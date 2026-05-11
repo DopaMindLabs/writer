@@ -22,7 +22,7 @@ export function WriteSurface({ doc, mode }: WriteSurfaceProps) {
   return (
     <div className="h-full overflow-auto bg-paper px-12 py-12">
       <Editor
-        key={doc.id}
+        key={`${doc.id}-${mode}`}
         initialValue={doc.body}
         onChange={handleChange}
         mode={mode}

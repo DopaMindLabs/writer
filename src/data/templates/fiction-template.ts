@@ -1,0 +1,87 @@
+import type { Template } from './types';
+
+const template: Template = {
+  id: 'fiction',
+  label: 'Fictional writing',
+  tag: 'FI',
+  description: 'novel · short story · script',
+  pickerOrder: 4,
+  sections: [
+    { label: 'Manuscript', order: 0, defaultDocName: 'Untitled chapter' },
+    { label: 'World', order: 1 },
+    { label: 'Workshop', order: 2 },
+  ],
+  seedDocs: [
+    { sectionLabel: 'Manuscript', name: 'The bell-keeper' },
+    { sectionLabel: 'Manuscript', name: 'Chapter 02 — Tollhouse' },
+    { sectionLabel: 'Manuscript', name: 'untitled' },
+    { sectionLabel: 'World', name: 'Characters' },
+    { sectionLabel: 'World', name: 'Places' },
+    { sectionLabel: 'World', name: 'Lore & rules' },
+    { sectionLabel: 'Workshop', name: 'Sessions' },
+  ],
+  seedNotes: [
+    {
+      l: 32,
+      t: 32,
+      w: 196,
+      h: 76,
+      kind: 'note',
+      body: 'bell rings on the wrong morning — is it her, or is the town slipping?',
+    },
+    {
+      l: 248,
+      t: 36,
+      w: 168,
+      h: 76,
+      kind: 'char',
+      title: 'Mira Voss',
+      body: "34. bell-keeper since her mother. doesn't want this.",
+    },
+    {
+      l: 32,
+      t: 122,
+      w: 184,
+      h: 64,
+      kind: 'note',
+      body: "priest's coat smells of pepper. why? keep, even if unused.",
+    },
+    {
+      l: 236,
+      t: 130,
+      w: 180,
+      h: 82,
+      kind: 'place',
+      title: 'The Tollhouse',
+      body: 'crossroads, west. older than the bell. a door that opens both ways.',
+    },
+    {
+      l: 436,
+      t: 56,
+      w: 152,
+      h: 56,
+      kind: 'note',
+      body: '"she was already late" — opener?',
+    },
+    {
+      l: 32,
+      t: 200,
+      w: 260,
+      h: 60,
+      kind: 'lore',
+      title: 'The Long Quiet',
+      body: "year 0 of the calendar. nobody remembers it. that's the rule.",
+    },
+    {
+      l: 312,
+      t: 226,
+      w: 152,
+      h: 64,
+      kind: 'char',
+      title: 'a child',
+      body: 'collects silences. unnamed.',
+    },
+  ],
+};
+
+export default template;

@@ -4,23 +4,54 @@ const template: Template = {
   id: 'bioinformatics',
   label: 'Bioinformatics',
   tag: 'BX',
-  description:
-    'Manuscript, methods, data, results, and a lab notebook for computational biology projects.',
+  description: 'pipelines · methods · lab notebook',
+  pickerOrder: 1,
   sections: [
     { label: 'Manuscript', order: 0 },
-    { label: 'Methods', order: 1 },
+    {
+      label: 'Methods',
+      order: 1,
+      sections: [
+        { label: 'Pipeline', order: 0, defaultDocName: 'Step' },
+        { label: 'Stats', order: 1, defaultDocName: 'Analysis' },
+      ],
+    },
     { label: 'Data', order: 2 },
     { label: 'Results', order: 3 },
     { label: 'References', order: 4 },
-    { label: 'Notebook', order: 5 },
+    { label: 'Notebook', order: 5, defaultDocName: 'Lab notes — {{date}}' },
   ],
   seedDocs: [
-    { sectionLabel: 'Manuscript', name: 'Abstract', body: '' },
-    { sectionLabel: 'Manuscript', name: 'Introduction', body: '' },
-    { sectionLabel: 'Methods', name: 'Pipeline overview', body: '' },
-    { sectionLabel: 'Data', name: 'Datasets & accessions', body: '' },
-    { sectionLabel: 'Results', name: 'Findings', body: '' },
-    { sectionLabel: 'Notebook', name: 'Lab notes — day 1', body: '' },
+    { sectionLabel: 'Manuscript', name: 'Abstract' },
+    { sectionLabel: 'Manuscript', name: 'Introduction' },
+    {
+      sectionLabel: 'Methods',
+      subsectionLabel: 'Pipeline',
+      name: 'Quality control',
+    },
+    {
+      sectionLabel: 'Methods',
+      subsectionLabel: 'Pipeline',
+      name: 'Alignment',
+    },
+    {
+      sectionLabel: 'Methods',
+      subsectionLabel: 'Pipeline',
+      name: 'Variant calling',
+    },
+    {
+      sectionLabel: 'Methods',
+      subsectionLabel: 'Stats',
+      name: 'Differential expression',
+    },
+    {
+      sectionLabel: 'Methods',
+      subsectionLabel: 'Stats',
+      name: 'Multiple testing',
+    },
+    { sectionLabel: 'Data', name: 'Datasets & accessions' },
+    { sectionLabel: 'Results', name: 'Findings' },
+    { sectionLabel: 'Notebook', name: 'Lab notes — day 1' },
   ],
 };
 

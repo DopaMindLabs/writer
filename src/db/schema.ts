@@ -13,6 +13,7 @@ export interface World {
 export interface Section {
   id: string;
   worldId: string;
+  parentSectionId: string | null;
   label: string;
   order: number;
 }
@@ -49,6 +50,14 @@ export interface Annotation {
   color?: HighlightColor;
   body?: string;
   author: string;
+  createdAt: number;
+}
+
+export interface Connection {
+  id: string;
+  worldId: string;
+  fromNoteId: string;
+  toNoteId: string;
   createdAt: number;
 }
 

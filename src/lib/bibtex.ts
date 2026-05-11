@@ -110,3 +110,38 @@ function mapType(type: string | undefined): Citation['type'] {
       return 'misc';
   }
 }
+
+function bibtexTypeFor(c: Citation): string {
+  switch (c.type) {
+    case 'book':
+      return 'book';
+    case 'article':
+      return 'article';
+    case 'chapter':
+      return 'incollection';
+    default:
+      return 'misc';
+  }
+}
+
+function escapeBraces(s: string): string {
+  return s.replace(/[{}]/g, '');
+}
+
+export function serializeCitationsToBibtex(citations: Citation[]): string {
+  const parts: string[] = [];
+  for (const c of citations) {
+    const fields: string[] = [];
+    if (c.authors && c.authors !== '(unknown)') {
+      fields.push(`  author = {${escapeBraces(c.authors)}}`);
+    }
+    if (c.title && c.title !== '(untitled)') {
+      fields.push(`  title  = {${escapeBraces(c.title)}}`);
+    }
+    if (c.year > 0) {
+      fields.push(`  year   = {${c.year}}`);
+    }
+    parts.push(`@${bibtexTypeFor(c)}{${c.key},\n${fields.join(',\n')}\n}`);
+  }
+  return parts.join('\n\n') + (parts.length > 0 ? '\n' : '');
+}

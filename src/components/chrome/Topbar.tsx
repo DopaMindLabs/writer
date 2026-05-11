@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Sun, Moon, BookOpen, Quote } from 'lucide-react';
+import { Sun, Moon, Quote } from 'lucide-react';
 import { useTheme } from '@/theme/ThemeProvider';
-import { ModeToggle } from './ModeToggle';
+import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
 import { cn } from '@/lib/utils';
 
 interface TopbarProps {
@@ -9,7 +9,7 @@ interface TopbarProps {
   docId: string | null;
   docName?: string;
   worldName?: string;
-  mode: 'normal' | 'focus';
+  mode: Mode;
 }
 
 export function Topbar({
@@ -24,7 +24,7 @@ export function Topbar({
   const onCitations = location.pathname.endsWith('/citations');
 
   return (
-    <header className="flex h-9 shrink-0 items-center gap-3 border-b border-rule bg-paper px-4">
+    <header className="flex h-10 shrink-0 items-center gap-4 border-b border-rule bg-paper px-4">
       <div className="flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-ink-3">
         <span>{worldName ?? '…'}</span>
         {docName && (
@@ -35,29 +35,22 @@ export function Topbar({
         )}
       </div>
       <div className="flex-1" />
-      <nav className="flex items-center gap-1">
-        <Link
-          to={`/w/${worldId}`}
-          className={cn(
-            'inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider hover:bg-paper-2',
-            !onCitations ? 'text-ink' : 'text-ink-3',
-          )}
-        >
-          <BookOpen className="h-3 w-3" />
-          Write
-        </Link>
-        <Link
-          to={`/w/${worldId}/citations`}
-          className={cn(
-            'inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider hover:bg-paper-2',
-            onCitations ? 'text-ink' : 'text-ink-3',
-          )}
-        >
-          <Quote className="h-3 w-3" />
-          Citations
-        </Link>
-      </nav>
-      <ModeToggle mode={mode} worldId={worldId} docId={docId} />
+      {!onCitations && (
+        <ModeTabs mode={mode} worldId={worldId} docId={docId} />
+      )}
+      <Link
+        to={`/w/${worldId}/citations`}
+        className={cn(
+          'inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider hover:bg-paper-2',
+          onCitations ? 'text-ink' : 'text-ink-3',
+        )}
+      >
+        <Quote className="h-3 w-3" />
+        Citations
+      </Link>
+      {!onCitations && (mode === 'dump' || docId) && (
+        <FocusToggle mode={mode} worldId={worldId} docId={docId} />
+      )}
       <button
         type="button"
         onClick={toggle}
