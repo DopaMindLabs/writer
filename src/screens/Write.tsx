@@ -1,7 +1,8 @@
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { WorldRail } from '@/components/chrome/WorldRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
+import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
 import { WriteSurface } from '@/components/surfaces/WriteSurface';
 import { useWorld } from '@/hooks/useWorlds';
@@ -10,6 +11,8 @@ import { useUI } from '@/store/ui';
 
 export function WriteScreen() {
   const { worldId, docId } = useParams<{ worldId: string; docId?: string }>();
+  const [searchParams] = useSearchParams();
+  const focus = searchParams.get('focus') === '1';
   const world = useWorld(worldId);
   const sections = useSections(worldId);
   const docs = useDocuments(worldId);
@@ -28,28 +31,39 @@ export function WriteScreen() {
   if (!worldId) return <Navigate to="/" replace />;
 
   if (!docId && sections.length > 0 && docs.length > 0) {
-    const firstSection = sections[0];
+    const orderedSections = [...sections].sort((a, b) => a.order - b.order);
+    const firstSection =
+      orderedSections.find((s) => s.parentSectionId === null) ??
+      orderedSections[0];
     const firstDoc = docs.find((d) => d.sectionId === firstSection.id) ?? docs[0];
     if (firstDoc) return <Navigate to={`/w/${worldId}/d/${firstDoc.id}`} replace />;
   }
 
+  const editorMode = focus ? 'focus' : 'write';
+
   return (
     <div className="flex h-full w-full">
-      <WorldRail activeWorldId={worldId} />
-      <Sidebar worldId={worldId} activeDocId={docId ?? null} />
+      {focus ? (
+        <FocusRail activeWorldId={worldId} />
+      ) : (
+        <>
+          <WorldRail activeWorldId={worldId} />
+          <Sidebar worldId={worldId} activeDocId={docId ?? null} />
+        </>
+      )}
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
           worldId={worldId}
           docId={docId ?? null}
           docName={doc?.name}
           worldName={world?.name}
-          mode="normal"
+          mode={editorMode}
         />
         <main className="flex-1 overflow-hidden">
           {doc ? (
-            <WriteSurface doc={doc} mode="normal" />
+            <WriteSurface doc={doc} mode={editorMode} />
           ) : (
-            <EmptyState worldId={worldId} />
+            <EmptyState />
           )}
         </main>
       </div>
@@ -57,7 +71,7 @@ export function WriteScreen() {
   );
 }
 
-function EmptyState({ worldId: _ }: { worldId: string }) {
+function EmptyState() {
   return (
     <div className="flex h-full items-center justify-center text-ink-3">
       <div className="text-center">

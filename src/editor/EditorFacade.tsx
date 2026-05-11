@@ -1,6 +1,6 @@
 import { LexicalEditor } from './LexicalEditor';
 
-export type EditorMode = 'normal' | 'focus';
+export type EditorMode = 'write' | 'focus' | 'read';
 
 export interface EditorProps {
   initialValue: string;

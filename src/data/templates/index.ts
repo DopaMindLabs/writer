@@ -8,10 +8,15 @@ const REGISTRY: Record<string, Template> = Object.fromEntries(
   Object.values(modules).map((m) => [m.default.id, m.default]),
 );
 
+function compareForPicker(a: Template, b: Template): number {
+  const ao = a.pickerOrder ?? Number.MAX_SAFE_INTEGER;
+  const bo = b.pickerOrder ?? Number.MAX_SAFE_INTEGER;
+  if (ao !== bo) return ao - bo;
+  return a.label.localeCompare(b.label);
+}
+
 export function listTemplates(): Template[] {
-  return Object.values(REGISTRY).sort((a, b) =>
-    a.label.localeCompare(b.label),
-  );
+  return Object.values(REGISTRY).sort(compareForPicker);
 }
 
 export function getTemplate(id: string): Template | undefined {

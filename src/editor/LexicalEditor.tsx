@@ -12,14 +12,15 @@ import { ListItemNode, ListNode } from '@lexical/list';
 import { LinkNode } from '@lexical/link';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { TRANSFORMERS } from '@lexical/markdown';
-import type { EditorState, LexicalEditor as LexicalEditorType } from 'lexical';
 import { AutosavePlugin } from './plugins/AutosavePlugin';
+import { EditablePlugin } from './plugins/EditablePlugin';
 import { cn } from '@/lib/utils';
+import type { EditorMode } from './EditorFacade';
 
 interface LexicalEditorProps {
   initialValue: string;
   onChange: (serialized: string) => void;
-  mode: 'normal' | 'focus';
+  mode: EditorMode;
   placeholder?: string;
   autoFocus?: boolean;
 }
@@ -54,10 +55,13 @@ export function LexicalEditor({
   placeholder = 'Start writing…',
   autoFocus = true,
 }: LexicalEditorProps) {
+  const editable = mode !== 'read';
+
   const initialConfig = useMemo(
     () => ({
       namespace: 'lotem-editor',
       theme: editorTheme,
+      editable,
       onError(error: Error) {
         console.error('Lexical error:', error);
       },
@@ -72,31 +76,37 @@ export function LexicalEditor({
       ],
       editorState: makeInitialState(initialValue),
     }),
-    [initialValue],
+    [initialValue, editable],
+  );
+
+  const surfaceClasses = cn(
+    'relative mx-auto w-full font-serif text-ink',
+    mode === 'focus' && 'max-w-[68ch] text-lg leading-[1.7]',
+    mode === 'read' && 'max-w-[68ch] text-[18px] leading-[1.75]',
+    mode === 'write' && 'max-w-[68ch] text-[17px] leading-[1.6]',
   );
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div
-        className={cn(
-          'relative mx-auto w-full font-serif text-ink',
-          mode === 'focus'
-            ? 'max-w-[68ch] text-lg leading-[1.65]'
-            : 'max-w-[68ch] text-[17px] leading-[1.6]',
-        )}
-      >
+      <div className={surfaceClasses}>
         <RichTextPlugin
           contentEditable={
             <ContentEditable
-              className="min-h-[60vh] outline-none"
+              className={cn(
+                'min-h-[60vh] outline-none',
+                mode === 'read' && 'caret-transparent',
+              )}
               aria-label="Document body"
-              autoFocus={autoFocus}
+              autoFocus={autoFocus && editable}
+              readOnly={!editable}
             />
           }
           placeholder={
-            <div className="pointer-events-none absolute left-0 top-0 select-none text-ink-4">
-              {placeholder}
-            </div>
+            editable ? (
+              <div className="pointer-events-none absolute left-0 top-0 select-none text-ink-4">
+                {placeholder}
+              </div>
+            ) : null
           }
           ErrorBoundary={LexicalErrorBoundary}
         />
@@ -104,26 +114,20 @@ export function LexicalEditor({
         <ListPlugin />
         <LinkPlugin />
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-        <AutosavePlugin onChange={onChange} />
+        {editable && <AutosavePlugin onChange={onChange} />}
+        <EditablePlugin editable={editable} />
       </div>
     </LexicalComposer>
   );
 }
 
-function makeInitialState(value: string) {
+function makeInitialState(value: string): string | undefined {
   if (!value) return undefined;
   try {
     const parsed = JSON.parse(value) as { root?: unknown };
     if (parsed?.root) return value;
   } catch {
-    /* fall through: treat as plain text */
+    /* fall through */
   }
-  return (editor: LexicalEditorType) => {
-    editor.update(() => {
-      const root = editor.getEditorState().read(() => null);
-      void root;
-    });
-  };
+  return undefined;
 }
-
-export type { EditorState };

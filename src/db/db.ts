@@ -6,6 +6,7 @@ import type {
   Note,
   Annotation,
   Citation,
+  Connection,
   Backup,
   Settings,
   HighlightPalette,
@@ -19,6 +20,7 @@ export class LotemDB extends Dexie {
   notes!: Table<Note, string>;
   annotations!: Table<Annotation, string>;
   citations!: Table<Citation, string>;
+  connections!: Table<Connection, string>;
   backups!: Table<Backup, string>;
   settings!: Table<Settings, string>;
   palettes!: Table<HighlightPalette, string>;
@@ -37,6 +39,25 @@ export class LotemDB extends Dexie {
       settings: 'key',
       palettes: 'id, worldId',
       meta: 'key',
+    });
+
+    this.version(2)
+      .stores({
+        sections:
+          'id, worldId, parentSectionId, order, [worldId+order], [worldId+parentSectionId]',
+      })
+      .upgrade(async (tx) => {
+        await tx
+          .table('sections')
+          .toCollection()
+          .modify((s: { parentSectionId?: string | null }) => {
+            if (s.parentSectionId === undefined) s.parentSectionId = null;
+          });
+      });
+
+    this.version(3).stores({
+      connections:
+        'id, worldId, fromNoteId, toNoteId, [worldId+fromNoteId], [worldId+toNoteId]',
     });
   }
 }

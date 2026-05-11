@@ -6,14 +6,22 @@ import { seedIfEmpty, resetAndReseed } from '@/db/seed';
 import { BootScreen } from '@/screens/Boot';
 import { WriteScreen } from '@/screens/Write';
 import { FocusScreen } from '@/screens/Focus';
+import { ReadScreen } from '@/screens/Read';
+import { SplitScreen } from '@/screens/Split';
+import { DumpScreen } from '@/screens/Dump';
 import { CitationsScreen } from '@/screens/Citations';
+import { TemplatesScreen } from '@/screens/Templates';
 import { NotFoundScreen } from '@/screens/NotFound';
 
 const router = createBrowserRouter([
   { path: '/', element: <BootScreen /> },
+  { path: '/new', element: <TemplatesScreen /> },
   { path: '/w/:worldId', element: <WriteScreen /> },
   { path: '/w/:worldId/d/:docId', element: <WriteScreen /> },
   { path: '/w/:worldId/d/:docId/focus', element: <FocusScreen /> },
+  { path: '/w/:worldId/d/:docId/read', element: <ReadScreen /> },
+  { path: '/w/:worldId/d/:docId/split', element: <SplitScreen /> },
+  { path: '/w/:worldId/dump', element: <DumpScreen /> },
   { path: '/w/:worldId/citations', element: <CitationsScreen /> },
   { path: '*', element: <NotFoundScreen /> },
 ]);
