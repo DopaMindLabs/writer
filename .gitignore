@@ -25,5 +25,7 @@ dist-ssr
 
 # Vite cache
 .vite
-project
-README.md
+*.tsbuildinfo
+
+# Project state files
+project/*.state.json
