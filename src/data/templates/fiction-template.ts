@@ -1,3 +1,4 @@
+import { NoteKind } from '@/db/schema';
 import { TemplateStage, type Template } from './types';
 
 const template: Template = {
@@ -29,7 +30,7 @@ const template: Template = {
       t: 32,
       w: 196,
       h: 76,
-      kind: 'note',
+      kind: NoteKind.Note,
       body: 'bell rings on the wrong morning — is it her, or is the town slipping?',
     },
     {
@@ -37,7 +38,7 @@ const template: Template = {
       t: 36,
       w: 168,
       h: 76,
-      kind: 'char',
+      kind: NoteKind.Char,
       title: 'Mira Voss',
       body: "34. bell-keeper since her mother. doesn't want this.",
     },
@@ -46,7 +47,7 @@ const template: Template = {
       t: 122,
       w: 184,
       h: 64,
-      kind: 'note',
+      kind: NoteKind.Note,
       body: "priest's coat smells of pepper. why? keep, even if unused.",
     },
     {
@@ -54,7 +55,7 @@ const template: Template = {
       t: 130,
       w: 180,
       h: 82,
-      kind: 'place',
+      kind: NoteKind.Place,
       title: 'The Tollhouse',
       body: 'crossroads, west. older than the bell. a door that opens both ways.',
     },
@@ -63,7 +64,7 @@ const template: Template = {
       t: 56,
       w: 152,
       h: 56,
-      kind: 'note',
+      kind: NoteKind.Note,
       body: '"she was already late" — opener?',
     },
     {
@@ -71,7 +72,7 @@ const template: Template = {
       t: 200,
       w: 260,
       h: 60,
-      kind: 'lore',
+      kind: NoteKind.Lore,
       title: 'The Long Quiet',
       body: "year 0 of the calendar. nobody remembers it. that's the rule.",
     },
@@ -80,11 +81,12 @@ const template: Template = {
       t: 226,
       w: 152,
       h: 64,
-      kind: 'char',
+      kind: NoteKind.Char,
       title: 'a child',
       body: 'collects silences. unnamed.',
     },
   ],
+  noteKinds: [NoteKind.Note, NoteKind.Char, NoteKind.Place, NoteKind.Lore],
 };
 
 export default template;

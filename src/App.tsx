@@ -3,7 +3,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { seedIfEmpty, resetAndReseed } from '@/db/seed';
-import { BootScreen } from '@/screens/Boot';
+import { HomeScreen } from '@/screens/Home';
+import { AboutScreen } from '@/screens/About';
 import { WriteScreen } from '@/screens/Write';
 import { FocusScreen } from '@/screens/Focus';
 import { ReadScreen } from '@/screens/Read';
@@ -14,7 +15,8 @@ import { TemplatesScreen } from '@/screens/Templates';
 import { NotFoundScreen } from '@/screens/NotFound';
 
 const router = createBrowserRouter([
-  { path: '/', element: <BootScreen /> },
+  { path: '/', element: <HomeScreen /> },
+  { path: '/about', element: <AboutScreen /> },
   { path: '/new', element: <TemplatesScreen /> },
   { path: '/w/:worldId', element: <WriteScreen /> },
   { path: '/w/:worldId/d/:docId', element: <WriteScreen /> },

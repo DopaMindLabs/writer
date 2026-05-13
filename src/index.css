@@ -17,6 +17,9 @@
   --hl-blue: #cfe3fa;
   --hl-green: #d6ebcf;
   --hl-ash: #e8e8e8;
+
+  --warning: #a8392c;
+  --warning-bg: #fbe2dc;
 }
 
 [data-theme='dark'] {
@@ -28,6 +31,9 @@
   --ink-4: #5a5a5a;
   --rule: #2c2c2c;
   --accent: #f5f5f5;
+
+  --warning: #ff8a7a;
+  --warning-bg: #3a1e1a;
 }
 
 html,

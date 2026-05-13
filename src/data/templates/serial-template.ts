@@ -1,3 +1,4 @@
+import { NoteKind } from '@/db/schema';
 import { TemplateStage, type Template } from './types';
 
 const template: Template = {
@@ -19,6 +20,7 @@ const template: Template = {
     { sectionLabel: 'Recurring people', name: 'Cast' },
     { sectionLabel: 'Calendar', name: 'Schedule' },
   ],
+  noteKinds: [NoteKind.Note, NoteKind.Source, NoteKind.Todo, NoteKind.Blank],
 };
 
 export default template;

@@ -1,3 +1,5 @@
+import type { NoteKind } from '@/db/schema';
+
 export interface TemplateSection {
   label: string;
   order: number;
@@ -25,7 +27,7 @@ export interface TemplateSeedNote {
   t: number;
   w: number;
   h: number;
-  kind: 'note' | 'char' | 'place' | 'lore';
+  kind: NoteKind;
   title?: string;
   body: string;
 }
@@ -50,4 +52,10 @@ export interface Template {
   sections: TemplateSection[];
   seedDocs: TemplateSeedDoc[];
   seedNotes?: TemplateSeedNote[];
+  /**
+   * Note kinds exposed by the Dump toolbar for worlds on this template.
+   * Order is preserved as toolbar order. If empty or undefined, the toolbar
+   * falls back to `[NoteKind.Blank]`.
+   */
+  noteKinds: NoteKind[];
 }

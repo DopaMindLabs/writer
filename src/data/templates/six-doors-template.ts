@@ -1,3 +1,4 @@
+import { NoteKind } from '@/db/schema';
 import { TemplateStage, type Template } from './types';
 
 const template: Template = {
@@ -22,6 +23,13 @@ const template: Template = {
     { sectionLabel: 'Shared world', name: 'Places' },
     { sectionLabel: 'Shared world', name: 'Common lore' },
     { sectionLabel: 'Together', name: 'Chat' },
+  ],
+  noteKinds: [
+    NoteKind.Note,
+    NoteKind.Char,
+    NoteKind.Place,
+    NoteKind.Lore,
+    NoteKind.Blank,
   ],
 };
 

@@ -28,6 +28,26 @@ export interface Doc {
   updatedAt: number;
 }
 
+export enum NoteKind {
+  Note = 'note',
+  Char = 'char',
+  Place = 'place',
+  Lore = 'lore',
+  Question = 'question',
+  Source = 'source',
+  Claim = 'claim',
+  Figure = 'figure',
+  Todo = 'todo',
+  LooseEnd = 'loose-end',
+  Blank = 'blank',
+}
+
+export enum NoteState {
+  SeedPrompt = 'seed-prompt',
+  SeedFetched = 'seed-fetched',
+  User = 'user',
+}
+
 export interface Note {
   id: string;
   worldId: string;
@@ -35,7 +55,8 @@ export interface Note {
   t: number;
   w: number;
   h: number;
-  kind: 'note' | 'char' | 'place' | 'lore';
+  kind: NoteKind;
+  state: NoteState;
   title?: string;
   body: string;
   createdAt: number;

@@ -1,3 +1,4 @@
+import { NoteKind } from '@/db/schema';
 import { TemplateStage, type Template } from './types';
 
 const template: Template = {
@@ -28,6 +29,14 @@ const template: Template = {
     { sectionLabel: 'Code & math', name: 'Equations' },
     { sectionLabel: 'Code & math', name: 'References' },
     { sectionLabel: 'Workshop', name: 'Sessions' },
+  ],
+  noteKinds: [
+    NoteKind.Question,
+    NoteKind.Source,
+    NoteKind.Claim,
+    NoteKind.Figure,
+    NoteKind.Todo,
+    NoteKind.LooseEnd,
   ],
 };
 

@@ -5,23 +5,17 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
-import { X } from 'lucide-react';
+import { Globe, X } from 'lucide-react';
 import { db } from '@/db/db';
 import { deleteNoteWithCascade } from '@/db/seed';
-import type { Note } from '@/db/schema';
+import { NoteState, type Note } from '@/db/schema';
+import { NOTE_KIND_LABEL } from '@/data/note-kinds';
 import { cn } from '@/lib/utils';
 
 const MIN_W = 120;
 const MIN_H = 60;
 const MAX_W = 480;
 const MAX_H = 360;
-
-const KIND_LABEL: Record<Note['kind'], string> = {
-  note: 'thought',
-  char: 'person',
-  place: 'place',
-  lore: 'lore',
-};
 
 const DAY = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
@@ -73,7 +67,9 @@ export function DumpNote({ note, selected, pending, onPick }: DumpNoteProps) {
   }, [note.title, editing]);
 
   const dayChip = DAY[new Date(note.createdAt).getDay()] ?? 'now';
-  const isNote = note.kind === 'note';
+  const isSeedPrompt = note.state === NoteState.SeedPrompt;
+  const isSeedFetched = note.state === NoteState.SeedFetched;
+  const isSeed = isSeedPrompt || isSeedFetched;
 
   const onSurfacePointerDown = useCallback(
     (e: ReactPointerEvent<HTMLDivElement>) => {
@@ -162,10 +158,17 @@ export function DumpNote({ note, selected, pending, onPick }: DumpNoteProps) {
     await deleteNoteWithCascade(note.id);
   }
 
+  async function maybePromote() {
+    if (note.state !== NoteState.User) {
+      await db.notes.update(note.id, { state: NoteState.User });
+    }
+  }
+
   async function commitBody() {
     setEditing('none');
     if (draftBody !== note.body) {
       await db.notes.update(note.id, { body: draftBody });
+      await maybePromote();
     }
   }
 
@@ -174,6 +177,7 @@ export function DumpNote({ note, selected, pending, onPick }: DumpNoteProps) {
     const next = draftTitle.trim() || undefined;
     if (next !== note.title) {
       await db.notes.update(note.id, { title: next });
+      await maybePromote();
     }
   }
 
@@ -191,23 +195,31 @@ export function DumpNote({ note, selected, pending, onPick }: DumpNoteProps) {
         minHeight: pos.h,
       }}
       className={cn(
-        'group absolute flex flex-col gap-1 border bg-paper p-2.5 shadow-sm transition-shadow',
-        selected ? 'border-ink' : 'border-rule',
+        'group absolute flex flex-col gap-1 border bg-paper p-2.5',
+        selected || !isSeed ? 'border-ink' : 'border-rule',
         pending && 'outline-2 outline-dashed outline-ink-3 outline-offset-2',
         drag.kind === 'idle' ? 'cursor-grab' : 'cursor-grabbing',
         selected && 'outline outline-2 outline-ink outline-offset-2',
       )}
     >
-      <div className="flex items-center gap-1.5 font-mono text-[8px] uppercase tracking-[0.1em] text-ink-4">
-        <span>{KIND_LABEL[note.kind]}</span>
+      <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4">
+        <span>{NOTE_KIND_LABEL[note.kind]}</span>
         <span className="flex-1" />
+        {isSeedFetched && (
+          <Globe className="h-3 w-3 text-ink-4" aria-label="Fetched content" />
+        )}
         <span>{dayChip}</span>
         <button
           type="button"
           onClick={onDelete}
           data-delete
           aria-label="Delete note"
-          className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 opacity-0 transition-opacity hover:bg-paper-2 hover:text-ink group-hover:opacity-100"
+          className={cn(
+            'ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 transition-opacity hover:bg-paper-2 hover:text-ink',
+            isSeedPrompt
+              ? 'opacity-100'
+              : 'opacity-0 group-hover:opacity-100',
+          )}
         >
           <X className="h-3 w-3" />
         </button>
@@ -264,7 +276,7 @@ export function DumpNote({ note, selected, pending, onPick }: DumpNoteProps) {
           }}
           className={cn(
             'flex-1 resize-none border-0 bg-transparent p-0 font-serif text-[12px] leading-snug text-ink-2 outline-none',
-            isNote && 'italic',
+            isSeedPrompt && 'italic',
           )}
         />
       ) : (
@@ -273,11 +285,11 @@ export function DumpNote({ note, selected, pending, onPick }: DumpNoteProps) {
           onClick={() => setEditing('body')}
           className={cn(
             'flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2',
-            isNote && 'italic',
-            !note.body && 'text-ink-4',
+            isSeedPrompt && 'italic',
+            !note.body && !isSeedPrompt && 'text-ink-4',
           )}
         >
-          {note.body || '(click to write)'}
+          {note.body || (isSeedPrompt ? '' : '(click to write)')}
         </div>
       )}
 

@@ -21,6 +21,8 @@ const config: Config = {
         'hl-blue': 'var(--hl-blue)',
         'hl-green': 'var(--hl-green)',
         'hl-ash': 'var(--hl-ash)',
+        warning: 'var(--warning)',
+        'warning-bg': 'var(--warning-bg)',
       },
       fontFamily: {
         sans: ['Geist', 'system-ui', '-apple-system', 'sans-serif'],

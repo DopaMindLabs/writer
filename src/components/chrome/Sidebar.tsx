@@ -246,6 +246,23 @@ export function Sidebar({ worldId, activeDocId }: SidebarProps) {
           </Link>
         </div>
       </div>
+      <div className="flex items-center gap-3 border-t border-rule px-5 py-3 font-mono text-[10px] uppercase tracking-wider text-ink-4">
+        <Link to="/" className="hover:text-ink">
+          Home
+        </Link>
+        <Link to="/about" className="hover:text-ink">
+          About
+        </Link>
+        {/* TODO: replace with GitHub URL */}
+        <a
+          href="#"
+          target="_blank"
+          rel="noreferrer"
+          className="hover:text-ink"
+        >
+          GitHub
+        </a>
+      </div>
     </aside>
   );
 }

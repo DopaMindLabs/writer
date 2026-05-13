@@ -8,20 +8,16 @@ import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { useNotes } from '@/hooks/useNotes';
 import { useConnections } from '@/hooks/useConnections';
+import { useWorld } from '@/hooks/useWorlds';
+import { getTemplate } from '@/data/templates';
+import { NOTE_KIND_LABEL } from '@/data/note-kinds';
 import { DumpNote } from './DumpNote';
 import { DumpConnection } from './DumpConnection';
-import type { Note } from '@/db/schema';
+import { NoteKind, NoteState, type Note } from '@/db/schema';
 
 interface DumpCanvasProps {
   worldId: string;
 }
-
-const TOOLBAR: { label: string; kind: Note['kind'] }[] = [
-  { label: '+ thought', kind: 'note' },
-  { label: '+ person', kind: 'char' },
-  { label: '+ place', kind: 'place' },
-  { label: '+ lore', kind: 'lore' },
-];
 
 const DEFAULT_W = 184;
 const DEFAULT_H = 80;
@@ -29,8 +25,15 @@ const DEFAULT_H = 80;
 export function DumpCanvas({ worldId }: DumpCanvasProps) {
   const notes = useNotes(worldId);
   const connections = useConnections(worldId);
+  const world = useWorld(worldId);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [pendingFrom, setPendingFrom] = useState<string | null>(null);
+
+  const toolbarKinds = useMemo<NoteKind[]>(() => {
+    const tpl = world?.template ? getTemplate(world.template) : undefined;
+    const kinds = tpl?.noteKinds;
+    return kinds && kinds.length > 0 ? kinds : [NoteKind.Blank];
+  }, [world?.template]);
 
   const notesById = useMemo(() => {
     const m = new Map<string, Note>();
@@ -39,7 +42,7 @@ export function DumpCanvas({ worldId }: DumpCanvasProps) {
   }, [notes]);
 
   const addNote = useCallback(
-    async (kind: Note['kind']) => {
+    async (kind: NoteKind) => {
       const existingCount = notes.length;
       const jitter = (existingCount * 24) % 240;
       await db.notes.add({
@@ -50,6 +53,7 @@ export function DumpCanvas({ worldId }: DumpCanvasProps) {
         w: DEFAULT_W,
         h: DEFAULT_H,
         kind,
+        state: NoteState.User,
         body: '',
         createdAt: Date.now(),
       });
@@ -137,17 +141,17 @@ export function DumpCanvas({ worldId }: DumpCanvasProps) {
       )}
 
       <div className="absolute bottom-5 left-1/2 -translate-x-1/2 border border-ink bg-paper">
-        {TOOLBAR.map((t, i) => (
+        {toolbarKinds.map((kind, i) => (
           <button
-            key={t.kind}
+            key={kind}
             type="button"
-            onClick={() => addNote(t.kind)}
+            onClick={() => addNote(kind)}
             className={
               'inline-block px-3 py-1.5 font-sans text-[11px] text-ink-3 hover:text-ink' +
-              (i < TOOLBAR.length - 1 ? ' border-r border-rule' : '')
+              (i < toolbarKinds.length - 1 ? ' border-r border-rule' : '')
             }
           >
-            {t.label}
+            + {NOTE_KIND_LABEL[kind]}
           </button>
         ))}
       </div>

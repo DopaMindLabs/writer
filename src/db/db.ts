@@ -59,6 +59,15 @@ export class LoremDB extends Dexie {
       connections:
         'id, worldId, fromNoteId, toNoteId, [worldId+fromNoteId], [worldId+toNoteId]',
     });
+
+    this.version(4).upgrade(async (tx) => {
+      await tx
+        .table('notes')
+        .toCollection()
+        .modify((n: { state?: string }) => {
+          if (n.state === undefined) n.state = 'user';
+        });
+    });
   }
 }
 
