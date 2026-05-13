@@ -4,6 +4,9 @@ const template: Template = {
   id: 'bioinformatics',
   label: 'Bioinformatics',
   tag: 'BX',
+  version: '0.1.0',
+  beta: true,
+  enabled: true,
   description: 'pipelines · methods · lab notebook',
   pickerOrder: 1,
   sections: [

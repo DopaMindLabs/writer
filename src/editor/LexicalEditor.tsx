@@ -59,7 +59,7 @@ export function LexicalEditor({
 
   const initialConfig = useMemo(
     () => ({
-      namespace: 'lotem-editor',
+      namespace: 'lorem-editor',
       theme: editorTheme,
       editable,
       onError(error: Error) {

@@ -2,9 +2,12 @@ import type { Template } from './types';
 
 const template: Template = {
   id: 'technical',
-  label: 'Technical · scRNA-seq report',
+  label: 'Technical · Scientific report',
   tag: 'TX',
-  description: 'scRNA-seq · methods · equations',
+  version: '0.1.0',
+  beta: true,
+  enabled: true,
+  description: 'Scientific · methods · equations',
   pickerOrder: 2,
   sections: [
     { label: 'Report', order: 0 },
@@ -13,7 +16,7 @@ const template: Template = {
     { label: 'Workshop', order: 3 },
   ],
   seedDocs: [
-    { sectionLabel: 'Report', name: 'scRNA-seq report' },
+    { sectionLabel: 'Report', name: 'Scientific report' },
     { sectionLabel: 'Report', name: 'Abstract' },
     { sectionLabel: 'Report', name: 'Methods' },
     { sectionLabel: 'Report', name: 'Results & figs' },

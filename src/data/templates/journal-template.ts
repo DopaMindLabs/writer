@@ -4,6 +4,9 @@ const template: Template = {
   id: 'journal',
   label: 'Journal',
   tag: 'JO',
+  version: '0.1.0',
+  beta: true,
+  enabled: true,
   description: 'daily, low-stakes',
   pickerOrder: 7,
   sections: [

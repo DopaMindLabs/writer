@@ -4,6 +4,9 @@ const template: Template = {
   id: 'fiction',
   label: 'Fictional writing',
   tag: 'FI',
+  version: '0.1.0',
+  beta: true,
+  enabled: true,
   description: 'novel · short story · script',
   pickerOrder: 4,
   sections: [

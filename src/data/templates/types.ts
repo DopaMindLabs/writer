@@ -34,6 +34,9 @@ export interface Template {
   id: string;
   label: string;
   tag: string;
+  version: string;
+  beta?: boolean;
+  enabled: boolean;
   description?: string;
   pickerOrder?: number;
   sections: TemplateSection[];

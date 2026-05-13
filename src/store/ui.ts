@@ -13,7 +13,7 @@ interface UIState {
   setExportOpen: (open: boolean) => void;
 }
 
-const PERSIST_KEY = 'lotem-ui';
+const PERSIST_KEY = 'lorem-ui';
 
 function loadPersisted(): Partial<UIState> {
   try {

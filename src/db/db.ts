@@ -13,7 +13,7 @@ import type {
   Meta,
 } from './schema';
 
-export class LotemDB extends Dexie {
+export class LoremDB extends Dexie {
   worlds!: Table<World, string>;
   sections!: Table<Section, string>;
   docs!: Table<Doc, string>;
@@ -27,7 +27,7 @@ export class LotemDB extends Dexie {
   meta!: Table<Meta, string>;
 
   constructor() {
-    super('lotem');
+    super('lorem');
     this.version(1).stores({
       worlds: 'id, updatedAt',
       sections: 'id, worldId, order, [worldId+order]',
@@ -62,8 +62,8 @@ export class LotemDB extends Dexie {
   }
 }
 
-export const db = new LotemDB();
+export const db = new LoremDB();
 
 if (import.meta.env.DEV) {
-  (window as unknown as { db: LotemDB }).db = db;
+  (window as unknown as { db: LoremDB }).db = db;
 }

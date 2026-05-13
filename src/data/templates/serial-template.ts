@@ -4,6 +4,9 @@ const template: Template = {
   id: 'serial',
   label: 'Serial',
   tag: 'SE',
+  version: '0.1.0',
+  beta: true,
+  enabled: true,
   description: 'recurring essays · newsletter',
   pickerOrder: 6,
   sections: [

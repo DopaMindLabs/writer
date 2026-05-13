@@ -4,6 +4,9 @@ const template: Template = {
   id: 'humanities',
   label: 'Thesis · research',
   tag: 'TH',
+  version: '0.1.0',
+  beta: true,
+  enabled: true,
   description: 'long-form academic',
   pickerOrder: 3,
   sections: [

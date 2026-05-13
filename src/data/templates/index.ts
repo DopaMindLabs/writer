@@ -16,7 +16,9 @@ function compareForPicker(a: Template, b: Template): number {
 }
 
 export function listTemplates(): Template[] {
-  return Object.values(REGISTRY).sort(compareForPicker);
+  return Object.values(REGISTRY)
+    .filter((t) => t.enabled)
+    .sort(compareForPicker);
 }
 
 export function getTemplate(id: string): Template | undefined {

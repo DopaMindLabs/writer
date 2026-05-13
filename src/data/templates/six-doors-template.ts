@@ -4,6 +4,9 @@ const template: Template = {
   id: 'six',
   label: 'Six Doors · collaborative',
   tag: 'SD',
+  version: '0.1.0',
+  beta: true,
+  enabled: true,
   description: 'shared world · multiple writers',
   pickerOrder: 5,
   sections: [
