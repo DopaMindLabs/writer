@@ -63,7 +63,7 @@ export function AboutScreen() {
           <p className="mt-3 font-serif text-[17px] leading-relaxed text-ink-2">
             {/* TODO: replace with GitHub URL */}
             <a
-              href="#"
+              href="https://github.com/DopaMindLabs/writer/"
               target="_blank"
               rel="noreferrer"
               className="underline decoration-rule underline-offset-4 hover:decoration-ink hover:text-ink"
