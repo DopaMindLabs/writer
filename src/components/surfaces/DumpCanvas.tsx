@@ -8,7 +8,7 @@ import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { useNotes } from '@/hooks/useNotes';
 import { useConnections } from '@/hooks/useConnections';
-import { useWorld } from '@/hooks/useWorlds';
+import { useSpace } from '@/hooks/useSpaces';
 import { getTemplate } from '@/data/templates';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
 import { DumpNote } from './DumpNote';
@@ -16,24 +16,24 @@ import { DumpConnection } from './DumpConnection';
 import { NoteKind, NoteState, type Note } from '@/db/schema';
 
 interface DumpCanvasProps {
-  worldId: string;
+  spaceId: string;
 }
 
 const DEFAULT_W = 184;
 const DEFAULT_H = 80;
 
-export function DumpCanvas({ worldId }: DumpCanvasProps) {
-  const notes = useNotes(worldId);
-  const connections = useConnections(worldId);
-  const world = useWorld(worldId);
+export function DumpCanvas({ spaceId }: DumpCanvasProps) {
+  const notes = useNotes(spaceId);
+  const connections = useConnections(spaceId);
+  const space = useSpace(spaceId);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [pendingFrom, setPendingFrom] = useState<string | null>(null);
 
   const toolbarKinds = useMemo<NoteKind[]>(() => {
-    const tpl = world?.template ? getTemplate(world.template) : undefined;
+    const tpl = space?.template ? getTemplate(space.template) : undefined;
     const kinds = tpl?.noteKinds;
     return kinds && kinds.length > 0 ? kinds : [NoteKind.Blank];
-  }, [world?.template]);
+  }, [space?.template]);
 
   const notesById = useMemo(() => {
     const m = new Map<string, Note>();
@@ -47,7 +47,7 @@ export function DumpCanvas({ worldId }: DumpCanvasProps) {
       const jitter = (existingCount * 24) % 240;
       await db.notes.add({
         id: newId(),
-        worldId,
+        spaceId,
         l: 24 + jitter,
         t: 24 + jitter,
         w: DEFAULT_W,
@@ -58,7 +58,7 @@ export function DumpCanvas({ worldId }: DumpCanvasProps) {
         createdAt: Date.now(),
       });
     },
-    [worldId, notes.length],
+    [spaceId, notes.length],
   );
 
   const handlePick = useCallback(
@@ -69,7 +69,7 @@ export function DumpCanvas({ worldId }: DumpCanvasProps) {
         } else if (pendingFrom !== id) {
           await db.connections.add({
             id: newId(),
-            worldId,
+            spaceId,
             fromNoteId: pendingFrom,
             toNoteId: id,
             createdAt: Date.now(),
@@ -82,7 +82,7 @@ export function DumpCanvas({ worldId }: DumpCanvasProps) {
       }
       setSelectedId(id);
     },
-    [pendingFrom, worldId],
+    [pendingFrom, spaceId],
   );
 
   function onBackgroundPointerDown(e: ReactPointerEvent<HTMLDivElement>) {

@@ -3,15 +3,15 @@ import { Link } from 'react-router-dom';
 import { db } from '@/db/db';
 
 export function HomeScreen() {
-  const [firstWorldId, setFirstWorldId] = useState<string | null>(null);
+  const [firstSpaceId, setFirstSpaceId] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const w = await db.worlds.orderBy('updatedAt').reverse().first();
+      const w = await db.spaces.orderBy('updatedAt').reverse().first();
       if (cancelled) return;
-      if (w) setFirstWorldId(w.id);
+      if (w) setFirstSpaceId(w.id);
       setLoaded(true);
     })();
     return () => {
@@ -19,7 +19,7 @@ export function HomeScreen() {
     };
   }, []);
 
-  const isEmpty = loaded && !firstWorldId;
+  const isEmpty = loaded && !firstSpaceId;
 
   return (
     <div className="flex h-full w-full flex-col overflow-auto bg-paper text-ink">
@@ -39,9 +39,9 @@ export function HomeScreen() {
 
         {loaded && (
           <div className="mt-12 border-y border-rule">
-            {firstWorldId && (
+            {firstSpaceId && (
               <Link
-                to={`/w/${firstWorldId}`}
+                to={`/s/${firstSpaceId}`}
                 className="flex items-baseline justify-between border-b border-rule px-2 py-5 transition-colors hover:bg-paper-2"
               >
                 <span className="font-serif text-[22px] text-ink">
@@ -63,7 +63,7 @@ export function HomeScreen() {
                     : 'font-serif text-[22px] italic text-ink'
                 }
               >
-                Start a new world
+                Start a new space
               </span>
               <span className="font-mono text-[11px] uppercase tracking-wider text-ink-3">
                 →

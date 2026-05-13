@@ -1,34 +1,34 @@
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { WorldRail } from '@/components/chrome/WorldRail';
+import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
 import { WriteSurface } from '@/components/surfaces/WriteSurface';
-import { useWorld } from '@/hooks/useWorlds';
+import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments, useDocument } from '@/hooks/useDocuments';
 import { useUI } from '@/store/ui';
 
 export function WriteScreen() {
-  const { worldId, docId } = useParams<{ worldId: string; docId?: string }>();
+  const { spaceId, docId } = useParams<{ spaceId: string; docId?: string }>();
   const [searchParams] = useSearchParams();
   const focus = searchParams.get('focus') === '1';
-  const world = useWorld(worldId);
-  const sections = useSections(worldId);
-  const docs = useDocuments(worldId);
+  const space = useSpace(spaceId);
+  const sections = useSections(spaceId);
+  const docs = useDocuments(spaceId);
   const doc = useDocument(docId);
-  const setCurrentWorldId = useUI((s) => s.setCurrentWorldId);
+  const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
   const setCurrentDocId = useUI((s) => s.setCurrentDocId);
 
   useEffect(() => {
-    if (worldId) setCurrentWorldId(worldId);
-  }, [worldId, setCurrentWorldId]);
+    if (spaceId) setCurrentSpaceId(spaceId);
+  }, [spaceId, setCurrentSpaceId]);
 
   useEffect(() => {
     setCurrentDocId(docId ?? null);
   }, [docId, setCurrentDocId]);
 
-  if (!worldId) return <Navigate to="/" replace />;
+  if (!spaceId) return <Navigate to="/" replace />;
 
   if (!docId && sections.length > 0 && docs.length > 0) {
     const orderedSections = [...sections].sort((a, b) => a.order - b.order);
@@ -36,7 +36,7 @@ export function WriteScreen() {
       orderedSections.find((s) => s.parentSectionId === null) ??
       orderedSections[0];
     const firstDoc = docs.find((d) => d.sectionId === firstSection.id) ?? docs[0];
-    if (firstDoc) return <Navigate to={`/w/${worldId}/d/${firstDoc.id}`} replace />;
+    if (firstDoc) return <Navigate to={`/s/${spaceId}/d/${firstDoc.id}`} replace />;
   }
 
   const editorMode = focus ? 'focus' : 'write';
@@ -44,19 +44,19 @@ export function WriteScreen() {
   return (
     <div className="flex h-full w-full">
       {focus ? (
-        <FocusRail activeWorldId={worldId} />
+        <FocusRail activeSpaceId={spaceId} />
       ) : (
         <>
-          <WorldRail activeWorldId={worldId} />
-          <Sidebar worldId={worldId} activeDocId={docId ?? null} />
+          <SpaceRail activeSpaceId={spaceId} />
+          <Sidebar spaceId={spaceId} activeDocId={docId ?? null} />
         </>
       )}
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
-          worldId={worldId}
+          spaceId={spaceId}
           docId={docId ?? null}
           docName={doc?.name}
-          worldName={world?.name}
+          spaceName={space?.name}
           mode={editorMode}
         />
         <main className="flex-1 overflow-hidden">
@@ -75,7 +75,7 @@ function EmptyState() {
   return (
     <div className="flex h-full items-center justify-center text-ink-3">
       <div className="text-center">
-        <p className="font-serif text-2xl text-ink">Empty world</p>
+        <p className="font-serif text-2xl text-ink">Empty space</p>
         <p className="mt-2 text-sm">Pick a document from the sidebar to start writing.</p>
       </div>
     </div>

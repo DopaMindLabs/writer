@@ -4,31 +4,31 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import { useEffect, useMemo, type ChangeEvent } from 'react';
-import { WorldRail } from '@/components/chrome/WorldRail';
+import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
 import { WriteSurface } from '@/components/surfaces/WriteSurface';
-import { useWorld } from '@/hooks/useWorlds';
+import { useSpace } from '@/hooks/useSpaces';
 import { useDocuments, useDocument } from '@/hooks/useDocuments';
 import { useUI } from '@/store/ui';
 
 export function SplitScreen() {
-  const { worldId, docId } = useParams<{ worldId: string; docId: string }>();
+  const { spaceId, docId } = useParams<{ spaceId: string; docId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const focus = searchParams.get('focus') === '1';
   const withParam = searchParams.get('with');
 
-  const world = useWorld(worldId);
-  const docs = useDocuments(worldId);
+  const space = useSpace(spaceId);
+  const docs = useDocuments(spaceId);
   const leftDoc = useDocument(docId);
   const rightDoc = useDocument(withParam);
-  const setCurrentWorldId = useUI((s) => s.setCurrentWorldId);
+  const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
   const setCurrentDocId = useUI((s) => s.setCurrentDocId);
 
   useEffect(() => {
-    if (worldId) setCurrentWorldId(worldId);
-  }, [worldId, setCurrentWorldId]);
+    if (spaceId) setCurrentSpaceId(spaceId);
+  }, [spaceId, setCurrentSpaceId]);
 
   useEffect(() => {
     if (docId) setCurrentDocId(docId);
@@ -49,7 +49,7 @@ export function SplitScreen() {
     setSearchParams(next, { replace: true });
   }, [docId, candidates, withParam, searchParams, setSearchParams]);
 
-  if (!worldId || !docId) return <Navigate to="/" replace />;
+  if (!spaceId || !docId) return <Navigate to="/" replace />;
 
   function onPickRight(e: ChangeEvent<HTMLSelectElement>) {
     const next = new URLSearchParams(searchParams);
@@ -60,19 +60,19 @@ export function SplitScreen() {
   return (
     <div className="flex h-full w-full">
       {focus ? (
-        <FocusRail activeWorldId={worldId} />
+        <FocusRail activeSpaceId={spaceId} />
       ) : (
         <>
-          <WorldRail activeWorldId={worldId} />
-          <Sidebar worldId={worldId} activeDocId={docId} />
+          <SpaceRail activeSpaceId={spaceId} />
+          <Sidebar spaceId={spaceId} activeDocId={docId} />
         </>
       )}
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
-          worldId={worldId}
+          spaceId={spaceId}
           docId={docId}
           docName={leftDoc?.name}
-          worldName={world?.name}
+          spaceName={space?.name}
           mode="split"
         />
         <main className="grid flex-1 grid-cols-2 overflow-hidden divide-x divide-rule">

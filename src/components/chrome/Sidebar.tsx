@@ -8,7 +8,7 @@ import {
   type KeyboardEvent,
 } from 'react';
 import { Plus } from 'lucide-react';
-import { useWorld } from '@/hooks/useWorlds';
+import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
 import { db } from '@/db/db';
@@ -22,7 +22,7 @@ import type { Doc, Section } from '@/db/schema';
 import { cn } from '@/lib/utils';
 
 interface SidebarProps {
-  worldId: string;
+  spaceId: string;
   activeDocId: string | null;
 }
 
@@ -31,11 +31,11 @@ interface AddingState {
   value: string;
 }
 
-export function Sidebar({ worldId, activeDocId }: SidebarProps) {
-  const world = useWorld(worldId);
-  const sections = useSections(worldId);
-  const docs = useDocuments(worldId);
-  const notes = useNotes(worldId);
+export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
+  const space = useSpace(spaceId);
+  const sections = useSections(spaceId);
+  const docs = useDocuments(spaceId);
+  const notes = useNotes(spaceId);
   const location = useLocation();
   const navigate = useNavigate();
   const modeSuffix = inferModeSuffix(location.pathname);
@@ -79,7 +79,7 @@ export function Sidebar({ worldId, activeDocId }: SidebarProps) {
     return map;
   }, [docs]);
 
-  const templateDef = world ? getTemplate(world.template) : undefined;
+  const templateDef = space ? getTemplate(space.template) : undefined;
   const topTemplateDefByLabel = useMemo(() => {
     const m = new Map<string, TemplateSectionDef>();
     for (const s of templateDef?.sections ?? []) m.set(s.label, s);
@@ -104,7 +104,7 @@ export function Sidebar({ worldId, activeDocId }: SidebarProps) {
   }
 
   function docHref(docId: string): string {
-    return `/w/${worldId}/d/${docId}${modeSuffix}`;
+    return `/s/${spaceId}/d/${docId}${modeSuffix}`;
   }
 
   function startAdd(
@@ -122,7 +122,7 @@ export function Sidebar({ worldId, activeDocId }: SidebarProps) {
     const id = newId();
     await db.docs.add({
       id,
-      worldId,
+      spaceId,
       sectionId: adding.sectionId,
       name,
       body: '',
@@ -130,7 +130,7 @@ export function Sidebar({ worldId, activeDocId }: SidebarProps) {
       updatedAt: Date.now(),
     });
     setAdding(null);
-    navigate(`/w/${worldId}/d/${id}`);
+    navigate(`/s/${spaceId}/d/${id}`);
   }
 
   function onAddKey(e: KeyboardEvent<HTMLInputElement>) {
@@ -147,10 +147,10 @@ export function Sidebar({ worldId, activeDocId }: SidebarProps) {
     <aside className="flex w-56 shrink-0 flex-col border-r border-rule bg-paper-2">
       <div className="border-b border-rule px-5 pb-4 pt-5">
         <div className="font-serif text-lg font-medium leading-tight tracking-tight text-ink">
-          {world?.name ?? '…'}
+          {space?.name ?? '…'}
         </div>
         <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-          {world?.shared ? 'SHARED' : 'PRIVATE · LOCAL'}
+          {space?.shared ? 'SHARED' : 'PRIVATE · LOCAL'}
         </div>
       </div>
       <div className="flex-1 overflow-auto py-2">
@@ -231,7 +231,7 @@ export function Sidebar({ worldId, activeDocId }: SidebarProps) {
             Workshop
           </div>
           <Link
-            to={`/w/${worldId}/dump`}
+            to={`/s/${spaceId}/dump`}
             className={cn(
               '-ml-px flex items-center gap-2 border-l-2 px-5 py-1.5 transition-colors',
               onDump

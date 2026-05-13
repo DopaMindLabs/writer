@@ -1,6 +1,6 @@
 import Dexie, { type Table } from 'dexie';
 import type {
-  World,
+  Space,
   Section,
   Doc,
   Note,
@@ -14,7 +14,7 @@ import type {
 } from './schema';
 
 export class LoremDB extends Dexie {
-  worlds!: Table<World, string>;
+  spaces!: Table<Space, string>;
   sections!: Table<Section, string>;
   docs!: Table<Doc, string>;
   notes!: Table<Note, string>;
@@ -27,24 +27,24 @@ export class LoremDB extends Dexie {
   meta!: Table<Meta, string>;
 
   constructor() {
-    super('lorem');
+    super('lipsum');
     this.version(1).stores({
-      worlds: 'id, updatedAt',
-      sections: 'id, worldId, order, [worldId+order]',
-      docs: 'id, worldId, sectionId, updatedAt, [worldId+sectionId]',
-      notes: 'id, worldId, kind, createdAt',
+      spaces: 'id, updatedAt',
+      sections: 'id, spaceId, order, [spaceId+order]',
+      docs: 'id, spaceId, sectionId, updatedAt, [spaceId+sectionId]',
+      notes: 'id, spaceId, kind, createdAt',
       annotations: 'id, docId, kind, createdAt',
-      citations: 'id, worldId, year, [worldId+key]',
+      citations: 'id, spaceId, year, [spaceId+key]',
       backups: 'id, when, scope, kind',
       settings: 'key',
-      palettes: 'id, worldId',
+      palettes: 'id, spaceId',
       meta: 'key',
     });
 
     this.version(2)
       .stores({
         sections:
-          'id, worldId, parentSectionId, order, [worldId+order], [worldId+parentSectionId]',
+          'id, spaceId, parentSectionId, order, [spaceId+order], [spaceId+parentSectionId]',
       })
       .upgrade(async (tx) => {
         await tx
@@ -57,7 +57,7 @@ export class LoremDB extends Dexie {
 
     this.version(3).stores({
       connections:
-        'id, worldId, fromNoteId, toNoteId, [worldId+fromNoteId], [worldId+toNoteId]',
+        'id, spaceId, fromNoteId, toNoteId, [spaceId+fromNoteId], [spaceId+toNoteId]',
     });
 
     this.version(4).upgrade(async (tx) => {

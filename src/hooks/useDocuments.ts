@@ -2,27 +2,27 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db/db';
 import type { Doc, Section } from '@/db/schema';
 
-export function useSections(worldId: string | null | undefined): Section[] {
+export function useSections(spaceId: string | null | undefined): Section[] {
   return (
     useLiveQuery(
       async () => {
-        if (!worldId) return [];
-        return db.sections.where('worldId').equals(worldId).sortBy('order');
+        if (!spaceId) return [];
+        return db.sections.where('spaceId').equals(spaceId).sortBy('order');
       },
-      [worldId],
+      [spaceId],
       [],
     ) ?? []
   );
 }
 
-export function useDocuments(worldId: string | null | undefined): Doc[] {
+export function useDocuments(spaceId: string | null | undefined): Doc[] {
   return (
     useLiveQuery(
       async () => {
-        if (!worldId) return [];
-        return db.docs.where('worldId').equals(worldId).toArray();
+        if (!spaceId) return [];
+        return db.docs.where('spaceId').equals(spaceId).toArray();
       },
-      [worldId],
+      [spaceId],
       [],
     ) ?? []
   );

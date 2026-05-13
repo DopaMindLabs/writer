@@ -2,7 +2,7 @@ import { useMemo, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { listTemplates, type Template } from '@/data/templates';
-import { createWorldFromTemplate } from '@/db/seed';
+import { createSpaceFromTemplate } from '@/db/seed';
 import { cn } from '@/lib/utils';
 
 export function TemplatesScreen() {
@@ -29,12 +29,12 @@ export function TemplatesScreen() {
     try {
       const cleanTag = tag.trim().slice(0, 3).toUpperCase() || selected.tag;
       const cleanName = name.trim() || selected.label;
-      const newId = await createWorldFromTemplate(
+      const newId = await createSpaceFromTemplate(
         selected,
         cleanName,
         cleanTag,
       );
-      navigate(`/w/${newId}`);
+      navigate(`/s/${newId}`);
     } finally {
       setSubmitting(false);
     }
@@ -53,7 +53,7 @@ export function TemplatesScreen() {
           back
         </Link>
         <div className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
-          new world
+          new space
         </div>
       </header>
 
@@ -64,7 +64,7 @@ export function TemplatesScreen() {
               01 — A KIND OF ROOM
             </div>
             <h1 className="font-serif text-5xl leading-[1.05] tracking-tight text-ink">
-              What kind of world{' '}
+              What kind of space{' '}
               <span className="italic font-light text-ink-2">
                 are you starting?
               </span>
@@ -136,13 +136,13 @@ export function TemplatesScreen() {
             <div className="grid grid-cols-[1fr_8rem] gap-6">
               <div>
                 <label
-                  htmlFor="world-name"
+                  htmlFor="space-name"
                   className="block font-mono text-[10px] uppercase tracking-[0.08em] text-ink-3"
                 >
                   Name
                 </label>
                 <input
-                  id="world-name"
+                  id="space-name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -151,13 +151,13 @@ export function TemplatesScreen() {
               </div>
               <div>
                 <label
-                  htmlFor="world-tag"
+                  htmlFor="space-tag"
                   className="block font-mono text-[10px] uppercase tracking-[0.08em] text-ink-3"
                 >
                   Tag
                 </label>
                 <input
-                  id="world-tag"
+                  id="space-tag"
                   type="text"
                   maxLength={3}
                   value={tag}

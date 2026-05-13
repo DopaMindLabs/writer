@@ -3,11 +3,11 @@ import { create } from 'zustand';
 type Theme = 'light' | 'dark';
 
 interface UIState {
-  currentWorldId: string | null;
+  currentSpaceId: string | null;
   currentDocId: string | null;
   theme: Theme;
   exportOpen: boolean;
-  setCurrentWorldId: (id: string | null) => void;
+  setCurrentSpaceId: (id: string | null) => void;
   setCurrentDocId: (id: string | null) => void;
   setTheme: (theme: Theme) => void;
   setExportOpen: (open: boolean) => void;
@@ -26,7 +26,7 @@ function loadPersisted(): Partial<UIState> {
   }
 }
 
-function persist(state: Pick<UIState, 'theme' | 'currentWorldId'>) {
+function persist(state: Pick<UIState, 'theme' | 'currentSpaceId'>) {
   try {
     localStorage.setItem(PERSIST_KEY, JSON.stringify(state));
   } catch {
@@ -37,18 +37,18 @@ function persist(state: Pick<UIState, 'theme' | 'currentWorldId'>) {
 const persisted = loadPersisted();
 
 export const useUI = create<UIState>((set, get) => ({
-  currentWorldId: persisted.currentWorldId ?? null,
+  currentSpaceId: persisted.currentSpaceId ?? null,
   currentDocId: null,
   theme: persisted.theme ?? 'light',
   exportOpen: false,
-  setCurrentWorldId: (id) => {
-    set({ currentWorldId: id });
-    persist({ theme: get().theme, currentWorldId: id });
+  setCurrentSpaceId: (id) => {
+    set({ currentSpaceId: id });
+    persist({ theme: get().theme, currentSpaceId: id });
   },
   setCurrentDocId: (id) => set({ currentDocId: id }),
   setTheme: (theme) => {
     set({ theme });
-    persist({ theme, currentWorldId: get().currentWorldId });
+    persist({ theme, currentSpaceId: get().currentSpaceId });
   },
   setExportOpen: (exportOpen) => set({ exportOpen }),
 }));

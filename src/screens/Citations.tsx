@@ -7,9 +7,9 @@ import {
   type ChangeEvent,
 } from 'react';
 import { Search } from 'lucide-react';
-import { WorldRail } from '@/components/chrome/WorldRail';
+import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Topbar } from '@/components/chrome/Topbar';
-import { useWorld } from '@/hooks/useWorlds';
+import { useSpace } from '@/hooks/useSpaces';
 import { useCitations } from '@/hooks/useCitations';
 import { useUI } from '@/store/ui';
 import {
@@ -28,10 +28,10 @@ const COL_TEMPLATE =
   'grid grid-cols-[7rem_minmax(8rem,12rem)_minmax(0,1fr)_4rem_6rem_4rem]';
 
 export function CitationsScreen() {
-  const { worldId } = useParams<{ worldId: string }>();
-  const world = useWorld(worldId);
-  const citations = useCitations(worldId);
-  const setCurrentWorldId = useUI((s) => s.setCurrentWorldId);
+  const { spaceId } = useParams<{ spaceId: string }>();
+  const space = useSpace(spaceId);
+  const citations = useCitations(spaceId);
+  const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [query, setQuery] = useState('');
@@ -39,12 +39,12 @@ export function CitationsScreen() {
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {
-    if (worldId) setCurrentWorldId(worldId);
-  }, [worldId, setCurrentWorldId]);
+    if (spaceId) setCurrentSpaceId(spaceId);
+  }, [spaceId, setCurrentSpaceId]);
 
   useEffect(() => {
     setPage(0);
-  }, [query, worldId]);
+  }, [query, spaceId]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -68,14 +68,14 @@ export function CitationsScreen() {
     [filtered, currentPage],
   );
 
-  if (!worldId) return <Navigate to="/" replace />;
+  if (!spaceId) return <Navigate to="/" replace />;
 
   async function handleFile(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (!file || !worldId) return;
+    if (!file || !spaceId) return;
     setStatus(`Parsing ${file.name}…`);
     try {
-      const parsed = await parseBibtexFile(file, worldId);
+      const parsed = await parseBibtexFile(file, spaceId);
       const { added, skipped } = await importCitations(parsed);
       setStatus(
         `Imported ${added} citation${added === 1 ? '' : 's'}${
@@ -100,20 +100,20 @@ export function CitationsScreen() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${world?.name ?? 'world'}-citations.bib`;
+    a.download = `${space?.name ?? 'space'}-citations.bib`;
     a.click();
     URL.revokeObjectURL(url);
   }
 
   return (
     <div className="flex h-full w-full">
-      <WorldRail activeWorldId={worldId} />
+      <SpaceRail activeSpaceId={spaceId} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
-          worldId={worldId}
+          spaceId={spaceId}
           docId={null}
           docName="Citations"
-          worldName={world?.name}
+          spaceName={space?.name}
           mode="write"
         />
         <main className="flex flex-1 flex-col overflow-hidden bg-paper">
@@ -176,7 +176,7 @@ export function CitationsScreen() {
 
           {adding && (
             <ManualAddForm
-              worldId={worldId}
+              spaceId={spaceId}
               onClose={() => setAdding(false)}
               onStatus={setStatus}
             />
@@ -296,11 +296,11 @@ function EmptyState({ hasCitations }: { hasCitations: boolean }) {
 }
 
 function ManualAddForm({
-  worldId,
+  spaceId,
   onClose,
   onStatus,
 }: {
-  worldId: string;
+  spaceId: string;
   onClose: () => void;
   onStatus: (s: string | null) => void;
 }) {
@@ -312,7 +312,7 @@ function ManualAddForm({
     setSubmitting(true);
     try {
       if (raw.trim().startsWith('@')) {
-        const parsed = await parseBibtexText(raw, worldId);
+        const parsed = await parseBibtexText(raw, spaceId);
         const { added, skipped } = await importCitations(parsed);
         onStatus(
           `Imported ${added} citation${added === 1 ? '' : 's'}${
@@ -322,7 +322,7 @@ function ManualAddForm({
       } else {
         const newCitation: Citation = {
           id: newId(),
-          worldId,
+          spaceId,
           key: `manual-${Date.now()}`,
           authors: '(unknown)',
           title: raw.trim(),

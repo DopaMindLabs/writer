@@ -5,18 +5,18 @@ import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
 import { cn } from '@/lib/utils';
 
 interface TopbarProps {
-  worldId: string;
+  spaceId: string;
   docId: string | null;
   docName?: string;
-  worldName?: string;
+  spaceName?: string;
   mode: Mode;
 }
 
 export function Topbar({
-  worldId,
+  spaceId,
   docId,
   docName,
-  worldName,
+  spaceName,
   mode,
 }: TopbarProps) {
   const { theme, toggle } = useTheme();
@@ -26,7 +26,7 @@ export function Topbar({
   return (
     <header className="flex h-10 shrink-0 items-center gap-4 border-b border-rule bg-paper px-4">
       <div className="flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-ink-3">
-        <span>{worldName ?? '…'}</span>
+        <span>{spaceName ?? '…'}</span>
         {docName && (
           <>
             <span className="text-ink-4">/</span>
@@ -36,10 +36,10 @@ export function Topbar({
       </div>
       <div className="flex-1" />
       {!onCitations && (
-        <ModeTabs mode={mode} worldId={worldId} docId={docId} />
+        <ModeTabs mode={mode} spaceId={spaceId} docId={docId} />
       )}
       <Link
-        to={`/w/${worldId}/citations`}
+        to={`/s/${spaceId}/citations`}
         className={cn(
           'inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider hover:bg-paper-2',
           onCitations ? 'text-ink' : 'text-ink-3',
@@ -49,7 +49,7 @@ export function Topbar({
         Citations
       </Link>
       {!onCitations && (mode === 'dump' || docId) && (
-        <FocusToggle mode={mode} worldId={worldId} docId={docId} />
+        <FocusToggle mode={mode} spaceId={spaceId} docId={docId} />
       )}
       <button
         type="button"

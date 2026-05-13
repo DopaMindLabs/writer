@@ -2,14 +2,14 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db/db';
 import type { Citation } from '@/db/schema';
 
-export function useCitations(worldId: string | null | undefined): Citation[] {
+export function useCitations(spaceId: string | null | undefined): Citation[] {
   return (
     useLiveQuery(
       async () => {
-        if (!worldId) return [];
-        return db.citations.where('worldId').equals(worldId).sortBy('year');
+        if (!spaceId) return [];
+        return db.citations.where('spaceId').equals(spaceId).sortBy('year');
       },
-      [worldId],
+      [spaceId],
       [],
     ) ?? []
   );

@@ -1,15 +1,15 @@
 import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
-import { useWorlds } from '@/hooks/useWorlds';
+import { useSpaces } from '@/hooks/useSpaces';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
-interface WorldRailProps {
-  activeWorldId: string | null;
+interface SpaceRailProps {
+  activeSpaceId: string | null;
 }
 
-export function WorldRail({ activeWorldId }: WorldRailProps) {
-  const worlds = useWorlds() ?? [];
+export function SpaceRail({ activeSpaceId }: SpaceRailProps) {
+  const spaces = useSpaces() ?? [];
 
   return (
     <aside className="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-rule bg-paper-2 py-3.5">
@@ -32,13 +32,13 @@ export function WorldRail({ activeWorldId }: WorldRailProps) {
           </div>
         </TooltipContent>
       </Tooltip>
-      {worlds.map((w) => {
-        const isActive = w.id === activeWorldId;
+      {spaces.map((w) => {
+        const isActive = w.id === activeSpaceId;
         return (
           <Tooltip key={w.id}>
             <TooltipTrigger asChild>
               <Link
-                to={`/w/${w.id}`}
+                to={`/s/${w.id}`}
                 className={cn(
                   'relative flex h-9 w-9 items-center justify-center rounded-md border font-mono text-[10px] font-medium tracking-wider transition-colors',
                   isActive
@@ -67,12 +67,12 @@ export function WorldRail({ activeWorldId }: WorldRailProps) {
           <Link
             to="/new"
             className="flex h-9 w-9 items-center justify-center rounded-md border border-dashed border-rule text-ink-4 hover:bg-paper hover:text-ink-2"
-            aria-label="Create new world"
+            aria-label="Create new space"
           >
             <Plus className="h-4 w-4" />
           </Link>
         </TooltipTrigger>
-        <TooltipContent side="right">Create new world</TooltipContent>
+        <TooltipContent side="right">Create new space</TooltipContent>
       </Tooltip>
     </aside>
   );

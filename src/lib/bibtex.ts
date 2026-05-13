@@ -12,7 +12,7 @@ type RawEntry = {
 
 export async function parseBibtexText(
   text: string,
-  worldId: string,
+  spaceId: string,
 ): Promise<Citation[]> {
   const parsed = (bibParser as unknown as { parse: (s: string) => { entries: RawEntry[] } }).parse(text);
   const out: Citation[] = [];
@@ -21,7 +21,7 @@ export async function parseBibtexText(
     const fields = entry.fields ?? {};
     out.push({
       id: newId(),
-      worldId,
+      spaceId,
       key: entry.key,
       authors: extractAuthors(entry, fields),
       title: stringField(fields.title) ?? '(untitled)',
@@ -36,10 +36,10 @@ export async function parseBibtexText(
 
 export async function parseBibtexFile(
   file: File,
-  worldId: string,
+  spaceId: string,
 ): Promise<Citation[]> {
   const text = await file.text();
-  return parseBibtexText(text, worldId);
+  return parseBibtexText(text, spaceId);
 }
 
 export async function importCitations(
@@ -50,8 +50,8 @@ export async function importCitations(
   await db.transaction('rw', db.citations, async () => {
     for (const c of citations) {
       const existing = await db.citations
-        .where('[worldId+key]')
-        .equals([c.worldId, c.key])
+        .where('[spaceId+key]')
+        .equals([c.spaceId, c.key])
         .first();
       if (existing) {
         skipped += 1;

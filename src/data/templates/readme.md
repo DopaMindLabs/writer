@@ -1,6 +1,6 @@
 # Templates
 
-Templates define the starting structure for a new world on `/new`.
+Templates define the starting structure for a new space on `/new`.
 
 Each template lives in its own `*-template.ts` file and exports one default
 `Template` object. The registry in `index.ts` loads these files with
@@ -31,16 +31,16 @@ const template: Template = {
 - `id`: Stable unique identifier. Do not rename this after release unless you
   also handle any migration paths that depend on it.
 - `label`: Human-readable name shown in the template picker.
-- `tag`: Default two- or three-letter world tag.
+- `tag`: Default two- or three-letter space tag.
 - `version`: Template version. Use semver-style strings such as `0.1.0`.
 - `beta`: Optional beta flag. Use `true` while a template is still experimental.
 - `enabled`: Controls picker visibility. Disabled templates remain loadable by
   id via `getTemplate()`, but are hidden from `listTemplates()`.
 - `description`: Short supporting text shown below the label in the picker.
 - `pickerOrder`: Sort order in the picker. Lower numbers appear first.
-- `sections`: Initial section tree for the world.
+- `sections`: Initial section tree for the space.
 - `seedDocs`: Initial documents placed into sections.
-- `seedNotes`: Optional canvas notes seeded into the world.
+- `seedNotes`: Optional canvas notes seeded into the space.
 
 ## Sections
 
@@ -80,7 +80,7 @@ seedDocs: [
 ];
 ```
 
-Keep seed docs lightweight. They should give the world a useful starting shape
+Keep seed docs lightweight. They should give the space a useful starting shape
 without making the template feel pre-written.
 
 ## Adding A Template

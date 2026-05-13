@@ -3,15 +3,15 @@ import { db } from '@/db/db';
 import type { Connection } from '@/db/schema';
 
 export function useConnections(
-  worldId: string | null | undefined,
+  spaceId: string | null | undefined,
 ): Connection[] {
   return (
     useLiveQuery(
       async () => {
-        if (!worldId) return [];
-        return db.connections.where('worldId').equals(worldId).toArray();
+        if (!spaceId) return [];
+        return db.connections.where('spaceId').equals(spaceId).toArray();
       },
-      [worldId],
+      [spaceId],
       [],
     ) ?? []
   );

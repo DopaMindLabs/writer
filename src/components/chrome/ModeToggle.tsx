@@ -7,7 +7,7 @@ export type Mode = 'write' | 'focus' | 'read' | 'split' | 'dump';
 
 interface ModeTabsProps {
   mode: Mode;
-  worldId: string;
+  spaceId: string;
   docId: string | null;
 }
 
@@ -22,7 +22,7 @@ const TABS: TabDef[] = [
   { key: 'dump', label: 'dump', perDoc: false },
 ];
 
-export function ModeTabs({ mode, worldId, docId }: ModeTabsProps) {
+export function ModeTabs({ mode, spaceId, docId }: ModeTabsProps) {
   const [searchParams] = useSearchParams();
   const focusParam = searchParams.get('focus');
   const withParam = searchParams.get('with');
@@ -38,8 +38,8 @@ export function ModeTabs({ mode, worldId, docId }: ModeTabsProps) {
         if (t.key === 'split' && withParam) params.set('with', withParam);
         const qs = params.toString();
         const to = t.perDoc
-          ? `/w/${worldId}/d/${docId}${t.suffix}${qs ? `?${qs}` : ''}`
-          : `/w/${worldId}/dump${focusParam ? '?focus=' + focusParam : ''}`;
+          ? `/s/${spaceId}/d/${docId}${t.suffix}${qs ? `?${qs}` : ''}`
+          : `/s/${spaceId}/dump${focusParam ? '?focus=' + focusParam : ''}`;
         return (
           <Link
             key={t.key}
@@ -61,20 +61,20 @@ export function ModeTabs({ mode, worldId, docId }: ModeTabsProps) {
 
 interface FocusToggleProps {
   mode: Mode;
-  worldId: string;
+  spaceId: string;
   docId: string | null;
 }
 
-export function FocusToggle({ mode, worldId, docId }: FocusToggleProps) {
+export function FocusToggle({ mode, spaceId, docId }: FocusToggleProps) {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const focused = searchParams.get('focus') === '1' || mode === 'focus';
 
   function basePathFor(m: Mode): string | null {
-    if (m === 'dump') return `/w/${worldId}/dump`;
+    if (m === 'dump') return `/s/${spaceId}/dump`;
     if (!docId) return null;
-    if (m === 'split') return `/w/${worldId}/d/${docId}/split`;
-    return `/w/${worldId}/d/${docId}`;
+    if (m === 'split') return `/s/${spaceId}/d/${docId}/split`;
+    return `/s/${spaceId}/d/${docId}`;
   }
 
   useEffect(() => {
@@ -97,7 +97,7 @@ export function FocusToggle({ mode, worldId, docId }: FocusToggleProps) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, worldId, docId, navigate, searchParams, focused]);
+  }, [mode, spaceId, docId, navigate, searchParams, focused]);
 
   if (mode === 'read') return null;
   const base = basePathFor(mode);

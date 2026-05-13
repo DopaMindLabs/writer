@@ -1,6 +1,6 @@
 import type { HighlightColor } from '@/theme/tokens';
 
-export interface World {
+export interface Space {
   id: string;
   tag: string;
   name: string;
@@ -12,7 +12,7 @@ export interface World {
 
 export interface Section {
   id: string;
-  worldId: string;
+  spaceId: string;
   parentSectionId: string | null;
   label: string;
   order: number;
@@ -20,7 +20,7 @@ export interface Section {
 
 export interface Doc {
   id: string;
-  worldId: string;
+  spaceId: string;
   sectionId: string;
   name: string;
   body: string;
@@ -50,7 +50,7 @@ export enum NoteState {
 
 export interface Note {
   id: string;
-  worldId: string;
+  spaceId: string;
   l: number;
   t: number;
   w: number;
@@ -76,7 +76,7 @@ export interface Annotation {
 
 export interface Connection {
   id: string;
-  worldId: string;
+  spaceId: string;
   fromNoteId: string;
   toNoteId: string;
   createdAt: number;
@@ -84,7 +84,7 @@ export interface Connection {
 
 export interface Citation {
   id: string;
-  worldId: string;
+  spaceId: string;
   key: string;
   authors: string;
   title: string;
@@ -116,7 +116,7 @@ export interface Settings {
 
 export interface HighlightPalette {
   id: string;
-  worldId: string;
+  spaceId: string;
   slots: { name: string; color: string }[];
 }
 
