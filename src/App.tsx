@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { seedIfEmpty, resetAndReseed } from '@/db/seed';
@@ -14,7 +14,7 @@ import { CitationsScreen } from '@/screens/Citations';
 import { TemplatesScreen } from '@/screens/Templates';
 import { NotFoundScreen } from '@/screens/NotFound';
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   { path: '/', element: <HomeScreen /> },
   { path: '/about', element: <AboutScreen /> },
   { path: '/new', element: <TemplatesScreen /> },
