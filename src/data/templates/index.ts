@@ -25,4 +25,9 @@ export function getTemplate(id: string): Template | undefined {
   return REGISTRY[id];
 }
 
-export type { Template, TemplateSection, TemplateSeedDoc } from './types';
+export type {
+  Template,
+  TemplateSection,
+  TemplateSeedDoc,
+  TemplateStage,
+} from './types';

@@ -1,12 +1,12 @@
-import type { Template } from './types';
+import { TemplateStage, type Template } from './types';
 
 const template: Template = {
   id: 'bioinformatics',
   label: 'Bioinformatics',
   tag: 'BX',
   version: '0.1.0',
-  beta: true,
-  enabled: true,
+  stage: TemplateStage.Experimental,
+  enabled: false,
   description: 'pipelines · methods · lab notebook',
   pickerOrder: 1,
   sections: [

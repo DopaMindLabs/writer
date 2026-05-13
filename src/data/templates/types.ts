@@ -30,12 +30,20 @@ export interface TemplateSeedNote {
   body: string;
 }
 
+export enum TemplateStage {
+  Experimental = 'experimental',
+  PreAlpha = 'pre-alpha',
+  Alpha = 'alpha',
+  Beta = 'beta',
+  Stable = 'stable',
+}
+
 export interface Template {
   id: string;
   label: string;
   tag: string;
   version: string;
-  beta?: boolean;
+  stage?: TemplateStage;
   enabled: boolean;
   description?: string;
   pickerOrder?: number;

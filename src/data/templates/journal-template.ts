@@ -1,11 +1,11 @@
-import type { Template } from './types';
+import { TemplateStage, type Template } from './types';
 
 const template: Template = {
   id: 'journal',
   label: 'Journal',
   tag: 'JO',
   version: '0.1.0',
-  beta: true,
+  stage: TemplateStage.Experimental,
   enabled: true,
   description: 'daily, low-stakes',
   pickerOrder: 7,

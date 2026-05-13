@@ -95,6 +95,11 @@ export function TemplatesScreen() {
                   <span className="flex flex-col">
                     <span className="font-serif text-[18px] leading-tight text-ink">
                       {t.label}
+                      {t.stage && t.stage !== 'stable' && (
+                        <span className="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3">
+                          {t.stage}
+                        </span>
+                      )}
                     </span>
                     {t.description && (
                       <span className="mt-1 font-serif text-[13px] italic text-ink-3">

@@ -1,11 +1,11 @@
-import type { Template } from './types';
+import { TemplateStage, type Template } from './types';
 
 const template: Template = {
   id: 'blank',
   label: 'Blank',
   tag: 'BL',
   version: '0.1.0',
-  beta: true,
+  stage: TemplateStage.Experimental,
   enabled: true,
   description: 'start from nothing',
   pickerOrder: 8,

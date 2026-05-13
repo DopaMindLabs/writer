@@ -1,11 +1,11 @@
-import type { Template } from './types';
+import { TemplateStage, type Template } from './types';
 
 const template: Template = {
   id: 'serial',
   label: 'Serial',
   tag: 'SE',
   version: '0.1.0',
-  beta: true,
+  stage: TemplateStage.Experimental,
   enabled: true,
   description: 'recurring essays · newsletter',
   pickerOrder: 6,

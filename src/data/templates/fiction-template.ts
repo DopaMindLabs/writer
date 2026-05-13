@@ -1,11 +1,11 @@
-import type { Template } from './types';
+import { TemplateStage, type Template } from './types';
 
 const template: Template = {
   id: 'fiction',
   label: 'Fictional writing',
   tag: 'FI',
   version: '0.1.0',
-  beta: true,
+  stage: TemplateStage.Experimental,
   enabled: true,
   description: 'novel · short story · script',
   pickerOrder: 4,

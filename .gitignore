@@ -27,3 +27,5 @@ dist-ssr
 .vite
 project
 README.md
+!src/data/templates/readme.md
+plans
