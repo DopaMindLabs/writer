@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThemeProvider } from '@/theme/ThemeProvider';
-import { seedIfEmpty, resetAndReseed } from '@/db/seed';
+import { resetAndReseed } from '@/db/seed';
 import { HomeScreen } from '@/screens/Home';
 import { AboutScreen } from '@/screens/About';
 import { WriteScreen } from '@/screens/Write';
@@ -41,8 +41,6 @@ export function App() {
           await resetAndReseed();
           url.searchParams.delete('reseed');
           window.history.replaceState({}, '', url.pathname + url.search);
-        } else {
-          await seedIfEmpty();
         }
         if (!cancelled) setReady(true);
       } catch (e) {
