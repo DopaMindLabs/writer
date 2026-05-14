@@ -47,4 +47,14 @@ describe('WriteScreen', () => {
     const editor = await findByTestId('editor-stub');
     expect(editor.getAttribute('data-mode')).toBe('focus');
   });
+
+  it('redirects to the first doc when none is selected but docs exist in the space', async () => {
+    const { findByTestId } = renderAtRoute(<WriteScreen />, {
+      path: '/s/:spaceId',
+      initialEntries: ['/s/s1'],
+    });
+    // seedBasicSpace seeds doc d1; Write should issue <Navigate> to
+    // /s/s1/d/d1, which the test router catches via the catch-all route.
+    expect(await findByTestId('catch-all')).toBeInTheDocument();
+  });
 });

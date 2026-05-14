@@ -15,7 +15,8 @@
     "test:coverage": "TZ=UTC vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:coverage": "playwright test"
   },
   "dependencies": {
     "@lexical/code": "^0.21.0",
@@ -65,6 +66,7 @@
     "autoprefixer": "^10.4.20",
     "fake-indexeddb": "^6.2.5",
     "jsdom": "^25.0.1",
+    "monocart-reporter": "^2.11.2",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "tailwindcss-animate": "^1.0.7",

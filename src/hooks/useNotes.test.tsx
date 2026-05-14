@@ -17,4 +17,9 @@ describe('useNotes', () => {
     const { result } = renderHook(() => useNotes(null));
     await waitFor(() => expect(result.current).toEqual([]));
   });
+
+  it('returns empty array when spaceId is undefined', async () => {
+    const { result } = renderHook(() => useNotes(undefined));
+    await waitFor(() => expect(result.current).toEqual([]));
+  });
 });

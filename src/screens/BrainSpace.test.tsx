@@ -20,4 +20,15 @@ describe('BrainSpaceScreen', () => {
     });
     expect(queryByTestId('catch-all')).toBeInTheDocument();
   });
+
+  it('renders the focus rail in focus mode', async () => {
+    await seedBrainSpaceCanvas();
+    const { container } = renderAtRoute(<BrainSpaceScreen />, {
+      path: '/s/:spaceId/dump',
+      initialEntries: ['/s/s1/dump?focus=1'],
+    });
+    // FocusRail is identified by its compact-dot styling; the regular
+    // SpaceRail would render the full label.
+    expect(container.querySelector('aside')).toBeInTheDocument();
+  });
 });

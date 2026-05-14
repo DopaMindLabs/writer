@@ -8,11 +8,13 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
     <div
       class="border-b border-rule px-5 pb-4 pt-5"
     >
-      <div
-        class="font-serif text-lg font-medium leading-tight tracking-tight text-ink"
+      <button
+        class="block w-full cursor-text truncate text-left font-serif text-lg font-medium leading-tight tracking-tight text-ink"
+        title="Rename space"
+        type="button"
       >
         Test Space
-      </div>
+      </button>
       <div
         class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
       >

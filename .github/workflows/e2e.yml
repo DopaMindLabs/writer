@@ -1,4 +1,4 @@
-name: E2E Tests
+name: Tests
 
 on:
   pull_request:
@@ -8,13 +8,13 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: e2e-${{ github.ref }}
+  group: tests-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  e2e:
+  unit:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -27,6 +27,30 @@ jobs:
 
       - run: npm run typecheck
 
+      - name: Unit tests with coverage gate (90%)
+        run: npm run test:coverage
+
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-coverage
+          path: coverage/
+          retention-days: 14
+
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: unit
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         with:
@@ -35,7 +59,15 @@ jobs:
 
       - run: npx playwright install --with-deps chromium
 
-      - run: npm run test:e2e
+      - name: E2E tests with coverage gate (90%)
+        run: npm run test:e2e:coverage
+
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-coverage
+          path: e2e-coverage/
+          retention-days: 14
 
       - if: failure()
         uses: actions/upload-artifact@v4

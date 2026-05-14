@@ -2,6 +2,7 @@ import { db } from '@/db/db';
 import type { Citation } from '@/db/schema';
 import {
   importCitations,
+  parseBibtexFile,
   parseBibtexText,
   serializeCitationsToBibtex,
 } from './bibtex';
@@ -56,6 +57,28 @@ describe('parseBibtexText', () => {
 
   it('returns empty array on empty input', async () => {
     const out = await parseBibtexText('', 's1');
+    expect(out).toEqual([]);
+  });
+
+});
+
+describe('parseBibtexFile', () => {
+  it('reads File text and delegates to parseBibtexText', async () => {
+    const file = new File(
+      ['@article{f1, author = {A, B}, title = {File}, year = {2024}}'],
+      'in.bib',
+      { type: 'application/x-bibtex' },
+    );
+    const out = await parseBibtexFile(file, 's1');
+    expect(out).toHaveLength(1);
+    expect(out[0].key).toBe('f1');
+  });
+
+  it('returns empty array for an empty file', async () => {
+    const file = new File([''], 'empty.bib', {
+      type: 'application/x-bibtex',
+    });
+    const out = await parseBibtexFile(file, 's1');
     expect(out).toEqual([]);
   });
 });

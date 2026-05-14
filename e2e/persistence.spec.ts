@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './_helpers';
 import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
 
 test('content typed into a doc survives a hard reload (IndexedDB persistence)', async ({ page }) => {

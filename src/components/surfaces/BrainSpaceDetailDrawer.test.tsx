@@ -104,4 +104,68 @@ describe('BrainSpaceDetailDrawer', () => {
       expect(await db.connections.get(CONNECTION.id)).toBeUndefined();
     });
   });
+
+  it('Enter on the title input commits the rename via blur', async () => {
+    await seedTwoConnectedNotes();
+    const user = userEvent.setup();
+    const { findByText, findByLabelText } = renderCanvas();
+    await findByText('Hero');
+    useUI.getState().openDetail(SECOND_NOTE.id);
+    const title = (await findByLabelText('Note title')) as HTMLInputElement;
+    await user.clear(title);
+    await user.type(title, 'Heroine{enter}');
+    await waitFor(async () => {
+      const fresh = await db.notes.get(SECOND_NOTE.id);
+      expect(fresh?.title).toBe('Heroine');
+    });
+  });
+
+  it('clearing the title persists undefined (no title)', async () => {
+    await seedTwoConnectedNotes();
+    const user = userEvent.setup();
+    const { findByText, findByLabelText } = renderCanvas();
+    await findByText('Hero');
+    useUI.getState().openDetail(SECOND_NOTE.id);
+    const title = (await findByLabelText('Note title')) as HTMLInputElement;
+    await user.clear(title);
+    title.blur();
+    await waitFor(async () => {
+      const fresh = await db.notes.get(SECOND_NOTE.id);
+      expect(fresh?.title).toBeUndefined();
+    });
+  });
+
+  it('clicking Delete note cascades and closes the drawer', async () => {
+    await seedTwoConnectedNotes();
+    const user = userEvent.setup();
+    const { findByText, findByRole } = renderCanvas();
+    await findByText('Hero');
+    useUI.getState().openDetail(SECOND_NOTE.id);
+    await user.click(
+      await findByRole('button', { name: /delete note/i }),
+    );
+    await waitFor(async () => {
+      expect(await db.notes.get(SECOND_NOTE.id)).toBeUndefined();
+      expect(useUI.getState().detailNoteId).toBeNull();
+    });
+  });
+
+  it('shows an Open button when a doc is linked and clicking it closes the drawer', async () => {
+    await db.spaces.put(sampleSpace);
+    await db.docs.put(sampleDoc);
+    await db.notes.bulkPut([
+      sampleNote,
+      { ...SECOND_NOTE, linkedDocId: sampleDoc.id },
+    ]);
+    const user = userEvent.setup();
+    const { findByText, findByRole } = renderCanvas();
+    await findByText('Hero');
+    useUI.getState().openDetail(SECOND_NOTE.id);
+    const open = await findByRole('button', { name: /^open$/i });
+    await user.click(open);
+    await waitFor(() =>
+      expect(useUI.getState().detailNoteId).toBeNull(),
+    );
+  });
+
 });
