@@ -24,12 +24,12 @@ async function seed() {
 describe('CitationsScreen', () => {
   it('renders the citation table with a seeded entry', async () => {
     await seed();
-    const { findByText } = renderAtRoute(<CitationsScreen />, {
+    const { findAllByText } = renderAtRoute(<CitationsScreen />, {
       path: '/s/:spaceId/citations',
       initialEntries: ['/s/s1/citations'],
     });
-    expect(await findByText('On testing')).toBeInTheDocument();
-    expect(await findByText('smith2020')).toBeInTheDocument();
+    expect((await findAllByText('On testing')).length).toBeGreaterThan(0);
+    expect((await findAllByText('smith2020')).length).toBeGreaterThan(0);
   });
 
   it('search filters the visible rows', async () => {
@@ -39,7 +39,7 @@ describe('CitationsScreen', () => {
       { ...sampleCitation, id: 'c2', key: 'jones1999', title: 'Other book' },
     ]);
     const user = userEvent.setup();
-    const { findByPlaceholderText, queryByText } = renderAtRoute(
+    const { findByPlaceholderText, queryAllByText } = renderAtRoute(
       <CitationsScreen />,
       {
         path: '/s/:spaceId/citations',
@@ -49,8 +49,8 @@ describe('CitationsScreen', () => {
     const input = await findByPlaceholderText(/authors, tags, year/i);
     await user.type(input, 'jones');
     await waitFor(() => {
-      expect(queryByText('On testing')).not.toBeInTheDocument();
-      expect(queryByText('Other book')).toBeInTheDocument();
+      expect(queryAllByText('On testing')).toHaveLength(0);
+      expect(queryAllByText('Other book').length).toBeGreaterThan(0);
     });
   });
 

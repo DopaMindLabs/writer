@@ -26,7 +26,9 @@ export function ReadScreen() {
 
   return (
     <div className="flex h-full w-full">
-      <FocusRail activeSpaceId={spaceId} />
+      <div className="hidden md:contents">
+        <FocusRail activeSpaceId={spaceId} />
+      </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
           spaceId={spaceId}

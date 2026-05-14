@@ -49,6 +49,7 @@ export function ModeTabs({ mode, spaceId, docId }: ModeTabsProps) {
               active
                 ? 'border-b border-ink font-medium text-ink'
                 : 'text-ink-4 hover:text-ink-2',
+              t.key === 'split' && 'hidden md:inline',
             )}
           >
             {t.label}

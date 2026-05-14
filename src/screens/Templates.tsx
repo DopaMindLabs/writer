@@ -44,7 +44,7 @@ export function TemplatesScreen() {
 
   return (
     <div className="flex h-full w-full flex-col overflow-auto bg-paper">
-      <header className="flex items-center justify-between border-b border-rule px-12 py-5">
+      <header className="flex items-center justify-between border-b border-rule px-4 py-4 md:px-12 md:py-5">
         <Link
           to="/"
           className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:text-ink"
@@ -58,12 +58,12 @@ export function TemplatesScreen() {
       </header>
 
       <form onSubmit={onSubmit} className="flex flex-1 flex-col">
-        <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-12 pt-16 pb-12">
+        <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-4 pt-10 pb-12 md:px-12 md:pt-16">
           <div>
             <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
               01 — A KIND OF ROOM
             </div>
-            <h1 className="font-serif text-5xl leading-[1.05] tracking-tight text-ink">
+            <h1 className="font-serif text-3xl leading-[1.05] tracking-tight text-ink md:text-5xl">
               What kind of space{' '}
               <span className="italic font-light text-ink-2">
                 are you starting?
@@ -84,7 +84,7 @@ export function TemplatesScreen() {
                   type="button"
                   onClick={() => onSelect(t)}
                   className={cn(
-                    'grid w-full grid-cols-[2rem_14rem_1fr_2rem] items-baseline gap-6 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2',
+                    'grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6',
                     active && 'bg-paper-2',
                   )}
                   aria-pressed={active}
@@ -107,7 +107,7 @@ export function TemplatesScreen() {
                       </span>
                     )}
                   </span>
-                  <span className="font-serif text-[14px] italic text-ink-2">
+                  <span className="hidden font-serif text-[14px] italic text-ink-2 md:inline">
                     {sectionPreview}
                   </span>
                   <span className="flex justify-end">
@@ -132,8 +132,8 @@ export function TemplatesScreen() {
         </div>
 
         <div className="sticky bottom-0 z-10 border-t border-rule bg-paper">
-          <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-12 py-6">
-            <div className="grid grid-cols-[1fr_8rem] gap-6">
+          <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-6 md:px-12">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_8rem] sm:gap-6">
               <div>
                 <label
                   htmlFor="space-name"
@@ -167,7 +167,7 @@ export function TemplatesScreen() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-3">
                 <div
                   className="flex h-5 w-9 cursor-not-allowed items-center rounded-full bg-paper-2 px-0.5 opacity-60"

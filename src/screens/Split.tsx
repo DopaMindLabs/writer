@@ -1,4 +1,5 @@
 import {
+  Link,
   Navigate,
   useParams,
   useSearchParams,
@@ -59,14 +60,16 @@ export function SplitScreen() {
 
   return (
     <div className="flex h-full w-full">
-      {focus ? (
-        <FocusRail activeSpaceId={spaceId} />
-      ) : (
-        <>
-          <SpaceRail activeSpaceId={spaceId} />
-          <Sidebar spaceId={spaceId} activeDocId={docId} />
-        </>
-      )}
+      <div className="hidden md:contents">
+        {focus ? (
+          <FocusRail activeSpaceId={spaceId} />
+        ) : (
+          <>
+            <SpaceRail activeSpaceId={spaceId} />
+            <Sidebar spaceId={spaceId} activeDocId={docId} />
+          </>
+        )}
+      </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
           spaceId={spaceId}
@@ -75,7 +78,8 @@ export function SplitScreen() {
           spaceName={space?.name}
           mode="split"
         />
-        <main className="grid flex-1 grid-cols-2 overflow-hidden divide-x divide-rule">
+        <SplitMobileNotice spaceId={spaceId} docId={docId} />
+        <main className="hidden flex-1 grid-cols-2 divide-x divide-rule overflow-hidden md:grid">
           <section className="flex min-w-0 flex-col">
             <div className="flex items-center justify-between border-b border-rule px-6 py-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3">
               <span>LEFT — {leftDoc?.name ?? '…'}</span>
@@ -116,6 +120,36 @@ export function SplitScreen() {
             </div>
           </section>
         </main>
+      </div>
+    </div>
+  );
+}
+
+function SplitMobileNotice({
+  spaceId,
+  docId,
+}: {
+  spaceId: string;
+  docId: string;
+}) {
+  return (
+    <div className="flex flex-1 items-center justify-center bg-paper px-6 py-10 md:hidden">
+      <div className="max-w-sm text-center">
+        <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
+          Split view
+        </div>
+        <p className="mt-3 font-serif text-[18px] italic text-ink-2">
+          Split view needs a larger screen.
+        </p>
+        <p className="mt-2 font-serif text-base text-ink-3">
+          Open this document in Write mode instead.
+        </p>
+        <Link
+          to={`/s/${spaceId}/d/${docId}`}
+          className="mt-6 inline-block font-mono text-[11px] uppercase tracking-wider text-ink underline underline-offset-4 hover:text-ink-2"
+        >
+          Open in Write →
+        </Link>
       </div>
     </div>
   );
