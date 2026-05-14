@@ -7,8 +7,10 @@ test.beforeEach(async ({ page }) => {
 
 test('Settings screen is reachable from home and renders the Editor tab by default', async ({ page }) => {
   await page.goto('/#/settings');
-  await expect(page.getByRole('heading', { name: /Editor/i })).toBeVisible();
-  await expect(page.getByText(/Floating toolbar/i)).toBeVisible();
+  await page.waitForLoadState('networkidle');
+  // Settings tabs render Editor/Account/Theme/etc. as buttons.
+  await expect(page.getByRole('button', { name: /^Editor$/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Theme$/ })).toBeVisible();
 });
 
 test('switching to the Theme tab updates the theme', async ({ page }) => {

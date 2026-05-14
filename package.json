@@ -16,7 +16,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
-    "test:e2e:coverage": "playwright test"
+    "test:e2e:coverage": "playwright test",
+    "build:e2e": "VITE_BASE=/ vite build",
+    "preview:e2e": "VITE_BASE=/ vite preview --port 4173"
   },
   "dependencies": {
     "@lexical/code": "^0.21.0",
