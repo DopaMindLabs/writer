@@ -38,6 +38,7 @@ export default defineConfig(({ command }) => ({
         'src/data/templates/types.ts',
         'src/main.tsx',
         'src/editor/**',
+        'src/tours/driver-setup.ts',
         'src/test/**',
         'src/**/*.test.{ts,tsx}',
         'src/**/__snapshots__/**',
