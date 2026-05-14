@@ -21,11 +21,11 @@ test('manually adds a BibTeX citation, filters it, and exports as .bib', async (
   await page.getByPlaceholder(/@article\{/).fill(SAMPLE_BIBTEX);
   await page.getByRole('button', { name: /add citation/i }).click();
 
-  await expect(page.getByText('e2eSmith2024')).toBeVisible();
+  await expect(page.getByText('e2eSmith2024').first()).toBeVisible();
   await expect(page.getByRole('status')).toContainText(/Imported 1 citation/i);
 
   await page.getByPlaceholder(/authors, tags, year/i).fill('Smith');
-  await expect(page.getByText('e2eSmith2024')).toBeVisible();
+  await expect(page.getByText('e2eSmith2024').first()).toBeVisible();
 
   await page.getByPlaceholder(/authors, tags, year/i).fill('zzznomatch');
   await expect(page.getByText(/no rows match your search/i)).toBeVisible();
