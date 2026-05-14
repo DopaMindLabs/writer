@@ -157,12 +157,20 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
         {topSections.map((sec) => {
           const subs = subsectionsByParent.get(sec.id) ?? [];
           const ownDocs = docsBySection.get(sec.id) ?? [];
+          const isWorkshop = sec.label === 'Workshop';
           return (
             <div key={sec.id} className="mb-2">
               <SectionHeader
                 label={sec.label}
                 onAdd={() => startAdd(sec.id, sec.label, null)}
               />
+              {isWorkshop && (
+                <BrainSpaceLink
+                  spaceId={spaceId}
+                  active={onDump}
+                  count={notes.length}
+                />
+              )}
               {ownDocs.map((d) => (
                 <DocLink
                   key={d.id}
@@ -226,25 +234,18 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
             </div>
           );
         })}
-        <div className="mt-4 border-t border-rule pt-2">
-          <div className="px-5 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4">
-            Workshop
+        {!topSections.some((s) => s.label === 'Workshop') && (
+          <div className="mt-4 border-t border-rule pt-2">
+            <div className="px-5 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4">
+              Workshop
+            </div>
+            <BrainSpaceLink
+              spaceId={spaceId}
+              active={onDump}
+              count={notes.length}
+            />
           </div>
-          <Link
-            to={`/s/${spaceId}/dump`}
-            className={cn(
-              '-ml-px flex items-center gap-2 border-l-2 px-5 py-1.5 transition-colors',
-              onDump
-                ? 'border-ink bg-paper font-medium text-ink'
-                : 'border-transparent text-ink-2 hover:bg-paper',
-            )}
-          >
-            <span className="flex-1 text-[13px]">Brain dump</span>
-            <span className="font-mono text-[10px] text-ink-4">
-              {notes.length > 0 ? `${notes.length}◦` : '◌'}
-            </span>
-          </Link>
-        </div>
+        )}
       </div>
       <div className="flex items-center gap-3 border-t border-rule px-5 py-3 font-mono text-[10px] uppercase tracking-wider text-ink-4">
         <Link to="/" className="hover:text-ink">
@@ -329,6 +330,33 @@ const AddDocInput = forwardRef<HTMLInputElement, AddDocInputProps>(
     );
   },
 );
+
+function BrainSpaceLink({
+  spaceId,
+  active,
+  count,
+}: {
+  spaceId: string;
+  active: boolean;
+  count: number;
+}) {
+  return (
+    <Link
+      to={`/s/${spaceId}/dump`}
+      className={cn(
+        '-ml-px flex items-center gap-2 border-l-2 px-5 py-1.5 transition-colors',
+        active
+          ? 'border-ink bg-paper font-medium text-ink'
+          : 'border-transparent text-ink-2 hover:bg-paper',
+      )}
+    >
+      <span className="flex-1 text-[13px]">Brain space</span>
+      <span className="font-mono text-[10px] text-ink-4">
+        {count > 0 ? `${count}◦` : '◌'}
+      </span>
+    </Link>
+  );
+}
 
 function DocLink({
   doc,

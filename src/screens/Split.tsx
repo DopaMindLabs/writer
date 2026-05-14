@@ -10,9 +10,12 @@ import { Sidebar } from '@/components/chrome/Sidebar';
 import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
 import { WriteSurface } from '@/components/surfaces/WriteSurface';
+import { DumpCanvas } from '@/components/surfaces/DumpCanvas';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocuments, useDocument } from '@/hooks/useDocuments';
 import { useUI } from '@/store/ui';
+
+const DUMP_PANE = 'dump';
 
 export function SplitScreen() {
   const { spaceId, docId } = useParams<{ spaceId: string; docId: string }>();
@@ -23,7 +26,8 @@ export function SplitScreen() {
   const space = useSpace(spaceId);
   const docs = useDocuments(spaceId);
   const leftDoc = useDocument(docId);
-  const rightDoc = useDocument(withParam);
+  const rightIsDump = withParam === DUMP_PANE;
+  const rightDoc = useDocument(rightIsDump ? null : withParam);
   const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
   const setCurrentDocId = useUI((s) => s.setCurrentDocId);
 
@@ -42,6 +46,7 @@ export function SplitScreen() {
 
   useEffect(() => {
     if (!docId || candidates.length === 0) return;
+    if (withParam === DUMP_PANE) return;
     if (withParam && candidates.some((d) => d.id === withParam)) return;
     const fallback = candidates[0];
     if (!fallback) return;
@@ -107,10 +112,13 @@ export function SplitScreen() {
                     {d.name}
                   </option>
                 ))}
+                <option value={DUMP_PANE}>Brain space</option>
               </select>
             </div>
             <div className="flex-1 overflow-hidden">
-              {rightDoc ? (
+              {rightIsDump ? (
+                <DumpCanvas spaceId={spaceId} />
+              ) : rightDoc ? (
                 <WriteSurface doc={rightDoc} mode="write" />
               ) : (
                 <div className="flex h-full items-center justify-center text-sm text-ink-3">

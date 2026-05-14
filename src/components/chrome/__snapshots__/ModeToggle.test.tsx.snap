@@ -57,7 +57,7 @@ exports[`ModeTabs > hides per-doc tabs when docId is null 1`] = `
       data-discover="true"
       href="/s/s1/dump"
     >
-      dump
+      space
     </a>
   </nav>
 </div>
@@ -94,7 +94,7 @@ exports[`ModeTabs > renders write/read/split/dump tabs with active state 1`] = `
       data-discover="true"
       href="/s/s1/dump"
     >
-      dump
+      space
     </a>
   </nav>
 </div>

@@ -1,11 +1,12 @@
 import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
 import { DumpCanvas } from '@/components/surfaces/DumpCanvas';
 import { useSpace } from '@/hooks/useSpaces';
+import { useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
 import { useUI } from '@/store/ui';
 
@@ -15,16 +16,18 @@ export function DumpScreen() {
   const focus = searchParams.get('focus') === '1';
   const space = useSpace(spaceId);
   const notes = useNotes(spaceId);
+  const docs = useDocuments(spaceId);
+  const lastDocId = useUI((s) => s.currentDocId);
   const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
-  const setCurrentDocId = useUI((s) => s.setCurrentDocId);
 
   useEffect(() => {
     if (spaceId) setCurrentSpaceId(spaceId);
   }, [spaceId, setCurrentSpaceId]);
 
-  useEffect(() => {
-    setCurrentDocId(null);
-  }, [setCurrentDocId]);
+  const fallbackDocId = useMemo(() => {
+    if (lastDocId && docs.some((d) => d.id === lastDocId)) return lastDocId;
+    return docs[0]?.id ?? null;
+  }, [docs, lastDocId]);
 
   if (!spaceId) return <Navigate to="/" replace />;
 
@@ -44,9 +47,10 @@ export function DumpScreen() {
         <Topbar
           spaceId={spaceId}
           docId={null}
-          docName={`Brain dump · ${notes.length} unsorted`}
+          docName={`Brain space · ${notes.length} unsorted`}
           spaceName={space?.name}
           mode="dump"
+          fallbackDocId={fallbackDocId}
         />
         <DumpMobileNotice spaceId={spaceId} />
         <main className="hidden flex-1 overflow-hidden md:block">
@@ -62,10 +66,10 @@ function DumpMobileNotice({ spaceId }: { spaceId: string }) {
     <div className="flex flex-1 items-center justify-center bg-paper px-6 py-10 md:hidden">
       <div className="max-w-sm text-center">
         <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
-          Brain dump
+          Brain space
         </div>
         <p className="mt-3 font-serif text-[18px] italic text-ink-2">
-          Brain dump works best on a larger screen.
+          Brain space works best on a larger screen.
         </p>
         <p className="mt-2 font-serif text-base text-ink-3">
           The canvas needs a mouse or trackpad.
