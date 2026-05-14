@@ -43,14 +43,16 @@ export function WriteScreen() {
 
   return (
     <div className="flex h-full w-full">
-      {focus ? (
-        <FocusRail activeSpaceId={spaceId} />
-      ) : (
-        <>
-          <SpaceRail activeSpaceId={spaceId} />
-          <Sidebar spaceId={spaceId} activeDocId={docId ?? null} />
-        </>
-      )}
+      <div className="hidden md:contents">
+        {focus ? (
+          <FocusRail activeSpaceId={spaceId} />
+        ) : (
+          <>
+            <SpaceRail activeSpaceId={spaceId} />
+            <Sidebar spaceId={spaceId} activeDocId={docId ?? null} />
+          </>
+        )}
+      </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
           spaceId={spaceId}

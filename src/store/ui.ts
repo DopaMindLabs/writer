@@ -7,10 +7,12 @@ interface UIState {
   currentDocId: string | null;
   theme: Theme;
   exportOpen: boolean;
+  mobileNavOpen: boolean;
   setCurrentSpaceId: (id: string | null) => void;
   setCurrentDocId: (id: string | null) => void;
   setTheme: (theme: Theme) => void;
   setExportOpen: (open: boolean) => void;
+  setMobileNavOpen: (open: boolean) => void;
 }
 
 const PERSIST_KEY = 'lorem-ui';
@@ -41,6 +43,7 @@ export const useUI = create<UIState>((set, get) => ({
   currentDocId: null,
   theme: persisted.theme ?? 'light',
   exportOpen: false,
+  mobileNavOpen: false,
   setCurrentSpaceId: (id) => {
     set({ currentSpaceId: id });
     persist({ theme: get().theme, currentSpaceId: id });
@@ -51,4 +54,5 @@ export const useUI = create<UIState>((set, get) => ({
     persist({ theme, currentSpaceId: get().currentSpaceId });
   },
   setExportOpen: (exportOpen) => set({ exportOpen }),
+  setMobileNavOpen: (mobileNavOpen) => set({ mobileNavOpen }),
 }));

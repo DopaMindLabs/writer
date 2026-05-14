@@ -23,11 +23,11 @@ export function HomeScreen() {
 
   return (
     <div className="flex h-full w-full flex-col overflow-auto bg-paper text-ink">
-      <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-12 py-16">
+      <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 py-10 md:px-12 md:py-16">
         <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
           a writing space
         </div>
-        <h1 className="font-serif text-6xl leading-[1.05] tracking-tight text-ink">
+        <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-ink md:text-6xl">
           LIpsum{' '}
           <span className="italic font-light text-ink-2">Writer</span>
         </h1>
@@ -44,7 +44,7 @@ export function HomeScreen() {
                 to={`/s/${firstSpaceId}`}
                 className="flex items-baseline justify-between border-b border-rule px-2 py-5 transition-colors hover:bg-paper-2"
               >
-                <span className="font-serif text-[22px] text-ink">
+                <span className="font-serif text-[18px] text-ink md:text-[22px]">
                   Continue writing
                 </span>
                 <span className="font-mono text-[11px] uppercase tracking-wider text-ink-3">
@@ -59,8 +59,8 @@ export function HomeScreen() {
               <span
                 className={
                   isEmpty
-                    ? 'font-serif text-[26px] italic text-ink'
-                    : 'font-serif text-[22px] italic text-ink'
+                    ? 'font-serif text-[20px] italic text-ink md:text-[26px]'
+                    : 'font-serif text-[18px] italic text-ink md:text-[22px]'
                 }
               >
                 Start a new space

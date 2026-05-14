@@ -1,4 +1,4 @@
-import { Navigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
@@ -30,14 +30,16 @@ export function DumpScreen() {
 
   return (
     <div className="flex h-full w-full">
-      {focus ? (
-        <FocusRail activeSpaceId={spaceId} />
-      ) : (
-        <>
-          <SpaceRail activeSpaceId={spaceId} />
-          <Sidebar spaceId={spaceId} activeDocId={null} />
-        </>
-      )}
+      <div className="hidden md:contents">
+        {focus ? (
+          <FocusRail activeSpaceId={spaceId} />
+        ) : (
+          <>
+            <SpaceRail activeSpaceId={spaceId} />
+            <Sidebar spaceId={spaceId} activeDocId={null} />
+          </>
+        )}
+      </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
           spaceId={spaceId}
@@ -46,9 +48,34 @@ export function DumpScreen() {
           spaceName={space?.name}
           mode="dump"
         />
-        <main className="flex-1 overflow-hidden">
+        <DumpMobileNotice spaceId={spaceId} />
+        <main className="hidden flex-1 overflow-hidden md:block">
           <DumpCanvas spaceId={spaceId} />
         </main>
+      </div>
+    </div>
+  );
+}
+
+function DumpMobileNotice({ spaceId }: { spaceId: string }) {
+  return (
+    <div className="flex flex-1 items-center justify-center bg-paper px-6 py-10 md:hidden">
+      <div className="max-w-sm text-center">
+        <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
+          Brain dump
+        </div>
+        <p className="mt-3 font-serif text-[18px] italic text-ink-2">
+          Brain dump works best on a larger screen.
+        </p>
+        <p className="mt-2 font-serif text-base text-ink-3">
+          The canvas needs a mouse or trackpad.
+        </p>
+        <Link
+          to={`/s/${spaceId}`}
+          className="mt-6 inline-block font-mono text-[11px] uppercase tracking-wider text-ink underline underline-offset-4 hover:text-ink-2"
+        >
+          Open in Write →
+        </Link>
       </div>
     </div>
   );

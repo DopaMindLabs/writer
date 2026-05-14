@@ -83,7 +83,7 @@ exports[`ModeTabs > renders write/read/split/dump tabs with active state 1`] = `
       read
     </a>
     <a
-      class="pb-0.5 transition-colors text-ink-4 hover:text-ink-2"
+      class="pb-0.5 transition-colors text-ink-4 hover:text-ink-2 hidden md:inline"
       data-discover="true"
       href="/s/s1/d/d1/split"
     >

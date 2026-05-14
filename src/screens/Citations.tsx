@@ -107,7 +107,9 @@ export function CitationsScreen() {
 
   return (
     <div className="flex h-full w-full">
-      <SpaceRail activeSpaceId={spaceId} />
+      <div className="hidden md:contents">
+        <SpaceRail activeSpaceId={spaceId} />
+      </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
           spaceId={spaceId}
@@ -117,7 +119,7 @@ export function CitationsScreen() {
           mode="write"
         />
         <main className="flex flex-1 flex-col overflow-hidden bg-paper">
-          <div className="border-b border-rule px-10 py-6">
+          <div className="border-b border-rule px-4 py-6 md:px-10">
             <div className="flex items-baseline justify-between">
               <div className="font-mono text-[10px] uppercase tracking-[0.08em]">
                 <span className="text-ink-3">Sources / </span>
@@ -129,8 +131,8 @@ export function CitationsScreen() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-4 border-b border-rule px-10 py-3">
-            <div className="relative flex w-[360px] max-w-[40%] items-center">
+          <div className="flex flex-col gap-2 border-b border-rule px-4 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-10">
+            <div className="relative flex w-full max-w-full items-center md:w-[360px] md:max-w-[40%]">
               <Search className="absolute left-0 h-3 w-3 text-ink-4" />
               <input
                 type="search"
@@ -167,7 +169,7 @@ export function CitationsScreen() {
 
           {status && (
             <div
-              className="border-b border-rule bg-paper-2 px-10 py-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              className="border-b border-rule bg-paper-2 px-4 py-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3 md:px-10"
               role="status"
             >
               {status}
@@ -186,7 +188,7 @@ export function CitationsScreen() {
             <div
               className={cn(
                 COL_TEMPLATE,
-                'sticky top-0 z-10 gap-4 border-b border-rule bg-paper px-10 py-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-3',
+                'sticky top-0 z-10 hidden gap-4 border-b border-rule bg-paper px-10 py-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-3 md:grid',
               )}
             >
               <span>TAG</span>
@@ -203,35 +205,44 @@ export function CitationsScreen() {
               pageRows.map((c) => (
                 <div
                   key={c.id}
-                  className={cn(
-                    COL_TEMPLATE,
-                    'items-baseline gap-4 border-b border-rule px-10 py-2.5 hover:bg-paper-2',
-                  )}
+                  className="flex flex-col gap-1 border-b border-rule px-4 py-3 hover:bg-paper-2 md:grid md:grid-cols-[7rem_minmax(8rem,12rem)_minmax(0,1fr)_4rem_6rem_4rem] md:items-baseline md:gap-4 md:px-10 md:py-2.5"
                 >
-                  <span className="truncate font-mono text-[11px] text-ink">
+                  <span className="hidden truncate font-mono text-[11px] text-ink md:inline">
                     {c.key}
+                  </span>
+                  <span className="font-serif text-[16px] text-ink md:hidden">
+                    {c.title}
                   </span>
                   <span className="truncate font-serif text-[14px] italic text-ink">
                     {c.authors}
                   </span>
-                  <span className="truncate font-serif text-[14px] text-ink-2">
+                  <span className="hidden truncate font-serif text-[14px] text-ink-2 md:inline">
                     {c.title}
                   </span>
-                  <span className="font-mono text-[11px] text-ink-3">
+                  <span className="hidden font-mono text-[11px] text-ink-3 md:inline">
                     {c.year > 0 ? c.year : '—'}
                   </span>
-                  <span className="font-mono text-[9px] uppercase tracking-wider text-ink-3">
+                  <span className="hidden font-mono text-[9px] uppercase tracking-wider text-ink-3 md:inline">
                     {c.type}
                   </span>
-                  <span className="text-right font-mono text-[11px] text-ink">
+                  <span className="hidden text-right font-mono text-[11px] text-ink md:inline">
                     {c.useCount > 0 ? `${c.useCount}×` : '—'}
                   </span>
+                  <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-ink-3 md:hidden">
+                    <span>{c.key}</span>
+                    <span className="text-ink-4">·</span>
+                    <span>{c.year > 0 ? c.year : '—'}</span>
+                    <span className="text-ink-4">·</span>
+                    <span>{c.type}</span>
+                    <span className="text-ink-4">·</span>
+                    <span>{c.useCount > 0 ? `${c.useCount}× used` : 'unused'}</span>
+                  </div>
                 </div>
               ))
             )}
           </div>
 
-          <div className="flex items-center justify-between border-t border-rule px-10 py-3 font-mono text-[10px] uppercase tracking-wider text-ink-3">
+          <div className="flex flex-col gap-2 border-t border-rule px-4 py-3 font-mono text-[10px] uppercase tracking-wider text-ink-3 md:flex-row md:items-center md:justify-between md:px-10">
             <span>STYLE — CHICAGO (AUTHOR-DATE)</span>
             <button
               type="button"
@@ -282,7 +293,7 @@ export function CitationsScreen() {
 
 function EmptyState({ hasCitations }: { hasCitations: boolean }) {
   return (
-    <div className="flex items-center justify-center px-10 py-20">
+    <div className="flex items-center justify-center px-4 py-20 md:px-10">
       <div className="text-center">
         <p className="font-serif text-[20px] text-ink">no citations yet</p>
         <p className="mt-2 text-[13px] text-ink-3">
@@ -345,7 +356,7 @@ function ManualAddForm({
   }
 
   return (
-    <div className="border-b border-rule bg-paper-2 px-10 py-4">
+    <div className="border-b border-rule bg-paper-2 px-4 py-4 md:px-10">
       <div className="mb-2 font-mono text-[10px] uppercase tracking-wider text-ink-3">
         Paste BibTeX or a title
       </div>

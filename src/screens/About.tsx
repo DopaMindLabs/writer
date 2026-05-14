@@ -4,7 +4,7 @@ import { ArrowLeft, AlertTriangle, Smile, Lightbulb } from 'lucide-react';
 export function AboutScreen() {
   return (
     <div className="flex h-full w-full flex-col overflow-auto bg-paper text-ink">
-      <header className="flex items-center justify-between border-b border-rule px-12 py-5">
+      <header className="flex items-center justify-between border-b border-rule px-4 py-4 md:px-12 md:py-5">
         <Link
           to="/"
           className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:text-ink"
@@ -17,11 +17,11 @@ export function AboutScreen() {
         </div>
       </header>
 
-      <div className="mx-auto flex w-full max-w-2xl flex-col px-12 pt-16 pb-24">
-        <h1 className="font-serif text-6xl leading-[1.05] tracking-tight text-ink">
+      <div className="mx-auto flex w-full max-w-2xl flex-col px-5 pt-10 pb-16 md:px-12 md:pt-16 md:pb-24">
+        <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-ink md:text-6xl">
           Hi,
         </h1>
-        <div className="mt-12 space-y-6 font-serif text-[18px] leading-relaxed text-ink-2">
+        <div className="mt-12 space-y-6 font-serif text-base leading-relaxed text-ink-2 md:text-[18px]">
           <p>This is for the writer who keeps starting over.  The one who opens a new document, types three sentences (or none),
             then spends 40mins  adjusting the font. The one whose best
             ideas arrive at 2am and get distracted. The one with fourteen
@@ -50,7 +50,7 @@ export function AboutScreen() {
             </p>
 
           </div>
-          <div className="mt-6 space-y-6 font-serif text-[18px] leading-relaxed text-ink-2">
+          <div className="mt-6 space-y-6 font-serif text-base leading-relaxed text-ink-2 md:text-[18px]">
             <p>I am still building this and I have alot ideas <Lightbulb className="inline-block h-4 w-4" />. I'd love to hear what works, what doesn't, and
               what you wish existed. Feedback is welcome.</p>
           </div>
