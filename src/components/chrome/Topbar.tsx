@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Sun, Moon, Quote, Menu, Contrast, Check } from 'lucide-react';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
 import { MobileNavDrawer } from './MobileNavDrawer';
 import { cn } from '@/lib/utils';
@@ -54,9 +55,44 @@ export function Topbar({
   const { t } = useTranslation('chrome');
   const { theme, setTheme } = useTheme();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const focus = searchParams.get('focus') === '1';
   const setMobileNavOpen = useUI((s) => s.setMobileNavOpen);
   const openCitationsDrawer = useUI((s) => s.openCitationsDrawer);
   const onCitations = location.pathname.endsWith('/citations');
+
+  const citationsTrigger = onCitations ? (
+    <Link
+      to={`/s/${spaceId}/citations`}
+      aria-label={t('topbar.citations')}
+      className={cn(
+        focus
+          ? 'inline-flex h-7 w-7 items-center justify-center rounded-md text-ink hover:bg-paper-2'
+          : 'inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink hover:bg-paper-2',
+      )}
+    >
+      <Quote className={focus ? 'h-3.5 w-3.5' : 'h-3 w-3'} />
+      {!focus && (
+        <span className="hidden sm:inline">{t('topbar.citations')}</span>
+      )}
+    </Link>
+  ) : (
+    <button
+      type="button"
+      onClick={() => openCitationsDrawer()}
+      aria-label={t('topbar.citations')}
+      className={cn(
+        focus
+          ? 'inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink'
+          : 'inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:bg-paper-2 hover:text-ink',
+      )}
+    >
+      <Quote className={focus ? 'h-3.5 w-3.5' : 'h-3 w-3'} />
+      {!focus && (
+        <span className="hidden sm:inline">{t('topbar.citations')}</span>
+      )}
+    </button>
+  );
 
   return (
     <header className="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-4 md:px-4">
@@ -69,10 +105,12 @@ export function Topbar({
         <Menu className="h-4 w-4" />
       </button>
       <div className="flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-ink-3">
-        <span className="hidden md:inline">{spaceName ?? '…'}</span>
+        {!focus && <span className="hidden md:inline">{spaceName ?? '…'}</span>}
         {docName && (
           <>
-            <span className="hidden text-ink-4 md:inline">/</span>
+            {!focus && (
+              <span className="hidden text-ink-4 md:inline">/</span>
+            )}
             <span className="text-ink">{docName}</span>
           </>
         )}
@@ -86,28 +124,13 @@ export function Topbar({
           fallbackDocId={fallbackDocId}
         />
       )}
-      {onCitations ? (
-        <Link
-          to={`/s/${spaceId}/citations`}
-          className={cn(
-            'inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink hover:bg-paper-2',
-          )}
-        >
-          <Quote className="h-3 w-3" />
-          <span className="hidden sm:inline">{t('topbar.citations')}</span>
-        </Link>
+      {focus ? (
+        <Tooltip>
+          <TooltipTrigger asChild>{citationsTrigger}</TooltipTrigger>
+          <TooltipContent side="bottom">{t('topbar.citations')}</TooltipContent>
+        </Tooltip>
       ) : (
-        <button
-          type="button"
-          onClick={() => openCitationsDrawer()}
-          className={cn(
-            'inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:bg-paper-2 hover:text-ink',
-          )}
-          aria-label={t('topbar.citations')}
-        >
-          <Quote className="h-3 w-3" />
-          <span className="hidden sm:inline">{t('topbar.citations')}</span>
-        </button>
+        citationsTrigger
       )}
       {!onCitations && (mode === 'dump' || docId) && (
         <FocusToggle mode={mode} spaceId={spaceId} docId={docId} />

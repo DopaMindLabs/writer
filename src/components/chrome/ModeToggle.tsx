@@ -1,8 +1,16 @@
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, type ComponentType, type SVGProps } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Maximize2, Minimize2 } from 'lucide-react';
+import {
+  BookOpen,
+  Columns2,
+  Maximize2,
+  Minimize2,
+  Network,
+  Pencil,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export type Mode = 'write' | 'focus' | 'read' | 'split' | 'dump';
 
@@ -12,6 +20,8 @@ interface ModeTabsProps {
   docId: string | null;
   fallbackDocId?: string | null;
 }
+
+type TabKey = 'write' | 'read' | 'split' | 'dump';
 
 type TabDef =
   | { key: 'write' | 'read' | 'split'; labelKey: string; suffix: string; perDoc: true }
@@ -24,15 +34,28 @@ const TABS: TabDef[] = [
   { key: 'dump', labelKey: 'modeToggle.space', perDoc: false },
 ];
 
+const TAB_ICONS: Record<TabKey, ComponentType<SVGProps<SVGSVGElement>>> = {
+  write: Pencil,
+  read: BookOpen,
+  split: Columns2,
+  dump: Network,
+};
+
 export function ModeTabs({ mode, spaceId, docId, fallbackDocId }: ModeTabsProps) {
   const { t } = useTranslation('chrome');
   const [searchParams] = useSearchParams();
   const focusParam = searchParams.get('focus');
+  const isFocus = focusParam === '1';
   const withParam = searchParams.get('with');
   const effectiveDocId = docId ?? fallbackDocId ?? null;
 
   return (
-    <nav className="inline-flex items-center gap-4 font-mono text-[11px]">
+    <nav
+      className={cn(
+        'inline-flex items-center font-mono text-[11px]',
+        isFocus ? 'gap-1' : 'gap-4',
+      )}
+    >
       {TABS.map((tab) => {
         if (tab.perDoc && !effectiveDocId) return null;
         const active =
@@ -44,6 +67,33 @@ export function ModeTabs({ mode, spaceId, docId, fallbackDocId }: ModeTabsProps)
         const to = tab.perDoc
           ? `/s/${spaceId}/d/${effectiveDocId}${tab.suffix}${qs ? `?${qs}` : ''}`
           : `/s/${spaceId}/dump${focusParam ? '?focus=' + focusParam : ''}`;
+
+        if (isFocus) {
+          const Icon = TAB_ICONS[tab.key];
+          const label = t(tab.labelKey);
+          return (
+            <Tooltip key={tab.key}>
+              <TooltipTrigger asChild>
+                <Link
+                  to={to}
+                  aria-label={label}
+                  aria-current={active ? 'page' : undefined}
+                  className={cn(
+                    'inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors',
+                    active
+                      ? 'text-ink'
+                      : 'text-ink-4 hover:bg-paper-2 hover:text-ink-2',
+                    tab.key === 'split' && 'hidden md:inline-flex',
+                  )}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">{label}</TooltipContent>
+            </Tooltip>
+          );
+        }
+
         return (
           <Link
             key={tab.key}
@@ -117,24 +167,32 @@ export function FocusToggle({ mode, spaceId, docId }: FocusToggleProps) {
   }
   const qs = next.toString();
 
+  if (focused) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Link
+            to={`${base}${qs ? `?${qs}` : ''}`}
+            aria-label={t('topbar.exitFocus')}
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink"
+          >
+            <Minimize2 className="h-3.5 w-3.5" />
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">{t('topbar.focusTitleNormal')}</TooltipContent>
+      </Tooltip>
+    );
+  }
+
   return (
     <Link
       to={`${base}${qs ? `?${qs}` : ''}`}
       className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:bg-paper-2 hover:text-ink"
-      title={focused ? t('topbar.focusTitleNormal') : t('topbar.focusTitleFocus')}
-      aria-label={focused ? t('topbar.exitFocus') : t('topbar.enterFocus')}
+      title={t('topbar.focusTitleFocus')}
+      aria-label={t('topbar.enterFocus')}
     >
-      {focused ? (
-        <>
-          <Minimize2 className="h-3 w-3" />
-          {t('topbar.normal')}
-        </>
-      ) : (
-        <>
-          <Maximize2 className="h-3 w-3" />
-          {t('topbar.focus')}
-        </>
-      )}
+      <Maximize2 className="h-3 w-3" />
+      {t('topbar.focus')}
     </Link>
   );
 }
