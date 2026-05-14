@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { db } from '@/db/db';
 import { BlockQuote } from '@/components/ui/block-quote';
 import { PageNav } from '@/components/chrome/PageNav';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function HomeScreen() {
   const { t } = useTranslation(['screens', 'common']);
@@ -82,8 +83,23 @@ export function HomeScreen() {
           </div>
         )}
 
-        <div className="mt-10 flex items-center justify-end font-mono text-[10px] uppercase tracking-wider text-ink-4">
-          <span className="italic normal-case">{t('home.statusLine')}</span>
+        <div className="mt-10 flex items-center justify-end">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span
+                tabIndex={0}
+                className="cursor-help rounded-sm border border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[color:var(--warning)]"
+              >
+                {t('home.statusLine')}
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[220px]">
+              <div className="font-medium">{t('home.warningTitle')}</div>
+              <div className="mt-0.5 text-[11px] opacity-80">
+                {t('home.warningBody')}
+              </div>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </div>

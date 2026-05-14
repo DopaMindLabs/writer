@@ -7,7 +7,9 @@
     "tagline": "A clutter-free space for long-form writing — fiction, research, essays, journals.",
     "continueWriting": "Continue writing",
     "startNewSpace": "Start a new space",
-    "statusLine": "experimental · local only"
+    "statusLine": "experimental · local only · data can be lost",
+    "warningTitle": "Experimental build",
+    "warningBody": "No data sync. Everything lives in your browser. If you clear your cache, your work will be lost"
   },
   "about": {
     "back": "back",
