@@ -96,6 +96,7 @@ export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
 
   return (
     <div
+      data-tour="tour-brainspace-canvas"
       onPointerDown={onBackgroundPointerDown}
       className="relative h-full min-w-0 flex-1 overflow-hidden bg-paper"
       style={{
@@ -149,7 +150,10 @@ export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
         </div>
       )}
 
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 border border-ink bg-paper">
+      <div
+        data-tour="tour-brainspace-add-note"
+        className="absolute bottom-5 left-1/2 -translate-x-1/2 border border-ink bg-paper"
+      >
         {toolbarKinds.map((kind, i) => (
           <button
             key={kind}

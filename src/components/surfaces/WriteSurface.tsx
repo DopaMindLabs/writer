@@ -20,7 +20,10 @@ export function WriteSurface({ doc, mode }: WriteSurfaceProps) {
   }, []);
 
   return (
-    <div className="h-full min-w-0 flex-1 overflow-auto bg-paper px-12 py-12">
+    <div
+      data-tour="tour-editor-main"
+      className="h-full min-w-0 flex-1 overflow-auto bg-paper px-12 py-12"
+    >
       <Editor
         key={`${doc.id}-${mode}`}
         initialValue={doc.body}

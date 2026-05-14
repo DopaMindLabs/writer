@@ -122,6 +122,7 @@ export function CitationsPane({
       </div>
 
       <div
+        data-tour="tour-citations-add"
         className={cn(
           'flex flex-col gap-2 border-b border-rule py-3 md:flex-row md:items-center md:justify-between md:gap-4',
           xPad,
@@ -183,7 +184,7 @@ export function CitationsPane({
         />
       )}
 
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto" data-tour="tour-citations-list">
         <div
           className={cn(
             colTemplate,

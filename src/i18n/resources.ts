@@ -3,6 +3,7 @@ import enChrome from './locales/en/chrome.json';
 import enScreens from './locales/en/screens.json';
 import enApp from './locales/en/app.json';
 import enTemplates from './locales/en/templates.json';
+import enTours from './locales/en/tours.json';
 
 export const resources = {
   en: {
@@ -11,6 +12,7 @@ export const resources = {
     screens: enScreens,
     app: enApp,
     templates: enTemplates,
+    tours: enTours,
   },
 } as const;
 

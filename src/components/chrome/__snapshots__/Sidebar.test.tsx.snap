@@ -10,6 +10,7 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
     >
       <div
         class="flex items-center gap-2"
+        data-tour="tour-sidebar-space-title"
       >
         <button
           class="block min-w-0 flex-1 cursor-text truncate text-left font-serif text-lg font-medium leading-tight tracking-tight text-ink"
@@ -23,6 +24,7 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
           class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm text-ink-3 opacity-0 transition-opacity hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
           data-discover="true"
           data-state="closed"
+          data-tour="tour-sidebar-settings"
           href="/s/s1/settings"
         >
           <svg
@@ -56,6 +58,7 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
     </div>
     <div
       class="flex-1 overflow-auto py-2"
+      data-tour="tour-sidebar-sections"
     >
       <div
         class="mb-2"

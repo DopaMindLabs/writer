@@ -9,6 +9,7 @@ import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments, useDocument } from '@/hooks/useDocuments';
 import { useUI } from '@/store/ui';
+import { useAutoTour } from '@/tours';
 
 export function WriteScreen() {
   const { spaceId, docId } = useParams<{ spaceId: string; docId?: string }>();
@@ -20,6 +21,8 @@ export function WriteScreen() {
   const doc = useDocument(docId);
   const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
   const setCurrentDocId = useUI((s) => s.setCurrentDocId);
+
+  useAutoTour('writer', { ready: !focus && !!doc });
 
   useEffect(() => {
     if (spaceId) setCurrentSpaceId(spaceId);

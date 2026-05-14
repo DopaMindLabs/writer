@@ -4,6 +4,7 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
 <div>
   <div
     class="relative h-full min-w-0 flex-1 overflow-hidden bg-paper"
+    data-tour="tour-brainspace-canvas"
     style="background-image: radial-gradient(circle at 1px 1px, var(--rule) 1px, transparent 1px); background-size: 20px 20px;"
   >
     <svg
@@ -183,6 +184,7 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
     </div>
     <div
       class="absolute bottom-5 left-1/2 -translate-x-1/2 border border-ink bg-paper"
+      data-tour="tour-brainspace-add-note"
     >
       <button
         class="inline-block px-3 py-1.5 font-sans text-[11px] text-ink-3 hover:text-ink"

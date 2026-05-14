@@ -11,6 +11,7 @@ import { useSpace } from '@/hooks/useSpaces';
 import { useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
 import { useUI } from '@/store/ui';
+import { useAutoTour } from '@/tours';
 
 export function BrainSpaceScreen() {
   const { t } = useTranslation('screens');
@@ -22,6 +23,8 @@ export function BrainSpaceScreen() {
   const docs = useDocuments(spaceId);
   const lastDocId = useUI((s) => s.currentDocId);
   const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
+
+  useAutoTour('brainspace', { ready: !!spaceId && !focus });
 
   useEffect(() => {
     if (spaceId) setCurrentSpaceId(spaceId);

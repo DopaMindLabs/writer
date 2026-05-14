@@ -185,7 +185,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
             className="w-full border-0 bg-transparent p-0 font-serif text-lg font-medium leading-tight tracking-tight text-ink outline-none"
           />
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" data-tour="tour-sidebar-space-title">
             <button
               type="button"
               onClick={() => space && setEditingSpaceName(true)}
@@ -200,6 +200,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
                 <TooltipTrigger asChild>
                   <Link
                     to={`/s/${spaceId}/settings`}
+                    data-tour="tour-sidebar-settings"
                     aria-label={t('chrome:sidebar.openSpaceSettings')}
                     className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm text-ink-3 opacity-0 transition-opacity hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
                   >
@@ -217,7 +218,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
           {space?.shared ? t('chrome:sidebar.shared') : t('chrome:sidebar.private')}
         </div>
       </div>
-      <div className="flex-1 overflow-auto py-2">
+      <div className="flex-1 overflow-auto py-2" data-tour="tour-sidebar-sections">
         {topSections.map((sec) => {
           const subs = subsectionsByParent.get(sec.id) ?? [];
           const ownDocs = docsBySection.get(sec.id) ?? [];
