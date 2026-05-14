@@ -52,7 +52,8 @@
     "react-i18next": "^17.0.7",
     "react-router-dom": "^7.15.1",
     "tailwind-merge": "^3.6.0",
-    "zustand": "^5.0.1"
+    "zustand": "^5.0.1",
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",
@@ -74,7 +75,6 @@
     "postcss": "^8.4.49",
     "tailwindcss": "^4.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "^6.0.3",
     "vite": "^8.0.13",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.6"
