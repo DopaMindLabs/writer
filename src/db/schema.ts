@@ -59,6 +59,7 @@ export interface Note {
   state: NoteState;
   title?: string;
   body: string;
+  linkedDocId?: string;
   createdAt: number;
 }
 

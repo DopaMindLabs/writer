@@ -9,10 +9,12 @@ import { newId } from '@/lib/ids';
 import { useNotes } from '@/hooks/useNotes';
 import { useConnections } from '@/hooks/useConnections';
 import { useSpace } from '@/hooks/useSpaces';
+import { useUI } from '@/store/ui';
 import { getTemplate } from '@/data/templates';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
 import { BrainSpaceNote } from './BrainSpaceNote';
 import { BrainSpaceConnection } from './BrainSpaceConnection';
+import { BrainSpaceDetailDrawer } from './BrainSpaceDetailDrawer';
 import { NoteKind, NoteState, type Note } from '@/db/schema';
 
 interface BrainSpaceCanvasProps {
@@ -26,7 +28,9 @@ export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
   const notes = useNotes(spaceId);
   const connections = useConnections(spaceId);
   const space = useSpace(spaceId);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const openDetail = useUI((s) => s.openDetail);
+  const focusedNoteId = useUI((s) => s.focusedNoteId);
+  const focusNote = useUI((s) => s.focusNote);
   const [pendingFrom, setPendingFrom] = useState<string | null>(null);
 
   const toolbarKinds = useMemo<NoteKind[]>(() => {
@@ -80,14 +84,14 @@ export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
         }
         return;
       }
-      setSelectedId(id);
+      openDetail(id);
     },
-    [pendingFrom, spaceId],
+    [pendingFrom, spaceId, openDetail],
   );
 
   function onBackgroundPointerDown(e: ReactPointerEvent<HTMLDivElement>) {
     if (e.target !== e.currentTarget) return;
-    setSelectedId(null);
+    focusNote(null);
     setPendingFrom(null);
   }
 
@@ -126,7 +130,8 @@ export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
         <BrainSpaceNote
           key={n.id}
           note={n}
-          selected={selectedId === n.id}
+          spaceId={spaceId}
+          selected={focusedNoteId === n.id}
           pending={pendingFrom === n.id}
           onPick={(e) => handlePick(n.id, e)}
         />
@@ -166,6 +171,8 @@ export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
           shift-click another note to connect · esc to cancel
         </div>
       )}
+
+      <BrainSpaceDetailDrawer spaceId={spaceId} />
     </div>
   );
 }

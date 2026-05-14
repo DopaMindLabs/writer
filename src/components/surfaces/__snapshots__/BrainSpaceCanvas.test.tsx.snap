@@ -100,14 +100,8 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
           </svg>
         </button>
       </div>
-      <button
-        class="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
-        type="button"
-      >
-        + title
-      </button>
       <div
-        class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+        class="flex-1 whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
       >
         Hello
       </div>
@@ -160,14 +154,8 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
           </svg>
         </button>
       </div>
-      <button
-        class="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
-        type="button"
-      >
-        + title
-      </button>
       <div
-        class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+        class="flex-1 whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
       >
         Hello
       </div>

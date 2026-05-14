@@ -8,11 +8,16 @@ interface UIState {
   theme: Theme;
   exportOpen: boolean;
   mobileNavOpen: boolean;
+  detailNoteId: string | null;
+  focusedNoteId: string | null;
   setCurrentSpaceId: (id: string | null) => void;
   setCurrentDocId: (id: string | null) => void;
   setTheme: (theme: Theme) => void;
   setExportOpen: (open: boolean) => void;
   setMobileNavOpen: (open: boolean) => void;
+  openDetail: (id: string) => void;
+  closeDetail: () => void;
+  focusNote: (id: string | null) => void;
 }
 
 const PERSIST_KEY = 'lorem-ui';
@@ -44,6 +49,8 @@ export const useUI = create<UIState>((set, get) => ({
   theme: persisted.theme ?? 'light',
   exportOpen: false,
   mobileNavOpen: false,
+  detailNoteId: null,
+  focusedNoteId: null,
   setCurrentSpaceId: (id) => {
     set({ currentSpaceId: id });
     persist({ theme: get().theme, currentSpaceId: id });
@@ -55,4 +62,7 @@ export const useUI = create<UIState>((set, get) => ({
   },
   setExportOpen: (exportOpen) => set({ exportOpen }),
   setMobileNavOpen: (mobileNavOpen) => set({ mobileNavOpen }),
+  openDetail: (id) => set({ detailNoteId: id, focusedNoteId: id }),
+  closeDetail: () => set({ detailNoteId: null }),
+  focusNote: (id) => set({ focusedNoteId: id }),
 }));
