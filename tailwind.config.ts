@@ -23,6 +23,8 @@ const config: Config = {
         'hl-ash': 'var(--hl-ash)',
         warning: 'var(--warning)',
         'warning-bg': 'var(--warning-bg)',
+        danger: 'var(--danger)',
+        'danger-bg': 'var(--danger-bg)',
       },
       fontFamily: {
         sans: ['Geist', 'system-ui', '-apple-system', 'sans-serif'],

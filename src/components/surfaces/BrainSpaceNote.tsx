@@ -398,9 +398,9 @@ function NoteContextMenu({ x, y, onDelete, onClose }: NoteContextMenuProps) {
         type="button"
         role="menuitem"
         onClick={onDelete}
-        className="flex w-full items-center gap-2 px-3 py-1.5 text-left font-sans text-[12px] text-ink hover:bg-paper-2"
+        className="flex w-full items-center gap-2 px-3 py-1.5 text-left font-sans text-[12px] text-[color:var(--danger)] transition-colors hover:bg-[color:var(--danger-bg)]"
       >
-        <Trash2 className="h-3.5 w-3.5" />
+        <Trash2 className="h-3.5 w-3.5 text-[color:var(--danger)]" />
         Delete note
       </button>
     </div>,

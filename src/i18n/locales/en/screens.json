@@ -87,6 +87,52 @@
       "title": "Backups",
       "subtitle": "Export, restore, and snapshot your local data.",
       "comingSoonBody": "Scheduled local snapshots, manual export to .zip, and restore from a previous backup."
+    },
+    "space": {
+      "breadcrumb": "SPACE · SETTINGS",
+      "loading": "Loading space…",
+      "tabs": {
+        "general": "General",
+        "sharing": "Sharing",
+        "template": "Template",
+        "members": "Members",
+        "danger": "Danger zone"
+      },
+      "general": {
+        "title": "General",
+        "subtitle": "Identifying details for this space. Changes apply immediately and sync across views.",
+        "nameLabel": "Space name",
+        "nameHint": "Shown in the sidebar header and the space rail tooltip.",
+        "tagLabel": "Tag",
+        "tagHint": "A short code (2–4 characters) shown on the space rail tile."
+      },
+      "sharing": {
+        "title": "Sharing",
+        "subtitle": "Control how this space is shared.",
+        "comingSoonBody": "Per-space visibility and shared links. Lands when cloud sync ships."
+      },
+      "template": {
+        "title": "Template",
+        "subtitle": "The structural template this space was created with.",
+        "comingSoonBody": "Changing a space's template after creation isn't supported yet. Lands once we can migrate sections and docs safely."
+      },
+      "members": {
+        "title": "Members",
+        "subtitle": "Co-writers and reviewers with access to this space.",
+        "comingSoonBody": "Invite collaborators, manage roles, and review changes. Lands with cloud sync."
+      },
+      "danger": {
+        "title": "Danger zone",
+        "subtitle": "Irreversible actions. Read carefully before continuing.",
+        "deleteCardTitle": "Delete this space",
+        "deleteCardBody": "Permanently removes this space along with every document, section, brain-space note, annotation, citation, and connection. This cannot be undone.",
+        "deleteButton": "Delete this space",
+        "dialogTitle": "Delete \"{{name}}\"?",
+        "dialogBody": "This permanently removes the space and all its contents. This cannot be undone.",
+        "typeToConfirm": "Type {{name}} to confirm",
+        "cancel": "Cancel",
+        "confirm": "Delete space"
+      }
     }
   },
   "notFound": {

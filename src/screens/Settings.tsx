@@ -6,6 +6,7 @@ import { SettingsTabs, type SettingsTabDef } from '@/components/settings/Setting
 import { SettingRow } from '@/components/settings/SettingRow';
 import { Chip } from '@/components/settings/Chip';
 import { ComingSoonRow } from '@/components/settings/ComingSoonRow';
+import { TabHeader } from '@/components/settings/TabHeader';
 
 const TAB_IDS = [
   'editor',
@@ -54,23 +55,6 @@ export function SettingsScreen() {
         </main>
       </div>
     </div>
-  );
-}
-
-function TabHeader({ titleKey, subtitleKey }: { titleKey: string; subtitleKey: string }) {
-  const { t } = useTranslation('screens');
-  return (
-    <>
-      <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-3">
-        {t('settings.breadcrumb')}
-      </div>
-      <h1 className="mb-2 font-serif text-[32px] font-normal leading-tight tracking-tight text-ink">
-        {t(titleKey)}
-      </h1>
-      <p className="mb-6 max-w-[540px] font-serif text-[14px] italic text-ink-3">
-        {t(subtitleKey)}
-      </p>
-    </>
   );
 }
 

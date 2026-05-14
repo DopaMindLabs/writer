@@ -8,7 +8,12 @@ import {
   type KeyboardEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus } from 'lucide-react';
+import { Plus, Settings } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
@@ -161,7 +166,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
 
   return (
     <aside className="flex w-56 shrink-0 flex-col border-r border-rule bg-paper-2">
-      <div className="border-b border-rule px-5 pb-4 pt-5">
+      <div className="group border-b border-rule px-5 pb-4 pt-5">
         {editingSpaceName ? (
           <input
             autoFocus
@@ -180,15 +185,33 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
             className="w-full border-0 bg-transparent p-0 font-serif text-lg font-medium leading-tight tracking-tight text-ink outline-none"
           />
         ) : (
-          <button
-            type="button"
-            onClick={() => space && setEditingSpaceName(true)}
-            disabled={!space}
-            title={space ? t('chrome:sidebar.renameSpace') : undefined}
-            className="block w-full cursor-text truncate text-left font-serif text-lg font-medium leading-tight tracking-tight text-ink"
-          >
-            {space?.name ?? '…'}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => space && setEditingSpaceName(true)}
+              disabled={!space}
+              title={space ? t('chrome:sidebar.renameSpace') : undefined}
+              className="block min-w-0 flex-1 cursor-text truncate text-left font-serif text-lg font-medium leading-tight tracking-tight text-ink"
+            >
+              {space?.name ?? '…'}
+            </button>
+            {space ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    to={`/s/${spaceId}/settings`}
+                    aria-label={t('chrome:sidebar.openSpaceSettings')}
+                    className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm text-ink-3 opacity-0 transition-opacity hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
+                  >
+                    <Settings className="h-3.5 w-3.5" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  {t('chrome:sidebar.openSpaceSettings')}
+                </TooltipContent>
+              </Tooltip>
+            ) : null}
+          </div>
         )}
         <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3">
           {space?.shared ? t('chrome:sidebar.shared') : t('chrome:sidebar.private')}

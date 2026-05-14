@@ -20,6 +20,9 @@
 
   --warning: #a8392c;
   --warning-bg: #fbe2dc;
+
+  --danger: #c96442;
+  --danger-bg: #f8e4dc;
 }
 
 [data-theme='dark'] {
@@ -34,6 +37,9 @@
 
   --warning: #ff8a7a;
   --warning-bg: #3a1e1a;
+
+  --danger: #e8987a;
+  --danger-bg: #3d2218;
 }
 
 [data-theme='hc-light'] {
@@ -54,6 +60,9 @@
 
   --warning: #a00000;
   --warning-bg: #ffe5e5;
+
+  --danger: #8a2400;
+  --danger-bg: #ffe7dc;
 }
 
 [data-theme='hc-dark'] {
@@ -74,6 +83,9 @@
 
   --warning: #ff8a7a;
   --warning-bg: #330000;
+
+  --danger: #ffb38a;
+  --danger-bg: #3d1808;
 }
 
 html,

@@ -282,9 +282,9 @@ function DrawerBody({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) {
         <button
           type="button"
           onClick={handleDeleteNote}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:text-ink"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-[color:var(--danger)] transition-colors hover:bg-[color:var(--danger-bg)]"
         >
-          <Trash2 className="h-3 w-3" />
+          <Trash2 className="h-3 w-3 text-[color:var(--danger)]" />
           Delete note
         </button>
       </footer>
