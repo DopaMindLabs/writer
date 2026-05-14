@@ -1,0 +1,71 @@
+name: Rollback to previous release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release tag to roll back to (e.g. v0.2.0). Required unless list_only is true."
+        required: false
+        type: string
+      list_only:
+        description: "List recent releases and exit without deploying."
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  list:
+    if: ${{ inputs.list_only }}
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: List recent releases
+        run: gh release list --limit 20 --repo "$GITHUB_REPOSITORY"
+
+  rollback:
+    if: ${{ !inputs.list_only }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      VERSION: ${{ inputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Validate inputs
+        run: |
+          if [ -z "$VERSION" ]; then
+            echo "::error::'version' input is required (e.g. v0.2.0). Re-run with list_only=true to see available releases."
+            exit 1
+          fi
+
+      - name: Verify release exists
+        run: gh release view "$VERSION" --json tagName,assets --repo "$GITHUB_REPOSITORY"
+
+      - name: Download release artifact
+        run: gh release download "$VERSION" --pattern 'dist-*.tar.gz' --dir . --repo "$GITHUB_REPOSITORY"
+
+      - name: Extract dist
+        run: |
+          mkdir -p dist
+          tar -xzf dist-*.tar.gz -C dist
+          ls -la dist
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
