@@ -19,7 +19,7 @@ const MAX_H = 360;
 
 const DAY = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
-interface DumpNoteProps {
+interface BrainSpaceNoteProps {
   note: Note;
   selected: boolean;
   pending: boolean;
@@ -45,7 +45,12 @@ type DragState =
       origH: number;
     };
 
-export function DumpNote({ note, selected, pending, onPick }: DumpNoteProps) {
+export function BrainSpaceNote({
+  note,
+  selected,
+  pending,
+  onPick,
+}: BrainSpaceNoteProps) {
   const [drag, setDrag] = useState<DragState>({ kind: 'idle' });
   const [pos, setPos] = useState({ l: note.l, t: note.t, w: note.w, h: note.h });
   const [editing, setEditing] = useState<'none' | 'title' | 'body'>('none');

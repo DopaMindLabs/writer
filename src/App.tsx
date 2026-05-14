@@ -9,7 +9,7 @@ import { WriteScreen } from '@/screens/Write';
 import { FocusScreen } from '@/screens/Focus';
 import { ReadScreen } from '@/screens/Read';
 import { SplitScreen } from '@/screens/Split';
-import { DumpScreen } from '@/screens/Dump';
+import { BrainSpaceScreen } from '@/screens/BrainSpace';
 import { CitationsScreen } from '@/screens/Citations';
 import { TemplatesScreen } from '@/screens/Templates';
 import { NotFoundScreen } from '@/screens/NotFound';
@@ -23,7 +23,7 @@ const router = createHashRouter([
   { path: '/s/:spaceId/d/:docId/focus', element: <FocusScreen /> },
   { path: '/s/:spaceId/d/:docId/read', element: <ReadScreen /> },
   { path: '/s/:spaceId/d/:docId/split', element: <SplitScreen /> },
-  { path: '/s/:spaceId/dump', element: <DumpScreen /> },
+  { path: '/s/:spaceId/dump', element: <BrainSpaceScreen /> },
   { path: '/s/:spaceId/citations', element: <CitationsScreen /> },
   { path: '*', element: <NotFoundScreen /> },
 ]);

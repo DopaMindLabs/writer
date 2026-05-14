@@ -1,13 +1,17 @@
 import { db } from '@/db/db';
 import type { Connection, Note } from '@/db/schema';
 
-interface DumpConnectionProps {
+interface BrainSpaceConnectionProps {
   connection: Connection;
   from: Note;
   to: Note;
 }
 
-export function DumpConnection({ connection, from, to }: DumpConnectionProps) {
+export function BrainSpaceConnection({
+  connection,
+  from,
+  to,
+}: BrainSpaceConnectionProps) {
   const cx1 = from.l + from.w / 2;
   const cy1 = from.t + from.h / 2;
   const cx2 = to.l + to.w / 2;

@@ -1,9 +1,9 @@
 import { render } from '@/test/test-utils';
 import { FIXED_TIME, sampleNote } from '@/test/fixtures';
 import type { Connection, Note } from '@/db/schema';
-import { DumpConnection } from './DumpConnection';
+import { BrainSpaceConnection } from './BrainSpaceConnection';
 
-describe('DumpConnection', () => {
+describe('BrainSpaceConnection', () => {
   it('renders SVG path between two notes', () => {
     const from: Note = { ...sampleNote, id: 'n1', l: 10, t: 10, w: 100, h: 60 };
     const to: Note = { ...sampleNote, id: 'n2', l: 240, t: 200, w: 120, h: 80 };
@@ -17,7 +17,7 @@ describe('DumpConnection', () => {
 
     const { container } = render(
       <svg>
-        <DumpConnection connection={conn} from={from} to={to} />
+        <BrainSpaceConnection connection={conn} from={from} to={to} />
       </svg>,
     );
     expect(container).toMatchSnapshot();

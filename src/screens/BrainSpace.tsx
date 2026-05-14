@@ -4,13 +4,13 @@ import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
-import { DumpCanvas } from '@/components/surfaces/DumpCanvas';
+import { BrainSpaceCanvas } from '@/components/surfaces/BrainSpaceCanvas';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
 import { useUI } from '@/store/ui';
 
-export function DumpScreen() {
+export function BrainSpaceScreen() {
   const { spaceId } = useParams<{ spaceId: string }>();
   const [searchParams] = useSearchParams();
   const focus = searchParams.get('focus') === '1';
@@ -52,16 +52,16 @@ export function DumpScreen() {
           mode="dump"
           fallbackDocId={fallbackDocId}
         />
-        <DumpMobileNotice spaceId={spaceId} />
+        <BrainSpaceMobileNotice spaceId={spaceId} />
         <main className="hidden flex-1 overflow-hidden md:block">
-          <DumpCanvas spaceId={spaceId} />
+          <BrainSpaceCanvas spaceId={spaceId} />
         </main>
       </div>
     </div>
   );
 }
 
-function DumpMobileNotice({ spaceId }: { spaceId: string }) {
+function BrainSpaceMobileNotice({ spaceId }: { spaceId: string }) {
   return (
     <div className="flex flex-1 items-center justify-center bg-paper px-6 py-10 md:hidden">
       <div className="max-w-sm text-center">

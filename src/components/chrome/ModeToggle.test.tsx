@@ -2,7 +2,7 @@ import { renderWithProviders } from '@/test/test-utils';
 import { FocusToggle, ModeTabs } from './ModeToggle';
 
 describe('ModeTabs', () => {
-  it('renders write/read/split/dump tabs with active state', () => {
+  it('renders write/read/split/space tabs with active state', () => {
     const { container } = renderWithProviders(
       <ModeTabs mode="write" spaceId="s1" docId="d1" />,
       { initialEntries: ['/s/s1/d/d1'] },

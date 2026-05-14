@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DumpNote > renders default note 1`] = `
+exports[`BrainSpaceNote > renders default note 1`] = `
 <div>
   <div
     class="group absolute flex flex-col gap-1 border bg-paper p-2.5 border-ink cursor-grab"
@@ -65,7 +65,7 @@ exports[`DumpNote > renders default note 1`] = `
 </div>
 `;
 
-exports[`DumpNote > renders selected and pending note with title 1`] = `
+exports[`BrainSpaceNote > renders selected and pending note with title 1`] = `
 <div>
   <div
     class="group absolute flex flex-col gap-1 border bg-paper p-2.5 border-ink cursor-grab outline outline-2 outline-ink outline-offset-2"
