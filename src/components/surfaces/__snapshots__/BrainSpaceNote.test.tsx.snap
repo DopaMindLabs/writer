@@ -25,6 +25,7 @@ exports[`BrainSpaceNote > renders default note 1`] = `
         type="button"
       >
         <svg
+          aria-hidden="true"
           class="lucide lucide-arrow-up-right h-3 w-3"
           fill="none"
           height="24"
@@ -70,7 +71,7 @@ exports[`BrainSpaceNote > renders default note 1`] = `
 exports[`BrainSpaceNote > renders selected and pending note with title 1`] = `
 <div>
   <div
-    class="group absolute flex flex-col gap-1 border bg-paper p-2.5 border-ink cursor-grab outline outline-2 outline-ink outline-offset-2"
+    class="group absolute flex flex-col gap-1 border bg-paper p-2.5 border-ink outline-dashed cursor-grab outline-2 outline-ink outline-offset-2"
     style="left: 24px; top: 24px; width: 184px; min-height: 80px;"
   >
     <div
@@ -92,6 +93,7 @@ exports[`BrainSpaceNote > renders selected and pending note with title 1`] = `
         type="button"
       >
         <svg
+          aria-hidden="true"
           class="lucide lucide-arrow-up-right h-3 w-3"
           fill="none"
           height="24"
