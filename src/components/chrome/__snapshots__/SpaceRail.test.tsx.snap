@@ -58,6 +58,7 @@ exports[`SpaceRail > renders rail with seeded spaces and active highlight 1`] = 
       href="/new"
     >
       <svg
+        aria-hidden="true"
         class="lucide lucide-plus h-4 w-4"
         fill="none"
         height="24"

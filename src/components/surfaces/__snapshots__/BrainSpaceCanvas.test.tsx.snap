@@ -81,6 +81,7 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
           type="button"
         >
           <svg
+            aria-hidden="true"
             class="lucide lucide-arrow-up-right h-3 w-3"
             fill="none"
             height="24"
@@ -143,6 +144,7 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
           type="button"
         >
           <svg
+            aria-hidden="true"
             class="lucide lucide-arrow-up-right h-3 w-3"
             fill="none"
             height="24"
