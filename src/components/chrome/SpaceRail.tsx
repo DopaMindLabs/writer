@@ -13,9 +13,13 @@ export function SpaceRail({ activeSpaceId }: SpaceRailProps) {
 
   return (
     <aside className="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-rule bg-paper-2 py-3.5">
-      <div className="mb-1 font-serif text-lg leading-none tracking-tight text-ink">
+      <Link
+        to="/"
+        aria-label="Home"
+        className="mb-1 flex h-7 w-7 items-center justify-center rounded-md font-serif text-lg leading-none tracking-tight text-ink hover:bg-paper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+      >
         L
-      </div>
+      </Link>
       <Tooltip>
         <TooltipTrigger asChild>
           <span

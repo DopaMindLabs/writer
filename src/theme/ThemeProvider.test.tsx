@@ -16,17 +16,18 @@ describe('ThemeProvider', () => {
     expect(document.documentElement.getAttribute('data-theme')).toBe('light');
   });
 
-  it('toggle flips light ↔ dark', () => {
+  it('setTheme to hc-light applies data-theme attribute', () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <ThemeProvider>{children}</ThemeProvider>
     );
     const { result } = renderHook(() => useTheme(), { wrapper });
 
-    expect(result.current.theme).toBe('light');
-    act(() => result.current.toggle());
-    expect(useUI.getState().theme).toBe('dark');
-    act(() => result.current.toggle());
-    expect(useUI.getState().theme).toBe('light');
+    act(() => result.current.setTheme('hc-light'));
+    expect(useUI.getState().theme).toBe('hc-light');
+    expect(document.documentElement.getAttribute('data-theme')).toBe('hc-light');
+
+    act(() => result.current.setTheme('hc-dark'));
+    expect(document.documentElement.getAttribute('data-theme')).toBe('hc-dark');
   });
 
   it('setTheme directly updates the store', () => {

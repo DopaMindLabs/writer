@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark' | 'hc-light' | 'hc-dark';
 
 interface UIState {
   currentSpaceId: string | null;

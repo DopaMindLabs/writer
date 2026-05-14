@@ -5,11 +5,14 @@ exports[`SpaceRail > renders rail with seeded spaces and active highlight 1`] = 
   <aside
     class="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-rule bg-paper-2 py-3.5"
   >
-    <div
-      class="mb-1 font-serif text-lg leading-none tracking-tight text-ink"
+    <a
+      aria-label="Home"
+      class="mb-1 flex h-7 w-7 items-center justify-center rounded-md font-serif text-lg leading-none tracking-tight text-ink hover:bg-paper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+      data-discover="true"
+      href="/"
     >
       L
-    </div>
+    </a>
     <span
       class="mb-2.5 cursor-help rounded-sm border border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-[color:var(--warning)]"
       data-state="closed"

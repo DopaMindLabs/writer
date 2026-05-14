@@ -1,10 +1,37 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Sun, Moon, Quote, Menu } from 'lucide-react';
+import { Sun, Moon, Quote, Menu, Contrast, Check } from 'lucide-react';
 import { useTheme } from '@/theme/ThemeProvider';
+import type { Theme } from '@/store/ui';
 import { useUI } from '@/store/ui';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
 import { MobileNavDrawer } from './MobileNavDrawer';
 import { cn } from '@/lib/utils';
+
+const THEME_OPTIONS: { value: Theme; label: string }[] = [
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'hc-light', label: 'High contrast (light)' },
+  { value: 'hc-dark', label: 'High contrast (dark)' },
+];
+
+function ThemeIcon({ theme }: { theme: Theme }) {
+  if (theme === 'hc-light' || theme === 'hc-dark') {
+    return <Contrast className="h-3.5 w-3.5" />;
+  }
+  return theme === 'dark' ? (
+    <Moon className="h-3.5 w-3.5" />
+  ) : (
+    <Sun className="h-3.5 w-3.5" />
+  );
+}
 
 interface TopbarProps {
   spaceId: string;
@@ -21,7 +48,7 @@ export function Topbar({
   spaceName,
   mode,
 }: TopbarProps) {
-  const { theme, toggle } = useTheme();
+  const { theme, setTheme } = useTheme();
   const location = useLocation();
   const setMobileNavOpen = useUI((s) => s.setMobileNavOpen);
   const onCitations = location.pathname.endsWith('/citations');
@@ -62,19 +89,34 @@ export function Topbar({
       {!onCitations && (mode === 'dump' || docId) && (
         <FocusToggle mode={mode} spaceId={spaceId} docId={docId} />
       )}
-      <button
-        type="button"
-        onClick={toggle}
-        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink"
-        aria-label="Toggle theme"
-        title="Toggle theme"
-      >
-        {theme === 'dark' ? (
-          <Sun className="h-3.5 w-3.5" />
-        ) : (
-          <Moon className="h-3.5 w-3.5" />
-        )}
-      </button>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+          aria-label="Theme"
+          title="Theme"
+        >
+          <ThemeIcon theme={theme} />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="min-w-[12rem]">
+          <DropdownMenuLabel>Theme</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {THEME_OPTIONS.map((opt) => (
+            <DropdownMenuItem
+              key={opt.value}
+              onSelect={() => setTheme(opt.value)}
+            >
+              <Check
+                className={cn(
+                  'h-3.5 w-3.5',
+                  theme === opt.value ? 'opacity-100' : 'opacity-0',
+                )}
+                aria-hidden
+              />
+              <span>{opt.label}</span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
       <MobileNavDrawer spaceId={spaceId} activeDocId={docId} />
     </header>
   );

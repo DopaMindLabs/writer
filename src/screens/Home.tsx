@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from '@/db/db';
+import { BlockQuote } from '@/components/ui/block-quote';
 
 export function HomeScreen() {
   const [firstSpaceId, setFirstSpaceId] = useState<string | null>(null);
@@ -25,7 +26,7 @@ export function HomeScreen() {
     <div className="flex h-full w-full flex-col overflow-auto bg-paper text-ink">
       <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 py-10 md:px-12 md:py-16">
         <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
-          a writing space
+          Free writing space
         </div>
         <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-ink md:text-6xl">
           LIpsum{' '}
@@ -36,6 +37,13 @@ export function HomeScreen() {
             ? 'Your first space is a blank one. Pick a template to get started, or start from nothing.'
             : 'A clutter-free space for long-form writing — fiction, research, essays, journals.'}
         </p>
+
+        <BlockQuote cite={<>&mdash; ARSI &ldquo;HAKITA&rdquo; PATALA</>}>
+          <p>
+            &lsquo;Culture shouldn&rsquo;t exist only for those who can afford
+            it&rsquo;
+          </p>
+        </BlockQuote>
 
         {loaded && (
           <div className="mt-12 border-y border-rule">
