@@ -13,12 +13,14 @@ function isoDate(d: Date): string {
 }
 
 function isoDateTime(d: Date): string {
-  return `${isoDate(d)} ${d.toTimeString().slice(0, 5)}`;
+  const hh = String(d.getUTCHours()).padStart(2, '0');
+  const mm = String(d.getUTCMinutes()).padStart(2, '0');
+  return `${isoDate(d)} ${hh}:${mm}`;
 }
 
 export function formatDocName(pattern: string, now: Date = new Date()): string {
   return pattern
     .replace(/\{\{date\}\}/g, isoDate(now))
     .replace(/\{\{datetime\}\}/g, isoDateTime(now))
-    .replace(/\{\{day\}\}/g, DAYS[now.getDay()]);
+    .replace(/\{\{day\}\}/g, DAYS[now.getUTCDay()]);
 }

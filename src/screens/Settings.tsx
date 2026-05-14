@@ -43,9 +43,9 @@ export function SettingsScreen() {
     <div className="flex h-full w-full flex-col bg-paper text-ink">
       <PageNav />
 
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         <SettingsTabs tabs={tabs} active={activeTab} onSelect={selectTab} />
-        <main className="flex-1 overflow-auto bg-paper px-10 py-8">
+        <main className="flex-1 overflow-auto bg-paper px-4 py-6 md:px-10 md:py-8">
           {activeTab === 'editor' && <EditorTab />}
           {activeTab === 'theme' && <ThemeTab />}
           {activeTab === 'account' && <PlaceholderTab id="account" />}
