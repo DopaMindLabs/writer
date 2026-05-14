@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { fireEvent } from '@testing-library/react';
-import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
+import { renderWithProviders, screen, waitFor, within } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { sampleSpace } from '@/test/fixtures';
 import type { Citation } from '@/db/schema';
@@ -172,6 +172,204 @@ describe('CitationsPane', () => {
     expect(revokeSpy).toHaveBeenCalledWith('blob:mock');
     createSpy.mockRestore();
     revokeSpy.mockRestore();
+  });
+
+  it('clicking a row expands a read-only detail view (no inputs until edit)', async () => {
+    await seedSpace();
+    await db.citations.put(citation());
+    renderWithProviders(<CitationsPane spaceId="s1" spaceName="Test" />);
+    const row = await screen.findByRole('button', {
+      name: /view citation smith2020/i,
+    });
+    await userEvent.click(row);
+    expect(
+      await screen.findByTestId('citation-detail-c-base'),
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText('Title')).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /^edit$/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('expanding then editing a row saves changes and returns to detail view', async () => {
+    await seedSpace();
+    await db.citations.put(citation());
+    renderWithProviders(<CitationsPane spaceId="s1" spaceName="Test" />);
+    await userEvent.click(
+      await screen.findByRole('button', { name: /view citation smith2020/i }),
+    );
+    await userEvent.click(
+      await screen.findByRole('button', { name: /^edit$/i }),
+    );
+    const titleInput = await screen.findByLabelText('Title');
+    await userEvent.clear(titleInput);
+    await userEvent.type(titleInput, 'Revised title');
+    await userEvent.click(screen.getByRole('button', { name: /^save$/i }));
+    await waitFor(async () => {
+      const updated = await db.citations.get('c-base');
+      expect(updated?.title).toBe('Revised title');
+    });
+    expect(await screen.findByText(/updated 1 citation/i)).toBeInTheDocument();
+    expect(
+      await screen.findByTestId('citation-detail-c-base'),
+    ).toBeInTheDocument();
+  });
+
+  it('escape key cancels an in-progress edit without persisting', async () => {
+    await seedSpace();
+    await db.citations.put(citation());
+    renderWithProviders(<CitationsPane spaceId="s1" spaceName="Test" />);
+    await userEvent.click(
+      await screen.findByRole('button', { name: /view citation smith2020/i }),
+    );
+    await userEvent.click(
+      await screen.findByRole('button', { name: /^edit$/i }),
+    );
+    const titleInput = await screen.findByLabelText('Title');
+    await userEvent.clear(titleInput);
+    await userEvent.type(titleInput, 'Should not stick');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(screen.queryByLabelText('Title')).not.toBeInTheDocument(),
+    );
+    expect(
+      screen.getByTestId('citation-detail-c-base'),
+    ).toBeInTheDocument();
+    const persisted = await db.citations.get('c-base');
+    expect(persisted?.title).toBe('On testing');
+  });
+
+  it('blocks save when the new tag collides with another citation in the same space', async () => {
+    await seedSpace();
+    await db.citations.bulkPut([
+      citation(),
+      citation({ id: 'c-other', key: 'jones2021', title: 'Other paper' }),
+    ]);
+    renderWithProviders(<CitationsPane spaceId="s1" spaceName="Test" />);
+    await userEvent.click(
+      await screen.findByRole('button', { name: /view citation smith2020/i }),
+    );
+    await userEvent.click(
+      await screen.findByRole('button', { name: /^edit$/i }),
+    );
+    const tagInput = await screen.findByLabelText('Tag');
+    await userEvent.clear(tagInput);
+    await userEvent.type(tagInput, 'jones2021');
+    await userEvent.click(screen.getByRole('button', { name: /^save$/i }));
+    expect(
+      await screen.findByText(/tag "jones2021" is already used in this space/i),
+    ).toBeInTheDocument();
+    const unchanged = await db.citations.get('c-base');
+    expect(unchanged?.key).toBe('smith2020');
+  });
+
+  it('bulk-deletes selected rows after confirmation', async () => {
+    await seedSpace();
+    await db.citations.bulkPut([
+      citation({ id: 'c1', key: 'k1', title: 'One' }),
+      citation({ id: 'c2', key: 'k2', title: 'Two' }),
+      citation({ id: 'c3', key: 'k3', title: 'Three' }),
+    ]);
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    renderWithProviders(<CitationsPane spaceId="s1" spaceName="Test" />);
+    await screen.findByRole('button', { name: /view citation k1/i });
+    await userEvent.click(screen.getByLabelText('Select citation k1'));
+    await userEvent.click(screen.getByLabelText('Select citation k2'));
+    const bulkBar = await screen.findByRole('region', {
+      name: /bulk actions/i,
+    });
+    await userEvent.click(
+      within(bulkBar).getByRole('button', { name: /^delete$/i }),
+    );
+    await waitFor(async () => {
+      const rows = await db.citations.toArray();
+      expect(rows.map((r) => r.id).sort()).toEqual(['c3']);
+    });
+    expect(confirmSpy).toHaveBeenCalled();
+    confirmSpy.mockRestore();
+  });
+
+  it('bulk-sets the type on selected rows', async () => {
+    await seedSpace();
+    await db.citations.bulkPut([
+      citation({ id: 'c1', key: 'k1', type: 'misc' }),
+      citation({ id: 'c2', key: 'k2', type: 'misc' }),
+    ]);
+    renderWithProviders(<CitationsPane spaceId="s1" spaceName="Test" />);
+    await screen.findByRole('button', { name: /view citation k1/i });
+    await userEvent.click(screen.getByLabelText('Select citation k1'));
+    await userEvent.click(screen.getByLabelText('Select citation k2'));
+    const typeSelect = await screen.findByLabelText(
+      /set type for selected citations/i,
+    );
+    await userEvent.selectOptions(typeSelect, 'book');
+    await waitFor(async () => {
+      const rows = await db.citations.toArray();
+      expect(rows.every((r) => r.type === 'book')).toBe(true);
+    });
+  });
+
+  it('deleting a single citation from the detail view removes it from the database', async () => {
+    await seedSpace();
+    await db.citations.put(citation());
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    renderWithProviders(<CitationsPane spaceId="s1" spaceName="Test" />);
+    await userEvent.click(
+      await screen.findByRole('button', { name: /view citation smith2020/i }),
+    );
+    const detail = await screen.findByTestId('citation-detail-c-base');
+    await userEvent.click(
+      within(detail).getByRole('button', { name: /^delete$/i }),
+    );
+    await waitFor(async () => {
+      const rows = await db.citations.toArray();
+      expect(rows).toHaveLength(0);
+    });
+    confirmSpy.mockRestore();
+  });
+
+  it('copy-tag button writes the citation key to the clipboard and shows confirmation', async () => {
+    await seedSpace();
+    await db.citations.put(citation());
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    });
+    renderWithProviders(<CitationsPane spaceId="s1" spaceName="Test" />);
+    await userEvent.click(
+      await screen.findByRole('button', { name: /view citation smith2020/i }),
+    );
+    await userEvent.click(
+      await screen.findByRole('button', { name: /^copy tag smith2020$/i }),
+    );
+    expect(writeText).toHaveBeenCalledWith('smith2020');
+    expect(
+      await screen.findByRole('button', { name: /^copied tag smith2020$/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('the close (×) button collapses an expanded row back to the list view', async () => {
+    await seedSpace();
+    await db.citations.put(citation());
+    renderWithProviders(<CitationsPane spaceId="s1" spaceName="Test" />);
+    await userEvent.click(
+      await screen.findByRole('button', { name: /view citation smith2020/i }),
+    );
+    expect(
+      await screen.findByTestId('citation-detail-c-base'),
+    ).toBeInTheDocument();
+    await userEvent.click(
+      screen.getByRole('button', { name: /collapse citation smith2020/i }),
+    );
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('citation-detail-c-base'),
+      ).not.toBeInTheDocument(),
+    );
+    expect(
+      await screen.findByRole('button', { name: /view citation smith2020/i }),
+    ).toBeInTheDocument();
   });
 
   it('paginates when more than one page of citations is present', async () => {

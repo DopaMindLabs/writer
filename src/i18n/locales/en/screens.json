@@ -218,6 +218,29 @@
     "failedManual": "Failed: {{message}}",
     "addedOne": "Added 1 citation.",
     "unknownAuthor": "(unknown)",
-    "unknownError": "unknown error"
+    "unknownError": "unknown error",
+    "edit": {
+      "save": "save",
+      "cancel": "cancel",
+      "delete": "delete",
+      "tagLabel": "Tag",
+      "authorsLabel": "Authors",
+      "titleLabel": "Title",
+      "yearLabel": "Year",
+      "typeLabel": "Type",
+      "duplicateKey": "Tag \"{{key}}\" is already used in this space.",
+      "updated": "Updated 1 citation.",
+      "deleteOne": "Deleted 1 citation.",
+      "confirmDeleteUsed": "This citation is used {{count}}× in your documents. Delete anyway?"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} selected",
+      "deleteSelected": "delete",
+      "setTypePrompt": "set type",
+      "clearSelection": "clear",
+      "deleted": "Deleted {{count}} citations.",
+      "typeApplied": "Set type to {{type}} on {{count}} citations.",
+      "confirmDelete": "Delete {{count}} citation(s)? This cannot be undone."
+    }
   }
 }
