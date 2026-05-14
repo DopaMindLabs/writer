@@ -20,7 +20,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 
 const TAB_IDS = [
   'general',
@@ -238,14 +237,15 @@ function DangerTab({ space }: { space: Space }) {
         <p className="mt-2 max-w-[480px] font-serif text-[13px] italic text-ink-3">
           {t('settings.space.danger.deleteCardBody')}
         </p>
-        <button
-          type="button"
+        <Button
+          variant="destructive"
+          size="sm"
           onClick={() => setOpen(true)}
-          className="mt-5 inline-flex items-center gap-2 border border-[color:var(--danger)] bg-transparent px-3.5 py-1.5 text-[12px] font-medium tracking-[0.01em] text-[color:var(--danger)] transition-colors hover:bg-[color:var(--danger-bg)]"
+          className="mt-5"
         >
-          <Trash2 className="h-3.5 w-3.5 text-[color:var(--danger)]" />
+          <Trash2 className="h-3.5 w-3.5" />
           {t('settings.space.danger.deleteButton')}
-        </button>
+        </Button>
       </div>
 
       <DeleteSpaceDialog space={space} open={open} onOpenChange={setOpen} />
@@ -317,21 +317,17 @@ function DeleteSpaceDialog({
         </label>
 
         <div className="flex items-center justify-end gap-2">
-          <Button variant="outline" onClick={() => handleOpenChange(false)}>
+          <Button variant="secondary" onClick={() => handleOpenChange(false)}>
             {t('settings.space.danger.cancel')}
           </Button>
-          <button
-            type="button"
+          <Button
+            variant="destructive"
             onClick={() => void handleConfirm()}
             disabled={!canDelete}
-            className={cn(
-              'inline-flex h-9 items-center justify-center gap-2 border border-[color:var(--danger)] bg-transparent px-4 text-sm font-medium text-[color:var(--danger)] transition-colors hover:bg-[color:var(--danger-bg)]',
-              'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent',
-            )}
           >
-            <Trash2 className="h-3.5 w-3.5 text-[color:var(--danger)]" />
+            <Trash2 className="h-3.5 w-3.5" />
             {t('settings.space.danger.confirm')}
-          </button>
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
