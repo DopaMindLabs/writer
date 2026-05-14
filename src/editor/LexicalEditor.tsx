@@ -14,6 +14,8 @@ import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { TRANSFORMERS } from '@lexical/markdown';
 import { AutosavePlugin } from './plugins/AutosavePlugin';
 import { EditablePlugin } from './plugins/EditablePlugin';
+import { FloatingToolbarPlugin } from './plugins/FloatingToolbarPlugin';
+import { useUI } from '@/store/ui';
 import { cn } from '@/lib/utils';
 import type { EditorMode } from './EditorFacade';
 
@@ -31,6 +33,7 @@ const editorTheme = {
     h1: 'mb-4 mt-6 font-serif text-3xl font-semibold tracking-tight',
     h2: 'mb-3 mt-6 font-serif text-2xl font-semibold tracking-tight',
     h3: 'mb-2 mt-4 font-serif text-xl font-semibold tracking-tight',
+    h4: 'mb-2 mt-3 font-serif text-lg font-semibold tracking-tight',
   },
   list: {
     ul: 'mb-4 list-disc pl-6',
@@ -56,6 +59,7 @@ export function LexicalEditor({
   autoFocus = true,
 }: LexicalEditorProps) {
   const editable = mode !== 'read';
+  const floatingToolbarEnabled = useUI((s) => s.floatingToolbarEnabled);
 
   const initialConfig = useMemo(
     () => ({
@@ -115,6 +119,7 @@ export function LexicalEditor({
         <LinkPlugin />
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
         {editable && <AutosavePlugin onChange={onChange} />}
+        {editable && floatingToolbarEnabled && <FloatingToolbarPlugin />}
         <EditablePlugin editable={editable} />
       </div>
     </LexicalComposer>
