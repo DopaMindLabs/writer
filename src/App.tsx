@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/theme/ThemeProvider';
 import { resetAndReseed } from '@/db/seed';
 import { HomeScreen } from '@/screens/Home';
 import { AboutScreen } from '@/screens/About';
+import { SettingsScreen } from '@/screens/Settings';
 import { WriteScreen } from '@/screens/Write';
 import { FocusScreen } from '@/screens/Focus';
 import { ReadScreen } from '@/screens/Read';
@@ -17,6 +18,7 @@ import { NotFoundScreen } from '@/screens/NotFound';
 const router = createHashRouter([
   { path: '/', element: <HomeScreen /> },
   { path: '/about', element: <AboutScreen /> },
+  { path: '/settings', element: <SettingsScreen /> },
   { path: '/new', element: <TemplatesScreen /> },
   { path: '/s/:spaceId', element: <WriteScreen /> },
   { path: '/s/:spaceId/d/:docId', element: <WriteScreen /> },

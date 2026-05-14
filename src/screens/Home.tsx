@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { db } from '@/db/db';
 import { BlockQuote } from '@/components/ui/block-quote';
+import { PageNav } from '@/components/chrome/PageNav';
 
 export function HomeScreen() {
   const { t } = useTranslation(['screens', 'common']);
@@ -26,6 +27,7 @@ export function HomeScreen() {
 
   return (
     <div className="flex h-full w-full flex-col overflow-auto bg-paper text-ink">
+      <PageNav showBack={false} />
       <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 py-10 md:px-12 md:py-16">
         <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
           {t('home.subtitle')}
@@ -80,23 +82,8 @@ export function HomeScreen() {
           </div>
         )}
 
-        <div className="mt-10 flex items-center gap-5 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-          <Link to="/about" className="hover:text-ink">
-            {t('about', { ns: 'common' })}
-          </Link>
-          {/* TODO: replace with GitHub URL */}
-          <a
-            href="#"
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-ink"
-          >
-            {t('github', { ns: 'common' })}
-          </a>
-          <span className="flex-1" />
-          <span className="italic normal-case text-ink-4">
-            {t('home.statusLine')}
-          </span>
+        <div className="mt-10 flex items-center justify-end font-mono text-[10px] uppercase tracking-wider text-ink-4">
+          <span className="italic normal-case">{t('home.statusLine')}</span>
         </div>
       </div>
     </div>

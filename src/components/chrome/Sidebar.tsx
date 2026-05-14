@@ -257,6 +257,9 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
         <Link to="/about" className="hover:text-ink">
           {t('about', { ns: 'common' })}
         </Link>
+        <Link to="/settings" className="hover:text-ink">
+          {t('settings', { ns: 'common' })}
+        </Link>
         {/* TODO: replace with GitHub URL */}
         <a
           href="#"
