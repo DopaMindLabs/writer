@@ -167,6 +167,43 @@ describe('Sidebar', () => {
       .toBeInTheDocument();
   });
 
+  it('shows a hover-revealed Space settings link in the header', async () => {
+    await seedBasicSpace();
+    renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
+      initialEntries: ['/s/s1/d/d1'],
+    });
+    const cog = await screen.findByRole('link', {
+      name: /space settings/i,
+    });
+    expect(cog).toHaveAttribute('href', '/s/s1/settings');
+    // The cog uses the opacity-0 + group-hover:opacity-100 pattern so it's
+    // visually hidden until the header is hovered or the link is focused.
+    expect(cog.className).toMatch(/opacity-0/);
+    expect(cog.className).toMatch(/group-hover:opacity-100/);
+  });
+
+  it('hides the Space settings link while renaming the space', async () => {
+    await seedBasicSpace();
+    const user = userEvent.setup();
+    renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
+      initialEntries: ['/s/s1/d/d1'],
+    });
+    await user.click(await screen.findByText('Test Space'));
+    await screen.findByLabelText(/rename space/i);
+    expect(
+      screen.queryByRole('link', { name: /space settings/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('omits the Space settings link when the space has not loaded yet', () => {
+    renderWithProviders(<Sidebar spaceId="missing" activeDocId={null} />, {
+      initialEntries: ['/s/missing'],
+    });
+    expect(
+      screen.queryByRole('link', { name: /space settings/i }),
+    ).not.toBeInTheDocument();
+  });
+
   it('shows the bottom nav with Home/About/Settings/Github links', async () => {
     await seedBasicSpace();
     renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {

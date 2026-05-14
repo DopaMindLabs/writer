@@ -6,7 +6,8 @@
     "empty": "(empty)",
     "addDocAria": "Add doc to {{label}}",
     "docNamePlaceholder": "Doc name (Enter to create)",
-    "renameSpace": "Rename space"
+    "renameSpace": "Rename space",
+    "openSpaceSettings": "Space settings"
   },
   "topbar": {
     "openNav": "Open navigation",

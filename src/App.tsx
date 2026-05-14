@@ -6,6 +6,7 @@ import { resetAndReseed } from '@/db/seed';
 import { HomeScreen } from '@/screens/Home';
 import { AboutScreen } from '@/screens/About';
 import { SettingsScreen } from '@/screens/Settings';
+import { SpaceSettingsScreen } from '@/screens/SpaceSettings';
 import { WriteScreen } from '@/screens/Write';
 import { FocusScreen } from '@/screens/Focus';
 import { ReadScreen } from '@/screens/Read';
@@ -21,6 +22,7 @@ const router = createHashRouter([
   { path: '/settings', element: <SettingsScreen /> },
   { path: '/new', element: <TemplatesScreen /> },
   { path: '/s/:spaceId', element: <WriteScreen /> },
+  { path: '/s/:spaceId/settings', element: <SpaceSettingsScreen /> },
   { path: '/s/:spaceId/d/:docId', element: <WriteScreen /> },
   { path: '/s/:spaceId/d/:docId/focus', element: <FocusScreen /> },
   { path: '/s/:spaceId/d/:docId/read', element: <ReadScreen /> },

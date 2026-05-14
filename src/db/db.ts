@@ -68,6 +68,10 @@ export class LoremDB extends Dexie {
           if (n.state === undefined) n.state = 'user';
         });
     });
+
+    this.version(5).stores({
+      spaces: 'id, createdAt, updatedAt',
+    });
   }
 }
 

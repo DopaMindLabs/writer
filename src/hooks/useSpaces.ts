@@ -2,7 +2,11 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db/db';
 
 export function useSpaces() {
-  return useLiveQuery(() => db.spaces.orderBy('updatedAt').reverse().toArray(), [], []);
+  return useLiveQuery(
+    () => db.spaces.orderBy('createdAt').reverse().toArray(),
+    [],
+    [],
+  );
 }
 
 export function useSpace(id: string | null | undefined) {
