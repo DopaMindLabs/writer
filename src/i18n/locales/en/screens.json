@@ -24,10 +24,68 @@
     "statusValueRest": " — there is no data sync. All data is saved in IndexedDB in your local browser. If you clear your browser cache, your work will be lost.",
     "feedbackBefore": "I am still building this and I have alot ideas ",
     "feedbackAfter": ". I'd love to hear what works, what doesn't, and what you wish existed. Feedback is welcome.",
-    "sourceLabel": "Source",
-    "settingsLabel": "Editor enhancements",
-    "floatingToolbarLabel": "Floating formatting toolbar",
-    "floatingToolbarHint": "Show H1–H4, lists, blockquote, bold and italic on text selection or right-click. Off by default — markdown shortcuts (#, >, -, **) still work either way."
+    "sourceLabel": "Source"
+  },
+  "settings": {
+    "back": "back",
+    "windowTitle": "lotem · settings",
+    "breadcrumb": "SETTINGS",
+    "comingSoonBadge": "coming soon",
+    "helpAria": "What is this?",
+    "tabs": {
+      "editor": "Editor",
+      "account": "Account",
+      "typography": "Typography",
+      "theme": "Theme",
+      "shortcuts": "Shortcuts",
+      "backups": "Backups"
+    },
+    "editor": {
+      "title": "Editor",
+      "subtitle": "Toolbar and writing affordances. Markdown shortcuts (#, >, -, **) keep working regardless of these settings.",
+      "floatingToolbarLabel": "Floating toolbar",
+      "floatingToolbarHint": "Appears on highlight or right-click in write mode.",
+      "floatingToolbarOff": "Off",
+      "floatingToolbarOn": "On",
+      "rightClickLabel": "Right-click menu",
+      "rightClickHint": "Switch between the floating toolbar and the browser's native context menu.",
+      "rightClickTooltip": "Use the native context menu on right-click instead of the floating toolbar. The toolbar will still appear on highlight-select.",
+      "inlineTogglesLabel": "Inline toggles",
+      "inlineTogglesHint": "Bold and italic buttons inside the floating toolbar.",
+      "inlineTogglesTooltip": "Hide the B and I buttons from the floating toolbar. Markdown shortcuts (**, _) keep working.",
+      "listDepthLabel": "List nesting depth",
+      "listDepthHint": "How deep bullet and numbered lists can nest.",
+      "listDepthTooltip": "Raise or lower the cap on list nesting. Currently fixed at 2 levels.",
+      "templateDefaultsLabel": "Per-template defaults",
+      "templateDefaultsHint": "Different formatting subsets per template.",
+      "templateDefaultsTooltip": "Let each template (fiction, journal, technical…) choose its own formatting subset."
+    },
+    "theme": {
+      "title": "Theme",
+      "subtitle": "Applies everywhere. Changes take effect immediately.",
+      "rowLabel": "Color scheme",
+      "rowHint": "Switch between light, dark, or high-contrast variants."
+    },
+    "account": {
+      "title": "Account",
+      "subtitle": "Sign-in, sync across devices, and shared workspaces.",
+      "comingSoonBody": "Cloud sync is unavailable today — Lotem is local-only. Account, sign-in, and shared workspaces land when sync ships."
+    },
+    "typography": {
+      "title": "Typography",
+      "subtitle": "Defaults across all worlds. Individual worlds may override.",
+      "comingSoonBody": "Pick the prose font, UI font, default reading size, line height, and measure for new worlds."
+    },
+    "shortcuts": {
+      "title": "Shortcuts",
+      "subtitle": "Keyboard bindings for navigation, formatting, and modes.",
+      "comingSoonBody": "Rebindable shortcuts for write/read/split, focus mode, and the formatting toolbar."
+    },
+    "backups": {
+      "title": "Backups",
+      "subtitle": "Export, restore, and snapshot your local data.",
+      "comingSoonBody": "Scheduled local snapshots, manual export to .zip, and restore from a previous backup."
+    }
   },
   "notFound": {
     "code": "404",

@@ -164,6 +164,13 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
       </a>
       <a
         class="hover:text-ink"
+        data-discover="true"
+        href="/settings"
+      >
+        Settings
+      </a>
+      <a
+        class="hover:text-ink"
         href="#"
         rel="noreferrer"
         target="_blank"
