@@ -16,9 +16,9 @@ const template: Template = {
     { label: 'Workshop', order: 2 },
   ],
   seedDocs: [
-    { sectionLabel: 'Manuscript', name: 'Chapter 01 - The Waypoint' },
-    { sectionLabel: 'Manuscript', name: 'Chapter 02 — Outpost Meridian' },
     { sectionLabel: 'Manuscript', name: 'Chapter 03 — The Collective' },
+    { sectionLabel: 'Manuscript', name: 'Chapter 02 — Outpost Meridian' },
+    { sectionLabel: 'Manuscript', name: 'Chapter 01 - The Waypoint' },
     { sectionLabel: 'World', name: 'Characters' },
     { sectionLabel: 'World', name: 'Places' },
     { sectionLabel: 'World', name: 'Lore & rules' },
