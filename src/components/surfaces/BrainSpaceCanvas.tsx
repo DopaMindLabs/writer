@@ -28,7 +28,6 @@ export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
   const notes = useNotes(spaceId);
   const connections = useConnections(spaceId);
   const space = useSpace(spaceId);
-  const openDetail = useUI((s) => s.openDetail);
   const focusedNoteId = useUI((s) => s.focusedNoteId);
   const focusNote = useUI((s) => s.focusNote);
   const [pendingFrom, setPendingFrom] = useState<string | null>(null);
@@ -84,9 +83,9 @@ export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
         }
         return;
       }
-      openDetail(id);
+      focusNote(id);
     },
-    [pendingFrom, spaceId, openDetail],
+    [pendingFrom, spaceId, focusNote],
   );
 
   function onBackgroundPointerDown(e: ReactPointerEvent<HTMLDivElement>) {

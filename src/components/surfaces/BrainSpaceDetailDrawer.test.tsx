@@ -46,7 +46,8 @@ describe('BrainSpaceDetailDrawer', () => {
     await seedTwoConnectedNotes();
     const user = userEvent.setup();
     const { findByText, findByLabelText } = renderCanvas();
-    await user.click(await findByText('Hero'));
+    await findByText('Hero');
+    useUI.getState().openDetail(SECOND_NOTE.id);
     const titleInput = await findByLabelText('Note title');
     expect((titleInput as HTMLInputElement).value).toBe('Hero');
     expect(await findByText('Body')).toBeInTheDocument();
@@ -56,7 +57,8 @@ describe('BrainSpaceDetailDrawer', () => {
     await seedTwoConnectedNotes();
     const user = userEvent.setup();
     const { findByText, findByRole } = renderCanvas();
-    await user.click(await findByText('Hero'));
+    await findByText('Hero');
+    useUI.getState().openDetail(SECOND_NOTE.id);
     const heading = await findByRole('heading', { name: /connections/i });
     expect(heading.textContent).toMatch(/Connections \(1\)/);
   });
@@ -65,7 +67,8 @@ describe('BrainSpaceDetailDrawer', () => {
     await seedTwoConnectedNotes();
     const user = userEvent.setup();
     const { findByText, findByLabelText } = renderCanvas();
-    await user.click(await findByText('Hero'));
+    await findByText('Hero');
+    useUI.getState().openDetail(SECOND_NOTE.id);
     const body = (await findByLabelText('Body')) as HTMLTextAreaElement;
     await user.clear(body);
     await user.type(body, 'updated body');
@@ -81,7 +84,8 @@ describe('BrainSpaceDetailDrawer', () => {
     await db.docs.put(sampleDoc);
     const user = userEvent.setup();
     const { findByText, findByLabelText } = renderCanvas();
-    await user.click(await findByText('Hero'));
+    await findByText('Hero');
+    useUI.getState().openDetail(SECOND_NOTE.id);
     const select = (await findByLabelText(/linked doc/i)) as HTMLSelectElement;
     await user.selectOptions(select, sampleDoc.id);
     await waitFor(async () => {
@@ -94,7 +98,8 @@ describe('BrainSpaceDetailDrawer', () => {
     await seedTwoConnectedNotes();
     const user = userEvent.setup();
     const { findByText, findAllByLabelText } = renderCanvas();
-    await user.click(await findByText('Hero'));
+    await findByText('Hero');
+    useUI.getState().openDetail(SECOND_NOTE.id);
     const removeButtons = await findAllByLabelText('Remove connection');
     await user.click(removeButtons[0]);
     await waitFor(async () => {
