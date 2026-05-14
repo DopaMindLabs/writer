@@ -17,6 +17,14 @@ describe('ModeTabs', () => {
     );
     expect(container).toMatchSnapshot();
   });
+
+  it('renders icon-only tabs with tooltips in focus mode', () => {
+    const { container } = renderWithProviders(
+      <ModeTabs mode="focus" spaceId="s1" docId="d1" />,
+      { initialEntries: ['/s/s1/d/d1?focus=1'] },
+    );
+    expect(container).toMatchSnapshot();
+  });
 });
 
 describe('FocusToggle', () => {
@@ -24,6 +32,14 @@ describe('FocusToggle', () => {
     const { container } = renderWithProviders(
       <FocusToggle mode="write" spaceId="s1" docId="d1" />,
       { initialEntries: ['/s/s1/d/d1'] },
+    );
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders icon-only exit-focus link when focused', () => {
+    const { container } = renderWithProviders(
+      <FocusToggle mode="focus" spaceId="s1" docId="d1" />,
+      { initialEntries: ['/s/s1/d/d1?focus=1'] },
     );
     expect(container).toMatchSnapshot();
   });
