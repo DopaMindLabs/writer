@@ -5,7 +5,8 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
-import { Globe, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ExternalLink, Globe, X } from 'lucide-react';
 import { db } from '@/db/db';
 import { deleteNoteWithCascade } from '@/db/seed';
 import { NoteState, type Note } from '@/db/schema';
@@ -21,6 +22,7 @@ const DAY = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
 interface BrainSpaceNoteProps {
   note: Note;
+  spaceId: string;
   selected: boolean;
   pending: boolean;
   onPick: (e: ReactPointerEvent<HTMLDivElement>) => void;
@@ -47,29 +49,20 @@ type DragState =
 
 export function BrainSpaceNote({
   note,
+  spaceId,
   selected,
   pending,
   onPick,
 }: BrainSpaceNoteProps) {
+  const navigate = useNavigate();
   const [drag, setDrag] = useState<DragState>({ kind: 'idle' });
   const [pos, setPos] = useState({ l: note.l, t: note.t, w: note.w, h: note.h });
-  const [editing, setEditing] = useState<'none' | 'title' | 'body'>('none');
-  const [draftBody, setDraftBody] = useState(note.body);
-  const [draftTitle, setDraftTitle] = useState(note.title ?? '');
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (drag.kind !== 'idle') return;
     setPos({ l: note.l, t: note.t, w: note.w, h: note.h });
   }, [note.l, note.t, note.w, note.h, drag.kind]);
-
-  useEffect(() => {
-    if (editing === 'body') setDraftBody(note.body);
-  }, [note.body, editing]);
-
-  useEffect(() => {
-    if (editing === 'title') setDraftTitle(note.title ?? '');
-  }, [note.title, editing]);
 
   const dayChip = DAY[new Date(note.createdAt).getDay()] ?? 'now';
   const isSeedPrompt = note.state === NoteState.SeedPrompt;
@@ -78,14 +71,18 @@ export function BrainSpaceNote({
 
   const onSurfacePointerDown = useCallback(
     (e: ReactPointerEvent<HTMLDivElement>) => {
-      if (editing !== 'none') return;
       if (e.button !== 0) return;
-      onPick(e);
-      if (e.shiftKey) return;
       const target = e.target as HTMLElement;
       if (target.closest('[data-resize-handle]')) return;
       if (target.closest('[data-delete]')) return;
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      if (target.closest('[data-doc-link]')) return;
+      onPick(e);
+      if (e.shiftKey) return;
+      try {
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      } catch {
+        /* environments without pointer capture (jsdom) */
+      }
       setDrag({
         kind: 'move',
         pointerId: e.pointerId,
@@ -96,7 +93,7 @@ export function BrainSpaceNote({
       });
       e.preventDefault();
     },
-    [editing, onPick, note.l, note.t],
+    [onPick, note.l, note.t],
   );
 
   const onResizePointerDown = useCallback(
@@ -163,27 +160,10 @@ export function BrainSpaceNote({
     await deleteNoteWithCascade(note.id);
   }
 
-  async function maybePromote() {
-    if (note.state !== NoteState.User) {
-      await db.notes.update(note.id, { state: NoteState.User });
-    }
-  }
-
-  async function commitBody() {
-    setEditing('none');
-    if (draftBody !== note.body) {
-      await db.notes.update(note.id, { body: draftBody });
-      await maybePromote();
-    }
-  }
-
-  async function commitTitle() {
-    setEditing('none');
-    const next = draftTitle.trim() || undefined;
-    if (next !== note.title) {
-      await db.notes.update(note.id, { title: next });
-      await maybePromote();
-    }
+  function onDocLinkClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (!note.linkedDocId) return;
+    navigate(`/s/${spaceId}/d/${note.linkedDocId}`);
   }
 
   return (
@@ -210,6 +190,18 @@ export function BrainSpaceNote({
       <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4">
         <span>{NOTE_KIND_LABEL[note.kind]}</span>
         <span className="flex-1" />
+        {note.linkedDocId && (
+          <button
+            type="button"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={onDocLinkClick}
+            data-doc-link
+            aria-label="Open linked doc"
+            className="inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-3 hover:bg-paper-2 hover:text-ink"
+          >
+            <ExternalLink className="h-3 w-3" />
+          </button>
+        )}
         {isSeedFetched && (
           <Globe className="h-3 w-3 text-ink-4" aria-label="Fetched content" />
         )}
@@ -230,73 +222,21 @@ export function BrainSpaceNote({
         </button>
       </div>
 
-      {editing === 'title' ? (
-        <input
-          autoFocus
-          value={draftTitle}
-          onChange={(e) => setDraftTitle(e.target.value)}
-          onBlur={commitTitle}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-            if (e.key === 'Escape') {
-              setDraftTitle(note.title ?? '');
-              setEditing('none');
-            }
-          }}
-          placeholder="title"
-          className="border-0 bg-transparent p-0 font-serif text-[13px] font-medium text-ink outline-none"
-        />
-      ) : note.title ? (
-        <div
-          onPointerDown={(e) => {
-            e.stopPropagation();
-          }}
-          onClick={() => setEditing('title')}
-          className="font-serif text-[13px] font-medium text-ink"
-        >
+      {note.title ? (
+        <div className="font-serif text-[13px] font-medium text-ink">
           {note.title}
         </div>
-      ) : (
-        <button
-          type="button"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => setEditing('title')}
-          className="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
-        >
-          + title
-        </button>
-      )}
+      ) : null}
 
-      {editing === 'body' ? (
-        <textarea
-          autoFocus
-          value={draftBody}
-          onChange={(e) => setDraftBody(e.target.value)}
-          onBlur={commitBody}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              setDraftBody(note.body);
-              setEditing('none');
-            }
-          }}
-          className={cn(
-            'flex-1 resize-none border-0 bg-transparent p-0 font-serif text-[12px] leading-snug text-ink-2 outline-none',
-            isSeedPrompt && 'italic',
-          )}
-        />
-      ) : (
-        <div
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => setEditing('body')}
-          className={cn(
-            'flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2',
-            isSeedPrompt && 'italic',
-            !note.body && !isSeedPrompt && 'text-ink-4',
-          )}
-        >
-          {note.body || (isSeedPrompt ? '' : '(click to write)')}
-        </div>
-      )}
+      <div
+        className={cn(
+          'flex-1 whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2',
+          isSeedPrompt && 'italic',
+          !note.body && !isSeedPrompt && 'text-ink-4',
+        )}
+      >
+        {note.body || (isSeedPrompt ? '' : '(click to open)')}
+      </div>
 
       <div
         data-resize-handle

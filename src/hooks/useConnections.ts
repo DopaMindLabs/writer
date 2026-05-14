@@ -16,3 +16,29 @@ export function useConnections(
     ) ?? []
   );
 }
+
+export interface NoteConnections {
+  incoming: Connection[];
+  outgoing: Connection[];
+}
+
+const EMPTY_CONNECTIONS: NoteConnections = { incoming: [], outgoing: [] };
+
+export function useConnectionsForNote(
+  noteId: string | null | undefined,
+): NoteConnections {
+  return (
+    useLiveQuery(
+      async () => {
+        if (!noteId) return EMPTY_CONNECTIONS;
+        const [outgoing, incoming] = await Promise.all([
+          db.connections.where('fromNoteId').equals(noteId).toArray(),
+          db.connections.where('toNoteId').equals(noteId).toArray(),
+        ]);
+        return { incoming, outgoing };
+      },
+      [noteId],
+      EMPTY_CONNECTIONS,
+    ) ?? EMPTY_CONNECTIONS
+  );
+}

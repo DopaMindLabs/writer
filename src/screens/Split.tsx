@@ -89,7 +89,7 @@ export function SplitScreen() {
         <main className="hidden flex-1 grid-cols-2 divide-x divide-rule overflow-hidden md:grid">
           <section className="flex min-w-0 flex-col">
             <div className="flex items-center justify-between border-b border-rule px-6 py-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-              <span>LEFT — {leftDoc?.name ?? '…'}</span>
+              <span>{t('split.leftPrefix')} {leftDoc?.name ?? '…'}</span>
             </div>
             <div className="flex-1 overflow-hidden">
               {leftDoc && <WriteSurface doc={leftDoc} mode="write" />}
