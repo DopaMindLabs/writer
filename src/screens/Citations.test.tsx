@@ -1,7 +1,8 @@
 import userEvent from '@testing-library/user-event';
-import { renderAtRoute, waitFor } from '@/test/test-utils';
+import { act, renderAtRoute, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
-import { sampleSpace } from '@/test/fixtures';
+import { sampleSpace, seedBasicSpace } from '@/test/fixtures';
+import { useUI } from '@/store/ui';
 import type { Citation } from '@/db/schema';
 import { CitationsScreen } from './Citations';
 
@@ -73,5 +74,18 @@ describe('CitationsScreen', () => {
       initialEntries: ['/citations'],
     });
     expect(queryByTestId('catch-all')).toBeInTheDocument();
+  });
+
+  it('renders the docs sidebar so the user can navigate back to a doc', async () => {
+    await seedBasicSpace();
+    await db.citations.put(sampleCitation);
+    act(() => useUI.getState().setCurrentDocId('d1'));
+    const { findByRole, findAllByText } = renderAtRoute(<CitationsScreen />, {
+      path: '/s/:spaceId/citations',
+      initialEntries: ['/s/s1/citations'],
+    });
+    const sidebar = await findByRole('link', { name: /sample doc/i });
+    expect(sidebar).toHaveAttribute('href', '/s/s1/d/d1');
+    expect((await findAllByText('On testing')).length).toBeGreaterThan(0);
   });
 });
