@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/DopaMindLabs/writer/compare/v0.4.1...v0.4.2) (2026-05-14)
+
+
+### Bug Fixes
+
+* update PostCSS configuration and Tailwind CSS imports ([6c75c53](https://github.com/DopaMindLabs/writer/commit/6c75c53ea3e1b28f2d1fe7799b49551b97fa415c))
+
 ## [0.4.1](https://github.com/DopaMindLabs/writer/compare/v0.3.0...v0.4.1) (2026-05-14)
 
 
