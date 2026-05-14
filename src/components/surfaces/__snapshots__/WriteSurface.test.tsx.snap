@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`WriteSurface > renders editor stub with doc body and mode 1`] = `
+<div>
+  <div
+    class="h-full overflow-auto bg-paper px-12 py-12"
+  >
+    <div
+      data-mode="write"
+      data-placeholder="Start writing…"
+      data-testid="editor-stub"
+    >
+      hello world
+    </div>
+  </div>
+</div>
+`;

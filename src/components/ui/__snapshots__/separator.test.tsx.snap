@@ -1,0 +1,18 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Separator > renders horizontal and vertical orientations 1`] = `
+<div>
+  <div>
+    <div
+      class="shrink-0 bg-rule h-px w-full"
+      data-orientation="horizontal"
+      role="none"
+    />
+    <div
+      class="shrink-0 bg-rule h-full w-px"
+      data-orientation="vertical"
+      role="none"
+    />
+  </div>
+</div>
+`;

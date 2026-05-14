@@ -1,0 +1,36 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FocusRail > renders space dots with active highlight 1`] = `
+<div>
+  <aside
+    class="flex w-9 shrink-0 flex-col items-center gap-3.5 border-r border-rule bg-paper py-3.5"
+  >
+    <div
+      class="font-serif text-sm leading-none text-ink"
+    >
+      L
+    </div>
+    <div
+      class="h-px w-4 bg-rule"
+    />
+    <a
+      aria-label="Gamma"
+      class="h-1 w-1 rounded-full bg-rule"
+      data-discover="true"
+      href="/s/s3"
+    />
+    <a
+      aria-label="Beta"
+      class="h-1 w-1 rounded-full bg-ink"
+      data-discover="true"
+      href="/s/s2"
+    />
+    <a
+      aria-label="Alpha"
+      class="h-1 w-1 rounded-full bg-rule"
+      data-discover="true"
+      href="/s/s1"
+    />
+  </aside>
+</div>
+`;
