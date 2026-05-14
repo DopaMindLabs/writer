@@ -1,7 +1,9 @@
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { useEffect, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Sun, Moon, Quote, Menu, Contrast, Check } from 'lucide-react';
 import { useTheme } from '@/theme/ThemeProvider';
+import { db } from '@/db/db';
 import type { Theme } from '@/store/ui';
 import { useUI } from '@/store/ui';
 import {
@@ -61,6 +63,32 @@ export function Topbar({
   const openCitationsDrawer = useUI((s) => s.openCitationsDrawer);
   const onCitations = location.pathname.endsWith('/citations');
 
+  const [editingDoc, setEditingDoc] = useState(false);
+  const [draftDocName, setDraftDocName] = useState(docName ?? '');
+
+  useEffect(() => {
+    if (!editingDoc) setDraftDocName(docName ?? '');
+  }, [docName, editingDoc]);
+
+  async function commitDocName() {
+    setEditingDoc(false);
+    if (!docId) return;
+    const next = draftDocName.trim();
+    if (!next || next === docName) return;
+    await db.docs.update(docId, { name: next, updatedAt: Date.now() });
+  }
+
+  function onDocKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      (e.target as HTMLInputElement).blur();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setDraftDocName(docName ?? '');
+      setEditingDoc(false);
+    }
+  }
+
   const citationsTrigger = onCitations ? (
     <Link
       to={`/s/${spaceId}/citations`}
@@ -111,7 +139,28 @@ export function Topbar({
             {!focus && (
               <span className="hidden text-ink-4 md:inline">/</span>
             )}
-            <span className="text-ink">{docName}</span>
+            {editingDoc ? (
+              <input
+                autoFocus
+                value={draftDocName}
+                onChange={(e) => setDraftDocName(e.target.value)}
+                onBlur={commitDocName}
+                onFocus={(e) => e.currentTarget.select()}
+                onKeyDown={onDocKeyDown}
+                aria-label={t('topbar.renameDoc')}
+                className="w-40 border-0 bg-transparent p-0 font-mono text-[11px] uppercase tracking-wider text-ink outline-none"
+              />
+            ) : (
+              <button
+                type="button"
+                onDoubleClick={() => docId && setEditingDoc(true)}
+                disabled={!docId}
+                title={docId ? t('topbar.renameDoc') : undefined}
+                className="cursor-text text-ink hover:text-ink"
+              >
+                {docName}
+              </button>
+            )}
           </>
         )}
       </div>
