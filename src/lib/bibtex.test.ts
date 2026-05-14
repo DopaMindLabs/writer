@@ -47,6 +47,22 @@ describe('parseBibtexText', () => {
     expect(smith?.year).toBe(2020);
   });
 
+  it('joins multiple authors with commas', async () => {
+    const out = await parseBibtexText(SAMPLE, 's1');
+    const smith = out.find((c) => c.key === 'smith2020');
+    expect(smith?.authors).toBe('John Smith, Jane Doe');
+  });
+
+  it('handles name particles (van) and "and others"', async () => {
+    const text = `@article{lobbezoo2013,
+  title = {Prognosis},
+  author = {Lobbezoo, Dorien JA and van Kampen, Roel JW and others},
+  year = {2013}
+}`;
+    const out = await parseBibtexText(text, 's1');
+    expect(out[0].authors).toBe('Dorien JA Lobbezoo, van Roel JW Kampen, et al.');
+  });
+
   it('falls back to (untitled) and (unknown) for missing fields', async () => {
     const out = await parseBibtexText(SAMPLE, 's1');
     const minimal = out.find((c) => c.key === 'minimal');

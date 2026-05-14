@@ -3,11 +3,18 @@ import { db } from '@/db/db';
 import { newId } from './ids';
 import type { Citation } from '@/db/schema';
 
+type Creator = {
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+  prefix?: string;
+  suffix?: string;
+};
+
 type RawEntry = {
   key?: string;
   type?: string;
   fields?: Record<string, unknown>;
-  creators?: { author?: { name?: string; firstName?: string; lastName?: string }[] };
 };
 
 export async function parseBibtexText(
@@ -23,7 +30,7 @@ export async function parseBibtexText(
       id: newId(),
       spaceId,
       key: entry.key,
-      authors: extractAuthors(entry, fields),
+      authors: extractAuthors(fields),
       title: stringField(fields.title) ?? '(untitled)',
       year: numberField(fields.year ?? fields.date) ?? 0,
       type: mapType(entry.type),
@@ -79,19 +86,19 @@ function numberField(v: unknown): number | undefined {
   return undefined;
 }
 
-function extractAuthors(entry: RawEntry, fields: Record<string, unknown>): string {
-  const creators = entry.creators?.author;
-  if (Array.isArray(creators) && creators.length > 0) {
-    return creators
-      .map((a) => {
-        if (!a) return '';
-        if (a.name) return a.name;
-        return [a.firstName, a.lastName].filter(Boolean).join(' ');
-      })
-      .filter(Boolean)
-      .join(', ');
+function formatCreator(c: Creator): string {
+  if (c.name) return c.name;
+  if (c.lastName === 'others' && !c.firstName) return 'et al.';
+  return [c.prefix, c.firstName, c.lastName, c.suffix].filter(Boolean).join(' ');
+}
+
+function extractAuthors(fields: Record<string, unknown>): string {
+  const author = fields.author;
+  if (Array.isArray(author) && author.length > 0 && typeof author[0] === 'object') {
+    const names = (author as Creator[]).map(formatCreator).filter(Boolean);
+    if (names.length > 0) return names.join(', ');
   }
-  return stringField(fields.author) ?? '(unknown)';
+  return stringField(author) ?? '(unknown)';
 }
 
 function mapType(type: string | undefined): Citation['type'] {
