@@ -2,13 +2,11 @@
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "packages": {
     ".": {
-      "release-as": "0.4.1",
       "release-type": "node",
       "package-name": "lorem-ipsum-writer",
       "include-component-in-tag": false,
       "include-v-in-tag": true,
-      "changelog-path": "CHANGELOG.md",
-      "last-release-sha": "6c2df28fb1132525345376e4e24b23fd0197f3e3"
+      "changelog-path": "CHANGELOG.md"
     }
   }
 }
