@@ -55,7 +55,7 @@ exports[`Topbar > renders citations view (no mode tabs, no focus toggle) 1`] = `
       class="flex-1"
     />
     <a
-      class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider hover:bg-paper-2 text-ink"
+      class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink hover:bg-paper-2"
       data-discover="true"
       href="/s/s1/citations"
     >
@@ -237,10 +237,10 @@ exports[`Topbar > renders with doc name, mode tabs and theme toggle 1`] = `
         space
       </a>
     </nav>
-    <a
-      class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider hover:bg-paper-2 text-ink-3"
-      data-discover="true"
-      href="/s/s1/citations"
+    <button
+      aria-label="Citations"
+      class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:bg-paper-2 hover:text-ink"
+      type="button"
     >
       <svg
         class="lucide lucide-quote h-3 w-3"
@@ -266,7 +266,7 @@ exports[`Topbar > renders with doc name, mode tabs and theme toggle 1`] = `
       >
         Citations
       </span>
-    </a>
+    </button>
     <a
       aria-label="Enter focus mode"
       class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:bg-paper-2 hover:text-ink"

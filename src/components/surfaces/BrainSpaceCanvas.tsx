@@ -97,7 +97,7 @@ export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
   return (
     <div
       onPointerDown={onBackgroundPointerDown}
-      className="relative h-full w-full overflow-hidden bg-paper"
+      className="relative h-full min-w-0 flex-1 overflow-hidden bg-paper"
       style={{
         backgroundImage:
           'radial-gradient(circle at 1px 1px, var(--rule) 1px, transparent 1px)',

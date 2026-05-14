@@ -3,7 +3,7 @@
 exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] = `
 <div>
   <div
-    class="relative h-full w-full overflow-hidden bg-paper"
+    class="relative h-full min-w-0 flex-1 overflow-hidden bg-paper"
     style="background-image: radial-gradient(circle at 1px 1px, var(--rule) 1px, transparent 1px); background-size: 20px 20px;"
   >
     <svg
@@ -74,13 +74,13 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
           mon
         </span>
         <button
-          aria-label="Delete note"
-          class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 transition-opacity hover:bg-paper-2 hover:text-ink opacity-0 group-hover:opacity-100"
-          data-delete="true"
+          aria-label="Open details"
+          class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 opacity-0 transition-opacity hover:bg-paper-2 hover:text-ink group-hover:opacity-100"
+          data-no-drag="true"
           type="button"
         >
           <svg
-            class="lucide lucide-x h-3 w-3"
+            class="lucide lucide-arrow-up-right h-3 w-3"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -92,16 +92,24 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M18 6 6 18"
+              d="M7 7h10v10"
             />
             <path
-              d="m6 6 12 12"
+              d="M7 17 17 7"
             />
           </svg>
         </button>
       </div>
+      <button
+        class="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
+        data-no-drag="true"
+        type="button"
+      >
+        + title
+      </button>
       <div
-        class="flex-1 whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+        class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+        data-no-drag="true"
       >
         Hello
       </div>
@@ -128,13 +136,13 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
           mon
         </span>
         <button
-          aria-label="Delete note"
-          class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 transition-opacity hover:bg-paper-2 hover:text-ink opacity-0 group-hover:opacity-100"
-          data-delete="true"
+          aria-label="Open details"
+          class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 opacity-0 transition-opacity hover:bg-paper-2 hover:text-ink group-hover:opacity-100"
+          data-no-drag="true"
           type="button"
         >
           <svg
-            class="lucide lucide-x h-3 w-3"
+            class="lucide lucide-arrow-up-right h-3 w-3"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -146,16 +154,24 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M18 6 6 18"
+              d="M7 7h10v10"
             />
             <path
-              d="m6 6 12 12"
+              d="M7 17 17 7"
             />
           </svg>
         </button>
       </div>
+      <button
+        class="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
+        data-no-drag="true"
+        type="button"
+      >
+        + title
+      </button>
       <div
-        class="flex-1 whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+        class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+        data-no-drag="true"
       >
         Hello
       </div>

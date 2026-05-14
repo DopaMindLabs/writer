@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
 import { WriteSurface } from '@/components/surfaces/WriteSurface';
+import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocument } from '@/hooks/useDocuments';
 import { useUI } from '@/store/ui';
@@ -37,8 +38,9 @@ export function ReadScreen() {
           spaceName={space?.name}
           mode="read"
         />
-        <main className="flex-1 overflow-hidden">
+        <main className="flex flex-1 overflow-hidden">
           {doc && <WriteSurface doc={doc} mode="read" />}
+          <CitationsSidePanel spaceId={spaceId} />
         </main>
       </div>
     </div>

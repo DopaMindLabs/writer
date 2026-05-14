@@ -3,7 +3,7 @@
 exports[`WriteSurface > renders editor stub with doc body and mode 1`] = `
 <div>
   <div
-    class="h-full overflow-auto bg-paper px-12 py-12"
+    class="h-full min-w-0 flex-1 overflow-auto bg-paper px-12 py-12"
   >
     <div
       data-mode="write"
