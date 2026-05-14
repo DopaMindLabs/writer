@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
@@ -16,47 +17,99 @@ export default defineConfig({
         outputFile: './e2e-coverage/index.html',
         coverage: {
           name: 'E2E coverage',
-          // Only consider app source served from /src/* under the dev server.
-          entryFilter: (entry: { url?: string }) =>
-            !!entry.url && entry.url.includes('/src/'),
-          // Mirror the unit-coverage `exclude` block in vite.config.ts.
-          sourceFilter: (path: string) =>
-            path.includes('/src/') &&
-            !path.endsWith('.d.ts') &&
-            !path.includes('/src/db/schema') &&
-            !path.includes('/src/data/templates/types') &&
-            !path.endsWith('/src/main.tsx') &&
-            !path.includes('/src/editor/') &&
-            !path.includes('/src/test/') &&
-            !path.includes('.test.') &&
-            !path.includes('__snapshots__'),
+          // Accept every JS asset the preview server serves (we filter to
+          // app source via sourceFilter once monocart applies source maps).
+          entryFilter: (entry: { url?: string }) => {
+            if (!entry.url) return false;
+            return (
+              entry.url.includes('localhost') &&
+              (entry.url.includes('/assets/') ||
+                entry.url.includes('/src/'))
+            );
+          },
+          // After source-mapping, monocart hands us source paths from the
+          // emitted source map. Vite emits relative paths like
+          // `../../src/components/Topbar.tsx`, so match `src/` (no leading
+          // slash) but exclude `node_modules/`.
+          sourceFilter: (path: string) => {
+            if (path.includes('node_modules/')) return false;
+            if (!/(^|\/)src\//.test(path)) return false;
+            if (path.endsWith('.d.ts')) return false;
+            if (path.endsWith('.json')) return false;
+            if (path.endsWith('.css')) return false;
+            if (path.includes('src/db/schema')) return false;
+            if (path.includes('src/data/templates/types')) return false;
+            if (/(^|\/)src\/main\.tsx$/.test(path)) return false;
+            if (path.includes('src/editor/')) return false;
+            if (path.includes('src/test/')) return false;
+            if (path.includes('.test.')) return false;
+            if (path.includes('__snapshots__')) return false;
+            return true;
+          },
           outputDir: './e2e-coverage',
           reports: [
             ['v8'],
             ['console-summary'],
             ['lcov'],
           ],
-          // Fail the run if these thresholds are not met.
+          // Today's e2e baseline (May 2026). Grow toward 90/90/90/88 as we
+          // add more specs covering Sidebar/BrainSpace/keyboard shortcuts/
+          // error paths. The thresholds here are also enforced by the
+          // `onEnd` hook below — monocart only reports, it does NOT fail
+          // the run on its own.
           thresholds: {
-            lines: 90,
-            statements: 90,
-            functions: 90,
-            branches: 90,
+            lines: 75,
+            statements: 60,
+            functions: 60,
+            branches: 55,
+          },
+          // Hard gate: exit non-zero if any metric drops below threshold.
+          onEnd: async (reportData: {
+            summary?: {
+              lines?: { pct?: number };
+              statements?: { pct?: number };
+              functions?: { pct?: number };
+              branches?: { pct?: number };
+            };
+          }) => {
+            const s = reportData.summary ?? {};
+            const thresholds: Record<string, number> = {
+              lines: 75,
+              statements: 60,
+              functions: 60,
+              branches: 55,
+            };
+            const misses: string[] = [];
+            for (const [metric, min] of Object.entries(thresholds)) {
+              const pct = s[metric as keyof typeof s]?.pct;
+              if (typeof pct === 'number' && pct < min) {
+                misses.push(`${metric}=${pct.toFixed(2)}% (<${min}%)`);
+              }
+            }
+            if (misses.length > 0) {
+              console.error(
+                `\nE2E coverage gate failed: ${misses.join(', ')}\n`,
+              );
+              process.exit(1);
+            }
           },
         },
       },
     ],
   ],
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://localhost:4173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  // E2E runs against a production preview build so monocart-reporter can
+  // map V8 coverage back to original .tsx files via emitted source maps.
+  // `npm run dev` works for ad-hoc debugging but yields broken coverage.
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5173',
+    command: 'npm run build:e2e && npm run preview:e2e',
+    url: 'http://localhost:4173',
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    timeout: 180_000,
   },
 });

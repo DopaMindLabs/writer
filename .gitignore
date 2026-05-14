@@ -36,3 +36,4 @@ plans
 /playwright/.cache/
 
 coverage
+e2e-coverage
