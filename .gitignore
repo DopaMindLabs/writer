@@ -29,3 +29,10 @@ project
 README.md
 !src/data/templates/readme.md
 plans
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+coverage

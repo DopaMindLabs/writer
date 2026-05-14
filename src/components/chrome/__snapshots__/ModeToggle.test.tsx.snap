@@ -1,0 +1,101 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FocusToggle > renders focus enter link in write mode 1`] = `
+<div>
+  <a
+    aria-label="Enter focus mode"
+    class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:bg-paper-2 hover:text-ink"
+    data-discover="true"
+    href="/s/s1/d/d1?focus=1"
+    title="Focus (⌘\\)"
+  >
+    <svg
+      class="lucide lucide-maximize2 h-3 w-3"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <polyline
+        points="15 3 21 3 21 9"
+      />
+      <polyline
+        points="9 21 3 21 3 15"
+      />
+      <line
+        x1="21"
+        x2="14"
+        y1="3"
+        y2="10"
+      />
+      <line
+        x1="3"
+        x2="10"
+        y1="21"
+        y2="14"
+      />
+    </svg>
+    FOCUS
+  </a>
+</div>
+`;
+
+exports[`FocusToggle > returns null in read mode 1`] = `<div />`;
+
+exports[`ModeTabs > hides per-doc tabs when docId is null 1`] = `
+<div>
+  <nav
+    class="inline-flex items-center gap-4 font-mono text-[11px]"
+  >
+    <a
+      class="pb-0.5 transition-colors border-b border-ink font-medium text-ink"
+      data-discover="true"
+      href="/s/s1/dump"
+    >
+      dump
+    </a>
+  </nav>
+</div>
+`;
+
+exports[`ModeTabs > renders write/read/split/dump tabs with active state 1`] = `
+<div>
+  <nav
+    class="inline-flex items-center gap-4 font-mono text-[11px]"
+  >
+    <a
+      class="pb-0.5 transition-colors border-b border-ink font-medium text-ink"
+      data-discover="true"
+      href="/s/s1/d/d1"
+    >
+      write
+    </a>
+    <a
+      class="pb-0.5 transition-colors text-ink-4 hover:text-ink-2"
+      data-discover="true"
+      href="/s/s1/d/d1/read"
+    >
+      read
+    </a>
+    <a
+      class="pb-0.5 transition-colors text-ink-4 hover:text-ink-2"
+      data-discover="true"
+      href="/s/s1/d/d1/split"
+    >
+      split
+    </a>
+    <a
+      class="pb-0.5 transition-colors text-ink-4 hover:text-ink-2"
+      data-discover="true"
+      href="/s/s1/dump"
+    >
+      dump
+    </a>
+  </nav>
+</div>
+`;

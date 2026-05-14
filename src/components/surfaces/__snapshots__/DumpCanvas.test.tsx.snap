@@ -1,0 +1,193 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DumpCanvas > renders canvas with seeded notes and connection 1`] = `
+<div>
+  <div
+    class="relative h-full w-full overflow-hidden bg-paper"
+    style="background-image: radial-gradient(circle at 1px 1px, var(--rule) 1px, transparent 1px); background-size: 20px 20px;"
+  >
+    <svg
+      class="pointer-events-none absolute inset-0 h-full w-full"
+      style="pointer-events: none;"
+    >
+      <g
+        style="pointer-events: auto;"
+      >
+        <g
+          class="group cursor-pointer"
+        >
+          <path
+            d="M 116 64 Q 224 82, 332 160"
+            fill="none"
+            pointer-events="stroke"
+            stroke="transparent"
+            stroke-width="14"
+          />
+          <path
+            class="transition-[stroke,stroke-width] group-hover:stroke-[var(--ink)] group-hover:stroke-2"
+            d="M 116 64 Q 224 82, 332 160"
+            fill="none"
+            pointer-events="none"
+            stroke="var(--rule)"
+            stroke-dasharray="2 3"
+            stroke-width="1"
+          />
+          <g
+            class="opacity-0 transition-opacity group-hover:opacity-100"
+            pointer-events="none"
+          >
+            <circle
+              cx="224"
+              cy="82"
+              fill="var(--paper)"
+              r="8"
+              stroke="var(--ink)"
+            />
+            <text
+              fill="var(--ink)"
+              font-family="monospace"
+              font-size="10"
+              text-anchor="middle"
+              x="224"
+              y="85"
+            >
+              ×
+            </text>
+          </g>
+        </g>
+      </g>
+    </svg>
+    <div
+      class="group absolute flex flex-col gap-1 border bg-paper p-2.5 border-ink cursor-grab"
+      style="left: 24px; top: 24px; width: 184px; min-height: 80px;"
+    >
+      <div
+        class="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4"
+      >
+        <span>
+          thought
+        </span>
+        <span
+          class="flex-1"
+        />
+        <span>
+          mon
+        </span>
+        <button
+          aria-label="Delete note"
+          class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 transition-opacity hover:bg-paper-2 hover:text-ink opacity-0 group-hover:opacity-100"
+          data-delete="true"
+          type="button"
+        >
+          <svg
+            class="lucide lucide-x h-3 w-3"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18 6 6 18"
+            />
+            <path
+              d="m6 6 12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      <button
+        class="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
+        type="button"
+      >
+        + title
+      </button>
+      <div
+        class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+      >
+        Hello
+      </div>
+      <div
+        aria-label="Resize note"
+        class="absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize"
+        data-resize-handle="true"
+      />
+    </div>
+    <div
+      class="group absolute flex flex-col gap-1 border bg-paper p-2.5 border-ink cursor-grab"
+      style="left: 240px; top: 120px; width: 184px; min-height: 80px;"
+    >
+      <div
+        class="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4"
+      >
+        <span>
+          thought
+        </span>
+        <span
+          class="flex-1"
+        />
+        <span>
+          mon
+        </span>
+        <button
+          aria-label="Delete note"
+          class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 transition-opacity hover:bg-paper-2 hover:text-ink opacity-0 group-hover:opacity-100"
+          data-delete="true"
+          type="button"
+        >
+          <svg
+            class="lucide lucide-x h-3 w-3"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18 6 6 18"
+            />
+            <path
+              d="m6 6 12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      <button
+        class="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
+        type="button"
+      >
+        + title
+      </button>
+      <div
+        class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+      >
+        Hello
+      </div>
+      <div
+        aria-label="Resize note"
+        class="absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize"
+        data-resize-handle="true"
+      />
+    </div>
+    <div
+      class="absolute bottom-5 left-1/2 -translate-x-1/2 border border-ink bg-paper"
+    >
+      <button
+        class="inline-block px-3 py-1.5 font-sans text-[11px] text-ink-3 hover:text-ink"
+        type="button"
+      >
+        + 
+        blank
+      </button>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,130 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DumpNote > renders default note 1`] = `
+<div>
+  <div
+    class="group absolute flex flex-col gap-1 border bg-paper p-2.5 border-ink cursor-grab"
+    style="left: 24px; top: 24px; width: 184px; min-height: 80px;"
+  >
+    <div
+      class="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4"
+    >
+      <span>
+        thought
+      </span>
+      <span
+        class="flex-1"
+      />
+      <span>
+        mon
+      </span>
+      <button
+        aria-label="Delete note"
+        class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 transition-opacity hover:bg-paper-2 hover:text-ink opacity-0 group-hover:opacity-100"
+        data-delete="true"
+        type="button"
+      >
+        <svg
+          class="lucide lucide-x h-3 w-3"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M18 6 6 18"
+          />
+          <path
+            d="m6 6 12 12"
+          />
+        </svg>
+      </button>
+    </div>
+    <button
+      class="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
+      type="button"
+    >
+      + title
+    </button>
+    <div
+      class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+    >
+      Hello
+    </div>
+    <div
+      aria-label="Resize note"
+      class="absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize"
+      data-resize-handle="true"
+    />
+  </div>
+</div>
+`;
+
+exports[`DumpNote > renders selected and pending note with title 1`] = `
+<div>
+  <div
+    class="group absolute flex flex-col gap-1 border bg-paper p-2.5 border-ink cursor-grab outline outline-2 outline-ink outline-offset-2"
+    style="left: 24px; top: 24px; width: 184px; min-height: 80px;"
+  >
+    <div
+      class="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4"
+    >
+      <span>
+        thought
+      </span>
+      <span
+        class="flex-1"
+      />
+      <span>
+        mon
+      </span>
+      <button
+        aria-label="Delete note"
+        class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 transition-opacity hover:bg-paper-2 hover:text-ink opacity-0 group-hover:opacity-100"
+        data-delete="true"
+        type="button"
+      >
+        <svg
+          class="lucide lucide-x h-3 w-3"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M18 6 6 18"
+          />
+          <path
+            d="m6 6 12 12"
+          />
+        </svg>
+      </button>
+    </div>
+    <div
+      class="font-serif text-[13px] font-medium text-ink"
+    >
+      A title
+    </div>
+    <div
+      class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+    >
+      Hello
+    </div>
+    <div
+      aria-label="Resize note"
+      class="absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize"
+      data-resize-handle="true"
+    />
+  </div>
+</div>
+`;
