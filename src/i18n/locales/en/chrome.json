@@ -1,0 +1,37 @@
+{
+  "sidebar": {
+    "shared": "SHARED",
+    "private": "PRIVATE · LOCAL",
+    "workshop": "Workshop",
+    "empty": "(empty)",
+    "addDocAria": "Add doc to {{label}}",
+    "docNamePlaceholder": "Doc name (Enter to create)"
+  },
+  "topbar": {
+    "openNav": "Open navigation",
+    "citations": "Citations",
+    "theme": "Theme",
+    "exitFocus": "Exit focus mode",
+    "enterFocus": "Enter focus mode",
+    "normal": "NORMAL",
+    "focus": "FOCUS",
+    "focusTitleNormal": "Normal (⌘\\)",
+    "focusTitleFocus": "Focus (⌘\\)",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "hcLight": "High contrast (light)",
+      "hcDark": "High contrast (dark)"
+    }
+  },
+  "modeToggle": {
+    "write": "write",
+    "read": "read",
+    "split": "split",
+    "space": "space"
+  },
+  "mobileNav": {
+    "title": "Navigation",
+    "close": "Close navigation"
+  }
+}

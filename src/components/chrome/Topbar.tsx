@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Sun, Moon, Quote, Menu, Contrast, Check } from 'lucide-react';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { Theme } from '@/store/ui';
@@ -15,11 +16,11 @@ import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
 import { MobileNavDrawer } from './MobileNavDrawer';
 import { cn } from '@/lib/utils';
 
-const THEME_OPTIONS: { value: Theme; label: string }[] = [
-  { value: 'light', label: 'Light' },
-  { value: 'dark', label: 'Dark' },
-  { value: 'hc-light', label: 'High contrast (light)' },
-  { value: 'hc-dark', label: 'High contrast (dark)' },
+const THEME_OPTIONS: { value: Theme; labelKey: string }[] = [
+  { value: 'light', labelKey: 'topbar.themes.light' },
+  { value: 'dark', labelKey: 'topbar.themes.dark' },
+  { value: 'hc-light', labelKey: 'topbar.themes.hcLight' },
+  { value: 'hc-dark', labelKey: 'topbar.themes.hcDark' },
 ];
 
 function ThemeIcon({ theme }: { theme: Theme }) {
@@ -50,6 +51,7 @@ export function Topbar({
   mode,
   fallbackDocId,
 }: TopbarProps) {
+  const { t } = useTranslation('chrome');
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const setMobileNavOpen = useUI((s) => s.setMobileNavOpen);
@@ -61,7 +63,7 @@ export function Topbar({
         type="button"
         onClick={() => setMobileNavOpen(true)}
         className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink md:hidden"
-        aria-label="Open navigation"
+        aria-label={t('topbar.openNav')}
       >
         <Menu className="h-4 w-4" />
       </button>
@@ -91,7 +93,7 @@ export function Topbar({
         )}
       >
         <Quote className="h-3 w-3" />
-        <span className="hidden sm:inline">Citations</span>
+        <span className="hidden sm:inline">{t('topbar.citations')}</span>
       </Link>
       {!onCitations && (mode === 'dump' || docId) && (
         <FocusToggle mode={mode} spaceId={spaceId} docId={docId} />
@@ -99,13 +101,13 @@ export function Topbar({
       <DropdownMenu>
         <DropdownMenuTrigger
           className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
-          aria-label="Theme"
-          title="Theme"
+          aria-label={t('topbar.theme')}
+          title={t('topbar.theme')}
         >
           <ThemeIcon theme={theme} />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="min-w-[12rem]">
-          <DropdownMenuLabel>Theme</DropdownMenuLabel>
+          <DropdownMenuLabel>{t('topbar.theme')}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {THEME_OPTIONS.map((opt) => (
             <DropdownMenuItem
@@ -119,7 +121,7 @@ export function Topbar({
                 )}
                 aria-hidden
               />
-              <span>{opt.label}</span>
+              <span>{t(opt.labelKey)}</span>
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import { useUI } from '@/store/ui';
@@ -13,6 +14,7 @@ interface MobileNavDrawerProps {
 }
 
 export function MobileNavDrawer({ spaceId, activeDocId }: MobileNavDrawerProps) {
+  const { t } = useTranslation('chrome');
   const mobileNavOpen = useUI((s) => s.mobileNavOpen);
   const setMobileNavOpen = useUI((s) => s.setMobileNavOpen);
   const location = useLocation();
@@ -39,12 +41,12 @@ export function MobileNavDrawer({ spaceId, activeDocId }: MobileNavDrawerProps) 
             'duration-200',
           )}
         >
-          <DialogPrimitive.Title className="sr-only">Navigation</DialogPrimitive.Title>
+          <DialogPrimitive.Title className="sr-only">{t('mobileNav.title')}</DialogPrimitive.Title>
           <SpaceRail activeSpaceId={spaceId} />
           <Sidebar spaceId={spaceId} activeDocId={activeDocId} />
           <DialogPrimitive.Close
             className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper hover:text-ink"
-            aria-label="Close navigation"
+            aria-label={t('mobileNav.close')}
           >
             <X className="h-4 w-4" />
           </DialogPrimitive.Close>

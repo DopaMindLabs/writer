@@ -1,25 +1,40 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from 'lucide-react';
 import { listTemplates, type Template } from '@/data/templates';
 import { createSpaceFromTemplate } from '@/db/seed';
 import { cn } from '@/lib/utils';
 
 export function TemplatesScreen() {
+  const { t } = useTranslation(['screens', 'templates']);
   const templates = useMemo(() => listTemplates(), []);
+  const templateLabel = (tpl: Template) =>
+    t(`${tpl.id}.label`, { ns: 'templates', defaultValue: tpl.label });
+  const templateTag = (tpl: Template) =>
+    t(`${tpl.id}.tag`, { ns: 'templates', defaultValue: tpl.tag });
+  const templateDescription = (tpl: Template) =>
+    tpl.description
+      ? t(`${tpl.id}.description`, { ns: 'templates', defaultValue: tpl.description })
+      : undefined;
+
   const [selectedId, setSelectedId] = useState<string>(
     templates[0]?.id ?? '',
   );
-  const selected = templates.find((t) => t.id === selectedId);
-  const [name, setName] = useState<string>(selected?.label ?? '');
-  const [tag, setTag] = useState<string>(selected?.tag ?? '');
+  const selected = templates.find((tpl) => tpl.id === selectedId);
+  const [name, setName] = useState<string>(
+    selected ? templateLabel(selected) : '',
+  );
+  const [tag, setTag] = useState<string>(
+    selected ? templateTag(selected) : '',
+  );
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  function onSelect(t: Template) {
-    setSelectedId(t.id);
-    setName(t.label);
-    setTag(t.tag);
+  function onSelect(tpl: Template) {
+    setSelectedId(tpl.id);
+    setName(templateLabel(tpl));
+    setTag(templateTag(tpl));
   }
 
   async function onSubmit(e: FormEvent) {
@@ -27,8 +42,10 @@ export function TemplatesScreen() {
     if (!selected || submitting) return;
     setSubmitting(true);
     try {
-      const cleanTag = tag.trim().slice(0, 3).toUpperCase() || selected.tag;
-      const cleanName = name.trim() || selected.label;
+      const fallbackTag = templateTag(selected);
+      const fallbackName = templateLabel(selected);
+      const cleanTag = tag.trim().slice(0, 3).toUpperCase() || fallbackTag;
+      const cleanName = name.trim() || fallbackName;
       const newId = await createSpaceFromTemplate(
         selected,
         cleanName,
@@ -40,7 +57,9 @@ export function TemplatesScreen() {
     }
   }
 
-  const submitLabel = `enter ${name.trim() || selected?.label || '…'} →`;
+  const submitLabel = t('templates.submitLabel', {
+    name: name.trim() || (selected ? templateLabel(selected) : '…'),
+  });
 
   return (
     <div className="flex h-full w-full flex-col overflow-auto bg-paper">
@@ -50,10 +69,10 @@ export function TemplatesScreen() {
           className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:text-ink"
         >
           <ArrowLeft className="h-3 w-3" />
-          back
+          {t('templates.back')}
         </Link>
         <div className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
-          new space
+          {t('templates.newSpace')}
         </div>
       </header>
 
@@ -61,28 +80,29 @@ export function TemplatesScreen() {
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-4 pt-10 pb-12 md:px-12 md:pt-16">
           <div>
             <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
-              01 — A KIND OF ROOM
+              {t('templates.crumb')}
             </div>
             <h1 className="font-serif text-3xl leading-[1.05] tracking-tight text-ink md:text-5xl">
-              What kind of space{' '}
+              {t('templates.headingMain')}{' '}
               <span className="italic font-light text-ink-2">
-                are you starting?
+                {t('templates.headingAccent')}
               </span>
             </h1>
           </div>
 
           <fieldset className="border-y border-rule">
-            <legend className="sr-only">Choose a template</legend>
-            {templates.map((t, i) => {
-              const active = t.id === selectedId;
-              const sectionPreview = t.sections
+            <legend className="sr-only">{t('templates.chooseLegend')}</legend>
+            {templates.map((tpl, i) => {
+              const active = tpl.id === selectedId;
+              const sectionPreview = tpl.sections
                 .map((s) => s.label)
                 .join(' · ');
+              const description = templateDescription(tpl);
               return (
                 <button
-                  key={t.id}
+                  key={tpl.id}
                   type="button"
-                  onClick={() => onSelect(t)}
+                  onClick={() => onSelect(tpl)}
                   className={cn(
                     'grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6',
                     active && 'bg-paper-2',
@@ -94,16 +114,16 @@ export function TemplatesScreen() {
                   </span>
                   <span className="flex flex-col">
                     <span className="font-serif text-[18px] leading-tight text-ink">
-                      {t.label}
-                      {t.stage && t.stage !== 'stable' && (
+                      {templateLabel(tpl)}
+                      {tpl.stage && tpl.stage !== 'stable' && (
                         <span className="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3">
-                          {t.stage}
+                          {tpl.stage}
                         </span>
                       )}
                     </span>
-                    {t.description && (
+                    {description && (
                       <span className="mt-1 font-serif text-[13px] italic text-ink-3">
-                        {t.description}
+                        {description}
                       </span>
                     )}
                   </span>
@@ -139,7 +159,7 @@ export function TemplatesScreen() {
                   htmlFor="space-name"
                   className="block font-mono text-[10px] uppercase tracking-[0.08em] text-ink-3"
                 >
-                  Name
+                  {t('templates.nameLabel')}
                 </label>
                 <input
                   id="space-name"
@@ -154,7 +174,7 @@ export function TemplatesScreen() {
                   htmlFor="space-tag"
                   className="block font-mono text-[10px] uppercase tracking-[0.08em] text-ink-3"
                 >
-                  Tag
+                  {t('templates.tagLabel')}
                 </label>
                 <input
                   id="space-tag"
@@ -174,13 +194,13 @@ export function TemplatesScreen() {
                   role="switch"
                   aria-checked="false"
                   aria-disabled="true"
-                  title="Cloud sync is unavailable — this app is local-only for now."
+                  title={t('templates.syncTooltip')}
                 >
                   <span className="h-4 w-4 rounded-full bg-ink-4" />
                 </div>
                 <span className="font-mono text-[11px] uppercase tracking-wider text-ink-3">
-                  cloud sync —{' '}
-                  <span className="italic text-ink-4">off, local</span>
+                  {t('templates.syncLabel')}{' '}
+                  <span className="italic text-ink-4">{t('templates.syncValue')}</span>
                 </span>
               </div>
               <button
@@ -188,7 +208,7 @@ export function TemplatesScreen() {
                 disabled={submitting || !selected}
                 className="font-serif text-[18px] italic text-ink underline underline-offset-4 hover:text-ink-2 disabled:opacity-50"
               >
-                {submitting ? 'creating…' : submitLabel}
+                {submitting ? t('templates.creating') : submitLabel}
               </button>
             </div>
           </div>

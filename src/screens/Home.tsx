@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { db } from '@/db/db';
 import { BlockQuote } from '@/components/ui/block-quote';
 
 export function HomeScreen() {
+  const { t } = useTranslation(['screens', 'common']);
   const [firstSpaceId, setFirstSpaceId] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -26,16 +28,14 @@ export function HomeScreen() {
     <div className="flex h-full w-full flex-col overflow-auto bg-paper text-ink">
       <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 py-10 md:px-12 md:py-16">
         <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
-          Free writing multiverse
+          {t('home.subtitle')}
         </div>
         <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-ink md:text-6xl">
-          LIpsum{' '}
-          <span className="italic font-light text-ink-2">Writer</span>
+          {t('home.titleMain')}{' '}
+          <span className="italic font-light text-ink-2">{t('home.titleAccent')}</span>
         </h1>
         <p className="mt-4 font-serif text-[18px] italic text-ink-2">
-          {isEmpty
-            ? 'Your first space is a blank one. Pick a template to get started, or start from nothing.'
-            : 'A clutter-free space for long-form writing — fiction, research, essays, journals.'}
+          {isEmpty ? t('home.emptyTagline') : t('home.tagline')}
         </p>
 
         <BlockQuote cite={<>&mdash; ARSI &ldquo;HAKITA&rdquo; PATALA</>}>
@@ -53,7 +53,7 @@ export function HomeScreen() {
                 className="flex items-baseline justify-between border-b border-rule px-2 py-5 transition-colors hover:bg-paper-2"
               >
                 <span className="font-serif text-[18px] text-ink md:text-[22px]">
-                  Continue writing
+                  {t('home.continueWriting')}
                 </span>
                 <span className="font-mono text-[11px] uppercase tracking-wider text-ink-3">
                   →
@@ -71,7 +71,7 @@ export function HomeScreen() {
                     : 'font-serif text-[18px] italic text-ink md:text-[22px]'
                 }
               >
-                Start a new space
+                {t('home.startNewSpace')}
               </span>
               <span className="font-mono text-[11px] uppercase tracking-wider text-ink-3">
                 →
@@ -82,7 +82,7 @@ export function HomeScreen() {
 
         <div className="mt-10 flex items-center gap-5 font-mono text-[10px] uppercase tracking-wider text-ink-3">
           <Link to="/about" className="hover:text-ink">
-            About
+            {t('about', { ns: 'common' })}
           </Link>
           {/* TODO: replace with GitHub URL */}
           <a
@@ -91,11 +91,11 @@ export function HomeScreen() {
             rel="noreferrer"
             className="hover:text-ink"
           >
-            GitHub
+            {t('github', { ns: 'common' })}
           </a>
           <span className="flex-1" />
           <span className="italic normal-case text-ink-4">
-            experimental · local only
+            {t('home.statusLine')}
           </span>
         </div>
       </div>
