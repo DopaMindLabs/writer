@@ -1,0 +1,42 @@
+{
+  "blank": {
+    "label": "Blank",
+    "tag": "BL",
+    "description": "start from nothing"
+  },
+  "fiction": {
+    "label": "Fictional writing",
+    "tag": "FI",
+    "description": "novel · short story · script"
+  },
+  "humanities": {
+    "label": "Thesis · research",
+    "tag": "TH",
+    "description": "long-form academic"
+  },
+  "journal": {
+    "label": "Journal",
+    "tag": "JO",
+    "description": "daily, low-stakes"
+  },
+  "serial": {
+    "label": "Serial",
+    "tag": "SE",
+    "description": "recurring essays · newsletter"
+  },
+  "six": {
+    "label": "Six Doors · collaborative",
+    "tag": "SD",
+    "description": "shared world · multiple writers"
+  },
+  "technical": {
+    "label": "Technical · Scientific report",
+    "tag": "TX",
+    "description": "Scientific · methods · equations"
+  },
+  "bioinformatics": {
+    "label": "Bioinformatics",
+    "tag": "BX",
+    "description": "pipelines · methods · lab notebook"
+  }
+}

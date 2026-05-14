@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Boot error",
+  "bootErrorHintBefore": "Try ",
+  "bootErrorHintAfter": " to reset the local database.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Booting…"
+}

@@ -1,5 +1,6 @@
 import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { FocusRail } from '@/components/chrome/FocusRail';
@@ -11,6 +12,7 @@ import { useNotes } from '@/hooks/useNotes';
 import { useUI } from '@/store/ui';
 
 export function BrainSpaceScreen() {
+  const { t } = useTranslation('screens');
   const { spaceId } = useParams<{ spaceId: string }>();
   const [searchParams] = useSearchParams();
   const focus = searchParams.get('focus') === '1';
@@ -47,7 +49,7 @@ export function BrainSpaceScreen() {
         <Topbar
           spaceId={spaceId}
           docId={null}
-          docName={`Brain space · ${notes.length} unsorted`}
+          docName={t('dump.headerCount', { count: notes.length })}
           spaceName={space?.name}
           mode="dump"
           fallbackDocId={fallbackDocId}
@@ -62,23 +64,24 @@ export function BrainSpaceScreen() {
 }
 
 function BrainSpaceMobileNotice({ spaceId }: { spaceId: string }) {
+  const { t } = useTranslation('screens');
   return (
     <div className="flex flex-1 items-center justify-center bg-paper px-6 py-10 md:hidden">
       <div className="max-w-sm text-center">
         <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
-          Brain space
+          {t('dump.title')}
         </div>
         <p className="mt-3 font-serif text-[18px] italic text-ink-2">
-          Brain space works best on a larger screen.
+          {t('dump.mobileWarning')}
         </p>
         <p className="mt-2 font-serif text-base text-ink-3">
-          The canvas needs a mouse or trackpad.
+          {t('dump.mobileNote')}
         </p>
         <Link
           to={`/s/${spaceId}`}
           className="mt-6 inline-block font-mono text-[11px] uppercase tracking-wider text-ink underline underline-offset-4 hover:text-ink-2"
         >
-          Open in Write →
+          {t('dump.openInWrite')}
         </Link>
       </div>
     </div>

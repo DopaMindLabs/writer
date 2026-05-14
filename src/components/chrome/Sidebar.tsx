@@ -7,6 +7,7 @@ import {
   useEffect,
   type KeyboardEvent,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments } from '@/hooks/useDocuments';
@@ -32,6 +33,7 @@ interface AddingState {
 }
 
 export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
+  const { t } = useTranslation(['chrome', 'common']);
   const space = useSpace(spaceId);
   const sections = useSections(spaceId);
   const docs = useDocuments(spaceId);
@@ -90,17 +92,18 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
     parentLabel: string,
     subLabel: string | null,
   ): string {
+    const untitled = t('untitled', { ns: 'common' });
     const parentDef = topTemplateDefByLabel.get(parentLabel);
-    if (!parentDef) return 'Untitled';
+    if (!parentDef) return untitled;
     if (subLabel === null) {
       return parentDef.defaultDocName
         ? formatDocName(parentDef.defaultDocName)
-        : 'Untitled';
+        : untitled;
     }
     const subDef = (parentDef.sections ?? []).find((s) => s.label === subLabel);
     return subDef?.defaultDocName
       ? formatDocName(subDef.defaultDocName)
-      : 'Untitled';
+      : untitled;
   }
 
   function docHref(docId: string): string {
@@ -118,7 +121,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
 
   async function commitAdd() {
     if (!adding) return;
-    const name = adding.value.trim() || 'Untitled';
+    const name = adding.value.trim() || t('untitled', { ns: 'common' });
     const id = newId();
     await db.docs.add({
       id,
@@ -150,7 +153,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
           {space?.name ?? '…'}
         </div>
         <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-          {space?.shared ? 'SHARED' : 'PRIVATE · LOCAL'}
+          {space?.shared ? t('chrome:sidebar.shared') : t('chrome:sidebar.private')}
         </div>
       </div>
       <div className="flex-1 overflow-auto py-2">
@@ -199,7 +202,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
                     />
                     {subDocs.length === 0 && adding?.sectionId !== sub.id && (
                       <div className="px-5 pl-7 py-1 text-[11px] italic text-ink-4">
-                        (empty)
+                        {t('chrome:sidebar.empty')}
                       </div>
                     )}
                     {subDocs.map((d) => (
@@ -228,7 +231,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
                 subs.length === 0 &&
                 adding?.sectionId !== sec.id && (
                   <div className="px-5 py-1.5 text-xs italic text-ink-4">
-                    (empty)
+                    {t('chrome:sidebar.empty')}
                   </div>
                 )}
             </div>
@@ -237,7 +240,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
         {!topSections.some((s) => s.label === 'Workshop') && (
           <div className="mt-4 border-t border-rule pt-2">
             <div className="px-5 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4">
-              Workshop
+              {t('chrome:sidebar.workshop')}
             </div>
             <BrainSpaceLink
               spaceId={spaceId}
@@ -249,10 +252,10 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
       </div>
       <div className="flex items-center gap-3 border-t border-rule px-5 py-3 font-mono text-[10px] uppercase tracking-wider text-ink-4">
         <Link to="/" className="hover:text-ink">
-          Home
+          {t('home', { ns: 'common' })}
         </Link>
         <Link to="/about" className="hover:text-ink">
-          About
+          {t('about', { ns: 'common' })}
         </Link>
         {/* TODO: replace with GitHub URL */}
         <a
@@ -261,7 +264,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
           rel="noreferrer"
           className="hover:text-ink"
         >
-          GitHub
+          {t('github', { ns: 'common' })}
         </a>
       </div>
     </aside>
@@ -277,6 +280,7 @@ function SectionHeader({
   indented?: boolean;
   onAdd: () => void;
 }) {
+  const { t } = useTranslation('chrome');
   return (
     <div
       className={cn(
@@ -289,7 +293,7 @@ function SectionHeader({
         type="button"
         onClick={onAdd}
         className="inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 opacity-0 transition-opacity hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
-        aria-label={`Add doc to ${label}`}
+        aria-label={t('sidebar.addDocAria', { label })}
       >
         <Plus className="h-3 w-3" />
       </button>
@@ -310,6 +314,7 @@ const AddDocInput = forwardRef<HTMLInputElement, AddDocInputProps>(
     { value, indented = false, onChange, onKeyDown, onBlur },
     ref,
   ) {
+    const { t } = useTranslation('chrome');
     return (
       <div
         className={cn(
@@ -323,7 +328,7 @@ const AddDocInput = forwardRef<HTMLInputElement, AddDocInputProps>(
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={onKeyDown}
           onBlur={onBlur}
-          placeholder="Doc name (Enter to create)"
+          placeholder={t('sidebar.docNamePlaceholder')}
           className="flex-1 border-0 bg-transparent p-0 text-[13px] text-ink outline-none placeholder:text-ink-4"
         />
       </div>
@@ -340,6 +345,7 @@ function BrainSpaceLink({
   active: boolean;
   count: number;
 }) {
+  const { t } = useTranslation('common');
   return (
     <Link
       to={`/s/${spaceId}/dump`}
@@ -350,7 +356,7 @@ function BrainSpaceLink({
           : 'border-transparent text-ink-2 hover:bg-paper',
       )}
     >
-      <span className="flex-1 text-[13px]">Brain space</span>
+      <span className="flex-1 text-[13px]">{t('brainSpace')}</span>
       <span className="font-mono text-[10px] text-ink-4">
         {count > 0 ? `${count}◦` : '◌'}
       </span>

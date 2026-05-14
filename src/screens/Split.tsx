@@ -5,6 +5,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import { useEffect, useMemo, type ChangeEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { FocusRail } from '@/components/chrome/FocusRail';
@@ -18,6 +19,7 @@ import { useUI } from '@/store/ui';
 const BRAIN_SPACE_PANE = 'dump';
 
 export function SplitScreen() {
+  const { t } = useTranslation('screens');
   const { spaceId, docId } = useParams<{ spaceId: string; docId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const focus = searchParams.get('focus') === '1';
