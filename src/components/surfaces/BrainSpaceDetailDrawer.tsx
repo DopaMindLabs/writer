@@ -10,6 +10,7 @@ import { useDocuments } from '@/hooks/useDocuments';
 import { useConnectionsForNote } from '@/hooks/useConnections';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
 import { NoteState, type Note } from '@/db/schema';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface BrainSpaceDetailDrawerProps {
@@ -176,14 +177,15 @@ function DrawerBody({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) {
             aria-label="Note title"
           />
         </div>
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onClose}
           aria-label="Close drawer"
-          className="ml-2 inline-flex h-7 w-7 items-center justify-center rounded-sm text-ink-4 hover:bg-paper-2 hover:text-ink"
+          className="ml-2 h-7 w-7 rounded-sm text-ink-4 hover:bg-paper-2 hover:text-ink"
         >
           <X className="h-4 w-4" />
-        </button>
+        </Button>
       </header>
 
       <div className="flex-1 overflow-y-auto p-4">
@@ -227,14 +229,14 @@ function DrawerBody({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) {
               ))}
             </select>
             {linkedDoc && (
-              <button
-                type="button"
+              <Button
+                variant="secondary"
                 onClick={handleOpenDoc}
-                className="inline-flex items-center gap-1.5 border border-ink bg-paper px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-ink hover:bg-paper-2"
+                className="gap-1.5 rounded-none border-ink px-3 py-2 font-mono text-[10px] uppercase tracking-wider"
               >
                 <ExternalLink className="h-3 w-3" />
                 Open
-              </button>
+              </Button>
             )}
           </div>
         </section>
@@ -279,14 +281,15 @@ function DrawerBody({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) {
       </div>
 
       <footer className="flex items-center justify-end border-t border-rule p-3">
-        <button
-          type="button"
+        <Button
+          variant="destructive"
+          size="sm"
           onClick={handleDeleteNote}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-[color:var(--danger)] transition-colors hover:bg-[color:var(--danger-bg)]"
+          className="gap-1.5 rounded-none border-0 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
         >
-          <Trash2 className="h-3 w-3 text-[color:var(--danger)]" />
+          <Trash2 className="h-3 w-3" />
           Delete note
-        </button>
+        </Button>
       </footer>
     </>
   );
@@ -318,14 +321,15 @@ function ConnectionRow({ direction, note, onFocus, onDelete }: ConnectionRowProp
           </span>
         )}
       </button>
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={onDelete}
         aria-label="Remove connection"
-        className="inline-flex h-5 w-5 items-center justify-center rounded-sm text-ink-4 hover:bg-paper-2 hover:text-ink"
+        className="h-5 w-5 rounded-sm text-ink-4 hover:bg-paper-2 hover:text-ink"
       >
         <X className="h-3 w-3" />
-      </button>
+      </Button>
     </li>
   );
 }

@@ -8,12 +8,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          'bg-ink text-paper hover:bg-ink-2',
-        outline:
-          'border border-rule bg-paper text-ink hover:bg-paper-2',
+        primary: 'bg-ink text-paper hover:bg-ink-2',
+        secondary: 'border border-rule bg-paper text-ink hover:bg-paper-2',
         ghost: 'text-ink hover:bg-paper-2',
         link: 'text-ink underline-offset-4 hover:underline',
+        destructive: 'border border-danger text-danger hover:bg-danger-bg',
+        default: 'bg-ink text-paper hover:bg-ink-2',
+        outline: 'border border-rule bg-paper text-ink hover:bg-paper-2',
       },
       size: {
         sm: 'h-8 px-3',
@@ -22,7 +23,7 @@ const buttonVariants = cva(
         icon: 'h-9 w-9',
       },
     },
-    defaultVariants: { variant: 'default', size: 'md' },
+    defaultVariants: { variant: 'primary', size: 'md' },
   },
 );
 
