@@ -1,16 +1,5 @@
 # Changelog
 
-## [0.4.0](https://github.com/DopaMindLabs/writer/compare/v0.3.0...v0.4.0) (2026-05-14)
-
-
-### Features
-
-* add mobile viewport tests for settings screens and ensure no horizontal overflow ([e6ee41c](https://github.com/DopaMindLabs/writer/commit/e6ee41c201d907a27fd94a5b1f0989504ff44030))
-* **citations:** enhance citation management with bulk actions and improved editing features ([5a5a691](https://github.com/DopaMindLabs/writer/commit/5a5a691f04516a625f202ba2c398044f9c9d8d88))
-* enhance author parsing to support name particles and multiple authors ([7c67408](https://github.com/DopaMindLabs/writer/commit/7c67408757863a524d324128fc4c9a48363c9226))
-* enhance CitationsSidePanel with navigation and expand functionality; add sidebar to CitationsScreen ([1f7274b](https://github.com/DopaMindLabs/writer/commit/1f7274bdf11f55cffa43494093438fd41e0c3dc7))
-* **tours:** implement guided tours for various screens and components ([8bb6f15](https://github.com/DopaMindLabs/writer/commit/8bb6f151114dc590fa1a7efa9052f12c82f8f907))
-
 ## [0.3.0](https://github.com/DopaMindLabs/writer/compare/v0.2.0...v0.3.0) (2026-05-14)
 
 
