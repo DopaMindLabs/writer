@@ -45,6 +45,8 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
 
   const [adding, setAdding] = useState<AddingState | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [editingSpaceName, setEditingSpaceName] = useState(false);
+  const [draftSpaceName, setDraftSpaceName] = useState(space?.name ?? '');
 
   useEffect(() => {
     if (adding && inputRef.current) {
@@ -53,6 +55,17 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
       input.setSelectionRange(input.value.length, input.value.length);
     }
   }, [adding]);
+
+  useEffect(() => {
+    if (!editingSpaceName) setDraftSpaceName(space?.name ?? '');
+  }, [space?.name, editingSpaceName]);
+
+  async function commitSpaceName() {
+    setEditingSpaceName(false);
+    const next = draftSpaceName.trim();
+    if (!next || next === space?.name) return;
+    await db.spaces.update(spaceId, { name: next, updatedAt: Date.now() });
+  }
 
   const { topSections, subsectionsByParent } = useMemo(() => {
     const top: Section[] = [];
@@ -149,9 +162,34 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
   return (
     <aside className="flex w-56 shrink-0 flex-col border-r border-rule bg-paper-2">
       <div className="border-b border-rule px-5 pb-4 pt-5">
-        <div className="font-serif text-lg font-medium leading-tight tracking-tight text-ink">
-          {space?.name ?? '…'}
-        </div>
+        {editingSpaceName ? (
+          <input
+            autoFocus
+            value={draftSpaceName}
+            onChange={(e) => setDraftSpaceName(e.target.value)}
+            onBlur={commitSpaceName}
+            onFocus={(e) => e.currentTarget.select()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+              if (e.key === 'Escape') {
+                setDraftSpaceName(space?.name ?? '');
+                setEditingSpaceName(false);
+              }
+            }}
+            aria-label={t('chrome:sidebar.renameSpace')}
+            className="w-full border-0 bg-transparent p-0 font-serif text-lg font-medium leading-tight tracking-tight text-ink outline-none"
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => space && setEditingSpaceName(true)}
+            disabled={!space}
+            title={space ? t('chrome:sidebar.renameSpace') : undefined}
+            className="block w-full cursor-text truncate text-left font-serif text-lg font-medium leading-tight tracking-tight text-ink"
+          >
+            {space?.name ?? '…'}
+          </button>
+        )}
         <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3">
           {space?.shared ? t('chrome:sidebar.shared') : t('chrome:sidebar.private')}
         </div>

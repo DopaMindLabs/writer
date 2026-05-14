@@ -47,4 +47,26 @@ describe('TemplatesScreen', () => {
       expect(await db.spaces.count()).toBeGreaterThan(0);
     });
   });
+
+  it('uses the template defaults when name and tag are cleared before submit', async () => {
+    const user = userEvent.setup();
+    const { getByText, getByLabelText, findByText } = renderWithProviders(
+      <TemplatesScreen />,
+    );
+    await user.click(getByText('Blank'));
+    const name = getByLabelText(/Name/i) as HTMLInputElement;
+    const tag = getByLabelText(/Tag/i) as HTMLInputElement;
+    await user.clear(name);
+    await user.clear(tag);
+    const submitButton = await findByText(/enter Blank|enter …/i);
+    await user.click(submitButton);
+    await waitFor(async () => {
+      const spaces = await db.spaces.toArray();
+      expect(spaces.length).toBeGreaterThan(0);
+      const last = spaces[spaces.length - 1];
+      // Fallbacks: template label + tag
+      expect(last.name).toBe('Blank');
+      expect(last.tag).toBe('BL');
+    });
+  });
 });

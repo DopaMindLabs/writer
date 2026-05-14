@@ -61,4 +61,25 @@ describe('SettingsScreen', () => {
     expect(getByRole('heading', { name: 'Account' })).toBeInTheDocument();
     expect(getByText(/Cloud sync is unavailable/i)).toBeInTheDocument();
   });
+
+  it('renders the typography tab when activated', () => {
+    const { getByRole } = renderWithProviders(<SettingsScreen />, {
+      initialEntries: ['/settings?tab=typography'],
+    });
+    expect(getByRole('heading', { name: /typography/i })).toBeInTheDocument();
+  });
+
+  it('renders the shortcuts tab when activated', () => {
+    const { getByRole } = renderWithProviders(<SettingsScreen />, {
+      initialEntries: ['/settings?tab=shortcuts'],
+    });
+    expect(getByRole('heading', { name: /shortcuts/i })).toBeInTheDocument();
+  });
+
+  it('renders the backups tab when activated', () => {
+    const { getByRole } = renderWithProviders(<SettingsScreen />, {
+      initialEntries: ['/settings?tab=backups'],
+    });
+    expect(getByRole('heading', { name: /backups/i })).toBeInTheDocument();
+  });
 });

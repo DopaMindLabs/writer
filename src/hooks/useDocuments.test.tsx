@@ -23,6 +23,11 @@ describe('useSections', () => {
     const { result } = renderHook(() => useSections(null));
     await waitFor(() => expect(result.current).toEqual([]));
   });
+
+  it('returns empty array when spaceId is undefined', async () => {
+    const { result } = renderHook(() => useSections(undefined));
+    await waitFor(() => expect(result.current).toEqual([]));
+  });
 });
 
 describe('useDocuments', () => {
@@ -39,6 +44,11 @@ describe('useDocuments', () => {
     const { result } = renderHook(() => useDocuments(undefined));
     await waitFor(() => expect(result.current).toEqual([]));
   });
+
+  it('returns empty array when spaceId is null', async () => {
+    const { result } = renderHook(() => useDocuments(null));
+    await waitFor(() => expect(result.current).toEqual([]));
+  });
 });
 
 describe('useDocument', () => {
@@ -50,6 +60,11 @@ describe('useDocument', () => {
 
   it('returns undefined when docId is null', async () => {
     const { result } = renderHook(() => useDocument(null));
+    await waitFor(() => expect(result.current).toBeUndefined());
+  });
+
+  it('returns undefined when docId is undefined', async () => {
+    const { result } = renderHook(() => useDocument(undefined));
     await waitFor(() => expect(result.current).toBeUndefined());
   });
 });

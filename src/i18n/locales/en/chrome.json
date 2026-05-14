@@ -5,7 +5,8 @@
     "workshop": "Workshop",
     "empty": "(empty)",
     "addDocAria": "Add doc to {{label}}",
-    "docNamePlaceholder": "Doc name (Enter to create)"
+    "docNamePlaceholder": "Doc name (Enter to create)",
+    "renameSpace": "Rename space"
   },
   "topbar": {
     "openNav": "Open navigation",

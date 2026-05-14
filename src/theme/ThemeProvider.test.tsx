@@ -46,4 +46,83 @@ describe('ThemeProvider', () => {
     );
     spy.mockRestore();
   });
+
+  it('detects high-contrast dark mode from media queries on mount', () => {
+    window.localStorage.clear();
+    const matchSpy = vi
+      .spyOn(window, 'matchMedia')
+      .mockImplementation((q: string) =>
+        ({
+          matches:
+            q === '(prefers-contrast: more)' ||
+            q === '(prefers-color-scheme: dark)',
+          media: q,
+          addEventListener: () => {},
+          removeEventListener: () => {},
+          addListener: () => {},
+          removeListener: () => {},
+          dispatchEvent: () => false,
+          onchange: null,
+        }) as unknown as MediaQueryList,
+      );
+    render(
+      <ThemeProvider>
+        <div />
+      </ThemeProvider>,
+    );
+    expect(useUI.getState().theme).toBe('hc-dark');
+    matchSpy.mockRestore();
+  });
+
+  it('detects high-contrast light mode when prefers-contrast is more and color scheme is light', () => {
+    window.localStorage.clear();
+    const matchSpy = vi
+      .spyOn(window, 'matchMedia')
+      .mockImplementation((q: string) =>
+        ({
+          matches: q === '(prefers-contrast: more)',
+          media: q,
+          addEventListener: () => {},
+          removeEventListener: () => {},
+          addListener: () => {},
+          removeListener: () => {},
+          dispatchEvent: () => false,
+          onchange: null,
+        }) as unknown as MediaQueryList,
+      );
+    render(
+      <ThemeProvider>
+        <div />
+      </ThemeProvider>,
+    );
+    expect(useUI.getState().theme).toBe('hc-light');
+    matchSpy.mockRestore();
+  });
+
+  it('ignores persisted localStorage with no theme field (handles bad JSON gracefully)', () => {
+    window.localStorage.setItem('lorem-ui', '{not-json');
+    const matchSpy = vi
+      .spyOn(window, 'matchMedia')
+      .mockImplementation(
+        () =>
+          ({
+            matches: false,
+            media: '',
+            addEventListener: () => {},
+            removeEventListener: () => {},
+            addListener: () => {},
+            removeListener: () => {},
+            dispatchEvent: () => false,
+            onchange: null,
+          }) as unknown as MediaQueryList,
+      );
+    render(
+      <ThemeProvider>
+        <div />
+      </ThemeProvider>,
+    );
+    // No contrast preference → no detected theme → stays at initial 'light'
+    expect(useUI.getState().theme).toBe('light');
+    matchSpy.mockRestore();
+  });
 });

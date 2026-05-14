@@ -144,4 +144,32 @@ describe('BrainSpaceNote', () => {
     await user.click(getByLabelText('Open linked doc'));
     expect(onPick).not.toHaveBeenCalled();
   });
+
+  it('closes the context menu when Escape is pressed', async () => {
+    await db.notes.put(sampleNote);
+    const { getByText, queryByRole, findByRole } = renderNote();
+    fireEvent.contextMenu(getByText('Hello'));
+    await findByRole('menuitem', { name: /delete note/i });
+    fireEvent.keyDown(document, { key: 'Escape' });
+    await waitFor(() => {
+      expect(
+        queryByRole('menuitem', { name: /delete note/i }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  it('closes the context menu when clicking outside it', async () => {
+    await db.notes.put(sampleNote);
+    const { getByText, queryByRole, findByRole } = renderNote();
+    fireEvent.contextMenu(getByText('Hello'));
+    await findByRole('menuitem', { name: /delete note/i });
+    // simulate a pointerdown on document outside the menu
+    fireEvent.pointerDown(document.body);
+    await waitFor(() => {
+      expect(
+        queryByRole('menuitem', { name: /delete note/i }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
 });

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './_helpers';
 import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
 
 const SAMPLE_BIBTEX = `@article{e2eSmith2024,
