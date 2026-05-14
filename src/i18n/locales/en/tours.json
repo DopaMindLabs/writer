@@ -1,0 +1,97 @@
+{
+  "menu": {
+    "help": "Help & tours",
+    "tours": "Guided tours",
+    "resetAll": "Reset all tours"
+  },
+  "controls": {
+    "next": "Next",
+    "prev": "Back",
+    "done": "Done",
+    "progress": "{{current}} of {{total}}"
+  },
+  "welcome": {
+    "title": "Welcome to LIpsum Writer",
+    "description": "A quick orientation to spaces and the home screen.",
+    "intro": {
+      "title": "Welcome",
+      "body": "LIpsum Writer is a writing workspace built around <i>spaces</i> — one space per project, paper, or book. Let's take a quick look around."
+    },
+    "continue": {
+      "title": "Pick up where you left off",
+      "body": "Your most recently edited space is here. One click reopens it."
+    },
+    "startSpace": {
+      "title": "Start something new",
+      "body": "Create a fresh space from a template — a thesis, a novel, an essay — and start writing in seconds."
+    }
+  },
+  "writer": {
+    "title": "The writer's workspace",
+    "description": "A tour of the editor, sidebar, and top bar.",
+    "intro": {
+      "title": "The writing surface",
+      "body": "This is where you do the work. Let's look at the navigation, modes, and tools you'll use most."
+    },
+    "spaceTitle": {
+      "title": "Space title",
+      "body": "Click the title to rename the space. The hover icon next to it opens its settings."
+    },
+    "sections": {
+      "title": "Sections & documents",
+      "body": "Organize a space into sections, and sections into documents. Hover a section to add a new doc."
+    },
+    "settings": {
+      "title": "Space settings",
+      "body": "Manage the template, sections, sharing, and deletion of this space."
+    },
+    "modes": {
+      "title": "Read · Write · Split",
+      "body": "Switch between editing, reading, or a side-by-side view. Each doc remembers your last mode."
+    },
+    "citations": {
+      "title": "Citations",
+      "body": "Open the citations panel to insert references while you write."
+    },
+    "theme": {
+      "title": "Theme",
+      "body": "Light, dark, and high-contrast variants — pick one that suits your eyes."
+    },
+    "editor": {
+      "title": "The editor",
+      "body": "A rich-text editor with markdown shortcuts, code blocks, and quotes. Start typing — your work autosaves locally."
+    }
+  },
+  "citations": {
+    "title": "Citations",
+    "description": "Managing references and bibliographies.",
+    "intro": {
+      "title": "Your bibliography",
+      "body": "All references for a space live here. Import a BibTeX file or add entries by hand."
+    },
+    "add": {
+      "title": "Add or import",
+      "body": "Drop in a .bib file or paste BibTeX text. Duplicates are skipped automatically."
+    },
+    "list": {
+      "title": "The list",
+      "body": "Search, filter, and edit citations inline. From here you can also export the full bibliography."
+    }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "The freeform notes canvas.",
+    "intro": {
+      "title": "Think out loud",
+      "body": "BrainSpace is a freeform canvas for ideas — drop notes, connect them, and shape your thinking before you commit to prose."
+    },
+    "addNote": {
+      "title": "Add a note",
+      "body": "Drop a note of any kind onto the canvas. Drag to move, resize from the corners."
+    },
+    "canvas": {
+      "title": "The canvas",
+      "body": "Shift-click two notes to connect them. Click the background to deselect."
+    }
+  }
+}

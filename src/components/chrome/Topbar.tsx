@@ -17,6 +17,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
 import { MobileNavDrawer } from './MobileNavDrawer';
+import { HelpMenu } from '@/tours';
 import { cn } from '@/lib/utils';
 
 const THEME_OPTIONS: { value: Theme; labelKey: string }[] = [
@@ -92,6 +93,7 @@ export function Topbar({
   const citationsTrigger = onCitations ? (
     <Link
       to={`/s/${spaceId}/citations`}
+      data-tour="tour-topbar-citations"
       aria-label={t('topbar.citations')}
       className={cn(
         focus
@@ -108,6 +110,7 @@ export function Topbar({
     <button
       type="button"
       onClick={() => openCitationsDrawer()}
+      data-tour="tour-topbar-citations"
       aria-label={t('topbar.citations')}
       className={cn(
         focus
@@ -166,12 +169,14 @@ export function Topbar({
       </div>
       <div className="flex-1" />
       {!onCitations && (
-        <ModeTabs
-          mode={mode}
-          spaceId={spaceId}
-          docId={docId}
-          fallbackDocId={fallbackDocId}
-        />
+        <div data-tour="tour-topbar-modes" className="inline-flex items-center">
+          <ModeTabs
+            mode={mode}
+            spaceId={spaceId}
+            docId={docId}
+            fallbackDocId={fallbackDocId}
+          />
+        </div>
       )}
       {focus ? (
         <Tooltip>
@@ -184,8 +189,10 @@ export function Topbar({
       {!onCitations && (mode === 'dump' || docId) && (
         <FocusToggle mode={mode} spaceId={spaceId} docId={docId} />
       )}
+      <HelpMenu />
       <DropdownMenu>
         <DropdownMenuTrigger
+          data-tour="tour-topbar-theme"
           className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
           aria-label={t('topbar.theme')}
           title={t('topbar.theme')}

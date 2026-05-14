@@ -9,7 +9,7 @@ if (!i18n.isInitialized) {
     fallbackLng: 'en',
     supportedLngs,
     defaultNS,
-    ns: ['common', 'chrome', 'screens', 'app', 'templates'],
+    ns: ['common', 'chrome', 'screens', 'app', 'templates', 'tours'],
     interpolation: { escapeValue: false },
     returnNull: false,
   });

@@ -6,12 +6,15 @@ import { Topbar } from '@/components/chrome/Topbar';
 import { useSpace } from '@/hooks/useSpaces';
 import { useUI } from '@/store/ui';
 import { CitationsPane } from '@/components/surfaces/CitationsPane';
+import { useAutoTour } from '@/tours';
 
 export function CitationsScreen() {
   const { spaceId } = useParams<{ spaceId: string }>();
   const space = useSpace(spaceId);
   const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
   const lastDocId = useUI((s) => s.currentDocId);
+
+  useAutoTour('citations', { ready: !!spaceId });
 
   useEffect(() => {
     if (spaceId) setCurrentSpaceId(spaceId);

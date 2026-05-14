@@ -5,11 +5,14 @@ import { db } from '@/db/db';
 import { BlockQuote } from '@/components/ui/block-quote';
 import { PageNav } from '@/components/chrome/PageNav';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useAutoTour } from '@/tours';
 
 export function HomeScreen() {
   const { t } = useTranslation(['screens', 'common']);
   const [firstSpaceId, setFirstSpaceId] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
+
+  useAutoTour('welcome', { ready: loaded });
 
   useEffect(() => {
     let cancelled = false;
@@ -53,6 +56,7 @@ export function HomeScreen() {
             {firstSpaceId && (
               <Link
                 to={`/s/${firstSpaceId}`}
+                data-tour="tour-continue-writing"
                 className="flex items-baseline justify-between border-b border-rule px-2 py-5 transition-colors hover:bg-paper-2"
               >
                 <span className="font-serif text-[18px] text-ink md:text-[22px]">
@@ -65,6 +69,7 @@ export function HomeScreen() {
             )}
             <Link
               to="/new"
+              data-tour="tour-start-space"
               className="flex items-baseline justify-between px-2 py-5 transition-colors hover:bg-paper-2"
             >
               <span

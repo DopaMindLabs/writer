@@ -42,6 +42,7 @@
     "clsx": "^2.1.1",
     "dexie": "^4.0.10",
     "dexie-react-hooks": "^1.1.7",
+    "driver.js": "^1.4.0",
     "i18next": "^26.1.0",
     "lexical": "^0.21.0",
     "lucide-react": "^0.468.0",
