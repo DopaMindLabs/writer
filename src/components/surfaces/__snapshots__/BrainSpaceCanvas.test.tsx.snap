@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DumpCanvas > renders canvas with seeded notes and connection 1`] = `
+exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] = `
 <div>
   <div
     class="relative h-full w-full overflow-hidden bg-paper"

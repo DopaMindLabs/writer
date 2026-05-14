@@ -1,11 +1,11 @@
 import { renderAtRoute } from '@/test/test-utils';
-import { seedDumpCanvas } from '@/test/fixtures';
-import { DumpScreen } from './Dump';
+import { seedBrainSpaceCanvas } from '@/test/fixtures';
+import { BrainSpaceScreen } from './BrainSpace';
 
-describe('DumpScreen', () => {
-  it('renders dump canvas with seeded notes', async () => {
-    await seedDumpCanvas();
-    const { findAllByText } = renderAtRoute(<DumpScreen />, {
+describe('BrainSpaceScreen', () => {
+  it('renders brain space canvas with seeded notes', async () => {
+    await seedBrainSpaceCanvas();
+    const { findAllByText } = renderAtRoute(<BrainSpaceScreen />, {
       path: '/s/:spaceId/dump',
       initialEntries: ['/s/s1/dump'],
     });
@@ -14,7 +14,7 @@ describe('DumpScreen', () => {
   });
 
   it('redirects when spaceId is missing', () => {
-    const { queryByTestId } = renderAtRoute(<DumpScreen />, {
+    const { queryByTestId } = renderAtRoute(<BrainSpaceScreen />, {
       path: '/dump',
       initialEntries: ['/dump'],
     });

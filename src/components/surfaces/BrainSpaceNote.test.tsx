@@ -3,12 +3,12 @@ import { fireEvent, render, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { sampleNote } from '@/test/fixtures';
 import { NoteState, type Note } from '@/db/schema';
-import { DumpNote } from './DumpNote';
+import { BrainSpaceNote } from './BrainSpaceNote';
 
-describe('DumpNote', () => {
+describe('BrainSpaceNote', () => {
   it('renders default note', () => {
     const { container } = render(
-      <DumpNote
+      <BrainSpaceNote
         note={sampleNote}
         selected={false}
         pending={false}
@@ -20,7 +20,7 @@ describe('DumpNote', () => {
 
   it('renders selected and pending note with title', () => {
     const { container } = render(
-      <DumpNote
+      <BrainSpaceNote
         note={{ ...sampleNote, title: 'A title' }}
         selected
         pending
@@ -39,7 +39,7 @@ describe('DumpNote', () => {
     await db.notes.put(seedNote);
     const user = userEvent.setup();
     const { getByText } = render(
-      <DumpNote
+      <BrainSpaceNote
         note={seedNote}
         selected={false}
         pending={false}
@@ -64,7 +64,7 @@ describe('DumpNote', () => {
     await db.notes.put(sampleNote);
     const user = userEvent.setup();
     const { getByText, queryByRole } = render(
-      <DumpNote
+      <BrainSpaceNote
         note={sampleNote}
         selected={false}
         pending={false}
@@ -87,7 +87,7 @@ describe('DumpNote', () => {
     await db.notes.put(noTitle);
     const user = userEvent.setup();
     const { getByText } = render(
-      <DumpNote
+      <BrainSpaceNote
         note={noTitle}
         selected={false}
         pending={false}
@@ -110,7 +110,7 @@ describe('DumpNote', () => {
     await db.notes.put(sampleNote);
     const user = userEvent.setup();
     const { getByLabelText } = render(
-      <DumpNote
+      <BrainSpaceNote
         note={sampleNote}
         selected={false}
         pending={false}

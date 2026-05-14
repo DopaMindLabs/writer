@@ -53,7 +53,7 @@ export interface Template {
   seedDocs: TemplateSeedDoc[];
   seedNotes?: TemplateSeedNote[];
   /**
-   * Note kinds exposed by the Dump toolbar for spaces on this template.
+   * Note kinds exposed by the Brain space toolbar for spaces on this template.
    * Order is preserved as toolbar order. If empty or undefined, the toolbar
    * falls back to `[NoteKind.Blank]`.
    */

@@ -75,7 +75,7 @@ export async function seedMultipleSpaces() {
   ]);
 }
 
-export async function seedDumpCanvas() {
+export async function seedBrainSpaceCanvas() {
   await db.spaces.put(sampleSpace);
   const n1: Note = { ...sampleNote, id: 'n1' };
   const n2: Note = { ...sampleNote, id: 'n2', l: 240, t: 120 };

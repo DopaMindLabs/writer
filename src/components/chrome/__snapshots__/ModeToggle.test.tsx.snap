@@ -63,7 +63,7 @@ exports[`ModeTabs > hides per-doc tabs when docId is null 1`] = `
 </div>
 `;
 
-exports[`ModeTabs > renders write/read/split/dump tabs with active state 1`] = `
+exports[`ModeTabs > renders write/read/split/space tabs with active state 1`] = `
 <div>
   <nav
     class="inline-flex items-center gap-4 font-mono text-[11px]"

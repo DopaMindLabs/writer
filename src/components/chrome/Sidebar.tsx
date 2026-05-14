@@ -39,7 +39,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const modeSuffix = inferModeSuffix(location.pathname);
-  const onDump = location.pathname.endsWith('/dump');
+  const onBrainSpace = location.pathname.endsWith('/dump');
 
   const [adding, setAdding] = useState<AddingState | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -167,7 +167,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
               {isWorkshop && (
                 <BrainSpaceLink
                   spaceId={spaceId}
-                  active={onDump}
+                  active={onBrainSpace}
                   count={notes.length}
                 />
               )}
@@ -241,7 +241,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
             </div>
             <BrainSpaceLink
               spaceId={spaceId}
-              active={onDump}
+              active={onBrainSpace}
               count={notes.length}
             />
           </div>

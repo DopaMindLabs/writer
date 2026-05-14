@@ -11,18 +11,18 @@ import { useConnections } from '@/hooks/useConnections';
 import { useSpace } from '@/hooks/useSpaces';
 import { getTemplate } from '@/data/templates';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
-import { DumpNote } from './DumpNote';
-import { DumpConnection } from './DumpConnection';
+import { BrainSpaceNote } from './BrainSpaceNote';
+import { BrainSpaceConnection } from './BrainSpaceConnection';
 import { NoteKind, NoteState, type Note } from '@/db/schema';
 
-interface DumpCanvasProps {
+interface BrainSpaceCanvasProps {
   spaceId: string;
 }
 
 const DEFAULT_W = 184;
 const DEFAULT_H = 80;
 
-export function DumpCanvas({ spaceId }: DumpCanvasProps) {
+export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
   const notes = useNotes(spaceId);
   const connections = useConnections(spaceId);
   const space = useSpace(spaceId);
@@ -111,14 +111,19 @@ export function DumpCanvas({ spaceId }: DumpCanvasProps) {
             const to = notesById.get(c.toNoteId);
             if (!from || !to) return null;
             return (
-              <DumpConnection key={c.id} connection={c} from={from} to={to} />
+              <BrainSpaceConnection
+                key={c.id}
+                connection={c}
+                from={from}
+                to={to}
+              />
             );
           })}
         </g>
       </svg>
 
       {notes.map((n) => (
-        <DumpNote
+        <BrainSpaceNote
           key={n.id}
           note={n}
           selected={selectedId === n.id}

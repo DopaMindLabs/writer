@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DumpConnection > renders SVG path between two notes 1`] = `
+exports[`BrainSpaceConnection > renders SVG path between two notes 1`] = `
 <div>
   <svg>
     <g
