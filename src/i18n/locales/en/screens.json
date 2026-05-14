@@ -24,7 +24,10 @@
     "statusValueRest": " — there is no data sync. All data is saved in IndexedDB in your local browser. If you clear your browser cache, your work will be lost.",
     "feedbackBefore": "I am still building this and I have alot ideas ",
     "feedbackAfter": ". I'd love to hear what works, what doesn't, and what you wish existed. Feedback is welcome.",
-    "sourceLabel": "Source"
+    "sourceLabel": "Source",
+    "settingsLabel": "Editor enhancements",
+    "floatingToolbarLabel": "Floating formatting toolbar",
+    "floatingToolbarHint": "Show H1–H4, lists, blockquote, bold and italic on text selection or right-click. Off by default — markdown shortcuts (#, >, -, **) still work either way."
   },
   "notFound": {
     "code": "404",
