@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.3.0](https://github.com/DopaMindLabs/writer/compare/v0.2.0...v0.3.0) (2026-05-14)
+
+
+### Features
+
+* add BrainSpaceDetailDrawer component with tests ([18fcff7](https://github.com/DopaMindLabs/writer/commit/18fcff79401d232b58cf79fe4cdc49959608125a))
+* add comprehensive tests for TemplatesScreen, WriteScreen, and UI store functionality ([48c1ac9](https://github.com/DopaMindLabs/writer/commit/48c1ac93d190a37ec6bdf6209ef1b10d13c7b0a8))
+* add Settings screen with navigation, tabs, and settings management ([4cc2d5d](https://github.com/DopaMindLabs/writer/commit/4cc2d5dc8e5785626f3310f2116fe3141d8422bf))
+* enhance Home screen with tooltip for status line warnings ([8e47832](https://github.com/DopaMindLabs/writer/commit/8e478323648b549c952f6d59af60e9a6b9c6ec7a))
+* enhance ModeToggle and Topbar components with tooltips and focus mode functionality ([9fa1126](https://github.com/DopaMindLabs/writer/commit/9fa11267da33ed334ef530aa55a37d62945c5db8))
+* enhance space settings with new tabs and delete functionality ([9f99fc2](https://github.com/DopaMindLabs/writer/commit/9f99fc2839a16053fdc1711893e8e387adc48e3d))
+* **i18n:** integrate i18next for internationalization support ([c9c9b47](https://github.com/DopaMindLabs/writer/commit/c9c9b47315087c8e88a700c742670273f9390847))
+* implement editable document name in Topbar with keyboard interactions ([5991197](https://github.com/DopaMindLabs/writer/commit/5991197c7ef1b16a287a420362b53f93f9af2c33))
+* implement floating toolbar for text formatting and add related settings ([683e7be](https://github.com/DopaMindLabs/writer/commit/683e7beee8aaacb4ee747cc41be11deab49742a6))
+* integrate citations panel across various screens and enhance UI state management ([d11b89c](https://github.com/DopaMindLabs/writer/commit/d11b89c3ccd67e6eb22bce001ccd6f6e7a4dbf31))
+* refactor BrainSpaceNote to manage editing state and add context menu for note actions ([26b072f](https://github.com/DopaMindLabs/writer/commit/26b072f067880e98bcb385de17d8ee7db1124d9b))
+* rename "dump" to "space" in various components and update related logic ([0ce2e72](https://github.com/DopaMindLabs/writer/commit/0ce2e729b10f13525943b8e6407ad31754b28632))
+* reorder seedDocs in fiction template for improved manuscript flow ([f34008d](https://github.com/DopaMindLabs/writer/commit/f34008dfa46752c013cb35be333c33c77fc3aa23))
+
+
+### Bug Fixes
+
+* update schema to include linkedDocId in Note interface ([18fcff7](https://github.com/DopaMindLabs/writer/commit/18fcff79401d232b58cf79fe4cdc49959608125a))
+
 ## [0.2.0](https://github.com/DopaMindLabs/writer/compare/v0.1.0...v0.2.0) (2026-05-14)
 
 
