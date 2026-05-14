@@ -28,7 +28,7 @@ export function PageNav({ showBack = true, backTo = '/' }: PageNavProps) {
       </div>
       <nav
         aria-label="Primary"
-        className="flex items-center gap-5 font-mono text-[10px] uppercase tracking-wider"
+        className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wider md:gap-5"
       >
         <NavLink to="/" end className={linkClass}>
           {t('home')}
@@ -43,7 +43,7 @@ export function PageNav({ showBack = true, backTo = '/' }: PageNavProps) {
           href="https://github.com/DopaMindLabs/Writer"
           target="_blank"
           rel="noreferrer"
-          className="text-ink-3 hover:text-ink"
+          className="hidden text-ink-3 hover:text-ink md:inline"
         >
           {t('github')}
         </a>

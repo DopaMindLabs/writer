@@ -12,7 +12,7 @@ export function SettingRow({ label, hint, disabled, children }: SettingRowProps)
   return (
     <div
       className={cn(
-        'grid grid-cols-[200px_1fr] items-start gap-6 border-b border-rule/60 py-[18px]',
+        'flex flex-col gap-2 border-b border-rule/60 py-[18px] md:grid md:grid-cols-[200px_1fr] md:items-start md:gap-6',
         disabled && 'cursor-not-allowed opacity-60',
       )}
     >

@@ -15,19 +15,19 @@ export function SettingsTabs({ tabs, active, onSelect }: SettingsTabsProps) {
   return (
     <nav
       aria-label="Settings sections"
-      className="w-56 shrink-0 border-r border-rule/60 bg-paper-2 py-5"
+      className="shrink-0 border-b border-rule/60 bg-paper-2 md:w-56 md:border-b-0 md:border-r md:py-5"
     >
-      <ul className="-ml-px flex flex-col">
+      <ul className="flex overflow-x-auto md:-ml-px md:flex-col md:overflow-visible">
         {tabs.map((tab) => {
           const isActive = tab.id === active;
           return (
-            <li key={tab.id}>
+            <li key={tab.id} className="shrink-0">
               <button
                 type="button"
                 onClick={() => onSelect(tab.id)}
                 aria-current={isActive ? 'page' : undefined}
                 className={cn(
-                  'flex w-full items-center border-l-2 px-6 py-2 text-left text-[13px] transition-colors',
+                  'flex w-full items-center whitespace-nowrap border-b-2 px-4 py-3 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-2',
                   isActive
                     ? 'border-ink bg-paper font-medium text-ink'
                     : 'border-transparent text-ink-2 hover:bg-paper hover:text-ink',

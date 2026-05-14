@@ -17,7 +17,7 @@ export function CitationsSidePanel({ spaceId }: CitationsSidePanelProps) {
   return (
     <aside
       aria-label="Citations"
-      className="flex h-full w-full max-w-[32rem] shrink-0 flex-col border-l border-rule bg-paper animate-in slide-in-from-right duration-200"
+      className="fixed inset-0 z-40 flex h-full w-full flex-col bg-paper animate-in slide-in-from-right duration-200 md:static md:inset-auto md:z-auto md:max-w-[32rem] md:shrink-0 md:border-l md:border-rule"
     >
       <div className="flex h-8 shrink-0 items-center justify-between border-b border-rule px-2">
         <span className="px-2 font-mono text-[10px] uppercase tracking-wider text-ink-3">

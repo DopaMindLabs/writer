@@ -30,7 +30,17 @@ interface Anchor {
   left: number;
 }
 
+const isCoarsePointer =
+  typeof window !== 'undefined' &&
+  typeof window.matchMedia === 'function' &&
+  window.matchMedia('(pointer: coarse)').matches;
+
 export function FloatingToolbarPlugin() {
+  if (isCoarsePointer) return null;
+  return <FloatingToolbarPluginImpl />;
+}
+
+function FloatingToolbarPluginImpl() {
   const [editor] = useLexicalComposerContext();
   const [anchor, setAnchor] = useState<Anchor | null>(null);
   const [formats, setFormats] = useState<ActiveFormats>({
