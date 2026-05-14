@@ -45,11 +45,13 @@ exports[`Topbar > collapses to icon-only chrome when focus=1 1`] = `
     <div
       class="flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-ink-3"
     >
-      <span
-        class="text-ink"
+      <button
+        class="cursor-text text-ink hover:text-ink"
+        title="Rename doc (double-click)"
+        type="button"
       >
         Sample
-      </span>
+      </button>
     </div>
     <div
       class="flex-1"
@@ -511,11 +513,13 @@ exports[`Topbar > renders with doc name, mode tabs and theme toggle 1`] = `
       >
         /
       </span>
-      <span
-        class="text-ink"
+      <button
+        class="cursor-text text-ink hover:text-ink"
+        title="Rename doc (double-click)"
+        type="button"
       >
         Sample
-      </span>
+      </button>
     </div>
     <div
       class="flex-1"

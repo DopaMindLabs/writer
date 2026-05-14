@@ -11,6 +11,7 @@
   "topbar": {
     "openNav": "Open navigation",
     "citations": "Citations",
+    "renameDoc": "Rename doc (double-click)",
     "theme": "Theme",
     "exitFocus": "Exit focus mode",
     "enterFocus": "Enter focus mode",
