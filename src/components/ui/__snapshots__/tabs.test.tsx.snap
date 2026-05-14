@@ -15,13 +15,13 @@ exports[`Tabs > renders tab list and content 1`] = `
       tabindex="0"
     >
       <button
-        aria-controls="radix-:r0:-content-a"
+        aria-controls="radix-_r_0_-content-a"
         aria-selected="true"
         class="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-paper data-[state=active]:text-ink data-[state=active]:shadow"
         data-orientation="horizontal"
         data-radix-collection-item=""
         data-state="active"
-        id="radix-:r0:-trigger-a"
+        id="radix-_r_0_-trigger-a"
         role="tab"
         tabindex="-1"
         type="button"
@@ -29,13 +29,13 @@ exports[`Tabs > renders tab list and content 1`] = `
         Alpha
       </button>
       <button
-        aria-controls="radix-:r0:-content-b"
+        aria-controls="radix-_r_0_-content-b"
         aria-selected="false"
         class="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-paper data-[state=active]:text-ink data-[state=active]:shadow"
         data-orientation="horizontal"
         data-radix-collection-item=""
         data-state="inactive"
-        id="radix-:r0:-trigger-b"
+        id="radix-_r_0_-trigger-b"
         role="tab"
         tabindex="-1"
         type="button"
@@ -44,11 +44,11 @@ exports[`Tabs > renders tab list and content 1`] = `
       </button>
     </div>
     <div
-      aria-labelledby="radix-:r0:-trigger-a"
+      aria-labelledby="radix-_r_0_-trigger-a"
       class="mt-2 ring-offset-paper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
       data-orientation="horizontal"
       data-state="active"
-      id="radix-:r0:-content-a"
+      id="radix-_r_0_-content-a"
       role="tabpanel"
       style="animation-duration: 0s;"
       tabindex="0"
@@ -56,12 +56,12 @@ exports[`Tabs > renders tab list and content 1`] = `
       Alpha panel
     </div>
     <div
-      aria-labelledby="radix-:r0:-trigger-b"
+      aria-labelledby="radix-_r_0_-trigger-b"
       class="mt-2 ring-offset-paper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
       data-orientation="horizontal"
       data-state="inactive"
       hidden=""
-      id="radix-:r0:-content-b"
+      id="radix-_r_0_-content-b"
       role="tabpanel"
       tabindex="0"
     />

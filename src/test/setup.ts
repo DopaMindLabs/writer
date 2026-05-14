@@ -41,7 +41,26 @@ if (typeof File !== 'undefined' && !('text' in File.prototype)) {
 }
 
 if (typeof window !== 'undefined') {
-  const w = window as unknown as { localStorage?: Storage };
+  // jsdom doesn't implement matchMedia. Install a default stub so code paths
+  // that read it (and tests that vi.spyOn it) have a function to operate on.
+  const w = window as unknown as {
+    localStorage?: Storage;
+    matchMedia?: (q: string) => MediaQueryList;
+  };
+  if (!w.matchMedia) {
+    w.matchMedia = (query: string) =>
+      ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        addListener: () => {},
+        removeListener: () => {},
+        dispatchEvent: () => false,
+      }) as unknown as MediaQueryList;
+  }
+
   if (!w.localStorage) {
     const store = new Map<string, string>();
     w.localStorage = {
