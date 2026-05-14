@@ -135,7 +135,7 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
           <span
             class="flex-1 text-[13px]"
           >
-            Brain dump
+            Brain space
           </span>
           <span
             class="font-mono text-[10px] text-ink-4"

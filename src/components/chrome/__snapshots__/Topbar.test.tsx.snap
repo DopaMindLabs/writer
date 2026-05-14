@@ -234,7 +234,7 @@ exports[`Topbar > renders with doc name, mode tabs and theme toggle 1`] = `
         data-discover="true"
         href="/s/s1/dump"
       >
-        dump
+        space
       </a>
     </nav>
     <a

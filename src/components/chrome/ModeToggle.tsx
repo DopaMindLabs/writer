@@ -9,6 +9,7 @@ interface ModeTabsProps {
   mode: Mode;
   spaceId: string;
   docId: string | null;
+  fallbackDocId?: string | null;
 }
 
 type TabDef =
@@ -19,18 +20,19 @@ const TABS: TabDef[] = [
   { key: 'write', label: 'write', suffix: '', perDoc: true },
   { key: 'read', label: 'read', suffix: '/read', perDoc: true },
   { key: 'split', label: 'split', suffix: '/split', perDoc: true },
-  { key: 'dump', label: 'dump', perDoc: false },
+  { key: 'dump', label: 'space', perDoc: false },
 ];
 
-export function ModeTabs({ mode, spaceId, docId }: ModeTabsProps) {
+export function ModeTabs({ mode, spaceId, docId, fallbackDocId }: ModeTabsProps) {
   const [searchParams] = useSearchParams();
   const focusParam = searchParams.get('focus');
   const withParam = searchParams.get('with');
+  const effectiveDocId = docId ?? fallbackDocId ?? null;
 
   return (
     <nav className="inline-flex items-center gap-4 font-mono text-[11px]">
       {TABS.map((t) => {
-        if (t.perDoc && !docId) return null;
+        if (t.perDoc && !effectiveDocId) return null;
         const active =
           t.key === mode || (mode === 'focus' && t.key === 'write');
         const params = new URLSearchParams();
@@ -38,7 +40,7 @@ export function ModeTabs({ mode, spaceId, docId }: ModeTabsProps) {
         if (t.key === 'split' && withParam) params.set('with', withParam);
         const qs = params.toString();
         const to = t.perDoc
-          ? `/s/${spaceId}/d/${docId}${t.suffix}${qs ? `?${qs}` : ''}`
+          ? `/s/${spaceId}/d/${effectiveDocId}${t.suffix}${qs ? `?${qs}` : ''}`
           : `/s/${spaceId}/dump${focusParam ? '?focus=' + focusParam : ''}`;
         return (
           <Link

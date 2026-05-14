@@ -39,6 +39,7 @@ interface TopbarProps {
   docName?: string;
   spaceName?: string;
   mode: Mode;
+  fallbackDocId?: string | null;
 }
 
 export function Topbar({
@@ -47,6 +48,7 @@ export function Topbar({
   docName,
   spaceName,
   mode,
+  fallbackDocId,
 }: TopbarProps) {
   const { theme, setTheme } = useTheme();
   const location = useLocation();
@@ -74,7 +76,12 @@ export function Topbar({
       </div>
       <div className="flex-1" />
       {!onCitations && (
-        <ModeTabs mode={mode} spaceId={spaceId} docId={docId} />
+        <ModeTabs
+          mode={mode}
+          spaceId={spaceId}
+          docId={docId}
+          fallbackDocId={fallbackDocId}
+        />
       )}
       <Link
         to={`/s/${spaceId}/citations`}

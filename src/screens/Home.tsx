@@ -26,7 +26,7 @@ export function HomeScreen() {
     <div className="flex h-full w-full flex-col overflow-auto bg-paper text-ink">
       <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 py-10 md:px-12 md:py-16">
         <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
-          Free writing space
+          Free writing multiverse
         </div>
         <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-ink md:text-6xl">
           LIpsum{' '}

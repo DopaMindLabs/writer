@@ -9,7 +9,7 @@ test('dump screen mounts with topbar showing the unsorted-notes count', async ({
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}/dump`);
 
-  await expect(page.getByText(/Brain dump · \d+ unsorted/i)).toBeVisible();
+  await expect(page.getByText(/Brain space · \d+ unsorted/i)).toBeVisible();
   // SpaceRail is present in non-focus dump view.
   await expect(page.getByRole('link', { name: 'Create new space' })).toBeVisible();
 });
