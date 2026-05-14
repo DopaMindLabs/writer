@@ -42,9 +42,8 @@ afterEach(() => {
 });
 
 describe('BrainSpaceDetailDrawer', () => {
-  it('opens when a bubble is clicked and shows its body', async () => {
+  it('opens when openDetail is called and shows the note body', async () => {
     await seedTwoConnectedNotes();
-    const user = userEvent.setup();
     const { findByText, findByLabelText } = renderCanvas();
     await findByText('Hero');
     useUI.getState().openDetail(SECOND_NOTE.id);
@@ -55,7 +54,6 @@ describe('BrainSpaceDetailDrawer', () => {
 
   it('lists incoming and outgoing connections', async () => {
     await seedTwoConnectedNotes();
-    const user = userEvent.setup();
     const { findByText, findByRole } = renderCanvas();
     await findByText('Hero');
     useUI.getState().openDetail(SECOND_NOTE.id);

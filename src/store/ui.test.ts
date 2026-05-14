@@ -11,6 +11,7 @@ describe('useUI store', () => {
         theme: 'light',
         exportOpen: false,
         floatingToolbarEnabled: false,
+        splitDividerPct: 50,
       });
     });
   });
@@ -19,7 +20,12 @@ describe('useUI store', () => {
     act(() => useUI.getState().setCurrentSpaceId('s1'));
     expect(useUI.getState().currentSpaceId).toBe('s1');
     expect(JSON.parse(window.localStorage.getItem('lorem-ui') ?? '{}')).toEqual(
-      { theme: 'light', currentSpaceId: 's1', floatingToolbarEnabled: false },
+      {
+        theme: 'light',
+        currentSpaceId: 's1',
+        floatingToolbarEnabled: false,
+        splitDividerPct: 50,
+      },
     );
   });
 
@@ -52,7 +58,12 @@ describe('useUI store', () => {
     act(() => useUI.getState().setFloatingToolbarEnabled(true));
     expect(useUI.getState().floatingToolbarEnabled).toBe(true);
     expect(JSON.parse(window.localStorage.getItem('lorem-ui') ?? '{}')).toEqual(
-      { theme: 'light', currentSpaceId: null, floatingToolbarEnabled: true },
+      {
+        theme: 'light',
+        currentSpaceId: null,
+        floatingToolbarEnabled: true,
+        splitDividerPct: 50,
+      },
     );
     act(() => useUI.getState().setFloatingToolbarEnabled(false));
     expect(useUI.getState().floatingToolbarEnabled).toBe(false);

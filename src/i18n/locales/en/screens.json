@@ -127,7 +127,14 @@
     "rightPaneAria": "Right pane document",
     "noOtherDocs": "(no other docs)",
     "brainSpaceOption": "Brain space",
-    "pickDoc": "Pick a document from the dropdown above."
+    "citationsOption": "Citations",
+    "pickDoc": "Pick a document from the dropdown above.",
+    "dividerAria": "Resize split panes"
+  },
+  "citationsDrawer": {
+    "title": "Citations",
+    "description": "Search, import, and export citations for this space.",
+    "close": "Close citations"
   },
   "citations": {
     "title": "Citations",

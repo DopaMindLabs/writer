@@ -5,6 +5,7 @@ import { Sidebar } from '@/components/chrome/Sidebar';
 import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
 import { WriteSurface } from '@/components/surfaces/WriteSurface';
+import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments, useDocument } from '@/hooks/useDocuments';
 import { useUI } from '@/store/ui';
@@ -61,12 +62,13 @@ export function WriteScreen() {
           spaceName={space?.name}
           mode={editorMode}
         />
-        <main className="flex-1 overflow-hidden">
+        <main className="flex flex-1 overflow-hidden">
           {doc ? (
             <WriteSurface doc={doc} mode={editorMode} />
           ) : (
             <EmptyState />
           )}
+          <CitationsSidePanel spaceId={spaceId} />
         </main>
       </div>
     </div>
@@ -75,7 +77,7 @@ export function WriteScreen() {
 
 function EmptyState() {
   return (
-    <div className="flex h-full items-center justify-center text-ink-3">
+    <div className="flex h-full min-w-0 flex-1 items-center justify-center text-ink-3">
       <div className="text-center">
         <p className="font-serif text-2xl text-ink">Empty space</p>
         <p className="mt-2 text-sm">Pick a document from the sidebar to start writing.</p>

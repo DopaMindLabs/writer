@@ -19,13 +19,13 @@ exports[`BrainSpaceNote > renders default note 1`] = `
         mon
       </span>
       <button
-        aria-label="Delete note"
-        class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 transition-opacity hover:bg-paper-2 hover:text-ink opacity-0 group-hover:opacity-100"
-        data-delete="true"
+        aria-label="Open details"
+        class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 opacity-0 transition-opacity hover:bg-paper-2 hover:text-ink group-hover:opacity-100"
+        data-no-drag="true"
         type="button"
       >
         <svg
-          class="lucide lucide-x h-3 w-3"
+          class="lucide lucide-arrow-up-right h-3 w-3"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -37,16 +37,24 @@ exports[`BrainSpaceNote > renders default note 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M18 6 6 18"
+            d="M7 7h10v10"
           />
           <path
-            d="m6 6 12 12"
+            d="M7 17 17 7"
           />
         </svg>
       </button>
     </div>
+    <button
+      class="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
+      data-no-drag="true"
+      type="button"
+    >
+      + title
+    </button>
     <div
-      class="flex-1 whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+      class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+      data-no-drag="true"
     >
       Hello
     </div>
@@ -78,13 +86,13 @@ exports[`BrainSpaceNote > renders selected and pending note with title 1`] = `
         mon
       </span>
       <button
-        aria-label="Delete note"
-        class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 transition-opacity hover:bg-paper-2 hover:text-ink opacity-0 group-hover:opacity-100"
-        data-delete="true"
+        aria-label="Open details"
+        class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 opacity-0 transition-opacity hover:bg-paper-2 hover:text-ink group-hover:opacity-100"
+        data-no-drag="true"
         type="button"
       >
         <svg
-          class="lucide lucide-x h-3 w-3"
+          class="lucide lucide-arrow-up-right h-3 w-3"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -96,21 +104,23 @@ exports[`BrainSpaceNote > renders selected and pending note with title 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M18 6 6 18"
+            d="M7 7h10v10"
           />
           <path
-            d="m6 6 12 12"
+            d="M7 17 17 7"
           />
         </svg>
       </button>
     </div>
     <div
-      class="font-serif text-[13px] font-medium text-ink"
+      class="cursor-text font-serif text-[13px] font-medium text-ink"
+      data-no-drag="true"
     >
       A title
     </div>
     <div
-      class="flex-1 whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+      class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+      data-no-drag="true"
     >
       Hello
     </div>

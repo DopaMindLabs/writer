@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/chrome/Sidebar';
 import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
 import { BrainSpaceCanvas } from '@/components/surfaces/BrainSpaceCanvas';
+import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
@@ -55,8 +56,9 @@ export function BrainSpaceScreen() {
           fallbackDocId={fallbackDocId}
         />
         <BrainSpaceMobileNotice spaceId={spaceId} />
-        <main className="hidden flex-1 overflow-hidden md:block">
+        <main className="hidden flex-1 overflow-hidden md:flex">
           <BrainSpaceCanvas spaceId={spaceId} />
+          <CitationsSidePanel spaceId={spaceId} />
         </main>
       </div>
     </div>

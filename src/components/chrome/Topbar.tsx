@@ -55,6 +55,7 @@ export function Topbar({
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const setMobileNavOpen = useUI((s) => s.setMobileNavOpen);
+  const openCitationsDrawer = useUI((s) => s.openCitationsDrawer);
   const onCitations = location.pathname.endsWith('/citations');
 
   return (
@@ -85,16 +86,29 @@ export function Topbar({
           fallbackDocId={fallbackDocId}
         />
       )}
-      <Link
-        to={`/s/${spaceId}/citations`}
-        className={cn(
-          'inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider hover:bg-paper-2',
-          onCitations ? 'text-ink' : 'text-ink-3',
-        )}
-      >
-        <Quote className="h-3 w-3" />
-        <span className="hidden sm:inline">{t('topbar.citations')}</span>
-      </Link>
+      {onCitations ? (
+        <Link
+          to={`/s/${spaceId}/citations`}
+          className={cn(
+            'inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink hover:bg-paper-2',
+          )}
+        >
+          <Quote className="h-3 w-3" />
+          <span className="hidden sm:inline">{t('topbar.citations')}</span>
+        </Link>
+      ) : (
+        <button
+          type="button"
+          onClick={() => openCitationsDrawer()}
+          className={cn(
+            'inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:bg-paper-2 hover:text-ink',
+          )}
+          aria-label={t('topbar.citations')}
+        >
+          <Quote className="h-3 w-3" />
+          <span className="hidden sm:inline">{t('topbar.citations')}</span>
+        </button>
+      )}
       {!onCitations && (mode === 'dump' || docId) && (
         <FocusToggle mode={mode} spaceId={spaceId} docId={docId} />
       )}
