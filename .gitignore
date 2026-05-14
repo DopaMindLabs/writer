@@ -26,7 +26,6 @@ dist-ssr
 # Vite cache
 .vite
 project
-README.md
 !src/data/templates/readme.md
 plans
 
