@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft, AlertTriangle, Smile, Lightbulb } from 'lucide-react';
+import { BlockQuote } from '@/components/ui/block-quote';
 
 export function AboutScreen() {
   return (
@@ -33,7 +34,23 @@ export function AboutScreen() {
             fragments, the half-thoughts, the 3am connections. All of it, in
             one place.
           </p>
-          <p>So I built this space for us.I hope it gives your dopamine rush just as much it give me to build this.</p>
+          <p>So I built this space for us. I hope it gives your dopamine rush just as much it give me to build this.</p>
+
+          <p>One more thing... I believe in tech for good & I hate advertsing. So, this will always be advert free and FREE for non-commercial use. You can fork it modify it as you like under <a
+              href="https://github.com/DopaMindLabs/Writer?tab=License-1-ov-file"
+              target="_blank"
+              rel="noreferrer"
+              className="underline decoration-rule underline-offset-4 hover:decoration-ink hover:text-ink"
+            >
+              PolyForm Noncommercial License 1.0.0
+            </a>
+          </p>
+          <BlockQuote cite={<>&mdash; ARSI &ldquo;HAKITA&rdquo; PATALA</>}>
+                    <p>
+                      &lsquo;Culture shouldn&rsquo;t exist only for those who can afford
+                      it&rsquo;
+                    </p>
+                  </BlockQuote>
 
         </div>
 
