@@ -97,6 +97,12 @@ describe('BrainSpaceDetailDrawer', () => {
     await findByText('Hero');
     useUI.getState().openDetail(SECOND_NOTE.id);
     const select = (await findByLabelText(/linked doc/i)) as HTMLSelectElement;
+    // Wait for the docs liveQuery to resolve and add the option for sampleDoc
+    await waitFor(() =>
+      expect(
+        Array.from(select.options).some((o) => o.value === sampleDoc.id),
+      ).toBe(true),
+    );
     await user.selectOptions(select, sampleDoc.id);
     await waitFor(async () => {
       const fresh = await db.notes.get(SECOND_NOTE.id);
