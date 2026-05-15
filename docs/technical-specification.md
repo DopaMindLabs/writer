@@ -39,7 +39,7 @@
 | 7 | **Sidebar** | Per-space navigation: section list, doc list, add doc, inline rename, Brain Space link with unsorted-note count, settings cog. |
 | 8 | **Mobile nav** | Hamburger drawer on small viewports; settings tabs reflow without horizontal overflow. |
 | 9 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), placeholder tabs for Account, Typography, Shortcuts, Backups. |
-| 10 | **Per-space settings** | General (name, tag), Sharing (coming soon), Template (coming soon), Members, Danger Zone (delete with typed confirmation). |
+| 10 | **Per-space settings** | General (name, tag), Sharing (coming soon), Template (coming soon), Members, Backups (manual `.md` snapshots + history + download), Danger Zone (delete with typed confirmation). |
 | 11 | **Persistence** | IndexedDB autosave (~600 ms debounce). Survives reload, route changes, browser restart. Versioned Dexie migrations. |
 | 12 | **Theming** | Four themes: light, dark, high-contrast light, high-contrast dark. Choice persists in `localStorage`. |
 | 13 | **Tours / onboarding** | Driver.js guided tours; auto-trigger on first visit; replay from help menu; per-tour completion tracked in `localStorage`. |
@@ -69,7 +69,7 @@
 
 ### 3.2 Data model (Dexie tables)
 
-`Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `Note` (state machine: `seed-prompt → seed-fetched → user`), `Connection`, `Annotation`, `Citation`, `Backup`, `Settings`, `HighlightPalette`, `Meta`.
+`Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `Note` (state machine: `seed-prompt → seed-fetched → user`), `Connection`, `Annotation`, `Citation`, `Backup` (binary `payload: Blob`, discriminated by `format` — currently only `md-zip`), `Settings`, `HighlightPalette`, `Meta`.
 
 Schema is on **version 5**; migrations backfill `Section.parentSectionId` and `Note.state` from prior versions.
 
@@ -271,6 +271,7 @@ Reached via the cog in the sidebar header. The **back** link returns to the acti
 | **Sharing** | Coming soon | *"Per-space visibility and shared links"* placeholder. |
 | **Template** | Coming soon | Cannot change template after creation; placeholder explains. |
 | **Members** | Present | Component scaffold (no implementation). |
+| **Backups** | Active | Manual `.md`-zip snapshots scoped to this space. Persisted in IndexedDB and re-downloadable from the history table. See § 4.15. |
 | **Danger zone** | Active | Delete button stays disabled until the typed confirmation matches the space name. Deletion redirects to Home. |
 
 *Covered by:* `space-settings.spec.ts`, `SpaceSettings.test.tsx`.
@@ -313,6 +314,64 @@ Four themes: `light`, `dark`, `hc-light`, `hc-dark`. Applied via `data-theme` on
 i18next is wired in with namespaces `common`, `chrome`, `screens`, `app`, `templates`. Currently the only supported language is **English (`en`)**. Missing translations fall back to the key. Adding a language requires only resource files.
 
 *Covered by:* `i18n.test.ts`.
+
+---
+
+### 4.15 Backups
+
+Manual export of an entire space as a Markdown `.zip` archive, with a history of past snapshots kept in IndexedDB. Reached via **Space settings → Backups**.
+
+**v1 scope.** Manual snapshot only — no auto-snapshots, no cloud sync, no restore yet. Restore / import is the same surface and is on the roadmap (the per-file YAML frontmatter is stable to make round-tripping straightforward when it lands). Other export formats (LaTeX, HTML, PDF) are deferred; `Backup.format` is a discriminator (`'md-zip'` today) so future formats can co-exist in the same table.
+
+**Snapshot creation.** Clicking **+ snapshot now**:
+
+1. Reads a consistent snapshot of the space inside a single Dexie read transaction (spaces, sections, docs, notes, annotations, citations, connections, palettes).
+2. Builds a `.zip` in-memory with [`JSZip`](https://www.npmjs.com/package/jszip).
+3. Inserts a `Backup` row (`kind: 'manual'`, `format: 'md-zip'`, `payload: Blob`, `size`, `when`, `scope: spaceId`).
+4. Triggers a browser download of the same blob via a temporary `<a download>`.
+
+**Doc body → Markdown.** Lexical-serialized doc bodies are hydrated into a headless editor (`@lexical/headless`) and run through `$convertToMarkdownString(TRANSFORMERS)` — the same transformer set used by the live editor, so headings, lists, links, code, and quotes round-trip with high fidelity. Plain-text seed bodies (not yet serialized) pass through unchanged.
+
+**Zip layout.** Inside the archive:
+
+```
+<space-slug>-YYYY-MM-DD-HHMM.zip
+├── space.md            # YAML frontmatter only (name, tag, template, exportedAt, format, schemaVersion)
+├── manuscript/
+│   └── <section-slug>/
+│       └── NN-<doc-slug>.md   # YAML frontmatter (id, name, status, wordCount, updatedAt) + body
+├── notes.md            # brain-dump cards grouped by kind
+├── citations.md        # bibliography
+├── connections.md      # note-to-note edge list
+├── annotations.md      # highlights / comments per doc
+└── palette.md          # highlight palette slots
+```
+
+Subsections nest under their parent section folder. Docs whose `sectionId` doesn't resolve land in `manuscript/_unsorted/`.
+
+**History table.** A live-queried list of `Backup` rows for the current space, newest first. Each row exposes:
+
+| Column | Source | Format |
+|--------|--------|--------|
+| WHEN | `backup.when` | Relative time ("just now", "12 min ago", "3 h ago", "2 d ago", or ISO date for older entries) |
+| KIND | `backup.kind` | Currently always `manual` |
+| SIZE | `backup.size` | Human-readable (B / kB / MB) |
+| Actions | — | `↓ download` (re-downloads the stored blob) · `delete` (confirm dialog → row removed) |
+
+A disabled `↑ restore from file · soon` hint sits beside the snapshot button to telegraph the next step on this surface.
+
+**Storage cost.** Blobs sit inside IndexedDB on the `backups` object store. The `payload` field is not indexed (index spec: `'id, when, scope, kind'`) so changing its type to `Blob` did not require a Dexie version bump. Practical implication: many snapshots of a large space can accumulate quickly — there is no auto-prune in v1.
+
+**Key files.**
+
+- [src/lib/backup/lexicalToMarkdown.ts](src/lib/backup/lexicalToMarkdown.ts) — headless-editor hydration + markdown conversion.
+- [src/lib/backup/buildSpaceMarkdownZip.ts](src/lib/backup/buildSpaceMarkdownZip.ts) — snapshot reader, zip builder, slugify, YAML emitter.
+- [src/lib/backup/createSpaceBackup.ts](src/lib/backup/createSpaceBackup.ts) — orchestrator that persists the row.
+- [src/hooks/useBackups.ts](src/hooks/useBackups.ts) — live-query hook.
+- [src/lib/file-download.ts](src/lib/file-download.ts) — shared `downloadBlob` helper (also used by Citations export).
+- [src/screens/SpaceSettings.tsx](src/screens/SpaceSettings.tsx) — `BackupsTab` component and the new `'backups'` entry in `TAB_IDS`.
+
+*Covered by:* `lexicalToMarkdown.test.ts`, `buildSpaceMarkdownZip.test.ts`, `createSpaceBackup.test.ts`, `SpaceSettings.test.tsx` (Backups tab tests).
 
 ---
 
@@ -375,10 +434,11 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 - **Surfaces:** `WriteSurface`, `BrainSpaceCanvas`, `BrainSpaceNote`, `BrainSpaceDetailDrawer`, `CitationsPane`, `CitationsSidePanel`.
 - **Settings primitives:** `SettingRow`, `SettingsTabs`, `Chip`, `ComingSoonRow`.
 - **UI base (snapshots):** button, card, dialog, input, scroll-area, separator, tabs, tooltip, block-quote, dropdown-menu.
-- **Hooks:** `useCitations`, `useConnections`, `useDocuments`, `useNotes`, `useSpaces`.
+- **Hooks:** `useCitations`, `useConnections`, `useDocuments`, `useNotes`, `useSpaces`, `useBackups`.
 - **Store:** `ui` (Zustand).
 - **DB:** `db` (Dexie migrations), `seed`.
 - **Utilities:** `bibtex`, `formatting`, `doc-naming`, `ids`, `utils`, `templates`, `i18n`.
+- **Backup pipeline:** `lexicalToMarkdown`, `buildSpaceMarkdownZip`, `createSpaceBackup` (snapshot read, zip layout, frontmatter, headless Lexical → Markdown).
 - **Theme / tours:** `ThemeProvider`, `tokens`, `HelpMenu`, `storage`, `useTour`, `useAutoTour`.
 
 ---
@@ -391,6 +451,9 @@ These exist as scaffolding only — they are visible in the UI but not yet funct
 - **Space settings → Sharing** (per-space visibility, shared links).
 - **Space settings → Template** (change template after creation).
 - **Space settings → Members** (no implementation behind the tab).
+- **Backup restore / import** — disabled `↑ restore from file · soon` hint in the Backups tab; the format is stable, the reverse path is not built.
+- **Auto-snapshots and cloud sync** — Backups are manual-only in v1; no scheduled snapshots, no off-device replication.
+- **Other export formats** — LaTeX, HTML, PDF; `Backup.format` discriminator is in place but only `md-zip` ships.
 - **Languages other than English** — i18n framework is wired but only `en` resources are shipped.
 
 ---
@@ -407,3 +470,4 @@ These exist as scaffolding only — they are visible in the UI but not yet funct
 - **View mode** — Write, Focus, Read, or Split — chrome variants around the same document.
 - **SpaceRail / FocusRail** — Left-edge navigation. SpaceRail in normal modes; FocusRail (compact) in Focus mode.
 - **Template** — A starter layout (sections, seed docs, note kinds) applied when creating a new space.
+- **Backup** — A snapshot of a space at a point in time. Stored as a binary blob in IndexedDB and re-downloadable from the Backups tab. The `format` field discriminates between formats; today only `md-zip` (a `.zip` of per-doc Markdown files) ships.

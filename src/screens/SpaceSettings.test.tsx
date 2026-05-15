@@ -210,6 +210,39 @@ describe('SpaceSettingsScreen', () => {
     ).toBeInTheDocument();
   });
 
+  it('renders the Backups tab with an empty history hint', async () => {
+    await seedBasicSpace();
+    renderAtSpaceSettings('/s/s1/settings?tab=backups');
+    expect(
+      await screen.findByRole('heading', { name: /^backups$/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/No snapshots yet/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /snapshot now/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('creates a snapshot, writes a Backups row, and shows it in the history', async () => {
+    await seedBasicSpace();
+    const user = userEvent.setup();
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => {});
+    renderAtSpaceSettings('/s/s1/settings?tab=backups');
+    await user.click(
+      await screen.findByRole('button', { name: /snapshot now/i }),
+    );
+    await waitFor(async () => {
+      expect(await db.backups.where('scope').equals('s1').count()).toBe(1);
+    });
+    expect(clickSpy).toHaveBeenCalled();
+    expect(await screen.findByTestId('backups-history')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^delete$/i })).toBeInTheDocument();
+    clickSpy.mockRestore();
+  });
+
   it('renders the Danger zone with the delete trigger', async () => {
     await seedBasicSpace();
     renderAtSpaceSettings('/s/s1/settings?tab=danger');

@@ -95,13 +95,16 @@ export interface Citation {
   raw?: string;
 }
 
+export type BackupFormat = 'md-zip';
+
 export interface Backup {
   id: string;
   when: number;
   scope: string;
   kind: 'auto' | 'manual' | 'snapshot';
+  format: BackupFormat;
   size: number;
-  payload: string;
+  payload: Blob;
   label?: string;
 }
 
