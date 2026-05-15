@@ -42,6 +42,11 @@ export default defineConfig({
             if (/(^|\/)src\/main\.tsx$/.test(path)) return false;
             if (path.includes('src/editor/')) return false;
             if (path.includes('src/test/')) return false;
+            // Tours are suppressed in e2e via the localStorage init-script
+            // in e2e/_helpers.ts (so the driver.js overlay doesn't intercept
+            // pointer events), so they can't contribute to e2e coverage.
+            // Cover them via unit tests instead.
+            if (path.includes('src/tours/')) return false;
             if (path.includes('.test.')) return false;
             if (path.includes('__snapshots__')) return false;
             return true;
@@ -52,11 +57,6 @@ export default defineConfig({
             ['console-summary'],
             ['lcov'],
           ],
-          // Today's e2e baseline (May 2026). Grow toward 90/90/90/88 as we
-          // add more specs covering Sidebar/BrainSpace/keyboard shortcuts/
-          // error paths. The thresholds here are also enforced by the
-          // `onEnd` hook below — monocart only reports, it does NOT fail
-          // the run on its own.
           thresholds: {
             lines: 75,
             statements: 60,
