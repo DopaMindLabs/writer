@@ -3,8 +3,9 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Trash2 } from 'lucide-react';
 import { useSpace } from '@/hooks/useSpaces';
+import { useBackups } from '@/hooks/useBackups';
 import { db } from '@/db/db';
-import type { Space } from '@/db/schema';
+import type { Backup, Space } from '@/db/schema';
 import { PageNav } from '@/components/chrome/PageNav';
 import {
   SettingsTabs,
@@ -20,12 +21,16 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { createSpaceBackup } from '@/lib/backup/createSpaceBackup';
+import { backupFilename } from '@/lib/backup/buildSpaceMarkdownZip';
+import { downloadBlob } from '@/lib/file-download';
 
 const TAB_IDS = [
   'general',
   'sharing',
   'template',
   'members',
+  'backups',
   'danger',
 ] as const;
 type TabId = (typeof TAB_IDS)[number];
@@ -65,6 +70,7 @@ export function SpaceSettingsScreen() {
               {activeTab === 'sharing' && <SharingTab />}
               {activeTab === 'template' && <TemplateTab />}
               {activeTab === 'members' && <MembersTab />}
+              {activeTab === 'backups' && <BackupsTab space={space} />}
               {activeTab === 'danger' && <DangerTab space={space} />}
             </>
           ) : (
@@ -216,6 +222,169 @@ function MembersTab() {
       </div>
     </section>
   );
+}
+
+function BackupsTab({ space }: { space: Space }) {
+  const { t } = useTranslation('screens');
+  const backups = useBackups(space.id);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSnapshot() {
+    setBusy(true);
+    setError(null);
+    try {
+      const { backup, filename } = await createSpaceBackup(space.id);
+      downloadBlob(backup.payload, filename);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function handleDownload(backup: Backup) {
+    downloadBlob(backup.payload, backupFilename(space.name, backup.when));
+  }
+
+  async function handleDelete(backup: Backup) {
+    const ok = window.confirm(t('settings.space.backups.deleteConfirm'));
+    if (!ok) return;
+    await db.backups.delete(backup.id);
+  }
+
+  return (
+    <section>
+      <TabHeader
+        titleKey="settings.space.backups.title"
+        subtitleKey="settings.space.backups.subtitle"
+        breadcrumbKey="settings.space.breadcrumb"
+      />
+
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule pb-4">
+        <p className="font-serif text-[13px] italic text-ink-3">
+          {t('settings.space.backups.comingSoonHint')}
+        </p>
+        <div className="flex items-center gap-4 text-[12px]">
+          <span
+            aria-disabled="true"
+            className="cursor-not-allowed font-mono text-[10px] uppercase tracking-wider text-ink-4"
+          >
+            {t('settings.space.backups.restoreSoon')}
+          </span>
+          <Button size="sm" onClick={() => void handleSnapshot()} disabled={busy}>
+            {busy
+              ? t('settings.space.backups.snapshotting')
+              : t('settings.space.backups.snapshotNow')}
+          </Button>
+        </div>
+      </div>
+
+      {error && (
+        <p
+          role="alert"
+          className="mt-3 font-mono text-[11px] uppercase tracking-wider text-ink"
+        >
+          {t('settings.space.backups.snapshotFailed', { message: error })}
+        </p>
+      )}
+
+      <div className="mt-6">
+        <h3 className="font-mono text-[10px] uppercase tracking-[0.08em] text-ink-3">
+          {t('settings.space.backups.historyTitle')}
+        </h3>
+        {backups.length === 0 ? (
+          <div className="mx-auto mt-6 max-w-md border border-dashed border-rule bg-paper-2/40 p-6 text-center">
+            <p className="font-serif text-[14px] italic text-ink-2">
+              {t('settings.space.backups.empty')}
+            </p>
+          </div>
+        ) : (
+          <table
+            data-testid="backups-history"
+            className="mt-3 w-full border-collapse text-[13px]"
+          >
+            <thead>
+              <tr className="border-b border-rule font-mono text-[9px] uppercase tracking-[0.08em] text-ink-3">
+                <th className="py-2 text-left font-normal">
+                  {t('settings.space.backups.columns.when')}
+                </th>
+                <th className="py-2 text-left font-normal">
+                  {t('settings.space.backups.columns.kind')}
+                </th>
+                <th className="py-2 text-right font-normal">
+                  {t('settings.space.backups.columns.size')}
+                </th>
+                <th className="py-2 text-right font-normal">
+                  {t('settings.space.backups.columns.actions')}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {backups.map((b) => (
+                <tr
+                  key={b.id}
+                  data-testid={`backup-row-${b.id}`}
+                  className="border-b border-rule"
+                >
+                  <td className="py-2.5 font-mono text-[12px] text-ink">
+                    {formatRelativeTime(b.when, t)}
+                  </td>
+                  <td className="py-2.5 font-mono text-[10px] uppercase tracking-wider text-ink-2">
+                    {t(`settings.space.backups.kind.${b.kind}`)}
+                  </td>
+                  <td className="py-2.5 text-right font-mono text-[12px] text-ink-2">
+                    {formatBytes(b.size)}
+                  </td>
+                  <td className="py-2.5 text-right">
+                    <div className="flex items-center justify-end gap-3 text-[12px]">
+                      <button
+                        type="button"
+                        onClick={() => handleDownload(b)}
+                        className="text-ink underline underline-offset-4 hover:text-ink-2"
+                      >
+                        {t('settings.space.backups.download')}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void handleDelete(b)}
+                        aria-label={t('settings.space.backups.delete')}
+                        className="text-ink-3 hover:text-ink"
+                      >
+                        {t('settings.space.backups.delete')}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function formatRelativeTime(
+  when: number,
+  t: (key: string) => string,
+  now: number = Date.now(),
+): string {
+  const diffSec = Math.max(0, Math.floor((now - when) / 1000));
+  if (diffSec < 60) return t('settings.space.backups.justNow');
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin} min ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr} h ago`;
+  const diffDay = Math.floor(diffHr / 24);
+  if (diffDay < 7) return `${diffDay} d ago`;
+  return new Date(when).toISOString().slice(0, 10);
 }
 
 function DangerTab({ space }: { space: Space }) {
