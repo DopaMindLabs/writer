@@ -44,13 +44,13 @@ export default defineConfig(({ command }) => ({
         'src/**/__snapshots__/**',
       ],
       thresholds: {
-        lines: 90,
-        statements: 90,
-        functions: 90,
-        // Branches at 88 — reflects defensive branches (??-fallbacks, optional
+        lines: 95,
+        statements: 95,
+        functions: 95,
+        // Branches at 90 — reflects defensive branches (??-fallbacks, optional
         // field ternaries) that are unreachable with the project's real data
         // unless we mock it. Raise if we ever refactor those out.
-        branches: 88,
+        branches: 90,
       },
     },
   },
