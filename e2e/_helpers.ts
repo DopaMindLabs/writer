@@ -25,12 +25,28 @@ export async function getFirstSpaceIdFromHome(page: Page): Promise<string> {
   return match[1];
 }
 
-// Extended test that auto-collects V8 JS coverage from Chromium and pushes it
-// to monocart-reporter's global coverage report. Specs should import `test`
-// from this module instead of `@playwright/test` so coverage is gathered.
+// Mirrors src/tours/storage.ts — keep the key/shape in sync if those change.
+const TOURS_STORAGE_KEY = 'lipsum-tours';
+const ALL_TOUR_IDS = ['welcome', 'writer', 'citations', 'brainspace'];
+
+// Extended test that (a) suppresses the driver.js guided tours so their
+// overlay doesn't intercept pointer events, and (b) auto-collects V8 JS
+// coverage from Chromium and pushes it to monocart-reporter. Specs should
+// import `test` from this module instead of `@playwright/test`.
 export const test = base.extend<{ autoCoverage: void }>({
   autoCoverage: [
     async ({ page, browserName }, use) => {
+      await page.addInitScript(
+        ({ key, ids }) => {
+          try {
+            localStorage.setItem(key, JSON.stringify({ version: 1, completed: ids }));
+          } catch {
+            /* ignore quota / disabled storage */
+          }
+        },
+        { key: TOURS_STORAGE_KEY, ids: ALL_TOUR_IDS },
+      );
+
       const enabled = browserName === 'chromium';
       if (enabled) {
         await page.coverage.startJSCoverage({ resetOnNavigation: false });
