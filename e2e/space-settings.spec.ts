@@ -5,17 +5,22 @@ test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
 });
 
-test('navigates from the sidebar cog to per-space settings', async ({
+test('navigates from the sidebar space menu to per-space settings', async ({
   page,
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}`);
 
-  const cog = page.getByRole('link', { name: /space settings/i });
-  // The cog is opacity-0 until hover/focus. Hovering the sidebar header
-  // group reveals it; once revealed we click to navigate.
-  await cog.scrollIntoViewIfNeeded();
-  await cog.click({ force: true });
+  // The sidebar cog now opens a space-menu popover instead of linking
+  // directly to settings.
+  const trigger = page.getByRole('button', { name: /open space menu/i });
+  await trigger.scrollIntoViewIfNeeded();
+  await trigger.click({ force: true });
+
+  // The popover exposes a "Settings" link that navigates to /s/:id/settings.
+  await page.getByTestId('space-menu-popover')
+    .getByRole('link', { name: /^settings$/i })
+    .click();
 
   await expect(page).toHaveURL(new RegExp(`#/s/${spaceId}/settings`));
   await expect(
@@ -35,36 +40,72 @@ test('switches between space settings tabs', async ({ page }) => {
   }
 });
 
-test('Sharing tab shows a coming-soon placeholder', async ({ page }) => {
+test('Sharing tab shows the Sharing placeholder content', async ({ page }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}/settings?tab=sharing`);
 
+  // The placeholder body renders the Sharing heading + the Visibility section.
   await expect(
-    page.getByText(/Per-space visibility and shared links/i),
+    page.getByRole('heading', { name: /^sharing$/i }),
   ).toBeVisible();
+  await expect(page.getByText(/^Visibility$/i)).toBeVisible();
 });
 
-test('Template tab shows a coming-soon placeholder', async ({ page }) => {
+test('Template tab shows the Template placeholder content', async ({ page }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}/settings?tab=template`);
 
   await expect(
-    page.getByText(/Changing a space's template after creation/i),
+    page.getByRole('heading', { name: /^template$/i }),
   ).toBeVisible();
+  await expect(page.getByText(/Current template/i)).toBeVisible();
 });
 
-test('Back link in space settings returns to the space (not home)', async ({
+test('Sidebar SpaceRail remains visible in space settings (lets the user return via the rail)', async ({
   page,
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}/settings`);
 
-  await page.getByRole('link', { name: /back/i }).click();
-  // WriteScreen may auto-redirect to the first doc, so we accept either the
-  // bare /s/:id route or the /s/:id/d/:docId redirect target. The contract
-  // is "land back in this space", not specifically the bare write view.
-  await expect(page).toHaveURL(new RegExp(`#/s/${spaceId}(?:/|$)`));
-  await expect(page).not.toHaveURL(/#\/$/);
+  // SpaceSettings no longer surfaces a top-level Back affordance; the SpaceRail
+  // on the left is what returns the user to writing.
+  await expect(
+    page.getByRole('link', { name: /Create new space/i }),
+  ).toBeVisible();
+});
+
+test('Backups tab snapshot now generates a manifest entry', async ({ page }) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}/settings?tab=backups`);
+  // Suppress the actual download click so the browser doesn't open a dialog.
+  await page.evaluate(() => {
+    HTMLAnchorElement.prototype.click = function () {};
+  });
+  await page.getByRole('button', { name: /snapshot now/i }).click();
+  // The history list flips from "no snapshots" to a non-empty list.
+  await expect(page.getByTestId('backups-history')).toBeVisible();
+});
+
+test('cycles through every per-space settings tab without crashing', async ({ page }) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}/settings`);
+  await page.waitForLoadState('networkidle');
+  const tabs = [
+    'General',
+    'Template',
+    'Highlight palette',
+    'Sharing',
+    'Members',
+    'Backups',
+    'Export',
+    'Danger zone',
+  ];
+  for (const label of tabs) {
+    await page.getByRole('button', { name: new RegExp(`^${label}$`) }).click();
+    await expect(
+      page.getByRole('heading', { name: new RegExp(`^${label}$`, 'i') }),
+    ).toBeVisible();
+  }
 });
 
 test('renames the space via the General tab', async ({ page }) => {

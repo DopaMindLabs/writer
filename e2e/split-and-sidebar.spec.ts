@@ -160,7 +160,7 @@ test('mobile viewport on a split URL shows the larger-screen notice and links ba
   await page.goto(splitUrl);
 
   await expect(
-    page.getByText(/Split view needs a larger screen/i),
+    page.getByText(/Needs a larger screen/i),
   ).toBeVisible();
 
   await page.getByRole('link', { name: /Open in Write/i }).click();

@@ -15,9 +15,12 @@ describe('SpaceRail', () => {
   });
 
   it('renders non-active shared-space dot when the active space is different', async () => {
-    renderWithProviders(<SpaceRail activeSpaceId="s1" />);
-    const tag = await screen.findByText('BBB');
-    const sharedLink = tag.closest('a');
+    const { container } = renderWithProviders(<SpaceRail activeSpaceId="s1" />);
+    await screen.findByText('BBB');
+
+    const sharedLink = container.querySelector(
+      'a[href="/s/s2"]',
+    ) as HTMLAnchorElement | null;
     expect(sharedLink).not.toBeNull();
     const dot = sharedLink!.querySelector('span');
     expect(dot).not.toBeNull();
@@ -26,8 +29,7 @@ describe('SpaceRail', () => {
 
   it('renders without crashing when no space is active', async () => {
     renderWithProviders(<SpaceRail activeSpaceId={null} />);
-    const tag = await screen.findByText('AAA');
-    expect(tag.closest('a')).toBeInTheDocument();
+    expect(await screen.findByRole('link', { name: /^AAA$/ })).toBeInTheDocument();
   });
 
   it('exposes a Quick Settings trigger at the bottom of the rail', async () => {

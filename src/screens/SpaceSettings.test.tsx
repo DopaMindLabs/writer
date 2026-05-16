@@ -246,6 +246,73 @@ describe('SpaceSettingsScreen', () => {
     clickSpy.mockRestore();
   });
 
+  it('formats backup sizes across B/kB/MB and timestamps across now/min/h/d/iso ranges', async () => {
+    await seedBasicSpace();
+    const NOW = Date.UTC(2026, 5, 1, 12, 0, 0);
+    vi.setSystemTime(NOW);
+    const minuteAgo = NOW - 90 * 1000; // ~1 min ago
+    const hoursAgo = NOW - 3 * 60 * 60 * 1000; // 3 h ago
+    const daysAgo = NOW - 2 * 24 * 60 * 60 * 1000; // 2 d ago
+    const oldDate = NOW - 14 * 24 * 60 * 60 * 1000; // 14 d -> ISO
+    await db.backups.bulkPut([
+      {
+        id: 'b-bytes',
+        when: NOW - 1000,
+        scope: 's1',
+        kind: 'manual',
+        format: 'md-zip',
+        size: 512,
+        payload: new Blob(['a']),
+      },
+      {
+        id: 'b-kb',
+        when: minuteAgo,
+        scope: 's1',
+        kind: 'manual',
+        format: 'md-zip',
+        size: 2048,
+        payload: new Blob(['ab']),
+      },
+      {
+        id: 'b-mb',
+        when: hoursAgo,
+        scope: 's1',
+        kind: 'manual',
+        format: 'md-zip',
+        size: 3 * 1024 * 1024,
+        payload: new Blob(['abc']),
+      },
+      {
+        id: 'b-days',
+        when: daysAgo,
+        scope: 's1',
+        kind: 'manual',
+        format: 'md-zip',
+        size: 1024,
+        payload: new Blob(['d']),
+      },
+      {
+        id: 'b-old',
+        when: oldDate,
+        scope: 's1',
+        kind: 'manual',
+        format: 'md-zip',
+        size: 1,
+        payload: new Blob(['e']),
+      },
+    ]);
+    renderAtSpaceSettings('/s/s1/settings?tab=backups');
+    const history = await screen.findByTestId('backups-history');
+    expect(history.textContent).toMatch(/512 B/);
+    expect(history.textContent).toMatch(/2\.0 kB/);
+    expect(history.textContent).toMatch(/3\.0 MB/);
+    expect(history.textContent).toMatch(/min ago|h ago/);
+    expect(history.textContent).toMatch(/\d+ d ago/);
+    // 14d → ISO date YYYY-MM-DD; verify a 2026-05- prefix appears.
+    expect(history.textContent).toMatch(/2026-05-/);
+    vi.useRealTimers();
+  });
+
   it('renders the Danger zone with the delete trigger', async () => {
     await seedBasicSpace();
     renderAtSpaceSettings('/s/s1/settings?tab=danger');

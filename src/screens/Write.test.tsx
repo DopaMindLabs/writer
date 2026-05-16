@@ -1,6 +1,8 @@
 import { vi } from 'vitest';
+import { act } from '@testing-library/react';
 import { renderAtRoute } from '@/test/test-utils';
 import { seedBasicSpace } from '@/test/fixtures';
+import { useUI } from '@/store/ui';
 
 vi.mock('@/editor/EditorFacade', () => ({
   Editor: (p: { initialValue: string; mode: string; placeholder?: string }) => (
@@ -56,5 +58,42 @@ describe('WriteScreen', () => {
     // seedBasicSpace seeds doc d1; Write should issue <Navigate> to
     // /s/s1/d/d1, which the test router catches via the catch-all route.
     expect(await findByTestId('catch-all')).toBeInTheDocument();
+  });
+
+  it('shows the inspector icons rail when inspectorMode is "icons" and not in focus mode', async () => {
+    act(() => {
+      useUI.getState().setInspectorMode('icons');
+      useUI.getState().closeCitationsDrawer();
+    });
+    const { findByTestId } = renderAtRoute(<WriteScreen />, {
+      path: '/s/:spaceId/d/:docId',
+      initialEntries: ['/s/s1/d/d1'],
+    });
+    expect(await findByTestId('doc-inspector-icons')).toBeInTheDocument();
+  });
+
+  it('shows the expanded inspector panel when inspectorMode is "expanded"', async () => {
+    act(() => {
+      useUI.getState().setInspectorMode('expanded');
+      useUI.getState().closeCitationsDrawer();
+    });
+    const { findByTestId } = renderAtRoute(<WriteScreen />, {
+      path: '/s/:spaceId/d/:docId',
+      initialEntries: ['/s/s1/d/d1'],
+    });
+    expect(await findByTestId('doc-inspector')).toBeInTheDocument();
+  });
+
+  it('hides the inspector when focus=1 even if inspectorMode is set', async () => {
+    act(() => {
+      useUI.getState().setInspectorMode('expanded');
+    });
+    const { findByTestId, queryByTestId } = renderAtRoute(<WriteScreen />, {
+      path: '/s/:spaceId/d/:docId',
+      initialEntries: ['/s/s1/d/d1?focus=1'],
+    });
+    await findByTestId('editor-stub');
+    expect(queryByTestId('doc-inspector')).not.toBeInTheDocument();
+    expect(queryByTestId('doc-inspector-icons')).not.toBeInTheDocument();
   });
 });
