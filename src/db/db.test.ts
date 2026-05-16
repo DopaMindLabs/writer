@@ -1,26 +1,16 @@
 import Dexie from 'dexie';
-import { db, LoremDB } from './db';
-
-const DB_NAME = 'lipsum';
-
-async function resetDatabase() {
-  await db.close();
-  await Dexie.delete(DB_NAME);
-}
-
-async function reopenGlobalDb() {
-  // Re-open the singleton so the rest of the suite can use it normally.
-  await db.open();
-}
+import { LoremDB } from './db';
 
 describe('LoremDB migrations', () => {
+  let dbName: string;
+
   afterEach(async () => {
-    await reopenGlobalDb();
+    await Dexie.delete(dbName);
   });
 
   it('version(2) upgrade backfills sections.parentSectionId = null when missing', async () => {
-    await resetDatabase();
-    const v1 = new Dexie(DB_NAME);
+    dbName = `lipsum-migration-${crypto.randomUUID()}`;
+    const v1 = new Dexie(dbName);
     v1.version(1).stores({
       spaces: 'id, updatedAt',
       sections: 'id, spaceId, order, [spaceId+order]',
@@ -43,7 +33,7 @@ describe('LoremDB migrations', () => {
     await v1.close();
 
     // Re-opening with LoremDB triggers all upgrade paths through v5.
-    const upgraded = new LoremDB();
+    const upgraded = new LoremDB(dbName);
     await upgraded.open();
     const sec = await upgraded.sections.get('sec-legacy');
     expect(sec).toBeDefined();
@@ -52,8 +42,8 @@ describe('LoremDB migrations', () => {
   });
 
   it('version(4) upgrade backfills notes.state = "user" when missing', async () => {
-    await resetDatabase();
-    const v3 = new Dexie(DB_NAME);
+    dbName = `lipsum-migration-${crypto.randomUUID()}`;
+    const v3 = new Dexie(dbName);
     v3.version(1).stores({
       spaces: 'id, updatedAt',
       sections: 'id, spaceId, order, [spaceId+order]',
@@ -89,7 +79,7 @@ describe('LoremDB migrations', () => {
     });
     await v3.close();
 
-    const upgraded = new LoremDB();
+    const upgraded = new LoremDB(dbName);
     await upgraded.open();
     const note = await upgraded.notes.get('n-legacy');
     expect(note).toBeDefined();
