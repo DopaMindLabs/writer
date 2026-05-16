@@ -176,6 +176,44 @@ describe('serializeCitationsToBibtex', () => {
   });
 });
 
+describe('parseBibtexText edge cases', () => {
+  it('extracts a four-digit year from a string with extra text around it', async () => {
+    const text = `@article{x, author = {A}, title = {T}, year = {published 1999 reprint}}`;
+    const out = await parseBibtexText(text, 's1');
+    expect(out[0].year).toBe(1999);
+  });
+
+  it('falls back to year=0 when the year field has no four-digit substring', async () => {
+    const text = `@article{x, author = {A}, title = {T}, year = {n.d.}}`;
+    const out = await parseBibtexText(text, 's1');
+    expect(out[0].year).toBe(0);
+  });
+
+  it('maps inproceedings and conference types to "article"', async () => {
+    const text =
+      '@inproceedings{p1, author = {A}, title = {T}, year = {2020}}\n' +
+      '@conference{c1, author = {A}, title = {T}, year = {2020}}';
+    const out = await parseBibtexText(text, 's1');
+    expect(out.find((c) => c.key === 'p1')?.type).toBe('article');
+    expect(out.find((c) => c.key === 'c1')?.type).toBe('article');
+  });
+
+  it('maps inbook and booklet to their corresponding canonical types', async () => {
+    const text =
+      '@inbook{b1, author = {A}, title = {T}, year = {2020}}\n' +
+      '@booklet{bk1, author = {A}, title = {T}, year = {2020}}';
+    const out = await parseBibtexText(text, 's1');
+    expect(out.find((c) => c.key === 'b1')?.type).toBe('chapter');
+    expect(out.find((c) => c.key === 'bk1')?.type).toBe('book');
+  });
+
+  it('falls back to "misc" for unknown bibtex types', async () => {
+    const text = '@unknownType{u1, author = {A}, title = {T}, year = {2020}}';
+    const out = await parseBibtexText(text, 's1');
+    expect(out.find((c) => c.key === 'u1')?.type).toBe('misc');
+  });
+});
+
 describe('importCitations', () => {
   it('adds all entries on first call and skips duplicates on second', async () => {
     const cs = await parseBibtexText(SAMPLE, 's1');

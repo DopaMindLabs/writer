@@ -128,6 +128,48 @@ describe('SpaceSettingsScreen', () => {
     expect(tagInput.value).toBe('TST');
   });
 
+  it('Enter on the tag input commits the rename via blur', async () => {
+    await seedBasicSpace();
+    const user = userEvent.setup();
+    renderAtSpaceSettings();
+    const tagInput = (await screen.findByLabelText(
+      /^tag$/i,
+    )) as HTMLInputElement;
+    await user.clear(tagInput);
+    await user.type(tagInput, 'ABC{enter}');
+    await waitFor(async () => {
+      expect((await db.spaces.get('s1'))?.tag).toBe('ABC');
+    });
+  });
+
+  it('blurring with an unchanged tag does not write to the DB', async () => {
+    await seedBasicSpace();
+    const updateSpy = vi.spyOn(db.spaces, 'update');
+    renderAtSpaceSettings();
+    const tagInput = (await screen.findByLabelText(
+      /^tag$/i,
+    )) as HTMLInputElement;
+    // The tag is already 'TST' from sampleSpace; blurring without changes
+    // should be a no-op.
+    tagInput.focus();
+    tagInput.blur();
+    expect(updateSpy).not.toHaveBeenCalled();
+    updateSpy.mockRestore();
+  });
+
+  it('blurring with an unchanged name does not write to the DB', async () => {
+    await seedBasicSpace();
+    const updateSpy = vi.spyOn(db.spaces, 'update');
+    renderAtSpaceSettings();
+    const nameInput = (await screen.findByLabelText(
+      /space name/i,
+    )) as HTMLInputElement;
+    nameInput.focus();
+    nameInput.blur();
+    expect(updateSpy).not.toHaveBeenCalled();
+    updateSpy.mockRestore();
+  });
+
   it('renders the Sharing placeholder (coming soon)', async () => {
     await seedBasicSpace();
     renderAtSpaceSettings('/s/s1/settings?tab=sharing');

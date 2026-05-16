@@ -140,6 +140,45 @@ describe('SplitScreen', () => {
     expect(useUI.getState().splitDividerPct).toBe(50);
   });
 
+  it('pointer drag with a non-zero container width updates the split percent', async () => {
+    renderAtRoute(<SplitScreen />, {
+      path: '/s/:spaceId/d/:docId/split',
+      initialEntries: ['/s/s1/d/d1/split?with=d2'],
+    });
+    const sep = await screen.findByRole('separator', {
+      name: /resize split panes/i,
+    });
+    (sep as unknown as { setPointerCapture: (id: number) => void }).setPointerCapture =
+      () => {};
+    (sep as unknown as { hasPointerCapture: (id: number) => boolean }).hasPointerCapture =
+      () => true;
+    (sep as unknown as { releasePointerCapture: (id: number) => void }).releasePointerCapture =
+      () => {};
+    // Patch the parent container so the drag handler reads a real width
+    const container = sep.parentElement as HTMLElement;
+    container.getBoundingClientRect = () =>
+      ({
+        left: 0,
+        top: 0,
+        right: 1000,
+        bottom: 600,
+        width: 1000,
+        height: 600,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }) as DOMRect;
+    fireEvent.pointerDown(sep, { pointerId: 1, clientX: 300 });
+    fireEvent.pointerMove(sep, { pointerId: 1, clientX: 600 });
+    fireEvent.pointerUp(sep, { pointerId: 1, clientX: 600 });
+    // 600/1000 → 60%, within [25,75], not within snap window of 50%, so settle at ~60
+    await waitFor(() => {
+      const pct = useUI.getState().splitDividerPct;
+      expect(pct).toBeGreaterThan(50);
+      expect(pct).toBeLessThanOrEqual(75);
+    });
+  });
+
   it('completes a pointer drag-release cycle without error', async () => {
     renderAtRoute(<SplitScreen />, {
       path: '/s/:spaceId/d/:docId/split',

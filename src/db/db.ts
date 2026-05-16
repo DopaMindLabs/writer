@@ -26,8 +26,8 @@ export class LoremDB extends Dexie {
   palettes!: Table<HighlightPalette, string>;
   meta!: Table<Meta, string>;
 
-  constructor() {
-    super('lipsum');
+  constructor(name = 'lipsum') {
+    super(name);
     this.version(1).stores({
       spaces: 'id, updatedAt',
       sections: 'id, spaceId, order, [spaceId+order]',
