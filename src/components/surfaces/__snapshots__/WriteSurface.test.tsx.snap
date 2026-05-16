@@ -6,13 +6,14 @@ exports[`WriteSurface > renders editor stub with doc body and mode 1`] = `
     class="h-full min-w-0 flex-1 overflow-auto bg-paper px-12 py-12"
     data-tour="tour-editor-main"
   >
-    <div
+    <button
       data-mode="write"
       data-placeholder="Start writing…"
       data-testid="editor-stub"
+      type="button"
     >
       hello world
-    </div>
+    </button>
   </div>
 </div>
 `;
