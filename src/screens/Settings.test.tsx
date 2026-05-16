@@ -33,14 +33,12 @@ describe('SettingsScreen', () => {
     expect(useUI.getState().floatingToolbarEnabled).toBe(false);
   });
 
-  it('switches to the Theme tab and changes theme via chips', () => {
-    const { getByRole } = renderWithProviders(<SettingsScreen />, {
+  it('does not render a standalone Theme tab (theme moved to Quick Settings)', () => {
+    const { queryByRole } = renderWithProviders(<SettingsScreen />, {
       initialEntries: ['/settings'],
     });
-    fireEvent.click(getByRole('button', { name: 'Theme' }));
-    expect(getByRole('heading', { name: 'Theme' })).toBeInTheDocument();
-    fireEvent.click(getByRole('button', { name: 'Dark' }));
-    expect(useUI.getState().theme).toBe('dark');
+    // No "Theme" tab in the settings nav anymore.
+    expect(queryByRole('button', { name: 'Theme' })).not.toBeInTheDocument();
   });
 
   it('shows a disabled checkbox on a coming-soon row', () => {
@@ -55,11 +53,17 @@ describe('SettingsScreen', () => {
   });
 
   it('renders coming-soon placeholder content on the Account tab', () => {
-    const { getByRole, getByText } = renderWithProviders(<SettingsScreen />, {
-      initialEntries: ['/settings?tab=account'],
-    });
+    const { getByRole, getByText, container } = renderWithProviders(
+      <SettingsScreen />,
+      { initialEntries: ['/settings?tab=account'] },
+    );
     expect(getByRole('heading', { name: 'Account' })).toBeInTheDocument();
-    expect(getByText(/Cloud sync is unavailable/i)).toBeInTheDocument();
+    // Placeholder hint mirrors the design's wording.
+    expect(getByText(/Cloud sync is not available yet/i)).toBeInTheDocument();
+    // And the placeholder is wrapped in a non-closable Coming Soon overlay.
+    expect(
+      container.querySelector('[data-coming-soon-overlay="true"]'),
+    ).not.toBeNull();
   });
 
   it('renders the typography tab when activated', () => {

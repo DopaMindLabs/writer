@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { Topbar } from '@/components/chrome/Topbar';
+import { MobileTabs } from '@/components/chrome/MobileTabs';
+import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
 import { useSpace } from '@/hooks/useSpaces';
 import { useUI } from '@/store/ui';
 import { CitationsPane } from '@/components/surfaces/CitationsPane';
@@ -44,6 +46,8 @@ export function CitationsScreen() {
             density="comfortable"
           />
         </main>
+        <MobileTabs spaceId={spaceId} docId={lastDocId} />
+        <MobileMoreSheet spaceId={spaceId} docId={lastDocId} />
       </div>
     </div>
   );

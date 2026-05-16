@@ -5,5 +5,9 @@
   "home": "Home",
   "about": "About",
   "settings": "Settings",
-  "back": "back"
+  "back": "back",
+  "comingSoon": {
+    "tooltip": "Coming soon",
+    "defaultHint": "Not available yet — coming soon."
+  }
 }

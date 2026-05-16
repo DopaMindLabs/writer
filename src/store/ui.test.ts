@@ -25,6 +25,9 @@ describe('useUI store', () => {
         currentSpaceId: 's1',
         floatingToolbarEnabled: false,
         splitDividerPct: 50,
+        inspectorMode: 'none',
+        inspectorSection: 'outline',
+        readingWidth: 'm',
       },
     );
   });
@@ -63,6 +66,9 @@ describe('useUI store', () => {
         currentSpaceId: null,
         floatingToolbarEnabled: true,
         splitDividerPct: 50,
+        inspectorMode: 'none',
+        inspectorSection: 'outline',
+        readingWidth: 'm',
       },
     );
     act(() => useUI.getState().setFloatingToolbarEnabled(false));

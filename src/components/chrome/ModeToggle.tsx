@@ -192,7 +192,7 @@ export function FocusToggle({ mode, spaceId, docId }: FocusToggleProps) {
       aria-label={t('topbar.enterFocus')}
     >
       <Maximize2 className="h-3 w-3" />
-      {t('topbar.focus')}
+      {/* {t('topbar.focus')} */}
     </Link>
   );
 }

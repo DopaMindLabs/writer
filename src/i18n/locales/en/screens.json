@@ -32,15 +32,30 @@
     "back": "back",
     "windowTitle": "lotem · settings",
     "breadcrumb": "SETTINGS",
+    "shellSubtitle": "GLOBAL SETTINGS",
     "comingSoonBadge": "coming soon",
     "helpAria": "What is this?",
+    "groups": {
+      "preferences": "Preferences",
+      "writing": "Writing",
+      "data": "Data",
+      "account": "Account"
+    },
     "tabs": {
+      "general": "General",
+      "appearance": "Appearance",
       "editor": "Editor",
-      "account": "Account",
       "typography": "Typography",
-      "theme": "Theme",
-      "shortcuts": "Shortcuts",
-      "backups": "Backups"
+      "shortcuts": "Keyboard",
+      "templates": "Templates",
+      "palettes": "Highlight palettes",
+      "citations": "Citation style",
+      "annotation": "Annotations",
+      "backups": "Backups",
+      "export": "Export / import",
+      "data": "Your data",
+      "account": "Account",
+      "about": "About"
     },
     "editor": {
       "title": "Editor",
@@ -62,42 +77,264 @@
       "templateDefaultsHint": "Different formatting subsets per template.",
       "templateDefaultsTooltip": "Let each template (fiction, journal, technical…) choose its own formatting subset."
     },
-    "theme": {
-      "title": "Theme",
-      "subtitle": "Applies everywhere. Changes take effect immediately.",
-      "rowLabel": "Color scheme",
-      "rowHint": "Switch between light, dark, or high-contrast variants."
+    "general": {
+      "title": "General",
+      "subtitle": "How LIpsum Writer shows up by default. None of this is destructive.",
+      "comingSoonBody": "Compact density, reduce motion, keyboard hint visibility, and what view opens at startup.",
+      "compactDensityLabel": "Compact density",
+      "compactDensityHint": "Tighter rows in lists, tighter padding everywhere.",
+      "reduceMotionLabel": "Reduce motion",
+      "reduceMotionHint": "Skip animated transitions between views.",
+      "keyboardHintsLabel": "Show keyboard hints",
+      "keyboardHintsHint": "Display ⌘-key shortcuts in tooltips and the corner of buttons.",
+      "startupLabel": "Open at startup",
+      "startupHint": "What you see when you launch the app.",
+      "startupOptions": {
+        "lastView": "Last view",
+        "home": "Home",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Appearance",
+      "subtitle": "Colour, type, density. The mood you want this thing to set.",
+      "comingSoonBody": "Curated theme palettes, accent colour, and density. Today's theme switch lives in the world rail's quick settings.",
+      "themeLabel": "Theme",
+      "themeHint": "Three curated palettes. They tune everything — block colours, hairlines, even the grain.",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "default",
+        "studio": "Studio",
+        "studioSub": "neutral",
+        "midnight": "Midnight",
+        "midnightSub": "dark"
+      },
+      "accentLabel": "Accent",
+      "accentHint": "Used for hover, focus, active editing ring.",
+      "densityLabel": "Density",
+      "densityOptions": {
+        "cozy": "Cozy",
+        "default": "Default",
+        "compact": "Compact"
+      }
+    },
+    "templates": {
+      "title": "Templates",
+      "subtitle": "Reusable scaffolds for new spaces and docs.",
+      "comingSoonBody": "Author your own templates with sections, default doc names, and prose stubs.",
+      "items": {
+        "fiction": "Fiction",
+        "fictionSub": "Manuscript · World · Workshop",
+        "research": "Research",
+        "researchSub": "Sources · Notes · Drafts",
+        "journal": "Journal",
+        "journalSub": "Daily · Weekly · Reflections",
+        "essay": "Essay",
+        "essaySub": "Outline · Drafts · Final"
+      }
+    },
+    "palettes": {
+      "title": "Highlight palettes",
+      "subtitle": "Five-slot palettes per space — name and tune each colour.",
+      "comingSoonBody": "Edit, save, and switch named highlight palettes (Evidence, To revise, Reference…) across spaces.",
+      "items": {
+        "evidence": "Evidence",
+        "revise": "To revise",
+        "reference": "Reference",
+        "quote": "Quote",
+        "loose": "Loose end"
+      },
+      "rename": "rename",
+      "tune": "tune"
+    },
+    "citations": {
+      "title": "Citation style",
+      "subtitle": "Default citation style across spaces.",
+      "comingSoonBody": "Pick a global style (Chicago, APA, MLA…) with per-space overrides.",
+      "styleLabel": "Default style",
+      "styleHint": "Used when inserting a new citation. Per-space overrides land later.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Annotations",
+      "subtitle": "Margin notes and inline annotations.",
+      "comingSoonBody": "Annotation kinds, visibility defaults, and export behaviour.",
+      "showMarginLabel": "Show margin notes",
+      "showMarginHint": "Annotations float in the right gutter when there's room.",
+      "showInlineLabel": "Show inline highlights",
+      "showInlineHint": "Annotation colour bleeds onto the underlying prose.",
+      "exportLabel": "Include in exports",
+      "exportHint": "Annotations are written out alongside the document body."
+    },
+    "export": {
+      "title": "Export / import",
+      "subtitle": "Move data in and out of LIpsum Writer.",
+      "comingSoonBody": "Bulk export to .zip, import from another LIpsum bundle or Markdown directory.",
+      "formatLabel": "Export format",
+      "formatHint": "Per-doc and per-space exports use the same default.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Import from",
+      "importHint": "Bring in another LIpsum bundle or a directory of Markdown files.",
+      "importOptions": {
+        "bundle": "LIpsum bundle (.zip)",
+        "markdown": "Markdown folder",
+        "obsidian": "Obsidian vault"
+      }
+    },
+    "data": {
+      "title": "Your data",
+      "subtitle": "Where your work lives and how much room it takes.",
+      "comingSoonBody": "IndexedDB usage, storage estimate, and a one-click full wipe.",
+      "storageLabel": "Storage used",
+      "storageValue": "≈ 12.4 MB · 4 spaces, 38 docs",
+      "engineLabel": "Storage engine",
+      "engineValue": "IndexedDB (local browser)",
+      "wipeLabel": "Wipe everything",
+      "wipeHint": "Removes every space, doc, and snapshot from this browser. There is no undo.",
+      "wipeButton": "Wipe local data…"
+    },
+    "about": {
+      "title": "About",
+      "subtitle": "Build info and links.",
+      "comingSoonBody": "See the /about page for the story; this tab will host build info, license, and changelog.",
+      "versionLabel": "Version",
+      "versionValue": "0.5.0 · experimental",
+      "buildLabel": "Build",
+      "buildValue": "local",
+      "licenseLabel": "License",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Links",
+      "links": {
+        "source": "Source",
+        "changelog": "Changelog",
+        "feedback": "Send feedback"
+      }
     },
     "account": {
       "title": "Account",
       "subtitle": "Sign-in, sync across devices, and shared workspaces.",
-      "comingSoonBody": "Cloud sync is unavailable today — Lotem is local-only. Account, sign-in, and shared workspaces land when sync ships."
+      "comingSoonBody": "Cloud sync is unavailable today — Lotem is local-only. Account, sign-in, and shared workspaces land when sync ships.",
+      "signedOutLabel": "Sign in",
+      "signedOutHint": "Cloud sync is not available yet. This is here to show the design.",
+      "signInButton": "Sign in with email",
+      "syncLabel": "Sync this device",
+      "syncHint": "Once you sign in, your spaces will replicate to other devices."
     },
     "typography": {
       "title": "Typography",
       "subtitle": "Defaults across all worlds. Individual worlds may override.",
-      "comingSoonBody": "Pick the prose font, UI font, default reading size, line height, and measure for new worlds."
+      "comingSoonBody": "Pick the prose font, UI font, default reading size, line height, and measure for new worlds.",
+      "proseFontLabel": "Prose font",
+      "uiFontLabel": "UI font",
+      "proseSizeLabel": "Prose size",
+      "proseSizeHint": "Default for new worlds.",
+      "lineHeightLabel": "Line height",
+      "measureLabel": "Measure",
+      "measureHint": "Maximum line width.",
+      "measureValue": "64 ch · ~620 px"
     },
     "shortcuts": {
       "title": "Shortcuts",
       "subtitle": "Keyboard bindings for navigation, formatting, and modes.",
-      "comingSoonBody": "Rebindable shortcuts for write/read/split, focus mode, and the formatting toolbar."
+      "comingSoonBody": "Rebindable shortcuts for write/read/split, focus mode, and the formatting toolbar.",
+      "navHeader": "Navigation",
+      "formatHeader": "Formatting",
+      "modeHeader": "Modes",
+      "items": {
+        "openSettings": "Open settings",
+        "quickSettings": "Quick settings",
+        "findInDoc": "Find in doc",
+        "toggleFocus": "Toggle focus",
+        "toggleInspector": "Toggle inspector",
+        "bold": "Bold",
+        "italic": "Italic",
+        "underline": "Underline",
+        "heading1": "Heading 1",
+        "heading2": "Heading 2",
+        "write": "Write mode",
+        "read": "Read mode",
+        "split": "Split mode"
+      }
     },
     "backups": {
       "title": "Backups",
       "subtitle": "Export, restore, and snapshot your local data.",
-      "comingSoonBody": "Scheduled local snapshots, manual export to .zip, and restore from a previous backup."
+      "comingSoonBody": "Scheduled local snapshots, manual export to .zip, and restore from a previous backup.",
+      "intervalLabel": "Auto-snapshot interval",
+      "intervalOptions": {
+        "5min": "5 min",
+        "10min": "10 min",
+        "30min": "30 min",
+        "off": "Off"
+      },
+      "keepLabel": "Keep",
+      "keepHint": "Older snapshots roll off automatically.",
+      "keepOptions": {
+        "last50": "Last 50",
+        "days7": "7 days",
+        "days30": "30 days"
+      },
+      "latestLabel": "Latest",
+      "latestValue": "12 min ago · 1,190 words"
     },
     "space": {
       "breadcrumb": "SPACE · SETTINGS",
+      "shellSubtitle": "SPACE SETTINGS",
       "loading": "Loading space…",
+      "groups": {
+        "thisSpace": "This space",
+        "sharingMembers": "Sharing & members",
+        "data": "Data"
+      },
       "tabs": {
         "general": "General",
-        "sharing": "Sharing",
         "template": "Template",
+        "palette": "Highlight palette",
+        "sharing": "Sharing",
         "members": "Members",
         "backups": "Backups",
+        "export": "Export",
         "danger": "Danger zone"
+      },
+      "palette": {
+        "title": "Highlight palette",
+        "subtitle": "Five named, tunable highlight colours for this space.",
+        "comingSoonBody": "Rename, retint, and reorder this space's highlight slots.",
+        "items": {
+          "evidence": "Evidence",
+          "revise": "To revise",
+          "reference": "Reference",
+          "quote": "Quote",
+          "loose": "Loose end"
+        },
+        "rename": "rename",
+        "tune": "tune"
+      },
+      "export": {
+        "title": "Export",
+        "subtitle": "Move this space's content into another tool.",
+        "comingSoonBody": "Export to Markdown .zip (today via Backups), LaTeX, HTML, or PDF — all in one place.",
+        "formatLabel": "Format",
+        "formatHint": "Markdown ships first; the rest follow.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Last export",
+        "lastValue": "never"
       },
       "general": {
         "title": "General",
@@ -110,17 +347,44 @@
       "sharing": {
         "title": "Sharing",
         "subtitle": "Control how this space is shared.",
-        "comingSoonBody": "Per-space visibility and shared links. Lands when cloud sync ships."
+        "comingSoonBody": "Per-space visibility and shared links. Lands when cloud sync ships.",
+        "visibilityLabel": "Visibility",
+        "visibilityOptions": {
+          "private": "Private",
+          "link": "Anyone with link",
+          "members": "Members only"
+        },
+        "linkLabel": "Shareable link",
+        "linkHint": "Read-only by default. Editing privileges follow Members.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "copy"
       },
       "template": {
         "title": "Template",
         "subtitle": "The structural template this space was created with.",
-        "comingSoonBody": "Changing a space's template after creation isn't supported yet. Lands once we can migrate sections and docs safely."
+        "comingSoonBody": "Changing a space's template after creation isn't supported yet. Lands once we can migrate sections and docs safely.",
+        "currentLabel": "Current template",
+        "currentValue": "Fiction",
+        "currentSub": "Manuscript · World · Workshop",
+        "changeLabel": "Change template",
+        "changeHint": "Reflows existing sections and docs to the new template.",
+        "changeButton": "Change template…"
       },
       "members": {
         "title": "Members",
         "subtitle": "Co-writers and reviewers with access to this space.",
-        "comingSoonBody": "Invite collaborators, manage roles, and review changes. Lands with cloud sync."
+        "comingSoonBody": "Invite collaborators, manage roles, and review changes. Lands with cloud sync.",
+        "inviteLabel": "Invite by email",
+        "inviteHint": "We'll send them a link to join this space.",
+        "invitePlaceholder": "name@example.com",
+        "inviteButton": "send invite",
+        "membersLabel": "Members",
+        "roles": {
+          "owner": "owner",
+          "editor": "editor",
+          "viewer": "viewer"
+        },
+        "you": "you"
       },
       "backups": {
         "title": "Backups",

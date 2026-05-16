@@ -1,9 +1,9 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Topbar > collapses to icon-only chrome when focus=1 1`] = `
+exports[`Topbar > collapses to icon-only chrome when focus=1 (no inspector toggle, no search) 1`] = `
 <div>
   <header
-    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-4 md:px-4"
+    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
   >
     <button
       aria-label="Open navigation"
@@ -35,10 +35,10 @@ exports[`Topbar > collapses to icon-only chrome when focus=1 1`] = `
       </svg>
     </button>
     <div
-      class="flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-ink-3"
+      class="flex items-center gap-1.5 font-serif text-[14px] text-ink-3"
     >
       <button
-        class="cursor-text text-ink hover:text-ink"
+        class="cursor-text font-medium text-ink hover:text-ink"
         title="Rename doc (double-click)"
         type="button"
       >
@@ -197,7 +197,7 @@ exports[`Topbar > collapses to icon-only chrome when focus=1 1`] = `
     </div>
     <button
       aria-label="Citations"
-      class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink"
+      class="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink"
       data-state="closed"
       data-tour="tour-topbar-citations"
       type="button"
@@ -257,106 +257,14 @@ exports[`Topbar > collapses to icon-only chrome when focus=1 1`] = `
         />
       </svg>
     </a>
-    <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      aria-label="Help & tours"
-      class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
-      data-state="closed"
-      data-tour="tour-help-menu"
-      id="radix-_r_k_"
-      title="Help & tours"
-      type="button"
-    >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-circle-question-mark h-3.5 w-3.5"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle
-          cx="12"
-          cy="12"
-          r="10"
-        />
-        <path
-          d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
-        />
-        <path
-          d="M12 17h.01"
-        />
-      </svg>
-    </button>
-    <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      aria-label="Theme"
-      class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
-      data-state="closed"
-      data-tour="tour-topbar-theme"
-      id="radix-_r_m_"
-      title="Theme"
-      type="button"
-    >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-sun h-3.5 w-3.5"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle
-          cx="12"
-          cy="12"
-          r="4"
-        />
-        <path
-          d="M12 2v2"
-        />
-        <path
-          d="M12 20v2"
-        />
-        <path
-          d="m4.93 4.93 1.41 1.41"
-        />
-        <path
-          d="m17.66 17.66 1.41 1.41"
-        />
-        <path
-          d="M2 12h2"
-        />
-        <path
-          d="M20 12h2"
-        />
-        <path
-          d="m6.34 17.66-1.41 1.41"
-        />
-        <path
-          d="m19.07 4.93-1.41 1.41"
-        />
-      </svg>
-    </button>
   </header>
 </div>
 `;
 
-exports[`Topbar > renders citations view (no mode tabs, no focus toggle) 1`] = `
+exports[`Topbar > renders citations view (no mode tabs, no focus toggle, no inspector toggle) 1`] = `
 <div>
   <header
-    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-4 md:px-4"
+    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
   >
     <button
       aria-label="Open navigation"
@@ -388,7 +296,7 @@ exports[`Topbar > renders citations view (no mode tabs, no focus toggle) 1`] = `
       </svg>
     </button>
     <div
-      class="flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-ink-3"
+      class="flex items-center gap-1.5 font-serif text-[14px] text-ink-3"
     >
       <span
         class="hidden md:inline"
@@ -399,139 +307,65 @@ exports[`Topbar > renders citations view (no mode tabs, no focus toggle) 1`] = `
     <div
       class="flex-1"
     />
+    <span
+      aria-disabled="true"
+      class="relative max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink hidden md:inline-flex"
+      data-coming-soon="true"
+      data-state="closed"
+      tabindex="0"
+    >
+      <span
+        aria-hidden="true"
+        class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+      >
+        <span
+          aria-label="Find in doc"
+          class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-search h-3.5 w-3.5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m21 21-4.34-4.34"
+            />
+            <circle
+              cx="11"
+              cy="11"
+              r="8"
+            />
+          </svg>
+        </span>
+      </span>
+    </span>
     <a
       aria-label="Citations"
-      class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink hover:bg-paper-2"
+      class="inline-flex items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors text-ink hover:bg-paper-2"
       data-discover="true"
       data-tour="tour-topbar-citations"
       href="/s/s1/citations"
     >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-quote h-3 w-3"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
-        />
-        <path
-          d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
-        />
-      </svg>
-      <span
-        class="hidden sm:inline"
-      >
-        Citations
+      <span>
+        cite
       </span>
     </a>
-    <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      aria-label="Help & tours"
-      class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
-      data-state="closed"
-      data-tour="tour-help-menu"
-      id="radix-_r_7_"
-      title="Help & tours"
-      type="button"
-    >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-circle-question-mark h-3.5 w-3.5"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle
-          cx="12"
-          cy="12"
-          r="10"
-        />
-        <path
-          d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
-        />
-        <path
-          d="M12 17h.01"
-        />
-      </svg>
-    </button>
-    <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      aria-label="Theme"
-      class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
-      data-state="closed"
-      data-tour="tour-topbar-theme"
-      id="radix-_r_9_"
-      title="Theme"
-      type="button"
-    >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-sun h-3.5 w-3.5"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle
-          cx="12"
-          cy="12"
-          r="4"
-        />
-        <path
-          d="M12 2v2"
-        />
-        <path
-          d="M12 20v2"
-        />
-        <path
-          d="m4.93 4.93 1.41 1.41"
-        />
-        <path
-          d="m17.66 17.66 1.41 1.41"
-        />
-        <path
-          d="M2 12h2"
-        />
-        <path
-          d="M20 12h2"
-        />
-        <path
-          d="m6.34 17.66-1.41 1.41"
-        />
-        <path
-          d="m19.07 4.93-1.41 1.41"
-        />
-      </svg>
-    </button>
   </header>
 </div>
 `;
 
-exports[`Topbar > renders with doc name, mode tabs and theme toggle 1`] = `
+exports[`Topbar > renders with doc name, mode tabs, search and inspector toggle 1`] = `
 <div>
   <header
-    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-4 md:px-4"
+    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
   >
     <button
       aria-label="Open navigation"
@@ -563,7 +397,7 @@ exports[`Topbar > renders with doc name, mode tabs and theme toggle 1`] = `
       </svg>
     </button>
     <div
-      class="flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-ink-3"
+      class="flex items-center gap-1.5 font-serif text-[14px] text-ink-3"
     >
       <span
         class="hidden md:inline"
@@ -576,7 +410,7 @@ exports[`Topbar > renders with doc name, mode tabs and theme toggle 1`] = `
         /
       </span>
       <button
-        class="cursor-text text-ink hover:text-ink"
+        class="cursor-text font-medium text-ink hover:text-ink"
         title="Rename doc (double-click)"
         type="button"
       >
@@ -623,36 +457,58 @@ exports[`Topbar > renders with doc name, mode tabs and theme toggle 1`] = `
         </a>
       </nav>
     </div>
+    <span
+      aria-hidden="true"
+      class="hidden h-3.5 w-px bg-rule md:inline-block"
+    />
+    <span
+      aria-disabled="true"
+      class="relative max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink hidden md:inline-flex"
+      data-coming-soon="true"
+      data-state="closed"
+      tabindex="0"
+    >
+      <span
+        aria-hidden="true"
+        class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+      >
+        <span
+          aria-label="Find in doc"
+          class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-search h-3.5 w-3.5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m21 21-4.34-4.34"
+            />
+            <circle
+              cx="11"
+              cy="11"
+              r="8"
+            />
+          </svg>
+        </span>
+      </span>
+    </span>
     <button
       aria-label="Citations"
-      class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:bg-paper-2 hover:text-ink"
+      class="inline-flex items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink"
       data-tour="tour-topbar-citations"
       type="button"
     >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-quote h-3 w-3"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
-        />
-        <path
-          d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
-        />
-      </svg>
-      <span
-        class="hidden sm:inline"
-      >
-        Citations
+      <span>
+        cite
       </span>
     </button>
     <a
@@ -688,22 +544,17 @@ exports[`Topbar > renders with doc name, mode tabs and theme toggle 1`] = `
           d="M9 21H3v-6"
         />
       </svg>
-      FOCUS
     </a>
     <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      aria-label="Help & tours"
-      class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+      aria-label="Doc inspector"
+      aria-pressed="false"
+      class="hidden h-7 w-7 items-center justify-center rounded-md transition-colors md:inline-flex text-ink-3 hover:bg-paper-2 hover:text-ink"
       data-state="closed"
-      data-tour="tour-help-menu"
-      id="radix-_r_0_"
-      title="Help & tours"
       type="button"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-question-mark h-3.5 w-3.5"
+        class="lucide lucide-ellipsis h-3.5 w-3.5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -717,68 +568,17 @@ exports[`Topbar > renders with doc name, mode tabs and theme toggle 1`] = `
         <circle
           cx="12"
           cy="12"
-          r="10"
+          r="1"
         />
-        <path
-          d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
-        />
-        <path
-          d="M12 17h.01"
-        />
-      </svg>
-    </button>
-    <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      aria-label="Theme"
-      class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
-      data-state="closed"
-      data-tour="tour-topbar-theme"
-      id="radix-_r_2_"
-      title="Theme"
-      type="button"
-    >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-sun h-3.5 w-3.5"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
         <circle
-          cx="12"
+          cx="19"
           cy="12"
-          r="4"
+          r="1"
         />
-        <path
-          d="M12 2v2"
-        />
-        <path
-          d="M12 20v2"
-        />
-        <path
-          d="m4.93 4.93 1.41 1.41"
-        />
-        <path
-          d="m17.66 17.66 1.41 1.41"
-        />
-        <path
-          d="M2 12h2"
-        />
-        <path
-          d="M20 12h2"
-        />
-        <path
-          d="m6.34 17.66-1.41 1.41"
-        />
-        <path
-          d="m19.07 4.93-1.41 1.41"
+        <circle
+          cx="5"
+          cy="12"
+          r="1"
         />
       </svg>
     </button>

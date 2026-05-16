@@ -172,42 +172,45 @@ describe('SpaceSettingsScreen', () => {
 
   it('renders the Sharing placeholder (coming soon)', async () => {
     await seedBasicSpace();
-    renderAtSpaceSettings('/s/s1/settings?tab=sharing');
+    const { container } = renderAtSpaceSettings('/s/s1/settings?tab=sharing');
     expect(
       await screen.findByRole('heading', { name: /^sharing$/i }),
     ).toBeInTheDocument();
+    expect(screen.getByText(/Visibility/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Per-space visibility and shared links/i),
-    ).toBeInTheDocument();
+      container.querySelector('[data-coming-soon-overlay="true"]'),
+    ).not.toBeNull();
   });
 
-  it('renders a Back link that returns to the current space', async () => {
+  it('renders the world rail with the current space as the back affordance', async () => {
     await seedBasicSpace();
     renderAtSpaceSettings();
-    const back = await screen.findByRole('link', { name: /back/i });
-    expect(back).toHaveAttribute('href', '/s/s1');
+    const spaceLink = await screen.findByRole('link', { name: 'TST' });
+    expect(spaceLink).toHaveAttribute('href', '/s/s1');
   });
 
   it('renders the Template placeholder (coming soon)', async () => {
     await seedBasicSpace();
-    renderAtSpaceSettings('/s/s1/settings?tab=template');
+    const { container } = renderAtSpaceSettings('/s/s1/settings?tab=template');
     expect(
       await screen.findByRole('heading', { name: /^template$/i }),
     ).toBeInTheDocument();
+    expect(screen.getByText(/Current template/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Changing a space's template after creation/i),
-    ).toBeInTheDocument();
+      container.querySelector('[data-coming-soon-overlay="true"]'),
+    ).not.toBeNull();
   });
 
   it('renders the Members placeholder', async () => {
     await seedBasicSpace();
-    renderAtSpaceSettings('/s/s1/settings?tab=members');
+    const { container } = renderAtSpaceSettings('/s/s1/settings?tab=members');
     expect(
       await screen.findByRole('heading', { name: /^members$/i }),
     ).toBeInTheDocument();
+    expect(screen.getByText(/Invite by email/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Invite collaborators/i),
-    ).toBeInTheDocument();
+      container.querySelector('[data-coming-soon-overlay="true"]'),
+    ).not.toBeNull();
   });
 
   it('renders the Backups tab with an empty history hint', async () => {
@@ -326,9 +329,12 @@ describe('SpaceSettingsScreen', () => {
     await seedBasicSpace();
     const user = userEvent.setup();
     renderAtSpaceSettings();
-    await user.click(
-      await screen.findByRole('button', { name: /^sharing$/i }),
-    );
+    // SettingsTabs renders both a mobile and a desktop variant in the DOM, so
+    // there are two "Sharing" buttons; click either.
+    const buttons = await screen.findAllByRole('button', {
+      name: /^sharing$/i,
+    });
+    await user.click(buttons[0]);
     expect(
       await screen.findByRole('heading', { name: /^sharing$/i }),
     ).toBeInTheDocument();

@@ -1,42 +1,14 @@
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useEffect, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Sun, Moon, Quote, Menu, Contrast, Check } from 'lucide-react';
-import { useTheme } from '@/theme/ThemeProvider';
+import { Quote, Menu, Search, MoreHorizontal } from 'lucide-react';
 import { db } from '@/db/db';
-import type { Theme } from '@/store/ui';
 import { useUI } from '@/store/ui';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
 import { MobileNavDrawer } from './MobileNavDrawer';
-import { HelpMenu } from '@/tours';
 import { cn } from '@/lib/utils';
-
-const THEME_OPTIONS: { value: Theme; labelKey: string }[] = [
-  { value: 'light', labelKey: 'topbar.themes.light' },
-  { value: 'dark', labelKey: 'topbar.themes.dark' },
-  { value: 'hc-light', labelKey: 'topbar.themes.hcLight' },
-  { value: 'hc-dark', labelKey: 'topbar.themes.hcDark' },
-];
-
-function ThemeIcon({ theme }: { theme: Theme }) {
-  if (theme === 'hc-light' || theme === 'hc-dark') {
-    return <Contrast className="h-3.5 w-3.5" />;
-  }
-  return theme === 'dark' ? (
-    <Moon className="h-3.5 w-3.5" />
-  ) : (
-    <Sun className="h-3.5 w-3.5" />
-  );
-}
 
 interface TopbarProps {
   spaceId: string;
@@ -56,13 +28,16 @@ export function Topbar({
   fallbackDocId,
 }: TopbarProps) {
   const { t } = useTranslation('chrome');
-  const { theme, setTheme } = useTheme();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const focus = searchParams.get('focus') === '1';
   const setMobileNavOpen = useUI((s) => s.setMobileNavOpen);
   const openCitationsDrawer = useUI((s) => s.openCitationsDrawer);
+  const inspectorMode = useUI((s) => s.inspectorMode);
+  const toggleInspector = useUI((s) => s.toggleInspector);
+  const setInspectorMode = useUI((s) => s.setInspectorMode);
   const onCitations = location.pathname.endsWith('/citations');
+  const inspectorOpen = inspectorMode !== 'none';
 
   const [editingDoc, setEditingDoc] = useState(false);
   const [draftDocName, setDraftDocName] = useState(docName ?? '');
@@ -70,6 +45,10 @@ export function Topbar({
   useEffect(() => {
     if (!editingDoc) setDraftDocName(docName ?? '');
   }, [docName, editingDoc]);
+
+  useEffect(() => {
+    if (focus && inspectorMode !== 'none') setInspectorMode('none');
+  }, [focus, inspectorMode, setInspectorMode]);
 
   async function commitDocName() {
     setEditingDoc(false);
@@ -90,21 +69,26 @@ export function Topbar({
     }
   }
 
+  const citeContent = focus ? (
+    <Quote className="h-3.5 w-3.5" />
+  ) : (
+    <span>{t('topbar.cite')}</span>
+  );
+  const citeBaseClass = focus
+    ? 'inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors'
+    : 'inline-flex items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors';
+  const citeRestClass = onCitations
+    ? 'text-ink hover:bg-paper-2'
+    : 'text-ink-3 hover:bg-paper-2 hover:text-ink';
+
   const citationsTrigger = onCitations ? (
     <Link
       to={`/s/${spaceId}/citations`}
       data-tour="tour-topbar-citations"
       aria-label={t('topbar.citations')}
-      className={cn(
-        focus
-          ? 'inline-flex h-7 w-7 items-center justify-center rounded-md text-ink hover:bg-paper-2'
-          : 'inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink hover:bg-paper-2',
-      )}
+      className={cn(citeBaseClass, citeRestClass)}
     >
-      <Quote className={focus ? 'h-3.5 w-3.5' : 'h-3 w-3'} />
-      {!focus && (
-        <span className="hidden sm:inline">{t('topbar.citations')}</span>
-      )}
+      {citeContent}
     </Link>
   ) : (
     <button
@@ -112,21 +96,14 @@ export function Topbar({
       onClick={() => openCitationsDrawer()}
       data-tour="tour-topbar-citations"
       aria-label={t('topbar.citations')}
-      className={cn(
-        focus
-          ? 'inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink'
-          : 'inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:bg-paper-2 hover:text-ink',
-      )}
+      className={cn(citeBaseClass, citeRestClass)}
     >
-      <Quote className={focus ? 'h-3.5 w-3.5' : 'h-3 w-3'} />
-      {!focus && (
-        <span className="hidden sm:inline">{t('topbar.citations')}</span>
-      )}
+      {citeContent}
     </button>
   );
 
   return (
-    <header className="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-4 md:px-4">
+    <header className="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4">
       <button
         type="button"
         onClick={() => setMobileNavOpen(true)}
@@ -135,7 +112,7 @@ export function Topbar({
       >
         <Menu className="h-4 w-4" />
       </button>
-      <div className="flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-ink-3">
+      <div className="flex items-center gap-1.5 font-serif text-[14px] text-ink-3">
         {!focus && <span className="hidden md:inline">{spaceName ?? '…'}</span>}
         {docName && (
           <>
@@ -151,7 +128,7 @@ export function Topbar({
                 onFocus={(e) => e.currentTarget.select()}
                 onKeyDown={onDocKeyDown}
                 aria-label={t('topbar.renameDoc')}
-                className="w-40 border-0 bg-transparent p-0 font-mono text-[11px] uppercase tracking-wider text-ink outline-none"
+                className="w-40 border-0 bg-transparent p-0 font-serif text-[14px] font-medium text-ink outline-none"
               />
             ) : (
               <button
@@ -159,7 +136,7 @@ export function Topbar({
                 onDoubleClick={() => docId && setEditingDoc(true)}
                 disabled={!docId}
                 title={docId ? t('topbar.renameDoc') : undefined}
-                className="cursor-text text-ink hover:text-ink"
+                className="cursor-text font-medium text-ink hover:text-ink"
               >
                 {docName}
               </button>
@@ -178,6 +155,19 @@ export function Topbar({
           />
         </div>
       )}
+      {!focus && !onCitations && (
+        <span className="hidden h-3.5 w-px bg-rule md:inline-block" aria-hidden />
+      )}
+      {!focus && (
+        <ComingSoon hint={t('topbar.findInDoc')} side="bottom" className="hidden md:inline-flex">
+          <span
+            aria-label={t('topbar.findInDoc')}
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3"
+          >
+            <Search className="h-3.5 w-3.5" />
+          </span>
+        </ComingSoon>
+      )}
       {focus ? (
         <Tooltip>
           <TooltipTrigger asChild>{citationsTrigger}</TooltipTrigger>
@@ -189,36 +179,35 @@ export function Topbar({
       {!onCitations && (mode === 'dump' || docId) && (
         <FocusToggle mode={mode} spaceId={spaceId} docId={docId} />
       )}
-      <HelpMenu />
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          data-tour="tour-topbar-theme"
-          className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
-          aria-label={t('topbar.theme')}
-          title={t('topbar.theme')}
-        >
-          <ThemeIcon theme={theme} />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="min-w-[12rem]">
-          <DropdownMenuLabel>{t('topbar.theme')}</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          {THEME_OPTIONS.map((opt) => (
-            <DropdownMenuItem
-              key={opt.value}
-              onSelect={() => setTheme(opt.value)}
-            >
-              <Check
+      {!focus &&
+        !onCitations &&
+        docId &&
+        (mode === 'write' || mode === 'read') && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={toggleInspector}
+                aria-label={t('topbar.inspector')}
+                aria-pressed={inspectorOpen}
                 className={cn(
-                  'h-3.5 w-3.5',
-                  theme === opt.value ? 'opacity-100' : 'opacity-0',
+                  'hidden h-7 w-7 items-center justify-center rounded-md transition-colors md:inline-flex',
+                  inspectorOpen
+                    ? 'text-ink hover:bg-paper-2'
+                    : 'text-ink-3 hover:bg-paper-2 hover:text-ink',
                 )}
-                aria-hidden
-              />
-              <span>{t(opt.labelKey)}</span>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+              >
+                <MoreHorizontal
+                  className="h-3.5 w-3.5"
+                  strokeWidth={inspectorOpen ? 2.6 : 2}
+                />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              {t('topbar.inspector')}
+            </TooltipContent>
+          </Tooltip>
+        )}
       <MobileNavDrawer spaceId={spaceId} activeDocId={docId} />
     </header>
   );

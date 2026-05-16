@@ -6,11 +6,8 @@ import { useSpace } from '@/hooks/useSpaces';
 import { useBackups } from '@/hooks/useBackups';
 import { db } from '@/db/db';
 import type { Backup, Space } from '@/db/schema';
-import { PageNav } from '@/components/chrome/PageNav';
-import {
-  SettingsTabs,
-  type SettingsTabDef,
-} from '@/components/settings/SettingsTabs';
+import { SettingsShell } from '@/components/settings/SettingsShell';
+import type { SettingsTabGroup } from '@/components/settings/SettingsTabs';
 import { SettingRow } from '@/components/settings/SettingRow';
 import { TabHeader } from '@/components/settings/TabHeader';
 import {
@@ -28,13 +25,23 @@ import {
 import { backupFilename } from '@/lib/backup/buildSpaceMarkdownZip';
 import { downloadBlob } from '@/lib/file-download';
 import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';
+import { ComingSoon } from '@/components/settings/ComingSoon';
+import {
+  SpaceTemplatePlaceholder,
+  SpacePalettePlaceholder,
+  SpaceSharingPlaceholder,
+  SpaceMembersPlaceholder,
+  SpaceExportPlaceholder,
+} from '@/components/settings/placeholders/SpaceSettingsPlaceholders';
 
 const TAB_IDS = [
   'general',
-  'sharing',
   'template',
+  'palette',
+  'sharing',
   'members',
   'backups',
+  'export',
   'danger',
 ] as const;
 type TabId = (typeof TAB_IDS)[number];
@@ -51,10 +58,29 @@ export function SpaceSettingsScreen() {
   const rawTab = params.get('tab');
   const activeTab: TabId = isTabId(rawTab) ? rawTab : 'general';
 
-  const tabs: SettingsTabDef[] = TAB_IDS.map((id) => ({
-    id,
-    label: t(`settings.space.tabs.${id}`),
-  }));
+  const groups: SettingsTabGroup[] = [
+    {
+      label: t('settings.space.groups.thisSpace'),
+      tabs: (['general', 'template', 'palette'] as const).map((id) => ({
+        id,
+        label: t(`settings.space.tabs.${id}`),
+      })),
+    },
+    {
+      label: t('settings.space.groups.sharingMembers'),
+      tabs: (['sharing', 'members'] as const).map((id) => ({
+        id,
+        label: t(`settings.space.tabs.${id}`),
+      })),
+    },
+    {
+      label: t('settings.space.groups.data'),
+      tabs: (['backups', 'export', 'danger'] as const).map((id) => ({
+        id,
+        label: t(`settings.space.tabs.${id}`),
+      })),
+    },
+  ];
 
   function selectTab(id: string) {
     const next = new URLSearchParams(params);
@@ -63,31 +89,34 @@ export function SpaceSettingsScreen() {
   }
 
   return (
-    <div className="flex h-full w-full flex-col bg-paper text-ink">
-      <PageNav backTo={spaceId ? `/s/${spaceId}` : '/'} />
-      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-        <SettingsTabs tabs={tabs} active={activeTab} onSelect={selectTab} />
-        <main className="flex-1 overflow-auto bg-paper px-4 py-6 md:px-10 md:py-8">
-          {space ? (
-            <>
-              {activeTab === 'general' && <GeneralTab space={space} />}
-              {activeTab === 'sharing' && <SharingTab />}
-              {activeTab === 'template' && <TemplateTab />}
-              {activeTab === 'members' && <MembersTab />}
-              {activeTab === 'backups' && <BackupsTab space={space} />}
-              {activeTab === 'danger' && <DangerTab space={space} />}
-            </>
-          ) : (
-            <p
-              data-testid="space-settings-loading"
-              className="font-serif text-[14px] italic text-ink-3"
-            >
-              {t('settings.space.loading')}
-            </p>
-          )}
-        </main>
-      </div>
-    </div>
+    <SettingsShell
+      variant="space"
+      space={space ?? null}
+      activeSpaceId={spaceId ?? null}
+      groups={groups}
+      active={activeTab}
+      onSelect={selectTab}
+    >
+      {space ? (
+        <>
+          {activeTab === 'general' && <GeneralTab space={space} />}
+          {activeTab === 'template' && <TemplateTab />}
+          {activeTab === 'palette' && <PaletteTab />}
+          {activeTab === 'sharing' && <SharingTab />}
+          {activeTab === 'members' && <MembersTab />}
+          {activeTab === 'backups' && <BackupsTab space={space} />}
+          {activeTab === 'export' && <ExportTab />}
+          {activeTab === 'danger' && <DangerTab space={space} />}
+        </>
+      ) : (
+        <p
+          data-testid="space-settings-loading"
+          className="font-serif text-[14px] italic text-ink-3"
+        >
+          {t('settings.space.loading')}
+        </p>
+      )}
+    </SettingsShell>
   );
 }
 
@@ -166,59 +195,42 @@ function GeneralTab({ space }: { space: Space }) {
 }
 
 function SharingTab() {
-  const { t } = useTranslation('screens');
   return (
-    <section>
-      <TabHeader
-        titleKey="settings.space.sharing.title"
-        subtitleKey="settings.space.sharing.subtitle"
-        breadcrumbKey="settings.space.breadcrumb"
-      />
-      <div className="mx-auto mt-8 max-w-md border border-dashed border-rule bg-paper-2/40 p-8 text-center">
-        <ComingSoonBadge />
-        <p className="mt-4 font-serif text-[14px] italic text-ink-2">
-          {t('settings.space.sharing.comingSoonBody')}
-        </p>
-      </div>
-    </section>
+    <ComingSoon overlay>
+      <SpaceSharingPlaceholder />
+    </ComingSoon>
   );
 }
 
 function TemplateTab() {
-  const { t } = useTranslation('screens');
   return (
-    <section>
-      <TabHeader
-        titleKey="settings.space.template.title"
-        subtitleKey="settings.space.template.subtitle"
-        breadcrumbKey="settings.space.breadcrumb"
-      />
-      <div className="mx-auto mt-8 max-w-md border border-dashed border-rule bg-paper-2/40 p-8 text-center">
-        <ComingSoonBadge />
-        <p className="mt-4 font-serif text-[14px] italic text-ink-2">
-          {t('settings.space.template.comingSoonBody')}
-        </p>
-      </div>
-    </section>
+    <ComingSoon overlay>
+      <SpaceTemplatePlaceholder />
+    </ComingSoon>
   );
 }
 
 function MembersTab() {
-  const { t } = useTranslation('screens');
   return (
-    <section>
-      <TabHeader
-        titleKey="settings.space.members.title"
-        subtitleKey="settings.space.members.subtitle"
-        breadcrumbKey="settings.space.breadcrumb"
-      />
-      <div className="mx-auto mt-8 max-w-md border border-dashed border-rule bg-paper-2/40 p-8 text-center">
-        <ComingSoonBadge />
-        <p className="mt-4 font-serif text-[14px] italic text-ink-2">
-          {t('settings.space.members.comingSoonBody')}
-        </p>
-      </div>
-    </section>
+    <ComingSoon overlay>
+      <SpaceMembersPlaceholder />
+    </ComingSoon>
+  );
+}
+
+function PaletteTab() {
+  return (
+    <ComingSoon overlay>
+      <SpacePalettePlaceholder />
+    </ComingSoon>
+  );
+}
+
+function ExportTab() {
+  return (
+    <ComingSoon overlay>
+      <SpaceExportPlaceholder />
+    </ComingSoon>
   );
 }
 

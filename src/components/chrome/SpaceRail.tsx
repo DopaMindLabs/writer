@@ -1,14 +1,22 @@
 import { Link } from 'react-router-dom';
-import { Plus } from 'lucide-react';
+import { MoreVertical, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useSpaces } from '@/hooks/useSpaces';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { QuickSettingsPopover } from './QuickSettingsPopover';
 
 interface SpaceRailProps {
   activeSpaceId: string | null;
 }
 
 export function SpaceRail({ activeSpaceId }: SpaceRailProps) {
+  const { t } = useTranslation('chrome');
   const spaces = useSpaces() ?? [];
 
   return (
@@ -44,10 +52,10 @@ export function SpaceRail({ activeSpaceId }: SpaceRailProps) {
               <Link
                 to={`/s/${w.id}`}
                 className={cn(
-                  'relative flex h-9 w-9 items-center justify-center rounded-md border font-mono text-[10px] font-medium tracking-wider transition-colors',
+                  'relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors',
                   isActive
-                    ? 'border-ink bg-ink text-paper'
-                    : 'border-rule bg-transparent text-ink-2 hover:bg-paper',
+                    ? 'bg-ink text-paper'
+                    : 'bg-transparent text-ink-2 hover:bg-paper hover:text-ink',
                 )}
               >
                 {w.tag}
@@ -65,12 +73,11 @@ export function SpaceRail({ activeSpaceId }: SpaceRailProps) {
           </Tooltip>
         );
       })}
-      <div className="flex-1" />
       <Tooltip>
         <TooltipTrigger asChild>
           <Link
             to="/new"
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-dashed border-rule text-ink-4 hover:bg-paper hover:text-ink-2"
+            className="flex h-9 w-9 items-center justify-center rounded-md text-ink-4 hover:bg-paper hover:text-ink-2"
             aria-label="Create new space"
           >
             <Plus className="h-4 w-4" />
@@ -78,6 +85,36 @@ export function SpaceRail({ activeSpaceId }: SpaceRailProps) {
         </TooltipTrigger>
         <TooltipContent side="right">Create new space</TooltipContent>
       </Tooltip>
+      <div className="flex-1" />
+      <Popover>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <PopoverTrigger
+              data-tour="tour-topbar-theme"
+              aria-label={t('quickSettings.trigger')}
+              className={cn(
+                'group inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors',
+                'text-ink-3 hover:bg-paper hover:text-ink',
+                'data-[state=open]:bg-paper data-[state=open]:text-ink',
+                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink',
+              )}
+            >
+              <MoreVertical className="h-4 w-4" aria-hidden />
+            </PopoverTrigger>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            {t('quickSettings.trigger')}
+          </TooltipContent>
+        </Tooltip>
+        <PopoverContent
+          side="right"
+          align="end"
+          sideOffset={8}
+          className="p-0"
+        >
+          <QuickSettingsPopover />
+        </PopoverContent>
+      </Popover>
     </aside>
   );
 }

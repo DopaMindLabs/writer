@@ -35,7 +35,6 @@ exports[`FocusToggle > renders focus enter link in write mode 1`] = `
         d="M9 21H3v-6"
       />
     </svg>
-    FOCUS
   </a>
 </div>
 `;
