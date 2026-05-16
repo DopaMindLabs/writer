@@ -3,10 +3,10 @@ import { useEffect, type ComponentType, type SVGProps } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   BookOpen,
+  Brain,
   Columns2,
   Maximize2,
   Minimize2,
-  Network,
   Pencil,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -38,7 +38,7 @@ const TAB_ICONS: Record<TabKey, ComponentType<SVGProps<SVGSVGElement>>> = {
   write: Pencil,
   read: BookOpen,
   split: Columns2,
-  dump: Network,
+  dump: Brain,
 };
 
 export function ModeTabs({ mode, spaceId, docId, fallbackDocId }: ModeTabsProps) {
@@ -185,14 +185,18 @@ export function FocusToggle({ mode, spaceId, docId }: FocusToggleProps) {
   }
 
   return (
-    <Link
-      to={`${base}${qs ? `?${qs}` : ''}`}
-      className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:bg-paper-2 hover:text-ink"
-      title={t('topbar.focusTitleFocus')}
-      aria-label={t('topbar.enterFocus')}
-    >
-      <Maximize2 className="h-3 w-3" />
-      {/* {t('topbar.focus')} */}
-    </Link>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Link
+          to={`${base}${qs ? `?${qs}` : ''}`}
+          title={t('topbar.focusTitleFocus')}
+          aria-label={t('topbar.enterFocus')}
+          className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-paper-2 hover:text-ink"
+        >
+          <Maximize2 className="h-3.5 w-3.5" aria-hidden />
+        </Link>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">{t('topbar.focusTitleFocus')}</TooltipContent>
+    </Tooltip>
   );
 }

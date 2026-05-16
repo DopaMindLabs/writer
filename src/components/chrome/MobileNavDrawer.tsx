@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 import { useUI } from '@/store/ui';
 import { SpaceRail } from './SpaceRail';
 import { Sidebar } from './Sidebar';
-import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon';
 import { cn } from '@/lib/utils';
 
 interface MobileNavDrawerProps {
@@ -46,14 +46,12 @@ export function MobileNavDrawer({ spaceId, activeDocId }: MobileNavDrawerProps) 
           <SpaceRail activeSpaceId={spaceId} />
           <Sidebar spaceId={spaceId} activeDocId={activeDocId} />
           <DialogPrimitive.Close asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label={t('mobileNav.close')}
-              className="absolute right-2 top-2 h-7 w-7 text-ink-3 hover:bg-paper hover:text-ink"
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            <IconButton
+              icon={X}
+              iconSize="md"
+              label={t('mobileNav.close')}
+              className="absolute right-2 top-2"
+            />
           </DialogPrimitive.Close>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>

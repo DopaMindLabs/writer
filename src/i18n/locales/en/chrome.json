@@ -85,7 +85,14 @@
       "l": "L"
     },
     "moreLabel": "More",
+    "helpToursLabel": "Help tour",
     "helpItem": "Help & shortcuts",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "hcLight": "HC light",
+      "hcDark": "HC dark"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "What's new",
     "feedback": "Send feedback…",

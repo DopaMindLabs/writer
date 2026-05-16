@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, List, Info, History, MoreHorizontal } from 'lucide-react';
 import { useUI, type InspectorSection } from '@/store/ui';
+import { IconButton } from '@/components/ui/icon';
 import { cn } from '@/lib/utils';
 
 const ITEMS: { id: InspectorSection; Icon: typeof List }[] = [
@@ -21,15 +22,12 @@ export function DocInspectorIcons() {
       data-testid="doc-inspector-icons"
       className="hidden w-11 shrink-0 flex-col items-center gap-1 border-l border-rule bg-paper-2 py-3.5 md:flex"
     >
-      <button
-        type="button"
-        onClick={() => setInspectorMode('expanded')}
-        aria-label={t('inspector.expand')}
+      <IconButton
+        icon={ChevronLeft}
+        label={t('inspector.expand')}
         title={t('inspector.expand')}
-        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper hover:text-ink"
-      >
-        <ChevronLeft className="h-3.5 w-3.5" aria-hidden />
-      </button>
+        onClick={() => setInspectorMode('expanded')}
+      />
       <div className="my-1.5 h-px w-4 bg-rule" aria-hidden />
       {ITEMS.map(({ id, Icon }) => {
         const on = section === id;

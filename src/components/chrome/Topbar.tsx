@@ -5,6 +5,7 @@ import { Quote, Menu, Search, MoreHorizontal } from 'lucide-react';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { IconButton } from '@/components/ui/icon';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
 import { MobileNavDrawer } from './MobileNavDrawer';
@@ -104,14 +105,13 @@ export function Topbar({
 
   return (
     <header className="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4">
-      <button
-        type="button"
+      <IconButton
+        icon={Menu}
+        iconSize="md"
+        label={t('topbar.openNav')}
         onClick={() => setMobileNavOpen(true)}
-        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink md:hidden"
-        aria-label={t('topbar.openNav')}
-      >
-        <Menu className="h-4 w-4" />
-      </button>
+        className="md:hidden"
+      />
       <div className="flex items-center gap-1.5 font-serif text-[14px] text-ink-3">
         {!focus && <span className="hidden md:inline">{spaceName ?? '…'}</span>}
         {docName && (
@@ -185,23 +185,14 @@ export function Topbar({
         (mode === 'write' || mode === 'read') && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
-                type="button"
+              <IconButton
+                icon={MoreHorizontal}
+                label={t('topbar.inspector')}
+                active={inspectorOpen}
+                strokeWidth={inspectorOpen ? 2.6 : 2}
                 onClick={toggleInspector}
-                aria-label={t('topbar.inspector')}
-                aria-pressed={inspectorOpen}
-                className={cn(
-                  'hidden h-7 w-7 items-center justify-center rounded-md transition-colors md:inline-flex',
-                  inspectorOpen
-                    ? 'text-ink hover:bg-paper-2'
-                    : 'text-ink-3 hover:bg-paper-2 hover:text-ink',
-                )}
-              >
-                <MoreHorizontal
-                  className="h-3.5 w-3.5"
-                  strokeWidth={inspectorOpen ? 2.6 : 2}
-                />
-              </button>
+                className="hidden md:inline-flex"
+              />
             </TooltipTrigger>
             <TooltipContent side="bottom">
               {t('topbar.inspector')}

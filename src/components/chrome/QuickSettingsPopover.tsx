@@ -6,16 +6,17 @@ import { useUI, type ReadingWidth, type Theme } from '@/store/ui';
 import { Chip } from '@/components/settings/Chip';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { PopoverClose } from '@/components/ui/popover';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { TOUR_IDS, TOURS, type TourId } from '@/tours/tours';
 import { useTour } from '@/tours/useTour';
 import { getCompleted } from '@/tours/storage';
 import { cn } from '@/lib/utils';
 
-const THEMES: { id: Theme; labelKey: string }[] = [
-  { id: 'light', labelKey: 'topbar.themes.light' },
-  { id: 'dark', labelKey: 'topbar.themes.dark' },
-  { id: 'hc-light', labelKey: 'topbar.themes.hcLight' },
-  { id: 'hc-dark', labelKey: 'topbar.themes.hcDark' },
+const THEMES: { id: Theme; labelKey: string; titleKey: string }[] = [
+  { id: 'light', labelKey: 'quickSettings.themes.light', titleKey: 'topbar.themes.light' },
+  { id: 'dark', labelKey: 'quickSettings.themes.dark', titleKey: 'topbar.themes.dark' },
+  { id: 'hc-light', labelKey: 'quickSettings.themes.hcLight', titleKey: 'topbar.themes.hcLight' },
+  { id: 'hc-dark', labelKey: 'quickSettings.themes.hcDark', titleKey: 'topbar.themes.hcDark' },
 ];
 
 interface RowProps {
@@ -26,8 +27,8 @@ interface RowProps {
 
 function Row({ label, hint, children }: RowProps) {
   return (
-    <div className="grid grid-cols-[1fr_auto] items-center gap-3 border-b border-rule/60 px-4 py-2.5">
-      <div className="min-w-0">
+    <div className="grid grid-cols-[1fr_auto] items-start gap-3 border-b border-rule/60 px-4 py-2.5">
+      <div className="min-w-0 pt-px">
         <div className="text-[12px] font-medium text-ink">{label}</div>
         {hint && (
           <div className="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
@@ -167,14 +168,21 @@ export function QuickSettingsPopover() {
       <Row label={t('chrome:quickSettings.themeLabel')}>
         <div className="flex flex-wrap gap-1">
           {THEMES.map((opt) => (
-            <Chip
-              key={opt.id}
-              active={theme === opt.id}
-              onClick={() => setTheme(opt.id)}
-              className="px-2 py-0.5 text-[10px]"
-            >
-              {t(`chrome:${opt.labelKey}`)}
-            </Chip>
+            <Tooltip key={opt.id}>
+              <TooltipTrigger asChild>
+                <Chip
+                  active={theme === opt.id}
+                  onClick={() => setTheme(opt.id)}
+                  className="px-2 py-0.5 text-[10px]"
+                  aria-label={t(`chrome:${opt.titleKey}`)}
+                >
+                  {t(`chrome:${opt.labelKey}`)}
+                </Chip>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                {t(`chrome:${opt.titleKey}`)}
+              </TooltipContent>
+            </Tooltip>
           ))}
         </div>
       </Row>
@@ -217,10 +225,9 @@ export function QuickSettingsPopover() {
       </Row>
 
       <div className="px-4 pb-1.5 pt-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
-        {t('chrome:quickSettings.moreLabel')}
+        {t('chrome:quickSettings.helpToursLabel')}
       </div>
 
-      {/* Help tours — each tour is a one-line replay item. */}
       {TOUR_IDS.map((id) => {
         const done = completedSnapshot.includes(id);
         return (
@@ -234,6 +241,10 @@ export function QuickSettingsPopover() {
           </MenuItem>
         );
       })}
+
+      <div className="px-4 pb-1.5 pt-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
+        {t('chrome:quickSettings.moreLabel')}
+      </div>
 
       <ComingSoon
         hint={t('chrome:quickSettings.whatsNew')}

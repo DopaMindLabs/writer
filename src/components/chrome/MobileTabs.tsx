@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Pencil, BookOpen, Network, Quote, MoreHorizontal } from 'lucide-react';
+import { Pencil, BookOpen, Brain, Quote, MoreHorizontal } from 'lucide-react';
 import { useUI } from '@/store/ui';
 import { cn } from '@/lib/utils';
 
@@ -49,7 +49,7 @@ export function MobileTabs({ spaceId, docId }: MobileTabsProps) {
     },
     {
       key: 'brain',
-      Icon: Network,
+      Icon: Brain,
       href: brainHref ?? undefined,
       match: (p) => p.endsWith('/dump'),
     },
