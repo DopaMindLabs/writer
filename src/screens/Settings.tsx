@@ -6,6 +6,7 @@ import { SettingsTabs, type SettingsTabDef } from '@/components/settings/Setting
 import { SettingRow } from '@/components/settings/SettingRow';
 import { Chip } from '@/components/settings/Chip';
 import { ComingSoonRow } from '@/components/settings/ComingSoonRow';
+import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';
 import { TabHeader } from '@/components/settings/TabHeader';
 
 const TAB_IDS = [
@@ -163,9 +164,7 @@ function PlaceholderTab({ id }: { id: PlaceholderTabId }) {
         subtitleKey={`settings.${id}.subtitle`}
       />
       <div className="mx-auto mt-8 max-w-md border border-dashed border-rule bg-paper-2/40 p-8 text-center">
-        <div className="inline-block rounded-sm bg-paper-2 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-ink-3">
-          {t('settings.comingSoonBadge')}
-        </div>
+        <ComingSoonBadge />
         <p className="mt-4 font-serif text-[14px] italic text-ink-2">
           {t(`settings.${id}.comingSoonBody`)}
         </p>

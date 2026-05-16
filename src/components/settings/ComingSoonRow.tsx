@@ -2,6 +2,7 @@ import { HelpCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { SettingRow } from './SettingRow';
+import { ComingSoonBadge } from './ComingSoonBadge';
 
 interface ComingSoonRowProps {
   label: string;
@@ -34,9 +35,7 @@ export function ComingSoonRow({ label, hint, tooltip }: ComingSoonRowProps) {
             {tooltip}
           </TooltipContent>
         </Tooltip>
-        <span className="rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3">
-          {t('settings.comingSoonBadge')}
-        </span>
+        <ComingSoonBadge />
       </div>
     </SettingRow>
   );

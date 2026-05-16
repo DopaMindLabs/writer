@@ -130,7 +130,7 @@
         "snapshotNow": "+ snapshot now",
         "snapshotting": "snapshotting…",
         "snapshotFailed": "Snapshot failed: {{message}}",
-        "restoreSoon": "↑ restore from file · soon",
+        "restoreLabel": "↑ restore from file",
         "historyTitle": "History",
         "empty": "No snapshots yet — create one with + snapshot now.",
         "columns": {

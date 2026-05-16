@@ -27,6 +27,7 @@ import {
 } from '@/lib/backup/createSpaceBackup';
 import { backupFilename } from '@/lib/backup/buildSpaceMarkdownZip';
 import { downloadBlob } from '@/lib/file-download';
+import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';
 
 const TAB_IDS = [
   'general',
@@ -174,9 +175,7 @@ function SharingTab() {
         breadcrumbKey="settings.space.breadcrumb"
       />
       <div className="mx-auto mt-8 max-w-md border border-dashed border-rule bg-paper-2/40 p-8 text-center">
-        <div className="inline-block rounded-sm bg-paper-2 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-ink-3">
-          {t('settings.comingSoonBadge')}
-        </div>
+        <ComingSoonBadge />
         <p className="mt-4 font-serif text-[14px] italic text-ink-2">
           {t('settings.space.sharing.comingSoonBody')}
         </p>
@@ -195,9 +194,7 @@ function TemplateTab() {
         breadcrumbKey="settings.space.breadcrumb"
       />
       <div className="mx-auto mt-8 max-w-md border border-dashed border-rule bg-paper-2/40 p-8 text-center">
-        <div className="inline-block rounded-sm bg-paper-2 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-ink-3">
-          {t('settings.comingSoonBadge')}
-        </div>
+        <ComingSoonBadge />
         <p className="mt-4 font-serif text-[14px] italic text-ink-2">
           {t('settings.space.template.comingSoonBody')}
         </p>
@@ -216,9 +213,7 @@ function MembersTab() {
         breadcrumbKey="settings.space.breadcrumb"
       />
       <div className="mx-auto mt-8 max-w-md border border-dashed border-rule bg-paper-2/40 p-8 text-center">
-        <div className="inline-block rounded-sm bg-paper-2 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-ink-3">
-          {t('settings.comingSoonBadge')}
-        </div>
+        <ComingSoonBadge />
         <p className="mt-4 font-serif text-[14px] italic text-ink-2">
           {t('settings.space.members.comingSoonBody')}
         </p>
@@ -273,9 +268,10 @@ function BackupsTab({ space }: { space: Space }) {
         <div className="flex items-center gap-4 text-[12px]">
           <span
             aria-disabled="true"
-            className="cursor-not-allowed font-mono text-[10px] uppercase tracking-wider text-ink-4"
+            className="inline-flex cursor-not-allowed items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-ink-4"
           >
-            {t('settings.space.backups.restoreSoon')}
+            {t('settings.space.backups.restoreLabel')}
+            <ComingSoonBadge />
           </span>
           <Button size="sm" onClick={() => void handleSnapshot()} disabled={busy}>
             {busy
