@@ -10,7 +10,7 @@ import {
   sampleSpace,
   seedBasicSpace,
 } from '@/test/fixtures';
-import type { Annotation, Citation, Connection } from '@/db/schema';
+import type { Annotation, Backup, Citation, Connection } from '@/db/schema';
 import {
   deleteSpaceCascade,
   SpaceSettingsScreen,
@@ -210,6 +210,39 @@ describe('SpaceSettingsScreen', () => {
     ).toBeInTheDocument();
   });
 
+  it('renders the Backups tab with an empty history hint', async () => {
+    await seedBasicSpace();
+    renderAtSpaceSettings('/s/s1/settings?tab=backups');
+    expect(
+      await screen.findByRole('heading', { name: /^backups$/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/No snapshots yet/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /snapshot now/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('creates a snapshot, writes a Backups row, and shows it in the history', async () => {
+    await seedBasicSpace();
+    const user = userEvent.setup();
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => {});
+    renderAtSpaceSettings('/s/s1/settings?tab=backups');
+    await user.click(
+      await screen.findByRole('button', { name: /snapshot now/i }),
+    );
+    await waitFor(async () => {
+      expect(await db.backups.where('scope').equals('s1').count()).toBe(1);
+    });
+    expect(clickSpy).toHaveBeenCalled();
+    expect(await screen.findByTestId('backups-history')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^delete$/i })).toBeInTheDocument();
+    clickSpy.mockRestore();
+  });
+
   it('renders the Danger zone with the delete trigger', async () => {
     await seedBasicSpace();
     renderAtSpaceSettings('/s/s1/settings?tab=danger');
@@ -354,6 +387,21 @@ describe('deleteSpaceCascade', () => {
       spaceId: 's1',
       slots: [{ name: 'a', color: '#fff' }],
     });
+    const backupS1: Backup = {
+      id: 'b1',
+      when: FIXED_TIME,
+      scope: 's1',
+      kind: 'manual',
+      format: 'md-zip',
+      size: 1,
+      payload: new Blob(['x']),
+    };
+    const backupS2: Backup = {
+      ...backupS1,
+      id: 'b2',
+      scope: 's2',
+    };
+    await db.backups.bulkPut([backupS1, backupS2]);
 
     // Seed an unrelated doc in s2 to confirm it survives
     await db.docs.put({
@@ -374,6 +422,8 @@ describe('deleteSpaceCascade', () => {
     expect(await db.citations.where({ spaceId: 's1' }).count()).toBe(0);
     expect(await db.connections.where({ spaceId: 's1' }).count()).toBe(0);
     expect(await db.palettes.where({ spaceId: 's1' }).count()).toBe(0);
+    expect(await db.backups.where('scope').equals('s1').count()).toBe(0);
+    expect(await db.backups.where('scope').equals('s2').count()).toBe(1);
     expect(await db.annotations.get('a1')).toBeUndefined();
     expect(await db.docs.get('d-other')).toBeDefined();
   });

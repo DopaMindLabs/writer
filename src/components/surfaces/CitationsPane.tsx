@@ -18,6 +18,7 @@ import {
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { cn } from '@/lib/utils';
+import { downloadBlob } from '@/lib/file-download';
 import type { Citation } from '@/db/schema';
 
 export type CitationsDensity = 'comfortable' | 'compact';
@@ -137,12 +138,7 @@ export function CitationsPane({
   function handleExport() {
     const bib = serializeCitationsToBibtex(citations);
     const blob = new Blob([bib], { type: 'application/x-bibtex' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${spaceName ?? 'space'}-citations.bib`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadBlob(blob, `${spaceName ?? 'space'}-citations.bib`);
   }
 
   async function handleBulkDelete() {

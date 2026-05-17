@@ -96,6 +96,7 @@
         "sharing": "Sharing",
         "template": "Template",
         "members": "Members",
+        "backups": "Backups",
         "danger": "Danger zone"
       },
       "general": {
@@ -120,6 +121,34 @@
         "title": "Members",
         "subtitle": "Co-writers and reviewers with access to this space.",
         "comingSoonBody": "Invite collaborators, manage roles, and review changes. Lands with cloud sync."
+      },
+      "backups": {
+        "title": "Backups",
+        "subtitle": "Snapshot this space as a Markdown .zip you can download and keep.",
+        "comingSoonHint": "LaTeX, HTML, and PDF formats are coming. Restore from file lands with import.",
+        "retentionHint": "Keeping the {{count}} most recent snapshots — older ones are removed automatically.",
+        "snapshotNow": "+ snapshot now",
+        "snapshotting": "snapshotting…",
+        "snapshotFailed": "Snapshot failed: {{message}}",
+        "restoreSoon": "↑ restore from file · soon",
+        "historyTitle": "History",
+        "empty": "No snapshots yet — create one with + snapshot now.",
+        "columns": {
+          "when": "WHEN",
+          "kind": "KIND",
+          "size": "SIZE",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "manual",
+          "auto": "auto",
+          "snapshot": "snapshot"
+        },
+        "download": "↓ download",
+        "delete": "delete",
+        "deleteConfirm": "Delete this snapshot? This cannot be undone.",
+        "deleted": "Snapshot deleted.",
+        "justNow": "just now"
       },
       "danger": {
         "title": "Danger zone",
