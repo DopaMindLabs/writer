@@ -6,7 +6,9 @@
       "Bash(ls ~/Library/Caches/ms-playwright/ 2>/dev/null | head -5)",
       "Read(//Users/Shavindra/Library/Caches/ms-playwright/**)",
       "Bash(npm run *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(grep -oE 'window\\\\.reportData[ =\\\\s]*[^;]{0,200}' /Users/Shavindra/Documents/dev/Lotem/lotem-ipsum/e2e-coverage/index.html)",
+      "Bash(node -e ' *)"
     ]
   }
 }
