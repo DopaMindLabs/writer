@@ -6,8 +6,7 @@ import {
   sampleDoc,
   sampleNote,
 } from '@/test/fixtures';
-import { createSpaceBackup } from './createSpaceBackup';
-
+import { createSpaceBackup, MAX_BACKUPS_PER_SPACE } from './createSpaceBackup';
 describe('createSpaceBackup', () => {
   beforeEach(async () => {
     await db.spaces.put(sampleSpace);
@@ -40,5 +39,25 @@ describe('createSpaceBackup', () => {
     await createSpaceBackup(sampleSpace.id);
     const all = await db.backups.where('scope').equals(sampleSpace.id).toArray();
     expect(all).toHaveLength(2);
+  });
+
+   it('keeps only the five newest backups for a space', async () => {
+    const firstWhen = Date.UTC(2026, 4, 16, 12, 0);
+    const createdBackupIds: string[] = [];
+
+    for (let i = 0; i < MAX_BACKUPS_PER_SPACE + 1; i += 1) {
+      const { backup } = await createSpaceBackup(sampleSpace.id, {
+        now: () => firstWhen + i,
+      });
+      createdBackupIds.push(backup.id);
+    }
+
+    const all = await db.backups.where('scope').equals(sampleSpace.id).toArray();
+    expect(all).toHaveLength(MAX_BACKUPS_PER_SPACE);
+    expect(await db.backups.get(createdBackupIds[0])).toBeUndefined();
+    expect(await db.backups.get(createdBackupIds[1])).toBeDefined();
+    expect(
+      await db.backups.get(createdBackupIds[createdBackupIds.length - 1]),
+    ).toBeDefined();
   });
 });
