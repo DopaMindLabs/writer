@@ -8,7 +8,11 @@
       "Bash(npm run *)",
       "Bash(npx tsc *)",
       "Bash(grep -oE 'window\\\\.reportData[ =\\\\s]*[^;]{0,200}' /Users/Shavindra/Documents/dev/Lotem/lotem-ipsum/e2e-coverage/index.html)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(pnpm vitest *)",
+      "Bash(npx vitest *)",
+      "Bash(wait %1)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('/Users/Shavindra/Documents/dev/Lotem/lotem-ipsum/src/i18n/locales/en/screens.json','utf8'\\)\\); console.log\\('OK'\\)\")"
     ]
   }
 }

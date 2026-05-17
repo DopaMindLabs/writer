@@ -126,6 +126,7 @@
         "title": "Backups",
         "subtitle": "Snapshot this space as a Markdown .zip you can download and keep.",
         "comingSoonHint": "LaTeX, HTML, and PDF formats are coming. Restore from file lands with import.",
+        "retentionHint": "Keeping the {{count}} most recent snapshots — older ones are removed automatically.",
         "snapshotNow": "+ snapshot now",
         "snapshotting": "snapshotting…",
         "snapshotFailed": "Snapshot failed: {{message}}",

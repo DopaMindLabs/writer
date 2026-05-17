@@ -10,7 +10,7 @@ import {
   sampleSpace,
   seedBasicSpace,
 } from '@/test/fixtures';
-import type { Annotation, Citation, Connection } from '@/db/schema';
+import type { Annotation, Backup, Citation, Connection } from '@/db/schema';
 import {
   deleteSpaceCascade,
   SpaceSettingsScreen,
@@ -387,6 +387,21 @@ describe('deleteSpaceCascade', () => {
       spaceId: 's1',
       slots: [{ name: 'a', color: '#fff' }],
     });
+    const backupS1: Backup = {
+      id: 'b1',
+      when: FIXED_TIME,
+      scope: 's1',
+      kind: 'manual',
+      format: 'md-zip',
+      size: 1,
+      payload: new Blob(['x']),
+    };
+    const backupS2: Backup = {
+      ...backupS1,
+      id: 'b2',
+      scope: 's2',
+    };
+    await db.backups.bulkPut([backupS1, backupS2]);
 
     // Seed an unrelated doc in s2 to confirm it survives
     await db.docs.put({
@@ -407,6 +422,8 @@ describe('deleteSpaceCascade', () => {
     expect(await db.citations.where({ spaceId: 's1' }).count()).toBe(0);
     expect(await db.connections.where({ spaceId: 's1' }).count()).toBe(0);
     expect(await db.palettes.where({ spaceId: 's1' }).count()).toBe(0);
+    expect(await db.backups.where('scope').equals('s1').count()).toBe(0);
+    expect(await db.backups.where('scope').equals('s2').count()).toBe(1);
     expect(await db.annotations.get('a1')).toBeUndefined();
     expect(await db.docs.get('d-other')).toBeDefined();
   });

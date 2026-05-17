@@ -21,7 +21,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { createSpaceBackup } from '@/lib/backup/createSpaceBackup';
+import {
+  MAX_BACKUPS_PER_SPACE,
+  createSpaceBackup,
+} from '@/lib/backup/createSpaceBackup';
 import { backupFilename } from '@/lib/backup/buildSpaceMarkdownZip';
 import { downloadBlob } from '@/lib/file-download';
 
@@ -263,7 +266,9 @@ function BackupsTab({ space }: { space: Space }) {
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule pb-4">
         <p className="font-serif text-[13px] italic text-ink-3">
-          {t('settings.space.backups.comingSoonHint')}
+          {t('settings.space.backups.retentionHint', {
+            count: MAX_BACKUPS_PER_SPACE,
+          })}
         </p>
         <div className="flex items-center gap-4 text-[12px]">
           <span
@@ -371,6 +376,7 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+// TODO: move to utils and add tests
 function formatRelativeTime(
   when: number,
   t: (key: string) => string,
@@ -515,6 +521,7 @@ export async function deleteSpaceCascade(spaceId: string): Promise<void> {
       db.citations,
       db.connections,
       db.palettes,
+      db.backups,
     ],
     async () => {
       const docIds = await db.docs.where({ spaceId }).primaryKeys();
@@ -527,6 +534,7 @@ export async function deleteSpaceCascade(spaceId: string): Promise<void> {
       await db.citations.where({ spaceId }).delete();
       await db.connections.where({ spaceId }).delete();
       await db.palettes.where({ spaceId }).delete();
+      await db.backups.where('scope').equals(spaceId).delete();
       await db.spaces.delete(spaceId);
     },
   );
