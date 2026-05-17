@@ -79,6 +79,25 @@ describe('useUI store', () => {
     expect(useUI.getState().theme).toBe('dark');
   });
 
+  it('hydrates persisted theme + currentSpaceId from localStorage on first import', async () => {
+    window.localStorage.setItem(
+      'lorem-ui',
+      JSON.stringify({
+        theme: 'dark',
+        currentSpaceId: 'persisted-space',
+        floatingToolbarEnabled: true,
+        splitDividerPct: 60,
+      }),
+    );
+    vi.resetModules();
+    const { useUI: useUIFresh } = await import('./ui');
+    const state = useUIFresh.getState();
+    expect(state.theme).toBe('dark');
+    expect(state.currentSpaceId).toBe('persisted-space');
+    expect(state.floatingToolbarEnabled).toBe(true);
+    expect(state.splitDividerPct).toBe(60);
+  });
+
   it('openDetail/closeDetail flips detailNoteId and focuses the note', () => {
     act(() => useUI.getState().openDetail('n1'));
     expect(useUI.getState().detailNoteId).toBe('n1');
