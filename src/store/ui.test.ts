@@ -25,6 +25,9 @@ describe('useUI store', () => {
         currentSpaceId: 's1',
         floatingToolbarEnabled: false,
         splitDividerPct: 50,
+        inspectorMode: 'none',
+        inspectorSection: 'outline',
+        readingWidth: 'm',
       },
     );
   });
@@ -63,6 +66,9 @@ describe('useUI store', () => {
         currentSpaceId: null,
         floatingToolbarEnabled: true,
         splitDividerPct: 50,
+        inspectorMode: 'none',
+        inspectorSection: 'outline',
+        readingWidth: 'm',
       },
     );
     act(() => useUI.getState().setFloatingToolbarEnabled(false));
@@ -79,23 +85,48 @@ describe('useUI store', () => {
     expect(useUI.getState().theme).toBe('dark');
   });
 
-  it('hydrates persisted theme + currentSpaceId from localStorage on first import', async () => {
+  it('hydrates persisted state from localStorage on first import', async () => {
     window.localStorage.setItem(
       'lorem-ui',
       JSON.stringify({
         theme: 'dark',
-        currentSpaceId: 'persisted-space',
+        currentSpaceId: 'hydrated-space',
         floatingToolbarEnabled: true,
         splitDividerPct: 60,
+        inspectorMode: 'expanded',
+        inspectorSection: 'history',
+        readingWidth: 'l',
       }),
     );
     vi.resetModules();
-    const { useUI: useUIFresh } = await import('./ui');
-    const state = useUIFresh.getState();
-    expect(state.theme).toBe('dark');
-    expect(state.currentSpaceId).toBe('persisted-space');
-    expect(state.floatingToolbarEnabled).toBe(true);
-    expect(state.splitDividerPct).toBe(60);
+    const { useUI: fresh } = await import('./ui');
+    const s = fresh.getState();
+    expect(s.theme).toBe('dark');
+    expect(s.currentSpaceId).toBe('hydrated-space');
+    expect(s.floatingToolbarEnabled).toBe(true);
+    expect(s.splitDividerPct).toBe(60);
+    expect(s.inspectorMode).toBe('expanded');
+    expect(s.inspectorSection).toBe('history');
+    expect(s.readingWidth).toBe('l');
+  });
+
+  it('falls back to defaults when persisted shape is invalid', async () => {
+    window.localStorage.setItem(
+      'lorem-ui',
+      JSON.stringify({
+        inspectorMode: 'bogus',
+        inspectorSection: 42,
+        readingWidth: 'XL',
+        splitDividerPct: Number.POSITIVE_INFINITY,
+      }),
+    );
+    vi.resetModules();
+    const { useUI: fresh } = await import('./ui');
+    const s = fresh.getState();
+    expect(s.inspectorMode).toBe('none');
+    expect(s.inspectorSection).toBe('outline');
+    expect(s.readingWidth).toBe('m');
+    expect(s.splitDividerPct).toBe(50);
   });
 
   it('openDetail/closeDetail flips detailNoteId and focuses the note', () => {

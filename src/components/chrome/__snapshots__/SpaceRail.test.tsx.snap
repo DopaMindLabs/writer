@@ -21,7 +21,7 @@ exports[`SpaceRail > renders rail with seeded spaces and active highlight 1`] = 
       exp
     </span>
     <a
-      class="relative flex h-9 w-9 items-center justify-center rounded-md border font-mono text-[10px] font-medium tracking-wider transition-colors border-rule bg-transparent text-ink-2 hover:bg-paper"
+      class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
       data-discover="true"
       data-state="closed"
       href="/s/s3"
@@ -29,7 +29,7 @@ exports[`SpaceRail > renders rail with seeded spaces and active highlight 1`] = 
       CCC
     </a>
     <a
-      class="relative flex h-9 w-9 items-center justify-center rounded-md border font-mono text-[10px] font-medium tracking-wider transition-colors border-ink bg-ink text-paper"
+      class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-ink text-paper"
       data-discover="true"
       data-state="closed"
       href="/s/s2"
@@ -40,19 +40,16 @@ exports[`SpaceRail > renders rail with seeded spaces and active highlight 1`] = 
       />
     </a>
     <a
-      class="relative flex h-9 w-9 items-center justify-center rounded-md border font-mono text-[10px] font-medium tracking-wider transition-colors border-rule bg-transparent text-ink-2 hover:bg-paper"
+      class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
       data-discover="true"
       data-state="closed"
       href="/s/s1"
     >
       AAA
     </a>
-    <div
-      class="flex-1"
-    />
     <a
       aria-label="Create new space"
-      class="flex h-9 w-9 items-center justify-center rounded-md border border-dashed border-rule text-ink-4 hover:bg-paper hover:text-ink-2"
+      class="flex h-9 w-9 items-center justify-center rounded-md text-ink-4 hover:bg-paper hover:text-ink-2"
       data-discover="true"
       data-state="closed"
       href="/new"
@@ -78,6 +75,49 @@ exports[`SpaceRail > renders rail with seeded spaces and active highlight 1`] = 
         />
       </svg>
     </a>
+    <div
+      class="flex-1"
+    />
+    <button
+      aria-controls="radix-_r_2_"
+      aria-expanded="false"
+      aria-haspopup="dialog"
+      aria-label="LIpsum Writer"
+      class="group inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper hover:text-ink data-[state=open]:bg-paper data-[state=open]:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+      data-state="closed"
+      data-tour="tour-topbar-theme"
+      type="button"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-ellipsis-vertical h-4 w-4"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="1"
+        />
+        <circle
+          cx="12"
+          cy="5"
+          r="1"
+        />
+        <circle
+          cx="12"
+          cy="19"
+          r="1"
+        />
+      </svg>
+    </button>
   </aside>
 </div>
 `;

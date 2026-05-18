@@ -3,17 +3,22 @@
 exports[`WriteSurface > renders editor stub with doc body and mode 1`] = `
 <div>
   <div
-    class="h-full min-w-0 flex-1 overflow-auto bg-paper px-12 py-12"
+    class="h-full min-w-0 flex-1 overflow-auto bg-paper px-6 py-12 md:px-12"
+    data-reading-width="m"
     data-tour="tour-editor-main"
   >
-    <button
-      data-mode="write"
-      data-placeholder="Start writing…"
-      data-testid="editor-stub"
-      type="button"
+    <div
+      class="mx-auto w-full max-w-[680px]"
     >
-      hello world
-    </button>
+      <button
+        data-mode="write"
+        data-placeholder="Start writing…"
+        data-testid="editor-stub"
+        type="button"
+      >
+        hello world
+      </button>
+    </div>
   </div>
 </div>
 `;

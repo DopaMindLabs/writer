@@ -1,4 +1,5 @@
 import userEvent from '@testing-library/user-event';
+import { within } from '@testing-library/react';
 import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { sampleSpace, seedBasicSpace } from '@/test/fixtures';
@@ -167,22 +168,43 @@ describe('Sidebar', () => {
       .toBeInTheDocument();
   });
 
-  it('shows a hover-revealed Space settings link in the header', async () => {
+  it('shows a hover-revealed Space menu trigger in the header', async () => {
     await seedBasicSpace();
     renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
       initialEntries: ['/s/s1/d/d1'],
     });
-    const cog = await screen.findByRole('link', {
-      name: /space settings/i,
+    const trigger = await screen.findByRole('button', {
+      name: /open space menu/i,
     });
-    expect(cog).toHaveAttribute('href', '/s/s1/settings');
-    // The cog uses the opacity-0 + group-hover:opacity-100 pattern so it's
-    // visually hidden until the header is hovered or the link is focused.
-    expect(cog.className).toMatch(/opacity-0/);
-    expect(cog.className).toMatch(/group-hover:opacity-100/);
+    // Trigger uses opacity-0 + group-hover:opacity-100 so it's hidden until
+    // the header is hovered or the trigger is focused.
+    expect(trigger.className).toMatch(/opacity-0/);
+    expect(trigger.className).toMatch(/group-hover:opacity-100/);
   });
 
-  it('hides the Space settings link while renaming the space', async () => {
+  it('opens the space menu popover with Settings, Backups, and Delete entries when clicked', async () => {
+    await seedBasicSpace();
+    const user = userEvent.setup();
+    renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
+      initialEntries: ['/s/s1/d/d1'],
+    });
+    await user.click(
+      await screen.findByRole('button', { name: /open space menu/i }),
+    );
+    const menu = await screen.findByTestId('space-menu-popover');
+    const inMenu = within(menu);
+    expect(
+      inMenu.getByRole('link', { name: /^settings$/i }),
+    ).toHaveAttribute('href', '/s/s1/settings');
+    expect(
+      inMenu.getByRole('link', { name: /backups & history/i }),
+    ).toHaveAttribute('href', '/s/s1/settings?tab=backups');
+    expect(
+      inMenu.getByRole('link', { name: /delete space/i }),
+    ).toHaveAttribute('href', '/s/s1/settings?tab=danger');
+  });
+
+  it('hides the Space menu trigger while renaming the space', async () => {
     await seedBasicSpace();
     const user = userEvent.setup();
     renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
@@ -191,27 +213,28 @@ describe('Sidebar', () => {
     await user.click(await screen.findByText('Test Space'));
     await screen.findByLabelText(/rename space/i);
     expect(
-      screen.queryByRole('link', { name: /space settings/i }),
+      screen.queryByRole('button', { name: /open space menu/i }),
     ).not.toBeInTheDocument();
   });
 
-  it('omits the Space settings link when the space has not loaded yet', () => {
+  it('omits the Space menu trigger when the space has not loaded yet', () => {
     renderWithProviders(<Sidebar spaceId="missing" activeDocId={null} />, {
       initialEntries: ['/s/missing'],
     });
     expect(
-      screen.queryByRole('link', { name: /space settings/i }),
+      screen.queryByRole('button', { name: /open space menu/i }),
     ).not.toBeInTheDocument();
   });
 
-  it('shows the bottom nav with Home/About/Settings/Github links', async () => {
+  it('does not render the legacy bottom nav (Home/About/Settings/Github) — moved to Quick Settings + Space menu', async () => {
     await seedBasicSpace();
     renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
       initialEntries: ['/s/s1/d/d1'],
     });
-    expect(await screen.findByRole('link', { name: /^home$/i })).toHaveAttribute('href', '/');
-    expect(screen.getByRole('link', { name: /^about$/i })).toHaveAttribute('href', '/about');
-    expect(screen.getByRole('link', { name: /^settings$/i })).toHaveAttribute('href', '/settings');
+    await screen.findByText('Test Space');
+    expect(screen.queryByRole('link', { name: /^home$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /^about$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /^github$/i })).not.toBeInTheDocument();
   });
 
   it('appends the mode suffix to doc links based on URL', async () => {
@@ -384,7 +407,8 @@ describe('Sidebar', () => {
     renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
       initialEntries: ['/s/s1'],
     });
-    expect(await screen.findByText(/^shared$/i)).toBeInTheDocument();
+    expect(await screen.findByText(/shared/i)).toBeInTheDocument();
+    expect(screen.queryByText(/private · local/i)).not.toBeInTheDocument();
   });
 
   it('renders the BrainSpace link inline under the Workshop section when one exists', async () => {
@@ -463,12 +487,4 @@ describe('Sidebar', () => {
     );
   });
 
-  it('renders the bottom GitHub link with target="_blank"', async () => {
-    await seedBasicSpace();
-    renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
-      initialEntries: ['/s/s1/d/d1'],
-    });
-    const gh = await screen.findByRole('link', { name: /github/i });
-    expect(gh).toHaveAttribute('target', '_blank');
-  });
 });

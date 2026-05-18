@@ -7,7 +7,15 @@ import { useUI } from '@/store/ui';
 import { Topbar } from './Topbar';
 
 describe('Topbar', () => {
-  it('renders with doc name, mode tabs and theme toggle', () => {
+  beforeEach(() => {
+    // Reset transient UI between tests so prior in_progress state doesn't bleed.
+    act(() => {
+      useUI.getState().setInspectorMode('none');
+      useUI.getState().closeCitationsDrawer();
+    });
+  });
+
+  it('renders with doc name, mode tabs, search and inspector toggle', () => {
     const { container } = renderWithProviders(
       <Topbar
         spaceId="s1"
@@ -21,7 +29,7 @@ describe('Topbar', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it('renders citations view (no mode tabs, no focus toggle)', () => {
+  it('renders citations view (no mode tabs, no focus toggle, no inspector toggle)', () => {
     const { container } = renderWithProviders(
       <Topbar
         spaceId="s1"
@@ -34,7 +42,7 @@ describe('Topbar', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it('collapses to icon-only chrome when focus=1', () => {
+  it('collapses to icon-only chrome when focus=1 (no inspector toggle, no search)', () => {
     const { container } = renderWithProviders(
       <Topbar
         spaceId="s1"
@@ -69,26 +77,63 @@ describe('Topbar', () => {
     expect(useUI.getState().mobileNavOpen).toBe(true);
   });
 
-  it('renders Contrast icon when theme is high-contrast', async () => {
-    act(() => useUI.getState().setTheme('hc-light'));
-    const { container } = renderWithProviders(
+  it('does not render the standalone theme dropdown (theme moved to Quick Settings)', () => {
+    renderWithProviders(
       <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
       { initialEntries: ['/s/s1/d/d1'] },
     );
-    await waitFor(() => {
-      expect(container.querySelector('svg.lucide-contrast')).not.toBeNull();
-    });
+    expect(
+      screen.queryByRole('button', { name: /^theme$/i }),
+    ).not.toBeInTheDocument();
   });
 
-  it('renders Moon icon when theme is dark', async () => {
-    act(() => useUI.getState().setTheme('dark'));
-    const { container } = renderWithProviders(
+  it('does not render the standalone help menu (moved to Quick Settings)', () => {
+    renderWithProviders(
       <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
       { initialEntries: ['/s/s1/d/d1'] },
     );
-    await waitFor(() => {
-      expect(container.querySelector('svg.lucide-moon')).not.toBeNull();
-    });
+    expect(
+      screen.queryByRole('button', { name: /^help$/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows the inspector toggle in write mode and cycles through none → icons → expanded → none on click', async () => {
+    renderWithProviders(
+      <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
+      { initialEntries: ['/s/s1/d/d1'] },
+    );
+    expect(useUI.getState().inspectorMode).toBe('none');
+    await userEvent.click(
+      screen.getByRole('button', { name: /doc inspector/i }),
+    );
+    expect(useUI.getState().inspectorMode).toBe('icons');
+    await userEvent.click(
+      screen.getByRole('button', { name: /doc inspector/i }),
+    );
+    expect(useUI.getState().inspectorMode).toBe('expanded');
+    await userEvent.click(
+      screen.getByRole('button', { name: /doc inspector/i }),
+    );
+    expect(useUI.getState().inspectorMode).toBe('none');
+  });
+
+  it('auto-closes the inspector when focus mode is enabled', () => {
+    act(() => useUI.getState().setInspectorMode('expanded'));
+    renderWithProviders(
+      <Topbar spaceId="s1" docId="d1" docName="Sample" mode="focus" />,
+      { initialEntries: ['/s/s1/d/d1?focus=1'] },
+    );
+    expect(useUI.getState().inspectorMode).toBe('none');
+  });
+
+  it('hides the inspector toggle in split mode', () => {
+    renderWithProviders(
+      <Topbar spaceId="s1" docId="d1" docName="Sample" mode="split" />,
+      { initialEntries: ['/s/s1/d/d1/split'] },
+    );
+    expect(
+      screen.queryByRole('button', { name: /doc inspector/i }),
+    ).not.toBeInTheDocument();
   });
 
   it('renders the focus-mode citations Link variant on /citations?focus=1', () => {
@@ -96,23 +141,8 @@ describe('Topbar', () => {
       <Topbar spaceId="s1" docId={null} spaceName="Test" mode="focus" />,
       { initialEntries: ['/s/s1/citations?focus=1'] },
     );
-    // On the citations route, the citations affordance is a Link (not a
-    // button) pointing to the citations route itself.
     const link = screen.getByRole('link', { name: /citations/i });
     expect(link).toHaveAttribute('href', '/s/s1/citations');
-  });
-
-  it('lets the user switch themes via the theme dropdown', async () => {
-    renderWithProviders(
-      <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
-      { initialEntries: ['/s/s1/d/d1'] },
-    );
-    await userEvent.click(
-      screen.getByRole('button', { name: /^theme$/i }),
-    );
-    const darkItem = await screen.findByRole('menuitem', { name: /dark$/i });
-    await userEvent.click(darkItem);
-    await waitFor(() => expect(useUI.getState().theme).toBe('dark'));
   });
 
   it('double-click on the doc-name button enables editing and Enter persists the new name', async () => {
@@ -181,12 +211,10 @@ describe('Topbar', () => {
       />,
       { initialEntries: ['/s/s1/d/d1'] },
     );
-    // unchanged: enter and immediately blur with the same value
     await user.dblClick(screen.getByRole('button', { name: /same/i }));
     const input = await screen.findByLabelText(/rename doc/i);
     fireEvent.blur(input);
     expect(updateSpy).not.toHaveBeenCalled();
-    // empty: enter and clear, then blur
     await user.dblClick(screen.getByRole('button', { name: /same/i }));
     const input2 = await screen.findByLabelText(/rename doc/i);
     await user.clear(input2);
@@ -209,13 +237,11 @@ describe('Topbar', () => {
     );
     const button = screen.getByRole('button', { name: /sample/i });
     expect(button).toBeDisabled();
-    // double-click should be a no-op — no input shows up
     await user.dblClick(button);
     expect(screen.queryByLabelText(/rename doc/i)).not.toBeInTheDocument();
   });
 
   it('hides the FocusToggle when on /citations or when mode is not dump and there is no docId', () => {
-    // /citations: no FocusToggle even with docId
     const { rerender } = renderWithProviders(
       <Topbar
         spaceId="s1"
@@ -229,7 +255,6 @@ describe('Topbar', () => {
     expect(
       screen.queryByRole('link', { name: /focus mode/i }),
     ).not.toBeInTheDocument();
-    // mode=write with docId=null: FocusToggle hidden
     rerender(
       <Topbar
         spaceId="s1"
@@ -248,7 +273,6 @@ describe('Topbar', () => {
       <Topbar spaceId="s1" docId={null} spaceName="Test" mode="dump" />,
       { initialEntries: ['/s/s1/dump'] },
     );
-    // FocusToggle renders as a Link with an aria-label like "Focus mode"
     expect(
       screen.getByRole('link', { name: /focus mode/i }),
     ).toBeInTheDocument();

@@ -1,26 +1,64 @@
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useUI, type Theme } from '@/store/ui';
-import { PageNav } from '@/components/chrome/PageNav';
-import { SettingsTabs, type SettingsTabDef } from '@/components/settings/SettingsTabs';
+import { useUI } from '@/store/ui';
+import { SettingsShell } from '@/components/settings/SettingsShell';
+import type { SettingsTabGroup } from '@/components/settings/SettingsTabs';
 import { SettingRow } from '@/components/settings/SettingRow';
 import { Chip } from '@/components/settings/Chip';
+import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ComingSoonRow } from '@/components/settings/ComingSoonRow';
 import { TabHeader } from '@/components/settings/TabHeader';
+import {
+  GeneralPlaceholder,
+  AppearancePlaceholder,
+  TypographyPlaceholder,
+  ShortcutsPlaceholder,
+  PalettesPlaceholder,
+  CitationsPlaceholder,
+  AnnotationPlaceholder,
+  ExportPlaceholder,
+  DataPlaceholder,
+  AccountPlaceholder,
+  AboutPlaceholder,
+  BackupsPlaceholder,
+} from '@/components/settings/placeholders/GlobalSettingsPlaceholders';
 
 const TAB_IDS = [
-  'editor',
-  'account',
+  'general',
+  'appearance',
   'typography',
-  'theme',
+  'editor',
   'shortcuts',
+  'palettes',
+  'citations',
+  'annotation',
   'backups',
+  'export',
+  'data',
+  'account',
+  'about',
 ] as const;
 type TabId = (typeof TAB_IDS)[number];
+type PlaceholderTabId = Exclude<TabId, 'editor'>;
 
 function isTabId(value: string | null): value is TabId {
   return value !== null && (TAB_IDS as readonly string[]).includes(value);
 }
+
+const PLACEHOLDERS: Record<PlaceholderTabId, () => JSX.Element> = {
+  general: GeneralPlaceholder,
+  appearance: AppearancePlaceholder,
+  typography: TypographyPlaceholder,
+  shortcuts: ShortcutsPlaceholder,
+  palettes: PalettesPlaceholder,
+  citations: CitationsPlaceholder,
+  annotation: AnnotationPlaceholder,
+  export: ExportPlaceholder,
+  data: DataPlaceholder,
+  account: AccountPlaceholder,
+  about: AboutPlaceholder,
+  backups: BackupsPlaceholder,
+};
 
 export function SettingsScreen() {
   const { t } = useTranslation(['screens', 'chrome', 'common']);
@@ -28,10 +66,35 @@ export function SettingsScreen() {
   const rawTab = params.get('tab');
   const activeTab: TabId = isTabId(rawTab) ? rawTab : 'editor';
 
-  const tabs: SettingsTabDef[] = TAB_IDS.map((id) => ({
-    id,
-    label: t(`settings.tabs.${id}`),
-  }));
+  const groups: SettingsTabGroup[] = [
+    {
+      label: t('settings.groups.preferences'),
+      tabs: (
+        ['general', 'appearance', 'typography', 'editor', 'shortcuts'] as const
+      ).map((id) => ({ id, label: t(`settings.tabs.${id}`) })),
+    },
+    {
+      label: t('settings.groups.writing'),
+      tabs: (['palettes', 'citations', 'annotation'] as const).map((id) => ({
+        id,
+        label: t(`settings.tabs.${id}`),
+      })),
+    },
+    {
+      label: t('settings.groups.data'),
+      tabs: (['backups', 'export', 'data'] as const).map((id) => ({
+        id,
+        label: t(`settings.tabs.${id}`),
+      })),
+    },
+    {
+      label: t('settings.groups.account'),
+      tabs: (['account', 'about'] as const).map((id) => ({
+        id,
+        label: t(`settings.tabs.${id}`),
+      })),
+    },
+  ];
 
   function selectTab(id: string) {
     const next = new URLSearchParams(params);
@@ -40,21 +103,18 @@ export function SettingsScreen() {
   }
 
   return (
-    <div className="flex h-full w-full flex-col bg-paper text-ink">
-      <PageNav />
-
-      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-        <SettingsTabs tabs={tabs} active={activeTab} onSelect={selectTab} />
-        <main className="flex-1 overflow-auto bg-paper px-4 py-6 md:px-10 md:py-8">
-          {activeTab === 'editor' && <EditorTab />}
-          {activeTab === 'theme' && <ThemeTab />}
-          {activeTab === 'account' && <PlaceholderTab id="account" />}
-          {activeTab === 'typography' && <PlaceholderTab id="typography" />}
-          {activeTab === 'shortcuts' && <PlaceholderTab id="shortcuts" />}
-          {activeTab === 'backups' && <PlaceholderTab id="backups" />}
-        </main>
-      </div>
-    </div>
+    <SettingsShell
+      variant="global"
+      groups={groups}
+      active={activeTab}
+      onSelect={selectTab}
+    >
+      {activeTab === 'editor' ? (
+        <EditorTab />
+      ) : (
+        <PlaceholderTab id={activeTab as PlaceholderTabId} />
+      )}
+    </SettingsShell>
   );
 }
 
@@ -114,62 +174,11 @@ function EditorTab() {
   );
 }
 
-const THEME_OPTIONS: { id: Theme; labelKey: string }[] = [
-  { id: 'light', labelKey: 'chrome:topbar.themes.light' },
-  { id: 'dark', labelKey: 'chrome:topbar.themes.dark' },
-  { id: 'hc-light', labelKey: 'chrome:topbar.themes.hcLight' },
-  { id: 'hc-dark', labelKey: 'chrome:topbar.themes.hcDark' },
-];
-
-function ThemeTab() {
-  const { t } = useTranslation(['screens', 'chrome']);
-  const theme = useUI((s) => s.theme);
-  const setTheme = useUI((s) => s.setTheme);
-
-  return (
-    <section>
-      <TabHeader
-        titleKey="settings.theme.title"
-        subtitleKey="settings.theme.subtitle"
-      />
-      <SettingRow
-        label={t('settings.theme.rowLabel')}
-        hint={t('settings.theme.rowHint')}
-      >
-        <div className="flex flex-wrap gap-2">
-          {THEME_OPTIONS.map((opt) => (
-            <Chip
-              key={opt.id}
-              active={theme === opt.id}
-              onClick={() => setTheme(opt.id)}
-            >
-              {t(opt.labelKey)}
-            </Chip>
-          ))}
-        </div>
-      </SettingRow>
-    </section>
-  );
-}
-
-type PlaceholderTabId = 'account' | 'typography' | 'shortcuts' | 'backups';
-
 function PlaceholderTab({ id }: { id: PlaceholderTabId }) {
-  const { t } = useTranslation('screens');
+  const Body = PLACEHOLDERS[id];
   return (
-    <section>
-      <TabHeader
-        titleKey={`settings.${id}.title`}
-        subtitleKey={`settings.${id}.subtitle`}
-      />
-      <div className="mx-auto mt-8 max-w-md border border-dashed border-rule bg-paper-2/40 p-8 text-center">
-        <div className="inline-block rounded-sm bg-paper-2 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-ink-3">
-          {t('settings.comingSoonBadge')}
-        </div>
-        <p className="mt-4 font-serif text-[14px] italic text-ink-2">
-          {t(`settings.${id}.comingSoonBody`)}
-        </p>
-      </div>
-    </section>
+    <ComingSoon overlay>
+      <Body />
+    </ComingSoon>
   );
 }

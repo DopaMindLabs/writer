@@ -7,6 +7,8 @@ import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
 import { BrainSpaceCanvas } from '@/components/surfaces/BrainSpaceCanvas';
 import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
+import { MobileTabs } from '@/components/chrome/MobileTabs';
+import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
@@ -63,6 +65,12 @@ export function BrainSpaceScreen() {
           <BrainSpaceCanvas spaceId={spaceId} />
           <CitationsSidePanel spaceId={spaceId} />
         </main>
+        {!focus && (
+          <>
+            <MobileTabs spaceId={spaceId} />
+            <MobileMoreSheet spaceId={spaceId} />
+          </>
+        )}
       </div>
     </div>
   );

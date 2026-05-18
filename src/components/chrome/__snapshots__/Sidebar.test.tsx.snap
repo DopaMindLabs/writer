@@ -19,13 +19,15 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
         >
           Test Space
         </button>
-        <a
-          aria-label="Space settings"
-          class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm text-ink-3 opacity-0 transition-opacity hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
-          data-discover="true"
+        <button
+          aria-controls="radix-_r_0_"
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          aria-label="Open space menu"
+          class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm text-ink-3 opacity-0 transition-opacity hover:bg-paper hover:text-ink focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink group-hover:opacity-100 data-[state=open]:bg-ink data-[state=open]:text-paper data-[state=open]:opacity-100"
           data-state="closed"
           data-tour="tour-sidebar-settings"
-          href="/s/s1/settings"
+          type="button"
         >
           <svg
             aria-hidden="true"
@@ -49,12 +51,12 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
               r="3"
             />
           </svg>
-        </a>
+        </button>
       </div>
       <div
         class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
       >
-        PRIVATE · LOCAL
+        PRIVATE · LOCAL · 2y
       </div>
     </div>
     <div
@@ -185,39 +187,6 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
           </span>
         </a>
       </div>
-    </div>
-    <div
-      class="flex items-center gap-3 border-t border-rule px-5 py-3 font-mono text-[10px] uppercase tracking-wider text-ink-4"
-    >
-      <a
-        class="hover:text-ink"
-        data-discover="true"
-        href="/"
-      >
-        Home
-      </a>
-      <a
-        class="hover:text-ink"
-        data-discover="true"
-        href="/about"
-      >
-        About
-      </a>
-      <a
-        class="hover:text-ink"
-        data-discover="true"
-        href="/settings"
-      >
-        Settings
-      </a>
-      <a
-        class="hover:text-ink"
-        href="#"
-        rel="noreferrer"
-        target="_blank"
-      >
-        GitHub
-      </a>
     </div>
   </aside>
 </div>

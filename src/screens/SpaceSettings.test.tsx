@@ -172,42 +172,45 @@ describe('SpaceSettingsScreen', () => {
 
   it('renders the Sharing placeholder (coming soon)', async () => {
     await seedBasicSpace();
-    renderAtSpaceSettings('/s/s1/settings?tab=sharing');
+    const { container } = renderAtSpaceSettings('/s/s1/settings?tab=sharing');
     expect(
       await screen.findByRole('heading', { name: /^sharing$/i }),
     ).toBeInTheDocument();
+    expect(screen.getByText(/Visibility/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Per-space visibility and shared links/i),
-    ).toBeInTheDocument();
+      container.querySelector('[data-coming-soon-overlay="true"]'),
+    ).not.toBeNull();
   });
 
-  it('renders a Back link that returns to the current space', async () => {
+  it('renders the world rail with the current space as the back affordance', async () => {
     await seedBasicSpace();
     renderAtSpaceSettings();
-    const back = await screen.findByRole('link', { name: /back/i });
-    expect(back).toHaveAttribute('href', '/s/s1');
+    const spaceLink = await screen.findByRole('link', { name: 'TST' });
+    expect(spaceLink).toHaveAttribute('href', '/s/s1');
   });
 
   it('renders the Template placeholder (coming soon)', async () => {
     await seedBasicSpace();
-    renderAtSpaceSettings('/s/s1/settings?tab=template');
+    const { container } = renderAtSpaceSettings('/s/s1/settings?tab=template');
     expect(
       await screen.findByRole('heading', { name: /^template$/i }),
     ).toBeInTheDocument();
+    expect(screen.getByText(/Current template/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Changing a space's template after creation/i),
-    ).toBeInTheDocument();
+      container.querySelector('[data-coming-soon-overlay="true"]'),
+    ).not.toBeNull();
   });
 
   it('renders the Members placeholder', async () => {
     await seedBasicSpace();
-    renderAtSpaceSettings('/s/s1/settings?tab=members');
+    const { container } = renderAtSpaceSettings('/s/s1/settings?tab=members');
     expect(
       await screen.findByRole('heading', { name: /^members$/i }),
     ).toBeInTheDocument();
+    expect(screen.getByText(/Invite by email/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Invite collaborators/i),
-    ).toBeInTheDocument();
+      container.querySelector('[data-coming-soon-overlay="true"]'),
+    ).not.toBeNull();
   });
 
   it('renders the Backups tab with an empty history hint', async () => {
@@ -241,6 +244,73 @@ describe('SpaceSettingsScreen', () => {
     expect(await screen.findByTestId('backups-history')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /^delete$/i })).toBeInTheDocument();
     clickSpy.mockRestore();
+  });
+
+  it('formats backup sizes across B/kB/MB and timestamps across now/min/h/d/iso ranges', async () => {
+    await seedBasicSpace();
+    const NOW = Date.UTC(2026, 5, 1, 12, 0, 0);
+    vi.setSystemTime(NOW);
+    const minuteAgo = NOW - 90 * 1000; // ~1 min ago
+    const hoursAgo = NOW - 3 * 60 * 60 * 1000; // 3 h ago
+    const daysAgo = NOW - 2 * 24 * 60 * 60 * 1000; // 2 d ago
+    const oldDate = NOW - 14 * 24 * 60 * 60 * 1000; // 14 d -> ISO
+    await db.backups.bulkPut([
+      {
+        id: 'b-bytes',
+        when: NOW - 1000,
+        scope: 's1',
+        kind: 'manual',
+        format: 'md-zip',
+        size: 512,
+        payload: new Blob(['a']),
+      },
+      {
+        id: 'b-kb',
+        when: minuteAgo,
+        scope: 's1',
+        kind: 'manual',
+        format: 'md-zip',
+        size: 2048,
+        payload: new Blob(['ab']),
+      },
+      {
+        id: 'b-mb',
+        when: hoursAgo,
+        scope: 's1',
+        kind: 'manual',
+        format: 'md-zip',
+        size: 3 * 1024 * 1024,
+        payload: new Blob(['abc']),
+      },
+      {
+        id: 'b-days',
+        when: daysAgo,
+        scope: 's1',
+        kind: 'manual',
+        format: 'md-zip',
+        size: 1024,
+        payload: new Blob(['d']),
+      },
+      {
+        id: 'b-old',
+        when: oldDate,
+        scope: 's1',
+        kind: 'manual',
+        format: 'md-zip',
+        size: 1,
+        payload: new Blob(['e']),
+      },
+    ]);
+    renderAtSpaceSettings('/s/s1/settings?tab=backups');
+    const history = await screen.findByTestId('backups-history');
+    expect(history.textContent).toMatch(/512 B/);
+    expect(history.textContent).toMatch(/2\.0 kB/);
+    expect(history.textContent).toMatch(/3\.0 MB/);
+    expect(history.textContent).toMatch(/min ago|h ago/);
+    expect(history.textContent).toMatch(/\d+ d ago/);
+    // 14d → ISO date YYYY-MM-DD; verify a 2026-05- prefix appears.
+    expect(history.textContent).toMatch(/2026-05-/);
+    vi.useRealTimers();
   });
 
   it('renders the Danger zone with the delete trigger', async () => {
@@ -326,9 +396,12 @@ describe('SpaceSettingsScreen', () => {
     await seedBasicSpace();
     const user = userEvent.setup();
     renderAtSpaceSettings();
-    await user.click(
-      await screen.findByRole('button', { name: /^sharing$/i }),
-    );
+    // SettingsTabs renders both a mobile and a desktop variant in the DOM, so
+    // there are two "Sharing" buttons; click either.
+    const buttons = await screen.findAllByRole('button', {
+      name: /^sharing$/i,
+    });
+    await user.click(buttons[0]);
     expect(
       await screen.findByRole('heading', { name: /^sharing$/i }),
     ).toBeInTheDocument();
