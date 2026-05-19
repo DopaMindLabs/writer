@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Check } from 'lucide-react';
+import { Check } from '@/components/libs/icons';
 import { useUI, type ReadingWidth, type Theme } from '@/store/ui';
 import { Chip } from '@/components/settings/Chip';
 import { ComingSoon } from '@/components/settings/ComingSoon';

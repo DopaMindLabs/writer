@@ -1,4 +1,4 @@
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle } from '@/components/libs/icons';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { SettingRow } from './SettingRow';

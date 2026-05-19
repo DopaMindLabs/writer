@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 import userEvent from '@testing-library/user-event';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from '@/components/libs/icons';
 import { render, screen } from '@/test/test-utils';
 import { Icon, IconButton } from './icon';
 

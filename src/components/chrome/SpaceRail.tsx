@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { MoreVertical, Plus } from 'lucide-react';
+import { MoreVertical, Plus } from '@/components/libs/icons';
 import { useTranslation } from 'react-i18next';
 import { useSpaces } from '@/hooks/useSpaces';
 import { cn } from '@/lib/utils';

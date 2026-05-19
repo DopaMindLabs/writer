@@ -7,7 +7,7 @@ import {
   type KeyboardEvent,
   type MouseEvent,
 } from 'react';
-import { Check, Copy, Search } from 'lucide-react';
+import { Check, Copy, Search } from '@/components/libs/icons';
 import { useCitations } from '@/hooks/useCitations';
 import {
   parseBibtexFile,

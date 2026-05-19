@@ -1,6 +1,6 @@
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { DialogPrimitive } from '@/components/libs/radix';
 import { useUI } from '@/store/ui';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { cn } from '@/lib/utils';

@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { ArrowUpRight, ExternalLink, Globe, Trash2 } from 'lucide-react';
+import { ArrowUpRight, ExternalLink, Globe, Trash2 } from '@/components/libs/icons';
 import { db } from '@/db/db';
 import { deleteNoteWithCascade } from '@/db/seed';
 import { useUI } from '@/store/ui';

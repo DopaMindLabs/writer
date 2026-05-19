@@ -8,7 +8,7 @@ import {
   type KeyboardEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Settings } from 'lucide-react';
+import { Plus, Settings } from '@/components/libs/icons';
 import {
   Tooltip,
   TooltipContent,

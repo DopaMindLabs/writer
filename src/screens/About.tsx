@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, Smile, Lightbulb } from 'lucide-react';
+import { AlertTriangle, Smile, Lightbulb } from '@/components/libs/icons';
 import { BlockQuote } from '@/components/ui/block-quote';
 import { PageNav } from '@/components/chrome/PageNav';
 

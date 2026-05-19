@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight } from '@/components/libs/icons';
 import { useUI, type InspectorSection } from '@/store/ui';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';

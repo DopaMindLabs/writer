@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
-import { ExternalLink, Link2, Trash2, X } from 'lucide-react';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { ExternalLink, Link2, Trash2, X } from '@/components/libs/icons';
+import { DialogPrimitive } from '@/components/libs/radix';
 import { db } from '@/db/db';
 import { deleteNoteWithCascade } from '@/db/seed';
 import { useUI } from '@/store/ui';
