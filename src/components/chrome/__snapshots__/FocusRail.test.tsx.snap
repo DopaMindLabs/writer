@@ -31,6 +31,48 @@ exports[`FocusRail > renders space dots with active highlight 1`] = `
       data-discover="true"
       href="/s/s1"
     />
+    <div
+      class="flex-1"
+    />
+    <button
+      aria-controls="radix-_r_0_"
+      aria-expanded="false"
+      aria-haspopup="dialog"
+      aria-label="LIpsum Writer"
+      class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink"
+      data-state="closed"
+      type="button"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-ellipsis-vertical h-3.5 w-3.5"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="1"
+        />
+        <circle
+          cx="12"
+          cy="5"
+          r="1"
+        />
+        <circle
+          cx="12"
+          cy="19"
+          r="1"
+        />
+      </svg>
+    </button>
   </aside>
 </div>
 `;

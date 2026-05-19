@@ -531,4 +531,70 @@ describe('buildSpaceMarkdownZipFor', () => {
     const md = await zip.file('notes.md')!.async('string');
     expect(md).toContain('- **_(empty)_**');
   });
+
+  it('renders annotations and palette content when present', async () => {
+    await db.annotations.bulkPut([
+      {
+        id: 'a1',
+        docId: sampleDoc.id,
+        rangeStart: 0,
+        rangeEnd: 10,
+        kind: 'highlight',
+        color: 'yellow',
+        body: 'first\nmulti-line',
+        author: 'me',
+        createdAt: 0,
+      },
+      {
+        id: 'a2',
+        docId: sampleDoc.id,
+        rangeStart: 12,
+        rangeEnd: 18,
+        kind: 'inline',
+        author: 'me',
+        createdAt: 1,
+      },
+    ]);
+    await db.palettes.put({
+      id: 'p1',
+      spaceId: sampleSpace.id,
+      slots: [
+        { name: 'Warm', color: '#ffaa00' },
+        { name: 'Cool', color: '#0099ff' },
+      ],
+    });
+    await db.citations.put({
+      id: 'c1',
+      spaceId: sampleSpace.id,
+      key: 'Doe2024',
+      authors: 'Doe, J.',
+      title: 'A title',
+      year: 2024,
+      type: 'article',
+      useCount: 0,
+    });
+    await db.connections.put({
+      id: 'conn1',
+      spaceId: sampleSpace.id,
+      fromNoteId: sampleNote.id,
+      toNoteId: sampleNote.id,
+      createdAt: 0,
+    });
+
+    const { blob } = await buildSpaceMarkdownZipFor(sampleSpace.id, WHEN);
+    const zip = await loadZip(blob);
+    const annotations = await zip.file('annotations.md')!.async('string');
+    expect(annotations).toContain('# Annotations');
+    expect(annotations).toContain('**highlight**');
+    expect(annotations).toContain('yellow');
+    expect(annotations).toContain('first multi-line');
+    const palette = await zip.file('palette.md')!.async('string');
+    expect(palette).toContain('# Palette');
+    expect(palette).toContain('Warm');
+    expect(palette).toContain('#ffaa00');
+    const citations = await zip.file('citations.md')!.async('string');
+    expect(citations).toContain('Doe2024');
+    const connections = await zip.file('connections.md')!.async('string');
+    expect(connections.length).toBeGreaterThan(0);
+  });
 });

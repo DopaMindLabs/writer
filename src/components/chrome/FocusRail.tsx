@@ -1,12 +1,27 @@
 import { Link } from 'react-router-dom';
+import { MoreVertical } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useSpaces } from '@/hooks/useSpaces';
 import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { IconButton } from '@/components/ui/icon';
+import { QuickSettingsPopover } from './QuickSettingsPopover';
 
 interface FocusRailProps {
   activeSpaceId: string | null;
 }
 
 export function FocusRail({ activeSpaceId }: FocusRailProps) {
+  const { t } = useTranslation('chrome');
   const spaces = useSpaces() ?? [];
 
   return (
@@ -24,6 +39,30 @@ export function FocusRail({ activeSpaceId }: FocusRailProps) {
           )}
         />
       ))}
+      <div className="flex-1" />
+      <Popover>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <PopoverTrigger asChild>
+              <IconButton
+                icon={MoreVertical}
+                label={t('quickSettings.trigger')}
+              />
+            </PopoverTrigger>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            {t('quickSettings.trigger')}
+          </TooltipContent>
+        </Tooltip>
+        <PopoverContent
+          side="right"
+          align="end"
+          sideOffset={8}
+          className="p-0"
+        >
+          <QuickSettingsPopover />
+        </PopoverContent>
+      </Popover>
     </aside>
   );
 }

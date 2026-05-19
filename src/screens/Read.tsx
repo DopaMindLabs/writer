@@ -4,6 +4,10 @@ import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
 import { WriteSurface } from '@/components/surfaces/WriteSurface';
 import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
+import { DocInspector } from '@/components/chrome/DocInspector';
+import { DocInspectorIcons } from '@/components/chrome/DocInspectorIcons';
+import { MobileTabs } from '@/components/chrome/MobileTabs';
+import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocument } from '@/hooks/useDocuments';
 import { useUI } from '@/store/ui';
@@ -14,6 +18,12 @@ export function ReadScreen() {
   const doc = useDocument(docId);
   const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
   const setCurrentDocId = useUI((s) => s.setCurrentDocId);
+  const citationsDrawerOpen = useUI((s) => s.citationsDrawerOpen);
+  const inspectorMode = useUI((s) => s.inspectorMode);
+  const inspectorVisible =
+    inspectorMode !== 'none' && !!doc && !citationsDrawerOpen;
+  const showInspectorExpanded = inspectorVisible && inspectorMode === 'expanded';
+  const showInspectorIcons = inspectorVisible && inspectorMode === 'icons';
 
   useEffect(() => {
     if (spaceId) setCurrentSpaceId(spaceId);
@@ -41,7 +51,11 @@ export function ReadScreen() {
         <main className="flex flex-1 overflow-hidden">
           {doc && <WriteSurface doc={doc} mode="read" />}
           <CitationsSidePanel spaceId={spaceId} />
+          {showInspectorIcons && doc && <DocInspectorIcons />}
+          {showInspectorExpanded && doc && <DocInspector docName={doc.name} />}
         </main>
+        <MobileTabs spaceId={spaceId} docId={docId ?? null} />
+        <MobileMoreSheet spaceId={spaceId} docId={docId ?? null} />
       </div>
     </div>
   );

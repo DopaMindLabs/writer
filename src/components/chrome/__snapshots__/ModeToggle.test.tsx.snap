@@ -4,14 +4,15 @@ exports[`FocusToggle > renders focus enter link in write mode 1`] = `
 <div>
   <a
     aria-label="Enter focus mode"
-    class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:bg-paper-2 hover:text-ink"
+    class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-paper-2 hover:text-ink"
     data-discover="true"
+    data-state="closed"
     href="/s/s1/d/d1?focus=1"
     title="Focus (⌘\\)"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-maximize2 lucide-maximize-2 h-3 w-3"
+      class="lucide lucide-maximize2 lucide-maximize-2 h-3.5 w-3.5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -35,7 +36,6 @@ exports[`FocusToggle > renders focus enter link in write mode 1`] = `
         d="M9 21H3v-6"
       />
     </svg>
-    FOCUS
   </a>
 </div>
 `;
@@ -200,7 +200,7 @@ exports[`ModeTabs > renders icon-only tabs with tooltips in focus mode 1`] = `
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-network h-3.5 w-3.5"
+        class="lucide lucide-brain h-3.5 w-3.5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -211,32 +211,29 @@ exports[`ModeTabs > renders icon-only tabs with tooltips in focus mode 1`] = `
         width="24"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <rect
-          height="6"
-          rx="1"
-          width="6"
-          x="16"
-          y="16"
-        />
-        <rect
-          height="6"
-          rx="1"
-          width="6"
-          x="2"
-          y="16"
-        />
-        <rect
-          height="6"
-          rx="1"
-          width="6"
-          x="9"
-          y="2"
+        <path
+          d="M12 18V5"
         />
         <path
-          d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"
+          d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4"
         />
         <path
-          d="M12 12V8"
+          d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"
+        />
+        <path
+          d="M17.997 5.125a4 4 0 0 1 2.526 5.77"
+        />
+        <path
+          d="M18 18a4 4 0 0 0 2-7.464"
+        />
+        <path
+          d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"
+        />
+        <path
+          d="M6 18a4 4 0 0 1-2-7.464"
+        />
+        <path
+          d="M6.003 5.125a4 4 0 0 0-2.526 5.77"
         />
       </svg>
     </a>

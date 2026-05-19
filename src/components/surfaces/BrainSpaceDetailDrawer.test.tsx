@@ -197,9 +197,18 @@ describe('BrainSpaceDetailDrawer', () => {
     const { findByText, findByRole } = renderCanvas();
     await findByText('Hero');
     useUI.getState().openDetail(SECOND_NOTE.id);
-    await user.click(await findByRole('button', { name: /^open$/i }));
-    expect(navigateSpy).toHaveBeenCalledWith(
-      `/s/${sampleSpace.id}/d/${sampleDoc.id}`,
+    // The Open button only renders once the docs useLiveQuery resolves
+    // sampleDoc. Wait with a generous timeout to avoid flakes under load.
+    const openBtn = await findByRole(
+      'button',
+      { name: /^open$/i },
+      { timeout: 5000 },
+    );
+    await user.click(openBtn);
+    await waitFor(() =>
+      expect(navigateSpy).toHaveBeenCalledWith(
+        `/s/${sampleSpace.id}/d/${sampleDoc.id}`,
+      ),
     );
   });
 

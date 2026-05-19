@@ -1,5 +1,4 @@
 import {
-  Link,
   Navigate,
   useParams,
   useSearchParams,
@@ -19,6 +18,9 @@ import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
+import { MobileTabs } from '@/components/chrome/MobileTabs';
+import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
+import { MobileSplitFallback } from '@/components/chrome/MobileSplitFallback';
 import { WriteSurface } from '@/components/surfaces/WriteSurface';
 import { BrainSpaceCanvas } from '@/components/surfaces/BrainSpaceCanvas';
 import { CitationsPane } from '@/components/surfaces/CitationsPane';
@@ -105,7 +107,7 @@ export function SplitScreen() {
           spaceName={space?.name}
           mode="split"
         />
-        <SplitMobileNotice spaceId={spaceId} docId={docId} />
+        <MobileSplitFallback spaceId={spaceId} docId={docId} />
         <SplitPanes
           spaceId={spaceId}
           leftHeader={
@@ -155,6 +157,8 @@ export function SplitScreen() {
           }
           aside={<CitationsSidePanel spaceId={spaceId} />}
         />
+        <MobileTabs spaceId={spaceId} docId={docId} />
+        <MobileMoreSheet spaceId={spaceId} docId={docId} />
       </div>
     </div>
   );
@@ -338,32 +342,3 @@ function SplitPanes({
   );
 }
 
-function SplitMobileNotice({
-  spaceId,
-  docId,
-}: {
-  spaceId: string;
-  docId: string;
-}) {
-  return (
-    <div className="flex flex-1 items-center justify-center bg-paper px-6 py-10 md:hidden">
-      <div className="max-w-sm text-center">
-        <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
-          Split view
-        </div>
-        <p className="mt-3 font-serif text-[18px] italic text-ink-2">
-          Split view needs a larger screen.
-        </p>
-        <p className="mt-2 font-serif text-base text-ink-3">
-          Open this document in Write mode instead.
-        </p>
-        <Link
-          to={`/s/${spaceId}/d/${docId}`}
-          className="mt-6 inline-block font-mono text-[11px] uppercase tracking-wider text-ink underline underline-offset-4 hover:text-ink-2"
-        >
-          Open in Write →
-        </Link>
-      </div>
-    </div>
-  );
-}

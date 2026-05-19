@@ -2,7 +2,7 @@ import { Maximize2, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUI } from '@/store/ui';
 import { useSpace } from '@/hooks/useSpaces';
-import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon';
 import { CitationsPane } from './CitationsPane';
 
 interface CitationsSidePanelProps {
@@ -32,24 +32,18 @@ export function CitationsSidePanel({ spaceId }: CitationsSidePanelProps) {
           Citations
         </span>
         <div className="flex items-center">
-          <Button
-            variant="ghost"
-            size="icon"
+          <IconButton
+            icon={Maximize2}
+            iconSize="md"
+            label="Open citations in full view"
             onClick={openCitationsScreen}
-            aria-label="Open citations in full view"
-            className="h-7 w-7 rounded-sm text-ink-4 hover:bg-paper-2 hover:text-ink"
-          >
-            <Maximize2 className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
+          />
+          <IconButton
+            icon={X}
+            iconSize="md"
+            label="Close citations"
             onClick={close}
-            aria-label="Close citations"
-            className="h-7 w-7 rounded-sm text-ink-4 hover:bg-paper-2 hover:text-ink"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          />
         </div>
       </div>
       <div className="flex min-h-0 flex-1 flex-col">
