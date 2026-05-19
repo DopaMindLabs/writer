@@ -20,14 +20,17 @@ function TabButton({
   tab,
   active,
   onSelect,
+  testId,
 }: {
   tab: SettingsTabDef;
   active: boolean;
   onSelect: (id: string) => void;
+  testId?: string;
 }) {
   return (
     <button
       type="button"
+      data-testid={testId}
       onClick={() => onSelect(tab.id)}
       aria-current={active ? 'page' : undefined}
       className={cn(
@@ -73,6 +76,7 @@ export function SettingsTabs({ groups, active, onSelect }: SettingsTabsProps) {
                     tab={tab}
                     active={tab.id === active}
                     onSelect={onSelect}
+                    testId={`settings-tab-${tab.id}`}
                   />
                 </li>
               ))}

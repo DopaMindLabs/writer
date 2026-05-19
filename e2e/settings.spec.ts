@@ -34,25 +34,23 @@ test('cycles through every global settings tab without crashing', async ({ page 
   // The full tab list maps 1:1 to TAB_IDS in Settings.tsx. Visiting each one
   // exercises the per-tab placeholder body, which boosts e2e line coverage on
   // the placeholder module.
-  const tabs = [
-    'General',
-    'Appearance',
-    'Typography',
-    'Editor',
-    'Shortcuts',
-    'Palettes',
-    'Citations',
-    'Annotation',
-    'Backups',
-    'Export',
-    'Data',
-    'Account',
-    'About',
+  const tabs: Array<{ id: string; heading: RegExp }> = [
+    { id: 'general', heading: /^General$/i },
+    { id: 'appearance', heading: /^Appearance$/i },
+    { id: 'typography', heading: /^Typography$/i },
+    { id: 'editor', heading: /^Editor$/i },
+    { id: 'shortcuts', heading: /^Shortcuts$/i },
+    { id: 'palettes', heading: /^Highlight palettes$/i },
+    { id: 'citations', heading: /^Citation style$/i },
+    { id: 'annotation', heading: /^Annotations$/i },
+    { id: 'backups', heading: /^Backups$/i },
+    { id: 'export', heading: /^Export \/ import$/i },
+    { id: 'data', heading: /^Your data$/i },
+    { id: 'account', heading: /^Account$/i },
+    { id: 'about', heading: /^About$/i },
   ];
-  for (const label of tabs) {
-    await page.getByRole('button', { name: new RegExp(`^${label}$`) }).click();
-    await expect(
-      page.getByRole('heading', { name: new RegExp(`^${label}$`, 'i') }),
-    ).toBeVisible();
+  for (const { id, heading } of tabs) {
+    await page.getByTestId(`settings-tab-${id}`).click();
+    await expect(page.getByRole('heading', { name: heading })).toBeVisible();
   }
 });
