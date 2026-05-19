@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
+import { ScrollAreaPrimitive } from '@/components/libs/primitives';
 import { cn } from '@/lib/utils';
 
 export const ScrollArea = forwardRef<

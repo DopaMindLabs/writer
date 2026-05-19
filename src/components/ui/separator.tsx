@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import * as SeparatorPrimitive from '@radix-ui/react-separator';
+import { SeparatorPrimitive } from '@/components/libs/primitives';
 import { cn } from '@/lib/utils';
 
 export const Separator = forwardRef<

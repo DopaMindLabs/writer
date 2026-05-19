@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { HelpCircle, Check } from 'lucide-react';
+import { HelpCircle, Check } from '@/components/libs/icons';
 import {
   DropdownMenu,
   DropdownMenuContent,

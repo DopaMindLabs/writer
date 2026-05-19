@@ -8,7 +8,7 @@ import {
   Maximize2,
   Minimize2,
   Pencil,
-} from 'lucide-react';
+} from '@/components/libs/icons';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 

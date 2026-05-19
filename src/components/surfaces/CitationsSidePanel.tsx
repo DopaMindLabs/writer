@@ -1,4 +1,4 @@
-import { Maximize2, X } from 'lucide-react';
+import { Maximize2, X } from '@/components/libs/icons';
 import { useNavigate } from 'react-router-dom';
 import { useUI } from '@/store/ui';
 import { useSpace } from '@/hooks/useSpaces';

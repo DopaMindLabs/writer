@@ -1,7 +1,7 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from '@/components/libs/icons';
 import { listTemplates, type Template } from '@/data/templates';
 import { createSpaceFromTemplate } from '@/db/seed';
 import { cn } from '@/lib/utils';

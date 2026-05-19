@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { X } from 'lucide-react';
+import { DialogPrimitive } from '@/components/libs/primitives';
+import { X } from '@/components/libs/icons';
 import { useUI } from '@/store/ui';
 import { SpaceRail } from './SpaceRail';
 import { Sidebar } from './Sidebar';

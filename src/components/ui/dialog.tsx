@@ -1,6 +1,6 @@
 import { forwardRef, type HTMLAttributes } from 'react';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { X } from 'lucide-react';
+import { DialogPrimitive } from '@/components/libs/primitives';
+import { X } from '@/components/libs/icons';
 import { cn } from '@/lib/utils';
 
 export const Dialog = DialogPrimitive.Root;

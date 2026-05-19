@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Pencil, BookOpen, Brain, Quote, MoreHorizontal } from 'lucide-react';
+import { Pencil, BookOpen, Brain, Quote, MoreHorizontal } from '@/components/libs/icons';
 import { useUI } from '@/store/ui';
 import { cn } from '@/lib/utils';
 

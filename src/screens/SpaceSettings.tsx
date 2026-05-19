@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Trash2 } from 'lucide-react';
+import { Trash2 } from '@/components/libs/icons';
 import { useSpace } from '@/hooks/useSpaces';
 import { useBackups } from '@/hooks/useBackups';
 import { db } from '@/db/db';

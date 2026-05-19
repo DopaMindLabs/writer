@@ -1,5 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
-import type { LucideIcon } from 'lucide-react';
+import type { LucideIcon } from '@/components/libs/icons';
 import { cn } from '@/lib/utils';
 
 export type IconSize = 'xs' | 'sm' | 'md';

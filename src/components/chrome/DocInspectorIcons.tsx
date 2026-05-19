@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, List, Info, History, MoreHorizontal } from 'lucide-react';
+import { ChevronLeft, List, Info, History, MoreHorizontal } from '@/components/libs/icons';
 import { useUI, type InspectorSection } from '@/store/ui';
 import { IconButton } from '@/components/ui/icon';
 import { cn } from '@/lib/utils';
