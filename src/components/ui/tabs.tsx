@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { TabsPrimitive } from '@/components/libs/radix';
+import { TabsPrimitive } from '@/components/libs/primitives';
 import { cn } from '@/lib/utils';
 
 export const Tabs = TabsPrimitive.Root;

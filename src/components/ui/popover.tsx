@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { PopoverPrimitive } from '@/components/libs/radix';
+import { PopoverPrimitive } from '@/components/libs/primitives';
 import { cn } from '@/lib/utils';
 
 export const Popover = PopoverPrimitive.Root;

@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes } from 'react';
-import { DialogPrimitive } from '@/components/libs/radix';
+import { DialogPrimitive } from '@/components/libs/primitives';
 import { X } from '@/components/libs/icons';
 import { cn } from '@/lib/utils';
 

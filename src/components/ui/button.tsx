@@ -1,5 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
-import { Slot } from '@/components/libs/radix';
+import { Slot } from '@/components/libs/primitives';
 import { cva, type VariantProps } from '@/components/libs/variants';
 import { cn } from '@/lib/utils';
 

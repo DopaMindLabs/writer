@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { DialogPrimitive } from '@/components/libs/radix';
+import { DialogPrimitive } from '@/components/libs/primitives';
 import { X } from '@/components/libs/icons';
 import { useUI } from '@/store/ui';
 import { SpaceRail } from './SpaceRail';
