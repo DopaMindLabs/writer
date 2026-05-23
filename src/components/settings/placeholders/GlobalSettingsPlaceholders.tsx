@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { SettingRow } from '@/components/settings/SettingRow';
 import { TabHeader } from '@/components/settings/TabHeader';
+import { TypographyLabel } from '@/components/ui/typography';
 import {
   PlaceholderAccentDots,
   PlaceholderChips,
@@ -173,9 +174,9 @@ export function ShortcutsPlaceholder() {
       />
       {groups.map(([heading, rows], gi) => (
         <div key={gi} className="mb-8">
-          <h3 className="mb-2 font-mono text-[10px] uppercase tracking-[0.08em] text-ink-3">
-            {heading}
-          </h3>
+          <TypographyLabel asChild className="mb-2">
+            <h3>{heading}</h3>
+          </TypographyLabel>
           {rows.map(([label, kbd], i) => (
             <div
               key={i}

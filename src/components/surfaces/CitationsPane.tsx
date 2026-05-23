@@ -20,6 +20,7 @@ import { newId } from '@/lib/ids';
 import { cn } from '@/lib/utils';
 import { downloadBlob } from '@/lib/file-download';
 import type { Citation } from '@/db/schema';
+import { TypographyMuted, TypographyP } from '@/components/ui/typography';
 
 export type CitationsDensity = 'comfortable' | 'compact';
 
@@ -414,12 +415,14 @@ function EmptyState({ hasCitations }: { hasCitations: boolean }) {
   return (
     <div className="flex items-center justify-center px-4 py-20 md:px-10">
       <div className="text-center">
-        <p className="font-serif text-[20px] text-ink">no citations yet</p>
-        <p className="mt-2 text-[13px] text-ink-3">
+        <TypographyP variant="empty" className="text-[20px]">
+          no citations yet
+        </TypographyP>
+        <TypographyMuted className="mt-2 text-[13px]">
           {hasCitations
             ? 'no rows match your search.'
             : 'import a .bib or add one manually.'}
-        </p>
+        </TypographyMuted>
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments, useDocument } from '@/hooks/useDocuments';
 import { useUI } from '@/store/ui';
+import { TypographyMuted, TypographyP } from '@/components/ui/typography';
 import { useAutoTour } from '@/tours';
 
 export function WriteScreen() {
@@ -100,8 +101,10 @@ function EmptyState() {
   return (
     <div className="flex h-full min-w-0 flex-1 items-center justify-center text-ink-3">
       <div className="text-center">
-        <p className="font-serif text-2xl text-ink">Empty space</p>
-        <p className="mt-2 text-sm">Pick a document from the sidebar to start writing.</p>
+        <TypographyP variant="empty">Empty space</TypographyP>
+        <TypographyMuted className="mt-2">
+          Pick a document from the sidebar to start writing.
+        </TypographyMuted>
       </div>
     </div>
   );

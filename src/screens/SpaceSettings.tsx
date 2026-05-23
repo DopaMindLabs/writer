@@ -11,6 +11,11 @@ import type { SettingsTabGroup } from '@/components/settings/SettingsTabs';
 import { SettingRow } from '@/components/settings/SettingRow';
 import { TabHeader } from '@/components/settings/TabHeader';
 import {
+  TypographyH2,
+  TypographyLabel,
+  TypographyP,
+} from '@/components/ui/typography';
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -272,11 +277,11 @@ function BackupsTab({ space }: { space: Space }) {
       />
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule pb-4">
-        <p className="font-serif text-[13px] italic text-ink-3">
+        <TypographyP variant="caption">
           {t('settings.space.backups.retentionHint', {
             count: MAX_BACKUPS_PER_SPACE,
           })}
-        </p>
+        </TypographyP>
         <div className="flex items-center gap-4 text-[12px]">
           <span
             aria-disabled="true"
@@ -303,14 +308,14 @@ function BackupsTab({ space }: { space: Space }) {
       )}
 
       <div className="mt-6">
-        <h3 className="font-mono text-[10px] uppercase tracking-[0.08em] text-ink-3">
-          {t('settings.space.backups.historyTitle')}
-        </h3>
+        <TypographyLabel asChild>
+          <h3>{t('settings.space.backups.historyTitle')}</h3>
+        </TypographyLabel>
         {backups.length === 0 ? (
           <div className="mx-auto mt-6 max-w-md border border-dashed border-rule bg-paper-2/40 p-6 text-center">
-            <p className="font-serif text-[14px] italic text-ink-2">
+            <TypographyP variant="caption" className="text-[14px] text-ink-2">
               {t('settings.space.backups.empty')}
-            </p>
+            </TypographyP>
           </div>
         ) : (
           <table
@@ -414,12 +419,10 @@ function DangerTab({ space }: { space: Space }) {
       />
 
       <div className="border border-rule p-6">
-        <h2 className="font-serif text-[18px] font-medium tracking-tight text-ink">
-          {t('settings.space.danger.deleteCardTitle')}
-        </h2>
-        <p className="mt-2 max-w-[480px] font-serif text-[13px] italic text-ink-3">
+        <TypographyH2>{t('settings.space.danger.deleteCardTitle')}</TypographyH2>
+        <TypographyP variant="caption" className="mt-2 max-w-[480px]">
           {t('settings.space.danger.deleteCardBody')}
-        </p>
+        </TypographyP>
         <Button
           variant="destructive"
           size="sm"

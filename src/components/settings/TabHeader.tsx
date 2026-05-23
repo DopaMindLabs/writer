@@ -1,4 +1,9 @@
 import { useTranslation } from 'react-i18next';
+import {
+  TypographyH1,
+  TypographyLabel,
+  TypographyP,
+} from '@/components/ui/typography';
 
 interface TabHeaderProps {
   titleKey: string;
@@ -14,15 +19,15 @@ export function TabHeader({
   const { t } = useTranslation('screens');
   return (
     <>
-      <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-3">
+      <TypographyLabel className="mb-1 tracking-[0.1em]">
         {t(breadcrumbKey)}
-      </div>
-      <h1 className="mb-2 font-serif text-[32px] font-normal leading-tight tracking-tight text-ink">
+      </TypographyLabel>
+      <TypographyH1 variant="section" className="mb-2">
         {t(titleKey)}
-      </h1>
-      <p className="mb-6 max-w-[540px] font-serif text-[14px] italic text-ink-3">
+      </TypographyH1>
+      <TypographyP variant="caption" className="mb-6 max-w-[540px] text-[14px]">
         {t(subtitleKey)}
-      </p>
+      </TypographyP>
     </>
   );
 }

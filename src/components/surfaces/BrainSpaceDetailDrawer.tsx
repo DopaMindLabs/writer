@@ -11,6 +11,7 @@ import { useConnectionsForNote } from '@/hooks/useConnections';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
 import { NoteState, type Note } from '@/db/schema';
 import { Button } from '@/components/ui/button';
+import { TypographyLabel } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 
 interface BrainSpaceDetailDrawerProps {
@@ -242,9 +243,9 @@ function DrawerBody({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) {
         </section>
 
         <section>
-          <h3 className="mb-2 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-            Connections ({incoming.length + outgoing.length})
-          </h3>
+          <TypographyLabel asChild variant="wide" className="mb-2">
+            <h3>Connections ({incoming.length + outgoing.length})</h3>
+          </TypographyLabel>
           {incoming.length + outgoing.length === 0 ? (
             <p className="font-mono text-[11px] text-ink-4">
               shift-click another note on the canvas to connect.

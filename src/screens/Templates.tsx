@@ -5,6 +5,7 @@ import { ArrowLeft } from '@/components/libs/icons';
 import { listTemplates, type Template } from '@/data/templates';
 import { createSpaceFromTemplate } from '@/db/seed';
 import { cn } from '@/lib/utils';
+import { TypographyH1 } from '@/components/ui/typography';
 
 export function TemplatesScreen() {
   const { t } = useTranslation(['screens', 'templates']);
@@ -82,12 +83,12 @@ export function TemplatesScreen() {
             <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
               {t('templates.crumb')}
             </div>
-            <h1 className="font-serif text-3xl leading-[1.05] tracking-tight text-ink md:text-5xl">
+            <TypographyH1 variant="page">
               {t('templates.headingMain')}{' '}
               <span className="italic font-light text-ink-2">
                 {t('templates.headingAccent')}
               </span>
-            </h1>
+            </TypographyH1>
           </div>
 
           <fieldset className="border-y border-rule">

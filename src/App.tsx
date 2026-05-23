@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import {
+  TypographyLabel,
+  TypographyMuted,
+  TypographyP,
+} from '@/components/ui/typography';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { resetAndReseed } from '@/db/seed';
 import { HomeScreen } from '@/screens/Home';
@@ -61,13 +66,13 @@ export function App() {
       <ThemeProvider>
         <div className="flex h-full items-center justify-center p-8 text-center">
           <div>
-            <p className="font-mono text-xs uppercase tracking-wider text-ink-3">
-              Boot error
-            </p>
-            <p className="mt-2 font-serif text-2xl text-ink">{error.message}</p>
-            <p className="mt-2 text-xs text-ink-3">
+            <TypographyLabel variant="xs">Boot error</TypographyLabel>
+            <TypographyP variant="empty" className="mt-2">
+              {error.message}
+            </TypographyP>
+            <TypographyMuted variant="xs" className="mt-2">
               Try <code>?reseed=1</code> to reset the local database.
-            </p>
+            </TypographyMuted>
           </div>
         </div>
       </ThemeProvider>
@@ -78,7 +83,7 @@ export function App() {
     return (
       <ThemeProvider>
         <div className="flex h-full items-center justify-center font-sans text-ink-3">
-          <p className="text-sm">Booting…</p>
+          <TypographyMuted>Booting…</TypographyMuted>
         </div>
       </ThemeProvider>
     );

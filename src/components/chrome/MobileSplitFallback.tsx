@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { TypographyH1, TypographyP } from '@/components/ui/typography';
 
 interface MobileSplitFallbackProps {
   spaceId: string;
@@ -20,12 +21,12 @@ export function MobileSplitFallback({ spaceId, docId }: MobileSplitFallbackProps
         <div className="flex-1 border-b border-rule" />
         <div className="flex-1" />
       </div>
-      <h1 className="mb-3 font-serif text-[22px] font-medium tracking-tight text-ink">
+      <TypographyH1 variant="compact" className="mb-3">
         {t('mobileSplitFallback.title')}
-      </h1>
-      <p className="mb-6 max-w-[280px] font-serif text-[14px] italic text-ink-3">
+      </TypographyH1>
+      <TypographyP variant="caption" className="mb-6 max-w-[280px] text-[14px]">
         {t('mobileSplitFallback.body')}
-      </p>
+      </TypographyP>
       <Link
         to={`/s/${spaceId}/d/${docId}`}
         className="inline-block border border-ink px-4 py-2 text-[12px] font-medium uppercase tracking-wider text-ink"

@@ -16,6 +16,7 @@ import { BrainSpaceNote } from './BrainSpaceNote';
 import { BrainSpaceConnection } from './BrainSpaceConnection';
 import { BrainSpaceDetailDrawer } from './BrainSpaceDetailDrawer';
 import { NoteKind, NoteState, type Note } from '@/db/schema';
+import { TypographyLabel, TypographyP } from '@/components/ui/typography';
 
 interface BrainSpaceCanvasProps {
   spaceId: string;
@@ -140,12 +141,10 @@ export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
       {notes.length === 0 && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-center">
           <div>
-            <p className="font-serif text-[20px] italic text-ink-3">
-              start dumping
-            </p>
-            <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-4">
+            <TypographyP variant="emptyHint">start dumping</TypographyP>
+            <TypographyLabel variant="wide" className="mt-1 text-ink-4">
               pick a card type below
-            </p>
+            </TypographyLabel>
           </div>
         </div>
       )}

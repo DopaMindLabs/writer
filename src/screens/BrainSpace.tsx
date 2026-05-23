@@ -14,6 +14,7 @@ import { useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
 import { useUI } from '@/store/ui';
 import { useAutoTour } from '@/tours';
+import { TypographyP } from '@/components/ui/typography';
 
 export function BrainSpaceScreen() {
   const { t } = useTranslation('screens');
@@ -84,12 +85,12 @@ function BrainSpaceMobileNotice({ spaceId }: { spaceId: string }) {
         <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
           {t('dump.title')}
         </div>
-        <p className="mt-3 font-serif text-[18px] italic text-ink-2">
+        <TypographyP variant="tagline" className="mt-3">
           {t('dump.mobileWarning')}
-        </p>
-        <p className="mt-2 font-serif text-base text-ink-3">
+        </TypographyP>
+        <TypographyP variant="description" className="mt-2">
           {t('dump.mobileNote')}
-        </p>
+        </TypographyP>
         <Link
           to={`/s/${spaceId}`}
           className="mt-6 inline-block font-mono text-[11px] uppercase tracking-wider text-ink underline underline-offset-4 hover:text-ink-2"

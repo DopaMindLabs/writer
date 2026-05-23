@@ -1,6 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle, Smile, Lightbulb } from '@/components/libs/icons';
 import { BlockQuote } from '@/components/ui/block-quote';
+import {
+  TypographyH1,
+  TypographyLabel,
+  TypographyLead,
+  TypographyP,
+} from '@/components/ui/typography';
 import { PageNav } from '@/components/chrome/PageNav';
 
 export function AboutScreen() {
@@ -10,19 +16,17 @@ export function AboutScreen() {
       <PageNav />
 
       <div className="mx-auto flex w-full max-w-2xl flex-col px-5 pt-10 pb-16 md:px-12 md:pt-16 md:pb-24">
-        <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-ink md:text-6xl">
-          {t('about.greeting')}
-        </h1>
-        <div className="mt-12 space-y-6 font-serif text-base leading-relaxed text-ink-2 md:text-[18px]">
-          <p>{t('about.paragraph1')}</p>
-          <p>
+        <TypographyH1>{t('about.greeting')}</TypographyH1>
+        <div className="mt-12 space-y-6">
+          <TypographyP>{t('about.paragraph1')}</TypographyP>
+          <TypographyP>
             {t('about.paragraph2Before')}
             <Smile className="inline-block h-4 w-4" />
             {t('about.paragraph2After')}
-          </p>
-          <p>{t('about.paragraph3')}</p>
+          </TypographyP>
+          <TypographyP>{t('about.paragraph3')}</TypographyP>
 
-          <p>
+          <TypographyP>
             {t('about.paragraph4Before')}
             <a
               href="https://github.com/DopaMindLabs/Writer?tab=License-1-ov-file"
@@ -32,42 +36,42 @@ export function AboutScreen() {
             >
               {t('about.licenseLinkText')}
             </a>
-          </p>
+          </TypographyP>
           <BlockQuote cite={<>&mdash; ARSI &ldquo;HAKITA&rdquo; PATALA</>}>
-                    <p>
-                      &lsquo;Culture shouldn&rsquo;t exist only for those who can afford
-                      it&rsquo;
-                    </p>
-                  </BlockQuote>
-
+            <p>
+              &lsquo;Culture shouldn&rsquo;t exist only for those who can afford
+              it&rsquo;
+            </p>
+          </BlockQuote>
         </div>
 
         <section className="mt-12 border-t border-rule pt-8">
-          <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-[color:var(--warning)]">
+          <TypographyLabel
+            className="tracking-[0.12em] text-[color:var(--warning)]"
+          >
             {t('about.statusLabel')}
-          </div>
+          </TypographyLabel>
           <div className="mt-3 flex gap-3 rounded-sm border-l-2 border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-4 py-3">
             <AlertTriangle className="mt-1 h-4 w-4 shrink-0 text-[color:var(--warning)]" />
-            <p className="font-serif text-[17px] leading-relaxed text-[color:var(--warning)]">
+            <TypographyLead className="text-[color:var(--warning)]">
               <strong className="font-semibold">{t('about.statusValueStrong')}</strong>
               {t('about.statusValueRest')}
-            </p>
-
+            </TypographyLead>
           </div>
-          <div className="mt-6 space-y-6 font-serif text-base leading-relaxed text-ink-2 md:text-[18px]">
-            <p>
+          <div className="mt-6 space-y-6">
+            <TypographyP>
               {t('about.feedbackBefore')}
               <Lightbulb className="inline-block h-4 w-4" />
               {t('about.feedbackAfter')}
-            </p>
+            </TypographyP>
           </div>
         </section>
 
         <section className="mt-8 border-t border-rule pt-8">
-          <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
+          <TypographyLabel className="tracking-[0.12em]">
             {t('about.sourceLabel')}
-          </div>
-          <p className="mt-3 font-serif text-[17px] leading-relaxed text-ink-2">
+          </TypographyLabel>
+          <TypographyLead className="mt-3">
             {/* TODO: replace with GitHub URL */}
             <a
               href="https://github.com/DopaMindLabs/writer/"
@@ -77,7 +81,7 @@ export function AboutScreen() {
             >
               {t('github', { ns: 'common' })}
             </a>
-          </p>
+          </TypographyLead>
         </section>
       </div>
     </div>

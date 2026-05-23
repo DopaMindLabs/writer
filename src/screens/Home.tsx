@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { db } from '@/db/db';
 import { BlockQuote } from '@/components/ui/block-quote';
+import { TypographyH1, TypographyP } from '@/components/ui/typography';
 import { PageNav } from '@/components/chrome/PageNav';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAutoTour } from '@/tours';
@@ -36,13 +37,13 @@ export function HomeScreen() {
         <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
           {t('home.subtitle')}
         </div>
-        <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-ink md:text-6xl">
+        <TypographyH1>
           {t('home.titleMain')}{' '}
           <span className="italic font-light text-ink-2">{t('home.titleAccent')}</span>
-        </h1>
-        <p className="mt-4 font-serif text-[18px] italic text-ink-2">
+        </TypographyH1>
+        <TypographyP variant="tagline" className="mt-4">
           {isEmpty ? t('home.emptyTagline') : t('home.tagline')}
-        </p>
+        </TypographyP>
 
         <BlockQuote cite={<>&mdash; ARSI &ldquo;HAKITA&rdquo; PATALA</>}>
           <p>
