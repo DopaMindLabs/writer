@@ -14,6 +14,9 @@ describe('Button', () => {
         </Button>
         <Button kind="dangerous">dangerous md</Button>
         <Button disabled>disabled</Button>
+        <Button kind="ghost" size="sm" disabled>
+          disabled ghost sm
+        </Button>
       </div>,
     );
     expect(container).toMatchSnapshot();
