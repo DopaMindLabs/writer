@@ -4,7 +4,7 @@ import { useUI } from '@/store/ui';
 import { SettingsShell } from '@/components/settings/SettingsShell';
 import type { SettingsTabGroup } from '@/components/settings/SettingsTabs';
 import { SettingRow } from '@/components/settings/SettingRow';
-import { Chip } from '@/components/settings/Chip';
+import { Chip } from '@/components/ui/Chip';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ComingSoonRow } from '@/components/settings/ComingSoonRow';
 import { TabHeader } from '@/components/settings/TabHeader';

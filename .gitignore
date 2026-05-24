@@ -37,3 +37,6 @@ plans
 coverage
 e2e-coverage
 .claude
+
+# Storybook
+storybook-static

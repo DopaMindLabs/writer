@@ -1,11 +1,13 @@
 export const BW = {
   paper: 'var(--paper)',
   paper2: 'var(--paper-2)',
+  off: 'var(--paper-2)',
   ink: 'var(--ink)',
   ink2: 'var(--ink-2)',
   ink3: 'var(--ink-3)',
   ink4: 'var(--ink-4)',
   rule: 'var(--rule)',
+  ruleS: 'var(--rule-s)',
   accent: 'var(--accent)',
 } as const;
 

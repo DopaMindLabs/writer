@@ -1,6 +1,5 @@
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
+import { Link } from '@/components/ui/Link';
 import {
   TypographyH1,
   TypographyLabel,
@@ -19,9 +18,9 @@ export const NotFoundScreen = () => {
         <TypographyMuted className="mt-2">
           {t('notFound.body')}
         </TypographyMuted>
-        <Button asChild className="mt-6">
-          <Link to="/">{t('notFound.goHome')}</Link>
-        </Button>
+        <Link to="/" kind="primary" className="mt-6">
+          {t('notFound.goHome')}
+        </Link>
       </div>
     </div>
   );

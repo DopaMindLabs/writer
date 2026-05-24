@@ -22,7 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import {
   MAX_BACKUPS_PER_SPACE,
   createSpaceBackup,
@@ -424,7 +424,7 @@ const DangerTab = ({ space }: { space: Space }) => {
           {t('settings.space.danger.deleteCardBody')}
         </TypographyP>
         <Button
-          variant="destructive"
+          kind="dangerous"
           size="sm"
           onClick={() => setOpen(true)}
           className="mt-5"
@@ -503,11 +503,11 @@ const DeleteSpaceDialog = ({
         </label>
 
         <div className="flex items-center justify-end gap-2">
-          <Button variant="secondary" onClick={() => handleOpenChange(false)}>
+          <Button kind="secondary" onClick={() => handleOpenChange(false)}>
             {t('settings.space.danger.cancel')}
           </Button>
           <Button
-            variant="destructive"
+            kind="dangerous"
             onClick={() => void handleConfirm()}
             disabled={!canDelete}
           >

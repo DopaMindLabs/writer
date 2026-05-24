@@ -15,6 +15,7 @@ const config: Config = {
         paper: 'var(--paper)',
         'paper-2': 'var(--paper-2)',
         rule: 'var(--rule)',
+        'rule-s': 'var(--rule-s)',
         accent: 'var(--accent)',
         'hl-yellow': 'var(--hl-yellow)',
         'hl-pink': 'var(--hl-pink)',

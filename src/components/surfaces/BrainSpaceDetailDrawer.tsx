@@ -10,7 +10,8 @@ import { useDocuments } from '@/hooks/useDocuments';
 import { useConnectionsForNote } from '@/hooks/useConnections';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
 import { NoteState, type Note } from '@/db/schema';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
+import { IconButton } from '@/components/ui/icon';
 import { TypographyLabel } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 
@@ -44,15 +45,14 @@ const ConnectionRow = ({ direction, note, onFocus, onDelete }: ConnectionRowProp
           </span>
         )}
       </button>
-      <Button
-        variant="ghost"
-        size="icon"
+      <IconButton
+        icon={X}
+        label="Remove connection"
+        buttonSize="sm"
+        iconSize="xs"
         onClick={onDelete}
-        aria-label="Remove connection"
-        className="h-5 w-5 rounded-sm text-ink-4 hover:bg-paper-2 hover:text-ink"
-      >
-        <X className="h-3 w-3" />
-      </Button>
+        className="h-5 w-5 text-ink-4"
+      />
     </li>
   );
 };
@@ -162,15 +162,14 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
             aria-label="Note title"
           />
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
+        <IconButton
+          icon={X}
+          label="Close drawer"
+          buttonSize="sm"
+          iconSize="sm"
           onClick={onClose}
-          aria-label="Close drawer"
-          className="ml-2 h-7 w-7 rounded-sm text-ink-4 hover:bg-paper-2 hover:text-ink"
-        >
-          <X className="h-4 w-4" />
-        </Button>
+          className="ml-2 text-ink-4"
+        />
       </header>
 
       <div className="flex-1 overflow-y-auto p-4">
@@ -215,9 +214,9 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
             </select>
             {linkedDoc && (
               <Button
-                variant="secondary"
+                kind="secondary"
                 onClick={handleOpenDoc}
-                className="gap-1.5 rounded-none border-ink px-3 py-2 font-mono text-[10px] uppercase tracking-wider"
+                className="gap-1.5 border-ink px-3 py-2 font-mono text-[10px] uppercase tracking-wider"
               >
                 <ExternalLink className="h-3 w-3" />
                 Open
@@ -267,10 +266,10 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
 
       <footer className="flex items-center justify-end border-t border-rule p-3">
         <Button
-          variant="destructive"
+          kind="dangerous"
           size="sm"
           onClick={handleDeleteNote}
-          className="gap-1.5 rounded-none border-0 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
+          className="gap-1.5 border-0 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
         >
           <Trash2 className="h-3 w-3" />
           Delete note

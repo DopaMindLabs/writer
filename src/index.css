@@ -3,12 +3,13 @@
 
 :root {
   --paper: #ffffff;
-  --paper-2: #f7f6f3;
+  --paper-2: #fafafa;
   --ink: #111111;
-  --ink-2: #3a3a3a;
-  --ink-3: #6b6b6b;
-  --ink-4: #b4b4b4;
-  --rule: #e5e3df;
+  --ink-2: #404040;
+  --ink-3: #737373;
+  --ink-4: #a3a3a3;
+  --rule: #e5e5e5;
+  --rule-s: #f0f0f0;
   --accent: #111111;
 
   --hl-yellow: #fff3a8;
@@ -32,6 +33,7 @@
   --ink-3: #8a8a8a;
   --ink-4: #5a5a5a;
   --rule: #2c2c2c;
+  --rule-s: #1f1f1f;
   --accent: #f5f5f5;
 
   --warning: #ff8a7a;
@@ -49,6 +51,7 @@
   --ink-3: #1a1a1a;
   --ink-4: #3d3d3d;
   --rule: #000000;
+  --rule-s: #1a1a1a;
   --accent: #0033cc;
 
   --hl-yellow: #f0e442;
@@ -72,6 +75,7 @@
   --ink-3: #e5e5e5;
   --ink-4: #bfbfbf;
   --rule: #ffffff;
+  --rule-s: #e5e5e5;
   --accent: #66aaff;
 
   --hl-yellow: #f0e442;

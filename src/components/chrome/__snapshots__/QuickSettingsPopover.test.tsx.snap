@@ -95,12 +95,13 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
       <button
         aria-checked="false"
         aria-label="Focus mode"
-        class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors border-rule bg-paper-2"
+        class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-rule bg-paper-2"
         role="switch"
         type="button"
       >
         <span
-          class="absolute top-[1px] h-3 w-3 rounded-full bg-paper transition-transform left-[1px] translate-x-0"
+          aria-hidden="true"
+          class="absolute top-[1px] left-[1px] h-3 w-3 rounded-full bg-paper transition-transform translate-x-0"
         />
       </button>
     </div>
@@ -123,12 +124,13 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
       <button
         aria-checked="false"
         aria-label="Floating toolbar"
-        class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors border-rule bg-paper-2"
+        class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-rule bg-paper-2"
         role="switch"
         type="button"
       >
         <span
-          class="absolute top-[1px] h-3 w-3 rounded-full bg-paper transition-transform left-[1px] translate-x-0"
+          aria-hidden="true"
+          class="absolute top-[1px] left-[1px] h-3 w-3 rounded-full bg-paper transition-transform translate-x-0"
         />
       </button>
     </div>

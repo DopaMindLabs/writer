@@ -3,7 +3,8 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Check } from '@/components/libs/icons';
 import { useUI, type ReadingWidth, type Theme } from '@/store/ui';
-import { Chip } from '@/components/settings/Chip';
+import { Chip } from '@/components/ui/Chip';
+import { PillToggle } from '@/components/ui/PillToggle';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { PopoverClose } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -38,37 +39,6 @@ const Row = ({ label, hint, children }: RowProps) => {
       </div>
       <div className="flex shrink-0 items-center justify-end">{children}</div>
     </div>
-  );
-};
-
-const PillToggle = ({
-  on,
-  onToggle,
-  ariaLabel,
-}: {
-  on: boolean;
-  onToggle: () => void;
-  ariaLabel: string;
-}) => {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={on}
-      aria-label={ariaLabel}
-      onClick={onToggle}
-      className={cn(
-        'relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors',
-        on ? 'border-ink bg-ink' : 'border-rule bg-paper-2',
-      )}
-    >
-      <span
-        className={cn(
-          'absolute top-[1px] h-3 w-3 rounded-full bg-paper transition-transform',
-          on ? 'left-[1px] translate-x-3' : 'left-[1px] translate-x-0',
-        )}
-      />
-    </button>
   );
 };
 
@@ -194,7 +164,7 @@ export const QuickSettingsPopover = () => {
         <PillToggle
           on={focused}
           onToggle={handleFocus}
-          ariaLabel={t('chrome:quickSettings.focusLabel')}
+          label={t('chrome:quickSettings.focusLabel')}
         />
       </Row>
 
@@ -202,7 +172,7 @@ export const QuickSettingsPopover = () => {
         <PillToggle
           on={floatingToolbar}
           onToggle={() => setFloatingToolbar(!floatingToolbar)}
-          ariaLabel={t('chrome:quickSettings.floatingToolbarLabel')}
+          label={t('chrome:quickSettings.floatingToolbarLabel')}
         />
       </Row>
 
