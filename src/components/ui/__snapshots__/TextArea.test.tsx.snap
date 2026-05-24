@@ -1,0 +1,35 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TextArea > snapshot > should match the snapshot across all variants 1`] = `
+<div>
+  <div>
+    <textarea
+      class="block w-full resize-y border bg-transparent px-3 py-2 font-serif text-[14px] leading-[1.55] text-ink outline-none transition-colors placeholder:text-ink-4 placeholder:font-serif placeholder:italic disabled:cursor-not-allowed border-rule focus:border-ink"
+      data-testid="ta-snap-rest"
+      placeholder="rest"
+      rows="4"
+    />
+    <textarea
+      class="block w-full resize-y border bg-transparent px-3 py-2 font-serif text-[14px] leading-[1.55] text-ink outline-none transition-colors placeholder:text-ink-4 placeholder:font-serif placeholder:italic disabled:cursor-not-allowed border-rule focus:border-ink"
+      data-testid="ta-snap-filled"
+      rows="4"
+    >
+      filled
+    </textarea>
+    <textarea
+      class="block w-full resize-y border px-3 py-2 font-serif text-[14px] leading-[1.55] outline-none transition-colors placeholder:text-ink-4 placeholder:font-serif placeholder:italic disabled:cursor-not-allowed border-rule bg-paper-2 text-ink-4"
+      data-testid="ta-snap-disabled"
+      disabled=""
+      rows="4"
+    />
+    <textarea
+      aria-invalid="true"
+      class="block w-full resize-y border bg-transparent px-3 py-2 font-serif text-[14px] leading-[1.55] text-ink outline-none transition-colors placeholder:text-ink-4 placeholder:font-serif placeholder:italic disabled:cursor-not-allowed border-ink"
+      data-testid="ta-snap-error"
+      rows="4"
+    >
+      bad
+    </textarea>
+  </div>
+</div>
+`;

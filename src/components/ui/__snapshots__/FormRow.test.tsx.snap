@@ -1,0 +1,146 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FormRow > snapshot > should match the snapshot across all variants 1`] = `
+<div>
+  <div>
+    <div
+      class="grid grid-cols-1 items-start gap-1 border-b border-rule-s py-3 md:grid-cols-[200px_1fr] md:gap-6"
+      data-testid="fr-snap-min"
+    >
+      <div
+        class="flex flex-col gap-1"
+      >
+        <label
+          class="font-sans text-[13px] font-medium leading-tight text-ink"
+          data-testid="fr-snap-min-label"
+        >
+          Name
+        </label>
+      </div>
+      <div
+        class="flex flex-col gap-1.5"
+      >
+        <div>
+          <input
+            class="block w-full border-0 bg-transparent px-0 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-b border-rule focus:border-ink"
+            type="text"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="grid grid-cols-1 items-start gap-1 border-b border-rule-s py-3 md:grid-cols-[200px_1fr] md:gap-6"
+      data-testid="fr-snap-hint"
+    >
+      <div
+        class="flex flex-col gap-1"
+      >
+        <label
+          class="font-sans text-[13px] font-medium leading-tight text-ink"
+          data-testid="fr-snap-hint-label"
+        >
+          Name
+        </label>
+        <div
+          class="font-serif text-[12px] italic leading-snug text-ink-3"
+          data-testid="fr-snap-hint-hint"
+        >
+          Visible
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-1.5"
+      >
+        <div>
+          <input
+            class="block w-full border-0 bg-transparent px-0 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-b border-rule focus:border-ink"
+            type="text"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="grid grid-cols-1 items-start gap-1 border-b border-rule-s py-3 md:grid-cols-[200px_1fr] md:gap-6"
+      data-testid="fr-snap-err"
+    >
+      <div
+        class="flex flex-col gap-1"
+      >
+        <label
+          class="font-sans text-[13px] font-medium leading-tight text-ink"
+          data-testid="fr-snap-err-label"
+        >
+          Name
+        </label>
+      </div>
+      <div
+        class="flex flex-col gap-1.5"
+      >
+        <div>
+          <input
+            aria-invalid="true"
+            class="block w-full border-0 bg-transparent px-0 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-b border-ink"
+            type="text"
+          />
+        </div>
+        <div
+          class="font-mono text-[10px] uppercase tracking-wider text-ink"
+          data-testid="fr-snap-err-error"
+          role="alert"
+        >
+          <span
+            aria-hidden="true"
+          >
+            ✕ 
+          </span>
+          Required
+        </div>
+      </div>
+    </div>
+    <div
+      class="grid grid-cols-1 items-start gap-1 border-b border-rule-s py-3 md:grid-cols-[200px_1fr] md:gap-6"
+      data-testid="fr-snap-full"
+    >
+      <div
+        class="flex flex-col gap-1"
+      >
+        <label
+          class="font-sans text-[13px] font-medium leading-tight text-ink"
+          data-testid="fr-snap-full-label"
+        >
+          Name
+        </label>
+        <div
+          class="font-serif text-[12px] italic leading-snug text-ink-3"
+          data-testid="fr-snap-full-hint"
+        >
+          Visible
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-1.5"
+      >
+        <div>
+          <input
+            aria-invalid="true"
+            class="block w-full border-0 bg-transparent px-0 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-b border-ink"
+            type="text"
+          />
+        </div>
+        <div
+          class="font-mono text-[10px] uppercase tracking-wider text-ink"
+          data-testid="fr-snap-full-error"
+          role="alert"
+        >
+          <span
+            aria-hidden="true"
+          >
+            ✕ 
+          </span>
+          Required
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

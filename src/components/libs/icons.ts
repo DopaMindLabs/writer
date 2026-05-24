@@ -5,6 +5,7 @@ export {
   BookOpen,
   Brain,
   Check,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Columns2,

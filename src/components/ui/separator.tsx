@@ -2,12 +2,26 @@ import { forwardRef } from 'react';
 import { SeparatorPrimitive } from '@/components/libs/primitives';
 import { cn } from '@/lib/utils';
 
+type SeparatorPrimitiveProps = React.ComponentPropsWithoutRef<
+  typeof SeparatorPrimitive.Root
+>;
+
+export interface SeparatorProps extends SeparatorPrimitiveProps {
+  light?: boolean;
+}
+
 export const Separator = forwardRef<
   React.ElementRef<typeof SeparatorPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>
+  SeparatorProps
 >(
   (
-    { className, orientation = 'horizontal', decorative = true, ...props },
+    {
+      className,
+      orientation = 'horizontal',
+      decorative = true,
+      light = false,
+      ...props
+    },
     ref,
   ) => (
     <SeparatorPrimitive.Root
@@ -15,7 +29,8 @@ export const Separator = forwardRef<
       decorative={decorative}
       orientation={orientation}
       className={cn(
-        'shrink-0 bg-rule',
+        'shrink-0',
+        light ? 'bg-rule-s' : 'bg-rule',
         orientation === 'horizontal' ? 'h-px w-full' : 'h-full w-px',
         className,
       )}
