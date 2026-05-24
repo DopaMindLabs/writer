@@ -27,6 +27,7 @@ export default defineConfig(({ command }) => ({
     setupFiles: ['./src/test/setup.ts'],
     css: false,
     include: ['src/**/*.test.{ts,tsx}'],
+    outputDiffLines: 50,
     clearMocks: true,
     restoreMocks: true,
     coverage: {
