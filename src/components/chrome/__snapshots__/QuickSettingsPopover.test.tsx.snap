@@ -33,7 +33,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
         class="flex flex-wrap gap-1"
       >
         <button
-          aria-describedby="radix-_r_1_"
+          aria-describedby="radix-_r_*_"
           aria-label="Light"
           aria-pressed="true"
           class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper px-2 py-0.5 text-[10px]"

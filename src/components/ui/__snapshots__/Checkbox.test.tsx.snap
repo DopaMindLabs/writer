@@ -12,7 +12,7 @@ exports[`Checkbox > snapshot > should match the snapshot across all variants 1`]
         <input
           class="peer h-[14px] w-[14px] cursor-pointer appearance-none border border-rule bg-paper transition-colors checked:border-ink checked:bg-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:cursor-not-allowed"
           data-testid="cb-snap-rest"
-          id="_r_9_"
+          id="_r_*_"
           type="checkbox"
         />
         <svg
@@ -36,7 +36,7 @@ exports[`Checkbox > snapshot > should match the snapshot across all variants 1`]
       </span>
       <label
         class="cursor-pointer text-[13px] text-ink-2"
-        for="_r_9_"
+        for="_r_*_"
       >
         rest
       </label>
@@ -51,7 +51,7 @@ exports[`Checkbox > snapshot > should match the snapshot across all variants 1`]
           checked=""
           class="peer h-[14px] w-[14px] cursor-pointer appearance-none border border-rule bg-paper transition-colors checked:border-ink checked:bg-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:cursor-not-allowed"
           data-testid="cb-snap-checked"
-          id="_r_a_"
+          id="_r_*_"
           type="checkbox"
         />
         <svg
@@ -75,7 +75,7 @@ exports[`Checkbox > snapshot > should match the snapshot across all variants 1`]
       </span>
       <label
         class="cursor-pointer text-[13px] text-ink-2"
-        for="_r_a_"
+        for="_r_*_"
       >
         checked
       </label>
@@ -90,7 +90,7 @@ exports[`Checkbox > snapshot > should match the snapshot across all variants 1`]
           class="peer h-[14px] w-[14px] cursor-pointer appearance-none border border-rule bg-paper transition-colors checked:border-ink checked:bg-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:cursor-not-allowed"
           data-testid="cb-snap-disabled"
           disabled=""
-          id="_r_b_"
+          id="_r_*_"
           type="checkbox"
         />
         <svg
@@ -114,7 +114,7 @@ exports[`Checkbox > snapshot > should match the snapshot across all variants 1`]
       </span>
       <label
         class="text-[13px] text-ink-2 cursor-not-allowed"
-        for="_r_b_"
+        for="_r_*_"
       >
         disabled
       </label>
@@ -130,7 +130,7 @@ exports[`Checkbox > snapshot > should match the snapshot across all variants 1`]
           class="peer h-[14px] w-[14px] cursor-pointer appearance-none border border-rule bg-paper transition-colors checked:border-ink checked:bg-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:cursor-not-allowed"
           data-testid="cb-snap-checked-disabled"
           disabled=""
-          id="_r_c_"
+          id="_r_*_"
           type="checkbox"
         />
         <svg
@@ -154,7 +154,7 @@ exports[`Checkbox > snapshot > should match the snapshot across all variants 1`]
       </span>
       <label
         class="text-[13px] text-ink-2 cursor-not-allowed"
-        for="_r_c_"
+        for="_r_*_"
       >
         checked + disabled
       </label>
