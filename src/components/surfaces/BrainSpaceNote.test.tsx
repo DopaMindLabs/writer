@@ -16,14 +16,14 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-function renderNote(
+const renderNote = (
   note = sampleNote,
   overrides: Partial<{
     selected: boolean;
     pending: boolean;
     onPick: () => void;
   }> = {},
-) {
+) => {
   return renderAtRoute(
     <BrainSpaceNote
       note={note}
@@ -34,7 +34,7 @@ function renderNote(
     />,
     { path: '/s/:spaceId', initialEntries: [`/s/${sampleSpace.id}`] },
   );
-}
+};
 
 afterEach(() => {
   useUI.getState().closeDetail();

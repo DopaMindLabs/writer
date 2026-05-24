@@ -8,7 +8,7 @@ import { PageNav } from '@/components/chrome/PageNav';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAutoTour } from '@/tours';
 
-export function HomeScreen() {
+export const HomeScreen = () => {
   const { t } = useTranslation(['screens', 'common']);
   const [firstSpaceId, setFirstSpaceId] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -110,4 +110,4 @@ export function HomeScreen() {
       </div>
     </div>
   );
-}
+};

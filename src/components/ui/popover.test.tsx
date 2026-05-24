@@ -7,7 +7,7 @@ import {
   PopoverClose,
 } from './popover';
 
-function Harness() {
+const Harness = () => {
   return (
     <Popover>
       <PopoverTrigger>open</PopoverTrigger>
@@ -17,7 +17,7 @@ function Harness() {
       </PopoverContent>
     </Popover>
   );
-}
+};
 
 describe('Popover primitives', () => {
   it('opens on trigger click and portals content', async () => {

@@ -8,7 +8,7 @@ interface SettingRowProps {
   children: ReactNode;
 }
 
-export function SettingRow({ label, hint, disabled, children }: SettingRowProps) {
+export const SettingRow = ({ label, hint, disabled, children }: SettingRowProps) => {
   return (
     <div
       className={cn(
@@ -27,4 +27,4 @@ export function SettingRow({ label, hint, disabled, children }: SettingRowProps)
       <div>{children}</div>
     </div>
   );
-}
+};

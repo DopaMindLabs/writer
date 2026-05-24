@@ -13,17 +13,17 @@ import { HelpMenu } from './HelpMenu';
 import { markCompleted, getCompleted, TOURS_STORAGE_KEY } from './storage';
 import { TOUR_IDS } from './tours';
 
-async function openMenu(user: ReturnType<typeof userEvent.setup>) {
+const openMenu = async (user: ReturnType<typeof userEvent.setup>) => {
   await user.click(screen.getByLabelText('Help & tours'));
-}
+};
 
-function getItem(tourId: string): HTMLElement {
+const getItem = (tourId: string): HTMLElement => {
   const item = document.querySelector<HTMLElement>(
     `[data-tour-id="${tourId}"]`,
   );
   if (!item) throw new Error(`Menu item with data-tour-id="${tourId}" not found`);
   return item;
-}
+};
 
 describe('HelpMenu', () => {
   beforeEach(() => {

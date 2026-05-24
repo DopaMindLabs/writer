@@ -14,7 +14,7 @@ interface MobileNavDrawerProps {
   activeDocId: string | null;
 }
 
-export function MobileNavDrawer({ spaceId, activeDocId }: MobileNavDrawerProps) {
+export const MobileNavDrawer = ({ spaceId, activeDocId }: MobileNavDrawerProps) => {
   const { t } = useTranslation('chrome');
   const mobileNavOpen = useUI((s) => s.mobileNavOpen);
   const setMobileNavOpen = useUI((s) => s.setMobileNavOpen);
@@ -57,4 +57,4 @@ export function MobileNavDrawer({ spaceId, activeDocId }: MobileNavDrawerProps) 
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>
   );
-}
+};

@@ -41,9 +41,9 @@ describe('useTour', () => {
 });
 
 // Helper to read completion without importing isCompleted twice
-function result_isCompleted(id: string): boolean {
+const result_isCompleted = (id: string): boolean => {
   const raw = window.localStorage.getItem('lipsum-tours');
   if (!raw) return false;
   const parsed = JSON.parse(raw) as { completed?: string[] };
   return Array.isArray(parsed.completed) && parsed.completed.includes(id);
-}
+};

@@ -6,7 +6,7 @@ import { sampleSpace } from '@/test/fixtures';
 import type { Citation } from '@/db/schema';
 import { CitationsPane } from './CitationsPane';
 
-function citation(overrides: Partial<Citation> = {}): Citation {
+const citation = (overrides: Partial<Citation> = {}): Citation => {
   return {
     id: 'c-base',
     spaceId: 's1',
@@ -18,11 +18,11 @@ function citation(overrides: Partial<Citation> = {}): Citation {
     useCount: 0,
     ...overrides,
   };
-}
+};
 
-async function seedSpace() {
+const seedSpace = async () => {
   await db.spaces.put(sampleSpace);
-}
+};
 
 describe('CitationsPane', () => {
   it('renders empty state when no citations exist', async () => {

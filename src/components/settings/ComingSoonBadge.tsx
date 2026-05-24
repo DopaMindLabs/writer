@@ -5,7 +5,7 @@ interface ComingSoonBadgeProps {
   className?: string;
 }
 
-export function ComingSoonBadge({ className }: ComingSoonBadgeProps) {
+export const ComingSoonBadge = ({ className }: ComingSoonBadgeProps) => {
   const { t } = useTranslation('screens');
   return (
     <span
@@ -18,4 +18,4 @@ export function ComingSoonBadge({ className }: ComingSoonBadgeProps) {
       {t('settings.comingSoonBadge')}
     </span>
   );
-}
+};

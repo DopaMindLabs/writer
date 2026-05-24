@@ -18,7 +18,7 @@ vi.mock('@/lib/file-download', () => ({
   downloadBlob: (...args: unknown[]) => downloadBlobMock(...args),
 }));
 
-function renderInPopover(node: React.ReactElement) {
+const renderInPopover = (node: React.ReactElement) => {
   return render(
     <MemoryRouter>
       <TooltipProvider delayDuration={0}>
@@ -29,7 +29,7 @@ function renderInPopover(node: React.ReactElement) {
       </TooltipProvider>
     </MemoryRouter>,
   );
-}
+};
 
 describe('SpaceMenuPopover', () => {
   beforeEach(() => {

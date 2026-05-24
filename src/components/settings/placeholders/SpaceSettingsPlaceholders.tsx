@@ -15,7 +15,7 @@ const PALETTE_ITEMS: [string, string][] = [
   ['loose', '#e8e8e8'],
 ];
 
-export function SpaceTemplatePlaceholder() {
+export const SpaceTemplatePlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -44,9 +44,9 @@ export function SpaceTemplatePlaceholder() {
       </SettingRow>
     </section>
   );
-}
+};
 
-export function SpacePalettePlaceholder() {
+export const SpacePalettePlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -68,9 +68,9 @@ export function SpacePalettePlaceholder() {
       </div>
     </section>
   );
-}
+};
 
-export function SpaceSharingPlaceholder() {
+export const SpaceSharingPlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -105,9 +105,9 @@ export function SpaceSharingPlaceholder() {
       </SettingRow>
     </section>
   );
-}
+};
 
-export function SpaceMembersPlaceholder() {
+export const SpaceMembersPlaceholder = () => {
   const { t } = useTranslation('screens');
   const members: [string, string, string][] = [
     ['You', 'you@example.com', t('settings.space.members.roles.owner')],
@@ -161,9 +161,9 @@ export function SpaceMembersPlaceholder() {
       </div>
     </section>
   );
-}
+};
 
-export function SpaceExportPlaceholder() {
+export const SpaceExportPlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -193,4 +193,4 @@ export function SpaceExportPlaceholder() {
       </SettingRow>
     </section>
   );
-}
+};

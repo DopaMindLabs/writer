@@ -5,13 +5,13 @@ import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 import { MobileNavDrawer } from './MobileNavDrawer';
 
-async function openAfterMount() {
+const openAfterMount = async () => {
   // The drawer's useEffect closes itself on pathname change, including the
   // initial mount. Open it on the next microtask so the effect has already run.
   await act(async () => {
     useUI.getState().setMobileNavOpen(true);
   });
-}
+};
 
 describe('MobileNavDrawer', () => {
   it('does not render Dialog content when closed', () => {

@@ -20,7 +20,7 @@ interface FocusRailProps {
   activeSpaceId: string | null;
 }
 
-export function FocusRail({ activeSpaceId }: FocusRailProps) {
+export const FocusRail = ({ activeSpaceId }: FocusRailProps) => {
   const { t } = useTranslation('chrome');
   const spaces = useSpaces() ?? [];
 
@@ -65,4 +65,4 @@ export function FocusRail({ activeSpaceId }: FocusRailProps) {
       </Popover>
     </aside>
   );
-}
+};

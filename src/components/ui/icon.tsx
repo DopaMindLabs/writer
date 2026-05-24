@@ -17,7 +17,7 @@ interface IconProps {
   strokeWidth?: number;
 }
 
-export function Icon({ icon: I, size = 'sm', className, strokeWidth }: IconProps) {
+export const Icon = ({ icon: I, size = 'sm', className, strokeWidth }: IconProps) => {
   return (
     <I
       className={cn(ICON_SIZE[size], className)}
@@ -25,7 +25,7 @@ export function Icon({ icon: I, size = 'sm', className, strokeWidth }: IconProps
       aria-hidden
     />
   );
-}
+};
 
 export type IconButtonSize = 'sm' | 'md';
 
@@ -40,7 +40,7 @@ interface IconButtonProps
 }
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
-  function IconButton(
+  (
     {
       icon,
       label,
@@ -53,7 +53,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       ...rest
     },
     ref,
-  ) {
+  ) => {
     return (
       <button
         ref={ref}
@@ -77,3 +77,4 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
     );
   },
 );
+IconButton.displayName = 'IconButton';

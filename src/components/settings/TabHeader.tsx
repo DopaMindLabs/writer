@@ -11,11 +11,11 @@ interface TabHeaderProps {
   breadcrumbKey?: string;
 }
 
-export function TabHeader({
+export const TabHeader = ({
   titleKey,
   subtitleKey,
   breadcrumbKey = 'settings.breadcrumb',
-}: TabHeaderProps) {
+}: TabHeaderProps) => {
   const { t } = useTranslation('screens');
   return (
     <>
@@ -30,4 +30,4 @@ export function TabHeader({
       </TypographyP>
     </>
   );
-}
+};

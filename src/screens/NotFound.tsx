@@ -7,7 +7,7 @@ import {
   TypographyMuted,
 } from '@/components/ui/typography';
 
-export function NotFoundScreen() {
+export const NotFoundScreen = () => {
   const { t } = useTranslation('screens');
   return (
     <div className="flex h-full items-center justify-center text-ink">
@@ -25,4 +25,4 @@ export function NotFoundScreen() {
       </div>
     </div>
   );
-}
+};

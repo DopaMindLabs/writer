@@ -7,7 +7,7 @@ interface AutosavePluginProps {
   debounceMs?: number;
 }
 
-export function AutosavePlugin({ onChange, debounceMs = 600 }: AutosavePluginProps) {
+export const AutosavePlugin = ({ onChange, debounceMs = 600 }: AutosavePluginProps) => {
   const [editor] = useLexicalComposerContext();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSavedRef = useRef<string | null>(null);
@@ -32,4 +32,4 @@ export function AutosavePlugin({ onChange, debounceMs = 600 }: AutosavePluginPro
   }, []);
 
   return null;
-}
+};

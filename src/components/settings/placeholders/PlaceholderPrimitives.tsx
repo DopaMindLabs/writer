@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-export function PlaceholderToggle({ on = false }: { on?: boolean }) {
+export const PlaceholderToggle = ({ on = false }: { on?: boolean }) => {
   return (
     <span
       aria-hidden
@@ -18,14 +18,14 @@ export function PlaceholderToggle({ on = false }: { on?: boolean }) {
       />
     </span>
   );
-}
+};
 
 interface PlaceholderChipsProps {
   options: ReactNode[];
   active?: number;
 }
 
-export function PlaceholderChips({ options, active = 0 }: PlaceholderChipsProps) {
+export const PlaceholderChips = ({ options, active = 0 }: PlaceholderChipsProps) => {
   return (
     <div className="flex flex-wrap gap-1.5">
       {options.map((label, i) => {
@@ -46,9 +46,9 @@ export function PlaceholderChips({ options, active = 0 }: PlaceholderChipsProps)
       })}
     </div>
   );
-}
+};
 
-export function PlaceholderSlider({
+export const PlaceholderSlider = ({
   pct = 50,
   a = 'S',
   b = 'L',
@@ -58,7 +58,7 @@ export function PlaceholderSlider({
   a?: string;
   b?: string;
   v?: string;
-}) {
+}) => {
   return (
     <div className="flex items-center gap-3">
       <span className="font-serif text-[12px] text-ink-3">{a}</span>
@@ -78,9 +78,9 @@ export function PlaceholderSlider({
       )}
     </div>
   );
-}
+};
 
-export function PlaceholderInput({
+export const PlaceholderInput = ({
   value,
   width = 220,
   mono = false,
@@ -88,7 +88,7 @@ export function PlaceholderInput({
   value: string;
   width?: number;
   mono?: boolean;
-}) {
+}) => {
   return (
     <span
       aria-hidden
@@ -101,9 +101,9 @@ export function PlaceholderInput({
       {value}
     </span>
   );
-}
+};
 
-export function PlaceholderAccentDots() {
+export const PlaceholderAccentDots = () => {
   const colours = ['#111111', '#7a6a55', '#5a6f55', '#6a5a7a', '#7a5a5a'];
   return (
     <div className="flex items-center gap-2">
@@ -119,9 +119,9 @@ export function PlaceholderAccentDots() {
       ))}
     </div>
   );
-}
+};
 
-export function PlaceholderThemeCards() {
+export const PlaceholderThemeCards = () => {
   const cards: [string, string, string, boolean][] = [
     ['Linen', '#fafaf6', 'default', true],
     ['Studio', '#f3f3f0', 'neutral', false],
@@ -167,9 +167,9 @@ export function PlaceholderThemeCards() {
       })}
     </div>
   );
-}
+};
 
-export function PlaceholderSwatchRow({
+export const PlaceholderSwatchRow = ({
   name,
   color,
   rename,
@@ -179,7 +179,7 @@ export function PlaceholderSwatchRow({
   color: string;
   rename: string;
   tune: string;
-}) {
+}) => {
   return (
     <div className="flex items-center gap-3.5 border border-rule p-3">
       <div
@@ -197,4 +197,4 @@ export function PlaceholderSwatchRow({
       <span className="font-sans text-[11px] text-ink-3">{tune}</span>
     </div>
   );
-}
+};

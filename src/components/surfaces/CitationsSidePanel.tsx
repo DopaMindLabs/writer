@@ -9,7 +9,7 @@ interface CitationsSidePanelProps {
   spaceId: string;
 }
 
-export function CitationsSidePanel({ spaceId }: CitationsSidePanelProps) {
+export const CitationsSidePanel = ({ spaceId }: CitationsSidePanelProps) => {
   const open = useUI((s) => s.citationsDrawerOpen);
   const close = useUI((s) => s.closeCitationsDrawer);
   const space = useSpace(spaceId);
@@ -17,10 +17,10 @@ export function CitationsSidePanel({ spaceId }: CitationsSidePanelProps) {
 
   if (!open) return null;
 
-  function openCitationsScreen() {
+  const openCitationsScreen = () => {
     close();
     navigate(`/s/${spaceId}/citations`);
-  }
+  };
 
   return (
     <aside
@@ -55,4 +55,4 @@ export function CitationsSidePanel({ spaceId }: CitationsSidePanelProps) {
       </div>
     </aside>
   );
-}
+};

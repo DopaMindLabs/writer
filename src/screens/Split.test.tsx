@@ -39,10 +39,10 @@ const docC: Doc = {
   body: 'third',
 };
 
-async function seed() {
+const seed = async () => {
   await db.spaces.put(sampleSpace);
   await db.docs.bulkPut([docA, docB, docC]);
-}
+};
 
 describe('SplitScreen', () => {
   beforeEach(seed);

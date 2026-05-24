@@ -10,7 +10,7 @@ import { useUI } from '@/store/ui';
 import { CitationsPane } from '@/components/surfaces/CitationsPane';
 import { useAutoTour } from '@/tours';
 
-export function CitationsScreen() {
+export const CitationsScreen = () => {
   const { spaceId } = useParams<{ spaceId: string }>();
   const space = useSpace(spaceId);
   const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
@@ -51,4 +51,4 @@ export function CitationsScreen() {
       </div>
     </div>
   );
-}
+};

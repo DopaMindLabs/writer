@@ -14,7 +14,7 @@ import { TOUR_IDS, TOURS, type TourId } from './tours';
 import { useTour } from './useTour';
 import { getCompleted } from './storage';
 
-export function HelpMenu() {
+export const HelpMenu = () => {
   const { t } = useTranslation('tours');
   const { replay, resetAll } = useTour();
   const [completedSnapshot, setCompletedSnapshot] = useState<string[]>(() =>
@@ -23,15 +23,15 @@ export function HelpMenu() {
 
   const refreshSnapshot = () => setCompletedSnapshot(getCompleted());
 
-  function handleSelect(id: TourId) {
+  const handleSelect = (id: TourId) => {
     replay(id);
     refreshSnapshot();
-  }
+  };
 
-  function handleResetAll() {
+  const handleResetAll = () => {
     resetAll();
     refreshSnapshot();
-  }
+  };
 
   return (
     <DropdownMenu onOpenChange={(open) => open && refreshSnapshot()}>
@@ -73,4 +73,4 @@ export function HelpMenu() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+};

@@ -19,7 +19,7 @@ interface TabItem {
   match?: (pathname: string) => boolean;
 }
 
-export function MobileTabs({ spaceId, docId }: MobileTabsProps) {
+export const MobileTabs = ({ spaceId, docId }: MobileTabsProps) => {
   const { t } = useTranslation('chrome');
   const location = useLocation();
   const setMobileMoreOpen = useUI((s) => s.setMobileMoreOpen);
@@ -114,4 +114,4 @@ export function MobileTabs({ spaceId, docId }: MobileTabsProps) {
       })}
     </nav>
   );
-}
+};

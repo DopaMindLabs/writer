@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from './dropdown-menu';
 
-function Harness({ onSelect = () => {} }: { onSelect?: () => void }) {
+const Harness = ({ onSelect = () => {} }: { onSelect?: () => void }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>open</DropdownMenuTrigger>
@@ -21,7 +21,7 @@ function Harness({ onSelect = () => {} }: { onSelect?: () => void }) {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+};
 
 describe('DropdownMenu primitives', () => {
   it('opens on trigger click and renders label, separator, items', async () => {

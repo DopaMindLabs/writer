@@ -43,7 +43,7 @@ interface AddingState {
   value: string;
 }
 
-export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
+export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
   const { t } = useTranslation(['chrome', 'common']);
   const space = useSpace(spaceId);
   const sections = useSections(spaceId);
@@ -71,12 +71,12 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
     if (!editingSpaceName) setDraftSpaceName(space?.name ?? '');
   }, [space?.name, editingSpaceName]);
 
-  async function commitSpaceName() {
+  const commitSpaceName = async () => {
     setEditingSpaceName(false);
     const next = draftSpaceName.trim();
     if (!next || next === space?.name) return;
     await db.spaces.update(spaceId, { name: next, updatedAt: Date.now() });
-  }
+  };
 
   const { topSections, subsectionsByParent } = useMemo(() => {
     const top: Section[] = [];
@@ -112,10 +112,10 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
     return m;
   }, [templateDef]);
 
-  function resolveDefaultName(
+  const resolveDefaultName = (
     parentLabel: string,
     subLabel: string | null,
-  ): string {
+  ): string => {
     const untitled = t('untitled', { ns: 'common' });
     const parentDef = topTemplateDefByLabel.get(parentLabel);
     if (!parentDef) return untitled;
@@ -128,22 +128,22 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
     return subDef?.defaultDocName
       ? formatDocName(subDef.defaultDocName)
       : untitled;
-  }
+  };
 
-  function docHref(docId: string): string {
+  const docHref = (docId: string): string => {
     return `/s/${spaceId}/d/${docId}${modeSuffix}`;
-  }
+  };
 
-  function startAdd(
+  const startAdd = (
     sectionId: string,
     parentLabel: string,
     subLabel: string | null,
-  ) {
+  ) => {
     const value = resolveDefaultName(parentLabel, subLabel);
     setAdding({ sectionId, value });
-  }
+  };
 
-  async function commitAdd() {
+  const commitAdd = async () => {
     if (!adding) return;
     const name = adding.value.trim() || t('untitled', { ns: 'common' });
     const id = newId();
@@ -158,9 +158,9 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
     });
     setAdding(null);
     navigate(`/s/${spaceId}/d/${id}`);
-  }
+  };
 
-  function onAddKey(e: KeyboardEvent<HTMLInputElement>) {
+  const onAddKey = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       void commitAdd();
@@ -168,7 +168,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
       e.preventDefault();
       setAdding(null);
     }
-  }
+  };
 
   return (
     <aside className="flex w-56 shrink-0 flex-col border-r border-rule bg-paper-2">
@@ -340,7 +340,7 @@ export function Sidebar({ spaceId, activeDocId }: SidebarProps) {
       </div>
     </aside>
   );
-}
+};
 
 type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
 
@@ -356,7 +356,7 @@ function formatSpaceAge(createdAt: number, t: TranslateFn): string {
   return t('chrome:sidebar.ageYears', { count: Math.floor(days / 365) });
 }
 
-function SectionHeader({
+const SectionHeader = ({
   label,
   indented = false,
   onAdd,
@@ -364,7 +364,7 @@ function SectionHeader({
   label: string;
   indented?: boolean;
   onAdd: () => void;
-}) {
+}) => {
   const { t } = useTranslation('chrome');
   return (
     <div
@@ -384,7 +384,7 @@ function SectionHeader({
       </button>
     </div>
   );
-}
+};
 
 interface AddDocInputProps {
   value: string;
@@ -395,10 +395,7 @@ interface AddDocInputProps {
 }
 
 const AddDocInput = forwardRef<HTMLInputElement, AddDocInputProps>(
-  function AddDocInput(
-    { value, indented = false, onChange, onKeyDown, onBlur },
-    ref,
-  ) {
+  ({ value, indented = false, onChange, onKeyDown, onBlur }, ref) => {
     const { t } = useTranslation('chrome');
     return (
       <div
@@ -420,8 +417,9 @@ const AddDocInput = forwardRef<HTMLInputElement, AddDocInputProps>(
     );
   },
 );
+AddDocInput.displayName = 'AddDocInput';
 
-function BrainSpaceLink({
+const BrainSpaceLink = ({
   spaceId,
   active,
   count,
@@ -429,7 +427,7 @@ function BrainSpaceLink({
   spaceId: string;
   active: boolean;
   count: number;
-}) {
+}) => {
   const { t } = useTranslation('common');
   return (
     <Link
@@ -447,9 +445,9 @@ function BrainSpaceLink({
       </span>
     </Link>
   );
-}
+};
 
-function DocLink({
+const DocLink = ({
   doc,
   href,
   active,
@@ -459,7 +457,7 @@ function DocLink({
   href: string;
   active: boolean;
   indented?: boolean;
-}) {
+}) => {
   const wordCount = countWords(doc.body);
   return (
     <Link
@@ -485,7 +483,7 @@ function DocLink({
       </span>
     </Link>
   );
-}
+};
 
 function inferModeSuffix(pathname: string): string {
   if (pathname.endsWith('/read')) return '/read';

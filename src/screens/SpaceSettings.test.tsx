@@ -16,12 +16,12 @@ import {
   SpaceSettingsScreen,
 } from './SpaceSettings';
 
-function renderAtSpaceSettings(initialPath = '/s/s1/settings') {
+const renderAtSpaceSettings = (initialPath = '/s/s1/settings') => {
   return renderAtRoute(<SpaceSettingsScreen />, {
     path: '/s/:spaceId/settings',
     initialEntries: [initialPath],
   });
-}
+};
 
 describe('SpaceSettingsScreen', () => {
   it('renders the General tab with the space name and tag by default', async () => {

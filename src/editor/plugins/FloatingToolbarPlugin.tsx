@@ -35,12 +35,7 @@ const isCoarsePointer =
   typeof window.matchMedia === 'function' &&
   window.matchMedia('(pointer: coarse)').matches;
 
-export function FloatingToolbarPlugin() {
-  if (isCoarsePointer) return null;
-  return <FloatingToolbarPluginImpl />;
-}
-
-function FloatingToolbarPluginImpl() {
+const FloatingToolbarPluginImpl = () => {
   const [editor] = useLexicalComposerContext();
   const [anchor, setAnchor] = useState<Anchor | null>(null);
   const [formats, setFormats] = useState<ActiveFormats>({
@@ -240,4 +235,9 @@ function FloatingToolbarPluginImpl() {
     />,
     document.body,
   );
-}
+};
+
+export const FloatingToolbarPlugin = () => {
+  if (isCoarsePointer) return null;
+  return <FloatingToolbarPluginImpl />;
+};

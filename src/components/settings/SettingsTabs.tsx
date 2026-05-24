@@ -16,7 +16,7 @@ interface SettingsTabsProps {
   onSelect: (id: string) => void;
 }
 
-function TabButton({
+const TabButton = ({
   tab,
   active,
   onSelect,
@@ -26,7 +26,7 @@ function TabButton({
   active: boolean;
   onSelect: (id: string) => void;
   testId?: string;
-}) {
+}) => {
   return (
     <button
       type="button"
@@ -43,9 +43,9 @@ function TabButton({
       {tab.label}
     </button>
   );
-}
+};
 
-export function SettingsTabs({ groups, active, onSelect }: SettingsTabsProps) {
+export const SettingsTabs = ({ groups, active, onSelect }: SettingsTabsProps) => {
   return (
     <nav aria-label="Settings sections" className="contents">
       {/* Mobile: a single horizontal scroll strip, groups flattened */}
@@ -86,4 +86,4 @@ export function SettingsTabs({ groups, active, onSelect }: SettingsTabsProps) {
       </div>
     </nav>
   );
-}
+};

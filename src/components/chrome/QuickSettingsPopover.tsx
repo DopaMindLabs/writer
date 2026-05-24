@@ -25,7 +25,7 @@ interface RowProps {
   children: ReactNode;
 }
 
-function Row({ label, hint, children }: RowProps) {
+const Row = ({ label, hint, children }: RowProps) => {
   return (
     <div className="grid grid-cols-[1fr_auto] items-start gap-3 border-b border-rule/60 px-4 py-2.5">
       <div className="min-w-0 pt-px">
@@ -39,9 +39,9 @@ function Row({ label, hint, children }: RowProps) {
       <div className="flex shrink-0 items-center justify-end">{children}</div>
     </div>
   );
-}
+};
 
-function PillToggle({
+const PillToggle = ({
   on,
   onToggle,
   ariaLabel,
@@ -49,7 +49,7 @@ function PillToggle({
   on: boolean;
   onToggle: () => void;
   ariaLabel: string;
-}) {
+}) => {
   return (
     <button
       type="button"
@@ -70,9 +70,9 @@ function PillToggle({
       />
     </button>
   );
-}
+};
 
-function MenuItem({
+const MenuItem = ({
   children,
   kbd,
   onClick,
@@ -86,7 +86,7 @@ function MenuItem({
   asChild?: boolean;
   href?: string;
   done?: boolean;
-}) {
+}) => {
   const inner = (
     <span className="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2">
       {typeof done === 'boolean' && (
@@ -120,9 +120,9 @@ function MenuItem({
       </button>
     </PopoverClose>
   );
-}
+};
 
-export function QuickSettingsPopover() {
+export const QuickSettingsPopover = () => {
   const { t } = useTranslation(['chrome', 'tours']);
   const theme = useUI((s) => s.theme);
   const setTheme = useUI((s) => s.setTheme);
@@ -142,17 +142,17 @@ export function QuickSettingsPopover() {
     setCompletedSnapshot(getCompleted());
   }, []);
 
-  function handleFocus() {
+  const handleFocus = () => {
     const next = new URLSearchParams(params);
     if (focused) next.delete('focus');
     else next.set('focus', '1');
     setParams(next, { replace: false });
-  }
+  };
 
-  function handleTour(id: TourId) {
+  const handleTour = (id: TourId) => {
     replay(id);
     setCompletedSnapshot(getCompleted());
-  }
+  };
 
   return (
     <div
@@ -293,4 +293,4 @@ export function QuickSettingsPopover() {
       </div>
     </div>
   );
-}
+};

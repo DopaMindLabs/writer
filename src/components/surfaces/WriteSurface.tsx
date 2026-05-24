@@ -16,7 +16,7 @@ const READING_WIDTH_MAX: Record<ReadingWidth, string> = {
   l: 'max-w-[860px]',
 };
 
-export function WriteSurface({ doc, mode }: WriteSurfaceProps) {
+export const WriteSurface = ({ doc, mode }: WriteSurfaceProps) => {
   const docIdRef = useRef(doc.id);
   docIdRef.current = doc.id;
   const readingWidth = useUI((s) => s.readingWidth);
@@ -45,4 +45,4 @@ export function WriteSurface({ doc, mode }: WriteSurfaceProps) {
       </div>
     </div>
   );
-}
+};

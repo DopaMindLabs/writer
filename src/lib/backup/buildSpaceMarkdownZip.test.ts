@@ -22,10 +22,10 @@ import {
 
 const WHEN = Date.UTC(2026, 4, 15, 14, 32);
 
-async function loadZip(blob: Blob): Promise<JSZip> {
+const loadZip = async (blob: Blob): Promise<JSZip> => {
   const buf = await blob.arrayBuffer();
   return JSZip.loadAsync(buf);
-}
+};
 
 describe('slugify', () => {
   it('lowercases and hyphenates', () => {

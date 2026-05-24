@@ -11,7 +11,7 @@ interface DocInspectorProps {
   docName: string;
 }
 
-export function DocInspector({ docName }: DocInspectorProps) {
+export const DocInspector = ({ docName }: DocInspectorProps) => {
   const { t } = useTranslation('chrome');
   const setInspectorMode = useUI((s) => s.setInspectorMode);
   const section = useUI((s) => s.inspectorSection);
@@ -73,9 +73,9 @@ export function DocInspector({ docName }: DocInspectorProps) {
       </ComingSoon>
     </aside>
   );
-}
+};
 
-function OutlinePane() {
+const OutlinePane = () => {
   const { t } = useTranslation('chrome');
   const rows: [string, string, boolean][] = [
     ['H1', "The bell-keeper's last morning", true],
@@ -115,9 +115,9 @@ function OutlinePane() {
       </div>
     </div>
   );
-}
+};
 
-function InfoPane() {
+const InfoPane = () => {
   const { t } = useTranslation('chrome');
   const rows: [string, string][] = [
     [t('inspector.info.words'), '1,204 / 1,500'],
@@ -144,9 +144,9 @@ function InfoPane() {
       ))}
     </div>
   );
-}
+};
 
-function HistoryPane() {
+const HistoryPane = () => {
   const { t } = useTranslation('chrome');
   const rows: [string, string, boolean, boolean][] = [
     ['now', 'pre-edit · auto', true, false],
@@ -197,9 +197,9 @@ function HistoryPane() {
       </div>
     </div>
   );
-}
+};
 
-function ActionsPane() {
+const ActionsPane = () => {
   const { t } = useTranslation('chrome');
   const item = (text: string, kbd?: string, badge?: string) => (
     <div className="flex items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper hover:text-ink">
@@ -230,4 +230,4 @@ function ActionsPane() {
       {item(t('inspector.actions.trash'))}
     </div>
   );
-}
+};

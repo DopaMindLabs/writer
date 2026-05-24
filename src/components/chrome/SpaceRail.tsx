@@ -15,7 +15,7 @@ interface SpaceRailProps {
   activeSpaceId: string | null;
 }
 
-export function SpaceRail({ activeSpaceId }: SpaceRailProps) {
+export const SpaceRail = ({ activeSpaceId }: SpaceRailProps) => {
   const { t } = useTranslation('chrome');
   const spaces = useSpaces() ?? [];
 
@@ -117,4 +117,4 @@ export function SpaceRail({ activeSpaceId }: SpaceRailProps) {
       </Popover>
     </aside>
   );
-}
+};

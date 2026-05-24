@@ -38,7 +38,7 @@ const MAX_PCT = 75;
 const SNAP_PCT = 50;
 const SNAP_TOLERANCE = 5;
 
-export function SplitScreen() {
+export const SplitScreen = () => {
   const { t } = useTranslation('screens');
   const { spaceId, docId } = useParams<{ spaceId: string; docId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -81,11 +81,11 @@ export function SplitScreen() {
 
   if (!spaceId || !docId) return <Navigate to="/" replace />;
 
-  function onPickRight(e: ChangeEvent<HTMLSelectElement>) {
+  const onPickRight = (e: ChangeEvent<HTMLSelectElement>) => {
     const next = new URLSearchParams(searchParams);
     next.set('with', e.target.value);
     setSearchParams(next, { replace: true });
-  }
+  };
 
   return (
     <div className="flex h-full w-full">
@@ -162,7 +162,7 @@ export function SplitScreen() {
       </div>
     </div>
   );
-}
+};
 
 interface SplitPanesProps {
   spaceId: string;
@@ -173,13 +173,13 @@ interface SplitPanesProps {
   aside?: React.ReactNode;
 }
 
-function SplitPanes({
+const SplitPanes = ({
   leftHeader,
   leftContent,
   rightHeader,
   rightContent,
   aside,
-}: SplitPanesProps) {
+}: SplitPanesProps) => {
   const storedPct = useUI((s) => s.splitDividerPct);
   const setStoredPct = useUI((s) => s.setSplitDividerPct);
   const [pct, setPct] = useState<number>(storedPct);
@@ -340,5 +340,5 @@ function SplitPanes({
       {aside}
     </main>
   );
-}
+};
 

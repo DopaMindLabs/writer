@@ -7,11 +7,11 @@ interface BrainSpaceConnectionProps {
   to: Note;
 }
 
-export function BrainSpaceConnection({
+export const BrainSpaceConnection = ({
   connection,
   from,
   to,
-}: BrainSpaceConnectionProps) {
+}: BrainSpaceConnectionProps) => {
   const cx1 = from.l + from.w / 2;
   const cy1 = from.t + from.h / 2;
   const cx2 = to.l + to.w / 2;
@@ -20,9 +20,9 @@ export function BrainSpaceConnection({
   const my = (cy1 + cy2) / 2 - 30;
   const d = `M ${cx1} ${cy1} Q ${mx} ${my}, ${cx2} ${cy2}`;
 
-  async function onDelete() {
+  const onDelete = async () => {
     await db.connections.delete(connection.id);
-  }
+  };
 
   return (
     <g className="group cursor-pointer" onClick={onDelete}>
@@ -60,4 +60,4 @@ export function BrainSpaceConnection({
       </g>
     </g>
   );
-}
+};

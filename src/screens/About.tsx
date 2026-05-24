@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/typography';
 import { PageNav } from '@/components/chrome/PageNav';
 
-export function AboutScreen() {
+export const AboutScreen = () => {
   const { t } = useTranslation(['screens', 'common']);
   return (
     <div className="flex h-full w-full flex-col overflow-auto bg-paper text-ink">
@@ -86,4 +86,4 @@ export function AboutScreen() {
       </div>
     </div>
   );
-}
+};

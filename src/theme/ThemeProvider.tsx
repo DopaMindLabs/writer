@@ -28,7 +28,7 @@ function detectInitialTheme(): Theme | null {
   return wantsDark ? 'hc-dark' : 'hc-light';
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const theme = useUI((s) => s.theme);
   const setTheme = useUI((s) => s.setTheme);
 
@@ -48,7 +48,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       {children}
     </ThemeContext.Provider>
   );
-}
+};
 
 export function useTheme() {
   const ctx = useContext(ThemeContext);

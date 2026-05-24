@@ -41,7 +41,7 @@ const TAB_ICONS: Record<TabKey, ComponentType<SVGProps<SVGSVGElement>>> = {
   dump: Brain,
 };
 
-export function ModeTabs({ mode, spaceId, docId, fallbackDocId }: ModeTabsProps) {
+export const ModeTabs = ({ mode, spaceId, docId, fallbackDocId }: ModeTabsProps) => {
   const { t } = useTranslation('chrome');
   const [searchParams] = useSearchParams();
   const focusParam = searchParams.get('focus');
@@ -112,7 +112,7 @@ export function ModeTabs({ mode, spaceId, docId, fallbackDocId }: ModeTabsProps)
       })}
     </nav>
   );
-}
+};
 
 interface FocusToggleProps {
   mode: Mode;
@@ -120,24 +120,24 @@ interface FocusToggleProps {
   docId: string | null;
 }
 
-export function FocusToggle({ mode, spaceId, docId }: FocusToggleProps) {
+export const FocusToggle = ({ mode, spaceId, docId }: FocusToggleProps) => {
   const { t } = useTranslation('chrome');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const focused = searchParams.get('focus') === '1' || mode === 'focus';
 
-  function basePathFor(m: Mode): string | null {
+  const basePathFor = (m: Mode): string | null => {
     if (m === 'dump') return `/s/${spaceId}/dump`;
     if (!docId) return null;
     if (m === 'split') return `/s/${spaceId}/d/${docId}/split`;
     return `/s/${spaceId}/d/${docId}`;
-  }
+  };
 
   useEffect(() => {
     if (mode === 'read') return;
     const base = basePathFor(mode);
     if (!base) return;
-    function onKey(e: KeyboardEvent) {
+    const onKey = (e: KeyboardEvent) => {
       const isMod = e.metaKey || e.ctrlKey;
       if (!isMod || e.key !== '\\') return;
       e.preventDefault();
@@ -149,7 +149,7 @@ export function FocusToggle({ mode, spaceId, docId }: FocusToggleProps) {
       }
       const qs = next.toString();
       navigate(`${base}${qs ? `?${qs}` : ''}`);
-    }
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -199,4 +199,4 @@ export function FocusToggle({ mode, spaceId, docId }: FocusToggleProps) {
       <TooltipContent side="bottom">{t('topbar.focusTitleFocus')}</TooltipContent>
     </Tooltip>
   );
-}
+};

@@ -17,10 +17,10 @@ const sampleCitation: Citation = {
   useCount: 0,
 };
 
-async function seed() {
+const seed = async () => {
   await db.spaces.put(sampleSpace);
   await db.citations.put(sampleCitation);
-}
+};
 
 describe('CitationsScreen', () => {
   it('renders the citation table with a seeded entry', async () => {

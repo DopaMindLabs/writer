@@ -37,7 +37,7 @@ const router = createHashRouter([
   { path: '*', element: <NotFoundScreen /> },
 ]);
 
-export function App() {
+export const App = () => {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -96,4 +96,4 @@ export function App() {
       </TooltipProvider>
     </ThemeProvider>
   );
-}
+};

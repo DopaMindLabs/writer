@@ -49,13 +49,59 @@ type DragState =
       origH: number;
     };
 
-export function BrainSpaceNote({
+interface NoteContextMenuProps {
+  x: number;
+  y: number;
+  onDelete: () => void;
+  onClose: () => void;
+}
+
+const NoteContextMenu = ({ x, y, onDelete, onClose }: NoteContextMenuProps) => {
+  useEffect(() => {
+    const onPointerDown = (e: PointerEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && target.closest('[data-note-context-menu]')) return;
+      onClose();
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('pointerdown', onPointerDown, true);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown, true);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [onClose]);
+
+  return createPortal(
+    <div
+      data-note-context-menu
+      role="menu"
+      style={{ left: x, top: y }}
+      className="fixed z-50 min-w-[10rem] border border-ink bg-paper py-1 shadow-md"
+    >
+      <button
+        type="button"
+        role="menuitem"
+        onClick={onDelete}
+        className="flex w-full items-center gap-2 px-3 py-1.5 text-left font-sans text-[12px] text-[color:var(--danger)] transition-colors hover:bg-[color:var(--danger-bg)]"
+      >
+        <Trash2 className="h-3.5 w-3.5 text-[color:var(--danger)]" />
+        Delete note
+      </button>
+    </div>,
+    document.body,
+  );
+};
+
+export const BrainSpaceNote = ({
   note,
   spaceId,
   selected,
   pending,
   onPick,
-}: BrainSpaceNoteProps) {
+}: BrainSpaceNoteProps) => {
   const navigate = useNavigate();
   const openDetail = useUI((s) => s.openDetail);
   const [drag, setDrag] = useState<DragState>({ kind: 'idle' });
@@ -174,50 +220,50 @@ export function BrainSpaceNote({
     [drag, note.id, pos.l, pos.t, pos.w, pos.h],
   );
 
-  async function maybePromote() {
+  const maybePromote = async () => {
     if (note.state !== NoteState.User) {
       await db.notes.update(note.id, { state: NoteState.User });
     }
-  }
+  };
 
-  async function commitBody() {
+  const commitBody = async () => {
     setEditing('none');
     if (draftBody !== note.body) {
       await db.notes.update(note.id, { body: draftBody });
       await maybePromote();
     }
-  }
+  };
 
-  async function commitTitle() {
+  const commitTitle = async () => {
     setEditing('none');
     const next = draftTitle.trim() || undefined;
     if (next !== note.title) {
       await db.notes.update(note.id, { title: next });
       await maybePromote();
     }
-  }
+  };
 
-  function onOpenDetail(e: React.MouseEvent) {
+  const onOpenDetail = (e: React.MouseEvent) => {
     e.stopPropagation();
     openDetail(note.id);
-  }
+  };
 
-  function onDocLinkClick(e: React.MouseEvent) {
+  const onDocLinkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!note.linkedDocId) return;
     navigate(`/s/${spaceId}/d/${note.linkedDocId}`);
-  }
+  };
 
-  function onContextMenu(e: React.MouseEvent) {
+  const onContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setMenu({ x: e.clientX, y: e.clientY });
-  }
+  };
 
-  async function onDeleteFromMenu() {
+  const onDeleteFromMenu = async () => {
     setMenu(null);
     await deleteNoteWithCascade(note.id);
-  }
+  };
 
   return (
     <div
@@ -360,50 +406,4 @@ export function BrainSpaceNote({
       )}
     </div>
   );
-}
-
-interface NoteContextMenuProps {
-  x: number;
-  y: number;
-  onDelete: () => void;
-  onClose: () => void;
-}
-
-function NoteContextMenu({ x, y, onDelete, onClose }: NoteContextMenuProps) {
-  useEffect(() => {
-    function onPointerDown(e: PointerEvent) {
-      const target = e.target as HTMLElement | null;
-      if (target && target.closest('[data-note-context-menu]')) return;
-      onClose();
-    }
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose();
-    }
-    document.addEventListener('pointerdown', onPointerDown, true);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown, true);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [onClose]);
-
-  return createPortal(
-    <div
-      data-note-context-menu
-      role="menu"
-      style={{ left: x, top: y }}
-      className="fixed z-50 min-w-[10rem] border border-ink bg-paper py-1 shadow-md"
-    >
-      <button
-        type="button"
-        role="menuitem"
-        onClick={onDelete}
-        className="flex w-full items-center gap-2 px-3 py-1.5 text-left font-sans text-[12px] text-[color:var(--danger)] transition-colors hover:bg-[color:var(--danger-bg)]"
-      >
-        <Trash2 className="h-3.5 w-3.5 text-[color:var(--danger)]" />
-        Delete note
-      </button>
-    </div>,
-    document.body,
-  );
-}
+};

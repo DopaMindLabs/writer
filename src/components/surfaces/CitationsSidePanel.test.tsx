@@ -6,10 +6,10 @@ import { sampleSpace } from '@/test/fixtures';
 import { useUI } from '@/store/ui';
 import { CitationsSidePanel } from './CitationsSidePanel';
 
-function LocationProbe() {
+const LocationProbe = () => {
   const loc = useLocation();
   return <div data-testid="location">{loc.pathname}</div>;
-}
+};
 
 describe('CitationsSidePanel', () => {
   it('renders nothing when the drawer is closed', () => {

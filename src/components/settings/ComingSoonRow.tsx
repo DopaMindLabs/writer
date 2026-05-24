@@ -10,7 +10,7 @@ interface ComingSoonRowProps {
   tooltip: string;
 }
 
-export function ComingSoonRow({ label, hint, tooltip }: ComingSoonRowProps) {
+export const ComingSoonRow = ({ label, hint, tooltip }: ComingSoonRowProps) => {
   const { t } = useTranslation('screens');
   return (
     <SettingRow label={label} hint={hint} disabled>
@@ -39,4 +39,4 @@ export function ComingSoonRow({ label, hint, tooltip }: ComingSoonRowProps) {
       </div>
     </SettingRow>
   );
-}
+};

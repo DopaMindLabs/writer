@@ -12,7 +12,7 @@ import {
   PlaceholderToggle,
 } from './PlaceholderPrimitives';
 
-export function GeneralPlaceholder() {
+export const GeneralPlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -53,9 +53,9 @@ export function GeneralPlaceholder() {
       </SettingRow>
     </section>
   );
-}
+};
 
-export function AppearancePlaceholder() {
+export const AppearancePlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -90,9 +90,9 @@ export function AppearancePlaceholder() {
       </SettingRow>
     </section>
   );
-}
+};
 
-export function TypographyPlaceholder() {
+export const TypographyPlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -131,9 +131,9 @@ export function TypographyPlaceholder() {
       </SettingRow>
     </section>
   );
-}
+};
 
-export function ShortcutsPlaceholder() {
+export const ShortcutsPlaceholder = () => {
   const { t } = useTranslation('screens');
   type Row = [string, string];
   const groups: [string, Row[]][] = [
@@ -190,9 +190,9 @@ export function ShortcutsPlaceholder() {
       ))}
     </section>
   );
-}
+};
 
-export function TemplatesPlaceholder() {
+export const TemplatesPlaceholder = () => {
   const { t } = useTranslation('screens');
   const items: [string, string][] = [
     [t('settings.templates.items.fiction'), t('settings.templates.items.fictionSub')],
@@ -220,7 +220,7 @@ export function TemplatesPlaceholder() {
       </div>
     </section>
   );
-}
+};
 
 const PALETTE_ITEMS: [string, string][] = [
   ['evidence', '#fff3a8'],
@@ -230,7 +230,7 @@ const PALETTE_ITEMS: [string, string][] = [
   ['loose', '#e8e8e8'],
 ];
 
-export function PalettesPlaceholder() {
+export const PalettesPlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -251,9 +251,9 @@ export function PalettesPlaceholder() {
       </div>
     </section>
   );
-}
+};
 
-export function CitationsPlaceholder() {
+export const CitationsPlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -277,9 +277,9 @@ export function CitationsPlaceholder() {
       </SettingRow>
     </section>
   );
-}
+};
 
-export function AnnotationPlaceholder() {
+export const AnnotationPlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -307,9 +307,9 @@ export function AnnotationPlaceholder() {
       </SettingRow>
     </section>
   );
-}
+};
 
-export function ExportPlaceholder() {
+export const ExportPlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -347,9 +347,9 @@ export function ExportPlaceholder() {
       </SettingRow>
     </section>
   );
-}
+};
 
-export function DataPlaceholder() {
+export const DataPlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -377,9 +377,9 @@ export function DataPlaceholder() {
       </SettingRow>
     </section>
   );
-}
+};
 
-export function AccountPlaceholder() {
+export const AccountPlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -403,9 +403,9 @@ export function AccountPlaceholder() {
       </SettingRow>
     </section>
   );
-}
+};
 
-export function AboutPlaceholder() {
+export const AboutPlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -443,9 +443,9 @@ export function AboutPlaceholder() {
       </SettingRow>
     </section>
   );
-}
+};
 
-export function BackupsPlaceholder() {
+export const BackupsPlaceholder = () => {
   const { t } = useTranslation('screens');
   return (
     <section>
@@ -484,6 +484,6 @@ export function BackupsPlaceholder() {
       </SettingRow>
     </section>
   );
-}
+};
 
 export { PlaceholderInput };

@@ -12,7 +12,7 @@ interface MobileMoreSheetProps {
 
 type ModeKey = 'write' | 'read' | 'split';
 
-export function MobileMoreSheet({ spaceId, docId }: MobileMoreSheetProps) {
+export const MobileMoreSheet = ({ spaceId, docId }: MobileMoreSheetProps) => {
   const { t } = useTranslation(['chrome', 'common']);
   const open = useUI((s) => s.mobileMoreOpen);
   const setOpen = useUI((s) => s.setMobileMoreOpen);
@@ -40,12 +40,12 @@ export function MobileMoreSheet({ spaceId, docId }: MobileMoreSheetProps) {
     },
   ];
 
-  function modeActive(key: ModeKey): boolean {
+  const modeActive = (key: ModeKey): boolean => {
     const p = location.pathname;
     if (key === 'read') return p.endsWith('/read');
     if (key === 'split') return p.endsWith('/split');
     return !p.endsWith('/read') && !p.endsWith('/split') && !p.endsWith('/dump');
-  }
+  };
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
@@ -129,9 +129,9 @@ export function MobileMoreSheet({ spaceId, docId }: MobileMoreSheetProps) {
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>
   );
-}
+};
 
-function MoreItem({ to, label }: { to: string; label: string }) {
+const MoreItem = ({ to, label }: { to: string; label: string }) => {
   return (
     <li>
       <DialogPrimitive.Close asChild>
@@ -144,9 +144,9 @@ function MoreItem({ to, label }: { to: string; label: string }) {
       </DialogPrimitive.Close>
     </li>
   );
-}
+};
 
-function ComingSoonItem({ label }: { label: string }) {
+const ComingSoonItem = ({ label }: { label: string }) => {
   return (
     <li>
       <ComingSoon hint={label} className="w-full">
@@ -156,4 +156,4 @@ function ComingSoonItem({ label }: { label: string }) {
       </ComingSoon>
     </li>
   );
-}
+};

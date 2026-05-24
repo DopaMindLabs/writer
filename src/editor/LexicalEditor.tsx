@@ -51,13 +51,13 @@ const editorTheme = {
   link: 'text-ink underline underline-offset-2',
 };
 
-export function LexicalEditor({
+export const LexicalEditor = ({
   initialValue,
   onChange,
   mode,
   placeholder = 'Start writing…',
   autoFocus = true,
-}: LexicalEditorProps) {
+}: LexicalEditorProps) => {
   const editable = mode !== 'read';
   const floatingToolbarEnabled = useUI((s) => s.floatingToolbarEnabled);
 
@@ -124,7 +124,7 @@ export function LexicalEditor({
       </div>
     </LexicalComposer>
   );
-}
+};
 
 function makeInitialState(value: string): string | undefined {
   if (!value) return undefined;

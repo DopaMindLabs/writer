@@ -11,7 +11,7 @@ interface PageNavProps {
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   cn('hover:text-ink', isActive ? 'text-ink' : 'text-ink-3');
 
-export function PageNav({ showBack = true, backTo = '/' }: PageNavProps) {
+export const PageNav = ({ showBack = true, backTo = '/' }: PageNavProps) => {
   const { t } = useTranslation('common');
   return (
     <header className="flex items-center justify-between gap-4 border-b border-rule px-4 py-4 md:px-12 md:py-5">
@@ -50,4 +50,4 @@ export function PageNav({ showBack = true, backTo = '/' }: PageNavProps) {
       </nav>
     </header>
   );
-}
+};

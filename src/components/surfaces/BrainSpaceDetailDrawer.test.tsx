@@ -34,18 +34,18 @@ const CONNECTION: Connection = {
   createdAt: 0,
 };
 
-async function seedTwoConnectedNotes() {
+const seedTwoConnectedNotes = async () => {
   await db.spaces.put(sampleSpace);
   await db.notes.bulkPut([sampleNote, SECOND_NOTE]);
   await db.connections.put(CONNECTION);
-}
+};
 
-function renderCanvas() {
+const renderCanvas = () => {
   return renderAtRoute(<BrainSpaceCanvas spaceId={sampleSpace.id} />, {
     path: '/s/:spaceId',
     initialEntries: [`/s/${sampleSpace.id}`],
   });
-}
+};
 
 afterEach(() => {
   useUI.getState().closeDetail();

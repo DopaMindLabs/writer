@@ -16,7 +16,7 @@ vi.mock('@/tours/storage', () => ({
   getCompleted: () => getCompletedMock(),
 }));
 
-function LocationProbe() {
+const LocationProbe = () => {
   const location = useLocation();
   const [params] = useSearchParams();
   return (
@@ -25,9 +25,9 @@ function LocationProbe() {
       <div data-testid="probe-search">{params.toString()}</div>
     </>
   );
-}
+};
 
-function Harness() {
+const Harness = () => {
   return (
     <>
       <Popover open>
@@ -39,7 +39,7 @@ function Harness() {
       <LocationProbe />
     </>
   );
-}
+};
 
 describe('QuickSettingsPopover', () => {
   beforeEach(() => {

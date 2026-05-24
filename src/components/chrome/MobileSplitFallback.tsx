@@ -7,7 +7,7 @@ interface MobileSplitFallbackProps {
   docId: string;
 }
 
-export function MobileSplitFallback({ spaceId, docId }: MobileSplitFallbackProps) {
+export const MobileSplitFallback = ({ spaceId, docId }: MobileSplitFallbackProps) => {
   const { t } = useTranslation('chrome');
   return (
     <div
@@ -35,4 +35,4 @@ export function MobileSplitFallback({ spaceId, docId }: MobileSplitFallbackProps
       </Link>
     </div>
   );
-}
+};

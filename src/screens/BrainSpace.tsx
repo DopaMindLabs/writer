@@ -16,7 +16,7 @@ import { useUI } from '@/store/ui';
 import { useAutoTour } from '@/tours';
 import { TypographyP } from '@/components/ui/typography';
 
-export function BrainSpaceScreen() {
+export const BrainSpaceScreen = () => {
   const { t } = useTranslation('screens');
   const { spaceId } = useParams<{ spaceId: string }>();
   const [searchParams] = useSearchParams();
@@ -75,9 +75,9 @@ export function BrainSpaceScreen() {
       </div>
     </div>
   );
-}
+};
 
-function BrainSpaceMobileNotice({ spaceId }: { spaceId: string }) {
+const BrainSpaceMobileNotice = ({ spaceId }: { spaceId: string }) => {
   const { t } = useTranslation('screens');
   return (
     <div className="flex flex-1 items-center justify-center bg-paper px-6 py-10 md:hidden">
@@ -100,4 +100,4 @@ function BrainSpaceMobileNotice({ spaceId }: { spaceId: string }) {
       </div>
     </div>
   );
-}
+};

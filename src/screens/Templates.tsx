@@ -7,7 +7,7 @@ import { createSpaceFromTemplate } from '@/db/seed';
 import { cn } from '@/lib/utils';
 import { TypographyH1 } from '@/components/ui/typography';
 
-export function TemplatesScreen() {
+export const TemplatesScreen = () => {
   const { t } = useTranslation(['screens', 'templates']);
   const templates = useMemo(() => listTemplates(), []);
   const templateLabel = (tpl: Template) =>
@@ -32,13 +32,13 @@ export function TemplatesScreen() {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  function onSelect(tpl: Template) {
+  const onSelect = (tpl: Template) => {
     setSelectedId(tpl.id);
     setName(templateLabel(tpl));
     setTag(templateTag(tpl));
-  }
+  };
 
-  async function onSubmit(e: FormEvent) {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!selected || submitting) return;
     setSubmitting(true);
@@ -56,7 +56,7 @@ export function TemplatesScreen() {
     } finally {
       setSubmitting(false);
     }
-  }
+  };
 
   const submitLabel = t('templates.submitLabel', {
     name: name.trim() || (selected ? templateLabel(selected) : '…'),
@@ -217,4 +217,4 @@ export function TemplatesScreen() {
       </form>
     </div>
   );
-}
+};

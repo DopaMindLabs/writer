@@ -41,11 +41,11 @@ const TYPE_OPTIONS: Citation['type'][] = ['book', 'article', 'chapter', 'misc'];
 
 type RowMode = 'view' | 'edit';
 
-export function CitationsPane({
+export const CitationsPane = ({
   spaceId,
   spaceName,
   density = 'comfortable',
-}: CitationsPaneProps) {
+}: CitationsPaneProps) => {
   const citations = useCitations(spaceId);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<string | null>(null);
@@ -86,21 +86,21 @@ export function CitationsPane({
   const colTemplate = isCompact ? COL_TEMPLATE_COMPACT : COL_TEMPLATE_COMFORTABLE;
   const xPad = isCompact ? 'px-4' : 'px-4 md:px-10';
 
-  function toggleSelected(id: string) {
+  const toggleSelected = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
       return next;
     });
-  }
+  };
 
   const visibleIds = pageRows.map((r) => r.id);
   const allVisibleSelected =
     visibleIds.length > 0 && visibleIds.every((id) => selected.has(id));
   const someVisibleSelected = visibleIds.some((id) => selected.has(id));
 
-  function toggleSelectAllVisible() {
+  const toggleSelectAllVisible = () => {
     setSelected((prev) => {
       const next = new Set(prev);
       if (allVisibleSelected) {
@@ -110,9 +110,9 @@ export function CitationsPane({
       }
       return next;
     });
-  }
+  };
 
-  async function handleFile(e: ChangeEvent<HTMLInputElement>) {
+  const handleFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setStatus(`Parsing ${file.name}…`);
@@ -134,15 +134,15 @@ export function CitationsPane({
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
-  }
+  };
 
-  function handleExport() {
+  const handleExport = () => {
     const bib = serializeCitationsToBibtex(citations);
     const blob = new Blob([bib], { type: 'application/x-bibtex' });
     downloadBlob(blob, `${spaceName ?? 'space'}-citations.bib`);
-  }
+  };
 
-  async function handleBulkDelete() {
+  const handleBulkDelete = async () => {
     const ids = Array.from(selected);
     if (ids.length === 0) return;
     const ok = window.confirm(
@@ -152,9 +152,9 @@ export function CitationsPane({
     await db.citations.bulkDelete(ids);
     setSelected(new Set());
     setStatus(`Deleted ${ids.length} citation${ids.length === 1 ? '' : 's'}.`);
-  }
+  };
 
-  async function deleteCitation(c: Citation) {
+  const deleteCitation = async (c: Citation) => {
     const confirmMsg =
       c.useCount > 0
         ? `This citation is used ${c.useCount}× in your documents. Delete anyway?`
@@ -175,9 +175,9 @@ export function CitationsPane({
         `Failed: ${err instanceof Error ? err.message : 'unknown error'}`,
       );
     }
-  }
+  };
 
-  async function handleBulkSetType(type: Citation['type']) {
+  const handleBulkSetType = async (type: Citation['type']) => {
     const ids = Array.from(selected);
     if (ids.length === 0) return;
     await db.transaction('rw', db.citations, async () => {
@@ -188,7 +188,7 @@ export function CitationsPane({
     setStatus(
       `Set type to ${type} on ${ids.length} citation${ids.length === 1 ? '' : 's'}.`,
     );
-  }
+  };
 
   return (
     <div className="flex h-full flex-1 flex-col overflow-hidden bg-paper">
@@ -409,9 +409,9 @@ export function CitationsPane({
       </div>
     </div>
   );
-}
+};
 
-function EmptyState({ hasCitations }: { hasCitations: boolean }) {
+const EmptyState = ({ hasCitations }: { hasCitations: boolean }) => {
   return (
     <div className="flex items-center justify-center px-4 py-20 md:px-10">
       <div className="text-center">
@@ -426,7 +426,7 @@ function EmptyState({ hasCitations }: { hasCitations: boolean }) {
       </div>
     </div>
   );
-}
+};
 
 interface CitationRowProps {
   citation: Citation;
@@ -438,7 +438,7 @@ interface CitationRowProps {
   onExpand: () => void;
 }
 
-function CitationRow({
+const CitationRow = ({
   citation: c,
   isCompact,
   colTemplate,
@@ -446,19 +446,19 @@ function CitationRow({
   isSelected,
   onToggleSelect,
   onExpand,
-}: CitationRowProps) {
-  function handleRowClick(e: MouseEvent<HTMLDivElement>) {
+}: CitationRowProps) => {
+  const handleRowClick = (e: MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     if (target.closest('input, button, a, select, label')) return;
     onExpand();
-  }
+  };
 
-  function handleRowKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+  const handleRowKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       onExpand();
     }
-  }
+  };
 
   return (
     <div
@@ -521,9 +521,9 @@ function CitationRow({
       </div>
     </div>
   );
-}
+};
 
-function CopyTagButton({ value }: { value: string }) {
+const CopyTagButton = ({ value }: { value: string }) => {
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -533,7 +533,7 @@ function CopyTagButton({ value }: { value: string }) {
     };
   }, []);
 
-  async function handleCopy() {
+  const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
@@ -542,7 +542,7 @@ function CopyTagButton({ value }: { value: string }) {
     } catch {
       // ignore — clipboard may be blocked in some contexts
     }
-  }
+  };
 
   return (
     <button
@@ -555,7 +555,7 @@ function CopyTagButton({ value }: { value: string }) {
       {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
     </button>
   );
-}
+};
 
 interface CitationDetailRowProps {
   citation: Citation;
@@ -567,7 +567,7 @@ interface CitationDetailRowProps {
   onClose: () => void;
 }
 
-function CitationDetailRow({
+const CitationDetailRow = ({
   citation: c,
   xPad,
   isSelected,
@@ -575,7 +575,7 @@ function CitationDetailRow({
   onEdit,
   onDelete,
   onClose,
-}: CitationDetailRowProps) {
+}: CitationDetailRowProps) => {
   const labelCls = 'font-mono text-[10px] uppercase tracking-wider text-ink-3';
   const valueCls = 'text-[13px] text-ink';
 
@@ -656,7 +656,7 @@ function CitationDetailRow({
       </div>
     </div>
   );
-}
+};
 
 interface CitationEditRowProps {
   citation: Citation;
@@ -667,14 +667,14 @@ interface CitationEditRowProps {
   onError: (msg: string) => void;
 }
 
-function CitationEditRow({
+const CitationEditRow = ({
   citation: c,
   xPad,
   onCancel,
   onSaved,
   onDelete,
   onError,
-}: CitationEditRowProps) {
+}: CitationEditRowProps) => {
   const [draft, setDraft] = useState({
     key: c.key,
     authors: c.authors,
@@ -684,7 +684,7 @@ function CitationEditRow({
   });
   const [busy, setBusy] = useState(false);
 
-  async function handleSave() {
+  const handleSave = async () => {
     setBusy(true);
     try {
       const trimmedKey = draft.key.trim() || c.key;
@@ -723,9 +723,9 @@ function CitationEditRow({
       );
       setBusy(false);
     }
-  }
+  };
 
-  function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Escape') {
       e.preventDefault();
       onCancel();
@@ -733,7 +733,7 @@ function CitationEditRow({
       e.preventDefault();
       void handleSave();
     }
-  }
+  };
 
   const inputCls =
     'w-full rounded-sm border border-rule bg-paper px-2 py-1 text-[13px] text-ink outline-none focus:border-ink';
@@ -843,7 +843,7 @@ function CitationEditRow({
       </div>
     </div>
   );
-}
+};
 
 interface BulkBarProps {
   xPad: string;
@@ -853,7 +853,7 @@ interface BulkBarProps {
   onSetType: (t: Citation['type']) => void;
 }
 
-function BulkBar({ xPad, count, onClear, onDelete, onSetType }: BulkBarProps) {
+const BulkBar = ({ xPad, count, onClear, onDelete, onSetType }: BulkBarProps) => {
   return (
     <div
       className={cn(
@@ -907,7 +907,7 @@ function BulkBar({ xPad, count, onClear, onDelete, onSetType }: BulkBarProps) {
       </div>
     </div>
   );
-}
+};
 
 interface ManualAddFormProps {
   spaceId: string;
@@ -916,11 +916,11 @@ interface ManualAddFormProps {
   onStatus: (s: string | null) => void;
 }
 
-function ManualAddForm({ spaceId, xPad, onClose, onStatus }: ManualAddFormProps) {
+const ManualAddForm = ({ spaceId, xPad, onClose, onStatus }: ManualAddFormProps) => {
   const [raw, setRaw] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  async function onSubmit() {
+  const onSubmit = async () => {
     if (!raw.trim()) return;
     setSubmitting(true);
     try {
@@ -955,7 +955,7 @@ function ManualAddForm({ spaceId, xPad, onClose, onStatus }: ManualAddFormProps)
     } finally {
       setSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className={cn('border-b border-rule bg-paper-2 py-4', xPad)}>
@@ -988,4 +988,4 @@ function ManualAddForm({ spaceId, xPad, onClose, onStatus }: ManualAddFormProps)
       </div>
     </div>
   );
-}
+};

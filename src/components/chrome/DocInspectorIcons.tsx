@@ -11,7 +11,7 @@ const ITEMS: { id: InspectorSection; Icon: typeof List }[] = [
   { id: 'actions', Icon: MoreHorizontal },
 ];
 
-export function DocInspectorIcons() {
+export const DocInspectorIcons = () => {
   const { t } = useTranslation('chrome');
   const setInspectorMode = useUI((s) => s.setInspectorMode);
   const section = useUI((s) => s.inspectorSection);
@@ -65,4 +65,4 @@ export function DocInspectorIcons() {
       </button>
     </aside>
   );
-}
+};

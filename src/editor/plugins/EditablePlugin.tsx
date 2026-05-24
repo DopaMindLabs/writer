@@ -5,7 +5,7 @@ interface EditablePluginProps {
   editable: boolean;
 }
 
-export function EditablePlugin({ editable }: EditablePluginProps) {
+export const EditablePlugin = ({ editable }: EditablePluginProps) => {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
@@ -13,4 +13,4 @@ export function EditablePlugin({ editable }: EditablePluginProps) {
   }, [editor, editable]);
 
   return null;
-}
+};

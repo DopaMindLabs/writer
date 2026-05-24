@@ -20,14 +20,14 @@ interface TopbarProps {
   fallbackDocId?: string | null;
 }
 
-export function Topbar({
+export const Topbar = ({
   spaceId,
   docId,
   docName,
   spaceName,
   mode,
   fallbackDocId,
-}: TopbarProps) {
+}: TopbarProps) => {
   const { t } = useTranslation('chrome');
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -51,15 +51,15 @@ export function Topbar({
     if (focus && inspectorMode !== 'none') setInspectorMode('none');
   }, [focus, inspectorMode, setInspectorMode]);
 
-  async function commitDocName() {
+  const commitDocName = async () => {
     setEditingDoc(false);
     if (!docId) return;
     const next = draftDocName.trim();
     if (!next || next === docName) return;
     await db.docs.update(docId, { name: next, updatedAt: Date.now() });
-  }
+  };
 
-  function onDocKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+  const onDocKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       (e.target as HTMLInputElement).blur();
@@ -68,7 +68,7 @@ export function Topbar({
       setDraftDocName(docName ?? '');
       setEditingDoc(false);
     }
-  }
+  };
 
   const citeContent = focus ? (
     <Quote className="h-3.5 w-3.5" />
@@ -202,4 +202,4 @@ export function Topbar({
       <MobileNavDrawer spaceId={spaceId} activeDocId={docId} />
     </header>
   );
-}
+};

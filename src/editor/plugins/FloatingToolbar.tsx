@@ -21,7 +21,7 @@ interface BtnProps {
   onMouseDown: (e: React.MouseEvent) => void;
 }
 
-function Btn({ active, label, ariaLabel, onMouseDown }: BtnProps) {
+const Btn = ({ active, label, ariaLabel, onMouseDown }: BtnProps) => {
   return (
     <button
       type="button"
@@ -39,17 +39,17 @@ function Btn({ active, label, ariaLabel, onMouseDown }: BtnProps) {
       {label}
     </button>
   );
-}
+};
 
-function Sep() {
+const Sep = () => {
   return <span aria-hidden className="mx-0.5 h-4 w-px bg-rule" />;
-}
+};
 
 export const FloatingToolbar = forwardRef<HTMLDivElement, FloatingToolbarProps>(
-  function FloatingToolbar(
+  (
     { block, bold, italic, onHeading, onList, onQuote, onBold, onItalic, style },
     ref,
-  ) {
+  ) => {
     return (
       <div
         ref={ref}
@@ -121,3 +121,4 @@ export const FloatingToolbar = forwardRef<HTMLDivElement, FloatingToolbarProps>(
     );
   },
 );
+FloatingToolbar.displayName = 'FloatingToolbar';

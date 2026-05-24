@@ -9,10 +9,10 @@ interface ProvidersProps {
   initialEntries?: string[];
 }
 
-export function AllProviders({
+export const AllProviders = ({
   children,
   initialEntries = ['/'],
-}: ProvidersProps) {
+}: ProvidersProps) => {
   return (
     <MemoryRouter initialEntries={initialEntries}>
       <ThemeProvider>
@@ -20,11 +20,11 @@ export function AllProviders({
       </ThemeProvider>
     </MemoryRouter>
   );
-}
+};
 
 type Options = RenderOptions & { initialEntries?: string[] };
 
-export function renderWithProviders(ui: ReactElement, options: Options = {}) {
+export const renderWithProviders = (ui: ReactElement, options: Options = {}) => {
   const { initialEntries, ...rest } = options;
   return render(ui, {
     wrapper: ({ children }) => (
@@ -32,14 +32,14 @@ export function renderWithProviders(ui: ReactElement, options: Options = {}) {
     ),
     ...rest,
   });
-}
+};
 
 type RouteOptions = RenderOptions & {
   path: string;
   initialEntries: string[];
 };
 
-export function renderAtRoute(element: ReactElement, options: RouteOptions) {
+export const renderAtRoute = (element: ReactElement, options: RouteOptions) => {
   const { path, initialEntries, ...rest } = options;
   return render(
     <MemoryRouter initialEntries={initialEntries}>
@@ -54,6 +54,6 @@ export function renderAtRoute(element: ReactElement, options: RouteOptions) {
     </MemoryRouter>,
     rest,
   );
-}
+};
 
 export * from '@testing-library/react';

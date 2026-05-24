@@ -16,7 +16,7 @@ import { useUI } from '@/store/ui';
 import { TypographyMuted, TypographyP } from '@/components/ui/typography';
 import { useAutoTour } from '@/tours';
 
-export function WriteScreen() {
+export const WriteScreen = () => {
   const { spaceId, docId } = useParams<{ spaceId: string; docId?: string }>();
   const [searchParams] = useSearchParams();
   const focus = searchParams.get('focus') === '1';
@@ -95,9 +95,9 @@ export function WriteScreen() {
       </div>
     </div>
   );
-}
+};
 
-function EmptyState() {
+const EmptyState = () => {
   return (
     <div className="flex h-full min-w-0 flex-1 items-center justify-center text-ink-3">
       <div className="text-center">
@@ -108,4 +108,4 @@ function EmptyState() {
       </div>
     </div>
   );
-}
+};

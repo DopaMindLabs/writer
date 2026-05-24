@@ -19,7 +19,7 @@ import {
 } from '@lexical/list';
 import { getActiveBlockType } from './formatting';
 
-function makeEditor(): LexicalEditor {
+const makeEditor = (): LexicalEditor => {
   const editor = createEditor({
     namespace: 'test',
     onError: (e) => {
@@ -28,12 +28,12 @@ function makeEditor(): LexicalEditor {
     nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode],
   });
   return editor;
-}
+};
 
-function readBlockTypeAt(
+const readBlockTypeAt = (
   editor: LexicalEditor,
   selectKey: () => void,
-): ReturnType<typeof getActiveBlockType> {
+): ReturnType<typeof getActiveBlockType> => {
   let result: ReturnType<typeof getActiveBlockType> = 'paragraph';
   editor.update(
     () => {
@@ -45,7 +45,7 @@ function readBlockTypeAt(
     result = getActiveBlockType();
   });
   return result;
-}
+};
 
 describe('getActiveBlockType', () => {
   it('returns "paragraph" for a plain paragraph', () => {

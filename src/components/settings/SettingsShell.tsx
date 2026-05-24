@@ -10,51 +10,12 @@ import {
 
 type SettingsShellVariant = 'global' | 'space';
 
-interface SettingsShellProps {
-  variant: SettingsShellVariant;
-  groups: SettingsTabGroup[];
-  active: string;
-  onSelect: (id: string) => void;
-  children: ReactNode;
-  space?: Space | null;
-  activeSpaceId?: string | null;
-}
-
-export function SettingsShell({
-  variant,
-  groups,
-  active,
-  onSelect,
-  children,
-  space = null,
-  activeSpaceId = null,
-}: SettingsShellProps) {
-  return (
-    <div className="flex h-full w-full bg-paper text-ink">
-      <div className="hidden md:flex">
-        <SpaceRail activeSpaceId={activeSpaceId} />
-      </div>
-      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-        <div className="flex min-h-0 shrink-0 flex-col border-r border-rule bg-paper-2 md:w-[240px]">
-          <SettingsNavHeader variant={variant} space={space} />
-          <SettingsTabs groups={groups} active={active} onSelect={onSelect} />
-        </div>
-        <main className="flex-1 overflow-auto bg-paper">
-          <div className="max-w-[880px] px-4 pb-20 pt-6 md:px-12 md:pt-9">
-            {children}
-          </div>
-        </main>
-      </div>
-    </div>
-  );
-}
-
 interface SettingsNavHeaderProps {
   variant: SettingsShellVariant;
   space: Space | null;
 }
 
-function SettingsNavHeader({ variant, space }: SettingsNavHeaderProps) {
+const SettingsNavHeader = ({ variant, space }: SettingsNavHeaderProps) => {
   const { t } = useTranslation('screens');
   const isSpace = variant === 'space';
   const title = isSpace ? space?.name ?? '…' : 'LIpsum Writer';
@@ -86,4 +47,43 @@ function SettingsNavHeader({ variant, space }: SettingsNavHeaderProps) {
       </div>
     </div>
   );
+};
+
+interface SettingsShellProps {
+  variant: SettingsShellVariant;
+  groups: SettingsTabGroup[];
+  active: string;
+  onSelect: (id: string) => void;
+  children: ReactNode;
+  space?: Space | null;
+  activeSpaceId?: string | null;
 }
+
+export const SettingsShell = ({
+  variant,
+  groups,
+  active,
+  onSelect,
+  children,
+  space = null,
+  activeSpaceId = null,
+}: SettingsShellProps) => {
+  return (
+    <div className="flex h-full w-full bg-paper text-ink">
+      <div className="hidden md:flex">
+        <SpaceRail activeSpaceId={activeSpaceId} />
+      </div>
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+        <div className="flex min-h-0 shrink-0 flex-col border-r border-rule bg-paper-2 md:w-[240px]">
+          <SettingsNavHeader variant={variant} space={space} />
+          <SettingsTabs groups={groups} active={active} onSelect={onSelect} />
+        </div>
+        <main className="flex-1 overflow-auto bg-paper">
+          <div className="max-w-[880px] px-4 pb-20 pt-6 md:px-12 md:pt-9">
+            {children}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+};

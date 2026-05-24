@@ -10,6 +10,6 @@ export interface EditorProps {
   autoFocus?: boolean;
 }
 
-export function Editor(props: EditorProps) {
+export const Editor = (props: EditorProps) => {
   return <LexicalEditor {...props} />;
-}
+};

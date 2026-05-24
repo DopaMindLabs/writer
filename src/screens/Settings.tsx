@@ -60,7 +60,7 @@ const PLACEHOLDERS: Record<PlaceholderTabId, () => JSX.Element> = {
   backups: BackupsPlaceholder,
 };
 
-export function SettingsScreen() {
+export const SettingsScreen = () => {
   const { t } = useTranslation(['screens', 'chrome', 'common']);
   const [params, setParams] = useSearchParams();
   const rawTab = params.get('tab');
@@ -96,11 +96,11 @@ export function SettingsScreen() {
     },
   ];
 
-  function selectTab(id: string) {
+  const selectTab = (id: string) => {
     const next = new URLSearchParams(params);
     next.set('tab', id);
     setParams(next, { replace: false });
-  }
+  };
 
   return (
     <SettingsShell
@@ -116,9 +116,9 @@ export function SettingsScreen() {
       )}
     </SettingsShell>
   );
-}
+};
 
-function EditorTab() {
+const EditorTab = () => {
   const { t } = useTranslation('screens');
   const floatingToolbarEnabled = useUI((s) => s.floatingToolbarEnabled);
   const setFloatingToolbarEnabled = useUI((s) => s.setFloatingToolbarEnabled);
@@ -172,13 +172,13 @@ function EditorTab() {
       />
     </section>
   );
-}
+};
 
-function PlaceholderTab({ id }: { id: PlaceholderTabId }) {
+const PlaceholderTab = ({ id }: { id: PlaceholderTabId }) => {
   const Body = PLACEHOLDERS[id];
   return (
     <ComingSoon overlay>
       <Body />
     </ComingSoon>
   );
-}
+};

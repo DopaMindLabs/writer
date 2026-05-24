@@ -18,60 +18,44 @@ interface BrainSpaceDetailDrawerProps {
   spaceId: string;
 }
 
-export function BrainSpaceDetailDrawer({ spaceId }: BrainSpaceDetailDrawerProps) {
-  const detailNoteId = useUI((s) => s.detailNoteId);
-  const closeDetail = useUI((s) => s.closeDetail);
-  const focusNote = useUI((s) => s.focusNote);
-  const openDetail = useUI((s) => s.openDetail);
-
-  const note = useLiveQuery(
-    () => (detailNoteId ? db.notes.get(detailNoteId) : undefined),
-    [detailNoteId],
-    undefined,
-  );
-
-  const open = Boolean(detailNoteId && note);
-
-  return (
-    <DialogPrimitive.Root
-      open={open}
-      onOpenChange={(next) => {
-        if (!next) closeDetail();
-      }}
-    >
-      <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay
-          className="fixed inset-0 z-40 bg-black/20 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
-        />
-        <DialogPrimitive.Content
-          className={cn(
-            'fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col border-l border-rule bg-paper shadow-xl',
-            'data-[state=open]:animate-in data-[state=closed]:animate-out',
-            'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right',
-          )}
-        >
-          <DialogPrimitive.Title className="sr-only">
-            Note details
-          </DialogPrimitive.Title>
-          <DialogPrimitive.Description className="sr-only">
-            Edit the selected note and manage its connections.
-          </DialogPrimitive.Description>
-          {note ? (
-            <DrawerBody
-              note={note}
-              spaceId={spaceId}
-              onFocusNote={(id) => {
-                focusNote(id);
-                openDetail(id);
-              }}
-              onClose={closeDetail}
-            />
-          ) : null}
-        </DialogPrimitive.Content>
-      </DialogPrimitive.Portal>
-    </DialogPrimitive.Root>
-  );
+interface ConnectionRowProps {
+  direction: 'in' | 'out';
+  note: Note | undefined;
+  onFocus: () => void;
+  onDelete: () => void;
 }
+
+const ConnectionRow = ({ direction, note, onFocus, onDelete }: ConnectionRowProps) => {
+  const label = note?.title || note?.body?.split('\n')[0] || '(untitled)';
+  const arrow = direction === 'out' ? '→' : '←';
+  return (
+    <li className="flex items-center gap-2 border border-rule bg-paper px-2 py-1.5">
+      <button
+        type="button"
+        onClick={onFocus}
+        disabled={!note}
+        className="flex min-w-0 flex-1 items-center gap-2 text-left font-serif text-[13px] text-ink hover:underline disabled:cursor-not-allowed disabled:text-ink-4"
+      >
+        <span className="font-mono text-[11px] text-ink-3">{arrow}</span>
+        <span className="min-w-0 truncate">{label}</span>
+        {note && (
+          <span className="font-mono text-[9px] uppercase tracking-wider text-ink-4">
+            {NOTE_KIND_LABEL[note.kind]}
+          </span>
+        )}
+      </button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={onDelete}
+        aria-label="Remove connection"
+        className="h-5 w-5 rounded-sm text-ink-4 hover:bg-paper-2 hover:text-ink"
+      >
+        <X className="h-3 w-3" />
+      </Button>
+    </li>
+  );
+};
 
 interface DrawerBodyProps {
   note: Note;
@@ -80,7 +64,7 @@ interface DrawerBodyProps {
   onClose: () => void;
 }
 
-function DrawerBody({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) {
+const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) => {
   const navigate = useNavigate();
   const docs = useDocuments(spaceId);
   const { incoming, outgoing } = useConnectionsForNote(note.id);
@@ -119,7 +103,7 @@ function DrawerBody({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) {
     ? docs.find((d) => d.id === note.linkedDocId)
     : undefined;
 
-  async function commitTitle() {
+  const commitTitle = async () => {
     const next = draftTitle.trim() || undefined;
     if (next !== note.title) {
       await db.notes.update(note.id, {
@@ -127,37 +111,37 @@ function DrawerBody({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) {
         state: NoteState.User,
       });
     }
-  }
+  };
 
-  async function commitBody() {
+  const commitBody = async () => {
     if (draftBody !== note.body) {
       await db.notes.update(note.id, {
         body: draftBody,
         state: NoteState.User,
       });
     }
-  }
+  };
 
-  async function handleLinkDoc(docId: string) {
+  const handleLinkDoc = async (docId: string) => {
     await db.notes.update(note.id, {
       linkedDocId: docId === '' ? undefined : docId,
     });
-  }
+  };
 
-  async function handleDeleteConnection(connectionId: string) {
+  const handleDeleteConnection = async (connectionId: string) => {
     await db.connections.delete(connectionId);
-  }
+  };
 
-  async function handleDeleteNote() {
+  const handleDeleteNote = async () => {
     await deleteNoteWithCascade(note.id);
     onClose();
-  }
+  };
 
-  function handleOpenDoc() {
+  const handleOpenDoc = () => {
     if (!note.linkedDocId) return;
     onClose();
     navigate(`/s/${spaceId}/d/${note.linkedDocId}`);
-  }
+  };
 
   return (
     <>
@@ -294,43 +278,59 @@ function DrawerBody({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) {
       </footer>
     </>
   );
-}
+};
 
-interface ConnectionRowProps {
-  direction: 'in' | 'out';
-  note: Note | undefined;
-  onFocus: () => void;
-  onDelete: () => void;
-}
+export const BrainSpaceDetailDrawer = ({ spaceId }: BrainSpaceDetailDrawerProps) => {
+  const detailNoteId = useUI((s) => s.detailNoteId);
+  const closeDetail = useUI((s) => s.closeDetail);
+  const focusNote = useUI((s) => s.focusNote);
+  const openDetail = useUI((s) => s.openDetail);
 
-function ConnectionRow({ direction, note, onFocus, onDelete }: ConnectionRowProps) {
-  const label = note?.title || note?.body?.split('\n')[0] || '(untitled)';
-  const arrow = direction === 'out' ? '→' : '←';
-  return (
-    <li className="flex items-center gap-2 border border-rule bg-paper px-2 py-1.5">
-      <button
-        type="button"
-        onClick={onFocus}
-        disabled={!note}
-        className="flex min-w-0 flex-1 items-center gap-2 text-left font-serif text-[13px] text-ink hover:underline disabled:cursor-not-allowed disabled:text-ink-4"
-      >
-        <span className="font-mono text-[11px] text-ink-3">{arrow}</span>
-        <span className="min-w-0 truncate">{label}</span>
-        {note && (
-          <span className="font-mono text-[9px] uppercase tracking-wider text-ink-4">
-            {NOTE_KIND_LABEL[note.kind]}
-          </span>
-        )}
-      </button>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={onDelete}
-        aria-label="Remove connection"
-        className="h-5 w-5 rounded-sm text-ink-4 hover:bg-paper-2 hover:text-ink"
-      >
-        <X className="h-3 w-3" />
-      </Button>
-    </li>
+  const note = useLiveQuery(
+    () => (detailNoteId ? db.notes.get(detailNoteId) : undefined),
+    [detailNoteId],
+    undefined,
   );
-}
+
+  const open = Boolean(detailNoteId && note);
+
+  return (
+    <DialogPrimitive.Root
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) closeDetail();
+      }}
+    >
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay
+          className="fixed inset-0 z-40 bg-black/20 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+        />
+        <DialogPrimitive.Content
+          className={cn(
+            'fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col border-l border-rule bg-paper shadow-xl',
+            'data-[state=open]:animate-in data-[state=closed]:animate-out',
+            'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right',
+          )}
+        >
+          <DialogPrimitive.Title className="sr-only">
+            Note details
+          </DialogPrimitive.Title>
+          <DialogPrimitive.Description className="sr-only">
+            Edit the selected note and manage its connections.
+          </DialogPrimitive.Description>
+          {note ? (
+            <DrawerBody
+              note={note}
+              spaceId={spaceId}
+              onFocusNote={(id) => {
+                focusNote(id);
+                openDetail(id);
+              }}
+              onClose={closeDetail}
+            />
+          ) : null}
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
+  );
+};

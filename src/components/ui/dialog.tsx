@@ -47,10 +47,10 @@ export const DialogContent = forwardRef<
 ));
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
-export function DialogHeader({
+export const DialogHeader = ({
   className,
   ...props
-}: HTMLAttributes<HTMLDivElement>) {
+}: HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
       className={cn(
@@ -60,7 +60,7 @@ export function DialogHeader({
       {...props}
     />
   );
-}
+};
 
 export const DialogTitle = forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,

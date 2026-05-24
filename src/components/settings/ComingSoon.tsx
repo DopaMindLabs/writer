@@ -16,7 +16,7 @@ export interface ComingSoonProps {
   overlay?: boolean;
 }
 
-export function ComingSoon({
+export const ComingSoon = ({
   children,
   hint,
   side = 'top',
@@ -25,7 +25,7 @@ export function ComingSoon({
   showBadge = false,
   badgeClassName,
   overlay = false,
-}: ComingSoonProps) {
+}: ComingSoonProps) => {
   const { t } = useTranslation('common');
   const tooltipText = hint
     ? `${t('comingSoon.tooltip')} — ${hint}`
@@ -86,4 +86,4 @@ export function ComingSoon({
       </TooltipContent>
     </Tooltip>
   );
-}
+};

@@ -12,7 +12,7 @@ import { useSpace } from '@/hooks/useSpaces';
 import { useDocument } from '@/hooks/useDocuments';
 import { useUI } from '@/store/ui';
 
-export function ReadScreen() {
+export const ReadScreen = () => {
   const { spaceId, docId } = useParams<{ spaceId: string; docId: string }>();
   const space = useSpace(spaceId);
   const doc = useDocument(docId);
@@ -59,4 +59,4 @@ export function ReadScreen() {
       </div>
     </div>
   );
-}
+};

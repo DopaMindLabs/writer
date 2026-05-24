@@ -25,7 +25,7 @@ interface BrainSpaceCanvasProps {
 const DEFAULT_W = 184;
 const DEFAULT_H = 80;
 
-export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
+export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
   const notes = useNotes(spaceId);
   const connections = useConnections(spaceId);
   const space = useSpace(spaceId);
@@ -89,11 +89,11 @@ export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
     [pendingFrom, spaceId, focusNote],
   );
 
-  function onBackgroundPointerDown(e: ReactPointerEvent<HTMLDivElement>) {
+  const onBackgroundPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (e.target !== e.currentTarget) return;
     focusNote(null);
     setPendingFrom(null);
-  }
+  };
 
   return (
     <div
@@ -177,4 +177,4 @@ export function BrainSpaceCanvas({ spaceId }: BrainSpaceCanvasProps) {
       <BrainSpaceDetailDrawer spaceId={spaceId} />
     </div>
   );
-}
+};

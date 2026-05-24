@@ -55,7 +55,7 @@ function isTabId(value: string | null): value is TabId {
   return value !== null && (TAB_IDS as readonly string[]).includes(value);
 }
 
-export function SpaceSettingsScreen() {
+export const SpaceSettingsScreen = () => {
   const { t } = useTranslation(['screens', 'chrome', 'common']);
   const { spaceId } = useParams<{ spaceId: string }>();
   const space = useSpace(spaceId);
@@ -87,11 +87,11 @@ export function SpaceSettingsScreen() {
     },
   ];
 
-  function selectTab(id: string) {
+  const selectTab = (id: string) => {
     const next = new URLSearchParams(params);
     next.set('tab', id);
     setParams(next, { replace: false });
-  }
+  };
 
   return (
     <SettingsShell
@@ -123,14 +123,14 @@ export function SpaceSettingsScreen() {
       )}
     </SettingsShell>
   );
-}
+};
 
-function GeneralTab({ space }: { space: Space }) {
+const GeneralTab = ({ space }: { space: Space }) => {
   const { t } = useTranslation('screens');
   const [name, setName] = useState(space.name);
   const [tag, setTag] = useState(space.tag);
 
-  async function commitName() {
+  const commitName = async () => {
     const next = name.trim();
     if (!next) {
       setName(space.name);
@@ -138,9 +138,9 @@ function GeneralTab({ space }: { space: Space }) {
     }
     if (next === space.name) return;
     await db.spaces.update(space.id, { name: next, updatedAt: Date.now() });
-  }
+  };
 
-  async function commitTag() {
+  const commitTag = async () => {
     const next = tag.trim();
     if (!next) {
       setTag(space.tag);
@@ -148,7 +148,7 @@ function GeneralTab({ space }: { space: Space }) {
     }
     if (next === space.tag) return;
     await db.spaces.update(space.id, { tag: next, updatedAt: Date.now() });
-  }
+  };
 
   return (
     <section>
@@ -197,55 +197,55 @@ function GeneralTab({ space }: { space: Space }) {
       </SettingRow>
     </section>
   );
-}
+};
 
-function SharingTab() {
+const SharingTab = () => {
   return (
     <ComingSoon overlay>
       <SpaceSharingPlaceholder />
     </ComingSoon>
   );
-}
+};
 
-function TemplateTab() {
+const TemplateTab = () => {
   return (
     <ComingSoon overlay>
       <SpaceTemplatePlaceholder />
     </ComingSoon>
   );
-}
+};
 
-function MembersTab() {
+const MembersTab = () => {
   return (
     <ComingSoon overlay>
       <SpaceMembersPlaceholder />
     </ComingSoon>
   );
-}
+};
 
-function PaletteTab() {
+const PaletteTab = () => {
   return (
     <ComingSoon overlay>
       <SpacePalettePlaceholder />
     </ComingSoon>
   );
-}
+};
 
-function ExportTab() {
+const ExportTab = () => {
   return (
     <ComingSoon overlay>
       <SpaceExportPlaceholder />
     </ComingSoon>
   );
-}
+};
 
-function BackupsTab({ space }: { space: Space }) {
+const BackupsTab = ({ space }: { space: Space }) => {
   const { t } = useTranslation('screens');
   const backups = useBackups(space.id);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSnapshot() {
+  const handleSnapshot = async () => {
     setBusy(true);
     setError(null);
     try {
@@ -256,17 +256,17 @@ function BackupsTab({ space }: { space: Space }) {
     } finally {
       setBusy(false);
     }
-  }
+  };
 
-  function handleDownload(backup: Backup) {
+  const handleDownload = (backup: Backup) => {
     downloadBlob(backup.payload, backupFilename(space.name, backup.when));
-  }
+  };
 
-  async function handleDelete(backup: Backup) {
+  const handleDelete = async (backup: Backup) => {
     const ok = window.confirm(t('settings.space.backups.deleteConfirm'));
     if (!ok) return;
     await db.backups.delete(backup.id);
-  }
+  };
 
   return (
     <section>
@@ -381,7 +381,7 @@ function BackupsTab({ space }: { space: Space }) {
       </div>
     </section>
   );
-}
+};
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -406,7 +406,7 @@ function formatRelativeTime(
   return new Date(when).toISOString().slice(0, 10);
 }
 
-function DangerTab({ space }: { space: Space }) {
+const DangerTab = ({ space }: { space: Space }) => {
   const { t } = useTranslation('screens');
   const [open, setOpen] = useState(false);
 
@@ -437,7 +437,7 @@ function DangerTab({ space }: { space: Space }) {
       <DeleteSpaceDialog space={space} open={open} onOpenChange={setOpen} />
     </section>
   );
-}
+};
 
 interface DeleteSpaceDialogProps {
   space: Space;
@@ -445,11 +445,11 @@ interface DeleteSpaceDialogProps {
   onOpenChange: (next: boolean) => void;
 }
 
-function DeleteSpaceDialog({
+const DeleteSpaceDialog = ({
   space,
   open,
   onOpenChange,
-}: DeleteSpaceDialogProps) {
+}: DeleteSpaceDialogProps) => {
   const { t } = useTranslation('screens');
   const navigate = useNavigate();
   const [typed, setTyped] = useState('');
@@ -457,12 +457,12 @@ function DeleteSpaceDialog({
 
   const canDelete = typed.trim() === space.name && !submitting;
 
-  function handleOpenChange(next: boolean) {
+  const handleOpenChange = (next: boolean) => {
     if (!next) setTyped('');
     onOpenChange(next);
-  }
+  };
 
-  async function handleConfirm() {
+  const handleConfirm = async () => {
     if (!canDelete) return;
     setSubmitting(true);
     try {
@@ -473,7 +473,7 @@ function DeleteSpaceDialog({
     } finally {
       setSubmitting(false);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -518,7 +518,7 @@ function DeleteSpaceDialog({
       </DialogContent>
     </Dialog>
   );
-}
+};
 
 export async function deleteSpaceCascade(spaceId: string): Promise<void> {
   await db.transaction(

@@ -25,7 +25,7 @@ interface ItemProps {
   disabled?: boolean;
 }
 
-function Item({
+const Item = ({
   children,
   href,
   onClick,
@@ -34,7 +34,7 @@ function Item({
   danger,
   muted,
   disabled,
-}: ItemProps) {
+}: ItemProps) => {
   const inner = (
     <span
       className={cn(
@@ -74,18 +74,18 @@ function Item({
       </button>
     </PopoverClose>
   );
-}
+};
 
-function Divider() {
+const Divider = () => {
   return <div className="my-1 h-px bg-rule" />;
-}
+};
 
-export function SpaceMenuPopover({ space, onRename }: SpaceMenuPopoverProps) {
+export const SpaceMenuPopover = ({ space, onRename }: SpaceMenuPopoverProps) => {
   const { t } = useTranslation('chrome');
   const backups = useBackups(space.id);
   const [exporting, setExporting] = useState(false);
 
-  async function handleExport() {
+  const handleExport = async () => {
     setExporting(true);
     try {
       const { backup, filename } = await createSpaceBackup(space.id);
@@ -93,7 +93,7 @@ export function SpaceMenuPopover({ space, onRename }: SpaceMenuPopoverProps) {
     } finally {
       setExporting(false);
     }
-  }
+  };
 
   return (
     <div
@@ -141,4 +141,4 @@ export function SpaceMenuPopover({ space, onRename }: SpaceMenuPopoverProps) {
       </div>
     </div>
   );
-}
+};
