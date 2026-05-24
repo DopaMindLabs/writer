@@ -35,7 +35,6 @@ exports[`ComingSoonRow > snapshot > should match the snapshot across all variant
               class="peer h-[14px] w-[14px] cursor-pointer appearance-none border border-rule bg-paper transition-colors checked:border-ink checked:bg-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:cursor-not-allowed"
               data-testid="coming-soon-row-checkbox"
               disabled=""
-              id="_r_6_"
               type="checkbox"
             />
             <svg
@@ -132,7 +131,6 @@ exports[`ComingSoonRow > snapshot > should match the snapshot across all variant
               class="peer h-[14px] w-[14px] cursor-pointer appearance-none border border-rule bg-paper transition-colors checked:border-ink checked:bg-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:cursor-not-allowed"
               data-testid="coming-soon-row-checkbox"
               disabled=""
-              id="_r_8_"
               type="checkbox"
             />
             <svg

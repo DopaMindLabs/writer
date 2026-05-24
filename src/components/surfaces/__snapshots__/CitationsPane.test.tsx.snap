@@ -119,7 +119,6 @@ exports[`CitationsPane > snapshot > should match the snapshot across all variant
               aria-label="Select all citations on this page"
               class="peer h-[14px] w-[14px] cursor-pointer appearance-none border border-rule bg-paper transition-colors checked:border-ink checked:bg-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:cursor-not-allowed"
               data-testid="citations-select-all"
-              id="_r_5h_"
               type="checkbox"
             />
             <svg
@@ -184,7 +183,6 @@ exports[`CitationsPane > snapshot > should match the snapshot across all variant
               aria-label="Select citation alpha2020"
               class="peer h-[14px] w-[14px] cursor-pointer appearance-none border border-rule bg-paper transition-colors checked:border-ink checked:bg-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:cursor-not-allowed"
               data-testid="citation-row-c-a-select"
-              id="_r_5i_"
               type="checkbox"
             />
             <svg
@@ -301,7 +299,6 @@ exports[`CitationsPane > snapshot > should match the snapshot across all variant
               aria-label="Select citation beta2021"
               class="peer h-[14px] w-[14px] cursor-pointer appearance-none border border-rule bg-paper transition-colors checked:border-ink checked:bg-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:cursor-not-allowed"
               data-testid="citation-row-c-b-select"
-              id="_r_5j_"
               type="checkbox"
             />
             <svg

@@ -1,12 +1,29 @@
 import '@testing-library/jest-dom/vitest';
 import 'fake-indexeddb/auto';
 import '@/i18n';
-import { afterEach, beforeEach } from 'vitest';
+import { afterEach, beforeEach, expect } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 
 const initialUIState = useUI.getState();
+
+// React's useId() emits tokens like `_r_5h_` whose value depends on render
+// order across the suite. Radix primitives (DropdownMenu, etc.) wire these
+// into `aria-controls="radix-_r_…_"` for a11y, so we can't strip them at
+// the source. Mask the variable suffix in snapshots to keep them stable.
+const REACT_ID_TOKEN = /^(?:radix-)?_r_[a-z0-9]+_$/i;
+expect.addSnapshotSerializer({
+  test: (val) => typeof val === 'string' && REACT_ID_TOKEN.test(val),
+  serialize: (val, config, indentation, depth, refs, printer) =>
+    printer(
+      (val as string).replace(/_r_[a-z0-9]+_/gi, '_r_*_'),
+      config,
+      indentation,
+      depth,
+      refs,
+    ),
+});
 
 // Some vitest+jsdom combinations don't expose window.localStorage. Install
 // a Map-backed polyfill before any module imports it.

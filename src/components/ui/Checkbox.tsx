@@ -28,7 +28,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     ref,
   ) => {
     const autoId = useId();
-    const inputId = id ?? autoId;
+    const inputId = id ?? (label !== undefined ? autoId : undefined);
     const testId = (rest as { 'data-testid'?: string })['data-testid'];
     const boxTestId = testId ? `${testId}-box` : undefined;
 
