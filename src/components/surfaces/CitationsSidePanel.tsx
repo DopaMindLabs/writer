@@ -4,6 +4,7 @@ import { useUI } from '@/store/ui';
 import { useSpace } from '@/hooks/useSpaces';
 import { IconButton } from '@/components/ui/icon';
 import { CitationsPane } from './CitationsPane';
+import { routes } from '@/lib/routes';
 
 interface CitationsSidePanelProps {
   spaceId: string;
@@ -19,7 +20,7 @@ export const CitationsSidePanel = ({ spaceId }: CitationsSidePanelProps) => {
 
   const openCitationsScreen = () => {
     close();
-    navigate(`/s/${spaceId}/citations`);
+    navigate(routes.citations(spaceId));
   };
 
   return (

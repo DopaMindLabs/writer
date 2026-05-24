@@ -1,7 +1,9 @@
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Pencil, BookOpen, Brain, Quote, MoreHorizontal } from '@/components/libs/icons';
 import { useUI } from '@/store/ui';
+import { Link } from '@/components/ui/Link';
+import { routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 
 interface MobileTabsProps {
@@ -26,9 +28,14 @@ export const MobileTabs = ({ spaceId, docId }: MobileTabsProps) => {
   const openCitationsDrawer = useUI((s) => s.openCitationsDrawer);
 
   const writeHref =
-    spaceId && docId ? `/s/${spaceId}/d/${docId}` : spaceId ? `/s/${spaceId}` : '/';
-  const readHref = spaceId && docId ? `/s/${spaceId}/d/${docId}/read` : null;
-  const brainHref = spaceId ? `/s/${spaceId}/dump` : null;
+    spaceId && docId
+      ? routes.docWrite(spaceId, docId)
+      : spaceId
+        ? routes.spaceWrite(spaceId)
+        : routes.home();
+  const readHref =
+    spaceId && docId ? routes.docRead(spaceId, docId) : null;
+  const brainHref = spaceId ? routes.brainSpace(spaceId) : null;
 
   const items: TabItem[] = [
     {

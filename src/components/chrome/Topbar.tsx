@@ -1,4 +1,4 @@
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useEffect, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Quote, Menu, Search, MoreHorizontal } from '@/components/libs/icons';
@@ -6,7 +6,9 @@ import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { IconButton } from '@/components/ui/icon';
+import { Link } from '@/components/ui/Link';
 import { ComingSoon } from '@/components/settings/ComingSoon';
+import { routes } from '@/lib/routes';
 import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
 import { MobileNavDrawer } from './MobileNavDrawer';
 import { cn } from '@/lib/utils';
@@ -84,7 +86,7 @@ export const Topbar = ({
 
   const citationsTrigger = onCitations ? (
     <Link
-      to={`/s/${spaceId}/citations`}
+      to={routes.citations(spaceId)}
       data-tour="tour-topbar-citations"
       aria-label={t('topbar.citations')}
       className={cn(citeBaseClass, citeRestClass)}

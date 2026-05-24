@@ -4,11 +4,11 @@ exports[`Link > renders internal and external variants 1`] = `
 <div>
   <div>
     <a
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border-b border-ink bg-transparent text-ink hover:text-ink-2 h-auto px-0 pb-[2px] text-[13px]"
+      class=""
       data-discover="true"
       href="/"
     >
-      internal default ghost
+      internal default unstyled
     </a>
     <a
       class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 bg-ink text-paper hover:bg-ink-2 h-9 px-4 text-[13px]"
@@ -16,6 +16,13 @@ exports[`Link > renders internal and external variants 1`] = `
       href="/space"
     >
       internal primary
+    </a>
+    <a
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border-b border-ink bg-transparent text-ink hover:text-ink-2 h-auto px-0 pb-[2px] text-[13px]"
+      data-discover="true"
+      href="/about"
+    >
+      internal ghost
     </a>
     <a
       class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border border-ink bg-transparent text-ink hover:bg-paper-2 h-9 px-4 text-[13px]"
@@ -26,10 +33,10 @@ exports[`Link > renders internal and external variants 1`] = `
       external secondary
     </a>
     <a
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border-b border-ink bg-transparent text-ink hover:text-ink-2 h-auto px-0 pb-[2px] text-[13px]"
+      class=""
       href="mailto:hi@example.com"
     >
-      mailto ghost
+      mailto unstyled
     </a>
   </div>
 </div>

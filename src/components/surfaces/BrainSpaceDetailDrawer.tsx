@@ -10,6 +10,7 @@ import { useDocuments } from '@/hooks/useDocuments';
 import { useConnectionsForNote } from '@/hooks/useConnections';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
 import { NoteState, type Note } from '@/db/schema';
+import { routes } from '@/lib/routes';
 import { Button } from '@/components/ui/Button';
 import { IconButton } from '@/components/ui/icon';
 import { TypographyLabel } from '@/components/ui/typography';
@@ -140,7 +141,7 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
   const handleOpenDoc = () => {
     if (!note.linkedDocId) return;
     onClose();
-    navigate(`/s/${spaceId}/d/${note.linkedDocId}`);
+    navigate(routes.docWrite(spaceId, note.linkedDocId));
   };
 
   return (

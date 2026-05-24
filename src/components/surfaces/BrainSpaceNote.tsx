@@ -13,6 +13,7 @@ import { deleteNoteWithCascade } from '@/db/seed';
 import { useUI } from '@/store/ui';
 import { NoteState, type Note } from '@/db/schema';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
+import { routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 
 const MIN_W = 120;
@@ -251,7 +252,7 @@ export const BrainSpaceNote = ({
   const onDocLinkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!note.linkedDocId) return;
-    navigate(`/s/${spaceId}/d/${note.linkedDocId}`);
+    navigate(routes.docWrite(spaceId, note.linkedDocId));
   };
 
   const onContextMenu = (e: React.MouseEvent) => {

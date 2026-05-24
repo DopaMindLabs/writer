@@ -1,4 +1,4 @@
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, type ComponentType, type SVGProps } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,6 +11,8 @@ import {
 } from '@/components/libs/icons';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Link } from '@/components/ui/Link';
+import { routes } from '@/lib/routes';
 
 export type Mode = 'write' | 'focus' | 'read' | 'split' | 'dump';
 
@@ -23,14 +25,23 @@ interface ModeTabsProps {
 
 type TabKey = 'write' | 'read' | 'split' | 'dump';
 
+type PerDocKey = 'write' | 'read' | 'split';
+type DocBuilder = (spaceId: string, docId: string) => string;
+
+const PER_DOC_BUILDERS: Record<PerDocKey, DocBuilder> = {
+  write: routes.docWrite,
+  read: routes.docRead,
+  split: routes.docSplit,
+};
+
 type TabDef =
-  | { key: 'write' | 'read' | 'split'; labelKey: string; suffix: string; perDoc: true }
+  | { key: PerDocKey; labelKey: string; perDoc: true }
   | { key: 'dump'; labelKey: string; perDoc: false };
 
 const TABS: TabDef[] = [
-  { key: 'write', labelKey: 'modeToggle.write', suffix: '', perDoc: true },
-  { key: 'read', labelKey: 'modeToggle.read', suffix: '/read', perDoc: true },
-  { key: 'split', labelKey: 'modeToggle.split', suffix: '/split', perDoc: true },
+  { key: 'write', labelKey: 'modeToggle.write', perDoc: true },
+  { key: 'read', labelKey: 'modeToggle.read', perDoc: true },
+  { key: 'split', labelKey: 'modeToggle.split', perDoc: true },
   { key: 'dump', labelKey: 'modeToggle.space', perDoc: false },
 ];
 
@@ -65,8 +76,8 @@ export const ModeTabs = ({ mode, spaceId, docId, fallbackDocId }: ModeTabsProps)
         if (tab.key === 'split' && withParam) params.set('with', withParam);
         const qs = params.toString();
         const to = tab.perDoc
-          ? `/s/${spaceId}/d/${effectiveDocId}${tab.suffix}${qs ? `?${qs}` : ''}`
-          : `/s/${spaceId}/dump${focusParam ? '?focus=' + focusParam : ''}`;
+          ? `${PER_DOC_BUILDERS[tab.key](spaceId, effectiveDocId!)}${qs ? `?${qs}` : ''}`
+          : `${routes.brainSpace(spaceId)}${focusParam ? '?focus=' + focusParam : ''}`;
 
         if (isFocus) {
           const Icon = TAB_ICONS[tab.key];
@@ -127,10 +138,10 @@ export const FocusToggle = ({ mode, spaceId, docId }: FocusToggleProps) => {
   const focused = searchParams.get('focus') === '1' || mode === 'focus';
 
   const basePathFor = (m: Mode): string | null => {
-    if (m === 'dump') return `/s/${spaceId}/dump`;
+    if (m === 'dump') return routes.brainSpace(spaceId);
     if (!docId) return null;
-    if (m === 'split') return `/s/${spaceId}/d/${docId}/split`;
-    return `/s/${spaceId}/d/${docId}`;
+    if (m === 'split') return routes.docSplit(spaceId, docId);
+    return routes.docWrite(spaceId, docId);
   };
 
   useEffect(() => {

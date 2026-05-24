@@ -15,6 +15,7 @@ import { useSections, useDocuments, useDocument } from '@/hooks/useDocuments';
 import { useUI } from '@/store/ui';
 import { TypographyMuted, TypographyP } from '@/components/ui/typography';
 import { useAutoTour } from '@/tours';
+import { routes } from '@/lib/routes';
 
 export const WriteScreen = () => {
   const { spaceId, docId } = useParams<{ spaceId: string; docId?: string }>();
@@ -43,7 +44,7 @@ export const WriteScreen = () => {
     setCurrentDocId(docId ?? null);
   }, [docId, setCurrentDocId]);
 
-  if (!spaceId) return <Navigate to="/" replace />;
+  if (!spaceId) return <Navigate to={routes.home()} replace />;
 
   if (!docId && sections.length > 0 && docs.length > 0) {
     const orderedSections = [...sections].sort((a, b) => a.order - b.order);
@@ -51,7 +52,10 @@ export const WriteScreen = () => {
       orderedSections.find((s) => s.parentSectionId === null) ??
       orderedSections[0];
     const firstDoc = docs.find((d) => d.sectionId === firstSection.id) ?? docs[0];
-    if (firstDoc) return <Navigate to={`/s/${spaceId}/d/${firstDoc.id}`} replace />;
+    if (firstDoc)
+      return (
+        <Navigate to={routes.docWrite(spaceId, firstDoc.id)} replace />
+      );
   }
 
   const editorMode = focus ? 'focus' : 'write';

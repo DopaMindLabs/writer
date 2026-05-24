@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   forwardRef,
   useMemo,
@@ -19,6 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Link } from '@/components/ui/Link';
 import { SpaceMenuPopover } from './SpaceMenuPopover';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments } from '@/hooks/useDocuments';
@@ -26,6 +27,7 @@ import { useNotes } from '@/hooks/useNotes';
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { formatDocName } from '@/lib/doc-naming';
+import { routes } from '@/lib/routes';
 import {
   getTemplate,
   type TemplateSection as TemplateSectionDef,
@@ -131,7 +133,7 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
   };
 
   const docHref = (docId: string): string => {
-    return `/s/${spaceId}/d/${docId}${modeSuffix}`;
+    return `${routes.docWrite(spaceId, docId)}${modeSuffix}`;
   };
 
   const startAdd = (
@@ -157,7 +159,7 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
       updatedAt: Date.now(),
     });
     setAdding(null);
-    navigate(`/s/${spaceId}/d/${id}`);
+    navigate(routes.docWrite(spaceId, id));
   };
 
   const onAddKey = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -431,7 +433,7 @@ const BrainSpaceLink = ({
   const { t } = useTranslation('common');
   return (
     <Link
-      to={`/s/${spaceId}/dump`}
+      to={routes.brainSpace(spaceId)}
       className={cn(
         '-ml-px flex items-center gap-2 border-l-2 px-5 py-1.5 transition-colors',
         active

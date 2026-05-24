@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom';
 import { MoreVertical } from '@/components/libs/icons';
 import { useTranslation } from 'react-i18next';
 import { useSpaces } from '@/hooks/useSpaces';
+import { routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { IconButton } from '@/components/ui/icon';
+import { Link } from '@/components/ui/Link';
 import { QuickSettingsPopover } from './QuickSettingsPopover';
 
 interface FocusRailProps {
@@ -31,7 +32,7 @@ export const FocusRail = ({ activeSpaceId }: FocusRailProps) => {
       {spaces.map((w) => (
         <Link
           key={w.id}
-          to={`/s/${w.id}`}
+          to={routes.spaceWrite(w.id)}
           aria-label={w.name}
           className={cn(
             'h-1 w-1 rounded-full',
