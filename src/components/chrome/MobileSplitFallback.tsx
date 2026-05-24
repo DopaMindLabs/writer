@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Link } from '@/components/ui/Link';
 import { TypographyH1, TypographyP } from '@/components/ui/typography';
+import { routes } from '@/lib/routes';
 
 interface MobileSplitFallbackProps {
   spaceId: string;
@@ -28,7 +29,7 @@ export const MobileSplitFallback = ({ spaceId, docId }: MobileSplitFallbackProps
         {t('mobileSplitFallback.body')}
       </TypographyP>
       <Link
-        to={`/s/${spaceId}/d/${docId}`}
+        to={routes.docWrite(spaceId, docId)}
         className="inline-block border border-ink px-4 py-2 text-[12px] font-medium uppercase tracking-wider text-ink"
       >
         {t('mobileSplitFallback.cta')}

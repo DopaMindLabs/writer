@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { db } from '@/db/db';
 import { BlockQuote } from '@/components/ui/block-quote';
+import { Link } from '@/components/ui/Link';
 import { TypographyH1, TypographyP } from '@/components/ui/typography';
 import { PageNav } from '@/components/chrome/PageNav';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { routes } from '@/lib/routes';
 import { useAutoTour } from '@/tours';
 
 export const HomeScreen = () => {
@@ -56,7 +57,7 @@ export const HomeScreen = () => {
           <div className="mt-12 border-y border-rule">
             {firstSpaceId && (
               <Link
-                to={`/s/${firstSpaceId}`}
+                to={routes.spaceWrite(firstSpaceId)}
                 data-tour="tour-continue-writing"
                 className="flex items-baseline justify-between border-b border-rule px-2 py-5 transition-colors hover:bg-paper-2"
               >
@@ -69,7 +70,7 @@ export const HomeScreen = () => {
               </Link>
             )}
             <Link
-              to="/new"
+              to={routes.templates()}
               data-tour="tour-start-space"
               className="flex items-baseline justify-between px-2 py-5 transition-colors hover:bg-paper-2"
             >

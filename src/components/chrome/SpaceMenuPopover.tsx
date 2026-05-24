@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useBackups } from '@/hooks/useBackups';
 import type { Space } from '@/db/schema';
 import { createSpaceBackup } from '@/lib/backup/createSpaceBackup';
 import { downloadBlob } from '@/lib/file-download';
+import { routes } from '@/lib/routes';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { PopoverClose } from '@/components/ui/popover';
+import { Link } from '@/components/ui/Link';
 import { cn } from '@/lib/utils';
 
 interface SpaceMenuPopoverProps {
@@ -111,9 +112,9 @@ export const SpaceMenuPopover = ({ space, onRename }: SpaceMenuPopoverProps) => 
 
       <div className="pt-1">
         <Item onClick={onRename}>{t('spaceMenu.rename')}</Item>
-        <Item href={`/s/${space.id}/settings`}>{t('spaceMenu.settings')}</Item>
+        <Item href={routes.spaceSettings(space.id)}>{t('spaceMenu.settings')}</Item>
         <Item
-          href={`/s/${space.id}/settings?tab=backups`}
+          href={`${routes.spaceSettings(space.id)}?tab=backups`}
           badge={backups.length > 0 ? backups.length : undefined}
         >
           {t('spaceMenu.backups')}
@@ -135,7 +136,7 @@ export const SpaceMenuPopover = ({ space, onRename }: SpaceMenuPopoverProps) => 
           </Item>
         </ComingSoon>
 
-        <Item href={`/s/${space.id}/settings?tab=danger`} danger>
+        <Item href={`${routes.spaceSettings(space.id)}?tab=danger`} danger>
           {t('spaceMenu.delete')}
         </Item>
       </div>

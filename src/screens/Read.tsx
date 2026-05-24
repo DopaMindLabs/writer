@@ -11,6 +11,7 @@ import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocument } from '@/hooks/useDocuments';
 import { useUI } from '@/store/ui';
+import { routes } from '@/lib/routes';
 
 export const ReadScreen = () => {
   const { spaceId, docId } = useParams<{ spaceId: string; docId: string }>();
@@ -33,7 +34,7 @@ export const ReadScreen = () => {
     if (docId) setCurrentDocId(docId);
   }, [docId, setCurrentDocId]);
 
-  if (!spaceId || !docId) return <Navigate to="/" replace />;
+  if (!spaceId || !docId) return <Navigate to={routes.home()} replace />;
 
   return (
     <div className="flex h-full w-full">

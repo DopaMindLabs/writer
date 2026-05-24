@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom';
 import { MoreVertical, Plus } from '@/components/libs/icons';
 import { useTranslation } from 'react-i18next';
 import { useSpaces } from '@/hooks/useSpaces';
+import { routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
@@ -9,6 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Link } from '@/components/ui/Link';
 import { QuickSettingsPopover } from './QuickSettingsPopover';
 
 interface SpaceRailProps {
@@ -22,7 +23,7 @@ export const SpaceRail = ({ activeSpaceId }: SpaceRailProps) => {
   return (
     <aside className="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-rule bg-paper-2 py-3.5">
       <Link
-        to="/"
+        to={routes.home()}
         aria-label="Home"
         className="mb-1 flex h-7 w-7 items-center justify-center rounded-md font-serif text-lg leading-none tracking-tight text-ink hover:bg-paper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
       >
@@ -50,7 +51,7 @@ export const SpaceRail = ({ activeSpaceId }: SpaceRailProps) => {
           <Tooltip key={w.id}>
             <TooltipTrigger asChild>
               <Link
-                to={`/s/${w.id}`}
+                to={routes.spaceWrite(w.id)}
                 className={cn(
                   'relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors',
                   isActive
@@ -76,7 +77,7 @@ export const SpaceRail = ({ activeSpaceId }: SpaceRailProps) => {
       <Tooltip>
         <TooltipTrigger asChild>
           <Link
-            to="/new"
+            to={routes.templates()}
             className="flex h-9 w-9 items-center justify-center rounded-md text-ink-4 hover:bg-paper hover:text-ink-2"
             aria-label="Create new space"
           >

@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Check } from '@/components/libs/icons';
 import { useUI, type ReadingWidth, type Theme } from '@/store/ui';
@@ -8,9 +8,11 @@ import { PillToggle } from '@/components/ui/PillToggle';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { PopoverClose } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Link } from '@/components/ui/Link';
 import { TOUR_IDS, TOURS, type TourId } from '@/tours/tours';
 import { useTour } from '@/tours/useTour';
 import { getCompleted } from '@/tours/storage';
+import { routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 
 const THEMES: { id: Theme; labelKey: string; titleKey: string }[] = [
@@ -242,7 +244,7 @@ export const QuickSettingsPopover = () => {
         </span>
       </ComingSoon>
 
-      <MenuItem asChild href="/about">
+      <MenuItem asChild href={routes.about()}>
         {t('chrome:quickSettings.about')}
       </MenuItem>
 
@@ -250,7 +252,7 @@ export const QuickSettingsPopover = () => {
         <PopoverClose asChild>
           <button
             type="button"
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate(routes.settings())}
             className="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
           >
             {t('chrome:quickSettings.fullSettings')}

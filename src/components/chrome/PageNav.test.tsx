@@ -26,7 +26,7 @@ describe('PageNav', () => {
     const github = screen.getByRole('link', { name: /github/i });
     expect(github).toHaveAttribute('href', 'https://github.com/DopaMindLabs/Writer');
     expect(github).toHaveAttribute('target', '_blank');
-    expect(github).toHaveAttribute('rel', 'noreferrer');
+    expect(github).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
   it('marks the active nav link as text-ink', () => {

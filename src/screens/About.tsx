@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle, Smile, Lightbulb } from '@/components/libs/icons';
 import { BlockQuote } from '@/components/ui/block-quote';
+import { Link } from '@/components/ui/Link';
 import {
   TypographyH1,
   TypographyLabel,
@@ -8,6 +9,7 @@ import {
   TypographyP,
 } from '@/components/ui/typography';
 import { PageNav } from '@/components/chrome/PageNav';
+import { EXTERNAL_LINKS } from '@/lib/routes';
 
 export const AboutScreen = () => {
   const { t } = useTranslation(['screens', 'common']);
@@ -28,14 +30,12 @@ export const AboutScreen = () => {
 
           <TypographyP>
             {t('about.paragraph4Before')}
-            <a
-              href="https://github.com/DopaMindLabs/Writer?tab=License-1-ov-file"
-              target="_blank"
-              rel="noreferrer"
+            <Link
+              href={EXTERNAL_LINKS.license}
               className="underline decoration-rule underline-offset-4 hover:decoration-ink hover:text-ink"
             >
               {t('about.licenseLinkText')}
-            </a>
+            </Link>
           </TypographyP>
           <BlockQuote cite={<>&mdash; ARSI &ldquo;HAKITA&rdquo; PATALA</>}>
             <p>
@@ -72,15 +72,12 @@ export const AboutScreen = () => {
             {t('about.sourceLabel')}
           </TypographyLabel>
           <TypographyLead className="mt-3">
-            {/* TODO: replace with GitHub URL */}
-            <a
-              href="https://github.com/DopaMindLabs/writer/"
-              target="_blank"
-              rel="noreferrer"
+            <Link
+              href={EXTERNAL_LINKS.githubSource}
               className="underline decoration-rule underline-offset-4 hover:decoration-ink hover:text-ink"
             >
               {t('github', { ns: 'common' })}
-            </a>
+            </Link>
           </TypographyLead>
         </section>
       </div>

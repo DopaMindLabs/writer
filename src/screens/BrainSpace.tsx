@@ -1,4 +1,4 @@
-import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom';
+import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
@@ -14,7 +14,9 @@ import { useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
 import { useUI } from '@/store/ui';
 import { useAutoTour } from '@/tours';
+import { Link } from '@/components/ui/Link';
 import { TypographyP } from '@/components/ui/typography';
+import { routes } from '@/lib/routes';
 
 export const BrainSpaceScreen = () => {
   const { t } = useTranslation('screens');
@@ -38,7 +40,7 @@ export const BrainSpaceScreen = () => {
     return docs[0]?.id ?? null;
   }, [docs, lastDocId]);
 
-  if (!spaceId) return <Navigate to="/" replace />;
+  if (!spaceId) return <Navigate to={routes.home()} replace />;
 
   return (
     <div className="flex h-full w-full">
@@ -92,7 +94,7 @@ const BrainSpaceMobileNotice = ({ spaceId }: { spaceId: string }) => {
           {t('dump.mobileNote')}
         </TypographyP>
         <Link
-          to={`/s/${spaceId}`}
+          to={routes.spaceWrite(spaceId)}
           className="mt-6 inline-block font-mono text-[11px] uppercase tracking-wider text-ink underline underline-offset-4 hover:text-ink-2"
         >
           {t('dump.openInWrite')}

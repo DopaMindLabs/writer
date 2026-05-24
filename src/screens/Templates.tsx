@@ -1,11 +1,13 @@
 import { useMemo, useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from '@/components/libs/icons';
 import { listTemplates, type Template } from '@/data/templates';
 import { createSpaceFromTemplate } from '@/db/seed';
 import { cn } from '@/lib/utils';
+import { Link } from '@/components/ui/Link';
 import { TypographyH1 } from '@/components/ui/typography';
+import { routes } from '@/lib/routes';
 
 export const TemplatesScreen = () => {
   const { t } = useTranslation(['screens', 'templates']);
@@ -52,7 +54,7 @@ export const TemplatesScreen = () => {
         cleanName,
         cleanTag,
       );
-      navigate(`/s/${newId}`);
+      navigate(routes.spaceWrite(newId));
     } finally {
       setSubmitting(false);
     }
@@ -66,7 +68,7 @@ export const TemplatesScreen = () => {
     <div className="flex h-full w-full flex-col overflow-auto bg-paper">
       <header className="flex items-center justify-between border-b border-rule px-4 py-4 md:px-12 md:py-5">
         <Link
-          to="/"
+          to={routes.home()}
           className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:text-ink"
         >
           <ArrowLeft className="h-3 w-3" />

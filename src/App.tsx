@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/typography';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { resetAndReseed } from '@/db/seed';
+import { ROUTE_PATHS, RouteName } from '@/lib/routes';
 import { HomeScreen } from '@/screens/Home';
 import { AboutScreen } from '@/screens/About';
 import { SettingsScreen } from '@/screens/Settings';
@@ -22,18 +23,21 @@ import { TemplatesScreen } from '@/screens/Templates';
 import { NotFoundScreen } from '@/screens/NotFound';
 
 const router = createHashRouter([
-  { path: '/', element: <HomeScreen /> },
-  { path: '/about', element: <AboutScreen /> },
-  { path: '/settings', element: <SettingsScreen /> },
-  { path: '/new', element: <TemplatesScreen /> },
-  { path: '/s/:spaceId', element: <WriteScreen /> },
-  { path: '/s/:spaceId/settings', element: <SpaceSettingsScreen /> },
-  { path: '/s/:spaceId/d/:docId', element: <WriteScreen /> },
-  { path: '/s/:spaceId/d/:docId/focus', element: <FocusScreen /> },
-  { path: '/s/:spaceId/d/:docId/read', element: <ReadScreen /> },
-  { path: '/s/:spaceId/d/:docId/split', element: <SplitScreen /> },
-  { path: '/s/:spaceId/dump', element: <BrainSpaceScreen /> },
-  { path: '/s/:spaceId/citations', element: <CitationsScreen /> },
+  { path: ROUTE_PATHS[RouteName.Home], element: <HomeScreen /> },
+  { path: ROUTE_PATHS[RouteName.About], element: <AboutScreen /> },
+  { path: ROUTE_PATHS[RouteName.Settings], element: <SettingsScreen /> },
+  { path: ROUTE_PATHS[RouteName.Templates], element: <TemplatesScreen /> },
+  { path: ROUTE_PATHS[RouteName.SpaceWrite], element: <WriteScreen /> },
+  {
+    path: ROUTE_PATHS[RouteName.SpaceSettings],
+    element: <SpaceSettingsScreen />,
+  },
+  { path: ROUTE_PATHS[RouteName.DocWrite], element: <WriteScreen /> },
+  { path: ROUTE_PATHS[RouteName.DocFocus], element: <FocusScreen /> },
+  { path: ROUTE_PATHS[RouteName.DocRead], element: <ReadScreen /> },
+  { path: ROUTE_PATHS[RouteName.DocSplit], element: <SplitScreen /> },
+  { path: ROUTE_PATHS[RouteName.BrainSpace], element: <BrainSpaceScreen /> },
+  { path: ROUTE_PATHS[RouteName.Citations], element: <CitationsScreen /> },
   { path: '*', element: <NotFoundScreen /> },
 ]);
 

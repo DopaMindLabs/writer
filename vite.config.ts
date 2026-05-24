@@ -23,9 +23,11 @@ export default defineConfig(({ command }) => ({
   test: {
     globals: true,
     environment: 'jsdom',
+    reporter: process.env.CI ? 'verbose' : 'default',
     setupFiles: ['./src/test/setup.ts'],
     css: false,
     include: ['src/**/*.test.{ts,tsx}'],
+    outputDiffLines: 50,
     clearMocks: true,
     restoreMocks: true,
     coverage: {

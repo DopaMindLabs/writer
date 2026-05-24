@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Trash2 } from '@/components/libs/icons';
+import { routes } from '@/lib/routes';
 import { useSpace } from '@/hooks/useSpaces';
 import { useBackups } from '@/hooks/useBackups';
 import { db } from '@/db/db';
@@ -469,7 +470,7 @@ const DeleteSpaceDialog = ({
       await deleteSpaceCascade(space.id);
       onOpenChange(false);
       setTyped('');
-      navigate('/');
+      navigate(routes.home());
     } finally {
       setSubmitting(false);
     }

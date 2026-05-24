@@ -9,6 +9,7 @@ import { useSpace } from '@/hooks/useSpaces';
 import { useUI } from '@/store/ui';
 import { CitationsPane } from '@/components/surfaces/CitationsPane';
 import { useAutoTour } from '@/tours';
+import { routes } from '@/lib/routes';
 
 export const CitationsScreen = () => {
   const { spaceId } = useParams<{ spaceId: string }>();
@@ -22,7 +23,7 @@ export const CitationsScreen = () => {
     if (spaceId) setCurrentSpaceId(spaceId);
   }, [spaceId, setCurrentSpaceId]);
 
-  if (!spaceId) return <Navigate to="/" replace />;
+  if (!spaceId) return <Navigate to={routes.home()} replace />;
 
   return (
     <div className="flex h-full w-full">

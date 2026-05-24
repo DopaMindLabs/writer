@@ -5,6 +5,7 @@ import {
   TypographyLabel,
   TypographyMuted,
 } from '@/components/ui/typography';
+import { routes } from '@/lib/routes';
 
 export const NotFoundScreen = () => {
   const { t } = useTranslation('screens');
@@ -18,7 +19,7 @@ export const NotFoundScreen = () => {
         <TypographyMuted className="mt-2">
           {t('notFound.body')}
         </TypographyMuted>
-        <Link to="/" kind="primary" className="mt-6">
+        <Link to={routes.home()} kind="primary" className="mt-6">
           {t('notFound.goHome')}
         </Link>
       </div>

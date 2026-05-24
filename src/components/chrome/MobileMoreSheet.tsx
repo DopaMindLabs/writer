@@ -1,8 +1,10 @@
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { DialogPrimitive } from '@/components/libs/primitives';
 import { useUI } from '@/store/ui';
 import { ComingSoon } from '@/components/settings/ComingSoon';
+import { Link } from '@/components/ui/Link';
+import { routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 
 interface MobileMoreSheetProps {
@@ -25,18 +27,18 @@ export const MobileMoreSheet = ({ spaceId, docId }: MobileMoreSheetProps) => {
       key: 'write',
       href:
         spaceId && docId
-          ? `/s/${spaceId}/d/${docId}${focused ? '?focus=1' : ''}`
+          ? `${routes.docWrite(spaceId, docId)}${focused ? '?focus=1' : ''}`
           : spaceId
-            ? `/s/${spaceId}`
+            ? routes.spaceWrite(spaceId)
             : null,
     },
     {
       key: 'read',
-      href: spaceId && docId ? `/s/${spaceId}/d/${docId}/read` : null,
+      href: spaceId && docId ? routes.docRead(spaceId, docId) : null,
     },
     {
       key: 'split',
-      href: spaceId && docId ? `/s/${spaceId}/d/${docId}/split` : null,
+      href: spaceId && docId ? routes.docSplit(spaceId, docId) : null,
     },
   ];
 
@@ -113,13 +115,15 @@ export const MobileMoreSheet = ({ spaceId, docId }: MobileMoreSheetProps) => {
             </div>
             <ul className="mt-1 flex flex-col">
               <MoreItem
-                to={spaceId ? `/s/${spaceId}/settings` : '/settings'}
+                to={
+                  spaceId ? routes.spaceSettings(spaceId) : routes.settings()
+                }
                 label={t(
                   spaceId ? 'mobileMore.spaceSettings' : 'mobileMore.settings',
                 )}
               />
-              <MoreItem to="/settings" label={t('mobileMore.settings')} />
-              <MoreItem to="/about" label={t('mobileMore.about')} />
+              <MoreItem to={routes.settings()} label={t('mobileMore.settings')} />
+              <MoreItem to={routes.about()} label={t('mobileMore.about')} />
               <ComingSoonItem label={t('mobileMore.help')} />
               <ComingSoonItem label={t('mobileMore.whatsNew')} />
               <ComingSoonItem label={t('mobileMore.feedback')} />

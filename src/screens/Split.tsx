@@ -28,6 +28,7 @@ import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocuments, useDocument } from '@/hooks/useDocuments';
 import { useUI } from '@/store/ui';
+import { routes } from '@/lib/routes';
 
 const BRAIN_SPACE_PANE = 'dump';
 const CITATIONS_PANE = 'citations';
@@ -79,7 +80,7 @@ export const SplitScreen = () => {
     setSearchParams(next, { replace: true });
   }, [docId, candidates, withParam, searchParams, setSearchParams]);
 
-  if (!spaceId || !docId) return <Navigate to="/" replace />;
+  if (!spaceId || !docId) return <Navigate to={routes.home()} replace />;
 
   const onPickRight = (e: ChangeEvent<HTMLSelectElement>) => {
     const next = new URLSearchParams(searchParams);
