@@ -3,6 +3,9 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Trash2 } from '@/components/libs/icons';
 import { routes } from '@/lib/routes';
+import { TextField } from '@/components/ui/TextField';
+import { Label } from '@/components/ui/Label';
+import { IconButton } from '@/components/ui/icon';
 import { useSpace } from '@/hooks/useSpaces';
 import { useBackups } from '@/hooks/useBackups';
 import { db } from '@/db/db';
@@ -152,7 +155,7 @@ const GeneralTab = ({ space }: { space: Space }) => {
   };
 
   return (
-    <section>
+    <section data-testid="space-settings-tab-general">
       <TabHeader
         titleKey="settings.space.general.title"
         subtitleKey="settings.space.general.subtitle"
@@ -163,8 +166,8 @@ const GeneralTab = ({ space }: { space: Space }) => {
         label={t('settings.space.general.nameLabel')}
         hint={t('settings.space.general.nameHint')}
       >
-        <input
-          type="text"
+        <TextField
+          data-testid="space-settings-name-input"
           value={name}
           onChange={(e) => setName(e.target.value)}
           onBlur={() => void commitName()}
@@ -174,7 +177,7 @@ const GeneralTab = ({ space }: { space: Space }) => {
             if (e.key === 'Escape') setName(space.name);
           }}
           aria-label={t('settings.space.general.nameLabel')}
-          className="w-full max-w-[320px] border-b border-rule bg-transparent py-1 text-[14px] text-ink outline-none focus:border-ink"
+          className="max-w-[320px]"
         />
       </SettingRow>
 
@@ -182,8 +185,8 @@ const GeneralTab = ({ space }: { space: Space }) => {
         label={t('settings.space.general.tagLabel')}
         hint={t('settings.space.general.tagHint')}
       >
-        <input
-          type="text"
+        <TextField
+          data-testid="space-settings-tag-input"
           value={tag}
           onChange={(e) => setTag(e.target.value)}
           onBlur={() => void commitTag()}
@@ -193,7 +196,7 @@ const GeneralTab = ({ space }: { space: Space }) => {
             if (e.key === 'Escape') setTag(space.tag);
           }}
           aria-label={t('settings.space.general.tagLabel')}
-          className="w-full max-w-[120px] border-b border-rule bg-transparent py-1 font-mono text-[12px] uppercase tracking-wider text-ink outline-none focus:border-ink"
+          className="max-w-[120px] font-mono text-[12px] uppercase tracking-wider"
         />
       </SettingRow>
     </section>
@@ -203,7 +206,9 @@ const GeneralTab = ({ space }: { space: Space }) => {
 const SharingTab = () => {
   return (
     <ComingSoon overlay>
-      <SpaceSharingPlaceholder />
+      <div data-testid="space-settings-tab-sharing">
+        <SpaceSharingPlaceholder />
+      </div>
     </ComingSoon>
   );
 };
@@ -211,7 +216,9 @@ const SharingTab = () => {
 const TemplateTab = () => {
   return (
     <ComingSoon overlay>
-      <SpaceTemplatePlaceholder />
+      <div data-testid="space-settings-tab-template">
+        <SpaceTemplatePlaceholder />
+      </div>
     </ComingSoon>
   );
 };
@@ -219,7 +226,9 @@ const TemplateTab = () => {
 const MembersTab = () => {
   return (
     <ComingSoon overlay>
-      <SpaceMembersPlaceholder />
+      <div data-testid="space-settings-tab-members">
+        <SpaceMembersPlaceholder />
+      </div>
     </ComingSoon>
   );
 };
@@ -270,7 +279,7 @@ const BackupsTab = ({ space }: { space: Space }) => {
   };
 
   return (
-    <section>
+    <section data-testid="space-settings-tab-backups">
       <TabHeader
         titleKey="settings.space.backups.title"
         subtitleKey="settings.space.backups.subtitle"
@@ -291,7 +300,12 @@ const BackupsTab = ({ space }: { space: Space }) => {
             {t('settings.space.backups.restoreLabel')}
             <ComingSoonBadge />
           </span>
-          <Button size="sm" onClick={() => void handleSnapshot()} disabled={busy}>
+          <Button
+            data-testid="space-settings-backups-snapshot"
+            size="sm"
+            onClick={() => void handleSnapshot()}
+            disabled={busy}
+          >
             {busy
               ? t('settings.space.backups.snapshotting')
               : t('settings.space.backups.snapshotNow')}
@@ -357,14 +371,17 @@ const BackupsTab = ({ space }: { space: Space }) => {
                   </td>
                   <td className="py-2.5 text-right">
                     <div className="flex items-center justify-end gap-3 text-[12px]">
-                      <button
-                        type="button"
+                      <Button
+                        data-testid={`backup-row-${b.id}-download`}
+                        kind="ghost"
+                        size="sm"
                         onClick={() => handleDownload(b)}
-                        className="text-ink underline underline-offset-4 hover:text-ink-2"
                       >
                         {t('settings.space.backups.download')}
-                      </button>
+                      </Button>
+                      {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
                       <button
+                        data-testid={`backup-row-${b.id}-delete`}
                         type="button"
                         onClick={() => void handleDelete(b)}
                         aria-label={t('settings.space.backups.delete')}
@@ -412,7 +429,7 @@ const DangerTab = ({ space }: { space: Space }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <section>
+    <section data-testid="space-settings-tab-danger">
       <TabHeader
         titleKey="settings.space.danger.title"
         subtitleKey="settings.space.danger.subtitle"
@@ -425,6 +442,7 @@ const DangerTab = ({ space }: { space: Space }) => {
           {t('settings.space.danger.deleteCardBody')}
         </TypographyP>
         <Button
+          data-testid="space-settings-danger-delete-trigger"
           kind="dangerous"
           size="sm"
           onClick={() => setOpen(true)}
@@ -488,11 +506,15 @@ const DeleteSpaceDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <label className="flex flex-col gap-2">
-          <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
-            {t('settings.space.danger.typeToConfirm', { name: space.name })}
-          </span>
+        <Label
+          tone="ink3"
+          weight="regular"
+          className="flex flex-col gap-2 font-mono text-[10px] uppercase tracking-wider"
+        >
+          {t('settings.space.danger.typeToConfirm', { name: space.name })}
+          {/* @lint-ignore native-input: bordered (not baseline) input; TextField currently only exposes baseline/bare — bordered variant tracked for PR 5 */}
           <input
+            data-testid="space-settings-delete-dialog-input"
             type="text"
             value={typed}
             onChange={(e) => setTyped(e.target.value)}
@@ -501,13 +523,18 @@ const DeleteSpaceDialog = ({
             })}
             className="w-full border border-rule bg-paper px-3 py-2 text-[14px] text-ink outline-none focus:border-ink"
           />
-        </label>
+        </Label>
 
         <div className="flex items-center justify-end gap-2">
-          <Button kind="secondary" onClick={() => handleOpenChange(false)}>
+          <Button
+            data-testid="space-settings-delete-dialog-cancel"
+            kind="secondary"
+            onClick={() => handleOpenChange(false)}
+          >
             {t('settings.space.danger.cancel')}
           </Button>
           <Button
+            data-testid="space-settings-delete-dialog-confirm"
             kind="dangerous"
             onClick={() => void handleConfirm()}
             disabled={!canDelete}

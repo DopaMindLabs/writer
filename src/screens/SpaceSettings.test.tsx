@@ -24,401 +24,397 @@ const renderAtSpaceSettings = (initialPath = '/s/s1/settings') => {
 };
 
 describe('SpaceSettingsScreen', () => {
-  it('renders the General tab with the space name and tag by default', async () => {
-    await seedBasicSpace();
-    renderAtSpaceSettings();
-    expect(
-      await screen.findByRole('heading', { name: /^general$/i }),
-    ).toBeInTheDocument();
-    expect(
-      (screen.getByLabelText(/space name/i) as HTMLInputElement).value,
-    ).toBe('Test Space');
-    expect(
-      (screen.getByLabelText(/^tag$/i) as HTMLInputElement).value,
-    ).toBe('TST');
-  });
+  describe('rendering', () => {
+    it('should render the General tab with the space name and tag by default', async () => {
+      await seedBasicSpace();
+      renderAtSpaceSettings();
+      expect(
+        await screen.findByTestId('space-settings-tab-general'),
+      ).toBeInTheDocument();
+      expect(screen.getByTestId('space-settings-name-input')).toHaveValue(
+        'Test Space',
+      );
+      expect(screen.getByTestId('space-settings-tag-input')).toHaveValue('TST');
+    });
 
-  it('shows a loading placeholder when the space has not loaded yet', async () => {
-    renderAtSpaceSettings('/s/nope/settings');
-    expect(
-      await screen.findByTestId('space-settings-loading'),
-    ).toBeInTheDocument();
-  });
+    it('should show a loading placeholder when the space has not loaded yet', async () => {
+      renderAtSpaceSettings('/s/nope/settings');
+      expect(
+        await screen.findByTestId('space-settings-loading'),
+      ).toBeInTheDocument();
+    });
 
-  it('persists a rename via Enter on the name input', async () => {
-    await seedBasicSpace();
-    const user = userEvent.setup();
-    renderAtSpaceSettings();
-    const nameInput = (await screen.findByLabelText(
-      /space name/i,
-    )) as HTMLInputElement;
-    await user.clear(nameInput);
-    await user.type(nameInput, 'Renamed Space{enter}');
-    await waitFor(async () => {
-      expect((await db.spaces.get('s1'))?.name).toBe('Renamed Space');
+    it('should render the world rail with the current space as the back affordance', async () => {
+      await seedBasicSpace();
+      renderAtSpaceSettings();
+      const spaceLink = await screen.findByTestId('space-rail-space-s1');
+      expect(spaceLink).toHaveAttribute('href', '/s/s1');
+      expect(spaceLink).toHaveTextContent('TST');
     });
   });
 
-  it('reverts an unchanged or empty name without writing to Dexie', async () => {
-    await seedBasicSpace();
-    const user = userEvent.setup();
-    const updateSpy = vi.spyOn(db.spaces, 'update');
-    renderAtSpaceSettings();
-    const nameInput = (await screen.findByLabelText(
-      /space name/i,
-    )) as HTMLInputElement;
-    await user.clear(nameInput);
-    nameInput.blur();
-    await waitFor(() => expect(nameInput.value).toBe('Test Space'));
-    expect(updateSpy).not.toHaveBeenCalled();
-    updateSpy.mockRestore();
-  });
+  describe('name input', () => {
+    it('should persist a rename via Enter', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderAtSpaceSettings();
+      const nameInput = await screen.findByTestId('space-settings-name-input');
+      await user.clear(nameInput);
+      await user.type(nameInput, 'Renamed Space{enter}');
+      await waitFor(async () => {
+        expect((await db.spaces.get('s1'))?.name).toBe('Renamed Space');
+      });
+    });
 
-  it('Escape on the name input reverts to the original value', async () => {
-    await seedBasicSpace();
-    const user = userEvent.setup();
-    renderAtSpaceSettings();
-    const nameInput = (await screen.findByLabelText(
-      /space name/i,
-    )) as HTMLInputElement;
-    await user.clear(nameInput);
-    await user.type(nameInput, 'Throwaway{escape}');
-    expect(nameInput.value).toBe('Test Space');
-  });
+    it('should revert an unchanged or empty name without writing to Dexie', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      const updateSpy = vi.spyOn(db.spaces, 'update');
+      renderAtSpaceSettings();
+      const nameInput = await screen.findByTestId('space-settings-name-input');
+      await user.clear(nameInput);
+      nameInput.blur();
+      await waitFor(() =>
+        expect(nameInput).toHaveValue('Test Space'),
+      );
+      expect(updateSpy).not.toHaveBeenCalled();
+      updateSpy.mockRestore();
+    });
 
-  it('persists a tag change via blur', async () => {
-    await seedBasicSpace();
-    const user = userEvent.setup();
-    renderAtSpaceSettings();
-    const tagInput = (await screen.findByLabelText(
-      /^tag$/i,
-    )) as HTMLInputElement;
-    await user.clear(tagInput);
-    await user.type(tagInput, 'NEW');
-    tagInput.blur();
-    await waitFor(async () => {
-      expect((await db.spaces.get('s1'))?.tag).toBe('NEW');
+    it('should revert to the original value when Escape is pressed', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderAtSpaceSettings();
+      const nameInput = await screen.findByTestId('space-settings-name-input');
+      await user.clear(nameInput);
+      await user.type(nameInput, 'Throwaway{escape}');
+      expect(nameInput).toHaveValue('Test Space');
+    });
+
+    it('should not write to the DB when blurred with an unchanged name', async () => {
+      await seedBasicSpace();
+      const updateSpy = vi.spyOn(db.spaces, 'update');
+      renderAtSpaceSettings();
+      const nameInput = await screen.findByTestId('space-settings-name-input');
+      nameInput.focus();
+      nameInput.blur();
+      expect(updateSpy).not.toHaveBeenCalled();
+      updateSpy.mockRestore();
     });
   });
 
-  it('reverts an empty tag without writing', async () => {
-    await seedBasicSpace();
-    const user = userEvent.setup();
-    const updateSpy = vi.spyOn(db.spaces, 'update');
-    renderAtSpaceSettings();
-    const tagInput = (await screen.findByLabelText(
-      /^tag$/i,
-    )) as HTMLInputElement;
-    await user.clear(tagInput);
-    tagInput.blur();
-    await waitFor(() => expect(tagInput.value).toBe('TST'));
-    expect(updateSpy).not.toHaveBeenCalled();
-    updateSpy.mockRestore();
-  });
+  describe('tag input', () => {
+    it('should persist a tag change via blur', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderAtSpaceSettings();
+      const tagInput = await screen.findByTestId('space-settings-tag-input');
+      await user.clear(tagInput);
+      await user.type(tagInput, 'NEW');
+      tagInput.blur();
+      await waitFor(async () => {
+        expect((await db.spaces.get('s1'))?.tag).toBe('NEW');
+      });
+    });
 
-  it('Escape on the tag input reverts to the original value', async () => {
-    await seedBasicSpace();
-    const user = userEvent.setup();
-    renderAtSpaceSettings();
-    const tagInput = (await screen.findByLabelText(
-      /^tag$/i,
-    )) as HTMLInputElement;
-    await user.clear(tagInput);
-    await user.type(tagInput, 'XYZ{escape}');
-    expect(tagInput.value).toBe('TST');
-  });
+    it('should revert an empty tag without writing', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      const updateSpy = vi.spyOn(db.spaces, 'update');
+      renderAtSpaceSettings();
+      const tagInput = await screen.findByTestId('space-settings-tag-input');
+      await user.clear(tagInput);
+      tagInput.blur();
+      await waitFor(() => expect(tagInput).toHaveValue('TST'));
+      expect(updateSpy).not.toHaveBeenCalled();
+      updateSpy.mockRestore();
+    });
 
-  it('Enter on the tag input commits the rename via blur', async () => {
-    await seedBasicSpace();
-    const user = userEvent.setup();
-    renderAtSpaceSettings();
-    const tagInput = (await screen.findByLabelText(
-      /^tag$/i,
-    )) as HTMLInputElement;
-    await user.clear(tagInput);
-    await user.type(tagInput, 'ABC{enter}');
-    await waitFor(async () => {
-      expect((await db.spaces.get('s1'))?.tag).toBe('ABC');
+    it('should revert to the original value when Escape is pressed', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderAtSpaceSettings();
+      const tagInput = await screen.findByTestId('space-settings-tag-input');
+      await user.clear(tagInput);
+      await user.type(tagInput, 'XYZ{escape}');
+      expect(tagInput).toHaveValue('TST');
+    });
+
+    it('should commit the tag via Enter (blurs the input)', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderAtSpaceSettings();
+      const tagInput = await screen.findByTestId('space-settings-tag-input');
+      await user.clear(tagInput);
+      await user.type(tagInput, 'ABC{enter}');
+      await waitFor(async () => {
+        expect((await db.spaces.get('s1'))?.tag).toBe('ABC');
+      });
+    });
+
+    it('should not write to the DB when blurred with an unchanged tag', async () => {
+      await seedBasicSpace();
+      const updateSpy = vi.spyOn(db.spaces, 'update');
+      renderAtSpaceSettings();
+      const tagInput = await screen.findByTestId('space-settings-tag-input');
+      tagInput.focus();
+      tagInput.blur();
+      expect(updateSpy).not.toHaveBeenCalled();
+      updateSpy.mockRestore();
     });
   });
 
-  it('blurring with an unchanged tag does not write to the DB', async () => {
-    await seedBasicSpace();
-    const updateSpy = vi.spyOn(db.spaces, 'update');
-    renderAtSpaceSettings();
-    const tagInput = (await screen.findByLabelText(
-      /^tag$/i,
-    )) as HTMLInputElement;
-    // The tag is already 'TST' from sampleSpace; blurring without changes
-    // should be a no-op.
-    tagInput.focus();
-    tagInput.blur();
-    expect(updateSpy).not.toHaveBeenCalled();
-    updateSpy.mockRestore();
-  });
-
-  it('blurring with an unchanged name does not write to the DB', async () => {
-    await seedBasicSpace();
-    const updateSpy = vi.spyOn(db.spaces, 'update');
-    renderAtSpaceSettings();
-    const nameInput = (await screen.findByLabelText(
-      /space name/i,
-    )) as HTMLInputElement;
-    nameInput.focus();
-    nameInput.blur();
-    expect(updateSpy).not.toHaveBeenCalled();
-    updateSpy.mockRestore();
-  });
-
-  it('renders the Sharing placeholder (coming soon)', async () => {
-    await seedBasicSpace();
-    const { container } = renderAtSpaceSettings('/s/s1/settings?tab=sharing');
-    expect(
-      await screen.findByRole('heading', { name: /^sharing$/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/Visibility/i)).toBeInTheDocument();
-    expect(
-      container.querySelector('[data-coming-soon-overlay="true"]'),
-    ).not.toBeNull();
-  });
-
-  it('renders the world rail with the current space as the back affordance', async () => {
-    await seedBasicSpace();
-    renderAtSpaceSettings();
-    const spaceLink = await screen.findByRole('link', { name: 'TST' });
-    expect(spaceLink).toHaveAttribute('href', '/s/s1');
-  });
-
-  it('renders the Template placeholder (coming soon)', async () => {
-    await seedBasicSpace();
-    const { container } = renderAtSpaceSettings('/s/s1/settings?tab=template');
-    expect(
-      await screen.findByRole('heading', { name: /^template$/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/Current template/i)).toBeInTheDocument();
-    expect(
-      container.querySelector('[data-coming-soon-overlay="true"]'),
-    ).not.toBeNull();
-  });
-
-  it('renders the Members placeholder', async () => {
-    await seedBasicSpace();
-    const { container } = renderAtSpaceSettings('/s/s1/settings?tab=members');
-    expect(
-      await screen.findByRole('heading', { name: /^members$/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/Invite by email/i)).toBeInTheDocument();
-    expect(
-      container.querySelector('[data-coming-soon-overlay="true"]'),
-    ).not.toBeNull();
-  });
-
-  it('renders the Backups tab with an empty history hint', async () => {
-    await seedBasicSpace();
-    renderAtSpaceSettings('/s/s1/settings?tab=backups');
-    expect(
-      await screen.findByRole('heading', { name: /^backups$/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/No snapshots yet/i),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /snapshot now/i }),
-    ).toBeInTheDocument();
-  });
-
-  it('creates a snapshot, writes a Backups row, and shows it in the history', async () => {
-    await seedBasicSpace();
-    const user = userEvent.setup();
-    const clickSpy = vi
-      .spyOn(HTMLAnchorElement.prototype, 'click')
-      .mockImplementation(() => {});
-    renderAtSpaceSettings('/s/s1/settings?tab=backups');
-    await user.click(
-      await screen.findByRole('button', { name: /snapshot now/i }),
-    );
-    await waitFor(async () => {
-      expect(await db.backups.where('scope').equals('s1').count()).toBe(1);
+  describe('placeholder tabs', () => {
+    it('should render the Sharing placeholder (coming soon)', async () => {
+      await seedBasicSpace();
+      const { container } = renderAtSpaceSettings('/s/s1/settings?tab=sharing');
+      const tab = await screen.findByTestId('space-settings-tab-sharing');
+      expect(tab).toHaveTextContent(/Visibility/i);
+      expect(
+        container.querySelector('[data-coming-soon-overlay="true"]'),
+      ).not.toBeNull();
     });
-    expect(clickSpy).toHaveBeenCalled();
-    expect(await screen.findByTestId('backups-history')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /^delete$/i })).toBeInTheDocument();
-    clickSpy.mockRestore();
-  });
 
-  it('formats backup sizes across B/kB/MB and timestamps across now/min/h/d/iso ranges', async () => {
-    await seedBasicSpace();
-    const NOW = Date.UTC(2026, 5, 1, 12, 0, 0);
-    vi.setSystemTime(NOW);
-    const minuteAgo = NOW - 90 * 1000; // ~1 min ago
-    const hoursAgo = NOW - 3 * 60 * 60 * 1000; // 3 h ago
-    const daysAgo = NOW - 2 * 24 * 60 * 60 * 1000; // 2 d ago
-    const oldDate = NOW - 14 * 24 * 60 * 60 * 1000; // 14 d -> ISO
-    await db.backups.bulkPut([
-      {
-        id: 'b-bytes',
-        when: NOW - 1000,
-        scope: 's1',
-        kind: 'manual',
-        format: 'md-zip',
-        size: 512,
-        payload: new Blob(['a']),
-      },
-      {
-        id: 'b-kb',
-        when: minuteAgo,
-        scope: 's1',
-        kind: 'manual',
-        format: 'md-zip',
-        size: 2048,
-        payload: new Blob(['ab']),
-      },
-      {
-        id: 'b-mb',
-        when: hoursAgo,
-        scope: 's1',
-        kind: 'manual',
-        format: 'md-zip',
-        size: 3 * 1024 * 1024,
-        payload: new Blob(['abc']),
-      },
-      {
-        id: 'b-days',
-        when: daysAgo,
-        scope: 's1',
-        kind: 'manual',
-        format: 'md-zip',
-        size: 1024,
-        payload: new Blob(['d']),
-      },
-      {
-        id: 'b-old',
-        when: oldDate,
-        scope: 's1',
-        kind: 'manual',
-        format: 'md-zip',
-        size: 1,
-        payload: new Blob(['e']),
-      },
-    ]);
-    renderAtSpaceSettings('/s/s1/settings?tab=backups');
-    const history = await screen.findByTestId('backups-history');
-    expect(history.textContent).toMatch(/512 B/);
-    expect(history.textContent).toMatch(/2\.0 kB/);
-    expect(history.textContent).toMatch(/3\.0 MB/);
-    expect(history.textContent).toMatch(/min ago|h ago/);
-    expect(history.textContent).toMatch(/\d+ d ago/);
-    // 14d → ISO date YYYY-MM-DD; verify a 2026-05- prefix appears.
-    expect(history.textContent).toMatch(/2026-05-/);
-    vi.useRealTimers();
-  });
-
-  it('renders the Danger zone with the delete trigger', async () => {
-    await seedBasicSpace();
-    renderAtSpaceSettings('/s/s1/settings?tab=danger');
-    expect(
-      await screen.findByRole('heading', { name: /^danger zone$/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /delete this space/i }),
-    ).toBeInTheDocument();
-  });
-
-  it('keeps the delete dialog confirm button disabled until the space name is typed exactly', async () => {
-    await seedBasicSpace();
-    const user = userEvent.setup();
-    renderAtSpaceSettings('/s/s1/settings?tab=danger');
-    await user.click(
-      await screen.findByRole('button', { name: /delete this space/i }),
-    );
-    const input = await screen.findByLabelText(/type test space to confirm/i);
-    const confirmButton = screen.getByRole('button', {
-      name: /^delete space$/i,
+    it('should render the Template placeholder (coming soon)', async () => {
+      await seedBasicSpace();
+      const { container } = renderAtSpaceSettings('/s/s1/settings?tab=template');
+      const tab = await screen.findByTestId('space-settings-tab-template');
+      expect(tab).toHaveTextContent(/Current template/i);
+      expect(
+        container.querySelector('[data-coming-soon-overlay="true"]'),
+      ).not.toBeNull();
     });
-    expect(confirmButton).toBeDisabled();
-    await user.type(input, 'Test Spac');
-    expect(confirmButton).toBeDisabled();
-    await user.type(input, 'e');
-    expect(confirmButton).toBeEnabled();
-  });
 
-  it('cancels the delete dialog without deleting the space', async () => {
-    await seedBasicSpace();
-    const user = userEvent.setup();
-    renderAtSpaceSettings('/s/s1/settings?tab=danger');
-    await user.click(
-      await screen.findByRole('button', { name: /delete this space/i }),
-    );
-    await user.click(screen.getByRole('button', { name: /^cancel$/i }));
-    expect(await db.spaces.get('s1')).toBeDefined();
-  });
-
-  it('clears the typed confirmation when the dialog is reopened', async () => {
-    await seedBasicSpace();
-    const user = userEvent.setup();
-    renderAtSpaceSettings('/s/s1/settings?tab=danger');
-    await user.click(
-      await screen.findByRole('button', { name: /delete this space/i }),
-    );
-    const input = (await screen.findByLabelText(
-      /type test space to confirm/i,
-    )) as HTMLInputElement;
-    await user.type(input, 'partial');
-    await user.click(screen.getByRole('button', { name: /^cancel$/i }));
-    await user.click(
-      await screen.findByRole('button', { name: /delete this space/i }),
-    );
-    const reopened = (await screen.findByLabelText(
-      /type test space to confirm/i,
-    )) as HTMLInputElement;
-    expect(reopened.value).toBe('');
-  });
-
-  it('deletes the space and navigates home when confirmed', async () => {
-    await seedBasicSpace();
-    const user = userEvent.setup();
-    renderAtSpaceSettings('/s/s1/settings?tab=danger');
-    await user.click(
-      await screen.findByRole('button', { name: /delete this space/i }),
-    );
-    const input = await screen.findByLabelText(/type test space to confirm/i);
-    await user.type(input, 'Test Space');
-    await user.click(screen.getByRole('button', { name: /^delete space$/i }));
-    await waitFor(async () => {
-      expect(await db.spaces.get('s1')).toBeUndefined();
+    it('should render the Members placeholder', async () => {
+      await seedBasicSpace();
+      const { container } = renderAtSpaceSettings('/s/s1/settings?tab=members');
+      const tab = await screen.findByTestId('space-settings-tab-members');
+      expect(tab).toHaveTextContent(/Invite by email/i);
+      expect(
+        container.querySelector('[data-coming-soon-overlay="true"]'),
+      ).not.toBeNull();
     });
-    await waitFor(() =>
-      expect(screen.getByTestId('catch-all')).toBeInTheDocument(),
-    );
   });
 
-  it('switches tabs when a tab in the side rail is clicked', async () => {
-    await seedBasicSpace();
-    const user = userEvent.setup();
-    renderAtSpaceSettings();
-    // SettingsTabs renders both a mobile and a desktop variant in the DOM, so
-    // there are two "Sharing" buttons; click either.
-    const buttons = await screen.findAllByRole('button', {
-      name: /^sharing$/i,
+  describe('backups tab', () => {
+    it('should render with an empty history hint and a snapshot trigger', async () => {
+      await seedBasicSpace();
+      renderAtSpaceSettings('/s/s1/settings?tab=backups');
+      const tab = await screen.findByTestId('space-settings-tab-backups');
+      expect(tab).toHaveTextContent(/No snapshots yet/i);
+      const snapshot = screen.getByTestId('space-settings-backups-snapshot');
+      expect(snapshot).toHaveTextContent(/snapshot now/i);
     });
-    await user.click(buttons[0]);
-    expect(
-      await screen.findByRole('heading', { name: /^sharing$/i }),
-    ).toBeInTheDocument();
+
+    it('should create a snapshot, write a Backups row, and show it in the history', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      const clickSpy = vi
+        .spyOn(HTMLAnchorElement.prototype, 'click')
+        .mockImplementation(() => {});
+      renderAtSpaceSettings('/s/s1/settings?tab=backups');
+      await user.click(
+        await screen.findByTestId('space-settings-backups-snapshot'),
+      );
+      await waitFor(async () => {
+        expect(await db.backups.where('scope').equals('s1').count()).toBe(1);
+      });
+      expect(clickSpy).toHaveBeenCalled();
+      const history = await screen.findByTestId('backups-history');
+      expect(history).toBeInTheDocument();
+      const ids = await db.backups.where('scope').equals('s1').primaryKeys();
+      const firstId = ids[0] as string;
+      expect(
+        screen.getByTestId(`backup-row-${firstId}-delete`),
+      ).toHaveTextContent(/delete/i);
+      clickSpy.mockRestore();
+    });
+
+    it('should format backup sizes across B/kB/MB and timestamps across now/min/h/d/iso ranges', async () => {
+      await seedBasicSpace();
+      const NOW = Date.UTC(2026, 5, 1, 12, 0, 0);
+      vi.setSystemTime(NOW);
+      const minuteAgo = NOW - 90 * 1000;
+      const hoursAgo = NOW - 3 * 60 * 60 * 1000;
+      const daysAgo = NOW - 2 * 24 * 60 * 60 * 1000;
+      const oldDate = NOW - 14 * 24 * 60 * 60 * 1000;
+      await db.backups.bulkPut([
+        {
+          id: 'b-bytes',
+          when: NOW - 1000,
+          scope: 's1',
+          kind: 'manual',
+          format: 'md-zip',
+          size: 512,
+          payload: new Blob(['a']),
+        },
+        {
+          id: 'b-kb',
+          when: minuteAgo,
+          scope: 's1',
+          kind: 'manual',
+          format: 'md-zip',
+          size: 2048,
+          payload: new Blob(['ab']),
+        },
+        {
+          id: 'b-mb',
+          when: hoursAgo,
+          scope: 's1',
+          kind: 'manual',
+          format: 'md-zip',
+          size: 3 * 1024 * 1024,
+          payload: new Blob(['abc']),
+        },
+        {
+          id: 'b-days',
+          when: daysAgo,
+          scope: 's1',
+          kind: 'manual',
+          format: 'md-zip',
+          size: 1024,
+          payload: new Blob(['d']),
+        },
+        {
+          id: 'b-old',
+          when: oldDate,
+          scope: 's1',
+          kind: 'manual',
+          format: 'md-zip',
+          size: 1,
+          payload: new Blob(['e']),
+        },
+      ]);
+      renderAtSpaceSettings('/s/s1/settings?tab=backups');
+      const history = await screen.findByTestId('backups-history');
+      expect(history.textContent).toMatch(/512 B/);
+      expect(history.textContent).toMatch(/2\.0 kB/);
+      expect(history.textContent).toMatch(/3\.0 MB/);
+      expect(history.textContent).toMatch(/min ago|h ago/);
+      expect(history.textContent).toMatch(/\d+ d ago/);
+      expect(history.textContent).toMatch(/2026-05-/);
+      vi.useRealTimers();
+    });
   });
 
-  it('falls back to the General tab when ?tab= is unrecognised', async () => {
-    await seedBasicSpace();
-    renderAtSpaceSettings('/s/s1/settings?tab=bogus');
-    expect(
-      await screen.findByRole('heading', { name: /^general$/i }),
-    ).toBeInTheDocument();
+  describe('danger zone', () => {
+    it('should render the danger tab with the delete trigger', async () => {
+      await seedBasicSpace();
+      renderAtSpaceSettings('/s/s1/settings?tab=danger');
+      expect(
+        await screen.findByTestId('space-settings-tab-danger'),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId('space-settings-danger-delete-trigger'),
+      ).toHaveTextContent(/delete this space/i);
+    });
+
+    it('should keep the confirm button disabled until the space name is typed exactly', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderAtSpaceSettings('/s/s1/settings?tab=danger');
+      await user.click(
+        await screen.findByTestId('space-settings-danger-delete-trigger'),
+      );
+      const input = await screen.findByTestId(
+        'space-settings-delete-dialog-input',
+      );
+      const confirmButton = screen.getByTestId(
+        'space-settings-delete-dialog-confirm',
+      );
+      expect(confirmButton).toBeDisabled();
+      await user.type(input, 'Test Spac');
+      expect(confirmButton).toBeDisabled();
+      await user.type(input, 'e');
+      expect(confirmButton).toBeEnabled();
+    });
+
+    it('should cancel the delete dialog without deleting the space', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderAtSpaceSettings('/s/s1/settings?tab=danger');
+      await user.click(
+        await screen.findByTestId('space-settings-danger-delete-trigger'),
+      );
+      await user.click(
+        screen.getByTestId('space-settings-delete-dialog-cancel'),
+      );
+      expect(await db.spaces.get('s1')).toBeDefined();
+    });
+
+    it('should clear the typed confirmation when the dialog is reopened', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderAtSpaceSettings('/s/s1/settings?tab=danger');
+      await user.click(
+        await screen.findByTestId('space-settings-danger-delete-trigger'),
+      );
+      const input = await screen.findByTestId(
+        'space-settings-delete-dialog-input',
+      );
+      await user.type(input, 'partial');
+      await user.click(
+        screen.getByTestId('space-settings-delete-dialog-cancel'),
+      );
+      await user.click(
+        await screen.findByTestId('space-settings-danger-delete-trigger'),
+      );
+      const reopened = await screen.findByTestId(
+        'space-settings-delete-dialog-input',
+      );
+      expect(reopened).toHaveValue('');
+    });
+
+    it('should delete the space and navigate home when confirmed', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderAtSpaceSettings('/s/s1/settings?tab=danger');
+      await user.click(
+        await screen.findByTestId('space-settings-danger-delete-trigger'),
+      );
+      const input = await screen.findByTestId(
+        'space-settings-delete-dialog-input',
+      );
+      await user.type(input, 'Test Space');
+      await user.click(
+        screen.getByTestId('space-settings-delete-dialog-confirm'),
+      );
+      await waitFor(async () => {
+        expect(await db.spaces.get('s1')).toBeUndefined();
+      });
+      await waitFor(() =>
+        expect(screen.getByTestId('catch-all')).toBeInTheDocument(),
+      );
+    });
+  });
+
+  describe('tab switching', () => {
+    it('should switch tabs when a tab in the side rail is clicked', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderAtSpaceSettings();
+      // SettingsTabs renders both a mobile and a desktop variant in the DOM;
+      // either testid resolves to the same logical tab.
+      await user.click(
+        await screen.findByTestId('settings-tab-mobile-sharing'),
+      );
+      expect(
+        await screen.findByTestId('space-settings-tab-sharing'),
+      ).toBeInTheDocument();
+    });
+
+    it('should fall back to the General tab when ?tab= is unrecognised', async () => {
+      await seedBasicSpace();
+      renderAtSpaceSettings('/s/s1/settings?tab=bogus');
+      expect(
+        await screen.findByTestId('space-settings-tab-general'),
+      ).toBeInTheDocument();
+    });
   });
 });
 
 describe('deleteSpaceCascade', () => {
-  it('deletes every row scoped to the space and leaves other spaces untouched', async () => {
-    // Seed s1 with a doc, annotation, note, section, citation, connection
+  it('should delete every row scoped to the space and leave other spaces untouched', async () => {
     await db.spaces.bulkPut([
       sampleSpace,
       { ...sampleSpace, id: 's2', name: 'Other', tag: 'OTH' },
@@ -476,7 +472,6 @@ describe('deleteSpaceCascade', () => {
     };
     await db.backups.bulkPut([backupS1, backupS2]);
 
-    // Seed an unrelated doc in s2 to confirm it survives
     await db.docs.put({
       ...sampleDoc,
       id: 'd-other',
@@ -501,7 +496,7 @@ describe('deleteSpaceCascade', () => {
     expect(await db.docs.get('d-other')).toBeDefined();
   });
 
-  it('no-ops cleanly for an empty space with no docs', async () => {
+  it('should no-op cleanly for an empty space with no docs', async () => {
     await db.spaces.put({ ...sampleSpace, id: 's-empty', name: 'Empty' });
     await act(async () => {
       await deleteSpaceCascade('s-empty');

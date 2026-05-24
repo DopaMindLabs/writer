@@ -52,6 +52,7 @@ export const SpaceRail = ({ activeSpaceId }: SpaceRailProps) => {
             <TooltipTrigger asChild>
               <Link
                 to={routes.spaceWrite(w.id)}
+                data-testid={`space-rail-space-${w.id}`}
                 className={cn(
                   'relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors',
                   isActive

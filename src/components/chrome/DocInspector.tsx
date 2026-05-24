@@ -3,6 +3,7 @@ import { ChevronRight } from '@/components/libs/icons';
 import { useUI, type InspectorSection } from '@/store/ui';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';
+import { IconButton } from '@/components/ui/icon';
 import { cn } from '@/lib/utils';
 
 const TABS: InspectorSection[] = ['outline', 'info', 'history', 'actions'];
@@ -23,26 +24,30 @@ export const DocInspector = ({ docName }: DocInspectorProps) => {
       className="relative hidden w-72 shrink-0 flex-col border-l border-rule bg-paper-2 md:flex"
     >
       <div className="flex items-center gap-2 border-b border-rule px-4 py-3">
-        <span className="flex-1 truncate font-mono text-[9px] uppercase tracking-wider text-ink-3">
+        <span
+          data-testid="doc-inspector-name"
+          className="flex-1 truncate font-mono text-[9px] uppercase tracking-wider text-ink-3"
+        >
           {docName || '—'}
         </span>
         <ComingSoonBadge />
-        <button
-          type="button"
+        <IconButton
+          data-testid="doc-inspector-collapse"
+          icon={ChevronRight}
+          label={t('inspector.collapse')}
           onClick={() => setInspectorMode('icons')}
-          aria-label={t('inspector.collapse')}
-          className="inline-flex h-5 w-5 items-center justify-center rounded-sm text-ink-3 hover:bg-paper hover:text-ink"
-        >
-          <ChevronRight className="h-3.5 w-3.5" aria-hidden />
-        </button>
+          className="h-5 w-5"
+        />
       </div>
 
       <div className="flex border-b border-rule">
         {TABS.map((id) => {
           const on = section === id;
+          // @lint-ignore native-button: tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
           return (
             <button
               key={id}
+              data-testid={`doc-inspector-tab-${id}`}
               type="button"
               onClick={() => setSection(id)}
               aria-current={on ? 'page' : undefined}
@@ -64,7 +69,10 @@ export const DocInspector = ({ docName }: DocInspectorProps) => {
         side="left"
         className="block flex-1 self-stretch"
       >
-        <div className="flex-1 overflow-auto">
+        <div
+          data-testid={`doc-inspector-pane-${section}`}
+          className="flex-1 overflow-auto"
+        >
           {section === 'outline' && <OutlinePane />}
           {section === 'info' && <InfoPane />}
           {section === 'history' && <HistoryPane />}

@@ -64,6 +64,28 @@ describe('SearchField', () => {
       );
       expect(queryByTestId('sf-dis-clear')).toBeNull();
     });
+
+    it('should show the clear button after typing into an initially empty uncontrolled field', () => {
+      const { getByTestId, queryByTestId } = render(
+        <SearchField data-testid="sf-uctl-type" />,
+      );
+      expect(queryByTestId('sf-uctl-type-clear')).toBeNull();
+      fireEvent.change(getByTestId('sf-uctl-type'), {
+        target: { value: 'a' },
+      });
+      expect(getByTestId('sf-uctl-type-clear')).toBeInTheDocument();
+    });
+
+    it('should hide the clear button after the user clears an uncontrolled field by typing', () => {
+      const { getByTestId, queryByTestId } = render(
+        <SearchField data-testid="sf-uctl-erase" defaultValue="seed" />,
+      );
+      expect(getByTestId('sf-uctl-erase-clear')).toBeInTheDocument();
+      fireEvent.change(getByTestId('sf-uctl-erase'), {
+        target: { value: '' },
+      });
+      expect(queryByTestId('sf-uctl-erase-clear')).toBeNull();
+    });
   });
 
   describe('clear behaviour', () => {
@@ -84,6 +106,23 @@ describe('SearchField', () => {
       fireEvent.click(getByTestId('sf-clear-clear'));
       expect(getByTestId('sf-clear')).toHaveValue('');
       expect(queryByTestId('sf-clear-clear')).toBeNull();
+    });
+
+    it('should hide the clear button after clicking clear on an uncontrolled field', () => {
+      const onClear = vi.fn();
+      const { getByTestId, queryByTestId } = render(
+        <SearchField
+          data-testid="sf-uctl-clear"
+          defaultValue="seed"
+          onClear={onClear}
+        />,
+      );
+      expect(getByTestId('sf-uctl-clear')).toHaveValue('seed');
+      fireEvent.click(getByTestId('sf-uctl-clear-clear'));
+      expect(getByTestId('sf-uctl-clear')).toHaveValue('');
+      expect(queryByTestId('sf-uctl-clear-clear')).toBeNull();
+      expect(document.activeElement).toBe(getByTestId('sf-uctl-clear'));
+      expect(onClear).toHaveBeenCalledTimes(1);
     });
 
     it('should expose a custom clear aria-label', () => {

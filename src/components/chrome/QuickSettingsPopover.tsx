@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Check } from '@/components/libs/icons';
 import { useUI, type ReadingWidth, type Theme } from '@/store/ui';
@@ -51,6 +51,7 @@ const MenuItem = ({
   asChild,
   href,
   done,
+  testId,
 }: {
   children: ReactNode;
   kbd?: string;
@@ -58,11 +59,13 @@ const MenuItem = ({
   asChild?: boolean;
   href?: string;
   done?: boolean;
+  testId?: string;
 }) => {
   const inner = (
     <span className="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2">
       {typeof done === 'boolean' && (
         <Check
+          data-testid={testId ? `${testId}-check` : undefined}
           className={cn(
             'h-3 w-3 shrink-0',
             done ? 'text-ink opacity-100' : 'opacity-0',
@@ -72,14 +75,19 @@ const MenuItem = ({
       )}
       <span className="flex-1 text-left">{children}</span>
       {kbd && (
-        <span className="font-mono text-[10px] text-ink-4">{kbd}</span>
+        <span
+          data-testid={testId ? `${testId}-kbd` : undefined}
+          className="font-mono text-[10px] text-ink-4"
+        >
+          {kbd}
+        </span>
       )}
     </span>
   );
   if (asChild && href) {
     return (
       <PopoverClose asChild>
-        <Link to={href} className="block w-full text-left">
+        <Link to={href} className="block w-full text-left" data-testid={testId}>
           {inner}
         </Link>
       </PopoverClose>
@@ -87,7 +95,13 @@ const MenuItem = ({
   }
   return (
     <PopoverClose asChild>
-      <button type="button" onClick={onClick} className="block w-full text-left">
+      {/* @lint-ignore native-button: full-row PopoverClose asChild shell wrapping styled inner content; not a DS Button kind */}
+      <button
+        type="button"
+        onClick={onClick}
+        data-testid={testId}
+        className="block w-full text-left"
+      >
         {inner}
       </button>
     </PopoverClose>
@@ -103,7 +117,6 @@ export const QuickSettingsPopover = () => {
   const readingWidth = useUI((s) => s.readingWidth);
   const setReadingWidth = useUI((s) => s.setReadingWidth);
   const [params, setParams] = useSearchParams();
-  const navigate = useNavigate();
   const focused = params.get('focus') === '1';
   const { replay } = useTour();
   const [completedSnapshot, setCompletedSnapshot] = useState<string[]>(() =>
@@ -147,6 +160,7 @@ export const QuickSettingsPopover = () => {
                   onClick={() => setTheme(opt.id)}
                   className="px-2 py-0.5 text-[10px]"
                   aria-label={t(`chrome:${opt.titleKey}`)}
+                  data-testid={`quick-settings-theme-${opt.id}`}
                 >
                   {t(`chrome:${opt.labelKey}`)}
                 </Chip>
@@ -167,6 +181,7 @@ export const QuickSettingsPopover = () => {
           on={focused}
           onToggle={handleFocus}
           label={t('chrome:quickSettings.focusLabel')}
+          data-testid="quick-settings-focus-toggle"
         />
       </Row>
 
@@ -175,6 +190,7 @@ export const QuickSettingsPopover = () => {
           on={floatingToolbar}
           onToggle={() => setFloatingToolbar(!floatingToolbar)}
           label={t('chrome:quickSettings.floatingToolbarLabel')}
+          data-testid="quick-settings-floating-toolbar-toggle"
         />
       </Row>
 
@@ -189,6 +205,7 @@ export const QuickSettingsPopover = () => {
               active={readingWidth === w}
               onClick={() => setReadingWidth(w)}
               className="px-2 py-0.5 text-[10px] uppercase"
+              data-testid={`quick-settings-width-${w}`}
             >
               {t(`chrome:quickSettings.readingWidth.${w}`)}
             </Chip>
@@ -208,6 +225,7 @@ export const QuickSettingsPopover = () => {
             onClick={() => handleTour(id)}
             done={done}
             kbd={id === 'welcome' ? t('chrome:quickSettings.helpKbd') : undefined}
+            testId={`quick-settings-tour-${id}`}
           >
             {t(`tours:${TOURS[id].titleKey}`)}
           </MenuItem>
@@ -244,19 +262,23 @@ export const QuickSettingsPopover = () => {
         </span>
       </ComingSoon>
 
-      <MenuItem asChild href={routes.about()}>
+      <MenuItem
+        asChild
+        href={routes.about()}
+        testId="quick-settings-about"
+      >
         {t('chrome:quickSettings.about')}
       </MenuItem>
 
       <div className="mt-1 flex items-center gap-3 border-t border-rule bg-paper-2 px-4 py-2.5">
         <PopoverClose asChild>
-          <button
-            type="button"
-            onClick={() => navigate(routes.settings())}
+          <Link
+            to={routes.settings()}
             className="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
+            data-testid="quick-settings-full-settings"
           >
             {t('chrome:quickSettings.fullSettings')}
-          </button>
+          </Link>
         </PopoverClose>
         <span className="flex-1" />
         <span className="font-mono text-[10px] text-ink-4">

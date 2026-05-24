@@ -7,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { QuickSettingsPopover } from './QuickSettingsPopover';
 
 const replayMock = vi.fn();
-const getCompletedMock = vi.fn<[], string[]>(() => ['welcome']);
+const getCompletedMock = vi.fn<() => string[]>(() => ['welcome']);
 
 vi.mock('@/tours/useTour', () => ({
   useTour: () => ({ replay: replayMock }),
@@ -53,145 +53,150 @@ describe('QuickSettingsPopover', () => {
     });
   });
 
-  it('renders the popover surface', () => {
-    renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-    expect(screen.getByTestId('quick-settings-popover')).toMatchSnapshot();
-  });
-
-  it('renders the title, theme row, switches, reading widths, and footer controls', () => {
-    renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-    expect(screen.getByText(/^quick settings$/i)).toBeInTheDocument();
-    expect(screen.getByText(/^theme$/i)).toBeInTheDocument();
-    expect(screen.getByRole('switch', { name: /focus mode/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole('switch', { name: /floating toolbar/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/reading width/i)).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /full settings/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /^about$/i })).toHaveAttribute(
-      'href',
-      '/about',
-    );
-  });
-
-  it.each<[Theme, RegExp]>([
-    ['light', /^Light$/],
-    ['dark', /^Dark$/],
-    ['hc-light', /HC light|High contrast \(light\)/],
-    ['hc-dark', /HC dark|High contrast \(dark\)/],
-  ])('clicking the %s theme chip updates the store', async (themeId, label) => {
-    renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-    const chips = screen.getAllByRole('button', { name: label });
-    // Multiple chips may share the visible label/tooltip wording; the chip we
-    // want lives inside the popover and has the cursor-pointer chip class.
-    const chip = chips[0];
-    await userEvent.click(chip);
-    expect(useUI.getState().theme).toBe(themeId);
-  });
-
-  it('toggling the focus switch adds and removes ?focus=1 from the URL', async () => {
-    renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-    expect(screen.getByTestId('probe-search').textContent).toBe('');
-    await userEvent.click(screen.getByRole('switch', { name: /focus mode/i }));
-    expect(screen.getByTestId('probe-search').textContent).toBe('focus=1');
-    await userEvent.click(screen.getByRole('switch', { name: /focus mode/i }));
-    expect(screen.getByTestId('probe-search').textContent).toBe('');
-  });
-
-  it('reflects an existing ?focus=1 URL as aria-checked on the focus switch', () => {
-    renderWithProviders(<Harness />, {
-      initialEntries: ['/s/s1/d/d1?focus=1'],
-    });
-    expect(
-      screen
-        .getByRole('switch', { name: /focus mode/i })
-        .getAttribute('aria-checked'),
-    ).toBe('true');
-  });
-
-  it('toggling the floating-toolbar switch updates the store', async () => {
-    renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-    expect(useUI.getState().floatingToolbarEnabled).toBe(false);
-    await userEvent.click(
-      screen.getByRole('switch', { name: /floating toolbar/i }),
-    );
-    expect(useUI.getState().floatingToolbarEnabled).toBe(true);
-  });
-
-  it.each<ReadingWidth>(['s', 'm', 'l'])(
-    'clicking the %s reading-width chip updates the store',
-    async (width) => {
+  describe('rendering', () => {
+    it('should render the popover surface', () => {
       renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-      const label = width.toUpperCase();
-      // Scope the lookup to buttons whose text is exactly the letter.
-      const chip = screen
-        .getAllByRole('button')
-        .find((b) => b.textContent?.trim() === label);
-      expect(chip).toBeDefined();
-      await userEvent.click(chip!);
-      expect(useUI.getState().readingWidth).toBe(width);
-    },
-  );
-
-  it('clicking a help tour menu item invokes replay with that tour id', async () => {
-    renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-    // The first tour ID is 'welcome' (already completed in mock); click it.
-    const welcomeItem = screen
-      .getAllByRole('button')
-      .find((b) => /welcome/i.test(b.textContent ?? ''));
-    expect(welcomeItem).toBeDefined();
-    await userEvent.click(welcomeItem!);
-    expect(replayMock).toHaveBeenCalledWith('welcome');
-  });
-
-  it('renders the ⌘? keyboard shortcut on the welcome tour row only', () => {
-    renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-    const popover = screen.getByTestId('quick-settings-popover');
-    expect(popover.textContent).toContain('⌘?');
-  });
-
-  it('shows the check icon as opaque for completed tours and hidden for not-yet-completed tours', () => {
-    getCompletedMock.mockReturnValue(['welcome']);
-    renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-    const popover = screen.getByTestId('quick-settings-popover');
-    const checks = popover.querySelectorAll('svg.lucide-check');
-    // 4 tours => 4 check slots
-    expect(checks.length).toBeGreaterThanOrEqual(4);
-    // The first should be opacity-100 (welcome is completed)
-    const opaqueChecks = Array.from(checks).filter((c) =>
-      c.getAttribute('class')?.includes('opacity-100'),
-    );
-    expect(opaqueChecks.length).toBe(1);
-  });
-
-  it('clicking "Full settings" navigates to /settings', async () => {
-    renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-    expect(screen.getByTestId('probe-pathname').textContent).toBe('/s/s1/d/d1');
-    await userEvent.click(
-      screen.getByRole('button', { name: /full settings/i }),
-    );
-    expect(screen.getByTestId('probe-pathname').textContent).toBe('/settings');
-  });
-
-  it('renders the About link with href=/about', () => {
-    renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-    expect(screen.getByRole('link', { name: /^about$/i })).toHaveAttribute(
-      'href',
-      '/about',
-    );
-  });
-
-  it('reflects floatingToolbar=true via aria-checked when seeded in the store', () => {
-    act(() => {
-      useUI.getState().setFloatingToolbarEnabled(true);
+      expect(screen.getByTestId('quick-settings-popover')).toMatchSnapshot();
     });
-    renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-    expect(
-      screen
-        .getByRole('switch', { name: /floating toolbar/i })
-        .getAttribute('aria-checked'),
-    ).toBe('true');
+
+    it('should render the title, theme row, switches, reading widths, and footer controls', () => {
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      const popover = screen.getByTestId('quick-settings-popover');
+      expect(popover).toHaveTextContent(/quick settings/i);
+      expect(popover).toHaveTextContent(/theme/i);
+      expect(popover).toHaveTextContent(/reading width/i);
+      expect(screen.getByTestId('quick-settings-focus-toggle')).toHaveAttribute(
+        'role',
+        'switch',
+      );
+      expect(
+        screen.getByTestId('quick-settings-floating-toolbar-toggle'),
+      ).toHaveAttribute('role', 'switch');
+      expect(screen.getByTestId('quick-settings-full-settings')).toHaveTextContent(
+        /full settings/i,
+      );
+      const about = screen.getByTestId('quick-settings-about');
+      expect(about).toHaveTextContent(/about/i);
+      expect(about).toHaveAttribute('href', '/about');
+    });
+  });
+
+  describe('theme chips', () => {
+    it.each<[Theme, RegExp]>([
+      ['light', /^Light$/],
+      ['dark', /^Dark$/],
+      ['hc-light', /HC light|High contrast \(light\)/],
+      ['hc-dark', /HC dark|High contrast \(dark\)/],
+    ])(
+      'should update the store when the %s theme chip is clicked',
+      async (themeId, label) => {
+        renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+        const chip = screen.getByTestId(`quick-settings-theme-${themeId}`);
+        expect(chip).toHaveTextContent(label);
+        await userEvent.click(chip);
+        expect(useUI.getState().theme).toBe(themeId);
+      },
+    );
+  });
+
+  describe('focus toggle', () => {
+    it('should add and remove ?focus=1 from the URL when toggled', async () => {
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      expect(screen.getByTestId('probe-search').textContent).toBe('');
+      await userEvent.click(screen.getByTestId('quick-settings-focus-toggle'));
+      expect(screen.getByTestId('probe-search').textContent).toBe('focus=1');
+      await userEvent.click(screen.getByTestId('quick-settings-focus-toggle'));
+      expect(screen.getByTestId('probe-search').textContent).toBe('');
+    });
+
+    it('should reflect an existing ?focus=1 URL as aria-checked=true', () => {
+      renderWithProviders(<Harness />, {
+        initialEntries: ['/s/s1/d/d1?focus=1'],
+      });
+      expect(screen.getByTestId('quick-settings-focus-toggle')).toHaveAttribute(
+        'aria-checked',
+        'true',
+      );
+    });
+  });
+
+  describe('floating-toolbar toggle', () => {
+    it('should update the store when toggled', async () => {
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      expect(useUI.getState().floatingToolbarEnabled).toBe(false);
+      await userEvent.click(
+        screen.getByTestId('quick-settings-floating-toolbar-toggle'),
+      );
+      expect(useUI.getState().floatingToolbarEnabled).toBe(true);
+    });
+
+    it('should reflect floatingToolbar=true via aria-checked when seeded in the store', () => {
+      act(() => {
+        useUI.getState().setFloatingToolbarEnabled(true);
+      });
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      expect(
+        screen.getByTestId('quick-settings-floating-toolbar-toggle'),
+      ).toHaveAttribute('aria-checked', 'true');
+    });
+  });
+
+  describe('reading width chips', () => {
+    it.each<ReadingWidth>(['s', 'm', 'l'])(
+      'should update the store when the %s width chip is clicked',
+      async (width) => {
+        renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+        const chip = screen.getByTestId(`quick-settings-width-${width}`);
+        expect(chip).toHaveTextContent(width.toUpperCase());
+        await userEvent.click(chip);
+        expect(useUI.getState().readingWidth).toBe(width);
+      },
+    );
+  });
+
+  describe('help tours', () => {
+    it('should invoke replay with the tour id when a tour menu item is clicked', async () => {
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      await userEvent.click(screen.getByTestId('quick-settings-tour-welcome'));
+      expect(replayMock).toHaveBeenCalledWith('welcome');
+    });
+
+    it('should render the ⌘? keyboard shortcut on the welcome tour row only', () => {
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      const kbd = screen.getByTestId('quick-settings-tour-welcome-kbd');
+      expect(kbd).toHaveTextContent('⌘?');
+    });
+
+    it('should mark completed tours with an opaque check and others with a hidden check', () => {
+      getCompletedMock.mockReturnValue(['welcome']);
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      const welcomeCheck = screen.getByTestId(
+        'quick-settings-tour-welcome-check',
+      );
+      expect(welcomeCheck.getAttribute('class')).toContain('opacity-100');
+    });
+  });
+
+  describe('full settings navigation', () => {
+    it('should navigate to /settings when the full-settings link is clicked', async () => {
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      expect(screen.getByTestId('probe-pathname').textContent).toBe(
+        '/s/s1/d/d1',
+      );
+      await userEvent.click(screen.getByTestId('quick-settings-full-settings'));
+      expect(screen.getByTestId('probe-pathname').textContent).toBe(
+        '/settings',
+      );
+    });
+  });
+
+  describe('about link', () => {
+    it('should render with href=/about', () => {
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      expect(screen.getByTestId('quick-settings-about')).toHaveAttribute(
+        'href',
+        '/about',
+      );
+    });
   });
 });

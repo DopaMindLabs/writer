@@ -5,6 +5,9 @@ const meta = {
   title: 'Forms/TextArea',
   component: TextArea,
   args: { placeholder: 'leave a note…', rows: 4 },
+  argTypes: {
+    variant: { control: 'inline-radio', options: ['framed', 'bare'] },
+  },
 } satisfies Meta<typeof TextArea>;
 
 export default meta;
@@ -22,3 +25,12 @@ export const Error: Story = {
   args: { defaultValue: 'invalid abstract', error: true },
 };
 export const Tall: Story = { args: { rows: 8 } };
+
+export const Bare: Story = {
+  args: {
+    variant: 'bare',
+    defaultValue:
+      'Borderless inline body — used in brain-space note inline edits.',
+    rows: 3,
+  },
+};

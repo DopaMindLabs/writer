@@ -1,13 +1,119 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Topbar > collapses to icon-only chrome when focus=1 (no inspector toggle, no search) 1`] = `
+exports[`Topbar > snapshot > should match the snapshot across all variants > citations 1`] = `
 <div>
   <header
     class="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
+    data-testid="topbar"
   >
     <button
       aria-label="Open navigation"
       class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink md:hidden"
+      data-testid="topbar-open-nav"
+      type="button"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-menu h-4 w-4"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M4 5h16"
+        />
+        <path
+          d="M4 12h16"
+        />
+        <path
+          d="M4 19h16"
+        />
+      </svg>
+    </button>
+    <div
+      class="flex items-center gap-1.5 font-serif text-[14px] text-ink-3"
+    >
+      <span
+        class="hidden md:inline"
+      >
+        Test
+      </span>
+    </div>
+    <div
+      class="flex-1"
+    />
+    <span
+      aria-disabled="true"
+      class="relative max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink hidden md:inline-flex"
+      data-coming-soon="true"
+      data-state="closed"
+      tabindex="0"
+    >
+      <span
+        aria-hidden="true"
+        class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+      >
+        <span
+          aria-label="Find in doc"
+          class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-search h-3.5 w-3.5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m21 21-4.34-4.34"
+            />
+            <circle
+              cx="11"
+              cy="11"
+              r="8"
+            />
+          </svg>
+        </span>
+      </span>
+    </span>
+    <a
+      aria-label="Citations"
+      class="inline-flex items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors text-ink hover:bg-paper-2"
+      data-discover="true"
+      data-testid="topbar-citations"
+      data-tour="tour-topbar-citations"
+      href="/s/s1/citations"
+    >
+      <span>
+        cite
+      </span>
+    </a>
+  </header>
+</div>
+`;
+
+exports[`Topbar > snapshot > should match the snapshot across all variants > focus 1`] = `
+<div>
+  <header
+    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
+    data-testid="topbar"
+  >
+    <button
+      aria-label="Open navigation"
+      class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink md:hidden"
+      data-testid="topbar-open-nav"
       type="button"
     >
       <svg
@@ -39,6 +145,7 @@ exports[`Topbar > collapses to icon-only chrome when focus=1 (no inspector toggl
     >
       <button
         class="cursor-text font-medium text-ink hover:text-ink"
+        data-testid="topbar-doc-name"
         title="Rename doc (double-click)"
         type="button"
       >
@@ -196,6 +303,7 @@ exports[`Topbar > collapses to icon-only chrome when focus=1 (no inspector toggl
       aria-label="Citations"
       class="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink"
       data-state="closed"
+      data-testid="topbar-citations"
       data-tour="tour-topbar-citations"
       type="button"
     >
@@ -225,6 +333,7 @@ exports[`Topbar > collapses to icon-only chrome when focus=1 (no inspector toggl
       class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink"
       data-discover="true"
       data-state="closed"
+      data-testid="focus-toggle"
       href="/s/s1/d/d1"
     >
       <svg
@@ -258,115 +367,16 @@ exports[`Topbar > collapses to icon-only chrome when focus=1 (no inspector toggl
 </div>
 `;
 
-exports[`Topbar > renders citations view (no mode tabs, no focus toggle, no inspector toggle) 1`] = `
+exports[`Topbar > snapshot > should match the snapshot across all variants > write 1`] = `
 <div>
   <header
     class="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
+    data-testid="topbar"
   >
     <button
       aria-label="Open navigation"
       class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink md:hidden"
-      type="button"
-    >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-menu h-4 w-4"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M4 5h16"
-        />
-        <path
-          d="M4 12h16"
-        />
-        <path
-          d="M4 19h16"
-        />
-      </svg>
-    </button>
-    <div
-      class="flex items-center gap-1.5 font-serif text-[14px] text-ink-3"
-    >
-      <span
-        class="hidden md:inline"
-      >
-        Test
-      </span>
-    </div>
-    <div
-      class="flex-1"
-    />
-    <span
-      aria-disabled="true"
-      class="relative max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink hidden md:inline-flex"
-      data-coming-soon="true"
-      data-state="closed"
-      tabindex="0"
-    >
-      <span
-        aria-hidden="true"
-        class="pointer-events-none inline-flex max-w-full items-center opacity-60"
-      >
-        <span
-          aria-label="Find in doc"
-          class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3"
-        >
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-search h-3.5 w-3.5"
-            fill="none"
-            height="24"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m21 21-4.34-4.34"
-            />
-            <circle
-              cx="11"
-              cy="11"
-              r="8"
-            />
-          </svg>
-        </span>
-      </span>
-    </span>
-    <a
-      aria-label="Citations"
-      class="inline-flex items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors text-ink hover:bg-paper-2"
-      data-discover="true"
-      data-tour="tour-topbar-citations"
-      href="/s/s1/citations"
-    >
-      <span>
-        cite
-      </span>
-    </a>
-  </header>
-</div>
-`;
-
-exports[`Topbar > renders with doc name, mode tabs, search and inspector toggle 1`] = `
-<div>
-  <header
-    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
-  >
-    <button
-      aria-label="Open navigation"
-      class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink md:hidden"
+      data-testid="topbar-open-nav"
       type="button"
     >
       <svg
@@ -408,6 +418,7 @@ exports[`Topbar > renders with doc name, mode tabs, search and inspector toggle 
       </span>
       <button
         class="cursor-text font-medium text-ink hover:text-ink"
+        data-testid="topbar-doc-name"
         title="Rename doc (double-click)"
         type="button"
       >
@@ -501,6 +512,7 @@ exports[`Topbar > renders with doc name, mode tabs, search and inspector toggle 
     <button
       aria-label="Citations"
       class="inline-flex items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink"
+      data-testid="topbar-citations"
       data-tour="tour-topbar-citations"
       type="button"
     >
@@ -513,6 +525,7 @@ exports[`Topbar > renders with doc name, mode tabs, search and inspector toggle 
       class="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-paper-2 hover:text-ink"
       data-discover="true"
       data-state="closed"
+      data-testid="focus-toggle"
       href="/s/s1/d/d1?focus=1"
       title="Focus (⌘\\)"
     >
@@ -548,6 +561,7 @@ exports[`Topbar > renders with doc name, mode tabs, search and inspector toggle 
       aria-pressed="false"
       class="items-center justify-center rounded-md transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink hidden md:inline-flex"
       data-state="closed"
+      data-testid="topbar-inspector-toggle"
       type="button"
     >
       <svg

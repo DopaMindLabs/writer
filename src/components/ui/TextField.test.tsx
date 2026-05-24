@@ -31,11 +31,41 @@ describe('TextField', () => {
   });
 
   describe('variants', () => {
-    it('should apply rest tone classes by default', () => {
+    it('should default to the baseline variant with rest tone', () => {
       const { getByTestId } = render(<TextField data-testid="tf-rest" />);
       const el = getByTestId('tf-rest');
+      expect(el.className).toContain('border-b');
       expect(el.className).toContain('border-rule');
       expect(el.className).toContain('focus:border-ink');
+    });
+
+    it('should apply the bare variant classes (no border, no padding)', () => {
+      const { getByTestId } = render(
+        <TextField data-testid="tf-bare" variant="bare" />,
+      );
+      const el = getByTestId('tf-bare');
+      expect(el.className).toContain('border-0');
+      expect(el.className).toContain('p-0');
+      expect(el.className).not.toContain('border-b');
+    });
+
+    it('should not add a focus border in the bare variant', () => {
+      const { getByTestId } = render(
+        <TextField data-testid="tf-bare-focus" variant="bare" />,
+      );
+      expect(getByTestId('tf-bare-focus').className).not.toContain(
+        'focus:border-ink',
+      );
+    });
+
+    it('should still aria-invalid in the bare variant when error is set', () => {
+      const { getByTestId } = render(
+        <TextField data-testid="tf-bare-error" variant="bare" error />,
+      );
+      expect(getByTestId('tf-bare-error')).toHaveAttribute(
+        'aria-invalid',
+        'true',
+      );
     });
 
     it('should apply the disabled tone classes when disabled', () => {
@@ -74,6 +104,16 @@ describe('TextField', () => {
           <TextField data-testid="tf-snap-filled" defaultValue="filled" />
           <TextField data-testid="tf-snap-disabled" disabled placeholder="off" />
           <TextField data-testid="tf-snap-error" defaultValue="bad" error />
+          <TextField
+            data-testid="tf-snap-bare"
+            variant="bare"
+            defaultValue="bare"
+          />
+          <TextField
+            data-testid="tf-snap-bare-disabled"
+            variant="bare"
+            disabled
+          />
         </div>,
       );
       expect(container).toMatchSnapshot();

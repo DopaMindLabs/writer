@@ -2,6 +2,8 @@ import {
   forwardRef,
   useImperativeHandle,
   useRef,
+  useState,
+  type ChangeEvent,
   type InputHTMLAttributes,
 } from 'react';
 import { Search, X } from '@/components/libs/icons';
@@ -34,12 +36,21 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
     const inputTestId = (rest as { 'data-testid'?: string })['data-testid'];
     const clearTestId = inputTestId ? `${inputTestId}-clear` : undefined;
 
-    const showClear =
-      !disabled &&
-      ((typeof value === 'string' && value.length > 0) ||
-        (value === undefined &&
-          typeof defaultValue === 'string' &&
-          defaultValue.length > 0));
+    const isControlled = value !== undefined;
+    const [uncontrolledEmpty, setUncontrolledEmpty] = useState(
+      () => !(typeof defaultValue === 'string' && defaultValue.length > 0),
+    );
+
+    const isEmpty = isControlled
+      ? !(typeof value === 'string' && value.length > 0)
+      : uncontrolledEmpty;
+
+    const showClear = !disabled && !isEmpty;
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+      if (!isControlled) setUncontrolledEmpty(e.target.value.length === 0);
+      onChange?.(e);
+    };
 
     const handleClear = () => {
       const el = internalRef.current;
@@ -47,6 +58,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
         el.value = '';
         el.focus();
       }
+      if (!isControlled) setUncontrolledEmpty(true);
       onClear?.();
     };
 
@@ -70,7 +82,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
           type="search"
           value={value}
           defaultValue={defaultValue}
-          onChange={onChange}
+          onChange={handleChange}
           disabled={disabled}
           placeholder={placeholder}
           className={cn(

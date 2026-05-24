@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`QuickSettingsPopover > renders the popover surface 1`] = `
+exports[`QuickSettingsPopover > rendering > should render the popover surface 1`] = `
 <div
   class="w-72 bg-paper font-sans"
   data-testid="quick-settings-popover"
@@ -38,6 +38,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
           aria-pressed="true"
           class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper px-2 py-0.5 text-[10px]"
           data-state="instant-open"
+          data-testid="quick-settings-theme-light"
           type="button"
         >
           Light
@@ -47,6 +48,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
           aria-pressed="false"
           class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px]"
           data-state="closed"
+          data-testid="quick-settings-theme-dark"
           type="button"
         >
           Dark
@@ -56,6 +58,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
           aria-pressed="false"
           class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px]"
           data-state="closed"
+          data-testid="quick-settings-theme-hc-light"
           type="button"
         >
           HC light
@@ -65,6 +68,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
           aria-pressed="false"
           class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px]"
           data-state="closed"
+          data-testid="quick-settings-theme-hc-dark"
           type="button"
         >
           HC dark
@@ -96,6 +100,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
         aria-checked="false"
         aria-label="Focus mode"
         class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-rule bg-paper-2"
+        data-testid="quick-settings-focus-toggle"
         role="switch"
         type="button"
       >
@@ -125,6 +130,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
         aria-checked="false"
         aria-label="Floating toolbar"
         class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-rule bg-paper-2"
+        data-testid="quick-settings-floating-toolbar-toggle"
         role="switch"
         type="button"
       >
@@ -161,6 +167,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
         <button
           aria-pressed="false"
           class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px] uppercase"
+          data-testid="quick-settings-width-s"
           type="button"
         >
           S
@@ -168,6 +175,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
         <button
           aria-pressed="true"
           class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper px-2 py-0.5 text-[10px] uppercase"
+          data-testid="quick-settings-width-m"
           type="button"
         >
           M
@@ -175,6 +183,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
         <button
           aria-pressed="false"
           class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px] uppercase"
+          data-testid="quick-settings-width-l"
           type="button"
         >
           L
@@ -189,6 +198,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
   </div>
   <button
     class="block w-full text-left"
+    data-testid="quick-settings-tour-welcome"
     type="button"
   >
     <span
@@ -197,6 +207,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
       <svg
         aria-hidden="true"
         class="lucide lucide-check h-3 w-3 shrink-0 text-ink opacity-100"
+        data-testid="quick-settings-tour-welcome-check"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -218,6 +229,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
       </span>
       <span
         class="font-mono text-[10px] text-ink-4"
+        data-testid="quick-settings-tour-welcome-kbd"
       >
         ⌘?
       </span>
@@ -225,6 +237,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
   </button>
   <button
     class="block w-full text-left"
+    data-testid="quick-settings-tour-writer"
     type="button"
   >
     <span
@@ -233,6 +246,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
       <svg
         aria-hidden="true"
         class="lucide lucide-check h-3 w-3 shrink-0 opacity-0"
+        data-testid="quick-settings-tour-writer-check"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -256,6 +270,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
   </button>
   <button
     class="block w-full text-left"
+    data-testid="quick-settings-tour-citations"
     type="button"
   >
     <span
@@ -264,6 +279,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
       <svg
         aria-hidden="true"
         class="lucide lucide-check h-3 w-3 shrink-0 opacity-0"
+        data-testid="quick-settings-tour-citations-check"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -287,6 +303,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
   </button>
   <button
     class="block w-full text-left"
+    data-testid="quick-settings-tour-brainspace"
     type="button"
   >
     <span
@@ -295,6 +312,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
       <svg
         aria-hidden="true"
         class="lucide lucide-check h-3 w-3 shrink-0 opacity-0"
+        data-testid="quick-settings-tour-brainspace-check"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -374,6 +392,7 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
   <a
     class="block w-full text-left"
     data-discover="true"
+    data-testid="quick-settings-about"
     href="/about"
     type="button"
   >
@@ -390,12 +409,15 @@ exports[`QuickSettingsPopover > renders the popover surface 1`] = `
   <div
     class="mt-1 flex items-center gap-3 border-t border-rule bg-paper-2 px-4 py-2.5"
   >
-    <button
+    <a
       class="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
+      data-discover="true"
+      data-testid="quick-settings-full-settings"
+      href="/settings"
       type="button"
     >
       full settings →
-    </button>
+    </a>
     <span
       class="flex-1"
     />

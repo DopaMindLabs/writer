@@ -8,41 +8,56 @@ export interface SelectOption {
   label: string;
 }
 
+export type SelectVariant = 'baseline' | 'bare';
+
 export const selectRecipe = cva(
-  'block w-full appearance-none border-0 bg-transparent pl-0 pr-6 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none disabled:cursor-not-allowed',
+  'block w-full appearance-none border-0 bg-transparent leading-tight text-ink outline-none disabled:cursor-not-allowed',
   {
     variants: {
+      variant: {
+        baseline: 'pl-0 pr-6 py-1.5 font-sans text-[14px]',
+        bare: 'p-0',
+      },
       tone: {
         rest: '',
         error: '',
         disabled: 'text-ink-4',
       },
     },
-    defaultVariants: { tone: 'rest' },
+    defaultVariants: { variant: 'baseline', tone: 'rest' },
   },
 );
 
-type SelectVariants = VariantProps<typeof selectRecipe>;
+type SelectRecipeVariants = VariantProps<typeof selectRecipe>;
 
 export interface SelectProps
   extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'>,
-    Omit<SelectVariants, 'tone'> {
+    Omit<SelectRecipeVariants, 'tone'> {
   options: ReadonlyArray<SelectOption>;
   error?: boolean;
+  /** Hide the trailing chevron (only meaningful for variant="bare"). */
+  hideChevron?: boolean;
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, options, disabled, error, ...rest }, ref) => {
+  (
+    { className, options, variant = 'baseline', disabled, error, hideChevron, ...rest },
+    ref,
+  ) => {
     const tone = disabled ? 'disabled' : error ? 'error' : 'rest';
-    const wrapperBorder = error
-      ? 'border-ink'
-      : 'border-rule focus-within:border-ink';
-    const wrapperBg = disabled ? 'bg-paper-2' : '';
+    const isBaseline = variant === 'baseline';
+    const wrapperBorder = isBaseline
+      ? error
+        ? 'border-b border-ink'
+        : 'border-b border-rule focus-within:border-ink'
+      : '';
+    const wrapperBg = disabled && isBaseline ? 'bg-paper-2' : '';
+    const showChevron = !hideChevron && isBaseline;
 
     return (
       <div
         className={cn(
-          'group relative flex w-full items-center border-b transition-colors',
+          'group relative flex w-full items-center transition-colors',
           wrapperBorder,
           wrapperBg,
           className,
@@ -52,7 +67,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           disabled={disabled}
           aria-invalid={error || undefined}
-          className={selectRecipe({ tone })}
+          className={selectRecipe({ variant, tone })}
           {...rest}
         >
           {options.map((opt) => (
@@ -61,13 +76,15 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           ))}
         </select>
-        <ChevronDown
-          className={cn(
-            'pointer-events-none absolute right-0 h-3.5 w-3.5',
-            disabled ? 'text-ink-4' : 'text-ink-3',
-          )}
-          aria-hidden
-        />
+        {showChevron ? (
+          <ChevronDown
+            className={cn(
+              'pointer-events-none absolute right-0 h-3.5 w-3.5',
+              disabled ? 'text-ink-4' : 'text-ink-3',
+            )}
+            aria-hidden
+          />
+        ) : null}
       </div>
     );
   },

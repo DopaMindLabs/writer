@@ -51,6 +51,22 @@ describe('Select', () => {
       expect(el).not.toHaveAttribute('aria-invalid');
     });
 
+    it('should default to the baseline variant', () => {
+      const { getByTestId } = render(
+        <Select data-testid="sel-baseline" options={THEMES} />,
+      );
+      expect(getByTestId('sel-baseline').className).toContain('font-sans');
+    });
+
+    it('should apply the bare variant classes (no padding, no font preset)', () => {
+      const { getByTestId } = render(
+        <Select data-testid="sel-bare" variant="bare" options={THEMES} />,
+      );
+      const el = getByTestId('sel-bare');
+      expect(el.className).toContain('p-0');
+      expect(el.className).not.toContain('font-sans');
+    });
+
     it('should be disabled and apply disabled tone classes when disabled', () => {
       const { getByTestId } = render(
         <Select data-testid="sel-dis" options={THEMES} disabled />,

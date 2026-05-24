@@ -18,6 +18,7 @@ export const PageNav = ({ showBack = true, backTo }: PageNavProps) => {
       <div className="flex min-w-[60px] items-center">
         {showBack ? (
           <Link
+            data-testid="page-nav-back"
             to={backTo ?? routes.home()}
             className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:text-ink"
           >
@@ -27,6 +28,7 @@ export const PageNav = ({ showBack = true, backTo }: PageNavProps) => {
         ) : null}
       </div>
       <nav
+        data-testid="page-nav"
         aria-label="Primary"
         className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wider md:gap-5"
       >
@@ -34,6 +36,7 @@ export const PageNav = ({ showBack = true, backTo }: PageNavProps) => {
           item.external ? (
             <Link
               key={item.i18nKey}
+              data-testid={`page-nav-nav-${item.i18nKey}`}
               href={item.to}
               className="hidden text-ink-3 hover:text-ink md:inline"
             >
@@ -42,6 +45,7 @@ export const PageNav = ({ showBack = true, backTo }: PageNavProps) => {
           ) : (
             <Link
               key={item.i18nKey}
+              data-testid={`page-nav-nav-${item.i18nKey}`}
               to={item.to}
               end={item.end}
               className={linkClasses}

@@ -1,72 +1,95 @@
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, waitFor } from '@/test/test-utils';
+import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { TemplatesScreen } from './Templates';
 
 describe('TemplatesScreen', () => {
-  it('renders the template list and the submit form', () => {
-    const { getByText, getByLabelText } = renderWithProviders(
-      <TemplatesScreen />,
-    );
-    expect(getByText(/01 — A KIND OF ROOM/i)).toBeInTheDocument();
-    expect(getByText(/Blank/i)).toBeInTheDocument();
-    expect(getByLabelText(/Name/i)).toBeInTheDocument();
-    expect(getByLabelText(/Tag/i)).toBeInTheDocument();
-  });
+  describe('rendering', () => {
+    it('should render the templates screen with the name and tag inputs', () => {
+      renderWithProviders(<TemplatesScreen />);
+      expect(screen.getByTestId('templates-screen')).toBeInTheDocument();
+      expect(screen.getByTestId('templates-name-input')).toBeInTheDocument();
+      expect(screen.getByTestId('templates-tag-input')).toBeInTheDocument();
+    });
 
-  it('selecting a template updates the name and tag fields', async () => {
-    const user = userEvent.setup();
-    const { getByText, getByLabelText } = renderWithProviders(
-      <TemplatesScreen />,
-    );
-    await user.click(getByText('Blank'));
-    expect((getByLabelText(/Name/i) as HTMLInputElement).value).toBe('Blank');
-    expect((getByLabelText(/Tag/i) as HTMLInputElement).value).toBe('BL');
-  });
-
-  it('typing in the name and tag fields updates the values', async () => {
-    const user = userEvent.setup();
-    const { getByLabelText } = renderWithProviders(<TemplatesScreen />);
-    const nameInput = getByLabelText(/Name/i) as HTMLInputElement;
-    const tagInput = getByLabelText(/Tag/i) as HTMLInputElement;
-    await user.clear(nameInput);
-    await user.type(nameInput, 'My space');
-    await user.clear(tagInput);
-    await user.type(tagInput, 'abc');
-    expect(nameInput.value).toBe('My space');
-    expect(tagInput.value).toBe('ABC');
-  });
-
-  it('submitting the form creates a space and navigates', async () => {
-    const user = userEvent.setup();
-    const { getByText, findByText } = renderWithProviders(<TemplatesScreen />);
-    await user.click(getByText('Blank'));
-    const submitButton = await findByText(/enter Blank/i);
-    await user.click(submitButton);
-    await waitFor(async () => {
-      expect(await db.spaces.count()).toBeGreaterThan(0);
+    it('should render the Blank template card with its label', () => {
+      renderWithProviders(<TemplatesScreen />);
+      const blank = screen.getByTestId('templates-card-blank');
+      expect(blank).toHaveTextContent(/Blank/i);
     });
   });
 
-  it('uses the template defaults when name and tag are cleared before submit', async () => {
-    const user = userEvent.setup();
-    const { getByText, getByLabelText, findByText } = renderWithProviders(
-      <TemplatesScreen />,
-    );
-    await user.click(getByText('Blank'));
-    const name = getByLabelText(/Name/i) as HTMLInputElement;
-    const tag = getByLabelText(/Tag/i) as HTMLInputElement;
-    await user.clear(name);
-    await user.clear(tag);
-    const submitButton = await findByText(/enter Blank|enter …/i);
-    await user.click(submitButton);
-    await waitFor(async () => {
-      const spaces = await db.spaces.toArray();
-      expect(spaces.length).toBeGreaterThan(0);
-      const last = spaces[spaces.length - 1];
-      // Fallbacks: template label + tag
-      expect(last.name).toBe('Blank');
-      expect(last.tag).toBe('BL');
+  describe('selection', () => {
+    it('should update the name and tag inputs to the selected template defaults', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<TemplatesScreen />);
+      await user.click(screen.getByTestId('templates-card-blank'));
+      const name = screen.getByTestId('templates-name-input') as HTMLInputElement;
+      const tag = screen.getByTestId('templates-tag-input') as HTMLInputElement;
+      expect(name.value).toBe('Blank');
+      expect(tag.value).toBe('BL');
+    });
+
+    it('should mark the selected template card with aria-pressed=true', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<TemplatesScreen />);
+      const blank = screen.getByTestId('templates-card-blank');
+      await user.click(blank);
+      expect(blank).toHaveAttribute('aria-pressed', 'true');
+    });
+  });
+
+  describe('input editing', () => {
+    it('should update the name and tag inputs when the user types', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<TemplatesScreen />);
+      const name = screen.getByTestId('templates-name-input') as HTMLInputElement;
+      const tag = screen.getByTestId('templates-tag-input') as HTMLInputElement;
+      await user.clear(name);
+      await user.type(name, 'My space');
+      await user.clear(tag);
+      await user.type(tag, 'abc');
+      expect(name.value).toBe('My space');
+      expect(tag.value).toBe('ABC');
+    });
+  });
+
+  describe('submit', () => {
+    it('should create a space and navigate when the form is submitted', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<TemplatesScreen />);
+      await user.click(screen.getByTestId('templates-card-blank'));
+      const submit = screen.getByTestId('templates-submit');
+      expect(submit).toHaveTextContent(/enter Blank/i);
+      await user.click(submit);
+      await waitFor(async () => {
+        expect(await db.spaces.count()).toBeGreaterThan(0);
+      });
+    });
+
+    it('should fall back to the template defaults when name and tag are cleared before submit', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<TemplatesScreen />);
+      await user.click(screen.getByTestId('templates-card-blank'));
+      const name = screen.getByTestId('templates-name-input') as HTMLInputElement;
+      const tag = screen.getByTestId('templates-tag-input') as HTMLInputElement;
+      await user.clear(name);
+      await user.clear(tag);
+      await user.click(screen.getByTestId('templates-submit'));
+      await waitFor(async () => {
+        const spaces = await db.spaces.toArray();
+        expect(spaces.length).toBeGreaterThan(0);
+        const last = spaces[spaces.length - 1];
+        expect(last.name).toBe('Blank');
+        expect(last.tag).toBe('BL');
+      });
+    });
+  });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across all variants', () => {
+      const { container } = renderWithProviders(<TemplatesScreen />);
+      expect(container).toMatchSnapshot();
     });
   });
 });

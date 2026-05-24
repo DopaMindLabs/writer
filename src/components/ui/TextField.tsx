@@ -3,16 +3,29 @@ import { cva, type VariantProps } from '@/components/libs/variants';
 import { cn } from '@/lib/utils';
 
 export const textFieldRecipe = cva(
-  'block w-full border-0 bg-transparent px-0 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed',
+  'block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed',
   {
     variants: {
+      variant: {
+        baseline: 'border-0 border-b px-0 py-1.5',
+        bare: 'border-0 p-0',
+      },
       tone: {
-        rest: 'border-b border-rule focus:border-ink',
-        error: 'border-b border-ink',
-        disabled: 'border-b border-rule bg-paper-2 text-ink-4',
+        rest: '',
+        error: '',
+        disabled: 'bg-paper-2 text-ink-4',
       },
     },
-    defaultVariants: { tone: 'rest' },
+    compoundVariants: [
+      {
+        variant: 'baseline',
+        tone: 'rest',
+        class: 'border-rule focus:border-ink',
+      },
+      { variant: 'baseline', tone: 'error', class: 'border-ink' },
+      { variant: 'baseline', tone: 'disabled', class: 'border-rule' },
+    ],
+    defaultVariants: { variant: 'baseline', tone: 'rest' },
   },
 );
 
@@ -25,7 +38,10 @@ export interface TextFieldProps
 }
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
-  ({ className, type = 'text', disabled, error, ...props }, ref) => {
+  (
+    { className, type = 'text', variant, disabled, error, ...props },
+    ref,
+  ) => {
     const tone = disabled ? 'disabled' : error ? 'error' : 'rest';
     return (
       <input
@@ -33,7 +49,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         type={type}
         disabled={disabled}
         aria-invalid={error || undefined}
-        className={cn(textFieldRecipe({ tone }), className)}
+        className={cn(textFieldRecipe({ variant, tone }), className)}
         {...props}
       />
     );

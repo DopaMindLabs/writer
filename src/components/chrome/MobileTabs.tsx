@@ -99,6 +99,7 @@ export const MobileTabs = ({ spaceId, docId }: MobileTabsProps) => {
           return (
             <Link
               key={item.key}
+              data-testid={`mobile-tabs-${item.key}`}
               to={item.href}
               aria-current={active ? 'page' : undefined}
               className={className}
@@ -107,9 +108,11 @@ export const MobileTabs = ({ spaceId, docId }: MobileTabsProps) => {
             </Link>
           );
         }
+        // @lint-ignore native-button: tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
         return (
           <button
             key={item.key}
+            data-testid={`mobile-tabs-${item.key}`}
             type="button"
             onClick={item.onClick}
             aria-pressed={active}

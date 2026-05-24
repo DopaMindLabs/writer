@@ -34,11 +34,22 @@ describe('TextArea', () => {
   });
 
   describe('variants', () => {
-    it('should apply rest tone classes by default', () => {
+    it('should default to the framed variant with rest tone', () => {
       const { getByTestId } = render(<TextArea data-testid="ta-rest" />);
       const el = getByTestId('ta-rest');
       expect(el.className).toContain('border-rule');
       expect(el.className).toContain('focus:border-ink');
+      expect(el.className).toContain('resize-y');
+    });
+
+    it('should apply the bare variant classes (no border, no padding, no resize handle)', () => {
+      const { getByTestId } = render(
+        <TextArea data-testid="ta-bare" variant="bare" />,
+      );
+      const el = getByTestId('ta-bare');
+      expect(el.className).toContain('border-0');
+      expect(el.className).toContain('p-0');
+      expect(el.className).not.toContain('resize-y');
     });
 
     it('should apply disabled tone classes when disabled', () => {
@@ -69,6 +80,7 @@ describe('TextArea', () => {
           <TextArea data-testid="ta-snap-filled" defaultValue="filled" />
           <TextArea data-testid="ta-snap-disabled" disabled />
           <TextArea data-testid="ta-snap-error" defaultValue="bad" error />
+          <TextArea data-testid="ta-snap-bare" variant="bare" defaultValue="bare" />
         </div>,
       );
       expect(container).toMatchSnapshot();

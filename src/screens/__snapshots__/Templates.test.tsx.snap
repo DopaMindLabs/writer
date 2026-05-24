@@ -1,0 +1,431 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TemplatesScreen > snapshot > should match the snapshot across all variants 1`] = `
+<div>
+  <div
+    class="flex h-full w-full flex-col overflow-auto bg-paper"
+    data-testid="templates-screen"
+  >
+    <header
+      class="flex items-center justify-between border-b border-rule px-4 py-4 md:px-12 md:py-5"
+    >
+      <a
+        class="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:text-ink"
+        data-discover="true"
+        data-testid="templates-back"
+        href="/"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-arrow-left h-3 w-3"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m12 19-7-7 7-7"
+          />
+          <path
+            d="M19 12H5"
+          />
+        </svg>
+        back
+      </a>
+      <div
+        class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+      >
+        new space
+      </div>
+    </header>
+    <form
+      class="flex flex-1 flex-col"
+    >
+      <div
+        class="mx-auto flex w-full max-w-4xl flex-col gap-12 px-4 pt-10 pb-12 md:px-12 md:pt-16"
+      >
+        <div>
+          <div
+            class="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3"
+          >
+            01 — A KIND OF ROOM
+          </div>
+          <h1
+            class="font-serif tracking-tight text-ink text-3xl leading-[1.05] md:text-5xl"
+          >
+            What kind of space
+             
+            <span
+              class="italic font-light text-ink-2"
+            >
+              are you starting?
+            </span>
+          </h1>
+        </div>
+        <fieldset
+          class="border-y border-rule"
+        >
+          <legend
+            class="sr-only"
+          >
+            Choose a template
+          </legend>
+          <button
+            aria-pressed="true"
+            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6 bg-paper-2"
+            data-testid="templates-card-technical"
+            type="button"
+          >
+            <span
+              class="font-mono text-[12px] text-ink-3"
+            >
+              01
+            </span>
+            <span
+              class="flex flex-col"
+            >
+              <span
+                class="font-serif text-[18px] leading-tight text-ink"
+              >
+                Technical · Scientific report
+                <span
+                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
+                >
+                  experimental
+                </span>
+              </span>
+              <span
+                class="mt-1 font-serif text-[13px] italic text-ink-3"
+              >
+                Scientific · methods · equations
+              </span>
+            </span>
+            <span
+              class="hidden font-serif text-[14px] italic text-ink-2 md:inline"
+            >
+              Report · Data & figures · Code & math · Workshop
+            </span>
+            <span
+              class="flex justify-end"
+            >
+              <span
+                aria-hidden="true"
+                class="flex h-4 w-4 items-center justify-center rounded-full border border-ink bg-ink"
+              >
+                <span
+                  class="h-1.5 w-1.5 rounded-full bg-paper"
+                />
+              </span>
+            </span>
+          </button>
+          <button
+            aria-pressed="false"
+            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6"
+            data-testid="templates-card-humanities"
+            type="button"
+          >
+            <span
+              class="font-mono text-[12px] text-ink-3"
+            >
+              02
+            </span>
+            <span
+              class="flex flex-col"
+            >
+              <span
+                class="font-serif text-[18px] leading-tight text-ink"
+              >
+                Thesis · research
+                <span
+                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
+                >
+                  experimental
+                </span>
+              </span>
+              <span
+                class="mt-1 font-serif text-[13px] italic text-ink-3"
+              >
+                long-form academic
+              </span>
+            </span>
+            <span
+              class="hidden font-serif text-[14px] italic text-ink-2 md:inline"
+            >
+              Manuscript · Sources · Arguments · Workshop
+            </span>
+            <span
+              class="flex justify-end"
+            >
+              <span
+                aria-hidden="true"
+                class="flex h-4 w-4 items-center justify-center rounded-full border border-rule bg-transparent"
+              />
+            </span>
+          </button>
+          <button
+            aria-pressed="false"
+            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6"
+            data-testid="templates-card-fiction"
+            type="button"
+          >
+            <span
+              class="font-mono text-[12px] text-ink-3"
+            >
+              03
+            </span>
+            <span
+              class="flex flex-col"
+            >
+              <span
+                class="font-serif text-[18px] leading-tight text-ink"
+              >
+                Fictional writing
+                <span
+                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
+                >
+                  experimental
+                </span>
+              </span>
+              <span
+                class="mt-1 font-serif text-[13px] italic text-ink-3"
+              >
+                novel · short story · script
+              </span>
+            </span>
+            <span
+              class="hidden font-serif text-[14px] italic text-ink-2 md:inline"
+            >
+              Manuscript · World · Workshop
+            </span>
+            <span
+              class="flex justify-end"
+            >
+              <span
+                aria-hidden="true"
+                class="flex h-4 w-4 items-center justify-center rounded-full border border-rule bg-transparent"
+              />
+            </span>
+          </button>
+          <button
+            aria-pressed="false"
+            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6"
+            data-testid="templates-card-serial"
+            type="button"
+          >
+            <span
+              class="font-mono text-[12px] text-ink-3"
+            >
+              04
+            </span>
+            <span
+              class="flex flex-col"
+            >
+              <span
+                class="font-serif text-[18px] leading-tight text-ink"
+              >
+                Serial
+                <span
+                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
+                >
+                  experimental
+                </span>
+              </span>
+              <span
+                class="mt-1 font-serif text-[13px] italic text-ink-3"
+              >
+                recurring essays · newsletter
+              </span>
+            </span>
+            <span
+              class="hidden font-serif text-[14px] italic text-ink-2 md:inline"
+            >
+              Issues · Recurring people · Calendar
+            </span>
+            <span
+              class="flex justify-end"
+            >
+              <span
+                aria-hidden="true"
+                class="flex h-4 w-4 items-center justify-center rounded-full border border-rule bg-transparent"
+              />
+            </span>
+          </button>
+          <button
+            aria-pressed="false"
+            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6"
+            data-testid="templates-card-journal"
+            type="button"
+          >
+            <span
+              class="font-mono text-[12px] text-ink-3"
+            >
+              05
+            </span>
+            <span
+              class="flex flex-col"
+            >
+              <span
+                class="font-serif text-[18px] leading-tight text-ink"
+              >
+                Journal
+                <span
+                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
+                >
+                  experimental
+                </span>
+              </span>
+              <span
+                class="mt-1 font-serif text-[13px] italic text-ink-3"
+              >
+                daily, low-stakes
+              </span>
+            </span>
+            <span
+              class="hidden font-serif text-[14px] italic text-ink-2 md:inline"
+            >
+              Daily · Themes · Seedlings · Streak
+            </span>
+            <span
+              class="flex justify-end"
+            >
+              <span
+                aria-hidden="true"
+                class="flex h-4 w-4 items-center justify-center rounded-full border border-rule bg-transparent"
+              />
+            </span>
+          </button>
+          <button
+            aria-pressed="false"
+            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6"
+            data-testid="templates-card-blank"
+            type="button"
+          >
+            <span
+              class="font-mono text-[12px] text-ink-3"
+            >
+              06
+            </span>
+            <span
+              class="flex flex-col"
+            >
+              <span
+                class="font-serif text-[18px] leading-tight text-ink"
+              >
+                Blank
+                <span
+                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
+                >
+                  experimental
+                </span>
+              </span>
+              <span
+                class="mt-1 font-serif text-[13px] italic text-ink-3"
+              >
+                start from nothing
+              </span>
+            </span>
+            <span
+              class="hidden font-serif text-[14px] italic text-ink-2 md:inline"
+            >
+              Notes
+            </span>
+            <span
+              class="flex justify-end"
+            >
+              <span
+                aria-hidden="true"
+                class="flex h-4 w-4 items-center justify-center rounded-full border border-rule bg-transparent"
+              />
+            </span>
+          </button>
+        </fieldset>
+      </div>
+      <div
+        class="sticky bottom-0 z-10 border-t border-rule bg-paper"
+      >
+        <div
+          class="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-6 md:px-12"
+        >
+          <div
+            class="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_8rem] sm:gap-6"
+          >
+            <div>
+              <label
+                class="text-ink-3 font-normal block font-mono text-[10px] uppercase tracking-[0.08em]"
+                for="space-name"
+              >
+                Name
+              </label>
+              <input
+                class="block w-full bg-transparent text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 border-rule focus:border-ink mt-1 h-10 py-0 font-serif text-[22px] leading-none"
+                data-testid="templates-name-input"
+                id="space-name"
+                type="text"
+                value="Technical · Scientific report"
+              />
+            </div>
+            <div>
+              <label
+                class="text-ink-3 font-normal block font-mono text-[10px] uppercase tracking-[0.08em]"
+                for="space-tag"
+              >
+                Tag
+              </label>
+              <input
+                class="block w-full bg-transparent text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 border-rule focus:border-ink mt-1 h-10 py-0 text-center font-mono text-[18px] leading-none tracking-widest"
+                data-testid="templates-tag-input"
+                id="space-tag"
+                maxlength="3"
+                type="text"
+                value="TX"
+              />
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between"
+          >
+            <div
+              class="flex items-center gap-3"
+            >
+              <div
+                aria-checked="false"
+                aria-disabled="true"
+                class="flex h-5 w-9 cursor-not-allowed items-center rounded-full bg-paper-2 px-0.5 opacity-60"
+                role="switch"
+                title="Cloud sync is unavailable — this app is local-only for now."
+              >
+                <span
+                  class="h-4 w-4 rounded-full bg-ink-4"
+                />
+              </div>
+              <span
+                class="font-mono text-[11px] uppercase tracking-wider text-ink-3"
+              >
+                cloud sync —
+                 
+                <span
+                  class="italic text-ink-4"
+                >
+                  off, local
+                </span>
+              </span>
+            </div>
+            <button
+              class="font-serif text-[18px] italic text-ink underline underline-offset-4 hover:text-ink-2 disabled:opacity-50"
+              data-testid="templates-submit"
+              type="submit"
+            >
+              enter Technical · Scientific report →
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+`;

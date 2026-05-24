@@ -7,6 +7,7 @@ import { useUI } from '@/store/ui';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { IconButton } from '@/components/ui/icon';
 import { Link } from '@/components/ui/Link';
+import { TextField } from '@/components/ui/TextField';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { routes } from '@/lib/routes';
 import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
@@ -88,16 +89,19 @@ export const Topbar = ({
     <Link
       to={routes.citations(spaceId)}
       data-tour="tour-topbar-citations"
+      data-testid="topbar-citations"
       aria-label={t('topbar.citations')}
       className={cn(citeBaseClass, citeRestClass)}
     >
       {citeContent}
     </Link>
   ) : (
+    // @lint-ignore native-button: custom toolbar trigger (rendered as either icon-pill in focus mode or lowercase text in normal mode); DS Button kinds don't fit either shape
     <button
       type="button"
       onClick={() => openCitationsDrawer()}
       data-tour="tour-topbar-citations"
+      data-testid="topbar-citations"
       aria-label={t('topbar.citations')}
       className={cn(citeBaseClass, citeRestClass)}
     >
@@ -106,8 +110,12 @@ export const Topbar = ({
   );
 
   return (
-    <header className="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4">
+    <header
+      data-testid="topbar"
+      className="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
+    >
       <IconButton
+        data-testid="topbar-open-nav"
         icon={Menu}
         iconSize="md"
         label={t('topbar.openNav')}
@@ -122,7 +130,9 @@ export const Topbar = ({
               <span className="hidden text-ink-4 md:inline">/</span>
             )}
             {editingDoc ? (
-              <input
+              <TextField
+                data-testid="topbar-doc-name-input"
+                variant="bare"
                 autoFocus
                 value={draftDocName}
                 onChange={(e) => setDraftDocName(e.target.value)}
@@ -130,10 +140,12 @@ export const Topbar = ({
                 onFocus={(e) => e.currentTarget.select()}
                 onKeyDown={onDocKeyDown}
                 aria-label={t('topbar.renameDoc')}
-                className="w-40 border-0 bg-transparent p-0 font-serif text-[14px] font-medium text-ink outline-none"
+                className="w-40 font-serif text-[14px] font-medium"
               />
             ) : (
+              // @lint-ignore native-button: editable-text trigger (double-click to rename); not a DS Button
               <button
+                data-testid="topbar-doc-name"
                 type="button"
                 onDoubleClick={() => docId && setEditingDoc(true)}
                 disabled={!docId}
@@ -188,6 +200,7 @@ export const Topbar = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <IconButton
+                data-testid="topbar-inspector-toggle"
                 icon={MoreHorizontal}
                 label={t('topbar.inspector')}
                 active={inspectorOpen}

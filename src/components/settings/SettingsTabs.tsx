@@ -27,6 +27,7 @@ const TabButton = ({
   onSelect: (id: string) => void;
   testId?: string;
 }) => {
+  // @lint-ignore native-button: tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
   return (
     <button
       type="button"
@@ -47,9 +48,16 @@ const TabButton = ({
 
 export const SettingsTabs = ({ groups, active, onSelect }: SettingsTabsProps) => {
   return (
-    <nav aria-label="Settings sections" className="contents">
+    <nav
+      data-testid="settings-tabs"
+      aria-label="Settings sections"
+      className="contents"
+    >
       {/* Mobile: a single horizontal scroll strip, groups flattened */}
-      <ul className="flex overflow-x-auto border-b border-rule/60 bg-paper-2 md:hidden">
+      <ul
+        data-testid="settings-tabs-mobile"
+        className="flex overflow-x-auto border-b border-rule/60 bg-paper-2 md:hidden"
+      >
         {groups.flatMap((g) =>
           g.tabs.map((tab) => (
             <li key={tab.id} className="shrink-0">
@@ -57,16 +65,23 @@ export const SettingsTabs = ({ groups, active, onSelect }: SettingsTabsProps) =>
                 tab={tab}
                 active={tab.id === active}
                 onSelect={onSelect}
+                testId={`settings-tab-mobile-${tab.id}`}
               />
             </li>
           )),
         )}
       </ul>
       {/* Desktop: grouped vertical sections (chrome owned by SettingsShell) */}
-      <div className="hidden flex-1 overflow-auto pb-3 pt-1.5 md:-ml-px md:block">
+      <div
+        data-testid="settings-tabs-desktop"
+        className="hidden flex-1 overflow-auto pb-3 pt-1.5 md:-ml-px md:block"
+      >
         {groups.map((g, gi) => (
           <div key={gi} className="mb-1.5 last:mb-0">
-            <div className="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4">
+            <div
+              data-testid={`settings-tabs-group-${gi}`}
+              className="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+            >
               {g.label}
             </div>
             <ul>

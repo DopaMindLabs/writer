@@ -4,10 +4,10 @@ exports[`Select > snapshot > should match the snapshot across all variants 1`] =
 <div>
   <div>
     <div
-      class="group relative flex w-full items-center border-b transition-colors border-rule focus-within:border-ink"
+      class="group relative flex w-full items-center transition-colors border-b border-rule focus-within:border-ink"
     >
       <select
-        class="block w-full appearance-none border-0 bg-transparent pl-0 pr-6 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none disabled:cursor-not-allowed"
+        class="block w-full appearance-none border-0 bg-transparent leading-tight text-ink outline-none disabled:cursor-not-allowed pl-0 pr-6 py-1.5 font-sans text-[14px]"
         data-testid="sel-snap-rest"
       >
         <option
@@ -45,10 +45,10 @@ exports[`Select > snapshot > should match the snapshot across all variants 1`] =
       </svg>
     </div>
     <div
-      class="group relative flex w-full items-center border-b transition-colors border-rule focus-within:border-ink"
+      class="group relative flex w-full items-center transition-colors border-b border-rule focus-within:border-ink"
     >
       <select
-        class="block w-full appearance-none border-0 bg-transparent pl-0 pr-6 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none disabled:cursor-not-allowed"
+        class="block w-full appearance-none border-0 bg-transparent leading-tight text-ink outline-none disabled:cursor-not-allowed pl-0 pr-6 py-1.5 font-sans text-[14px]"
         data-testid="sel-snap-filled"
       >
         <option
@@ -87,10 +87,10 @@ exports[`Select > snapshot > should match the snapshot across all variants 1`] =
       </svg>
     </div>
     <div
-      class="group relative flex w-full items-center border-b transition-colors border-rule focus-within:border-ink bg-paper-2"
+      class="group relative flex w-full items-center transition-colors border-b border-rule focus-within:border-ink bg-paper-2"
     >
       <select
-        class="block w-full appearance-none border-0 bg-transparent pl-0 pr-6 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none disabled:cursor-not-allowed text-ink-4"
+        class="block w-full appearance-none border-0 bg-transparent leading-tight text-ink outline-none disabled:cursor-not-allowed pl-0 pr-6 py-1.5 font-sans text-[14px] text-ink-4"
         data-testid="sel-snap-disabled"
         disabled=""
       >
@@ -129,11 +129,11 @@ exports[`Select > snapshot > should match the snapshot across all variants 1`] =
       </svg>
     </div>
     <div
-      class="group relative flex w-full items-center border-b transition-colors border-ink"
+      class="group relative flex w-full items-center transition-colors border-b border-ink"
     >
       <select
         aria-invalid="true"
-        class="block w-full appearance-none border-0 bg-transparent pl-0 pr-6 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none disabled:cursor-not-allowed"
+        class="block w-full appearance-none border-0 bg-transparent leading-tight text-ink outline-none disabled:cursor-not-allowed pl-0 pr-6 py-1.5 font-sans text-[14px]"
         data-testid="sel-snap-error"
       >
         <option

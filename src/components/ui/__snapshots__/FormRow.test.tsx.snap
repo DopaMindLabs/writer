@@ -22,7 +22,7 @@ exports[`FormRow > snapshot > should match the snapshot across all variants 1`] 
       >
         <div>
           <input
-            class="block w-full border-0 bg-transparent px-0 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-b border-rule focus:border-ink"
+            class="block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 py-1.5 border-rule focus:border-ink"
             type="text"
           />
         </div>
@@ -53,7 +53,7 @@ exports[`FormRow > snapshot > should match the snapshot across all variants 1`] 
       >
         <div>
           <input
-            class="block w-full border-0 bg-transparent px-0 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-b border-rule focus:border-ink"
+            class="block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 py-1.5 border-rule focus:border-ink"
             type="text"
           />
         </div>
@@ -79,7 +79,7 @@ exports[`FormRow > snapshot > should match the snapshot across all variants 1`] 
         <div>
           <input
             aria-invalid="true"
-            class="block w-full border-0 bg-transparent px-0 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-b border-ink"
+            class="block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 py-1.5 border-ink"
             type="text"
           />
         </div>
@@ -123,7 +123,7 @@ exports[`FormRow > snapshot > should match the snapshot across all variants 1`] 
         <div>
           <input
             aria-invalid="true"
-            class="block w-full border-0 bg-transparent px-0 py-1.5 font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-b border-ink"
+            class="block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 py-1.5 border-ink"
             type="text"
           />
         </div>

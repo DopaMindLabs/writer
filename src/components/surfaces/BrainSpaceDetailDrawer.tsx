@@ -11,6 +11,10 @@ import { useConnectionsForNote } from '@/hooks/useConnections';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
 import { NoteState, type Note } from '@/db/schema';
 import { routes } from '@/lib/routes';
+import { TextField } from '@/components/ui/TextField';
+import { TextArea } from '@/components/ui/TextArea';
+import { Select } from '@/components/ui/Select';
+import { Label } from '@/components/ui/Label';
 import { Button } from '@/components/ui/Button';
 import { IconButton } from '@/components/ui/icon';
 import { TypographyLabel } from '@/components/ui/typography';
@@ -27,13 +31,28 @@ interface ConnectionRowProps {
   onDelete: () => void;
 }
 
-const ConnectionRow = ({ direction, note, onFocus, onDelete }: ConnectionRowProps) => {
+interface ConnectionRowExtras {
+  testIdBase: string;
+}
+
+const ConnectionRow = ({
+  direction,
+  note,
+  onFocus,
+  onDelete,
+  testIdBase,
+}: ConnectionRowProps & ConnectionRowExtras) => {
   const label = note?.title || note?.body?.split('\n')[0] || '(untitled)';
   const arrow = direction === 'out' ? '→' : '←';
   return (
-    <li className="flex items-center gap-2 border border-rule bg-paper px-2 py-1.5">
+    <li
+      data-testid={testIdBase}
+      className="flex items-center gap-2 border border-rule bg-paper px-2 py-1.5"
+    >
+      {/* @lint-ignore native-button: connection-row content trigger (multi-element label inside a list item); not a DS Button kind */}
       <button
         type="button"
+        data-testid={`${testIdBase}-focus`}
         onClick={onFocus}
         disabled={!note}
         className="flex min-w-0 flex-1 items-center gap-2 text-left font-serif text-[13px] text-ink hover:underline disabled:cursor-not-allowed disabled:text-ink-4"
@@ -47,6 +66,7 @@ const ConnectionRow = ({ direction, note, onFocus, onDelete }: ConnectionRowProp
         )}
       </button>
       <IconButton
+        data-testid={`${testIdBase}-remove`}
         icon={X}
         label="Remove connection"
         buttonSize="sm"
@@ -151,7 +171,9 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
           <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4">
             {NOTE_KIND_LABEL[note.kind]}
           </span>
-          <input
+          <TextField
+            data-testid="brain-detail-drawer-title"
+            variant="bare"
             value={draftTitle}
             onChange={(e) => setDraftTitle(e.target.value)}
             onBlur={commitTitle}
@@ -159,11 +181,12 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
               if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
             }}
             placeholder="Untitled"
-            className="border-0 bg-transparent p-0 font-serif text-xl font-medium text-ink outline-none placeholder:text-ink-4"
+            className="font-serif text-xl font-medium"
             aria-label="Note title"
           />
         </div>
         <IconButton
+          data-testid="brain-detail-drawer-close"
           icon={X}
           label="Close drawer"
           buttonSize="sm"
@@ -175,46 +198,53 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
 
       <div className="flex-1 overflow-y-auto p-4">
         <section className="mb-6">
-          <label
+          <Label
             htmlFor="drawer-body"
-            className="mb-2 block font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            tone="ink3"
+            weight="regular"
+            className="mb-2 block font-mono text-[10px] uppercase tracking-wider"
           >
             Body
-          </label>
-          <textarea
+          </Label>
+          <TextArea
             id="drawer-body"
+            data-testid="brain-detail-drawer-body"
             value={draftBody}
             onChange={(e) => setDraftBody(e.target.value)}
             onBlur={commitBody}
             placeholder="Write something…"
-            className="min-h-[160px] w-full resize-y border border-rule bg-paper p-2 font-serif text-[14px] leading-relaxed text-ink outline-none focus:border-ink"
+            className="min-h-[160px] leading-relaxed"
           />
         </section>
 
         <section className="mb-6">
-          <label
+          <Label
             htmlFor="drawer-doc-link"
-            className="mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            tone="ink3"
+            weight="regular"
+            className="mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider"
           >
             <Link2 className="h-3 w-3" />
             Linked Doc
-          </label>
+          </Label>
           <div className="flex items-center gap-2">
-            <select
+            <Select
               id="drawer-doc-link"
+              data-testid="brain-detail-drawer-linked-doc"
               value={note.linkedDocId ?? ''}
               onChange={(e) => handleLinkDoc(e.target.value)}
-              className="flex-1 border border-rule bg-paper p-2 font-sans text-[13px] text-ink outline-none focus:border-ink"
-            >
-              <option value="">— No linked doc —</option>
-              {docs.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name || 'Untitled'}
-                </option>
-              ))}
-            </select>
+              className="flex-1"
+              options={[
+                { value: '', label: '— No linked doc —' },
+                ...docs.map((d) => ({
+                  value: d.id,
+                  label: d.name || 'Untitled',
+                })),
+              ]}
+            />
             {linkedDoc && (
               <Button
+                data-testid="brain-detail-drawer-open"
                 kind="secondary"
                 onClick={handleOpenDoc}
                 className="gap-1.5 border-ink px-3 py-2 font-mono text-[10px] uppercase tracking-wider"
@@ -228,10 +258,15 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
 
         <section>
           <TypographyLabel asChild variant="wide" className="mb-2">
-            <h3>Connections ({incoming.length + outgoing.length})</h3>
+            <h3 data-testid="brain-detail-drawer-connections-heading">
+              Connections ({incoming.length + outgoing.length})
+            </h3>
           </TypographyLabel>
           {incoming.length + outgoing.length === 0 ? (
-            <p className="font-mono text-[11px] text-ink-4">
+            <p
+              data-testid="brain-detail-drawer-connections-empty"
+              className="font-mono text-[11px] text-ink-4"
+            >
               shift-click another note on the canvas to connect.
             </p>
           ) : (
@@ -245,6 +280,7 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
                     note={other}
                     onFocus={() => other && onFocusNote(other.id)}
                     onDelete={() => handleDeleteConnection(c.id)}
+                    testIdBase={`brain-detail-drawer-connection-${c.id}`}
                   />
                 );
               })}
@@ -257,6 +293,7 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
                     note={other}
                     onFocus={() => other && onFocusNote(other.id)}
                     onDelete={() => handleDeleteConnection(c.id)}
+                    testIdBase={`brain-detail-drawer-connection-${c.id}`}
                   />
                 );
               })}
@@ -267,6 +304,7 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
 
       <footer className="flex items-center justify-end border-t border-rule p-3">
         <Button
+          data-testid="brain-detail-drawer-delete"
           kind="dangerous"
           size="sm"
           onClick={handleDeleteNote}
@@ -306,6 +344,7 @@ export const BrainSpaceDetailDrawer = ({ spaceId }: BrainSpaceDetailDrawerProps)
           className="fixed inset-0 z-40 bg-black/20 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
         />
         <DialogPrimitive.Content
+          data-testid="brain-detail-drawer"
           className={cn(
             'fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col border-l border-rule bg-paper shadow-xl',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
