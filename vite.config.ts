@@ -43,6 +43,7 @@ export default defineConfig(({ command }) => ({
         'src/tours/driver-setup.ts',
         'src/test/**',
         'src/**/*.test.{ts,tsx}',
+        'src/**/*.stories.{ts,tsx}',
         'src/**/__snapshots__/**',
       ],
       thresholds: {
