@@ -19,7 +19,8 @@ test.describe('Workflow: space setup, backup, and sync', () => {
     let spaceId = '';
 
     await test.step('Given they create a space from a template (cloud sync is an off/local placeholder)', async () => {
-      await page.goto('/#/templates');
+      await page.getByRole('link', { name: /Start a new space/i }).first().click();
+      await expect(page.getByTestId('templates-screen')).toBeVisible();
       await expect(page.getByText(/cloud sync/i)).toBeVisible();
       const cloudSyncSwitch = page.getByRole('switch');
       await expect(cloudSyncSwitch).toHaveAttribute('aria-disabled', 'true');

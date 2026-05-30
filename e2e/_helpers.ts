@@ -43,13 +43,21 @@ export const gotoFirstDoc = async (
 /**
  * Create a space from the given template via the Templates screen and return
  * the new space's UUID. Optionally override the template-prefilled name/tag.
+ *
+ * Reaches the Templates screen by clicking the in-app "new space" link (present
+ * on both the home dashboard and a space's SpaceRail) rather than a direct hash
+ * `goto`, which can race the hash router mounting right after boot.
  */
 export const createSpaceFromTemplate = async (
   page: Page,
   templateId: string,
   opts?: { name?: string; tag?: string },
 ): Promise<string> => {
-  await page.goto('/#/templates');
+  await page
+    .getByRole('link', { name: /Start a new space|Create new space/i })
+    .first()
+    .click();
+  await expect(page.getByTestId('templates-screen')).toBeVisible();
   await page.getByTestId(`templates-card-${templateId}`).click();
   if (opts?.name !== undefined) await page.locator('#space-name').fill(opts.name);
   if (opts?.tag !== undefined) await page.locator('#space-tag').fill(opts.tag);
