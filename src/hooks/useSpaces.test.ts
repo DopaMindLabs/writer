@@ -13,7 +13,7 @@ describe('useSpaces', () => {
 
     const { result } = renderHook(() => useSpaces());
     await waitFor(() => {
-      expect(result.current?.map((s) => s.id)).toEqual(['b', 'c', 'a']);
+      expect(result.current.map((s) => s.id)).toEqual(['b', 'c', 'a']);
     });
   });
 });
@@ -22,12 +22,12 @@ describe('useSpace', () => {
   it('returns the matching space record', async () => {
     await db.spaces.put(sampleSpace);
     const { result } = renderHook(() => useSpace('s1'));
-    await waitFor(() => expect(result.current?.id).toBe('s1'));
+    await waitFor(() => { expect(result.current?.id).toBe('s1'); });
   });
 
   it('returns undefined for null id', async () => {
     await db.spaces.put(sampleSpace);
     const { result } = renderHook(() => useSpace(null));
-    await waitFor(() => expect(result.current).toBeUndefined());
+    await waitFor(() => { expect(result.current).toBeUndefined(); });
   });
 });

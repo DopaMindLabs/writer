@@ -10,16 +10,16 @@ describe('useNotes', () => {
       { ...sampleNote, id: 'n2' },
     ]);
     const { result } = renderHook(() => useNotes('s1'));
-    await waitFor(() => expect(result.current).toHaveLength(2));
+    await waitFor(() => { expect(result.current).toHaveLength(2); });
   });
 
   it('returns empty array when spaceId is null', async () => {
     const { result } = renderHook(() => useNotes(null));
-    await waitFor(() => expect(result.current).toEqual([]));
+    await waitFor(() => { expect(result.current).toEqual([]); });
   });
 
   it('returns empty array when spaceId is undefined', async () => {
     const { result } = renderHook(() => useNotes(undefined));
-    await waitFor(() => expect(result.current).toEqual([]));
+    await waitFor(() => { expect(result.current).toEqual([]); });
   });
 });

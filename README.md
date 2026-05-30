@@ -34,12 +34,22 @@ The dev server starts at http://localhost:5173.
 - `npm run build` — type-check and build for production
 - `npm run preview` — preview the production build locally
 - `npm run typecheck` — TypeScript check only
+- `npm run lint` — ESLint (coding-standards gate; see below)
+- `npm run lint:fix` — ESLint with autofix
 - `npm run test` — run unit tests (Vitest, watch mode, `TZ=UTC`)
 - `npm run test:run` — run unit tests once (CI mode)
 - `npm run test:ui` — Vitest UI
 - `npm run test:coverage` — unit test coverage
 - `npm run test:e2e` — run Playwright e2e tests
 - `npm run test:e2e:ui` — Playwright UI mode
+
+## Coding standards
+
+This project follows a strict set of coding rules adapted from NASA/JPL's "Power of Ten",
+enforced by ESLint (`npm run lint`) and a pre-commit hook. See
+[CODING_STANDARDS.md](./CODING_STANDARDS.md). The standard applies going forward: new and
+edited code must lint clean (warnings included), while a historical backlog is tracked as
+warnings.
 
 ## License
 

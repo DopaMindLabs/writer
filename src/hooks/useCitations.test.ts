@@ -29,11 +29,11 @@ describe('useCitations', () => {
 
   it('returns empty array when spaceId is null', async () => {
     const { result } = renderHook(() => useCitations(null));
-    await waitFor(() => expect(result.current).toEqual([]));
+    await waitFor(() => { expect(result.current).toEqual([]); });
   });
 
   it('returns empty array when spaceId is undefined', async () => {
     const { result } = renderHook(() => useCitations(undefined));
-    await waitFor(() => expect(result.current).toEqual([]));
+    await waitFor(() => { expect(result.current).toEqual([]); });
   });
 });

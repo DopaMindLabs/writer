@@ -1,55 +1,70 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { db } from '@/db/db';
-import { sampleDoc, sampleSpace } from '@/test/fixtures';
-import { useSections, useDocuments, useDocument } from './useDocuments';
-import { useCitations } from './useCitations';
-import { useNotes } from './useNotes';
-import { useConnections, useConnectionsForNote } from './useConnections';
+import {
+  sampleDoc,
+  sampleSection,
+  sampleSubsection,
+} from '@/test/fixtures';
+import { useDocument, useDocuments, useSections } from './useDocuments';
 
-describe('useDocuments hooks', () => {
-  it('useSections returns an empty array when spaceId is null', async () => {
-    const { result } = renderHook(() => useSections(null));
-    await waitFor(() => expect(result.current).toEqual([]));
-  });
-
-  it('useDocuments returns an empty array when spaceId is undefined', async () => {
-    const { result } = renderHook(() => useDocuments(undefined));
-    await waitFor(() => expect(result.current).toEqual([]));
-  });
-
-  it('useDocument returns undefined when docId is null', async () => {
-    const { result } = renderHook(() => useDocument(null));
-    await waitFor(() => expect(result.current).toBeUndefined());
-  });
-
-  it('useDocuments returns docs filtered by space', async () => {
-    await db.spaces.put(sampleSpace);
-    await db.docs.put(sampleDoc);
-    const { result } = renderHook(() => useDocuments(sampleSpace.id));
-    await waitFor(() => expect(result.current).toHaveLength(1));
-    expect(result.current[0].id).toBe(sampleDoc.id);
-  });
-
-  it('useCitations returns an empty array when spaceId is null', async () => {
-    const { result } = renderHook(() => useCitations(null));
-    await waitFor(() => expect(result.current).toEqual([]));
-  });
-
-  it('useNotes returns an empty array when spaceId is undefined', async () => {
-    const { result } = renderHook(() => useNotes(undefined));
-    await waitFor(() => expect(result.current).toEqual([]));
-  });
-
-  it('useConnections returns an empty array when spaceId is null', async () => {
-    const { result } = renderHook(() => useConnections(null));
-    await waitFor(() => expect(result.current).toEqual([]));
-  });
-
-  it('useConnectionsForNote returns the empty shape when noteId is null', async () => {
-    const { result } = renderHook(() => useConnectionsForNote(null));
+describe('useSections', () => {
+  it('returns sections sorted by order', async () => {
+    await db.sections.bulkPut([
+      { ...sampleSection, id: 'a', order: 2 },
+      { ...sampleSubsection, id: 'b', order: 1, parentSectionId: 'a' },
+    ]);
+    const { result } = renderHook(() => useSections('s1'));
     await waitFor(() => {
-      expect(result.current.incoming).toEqual([]);
-      expect(result.current.outgoing).toEqual([]);
+      expect(result.current.map((s) => s.id)).toEqual(['b', 'a']);
     });
+  });
+
+  it('returns empty array when spaceId is null', async () => {
+    const { result } = renderHook(() => useSections(null));
+    await waitFor(() => { expect(result.current).toEqual([]); });
+  });
+
+  it('returns empty array when spaceId is undefined', async () => {
+    const { result } = renderHook(() => useSections(undefined));
+    await waitFor(() => { expect(result.current).toEqual([]); });
+  });
+});
+
+describe('useDocuments', () => {
+  it('returns docs for the given space', async () => {
+    await db.docs.bulkPut([
+      { ...sampleDoc, id: 'd1' },
+      { ...sampleDoc, id: 'd2' },
+    ]);
+    const { result } = renderHook(() => useDocuments('s1'));
+    await waitFor(() => { expect(result.current).toHaveLength(2); });
+  });
+
+  it('returns empty array when spaceId is undefined', async () => {
+    const { result } = renderHook(() => useDocuments(undefined));
+    await waitFor(() => { expect(result.current).toEqual([]); });
+  });
+
+  it('returns empty array when spaceId is null', async () => {
+    const { result } = renderHook(() => useDocuments(null));
+    await waitFor(() => { expect(result.current).toEqual([]); });
+  });
+});
+
+describe('useDocument', () => {
+  it('returns single doc by id', async () => {
+    await db.docs.put(sampleDoc);
+    const { result } = renderHook(() => useDocument('d1'));
+    await waitFor(() => { expect(result.current?.id).toBe('d1'); });
+  });
+
+  it('returns undefined when docId is null', async () => {
+    const { result } = renderHook(() => useDocument(null));
+    await waitFor(() => { expect(result.current).toBeUndefined(); });
+  });
+
+  it('returns undefined when docId is undefined', async () => {
+    const { result } = renderHook(() => useDocument(undefined));
+    await waitFor(() => { expect(result.current).toBeUndefined(); });
   });
 });
