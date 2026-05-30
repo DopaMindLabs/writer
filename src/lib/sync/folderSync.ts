@@ -1,5 +1,6 @@
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
+import { errorMessage } from '@/lib/errorMessage';
 import type { Space, SyncEntry } from '@/db/schema';
 import {
   buildSpaceMarkdownZipFor,
@@ -251,7 +252,7 @@ export const syncSpaceToFolder = async (
       kind,
       status: 'error',
       size: 0,
-      error: err instanceof Error ? err.message : String(err),
+      error: errorMessage(err),
     };
     await db.syncs.put(entry);
     await pruneSyncHistory(space.id);

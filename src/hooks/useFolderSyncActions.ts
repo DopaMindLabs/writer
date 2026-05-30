@@ -7,6 +7,7 @@ import {
   type SpaceSyncResult,
 } from '@/lib/sync/folderSync';
 import { isAbort } from '@/components/settings/sync/abort';
+import { errorMessage } from '@/lib/errorMessage';
 
 export interface FolderSyncActions {
   busy: boolean;
@@ -29,7 +30,7 @@ export const useFolderSyncActions = (spaceId?: string): FolderSyncActions => {
 
   const fail = (err: unknown): void => {
     if (isAbort(err)) return;
-    setError(err instanceof Error ? err.message : String(err));
+    setError(errorMessage(err));
   };
 
   const choose = async (): Promise<void> => {

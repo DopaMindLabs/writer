@@ -23,6 +23,7 @@ import { StatusGlyph } from '@/components/ui/StatusGlyph';
 import { createSpaceBackup } from '@/lib/backup/createSpaceBackup';
 import { backupFilename } from '@/lib/backup/buildSpaceMarkdownZip';
 import { downloadBlob } from '@/lib/file-download';
+import { errorMessage } from '@/lib/errorMessage';
 import { SpaceSyncTab } from '@/components/settings/SpaceSyncTab';
 import { SpaceTextSetting } from '@/components/settings/SpaceTextSetting';
 import { DeleteConfirmField } from '@/components/settings/DeleteConfirmField';
@@ -257,7 +258,7 @@ const BackupsTab = ({ space }: { space: Space }) => {
       const { backup, filename } = await createSpaceBackup(space.id);
       downloadBlob(backup.payload, filename);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(errorMessage(err));
     } finally {
       setBusy(false);
     }

@@ -167,6 +167,104 @@ describe('folderSync', () => {
     await expect(syncAllSpacesToFolder()).rejects.toThrow(/no sync folder/i);
   });
 
+  it('records an error when write permission is denied for a space', async () => {
+    const handle = {
+      name: 'denied',
+      queryPermission: vi.fn(() => Promise.resolve('denied')),
+      requestPermission: vi.fn(() => Promise.resolve('denied')),
+    } as unknown as FileSystemDirectoryHandle;
+    const entry = await syncSpaceToFolder(handle, sampleSpace, 'manual');
+    expect(entry.status).toBe('error');
+    expect(entry.error).toMatch(/permission/i);
+  });
+
+  it('throws when manual sync-all is denied write permission', async () => {
+    const handle = {
+      name: 'denied',
+      queryPermission: vi.fn(() => Promise.resolve('denied')),
+      requestPermission: vi.fn(() => Promise.resolve('denied')),
+    } as unknown as FileSystemDirectoryHandle;
+    await expect(syncAllSpacesToFolder(handle, 'manual')).rejects.toThrow(
+      /permission/i,
+    );
+  });
+
+  it('getWritePermissionState is "unknown" when the handle has no permission API', async () => {
+    const handle = { name: 'x' } as unknown as FileSystemDirectoryHandle;
+    expect(await getWritePermissionState(handle)).toBe('unknown');
+  });
+
+  it('requestFolderPermission is false when no folder is connected', async () => {
+    expect(await requestFolderPermission()).toBe(false);
+  });
+
+  it('syncOneSpace throws when the space does not exist', async () => {
+    const handle = makeMockHandle();
+    await expect(
+      syncOneSpace('does-not-exist', 'manual', asHandle(handle)),
+    ).rejects.toThrow(/not found/i);
+  });
+
+  it('syncAllSpacesToFolder skips the permission gate for auto runs', async () => {
+    const handle = makeMockHandle();
+    const run = await syncAllSpacesToFolder(asHandle(handle), 'auto');
+    expect(run.results[0]).toMatchObject({ spaceId: sampleSpace.id, ok: true });
+  });
+
+  it('ensureWritePermission returns true when permission is already granted', async () => {
+    const handle = {
+      queryPermission: vi.fn(() => Promise.resolve('granted')),
+    } as unknown as FileSystemDirectoryHandle;
+    expect(await ensureWritePermission(handle)).toBe(true);
+  });
+
+  it('ensureWritePermission returns false when non-interactive and not granted', async () => {
+    const handle = {
+      queryPermission: vi.fn(() => Promise.resolve('prompt')),
+    } as unknown as FileSystemDirectoryHandle;
+    expect(await ensureWritePermission(handle, { interactive: false })).toBe(
+      false,
+    );
+  });
+
+  it('getLastSyncForSpace returns the newest of several entries', async () => {
+    await db.syncs.bulkPut([
+      { id: '1', spaceId: sampleSpace.id, when: 100, kind: 'manual', status: 'ok', size: 1 },
+      { id: '2', spaceId: sampleSpace.id, when: 200, kind: 'auto', status: 'ok', size: 2 },
+    ]);
+    const last = await getLastSyncForSpace(sampleSpace.id);
+    expect(last?.id).toBe('2');
+  });
+
+  it('tolerates a failed history prune without failing the sync', async () => {
+    const files = new Map<string, Blob>();
+    for (let i = 0; i < MAX_SYNCS_PER_SPACE + 2; i += 1) {
+      files.set(`2026-01-${String(i).padStart(2, '0')}-000000.zip`, new Blob(['x']));
+    }
+    const dir = {
+      getFileHandle: vi.fn(() => ({
+        createWritable: () => ({
+          write: () => undefined,
+          close: () => undefined,
+        }),
+      })),
+      // Best-effort cleanup: removeEntry rejects, which must not fail the sync.
+      removeEntry: vi.fn(() => Promise.reject(new Error('locked'))),
+      async *[Symbol.asyncIterator]() {
+        await Promise.resolve();
+        for (const name of files.keys()) {
+          yield [name, { kind: 'file' }] as [string, { kind: string }];
+        }
+      },
+    };
+    const handle = {
+      name: 'prune',
+      getDirectoryHandle: vi.fn(() => Promise.resolve(dir)),
+    } as unknown as FileSystemDirectoryHandle;
+    const entry = await syncSpaceToFolder(handle, sampleSpace, 'manual');
+    expect(entry.status).toBe('ok');
+  });
+
   it('ensureWritePermission requests permission when interactive and not granted', async () => {
     const requestPermission = vi.fn(() => Promise.resolve('granted'));
     const queryPermission = vi.fn(() => Promise.resolve('prompt'));

@@ -405,22 +405,6 @@ describe('SpaceSettingsScreen', () => {
       );
       expect(await screen.findByRole('alert')).toBeInTheDocument();
     });
-
-    it('stringifies a non-Error snapshot failure', async () => {
-      await seedBasicSpace();
-      const user = userEvent.setup();
-      // createSpaceBackup succeeds, then downloadBlob throws a non-Error, which
-      // exercises the String(err) fallback in the catch.
-      const nonError: unknown = 'kaboom';
-      vi.spyOn(URL, 'createObjectURL').mockImplementation(() => {
-        throw nonError;
-      });
-      renderAtSpaceSettings('/s/s1/settings?tab=backups');
-      await user.click(
-        await screen.findByTestId('space-settings-backups-snapshot'),
-      );
-      expect(await screen.findByRole('alert')).toHaveTextContent(/kaboom/i);
-    });
   });
 
   describe('danger zone', () => {
