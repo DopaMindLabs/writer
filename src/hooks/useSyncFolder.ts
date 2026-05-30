@@ -12,12 +12,12 @@ export function useSyncFolder(): SyncFolderState {
   const data = useLiveQuery(
     async () => {
       const handleRow = await db.meta.get('syncFolderHandle');
-      const lastRow = await db.meta.get('syncLastAt');
       const handle = handleRow?.value as FileSystemDirectoryHandle | undefined;
-      return {
-        folderName: handle?.name ?? null,
-        lastSyncedAt: typeof lastRow?.value === 'number' ? lastRow.value : null,
-      };
+      const syncs = await db.syncs.toArray();
+      const lastSyncedAt = syncs.length
+        ? syncs.reduce((max, r) => Math.max(max, r.when), 0)
+        : null;
+      return { folderName: handle?.name ?? null, lastSyncedAt };
     },
     [],
     { folderName: null, lastSyncedAt: null },

@@ -5,36 +5,29 @@ import { SettingRow } from '@/components/settings/SettingRow';
 import { Button } from '@/components/ui/Button';
 import { TypographyLabel, TypographyP } from '@/components/ui/typography';
 import { useSyncFolder } from '@/hooks/useSyncFolder';
+import { useDefaultInterval, useSyncHistory } from '@/hooks/useSync';
+import { useSpaces } from '@/hooks/useSpaces';
 import {
   forgetSyncFolder,
   pickSyncFolder,
+  setDefaultIntervalMin,
   syncAllSpacesToFolder,
   type SpaceSyncResult,
 } from '@/lib/sync/folderSync';
+import { IntervalSelector } from '@/components/settings/sync/IntervalSelector';
+import { SyncHistoryTable } from '@/components/settings/sync/SyncHistoryTable';
+import { formatRelativeTime } from '@/components/settings/sync/syncFormat';
 
 function isAbort(err: unknown): boolean {
   return err instanceof DOMException && err.name === 'AbortError';
 }
 
-function formatRelativeTime(
-  when: number,
-  t: (key: string) => string,
-  now: number = Date.now(),
-): string {
-  const diffSec = Math.max(0, Math.floor((now - when) / 1000));
-  if (diffSec < 60) return t('settings.sync.justNow');
-  const diffMin = Math.floor(diffSec / 60);
-  if (diffMin < 60) return `${diffMin} min ago`;
-  const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return `${diffHr} h ago`;
-  const diffDay = Math.floor(diffHr / 24);
-  if (diffDay < 7) return `${diffDay} d ago`;
-  return new Date(when).toISOString().slice(0, 10);
-}
-
 export const SyncTab = () => {
   const { t } = useTranslation('screens');
   const { supported, folderName, lastSyncedAt } = useSyncFolder();
+  const defaultInterval = useDefaultInterval();
+  const history = useSyncHistory();
+  const spaces = useSpaces();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<SpaceSyncResult[] | null>(null);
@@ -63,7 +56,7 @@ export const SyncTab = () => {
     try {
       await pickSyncFolder();
     } catch (err) {
-      if (isAbort(err)) return; // user dismissed the picker
+      if (isAbort(err)) return;
       setError(err instanceof Error ? err.message : String(err));
     }
   };
@@ -80,12 +73,14 @@ export const SyncTab = () => {
       const run = await syncAllSpacesToFolder();
       setResults(run.results);
     } catch (err) {
-      if (isAbort(err)) return; // user dismissed the permission prompt
+      if (isAbort(err)) return;
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setBusy(false);
     }
   };
+
+  const spaceNames = Object.fromEntries(spaces.map((s) => [s.id, s.name]));
 
   return (
     <section>
@@ -102,11 +97,7 @@ export const SyncTab = () => {
           <span className="font-serif text-[14px] text-ink">
             {folderName ?? t('settings.sync.noFolder')}
           </span>
-          <Button
-            kind="secondary"
-            size="sm"
-            onClick={() => void handleChoose()}
-          >
+          <Button kind="secondary" size="sm" onClick={() => void handleChoose()}>
             {folderName
               ? t('settings.sync.changeFolder')
               : t('settings.sync.chooseFolder')}
@@ -120,15 +111,23 @@ export const SyncTab = () => {
       </SettingRow>
 
       <SettingRow
+        label={t('settings.sync.intervalLabel')}
+        hint={t('settings.sync.intervalHint')}
+      >
+        <IntervalSelector
+          value={defaultInterval}
+          onChange={(v) => void setDefaultIntervalMin(v)}
+          ariaLabel={t('settings.sync.intervalLabel')}
+        />
+      </SettingRow>
+
+      <SettingRow
         label={t('settings.sync.syncLabel')}
         hint={t('settings.sync.pushOnlyHint')}
       >
         <div className="flex flex-col items-end gap-1">
-          <Button
-            onClick={() => void handleSync()}
-            disabled={busy || !folderName}
-          >
-            {busy ? t('settings.sync.syncing') : t('settings.sync.syncNow')}
+          <Button onClick={() => void handleSync()} disabled={busy || !folderName}>
+            {busy ? t('settings.sync.syncing') : t('settings.sync.syncNowAll')}
           </Button>
           <TypographyP variant="caption" className="text-[12px] text-ink-3">
             {lastSyncedAt
@@ -188,6 +187,8 @@ export const SyncTab = () => {
           </table>
         </div>
       )}
+
+      <SyncHistoryTable entries={history} showSpace spaceNames={spaceNames} />
     </section>
   );
 };

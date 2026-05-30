@@ -1,14 +1,27 @@
 import { db } from '@/db/db';
-import { createSpaceBackup } from '@/lib/backup/createSpaceBackup';
+import { newId } from '@/lib/ids';
+import type { Space, SyncEntry } from '@/db/schema';
+import {
+  buildSpaceMarkdownZipFor,
+  slugify,
+} from '@/lib/backup/buildSpaceMarkdownZip';
 
-// Push-only folder sync built on the File System Access API. On "Sync now" we
-// reuse the existing backup pipeline (createSpaceBackup → md-zip) and write the
-// resulting blob into a user-chosen folder. The folder handle is persisted in
-// the `meta` table so it survives reloads; browsers still require a one-click
-// permission re-grant per session (see ensureWritePermission).
+// Push-only folder sync built on the File System Access API. Sync is distinct
+// from Backup: it writes the space's md-zip into a user-chosen folder (never the
+// backups table) and records each run in the `syncs` table. Per space we keep a
+// rotating history of MAX_SYNCS_PER_SPACE files plus a stable `latest.zip`, all
+// inside a per-space subfolder. The folder handle is persisted in `meta` so it
+// survives reloads; browsers require a one-click permission re-grant per session.
 
 const HANDLE_KEY = 'syncFolderHandle';
-const LAST_KEY = 'syncLastAt';
+const GLOBAL_CONFIG_ID = 'global';
+
+export const MAX_SYNCS_PER_SPACE = 5;
+export const DEFAULT_INTERVAL_MIN = 10;
+export const INHERIT_INTERVAL = -1;
+// 0 = off. Used by the settings UI; the global default may not be "inherit".
+export const INTERVAL_OPTIONS = [0, 5, 10, 30] as const;
+export const LATEST_FILENAME = 'latest.zip';
 
 export function isFolderSyncSupported(): boolean {
   return typeof window !== 'undefined' && 'showDirectoryPicker' in window;
@@ -35,47 +48,180 @@ export async function forgetSyncFolder(): Promise<void> {
   await db.meta.delete(HANDLE_KEY);
 }
 
-export async function getLastSyncedAt(): Promise<number | null> {
-  const row = await db.meta.get(LAST_KEY);
-  return typeof row?.value === 'number' ? row.value : null;
-}
-
-// Must be called from within a user gesture (e.g. a click handler): browsers
-// only re-grant file-system write permission in response to user activation.
+// Resolve write permission. With { interactive: false } we only query (never
+// prompt) — required for background auto-sync, which has no user gesture.
 export async function ensureWritePermission(
   handle: FileSystemDirectoryHandle,
+  { interactive = true }: { interactive?: boolean } = {},
 ): Promise<boolean> {
   const opts: FileSystemHandlePermissionDescriptor = { mode: 'readwrite' };
   if (handle.queryPermission) {
     const current = await handle.queryPermission(opts);
     if (current === 'granted') return true;
+    if (!interactive) return false;
   }
-  if (handle.requestPermission) {
+  if (interactive && handle.requestPermission) {
     const next = await handle.requestPermission(opts);
     return next === 'granted';
   }
   // Permission APIs unavailable — assume the handle is usable.
-  return true;
+  return !handle.queryPermission;
 }
 
-async function writeBlobToFolder(
-  handle: FileSystemDirectoryHandle,
+// ---------------------------------------------------------------------------
+// Config (global default + per-space override), stored in `syncConfigs`.
+// ---------------------------------------------------------------------------
+
+export async function getDefaultIntervalMin(): Promise<number> {
+  const row = await db.syncConfigs.get(GLOBAL_CONFIG_ID);
+  return row ? row.intervalMin : DEFAULT_INTERVAL_MIN;
+}
+
+export async function setDefaultIntervalMin(intervalMin: number): Promise<void> {
+  await db.syncConfigs.put({ spaceId: GLOBAL_CONFIG_ID, intervalMin });
+}
+
+// Per-space interval. INHERIT_INTERVAL means "use the global default".
+export async function getSpaceIntervalMin(spaceId: string): Promise<number> {
+  const row = await db.syncConfigs.get(spaceId);
+  return row ? row.intervalMin : INHERIT_INTERVAL;
+}
+
+export async function setSpaceIntervalMin(
+  spaceId: string,
+  intervalMin: number,
+): Promise<void> {
+  await db.syncConfigs.put({ spaceId, intervalMin });
+}
+
+export async function getEffectiveIntervalMin(spaceId: string): Promise<number> {
+  const own = await getSpaceIntervalMin(spaceId);
+  if (own !== INHERIT_INTERVAL) return own;
+  return getDefaultIntervalMin();
+}
+
+// ---------------------------------------------------------------------------
+// Sync history (`syncs` table).
+// ---------------------------------------------------------------------------
+
+export async function getLastSyncForSpace(
+  spaceId: string,
+): Promise<SyncEntry | undefined> {
+  const rows = await db.syncs.where('spaceId').equals(spaceId).toArray();
+  return rows.sort((a, b) => b.when - a.when)[0];
+}
+
+export async function getLastSyncedAt(): Promise<number | null> {
+  const rows = await db.syncs.toArray();
+  if (rows.length === 0) return null;
+  return rows.reduce((max, r) => Math.max(max, r.when), 0);
+}
+
+async function pruneSyncHistory(spaceId: string): Promise<void> {
+  const rows = await db.syncs.where('spaceId').equals(spaceId).toArray();
+  const stale = rows
+    .sort((a, b) => b.when - a.when)
+    .slice(MAX_SYNCS_PER_SPACE)
+    .map((r) => r.id);
+  if (stale.length > 0) await db.syncs.bulkDelete(stale);
+}
+
+// ---------------------------------------------------------------------------
+// Folder writes.
+// ---------------------------------------------------------------------------
+
+function spaceDirName(space: Space): string {
+  return `${slugify(space.name, 'space')}-${space.id.slice(0, 6)}`;
+}
+
+function isHistoryFilename(name: string): boolean {
+  return name !== LATEST_FILENAME && /\.zip$/i.test(name);
+}
+
+async function writeBlobToDir(
+  dir: FileSystemDirectoryHandle,
   filename: string,
   blob: Blob,
 ): Promise<void> {
-  const fileHandle = await handle.getFileHandle(filename, { create: true });
+  const fileHandle = await dir.getFileHandle(filename, { create: true });
   const writable = await fileHandle.createWritable();
   await writable.write(blob);
   await writable.close();
 }
 
+async function pruneFolderHistory(dir: FileSystemDirectoryHandle): Promise<void> {
+  const names: string[] = [];
+  // FileSystemDirectoryHandle is async-iterable over [name, handle] pairs.
+  for await (const [name, entry] of dir as unknown as AsyncIterable<
+    [string, FileSystemHandle]
+  >) {
+    if (entry.kind === 'file' && isHistoryFilename(name)) names.push(name);
+  }
+  // History filenames are timestamp-prefixed, so lexical sort is chronological.
+  const stale = names.sort().reverse().slice(MAX_SYNCS_PER_SPACE);
+  for (const name of stale) {
+    await dir.removeEntry(name).catch(() => {});
+  }
+}
+
+function historyFilename(when: number): string {
+  const d = new Date(when);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return (
+    `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}` +
+    `-${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}.zip`
+  );
+}
+
+// Sync a single space: build the md-zip, write a timestamped history file plus
+// the rolling latest.zip, prune to MAX_SYNCS_PER_SPACE, and record the run.
 export async function syncSpaceToFolder(
   handle: FileSystemDirectoryHandle,
-  spaceId: string,
-): Promise<string> {
-  const { backup, filename } = await createSpaceBackup(spaceId);
-  await writeBlobToFolder(handle, filename, backup.payload);
-  return filename;
+  space: Space,
+  kind: SyncEntry['kind'],
+  { interactive = true }: { interactive?: boolean } = {},
+): Promise<SyncEntry> {
+  const when = Date.now();
+  try {
+    const granted = await ensureWritePermission(handle, { interactive });
+    if (!granted) {
+      throw new Error('Write permission to the folder was not granted.');
+    }
+    const { blob } = await buildSpaceMarkdownZipFor(space.id, when);
+    const dir = await handle.getDirectoryHandle(spaceDirName(space), {
+      create: true,
+    });
+    const filename = historyFilename(when);
+    await writeBlobToDir(dir, filename, blob);
+    await writeBlobToDir(dir, LATEST_FILENAME, blob);
+    await pruneFolderHistory(dir);
+
+    const entry: SyncEntry = {
+      id: newId(),
+      spaceId: space.id,
+      when,
+      kind,
+      status: 'ok',
+      size: blob.size,
+      filename,
+    };
+    await db.syncs.put(entry);
+    await pruneSyncHistory(space.id);
+    return entry;
+  } catch (err) {
+    const entry: SyncEntry = {
+      id: newId(),
+      spaceId: space.id,
+      when,
+      kind,
+      status: 'error',
+      size: 0,
+      error: err instanceof Error ? err.message : String(err),
+    };
+    await db.syncs.put(entry);
+    await pruneSyncHistory(space.id);
+    return entry;
+  }
 }
 
 export interface SpaceSyncResult {
@@ -90,38 +236,52 @@ export interface SyncRunResult {
   syncedAt: number;
 }
 
-// Pushes every space to the connected folder. The `handle` argument is mainly
-// for tests/composition; the UI calls this with no argument so it reads the
-// persisted folder handle. Per-space failures are captured rather than aborting
-// the whole run.
+function toResult(space: Space, entry: SyncEntry): SpaceSyncResult {
+  return {
+    spaceId: space.id,
+    name: space.name,
+    ok: entry.status === 'ok',
+    error: entry.error,
+  };
+}
+
+// Manually sync one space. Throws if no folder is connected.
+export async function syncOneSpace(
+  spaceId: string,
+  kind: SyncEntry['kind'] = 'manual',
+  handleArg?: FileSystemDirectoryHandle,
+): Promise<SpaceSyncResult> {
+  const handle = handleArg ?? (await getSyncFolderHandle());
+  if (!handle) throw new Error('No sync folder is connected.');
+  const space = await db.spaces.get(spaceId);
+  if (!space) throw new Error(`Space not found: ${spaceId}`);
+  const entry = await syncSpaceToFolder(handle, space, kind, {
+    interactive: kind === 'manual',
+  });
+  return toResult(space, entry);
+}
+
+// Manually sync every space. Per-space failures are captured, not fatal.
 export async function syncAllSpacesToFolder(
   handleArg?: FileSystemDirectoryHandle,
+  kind: SyncEntry['kind'] = 'manual',
 ): Promise<SyncRunResult> {
   const handle = handleArg ?? (await getSyncFolderHandle());
   if (!handle) throw new Error('No sync folder is connected.');
-
-  const granted = await ensureWritePermission(handle);
-  if (!granted) {
-    throw new Error('Write permission to the folder was not granted.');
+  if (kind === 'manual') {
+    const granted = await ensureWritePermission(handle, { interactive: true });
+    if (!granted) {
+      throw new Error('Write permission to the folder was not granted.');
+    }
   }
 
   const spaces = await db.spaces.toArray();
   const results: SpaceSyncResult[] = [];
   for (const space of spaces) {
-    try {
-      await syncSpaceToFolder(handle, space.id);
-      results.push({ spaceId: space.id, name: space.name, ok: true });
-    } catch (err) {
-      results.push({
-        spaceId: space.id,
-        name: space.name,
-        ok: false,
-        error: err instanceof Error ? err.message : String(err),
-      });
-    }
+    const entry = await syncSpaceToFolder(handle, space, kind, {
+      interactive: false,
+    });
+    results.push(toResult(space, entry));
   }
-
-  const syncedAt = Date.now();
-  await db.meta.put({ key: LAST_KEY, value: syncedAt });
-  return { results, syncedAt };
+  return { results, syncedAt: Date.now() };
 }

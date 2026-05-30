@@ -32,6 +32,7 @@ import {
 } from '@/lib/backup/createSpaceBackup';
 import { backupFilename } from '@/lib/backup/buildSpaceMarkdownZip';
 import { downloadBlob } from '@/lib/file-download';
+import { SpaceSyncTab } from '@/components/settings/SpaceSyncTab';
 import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import {
@@ -49,6 +50,7 @@ const TAB_IDS = [
   'sharing',
   'members',
   'backups',
+  'sync',
   'export',
   'danger',
 ] as const;
@@ -83,7 +85,7 @@ export const SpaceSettingsScreen = () => {
     },
     {
       label: t('settings.space.groups.data'),
-      tabs: (['backups', 'export', 'danger'] as const).map((id) => ({
+      tabs: (['backups', 'sync', 'export', 'danger'] as const).map((id) => ({
         id,
         label: t(`settings.space.tabs.${id}`),
       })),
@@ -113,6 +115,7 @@ export const SpaceSettingsScreen = () => {
           {activeTab === 'sharing' && <SharingTab />}
           {activeTab === 'members' && <MembersTab />}
           {activeTab === 'backups' && <BackupsTab space={space} />}
+          {activeTab === 'sync' && <SpaceSyncTab space={space} />}
           {activeTab === 'export' && <ExportTab />}
           {activeTab === 'danger' && <DangerTab space={space} />}
         </>
@@ -560,6 +563,8 @@ export async function deleteSpaceCascade(spaceId: string): Promise<void> {
       db.connections,
       db.palettes,
       db.backups,
+      db.syncs,
+      db.syncConfigs,
     ],
     async () => {
       const docIds = await db.docs.where({ spaceId }).primaryKeys();
@@ -573,6 +578,8 @@ export async function deleteSpaceCascade(spaceId: string): Promise<void> {
       await db.connections.where({ spaceId }).delete();
       await db.palettes.where({ spaceId }).delete();
       await db.backups.where('scope').equals(spaceId).delete();
+      await db.syncs.where({ spaceId }).delete();
+      await db.syncConfigs.delete(spaceId);
       await db.spaces.delete(spaceId);
     },
   );

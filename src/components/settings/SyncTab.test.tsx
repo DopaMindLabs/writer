@@ -7,13 +7,28 @@ vi.mock('@/hooks/useSyncFolder', () => ({
   useSyncFolder: () => useSyncFolder(),
 }));
 
+const useDefaultInterval = vi.fn(() => 10);
+const useSyncHistory = vi.fn((_id?: string | null) => [] as unknown[]);
+vi.mock('@/hooks/useSync', () => ({
+  useDefaultInterval: () => useDefaultInterval(),
+  useSyncHistory: (spaceId?: string | null) => useSyncHistory(spaceId),
+}));
+
+vi.mock('@/hooks/useSpaces', () => ({
+  useSpaces: () => [],
+}));
+
 const pickSyncFolder = vi.fn();
 const forgetSyncFolder = vi.fn();
+const setDefaultIntervalMin = vi.fn();
 const syncAllSpacesToFolder = vi.fn();
 vi.mock('@/lib/sync/folderSync', () => ({
   pickSyncFolder: (...args: unknown[]) => pickSyncFolder(...args),
   forgetSyncFolder: (...args: unknown[]) => forgetSyncFolder(...args),
+  setDefaultIntervalMin: (...args: unknown[]) => setDefaultIntervalMin(...args),
   syncAllSpacesToFolder: (...args: unknown[]) => syncAllSpacesToFolder(...args),
+  INHERIT_INTERVAL: -1,
+  INTERVAL_OPTIONS: [0, 5, 10, 30],
 }));
 
 // Imported after the mocks are registered.
@@ -21,6 +36,8 @@ import { SyncTab } from './SyncTab';
 
 beforeEach(() => {
   vi.clearAllMocks();
+  useDefaultInterval.mockReturnValue(10);
+  useSyncHistory.mockReturnValue([]);
 });
 
 describe('SyncTab', () => {
@@ -35,11 +52,11 @@ describe('SyncTab', () => {
       screen.getByText(/not available in this browser/i),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /sync now/i }),
+      screen.queryByRole('button', { name: /sync all spaces/i }),
     ).not.toBeInTheDocument();
   });
 
-  it('disables Sync now until a folder is connected', () => {
+  it('disables Sync until a folder is connected', () => {
     useSyncFolder.mockReturnValue({
       supported: true,
       folderName: null,
@@ -49,7 +66,9 @@ describe('SyncTab', () => {
     expect(
       screen.getByRole('button', { name: /choose folder/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /sync now/i })).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: /sync all spaces/i }),
+    ).toBeDisabled();
   });
 
   it('runs a sync and renders per-space results', async () => {
@@ -67,11 +86,57 @@ describe('SyncTab', () => {
     });
 
     renderWithProviders(<SyncTab />);
-    fireEvent.click(screen.getByRole('button', { name: /sync now/i }));
+    fireEvent.click(screen.getByRole('button', { name: /sync all spaces/i }));
 
     await waitFor(() => expect(syncAllSpacesToFolder).toHaveBeenCalledTimes(1));
     expect(await screen.findByText('Novel')).toBeInTheDocument();
     expect(screen.getByText('Essays')).toBeInTheDocument();
     expect(screen.getByText('disk full')).toBeInTheDocument();
+  });
+
+  it('changes the default auto-sync interval', () => {
+    useSyncFolder.mockReturnValue({
+      supported: true,
+      folderName: 'Drafts',
+      lastSyncedAt: null,
+    });
+    renderWithProviders(<SyncTab />);
+    fireEvent.click(screen.getByRole('button', { name: '30 min' }));
+    expect(setDefaultIntervalMin).toHaveBeenCalledWith(30);
+  });
+
+  it('connects a folder via the picker', async () => {
+    useSyncFolder.mockReturnValue({
+      supported: true,
+      folderName: null,
+      lastSyncedAt: null,
+    });
+    pickSyncFolder.mockResolvedValue({ name: 'Drafts' });
+    renderWithProviders(<SyncTab />);
+    fireEvent.click(screen.getByRole('button', { name: /choose folder/i }));
+    await waitFor(() => expect(pickSyncFolder).toHaveBeenCalledTimes(1));
+  });
+
+  it('disconnects the connected folder', async () => {
+    useSyncFolder.mockReturnValue({
+      supported: true,
+      folderName: 'Drafts',
+      lastSyncedAt: null,
+    });
+    renderWithProviders(<SyncTab />);
+    fireEvent.click(screen.getByRole('button', { name: /disconnect/i }));
+    await waitFor(() => expect(forgetSyncFolder).toHaveBeenCalledTimes(1));
+  });
+
+  it('surfaces an error when syncing fails', async () => {
+    useSyncFolder.mockReturnValue({
+      supported: true,
+      folderName: 'Drafts',
+      lastSyncedAt: null,
+    });
+    syncAllSpacesToFolder.mockRejectedValue(new Error('boom'));
+    renderWithProviders(<SyncTab />);
+    fireEvent.click(screen.getByRole('button', { name: /sync all spaces/i }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(/boom/i);
   });
 });

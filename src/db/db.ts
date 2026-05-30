@@ -11,6 +11,8 @@ import type {
   Settings,
   HighlightPalette,
   Meta,
+  SyncEntry,
+  SyncConfig,
 } from './schema';
 
 export class LoremDB extends Dexie {
@@ -25,6 +27,8 @@ export class LoremDB extends Dexie {
   settings!: Table<Settings, string>;
   palettes!: Table<HighlightPalette, string>;
   meta!: Table<Meta, string>;
+  syncs!: Table<SyncEntry, string>;
+  syncConfigs!: Table<SyncConfig, string>;
 
   constructor(name = 'lipsum') {
     super(name);
@@ -71,6 +75,11 @@ export class LoremDB extends Dexie {
 
     this.version(5).stores({
       spaces: 'id, createdAt, updatedAt',
+    });
+
+    this.version(6).stores({
+      syncs: 'id, spaceId, when, [spaceId+when]',
+      syncConfigs: 'spaceId',
     });
   }
 }

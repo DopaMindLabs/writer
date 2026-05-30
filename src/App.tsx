@@ -7,6 +7,7 @@ import {
   TypographyP,
 } from '@/components/ui/typography';
 import { ThemeProvider } from '@/theme/ThemeProvider';
+import { SyncScheduler } from '@/lib/sync/SyncScheduler';
 import { resetAndReseed } from '@/db/seed';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
 import { HomeScreen } from '@/screens/Home';
@@ -96,6 +97,7 @@ export const App = () => {
   return (
     <ThemeProvider>
       <TooltipProvider delayDuration={300}>
+        <SyncScheduler />
         <RouterProvider router={router} />
       </TooltipProvider>
     </ThemeProvider>

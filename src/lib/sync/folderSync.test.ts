@@ -7,35 +7,79 @@ import {
   sampleNote,
 } from '@/test/fixtures';
 import {
+  DEFAULT_INTERVAL_MIN,
+  INHERIT_INTERVAL,
+  LATEST_FILENAME,
+  MAX_SYNCS_PER_SPACE,
   ensureWritePermission,
+  forgetSyncFolder,
+  getEffectiveIntervalMin,
+  getLastSyncForSpace,
   getLastSyncedAt,
+  getSyncFolderHandle,
+  pickSyncFolder,
+  setDefaultIntervalMin,
+  setSpaceIntervalMin,
   syncAllSpacesToFolder,
+  syncOneSpace,
   syncSpaceToFolder,
 } from './folderSync';
 
-interface MockHandle {
-  name: string;
-  files: Record<string, Blob>;
+interface MockDir {
+  files: Map<string, Blob>;
   getFileHandle: ReturnType<typeof vi.fn>;
+  removeEntry: ReturnType<typeof vi.fn>;
+  [Symbol.asyncIterator](): AsyncIterator<[string, { kind: string }]>;
 }
 
-function makeMockHandle(opts: { fail?: boolean } = {}): MockHandle {
-  const files: Record<string, Blob> = {};
-  const getFileHandle = vi.fn(async (filename: string) => {
-    if (opts.fail) throw new Error('disk full');
-    return {
+function makeMockDir(): MockDir {
+  const files = new Map<string, Blob>();
+  return {
+    files,
+    getFileHandle: vi.fn(async (name: string) => ({
       createWritable: async () => ({
         write: async (blob: Blob) => {
-          files[filename] = blob;
+          files.set(name, blob);
         },
         close: async () => {},
       }),
-    };
-  });
-  return { name: 'test-folder', files, getFileHandle };
+    })),
+    removeEntry: vi.fn(async (name: string) => {
+      files.delete(name);
+    }),
+    async *[Symbol.asyncIterator]() {
+      for (const name of files.keys()) {
+        yield [name, { kind: 'file' }] as [string, { kind: string }];
+      }
+    },
+  };
+}
+
+interface MockHandle {
+  name: string;
+  dirs: Map<string, MockDir>;
+  getDirectoryHandle: ReturnType<typeof vi.fn>;
+}
+
+function makeMockHandle(opts: { fail?: boolean } = {}): MockHandle {
+  const dirs = new Map<string, MockDir>();
+  return {
+    name: 'test-folder',
+    dirs,
+    getDirectoryHandle: vi.fn(async (name: string) => {
+      if (opts.fail) throw new Error('disk full');
+      let dir = dirs.get(name);
+      if (!dir) {
+        dir = makeMockDir();
+        dirs.set(name, dir);
+      }
+      return dir;
+    }),
+  };
 }
 
 const asHandle = (h: MockHandle) => h as unknown as FileSystemDirectoryHandle;
+const onlyDir = (h: MockHandle) => [...h.dirs.values()][0];
 
 describe('folderSync', () => {
   beforeEach(async () => {
@@ -46,52 +90,60 @@ describe('folderSync', () => {
     await db.notes.put(sampleNote);
   });
 
-  it('syncSpaceToFolder writes a .zip and records a backup row', async () => {
+  it('writes latest.zip + a history file and records a sync row (not a backup)', async () => {
     const handle = makeMockHandle();
-    const filename = await syncSpaceToFolder(asHandle(handle), sampleSpace.id);
+    const entry = await syncSpaceToFolder(asHandle(handle), sampleSpace, 'manual');
 
-    expect(filename).toMatch(/\.zip$/);
-    expect(handle.files[filename]).toBeInstanceOf(Blob);
-    expect(handle.getFileHandle).toHaveBeenCalledWith(filename, {
-      create: true,
-    });
+    expect(entry.status).toBe('ok');
+    const dir = onlyDir(handle);
+    expect(dir.files.get(LATEST_FILENAME)).toBeInstanceOf(Blob);
+    const historyNames = [...dir.files.keys()].filter(
+      (n) => n !== LATEST_FILENAME,
+    );
+    expect(historyNames).toHaveLength(1);
+    expect(historyNames[0]).toMatch(/\.zip$/);
 
-    const backups = await db.backups
-      .where('scope')
-      .equals(sampleSpace.id)
-      .toArray();
-    expect(backups).toHaveLength(1);
+    const syncs = await db.syncs.where('spaceId').equals(sampleSpace.id).toArray();
+    expect(syncs).toHaveLength(1);
+    // Sync must NOT create a backup row.
+    const backups = await db.backups.where('scope').equals(sampleSpace.id).toArray();
+    expect(backups).toHaveLength(0);
   });
 
-  it('syncAllSpacesToFolder reports per-space success and records lastSyncedAt', async () => {
+  it('syncAllSpacesToFolder reports success and records lastSyncedAt', async () => {
     const handle = makeMockHandle();
     const run = await syncAllSpacesToFolder(asHandle(handle));
 
     expect(run.results).toEqual([
       expect.objectContaining({ spaceId: sampleSpace.id, ok: true }),
     ]);
-    expect(Object.keys(handle.files)).toHaveLength(1);
-    expect(await getLastSyncedAt()).toBe(run.syncedAt);
+    expect(await getLastSyncedAt()).not.toBeNull();
   });
 
   it('captures per-space failures without aborting the run', async () => {
     const handle = makeMockHandle({ fail: true });
     const run = await syncAllSpacesToFolder(asHandle(handle));
 
-    expect(run.results[0]).toMatchObject({
-      spaceId: sampleSpace.id,
-      ok: false,
-    });
+    expect(run.results[0]).toMatchObject({ spaceId: sampleSpace.id, ok: false });
     expect(run.results[0].error).toContain('disk full');
-    // A lastSyncedAt is still recorded for the run.
-    expect(await getLastSyncedAt()).toBe(run.syncedAt);
+    const syncs = await db.syncs.where('spaceId').equals(sampleSpace.id).toArray();
+    expect(syncs[0].status).toBe('error');
+  });
+
+  it('keeps only the last MAX_SYNCS_PER_SPACE history rows', async () => {
+    const handle = makeMockHandle();
+    for (let i = 0; i < MAX_SYNCS_PER_SPACE + 2; i += 1) {
+      await syncSpaceToFolder(asHandle(handle), sampleSpace, 'auto');
+    }
+    const syncs = await db.syncs.where('spaceId').equals(sampleSpace.id).toArray();
+    expect(syncs).toHaveLength(MAX_SYNCS_PER_SPACE);
   });
 
   it('throws when no folder is connected', async () => {
     await expect(syncAllSpacesToFolder()).rejects.toThrow(/no sync folder/i);
   });
 
-  it('ensureWritePermission requests permission when not already granted', async () => {
+  it('ensureWritePermission requests permission when interactive and not granted', async () => {
     const requestPermission = vi.fn(async () => 'granted' as PermissionState);
     const queryPermission = vi.fn(async () => 'prompt' as PermissionState);
     const handle = {
@@ -100,9 +152,109 @@ describe('folderSync', () => {
       requestPermission,
     } as unknown as FileSystemDirectoryHandle;
 
-    const ok = await ensureWritePermission(handle);
-
-    expect(ok).toBe(true);
+    expect(await ensureWritePermission(handle)).toBe(true);
     expect(requestPermission).toHaveBeenCalledWith({ mode: 'readwrite' });
+  });
+
+  it('ensureWritePermission never prompts when non-interactive', async () => {
+    const requestPermission = vi.fn(async () => 'granted' as PermissionState);
+    const queryPermission = vi.fn(async () => 'prompt' as PermissionState);
+    const handle = {
+      name: 'f',
+      queryPermission,
+      requestPermission,
+    } as unknown as FileSystemDirectoryHandle;
+
+    expect(await ensureWritePermission(handle, { interactive: false })).toBe(
+      false,
+    );
+    expect(requestPermission).not.toHaveBeenCalled();
+  });
+
+  it('resolves the effective interval from default + per-space override', async () => {
+    // No config rows → falls back to the default constant.
+    expect(await getEffectiveIntervalMin(sampleSpace.id)).toBe(
+      DEFAULT_INTERVAL_MIN,
+    );
+
+    await setDefaultIntervalMin(30);
+    expect(await getEffectiveIntervalMin(sampleSpace.id)).toBe(30);
+
+    await setSpaceIntervalMin(sampleSpace.id, 5);
+    expect(await getEffectiveIntervalMin(sampleSpace.id)).toBe(5);
+
+    // Inherit → back to the default.
+    await setSpaceIntervalMin(sampleSpace.id, INHERIT_INTERVAL);
+    expect(await getEffectiveIntervalMin(sampleSpace.id)).toBe(30);
+  });
+
+  it('pick/get/forget the folder handle via meta', async () => {
+    const picked = { name: 'picked-folder' };
+    (window as unknown as { showDirectoryPicker: unknown }).showDirectoryPicker =
+      vi.fn(async () => picked);
+    try {
+      const { name } = await pickSyncFolder();
+      expect(name).toBe('picked-folder');
+      const handle = await getSyncFolderHandle();
+      expect(handle).toMatchObject({ name: 'picked-folder' });
+      await forgetSyncFolder();
+      expect(await getSyncFolderHandle()).toBeNull();
+    } finally {
+      delete (window as unknown as { showDirectoryPicker?: unknown })
+        .showDirectoryPicker;
+    }
+  });
+
+  it('pickSyncFolder throws when the API is unavailable', async () => {
+    await expect(pickSyncFolder()).rejects.toThrow(/not supported/i);
+  });
+
+  it('syncOneSpace syncs a single space and records its last sync', async () => {
+    const handle = makeMockHandle();
+    const res = await syncOneSpace(sampleSpace.id, 'manual', asHandle(handle));
+    expect(res).toMatchObject({ spaceId: sampleSpace.id, ok: true });
+    const last = await getLastSyncForSpace(sampleSpace.id);
+    expect(last?.status).toBe('ok');
+  });
+
+  it('syncOneSpace rejects an unknown space', async () => {
+    const handle = makeMockHandle();
+    await expect(
+      syncOneSpace('nope', 'manual', asHandle(handle)),
+    ).rejects.toThrow(/space not found/i);
+  });
+
+  it('syncOneSpace throws when no folder is connected', async () => {
+    await expect(syncOneSpace(sampleSpace.id)).rejects.toThrow(/no sync folder/i);
+  });
+
+  it('prunes folder history to the most recent files', async () => {
+    const handle = makeMockHandle();
+    const base = Date.UTC(2026, 0, 1, 0, 0, 0);
+    const spy = vi.spyOn(Date, 'now');
+    try {
+      for (let i = 0; i < MAX_SYNCS_PER_SPACE + 2; i += 1) {
+        // Space writes one history file per second → distinct filenames.
+        spy.mockReturnValue(base + i * 1000);
+        await syncSpaceToFolder(asHandle(handle), sampleSpace, 'auto');
+      }
+    } finally {
+      spy.mockRestore();
+    }
+    const dir = onlyDir(handle);
+    const historyNames = [...dir.files.keys()].filter(
+      (n) => n !== LATEST_FILENAME,
+    );
+    expect(historyNames).toHaveLength(MAX_SYNCS_PER_SPACE);
+    expect(dir.removeEntry).toHaveBeenCalled();
+  });
+
+  it('ensureWritePermission allows handles without permission APIs', async () => {
+    const handle = { name: 'plain' } as unknown as FileSystemDirectoryHandle;
+    expect(await ensureWritePermission(handle)).toBe(true);
+  });
+
+  it('getLastSyncedAt is null before any sync', async () => {
+    expect(await getLastSyncedAt()).toBeNull();
   });
 });
