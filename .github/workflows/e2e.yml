@@ -62,7 +62,7 @@ jobs:
 
       - run: npx playwright install --with-deps chromium
 
-      - name: E2E tests with coverage gate (90%)
+      - name: E2E tests + coverage ratchet
         run: npm run test:e2e:coverage
 
       - if: always()

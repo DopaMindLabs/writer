@@ -1,0 +1,9 @@
+{
+  "cap": 95,
+  "e2e": {
+    "lines": 72,
+    "statements": 58,
+    "functions": 62,
+    "branches": 53
+  }
+}
