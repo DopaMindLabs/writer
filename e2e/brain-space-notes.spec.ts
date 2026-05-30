@@ -30,3 +30,23 @@ test('brain space adds a note from the toolbar and deletes it via the detail dra
 
   await expect(noteCards).toHaveCount(before);
 });
+
+test('brain space note opens a context menu on right-click and dismisses on Escape', async ({
+  page,
+}) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}/dump`);
+
+  const canvas = page.getByTestId('brain-canvas');
+  const noteCards = canvas.locator(':scope > [data-testid^="brain-note-"]');
+  await page.getByTestId('brain-canvas-tool-question').click();
+  await expect(noteCards).toHaveCount(1);
+
+  await noteCards.last().click({ button: 'right' });
+  const menu = page.getByTestId('brain-note-context-menu');
+  await expect(menu).toBeVisible();
+  await expect(menu.getByTestId('brain-note-context-menu-delete')).toBeVisible();
+
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
+});

@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const RATCHET_MARGIN = 2;
+const RATCHET_STEP = 5;
 const METRICS = ['lines', 'statements', 'functions', 'branches'];
 const SUMMARY_PATHS = {
   e2e: './e2e-coverage/coverage-summary.json',
@@ -45,7 +46,7 @@ for (const metric of METRICS) {
     continue;
   }
   const next = Math.min(Math.floor(pct - RATCHET_MARGIN), cap);
-  if (next > floor) {
+  if (next >= floor + RATCHET_STEP) {
     raises.push(`${metric} ${floor}% -> ${next}%`);
     floors[metric] = next;
   }
@@ -56,9 +57,16 @@ if (misses.length > 0) {
   process.exit(1);
 }
 
-if (raises.length > 0) {
-  writeFileSync('./coverage-baseline.json', `${JSON.stringify(baseline, null, 2)}\n`);
-  console.log(`coverage-ratchet: ${suite} floors raised: ${raises.join(', ')}`);
-} else {
+if (raises.length === 0) {
   console.log(`coverage-ratchet: ${suite} coverage holds at or above all floors.`);
+  process.exit(0);
 }
+
+if (process.env.CI) {
+  console.error(`\nE2E coverage improved beyond the committed floors:\n  ${raises.join('\n  ')}\nRun \`npm run test:e2e:coverage\` locally and commit the updated coverage-baseline.json to lock it in.\n`);
+  process.exit(1);
+}
+
+writeFileSync('./coverage-baseline.json', `${JSON.stringify(baseline, null, 2)}\n`);
+console.log(`coverage-ratchet: ${suite} floors raised: ${raises.join(', ')}`);
+console.log('coverage-ratchet: coverage-baseline.json updated — commit the change to lock it in.');
