@@ -1,0 +1,534 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DocInspector > snapshot > should match the snapshot across all variants > docName=empty 1`] = `
+<div>
+  <aside
+    class="relative hidden w-72 shrink-0 flex-col border-l border-rule bg-paper-2 md:flex"
+    data-testid="doc-inspector"
+  >
+    <div
+      class="flex items-center gap-2 border-b border-rule px-4 py-3"
+    >
+      <span
+        class="flex-1 truncate font-mono text-[9px] uppercase tracking-wider text-ink-3"
+        data-testid="doc-inspector-name"
+      >
+        —
+      </span>
+      <span
+        class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
+        data-testid="coming-soon-badge"
+      >
+        coming soon
+      </span>
+      <button
+        aria-label="Collapse inspector"
+        class="inline-flex items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5"
+        data-testid="doc-inspector-collapse"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-chevron-right h-3.5 w-3.5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m9 18 6-6-6-6"
+          />
+        </svg>
+      </button>
+    </div>
+    <div
+      class="flex border-b border-rule"
+    >
+      <button
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        data-testid="doc-inspector-tab-outline"
+        type="button"
+      >
+        OUTLINE
+      </button>
+      <button
+        aria-current="page"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-ink text-ink"
+        data-testid="doc-inspector-tab-info"
+        type="button"
+      >
+        INFO
+      </button>
+      <button
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        data-testid="doc-inspector-tab-history"
+        type="button"
+      >
+        HISTORY
+      </button>
+      <button
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        data-testid="doc-inspector-tab-actions"
+        type="button"
+      >
+        ACTIONS
+      </button>
+    </div>
+    <span
+      aria-disabled="true"
+      class="relative max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink block flex-1 self-stretch"
+      data-coming-soon="true"
+      data-state="closed"
+      tabindex="0"
+    >
+      <span
+        aria-hidden="true"
+        class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+      >
+        <div
+          class="flex-1 overflow-auto"
+          data-testid="doc-inspector-pane-info"
+        >
+          <div
+            class="px-4 py-3.5"
+          >
+            <div
+              class="mb-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+            >
+              INFO
+            </div>
+            <div
+              class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
+            >
+              <span
+                class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              >
+                Words
+              </span>
+              <span
+                class="font-serif text-[13px] text-ink"
+              >
+                1,204 / 1,500
+              </span>
+            </div>
+            <div
+              class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
+            >
+              <span
+                class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              >
+                Time
+              </span>
+              <span
+                class="font-serif text-[13px] text-ink"
+              >
+                22:14 · today
+              </span>
+            </div>
+            <div
+              class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
+            >
+              <span
+                class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              >
+                Created
+              </span>
+              <span
+                class="font-serif text-[13px] text-ink"
+              >
+                14 days ago
+              </span>
+            </div>
+            <div
+              class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
+            >
+              <span
+                class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              >
+                Section
+              </span>
+              <span
+                class="font-serif text-[13px] text-ink"
+              >
+                Manuscript
+              </span>
+            </div>
+            <div
+              class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
+            >
+              <span
+                class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              >
+                Status
+              </span>
+              <span
+                class="font-serif text-[13px] text-ink"
+              >
+                Draft
+              </span>
+            </div>
+          </div>
+        </div>
+      </span>
+    </span>
+  </aside>
+</div>
+`;
+
+exports[`DocInspector > snapshot > should match the snapshot across all variants > section=info 1`] = `
+<div>
+  <aside
+    class="relative hidden w-72 shrink-0 flex-col border-l border-rule bg-paper-2 md:flex"
+    data-testid="doc-inspector"
+  >
+    <div
+      class="flex items-center gap-2 border-b border-rule px-4 py-3"
+    >
+      <span
+        class="flex-1 truncate font-mono text-[9px] uppercase tracking-wider text-ink-3"
+        data-testid="doc-inspector-name"
+      >
+        My doc
+      </span>
+      <span
+        class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
+        data-testid="coming-soon-badge"
+      >
+        coming soon
+      </span>
+      <button
+        aria-label="Collapse inspector"
+        class="inline-flex items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5"
+        data-testid="doc-inspector-collapse"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-chevron-right h-3.5 w-3.5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m9 18 6-6-6-6"
+          />
+        </svg>
+      </button>
+    </div>
+    <div
+      class="flex border-b border-rule"
+    >
+      <button
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        data-testid="doc-inspector-tab-outline"
+        type="button"
+      >
+        OUTLINE
+      </button>
+      <button
+        aria-current="page"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-ink text-ink"
+        data-testid="doc-inspector-tab-info"
+        type="button"
+      >
+        INFO
+      </button>
+      <button
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        data-testid="doc-inspector-tab-history"
+        type="button"
+      >
+        HISTORY
+      </button>
+      <button
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        data-testid="doc-inspector-tab-actions"
+        type="button"
+      >
+        ACTIONS
+      </button>
+    </div>
+    <span
+      aria-disabled="true"
+      class="relative max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink block flex-1 self-stretch"
+      data-coming-soon="true"
+      data-state="closed"
+      tabindex="0"
+    >
+      <span
+        aria-hidden="true"
+        class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+      >
+        <div
+          class="flex-1 overflow-auto"
+          data-testid="doc-inspector-pane-info"
+        >
+          <div
+            class="px-4 py-3.5"
+          >
+            <div
+              class="mb-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+            >
+              INFO
+            </div>
+            <div
+              class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
+            >
+              <span
+                class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              >
+                Words
+              </span>
+              <span
+                class="font-serif text-[13px] text-ink"
+              >
+                1,204 / 1,500
+              </span>
+            </div>
+            <div
+              class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
+            >
+              <span
+                class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              >
+                Time
+              </span>
+              <span
+                class="font-serif text-[13px] text-ink"
+              >
+                22:14 · today
+              </span>
+            </div>
+            <div
+              class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
+            >
+              <span
+                class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              >
+                Created
+              </span>
+              <span
+                class="font-serif text-[13px] text-ink"
+              >
+                14 days ago
+              </span>
+            </div>
+            <div
+              class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
+            >
+              <span
+                class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              >
+                Section
+              </span>
+              <span
+                class="font-serif text-[13px] text-ink"
+              >
+                Manuscript
+              </span>
+            </div>
+            <div
+              class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
+            >
+              <span
+                class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              >
+                Status
+              </span>
+              <span
+                class="font-serif text-[13px] text-ink"
+              >
+                Draft
+              </span>
+            </div>
+          </div>
+        </div>
+      </span>
+    </span>
+  </aside>
+</div>
+`;
+
+exports[`DocInspector > snapshot > should match the snapshot across all variants > section=outline 1`] = `
+<div>
+  <aside
+    class="relative hidden w-72 shrink-0 flex-col border-l border-rule bg-paper-2 md:flex"
+    data-testid="doc-inspector"
+  >
+    <div
+      class="flex items-center gap-2 border-b border-rule px-4 py-3"
+    >
+      <span
+        class="flex-1 truncate font-mono text-[9px] uppercase tracking-wider text-ink-3"
+        data-testid="doc-inspector-name"
+      >
+        My doc
+      </span>
+      <span
+        class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
+        data-testid="coming-soon-badge"
+      >
+        coming soon
+      </span>
+      <button
+        aria-label="Collapse inspector"
+        class="inline-flex items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5"
+        data-testid="doc-inspector-collapse"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-chevron-right h-3.5 w-3.5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m9 18 6-6-6-6"
+          />
+        </svg>
+      </button>
+    </div>
+    <div
+      class="flex border-b border-rule"
+    >
+      <button
+        aria-current="page"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-ink text-ink"
+        data-testid="doc-inspector-tab-outline"
+        type="button"
+      >
+        OUTLINE
+      </button>
+      <button
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        data-testid="doc-inspector-tab-info"
+        type="button"
+      >
+        INFO
+      </button>
+      <button
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        data-testid="doc-inspector-tab-history"
+        type="button"
+      >
+        HISTORY
+      </button>
+      <button
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        data-testid="doc-inspector-tab-actions"
+        type="button"
+      >
+        ACTIONS
+      </button>
+    </div>
+    <span
+      aria-disabled="true"
+      class="relative max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink block flex-1 self-stretch"
+      data-coming-soon="true"
+      data-state="closed"
+      tabindex="0"
+    >
+      <span
+        aria-hidden="true"
+        class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+      >
+        <div
+          class="flex-1 overflow-auto"
+          data-testid="doc-inspector-pane-outline"
+        >
+          <div
+            class="px-4 py-3.5"
+          >
+            <div
+              class="mb-2 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+            >
+              OUTLINE
+               ·
+               
+              4 SECTIONS
+            </div>
+            <div
+              class="-ml-3.5"
+            >
+              <div
+                class="flex items-baseline gap-2 border-l-2 py-1.5 pl-3.5 border-ink"
+              >
+                <span
+                  class="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4"
+                >
+                  H1
+                </span>
+                <span
+                  class="flex-1 font-serif text-[13px] font-medium text-ink"
+                >
+                  The bell-keeper's last morning
+                </span>
+              </div>
+              <div
+                class="flex items-baseline gap-2 border-l-2 py-1.5 pl-7 border-transparent"
+              >
+                <span
+                  class="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4"
+                >
+                  H2
+                </span>
+                <span
+                  class="flex-1 font-serif text-[13px] text-ink-2"
+                >
+                  Mira walks
+                </span>
+              </div>
+              <div
+                class="flex items-baseline gap-2 border-l-2 py-1.5 pl-7 border-transparent"
+              >
+                <span
+                  class="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4"
+                >
+                  H2
+                </span>
+                <span
+                  class="flex-1 font-serif text-[13px] text-ink-2"
+                >
+                  The tower
+                </span>
+              </div>
+              <div
+                class="flex items-baseline gap-2 border-l-2 py-1.5 pl-7 border-transparent"
+              >
+                <span
+                  class="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4"
+                >
+                  H2
+                </span>
+                <span
+                  class="flex-1 font-serif text-[13px] text-ink-2"
+                >
+                  Counting
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </span>
+    </span>
+  </aside>
+</div>
+`;

@@ -6,6 +6,8 @@ import { listTemplates, type Template } from '@/data/templates';
 import { createSpaceFromTemplate } from '@/db/seed';
 import { cn } from '@/lib/utils';
 import { Link } from '@/components/ui/Link';
+import { TextField } from '@/components/ui/TextField';
+import { Label } from '@/components/ui/Label';
 import { TypographyH1 } from '@/components/ui/typography';
 import { routes } from '@/lib/routes';
 
@@ -65,9 +67,13 @@ export const TemplatesScreen = () => {
   });
 
   return (
-    <div className="flex h-full w-full flex-col overflow-auto bg-paper">
+    <div
+      data-testid="templates-screen"
+      className="flex h-full w-full flex-col overflow-auto bg-paper"
+    >
       <header className="flex items-center justify-between border-b border-rule px-4 py-4 md:px-12 md:py-5">
         <Link
+          data-testid="templates-back"
           to={routes.home()}
           className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:text-ink"
         >
@@ -102,8 +108,10 @@ export const TemplatesScreen = () => {
                 .join(' · ');
               const description = templateDescription(tpl);
               return (
+                // @lint-ignore native-button: large card-style radio row with multi-column grid content; not a DS Button kind
                 <button
                   key={tpl.id}
+                  data-testid={`templates-card-${tpl.id}`}
                   type="button"
                   onClick={() => onSelect(tpl)}
                   className={cn(
@@ -158,34 +166,38 @@ export const TemplatesScreen = () => {
           <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-6 md:px-12">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_8rem] sm:gap-6">
               <div>
-                <label
+                <Label
                   htmlFor="space-name"
-                  className="block font-mono text-[10px] uppercase tracking-[0.08em] text-ink-3"
+                  tone="ink3"
+                  weight="regular"
+                  className="block font-mono text-[10px] uppercase tracking-[0.08em]"
                 >
                   {t('templates.nameLabel')}
-                </label>
-                <input
+                </Label>
+                <TextField
                   id="space-name"
-                  type="text"
+                  data-testid="templates-name-input"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="mt-1 h-10 w-full border-0 border-b border-rule bg-transparent py-0 font-serif text-[22px] leading-none text-ink outline-none focus:border-ink"
+                  className="mt-1 h-10 py-0 font-serif text-[22px] leading-none"
                 />
               </div>
               <div>
-                <label
+                <Label
                   htmlFor="space-tag"
-                  className="block font-mono text-[10px] uppercase tracking-[0.08em] text-ink-3"
+                  tone="ink3"
+                  weight="regular"
+                  className="block font-mono text-[10px] uppercase tracking-[0.08em]"
                 >
                   {t('templates.tagLabel')}
-                </label>
-                <input
+                </Label>
+                <TextField
                   id="space-tag"
-                  type="text"
+                  data-testid="templates-tag-input"
                   maxLength={3}
                   value={tag}
                   onChange={(e) => setTag(e.target.value.toUpperCase())}
-                  className="mt-1 h-10 w-full border-0 border-b border-rule bg-transparent py-0 text-center font-mono text-[18px] leading-none tracking-widest text-ink outline-none focus:border-ink"
+                  className="mt-1 h-10 py-0 text-center font-mono text-[18px] leading-none tracking-widest"
                 />
               </div>
             </div>
@@ -206,7 +218,9 @@ export const TemplatesScreen = () => {
                   <span className="italic text-ink-4">{t('templates.syncValue')}</span>
                 </span>
               </div>
+              {/* @lint-ignore native-button: italic-serif submit treatment unique to Templates; DS Button ghost is sans + thin underline and visually wrong here */}
               <button
+                data-testid="templates-submit"
                 type="submit"
                 disabled={submitting || !selected}
                 className="font-serif text-[18px] italic text-ink underline underline-offset-4 hover:text-ink-2 disabled:opacity-50"

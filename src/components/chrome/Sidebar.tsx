@@ -20,6 +20,8 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Link } from '@/components/ui/Link';
+import { TextField } from '@/components/ui/TextField';
+import { IconButton } from '@/components/ui/icon';
 import { SpaceMenuPopover } from './SpaceMenuPopover';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments } from '@/hooks/useDocuments';
@@ -176,7 +178,8 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
     <aside className="flex w-56 shrink-0 flex-col border-r border-rule bg-paper-2">
       <div className="group border-b border-rule px-5 pb-4 pt-5">
         {editingSpaceName ? (
-          <input
+          <TextField
+            variant="bare"
             autoFocus
             value={draftSpaceName}
             onChange={(e) => setDraftSpaceName(e.target.value)}
@@ -190,15 +193,18 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
               }
             }}
             aria-label={t('chrome:sidebar.renameSpace')}
-            className="w-full border-0 bg-transparent p-0 font-serif text-lg font-medium leading-tight tracking-tight text-ink outline-none"
+            data-testid="sidebar-space-title-input"
+            className="font-serif text-lg font-medium leading-tight tracking-tight"
           />
         ) : (
           <div className="flex items-center gap-2" data-tour="tour-sidebar-space-title">
+            {/* @lint-ignore native-button: editable-text trigger (click to rename); not a DS Button */}
             <button
               type="button"
               onClick={() => space && setEditingSpaceName(true)}
               disabled={!space}
               title={space ? t('chrome:sidebar.renameSpace') : undefined}
+              data-testid="sidebar-space-title"
               className="block min-w-0 flex-1 cursor-text truncate text-left font-serif text-lg font-medium leading-tight tracking-tight text-ink"
             >
               {space?.name ?? '…'}
@@ -209,6 +215,7 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
                   <TooltipTrigger asChild>
                     <PopoverTrigger
                       data-tour="tour-sidebar-settings"
+                      data-testid="sidebar-space-menu-trigger"
                       aria-label={t('chrome:sidebar.openSpaceMenu')}
                       className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm text-ink-3 opacity-0 transition-opacity hover:bg-paper hover:text-ink focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink group-hover:opacity-100 data-[state=open]:bg-ink data-[state=open]:text-paper data-[state=open]:opacity-100"
                     >
@@ -234,7 +241,10 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
             ) : null}
           </div>
         )}
-        <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3">
+        <div
+          data-testid="sidebar-space-subtitle"
+          className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+        >
           {(() => {
             const base = space?.shared
               ? t('chrome:sidebar.shared')
@@ -252,8 +262,13 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
           const ownDocs = docsBySection.get(sec.id) ?? [];
           const isWorkshop = sec.label === 'Workshop';
           return (
-            <div key={sec.id} className="mb-2">
+            <div
+              key={sec.id}
+              data-testid={`sidebar-section-${sec.id}`}
+              className="mb-2"
+            >
               <SectionHeader
+                sectionId={sec.id}
                 label={sec.label}
                 onAdd={() => startAdd(sec.id, sec.label, null)}
               />
@@ -275,6 +290,7 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
               {adding?.sectionId === sec.id && (
                 <AddDocInput
                   ref={inputRef}
+                  sectionId={sec.id}
                   value={adding.value}
                   onChange={(v) => setAdding({ ...adding, value: v })}
                   onKeyDown={onAddKey}
@@ -284,14 +300,22 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
               {subs.map((sub) => {
                 const subDocs = docsBySection.get(sub.id) ?? [];
                 return (
-                  <div key={sub.id} className="mt-1">
+                  <div
+                    key={sub.id}
+                    data-testid={`sidebar-section-${sub.id}`}
+                    className="mt-1"
+                  >
                     <SectionHeader
+                      sectionId={sub.id}
                       label={`↳ ${sub.label}`}
                       indented
                       onAdd={() => startAdd(sub.id, sec.label, sub.label)}
                     />
                     {subDocs.length === 0 && adding?.sectionId !== sub.id && (
-                      <div className="px-5 pl-7 py-1 text-[11px] italic text-ink-4">
+                      <div
+                        data-testid={`sidebar-section-${sub.id}-empty`}
+                        className="px-5 pl-7 py-1 text-[11px] italic text-ink-4"
+                      >
                         {t('chrome:sidebar.empty')}
                       </div>
                     )}
@@ -307,6 +331,7 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
                     {adding?.sectionId === sub.id && (
                       <AddDocInput
                         ref={inputRef}
+                        sectionId={sub.id}
                         value={adding.value}
                         indented
                         onChange={(v) => setAdding({ ...adding, value: v })}
@@ -320,7 +345,10 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
               {ownDocs.length === 0 &&
                 subs.length === 0 &&
                 adding?.sectionId !== sec.id && (
-                  <div className="px-5 py-1.5 text-xs italic text-ink-4">
+                  <div
+                    data-testid={`sidebar-section-${sec.id}-empty`}
+                    className="px-5 py-1.5 text-xs italic text-ink-4"
+                  >
                     {t('chrome:sidebar.empty')}
                   </div>
                 )}
@@ -328,8 +356,14 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
           );
         })}
         {!topSections.some((s) => s.label === 'Workshop') && (
-          <div className="mt-4 border-t border-rule pt-2">
-            <div className="px-5 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4">
+          <div
+            data-testid="sidebar-workshop-fallback"
+            className="mt-4 border-t border-rule pt-2"
+          >
+            <div
+              data-testid="sidebar-workshop-fallback-label"
+              className="px-5 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4"
+            >
               {t('chrome:sidebar.workshop')}
             </div>
             <BrainSpaceLink
@@ -359,10 +393,12 @@ function formatSpaceAge(createdAt: number, t: TranslateFn): string {
 }
 
 const SectionHeader = ({
+  sectionId,
   label,
   indented = false,
   onAdd,
 }: {
+  sectionId: string;
   label: string;
   indented?: boolean;
   onAdd: () => void;
@@ -370,25 +406,32 @@ const SectionHeader = ({
   const { t } = useTranslation('chrome');
   return (
     <div
+      data-testid={`sidebar-section-${sectionId}-header`}
       className={cn(
         'group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4',
         indented ? 'pl-7 pr-3' : 'px-5',
       )}
     >
-      <span className="flex-1 truncate">{label}</span>
-      <button
-        type="button"
-        onClick={onAdd}
-        className="inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 opacity-0 transition-opacity hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
-        aria-label={t('sidebar.addDocAria', { label })}
+      <span
+        data-testid={`sidebar-section-${sectionId}-label`}
+        className="flex-1 truncate"
       >
-        <Plus className="h-3 w-3" />
-      </button>
+        {label}
+      </span>
+      <IconButton
+        icon={Plus}
+        label={t('sidebar.addDocAria', { label })}
+        onClick={onAdd}
+        iconSize="xs"
+        data-testid={`sidebar-section-${sectionId}-add`}
+        className="h-4 w-4 rounded-sm opacity-0 hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
+      />
     </div>
   );
 };
 
 interface AddDocInputProps {
+  sectionId: string;
   value: string;
   indented?: boolean;
   onChange: (value: string) => void;
@@ -397,7 +440,7 @@ interface AddDocInputProps {
 }
 
 const AddDocInput = forwardRef<HTMLInputElement, AddDocInputProps>(
-  ({ value, indented = false, onChange, onKeyDown, onBlur }, ref) => {
+  ({ sectionId, value, indented = false, onChange, onKeyDown, onBlur }, ref) => {
     const { t } = useTranslation('chrome');
     return (
       <div
@@ -406,14 +449,16 @@ const AddDocInput = forwardRef<HTMLInputElement, AddDocInputProps>(
           indented ? 'pl-7 pr-3' : 'px-5',
         )}
       >
-        <input
+        <TextField
           ref={ref}
+          variant="bare"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={onKeyDown}
           onBlur={onBlur}
           placeholder={t('sidebar.docNamePlaceholder')}
-          className="flex-1 border-0 bg-transparent p-0 text-[13px] text-ink outline-none placeholder:text-ink-4"
+          data-testid={`sidebar-section-${sectionId}-add-input`}
+          className="flex-1 text-[13px]"
         />
       </div>
     );
@@ -434,6 +479,7 @@ const BrainSpaceLink = ({
   return (
     <Link
       to={routes.brainSpace(spaceId)}
+      data-testid="sidebar-brain-space-link"
       className={cn(
         '-ml-px flex items-center gap-2 border-l-2 px-5 py-1.5 transition-colors',
         active
@@ -441,8 +487,16 @@ const BrainSpaceLink = ({
           : 'border-transparent text-ink-2 hover:bg-paper',
       )}
     >
-      <span className="flex-1 text-[13px]">{t('brainSpace')}</span>
-      <span className="font-mono text-[10px] text-ink-4">
+      <span
+        data-testid="sidebar-brain-space-link-label"
+        className="flex-1 text-[13px]"
+      >
+        {t('brainSpace')}
+      </span>
+      <span
+        data-testid="sidebar-brain-space-link-count"
+        className="font-mono text-[10px] text-ink-4"
+      >
         {count > 0 ? `${count}◦` : '◌'}
       </span>
     </Link>
@@ -464,6 +518,7 @@ const DocLink = ({
   return (
     <Link
       to={href}
+      data-testid={`sidebar-doc-${doc.id}`}
       className={cn(
         '-ml-px flex items-center gap-2 border-l-2 py-1.5 transition-colors',
         indented ? 'pl-7 pr-5' : 'px-5',
@@ -473,6 +528,7 @@ const DocLink = ({
       )}
     >
       <span
+        data-testid={`sidebar-doc-${doc.id}-name`}
         className={cn(
           'flex-1 truncate text-[13px]',
           active ? 'font-medium text-ink' : 'text-ink-2',
@@ -480,7 +536,10 @@ const DocLink = ({
       >
         {doc.name}
       </span>
-      <span className="font-mono text-[10px] text-ink-4">
+      <span
+        data-testid={`sidebar-doc-${doc.id}-count`}
+        className="font-mono text-[10px] text-ink-4"
+      >
         {wordCount > 0 ? wordCount.toLocaleString() : '◌'}
       </span>
     </Link>

@@ -7,7 +7,13 @@ import {
   type KeyboardEvent,
   type MouseEvent,
 } from 'react';
-import { Check, Copy, Search } from '@/components/libs/icons';
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  X,
+} from '@/components/libs/icons';
 import { useCitations } from '@/hooks/useCitations';
 import {
   parseBibtexFile,
@@ -21,6 +27,12 @@ import { cn } from '@/lib/utils';
 import { downloadBlob } from '@/lib/file-download';
 import type { Citation } from '@/db/schema';
 import { TypographyMuted, TypographyP } from '@/components/ui/typography';
+import { Button } from '@/components/ui/Button';
+import { IconButton } from '@/components/ui/icon';
+import { TextArea } from '@/components/ui/TextArea';
+import { SearchField } from '@/components/ui/SearchField';
+import { Checkbox } from '@/components/ui/Checkbox';
+import { Label } from '@/components/ui/Label';
 
 export type CitationsDensity = 'comfortable' | 'compact';
 
@@ -191,7 +203,10 @@ export const CitationsPane = ({
   };
 
   return (
-    <div className="flex h-full flex-1 flex-col overflow-hidden bg-paper">
+    <div
+      className="flex h-full flex-1 flex-col overflow-hidden bg-paper"
+      data-testid="citations-pane"
+    >
       <div className={cn('border-b border-rule py-4', xPad, !isCompact && 'py-6')}>
         <div className="flex items-baseline justify-between">
           <div className="font-mono text-[10px] uppercase tracking-[0.08em]">
@@ -211,37 +226,42 @@ export const CitationsPane = ({
           xPad,
         )}
       >
-        <div className="relative flex w-full max-w-full items-center md:w-[360px] md:max-w-[40%]">
-          <Search className="absolute left-0 h-3 w-3 text-ink-4" />
-          <input
-            type="search"
+        <div className="w-full md:w-[360px] md:max-w-[40%]">
+          <SearchField
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onClear={() => setQuery('')}
             placeholder="authors, tags, year…"
-            className="w-full border-0 border-b border-rule bg-transparent py-1.5 pl-5 text-[12px] text-ink outline-none placeholder:text-ink-4 focus:border-ink"
+            className="text-[12px]"
+            data-testid="citations-search"
           />
         </div>
         <div className="flex items-center gap-5 text-[11px]">
-          <button
-            type="button"
+          <Button
+            kind="ghost"
+            size="sm"
             onClick={() => fileInputRef.current?.click()}
-            className="text-ink underline underline-offset-4 hover:text-ink-2"
+            data-testid="citations-upload"
           >
             ↑ upload .bib / .ris
-          </button>
+          </Button>
+          {/* @lint-ignore native-button: muted text-action toggle ("+ add" / "× cancel"); no matching DS Button kind */}
           <button
             type="button"
             onClick={() => setAdding((v) => !v)}
             className="text-ink-3 hover:text-ink"
+            data-testid="citations-add-toggle"
           >
             {adding ? '× cancel' : '+ add'}
           </button>
+          {/* @lint-ignore native-input: hidden file input triggered programmatically; DS primitives intentionally don't cover this case */}
           <input
             ref={fileInputRef}
             type="file"
             accept=".bib,.bibtex,text/x-bibtex,application/x-bibtex"
             className="hidden"
             onChange={handleFile}
+            data-testid="citations-file-input"
           />
         </div>
       </div>
@@ -253,6 +273,7 @@ export const CitationsPane = ({
             xPad,
           )}
           role="status"
+          data-testid="citations-status"
         >
           {status}
         </div>
@@ -286,8 +307,7 @@ export const CitationsPane = ({
           )}
         >
           <span className="flex items-center">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={allVisibleSelected}
               ref={(el) => {
                 if (el)
@@ -297,7 +317,7 @@ export const CitationsPane = ({
               onChange={toggleSelectAllVisible}
               aria-label="Select all citations on this page"
               disabled={visibleIds.length === 0}
-              className="h-3 w-3 cursor-pointer"
+              data-testid="citations-select-all"
             />
           </span>
           {!isCompact && <span>TAG</span>}
@@ -366,43 +386,44 @@ export const CitationsPane = ({
         )}
       >
         <span>STYLE — CHICAGO (AUTHOR-DATE)</span>
-        <button
-          type="button"
+        <Button
+          kind="ghost"
+          size="sm"
           onClick={handleExport}
           disabled={citations.length === 0}
-          className="text-ink underline underline-offset-4 hover:text-ink-2 disabled:cursor-not-allowed disabled:opacity-40 disabled:no-underline"
+          data-testid="citations-export"
         >
           EXPORT AS .BIB
-        </button>
+        </Button>
         <div className="flex items-center gap-3">
-          <span>
+          <span data-testid="citations-counts">
             {filtered.length} SHOWN · {pageRows.length} ON THIS PAGE
           </span>
           {totalPages > 1 && (
             <span className="flex items-center gap-2">
-              <button
-                type="button"
+              <IconButton
+                icon={ChevronLeft}
+                label="Previous page"
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
                 disabled={currentPage === 0}
-                className="hover:text-ink disabled:cursor-not-allowed disabled:opacity-30"
-                aria-label="Previous page"
-              >
-                ‹
-              </button>
-              <span>
+                iconSize="xs"
+                className="h-5 w-5"
+                data-testid="citations-prev-page"
+              />
+              <span data-testid="citations-page-indicator">
                 {currentPage + 1}/{totalPages}
               </span>
-              <button
-                type="button"
+              <IconButton
+                icon={ChevronRight}
+                label="Next page"
                 onClick={() =>
                   setPage((p) => Math.min(totalPages - 1, p + 1))
                 }
                 disabled={currentPage >= totalPages - 1}
-                className="hover:text-ink disabled:cursor-not-allowed disabled:opacity-30"
-                aria-label="Next page"
-              >
-                ›
-              </button>
+                iconSize="xs"
+                className="h-5 w-5"
+                data-testid="citations-next-page"
+              />
             </span>
           )}
         </div>
@@ -413,12 +434,22 @@ export const CitationsPane = ({
 
 const EmptyState = ({ hasCitations }: { hasCitations: boolean }) => {
   return (
-    <div className="flex items-center justify-center px-4 py-20 md:px-10">
+    <div
+      className="flex items-center justify-center px-4 py-20 md:px-10"
+      data-testid="citations-empty"
+    >
       <div className="text-center">
-        <TypographyP variant="empty" className="text-[20px]">
+        <TypographyP
+          variant="empty"
+          className="text-[20px]"
+          data-testid="citations-empty-title"
+        >
           no citations yet
         </TypographyP>
-        <TypographyMuted className="mt-2 text-[13px]">
+        <TypographyMuted
+          className="mt-2 text-[13px]"
+          data-testid="citations-empty-hint"
+        >
           {hasCitations
             ? 'no rows match your search.'
             : 'import a .bib or add one manually.'}
@@ -460,6 +491,7 @@ const CitationRow = ({
     }
   };
 
+  const rowTestId = `citation-row-${c.id}`;
   return (
     <div
       role="button"
@@ -467,6 +499,7 @@ const CitationRow = ({
       onClick={handleRowClick}
       onKeyDown={handleRowKeyDown}
       aria-label={`View citation ${c.key}`}
+      data-testid={rowTestId}
       className={cn(
         'flex cursor-pointer flex-col gap-1 border-b border-rule py-3 hover:bg-paper-2 focus:bg-paper-2 focus:outline-none md:items-baseline md:gap-4 md:py-2.5',
         colTemplate,
@@ -474,39 +507,56 @@ const CitationRow = ({
       )}
     >
       <span className="flex items-center">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={isSelected}
           onChange={onToggleSelect}
           onClick={(e) => e.stopPropagation()}
           aria-label={`Select citation ${c.key}`}
-          className="h-3 w-3 cursor-pointer"
+          data-testid={`${rowTestId}-select`}
         />
       </span>
       {!isCompact && (
-        <span className="hidden truncate font-mono text-[11px] text-ink md:inline">
+        <span
+          className="hidden truncate font-mono text-[11px] text-ink md:inline"
+          data-testid={`${rowTestId}-tag`}
+        >
           {c.key}
         </span>
       )}
       <span className="font-serif text-[16px] text-ink md:hidden">
         {c.title}
       </span>
-      <span className="truncate font-serif text-[14px] italic text-ink">
+      <span
+        className="truncate font-serif text-[14px] italic text-ink"
+        data-testid={`${rowTestId}-authors`}
+      >
         {c.authors}
       </span>
-      <span className="hidden truncate font-serif text-[14px] text-ink-2 md:inline">
+      <span
+        className="hidden truncate font-serif text-[14px] text-ink-2 md:inline"
+        data-testid={`${rowTestId}-title`}
+      >
         {c.title}
       </span>
-      <span className="hidden font-mono text-[11px] text-ink-3 md:inline">
+      <span
+        className="hidden font-mono text-[11px] text-ink-3 md:inline"
+        data-testid={`${rowTestId}-year`}
+      >
         {c.year > 0 ? c.year : '—'}
       </span>
       {!isCompact && (
-        <span className="hidden font-mono text-[9px] uppercase tracking-wider text-ink-3 md:inline">
+        <span
+          className="hidden font-mono text-[9px] uppercase tracking-wider text-ink-3 md:inline"
+          data-testid={`${rowTestId}-type`}
+        >
           {c.type}
         </span>
       )}
       {!isCompact && (
-        <span className="hidden text-right font-mono text-[11px] text-ink md:inline">
+        <span
+          className="hidden text-right font-mono text-[11px] text-ink md:inline"
+          data-testid={`${rowTestId}-used`}
+        >
           {c.useCount > 0 ? `${c.useCount}×` : '—'}
         </span>
       )}
@@ -523,7 +573,13 @@ const CitationRow = ({
   );
 };
 
-const CopyTagButton = ({ value }: { value: string }) => {
+const CopyTagButton = ({
+  value,
+  testId,
+}: {
+  value: string;
+  testId?: string;
+}) => {
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -545,15 +601,15 @@ const CopyTagButton = ({ value }: { value: string }) => {
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleCopy}
-      aria-label={copied ? `Copied tag ${value}` : `Copy tag ${value}`}
+    <IconButton
+      icon={copied ? Check : Copy}
+      label={copied ? `Copied tag ${value}` : `Copy tag ${value}`}
       title={copied ? 'Copied' : 'Copy tag'}
-      className="flex h-5 w-5 items-center justify-center text-ink-3 hover:text-ink"
-    >
-      {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-    </button>
+      onClick={handleCopy}
+      iconSize="xs"
+      className="h-5 w-5"
+      data-testid={testId}
+    />
   );
 };
 
@@ -579,79 +635,110 @@ const CitationDetailRow = ({
   const labelCls = 'font-mono text-[10px] uppercase tracking-wider text-ink-3';
   const valueCls = 'text-[13px] text-ink';
 
+  const detailTestId = `citation-detail-${c.id}`;
   return (
     <div
       className={cn('border-b border-rule bg-paper-2 py-3 md:py-4', xPad)}
-      data-testid={`citation-detail-${c.id}`}
+      data-testid={detailTestId}
     >
       <div className="mb-3 flex items-center justify-between">
-        <label className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-          <input
-            type="checkbox"
+        <Label
+          tone="ink3"
+          weight="regular"
+          className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider"
+        >
+          <Checkbox
             checked={isSelected}
             onChange={onToggleSelect}
             aria-label={`Select citation ${c.key}`}
-            className="h-3 w-3 cursor-pointer"
+            data-testid={`${detailTestId}-select`}
           />
           {c.key}
-        </label>
-        <button
-          type="button"
+        </Label>
+        <IconButton
+          icon={X}
+          label={`Collapse citation ${c.key}`}
           onClick={onClose}
-          aria-label={`Collapse citation ${c.key}`}
-          className="text-[16px] leading-none text-ink-3 hover:text-ink"
-        >
-          ×
-        </button>
+          iconSize="xs"
+          className="h-5 w-5"
+          data-testid={`${detailTestId}-close`}
+        />
       </div>
       <div className="grid gap-3 md:grid-cols-[7rem_1fr_5rem_7rem]">
         <div className="flex flex-col gap-1">
           <span className={cn(labelCls, 'flex items-center gap-1.5')}>
             Tag
-            <CopyTagButton value={c.key} />
+            <CopyTagButton value={c.key} testId={`${detailTestId}-copy`} />
           </span>
-          <span className={cn(valueCls, 'font-mono break-all')}>{c.key}</span>
+          <span
+            className={cn(valueCls, 'font-mono break-all')}
+            data-testid={`${detailTestId}-tag`}
+          >
+            {c.key}
+          </span>
         </div>
         <div className="flex flex-col gap-1">
           <span className={labelCls}>Authors</span>
-          <span className={cn(valueCls, 'font-serif italic')}>{c.authors}</span>
+          <span
+            className={cn(valueCls, 'font-serif italic')}
+            data-testid={`${detailTestId}-authors`}
+          >
+            {c.authors}
+          </span>
         </div>
         <div className="flex flex-col gap-1">
           <span className={labelCls}>Year</span>
-          <span className={cn(valueCls, 'font-mono')}>
+          <span
+            className={cn(valueCls, 'font-mono')}
+            data-testid={`${detailTestId}-year`}
+          >
             {c.year > 0 ? c.year : '—'}
           </span>
         </div>
         <div className="flex flex-col gap-1">
           <span className={labelCls}>Type</span>
-          <span className={cn(valueCls, 'font-mono uppercase tracking-wider')}>
+          <span
+            className={cn(valueCls, 'font-mono uppercase tracking-wider')}
+            data-testid={`${detailTestId}-type`}
+          >
             {c.type}
           </span>
         </div>
       </div>
       <div className="mt-3 flex flex-col gap-1">
         <span className={labelCls}>Title</span>
-        <span className={cn(valueCls, 'font-serif')}>{c.title}</span>
+        <span
+          className={cn(valueCls, 'font-serif')}
+          data-testid={`${detailTestId}-title`}
+        >
+          {c.title}
+        </span>
       </div>
       <div className="mt-3 flex items-center justify-between text-[11px]">
-        <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
+        <span
+          className="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+          data-testid={`${detailTestId}-used`}
+        >
           {c.useCount > 0 ? `${c.useCount}× used` : 'unused'}
         </span>
         <div className="flex items-center gap-3">
+          {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
           <button
             type="button"
             onClick={onDelete}
             className="text-ink-3 hover:text-ink"
+            data-testid={`${detailTestId}-delete`}
           >
             delete
           </button>
-          <button
-            type="button"
+          <Button
+            kind="ghost"
+            size="sm"
             onClick={onEdit}
-            className="text-ink underline underline-offset-4 hover:text-ink-2"
+            data-testid={`${detailTestId}-edit`}
           >
             edit
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -735,20 +822,24 @@ const CitationEditRow = ({
     }
   };
 
+  // Inline-edit form uses bordered (not baseline) inputs — DS TextField currently exposes baseline/bare only.
+  // Bordered variant tracked for PR 5; until then these stay raw with @lint-ignore native-input.
   const inputCls =
     'w-full rounded-sm border border-rule bg-paper px-2 py-1 text-[13px] text-ink outline-none focus:border-ink';
   const labelCls =
-    'flex flex-col gap-1 font-mono text-[10px] uppercase tracking-wider text-ink-3';
+    'flex flex-col gap-1 font-mono text-[10px] uppercase tracking-wider';
 
+  const editTestId = `citation-edit-${c.id}`;
   return (
     <div
       className={cn('border-b border-rule bg-paper-2 py-3 md:py-4', xPad)}
       onKeyDown={handleKeyDown}
-      data-testid={`citation-edit-${c.id}`}
+      data-testid={editTestId}
     >
       <div className="grid gap-3 md:grid-cols-[7rem_1fr_5rem_7rem]">
-        <label className={labelCls}>
+        <Label tone="ink3" weight="regular" className={labelCls}>
           Tag
+          {/* @lint-ignore native-input: bordered inline-edit input; see comment above */}
           <input
             type="text"
             value={draft.key}
@@ -756,10 +847,12 @@ const CitationEditRow = ({
             className={cn(inputCls, 'font-mono')}
             autoFocus
             aria-label="Tag"
+            data-testid={`${editTestId}-tag`}
           />
-        </label>
-        <label className={labelCls}>
+        </Label>
+        <Label tone="ink3" weight="regular" className={labelCls}>
           Authors
+          {/* @lint-ignore native-input: bordered inline-edit input; see comment above */}
           <input
             type="text"
             value={draft.authors}
@@ -768,10 +861,12 @@ const CitationEditRow = ({
             }
             className={inputCls}
             aria-label="Authors"
+            data-testid={`${editTestId}-authors`}
           />
-        </label>
-        <label className={labelCls}>
+        </Label>
+        <Label tone="ink3" weight="regular" className={labelCls}>
           Year
+          {/* @lint-ignore native-input: bordered inline-edit input; see comment above */}
           <input
             type="text"
             inputMode="numeric"
@@ -780,10 +875,12 @@ const CitationEditRow = ({
             onChange={(e) => setDraft((d) => ({ ...d, year: e.target.value }))}
             className={cn(inputCls, 'font-mono')}
             aria-label="Year"
+            data-testid={`${editTestId}-year`}
           />
-        </label>
-        <label className={labelCls}>
+        </Label>
+        <Label tone="ink3" weight="regular" className={labelCls}>
           Type
+          {/* @lint-ignore native-select: bordered inline-edit select; matching variant for DS Select tracked for PR 5 */}
           <select
             value={draft.type}
             onChange={(e) =>
@@ -794,6 +891,7 @@ const CitationEditRow = ({
             }
             className={inputCls}
             aria-label="Type"
+            data-testid={`${editTestId}-type`}
           >
             {TYPE_OPTIONS.map((t) => (
               <option key={t} value={t}>
@@ -801,44 +899,51 @@ const CitationEditRow = ({
               </option>
             ))}
           </select>
-        </label>
+        </Label>
       </div>
-      <label className={cn(labelCls, 'mt-3')}>
+      <Label tone="ink3" weight="regular" className={cn(labelCls, 'mt-3')}>
         Title
+        {/* @lint-ignore native-input: bordered inline-edit input; see comment above */}
         <input
           type="text"
           value={draft.title}
           onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
           className={inputCls}
           aria-label="Title"
+          data-testid={`${editTestId}-title`}
         />
-      </label>
+      </Label>
       <div className="mt-3 flex items-center justify-between text-[11px]">
+        {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
         <button
           type="button"
           onClick={onDelete}
           disabled={busy}
           className="text-ink-3 hover:text-ink disabled:opacity-50"
+          data-testid={`${editTestId}-delete`}
         >
           delete
         </button>
         <div className="flex items-center gap-3">
+          {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
           <button
             type="button"
             onClick={onCancel}
             disabled={busy}
             className="text-ink-3 hover:text-ink disabled:opacity-50"
+            data-testid={`${editTestId}-cancel`}
           >
             cancel
           </button>
-          <button
-            type="button"
+          <Button
+            kind="ghost"
+            size="sm"
             onClick={handleSave}
             disabled={busy}
-            className="text-ink underline underline-offset-4 hover:text-ink-2 disabled:opacity-50"
+            data-testid={`${editTestId}-save`}
           >
             {busy ? 'saving…' : 'save'}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -862,13 +967,22 @@ const BulkBar = ({ xPad, count, onClear, onDelete, onSetType }: BulkBarProps) =>
       )}
       role="region"
       aria-label="Bulk actions"
+      data-testid="citations-bulk-bar"
     >
-      <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
+      <span
+        className="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+        data-testid="citations-bulk-bar-count"
+      >
         {count} selected
       </span>
       <div className="flex flex-wrap items-center gap-4">
-        <label className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-ink-3">
+        <Label
+          tone="ink3"
+          weight="regular"
+          className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider"
+        >
           set type
+          {/* @lint-ignore native-select: bordered bulk-action select; matching variant for DS Select tracked for PR 5 */}
           <select
             defaultValue=""
             onChange={(e) => {
@@ -879,6 +993,7 @@ const BulkBar = ({ xPad, count, onClear, onDelete, onSetType }: BulkBarProps) =>
             }}
             aria-label="Set type for selected citations"
             className="rounded-sm border border-rule bg-paper px-2 py-0.5 text-[11px] text-ink outline-none focus:border-ink"
+            data-testid="citations-bulk-set-type"
           >
             <option value="" disabled>
               choose…
@@ -889,18 +1004,21 @@ const BulkBar = ({ xPad, count, onClear, onDelete, onSetType }: BulkBarProps) =>
               </option>
             ))}
           </select>
-        </label>
-        <button
-          type="button"
+        </Label>
+        <Button
+          kind="ghost"
+          size="sm"
           onClick={onDelete}
-          className="text-ink underline underline-offset-4 hover:text-ink-2"
+          data-testid="citations-bulk-delete"
         >
           delete
-        </button>
+        </Button>
+        {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
         <button
           type="button"
           onClick={onClear}
           className="text-ink-3 hover:text-ink"
+          data-testid="citations-bulk-clear"
         >
           clear
         </button>
@@ -958,33 +1076,40 @@ const ManualAddForm = ({ spaceId, xPad, onClose, onStatus }: ManualAddFormProps)
   };
 
   return (
-    <div className={cn('border-b border-rule bg-paper-2 py-4', xPad)}>
+    <div
+      className={cn('border-b border-rule bg-paper-2 py-4', xPad)}
+      data-testid="citations-manual-add"
+    >
       <div className="mb-2 font-mono text-[10px] uppercase tracking-wider text-ink-3">
         Paste BibTeX or a title
       </div>
-      <textarea
+      <TextArea
         value={raw}
         onChange={(e) => setRaw(e.target.value)}
         rows={4}
         placeholder={'@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}'}
-        className="w-full resize-y rounded-sm border border-rule bg-paper p-2 font-mono text-[12px] text-ink outline-none focus:border-ink"
+        className="rounded-sm font-mono text-[12px] placeholder:not-italic placeholder:font-mono"
+        data-testid="citations-manual-add-input"
       />
       <div className="mt-2 flex items-center justify-end gap-3 text-[11px]">
+        {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
         <button
           type="button"
           onClick={onClose}
           className="text-ink-3 hover:text-ink"
+          data-testid="citations-manual-add-cancel"
         >
           cancel
         </button>
-        <button
-          type="button"
+        <Button
+          kind="ghost"
+          size="sm"
           onClick={onSubmit}
           disabled={submitting || !raw.trim()}
-          className="text-ink underline underline-offset-4 hover:text-ink-2 disabled:opacity-50"
+          data-testid="citations-manual-add-submit"
         >
           {submitting ? 'adding…' : 'add citation'}
-        </button>
+        </Button>
       </div>
     </div>
   );

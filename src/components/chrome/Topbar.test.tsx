@@ -15,266 +15,313 @@ describe('Topbar', () => {
     });
   });
 
-  it('renders with doc name, mode tabs, search and inspector toggle', () => {
-    const { container } = renderWithProviders(
-      <Topbar
-        spaceId="s1"
-        docId="d1"
-        docName="Sample"
-        spaceName="Test"
-        mode="write"
-      />,
-      { initialEntries: ['/s/s1/d/d1'] },
-    );
-    expect(container).toMatchSnapshot();
-  });
+  describe('rendering', () => {
+    it('should render the open-nav button, doc-name button, citations trigger, and inspector toggle in write mode', () => {
+      renderWithProviders(
+        <Topbar
+          spaceId="s1"
+          docId="d1"
+          docName="Sample"
+          spaceName="Test"
+          mode="write"
+        />,
+        { initialEntries: ['/s/s1/d/d1'] },
+      );
+      expect(screen.getByTestId('topbar')).toBeInTheDocument();
+      expect(screen.getByTestId('topbar-open-nav')).toHaveAttribute(
+        'aria-label',
+        expect.stringMatching(/open nav/i),
+      );
+      expect(screen.getByTestId('topbar-doc-name')).toHaveTextContent('Sample');
+      expect(screen.getByTestId('topbar-citations')).toHaveAttribute(
+        'aria-label',
+        expect.stringMatching(/citations/i),
+      );
+      expect(screen.getByTestId('topbar-inspector-toggle')).toHaveAttribute(
+        'aria-label',
+        expect.stringMatching(/inspector/i),
+      );
+    });
 
-  it('renders citations view (no mode tabs, no focus toggle, no inspector toggle)', () => {
-    const { container } = renderWithProviders(
-      <Topbar
-        spaceId="s1"
-        docId={null}
-        spaceName="Test"
-        mode="write"
-      />,
-      { initialEntries: ['/s/s1/citations'] },
-    );
-    expect(container).toMatchSnapshot();
-  });
+    it('should not render the inspector toggle on the citations route', () => {
+      renderWithProviders(
+        <Topbar spaceId="s1" docId={null} spaceName="Test" mode="write" />,
+        { initialEntries: ['/s/s1/citations'] },
+      );
+      expect(
+        screen.queryByTestId('topbar-inspector-toggle'),
+      ).not.toBeInTheDocument();
+    });
 
-  it('collapses to icon-only chrome when focus=1 (no inspector toggle, no search)', () => {
-    const { container } = renderWithProviders(
-      <Topbar
-        spaceId="s1"
-        docId="d1"
-        docName="Sample"
-        spaceName="Test"
-        mode="focus"
-      />,
-      { initialEntries: ['/s/s1/d/d1?focus=1'] },
-    );
-    expect(container).toMatchSnapshot();
-  });
+    it('should collapse to icon-only chrome when focus=1 (no inspector toggle)', () => {
+      renderWithProviders(
+        <Topbar
+          spaceId="s1"
+          docId="d1"
+          docName="Sample"
+          spaceName="Test"
+          mode="focus"
+        />,
+        { initialEntries: ['/s/s1/d/d1?focus=1'] },
+      );
+      expect(
+        screen.queryByTestId('topbar-inspector-toggle'),
+      ).not.toBeInTheDocument();
+    });
 
-  it('opens the citations drawer when the citations button is clicked', async () => {
-    renderWithProviders(
-      <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
-      { initialEntries: ['/s/s1/d/d1'] },
-    );
-    expect(useUI.getState().citationsDrawerOpen).toBe(false);
-    await userEvent.click(
-      screen.getAllByRole('button', { name: /citations/i })[0],
-    );
-    expect(useUI.getState().citationsDrawerOpen).toBe(true);
-  });
+    it('should not render a standalone theme button', () => {
+      renderWithProviders(
+        <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
+        { initialEntries: ['/s/s1/d/d1'] },
+      );
+      expect(screen.queryByTestId('topbar-theme')).not.toBeInTheDocument();
+    });
 
-  it('opens the mobile nav drawer when the menu button is clicked', async () => {
-    renderWithProviders(
-      <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
-      { initialEntries: ['/s/s1/d/d1'] },
-    );
-    await userEvent.click(screen.getByRole('button', { name: /open nav/i }));
-    expect(useUI.getState().mobileNavOpen).toBe(true);
-  });
-
-  it('does not render the standalone theme dropdown (theme moved to Quick Settings)', () => {
-    renderWithProviders(
-      <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
-      { initialEntries: ['/s/s1/d/d1'] },
-    );
-    expect(
-      screen.queryByRole('button', { name: /^theme$/i }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('does not render the standalone help menu (moved to Quick Settings)', () => {
-    renderWithProviders(
-      <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
-      { initialEntries: ['/s/s1/d/d1'] },
-    );
-    expect(
-      screen.queryByRole('button', { name: /^help$/i }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('shows the inspector toggle in write mode and cycles through none → icons → expanded → none on click', async () => {
-    renderWithProviders(
-      <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
-      { initialEntries: ['/s/s1/d/d1'] },
-    );
-    expect(useUI.getState().inspectorMode).toBe('none');
-    await userEvent.click(
-      screen.getByRole('button', { name: /doc inspector/i }),
-    );
-    expect(useUI.getState().inspectorMode).toBe('icons');
-    await userEvent.click(
-      screen.getByRole('button', { name: /doc inspector/i }),
-    );
-    expect(useUI.getState().inspectorMode).toBe('expanded');
-    await userEvent.click(
-      screen.getByRole('button', { name: /doc inspector/i }),
-    );
-    expect(useUI.getState().inspectorMode).toBe('none');
-  });
-
-  it('auto-closes the inspector when focus mode is enabled', () => {
-    act(() => useUI.getState().setInspectorMode('expanded'));
-    renderWithProviders(
-      <Topbar spaceId="s1" docId="d1" docName="Sample" mode="focus" />,
-      { initialEntries: ['/s/s1/d/d1?focus=1'] },
-    );
-    expect(useUI.getState().inspectorMode).toBe('none');
-  });
-
-  it('hides the inspector toggle in split mode', () => {
-    renderWithProviders(
-      <Topbar spaceId="s1" docId="d1" docName="Sample" mode="split" />,
-      { initialEntries: ['/s/s1/d/d1/split'] },
-    );
-    expect(
-      screen.queryByRole('button', { name: /doc inspector/i }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('renders the focus-mode citations Link variant on /citations?focus=1', () => {
-    renderWithProviders(
-      <Topbar spaceId="s1" docId={null} spaceName="Test" mode="focus" />,
-      { initialEntries: ['/s/s1/citations?focus=1'] },
-    );
-    const link = screen.getByRole('link', { name: /citations/i });
-    expect(link).toHaveAttribute('href', '/s/s1/citations');
-  });
-
-  it('double-click on the doc-name button enables editing and Enter persists the new name', async () => {
-    await db.spaces.put(sampleSpace);
-    await db.docs.put({ ...sampleDoc, name: 'Original' });
-    const user = userEvent.setup();
-    renderWithProviders(
-      <Topbar
-        spaceId="s1"
-        docId="d1"
-        docName="Original"
-        spaceName="Test"
-        mode="write"
-      />,
-      { initialEntries: ['/s/s1/d/d1'] },
-    );
-    const docButton = screen.getByRole('button', { name: /original/i });
-    await user.dblClick(docButton);
-    const input = await screen.findByLabelText(/rename doc/i);
-    await user.clear(input);
-    await user.type(input, 'Renamed{enter}');
-    await waitFor(async () => {
-      const fresh = await db.docs.get('d1');
-      expect(fresh?.name).toBe('Renamed');
+    it('should not render a standalone help menu', () => {
+      renderWithProviders(
+        <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
+        { initialEntries: ['/s/s1/d/d1'] },
+      );
+      expect(screen.queryByTestId('topbar-help')).not.toBeInTheDocument();
     });
   });
 
-  it('Escape during doc rename reverts the draft and exits edit mode without persisting', async () => {
-    await db.spaces.put(sampleSpace);
-    await db.docs.put({ ...sampleDoc, name: 'Original' });
-    const user = userEvent.setup();
-    const updateSpy = vi.spyOn(db.docs, 'update');
-    renderWithProviders(
-      <Topbar
-        spaceId="s1"
-        docId="d1"
-        docName="Original"
-        spaceName="Test"
-        mode="write"
-      />,
-      { initialEntries: ['/s/s1/d/d1'] },
-    );
-    await user.dblClick(screen.getByRole('button', { name: /original/i }));
-    const input = await screen.findByLabelText(/rename doc/i);
-    await user.clear(input);
-    await user.type(input, 'Discard{escape}');
-    await waitFor(() =>
-      expect(screen.queryByLabelText(/rename doc/i)).not.toBeInTheDocument(),
-    );
-    expect(updateSpy).not.toHaveBeenCalled();
-    updateSpy.mockRestore();
+  describe('citations trigger', () => {
+    it('should open the citations drawer when clicked', async () => {
+      renderWithProviders(
+        <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
+        { initialEntries: ['/s/s1/d/d1'] },
+      );
+      expect(useUI.getState().citationsDrawerOpen).toBe(false);
+      await userEvent.click(screen.getByTestId('topbar-citations'));
+      expect(useUI.getState().citationsDrawerOpen).toBe(true);
+    });
+
+    it('should render as a link to /s/:spaceId/citations when on /citations in focus mode', () => {
+      renderWithProviders(
+        <Topbar spaceId="s1" docId={null} spaceName="Test" mode="focus" />,
+        { initialEntries: ['/s/s1/citations?focus=1'] },
+      );
+      const link = screen.getByTestId('topbar-citations');
+      expect(link.tagName).toBe('A');
+      expect(link).toHaveAttribute('href', '/s/s1/citations');
+    });
   });
 
-  it('blurring with an empty or unchanged doc name does not write to the DB', async () => {
-    await db.spaces.put(sampleSpace);
-    await db.docs.put({ ...sampleDoc, name: 'Same' });
-    const user = userEvent.setup();
-    const updateSpy = vi.spyOn(db.docs, 'update');
-    renderWithProviders(
-      <Topbar
-        spaceId="s1"
-        docId="d1"
-        docName="Same"
-        spaceName="Test"
-        mode="write"
-      />,
-      { initialEntries: ['/s/s1/d/d1'] },
-    );
-    await user.dblClick(screen.getByRole('button', { name: /same/i }));
-    const input = await screen.findByLabelText(/rename doc/i);
-    fireEvent.blur(input);
-    expect(updateSpy).not.toHaveBeenCalled();
-    await user.dblClick(screen.getByRole('button', { name: /same/i }));
-    const input2 = await screen.findByLabelText(/rename doc/i);
-    await user.clear(input2);
-    fireEvent.blur(input2);
-    expect(updateSpy).not.toHaveBeenCalled();
-    updateSpy.mockRestore();
+  describe('mobile nav', () => {
+    it('should open the mobile nav drawer when the menu button is clicked', async () => {
+      renderWithProviders(
+        <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
+        { initialEntries: ['/s/s1/d/d1'] },
+      );
+      await userEvent.click(screen.getByTestId('topbar-open-nav'));
+      expect(useUI.getState().mobileNavOpen).toBe(true);
+    });
   });
 
-  it('disables the doc-name button when docId is null (cannot enter edit mode)', async () => {
-    const user = userEvent.setup();
-    renderWithProviders(
-      <Topbar
-        spaceId="s1"
-        docId={null}
-        docName="Sample"
-        spaceName="Test"
-        mode="write"
-      />,
-      { initialEntries: ['/s/s1'] },
-    );
-    const button = screen.getByRole('button', { name: /sample/i });
-    expect(button).toBeDisabled();
-    await user.dblClick(button);
-    expect(screen.queryByLabelText(/rename doc/i)).not.toBeInTheDocument();
+  describe('inspector toggle', () => {
+    it('should cycle through none → icons → expanded → none on click', async () => {
+      renderWithProviders(
+        <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
+        { initialEntries: ['/s/s1/d/d1'] },
+      );
+      expect(useUI.getState().inspectorMode).toBe('none');
+      const toggle = screen.getByTestId('topbar-inspector-toggle');
+      await userEvent.click(toggle);
+      expect(useUI.getState().inspectorMode).toBe('icons');
+      await userEvent.click(toggle);
+      expect(useUI.getState().inspectorMode).toBe('expanded');
+      await userEvent.click(toggle);
+      expect(useUI.getState().inspectorMode).toBe('none');
+    });
+
+    it('should auto-close the inspector when focus mode is enabled', () => {
+      act(() => useUI.getState().setInspectorMode('expanded'));
+      renderWithProviders(
+        <Topbar spaceId="s1" docId="d1" docName="Sample" mode="focus" />,
+        { initialEntries: ['/s/s1/d/d1?focus=1'] },
+      );
+      expect(useUI.getState().inspectorMode).toBe('none');
+    });
+
+    it('should hide the inspector toggle in split mode', () => {
+      renderWithProviders(
+        <Topbar spaceId="s1" docId="d1" docName="Sample" mode="split" />,
+        { initialEntries: ['/s/s1/d/d1/split'] },
+      );
+      expect(
+        screen.queryByTestId('topbar-inspector-toggle'),
+      ).not.toBeInTheDocument();
+    });
   });
 
-  it('hides the FocusToggle when on /citations or when mode is not dump and there is no docId', () => {
-    const { rerender } = renderWithProviders(
-      <Topbar
-        spaceId="s1"
-        docId="d1"
-        docName="Sample"
-        spaceName="Test"
-        mode="write"
-      />,
-      { initialEntries: ['/s/s1/citations'] },
-    );
-    expect(
-      screen.queryByRole('link', { name: /focus mode/i }),
-    ).not.toBeInTheDocument();
-    rerender(
-      <Topbar
-        spaceId="s1"
-        docId={null}
-        spaceName="Test"
-        mode="write"
-      />,
-    );
-    expect(
-      screen.queryByRole('link', { name: /focus mode/i }),
-    ).not.toBeInTheDocument();
+  describe('doc-name rename', () => {
+    it('should enable editing on double-click and persist the new name on Enter', async () => {
+      await db.spaces.put(sampleSpace);
+      await db.docs.put({ ...sampleDoc, name: 'Original' });
+      const user = userEvent.setup();
+      renderWithProviders(
+        <Topbar
+          spaceId="s1"
+          docId="d1"
+          docName="Original"
+          spaceName="Test"
+          mode="write"
+        />,
+        { initialEntries: ['/s/s1/d/d1'] },
+      );
+      const docButton = screen.getByTestId('topbar-doc-name');
+      expect(docButton).toHaveTextContent('Original');
+      await user.dblClick(docButton);
+      const input = await screen.findByTestId('topbar-doc-name-input');
+      await user.clear(input);
+      await user.type(input, 'Renamed{enter}');
+      await waitFor(async () => {
+        const fresh = await db.docs.get('d1');
+        expect(fresh?.name).toBe('Renamed');
+      });
+    });
+
+    it('should revert the draft and exit edit mode on Escape without persisting', async () => {
+      await db.spaces.put(sampleSpace);
+      await db.docs.put({ ...sampleDoc, name: 'Original' });
+      const user = userEvent.setup();
+      const updateSpy = vi.spyOn(db.docs, 'update');
+      renderWithProviders(
+        <Topbar
+          spaceId="s1"
+          docId="d1"
+          docName="Original"
+          spaceName="Test"
+          mode="write"
+        />,
+        { initialEntries: ['/s/s1/d/d1'] },
+      );
+      await user.dblClick(screen.getByTestId('topbar-doc-name'));
+      const input = await screen.findByTestId('topbar-doc-name-input');
+      await user.clear(input);
+      await user.type(input, 'Discard{escape}');
+      await waitFor(() =>
+        expect(
+          screen.queryByTestId('topbar-doc-name-input'),
+        ).not.toBeInTheDocument(),
+      );
+      expect(updateSpy).not.toHaveBeenCalled();
+      updateSpy.mockRestore();
+    });
+
+    it('should not write to the DB when blurring with an empty or unchanged name', async () => {
+      await db.spaces.put(sampleSpace);
+      await db.docs.put({ ...sampleDoc, name: 'Same' });
+      const user = userEvent.setup();
+      const updateSpy = vi.spyOn(db.docs, 'update');
+      renderWithProviders(
+        <Topbar
+          spaceId="s1"
+          docId="d1"
+          docName="Same"
+          spaceName="Test"
+          mode="write"
+        />,
+        { initialEntries: ['/s/s1/d/d1'] },
+      );
+      await user.dblClick(screen.getByTestId('topbar-doc-name'));
+      const input = await screen.findByTestId('topbar-doc-name-input');
+      fireEvent.blur(input);
+      expect(updateSpy).not.toHaveBeenCalled();
+      await user.dblClick(screen.getByTestId('topbar-doc-name'));
+      const input2 = await screen.findByTestId('topbar-doc-name-input');
+      await user.clear(input2);
+      fireEvent.blur(input2);
+      expect(updateSpy).not.toHaveBeenCalled();
+      updateSpy.mockRestore();
+    });
+
+    it('should disable the doc-name button when docId is null and not enter edit mode on dblclick', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(
+        <Topbar
+          spaceId="s1"
+          docId={null}
+          docName="Sample"
+          spaceName="Test"
+          mode="write"
+        />,
+        { initialEntries: ['/s/s1'] },
+      );
+      const button = screen.getByTestId('topbar-doc-name');
+      expect(button).toBeDisabled();
+      await user.dblClick(button);
+      expect(
+        screen.queryByTestId('topbar-doc-name-input'),
+      ).not.toBeInTheDocument();
+    });
   });
 
-  it('shows the FocusToggle when mode is dump even without a docId', () => {
-    renderWithProviders(
-      <Topbar spaceId="s1" docId={null} spaceName="Test" mode="dump" />,
-      { initialEntries: ['/s/s1/dump'] },
-    );
-    expect(
-      screen.getByRole('link', { name: /focus mode/i }),
-    ).toBeInTheDocument();
+  describe('focus toggle', () => {
+    it('should hide the FocusToggle on /citations or when there is no docId and mode is not dump', () => {
+      const { rerender } = renderWithProviders(
+        <Topbar
+          spaceId="s1"
+          docId="d1"
+          docName="Sample"
+          spaceName="Test"
+          mode="write"
+        />,
+        { initialEntries: ['/s/s1/citations'] },
+      );
+      expect(screen.queryByTestId('focus-toggle')).not.toBeInTheDocument();
+      rerender(
+        <Topbar spaceId="s1" docId={null} spaceName="Test" mode="write" />,
+      );
+      expect(screen.queryByTestId('focus-toggle')).not.toBeInTheDocument();
+    });
+
+    it('should show the FocusToggle when mode is dump even without a docId', () => {
+      renderWithProviders(
+        <Topbar spaceId="s1" docId={null} spaceName="Test" mode="dump" />,
+        { initialEntries: ['/s/s1/dump'] },
+      );
+      expect(screen.getByTestId('focus-toggle')).toBeInTheDocument();
+    });
+  });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across all variants', () => {
+      const { container: writeContainer } = renderWithProviders(
+        <Topbar
+          spaceId="s1"
+          docId="d1"
+          docName="Sample"
+          spaceName="Test"
+          mode="write"
+        />,
+        { initialEntries: ['/s/s1/d/d1'] },
+      );
+      expect(writeContainer).toMatchSnapshot('write');
+
+      const { container: citationsContainer } = renderWithProviders(
+        <Topbar
+          spaceId="s1"
+          docId={null}
+          spaceName="Test"
+          mode="write"
+        />,
+        { initialEntries: ['/s/s1/citations'] },
+      );
+      expect(citationsContainer).toMatchSnapshot('citations');
+
+      const { container: focusContainer } = renderWithProviders(
+        <Topbar
+          spaceId="s1"
+          docId="d1"
+          docName="Sample"
+          spaceName="Test"
+          mode="focus"
+        />,
+        { initialEntries: ['/s/s1/d/d1?focus=1'] },
+      );
+      expect(focusContainer).toMatchSnapshot('focus');
+    });
   });
 });

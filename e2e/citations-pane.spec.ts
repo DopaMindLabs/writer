@@ -33,12 +33,12 @@ test('expand a citation, edit it via Cmd+Enter, and reject duplicate tags', asyn
   await addBibtex(page, CITATION_B);
 
   await page.getByRole('button', { name: 'View citation paneSmith2021' }).click();
-  const detail = page.locator('[data-testid^="citation-detail-"]');
+  const detail = page.locator('div[data-testid^="citation-detail-"]');
   await expect(detail).toBeVisible();
   await expect(detail.getByText('Pane Edit Subject')).toBeVisible();
 
   await detail.getByRole('button', { name: 'edit' }).click();
-  const editor = page.locator('[data-testid^="citation-edit-"]');
+  const editor = page.locator('div[data-testid^="citation-edit-"]');
   await expect(editor).toBeVisible();
 
   await editor.getByLabel('Tag').fill('paneJones2022');
@@ -57,7 +57,7 @@ test('expand a citation, edit it via Cmd+Enter, and reject duplicate tags', asyn
   await expect(page.getByText('paneSmith2021v2').first()).toBeVisible();
   await expect(page.getByText('Renamed Subject').first()).toBeVisible();
 
-  const updatedDetail = page.locator('[data-testid^="citation-detail-"]');
+  const updatedDetail = page.locator('div[data-testid^="citation-detail-"]');
   await updatedDetail
     .getByRole('button', { name: /Collapse citation paneSmith2021v2/ })
     .click();
@@ -72,11 +72,11 @@ test('Escape cancels an in-progress citation edit without saving', async ({ page
 
   await page.getByRole('button', { name: 'View citation paneSmith2021' }).click();
   await page
-    .locator('[data-testid^="citation-detail-"]')
+    .locator('div[data-testid^="citation-detail-"]')
     .getByRole('button', { name: 'edit' })
     .click();
 
-  const editor = page.locator('[data-testid^="citation-edit-"]');
+  const editor = page.locator('div[data-testid^="citation-edit-"]');
   await editor.getByLabel('Title').fill('Should Not Persist');
   await editor.getByLabel('Title').press('Escape');
 

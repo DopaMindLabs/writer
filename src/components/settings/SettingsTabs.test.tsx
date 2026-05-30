@@ -17,38 +17,94 @@ const groups: SettingsTabGroup[] = [
 ];
 
 describe('SettingsTabs', () => {
-  it('renders the group headers in the desktop nav', () => {
-    renderWithProviders(
-      <SettingsTabs groups={groups} active="editor" onSelect={() => {}} />,
-    );
-    // Headers render at least once across the desktop section.
-    expect(screen.getAllByText('Preferences').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Data').length).toBeGreaterThan(0);
+  describe('rendering', () => {
+    it('should render the group headers in the desktop nav', () => {
+      renderWithProviders(
+        <SettingsTabs groups={groups} active="editor" onSelect={() => {}} />,
+      );
+      expect(screen.getByTestId('settings-tabs-group-0')).toHaveTextContent(
+        'Preferences',
+      );
+      expect(screen.getByTestId('settings-tabs-group-1')).toHaveTextContent(
+        'Data',
+      );
+    });
+
+    it('should render each tab in both mobile and desktop strips', () => {
+      renderWithProviders(
+        <SettingsTabs groups={groups} active="editor" onSelect={() => {}} />,
+      );
+      expect(screen.getByTestId('settings-tab-general')).toHaveTextContent(
+        'General',
+      );
+      expect(screen.getByTestId('settings-tab-editor')).toHaveTextContent(
+        'Editor',
+      );
+      expect(screen.getByTestId('settings-tab-sync')).toHaveTextContent('Sync');
+
+      expect(
+        screen.getByTestId('settings-tab-mobile-general'),
+      ).toHaveTextContent('General');
+      expect(screen.getByTestId('settings-tab-mobile-editor')).toHaveTextContent(
+        'Editor',
+      );
+      expect(screen.getByTestId('settings-tab-mobile-sync')).toHaveTextContent(
+        'Sync',
+      );
+    });
   });
 
-  it('marks the active tab with aria-current="page"', () => {
-    renderWithProviders(
-      <SettingsTabs groups={groups} active="editor" onSelect={() => {}} />,
-    );
-    // Tabs render twice (mobile + desktop) — check at least one button per id
-    // carries the right aria-current value.
-    const editors = screen.getAllByRole('button', { name: 'Editor' });
-    expect(editors.some((b) => b.getAttribute('aria-current') === 'page')).toBe(
-      true,
-    );
-    const generals = screen.getAllByRole('button', { name: 'General' });
-    expect(
-      generals.every((b) => b.getAttribute('aria-current') !== 'page'),
-    ).toBe(true);
+  describe('active state', () => {
+    it('should mark the active desktop tab with aria-current="page" and leave others unset', () => {
+      renderWithProviders(
+        <SettingsTabs groups={groups} active="editor" onSelect={() => {}} />,
+      );
+      expect(
+        screen.getByTestId('settings-tab-editor').getAttribute('aria-current'),
+      ).toBe('page');
+      expect(
+        screen.getByTestId('settings-tab-general').getAttribute('aria-current'),
+      ).toBeNull();
+    });
+
+    it('should mark the matching mobile tab with aria-current="page"', () => {
+      renderWithProviders(
+        <SettingsTabs groups={groups} active="editor" onSelect={() => {}} />,
+      );
+      expect(
+        screen
+          .getByTestId('settings-tab-mobile-editor')
+          .getAttribute('aria-current'),
+      ).toBe('page');
+    });
   });
 
-  it('calls onSelect with the tab id when a tab is clicked', async () => {
-    const onSelect = vi.fn();
-    renderWithProviders(
-      <SettingsTabs groups={groups} active="general" onSelect={onSelect} />,
-    );
-    const syncButton = screen.getAllByRole('button', { name: 'Sync' })[0];
-    await userEvent.click(syncButton);
-    expect(onSelect).toHaveBeenCalledWith('sync');
+  describe('behaviour', () => {
+    it('should call onSelect with the tab id when a desktop tab is clicked', async () => {
+      const onSelect = vi.fn();
+      renderWithProviders(
+        <SettingsTabs groups={groups} active="general" onSelect={onSelect} />,
+      );
+      await userEvent.click(screen.getByTestId('settings-tab-sync'));
+      expect(onSelect).toHaveBeenCalledWith('sync');
+    });
+
+    it('should call onSelect with the tab id when a mobile tab is clicked', async () => {
+      const onSelect = vi.fn();
+      renderWithProviders(
+        <SettingsTabs groups={groups} active="general" onSelect={onSelect} />,
+      );
+      await userEvent.click(screen.getByTestId('settings-tab-mobile-sync'));
+      expect(onSelect).toHaveBeenCalledWith('sync');
+    });
+  });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across all variants', () => {
+      const { container } = renderWithProviders(
+        <SettingsTabs groups={groups} active="editor" onSelect={() => {}} />,
+      );
+      expect(container).toMatchSnapshot('active=editor');
+    });
   });
 });

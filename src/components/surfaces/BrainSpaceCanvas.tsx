@@ -98,6 +98,7 @@ export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
   return (
     <div
       data-tour="tour-brainspace-canvas"
+      data-testid="brain-canvas"
       onPointerDown={onBackgroundPointerDown}
       className="relative h-full min-w-0 flex-1 overflow-hidden bg-paper"
       style={{
@@ -139,7 +140,10 @@ export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
       ))}
 
       {notes.length === 0 && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-center">
+        <div
+          data-testid="brain-canvas-empty"
+          className="pointer-events-none absolute inset-0 flex items-center justify-center text-center"
+        >
           <div>
             <TypographyP variant="emptyHint">start dumping</TypographyP>
             <TypographyLabel variant="wide" className="mt-1 text-ink-4">
@@ -151,11 +155,14 @@ export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
 
       <div
         data-tour="tour-brainspace-add-note"
+        data-testid="brain-canvas-toolbar"
         className="absolute bottom-5 left-1/2 -translate-x-1/2 border border-ink bg-paper"
       >
         {toolbarKinds.map((kind, i) => (
+          // @lint-ignore native-button: segmented toolbar with vertical dividers; DS Button ghost variant has incompatible padding + bottom-border
           <button
             key={kind}
+            data-testid={`brain-canvas-tool-${kind}`}
             type="button"
             onClick={() => addNote(kind)}
             className={
@@ -169,7 +176,10 @@ export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
       </div>
 
       {pendingFrom && (
-        <div className="pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 rounded-full border border-ink bg-paper px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-ink">
+        <div
+          data-testid="brain-canvas-pending-hint"
+          className="pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 rounded-full border border-ink bg-paper px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-ink"
+        >
           shift-click another note to connect · esc to cancel
         </div>
       )}

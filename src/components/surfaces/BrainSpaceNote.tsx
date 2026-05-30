@@ -14,6 +14,9 @@ import { useUI } from '@/store/ui';
 import { NoteState, type Note } from '@/db/schema';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
 import { routes } from '@/lib/routes';
+import { IconButton } from '@/components/ui/icon';
+import { TextField } from '@/components/ui/TextField';
+import { TextArea } from '@/components/ui/TextArea';
 import { cn } from '@/lib/utils';
 
 const MIN_W = 120;
@@ -78,14 +81,17 @@ const NoteContextMenu = ({ x, y, onDelete, onClose }: NoteContextMenuProps) => {
   return createPortal(
     <div
       data-note-context-menu
+      data-testid="brain-note-context-menu"
       role="menu"
       style={{ left: x, top: y }}
       className="fixed z-50 min-w-[10rem] border border-ink bg-paper py-1 shadow-md"
     >
+      {/* @lint-ignore native-button: menuitem in a context menu; danger-tinted row not a DS Button kind */}
       <button
         type="button"
         role="menuitem"
         onClick={onDelete}
+        data-testid="brain-note-context-menu-delete"
         className="flex w-full items-center gap-2 px-3 py-1.5 text-left font-sans text-[12px] text-[color:var(--danger)] transition-colors hover:bg-[color:var(--danger-bg)]"
       >
         <Trash2 className="h-3.5 w-3.5 text-[color:var(--danger)]" />
@@ -269,6 +275,7 @@ export const BrainSpaceNote = ({
   return (
     <div
       ref={ref}
+      data-testid={`brain-note-${note.id}`}
       onPointerDown={onSurfacePointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -289,38 +296,45 @@ export const BrainSpaceNote = ({
       )}
     >
       <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4">
-        <span>{NOTE_KIND_LABEL[note.kind]}</span>
+        <span data-testid={`brain-note-${note.id}-kind`}>
+          {NOTE_KIND_LABEL[note.kind]}
+        </span>
         <span className="flex-1" />
         {note.linkedDocId && (
-          <button
-            type="button"
+          <IconButton
+            icon={ExternalLink}
+            label="Open linked doc"
             onPointerDown={(e) => e.stopPropagation()}
             onClick={onDocLinkClick}
             data-no-drag
-            aria-label="Open linked doc"
-            className="inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-3 hover:bg-paper-2 hover:text-ink"
-          >
-            <ExternalLink className="h-3 w-3" />
-          </button>
+            iconSize="xs"
+            data-testid={`brain-note-${note.id}-doc-link`}
+            className="h-4 w-4 rounded-sm hover:bg-paper-2"
+          />
         )}
         {isSeedFetched && (
-          <Globe className="h-3 w-3 text-ink-4" aria-label="Fetched content" />
+          <Globe
+            className="h-3 w-3 text-ink-4"
+            aria-label="Fetched content"
+            data-testid={`brain-note-${note.id}-fetched-icon`}
+          />
         )}
-        <span>{dayChip}</span>
-        <button
-          type="button"
+        <span data-testid={`brain-note-${note.id}-day-chip`}>{dayChip}</span>
+        <IconButton
+          icon={ArrowUpRight}
+          label="Open details"
           onPointerDown={(e) => e.stopPropagation()}
           onClick={onOpenDetail}
           data-no-drag
-          aria-label="Open details"
-          className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 opacity-0 transition-opacity hover:bg-paper-2 hover:text-ink group-hover:opacity-100"
-        >
-          <ArrowUpRight className="h-3 w-3" />
-        </button>
+          iconSize="xs"
+          data-testid={`brain-note-${note.id}-open-details`}
+          className="ml-1 h-4 w-4 rounded-sm text-ink-4 opacity-0 hover:bg-paper-2 group-hover:opacity-100"
+        />
       </div>
 
       {editing === 'title' ? (
-        <input
+        <TextField
+          variant="bare"
           autoFocus
           value={draftTitle}
           onChange={(e) => setDraftTitle(e.target.value)}
@@ -333,24 +347,28 @@ export const BrainSpaceNote = ({
             }
           }}
           placeholder="title"
-          className="border-0 bg-transparent p-0 font-serif text-[13px] font-medium text-ink outline-none"
+          className="font-serif text-[13px] font-medium"
           data-no-drag
+          data-testid={`brain-note-${note.id}-title-input`}
         />
       ) : note.title ? (
         <div
           onPointerDown={(e) => e.stopPropagation()}
           onClick={() => setEditing('title')}
           data-no-drag
+          data-testid={`brain-note-${note.id}-title`}
           className="cursor-text font-serif text-[13px] font-medium text-ink"
         >
           {note.title}
         </div>
       ) : (
+        // @lint-ignore native-button: "+ title" hover-revealed placeholder trigger (begins inline edit); not a DS Button kind
         <button
           type="button"
           onPointerDown={(e) => e.stopPropagation()}
           onClick={() => setEditing('title')}
           data-no-drag
+          data-testid={`brain-note-${note.id}-add-title`}
           className="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
         >
           + title
@@ -358,8 +376,10 @@ export const BrainSpaceNote = ({
       )}
 
       {editing === 'body' ? (
-        <textarea
+        <TextArea
+          variant="bare"
           autoFocus
+          rows={undefined}
           value={draftBody}
           onChange={(e) => setDraftBody(e.target.value)}
           onBlur={commitBody}
@@ -370,16 +390,18 @@ export const BrainSpaceNote = ({
             }
           }}
           className={cn(
-            'flex-1 resize-none border-0 bg-transparent p-0 font-serif text-[12px] leading-snug text-ink-2 outline-none',
+            'flex-1 resize-none font-serif text-[12px] leading-snug text-ink-2',
             isSeedPrompt && 'italic',
           )}
           data-no-drag
+          data-testid={`brain-note-${note.id}-body-input`}
         />
       ) : (
         <div
           onPointerDown={(e) => e.stopPropagation()}
           onClick={() => setEditing('body')}
           data-no-drag
+          data-testid={`brain-note-${note.id}-body`}
           className={cn(
             'flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2',
             isSeedPrompt && 'italic',
@@ -395,6 +417,7 @@ export const BrainSpaceNote = ({
         onPointerDown={onResizePointerDown}
         className="absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize"
         aria-label="Resize note"
+        data-testid={`brain-note-${note.id}-resize-handle`}
       />
 
       {menu && (

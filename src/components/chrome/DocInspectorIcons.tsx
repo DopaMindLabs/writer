@@ -1,5 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, List, Info, History, MoreHorizontal } from '@/components/libs/icons';
+import {
+  ChevronLeft,
+  List,
+  Info,
+  History,
+  MoreHorizontal,
+  X,
+} from '@/components/libs/icons';
 import { useUI, type InspectorSection } from '@/store/ui';
 import { IconButton } from '@/components/ui/icon';
 import { cn } from '@/lib/utils';
@@ -23,6 +30,7 @@ export const DocInspectorIcons = () => {
       className="hidden w-11 shrink-0 flex-col items-center gap-1 border-l border-rule bg-paper-2 py-3.5 md:flex"
     >
       <IconButton
+        data-testid="doc-inspector-icons-expand"
         icon={ChevronLeft}
         label={t('inspector.expand')}
         title={t('inspector.expand')}
@@ -31,9 +39,11 @@ export const DocInspectorIcons = () => {
       <div className="my-1.5 h-px w-4 bg-rule" aria-hidden />
       {ITEMS.map(({ id, Icon }) => {
         const on = section === id;
+        // @lint-ignore native-button: icon tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
         return (
           <button
             key={id}
+            data-testid={`doc-inspector-icons-${id}`}
             type="button"
             onClick={() => {
               setSection(id);
@@ -54,15 +64,13 @@ export const DocInspectorIcons = () => {
         );
       })}
       <div className="flex-1" />
-      <button
-        type="button"
-        onClick={() => setInspectorMode('none')}
-        aria-label={t('inspector.collapse')}
+      <IconButton
+        data-testid="doc-inspector-icons-collapse"
+        icon={X}
+        label={t('inspector.collapse')}
         title={t('inspector.collapse')}
-        className="inline-flex h-7 w-7 items-center justify-center rounded-md font-mono text-[14px] text-ink-3 hover:bg-paper hover:text-ink"
-      >
-        ×
-      </button>
+        onClick={() => setInspectorMode('none')}
+      />
     </aside>
   );
 };

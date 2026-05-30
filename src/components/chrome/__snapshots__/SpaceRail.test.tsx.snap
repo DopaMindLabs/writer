@@ -24,6 +24,7 @@ exports[`SpaceRail > renders rail with seeded spaces and active highlight 1`] = 
       class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
       data-discover="true"
       data-state="closed"
+      data-testid="space-rail-space-s3"
       href="/s/s3"
     >
       CCC
@@ -32,6 +33,7 @@ exports[`SpaceRail > renders rail with seeded spaces and active highlight 1`] = 
       class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-ink text-paper"
       data-discover="true"
       data-state="closed"
+      data-testid="space-rail-space-s2"
       href="/s/s2"
     >
       BBB
@@ -43,6 +45,7 @@ exports[`SpaceRail > renders rail with seeded spaces and active highlight 1`] = 
       class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
       data-discover="true"
       data-state="closed"
+      data-testid="space-rail-space-s1"
       href="/s/s1"
     >
       AAA
@@ -79,7 +82,7 @@ exports[`SpaceRail > renders rail with seeded spaces and active highlight 1`] = 
       class="flex-1"
     />
     <button
-      aria-controls="radix-_r_2_"
+      aria-controls="radix-_r_*_"
       aria-expanded="false"
       aria-haspopup="dialog"
       aria-label="LIpsum Writer"

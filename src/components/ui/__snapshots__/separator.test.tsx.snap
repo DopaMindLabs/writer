@@ -1,16 +1,30 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Separator > renders horizontal and vertical orientations 1`] = `
+exports[`Separator > snapshot > should match the snapshot across all variants 1`] = `
 <div>
   <div>
     <div
       class="shrink-0 bg-rule h-px w-full"
       data-orientation="horizontal"
+      data-testid="sep-snap-h"
+      role="none"
+    />
+    <div
+      class="shrink-0 bg-rule-s h-px w-full"
+      data-orientation="horizontal"
+      data-testid="sep-snap-h-light"
       role="none"
     />
     <div
       class="shrink-0 bg-rule h-full w-px"
       data-orientation="vertical"
+      data-testid="sep-snap-v"
+      role="none"
+    />
+    <div
+      class="shrink-0 bg-rule-s h-full w-px"
+      data-orientation="vertical"
+      data-testid="sep-snap-v-light"
       role="none"
     />
   </div>

@@ -183,6 +183,7 @@ export const FocusToggle = ({ mode, spaceId, docId }: FocusToggleProps) => {
       <Tooltip>
         <TooltipTrigger asChild>
           <Link
+            data-testid="focus-toggle"
             to={`${base}${qs ? `?${qs}` : ''}`}
             aria-label={t('topbar.exitFocus')}
             className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 hover:bg-paper-2 hover:text-ink"
@@ -199,6 +200,7 @@ export const FocusToggle = ({ mode, spaceId, docId }: FocusToggleProps) => {
     <Tooltip>
       <TooltipTrigger asChild>
         <Link
+          data-testid="focus-toggle"
           to={`${base}${qs ? `?${qs}` : ''}`}
           title={t('topbar.focusTitleFocus')}
           aria-label={t('topbar.enterFocus')}

@@ -24,6 +24,7 @@ interface ItemProps {
   danger?: boolean;
   muted?: boolean;
   disabled?: boolean;
+  testId?: string;
 }
 
 const Item = ({
@@ -35,6 +36,7 @@ const Item = ({
   danger,
   muted,
   disabled,
+  testId,
 }: ItemProps) => {
   const inner = (
     <span
@@ -49,7 +51,10 @@ const Item = ({
     >
       <span className="flex-1 text-left">{children}</span>
       {badge !== undefined && (
-        <span className="font-mono text-[9px] tracking-wider text-ink-3">
+        <span
+          data-testid={testId ? `${testId}-badge` : undefined}
+          className="font-mono text-[9px] tracking-wider text-ink-3"
+        >
           {badge}
         </span>
       )}
@@ -58,11 +63,16 @@ const Item = ({
       )}
     </span>
   );
-  if (disabled) return <span className="block w-full">{inner}</span>;
+  if (disabled)
+    return (
+      <span data-testid={testId} className="block w-full">
+        {inner}
+      </span>
+    );
   if (href) {
     return (
       <PopoverClose asChild>
-        <Link to={href} className="block w-full">
+        <Link to={href} data-testid={testId} className="block w-full">
           {inner}
         </Link>
       </PopoverClose>
@@ -70,7 +80,13 @@ const Item = ({
   }
   return (
     <PopoverClose asChild>
-      <button type="button" onClick={onClick} className="block w-full text-left">
+      {/* @lint-ignore native-button: full-row PopoverClose asChild shell wrapping styled inner content; not a DS Button kind */}
+      <button
+        type="button"
+        onClick={onClick}
+        data-testid={testId}
+        className="block w-full text-left"
+      >
         {inner}
       </button>
     </PopoverClose>
@@ -111,32 +127,46 @@ export const SpaceMenuPopover = ({ space, onRename }: SpaceMenuPopoverProps) => 
       </div>
 
       <div className="pt-1">
-        <Item onClick={onRename}>{t('spaceMenu.rename')}</Item>
-        <Item href={routes.spaceSettings(space.id)}>{t('spaceMenu.settings')}</Item>
+        <Item onClick={onRename} testId="space-menu-popover-rename">
+          {t('spaceMenu.rename')}
+        </Item>
+        <Item
+          href={routes.spaceSettings(space.id)}
+          testId="space-menu-popover-settings"
+        >
+          {t('spaceMenu.settings')}
+        </Item>
         <Item
           href={`${routes.spaceSettings(space.id)}?tab=backups`}
           badge={backups.length > 0 ? backups.length : undefined}
+          testId="space-menu-popover-backups"
         >
           {t('spaceMenu.backups')}
         </Item>
 
         <ComingSoon hint={t('spaceMenu.members')} side="right" className="w-full">
-          <Item disabled>{t('spaceMenu.members')}</Item>
+          <Item disabled testId="space-menu-popover-members">
+            {t('spaceMenu.members')}
+          </Item>
         </ComingSoon>
 
-        <Item onClick={() => void handleExport()}>
+        <Item onClick={() => void handleExport()} testId="space-menu-popover-export">
           {exporting ? t('spaceMenu.exporting') : t('spaceMenu.export')}
         </Item>
 
         <Divider />
 
         <ComingSoon hint={t('spaceMenu.duplicate')} side="right" className="w-full">
-          <Item disabled muted>
+          <Item disabled muted testId="space-menu-popover-duplicate">
             {t('spaceMenu.duplicate')}
           </Item>
         </ComingSoon>
 
-        <Item href={`${routes.spaceSettings(space.id)}?tab=danger`} danger>
+        <Item
+          href={`${routes.spaceSettings(space.id)}?tab=danger`}
+          danger
+          testId="space-menu-popover-delete"
+        >
           {t('spaceMenu.delete')}
         </Item>
       </div>

@@ -29,6 +29,7 @@ import { useSpace } from '@/hooks/useSpaces';
 import { useDocuments, useDocument } from '@/hooks/useDocuments';
 import { useUI } from '@/store/ui';
 import { routes } from '@/lib/routes';
+import { Select, type SelectOption } from '@/components/ui/Select';
 
 const BRAIN_SPACE_PANE = 'dump';
 const CITATIONS_PANE = 'citations';
@@ -120,23 +121,25 @@ export const SplitScreen = () => {
               <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
                 RIGHT —
               </span>
-              <select
+              <Select
+                data-testid="split-right-pane-select"
+                variant="bare"
                 value={withParam ?? ''}
                 onChange={onPickRight}
-                className="flex-1 truncate border-0 bg-transparent font-mono text-[10px] uppercase tracking-wider text-ink outline-none focus:underline"
                 aria-label="Right pane document"
-              >
-                {candidates.length === 0 && (
-                  <option value="">(no other docs)</option>
-                )}
-                {candidates.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.name}
-                  </option>
-                ))}
-                <option value={BRAIN_SPACE_PANE}>Brain space</option>
-                <option value={CITATIONS_PANE}>Citations</option>
-              </select>
+                className="flex-1 truncate font-mono text-[10px] uppercase tracking-wider focus-within:underline"
+                options={[
+                  ...(candidates.length === 0
+                    ? [{ value: '', label: '(no other docs)' }]
+                    : []),
+                  ...candidates.map<SelectOption>((d) => ({
+                    value: d.id,
+                    label: d.name,
+                  })),
+                  { value: BRAIN_SPACE_PANE, label: 'Brain space' },
+                  { value: CITATIONS_PANE, label: 'Citations' },
+                ]}
+              />
             </>
           }
           rightContent={
@@ -312,6 +315,7 @@ const SplitPanes = ({
         <div className="flex-1 overflow-hidden">{leftContent}</div>
       </section>
       <div
+        data-testid="split-divider"
         role="separator"
         aria-orientation="vertical"
         aria-valuemin={MIN_PCT}

@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
+exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] = `
 <div>
   <aside
     class="flex w-56 shrink-0 flex-col border-r border-rule bg-paper-2"
@@ -14,18 +14,20 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
       >
         <button
           class="block min-w-0 flex-1 cursor-text truncate text-left font-serif text-lg font-medium leading-tight tracking-tight text-ink"
+          data-testid="sidebar-space-title"
           title="Rename space"
           type="button"
         >
           Test Space
         </button>
         <button
-          aria-controls="radix-_r_0_"
+          aria-controls="radix-_r_*_"
           aria-expanded="false"
           aria-haspopup="dialog"
           aria-label="Open space menu"
           class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm text-ink-3 opacity-0 transition-opacity hover:bg-paper hover:text-ink focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink group-hover:opacity-100 data-[state=open]:bg-ink data-[state=open]:text-paper data-[state=open]:opacity-100"
           data-state="closed"
+          data-testid="sidebar-space-menu-trigger"
           data-tour="tour-sidebar-settings"
           type="button"
         >
@@ -55,6 +57,7 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
       </div>
       <div
         class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+        data-testid="sidebar-space-subtitle"
       >
         PRIVATE · LOCAL · 2y
       </div>
@@ -65,18 +68,22 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
     >
       <div
         class="mb-2"
+        data-testid="sidebar-section-sec1"
       >
         <div
           class="group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 px-5"
+          data-testid="sidebar-section-sec1-header"
         >
           <span
             class="flex-1 truncate"
+            data-testid="sidebar-section-sec1-label"
           >
             Drafts
           </span>
           <button
             aria-label="Add doc to Drafts"
-            class="inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 opacity-0 transition-opacity hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
+            class="inline-flex items-center justify-center transition-colors text-ink-3 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-4 w-4 rounded-sm opacity-0 hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
+            data-testid="sidebar-section-sec1-add"
             type="button"
           >
             <svg
@@ -104,33 +111,40 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
         <a
           class="-ml-px flex items-center gap-2 border-l-2 py-1.5 transition-colors px-5 border-ink bg-paper"
           data-discover="true"
+          data-testid="sidebar-doc-d1"
           href="/s/s1/d/d1"
         >
           <span
             class="flex-1 truncate text-[13px] font-medium text-ink"
+            data-testid="sidebar-doc-d1-name"
           >
             Sample Doc
           </span>
           <span
             class="font-mono text-[10px] text-ink-4"
+            data-testid="sidebar-doc-d1-count"
           >
             ◌
           </span>
         </a>
         <div
           class="mt-1"
+          data-testid="sidebar-section-sec1a"
         >
           <div
             class="group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 pl-7 pr-3"
+            data-testid="sidebar-section-sec1a-header"
           >
             <span
               class="flex-1 truncate"
+              data-testid="sidebar-section-sec1a-label"
             >
               ↳ Ideas
             </span>
             <button
               aria-label="Add doc to ↳ Ideas"
-              class="inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 opacity-0 transition-opacity hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
+              class="inline-flex items-center justify-center transition-colors text-ink-3 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-4 w-4 rounded-sm opacity-0 hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
+              data-testid="sidebar-section-sec1a-add"
               type="button"
             >
               <svg
@@ -157,6 +171,7 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
           </div>
           <div
             class="px-5 pl-7 py-1 text-[11px] italic text-ink-4"
+            data-testid="sidebar-section-sec1a-empty"
           >
             (empty)
           </div>
@@ -164,24 +179,29 @@ exports[`Sidebar > renders sections, subsection, and doc link 1`] = `
       </div>
       <div
         class="mt-4 border-t border-rule pt-2"
+        data-testid="sidebar-workshop-fallback"
       >
         <div
           class="px-5 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4"
+          data-testid="sidebar-workshop-fallback-label"
         >
           Workshop
         </div>
         <a
           class="-ml-px flex items-center gap-2 border-l-2 px-5 py-1.5 transition-colors border-transparent text-ink-2 hover:bg-paper"
           data-discover="true"
+          data-testid="sidebar-brain-space-link"
           href="/s/s1/dump"
         >
           <span
             class="flex-1 text-[13px]"
+            data-testid="sidebar-brain-space-link-label"
           >
             Brain space
           </span>
           <span
             class="font-mono text-[10px] text-ink-4"
+            data-testid="sidebar-brain-space-link-count"
           >
             1◦
           </span>

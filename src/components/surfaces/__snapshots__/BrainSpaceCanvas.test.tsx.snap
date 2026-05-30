@@ -1,9 +1,10 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] = `
+exports[`BrainSpaceCanvas > snapshot > should match the snapshot across all variants 1`] = `
 <div>
   <div
     class="relative h-full min-w-0 flex-1 overflow-hidden bg-paper"
+    data-testid="brain-canvas"
     data-tour="tour-brainspace-canvas"
     style="background-image: radial-gradient(circle at 1px 1px, var(--rule) 1px, transparent 1px); background-size: 20px 20px;"
   >
@@ -60,24 +61,30 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
     </svg>
     <div
       class="group absolute flex flex-col gap-1 border bg-paper p-2.5 border-ink cursor-grab"
+      data-testid="brain-note-n1"
       style="left: 24px; top: 24px; width: 184px; min-height: 80px;"
     >
       <div
         class="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4"
       >
-        <span>
+        <span
+          data-testid="brain-note-n1-kind"
+        >
           thought
         </span>
         <span
           class="flex-1"
         />
-        <span>
+        <span
+          data-testid="brain-note-n1-day-chip"
+        >
           mon
         </span>
         <button
           aria-label="Open details"
-          class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 opacity-0 transition-opacity hover:bg-paper-2 hover:text-ink group-hover:opacity-100"
+          class="inline-flex items-center justify-center transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink ml-1 h-4 w-4 rounded-sm text-ink-4 opacity-0 hover:bg-paper-2 group-hover:opacity-100"
           data-no-drag="true"
+          data-testid="brain-note-n1-open-details"
           type="button"
         >
           <svg
@@ -105,6 +112,7 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
       <button
         class="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
         data-no-drag="true"
+        data-testid="brain-note-n1-add-title"
         type="button"
       >
         + title
@@ -112,6 +120,7 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
       <div
         class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
         data-no-drag="true"
+        data-testid="brain-note-n1-body"
       >
         Hello
       </div>
@@ -119,28 +128,35 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
         aria-label="Resize note"
         class="absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize"
         data-resize-handle="true"
+        data-testid="brain-note-n1-resize-handle"
       />
     </div>
     <div
       class="group absolute flex flex-col gap-1 border bg-paper p-2.5 border-ink cursor-grab"
+      data-testid="brain-note-n2"
       style="left: 240px; top: 120px; width: 184px; min-height: 80px;"
     >
       <div
         class="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4"
       >
-        <span>
+        <span
+          data-testid="brain-note-n2-kind"
+        >
           thought
         </span>
         <span
           class="flex-1"
         />
-        <span>
+        <span
+          data-testid="brain-note-n2-day-chip"
+        >
           mon
         </span>
         <button
           aria-label="Open details"
-          class="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-sm text-ink-4 opacity-0 transition-opacity hover:bg-paper-2 hover:text-ink group-hover:opacity-100"
+          class="inline-flex items-center justify-center transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink ml-1 h-4 w-4 rounded-sm text-ink-4 opacity-0 hover:bg-paper-2 group-hover:opacity-100"
           data-no-drag="true"
+          data-testid="brain-note-n2-open-details"
           type="button"
         >
           <svg
@@ -168,6 +184,7 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
       <button
         class="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
         data-no-drag="true"
+        data-testid="brain-note-n2-add-title"
         type="button"
       >
         + title
@@ -175,6 +192,7 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
       <div
         class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
         data-no-drag="true"
+        data-testid="brain-note-n2-body"
       >
         Hello
       </div>
@@ -182,14 +200,17 @@ exports[`BrainSpaceCanvas > renders canvas with seeded notes and connection 1`] 
         aria-label="Resize note"
         class="absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize"
         data-resize-handle="true"
+        data-testid="brain-note-n2-resize-handle"
       />
     </div>
     <div
       class="absolute bottom-5 left-1/2 -translate-x-1/2 border border-ink bg-paper"
+      data-testid="brain-canvas-toolbar"
       data-tour="tour-brainspace-add-note"
     >
       <button
         class="inline-block px-3 py-1.5 font-sans text-[11px] text-ink-3 hover:text-ink"
+        data-testid="brain-canvas-tool-blank"
         type="button"
       >
         + 

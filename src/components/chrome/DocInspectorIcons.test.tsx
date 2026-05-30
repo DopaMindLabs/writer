@@ -14,65 +14,91 @@ describe('DocInspectorIcons', () => {
     });
   });
 
-  it('renders the icons aside with expand, four section buttons, and collapse', () => {
-    const { container } = renderWithProviders(<DocInspectorIcons />);
-    expect(container).toMatchSnapshot();
-  });
+  describe('rendering', () => {
+    it('should expose the doc-inspector-icons testid wrapper', () => {
+      renderWithProviders(<DocInspectorIcons />);
+      expect(screen.getByTestId('doc-inspector-icons')).toBeInTheDocument();
+    });
 
-  it('exposes the doc-inspector-icons testid wrapper', () => {
-    renderWithProviders(<DocInspectorIcons />);
-    expect(screen.getByTestId('doc-inspector-icons')).toBeInTheDocument();
-  });
-
-  it('renders all four section buttons (outline, info, history, actions)', () => {
-    renderWithProviders(<DocInspectorIcons />);
-    for (const id of SECTIONS) {
+    it('should render expand and collapse icon buttons', () => {
+      renderWithProviders(<DocInspectorIcons />);
+      expect(screen.getByTestId('doc-inspector-icons-expand')).toHaveAttribute(
+        'aria-label',
+        'Expand inspector',
+      );
       expect(
-        screen.getByRole('button', { name: new RegExp(id, 'i') }),
-      ).toBeInTheDocument();
-    }
+        screen.getByTestId('doc-inspector-icons-collapse'),
+      ).toHaveAttribute('aria-label', 'Collapse inspector');
+    });
+
+    it('should render all four section buttons with matching aria-label', () => {
+      renderWithProviders(<DocInspectorIcons />);
+      for (const id of SECTIONS) {
+        const btn = screen.getByTestId(`doc-inspector-icons-${id}`);
+        expect(btn).toHaveAttribute('aria-label', id.toUpperCase());
+      }
+    });
   });
 
-  it('expand button click sets inspectorMode to "expanded"', async () => {
-    renderWithProviders(<DocInspectorIcons />);
-    await userEvent.click(
-      screen.getByRole('button', { name: /expand/i }),
+  describe('expand', () => {
+    it('should set inspectorMode to "expanded" when the expand button is clicked', async () => {
+      renderWithProviders(<DocInspectorIcons />);
+      await userEvent.click(screen.getByTestId('doc-inspector-icons-expand'));
+      expect(useUI.getState().inspectorMode).toBe('expanded');
+    });
+  });
+
+  describe('section buttons', () => {
+    it.each(SECTIONS)(
+      'should set inspectorSection to %s and expand the inspector when clicked',
+      async (id) => {
+        act(() => {
+          useUI.getState().setInspectorSection('outline');
+          useUI.getState().setInspectorMode('icons');
+        });
+        renderWithProviders(<DocInspectorIcons />);
+        await userEvent.click(screen.getByTestId(`doc-inspector-icons-${id}`));
+        expect(useUI.getState().inspectorSection).toBe(id);
+        expect(useUI.getState().inspectorMode).toBe('expanded');
+      },
     );
-    expect(useUI.getState().inspectorMode).toBe('expanded');
-  });
 
-  it.each(SECTIONS)(
-    'clicking the %s section sets inspectorSection and expands the inspector',
-    async (id) => {
+    it('should mark the active section with aria-current="page"', () => {
       act(() => {
-        useUI.getState().setInspectorSection('outline');
-        useUI.getState().setInspectorMode('icons');
+        useUI.getState().setInspectorSection('history');
       });
       renderWithProviders(<DocInspectorIcons />);
-      await userEvent.click(
-        screen.getByRole('button', { name: new RegExp(id, 'i') }),
-      );
-      expect(useUI.getState().inspectorSection).toBe(id);
-      expect(useUI.getState().inspectorMode).toBe('expanded');
-    },
-  );
-
-  it('marks the active section with aria-current="page"', () => {
-    act(() => {
-      useUI.getState().setInspectorSection('history');
+      expect(
+        screen
+          .getByTestId('doc-inspector-icons-history')
+          .getAttribute('aria-current'),
+      ).toBe('page');
+      expect(
+        screen
+          .getByTestId('doc-inspector-icons-outline')
+          .hasAttribute('aria-current'),
+      ).toBe(false);
     });
-    renderWithProviders(<DocInspectorIcons />);
-    const historyBtn = screen.getByRole('button', { name: /history/i });
-    expect(historyBtn.getAttribute('aria-current')).toBe('page');
-    const outlineBtn = screen.getByRole('button', { name: /outline/i });
-    expect(outlineBtn.hasAttribute('aria-current')).toBe(false);
   });
 
-  it('collapse button click sets inspectorMode to "none"', async () => {
-    renderWithProviders(<DocInspectorIcons />);
-    await userEvent.click(
-      screen.getByRole('button', { name: /collapse/i }),
-    );
-    expect(useUI.getState().inspectorMode).toBe('none');
+  describe('collapse', () => {
+    it('should set inspectorMode to "none" when the collapse button is clicked', async () => {
+      renderWithProviders(<DocInspectorIcons />);
+      await userEvent.click(screen.getByTestId('doc-inspector-icons-collapse'));
+      expect(useUI.getState().inspectorMode).toBe('none');
+    });
+  });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across all variants', () => {
+      const { container: outline } = renderWithProviders(<DocInspectorIcons />);
+      expect(outline).toMatchSnapshot('section=outline');
+
+      act(() => {
+        useUI.getState().setInspectorSection('history');
+      });
+      const { container: history } = renderWithProviders(<DocInspectorIcons />);
+      expect(history).toMatchSnapshot('section=history');
+    });
   });
 });
