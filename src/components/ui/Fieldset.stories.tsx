@@ -8,7 +8,7 @@ import { Checkbox } from './Checkbox';
 const meta = {
   title: 'Forms/Fieldset',
   component: Fieldset,
-  args: { label: 'Account · 03' },
+  args: { label: 'Account · 03', children: null },
   parameters: { layout: 'padded' },
 } satisfies Meta<typeof Fieldset>;
 

@@ -20,7 +20,10 @@ export interface TypographyLabelProps
   asChild?: boolean;
 }
 
-export const TypographyLabel = forwardRef<HTMLElement, TypographyLabelProps>(
+export const TypographyLabel = forwardRef<
+  HTMLParagraphElement,
+  TypographyLabelProps
+>(
   ({ className, variant, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'p';
     return (

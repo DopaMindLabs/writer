@@ -60,7 +60,6 @@ describe('PlaceholderPrimitives', () => {
 
   it('renders PlaceholderAccentDots with a checkmark on the first dot', () => {
     const { container } = render(<PlaceholderAccentDots />);
-    const dots = container.querySelectorAll('span > span, span');
     // First dot contains the checkmark.
     expect(container.textContent).toContain('✓');
   });

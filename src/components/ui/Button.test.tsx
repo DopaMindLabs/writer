@@ -81,7 +81,9 @@ describe('Button', () => {
           click
         </Button>,
       );
-      await userEvent.click(screen.getByTestId('btn'), { skipPointerEventsCheck: true });
+      await userEvent.click(screen.getByTestId('btn'), {
+        pointerEventsCheck: 0,
+      });
       expect(onClick).not.toHaveBeenCalled();
     });
   });
