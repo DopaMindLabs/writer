@@ -160,8 +160,8 @@ Tiny mono micro-label. Sits above every titled block.
 |---|---|---|---|
 | `children` | node | — | The label text. Almost always uppercase. |
 | `size` | number | `10` | Font size in px. Common values: 9, 10. |
-| `tone` | `"ink2" \| "ink3" \| "ink4"` | `"ink3"` | Colour token. |
-| `mb` | number | `0` | Bottom margin in px. |
+| `tone` | `"ink2" \| "ink3" \| "ink4"` | `"ink3"` | Colour token (ink only — status is never tinted into a label). |
+| `asChild` | boolean | `false` | Render through Radix `Slot` so the style lands on the child element (e.g. a `<th>`/`<td>`). |
 
 **Usage rules**
 
@@ -222,6 +222,9 @@ A row of small hairline-bordered options. Active fills ink.
 | `options` | `string[]` | — | Labels. |
 | `active` | number | `0` | Index of the active option. |
 
+Also supports a **value-based** mode (`options: { label: string; value: number }[]` + `value`
++ `onChange(value)`) for non-positional choices such as the sync-interval picker.
+
 > **In this repo:** `src/components/ui/Chip.tsx` + `src/components/ui/ChipGroup.tsx`.
 
 ---
@@ -236,6 +239,21 @@ Horizontal or vertical hairline.
 | `light` | boolean | `false` | If true, uses `Color.ruleS` instead of `Color.rule`. |
 
 > **In this repo:** `src/components/ui/separator.tsx` (Radix Separator wrapper).
+
+---
+
+### 3.6 `EmptyState`
+
+Dashed, centered placeholder card for when a list or feature has nothing to show (no history
+yet, an unsupported browser). Distinct from the full-pane "empty" idiom (`TypographyP
+variant="empty"`) — this is the small inline card used in Settings.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `title` | string | — | Optional eyebrow-style heading (via `TypographyLabel`). |
+| `caption` | string | — | Body caption (via `TypographyP variant="caption"`). |
+
+> **In this repo:** `src/components/ui/EmptyState.tsx`.
 
 ---
 
@@ -448,12 +466,24 @@ themes and mapped in [`tailwind.config.ts`](../tailwind.config.ts):
 | Success | `--success` | `--success-bg` | `text-success`, `bg-success-bg` |
 | Info | `--info` | `--info-bg` | `text-info`, `bg-info-bg` |
 
-> **Gap → DS update.** The spec defines four roles; this repo previously implemented only
-> `warning` and `danger`. `success` and `info` have now been added at the token level (above)
-> to close that gap. The spec's full three-step (tint/base/deep) model and its feedback
-> components (`StatusGlyph`, `StatusBadge`, `FieldError`, `InlineBanner`, `Toast`) are a
-> **future extension**: build them — and extend these tokens to the triad — when richer status
-> UI is needed, rather than hard-coding one-off status colours at the call site.
+**Implemented feedback components** (`src/components/ui/`, built on the two-token form):
+
+| Component | Use |
+|---|---|
+| `StatusGlyph` | Inline icon + label for status that reads as text (e.g. a failed-sync `role="alert"` line). |
+| `StatusBadge` | Tinted pill for state attached to a table row (e.g. a sync history row: success / error). |
+| `InlineBanner` | Full-width strip with a coloured left rail for a persistent notice (e.g. the sync reconnect prompt). |
+
+> **Icons, not glyphs.** The §5.1 glyph column is realised with lucide icon components from
+> `@/components/libs/icons` (`success → Check`, `error → X`, `warning → AlertTriangle`,
+> `info → Info`) rendered via the `Icon` wrapper — never Unicode characters.
+
+> **Gap → DS update.** `success` and `info` were added at the token level to close the
+> four-role gap; `StatusGlyph`/`StatusBadge`/`InlineBanner` are now implemented (above). The
+> spec's full three-step (tint/base/deep) model and the remaining components (`FieldError`,
+> `Toast`) are a **future extension**: build them — and extend these tokens to the triad —
+> when richer status UI is needed, rather than hard-coding one-off status colours at the call
+> site.
 
 ---
 

@@ -1,4 +1,5 @@
 import { forwardRef, type HTMLAttributes } from 'react';
+import { Slot } from '@/components/libs/primitives';
 import { cva, type VariantProps } from '@/components/libs/variants';
 import { cn } from '@/lib/utils';
 
@@ -23,15 +24,22 @@ const eyebrowRecipe = cva(
 
 export interface EyebrowProps
   extends HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof eyebrowRecipe> {}
+    VariantProps<typeof eyebrowRecipe> {
+  /** Render through Radix Slot so the eyebrow style lands on the child element
+   * (e.g. a <th> or <td>) instead of a wrapper div. */
+  asChild?: boolean;
+}
 
 export const Eyebrow = forwardRef<HTMLDivElement, EyebrowProps>(
-  ({ className, size, tone, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(eyebrowRecipe({ size, tone }), className)}
-      {...props}
-    />
-  ),
+  ({ className, size, tone, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : 'div';
+    return (
+      <Comp
+        ref={ref}
+        className={cn(eyebrowRecipe({ size, tone }), className)}
+        {...props}
+      />
+    );
+  },
 );
 Eyebrow.displayName = 'Eyebrow';
