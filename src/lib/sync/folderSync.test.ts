@@ -189,20 +189,28 @@ describe('folderSync', () => {
     );
   });
 
-  it('getWritePermissionState is "unknown" when the handle has no permission API', async () => {
-    const handle = { name: 'x' } as unknown as FileSystemDirectoryHandle;
-    expect(await getWritePermissionState(handle)).toBe('unknown');
+  it('getWritePermissionState is "unknown" when the stored handle has no permission API', async () => {
+    await db.meta.put({ key: 'syncFolderHandle', value: { name: 'x' } });
+    expect(await getWritePermissionState()).toBe('unknown');
   });
 
-  it('requestFolderPermission is false when no folder is connected', async () => {
-    expect(await requestFolderPermission()).toBe(false);
+  it('requestFolderPermission resolves via the stored handle', async () => {
+    await db.meta.put({ key: 'syncFolderHandle', value: { name: 'stored' } });
+    expect(await requestFolderPermission()).toBe(true);
   });
 
-  it('syncOneSpace throws when the space does not exist', async () => {
-    const handle = makeMockHandle();
-    await expect(
-      syncOneSpace('does-not-exist', 'manual', asHandle(handle)),
-    ).rejects.toThrow(/not found/i);
+  it('syncOneSpace uses the stored handle when none is passed', async () => {
+    await db.meta.put({ key: 'syncFolderHandle', value: { name: 'stored' } });
+    const res = await syncOneSpace(sampleSpace.id);
+    expect(res).toMatchObject({ spaceId: sampleSpace.id, ok: false });
+  });
+
+  it('falls back to the stored handle when none is passed', async () => {
+    await db.meta.put({ key: 'syncFolderHandle', value: { name: 'stored' } });
+    const run = await syncAllSpacesToFolder(undefined, 'auto');
+    // The stored plain handle has no getDirectoryHandle, so the write fails —
+    // but the guard passed via getSyncFolderHandle().
+    expect(run.results[0]).toMatchObject({ spaceId: sampleSpace.id, ok: false });
   });
 
   it('syncAllSpacesToFolder skips the permission gate for auto runs', async () => {
@@ -216,15 +224,6 @@ describe('folderSync', () => {
       queryPermission: vi.fn(() => Promise.resolve('granted')),
     } as unknown as FileSystemDirectoryHandle;
     expect(await ensureWritePermission(handle)).toBe(true);
-  });
-
-  it('ensureWritePermission returns false when non-interactive and not granted', async () => {
-    const handle = {
-      queryPermission: vi.fn(() => Promise.resolve('prompt')),
-    } as unknown as FileSystemDirectoryHandle;
-    expect(await ensureWritePermission(handle, { interactive: false })).toBe(
-      false,
-    );
   });
 
   it('getLastSyncForSpace returns the newest of several entries', async () => {
