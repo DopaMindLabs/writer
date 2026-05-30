@@ -175,7 +175,7 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
             data-testid="brain-detail-drawer-title"
             variant="bare"
             value={draftTitle}
-            onChange={(e) => setDraftTitle(e.target.value)}
+            onChange={(e) => { setDraftTitle(e.target.value); }}
             onBlur={commitTitle}
             onKeyDown={(e) => {
               if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
@@ -210,7 +210,7 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
             id="drawer-body"
             data-testid="brain-detail-drawer-body"
             value={draftBody}
-            onChange={(e) => setDraftBody(e.target.value)}
+            onChange={(e) => { setDraftBody(e.target.value); }}
             onBlur={commitBody}
             placeholder="Write something…"
             className="min-h-[160px] leading-relaxed"

@@ -223,7 +223,7 @@ describe('SpaceSettingsScreen', () => {
       const history = await screen.findByTestId('backups-history');
       expect(history).toBeInTheDocument();
       const ids = await db.backups.where('scope').equals('s1').primaryKeys();
-      const firstId = ids[0] as string;
+      const firstId = ids[0];
       expect(
         screen.getByTestId(`backup-row-${firstId}-delete`),
       ).toHaveTextContent(/delete/i);

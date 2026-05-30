@@ -32,10 +32,10 @@ describe('BrainSpaceConnection', () => {
         <BrainSpaceConnection connection={conn} from={from} to={to} />
       </svg>,
     );
-    const group = container.querySelector('g.group') as SVGGElement;
+    const group = container.querySelector('g.group')!;
     await userEvent.click(group);
     await waitFor(async () =>
-      expect(await db.connections.get(conn.id)).toBeUndefined(),
+      { expect(await db.connections.get(conn.id)).toBeUndefined(); },
     );
   });
 });

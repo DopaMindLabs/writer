@@ -63,13 +63,13 @@ export const MobileTabs = ({ spaceId, docId }: MobileTabsProps) => {
     {
       key: 'cite',
       Icon: Quote,
-      onClick: () => openCitationsDrawer(),
+      onClick: () => { openCitationsDrawer(); },
       match: (p) => p.endsWith('/citations'),
     },
     {
       key: 'more',
       Icon: MoreHorizontal,
-      onClick: () => setMobileMoreOpen(true),
+      onClick: () => { setMobileMoreOpen(true); },
     },
   ];
 

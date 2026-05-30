@@ -9,7 +9,7 @@ export interface RadioOption {
 export interface RadioRowProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   name: string;
-  options: ReadonlyArray<RadioOption>;
+  options: readonly RadioOption[];
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;

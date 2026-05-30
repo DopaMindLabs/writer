@@ -1,7 +1,7 @@
 import { renderWithProviders } from '@/test/test-utils';
 import * as Placeholders from './SpaceSettingsPlaceholders';
 
-const COMPONENTS: Array<keyof typeof Placeholders> = [
+const COMPONENTS: (keyof typeof Placeholders)[] = [
   'SpaceTemplatePlaceholder',
   'SpacePalettePlaceholder',
   'SpaceSharingPlaceholder',

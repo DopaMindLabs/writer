@@ -113,7 +113,7 @@ export const SettingsScreen = () => {
       {activeTab === 'editor' ? (
         <EditorTab />
       ) : (
-        <PlaceholderTab id={activeTab as PlaceholderTabId} />
+        <PlaceholderTab id={activeTab} />
       )}
     </SettingsShell>
   );
@@ -138,13 +138,13 @@ const EditorTab = () => {
         <div className="flex gap-2">
           <Chip
             active={!floatingToolbarEnabled}
-            onClick={() => setFloatingToolbarEnabled(false)}
+            onClick={() => { setFloatingToolbarEnabled(false); }}
           >
             {t('settings.editor.floatingToolbarOff')}
           </Chip>
           <Chip
             active={floatingToolbarEnabled}
-            onClick={() => setFloatingToolbarEnabled(true)}
+            onClick={() => { setFloatingToolbarEnabled(true); }}
           >
             {t('settings.editor.floatingToolbarOn')}
           </Chip>

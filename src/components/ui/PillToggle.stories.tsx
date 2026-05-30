@@ -24,7 +24,7 @@ export const Interactive: Story = {
     const Stateful = () => {
       const [on, setOn] = useState(false);
       return (
-        <PillToggle on={on} label="Focus mode" onToggle={() => setOn(!on)} />
+        <PillToggle on={on} label="Focus mode" onToggle={() => { setOn(!on); }} />
       );
     };
     return <Stateful />;

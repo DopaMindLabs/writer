@@ -31,7 +31,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
     ref,
   ) => {
     const internalRef = useRef<HTMLInputElement>(null);
-    useImperativeHandle(ref, () => internalRef.current as HTMLInputElement);
+    useImperativeHandle(ref, () => internalRef.current!);
 
     const inputTestId = (rest as { 'data-testid'?: string })['data-testid'];
     const clearTestId = inputTestId ? `${inputTestId}-clear` : undefined;

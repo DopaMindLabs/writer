@@ -34,7 +34,7 @@ test('cycles through every global settings tab without crashing', async ({ page 
   // The full tab list maps 1:1 to TAB_IDS in Settings.tsx. Visiting each one
   // exercises the per-tab placeholder body, which boosts e2e line coverage on
   // the placeholder module.
-  const tabs: Array<{ id: string; heading: RegExp }> = [
+  const tabs: { id: string; heading: RegExp }[] = [
     { id: 'general', heading: /^General$/i },
     { id: 'appearance', heading: /^Appearance$/i },
     { id: 'typography', heading: /^Typography$/i },

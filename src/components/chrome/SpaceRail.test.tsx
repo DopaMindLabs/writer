@@ -20,7 +20,7 @@ describe('SpaceRail', () => {
 
     const sharedLink = container.querySelector(
       'a[href="/s/s2"]',
-    ) as HTMLAnchorElement | null;
+    );
     expect(sharedLink).not.toBeNull();
     const dot = sharedLink!.querySelector('span');
     expect(dot).not.toBeNull();

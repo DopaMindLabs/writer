@@ -34,7 +34,7 @@ export const DocInspectorIcons = () => {
         icon={ChevronLeft}
         label={t('inspector.expand')}
         title={t('inspector.expand')}
-        onClick={() => setInspectorMode('expanded')}
+        onClick={() => { setInspectorMode('expanded'); }}
       />
       <div className="my-1.5 h-px w-4 bg-rule" aria-hidden />
       {ITEMS.map(({ id, Icon }) => {
@@ -69,7 +69,7 @@ export const DocInspectorIcons = () => {
         icon={X}
         label={t('inspector.collapse')}
         title={t('inspector.collapse')}
-        onClick={() => setInspectorMode('none')}
+        onClick={() => { setInspectorMode('none'); }}
       />
     </aside>
   );

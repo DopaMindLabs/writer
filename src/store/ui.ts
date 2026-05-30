@@ -145,23 +145,23 @@ export const useUI = create<UIState>((set, get) => {
       set({ currentSpaceId: id });
       persist(snapshot({ currentSpaceId: id }));
     },
-    setCurrentDocId: (id) => set({ currentDocId: id }),
+    setCurrentDocId: (id) => { set({ currentDocId: id }); },
     setTheme: (theme) => {
       set({ theme });
       persist(snapshot({ theme }));
     },
-    setExportOpen: (exportOpen) => set({ exportOpen }),
-    setMobileNavOpen: (mobileNavOpen) => set({ mobileNavOpen }),
-    setMobileMoreOpen: (mobileMoreOpen) => set({ mobileMoreOpen }),
-    openDetail: (id) => set({ detailNoteId: id, focusedNoteId: id }),
-    closeDetail: () => set({ detailNoteId: null }),
-    focusNote: (id) => set({ focusedNoteId: id }),
+    setExportOpen: (exportOpen) => { set({ exportOpen }); },
+    setMobileNavOpen: (mobileNavOpen) => { set({ mobileNavOpen }); },
+    setMobileMoreOpen: (mobileMoreOpen) => { set({ mobileMoreOpen }); },
+    openDetail: (id) => { set({ detailNoteId: id, focusedNoteId: id }); },
+    closeDetail: () => { set({ detailNoteId: null }); },
+    focusNote: (id) => { set({ focusedNoteId: id }); },
     setFloatingToolbarEnabled: (floatingToolbarEnabled) => {
       set({ floatingToolbarEnabled });
       persist(snapshot({ floatingToolbarEnabled }));
     },
-    openCitationsDrawer: () => set({ citationsDrawerOpen: true }),
-    closeCitationsDrawer: () => set({ citationsDrawerOpen: false }),
+    openCitationsDrawer: () => { set({ citationsDrawerOpen: true }); },
+    closeCitationsDrawer: () => { set({ citationsDrawerOpen: false }); },
     setSplitDividerPct: (pct) => {
       const clamped = clampDividerPct(pct);
       set({ splitDividerPct: clamped });

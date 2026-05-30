@@ -26,7 +26,7 @@ export const Controlled: Story = {
         <Checkbox
           {...args}
           checked={on}
-          onChange={(e) => setOn(e.target.checked)}
+          onChange={(e) => { setOn(e.target.checked); }}
           label={`${args.label} — ${on ? 'on' : 'off'}`}
         />
       );

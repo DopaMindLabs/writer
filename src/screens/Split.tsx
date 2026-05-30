@@ -328,7 +328,7 @@ const SplitPanes = ({
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerCancel}
         onKeyDown={onKeyDown}
-        onDoubleClick={() => commitPct(SNAP_PCT)}
+        onDoubleClick={() => { commitPct(SNAP_PCT); }}
         className="group relative flex w-1 shrink-0 cursor-col-resize touch-none items-stretch bg-rule outline-none hover:bg-ink/30 focus-visible:bg-ink/40"
       >
         <span className="absolute inset-y-0 -left-1.5 w-4" aria-hidden />

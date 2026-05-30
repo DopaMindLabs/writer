@@ -84,18 +84,18 @@ describe('SplitScreen', () => {
       renderAt('/s/s1/d/d1/split?with=d2');
       const select = (await screen.findByTestId(
         'split-right-pane-select',
-      )) as HTMLSelectElement;
+      ));
       expect(select).toHaveAttribute('aria-label', 'Right pane document');
       await userEvent.selectOptions(select, 'd3');
-      await waitFor(() => expect(select.value).toBe('d3'));
+      await waitFor(() => { expect(select.value).toBe('d3'); });
     });
 
     it('should fall back to the first candidate when withParam is missing', async () => {
       renderAt('/s/s1/d/d1/split');
       const select = (await screen.findByTestId(
         'split-right-pane-select',
-      )) as HTMLSelectElement;
-      await waitFor(() => expect(select.value).toMatch(/d2|d3/));
+      ));
+      await waitFor(() => { expect(select.value).toMatch(/d2|d3/); });
     });
   });
 
@@ -108,7 +108,7 @@ describe('SplitScreen', () => {
       const startPct = useUI.getState().splitDividerPct;
       await userEvent.keyboard('{ArrowRight}');
       await waitFor(() =>
-        expect(useUI.getState().splitDividerPct).toBeGreaterThan(startPct),
+        { expect(useUI.getState().splitDividerPct).toBeGreaterThan(startPct); },
       );
       await userEvent.keyboard('{ArrowLeft}{ArrowLeft}');
       await userEvent.keyboard('{Home}');
@@ -138,7 +138,7 @@ describe('SplitScreen', () => {
         () => true;
       (sep as unknown as { releasePointerCapture: (id: number) => void }).releasePointerCapture =
         () => {};
-      const container = sep.parentElement as HTMLElement;
+      const container = sep.parentElement!;
       container.getBoundingClientRect = () =>
         ({
           left: 0,
@@ -150,7 +150,7 @@ describe('SplitScreen', () => {
           x: 0,
           y: 0,
           toJSON: () => ({}),
-        }) as DOMRect;
+        });
       fireEvent.pointerDown(sep, { pointerId: 1, clientX: 300 });
       fireEvent.pointerMove(sep, { pointerId: 1, clientX: 600 });
       fireEvent.pointerUp(sep, { pointerId: 1, clientX: 600 });

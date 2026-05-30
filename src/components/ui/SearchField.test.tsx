@@ -96,8 +96,8 @@ describe('SearchField', () => {
           <SearchField
             data-testid="sf-clear"
             value={v}
-            onChange={(e) => setV(e.target.value)}
-            onClear={() => setV('')}
+            onChange={(e) => { setV(e.target.value); }}
+            onClear={() => { setV(''); }}
           />
         );
       };

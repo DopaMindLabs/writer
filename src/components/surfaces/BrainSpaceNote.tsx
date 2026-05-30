@@ -304,7 +304,7 @@ export const BrainSpaceNote = ({
           <IconButton
             icon={ExternalLink}
             label="Open linked doc"
-            onPointerDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => { e.stopPropagation(); }}
             onClick={onDocLinkClick}
             data-no-drag
             iconSize="xs"
@@ -323,7 +323,7 @@ export const BrainSpaceNote = ({
         <IconButton
           icon={ArrowUpRight}
           label="Open details"
-          onPointerDown={(e) => e.stopPropagation()}
+          onPointerDown={(e) => { e.stopPropagation(); }}
           onClick={onOpenDetail}
           data-no-drag
           iconSize="xs"
@@ -337,7 +337,7 @@ export const BrainSpaceNote = ({
           variant="bare"
           autoFocus
           value={draftTitle}
-          onChange={(e) => setDraftTitle(e.target.value)}
+          onChange={(e) => { setDraftTitle(e.target.value); }}
           onBlur={commitTitle}
           onKeyDown={(e) => {
             if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
@@ -353,8 +353,8 @@ export const BrainSpaceNote = ({
         />
       ) : note.title ? (
         <div
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => setEditing('title')}
+          onPointerDown={(e) => { e.stopPropagation(); }}
+          onClick={() => { setEditing('title'); }}
           data-no-drag
           data-testid={`brain-note-${note.id}-title`}
           className="cursor-text font-serif text-[13px] font-medium text-ink"
@@ -365,8 +365,8 @@ export const BrainSpaceNote = ({
         // @lint-ignore native-button: "+ title" hover-revealed placeholder trigger (begins inline edit); not a DS Button kind
         <button
           type="button"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => setEditing('title')}
+          onPointerDown={(e) => { e.stopPropagation(); }}
+          onClick={() => { setEditing('title'); }}
           data-no-drag
           data-testid={`brain-note-${note.id}-add-title`}
           className="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
@@ -381,7 +381,7 @@ export const BrainSpaceNote = ({
           autoFocus
           rows={undefined}
           value={draftBody}
-          onChange={(e) => setDraftBody(e.target.value)}
+          onChange={(e) => { setDraftBody(e.target.value); }}
           onBlur={commitBody}
           onKeyDown={(e) => {
             if (e.key === 'Escape') {
@@ -398,8 +398,8 @@ export const BrainSpaceNote = ({
         />
       ) : (
         <div
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => setEditing('body')}
+          onPointerDown={(e) => { e.stopPropagation(); }}
+          onClick={() => { setEditing('body'); }}
           data-no-drag
           data-testid={`brain-note-${note.id}-body`}
           className={cn(
@@ -425,7 +425,7 @@ export const BrainSpaceNote = ({
           x={menu.x}
           y={menu.y}
           onDelete={onDeleteFromMenu}
-          onClose={() => setMenu(null)}
+          onClose={() => { setMenu(null); }}
         />
       )}
     </div>

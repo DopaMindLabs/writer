@@ -162,7 +162,7 @@ export const FocusToggle = ({ mode, spaceId, docId }: FocusToggleProps) => {
       navigate(`${base}${qs ? `?${qs}` : ''}`);
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, spaceId, docId, navigate, searchParams, focused]);
 

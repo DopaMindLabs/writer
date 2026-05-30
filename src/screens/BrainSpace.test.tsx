@@ -49,7 +49,7 @@ describe('BrainSpaceScreen', () => {
     });
     // Just assert the screen renders successfully; the fallbackDocId useMemo
     // executes during render (covers the lastDocId-matched branch).
-    await waitFor(() => expect(container.querySelector('main')).not.toBeNull());
+    await waitFor(() => { expect(container.querySelector('main')).not.toBeNull(); });
     useUI.getState().setCurrentDocId(null);
   });
 
@@ -61,7 +61,7 @@ describe('BrainSpaceScreen', () => {
       path: '/s/:spaceId/dump',
       initialEntries: ['/s/s1/dump'],
     });
-    await waitFor(() => expect(container.querySelector('main')).not.toBeNull());
+    await waitFor(() => { expect(container.querySelector('main')).not.toBeNull(); });
     useUI.getState().setCurrentDocId(null);
   });
 });
