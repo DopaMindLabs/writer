@@ -25,6 +25,9 @@ jobs:
 
       - run: npm ci
 
+      - name: Lint (coding standards gate)
+        run: npm run lint
+
       - run: npm run typecheck
 
       - name: Unit tests with coverage gate (90%)
