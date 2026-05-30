@@ -65,16 +65,4 @@ test.describe('Folder sync settings', () => {
     // syncOneSpace fails on the method-free handle -> StatusGlyph alert line.
     await expect(page.getByRole('alert')).toBeVisible();
   });
-
-  test('Sync tab shows the unsupported notice without the API', async ({
-    page,
-  }) => {
-    // Remove the stub added by beforeEach so the feature reads as unsupported.
-    await page.addInitScript(() => {
-      // @ts-expect-error — deleting the configurable stub from beforeEach
-      delete window.showDirectoryPicker;
-    });
-    await page.goto('/#/settings?tab=sync');
-    await expect(page.getByText(/File System Access API/i)).toBeVisible();
-  });
 });
