@@ -1,6 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import type { SyncEntry } from '@/db/schema';
-import { TypographyLabel, TypographyP } from '@/components/ui/typography';
+import { Eyebrow } from '@/components/ui/Eyebrow';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import { TypographyLabel } from '@/components/ui/typography';
 import { formatBytes, formatRelativeTime } from './syncFormat';
 
 interface SyncHistoryTableProps {
@@ -29,18 +32,18 @@ const SyncHistoryRow = ({ entry, showSpace, spaceNames }: SyncHistoryRowProps) =
           {spaceNames[entry.spaceId] ?? entry.spaceId}
         </td>
       ) : null}
-      <td className="py-2.5 font-mono text-[10px] uppercase tracking-wider text-ink-2">
-        {t(`settings.sync.kind.${entry.kind}`)}
-      </td>
+      <Eyebrow asChild size={10} tone="ink2">
+        <td className="py-2.5">{t(`settings.sync.kind.${entry.kind}`)}</td>
+      </Eyebrow>
       <td className="py-2.5 text-right font-mono text-[12px] text-ink-2">
         {entry.status === 'ok' ? formatBytes(entry.size) : '—'}
       </td>
-      <td className="py-2.5 text-right font-mono text-[10px] uppercase tracking-wider">
-        <span className={entry.status === 'ok' ? 'text-ink-2' : 'text-ink'}>
+      <td className="py-2.5 text-right">
+        <StatusBadge kind={entry.status === 'ok' ? 'success' : 'error'}>
           {t(`settings.sync.status.${entry.status}`)}
-        </span>
+        </StatusBadge>
         {entry.status === 'error' && entry.error ? (
-          <span className="ml-2 normal-case tracking-normal text-ink-3">
+          <span className="ml-2 font-mono text-[10px] text-ink-3">
             {entry.error}
           </span>
         ) : null}
@@ -62,36 +65,34 @@ export const SyncHistoryTable = ({
         <h3>{t('settings.sync.historyTitle')}</h3>
       </TypographyLabel>
       {entries.length === 0 ? (
-        <div className="mx-auto mt-6 max-w-md border border-dashed border-rule bg-paper-2/40 p-6 text-center">
-          <TypographyP variant="caption" className="text-[14px] text-ink-2">
-            {t('settings.sync.historyEmpty')}
-          </TypographyP>
-        </div>
+        <EmptyState caption={t('settings.sync.historyEmpty')} />
       ) : (
         <table
           data-testid="sync-history"
           className="mt-3 w-full border-collapse text-[13px]"
         >
           <thead>
-            <tr className="border-b border-rule font-mono text-[9px] uppercase tracking-[0.08em] text-ink-3">
-              <th className="py-2 text-left font-normal">
-                {t('settings.sync.columns.when')}
-              </th>
-              {showSpace ? (
+            <Eyebrow asChild size={9} tone="ink3">
+              <tr className="border-b border-rule">
                 <th className="py-2 text-left font-normal">
-                  {t('settings.sync.columns.space')}
+                  {t('settings.sync.columns.when')}
                 </th>
-              ) : null}
-              <th className="py-2 text-left font-normal">
-                {t('settings.sync.columns.kind')}
-              </th>
-              <th className="py-2 text-right font-normal">
-                {t('settings.sync.columns.size')}
-              </th>
-              <th className="py-2 text-right font-normal">
-                {t('settings.sync.columns.status')}
-              </th>
-            </tr>
+                {showSpace ? (
+                  <th className="py-2 text-left font-normal">
+                    {t('settings.sync.columns.space')}
+                  </th>
+                ) : null}
+                <th className="py-2 text-left font-normal">
+                  {t('settings.sync.columns.kind')}
+                </th>
+                <th className="py-2 text-right font-normal">
+                  {t('settings.sync.columns.size')}
+                </th>
+                <th className="py-2 text-right font-normal">
+                  {t('settings.sync.columns.status')}
+                </th>
+              </tr>
+            </Eyebrow>
           </thead>
           <tbody>
             {entries.map((e) => (

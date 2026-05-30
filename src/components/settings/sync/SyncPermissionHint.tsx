@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/Button';
+import { InlineBanner } from '@/components/ui/InlineBanner';
 import { useFolderPermission } from '@/hooks/useSync';
 import { requestFolderPermission } from '@/lib/sync/folderSync';
 
@@ -29,16 +29,13 @@ export const SyncPermissionHint = ({
   };
 
   return (
-    <div
-      role="status"
-      className="mt-4 flex flex-wrap items-center justify-between gap-3 border border-ink bg-paper-2/60 px-4 py-3"
+    <InlineBanner
+      kind="warning"
+      className="mt-4"
+      action={busy ? t('settings.sync.syncing') : t('settings.sync.reconnectButton')}
+      onAction={() => void handleResume()}
     >
-      <p className="max-w-[520px] font-serif text-[13px] italic text-ink-2">
-        {t('settings.sync.reconnectHint')}
-      </p>
-      <Button size="sm" onClick={() => void handleResume()} disabled={busy}>
-        {busy ? t('settings.sync.syncing') : t('settings.sync.reconnectButton')}
-      </Button>
-    </div>
+      {t('settings.sync.reconnectHint')}
+    </InlineBanner>
   );
 };

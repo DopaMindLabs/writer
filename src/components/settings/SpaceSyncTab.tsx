@@ -1,75 +1,31 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Space } from '@/db/schema';
 import { TabHeader } from '@/components/settings/TabHeader';
 import { SettingRow } from '@/components/settings/SettingRow';
-import { Button } from '@/components/ui/Button';
-import { TypographyP } from '@/components/ui/typography';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { StatusGlyph } from '@/components/ui/StatusGlyph';
 import { useSyncFolder } from '@/hooks/useSyncFolder';
-import { useDefaultInterval, useSpaceInterval, useSyncHistory } from '@/hooks/useSync';
 import {
-  pickSyncFolder,
-  setSpaceIntervalMin,
-  syncOneSpace,
-} from '@/lib/sync/folderSync';
+  useDefaultInterval,
+  useSpaceInterval,
+  useSyncHistory,
+} from '@/hooks/useSync';
+import { useFolderSyncActions } from '@/hooks/useFolderSyncActions';
+import { setSpaceIntervalMin } from '@/lib/sync/folderSync';
 import { IntervalSelector } from '@/components/settings/sync/IntervalSelector';
+import { SyncFolderRow } from '@/components/settings/sync/SyncFolderRow';
+import { SyncRunRow } from '@/components/settings/sync/SyncRunRow';
 import { SyncHistoryTable } from '@/components/settings/sync/SyncHistoryTable';
 import { SyncPermissionHint } from '@/components/settings/sync/SyncPermissionHint';
 import { intervalLabel } from '@/components/settings/sync/syncFormat';
-import { isAbort } from '@/components/settings/sync/abort';
 
-// nasa-exception: max-lines-per-function (cohesive settings-tab render, mirrors
-// the existing BackupsTab; sub-pieces are already extracted to sync/*)
-// eslint-disable-next-line max-lines-per-function
 export const SpaceSyncTab = ({ space }: { space: Space }) => {
   const { t } = useTranslation('screens');
   const { supported, folderName } = useSyncFolder();
   const defaultInterval = useDefaultInterval();
   const { own } = useSpaceInterval(space.id);
   const history = useSyncHistory(space.id);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  if (!supported) {
-    return (
-      <section>
-        <TabHeader
-          titleKey="settings.space.sync.title"
-          subtitleKey="settings.space.sync.subtitle"
-          breadcrumbKey="settings.space.breadcrumb"
-        />
-        <div className="mx-auto mt-6 max-w-md border border-dashed border-rule bg-paper-2/40 p-6 text-center">
-          <TypographyP variant="caption" className="text-[14px] text-ink-2">
-            {t('settings.sync.unsupportedBody')}
-          </TypographyP>
-        </div>
-      </section>
-    );
-  }
-
-  const handleChoose = async () => {
-    setError(null);
-    try {
-      await pickSyncFolder();
-    } catch (err) {
-      if (isAbort(err)) return;
-      setError(err instanceof Error ? err.message : String(err));
-    }
-  };
-
-  const handleSync = async () => {
-    setBusy(true);
-    setError(null);
-    try {
-      const res = await syncOneSpace(space.id);
-      if (!res.ok) setError(res.error ?? 'Sync failed');
-    } catch (err) {
-      if (isAbort(err)) return;
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setBusy(false);
-    }
-  };
+  const { busy, error, choose, sync } = useFolderSyncActions(space.id);
 
   return (
     <section>
@@ -79,57 +35,43 @@ export const SpaceSyncTab = ({ space }: { space: Space }) => {
         breadcrumbKey="settings.space.breadcrumb"
       />
 
-      <SyncPermissionHint folderName={folderName} />
-
-      <SettingRow
-        label={t('settings.sync.folderLabel')}
-        hint={t('settings.space.sync.folderHint')}
-      >
-        <div className="flex flex-wrap items-center justify-end gap-3">
-          <span className="font-serif text-[14px] text-ink">
-            {folderName ?? t('settings.sync.noFolder')}
-          </span>
-          {!folderName ? (
-            <Button kind="secondary" size="sm" onClick={() => void handleChoose()}>
-              {t('settings.sync.chooseFolder')}
-            </Button>
+      {!supported ? (
+        <EmptyState caption={t('settings.sync.unsupportedBody')} />
+      ) : (
+        <>
+          <SyncPermissionHint folderName={folderName} />
+          <SyncFolderRow
+            folderName={folderName}
+            hint={t('settings.space.sync.folderHint')}
+            onChoose={() => void choose()}
+          />
+          <SettingRow
+            label={t('settings.sync.intervalLabel')}
+            hint={t('settings.space.sync.intervalHint')}
+          >
+            <IntervalSelector
+              value={own}
+              onChange={(v) => void setSpaceIntervalMin(space.id, v)}
+              inheritLabel={t('settings.sync.intervalDefault', {
+                label: intervalLabel(defaultInterval, t),
+              })}
+              ariaLabel={t('settings.sync.intervalLabel')}
+            />
+          </SettingRow>
+          <SyncRunRow
+            busy={busy}
+            disabled={!folderName}
+            idleLabel={t('settings.space.sync.syncNow')}
+            onSync={() => void sync()}
+          />
+          {error ? (
+            <StatusGlyph kind="error" role="alert" className="mt-3">
+              {t('settings.sync.syncFailed', { message: error })}
+            </StatusGlyph>
           ) : null}
-        </div>
-      </SettingRow>
-
-      <SettingRow
-        label={t('settings.sync.intervalLabel')}
-        hint={t('settings.space.sync.intervalHint')}
-      >
-        <IntervalSelector
-          value={own}
-          onChange={(v) => void setSpaceIntervalMin(space.id, v)}
-          inheritLabel={t('settings.sync.intervalDefault', {
-            label: intervalLabel(defaultInterval, t),
-          })}
-          ariaLabel={t('settings.sync.intervalLabel')}
-        />
-      </SettingRow>
-
-      <SettingRow
-        label={t('settings.sync.syncLabel')}
-        hint={t('settings.sync.pushOnlyHint')}
-      >
-        <Button onClick={() => void handleSync()} disabled={busy || !folderName}>
-          {busy ? t('settings.sync.syncing') : t('settings.space.sync.syncNow')}
-        </Button>
-      </SettingRow>
-
-      {error && (
-        <p
-          role="alert"
-          className="mt-3 font-mono text-[11px] uppercase tracking-wider text-ink"
-        >
-          {t('settings.sync.syncFailed', { message: error })}
-        </p>
+          <SyncHistoryTable entries={history} />
+        </>
       )}
-
-      <SyncHistoryTable entries={history} />
     </section>
   );
 };
