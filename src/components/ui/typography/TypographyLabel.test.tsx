@@ -47,7 +47,7 @@ describe('TypographyLabel', () => {
   });
 
   it('forwards ref', () => {
-    const ref = { current: null as HTMLElement | null };
+    const ref = { current: null as HTMLParagraphElement | null };
     renderWithProviders(<TypographyLabel ref={ref}>Ref</TypographyLabel>);
     expect(ref.current).not.toBeNull();
     expect(ref.current?.tagName).toBe('P');

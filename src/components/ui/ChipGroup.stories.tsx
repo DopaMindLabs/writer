@@ -5,6 +5,7 @@ import { ChipGroup } from './ChipGroup';
 const meta = {
   title: 'Atoms/ChipGroup',
   component: ChipGroup,
+  args: { options: ['Light', 'Dark'], active: 0 },
 } satisfies Meta<typeof ChipGroup>;
 
 export default meta;

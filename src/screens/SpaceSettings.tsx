@@ -5,7 +5,6 @@ import { Trash2 } from '@/components/libs/icons';
 import { routes } from '@/lib/routes';
 import { TextField } from '@/components/ui/TextField';
 import { Label } from '@/components/ui/Label';
-import { IconButton } from '@/components/ui/icon';
 import { useSpace } from '@/hooks/useSpaces';
 import { useBackups } from '@/hooks/useBackups';
 import { db } from '@/db/db';

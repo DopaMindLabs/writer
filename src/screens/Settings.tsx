@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useUI } from '@/store/ui';
@@ -45,7 +46,7 @@ function isTabId(value: string | null): value is TabId {
   return value !== null && (TAB_IDS as readonly string[]).includes(value);
 }
 
-const PLACEHOLDERS: Record<PlaceholderTabId, () => JSX.Element> = {
+const PLACEHOLDERS: Record<PlaceholderTabId, () => ReactElement> = {
   general: GeneralPlaceholder,
   appearance: AppearancePlaceholder,
   typography: TypographyPlaceholder,

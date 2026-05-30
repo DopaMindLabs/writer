@@ -5,6 +5,7 @@ import { PillToggle } from './PillToggle';
 const meta = {
   title: 'Atoms/PillToggle',
   component: PillToggle,
+  args: { on: false, label: 'Focus mode', onToggle: () => {} },
 } satisfies Meta<typeof PillToggle>;
 
 export default meta;
