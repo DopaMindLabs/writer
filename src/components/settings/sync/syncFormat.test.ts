@@ -4,7 +4,7 @@ import { formatBytes, formatRelativeTime, intervalLabel } from './syncFormat';
 
 // Minimal TFunction stand-in: echoes the key, applying {{count}}/{{label}}.
 const t = ((key: string, opts?: Record<string, unknown>) => {
-  if (opts && 'count' in opts) return `${opts.count} min`;
+  if (opts && 'count' in opts) return `${String(opts.count)} min`;
   if (opts && 'label' in opts) return String(opts.label);
   return key;
 }) as unknown as TFunction;

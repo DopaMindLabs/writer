@@ -34,28 +34,31 @@ interface MockDir {
   [Symbol.asyncIterator](): AsyncIterator<[string, { kind: string }]>;
 }
 
-function makeMockDir(): MockDir {
+const makeMockDir = (): MockDir => {
   const files = new Map<string, Blob>();
   return {
     files,
-    getFileHandle: vi.fn(async (name: string) => ({
-      createWritable: async () => ({
-        write: async (blob: Blob) => {
+    getFileHandle: vi.fn((name: string) => ({
+      createWritable: () => ({
+        write: (blob: Blob) => {
           files.set(name, blob);
         },
-        close: async () => {},
+        close: () => undefined,
       }),
     })),
-    removeEntry: vi.fn(async (name: string) => {
+    // Production code chains `.catch` on this, so it must return a promise.
+    removeEntry: vi.fn((name: string) => {
       files.delete(name);
+      return Promise.resolve();
     }),
     async *[Symbol.asyncIterator]() {
+      await Promise.resolve();
       for (const name of files.keys()) {
         yield [name, { kind: 'file' }] as [string, { kind: string }];
       }
     },
   };
-}
+};
 
 interface MockHandle {
   name: string;
@@ -63,22 +66,22 @@ interface MockHandle {
   getDirectoryHandle: ReturnType<typeof vi.fn>;
 }
 
-function makeMockHandle(opts: { fail?: boolean } = {}): MockHandle {
+const makeMockHandle = (opts: { fail?: boolean } = {}): MockHandle => {
   const dirs = new Map<string, MockDir>();
   return {
     name: 'test-folder',
     dirs,
-    getDirectoryHandle: vi.fn(async (name: string) => {
+    getDirectoryHandle: vi.fn((name: string) => {
       if (opts.fail) throw new Error('disk full');
       let dir = dirs.get(name);
       if (!dir) {
         dir = makeMockDir();
         dirs.set(name, dir);
       }
-      return dir;
+      return Promise.resolve(dir);
     }),
   };
-}
+};
 
 const asHandle = (h: MockHandle) => h as unknown as FileSystemDirectoryHandle;
 const onlyDir = (h: MockHandle) => [...h.dirs.values()][0];
@@ -110,6 +113,25 @@ describe('folderSync', () => {
     // Sync must NOT create a backup row.
     const backups = await db.backups.where('scope').equals(sampleSpace.id).toArray();
     expect(backups).toHaveLength(0);
+  });
+
+  it('keeps same-named spaces in separate subfolders', async () => {
+    // Two distinct spaces sharing a name must not collide.
+    const spaceB = {
+      ...sampleSpace,
+      id: 'space-b-00000000',
+      name: sampleSpace.name,
+    };
+    await db.spaces.put(spaceB);
+
+    const handle = makeMockHandle();
+    await syncSpaceToFolder(asHandle(handle), sampleSpace, 'manual');
+    await syncSpaceToFolder(asHandle(handle), spaceB, 'manual');
+
+    expect(handle.dirs.size).toBe(2);
+    for (const dir of handle.dirs.values()) {
+      expect(dir.files.get(LATEST_FILENAME)).toBeInstanceOf(Blob);
+    }
   });
 
   it('syncAllSpacesToFolder reports success and records lastSyncedAt', async () => {
@@ -146,8 +168,8 @@ describe('folderSync', () => {
   });
 
   it('ensureWritePermission requests permission when interactive and not granted', async () => {
-    const requestPermission = vi.fn(async () => 'granted' as PermissionState);
-    const queryPermission = vi.fn(async () => 'prompt' as PermissionState);
+    const requestPermission = vi.fn(() => Promise.resolve('granted'));
+    const queryPermission = vi.fn(() => Promise.resolve('prompt'));
     const handle = {
       name: 'f',
       queryPermission,
@@ -159,8 +181,8 @@ describe('folderSync', () => {
   });
 
   it('ensureWritePermission never prompts when non-interactive', async () => {
-    const requestPermission = vi.fn(async () => 'granted' as PermissionState);
-    const queryPermission = vi.fn(async () => 'prompt' as PermissionState);
+    const requestPermission = vi.fn(() => Promise.resolve('granted'));
+    const queryPermission = vi.fn(() => Promise.resolve('prompt'));
     const handle = {
       name: 'f',
       queryPermission,
@@ -193,7 +215,7 @@ describe('folderSync', () => {
   it('pick/get/forget the folder handle via meta', async () => {
     const picked = { name: 'picked-folder' };
     (window as unknown as { showDirectoryPicker: unknown }).showDirectoryPicker =
-      vi.fn(async () => picked);
+      vi.fn(() => Promise.resolve(picked));
     try {
       const { name } = await pickSyncFolder();
       expect(name).toBe('picked-folder');
@@ -265,7 +287,7 @@ describe('folderSync', () => {
 
     const prompt = {
       name: 'p',
-      queryPermission: vi.fn(async () => 'prompt' as PermissionState),
+      queryPermission: vi.fn(() => Promise.resolve('prompt')),
     } as unknown as FileSystemDirectoryHandle;
     expect(await getWritePermissionState(prompt)).toBe('prompt');
 
@@ -278,8 +300,8 @@ describe('folderSync', () => {
 
     const handle = {
       name: 'g',
-      queryPermission: vi.fn(async () => 'prompt' as PermissionState),
-      requestPermission: vi.fn(async () => 'granted' as PermissionState),
+      queryPermission: vi.fn(() => Promise.resolve('prompt')),
+      requestPermission: vi.fn(() => Promise.resolve('granted')),
     } as unknown as FileSystemDirectoryHandle;
     expect(await requestFolderPermission(handle)).toBe(true);
   });

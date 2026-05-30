@@ -1,14 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@/test/test-utils';
+import type { FolderPermissionState } from '@/hooks/useSync';
 
-const useFolderPermission = vi.fn();
+const useFolderPermission =
+  vi.fn<(folderName: string | null) => FolderPermissionState>();
 vi.mock('@/hooks/useSync', () => ({
   useFolderPermission: (folderName: string | null) =>
     useFolderPermission(folderName),
 }));
 
-const requestFolderPermission = vi.fn();
+const requestFolderPermission = vi.fn<(...a: unknown[]) => Promise<boolean>>();
 vi.mock('@/lib/sync/folderSync', () => ({
   requestFolderPermission: (...a: unknown[]) => requestFolderPermission(...a),
 }));
@@ -46,8 +48,8 @@ describe('SyncPermissionHint', () => {
     fireEvent.click(screen.getByRole('button', { name: /reconnect/i }));
 
     await waitFor(() =>
-      expect(requestFolderPermission).toHaveBeenCalledTimes(1),
+      { expect(requestFolderPermission).toHaveBeenCalledTimes(1); },
     );
-    await waitFor(() => expect(refresh).toHaveBeenCalled());
+    await waitFor(() => { expect(refresh).toHaveBeenCalled(); });
   });
 });

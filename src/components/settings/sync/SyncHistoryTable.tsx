@@ -11,6 +11,44 @@ interface SyncHistoryTableProps {
   spaceNames?: Record<string, string>;
 }
 
+interface SyncHistoryRowProps {
+  entry: SyncEntry;
+  showSpace: boolean;
+  spaceNames: Record<string, string>;
+}
+
+const SyncHistoryRow = ({ entry, showSpace, spaceNames }: SyncHistoryRowProps) => {
+  const { t } = useTranslation('screens');
+  return (
+    <tr data-testid={`sync-row-${entry.id}`} className="border-b border-rule">
+      <td className="py-2.5 font-mono text-[12px] text-ink">
+        {formatRelativeTime(entry.when, t)}
+      </td>
+      {showSpace ? (
+        <td className="py-2.5 text-[13px] text-ink">
+          {spaceNames[entry.spaceId] ?? entry.spaceId}
+        </td>
+      ) : null}
+      <td className="py-2.5 font-mono text-[10px] uppercase tracking-wider text-ink-2">
+        {t(`settings.sync.kind.${entry.kind}`)}
+      </td>
+      <td className="py-2.5 text-right font-mono text-[12px] text-ink-2">
+        {entry.status === 'ok' ? formatBytes(entry.size) : '—'}
+      </td>
+      <td className="py-2.5 text-right font-mono text-[10px] uppercase tracking-wider">
+        <span className={entry.status === 'ok' ? 'text-ink-2' : 'text-ink'}>
+          {t(`settings.sync.status.${entry.status}`)}
+        </span>
+        {entry.status === 'error' && entry.error ? (
+          <span className="ml-2 normal-case tracking-normal text-ink-3">
+            {entry.error}
+          </span>
+        ) : null}
+      </td>
+    </tr>
+  );
+};
+
 export const SyncHistoryTable = ({
   entries,
   showSpace = false,
@@ -57,36 +95,12 @@ export const SyncHistoryTable = ({
           </thead>
           <tbody>
             {entries.map((e) => (
-              <tr
+              <SyncHistoryRow
                 key={e.id}
-                data-testid={`sync-row-${e.id}`}
-                className="border-b border-rule"
-              >
-                <td className="py-2.5 font-mono text-[12px] text-ink">
-                  {formatRelativeTime(e.when, t)}
-                </td>
-                {showSpace ? (
-                  <td className="py-2.5 text-[13px] text-ink">
-                    {spaceNames[e.spaceId] ?? e.spaceId}
-                  </td>
-                ) : null}
-                <td className="py-2.5 font-mono text-[10px] uppercase tracking-wider text-ink-2">
-                  {t(`settings.sync.kind.${e.kind}`)}
-                </td>
-                <td className="py-2.5 text-right font-mono text-[12px] text-ink-2">
-                  {e.status === 'ok' ? formatBytes(e.size) : '—'}
-                </td>
-                <td className="py-2.5 text-right font-mono text-[10px] uppercase tracking-wider">
-                  <span className={e.status === 'ok' ? 'text-ink-2' : 'text-ink'}>
-                    {t(`settings.sync.status.${e.status}`)}
-                  </span>
-                  {e.status === 'error' && e.error ? (
-                    <span className="ml-2 normal-case tracking-normal text-ink-3">
-                      {e.error}
-                    </span>
-                  ) : null}
-                </td>
-              </tr>
+                entry={e}
+                showSpace={showSpace}
+                spaceNames={spaceNames}
+              />
             ))}
           </tbody>
         </table>

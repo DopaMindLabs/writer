@@ -18,11 +18,11 @@ import { IntervalSelector } from '@/components/settings/sync/IntervalSelector';
 import { SyncHistoryTable } from '@/components/settings/sync/SyncHistoryTable';
 import { SyncPermissionHint } from '@/components/settings/sync/SyncPermissionHint';
 import { formatRelativeTime } from '@/components/settings/sync/syncFormat';
+import { isAbort } from '@/components/settings/sync/abort';
 
-function isAbort(err: unknown): boolean {
-  return err instanceof DOMException && err.name === 'AbortError';
-}
-
+// nasa-exception: max-lines-per-function (cohesive settings-tab render, mirrors
+// the existing BackupsTab; sub-pieces are already extracted to sync/*)
+// eslint-disable-next-line max-lines-per-function
 export const SyncTab = () => {
   const { t } = useTranslation('screens');
   const { supported, folderName, lastSyncedAt } = useSyncFolder();

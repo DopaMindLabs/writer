@@ -1,21 +1,25 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@/test/test-utils';
+import type { SyncFolderState } from '@/hooks/useSyncFolder';
+import type { SyncRunResult } from '@/lib/sync/folderSync';
 
-const useSyncFolder = vi.fn();
+const useSyncFolder = vi.fn<() => SyncFolderState>();
 vi.mock('@/hooks/useSyncFolder', () => ({
   useSyncFolder: () => useSyncFolder(),
 }));
 
 const useDefaultInterval = vi.fn(() => 10);
-const useSyncHistory = vi.fn((_id?: string | null) => [] as unknown[]);
+const useSyncHistory = vi.fn<(id?: string | null) => unknown[]>(() => []);
 vi.mock('@/hooks/useSync', () => ({
   useDefaultInterval: () => useDefaultInterval(),
   useSyncHistory: (spaceId?: string | null) => useSyncHistory(spaceId),
   useFolderPermission: () => ({
     granted: true,
     lapsed: false,
-    refresh: () => {},
+    refresh: () => {
+      // no-op
+    },
   }),
 }));
 
@@ -23,10 +27,10 @@ vi.mock('@/hooks/useSpaces', () => ({
   useSpaces: () => [],
 }));
 
-const pickSyncFolder = vi.fn();
-const forgetSyncFolder = vi.fn();
-const setDefaultIntervalMin = vi.fn();
-const syncAllSpacesToFolder = vi.fn();
+const pickSyncFolder = vi.fn<(...a: unknown[]) => Promise<{ name: string }>>();
+const forgetSyncFolder = vi.fn<(...a: unknown[]) => Promise<void>>();
+const setDefaultIntervalMin = vi.fn<(...a: unknown[]) => Promise<void>>();
+const syncAllSpacesToFolder = vi.fn<(...a: unknown[]) => Promise<SyncRunResult>>();
 vi.mock('@/lib/sync/folderSync', () => ({
   pickSyncFolder: (...args: unknown[]) => pickSyncFolder(...args),
   forgetSyncFolder: (...args: unknown[]) => forgetSyncFolder(...args),
@@ -93,7 +97,7 @@ describe('SyncTab', () => {
     renderWithProviders(<SyncTab />);
     fireEvent.click(screen.getByRole('button', { name: /sync all spaces/i }));
 
-    await waitFor(() => expect(syncAllSpacesToFolder).toHaveBeenCalledTimes(1));
+    await waitFor(() => { expect(syncAllSpacesToFolder).toHaveBeenCalledTimes(1); });
     expect(await screen.findByText('Novel')).toBeInTheDocument();
     expect(screen.getByText('Essays')).toBeInTheDocument();
     expect(screen.getByText('disk full')).toBeInTheDocument();
@@ -119,7 +123,7 @@ describe('SyncTab', () => {
     pickSyncFolder.mockResolvedValue({ name: 'Drafts' });
     renderWithProviders(<SyncTab />);
     fireEvent.click(screen.getByRole('button', { name: /choose folder/i }));
-    await waitFor(() => expect(pickSyncFolder).toHaveBeenCalledTimes(1));
+    await waitFor(() => { expect(pickSyncFolder).toHaveBeenCalledTimes(1); });
   });
 
   it('disconnects the connected folder', async () => {
@@ -130,7 +134,7 @@ describe('SyncTab', () => {
     });
     renderWithProviders(<SyncTab />);
     fireEvent.click(screen.getByRole('button', { name: /disconnect/i }));
-    await waitFor(() => expect(forgetSyncFolder).toHaveBeenCalledTimes(1));
+    await waitFor(() => { expect(forgetSyncFolder).toHaveBeenCalledTimes(1); });
   });
 
   it('surfaces an error when syncing fails', async () => {

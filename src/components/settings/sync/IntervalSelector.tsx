@@ -29,7 +29,7 @@ export const IntervalSelector = ({
         <Chip
           key={opt}
           active={opt === value}
-          onClick={() => onChange(opt)}
+          onClick={() => { onChange(opt); }}
         >
           {opt === INHERIT_INTERVAL ? inheritLabel : intervalLabel(opt, t)}
         </Chip>

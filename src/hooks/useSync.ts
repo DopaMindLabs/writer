@@ -9,14 +9,11 @@ import {
 } from '@/lib/sync/folderSync';
 
 // The global default auto-sync interval (minutes; 0 = off).
-export function useDefaultInterval(): number {
-  return (
-    useLiveQuery(async () => {
-      const row = await db.syncConfigs.get('global');
-      return row ? row.intervalMin : DEFAULT_INTERVAL_MIN;
-    }, []) ?? DEFAULT_INTERVAL_MIN
-  );
-}
+export const useDefaultInterval = (): number =>
+  useLiveQuery(async () => {
+    const row = await db.syncConfigs.get('global');
+    return row ? row.intervalMin : DEFAULT_INTERVAL_MIN;
+  }, []) ?? DEFAULT_INTERVAL_MIN;
 
 export interface SpaceIntervalState {
   /** The space's own setting: INHERIT_INTERVAL when inheriting the default. */
@@ -25,31 +22,28 @@ export interface SpaceIntervalState {
   effective: number;
 }
 
-export function useSpaceInterval(
+export const useSpaceInterval = (
   spaceId: string | null | undefined,
-): SpaceIntervalState {
-  return (
-    useLiveQuery(
-      async () => {
-        if (!spaceId) {
-          return { own: INHERIT_INTERVAL, effective: DEFAULT_INTERVAL_MIN };
-        }
-        const defaultRow = await db.syncConfigs.get('global');
-        const defaultInterval = defaultRow
-          ? defaultRow.intervalMin
-          : DEFAULT_INTERVAL_MIN;
-        const own = await db.syncConfigs.get(spaceId);
-        const ownInterval = own ? own.intervalMin : INHERIT_INTERVAL;
-        return {
-          own: ownInterval,
-          effective:
-            ownInterval === INHERIT_INTERVAL ? defaultInterval : ownInterval,
-        };
-      },
-      [spaceId],
-    ) ?? { own: INHERIT_INTERVAL, effective: DEFAULT_INTERVAL_MIN }
-  );
-}
+): SpaceIntervalState =>
+  useLiveQuery(
+    async () => {
+      if (!spaceId) {
+        return { own: INHERIT_INTERVAL, effective: DEFAULT_INTERVAL_MIN };
+      }
+      const defaultRow = await db.syncConfigs.get('global');
+      const defaultInterval = defaultRow
+        ? defaultRow.intervalMin
+        : DEFAULT_INTERVAL_MIN;
+      const own = await db.syncConfigs.get(spaceId);
+      const ownInterval = own ? own.intervalMin : INHERIT_INTERVAL;
+      return {
+        own: ownInterval,
+        effective:
+          ownInterval === INHERIT_INTERVAL ? defaultInterval : ownInterval,
+      };
+    },
+    [spaceId],
+  ) ?? { own: INHERIT_INTERVAL, effective: DEFAULT_INTERVAL_MIN };
 
 export interface FolderPermissionState {
   /** Permission is usable right now (granted, or no permission API). */
@@ -65,9 +59,9 @@ export interface FolderPermissionState {
 // "prompt" until the user acts — the UI uses `lapsed` to nudge a reconnect.
 // Re-queries on mount, on window focus, on a short poll, and when the connected
 // folder (folderName) changes.
-export function useFolderPermission(
+export const useFolderPermission = (
   folderName: string | null,
-): FolderPermissionState {
+): FolderPermissionState => {
   const [state, setState] = useState<
     Awaited<ReturnType<typeof getWritePermissionState>>
   >('unknown');
@@ -78,7 +72,9 @@ export function useFolderPermission(
 
   useEffect(() => {
     refresh();
-    const onFocus = () => refresh();
+    const onFocus = () => {
+      refresh();
+    };
     window.addEventListener('focus', onFocus);
     const id = window.setInterval(refresh, 5_000);
     return () => {
@@ -92,22 +88,17 @@ export function useFolderPermission(
     lapsed: state === 'prompt' || state === 'denied',
     refresh,
   };
-}
+};
 
 // Recent sync history. Pass a spaceId for one space, or omit for all spaces.
-export function useSyncHistory(
-  spaceId?: string | null,
-): SyncEntry[] {
-  return (
-    useLiveQuery(
-      async () => {
-        const rows = spaceId
-          ? await db.syncs.where('spaceId').equals(spaceId).toArray()
-          : await db.syncs.toArray();
-        return rows.sort((a, b) => b.when - a.when);
-      },
-      [spaceId],
-      [],
-    ) ?? []
+export const useSyncHistory = (spaceId?: string | null): SyncEntry[] =>
+  useLiveQuery(
+    async () => {
+      const rows = spaceId
+        ? await db.syncs.where('spaceId').equals(spaceId).toArray()
+        : await db.syncs.toArray();
+      return rows.sort((a, b) => b.when - a.when);
+    },
+    [spaceId],
+    [],
   );
-}

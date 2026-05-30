@@ -13,22 +13,22 @@ describe('useSync hooks', () => {
 
   it('useDefaultInterval falls back to the default then reflects config', async () => {
     const { result } = renderHook(() => useDefaultInterval());
-    await waitFor(() => expect(result.current).toBe(DEFAULT_INTERVAL_MIN));
+    await waitFor(() => { expect(result.current).toBe(DEFAULT_INTERVAL_MIN); });
 
     await db.syncConfigs.put({ spaceId: 'global', intervalMin: 30 });
-    await waitFor(() => expect(result.current).toBe(30));
+    await waitFor(() => { expect(result.current).toBe(30); });
   });
 
   it('useSpaceInterval resolves inheritance and overrides', async () => {
     await db.syncConfigs.put({ spaceId: 'global', intervalMin: 30 });
     const { result } = renderHook(() => useSpaceInterval(sampleSpace.id));
     await waitFor(() =>
-      expect(result.current).toEqual({ own: INHERIT_INTERVAL, effective: 30 }),
+      { expect(result.current).toEqual({ own: INHERIT_INTERVAL, effective: 30 }); },
     );
 
     await db.syncConfigs.put({ spaceId: sampleSpace.id, intervalMin: 5 });
     await waitFor(() =>
-      expect(result.current).toEqual({ own: 5, effective: 5 }),
+      { expect(result.current).toEqual({ own: 5, effective: 5 }); },
     );
   });
 
@@ -39,7 +39,7 @@ describe('useSync hooks', () => {
       { id: 'c', spaceId: 'other', when: 300, kind: 'auto', status: 'ok', size: 3 },
     ]);
     const { result } = renderHook(() => useSyncHistory(sampleSpace.id));
-    await waitFor(() => expect(result.current).toHaveLength(2));
+    await waitFor(() => { expect(result.current).toHaveLength(2); });
     expect(result.current.map((r) => r.id)).toEqual(['b', 'a']);
   });
 
@@ -53,7 +53,7 @@ describe('useSync hooks', () => {
       size: 1,
     });
     const { result } = renderHook(() => useSyncFolder());
-    await waitFor(() => expect(result.current.lastSyncedAt).toBe(1234));
+    await waitFor(() => { expect(result.current.lastSyncedAt).toBe(1234); });
     // jsdom has no showDirectoryPicker.
     expect(result.current.supported).toBe(false);
     expect(result.current.folderName).toBeNull();

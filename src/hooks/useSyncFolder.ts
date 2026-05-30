@@ -8,7 +8,7 @@ export interface SyncFolderState {
   lastSyncedAt: number | null;
 }
 
-export function useSyncFolder(): SyncFolderState {
+export const useSyncFolder = (): SyncFolderState => {
   const data = useLiveQuery(
     async () => {
       const handleRow = await db.meta.get('syncFolderHandle');
@@ -28,4 +28,4 @@ export function useSyncFolder(): SyncFolderState {
     folderName: data.folderName,
     lastSyncedAt: data.lastSyncedAt,
   };
-}
+};
