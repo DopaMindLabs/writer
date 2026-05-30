@@ -62,6 +62,41 @@ describe('useFolderSyncActions', () => {
     expect(result.current.error).toBe('disk full');
   });
 
+  it('sync() in single-space mode is silent on success', async () => {
+    mocked.syncOne.mockResolvedValue({ spaceId: 's3', name: 'Poems', ok: true });
+    const { result } = renderHook(() => useFolderSyncActions('s3'));
+
+    await act(async () => {
+      await result.current.sync();
+    });
+
+    expect(result.current.error).toBeNull();
+  });
+
+  it('sync() falls back to a generic message when a failure has no error', async () => {
+    mocked.syncOne.mockResolvedValue({ spaceId: 's4', name: 'Notes', ok: false });
+    const { result } = renderHook(() => useFolderSyncActions('s4'));
+
+    await act(async () => {
+      await result.current.sync();
+    });
+
+    expect(result.current.error).toBe('Sync failed');
+  });
+
+  it('choose() stringifies a non-Error rejection', async () => {
+    mocked.pick.mockRejectedValue('picker exploded');
+    const { result } = renderHook(() => useFolderSyncActions());
+
+    await act(async () => {
+      await result.current.choose();
+    });
+
+    await waitFor(() => {
+      expect(result.current.error).toBe('picker exploded');
+    });
+  });
+
   it('choose() swallows an aborted folder pick', async () => {
     mocked.pick.mockRejectedValue(
       new DOMException('cancelled', 'AbortError'),

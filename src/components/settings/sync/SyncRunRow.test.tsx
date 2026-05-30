@@ -52,4 +52,17 @@ describe('SyncRunRow', () => {
     );
     expect(screen.getByText(/never/i)).toBeInTheDocument();
   });
+
+  it('shows a relative "last synced" caption for a real timestamp', () => {
+    renderWithProviders(
+      <SyncRunRow
+        busy={false}
+        disabled={false}
+        idleLabel="Sync now"
+        onSync={vi.fn()}
+        lastSyncedAt={Date.now()}
+      />,
+    );
+    expect(screen.getByText(/synced/i)).toBeInTheDocument();
+  });
 });

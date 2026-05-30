@@ -3,6 +3,7 @@ import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@/test/test-utils';
 import type { SyncFolderState } from '@/hooks/useSyncFolder';
 import type { SyncRunResult } from '@/lib/sync/folderSync';
+import type { Space } from '@/db/schema';
 
 const useSyncFolder = vi.fn<() => SyncFolderState>();
 vi.mock('@/hooks/useSyncFolder', () => ({
@@ -24,7 +25,7 @@ vi.mock('@/hooks/useSync', () => ({
 }));
 
 vi.mock('@/hooks/useSpaces', () => ({
-  useSpaces: () => [],
+  useSpaces: () => [{ id: 's1', name: 'Novel' }] as unknown as Space[],
 }));
 
 const pickSyncFolder = vi.fn<(...a: unknown[]) => Promise<{ name: string }>>();

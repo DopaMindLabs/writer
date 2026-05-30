@@ -42,6 +42,16 @@ describe('SpaceSettingsScreen', () => {
       ).toBeInTheDocument();
     });
 
+    it('should treat a missing spaceId route param as no space', async () => {
+      renderAtRoute(<SpaceSettingsScreen />, {
+        path: '/settings',
+        initialEntries: ['/settings'],
+      });
+      expect(
+        await screen.findByTestId('space-settings-loading'),
+      ).toBeInTheDocument();
+    });
+
     it('should render the world rail with the current space as the back affordance', async () => {
       await seedBasicSpace();
       renderAtSpaceSettings();
@@ -192,6 +202,34 @@ describe('SpaceSettingsScreen', () => {
         container.querySelector('[data-coming-soon-overlay="true"]'),
       ).not.toBeNull();
     });
+
+    it('should render the Palette placeholder (coming soon)', async () => {
+      await seedBasicSpace();
+      const { container } = renderAtSpaceSettings('/s/s1/settings?tab=palette');
+      await waitFor(() => {
+        expect(
+          container.querySelector('[data-coming-soon-overlay="true"]'),
+        ).not.toBeNull();
+      });
+    });
+
+    it('should render the Export placeholder (coming soon)', async () => {
+      await seedBasicSpace();
+      const { container } = renderAtSpaceSettings('/s/s1/settings?tab=export');
+      await waitFor(() => {
+        expect(
+          container.querySelector('[data-coming-soon-overlay="true"]'),
+        ).not.toBeNull();
+      });
+    });
+
+    it('should render the Sync tab (unsupported notice under jsdom)', async () => {
+      await seedBasicSpace();
+      renderAtSpaceSettings('/s/s1/settings?tab=sync');
+      expect(
+        await screen.findByText(/File System Access API/i),
+      ).toBeInTheDocument();
+    });
   });
 
   describe('backups tab', () => {
@@ -292,6 +330,96 @@ describe('SpaceSettingsScreen', () => {
       expect(history.textContent).toMatch(/\d+ d ago/);
       expect(history.textContent).toMatch(/2026-05-/);
       vi.useRealTimers();
+    });
+
+    it('should download a backup when its download action is clicked', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      const clickSpy = vi
+        .spyOn(HTMLAnchorElement.prototype, 'click')
+        .mockImplementation(() => undefined);
+      // A Blob round-tripped through fake-indexeddb is not a real Blob, so stub
+      // the object-URL calls that downloadBlob makes on the stored payload.
+      vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock');
+      vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
+      renderAtSpaceSettings('/s/s1/settings?tab=backups');
+      await user.click(
+        await screen.findByTestId('space-settings-backups-snapshot'),
+      );
+      await waitFor(async () => {
+        expect(await db.backups.where('scope').equals('s1').count()).toBe(1);
+      });
+      const ids = await db.backups.where('scope').equals('s1').primaryKeys();
+      clickSpy.mockClear();
+      await user.click(screen.getByTestId(`backup-row-${ids[0]}-download`));
+      expect(clickSpy).toHaveBeenCalled();
+    });
+
+    it('should delete a backup after the user confirms', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(
+        () => undefined,
+      );
+      vi.spyOn(window, 'confirm').mockReturnValue(true);
+      renderAtSpaceSettings('/s/s1/settings?tab=backups');
+      await user.click(
+        await screen.findByTestId('space-settings-backups-snapshot'),
+      );
+      await waitFor(async () => {
+        expect(await db.backups.where('scope').equals('s1').count()).toBe(1);
+      });
+      const ids = await db.backups.where('scope').equals('s1').primaryKeys();
+      await user.click(screen.getByTestId(`backup-row-${ids[0]}-delete`));
+      await waitFor(async () => {
+        expect(await db.backups.where('scope').equals('s1').count()).toBe(0);
+      });
+    });
+
+    it('should not delete a backup when the user cancels the confirm', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(
+        () => undefined,
+      );
+      vi.spyOn(window, 'confirm').mockReturnValue(false);
+      renderAtSpaceSettings('/s/s1/settings?tab=backups');
+      await user.click(
+        await screen.findByTestId('space-settings-backups-snapshot'),
+      );
+      await waitFor(async () => {
+        expect(await db.backups.where('scope').equals('s1').count()).toBe(1);
+      });
+      const ids = await db.backups.where('scope').equals('s1').primaryKeys();
+      await user.click(screen.getByTestId(`backup-row-${ids[0]}-delete`));
+      expect(await db.backups.where('scope').equals('s1').count()).toBe(1);
+    });
+
+    it('should surface an error when the snapshot fails', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      vi.spyOn(db.backups, 'put').mockRejectedValue(new Error('snapshot boom'));
+      renderAtSpaceSettings('/s/s1/settings?tab=backups');
+      await user.click(
+        await screen.findByTestId('space-settings-backups-snapshot'),
+      );
+      expect(await screen.findByRole('alert')).toBeInTheDocument();
+    });
+
+    it('stringifies a non-Error snapshot failure', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      // createSpaceBackup succeeds, then downloadBlob throws a non-Error, which
+      // exercises the String(err) fallback in the catch.
+      const nonError: unknown = 'kaboom';
+      vi.spyOn(URL, 'createObjectURL').mockImplementation(() => {
+        throw nonError;
+      });
+      renderAtSpaceSettings('/s/s1/settings?tab=backups');
+      await user.click(
+        await screen.findByTestId('space-settings-backups-snapshot'),
+      );
+      expect(await screen.findByRole('alert')).toHaveTextContent(/kaboom/i);
     });
   });
 

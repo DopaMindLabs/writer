@@ -43,4 +43,22 @@ describe('SyncHistoryTable', () => {
     expect(screen.getByText('2.0 kB')).toBeInTheDocument();
     expect(screen.getByText('disk full')).toBeInTheDocument();
   });
+
+  it('renders without a Space column when showSpace is false', () => {
+    renderWithProviders(<SyncHistoryTable entries={entries} />);
+    expect(screen.getByTestId('sync-history')).toBeInTheDocument();
+    expect(screen.queryByText('Novel')).not.toBeInTheDocument();
+  });
+
+  it('falls back to the spaceId when no display name is mapped', () => {
+    renderWithProviders(
+      <SyncHistoryTable
+        entries={entries}
+        showSpace
+        spaceNames={{ s1: 'Novel' }}
+      />,
+    );
+    // s2 has no mapped name, so its raw id is shown.
+    expect(screen.getByText('s2')).toBeInTheDocument();
+  });
 });

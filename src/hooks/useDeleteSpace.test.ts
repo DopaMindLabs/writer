@@ -40,6 +40,27 @@ describe('useDeleteSpace', () => {
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
+  it('keeps the typed value when the dialog opens', () => {
+    const onOpenChange = vi.fn();
+    const { result } = renderHook(() => useDeleteSpace(space, onOpenChange));
+    act(() => {
+      result.current.setTyped('Novel');
+    });
+    act(() => {
+      result.current.handleOpenChange(true);
+    });
+    expect(result.current.typed).toBe('Novel');
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+  });
+
+  it('does nothing on confirm while the name does not match', async () => {
+    const { result } = renderHook(() => useDeleteSpace(space, vi.fn()));
+    await act(async () => {
+      await result.current.handleConfirm();
+    });
+    expect(deleteSpaceCascade).not.toHaveBeenCalled();
+  });
+
   it('deletes the space and navigates home on confirm', async () => {
     vi.mocked(deleteSpaceCascade).mockResolvedValue(undefined);
     const onOpenChange = vi.fn();

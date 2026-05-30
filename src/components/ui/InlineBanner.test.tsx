@@ -45,4 +45,10 @@ describe('InlineBanner', () => {
       screen.queryByRole('button', { name: 'Dismiss' }),
     ).not.toBeInTheDocument();
   });
+
+  it('renders a title-only banner with no body', () => {
+    render(<InlineBanner kind="success" title="Imported" />);
+    expect(screen.getByText('Imported')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveClass('text-success');
+  });
 });
