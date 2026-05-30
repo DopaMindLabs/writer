@@ -48,6 +48,32 @@ export async function forgetSyncFolder(): Promise<void> {
   await db.meta.delete(HANDLE_KEY);
 }
 
+export type WritePermissionState =
+  | PermissionState // 'granted' | 'prompt' | 'denied'
+  | 'no-folder' // nothing connected
+  | 'unknown'; // permission API unavailable — treat as usable
+
+// Non-interactively report the current write-permission state of the connected
+// folder. Used by the UI to decide whether to show a "reconnect" hint.
+export async function getWritePermissionState(
+  handleArg?: FileSystemDirectoryHandle,
+): Promise<WritePermissionState> {
+  const handle = handleArg ?? (await getSyncFolderHandle());
+  if (!handle) return 'no-folder';
+  if (!handle.queryPermission) return 'unknown';
+  return handle.queryPermission({ mode: 'readwrite' });
+}
+
+// Re-request write permission. Must run inside a user gesture. Returns whether
+// permission is now granted.
+export async function requestFolderPermission(
+  handleArg?: FileSystemDirectoryHandle,
+): Promise<boolean> {
+  const handle = handleArg ?? (await getSyncFolderHandle());
+  if (!handle) return false;
+  return ensureWritePermission(handle, { interactive: true });
+}
+
 // Resolve write permission. With { interactive: false } we only query (never
 // prompt) — required for background auto-sync, which has no user gesture.
 export async function ensureWritePermission(

@@ -17,7 +17,9 @@ import {
   getLastSyncForSpace,
   getLastSyncedAt,
   getSyncFolderHandle,
+  getWritePermissionState,
   pickSyncFolder,
+  requestFolderPermission,
   setDefaultIntervalMin,
   setSpaceIntervalMin,
   syncAllSpacesToFolder,
@@ -256,5 +258,29 @@ describe('folderSync', () => {
 
   it('getLastSyncedAt is null before any sync', async () => {
     expect(await getLastSyncedAt()).toBeNull();
+  });
+
+  it('getWritePermissionState reflects the handle (or no-folder)', async () => {
+    expect(await getWritePermissionState()).toBe('no-folder');
+
+    const prompt = {
+      name: 'p',
+      queryPermission: vi.fn(async () => 'prompt' as PermissionState),
+    } as unknown as FileSystemDirectoryHandle;
+    expect(await getWritePermissionState(prompt)).toBe('prompt');
+
+    const noApi = { name: 'n' } as unknown as FileSystemDirectoryHandle;
+    expect(await getWritePermissionState(noApi)).toBe('unknown');
+  });
+
+  it('requestFolderPermission returns false with no folder, true once granted', async () => {
+    expect(await requestFolderPermission()).toBe(false);
+
+    const handle = {
+      name: 'g',
+      queryPermission: vi.fn(async () => 'prompt' as PermissionState),
+      requestPermission: vi.fn(async () => 'granted' as PermissionState),
+    } as unknown as FileSystemDirectoryHandle;
+    expect(await requestFolderPermission(handle)).toBe(true);
   });
 });

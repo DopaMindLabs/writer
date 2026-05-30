@@ -309,6 +309,8 @@
       "pushOnlyHint": "Push-only for now — this writes your local data to the folder. Pulling changes back lands later.",
       "syncNow": "Sync now",
       "syncNowAll": "Sync all spaces",
+      "reconnectHint": "Sync is paused — the browser needs folder permission again for this session. Reconnect to resume manual and auto-sync.",
+      "reconnectButton": "Reconnect",
       "syncing": "Syncing…",
       "syncFailed": "Sync failed: {{message}}",
       "lastSynced": "Last synced {{when}}",

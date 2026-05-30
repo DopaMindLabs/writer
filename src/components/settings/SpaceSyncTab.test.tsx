@@ -18,6 +18,11 @@ vi.mock('@/hooks/useSync', () => ({
   useDefaultInterval: () => useDefaultInterval(),
   useSpaceInterval: (id: string) => useSpaceInterval(id),
   useSyncHistory: (id?: string | null) => useSyncHistory(id),
+  useFolderPermission: () => ({
+    granted: true,
+    lapsed: false,
+    refresh: () => {},
+  }),
 }));
 
 const pickSyncFolder = vi.fn();

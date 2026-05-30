@@ -12,6 +12,11 @@ const useSyncHistory = vi.fn((_id?: string | null) => [] as unknown[]);
 vi.mock('@/hooks/useSync', () => ({
   useDefaultInterval: () => useDefaultInterval(),
   useSyncHistory: (spaceId?: string | null) => useSyncHistory(spaceId),
+  useFolderPermission: () => ({
+    granted: true,
+    lapsed: false,
+    refresh: () => {},
+  }),
 }));
 
 vi.mock('@/hooks/useSpaces', () => ({

@@ -16,6 +16,7 @@ import {
 } from '@/lib/sync/folderSync';
 import { IntervalSelector } from '@/components/settings/sync/IntervalSelector';
 import { SyncHistoryTable } from '@/components/settings/sync/SyncHistoryTable';
+import { SyncPermissionHint } from '@/components/settings/sync/SyncPermissionHint';
 import { formatRelativeTime } from '@/components/settings/sync/syncFormat';
 
 function isAbort(err: unknown): boolean {
@@ -88,6 +89,8 @@ export const SyncTab = () => {
         titleKey="settings.sync.title"
         subtitleKey="settings.sync.subtitle"
       />
+
+      <SyncPermissionHint folderName={folderName} />
 
       <SettingRow
         label={t('settings.sync.folderLabel')}
