@@ -57,48 +57,22 @@ export default defineConfig({
             ['console-summary'],
             ['lcov'],
           ],
-          // Ratcheted to ~2pp below the current actuals so the gate catches
-          // real regressions without flaking on small bundle-emit shifts
-          // (monocart branch totals can swing a few percent between runs
-          // when v8 re-ranges code on rebuild). When coverage improves
-          // meaningfully, raise these (don't drop them).
-          // Actuals at the time of writing: lines 74.18, statements 59.92,
-          // functions 64.69, branches 55.53.
-          thresholds: {
-            lines: 72,
-            statements: 58,
-            functions: 62,
-            branches: 53,
-          },
-          // Hard gate: exit non-zero if any metric drops below threshold.
           onEnd: async (reportData: {
-            summary?: {
-              lines?: { pct?: number };
-              statements?: { pct?: number };
-              functions?: { pct?: number };
-              branches?: { pct?: number };
-            };
+            summary?: Record<string, { pct?: number }>;
           }) => {
             const s = reportData.summary ?? {};
-            const thresholds: Record<string, number> = {
-              lines: 72,
-              statements: 58,
-              functions: 62,
-              branches: 53,
-            };
-            const misses: string[] = [];
-            for (const [metric, min] of Object.entries(thresholds)) {
-              const pct = s[metric as keyof typeof s]?.pct;
-              if (typeof pct === 'number' && pct < min) {
-                misses.push(`${metric}=${pct.toFixed(2)}% (<${min}%)`);
-              }
+            const metrics = ['lines', 'statements', 'functions', 'branches'];
+            const summary: Record<string, { pct: number }> = {};
+            for (const metric of metrics) {
+              const pct = s[metric]?.pct;
+              if (typeof pct === 'number') summary[metric] = { pct };
             }
-            if (misses.length > 0) {
-              console.error(
-                `\nE2E coverage gate failed: ${misses.join(', ')}\n`,
-              );
-              process.exit(1);
-            }
+            const { writeFile, mkdir } = await import('node:fs/promises');
+            await mkdir('./e2e-coverage', { recursive: true });
+            await writeFile(
+              './e2e-coverage/coverage-summary.json',
+              `${JSON.stringify(summary, null, 2)}\n`,
+            );
           },
         },
       },

@@ -124,6 +124,15 @@ export default tseslint.config(
   },
 
   {
+    files: ['scripts/**/*.{js,cjs,mjs}'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+
+  {
     files: ['e2e/**/*.ts', '.storybook/**/*.{ts,tsx}'],
     extends: [tseslint.configs.disableTypeChecked],
   },

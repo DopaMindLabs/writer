@@ -36,6 +36,10 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      - name: Lint (coding standards gate)
+        run: npm run lint
+
       - run: npm run typecheck
       - run: npm run build
 

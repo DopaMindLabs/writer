@@ -43,6 +43,40 @@ System" design spec. When adding or changing any component or feature, verify it
   from `docs/design-system.md`; build the **writer** surface only.
 - Add a `.test.tsx` and a `.stories.tsx` mirroring the file under test (see
   [CODING_STANDARDS.md](./CODING_STANDARDS.md)).
+## E2E test coverage (ratcheted)
+
+E2E coverage is gated by a ratchet (`scripts/coverage-ratchet.mjs`, run via
+`npm run test:e2e:coverage`) that compares the live run against the floors in
+`coverage-baseline.json` and only ever raises them toward a 95% cap.
+
+- **New user-facing features must land with ≥ 90% e2e coverage of their own code paths.**
+  Add Playwright specs under `e2e/` alongside the feature; don't rely on unit tests to cover
+  flows a user can click through.
+- **Coverage may only increase.** Never lower a value in `coverage-baseline.json` or relax the
+  ratchet to make CI pass — fix the tests instead. When a run raises the floors, commit the
+  updated `coverage-baseline.json`.
+- Run `npm run test:e2e:coverage` before committing coverage-affecting changes; it gates CI.
+- `src/editor/**` and `src/tours/**` are excluded from e2e coverage (covered by unit tests); the
+  90% bar applies to the rest of the app.
+## Testing philosophy (read before changing tests)
+
+Unit tests (Vitest) and e2e tests (Playwright) exist to **prevent regressions** — to
+protect existing, working behavior from unintended change. Treat them as a safety net,
+not a checkbox.
+
+- **Take a TDD/BDD approach.** Before implementing a change, write or extend a test that
+  describes the intended behavior, then make it pass. New behavior ships with a test that
+  would fail without it.
+- **A green run is not the objective.** Stability and the absence of unintended changes
+  are. Passing tests are a means of confirming that, not the goal itself.
+- **When a test fails, find the root cause and fix the regression.** Do not delete, skip,
+  `.only`/`.skip`, weaken assertions, or rewrite a test just to make it pass. A failing
+  test is signalling that behavior changed — diagnose why.
+- The **only** exception is when the user has explicitly agreed that the feature under
+  test is being removed or is redundant. In that case, remove the test as part of that
+  agreed change.
+- Run `npm run test:run` (and `npm run test:e2e` for UI-facing changes) before committing,
+  alongside `npm run lint` and `npm run typecheck`.
 
 ## Key commands
 
