@@ -52,6 +52,7 @@
       "citations": "Citation style",
       "annotation": "Annotations",
       "backups": "Backups",
+      "sync": "Sync",
       "export": "Export / import",
       "data": "Your data",
       "account": "Account",
@@ -288,6 +289,54 @@
       "latestLabel": "Latest",
       "latestValue": "12 min ago · 1,190 words"
     },
+    "sync": {
+      "title": "Sync",
+      "subtitle": "Push your spaces to a folder you choose. Point it at a Google Drive, Dropbox, or iCloud folder to sync across devices.",
+      "unsupportedTitle": "Not available in this browser",
+      "unsupportedBody": "Folder sync needs the File System Access API, available in Chrome, Edge, and other Chromium browsers on desktop. Switch to a supported browser to use it.",
+      "folderLabel": "Synced folder",
+      "folderHint": "Each sync writes a Markdown .zip per space here, keeping the last 5 plus a latest.zip. Sync is separate from Backups.",
+      "noFolder": "No folder connected",
+      "chooseFolder": "Choose folder…",
+      "changeFolder": "Change…",
+      "disconnect": "Disconnect",
+      "intervalLabel": "Auto-sync",
+      "intervalHint": "How often spaces sync automatically while the app is open and the folder is connected. Each space can override this default.",
+      "intervalOff": "Off",
+      "intervalMinutes": "{{count}} min",
+      "intervalDefault": "Default ({{label}})",
+      "syncLabel": "Manual sync",
+      "pushOnlyHint": "Push-only for now — this writes your local data to the folder. Pulling changes back lands later.",
+      "syncNow": "Sync now",
+      "syncNowAll": "Sync all spaces",
+      "reconnectHint": "Sync is paused — the browser needs folder permission again for this session. Reconnect to resume manual and auto-sync.",
+      "reconnectButton": "Reconnect",
+      "syncing": "Syncing…",
+      "syncFailed": "Sync failed: {{message}}",
+      "lastSynced": "Last synced {{when}}",
+      "neverSynced": "Never synced",
+      "justNow": "just now",
+      "resultsTitle": "Last run",
+      "spaceOk": "synced",
+      "spaceFailed": "failed",
+      "historyTitle": "Recent syncs",
+      "historyEmpty": "No syncs yet.",
+      "columns": {
+        "when": "WHEN",
+        "space": "SPACE",
+        "kind": "KIND",
+        "size": "SIZE",
+        "status": "STATUS"
+      },
+      "kind": {
+        "auto": "auto",
+        "manual": "manual"
+      },
+      "status": {
+        "ok": "ok",
+        "error": "error"
+      }
+    },
     "space": {
       "breadcrumb": "SPACE · SETTINGS",
       "shellSubtitle": "SPACE SETTINGS",
@@ -304,6 +353,7 @@
         "sharing": "Sharing",
         "members": "Members",
         "backups": "Backups",
+        "sync": "Sync",
         "export": "Export",
         "danger": "Danger zone"
       },
@@ -413,6 +463,13 @@
         "deleteConfirm": "Delete this snapshot? This cannot be undone.",
         "deleted": "Snapshot deleted.",
         "justNow": "just now"
+      },
+      "sync": {
+        "title": "Sync",
+        "subtitle": "Push this space to the connected folder, manually or on a schedule. Sync is separate from Backups.",
+        "folderHint": "Connect a folder in global Settings → Sync. The same folder is used for every space.",
+        "intervalHint": "How often this space syncs automatically. Choose Default to follow the global auto-sync setting.",
+        "syncNow": "Sync this space"
       },
       "danger": {
         "title": "Danger zone",

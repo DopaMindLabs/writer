@@ -9,6 +9,7 @@ import { Chip } from '@/components/ui/Chip';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ComingSoonRow } from '@/components/settings/ComingSoonRow';
 import { TabHeader } from '@/components/settings/TabHeader';
+import { SyncTab } from '@/components/settings/SyncTab';
 import {
   GeneralPlaceholder,
   AppearancePlaceholder,
@@ -34,17 +35,17 @@ const TAB_IDS = [
   'citations',
   'annotation',
   'backups',
+  'sync',
   'export',
   'data',
   'account',
   'about',
 ] as const;
 type TabId = (typeof TAB_IDS)[number];
-type PlaceholderTabId = Exclude<TabId, 'editor'>;
+type PlaceholderTabId = Exclude<TabId, 'editor' | 'sync'>;
 
-function isTabId(value: string | null): value is TabId {
-  return value !== null && (TAB_IDS as readonly string[]).includes(value);
-}
+const isTabId = (value: string | null): value is TabId =>
+  value !== null && (TAB_IDS as readonly string[]).includes(value);
 
 const PLACEHOLDERS: Record<PlaceholderTabId, () => ReactElement> = {
   general: GeneralPlaceholder,
@@ -83,7 +84,7 @@ export const SettingsScreen = () => {
     },
     {
       label: t('settings.groups.data'),
-      tabs: (['backups', 'export', 'data'] as const).map((id) => ({
+      tabs: (['backups', 'sync', 'export', 'data'] as const).map((id) => ({
         id,
         label: t(`settings.tabs.${id}`),
       })),
@@ -112,6 +113,8 @@ export const SettingsScreen = () => {
     >
       {activeTab === 'editor' ? (
         <EditorTab />
+      ) : activeTab === 'sync' ? (
+        <SyncTab />
       ) : (
         <PlaceholderTab id={activeTab} />
       )}

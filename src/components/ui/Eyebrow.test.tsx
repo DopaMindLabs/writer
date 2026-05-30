@@ -1,4 +1,4 @@
-import { render } from '@/test/test-utils';
+import { render, screen } from '@/test/test-utils';
 import { Eyebrow } from './Eyebrow';
 
 describe('Eyebrow', () => {
@@ -14,5 +14,22 @@ describe('Eyebrow', () => {
       </div>,
     );
     expect(container).toMatchSnapshot();
+  });
+
+  it('applies eyebrow styling to the child element when asChild is set', () => {
+    render(
+      <table>
+        <thead>
+          <tr>
+            <Eyebrow asChild size={9} tone="ink3">
+              <th>when</th>
+            </Eyebrow>
+          </tr>
+        </thead>
+      </table>,
+    );
+    const cell = screen.getByText('when');
+    expect(cell.tagName).toBe('TH');
+    expect(cell).toHaveClass('font-mono', 'uppercase', 'text-[9px]', 'text-ink-3');
   });
 });

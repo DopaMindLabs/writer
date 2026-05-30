@@ -128,3 +128,24 @@ export interface Meta {
   key: string;
   value: unknown;
 }
+
+// A recorded sync run for a space. Sync is distinct from Backup: it pushes the
+// space to the connected folder and is tracked here (not in the backups table).
+export interface SyncEntry {
+  id: string;
+  spaceId: string;
+  when: number;
+  kind: 'auto' | 'manual';
+  status: 'ok' | 'error';
+  size: number;
+  filename?: string;
+  error?: string;
+}
+
+// Auto-sync configuration. A single row with spaceId === 'global' holds the
+// default; per-space rows override it. intervalMin: 0 = off, INHERIT_INTERVAL
+// (-1) = use the global default (per-space rows only).
+export interface SyncConfig {
+  spaceId: string;
+  intervalMin: number;
+}

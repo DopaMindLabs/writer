@@ -7,6 +7,7 @@ import {
   TypographyP,
 } from '@/components/ui/typography';
 import { ThemeProvider } from '@/theme/ThemeProvider';
+import { SyncScheduler } from '@/lib/sync/SyncScheduler';
 import { resetAndReseed } from '@/db/seed';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
 import { HomeScreen } from '@/screens/Home';
@@ -47,19 +48,21 @@ export const App = () => {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      try {
-        const url = new URL(window.location.href);
-        if (url.searchParams.has('reseed')) {
-          await resetAndReseed();
-          url.searchParams.delete('reseed');
-          window.history.replaceState({}, '', url.pathname + url.search);
-        }
-        if (!cancelled) setReady(true);
-      } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e : new Error(String(e)));
+    const run = async () => {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('reseed')) {
+        await resetAndReseed();
+        url.searchParams.delete('reseed');
+        window.history.replaceState({}, '', url.pathname + url.search);
       }
-    })();
+    };
+    run()
+      .then(() => {
+        if (!cancelled) setReady(true);
+      })
+      .catch((e: unknown) => {
+        if (!cancelled) setError(e instanceof Error ? e : new Error(String(e)));
+      });
     return () => {
       cancelled = true;
     };
@@ -96,6 +99,7 @@ export const App = () => {
   return (
     <ThemeProvider>
       <TooltipProvider delayDuration={300}>
+        <SyncScheduler />
         <RouterProvider router={router} />
       </TooltipProvider>
     </ThemeProvider>

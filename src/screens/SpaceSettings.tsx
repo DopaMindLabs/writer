@@ -1,23 +1,16 @@
 import { useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Trash2 } from '@/components/libs/icons';
-import { routes } from '@/lib/routes';
-import { TextField } from '@/components/ui/TextField';
-import { Label } from '@/components/ui/Label';
 import { useSpace } from '@/hooks/useSpaces';
 import { useBackups } from '@/hooks/useBackups';
+import { useDeleteSpace } from '@/hooks/useDeleteSpace';
 import { db } from '@/db/db';
 import type { Backup, Space } from '@/db/schema';
 import { SettingsShell } from '@/components/settings/SettingsShell';
 import type { SettingsTabGroup } from '@/components/settings/SettingsTabs';
-import { SettingRow } from '@/components/settings/SettingRow';
 import { TabHeader } from '@/components/settings/TabHeader';
-import {
-  TypographyH2,
-  TypographyLabel,
-  TypographyP,
-} from '@/components/ui/typography';
+import { TypographyH2, TypographyP } from '@/components/ui/typography';
 import {
   Dialog,
   DialogContent,
@@ -26,13 +19,16 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/Button';
-import {
-  MAX_BACKUPS_PER_SPACE,
-  createSpaceBackup,
-} from '@/lib/backup/createSpaceBackup';
+import { StatusGlyph } from '@/components/ui/StatusGlyph';
+import { createSpaceBackup } from '@/lib/backup/createSpaceBackup';
 import { backupFilename } from '@/lib/backup/buildSpaceMarkdownZip';
 import { downloadBlob } from '@/lib/file-download';
-import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';
+import { errorMessage } from '@/lib/errorMessage';
+import { SpaceSyncTab } from '@/components/settings/SpaceSyncTab';
+import { SpaceTextSetting } from '@/components/settings/SpaceTextSetting';
+import { DeleteConfirmField } from '@/components/settings/DeleteConfirmField';
+import { BackupsToolbar } from '@/components/settings/backups/BackupsToolbar';
+import { BackupsHistoryTable } from '@/components/settings/backups/BackupsHistoryTable';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import {
   SpaceTemplatePlaceholder,
@@ -49,14 +45,14 @@ const TAB_IDS = [
   'sharing',
   'members',
   'backups',
+  'sync',
   'export',
   'danger',
 ] as const;
 type TabId = (typeof TAB_IDS)[number];
 
-function isTabId(value: string | null): value is TabId {
-  return value !== null && (TAB_IDS as readonly string[]).includes(value);
-}
+const isTabId = (value: string | null): value is TabId =>
+  value !== null && (TAB_IDS as readonly string[]).includes(value);
 
 export const SpaceSettingsScreen = () => {
   const { t } = useTranslation(['screens', 'chrome', 'common']);
@@ -83,7 +79,7 @@ export const SpaceSettingsScreen = () => {
     },
     {
       label: t('settings.space.groups.data'),
-      tabs: (['backups', 'export', 'danger'] as const).map((id) => ({
+      tabs: (['backups', 'sync', 'export', 'danger'] as const).map((id) => ({
         id,
         label: t(`settings.space.tabs.${id}`),
       })),
@@ -106,16 +102,7 @@ export const SpaceSettingsScreen = () => {
       onSelect={selectTab}
     >
       {space ? (
-        <>
-          {activeTab === 'general' && <GeneralTab space={space} />}
-          {activeTab === 'template' && <TemplateTab />}
-          {activeTab === 'palette' && <PaletteTab />}
-          {activeTab === 'sharing' && <SharingTab />}
-          {activeTab === 'members' && <MembersTab />}
-          {activeTab === 'backups' && <BackupsTab space={space} />}
-          {activeTab === 'export' && <ExportTab />}
-          {activeTab === 'danger' && <DangerTab space={space} />}
-        </>
+        <SpaceTabContent activeTab={activeTab} space={space} />
       ) : (
         <p
           data-testid="space-settings-loading"
@@ -127,6 +114,26 @@ export const SpaceSettingsScreen = () => {
     </SettingsShell>
   );
 };
+
+const SpaceTabContent = ({
+  activeTab,
+  space,
+}: {
+  activeTab: TabId;
+  space: Space;
+}) => (
+  <>
+    {activeTab === 'general' && <GeneralTab space={space} />}
+    {activeTab === 'template' && <TemplateTab />}
+    {activeTab === 'palette' && <PaletteTab />}
+    {activeTab === 'sharing' && <SharingTab />}
+    {activeTab === 'members' && <MembersTab />}
+    {activeTab === 'backups' && <BackupsTab space={space} />}
+    {activeTab === 'sync' && <SpaceSyncTab space={space} />}
+    {activeTab === 'export' && <ExportTab />}
+    {activeTab === 'danger' && <DangerTab space={space} />}
+  </>
+);
 
 const GeneralTab = ({ space }: { space: Space }) => {
   const { t } = useTranslation('screens');
@@ -161,43 +168,33 @@ const GeneralTab = ({ space }: { space: Space }) => {
         breadcrumbKey="settings.space.breadcrumb"
       />
 
-      <SettingRow
+      <SpaceTextSetting
         label={t('settings.space.general.nameLabel')}
         hint={t('settings.space.general.nameHint')}
-      >
-        <TextField
-          data-testid="space-settings-name-input"
-          value={name}
-          onChange={(e) => { setName(e.target.value); }}
-          onBlur={() => void commitName()}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter')
-              (e.currentTarget).blur();
-            if (e.key === 'Escape') setName(space.name);
-          }}
-          aria-label={t('settings.space.general.nameLabel')}
-          className="max-w-[320px]"
-        />
-      </SettingRow>
+        ariaLabel={t('settings.space.general.nameLabel')}
+        testId="space-settings-name-input"
+        value={name}
+        onChange={setName}
+        onCommit={() => void commitName()}
+        onReset={() => {
+          setName(space.name);
+        }}
+        inputClassName="max-w-[320px]"
+      />
 
-      <SettingRow
+      <SpaceTextSetting
         label={t('settings.space.general.tagLabel')}
         hint={t('settings.space.general.tagHint')}
-      >
-        <TextField
-          data-testid="space-settings-tag-input"
-          value={tag}
-          onChange={(e) => { setTag(e.target.value); }}
-          onBlur={() => void commitTag()}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter')
-              (e.currentTarget).blur();
-            if (e.key === 'Escape') setTag(space.tag);
-          }}
-          aria-label={t('settings.space.general.tagLabel')}
-          className="max-w-[120px] font-mono text-[12px] uppercase tracking-wider"
-        />
-      </SettingRow>
+        ariaLabel={t('settings.space.general.tagLabel')}
+        testId="space-settings-tag-input"
+        value={tag}
+        onChange={setTag}
+        onCommit={() => void commitTag()}
+        onReset={() => {
+          setTag(space.tag);
+        }}
+        inputClassName="max-w-[120px] font-mono text-[12px] uppercase tracking-wider"
+      />
     </section>
   );
 };
@@ -261,7 +258,7 @@ const BackupsTab = ({ space }: { space: Space }) => {
       const { backup, filename } = await createSpaceBackup(space.id);
       downloadBlob(backup.payload, filename);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(errorMessage(err));
     } finally {
       setBusy(false);
     }
@@ -285,143 +282,22 @@ const BackupsTab = ({ space }: { space: Space }) => {
         breadcrumbKey="settings.space.breadcrumb"
       />
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule pb-4">
-        <TypographyP variant="caption">
-          {t('settings.space.backups.retentionHint', {
-            count: MAX_BACKUPS_PER_SPACE,
-          })}
-        </TypographyP>
-        <div className="flex items-center gap-4 text-[12px]">
-          <span
-            aria-disabled="true"
-            className="inline-flex cursor-not-allowed items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-ink-4"
-          >
-            {t('settings.space.backups.restoreLabel')}
-            <ComingSoonBadge />
-          </span>
-          <Button
-            data-testid="space-settings-backups-snapshot"
-            size="sm"
-            onClick={() => void handleSnapshot()}
-            disabled={busy}
-          >
-            {busy
-              ? t('settings.space.backups.snapshotting')
-              : t('settings.space.backups.snapshotNow')}
-          </Button>
-        </div>
-      </div>
+      <BackupsToolbar busy={busy} onSnapshot={() => void handleSnapshot()} />
 
       {error && (
-        <p
-          role="alert"
-          className="mt-3 font-mono text-[11px] uppercase tracking-wider text-ink"
-        >
+        <StatusGlyph kind="error" role="alert" className="mt-3">
           {t('settings.space.backups.snapshotFailed', { message: error })}
-        </p>
+        </StatusGlyph>
       )}
 
-      <div className="mt-6">
-        <TypographyLabel asChild>
-          <h3>{t('settings.space.backups.historyTitle')}</h3>
-        </TypographyLabel>
-        {backups.length === 0 ? (
-          <div className="mx-auto mt-6 max-w-md border border-dashed border-rule bg-paper-2/40 p-6 text-center">
-            <TypographyP variant="caption" className="text-[14px] text-ink-2">
-              {t('settings.space.backups.empty')}
-            </TypographyP>
-          </div>
-        ) : (
-          <table
-            data-testid="backups-history"
-            className="mt-3 w-full border-collapse text-[13px]"
-          >
-            <thead>
-              <tr className="border-b border-rule font-mono text-[9px] uppercase tracking-[0.08em] text-ink-3">
-                <th className="py-2 text-left font-normal">
-                  {t('settings.space.backups.columns.when')}
-                </th>
-                <th className="py-2 text-left font-normal">
-                  {t('settings.space.backups.columns.kind')}
-                </th>
-                <th className="py-2 text-right font-normal">
-                  {t('settings.space.backups.columns.size')}
-                </th>
-                <th className="py-2 text-right font-normal">
-                  {t('settings.space.backups.columns.actions')}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {backups.map((b) => (
-                <tr
-                  key={b.id}
-                  data-testid={`backup-row-${b.id}`}
-                  className="border-b border-rule"
-                >
-                  <td className="py-2.5 font-mono text-[12px] text-ink">
-                    {formatRelativeTime(b.when, t)}
-                  </td>
-                  <td className="py-2.5 font-mono text-[10px] uppercase tracking-wider text-ink-2">
-                    {t(`settings.space.backups.kind.${b.kind}`)}
-                  </td>
-                  <td className="py-2.5 text-right font-mono text-[12px] text-ink-2">
-                    {formatBytes(b.size)}
-                  </td>
-                  <td className="py-2.5 text-right">
-                    <div className="flex items-center justify-end gap-3 text-[12px]">
-                      <Button
-                        data-testid={`backup-row-${b.id}-download`}
-                        kind="ghost"
-                        size="sm"
-                        onClick={() => { handleDownload(b); }}
-                      >
-                        {t('settings.space.backups.download')}
-                      </Button>
-                      {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
-                      <button
-                        data-testid={`backup-row-${b.id}-delete`}
-                        type="button"
-                        onClick={() => void handleDelete(b)}
-                        aria-label={t('settings.space.backups.delete')}
-                        className="text-ink-3 hover:text-ink"
-                      >
-                        {t('settings.space.backups.delete')}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      <BackupsHistoryTable
+        backups={backups}
+        onDownload={handleDownload}
+        onDelete={(b) => void handleDelete(b)}
+      />
     </section>
   );
 };
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-// TODO: move to utils and add tests
-function formatRelativeTime(
-  when: number,
-  t: (key: string) => string,
-  now: number = Date.now(),
-): string {
-  const diffSec = Math.max(0, Math.floor((now - when) / 1000));
-  if (diffSec < 60) return t('settings.space.backups.justNow');
-  const diffMin = Math.floor(diffSec / 60);
-  if (diffMin < 60) return `${diffMin} min ago`;
-  const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return `${diffHr} h ago`;
-  const diffDay = Math.floor(diffHr / 24);
-  if (diffDay < 7) return `${diffDay} d ago`;
-  return new Date(when).toISOString().slice(0, 10);
-}
 
 const DangerTab = ({ space }: { space: Space }) => {
   const { t } = useTranslation('screens');
@@ -469,29 +345,8 @@ const DeleteSpaceDialog = ({
   onOpenChange,
 }: DeleteSpaceDialogProps) => {
   const { t } = useTranslation('screens');
-  const navigate = useNavigate();
-  const [typed, setTyped] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-
-  const canDelete = typed.trim() === space.name && !submitting;
-
-  const handleOpenChange = (next: boolean) => {
-    if (!next) setTyped('');
-    onOpenChange(next);
-  };
-
-  const handleConfirm = async () => {
-    if (!canDelete) return;
-    setSubmitting(true);
-    try {
-      await deleteSpaceCascade(space.id);
-      onOpenChange(false);
-      setTyped('');
-      navigate(routes.home());
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  const { typed, setTyped, canDelete, handleOpenChange, handleConfirm } =
+    useDeleteSpace(space, onOpenChange);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -505,30 +360,20 @@ const DeleteSpaceDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <Label
-          tone="ink3"
-          weight="regular"
-          className="flex flex-col gap-2 font-mono text-[10px] uppercase tracking-wider"
-        >
-          {t('settings.space.danger.typeToConfirm', { name: space.name })}
-          {/* @lint-ignore native-input: bordered (not baseline) input; TextField currently only exposes baseline/bare — bordered variant tracked for PR 5 */}
-          <input
-            data-testid="space-settings-delete-dialog-input"
-            type="text"
-            value={typed}
-            onChange={(e) => { setTyped(e.target.value); }}
-            aria-label={t('settings.space.danger.typeToConfirm', {
-              name: space.name,
-            })}
-            className="w-full border border-rule bg-paper px-3 py-2 text-[14px] text-ink outline-none focus:border-ink"
-          />
-        </Label>
+        <DeleteConfirmField
+          label={t('settings.space.danger.typeToConfirm', { name: space.name })}
+          value={typed}
+          onChange={setTyped}
+          testId="space-settings-delete-dialog-input"
+        />
 
         <div className="flex items-center justify-end gap-2">
           <Button
             data-testid="space-settings-delete-dialog-cancel"
             kind="secondary"
-            onClick={() => { handleOpenChange(false); }}
+            onClick={() => {
+              handleOpenChange(false);
+            }}
           >
             {t('settings.space.danger.cancel')}
           </Button>
@@ -546,34 +391,3 @@ const DeleteSpaceDialog = ({
     </Dialog>
   );
 };
-
-export async function deleteSpaceCascade(spaceId: string): Promise<void> {
-  await db.transaction(
-    'rw',
-    [
-      db.spaces,
-      db.sections,
-      db.docs,
-      db.notes,
-      db.annotations,
-      db.citations,
-      db.connections,
-      db.palettes,
-      db.backups,
-    ],
-    async () => {
-      const docIds = await db.docs.where({ spaceId }).primaryKeys();
-      if (docIds.length > 0) {
-        await db.annotations.where('docId').anyOf(docIds).delete();
-      }
-      await db.docs.where({ spaceId }).delete();
-      await db.sections.where({ spaceId }).delete();
-      await db.notes.where({ spaceId }).delete();
-      await db.citations.where({ spaceId }).delete();
-      await db.connections.where({ spaceId }).delete();
-      await db.palettes.where({ spaceId }).delete();
-      await db.backups.where('scope').equals(spaceId).delete();
-      await db.spaces.delete(spaceId);
-    },
-  );
-}

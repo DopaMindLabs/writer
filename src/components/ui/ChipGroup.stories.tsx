@@ -39,3 +39,25 @@ export const Interactive: Story = {
     return <Stateful />;
   },
 };
+
+export const ValueMode: Story = {
+  render: () => {
+    const Stateful = () => {
+      const [value, setValue] = useState(5);
+      return (
+        <ChipGroup
+          options={[
+            { label: 'Off', value: 0 },
+            { label: '5 min', value: 5 },
+            { label: '15 min', value: 15 },
+            { label: '60 min', value: 60 },
+          ]}
+          value={value}
+          onChange={setValue}
+          label="Sync interval"
+        />
+      );
+    };
+    return <Stateful />;
+  },
+};
