@@ -26,6 +26,10 @@ const config: Config = {
         'warning-bg': 'var(--warning-bg)',
         danger: 'var(--danger)',
         'danger-bg': 'var(--danger-bg)',
+        success: 'var(--success)',
+        'success-bg': 'var(--success-bg)',
+        info: 'var(--info)',
+        'info-bg': 'var(--info-bg)',
       },
       fontFamily: {
         sans: ['Geist', 'system-ui', '-apple-system', 'sans-serif'],
