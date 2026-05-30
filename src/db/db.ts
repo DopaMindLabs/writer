@@ -69,7 +69,7 @@ export class LoremDB extends Dexie {
         .table('notes')
         .toCollection()
         .modify((n: { state?: string }) => {
-          if (n.state === undefined) n.state = 'user';
+          n.state ??= 'user';
         });
     });
 

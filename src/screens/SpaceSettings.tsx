@@ -33,6 +33,7 @@ import {
 import { backupFilename } from '@/lib/backup/buildSpaceMarkdownZip';
 import { downloadBlob } from '@/lib/file-download';
 import { SpaceSyncTab } from '@/components/settings/SpaceSyncTab';
+import { deleteSpaceCascade } from '@/lib/space/deleteSpaceCascade';
 import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import {
@@ -56,9 +57,8 @@ const TAB_IDS = [
 ] as const;
 type TabId = (typeof TAB_IDS)[number];
 
-function isTabId(value: string | null): value is TabId {
-  return value !== null && (TAB_IDS as readonly string[]).includes(value);
-}
+const isTabId = (value: string | null): value is TabId =>
+  value !== null && (TAB_IDS as readonly string[]).includes(value);
 
 export const SpaceSettingsScreen = () => {
   const { t } = useTranslation(['screens', 'chrome', 'common']);
@@ -108,17 +108,7 @@ export const SpaceSettingsScreen = () => {
       onSelect={selectTab}
     >
       {space ? (
-        <>
-          {activeTab === 'general' && <GeneralTab space={space} />}
-          {activeTab === 'template' && <TemplateTab />}
-          {activeTab === 'palette' && <PaletteTab />}
-          {activeTab === 'sharing' && <SharingTab />}
-          {activeTab === 'members' && <MembersTab />}
-          {activeTab === 'backups' && <BackupsTab space={space} />}
-          {activeTab === 'sync' && <SpaceSyncTab space={space} />}
-          {activeTab === 'export' && <ExportTab />}
-          {activeTab === 'danger' && <DangerTab space={space} />}
-        </>
+        <SpaceTabContent activeTab={activeTab} space={space} />
       ) : (
         <p
           data-testid="space-settings-loading"
@@ -131,6 +121,28 @@ export const SpaceSettingsScreen = () => {
   );
 };
 
+const SpaceTabContent = ({
+  activeTab,
+  space,
+}: {
+  activeTab: TabId;
+  space: Space;
+}) => (
+  <>
+    {activeTab === 'general' && <GeneralTab space={space} />}
+    {activeTab === 'template' && <TemplateTab />}
+    {activeTab === 'palette' && <PaletteTab />}
+    {activeTab === 'sharing' && <SharingTab />}
+    {activeTab === 'members' && <MembersTab />}
+    {activeTab === 'backups' && <BackupsTab space={space} />}
+    {activeTab === 'sync' && <SpaceSyncTab space={space} />}
+    {activeTab === 'export' && <ExportTab />}
+    {activeTab === 'danger' && <DangerTab space={space} />}
+  </>
+);
+
+// nasa-exception: max-lines-per-function (cohesive settings-tab render)
+// eslint-disable-next-line max-lines-per-function
 const GeneralTab = ({ space }: { space: Space }) => {
   const { t } = useTranslation('screens');
   const [name, setName] = useState(space.name);
@@ -251,6 +263,8 @@ const ExportTab = () => {
   );
 };
 
+// nasa-exception: max-lines-per-function (cohesive settings-tab render)
+// eslint-disable-next-line max-lines-per-function
 const BackupsTab = ({ space }: { space: Space }) => {
   const { t } = useTranslation('screens');
   const backups = useBackups(space.id);
@@ -403,28 +417,27 @@ const BackupsTab = ({ space }: { space: Space }) => {
   );
 };
 
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
+const formatBytes = (bytes: number): string => {
+  if (bytes < 1024) return `${String(bytes)} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
+};
 
-// TODO: move to utils and add tests
-function formatRelativeTime(
+const formatRelativeTime = (
   when: number,
   t: (key: string) => string,
   now: number = Date.now(),
-): string {
+): string => {
   const diffSec = Math.max(0, Math.floor((now - when) / 1000));
   if (diffSec < 60) return t('settings.space.backups.justNow');
   const diffMin = Math.floor(diffSec / 60);
-  if (diffMin < 60) return `${diffMin} min ago`;
+  if (diffMin < 60) return `${String(diffMin)} min ago`;
   const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return `${diffHr} h ago`;
+  if (diffHr < 24) return `${String(diffHr)} h ago`;
   const diffDay = Math.floor(diffHr / 24);
-  if (diffDay < 7) return `${diffDay} d ago`;
+  if (diffDay < 7) return `${String(diffDay)} d ago`;
   return new Date(when).toISOString().slice(0, 10);
-}
+};
 
 const DangerTab = ({ space }: { space: Space }) => {
   const { t } = useTranslation('screens');
@@ -466,6 +479,8 @@ interface DeleteSpaceDialogProps {
   onOpenChange: (next: boolean) => void;
 }
 
+// nasa-exception: max-lines-per-function (cohesive dialog render)
+// eslint-disable-next-line max-lines-per-function
 const DeleteSpaceDialog = ({
   space,
   open,
@@ -490,7 +505,7 @@ const DeleteSpaceDialog = ({
       await deleteSpaceCascade(space.id);
       onOpenChange(false);
       setTyped('');
-      navigate(routes.home());
+      await navigate(routes.home());
     } finally {
       setSubmitting(false);
     }
@@ -549,38 +564,3 @@ const DeleteSpaceDialog = ({
     </Dialog>
   );
 };
-
-export async function deleteSpaceCascade(spaceId: string): Promise<void> {
-  await db.transaction(
-    'rw',
-    [
-      db.spaces,
-      db.sections,
-      db.docs,
-      db.notes,
-      db.annotations,
-      db.citations,
-      db.connections,
-      db.palettes,
-      db.backups,
-      db.syncs,
-      db.syncConfigs,
-    ],
-    async () => {
-      const docIds = await db.docs.where({ spaceId }).primaryKeys();
-      if (docIds.length > 0) {
-        await db.annotations.where('docId').anyOf(docIds).delete();
-      }
-      await db.docs.where({ spaceId }).delete();
-      await db.sections.where({ spaceId }).delete();
-      await db.notes.where({ spaceId }).delete();
-      await db.citations.where({ spaceId }).delete();
-      await db.connections.where({ spaceId }).delete();
-      await db.palettes.where({ spaceId }).delete();
-      await db.backups.where('scope').equals(spaceId).delete();
-      await db.syncs.where({ spaceId }).delete();
-      await db.syncConfigs.delete(spaceId);
-      await db.spaces.delete(spaceId);
-    },
-  );
-}

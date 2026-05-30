@@ -11,10 +11,8 @@ import {
   seedBasicSpace,
 } from '@/test/fixtures';
 import type { Annotation, Backup, Citation, Connection } from '@/db/schema';
-import {
-  deleteSpaceCascade,
-  SpaceSettingsScreen,
-} from './SpaceSettings';
+import { SpaceSettingsScreen } from './SpaceSettings';
+import { deleteSpaceCascade } from '@/lib/space/deleteSpaceCascade';
 
 const renderAtSpaceSettings = (initialPath = '/s/s1/settings') => {
   return renderAtRoute(<SpaceSettingsScreen />, {
@@ -211,7 +209,7 @@ describe('SpaceSettingsScreen', () => {
       const user = userEvent.setup();
       const clickSpy = vi
         .spyOn(HTMLAnchorElement.prototype, 'click')
-        .mockImplementation(() => {});
+        .mockImplementation(() => undefined);
       renderAtSpaceSettings('/s/s1/settings?tab=backups');
       await user.click(
         await screen.findByTestId('space-settings-backups-snapshot'),

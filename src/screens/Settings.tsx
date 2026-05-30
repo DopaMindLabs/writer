@@ -44,9 +44,8 @@ const TAB_IDS = [
 type TabId = (typeof TAB_IDS)[number];
 type PlaceholderTabId = Exclude<TabId, 'editor' | 'sync'>;
 
-function isTabId(value: string | null): value is TabId {
-  return value !== null && (TAB_IDS as readonly string[]).includes(value);
-}
+const isTabId = (value: string | null): value is TabId =>
+  value !== null && (TAB_IDS as readonly string[]).includes(value);
 
 const PLACEHOLDERS: Record<PlaceholderTabId, () => ReactElement> = {
   general: GeneralPlaceholder,
