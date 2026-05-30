@@ -30,7 +30,9 @@ test.describe('Workflow: capturing ideas in the brain space', () => {
     });
 
     await test.step('And they edit a note title inline', async () => {
-      const note = noteCards.first();
+      // Operate on the most-recently-added note: canvas notes are absolutely
+      // positioned and overlap, so the last one is painted on top (not occluded).
+      const note = noteCards.last();
       await note.hover();
       await note.locator('[data-testid$="-add-title"]').click();
       const input = note.locator('[data-testid$="-title-input"]');
@@ -40,7 +42,7 @@ test.describe('Workflow: capturing ideas in the brain space', () => {
     });
 
     await test.step('And they enrich it via the detail drawer and link a doc', async () => {
-      const note = noteCards.first();
+      const note = noteCards.last();
       await note.hover();
       await note.locator('[data-testid$="-open-details"]').click();
       const drawer = page.getByTestId('brain-detail-drawer');

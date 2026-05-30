@@ -12,14 +12,24 @@ import {
 interface SpaceProbe {
   id: string;
   probe: string;
-  docUrl: string;
+  docPath: string;
 }
 
+// Force a real cross-document navigation to a hash route. A plain hash-only
+// `goto` can be a no-op in a HashRouter SPA (the doc never actually switches),
+// so a unique query changes path+search and guarantees a fresh load.
+const hardGoto = async (page: Page, hash: string): Promise<void> => {
+  await page.goto(`/?n=${Date.now()}#${hash}`);
+};
+
 const draftProbe = async (page: Page, sp: SpaceProbe): Promise<void> => {
-  await page.goto(`/#/s/${sp.id}`);
-  await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
-  sp.docUrl = page.url();
+  await hardGoto(page, `/s/${sp.id}`);
+  // Wait for *this* space's doc specifically — a generic /d/ match would accept
+  // a stale prior-space URL and type into the wrong doc.
+  await page.waitForURL(new RegExp(`/s/${sp.id}/d/`));
+  sp.docPath = new URL(page.url()).hash;
   const editor = page.locator('[aria-label="Document body"]');
+  await expect(editor).toBeVisible();
   await editor.click();
   await page.keyboard.type(sp.probe);
   await expect(editor).toContainText(sp.probe);
@@ -47,10 +57,11 @@ test.describe('Workflow: switching between spaces stays isolated', () => {
         name: 'Fiction space',
         tag: 'FIC',
       });
+      const stamp = Date.now();
       spaces.push(
-        { id: bioId, probe: `bio-${Date.now()}`, docUrl: '' },
-        { id: humId, probe: `hum-${Date.now()}`, docUrl: '' },
-        { id: ficId, probe: `fic-${Date.now()}`, docUrl: '' },
+        { id: bioId, probe: `bio-${stamp}`, docPath: '' },
+        { id: humId, probe: `hum-${stamp}`, docPath: '' },
+        { id: ficId, probe: `fic-${stamp}`, docPath: '' },
       );
     });
 
@@ -72,7 +83,8 @@ test.describe('Workflow: switching between spaces stays isolated', () => {
 
     await test.step('Then each space shows only its own content', async () => {
       for (const sp of spaces) {
-        await page.goto(sp.docUrl);
+        await hardGoto(page, sp.docPath.replace(/^#/, ''));
+        await page.waitForURL(new RegExp(`/s/${sp.id}/d/`));
         const editor = page.locator('[aria-label="Document body"]');
         await expect(editor).toContainText(sp.probe);
         for (const other of spaces) {
