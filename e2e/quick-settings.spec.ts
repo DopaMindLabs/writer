@@ -1,26 +1,14 @@
 import { test, expect } from './_helpers';
-import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
+import { reseedAndGoHome, gotoFirstDoc } from './_helpers';
 
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
 });
 
-async function gotoFirstDoc(page: import('@playwright/test').Page): Promise<{
-  spaceId: string;
-  docId: string;
-}> {
-  const spaceId = await getFirstSpaceIdFromHome(page);
-  await page.goto(`/#/s/${spaceId}`);
-  await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
-  const docId = new URL(page.url()).hash.match(/\/d\/([^/?]+)/)?.[1];
-  if (!docId) throw new Error(`Could not extract docId from ${page.url()}`);
-  return { spaceId, docId };
-}
-
-async function openQuickSettings(page: import('@playwright/test').Page) {
+const openQuickSettings = async (page: import('@playwright/test').Page): Promise<void> => {
   await page.getByRole('button', { name: /LIpsum Writer/i }).first().click();
   await expect(page.getByTestId('quick-settings-popover')).toBeVisible();
-}
+};
 
 test('opens the quick settings popover from the rail trigger', async ({ page }) => {
   const { spaceId, docId } = await gotoFirstDoc(page);
