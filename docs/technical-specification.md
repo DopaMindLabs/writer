@@ -22,6 +22,8 @@
 
 **Tech stack.** React 19, Vite, TypeScript, Lexical (editor), Dexie (IndexedDB), Zustand (state), Tailwind, Radix UI primitives, Driver.js (tours), i18next (i18n).
 
+**Design system.** UI tokens, principles, and primitives are documented in [design-system.md](./design-system.md) — the single source of truth for components under `src/components/ui/` and the chrome/settings/surfaces that compose them.
+
 **License.** PolyForm Noncommercial 1.0.0 — free for personal, research, non-profit use.
 
 ---
