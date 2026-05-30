@@ -168,11 +168,11 @@ const GeneralTab = ({ space }: { space: Space }) => {
         <TextField
           data-testid="space-settings-name-input"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => { setName(e.target.value); }}
           onBlur={() => void commitName()}
           onKeyDown={(e) => {
             if (e.key === 'Enter')
-              (e.currentTarget as HTMLInputElement).blur();
+              (e.currentTarget).blur();
             if (e.key === 'Escape') setName(space.name);
           }}
           aria-label={t('settings.space.general.nameLabel')}
@@ -187,11 +187,11 @@ const GeneralTab = ({ space }: { space: Space }) => {
         <TextField
           data-testid="space-settings-tag-input"
           value={tag}
-          onChange={(e) => setTag(e.target.value)}
+          onChange={(e) => { setTag(e.target.value); }}
           onBlur={() => void commitTag()}
           onKeyDown={(e) => {
             if (e.key === 'Enter')
-              (e.currentTarget as HTMLInputElement).blur();
+              (e.currentTarget).blur();
             if (e.key === 'Escape') setTag(space.tag);
           }}
           aria-label={t('settings.space.general.tagLabel')}
@@ -374,7 +374,7 @@ const BackupsTab = ({ space }: { space: Space }) => {
                         data-testid={`backup-row-${b.id}-download`}
                         kind="ghost"
                         size="sm"
-                        onClick={() => handleDownload(b)}
+                        onClick={() => { handleDownload(b); }}
                       >
                         {t('settings.space.backups.download')}
                       </Button>
@@ -444,7 +444,7 @@ const DangerTab = ({ space }: { space: Space }) => {
           data-testid="space-settings-danger-delete-trigger"
           kind="dangerous"
           size="sm"
-          onClick={() => setOpen(true)}
+          onClick={() => { setOpen(true); }}
           className="mt-5"
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -516,7 +516,7 @@ const DeleteSpaceDialog = ({
             data-testid="space-settings-delete-dialog-input"
             type="text"
             value={typed}
-            onChange={(e) => setTyped(e.target.value)}
+            onChange={(e) => { setTyped(e.target.value); }}
             aria-label={t('settings.space.danger.typeToConfirm', {
               name: space.name,
             })}
@@ -528,7 +528,7 @@ const DeleteSpaceDialog = ({
           <Button
             data-testid="space-settings-delete-dialog-cancel"
             kind="secondary"
-            onClick={() => handleOpenChange(false)}
+            onClick={() => { handleOpenChange(false); }}
           >
             {t('settings.space.danger.cancel')}
           </Button>

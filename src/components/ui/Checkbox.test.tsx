@@ -70,7 +70,7 @@ describe('Checkbox', () => {
           <Checkbox
             data-testid="cb-toggle"
             checked={v}
-            onChange={(e) => setV(e.target.checked)}
+            onChange={(e) => { setV(e.target.checked); }}
             label="t"
           />
         );

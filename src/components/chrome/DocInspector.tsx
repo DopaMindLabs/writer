@@ -35,7 +35,7 @@ export const DocInspector = ({ docName }: DocInspectorProps) => {
           data-testid="doc-inspector-collapse"
           icon={ChevronRight}
           label={t('inspector.collapse')}
-          onClick={() => setInspectorMode('icons')}
+          onClick={() => { setInspectorMode('icons'); }}
           className="h-5 w-5"
         />
       </div>
@@ -49,7 +49,7 @@ export const DocInspector = ({ docName }: DocInspectorProps) => {
               key={id}
               data-testid={`doc-inspector-tab-${id}`}
               type="button"
-              onClick={() => setSection(id)}
+              onClick={() => { setSection(id); }}
               aria-current={on ? 'page' : undefined}
               className={cn(
                 'flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors',

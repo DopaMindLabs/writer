@@ -24,8 +24,8 @@ export const Controlled: Story = {
           <SearchField
             {...args}
             value={v}
-            onChange={(e) => setV(e.target.value)}
-            onClear={() => setV('')}
+            onChange={(e) => { setV(e.target.value); }}
+            onClear={() => { setV(''); }}
           />
         </div>
       );

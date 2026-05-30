@@ -182,9 +182,9 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
             variant="bare"
             autoFocus
             value={draftSpaceName}
-            onChange={(e) => setDraftSpaceName(e.target.value)}
+            onChange={(e) => { setDraftSpaceName(e.target.value); }}
             onBlur={commitSpaceName}
-            onFocus={(e) => e.currentTarget.select()}
+            onFocus={(e) => { e.currentTarget.select(); }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
               if (e.key === 'Escape') {
@@ -234,7 +234,7 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
                 >
                   <SpaceMenuPopover
                     space={space}
-                    onRename={() => setEditingSpaceName(true)}
+                    onRename={() => { setEditingSpaceName(true); }}
                   />
                 </PopoverContent>
               </Popover>
@@ -270,7 +270,7 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
               <SectionHeader
                 sectionId={sec.id}
                 label={sec.label}
-                onAdd={() => startAdd(sec.id, sec.label, null)}
+                onAdd={() => { startAdd(sec.id, sec.label, null); }}
               />
               {isWorkshop && (
                 <BrainSpaceLink
@@ -292,9 +292,9 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
                   ref={inputRef}
                   sectionId={sec.id}
                   value={adding.value}
-                  onChange={(v) => setAdding({ ...adding, value: v })}
+                  onChange={(v) => { setAdding({ ...adding, value: v }); }}
                   onKeyDown={onAddKey}
-                  onBlur={() => setAdding(null)}
+                  onBlur={() => { setAdding(null); }}
                 />
               )}
               {subs.map((sub) => {
@@ -309,7 +309,7 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
                       sectionId={sub.id}
                       label={`↳ ${sub.label}`}
                       indented
-                      onAdd={() => startAdd(sub.id, sec.label, sub.label)}
+                      onAdd={() => { startAdd(sub.id, sec.label, sub.label); }}
                     />
                     {subDocs.length === 0 && adding?.sectionId !== sub.id && (
                       <div
@@ -334,9 +334,9 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
                         sectionId={sub.id}
                         value={adding.value}
                         indented
-                        onChange={(v) => setAdding({ ...adding, value: v })}
+                        onChange={(v) => { setAdding({ ...adding, value: v }); }}
                         onKeyDown={onAddKey}
-                        onBlur={() => setAdding(null)}
+                        onBlur={() => { setAdding(null); }}
                       />
                     )}
                   </div>
@@ -453,7 +453,7 @@ const AddDocInput = forwardRef<HTMLInputElement, AddDocInputProps>(
           ref={ref}
           variant="bare"
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => { onChange(e.target.value); }}
           onKeyDown={onKeyDown}
           onBlur={onBlur}
           placeholder={t('sidebar.docNamePlaceholder')}

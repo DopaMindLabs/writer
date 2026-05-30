@@ -99,7 +99,7 @@ export const Topbar = ({
     // @lint-ignore native-button: custom toolbar trigger (rendered as either icon-pill in focus mode or lowercase text in normal mode); DS Button kinds don't fit either shape
     <button
       type="button"
-      onClick={() => openCitationsDrawer()}
+      onClick={() => { openCitationsDrawer(); }}
       data-tour="tour-topbar-citations"
       data-testid="topbar-citations"
       aria-label={t('topbar.citations')}
@@ -119,7 +119,7 @@ export const Topbar = ({
         icon={Menu}
         iconSize="md"
         label={t('topbar.openNav')}
-        onClick={() => setMobileNavOpen(true)}
+        onClick={() => { setMobileNavOpen(true); }}
         className="md:hidden"
       />
       <div className="flex items-center gap-1.5 font-serif text-[14px] text-ink-3">
@@ -135,9 +135,9 @@ export const Topbar = ({
                 variant="bare"
                 autoFocus
                 value={draftDocName}
-                onChange={(e) => setDraftDocName(e.target.value)}
+                onChange={(e) => { setDraftDocName(e.target.value); }}
                 onBlur={commitDocName}
-                onFocus={(e) => e.currentTarget.select()}
+                onFocus={(e) => { e.currentTarget.select(); }}
                 onKeyDown={onDocKeyDown}
                 aria-label={t('topbar.renameDoc')}
                 className="w-40 font-serif text-[14px] font-medium"

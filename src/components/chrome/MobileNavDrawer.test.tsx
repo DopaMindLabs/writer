@@ -37,7 +37,7 @@ describe('MobileNavDrawer', () => {
     const close = await screen.findByRole('button', { name: /close|nav\.close/i });
     await userEvent.click(close);
     await waitFor(() =>
-      expect(useUI.getState().mobileNavOpen).toBe(false),
+      { expect(useUI.getState().mobileNavOpen).toBe(false); },
     );
   });
 });

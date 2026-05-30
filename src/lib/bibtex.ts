@@ -3,19 +3,19 @@ import { db } from '@/db/db';
 import { newId } from './ids';
 import type { Citation } from '@/db/schema';
 
-type Creator = {
+interface Creator {
   name?: string;
   firstName?: string;
   lastName?: string;
   prefix?: string;
   suffix?: string;
-};
+}
 
-type RawEntry = {
+interface RawEntry {
   key?: string;
   type?: string;
   fields?: Record<string, unknown>;
-};
+}
 
 export async function parseBibtexText(
   text: string,
@@ -73,14 +73,14 @@ export async function importCitations(
 
 function stringField(v: unknown): string | undefined {
   if (typeof v === 'string') return v.trim();
-  if (Array.isArray(v) && typeof v[0] === 'string') return (v[0] as string).trim();
+  if (Array.isArray(v) && typeof v[0] === 'string') return (v[0]).trim();
   return undefined;
 }
 
 function numberField(v: unknown): number | undefined {
   if (typeof v === 'number') return v;
   if (typeof v === 'string') {
-    const m = v.match(/\d{4}/);
+    const m = /\d{4}/.exec(v);
     if (m) return parseInt(m[0], 10);
   }
   return undefined;

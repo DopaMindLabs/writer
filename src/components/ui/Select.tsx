@@ -33,7 +33,7 @@ type SelectRecipeVariants = VariantProps<typeof selectRecipe>;
 export interface SelectProps
   extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'>,
     Omit<SelectRecipeVariants, 'tone'> {
-  options: ReadonlyArray<SelectOption>;
+  options: readonly SelectOption[];
   error?: boolean;
   /** Hide the trailing chevron (only meaningful for variant="bare"). */
   hideChevron?: boolean;

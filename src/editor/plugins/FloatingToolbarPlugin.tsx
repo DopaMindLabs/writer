@@ -160,7 +160,7 @@ const FloatingToolbarPluginImpl = () => {
 
       setFormats(readActiveFormats(editor));
       if (hasRangeSelection) {
-        const rect = domSelection!.getRangeAt(0).getBoundingClientRect();
+        const rect = domSelection.getRangeAt(0).getBoundingClientRect();
         setAnchor(positionFromRect(rect));
       } else {
         setAnchor(positionFromPoint(event.clientX, event.clientY));
@@ -187,7 +187,7 @@ const FloatingToolbarPluginImpl = () => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setAnchor(null);
     };
-    const onScroll = () => setAnchor(null);
+    const onScroll = () => { setAnchor(null); };
 
     document.addEventListener('pointerdown', onPointerDown, true);
     document.addEventListener('keydown', onKeyDown, true);

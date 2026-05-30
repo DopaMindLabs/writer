@@ -3,7 +3,7 @@ import { ThemeProvider, useTheme } from './ThemeProvider';
 import { useUI } from '@/store/ui';
 
 beforeEach(() => {
-  act(() => useUI.setState({ theme: 'light' }));
+  act(() => { useUI.setState({ theme: 'light' }); });
 });
 
 describe('ThemeProvider', () => {
@@ -22,11 +22,11 @@ describe('ThemeProvider', () => {
     );
     const { result } = renderHook(() => useTheme(), { wrapper });
 
-    act(() => result.current.setTheme('hc-light'));
+    act(() => { result.current.setTheme('hc-light'); });
     expect(useUI.getState().theme).toBe('hc-light');
     expect(document.documentElement.getAttribute('data-theme')).toBe('hc-light');
 
-    act(() => result.current.setTheme('hc-dark'));
+    act(() => { result.current.setTheme('hc-dark'); });
     expect(document.documentElement.getAttribute('data-theme')).toBe('hc-dark');
   });
 
@@ -35,7 +35,7 @@ describe('ThemeProvider', () => {
       <ThemeProvider>{children}</ThemeProvider>
     );
     const { result } = renderHook(() => useTheme(), { wrapper });
-    act(() => result.current.setTheme('dark'));
+    act(() => { result.current.setTheme('dark'); });
     expect(useUI.getState().theme).toBe('dark');
   });
 
@@ -63,7 +63,7 @@ describe('ThemeProvider', () => {
           removeListener: () => {},
           dispatchEvent: () => false,
           onchange: null,
-        }) as unknown as MediaQueryList,
+        }),
       );
     render(
       <ThemeProvider>
@@ -88,7 +88,7 @@ describe('ThemeProvider', () => {
           removeListener: () => {},
           dispatchEvent: () => false,
           onchange: null,
-        }) as unknown as MediaQueryList,
+        }),
       );
     render(
       <ThemeProvider>
@@ -114,7 +114,7 @@ describe('ThemeProvider', () => {
             removeListener: () => {},
             dispatchEvent: () => false,
             onchange: null,
-          }) as unknown as MediaQueryList,
+          }),
       );
     render(
       <ThemeProvider>

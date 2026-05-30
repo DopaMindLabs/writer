@@ -110,7 +110,7 @@ describe('CitationsPane', () => {
       await userEvent.click(screen.getByTestId('citations-add-toggle'));
       const textarea = (await screen.findByTestId(
         'citations-manual-add-input',
-      )) as HTMLTextAreaElement;
+      ));
       fireEvent.change(textarea, {
         target: {
           value:
@@ -132,7 +132,7 @@ describe('CitationsPane', () => {
       await userEvent.click(screen.getByTestId('citations-add-toggle'));
       const textarea = (await screen.findByTestId(
         'citations-manual-add-input',
-      )) as HTMLTextAreaElement;
+      ));
       await userEvent.type(textarea, '   ');
       expect(
         screen.getByTestId('citations-manual-add-submit'),
@@ -168,7 +168,7 @@ describe('CitationsPane', () => {
       renderPane();
       const fileInput = screen.getByTestId(
         'citations-file-input',
-      ) as HTMLInputElement;
+      );
       const file = new File(
         [
           '@book{frost1916, author = {Frost, R.}, title = {Mountain Interval}, year = {1916}}',
@@ -187,7 +187,7 @@ describe('CitationsPane', () => {
       renderPane();
       const fileInput = screen.getByTestId(
         'citations-file-input',
-      ) as HTMLInputElement;
+      );
       const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       const bad = new File(['not bibtex content'], 'bad.bib', {
         type: 'application/x-bibtex',
@@ -205,7 +205,7 @@ describe('CitationsPane', () => {
       renderPane();
       const fileInput = screen.getByTestId(
         'citations-file-input',
-      ) as HTMLInputElement;
+      );
       const file = new File(
         [
           '@book{frost1916, author = {Frost, R.}, title = {Mountain Interval}, year = {1916}}',
@@ -232,7 +232,7 @@ describe('CitationsPane', () => {
       renderPane();
       const fileInput = screen.getByTestId(
         'citations-file-input',
-      ) as HTMLInputElement;
+      );
       const file = new File(['anything'], 'x.bib', {
         type: 'application/x-bibtex',
       });
@@ -252,7 +252,7 @@ describe('CitationsPane', () => {
       renderPane();
       const fileInput = screen.getByTestId(
         'citations-file-input',
-      ) as HTMLInputElement;
+      );
       const clickSpy = vi
         .spyOn(fileInput, 'click')
         .mockImplementation(() => {});
@@ -662,7 +662,7 @@ describe('CitationsPane', () => {
       );
       const typeSelect = (await screen.findByTestId(
         'citation-edit-c-base-type',
-      )) as HTMLSelectElement;
+      ));
       await userEvent.selectOptions(typeSelect, 'chapter');
       await userEvent.click(screen.getByTestId('citation-edit-c-base-save'));
       await waitFor(async () => {
@@ -767,9 +767,9 @@ describe('CitationsPane', () => {
       await userEvent.click(screen.getByTestId('citation-row-c1-select'));
       const typeSelect = (await screen.findByTestId(
         'citations-bulk-set-type',
-      )) as HTMLSelectElement;
+      ));
       await userEvent.selectOptions(typeSelect, 'book');
-      await waitFor(() => expect(typeSelect.value).toBe(''));
+      await waitFor(() => { expect(typeSelect.value).toBe(''); });
     });
 
     it('should leave rows intact when the bulk-delete confirmation is declined', async () => {
@@ -819,7 +819,7 @@ describe('CitationsPane', () => {
       renderPane();
       const selectAll = (await screen.findByTestId(
         'citations-select-all',
-      )) as HTMLInputElement;
+      ));
       expect(selectAll).toHaveAttribute(
         'aria-label',
         'Select all citations on this page',

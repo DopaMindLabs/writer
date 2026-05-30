@@ -136,7 +136,7 @@ describe('Topbar', () => {
     });
 
     it('should auto-close the inspector when focus mode is enabled', () => {
-      act(() => useUI.getState().setInspectorMode('expanded'));
+      act(() => { useUI.getState().setInspectorMode('expanded'); });
       renderWithProviders(
         <Topbar spaceId="s1" docId="d1" docName="Sample" mode="focus" />,
         { initialEntries: ['/s/s1/d/d1?focus=1'] },

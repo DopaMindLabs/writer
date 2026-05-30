@@ -65,38 +65,38 @@ export const FloatingToolbar = forwardRef<HTMLDivElement, FloatingToolbarProps>(
           label="H1"
           ariaLabel="Heading 1"
           active={block === 'h1'}
-          onMouseDown={() => onHeading('h1')}
+          onMouseDown={() => { onHeading('h1'); }}
         />
         <Btn
           label="H2"
           ariaLabel="Heading 2"
           active={block === 'h2'}
-          onMouseDown={() => onHeading('h2')}
+          onMouseDown={() => { onHeading('h2'); }}
         />
         <Btn
           label="H3"
           ariaLabel="Heading 3"
           active={block === 'h3'}
-          onMouseDown={() => onHeading('h3')}
+          onMouseDown={() => { onHeading('h3'); }}
         />
         <Btn
           label="H4"
           ariaLabel="Heading 4"
           active={block === 'h4'}
-          onMouseDown={() => onHeading('h4')}
+          onMouseDown={() => { onHeading('h4'); }}
         />
         <Sep />
         <Btn
           label="•"
           ariaLabel="Bullet list"
           active={block === 'bullet'}
-          onMouseDown={() => onList('bullet')}
+          onMouseDown={() => { onList('bullet'); }}
         />
         <Btn
           label="1."
           ariaLabel="Numbered list"
           active={block === 'number'}
-          onMouseDown={() => onList('number')}
+          onMouseDown={() => { onList('number'); }}
         />
         <Btn
           label="“"

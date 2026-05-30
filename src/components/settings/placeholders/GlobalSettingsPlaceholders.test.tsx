@@ -2,7 +2,7 @@ import type { ComponentType } from 'react';
 import { renderWithProviders } from '@/test/test-utils';
 import * as Placeholders from './GlobalSettingsPlaceholders';
 
-const COMPONENTS: Array<keyof typeof Placeholders> = [
+const COMPONENTS: (keyof typeof Placeholders)[] = [
   'GeneralPlaceholder',
   'AppearancePlaceholder',
   'TypographyPlaceholder',

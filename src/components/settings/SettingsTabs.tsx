@@ -32,7 +32,7 @@ const TabButton = ({
     <button
       type="button"
       data-testid={testId}
-      onClick={() => onSelect(tab.id)}
+      onClick={() => { onSelect(tab.id); }}
       aria-current={active ? 'page' : undefined}
       className={cn(
         'flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5',

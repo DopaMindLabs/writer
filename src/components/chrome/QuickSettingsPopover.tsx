@@ -157,7 +157,7 @@ export const QuickSettingsPopover = () => {
               <TooltipTrigger asChild>
                 <Chip
                   active={theme === opt.id}
-                  onClick={() => setTheme(opt.id)}
+                  onClick={() => { setTheme(opt.id); }}
                   className="px-2 py-0.5 text-[10px]"
                   aria-label={t(`chrome:${opt.titleKey}`)}
                   data-testid={`quick-settings-theme-${opt.id}`}
@@ -188,7 +188,7 @@ export const QuickSettingsPopover = () => {
       <Row label={t('chrome:quickSettings.floatingToolbarLabel')}>
         <PillToggle
           on={floatingToolbar}
-          onToggle={() => setFloatingToolbar(!floatingToolbar)}
+          onToggle={() => { setFloatingToolbar(!floatingToolbar); }}
           label={t('chrome:quickSettings.floatingToolbarLabel')}
           data-testid="quick-settings-floating-toolbar-toggle"
         />
@@ -203,7 +203,7 @@ export const QuickSettingsPopover = () => {
             <Chip
               key={w}
               active={readingWidth === w}
-              onClick={() => setReadingWidth(w)}
+              onClick={() => { setReadingWidth(w); }}
               className="px-2 py-0.5 text-[10px] uppercase"
               data-testid={`quick-settings-width-${w}`}
             >
@@ -222,7 +222,7 @@ export const QuickSettingsPopover = () => {
         return (
           <MenuItem
             key={id}
-            onClick={() => handleTour(id)}
+            onClick={() => { handleTour(id); }}
             done={done}
             kbd={id === 'welcome' ? t('chrome:quickSettings.helpKbd') : undefined}
             testId={`quick-settings-tour-${id}`}

@@ -229,8 +229,8 @@ export const CitationsPane = ({
         <div className="w-full md:w-[360px] md:max-w-[40%]">
           <SearchField
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onClear={() => setQuery('')}
+            onChange={(e) => { setQuery(e.target.value); }}
+            onClear={() => { setQuery(''); }}
             placeholder="authors, tags, year…"
             className="text-[12px]"
             data-testid="citations-search"
@@ -248,7 +248,7 @@ export const CitationsPane = ({
           {/* @lint-ignore native-button: muted text-action toggle ("+ add" / "× cancel"); no matching DS Button kind */}
           <button
             type="button"
-            onClick={() => setAdding((v) => !v)}
+            onClick={() => { setAdding((v) => !v); }}
             className="text-ink-3 hover:text-ink"
             data-testid="citations-add-toggle"
           >
@@ -283,7 +283,7 @@ export const CitationsPane = ({
         <BulkBar
           xPad={xPad}
           count={selected.size}
-          onClear={() => setSelected(new Set())}
+          onClear={() => { setSelected(new Set()); }}
           onDelete={handleBulkDelete}
           onSetType={handleBulkSetType}
         />
@@ -293,7 +293,7 @@ export const CitationsPane = ({
         <ManualAddForm
           spaceId={spaceId}
           xPad={xPad}
-          onClose={() => setAdding(false)}
+          onClose={() => { setAdding(false); }}
           onStatus={setStatus}
         />
       )}
@@ -339,13 +339,13 @@ export const CitationsPane = ({
                   key={c.id}
                   citation={c}
                   xPad={xPad}
-                  onCancel={() => setOpenRow({ id: c.id, mode: 'view' })}
+                  onCancel={() => { setOpenRow({ id: c.id, mode: 'view' }); }}
                   onSaved={() => {
                     setOpenRow({ id: c.id, mode: 'view' });
                     setStatus('Updated 1 citation.');
                   }}
                   onDelete={() => deleteCitation(c)}
-                  onError={(msg) => setStatus(msg)}
+                  onError={(msg) => { setStatus(msg); }}
                 />
               );
             }
@@ -356,10 +356,10 @@ export const CitationsPane = ({
                   citation={c}
                   xPad={xPad}
                   isSelected={selected.has(c.id)}
-                  onToggleSelect={() => toggleSelected(c.id)}
-                  onEdit={() => setOpenRow({ id: c.id, mode: 'edit' })}
+                  onToggleSelect={() => { toggleSelected(c.id); }}
+                  onEdit={() => { setOpenRow({ id: c.id, mode: 'edit' }); }}
                   onDelete={() => deleteCitation(c)}
-                  onClose={() => setOpenRow(null)}
+                  onClose={() => { setOpenRow(null); }}
                 />
               );
             }
@@ -371,8 +371,8 @@ export const CitationsPane = ({
                 colTemplate={colTemplate}
                 xPad={xPad}
                 isSelected={selected.has(c.id)}
-                onToggleSelect={() => toggleSelected(c.id)}
-                onExpand={() => setOpenRow({ id: c.id, mode: 'view' })}
+                onToggleSelect={() => { toggleSelected(c.id); }}
+                onExpand={() => { setOpenRow({ id: c.id, mode: 'view' }); }}
               />
             );
           })
@@ -404,7 +404,7 @@ export const CitationsPane = ({
               <IconButton
                 icon={ChevronLeft}
                 label="Previous page"
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                onClick={() => { setPage((p) => Math.max(0, p - 1)); }}
                 disabled={currentPage === 0}
                 iconSize="xs"
                 className="h-5 w-5"
@@ -417,7 +417,7 @@ export const CitationsPane = ({
                 icon={ChevronRight}
                 label="Next page"
                 onClick={() =>
-                  setPage((p) => Math.min(totalPages - 1, p + 1))
+                  { setPage((p) => Math.min(totalPages - 1, p + 1)); }
                 }
                 disabled={currentPage >= totalPages - 1}
                 iconSize="xs"
@@ -510,7 +510,7 @@ const CitationRow = ({
         <Checkbox
           checked={isSelected}
           onChange={onToggleSelect}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => { e.stopPropagation(); }}
           aria-label={`Select citation ${c.key}`}
           data-testid={`${rowTestId}-select`}
         />
@@ -594,7 +594,7 @@ const CopyTagButton = ({
       await navigator.clipboard.writeText(value);
       setCopied(true);
       if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => setCopied(false), 1500);
+      timerRef.current = setTimeout(() => { setCopied(false); }, 1500);
     } catch {
       // ignore — clipboard may be blocked in some contexts
     }
@@ -843,7 +843,7 @@ const CitationEditRow = ({
           <input
             type="text"
             value={draft.key}
-            onChange={(e) => setDraft((d) => ({ ...d, key: e.target.value }))}
+            onChange={(e) => { setDraft((d) => ({ ...d, key: e.target.value })); }}
             className={cn(inputCls, 'font-mono')}
             autoFocus
             aria-label="Tag"
@@ -857,7 +857,7 @@ const CitationEditRow = ({
             type="text"
             value={draft.authors}
             onChange={(e) =>
-              setDraft((d) => ({ ...d, authors: e.target.value }))
+              { setDraft((d) => ({ ...d, authors: e.target.value })); }
             }
             className={inputCls}
             aria-label="Authors"
@@ -872,7 +872,7 @@ const CitationEditRow = ({
             inputMode="numeric"
             pattern="[0-9]*"
             value={draft.year}
-            onChange={(e) => setDraft((d) => ({ ...d, year: e.target.value }))}
+            onChange={(e) => { setDraft((d) => ({ ...d, year: e.target.value })); }}
             className={cn(inputCls, 'font-mono')}
             aria-label="Year"
             data-testid={`${editTestId}-year`}
@@ -884,10 +884,10 @@ const CitationEditRow = ({
           <select
             value={draft.type}
             onChange={(e) =>
-              setDraft((d) => ({
+              { setDraft((d) => ({
                 ...d,
                 type: e.target.value as Citation['type'],
-              }))
+              })); }
             }
             className={inputCls}
             aria-label="Type"
@@ -907,7 +907,7 @@ const CitationEditRow = ({
         <input
           type="text"
           value={draft.title}
-          onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+          onChange={(e) => { setDraft((d) => ({ ...d, title: e.target.value })); }}
           className={inputCls}
           aria-label="Title"
           data-testid={`${editTestId}-title`}
@@ -1085,7 +1085,7 @@ const ManualAddForm = ({ spaceId, xPad, onClose, onStatus }: ManualAddFormProps)
       </div>
       <TextArea
         value={raw}
-        onChange={(e) => setRaw(e.target.value)}
+        onChange={(e) => { setRaw(e.target.value); }}
         rows={4}
         placeholder={'@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}'}
         className="rounded-sm font-mono text-[12px] placeholder:not-italic placeholder:font-mono"

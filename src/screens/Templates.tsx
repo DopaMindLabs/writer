@@ -113,7 +113,7 @@ export const TemplatesScreen = () => {
                   key={tpl.id}
                   data-testid={`templates-card-${tpl.id}`}
                   type="button"
-                  onClick={() => onSelect(tpl)}
+                  onClick={() => { onSelect(tpl); }}
                   className={cn(
                     'grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6',
                     active && 'bg-paper-2',
@@ -178,7 +178,7 @@ export const TemplatesScreen = () => {
                   id="space-name"
                   data-testid="templates-name-input"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => { setName(e.target.value); }}
                   className="mt-1 h-10 py-0 font-serif text-[22px] leading-none"
                 />
               </div>
@@ -196,7 +196,7 @@ export const TemplatesScreen = () => {
                   data-testid="templates-tag-input"
                   maxLength={3}
                   value={tag}
-                  onChange={(e) => setTag(e.target.value.toUpperCase())}
+                  onChange={(e) => { setTag(e.target.value.toUpperCase()); }}
                   className="mt-1 h-10 py-0 text-center font-mono text-[18px] leading-none tracking-widest"
                 />
               </div>

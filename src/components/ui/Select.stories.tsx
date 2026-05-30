@@ -32,7 +32,7 @@ export const Controlled: Story = {
           <Select
             {...args}
             value={v}
-            onChange={(e) => setV(e.target.value)}
+            onChange={(e) => { setV(e.target.value); }}
           />
           <div className="mt-2 font-mono text-[10px] uppercase tracking-wider text-ink-3">
             selected: {v}

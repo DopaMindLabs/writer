@@ -79,7 +79,7 @@ describe('CitationsScreen', () => {
   it('renders the docs sidebar so the user can navigate back to a doc', async () => {
     await seedBasicSpace();
     await db.citations.put(sampleCitation);
-    act(() => useUI.getState().setCurrentDocId('d1'));
+    act(() => { useUI.getState().setCurrentDocId('d1'); });
     const { findByRole, findAllByText } = renderAtRoute(<CitationsScreen />, {
       path: '/s/:spaceId/citations',
       initialEntries: ['/s/s1/citations'],

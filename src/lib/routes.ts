@@ -67,7 +67,7 @@ export const EXTERNAL_LINKS = {
   license: 'https://github.com/DopaMindLabs/Writer?tab=License-1-ov-file',
 } as const;
 
-export const PRIMARY_NAV: ReadonlyArray<NavItem> = [
+export const PRIMARY_NAV: readonly NavItem[] = [
   { name: RouteName.Home, to: routes.home(), i18nKey: 'home', end: true },
   { name: RouteName.About, to: routes.about(), i18nKey: 'about' },
   { name: RouteName.Settings, to: routes.settings(), i18nKey: 'settings' },

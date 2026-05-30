@@ -22,7 +22,7 @@ describe('ComingSoon', () => {
       </ComingSoon>,
     );
     await userEvent.hover(
-      screen.getByText('Search').closest('[data-coming-soon]') as HTMLElement,
+      screen.getByText('Search').closest('[data-coming-soon]')!,
     );
     // Radix renders the tooltip text twice (visible + visually-hidden sr copy);
     // assert at least one match is present.

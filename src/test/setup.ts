@@ -50,8 +50,8 @@ if (typeof File !== 'undefined' && !('text' in File.prototype)) {
   ).text = function (this: File) {
     return new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result ?? ''));
-      reader.onerror = () => reject(reader.error);
+      reader.onload = () => { resolve(String(reader.result ?? '')); };
+      reader.onerror = () => { reject(reader.error); };
       reader.readAsText(this);
     });
   };
@@ -75,7 +75,7 @@ if (typeof window !== 'undefined') {
         addListener: () => {},
         removeListener: () => {},
         dispatchEvent: () => false,
-      }) as unknown as MediaQueryList;
+      });
   }
 
   if (!w.localStorage) {
@@ -84,8 +84,8 @@ if (typeof window !== 'undefined') {
       get length() {
         return store.size;
       },
-      clear: () => store.clear(),
-      getItem: (k) => (store.has(k) ? (store.get(k) as string) : null),
+      clear: () => { store.clear(); },
+      getItem: (k) => (store.has(k) ? (store.get(k)!) : null),
       setItem: (k, v) => {
         store.set(k, String(v));
       },

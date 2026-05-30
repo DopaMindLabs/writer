@@ -30,7 +30,7 @@ describe('App', () => {
   it('calls resetAndReseed when ?reseed=1 query param is present', async () => {
     window.history.replaceState({}, '', '/?reseed=1');
     render(<App />);
-    await waitFor(() => expect(resetAndReseed).toHaveBeenCalled());
+    await waitFor(() => { expect(resetAndReseed).toHaveBeenCalled(); });
     // Param is stripped after reset.
     expect(window.location.search).not.toContain('reseed');
   });
