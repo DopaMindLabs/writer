@@ -22,4 +22,13 @@ describe('SyncResultsTable', () => {
     expect(screen.getByText('disk full')).toBeInTheDocument();
     expect(screen.getByTestId('sync-result-s2')).toBeInTheDocument();
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot of the per-space results table', () => {
+      const { container } = renderWithProviders(
+        <SyncResultsTable results={results} />,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

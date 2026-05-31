@@ -1,0 +1,90 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DropdownMenu primitives > snapshot > should match the snapshot of the open menu with label, separator, and items 1`] = `
+<body
+  data-scroll-locked="1"
+  style="pointer-events: none;"
+>
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+  <div
+    aria-hidden="true"
+    data-aria-hidden="true"
+  >
+    <button
+      aria-controls="radix-_r_*_"
+      aria-expanded="true"
+      aria-haspopup="menu"
+      data-state="open"
+      id="radix-_r_*_"
+      type="button"
+    >
+      open
+    </button>
+  </div>
+  <div
+    data-radix-popper-content-wrapper=""
+    dir="ltr"
+    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 4px); min-width: max-content; z-index: auto; --radix-popper-available-width: 0px; --radix-popper-available-height: -4px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 50% 0px;"
+  >
+    <div
+      aria-labelledby="radix-_r_*_"
+      aria-orientation="vertical"
+      class="z-50 min-w-[10rem] overflow-hidden rounded-md border border-rule bg-paper p-1 text-ink shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+      data-align="center"
+      data-orientation="vertical"
+      data-radix-menu-content=""
+      data-side="bottom"
+      data-state="open"
+      dir="ltr"
+      id="radix-_r_*_"
+      role="menu"
+      style="outline: none; --radix-dropdown-menu-content-transform-origin: var(--radix-popper-transform-origin); --radix-dropdown-menu-content-available-width: var(--radix-popper-available-width); --radix-dropdown-menu-content-available-height: var(--radix-popper-available-height); --radix-dropdown-menu-trigger-width: var(--radix-popper-anchor-width); --radix-dropdown-menu-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
+      tabindex="-1"
+    >
+      <div
+        class="px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+      >
+        Actions
+      </div>
+      <div
+        aria-orientation="horizontal"
+        class="-mx-1 my-1 h-px bg-rule"
+        role="separator"
+      />
+      <div
+        class="relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-paper-2 focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        role="menuitem"
+        tabindex="-1"
+      >
+        Rename
+      </div>
+      <div
+        aria-disabled="true"
+        class="relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-paper-2 focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+        data-disabled=""
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        role="menuitem"
+        tabindex="-1"
+      >
+        Delete
+      </div>
+    </div>
+  </div>
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+</body>
+`;

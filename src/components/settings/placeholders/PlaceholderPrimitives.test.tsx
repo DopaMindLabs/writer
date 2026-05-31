@@ -60,7 +60,6 @@ describe('PlaceholderPrimitives', () => {
 
   it('renders PlaceholderAccentDots with a checkmark on the first dot', () => {
     const { container } = render(<PlaceholderAccentDots />);
-    // First dot contains the checkmark.
     expect(container.textContent).toContain('✓');
   });
 
@@ -85,5 +84,29 @@ describe('PlaceholderPrimitives', () => {
     expect(getByText('#FAFAF6')).toBeInTheDocument();
     expect(getByText('rename')).toBeInTheDocument();
     expect(getByText('tune')).toBeInTheDocument();
+  });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across every placeholder primitive', () => {
+      const { container } = render(
+        <div>
+          <PlaceholderToggle />
+          <PlaceholderToggle on />
+          <PlaceholderChips options={['A', 'B', 'C']} active={1} />
+          <PlaceholderSlider pct={40} a="S" b="L" v="40%" />
+          <PlaceholderInput value="hello" />
+          <PlaceholderInput value="HELLO" mono />
+          <PlaceholderAccentDots />
+          <PlaceholderThemeCards />
+          <PlaceholderSwatchRow
+            name="Bone"
+            color="#fafaf6"
+            rename="rename"
+            tune="tune"
+          />
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
   });
 });

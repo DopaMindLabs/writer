@@ -25,18 +25,15 @@ describe('MobileMoreSheet', () => {
       initialEntries: ['/s/s1/d/d1'],
     });
     expect(screen.getByTestId('mobile-more-sheet')).toBeInTheDocument();
-    // Write mode link is rendered (has computed href).
     expect(
       screen.getByRole('link', { name: /write/i }).getAttribute('href'),
     ).toBe('/s/s1/d/d1');
-    // Read and Split links also wired up.
     expect(
       screen.getByRole('link', { name: /read/i }).getAttribute('href'),
     ).toBe('/s/s1/d/d1/read');
     expect(
       screen.getByRole('link', { name: /split/i }).getAttribute('href'),
     ).toBe('/s/s1/d/d1/split');
-    // Menu items: space settings + about + help/whatsNew/feedback ComingSoon entries.
     expect(
       screen.getByRole('link', { name: /space settings/i }),
     ).toHaveAttribute('href', '/s/s1/settings');
@@ -53,14 +50,12 @@ describe('MobileMoreSheet', () => {
     renderWithProviders(<MobileMoreSheet spaceId="s1" docId={null} />, {
       initialEntries: ['/s/s1'],
     });
-    // Read & Split have no href so they fall through to the ComingSoon span.
     expect(
       screen.queryByRole('link', { name: /^read$/i }),
     ).not.toBeInTheDocument();
     expect(
       screen.queryByRole('link', { name: /^split$/i }),
     ).not.toBeInTheDocument();
-    // The write link should still resolve to the space-only path.
     expect(
       screen.getByRole('link', { name: /^write$/i }).getAttribute('href'),
     ).toBe('/s/s1');
@@ -100,5 +95,33 @@ describe('MobileMoreSheet', () => {
     expect(
       screen.getByRole('link', { name: /write/i }).getAttribute('href'),
     ).toBe('/s/s1/d/d1?focus=1');
+  });
+});
+
+describe('snapshot', () => {
+  beforeEach(() => {
+    act(() => {
+      useUI.getState().setMobileMoreOpen(false);
+    });
+  });
+
+  it('matches the open sheet with an active doc', () => {
+    act(() => {
+      useUI.getState().setMobileMoreOpen(true);
+    });
+    renderWithProviders(<MobileMoreSheet spaceId="s1" docId="d1" />, {
+      initialEntries: ['/s/s1/d/d1'],
+    });
+    expect(screen.getByTestId('mobile-more-sheet')).toMatchSnapshot();
+  });
+
+  it('matches the space-level sheet with no active doc', () => {
+    act(() => {
+      useUI.getState().setMobileMoreOpen(true);
+    });
+    renderWithProviders(<MobileMoreSheet spaceId="s1" docId={null} />, {
+      initialEntries: ['/s/s1'],
+    });
+    expect(screen.getByTestId('mobile-more-sheet')).toMatchSnapshot();
   });
 });

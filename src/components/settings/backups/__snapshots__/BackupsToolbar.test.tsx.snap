@@ -1,0 +1,73 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BackupsToolbar > snapshot > should match the snapshot for idle and busy states 1`] = `
+<div>
+  <div>
+    <div
+      class="flex flex-wrap items-center justify-between gap-3 border-b border-rule pb-4"
+    >
+      <p
+        class="font-serif text-[13px] italic text-ink-3"
+      >
+        Keeping the 3 most recent snapshots — older ones are removed automatically.
+      </p>
+      <div
+        class="flex items-center gap-4 text-[12px]"
+      >
+        <span
+          aria-disabled="true"
+          class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-4 inline-flex cursor-not-allowed items-center gap-2"
+        >
+          ↑ restore from file
+          <span
+            class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
+            data-testid="coming-soon-badge"
+          >
+            coming soon
+          </span>
+        </span>
+        <button
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 bg-ink text-paper hover:bg-ink-2 h-7 px-3 text-xs"
+          data-testid="space-settings-backups-snapshot"
+          type="button"
+        >
+          + snapshot now
+        </button>
+      </div>
+    </div>
+    <div
+      class="flex flex-wrap items-center justify-between gap-3 border-b border-rule pb-4"
+    >
+      <p
+        class="font-serif text-[13px] italic text-ink-3"
+      >
+        Keeping the 3 most recent snapshots — older ones are removed automatically.
+      </p>
+      <div
+        class="flex items-center gap-4 text-[12px]"
+      >
+        <span
+          aria-disabled="true"
+          class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-4 inline-flex cursor-not-allowed items-center gap-2"
+        >
+          ↑ restore from file
+          <span
+            class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
+            data-testid="coming-soon-badge"
+          >
+            coming soon
+          </span>
+        </span>
+        <button
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 bg-ink text-paper hover:bg-ink-2 h-7 px-3 text-xs"
+          data-testid="space-settings-backups-snapshot"
+          disabled=""
+          type="button"
+        >
+          snapshotting…
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

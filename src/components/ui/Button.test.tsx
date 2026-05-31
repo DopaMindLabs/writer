@@ -110,4 +110,25 @@ describe('Button', () => {
     render(<Button type="submit" data-testid="btn">submit</Button>);
     expect(screen.getByTestId('btn')).toHaveAttribute('type', 'submit');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across kinds, sizes and states', () => {
+      const { container } = render(
+        <div>
+          <Button kind="primary">primary</Button>
+          <Button kind="secondary">secondary</Button>
+          <Button kind="ghost">ghost</Button>
+          <Button kind="dangerous">dangerous</Button>
+          <Button size="sm">small</Button>
+          <Button size="md">medium</Button>
+          <Button size="lg">large</Button>
+          <Button kind="ghost" size="sm">
+            ghost small
+          </Button>
+          <Button disabled>disabled</Button>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

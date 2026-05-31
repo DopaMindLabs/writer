@@ -1,0 +1,38 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TabHeader > snapshot > should match the snapshot for global and space breadcrumb variants 1`] = `
+<div>
+  <div>
+    <p
+      class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+    >
+      SETTINGS
+    </p>
+    <h1
+      class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+    >
+      Sync
+    </h1>
+    <p
+      class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+    >
+      Push your spaces to a folder you choose. Point it at a Google Drive, Dropbox, or iCloud folder to sync across devices.
+    </p>
+    <p
+      class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+    >
+      SPACE · SETTINGS
+    </p>
+    <h1
+      class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+    >
+      Sync
+    </h1>
+    <p
+      class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+    >
+      Push this space to the connected folder, manually or on a schedule. Sync is separate from Backups.
+    </p>
+  </div>
+</div>
+`;

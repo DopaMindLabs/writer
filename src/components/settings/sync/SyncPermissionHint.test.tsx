@@ -52,4 +52,18 @@ describe('SyncPermissionHint', () => {
     );
     await waitFor(() => { expect(refresh).toHaveBeenCalled(); });
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot of the lapsed-permission banner', () => {
+      useFolderPermission.mockReturnValue({
+        granted: false,
+        lapsed: true,
+        refresh: vi.fn(),
+      });
+      const { container } = renderWithProviders(
+        <SyncPermissionHint folderName="Drafts" />,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

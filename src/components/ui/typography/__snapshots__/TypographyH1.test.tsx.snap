@@ -1,0 +1,33 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TypographyH1 > snapshot > should match the snapshot across all variants 1`] = `
+<div>
+  <div>
+    <h1
+      class="font-serif tracking-tight text-ink text-4xl leading-[1.05] md:text-6xl"
+    >
+      Display
+    </h1>
+    <h1
+      class="font-serif tracking-tight text-ink text-3xl leading-[1.05] md:text-5xl"
+    >
+      Page
+    </h1>
+    <h1
+      class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight"
+    >
+      Section
+    </h1>
+    <h1
+      class="font-serif tracking-tight text-ink text-[22px] font-medium"
+    >
+      Compact
+    </h1>
+    <h1
+      class="font-serif tracking-tight text-ink text-3xl"
+    >
+      Simple
+    </h1>
+  </div>
+</div>
+`;

@@ -59,4 +59,17 @@ describe('CitationsSidePanel', () => {
     expect(useUI.getState().citationsDrawerOpen).toBe(false);
     expect(screen.getByTestId('location').textContent).toBe('/s/s1/citations');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot of the open panel over an empty space', async () => {
+      await db.spaces.put(sampleSpace);
+      act(() => {
+        useUI.getState().openCitationsDrawer();
+      });
+      renderWithProviders(<CitationsSidePanel spaceId="s1" />);
+      const panel = screen.getByRole('complementary', { name: 'Citations' });
+      await screen.findByText(/no citations yet/i);
+      expect(panel).toMatchSnapshot();
+    });
+  });
 });

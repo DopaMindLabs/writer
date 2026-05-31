@@ -33,4 +33,16 @@ describe('BlockQuote', () => {
     expect(ref.current).not.toBeNull();
     expect(ref.current).toHaveClass('custom');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot with and without a cite footer', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <BlockQuote>The unexamined life is not worth living.</BlockQuote>
+          <BlockQuote cite="— Hamlet">To be, or not to be.</BlockQuote>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

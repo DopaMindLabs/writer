@@ -19,7 +19,6 @@ vi.mock('@/hooks/useSync', () => ({
     granted: true,
     lapsed: false,
     refresh: () => {
-      // no-op
     },
   }),
 }));
@@ -41,7 +40,6 @@ vi.mock('@/lib/sync/folderSync', () => ({
   INTERVAL_OPTIONS: [0, 5, 10, 30],
 }));
 
-// Imported after the mocks are registered.
 import { SyncTab } from './SyncTab';
 
 beforeEach(() => {
@@ -148,5 +146,17 @@ describe('SyncTab', () => {
     renderWithProviders(<SyncTab />);
     fireEvent.click(screen.getByRole('button', { name: /sync all spaces/i }));
     expect(await screen.findByRole('alert')).toHaveTextContent(/boom/i);
+  });
+
+  describe('snapshot', () => {
+    it('should match the snapshot of the connected global sync tab', () => {
+      useSyncFolder.mockReturnValue({
+        supported: true,
+        folderName: 'Drafts',
+        lastSyncedAt: null,
+      });
+      const { container } = renderWithProviders(<SyncTab />);
+      expect(container).toMatchSnapshot();
+    });
   });
 });

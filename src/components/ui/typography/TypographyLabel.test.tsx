@@ -52,4 +52,20 @@ describe('TypographyLabel', () => {
     expect(ref.current).not.toBeNull();
     expect(ref.current?.tagName).toBe('P');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across all variants and asChild', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <TypographyLabel variant="default">Default</TypographyLabel>
+          <TypographyLabel variant="wide">Wide</TypographyLabel>
+          <TypographyLabel variant="xs">Xs</TypographyLabel>
+          <TypographyLabel asChild>
+            <h3>As child</h3>
+          </TypographyLabel>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

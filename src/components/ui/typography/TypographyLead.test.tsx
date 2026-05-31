@@ -27,4 +27,17 @@ describe('TypographyLead', () => {
     expect(ref.current).not.toBeNull();
     expect(ref.current?.tagName).toBe('P');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot of the lead paragraph', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <TypographyLead>
+            A lead paragraph introduces the body copy that follows.
+          </TypographyLead>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

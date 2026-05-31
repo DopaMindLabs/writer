@@ -36,4 +36,20 @@ describe('Chip', () => {
     expect(btn).toBeDisabled();
     expect(btn).toHaveClass('custom');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across active and disabled states', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <Chip>rest</Chip>
+          <Chip active>active</Chip>
+          <Chip disabled>disabled</Chip>
+          <Chip active disabled>
+            active disabled
+          </Chip>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

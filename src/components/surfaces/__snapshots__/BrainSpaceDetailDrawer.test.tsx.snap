@@ -1,0 +1,274 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BrainSpaceDetailDrawer > snapshot > should match the snapshot of the opened drawer with a connection 1`] = `
+<div
+  aria-describedby="radix-_r_*_"
+  aria-labelledby="radix-_r_*_"
+  class="fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col border-l border-rule bg-paper shadow-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right"
+  data-state="open"
+  data-testid="brain-detail-drawer"
+  id="radix-_r_*_"
+  role="dialog"
+  style="pointer-events: auto;"
+  tabindex="-1"
+>
+  <h2
+    class="sr-only"
+    id="radix-_r_*_"
+  >
+    Note details
+  </h2>
+  <p
+    class="sr-only"
+    id="radix-_r_*_"
+  >
+    Edit the selected note and manage its connections.
+  </p>
+  <header
+    class="flex items-start justify-between border-b border-rule p-4"
+  >
+    <div
+      class="flex min-w-0 flex-1 flex-col gap-1"
+    >
+      <span
+        class="font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4"
+      >
+        thought
+      </span>
+      <input
+        aria-label="Note title"
+        class="block w-full bg-transparent text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 p-0 font-serif text-xl font-medium"
+        data-testid="brain-detail-drawer-title"
+        placeholder="Untitled"
+        type="text"
+        value="Hero"
+      />
+    </div>
+    <button
+      aria-label="Close drawer"
+      class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink ml-2 text-ink-4"
+      data-testid="brain-detail-drawer-close"
+      type="button"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-x h-3.5 w-3.5"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 6 6 18"
+        />
+        <path
+          d="m6 6 12 12"
+        />
+      </svg>
+    </button>
+  </header>
+  <div
+    class="flex-1 overflow-y-auto p-4"
+  >
+    <section
+      class="mb-6"
+    >
+      <label
+        class="text-ink-3 font-normal mb-2 block font-mono text-[10px] uppercase tracking-wider"
+        for="drawer-body"
+      >
+        Body
+      </label>
+      <textarea
+        class="block w-full bg-transparent font-serif text-[14px] text-ink outline-none transition-colors placeholder:text-ink-4 placeholder:font-serif placeholder:italic disabled:cursor-not-allowed resize-y border px-3 py-2 border-rule focus:border-ink min-h-[160px] leading-relaxed"
+        data-testid="brain-detail-drawer-body"
+        id="drawer-body"
+        placeholder="Write something…"
+        rows="4"
+      >
+        tall, broody
+      </textarea>
+    </section>
+    <section
+      class="mb-6"
+    >
+      <label
+        class="text-ink-3 font-normal mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider"
+        for="drawer-doc-link"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-link2 lucide-link-2 h-3 w-3"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M9 17H7A5 5 0 0 1 7 7h2"
+          />
+          <path
+            d="M15 7h2a5 5 0 1 1 0 10h-2"
+          />
+          <line
+            x1="8"
+            x2="16"
+            y1="12"
+            y2="12"
+          />
+        </svg>
+        Linked Doc
+      </label>
+      <div
+        class="flex items-center gap-2"
+      >
+        <div
+          class="group relative flex w-full items-center transition-colors border-b border-rule focus-within:border-ink flex-1"
+        >
+          <select
+            class="block w-full appearance-none border-0 bg-transparent leading-tight text-ink outline-none disabled:cursor-not-allowed pl-0 pr-6 py-1.5 font-sans text-[14px]"
+            data-testid="brain-detail-drawer-linked-doc"
+            id="drawer-doc-link"
+          >
+            <option
+              value=""
+            >
+              — No linked doc —
+            </option>
+          </select>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down pointer-events-none absolute right-0 h-3.5 w-3.5 text-ink-3"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h3
+        class="font-mono uppercase text-ink-3 text-[10px] tracking-wider mb-2"
+        data-testid="brain-detail-drawer-connections-heading"
+      >
+        Connections (
+        1
+        )
+      </h3>
+      <ul
+        class="flex flex-col gap-1"
+      >
+        <li
+          class="flex items-center gap-2 border border-rule bg-paper px-2 py-1.5"
+          data-testid="brain-detail-drawer-connection-c1"
+        >
+          <button
+            class="flex min-w-0 flex-1 items-center gap-2 text-left font-serif text-[13px] text-ink hover:underline disabled:cursor-not-allowed disabled:text-ink-4"
+            data-testid="brain-detail-drawer-connection-c1-focus"
+            disabled=""
+            type="button"
+          >
+            <span
+              class="font-mono text-[11px] text-ink-3"
+            >
+              ←
+            </span>
+            <span
+              class="min-w-0 truncate"
+            >
+              (untitled)
+            </span>
+          </button>
+          <button
+            aria-label="Remove connection"
+            class="inline-flex items-center justify-center rounded-md transition-colors hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5 text-ink-4"
+            data-testid="brain-detail-drawer-connection-c1-remove"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-x h-3 w-3"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M18 6 6 18"
+              />
+              <path
+                d="m6 6 12 12"
+              />
+            </svg>
+          </button>
+        </li>
+      </ul>
+    </section>
+  </div>
+  <footer
+    class="flex items-center justify-end border-t border-rule p-3"
+  >
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap rounded-none font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 bg-ink text-paper hover:bg-ink-2 h-7 gap-1.5 border-0 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
+      data-testid="brain-detail-drawer-delete"
+      type="button"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-trash2 lucide-trash-2 h-3 w-3"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10 11v6"
+        />
+        <path
+          d="M14 11v6"
+        />
+        <path
+          d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"
+        />
+        <path
+          d="M3 6h18"
+        />
+        <path
+          d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+        />
+      </svg>
+      Delete note
+    </button>
+  </footer>
+</div>
+`;
