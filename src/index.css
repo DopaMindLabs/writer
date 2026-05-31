@@ -172,14 +172,15 @@
 
 /*
  * Reduced motion. `motion: auto` (default) follows the OS via the media query;
- * `reduced` forces it on; `full` reverts it for users who want motion despite an
- * OS setting. Honouring the OS preference is the intended behaviour, not a
- * regression — the default visual baseline is captured without emulation.
+ * `reduced` forces it on; `full` opts out of the OS reduce preference and keeps
+ * the app's authored motion. We exclude `data-motion='full'` from the media
+ * rule rather than trying to restore motion after the fact — `revert` would roll
+ * authored durations back to the UA default (no motion), not to our values.
  */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  html:not([data-motion='full']) *,
+  html:not([data-motion='full']) *::before,
+  html:not([data-motion='full']) *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -193,13 +194,6 @@
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
-}
-[data-motion='full'] *,
-[data-motion='full'] *::before,
-[data-motion='full'] *::after {
-  animation-duration: revert !important;
-  animation-iteration-count: revert !important;
-  transition-duration: revert !important;
 }
 
 html,
