@@ -28,7 +28,7 @@ export const SpaceSyncTab = ({ space }: { space: Space }) => {
   const { busy, error, choose, sync } = useFolderSyncActions(space.id);
 
   return (
-    <section>
+    <section data-testid="space-settings-tab-sync">
       <TabHeader
         titleKey="settings.space.sync.title"
         subtitleKey="settings.space.sync.subtitle"
