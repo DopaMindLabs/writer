@@ -12,7 +12,7 @@ const template: Template = {
   pickerOrder: 8,
   sections: [{ label: 'Notes', order: 0 }],
   seedDocs: [{ sectionLabel: 'Notes', name: 'Untitled' }],
-  noteKinds: [NoteKind.Blank],
+  noteKinds: [NoteKind.Blank, NoteKind.Image],
 };
 
 export default template;

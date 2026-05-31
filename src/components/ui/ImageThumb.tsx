@@ -28,18 +28,36 @@ export interface ImageThumbProps
   /** When provided, a hover-revealed remove control is shown. */
   onRemove?: () => void;
   removeTestId?: string;
+  /** When provided, the image becomes a button that opens it (e.g. full size). */
+  onOpen?: () => void;
+  openTestId?: string;
 }
 
 /**
  * Square image tile rendered from a Blob, framed with a hairline rule per the
- * design system. Optionally shows a borderless remove control on hover.
+ * design system. Optionally shows a borderless remove control on hover, and —
+ * when `onOpen` is given — makes the image a keyboard-operable button that
+ * opens it (e.g. in a full-size viewer).
  */
 export const ImageThumb = forwardRef<HTMLDivElement, ImageThumbProps>(
-  ({ blob, name, size, onRemove, removeTestId, className, ...props }, ref) => {
+  (
+    { blob, name, size, onRemove, removeTestId, onOpen, openTestId, className, ...props },
+    ref,
+  ) => {
     const url = useObjectUrl(blob);
     return (
       <div ref={ref} className={cn(imageThumbRecipe({ size }), className)} {...props}>
-        {url ? (
+        {url && onOpen ? (
+          <button
+            type="button"
+            onClick={onOpen}
+            aria-label={`View ${name}`}
+            data-testid={openTestId}
+            className="h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+          >
+            <img src={url} alt={name} className="h-full w-full object-cover" />
+          </button>
+        ) : url ? (
           <img src={url} alt={name} className="h-full w-full object-cover" />
         ) : null}
         {onRemove ? (

@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 const addQuestionNote = async (page: Page) => {
   const canvas = page.getByTestId('brain-canvas');
   await expect(canvas).toBeVisible();
-  const noteCards = canvas.locator(':scope > [data-testid^="brain-note-"]');
+  const noteCards = page.getByTestId('brain-canvas-content').locator(':scope > [data-testid^="brain-note-"]');
   await page.getByTestId('brain-canvas-tool-question').click();
   await expect(noteCards).toHaveCount(1);
   return noteCards.last();
@@ -56,7 +56,7 @@ test('uploads a picture via the drawer, persists across reload, and removes it',
   await page.reload();
 
   const card = page
-    .getByTestId('brain-canvas')
+    .getByTestId('brain-canvas-content')
     .locator(':scope > [data-testid^="brain-note-"]')
     .last();
   await expect(card.locator('[data-testid$="-images"]')).toBeVisible();
@@ -97,7 +97,7 @@ test('enforces the two-image limit per note', async ({ page }) => {
   // The card's quick-add button disappears once the limit is reached.
   await page.getByTestId('brain-detail-drawer-close').click();
   const card = page
-    .getByTestId('brain-canvas')
+    .getByTestId('brain-canvas-content')
     .locator(':scope > [data-testid^="brain-note-"]')
     .last();
   await card.hover();

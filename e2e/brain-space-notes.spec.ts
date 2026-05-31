@@ -15,7 +15,7 @@ test('brain space adds a note from the toolbar and deletes it via the detail dra
   await expect(canvas).toBeVisible();
   await expect(page.getByTestId('brain-canvas-toolbar')).toBeVisible();
 
-  const noteCards = canvas.locator(':scope > [data-testid^="brain-note-"]');
+  const noteCards = page.getByTestId('brain-canvas-content').locator(':scope > [data-testid^="brain-note-"]');
   const before = await noteCards.count();
 
   await page.getByTestId('brain-canvas-tool-question').click();
@@ -37,8 +37,9 @@ test('brain space note opens a context menu on right-click and dismisses on Esca
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}/dump`);
 
-  const canvas = page.getByTestId('brain-canvas');
-  const noteCards = canvas.locator(':scope > [data-testid^="brain-note-"]');
+  const noteCards = page
+    .getByTestId('brain-canvas-content')
+    .locator(':scope > [data-testid^="brain-note-"]');
   await page.getByTestId('brain-canvas-tool-question').click();
   await expect(noteCards).toHaveCount(1);
 

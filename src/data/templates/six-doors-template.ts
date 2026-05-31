@@ -30,6 +30,7 @@ const template: Template = {
     NoteKind.Place,
     NoteKind.Lore,
     NoteKind.Blank,
+    NoteKind.Image,
   ],
 };
 

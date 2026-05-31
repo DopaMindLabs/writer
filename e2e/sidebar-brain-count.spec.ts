@@ -14,7 +14,7 @@ test('sidebar reflects the brain-space note count and cancels add-doc on Escape'
   await page.goto(`/#/s/${spaceId}/dump`);
   await page.getByTestId('brain-canvas-tool-question').click();
   await expect(
-    page.getByTestId('brain-canvas').locator(':scope > [data-testid^="brain-note-"]'),
+    page.getByTestId('brain-canvas-content').locator(':scope > [data-testid^="brain-note-"]'),
   ).toHaveCount(1);
 
   // On the doc view the sidebar brain-space link shows the non-empty count glyph.

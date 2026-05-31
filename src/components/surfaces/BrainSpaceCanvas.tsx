@@ -1,8 +1,10 @@
 import {
   useCallback,
   useMemo,
+  useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
+  type RefObject,
 } from 'react';
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
@@ -11,11 +13,18 @@ import { useConnections } from '@/hooks/useConnections';
 import { useSpace } from '@/hooks/useSpaces';
 import { useUI } from '@/store/ui';
 import { getTemplate } from '@/data/templates';
+import { getNoteType } from '@/data/note-types';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
 import { BrainSpaceNote } from './BrainSpaceNote';
 import { BrainSpaceConnection } from './BrainSpaceConnection';
 import { BrainSpaceDetailDrawer } from './BrainSpaceDetailDrawer';
-import { NoteKind, NoteState, type Note, type Connection } from '@/db/schema';
+import {
+  NoteKind,
+  NoteLayout,
+  NoteState,
+  type Note,
+  type Connection,
+} from '@/db/schema';
 import { TypographyLabel, TypographyP } from '@/components/ui/typography';
 
 interface BrainSpaceCanvasProps {
@@ -24,15 +33,49 @@ interface BrainSpaceCanvasProps {
 
 const DEFAULT_W = 184;
 const DEFAULT_H = 80;
+// Image cards lead with the picture, so they start larger than a text note.
+const IMAGE_DEFAULT_W = 240;
+const IMAGE_DEFAULT_H = 200;
+// Breathing room added past the furthest note so it never sits flush against
+// the scroll edge.
+const CONTENT_MARGIN = 200;
+
+interface ContentExtent {
+  width: number;
+  height: number;
+}
+
+// The scrollable content size: the bounding box of every note plus a margin, so
+// notes positioned beyond the viewport stay reachable by scrolling. The content
+// layer is also stretched to at least fill the viewport via `min-w/min-h-full`.
+const contentExtent = (notes: Note[]): ContentExtent => {
+  let width = 0;
+  let height = 0;
+  for (const n of notes) {
+    width = Math.max(width, n.l + n.w);
+    height = Math.max(height, n.t + n.h);
+  }
+  return {
+    width: width + CONTENT_MARGIN,
+    height: height + CONTENT_MARGIN,
+  };
+};
 
 interface ConnectionsLayerProps {
   connections: Connection[];
   notesById: Map<string, Note>;
+  extent: ContentExtent;
 }
 
-const ConnectionsLayer = ({ connections, notesById }: ConnectionsLayerProps) => (
+const ConnectionsLayer = ({
+  connections,
+  notesById,
+  extent,
+}: ConnectionsLayerProps) => (
   <svg
-    className="pointer-events-none absolute inset-0 h-full w-full"
+    className="pointer-events-none absolute left-0 top-0"
+    width={extent.width}
+    height={extent.height}
     style={{ pointerEvents: 'none' }}
   >
     <g style={{ pointerEvents: 'auto' }}>
@@ -100,27 +143,62 @@ const CanvasToolbar = ({ toolbarKinds, onAddNote }: CanvasToolbarProps) => (
   </div>
 );
 
-const useCanvasInteractions = (spaceId: string, noteCount: number) => {
+// Top-left of the visible viewport in content coordinates. New cards are
+// anchored here rather than the canvas origin: with a scrollable canvas the
+// toolbar stays pinned while the user may be scrolled far from (0, 0), so a
+// card placed at (24, 24) would appear off-screen and look like the click did
+// nothing. Offsetting by the scroll position lands it in the current view.
+const viewportOrigin = (scroller: HTMLDivElement | null) => ({
+  l: scroller ? Math.round(scroller.scrollLeft) : 0,
+  t: scroller ? Math.round(scroller.scrollTop) : 0,
+});
+
+// Build a fresh note record anchored to the viewport origin. The cascading
+// jitter fans successive cards out from the top-left so they don't stack.
+const buildNote = (
+  spaceId: string,
+  kind: NoteKind,
+  noteCount: number,
+  origin: { l: number; t: number },
+): Note => {
+  const jitter = (noteCount * 24) % 240;
+  const type = getNoteType(kind);
+  const isImage = type.layout === NoteLayout.Image;
+  return {
+    id: newId(),
+    spaceId,
+    l: origin.l + 24 + jitter,
+    t: origin.t + 24 + jitter,
+    w: isImage ? IMAGE_DEFAULT_W : DEFAULT_W,
+    h: isImage ? IMAGE_DEFAULT_H : DEFAULT_H,
+    kind,
+    state: NoteState.User,
+    body: '',
+    createdAt: Date.now(),
+    typeVersion: type.version,
+  };
+};
+
+const useCanvasInteractions = (
+  spaceId: string,
+  noteCount: number,
+  scrollRef: RefObject<HTMLDivElement | null>,
+) => {
   const focusNote = useUI((s) => s.focusNote);
   const [pendingFrom, setPendingFrom] = useState<string | null>(null);
 
   const addNote = useCallback(
     async (kind: NoteKind) => {
-      const jitter = (noteCount * 24) % 240;
-      await db.notes.add({
-        id: newId(),
+      const note = buildNote(
         spaceId,
-        l: 24 + jitter,
-        t: 24 + jitter,
-        w: DEFAULT_W,
-        h: DEFAULT_H,
         kind,
-        state: NoteState.User,
-        body: '',
-        createdAt: Date.now(),
-      });
+        noteCount,
+        viewportOrigin(scrollRef.current),
+      );
+      await db.notes.add(note);
+      focusNote(note.id);
     },
-    [spaceId, noteCount],
+    [spaceId, noteCount, focusNote, scrollRef],
   );
 
   const handlePick = useCallback(
@@ -148,13 +226,79 @@ const useCanvasInteractions = (spaceId: string, noteCount: number) => {
   );
 
   const onBackgroundPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (e.target !== e.currentTarget) return;
+    // Deselect on a click that doesn't land on a note — either the scroll
+    // viewport or the (empty) content layer beneath it.
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-testid^="brain-note-"]')) return;
     focusNote(null);
     setPendingFrom(null);
   };
 
   return { pendingFrom, addNote, handlePick, onBackgroundPointerDown };
 };
+
+interface CanvasScrollProps {
+  spaceId: string;
+  notes: Note[];
+  connections: Connection[];
+  notesById: Map<string, Note>;
+  focusedNoteId: string | null;
+  pendingFrom: string | null;
+  extent: ContentExtent;
+  scrollRef: RefObject<HTMLDivElement | null>;
+  onPick: (id: string, e: ReactPointerEvent<HTMLDivElement>) => void;
+}
+
+// Scroll viewport in its own layer so the canvas chrome (toolbar, hint, empty
+// state, drawer) stays pinned to the visible pane instead of scrolling away.
+// The inner content layer is sized to the bounding box of all notes, so notes
+// placed beyond the viewport (e.g. in a narrow split pane) stay reachable.
+const CanvasScroll = ({
+  spaceId,
+  notes,
+  connections,
+  notesById,
+  focusedNoteId,
+  pendingFrom,
+  extent,
+  scrollRef,
+  onPick,
+}: CanvasScrollProps) => (
+  <div
+    ref={scrollRef}
+    data-testid="brain-canvas-scroll"
+    className="absolute inset-0 overflow-auto"
+  >
+    <div
+      data-testid="brain-canvas-content"
+      className="relative min-h-full min-w-full"
+      style={{
+        width: extent.width,
+        height: extent.height,
+        backgroundImage:
+          'radial-gradient(circle at 1px 1px, var(--rule) 1px, transparent 1px)',
+        backgroundSize: '20px 20px',
+      }}
+    >
+      <ConnectionsLayer
+        connections={connections}
+        notesById={notesById}
+        extent={extent}
+      />
+
+      {notes.map((n) => (
+        <BrainSpaceNote
+          key={n.id}
+          note={n}
+          spaceId={spaceId}
+          selected={focusedNoteId === n.id}
+          pending={pendingFrom === n.id}
+          onPick={(e) => { onPick(n.id, e); }}
+        />
+      ))}
+    </div>
+  </div>
+);
 
 export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
   const notes = useNotes(spaceId);
@@ -174,8 +318,12 @@ export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
     return m;
   }, [notes]);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   const { pendingFrom, addNote, handlePick, onBackgroundPointerDown } =
-    useCanvasInteractions(spaceId, notes.length);
+    useCanvasInteractions(spaceId, notes.length, scrollRef);
+
+  const extent = useMemo(() => contentExtent(notes), [notes]);
 
   return (
     <div
@@ -183,24 +331,18 @@ export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
       data-testid="brain-canvas"
       onPointerDown={onBackgroundPointerDown}
       className="relative h-full min-w-0 flex-1 overflow-hidden bg-paper"
-      style={{
-        backgroundImage:
-          'radial-gradient(circle at 1px 1px, var(--rule) 1px, transparent 1px)',
-        backgroundSize: '20px 20px',
-      }}
     >
-      <ConnectionsLayer connections={connections} notesById={notesById} />
-
-      {notes.map((n) => (
-        <BrainSpaceNote
-          key={n.id}
-          note={n}
-          spaceId={spaceId}
-          selected={focusedNoteId === n.id}
-          pending={pendingFrom === n.id}
-          onPick={(e) => { void handlePick(n.id, e); }}
-        />
-      ))}
+      <CanvasScroll
+        spaceId={spaceId}
+        notes={notes}
+        connections={connections}
+        notesById={notesById}
+        focusedNoteId={focusedNoteId}
+        pendingFrom={pendingFrom}
+        extent={extent}
+        scrollRef={scrollRef}
+        onPick={(id, e) => { void handlePick(id, e); }}
+      />
 
       {notes.length === 0 && <CanvasEmptyState />}
 

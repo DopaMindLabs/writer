@@ -22,7 +22,7 @@ test('exports a space populated with citations and notes', async ({ page }) => {
 
   await page.goto(`/#/s/${spaceId}/dump`);
   const notes = page
-    .getByTestId('brain-canvas')
+    .getByTestId('brain-canvas-content')
     .locator(':scope > [data-testid^="brain-note-"]');
 
   // A titled note (heading from title) of one kind...

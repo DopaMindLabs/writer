@@ -76,11 +76,12 @@ exports[`BrainSpaceNote > snapshot > should match the snapshot across all varian
         class="inline-flex items-center justify-center transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink ml-1 h-4 w-4 rounded-sm text-ink-4 opacity-0 hover:bg-paper-2 group-hover:opacity-100"
         data-no-drag="true"
         data-testid="brain-note-n1-open-details"
+        title="Open details panel"
         type="button"
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-arrow-up-right h-3 w-3"
+          class="lucide lucide-maximize2 lucide-maximize-2 h-3 w-3"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -92,10 +93,16 @@ exports[`BrainSpaceNote > snapshot > should match the snapshot across all varian
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M7 7h10v10"
+            d="M15 3h6v6"
           />
           <path
-            d="M7 17 17 7"
+            d="m21 3-7 7"
+          />
+          <path
+            d="m3 21 7-7"
+          />
+          <path
+            d="M9 21H3v-6"
           />
         </svg>
       </button>

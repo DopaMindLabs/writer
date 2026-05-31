@@ -40,6 +40,16 @@ export enum NoteKind {
   Todo = 'todo',
   LooseEnd = 'loose-end',
   Blank = 'blank',
+  Image = 'image',
+}
+
+// How a note card presents itself. Decoupled from NoteKind (which is semantic)
+// so a kind maps to a layout and rendering can dispatch on the layout exhaustively.
+export enum NoteLayout {
+  // Title + body, with an optional strip of image thumbnails.
+  Text = 'text',
+  // Image-first: the picture is primary, the title is an optional caption, no body.
+  Image = 'image',
 }
 
 export enum NoteState {
@@ -61,6 +71,12 @@ export interface Note {
   body: string;
   linkedDocId?: string;
   createdAt: number;
+  // Optional per-note presentation override; when absent the layout is derived
+  // from the note's kind via the note-type registry. Additive/non-indexed.
+  layout?: NoteLayout;
+  // Card-type descriptor version stamped at creation; anchors any future
+  // per-card migration. Additive/non-indexed.
+  typeVersion?: string;
 }
 
 // An image attached to a brain-dump note. The binary payload is stored as a
