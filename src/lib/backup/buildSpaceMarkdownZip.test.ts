@@ -493,6 +493,7 @@ describe('buildSpaceMarkdownZipFor', () => {
       sections: [],
       docs: [{ ...sampleDoc, id: 'known', name: 'Known Doc' }],
       notes: [],
+      attachments: [],
       annotations: [
         {
           id: 'a-orphan',
@@ -513,6 +514,133 @@ describe('buildSpaceMarkdownZipFor', () => {
     const md = await zip.file('annotations.md')!.async('string');
     expect(md).toContain('## ghost-doc');
     expect(md).toContain('**side** `0–3` — eve');
+  });
+
+  it('bundles note image attachments and references them in notes.md', async () => {
+    // Use a hand-crafted snapshot so real Blobs reach JSZip (fake-indexeddb
+    // does not preserve Blob instances through a round-trip).
+    const snapshot: SpaceSnapshot = {
+      space: sampleSpace,
+      sections: [],
+      docs: [],
+      notes: [{ ...sampleNote, id: 'n1', title: 'Mood board' }],
+      attachments: [
+        {
+          id: 'att1',
+          noteId: 'n1',
+          spaceId: sampleSpace.id,
+          name: 'sketch.png',
+          mime: 'image/png',
+          size: 3,
+          blob: new Blob(['one'], { type: 'image/png' }),
+          createdAt: FIXED_TIME,
+        },
+        {
+          id: 'att2',
+          noteId: 'n1',
+          spaceId: sampleSpace.id,
+          name: 'sketch.png',
+          mime: 'image/png',
+          size: 3,
+          blob: new Blob(['two'], { type: 'image/png' }),
+          createdAt: FIXED_TIME + 1,
+        },
+      ],
+      annotations: [],
+      citations: [],
+      connections: [],
+      palettes: [],
+    };
+
+    const blob = await buildSpaceMarkdownZip(snapshot, WHEN);
+    const zip = await loadZip(blob);
+    const assetPaths = Object.values(zip.files)
+      .filter((f) => !f.dir && f.name.startsWith('assets/notes/n1/'))
+      .map((f) => f.name);
+
+    // Two files written, with colliding names de-duplicated.
+    expect(assetPaths).toHaveLength(2);
+    expect(assetPaths).toContain('assets/notes/n1/sketch.png');
+    expect(assetPaths).toContain('assets/notes/n1/sketch-2.png');
+
+    const notesMd = await zip.file('notes.md')!.async('string');
+    expect(notesMd).toContain('![sketch.png](assets/notes/n1/sketch.png)');
+    expect(notesMd).toContain('![sketch.png](assets/notes/n1/sketch-2.png)');
+
+    // The blob content is preserved.
+    const stored = await zip.file('assets/notes/n1/sketch.png')!.async('string');
+    expect(stored).toBe('one');
+  });
+
+  it('places docs whose section is missing under manuscript/_unsorted', async () => {
+    const snapshot: SpaceSnapshot = {
+      space: sampleSpace,
+      sections: [],
+      docs: [{ ...sampleDoc, id: 'orphan', name: 'Stray', sectionId: 'ghost' }],
+      notes: [],
+      attachments: [],
+      annotations: [],
+      citations: [],
+      connections: [],
+      palettes: [],
+    };
+
+    const blob = await buildSpaceMarkdownZip(snapshot, WHEN);
+    const zip = await loadZip(blob);
+    const entry = Object.values(zip.files).find(
+      (f) => !f.dir && f.name.startsWith('manuscript/_unsorted/'),
+    );
+    expect(entry).toBeDefined();
+    const md = await entry!.async('string');
+    expect(md).toContain('name: Stray');
+    // A section-less doc emits no `section:` frontmatter line.
+    expect(md).not.toContain('section:');
+  });
+
+  it('derives asset filenames from the name extension or MIME fallback', async () => {
+    const att = (
+      id: string,
+      name: string,
+      mime: string,
+    ): SpaceSnapshot['attachments'][number] => ({
+      id,
+      noteId: 'n1',
+      spaceId: sampleSpace.id,
+      name,
+      mime,
+      size: 1,
+      blob: new Blob([id], { type: mime }),
+      createdAt: FIXED_TIME,
+    });
+
+    const snapshot: SpaceSnapshot = {
+      space: sampleSpace,
+      sections: [],
+      docs: [],
+      notes: [{ ...sampleNote, id: 'n1', title: 'N' }],
+      attachments: [
+        // No extension → fall back to the MIME-derived extension.
+        att('a1', 'diagram', 'image/webp'),
+        // Extension strips to empty → fall back to MIME (png).
+        att('a2', 'shot.@@@', 'image/png'),
+        // Unknown MIME and no usable extension → generic 'img'.
+        att('a3', 'blob', 'image/tiff'),
+      ],
+      annotations: [],
+      citations: [],
+      connections: [],
+      palettes: [],
+    };
+
+    const blob = await buildSpaceMarkdownZip(snapshot, WHEN);
+    const zip = await loadZip(blob);
+    const names = Object.values(zip.files)
+      .filter((f) => !f.dir && f.name.startsWith('assets/notes/n1/'))
+      .map((f) => f.name);
+
+    expect(names).toContain('assets/notes/n1/diagram.webp');
+    expect(names).toContain('assets/notes/n1/shot.png');
+    expect(names).toContain('assets/notes/n1/blob.img');
   });
 
   it('renders untitled notes whose body collapses to empty', async () => {

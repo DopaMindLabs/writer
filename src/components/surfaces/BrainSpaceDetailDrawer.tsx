@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
-import { ExternalLink, Link2, Trash2, X } from '@/components/libs/icons';
+import {
+  ExternalLink,
+  ImagePlus,
+  Link2,
+  Trash2,
+  X,
+} from '@/components/libs/icons';
 import {
   DialogPrimitiveContent,
   DialogPrimitiveDescription,
@@ -15,15 +21,27 @@ import { deleteNoteWithCascade } from '@/db/seed';
 import { useUI } from '@/store/ui';
 import { useDocuments } from '@/hooks/useDocuments';
 import { useConnectionsForNote } from '@/hooks/useConnections';
+import { useNoteAttachments } from '@/hooks/useNoteAttachments';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
-import { NoteState, type Note, type Connection, type Doc } from '@/db/schema';
+import { IMAGE_ACCEPT_ATTR, MAX_NOTE_IMAGES } from '@/data/note-attachments';
+import { addNoteImages, deleteNoteAttachment } from '@/lib/note-attachments';
+import {
+  NoteState,
+  type Note,
+  type Connection,
+  type Doc,
+  type NoteAttachment,
+} from '@/db/schema';
 import { routes } from '@/lib/routes';
 import { TextField } from '@/components/ui/TextField';
 import { TextArea } from '@/components/ui/TextArea';
 import { Select } from '@/components/ui/Select';
 import { Label } from '@/components/ui/Label';
 import { Button } from '@/components/ui/Button';
-import { IconButton } from '@/components/ui/icon';
+import { Icon, IconButton } from '@/components/ui/icon';
+import { FileInputTrigger } from '@/components/ui/FileInputTrigger';
+import { ImageThumb } from '@/components/ui/ImageThumb';
+import { InlineBanner } from '@/components/ui/InlineBanner';
 import { TypographyLabel } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 
@@ -297,6 +315,120 @@ const BodySection = ({ note }: { note: Note }) => {
   );
 };
 
+const AttachmentsHeader = ({ count }: { count: number }) => (
+  <div className="mb-2 flex items-center justify-between">
+    <Label
+      tone="ink3"
+      weight="regular"
+      className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider"
+    >
+      <ImagePlus className="h-3 w-3" />
+      Pictures
+    </Label>
+    <span
+      data-testid="brain-detail-drawer-attachments-count"
+      className="font-mono text-[10px] text-ink-4"
+    >
+      {count} / {MAX_NOTE_IMAGES}
+    </span>
+  </div>
+);
+
+const AttachmentsGrid = ({ attachments }: { attachments: NoteAttachment[] }) => {
+  if (attachments.length === 0) return null;
+  return (
+    <div className="mb-2 flex flex-wrap gap-2">
+      {attachments.map((att) => (
+        <ImageThumb
+          key={att.id}
+          blob={att.blob}
+          name={att.name}
+          size="md"
+          onRemove={() => { void deleteNoteAttachment(att.id); }}
+          removeTestId={`brain-detail-drawer-attachments-image-${att.id}-remove`}
+          data-testid={`brain-detail-drawer-attachments-image-${att.id}`}
+        />
+      ))}
+    </div>
+  );
+};
+
+interface AttachmentsUploadProps {
+  atLimit: boolean;
+  onPick: (files: File[]) => void;
+}
+
+const AttachmentsUpload = ({ atLimit, onPick }: AttachmentsUploadProps) => (
+  <>
+    <FileInputTrigger
+      accept={IMAGE_ACCEPT_ATTR}
+      multiple
+      disabled={atLimit}
+      onPick={onPick}
+      data-testid="brain-detail-drawer-attachments-input"
+    >
+      {(open) => (
+        <Button
+          kind="secondary"
+          size="sm"
+          disabled={atLimit}
+          onClick={open}
+          data-testid="brain-detail-drawer-attachments-upload"
+          className="gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
+        >
+          <Icon icon={ImagePlus} size="xs" />
+          Add picture
+        </Button>
+      )}
+    </FileInputTrigger>
+    {atLimit && (
+      <p
+        data-testid="brain-detail-drawer-attachments-limit-hint"
+        className="mt-1.5 font-mono text-[10px] text-ink-4"
+      >
+        limit of {MAX_NOTE_IMAGES} reached — remove one to add another.
+      </p>
+    )}
+  </>
+);
+
+interface AttachmentsSectionProps {
+  note: Note;
+  attachments: NoteAttachment[];
+}
+
+const AttachmentsSection = ({ note, attachments }: AttachmentsSectionProps) => {
+  const [rejected, setRejected] = useState<string[]>([]);
+  const atLimit = attachments.length >= MAX_NOTE_IMAGES;
+
+  const handlePick = async (files: File[]) => {
+    const result = await addNoteImages(note, files);
+    setRejected(result.rejected);
+  };
+
+  return (
+    <section className="mb-6" data-testid="brain-detail-drawer-attachments">
+      <AttachmentsHeader count={attachments.length} />
+      {rejected.length > 0 && (
+        <InlineBanner
+          kind="warning"
+          dismissible
+          onDismiss={() => { setRejected([]); }}
+          className="mb-2"
+          data-testid="brain-detail-drawer-attachments-reject-banner"
+        >
+          {rejected.join('; ')}
+        </InlineBanner>
+      )}
+      <AttachmentsGrid attachments={attachments} />
+      <AttachmentsUpload
+        atLimit={atLimit}
+        onPick={(files) => { void handlePick(files); }}
+      />
+    </section>
+  );
+};
+
 interface DrawerBodyProps {
   note: Note;
   spaceId: string;
@@ -331,11 +463,27 @@ const useRelatedNotesById = (
   }, [relatedNotes]);
 };
 
+const DrawerDeleteFooter = ({ onDelete }: { onDelete: () => void }) => (
+  <footer className="flex items-center justify-end border-t border-rule p-3">
+    <Button
+      data-testid="brain-detail-drawer-delete"
+      kind="dangerous"
+      size="sm"
+      onClick={onDelete}
+      className="gap-1.5 border-0 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
+    >
+      <Trash2 className="h-3 w-3" />
+      Delete note
+    </Button>
+  </footer>
+);
+
 const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) => {
   const navigate = useNavigate();
   const docs = useDocuments(spaceId);
   const { incoming, outgoing } = useConnectionsForNote(note.id);
   const relatedById = useRelatedNotesById(incoming, outgoing);
+  const attachments = useNoteAttachments(note.id);
 
   const linkedDoc = note.linkedDocId
     ? docs.find((d) => d.id === note.linkedDocId)
@@ -369,6 +517,8 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
       <div className="flex-1 overflow-y-auto p-4">
         <BodySection note={note} />
 
+        <AttachmentsSection note={note} attachments={attachments} />
+
         <LinkedDocSection
           note={note}
           docs={docs}
@@ -386,18 +536,7 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
         />
       </div>
 
-      <footer className="flex items-center justify-end border-t border-rule p-3">
-        <Button
-          data-testid="brain-detail-drawer-delete"
-          kind="dangerous"
-          size="sm"
-          onClick={() => { void handleDeleteNote(); }}
-          className="gap-1.5 border-0 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
-        >
-          <Trash2 className="h-3 w-3" />
-          Delete note
-        </Button>
-      </footer>
+      <DrawerDeleteFooter onDelete={() => { void handleDeleteNote(); }} />
     </>
   );
 };
