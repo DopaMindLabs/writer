@@ -1,0 +1,351 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`snapshot > matches the open sheet with an active doc 1`] = `
+<div
+  aria-labelledby="radix-_r_*_"
+  class="fixed inset-x-0 bottom-0 z-50 flex max-h-[80vh] flex-col rounded-t-2xl bg-paper pb-[env(safe-area-inset-bottom)] shadow-xl md:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom duration-200"
+  data-state="open"
+  data-testid="mobile-more-sheet"
+  id="radix-_r_*_"
+  role="dialog"
+  style="pointer-events: auto;"
+  tabindex="-1"
+>
+  <h2
+    class="sr-only"
+    id="radix-_r_*_"
+  >
+    More
+  </h2>
+  <div
+    aria-hidden="true"
+    class="mx-auto mt-2 h-1 w-9 rounded-full bg-rule"
+  />
+  <div
+    class="px-4 pb-2 pt-4"
+  >
+    <div
+      class="font-mono text-[9px] uppercase tracking-wider text-ink-4"
+    >
+      Mode
+    </div>
+    <div
+      class="mt-2 flex gap-1.5"
+    >
+      <a
+        class="flex-1 border px-3 py-2 text-center text-[12px] uppercase tracking-wider border-ink bg-ink font-medium text-paper"
+        data-discover="true"
+        href="/s/s1/d/d1"
+        type="button"
+      >
+        write
+      </a>
+      <a
+        class="flex-1 border px-3 py-2 text-center text-[12px] uppercase tracking-wider border-rule bg-paper text-ink"
+        data-discover="true"
+        href="/s/s1/d/d1/read"
+        type="button"
+      >
+        read
+      </a>
+      <a
+        class="flex-1 border px-3 py-2 text-center text-[12px] uppercase tracking-wider border-rule bg-paper text-ink"
+        data-discover="true"
+        href="/s/s1/d/d1/split"
+        type="button"
+      >
+        split
+      </a>
+    </div>
+  </div>
+  <div
+    class="px-4 pb-3 pt-4"
+  >
+    <div
+      class="font-mono text-[9px] uppercase tracking-wider text-ink-4"
+    >
+      Menu
+    </div>
+    <ul
+      class="mt-1 flex flex-col"
+    >
+      <li>
+        <a
+          class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink hover:bg-paper-2"
+          data-discover="true"
+          href="/s/s1/settings"
+          type="button"
+        >
+          Space settings
+        </a>
+      </li>
+      <li>
+        <a
+          class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink hover:bg-paper-2"
+          data-discover="true"
+          href="/settings"
+          type="button"
+        >
+          Settings
+        </a>
+      </li>
+      <li>
+        <a
+          class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink hover:bg-paper-2"
+          data-discover="true"
+          href="/about"
+          type="button"
+        >
+          About
+        </a>
+      </li>
+      <li>
+        <span
+          aria-describedby="radix-_r_*_"
+          aria-disabled="true"
+          class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink w-full"
+          data-coming-soon="true"
+          data-state="instant-open"
+          tabindex="0"
+        >
+          <span
+            aria-hidden="true"
+            class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+          >
+            <span
+              class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink"
+            >
+              Help & shortcuts
+            </span>
+          </span>
+        </span>
+      </li>
+      <li>
+        <span
+          aria-disabled="true"
+          class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink w-full"
+          data-coming-soon="true"
+          data-state="closed"
+          tabindex="0"
+        >
+          <span
+            aria-hidden="true"
+            class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+          >
+            <span
+              class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink"
+            >
+              What's new
+            </span>
+          </span>
+        </span>
+      </li>
+      <li>
+        <span
+          aria-disabled="true"
+          class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink w-full"
+          data-coming-soon="true"
+          data-state="closed"
+          tabindex="0"
+        >
+          <span
+            aria-hidden="true"
+            class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+          >
+            <span
+              class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink"
+            >
+              Send feedback…
+            </span>
+          </span>
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>
+`;
+
+exports[`snapshot > matches the space-level sheet with no active doc 1`] = `
+<div
+  aria-labelledby="radix-_r_*_"
+  class="fixed inset-x-0 bottom-0 z-50 flex max-h-[80vh] flex-col rounded-t-2xl bg-paper pb-[env(safe-area-inset-bottom)] shadow-xl md:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom duration-200"
+  data-state="open"
+  data-testid="mobile-more-sheet"
+  id="radix-_r_*_"
+  role="dialog"
+  style="pointer-events: auto;"
+  tabindex="-1"
+>
+  <h2
+    class="sr-only"
+    id="radix-_r_*_"
+  >
+    More
+  </h2>
+  <div
+    aria-hidden="true"
+    class="mx-auto mt-2 h-1 w-9 rounded-full bg-rule"
+  />
+  <div
+    class="px-4 pb-2 pt-4"
+  >
+    <div
+      class="font-mono text-[9px] uppercase tracking-wider text-ink-4"
+    >
+      Mode
+    </div>
+    <div
+      class="mt-2 flex gap-1.5"
+    >
+      <a
+        class="flex-1 border px-3 py-2 text-center text-[12px] uppercase tracking-wider border-ink bg-ink font-medium text-paper"
+        data-discover="true"
+        href="/s/s1"
+        type="button"
+      >
+        write
+      </a>
+      <span
+        aria-describedby="radix-_r_*_"
+        aria-disabled="true"
+        class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink flex-1"
+        data-coming-soon="true"
+        data-state="instant-open"
+        tabindex="0"
+      >
+        <span
+          aria-hidden="true"
+          class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+        >
+          <span
+            class="flex-1 border px-3 py-2 text-center text-[12px] uppercase tracking-wider border-rule bg-paper text-ink block w-full"
+          >
+            read
+          </span>
+        </span>
+      </span>
+      <span
+        aria-disabled="true"
+        class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink flex-1"
+        data-coming-soon="true"
+        data-state="closed"
+        tabindex="0"
+      >
+        <span
+          aria-hidden="true"
+          class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+        >
+          <span
+            class="flex-1 border px-3 py-2 text-center text-[12px] uppercase tracking-wider border-rule bg-paper text-ink block w-full"
+          >
+            split
+          </span>
+        </span>
+      </span>
+    </div>
+  </div>
+  <div
+    class="px-4 pb-3 pt-4"
+  >
+    <div
+      class="font-mono text-[9px] uppercase tracking-wider text-ink-4"
+    >
+      Menu
+    </div>
+    <ul
+      class="mt-1 flex flex-col"
+    >
+      <li>
+        <a
+          class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink hover:bg-paper-2"
+          data-discover="true"
+          href="/s/s1/settings"
+          type="button"
+        >
+          Space settings
+        </a>
+      </li>
+      <li>
+        <a
+          class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink hover:bg-paper-2"
+          data-discover="true"
+          href="/settings"
+          type="button"
+        >
+          Settings
+        </a>
+      </li>
+      <li>
+        <a
+          class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink hover:bg-paper-2"
+          data-discover="true"
+          href="/about"
+          type="button"
+        >
+          About
+        </a>
+      </li>
+      <li>
+        <span
+          aria-disabled="true"
+          class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink w-full"
+          data-coming-soon="true"
+          data-state="closed"
+          tabindex="0"
+        >
+          <span
+            aria-hidden="true"
+            class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+          >
+            <span
+              class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink"
+            >
+              Help & shortcuts
+            </span>
+          </span>
+        </span>
+      </li>
+      <li>
+        <span
+          aria-disabled="true"
+          class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink w-full"
+          data-coming-soon="true"
+          data-state="closed"
+          tabindex="0"
+        >
+          <span
+            aria-hidden="true"
+            class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+          >
+            <span
+              class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink"
+            >
+              What's new
+            </span>
+          </span>
+        </span>
+      </li>
+      <li>
+        <span
+          aria-disabled="true"
+          class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink w-full"
+          data-coming-soon="true"
+          data-state="closed"
+          tabindex="0"
+        >
+          <span
+            aria-hidden="true"
+            class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+          >
+            <span
+              class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink"
+            >
+              Send feedback…
+            </span>
+          </span>
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>
+`;

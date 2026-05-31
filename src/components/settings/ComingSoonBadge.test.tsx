@@ -14,4 +14,16 @@ describe('ComingSoonBadge', () => {
     renderWithProviders(<ComingSoonBadge className="ml-2" />);
     expect(screen.getByTestId('coming-soon-badge').className).toMatch(/ml-2/);
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot for default and custom-class variants', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <ComingSoonBadge />
+          <ComingSoonBadge className="px-2 py-1 text-[10px]" />
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

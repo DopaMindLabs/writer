@@ -1,0 +1,80 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ComingSoon > snapshot > should match the snapshot across tooltip, badge, and overlay variants 1`] = `
+<div>
+  <div>
+    <span
+      aria-disabled="true"
+      class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink"
+      data-coming-soon="true"
+      data-state="closed"
+      tabindex="0"
+    >
+      <span
+        aria-hidden="true"
+        class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+      >
+        <button
+          type="button"
+        >
+          Search
+        </button>
+      </span>
+    </span>
+    <span
+      aria-disabled="true"
+      class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink"
+      data-coming-soon="true"
+      data-state="closed"
+      tabindex="0"
+    >
+      <span
+        aria-hidden="true"
+        class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+      >
+        <button
+          type="button"
+        >
+          Export
+        </button>
+      </span>
+      <span
+        class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3 absolute right-1 top-1"
+        data-testid="coming-soon-badge"
+      >
+        coming soon
+      </span>
+    </span>
+    <div
+      aria-disabled="true"
+      class="relative block w-full cursor-not-allowed"
+      data-coming-soon="true"
+      data-coming-soon-overlay="true"
+    >
+      <div
+        class="pointer-events-none opacity-50"
+      >
+        <div>
+          A future panel.
+        </div>
+      </div>
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-0 flex items-center justify-center bg-paper/40 backdrop-blur-[1px]"
+      >
+        <span
+          class="inline-block rounded-sm bg-paper-2 font-mono uppercase tracking-wider text-ink-3 px-2 py-1 text-[10px]"
+          data-testid="coming-soon-badge"
+        >
+          coming soon
+        </span>
+      </div>
+      <span
+        class="sr-only"
+      >
+        Coming soon — Soon
+      </span>
+    </div>
+  </div>
+</div>
+`;

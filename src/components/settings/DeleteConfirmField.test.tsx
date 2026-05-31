@@ -20,4 +20,26 @@ describe('DeleteConfirmField', () => {
     });
     expect(onChange).toHaveBeenCalledWith('Novel');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot for empty and filled states', () => {
+      const { container } = render(
+        <div>
+          <DeleteConfirmField
+            label='Type "Novel" to confirm'
+            value=""
+            onChange={() => undefined}
+            testId="confirm-empty"
+          />
+          <DeleteConfirmField
+            label='Type "Novel" to confirm'
+            value="Novel"
+            onChange={() => undefined}
+            testId="confirm-filled"
+          />
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

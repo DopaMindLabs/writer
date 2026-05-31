@@ -26,4 +26,24 @@ describe('StatusBadge', () => {
     );
     expect(container.querySelector('svg')).not.toBeInTheDocument();
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across kinds, sizes, and glyph states', () => {
+      const { container } = render(
+        <div>
+          <StatusBadge kind="error">ERROR</StatusBadge>
+          <StatusBadge kind="warning">WARNING</StatusBadge>
+          <StatusBadge kind="success">SUCCESS</StatusBadge>
+          <StatusBadge kind="info">INFO</StatusBadge>
+          <StatusBadge kind="info" size="md">
+            MEDIUM
+          </StatusBadge>
+          <StatusBadge kind="info" glyph={false}>
+            NO GLYPH
+          </StatusBadge>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

@@ -65,4 +65,42 @@ describe('SyncRunRow', () => {
     );
     expect(screen.getByText(/synced/i)).toBeInTheDocument();
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across idle, busy, never-synced, and synced states', () => {
+      // A fixed, well-past timestamp renders as a stable ISO date.
+      const fixed = Date.UTC(2024, 0, 1, 0, 0, 0);
+      const { container } = renderWithProviders(
+        <div>
+          <SyncRunRow
+            busy={false}
+            disabled={false}
+            idleLabel="Sync now"
+            onSync={() => undefined}
+          />
+          <SyncRunRow
+            busy
+            disabled={false}
+            idleLabel="Sync now"
+            onSync={() => undefined}
+          />
+          <SyncRunRow
+            busy={false}
+            disabled={false}
+            idleLabel="Sync now"
+            onSync={() => undefined}
+            lastSyncedAt={null}
+          />
+          <SyncRunRow
+            busy={false}
+            disabled={false}
+            idleLabel="Sync now"
+            onSync={() => undefined}
+            lastSyncedAt={fixed}
+          />
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

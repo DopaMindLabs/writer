@@ -149,4 +149,16 @@ describe('SyncTab', () => {
     fireEvent.click(screen.getByRole('button', { name: /sync all spaces/i }));
     expect(await screen.findByRole('alert')).toHaveTextContent(/boom/i);
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot of the connected global sync tab', () => {
+      useSyncFolder.mockReturnValue({
+        supported: true,
+        folderName: 'Drafts',
+        lastSyncedAt: null,
+      });
+      const { container } = renderWithProviders(<SyncTab />);
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

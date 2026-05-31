@@ -1,0 +1,107 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SyncFolderRow > snapshot > should match the snapshot across connect, connect-only, and manage modes 1`] = `
+<div>
+  <div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Synced folder
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          Choose a folder to sync to.
+        </div>
+      </div>
+      <div>
+        <div
+          class="flex flex-wrap items-center justify-end gap-3"
+        >
+          <span
+            class="font-serif text-[14px] text-ink"
+          >
+            No folder connected
+          </span>
+          <button
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border border-ink bg-transparent text-ink hover:bg-paper-2 h-7 px-3 text-xs"
+            type="button"
+          >
+            Choose folder…
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Synced folder
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          Connected.
+        </div>
+      </div>
+      <div>
+        <div
+          class="flex flex-wrap items-center justify-end gap-3"
+        >
+          <span
+            class="font-serif text-[14px] text-ink"
+          >
+            Drafts
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Synced folder
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          Connected.
+        </div>
+      </div>
+      <div>
+        <div
+          class="flex flex-wrap items-center justify-end gap-3"
+        >
+          <span
+            class="font-serif text-[14px] text-ink"
+          >
+            Drafts
+          </span>
+          <button
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border border-ink bg-transparent text-ink hover:bg-paper-2 h-7 px-3 text-xs"
+            type="button"
+          >
+            Change…
+          </button>
+          <button
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border-b border-ink bg-transparent text-ink hover:text-ink-2 h-auto px-0 pb-[2px] text-xs"
+            type="button"
+          >
+            Disconnect
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -45,4 +45,23 @@ describe('ComingSoon', () => {
     );
     expect(screen.getByTestId('coming-soon-badge')).toBeInTheDocument();
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across tooltip, badge, and overlay variants', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <ComingSoon hint="Find in doc">
+            <button type="button">Search</button>
+          </ComingSoon>
+          <ComingSoon hint="Export" showBadge>
+            <button type="button">Export</button>
+          </ComingSoon>
+          <ComingSoon hint="Soon" overlay>
+            <div>A future panel.</div>
+          </ComingSoon>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

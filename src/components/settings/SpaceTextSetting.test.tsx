@@ -28,4 +28,22 @@ describe('SpaceTextSetting', () => {
     fireEvent.keyDown(input, { key: 'Escape' });
     expect(onReset).toHaveBeenCalledOnce();
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot of the field with a label and hint', () => {
+      const { container } = renderWithProviders(
+        <SpaceTextSetting
+          label="Space name"
+          hint="Shown in the rail and title bar."
+          ariaLabel="Space name"
+          testId="field"
+          value="Novel"
+          onChange={() => undefined}
+          onCommit={() => undefined}
+          onReset={() => undefined}
+        />,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

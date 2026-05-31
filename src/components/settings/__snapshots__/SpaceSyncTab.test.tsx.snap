@@ -1,0 +1,157 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SpaceSyncTab > snapshot > should match the snapshot of the connected per-space sync tab 1`] = `
+<div>
+  <section
+    data-testid="space-settings-tab-sync"
+  >
+    <p
+      class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+    >
+      SPACE · SETTINGS
+    </p>
+    <h1
+      class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+    >
+      Sync
+    </h1>
+    <p
+      class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+    >
+      Push this space to the connected folder, manually or on a schedule. Sync is separate from Backups.
+    </p>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Synced folder
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          Connect a folder in global Settings → Sync. The same folder is used for every space.
+        </div>
+      </div>
+      <div>
+        <div
+          class="flex flex-wrap items-center justify-end gap-3"
+        >
+          <span
+            class="font-serif text-[14px] text-ink"
+          >
+            Drafts
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Auto-sync
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          How often this space syncs automatically. Choose Default to follow the global auto-sync setting.
+        </div>
+      </div>
+      <div>
+        <div
+          aria-label="Auto-sync"
+          class="flex flex-wrap gap-1.5"
+          role="group"
+        >
+          <button
+            aria-pressed="true"
+            class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper"
+            type="button"
+          >
+            Default (10 min)
+          </button>
+          <button
+            aria-pressed="false"
+            class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+            type="button"
+          >
+            Off
+          </button>
+          <button
+            aria-pressed="false"
+            class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+            type="button"
+          >
+            5 min
+          </button>
+          <button
+            aria-pressed="false"
+            class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+            type="button"
+          >
+            10 min
+          </button>
+          <button
+            aria-pressed="false"
+            class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+            type="button"
+          >
+            30 min
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Manual sync
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          Push-only for now — this writes your local data to the folder. Pulling changes back lands later.
+        </div>
+      </div>
+      <div>
+        <div
+          class="flex flex-col items-end gap-1"
+        >
+          <button
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 bg-ink text-paper hover:bg-ink-2 h-9 px-4 text-[13px]"
+            type="button"
+          >
+            Sync this space
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="mt-6"
+    >
+      <h3
+        class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em]"
+      >
+        Recent syncs
+      </h3>
+      <div
+        class="mx-auto mt-6 max-w-md border border-dashed border-rule bg-paper-2/40 p-6 text-center"
+      >
+        <p
+          class="font-serif italic text-[14px] text-ink-2"
+        >
+          No syncs yet.
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+`;

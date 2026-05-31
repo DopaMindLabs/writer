@@ -389,4 +389,16 @@ describe('BrainSpaceDetailDrawer', () => {
       await waitFor(() => expect(useUI.getState().detailNoteId).toBeNull());
     });
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot of the opened drawer with a connection', async () => {
+      await seedTwoConnectedNotes();
+      renderCanvas();
+      await screen.findByTestId('brain-note-n2');
+      useUI.getState().openDetail(SECOND_NOTE.id);
+      const drawer = await screen.findByTestId('brain-detail-drawer');
+      await screen.findByTestId('brain-detail-drawer-connections-heading');
+      expect(drawer).toMatchSnapshot();
+    });
+  });
 });

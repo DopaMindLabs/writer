@@ -1,0 +1,1665 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of every global placeholder panel 1`] = `
+<div>
+  <div>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        General
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        How LIpsum Writer shows up by default. None of this is destructive.
+      </p>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Compact density
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Tighter rows in lists, tighter padding everywhere.
+          </div>
+        </div>
+        <div>
+          <span
+            aria-hidden="true"
+            class="relative inline-block h-4 w-7 rounded-full border border-rule bg-paper-2"
+          >
+            <span
+              class="absolute top-[1px] h-3 w-3 rounded-full bg-paper transition-transform left-[1px] translate-x-0"
+            />
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Reduce motion
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Skip animated transitions between views.
+          </div>
+        </div>
+        <div>
+          <span
+            aria-hidden="true"
+            class="relative inline-block h-4 w-7 rounded-full border border-rule bg-paper-2"
+          >
+            <span
+              class="absolute top-[1px] h-3 w-3 rounded-full bg-paper transition-transform left-[1px] translate-x-0"
+            />
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Show keyboard hints
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Display ⌘-key shortcuts in tooltips and the corner of buttons.
+          </div>
+        </div>
+        <div>
+          <span
+            aria-hidden="true"
+            class="relative inline-block h-4 w-7 rounded-full border border-ink bg-ink"
+          >
+            <span
+              class="absolute top-[1px] h-3 w-3 rounded-full bg-paper transition-transform left-[1px] translate-x-3"
+            />
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Open at startup
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            What you see when you launch the app.
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-wrap gap-1.5"
+          >
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-ink bg-ink font-medium text-paper"
+            >
+              Last view
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              Home
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              Brain space
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Appearance
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Colour, type, density. The mood you want this thing to set.
+      </p>
+      <div
+        class="border-b border-rule/60 py-[18px]"
+      >
+        <div
+          class="mb-1 text-[13px] font-medium text-ink"
+        >
+          Theme
+        </div>
+        <div
+          class="mb-3 font-serif text-[12px] italic text-ink-3"
+        >
+          Three curated palettes. They tune everything — block colours, hairlines, even the grain.
+        </div>
+        <div
+          class="grid grid-cols-1 gap-3 sm:grid-cols-3"
+        >
+          <div
+            class="relative border border-rule p-3.5"
+            style="background: rgb(250, 250, 246); color: rgb(17, 17, 17);"
+          >
+            <div
+              class="mb-3 h-9"
+            >
+              <div
+                class="mb-1.5 h-[2px] w-[40%] bg-current opacity-50"
+              />
+              <div
+                class="mb-1 h-[2px] w-[70%] bg-current opacity-25"
+              />
+              <div
+                class="h-[2px] w-[60%] bg-current opacity-25"
+              />
+            </div>
+            <div
+              class="flex items-baseline gap-2"
+            >
+              <span
+                class="font-serif text-[15px] font-medium tracking-tight"
+              >
+                Linen
+              </span>
+              <span
+                class="flex-1"
+              />
+              <span
+                class="font-mono text-[9px] uppercase tracking-wider opacity-60"
+              >
+                default
+              </span>
+            </div>
+            <span
+              class="absolute right-2.5 top-2.5 px-1.5 font-mono text-[9px] tracking-wider"
+              style="background: rgb(17, 17, 17); color: rgb(255, 255, 255);"
+            >
+              ON
+            </span>
+          </div>
+          <div
+            class="relative border border-rule p-3.5"
+            style="background: rgb(243, 243, 240); color: rgb(17, 17, 17);"
+          >
+            <div
+              class="mb-3 h-9"
+            >
+              <div
+                class="mb-1.5 h-[2px] w-[40%] bg-current opacity-50"
+              />
+              <div
+                class="mb-1 h-[2px] w-[70%] bg-current opacity-25"
+              />
+              <div
+                class="h-[2px] w-[60%] bg-current opacity-25"
+              />
+            </div>
+            <div
+              class="flex items-baseline gap-2"
+            >
+              <span
+                class="font-serif text-[15px] font-medium tracking-tight"
+              >
+                Studio
+              </span>
+              <span
+                class="flex-1"
+              />
+              <span
+                class="font-mono text-[9px] uppercase tracking-wider opacity-60"
+              >
+                neutral
+              </span>
+            </div>
+          </div>
+          <div
+            class="relative border border-rule p-3.5"
+            style="background: rgb(17, 17, 17); color: rgb(255, 255, 255);"
+          >
+            <div
+              class="mb-3 h-9"
+            >
+              <div
+                class="mb-1.5 h-[2px] w-[40%] bg-current opacity-50"
+              />
+              <div
+                class="mb-1 h-[2px] w-[70%] bg-current opacity-25"
+              />
+              <div
+                class="h-[2px] w-[60%] bg-current opacity-25"
+              />
+            </div>
+            <div
+              class="flex items-baseline gap-2"
+            >
+              <span
+                class="font-serif text-[15px] font-medium tracking-tight"
+              >
+                Midnight
+              </span>
+              <span
+                class="flex-1"
+              />
+              <span
+                class="font-mono text-[9px] uppercase tracking-wider opacity-60"
+              >
+                dark
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Accent
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Used for hover, focus, active editing ring.
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex items-center gap-2"
+          >
+            <span
+              aria-hidden="true"
+              class="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full text-paper"
+              style="background: rgb(17, 17, 17);"
+            >
+              ✓
+            </span>
+            <span
+              aria-hidden="true"
+              class="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full text-paper"
+              style="background: rgb(122, 106, 85);"
+            />
+            <span
+              aria-hidden="true"
+              class="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full text-paper"
+              style="background: rgb(90, 111, 85);"
+            />
+            <span
+              aria-hidden="true"
+              class="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full text-paper"
+              style="background: rgb(106, 90, 122);"
+            />
+            <span
+              aria-hidden="true"
+              class="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full text-paper"
+              style="background: rgb(122, 90, 90);"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Density
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-wrap gap-1.5"
+          >
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              Cozy
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-ink bg-ink font-medium text-paper"
+            >
+              Default
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              Compact
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Typography
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Defaults across all worlds. Individual worlds may override.
+      </p>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Prose font
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-wrap gap-1.5"
+          >
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-ink bg-ink font-medium text-paper"
+            >
+              Source Serif 4
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              EB Garamond
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              Lora
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              Iowan
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            UI font
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-wrap gap-1.5"
+          >
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-ink bg-ink font-medium text-paper"
+            >
+              Geist
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              Inter
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              IBM Plex
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              System
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Prose size
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Default for new worlds.
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex items-center gap-3"
+          >
+            <span
+              class="font-serif text-[12px] text-ink-3"
+            >
+              S
+            </span>
+            <div
+              class="relative h-[2px] w-[200px] bg-rule"
+            >
+              <div
+                class="absolute left-0 top-0 h-full bg-ink"
+                style="width: 60%;"
+              />
+              <div
+                class="absolute -top-[5px] h-3 w-3 -translate-x-1/2 rounded-full bg-ink"
+                style="left: 60%;"
+              />
+            </div>
+            <span
+              class="font-serif text-[16px] text-ink"
+            >
+              L
+            </span>
+            <span
+              class="ml-1 font-mono text-[11px] text-ink-3"
+            >
+              17 px
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Line height
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-wrap gap-1.5"
+          >
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              1.4
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              1.55
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-ink bg-ink font-medium text-paper"
+            >
+              1.65
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              1.8
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Measure
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Maximum line width.
+          </div>
+        </div>
+        <div>
+          <span
+            class="font-serif text-[14px] text-ink"
+          >
+            64 ch · ~620 px
+          </span>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Shortcuts
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Keyboard bindings for navigation, formatting, and modes.
+      </p>
+      <div
+        class="mb-8"
+      >
+        <h3
+          class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em] mb-2"
+        >
+          Navigation
+        </h3>
+        <div
+          class="flex items-center justify-between border-b border-rule/60 py-2.5"
+        >
+          <span
+            class="text-[13px] text-ink-2"
+          >
+            Open settings
+          </span>
+          <span
+            class="font-mono text-[11px] text-ink"
+          >
+            ⌘ ,
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between border-b border-rule/60 py-2.5"
+        >
+          <span
+            class="text-[13px] text-ink-2"
+          >
+            Quick settings
+          </span>
+          <span
+            class="font-mono text-[11px] text-ink"
+          >
+            ⌘ K
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between border-b border-rule/60 py-2.5"
+        >
+          <span
+            class="text-[13px] text-ink-2"
+          >
+            Find in doc
+          </span>
+          <span
+            class="font-mono text-[11px] text-ink"
+          >
+            ⌘ F
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between border-b border-rule/60 py-2.5"
+        >
+          <span
+            class="text-[13px] text-ink-2"
+          >
+            Toggle focus
+          </span>
+          <span
+            class="font-mono text-[11px] text-ink"
+          >
+            ⌘ .
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between border-b border-rule/60 py-2.5"
+        >
+          <span
+            class="text-[13px] text-ink-2"
+          >
+            Toggle inspector
+          </span>
+          <span
+            class="font-mono text-[11px] text-ink"
+          >
+            ⌘ I
+          </span>
+        </div>
+      </div>
+      <div
+        class="mb-8"
+      >
+        <h3
+          class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em] mb-2"
+        >
+          Formatting
+        </h3>
+        <div
+          class="flex items-center justify-between border-b border-rule/60 py-2.5"
+        >
+          <span
+            class="text-[13px] text-ink-2"
+          >
+            Bold
+          </span>
+          <span
+            class="font-mono text-[11px] text-ink"
+          >
+            ⌘ B
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between border-b border-rule/60 py-2.5"
+        >
+          <span
+            class="text-[13px] text-ink-2"
+          >
+            Italic
+          </span>
+          <span
+            class="font-mono text-[11px] text-ink"
+          >
+            ⌘ I
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between border-b border-rule/60 py-2.5"
+        >
+          <span
+            class="text-[13px] text-ink-2"
+          >
+            Underline
+          </span>
+          <span
+            class="font-mono text-[11px] text-ink"
+          >
+            ⌘ U
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between border-b border-rule/60 py-2.5"
+        >
+          <span
+            class="text-[13px] text-ink-2"
+          >
+            Heading 1
+          </span>
+          <span
+            class="font-mono text-[11px] text-ink"
+          >
+            # →
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between border-b border-rule/60 py-2.5"
+        >
+          <span
+            class="text-[13px] text-ink-2"
+          >
+            Heading 2
+          </span>
+          <span
+            class="font-mono text-[11px] text-ink"
+          >
+            ## →
+          </span>
+        </div>
+      </div>
+      <div
+        class="mb-8"
+      >
+        <h3
+          class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em] mb-2"
+        >
+          Modes
+        </h3>
+        <div
+          class="flex items-center justify-between border-b border-rule/60 py-2.5"
+        >
+          <span
+            class="text-[13px] text-ink-2"
+          >
+            Write mode
+          </span>
+          <span
+            class="font-mono text-[11px] text-ink"
+          >
+            ⌘ 1
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between border-b border-rule/60 py-2.5"
+        >
+          <span
+            class="text-[13px] text-ink-2"
+          >
+            Read mode
+          </span>
+          <span
+            class="font-mono text-[11px] text-ink"
+          >
+            ⌘ 2
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between border-b border-rule/60 py-2.5"
+        >
+          <span
+            class="text-[13px] text-ink-2"
+          >
+            Split mode
+          </span>
+          <span
+            class="font-mono text-[11px] text-ink"
+          >
+            ⌘ 3
+          </span>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Templates
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Reusable scaffolds for new spaces and docs.
+      </p>
+      <div
+        class="grid grid-cols-1 gap-3 sm:grid-cols-2"
+      >
+        <div
+          class="border border-rule p-4"
+        >
+          <div
+            class="font-serif text-[16px] font-medium tracking-tight text-ink"
+          >
+            Fiction
+          </div>
+          <div
+            class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+          >
+            Manuscript · World · Workshop
+          </div>
+        </div>
+        <div
+          class="border border-rule p-4"
+        >
+          <div
+            class="font-serif text-[16px] font-medium tracking-tight text-ink"
+          >
+            Research
+          </div>
+          <div
+            class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+          >
+            Sources · Notes · Drafts
+          </div>
+        </div>
+        <div
+          class="border border-rule p-4"
+        >
+          <div
+            class="font-serif text-[16px] font-medium tracking-tight text-ink"
+          >
+            Journal
+          </div>
+          <div
+            class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+          >
+            Daily · Weekly · Reflections
+          </div>
+        </div>
+        <div
+          class="border border-rule p-4"
+        >
+          <div
+            class="font-serif text-[16px] font-medium tracking-tight text-ink"
+          >
+            Essay
+          </div>
+          <div
+            class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+          >
+            Outline · Drafts · Final
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Highlight palettes
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Five-slot palettes per space — name and tune each colour.
+      </p>
+      <div
+        class="flex flex-col gap-2"
+      >
+        <div
+          class="flex items-center gap-3.5 border border-rule p-3"
+        >
+          <div
+            aria-hidden="true"
+            class="h-7 w-7 border border-rule"
+            style="background: rgb(255, 243, 168);"
+          />
+          <div
+            class="min-w-0 flex-1"
+          >
+            <div
+              class="font-serif text-[14px] font-medium text-ink"
+            >
+              Evidence
+            </div>
+            <div
+              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              #FFF3A8
+            </div>
+          </div>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            rename
+          </span>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            tune
+          </span>
+        </div>
+        <div
+          class="flex items-center gap-3.5 border border-rule p-3"
+        >
+          <div
+            aria-hidden="true"
+            class="h-7 w-7 border border-rule"
+            style="background: rgb(255, 214, 224);"
+          />
+          <div
+            class="min-w-0 flex-1"
+          >
+            <div
+              class="font-serif text-[14px] font-medium text-ink"
+            >
+              To revise
+            </div>
+            <div
+              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              #FFD6E0
+            </div>
+          </div>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            rename
+          </span>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            tune
+          </span>
+        </div>
+        <div
+          class="flex items-center gap-3.5 border border-rule p-3"
+        >
+          <div
+            aria-hidden="true"
+            class="h-7 w-7 border border-rule"
+            style="background: rgb(207, 227, 250);"
+          />
+          <div
+            class="min-w-0 flex-1"
+          >
+            <div
+              class="font-serif text-[14px] font-medium text-ink"
+            >
+              Reference
+            </div>
+            <div
+              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              #CFE3FA
+            </div>
+          </div>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            rename
+          </span>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            tune
+          </span>
+        </div>
+        <div
+          class="flex items-center gap-3.5 border border-rule p-3"
+        >
+          <div
+            aria-hidden="true"
+            class="h-7 w-7 border border-rule"
+            style="background: rgb(214, 235, 207);"
+          />
+          <div
+            class="min-w-0 flex-1"
+          >
+            <div
+              class="font-serif text-[14px] font-medium text-ink"
+            >
+              Quote
+            </div>
+            <div
+              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              #D6EBCF
+            </div>
+          </div>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            rename
+          </span>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            tune
+          </span>
+        </div>
+        <div
+          class="flex items-center gap-3.5 border border-rule p-3"
+        >
+          <div
+            aria-hidden="true"
+            class="h-7 w-7 border border-rule"
+            style="background: rgb(232, 232, 232);"
+          />
+          <div
+            class="min-w-0 flex-1"
+          >
+            <div
+              class="font-serif text-[14px] font-medium text-ink"
+            >
+              Loose end
+            </div>
+            <div
+              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              #E8E8E8
+            </div>
+          </div>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            rename
+          </span>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            tune
+          </span>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Citation style
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Default citation style across spaces.
+      </p>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Default style
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Used when inserting a new citation. Per-space overrides land later.
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-wrap gap-1.5"
+          >
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-ink bg-ink font-medium text-paper"
+            >
+              Chicago
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              APA
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              MLA
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              IEEE
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Annotations
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Margin notes and inline annotations.
+      </p>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Show margin notes
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Annotations float in the right gutter when there's room.
+          </div>
+        </div>
+        <div>
+          <span
+            aria-hidden="true"
+            class="relative inline-block h-4 w-7 rounded-full border border-ink bg-ink"
+          >
+            <span
+              class="absolute top-[1px] h-3 w-3 rounded-full bg-paper transition-transform left-[1px] translate-x-3"
+            />
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Show inline highlights
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Annotation colour bleeds onto the underlying prose.
+          </div>
+        </div>
+        <div>
+          <span
+            aria-hidden="true"
+            class="relative inline-block h-4 w-7 rounded-full border border-ink bg-ink"
+          >
+            <span
+              class="absolute top-[1px] h-3 w-3 rounded-full bg-paper transition-transform left-[1px] translate-x-3"
+            />
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Include in exports
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Annotations are written out alongside the document body.
+          </div>
+        </div>
+        <div>
+          <span
+            aria-hidden="true"
+            class="relative inline-block h-4 w-7 rounded-full border border-rule bg-paper-2"
+          >
+            <span
+              class="absolute top-[1px] h-3 w-3 rounded-full bg-paper transition-transform left-[1px] translate-x-0"
+            />
+          </span>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Export / import
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Move data in and out of LIpsum Writer.
+      </p>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Export format
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Per-doc and per-space exports use the same default.
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-wrap gap-1.5"
+          >
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-ink bg-ink font-medium text-paper"
+            >
+              Markdown
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              HTML
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              PDF
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              .docx
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              LaTeX
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Import from
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Bring in another LIpsum bundle or a directory of Markdown files.
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-wrap gap-1.5"
+          >
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-ink bg-ink font-medium text-paper"
+            >
+              LIpsum bundle (.zip)
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              Markdown folder
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              Obsidian vault
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Your data
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Where your work lives and how much room it takes.
+      </p>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Storage used
+          </div>
+        </div>
+        <div>
+          <span
+            class="font-serif text-[14px] text-ink"
+          >
+            ≈ 12.4 MB · 4 spaces, 38 docs
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Storage engine
+          </div>
+        </div>
+        <div>
+          <span
+            class="font-serif text-[14px] text-ink"
+          >
+            IndexedDB (local browser)
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Wipe everything
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Removes every space, doc, and snapshot from this browser. There is no undo.
+          </div>
+        </div>
+        <div>
+          <span
+            class="inline-block border border-ink px-3 py-1.5 text-[12px] font-medium text-ink"
+          >
+            Wipe local data…
+          </span>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Account
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Sign-in, sync across devices, and shared workspaces.
+      </p>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Sign in
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Cloud sync is not available yet. This is here to show the design.
+          </div>
+        </div>
+        <div>
+          <span
+            class="inline-block border border-ink px-3 py-1.5 text-[12px] font-medium text-ink"
+          >
+            Sign in with email
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Sync this device
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Once you sign in, your spaces will replicate to other devices.
+          </div>
+        </div>
+        <div>
+          <span
+            aria-hidden="true"
+            class="relative inline-block h-4 w-7 rounded-full border border-rule bg-paper-2"
+          >
+            <span
+              class="absolute top-[1px] h-3 w-3 rounded-full bg-paper transition-transform left-[1px] translate-x-0"
+            />
+          </span>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        About
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Build info and links.
+      </p>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Version
+          </div>
+        </div>
+        <div>
+          <span
+            class="font-serif text-[14px] text-ink"
+          >
+            0.5.0 · experimental
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Build
+          </div>
+        </div>
+        <div>
+          <span
+            class="font-serif text-[14px] text-ink"
+          >
+            local
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            License
+          </div>
+        </div>
+        <div>
+          <span
+            class="font-serif text-[14px] text-ink"
+          >
+            PolyForm Noncommercial 1.0.0
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Links
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-wrap items-center gap-4"
+          >
+            <span
+              class="border-b border-ink pb-px text-[13px] text-ink"
+            >
+              Source
+            </span>
+            <span
+              class="border-b border-ink pb-px text-[13px] text-ink"
+            >
+              Changelog
+            </span>
+            <span
+              class="border-b border-ink pb-px text-[13px] text-ink"
+            >
+              Send feedback
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Backups
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Export, restore, and snapshot your local data.
+      </p>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Auto-snapshot interval
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-wrap gap-1.5"
+          >
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              5 min
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-ink bg-ink font-medium text-paper"
+            >
+              10 min
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              30 min
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              Off
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Keep
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Older snapshots roll off automatically.
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-wrap gap-1.5"
+          >
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              Last 50
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-ink bg-ink font-medium text-paper"
+            >
+              7 days
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              30 days
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Latest
+          </div>
+        </div>
+        <div>
+          <span
+            class="font-serif text-[14px] text-ink"
+          >
+            12 min ago · 1,190 words
+          </span>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+`;

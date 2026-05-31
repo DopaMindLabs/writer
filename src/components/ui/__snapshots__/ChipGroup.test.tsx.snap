@@ -1,0 +1,55 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ChipGroup > snapshot > should match the snapshot across index and value modes 1`] = `
+<div>
+  <div>
+    <div
+      aria-label="Width"
+      class="flex flex-wrap gap-1.5"
+      role="group"
+    >
+      <button
+        aria-pressed="false"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+        type="button"
+      >
+        S
+      </button>
+      <button
+        aria-pressed="true"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper"
+        type="button"
+      >
+        M
+      </button>
+      <button
+        aria-pressed="false"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+        type="button"
+      >
+        L
+      </button>
+    </div>
+    <div
+      aria-label="Interval"
+      class="flex flex-wrap gap-1.5"
+      role="group"
+    >
+      <button
+        aria-pressed="false"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+        type="button"
+      >
+        Off
+      </button>
+      <button
+        aria-pressed="true"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper"
+        type="button"
+      >
+        5 min
+      </button>
+    </div>
+  </div>
+</div>
+`;

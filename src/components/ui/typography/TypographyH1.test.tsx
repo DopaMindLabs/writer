@@ -53,4 +53,19 @@ describe('TypographyH1', () => {
     expect(ref.current).not.toBeNull();
     expect(ref.current?.tagName).toBe('H1');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across all variants', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <TypographyH1 variant="display">Display</TypographyH1>
+          <TypographyH1 variant="page">Page</TypographyH1>
+          <TypographyH1 variant="section">Section</TypographyH1>
+          <TypographyH1 variant="compact">Compact</TypographyH1>
+          <TypographyH1 variant="simple">Simple</TypographyH1>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

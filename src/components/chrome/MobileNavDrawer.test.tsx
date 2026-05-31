@@ -10,6 +10,7 @@ const openAfterMount = async () => {
   // initial mount. Open it on the next microtask so the effect has already run.
   await act(async () => {
     useUI.getState().setMobileNavOpen(true);
+    await Promise.resolve();
   });
 };
 
@@ -39,5 +40,20 @@ describe('MobileNavDrawer', () => {
     await waitFor(() =>
       { expect(useUI.getState().mobileNavOpen).toBe(false); },
     );
+  });
+});
+
+describe('snapshot', () => {
+  it('matches the open drawer with the seeded space contents', async () => {
+    await seedBasicSpace();
+    renderWithProviders(<MobileNavDrawer spaceId="s1" activeDocId="d1" />, {
+      initialEntries: ['/s/s1/d/d1'],
+    });
+    await openAfterMount();
+    // Wait for the embedded Sidebar to hydrate its async Dexie data.
+    await screen.findByText('Sample Doc');
+    // The drawer renders into a portal on document.body, not into `container`.
+    const dialog = document.body.querySelector('[role="dialog"]');
+    expect(dialog).toMatchSnapshot();
   });
 });

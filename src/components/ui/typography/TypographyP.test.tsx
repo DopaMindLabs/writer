@@ -70,4 +70,21 @@ describe('TypographyP', () => {
     expect(ref.current).not.toBeNull();
     expect(ref.current?.tagName).toBe('P');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across all variants', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <TypographyP variant="body">Body</TypographyP>
+          <TypographyP variant="lead">Lead</TypographyP>
+          <TypographyP variant="tagline">Tagline</TypographyP>
+          <TypographyP variant="description">Description</TypographyP>
+          <TypographyP variant="caption">Caption</TypographyP>
+          <TypographyP variant="empty">Empty</TypographyP>
+          <TypographyP variant="emptyHint">Empty hint</TypographyP>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

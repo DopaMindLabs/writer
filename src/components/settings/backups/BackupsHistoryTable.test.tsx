@@ -36,4 +36,30 @@ describe('BackupsHistoryTable', () => {
     fireEvent.click(screen.getByTestId('backup-row-b1-delete'));
     expect(onDelete).toHaveBeenCalledOnce();
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot for the empty state and a populated table', () => {
+      // A fixed, well-past timestamp renders as a stable ISO date.
+      const fixed = Date.UTC(2024, 0, 1, 0, 0, 0);
+      const rows = [
+        { id: 'b1', spaceId: 's1', when: fixed, kind: 'manual', size: 2048 },
+        { id: 'b2', spaceId: 's1', when: fixed, kind: 'auto', size: 512 },
+      ] as unknown as Backup[];
+      const { container } = renderWithProviders(
+        <div>
+          <BackupsHistoryTable
+            backups={[]}
+            onDownload={() => undefined}
+            onDelete={() => undefined}
+          />
+          <BackupsHistoryTable
+            backups={rows}
+            onDownload={() => undefined}
+            onDelete={() => undefined}
+          />
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

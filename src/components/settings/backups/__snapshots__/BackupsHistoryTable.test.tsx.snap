@@ -1,0 +1,152 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BackupsHistoryTable > snapshot > should match the snapshot for the empty state and a populated table 1`] = `
+<div>
+  <div>
+    <div
+      class="mt-6"
+    >
+      <h3
+        class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em]"
+      >
+        History
+      </h3>
+      <div
+        class="mx-auto mt-6 max-w-md border border-dashed border-rule bg-paper-2/40 p-6 text-center"
+      >
+        <p
+          class="font-serif italic text-[14px] text-ink-2"
+        >
+          No snapshots yet — create one with + snapshot now.
+        </p>
+      </div>
+    </div>
+    <div
+      class="mt-6"
+    >
+      <h3
+        class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em]"
+      >
+        History
+      </h3>
+      <table
+        class="mt-3 w-full border-collapse text-[13px]"
+        data-testid="backups-history"
+      >
+        <thead>
+          <tr
+            class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-3 border-b border-rule"
+          >
+            <th
+              class="py-2 text-left font-normal"
+            >
+              WHEN
+            </th>
+            <th
+              class="py-2 text-left font-normal"
+            >
+              KIND
+            </th>
+            <th
+              class="py-2 text-right font-normal"
+            >
+              SIZE
+            </th>
+            <th
+              class="py-2 text-right font-normal"
+            />
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class="border-b border-rule"
+            data-testid="backup-row-b1"
+          >
+            <td
+              class="py-2.5 font-mono text-[12px] text-ink"
+            >
+              2024-01-01
+            </td>
+            <td
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-2 py-2.5"
+            >
+              manual
+            </td>
+            <td
+              class="py-2.5 text-right font-mono text-[12px] text-ink-2"
+            >
+              2.0 kB
+            </td>
+            <td
+              class="py-2.5 text-right"
+            >
+              <div
+                class="flex items-center justify-end gap-3 text-[12px]"
+              >
+                <button
+                  class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border-b border-ink bg-transparent text-ink hover:text-ink-2 h-auto px-0 pb-[2px] text-xs"
+                  data-testid="backup-row-b1-download"
+                  type="button"
+                >
+                  ↓ download
+                </button>
+                <button
+                  aria-label="delete"
+                  class="text-ink-3 hover:text-ink"
+                  data-testid="backup-row-b1-delete"
+                  type="button"
+                >
+                  delete
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="border-b border-rule"
+            data-testid="backup-row-b2"
+          >
+            <td
+              class="py-2.5 font-mono text-[12px] text-ink"
+            >
+              2024-01-01
+            </td>
+            <td
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-2 py-2.5"
+            >
+              auto
+            </td>
+            <td
+              class="py-2.5 text-right font-mono text-[12px] text-ink-2"
+            >
+              512 B
+            </td>
+            <td
+              class="py-2.5 text-right"
+            >
+              <div
+                class="flex items-center justify-end gap-3 text-[12px]"
+              >
+                <button
+                  class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border-b border-ink bg-transparent text-ink hover:text-ink-2 h-auto px-0 pb-[2px] text-xs"
+                  data-testid="backup-row-b2-download"
+                  type="button"
+                >
+                  ↓ download
+                </button>
+                <button
+                  aria-label="delete"
+                  class="text-ink-3 hover:text-ink"
+                  data-testid="backup-row-b2-delete"
+                  type="button"
+                >
+                  delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+`;

@@ -33,4 +33,13 @@ describe('Popover primitives', () => {
     await userEvent.click(screen.getByRole('button', { name: 'close' }));
     expect(screen.queryByText('hello popover')).not.toBeInTheDocument();
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot of the open popover content', async () => {
+      const { baseElement } = renderWithProviders(<Harness />);
+      await userEvent.click(screen.getByRole('button', { name: 'open' }));
+      expect(await screen.findByText('hello popover')).toBeInTheDocument();
+      expect(baseElement).toMatchSnapshot();
+    });
+  });
 });

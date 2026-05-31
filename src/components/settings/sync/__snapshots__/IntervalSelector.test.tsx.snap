@@ -1,0 +1,81 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`IntervalSelector > snapshot > should match the snapshot with and without the inherit chip 1`] = `
+<div>
+  <div>
+    <div
+      class="flex flex-wrap gap-1.5"
+      role="group"
+    >
+      <button
+        aria-pressed="false"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+        type="button"
+      >
+        Off
+      </button>
+      <button
+        aria-pressed="false"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+        type="button"
+      >
+        5 min
+      </button>
+      <button
+        aria-pressed="true"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper"
+        type="button"
+      >
+        10 min
+      </button>
+      <button
+        aria-pressed="false"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+        type="button"
+      >
+        30 min
+      </button>
+    </div>
+    <div
+      class="flex flex-wrap gap-1.5"
+      role="group"
+    >
+      <button
+        aria-pressed="true"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper"
+        type="button"
+      >
+        Default (10 min)
+      </button>
+      <button
+        aria-pressed="false"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+        type="button"
+      >
+        Off
+      </button>
+      <button
+        aria-pressed="false"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+        type="button"
+      >
+        5 min
+      </button>
+      <button
+        aria-pressed="false"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+        type="button"
+      >
+        10 min
+      </button>
+      <button
+        aria-pressed="false"
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+        type="button"
+      >
+        30 min
+      </button>
+    </div>
+  </div>
+</div>
+`;

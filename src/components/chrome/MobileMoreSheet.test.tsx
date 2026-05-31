@@ -102,3 +102,32 @@ describe('MobileMoreSheet', () => {
     ).toBe('/s/s1/d/d1?focus=1');
   });
 });
+
+describe('snapshot', () => {
+  beforeEach(() => {
+    act(() => {
+      useUI.getState().setMobileMoreOpen(false);
+    });
+  });
+
+  it('matches the open sheet with an active doc', () => {
+    act(() => {
+      useUI.getState().setMobileMoreOpen(true);
+    });
+    renderWithProviders(<MobileMoreSheet spaceId="s1" docId="d1" />, {
+      initialEntries: ['/s/s1/d/d1'],
+    });
+    // The sheet renders into a portal on document.body, not into `container`.
+    expect(screen.getByTestId('mobile-more-sheet')).toMatchSnapshot();
+  });
+
+  it('matches the space-level sheet with no active doc', () => {
+    act(() => {
+      useUI.getState().setMobileMoreOpen(true);
+    });
+    renderWithProviders(<MobileMoreSheet spaceId="s1" docId={null} />, {
+      initialEntries: ['/s/s1'],
+    });
+    expect(screen.getByTestId('mobile-more-sheet')).toMatchSnapshot();
+  });
+});
