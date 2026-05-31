@@ -53,8 +53,9 @@ test.describe('Accessibility settings panel', () => {
     await page.getByRole('button', { name: 'Large', exact: true }).click();
     await expect(page.locator('html')).toHaveAttribute('data-text-scale', 'lg');
 
-    // Motion is a RadioRow (radio inputs with labels).
-    await page.getByLabel('Reduced').check();
+    // Motion is a RadioRow whose <input> is visually hidden (peer sr-only);
+    // click the visible label text rather than the input itself.
+    await page.getByText('Reduced', { exact: true }).click();
     await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
 
     await page.getByRole('switch', { name: 'Always underline links' }).click();
