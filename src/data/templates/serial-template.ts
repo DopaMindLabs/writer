@@ -20,7 +20,13 @@ const template: Template = {
     { sectionLabel: 'Recurring people', name: 'Cast' },
     { sectionLabel: 'Calendar', name: 'Schedule' },
   ],
-  noteKinds: [NoteKind.Note, NoteKind.Source, NoteKind.Todo, NoteKind.Blank],
+  noteKinds: [
+    NoteKind.Note,
+    NoteKind.Source,
+    NoteKind.Todo,
+    NoteKind.Blank,
+    NoteKind.Image,
+  ],
 };
 
 export default template;

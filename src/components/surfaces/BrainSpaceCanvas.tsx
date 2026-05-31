@@ -11,11 +11,18 @@ import { useConnections } from '@/hooks/useConnections';
 import { useSpace } from '@/hooks/useSpaces';
 import { useUI } from '@/store/ui';
 import { getTemplate } from '@/data/templates';
+import { getNoteType } from '@/data/note-types';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
 import { BrainSpaceNote } from './BrainSpaceNote';
 import { BrainSpaceConnection } from './BrainSpaceConnection';
 import { BrainSpaceDetailDrawer } from './BrainSpaceDetailDrawer';
-import { NoteKind, NoteState, type Note, type Connection } from '@/db/schema';
+import {
+  NoteKind,
+  NoteLayout,
+  NoteState,
+  type Note,
+  type Connection,
+} from '@/db/schema';
 import { TypographyLabel, TypographyP } from '@/components/ui/typography';
 
 interface BrainSpaceCanvasProps {
@@ -24,6 +31,9 @@ interface BrainSpaceCanvasProps {
 
 const DEFAULT_W = 184;
 const DEFAULT_H = 80;
+// Image cards lead with the picture, so they start larger than a text note.
+const IMAGE_DEFAULT_W = 240;
+const IMAGE_DEFAULT_H = 200;
 
 interface ConnectionsLayerProps {
   connections: Connection[];
@@ -107,20 +117,25 @@ const useCanvasInteractions = (spaceId: string, noteCount: number) => {
   const addNote = useCallback(
     async (kind: NoteKind) => {
       const jitter = (noteCount * 24) % 240;
+      const type = getNoteType(kind);
+      const isImage = type.layout === NoteLayout.Image;
+      const id = newId();
       await db.notes.add({
-        id: newId(),
+        id,
         spaceId,
         l: 24 + jitter,
         t: 24 + jitter,
-        w: DEFAULT_W,
-        h: DEFAULT_H,
+        w: isImage ? IMAGE_DEFAULT_W : DEFAULT_W,
+        h: isImage ? IMAGE_DEFAULT_H : DEFAULT_H,
         kind,
         state: NoteState.User,
         body: '',
         createdAt: Date.now(),
+        typeVersion: type.version,
       });
+      focusNote(id);
     },
-    [spaceId, noteCount],
+    [spaceId, noteCount, focusNote],
   );
 
   const handlePick = useCallback(

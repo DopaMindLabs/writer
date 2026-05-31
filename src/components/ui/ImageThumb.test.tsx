@@ -33,4 +33,19 @@ describe('ImageThumb', () => {
     );
     expect(container.firstChild).toHaveClass('h-12', 'w-12');
   });
+
+  it('does not make the image clickable unless onOpen is provided', () => {
+    render(<ImageThumb blob={makeBlob()} name="a.png" />);
+    expect(
+      screen.queryByRole('button', { name: /View/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('fires onOpen when the image button is clicked', async () => {
+    const user = userEvent.setup();
+    const onOpen = vi.fn();
+    render(<ImageThumb blob={makeBlob()} name="a.png" onOpen={onOpen} />);
+    await user.click(screen.getByRole('button', { name: 'View a.png' }));
+    expect(onOpen).toHaveBeenCalledOnce();
+  });
 });

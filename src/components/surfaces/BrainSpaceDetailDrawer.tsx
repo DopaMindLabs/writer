@@ -23,6 +23,7 @@ import { useDocuments } from '@/hooks/useDocuments';
 import { useConnectionsForNote } from '@/hooks/useConnections';
 import { useNoteAttachments } from '@/hooks/useNoteAttachments';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
+import { getNoteLayoutConfig } from '@/data/note-types';
 import { IMAGE_ACCEPT_ATTR, MAX_NOTE_IMAGES } from '@/data/note-attachments';
 import { addNoteImages, deleteNoteAttachment } from '@/lib/note-attachments';
 import {
@@ -41,6 +42,7 @@ import { Button } from '@/components/ui/Button';
 import { Icon, IconButton } from '@/components/ui/icon';
 import { FileInputTrigger } from '@/components/ui/FileInputTrigger';
 import { ImageThumb } from '@/components/ui/ImageThumb';
+import { ImageLightbox, type LightboxImage } from '@/components/ui/ImageLightbox';
 import { InlineBanner } from '@/components/ui/InlineBanner';
 import { TypographyLabel } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
@@ -334,16 +336,23 @@ const AttachmentsHeader = ({ count }: { count: number }) => (
   </div>
 );
 
-const AttachmentsGrid = ({ attachments }: { attachments: NoteAttachment[] }) => {
+interface AttachmentsGridProps {
+  attachments: NoteAttachment[];
+  onOpenImage: (index: number) => void;
+}
+
+const AttachmentsGrid = ({ attachments, onOpenImage }: AttachmentsGridProps) => {
   if (attachments.length === 0) return null;
   return (
     <div className="mb-2 flex flex-wrap gap-2">
-      {attachments.map((att) => (
+      {attachments.map((att, i) => (
         <ImageThumb
           key={att.id}
           blob={att.blob}
           name={att.name}
           size="md"
+          onOpen={() => { onOpenImage(i); }}
+          openTestId={`brain-detail-drawer-attachments-image-${att.id}-open`}
           onRemove={() => { void deleteNoteAttachment(att.id); }}
           removeTestId={`brain-detail-drawer-attachments-image-${att.id}-remove`}
           data-testid={`brain-detail-drawer-attachments-image-${att.id}`}
@@ -399,7 +408,13 @@ interface AttachmentsSectionProps {
 
 const AttachmentsSection = ({ note, attachments }: AttachmentsSectionProps) => {
   const [rejected, setRejected] = useState<string[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const atLimit = attachments.length >= MAX_NOTE_IMAGES;
+
+  const lightboxImages = useMemo<LightboxImage[]>(
+    () => attachments.map((a) => ({ blob: a.blob, name: a.name })),
+    [attachments],
+  );
 
   const handlePick = async (files: File[]) => {
     const result = await addNoteImages(note, files);
@@ -420,10 +435,17 @@ const AttachmentsSection = ({ note, attachments }: AttachmentsSectionProps) => {
           {rejected.join('; ')}
         </InlineBanner>
       )}
-      <AttachmentsGrid attachments={attachments} />
+      <AttachmentsGrid attachments={attachments} onOpenImage={setLightboxIndex} />
       <AttachmentsUpload
         atLimit={atLimit}
         onPick={(files) => { void handlePick(files); }}
+      />
+      <ImageLightbox
+        images={lightboxImages}
+        index={lightboxIndex ?? 0}
+        open={lightboxIndex !== null}
+        onOpenChange={(o) => { if (!o) setLightboxIndex(null); }}
+        onIndexChange={setLightboxIndex}
       />
     </section>
   );
@@ -484,6 +506,7 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
   const { incoming, outgoing } = useConnectionsForNote(note.id);
   const relatedById = useRelatedNotesById(incoming, outgoing);
   const attachments = useNoteAttachments(note.id);
+  const caps = getNoteLayoutConfig(note);
 
   const linkedDoc = note.linkedDocId
     ? docs.find((d) => d.id === note.linkedDocId)
@@ -515,9 +538,11 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
       <DrawerHeader note={note} onClose={onClose} />
 
       <div className="flex-1 overflow-y-auto p-4">
-        <BodySection note={note} />
+        {caps.allowsText && <BodySection note={note} />}
 
-        <AttachmentsSection note={note} attachments={attachments} />
+        {caps.allowsImages && (
+          <AttachmentsSection note={note} attachments={attachments} />
+        )}
 
         <LinkedDocSection
           note={note}

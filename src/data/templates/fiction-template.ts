@@ -86,7 +86,13 @@ const template: Template = {
       body: 'Trill, unjoined. keeps to herself. writes the pauses between subspace bursts in a private log nobody asked her to keep.',
     },
   ],
-  noteKinds: [NoteKind.Note, NoteKind.Char, NoteKind.Place, NoteKind.Lore],
+  noteKinds: [
+    NoteKind.Note,
+    NoteKind.Char,
+    NoteKind.Place,
+    NoteKind.Lore,
+    NoteKind.Image,
+  ],
 };
 
 export default template;

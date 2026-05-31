@@ -38,7 +38,7 @@ describe('BrainSpaceCanvas', () => {
     it('should render one toolbar button per noteKind on the space template', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'fiction' });
       renderWithProviders(<BrainSpaceCanvas spaceId="s1" />);
-      // fiction template defines noteKinds [Note, Char, Place, Lore]
+      // fiction template defines noteKinds [Note, Char, Place, Lore, Image]
       expect(
         await screen.findByTestId('brain-canvas-tool-note'),
       ).toHaveTextContent(/\+ thought/i);
@@ -50,6 +50,9 @@ describe('BrainSpaceCanvas', () => {
       );
       expect(screen.getByTestId('brain-canvas-tool-lore')).toHaveTextContent(
         /\+ lore/i,
+      );
+      expect(screen.getByTestId('brain-canvas-tool-image')).toHaveTextContent(
+        /\+ image/i,
       );
     });
   });
