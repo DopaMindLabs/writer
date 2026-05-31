@@ -14,9 +14,11 @@ become prose. Every space has one.
 ## Notes
 
 Add notes freely onto the canvas. A note can hold a quick thought, a quotation,
-or a task. Click a note's title or body to **edit inline**, or open the
-**detail drawer** for the full view. Right-click a note for its context menu;
-**Escape** dismisses it. The sidebar reflects your **unsorted-notes count**.
+or a task. New notes appear in your **current view** — even when you've scrolled
+away from where you started — so a card you add is always where you're looking.
+Click a note's title or body to **edit inline**, or open the **detail drawer**
+for the full view. Right-click a note for its context menu; **Escape** dismisses
+it. The sidebar reflects your **unsorted-notes count**.
 
 ## Note kinds
 

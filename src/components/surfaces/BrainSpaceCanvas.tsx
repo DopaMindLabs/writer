@@ -1,8 +1,10 @@
 import {
   useCallback,
   useMemo,
+  useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
+  type RefObject,
 } from 'react';
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
@@ -141,32 +143,62 @@ const CanvasToolbar = ({ toolbarKinds, onAddNote }: CanvasToolbarProps) => (
   </div>
 );
 
-const useCanvasInteractions = (spaceId: string, noteCount: number) => {
+// Top-left of the visible viewport in content coordinates. New cards are
+// anchored here rather than the canvas origin: with a scrollable canvas the
+// toolbar stays pinned while the user may be scrolled far from (0, 0), so a
+// card placed at (24, 24) would appear off-screen and look like the click did
+// nothing. Offsetting by the scroll position lands it in the current view.
+const viewportOrigin = (scroller: HTMLDivElement | null) => ({
+  l: scroller ? Math.round(scroller.scrollLeft) : 0,
+  t: scroller ? Math.round(scroller.scrollTop) : 0,
+});
+
+// Build a fresh note record anchored to the viewport origin. The cascading
+// jitter fans successive cards out from the top-left so they don't stack.
+const buildNote = (
+  spaceId: string,
+  kind: NoteKind,
+  noteCount: number,
+  origin: { l: number; t: number },
+): Note => {
+  const jitter = (noteCount * 24) % 240;
+  const type = getNoteType(kind);
+  const isImage = type.layout === NoteLayout.Image;
+  return {
+    id: newId(),
+    spaceId,
+    l: origin.l + 24 + jitter,
+    t: origin.t + 24 + jitter,
+    w: isImage ? IMAGE_DEFAULT_W : DEFAULT_W,
+    h: isImage ? IMAGE_DEFAULT_H : DEFAULT_H,
+    kind,
+    state: NoteState.User,
+    body: '',
+    createdAt: Date.now(),
+    typeVersion: type.version,
+  };
+};
+
+const useCanvasInteractions = (
+  spaceId: string,
+  noteCount: number,
+  scrollRef: RefObject<HTMLDivElement | null>,
+) => {
   const focusNote = useUI((s) => s.focusNote);
   const [pendingFrom, setPendingFrom] = useState<string | null>(null);
 
   const addNote = useCallback(
     async (kind: NoteKind) => {
-      const jitter = (noteCount * 24) % 240;
-      const type = getNoteType(kind);
-      const isImage = type.layout === NoteLayout.Image;
-      const id = newId();
-      await db.notes.add({
-        id,
+      const note = buildNote(
         spaceId,
-        l: 24 + jitter,
-        t: 24 + jitter,
-        w: isImage ? IMAGE_DEFAULT_W : DEFAULT_W,
-        h: isImage ? IMAGE_DEFAULT_H : DEFAULT_H,
         kind,
-        state: NoteState.User,
-        body: '',
-        createdAt: Date.now(),
-        typeVersion: type.version,
-      });
-      focusNote(id);
+        noteCount,
+        viewportOrigin(scrollRef.current),
+      );
+      await db.notes.add(note);
+      focusNote(note.id);
     },
-    [spaceId, noteCount, focusNote],
+    [spaceId, noteCount, focusNote, scrollRef],
   );
 
   const handlePick = useCallback(
@@ -213,6 +245,7 @@ interface CanvasScrollProps {
   focusedNoteId: string | null;
   pendingFrom: string | null;
   extent: ContentExtent;
+  scrollRef: RefObject<HTMLDivElement | null>;
   onPick: (id: string, e: ReactPointerEvent<HTMLDivElement>) => void;
 }
 
@@ -228,9 +261,14 @@ const CanvasScroll = ({
   focusedNoteId,
   pendingFrom,
   extent,
+  scrollRef,
   onPick,
 }: CanvasScrollProps) => (
-  <div data-testid="brain-canvas-scroll" className="absolute inset-0 overflow-auto">
+  <div
+    ref={scrollRef}
+    data-testid="brain-canvas-scroll"
+    className="absolute inset-0 overflow-auto"
+  >
     <div
       data-testid="brain-canvas-content"
       className="relative min-h-full min-w-full"
@@ -280,8 +318,10 @@ export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
     return m;
   }, [notes]);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   const { pendingFrom, addNote, handlePick, onBackgroundPointerDown } =
-    useCanvasInteractions(spaceId, notes.length);
+    useCanvasInteractions(spaceId, notes.length, scrollRef);
 
   const extent = useMemo(() => contentExtent(notes), [notes]);
 
@@ -300,6 +340,7 @@ export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
         focusedNoteId={focusedNoteId}
         pendingFrom={pendingFrom}
         extent={extent}
+        scrollRef={scrollRef}
         onPick={(id, e) => { void handlePick(id, e); }}
       />
 

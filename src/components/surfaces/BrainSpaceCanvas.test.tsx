@@ -90,6 +90,40 @@ describe('BrainSpaceCanvas', () => {
         expect(await db.notes.count()).toBe(1);
       });
     });
+
+    it('places the new note at the canvas origin when not scrolled', async () => {
+      await db.spaces.put(sampleSpace);
+      const user = userEvent.setup();
+      renderWithProviders(<BrainSpaceCanvas spaceId="s1" />);
+      const button = await screen.findByTestId('brain-canvas-tool-blank');
+      await user.click(button);
+      await waitFor(async () => {
+        expect(await db.notes.count()).toBe(1);
+      });
+      const [note] = await db.notes.toArray();
+      // First note, no scroll, no jitter: sits at the (24, 24) inset.
+      expect(note.l).toBe(24);
+      expect(note.t).toBe(24);
+    });
+
+    it('anchors the new note to the visible viewport when scrolled away from the origin', async () => {
+      await db.spaces.put(sampleSpace);
+      const user = userEvent.setup();
+      renderWithProviders(<BrainSpaceCanvas spaceId="s1" />);
+      // Simulate the user scrolling to a far-off cluster before adding a card.
+      const scroll = await screen.findByTestId('brain-canvas-scroll');
+      scroll.scrollLeft = 1800;
+      scroll.scrollTop = 1300;
+      const button = await screen.findByTestId('brain-canvas-tool-blank');
+      await user.click(button);
+      await waitFor(async () => {
+        expect(await db.notes.count()).toBe(1);
+      });
+      const [note] = await db.notes.toArray();
+      // Offset by the scroll position so the card lands in view, not at (24, 24).
+      expect(note.l).toBe(1824);
+      expect(note.t).toBe(1324);
+    });
   });
 
   describe('connection creation', () => {
