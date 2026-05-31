@@ -32,7 +32,7 @@ export const SyncPermissionHint = ({
     <InlineBanner
       kind="warning"
       className="mt-4"
-      action={busy ? t('settings.sync.syncing') : t('settings.sync.reconnectButton')}
+      action={busy ? t('settings.sync.reconnecting') : t('settings.sync.reconnectButton')}
       onAction={() => void handleResume()}
     >
       {t('settings.sync.reconnectHint')}
