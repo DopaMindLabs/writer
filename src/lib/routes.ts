@@ -35,7 +35,7 @@ export const ROUTE_PATHS: Record<RouteName, string> = {
 export const routes = {
   home: () => '/',
   about: () => '/about',
-  settings: () => '/settings',
+  settings: (tab?: string) => (tab ? `/settings?tab=${tab}` : '/settings'),
   templates: () => '/new',
   spaceWrite: (spaceId: string) => `/s/${spaceId}`,
   spaceSettings: (spaceId: string) => `/s/${spaceId}/settings`,

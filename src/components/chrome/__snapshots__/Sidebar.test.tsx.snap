@@ -3,6 +3,7 @@
 exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] = `
 <div>
   <aside
+    aria-label="Space"
     class="flex w-56 shrink-0 flex-col border-r border-rule bg-paper-2"
   >
     <div
@@ -62,7 +63,8 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
         PRIVATE · LOCAL · 2y
       </div>
     </div>
-    <div
+    <nav
+      aria-label="Documents"
       class="flex-1 overflow-auto py-2"
       data-tour="tour-sidebar-sections"
     >
@@ -207,7 +209,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
           </span>
         </a>
       </div>
-    </div>
+    </nav>
   </aside>
 </div>
 `;

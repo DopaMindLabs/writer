@@ -93,6 +93,35 @@ describe('FormRow', () => {
     });
   });
 
+  describe('aria-describedby', () => {
+    it('links the control to the hint and error via aria-describedby', () => {
+      const { getByTestId } = render(
+        <FormRow
+          data-testid="fr"
+          label="Name"
+          hint="Visible to others."
+          error="Required"
+        >
+          <TextField data-testid="fr-input" />
+        </FormRow>,
+      );
+      const describedBy =
+        getByTestId('fr-input').getAttribute('aria-describedby') ?? '';
+      const ids = describedBy.split(' ').filter(Boolean);
+      expect(ids).toContain(getByTestId('fr-hint').id);
+      expect(ids).toContain(getByTestId('fr-error').id);
+    });
+
+    it('does not set aria-describedby when there is no hint or error', () => {
+      const { getByTestId } = render(
+        <FormRow data-testid="fr" label="Name">
+          <TextField data-testid="fr-input" />
+        </FormRow>,
+      );
+      expect(getByTestId('fr-input')).not.toHaveAttribute('aria-describedby');
+    });
+  });
+
   describe('snapshot', () => {
     it('should match the snapshot across all variants', () => {
       const { container } = render(

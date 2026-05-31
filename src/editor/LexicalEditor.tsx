@@ -83,11 +83,17 @@ export const LexicalEditor = ({
     [initialValue, editable],
   );
 
+  // Font size and leading consume the accessibility scale multipliers
+  // (default 1 → identical to the previous fixed values), so the Text size and
+  // Line spacing preferences scale the surface without changing the default.
   const surfaceClasses = cn(
     'relative mx-auto w-full font-serif text-ink',
-    mode === 'focus' && 'max-w-[68ch] text-lg leading-[1.7]',
-    mode === 'read' && 'max-w-[68ch] text-[18px] leading-[1.75]',
-    mode === 'write' && 'max-w-[68ch] text-[17px] leading-[1.6]',
+    mode === 'focus' &&
+      'max-w-[68ch] text-[length:calc(1.125rem*var(--reading-scale))] leading-[calc(1.7*var(--reading-leading-scale))]',
+    mode === 'read' &&
+      'max-w-[68ch] text-[length:calc(18px*var(--reading-scale))] leading-[calc(1.75*var(--reading-leading-scale))]',
+    mode === 'write' &&
+      'max-w-[68ch] text-[length:calc(17px*var(--reading-scale))] leading-[calc(1.6*var(--reading-leading-scale))]',
   );
 
   return (

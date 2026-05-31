@@ -3,6 +3,7 @@
 exports[`SpaceRail > renders rail with seeded spaces and active highlight 1`] = `
 <div>
   <aside
+    aria-label="Spaces"
     class="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-rule bg-paper-2 py-3.5"
   >
     <a

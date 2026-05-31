@@ -467,6 +467,8 @@ const SplitPanes = ({
 
   return (
     <main
+      id="main-content"
+      tabIndex={-1}
       ref={(el) => {
         containerRef.current = el;
       }}
