@@ -85,6 +85,25 @@ test('compares versions and toggles the diff layout in the modal', async ({
   await expect(page.getByTestId('diff-view')).toBeVisible();
 });
 
+test('hides all version controls in read mode', async ({ page }) => {
+  await gotoFirstDoc(page);
+  // Capture the resolved space/doc ids, then view the same doc in read mode.
+  const m = /#\/s\/([^/]+)\/d\/([^/]+)/.exec(page.url());
+  if (!m) throw new Error(`expected a doc URL, got ${page.url()}`);
+  const [, spaceId, docId] = m;
+  await page.goto(`/#/s/${spaceId}/d/${docId}/read`);
+  await expect(page.locator('[aria-label="Document body"]')).toBeVisible();
+
+  // Open the inspector; versioning is a write-surface concern, so the History
+  // tab/icon and its controls must be absent here.
+  await openInspectorSection(page, 'outline');
+  await expect(page.getByTestId('doc-inspector-tab-outline')).toBeVisible();
+  await expect(page.getByTestId('doc-inspector-tab-history')).toHaveCount(0);
+  await expect(page.getByTestId('doc-inspector-icons-history')).toHaveCount(0);
+  await expect(page.getByTestId('history-save-version')).toHaveCount(0);
+  await expect(page.getByTestId('open-version-modal')).toHaveCount(0);
+});
+
 test('restores an earlier version, creating a safety snapshot', async ({
   page,
 }) => {

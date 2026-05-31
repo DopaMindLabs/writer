@@ -175,6 +175,33 @@ describe('DocInspector', () => {
       expect(useUI.getState().versionModalOpen).toBe(true);
     });
 
+    it('should hide the history tab and fall back to outline when hideHistory is set', () => {
+      act(() => {
+        useUI.getState().setInspectorSection('history');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" hideHistory />);
+      expect(
+        screen.queryByTestId('doc-inspector-tab-history'),
+      ).not.toBeInTheDocument();
+      // The persisted "history" section is coerced to "outline" locally without
+      // mutating the store, so the write surface still restores it.
+      expect(screen.getByTestId('doc-inspector-pane-outline')).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('doc-inspector-pane-history'),
+      ).not.toBeInTheDocument();
+      expect(useUI.getState().inspectorSection).toBe('history');
+    });
+
+    it('should keep the history tab when hideHistory is not set', () => {
+      act(() => {
+        useUI.getState().setInspectorSection('history');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      expect(
+        screen.getByTestId('doc-inspector-tab-history'),
+      ).toBeInTheDocument();
+    });
+
     it('should render the ActionsPane when section is "actions"', () => {
       act(() => {
         useUI.getState().setInspectorSection('actions');

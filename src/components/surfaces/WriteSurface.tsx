@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Editor, type EditorMode } from '@/editor/EditorFacade';
 import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
@@ -25,20 +25,7 @@ export const WriteSurface = ({ doc, mode }: WriteSurfaceProps) => {
   const docIdRef = useRef(doc.id);
   docIdRef.current = doc.id;
   const readingWidth = useUI((s) => s.readingWidth);
-
-  // The editor is uncontrolled (key-remounted on initialValue change). We must
-  // remount when the body changes from *outside* the editor (e.g. a restore),
-  // but NOT for the editor's own autosaves, which would drop the caret. Track
-  // the last body the editor itself emitted; when the live doc.body differs,
-  // bump a nonce to force a remount that re-reads the restored content.
-  const lastEmittedRef = useRef(doc.body);
-  const [restoreNonce, setRestoreNonce] = useState(0);
-  useEffect(() => {
-    if (doc.body !== lastEmittedRef.current) {
-      lastEmittedRef.current = doc.body;
-      setRestoreNonce((n) => n + 1);
-    }
-  }, [doc.body]);
+  const restoreNonce = useUI((s) => s.restoreNonces[doc.id] ?? 0);
 
   // Record a starting snapshot when a document is opened, and clear the
   // auto-capture throttle so the next document starts fresh.
@@ -53,7 +40,6 @@ export const WriteSurface = ({ doc, mode }: WriteSurfaceProps) => {
   }, [doc.id]);
 
   const handleChange = useCallback((serialized: string) => {
-    lastEmittedRef.current = serialized;
     void db.docs.update(docIdRef.current, {
       body: serialized,
       updatedAt: Date.now(),

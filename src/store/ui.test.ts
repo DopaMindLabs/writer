@@ -12,6 +12,7 @@ describe('useUI store', () => {
         exportOpen: false,
         floatingToolbarEnabled: false,
         splitDividerPct: 50,
+        restoreNonces: {},
       });
     });
   });
@@ -157,6 +158,16 @@ describe('useUI store', () => {
     expect(window.localStorage.getItem('lorem-ui')).toBeNull();
     act(() => { useUI.getState().setSaveVersionOpen(false); });
     expect(useUI.getState().saveVersionOpen).toBe(false);
+  });
+
+  it('bumpRestoreNonce increments only the given doc and does not persist', () => {
+    act(() => { useUI.getState().bumpRestoreNonce('d1'); });
+    expect(useUI.getState().restoreNonces).toEqual({ d1: 1 });
+    expect(window.localStorage.getItem('lorem-ui')).toBeNull();
+
+    act(() => { useUI.getState().bumpRestoreNonce('d1'); });
+    act(() => { useUI.getState().bumpRestoreNonce('d2'); });
+    expect(useUI.getState().restoreNonces).toEqual({ d1: 2, d2: 1 });
   });
 
   it('setCompareRevisionIds stores the base/compare selection', () => {

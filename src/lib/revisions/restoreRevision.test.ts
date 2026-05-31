@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { db } from '@/db/db';
+import { useUI } from '@/store/ui';
 import { sampleDoc, sampleSpace, sampleSection } from '@/test/fixtures';
 import { createRevision } from './createRevision';
 import { restoreRevision } from './restoreRevision';
@@ -7,6 +8,7 @@ import { InvariantError } from '@/lib/invariant';
 
 describe('restoreRevision', () => {
   beforeEach(async () => {
+    useUI.setState({ restoreNonces: {} });
     await db.spaces.put(sampleSpace);
     await db.sections.put(sampleSection);
     await db.docs.put({ ...sampleDoc, body: 'current body', meta: { wordCount: 2 } });
@@ -29,6 +31,18 @@ describe('restoreRevision', () => {
     expect(safety).toBeDefined();
     expect(safety?.body).toBe('current body');
     expect(safety?.kind).toBe('manual');
+  });
+
+  it('bumps only the restored doc\'s nonce so other open docs do not remount', async () => {
+    const target = await createRevision(sampleDoc.id, 'old body text', {
+      kind: 'manual',
+    });
+
+    expect(useUI.getState().restoreNonces[sampleDoc.id] ?? 0).toBe(0);
+    await restoreRevision(sampleDoc.id, target.id);
+
+    expect(useUI.getState().restoreNonces[sampleDoc.id]).toBe(1);
+    expect(useUI.getState().restoreNonces['other-doc']).toBeUndefined();
   });
 
   it('rejects an unknown revision id', async () => {

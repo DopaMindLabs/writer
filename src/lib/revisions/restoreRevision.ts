@@ -1,5 +1,6 @@
 import { db } from '@/db/db';
 import { invariant } from '@/lib/invariant';
+import { useUI } from '@/store/ui';
 import { createRevision } from './createRevision';
 
 export interface RestoreRevisionOpts {
@@ -40,4 +41,6 @@ export const restoreRevision = async (
       meta: { ...doc.meta, wordCount: target.wordCount },
     });
   });
+
+  useUI.getState().bumpRestoreNonce(docId);
 };

@@ -23,18 +23,24 @@ const TABS: InspectorSection[] = ['outline', 'info', 'history', 'actions'];
 interface DocInspectorProps {
   docName: string;
   docId: string;
+  hideHistory?: boolean;
 }
 
 interface DocInspectorTabsProps {
+  tabs: InspectorSection[];
   section: InspectorSection;
   setSection: (id: InspectorSection) => void;
 }
 
-const DocInspectorTabs = ({ section, setSection }: DocInspectorTabsProps) => {
+const DocInspectorTabs = ({
+  tabs,
+  section,
+  setSection,
+}: DocInspectorTabsProps) => {
   const { t } = useTranslation('chrome');
   return (
     <div className="flex border-b border-rule">
-      {TABS.map((id) => {
+      {tabs.map((id) => {
         const on = section === id;
         // @lint-ignore native-button: tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
         return (
@@ -59,11 +65,21 @@ const DocInspectorTabs = ({ section, setSection }: DocInspectorTabsProps) => {
   );
 };
 
-export const DocInspector = ({ docName, docId }: DocInspectorProps) => {
+export const DocInspector = ({
+  docName,
+  docId,
+  hideHistory = false,
+}: DocInspectorProps) => {
   const { t } = useTranslation('chrome');
   const setInspectorMode = useUI((s) => s.setInspectorMode);
   const section = useUI((s) => s.inspectorSection);
   const setSection = useUI((s) => s.setInspectorSection);
+
+  const tabs = hideHistory ? TABS.filter((id) => id !== 'history') : TABS;
+  // Don't mutate the persisted section: coerce locally so returning to the
+  // write surface restores the History tab the user last had open.
+  const activeSection =
+    hideHistory && section === 'history' ? 'outline' : section;
 
   return (
     <aside
@@ -87,16 +103,20 @@ export const DocInspector = ({ docName, docId }: DocInspectorProps) => {
         />
       </div>
 
-      <DocInspectorTabs section={section} setSection={setSection} />
+      <DocInspectorTabs
+        tabs={tabs}
+        section={activeSection}
+        setSection={setSection}
+      />
 
       <div
-        data-testid={`doc-inspector-pane-${section}`}
+        data-testid={`doc-inspector-pane-${activeSection}`}
         className="flex-1 overflow-auto"
       >
-        {section === 'outline' && <OutlinePane />}
-        {section === 'info' && <InfoPane />}
-        {section === 'history' && <HistoryPane docId={docId} />}
-        {section === 'actions' && <ActionsPane />}
+        {activeSection === 'outline' && <OutlinePane />}
+        {activeSection === 'info' && <InfoPane />}
+        {activeSection === 'history' && <HistoryPane docId={docId} />}
+        {activeSection === 'actions' && <ActionsPane />}
       </div>
     </aside>
   );

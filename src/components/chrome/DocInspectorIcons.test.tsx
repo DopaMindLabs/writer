@@ -81,6 +81,30 @@ describe('DocInspectorIcons', () => {
     });
   });
 
+  describe('hideHistory (read mode)', () => {
+    it('should not render the history icon when hideHistory is set', () => {
+      renderWithProviders(<DocInspectorIcons hideHistory />);
+      expect(
+        screen.queryByTestId('doc-inspector-icons-history'),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByTestId('doc-inspector-icons-outline'),
+      ).toBeInTheDocument();
+    });
+
+    it('should coerce the active highlight off a hidden history section', () => {
+      act(() => {
+        useUI.getState().setInspectorSection('history');
+      });
+      renderWithProviders(<DocInspectorIcons hideHistory />);
+      expect(
+        screen
+          .getByTestId('doc-inspector-icons-outline')
+          .getAttribute('aria-current'),
+      ).toBe('page');
+    });
+  });
+
   describe('collapse', () => {
     it('should set inspectorMode to "none" when the collapse button is clicked', async () => {
       renderWithProviders(<DocInspectorIcons />);
