@@ -51,6 +51,37 @@ describe('useDocuments', () => {
   });
 });
 
+describe('useDocuments — cross-space staleness guard', () => {
+  it('returns undefined synchronously after the key changes, before the new query resolves', async () => {
+    await db.docs.bulkPut([
+      { ...sampleDoc, id: 'd1', spaceId: 's1' },
+      { ...sampleDoc, id: 'd2', spaceId: 's2' },
+    ]);
+    const { result, rerender } = renderHook(
+      ({ sid }: { sid: string }) => useDocuments(sid),
+      { initialProps: { sid: 's1' } },
+    );
+    await waitFor(() => {
+      expect(result.current?.map((d) => d.id)).toEqual(['d1']);
+    });
+    rerender({ sid: 's2' });
+    // Synchronously after the key changes the stale s1 result must not leak.
+    expect(result.current).toBeUndefined();
+    await waitFor(() => {
+      expect(result.current?.map((d) => d.id)).toEqual(['d2']);
+    });
+  });
+
+  it('keeps array reference identity when no new emission occurs', async () => {
+    await db.docs.put({ ...sampleDoc, id: 'd1', spaceId: 's1' });
+    const { result, rerender } = renderHook(() => useDocuments('s1'));
+    await waitFor(() => { expect(result.current).toBeDefined(); });
+    const first = result.current;
+    rerender();
+    expect(result.current).toBe(first);
+  });
+});
+
 describe('useDocument', () => {
   it('returns single doc by id', async () => {
     await db.docs.put(sampleDoc);
