@@ -11,6 +11,8 @@ export enum RouteName {
   DocSplit = 'docSplit',
   BrainSpace = 'brainSpace',
   Citations = 'citations',
+  Help = 'help',
+  HelpArticle = 'helpArticle',
 }
 
 export const ROUTE_PATHS: Record<RouteName, string> = {
@@ -26,6 +28,8 @@ export const ROUTE_PATHS: Record<RouteName, string> = {
   [RouteName.DocSplit]: '/s/:spaceId/d/:docId/split',
   [RouteName.BrainSpace]: '/s/:spaceId/dump',
   [RouteName.Citations]: '/s/:spaceId/citations',
+  [RouteName.Help]: '/help',
+  [RouteName.HelpArticle]: '/help/:slug',
 };
 
 export const routes = {
@@ -43,6 +47,9 @@ export const routes = {
     `/s/${spaceId}/d/${docId}/split`,
   brainSpace: (spaceId: string) => `/s/${spaceId}/dump`,
   citations: (spaceId: string) => `/s/${spaceId}/citations`,
+  help: () => '/help',
+  helpArticle: (slug: string, anchor?: string) =>
+    `/help/${slug}${anchor ? `#${anchor}` : ''}`,
 } as const;
 
 export interface InternalNavItem {
@@ -70,6 +77,7 @@ export const EXTERNAL_LINKS = {
 export const PRIMARY_NAV: readonly NavItem[] = [
   { name: RouteName.Home, to: routes.home(), i18nKey: 'home', end: true },
   { name: RouteName.About, to: routes.about(), i18nKey: 'about' },
+  { name: RouteName.Help, to: routes.help(), i18nKey: 'help' },
   { name: RouteName.Settings, to: routes.settings(), i18nKey: 'settings' },
   { to: EXTERNAL_LINKS.github, i18nKey: 'github', external: true },
 ];

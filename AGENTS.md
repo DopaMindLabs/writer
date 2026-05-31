@@ -92,6 +92,24 @@ names must be prefixed with a Conventional Commit type, enforced by the `pre-pus
 - Exempt: `main`, `develop`, and automation branches (`claude/*`, `dependabot/*`,
   `release-please*`).
 
+## Help content (read before adding or changing features)
+
+The in-app **Help Center** (`/help`) is end-user documentation that lives beside the
+code. User-facing behavior changes ship with a help update, the same way they ship with
+a test. When planning a feature, identify which help article(s) it adds or changes; when
+implementing, update them in the same PR.
+
+- **Author/edit** prose in `src/help/content/en/<slug>.md` (plain markdown; the first
+  `#` line is the article title). Add translations later as
+  `src/help/content/<locale>/<slug>.md`; missing locales fall back to English.
+- **Register** metadata in `src/lib/help/registry.ts`: `category`, `keywords`,
+  `featureArea`, and an optional `tourId`.
+- **Enforcement:** `src/lib/help/registry.test.ts` fails if any `featureArea` or guided
+  tour lacks an article, or a registered slug has no English body. Treat a red coverage
+  test as a missing doc, not a test to weaken.
+- **Reviewers** should check that feature PRs include the corresponding help change.
+- Write for end users (task-oriented "how do I…"), not implementation detail.
+
 ## Key commands
 
 - `npm run dev`: Vite dev server
