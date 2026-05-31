@@ -6,6 +6,7 @@ import {
   seedBasicSpace,
   seedMultipleSpaces,
   seedBrainSpaceCanvas,
+  seedDocWithRevisions,
 } from '@/test/fixtures';
 import '@/index.css';
 
@@ -39,6 +40,7 @@ const seeders = {
   basicSpace: seedBasicSpace,
   multipleSpaces: seedMultipleSpaces,
   brainSpace: seedBrainSpaceCanvas,
+  docWithRevisions: seedDocWithRevisions,
 } satisfies Record<string, () => Promise<void>>;
 
 export type SeedKey = keyof typeof seeders;

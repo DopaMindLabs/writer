@@ -16,6 +16,9 @@ const eyebrowRecipe = cva(
         ink2: 'text-ink-2',
         ink3: 'text-ink-3',
         ink4: 'text-ink-4',
+        // Inverted: for eyebrows sitting on an ink-filled ground (e.g. a "NOW"
+        // badge). Pair with a `bg-ink` wrapper.
+        paper: 'text-paper',
       },
     },
     defaultVariants: { size: 10, tone: 'ink3' },
