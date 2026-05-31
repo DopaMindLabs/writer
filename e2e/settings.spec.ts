@@ -28,6 +28,31 @@ test('Account tab shows the coming-soon placeholder', async ({ page }) => {
   await expect(page.getByText(/Cloud sync is not available/i)).toBeVisible();
 });
 
+test('stacks a group on one page and scrolls to the selected section', async ({
+  page,
+}) => {
+  await page.goto('/#/settings');
+  await page.waitForLoadState('networkidle');
+
+  // The Preferences group renders all of its sections stacked together.
+  await expect(page.getByRole('heading', { name: /^General$/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Editor$/ })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: /^Typography$/ }),
+  ).toBeVisible();
+
+  // Selecting Keyboard scrolls its stacked section into the viewport.
+  await page.getByTestId('settings-tab-shortcuts').click();
+  await expect(
+    page.getByRole('heading', { name: /^Shortcuts$/ }),
+  ).toBeInViewport();
+
+  // Selecting a tab in a different group swaps the stacked page entirely.
+  await page.getByTestId('settings-tab-account').click();
+  await expect(page.getByRole('heading', { name: /^Account$/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Editor$/ })).toHaveCount(0);
+});
+
 test('cycles through every global settings tab without crashing', async ({ page }) => {
   await page.goto('/#/settings');
   await page.waitForLoadState('networkidle');

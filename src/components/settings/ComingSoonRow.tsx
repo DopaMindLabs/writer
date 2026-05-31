@@ -26,6 +26,7 @@ export const ComingSoonRow = ({ label, hint, tooltip }: ComingSoonRowProps) => {
           data-testid="coming-soon-row-checkbox"
           disabled
           aria-disabled="true"
+          aria-label={label}
         />
         <Tooltip>
           <TooltipTrigger asChild>
