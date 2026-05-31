@@ -9,6 +9,7 @@ import type {
   Citation,
   Connection,
   Backup,
+  Revision,
   Settings,
   HighlightPalette,
   Meta,
@@ -26,6 +27,7 @@ export class LoremDB extends Dexie {
   citations!: Table<Citation, string>;
   connections!: Table<Connection, string>;
   backups!: Table<Backup, string>;
+  revisions!: Table<Revision, string>;
   settings!: Table<Settings, string>;
   palettes!: Table<HighlightPalette, string>;
   meta!: Table<Meta, string>;
@@ -86,6 +88,10 @@ export class LoremDB extends Dexie {
 
     this.version(7).stores({
       noteAttachments: 'id, noteId, spaceId, [noteId+createdAt]',
+    });
+
+    this.version(8).stores({
+      revisions: 'id, docId, createdAt, kind, [docId+createdAt]',
     });
   }
 }

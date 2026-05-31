@@ -125,6 +125,27 @@ export interface Citation {
   raw?: string;
 }
 
+// A point-in-time snapshot of a single document's body. Stored as a full
+// snapshot (not a delta) so rollback is trivial and robust. `body` is the
+// canonical serialized Lexical JSON; `text` is the extracted plaintext kept
+// alongside it so diffing and previews never re-parse Lexical off-React.
+export type RevisionKind = 'auto' | 'manual' | 'baseline';
+
+export interface Revision {
+  id: string;
+  docId: string;
+  body: string;
+  text: string;
+  wordCount: number;
+  kind: RevisionKind;
+  label?: string;
+  pinned?: boolean;
+  createdAt: number;
+  // RESERVED for a later "tracked changes" phase (inline accept/reject
+  // change-set metadata). Untouched today.
+  meta?: Record<string, unknown>;
+}
+
 export type BackupFormat = 'md-zip';
 
 export interface Backup {
