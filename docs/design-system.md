@@ -257,6 +257,49 @@ variant="empty"`) — this is the small inline card used in Settings.
 
 ---
 
+### 3.7 Media / attachments
+
+The first media surface in the writer is **picture attachments on brain-dump notes**. Two
+primitives back it; both follow the hairline grammar (square corners, 1-px `rule` frame, no
+shadow) and compose with existing atoms rather than introducing new button shapes.
+
+#### `ImageThumb`
+
+Square image tile rendered from a `Blob`. Frames the image with a hairline `rule` on a
+`paper-2` ground and clips with `object-cover`. The optional remove control is a borderless
+`IconButton` (`X` glyph) revealed on hover — never a stroked button.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `blob` | `Blob` | — | Image data; an object URL is created and revoked via `useObjectUrl`. |
+| `name` | string | — | Alt text / accessible name. |
+| `size` | `"sm" \| "md"` | `"md"` | `sm` ≈ 48 px (card strip), `md` ≈ 80 px (drawer grid). |
+| `onRemove` | `() => void` | — | When set, shows the hover-revealed remove control. |
+
+> **In this repo:** `src/components/ui/ImageThumb.tsx`.
+
+#### `FileInputTrigger`
+
+Logic-only (renderless) primitive that owns a visually hidden `<input type="file">` and hands
+its child an `open()` callback. **Compose it with an existing DS `Button`/`IconButton`** — do
+not style a bespoke upload control. This keeps every file picker consistent with every other
+action (the labelled drawer button uses `Button kind="secondary"`; the card's quick-add uses
+the hover-revealed `IconButton`).
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `accept` | string | — | `accept` attribute (e.g. the image MIME list). |
+| `multiple` | boolean | `false` | Allow selecting more than one file. |
+| `disabled` | boolean | `false` | Disables the input; `open()` becomes a no-op (use at limits). |
+| `onPick` | `(files: File[]) => void` | — | Called with chosen files; the input resets after. |
+| `children` | `(open) => ReactNode` | — | Render prop wiring `open()` to a DS button. |
+
+> **In this repo:** `src/components/ui/FileInputTrigger.tsx`. Rejected files (wrong type, over
+> size) surface through the existing `InlineBanner kind="warning"` — the status palette is the
+> only colour exception, per §1.2.
+
+---
+
 ## 4. Forms
 
 Every form primitive follows the same rule set: hairline borders, ink fill on active focus,

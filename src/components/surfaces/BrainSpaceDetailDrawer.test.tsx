@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { fireEvent } from '@testing-library/react';
-import { renderAtRoute, screen, waitFor } from '@/test/test-utils';
+import { renderAtRoute, screen, waitFor, within } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 import { sampleDoc, sampleNote, sampleSpace } from '@/test/fixtures';
@@ -399,6 +399,99 @@ describe('BrainSpaceDetailDrawer', () => {
       const drawer = await screen.findByTestId('brain-detail-drawer');
       await screen.findByTestId('brain-detail-drawer-connections-heading');
       expect(drawer).toMatchSnapshot();
+    });
+  });
+
+  describe('attachments', () => {
+    const openDrawerForSecondNote = async () => {
+      await seedTwoConnectedNotes();
+      renderCanvas();
+      await screen.findByTestId('brain-note-n2');
+      useUI.getState().openDetail(SECOND_NOTE.id);
+      await screen.findByTestId('brain-detail-drawer-attachments');
+    };
+
+    const seedAttachment = async (id: string) => {
+      await db.noteAttachments.put({
+        id,
+        noteId: SECOND_NOTE.id,
+        spaceId: sampleSpace.id,
+        name: `${id}.png`,
+        mime: 'image/png',
+        size: 4,
+        blob: new Blob(['x'], { type: 'image/png' }),
+        createdAt: Date.now(),
+      });
+    };
+
+    it('uploads a picture and reflects it in the count and grid', async () => {
+      const user = userEvent.setup();
+      await openDrawerForSecondNote();
+      const input = screen.getByTestId('brain-detail-drawer-attachments-input');
+      await user.upload(input, new File(['x'], 'ref.png', { type: 'image/png' }));
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('brain-detail-drawer-attachments-count'),
+        ).toHaveTextContent('1 / 2');
+      });
+      await waitFor(() => {
+        expect(screen.getByRole('img', { name: 'ref.png' })).toBeInTheDocument();
+      });
+    });
+
+    it('disables the upload button and shows a hint at the limit', async () => {
+      await seedAttachment('a1');
+      await seedAttachment('a2');
+      await openDrawerForSecondNote();
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('brain-detail-drawer-attachments-count'),
+        ).toHaveTextContent('2 / 2');
+      });
+      expect(
+        screen.getByTestId('brain-detail-drawer-attachments-upload'),
+      ).toBeDisabled();
+      expect(
+        screen.getByTestId('brain-detail-drawer-attachments-limit-hint'),
+      ).toBeInTheDocument();
+    });
+
+    it('removes a picture from the grid', async () => {
+      const user = userEvent.setup();
+      await seedAttachment('a1');
+      await openDrawerForSecondNote();
+      await screen.findByTestId('brain-detail-drawer-attachments-image-a1');
+      await user.click(
+        screen.getByTestId('brain-detail-drawer-attachments-image-a1-remove'),
+      );
+      await waitFor(async () => {
+        expect(await db.noteAttachments.get('a1')).toBeUndefined();
+      });
+    });
+
+    it('warns when an unsupported file type is chosen', async () => {
+      await openDrawerForSecondNote();
+      const input = screen.getByTestId('brain-detail-drawer-attachments-input');
+      // Drive the change directly so the non-image file bypasses the input's
+      // accept filter and reaches the component's own validation path.
+      fireEvent.change(input, {
+        target: { files: [new File(['x'], 'notes.txt', { type: 'text/plain' })] },
+      });
+
+      const banner = await screen.findByTestId(
+        'brain-detail-drawer-attachments-reject-banner',
+      );
+      expect(banner).toHaveTextContent(/unsupported type/);
+
+      // Dismissing clears the warning.
+      const user = userEvent.setup();
+      await user.click(within(banner).getByRole('button', { name: 'Dismiss' }));
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId('brain-detail-drawer-attachments-reject-banner'),
+        ).not.toBeInTheDocument();
+      });
     });
   });
 });
