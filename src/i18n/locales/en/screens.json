@@ -7,9 +7,9 @@
     "tagline": "A clutter-free space for long-form writing — fiction, research, essays, journals.",
     "continueWriting": "Continue writing",
     "startNewSpace": "Start a new space",
-    "statusLine": "experimental · local only · data can be lost",
+    "statusLine": "experimental · data can be lost",
     "warningTitle": "Experimental build",
-    "warningBody": "No data sync. Everything lives in your browser. If you clear your cache, your work will be lost"
+    "warningBody": "Your work lives in this browser. Connect a sync folder in Settings → Sync to push copies out; otherwise clearing your cache loses it."
   },
   "about": {
     "back": "back",
@@ -23,7 +23,7 @@
     "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
     "statusLabel": "Status",
     "statusValueStrong": "Experimental",
-    "statusValueRest": " — there is no data sync. All data is saved in IndexedDB in your local browser. If you clear your browser cache, your work will be lost.",
+    "statusValueRest": " — data is saved in IndexedDB in your browser. Connect a sync folder in Settings → Sync to push copies out, or clearing your browser cache loses your work.",
     "feedbackBefore": "I am still building this and I have alot ideas ",
     "feedbackAfter": ". I'd love to hear what works, what doesn't, and what you wish existed. Feedback is welcome.",
     "sourceLabel": "Source"
@@ -225,9 +225,9 @@
     "account": {
       "title": "Account",
       "subtitle": "Sign-in, sync across devices, and shared workspaces.",
-      "comingSoonBody": "Cloud sync is unavailable today — Lotem is local-only. Account, sign-in, and shared workspaces land when sync ships.",
+      "comingSoonBody": "Folder sync is available today in Settings → Sync. Sign-in, cross-device sync, and shared workspaces land later.",
       "signedOutLabel": "Sign in",
-      "signedOutHint": "Cloud sync is not available yet. This is here to show the design.",
+      "signedOutHint": "Account sign-in is coming soon. Folder sync is available now in Settings → Sync.",
       "signInButton": "Sign in with email",
       "syncLabel": "Sync this device",
       "syncHint": "Once you sign in, your spaces will replicate to other devices."
@@ -292,6 +292,11 @@
     "sync": {
       "title": "Sync",
       "subtitle": "Push your spaces to a folder you choose. Point it at a Google Drive, Dropbox, or iCloud folder to sync across devices.",
+      "googleDriveLabel": "Google Drive",
+      "googleDriveHint": "Sync directly to Google Drive — no desktop folder required.",
+      "githubLabel": "GitHub",
+      "githubHint": "Back your spaces up to a GitHub repository as Markdown.",
+      "providerTooltip": "Direct provider sync is coming soon. For now, point the synced folder above at a Google Drive or Dropbox folder.",
       "unsupportedTitle": "Not available in this browser",
       "unsupportedBody": "Folder sync needs the File System Access API, available in Chrome, Edge, and other Chromium browsers on desktop. Switch to a supported browser to use it.",
       "folderLabel": "Synced folder",
@@ -501,7 +506,7 @@
     "tagLabel": "Tag",
     "syncLabel": "cloud sync —",
     "syncValue": "off, local",
-    "syncTooltip": "Cloud sync is unavailable — this app is local-only for now.",
+    "syncTooltip": "Folder sync is available in Settings → Sync. Direct cloud providers like Google Drive and GitHub are coming soon.",
     "creating": "creating…",
     "submitLabel": "enter {{name}} →",
     "newSpace": "new space",

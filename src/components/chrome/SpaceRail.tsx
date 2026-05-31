@@ -70,7 +70,7 @@ const SpaceRailHeader = () => (
       <TooltipContent side="right" className="max-w-[220px]">
         <div className="font-medium">Experimental build</div>
         <div className="mt-0.5 text-[11px] opacity-80">
-          No data sync. Everything lives in your browser. If you clear your cache, your work will be lost
+          Your work lives in this browser. Connect a sync folder in Settings → Sync to push copies out; otherwise clearing your cache loses it.
         </div>
       </TooltipContent>
     </Tooltip>

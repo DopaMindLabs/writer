@@ -14,6 +14,7 @@ import { SyncRunRow } from '@/components/settings/sync/SyncRunRow';
 import { SyncHistoryTable } from '@/components/settings/sync/SyncHistoryTable';
 import { SyncResultsTable } from '@/components/settings/sync/SyncResultsTable';
 import { SyncPermissionHint } from '@/components/settings/sync/SyncPermissionHint';
+import { ComingSoonRow } from '@/components/settings/ComingSoonRow';
 
 const SyncTabConnected = () => {
   const { t } = useTranslation('screens');
@@ -80,6 +81,16 @@ export const SyncTab = () => {
           caption={t('settings.sync.unsupportedBody')}
         />
       )}
+      <ComingSoonRow
+        label={t('settings.sync.googleDriveLabel')}
+        hint={t('settings.sync.googleDriveHint')}
+        tooltip={t('settings.sync.providerTooltip')}
+      />
+      <ComingSoonRow
+        label={t('settings.sync.githubLabel')}
+        hint={t('settings.sync.githubHint')}
+        tooltip={t('settings.sync.providerTooltip')}
+      />
     </section>
   );
 };

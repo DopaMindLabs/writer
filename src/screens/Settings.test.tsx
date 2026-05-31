@@ -59,7 +59,7 @@ describe('SettingsScreen', () => {
     );
     expect(getByRole('heading', { name: 'Account' })).toBeInTheDocument();
     // Placeholder hint mirrors the design's wording.
-    expect(getByText(/Cloud sync is not available yet/i)).toBeInTheDocument();
+    expect(getByText(/Account sign-in is coming soon/i)).toBeInTheDocument();
     // And the placeholder is wrapped in a non-closable Coming Soon overlay.
     expect(
       container.querySelector('[data-coming-soon-overlay="true"]'),

@@ -149,4 +149,28 @@ describe('SyncTab', () => {
     fireEvent.click(screen.getByRole('button', { name: /sync all spaces/i }));
     expect(await screen.findByRole('alert')).toHaveTextContent(/boom/i);
   });
+
+  it('surfaces coming-soon rows for Google Drive and GitHub when supported', () => {
+    useSyncFolder.mockReturnValue({
+      supported: true,
+      folderName: 'Drafts',
+      lastSyncedAt: null,
+    });
+    renderWithProviders(<SyncTab />);
+    expect(screen.getByText('Google Drive')).toBeInTheDocument();
+    expect(screen.getByText('GitHub')).toBeInTheDocument();
+    expect(screen.getAllByTestId('coming-soon-row')).toHaveLength(2);
+  });
+
+  it('keeps the Google Drive and GitHub coming-soon rows when unsupported', () => {
+    useSyncFolder.mockReturnValue({
+      supported: false,
+      folderName: null,
+      lastSyncedAt: null,
+    });
+    renderWithProviders(<SyncTab />);
+    expect(screen.getByText('Google Drive')).toBeInTheDocument();
+    expect(screen.getByText('GitHub')).toBeInTheDocument();
+    expect(screen.getAllByTestId('coming-soon-row')).toHaveLength(2);
+  });
 });

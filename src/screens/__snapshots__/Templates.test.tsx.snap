@@ -397,7 +397,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
                 aria-disabled="true"
                 class="flex h-5 w-9 cursor-not-allowed items-center rounded-full bg-paper-2 px-0.5 opacity-60"
                 role="switch"
-                title="Cloud sync is unavailable — this app is local-only for now."
+                title="Folder sync is available in Settings → Sync. Direct cloud providers like Google Drive and GitHub are coming soon."
               >
                 <span
                   class="h-4 w-4 rounded-full bg-ink-4"

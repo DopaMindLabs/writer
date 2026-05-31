@@ -25,7 +25,7 @@ test('Account tab shows the coming-soon placeholder', async ({ page }) => {
   await page.goto('/#/settings?tab=account');
   await expect(page.getByRole('heading', { name: /Account/i })).toBeVisible();
   // Account placeholder surfaces the sync hint copy from settings.account.signedOutHint.
-  await expect(page.getByText(/Cloud sync is not available/i)).toBeVisible();
+  await expect(page.getByText(/Account sign-in is coming soon/i)).toBeVisible();
 });
 
 test('cycles through every global settings tab without crashing', async ({ page }) => {
