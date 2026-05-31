@@ -1,6 +1,7 @@
 import { test as base, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { addCoverageReport } from 'monocart-reporter';
+import axe from 'axe-core';
 
 /**
  * Navigate to the app with `?reseed=1`, which wipes IndexedDB and reseeds
@@ -123,5 +124,51 @@ export const test = base.extend<{ autoCoverage: void }>({
     { scope: 'test', auto: true },
   ],
 });
+
+interface AxeNode {
+  target: string[];
+}
+interface AxeViolation {
+  id: string;
+  impact: string | null;
+  help: string;
+  helpUrl: string;
+  nodes: AxeNode[];
+}
+
+/**
+ * Run axe-core (already a dependency via the Storybook a11y addon) against the
+ * current page and fail on any WCAG 2.1 A/AA violation. Injects the bundled axe
+ * source rather than a Playwright wrapper, so it needs no extra install.
+ */
+export const expectNoA11yViolations = async (
+  page: Page,
+  context?: string,
+): Promise<void> => {
+  await page.evaluate(axe.source);
+  const violations = (await page.evaluate(async () => {
+    const result = await (
+      window as unknown as {
+        axe: { run: (opts: unknown) => Promise<{ violations: AxeViolation[] }> };
+      }
+    ).axe.run({
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] },
+    });
+    return result.violations;
+  })) as AxeViolation[];
+
+  if (violations.length > 0) {
+    const summary = violations
+      .map(
+        (v) =>
+          `  [${v.impact ?? 'n/a'}] ${v.id}: ${v.help} (${v.nodes.length} node(s))\n    ${v.helpUrl}`,
+      )
+      .join('\n');
+    throw new Error(
+      `axe found ${String(violations.length)} accessibility violation(s)` +
+        `${context ? ` on ${context}` : ''}:\n${summary}`,
+    );
+  }
+};
 
 export { expect };
