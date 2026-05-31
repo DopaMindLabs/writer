@@ -1,0 +1,108 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsTabs > snapshot > should match the snapshot across all variants > active=editor 1`] = `
+<div>
+  <nav
+    aria-label="Settings sections"
+    class="contents"
+    data-testid="settings-tabs"
+  >
+    <ul
+      class="flex overflow-x-auto border-b border-rule/60 bg-paper-2 md:hidden"
+      data-testid="settings-tabs-mobile"
+    >
+      <li
+        class="shrink-0"
+      >
+        <button
+          class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-transparent text-ink-2 hover:bg-paper hover:text-ink"
+          data-testid="settings-tab-mobile-general"
+          type="button"
+        >
+          General
+        </button>
+      </li>
+      <li
+        class="shrink-0"
+      >
+        <button
+          aria-current="page"
+          class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-ink bg-paper font-medium text-ink"
+          data-testid="settings-tab-mobile-editor"
+          type="button"
+        >
+          Editor
+        </button>
+      </li>
+      <li
+        class="shrink-0"
+      >
+        <button
+          class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-transparent text-ink-2 hover:bg-paper hover:text-ink"
+          data-testid="settings-tab-mobile-sync"
+          type="button"
+        >
+          Sync
+        </button>
+      </li>
+    </ul>
+    <div
+      class="hidden flex-1 overflow-auto pb-3 pt-1.5 md:-ml-px md:block"
+      data-testid="settings-tabs-desktop"
+    >
+      <div
+        class="mb-1.5 last:mb-0"
+      >
+        <div
+          class="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+          data-testid="settings-tabs-group-0"
+        >
+          Preferences
+        </div>
+        <ul>
+          <li>
+            <button
+              class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-transparent text-ink-2 hover:bg-paper hover:text-ink"
+              data-testid="settings-tab-general"
+              type="button"
+            >
+              General
+            </button>
+          </li>
+          <li>
+            <button
+              aria-current="page"
+              class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-ink bg-paper font-medium text-ink"
+              data-testid="settings-tab-editor"
+              type="button"
+            >
+              Editor
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div
+        class="mb-1.5 last:mb-0"
+      >
+        <div
+          class="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+          data-testid="settings-tabs-group-1"
+        >
+          Data
+        </div>
+        <ul>
+          <li>
+            <button
+              class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-transparent text-ink-2 hover:bg-paper hover:text-ink"
+              data-testid="settings-tab-sync"
+              type="button"
+            >
+              Sync
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+`;

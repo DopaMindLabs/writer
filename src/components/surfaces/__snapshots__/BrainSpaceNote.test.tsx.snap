@@ -1,0 +1,77 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BrainSpaceNote > snapshot > should match the snapshot across all variants 1`] = `
+<div>
+  <div
+    class="group absolute flex flex-col gap-1 border bg-paper p-2.5 border-ink outline-dashed cursor-grab outline-2 outline-ink outline-offset-2"
+    data-testid="brain-note-n1"
+    style="left: 24px; top: 24px; width: 184px; min-height: 80px;"
+  >
+    <div
+      class="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4"
+    >
+      <span
+        data-testid="brain-note-n1-kind"
+      >
+        thought
+      </span>
+      <span
+        class="flex-1"
+      />
+      <span
+        data-testid="brain-note-n1-day-chip"
+      >
+        mon
+      </span>
+      <button
+        aria-label="Open details"
+        class="inline-flex items-center justify-center transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink ml-1 h-4 w-4 rounded-sm text-ink-4 opacity-0 hover:bg-paper-2 group-hover:opacity-100"
+        data-no-drag="true"
+        data-testid="brain-note-n1-open-details"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-arrow-up-right h-3 w-3"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7 7h10v10"
+          />
+          <path
+            d="M7 17 17 7"
+          />
+        </svg>
+      </button>
+    </div>
+    <div
+      class="cursor-text font-serif text-[13px] font-medium text-ink"
+      data-no-drag="true"
+      data-testid="brain-note-n1-title"
+    >
+      A title
+    </div>
+    <div
+      class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+      data-no-drag="true"
+      data-testid="brain-note-n1-body"
+    >
+      Hello
+    </div>
+    <div
+      aria-label="Resize note"
+      class="absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize"
+      data-resize-handle="true"
+      data-testid="brain-note-n1-resize-handle"
+    />
+  </div>
+</div>
+`;

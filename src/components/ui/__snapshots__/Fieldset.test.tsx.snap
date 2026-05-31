@@ -1,0 +1,66 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Fieldset > snapshot > should match the snapshot with and without rows 1`] = `
+<div>
+  <div>
+    <fieldset
+      class="min-w-0 border-0 p-0"
+      data-testid="fs-snap-empty"
+    >
+      <legend
+        class="mb-2 block w-full border-b border-ink pb-1 font-mono text-[10px] uppercase tracking-[0.11em] text-ink"
+        data-testid="fs-snap-empty-legend"
+      >
+        empty
+      </legend>
+      <div
+        class="flex flex-col"
+        data-testid="fs-snap-empty-body"
+      >
+        <div />
+      </div>
+    </fieldset>
+    <fieldset
+      class="min-w-0 border-0 p-0"
+      data-testid="fs-snap-rows"
+    >
+      <legend
+        class="mb-2 block w-full border-b border-ink pb-1 font-mono text-[10px] uppercase tracking-[0.11em] text-ink"
+        data-testid="fs-snap-rows-legend"
+      >
+        rows
+      </legend>
+      <div
+        class="flex flex-col"
+        data-testid="fs-snap-rows-body"
+      >
+        <div
+          class="grid grid-cols-1 items-start gap-1 border-b border-rule-s py-3 md:grid-cols-[200px_1fr] md:gap-6"
+          data-testid="fs-snap-rows-row"
+        >
+          <div
+            class="flex flex-col gap-1"
+          >
+            <label
+              class="font-sans text-[13px] font-medium leading-tight text-ink"
+              data-testid="fs-snap-rows-row-label"
+            >
+              Name
+            </label>
+          </div>
+          <div
+            class="flex flex-col gap-1.5"
+          >
+            <div>
+              <input
+                class="block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 py-1.5 border-rule focus:border-ink"
+                type="text"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+</div>
+`;

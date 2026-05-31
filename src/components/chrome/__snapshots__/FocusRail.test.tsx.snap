@@ -1,0 +1,78 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FocusRail > renders space dots with active highlight 1`] = `
+<div>
+  <aside
+    class="flex w-9 shrink-0 flex-col items-center gap-3.5 border-r border-rule bg-paper py-3.5"
+  >
+    <div
+      class="font-serif text-sm leading-none text-ink"
+    >
+      L
+    </div>
+    <div
+      class="h-px w-4 bg-rule"
+    />
+    <a
+      aria-label="Gamma"
+      class="h-1 w-1 rounded-full bg-rule"
+      data-discover="true"
+      href="/s/s3"
+    />
+    <a
+      aria-label="Beta"
+      class="h-1 w-1 rounded-full bg-ink"
+      data-discover="true"
+      href="/s/s2"
+    />
+    <a
+      aria-label="Alpha"
+      class="h-1 w-1 rounded-full bg-rule"
+      data-discover="true"
+      href="/s/s1"
+    />
+    <div
+      class="flex-1"
+    />
+    <button
+      aria-controls="radix-_r_*_"
+      aria-expanded="false"
+      aria-haspopup="dialog"
+      aria-label="LIpsum Writer"
+      class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink"
+      data-state="closed"
+      type="button"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-ellipsis-vertical h-3.5 w-3.5"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="1"
+        />
+        <circle
+          cx="12"
+          cy="5"
+          r="1"
+        />
+        <circle
+          cx="12"
+          cy="19"
+          r="1"
+        />
+      </svg>
+    </button>
+  </aside>
+</div>
+`;

@@ -1,0 +1,213 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] = `
+<div>
+  <aside
+    class="flex w-56 shrink-0 flex-col border-r border-rule bg-paper-2"
+  >
+    <div
+      class="group border-b border-rule px-5 pb-4 pt-5"
+    >
+      <div
+        class="flex items-center gap-2"
+        data-tour="tour-sidebar-space-title"
+      >
+        <button
+          class="block min-w-0 flex-1 cursor-text truncate text-left font-serif text-lg font-medium leading-tight tracking-tight text-ink"
+          data-testid="sidebar-space-title"
+          title="Rename space"
+          type="button"
+        >
+          Test Space
+        </button>
+        <button
+          aria-controls="radix-_r_*_"
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          aria-label="Open space menu"
+          class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm text-ink-3 opacity-0 transition-opacity hover:bg-paper hover:text-ink focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink group-hover:opacity-100 data-[state=open]:bg-ink data-[state=open]:text-paper data-[state=open]:opacity-100"
+          data-state="closed"
+          data-testid="sidebar-space-menu-trigger"
+          data-tour="tour-sidebar-settings"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-settings h-3.5 w-3.5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
+            />
+            <circle
+              cx="12"
+              cy="12"
+              r="3"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+        data-testid="sidebar-space-subtitle"
+      >
+        PRIVATE · LOCAL · 2y
+      </div>
+    </div>
+    <div
+      class="flex-1 overflow-auto py-2"
+      data-tour="tour-sidebar-sections"
+    >
+      <div
+        class="mb-2"
+        data-testid="sidebar-section-sec1"
+      >
+        <div
+          class="group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 px-5"
+          data-testid="sidebar-section-sec1-header"
+        >
+          <span
+            class="flex-1 truncate"
+            data-testid="sidebar-section-sec1-label"
+          >
+            Drafts
+          </span>
+          <button
+            aria-label="Add doc to Drafts"
+            class="inline-flex items-center justify-center transition-colors text-ink-3 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-4 w-4 rounded-sm opacity-0 hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
+            data-testid="sidebar-section-sec1-add"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-plus h-3 w-3"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 12h14"
+              />
+              <path
+                d="M12 5v14"
+              />
+            </svg>
+          </button>
+        </div>
+        <a
+          class="-ml-px flex items-center gap-2 border-l-2 py-1.5 transition-colors px-5 border-ink bg-paper"
+          data-discover="true"
+          data-testid="sidebar-doc-d1"
+          href="/s/s1/d/d1"
+        >
+          <span
+            class="flex-1 truncate text-[13px] font-medium text-ink"
+            data-testid="sidebar-doc-d1-name"
+          >
+            Sample Doc
+          </span>
+          <span
+            class="font-mono text-[10px] text-ink-4"
+            data-testid="sidebar-doc-d1-count"
+          >
+            ◌
+          </span>
+        </a>
+        <div
+          class="mt-1"
+          data-testid="sidebar-section-sec1a"
+        >
+          <div
+            class="group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 pl-7 pr-3"
+            data-testid="sidebar-section-sec1a-header"
+          >
+            <span
+              class="flex-1 truncate"
+              data-testid="sidebar-section-sec1a-label"
+            >
+              ↳ Ideas
+            </span>
+            <button
+              aria-label="Add doc to ↳ Ideas"
+              class="inline-flex items-center justify-center transition-colors text-ink-3 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-4 w-4 rounded-sm opacity-0 hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
+              data-testid="sidebar-section-sec1a-add"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-plus h-3 w-3"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 12h14"
+                />
+                <path
+                  d="M12 5v14"
+                />
+              </svg>
+            </button>
+          </div>
+          <div
+            class="px-5 pl-7 py-1 text-[11px] italic text-ink-4"
+            data-testid="sidebar-section-sec1a-empty"
+          >
+            (empty)
+          </div>
+        </div>
+      </div>
+      <div
+        class="mt-4 border-t border-rule pt-2"
+        data-testid="sidebar-workshop-fallback"
+      >
+        <div
+          class="px-5 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4"
+          data-testid="sidebar-workshop-fallback-label"
+        >
+          Workshop
+        </div>
+        <a
+          class="-ml-px flex items-center gap-2 border-l-2 px-5 py-1.5 transition-colors border-transparent text-ink-2 hover:bg-paper"
+          data-discover="true"
+          data-testid="sidebar-brain-space-link"
+          href="/s/s1/dump"
+        >
+          <span
+            class="flex-1 text-[13px]"
+            data-testid="sidebar-brain-space-link-label"
+          >
+            Brain space
+          </span>
+          <span
+            class="font-mono text-[10px] text-ink-4"
+            data-testid="sidebar-brain-space-link-count"
+          >
+            1◦
+          </span>
+        </a>
+      </div>
+    </div>
+  </aside>
+</div>
+`;

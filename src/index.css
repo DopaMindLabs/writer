@@ -1,0 +1,223 @@
+@import 'tailwindcss';
+@config '../tailwind.config.ts';
+
+:root {
+  --paper: #ffffff;
+  --paper-2: #fafafa;
+  --ink: #111111;
+  --ink-2: #404040;
+  --ink-3: #737373;
+  --ink-4: #a3a3a3;
+  --rule: #e5e5e5;
+  --rule-s: #f0f0f0;
+  --accent: #111111;
+
+  --hl-yellow: #fff3a8;
+  --hl-pink: #ffd6e0;
+  --hl-blue: #cfe3fa;
+  --hl-green: #d6ebcf;
+  --hl-ash: #e8e8e8;
+
+  --warning: #a8392c;
+  --warning-bg: #fbe2dc;
+
+  --danger: #c96442;
+  --danger-bg: #f8e4dc;
+
+  --success: #4f7a3a;
+  --success-bg: #e6efdf;
+
+  --info: #3a6597;
+  --info-bg: #e2ecf6;
+}
+
+[data-theme='dark'] {
+  --paper: #111111;
+  --paper-2: #1a1a1a;
+  --ink: #f5f5f5;
+  --ink-2: #c8c8c8;
+  --ink-3: #8a8a8a;
+  --ink-4: #5a5a5a;
+  --rule: #2c2c2c;
+  --rule-s: #1f1f1f;
+  --accent: #f5f5f5;
+
+  --warning: #ff8a7a;
+  --warning-bg: #3a1e1a;
+
+  --danger: #e8987a;
+  --danger-bg: #3d2218;
+
+  --success: #9cc47e;
+  --success-bg: #1c2a16;
+
+  --info: #8ab6e6;
+  --info-bg: #16222f;
+}
+
+[data-theme='hc-light'] {
+  --paper: #ffffff;
+  --paper-2: #ffffff;
+  --ink: #000000;
+  --ink-2: #000000;
+  --ink-3: #1a1a1a;
+  --ink-4: #3d3d3d;
+  --rule: #000000;
+  --rule-s: #1a1a1a;
+  --accent: #0033cc;
+
+  --hl-yellow: #f0e442;
+  --hl-pink: #cc79a7;
+  --hl-blue: #56b4e9;
+  --hl-green: #009e73;
+  --hl-ash: #999999;
+
+  --warning: #a00000;
+  --warning-bg: #ffe5e5;
+
+  --danger: #8a2400;
+  --danger-bg: #ffe7dc;
+
+  --success: #0a5a00;
+  --success-bg: #e5ffe5;
+
+  --info: #0033cc;
+  --info-bg: #e5ecff;
+}
+
+[data-theme='hc-dark'] {
+  --paper: #000000;
+  --paper-2: #000000;
+  --ink: #ffffff;
+  --ink-2: #ffffff;
+  --ink-3: #e5e5e5;
+  --ink-4: #bfbfbf;
+  --rule: #ffffff;
+  --rule-s: #e5e5e5;
+  --accent: #66aaff;
+
+  --hl-yellow: #f0e442;
+  --hl-pink: #cc79a7;
+  --hl-blue: #56b4e9;
+  --hl-green: #009e73;
+  --hl-ash: #999999;
+
+  --warning: #ff8a7a;
+  --warning-bg: #330000;
+
+  --danger: #ffb38a;
+  --danger-bg: #3d1808;
+
+  --success: #7aff7a;
+  --success-bg: #003300;
+
+  --info: #99ccff;
+  --info-bg: #001a33;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Geist', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.lipsum-tour-popover.driver-popover {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.18);
+  font-family: 'Geist', system-ui, -apple-system, sans-serif;
+  max-width: 320px;
+}
+
+.lipsum-tour-popover .driver-popover-title {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.lipsum-tour-popover .driver-popover-description {
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.lipsum-tour-popover .driver-popover-progress-text {
+  color: var(--ink-3);
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lipsum-tour-popover .driver-popover-close-btn {
+  color: var(--ink-3);
+}
+.lipsum-tour-popover .driver-popover-close-btn:hover {
+  color: var(--ink);
+}
+
+.lipsum-tour-popover .driver-popover-footer button {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 4px;
+  text-shadow: none;
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+}
+.lipsum-tour-popover .driver-popover-next-btn,
+.lipsum-tour-popover .driver-popover-done-btn {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.lipsum-tour-popover .driver-popover-next-btn:hover,
+.lipsum-tour-popover .driver-popover-done-btn:hover {
+  background: var(--ink-2);
+  border-color: var(--ink-2);
+}
+.lipsum-tour-popover .driver-popover-prev-btn:hover {
+  background: var(--paper-2);
+}
+
+.lipsum-tour-popover .driver-popover-arrow-side-top {
+  border-top-color: var(--paper);
+}
+.lipsum-tour-popover .driver-popover-arrow-side-bottom {
+  border-bottom-color: var(--paper);
+}
+.lipsum-tour-popover .driver-popover-arrow-side-left {
+  border-left-color: var(--paper);
+}
+.lipsum-tour-popover .driver-popover-arrow-side-right {
+  border-right-color: var(--paper);
+}
+
+/* Force hover-reveal affordances to be visible while highlighted by a tour. */
+.driver-active-element [class*='opacity-0'],
+.driver-active-element[class*='opacity-0'] {
+  opacity: 1 !important;
+}

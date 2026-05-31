@@ -1,0 +1,596 @@
+{
+  "home": {
+    "subtitle": "Free writing multiverse",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Your first space is a blank one. Pick a template to get started, or start from nothing.",
+    "tagline": "A clutter-free space for long-form writing — fiction, research, essays, journals.",
+    "continueWriting": "Continue writing",
+    "startNewSpace": "Start a new space",
+    "statusLine": "experimental · local only · data can be lost",
+    "warningTitle": "Experimental build",
+    "warningBody": "No data sync. Everything lives in your browser. If you clear your cache, your work will be lost"
+  },
+  "about": {
+    "back": "back",
+    "title": "about",
+    "greeting": "Hi,",
+    "paragraph1": "This is for the writer who keeps starting over.  The one who opens a new document, types three sentences (or none), then spends 40mins  adjusting the font. The one whose best ideas arrive at 2am and get distracted. The one with fourteen tabs, six notebooks, and a draft that hasn't moved in a month.",
+    "paragraph2Before": "I know, because that's me ",
+    "paragraph2After": ". I have ADHD, Autism, probably other -isms hasn't been diagnosed yet. I need something that understands my chaotic but wonderful brain. Somewhere to dump everything before it disappears (or start writing). The fragments, the half-thoughts, the 3am connections. All of it, in one place.",
+    "paragraph3": "So I built this space for us. I hope it gives your dopamine rush just as much it give me to build this.",
+    "paragraph4Before": "One more thing... I believe in tech for good & I hate advertsing. So, this will always be advert free and FREE for non-commercial use. You can fork it modify it as you like under ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Status",
+    "statusValueStrong": "Experimental",
+    "statusValueRest": " — there is no data sync. All data is saved in IndexedDB in your local browser. If you clear your browser cache, your work will be lost.",
+    "feedbackBefore": "I am still building this and I have alot ideas ",
+    "feedbackAfter": ". I'd love to hear what works, what doesn't, and what you wish existed. Feedback is welcome.",
+    "sourceLabel": "Source"
+  },
+  "settings": {
+    "back": "back",
+    "windowTitle": "lotem · settings",
+    "breadcrumb": "SETTINGS",
+    "shellSubtitle": "GLOBAL SETTINGS",
+    "comingSoonBadge": "coming soon",
+    "helpAria": "What is this?",
+    "groups": {
+      "preferences": "Preferences",
+      "writing": "Writing",
+      "data": "Data",
+      "account": "Account"
+    },
+    "tabs": {
+      "general": "General",
+      "appearance": "Appearance",
+      "editor": "Editor",
+      "typography": "Typography",
+      "shortcuts": "Keyboard",
+      "templates": "Templates",
+      "palettes": "Highlight palettes",
+      "citations": "Citation style",
+      "annotation": "Annotations",
+      "backups": "Backups",
+      "sync": "Sync",
+      "export": "Export / import",
+      "data": "Your data",
+      "account": "Account",
+      "about": "About"
+    },
+    "editor": {
+      "title": "Editor",
+      "subtitle": "Toolbar and writing affordances. Markdown shortcuts (#, >, -, **) keep working regardless of these settings.",
+      "floatingToolbarLabel": "Floating toolbar",
+      "floatingToolbarHint": "Appears on highlight or right-click in write mode.",
+      "floatingToolbarOff": "Off",
+      "floatingToolbarOn": "On",
+      "rightClickLabel": "Right-click menu",
+      "rightClickHint": "Switch between the floating toolbar and the browser's native context menu.",
+      "rightClickTooltip": "Use the native context menu on right-click instead of the floating toolbar. The toolbar will still appear on highlight-select.",
+      "inlineTogglesLabel": "Inline toggles",
+      "inlineTogglesHint": "Bold and italic buttons inside the floating toolbar.",
+      "inlineTogglesTooltip": "Hide the B and I buttons from the floating toolbar. Markdown shortcuts (**, _) keep working.",
+      "listDepthLabel": "List nesting depth",
+      "listDepthHint": "How deep bullet and numbered lists can nest.",
+      "listDepthTooltip": "Raise or lower the cap on list nesting. Currently fixed at 2 levels.",
+      "templateDefaultsLabel": "Per-template defaults",
+      "templateDefaultsHint": "Different formatting subsets per template.",
+      "templateDefaultsTooltip": "Let each template (fiction, journal, technical…) choose its own formatting subset."
+    },
+    "general": {
+      "title": "General",
+      "subtitle": "How LIpsum Writer shows up by default. None of this is destructive.",
+      "comingSoonBody": "Compact density, reduce motion, keyboard hint visibility, and what view opens at startup.",
+      "compactDensityLabel": "Compact density",
+      "compactDensityHint": "Tighter rows in lists, tighter padding everywhere.",
+      "reduceMotionLabel": "Reduce motion",
+      "reduceMotionHint": "Skip animated transitions between views.",
+      "keyboardHintsLabel": "Show keyboard hints",
+      "keyboardHintsHint": "Display ⌘-key shortcuts in tooltips and the corner of buttons.",
+      "startupLabel": "Open at startup",
+      "startupHint": "What you see when you launch the app.",
+      "startupOptions": {
+        "lastView": "Last view",
+        "home": "Home",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Appearance",
+      "subtitle": "Colour, type, density. The mood you want this thing to set.",
+      "comingSoonBody": "Curated theme palettes, accent colour, and density. Today's theme switch lives in the world rail's quick settings.",
+      "themeLabel": "Theme",
+      "themeHint": "Three curated palettes. They tune everything — block colours, hairlines, even the grain.",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "default",
+        "studio": "Studio",
+        "studioSub": "neutral",
+        "midnight": "Midnight",
+        "midnightSub": "dark"
+      },
+      "accentLabel": "Accent",
+      "accentHint": "Used for hover, focus, active editing ring.",
+      "densityLabel": "Density",
+      "densityOptions": {
+        "cozy": "Cozy",
+        "default": "Default",
+        "compact": "Compact"
+      }
+    },
+    "templates": {
+      "title": "Templates",
+      "subtitle": "Reusable scaffolds for new spaces and docs.",
+      "comingSoonBody": "Author your own templates with sections, default doc names, and prose stubs.",
+      "items": {
+        "fiction": "Fiction",
+        "fictionSub": "Manuscript · World · Workshop",
+        "research": "Research",
+        "researchSub": "Sources · Notes · Drafts",
+        "journal": "Journal",
+        "journalSub": "Daily · Weekly · Reflections",
+        "essay": "Essay",
+        "essaySub": "Outline · Drafts · Final"
+      }
+    },
+    "palettes": {
+      "title": "Highlight palettes",
+      "subtitle": "Five-slot palettes per space — name and tune each colour.",
+      "comingSoonBody": "Edit, save, and switch named highlight palettes (Evidence, To revise, Reference…) across spaces.",
+      "items": {
+        "evidence": "Evidence",
+        "revise": "To revise",
+        "reference": "Reference",
+        "quote": "Quote",
+        "loose": "Loose end"
+      },
+      "rename": "rename",
+      "tune": "tune"
+    },
+    "citations": {
+      "title": "Citation style",
+      "subtitle": "Default citation style across spaces.",
+      "comingSoonBody": "Pick a global style (Chicago, APA, MLA…) with per-space overrides.",
+      "styleLabel": "Default style",
+      "styleHint": "Used when inserting a new citation. Per-space overrides land later.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Annotations",
+      "subtitle": "Margin notes and inline annotations.",
+      "comingSoonBody": "Annotation kinds, visibility defaults, and export behaviour.",
+      "showMarginLabel": "Show margin notes",
+      "showMarginHint": "Annotations float in the right gutter when there's room.",
+      "showInlineLabel": "Show inline highlights",
+      "showInlineHint": "Annotation colour bleeds onto the underlying prose.",
+      "exportLabel": "Include in exports",
+      "exportHint": "Annotations are written out alongside the document body."
+    },
+    "export": {
+      "title": "Export / import",
+      "subtitle": "Move data in and out of LIpsum Writer.",
+      "comingSoonBody": "Bulk export to .zip, import from another LIpsum bundle or Markdown directory.",
+      "formatLabel": "Export format",
+      "formatHint": "Per-doc and per-space exports use the same default.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Import from",
+      "importHint": "Bring in another LIpsum bundle or a directory of Markdown files.",
+      "importOptions": {
+        "bundle": "LIpsum bundle (.zip)",
+        "markdown": "Markdown folder",
+        "obsidian": "Obsidian vault"
+      }
+    },
+    "data": {
+      "title": "Your data",
+      "subtitle": "Where your work lives and how much room it takes.",
+      "comingSoonBody": "IndexedDB usage, storage estimate, and a one-click full wipe.",
+      "storageLabel": "Storage used",
+      "storageValue": "≈ 12.4 MB · 4 spaces, 38 docs",
+      "engineLabel": "Storage engine",
+      "engineValue": "IndexedDB (local browser)",
+      "wipeLabel": "Wipe everything",
+      "wipeHint": "Removes every space, doc, and snapshot from this browser. There is no undo.",
+      "wipeButton": "Wipe local data…"
+    },
+    "about": {
+      "title": "About",
+      "subtitle": "Build info and links.",
+      "comingSoonBody": "See the /about page for the story; this tab will host build info, license, and changelog.",
+      "versionLabel": "Version",
+      "versionValue": "0.5.0 · experimental",
+      "buildLabel": "Build",
+      "buildValue": "local",
+      "licenseLabel": "License",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Links",
+      "links": {
+        "source": "Source",
+        "changelog": "Changelog",
+        "feedback": "Send feedback"
+      }
+    },
+    "account": {
+      "title": "Account",
+      "subtitle": "Sign-in, sync across devices, and shared workspaces.",
+      "comingSoonBody": "Cloud sync is unavailable today — Lotem is local-only. Account, sign-in, and shared workspaces land when sync ships.",
+      "signedOutLabel": "Sign in",
+      "signedOutHint": "Cloud sync is not available yet. This is here to show the design.",
+      "signInButton": "Sign in with email",
+      "syncLabel": "Sync this device",
+      "syncHint": "Once you sign in, your spaces will replicate to other devices."
+    },
+    "typography": {
+      "title": "Typography",
+      "subtitle": "Defaults across all worlds. Individual worlds may override.",
+      "comingSoonBody": "Pick the prose font, UI font, default reading size, line height, and measure for new worlds.",
+      "proseFontLabel": "Prose font",
+      "uiFontLabel": "UI font",
+      "proseSizeLabel": "Prose size",
+      "proseSizeHint": "Default for new worlds.",
+      "lineHeightLabel": "Line height",
+      "measureLabel": "Measure",
+      "measureHint": "Maximum line width.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Shortcuts",
+      "subtitle": "Keyboard bindings for navigation, formatting, and modes.",
+      "comingSoonBody": "Rebindable shortcuts for write/read/split, focus mode, and the formatting toolbar.",
+      "navHeader": "Navigation",
+      "formatHeader": "Formatting",
+      "modeHeader": "Modes",
+      "items": {
+        "openSettings": "Open settings",
+        "quickSettings": "Quick settings",
+        "findInDoc": "Find in doc",
+        "toggleFocus": "Toggle focus",
+        "toggleInspector": "Toggle inspector",
+        "bold": "Bold",
+        "italic": "Italic",
+        "underline": "Underline",
+        "heading1": "Heading 1",
+        "heading2": "Heading 2",
+        "write": "Write mode",
+        "read": "Read mode",
+        "split": "Split mode"
+      }
+    },
+    "backups": {
+      "title": "Backups",
+      "subtitle": "Export, restore, and snapshot your local data.",
+      "comingSoonBody": "Scheduled local snapshots, manual export to .zip, and restore from a previous backup.",
+      "intervalLabel": "Auto-snapshot interval",
+      "intervalOptions": {
+        "5min": "5 min",
+        "10min": "10 min",
+        "30min": "30 min",
+        "off": "Off"
+      },
+      "keepLabel": "Keep",
+      "keepHint": "Older snapshots roll off automatically.",
+      "keepOptions": {
+        "last50": "Last 50",
+        "days7": "7 days",
+        "days30": "30 days"
+      },
+      "latestLabel": "Latest",
+      "latestValue": "12 min ago · 1,190 words"
+    },
+    "sync": {
+      "title": "Sync",
+      "subtitle": "Push your spaces to a folder you choose. Point it at a Google Drive, Dropbox, or iCloud folder to sync across devices.",
+      "unsupportedTitle": "Not available in this browser",
+      "unsupportedBody": "Folder sync needs the File System Access API, available in Chrome, Edge, and other Chromium browsers on desktop. Switch to a supported browser to use it.",
+      "folderLabel": "Synced folder",
+      "folderHint": "Each sync writes a Markdown .zip per space here, keeping the last 5 plus a latest.zip. Sync is separate from Backups.",
+      "noFolder": "No folder connected",
+      "chooseFolder": "Choose folder…",
+      "changeFolder": "Change…",
+      "disconnect": "Disconnect",
+      "intervalLabel": "Auto-sync",
+      "intervalHint": "How often spaces sync automatically while the app is open and the folder is connected. Each space can override this default.",
+      "intervalOff": "Off",
+      "intervalMinutes": "{{count}} min",
+      "intervalDefault": "Default ({{label}})",
+      "syncLabel": "Manual sync",
+      "pushOnlyHint": "Push-only for now — this writes your local data to the folder. Pulling changes back lands later.",
+      "syncNow": "Sync now",
+      "syncNowAll": "Sync all spaces",
+      "reconnectHint": "Sync is paused — the browser needs folder permission again for this session. Reconnect to resume manual and auto-sync.",
+      "reconnectButton": "Reconnect",
+      "syncing": "Syncing…",
+      "syncFailed": "Sync failed: {{message}}",
+      "lastSynced": "Last synced {{when}}",
+      "neverSynced": "Never synced",
+      "justNow": "just now",
+      "resultsTitle": "Last run",
+      "spaceOk": "synced",
+      "spaceFailed": "failed",
+      "historyTitle": "Recent syncs",
+      "historyEmpty": "No syncs yet.",
+      "columns": {
+        "when": "WHEN",
+        "space": "SPACE",
+        "kind": "KIND",
+        "size": "SIZE",
+        "status": "STATUS"
+      },
+      "kind": {
+        "auto": "auto",
+        "manual": "manual"
+      },
+      "status": {
+        "ok": "ok",
+        "error": "error"
+      }
+    },
+    "space": {
+      "breadcrumb": "SPACE · SETTINGS",
+      "shellSubtitle": "SPACE SETTINGS",
+      "loading": "Loading space…",
+      "groups": {
+        "thisSpace": "This space",
+        "sharingMembers": "Sharing & members",
+        "data": "Data"
+      },
+      "tabs": {
+        "general": "General",
+        "template": "Template",
+        "palette": "Highlight palette",
+        "sharing": "Sharing",
+        "members": "Members",
+        "backups": "Backups",
+        "sync": "Sync",
+        "export": "Export",
+        "danger": "Danger zone"
+      },
+      "palette": {
+        "title": "Highlight palette",
+        "subtitle": "Five named, tunable highlight colours for this space.",
+        "comingSoonBody": "Rename, retint, and reorder this space's highlight slots.",
+        "items": {
+          "evidence": "Evidence",
+          "revise": "To revise",
+          "reference": "Reference",
+          "quote": "Quote",
+          "loose": "Loose end"
+        },
+        "rename": "rename",
+        "tune": "tune"
+      },
+      "export": {
+        "title": "Export",
+        "subtitle": "Move this space's content into another tool.",
+        "comingSoonBody": "Export to Markdown .zip (today via Backups), LaTeX, HTML, or PDF — all in one place.",
+        "formatLabel": "Format",
+        "formatHint": "Markdown ships first; the rest follow.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Last export",
+        "lastValue": "never"
+      },
+      "general": {
+        "title": "General",
+        "subtitle": "Identifying details for this space. Changes apply immediately and sync across views.",
+        "nameLabel": "Space name",
+        "nameHint": "Shown in the sidebar header and the space rail tooltip.",
+        "tagLabel": "Tag",
+        "tagHint": "A short code (2–4 characters) shown on the space rail tile."
+      },
+      "sharing": {
+        "title": "Sharing",
+        "subtitle": "Control how this space is shared.",
+        "comingSoonBody": "Per-space visibility and shared links. Lands when cloud sync ships.",
+        "visibilityLabel": "Visibility",
+        "visibilityOptions": {
+          "private": "Private",
+          "link": "Anyone with link",
+          "members": "Members only"
+        },
+        "linkLabel": "Shareable link",
+        "linkHint": "Read-only by default. Editing privileges follow Members.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "copy"
+      },
+      "template": {
+        "title": "Template",
+        "subtitle": "The structural template this space was created with.",
+        "comingSoonBody": "Changing a space's template after creation isn't supported yet. Lands once we can migrate sections and docs safely.",
+        "currentLabel": "Current template",
+        "currentValue": "Fiction",
+        "currentSub": "Manuscript · World · Workshop",
+        "changeLabel": "Change template",
+        "changeHint": "Reflows existing sections and docs to the new template.",
+        "changeButton": "Change template…"
+      },
+      "members": {
+        "title": "Members",
+        "subtitle": "Co-writers and reviewers with access to this space.",
+        "comingSoonBody": "Invite collaborators, manage roles, and review changes. Lands with cloud sync.",
+        "inviteLabel": "Invite by email",
+        "inviteHint": "We'll send them a link to join this space.",
+        "invitePlaceholder": "name@example.com",
+        "inviteButton": "send invite",
+        "membersLabel": "Members",
+        "roles": {
+          "owner": "owner",
+          "editor": "editor",
+          "viewer": "viewer"
+        },
+        "you": "you"
+      },
+      "backups": {
+        "title": "Backups",
+        "subtitle": "Snapshot this space as a Markdown .zip you can download and keep.",
+        "comingSoonHint": "LaTeX, HTML, and PDF formats are coming. Restore from file lands with import.",
+        "retentionHint": "Keeping the {{count}} most recent snapshots — older ones are removed automatically.",
+        "snapshotNow": "+ snapshot now",
+        "snapshotting": "snapshotting…",
+        "snapshotFailed": "Snapshot failed: {{message}}",
+        "restoreLabel": "↑ restore from file",
+        "historyTitle": "History",
+        "empty": "No snapshots yet — create one with + snapshot now.",
+        "columns": {
+          "when": "WHEN",
+          "kind": "KIND",
+          "size": "SIZE",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "manual",
+          "auto": "auto",
+          "snapshot": "snapshot"
+        },
+        "download": "↓ download",
+        "delete": "delete",
+        "deleteConfirm": "Delete this snapshot? This cannot be undone.",
+        "deleted": "Snapshot deleted.",
+        "justNow": "just now"
+      },
+      "sync": {
+        "title": "Sync",
+        "subtitle": "Push this space to the connected folder, manually or on a schedule. Sync is separate from Backups.",
+        "folderHint": "Connect a folder in global Settings → Sync. The same folder is used for every space.",
+        "intervalHint": "How often this space syncs automatically. Choose Default to follow the global auto-sync setting.",
+        "syncNow": "Sync this space"
+      },
+      "danger": {
+        "title": "Danger zone",
+        "subtitle": "Irreversible actions. Read carefully before continuing.",
+        "deleteCardTitle": "Delete this space",
+        "deleteCardBody": "Permanently removes this space along with every document, section, brain-space note, annotation, citation, and connection. This cannot be undone.",
+        "deleteButton": "Delete this space",
+        "dialogTitle": "Delete \"{{name}}\"?",
+        "dialogBody": "This permanently removes the space and all its contents. This cannot be undone.",
+        "typeToConfirm": "Type {{name}} to confirm",
+        "cancel": "Cancel",
+        "confirm": "Delete space"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Lost in the margins",
+    "body": "That page doesn't exist (yet).",
+    "goHome": "Go home"
+  },
+  "templates": {
+    "crumb": "01 — A KIND OF ROOM",
+    "headingMain": "What kind of space",
+    "headingAccent": "are you starting?",
+    "chooseLegend": "Choose a template",
+    "nameLabel": "Name",
+    "tagLabel": "Tag",
+    "syncLabel": "cloud sync —",
+    "syncValue": "off, local",
+    "syncTooltip": "Cloud sync is unavailable — this app is local-only for now.",
+    "creating": "creating…",
+    "submitLabel": "enter {{name}} →",
+    "newSpace": "new space",
+    "back": "back"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} unsorted",
+    "title": "Brain space",
+    "mobileWarning": "Brain space works best on a larger screen.",
+    "mobileNote": "The canvas needs a mouse or trackpad.",
+    "openInWrite": "Open in Write →"
+  },
+  "split": {
+    "title": "Split view",
+    "mobileWarning": "Split view needs a larger screen.",
+    "mobileNote": "Open this document in Write mode instead.",
+    "openInWrite": "Open in Write →",
+    "leftPrefix": "LEFT —",
+    "rightPrefix": "RIGHT —",
+    "rightPaneAria": "Right pane document",
+    "noOtherDocs": "(no other docs)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Citations",
+    "pickDoc": "Pick a document from the dropdown above.",
+    "dividerAria": "Resize split panes"
+  },
+  "citationsDrawer": {
+    "title": "Citations",
+    "description": "Search, import, and export citations for this space.",
+    "close": "Close citations"
+  },
+  "citations": {
+    "title": "Citations",
+    "breadcrumb": "Sources / ",
+    "entries": "{{count}} ENTRIES",
+    "searchPlaceholder": "authors, tags, year…",
+    "upload": "↑ upload .bib / .ris",
+    "add": "+ add",
+    "cancel": "× cancel",
+    "columns": {
+      "tag": "TAG",
+      "authors": "AUTHORS",
+      "title": "TITLE",
+      "year": "YEAR",
+      "type": "TYPE",
+      "used": "USED"
+    },
+    "style": "STYLE — CHICAGO (AUTHOR-DATE)",
+    "exportBib": "EXPORT AS .BIB",
+    "summary": "{{filtered}} SHOWN · {{shown}} ON THIS PAGE",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
+    "empty": "no citations yet",
+    "noMatch": "no rows match your search.",
+    "importHint": "import a .bib or add one manually.",
+    "pasteHeader": "Paste BibTeX or a title",
+    "addCitation": "add citation",
+    "manualCancel": "cancel",
+    "adding": "adding…",
+    "parsing": "Parsing {{name}}…",
+    "imported": "Imported {{added}} citation{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", skipped {{skipped}} duplicate{{skippedPlural}}",
+    "skippedSuffixShort": ", skipped {{skipped}}",
+    "failed": "Failed to parse: {{message}}",
+    "failedManual": "Failed: {{message}}",
+    "addedOne": "Added 1 citation.",
+    "unknownAuthor": "(unknown)",
+    "unknownError": "unknown error",
+    "edit": {
+      "save": "save",
+      "cancel": "cancel",
+      "delete": "delete",
+      "tagLabel": "Tag",
+      "authorsLabel": "Authors",
+      "titleLabel": "Title",
+      "yearLabel": "Year",
+      "typeLabel": "Type",
+      "duplicateKey": "Tag \"{{key}}\" is already used in this space.",
+      "updated": "Updated 1 citation.",
+      "deleteOne": "Deleted 1 citation.",
+      "confirmDeleteUsed": "This citation is used {{count}}× in your documents. Delete anyway?"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} selected",
+      "deleteSelected": "delete",
+      "setTypePrompt": "set type",
+      "clearSelection": "clear",
+      "deleted": "Deleted {{count}} citations.",
+      "typeApplied": "Set type to {{type}} on {{count}} citations.",
+      "confirmDelete": "Delete {{count}} citation(s)? This cannot be undone."
+    }
+  }
+}
