@@ -90,7 +90,13 @@ export const HelpScreen = () => {
             <HelpNav />
           </div>
         </aside>
-        <main className="min-w-0 max-w-2xl flex-1">{renderMain()}</main>
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="min-w-0 max-w-2xl flex-1 outline-none"
+        >
+          {renderMain()}
+        </main>
       </div>
     </div>
   );

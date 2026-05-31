@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createHashRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { SkipLink } from '@/components/ui/SkipLink';
 import { HelpPalette } from '@/components/help/HelpPalette';
 import { useGlobalShortcuts } from '@/hooks/useGlobalShortcuts';
 import {
@@ -36,6 +37,7 @@ const RootLayout = () => {
   useGlobalShortcuts();
   return (
     <>
+      <SkipLink />
       <Outlet />
       <HelpPalette />
     </>

@@ -78,7 +78,11 @@ export const SettingsShell = ({
           <SettingsNavHeader variant={variant} space={space} />
           <SettingsTabs groups={groups} active={active} onSelect={onSelect} />
         </div>
-        <main className="flex-1 overflow-auto bg-paper">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex-1 overflow-auto bg-paper outline-none"
+        >
           <div className="max-w-[880px] px-4 pb-20 pt-6 md:px-12 md:pt-9">
             {children}
           </div>

@@ -40,7 +40,11 @@ export const CitationsScreen = () => {
           mode="write"
           fallbackDocId={lastDocId}
         />
-        <main className="flex flex-1 flex-col overflow-hidden bg-paper">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex flex-1 flex-col overflow-hidden bg-paper outline-none"
+        >
           <CitationsPane
             spaceId={spaceId}
             spaceName={space?.name}

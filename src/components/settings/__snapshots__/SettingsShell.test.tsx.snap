@@ -264,7 +264,9 @@ exports[`SettingsShell > snapshot > should match the snapshot across global and 
           </nav>
         </div>
         <main
-          class="flex-1 overflow-auto bg-paper"
+          class="flex-1 overflow-auto bg-paper outline-none"
+          id="main-content"
+          tabindex="-1"
         >
           <div
             class="max-w-[880px] px-4 pb-20 pt-6 md:px-12 md:pt-9"
@@ -537,7 +539,9 @@ exports[`SettingsShell > snapshot > should match the snapshot across global and 
           </nav>
         </div>
         <main
-          class="flex-1 overflow-auto bg-paper"
+          class="flex-1 overflow-auto bg-paper outline-none"
+          id="main-content"
+          tabindex="-1"
         >
           <div
             class="max-w-[880px] px-4 pb-20 pt-6 md:px-12 md:pt-9"

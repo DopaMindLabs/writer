@@ -467,10 +467,12 @@ const SplitPanes = ({
 
   return (
     <main
+      id="main-content"
+      tabIndex={-1}
       ref={(el) => {
         containerRef.current = el;
       }}
-      className="hidden flex-1 overflow-hidden md:flex"
+      className="hidden flex-1 overflow-hidden outline-none md:flex"
     >
       <section
         className="flex min-w-0 flex-col"
