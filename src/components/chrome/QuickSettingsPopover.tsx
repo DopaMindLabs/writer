@@ -267,28 +267,57 @@ const MoreSection = () => {
         {t('chrome:quickSettings.about')}
       </MenuItem>
 
-      <FullSettingsFooter />
+      <QuickLinksFooter />
     </>
   );
 };
 
-const FullSettingsFooter = () => {
+interface FooterLinkProps {
+  to: string;
+  label: string;
+  kbd: string;
+  testId: string;
+  divider?: boolean;
+}
+
+const FooterLink = ({ to, label, kbd, testId, divider }: FooterLinkProps) => (
+  <div
+    className={cn(
+      'flex items-center gap-3 px-4 py-2.5',
+      divider && 'border-t border-rule/60',
+    )}
+  >
+    <PopoverClose asChild>
+      <Link
+        to={to}
+        className="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
+        data-testid={testId}
+      >
+        {label}
+      </Link>
+    </PopoverClose>
+    <span className="flex-1" />
+    <span className="font-mono text-[10px] text-ink-4">{kbd}</span>
+  </div>
+);
+
+const QuickLinksFooter = () => {
   const { t } = useTranslation('chrome');
   return (
-    <div className="mt-1 flex items-center gap-3 border-t border-rule bg-paper-2 px-4 py-2.5">
-      <PopoverClose asChild>
-        <Link
-          to={routes.settings()}
-          className="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
-          data-testid="quick-settings-full-settings"
-        >
-          {t('quickSettings.fullSettings')}
-        </Link>
-      </PopoverClose>
-      <span className="flex-1" />
-      <span className="font-mono text-[10px] text-ink-4">
-        {t('quickSettings.fullSettingsKbd')}
-      </span>
+    <div className="mt-1 border-t border-rule bg-paper-2">
+      <FooterLink
+        to={routes.help()}
+        label={t('quickSettings.helpLink')}
+        kbd={t('quickSettings.helpKbd')}
+        testId="quick-settings-help"
+      />
+      <FooterLink
+        to={routes.settings()}
+        label={t('quickSettings.fullSettings')}
+        kbd={t('quickSettings.fullSettingsKbd')}
+        testId="quick-settings-full-settings"
+        divider
+      />
     </div>
   );
 };

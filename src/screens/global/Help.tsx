@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
-import { PageNav } from '@/components/chrome/PageNav';
+import { useNavigate, useParams } from 'react-router-dom';
+import { NavShell } from '@/components/chrome/NavShell';
+import type { NavTabDef, NavTabGroup } from '@/components/chrome/NavTabs';
 import { Card } from '@/components/ui/card';
 import { Link } from '@/components/ui/Link';
 import {
@@ -15,9 +16,11 @@ import {
   type HelpCategory,
 } from '@/lib/help/registry';
 import { getHelpDoc } from '@/lib/help/content';
-import { HelpNav } from '@/components/help/HelpNav';
 import { HelpArticle } from '@/components/help/HelpArticle';
 import { HelpSearch } from '@/components/help/HelpSearch';
+
+/** Sentinel tab id for the landing overview (no article slug). */
+const OVERVIEW_ID = 'overview';
 
 interface CategoryCardProps {
   readonly category: HelpCategory;
@@ -52,6 +55,32 @@ const CategoryCard = ({ category, locale }: CategoryCardProps) => {
   );
 };
 
+const AllFeaturesLink = () => {
+  const { t } = useTranslation('help');
+  return (
+    <Link
+      to={routes.helpArticle('features')}
+      data-testid="help-all-features"
+      className="group mt-8 flex items-center justify-between gap-3 border border-rule bg-paper-2 px-4 py-3 hover:border-ink"
+    >
+      <span className="min-w-0">
+        <span className="block text-[15px] font-medium text-ink">
+          {t('allFeatures.title')}
+        </span>
+        <span className="mt-0.5 block text-[13px] text-ink-3">
+          {t('allFeatures.subtitle')}
+        </span>
+      </span>
+      <span
+        aria-hidden
+        className="shrink-0 font-mono text-[12px] text-ink-3 group-hover:text-ink"
+      >
+        →
+      </span>
+    </Link>
+  );
+};
+
 const HelpLanding = ({ locale }: { readonly locale: string }) => {
   const { t } = useTranslation('help');
   return (
@@ -61,6 +90,7 @@ const HelpLanding = ({ locale }: { readonly locale: string }) => {
       <div className="mt-8">
         <HelpSearch />
       </div>
+      <AllFeaturesLink />
       <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {HELP_CATEGORIES.map((category) => (
           <CategoryCard key={category.id} category={category} locale={locale} />
@@ -70,10 +100,45 @@ const HelpLanding = ({ locale }: { readonly locale: string }) => {
   );
 };
 
+/**
+ * Builds the left-rail sub-navigation that mirrors Settings: a leading
+ * "Overview" entry, then one group per help category listing its articles.
+ */
+const useHelpNavGroups = (locale: string): NavTabGroup[] => {
+  const { t } = useTranslation('help');
+  const groups: NavTabGroup[] = [
+    {
+      label: t('navGroup'),
+      tabs: [{ id: OVERVIEW_ID, label: t('navOverview') }],
+    },
+  ];
+  for (const category of HELP_CATEGORIES) {
+    const tabs = getArticlesByCategory(category.id).reduce<NavTabDef[]>(
+      (acc, article) => {
+        const doc = getHelpDoc(article.slug, locale);
+        if (doc) acc.push({ id: article.slug, label: doc.title });
+        return acc;
+      },
+      [],
+    );
+    if (tabs.length > 0) {
+      groups.push({ label: t(`categories.${category.id}`), tabs });
+    }
+  }
+  return groups;
+};
+
 export const HelpScreen = () => {
-  const { i18n } = useTranslation('help');
+  const { t, i18n } = useTranslation('help');
   const locale = i18n.language;
   const { slug } = useParams();
+  const navigate = useNavigate();
+  const groups = useHelpNavGroups(locale);
+  const active = slug ?? OVERVIEW_ID;
+
+  const handleSelect = (id: string) => {
+    void navigate(id === OVERVIEW_ID ? routes.help() : routes.helpArticle(id));
+  };
 
   const renderMain = () => {
     if (slug === undefined) return <HelpLanding locale={locale} />;
@@ -82,22 +147,15 @@ export const HelpScreen = () => {
   };
 
   return (
-    <div className="flex h-full w-full flex-col overflow-auto bg-paper text-ink">
-      <PageNav />
-      <div className="mx-auto flex w-full max-w-5xl gap-10 px-5 pt-10 pb-16 md:px-12 md:pt-12">
-        <aside className="hidden w-56 shrink-0 md:block">
-          <div className="sticky top-4">
-            <HelpNav />
-          </div>
-        </aside>
-        <main
-          id="main-content"
-          tabIndex={-1}
-          className="min-w-0 max-w-2xl flex-1"
-        >
-          {renderMain()}
-        </main>
-      </div>
-    </div>
+    <NavShell
+      variant="global"
+      subtitle={t('shellSubtitle')}
+      navLabel={t('navAria')}
+      groups={groups}
+      active={active}
+      onSelect={handleSelect}
+    >
+      {renderMain()}
+    </NavShell>
   );
 };

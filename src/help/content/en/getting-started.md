@@ -1,31 +1,37 @@
 # Getting started
 
-Welcome! This app is a calm, local-first place to write. Your work lives in
-**spaces**, and everything is saved automatically to your browser as you type —
-no accounts, no cloud, no save button.
+A calm, local-first place to write. Your work lives in **spaces** and saves to
+your browser automatically — no accounts, no cloud, no save button.
+
+## At a glance
+
+1. From **Home**, open or create a space.
+2. Add a document from the **sidebar**.
+3. Start typing — every keystroke is saved.
+
+That's the whole loop. Everything below is detail you can come back to.
 
 ## Your first document
 
-1. From the **Home** screen, open or create a space.
-2. Inside a space, add a document from the sidebar.
-3. Start typing in the editor. Changes are saved continuously.
-
-There is no "new file" dialog to wrestle with — a document is just a place to
-write, and you can rename it any time from the top bar.
+- A document is just a place to write — there's no "new file" dialogue.
+- Rename it any time by clicking its name in the **top bar**.
+- Didn't name it? A title is inferred from your first line.
 
 ## Finding your way around
 
-- The **sidebar** lists your spaces, sections, and documents.
-- The **top bar** shows the current document and the mode tabs.
-- The **Help** link in the page navigation brings you back here at any time.
+- **Sidebar** — your spaces, sections, and documents.
+- **Top bar** — the current document and the mode tabs.
+- **Help** link in the page navigation — brings you back here any time.
 
 ## Guided tours
 
-The first time you open key screens, a short interactive tour points out the
-essentials. You can replay any tour later from the help (**?**) menu.
+The first time you open a key screen, a short interactive tour points out the
+essentials. Replay any tour later from the help (**?**) menu or
+[Quick settings](customization-and-settings#quick-settings).
 
-## Where to go next
+## Related
 
-- Learn the editor in [Writing & editing](writing-and-editing).
-- Organize larger projects in [Organizing your work](organizing-your-work).
-- See every shortcut in [Keyboard shortcuts](keyboard-shortcuts).
+- [All features](features) — a complete, scannable list of what you can do.
+- [Writing & editing](writing-and-editing) — learn the editor.
+- [Organising your work](organizing-your-work) — structure a bigger project.
+- [Keyboard shortcuts](keyboard-shortcuts) — drive everything from the keyboard.
