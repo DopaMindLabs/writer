@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SettingsTabs > snapshot > should match the snapshot across all variants > active=editor 1`] = `
+exports[`NavTabs > snapshot > should match the snapshot across all variants > active=editor 1`] = `
 <div>
   <nav
     aria-label="Settings sections"

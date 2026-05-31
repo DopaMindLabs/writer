@@ -10,8 +10,8 @@ import { useBackups } from '@/hooks/useBackups';
 import { useDeleteSpace } from '@/hooks/useDeleteSpace';
 import { db } from '@/db/db';
 import type { Backup, Space } from '@/db/schema';
-import { SettingsShell } from '@/components/settings/SettingsShell';
-import type { SettingsTabGroup } from '@/components/settings/SettingsTabs';
+import { NavShell } from '@/components/chrome/NavShell';
+import type { NavTabGroup } from '@/components/chrome/NavTabs';
 import { SettingsSectionStack } from '@/components/settings/SettingsSectionStack';
 import { TabHeader } from '@/components/settings/TabHeader';
 import { TypographyH2, TypographyP } from '@/components/ui/typography';
@@ -64,7 +64,7 @@ const GROUPED_TABS: { label: string; ids: readonly TabId[] }[] = [
   { label: 'data', ids: ['backups', 'sync', 'export', 'danger'] },
 ];
 
-const buildGroups = (t: TFunction): SettingsTabGroup[] =>
+const buildGroups = (t: TFunction): NavTabGroup[] =>
   GROUPED_TABS.map((group) => ({
     label: t(`settings.space.groups.${group.label}`),
     tabs: group.ids.map((id) => ({
@@ -127,7 +127,7 @@ export const SpaceSettingsScreen = () => {
   };
 
   return (
-    <SettingsShell
+    <NavShell
       variant="space"
       space={space ?? null}
       activeSpaceId={spaceId ?? null}
@@ -153,7 +153,7 @@ export const SpaceSettingsScreen = () => {
           {t('settings.space.loading')}
         </p>
       )}
-    </SettingsShell>
+    </NavShell>
   );
 };
 

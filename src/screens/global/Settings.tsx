@@ -4,8 +4,8 @@ import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { useUI } from '@/store/ui';
-import { SettingsShell } from '@/components/settings/SettingsShell';
-import type { SettingsTabGroup } from '@/components/settings/SettingsTabs';
+import { NavShell } from '@/components/chrome/NavShell';
+import type { NavTabGroup } from '@/components/chrome/NavTabs';
 import { SettingsSectionStack } from '@/components/settings/SettingsSectionStack';
 import { SettingRow } from '@/components/settings/SettingRow';
 import { Chip } from '@/components/ui/Chip';
@@ -84,7 +84,7 @@ const GROUPED_TABS: { label: string; ids: readonly TabId[] }[] = [
   { label: 'account', ids: ['account', 'about'] },
 ];
 
-const buildGroups = (t: TFunction): SettingsTabGroup[] =>
+const buildGroups = (t: TFunction): NavTabGroup[] =>
   GROUPED_TABS.map((group) => ({
     label: t(`settings.groups.${group.label}`),
     tabs: group.ids.map((id) => ({ id, label: t(`settings.tabs.${id}`) })),
@@ -129,7 +129,7 @@ export const SettingsScreen = () => {
   };
 
   return (
-    <SettingsShell
+    <NavShell
       variant="global"
       groups={groups}
       active={active}
@@ -141,7 +141,7 @@ export const SettingsScreen = () => {
         scrollNonce={scrollNonce}
         onVisibleChange={setVisibleId}
       />
-    </SettingsShell>
+    </NavShell>
   );
 };
 

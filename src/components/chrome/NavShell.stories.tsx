@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { sampleSpace } from '@/test/fixtures';
-import { SettingsShell } from './SettingsShell';
-import { TabHeader } from './TabHeader';
-import type { SettingsTabGroup } from './SettingsTabs';
+import { TabHeader } from '@/components/settings/TabHeader';
+import { NavShell } from './NavShell';
+import type { NavTabGroup } from './NavTabs';
 
-const groups: SettingsTabGroup[] = [
+const groups: NavTabGroup[] = [
   {
     label: 'Preferences',
     tabs: [
@@ -24,10 +24,10 @@ const groups: SettingsTabGroup[] = [
 
 const meta = {
   tags: ['!autodocs'],
-  title: 'Settings/SettingsShell',
-  component: SettingsShell,
+  title: 'Chrome/NavShell',
+  component: NavShell,
   parameters: { layout: 'fullscreen', seed: 'multipleSpaces' },
-} satisfies Meta<typeof SettingsShell>;
+} satisfies Meta<typeof NavShell>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -48,14 +48,14 @@ export const Global: Story = {
       const [active, setActive] = useState('sync');
       return (
         <div className="h-[600px]">
-          <SettingsShell
+          <NavShell
             variant="global"
             groups={groups}
             active={active}
             onSelect={setActive}
           >
             <Body />
-          </SettingsShell>
+          </NavShell>
         </div>
       );
     };
@@ -70,7 +70,7 @@ export const SpaceScoped: Story = {
       const [active, setActive] = useState('sync');
       return (
         <div className="h-[600px]">
-          <SettingsShell
+          <NavShell
             variant="space"
             groups={groups}
             active={active}
@@ -79,7 +79,7 @@ export const SpaceScoped: Story = {
             activeSpaceId={sampleSpace.id}
           >
             <Body />
-          </SettingsShell>
+          </NavShell>
         </div>
       );
     };

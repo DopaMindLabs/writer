@@ -1,8 +1,8 @@
 import { renderWithProviders, screen } from '@/test/test-utils';
 import userEvent from '@testing-library/user-event';
-import { SettingsTabs, type SettingsTabGroup } from './SettingsTabs';
+import { NavTabs, type NavTabGroup } from './NavTabs';
 
-const groups: SettingsTabGroup[] = [
+const groups: NavTabGroup[] = [
   {
     label: 'Preferences',
     tabs: [
@@ -16,11 +16,11 @@ const groups: SettingsTabGroup[] = [
   },
 ];
 
-describe('SettingsTabs', () => {
+describe('NavTabs', () => {
   describe('rendering', () => {
     it('should render the group headers in the desktop nav', () => {
       renderWithProviders(
-        <SettingsTabs groups={groups} active="editor" onSelect={() => {}} />,
+        <NavTabs groups={groups} active="editor" onSelect={() => {}} />,
       );
       expect(screen.getByTestId('settings-tabs-group-0')).toHaveTextContent(
         'Preferences',
@@ -32,7 +32,7 @@ describe('SettingsTabs', () => {
 
     it('should render each tab in both mobile and desktop strips', () => {
       renderWithProviders(
-        <SettingsTabs groups={groups} active="editor" onSelect={() => {}} />,
+        <NavTabs groups={groups} active="editor" onSelect={() => {}} />,
       );
       expect(screen.getByTestId('settings-tab-general')).toHaveTextContent(
         'General',
@@ -57,7 +57,7 @@ describe('SettingsTabs', () => {
   describe('active state', () => {
     it('should mark the active desktop tab with aria-current="page" and leave others unset', () => {
       renderWithProviders(
-        <SettingsTabs groups={groups} active="editor" onSelect={() => {}} />,
+        <NavTabs groups={groups} active="editor" onSelect={() => {}} />,
       );
       expect(
         screen.getByTestId('settings-tab-editor').getAttribute('aria-current'),
@@ -69,7 +69,7 @@ describe('SettingsTabs', () => {
 
     it('should mark the matching mobile tab with aria-current="page"', () => {
       renderWithProviders(
-        <SettingsTabs groups={groups} active="editor" onSelect={() => {}} />,
+        <NavTabs groups={groups} active="editor" onSelect={() => {}} />,
       );
       expect(
         screen
@@ -83,7 +83,7 @@ describe('SettingsTabs', () => {
     it('should call onSelect with the tab id when a desktop tab is clicked', async () => {
       const onSelect = vi.fn();
       renderWithProviders(
-        <SettingsTabs groups={groups} active="general" onSelect={onSelect} />,
+        <NavTabs groups={groups} active="general" onSelect={onSelect} />,
       );
       await userEvent.click(screen.getByTestId('settings-tab-sync'));
       expect(onSelect).toHaveBeenCalledWith('sync');
@@ -92,7 +92,7 @@ describe('SettingsTabs', () => {
     it('should call onSelect with the tab id when a mobile tab is clicked', async () => {
       const onSelect = vi.fn();
       renderWithProviders(
-        <SettingsTabs groups={groups} active="general" onSelect={onSelect} />,
+        <NavTabs groups={groups} active="general" onSelect={onSelect} />,
       );
       await userEvent.click(screen.getByTestId('settings-tab-mobile-sync'));
       expect(onSelect).toHaveBeenCalledWith('sync');
@@ -102,7 +102,7 @@ describe('SettingsTabs', () => {
   describe('snapshot', () => {
     it('should match the snapshot across all variants', () => {
       const { container } = renderWithProviders(
-        <SettingsTabs groups={groups} active="editor" onSelect={() => {}} />,
+        <NavTabs groups={groups} active="editor" onSelect={() => {}} />,
       );
       expect(container).toMatchSnapshot('active=editor');
     });

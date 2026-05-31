@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SettingsShell > snapshot > should match the snapshot across global and space variants 1`] = `
+exports[`NavShell > snapshot > should match the snapshot across global and space variants 1`] = `
 <div>
   <div>
     <div

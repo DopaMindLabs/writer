@@ -2,10 +2,10 @@ import { describe, it, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { seedMultipleSpaces, sampleSpace } from '@/test/fixtures';
-import { SettingsShell } from './SettingsShell';
-import type { SettingsTabGroup } from './SettingsTabs';
+import { NavShell } from './NavShell';
+import type { NavTabGroup } from './NavTabs';
 
-const groups: SettingsTabGroup[] = [
+const groups: NavTabGroup[] = [
   {
     label: 'Preferences',
     tabs: [
@@ -20,10 +20,10 @@ const groups: SettingsTabGroup[] = [
 ];
 
 const renderShell = (
-  props: Partial<React.ComponentProps<typeof SettingsShell>> = {},
+  props: Partial<React.ComponentProps<typeof NavShell>> = {},
 ) =>
   renderWithProviders(
-    <SettingsShell
+    <NavShell
       variant="global"
       groups={groups}
       active="general"
@@ -31,10 +31,10 @@ const renderShell = (
       {...props}
     >
       <div data-testid="shell-body">Body content</div>
-    </SettingsShell>,
+    </NavShell>,
   );
 
-describe('SettingsShell', () => {
+describe('NavShell', () => {
   it('renders the global header and child body', async () => {
     await seedMultipleSpaces();
     renderShell();
@@ -61,20 +61,29 @@ describe('SettingsShell', () => {
     expect(onSelect).toHaveBeenCalledWith('appearance');
   });
 
+  it('overrides the header subtitle and nav label when provided', async () => {
+    await seedMultipleSpaces();
+    renderShell({ subtitle: 'Help / Documentation', navLabel: 'Help topics' });
+    expect(screen.getByText('Help / Documentation')).toBeInTheDocument();
+    expect(
+      screen.getByRole('navigation', { name: 'Help topics' }),
+    ).toBeInTheDocument();
+  });
+
   describe('snapshot', () => {
     it('should match the snapshot across global and space variants', async () => {
       await seedMultipleSpaces();
       const { container } = renderWithProviders(
         <div>
-          <SettingsShell
+          <NavShell
             variant="global"
             groups={groups}
             active="general"
             onSelect={() => undefined}
           >
             <div>Global body</div>
-          </SettingsShell>
-          <SettingsShell
+          </NavShell>
+          <NavShell
             variant="space"
             groups={groups}
             active="sync"
@@ -83,7 +92,7 @@ describe('SettingsShell', () => {
             activeSpaceId={sampleSpace.id}
           >
             <div>Space body</div>
-          </SettingsShell>
+          </NavShell>
         </div>,
       );
       await screen.findAllByText('LIpsum Writer');
