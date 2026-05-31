@@ -36,8 +36,9 @@ export const BrainSpaceScreen = () => {
   }, [spaceId, setCurrentSpaceId]);
 
   const fallbackDocId = useMemo(() => {
-    if (lastDocId && docs.some((d) => d.id === lastDocId)) return lastDocId;
-    return docs[0]?.id ?? null;
+    const list = docs ?? [];
+    if (lastDocId && list.some((d) => d.id === lastDocId)) return lastDocId;
+    return list[0]?.id ?? null;
   }, [docs, lastDocId]);
 
   if (!spaceId) return <Navigate to={routes.home()} replace />;
