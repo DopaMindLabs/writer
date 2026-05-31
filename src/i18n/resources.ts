@@ -4,6 +4,7 @@ import enScreens from './locales/en/screens.json';
 import enApp from './locales/en/app.json';
 import enTemplates from './locales/en/templates.json';
 import enTours from './locales/en/tours.json';
+import enHelp from './locales/en/help.json';
 
 export const resources = {
   en: {
@@ -13,6 +14,7 @@ export const resources = {
     app: enApp,
     templates: enTemplates,
     tours: enTours,
+    help: enHelp,
   },
 } as const;
 

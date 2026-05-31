@@ -1,0 +1,37 @@
+{
+  "title": "Help",
+  "subtitle": "Guides and answers for getting the most out of your writing.",
+  "searchPlaceholder": "Search help…",
+  "searchLabel": "Search help articles",
+  "noResults": "No articles matched “{{query}}”.",
+  "resultsCount_one": "{{count}} result",
+  "resultsCount_other": "{{count}} results",
+  "browseAll": "Browse all topics",
+  "onThisPage": "On this page",
+  "related": "Related",
+  "backToHelp": "All help",
+  "openCenter": "Open full Help Center",
+  "articleNotFound": "That help article doesn’t exist.",
+  "palette": {
+    "title": "Help",
+    "description": "Search the Help Center or jump to a shortcut.",
+    "shortcutsHeading": "Keyboard shortcuts",
+    "hint": "Press Esc to close"
+  },
+  "shortcuts": {
+    "help": "Open help",
+    "focus": "Toggle focus mode"
+  },
+  "categories": {
+    "getting-started": "Getting Started",
+    "writing": "Writing & Editing",
+    "organizing": "Organizing",
+    "views": "Views & Modes",
+    "research": "Research & Citations",
+    "brainspace": "BrainSpace",
+    "annotations": "Annotations & Highlights",
+    "customization": "Customization & Settings",
+    "data": "Your Data",
+    "mobile": "Mobile"
+  }
+}
