@@ -512,8 +512,8 @@ const useAddDoc = (spaceId: string, space: Space | undefined) => {
 export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
   const { t } = useTranslation(['chrome', 'common']);
   const space = useSpace(spaceId);
-  const sections = useSections(spaceId);
-  const docs = useDocuments(spaceId);
+  const sections = useSections(spaceId) ?? [];
+  const docs = useDocuments(spaceId) ?? [];
   const notes = useNotes(spaceId);
   const location = useLocation();
   const modeSuffix = inferModeSuffix(location.pathname);

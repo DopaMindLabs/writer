@@ -41,6 +41,19 @@ describe('WriteScreen', () => {
     expect(await findByText('Empty space')).toBeInTheDocument();
   });
 
+  it('shows a loading indicator instead of flashing the empty state while a space resolves', async () => {
+    const { queryByText, queryByTestId, findByText } = renderAtRoute(
+      <WriteScreen />,
+      { path: '/s/:spaceId', initialEntries: ['/s/empty'] },
+    );
+    // Before the live queries resolve we render the loading indicator, not a
+    // flash of the empty state (the previous jumpy behaviour on space switch).
+    expect(queryByTestId('write-loading')).toBeInTheDocument();
+    expect(queryByText('Empty space')).not.toBeInTheDocument();
+    // Once resolved to a genuinely empty space, the empty state renders.
+    expect(await findByText('Empty space')).toBeInTheDocument();
+  });
+
   it('renders focus rail when focus=1', async () => {
     const { findByTestId } = renderAtRoute(<WriteScreen />, {
       path: '/s/:spaceId/d/:docId',
