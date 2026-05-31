@@ -15,6 +15,18 @@ This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
 - `src/tours/` is exempt; `src/editor/` relaxes size limits only. For a one-off exception,
   add `// nasa-exception: <rule> (<reason>)` above an `// eslint-disable-next-line`.
 
+## Language (read before writing copy)
+
+All user-facing copy and documentation use **British English** — e.g. _colour_, _organise_,
+_customise_, _behaviour_, _centre_, _-ise_ not _-ize_. This applies to UI strings
+(`src/i18n/locales/en/*.json`), Help Center articles (`src/help/content/en/*.md`), comments,
+and docs.
+
+- **Exceptions:** code identifiers, URL slugs, and CSS/token names stay as written (they are
+  identifiers, not prose), as do established product/proper names already used across the app
+  (e.g. **Help Center**). Don't rename a slug just to spell it the British way.
+- When adding or editing copy, match the British spellings already in surrounding text.
+
 ## Design system (read before building UI)
 
 [`docs/design-system.md`](./docs/design-system.md) is the **single source of truth** for

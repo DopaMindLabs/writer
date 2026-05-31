@@ -2,11 +2,18 @@
 
 The app adapts to small screens so you can read and write on a phone or tablet.
 
+## At a glance
+
+- A **bottom tab bar** replaces the sidebar on small screens.
+- The **more** tab opens a drawer with settings, help, and about.
+- **Read** mode and [BrainSpace](brainspace) work great on a phone.
+- **Split view** needs a tablet or desktop.
+
 ## Navigation on small screens
 
-On narrow screens the sidebar collapses behind a menu to give your text room to
-breathe. Tap the menu to reach your spaces, sections, and documents, and the
-top bar to switch modes.
+On narrow screens the sidebar collapses behind a menu and a **bottom-tabs** nav
+appears. Tap a tab to switch modes, open the **nav drawer** to reach spaces and
+documents, and open **more** for settings, **Help**, and about.
 
 ## What works well on mobile
 
@@ -14,13 +21,19 @@ top bar to switch modes.
 - Quick edits and capturing ideas in [BrainSpace](brainspace).
 - Light formatting via the floating toolbar.
 
-## What is better on a larger screen
+## What's better on a larger screen
 
-- **Split view**, which needs the width of a tablet or desktop.
+- **Split view**, which needs the width of a tablet or desktop — on a phone a
+  split URL shows a notice with a link back to Write.
 - Heavy structural work across many documents.
 
 ## Tips
 
-- Because storage is local to each browser, work started on your phone stays on
-  your phone unless you export and import it — see [Your data](your-data).
+- Storage is local to each browser, so work started on your phone stays on your
+  phone unless you export and import it — see [Your data](your-data).
 - Rotate to landscape for a more comfortable writing measure.
+
+## Related
+
+- [Views & modes](views-and-modes) — what each mode is for.
+- [Your data](your-data) — moving work between devices.

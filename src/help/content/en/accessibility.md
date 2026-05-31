@@ -1,14 +1,22 @@
 # Accessibility
 
-Lorem Ipsum is built to work with the tools you already use — keyboards, screen
-readers, and your system's own accessibility settings. Open **Settings →
-Accessibility** to tune the interface. Every option starts at the default
-experience, so nothing changes until you choose it.
+Built to work with the tools you already use — keyboards, screen readers, and
+your system's own settings. Open **Settings → Accessibility** to tune the
+interface. Every option starts at the default, so nothing changes until you
+choose it.
+
+## At a glance
+
+- **Theme & contrast** — light, dark, or two high-contrast (AAA) themes.
+- **Motion** — match system, or force reduced / full.
+- **Text size & spacing** — scale the surface and line spacing.
+- **Links & focus** — always-underline links and an enhanced focus ring.
+- Everything is **opt-in** and **saved locally**.
 
 ## Theme & contrast
 
 Pick **Light** or **Dark**, or one of the two **High contrast** themes. The
-high-contrast themes meet the WCAG AAA contrast standard for text.
+high-contrast themes meet the **WCAG AAA** contrast standard for text.
 
 ## Motion
 
@@ -29,9 +37,15 @@ move through the app with a keyboard.
 
 ## Keyboard and screen readers
 
-Use **Tab** and **Shift+Tab** to move between controls. Interface controls carry
-labels and roles so screen readers announce them correctly.
+- **Tab** / **Shift+Tab** move between controls.
+- A **skip link** jumps straight to the main content.
+- Controls carry labels and roles so screen readers announce them correctly.
 
 ## Your preferences are saved
 
 Changes are stored locally and reapplied the next time you open the app.
+
+## Related
+
+- [Customisation & settings](customization-and-settings) — themes and typography.
+- [Keyboard shortcuts](keyboard-shortcuts) — keyboard navigation.

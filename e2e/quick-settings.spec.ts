@@ -64,6 +64,15 @@ test('clicking a help-tour menu item dismisses the popover', async ({ page }) =>
   await expect(page.getByTestId('quick-settings-popover')).toBeHidden();
 });
 
+test('opens the Help Center from quick settings', async ({ page }) => {
+  const { spaceId, docId } = await gotoFirstDoc(page);
+  await page.goto(`/#/s/${spaceId}/d/${docId}`);
+  await openQuickSettings(page);
+  await page.getByTestId('quick-settings-help').click();
+  await expect(page).toHaveURL(/#\/help$/);
+  await expect(page.getByTestId('help-landing')).toBeVisible();
+});
+
 test('jumps to the Accessibility settings tab from quick settings', async ({
   page,
 }) => {
