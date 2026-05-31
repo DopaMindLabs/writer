@@ -185,7 +185,9 @@ const pruneFolderHistory = async (
   dir: FileSystemDirectoryHandle,
 ): Promise<void> => {
   const names: string[] = [];
-  // FileSystemDirectoryHandle is async-iterable over [name, handle] pairs.
+  // FileSystemDirectoryHandle is async-iterable over [name, handle] pairs, but
+  // lib.dom.d.ts does not yet type the iterator, so the cast is unavoidable.
+  // nasa-exception: no-unsafe-type-assertion (FSAA async-iterable untyped in lib.dom)
   for await (const [name, entry] of dir as unknown as AsyncIterable<
     [string, FileSystemHandle]
   >) {
