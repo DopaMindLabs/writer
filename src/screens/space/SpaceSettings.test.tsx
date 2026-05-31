@@ -503,7 +503,7 @@ describe('SpaceSettingsScreen', () => {
       await seedBasicSpace();
       const user = userEvent.setup();
       renderAtSpaceSettings();
-      // SettingsTabs renders both a mobile and a desktop variant in the DOM;
+      // NavTabs renders both a mobile and a desktop variant in the DOM;
       // either testid resolves to the same logical tab.
       await user.click(
         await screen.findByTestId('settings-tab-mobile-sharing'),
