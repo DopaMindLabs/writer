@@ -13,6 +13,11 @@ beforeEach(() => {
 });
 
 describe('AccessibilityTab', () => {
+  it('matches the snapshot at default preferences', () => {
+    const { container } = renderWithProviders(<AccessibilityTab />);
+    expect(container).toMatchSnapshot();
+  });
+
   it('renders all preference controls', () => {
     renderWithProviders(<AccessibilityTab />);
     expect(

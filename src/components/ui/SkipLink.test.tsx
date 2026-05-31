@@ -21,4 +21,9 @@ describe('SkipLink', () => {
     render(<SkipLink />);
     expect(screen.getByRole('link')).toHaveClass('sr-only');
   });
+
+  it('matches the snapshot', () => {
+    const { container } = render(<SkipLink />);
+    expect(container).toMatchSnapshot();
+  });
 });

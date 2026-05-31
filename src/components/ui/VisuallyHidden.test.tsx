@@ -22,4 +22,9 @@ describe('VisuallyHidden', () => {
       screen.getByRole('heading', { name: 'Section title' }),
     ).toHaveClass('sr-only');
   });
+
+  it('matches the snapshot', () => {
+    const { container } = render(<VisuallyHidden>screen-reader text</VisuallyHidden>);
+    expect(container).toMatchSnapshot();
+  });
 });
