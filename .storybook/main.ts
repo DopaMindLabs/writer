@@ -9,9 +9,7 @@ const config: StorybookConfig = {
     name: '@storybook/react-vite',
     options: {},
   },
-  // Register the "@/" alias for the whole Storybook build. vite-tsconfig-paths
-  // only aliases files inside the tsconfig `include` (src), so .storybook files
-  // (e.g. preview.tsx) need this to import via the alias like the rest of the app.
+  // vite-tsconfig-paths only aliases files under src, so register "@/" here too.
   viteFinal: (viteConfig) =>
     mergeConfig(viteConfig, {
       resolve: {

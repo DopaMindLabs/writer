@@ -10,8 +10,6 @@ describe('TabHeader', () => {
         subtitleKey="settings.sync.subtitle"
       />,
     );
-    // The translation keys resolve to real copy; assert the rendered output is
-    // not the raw keys (i.e. i18n resolved them).
     expect(screen.queryByText('settings.sync.title')).not.toBeInTheDocument();
     expect(screen.getByRole('heading')).toBeInTheDocument();
   });

@@ -68,7 +68,6 @@ describe('SyncRunRow', () => {
 
   describe('snapshot', () => {
     it('should match the snapshot across idle, busy, never-synced, and synced states', () => {
-      // A fixed, well-past timestamp renders as a stable ISO date.
       const fixed = Date.UTC(2024, 0, 1, 0, 0, 0);
       const { container } = renderWithProviders(
         <div>

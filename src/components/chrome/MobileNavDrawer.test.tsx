@@ -6,8 +6,6 @@ import { useUI } from '@/store/ui';
 import { MobileNavDrawer } from './MobileNavDrawer';
 
 const openAfterMount = async () => {
-  // The drawer's useEffect closes itself on pathname change, including the
-  // initial mount. Open it on the next microtask so the effect has already run.
   await act(async () => {
     useUI.getState().setMobileNavOpen(true);
     await Promise.resolve();
@@ -50,9 +48,7 @@ describe('snapshot', () => {
       initialEntries: ['/s/s1/d/d1'],
     });
     await openAfterMount();
-    // Wait for the embedded Sidebar to hydrate its async Dexie data.
     await screen.findByText('Sample Doc');
-    // The drawer renders into a portal on document.body, not into `container`.
     const dialog = document.body.querySelector('[role="dialog"]');
     expect(dialog).toMatchSnapshot();
   });

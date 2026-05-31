@@ -39,7 +39,6 @@ describe('BackupsHistoryTable', () => {
 
   describe('snapshot', () => {
     it('should match the snapshot for the empty state and a populated table', () => {
-      // A fixed, well-past timestamp renders as a stable ISO date.
       const fixed = Date.UTC(2024, 0, 1, 0, 0, 0);
       const rows = [
         { id: 'b1', spaceId: 's1', when: fixed, kind: 'manual', size: 2048 },

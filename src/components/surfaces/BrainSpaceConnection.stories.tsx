@@ -29,8 +29,6 @@ const meta = {
   title: 'Surfaces/BrainSpaceConnection',
   component: BrainSpaceConnection,
   parameters: { layout: 'centered' },
-  // BrainSpaceConnection renders an SVG <g>; wrap it in an <svg> so the path is
-  // measurable and visible in the gallery.
   decorators: [
     (Story) => (
       <svg width={460} height={260} className="border border-rule bg-paper">

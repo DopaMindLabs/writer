@@ -6,7 +6,6 @@ const meta = {
   title: 'Surfaces/BrainSpaceCanvas',
   component: BrainSpaceCanvas,
   parameters: { layout: 'fullscreen' },
-  // The canvas fills its parent; give it a sized frame in the gallery.
   decorators: [
     (Story) => (
       <div className="h-[520px] w-full border border-rule">

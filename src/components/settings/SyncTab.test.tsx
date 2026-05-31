@@ -40,7 +40,6 @@ vi.mock('@/lib/sync/folderSync', () => ({
   INTERVAL_OPTIONS: [0, 5, 10, 30],
 }));
 
-// Imported after the mocks are registered.
 import { SyncTab } from './SyncTab';
 
 beforeEach(() => {

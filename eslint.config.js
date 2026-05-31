@@ -112,10 +112,7 @@ export default tseslint.config(
       '.storybook/**/*.{ts,tsx}',
     ],
     rules: {
-      // Test/stories/storybook ergonomics: long describe/it bodies, decorators,
-      // loaders and mock noops are expected here, so the rules that only matter
-      // for production code are relaxed (production code is held to the strict
-      // bar). The "@/" alias rule below still applies.
+      // Test/stories/storybook ergonomics: relax production-only rules here.
       'max-lines-per-function': 'off',
       complexity: 'off',
       'func-style': 'off',
@@ -160,9 +157,7 @@ export default tseslint.config(
   },
 
   {
-    // Enforce the "@/" path alias for cross-directory imports. Same-directory
-    // ("./sibling") imports are still allowed; only parent-relative ("../")
-    // imports must go through the alias so module paths stay stable on moves.
+    // Require the "@/" alias for parent-relative ("../") imports; "./" is fine.
     files: ['src/**/*.{ts,tsx}', '.storybook/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': [

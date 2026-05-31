@@ -67,7 +67,6 @@ describe('SpaceSyncTab', () => {
       lastSyncedAt: null,
     });
     renderWithProviders(<SpaceSyncTab space={space} />);
-    // Inherit chip labelled from the default interval.
     expect(
       screen.getByRole('button', { name: /default \(10 min\)/i }),
     ).toBeInTheDocument();

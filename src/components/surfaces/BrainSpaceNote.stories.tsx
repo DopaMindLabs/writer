@@ -21,7 +21,6 @@ const baseNote: Note = {
 const meta = {
   title: 'Surfaces/BrainSpaceNote',
   component: BrainSpaceNote,
-  // The note is absolutely positioned; give it a relative canvas to live in.
   decorators: [
     (Story) => (
       <div className="relative h-64 w-[420px] border border-rule bg-paper">
