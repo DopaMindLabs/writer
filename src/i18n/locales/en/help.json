@@ -7,6 +7,10 @@
   "resultsCount_one": "{{count}} result",
   "resultsCount_other": "{{count}} results",
   "browseAll": "Browse all topics",
+  "allFeatures": {
+    "title": "See all features",
+    "subtitle": "A complete, scannable list of everything you can do — each links to its guide."
+  },
   "onThisPage": "On this page",
   "related": "Related",
   "backToHelp": "All help",
@@ -25,12 +29,12 @@
   "categories": {
     "getting-started": "Getting Started",
     "writing": "Writing & Editing",
-    "organizing": "Organizing",
+    "organizing": "Organising",
     "views": "Views & Modes",
     "research": "Research & Citations",
     "brainspace": "BrainSpace",
     "annotations": "Annotations & Highlights",
-    "customization": "Customization & Settings",
+    "customization": "Customisation & Settings",
     "data": "Your Data",
     "mobile": "Mobile"
   }

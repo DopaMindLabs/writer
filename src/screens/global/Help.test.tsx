@@ -12,6 +12,25 @@ describe('HelpScreen', () => {
     expect(screen.getByRole('heading', { name: 'Help' })).toBeInTheDocument();
   });
 
+  it('signposts the all-features catalogue from the landing', () => {
+    renderAtRoute(<HelpScreen />, {
+      path: '/help',
+      initialEntries: ['/help'],
+    });
+    expect(screen.getByTestId('help-all-features')).toHaveAttribute(
+      'href',
+      '/help/features',
+    );
+  });
+
+  it('renders the all-features catalogue article at /help/features', () => {
+    renderAtRoute(<HelpScreen />, {
+      path: '/help/:slug',
+      initialEntries: ['/help/features'],
+    });
+    expect(screen.getByTestId('help-article')).toBeInTheDocument();
+  });
+
   it('renders an article at /help/:slug', () => {
     renderAtRoute(<HelpScreen />, {
       path: '/help/:slug',

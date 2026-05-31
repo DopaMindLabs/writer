@@ -190,6 +190,24 @@ describe('QuickSettingsPopover', () => {
     });
   });
 
+  describe('help link', () => {
+    it('should render the help link with href=/help and the ⌘? shortcut', () => {
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      const help = screen.getByTestId('quick-settings-help');
+      expect(help).toHaveTextContent(/help center/i);
+      expect(help).toHaveAttribute('href', '/help');
+    });
+
+    it('should navigate to /help when the help link is clicked', async () => {
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      expect(screen.getByTestId('probe-pathname').textContent).toBe(
+        '/s/s1/d/d1',
+      );
+      await userEvent.click(screen.getByTestId('quick-settings-help'));
+      expect(screen.getByTestId('probe-pathname').textContent).toBe('/help');
+    });
+  });
+
   describe('about link', () => {
     it('should render with href=/about', () => {
       renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });

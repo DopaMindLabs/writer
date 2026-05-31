@@ -36,6 +36,13 @@ test('browses to an article from a category card', async ({ page }) => {
   ).toBeVisible();
 });
 
+test('jumps to the all-features catalogue from the landing', async ({ page }) => {
+  await page.goto('/#/help');
+  await page.getByTestId('help-all-features').click();
+  await expect(page).toHaveURL(/#\/help\/features$/);
+  await expect(page.getByTestId('help-article')).toBeVisible();
+});
+
 test('opens the Quick Help overlay with ⌘K and jumps to an article', async ({
   page,
 }) => {

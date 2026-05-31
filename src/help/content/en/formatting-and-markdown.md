@@ -1,7 +1,13 @@
 # Formatting & markdown
 
-You can format text with the floating toolbar, with keyboard shortcuts, or by
-typing markdown shorthand as you write.
+Format text three ways: the floating toolbar, keyboard shortcuts, or markdown
+shorthand typed as you write.
+
+## At a glance
+
+- Type `## ` for a heading, `- ` for a bullet, `1. ` for a numbered list.
+- Wrap a word in `**bold**` or `*italic*`.
+- Select text to use the floating toolbar instead.
 
 ## Markdown shortcuts
 
@@ -16,15 +22,16 @@ automatically:
 
 ## Inline formatting
 
-Select text and use the floating toolbar, or:
+Select text and use the floating toolbar, or use the keyboard:
 
 - **Bold** — the bold shortcut
 - *Italic* — the italic shortcut
 
 ## Headings and structure
 
-Headings do more than look big — they define the document outline shown in the
-inspector, which makes navigating long pieces effortless. Use them generously.
+Headings do more than look big — they define the document **outline** shown in
+the inspector, which makes navigating long pieces effortless. Use them
+generously.
 
 ## Lists and quotes
 
@@ -32,4 +39,7 @@ Lists and block quotes keep their formatting when you press Enter, so you can
 keep typing without reaching for the mouse. Press Enter on an empty list item to
 exit the list.
 
-For the complete set of key bindings, see [Keyboard shortcuts](keyboard-shortcuts).
+## Related
+
+- [Keyboard shortcuts](keyboard-shortcuts) — the complete set of key bindings.
+- [Writing & editing](writing-and-editing) — how the editor behaves.

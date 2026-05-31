@@ -100,32 +100,22 @@ exports[`snapshot > matches the open sheet with an active doc 1`] = `
         </a>
       </li>
       <li>
+        <a
+          class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink hover:bg-paper-2"
+          data-discover="true"
+          href="/help"
+          type="button"
+        >
+          Help & shortcuts
+        </a>
+      </li>
+      <li>
         <span
           aria-describedby="radix-_r_*_"
           aria-disabled="true"
           class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink w-full"
           data-coming-soon="true"
           data-state="instant-open"
-          tabindex="0"
-        >
-          <span
-            aria-hidden="true"
-            class="pointer-events-none inline-flex max-w-full items-center opacity-60"
-          >
-            <span
-              class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink"
-            >
-              Help & shortcuts
-            </span>
-          </span>
-        </span>
-      </li>
-      <li>
-        <span
-          aria-disabled="true"
-          class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink w-full"
-          data-coming-soon="true"
-          data-state="closed"
           tabindex="0"
         >
           <span
@@ -286,24 +276,14 @@ exports[`snapshot > matches the space-level sheet with no active doc 1`] = `
         </a>
       </li>
       <li>
-        <span
-          aria-disabled="true"
-          class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink w-full"
-          data-coming-soon="true"
-          data-state="closed"
-          tabindex="0"
+        <a
+          class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink hover:bg-paper-2"
+          data-discover="true"
+          href="/help"
+          type="button"
         >
-          <span
-            aria-hidden="true"
-            class="pointer-events-none inline-flex max-w-full items-center opacity-60"
-          >
-            <span
-              class="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink"
-            >
-              Help & shortcuts
-            </span>
-          </span>
-        </span>
+          Help & shortcuts
+        </a>
       </li>
       <li>
         <span

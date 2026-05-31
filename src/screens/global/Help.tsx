@@ -52,6 +52,32 @@ const CategoryCard = ({ category, locale }: CategoryCardProps) => {
   );
 };
 
+const AllFeaturesLink = () => {
+  const { t } = useTranslation('help');
+  return (
+    <Link
+      to={routes.helpArticle('features')}
+      data-testid="help-all-features"
+      className="group mt-8 flex items-center justify-between gap-3 border border-rule bg-paper-2 px-4 py-3 hover:border-ink"
+    >
+      <span className="min-w-0">
+        <span className="block text-[15px] font-medium text-ink">
+          {t('allFeatures.title')}
+        </span>
+        <span className="mt-0.5 block text-[13px] text-ink-3">
+          {t('allFeatures.subtitle')}
+        </span>
+      </span>
+      <span
+        aria-hidden
+        className="shrink-0 font-mono text-[12px] text-ink-3 group-hover:text-ink"
+      >
+        →
+      </span>
+    </Link>
+  );
+};
+
 const HelpLanding = ({ locale }: { readonly locale: string }) => {
   const { t } = useTranslation('help');
   return (
@@ -61,6 +87,7 @@ const HelpLanding = ({ locale }: { readonly locale: string }) => {
       <div className="mt-8">
         <HelpSearch />
       </div>
+      <AllFeaturesLink />
       <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {HELP_CATEGORIES.map((category) => (
           <CategoryCard key={category.id} category={category} locale={locale} />

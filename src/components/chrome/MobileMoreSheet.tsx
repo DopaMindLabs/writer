@@ -152,7 +152,7 @@ const MenuSection = ({ spaceId }: { spaceId: string | null }) => {
         />
         <MoreItem to={routes.settings()} label={t('mobileMore.settings')} />
         <MoreItem to={routes.about()} label={t('mobileMore.about')} />
-        <ComingSoonItem label={t('mobileMore.help')} />
+        <MoreItem to={routes.help()} label={t('mobileMore.help')} />
         <ComingSoonItem label={t('mobileMore.whatsNew')} />
         <ComingSoonItem label={t('mobileMore.feedback')} />
       </ul>

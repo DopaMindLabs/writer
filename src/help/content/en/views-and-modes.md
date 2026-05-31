@@ -1,7 +1,15 @@
 # Views & modes
 
-The same document can be viewed in several modes. Switch between them with the
-tabs in the top bar.
+The same document can be viewed several ways. Switch between them with the tabs
+in the top bar.
+
+## At a glance
+
+- **Write** — the default editing surface.
+- **Focus** — hide the chrome (**⌘\\**).
+- **Read** — a clean, non-editable reading view.
+- **Split** — two documents side by side (wider screens).
+- **Inspector** — outline, info, and history for the current doc.
 
 ## Write
 
@@ -21,15 +29,23 @@ reviewing a draft as your reader will see it.
 ## Split
 
 Split view shows two documents side by side — handy for referencing notes while
-you write, or comparing two drafts. Split is available on wider screens.
+you write, or comparing two drafts. Split needs the width of a tablet or
+desktop; on a phone you'll see a prompt to open in Write instead.
 
 ## The inspector
 
-The inspector panel reveals the document **outline**, info, and history. Cycle
-its size from hidden, to icons, to expanded. The outline is built from your
+The inspector reveals the document **outline**, info, and history. Cycle its
+size from hidden, to icons, to expanded. The outline is built from your
 headings, so good headings make navigation instant.
 
 ## Reading width
 
-Prefer a narrower or wider measure? Adjust the reading width in settings to suit
-your eyes and screen — see [Customization & settings](customization-and-settings).
+Prefer a narrower or wider measure? Adjust the **reading width** in
+[Quick settings](customization-and-settings#quick-settings) to suit your eyes
+and screen.
+
+## Related
+
+- [Writing & editing](writing-and-editing) — the editing surface in depth.
+- [Customisation & settings](customization-and-settings) — themes and reading width.
+- [Keyboard shortcuts](keyboard-shortcuts) — switch modes from the keyboard.
