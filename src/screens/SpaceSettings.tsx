@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { ReactElement } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
+import { assertNever } from '@/lib/invariant';
 import { Trash2 } from '@/components/libs/icons';
 import { useSpace } from '@/hooks/useSpaces';
 import { useBackups } from '@/hooks/useBackups';
@@ -9,6 +12,7 @@ import { db } from '@/db/db';
 import type { Backup, Space } from '@/db/schema';
 import { SettingsShell } from '@/components/settings/SettingsShell';
 import type { SettingsTabGroup } from '@/components/settings/SettingsTabs';
+import { SettingsSectionStack } from '@/components/settings/SettingsSectionStack';
 import { TabHeader } from '@/components/settings/TabHeader';
 import { TypographyH2, TypographyP } from '@/components/ui/typography';
 import {
@@ -54,6 +58,46 @@ type TabId = (typeof TAB_IDS)[number];
 const isTabId = (value: string | null): value is TabId =>
   value !== null && (TAB_IDS as readonly string[]).includes(value);
 
+const GROUPED_TABS: { label: string; ids: readonly TabId[] }[] = [
+  { label: 'thisSpace', ids: ['general', 'template', 'palette'] },
+  { label: 'sharingMembers', ids: ['sharing', 'members'] },
+  { label: 'data', ids: ['backups', 'sync', 'export', 'danger'] },
+];
+
+const buildGroups = (t: TFunction): SettingsTabGroup[] =>
+  GROUPED_TABS.map((group) => ({
+    label: t(`settings.space.groups.${group.label}`),
+    tabs: group.ids.map((id) => ({
+      id,
+      label: t(`settings.space.tabs.${id}`),
+    })),
+  }));
+
+const renderSection = (id: TabId, space: Space): ReactElement => {
+  switch (id) {
+    case 'general':
+      return <GeneralTab space={space} />;
+    case 'template':
+      return <TemplateTab />;
+    case 'palette':
+      return <PaletteTab />;
+    case 'sharing':
+      return <SharingTab />;
+    case 'members':
+      return <MembersTab />;
+    case 'backups':
+      return <BackupsTab space={space} />;
+    case 'sync':
+      return <SpaceSyncTab space={space} />;
+    case 'export':
+      return <ExportTab />;
+    case 'danger':
+      return <DangerTab space={space} />;
+    default:
+      return assertNever(id);
+  }
+};
+
 export const SpaceSettingsScreen = () => {
   const { t } = useTranslation(['screens', 'chrome', 'common']);
   const { spaceId } = useParams<{ spaceId: string }>();
@@ -61,35 +105,25 @@ export const SpaceSettingsScreen = () => {
   const [params, setParams] = useSearchParams();
   const rawTab = params.get('tab');
   const activeTab: TabId = isTabId(rawTab) ? rawTab : 'general';
+  const [visibleId, setVisibleId] = useState<string>(activeTab);
+  const [scrollNonce, setScrollNonce] = useState(0);
 
-  const groups: SettingsTabGroup[] = [
-    {
-      label: t('settings.space.groups.thisSpace'),
-      tabs: (['general', 'template', 'palette'] as const).map((id) => ({
-        id,
-        label: t(`settings.space.tabs.${id}`),
-      })),
-    },
-    {
-      label: t('settings.space.groups.sharingMembers'),
-      tabs: (['sharing', 'members'] as const).map((id) => ({
-        id,
-        label: t(`settings.space.tabs.${id}`),
-      })),
-    },
-    {
-      label: t('settings.space.groups.data'),
-      tabs: (['backups', 'sync', 'export', 'danger'] as const).map((id) => ({
-        id,
-        label: t(`settings.space.tabs.${id}`),
-      })),
-    },
-  ];
+  const groups = buildGroups(t);
+  const activeGroup =
+    groups.find((g) => g.tabs.some((tab) => tab.id === activeTab)) ?? groups[0];
+  const sectionIds = activeGroup.tabs.map((tab) => tab.id);
+  const active = sectionIds.includes(visibleId) ? visibleId : activeTab;
+
+  useEffect(() => {
+    setVisibleId(activeTab);
+  }, [activeTab]);
 
   const selectTab = (id: string) => {
     const next = new URLSearchParams(params);
     next.set('tab', id);
     setParams(next, { replace: false });
+    setVisibleId(id);
+    setScrollNonce((n) => n + 1);
   };
 
   return (
@@ -98,11 +132,19 @@ export const SpaceSettingsScreen = () => {
       space={space ?? null}
       activeSpaceId={spaceId ?? null}
       groups={groups}
-      active={activeTab}
+      active={active}
       onSelect={selectTab}
     >
       {space ? (
-        <SpaceTabContent activeTab={activeTab} space={space} />
+        <SettingsSectionStack
+          sections={sectionIds.map((id) => ({
+            id,
+            node: renderSection(id as TabId, space),
+          }))}
+          scrollTarget={activeTab}
+          scrollNonce={scrollNonce}
+          onVisibleChange={setVisibleId}
+        />
       ) : (
         <p
           data-testid="space-settings-loading"
@@ -114,26 +156,6 @@ export const SpaceSettingsScreen = () => {
     </SettingsShell>
   );
 };
-
-const SpaceTabContent = ({
-  activeTab,
-  space,
-}: {
-  activeTab: TabId;
-  space: Space;
-}) => (
-  <>
-    {activeTab === 'general' && <GeneralTab space={space} />}
-    {activeTab === 'template' && <TemplateTab />}
-    {activeTab === 'palette' && <PaletteTab />}
-    {activeTab === 'sharing' && <SharingTab />}
-    {activeTab === 'members' && <MembersTab />}
-    {activeTab === 'backups' && <BackupsTab space={space} />}
-    {activeTab === 'sync' && <SpaceSyncTab space={space} />}
-    {activeTab === 'export' && <ExportTab />}
-    {activeTab === 'danger' && <DangerTab space={space} />}
-  </>
-);
 
 const GeneralTab = ({ space }: { space: Space }) => {
   const { t } = useTranslation('screens');
