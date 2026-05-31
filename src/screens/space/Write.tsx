@@ -1,5 +1,6 @@
-import { Navigate, useParams, useSearchParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { FocusRail } from '@/components/chrome/FocusRail';
@@ -33,6 +34,12 @@ export const WriteScreen = () => {
 
   useAutoTour('writer', { ready: !focus && !!doc });
 
+  // Redirect `/s/:spaceId` to its first document imperatively. Returning a
+  // <Navigate> element here would unmount the whole screen (rails, sidebar,
+  // topbar) for a frame and remount it after the redirect — perceived as the
+  // page "reloading" on every space switch. An effect keeps the chrome mounted.
+  const redirecting = useFirstDocRedirect(spaceId, docId, sections, docs);
+
   useEffect(() => {
     if (spaceId) setCurrentSpaceId(spaceId);
   }, [spaceId, setCurrentSpaceId]);
@@ -43,14 +50,8 @@ export const WriteScreen = () => {
 
   if (!spaceId) return <Navigate to={routes.home()} replace />;
 
-  if (!docId) {
-    const firstDocId = pickFirstDocId(sections, docs);
-    if (firstDocId) {
-      return <Navigate to={routes.docWrite(spaceId, firstDocId)} replace />;
-    }
-  }
-
   const editorMode = focus ? 'focus' : 'write';
+  const contentLoading = redirecting || isSelectedDocLoading(docId, doc, docs);
 
   return (
     <div className="flex h-full w-full">
@@ -64,11 +65,11 @@ export const WriteScreen = () => {
           mode={editorMode}
         />
         <main id="main-content" tabIndex={-1} className="flex flex-1 overflow-hidden">
-          {doc ? (
-            <WriteSurface doc={doc} mode={editorMode} />
-          ) : (
-            <EmptyState />
-          )}
+          <WriteEditorArea
+            doc={doc}
+            editorMode={editorMode}
+            loading={contentLoading}
+          />
           <CitationsSidePanel spaceId={spaceId} />
           <WriteInspector
             doc={doc}
@@ -135,6 +136,59 @@ const pickFirstDocId = (
   return firstDoc.id;
 };
 
+/**
+ * When `/s/:spaceId` has no doc selected, redirect to the space's first
+ * document once its data has loaded. The redirect runs in an effect (rather
+ * than by returning <Navigate>) so the surrounding chrome stays mounted across
+ * the switch. Returns whether a redirect is pending, so the caller can show a
+ * loading indicator instead of flashing the empty state.
+ */
+const useFirstDocRedirect = (
+  spaceId: string | undefined,
+  docId: string | undefined,
+  sections: Section[] | undefined,
+  docs: Doc[] | undefined,
+): boolean => {
+  const navigate = useNavigate();
+  const dataReady = sections !== undefined && docs !== undefined;
+  const firstDocId =
+    !docId && dataReady ? pickFirstDocId(sections, docs) : undefined;
+  useEffect(() => {
+    if (spaceId && firstDocId) {
+      void navigate(routes.docWrite(spaceId, firstDocId), { replace: true });
+    }
+  }, [spaceId, firstDocId, navigate]);
+  return !docId && (!dataReady || firstDocId !== undefined);
+};
+
+/**
+ * The selected document is still loading while its query resolves. A docId
+ * absent from the loaded list is treated as genuinely missing (e.g. a stale
+ * URL) rather than loading forever.
+ */
+const isSelectedDocLoading = (
+  docId: string | undefined,
+  doc: Doc | undefined,
+  docs: Doc[] | undefined,
+): boolean => {
+  if (!docId || doc) return false;
+  return docs === undefined || docs.some((d) => d.id === docId);
+};
+
+const WriteEditorArea = ({
+  doc,
+  editorMode,
+  loading,
+}: {
+  doc: Doc | undefined;
+  editorMode: 'focus' | 'write';
+  loading: boolean;
+}) => {
+  if (doc) return <WriteSurface doc={doc} mode={editorMode} />;
+  if (loading) return <LoadingState />;
+  return <EmptyState />;
+};
+
 const WriteInspector = ({
   doc,
   inspectorMode,
@@ -162,6 +216,19 @@ const EmptyState = () => {
           Pick a document from the sidebar to start writing.
         </TypographyMuted>
       </div>
+    </div>
+  );
+};
+
+const LoadingState = () => {
+  const { t } = useTranslation('screens');
+  return (
+    <div
+      data-testid="write-loading"
+      aria-live="polite"
+      className="flex h-full min-w-0 flex-1 items-center justify-center"
+    >
+      <TypographyP variant="caption">{t('settings.space.loading')}</TypographyP>
     </div>
   );
 };

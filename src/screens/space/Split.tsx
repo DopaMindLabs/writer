@@ -60,7 +60,7 @@ export const SplitScreen = () => {
   }, [docId, setCurrentDocId]);
 
   const candidates = useMemo(
-    () => docs.filter((d) => d.id !== docId),
+    () => (docs ?? []).filter((d) => d.id !== docId),
     [docs, docId],
   );
 
