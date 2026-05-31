@@ -126,13 +126,20 @@ export const LexicalEditor = ({
   );
 };
 
-function makeInitialState(value: string): string | undefined {
+const makeInitialState = (value: string): string | undefined => {
   if (!value) return undefined;
   try {
-    const parsed = JSON.parse(value) as { root?: unknown };
-    if (parsed?.root) return value;
+    const parsed: unknown = JSON.parse(value);
+    if (
+      typeof parsed === 'object' &&
+      parsed !== null &&
+      'root' in parsed &&
+      (parsed as { root?: unknown }).root
+    ) {
+      return value;
+    }
   } catch {
     /* fall through */
   }
   return undefined;
-}
+};

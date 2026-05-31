@@ -23,7 +23,7 @@ interface FocusRailProps {
 
 export const FocusRail = ({ activeSpaceId }: FocusRailProps) => {
   const { t } = useTranslation('chrome');
-  const spaces = useSpaces() ?? [];
+  const spaces = useSpaces();
 
   return (
     <aside className="flex w-9 shrink-0 flex-col items-center gap-3.5 border-r border-rule bg-paper py-3.5">

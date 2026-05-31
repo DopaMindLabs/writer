@@ -20,7 +20,7 @@ export const CitationsSidePanel = ({ spaceId }: CitationsSidePanelProps) => {
 
   const openCitationsScreen = () => {
     close();
-    navigate(routes.citations(spaceId));
+    void navigate(routes.citations(spaceId));
   };
 
   return (

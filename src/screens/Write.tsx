@@ -12,7 +12,8 @@ import { MobileTabs } from '@/components/chrome/MobileTabs';
 import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments, useDocument } from '@/hooks/useDocuments';
-import { useUI } from '@/store/ui';
+import { useUI, type InspectorMode } from '@/store/ui';
+import type { Doc, Section } from '@/db/schema';
 import { TypographyMuted, TypographyP } from '@/components/ui/typography';
 import { useAutoTour } from '@/tours';
 import { routes } from '@/lib/routes';
@@ -29,10 +30,6 @@ export const WriteScreen = () => {
   const setCurrentDocId = useUI((s) => s.setCurrentDocId);
   const citationsDrawerOpen = useUI((s) => s.citationsDrawerOpen);
   const inspectorMode = useUI((s) => s.inspectorMode);
-  const inspectorVisible =
-    !focus && inspectorMode !== 'none' && !!doc && !citationsDrawerOpen;
-  const showInspectorExpanded = inspectorVisible && inspectorMode === 'expanded';
-  const showInspectorIcons = inspectorVisible && inspectorMode === 'icons';
 
   useAutoTour('writer', { ready: !focus && !!doc });
 
@@ -46,32 +43,18 @@ export const WriteScreen = () => {
 
   if (!spaceId) return <Navigate to={routes.home()} replace />;
 
-  if (!docId && sections.length > 0 && docs.length > 0) {
-    const orderedSections = [...sections].sort((a, b) => a.order - b.order);
-    const firstSection =
-      orderedSections.find((s) => s.parentSectionId === null) ??
-      orderedSections[0];
-    const firstDoc = docs.find((d) => d.sectionId === firstSection.id) ?? docs[0];
-    if (firstDoc)
-      return (
-        <Navigate to={routes.docWrite(spaceId, firstDoc.id)} replace />
-      );
+  if (!docId) {
+    const firstDocId = pickFirstDocId(sections, docs);
+    if (firstDocId) {
+      return <Navigate to={routes.docWrite(spaceId, firstDocId)} replace />;
+    }
   }
 
   const editorMode = focus ? 'focus' : 'write';
 
   return (
     <div className="flex h-full w-full">
-      <div className="hidden md:contents">
-        {focus ? (
-          <FocusRail activeSpaceId={spaceId} />
-        ) : (
-          <>
-            <SpaceRail activeSpaceId={spaceId} />
-            <Sidebar spaceId={spaceId} activeDocId={docId ?? null} />
-          </>
-        )}
-      </div>
+      <WriteRails spaceId={spaceId} docId={docId} focus={focus} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
           spaceId={spaceId}
@@ -87,18 +70,87 @@ export const WriteScreen = () => {
             <EmptyState />
           )}
           <CitationsSidePanel spaceId={spaceId} />
-          {showInspectorIcons && doc && <DocInspectorIcons />}
-          {showInspectorExpanded && doc && <DocInspector docName={doc.name} />}
+          <WriteInspector
+            doc={doc}
+            inspectorMode={inspectorMode}
+            citationsDrawerOpen={citationsDrawerOpen}
+            focus={focus}
+          />
         </main>
-        {!focus && (
-          <>
-            <MobileTabs spaceId={spaceId} docId={docId ?? null} />
-            <MobileMoreSheet spaceId={spaceId} docId={docId ?? null} />
-          </>
-        )}
+        <WriteMobileChrome spaceId={spaceId} docId={docId} focus={focus} />
       </div>
     </div>
   );
+};
+
+const WriteMobileChrome = ({
+  spaceId,
+  docId,
+  focus,
+}: {
+  spaceId: string;
+  docId: string | undefined;
+  focus: boolean;
+}) => {
+  if (focus) return null;
+  return (
+    <>
+      <MobileTabs spaceId={spaceId} docId={docId ?? null} />
+      <MobileMoreSheet spaceId={spaceId} docId={docId ?? null} />
+    </>
+  );
+};
+
+const WriteRails = ({
+  spaceId,
+  docId,
+  focus,
+}: {
+  spaceId: string;
+  docId: string | undefined;
+  focus: boolean;
+}) => (
+  <div className="hidden md:contents">
+    {focus ? (
+      <FocusRail activeSpaceId={spaceId} />
+    ) : (
+      <>
+        <SpaceRail activeSpaceId={spaceId} />
+        <Sidebar spaceId={spaceId} activeDocId={docId ?? null} />
+      </>
+    )}
+  </div>
+);
+
+const pickFirstDocId = (
+  sections: Section[],
+  docs: Doc[],
+): string | undefined => {
+  if (sections.length === 0 || docs.length === 0) return undefined;
+  const orderedSections = [...sections].sort((a, b) => a.order - b.order);
+  const firstSection =
+    orderedSections.find((s) => s.parentSectionId === null) ??
+    orderedSections[0];
+  const firstDoc = docs.find((d) => d.sectionId === firstSection.id) ?? docs[0];
+  return firstDoc.id;
+};
+
+const WriteInspector = ({
+  doc,
+  inspectorMode,
+  citationsDrawerOpen,
+  focus,
+}: {
+  doc: Doc | undefined;
+  inspectorMode: InspectorMode;
+  citationsDrawerOpen: boolean;
+  focus: boolean;
+}) => {
+  if (focus || !doc || citationsDrawerOpen || inspectorMode === 'none') {
+    return null;
+  }
+  if (inspectorMode === 'icons') return <DocInspectorIcons />;
+  return <DocInspector docName={doc.name} />;
 };
 
 const EmptyState = () => {

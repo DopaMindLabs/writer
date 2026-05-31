@@ -1,7 +1,7 @@
 import { forwardRef, type HTMLAttributes } from 'react';
-import { Slot } from '@/components/libs/primitives';
 import { cva, type VariantProps } from '@/components/libs/variants';
 import { cn } from '@/lib/utils';
+import { SlotPrimitive } from './slot.primitives';
 
 const eyebrowRecipe = cva(
   'font-mono uppercase tracking-[0.11em] leading-none',
@@ -32,7 +32,7 @@ export interface EyebrowProps
 
 export const Eyebrow = forwardRef<HTMLDivElement, EyebrowProps>(
   ({ className, size, tone, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'div';
+    const Comp = asChild ? SlotPrimitive : 'div';
     return (
       <Comp
         ref={ref}

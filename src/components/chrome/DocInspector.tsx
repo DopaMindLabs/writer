@@ -12,6 +12,40 @@ interface DocInspectorProps {
   docName: string;
 }
 
+interface DocInspectorTabsProps {
+  section: InspectorSection;
+  setSection: (id: InspectorSection) => void;
+}
+
+const DocInspectorTabs = ({ section, setSection }: DocInspectorTabsProps) => {
+  const { t } = useTranslation('chrome');
+  return (
+    <div className="flex border-b border-rule">
+      {TABS.map((id) => {
+        const on = section === id;
+        // @lint-ignore native-button: tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
+        return (
+          <button
+            key={id}
+            data-testid={`doc-inspector-tab-${id}`}
+            type="button"
+            onClick={() => { setSection(id); }}
+            aria-current={on ? 'page' : undefined}
+            className={cn(
+              'flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors',
+              on
+                ? 'border-ink text-ink'
+                : 'border-transparent text-ink-3 hover:text-ink-2',
+            )}
+          >
+            {t(`inspector.tabs.${id}`)}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
 export const DocInspector = ({ docName }: DocInspectorProps) => {
   const { t } = useTranslation('chrome');
   const setInspectorMode = useUI((s) => s.setInspectorMode);
@@ -40,29 +74,7 @@ export const DocInspector = ({ docName }: DocInspectorProps) => {
         />
       </div>
 
-      <div className="flex border-b border-rule">
-        {TABS.map((id) => {
-          const on = section === id;
-          // @lint-ignore native-button: tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
-          return (
-            <button
-              key={id}
-              data-testid={`doc-inspector-tab-${id}`}
-              type="button"
-              onClick={() => { setSection(id); }}
-              aria-current={on ? 'page' : undefined}
-              className={cn(
-                'flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors',
-                on
-                  ? 'border-ink text-ink'
-                  : 'border-transparent text-ink-3 hover:text-ink-2',
-              )}
-            >
-              {t(`inspector.tabs.${id}`)}
-            </button>
-          );
-        })}
-      </div>
+      <DocInspectorTabs section={section} setSection={setSection} />
 
       <ComingSoon
         hint={t('inspector.expand')}
