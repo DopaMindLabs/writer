@@ -136,6 +136,19 @@ interface AxeViolation {
   nodes: AxeNode[];
 }
 
+interface A11yScanOptions {
+  /** Label included in the failure message. */
+  context?: string;
+  /**
+   * Rule ids to disable for this scan. Use to exclude `color-contrast` on the
+   * default `light`/`dark` themes, whose grayscale "meta" inks (e.g. `ink-4`
+   * for counts/shortcuts) are an intentional, documented sub-AA exception — see
+   * docs/design-system.md §11.3 and ACCESSIBILITY.md. Contrast is asserted in
+   * full against the high-contrast themes instead.
+   */
+  disableRules?: string[];
+}
+
 /**
  * Run axe-core (already a dependency via the Storybook a11y addon) against the
  * current page and fail on any WCAG 2.1 A/AA violation. Injects the bundled axe
@@ -143,19 +156,21 @@ interface AxeViolation {
  */
 export const expectNoA11yViolations = async (
   page: Page,
-  context?: string,
+  options: A11yScanOptions = {},
 ): Promise<void> => {
+  const { context, disableRules = [] } = options;
   await page.evaluate(axe.source);
-  const violations = (await page.evaluate(async () => {
+  const violations = (await page.evaluate(async (rules: string[]) => {
     const result = await (
       window as unknown as {
         axe: { run: (opts: unknown) => Promise<{ violations: AxeViolation[] }> };
       }
     ).axe.run({
       runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] },
+      rules: Object.fromEntries(rules.map((id) => [id, { enabled: false }])),
     });
     return result.violations;
-  })) as AxeViolation[];
+  }, disableRules)) as AxeViolation[];
 
   if (violations.length > 0) {
     const summary = violations
