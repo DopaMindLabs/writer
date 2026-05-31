@@ -1,20 +1,9 @@
 import { test, expect } from './_helpers';
-import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
+import { reseedAndGoHome, gotoFirstDoc } from './_helpers';
 
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
 });
-
-async function gotoFirstDoc(page: import('@playwright/test').Page): Promise<{ spaceId: string; docId: string }> {
-  const spaceId = await getFirstSpaceIdFromHome(page);
-  await page.goto(`/#/s/${spaceId}`);
-  // WriteScreen redirects /s/:spaceId to /s/:spaceId/d/:firstDocId once data loads.
-  await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
-  const url = new URL(page.url());
-  const docId = url.hash.match(/\/d\/([^/?]+)/)?.[1];
-  if (!docId) throw new Error(`Could not extract docId from ${page.url()}`);
-  return { spaceId, docId };
-}
 
 test('write mode renders SpaceRail and an editable document body', async ({ page }) => {
   const { spaceId, docId } = await gotoFirstDoc(page);
