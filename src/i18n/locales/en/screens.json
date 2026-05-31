@@ -311,6 +311,7 @@
       "syncNowAll": "Sync all spaces",
       "reconnectHint": "Sync is paused — the browser needs folder permission again for this session. Reconnect to resume manual and auto-sync.",
       "reconnectButton": "Reconnect",
+      "reconnecting": "Reconnecting…",
       "syncing": "Syncing…",
       "syncFailed": "Sync failed: {{message}}",
       "lastSynced": "Last synced {{when}}",
