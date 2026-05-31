@@ -747,3 +747,58 @@ Things this spec doesn't pin down — open for next iteration:
 4. **Status palette depth.** Whether to expand the repo's two-token status roles (§5.2) into
    the spec's full tint/base/deep triad, and to build the feedback components, when richer
    status UI lands.
+
+---
+
+## 11. Accessibility
+
+Accessibility is a **first-class, additive layer** over this design system — never a rewrite of
+it. The themes (§2.1) remain the single source of truth; accessibility preferences are
+**orthogonal `data-*` modifiers** on `<html>` that only override CSS custom properties, so they
+compose with any active `data-theme` and require no component changes. Every preference defaults
+to the app's current behaviour, so existing users see no change until they opt in.
+
+### 11.1 Preference axes
+
+| Attribute | Values (default first) | Effect |
+|---|---|---|
+| `data-theme` *(see §2.1)* | `light` · `dark` · `hc-light` · `hc-dark` | Full token set. |
+| `data-motion` | `auto` · `reduced` · `full` | `auto` follows the OS `prefers-reduced-motion`; `reduced` forces motion off; `full` restores it. |
+| `data-text-scale` | `base` · `sm` · `lg` · `xl` | Scales the reading/writing surface via the `--reading-scale` multiplier. |
+| `data-line-spacing` | `normal` · `relaxed` · `loose` | Prose leading via the `--reading-leading-scale` multiplier. |
+| `data-link-underline` | `auto` · `always` | `always` underlines links (don't rely on colour alone — WCAG 1.4.1). |
+| `data-focus` | `standard` · `enhanced` | `enhanced` thickens the focus ring (`--focus-ring-width`) and paints an extra `--accent` outline. |
+
+> **In this repo:** tokens + override blocks live in [`src/index.css`](../src/index.css); the
+> preference state is in `src/store/a11y.ts` (key `lorem-a11y`, separate from `lorem-ui`),
+> applied by `src/theme/A11yPreferenceProvider.tsx` via `src/theme/a11y-prefs.ts`. The
+> user-facing controls live in the Settings **Accessibility** tab.
+
+### 11.2 Tokens
+
+`--reading-scale` (1), `--reading-leading-scale` (1), `--focus-ring-width` (1px) and
+`--motion-duration` (150ms) are defined on `:root` at their **current values** (a scale of 1 is
+a no-op) and only changed by the override blocks above. Consume the scale multipliers with
+token-backed arbitrary classes (e.g.
+`text-[length:calc(17px*var(--reading-scale))] leading-[calc(1.6*var(--reading-leading-scale))]`)
+— never hard-code a size, leading, focus width, or transition duration that a preference should
+govern.
+
+### 11.3 Contrast policy
+
+- **`light` / `dark`** target **WCAG AA** and keep the grayscale aesthetic unchanged. Core text
+  already exceeds AAA (≈26:1); the status palette (§5) is AA.
+- **`hc-light` / `hc-dark`** target **WCAG AAA (7:1)** for text and status, and override the
+  highlight palette (§7.4) accordingly. AAA-strict colour work is **quarantined to these
+  themes** so it never compromises the default visual language.
+
+### 11.4 Primitives & rules
+
+- **`SkipLink`** (`src/components/ui/SkipLink.tsx`) — "skip to content" bypass link, hidden
+  until focused. Render first in the app shell, pointing at the main landmark `id`.
+- **`VisuallyHidden`** (`src/components/ui/VisuallyHidden.tsx`) — named primitive for
+  screen-reader-only text, composed from the Radix VisuallyHidden primitive. Use it instead of
+  hand-rolling `sr-only`.
+- Every interactive element must be keyboard operable with a visible focus indicator, carry an
+  accessible name, and use correct ARIA (labels, roles, `aria-live`, `aria-describedby`,
+  landmarks). Animations must respect `data-motion` / `prefers-reduced-motion`.
