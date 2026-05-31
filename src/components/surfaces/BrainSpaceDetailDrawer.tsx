@@ -480,7 +480,7 @@ const DrawerDeleteFooter = ({ onDelete }: { onDelete: () => void }) => (
 
 const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) => {
   const navigate = useNavigate();
-  const docs = useDocuments(spaceId);
+  const docs = useDocuments(spaceId) ?? [];
   const { incoming, outgoing } = useConnectionsForNote(note.id);
   const relatedById = useRelatedNotesById(incoming, outgoing);
   const attachments = useNoteAttachments(note.id);
