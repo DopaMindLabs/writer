@@ -1,22 +1,37 @@
-import { act } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { useUI, type InspectorSection } from '@/store/ui';
+import { db } from '@/db/db';
+import type { Revision } from '@/db/schema';
 import { DocInspector } from './DocInspector';
 
 const SECTIONS: InspectorSection[] = ['outline', 'info', 'history', 'actions'];
+
+const makeRevision = (overrides: Partial<Revision>): Revision => ({
+  id: overrides.id ?? 'r',
+  docId: overrides.docId ?? 'd1',
+  body: overrides.body ?? 'body',
+  text: overrides.text ?? 'body',
+  wordCount: overrides.wordCount ?? 1,
+  kind: overrides.kind ?? 'auto',
+  createdAt: overrides.createdAt ?? Date.now(),
+  pinned: overrides.pinned,
+  label: overrides.label,
+});
 
 describe('DocInspector', () => {
   beforeEach(() => {
     act(() => {
       useUI.getState().setInspectorMode('expanded');
       useUI.getState().setInspectorSection('outline');
+      useUI.getState().setVersionModalOpen(false);
     });
   });
 
   describe('rendering', () => {
     it('should render the inspector aside with the doc name, collapse button, and tab strip', () => {
-      renderWithProviders(<DocInspector docName="My doc" />);
+      renderWithProviders(<DocInspector docName="My doc" docId="d1" />);
       const aside = screen.getByTestId('doc-inspector');
       expect(aside).toBeInTheDocument();
       expect(screen.getByTestId('doc-inspector-name')).toHaveTextContent(
@@ -33,14 +48,14 @@ describe('DocInspector', () => {
     });
 
     it('should show an em-dash placeholder when docName is empty', () => {
-      renderWithProviders(<DocInspector docName="" />);
+      renderWithProviders(<DocInspector docName="" docId="d1" />);
       expect(screen.getByTestId('doc-inspector-name')).toHaveTextContent('—');
     });
   });
 
   describe('collapse button', () => {
     it('should switch inspectorMode to "icons" when clicked', async () => {
-      renderWithProviders(<DocInspector docName="X" />);
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
       await userEvent.click(screen.getByTestId('doc-inspector-collapse'));
       expect(useUI.getState().inspectorMode).toBe('icons');
     });
@@ -53,7 +68,7 @@ describe('DocInspector', () => {
         act(() => {
           useUI.getState().setInspectorSection('outline');
         });
-        renderWithProviders(<DocInspector docName="X" />);
+        renderWithProviders(<DocInspector docName="X" docId="d1" />);
         const tab = screen.getByTestId(`doc-inspector-tab-${id}`);
         await userEvent.click(tab);
         expect(useUI.getState().inspectorSection).toBe(id);
@@ -71,7 +86,7 @@ describe('DocInspector', () => {
       act(() => {
         useUI.getState().setInspectorSection('outline');
       });
-      renderWithProviders(<DocInspector docName="X" />);
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
       const pane = screen.getByTestId('doc-inspector-pane-outline');
       expect(pane).toHaveTextContent(/Mira walks/);
       expect(pane).toHaveTextContent(/bell-keeper/i);
@@ -81,37 +96,71 @@ describe('DocInspector', () => {
       act(() => {
         useUI.getState().setInspectorSection('info');
       });
-      renderWithProviders(<DocInspector docName="X" />);
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
       const pane = screen.getByTestId('doc-inspector-pane-info');
       expect(pane).toHaveTextContent(/1,204 \/ 1,500/);
       expect(pane).toHaveTextContent(/Draft/);
     });
 
-    it('should render the HistoryPane when section is "history"', () => {
+    it('should show an empty state in the HistoryPane when the doc has no revisions', () => {
       act(() => {
         useUI.getState().setInspectorSection('history');
       });
-      renderWithProviders(<DocInspector docName="X" />);
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      const pane = screen.getByTestId('doc-inspector-pane-history');
+      expect(pane).toHaveTextContent(/no versions yet/i);
+    });
+
+    it('should list live revisions in the HistoryPane', async () => {
+      await db.revisions.bulkPut([
+        makeRevision({ id: 'rev-old', label: 'first draft', createdAt: 1 }),
+        makeRevision({ id: 'rev-new', kind: 'baseline', createdAt: 2 }),
+      ]);
+      act(() => {
+        useUI.getState().setInspectorSection('history');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      await waitFor(() => {
+        expect(screen.getByTestId('revision-row-rev-old')).toBeInTheDocument();
+      });
       const pane = screen.getByTestId('doc-inspector-pane-history');
       expect(pane).toHaveTextContent(/first draft/i);
-      expect(pane).toHaveTextContent(/pre-edit/i);
+      expect(pane).toHaveTextContent(/baseline/i);
+    });
+
+    it('should open the version modal from the history "full" link', async () => {
+      act(() => {
+        useUI.getState().setInspectorSection('history');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      await userEvent.click(screen.getByTestId('open-version-modal'));
+      expect(useUI.getState().versionModalOpen).toBe(true);
     });
 
     it('should render the ActionsPane when section is "actions"', () => {
       act(() => {
         useUI.getState().setInspectorSection('actions');
       });
-      renderWithProviders(<DocInspector docName="X" />);
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
       const pane = screen.getByTestId('doc-inspector-pane-actions');
       expect(pane).toHaveTextContent(/rename/i);
       expect(pane).toHaveTextContent(/trash/i);
+    });
+
+    it('should open the version modal from the actions pane', async () => {
+      act(() => {
+        useUI.getState().setInspectorSection('actions');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      await userEvent.click(screen.getByTestId('action-version-history'));
+      expect(useUI.getState().versionModalOpen).toBe(true);
     });
   });
 
   describe('snapshot', () => {
     it('should match the snapshot across all variants', () => {
       const { container: outline } = renderWithProviders(
-        <DocInspector docName="My doc" />,
+        <DocInspector docName="My doc" docId="d1" />,
       );
       expect(outline).toMatchSnapshot('section=outline');
 
@@ -119,12 +168,12 @@ describe('DocInspector', () => {
         useUI.getState().setInspectorSection('info');
       });
       const { container: info } = renderWithProviders(
-        <DocInspector docName="My doc" />,
+        <DocInspector docName="My doc" docId="d1" />,
       );
       expect(info).toMatchSnapshot('section=info');
 
       const { container: empty } = renderWithProviders(
-        <DocInspector docName="" />,
+        <DocInspector docName="" docId="d1" />,
       );
       expect(empty).toMatchSnapshot('docName=empty');
     });

@@ -79,20 +79,20 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
         ACTIONS
       </button>
     </div>
-    <span
-      aria-disabled="true"
-      class="relative max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink block flex-1 self-stretch"
-      data-coming-soon="true"
-      data-state="closed"
-      tabindex="0"
+    <div
+      class="flex-1 overflow-auto"
+      data-testid="doc-inspector-pane-info"
     >
       <span
-        aria-hidden="true"
-        class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+        aria-disabled="true"
+        class="relative max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink block self-stretch"
+        data-coming-soon="true"
+        data-state="closed"
+        tabindex="0"
       >
-        <div
-          class="flex-1 overflow-auto"
-          data-testid="doc-inspector-pane-info"
+        <span
+          aria-hidden="true"
+          class="pointer-events-none inline-flex max-w-full items-center opacity-60"
         >
           <div
             class="px-4 py-3.5"
@@ -173,9 +173,9 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
               </span>
             </div>
           </div>
-        </div>
+        </span>
       </span>
-    </span>
+    </div>
   </aside>
 </div>
 `;
@@ -259,20 +259,20 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
         ACTIONS
       </button>
     </div>
-    <span
-      aria-disabled="true"
-      class="relative max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink block flex-1 self-stretch"
-      data-coming-soon="true"
-      data-state="closed"
-      tabindex="0"
+    <div
+      class="flex-1 overflow-auto"
+      data-testid="doc-inspector-pane-info"
     >
       <span
-        aria-hidden="true"
-        class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+        aria-disabled="true"
+        class="relative max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink block self-stretch"
+        data-coming-soon="true"
+        data-state="closed"
+        tabindex="0"
       >
-        <div
-          class="flex-1 overflow-auto"
-          data-testid="doc-inspector-pane-info"
+        <span
+          aria-hidden="true"
+          class="pointer-events-none inline-flex max-w-full items-center opacity-60"
         >
           <div
             class="px-4 py-3.5"
@@ -353,9 +353,9 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
               </span>
             </div>
           </div>
-        </div>
+        </span>
       </span>
-    </span>
+    </div>
   </aside>
 </div>
 `;
@@ -439,20 +439,20 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
         ACTIONS
       </button>
     </div>
-    <span
-      aria-disabled="true"
-      class="relative max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink block flex-1 self-stretch"
-      data-coming-soon="true"
-      data-state="closed"
-      tabindex="0"
+    <div
+      class="flex-1 overflow-auto"
+      data-testid="doc-inspector-pane-outline"
     >
       <span
-        aria-hidden="true"
-        class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+        aria-disabled="true"
+        class="relative max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink block self-stretch"
+        data-coming-soon="true"
+        data-state="closed"
+        tabindex="0"
       >
-        <div
-          class="flex-1 overflow-auto"
-          data-testid="doc-inspector-pane-outline"
+        <span
+          aria-hidden="true"
+          class="pointer-events-none inline-flex max-w-full items-center opacity-60"
         >
           <div
             class="px-4 py-3.5"
@@ -526,9 +526,9 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
               </div>
             </div>
           </div>
-        </div>
+        </span>
       </span>
-    </span>
+    </div>
   </aside>
 </div>
 `;

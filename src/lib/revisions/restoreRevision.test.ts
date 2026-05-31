@@ -1,0 +1,46 @@
+import { describe, it, expect, beforeEach } from 'vitest';
+import { db } from '@/db/db';
+import { sampleDoc, sampleSpace, sampleSection } from '@/test/fixtures';
+import { createRevision } from './createRevision';
+import { restoreRevision } from './restoreRevision';
+import { InvariantError } from '@/lib/invariant';
+
+describe('restoreRevision', () => {
+  beforeEach(async () => {
+    await db.spaces.put(sampleSpace);
+    await db.sections.put(sampleSection);
+    await db.docs.put({ ...sampleDoc, body: 'current body', meta: { wordCount: 2 } });
+  });
+
+  it('restores the target body and snapshots the current state first', async () => {
+    const target = await createRevision(sampleDoc.id, 'old body text', {
+      kind: 'manual',
+      now: () => 1000,
+    });
+
+    await restoreRevision(sampleDoc.id, target.id, { now: () => 5000 });
+
+    const doc = await db.docs.get(sampleDoc.id);
+    expect(doc?.body).toBe('old body text');
+    expect(doc?.updatedAt).toBe(5000);
+
+    const safety = (await db.revisions.where('docId').equals(sampleDoc.id).toArray())
+      .find((r) => r.label === 'pre-restore');
+    expect(safety).toBeDefined();
+    expect(safety?.body).toBe('current body');
+    expect(safety?.kind).toBe('manual');
+  });
+
+  it('rejects an unknown revision id', async () => {
+    await expect(
+      restoreRevision(sampleDoc.id, 'nope'),
+    ).rejects.toBeInstanceOf(InvariantError);
+  });
+
+  it('rejects a revision that belongs to a different document', async () => {
+    const other = await createRevision('other-doc', 'x', { kind: 'manual' });
+    await expect(
+      restoreRevision(sampleDoc.id, other.id),
+    ).rejects.toBeInstanceOf(InvariantError);
+  });
+});

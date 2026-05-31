@@ -145,7 +145,24 @@
     "history": {
       "title": "VERSIONS",
       "now": "NOW",
-      "full": "full version history →"
+      "full": "full version history →",
+      "empty": "No versions yet. Versions are saved automatically as you write.",
+      "summary": "{{count}} version",
+      "summary_other": "{{count}} versions",
+      "saveVersion": "Save version",
+      "savePrompt": "Name this version (optional)",
+      "pin": "Pin version",
+      "unpin": "Unpin version",
+      "restore": "Restore",
+      "kind": {
+        "auto": "auto",
+        "manual": "manual",
+        "baseline": "baseline"
+      },
+      "ageNow": "now",
+      "ageMinutes": "{{count}}m ago",
+      "ageHours": "{{count}}h ago",
+      "ageDays": "{{count}}d ago"
     },
     "actions": {
       "label": "DOC ACTIONS",
@@ -156,8 +173,29 @@
       "print": "Print…",
       "wordCount": "Word count statistics",
       "versionHistory": "Version history",
+      "saveVersion": "Save version…",
       "restore": "Restore earlier version…",
       "trash": "Move to Trash"
     }
+  },
+  "versionModal": {
+    "title": "Version history",
+    "description": "Compare and restore earlier versions of this document.",
+    "close": "Close",
+    "listLabel": "Versions",
+    "empty": "No versions yet. Keep writing and versions will appear here.",
+    "current": "Current",
+    "compareWith": "Comparing with current",
+    "selectBase": "Select a version to compare",
+    "diffModeLabel": "Diff layout",
+    "inline": "Inline",
+    "sideBySide": "Side by side",
+    "oldLabel": "Selected version",
+    "newLabel": "Current",
+    "identical": "No changes between these versions.",
+    "restore": "Restore this version",
+    "restoreConfirm": "Restore this version? Your current text is saved as a version first, so you can undo this.",
+    "pin": "Pin",
+    "unpin": "Unpin"
   }
 }

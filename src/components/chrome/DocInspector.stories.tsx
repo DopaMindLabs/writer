@@ -18,9 +18,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { docName: "The bell-keeper's last morning" },
+  args: { docName: "The bell-keeper's last morning", docId: 'd1' },
 };
 
 export const EmptyName: Story = {
-  args: { docName: '' },
+  args: { docName: '', docId: 'd1' },
 };

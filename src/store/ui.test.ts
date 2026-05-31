@@ -28,6 +28,7 @@ describe('useUI store', () => {
         inspectorMode: 'none',
         inspectorSection: 'outline',
         readingWidth: 'm',
+        diffMode: 'side-by-side',
       },
     );
   });
@@ -69,6 +70,7 @@ describe('useUI store', () => {
         inspectorMode: 'none',
         inspectorSection: 'outline',
         readingWidth: 'm',
+        diffMode: 'side-by-side',
       },
     );
     act(() => { useUI.getState().setFloatingToolbarEnabled(false); });
@@ -96,6 +98,7 @@ describe('useUI store', () => {
         inspectorMode: 'expanded',
         inspectorSection: 'history',
         readingWidth: 'l',
+        diffMode: 'inline',
       }),
     );
     vi.resetModules();
@@ -108,6 +111,7 @@ describe('useUI store', () => {
     expect(s.inspectorMode).toBe('expanded');
     expect(s.inspectorSection).toBe('history');
     expect(s.readingWidth).toBe('l');
+    expect(s.diffMode).toBe('inline');
   });
 
   it('falls back to defaults when persisted shape is invalid', async () => {
@@ -118,6 +122,7 @@ describe('useUI store', () => {
         inspectorSection: 42,
         readingWidth: 'XL',
         splitDividerPct: Number.POSITIVE_INFINITY,
+        diffMode: 'nonsense',
       }),
     );
     vi.resetModules();
@@ -127,6 +132,33 @@ describe('useUI store', () => {
     expect(s.inspectorSection).toBe('outline');
     expect(s.readingWidth).toBe('m');
     expect(s.splitDividerPct).toBe(50);
+    expect(s.diffMode).toBe('side-by-side');
+  });
+
+  it('setDiffMode updates state and persists', () => {
+    act(() => { useUI.getState().setDiffMode('inline'); });
+    expect(useUI.getState().diffMode).toBe('inline');
+    expect(
+      JSON.parse(window.localStorage.getItem('lorem-ui') ?? '{}').diffMode,
+    ).toBe('inline');
+  });
+
+  it('setVersionModalOpen toggles the modal flag without persisting', () => {
+    act(() => { useUI.getState().setVersionModalOpen(true); });
+    expect(useUI.getState().versionModalOpen).toBe(true);
+    expect(window.localStorage.getItem('lorem-ui')).toBeNull();
+    act(() => { useUI.getState().setVersionModalOpen(false); });
+    expect(useUI.getState().versionModalOpen).toBe(false);
+  });
+
+  it('setCompareRevisionIds stores the base/compare selection', () => {
+    act(() => {
+      useUI.getState().setCompareRevisionIds({ base: 'rev1', compare: null });
+    });
+    expect(useUI.getState().compareRevisionIds).toEqual({
+      base: 'rev1',
+      compare: null,
+    });
   });
 
   it('openDetail/closeDetail flips detailNoteId and focuses the note', () => {

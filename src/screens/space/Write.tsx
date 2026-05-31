@@ -9,6 +9,7 @@ import { WriteSurface } from '@/components/surfaces/WriteSurface';
 import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
 import { DocInspector } from '@/components/chrome/DocInspector';
 import { DocInspectorIcons } from '@/components/chrome/DocInspectorIcons';
+import { VersionHistoryModal } from '@/components/chrome/VersionHistoryModal';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
 import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
 import { useSpace } from '@/hooks/useSpaces';
@@ -78,6 +79,7 @@ export const WriteScreen = () => {
             focus={focus}
           />
         </main>
+        {doc && <VersionHistoryModal doc={doc} />}
         <WriteMobileChrome spaceId={spaceId} docId={docId} focus={focus} />
       </div>
     </div>
@@ -204,7 +206,7 @@ const WriteInspector = ({
     return null;
   }
   if (inspectorMode === 'icons') return <DocInspectorIcons />;
-  return <DocInspector docName={doc.name} />;
+  return <DocInspector docName={doc.name} docId={doc.id} />;
 };
 
 const EmptyState = () => {

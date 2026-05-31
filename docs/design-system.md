@@ -517,6 +517,14 @@ themes and mapped in [`tailwind.config.ts`](../tailwind.config.ts):
 | `StatusBadge` | Tinted pill for state attached to a table row (e.g. a sync history row: success / error). |
 | `InlineBanner` | Full-width strip with a coloured left rail for a persistent notice (e.g. the sync reconnect prompt). |
 
+> **Semantic use: diff highlighting.** The version-history diff viewer
+> (`VersionHistoryModal`) reuses the success/danger two-token form to mark
+> **added** text (`bg-success-bg text-success`) and **removed** text
+> (`bg-danger-bg text-danger` + `line-through`). This is a deliberate semantic
+> extension of the status palette — added/removed reads the same way "saved" and
+> "error" do — and stays within the grayscale-plus-status rule. Any future diff or
+> change-tracking surface must reuse these tokens, never hard-coded greens/reds.
+
 > **Icons, not glyphs.** The §5.1 glyph column is realised with lucide icon components from
 > `@/components/libs/icons` (`success → Check`, `error → X`, `warning → AlertTriangle`,
 > `info → Info`) rendered via the `Icon` wrapper — never Unicode characters.

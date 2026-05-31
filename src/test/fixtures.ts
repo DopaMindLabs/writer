@@ -5,6 +5,7 @@ import {
   type Connection,
   type Doc,
   type Note,
+  type Revision,
   type Section,
   type Space,
 } from '@/db/schema';
@@ -60,11 +61,61 @@ export const sampleNote: Note = {
   createdAt: FIXED_TIME,
 };
 
+export const sampleRevision: Revision = {
+  id: 'rev1',
+  docId: 'd1',
+  body: 'First draft.',
+  text: 'First draft.',
+  wordCount: 2,
+  kind: 'baseline',
+  createdAt: FIXED_TIME,
+};
+
 export async function seedBasicSpace() {
   await db.spaces.put(sampleSpace);
   await db.sections.bulkPut([sampleSection, sampleSubsection]);
   await db.docs.put(sampleDoc);
   await db.notes.put(sampleNote);
+}
+
+export async function seedDocWithRevisions() {
+  await seedBasicSpace();
+  await db.docs.put({
+    ...sampleDoc,
+    body: 'The bell rang twice across the quiet valley.',
+    meta: { wordCount: 8 },
+  });
+  await db.revisions.bulkPut([
+    {
+      ...sampleRevision,
+      id: 'rev-base',
+      kind: 'baseline',
+      text: 'The bell rang once.',
+      body: 'The bell rang once.',
+      wordCount: 4,
+      createdAt: FIXED_TIME,
+    },
+    {
+      ...sampleRevision,
+      id: 'rev-auto',
+      kind: 'auto',
+      text: 'The bell rang twice across the valley.',
+      body: 'The bell rang twice across the valley.',
+      wordCount: 7,
+      createdAt: FIXED_TIME + 600_000,
+    },
+    {
+      ...sampleRevision,
+      id: 'rev-manual',
+      kind: 'manual',
+      label: 'before review',
+      pinned: true,
+      text: 'The bell rang twice across the quiet valley.',
+      body: 'The bell rang twice across the quiet valley.',
+      wordCount: 8,
+      createdAt: FIXED_TIME + 1_200_000,
+    },
+  ]);
 }
 
 export async function seedMultipleSpaces() {

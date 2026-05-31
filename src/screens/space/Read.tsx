@@ -73,5 +73,5 @@ const ReadInspector = ({
 }) => {
   if (!doc || citationsDrawerOpen || inspectorMode === 'none') return null;
   if (inspectorMode === 'icons') return <DocInspectorIcons />;
-  return <DocInspector docName={doc.name} />;
+  return <DocInspector docName={doc.name} docId={doc.id} />;
 };

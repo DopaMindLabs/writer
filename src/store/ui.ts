@@ -4,6 +4,7 @@ export type Theme = 'light' | 'dark' | 'hc-light' | 'hc-dark';
 export type InspectorMode = 'none' | 'icons' | 'expanded';
 export type InspectorSection = 'outline' | 'info' | 'history' | 'actions';
 export type ReadingWidth = 's' | 'm' | 'l';
+export type DiffMode = 'inline' | 'side-by-side';
 
 interface UIState {
   currentSpaceId: string | null;
@@ -20,6 +21,9 @@ interface UIState {
   inspectorMode: InspectorMode;
   inspectorSection: InspectorSection;
   readingWidth: ReadingWidth;
+  versionModalOpen: boolean;
+  diffMode: DiffMode;
+  compareRevisionIds: { base: string | null; compare: string | null };
   setCurrentSpaceId: (id: string | null) => void;
   setCurrentDocId: (id: string | null) => void;
   setTheme: (theme: Theme) => void;
@@ -37,6 +41,12 @@ interface UIState {
   toggleInspector: () => void;
   setInspectorSection: (section: InspectorSection) => void;
   setReadingWidth: (width: ReadingWidth) => void;
+  setVersionModalOpen: (open: boolean) => void;
+  setDiffMode: (mode: DiffMode) => void;
+  setCompareRevisionIds: (ids: {
+    base: string | null;
+    compare: string | null;
+  }) => void;
 }
 
 const PERSIST_KEY = 'lorem-ui';
@@ -61,6 +71,7 @@ type PersistedShape = Pick<
   | 'inspectorMode'
   | 'inspectorSection'
   | 'readingWidth'
+  | 'diffMode'
 >;
 
 const READING_WIDTHS: ReadingWidth[] = ['s', 'm', 'l'];
@@ -86,6 +97,13 @@ const sanitizeReadingWidth = (v: unknown): ReadingWidth =>
   typeof v === 'string' && (READING_WIDTHS as string[]).includes(v)
     ? (v as ReadingWidth)
     : 'm';
+
+const DIFF_MODES: DiffMode[] = ['inline', 'side-by-side'];
+
+const sanitizeDiffMode = (v: unknown): DiffMode =>
+  typeof v === 'string' && (DIFF_MODES as string[]).includes(v)
+    ? (v as DiffMode)
+    : 'side-by-side';
 
 const DEFAULT_SPLIT_DIVIDER_PCT = 50;
 const MIN_SPLIT_DIVIDER_PCT = 25;
@@ -117,6 +135,7 @@ const buildSnapshot = (
   inspectorMode: s.inspectorMode,
   inspectorSection: s.inspectorSection,
   readingWidth: s.readingWidth,
+  diffMode: s.diffMode,
   ...overrides,
 });
 
@@ -141,6 +160,9 @@ const initialState = () => ({
   inspectorMode: sanitizeInspectorMode(persisted.inspectorMode),
   inspectorSection: sanitizeInspectorSection(persisted.inspectorSection),
   readingWidth: sanitizeReadingWidth(persisted.readingWidth),
+  versionModalOpen: false,
+  diffMode: sanitizeDiffMode(persisted.diffMode),
+  compareRevisionIds: { base: null, compare: null },
 });
 
 const createActions = (
@@ -183,6 +205,13 @@ const createToggleActions = (set: SetState) => ({
   focusNote: (id: string | null) => { set({ focusedNoteId: id }); },
   openCitationsDrawer: () => { set({ citationsDrawerOpen: true }); },
   closeCitationsDrawer: () => { set({ citationsDrawerOpen: false }); },
+  setVersionModalOpen: (versionModalOpen: boolean) => {
+    set({ versionModalOpen });
+  },
+  setCompareRevisionIds: (compareRevisionIds: {
+    base: string | null;
+    compare: string | null;
+  }) => { set({ compareRevisionIds }); },
 });
 
 const createInspectorActions = (
@@ -208,6 +237,10 @@ const createInspectorActions = (
   setReadingWidth: (readingWidth: ReadingWidth) => {
     set({ readingWidth });
     persist(snapshot({ readingWidth }));
+  },
+  setDiffMode: (diffMode: DiffMode) => {
+    set({ diffMode });
+    persist(snapshot({ diffMode }));
   },
 });
 
