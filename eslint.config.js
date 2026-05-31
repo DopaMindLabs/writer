@@ -156,4 +156,25 @@ export default tseslint.config(
     files: ['e2e/**/*.ts', '.storybook/**/*.{ts,tsx}'],
     extends: [tseslint.configs.disableTypeChecked],
   },
+
+  {
+    // Enforce the "@/" path alias for cross-directory imports. Same-directory
+    // ("./sibling") imports are still allowed; only parent-relative ("../")
+    // imports must go through the alias so module paths stay stable on moves.
+    files: ['src/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^\\.\\./',
+              message:
+                'Use the "@/" path alias instead of a relative parent import (e.g. "@/test/test-utils").',
+            },
+          ],
+        },
+      ],
+    },
+  },
 );

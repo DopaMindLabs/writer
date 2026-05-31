@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { serializeState } from '../serialize';
+import { serializeState } from '@/editor/serialize';
 
 interface AutosavePluginProps {
   onChange: (serialized: string) => void;
