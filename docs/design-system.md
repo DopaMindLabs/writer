@@ -786,11 +786,25 @@ govern.
 
 ### 11.3 Contrast policy
 
-- **`light` / `dark`** target **WCAG AA** and keep the grayscale aesthetic unchanged. Core text
-  already exceeds AAA (≈26:1); the status palette (§5) is AA.
-- **`hc-light` / `hc-dark`** target **WCAG AAA (7:1)** for text and status, and override the
-  highlight palette (§7.4) accordingly. AAA-strict colour work is **quarantined to these
-  themes** so it never compromises the default visual language.
+- **`light` / `dark`** keep the grayscale aesthetic unchanged. Core text already exceeds AAA
+  (≈26:1). The status palette (§5) is mostly AA, with two **known exceptions in `light`**:
+  `--danger` (~3.2:1 on its tint) and `--success`-on-tint fall below the 4.5:1 small-text AA
+  bar. These are **not** raised, because changing the default tokens would alter the experience
+  for existing users; users who need stronger status contrast opt into the high-contrast themes.
+- **`hc-light` / `hc-dark`** meet **WCAG AAA (7:1)** for text and the full status palette (on
+  both paper and tint grounds), and override the highlight palette (§7.4) accordingly.
+  AAA-strict colour work is **quarantined to these themes** so it never compromises the default
+  visual language.
+- The policy is **locked by a test** (`src/theme/contrast.test.ts`), which parses `index.css`
+  and asserts ≥7:1 in the `hc-*` themes (and a ≥3:1 floor elsewhere) so a token edit can't
+  silently regress it.
+
+### 11.5 Motion
+
+`prefers-reduced-motion` and the `data-motion` preference gate animation. CSS transitions and
+animations are near-instant under reduced motion (`src/index.css`), and the guided tours
+(driver.js) disable smooth-scrolling via `tourMotionReduced()` in
+`src/tours/driver-setup.ts` — both honour `reduced`/`full`/OS in the same order.
 
 ### 11.4 Primitives & rules
 
