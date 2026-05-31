@@ -22,7 +22,7 @@ const template: Template = {
     { sectionLabel: 'Seedlings', name: 'Ideas' },
     { sectionLabel: 'Streak', name: 'Tracker' },
   ],
-  noteKinds: [NoteKind.Note, NoteKind.Question, NoteKind.Blank],
+  noteKinds: [NoteKind.Note, NoteKind.Question, NoteKind.Blank, NoteKind.Image],
 };
 
 export default template;

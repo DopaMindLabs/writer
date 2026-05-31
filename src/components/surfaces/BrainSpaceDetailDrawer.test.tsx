@@ -398,6 +398,14 @@ describe('BrainSpaceDetailDrawer', () => {
       useUI.getState().openDetail(SECOND_NOTE.id);
       const drawer = await screen.findByTestId('brain-detail-drawer');
       await screen.findByTestId('brain-detail-drawer-connections-heading');
+      // Wait for the related-note live query to settle so the snapshot captures
+      // the resolved connection row rather than its transient loading state: the
+      // focus button is disabled until the connected note loads.
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('brain-detail-drawer-connection-c1-focus'),
+        ).toBeEnabled();
+      });
       expect(drawer).toMatchSnapshot();
     });
   });
@@ -492,6 +500,18 @@ describe('BrainSpaceDetailDrawer', () => {
           screen.queryByTestId('brain-detail-drawer-attachments-reject-banner'),
         ).not.toBeInTheDocument();
       });
+    });
+
+    it('opens the full-size viewer when an attachment is clicked', async () => {
+      const user = userEvent.setup();
+      await seedAttachment('a1');
+      await openDrawerForSecondNote();
+      await screen.findByTestId('brain-detail-drawer-attachments-image-a1');
+      expect(screen.queryByTestId('image-lightbox-image')).not.toBeInTheDocument();
+      await user.click(
+        screen.getByTestId('brain-detail-drawer-attachments-image-a1-open'),
+      );
+      expect(screen.getByTestId('image-lightbox-image')).toBeInTheDocument();
     });
   });
 });

@@ -14,7 +14,7 @@ test.describe('Workflow: capturing ideas in the brain space', () => {
   }) => {
     const spaceId = await getFirstSpaceIdFromHome(page);
     const canvas = page.getByTestId('brain-canvas');
-    const noteCards = canvas.locator(':scope > [data-testid^="brain-note-"]');
+    const noteCards = page.getByTestId('brain-canvas-content').locator(':scope > [data-testid^="brain-note-"]');
 
     await test.step('Given the writer opens the brain space', async () => {
       await page.goto(`/#/s/${spaceId}/dump`);

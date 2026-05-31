@@ -1,15 +1,11 @@
-import { NoteKind } from '@/db/schema';
+import type { NoteKind } from '@/db/schema';
+import { listNoteTypes } from '@/data/note-types';
 
-export const NOTE_KIND_LABEL: Record<NoteKind, string> = {
-  [NoteKind.Note]: 'thought',
-  [NoteKind.Char]: 'person',
-  [NoteKind.Place]: 'place',
-  [NoteKind.Lore]: 'lore',
-  [NoteKind.Question]: 'question',
-  [NoteKind.Source]: 'source',
-  [NoteKind.Claim]: 'claim',
-  [NoteKind.Figure]: 'figure',
-  [NoteKind.Todo]: 'todo',
-  [NoteKind.LooseEnd]: 'loose end',
-  [NoteKind.Blank]: 'blank',
-};
+/**
+ * Human-readable label for each note kind, derived from the note-type registry
+ * so labels have a single source of truth. Kept as a `Record<NoteKind, string>`
+ * for back-compatibility with existing importers.
+ */
+export const NOTE_KIND_LABEL = Object.fromEntries(
+  listNoteTypes().map((t) => [t.kind, t.label]),
+) as Record<NoteKind, string>;

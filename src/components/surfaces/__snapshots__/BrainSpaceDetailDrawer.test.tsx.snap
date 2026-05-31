@@ -285,7 +285,6 @@ exports[`BrainSpaceDetailDrawer > snapshot > should match the snapshot of the op
           <button
             class="flex min-w-0 flex-1 items-center gap-2 text-left font-serif text-[13px] text-ink hover:underline disabled:cursor-not-allowed disabled:text-ink-4"
             data-testid="brain-detail-drawer-connection-c1-focus"
-            disabled=""
             type="button"
           >
             <span
@@ -296,7 +295,12 @@ exports[`BrainSpaceDetailDrawer > snapshot > should match the snapshot of the op
             <span
               class="min-w-0 truncate"
             >
-              (untitled)
+              Hello
+            </span>
+            <span
+              class="font-mono text-[9px] uppercase tracking-wider text-ink-4"
+            >
+              thought
             </span>
           </button>
           <button
