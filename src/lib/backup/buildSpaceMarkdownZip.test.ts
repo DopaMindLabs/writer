@@ -572,6 +572,77 @@ describe('buildSpaceMarkdownZipFor', () => {
     expect(stored).toBe('one');
   });
 
+  it('places docs whose section is missing under manuscript/_unsorted', async () => {
+    const snapshot: SpaceSnapshot = {
+      space: sampleSpace,
+      sections: [],
+      docs: [{ ...sampleDoc, id: 'orphan', name: 'Stray', sectionId: 'ghost' }],
+      notes: [],
+      attachments: [],
+      annotations: [],
+      citations: [],
+      connections: [],
+      palettes: [],
+    };
+
+    const blob = await buildSpaceMarkdownZip(snapshot, WHEN);
+    const zip = await loadZip(blob);
+    const entry = Object.values(zip.files).find(
+      (f) => !f.dir && f.name.startsWith('manuscript/_unsorted/'),
+    );
+    expect(entry).toBeDefined();
+    const md = await entry!.async('string');
+    expect(md).toContain('name: Stray');
+    // A section-less doc emits no `section:` frontmatter line.
+    expect(md).not.toContain('section:');
+  });
+
+  it('derives asset filenames from the name extension or MIME fallback', async () => {
+    const att = (
+      id: string,
+      name: string,
+      mime: string,
+    ): SpaceSnapshot['attachments'][number] => ({
+      id,
+      noteId: 'n1',
+      spaceId: sampleSpace.id,
+      name,
+      mime,
+      size: 1,
+      blob: new Blob([id], { type: mime }),
+      createdAt: FIXED_TIME,
+    });
+
+    const snapshot: SpaceSnapshot = {
+      space: sampleSpace,
+      sections: [],
+      docs: [],
+      notes: [{ ...sampleNote, id: 'n1', title: 'N' }],
+      attachments: [
+        // No extension → fall back to the MIME-derived extension.
+        att('a1', 'diagram', 'image/webp'),
+        // Extension strips to empty → fall back to MIME (png).
+        att('a2', 'shot.@@@', 'image/png'),
+        // Unknown MIME and no usable extension → generic 'img'.
+        att('a3', 'blob', 'image/tiff'),
+      ],
+      annotations: [],
+      citations: [],
+      connections: [],
+      palettes: [],
+    };
+
+    const blob = await buildSpaceMarkdownZip(snapshot, WHEN);
+    const zip = await loadZip(blob);
+    const names = Object.values(zip.files)
+      .filter((f) => !f.dir && f.name.startsWith('assets/notes/n1/'))
+      .map((f) => f.name);
+
+    expect(names).toContain('assets/notes/n1/diagram.webp');
+    expect(names).toContain('assets/notes/n1/shot.png');
+    expect(names).toContain('assets/notes/n1/blob.img');
+  });
+
   it('renders untitled notes whose body collapses to empty', async () => {
     // Forces n.body.split('\n')[0]?.trim() → '' → final '_(empty)_' fallback,
     // separately from the whitespace-title path covered above.

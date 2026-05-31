@@ -1,6 +1,6 @@
 import { db } from '@/db/db';
 import { NoteKind, NoteState, type Note } from '@/db/schema';
-import { MAX_NOTE_IMAGES } from '@/data/note-attachments';
+import { MAX_IMAGE_BYTES, MAX_NOTE_IMAGES } from '@/data/note-attachments';
 import {
   addNoteImages,
   countNoteAttachments,
@@ -40,6 +40,19 @@ describe('addNoteImages', () => {
     expect(stored[0]?.spaceId).toBe('s1');
     expect(stored[0]?.name).toBe('a.png');
     expect(stored[0]?.mime).toBe('image/png');
+  });
+
+  it('rejects images larger than the size limit', async () => {
+    const note = makeNote();
+    await db.notes.put(note);
+    const big = pngFile('big.png');
+    Object.defineProperty(big, 'size', { value: MAX_IMAGE_BYTES + 1 });
+
+    const { added, rejected } = await addNoteImages(note, [big]);
+
+    expect(added).toHaveLength(0);
+    expect(rejected[0]).toMatch(/larger than 5 MB/);
+    expect(await countNoteAttachments('n1')).toBe(0);
   });
 
   it('rejects unsupported file types', async () => {
@@ -82,6 +95,19 @@ describe('addNoteImages', () => {
     expect(added).toHaveLength(MAX_NOTE_IMAGES - 1);
     expect(rejected).toHaveLength(1);
     expect(await countNoteAttachments('n1')).toBe(MAX_NOTE_IMAGES);
+  });
+
+  it('never exceeds the limit when two uploads race', async () => {
+    const note = makeNote();
+    await db.notes.put(note);
+
+    const [r1, r2] = await Promise.all([
+      addNoteImages(note, [pngFile('a.png'), pngFile('b.png')]),
+      addNoteImages(note, [pngFile('c.png'), pngFile('d.png')]),
+    ]);
+
+    expect(await countNoteAttachments('n1')).toBe(MAX_NOTE_IMAGES);
+    expect(r1.added.length + r2.added.length).toBe(MAX_NOTE_IMAGES);
   });
 
   it('promotes a seed note to a user note when an image is added', async () => {

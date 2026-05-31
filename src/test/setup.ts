@@ -57,21 +57,21 @@ if (typeof File !== 'undefined' && !('text' in File.prototype)) {
   };
 }
 
-// jsdom doesn't implement URL.createObjectURL / revokeObjectURL. useObjectUrl
-// (image attachment previews) relies on them, so stub them with a counter-based
-// fake URL and a no-op revoke.
+// Stub URL.createObjectURL / revokeObjectURL for jsdom. We override
+// unconditionally (not just when missing): on Node runtimes that DO provide a
+// native createObjectURL it throws on anything that isn't a real Blob, and
+// fake-indexeddb degrades stored Blobs to plain objects on read — so the native
+// implementation would throw inside useObjectUrl's effect. A counter-based fake
+// that ignores its argument keeps previews working in tests without throwing.
+// Tests that need specific behaviour still vi.spyOn over this stub.
 if (typeof URL !== 'undefined') {
   const u = URL as unknown as {
-    createObjectURL?: (obj: Blob) => string;
-    revokeObjectURL?: (url: string) => void;
+    createObjectURL: (obj: Blob) => string;
+    revokeObjectURL: (url: string) => void;
   };
-  if (!u.createObjectURL) {
-    let counter = 0;
-    u.createObjectURL = () => `blob:mock/${String(++counter)}`;
-  }
-  if (!u.revokeObjectURL) {
-    u.revokeObjectURL = () => {};
-  }
+  let counter = 0;
+  u.createObjectURL = () => `blob:mock/${String(++counter)}`;
+  u.revokeObjectURL = () => {};
 }
 
 if (typeof window !== 'undefined') {

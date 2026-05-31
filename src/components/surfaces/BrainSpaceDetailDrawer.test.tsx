@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { fireEvent } from '@testing-library/react';
-import { renderAtRoute, screen, waitFor } from '@/test/test-utils';
+import { renderAtRoute, screen, waitFor, within } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 import { sampleDoc, sampleNote, sampleSpace } from '@/test/fixtures';
@@ -483,6 +483,15 @@ describe('BrainSpaceDetailDrawer', () => {
         'brain-detail-drawer-attachments-reject-banner',
       );
       expect(banner).toHaveTextContent(/unsupported type/);
+
+      // Dismissing clears the warning.
+      const user = userEvent.setup();
+      await user.click(within(banner).getByRole('button', { name: 'Dismiss' }));
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId('brain-detail-drawer-attachments-reject-banner'),
+        ).not.toBeInTheDocument();
+      });
     });
   });
 });

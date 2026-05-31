@@ -1,4 +1,5 @@
 import userEvent from '@testing-library/user-event';
+import { fireEvent } from '@testing-library/react';
 import { render, screen } from '@/test/test-utils';
 import { FileInputTrigger } from './FileInputTrigger';
 
@@ -57,5 +58,50 @@ describe('FileInputTrigger', () => {
   it('disables the input when disabled', () => {
     renderTrigger({ disabled: true });
     expect(screen.getByTestId('trigger-input')).toBeDisabled();
+  });
+
+  it('open() clicks the hidden input when not disabled', async () => {
+    const user = userEvent.setup();
+    render(
+      <FileInputTrigger onPick={vi.fn()} data-testid="trigger-input">
+        {(open) => (
+          <button type="button" onClick={open}>
+            Upload
+          </button>
+        )}
+      </FileInputTrigger>,
+    );
+    const input = screen.getByTestId('trigger-input') as HTMLInputElement;
+    const clickSpy = vi.fn();
+    input.click = clickSpy;
+    await user.click(screen.getByRole('button', { name: 'Upload' }));
+    expect(clickSpy).toHaveBeenCalledOnce();
+  });
+
+  it('open() is a no-op when disabled', async () => {
+    const user = userEvent.setup();
+    render(
+      <FileInputTrigger disabled onPick={vi.fn()} data-testid="trigger-input">
+        {(open) => (
+          <button type="button" onClick={open}>
+            Upload
+          </button>
+        )}
+      </FileInputTrigger>,
+    );
+    const input = screen.getByTestId('trigger-input') as HTMLInputElement;
+    const clickSpy = vi.fn();
+    input.click = clickSpy;
+    await user.click(screen.getByRole('button', { name: 'Upload' }));
+    expect(clickSpy).not.toHaveBeenCalled();
+  });
+
+  it('treats a null file list as no selection', () => {
+    const onPick = vi.fn();
+    renderTrigger({ onPick });
+    fireEvent.change(screen.getByTestId('trigger-input'), {
+      target: { files: null },
+    });
+    expect(onPick).not.toHaveBeenCalled();
   });
 });

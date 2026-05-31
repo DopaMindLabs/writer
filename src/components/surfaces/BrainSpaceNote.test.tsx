@@ -612,6 +612,20 @@ describe('BrainSpaceNote', () => {
       ).toBe(1);
     });
 
+    it('opens the file picker when the add-picture button is clicked', async () => {
+      const user = userEvent.setup();
+      renderNote();
+      const input = screen.getByTestId(
+        `brain-note-${sampleNote.id}-image-input`,
+      ) as HTMLInputElement;
+      const clickSpy = vi.fn();
+      input.click = clickSpy;
+      await user.click(
+        screen.getByTestId(`brain-note-${sampleNote.id}-add-image`),
+      );
+      expect(clickSpy).toHaveBeenCalledOnce();
+    });
+
     it('hides the add-picture button once the limit is reached', async () => {
       await seedAttachment('a1');
       await seedAttachment('a2');
