@@ -10,6 +10,7 @@ exports[`SettingsShell > snapshot > should match the snapshot across global and 
         class="hidden md:flex"
       >
         <aside
+          aria-label="Spaces"
           class="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-rule bg-paper-2 py-3.5"
         >
           <a
@@ -285,6 +286,7 @@ exports[`SettingsShell > snapshot > should match the snapshot across global and 
         class="hidden md:flex"
       >
         <aside
+          aria-label="Spaces"
           class="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-rule bg-paper-2 py-3.5"
         >
           <a

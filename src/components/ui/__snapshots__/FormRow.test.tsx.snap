@@ -44,6 +44,7 @@ exports[`FormRow > snapshot > should match the snapshot across all variants 1`] 
         <div
           class="font-serif text-[12px] italic leading-snug text-ink-3"
           data-testid="fr-snap-hint-hint"
+          id="_r_b_-hint"
         >
           Visible
         </div>
@@ -53,6 +54,7 @@ exports[`FormRow > snapshot > should match the snapshot across all variants 1`] 
       >
         <div>
           <input
+            aria-describedby="_r_b_-hint"
             class="block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 py-1.5 border-rule focus:border-ink"
             type="text"
           />
@@ -78,6 +80,7 @@ exports[`FormRow > snapshot > should match the snapshot across all variants 1`] 
       >
         <div>
           <input
+            aria-describedby="_r_c_-error"
             aria-invalid="true"
             class="block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 py-1.5 border-ink"
             type="text"
@@ -86,6 +89,7 @@ exports[`FormRow > snapshot > should match the snapshot across all variants 1`] 
         <div
           class="font-mono text-[10px] uppercase tracking-wider text-ink"
           data-testid="fr-snap-err-error"
+          id="_r_c_-error"
           role="alert"
         >
           <span
@@ -113,6 +117,7 @@ exports[`FormRow > snapshot > should match the snapshot across all variants 1`] 
         <div
           class="font-serif text-[12px] italic leading-snug text-ink-3"
           data-testid="fr-snap-full-hint"
+          id="_r_d_-hint"
         >
           Visible
         </div>
@@ -122,6 +127,7 @@ exports[`FormRow > snapshot > should match the snapshot across all variants 1`] 
       >
         <div>
           <input
+            aria-describedby="_r_d_-hint _r_d_-error"
             aria-invalid="true"
             class="block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 py-1.5 border-ink"
             type="text"
@@ -130,6 +136,7 @@ exports[`FormRow > snapshot > should match the snapshot across all variants 1`] 
         <div
           class="font-mono text-[10px] uppercase tracking-wider text-ink"
           data-testid="fr-snap-full-error"
+          id="_r_d_-error"
           role="alert"
         >
           <span
