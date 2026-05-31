@@ -17,6 +17,7 @@ describe('SettingsSectionStack', () => {
 
   afterEach(() => {
     delete (Element.prototype as { scrollIntoView?: unknown }).scrollIntoView;
+    document.documentElement.removeAttribute('data-motion');
     vi.unstubAllGlobals();
   });
 
@@ -42,6 +43,32 @@ describe('SettingsSectionStack', () => {
     );
     await waitFor(() => {
       expect(scrollIntoView).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('uses a smooth scroll by default but an instant jump under reduced motion', async () => {
+    document.documentElement.setAttribute('data-motion', 'reduced');
+    const { unmount } = render(
+      <SettingsSectionStack sections={sections} scrollTarget="b" scrollNonce={0} />,
+    );
+    await waitFor(() => {
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'auto',
+        block: 'start',
+      });
+    });
+    unmount();
+    document.documentElement.removeAttribute('data-motion');
+
+    scrollIntoView.mockClear();
+    render(
+      <SettingsSectionStack sections={sections} scrollTarget="b" scrollNonce={0} />,
+    );
+    await waitFor(() => {
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'smooth',
+        block: 'start',
+      });
     });
   });
 

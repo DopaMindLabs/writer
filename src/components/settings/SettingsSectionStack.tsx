@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { ReactNode, RefObject } from 'react';
+import { motionReduced } from '@/theme/a11y-prefs';
 import { cn } from '@/lib/utils';
 
 export interface SettingsSection {
@@ -54,8 +55,10 @@ const useScrollToTarget = (refs: StackRefs, target: string, nonce: number) => {
     const el = refs.map.current.get(target);
     if (!el || typeof el.scrollIntoView !== 'function') return;
     refs.suppress.current = true;
+    // Respect the motion preference: a reduced-motion user gets an instant jump.
+    const behavior: ScrollBehavior = motionReduced() ? 'auto' : 'smooth';
     const raf = requestAnimationFrame(() => {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.scrollIntoView({ behavior, block: 'start' });
     });
     const timer = window.setTimeout(() => {
       refs.suppress.current = false;
