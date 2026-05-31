@@ -58,7 +58,35 @@ describe('SyncHistoryTable', () => {
         spaceNames={{ s1: 'Novel' }}
       />,
     );
-    // s2 has no mapped name, so its raw id is shown.
     expect(screen.getByText('s2')).toBeInTheDocument();
+  });
+
+  describe('snapshot', () => {
+    it('should match the snapshot for empty and populated (cross-space) tables', () => {
+      const fixed = Date.UTC(2024, 0, 1, 0, 0, 0);
+      const rows: SyncEntry[] = [
+        { id: 'ok1', spaceId: 's1', when: fixed, kind: 'manual', status: 'ok', size: 2048 },
+        {
+          id: 'err1',
+          spaceId: 's2',
+          when: fixed,
+          kind: 'auto',
+          status: 'error',
+          size: 0,
+          error: 'disk full',
+        },
+      ];
+      const { container } = renderWithProviders(
+        <div>
+          <SyncHistoryTable entries={[]} />
+          <SyncHistoryTable
+            entries={rows}
+            showSpace
+            spaceNames={{ s1: 'Novel', s2: 'Essays' }}
+          />
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
   });
 });

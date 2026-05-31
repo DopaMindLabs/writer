@@ -30,4 +30,23 @@ describe('SettingRow', () => {
     );
     expect(container.firstChild).toHaveClass('cursor-not-allowed', 'opacity-60');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across hint, no-hint, and disabled variants', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <SettingRow label="With hint" hint="Helpful detail">
+            <span>child</span>
+          </SettingRow>
+          <SettingRow label="No hint">
+            <span>child</span>
+          </SettingRow>
+          <SettingRow label="Disabled" hint="Coming soon" disabled>
+            <span>child</span>
+          </SettingRow>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

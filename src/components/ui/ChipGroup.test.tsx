@@ -61,4 +61,23 @@ describe('ChipGroup', () => {
       expect(onChange).toHaveBeenCalledWith(10);
     });
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across index and value modes', () => {
+      const { container } = render(
+        <div>
+          <ChipGroup options={['S', 'M', 'L']} active={1} label="Width" />
+          <ChipGroup
+            options={[
+              { label: 'Off', value: 0 },
+              { label: '5 min', value: 5 },
+            ]}
+            value={5}
+            label="Interval"
+          />
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

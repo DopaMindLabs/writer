@@ -29,4 +29,20 @@ describe('IntervalSelector', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Default (10 min)' }));
     expect(onChange).toHaveBeenCalledWith(INHERIT_INTERVAL);
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot with and without the inherit chip', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <IntervalSelector value={10} onChange={() => undefined} />
+          <IntervalSelector
+            value={INHERIT_INTERVAL}
+            onChange={() => undefined}
+            inheritLabel="Default (10 min)"
+          />
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

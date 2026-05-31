@@ -1,0 +1,554 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsShell > snapshot > should match the snapshot across global and space variants 1`] = `
+<div>
+  <div>
+    <div
+      class="flex h-full w-full bg-paper text-ink"
+    >
+      <div
+        class="hidden md:flex"
+      >
+        <aside
+          class="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-rule bg-paper-2 py-3.5"
+        >
+          <a
+            aria-label="Home"
+            class="mb-1 flex h-7 w-7 items-center justify-center rounded-md font-serif text-lg leading-none tracking-tight text-ink hover:bg-paper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+            data-discover="true"
+            href="/"
+          >
+            L
+          </a>
+          <span
+            class="mb-2.5 cursor-help rounded-sm border border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-[color:var(--warning)]"
+            data-state="closed"
+            tabindex="0"
+          >
+            exp
+          </span>
+          <a
+            class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
+            data-discover="true"
+            data-state="closed"
+            data-testid="space-rail-space-s3"
+            href="/s/s3"
+          >
+            CCC
+          </a>
+          <a
+            class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
+            data-discover="true"
+            data-state="closed"
+            data-testid="space-rail-space-s2"
+            href="/s/s2"
+          >
+            BBB
+            <span
+              class="absolute right-0.5 top-0.5 h-1 w-1 rounded-full bg-ink"
+            />
+          </a>
+          <a
+            class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
+            data-discover="true"
+            data-state="closed"
+            data-testid="space-rail-space-s1"
+            href="/s/s1"
+          >
+            AAA
+          </a>
+          <a
+            aria-label="Create new space"
+            class="flex h-9 w-9 items-center justify-center rounded-md text-ink-4 hover:bg-paper hover:text-ink-2"
+            data-discover="true"
+            data-state="closed"
+            href="/new"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-plus h-4 w-4"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 12h14"
+              />
+              <path
+                d="M12 5v14"
+              />
+            </svg>
+          </a>
+          <div
+            class="flex-1"
+          />
+          <button
+            aria-controls="radix-_r_*_"
+            aria-expanded="false"
+            aria-haspopup="dialog"
+            aria-label="LIpsum Writer"
+            class="group inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper hover:text-ink data-[state=open]:bg-paper data-[state=open]:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+            data-state="closed"
+            data-tour="tour-topbar-theme"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-ellipsis-vertical h-4 w-4"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="1"
+              />
+              <circle
+                cx="12"
+                cy="5"
+                r="1"
+              />
+              <circle
+                cx="12"
+                cy="19"
+                r="1"
+              />
+            </svg>
+          </button>
+        </aside>
+      </div>
+      <div
+        class="flex min-h-0 flex-1 flex-col md:flex-row"
+      >
+        <div
+          class="flex min-h-0 shrink-0 flex-col border-r border-rule bg-paper-2 md:w-[240px]"
+        >
+          <div
+            class="flex items-center gap-3 border-b border-rule px-6 pb-4 pt-5"
+          >
+            <div
+              aria-hidden="true"
+              class="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-md border border-rule font-serif text-[16px] text-ink"
+            >
+              L
+            </div>
+            <div
+              class="min-w-0 flex-1"
+            >
+              <div
+                class="truncate font-serif text-[20px] font-medium leading-none -tracking-[0.01em] text-ink"
+              >
+                LIpsum Writer
+              </div>
+              <div
+                class="mt-1 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-3"
+              >
+                GLOBAL SETTINGS
+              </div>
+            </div>
+          </div>
+          <nav
+            aria-label="Settings sections"
+            class="contents"
+            data-testid="settings-tabs"
+          >
+            <ul
+              class="flex overflow-x-auto border-b border-rule/60 bg-paper-2 md:hidden"
+              data-testid="settings-tabs-mobile"
+            >
+              <li
+                class="shrink-0"
+              >
+                <button
+                  aria-current="page"
+                  class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-ink bg-paper font-medium text-ink"
+                  data-testid="settings-tab-mobile-general"
+                  type="button"
+                >
+                  General
+                </button>
+              </li>
+              <li
+                class="shrink-0"
+              >
+                <button
+                  class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-transparent text-ink-2 hover:bg-paper hover:text-ink"
+                  data-testid="settings-tab-mobile-appearance"
+                  type="button"
+                >
+                  Appearance
+                </button>
+              </li>
+              <li
+                class="shrink-0"
+              >
+                <button
+                  class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-transparent text-ink-2 hover:bg-paper hover:text-ink"
+                  data-testid="settings-tab-mobile-sync"
+                  type="button"
+                >
+                  Sync
+                </button>
+              </li>
+            </ul>
+            <div
+              class="hidden flex-1 overflow-auto pb-3 pt-1.5 md:-ml-px md:block"
+              data-testid="settings-tabs-desktop"
+            >
+              <div
+                class="mb-1.5 last:mb-0"
+              >
+                <div
+                  class="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+                  data-testid="settings-tabs-group-0"
+                >
+                  Preferences
+                </div>
+                <ul>
+                  <li>
+                    <button
+                      aria-current="page"
+                      class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-ink bg-paper font-medium text-ink"
+                      data-testid="settings-tab-general"
+                      type="button"
+                    >
+                      General
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-transparent text-ink-2 hover:bg-paper hover:text-ink"
+                      data-testid="settings-tab-appearance"
+                      type="button"
+                    >
+                      Appearance
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div
+                class="mb-1.5 last:mb-0"
+              >
+                <div
+                  class="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+                  data-testid="settings-tabs-group-1"
+                >
+                  Data
+                </div>
+                <ul>
+                  <li>
+                    <button
+                      class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-transparent text-ink-2 hover:bg-paper hover:text-ink"
+                      data-testid="settings-tab-sync"
+                      type="button"
+                    >
+                      Sync
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        </div>
+        <main
+          class="flex-1 overflow-auto bg-paper"
+        >
+          <div
+            class="max-w-[880px] px-4 pb-20 pt-6 md:px-12 md:pt-9"
+          >
+            <div>
+              Global body
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <div
+      class="flex h-full w-full bg-paper text-ink"
+    >
+      <div
+        class="hidden md:flex"
+      >
+        <aside
+          class="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-rule bg-paper-2 py-3.5"
+        >
+          <a
+            aria-label="Home"
+            class="mb-1 flex h-7 w-7 items-center justify-center rounded-md font-serif text-lg leading-none tracking-tight text-ink hover:bg-paper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+            data-discover="true"
+            href="/"
+          >
+            L
+          </a>
+          <span
+            class="mb-2.5 cursor-help rounded-sm border border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-[color:var(--warning)]"
+            data-state="closed"
+            tabindex="0"
+          >
+            exp
+          </span>
+          <a
+            class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
+            data-discover="true"
+            data-state="closed"
+            data-testid="space-rail-space-s3"
+            href="/s/s3"
+          >
+            CCC
+          </a>
+          <a
+            class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
+            data-discover="true"
+            data-state="closed"
+            data-testid="space-rail-space-s2"
+            href="/s/s2"
+          >
+            BBB
+            <span
+              class="absolute right-0.5 top-0.5 h-1 w-1 rounded-full bg-ink"
+            />
+          </a>
+          <a
+            class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-ink text-paper"
+            data-discover="true"
+            data-state="closed"
+            data-testid="space-rail-space-s1"
+            href="/s/s1"
+          >
+            AAA
+          </a>
+          <a
+            aria-label="Create new space"
+            class="flex h-9 w-9 items-center justify-center rounded-md text-ink-4 hover:bg-paper hover:text-ink-2"
+            data-discover="true"
+            data-state="closed"
+            href="/new"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-plus h-4 w-4"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 12h14"
+              />
+              <path
+                d="M12 5v14"
+              />
+            </svg>
+          </a>
+          <div
+            class="flex-1"
+          />
+          <button
+            aria-controls="radix-_r_*_"
+            aria-expanded="false"
+            aria-haspopup="dialog"
+            aria-label="LIpsum Writer"
+            class="group inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper hover:text-ink data-[state=open]:bg-paper data-[state=open]:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+            data-state="closed"
+            data-tour="tour-topbar-theme"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-ellipsis-vertical h-4 w-4"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="1"
+              />
+              <circle
+                cx="12"
+                cy="5"
+                r="1"
+              />
+              <circle
+                cx="12"
+                cy="19"
+                r="1"
+              />
+            </svg>
+          </button>
+        </aside>
+      </div>
+      <div
+        class="flex min-h-0 flex-1 flex-col md:flex-row"
+      >
+        <div
+          class="flex min-h-0 shrink-0 flex-col border-r border-rule bg-paper-2 md:w-[240px]"
+        >
+          <div
+            class="flex items-center gap-3 border-b border-rule px-6 pb-4 pt-5"
+          >
+            <div
+              aria-hidden="true"
+              class="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-md bg-ink font-mono text-[10px] font-medium uppercase tracking-[0.04em] text-paper"
+            >
+              TST
+            </div>
+            <div
+              class="min-w-0 flex-1"
+            >
+              <div
+                class="truncate font-serif text-[20px] font-medium leading-none -tracking-[0.01em] text-ink"
+              >
+                Test Space
+              </div>
+              <div
+                class="mt-1 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-3"
+              >
+                SPACE SETTINGS
+              </div>
+            </div>
+          </div>
+          <nav
+            aria-label="Settings sections"
+            class="contents"
+            data-testid="settings-tabs"
+          >
+            <ul
+              class="flex overflow-x-auto border-b border-rule/60 bg-paper-2 md:hidden"
+              data-testid="settings-tabs-mobile"
+            >
+              <li
+                class="shrink-0"
+              >
+                <button
+                  class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-transparent text-ink-2 hover:bg-paper hover:text-ink"
+                  data-testid="settings-tab-mobile-general"
+                  type="button"
+                >
+                  General
+                </button>
+              </li>
+              <li
+                class="shrink-0"
+              >
+                <button
+                  class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-transparent text-ink-2 hover:bg-paper hover:text-ink"
+                  data-testid="settings-tab-mobile-appearance"
+                  type="button"
+                >
+                  Appearance
+                </button>
+              </li>
+              <li
+                class="shrink-0"
+              >
+                <button
+                  aria-current="page"
+                  class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-ink bg-paper font-medium text-ink"
+                  data-testid="settings-tab-mobile-sync"
+                  type="button"
+                >
+                  Sync
+                </button>
+              </li>
+            </ul>
+            <div
+              class="hidden flex-1 overflow-auto pb-3 pt-1.5 md:-ml-px md:block"
+              data-testid="settings-tabs-desktop"
+            >
+              <div
+                class="mb-1.5 last:mb-0"
+              >
+                <div
+                  class="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+                  data-testid="settings-tabs-group-0"
+                >
+                  Preferences
+                </div>
+                <ul>
+                  <li>
+                    <button
+                      class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-transparent text-ink-2 hover:bg-paper hover:text-ink"
+                      data-testid="settings-tab-general"
+                      type="button"
+                    >
+                      General
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-transparent text-ink-2 hover:bg-paper hover:text-ink"
+                      data-testid="settings-tab-appearance"
+                      type="button"
+                    >
+                      Appearance
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div
+                class="mb-1.5 last:mb-0"
+              >
+                <div
+                  class="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+                  data-testid="settings-tabs-group-1"
+                >
+                  Data
+                </div>
+                <ul>
+                  <li>
+                    <button
+                      aria-current="page"
+                      class="flex w-full items-center whitespace-nowrap border-b-2 px-4 py-2.5 text-left text-[13px] transition-colors md:border-b-0 md:border-l-2 md:px-6 md:py-1.5 border-ink bg-paper font-medium text-ink"
+                      data-testid="settings-tab-sync"
+                      type="button"
+                    >
+                      Sync
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        </div>
+        <main
+          class="flex-1 overflow-auto bg-paper"
+        >
+          <div
+            class="max-w-[880px] px-4 pb-20 pt-6 md:px-12 md:pt-9"
+          >
+            <div>
+              Space body
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+</div>
+`;

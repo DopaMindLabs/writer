@@ -27,4 +27,16 @@ describe('TypographyMuted', () => {
     expect(ref.current).not.toBeNull();
     expect(ref.current?.tagName).toBe('P');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across all variants', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <TypographyMuted variant="default">Default</TypographyMuted>
+          <TypographyMuted variant="xs">Xs</TypographyMuted>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

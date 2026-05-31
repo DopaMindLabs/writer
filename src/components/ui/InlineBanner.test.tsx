@@ -51,4 +51,27 @@ describe('InlineBanner', () => {
     expect(screen.getByText('Imported')).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveClass('text-success');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across kinds, action, and dismiss states', () => {
+      const { container } = render(
+        <div>
+          <InlineBanner kind="error" title="Sync failed">
+            The remote rejected the last push.
+          </InlineBanner>
+          <InlineBanner kind="warning" title="Permission lapsed">
+            Reconnect to resume syncing.
+          </InlineBanner>
+          <InlineBanner kind="success" title="Imported" />
+          <InlineBanner kind="info" action="Reconnect">
+            Body copy.
+          </InlineBanner>
+          <InlineBanner kind="info" dismissible>
+            Dismissible body.
+          </InlineBanner>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

@@ -23,4 +23,16 @@ describe('EmptyState', () => {
     const { container } = render(<EmptyState caption="x" className="mt-0" />);
     expect(container.firstChild).toHaveClass('mt-0', 'border-dashed');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot with and without a title', () => {
+      const { container } = render(
+        <div>
+          <EmptyState caption="No syncs yet." />
+          <EmptyState title="Not supported" caption="Use a Chromium browser." />
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

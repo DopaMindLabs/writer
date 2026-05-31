@@ -1,6 +1,13 @@
-import type { Preview, Decorator } from '@storybook/react-vite';
+import type { Preview, Decorator, Loader } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
-import '../src/index.css';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { db } from '@/db/db';
+import {
+  seedBasicSpace,
+  seedMultipleSpaces,
+  seedBrainSpaceCanvas,
+} from '@/test/fixtures';
+import '@/index.css';
 
 const themes = ['light', 'dark', 'hc-light', 'hc-dark'] as const;
 type ThemeId = (typeof themes)[number];
@@ -20,7 +27,33 @@ const withTheme: Decorator = (Story, context) => {
   );
 };
 
+const withTooltip: Decorator = (Story) => (
+  <TooltipProvider delayDuration={0}>
+    <Story />
+  </TooltipProvider>
+);
+
+// `parameters: { seed }` reseeds the shared Dexie DB per story; seeded stories
+// set `tags: ['!autodocs']` so they render one at a time, never side by side.
+const seeders = {
+  basicSpace: seedBasicSpace,
+  multipleSpaces: seedMultipleSpaces,
+  brainSpace: seedBrainSpaceCanvas,
+} satisfies Record<string, () => Promise<void>>;
+
+export type SeedKey = keyof typeof seeders;
+
+const seedLoader: Loader = async (context) => {
+  const seed = context.parameters.seed as SeedKey | undefined;
+  if (!seed) return {};
+  await Promise.all(db.tables.map((table) => table.clear()));
+  await seeders[seed]();
+  return { seed };
+};
+
 const preview: Preview = {
+  // Autodocs on by default; data-driven stories opt out with `!autodocs`.
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
     backgrounds: {
@@ -50,7 +83,8 @@ const preview: Preview = {
       },
     },
   },
-  decorators: [withTheme, withRouter],
+  decorators: [withTheme, withRouter, withTooltip],
+  loaders: [seedLoader],
 };
 
 export default preview;

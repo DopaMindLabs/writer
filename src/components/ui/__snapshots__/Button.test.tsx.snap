@@ -1,0 +1,63 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Button > snapshot > should match the snapshot across kinds, sizes and states 1`] = `
+<div>
+  <div>
+    <button
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 bg-ink text-paper hover:bg-ink-2 h-9 px-4 text-[13px]"
+      type="button"
+    >
+      primary
+    </button>
+    <button
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border border-ink bg-transparent text-ink hover:bg-paper-2 h-9 px-4 text-[13px]"
+      type="button"
+    >
+      secondary
+    </button>
+    <button
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border-b border-ink bg-transparent text-ink hover:text-ink-2 h-auto px-0 pb-[2px] text-[13px]"
+      type="button"
+    >
+      ghost
+    </button>
+    <button
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 bg-ink text-paper hover:bg-ink-2 h-9 px-4 text-[13px]"
+      type="button"
+    >
+      dangerous
+    </button>
+    <button
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 bg-ink text-paper hover:bg-ink-2 h-7 px-3 text-xs"
+      type="button"
+    >
+      small
+    </button>
+    <button
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 bg-ink text-paper hover:bg-ink-2 h-9 px-4 text-[13px]"
+      type="button"
+    >
+      medium
+    </button>
+    <button
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 bg-ink text-paper hover:bg-ink-2 h-11 px-[22px] text-sm"
+      type="button"
+    >
+      large
+    </button>
+    <button
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border-b border-ink bg-transparent text-ink hover:text-ink-2 h-auto px-0 pb-[2px] text-xs"
+      type="button"
+    >
+      ghost small
+    </button>
+    <button
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 bg-ink text-paper hover:bg-ink-2 h-9 px-4 text-[13px]"
+      disabled=""
+      type="button"
+    >
+      disabled
+    </button>
+  </div>
+</div>
+`;

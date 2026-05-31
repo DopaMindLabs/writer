@@ -109,11 +109,10 @@ export default tseslint.config(
       'src/**/*.stories.{ts,tsx}',
       'src/test/**',
       'e2e/**/*.ts',
+      '.storybook/**/*.{ts,tsx}',
     ],
     rules: {
-      // Test/stories ergonomics: long describe/it bodies and mock noops are
-      // expected here, so the rules that only matter for production code are
-      // relaxed for these files (production code is held to the strict bar).
+      // Test/stories/storybook ergonomics: relax production-only rules here.
       'max-lines-per-function': 'off',
       complexity: 'off',
       'func-style': 'off',
@@ -155,5 +154,24 @@ export default tseslint.config(
   {
     files: ['e2e/**/*.ts', '.storybook/**/*.{ts,tsx}'],
     extends: [tseslint.configs.disableTypeChecked],
+  },
+
+  {
+    // Require the "@/" alias for parent-relative ("../") imports; "./" is fine.
+    files: ['src/**/*.{ts,tsx}', '.storybook/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^\\.\\./',
+              message:
+                'Use the "@/" path alias instead of a relative parent import (e.g. "@/test/test-utils").',
+            },
+          ],
+        },
+      ],
+    },
   },
 );

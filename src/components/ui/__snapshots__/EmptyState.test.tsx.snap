@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EmptyState > snapshot > should match the snapshot with and without a title 1`] = `
+<div>
+  <div>
+    <div
+      class="mx-auto mt-6 max-w-md border border-dashed border-rule bg-paper-2/40 p-6 text-center"
+    >
+      <p
+        class="font-serif italic text-[14px] text-ink-2"
+      >
+        No syncs yet.
+      </p>
+    </div>
+    <div
+      class="mx-auto mt-6 max-w-md border border-dashed border-rule bg-paper-2/40 p-6 text-center"
+    >
+      <h3
+        class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em] mb-2"
+      >
+        Not supported
+      </h3>
+      <p
+        class="font-serif italic text-[14px] text-ink-2"
+      >
+        Use a Chromium browser.
+      </p>
+    </div>
+  </div>
+</div>
+`;
