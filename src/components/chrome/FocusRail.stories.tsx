@@ -5,6 +5,10 @@ import { FocusRail } from './FocusRail';
 // opt into a seed. The rail is a tall full-height aside, framed accordingly.
 
 const meta = {
+  // Seeded stories share one Dexie DB and cannot represent distinct seed
+  // states side by side, so they opt out of the combined autodocs gallery and
+  // are viewed one at a time in the canvas (where the per-story reseed holds).
+  tags: ['!autodocs'],
   title: 'Navigation/FocusRail',
   component: FocusRail,
   parameters: { layout: 'fullscreen', seed: 'multipleSpaces' },

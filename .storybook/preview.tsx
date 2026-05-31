@@ -35,7 +35,12 @@ const withTooltip: Decorator = (Story) => (
 
 // Stories for data-driven components opt into a Dexie seed via
 // `parameters: { seed: 'basicSpace' }`. The loader clears every table and
-// re-seeds from the shared test fixtures so the gallery renders real content.
+// re-seeds from the shared test fixtures so the story renders real content.
+//
+// The seed mutates a single shared database, so two seeded stories cannot show
+// distinct states at the same time. Seeded stories therefore set
+// `tags: ['!autodocs']` to stay out of the combined docs gallery and are viewed
+// one at a time in the canvas, where this per-story reseed is correct.
 const seeders = {
   basicSpace: seedBasicSpace,
   multipleSpaces: seedMultipleSpaces,
