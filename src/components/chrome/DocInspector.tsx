@@ -96,7 +96,7 @@ export const DocInspector = ({ docName, docId }: DocInspectorProps) => {
         {section === 'outline' && <OutlinePane />}
         {section === 'info' && <InfoPane />}
         {section === 'history' && <HistoryPane docId={docId} />}
-        {section === 'actions' && <ActionsPane docId={docId} />}
+        {section === 'actions' && <ActionsPane />}
       </div>
     </aside>
   );
@@ -177,12 +177,23 @@ const HistoryPane = ({ docId }: { docId: string }) => {
   const { t } = useTranslation('chrome');
   const revisions = useRevisions(docId);
   const setVersionModalOpen = useUI((s) => s.setVersionModalOpen);
+  const setSaveVersionOpen = useUI((s) => s.setSaveVersionOpen);
 
   return (
     <div className="px-4 py-3.5">
-      <Eyebrow size={9} tone="ink4" className="mb-2">
-        {t('inspector.history.title')} · {revisions.length}
-      </Eyebrow>
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <Eyebrow size={9} tone="ink4">
+          {t('inspector.history.title')} · {revisions.length}
+        </Eyebrow>
+        <Button
+          kind="ghost"
+          size="sm"
+          data-testid="history-save-version"
+          onClick={() => { setSaveVersionOpen(true); }}
+        >
+          {t('inspector.history.saveVersion')}
+        </Button>
+      </div>
       {revisions.length === 0 ? (
         <p className="font-serif text-[12px] italic text-ink-3">
           {t('inspector.history.empty')}
@@ -205,11 +216,8 @@ const HistoryPane = ({ docId }: { docId: string }) => {
   );
 };
 
-const ActionsPane = ({ docId }: { docId: string }) => {
+const ActionsPane = () => {
   const { t } = useTranslation('chrome');
-  const revisions = useRevisions(docId);
-  const setVersionModalOpen = useUI((s) => s.setVersionModalOpen);
-  const setSaveVersionOpen = useUI((s) => s.setSaveVersionOpen);
 
   return (
     <div className="py-2">
@@ -226,21 +234,7 @@ const ActionsPane = ({ docId }: { docId: string }) => {
         />
         <ActionItem text={t('inspector.actions.print')} />
         <ActionItem text={t('inspector.actions.wordCount')} />
-      </ComingSoon>
-      <div className="my-1.5 h-px bg-rule" />
-      <ActionButton
-        text={t('inspector.actions.saveVersion')}
-        onClick={() => { setSaveVersionOpen(true); }}
-        testId="action-save-version"
-      />
-      <ActionButton
-        text={t('inspector.actions.versionHistory')}
-        badge={String(revisions.length)}
-        onClick={() => { setVersionModalOpen(true); }}
-        testId="action-version-history"
-      />
-      <div className="my-1.5 h-px bg-rule" />
-      <ComingSoon hint={t('inspector.expand')} side="left" className="block">
+        <div className="my-1.5 h-px bg-rule" />
         <ActionItem text={t('inspector.actions.trash')} />
       </ComingSoon>
     </div>
@@ -263,29 +257,6 @@ const ActionItem = ({ text, kbd, badge }: ActionItemProps) => (
     )}
     {kbd && <span className="font-mono text-[10px] text-ink-4">{kbd}</span>}
   </div>
-);
-
-interface ActionButtonProps {
-  text: string;
-  badge?: string;
-  onClick: () => void;
-  testId: string;
-}
-
-const ActionButton = ({ text, badge, onClick, testId }: ActionButtonProps) => (
-  <button
-    type="button"
-    data-testid={testId}
-    onClick={onClick}
-    className="flex w-full items-center gap-2 px-4 py-1.5 text-left text-[13px] text-ink-2 hover:bg-paper hover:text-ink"
-  >
-    <span className="flex-1">{text}</span>
-    {badge && (
-      <Eyebrow asChild size={9} tone="ink3">
-        <span>{badge}</span>
-      </Eyebrow>
-    )}
-  </button>
 );
 
 const RevisionRowActions = ({ revision }: { revision: Revision }) => {

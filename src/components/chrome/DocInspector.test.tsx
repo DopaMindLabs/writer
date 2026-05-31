@@ -157,12 +157,12 @@ describe('DocInspector', () => {
       });
     });
 
-    it('opens the save-version dialog from the actions pane', async () => {
+    it('opens the save-version dialog from the history pane', async () => {
       act(() => {
-        useUI.getState().setInspectorSection('actions');
+        useUI.getState().setInspectorSection('history');
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
-      await userEvent.click(screen.getByTestId('action-save-version'));
+      await userEvent.click(screen.getByTestId('history-save-version'));
       expect(useUI.getState().saveVersionOpen).toBe(true);
     });
 
@@ -185,13 +185,15 @@ describe('DocInspector', () => {
       expect(pane).toHaveTextContent(/trash/i);
     });
 
-    it('should open the version modal from the actions pane', async () => {
+    it('should not show version actions in the actions pane', () => {
       act(() => {
         useUI.getState().setInspectorSection('actions');
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
-      await userEvent.click(screen.getByTestId('action-version-history'));
-      expect(useUI.getState().versionModalOpen).toBe(true);
+      expect(screen.queryByTestId('action-save-version')).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('action-version-history'),
+      ).not.toBeInTheDocument();
     });
   });
 

@@ -45,11 +45,11 @@ test('captures a baseline version and lists it in the history pane', async ({
   await expect(pane.getByText(/NOW/)).toBeVisible();
 });
 
-test('saves a manual version from the actions pane', async ({ page }) => {
+test('saves a manual version from the history pane', async ({ page }) => {
   await gotoFirstDoc(page);
 
-  await openInspectorSection(page, 'actions');
-  await page.getByTestId('action-save-version').click();
+  await openInspectorSection(page, 'history');
+  await page.getByTestId('history-save-version').click();
 
   // A styled in-app dialog collects the optional label (no native prompt).
   const dialog = page.getByTestId('save-version-dialog');
@@ -58,7 +58,6 @@ test('saves a manual version from the actions pane', async ({ page }) => {
   await page.getByTestId('save-version-submit').click();
   await expect(dialog).toBeHidden();
 
-  await openInspectorSection(page, 'history');
   const pane = page.getByTestId('doc-inspector-pane-history');
   await expect(pane.getByText('milestone draft')).toBeVisible();
 });

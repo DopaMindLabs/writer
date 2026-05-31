@@ -171,9 +171,6 @@
       "exportKbd": "⌘E",
       "print": "Print…",
       "wordCount": "Word count statistics",
-      "versionHistory": "Version history",
-      "saveVersion": "Save version…",
-      "restore": "Restore earlier version…",
       "trash": "Move to Trash"
     }
   },
