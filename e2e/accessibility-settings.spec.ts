@@ -48,17 +48,14 @@ test.describe('Accessibility settings panel', () => {
   }) => {
     await gotoAccessibilityTab(page);
 
-    await page.getByRole('button', { name: 'Large' }).click();
-    await expect(page.locator('html')).toHaveAttribute(
-      'data-text-scale',
-      'lg',
-    );
+    // Text size is a ChipGroup (buttons); "Large" must be exact so it doesn't
+    // also match "Extra large".
+    await page.getByRole('button', { name: 'Large', exact: true }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-text-scale', 'lg');
 
-    await page.getByText('Reduced', { exact: true }).click();
-    await expect(page.locator('html')).toHaveAttribute(
-      'data-motion',
-      'reduced',
-    );
+    // Motion is a RadioRow (radio inputs with labels).
+    await page.getByLabel('Reduced').check();
+    await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
 
     await page.getByRole('switch', { name: 'Always underline links' }).click();
     await expect(page.locator('html')).toHaveAttribute(
@@ -69,10 +66,7 @@ test.describe('Accessibility settings panel', () => {
     await page
       .getByRole('switch', { name: 'Enhanced focus indicator' })
       .click();
-    await expect(page.locator('html')).toHaveAttribute(
-      'data-focus',
-      'enhanced',
-    );
+    await expect(page.locator('html')).toHaveAttribute('data-focus', 'enhanced');
 
     const raw = await page.evaluate(() => localStorage.getItem('lorem-a11y'));
     expect(raw).toContain('"textScale":"lg"');
@@ -82,17 +76,11 @@ test.describe('Accessibility settings panel', () => {
   test('a preference survives a reload', async ({ page }) => {
     await gotoAccessibilityTab(page);
     await page.getByRole('button', { name: 'Extra large' }).click();
-    await expect(page.locator('html')).toHaveAttribute(
-      'data-text-scale',
-      'xl',
-    );
+    await expect(page.locator('html')).toHaveAttribute('data-text-scale', 'xl');
     await page.reload();
     await page.waitForFunction(
       () => !document.body.innerText.includes('Booting…'),
     );
-    await expect(page.locator('html')).toHaveAttribute(
-      'data-text-scale',
-      'xl',
-    );
+    await expect(page.locator('html')).toHaveAttribute('data-text-scale', 'xl');
   });
 });
