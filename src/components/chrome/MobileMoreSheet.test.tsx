@@ -41,6 +41,9 @@ describe('MobileMoreSheet', () => {
       'href',
       '/about',
     );
+    expect(
+      screen.getByRole('link', { name: /help & shortcuts/i }),
+    ).toHaveAttribute('href', '/help');
   });
 
   it('falls back to ComingSoon mode chips when there is no docId (read/split disabled)', () => {
