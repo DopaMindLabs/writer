@@ -44,7 +44,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
       </div>
     </header>
     <form
-      class="flex flex-1 flex-col outline-none"
+      class="flex flex-1 flex-col"
       id="main-content"
       tabindex="-1"
     >

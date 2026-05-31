@@ -38,7 +38,7 @@ export const HomeScreen = () => {
       <div
         id="main-content"
         tabIndex={-1}
-        className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 py-10 outline-none md:px-12 md:py-16"
+        className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 py-10 md:px-12 md:py-16"
       >
         <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
           {t('home.subtitle')}

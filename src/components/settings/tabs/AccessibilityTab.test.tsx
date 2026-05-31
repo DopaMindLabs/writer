@@ -60,4 +60,24 @@ describe('AccessibilityTab', () => {
     const reduced = screen.getByLabelText('Reduced') as HTMLInputElement;
     expect(reduced.checked).toBe(true);
   });
+
+  it('reset restores preferences to their defaults without touching the theme', () => {
+    useUI.setState({ theme: 'dark' });
+    useA11y.setState({
+      motion: 'reduced',
+      textScale: 'xl',
+      lineSpacing: 'loose',
+      linkUnderline: 'always',
+      focusRing: 'enhanced',
+    });
+    renderWithProviders(<AccessibilityTab />);
+    fireEvent.click(screen.getByTestId('a11y-reset'));
+    expect(useA11y.getState().motion).toBe('auto');
+    expect(useA11y.getState().textScale).toBe('base');
+    expect(useA11y.getState().lineSpacing).toBe('normal');
+    expect(useA11y.getState().linkUnderline).toBe('auto');
+    expect(useA11y.getState().focusRing).toBe('standard');
+    // The theme preference is intentionally left untouched.
+    expect(useUI.getState().theme).toBe('dark');
+  });
 });

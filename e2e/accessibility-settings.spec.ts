@@ -84,4 +84,24 @@ test.describe('Accessibility settings panel', () => {
     );
     await expect(page.locator('html')).toHaveAttribute('data-text-scale', 'xl');
   });
+
+  test('reset restores preferences to their defaults', async ({ page }) => {
+    await gotoAccessibilityTab(page);
+
+    await page.getByRole('button', { name: 'Large', exact: true }).click();
+    await page
+      .getByRole('switch', { name: 'Enhanced focus indicator' })
+      .click();
+    await expect(page.locator('html')).toHaveAttribute('data-text-scale', 'lg');
+    await expect(page.locator('html')).toHaveAttribute('data-focus', 'enhanced');
+
+    await page.getByTestId('a11y-reset').click();
+
+    // Default-valued preferences remove their attribute entirely.
+    await expect(page.locator('html')).not.toHaveAttribute(
+      'data-text-scale',
+      /.*/,
+    );
+    await expect(page.locator('html')).not.toHaveAttribute('data-focus', /.*/);
+  });
 });

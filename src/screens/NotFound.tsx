@@ -13,7 +13,7 @@ export const NotFoundScreen = () => {
     <div
       id="main-content"
       tabIndex={-1}
-      className="flex h-full items-center justify-center text-ink outline-none"
+      className="flex h-full items-center justify-center text-ink"
     >
       <div className="text-center">
         <TypographyLabel variant="xs">{t('notFound.code')}</TypographyLabel>

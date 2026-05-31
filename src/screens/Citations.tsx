@@ -43,7 +43,7 @@ export const CitationsScreen = () => {
         <main
           id="main-content"
           tabIndex={-1}
-          className="flex flex-1 flex-col overflow-hidden bg-paper outline-none"
+          className="flex flex-1 flex-col overflow-hidden bg-paper"
         >
           <CitationsPane
             spaceId={spaceId}

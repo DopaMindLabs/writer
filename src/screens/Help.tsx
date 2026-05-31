@@ -93,7 +93,7 @@ export const HelpScreen = () => {
         <main
           id="main-content"
           tabIndex={-1}
-          className="min-w-0 max-w-2xl flex-1 outline-none"
+          className="min-w-0 max-w-2xl flex-1"
         >
           {renderMain()}
         </main>

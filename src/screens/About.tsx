@@ -20,7 +20,7 @@ export const AboutScreen = () => {
       <div
         id="main-content"
         tabIndex={-1}
-        className="mx-auto flex w-full max-w-2xl flex-col px-5 pt-10 pb-16 outline-none md:px-12 md:pt-16 md:pb-24"
+        className="mx-auto flex w-full max-w-2xl flex-col px-5 pt-10 pb-16 md:px-12 md:pt-16 md:pb-24"
       >
         <TypographyH1>{t('about.greeting')}</TypographyH1>
         <div className="mt-12 space-y-6">

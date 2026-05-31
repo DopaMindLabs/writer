@@ -81,7 +81,7 @@ export const SettingsShell = ({
         <main
           id="main-content"
           tabIndex={-1}
-          className="flex-1 overflow-auto bg-paper outline-none"
+          className="flex-1 overflow-auto bg-paper"
         >
           <div className="max-w-[880px] px-4 pb-20 pt-6 md:px-12 md:pt-9">
             {children}

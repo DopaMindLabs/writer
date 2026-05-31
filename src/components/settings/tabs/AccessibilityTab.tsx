@@ -4,6 +4,7 @@ import { SettingRow } from '@/components/settings/SettingRow';
 import { RadioRow, type RadioOption } from '@/components/ui/RadioRow';
 import { ChipGroup } from '@/components/ui/ChipGroup';
 import { PillToggle } from '@/components/ui/PillToggle';
+import { Button } from '@/components/ui/Button';
 import { useUI, type Theme } from '@/store/ui';
 import { useA11y } from '@/store/a11y';
 import {
@@ -168,6 +169,26 @@ const FocusRow = () => {
   );
 };
 
+const ResetRow = () => {
+  const { t } = useTranslation('screens');
+  const reset = useA11y((s) => s.reset);
+  return (
+    <SettingRow
+      label={t('settings.accessibility.reset.label')}
+      hint={t('settings.accessibility.reset.hint')}
+    >
+      <Button
+        kind="secondary"
+        size="sm"
+        onClick={() => { reset(); }}
+        data-testid="a11y-reset"
+      >
+        {t('settings.accessibility.reset.action')}
+      </Button>
+    </SettingRow>
+  );
+};
+
 export const AccessibilityTab = () => (
   <section>
     <TabHeader
@@ -180,5 +201,6 @@ export const AccessibilityTab = () => (
     <LineSpacingRow />
     <LinkUnderlineRow />
     <FocusRow />
+    <ResetRow />
   </section>
 );
