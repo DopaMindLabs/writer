@@ -9,6 +9,7 @@ import {
   TypographyP,
 } from '@/components/ui/typography';
 import { ThemeProvider } from '@/theme/ThemeProvider';
+import { A11yPreferenceProvider } from '@/theme/A11yPreferenceProvider';
 import { SyncScheduler } from '@/lib/sync/SyncScheduler';
 import { resetAndReseed } from '@/db/seed';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
@@ -67,7 +68,11 @@ const router = createHashRouter([
   },
 ]);
 
-export const App = () => {
+/**
+ * Run the one-time boot sequence (optional `?reseed=1` reset) and expose the
+ * ready/error state. Extracted from <App /> so the component stays small.
+ */
+const useAppBoot = (): { ready: boolean; error: Error | null } => {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -92,6 +97,12 @@ export const App = () => {
       cancelled = true;
     };
   }, []);
+
+  return { ready, error };
+};
+
+export const App = () => {
+  const { ready, error } = useAppBoot();
 
   if (error) {
     return (
@@ -123,10 +134,12 @@ export const App = () => {
 
   return (
     <ThemeProvider>
-      <TooltipProvider delayDuration={300}>
-        <SyncScheduler />
-        <RouterProvider router={router} />
-      </TooltipProvider>
+      <A11yPreferenceProvider>
+        <TooltipProvider delayDuration={300}>
+          <SyncScheduler />
+          <RouterProvider router={router} />
+        </TooltipProvider>
+      </A11yPreferenceProvider>
     </ThemeProvider>
   );
 };
