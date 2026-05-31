@@ -63,6 +63,20 @@ export interface Note {
   createdAt: number;
 }
 
+// An image attached to a brain-dump note. The binary payload is stored as a
+// Blob directly in IndexedDB (mirrors Backup.payload), never base64'd into the
+// note row. Attachments are space-scoped for efficient export queries.
+export interface NoteAttachment {
+  id: string;
+  noteId: string;
+  spaceId: string;
+  name: string;
+  mime: string;
+  size: number;
+  blob: Blob;
+  createdAt: number;
+}
+
 export interface Annotation {
   id: string;
   docId: string;

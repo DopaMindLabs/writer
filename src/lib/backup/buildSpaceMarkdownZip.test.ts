@@ -493,6 +493,7 @@ describe('buildSpaceMarkdownZipFor', () => {
       sections: [],
       docs: [{ ...sampleDoc, id: 'known', name: 'Known Doc' }],
       notes: [],
+      attachments: [],
       annotations: [
         {
           id: 'a-orphan',
@@ -513,6 +514,62 @@ describe('buildSpaceMarkdownZipFor', () => {
     const md = await zip.file('annotations.md')!.async('string');
     expect(md).toContain('## ghost-doc');
     expect(md).toContain('**side** `0–3` — eve');
+  });
+
+  it('bundles note image attachments and references them in notes.md', async () => {
+    // Use a hand-crafted snapshot so real Blobs reach JSZip (fake-indexeddb
+    // does not preserve Blob instances through a round-trip).
+    const snapshot: SpaceSnapshot = {
+      space: sampleSpace,
+      sections: [],
+      docs: [],
+      notes: [{ ...sampleNote, id: 'n1', title: 'Mood board' }],
+      attachments: [
+        {
+          id: 'att1',
+          noteId: 'n1',
+          spaceId: sampleSpace.id,
+          name: 'sketch.png',
+          mime: 'image/png',
+          size: 3,
+          blob: new Blob(['one'], { type: 'image/png' }),
+          createdAt: FIXED_TIME,
+        },
+        {
+          id: 'att2',
+          noteId: 'n1',
+          spaceId: sampleSpace.id,
+          name: 'sketch.png',
+          mime: 'image/png',
+          size: 3,
+          blob: new Blob(['two'], { type: 'image/png' }),
+          createdAt: FIXED_TIME + 1,
+        },
+      ],
+      annotations: [],
+      citations: [],
+      connections: [],
+      palettes: [],
+    };
+
+    const blob = await buildSpaceMarkdownZip(snapshot, WHEN);
+    const zip = await loadZip(blob);
+    const assetPaths = Object.values(zip.files)
+      .filter((f) => !f.dir && f.name.startsWith('assets/notes/n1/'))
+      .map((f) => f.name);
+
+    // Two files written, with colliding names de-duplicated.
+    expect(assetPaths).toHaveLength(2);
+    expect(assetPaths).toContain('assets/notes/n1/sketch.png');
+    expect(assetPaths).toContain('assets/notes/n1/sketch-2.png');
+
+    const notesMd = await zip.file('notes.md')!.async('string');
+    expect(notesMd).toContain('![sketch.png](assets/notes/n1/sketch.png)');
+    expect(notesMd).toContain('![sketch.png](assets/notes/n1/sketch-2.png)');
+
+    // The blob content is preserved.
+    const stored = await zip.file('assets/notes/n1/sketch.png')!.async('string');
+    expect(stored).toBe('one');
   });
 
   it('renders untitled notes whose body collapses to empty', async () => {

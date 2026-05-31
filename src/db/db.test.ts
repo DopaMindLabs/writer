@@ -86,4 +86,49 @@ describe('LoremDB migrations', () => {
     expect(note?.state).toBe('user');
     await upgraded.close();
   });
+
+  it('version(7) adds the noteAttachments table without disturbing existing data', async () => {
+    dbName = `lipsum-migration-${crypto.randomUUID()}`;
+    const v6 = new Dexie(dbName);
+    v6.version(6).stores({
+      spaces: 'id, createdAt, updatedAt',
+      notes: 'id, spaceId, kind, createdAt',
+      connections:
+        'id, spaceId, fromNoteId, toNoteId, [spaceId+fromNoteId], [spaceId+toNoteId]',
+      meta: 'key',
+    });
+    await v6.open();
+    await v6.table('notes').add({
+      id: 'n-keep',
+      spaceId: 's1',
+      l: 0,
+      t: 0,
+      w: 100,
+      h: 60,
+      kind: 'note',
+      state: 'user',
+      body: 'keep me',
+      createdAt: 0,
+    });
+    await v6.close();
+
+    const upgraded = new LoremDB(dbName);
+    await upgraded.open();
+    expect((await upgraded.notes.get('n-keep'))?.body).toBe('keep me');
+    // The new table exists and is writable.
+    await upgraded.noteAttachments.add({
+      id: 'att1',
+      noteId: 'n-keep',
+      spaceId: 's1',
+      name: 'a.png',
+      mime: 'image/png',
+      size: 1,
+      blob: new Blob(['x']),
+      createdAt: 1,
+    });
+    expect(
+      await upgraded.noteAttachments.where('noteId').equals('n-keep').count(),
+    ).toBe(1);
+    await upgraded.close();
+  });
 });

@@ -16,6 +16,8 @@ export {
   HelpCircle,
   Highlighter,
   History,
+  Image,
+  ImagePlus,
   Info,
   Keyboard,
   Lightbulb,

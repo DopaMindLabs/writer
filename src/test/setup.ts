@@ -57,6 +57,23 @@ if (typeof File !== 'undefined' && !('text' in File.prototype)) {
   };
 }
 
+// jsdom doesn't implement URL.createObjectURL / revokeObjectURL. useObjectUrl
+// (image attachment previews) relies on them, so stub them with a counter-based
+// fake URL and a no-op revoke.
+if (typeof URL !== 'undefined') {
+  const u = URL as unknown as {
+    createObjectURL?: (obj: Blob) => string;
+    revokeObjectURL?: (url: string) => void;
+  };
+  if (!u.createObjectURL) {
+    let counter = 0;
+    u.createObjectURL = () => `blob:mock/${String(++counter)}`;
+  }
+  if (!u.revokeObjectURL) {
+    u.revokeObjectURL = () => {};
+  }
+}
+
 if (typeof window !== 'undefined') {
   // jsdom doesn't implement matchMedia. Install a default stub so code paths
   // that read it (and tests that vi.spyOn it) have a function to operate on.
