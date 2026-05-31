@@ -1,13 +1,13 @@
 import type { Preview, Decorator, Loader } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
-import { TooltipProvider } from '../src/components/ui/tooltip';
-import { db } from '../src/db/db';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { db } from '@/db/db';
 import {
   seedBasicSpace,
   seedMultipleSpaces,
   seedBrainSpaceCanvas,
-} from '../src/test/fixtures';
-import '../src/index.css';
+} from '@/test/fixtures';
+import '@/index.css';
 
 const themes = ['light', 'dark', 'hc-light', 'hc-dark'] as const;
 type ThemeId = (typeof themes)[number];
