@@ -45,6 +45,7 @@
       "general": "General",
       "appearance": "Appearance",
       "editor": "Editor",
+      "accessibility": "Accessibility",
       "typography": "Typography",
       "shortcuts": "Keyboard",
       "templates": "Templates",
@@ -77,6 +78,48 @@
       "templateDefaultsLabel": "Per-template defaults",
       "templateDefaultsHint": "Different formatting subsets per template.",
       "templateDefaultsTooltip": "Let each template (fiction, journal, technical…) choose its own formatting subset."
+    },
+    "accessibility": {
+      "title": "Accessibility",
+      "subtitle": "Tune the interface for comfort and assistive technology. Every option starts at the current experience — nothing changes until you choose it.",
+      "theme": {
+        "label": "Theme & contrast",
+        "hint": "High-contrast themes meet the WCAG AAA contrast standard.",
+        "light": "Light",
+        "dark": "Dark",
+        "hcLight": "High contrast (light)",
+        "hcDark": "High contrast (dark)"
+      },
+      "motion": {
+        "label": "Motion",
+        "hint": "Reduce or disable interface animations.",
+        "auto": "Match system",
+        "reduced": "Reduced",
+        "full": "Full"
+      },
+      "textSize": {
+        "label": "Text size",
+        "hint": "Scale the reading and writing surface.",
+        "sm": "Small",
+        "base": "Default",
+        "lg": "Large",
+        "xl": "Extra large"
+      },
+      "lineSpacing": {
+        "label": "Line spacing",
+        "hint": "Add breathing room between lines of prose.",
+        "normal": "Normal",
+        "relaxed": "Relaxed",
+        "loose": "Loose"
+      },
+      "linkUnderline": {
+        "label": "Always underline links",
+        "hint": "Show underlines so links don't rely on colour alone."
+      },
+      "focus": {
+        "label": "Enhanced focus indicator",
+        "hint": "Use a thicker, higher-contrast outline on focus."
+      }
     },
     "general": {
       "title": "General",
