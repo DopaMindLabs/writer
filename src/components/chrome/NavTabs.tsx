@@ -1,19 +1,21 @@
 import { cn } from '@/lib/utils';
 
-export interface SettingsTabDef {
+export interface NavTabDef {
   id: string;
   label: string;
 }
 
-export interface SettingsTabGroup {
+export interface NavTabGroup {
   label: string;
-  tabs: SettingsTabDef[];
+  tabs: NavTabDef[];
 }
 
-interface SettingsTabsProps {
-  groups: SettingsTabGroup[];
+interface NavTabsProps {
+  groups: NavTabGroup[];
   active: string;
   onSelect: (id: string) => void;
+  /** Accessible name for the nav landmark. Defaults to the Settings wording. */
+  label?: string;
 }
 
 const TabButton = ({
@@ -22,7 +24,7 @@ const TabButton = ({
   onSelect,
   testId,
 }: {
-  tab: SettingsTabDef;
+  tab: NavTabDef;
   active: boolean;
   onSelect: (id: string) => void;
   testId?: string;
@@ -46,11 +48,11 @@ const TabButton = ({
   );
 };
 
-export const SettingsTabs = ({ groups, active, onSelect }: SettingsTabsProps) => {
+export const NavTabs = ({ groups, active, onSelect, label = 'Settings sections' }: NavTabsProps) => {
   return (
     <nav
       data-testid="settings-tabs"
-      aria-label="Settings sections"
+      aria-label={label}
       className="contents"
     >
       {/* Mobile: a single horizontal scroll strip, groups flattened */}
@@ -71,7 +73,7 @@ export const SettingsTabs = ({ groups, active, onSelect }: SettingsTabsProps) =>
           )),
         )}
       </ul>
-      {/* Desktop: grouped vertical sections (chrome owned by SettingsShell) */}
+      {/* Desktop: grouped vertical sections (chrome owned by NavShell) */}
       <div
         data-testid="settings-tabs-desktop"
         className="hidden flex-1 overflow-auto pb-3 pt-1.5 md:-ml-px md:block"

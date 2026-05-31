@@ -14,19 +14,19 @@ import { A11yPreferenceProvider } from '@/theme/A11yPreferenceProvider';
 import { SyncScheduler } from '@/lib/sync/SyncScheduler';
 import { resetAndReseed } from '@/db/seed';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
-import { HomeScreen } from '@/screens/Home';
-import { AboutScreen } from '@/screens/About';
-import { SettingsScreen } from '@/screens/Settings';
-import { SpaceSettingsScreen } from '@/screens/SpaceSettings';
-import { WriteScreen } from '@/screens/Write';
-import { FocusScreen } from '@/screens/Focus';
-import { ReadScreen } from '@/screens/Read';
-import { SplitScreen } from '@/screens/Split';
-import { BrainSpaceScreen } from '@/screens/BrainSpace';
-import { CitationsScreen } from '@/screens/Citations';
-import { TemplatesScreen } from '@/screens/Templates';
-import { HelpScreen } from '@/screens/Help';
-import { NotFoundScreen } from '@/screens/NotFound';
+import { HomeScreen } from '@/screens/global/Home';
+import { AboutScreen } from '@/screens/global/About';
+import { SettingsScreen } from '@/screens/global/Settings';
+import { SpaceSettingsScreen } from '@/screens/space/SpaceSettings';
+import { WriteScreen } from '@/screens/space/Write';
+import { FocusScreen } from '@/screens/space/Focus';
+import { ReadScreen } from '@/screens/space/Read';
+import { SplitScreen } from '@/screens/space/Split';
+import { BrainSpaceScreen } from '@/screens/space/BrainSpace';
+import { CitationsScreen } from '@/screens/space/Citations';
+import { TemplatesScreen } from '@/screens/global/Templates';
+import { HelpScreen } from '@/screens/global/Help';
+import { NotFoundScreen } from '@/screens/global/NotFound';
 
 /**
  * Pathless layout route: mounts app-wide concerns once (global keyboard

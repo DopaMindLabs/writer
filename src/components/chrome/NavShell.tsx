@@ -1,27 +1,29 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { cn } from '@/lib/utils';
 import type { Space } from '@/db/schema';
-import {
-  SettingsTabs,
-  type SettingsTabGroup,
-} from './SettingsTabs';
+import { SpaceRail } from './SpaceRail';
+import { NavTabs, type NavTabGroup } from './NavTabs';
 
-type SettingsShellVariant = 'global' | 'space';
+type NavShellVariant = 'global' | 'space';
 
-interface SettingsNavHeaderProps {
-  variant: SettingsShellVariant;
+interface NavShellHeaderProps {
+  variant: NavShellVariant;
   space: Space | null;
+  subtitleOverride?: string;
 }
 
-const SettingsNavHeader = ({ variant, space }: SettingsNavHeaderProps) => {
+const NavShellHeader = ({
+  variant,
+  space,
+  subtitleOverride,
+}: NavShellHeaderProps) => {
   const { t } = useTranslation('screens');
   const isSpace = variant === 'space';
   const title = isSpace ? space?.name ?? '…' : 'LIpsum Writer';
-  const subtitle = isSpace
-    ? t('settings.space.shellSubtitle')
-    : t('settings.shellSubtitle');
+  const subtitle =
+    subtitleOverride ??
+    (isSpace ? t('settings.space.shellSubtitle') : t('settings.shellSubtitle'));
   const badge = isSpace ? space?.tag ?? '·' : 'L';
 
   return (
@@ -49,17 +51,26 @@ const SettingsNavHeader = ({ variant, space }: SettingsNavHeaderProps) => {
   );
 };
 
-interface SettingsShellProps {
-  variant: SettingsShellVariant;
-  groups: SettingsTabGroup[];
+interface NavShellProps {
+  variant: NavShellVariant;
+  groups: NavTabGroup[];
   active: string;
   onSelect: (id: string) => void;
   children: ReactNode;
   space?: Space | null;
   activeSpaceId?: string | null;
+  /** Overrides the variant-derived nav header subtitle (e.g. for the Help shell). */
+  subtitle?: string;
+  /** Accessible name for the sub-nav landmark (defaults to the Settings wording). */
+  navLabel?: string;
 }
 
-export const SettingsShell = ({
+/**
+ * Branded sidebar-nav + detail-pane shell shared by the Settings, Space settings
+ * and Help surfaces: a left rail (SpaceRail + grouped {@link NavTabs}) beside a
+ * scrollable content pane.
+ */
+export const NavShell = ({
   variant,
   groups,
   active,
@@ -67,7 +78,9 @@ export const SettingsShell = ({
   children,
   space = null,
   activeSpaceId = null,
-}: SettingsShellProps) => {
+  subtitle,
+  navLabel,
+}: NavShellProps) => {
   return (
     <div className="flex h-full w-full bg-paper text-ink">
       <div className="hidden md:flex">
@@ -75,8 +88,17 @@ export const SettingsShell = ({
       </div>
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         <div className="flex min-h-0 shrink-0 flex-col border-r border-rule bg-paper-2 md:w-[240px]">
-          <SettingsNavHeader variant={variant} space={space} />
-          <SettingsTabs groups={groups} active={active} onSelect={onSelect} />
+          <NavShellHeader
+            variant={variant}
+            space={space}
+            subtitleOverride={subtitle}
+          />
+          <NavTabs
+            groups={groups}
+            active={active}
+            onSelect={onSelect}
+            label={navLabel}
+          />
         </div>
         <main
           id="main-content"

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { SettingsTabs, type SettingsTabGroup } from './SettingsTabs';
+import { NavTabs, type NavTabGroup } from './NavTabs';
 
-const groups: SettingsTabGroup[] = [
+const groups: NavTabGroup[] = [
   {
     label: 'Preferences',
     tabs: [
@@ -21,10 +21,10 @@ const groups: SettingsTabGroup[] = [
 ];
 
 const meta = {
-  title: 'Settings/SettingsTabs',
-  component: SettingsTabs,
+  title: 'Chrome/NavTabs',
+  component: NavTabs,
   parameters: { layout: 'padded' },
-} satisfies Meta<typeof SettingsTabs>;
+} satisfies Meta<typeof NavTabs>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -35,7 +35,7 @@ export const Default: Story = {
       const [active, setActive] = useState('general');
       return (
         <div className="flex w-[240px] flex-col border-r border-rule bg-paper-2">
-          <SettingsTabs groups={groups} active={active} onSelect={setActive} />
+          <NavTabs groups={groups} active={active} onSelect={setActive} />
         </div>
       );
     };
