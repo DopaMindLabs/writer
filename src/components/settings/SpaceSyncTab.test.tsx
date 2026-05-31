@@ -23,7 +23,6 @@ vi.mock('@/hooks/useSync', () => ({
     granted: true,
     lapsed: false,
     refresh: () => {
-      // no-op
     },
   }),
 }));
@@ -68,7 +67,6 @@ describe('SpaceSyncTab', () => {
       lastSyncedAt: null,
     });
     renderWithProviders(<SpaceSyncTab space={space} />);
-    // Inherit chip labelled from the default interval.
     expect(
       screen.getByRole('button', { name: /default \(10 min\)/i }),
     ).toBeInTheDocument();
@@ -118,5 +116,17 @@ describe('SpaceSyncTab', () => {
     renderWithProviders(<SpaceSyncTab space={space} />);
     fireEvent.click(screen.getByRole('button', { name: /sync this space/i }));
     expect(await screen.findByRole('alert')).toHaveTextContent(/disk full/i);
+  });
+
+  describe('snapshot', () => {
+    it('should match the snapshot of the connected per-space sync tab', () => {
+      useSyncFolder.mockReturnValue({
+        supported: true,
+        folderName: 'Drafts',
+        lastSyncedAt: null,
+      });
+      const { container } = renderWithProviders(<SpaceSyncTab space={space} />);
+      expect(container).toMatchSnapshot();
+    });
   });
 });

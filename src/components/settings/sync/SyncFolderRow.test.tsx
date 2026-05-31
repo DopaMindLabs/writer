@@ -33,4 +33,30 @@ describe('SyncFolderRow', () => {
     );
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across connect, connect-only, and manage modes', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <SyncFolderRow
+            folderName={null}
+            hint="Choose a folder to sync to."
+            onChoose={() => undefined}
+          />
+          <SyncFolderRow
+            folderName="Drafts"
+            hint="Connected."
+            onChoose={() => undefined}
+          />
+          <SyncFolderRow
+            folderName="Drafts"
+            hint="Connected."
+            onChoose={() => undefined}
+            onDisconnect={() => undefined}
+          />
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

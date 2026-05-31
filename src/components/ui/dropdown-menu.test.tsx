@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from './dropdown-menu';
 
-const Harness = ({ onSelect = () => {} }: { onSelect?: () => void }) => {
+const Harness = ({ onSelect = vi.fn() }: { onSelect?: () => void }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>open</DropdownMenuTrigger>
@@ -47,5 +47,14 @@ describe('DropdownMenu primitives', () => {
     await userEvent.click(screen.getByRole('button', { name: 'open' }));
     const del = await screen.findByRole('menuitem', { name: 'Delete' });
     expect(del).toHaveAttribute('data-disabled');
+  });
+
+  describe('snapshot', () => {
+    it('should match the snapshot of the open menu with label, separator, and items', async () => {
+      const { baseElement } = renderWithProviders(<Harness />);
+      await userEvent.click(screen.getByRole('button', { name: 'open' }));
+      expect(await screen.findByText('Actions')).toBeInTheDocument();
+      expect(baseElement).toMatchSnapshot();
+    });
   });
 });

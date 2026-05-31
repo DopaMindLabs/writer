@@ -1,0 +1,32 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DeleteConfirmField > snapshot > should match the snapshot for empty and filled states 1`] = `
+<div>
+  <div>
+    <label
+      class="text-ink-3 font-normal flex flex-col gap-2 font-mono text-[10px] uppercase tracking-wider"
+    >
+      Type "Novel" to confirm
+      <input
+        aria-label="Type "Novel" to confirm"
+        class="w-full border border-rule bg-paper px-3 py-2 text-[14px] text-ink outline-none focus:border-ink"
+        data-testid="confirm-empty"
+        type="text"
+        value=""
+      />
+    </label>
+    <label
+      class="text-ink-3 font-normal flex flex-col gap-2 font-mono text-[10px] uppercase tracking-wider"
+    >
+      Type "Novel" to confirm
+      <input
+        aria-label="Type "Novel" to confirm"
+        class="w-full border border-rule bg-paper px-3 py-2 text-[14px] text-ink outline-none focus:border-ink"
+        data-testid="confirm-filled"
+        type="text"
+        value="Novel"
+      />
+    </label>
+  </div>
+</div>
+`;

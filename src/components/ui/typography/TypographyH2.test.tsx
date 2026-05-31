@@ -27,4 +27,15 @@ describe('TypographyH2', () => {
     expect(ref.current).not.toBeNull();
     expect(ref.current?.tagName).toBe('H2');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot of the default variant', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <TypographyH2 variant="default">Default</TypographyH2>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

@@ -24,8 +24,6 @@ describe('ComingSoon', () => {
     await userEvent.hover(
       screen.getByText('Search').closest('[data-coming-soon]')!,
     );
-    // Radix renders the tooltip text twice (visible + visually-hidden sr copy);
-    // assert at least one match is present.
     const matches = await screen.findAllByText(/Coming soon — Find in doc/);
     expect(matches.length).toBeGreaterThan(0);
   });
@@ -44,5 +42,24 @@ describe('ComingSoon', () => {
       </ComingSoon>,
     );
     expect(screen.getByTestId('coming-soon-badge')).toBeInTheDocument();
+  });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across tooltip, badge, and overlay variants', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <ComingSoon hint="Find in doc">
+            <button type="button">Search</button>
+          </ComingSoon>
+          <ComingSoon hint="Export" showBadge>
+            <button type="button">Export</button>
+          </ComingSoon>
+          <ComingSoon hint="Soon" overlay>
+            <div>A future panel.</div>
+          </ComingSoon>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
   });
 });

@@ -18,7 +18,7 @@ import {
   toggleList,
   toggleQuote,
   type ActiveFormats,
-} from '../formatting';
+} from '@/editor/formatting';
 import { FloatingToolbar } from './FloatingToolbar';
 
 const TOOLBAR_HEIGHT = 36;

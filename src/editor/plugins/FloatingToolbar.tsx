@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
-import type { BlockType } from '../formatting';
+import type { BlockType } from '@/editor/formatting';
 
 export interface FloatingToolbarProps {
   block: BlockType;

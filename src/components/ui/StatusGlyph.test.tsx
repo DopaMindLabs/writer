@@ -31,4 +31,21 @@ describe('StatusGlyph', () => {
     );
     expect(screen.getByRole('alert')).toHaveTextContent('boom');
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot across kinds and mono states', () => {
+      const { container } = render(
+        <div>
+          <StatusGlyph kind="error">failed</StatusGlyph>
+          <StatusGlyph kind="warning">warning</StatusGlyph>
+          <StatusGlyph kind="success">saved</StatusGlyph>
+          <StatusGlyph kind="info">noticed</StatusGlyph>
+          <StatusGlyph kind="info" mono={false}>
+            sans label
+          </StatusGlyph>
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

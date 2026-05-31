@@ -1,7 +1,7 @@
 import { forwardRef, type HTMLAttributes } from 'react';
 import { cva, type VariantProps } from '@/components/libs/variants';
 import { cn } from '@/lib/utils';
-import { SlotPrimitive } from '../slot.primitives';
+import { SlotPrimitive } from '@/components/ui/slot.primitives';
 
 const typographyLabelVariants = cva('font-mono uppercase text-ink-3', {
   variants: {

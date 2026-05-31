@@ -17,4 +17,16 @@ describe('BackupsToolbar', () => {
       screen.getByTestId('space-settings-backups-snapshot'),
     ).toBeDisabled();
   });
+
+  describe('snapshot', () => {
+    it('should match the snapshot for idle and busy states', () => {
+      const { container } = renderWithProviders(
+        <div>
+          <BackupsToolbar busy={false} onSnapshot={() => undefined} />
+          <BackupsToolbar busy onSnapshot={() => undefined} />
+        </div>,
+      );
+      expect(container).toMatchSnapshot();
+    });
+  });
 });
