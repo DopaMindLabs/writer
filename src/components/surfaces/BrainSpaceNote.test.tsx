@@ -3,7 +3,7 @@ import { fireEvent, renderAtRoute, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 import { sampleDoc, sampleNote, sampleSpace } from '@/test/fixtures';
-import { NoteState, type Note } from '@/db/schema';
+import { NoteKind, NoteState, type Note } from '@/db/schema';
 import { BrainSpaceNote } from './BrainSpaceNote';
 
 const navigateSpy = vi.fn();
@@ -315,7 +315,7 @@ describe('BrainSpaceNote', () => {
       renderNote(linked);
       expect(
         screen.getByTestId(`brain-note-${linked.id}-doc-link`),
-      ).toHaveAttribute('aria-label', 'Open linked doc');
+      ).toHaveAttribute('aria-label', 'Open linked document');
     });
 
     it('should not trigger onPick when the doc-link icon is clicked', async () => {
@@ -655,6 +655,97 @@ describe('BrainSpaceNote', () => {
       await waitFor(async () => {
         expect(await db.noteAttachments.get('a1')).toBeUndefined();
       });
+    });
+  });
+
+  describe('full-size viewer', () => {
+    const seedAttachment = async (id: string, noteId = sampleNote.id) => {
+      await db.noteAttachments.put({
+        id,
+        noteId,
+        spaceId: sampleSpace.id,
+        name: `${id}.png`,
+        mime: 'image/png',
+        size: 4,
+        blob: new Blob(['x'], { type: 'image/png' }),
+        createdAt: Date.now(),
+      });
+    };
+
+    it('opens the lightbox when a thumbnail is clicked', async () => {
+      const user = userEvent.setup();
+      await seedAttachment('a1');
+      renderNote();
+      await waitFor(() => {
+        expect(
+          screen.getByTestId(`brain-note-${sampleNote.id}-image-a1-open`),
+        ).toBeInTheDocument();
+      });
+      expect(screen.queryByTestId('image-lightbox-image')).not.toBeInTheDocument();
+      await user.click(
+        screen.getByTestId(`brain-note-${sampleNote.id}-image-a1-open`),
+      );
+      expect(screen.getByTestId('image-lightbox-image')).toBeInTheDocument();
+    });
+  });
+
+  describe('image card', () => {
+    const imageNote: Note = {
+      ...sampleNote,
+      kind: NoteKind.Image,
+      body: '',
+    };
+
+    const seedAttachment = async (id: string) => {
+      await db.noteAttachments.put({
+        id,
+        noteId: imageNote.id,
+        spaceId: sampleSpace.id,
+        name: `${id}.png`,
+        mime: 'image/png',
+        size: 4,
+        blob: new Blob(['x'], { type: 'image/png' }),
+        createdAt: Date.now(),
+      });
+    };
+
+    it('shows a drop zone and no body editor when empty', () => {
+      renderNote(imageNote);
+      expect(
+        screen.getByTestId(`brain-note-${imageNote.id}-image-dropzone`),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId(`brain-note-${imageNote.id}-body`),
+      ).not.toBeInTheDocument();
+    });
+
+    it('uploads through the drop zone', async () => {
+      const user = userEvent.setup();
+      renderNote(imageNote);
+      const input = screen.getByTestId(
+        `brain-note-${imageNote.id}-image-dropzone-input`,
+      );
+      await user.upload(input, new File(['x'], 'shot.png', { type: 'image/png' }));
+      await waitFor(() => {
+        expect(
+          screen.getByTestId(`brain-note-${imageNote.id}-image-card`),
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('renders the picture large and opens it full size', async () => {
+      const user = userEvent.setup();
+      await seedAttachment('a1');
+      renderNote(imageNote);
+      await waitFor(() => {
+        expect(
+          screen.getByTestId(`brain-note-${imageNote.id}-image-primary`),
+        ).toBeInTheDocument();
+      });
+      await user.click(
+        screen.getByTestId(`brain-note-${imageNote.id}-image-primary`),
+      );
+      expect(screen.getByTestId('image-lightbox-image')).toBeInTheDocument();
     });
   });
 

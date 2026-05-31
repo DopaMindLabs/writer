@@ -90,12 +90,11 @@ describe('SplitScreen', () => {
       await waitFor(() => { expect(select.value).toBe('d3'); });
     });
 
-    it('should fall back to the first candidate when withParam is missing', async () => {
+    it('should default the right pane to Brain space when withParam is missing', async () => {
       renderAt('/s/s1/d/d1/split');
-      const select = (await screen.findByTestId(
-        'split-right-pane-select',
-      ));
-      await waitFor(() => { expect(select.value).toMatch(/d2|d3/); });
+      // The right pane defaults to Brain space (no other doc required), so the
+      // canvas renders rather than a sibling document.
+      expect(await screen.findByTestId('brain-canvas')).toBeInTheDocument();
     });
   });
 

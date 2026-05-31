@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
@@ -10,24 +11,38 @@ import {
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
-  ArrowUpRight,
   ExternalLink,
   Globe,
   ImagePlus,
+  Maximize2,
   Trash2,
+  X,
 } from '@/components/libs/icons';
 import { db } from '@/db/db';
 import { deleteNoteWithCascade } from '@/db/seed';
 import { useUI } from '@/store/ui';
-import { NoteState, type Note, type NoteAttachment } from '@/db/schema';
+import {
+  NoteLayout,
+  NoteState,
+  type Note,
+  type NoteAttachment,
+} from '@/db/schema';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
+import {
+  getNoteLayoutConfig,
+  resolveNoteLayout,
+  type NoteLayoutConfig,
+} from '@/data/note-types';
 import { IMAGE_ACCEPT_ATTR, MAX_NOTE_IMAGES } from '@/data/note-attachments';
 import { addNoteImages, deleteNoteAttachment } from '@/lib/note-attachments';
 import { useNoteAttachments } from '@/hooks/useNoteAttachments';
+import { useObjectUrl } from '@/hooks/useObjectUrl';
+import { assertNever } from '@/lib/invariant';
 import { routes } from '@/lib/routes';
 import { IconButton } from '@/components/ui/icon';
 import { FileInputTrigger } from '@/components/ui/FileInputTrigger';
 import { ImageThumb } from '@/components/ui/ImageThumb';
+import { ImageLightbox, type LightboxImage } from '@/components/ui/ImageLightbox';
 import { TextField } from '@/components/ui/TextField';
 import { TextArea } from '@/components/ui/TextArea';
 import { cn } from '@/lib/utils';
@@ -338,7 +353,8 @@ const NoteHeader = ({
     {note.linkedDocId && (
       <IconButton
         icon={ExternalLink}
-        label="Open linked doc"
+        label="Open linked document"
+        title="Open linked document"
         onPointerDown={(e) => { e.stopPropagation(); }}
         onClick={onDocLinkClick}
         data-no-drag
@@ -356,8 +372,9 @@ const NoteHeader = ({
     )}
     <span data-testid={`brain-note-${note.id}-day-chip`}>{dayChip}</span>
     <IconButton
-      icon={ArrowUpRight}
+      icon={Maximize2}
       label="Open details"
+      title="Open details panel"
       onPointerDown={(e) => { e.stopPropagation(); }}
       onClick={onOpenDetail}
       data-no-drag
@@ -497,9 +514,15 @@ interface NoteImageStripProps {
   note: Note;
   attachments: NoteAttachment[];
   onRemove: (id: string) => void;
+  onOpenImage: (index: number) => void;
 }
 
-const NoteImageStrip = ({ note, attachments, onRemove }: NoteImageStripProps) => {
+const NoteImageStrip = ({
+  note,
+  attachments,
+  onRemove,
+  onOpenImage,
+}: NoteImageStripProps) => {
   if (attachments.length === 0) return null;
   return (
     <div
@@ -508,17 +531,181 @@ const NoteImageStrip = ({ note, attachments, onRemove }: NoteImageStripProps) =>
       data-testid={`brain-note-${note.id}-images`}
       className="flex flex-wrap gap-1"
     >
-      {attachments.map((att) => (
+      {attachments.map((att, i) => (
         <ImageThumb
           key={att.id}
           blob={att.blob}
           name={att.name}
           size="sm"
+          onOpen={() => { onOpenImage(i); }}
+          openTestId={`brain-note-${note.id}-image-${att.id}-open`}
           onRemove={() => { onRemove(att.id); }}
           removeTestId={`brain-note-${note.id}-image-${att.id}-remove`}
           data-testid={`brain-note-${note.id}-image-${att.id}`}
         />
       ))}
+    </div>
+  );
+};
+
+interface ImageCardEmptyProps {
+  note: Note;
+  onAddImages: (files: File[]) => void;
+}
+
+// Explicit, always-visible drop zone (not a hover-revealed control) so the next
+// action on a fresh image card is unambiguous.
+const ImageCardEmpty = ({ note, onAddImages }: ImageCardEmptyProps) => (
+  <FileInputTrigger
+    accept={IMAGE_ACCEPT_ATTR}
+    multiple
+    onPick={onAddImages}
+    data-testid={`brain-note-${note.id}-image-dropzone-input`}
+  >
+    {(open) => (
+      // @lint-ignore native-button: full-card image drop zone (icon + label content); not a DS Button kind
+      <button
+        type="button"
+        onPointerDown={(e) => { e.stopPropagation(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          open();
+        }}
+        data-no-drag
+        data-testid={`brain-note-${note.id}-image-dropzone`}
+        className="flex flex-1 flex-col items-center justify-center gap-1.5 border border-dashed border-rule bg-paper-2 py-6 text-ink-4 hover:border-ink hover:text-ink-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+      >
+        <ImagePlus className="h-5 w-5" />
+        <span className="font-mono text-[10px] uppercase tracking-wider">
+          add a picture
+        </span>
+      </button>
+    )}
+  </FileInputTrigger>
+);
+
+interface ImageCardFilledProps {
+  note: Note;
+  attachments: NoteAttachment[];
+  canAddImage: boolean;
+  onAddImages: (files: File[]) => void;
+  onRemove: (id: string) => void;
+  onOpenImage: (index: number) => void;
+}
+
+const ImageCardPrimary = ({
+  note,
+  attachment,
+  onRemove,
+  onOpenImage,
+}: {
+  note: Note;
+  attachment: NoteAttachment;
+  onRemove: (id: string) => void;
+  onOpenImage: (index: number) => void;
+}) => {
+  const url = useObjectUrl(attachment.blob);
+  return (
+    <div className="group/primary relative flex min-h-0 flex-1 items-center justify-center bg-paper-2">
+      {url ? (
+        // @lint-ignore native-button: zoomable primary image trigger; not a DS Button kind
+        <button
+          type="button"
+          onClick={() => { onOpenImage(0); }}
+          aria-label={`View ${attachment.name}`}
+          data-testid={`brain-note-${note.id}-image-primary`}
+          className="flex h-full w-full cursor-zoom-in items-center justify-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+        >
+          <img
+            src={url}
+            alt={attachment.name}
+            className="max-h-[280px] w-full object-contain"
+          />
+        </button>
+      ) : null}
+      <IconButton
+        icon={X}
+        label={`Remove ${attachment.name}`}
+        buttonSize="sm"
+        iconSize="xs"
+        onClick={() => { onRemove(attachment.id); }}
+        data-testid={`brain-note-${note.id}-image-${attachment.id}-remove`}
+        className="absolute right-0 top-0 h-5 w-5 bg-paper/80 text-ink-3 opacity-0 hover:bg-paper hover:text-ink group-hover/primary:opacity-100 focus-visible:opacity-100"
+      />
+    </div>
+  );
+};
+
+const ImageCardExtras = ({
+  note,
+  extras,
+  canAddImage,
+  onAddImages,
+  onRemove,
+  onOpenImage,
+}: {
+  note: Note;
+  extras: NoteAttachment[];
+  canAddImage: boolean;
+  onAddImages: (files: File[]) => void;
+  onRemove: (id: string) => void;
+  onOpenImage: (index: number) => void;
+}) => {
+  if (extras.length === 0 && !canAddImage) return null;
+  return (
+    <div className="flex flex-wrap items-center gap-1">
+      {extras.map((att, i) => (
+        <ImageThumb
+          key={att.id}
+          blob={att.blob}
+          name={att.name}
+          size="sm"
+          onOpen={() => { onOpenImage(i + 1); }}
+          openTestId={`brain-note-${note.id}-image-${att.id}-open`}
+          onRemove={() => { onRemove(att.id); }}
+          removeTestId={`brain-note-${note.id}-image-${att.id}-remove`}
+          data-testid={`brain-note-${note.id}-image-${att.id}`}
+        />
+      ))}
+      {canAddImage && (
+        <NoteAddImageButton note={note} onAddImages={onAddImages} />
+      )}
+    </div>
+  );
+};
+
+const ImageCardFilled = ({
+  note,
+  attachments,
+  canAddImage,
+  onAddImages,
+  onRemove,
+  onOpenImage,
+}: ImageCardFilledProps) => {
+  const primary = attachments.at(0);
+  return (
+    <div
+      data-no-drag
+      onPointerDown={(e) => { e.stopPropagation(); }}
+      data-testid={`brain-note-${note.id}-image-card`}
+      className="flex flex-1 flex-col gap-1"
+    >
+      {primary && (
+        <ImageCardPrimary
+          note={note}
+          attachment={primary}
+          onRemove={onRemove}
+          onOpenImage={onOpenImage}
+        />
+      )}
+      <ImageCardExtras
+        note={note}
+        extras={attachments.slice(1)}
+        canAddImage={canAddImage}
+        onAddImages={onAddImages}
+        onRemove={onRemove}
+        onOpenImage={onOpenImage}
+      />
     </div>
   );
 };
@@ -759,19 +946,27 @@ const NoteShell = ({
   </div>
 );
 
-const NoteCardContent = ({
+interface NoteCardContentProps {
+  note: Note;
+  caps: NoteLayoutConfig;
+  isSeedPrompt: boolean;
+  editing: ReturnType<typeof useNoteEditing>;
+  attachments: NoteAttachment[];
+  canAddImage: boolean;
+  onAddImages: (files: File[]) => void;
+  onRemoveImage: (id: string) => void;
+  onOpenImage: (index: number) => void;
+}
+
+const TextCardContent = ({
   note,
+  caps,
   isSeedPrompt,
   editing,
   attachments,
   onRemoveImage,
-}: {
-  note: Note;
-  isSeedPrompt: boolean;
-  editing: ReturnType<typeof useNoteEditing>;
-  attachments: NoteAttachment[];
-  onRemoveImage: (id: string) => void;
-}) => (
+  onOpenImage,
+}: NoteCardContentProps) => (
   <>
     <NoteContent
       note={note}
@@ -785,8 +980,145 @@ const NoteCardContent = ({
       setDraftBody={editing.setDraftBody}
       commitBody={() => { void editing.commitBody(); }}
     />
-    <NoteImageStrip note={note} attachments={attachments} onRemove={onRemoveImage} />
+    {caps.allowsImages && (
+      <NoteImageStrip
+        note={note}
+        attachments={attachments}
+        onRemove={onRemoveImage}
+        onOpenImage={onOpenImage}
+      />
+    )}
   </>
+);
+
+const ImageCardContent = ({
+  note,
+  editing,
+  attachments,
+  canAddImage,
+  onAddImages,
+  onRemoveImage,
+  onOpenImage,
+}: NoteCardContentProps) => (
+  <>
+    {attachments.length === 0 ? (
+      <ImageCardEmpty note={note} onAddImages={onAddImages} />
+    ) : (
+      <ImageCardFilled
+        note={note}
+        attachments={attachments}
+        canAddImage={canAddImage}
+        onAddImages={onAddImages}
+        onRemove={onRemoveImage}
+        onOpenImage={onOpenImage}
+      />
+    )}
+    {/* The title doubles as an optional caption on an image card. */}
+    <NoteTitle
+      note={note}
+      editing={editing.editing === 'title'}
+      draftTitle={editing.draftTitle}
+      setDraftTitle={editing.setDraftTitle}
+      onStartEdit={() => { editing.setEditing('title'); }}
+      onCommit={() => { void editing.commitTitle(); }}
+      onCancel={() => {
+        editing.setDraftTitle(note.title ?? '');
+        editing.setEditing('none');
+      }}
+    />
+  </>
+);
+
+const NoteCardContent = (props: NoteCardContentProps) => {
+  const layout = resolveNoteLayout(props.note);
+  switch (layout) {
+    case NoteLayout.Text:
+      return <TextCardContent {...props} />;
+    case NoteLayout.Image:
+      return <ImageCardContent {...props} />;
+    default:
+      return assertNever(layout);
+  }
+};
+
+const useNoteView = (note: Note, attachmentCount: number) => {
+  const caps = getNoteLayoutConfig(note);
+  const isSeedPrompt = note.state === NoteState.SeedPrompt;
+  const isSeedFetched = note.state === NoteState.SeedFetched;
+  return {
+    caps,
+    dayChip: DAY[new Date(note.createdAt).getDay()] ?? 'now',
+    isSeedPrompt,
+    isSeedFetched,
+    isSeed: isSeedPrompt || isSeedFetched,
+    canAddImage: caps.allowsImages && attachmentCount < MAX_NOTE_IMAGES,
+  };
+};
+
+interface NoteCardProps {
+  note: Note;
+  view: ReturnType<typeof useNoteView>;
+  editing: ReturnType<typeof useNoteEditing>;
+  dragState: ReturnType<typeof useNoteDrag>;
+  actions: ReturnType<typeof useNoteActions>;
+  attachments: NoteAttachment[];
+  selected: boolean;
+  pending: boolean;
+  divRef: Ref<HTMLDivElement>;
+  onAddImages: (files: File[]) => void;
+  onOpenImage: (index: number) => void;
+}
+
+const NoteCard = ({
+  note,
+  view,
+  editing,
+  dragState,
+  actions,
+  attachments,
+  selected,
+  pending,
+  divRef,
+  onAddImages,
+  onOpenImage,
+}: NoteCardProps) => (
+  <NoteShell
+    divRef={divRef}
+    note={note}
+    selected={selected}
+    pending={pending}
+    isSeed={view.isSeed}
+    dragState={dragState}
+    onContextMenu={actions.onContextMenu}
+  >
+    <NoteHeader
+      note={note}
+      dayChip={view.dayChip}
+      isSeedFetched={view.isSeedFetched}
+      canAddImage={view.canAddImage && !view.caps.imageFirst}
+      onAddImages={onAddImages}
+      onOpenDetail={actions.onOpenDetail}
+      onDocLinkClick={actions.onDocLinkClick}
+    />
+    <NoteCardContent
+      note={note}
+      caps={view.caps}
+      isSeedPrompt={view.isSeedPrompt}
+      editing={editing}
+      attachments={attachments}
+      canAddImage={view.canAddImage}
+      onAddImages={onAddImages}
+      onRemoveImage={(id) => { void deleteNoteAttachment(id); }}
+      onOpenImage={onOpenImage}
+    />
+    <NoteFooter
+      note={note}
+      menu={actions.menu}
+      onResizePointerDown={dragState.onResizePointerDown}
+      onDelete={() => { void actions.onDeleteFromMenu(); }}
+      onCloseMenu={() => { actions.setMenu(null); }}
+    />
+  </NoteShell>
 );
 
 export const BrainSpaceNote = ({
@@ -801,47 +1133,36 @@ export const BrainSpaceNote = ({
   const dragState = useNoteDrag(note, editing.editing, onPick);
   const actions = useNoteActions(note, spaceId);
   const attachments = useNoteAttachments(note.id);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const view = useNoteView(note, attachments.length);
 
-  const dayChip = DAY[new Date(note.createdAt).getDay()] ?? 'now';
-  const isSeedPrompt = note.state === NoteState.SeedPrompt;
-  const isSeedFetched = note.state === NoteState.SeedFetched;
-  const isSeed = isSeedPrompt || isSeedFetched;
+  const lightboxImages = useMemo<LightboxImage[]>(
+    () => attachments.map((a) => ({ blob: a.blob, name: a.name })),
+    [attachments],
+  );
 
   return (
-    <NoteShell
-      divRef={ref}
-      note={note}
-      selected={selected}
-      pending={pending}
-      isSeed={isSeed}
-      dragState={dragState}
-      onContextMenu={actions.onContextMenu}
-    >
-      <NoteHeader
+    <>
+      <NoteCard
         note={note}
-        dayChip={dayChip}
-        isSeedFetched={isSeedFetched}
-        canAddImage={attachments.length < MAX_NOTE_IMAGES}
-        onAddImages={(files) => { void addNoteImages(note, files); }}
-        onOpenDetail={actions.onOpenDetail}
-        onDocLinkClick={actions.onDocLinkClick}
-      />
-
-      <NoteCardContent
-        note={note}
-        isSeedPrompt={isSeedPrompt}
+        view={view}
         editing={editing}
+        dragState={dragState}
+        actions={actions}
         attachments={attachments}
-        onRemoveImage={(id) => { void deleteNoteAttachment(id); }}
+        selected={selected}
+        pending={pending}
+        divRef={ref}
+        onAddImages={(files) => { void addNoteImages(note, files); }}
+        onOpenImage={setLightboxIndex}
       />
-
-      <NoteFooter
-        note={note}
-        menu={actions.menu}
-        onResizePointerDown={dragState.onResizePointerDown}
-        onDelete={() => { void actions.onDeleteFromMenu(); }}
-        onCloseMenu={() => { actions.setMenu(null); }}
+      <ImageLightbox
+        images={lightboxImages}
+        index={lightboxIndex ?? 0}
+        open={lightboxIndex !== null}
+        onOpenChange={(o) => { if (!o) setLightboxIndex(null); }}
+        onIndexChange={setLightboxIndex}
       />
-    </NoteShell>
+    </>
   );
 };

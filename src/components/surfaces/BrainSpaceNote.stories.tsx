@@ -78,3 +78,17 @@ export const Empty: Story = {
     note: { ...baseNote, body: '' },
   },
 };
+
+export const ImageCard: Story = {
+  args: {
+    note: {
+      ...baseNote,
+      id: 'image-note',
+      kind: NoteKind.Image,
+      title: 'A picture',
+      body: '',
+      w: 240,
+      h: 200,
+    },
+  },
+};

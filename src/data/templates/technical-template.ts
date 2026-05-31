@@ -37,6 +37,7 @@ const template: Template = {
     NoteKind.Figure,
     NoteKind.Todo,
     NoteKind.LooseEnd,
+    NoteKind.Image,
   ],
 };
 

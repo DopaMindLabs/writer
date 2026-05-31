@@ -41,6 +41,8 @@ so you can jump straight to the detail.
 - **Note kinds** — tell ideas, questions, and sources apart. [Learn more](brainspace#note-kinds)
 - **Connections** — map how notes relate. [Learn more](brainspace#connections)
 - **Images** — up to two per note. [Learn more](brainspace#images)
+- **Full-size viewer** — click a picture to open it full size. [Learn more](brainspace#view-a-picture-full-size)
+- **Image cards** — picture-first notes from the toolbar. [Learn more](brainspace#image-cards)
 
 ## Annotations
 
