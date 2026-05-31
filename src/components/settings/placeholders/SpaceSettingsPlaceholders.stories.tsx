@@ -7,7 +7,6 @@ import {
   SpaceExportPlaceholder,
 } from './SpaceSettingsPlaceholders';
 
-// Each export is a self-contained, no-prop per-space "coming soon" panel.
 const meta = {
   title: 'Settings/Placeholders/SpaceSettingsPlaceholders',
   component: SpaceTemplatePlaceholder,

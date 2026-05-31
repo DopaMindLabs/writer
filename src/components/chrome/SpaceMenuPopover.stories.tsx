@@ -3,9 +3,6 @@ import { fn } from 'storybook/test';
 import type { Space } from '@/db/schema';
 import { SpaceMenuPopover } from './SpaceMenuPopover';
 
-// The per-space "…" menu. The `space` prop is passed directly; the backups badge
-// is sourced from Dexie via `useBackups`, so without a seed the badge is omitted.
-
 const space: Space = {
   id: 's1',
   tag: 'TST',

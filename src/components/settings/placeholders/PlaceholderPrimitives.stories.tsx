@@ -9,8 +9,6 @@ import {
   PlaceholderToggle,
 } from './PlaceholderPrimitives';
 
-// These are non-interactive mock controls used to dress the "coming soon"
-// settings placeholders. The gallery composes one of each.
 const Gallery = () => (
   <div className="flex w-[560px] flex-col gap-6">
     <div className="flex items-center gap-4">

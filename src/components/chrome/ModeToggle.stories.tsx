@@ -1,11 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { FocusToggle, ModeTabs } from './ModeToggle';
 
-// ModeToggle.tsx exports two primary components: ModeTabs (the write/read/split/
-// space tab strip) and FocusToggle (the enter/exit focus link). Both read the
-// router's search params for the `focus` flag, so the global MemoryRouter
-// decorator is sufficient to render them.
-
 const meta = {
   title: 'Navigation/ModeTabs',
   component: ModeTabs,
@@ -31,7 +26,6 @@ export const Dump: Story = {
   args: { mode: 'dump', spaceId: 's1', docId: null },
 };
 
-// With no docId the per-doc tabs collapse, leaving only the space tab.
 export const NoActiveDoc: Story = {
   args: { mode: 'dump', spaceId: 's1', docId: null },
 };

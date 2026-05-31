@@ -1,10 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DocInspector } from './DocInspector';
 
-// DocInspector reads the active section from the `useUI` store; the default
-// store value ('outline') renders fine without a seed. The aside is hidden
-// below the `md` breakpoint, so the stories use a tall framing wrapper.
-
 const meta = {
   title: 'Navigation/DocInspector',
   component: DocInspector,

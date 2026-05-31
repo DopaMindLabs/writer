@@ -15,7 +15,6 @@ import {
   BackupsPlaceholder,
 } from './GlobalSettingsPlaceholders';
 
-// Each export is a self-contained, no-prop "coming soon" settings panel.
 const meta = {
   title: 'Settings/Placeholders/GlobalSettingsPlaceholders',
   component: GeneralPlaceholder,

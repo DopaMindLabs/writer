@@ -19,7 +19,6 @@ vi.mock('@/hooks/useSync', () => ({
     granted: true,
     lapsed: false,
     refresh: () => {
-      // no-op
     },
   }),
 }));

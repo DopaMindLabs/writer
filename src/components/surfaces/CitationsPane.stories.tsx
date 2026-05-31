@@ -15,8 +15,6 @@ const citation = (overrides: Partial<Citation> = {}): Citation => ({
   ...overrides,
 });
 
-// The basicSpace seed creates space s1 but no citations; add a few rows on top
-// for the populated variants.
 const seedCitations = async () => {
   await db.citations.bulkPut([
     citation({ id: 'c-a', key: 'alpha2020', title: 'Alpha findings', year: 2020 }),
@@ -42,9 +40,6 @@ const seedCitations = async () => {
 };
 
 const meta = {
-  // Seeded stories share one Dexie DB and cannot represent distinct seed
-  // states side by side, so they opt out of the combined autodocs gallery and
-  // are viewed one at a time in the canvas (where the per-story reseed holds).
   tags: ['!autodocs'],
   title: 'Surfaces/CitationsPane',
   component: CitationsPane,
@@ -72,7 +67,6 @@ export const Compact: Story = {
   args: { density: 'compact' },
 };
 
-// No citations seeded beyond the empty space → empty state.
 export const Empty: Story = {
   args: { density: 'comfortable' },
 };
