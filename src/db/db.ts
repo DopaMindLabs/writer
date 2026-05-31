@@ -4,6 +4,7 @@ import type {
   Section,
   Doc,
   Note,
+  NoteAttachment,
   Annotation,
   Citation,
   Connection,
@@ -20,6 +21,7 @@ export class LoremDB extends Dexie {
   sections!: Table<Section, string>;
   docs!: Table<Doc, string>;
   notes!: Table<Note, string>;
+  noteAttachments!: Table<NoteAttachment, string>;
   annotations!: Table<Annotation, string>;
   citations!: Table<Citation, string>;
   connections!: Table<Connection, string>;
@@ -80,6 +82,10 @@ export class LoremDB extends Dexie {
     this.version(6).stores({
       syncs: 'id, spaceId, when, [spaceId+when]',
       syncConfigs: 'spaceId',
+    });
+
+    this.version(7).stores({
+      noteAttachments: 'id, noteId, spaceId, [noteId+createdAt]',
     });
   }
 }

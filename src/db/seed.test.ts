@@ -160,4 +160,60 @@ describe('deleteNoteWithCascade', () => {
     const remaining = await db.connections.toArray();
     expect(remaining.map((c) => c.id)).toEqual(['c3']);
   });
+
+  it('removes image attachments belonging to the deleted note', async () => {
+    await db.notes.bulkPut([
+      {
+        id: 'n1',
+        spaceId: 's1',
+        l: 0,
+        t: 0,
+        w: 100,
+        h: 60,
+        kind: NoteKind.Note,
+        state: NoteState.User,
+        body: '',
+        createdAt: FIXED_TIME,
+      },
+      {
+        id: 'n2',
+        spaceId: 's1',
+        l: 0,
+        t: 0,
+        w: 100,
+        h: 60,
+        kind: NoteKind.Note,
+        state: NoteState.User,
+        body: '',
+        createdAt: FIXED_TIME,
+      },
+    ]);
+    await db.noteAttachments.bulkPut([
+      {
+        id: 'att-n1',
+        noteId: 'n1',
+        spaceId: 's1',
+        name: 'a.png',
+        mime: 'image/png',
+        size: 1,
+        blob: new Blob(['x']),
+        createdAt: FIXED_TIME,
+      },
+      {
+        id: 'att-n2',
+        noteId: 'n2',
+        spaceId: 's1',
+        name: 'b.png',
+        mime: 'image/png',
+        size: 1,
+        blob: new Blob(['y']),
+        createdAt: FIXED_TIME,
+      },
+    ]);
+
+    await deleteNoteWithCascade('n1');
+
+    expect(await db.noteAttachments.get('att-n1')).toBeUndefined();
+    expect(await db.noteAttachments.get('att-n2')).toBeDefined();
+  });
 });

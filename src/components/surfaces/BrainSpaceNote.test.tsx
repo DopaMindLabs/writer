@@ -581,6 +581,83 @@ describe('BrainSpaceNote', () => {
     });
   });
 
+  describe('image attachments', () => {
+    const pngFile = (name = 'pic.png') =>
+      new File(['imgdata'], name, { type: 'image/png' });
+
+    const seedAttachment = async (id: string, noteId = sampleNote.id) => {
+      await db.noteAttachments.put({
+        id,
+        noteId,
+        spaceId: sampleSpace.id,
+        name: `${id}.png`,
+        mime: 'image/png',
+        size: 4,
+        blob: new Blob(['x'], { type: 'image/png' }),
+        createdAt: Date.now(),
+      });
+    };
+
+    it('uploads a picture and shows it in the note image strip', async () => {
+      const user = userEvent.setup();
+      renderNote();
+      const input = screen.getByTestId(`brain-note-${sampleNote.id}-image-input`);
+      await user.upload(input, pngFile());
+
+      await waitFor(() => {
+        expect(screen.getByRole('img', { name: 'pic.png' })).toBeInTheDocument();
+      });
+      expect(
+        await db.noteAttachments.where('noteId').equals(sampleNote.id).count(),
+      ).toBe(1);
+    });
+
+    it('opens the file picker when the add-picture button is clicked', async () => {
+      const user = userEvent.setup();
+      renderNote();
+      const input = screen.getByTestId(
+        `brain-note-${sampleNote.id}-image-input`,
+      ) as HTMLInputElement;
+      const clickSpy = vi.fn();
+      input.click = clickSpy;
+      await user.click(
+        screen.getByTestId(`brain-note-${sampleNote.id}-add-image`),
+      );
+      expect(clickSpy).toHaveBeenCalledOnce();
+    });
+
+    it('hides the add-picture button once the limit is reached', async () => {
+      await seedAttachment('a1');
+      await seedAttachment('a2');
+      renderNote();
+      await waitFor(() => {
+        expect(
+          screen.getByTestId(`brain-note-${sampleNote.id}-images`),
+        ).toBeInTheDocument();
+      });
+      expect(
+        screen.queryByTestId(`brain-note-${sampleNote.id}-add-image`),
+      ).not.toBeInTheDocument();
+    });
+
+    it('removes a picture when its remove control is clicked', async () => {
+      const user = userEvent.setup();
+      await seedAttachment('a1');
+      renderNote();
+      await waitFor(() => {
+        expect(
+          screen.getByTestId(`brain-note-${sampleNote.id}-image-a1`),
+        ).toBeInTheDocument();
+      });
+      await user.click(
+        screen.getByTestId(`brain-note-${sampleNote.id}-image-a1-remove`),
+      );
+      await waitFor(async () => {
+        expect(await db.noteAttachments.get('a1')).toBeUndefined();
+      });
+    });
+  });
+
   describe('snapshot', () => {
     it('should match the snapshot across all variants', () => {
       const { container } = renderNote(

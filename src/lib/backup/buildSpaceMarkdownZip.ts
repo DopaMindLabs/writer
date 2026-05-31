@@ -7,6 +7,7 @@ import type {
   Doc,
   HighlightPalette,
   Note,
+  NoteAttachment,
   Section,
   Space,
 } from '@/db/schema';
@@ -17,6 +18,7 @@ export interface SpaceSnapshot {
   sections: Section[];
   docs: Doc[];
   notes: Note[];
+  attachments: NoteAttachment[];
   annotations: Annotation[];
   citations: Citation[];
   connections: Connection[];
@@ -31,6 +33,7 @@ export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot>
       db.sections,
       db.docs,
       db.notes,
+      db.noteAttachments,
       db.annotations,
       db.citations,
       db.connections,
@@ -45,6 +48,10 @@ export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot>
         .sortBy('order');
       const docs = await db.docs.where('spaceId').equals(spaceId).toArray();
       const notes = await db.notes.where('spaceId').equals(spaceId).toArray();
+      const attachments = await db.noteAttachments
+        .where('spaceId')
+        .equals(spaceId)
+        .toArray();
       const docIds = docs.map((d) => d.id);
       const annotations = docIds.length
         ? await db.annotations.where('docId').anyOf(docIds).toArray()
@@ -66,6 +73,7 @@ export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot>
         sections,
         docs,
         notes,
+        attachments,
         annotations,
         citations,
         connections,
@@ -247,16 +255,107 @@ const noteHeading = (n: Note, fallback: string): string => {
   return firstNonEmpty([n.title, n.body.split('\n')[0]], fallback);
 };
 
-const renderNoteLines = (n: Note): string[] => {
+interface AttachmentPath {
+  path: string;
+  filename: string;
+}
+
+const MIME_EXT: Record<string, string> = {
+  'image/png': 'png',
+  'image/jpeg': 'jpg',
+  'image/gif': 'gif',
+  'image/webp': 'webp',
+};
+
+const assetExtension = (att: NoteAttachment): string => {
+  const dot = att.name.lastIndexOf('.');
+  if (dot > 0 && dot < att.name.length - 1) {
+    const ext = att.name.slice(dot + 1).toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (ext) return ext;
+  }
+  return MIME_EXT[att.mime] ?? 'img';
+};
+
+const uniqueAssetName = (att: NoteAttachment, used: Set<string>): string => {
+  const dot = att.name.lastIndexOf('.');
+  const base = slugify(dot > 0 ? att.name.slice(0, dot) : att.name, att.id);
+  const ext = assetExtension(att);
+  let name = `${base}.${ext}`;
+  let n = 2;
+  while (used.has(name)) {
+    name = `${base}-${String(n)}.${ext}`;
+    n++;
+  }
+  return name;
+};
+
+// Assigns each attachment a collision-free path under assets/notes/<noteId>/.
+const buildAttachmentPaths = (
+  attachments: NoteAttachment[],
+): Map<string, AttachmentPath> => {
+  const result = new Map<string, AttachmentPath>();
+  const usedByNote = new Map<string, Set<string>>();
+  for (const att of attachments) {
+    let used = usedByNote.get(att.noteId);
+    if (!used) {
+      used = new Set();
+      usedByNote.set(att.noteId, used);
+    }
+    const filename = uniqueAssetName(att, used);
+    used.add(filename);
+    result.set(att.id, {
+      path: `assets/notes/${att.noteId}/${filename}`,
+      filename,
+    });
+  }
+  return result;
+};
+
+const groupAttachmentsByNote = (
+  attachments: NoteAttachment[],
+): Map<string, NoteAttachment[]> => {
+  const byNote = new Map<string, NoteAttachment[]>();
+  for (const att of attachments) {
+    const list = byNote.get(att.noteId) ?? [];
+    list.push(att);
+    byNote.set(att.noteId, list);
+  }
+  return byNote;
+};
+
+interface NoteAssets {
+  byNote: Map<string, NoteAttachment[]>;
+  pathById: Map<string, AttachmentPath>;
+}
+
+const renderNoteLines = (n: Note, assets: NoteAssets): string[] => {
   const out = [`- **${noteHeading(n, '_(empty)_')}**  \`${n.id}\``];
   const rest = (n.title ? n.body : n.body.split('\n').slice(1).join('\n')).trim();
   if (rest) {
     for (const line of rest.split('\n')) out.push(`  ${line}`);
   }
+  for (const att of assets.byNote.get(n.id) ?? []) {
+    const info = assets.pathById.get(att.id);
+    if (info) out.push(`  ![${att.name}](${info.path})`);
+  }
   return out;
 };
 
-const renderNotesMd = (notes: Note[]): string => {
+// Writes each attachment blob into the zip and returns the lookup tables that
+// renderNotesMd needs to reference them.
+const writeAttachments = (
+  zip: JSZip,
+  attachments: NoteAttachment[],
+): NoteAssets => {
+  const pathById = buildAttachmentPaths(attachments);
+  for (const att of attachments) {
+    const info = pathById.get(att.id);
+    if (info) zip.file(info.path, att.blob);
+  }
+  return { byNote: groupAttachmentsByNote(attachments), pathById };
+};
+
+const renderNotesMd = (notes: Note[], assets: NoteAssets): string => {
   if (notes.length === 0) {
     return '# Notes\n\n_No notes._\n';
   }
@@ -270,7 +369,7 @@ const renderNotesMd = (notes: Note[]): string => {
   for (const [kind, list] of [...byKind.entries()].sort()) {
     lines.push(`## ${kind}`, '');
     for (const n of list) {
-      lines.push(...renderNoteLines(n));
+      lines.push(...renderNoteLines(n, assets));
     }
     lines.push('');
   }
@@ -356,8 +455,16 @@ export const buildSpaceMarkdownZip = async (
   when: number = Date.now(),
 ): Promise<Blob> => {
   const zip = new JSZip();
-  const { sections, docs, notes, annotations, citations, connections, palettes } =
-    snapshot;
+  const {
+    sections,
+    docs,
+    notes,
+    attachments,
+    annotations,
+    citations,
+    connections,
+    palettes,
+  } = snapshot;
 
   zip.file('space.md', renderSpaceMd(snapshot, when));
 
@@ -390,7 +497,9 @@ export const buildSpaceMarkdownZip = async (
     });
   }
 
-  zip.file('notes.md', renderNotesMd(notes));
+  const noteAssets = writeAttachments(zip, attachments);
+
+  zip.file('notes.md', renderNotesMd(notes, noteAssets));
   zip.file('citations.md', renderCitationsMd(citations));
   zip.file('connections.md', renderConnectionsMd(connections, notes));
   zip.file('annotations.md', renderAnnotationsMd(annotations, docs));
