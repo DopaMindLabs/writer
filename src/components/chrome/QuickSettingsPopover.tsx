@@ -253,28 +253,43 @@ const MoreSection = () => {
 
       <MenuItem
         asChild
+        href={routes.settings('accessibility')}
+        testId="quick-settings-accessibility"
+      >
+        {t('chrome:quickSettings.accessibility')}
+      </MenuItem>
+
+      <MenuItem
+        asChild
         href={routes.about()}
         testId="quick-settings-about"
       >
         {t('chrome:quickSettings.about')}
       </MenuItem>
 
-      <div className="mt-1 flex items-center gap-3 border-t border-rule bg-paper-2 px-4 py-2.5">
-        <PopoverClose asChild>
-          <Link
-            to={routes.settings()}
-            className="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
-            data-testid="quick-settings-full-settings"
-          >
-            {t('chrome:quickSettings.fullSettings')}
-          </Link>
-        </PopoverClose>
-        <span className="flex-1" />
-        <span className="font-mono text-[10px] text-ink-4">
-          {t('chrome:quickSettings.fullSettingsKbd')}
-        </span>
-      </div>
+      <FullSettingsFooter />
     </>
+  );
+};
+
+const FullSettingsFooter = () => {
+  const { t } = useTranslation('chrome');
+  return (
+    <div className="mt-1 flex items-center gap-3 border-t border-rule bg-paper-2 px-4 py-2.5">
+      <PopoverClose asChild>
+        <Link
+          to={routes.settings()}
+          className="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
+          data-testid="quick-settings-full-settings"
+        >
+          {t('quickSettings.fullSettings')}
+        </Link>
+      </PopoverClose>
+      <span className="flex-1" />
+      <span className="font-mono text-[10px] text-ink-4">
+        {t('quickSettings.fullSettingsKbd')}
+      </span>
+    </div>
   );
 };
 

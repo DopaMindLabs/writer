@@ -27,6 +27,12 @@ describe('App', () => {
     expect(await findByText(/LIpsum/)).toBeInTheDocument();
   });
 
+  it('renders a skip-to-content link as the first focusable element', async () => {
+    const { findByRole } = render(<App />);
+    const link = await findByRole('link', { name: 'Skip to content' });
+    expect(link).toHaveAttribute('href', '#main-content');
+  });
+
   it('calls resetAndReseed when ?reseed=1 query param is present', async () => {
     window.history.replaceState({}, '', '/?reseed=1');
     render(<App />);

@@ -1,4 +1,11 @@
-import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
+import {
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  useId,
+  type HTMLAttributes,
+  type ReactNode,
+} from 'react';
 import { cn } from '@/lib/utils';
 
 export interface FormRowProps extends HTMLAttributes<HTMLDivElement> {
@@ -18,6 +25,10 @@ interface FormRowLabelProps {
   hintTestId?: string;
 }
 
+interface FormRowLabelExtra {
+  hintId?: string;
+}
+
 const FormRowLabel = ({
   label,
   hint,
@@ -25,7 +36,8 @@ const FormRowLabel = ({
   labelClassName,
   labelTestId,
   hintTestId,
-}: FormRowLabelProps) => (
+  hintId,
+}: FormRowLabelProps & FormRowLabelExtra) => (
   <div className="flex flex-col gap-1">
     <label
       htmlFor={htmlFor}
@@ -39,6 +51,7 @@ const FormRowLabel = ({
     </label>
     {hint ? (
       <div
+        id={hintId}
         data-testid={hintTestId}
         className="font-serif text-[12px] italic leading-snug text-ink-3"
       >
@@ -47,6 +60,26 @@ const FormRowLabel = ({
     ) : null}
   </div>
 );
+
+/**
+ * Link the hint/error text to the control via `aria-describedby` so screen
+ * readers announce them with the field. Only augments a single valid React
+ * element child, and preserves any `aria-describedby` it already declares.
+ */
+const describeChild = (
+  children: ReactNode,
+  ids: string[],
+): ReactNode => {
+  if (ids.length === 0 || !isValidElement(children)) return children;
+  const existing = (children.props as { 'aria-describedby'?: string })[
+    'aria-describedby'
+  ];
+  const describedBy = [existing, ...ids].filter(Boolean).join(' ');
+  return cloneElement(
+    children as React.ReactElement<{ 'aria-describedby'?: string }>,
+    { 'aria-describedby': describedBy },
+  );
+};
 
 export const FormRow = forwardRef<HTMLDivElement, FormRowProps>(
   (
@@ -67,6 +100,13 @@ export const FormRow = forwardRef<HTMLDivElement, FormRowProps>(
     const hintTestId = testId ? `${testId}-hint` : undefined;
     const errorTestId = testId ? `${testId}-error` : undefined;
 
+    const baseId = useId();
+    const hintId = hint ? `${baseId}-hint` : undefined;
+    const errorId = error ? `${baseId}-error` : undefined;
+    const describedIds = [hintId, errorId].filter(
+      (id): id is string => Boolean(id),
+    );
+
     return (
       <div
         ref={ref}
@@ -83,11 +123,13 @@ export const FormRow = forwardRef<HTMLDivElement, FormRowProps>(
           labelClassName={labelClassName}
           labelTestId={labelTestId}
           hintTestId={hintTestId}
+          hintId={hintId}
         />
         <div className="flex flex-col gap-1.5">
-          <div>{children}</div>
+          <div>{describeChild(children, describedIds)}</div>
           {error ? (
             <div
+              id={errorId}
               data-testid={errorTestId}
               role="alert"
               className="font-mono text-[10px] uppercase tracking-wider text-ink"

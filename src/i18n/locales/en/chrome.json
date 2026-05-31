@@ -1,5 +1,10 @@
 {
+  "spaceRail": {
+    "landmarkLabel": "Spaces"
+  },
   "sidebar": {
+    "landmarkLabel": "Space",
+    "navLabel": "Documents",
     "shared": "SHARED",
     "private": "PRIVATE · LOCAL",
     "subtitleWithAge": "{{base}} · {{age}}",
@@ -96,6 +101,7 @@
     "helpKbd": "⌘?",
     "whatsNew": "What's new",
     "feedback": "Send feedback…",
+    "accessibility": "Accessibility",
     "about": "About",
     "fullSettings": "full settings →",
     "fullSettingsKbd": "⌘,",

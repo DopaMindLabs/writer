@@ -378,7 +378,12 @@ export const TemplatesScreen = () => {
     >
       <TemplatesHeader />
 
-      <form onSubmit={onSubmit} className="flex flex-1 flex-col">
+      <form
+        id="main-content"
+        tabIndex={-1}
+        onSubmit={onSubmit}
+        className="flex flex-1 flex-col"
+      >
         <TemplatesBody
           templates={templates}
           selectedId={selectedId}

@@ -10,6 +10,7 @@ import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ComingSoonRow } from '@/components/settings/ComingSoonRow';
 import { TabHeader } from '@/components/settings/TabHeader';
 import { SyncTab } from '@/components/settings/SyncTab';
+import { AccessibilityTab } from '@/components/settings/tabs/AccessibilityTab';
 import {
   GeneralPlaceholder,
   AppearancePlaceholder,
@@ -30,6 +31,7 @@ const TAB_IDS = [
   'appearance',
   'typography',
   'editor',
+  'accessibility',
   'shortcuts',
   'palettes',
   'citations',
@@ -42,7 +44,7 @@ const TAB_IDS = [
   'about',
 ] as const;
 type TabId = (typeof TAB_IDS)[number];
-type PlaceholderTabId = Exclude<TabId, 'editor' | 'sync'>;
+type PlaceholderTabId = Exclude<TabId, 'editor' | 'sync' | 'accessibility'>;
 
 const isTabId = (value: string | null): value is TabId =>
   value !== null && (TAB_IDS as readonly string[]).includes(value);
@@ -62,41 +64,38 @@ const PLACEHOLDERS: Record<PlaceholderTabId, () => ReactElement> = {
   backups: BackupsPlaceholder,
 };
 
+type TFn = (key: string) => string;
+
+const GROUP_TABS: { group: string; tabs: readonly TabId[] }[] = [
+  {
+    group: 'preferences',
+    tabs: [
+      'general',
+      'appearance',
+      'typography',
+      'editor',
+      'accessibility',
+      'shortcuts',
+    ],
+  },
+  { group: 'writing', tabs: ['palettes', 'citations', 'annotation'] },
+  { group: 'data', tabs: ['backups', 'sync', 'export', 'data'] },
+  { group: 'account', tabs: ['account', 'about'] },
+];
+
+const buildGroups = (t: TFn): SettingsTabGroup[] =>
+  GROUP_TABS.map(({ group, tabs }) => ({
+    label: t(`settings.groups.${group}`),
+    tabs: tabs.map((id) => ({ id, label: t(`settings.tabs.${id}`) })),
+  }));
+
 export const SettingsScreen = () => {
   const { t } = useTranslation(['screens', 'chrome', 'common']);
   const [params, setParams] = useSearchParams();
   const rawTab = params.get('tab');
   const activeTab: TabId = isTabId(rawTab) ? rawTab : 'editor';
 
-  const groups: SettingsTabGroup[] = [
-    {
-      label: t('settings.groups.preferences'),
-      tabs: (
-        ['general', 'appearance', 'typography', 'editor', 'shortcuts'] as const
-      ).map((id) => ({ id, label: t(`settings.tabs.${id}`) })),
-    },
-    {
-      label: t('settings.groups.writing'),
-      tabs: (['palettes', 'citations', 'annotation'] as const).map((id) => ({
-        id,
-        label: t(`settings.tabs.${id}`),
-      })),
-    },
-    {
-      label: t('settings.groups.data'),
-      tabs: (['backups', 'sync', 'export', 'data'] as const).map((id) => ({
-        id,
-        label: t(`settings.tabs.${id}`),
-      })),
-    },
-    {
-      label: t('settings.groups.account'),
-      tabs: (['account', 'about'] as const).map((id) => ({
-        id,
-        label: t(`settings.tabs.${id}`),
-      })),
-    },
-  ];
+  const groups = buildGroups(t);
 
   const selectTab = (id: string) => {
     const next = new URLSearchParams(params);
@@ -113,6 +112,8 @@ export const SettingsScreen = () => {
     >
       {activeTab === 'editor' ? (
         <EditorTab />
+      ) : activeTab === 'accessibility' ? (
+        <AccessibilityTab />
       ) : activeTab === 'sync' ? (
         <SyncTab />
       ) : (

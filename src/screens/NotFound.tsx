@@ -10,7 +10,11 @@ import { routes } from '@/lib/routes';
 export const NotFoundScreen = () => {
   const { t } = useTranslation('screens');
   return (
-    <div className="flex h-full items-center justify-center text-ink">
+    <div
+      id="main-content"
+      tabIndex={-1}
+      className="flex h-full items-center justify-center text-ink"
+    >
       <div className="text-center">
         <TypographyLabel variant="xs">{t('notFound.code')}</TypographyLabel>
         <TypographyH1 variant="simple" className="mt-2">

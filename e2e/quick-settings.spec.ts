@@ -63,3 +63,16 @@ test('clicking a help-tour menu item dismisses the popover', async ({ page }) =>
   // PopoverClose wraps each MenuItem, so the popover closes on click.
   await expect(page.getByTestId('quick-settings-popover')).toBeHidden();
 });
+
+test('jumps to the Accessibility settings tab from quick settings', async ({
+  page,
+}) => {
+  const { spaceId, docId } = await gotoFirstDoc(page);
+  await page.goto(`/#/s/${spaceId}/d/${docId}`);
+  await openQuickSettings(page);
+  await page.getByTestId('quick-settings-accessibility').click();
+  await expect(page).toHaveURL(/#\/settings\?tab=accessibility/);
+  await expect(
+    page.getByRole('heading', { name: 'Accessibility', level: 1 }),
+  ).toBeVisible();
+});

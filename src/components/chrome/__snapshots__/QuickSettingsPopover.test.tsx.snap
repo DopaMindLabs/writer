@@ -392,6 +392,23 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
   <a
     class="block w-full text-left"
     data-discover="true"
+    data-testid="quick-settings-accessibility"
+    href="/settings?tab=accessibility"
+    type="button"
+  >
+    <span
+      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
+    >
+      <span
+        class="flex-1 text-left"
+      >
+        Accessibility
+      </span>
+    </span>
+  </a>
+  <a
+    class="block w-full text-left"
+    data-discover="true"
     data-testid="quick-settings-about"
     href="/about"
     type="button"
