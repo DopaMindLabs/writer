@@ -1,6 +1,10 @@
 {
   "title": "Help",
   "subtitle": "Guides and answers for getting the most out of your writing.",
+  "shellSubtitle": "Help / Documentation",
+  "navGroup": "Help",
+  "navOverview": "Overview",
+  "navAria": "Help topics",
   "searchPlaceholder": "Search help…",
   "searchLabel": "Search help articles",
   "noResults": "No articles matched “{{query}}”.",
