@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dialog,
@@ -7,8 +7,10 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { PillToggle } from '@/components/ui/PillToggle';
 import { Button } from '@/components/ui/Button';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Pin, RotateCcw } from '@/components/libs/icons';
 import { IconButton } from '@/components/ui/icon';
 import { useUI, type DiffMode } from '@/store/ui';
@@ -145,9 +147,9 @@ const RevisionListItem = ({
             {formatRevisionAge(revision.createdAt, t)}
           </span>
           {isNewest && (
-            <span className="bg-ink px-1 font-mono text-[8px] tracking-wider text-paper">
-              {t('inspector.history.now')}
-            </span>
+            <Eyebrow asChild size={9} tone="paper">
+              <span className="bg-ink px-1">{t('inspector.history.now')}</span>
+            </Eyebrow>
           )}
         </div>
         <div className="truncate font-serif text-[11px] italic text-ink-3">
@@ -174,11 +176,11 @@ const DiffPanel = ({ doc, selected }: DiffPanelProps) => {
   const diffMode = useUI((s) => s.diffMode);
   const setDiffMode = useUI((s) => s.setDiffMode);
   const setOpen = useUI((s) => s.setVersionModalOpen);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const currentText = lexicalJsonToPlainText(doc.body);
 
   const restore = (): void => {
     if (!selected) return;
-    if (!window.confirm(t('versionModal.restoreConfirm'))) return;
     void restoreRevision(doc.id, selected.id)
       .then(() => { setOpen(false); })
       .catch((err: unknown) => {
@@ -211,12 +213,22 @@ const DiffPanel = ({ doc, selected }: DiffPanelProps) => {
           kind="secondary"
           size="sm"
           data-testid="modal-restore"
-          onClick={restore}
+          onClick={() => { setConfirmOpen(true); }}
         >
           <RotateCcw className="h-3.5 w-3.5" />
           {t('versionModal.restore')}
         </Button>
       </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={t('versionModal.restoreTitle')}
+        description={t('versionModal.restoreConfirm')}
+        confirmLabel={t('versionModal.restore')}
+        cancelLabel={t('versionModal.cancel')}
+        confirmKind="dangerous"
+        onConfirm={restore}
+      />
     </div>
   );
 };
@@ -230,13 +242,13 @@ const DiffToolbar = ({ diffMode, setDiffMode }: DiffToolbarProps) => {
   const { t } = useTranslation('chrome');
   return (
     <div className="flex items-center justify-between gap-3 border-b border-rule px-4 py-2.5">
-      <span className="font-mono text-[9px] uppercase tracking-wider text-ink-3">
+      <Eyebrow size={9} tone="ink3">
         {t('versionModal.compareWith')}
-      </span>
+      </Eyebrow>
       <div className="flex items-center gap-2">
-        <span className="font-mono text-[9px] uppercase tracking-wider text-ink-4">
+        <Eyebrow size={9} tone="ink4">
           {t('versionModal.inline')}
-        </span>
+        </Eyebrow>
         <PillToggle
           on={diffMode === 'side-by-side'}
           onToggle={() => {
@@ -245,9 +257,9 @@ const DiffToolbar = ({ diffMode, setDiffMode }: DiffToolbarProps) => {
           label={t('versionModal.diffModeLabel')}
           data-testid="diff-mode-toggle"
         />
-        <span className="font-mono text-[9px] uppercase tracking-wider text-ink-4">
+        <Eyebrow size={9} tone="ink4">
           {t('versionModal.sideBySide')}
-        </span>
+        </Eyebrow>
       </div>
     </div>
   );

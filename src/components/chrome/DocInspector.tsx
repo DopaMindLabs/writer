@@ -1,12 +1,16 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronRight, Pin, RotateCcw } from '@/components/libs/icons';
 import { useUI, type InspectorSection } from '@/store/ui';
 import { useRevisions } from '@/hooks/useRevisions';
 import { db } from '@/db/db';
 import type { Revision } from '@/db/schema';
-import { createRevision, restoreRevision } from '@/lib/revisions';
+import { restoreRevision } from '@/lib/revisions';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { Button } from '@/components/ui/Button';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 import { IconButton } from '@/components/ui/icon';
 import { cn } from '@/lib/utils';
 import {
@@ -107,42 +111,36 @@ const OutlinePane = () => {
     ['H2', 'Counting', false],
   ];
   return (
-    <ComingSoon
-      hint={t('inspector.expand')}
-      side="left"
-      className="block self-stretch"
-    >
-      <div className="px-4 py-3.5">
-        <div className="mb-2 font-mono text-[9px] uppercase tracking-wider text-ink-4">
-          {t('inspector.outline.title')} ·{' '}
-          {t('inspector.outline.sectionSummary', { count: rows.length })}
-        </div>
-        <div className="-ml-3.5">
-          {rows.map(([level, text, active], i) => (
-            <div
-              key={i}
+    <div className="px-4 py-3.5">
+      <div className="mb-2 font-mono text-[9px] uppercase tracking-wider text-ink-4">
+        {t('inspector.outline.title')} ·{' '}
+        {t('inspector.outline.sectionSummary', { count: rows.length })}
+      </div>
+      <div className="-ml-3.5">
+        {rows.map(([level, text, active], i) => (
+          <div
+            key={i}
+            className={cn(
+              'flex items-baseline gap-2 border-l-2 py-1.5',
+              level === 'H2' ? 'pl-7' : 'pl-3.5',
+              active ? 'border-ink' : 'border-transparent',
+            )}
+          >
+            <span className="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4">
+              {level}
+            </span>
+            <span
               className={cn(
-                'flex items-baseline gap-2 border-l-2 py-1.5',
-                level === 'H2' ? 'pl-7' : 'pl-3.5',
-                active ? 'border-ink' : 'border-transparent',
+                'flex-1 font-serif text-[13px]',
+                active ? 'font-medium text-ink' : 'text-ink-2',
               )}
             >
-              <span className="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4">
-                {level}
-              </span>
-              <span
-                className={cn(
-                  'flex-1 font-serif text-[13px]',
-                  active ? 'font-medium text-ink' : 'text-ink-2',
-                )}
-              >
-                {text}
-              </span>
-            </div>
-          ))}
-        </div>
+              {text}
+            </span>
+          </div>
+        ))}
       </div>
-    </ComingSoon>
+    </div>
   );
 };
 
@@ -156,88 +154,21 @@ const InfoPane = () => {
     [t('inspector.info.status'), 'Draft'],
   ];
   return (
-    <ComingSoon
-      hint={t('inspector.expand')}
-      side="left"
-      className="block self-stretch"
-    >
-      <div className="px-4 py-3.5">
-        <div className="mb-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
-          {t('inspector.info.title')}
-        </div>
-        {rows.map(([k, v]) => (
-          <div
-            key={k}
-            className="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-          >
-            <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
-              {k}
-            </span>
-            <span className="font-serif text-[13px] text-ink">{v}</span>
-          </div>
-        ))}
+    <div className="px-4 py-3.5">
+      <div className="mb-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
+        {t('inspector.info.title')}
       </div>
-    </ComingSoon>
-  );
-};
-
-interface RevisionRowProps {
-  revision: Revision;
-  isNewest: boolean;
-}
-
-const RevisionRow = ({ revision, isNewest }: RevisionRowProps) => {
-  const { t } = useTranslation('chrome');
-  const togglePin = (): void => {
-    void db.revisions.update(revision.id, { pinned: !revision.pinned });
-  };
-  const restore = (): void => {
-    void restoreRevision(revision.docId, revision.id).catch((err: unknown) => {
-      console.error('Failed to restore revision', err);
-    });
-  };
-  return (
-    <div
-      data-testid={`revision-row-${revision.id}`}
-      className="group flex items-center gap-2 border-b border-rule/60 py-2"
-    >
-      <span
-        className={cn(
-          'h-2 w-2 shrink-0 border border-ink',
-          revision.pinned ? 'bg-ink' : 'bg-transparent',
-        )}
-        aria-hidden
-      />
-      <div className="min-w-0 flex-1">
+      {rows.map(([k, v]) => (
         <div
-          className={cn(
-            'font-serif text-[12px] text-ink',
-            isNewest && 'font-medium',
-          )}
+          key={k}
+          className="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
         >
-          {formatRevisionAge(revision.createdAt, t)}
+          <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
+            {k}
+          </span>
+          <span className="font-serif text-[13px] text-ink">{v}</span>
         </div>
-        <div className="truncate font-serif text-[11px] italic text-ink-3">
-          {formatRevisionSubtitle(revision, t)}
-        </div>
-      </div>
-      {isNewest && (
-        <span className="bg-ink px-1.5 py-px font-mono text-[8px] tracking-wider text-paper">
-          {t('inspector.history.now')}
-        </span>
-      )}
-      <IconButton
-        icon={Pin}
-        label={t(revision.pinned ? 'inspector.history.unpin' : 'inspector.history.pin')}
-        onClick={togglePin}
-        className={cn('h-5 w-5', revision.pinned ? 'text-ink' : 'text-ink-4')}
-      />
-      <IconButton
-        icon={RotateCcw}
-        label={t('inspector.history.restore')}
-        onClick={restore}
-        className="h-5 w-5 text-ink-4"
-      />
+      ))}
     </div>
   );
 };
@@ -249,9 +180,9 @@ const HistoryPane = ({ docId }: { docId: string }) => {
 
   return (
     <div className="px-4 py-3.5">
-      <div className="mb-2 font-mono text-[9px] uppercase tracking-wider text-ink-4">
+      <Eyebrow size={9} tone="ink4" className="mb-2">
         {t('inspector.history.title')} · {revisions.length}
-      </div>
+      </Eyebrow>
       {revisions.length === 0 ? (
         <p className="font-serif text-[12px] italic text-ink-3">
           {t('inspector.history.empty')}
@@ -261,46 +192,30 @@ const HistoryPane = ({ docId }: { docId: string }) => {
           <RevisionRow key={rev.id} revision={rev} isNewest={i === 0} />
         ))
       )}
-      <button
-        type="button"
+      <Button
+        kind="ghost"
+        size="sm"
         data-testid="open-version-modal"
         onClick={() => { setVersionModalOpen(true); }}
-        className="mt-3 inline-block border-b border-ink pb-px font-sans text-[11px] text-ink hover:text-ink-2"
+        className="mt-3"
       >
         {t('inspector.history.full')}
-      </button>
+      </Button>
     </div>
   );
-};
-
-const saveVersion = (docId: string, label: string | null): void => {
-  if (label === null) return;
-  void (async () => {
-    const doc = await db.docs.get(docId);
-    if (!doc) return;
-    await createRevision(docId, doc.body, {
-      kind: 'manual',
-      label: label.trim() || undefined,
-    });
-  })().catch((err: unknown) => {
-    console.error('Failed to save version', err);
-  });
 };
 
 const ActionsPane = ({ docId }: { docId: string }) => {
   const { t } = useTranslation('chrome');
   const revisions = useRevisions(docId);
   const setVersionModalOpen = useUI((s) => s.setVersionModalOpen);
-
-  const onSave = (): void => {
-    saveVersion(docId, window.prompt(t('inspector.history.savePrompt')));
-  };
+  const setSaveVersionOpen = useUI((s) => s.setSaveVersionOpen);
 
   return (
     <div className="py-2">
-      <div className="px-4 pb-1 pt-2 font-mono text-[9px] uppercase tracking-wider text-ink-4">
+      <Eyebrow size={9} tone="ink4" className="px-4 pb-1 pt-2">
         {t('inspector.actions.label')}
-      </div>
+      </Eyebrow>
       <ComingSoon hint={t('inspector.expand')} side="left" className="block">
         <ActionItem text={t('inspector.actions.rename')} />
         <ActionItem text={t('inspector.actions.move')} />
@@ -315,7 +230,7 @@ const ActionsPane = ({ docId }: { docId: string }) => {
       <div className="my-1.5 h-px bg-rule" />
       <ActionButton
         text={t('inspector.actions.saveVersion')}
-        onClick={onSave}
+        onClick={() => { setSaveVersionOpen(true); }}
         testId="action-save-version"
       />
       <ActionButton
@@ -342,9 +257,9 @@ const ActionItem = ({ text, kbd, badge }: ActionItemProps) => (
   <div className="flex items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper hover:text-ink">
     <span className="flex-1">{text}</span>
     {badge && (
-      <span className="font-mono text-[9px] tracking-wider text-ink-3">
-        {badge}
-      </span>
+      <Eyebrow asChild size={9} tone="ink3">
+        <span>{badge}</span>
+      </Eyebrow>
     )}
     {kbd && <span className="font-mono text-[10px] text-ink-4">{kbd}</span>}
   </div>
@@ -366,9 +281,93 @@ const ActionButton = ({ text, badge, onClick, testId }: ActionButtonProps) => (
   >
     <span className="flex-1">{text}</span>
     {badge && (
-      <span className="font-mono text-[9px] tracking-wider text-ink-3">
-        {badge}
-      </span>
+      <Eyebrow asChild size={9} tone="ink3">
+        <span>{badge}</span>
+      </Eyebrow>
     )}
   </button>
 );
+
+const RevisionRowActions = ({ revision }: { revision: Revision }) => {
+  const { t } = useTranslation('chrome');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const togglePin = (): void => {
+    void db.revisions.update(revision.id, { pinned: !revision.pinned });
+  };
+  const restore = (): void => {
+    void restoreRevision(revision.docId, revision.id).catch((err: unknown) => {
+      console.error('Failed to restore revision', err);
+    });
+  };
+  return (
+    <>
+      <IconButton
+        icon={Pin}
+        label={t(revision.pinned ? 'inspector.history.unpin' : 'inspector.history.pin')}
+        onClick={togglePin}
+        className={cn('h-5 w-5', revision.pinned ? 'text-ink' : 'text-ink-4')}
+      />
+      <IconButton
+        icon={RotateCcw}
+        label={t('inspector.history.restore')}
+        onClick={() => { setConfirmOpen(true); }}
+        className="h-5 w-5 text-ink-4"
+      />
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={t('versionModal.restoreTitle')}
+        description={t('versionModal.restoreConfirm')}
+        confirmLabel={t('versionModal.restore')}
+        cancelLabel={t('versionModal.cancel')}
+        confirmKind="dangerous"
+        onConfirm={restore}
+      />
+    </>
+  );
+};
+
+const RevisionRow = ({
+  revision,
+  isNewest,
+}: {
+  revision: Revision;
+  isNewest: boolean;
+}) => {
+  const { t } = useTranslation('chrome');
+  return (
+    <div
+      data-testid={`revision-row-${revision.id}`}
+      className="group flex items-center gap-2 border-b border-rule/60 py-2"
+    >
+      <span
+        className={cn(
+          'h-2 w-2 shrink-0 border border-ink',
+          revision.pinned ? 'bg-ink' : 'bg-transparent',
+        )}
+        aria-hidden
+      />
+      <div className="min-w-0 flex-1">
+        <div
+          className={cn(
+            'font-serif text-[12px] text-ink',
+            isNewest && 'font-medium',
+          )}
+        >
+          {formatRevisionAge(revision.createdAt, t)}
+        </div>
+        <div className="truncate font-serif text-[11px] italic text-ink-3">
+          {formatRevisionSubtitle(revision, t)}
+        </div>
+      </div>
+      {isNewest && (
+        <Eyebrow asChild size={9} tone="paper">
+          <span className="bg-ink px-1.5 py-px">
+            {t('inspector.history.now')}
+          </span>
+        </Eyebrow>
+      )}
+      <RevisionRowActions revision={revision} />
+    </div>
+  );
+};

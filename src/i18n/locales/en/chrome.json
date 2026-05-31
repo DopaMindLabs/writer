@@ -150,7 +150,6 @@
       "summary": "{{count}} version",
       "summary_other": "{{count}} versions",
       "saveVersion": "Save version",
-      "savePrompt": "Name this version (optional)",
       "pin": "Pin version",
       "unpin": "Unpin version",
       "restore": "Restore",
@@ -194,8 +193,18 @@
     "newLabel": "Current",
     "identical": "No changes between these versions.",
     "restore": "Restore this version",
-    "restoreConfirm": "Restore this version? Your current text is saved as a version first, so you can undo this.",
+    "restoreTitle": "Restore this version?",
+    "restoreConfirm": "Your current text is saved as a version first, so you can undo this.",
+    "cancel": "Cancel",
     "pin": "Pin",
     "unpin": "Unpin"
+  },
+  "saveVersion": {
+    "title": "Save version",
+    "description": "Save a named snapshot you can return to later.",
+    "label": "Version name",
+    "placeholder": "Name this version (optional)",
+    "save": "Save version",
+    "cancel": "Cancel"
   }
 }

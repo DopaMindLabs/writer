@@ -538,6 +538,35 @@ themes and mapped in [`tailwind.config.ts`](../tailwind.config.ts):
 
 ---
 
+## 5a. Overlays (dialogs, confirms, popovers)
+
+Transient surfaces that float above the page. All share the hairline grammar: square
+corners (no radius), a 1 px `rule` border, `paper` ground, and a dimmed scrim. They are
+**modal Radix primitives** — never the browser's native `window.alert` / `confirm` /
+`prompt`, which ignore the tokens and type families.
+
+| Primitive | Source | Use it for |
+|---|---|---|
+| **Dialog** | `src/components/ui/dialog.tsx` | A centred modal task (compose `DialogContent` + `DialogHeader`/`DialogTitle`/`DialogDescription`). Default `max-w-lg`; override the `className` width as needed (e.g. `HelpPalette`, `VersionHistoryModal`). |
+| **ConfirmDialog** | `src/components/ui/ConfirmDialog.tsx` | A yes/no confirm for an irreversible or destructive action. Two `Button`s: `secondary` cancel + a confirm whose `confirmKind` is `dangerous` for destructive verbs. Autofocuses confirm; wires `aria-describedby`. |
+| **Popover** | `src/components/ui/popover.tsx` | A small panel anchored to a trigger (Quick Settings, Space menu). Not modal. |
+| **Bottom sheet** | `src/components/chrome/MobileMoreSheet.tsx` | The mobile-only slide-up menu. The one place radius is allowed (16 px scrim corners, per §1/§2.3). |
+
+**Rules**
+- **Never** use `window.alert` / `window.confirm` / `window.prompt`. For a confirm, use
+  `ConfirmDialog`; for text entry, compose a `Dialog` with the `TextField` primitive (see
+  `SaveVersionDialog`).
+- A dialog always has a `DialogTitle`; pair a destructive confirm with a `description` so the
+  consequence is stated. Keep the confirm button's verb specific ("Restore", "Delete"), not
+  "OK".
+- Buttons live bottom-right, cancel before confirm, built from the `Button` primitive (§4).
+
+> **Gap → DS update.** `ConfirmDialog` was added to close the "destructive confirm" gap that
+> previously fell back to `window.confirm`. The native `Toast` notification remains a future
+> extension (§5); until it lands, surface action results as inline status text, not a popup.
+
+---
+
 ## 6. Navigation (writer surface)
 
 ### 6.1 `WorldRail` (source: `final.jsx · FRail`)

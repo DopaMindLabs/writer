@@ -10,6 +10,7 @@ import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
 import { DocInspector } from '@/components/chrome/DocInspector';
 import { DocInspectorIcons } from '@/components/chrome/DocInspectorIcons';
 import { VersionHistoryModal } from '@/components/chrome/VersionHistoryModal';
+import { SaveVersionDialog } from '@/components/chrome/SaveVersionDialog';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
 import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
 import { useSpace } from '@/hooks/useSpaces';
@@ -80,6 +81,7 @@ export const WriteScreen = () => {
           />
         </main>
         {doc && <VersionHistoryModal doc={doc} />}
+        {doc && <SaveVersionDialog docId={doc.id} />}
         <WriteMobileChrome spaceId={spaceId} docId={docId} focus={focus} />
       </div>
     </div>

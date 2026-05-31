@@ -95,4 +95,38 @@ describe('VersionHistoryModal', () => {
       expect(stored?.pinned).toBe(true);
     });
   });
+
+  it('restores a version through the confirm dialog (no native popup)', async () => {
+    await db.revisions.put(
+      makeRevision({ id: 'rev1', text: 'old text', body: 'old text', createdAt: 10 }),
+    );
+    openModal();
+    renderWithProviders(<VersionHistoryModal doc={doc} />);
+
+    await userEvent.click(await screen.findByTestId('modal-restore'));
+    // A DS confirm dialog appears instead of window.confirm.
+    await userEvent.click(await screen.findByTestId('confirm-dialog-confirm'));
+
+    await waitFor(async () => {
+      const updated = await db.docs.get(doc.id);
+      expect(updated?.body).toBe('old text');
+    });
+    // The pre-restore safety snapshot was captured.
+    const rows = await db.revisions.where('docId').equals(doc.id).toArray();
+    expect(rows.some((r) => r.label === 'pre-restore')).toBe(true);
+  });
+
+  it('does not restore when the confirm dialog is cancelled', async () => {
+    await db.revisions.put(
+      makeRevision({ id: 'rev1', text: 'old text', body: 'old text', createdAt: 10 }),
+    );
+    openModal();
+    renderWithProviders(<VersionHistoryModal doc={doc} />);
+
+    await userEvent.click(await screen.findByTestId('modal-restore'));
+    await userEvent.click(await screen.findByTestId('confirm-dialog-cancel'));
+
+    const updated = await db.docs.get(doc.id);
+    expect(updated?.body).toBe('the quick brown fox');
+  });
 });

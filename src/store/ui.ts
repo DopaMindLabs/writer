@@ -22,6 +22,7 @@ interface UIState {
   inspectorSection: InspectorSection;
   readingWidth: ReadingWidth;
   versionModalOpen: boolean;
+  saveVersionOpen: boolean;
   diffMode: DiffMode;
   compareRevisionIds: { base: string | null; compare: string | null };
   setCurrentSpaceId: (id: string | null) => void;
@@ -42,6 +43,7 @@ interface UIState {
   setInspectorSection: (section: InspectorSection) => void;
   setReadingWidth: (width: ReadingWidth) => void;
   setVersionModalOpen: (open: boolean) => void;
+  setSaveVersionOpen: (open: boolean) => void;
   setDiffMode: (mode: DiffMode) => void;
   setCompareRevisionIds: (ids: {
     base: string | null;
@@ -207,6 +209,9 @@ const createToggleActions = (set: SetState) => ({
   closeCitationsDrawer: () => { set({ citationsDrawerOpen: false }); },
   setVersionModalOpen: (versionModalOpen: boolean) => {
     set({ versionModalOpen });
+  },
+  setSaveVersionOpen: (saveVersionOpen: boolean) => {
+    set({ saveVersionOpen });
   },
   setCompareRevisionIds: (compareRevisionIds: {
     base: string | null;

@@ -1,6 +1,6 @@
 import { act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, screen } from '@/test/test-utils';
+import { renderWithProviders, screen, within } from '@/test/test-utils';
 import { useUI, type InspectorSection } from '@/store/ui';
 import { db } from '@/db/db';
 import type { Revision } from '@/db/schema';
@@ -26,6 +26,7 @@ describe('DocInspector', () => {
       useUI.getState().setInspectorMode('expanded');
       useUI.getState().setInspectorSection('outline');
       useUI.getState().setVersionModalOpen(false);
+      useUI.getState().setSaveVersionOpen(false);
     });
   });
 
@@ -126,6 +127,43 @@ describe('DocInspector', () => {
       const pane = screen.getByTestId('doc-inspector-pane-history');
       expect(pane).toHaveTextContent(/first draft/i);
       expect(pane).toHaveTextContent(/baseline/i);
+    });
+
+    it('restores a revision via the confirm dialog (no native popup)', async () => {
+      await db.docs.put({
+        id: 'd1',
+        spaceId: 's1',
+        sectionId: 'sec1',
+        name: 'Doc',
+        body: 'current body',
+        meta: { wordCount: 2 },
+        updatedAt: 1,
+      });
+      await db.revisions.put(
+        makeRevision({ id: 'rev-old', body: 'older body', createdAt: 1 }),
+      );
+      act(() => {
+        useUI.getState().setInspectorSection('history');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+
+      const row = await screen.findByTestId('revision-row-rev-old');
+      await userEvent.click(within(row).getByLabelText(/^restore$/i));
+      await userEvent.click(await screen.findByTestId('confirm-dialog-confirm'));
+
+      await waitFor(async () => {
+        const updated = await db.docs.get('d1');
+        expect(updated?.body).toBe('older body');
+      });
+    });
+
+    it('opens the save-version dialog from the actions pane', async () => {
+      act(() => {
+        useUI.getState().setInspectorSection('actions');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      await userEvent.click(screen.getByTestId('action-save-version'));
+      expect(useUI.getState().saveVersionOpen).toBe(true);
     });
 
     it('should open the version modal from the history "full" link', async () => {

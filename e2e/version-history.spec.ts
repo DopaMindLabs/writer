@@ -48,13 +48,15 @@ test('captures a baseline version and lists it in the history pane', async ({
 test('saves a manual version from the actions pane', async ({ page }) => {
   await gotoFirstDoc(page);
 
-  // The "Save version" action prompts for an optional label.
-  page.on('dialog', (dialog) => {
-    void dialog.accept('milestone draft');
-  });
-
   await openInspectorSection(page, 'actions');
   await page.getByTestId('action-save-version').click();
+
+  // A styled in-app dialog collects the optional label (no native prompt).
+  const dialog = page.getByTestId('save-version-dialog');
+  await expect(dialog).toBeVisible();
+  await page.getByTestId('save-version-label').fill('milestone draft');
+  await page.getByTestId('save-version-submit').click();
+  await expect(dialog).toBeHidden();
 
   await openInspectorSection(page, 'history');
   const pane = page.getByTestId('doc-inspector-pane-history');
@@ -95,17 +97,16 @@ test('restores an earlier version, creating a safety snapshot', async ({
   await page.keyboard.type(` ${probe}`);
   await page.waitForTimeout(800);
 
-  // Confirm the restore (it warns that current text is snapshotted first).
-  page.on('dialog', (dialog) => {
-    void dialog.accept();
-  });
-
   await openInspectorSection(page, 'history');
   await page.getByTestId('open-version-modal').click();
 
   const modal = page.getByTestId('version-history-modal');
   await expect(modal).toBeVisible();
   await page.getByTestId('modal-restore').click();
+
+  // A styled confirm dialog appears (no native confirm); accept it.
+  await expect(page.getByTestId('confirm-dialog')).toBeVisible();
+  await page.getByTestId('confirm-dialog-confirm').click();
 
   // Modal closes after a restore.
   await expect(modal).toBeHidden();

@@ -151,6 +151,14 @@ describe('useUI store', () => {
     expect(useUI.getState().versionModalOpen).toBe(false);
   });
 
+  it('setSaveVersionOpen toggles the dialog flag without persisting', () => {
+    act(() => { useUI.getState().setSaveVersionOpen(true); });
+    expect(useUI.getState().saveVersionOpen).toBe(true);
+    expect(window.localStorage.getItem('lorem-ui')).toBeNull();
+    act(() => { useUI.getState().setSaveVersionOpen(false); });
+    expect(useUI.getState().saveVersionOpen).toBe(false);
+  });
+
   it('setCompareRevisionIds stores the base/compare selection', () => {
     act(() => {
       useUI.getState().setCompareRevisionIds({ base: 'rev1', compare: null });
