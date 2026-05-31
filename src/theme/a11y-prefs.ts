@@ -90,3 +90,16 @@ export const prefersReducedMotion = (): boolean => {
   if (typeof window === 'undefined') return false;
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 };
+
+/**
+ * Whether motion (animation, smooth scrolling) should be suppressed: when the
+ * user chose Reduced motion, or — unless they forced Full — when the OS requests
+ * it. Mirrors the CSS gating in index.css and the tour smooth-scroll gating.
+ */
+export const motionReduced = (): boolean => {
+  if (typeof document === 'undefined') return false;
+  const motion = document.documentElement.getAttribute('data-motion');
+  if (motion === 'reduced') return true;
+  if (motion === 'full') return false;
+  return prefersReducedMotion();
+};

@@ -86,4 +86,26 @@ describe('SettingsScreen', () => {
     });
     expect(getByRole('heading', { name: /backups/i })).toBeInTheDocument();
   });
+
+  it('stacks every sibling section of the active group on one page', () => {
+    const { getByRole } = renderWithProviders(<SettingsScreen />, {
+      initialEntries: ['/settings'],
+    });
+    // The Preferences group renders General … Editor … Typography together,
+    // not just the selected Editor section.
+    expect(getByRole('heading', { name: 'General' })).toBeInTheDocument();
+    expect(getByRole('heading', { name: 'Editor' })).toBeInTheDocument();
+    expect(getByRole('heading', { name: /typography/i })).toBeInTheDocument();
+  });
+
+  it('swaps the stacked page when a tab in another group is selected', () => {
+    const { getByTestId, getByRole, queryByRole } = renderWithProviders(
+      <SettingsScreen />,
+      { initialEntries: ['/settings'] },
+    );
+    fireEvent.click(getByTestId('settings-tab-account'));
+    expect(getByRole('heading', { name: 'Account' })).toBeInTheDocument();
+    // The Preferences group is no longer mounted.
+    expect(queryByRole('heading', { name: 'Editor' })).not.toBeInTheDocument();
+  });
 });
