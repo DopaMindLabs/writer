@@ -65,11 +65,11 @@ export const PlaceholderSlider = ({
       <div className="relative h-[2px] w-[200px] bg-rule">
         <div
           className="absolute left-0 top-0 h-full bg-ink"
-          style={{ width: `${pct}%` }}
+          style={{ width: `${String(pct)}%` }}
         />
         <div
           className="absolute -top-[5px] h-3 w-3 -translate-x-1/2 rounded-full bg-ink"
-          style={{ left: `${pct}%` }}
+          style={{ left: `${String(pct)}%` }}
         />
       </div>
       <span className="font-serif text-[16px] text-ink">{b}</span>

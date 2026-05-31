@@ -120,7 +120,7 @@ const FloatingToolbarPluginImpl = () => {
             const nodes = selection.getNodes();
             for (const node of nodes) {
               let listItem = node;
-              while (listItem && !$isListItemNode(listItem)) {
+              while (!$isListItemNode(listItem)) {
                 const parent = listItem.getParent();
                 if (!parent) break;
                 listItem = parent;

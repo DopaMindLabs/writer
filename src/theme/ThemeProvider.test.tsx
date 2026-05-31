@@ -1,5 +1,6 @@
 import { act, render, renderHook } from '@testing-library/react';
-import { ThemeProvider, useTheme } from './ThemeProvider';
+import { ThemeProvider } from './ThemeProvider';
+import { useTheme } from './theme-context';
 import { useUI } from '@/store/ui';
 
 beforeEach(() => {

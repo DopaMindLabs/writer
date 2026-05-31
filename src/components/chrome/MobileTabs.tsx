@@ -21,9 +21,7 @@ interface TabItem {
   match?: (pathname: string) => boolean;
 }
 
-export const MobileTabs = ({ spaceId, docId }: MobileTabsProps) => {
-  const { t } = useTranslation('chrome');
-  const location = useLocation();
+const useTabItems = ({ spaceId, docId }: MobileTabsProps): TabItem[] => {
   const setMobileMoreOpen = useUI((s) => s.setMobileMoreOpen);
   const openCitationsDrawer = useUI((s) => s.openCitationsDrawer);
 
@@ -33,11 +31,10 @@ export const MobileTabs = ({ spaceId, docId }: MobileTabsProps) => {
       : spaceId
         ? routes.spaceWrite(spaceId)
         : routes.home();
-  const readHref =
-    spaceId && docId ? routes.docRead(spaceId, docId) : null;
+  const readHref = spaceId && docId ? routes.docRead(spaceId, docId) : null;
   const brainHref = spaceId ? routes.brainSpace(spaceId) : null;
 
-  const items: TabItem[] = [
+  return [
     {
       key: 'write',
       Icon: Pencil,
@@ -72,6 +69,12 @@ export const MobileTabs = ({ spaceId, docId }: MobileTabsProps) => {
       onClick: () => { setMobileMoreOpen(true); },
     },
   ];
+};
+
+export const MobileTabs = ({ spaceId, docId }: MobileTabsProps) => {
+  const { t } = useTranslation('chrome');
+  const location = useLocation();
+  const items = useTabItems({ spaceId, docId });
 
   return (
     <nav
@@ -79,49 +82,53 @@ export const MobileTabs = ({ spaceId, docId }: MobileTabsProps) => {
       aria-label={t('mobileTabs.write')}
       className="flex h-14 shrink-0 items-stretch border-t border-rule bg-paper pb-[env(safe-area-inset-bottom)] md:hidden"
     >
-      {items.map((item) => {
-        const active = item.match ? item.match(location.pathname) : false;
-        const className = cn(
-          'flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors',
-          active
-            ? 'text-ink'
-            : 'text-ink-3 hover:text-ink',
-        );
-        const inner = (
-          <>
-            <item.Icon className="h-4 w-4" aria-hidden />
-            <span className="font-mono text-[9px] uppercase tracking-wider">
-              {t(`mobileTabs.${item.key}`)}
-            </span>
-          </>
-        );
-        if (item.href) {
-          return (
-            <Link
-              key={item.key}
-              data-testid={`mobile-tabs-${item.key}`}
-              to={item.href}
-              aria-current={active ? 'page' : undefined}
-              className={className}
-            >
-              {inner}
-            </Link>
-          );
-        }
-        // @lint-ignore native-button: tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
-        return (
-          <button
-            key={item.key}
-            data-testid={`mobile-tabs-${item.key}`}
-            type="button"
-            onClick={item.onClick}
-            aria-pressed={active}
-            className={className}
-          >
-            {inner}
-          </button>
-        );
-      })}
+      {items.map((item) => (
+        <MobileTab
+          key={item.key}
+          item={item}
+          active={item.match ? item.match(location.pathname) : false}
+        />
+      ))}
     </nav>
+  );
+};
+
+const MobileTab = ({ item, active }: { item: TabItem; active: boolean }) => {
+  const { t } = useTranslation('chrome');
+  const className = cn(
+    'flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors',
+    active ? 'text-ink' : 'text-ink-3 hover:text-ink',
+  );
+  const inner = (
+    <>
+      <item.Icon className="h-4 w-4" aria-hidden />
+      <span className="font-mono text-[9px] uppercase tracking-wider">
+        {t(`mobileTabs.${item.key}`)}
+      </span>
+    </>
+  );
+  if (item.href) {
+    return (
+      <Link
+        data-testid={`mobile-tabs-${item.key}`}
+        to={item.href}
+        aria-current={active ? 'page' : undefined}
+        className={className}
+      >
+        {inner}
+      </Link>
+    );
+  }
+  // @lint-ignore native-button: tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
+  return (
+    <button
+      data-testid={`mobile-tabs-${item.key}`}
+      type="button"
+      onClick={item.onClick}
+      aria-pressed={active}
+      className={className}
+    >
+      {inner}
+    </button>
   );
 };

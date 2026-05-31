@@ -21,8 +21,8 @@ export const WriteSurface = ({ doc, mode }: WriteSurfaceProps) => {
   docIdRef.current = doc.id;
   const readingWidth = useUI((s) => s.readingWidth);
 
-  const handleChange = useCallback(async (serialized: string) => {
-    await db.docs.update(docIdRef.current, {
+  const handleChange = useCallback((serialized: string) => {
+    void db.docs.update(docIdRef.current, {
       body: serialized,
       updatedAt: Date.now(),
     });

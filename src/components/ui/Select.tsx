@@ -10,7 +10,7 @@ export interface SelectOption {
 
 export type SelectVariant = 'baseline' | 'bare';
 
-export const selectRecipe = cva(
+const selectRecipe = cva(
   'block w-full appearance-none border-0 bg-transparent leading-tight text-ink outline-none disabled:cursor-not-allowed',
   {
     variants: {
@@ -66,7 +66,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         <select
           ref={ref}
           disabled={disabled}
-          aria-invalid={error || undefined}
+          aria-invalid={error ? true : undefined}
           className={selectRecipe({ variant, tone })}
           {...rest}
         >

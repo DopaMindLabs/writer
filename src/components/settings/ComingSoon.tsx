@@ -16,6 +16,41 @@ export interface ComingSoonProps {
   overlay?: boolean;
 }
 
+interface ComingSoonOverlayProps {
+  children: ReactNode;
+  className?: string;
+  badgeClassName?: string;
+  tooltipText: string;
+}
+
+const ComingSoonOverlay = ({
+  children,
+  className,
+  badgeClassName,
+  tooltipText,
+}: ComingSoonOverlayProps) => (
+  <div
+    data-coming-soon="true"
+    data-coming-soon-overlay="true"
+    aria-disabled="true"
+    className={cn(
+      'relative block w-full cursor-not-allowed',
+      className,
+    )}
+  >
+    <div className="pointer-events-none opacity-50">{children}</div>
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 flex items-center justify-center bg-paper/40 backdrop-blur-[1px]"
+    >
+      <ComingSoonBadge
+        className={cn('px-2 py-1 text-[10px]', badgeClassName)}
+      />
+    </div>
+    <span className="sr-only">{tooltipText}</span>
+  </div>
+);
+
 export const ComingSoon = ({
   children,
   hint,
@@ -33,26 +68,13 @@ export const ComingSoon = ({
 
   if (overlay) {
     return (
-      <div
-        data-coming-soon="true"
-        data-coming-soon-overlay="true"
-        aria-disabled="true"
-        className={cn(
-          'relative block w-full cursor-not-allowed',
-          className,
-        )}
+      <ComingSoonOverlay
+        className={className}
+        badgeClassName={badgeClassName}
+        tooltipText={tooltipText}
       >
-        <div className="pointer-events-none opacity-50">{children}</div>
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 flex items-center justify-center bg-paper/40 backdrop-blur-[1px]"
-        >
-          <ComingSoonBadge
-            className={cn('px-2 py-1 text-[10px]', badgeClassName)}
-          />
-        </div>
-        <span className="sr-only">{tooltipText}</span>
-      </div>
+        {children}
+      </ComingSoonOverlay>
     );
   }
 

@@ -1,7 +1,7 @@
 import { forwardRef, type HTMLAttributes } from 'react';
-import { Slot } from '@/components/libs/primitives';
 import { cva, type VariantProps } from '@/components/libs/variants';
 import { cn } from '@/lib/utils';
+import { SlotPrimitive } from '../slot.primitives';
 
 const typographyLabelVariants = cva('font-mono uppercase text-ink-3', {
   variants: {
@@ -25,7 +25,7 @@ export const TypographyLabel = forwardRef<
   TypographyLabelProps
 >(
   ({ className, variant, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'p';
+    const Comp = asChild ? SlotPrimitive : 'p';
     return (
       <Comp
         ref={ref}
@@ -36,5 +36,3 @@ export const TypographyLabel = forwardRef<
   },
 );
 TypographyLabel.displayName = 'TypographyLabel';
-
-export { typographyLabelVariants };
