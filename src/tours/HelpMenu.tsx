@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { HelpCircle, Check } from '@/components/libs/icons';
+import { BookOpen, HelpCircle, Check } from '@/components/libs/icons';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import { TOUR_IDS, TOURS, type TourId } from './tours';
 import { useTour } from './useTour';
@@ -16,6 +18,8 @@ import { getCompleted } from './storage';
 
 export const HelpMenu = () => {
   const { t } = useTranslation('tours');
+  const { t: tHelp } = useTranslation('help');
+  const navigate = useNavigate();
   const { replay, resetAll } = useTour();
   const [completedSnapshot, setCompletedSnapshot] = useState<string[]>(() =>
     getCompleted(),
@@ -44,6 +48,14 @@ export const HelpMenu = () => {
         <HelpCircle className="h-3.5 w-3.5" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[14rem]">
+        <DropdownMenuItem
+          onSelect={() => navigate(routes.help())}
+          data-tour-id="help-center"
+        >
+          <BookOpen className="h-3.5 w-3.5" aria-hidden />
+          <span className="flex-1">{tHelp('title')}</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <DropdownMenuLabel>{t('menu.tours')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {TOUR_IDS.map((id) => {
