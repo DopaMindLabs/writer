@@ -78,6 +78,20 @@ not a checkbox.
 - Run `npm run test:run` (and `npm run test:e2e` for UI-facing changes) before committing,
   alongside `npm run lint` and `npm run typecheck`.
 
+## Commits & branches
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org/) and are linted by
+commitlint (the `commit-msg` hook); run `npm run commit` for a guided Commitizen prompt. Branch
+names must be prefixed with a Conventional Commit type, enforced by the `pre-push` hook and the
+**Branch name** CI check (`scripts/validate-branch-name.mjs`):
+
+- Form: `<type>/<kebab-description>` — e.g. `feat/user-login`, `fix/date-parse`,
+  `chore/bump-deps`. Underscores are allowed for suffixes (`feat/user-login_v2`).
+- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`,
+  `revert`.
+- Exempt: `main`, `develop`, and automation branches (`claude/*`, `dependabot/*`,
+  `release-please*`).
+
 ## Key commands
 
 - `npm run dev`: Vite dev server
