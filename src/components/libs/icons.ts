@@ -1,5 +1,6 @@
 export {
   AlertTriangle,
+  AlignLeft,
   ArrowLeft,
   ArrowUpRight,
   BookOpen,
@@ -29,8 +30,11 @@ export {
   MoreHorizontal,
   MoreVertical,
   Pencil,
+  Pin,
   Plus,
   Quote,
+  RotateCcw,
+  Save,
   Search,
   Settings,
   Smartphone,

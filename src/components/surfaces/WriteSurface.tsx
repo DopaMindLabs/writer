@@ -1,8 +1,13 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Editor, type EditorMode } from '@/editor/EditorFacade';
 import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
 import { useUI, type ReadingWidth } from '@/store/ui';
+import {
+  captureAutoRevision,
+  captureBaselineRevision,
+  resetAutoThrottle,
+} from '@/lib/revisions';
 import { cn } from '@/lib/utils';
 
 interface WriteSurfaceProps {
@@ -20,12 +25,32 @@ export const WriteSurface = ({ doc, mode }: WriteSurfaceProps) => {
   const docIdRef = useRef(doc.id);
   docIdRef.current = doc.id;
   const readingWidth = useUI((s) => s.readingWidth);
+  const restoreNonce = useUI((s) => s.restoreNonces[doc.id] ?? 0);
+
+  // Record a starting snapshot when a document is opened, and clear the
+  // auto-capture throttle so the next document starts fresh.
+  useEffect(() => {
+    void captureBaselineRevision(doc.id, doc.body).catch((err: unknown) => {
+      console.error('Failed to capture baseline revision', err);
+    });
+    return () => { resetAutoThrottle(doc.id); };
+    // Keyed on doc.id only: we want the baseline at open time, not on every
+    // body change (auto-capture in handleChange covers ongoing edits).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doc.id]);
 
   const handleChange = useCallback((serialized: string) => {
     void db.docs.update(docIdRef.current, {
       body: serialized,
       updatedAt: Date.now(),
     });
+    // Best-effort, throttled history capture; never blocks or throws into the
+    // editor's onChange.
+    void captureAutoRevision(docIdRef.current, serialized).catch(
+      (err: unknown) => {
+        console.error('Failed to capture revision', err);
+      },
+    );
   }, []);
 
   return (
@@ -36,7 +61,7 @@ export const WriteSurface = ({ doc, mode }: WriteSurfaceProps) => {
     >
       <div className={cn('mx-auto w-full', READING_WIDTH_MAX[readingWidth])}>
         <Editor
-          key={`${doc.id}-${mode}`}
+          key={`${doc.id}-${mode}-${String(restoreNonce)}`}
           initialValue={doc.body}
           onChange={handleChange}
           mode={mode}

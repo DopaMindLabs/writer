@@ -1,27 +1,46 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight } from '@/components/libs/icons';
+import { ChevronRight, Pin, RotateCcw } from '@/components/libs/icons';
 import { useUI, type InspectorSection } from '@/store/ui';
+import { useRevisions } from '@/hooks/useRevisions';
+import { db } from '@/db/db';
+import type { Revision } from '@/db/schema';
+import { restoreRevision } from '@/lib/revisions';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { Button } from '@/components/ui/Button';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 import { IconButton } from '@/components/ui/icon';
 import { cn } from '@/lib/utils';
+import {
+  formatRevisionAge,
+  formatRevisionSubtitle,
+} from './revisionDisplay';
 
 const TABS: InspectorSection[] = ['outline', 'info', 'history', 'actions'];
 
 interface DocInspectorProps {
   docName: string;
+  docId: string;
+  hideHistory?: boolean;
 }
 
 interface DocInspectorTabsProps {
+  tabs: InspectorSection[];
   section: InspectorSection;
   setSection: (id: InspectorSection) => void;
 }
 
-const DocInspectorTabs = ({ section, setSection }: DocInspectorTabsProps) => {
+const DocInspectorTabs = ({
+  tabs,
+  section,
+  setSection,
+}: DocInspectorTabsProps) => {
   const { t } = useTranslation('chrome');
   return (
     <div className="flex border-b border-rule">
-      {TABS.map((id) => {
+      {tabs.map((id) => {
         const on = section === id;
         // @lint-ignore native-button: tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
         return (
@@ -46,11 +65,21 @@ const DocInspectorTabs = ({ section, setSection }: DocInspectorTabsProps) => {
   );
 };
 
-export const DocInspector = ({ docName }: DocInspectorProps) => {
+export const DocInspector = ({
+  docName,
+  docId,
+  hideHistory = false,
+}: DocInspectorProps) => {
   const { t } = useTranslation('chrome');
   const setInspectorMode = useUI((s) => s.setInspectorMode);
   const section = useUI((s) => s.inspectorSection);
   const setSection = useUI((s) => s.setInspectorSection);
+
+  const tabs = hideHistory ? TABS.filter((id) => id !== 'history') : TABS;
+  // Don't mutate the persisted section: coerce locally so returning to the
+  // write surface restores the History tab the user last had open.
+  const activeSection =
+    hideHistory && section === 'history' ? 'outline' : section;
 
   return (
     <aside
@@ -74,23 +103,21 @@ export const DocInspector = ({ docName }: DocInspectorProps) => {
         />
       </div>
 
-      <DocInspectorTabs section={section} setSection={setSection} />
+      <DocInspectorTabs
+        tabs={tabs}
+        section={activeSection}
+        setSection={setSection}
+      />
 
-      <ComingSoon
-        hint={t('inspector.expand')}
-        side="left"
-        className="block flex-1 self-stretch"
+      <div
+        data-testid={`doc-inspector-pane-${activeSection}`}
+        className="flex-1 overflow-auto"
       >
-        <div
-          data-testid={`doc-inspector-pane-${section}`}
-          className="flex-1 overflow-auto"
-        >
-          {section === 'outline' && <OutlinePane />}
-          {section === 'info' && <InfoPane />}
-          {section === 'history' && <HistoryPane />}
-          {section === 'actions' && <ActionsPane />}
-        </div>
-      </ComingSoon>
+        {activeSection === 'outline' && <OutlinePane />}
+        {activeSection === 'info' && <InfoPane />}
+        {activeSection === 'history' && <HistoryPane docId={docId} />}
+        {activeSection === 'actions' && <ActionsPane />}
+      </div>
     </aside>
   );
 };
@@ -166,88 +193,172 @@ const InfoPane = () => {
   );
 };
 
-const HistoryPane = () => {
+const HistoryPane = ({ docId }: { docId: string }) => {
   const { t } = useTranslation('chrome');
-  const rows: [string, string, boolean, boolean][] = [
-    ['now', 'pre-edit · auto', true, false],
-    ['12 min', 'auto', false, false],
-    ['41 min', '"first draft"', false, true],
-    ['Tue 09:14', '"before review"', false, true],
-    ['Mon', 'auto', false, false],
-  ];
+  const revisions = useRevisions(docId);
+  const setVersionModalOpen = useUI((s) => s.setVersionModalOpen);
+  const setSaveVersionOpen = useUI((s) => s.setSaveVersionOpen);
+
   return (
     <div className="px-4 py-3.5">
-      <div className="mb-2 font-mono text-[9px] uppercase tracking-wider text-ink-4">
-        {t('inspector.history.title')} · 12
-      </div>
-      {rows.map(([when, kind, current, pinned], i) => (
-        <div
-          key={i}
-          className="flex items-center gap-2 border-b border-rule/60 py-2"
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <Eyebrow size={9} tone="ink4">
+          {t('inspector.history.title')} · {revisions.length}
+        </Eyebrow>
+        <Button
+          kind="ghost"
+          size="sm"
+          data-testid="history-save-version"
+          onClick={() => { setSaveVersionOpen(true); }}
         >
-          <span
-            className={cn(
-              'h-2 w-2 shrink-0 border border-ink',
-              pinned ? 'bg-ink' : 'bg-transparent',
-            )}
-            aria-hidden
-          />
-          <div className="min-w-0 flex-1">
-            <div
-              className={cn(
-                'font-serif text-[12px] text-ink',
-                current && 'font-medium',
-              )}
-            >
-              {when}
-            </div>
-            <div className="font-serif text-[11px] italic text-ink-3">
-              {kind}
-            </div>
-          </div>
-          {current && (
-            <span className="bg-ink px-1.5 py-px font-mono text-[8px] tracking-wider text-paper">
-              {t('inspector.history.now')}
-            </span>
-          )}
-        </div>
-      ))}
-      <div className="mt-3 inline-block border-b border-ink pb-px font-sans text-[11px] text-ink">
-        {t('inspector.history.full')}
+          {t('inspector.history.saveVersion')}
+        </Button>
       </div>
+      {revisions.length === 0 ? (
+        <p className="font-serif text-[12px] italic text-ink-3">
+          {t('inspector.history.empty')}
+        </p>
+      ) : (
+        revisions.map((rev, i) => (
+          <RevisionRow key={rev.id} revision={rev} isNewest={i === 0} />
+        ))
+      )}
+      <Button
+        kind="ghost"
+        size="sm"
+        data-testid="open-version-modal"
+        onClick={() => { setVersionModalOpen(true); }}
+        className="mt-3"
+      >
+        {t('inspector.history.full')}
+      </Button>
     </div>
   );
 };
 
 const ActionsPane = () => {
   const { t } = useTranslation('chrome');
-  const item = (text: string, kbd?: string, badge?: string) => (
-    <div className="flex items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper hover:text-ink">
-      <span className="flex-1">{text}</span>
-      {badge && (
-        <span className="font-mono text-[9px] tracking-wider text-ink-3">
-          {badge}
-        </span>
-      )}
-      {kbd && <span className="font-mono text-[10px] text-ink-4">{kbd}</span>}
-    </div>
-  );
+
   return (
     <div className="py-2">
-      <div className="px-4 pb-1 pt-2 font-mono text-[9px] uppercase tracking-wider text-ink-4">
+      <Eyebrow size={9} tone="ink4" className="px-4 pb-1 pt-2">
         {t('inspector.actions.label')}
+      </Eyebrow>
+      <ComingSoon hint={t('inspector.expand')} side="left" className="block">
+        <ActionItem text={t('inspector.actions.rename')} />
+        <ActionItem text={t('inspector.actions.move')} />
+        <div className="my-1.5 h-px bg-rule" />
+        <ActionItem
+          text={t('inspector.actions.export')}
+          kbd={t('inspector.actions.exportKbd')}
+        />
+        <ActionItem text={t('inspector.actions.print')} />
+        <ActionItem text={t('inspector.actions.wordCount')} />
+        <div className="my-1.5 h-px bg-rule" />
+        <ActionItem text={t('inspector.actions.trash')} />
+      </ComingSoon>
+    </div>
+  );
+};
+
+interface ActionItemProps {
+  text: string;
+  kbd?: string;
+  badge?: string;
+}
+
+const ActionItem = ({ text, kbd, badge }: ActionItemProps) => (
+  <div className="flex items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper hover:text-ink">
+    <span className="flex-1">{text}</span>
+    {badge && (
+      <Eyebrow asChild size={9} tone="ink3">
+        <span>{badge}</span>
+      </Eyebrow>
+    )}
+    {kbd && <span className="font-mono text-[10px] text-ink-4">{kbd}</span>}
+  </div>
+);
+
+const RevisionRowActions = ({ revision }: { revision: Revision }) => {
+  const { t } = useTranslation('chrome');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const togglePin = (): void => {
+    void db.revisions.update(revision.id, { pinned: !revision.pinned });
+  };
+  const restore = (): void => {
+    void restoreRevision(revision.docId, revision.id).catch((err: unknown) => {
+      console.error('Failed to restore revision', err);
+    });
+  };
+  return (
+    <>
+      <IconButton
+        icon={Pin}
+        label={t(revision.pinned ? 'inspector.history.unpin' : 'inspector.history.pin')}
+        onClick={togglePin}
+        className={cn('h-5 w-5', revision.pinned ? 'text-ink' : 'text-ink-4')}
+      />
+      <IconButton
+        icon={RotateCcw}
+        label={t('inspector.history.restore')}
+        onClick={() => { setConfirmOpen(true); }}
+        className="h-5 w-5 text-ink-4"
+      />
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={t('versionModal.restoreTitle')}
+        description={t('versionModal.restoreConfirm')}
+        confirmLabel={t('versionModal.restore')}
+        cancelLabel={t('versionModal.cancel')}
+        confirmKind="dangerous"
+        onConfirm={restore}
+      />
+    </>
+  );
+};
+
+const RevisionRow = ({
+  revision,
+  isNewest,
+}: {
+  revision: Revision;
+  isNewest: boolean;
+}) => {
+  const { t } = useTranslation('chrome');
+  return (
+    <div
+      data-testid={`revision-row-${revision.id}`}
+      className="group flex items-center gap-2 border-b border-rule/60 py-2"
+    >
+      <span
+        className={cn(
+          'h-2 w-2 shrink-0 border border-ink',
+          revision.pinned ? 'bg-ink' : 'bg-transparent',
+        )}
+        aria-hidden
+      />
+      <div className="min-w-0 flex-1">
+        <div
+          className={cn(
+            'font-serif text-[12px] text-ink',
+            isNewest && 'font-medium',
+          )}
+        >
+          {formatRevisionAge(revision.createdAt, t)}
+        </div>
+        <div className="truncate font-serif text-[11px] italic text-ink-3">
+          {formatRevisionSubtitle(revision, t)}
+        </div>
       </div>
-      {item(t('inspector.actions.rename'))}
-      {item(t('inspector.actions.move'))}
-      <div className="my-1.5 h-px bg-rule" />
-      {item(t('inspector.actions.export'), t('inspector.actions.exportKbd'))}
-      {item(t('inspector.actions.print'))}
-      {item(t('inspector.actions.wordCount'))}
-      <div className="my-1.5 h-px bg-rule" />
-      {item(t('inspector.actions.versionHistory'), undefined, '12')}
-      {item(t('inspector.actions.restore'))}
-      <div className="my-1.5 h-px bg-rule" />
-      {item(t('inspector.actions.trash'))}
+      {isNewest && (
+        <Eyebrow asChild size={9} tone="paper">
+          <span className="bg-ink px-1.5 py-px">
+            {t('inspector.history.now')}
+          </span>
+        </Eyebrow>
+      )}
+      <RevisionRowActions revision={revision} />
     </div>
   );
 };

@@ -21,6 +21,7 @@ export const FEATURE_AREAS = [
   'accessibility',
   'shortcuts',
   'data',
+  'versioning',
   'mobile',
 ] as const;
 
@@ -183,6 +184,23 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     featureArea: 'data',
     keywords: ['export', 'import', 'backup', 'local', 'storage', 'offline'],
     related: ['getting-started', 'customization-and-settings'],
+  },
+  {
+    slug: 'version-history',
+    category: 'data',
+    featureArea: 'versioning',
+    keywords: [
+      'version',
+      'history',
+      'revision',
+      'restore',
+      'rollback',
+      'diff',
+      'compare',
+      'snapshot',
+      'pin',
+    ],
+    related: ['writing-and-editing', 'your-data'],
   },
   {
     slug: 'mobile',
