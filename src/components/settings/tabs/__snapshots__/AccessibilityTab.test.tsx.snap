@@ -1,0 +1,396 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AccessibilityTab > matches the snapshot at default preferences 1`] = `
+<div>
+  <section>
+    <p
+      class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+    >
+      SETTINGS
+    </p>
+    <h1
+      class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+    >
+      Accessibility
+    </h1>
+    <p
+      class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+    >
+      Tune the interface for comfort and assistive technology. Every option starts at the current experience — nothing changes until you choose it.
+    </p>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Theme & contrast
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          High-contrast themes meet the WCAG AAA contrast standard.
+        </div>
+      </div>
+      <div>
+        <div
+          aria-label="Theme & contrast"
+          class="inline-flex items-center gap-4 font-sans"
+          role="radiogroup"
+        >
+          <label
+            class="inline-flex cursor-pointer items-center gap-2 text-[13px] text-ink-2"
+            for="_r_0_-light"
+          >
+            <input
+              checked=""
+              class="peer sr-only"
+              id="_r_0_-light"
+              name="a11y-theme"
+              type="radio"
+              value="light"
+            />
+            <span
+              aria-hidden="true"
+              class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-ink peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+            >
+              <span
+                class="h-[6px] w-[6px] rounded-full bg-ink"
+              />
+            </span>
+            <span>
+              Light
+            </span>
+          </label>
+          <label
+            class="inline-flex cursor-pointer items-center gap-2 text-[13px] text-ink-2"
+            for="_r_0_-dark"
+          >
+            <input
+              class="peer sr-only"
+              id="_r_0_-dark"
+              name="a11y-theme"
+              type="radio"
+              value="dark"
+            />
+            <span
+              aria-hidden="true"
+              class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-rule peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+            />
+            <span>
+              Dark
+            </span>
+          </label>
+          <label
+            class="inline-flex cursor-pointer items-center gap-2 text-[13px] text-ink-2"
+            for="_r_0_-hc-light"
+          >
+            <input
+              class="peer sr-only"
+              id="_r_0_-hc-light"
+              name="a11y-theme"
+              type="radio"
+              value="hc-light"
+            />
+            <span
+              aria-hidden="true"
+              class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-rule peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+            />
+            <span>
+              High contrast (light)
+            </span>
+          </label>
+          <label
+            class="inline-flex cursor-pointer items-center gap-2 text-[13px] text-ink-2"
+            for="_r_0_-hc-dark"
+          >
+            <input
+              class="peer sr-only"
+              id="_r_0_-hc-dark"
+              name="a11y-theme"
+              type="radio"
+              value="hc-dark"
+            />
+            <span
+              aria-hidden="true"
+              class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-rule peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+            />
+            <span>
+              High contrast (dark)
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Motion
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          Reduce or disable interface animations.
+        </div>
+      </div>
+      <div>
+        <div
+          aria-label="Motion"
+          class="inline-flex items-center gap-4 font-sans"
+          role="radiogroup"
+        >
+          <label
+            class="inline-flex cursor-pointer items-center gap-2 text-[13px] text-ink-2"
+            for="_r_1_-auto"
+          >
+            <input
+              checked=""
+              class="peer sr-only"
+              id="_r_1_-auto"
+              name="a11y-motion"
+              type="radio"
+              value="auto"
+            />
+            <span
+              aria-hidden="true"
+              class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-ink peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+            >
+              <span
+                class="h-[6px] w-[6px] rounded-full bg-ink"
+              />
+            </span>
+            <span>
+              Match system
+            </span>
+          </label>
+          <label
+            class="inline-flex cursor-pointer items-center gap-2 text-[13px] text-ink-2"
+            for="_r_1_-reduced"
+          >
+            <input
+              class="peer sr-only"
+              id="_r_1_-reduced"
+              name="a11y-motion"
+              type="radio"
+              value="reduced"
+            />
+            <span
+              aria-hidden="true"
+              class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-rule peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+            />
+            <span>
+              Reduced
+            </span>
+          </label>
+          <label
+            class="inline-flex cursor-pointer items-center gap-2 text-[13px] text-ink-2"
+            for="_r_1_-full"
+          >
+            <input
+              class="peer sr-only"
+              id="_r_1_-full"
+              name="a11y-motion"
+              type="radio"
+              value="full"
+            />
+            <span
+              aria-hidden="true"
+              class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-rule peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+            />
+            <span>
+              Full
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Text size
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          Scale the reading and writing surface.
+        </div>
+      </div>
+      <div>
+        <div
+          aria-label="Text size"
+          class="flex flex-wrap gap-1.5"
+          role="group"
+        >
+          <button
+            aria-pressed="false"
+            class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+            type="button"
+          >
+            Small
+          </button>
+          <button
+            aria-pressed="true"
+            class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper"
+            type="button"
+          >
+            Default
+          </button>
+          <button
+            aria-pressed="false"
+            class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+            type="button"
+          >
+            Large
+          </button>
+          <button
+            aria-pressed="false"
+            class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+            type="button"
+          >
+            Extra large
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Line spacing
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          Add breathing room between lines of prose.
+        </div>
+      </div>
+      <div>
+        <div
+          aria-label="Line spacing"
+          class="flex flex-wrap gap-1.5"
+          role="group"
+        >
+          <button
+            aria-pressed="true"
+            class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper"
+            type="button"
+          >
+            Normal
+          </button>
+          <button
+            aria-pressed="false"
+            class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+            type="button"
+          >
+            Relaxed
+          </button>
+          <button
+            aria-pressed="false"
+            class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+            type="button"
+          >
+            Loose
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Always underline links
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          Show underlines so links don't rely on colour alone.
+        </div>
+      </div>
+      <div>
+        <button
+          aria-checked="false"
+          aria-label="Always underline links"
+          class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-rule bg-paper-2"
+          role="switch"
+          type="button"
+        >
+          <span
+            aria-hidden="true"
+            class="absolute top-[1px] left-[1px] h-3 w-3 rounded-full bg-paper transition-transform translate-x-0"
+          />
+        </button>
+      </div>
+    </div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Enhanced focus indicator
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          Use a thicker, higher-contrast outline on focus.
+        </div>
+      </div>
+      <div>
+        <button
+          aria-checked="false"
+          aria-label="Enhanced focus indicator"
+          class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-rule bg-paper-2"
+          role="switch"
+          type="button"
+        >
+          <span
+            aria-hidden="true"
+            class="absolute top-[1px] left-[1px] h-3 w-3 rounded-full bg-paper transition-transform translate-x-0"
+          />
+        </button>
+      </div>
+    </div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Reset to defaults
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          Restore motion, text size, line spacing, links, and focus to their defaults. Your theme is unchanged.
+        </div>
+      </div>
+      <div>
+        <button
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border border-ink bg-transparent text-ink hover:bg-paper-2 h-7 px-3 text-xs"
+          data-testid="a11y-reset"
+          type="button"
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
+`;

@@ -63,7 +63,7 @@ export const WriteScreen = () => {
           spaceName={space?.name}
           mode={editorMode}
         />
-        <main className="flex flex-1 overflow-hidden">
+        <main id="main-content" tabIndex={-1} className="flex flex-1 overflow-hidden">
           {doc ? (
             <WriteSurface doc={doc} mode={editorMode} />
           ) : (

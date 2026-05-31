@@ -64,7 +64,11 @@ export const BrainSpaceScreen = () => {
           fallbackDocId={fallbackDocId}
         />
         <BrainSpaceMobileNotice spaceId={spaceId} />
-        <main className="hidden flex-1 overflow-hidden md:flex">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="hidden flex-1 overflow-hidden md:flex"
+        >
           <BrainSpaceCanvas spaceId={spaceId} />
           <CitationsSidePanel spaceId={spaceId} />
         </main>

@@ -1,0 +1,51 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`a11y preference layer document state > enhanced focus is an isolated opt-in (snapshot) 1`] = `
+{
+  "data-focus": "enhanced",
+  "data-line-spacing": null,
+  "data-link-underline": null,
+  "data-motion": null,
+  "data-text-scale": null,
+}
+`;
+
+exports[`a11y preference layer document state > every non-default preference together (snapshot) 1`] = `
+{
+  "data-focus": "enhanced",
+  "data-line-spacing": "loose",
+  "data-link-underline": "always",
+  "data-motion": "reduced",
+  "data-text-scale": "xl",
+}
+`;
+
+exports[`a11y preference layer document state > larger text size is an isolated opt-in (snapshot) 1`] = `
+{
+  "data-focus": null,
+  "data-line-spacing": null,
+  "data-link-underline": null,
+  "data-motion": null,
+  "data-text-scale": "lg",
+}
+`;
+
+exports[`a11y preference layer document state > reduced motion is an isolated opt-in (snapshot) 1`] = `
+{
+  "data-focus": null,
+  "data-line-spacing": null,
+  "data-link-underline": null,
+  "data-motion": "reduced",
+  "data-text-scale": null,
+}
+`;
+
+exports[`a11y preference layer document state > writes no behaviour-changing attributes at the default (snapshot) 1`] = `
+{
+  "data-focus": null,
+  "data-line-spacing": null,
+  "data-link-underline": null,
+  "data-motion": null,
+  "data-text-scale": null,
+}
+`;

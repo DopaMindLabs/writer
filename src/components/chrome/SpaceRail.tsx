@@ -114,9 +114,13 @@ const SpaceRailSettings = () => {
 
 export const SpaceRail = ({ activeSpaceId }: SpaceRailProps) => {
   const spaces = useSpaces();
+  const { t } = useTranslation('chrome');
 
   return (
-    <aside className="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-rule bg-paper-2 py-3.5">
+    <aside
+      aria-label={t('spaceRail.landmarkLabel')}
+      className="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-rule bg-paper-2 py-3.5"
+    >
       <SpaceRailHeader />
       {spaces.map((w) => (
         <SpaceRailTile

@@ -46,7 +46,7 @@ export const ReadScreen = () => {
           spaceName={space?.name}
           mode="read"
         />
-        <main className="flex flex-1 overflow-hidden">
+        <main id="main-content" tabIndex={-1} className="flex flex-1 overflow-hidden">
           {doc && <WriteSurface doc={doc} mode="read" />}
           <CitationsSidePanel spaceId={spaceId} />
           <ReadInspector

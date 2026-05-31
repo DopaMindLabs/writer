@@ -29,6 +29,12 @@
 
   --info: #3a6597;
   --info-bg: #e2ecf6;
+
+  /* Accessibility preference layer — defaults equal current behaviour. */
+  --reading-scale: 1;
+  --reading-leading-scale: 1;
+  --focus-ring-width: 1px;
+  --motion-duration: 150ms;
 }
 
 [data-theme='dark'] {
@@ -113,6 +119,81 @@
 
   --info: #99ccff;
   --info-bg: #001a33;
+}
+
+/*
+ * Accessibility preference overrides.
+ *
+ * Each block is gated on a `data-*` attribute that is only present when the user
+ * has changed the matching preference away from its default, so the default
+ * experience is never touched. These compose with any active `data-theme`.
+ */
+
+/*
+ * Text size — a multiplier on the reading/writing surface, so each mode keeps
+ * its own base size and only scales proportionally (scale 1 = unchanged).
+ */
+[data-text-scale='sm'] {
+  --reading-scale: 0.9;
+}
+[data-text-scale='lg'] {
+  --reading-scale: 1.12;
+}
+[data-text-scale='xl'] {
+  --reading-scale: 1.24;
+}
+
+/* Line spacing — a multiplier on prose leading (scale 1 = unchanged). */
+[data-line-spacing='relaxed'] {
+  --reading-leading-scale: 1.12;
+}
+[data-line-spacing='loose'] {
+  --reading-leading-scale: 1.25;
+}
+
+/* Enhanced focus indicator (opt-in). Default stays at the current 1px ring. */
+[data-focus='enhanced'] {
+  --focus-ring-width: 2px;
+}
+/*
+ * When enhanced focus is on, paint an additional high-contrast outline on top of
+ * the existing ring. Additive: the default (standard) state has no rule, so the
+ * current focus appearance is unchanged.
+ */
+[data-focus='enhanced'] :focus-visible {
+  outline: var(--focus-ring-width) solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Always underline links (WCAG 1.4.1 — don't rely on colour alone). */
+[data-link-underline='always'] a {
+  text-decoration-line: underline;
+}
+
+/*
+ * Reduced motion. `motion: auto` (default) follows the OS via the media query;
+ * `reduced` forces it on; `full` opts out of the OS reduce preference and keeps
+ * the app's authored motion. We exclude `data-motion='full'` from the media
+ * rule rather than trying to restore motion after the fact — `revert` would roll
+ * authored durations back to the UA default (no motion), not to our values.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion='full']) *,
+  html:not([data-motion='full']) *::before,
+  html:not([data-motion='full']) *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+[data-motion='reduced'] *,
+[data-motion='reduced'] *::before,
+[data-motion='reduced'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
 
 html,
