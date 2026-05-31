@@ -52,6 +52,8 @@ const seedLoader: Loader = async (context) => {
 };
 
 const preview: Preview = {
+  // Autodocs on by default; data-driven stories opt out with `!autodocs`.
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
     backgrounds: {
