@@ -43,6 +43,33 @@ System" design spec. When adding or changing any component or feature, verify it
   from `docs/design-system.md`; build the **writer** surface only.
 - Add a `.test.tsx` and a `.stories.tsx` mirroring the file under test (see
   [CODING_STANDARDS.md](./CODING_STANDARDS.md)).
+
+## Accessibility (read before building UI)
+
+Accessibility is a first-class, **additive** property of every feature — not an afterthought
+and never a regression for existing users. [`docs/design-system.md` §11](./docs/design-system.md)
+is the source of truth for the accessibility layer; align with it when building or changing UI.
+
+- **Compose, honour the preference layer.** Build from the accessible primitives in
+  `src/components/ui/` (including `SkipLink` and `VisuallyHidden`). Consume the `data-*`
+  preference layer and its tokens (`--reading-scale`, `--reading-leading-scale`,
+  `--focus-ring-width`, motion gating) — **never hard-code** a font size, line-height, focus
+  ring, transition duration, or colour that a preference or theme should govern.
+- **Operable & perceivable.** Every interactive element must be keyboard-operable with a
+  visible focus indicator and an accessible name, use correct semantics (roles, labels,
+  landmarks, `aria-live`, `aria-describedby`, `aria-current`), and respect
+  `prefers-reduced-motion` / `data-motion`.
+- **Additive by default.** New behaviour is opt-in and must not change the default experience
+  for existing users. Defaults equal today's behaviour; persisted preferences stay
+  back-compatible (`?? default`, no destructive migration).
+- **Contrast.** Target **WCAG AA** in `light`/`dark` and **AAA (7:1)** in the `hc-*` themes;
+  keep AAA-strict colour work inside the high-contrast themes.
+- **Ships with a11y tests.** User-facing behaviour lands with accessibility tests the same way
+  it lands with tests and help: assertions in unit/e2e (query by role/label), a `.stories.tsx`
+  the Storybook a11y addon can check, and — for anything that touches the default experience —
+  a non-regression test proving no behaviour-changing `data-*` is applied until the user opts
+  in. Put new opt-in states behind their own story/test rather than editing a default snapshot.
+
 ## E2E test coverage (ratcheted)
 
 E2E coverage is gated by a ratchet (`scripts/coverage-ratchet.mjs`, run via
