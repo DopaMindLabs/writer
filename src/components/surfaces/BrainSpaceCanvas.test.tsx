@@ -35,6 +35,26 @@ describe('BrainSpaceCanvas', () => {
       expect(empty).toHaveTextContent(/start dumping/i);
     });
 
+    it('grows the scrollable content to reach a far-off note', async () => {
+      await db.spaces.put(sampleSpace);
+      // A note pushed far to the right/down — beyond any viewport.
+      await db.notes.put({
+        ...sampleNote,
+        id: 'far',
+        l: 2000,
+        t: 1500,
+        w: 184,
+        h: 80,
+      });
+      renderWithProviders(<BrainSpaceCanvas spaceId="s1" />);
+      await screen.findByTestId('brain-note-far');
+      const content = screen.getByTestId('brain-canvas-content');
+      // Content extent = note's far edge (l+w / t+h) plus the margin, so the
+      // note stays reachable by scrolling rather than being clipped.
+      expect(content.style.width).toBe('2384px');
+      expect(content.style.height).toBe('1780px');
+    });
+
     it('should render one toolbar button per noteKind on the space template', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'fiction' });
       renderWithProviders(<BrainSpaceCanvas spaceId="s1" />);
@@ -169,7 +189,10 @@ describe('BrainSpaceCanvas', () => {
       const { container } = renderWithProviders(
         <BrainSpaceCanvas spaceId="s1" />,
       );
-      await screen.findAllByTestId('brain-note-n1');
+      // Wait for BOTH notes so the content extent (derived from their bounding
+      // box) is settled before snapshotting, rather than a mid-load value.
+      await screen.findByTestId('brain-note-n1');
+      await screen.findByTestId('brain-note-n2');
       expect(container).toMatchSnapshot();
     });
   });

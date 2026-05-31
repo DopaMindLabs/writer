@@ -11,8 +11,9 @@ test('brain space detail drawer edits a note and links a doc', async ({
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}/dump`);
 
-  const canvas = page.getByTestId('brain-canvas');
-  const noteCards = canvas.locator(':scope > [data-testid^="brain-note-"]');
+  const noteCards = page
+    .getByTestId('brain-canvas-content')
+    .locator(':scope > [data-testid^="brain-note-"]');
   await page.getByTestId('brain-canvas-tool-question').click();
   await expect(noteCards).toHaveCount(1);
 

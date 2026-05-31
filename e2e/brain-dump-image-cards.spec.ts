@@ -25,7 +25,7 @@ const gotoDump = async (page: Page) => {
 
 const lastCard = (page: Page) =>
   page
-    .getByTestId('brain-canvas')
+    .getByTestId('brain-canvas-content')
     .locator(':scope > [data-testid^="brain-note-"]')
     .last();
 

@@ -65,13 +65,23 @@ export const SplitScreen = () => {
   );
 
   useEffect(() => {
-    if (!docId || candidates.length === 0) return;
-    if (withParam && SPECIAL_PANES.has(withParam)) return;
-    if (withParam && candidates.some((d) => d.id === withParam)) return;
-    const fallback = candidates[0];
-    const next = new URLSearchParams(searchParams);
-    next.set('with', fallback.id);
-    setSearchParams(next, { replace: true });
+    if (!docId) return;
+    const setDefault = () => {
+      // Default the right pane to Brain space (reachable without another doc).
+      const next = new URLSearchParams(searchParams);
+      next.set('with', BRAIN_SPACE_PANE);
+      setSearchParams(next, { replace: true });
+    };
+    if (!withParam) {
+      setDefault();
+      return;
+    }
+    if (SPECIAL_PANES.has(withParam)) return;
+    // A doc was requested but the list hasn't loaded yet — don't clobber it.
+    if (candidates.length === 0) return;
+    if (candidates.some((d) => d.id === withParam)) return;
+    // Stale/invalid doc id → fall back to Brain space.
+    setDefault();
   }, [docId, candidates, withParam, searchParams, setSearchParams]);
 
   if (!spaceId || !docId) return <Navigate to={routes.home()} replace />;

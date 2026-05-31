@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 const addNote = async (page: Page) => {
   await page.goto(`/#/s/${await getFirstSpaceIdFromHome(page)}/dump`);
   const notes = page
-    .getByTestId('brain-canvas')
+    .getByTestId('brain-canvas-content')
     .locator(':scope > [data-testid^="brain-note-"]');
   await page.getByTestId('brain-canvas-tool-question').click();
   await expect(notes).toHaveCount(1);
