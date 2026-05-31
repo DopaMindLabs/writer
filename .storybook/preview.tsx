@@ -1,5 +1,12 @@
-import type { Preview, Decorator } from '@storybook/react-vite';
+import type { Preview, Decorator, Loader } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
+import { TooltipProvider } from '../src/components/ui/tooltip';
+import { db } from '../src/db/db';
+import {
+  seedBasicSpace,
+  seedMultipleSpaces,
+  seedBrainSpaceCanvas,
+} from '../src/test/fixtures';
 import '../src/index.css';
 
 const themes = ['light', 'dark', 'hc-light', 'hc-dark'] as const;
@@ -18,6 +25,31 @@ const withTheme: Decorator = (Story, context) => {
       <Story />
     </div>
   );
+};
+
+const withTooltip: Decorator = (Story) => (
+  <TooltipProvider delayDuration={0}>
+    <Story />
+  </TooltipProvider>
+);
+
+// Stories for data-driven components opt into a Dexie seed via
+// `parameters: { seed: 'basicSpace' }`. The loader clears every table and
+// re-seeds from the shared test fixtures so the gallery renders real content.
+const seeders = {
+  basicSpace: seedBasicSpace,
+  multipleSpaces: seedMultipleSpaces,
+  brainSpace: seedBrainSpaceCanvas,
+} satisfies Record<string, () => Promise<void>>;
+
+export type SeedKey = keyof typeof seeders;
+
+const seedLoader: Loader = async (context) => {
+  const seed = context.parameters.seed as SeedKey | undefined;
+  if (!seed) return {};
+  await Promise.all(db.tables.map((table) => table.clear()));
+  await seeders[seed]();
+  return { seed };
 };
 
 const preview: Preview = {
@@ -50,7 +82,8 @@ const preview: Preview = {
       },
     },
   },
-  decorators: [withTheme, withRouter],
+  decorators: [withTheme, withRouter, withTooltip],
+  loaders: [seedLoader],
 };
 
 export default preview;
