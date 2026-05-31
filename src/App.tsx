@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { createHashRouter, RouterProvider } from 'react-router-dom';
+import { createHashRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { HelpPalette } from '@/components/help/HelpPalette';
+import { useGlobalShortcuts } from '@/hooks/useGlobalShortcuts';
 import {
   TypographyLabel,
   TypographyMuted,
@@ -20,25 +22,48 @@ import { SplitScreen } from '@/screens/Split';
 import { BrainSpaceScreen } from '@/screens/BrainSpace';
 import { CitationsScreen } from '@/screens/Citations';
 import { TemplatesScreen } from '@/screens/Templates';
+import { HelpScreen } from '@/screens/Help';
 import { NotFoundScreen } from '@/screens/NotFound';
 
+/**
+ * Pathless layout route: mounts app-wide concerns once (global keyboard
+ * shortcuts + the Quick Help overlay) with full router context, then renders
+ * the matched screen via <Outlet />.
+ */
+const RootLayout = () => {
+  useGlobalShortcuts();
+  return (
+    <>
+      <Outlet />
+      <HelpPalette />
+    </>
+  );
+};
+
 const router = createHashRouter([
-  { path: ROUTE_PATHS[RouteName.Home], element: <HomeScreen /> },
-  { path: ROUTE_PATHS[RouteName.About], element: <AboutScreen /> },
-  { path: ROUTE_PATHS[RouteName.Settings], element: <SettingsScreen /> },
-  { path: ROUTE_PATHS[RouteName.Templates], element: <TemplatesScreen /> },
-  { path: ROUTE_PATHS[RouteName.SpaceWrite], element: <WriteScreen /> },
   {
-    path: ROUTE_PATHS[RouteName.SpaceSettings],
-    element: <SpaceSettingsScreen />,
+    element: <RootLayout />,
+    children: [
+      { path: ROUTE_PATHS[RouteName.Home], element: <HomeScreen /> },
+      { path: ROUTE_PATHS[RouteName.About], element: <AboutScreen /> },
+      { path: ROUTE_PATHS[RouteName.Settings], element: <SettingsScreen /> },
+      { path: ROUTE_PATHS[RouteName.Templates], element: <TemplatesScreen /> },
+      { path: ROUTE_PATHS[RouteName.Help], element: <HelpScreen /> },
+      { path: ROUTE_PATHS[RouteName.HelpArticle], element: <HelpScreen /> },
+      { path: ROUTE_PATHS[RouteName.SpaceWrite], element: <WriteScreen /> },
+      {
+        path: ROUTE_PATHS[RouteName.SpaceSettings],
+        element: <SpaceSettingsScreen />,
+      },
+      { path: ROUTE_PATHS[RouteName.DocWrite], element: <WriteScreen /> },
+      { path: ROUTE_PATHS[RouteName.DocFocus], element: <FocusScreen /> },
+      { path: ROUTE_PATHS[RouteName.DocRead], element: <ReadScreen /> },
+      { path: ROUTE_PATHS[RouteName.DocSplit], element: <SplitScreen /> },
+      { path: ROUTE_PATHS[RouteName.BrainSpace], element: <BrainSpaceScreen /> },
+      { path: ROUTE_PATHS[RouteName.Citations], element: <CitationsScreen /> },
+      { path: '*', element: <NotFoundScreen /> },
+    ],
   },
-  { path: ROUTE_PATHS[RouteName.DocWrite], element: <WriteScreen /> },
-  { path: ROUTE_PATHS[RouteName.DocFocus], element: <FocusScreen /> },
-  { path: ROUTE_PATHS[RouteName.DocRead], element: <ReadScreen /> },
-  { path: ROUTE_PATHS[RouteName.DocSplit], element: <SplitScreen /> },
-  { path: ROUTE_PATHS[RouteName.BrainSpace], element: <BrainSpaceScreen /> },
-  { path: ROUTE_PATHS[RouteName.Citations], element: <CitationsScreen /> },
-  { path: '*', element: <NotFoundScreen /> },
 ]);
 
 export const App = () => {
@@ -46,8 +71,8 @@ export const App = () => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
+    const state = { cancelled: false };
+    void (async () => {
       try {
         const url = new URL(window.location.href);
         if (url.searchParams.has('reseed')) {
@@ -55,13 +80,15 @@ export const App = () => {
           url.searchParams.delete('reseed');
           window.history.replaceState({}, '', url.pathname + url.search);
         }
-        if (!cancelled) setReady(true);
+        if (!state.cancelled) setReady(true);
       } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e : new Error(String(e)));
+        if (!state.cancelled) {
+          setError(e instanceof Error ? e : new Error(String(e)));
+        }
       }
     })();
     return () => {
-      cancelled = true;
+      state.cancelled = true;
     };
   }, []);
 
