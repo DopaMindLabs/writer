@@ -25,5 +25,3 @@ export const TypographyH2 = forwardRef<HTMLHeadingElement, TypographyH2Props>(
   ),
 );
 TypographyH2.displayName = 'TypographyH2';
-
-export { typographyH2Variants };

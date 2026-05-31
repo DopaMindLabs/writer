@@ -29,5 +29,3 @@ export const TypographyH1 = forwardRef<HTMLHeadingElement, TypographyH1Props>(
   ),
 );
 TypographyH1.displayName = 'TypographyH1';
-
-export { typographyH1Variants };

@@ -2,7 +2,7 @@ import { forwardRef, type LabelHTMLAttributes } from 'react';
 import { cva, type VariantProps } from '@/components/libs/variants';
 import { cn } from '@/lib/utils';
 
-export const labelRecipe = cva('font-sans text-[13px] leading-tight', {
+const labelRecipe = cva('font-sans text-[13px] leading-tight', {
   variants: {
     tone: {
       ink: 'text-ink',

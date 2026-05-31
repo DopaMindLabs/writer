@@ -16,7 +16,7 @@ const HEADLESS_NODES = [
   CodeHighlightNode,
 ];
 
-export function lexicalJsonToMarkdown(body: string): string {
+export const lexicalJsonToMarkdown = (body: string): string => {
   if (!body) return '';
   if (!isSerialized(body)) return body;
 
@@ -36,4 +36,4 @@ export function lexicalJsonToMarkdown(body: string): string {
     out = $convertToMarkdownString(TRANSFORMERS);
   });
   return out;
-}
+};

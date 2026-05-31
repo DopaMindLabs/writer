@@ -31,5 +31,3 @@ export const TypographyP = forwardRef<HTMLParagraphElement, TypographyPProps>(
   ),
 );
 TypographyP.displayName = 'TypographyP';
-
-export { typographyPVariants };

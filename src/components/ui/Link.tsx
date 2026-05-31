@@ -6,7 +6,8 @@ import {
   type NavLinkProps as RouterNavLinkProps,
 } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { buttonRecipe, type ButtonKind, type ButtonSize } from './Button';
+import { buttonRecipe } from './Button.recipe';
+import { type ButtonKind, type ButtonSize } from './Button';
 
 interface CommonProps {
   kind?: ButtonKind;

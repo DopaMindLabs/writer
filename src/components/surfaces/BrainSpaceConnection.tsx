@@ -18,10 +18,10 @@ export const BrainSpaceConnection = ({
   const cy2 = to.t + to.h / 2;
   const mx = (cx1 + cx2) / 2;
   const my = (cy1 + cy2) / 2 - 30;
-  const d = `M ${cx1} ${cy1} Q ${mx} ${my}, ${cx2} ${cy2}`;
+  const d = `M ${String(cx1)} ${String(cy1)} Q ${String(mx)} ${String(my)}, ${String(cx2)} ${String(cy2)}`;
 
-  const onDelete = async () => {
-    await db.connections.delete(connection.id);
+  const onDelete = () => {
+    void db.connections.delete(connection.id);
   };
 
   return (
