@@ -23,36 +23,26 @@ interface TopbarProps {
   fallbackDocId?: string | null;
 }
 
-export const Topbar = ({
-  spaceId,
-  docId,
-  docName,
-  spaceName,
-  mode,
-  fallbackDocId,
-}: TopbarProps) => {
+interface DocBreadcrumbProps {
+  docId: string | null;
+  docName?: string;
+  spaceName?: string;
+  focus: boolean;
+}
+
+interface EditableDocNameProps {
+  docId: string | null;
+  docName: string;
+}
+
+const EditableDocName = ({ docId, docName }: EditableDocNameProps) => {
   const { t } = useTranslation('chrome');
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
-  const focus = searchParams.get('focus') === '1';
-  const setMobileNavOpen = useUI((s) => s.setMobileNavOpen);
-  const openCitationsDrawer = useUI((s) => s.openCitationsDrawer);
-  const inspectorMode = useUI((s) => s.inspectorMode);
-  const toggleInspector = useUI((s) => s.toggleInspector);
-  const setInspectorMode = useUI((s) => s.setInspectorMode);
-  const onCitations = location.pathname.endsWith('/citations');
-  const inspectorOpen = inspectorMode !== 'none';
-
   const [editingDoc, setEditingDoc] = useState(false);
-  const [draftDocName, setDraftDocName] = useState(docName ?? '');
+  const [draftDocName, setDraftDocName] = useState(docName);
 
   useEffect(() => {
-    if (!editingDoc) setDraftDocName(docName ?? '');
+    if (!editingDoc) setDraftDocName(docName);
   }, [docName, editingDoc]);
-
-  useEffect(() => {
-    if (focus && inspectorMode !== 'none') setInspectorMode('none');
-  }, [focus, inspectorMode, setInspectorMode]);
 
   const commitDocName = async () => {
     setEditingDoc(false);
@@ -68,10 +58,76 @@ export const Topbar = ({
       (e.target as HTMLInputElement).blur();
     } else if (e.key === 'Escape') {
       e.preventDefault();
-      setDraftDocName(docName ?? '');
+      setDraftDocName(docName);
       setEditingDoc(false);
     }
   };
+
+  if (editingDoc) {
+    return (
+      <TextField
+        data-testid="topbar-doc-name-input"
+        variant="bare"
+        autoFocus
+        value={draftDocName}
+        onChange={(e) => { setDraftDocName(e.target.value); }}
+        onBlur={() => { void commitDocName(); }}
+        onFocus={(e) => { e.currentTarget.select(); }}
+        onKeyDown={onDocKeyDown}
+        aria-label={t('topbar.renameDoc')}
+        className="w-40 font-serif text-[14px] font-medium"
+      />
+    );
+  }
+  return (
+    // @lint-ignore native-button: editable-text trigger (double-click to rename); not a DS Button
+    <button
+      data-testid="topbar-doc-name"
+      type="button"
+      onDoubleClick={() => { if (docId) setEditingDoc(true); }}
+      disabled={!docId}
+      title={docId ? t('topbar.renameDoc') : undefined}
+      className="cursor-text font-medium text-ink hover:text-ink"
+    >
+      {docName}
+    </button>
+  );
+};
+
+const DocBreadcrumb = ({
+  docId,
+  docName,
+  spaceName,
+  focus,
+}: DocBreadcrumbProps) => {
+  return (
+    <div className="flex items-center gap-1.5 font-serif text-[14px] text-ink-3">
+      {!focus && <span className="hidden md:inline">{spaceName ?? '…'}</span>}
+      {docName && (
+        <>
+          {!focus && (
+            <span className="hidden text-ink-4 md:inline">/</span>
+          )}
+          <EditableDocName docId={docId} docName={docName} />
+        </>
+      )}
+    </div>
+  );
+};
+
+interface CitationsTriggerProps {
+  spaceId: string;
+  focus: boolean;
+  onCitations: boolean;
+}
+
+const CitationsTrigger = ({
+  spaceId,
+  focus,
+  onCitations,
+}: CitationsTriggerProps) => {
+  const { t } = useTranslation('chrome');
+  const openCitationsDrawer = useUI((s) => s.openCitationsDrawer);
 
   const citeContent = focus ? (
     <Quote className="h-3.5 w-3.5" />
@@ -85,7 +141,7 @@ export const Topbar = ({
     ? 'text-ink hover:bg-paper-2'
     : 'text-ink-3 hover:bg-paper-2 hover:text-ink';
 
-  const citationsTrigger = onCitations ? (
+  const trigger = onCitations ? (
     <Link
       to={routes.citations(spaceId)}
       data-tour="tour-topbar-citations"
@@ -109,56 +165,61 @@ export const Topbar = ({
     </button>
   );
 
+  if (!focus) return trigger;
   return (
-    <header
-      data-testid="topbar"
-      className="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
-    >
-      <IconButton
-        data-testid="topbar-open-nav"
-        icon={Menu}
-        iconSize="md"
-        label={t('topbar.openNav')}
-        onClick={() => { setMobileNavOpen(true); }}
-        className="md:hidden"
-      />
-      <div className="flex items-center gap-1.5 font-serif text-[14px] text-ink-3">
-        {!focus && <span className="hidden md:inline">{spaceName ?? '…'}</span>}
-        {docName && (
-          <>
-            {!focus && (
-              <span className="hidden text-ink-4 md:inline">/</span>
-            )}
-            {editingDoc ? (
-              <TextField
-                data-testid="topbar-doc-name-input"
-                variant="bare"
-                autoFocus
-                value={draftDocName}
-                onChange={(e) => { setDraftDocName(e.target.value); }}
-                onBlur={commitDocName}
-                onFocus={(e) => { e.currentTarget.select(); }}
-                onKeyDown={onDocKeyDown}
-                aria-label={t('topbar.renameDoc')}
-                className="w-40 font-serif text-[14px] font-medium"
-              />
-            ) : (
-              // @lint-ignore native-button: editable-text trigger (double-click to rename); not a DS Button
-              <button
-                data-testid="topbar-doc-name"
-                type="button"
-                onDoubleClick={() => docId && setEditingDoc(true)}
-                disabled={!docId}
-                title={docId ? t('topbar.renameDoc') : undefined}
-                className="cursor-text font-medium text-ink hover:text-ink"
-              >
-                {docName}
-              </button>
-            )}
-          </>
-        )}
-      </div>
-      <div className="flex-1" />
+    <Tooltip>
+      <TooltipTrigger asChild>{trigger}</TooltipTrigger>
+      <TooltipContent side="bottom">{t('topbar.citations')}</TooltipContent>
+    </Tooltip>
+  );
+};
+
+const InspectorToggle = () => {
+  const { t } = useTranslation('chrome');
+  const inspectorMode = useUI((s) => s.inspectorMode);
+  const toggleInspector = useUI((s) => s.toggleInspector);
+  const inspectorOpen = inspectorMode !== 'none';
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <IconButton
+          data-testid="topbar-inspector-toggle"
+          icon={MoreHorizontal}
+          label={t('topbar.inspector')}
+          active={inspectorOpen}
+          strokeWidth={inspectorOpen ? 2.6 : 2}
+          onClick={toggleInspector}
+          className="hidden md:inline-flex"
+        />
+      </TooltipTrigger>
+      <TooltipContent side="bottom">
+        {t('topbar.inspector')}
+      </TooltipContent>
+    </Tooltip>
+  );
+};
+
+interface TopbarToolsProps {
+  spaceId: string;
+  docId: string | null;
+  mode: Mode;
+  fallbackDocId?: string | null;
+  focus: boolean;
+  onCitations: boolean;
+}
+
+const TopbarLeftTools = ({
+  spaceId,
+  docId,
+  mode,
+  fallbackDocId,
+  focus,
+  onCitations,
+}: TopbarToolsProps) => {
+  const { t } = useTranslation('chrome');
+  return (
+    <>
       {!onCitations && (
         <div data-tour="tour-topbar-modes" className="inline-flex items-center">
           <ModeTabs
@@ -182,38 +243,77 @@ export const Topbar = ({
           </span>
         </ComingSoon>
       )}
-      {focus ? (
-        <Tooltip>
-          <TooltipTrigger asChild>{citationsTrigger}</TooltipTrigger>
-          <TooltipContent side="bottom">{t('topbar.citations')}</TooltipContent>
-        </Tooltip>
-      ) : (
-        citationsTrigger
-      )}
-      {!onCitations && (mode === 'dump' || docId) && (
+    </>
+  );
+};
+
+const TopbarTools = (props: TopbarToolsProps) => {
+  const { spaceId, docId, mode, focus, onCitations } = props;
+  const showInspector =
+    !focus && !onCitations && docId && (mode === 'write' || mode === 'read');
+  const showFocusToggle = !onCitations && (mode === 'dump' || docId);
+
+  return (
+    <>
+      <TopbarLeftTools {...props} />
+      <CitationsTrigger spaceId={spaceId} focus={focus} onCitations={onCitations} />
+      {showFocusToggle && (
         <FocusToggle mode={mode} spaceId={spaceId} docId={docId} />
       )}
-      {!focus &&
-        !onCitations &&
-        docId &&
-        (mode === 'write' || mode === 'read') && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <IconButton
-                data-testid="topbar-inspector-toggle"
-                icon={MoreHorizontal}
-                label={t('topbar.inspector')}
-                active={inspectorOpen}
-                strokeWidth={inspectorOpen ? 2.6 : 2}
-                onClick={toggleInspector}
-                className="hidden md:inline-flex"
-              />
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              {t('topbar.inspector')}
-            </TooltipContent>
-          </Tooltip>
-        )}
+      {showInspector && <InspectorToggle />}
+    </>
+  );
+};
+
+export const Topbar = ({
+  spaceId,
+  docId,
+  docName,
+  spaceName,
+  mode,
+  fallbackDocId,
+}: TopbarProps) => {
+  const { t } = useTranslation('chrome');
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const focus = searchParams.get('focus') === '1';
+  const setMobileNavOpen = useUI((s) => s.setMobileNavOpen);
+  const inspectorMode = useUI((s) => s.inspectorMode);
+  const setInspectorMode = useUI((s) => s.setInspectorMode);
+  const onCitations = location.pathname.endsWith('/citations');
+
+  useEffect(() => {
+    if (focus && inspectorMode !== 'none') setInspectorMode('none');
+  }, [focus, inspectorMode, setInspectorMode]);
+
+  return (
+    <header
+      data-testid="topbar"
+      className="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
+    >
+      <IconButton
+        data-testid="topbar-open-nav"
+        icon={Menu}
+        iconSize="md"
+        label={t('topbar.openNav')}
+        onClick={() => { setMobileNavOpen(true); }}
+        className="md:hidden"
+      />
+      <DocBreadcrumb
+        docId={docId}
+        docName={docName}
+        spaceName={spaceName}
+        focus={focus}
+      />
+      <div className="flex-1" />
+      <TopbarTools
+        spaceId={spaceId}
+        docId={docId}
+        mode={mode}
+        fallbackDocId={fallbackDocId}
+        focus={focus}
+        onCitations={onCitations}
+      />
       <MobileNavDrawer spaceId={spaceId} activeDocId={docId} />
     </header>
   );

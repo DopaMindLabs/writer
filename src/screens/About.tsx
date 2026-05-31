@@ -45,27 +45,7 @@ export const AboutScreen = () => {
           </BlockQuote>
         </div>
 
-        <section className="mt-12 border-t border-rule pt-8">
-          <TypographyLabel
-            className="tracking-[0.12em] text-[color:var(--warning)]"
-          >
-            {t('about.statusLabel')}
-          </TypographyLabel>
-          <div className="mt-3 flex gap-3 rounded-sm border-l-2 border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-4 py-3">
-            <AlertTriangle className="mt-1 h-4 w-4 shrink-0 text-[color:var(--warning)]" />
-            <TypographyLead className="text-[color:var(--warning)]">
-              <strong className="font-semibold">{t('about.statusValueStrong')}</strong>
-              {t('about.statusValueRest')}
-            </TypographyLead>
-          </div>
-          <div className="mt-6 space-y-6">
-            <TypographyP>
-              {t('about.feedbackBefore')}
-              <Lightbulb className="inline-block h-4 w-4" />
-              {t('about.feedbackAfter')}
-            </TypographyP>
-          </div>
-        </section>
+        <AboutStatusSection />
 
         <section className="mt-8 border-t border-rule pt-8">
           <TypographyLabel className="tracking-[0.12em]">
@@ -82,5 +62,32 @@ export const AboutScreen = () => {
         </section>
       </div>
     </div>
+  );
+};
+
+const AboutStatusSection = () => {
+  const { t } = useTranslation(['screens', 'common']);
+  return (
+    <section className="mt-12 border-t border-rule pt-8">
+      <TypographyLabel
+        className="tracking-[0.12em] text-[color:var(--warning)]"
+      >
+        {t('about.statusLabel')}
+      </TypographyLabel>
+      <div className="mt-3 flex gap-3 rounded-sm border-l-2 border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-4 py-3">
+        <AlertTriangle className="mt-1 h-4 w-4 shrink-0 text-[color:var(--warning)]" />
+        <TypographyLead className="text-[color:var(--warning)]">
+          <strong className="font-semibold">{t('about.statusValueStrong')}</strong>
+          {t('about.statusValueRest')}
+        </TypographyLead>
+      </div>
+      <div className="mt-6 space-y-6">
+        <TypographyP>
+          {t('about.feedbackBefore')}
+          <Lightbulb className="inline-block h-4 w-4" />
+          {t('about.feedbackAfter')}
+        </TypographyP>
+      </div>
+    </section>
   );
 };

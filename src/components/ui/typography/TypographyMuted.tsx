@@ -27,5 +27,3 @@ export const TypographyMuted = forwardRef<
   />
 ));
 TypographyMuted.displayName = 'TypographyMuted';
-
-export { typographyMutedVariants };

@@ -44,6 +44,45 @@ const Row = ({ label, hint, children }: RowProps) => {
   );
 };
 
+interface MenuItemProps {
+  children: ReactNode;
+  kbd?: string;
+  onClick?: () => void;
+  asChild?: boolean;
+  href?: string;
+  done?: boolean;
+  testId?: string;
+}
+
+const MenuItemInner = ({
+  children,
+  kbd,
+  done,
+  testId,
+}: Pick<MenuItemProps, 'children' | 'kbd' | 'done' | 'testId'>) => (
+  <span className="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2">
+    {typeof done === 'boolean' && (
+      <Check
+        data-testid={testId ? `${testId}-check` : undefined}
+        className={cn(
+          'h-3 w-3 shrink-0',
+          done ? 'text-ink opacity-100' : 'opacity-0',
+        )}
+        aria-hidden
+      />
+    )}
+    <span className="flex-1 text-left">{children}</span>
+    {kbd && (
+      <span
+        data-testid={testId ? `${testId}-kbd` : undefined}
+        className="font-mono text-[10px] text-ink-4"
+      >
+        {kbd}
+      </span>
+    )}
+  </span>
+);
+
 const MenuItem = ({
   children,
   kbd,
@@ -52,37 +91,11 @@ const MenuItem = ({
   href,
   done,
   testId,
-}: {
-  children: ReactNode;
-  kbd?: string;
-  onClick?: () => void;
-  asChild?: boolean;
-  href?: string;
-  done?: boolean;
-  testId?: string;
-}) => {
+}: MenuItemProps) => {
   const inner = (
-    <span className="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2">
-      {typeof done === 'boolean' && (
-        <Check
-          data-testid={testId ? `${testId}-check` : undefined}
-          className={cn(
-            'h-3 w-3 shrink-0',
-            done ? 'text-ink opacity-100' : 'opacity-0',
-          )}
-          aria-hidden
-        />
-      )}
-      <span className="flex-1 text-left">{children}</span>
-      {kbd && (
-        <span
-          data-testid={testId ? `${testId}-kbd` : undefined}
-          className="font-mono text-[10px] text-ink-4"
-        >
-          {kbd}
-        </span>
-      )}
-    </span>
+    <MenuItemInner kbd={kbd} done={done} testId={testId}>
+      {children}
+    </MenuItemInner>
   );
   if (asChild && href) {
     return (
@@ -108,16 +121,64 @@ const MenuItem = ({
   );
 };
 
-export const QuickSettingsPopover = () => {
+const ThemeRow = () => {
   const { t } = useTranslation(['chrome', 'tours']);
   const theme = useUI((s) => s.theme);
   const setTheme = useUI((s) => s.setTheme);
-  const floatingToolbar = useUI((s) => s.floatingToolbarEnabled);
-  const setFloatingToolbar = useUI((s) => s.setFloatingToolbarEnabled);
+  return (
+    <Row label={t('chrome:quickSettings.themeLabel')}>
+      <div className="flex flex-wrap gap-1">
+        {THEMES.map((opt) => (
+          <Tooltip key={opt.id}>
+            <TooltipTrigger asChild>
+              <Chip
+                active={theme === opt.id}
+                onClick={() => { setTheme(opt.id); }}
+                className="px-2 py-0.5 text-[10px]"
+                aria-label={t(`chrome:${opt.titleKey}`)}
+                data-testid={`quick-settings-theme-${opt.id}`}
+              >
+                {t(`chrome:${opt.labelKey}`)}
+              </Chip>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              {t(`chrome:${opt.titleKey}`)}
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
+    </Row>
+  );
+};
+
+const ReadingWidthRow = () => {
+  const { t } = useTranslation(['chrome', 'tours']);
   const readingWidth = useUI((s) => s.readingWidth);
   const setReadingWidth = useUI((s) => s.setReadingWidth);
-  const [params, setParams] = useSearchParams();
-  const focused = params.get('focus') === '1';
+  return (
+    <Row
+      label={t('chrome:quickSettings.readingWidthLabel')}
+      hint={t('chrome:quickSettings.readingWidthHint')}
+    >
+      <div className="flex gap-1">
+        {(['s', 'm', 'l'] as ReadingWidth[]).map((w) => (
+          <Chip
+            key={w}
+            active={readingWidth === w}
+            onClick={() => { setReadingWidth(w); }}
+            className="px-2 py-0.5 text-[10px] uppercase"
+            data-testid={`quick-settings-width-${w}`}
+          >
+            {t(`chrome:quickSettings.readingWidth.${w}`)}
+          </Chip>
+        ))}
+      </div>
+    </Row>
+  );
+};
+
+const HelpToursSection = () => {
+  const { t } = useTranslation(['chrome', 'tours']);
   const { replay } = useTour();
   const [completedSnapshot, setCompletedSnapshot] = useState<string[]>(() =>
     getCompleted(),
@@ -127,92 +188,13 @@ export const QuickSettingsPopover = () => {
     setCompletedSnapshot(getCompleted());
   }, []);
 
-  const handleFocus = () => {
-    const next = new URLSearchParams(params);
-    if (focused) next.delete('focus');
-    else next.set('focus', '1');
-    setParams(next, { replace: false });
-  };
-
   const handleTour = (id: TourId) => {
     replay(id);
     setCompletedSnapshot(getCompleted());
   };
 
   return (
-    <div
-      data-testid="quick-settings-popover"
-      className="w-72 bg-paper font-sans"
-    >
-      <div className="border-b border-rule px-4 pb-3 pt-3.5">
-        <div className="font-serif text-[16px] font-medium tracking-tight text-ink">
-          {t('chrome:quickSettings.title')}
-        </div>
-      </div>
-
-      <Row label={t('chrome:quickSettings.themeLabel')}>
-        <div className="flex flex-wrap gap-1">
-          {THEMES.map((opt) => (
-            <Tooltip key={opt.id}>
-              <TooltipTrigger asChild>
-                <Chip
-                  active={theme === opt.id}
-                  onClick={() => { setTheme(opt.id); }}
-                  className="px-2 py-0.5 text-[10px]"
-                  aria-label={t(`chrome:${opt.titleKey}`)}
-                  data-testid={`quick-settings-theme-${opt.id}`}
-                >
-                  {t(`chrome:${opt.labelKey}`)}
-                </Chip>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                {t(`chrome:${opt.titleKey}`)}
-              </TooltipContent>
-            </Tooltip>
-          ))}
-        </div>
-      </Row>
-
-      <Row
-        label={t('chrome:quickSettings.focusLabel')}
-        hint={t('chrome:quickSettings.focusHint')}
-      >
-        <PillToggle
-          on={focused}
-          onToggle={handleFocus}
-          label={t('chrome:quickSettings.focusLabel')}
-          data-testid="quick-settings-focus-toggle"
-        />
-      </Row>
-
-      <Row label={t('chrome:quickSettings.floatingToolbarLabel')}>
-        <PillToggle
-          on={floatingToolbar}
-          onToggle={() => { setFloatingToolbar(!floatingToolbar); }}
-          label={t('chrome:quickSettings.floatingToolbarLabel')}
-          data-testid="quick-settings-floating-toolbar-toggle"
-        />
-      </Row>
-
-      <Row
-        label={t('chrome:quickSettings.readingWidthLabel')}
-        hint={t('chrome:quickSettings.readingWidthHint')}
-      >
-        <div className="flex gap-1">
-          {(['s', 'm', 'l'] as ReadingWidth[]).map((w) => (
-            <Chip
-              key={w}
-              active={readingWidth === w}
-              onClick={() => { setReadingWidth(w); }}
-              className="px-2 py-0.5 text-[10px] uppercase"
-              data-testid={`quick-settings-width-${w}`}
-            >
-              {t(`chrome:quickSettings.readingWidth.${w}`)}
-            </Chip>
-          ))}
-        </div>
-      </Row>
-
+    <>
       <div className="px-4 pb-1.5 pt-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
         {t('chrome:quickSettings.helpToursLabel')}
       </div>
@@ -231,7 +213,14 @@ export const QuickSettingsPopover = () => {
           </MenuItem>
         );
       })}
+    </>
+  );
+};
 
+const MoreSection = () => {
+  const { t } = useTranslation(['chrome', 'tours']);
+  return (
+    <>
       <div className="px-4 pb-1.5 pt-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
         {t('chrome:quickSettings.moreLabel')}
       </div>
@@ -285,6 +274,63 @@ export const QuickSettingsPopover = () => {
           {t('chrome:quickSettings.fullSettingsKbd')}
         </span>
       </div>
+    </>
+  );
+};
+
+export const QuickSettingsPopover = () => {
+  const { t } = useTranslation(['chrome', 'tours']);
+  const floatingToolbar = useUI((s) => s.floatingToolbarEnabled);
+  const setFloatingToolbar = useUI((s) => s.setFloatingToolbarEnabled);
+  const [params, setParams] = useSearchParams();
+  const focused = params.get('focus') === '1';
+
+  const handleFocus = () => {
+    const next = new URLSearchParams(params);
+    if (focused) next.delete('focus');
+    else next.set('focus', '1');
+    setParams(next, { replace: false });
+  };
+
+  return (
+    <div
+      data-testid="quick-settings-popover"
+      className="w-72 bg-paper font-sans"
+    >
+      <div className="border-b border-rule px-4 pb-3 pt-3.5">
+        <div className="font-serif text-[16px] font-medium tracking-tight text-ink">
+          {t('chrome:quickSettings.title')}
+        </div>
+      </div>
+
+      <ThemeRow />
+
+      <Row
+        label={t('chrome:quickSettings.focusLabel')}
+        hint={t('chrome:quickSettings.focusHint')}
+      >
+        <PillToggle
+          on={focused}
+          onToggle={handleFocus}
+          label={t('chrome:quickSettings.focusLabel')}
+          data-testid="quick-settings-focus-toggle"
+        />
+      </Row>
+
+      <Row label={t('chrome:quickSettings.floatingToolbarLabel')}>
+        <PillToggle
+          on={floatingToolbar}
+          onToggle={() => { setFloatingToolbar(!floatingToolbar); }}
+          label={t('chrome:quickSettings.floatingToolbarLabel')}
+          data-testid="quick-settings-floating-toolbar-toggle"
+        />
+      </Row>
+
+      <ReadingWidthRow />
+
+      <HelpToursSection />
+
+      <MoreSection />
     </div>
   );
 };

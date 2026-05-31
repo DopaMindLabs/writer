@@ -34,57 +34,7 @@ export type BlockType =
 
 export type HeadingLevel = Extract<HeadingTagType, 'h1' | 'h2' | 'h3' | 'h4'>;
 
-export function applyHeading(editor: LexicalEditor, level: HeadingLevel): void {
-  editor.update(() => {
-    const selection = $getSelection();
-    if (!$isRangeSelection(selection)) return;
-    const active = getActiveBlockType();
-    if (active === level) {
-      $setBlocksType(selection, () => $createParagraphNode());
-    } else {
-      $setBlocksType(selection, () => $createHeadingNode(level));
-    }
-  });
-}
-
-export function toggleQuote(editor: LexicalEditor): void {
-  editor.update(() => {
-    const selection = $getSelection();
-    if (!$isRangeSelection(selection)) return;
-    const active = getActiveBlockType();
-    if (active === 'quote') {
-      $setBlocksType(selection, () => $createParagraphNode());
-    } else {
-      $setBlocksType(selection, () => $createQuoteNode());
-    }
-  });
-}
-
-export function toggleList(
-  editor: LexicalEditor,
-  kind: 'bullet' | 'number',
-): void {
-  const active = readActiveBlockType(editor);
-  if (active === kind) {
-    editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
-    return;
-  }
-  editor.dispatchCommand(
-    kind === 'bullet'
-      ? INSERT_UNORDERED_LIST_COMMAND
-      : INSERT_ORDERED_LIST_COMMAND,
-    undefined,
-  );
-}
-
-export function toggleInlineFormat(
-  editor: LexicalEditor,
-  format: 'bold' | 'italic',
-): void {
-  editor.dispatchCommand(FORMAT_TEXT_COMMAND, format);
-}
-
-export function getActiveBlockType(): BlockType {
+export const getActiveBlockType = (): BlockType => {
   const selection = $getSelection();
   if (!$isRangeSelection(selection)) return 'paragraph';
   const anchorNode = selection.anchor.getNode();
@@ -107,15 +57,68 @@ export function getActiveBlockType(): BlockType {
     return nearestList.getListType() === 'number' ? 'number' : 'bullet';
   }
   return 'paragraph';
-}
+};
 
-export function readActiveBlockType(editor: LexicalEditor): BlockType {
+export const readActiveBlockType = (editor: LexicalEditor): BlockType => {
   let result: BlockType = 'paragraph';
   editor.getEditorState().read(() => {
     result = getActiveBlockType();
   });
   return result;
-}
+};
+
+export const applyHeading = (
+  editor: LexicalEditor,
+  level: HeadingLevel,
+): void => {
+  editor.update(() => {
+    const selection = $getSelection();
+    if (!$isRangeSelection(selection)) return;
+    const active = getActiveBlockType();
+    if (active === level) {
+      $setBlocksType(selection, () => $createParagraphNode());
+    } else {
+      $setBlocksType(selection, () => $createHeadingNode(level));
+    }
+  });
+};
+
+export const toggleQuote = (editor: LexicalEditor): void => {
+  editor.update(() => {
+    const selection = $getSelection();
+    if (!$isRangeSelection(selection)) return;
+    const active = getActiveBlockType();
+    if (active === 'quote') {
+      $setBlocksType(selection, () => $createParagraphNode());
+    } else {
+      $setBlocksType(selection, () => $createQuoteNode());
+    }
+  });
+};
+
+export const toggleList = (
+  editor: LexicalEditor,
+  kind: 'bullet' | 'number',
+): void => {
+  const active = readActiveBlockType(editor);
+  if (active === kind) {
+    editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+    return;
+  }
+  editor.dispatchCommand(
+    kind === 'bullet'
+      ? INSERT_UNORDERED_LIST_COMMAND
+      : INSERT_ORDERED_LIST_COMMAND,
+    undefined,
+  );
+};
+
+export const toggleInlineFormat = (
+  editor: LexicalEditor,
+  format: 'bold' | 'italic',
+): void => {
+  editor.dispatchCommand(FORMAT_TEXT_COMMAND, format);
+};
 
 export interface ActiveFormats {
   block: BlockType;
@@ -123,7 +126,7 @@ export interface ActiveFormats {
   italic: boolean;
 }
 
-export function readActiveFormats(editor: LexicalEditor): ActiveFormats {
+export const readActiveFormats = (editor: LexicalEditor): ActiveFormats => {
   let block: BlockType = 'paragraph';
   let bold = false;
   let italic = false;
@@ -136,4 +139,4 @@ export function readActiveFormats(editor: LexicalEditor): ActiveFormats {
     }
   });
   return { block, bold, italic };
-}
+};

@@ -1,18 +1,14 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db/db';
 
-export function useSpaces() {
+export const useSpaces = () => {
   return useLiveQuery(
     () => db.spaces.orderBy('createdAt').reverse().toArray(),
     [],
     [],
   );
-}
+};
 
-export function useSpace(id: string | null | undefined) {
-  return useLiveQuery(
-    () => (id ? db.spaces.get(id) : undefined),
-    [id],
-    undefined,
-  );
-}
+export const useSpace = (id: string | null | undefined) => {
+  return useLiveQuery(() => (id ? db.spaces.get(id) : undefined), [id], undefined);
+};

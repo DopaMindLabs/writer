@@ -1,9 +1,9 @@
 import { forwardRef } from 'react';
-import { SeparatorPrimitive } from '@/components/libs/primitives';
 import { cn } from '@/lib/utils';
+import { SeparatorPrimitiveRoot } from './separator.primitives';
 
 type SeparatorPrimitiveProps = React.ComponentPropsWithoutRef<
-  typeof SeparatorPrimitive.Root
+  typeof SeparatorPrimitiveRoot
 >;
 
 export interface SeparatorProps extends SeparatorPrimitiveProps {
@@ -11,7 +11,7 @@ export interface SeparatorProps extends SeparatorPrimitiveProps {
 }
 
 export const Separator = forwardRef<
-  React.ElementRef<typeof SeparatorPrimitive.Root>,
+  React.ComponentRef<typeof SeparatorPrimitiveRoot>,
   SeparatorProps
 >(
   (
@@ -24,7 +24,7 @@ export const Separator = forwardRef<
     },
     ref,
   ) => (
-    <SeparatorPrimitive.Root
+    <SeparatorPrimitiveRoot
       ref={ref}
       decorative={decorative}
       orientation={orientation}
@@ -38,4 +38,4 @@ export const Separator = forwardRef<
     />
   ),
 );
-Separator.displayName = SeparatorPrimitive.Root.displayName;
+Separator.displayName = SeparatorPrimitiveRoot.displayName;

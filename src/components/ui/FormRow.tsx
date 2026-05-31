@@ -9,6 +9,45 @@ export interface FormRowProps extends HTMLAttributes<HTMLDivElement> {
   labelClassName?: string;
 }
 
+interface FormRowLabelProps {
+  label: ReactNode;
+  hint?: ReactNode;
+  htmlFor?: string;
+  labelClassName?: string;
+  labelTestId?: string;
+  hintTestId?: string;
+}
+
+const FormRowLabel = ({
+  label,
+  hint,
+  htmlFor,
+  labelClassName,
+  labelTestId,
+  hintTestId,
+}: FormRowLabelProps) => (
+  <div className="flex flex-col gap-1">
+    <label
+      htmlFor={htmlFor}
+      data-testid={labelTestId}
+      className={cn(
+        'font-sans text-[13px] font-medium leading-tight text-ink',
+        labelClassName,
+      )}
+    >
+      {label}
+    </label>
+    {hint ? (
+      <div
+        data-testid={hintTestId}
+        className="font-serif text-[12px] italic leading-snug text-ink-3"
+      >
+        {hint}
+      </div>
+    ) : null}
+  </div>
+);
+
 export const FormRow = forwardRef<HTMLDivElement, FormRowProps>(
   (
     {
@@ -37,26 +76,14 @@ export const FormRow = forwardRef<HTMLDivElement, FormRowProps>(
         )}
         {...rest}
       >
-        <div className="flex flex-col gap-1">
-          <label
-            htmlFor={htmlFor}
-            data-testid={labelTestId}
-            className={cn(
-              'font-sans text-[13px] font-medium leading-tight text-ink',
-              labelClassName,
-            )}
-          >
-            {label}
-          </label>
-          {hint ? (
-            <div
-              data-testid={hintTestId}
-              className="font-serif text-[12px] italic leading-snug text-ink-3"
-            >
-              {hint}
-            </div>
-          ) : null}
-        </div>
+        <FormRowLabel
+          label={label}
+          hint={hint}
+          htmlFor={htmlFor}
+          labelClassName={labelClassName}
+          labelTestId={labelTestId}
+          hintTestId={hintTestId}
+        />
         <div className="flex flex-col gap-1.5">
           <div>{children}</div>
           {error ? (

@@ -2,7 +2,7 @@ import { forwardRef, type InputHTMLAttributes } from 'react';
 import { cva, type VariantProps } from '@/components/libs/variants';
 import { cn } from '@/lib/utils';
 
-export const textFieldRecipe = cva(
+const textFieldRecipe = cva(
   'block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed',
   {
     variants: {
@@ -48,7 +48,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         ref={ref}
         type={type}
         disabled={disabled}
-        aria-invalid={error || undefined}
+        aria-invalid={error ? true : undefined}
         className={cn(textFieldRecipe({ variant, tone }), className)}
         {...props}
       />

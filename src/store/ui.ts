@@ -41,7 +41,7 @@ interface UIState {
 
 const PERSIST_KEY = 'lorem-ui';
 
-function loadPersisted(): Partial<UIState> {
+const loadPersisted = (): Partial<UIState> => {
   try {
     const raw = localStorage.getItem(PERSIST_KEY);
     if (!raw) return {};
@@ -50,7 +50,7 @@ function loadPersisted(): Partial<UIState> {
   } catch {
     return {};
   }
-}
+};
 
 type PersistedShape = Pick<
   UIState,
@@ -72,119 +72,150 @@ const INSPECTOR_SECTIONS: InspectorSection[] = [
   'actions',
 ];
 
-function sanitizeInspectorMode(v: unknown): InspectorMode {
-  return typeof v === 'string' && (INSPECTOR_MODES as string[]).includes(v)
+const sanitizeInspectorMode = (v: unknown): InspectorMode =>
+  typeof v === 'string' && (INSPECTOR_MODES as string[]).includes(v)
     ? (v as InspectorMode)
     : 'none';
-}
 
-function sanitizeInspectorSection(v: unknown): InspectorSection {
-  return typeof v === 'string' && (INSPECTOR_SECTIONS as string[]).includes(v)
+const sanitizeInspectorSection = (v: unknown): InspectorSection =>
+  typeof v === 'string' && (INSPECTOR_SECTIONS as string[]).includes(v)
     ? (v as InspectorSection)
     : 'outline';
-}
 
-function sanitizeReadingWidth(v: unknown): ReadingWidth {
-  return typeof v === 'string' && (READING_WIDTHS as string[]).includes(v)
+const sanitizeReadingWidth = (v: unknown): ReadingWidth =>
+  typeof v === 'string' && (READING_WIDTHS as string[]).includes(v)
     ? (v as ReadingWidth)
     : 'm';
-}
 
 const DEFAULT_SPLIT_DIVIDER_PCT = 50;
 const MIN_SPLIT_DIVIDER_PCT = 25;
 const MAX_SPLIT_DIVIDER_PCT = 75;
 
-function clampDividerPct(pct: number): number {
+const clampDividerPct = (pct: number): number => {
   if (!Number.isFinite(pct)) return DEFAULT_SPLIT_DIVIDER_PCT;
   return Math.min(MAX_SPLIT_DIVIDER_PCT, Math.max(MIN_SPLIT_DIVIDER_PCT, pct));
-}
+};
 
-function persist(state: PersistedShape) {
+const persist = (state: PersistedShape): void => {
   try {
     localStorage.setItem(PERSIST_KEY, JSON.stringify(state));
   } catch {
     /* ignore quota */
   }
-}
+};
 
 const persisted = loadPersisted();
 
-export const useUI = create<UIState>((set, get) => {
-  function snapshot(overrides: Partial<PersistedShape> = {}): PersistedShape {
-    const s = get();
-    return {
-      theme: s.theme,
-      currentSpaceId: s.currentSpaceId,
-      floatingToolbarEnabled: s.floatingToolbarEnabled,
-      splitDividerPct: s.splitDividerPct,
-      inspectorMode: s.inspectorMode,
-      inspectorSection: s.inspectorSection,
-      readingWidth: s.readingWidth,
-      ...overrides,
-    };
-  }
+const buildSnapshot = (
+  s: UIState,
+  overrides: Partial<PersistedShape> = {},
+): PersistedShape => ({
+  theme: s.theme,
+  currentSpaceId: s.currentSpaceId,
+  floatingToolbarEnabled: s.floatingToolbarEnabled,
+  splitDividerPct: s.splitDividerPct,
+  inspectorMode: s.inspectorMode,
+  inspectorSection: s.inspectorSection,
+  readingWidth: s.readingWidth,
+  ...overrides,
+});
 
+type SetState = (partial: Partial<UIState>) => void;
+type GetState = () => UIState;
+type Snapshot = (overrides?: Partial<PersistedShape>) => PersistedShape;
+
+const initialState = () => ({
+  currentSpaceId: persisted.currentSpaceId ?? null,
+  currentDocId: null,
+  theme: persisted.theme ?? 'light',
+  exportOpen: false,
+  mobileNavOpen: false,
+  mobileMoreOpen: false,
+  detailNoteId: null,
+  focusedNoteId: null,
+  floatingToolbarEnabled: persisted.floatingToolbarEnabled ?? false,
+  citationsDrawerOpen: false,
+  splitDividerPct: clampDividerPct(
+    persisted.splitDividerPct ?? DEFAULT_SPLIT_DIVIDER_PCT,
+  ),
+  inspectorMode: sanitizeInspectorMode(persisted.inspectorMode),
+  inspectorSection: sanitizeInspectorSection(persisted.inspectorSection),
+  readingWidth: sanitizeReadingWidth(persisted.readingWidth),
+});
+
+const createActions = (
+  set: SetState,
+  get: GetState,
+  snapshot: Snapshot,
+) => ({
+  ...createDocActions(set, snapshot),
+  ...createToggleActions(set),
+  ...createInspectorActions(set, get, snapshot),
+});
+
+const createDocActions = (set: SetState, snapshot: Snapshot) => ({
+  setCurrentSpaceId: (id: string | null) => {
+    set({ currentSpaceId: id });
+    persist(snapshot({ currentSpaceId: id }));
+  },
+  setCurrentDocId: (id: string | null) => { set({ currentDocId: id }); },
+  setTheme: (theme: Theme) => {
+    set({ theme });
+    persist(snapshot({ theme }));
+  },
+  setFloatingToolbarEnabled: (floatingToolbarEnabled: boolean) => {
+    set({ floatingToolbarEnabled });
+    persist(snapshot({ floatingToolbarEnabled }));
+  },
+  setSplitDividerPct: (pct: number) => {
+    const clamped = clampDividerPct(pct);
+    set({ splitDividerPct: clamped });
+    persist(snapshot({ splitDividerPct: clamped }));
+  },
+});
+
+const createToggleActions = (set: SetState) => ({
+  setExportOpen: (exportOpen: boolean) => { set({ exportOpen }); },
+  setMobileNavOpen: (mobileNavOpen: boolean) => { set({ mobileNavOpen }); },
+  setMobileMoreOpen: (mobileMoreOpen: boolean) => { set({ mobileMoreOpen }); },
+  openDetail: (id: string) => { set({ detailNoteId: id, focusedNoteId: id }); },
+  closeDetail: () => { set({ detailNoteId: null }); },
+  focusNote: (id: string | null) => { set({ focusedNoteId: id }); },
+  openCitationsDrawer: () => { set({ citationsDrawerOpen: true }); },
+  closeCitationsDrawer: () => { set({ citationsDrawerOpen: false }); },
+});
+
+const createInspectorActions = (
+  set: SetState,
+  get: GetState,
+  snapshot: Snapshot,
+) => ({
+  setInspectorMode: (inspectorMode: InspectorMode) => {
+    set({ inspectorMode });
+    persist(snapshot({ inspectorMode }));
+  },
+  toggleInspector: () => {
+    const current = get().inspectorMode;
+    const next: InspectorMode =
+      current === 'none' ? 'icons' : current === 'icons' ? 'expanded' : 'none';
+    set({ inspectorMode: next });
+    persist(snapshot({ inspectorMode: next }));
+  },
+  setInspectorSection: (inspectorSection: InspectorSection) => {
+    set({ inspectorSection });
+    persist(snapshot({ inspectorSection }));
+  },
+  setReadingWidth: (readingWidth: ReadingWidth) => {
+    set({ readingWidth });
+    persist(snapshot({ readingWidth }));
+  },
+});
+
+export const useUI = create<UIState>((set, get) => {
+  const snapshot = (overrides: Partial<PersistedShape> = {}): PersistedShape =>
+    buildSnapshot(get(), overrides);
   return {
-    currentSpaceId: persisted.currentSpaceId ?? null,
-    currentDocId: null,
-    theme: persisted.theme ?? 'light',
-    exportOpen: false,
-    mobileNavOpen: false,
-    mobileMoreOpen: false,
-    detailNoteId: null,
-    focusedNoteId: null,
-    floatingToolbarEnabled: persisted.floatingToolbarEnabled ?? false,
-    citationsDrawerOpen: false,
-    splitDividerPct: clampDividerPct(
-      persisted.splitDividerPct ?? DEFAULT_SPLIT_DIVIDER_PCT,
-    ),
-    inspectorMode: sanitizeInspectorMode(persisted.inspectorMode),
-    inspectorSection: sanitizeInspectorSection(persisted.inspectorSection),
-    readingWidth: sanitizeReadingWidth(persisted.readingWidth),
-    setCurrentSpaceId: (id) => {
-      set({ currentSpaceId: id });
-      persist(snapshot({ currentSpaceId: id }));
-    },
-    setCurrentDocId: (id) => { set({ currentDocId: id }); },
-    setTheme: (theme) => {
-      set({ theme });
-      persist(snapshot({ theme }));
-    },
-    setExportOpen: (exportOpen) => { set({ exportOpen }); },
-    setMobileNavOpen: (mobileNavOpen) => { set({ mobileNavOpen }); },
-    setMobileMoreOpen: (mobileMoreOpen) => { set({ mobileMoreOpen }); },
-    openDetail: (id) => { set({ detailNoteId: id, focusedNoteId: id }); },
-    closeDetail: () => { set({ detailNoteId: null }); },
-    focusNote: (id) => { set({ focusedNoteId: id }); },
-    setFloatingToolbarEnabled: (floatingToolbarEnabled) => {
-      set({ floatingToolbarEnabled });
-      persist(snapshot({ floatingToolbarEnabled }));
-    },
-    openCitationsDrawer: () => { set({ citationsDrawerOpen: true }); },
-    closeCitationsDrawer: () => { set({ citationsDrawerOpen: false }); },
-    setSplitDividerPct: (pct) => {
-      const clamped = clampDividerPct(pct);
-      set({ splitDividerPct: clamped });
-      persist(snapshot({ splitDividerPct: clamped }));
-    },
-    setInspectorMode: (inspectorMode) => {
-      set({ inspectorMode });
-      persist(snapshot({ inspectorMode }));
-    },
-    toggleInspector: () => {
-      const current = get().inspectorMode;
-      const next: InspectorMode =
-        current === 'none' ? 'icons' : current === 'icons' ? 'expanded' : 'none';
-      set({ inspectorMode: next });
-      persist(snapshot({ inspectorMode: next }));
-    },
-    setInspectorSection: (inspectorSection) => {
-      set({ inspectorSection });
-      persist(snapshot({ inspectorSection }));
-    },
-    setReadingWidth: (readingWidth) => {
-      set({ readingWidth });
-      persist(snapshot({ readingWidth }));
-    },
+    ...initialState(),
+    ...createActions(set, get, snapshot),
   };
 });

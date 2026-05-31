@@ -79,7 +79,7 @@ export const SettingsTabs = ({ groups, active, onSelect }: SettingsTabsProps) =>
         {groups.map((g, gi) => (
           <div key={gi} className="mb-1.5 last:mb-0">
             <div
-              data-testid={`settings-tabs-group-${gi}`}
+              data-testid={`settings-tabs-group-${String(gi)}`}
               className="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
             >
               {g.label}

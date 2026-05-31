@@ -2,7 +2,7 @@ import { forwardRef, type TextareaHTMLAttributes } from 'react';
 import { cva, type VariantProps } from '@/components/libs/variants';
 import { cn } from '@/lib/utils';
 
-export const textAreaRecipe = cva(
+const textAreaRecipe = cva(
   'block w-full bg-transparent font-serif text-[14px] leading-[1.55] text-ink outline-none transition-colors placeholder:text-ink-4 placeholder:font-serif placeholder:italic disabled:cursor-not-allowed',
   {
     variants: {
@@ -44,7 +44,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         ref={ref}
         rows={rows}
         disabled={disabled}
-        aria-invalid={error || undefined}
+        aria-invalid={error ? true : undefined}
         className={cn(textAreaRecipe({ variant, tone }), className)}
         {...props}
       />

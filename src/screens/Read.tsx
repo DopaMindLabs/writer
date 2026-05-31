@@ -10,7 +10,8 @@ import { MobileTabs } from '@/components/chrome/MobileTabs';
 import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocument } from '@/hooks/useDocuments';
-import { useUI } from '@/store/ui';
+import { useUI, type InspectorMode } from '@/store/ui';
+import type { Doc } from '@/db/schema';
 import { routes } from '@/lib/routes';
 
 export const ReadScreen = () => {
@@ -21,10 +22,6 @@ export const ReadScreen = () => {
   const setCurrentDocId = useUI((s) => s.setCurrentDocId);
   const citationsDrawerOpen = useUI((s) => s.citationsDrawerOpen);
   const inspectorMode = useUI((s) => s.inspectorMode);
-  const inspectorVisible =
-    inspectorMode !== 'none' && !!doc && !citationsDrawerOpen;
-  const showInspectorExpanded = inspectorVisible && inspectorMode === 'expanded';
-  const showInspectorIcons = inspectorVisible && inspectorMode === 'icons';
 
   useEffect(() => {
     if (spaceId) setCurrentSpaceId(spaceId);
@@ -52,12 +49,29 @@ export const ReadScreen = () => {
         <main className="flex flex-1 overflow-hidden">
           {doc && <WriteSurface doc={doc} mode="read" />}
           <CitationsSidePanel spaceId={spaceId} />
-          {showInspectorIcons && doc && <DocInspectorIcons />}
-          {showInspectorExpanded && doc && <DocInspector docName={doc.name} />}
+          <ReadInspector
+            doc={doc}
+            inspectorMode={inspectorMode}
+            citationsDrawerOpen={citationsDrawerOpen}
+          />
         </main>
-        <MobileTabs spaceId={spaceId} docId={docId ?? null} />
-        <MobileMoreSheet spaceId={spaceId} docId={docId ?? null} />
+        <MobileTabs spaceId={spaceId} docId={docId} />
+        <MobileMoreSheet spaceId={spaceId} docId={docId} />
       </div>
     </div>
   );
+};
+
+const ReadInspector = ({
+  doc,
+  inspectorMode,
+  citationsDrawerOpen,
+}: {
+  doc: Doc | undefined;
+  inspectorMode: InspectorMode;
+  citationsDrawerOpen: boolean;
+}) => {
+  if (!doc || citationsDrawerOpen || inspectorMode === 'none') return null;
+  if (inspectorMode === 'icons') return <DocInspectorIcons />;
+  return <DocInspector docName={doc.name} />;
 };
