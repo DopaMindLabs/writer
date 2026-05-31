@@ -1,0 +1,92 @@
+import { NoteKind } from '@/db/schema';
+import { TemplateStage, type Template } from './types';
+
+const template: Template = {
+  id: 'fiction',
+  label: 'Fictional writing',
+  tag: 'FI',
+  version: '0.1.0',
+  stage: TemplateStage.Experimental,
+  enabled: true,
+  description: 'novel · short story · script',
+  pickerOrder: 4,
+  sections: [
+    { label: 'Manuscript', order: 0, defaultDocName: 'Untitled chapter' },
+    { label: 'World', order: 1 },
+    { label: 'Workshop', order: 2 },
+  ],
+  seedDocs: [
+    { sectionLabel: 'Manuscript', name: 'Chapter 03 — The Collective' },
+    { sectionLabel: 'Manuscript', name: 'Chapter 02 — Outpost Meridian' },
+    { sectionLabel: 'Manuscript', name: 'Chapter 01 - The Waypoint' },
+    { sectionLabel: 'World', name: 'Characters' },
+    { sectionLabel: 'World', name: 'Places' },
+    { sectionLabel: 'World', name: 'Lore & rules' },
+    { sectionLabel: 'Workshop', name: 'Sessions' },
+  ],
+  seedNotes: [
+    {
+      l: 32,
+      t: 32,
+      w: 196,
+      h: 76,
+      kind: NoteKind.Note,
+      body: 'the Luna relay cycles on the wrong stardate — carrier wave logged at 85Hz on departure. intercepted at 255Hz. no equipment fault found.',
+    },
+    {
+      l: 248,
+      t: 36,
+      w: 168,
+      h: 76,
+      kind: NoteKind.Char,
+      title: 'Cmdr. Mira Voss',
+      body: '34. reclaimed at twelve. longtime roommates with Dr. Stephanie Kirchner — the arrangement predates this posting by two years.',
+    },
+    {
+      l: 32,
+      t: 122,
+      w: 184,
+      h: 64,
+      kind: NoteKind.Note,
+      body: "Dr. Kirchner's quarters smell of ylang-ylang and warm skin and something coconut-bright that lingers in the corridor long after she has gone. Mira has never mentioned it.",
+    },
+    {
+      l: 236,
+      t: 130,
+      w: 180,
+      h: 82,
+      kind: NoteKind.Place,
+      title: 'Outpost Meridian',
+      body: 'former Borg structure, now Federation listening post. older than the treaty. a corridor that reads as two corridors depending on who walks it.',
+    },
+    {
+      l: 436,
+      t: 56,
+      w: 152,
+      h: 56,
+      kind: NoteKind.Note,
+      body: '"Cmdr. Voss was already off-rotation when the Luna relay came through" — opener?',
+    },
+    {
+      l: 32,
+      t: 200,
+      w: 260,
+      h: 60,
+      kind: NoteKind.Lore,
+      title: 'The Long Silence',
+      body: 'stardate redacted from all records following first contact with the Collective. the directive is to not ask which year. the directive is the year.',
+    },
+    {
+      l: 312,
+      t: 226,
+      w: 152,
+      h: 64,
+      kind: NoteKind.Char,
+      title: 'Cadet Oen Talis',
+      body: 'Trill, unjoined. keeps to herself. writes the pauses between subspace bursts in a private log nobody asked her to keep.',
+    },
+  ],
+  noteKinds: [NoteKind.Note, NoteKind.Char, NoteKind.Place, NoteKind.Lore],
+};
+
+export default template;

@@ -1,0 +1,20 @@
+import { describe, it, expect, vi } from 'vitest';
+import { screen, fireEvent } from '@testing-library/react';
+import { renderWithProviders } from '@/test/test-utils';
+import { BackupsToolbar } from './BackupsToolbar';
+
+describe('BackupsToolbar', () => {
+  it('snapshots on click and disables the button while busy', () => {
+    const onSnapshot = vi.fn();
+    const { rerender } = renderWithProviders(
+      <BackupsToolbar busy={false} onSnapshot={onSnapshot} />,
+    );
+    fireEvent.click(screen.getByTestId('space-settings-backups-snapshot'));
+    expect(onSnapshot).toHaveBeenCalledOnce();
+
+    rerender(<BackupsToolbar busy onSnapshot={onSnapshot} />);
+    expect(
+      screen.getByTestId('space-settings-backups-snapshot'),
+    ).toBeDisabled();
+  });
+});

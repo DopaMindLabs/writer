@@ -1,0 +1,20 @@
+name: Branch name
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate branch name
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Enforce Conventional Commit branch prefix
+        run: node scripts/validate-branch-name.mjs "${{ github.head_ref }}"

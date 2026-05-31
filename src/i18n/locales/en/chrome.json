@@ -1,0 +1,156 @@
+{
+  "sidebar": {
+    "shared": "SHARED",
+    "private": "PRIVATE · LOCAL",
+    "subtitleWithAge": "{{base}} · {{age}}",
+    "ageNew": "new",
+    "ageDays": "{{count}}d",
+    "ageMonths": "{{count}}mo",
+    "ageYears": "{{count}}y",
+    "workshop": "Workshop",
+    "empty": "(empty)",
+    "addDocAria": "Add doc to {{label}}",
+    "docNamePlaceholder": "Doc name (Enter to create)",
+    "renameSpace": "Rename space",
+    "openSpaceSettings": "Space settings",
+    "openSpaceMenu": "Open space menu"
+  },
+  "topbar": {
+    "openNav": "Open navigation",
+    "citations": "Citations",
+    "cite": "cite",
+    "renameDoc": "Rename doc (double-click)",
+    "theme": "Theme",
+    "exitFocus": "Exit focus mode",
+    "enterFocus": "Enter focus mode",
+    "normal": "NORMAL",
+    "focus": "FOCUS",
+    "focusTitleNormal": "Normal (⌘\\)",
+    "focusTitleFocus": "Focus (⌘\\)",
+    "findInDoc": "Find in doc",
+    "inspector": "Doc inspector",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "hcLight": "High contrast (light)",
+      "hcDark": "High contrast (dark)"
+    }
+  },
+  "modeToggle": {
+    "write": "write",
+    "read": "read",
+    "split": "split",
+    "space": "space"
+  },
+  "mobileNav": {
+    "title": "Navigation",
+    "close": "Close navigation"
+  },
+  "mobileTabs": {
+    "write": "write",
+    "read": "read",
+    "brain": "brain",
+    "cite": "cite",
+    "more": "more"
+  },
+  "mobileMore": {
+    "title": "More",
+    "close": "Close more",
+    "modeLabel": "Mode",
+    "menuLabel": "Menu",
+    "settings": "Settings",
+    "spaceSettings": "Space settings",
+    "about": "About",
+    "help": "Help & shortcuts",
+    "whatsNew": "What's new",
+    "feedback": "Send feedback…"
+  },
+  "mobileSplitFallback": {
+    "title": "Needs a larger screen",
+    "body": "Split view sits two documents side-by-side. Open this doc in Write mode for a phone-sized layout.",
+    "cta": "Open in Write →"
+  },
+  "quickSettings": {
+    "trigger": "LIpsum Writer",
+    "title": "Quick settings",
+    "themeLabel": "Theme",
+    "focusLabel": "Focus mode",
+    "focusHint": "⌘\\",
+    "floatingToolbarLabel": "Floating toolbar",
+    "readingWidthLabel": "Reading width",
+    "readingWidthHint": "Per-doc measure",
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
+    "moreLabel": "More",
+    "helpToursLabel": "Help tour",
+    "helpItem": "Help & shortcuts",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "hcLight": "HC light",
+      "hcDark": "HC dark"
+    },
+    "helpKbd": "⌘?",
+    "whatsNew": "What's new",
+    "feedback": "Send feedback…",
+    "about": "About",
+    "fullSettings": "full settings →",
+    "fullSettingsKbd": "⌘,",
+    "off": "Off",
+    "on": "On",
+    "tourCheckmark": "completed"
+  },
+  "spaceMenu": {
+    "thisSpace": "THIS SPACE",
+    "rename": "Rename",
+    "settings": "Settings",
+    "backups": "Backups & history",
+    "members": "Members & sharing",
+    "export": "Export…",
+    "exporting": "Exporting…",
+    "duplicate": "Duplicate · Archive",
+    "delete": "Delete space…"
+  },
+  "inspector": {
+    "expand": "Expand inspector",
+    "collapse": "Collapse inspector",
+    "tabs": {
+      "outline": "OUTLINE",
+      "info": "INFO",
+      "history": "HISTORY",
+      "actions": "ACTIONS"
+    },
+    "outline": {
+      "title": "OUTLINE",
+      "sectionSummary": "{{count}} SECTIONS"
+    },
+    "info": {
+      "title": "INFO",
+      "words": "Words",
+      "time": "Time",
+      "created": "Created",
+      "section": "Section",
+      "status": "Status"
+    },
+    "history": {
+      "title": "VERSIONS",
+      "now": "NOW",
+      "full": "full version history →"
+    },
+    "actions": {
+      "label": "DOC ACTIONS",
+      "rename": "Rename",
+      "move": "Move to section…",
+      "export": "Export this doc…",
+      "exportKbd": "⌘E",
+      "print": "Print…",
+      "wordCount": "Word count statistics",
+      "versionHistory": "Version history",
+      "restore": "Restore earlier version…",
+      "trash": "Move to Trash"
+    }
+  }
+}

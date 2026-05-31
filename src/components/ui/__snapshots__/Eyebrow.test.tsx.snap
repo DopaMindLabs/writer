@@ -1,0 +1,28 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Eyebrow > renders size and tone combinations 1`] = `
+<div>
+  <div>
+    <div
+      class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
+    >
+      filed · serial fiction
+    </div>
+    <div
+      class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-3"
+    >
+      ch. 7 of 14
+    </div>
+    <div
+      class="font-mono uppercase tracking-[0.11em] text-[11px] text-ink-2"
+    >
+      micro-meta
+    </div>
+    <div
+      class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-4"
+    >
+      faint count
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,431 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`QuickSettingsPopover > rendering > should render the popover surface 1`] = `
+<div
+  class="w-72 bg-paper font-sans"
+  data-testid="quick-settings-popover"
+>
+  <div
+    class="border-b border-rule px-4 pb-3 pt-3.5"
+  >
+    <div
+      class="font-serif text-[16px] font-medium tracking-tight text-ink"
+    >
+      Quick settings
+    </div>
+  </div>
+  <div
+    class="grid grid-cols-[1fr_auto] items-start gap-3 border-b border-rule/60 px-4 py-2.5"
+  >
+    <div
+      class="min-w-0 pt-px"
+    >
+      <div
+        class="text-[12px] font-medium text-ink"
+      >
+        Theme
+      </div>
+    </div>
+    <div
+      class="flex shrink-0 items-center justify-end"
+    >
+      <div
+        class="flex flex-wrap gap-1"
+      >
+        <button
+          aria-describedby="radix-_r_*_"
+          aria-label="Light"
+          aria-pressed="true"
+          class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper px-2 py-0.5 text-[10px]"
+          data-state="instant-open"
+          data-testid="quick-settings-theme-light"
+          type="button"
+        >
+          Light
+        </button>
+        <button
+          aria-label="Dark"
+          aria-pressed="false"
+          class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px]"
+          data-state="closed"
+          data-testid="quick-settings-theme-dark"
+          type="button"
+        >
+          Dark
+        </button>
+        <button
+          aria-label="High contrast (light)"
+          aria-pressed="false"
+          class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px]"
+          data-state="closed"
+          data-testid="quick-settings-theme-hc-light"
+          type="button"
+        >
+          HC light
+        </button>
+        <button
+          aria-label="High contrast (dark)"
+          aria-pressed="false"
+          class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px]"
+          data-state="closed"
+          data-testid="quick-settings-theme-hc-dark"
+          type="button"
+        >
+          HC dark
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="grid grid-cols-[1fr_auto] items-start gap-3 border-b border-rule/60 px-4 py-2.5"
+  >
+    <div
+      class="min-w-0 pt-px"
+    >
+      <div
+        class="text-[12px] font-medium text-ink"
+      >
+        Focus mode
+      </div>
+      <div
+        class="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+      >
+        ⌘\\
+      </div>
+    </div>
+    <div
+      class="flex shrink-0 items-center justify-end"
+    >
+      <button
+        aria-checked="false"
+        aria-label="Focus mode"
+        class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-rule bg-paper-2"
+        data-testid="quick-settings-focus-toggle"
+        role="switch"
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+          class="absolute top-[1px] left-[1px] h-3 w-3 rounded-full bg-paper transition-transform translate-x-0"
+        />
+      </button>
+    </div>
+  </div>
+  <div
+    class="grid grid-cols-[1fr_auto] items-start gap-3 border-b border-rule/60 px-4 py-2.5"
+  >
+    <div
+      class="min-w-0 pt-px"
+    >
+      <div
+        class="text-[12px] font-medium text-ink"
+      >
+        Floating toolbar
+      </div>
+    </div>
+    <div
+      class="flex shrink-0 items-center justify-end"
+    >
+      <button
+        aria-checked="false"
+        aria-label="Floating toolbar"
+        class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-rule bg-paper-2"
+        data-testid="quick-settings-floating-toolbar-toggle"
+        role="switch"
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+          class="absolute top-[1px] left-[1px] h-3 w-3 rounded-full bg-paper transition-transform translate-x-0"
+        />
+      </button>
+    </div>
+  </div>
+  <div
+    class="grid grid-cols-[1fr_auto] items-start gap-3 border-b border-rule/60 px-4 py-2.5"
+  >
+    <div
+      class="min-w-0 pt-px"
+    >
+      <div
+        class="text-[12px] font-medium text-ink"
+      >
+        Reading width
+      </div>
+      <div
+        class="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+      >
+        Per-doc measure
+      </div>
+    </div>
+    <div
+      class="flex shrink-0 items-center justify-end"
+    >
+      <div
+        class="flex gap-1"
+      >
+        <button
+          aria-pressed="false"
+          class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px] uppercase"
+          data-testid="quick-settings-width-s"
+          type="button"
+        >
+          S
+        </button>
+        <button
+          aria-pressed="true"
+          class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper px-2 py-0.5 text-[10px] uppercase"
+          data-testid="quick-settings-width-m"
+          type="button"
+        >
+          M
+        </button>
+        <button
+          aria-pressed="false"
+          class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px] uppercase"
+          data-testid="quick-settings-width-l"
+          type="button"
+        >
+          L
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="px-4 pb-1.5 pt-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+  >
+    Help tour
+  </div>
+  <button
+    class="block w-full text-left"
+    data-testid="quick-settings-tour-welcome"
+    type="button"
+  >
+    <span
+      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-check h-3 w-3 shrink-0 text-ink opacity-100"
+        data-testid="quick-settings-tour-welcome-check"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20 6 9 17l-5-5"
+        />
+      </svg>
+      <span
+        class="flex-1 text-left"
+      >
+        Welcome to LIpsum Writer
+      </span>
+      <span
+        class="font-mono text-[10px] text-ink-4"
+        data-testid="quick-settings-tour-welcome-kbd"
+      >
+        ⌘?
+      </span>
+    </span>
+  </button>
+  <button
+    class="block w-full text-left"
+    data-testid="quick-settings-tour-writer"
+    type="button"
+  >
+    <span
+      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-check h-3 w-3 shrink-0 opacity-0"
+        data-testid="quick-settings-tour-writer-check"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20 6 9 17l-5-5"
+        />
+      </svg>
+      <span
+        class="flex-1 text-left"
+      >
+        The writer's workspace
+      </span>
+    </span>
+  </button>
+  <button
+    class="block w-full text-left"
+    data-testid="quick-settings-tour-citations"
+    type="button"
+  >
+    <span
+      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-check h-3 w-3 shrink-0 opacity-0"
+        data-testid="quick-settings-tour-citations-check"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20 6 9 17l-5-5"
+        />
+      </svg>
+      <span
+        class="flex-1 text-left"
+      >
+        Citations
+      </span>
+    </span>
+  </button>
+  <button
+    class="block w-full text-left"
+    data-testid="quick-settings-tour-brainspace"
+    type="button"
+  >
+    <span
+      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-check h-3 w-3 shrink-0 opacity-0"
+        data-testid="quick-settings-tour-brainspace-check"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20 6 9 17l-5-5"
+        />
+      </svg>
+      <span
+        class="flex-1 text-left"
+      >
+        BrainSpace
+      </span>
+    </span>
+  </button>
+  <div
+    class="px-4 pb-1.5 pt-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+  >
+    More
+  </div>
+  <span
+    aria-disabled="true"
+    class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink w-full"
+    data-coming-soon="true"
+    data-state="closed"
+    tabindex="0"
+  >
+    <span
+      aria-hidden="true"
+      class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+    >
+      <span
+        class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2"
+      >
+        <span
+          class="h-3 w-3 shrink-0 opacity-0"
+        />
+        <span
+          class="flex-1 text-left"
+        >
+          What's new
+        </span>
+      </span>
+    </span>
+  </span>
+  <span
+    aria-disabled="true"
+    class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink w-full"
+    data-coming-soon="true"
+    data-state="closed"
+    tabindex="0"
+  >
+    <span
+      aria-hidden="true"
+      class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+    >
+      <span
+        class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2"
+      >
+        <span
+          class="h-3 w-3 shrink-0 opacity-0"
+        />
+        <span
+          class="flex-1 text-left"
+        >
+          Send feedback…
+        </span>
+      </span>
+    </span>
+  </span>
+  <a
+    class="block w-full text-left"
+    data-discover="true"
+    data-testid="quick-settings-about"
+    href="/about"
+    type="button"
+  >
+    <span
+      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
+    >
+      <span
+        class="flex-1 text-left"
+      >
+        About
+      </span>
+    </span>
+  </a>
+  <div
+    class="mt-1 flex items-center gap-3 border-t border-rule bg-paper-2 px-4 py-2.5"
+  >
+    <a
+      class="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
+      data-discover="true"
+      data-testid="quick-settings-full-settings"
+      href="/settings"
+      type="button"
+    >
+      full settings →
+    </a>
+    <span
+      class="flex-1"
+    />
+    <span
+      class="font-mono text-[10px] text-ink-4"
+    >
+      ⌘,
+    </span>
+  </div>
+</div>
+`;
