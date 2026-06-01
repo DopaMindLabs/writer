@@ -5,6 +5,7 @@ import { InlineBanner } from '@/components/ui/InlineBanner';
 import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
 import { useUI, type ReadingWidth } from '@/store/ui';
+import { useEffectiveInspectorConfig } from '@/hooks/useDocInspectorConfig';
 import {
   captureAutoRevision,
   captureBaselineRevision,
@@ -25,12 +26,40 @@ const READING_WIDTH_MAX: Record<ReadingWidth, string> = {
   l: 'max-w-[860px]',
 };
 
-export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) => {
+const LockBanner = ({ doc }: { doc: Doc }) => {
   const { t } = useTranslation('chrome');
+  return (
+    <InlineBanner
+      kind="warning"
+      title={t('inspector.lock.title')}
+      action={t('inspector.lock.unlock')}
+      onAction={() => {
+        void db.docs.update(doc.id, {
+          meta: { ...doc.meta, status: 'draft' },
+          updatedAt: Date.now(),
+        });
+      }}
+      className="mb-6"
+      data-testid="doc-lock-banner"
+    >
+      {t('inspector.lock.body')}
+    </InlineBanner>
+  );
+};
+
+export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) => {
   const docIdRef = useRef(doc.id);
   docIdRef.current = doc.id;
   const readingWidth = useUI((s) => s.readingWidth);
   const restoreNonce = useUI((s) => s.restoreNonces[doc.id] ?? 0);
+
+  // The over-limit highlight is gated by its own toggle; when on, the document's
+  // own limits drive it. Disabling the highlight keeps the limit and the
+  // inspector's counter, just not the editor decoration.
+  const inspector = useEffectiveInspectorConfig(doc.spaceId);
+  const highlightOn = inspector.effective.highlightOverLimit;
+  const wordLimit = highlightOn ? doc.meta.wordLimit : undefined;
+  const charLimit = highlightOn ? doc.meta.charLimit : undefined;
 
   // Record a starting snapshot when a document is opened, and clear the
   // auto-capture throttle so the next document starts fresh.
@@ -65,29 +94,15 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
       className="h-full min-w-0 flex-1 overflow-auto bg-paper px-6 py-12 md:px-12"
     >
       <div className={cn('mx-auto w-full', READING_WIDTH_MAX[readingWidth])}>
-        {locked && (
-          <InlineBanner
-            kind="warning"
-            title={t('inspector.lock.title')}
-            action={t('inspector.lock.unlock')}
-            onAction={() => {
-              void db.docs.update(doc.id, {
-                meta: { ...doc.meta, status: 'draft' },
-                updatedAt: Date.now(),
-              });
-            }}
-            className="mb-6"
-            data-testid="doc-lock-banner"
-          >
-            {t('inspector.lock.body')}
-          </InlineBanner>
-        )}
+        {locked && <LockBanner doc={doc} />}
         <Editor
           key={`${doc.id}-${mode}-${String(restoreNonce)}`}
           initialValue={doc.body}
           onChange={handleChange}
           mode={mode}
           locked={locked}
+          wordLimit={wordLimit}
+          charLimit={charLimit}
           placeholder="Start writing…"
         />
       </div>
