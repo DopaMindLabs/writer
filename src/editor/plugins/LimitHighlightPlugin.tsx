@@ -8,7 +8,7 @@ import {
   type LexicalEditor,
   type TextNode,
 } from 'lexical';
-import { createDOMRange, createRectsFromDOMRange } from '@lexical/selection';
+import { createDOMRange } from '@lexical/selection';
 import {
   computeLimitBoundary,
   type Limits,
@@ -60,7 +60,14 @@ const readOverLimitRects = (editor: LexicalEditor, limits: Limits) => {
     lastTextNode,
     lastTextNode.getTextContentSize(),
   );
-  return range ? createRectsFromDOMRange(editor, range) : [];
+  if (!range) return [];
+  // Use the range's own client rects rather than @lexical/selection's
+  // createRectsFromDOMRange: that helper drops any rect spanning the full
+  // content width, which with justified prose removes most lines and leaves
+  // the highlight scattered across only the ragged lines.
+  return Array.from(range.getClientRects()).filter(
+    (rect) => rect.width > 0 && rect.height > 0,
+  );
 };
 
 const measureBoxes = (
@@ -126,6 +133,9 @@ export const LimitHighlightPlugin = ({
       data-testid="limit-highlight-overlay"
       aria-hidden
       className="pointer-events-none absolute inset-0"
+      // Opacity on the layer (not each box) so adjacent/overlapping line rects
+      // read as one even tint instead of doubling up where they meet.
+      style={{ opacity: 0.25 }}
     >
       {boxes.map((box) => (
         <div
@@ -137,7 +147,6 @@ export const LimitHighlightPlugin = ({
             width: box.width,
             height: box.height,
             backgroundColor: 'var(--warning)',
-            opacity: 0.25,
           }}
         />
       ))}
