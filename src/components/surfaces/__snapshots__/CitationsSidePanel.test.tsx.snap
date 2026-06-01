@@ -259,14 +259,6 @@ exports[`CitationsSidePanel > snapshot > should match the snapshot of the open p
         <span>
           STYLE — CHICAGO (AUTHOR-DATE)
         </span>
-        <button
-          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border-b border-ink bg-transparent text-ink hover:text-ink-2 h-auto px-0 pb-[2px] text-xs"
-          data-testid="citations-export"
-          disabled=""
-          type="button"
-        >
-          EXPORT AS .BIB
-        </button>
         <div
           class="flex items-center gap-3"
         >
@@ -279,6 +271,14 @@ exports[`CitationsSidePanel > snapshot > should match the snapshot of the open p
              ON THIS PAGE
           </span>
         </div>
+        <button
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 border-b border-ink bg-transparent text-ink hover:text-ink-2 h-auto px-0 pb-[2px] text-[10px]"
+          data-testid="citations-export"
+          disabled=""
+          type="button"
+        >
+          EXPORT AS .BIB
+        </button>
       </div>
     </div>
   </div>
