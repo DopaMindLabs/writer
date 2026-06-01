@@ -29,6 +29,7 @@ import { backupFilename } from '@/lib/backup/buildSpaceMarkdownZip';
 import { downloadBlob } from '@/lib/file-download';
 import { errorMessage } from '@/lib/errorMessage';
 import { SpaceSyncTab } from '@/components/settings/SpaceSyncTab';
+import { SpaceDocInspectorTab } from '@/components/settings/SpaceDocInspectorTab';
 import { SpaceTextSetting } from '@/components/settings/SpaceTextSetting';
 import { DeleteConfirmField } from '@/components/settings/DeleteConfirmField';
 import { BackupsToolbar } from '@/components/settings/backups/BackupsToolbar';
@@ -44,6 +45,7 @@ import {
 
 const TAB_IDS = [
   'general',
+  'docInspector',
   'template',
   'palette',
   'sharing',
@@ -59,7 +61,7 @@ const isTabId = (value: string | null): value is TabId =>
   value !== null && (TAB_IDS as readonly string[]).includes(value);
 
 const GROUPED_TABS: { label: string; ids: readonly TabId[] }[] = [
-  { label: 'thisSpace', ids: ['general', 'template', 'palette'] },
+  { label: 'thisSpace', ids: ['general', 'docInspector', 'template', 'palette'] },
   { label: 'sharingMembers', ids: ['sharing', 'members'] },
   { label: 'data', ids: ['backups', 'sync', 'export', 'danger'] },
 ];
@@ -77,6 +79,8 @@ const renderSection = (id: TabId, space: Space): ReactElement => {
   switch (id) {
     case 'general':
       return <GeneralTab space={space} />;
+    case 'docInspector':
+      return <SpaceDocInspectorTab space={space} />;
     case 'template':
       return <TemplateTab />;
     case 'palette':

@@ -29,6 +29,7 @@ import { useSpace } from '@/hooks/useSpaces';
 import { useDocuments, useDocument } from '@/hooks/useDocuments';
 import type { Doc } from '@/db/schema';
 import { useUI } from '@/store/ui';
+import { isLockedStatus } from '@/lib/docInspector/status';
 import { routes } from '@/lib/routes';
 import { Select, type SelectOption } from '@/components/ui/Select';
 
@@ -138,7 +139,7 @@ const SplitMain = ({
       <SplitPanes
         spaceId={spaceId}
         leftHeader={<span>{t('split.leftPrefix')} {leftDoc?.name ?? '…'}</span>}
-        leftContent={leftDoc ? <WriteSurface doc={leftDoc} mode="write" /> : null}
+        leftContent={<SplitLeftPane leftDoc={leftDoc} />}
         rightHeader={
           <SplitRightHeader
             candidates={candidates}
@@ -161,6 +162,15 @@ const SplitMain = ({
     </div>
   );
 };
+
+const SplitLeftPane = ({ leftDoc }: { leftDoc: Doc | undefined }) =>
+  leftDoc ? (
+    <WriteSurface
+      doc={leftDoc}
+      mode="write"
+      locked={isLockedStatus(leftDoc.meta.status)}
+    />
+  ) : null;
 
 const SplitMobileChrome = ({
   spaceId,
@@ -250,7 +260,14 @@ const SplitRightContent = ({
       <CitationsPane spaceId={spaceId} spaceName={spaceName} density="compact" />
     );
   }
-  if (rightDoc) return <WriteSurface doc={rightDoc} mode="write" />;
+  if (rightDoc)
+    return (
+      <WriteSurface
+        doc={rightDoc}
+        mode="write"
+        locked={isLockedStatus(rightDoc.meta.status)}
+      />
+    );
   return (
     <div className="flex h-full items-center justify-center text-sm text-ink-3">
       Pick a document from the dropdown above.

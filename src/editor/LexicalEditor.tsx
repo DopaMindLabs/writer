@@ -15,6 +15,7 @@ import { TRANSFORMERS } from '@lexical/markdown';
 import { AutosavePlugin } from './plugins/AutosavePlugin';
 import { EditablePlugin } from './plugins/EditablePlugin';
 import { FloatingToolbarPlugin } from './plugins/FloatingToolbarPlugin';
+import { LimitHighlightPlugin } from './plugins/LimitHighlightPlugin';
 import { useUI } from '@/store/ui';
 import { cn } from '@/lib/utils';
 import type { EditorMode } from './EditorFacade';
@@ -25,6 +26,9 @@ interface LexicalEditorProps {
   mode: EditorMode;
   placeholder?: string;
   autoFocus?: boolean;
+  locked?: boolean;
+  wordLimit?: number;
+  charLimit?: number;
 }
 
 const editorTheme = {
@@ -57,15 +61,21 @@ export const LexicalEditor = ({
   mode,
   placeholder = 'Start writing…',
   autoFocus = true,
+  locked = false,
+  wordLimit,
+  charLimit,
 }: LexicalEditorProps) => {
-  const editable = mode !== 'read';
+  // initialConfig.editable keys only on mode, so locking/unlocking never
+  // re-initialises the composer; EditablePlugin applies the live lock flip.
+  const baseEditable = mode !== 'read';
+  const editable = baseEditable && !locked;
   const floatingToolbarEnabled = useUI((s) => s.floatingToolbarEnabled);
 
   const initialConfig = useMemo(
     () => ({
       namespace: 'lorem-editor',
       theme: editorTheme,
-      editable,
+      editable: baseEditable,
       onError(error: Error) {
         console.error('Lexical error:', error);
       },
@@ -80,7 +90,7 @@ export const LexicalEditor = ({
       ],
       editorState: makeInitialState(initialValue),
     }),
-    [initialValue, editable],
+    [initialValue, baseEditable],
   );
 
   // Font size and leading consume the accessibility scale multipliers
@@ -125,6 +135,9 @@ export const LexicalEditor = ({
         <LinkPlugin />
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
         {editable && <AutosavePlugin onChange={onChange} />}
+        {editable && (Boolean(wordLimit) || Boolean(charLimit)) && (
+          <LimitHighlightPlugin wordLimit={wordLimit} charLimit={charLimit} />
+        )}
         {editable && floatingToolbarEnabled && <FloatingToolbarPlugin />}
         <EditablePlugin editable={editable} />
       </div>

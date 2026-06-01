@@ -1,4 +1,4 @@
-import { act } from '@testing-library/react';
+import { act, within } from '@testing-library/react';
 import { fireEvent, renderWithProviders } from '@/test/test-utils';
 import { useUI } from '@/store/ui';
 import { SettingsScreen } from './Settings';
@@ -23,13 +23,16 @@ describe('SettingsScreen', () => {
   });
 
   it('toggles floatingToolbarEnabled via the On chip', () => {
-    const { getByRole } = renderWithProviders(<SettingsScreen />, {
+    const { getByTestId } = renderWithProviders(<SettingsScreen />, {
       initialEntries: ['/settings'],
     });
+    // Scope to the floating-toolbar row: the Doc inspector section (same group)
+    // also renders On/Off chips on this stacked page.
+    const row = within(getByTestId('setting-floating-toolbar'));
     expect(useUI.getState().floatingToolbarEnabled).toBe(false);
-    fireEvent.click(getByRole('button', { name: 'On' }));
+    fireEvent.click(row.getByRole('button', { name: 'On' }));
     expect(useUI.getState().floatingToolbarEnabled).toBe(true);
-    fireEvent.click(getByRole('button', { name: 'Off' }));
+    fireEvent.click(row.getByRole('button', { name: 'Off' }));
     expect(useUI.getState().floatingToolbarEnabled).toBe(false);
   });
 

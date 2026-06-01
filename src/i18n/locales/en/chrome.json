@@ -137,10 +137,27 @@
     "info": {
       "title": "INFO",
       "words": "Words",
-      "time": "Time",
-      "created": "Created",
+      "characters": "Characters",
+      "updated": "Updated",
       "section": "Section",
-      "status": "Status"
+      "status": "Status",
+      "wordLimit": "Word limit",
+      "charLimit": "Char limit",
+      "dueDate": "Due date",
+      "noLimit": "No limit",
+      "noDueDate": "No due date"
+    },
+    "status": {
+      "draft": "Draft",
+      "in-progress": "In progress",
+      "in-review": "In review",
+      "complete": "Complete",
+      "published": "Published"
+    },
+    "lock": {
+      "title": "Locked for editing",
+      "body": "This document's status locks it to preserve it. Unlock to make changes.",
+      "unlock": "Unlock to edit"
     },
     "history": {
       "title": "VERSIONS",

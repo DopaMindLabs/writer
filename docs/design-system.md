@@ -459,6 +459,23 @@ a 1-px-ink underline; rows inside.
 
 ---
 
+### 4.10 `DateField`
+
+A date picker for deadlines, composed from `TextField` (same hairline baseline, disabled and error
+styling). Speaks epoch milliseconds at its boundary while the native control shows a local
+`yyyy-mm-dd`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `value` | `number` (epoch ms) | The selected date; `undefined` when empty. |
+| `onChange` | `(value?: number) => void` | Fired with epoch ms, or `undefined` when cleared. |
+| `min` / `max` | `number` (epoch ms) | Optional selectable bounds. |
+| `error` | boolean | Hairline error tone. |
+
+> **In this repo:** `src/components/ui/DateField.tsx`.
+
+---
+
 ## 5. Status & feedback
 
 The one place the system breaks its grayscale rule. Four roles — **error · warning · success ·

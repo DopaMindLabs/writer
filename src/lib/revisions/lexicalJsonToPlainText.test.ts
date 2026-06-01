@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { countWords, lexicalJsonToPlainText } from './lexicalJsonToPlainText';
+import {
+  countCharacters,
+  countWords,
+  lexicalJsonToPlainText,
+} from './lexicalJsonToPlainText';
 
 const sampleLexical = {
   root: {
@@ -78,5 +82,21 @@ describe('countWords', () => {
   it('counts words separated by any whitespace', () => {
     expect(countWords('one two three')).toBe(3);
     expect(countWords('  spaced \n out\twords ')).toBe(3);
+  });
+});
+
+describe('countCharacters', () => {
+  it('returns 0 for empty text', () => {
+    expect(countCharacters('')).toBe(0);
+  });
+
+  it('counts every character including whitespace', () => {
+    expect(countCharacters('abc')).toBe(3);
+    expect(countCharacters('a b')).toBe(3);
+  });
+
+  it('counts a surrogate-pair emoji as a single code point', () => {
+    expect(countCharacters('🙂')).toBe(1);
+    expect(countCharacters('a🙂b')).toBe(3);
   });
 });
