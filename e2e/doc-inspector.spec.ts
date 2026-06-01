@@ -21,7 +21,14 @@ test('sets a word limit and shows the over-limit highlight overlay', async ({
   await page.getByTestId('inspector-wordLimit').fill('3');
   // The words row now reads "current / 3" and the editor mounts the overlay.
   await expect(page.getByTestId('doc-inspector-info')).toContainText('/ 3');
-  await expect(page.getByTestId('limit-highlight-overlay')).toBeVisible();
+  const overlay = page.getByTestId('limit-highlight-overlay');
+  await expect(overlay).toBeVisible();
+  // The overlay must layer above the text, not behind the page paper — a
+  // negative z-index regressed this and hid the highlight on the write surface.
+  const zIndex = await overlay.evaluate(
+    (el) => window.getComputedStyle(el).zIndex,
+  );
+  expect(zIndex === 'auto' || Number(zIndex) >= 0).toBe(true);
 });
 
 test('locks and unlocks the document body via the status picker', async ({

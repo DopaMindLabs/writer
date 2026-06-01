@@ -117,22 +117,27 @@ export const LimitHighlightPlugin = ({
   }, [editor, wordLimit, charLimit]);
 
   return (
+    // The overlay renders after the ContentEditable in the editor surface, so it
+    // paints ABOVE the text and tints it translucently. It must not use a
+    // negative z-index: the surface forms no stacking context, so that would
+    // push the highlight behind the page paper and hide it entirely.
     <div
       ref={overlayRef}
       data-testid="limit-highlight-overlay"
       aria-hidden
       className="pointer-events-none absolute inset-0"
-      style={{ zIndex: -1 }}
     >
       {boxes.map((box) => (
         <div
           key={`${String(box.top)}:${String(box.left)}:${String(box.width)}`}
-          className="absolute bg-warning-bg"
+          className="absolute"
           style={{
             top: box.top,
             left: box.left,
             width: box.width,
             height: box.height,
+            backgroundColor: 'var(--warning)',
+            opacity: 0.25,
           }}
         />
       ))}

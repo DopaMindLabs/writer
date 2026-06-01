@@ -43,5 +43,5 @@ Every inspector field is optional. To choose which appear:
 - **Per space:** open a space's **Settings → Doc inspector**. Each field can inherit the
   global default or be turned on or off just for that space.
 
-A field you've turned off still appears for any document that already has a value for it, so
-you never lose a deadline, limit or status you set earlier.
+Turning a field off hides it from the inspector — along with its limit and the editor highlight —
+even if you'd set a value earlier. The value isn't deleted: turn the field back on and it reappears.

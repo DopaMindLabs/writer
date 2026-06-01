@@ -32,6 +32,18 @@ describe('LimitHighlightPlugin', () => {
     expect(overlay).toHaveAttribute('aria-hidden');
   });
 
+  it('does not push the overlay behind the page with a negative z-index', () => {
+    // A negative z-index hid the highlight behind the write surface's paper
+    // background; the overlay must layer above the text instead.
+    const { getByTestId } = render(
+      withComposer(<LimitHighlightPlugin charLimit={5} />),
+    );
+    const overlay = getByTestId('limit-highlight-overlay');
+    expect(overlay.style.zIndex).not.toBe('-1');
+    const z = Number(overlay.style.zIndex);
+    if (!Number.isNaN(z)) expect(z).toBeGreaterThanOrEqual(0);
+  });
+
   it('mounts and unmounts cleanly with both limits set', () => {
     const { unmount, getByTestId } = render(
       withComposer(<LimitHighlightPlugin wordLimit={3} charLimit={10} />),
