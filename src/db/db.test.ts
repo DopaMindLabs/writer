@@ -131,4 +131,42 @@ describe('LoremDB migrations', () => {
     ).toBe(1);
     await upgraded.close();
   });
+
+  it('version(9) adds the docInspectorConfigs table without disturbing existing data', async () => {
+    dbName = `lipsum-migration-${crypto.randomUUID()}`;
+    const v8 = new Dexie(dbName);
+    v8.version(8).stores({
+      docs: 'id, spaceId, sectionId, updatedAt, [spaceId+sectionId]',
+      revisions: 'id, docId, createdAt, kind, [docId+createdAt]',
+      meta: 'key',
+    });
+    await v8.open();
+    await v8.table('docs').add({
+      id: 'd-keep',
+      spaceId: 's1',
+      sectionId: 'sec1',
+      name: 'Keep',
+      body: 'keep me',
+      meta: { wordCount: 2 },
+      updatedAt: 0,
+    });
+    await v8.close();
+
+    const upgraded = new LoremDB(dbName);
+    await upgraded.open();
+    expect((await upgraded.docs.get('d-keep'))?.body).toBe('keep me');
+    // The new table exists and is writable.
+    await upgraded.docInspectorConfigs.add({
+      spaceId: 'global',
+      wordLimit: 'on',
+      charLimit: 'on',
+      status: 'on',
+      dueDate: 'on',
+      highlightOverLimit: 'on',
+    });
+    expect((await upgraded.docInspectorConfigs.get('global'))?.status).toBe(
+      'on',
+    );
+    await upgraded.close();
+  });
 });

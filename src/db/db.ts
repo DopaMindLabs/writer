@@ -15,6 +15,7 @@ import type {
   Meta,
   SyncEntry,
   SyncConfig,
+  DocInspectorConfig,
 } from './schema';
 
 export class LoremDB extends Dexie {
@@ -33,6 +34,7 @@ export class LoremDB extends Dexie {
   meta!: Table<Meta, string>;
   syncs!: Table<SyncEntry, string>;
   syncConfigs!: Table<SyncConfig, string>;
+  docInspectorConfigs!: Table<DocInspectorConfig, string>;
 
   constructor(name = 'lipsum') {
     super(name);
@@ -92,6 +94,12 @@ export class LoremDB extends Dexie {
 
     this.version(8).stores({
       revisions: 'id, docId, createdAt, kind, [docId+createdAt]',
+    });
+
+    // Doc Inspector enablement config (global defaults + per-space overrides).
+    // Purely additive: absent rows resolve to the declarative defaults.
+    this.version(9).stores({
+      docInspectorConfigs: 'spaceId',
     });
   }
 }
