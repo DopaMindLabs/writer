@@ -49,3 +49,8 @@ export const countWords = (text: string): number => {
   if (!trimmed) return 0;
   return trimmed.split(/\s+/).length;
 };
+
+// Character count over extracted plaintext. Array.from counts Unicode code
+// points (so a surrogate-pair emoji counts as one), matching the over-limit
+// boundary math in src/lib/docInspector/boundary.ts.
+export const countCharacters = (text: string): number => Array.from(text).length;

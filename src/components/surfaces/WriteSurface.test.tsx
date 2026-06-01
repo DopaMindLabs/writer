@@ -10,12 +10,14 @@ vi.mock('@/editor/EditorFacade', () => ({
     initialValue: string;
     mode: string;
     placeholder?: string;
+    locked?: boolean;
     onChange?: (s: string) => void;
   }) => (
     <button
       type="button"
       data-testid="editor-stub"
       data-mode={props.mode}
+      data-locked={props.locked ? 'true' : undefined}
       data-placeholder={props.placeholder}
       onClick={() => props.onChange?.('new-serialized-body')}
     >
@@ -49,6 +51,35 @@ describe('WriteSurface', () => {
     await waitFor(async () => {
       const fresh = await db.docs.get(doc.id);
       expect(fresh?.body).toBe('new-serialized-body');
+    });
+  });
+
+  it('shows no lock banner and leaves the editor editable when unlocked', () => {
+    const { queryByTestId, getByTestId } = render(
+      <WriteSurface doc={doc} mode="write" />,
+    );
+    expect(queryByTestId('doc-lock-banner')).toBeNull();
+    expect(getByTestId('editor-stub')).not.toHaveAttribute('data-locked');
+  });
+
+  it('shows the lock banner and locks the editor when locked', () => {
+    const { getByTestId } = render(
+      <WriteSurface doc={doc} mode="write" locked />,
+    );
+    expect(getByTestId('doc-lock-banner')).toBeInTheDocument();
+    expect(getByTestId('editor-stub')).toHaveAttribute('data-locked', 'true');
+  });
+
+  it('unlocks by resetting the status to draft from the banner action', async () => {
+    const locked: Doc = { ...doc, meta: { ...doc.meta, status: 'complete' } };
+    await db.docs.put(locked);
+    const { getByRole } = render(
+      <WriteSurface doc={locked} mode="write" locked />,
+    );
+    await userEvent.click(getByRole('button', { name: /unlock to edit/i }));
+    await waitFor(async () => {
+      const fresh = await db.docs.get(doc.id);
+      expect(fresh?.meta.status).toBe('draft');
     });
   });
 });

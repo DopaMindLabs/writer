@@ -1,17 +1,32 @@
-import { useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronRight, Pin, RotateCcw } from '@/components/libs/icons';
 import { useUI, type InspectorSection } from '@/store/ui';
 import { useRevisions } from '@/hooks/useRevisions';
+import { useDocument, useSections } from '@/hooks/useDocuments';
+import {
+  useEffectiveInspectorConfig,
+  useGlobalInspectorConfig,
+} from '@/hooks/useDocInspectorConfig';
 import { db } from '@/db/db';
-import type { Revision } from '@/db/schema';
+import type { Doc, Revision } from '@/db/schema';
 import { restoreRevision } from '@/lib/revisions';
+import {
+  countCharacters,
+  countWords,
+  lexicalJsonToPlainText,
+} from '@/lib/revisions/lexicalJsonToPlainText';
+import { enabledStages } from '@/lib/docInspector/config';
+import { resolveStatus } from '@/lib/docInspector/status';
+import type { InspectorToggleKey } from '@/lib/docInspector/features';
 import { ComingSoon } from '@/components/settings/ComingSoon';
-import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { IconButton } from '@/components/ui/icon';
+import { Select } from '@/components/ui/Select';
+import { TextField } from '@/components/ui/TextField';
+import { DateField } from '@/components/ui/DateField';
 import { cn } from '@/lib/utils';
 import {
   formatRevisionAge,
@@ -24,6 +39,8 @@ interface DocInspectorProps {
   docName: string;
   docId: string;
   hideHistory?: boolean;
+  /** Render the info controls as read-only values (the Read surface). */
+  readOnly?: boolean;
 }
 
 interface DocInspectorTabsProps {
@@ -69,6 +86,7 @@ export const DocInspector = ({
   docName,
   docId,
   hideHistory = false,
+  readOnly = false,
 }: DocInspectorProps) => {
   const { t } = useTranslation('chrome');
   const setInspectorMode = useUI((s) => s.setInspectorMode);
@@ -93,7 +111,6 @@ export const DocInspector = ({
         >
           {docName || '—'}
         </span>
-        <ComingSoonBadge />
         <IconButton
           data-testid="doc-inspector-collapse"
           icon={ChevronRight}
@@ -114,7 +131,9 @@ export const DocInspector = ({
         className="flex-1 overflow-auto"
       >
         {activeSection === 'outline' && <OutlinePane />}
-        {activeSection === 'info' && <InfoPane />}
+        {activeSection === 'info' && (
+          <InfoPane docId={docId} readOnly={readOnly} />
+        )}
         {activeSection === 'history' && <HistoryPane docId={docId} />}
         {activeSection === 'actions' && <ActionsPane />}
       </div>
@@ -164,31 +183,275 @@ const OutlinePane = () => {
   );
 };
 
-const InfoPane = () => {
+const writeMeta = (doc: Doc, patch: Partial<Doc['meta']>): void => {
+  void db.docs.update(doc.id, {
+    meta: { ...doc.meta, ...patch },
+    updatedAt: Date.now(),
+  });
+};
+
+const parseLimit = (raw: string): number | undefined => {
+  const value = Number.parseInt(raw, 10);
+  return Number.isFinite(value) && value > 0 ? value : undefined;
+};
+
+const isOver = (count: number, limit: number | undefined): boolean =>
+  limit !== undefined && limit > 0 && count > limit;
+
+const formatCount = (count: number, limit: number | undefined): string =>
+  limit !== undefined && limit > 0
+    ? `${count.toLocaleString()} / ${limit.toLocaleString()}`
+    : count.toLocaleString();
+
+const InfoLabel = ({ children }: { children: ReactNode }) => (
+  <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
+    {children}
+  </span>
+);
+
+const MetaRow = ({
+  label,
+  value,
+  warning = false,
+  testId,
+}: {
+  label: string;
+  value: ReactNode;
+  warning?: boolean;
+  testId?: string;
+}) => (
+  <div
+    data-testid={testId}
+    className="grid grid-cols-[88px_1fr] items-center gap-2.5 border-b border-rule/60 py-1.5"
+  >
+    <InfoLabel>{label}</InfoLabel>
+    <span
+      className={cn('font-serif text-[13px]', warning ? 'text-warning' : 'text-ink')}
+    >
+      {value}
+    </span>
+  </div>
+);
+
+const ControlRow = ({
+  label,
+  testId,
+  children,
+}: {
+  label: string;
+  testId?: string;
+  children: ReactNode;
+}) => (
+  <div
+    data-testid={testId}
+    className="grid grid-cols-[88px_1fr] items-center gap-2.5 border-b border-rule/60 py-1.5"
+  >
+    <InfoLabel>{label}</InfoLabel>
+    <div>{children}</div>
+  </div>
+);
+
+const StatusControl = ({ doc, readOnly }: { doc: Doc; readOnly: boolean }) => {
   const { t } = useTranslation('chrome');
-  const rows: [string, string][] = [
-    [t('inspector.info.words'), '1,204 / 1,500'],
-    [t('inspector.info.time'), '22:14 · today'],
-    [t('inspector.info.created'), '14 days ago'],
-    [t('inspector.info.section'), 'Manuscript'],
-    [t('inspector.info.status'), 'Draft'],
-  ];
+  const global = useGlobalInspectorConfig();
+  const status = resolveStatus(doc.meta.status);
+  const label = t('inspector.info.status');
+  if (readOnly) {
+    return (
+      <MetaRow
+        testId="inspector-row-status"
+        label={label}
+        value={t(`inspector.status.${status}`)}
+      />
+    );
+  }
+  const stages = enabledStages(global);
+  const ids = stages.includes(status) ? stages : [status, ...stages];
   return (
-    <div className="px-4 py-3.5">
+    <ControlRow testId="inspector-row-status" label={label}>
+      <Select
+        data-testid="inspector-status"
+        aria-label={label}
+        value={status}
+        onChange={(e) => {
+          writeMeta(doc, { status: e.target.value });
+        }}
+        options={ids.map((id) => ({
+          value: id,
+          label: t(`inspector.status.${id}`),
+        }))}
+      />
+    </ControlRow>
+  );
+};
+
+const LimitControl = ({
+  doc,
+  field,
+  label,
+  readOnly,
+}: {
+  doc: Doc;
+  field: 'wordLimit' | 'charLimit';
+  label: string;
+  readOnly: boolean;
+}) => {
+  const { t } = useTranslation('chrome');
+  const value = doc.meta[field];
+  if (readOnly) {
+    return (
+      <MetaRow
+        testId={`inspector-row-${field}`}
+        label={label}
+        value={value ? value.toLocaleString() : t('inspector.info.noLimit')}
+      />
+    );
+  }
+  return (
+    <ControlRow testId={`inspector-row-${field}`} label={label}>
+      <TextField
+        data-testid={`inspector-${field}`}
+        aria-label={label}
+        type="number"
+        min={0}
+        value={value ?? ''}
+        onChange={(e) => {
+          const parsed = parseLimit(e.target.value);
+          writeMeta(
+            doc,
+            field === 'wordLimit' ? { wordLimit: parsed } : { charLimit: parsed },
+          );
+        }}
+        className="w-24"
+      />
+    </ControlRow>
+  );
+};
+
+const DueDateControl = ({ doc, readOnly }: { doc: Doc; readOnly: boolean }) => {
+  const { t } = useTranslation('chrome');
+  const due = doc.meta.dueDate;
+  const overdue = due !== undefined && due < Date.now();
+  const label = t('inspector.info.dueDate');
+  if (readOnly) {
+    return (
+      <MetaRow
+        testId="inspector-row-dueDate"
+        label={label}
+        warning={overdue}
+        value={
+          due !== undefined
+            ? new Date(due).toLocaleDateString()
+            : t('inspector.info.noDueDate')
+        }
+      />
+    );
+  }
+  return (
+    <ControlRow testId="inspector-row-dueDate" label={label}>
+      <DateField
+        data-testid="inspector-due-date"
+        aria-label={label}
+        value={due}
+        error={overdue}
+        onChange={(v) => {
+          writeMeta(doc, { dueDate: v });
+        }}
+      />
+    </ControlRow>
+  );
+};
+
+const InfoFields = ({
+  doc,
+  eff,
+  readOnly,
+}: {
+  doc: Doc;
+  eff: Record<InspectorToggleKey, boolean>;
+  readOnly: boolean;
+}) => {
+  const { t } = useTranslation('chrome');
+  return (
+    <>
+      {eff.status && <StatusControl doc={doc} readOnly={readOnly} />}
+      {eff.wordLimit && (
+        <LimitControl
+          doc={doc}
+          field="wordLimit"
+          label={t('inspector.info.wordLimit')}
+          readOnly={readOnly}
+        />
+      )}
+      {eff.charLimit && (
+        <LimitControl
+          doc={doc}
+          field="charLimit"
+          label={t('inspector.info.charLimit')}
+          readOnly={readOnly}
+        />
+      )}
+      {eff.dueDate && <DueDateControl doc={doc} readOnly={readOnly} />}
+    </>
+  );
+};
+
+const InfoPane = ({ docId, readOnly }: { docId: string; readOnly: boolean }) => {
+  const { t } = useTranslation('chrome');
+  const doc = useDocument(docId);
+  const sections = useSections(doc?.spaceId);
+  const inspector = useEffectiveInspectorConfig(doc?.spaceId);
+  const body = doc?.body;
+  const text = useMemo(
+    () => (body ? lexicalJsonToPlainText(body) : ''),
+    [body],
+  );
+
+  if (!doc) {
+    return <div data-testid="doc-inspector-info" className="px-4 py-3.5" />;
+  }
+
+  const words = countWords(text);
+  const chars = countCharacters(text);
+  const { wordLimit, charLimit } = doc.meta;
+  const sectionName =
+    sections?.find((s) => s.id === doc.sectionId)?.label ?? '—';
+  const eff = inspector.effective;
+
+  // Counts are always informational and shown for every document. The "/ limit"
+  // suffix and the editable limit/input row appear only while the feature is
+  // enabled; turning it off hides them (the stored value is kept, not deleted).
+  const displayWordLimit = eff.wordLimit ? wordLimit : undefined;
+  const displayCharLimit = eff.charLimit ? charLimit : undefined;
+
+  return (
+    <div data-testid="doc-inspector-info" className="px-4 py-3.5">
       <div className="mb-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
         {t('inspector.info.title')}
       </div>
-      {rows.map(([k, v]) => (
-        <div
-          key={k}
-          className="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
-            {k}
-          </span>
-          <span className="font-serif text-[13px] text-ink">{v}</span>
-        </div>
-      ))}
+      <MetaRow
+        testId="inspector-row-words"
+        label={t('inspector.info.words')}
+        value={formatCount(words, displayWordLimit)}
+        warning={isOver(words, displayWordLimit)}
+      />
+      <MetaRow
+        testId="inspector-row-characters"
+        label={t('inspector.info.characters')}
+        value={formatCount(chars, displayCharLimit)}
+        warning={isOver(chars, displayCharLimit)}
+      />
+      <MetaRow
+        testId="inspector-row-updated"
+        label={t('inspector.info.updated')}
+        value={formatRevisionAge(doc.updatedAt, t)}
+      />
+      <MetaRow
+        testId="inspector-row-section"
+        label={t('inspector.info.section')}
+        value={sectionName}
+      />
+      <InfoFields doc={doc} eff={eff} readOnly={readOnly} />
     </div>
   );
 };
@@ -244,7 +507,7 @@ const ActionsPane = () => {
       <Eyebrow size={9} tone="ink4" className="px-4 pb-1 pt-2">
         {t('inspector.actions.label')}
       </Eyebrow>
-      <ComingSoon hint={t('inspector.expand')} side="left" className="block">
+      <ComingSoon overlay hint={t('inspector.expand')}>
         <ActionItem text={t('inspector.actions.rename')} />
         <ActionItem text={t('inspector.actions.move')} />
         <div className="my-1.5 h-px bg-rule" />

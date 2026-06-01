@@ -92,6 +92,25 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     tourId: 'writer',
   },
   {
+    slug: 'doc-inspector',
+    category: 'writing',
+    featureArea: 'writing',
+    keywords: [
+      'inspector',
+      'status',
+      'lock',
+      'word limit',
+      'character limit',
+      'due date',
+      'deadline',
+    ],
+    related: [
+      'writing-and-editing',
+      'version-history',
+      'customization-and-settings',
+    ],
+  },
+  {
     slug: 'formatting-and-markdown',
     category: 'writing',
     featureArea: 'formatting',

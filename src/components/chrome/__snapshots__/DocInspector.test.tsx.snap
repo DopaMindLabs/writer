@@ -15,12 +15,6 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
       >
         —
       </span>
-      <span
-        class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
-        data-testid="coming-soon-badge"
-      >
-        coming soon
-      </span>
       <button
         aria-label="Collapse inspector"
         class="inline-flex items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5"
@@ -85,83 +79,8 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
     >
       <div
         class="px-4 py-3.5"
-      >
-        <div
-          class="mb-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
-        >
-          INFO
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Words
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            1,204 / 1,500
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Time
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            22:14 · today
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Created
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            14 days ago
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Section
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            Manuscript
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Status
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            Draft
-          </span>
-        </div>
-      </div>
+        data-testid="doc-inspector-info"
+      />
     </div>
   </aside>
 </div>
@@ -182,12 +101,6 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
       >
         My doc
       </span>
-      <span
-        class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
-        data-testid="coming-soon-badge"
-      >
-        coming soon
-      </span>
       <button
         aria-label="Collapse inspector"
         class="inline-flex items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5"
@@ -252,83 +165,8 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
     >
       <div
         class="px-4 py-3.5"
-      >
-        <div
-          class="mb-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
-        >
-          INFO
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Words
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            1,204 / 1,500
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Time
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            22:14 · today
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Created
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            14 days ago
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Section
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            Manuscript
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Status
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            Draft
-          </span>
-        </div>
-      </div>
+        data-testid="doc-inspector-info"
+      />
     </div>
   </aside>
 </div>
@@ -348,12 +186,6 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
         data-testid="doc-inspector-name"
       >
         My doc
-      </span>
-      <span
-        class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
-        data-testid="coming-soon-badge"
-      >
-        coming soon
       </span>
       <button
         aria-label="Collapse inspector"
