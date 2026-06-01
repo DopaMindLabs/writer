@@ -101,6 +101,21 @@ test('turning a limit feature off keeps the count but hides the limit suffix and
   await expect(page.getByTestId('inspector-row-section')).toBeVisible();
 });
 
+test('the space default chip explains it inherits from global settings', async ({
+  page,
+}) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}/settings?tab=docInspector`);
+  await expect(page.getByTestId('space-settings-doc-inspector')).toBeVisible();
+  await page
+    .getByRole('group', { name: 'Due date', exact: true })
+    .getByTestId('inspector-toggle-inherit')
+    .hover();
+  await expect(
+    page.getByTestId('inspector-toggle-inherit-tooltip'),
+  ).toContainText(/inherited from global settings/i);
+});
+
 test('the gating behaves the same way in a different template (serial)', async ({
   page,
 }) => {

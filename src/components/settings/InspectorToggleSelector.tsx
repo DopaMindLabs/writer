@@ -1,5 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { Chip } from '@/components/ui/Chip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import type { InspectorToggle } from '@/db/schema';
 
 // A segmented selector for a Doc Inspector toggle, used in both settings scopes
@@ -42,18 +47,34 @@ export const InspectorToggleSelector = ({
   const order = includeInherit ? WITH_INHERIT : WITHOUT_INHERIT;
   return (
     <div role="group" aria-label={ariaLabel} className="flex flex-wrap gap-1.5">
-      {order.map((toggle) => (
-        <Chip
-          key={toggle}
-          active={toggle === value}
-          data-testid={`inspector-toggle-${toggle}`}
-          onClick={() => {
-            onChange(toggle);
-          }}
-        >
-          {labelFor(toggle)}
-        </Chip>
-      ))}
+      {order.map((toggle) => {
+        const chip = (
+          <Chip
+            key={toggle}
+            active={toggle === value}
+            data-testid={`inspector-toggle-${toggle}`}
+            onClick={() => {
+              onChange(toggle);
+            }}
+          >
+            {labelFor(toggle)}
+          </Chip>
+        );
+        // The "Default" chip explains that it defers to the global setting.
+        if (toggle !== 'inherit') return chip;
+        return (
+          <Tooltip key={toggle}>
+            <TooltipTrigger asChild>{chip}</TooltipTrigger>
+            <TooltipContent
+              side="top"
+              className="max-w-xs"
+              data-testid="inspector-toggle-inherit-tooltip"
+            >
+              {t('settings.docInspector.inheritTooltip')}
+            </TooltipContent>
+          </Tooltip>
+        );
+      })}
     </div>
   );
 };

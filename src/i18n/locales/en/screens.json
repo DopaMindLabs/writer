@@ -98,6 +98,7 @@
       "on": "On",
       "off": "Off",
       "inherit": "Default ({{state}})",
+      "inheritTooltip": "Inherited from global settings",
       "stateOn": "on",
       "stateOff": "off"
     },

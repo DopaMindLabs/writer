@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '@/test/test-utils';
+import { renderWithProviders as render, screen } from '@/test/test-utils';
 import { InspectorToggleSelector } from './InspectorToggleSelector';
 
 describe('InspectorToggleSelector', () => {
@@ -35,6 +35,20 @@ describe('InspectorToggleSelector', () => {
     expect(screen.getByTestId('inspector-toggle-inherit')).toHaveTextContent(
       /default.*on/i,
     );
+  });
+
+  it('explains on hover that the default inherits from global settings', async () => {
+    render(
+      <InspectorToggleSelector
+        value="inherit"
+        defaultOn
+        onChange={vi.fn()}
+        ariaLabel="Status"
+      />,
+    );
+    await userEvent.hover(screen.getByTestId('inspector-toggle-inherit'));
+    const tip = await screen.findByTestId('inspector-toggle-inherit-tooltip');
+    expect(tip).toHaveTextContent(/inherited from global settings/i);
   });
 
   it('emits the chosen value', async () => {

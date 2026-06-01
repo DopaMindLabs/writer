@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { render, screen, waitFor } from '@/test/test-utils';
+import { renderWithProviders as render, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import type { Space } from '@/db/schema';
 import { SpaceDocInspectorTab } from './SpaceDocInspectorTab';
