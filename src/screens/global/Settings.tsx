@@ -14,6 +14,7 @@ import { ComingSoonRow } from '@/components/settings/ComingSoonRow';
 import { TabHeader } from '@/components/settings/TabHeader';
 import { SyncTab } from '@/components/settings/SyncTab';
 import { AccessibilityTab } from '@/components/settings/tabs/AccessibilityTab';
+import { DocInspectorTab } from '@/components/settings/tabs/DocInspectorTab';
 import {
   GeneralPlaceholder,
   AppearancePlaceholder,
@@ -34,6 +35,7 @@ const TAB_IDS = [
   'appearance',
   'typography',
   'editor',
+  'docInspector',
   'accessibility',
   'shortcuts',
   'palettes',
@@ -47,7 +49,10 @@ const TAB_IDS = [
   'about',
 ] as const;
 type TabId = (typeof TAB_IDS)[number];
-type PlaceholderTabId = Exclude<TabId, 'editor' | 'sync' | 'accessibility'>;
+type PlaceholderTabId = Exclude<
+  TabId,
+  'editor' | 'docInspector' | 'sync' | 'accessibility'
+>;
 
 const isTabId = (value: string | null): value is TabId =>
   value !== null && (TAB_IDS as readonly string[]).includes(value);
@@ -75,6 +80,7 @@ const GROUPED_TABS: { label: string; ids: readonly TabId[] }[] = [
       'appearance',
       'typography',
       'editor',
+      'docInspector',
       'accessibility',
       'shortcuts',
     ],
@@ -92,6 +98,7 @@ const buildGroups = (t: TFunction): NavTabGroup[] =>
 
 const renderSection = (id: TabId): ReactElement => {
   if (id === 'editor') return <EditorTab />;
+  if (id === 'docInspector') return <DocInspectorTab />;
   if (id === 'accessibility') return <AccessibilityTab />;
   if (id === 'sync') return <SyncTab />;
   return <PlaceholderTab id={id} />;

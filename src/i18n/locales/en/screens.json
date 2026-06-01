@@ -45,6 +45,7 @@
       "general": "General",
       "appearance": "Appearance",
       "editor": "Editor",
+      "docInspector": "Doc inspector",
       "accessibility": "Accessibility",
       "typography": "Typography",
       "shortcuts": "Keyboard",
@@ -78,6 +79,27 @@
       "templateDefaultsLabel": "Per-template defaults",
       "templateDefaultsHint": "Different formatting subsets per template.",
       "templateDefaultsTooltip": "Let each template (fiction, journal, technical…) choose its own formatting subset."
+    },
+    "docInspector": {
+      "title": "Doc inspector",
+      "subtitle": "Choose which fields appear in the document inspector. Each can be turned off globally and overridden per space.",
+      "statusLabel": "Status",
+      "statusHint": "Show the document status and lock completed documents from editing.",
+      "wordLimitLabel": "Word limit",
+      "wordLimitHint": "Show a word-count limit you can set per document.",
+      "charLimitLabel": "Character limit",
+      "charLimitHint": "Show a character-count limit you can set per document.",
+      "dueDateLabel": "Due date",
+      "dueDateHint": "Show a deadline you can set per document.",
+      "highlightLabel": "Highlight over-limit text",
+      "highlightHint": "Mark any text beyond the limit in the editor.",
+      "statusStagesLabel": "Status stages",
+      "statusStagesHint": "Choose which stages appear in the status picker.",
+      "on": "On",
+      "off": "Off",
+      "inherit": "Default ({{state}})",
+      "stateOn": "on",
+      "stateOff": "off"
     },
     "accessibility": {
       "title": "Accessibility",
@@ -397,6 +419,7 @@
       },
       "tabs": {
         "general": "General",
+        "docInspector": "Doc inspector",
         "template": "Template",
         "palette": "Highlight palette",
         "sharing": "Sharing",
@@ -405,6 +428,10 @@
         "sync": "Sync",
         "export": "Export",
         "danger": "Danger zone"
+      },
+      "docInspector": {
+        "title": "Doc inspector",
+        "subtitle": "Override the global inspector settings for this space."
       },
       "palette": {
         "title": "Highlight palette",
