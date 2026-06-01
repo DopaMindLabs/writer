@@ -1,9 +1,9 @@
-import { act, waitFor } from '@testing-library/react';
+import { act, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, within } from '@/test/test-utils';
 import { useUI, type InspectorSection } from '@/store/ui';
 import { db } from '@/db/db';
-import type { Revision } from '@/db/schema';
+import type { Doc, Revision } from '@/db/schema';
 import { DocInspector } from './DocInspector';
 
 const SECTIONS: InspectorSection[] = ['outline', 'info', 'history', 'actions'];
@@ -20,8 +20,23 @@ const makeRevision = (overrides: Partial<Revision>): Revision => ({
   label: overrides.label,
 });
 
+const seedDoc = (overrides: Partial<Doc> = {}): Promise<string> =>
+  db.docs.put({
+    id: 'd1',
+    spaceId: 's1',
+    sectionId: 'sec1',
+    name: 'Doc',
+    body: 'Hello world',
+    meta: { wordCount: 2 },
+    updatedAt: Date.now(),
+    ...overrides,
+  });
+
 describe('DocInspector', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await db.docs.clear();
+    await db.revisions.clear();
+    await db.docInspectorConfigs.clear();
     act(() => {
       useUI.getState().setInspectorMode('expanded');
       useUI.getState().setInspectorSection('outline');
@@ -93,14 +108,79 @@ describe('DocInspector', () => {
       expect(pane).toHaveTextContent(/bell-keeper/i);
     });
 
-    it('should render the InfoPane when section is "info"', () => {
+    it('should render live document info when section is "info"', async () => {
+      await seedDoc({ body: 'Hello world' });
       act(() => {
         useUI.getState().setInspectorSection('info');
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
-      const pane = screen.getByTestId('doc-inspector-pane-info');
-      expect(pane).toHaveTextContent(/1,204 \/ 1,500/);
-      expect(pane).toHaveTextContent(/Draft/);
+      const status = await screen.findByTestId('inspector-status');
+      expect(status).toHaveValue('draft');
+      const pane = screen.getByTestId('doc-inspector-info');
+      // "Hello world" → 2 words, 11 characters (label and value concatenate)
+      expect(pane).toHaveTextContent('Words2');
+      expect(pane).toHaveTextContent('Characters11');
+    });
+
+    it('writes a word limit to the document when edited', async () => {
+      await seedDoc();
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      const input = await screen.findByTestId('inspector-wordLimit');
+      fireEvent.change(input, { target: { value: '500' } });
+      await waitFor(async () => {
+        expect((await db.docs.get('d1'))?.meta.wordLimit).toBe(500);
+      });
+    });
+
+    it('changes the document status from the picker', async () => {
+      await seedDoc();
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      const status = await screen.findByTestId('inspector-status');
+      fireEvent.change(status, { target: { value: 'complete' } });
+      await waitFor(async () => {
+        expect((await db.docs.get('d1'))?.meta.status).toBe('complete');
+      });
+    });
+
+    it('hides a field disabled in settings unless the doc has a value', async () => {
+      await db.docInspectorConfigs.put({
+        spaceId: 'global',
+        wordLimit: 'on',
+        charLimit: 'on',
+        status: 'on',
+        dueDate: 'off',
+        highlightOverLimit: 'on',
+      });
+      await seedDoc();
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      await screen.findByTestId('inspector-status');
+      expect(screen.queryByTestId('inspector-due-date')).toBeNull();
+    });
+
+    it('shows a disabled field when the doc already has a value', async () => {
+      await db.docInspectorConfigs.put({
+        spaceId: 'global',
+        wordLimit: 'on',
+        charLimit: 'on',
+        status: 'on',
+        dueDate: 'off',
+        highlightOverLimit: 'on',
+      });
+      await seedDoc({ meta: { wordCount: 2, dueDate: 1_700_000_000_000 } });
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      expect(await screen.findByTestId('inspector-due-date')).toBeInTheDocument();
     });
 
     it('should show an empty state in the HistoryPane when the doc has no revisions', () => {

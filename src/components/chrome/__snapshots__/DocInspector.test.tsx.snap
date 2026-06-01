@@ -85,83 +85,8 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
     >
       <div
         class="px-4 py-3.5"
-      >
-        <div
-          class="mb-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
-        >
-          INFO
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Words
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            1,204 / 1,500
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Time
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            22:14 · today
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Created
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            14 days ago
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Section
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            Manuscript
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Status
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            Draft
-          </span>
-        </div>
-      </div>
+        data-testid="doc-inspector-info"
+      />
     </div>
   </aside>
 </div>
@@ -252,83 +177,8 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
     >
       <div
         class="px-4 py-3.5"
-      >
-        <div
-          class="mb-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
-        >
-          INFO
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Words
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            1,204 / 1,500
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Time
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            22:14 · today
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Created
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            14 days ago
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Section
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            Manuscript
-          </span>
-        </div>
-        <div
-          class="grid grid-cols-[80px_1fr] gap-2.5 border-b border-rule/60 py-1.5"
-        >
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Status
-          </span>
-          <span
-            class="font-serif text-[13px] text-ink"
-          >
-            Draft
-          </span>
-        </div>
-      </div>
+        data-testid="doc-inspector-info"
+      />
     </div>
   </aside>
 </div>
