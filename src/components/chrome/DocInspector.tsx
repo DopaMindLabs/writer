@@ -425,27 +425,31 @@ const InfoPane = ({ docId, readOnly }: { docId: string; readOnly: boolean }) => 
     sections?.find((s) => s.id === doc.sectionId)?.label ?? '—';
   const eff = inspector.effective;
 
+  // Counts are always informational and shown for every document. The "/ limit"
+  // suffix and the editable limit/input row follow the feature toggle (with the
+  // standard "show when the doc already has a value" exception).
+  const wordLimitVisible = showField('wordLimit', eff.wordLimit, doc);
+  const charLimitVisible = showField('charLimit', eff.charLimit, doc);
+  const displayWordLimit = wordLimitVisible ? wordLimit : undefined;
+  const displayCharLimit = charLimitVisible ? charLimit : undefined;
+
   return (
     <div data-testid="doc-inspector-info" className="px-4 py-3.5">
       <div className="mb-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
         {t('inspector.info.title')}
       </div>
-      {showField('wordLimit', eff.wordLimit, doc) && (
-        <MetaRow
-          testId="inspector-row-words"
-          label={t('inspector.info.words')}
-          value={formatCount(words, wordLimit)}
-          warning={isOver(words, wordLimit)}
-        />
-      )}
-      {showField('charLimit', eff.charLimit, doc) && (
-        <MetaRow
-          testId="inspector-row-characters"
-          label={t('inspector.info.characters')}
-          value={formatCount(chars, charLimit)}
-          warning={isOver(chars, charLimit)}
-        />
-      )}
+      <MetaRow
+        testId="inspector-row-words"
+        label={t('inspector.info.words')}
+        value={formatCount(words, displayWordLimit)}
+        warning={isOver(words, displayWordLimit)}
+      />
+      <MetaRow
+        testId="inspector-row-characters"
+        label={t('inspector.info.characters')}
+        value={formatCount(chars, displayCharLimit)}
+        warning={isOver(chars, displayCharLimit)}
+      />
       <MetaRow
         testId="inspector-row-updated"
         label={t('inspector.info.updated')}

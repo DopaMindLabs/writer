@@ -166,7 +166,7 @@ describe('DocInspector', () => {
       expect(screen.queryByTestId('inspector-due-date')).toBeNull();
     });
 
-    it('hides the Words row when wordLimit is off and the doc has no limit', async () => {
+    it('always shows the word count but hides the limit suffix and input when wordLimit is off', async () => {
       await db.docInspectorConfigs.put({
         spaceId: 'global',
         wordLimit: 'off',
@@ -175,17 +175,21 @@ describe('DocInspector', () => {
         dueDate: 'on',
         highlightOverLimit: 'on',
       });
-      await seedDoc();
+      await seedDoc(); // Hello world → 2 words
       act(() => {
         useUI.getState().setInspectorSection('info');
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
-      await screen.findByTestId('inspector-row-characters');
-      expect(screen.queryByTestId('inspector-row-words')).toBeNull();
+      const row = await screen.findByTestId('inspector-row-words');
+      // Count present, limit suffix absent.
+      expect(row).toHaveTextContent(/Words\s*2$/);
+      expect(row).not.toHaveTextContent('/');
+      // Limit input row hidden.
+      expect(screen.queryByTestId('inspector-row-wordLimit')).toBeNull();
       expect(screen.queryByTestId('inspector-wordLimit')).toBeNull();
     });
 
-    it('hides the Characters row when charLimit is off and the doc has no limit', async () => {
+    it('always shows the character count but hides the limit suffix and input when charLimit is off', async () => {
       await db.docInspectorConfigs.put({
         spaceId: 'global',
         wordLimit: 'on',
@@ -199,12 +203,28 @@ describe('DocInspector', () => {
         useUI.getState().setInspectorSection('info');
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
-      await screen.findByTestId('inspector-row-words');
-      expect(screen.queryByTestId('inspector-row-characters')).toBeNull();
+      const row = await screen.findByTestId('inspector-row-characters');
+      expect(row).toHaveTextContent(/Characters\s*11$/);
+      expect(row).not.toHaveTextContent('/');
+      expect(screen.queryByTestId('inspector-row-charLimit')).toBeNull();
       expect(screen.queryByTestId('inspector-charLimit')).toBeNull();
     });
 
-    it('keeps the Words row visible when wordLimit is off but the doc has a value', async () => {
+    it('shows count plus limit when the feature is enabled and a limit is set', async () => {
+      await seedDoc({ meta: { wordCount: 2, wordLimit: 500, charLimit: 200 } });
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      const words = await screen.findByTestId('inspector-row-words');
+      expect(words).toHaveTextContent('2 / 500');
+      const chars = screen.getByTestId('inspector-row-characters');
+      expect(chars).toHaveTextContent('11 / 200');
+      expect(screen.getByTestId('inspector-wordLimit')).toHaveValue(500);
+      expect(screen.getByTestId('inspector-charLimit')).toHaveValue(200);
+    });
+
+    it('keeps the limit suffix and input when toggle is off but the doc has a value', async () => {
       await db.docInspectorConfigs.put({
         spaceId: 'global',
         wordLimit: 'off',
@@ -219,10 +239,11 @@ describe('DocInspector', () => {
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
       const row = await screen.findByTestId('inspector-row-words');
-      expect(row).toHaveTextContent('/ 250');
+      expect(row).toHaveTextContent('2 / 250');
+      expect(screen.getByTestId('inspector-wordLimit')).toHaveValue(250);
     });
 
-    it('always shows the Updated and Section rows regardless of toggles', async () => {
+    it('always shows Updated, Section and the live counts regardless of toggles', async () => {
       await db.docInspectorConfigs.put({
         spaceId: 'global',
         wordLimit: 'off',
@@ -236,10 +257,17 @@ describe('DocInspector', () => {
         useUI.getState().setInspectorSection('info');
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
-      expect(await screen.findByTestId('inspector-row-updated')).toBeInTheDocument();
+      // Counts and metadata stay; gated controls go away.
+      expect(await screen.findByTestId('inspector-row-words')).toHaveTextContent(
+        /Words\s*2$/,
+      );
+      expect(screen.getByTestId('inspector-row-characters')).toHaveTextContent(
+        /Characters\s*11$/,
+      );
+      expect(screen.getByTestId('inspector-row-updated')).toBeInTheDocument();
       expect(screen.getByTestId('inspector-row-section')).toBeInTheDocument();
-      expect(screen.queryByTestId('inspector-row-words')).toBeNull();
-      expect(screen.queryByTestId('inspector-row-characters')).toBeNull();
+      expect(screen.queryByTestId('inspector-row-wordLimit')).toBeNull();
+      expect(screen.queryByTestId('inspector-row-charLimit')).toBeNull();
       expect(screen.queryByTestId('inspector-row-status')).toBeNull();
       expect(screen.queryByTestId('inspector-row-dueDate')).toBeNull();
     });
