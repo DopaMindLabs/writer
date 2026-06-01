@@ -794,15 +794,7 @@ const CitationsFooter = ({
       )}
     >
       <span>STYLE — CHICAGO (AUTHOR-DATE)</span>
-      <Button
-        kind="ghost"
-        size="sm"
-        onClick={onExport}
-        disabled={totalCitations === 0}
-        data-testid="citations-export"
-      >
-        EXPORT AS .BIB
-      </Button>
+
       <div className="flex items-center gap-3">
         <span data-testid="citations-counts">
           {shown} SHOWN · {onThisPage} ON THIS PAGE
@@ -815,6 +807,15 @@ const CitationsFooter = ({
           />
         )}
       </div>
+            <Button
+        kind="ghost"
+        size="xs"
+        onClick={onExport}
+        disabled={totalCitations === 0}
+        data-testid="citations-export"
+      >
+        EXPORT AS .BIB
+      </Button>
     </div>
   );
 };
