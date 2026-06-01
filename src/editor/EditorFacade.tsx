@@ -8,6 +8,7 @@ export interface EditorProps {
   mode: EditorMode;
   placeholder?: string;
   autoFocus?: boolean;
+  locked?: boolean;
 }
 
 export const Editor = (props: EditorProps) => {

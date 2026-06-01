@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Editor, type EditorMode } from '@/editor/EditorFacade';
+import { InlineBanner } from '@/components/ui/InlineBanner';
 import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
 import { useUI, type ReadingWidth } from '@/store/ui';
@@ -13,6 +15,8 @@ import { cn } from '@/lib/utils';
 interface WriteSurfaceProps {
   doc: Doc;
   mode: EditorMode;
+  /** Read-only because the document's status is a locked stage. */
+  locked?: boolean;
 }
 
 const READING_WIDTH_MAX: Record<ReadingWidth, string> = {
@@ -21,7 +25,8 @@ const READING_WIDTH_MAX: Record<ReadingWidth, string> = {
   l: 'max-w-[860px]',
 };
 
-export const WriteSurface = ({ doc, mode }: WriteSurfaceProps) => {
+export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) => {
+  const { t } = useTranslation('chrome');
   const docIdRef = useRef(doc.id);
   docIdRef.current = doc.id;
   const readingWidth = useUI((s) => s.readingWidth);
@@ -60,11 +65,29 @@ export const WriteSurface = ({ doc, mode }: WriteSurfaceProps) => {
       className="h-full min-w-0 flex-1 overflow-auto bg-paper px-6 py-12 md:px-12"
     >
       <div className={cn('mx-auto w-full', READING_WIDTH_MAX[readingWidth])}>
+        {locked && (
+          <InlineBanner
+            kind="warning"
+            title={t('inspector.lock.title')}
+            action={t('inspector.lock.unlock')}
+            onAction={() => {
+              void db.docs.update(doc.id, {
+                meta: { ...doc.meta, status: 'draft' },
+                updatedAt: Date.now(),
+              });
+            }}
+            className="mb-6"
+            data-testid="doc-lock-banner"
+          >
+            {t('inspector.lock.body')}
+          </InlineBanner>
+        )}
         <Editor
           key={`${doc.id}-${mode}-${String(restoreNonce)}`}
           initialValue={doc.body}
           onChange={handleChange}
           mode={mode}
+          locked={locked}
           placeholder="Start writing…"
         />
       </div>

@@ -142,6 +142,11 @@
       "section": "Section",
       "status": "Status"
     },
+    "lock": {
+      "title": "Locked for editing",
+      "body": "This document's status locks it to preserve it. Unlock to make changes.",
+      "unlock": "Unlock to edit"
+    },
     "history": {
       "title": "VERSIONS",
       "now": "NOW",
