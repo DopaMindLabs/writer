@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Editor, type EditorMode } from '@/editor/EditorFacade';
+import { InlineBanner } from '@/components/ui/InlineBanner';
 import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
 import { useUI, type ReadingWidth } from '@/store/ui';
+import { useEffectiveInspectorConfig } from '@/hooks/useDocInspectorConfig';
 import {
   captureAutoRevision,
   captureBaselineRevision,
@@ -13,6 +16,8 @@ import { cn } from '@/lib/utils';
 interface WriteSurfaceProps {
   doc: Doc;
   mode: EditorMode;
+  /** Read-only because the document's status is a locked stage. */
+  locked?: boolean;
 }
 
 const READING_WIDTH_MAX: Record<ReadingWidth, string> = {
@@ -21,11 +26,43 @@ const READING_WIDTH_MAX: Record<ReadingWidth, string> = {
   l: 'max-w-[860px]',
 };
 
-export const WriteSurface = ({ doc, mode }: WriteSurfaceProps) => {
+const LockBanner = ({ doc }: { doc: Doc }) => {
+  const { t } = useTranslation('chrome');
+  return (
+    <InlineBanner
+      kind="warning"
+      title={t('inspector.lock.title')}
+      action={t('inspector.lock.unlock')}
+      onAction={() => {
+        void db.docs.update(doc.id, {
+          meta: { ...doc.meta, status: 'draft' },
+          updatedAt: Date.now(),
+        });
+      }}
+      className="mb-6"
+      data-testid="doc-lock-banner"
+    >
+      {t('inspector.lock.body')}
+    </InlineBanner>
+  );
+};
+
+export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) => {
   const docIdRef = useRef(doc.id);
   docIdRef.current = doc.id;
   const readingWidth = useUI((s) => s.readingWidth);
   const restoreNonce = useUI((s) => s.restoreNonces[doc.id] ?? 0);
+
+  // The over-limit highlight needs both the highlight toggle and the relevant
+  // limit feature enabled. Disabling the highlight keeps the limit and the
+  // inspector counter (just no editor decoration); disabling a limit feature
+  // turns that limit off entirely.
+  const { effective } = useEffectiveInspectorConfig(doc.spaceId);
+  const highlightOn = effective.highlightOverLimit;
+  const wordLimit =
+    highlightOn && effective.wordLimit ? doc.meta.wordLimit : undefined;
+  const charLimit =
+    highlightOn && effective.charLimit ? doc.meta.charLimit : undefined;
 
   // Record a starting snapshot when a document is opened, and clear the
   // auto-capture throttle so the next document starts fresh.
@@ -60,11 +97,15 @@ export const WriteSurface = ({ doc, mode }: WriteSurfaceProps) => {
       className="h-full min-w-0 flex-1 overflow-auto bg-paper px-6 py-12 md:px-12"
     >
       <div className={cn('mx-auto w-full', READING_WIDTH_MAX[readingWidth])}>
+        {locked && <LockBanner doc={doc} />}
         <Editor
           key={`${doc.id}-${mode}-${String(restoreNonce)}`}
           initialValue={doc.body}
           onChange={handleChange}
           mode={mode}
+          locked={locked}
+          wordLimit={wordLimit}
+          charLimit={charLimit}
           placeholder="Start writing…"
         />
       </div>

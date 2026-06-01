@@ -1,4 +1,5 @@
 import type { HighlightColor } from '@/theme/tokens';
+import type { DocStatus } from '@/lib/docInspector/status';
 
 export interface Space {
   id: string;
@@ -24,7 +25,16 @@ export interface Doc {
   sectionId: string;
   name: string;
   body: string;
-  meta: { wordCount: number; status?: string };
+  meta: {
+    wordCount: number;
+    status?: string;
+    // Optional per-document writing limits and deadline surfaced by the Doc
+    // Inspector. All absent by default (no limit / no due date); read with
+    // `?? default` so existing documents stay back-compatible.
+    wordLimit?: number; // absent or 0 = no limit
+    charLimit?: number; // absent or 0 = no limit
+    dueDate?: number; // epoch ms; absent = no due date
+  };
   updatedAt: number;
 }
 
@@ -199,4 +209,21 @@ export interface SyncEntry {
 export interface SyncConfig {
   spaceId: string;
   intervalMin: number;
+}
+
+// Doc Inspector enablement. A single row with spaceId === 'global' holds the
+// defaults; per-space rows override it. Each toggle is 'on' | 'off' at the
+// global level; per-space rows may also be 'inherit' to defer to the global
+// default. `statusStages` (global row only) selects which workflow stages the
+// Status control offers.
+export type InspectorToggle = 'on' | 'off' | 'inherit';
+
+export interface DocInspectorConfig {
+  spaceId: string;
+  wordLimit: InspectorToggle;
+  charLimit: InspectorToggle;
+  status: InspectorToggle;
+  dueDate: InspectorToggle;
+  highlightOverLimit: InspectorToggle;
+  statusStages?: Partial<Record<DocStatus, boolean>>;
 }

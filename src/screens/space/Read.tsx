@@ -74,5 +74,7 @@ const ReadInspector = ({
   if (!doc || citationsDrawerOpen || inspectorMode === 'none') return null;
   // Versioning is a write-surface concern; hide the History tab while reading.
   if (inspectorMode === 'icons') return <DocInspectorIcons hideHistory />;
-  return <DocInspector docName={doc.name} docId={doc.id} hideHistory />;
+  return (
+    <DocInspector docName={doc.name} docId={doc.id} hideHistory readOnly />
+  );
 };

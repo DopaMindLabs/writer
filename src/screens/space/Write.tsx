@@ -16,6 +16,7 @@ import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments, useDocument } from '@/hooks/useDocuments';
 import { useUI, type InspectorMode } from '@/store/ui';
+import { isLockedStatus } from '@/lib/docInspector/status';
 import type { Doc, Section } from '@/db/schema';
 import { TypographyMuted, TypographyP } from '@/components/ui/typography';
 import { useAutoTour } from '@/tours';
@@ -188,7 +189,14 @@ const WriteEditorArea = ({
   editorMode: 'focus' | 'write';
   loading: boolean;
 }) => {
-  if (doc) return <WriteSurface doc={doc} mode={editorMode} />;
+  if (doc)
+    return (
+      <WriteSurface
+        doc={doc}
+        mode={editorMode}
+        locked={isLockedStatus(doc.meta.status)}
+      />
+    );
   if (loading) return <LoadingState />;
   return <EmptyState />;
 };
