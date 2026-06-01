@@ -216,12 +216,17 @@ const MetaRow = ({
   label,
   value,
   warning = false,
+  testId,
 }: {
   label: string;
   value: ReactNode;
   warning?: boolean;
+  testId?: string;
 }) => (
-  <div className="grid grid-cols-[88px_1fr] items-center gap-2.5 border-b border-rule/60 py-1.5">
+  <div
+    data-testid={testId}
+    className="grid grid-cols-[88px_1fr] items-center gap-2.5 border-b border-rule/60 py-1.5"
+  >
     <InfoLabel>{label}</InfoLabel>
     <span
       className={cn('font-serif text-[13px]', warning ? 'text-warning' : 'text-ink')}
@@ -233,12 +238,17 @@ const MetaRow = ({
 
 const ControlRow = ({
   label,
+  testId,
   children,
 }: {
   label: string;
+  testId?: string;
   children: ReactNode;
 }) => (
-  <div className="grid grid-cols-[88px_1fr] items-center gap-2.5 border-b border-rule/60 py-1.5">
+  <div
+    data-testid={testId}
+    className="grid grid-cols-[88px_1fr] items-center gap-2.5 border-b border-rule/60 py-1.5"
+  >
     <InfoLabel>{label}</InfoLabel>
     <div>{children}</div>
   </div>
@@ -250,12 +260,18 @@ const StatusControl = ({ doc, readOnly }: { doc: Doc; readOnly: boolean }) => {
   const status = resolveStatus(doc.meta.status);
   const label = t('inspector.info.status');
   if (readOnly) {
-    return <MetaRow label={label} value={t(`inspector.status.${status}`)} />;
+    return (
+      <MetaRow
+        testId="inspector-row-status"
+        label={label}
+        value={t(`inspector.status.${status}`)}
+      />
+    );
   }
   const stages = enabledStages(global);
   const ids = stages.includes(status) ? stages : [status, ...stages];
   return (
-    <ControlRow label={label}>
+    <ControlRow testId="inspector-row-status" label={label}>
       <Select
         data-testid="inspector-status"
         aria-label={label}
@@ -288,13 +304,14 @@ const LimitControl = ({
   if (readOnly) {
     return (
       <MetaRow
+        testId={`inspector-row-${field}`}
         label={label}
         value={value ? value.toLocaleString() : t('inspector.info.noLimit')}
       />
     );
   }
   return (
-    <ControlRow label={label}>
+    <ControlRow testId={`inspector-row-${field}`} label={label}>
       <TextField
         data-testid={`inspector-${field}`}
         aria-label={label}
@@ -322,6 +339,7 @@ const DueDateControl = ({ doc, readOnly }: { doc: Doc; readOnly: boolean }) => {
   if (readOnly) {
     return (
       <MetaRow
+        testId="inspector-row-dueDate"
         label={label}
         warning={overdue}
         value={
@@ -333,7 +351,7 @@ const DueDateControl = ({ doc, readOnly }: { doc: Doc; readOnly: boolean }) => {
     );
   }
   return (
-    <ControlRow label={label}>
+    <ControlRow testId="inspector-row-dueDate" label={label}>
       <DateField
         data-testid="inspector-due-date"
         aria-label={label}
@@ -412,21 +430,32 @@ const InfoPane = ({ docId, readOnly }: { docId: string; readOnly: boolean }) => 
       <div className="mb-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
         {t('inspector.info.title')}
       </div>
+      {showField('wordLimit', eff.wordLimit, doc) && (
+        <MetaRow
+          testId="inspector-row-words"
+          label={t('inspector.info.words')}
+          value={formatCount(words, wordLimit)}
+          warning={isOver(words, wordLimit)}
+        />
+      )}
+      {showField('charLimit', eff.charLimit, doc) && (
+        <MetaRow
+          testId="inspector-row-characters"
+          label={t('inspector.info.characters')}
+          value={formatCount(chars, charLimit)}
+          warning={isOver(chars, charLimit)}
+        />
+      )}
       <MetaRow
-        label={t('inspector.info.words')}
-        value={formatCount(words, wordLimit)}
-        warning={isOver(words, wordLimit)}
-      />
-      <MetaRow
-        label={t('inspector.info.characters')}
-        value={formatCount(chars, charLimit)}
-        warning={isOver(chars, charLimit)}
-      />
-      <MetaRow
+        testId="inspector-row-updated"
         label={t('inspector.info.updated')}
         value={formatRevisionAge(doc.updatedAt, t)}
       />
-      <MetaRow label={t('inspector.info.section')} value={sectionName} />
+      <MetaRow
+        testId="inspector-row-section"
+        label={t('inspector.info.section')}
+        value={sectionName}
+      />
       <InfoFields doc={doc} eff={eff} readOnly={readOnly} />
     </div>
   );

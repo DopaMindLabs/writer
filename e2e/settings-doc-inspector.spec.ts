@@ -55,6 +55,27 @@ test('a space overrides a globally disabled feature back on', async ({
   await expect(page.getByTestId('inspector-due-date')).toBeVisible();
 });
 
+test('turning a feature off hides every row for that feature', async ({
+  page,
+}) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+
+  await page.goto('/#/settings?tab=docInspector');
+  await page.getByTestId('toggle-wordLimit').click();
+  await page.getByTestId('toggle-charLimit').click();
+
+  await gotoFirstDocIn(page, spaceId);
+  await openInspectorInfo(page);
+  // Both the count row and the limit-input row disappear together.
+  await expect(page.getByTestId('inspector-row-words')).toHaveCount(0);
+  await expect(page.getByTestId('inspector-wordLimit')).toHaveCount(0);
+  await expect(page.getByTestId('inspector-row-characters')).toHaveCount(0);
+  await expect(page.getByTestId('inspector-charLimit')).toHaveCount(0);
+  // Updated and Section stay (they aren't toggleable features).
+  await expect(page.getByTestId('inspector-row-updated')).toBeVisible();
+  await expect(page.getByTestId('inspector-row-section')).toBeVisible();
+});
+
 test('hides a status stage disabled in settings', async ({ page }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
 

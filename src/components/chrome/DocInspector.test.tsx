@@ -166,6 +166,104 @@ describe('DocInspector', () => {
       expect(screen.queryByTestId('inspector-due-date')).toBeNull();
     });
 
+    it('hides the Words row when wordLimit is off and the doc has no limit', async () => {
+      await db.docInspectorConfigs.put({
+        spaceId: 'global',
+        wordLimit: 'off',
+        charLimit: 'on',
+        status: 'on',
+        dueDate: 'on',
+        highlightOverLimit: 'on',
+      });
+      await seedDoc();
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      await screen.findByTestId('inspector-row-characters');
+      expect(screen.queryByTestId('inspector-row-words')).toBeNull();
+      expect(screen.queryByTestId('inspector-wordLimit')).toBeNull();
+    });
+
+    it('hides the Characters row when charLimit is off and the doc has no limit', async () => {
+      await db.docInspectorConfigs.put({
+        spaceId: 'global',
+        wordLimit: 'on',
+        charLimit: 'off',
+        status: 'on',
+        dueDate: 'on',
+        highlightOverLimit: 'on',
+      });
+      await seedDoc();
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      await screen.findByTestId('inspector-row-words');
+      expect(screen.queryByTestId('inspector-row-characters')).toBeNull();
+      expect(screen.queryByTestId('inspector-charLimit')).toBeNull();
+    });
+
+    it('keeps the Words row visible when wordLimit is off but the doc has a value', async () => {
+      await db.docInspectorConfigs.put({
+        spaceId: 'global',
+        wordLimit: 'off',
+        charLimit: 'on',
+        status: 'on',
+        dueDate: 'on',
+        highlightOverLimit: 'on',
+      });
+      await seedDoc({ meta: { wordCount: 2, wordLimit: 250 } });
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      const row = await screen.findByTestId('inspector-row-words');
+      expect(row).toHaveTextContent('/ 250');
+    });
+
+    it('always shows the Updated and Section rows regardless of toggles', async () => {
+      await db.docInspectorConfigs.put({
+        spaceId: 'global',
+        wordLimit: 'off',
+        charLimit: 'off',
+        status: 'off',
+        dueDate: 'off',
+        highlightOverLimit: 'off',
+      });
+      await seedDoc();
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      expect(await screen.findByTestId('inspector-row-updated')).toBeInTheDocument();
+      expect(screen.getByTestId('inspector-row-section')).toBeInTheDocument();
+      expect(screen.queryByTestId('inspector-row-words')).toBeNull();
+      expect(screen.queryByTestId('inspector-row-characters')).toBeNull();
+      expect(screen.queryByTestId('inspector-row-status')).toBeNull();
+      expect(screen.queryByTestId('inspector-row-dueDate')).toBeNull();
+    });
+
+    it('renders read-only meta rows (no editable controls) when readOnly is set', async () => {
+      await seedDoc({
+        meta: {
+          wordCount: 2,
+          status: 'in-review',
+          wordLimit: 100,
+          dueDate: new Date(2026, 5, 1).getTime(),
+        },
+      });
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" readOnly />);
+      const status = await screen.findByTestId('inspector-row-status');
+      expect(status).toHaveTextContent(/in review/i);
+      expect(screen.queryByTestId('inspector-status')).toBeNull();
+      expect(screen.queryByTestId('inspector-wordLimit')).toBeNull();
+      expect(screen.queryByTestId('inspector-due-date')).toBeNull();
+    });
+
     it('shows a disabled field when the doc already has a value', async () => {
       await db.docInspectorConfigs.put({
         spaceId: 'global',
