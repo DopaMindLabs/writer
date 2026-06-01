@@ -53,13 +53,16 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
   const readingWidth = useUI((s) => s.readingWidth);
   const restoreNonce = useUI((s) => s.restoreNonces[doc.id] ?? 0);
 
-  // The over-limit highlight is gated by its own toggle; when on, the document's
-  // own limits drive it. Disabling the highlight keeps the limit and the
-  // inspector's counter, just not the editor decoration.
-  const inspector = useEffectiveInspectorConfig(doc.spaceId);
-  const highlightOn = inspector.effective.highlightOverLimit;
-  const wordLimit = highlightOn ? doc.meta.wordLimit : undefined;
-  const charLimit = highlightOn ? doc.meta.charLimit : undefined;
+  // The over-limit highlight needs both the highlight toggle and the relevant
+  // limit feature enabled. Disabling the highlight keeps the limit and the
+  // inspector counter (just no editor decoration); disabling a limit feature
+  // turns that limit off entirely.
+  const { effective } = useEffectiveInspectorConfig(doc.spaceId);
+  const highlightOn = effective.highlightOverLimit;
+  const wordLimit =
+    highlightOn && effective.wordLimit ? doc.meta.wordLimit : undefined;
+  const charLimit =
+    highlightOn && effective.charLimit ? doc.meta.charLimit : undefined;
 
   // Record a starting snapshot when a document is opened, and clear the
   // auto-capture throttle so the next document starts fresh.

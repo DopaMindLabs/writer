@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { TabHeader } from '@/components/settings/TabHeader';
 import { SettingRow } from '@/components/settings/SettingRow';
 import { INSPECTOR_TOGGLE_ROWS } from '@/components/settings/docInspectorRows';
-import { PillToggle } from '@/components/ui/PillToggle';
+import { InspectorToggleSelector } from '@/components/settings/InspectorToggleSelector';
 import { Chip } from '@/components/ui/Chip';
 import { useGlobalInspectorConfig } from '@/hooks/useDocInspectorConfig';
 import {
@@ -49,19 +49,18 @@ export const DocInspectorTab = () => {
       />
       {INSPECTOR_TOGGLE_ROWS.map((row) => {
         const label = t(`settings.docInspector.${row.labelKey}`);
-        const on = global[row.key] !== 'off';
         return (
           <SettingRow
             key={row.key}
             label={label}
             hint={t(`settings.docInspector.${row.hintKey}`)}
           >
-            <PillToggle
-              on={on}
-              label={label}
-              data-testid={`toggle-${row.key}`}
-              onToggle={() => {
-                void setGlobalToggle(row.key, !on);
+            <InspectorToggleSelector
+              value={global[row.key] === 'off' ? 'off' : 'on'}
+              includeInherit={false}
+              ariaLabel={label}
+              onChange={(next) => {
+                void setGlobalToggle(row.key, next === 'on');
               }}
             />
           </SettingRow>

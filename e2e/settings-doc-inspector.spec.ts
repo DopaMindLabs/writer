@@ -21,6 +21,19 @@ const openInspectorInfo = async (page: Page): Promise<void> => {
   await expect(page.getByTestId('doc-inspector-info')).toBeVisible();
 };
 
+// Set a feature's segmented selector (used in both scopes) to On/Off/Default,
+// scoped to its row by the group's accessible name (the feature label).
+const setToggle = async (
+  page: Page,
+  label: string,
+  state: 'on' | 'off' | 'inherit',
+): Promise<void> => {
+  await page
+    .getByRole('group', { name: label, exact: true })
+    .getByTestId(`inspector-toggle-${state}`)
+    .click();
+};
+
 test('global tab toggles a feature off, hiding it in the inspector', async ({
   page,
 }) => {
@@ -28,10 +41,16 @@ test('global tab toggles a feature off, hiding it in the inspector', async ({
 
   await page.goto('/#/settings?tab=docInspector');
   await expect(page.getByTestId('settings-doc-inspector')).toBeVisible();
-  const dueToggle = page.getByTestId('toggle-dueDate');
-  await expect(dueToggle).toHaveAttribute('aria-checked', 'true');
-  await dueToggle.click();
-  await expect(dueToggle).toHaveAttribute('aria-checked', 'false');
+  const dueGroup = page.getByRole('group', { name: 'Due date', exact: true });
+  await expect(dueGroup.getByTestId('inspector-toggle-on')).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await setToggle(page, 'Due date', 'off');
+  await expect(dueGroup.getByTestId('inspector-toggle-off')).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
 
   await gotoFirstDocIn(page, spaceId);
   await openInspectorInfo(page);
@@ -45,14 +64,11 @@ test('a space overrides a globally disabled feature back on', async ({
   const spaceId = await getFirstSpaceIdFromHome(page);
 
   await page.goto('/#/settings?tab=docInspector');
-  await page.getByTestId('toggle-dueDate').click();
+  await setToggle(page, 'Due date', 'off');
 
   await page.goto(`/#/s/${spaceId}/settings?tab=docInspector`);
   await expect(page.getByTestId('space-settings-doc-inspector')).toBeVisible();
-  await page
-    .getByRole('group', { name: 'Due date' })
-    .getByTestId('inspector-toggle-on')
-    .click();
+  await setToggle(page, 'Due date', 'on');
 
   await gotoFirstDocIn(page, spaceId);
   await openInspectorInfo(page);
@@ -65,8 +81,8 @@ test('turning a limit feature off keeps the count but hides the limit suffix and
   const spaceId = await getFirstSpaceIdFromHome(page);
 
   await page.goto('/#/settings?tab=docInspector');
-  await page.getByTestId('toggle-wordLimit').click();
-  await page.getByTestId('toggle-charLimit').click();
+  await setToggle(page, 'Word limit', 'off');
+  await setToggle(page, 'Character limit', 'off');
 
   await gotoFirstDocIn(page, spaceId);
   await openInspectorInfo(page);
@@ -90,8 +106,8 @@ test('the gating behaves the same way in a different template (serial)', async (
 }) => {
   // Reproduces the user-reported scenario: "Issue 01" in the Serial template.
   await page.goto('/#/settings?tab=docInspector');
-  await page.getByTestId('toggle-dueDate').click();
-  await page.getByTestId('toggle-wordLimit').click();
+  await setToggle(page, 'Due date', 'off');
+  await setToggle(page, 'Word limit', 'off');
 
   const serialSpaceId = await createSpaceFromTemplate(page, 'serial');
   await page.goto(`/#/s/${serialSpaceId}`);

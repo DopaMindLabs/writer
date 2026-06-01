@@ -18,7 +18,6 @@ import {
 } from '@/lib/revisions/lexicalJsonToPlainText';
 import { enabledStages } from '@/lib/docInspector/config';
 import { resolveStatus } from '@/lib/docInspector/status';
-import { showField } from '@/lib/docInspector/showField';
 import type { InspectorToggleKey } from '@/lib/docInspector/features';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';
@@ -377,10 +376,8 @@ const InfoFields = ({
   const { t } = useTranslation('chrome');
   return (
     <>
-      {showField('status', eff.status, doc) && (
-        <StatusControl doc={doc} readOnly={readOnly} />
-      )}
-      {showField('wordLimit', eff.wordLimit, doc) && (
+      {eff.status && <StatusControl doc={doc} readOnly={readOnly} />}
+      {eff.wordLimit && (
         <LimitControl
           doc={doc}
           field="wordLimit"
@@ -388,7 +385,7 @@ const InfoFields = ({
           readOnly={readOnly}
         />
       )}
-      {showField('charLimit', eff.charLimit, doc) && (
+      {eff.charLimit && (
         <LimitControl
           doc={doc}
           field="charLimit"
@@ -396,9 +393,7 @@ const InfoFields = ({
           readOnly={readOnly}
         />
       )}
-      {showField('dueDate', eff.dueDate, doc) && (
-        <DueDateControl doc={doc} readOnly={readOnly} />
-      )}
+      {eff.dueDate && <DueDateControl doc={doc} readOnly={readOnly} />}
     </>
   );
 };
@@ -426,12 +421,10 @@ const InfoPane = ({ docId, readOnly }: { docId: string; readOnly: boolean }) => 
   const eff = inspector.effective;
 
   // Counts are always informational and shown for every document. The "/ limit"
-  // suffix and the editable limit/input row follow the feature toggle (with the
-  // standard "show when the doc already has a value" exception).
-  const wordLimitVisible = showField('wordLimit', eff.wordLimit, doc);
-  const charLimitVisible = showField('charLimit', eff.charLimit, doc);
-  const displayWordLimit = wordLimitVisible ? wordLimit : undefined;
-  const displayCharLimit = charLimitVisible ? charLimit : undefined;
+  // suffix and the editable limit/input row appear only while the feature is
+  // enabled; turning it off hides them (the stored value is kept, not deleted).
+  const displayWordLimit = eff.wordLimit ? wordLimit : undefined;
+  const displayCharLimit = eff.charLimit ? charLimit : undefined;
 
   return (
     <div data-testid="doc-inspector-info" className="px-4 py-3.5">

@@ -148,7 +148,7 @@ describe('DocInspector', () => {
       });
     });
 
-    it('hides a field disabled in settings unless the doc has a value', async () => {
+    it('hides a field disabled in settings', async () => {
       await db.docInspectorConfigs.put({
         spaceId: 'global',
         wordLimit: 'on',
@@ -164,6 +164,7 @@ describe('DocInspector', () => {
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
       await screen.findByTestId('inspector-status');
       expect(screen.queryByTestId('inspector-due-date')).toBeNull();
+      expect(screen.queryByTestId('inspector-row-dueDate')).toBeNull();
     });
 
     it('always shows the word count but hides the limit suffix and input when wordLimit is off', async () => {
@@ -224,7 +225,7 @@ describe('DocInspector', () => {
       expect(screen.getByTestId('inspector-charLimit')).toHaveValue(200);
     });
 
-    it('keeps the limit suffix and input when toggle is off but the doc has a value', async () => {
+    it('hides the limit suffix and input when the toggle is off even if the doc has a value', async () => {
       await db.docInspectorConfigs.put({
         spaceId: 'global',
         wordLimit: 'off',
@@ -233,14 +234,17 @@ describe('DocInspector', () => {
         dueDate: 'on',
         highlightOverLimit: 'on',
       });
+      // The document already has a stored limit, but the feature is off.
       await seedDoc({ meta: { wordCount: 2, wordLimit: 250 } });
       act(() => {
         useUI.getState().setInspectorSection('info');
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
       const row = await screen.findByTestId('inspector-row-words');
-      expect(row).toHaveTextContent('2 / 250');
-      expect(screen.getByTestId('inspector-wordLimit')).toHaveValue(250);
+      // Count still shows; the stored limit is hidden, not applied.
+      expect(row).toHaveTextContent(/Words\s*2$/);
+      expect(row).not.toHaveTextContent('/');
+      expect(screen.queryByTestId('inspector-wordLimit')).toBeNull();
     });
 
     it('always shows Updated, Section and the live counts regardless of toggles', async () => {
@@ -292,7 +296,7 @@ describe('DocInspector', () => {
       expect(screen.queryByTestId('inspector-due-date')).toBeNull();
     });
 
-    it('shows a disabled field when the doc already has a value', async () => {
+    it('hides a disabled field even when the doc already has a value', async () => {
       await db.docInspectorConfigs.put({
         spaceId: 'global',
         wordLimit: 'on',
@@ -301,12 +305,15 @@ describe('DocInspector', () => {
         dueDate: 'off',
         highlightOverLimit: 'on',
       });
+      // A stored due date must not resurrect a feature the user turned off.
       await seedDoc({ meta: { wordCount: 2, dueDate: 1_700_000_000_000 } });
       act(() => {
         useUI.getState().setInspectorSection('info');
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
-      expect(await screen.findByTestId('inspector-due-date')).toBeInTheDocument();
+      await screen.findByTestId('inspector-row-section');
+      expect(screen.queryByTestId('inspector-due-date')).toBeNull();
+      expect(screen.queryByTestId('inspector-row-dueDate')).toBeNull();
     });
 
     it('should show an empty state in the HistoryPane when the doc has no revisions', () => {

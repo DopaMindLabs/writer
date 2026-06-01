@@ -50,4 +50,21 @@ describe('InspectorToggleSelector', () => {
     await userEvent.click(screen.getByTestId('inspector-toggle-off'));
     expect(onChange).toHaveBeenCalledWith('off');
   });
+
+  it('omits the inherit chip when includeInherit is false (global scope)', () => {
+    render(
+      <InspectorToggleSelector
+        value="on"
+        includeInherit={false}
+        onChange={vi.fn()}
+        ariaLabel="Status"
+      />,
+    );
+    expect(screen.queryByTestId('inspector-toggle-inherit')).toBeNull();
+    expect(screen.getByTestId('inspector-toggle-on')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(screen.getByTestId('inspector-toggle-off')).toBeInTheDocument();
+  });
 });

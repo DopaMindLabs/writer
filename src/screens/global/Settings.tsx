@@ -165,6 +165,7 @@ const EditorTab = () => {
       />
 
       <SettingRow
+        data-testid="setting-floating-toolbar"
         label={t('settings.editor.floatingToolbarLabel')}
         hint={t('settings.editor.floatingToolbarHint')}
       >

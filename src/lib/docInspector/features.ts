@@ -1,6 +1,7 @@
 // The configurable Doc Inspector toggles and their default state. Two kinds:
 //   - field features (wordLimit / charLimit / status / dueDate) gate whether a
-//     field is shown in the inspector, via showField();
+//     field's control is shown in the inspector — the feature toggle is the
+//     single switch (a stored value is kept but hidden while the feature is off);
 //   - the highlightOverLimit behaviour gates the editor's red over-limit
 //     highlight, independently of the limit itself.
 // All cascade global -> space and default on. Changing a default later is a
@@ -14,7 +15,7 @@ export interface InspectorToggleDescriptor {
   readonly enabledByDefault: boolean;
 }
 
-// Field-visibility features (these feed showField()).
+// Field-visibility features (each gates one inspector control).
 export const INSPECTOR_FIELD_FEATURES: readonly {
   readonly id: InspectorFeature;
   readonly enabledByDefault: boolean;
