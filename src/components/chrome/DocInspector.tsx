@@ -20,7 +20,6 @@ import { enabledStages } from '@/lib/docInspector/config';
 import { resolveStatus } from '@/lib/docInspector/status';
 import type { InspectorToggleKey } from '@/lib/docInspector/features';
 import { ComingSoon } from '@/components/settings/ComingSoon';
-import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
@@ -112,7 +111,6 @@ export const DocInspector = ({
         >
           {docName || '—'}
         </span>
-        <ComingSoonBadge />
         <IconButton
           data-testid="doc-inspector-collapse"
           icon={ChevronRight}
@@ -509,7 +507,7 @@ const ActionsPane = () => {
       <Eyebrow size={9} tone="ink4" className="px-4 pb-1 pt-2">
         {t('inspector.actions.label')}
       </Eyebrow>
-      <ComingSoon hint={t('inspector.expand')} side="left" className="block">
+      <ComingSoon overlay hint={t('inspector.expand')}>
         <ActionItem text={t('inspector.actions.rename')} />
         <ActionItem text={t('inspector.actions.move')} />
         <div className="my-1.5 h-px bg-rule" />
