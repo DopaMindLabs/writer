@@ -4,6 +4,10 @@ import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 import { sampleDoc, sampleNote, sampleSpace } from '@/test/fixtures';
 import { NoteKind, NoteState, type Note } from '@/db/schema';
+import {
+  useNoteAttachmentsBySpace,
+  attachmentsForNote,
+} from '@/hooks/useNoteAttachments';
 import { BrainSpaceNote } from './BrainSpaceNote';
 
 const navigateSpy = vi.fn();
@@ -16,6 +20,32 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
+// Mirrors how BrainSpaceCanvas feeds attachments: a single space-wide live
+// query, sliced per note. Keeps upload/remove reactivity in these unit tests.
+const NoteHarness = ({
+  note,
+  selected,
+  pending,
+  onPick,
+}: {
+  note: Note;
+  selected: boolean;
+  pending: boolean;
+  onPick: () => void;
+}) => {
+  const byNote = useNoteAttachmentsBySpace(sampleSpace.id);
+  return (
+    <BrainSpaceNote
+      note={note}
+      spaceId={sampleSpace.id}
+      selected={selected}
+      pending={pending}
+      attachments={attachmentsForNote(byNote, note.id)}
+      onPick={onPick}
+    />
+  );
+};
+
 const renderNote = (
   note = sampleNote,
   overrides: Partial<{
@@ -25,9 +55,8 @@ const renderNote = (
   }> = {},
 ) => {
   return renderAtRoute(
-    <BrainSpaceNote
+    <NoteHarness
       note={note}
-      spaceId={sampleSpace.id}
       selected={overrides.selected ?? false}
       pending={overrides.pending ?? false}
       onPick={overrides.onPick ?? (() => {})}
@@ -597,6 +626,37 @@ describe('BrainSpaceNote', () => {
         createdAt: Date.now(),
       });
     };
+
+    it('renders images from the attachments prop without its own query', async () => {
+      // The canvas owns the query; the card just renders what it is given.
+      renderAtRoute(
+        <BrainSpaceNote
+          note={sampleNote}
+          spaceId={sampleSpace.id}
+          selected={false}
+          pending={false}
+          attachments={[
+            {
+              id: 'prop1',
+              noteId: sampleNote.id,
+              spaceId: sampleSpace.id,
+              name: 'prop1.png',
+              mime: 'image/png',
+              size: 4,
+              blob: new Blob(['x'], { type: 'image/png' }),
+              createdAt: 1,
+            },
+          ]}
+          onPick={() => {}}
+        />,
+        { path: '/s/:spaceId', initialEntries: [`/s/${sampleSpace.id}`] },
+      );
+      await waitFor(() => {
+        expect(
+          screen.getByTestId(`brain-note-${sampleNote.id}-image-prop1`),
+        ).toBeInTheDocument();
+      });
+    });
 
     it('uploads a picture and shows it in the note image strip', async () => {
       const user = userEvent.setup();

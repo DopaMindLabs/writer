@@ -1,7 +1,10 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { db } from '@/db/db';
 import type { NoteAttachment } from '@/db/schema';
-import { useNoteAttachments } from './useNoteAttachments';
+import {
+  useNoteAttachments,
+  useNoteAttachmentsBySpace,
+} from './useNoteAttachments';
 
 const makeAttachment = (overrides: Partial<NoteAttachment>): NoteAttachment => ({
   id: 'a',
@@ -50,6 +53,37 @@ describe('useNoteAttachments', () => {
     const { result } = renderHook(() => useNoteAttachments(null));
     await waitFor(() => {
       expect(result.current).toEqual([]);
+    });
+  });
+});
+
+describe('useNoteAttachmentsBySpace', () => {
+  it('groups a space attachments by note, oldest-first within each note', async () => {
+    await db.noteAttachments.bulkPut([
+      makeAttachment({ id: 'n1-late', noteId: 'n1', createdAt: 300 }),
+      makeAttachment({ id: 'n1-early', noteId: 'n1', createdAt: 100 }),
+      makeAttachment({ id: 'n2-only', noteId: 'n2', createdAt: 50 }),
+      makeAttachment({ id: 'other-space', noteId: 'n3', spaceId: 's2' }),
+    ]);
+
+    const { result } = renderHook(() => useNoteAttachmentsBySpace('s1'));
+
+    await waitFor(() => {
+      expect(result.current.get('n1')?.map((a) => a.id)).toEqual([
+        'n1-early',
+        'n1-late',
+      ]);
+    });
+    expect(result.current.get('n2')?.map((a) => a.id)).toEqual(['n2-only']);
+    // Attachments from other spaces are excluded.
+    expect(result.current.has('n3')).toBe(false);
+  });
+
+  it('returns an empty map when no spaceId is given', async () => {
+    await db.noteAttachments.put(makeAttachment({ id: 'x', spaceId: 's1' }));
+    const { result } = renderHook(() => useNoteAttachmentsBySpace(null));
+    await waitFor(() => {
+      expect(result.current.size).toBe(0);
     });
   });
 });
