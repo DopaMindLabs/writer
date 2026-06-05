@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor, type EditorMode } from '@/editor/EditorFacade';
+import { countWords } from '@/editor/wordCount';
 import { InlineBanner } from '@/components/ui/InlineBanner';
 import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
@@ -50,6 +51,10 @@ const LockBanner = ({ doc }: { doc: Doc }) => {
 export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) => {
   const docIdRef = useRef(doc.id);
   docIdRef.current = doc.id;
+  // Track the latest meta so autosave can refresh the cached word count without
+  // clobbering other meta fields (status, limits, due date).
+  const metaRef = useRef(doc.meta);
+  metaRef.current = doc.meta;
   const readingWidth = useUI((s) => s.readingWidth);
   const restoreNonce = useUI((s) => s.restoreNonces[doc.id] ?? 0);
 
@@ -80,6 +85,9 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
     void db.docs.update(docIdRef.current, {
       body: serialized,
       updatedAt: Date.now(),
+      // Cache the word count so the sidebar reads it cheaply instead of
+      // re-parsing the body on every render. Preserve all other meta fields.
+      meta: { ...metaRef.current, wordCount: countWords(serialized) },
     });
     // Best-effort, throttled history capture; never blocks or throws into the
     // editor's onChange.

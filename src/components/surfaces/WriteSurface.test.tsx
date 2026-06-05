@@ -54,6 +54,20 @@ describe('WriteSurface', () => {
     });
   });
 
+  it('caches the recomputed word count without clobbering other meta', async () => {
+    const withStatus: Doc = { ...doc, meta: { wordCount: 2, status: 'draft' } };
+    await db.docs.put(withStatus);
+    const { getByTestId } = render(<WriteSurface doc={withStatus} mode="write" />);
+    await userEvent.click(getByTestId('editor-stub'));
+    await waitFor(async () => {
+      const fresh = await db.docs.get(doc.id);
+      // 'new-serialized-body' is a single whitespace-delimited token.
+      expect(fresh?.meta.wordCount).toBe(1);
+      // Sibling meta fields survive the update.
+      expect(fresh?.meta.status).toBe('draft');
+    });
+  });
+
   it('shows no lock banner and leaves the editor editable when unlocked', () => {
     const { queryByTestId, getByTestId } = render(
       <WriteSurface doc={doc} mode="write" />,

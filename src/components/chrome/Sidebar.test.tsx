@@ -460,91 +460,22 @@ describe('Sidebar', () => {
   });
 
   describe('word count', () => {
-    it('should count words in a doc body that is a Lexical JSON tree', async () => {
+    // The sidebar now renders the cached `doc.meta.wordCount` rather than
+    // parsing the document body on every render; the counting logic itself is
+    // covered in src/editor/wordCount.test.ts.
+    it('should render the cached meta.wordCount', async () => {
       await seedBasicSpace();
-      const lexicalBody = JSON.stringify({
-        root: {
-          children: [
-            {
-              children: [
-                { text: 'one two' },
-                { text: ' three four five' },
-              ],
-            },
-          ],
-        },
-      });
-      await db.docs.update('d1', { body: lexicalBody });
+      await db.docs.update('d1', { meta: { wordCount: 1234 } });
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
         initialEntries: ['/s/s1/d/d1'],
       });
       const count = await screen.findByTestId('sidebar-doc-d1-count');
-      expect(count).toHaveTextContent('5');
+      expect(count).toHaveTextContent('1,234');
     });
 
-    it('should fall back to plain-text word counting when body is not JSON', async () => {
+    it('should render the empty-circle indicator (◌) when the count is zero', async () => {
       await seedBasicSpace();
-      await db.docs.update('d1', { body: 'plain words here today' });
-      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
-        initialEntries: ['/s/s1/d/d1'],
-      });
-      const count = await screen.findByTestId('sidebar-doc-d1-count');
-      expect(count).toHaveTextContent('4');
-    });
-
-    it('should render the empty-circle indicator (◌) when the doc body is empty', async () => {
-      await seedBasicSpace();
-      // sampleDoc.body is '' — the countWords early-return path
-      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
-        initialEntries: ['/s/s1/d/d1'],
-      });
-      const count = await screen.findByTestId('sidebar-doc-d1-count');
-      expect(count).toHaveTextContent('◌');
-    });
-
-    it('should fall back to plain-text when the body is JSON but has no `root` field', async () => {
-      await seedBasicSpace();
-      await db.docs.update('d1', { body: '{"foo":"bar"}' });
-      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
-        initialEntries: ['/s/s1/d/d1'],
-      });
-      const count = await screen.findByTestId('sidebar-doc-d1-count');
-      // Plain-text counting of '{"foo":"bar"}' splits on whitespace → 1 token
-      expect(count.textContent).toMatch(/1$/);
-    });
-
-    it('should count zero words for a whitespace-only body', async () => {
-      await seedBasicSpace();
-      await db.docs.update('d1', { body: '   \n  \t  ' });
-      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
-        initialEntries: ['/s/s1/d/d1'],
-      });
-      const count = await screen.findByTestId('sidebar-doc-d1-count');
-      expect(count).toHaveTextContent('◌');
-    });
-
-    it('should handle a Lexical body whose root has text directly (no children)', async () => {
-      await seedBasicSpace();
-      await db.docs.update('d1', {
-        body: JSON.stringify({ root: { text: 'just root text' } }),
-      });
-      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
-        initialEntries: ['/s/s1/d/d1'],
-      });
-      const count = await screen.findByTestId('sidebar-doc-d1-count');
-      // root has a .text field directly — extractTextFromLexicalState returns it,
-      // then split on whitespace → 3 tokens
-      expect(count.textContent).toMatch(/3$/);
-    });
-
-    it('should return 0 words for a Lexical body whose root has no text and no children', async () => {
-      await seedBasicSpace();
-      // Synthetic Lexical-shaped JSON where root is an object with neither
-      // `text` nor `children` — exercises the `return ''` fallback in
-      // extractTextFromLexicalState.
-      await db.docs.update('d1', {
-        body: JSON.stringify({ root: { type: 'unknown' } }),
-      });
+      await db.docs.update('d1', { meta: { wordCount: 0 } });
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
         initialEntries: ['/s/s1/d/d1'],
       });
