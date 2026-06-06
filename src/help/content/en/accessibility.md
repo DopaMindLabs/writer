@@ -1,9 +1,8 @@
 # Accessibility
 
-Built to work with the tools you already use — keyboards, screen readers, and
-your system's own settings. Open **Settings → Accessibility** to tune the
-interface. Every option starts at the default, so nothing changes until you
-choose it.
+Works with keyboards, screen readers, and your system accessibility settings.
+Open **Settings → Accessibility** to tune the interface. Every option starts
+at the default, so nothing changes until you choose it.
 
 ## At a glance
 

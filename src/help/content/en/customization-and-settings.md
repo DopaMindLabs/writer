@@ -1,7 +1,8 @@
 # Customisation & settings
 
-Make the app feel like yours. Open the full **Settings** screen from the page
-navigation, or change the essentials fast from **Quick settings**.
+Adjust theme, typography, and reading width to suit you. Open the full
+**Settings** screen from the page navigation, or change the essentials fast
+from **Quick settings**.
 
 ## At a glance
 
@@ -39,8 +40,7 @@ including highlights and the Help Center — adapts automatically. See
 
 ## Typography
 
-Tune the prose font and size to suit your eyes. Long writing sessions are kinder
-when the type is set the way you like it.
+Tune the prose font and size to suit your eyes.
 
 ## Reading width
 

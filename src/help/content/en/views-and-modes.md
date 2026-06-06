@@ -23,8 +23,8 @@ with **⌘\\** (Ctrl+\\ on Windows/Linux) — press again to bring the chrome ba
 
 ## Read
 
-A clean, distraction-free reading view of the finished prose. Ideal for
-reviewing a draft as your reader will see it.
+A non-editable reading view of the finished prose. Use it to review a draft as
+your reader will see it.
 
 ## Split
 

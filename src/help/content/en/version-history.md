@@ -9,8 +9,7 @@ this history is stored locally in your browser.
 - **Baseline.** The first time you open a document, its current state is
   recorded as a starting point.
 - **Automatic.** As you write, the document is snapshotted in the background
-  every few minutes — but only when the text has actually changed, so the
-  history stays meaningful rather than noisy.
+  every few minutes, but only when the text has changed.
 - **Manual.** Save a version yourself at any moment from the document
   inspector's **History** or **Actions** tab. Give it a name (for example
   "before review") so it is easy to recognise later.
