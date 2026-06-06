@@ -261,6 +261,7 @@ const StatusControl = ({ doc, readOnly }: { doc: Doc; readOnly: boolean }) => {
   const global = useGlobalInspectorConfig();
   const status = resolveStatus(doc.meta.status);
   const label = t('inspector.info.status');
+  const stages = useMemo(() => enabledStages(global), [global]);
   if (readOnly) {
     return (
       <MetaRow
@@ -270,7 +271,6 @@ const StatusControl = ({ doc, readOnly }: { doc: Doc; readOnly: boolean }) => {
       />
     );
   }
-  const stages = enabledStages(global);
   const ids = stages.includes(status) ? stages : [status, ...stages];
   return (
     <ControlRow testId="inspector-row-status" label={label}>
