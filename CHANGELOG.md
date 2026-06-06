@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.6.0](https://github.com/DopaMindLabs/writer/compare/v0.5.0...v0.6.0) (2026-06-06)
+
+
+### Features
+
+* add form component and its tests ([#42](https://github.com/DopaMindLabs/writer/issues/42)) ([f8eb2dc](https://github.com/DopaMindLabs/writer/commit/f8eb2dc1a8ab9267a4c61f0bb100bcc46ed42405))
+* add picture uploads to brain dump notes ([#62](https://github.com/DopaMindLabs/writer/issues/62)) ([137bb4f](https://github.com/DopaMindLabs/writer/commit/137bb4f1e07fcce16f82f7cc8159641af8d8e76b))
+* adopt NASA Power-of-Ten coding standards with ESLint enforcement ([#46](https://github.com/DopaMindLabs/writer/issues/46)) ([adb2de7](https://github.com/DopaMindLabs/writer/commit/adb2de703b18744ba42a0870d8794cc68646fd28))
+* **backups:** allow create backup snapshots ([#32](https://github.com/DopaMindLabs/writer/issues/32)) ([306baa4](https://github.com/DopaMindLabs/writer/commit/306baa43fd5013ec35dedba1d7b746c8929deafd))
+* **brainspace:** full-size image viewer and image cards ([#77](https://github.com/DopaMindLabs/writer/issues/77)) ([34caa83](https://github.com/DopaMindLabs/writer/commit/34caa83d613e1ce06c914af8750e2c5f39e2ca6c))
+* **doc inspector:** implement Doc Inspector info pane with limits and status control ([#81](https://github.com/DopaMindLabs/writer/issues/81)) ([848c532](https://github.com/DopaMindLabs/writer/commit/848c5329997fe8c43914108ef3c811890be6730e))
+* **help:** add in-app Help Center with search and ⌘K overlay ([#63](https://github.com/DopaMindLabs/writer/issues/63)) ([5c02b8a](https://github.com/DopaMindLabs/writer/commit/5c02b8a50f2bc2f9f59e0c07ca10bcd83ae16d61))
+* **help:** rewrite the docs and help centre ([#74](https://github.com/DopaMindLabs/writer/issues/74)) ([8a48499](https://github.com/DopaMindLabs/writer/commit/8a48499be0a3cce93455d171f85f3978d05c97d9))
+* stack settings sections by group with scroll-spy navigation ([#72](https://github.com/DopaMindLabs/writer/issues/72)) ([efa4a51](https://github.com/DopaMindLabs/writer/commit/efa4a51fcdee1de2abae8793114c7ec4469c9b6e))
+* **sync:** push-only local folder sync MVP ([#44](https://github.com/DopaMindLabs/writer/issues/44)) ([0be5744](https://github.com/DopaMindLabs/writer/commit/0be5744d9eb800da19498f43204fda933a734871))
+* **ui:** add Button and Chip components with variant and size support ([ad5733f](https://github.com/DopaMindLabs/writer/commit/ad5733f59f41e6b40bfc76cc66789d8a971f899a))
+* **ui:** improve user navigation, flow and backup functionality ([#33](https://github.com/DopaMindLabs/writer/issues/33)) ([9c4219d](https://github.com/DopaMindLabs/writer/commit/9c4219dca529bd2a40ec59093bc38e3603f3c91f))
+* **versioning:** per-document version history, diff, and rollback ([#79](https://github.com/DopaMindLabs/writer/issues/79)) ([64f0590](https://github.com/DopaMindLabs/writer/commit/64f0590a0dbe7596a4b9ff3883b95f45466a9ab2))
+
+
+### Bug Fixes
+
+* **build:** resolve pre-existing TypeScript build errors ([#45](https://github.com/DopaMindLabs/writer/issues/45)) ([ef42dc7](https://github.com/DopaMindLabs/writer/commit/ef42dc79829af286efdbba61142f86a4e007744f))
+* **spaces:** keep chrome mounted when switching spaces ([#75](https://github.com/DopaMindLabs/writer/issues/75)) ([80473f6](https://github.com/DopaMindLabs/writer/commit/80473f61f1e0723b500001efcca4769a3a22f31a))
+* **spaces:** redirect to the switched-to space's own first document ([#78](https://github.com/DopaMindLabs/writer/issues/78)) ([b1c03fc](https://github.com/DopaMindLabs/writer/commit/b1c03fc6d94921d7166c5e02dbced7f40ff28c91))
+
 ## [0.5.0](https://github.com/DopaMindLabs/writer/compare/v0.4.2...v0.5.0) (2026-05-14)
 
 
