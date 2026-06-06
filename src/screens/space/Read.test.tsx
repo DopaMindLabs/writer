@@ -1,7 +1,8 @@
 import { vi } from 'vitest';
 import { act } from '@testing-library/react';
 import { renderAtRoute } from '@/test/test-utils';
-import { seedBasicSpace } from '@/test/fixtures';
+import { sampleDoc, seedBasicSpace } from '@/test/fixtures';
+import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 
 vi.mock('@/editor/EditorFacade', () => ({
@@ -60,6 +61,18 @@ describe('ReadScreen', () => {
       initialEntries: ['/s/s1/d/d1/read'],
     });
     expect(await findByTestId('doc-inspector')).toBeInTheDocument();
+  });
+
+  it('locks the editor when the document status is a locked stage', async () => {
+    await db.docs.put({
+      ...sampleDoc,
+      meta: { ...sampleDoc.meta, status: 'complete' },
+    });
+    const { findByTestId } = renderAtRoute(<ReadScreen />, {
+      path: '/s/:spaceId/d/:docId/read',
+      initialEntries: ['/s/s1/d/d1/read'],
+    });
+    expect(await findByTestId('doc-lock-banner')).toBeInTheDocument();
   });
 
   it('hides the inspector when the citations drawer is open', async () => {

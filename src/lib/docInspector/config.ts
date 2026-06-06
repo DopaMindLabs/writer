@@ -7,6 +7,7 @@
 import { db } from '@/db/db';
 import type { DocInspectorConfig, InspectorToggle } from '@/db/schema';
 import {
+  INSPECTOR_TOGGLE_KEYS,
   INSPECTOR_TOGGLES,
   type InspectorToggleKey,
 } from './features';
@@ -95,17 +96,16 @@ export const resolveToggle = (
   return own === 'on';
 };
 
-// Resolve every toggle at once into a plain enabled/disabled record.
+// Resolve every toggle at once into a plain enabled/disabled record. Derived
+// from INSPECTOR_TOGGLE_KEYS so adding a new toggle in features.ts propagates
+// here without a parallel edit.
 export const resolveAll = (
   global: DocInspectorConfig,
   space: DocInspectorConfig | null,
-): Record<InspectorToggleKey, boolean> => ({
-  wordLimit: resolveToggle(global, space, 'wordLimit'),
-  charLimit: resolveToggle(global, space, 'charLimit'),
-  status: resolveToggle(global, space, 'status'),
-  dueDate: resolveToggle(global, space, 'dueDate'),
-  highlightOverLimit: resolveToggle(global, space, 'highlightOverLimit'),
-});
+): Record<InspectorToggleKey, boolean> =>
+  Object.fromEntries(
+    INSPECTOR_TOGGLE_KEYS.map((key) => [key, resolveToggle(global, space, key)]),
+  ) as Record<InspectorToggleKey, boolean>;
 
 // The status stages currently offered by the picker (global row only in v1).
 export const enabledStages = (global: DocInspectorConfig): DocStatus[] =>

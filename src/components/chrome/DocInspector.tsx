@@ -11,12 +11,12 @@ import {
 import type { UpdateSpec } from 'dexie';
 import { db } from '@/db/db';
 import type { Doc, Revision } from '@/db/schema';
-import { restoreRevision } from '@/lib/revisions';
 import {
   countCharacters,
   countWords,
   lexicalJsonToPlainText,
-} from '@/lib/revisions/lexicalJsonToPlainText';
+  restoreRevision,
+} from '@/lib/revisions';
 import { enabledStages } from '@/lib/docInspector/config';
 import { resolveStatus } from '@/lib/docInspector/status';
 import type { InspectorToggleKey } from '@/lib/docInspector/features';
@@ -261,6 +261,7 @@ const StatusControl = ({ doc, readOnly }: { doc: Doc; readOnly: boolean }) => {
   const global = useGlobalInspectorConfig();
   const status = resolveStatus(doc.meta.status);
   const label = t('inspector.info.status');
+  const stages = useMemo(() => enabledStages(global), [global]);
   if (readOnly) {
     return (
       <MetaRow
@@ -270,7 +271,6 @@ const StatusControl = ({ doc, readOnly }: { doc: Doc; readOnly: boolean }) => {
       />
     );
   }
-  const stages = enabledStages(global);
   const ids = stages.includes(status) ? stages : [status, ...stages];
   return (
     <ControlRow testId="inspector-row-status" label={label}>
@@ -412,12 +412,13 @@ const InfoPane = ({ docId, readOnly }: { docId: string; readOnly: boolean }) => 
     [body],
   );
 
+  const words = useMemo(() => countWords(text), [text]);
+  const chars = useMemo(() => countCharacters(text), [text]);
+
   if (!doc) {
     return <div data-testid="doc-inspector-info" className="px-4 py-3.5" />;
   }
 
-  const words = countWords(text);
-  const chars = countCharacters(text);
   const { wordLimit, charLimit } = doc.meta;
   const sectionName =
     sections?.find((s) => s.id === doc.sectionId)?.label ?? '—';

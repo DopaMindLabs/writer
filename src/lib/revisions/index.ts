@@ -21,4 +21,5 @@ export {
 export {
   lexicalJsonToPlainText,
   countWords,
+  countCharacters,
 } from './lexicalJsonToPlainText';

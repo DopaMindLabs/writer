@@ -18,6 +18,22 @@ const HEADLESS_NODES = [
   CodeHighlightNode,
 ];
 
+// One headless editor for the whole module. Allocating a fresh editor on
+// every call (which fires per autosave tick and per InfoPane memo refresh)
+// is pure overhead — the editor is stateless across reads once we replace
+// its state for each body.
+let sharedEditor: ReturnType<typeof createHeadlessEditor> | null = null;
+const getSharedEditor = (): ReturnType<typeof createHeadlessEditor> => {
+  sharedEditor ??= createHeadlessEditor({
+    namespace: 'lorem-revision',
+    nodes: HEADLESS_NODES,
+    onError(err: Error) {
+      throw err;
+    },
+  });
+  return sharedEditor;
+};
+
 // Extracts plaintext from serialized Lexical JSON, off-React. A non-serialized
 // string (legacy plain body) is returned as-is. This is the single place
 // Revision capture parses Lexical outside the editor.
@@ -25,14 +41,7 @@ export const lexicalJsonToPlainText = (body: string): string => {
   if (!body) return '';
   if (!isSerialized(body)) return body;
 
-  const editor = createHeadlessEditor({
-    namespace: 'lorem-revision',
-    nodes: HEADLESS_NODES,
-    onError(err: Error) {
-      throw err;
-    },
-  });
-
+  const editor = getSharedEditor();
   const state = editor.parseEditorState(body);
   editor.setEditorState(state);
 
