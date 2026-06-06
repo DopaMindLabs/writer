@@ -17,8 +17,8 @@ describe('LanguagePicker', () => {
     // English itself collapses to just the English name.
     expect(labels).toContain('English');
     // Other locales render Native (English).
-    expect(labels.some((l) => /\(Spanish\)$/.test(l))).toBe(true);
-    expect(labels.some((l) => /\(Japanese\)$/.test(l))).toBe(true);
+    expect(labels.some((l) => l.endsWith('(Spanish)'))).toBe(true);
+    expect(labels.some((l) => l.endsWith('(Japanese)'))).toBe(true);
   });
 
   it('does not change the option labels when the active language switches', async () => {

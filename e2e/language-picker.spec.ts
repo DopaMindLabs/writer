@@ -1,22 +1,13 @@
 import { test, expect } from './_helpers';
 import { reseedAndGoHome } from './_helpers';
 
-const LANGUAGE_KEY = 'lipsum:language';
-
-const clearLanguage = async (
-  page: import('@playwright/test').Page,
-): Promise<void> => {
-  await page.addInitScript((key: string) => {
-    try {
-      localStorage.removeItem(key);
-    } catch {
-      /* storage unavailable */
-    }
-  }, LANGUAGE_KEY);
-};
+// Playwright isolates browser contexts per `test()` (no `storageState` in
+// playwright.config.ts, no shared `browser.newContext()`), so localStorage
+// starts empty for every test. No init-script clearing is needed — and would
+// in fact break the persistence assertion below by wiping the choice on
+// `page.reload()` before the i18n module can read it back.
 
 test.beforeEach(async ({ page }) => {
-  await clearLanguage(page);
   await reseedAndGoHome(page);
 });
 
@@ -57,9 +48,6 @@ test('help landing exposes the language picker next to search', async ({
   await expect(
     page.getByRole('heading', { name: 'Ayuda', level: 1 }),
   ).toBeVisible();
-
-  // Reset for the next test.
-  await page.getByTestId('help-language-picker').selectOption('en');
 });
 
 test('help shows the machine-translation banner with a picker when locale is not English', async ({

@@ -251,13 +251,13 @@ export const supportedLngs = [
   'to',
 ] as const;
 
-const partial = (
-  c: unknown,
-  a: unknown,
-  t: unknown,
-  to: unknown,
-  h: unknown,
-) => ({ common: c, app: a, templates: t, tours: to, help: h });
+const partial = (r: {
+  common: unknown;
+  app: unknown;
+  templates: unknown;
+  tours: unknown;
+  help: unknown;
+}) => r;
 
 export const resources = {
   en: {
@@ -318,41 +318,35 @@ export const resources = {
     tours: ptPTTours,
     help: ptPTHelp,
   },
-  it: partial(itCommon, itApp, itTemplates, itTours, itHelp),
-  pl: partial(plCommon, plApp, plTemplates, plTours, plHelp),
-  sv: partial(svCommon, svApp, svTemplates, svTours, svHelp),
-  da: partial(daCommon, daApp, daTemplates, daTours, daHelp),
-  nb: partial(nbCommon, nbApp, nbTemplates, nbTours, nbHelp),
-  is: partial(isCommon, isApp, isTemplates, isTours, isHelp),
-  ga: partial(gaCommon, gaApp, gaTemplates, gaTours, gaHelp),
-  lt: partial(ltCommon, ltApp, ltTemplates, ltTours, ltHelp),
-  lv: partial(lvCommon, lvApp, lvTemplates, lvTours, lvHelp),
-  et: partial(etCommon, etApp, etTemplates, etTours, etHelp),
-  cs: partial(csCommon, csApp, csTemplates, csTours, csHelp),
-  hu: partial(huCommon, huApp, huTemplates, huTours, huHelp),
-  ro: partial(roCommon, roApp, roTemplates, roTours, roHelp),
-  bg: partial(bgCommon, bgApp, bgTemplates, bgTours, bgHelp),
-  el: partial(elCommon, elApp, elTemplates, elTours, elHelp),
-  ja: partial(jaCommon, jaApp, jaTemplates, jaTours, jaHelp),
-  'zh-Hans': partial(
-    zhHansCommon,
-    zhHansApp,
-    zhHansTemplates,
-    zhHansTours,
-    zhHansHelp,
-  ),
-  ko: partial(koCommon, koApp, koTemplates, koTours, koHelp),
-  hi: partial(hiCommon, hiApp, hiTemplates, hiTours, hiHelp),
-  ta: partial(taCommon, taApp, taTemplates, taTours, taHelp),
-  si: partial(siCommon, siApp, siTemplates, siTours, siHelp),
-  am: partial(amCommon, amApp, amTemplates, amTours, amHelp),
-  sw: partial(swCommon, swApp, swTemplates, swTours, swHelp),
-  ha: partial(haCommon, haApp, haTemplates, haTours, haHelp),
-  yo: partial(yoCommon, yoApp, yoTemplates, yoTours, yoHelp),
-  zu: partial(zuCommon, zuApp, zuTemplates, zuTours, zuHelp),
-  mi: partial(miCommon, miApp, miTemplates, miTours, miHelp),
-  sm: partial(smCommon, smApp, smTemplates, smTours, smHelp),
-  to: partial(toCommon, toApp, toTemplates, toTours, toHelp),
+  it: partial({ common: itCommon, app: itApp, templates: itTemplates, tours: itTours, help: itHelp }),
+  pl: partial({ common: plCommon, app: plApp, templates: plTemplates, tours: plTours, help: plHelp }),
+  sv: partial({ common: svCommon, app: svApp, templates: svTemplates, tours: svTours, help: svHelp }),
+  da: partial({ common: daCommon, app: daApp, templates: daTemplates, tours: daTours, help: daHelp }),
+  nb: partial({ common: nbCommon, app: nbApp, templates: nbTemplates, tours: nbTours, help: nbHelp }),
+  is: partial({ common: isCommon, app: isApp, templates: isTemplates, tours: isTours, help: isHelp }),
+  ga: partial({ common: gaCommon, app: gaApp, templates: gaTemplates, tours: gaTours, help: gaHelp }),
+  lt: partial({ common: ltCommon, app: ltApp, templates: ltTemplates, tours: ltTours, help: ltHelp }),
+  lv: partial({ common: lvCommon, app: lvApp, templates: lvTemplates, tours: lvTours, help: lvHelp }),
+  et: partial({ common: etCommon, app: etApp, templates: etTemplates, tours: etTours, help: etHelp }),
+  cs: partial({ common: csCommon, app: csApp, templates: csTemplates, tours: csTours, help: csHelp }),
+  hu: partial({ common: huCommon, app: huApp, templates: huTemplates, tours: huTours, help: huHelp }),
+  ro: partial({ common: roCommon, app: roApp, templates: roTemplates, tours: roTours, help: roHelp }),
+  bg: partial({ common: bgCommon, app: bgApp, templates: bgTemplates, tours: bgTours, help: bgHelp }),
+  el: partial({ common: elCommon, app: elApp, templates: elTemplates, tours: elTours, help: elHelp }),
+  ja: partial({ common: jaCommon, app: jaApp, templates: jaTemplates, tours: jaTours, help: jaHelp }),
+  'zh-Hans': partial({ common: zhHansCommon, app: zhHansApp, templates: zhHansTemplates, tours: zhHansTours, help: zhHansHelp }),
+  ko: partial({ common: koCommon, app: koApp, templates: koTemplates, tours: koTours, help: koHelp }),
+  hi: partial({ common: hiCommon, app: hiApp, templates: hiTemplates, tours: hiTours, help: hiHelp }),
+  ta: partial({ common: taCommon, app: taApp, templates: taTemplates, tours: taTours, help: taHelp }),
+  si: partial({ common: siCommon, app: siApp, templates: siTemplates, tours: siTours, help: siHelp }),
+  am: partial({ common: amCommon, app: amApp, templates: amTemplates, tours: amTours, help: amHelp }),
+  sw: partial({ common: swCommon, app: swApp, templates: swTemplates, tours: swTours, help: swHelp }),
+  ha: partial({ common: haCommon, app: haApp, templates: haTemplates, tours: haTours, help: haHelp }),
+  yo: partial({ common: yoCommon, app: yoApp, templates: yoTemplates, tours: yoTours, help: yoHelp }),
+  zu: partial({ common: zuCommon, app: zuApp, templates: zuTemplates, tours: zuTours, help: zuHelp }),
+  mi: partial({ common: miCommon, app: miApp, templates: miTemplates, tours: miTours, help: miHelp }),
+  sm: partial({ common: smCommon, app: smApp, templates: smTemplates, tours: smTours, help: smHelp }),
+  to: partial({ common: toCommon, app: toApp, templates: toTemplates, tours: toTours, help: toHelp }),
 };
 
 export const defaultNS = 'common';
