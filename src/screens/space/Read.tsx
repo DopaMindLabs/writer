@@ -11,6 +11,7 @@ import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocument } from '@/hooks/useDocuments';
 import { useUI, type InspectorMode } from '@/store/ui';
+import { isLockedStatus } from '@/lib/docInspector/status';
 import type { Doc } from '@/db/schema';
 import { routes } from '@/lib/routes';
 
@@ -47,7 +48,13 @@ export const ReadScreen = () => {
           mode="read"
         />
         <main id="main-content" tabIndex={-1} className="flex flex-1 overflow-hidden">
-          {doc && <WriteSurface doc={doc} mode="read" />}
+          {doc && (
+            <WriteSurface
+              doc={doc}
+              mode="read"
+              locked={isLockedStatus(doc.meta.status)}
+            />
+          )}
           <CitationsSidePanel spaceId={spaceId} />
           <ReadInspector
             doc={doc}

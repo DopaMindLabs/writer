@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { act, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, within } from '@/test/test-utils';
@@ -135,6 +136,19 @@ describe('DocInspector', () => {
       fireEvent.change(input, { target: { value: '500' } });
       await waitFor(async () => {
         expect((await db.docs.get('d1'))?.meta.wordLimit).toBe(500);
+      });
+    });
+
+    it('writes a character limit to the document when edited', async () => {
+      await seedDoc();
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      const input = await screen.findByTestId('inspector-charLimit');
+      fireEvent.change(input, { target: { value: '1200' } });
+      await waitFor(async () => {
+        expect((await db.docs.get('d1'))?.meta.charLimit).toBe(1200);
       });
     });
 
@@ -279,6 +293,16 @@ describe('DocInspector', () => {
       expect(screen.queryByTestId('inspector-row-dueDate')).toBeNull();
     });
 
+    it('renders a "no due date" placeholder in read-only mode when the doc has none', async () => {
+      await seedDoc({ meta: { wordCount: 2 } });
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" readOnly />);
+      const row = await screen.findByTestId('inspector-row-dueDate');
+      expect(row).toHaveTextContent(/no due date/i);
+    });
+
     it('renders read-only meta rows (no editable controls) when readOnly is set', async () => {
       await seedDoc({
         meta: {
@@ -371,6 +395,91 @@ describe('DocInspector', () => {
         const updated = await db.docs.get('d1');
         expect(updated?.body).toBe('older body');
       });
+    });
+
+    it('writes the due date to the document when the date field is changed', async () => {
+      await seedDoc();
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      const due = await screen.findByTestId('inspector-due-date');
+      fireEvent.change(due, { target: { value: '2026-07-01' } });
+      await waitFor(async () => {
+        expect((await db.docs.get('d1'))?.meta.dueDate).toBe(
+          new Date(2026, 6, 1).getTime(),
+        );
+      });
+    });
+
+    it('clears the due date when the date field is emptied', async () => {
+      await seedDoc({
+        meta: { wordCount: 2, dueDate: new Date(2026, 5, 1).getTime() },
+      });
+      act(() => {
+        useUI.getState().setInspectorSection('info');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      const due = await screen.findByTestId('inspector-due-date');
+      fireEvent.change(due, { target: { value: '' } });
+      await waitFor(async () => {
+        expect((await db.docs.get('d1'))?.meta.dueDate).toBeUndefined();
+      });
+    });
+
+    it('toggles a revision\'s pinned state when the pin icon is clicked', async () => {
+      await db.revisions.put(
+        makeRevision({ id: 'rev-pin', kind: 'manual', pinned: false }),
+      );
+      act(() => {
+        useUI.getState().setInspectorSection('history');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      const row = await screen.findByTestId('revision-row-rev-pin');
+      await userEvent.click(within(row).getByLabelText(/pin version/i));
+      await waitFor(async () => {
+        expect((await db.revisions.get('rev-pin'))?.pinned).toBe(true);
+      });
+      await userEvent.click(within(row).getByLabelText(/unpin version/i));
+      await waitFor(async () => {
+        expect((await db.revisions.get('rev-pin'))?.pinned).toBe(false);
+      });
+    });
+
+    it('logs an error when a restore attempt rejects', async () => {
+      await db.docs.put({
+        id: 'd1',
+        spaceId: 's1',
+        sectionId: 'sec1',
+        name: 'Doc',
+        body: 'current body',
+        meta: { wordCount: 2 },
+        updatedAt: 1,
+      });
+      await db.revisions.put(
+        makeRevision({ id: 'rev-x', body: 'older', createdAt: 1 }),
+      );
+      // Inject a transient DB failure so restoreRevision rejects; the rejection
+      // must surface through console.error rather than crashing React.
+      const txSpy = vi
+        .spyOn(db, 'transaction')
+        .mockRejectedValueOnce(new Error('boom') as never);
+      const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      act(() => {
+        useUI.getState().setInspectorSection('history');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      const row = await screen.findByTestId('revision-row-rev-x');
+      await userEvent.click(within(row).getByLabelText(/^restore$/i));
+      await userEvent.click(await screen.findByTestId('confirm-dialog-confirm'));
+      await waitFor(() => {
+        expect(errSpy).toHaveBeenCalledWith(
+          'Failed to restore revision',
+          expect.any(Error),
+        );
+      });
+      txSpy.mockRestore();
+      errSpy.mockRestore();
     });
 
     it('opens the save-version dialog from the history pane', async () => {

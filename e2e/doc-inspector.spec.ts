@@ -75,6 +75,19 @@ test('locks and unlocks the document body via the status picker', async ({
   await expect(body).toHaveAttribute('contenteditable', 'true');
 });
 
+test('locks the Read surface for a doc whose status is a locked stage', async ({
+  page,
+}) => {
+  const { spaceId, docId } = await gotoFirstDoc(page);
+  await openInspectorInfo(page);
+
+  await page.getByTestId('inspector-status').selectOption('published');
+  await expect(page.getByTestId('doc-lock-banner')).toBeVisible();
+
+  await page.goto(`/#/s/${spaceId}/d/${docId}/read`);
+  await expect(page.getByTestId('doc-lock-banner')).toBeVisible();
+});
+
 test('flags an overdue due date', async ({ page }) => {
   await gotoFirstDoc(page);
   await openInspectorInfo(page);
