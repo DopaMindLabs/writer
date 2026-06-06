@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Σφάλμα εκκίνησης",
+  "bootErrorHintBefore": "Δοκίμασε ",
+  "bootErrorHintAfter": " για να επαναφέρεις την τοπική βάση δεδομένων.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Εκκίνηση…"
+}

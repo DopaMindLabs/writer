@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Gol", "tag": "GO", "description": "începe de la zero" },
+  "fiction": { "label": "Scriere de ficțiune", "tag": "FI", "description": "roman · povestire · scenariu" },
+  "humanities": { "label": "Teză · cercetare", "tag": "TH", "description": "lucrare academică extinsă" },
+  "journal": { "label": "Jurnal", "tag": "JU", "description": "zilnic, fără presiune" },
+  "serial": { "label": "Serie", "tag": "SE", "description": "eseuri recurente · buletin informativ" },
+  "six": { "label": "Șase Uși · colaborativ", "tag": "SD", "description": "lume partajată · mai mulți autori" },
+  "technical": { "label": "Tehnic · Raport științific", "tag": "TX", "description": "Științific · metode · ecuații" },
+  "bioinformatics": { "label": "Bioinformatică", "tag": "BX", "description": "fluxuri · metode · jurnal de laborator" }
+}

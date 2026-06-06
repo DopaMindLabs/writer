@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "ආරම්භක දෝෂය",
+  "bootErrorHintBefore": "පෙදෙසීය දත්ත සමුදාය යළි පිහිටුවීමට ",
+  "bootErrorHintAfter": " උත්සාහ කරන්න.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "ආරම්භ වෙමින්…"
+}

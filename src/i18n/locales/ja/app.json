@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "起動エラー",
+  "bootErrorHintBefore": "ローカルデータベースをリセットするには ",
+  "bootErrorHintAfter": " を試してください。",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "起動中…"
+}

@@ -1,0 +1,14 @@
+{
+  "untitled": "தலைப்பில்லாதது",
+  "brainSpace": "Brain Space",
+  "github": "GitHub",
+  "home": "முகப்பு",
+  "about": "பற்றி",
+  "settings": "அமைப்புகள்",
+  "help": "உதவி",
+  "back": "பின்",
+  "comingSoon": {
+    "tooltip": "விரைவில் வருகிறது",
+    "defaultHint": "இன்னும் கிடைக்கவில்லை — விரைவில் வருகிறது."
+  }
+}

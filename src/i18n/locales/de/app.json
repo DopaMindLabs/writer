@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Startfehler",
+  "bootErrorHintBefore": "Versuche ",
+  "bootErrorHintAfter": ", um die lokale Datenbank zurückzusetzen.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Wird gestartet…"
+}

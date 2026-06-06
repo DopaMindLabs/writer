@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Fesoasoani ma asiasiga", "tours": "Asiasiga e taʻitaʻia", "resetAll": "Toe seti asiasiga uma" },
+  "controls": { "next": "Sosoo ai", "prev": "Toe foi", "done": "Maeʻa", "progress": "{{current}} o {{total}}" },
+  "welcome": {
+    "title": "Afio mai i LIpsum Writer",
+    "description": "Faʻafeiloaʻiga vave o avanoa ma le mata o le aiga.",
+    "intro": { "title": "Afio mai", "body": "O LIpsum Writer o se vaega galuega tusitusi e fausia faʻataʻamilo i le <i>avanoa</i> — tasi le avanoa i le poloketi, tusiga poʻo le tusi. Tatou vaai vave." },
+    "continue": { "title": "Faʻaauau pe a maeʻa", "body": "O lou avanoa e lata mai ona faʻafouina o loo i ai. E tasi le kiliki e tatala ai." },
+    "startSpace": { "title": "Amata se mea fou", "body": "Faia se avanoa fou mai se faʻataʻitaʻiga — tusiga, tusi, tusiga — ma amata loa tusitusi i ni nai sekone." }
+  },
+  "writer": {
+    "title": "Vaega galuega a le tusitala",
+    "description": "Asiasiga i le faatonusia, pa o le itu ma le pa pito i luga.",
+    "intro": { "title": "Le luga e tusitusi ai", "body": "O iinei e te faia ai au galuega. Tatou vaai i le folauga, faiga ma meafaigaluega o le a sili ona e faʻaaogaina." },
+    "spaceTitle": { "title": "Suafa o le avanoa", "body": "Kiliki le suafa e suia ai le igoa o le avanoa. O le ata i tafatafa e tatala ai ana faatulagaga." },
+    "sections": { "title": "Vaega ma faʻamaumauga", "body": "Faatulaga se avanoa i vaega, ma vaega i faʻamaumauga. Faasee i luga o se vaega e faʻaopoopo ai se faʻamaumauga." },
+    "settings": { "title": "Faatulagaga o le avanoa", "body": "Pulea le faataitaiga, vaega, faaooga ma le tapeina o lenei avanoa." },
+    "modes": { "title": "Faitau · Tusi · Vaeluaga", "body": "Sui i le va o le faasaʻo, faitau poʻo le vaai itu lua. E manatua e faʻamaumauga taitasi lana faiga mulimuli." },
+    "citations": { "title": "Upu sii", "body": "Tatala le polokalama upu sii e tuʻu ai faasinomaga aʻo e tusi." },
+    "theme": { "title": "Autu", "body": "Malamalama, pogisa ma le ese maualuga — filifili le mea e fetaui ma ou mata." },
+    "editor": { "title": "Le faatonusia", "body": "O se faatonusia tusitusiga mauoa ma faʻavavevave Markdown, poloka tulafono ma upu sii. Amata tusitusi — o au galuega e teu otometi i totonu." }
+  },
+  "citations": {
+    "title": "Upu sii",
+    "description": "Pulea o faasinomaga ma tusi faʻamaumauga.",
+    "intro": { "title": "Lau tusi faʻamaumauga", "body": "O faasinomaga uma o le avanoa o loo nonofo iinei. Faʻaoga se faila BibTeX pe faʻaopoopo ulufale i lou lima." },
+    "add": { "title": "Faʻaopoopo pe faʻaoga", "body": "Tuʻu se faila .bib pe faʻapipiʻi se tusitusiga BibTeX. E faʻasalaina otometi le tutusa." },
+    "list": { "title": "Le lisi", "body": "Saili, faʻamamā ma faʻasaʻo upu sii i totonu. Mai iinei e mafai ona e auina atu le tusi faʻamaumauga atoa." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Le tusiga manatu saoloto.",
+    "intro": { "title": "Mafaufau leotele", "body": "O BrainSpace o se tusiga saoloto mo manatu — tuʻu manatu, faʻafesoʻotaʻi ma fausia lou mafaufauga aʻo lei alu i le tusitusiga." },
+    "addNote": { "title": "Faʻaopoopo se manatu", "body": "Tuʻu se manatu o so o se ituaiga i luga o le tusiga. Tosoʻa e siitia, suia le tele mai tulimanu." },
+    "canvas": { "title": "Le tusiga", "body": "Shift+kiliki manatu e lua e faʻafesoʻotaʻi. Kiliki le tua e aveese ai le filifiliga." }
+  }
+}

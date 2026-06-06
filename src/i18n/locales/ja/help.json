@@ -1,0 +1,48 @@
+{
+  "title": "ヘルプ",
+  "subtitle": "執筆を最大限に活かすためのガイドと回答。",
+  "shellSubtitle": "ヘルプ / ドキュメント",
+  "navGroup": "ヘルプ",
+  "navOverview": "概要",
+  "navAria": "ヘルプトピック",
+  "searchPlaceholder": "ヘルプを検索…",
+  "searchLabel": "ヘルプ記事を検索",
+  "noResults": "「{{query}}」に一致する記事はありません。",
+  "resultsCount_one": "{{count}} 件の結果",
+  "resultsCount_other": "{{count}} 件の結果",
+  "browseAll": "すべてのトピックを見る",
+  "languagePickerLabel": "ヘルプの言語",
+  "allFeatures": {
+    "title": "すべての機能を見る",
+    "subtitle": "できることのすべての一覧 — 各項目はガイドへのリンクです。"
+  },
+  "onThisPage": "このページの内容",
+  "related": "関連項目",
+  "backToHelp": "ヘルプ一覧",
+  "openCenter": "ヘルプセンター全体を開く",
+  "articleNotFound": "そのヘルプ記事は存在しません。",
+  "machineTranslationBanner": {
+    "label": "自動翻訳",
+    "body": "この記事は自動翻訳されました。誤りがあればお詫び申し上げます — フィードバックを送って修正にご協力ください。",
+    "feedbackLinkLabel": "フィードバックを送る"
+  },
+  "palette": {
+    "title": "ヘルプ",
+    "description": "ヘルプセンターを検索するか、ショートカットに移動します。",
+    "shortcutsHeading": "キーボードショートカット",
+    "hint": "Escで閉じる"
+  },
+  "shortcuts": { "help": "ヘルプを開く", "focus": "フォーカスモードを切り替え" },
+  "categories": {
+    "getting-started": "はじめに",
+    "writing": "執筆と編集",
+    "organizing": "整理",
+    "views": "表示とモード",
+    "research": "調査と引用",
+    "brainspace": "BrainSpace",
+    "annotations": "注釈とハイライト",
+    "customization": "カスタマイズと設定",
+    "data": "あなたのデータ",
+    "mobile": "モバイル"
+  }
+}

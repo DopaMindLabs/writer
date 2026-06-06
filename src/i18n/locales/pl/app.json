@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Błąd uruchamiania",
+  "bootErrorHintBefore": "Spróbuj ",
+  "bootErrorHintAfter": ", aby zresetować lokalną bazę danych.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Uruchamianie…"
+}

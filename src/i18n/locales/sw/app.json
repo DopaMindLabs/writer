@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Hitilafu ya kuanzisha",
+  "bootErrorHintBefore": "Jaribu ",
+  "bootErrorHintAfter": " kuanzisha upya hifadhidata ya ndani.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Inaanzisha…"
+}

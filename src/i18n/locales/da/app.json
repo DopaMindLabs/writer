@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Startfejl",
+  "bootErrorHintBefore": "Prøv ",
+  "bootErrorHintAfter": " for at nulstille den lokale database.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Starter…"
+}

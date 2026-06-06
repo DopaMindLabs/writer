@@ -1,0 +1,42 @@
+{
+  "blank": {
+    "label": "Vide",
+    "tag": "VI",
+    "description": "partir de zéro"
+  },
+  "fiction": {
+    "label": "Écriture de fiction",
+    "tag": "FI",
+    "description": "roman · nouvelle · scénario"
+  },
+  "humanities": {
+    "label": "Thèse · recherche",
+    "tag": "TH",
+    "description": "travail académique long"
+  },
+  "journal": {
+    "label": "Journal",
+    "tag": "JO",
+    "description": "quotidien, sans pression"
+  },
+  "serial": {
+    "label": "Série",
+    "tag": "SE",
+    "description": "essais récurrents · newsletter"
+  },
+  "six": {
+    "label": "Six Portes · collaboratif",
+    "tag": "SD",
+    "description": "monde partagé · plusieurs auteurs"
+  },
+  "technical": {
+    "label": "Technique · Rapport scientifique",
+    "tag": "TX",
+    "description": "Scientifique · méthodes · équations"
+  },
+  "bioinformatics": {
+    "label": "Bio-informatique",
+    "tag": "BX",
+    "description": "pipelines · méthodes · cahier de labo"
+  }
+}

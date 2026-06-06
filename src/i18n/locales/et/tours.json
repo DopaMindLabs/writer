@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Abi ja ringkäigud", "tours": "Juhitud ringkäigud", "resetAll": "Lähtesta kõik ringkäigud" },
+  "controls": { "next": "Edasi", "prev": "Tagasi", "done": "Valmis", "progress": "{{current}} / {{total}}" },
+  "welcome": {
+    "title": "Tere tulemast LIpsum Writerisse",
+    "description": "Kiire tutvustus ruumidele ja avalehele.",
+    "intro": { "title": "Tere tulemast", "body": "LIpsum Writer on kirjutamise tööala, mis on üles ehitatud <i>ruumide</i> ümber — üks ruum projekti, artikli või raamatu kohta. Vaatame kiiresti ringi." },
+    "continue": { "title": "Jätka sealt, kus pooleli jäid", "body": "Sinu viimati muudetud ruum on siin. Üks klõps avab selle uuesti." },
+    "startSpace": { "title": "Alusta midagi uut", "body": "Loo uus ruum mallist — väitekiri, romaan, essee — ja alusta kirjutamist sekunditega." }
+  },
+  "writer": {
+    "title": "Kirjaniku tööala",
+    "description": "Ringkäik toimetajas, külgribal ja ülaribal.",
+    "intro": { "title": "Kirjutamise pind", "body": "Siin teed sa tööd. Vaatame navigatsiooni, režiime ja tööriistu, mida kasutad kõige rohkem." },
+    "spaceTitle": { "title": "Ruumi pealkiri", "body": "Klõpsa pealkirjal, et ruum ümber nimetada. Kõrval olev ikoon avab selle seaded." },
+    "sections": { "title": "Sektsioonid ja dokumendid", "body": "Organiseeri ruum sektsioonideks ja sektsioonid dokumentideks. Hover sektsiooni kohal, et lisada dokument." },
+    "settings": { "title": "Ruumi seaded", "body": "Halda selle ruumi malli, sektsioone, jagamist ja kustutamist." },
+    "modes": { "title": "Loe · Kirjuta · Jaga", "body": "Vaheta redigeerimise, lugemise või kõrvuti vaate vahel. Iga dokument mäletab oma viimast režiimi." },
+    "citations": { "title": "Tsitaadid", "body": "Ava tsitaatide paneel, et lisada viiteid kirjutamise ajal." },
+    "theme": { "title": "Teema", "body": "Hele, tume ja kõrge kontrasti variandid — vali endale sobiv." },
+    "editor": { "title": "Toimetaja", "body": "Rikkaliku teksti toimetaja Markdowni otseteede, koodiplokkide ja tsitaatidega. Hakka kirjutama — sinu töö salvestub kohalikult automaatselt." }
+  },
+  "citations": {
+    "title": "Tsitaadid",
+    "description": "Viidete ja bibliograafiate haldamine.",
+    "intro": { "title": "Sinu bibliograafia", "body": "Kõik ruumi viited elavad siin. Impordi BibTeX-fail või lisa kanded käsitsi." },
+    "add": { "title": "Lisa või impordi", "body": "Lohista .bib-fail või kleebi BibTeX-tekst. Duplikaadid jäetakse automaatselt vahele." },
+    "list": { "title": "Nimekiri", "body": "Otsi, filtreeri ja muuda tsitaate sees. Siit saad ka kogu bibliograafia eksportida." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Vaba märkmete lõuend.",
+    "intro": { "title": "Mõtle valjusti", "body": "BrainSpace on vaba lõuend ideedele — viska märkmeid, ühenda neid ja vorma oma mõtlemist, enne kui lähed proosasse." },
+    "addNote": { "title": "Lisa märge", "body": "Viska mis tahes liiki märge lõuendile. Lohista liigutamiseks, muuda suurust nurkadest." },
+    "canvas": { "title": "Lõuend", "body": "Shift+klõpsa kahel märkmel nende ühendamiseks. Klõpsa tausta, et tühistada valik." }
+  }
+}

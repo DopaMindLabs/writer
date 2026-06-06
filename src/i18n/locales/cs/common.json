@@ -1,0 +1,14 @@
+{
+  "untitled": "Bez názvu",
+  "brainSpace": "Brain Space",
+  "github": "GitHub",
+  "home": "Domů",
+  "about": "O aplikaci",
+  "settings": "Nastavení",
+  "help": "Nápověda",
+  "back": "zpět",
+  "comingSoon": {
+    "tooltip": "Již brzy",
+    "defaultHint": "Zatím nedostupné — již brzy."
+  }
+}

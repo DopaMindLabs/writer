@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Earráid tosaithe",
+  "bootErrorHintBefore": "Bain triail as ",
+  "bootErrorHintAfter": " chun an bunachar sonraí áitiúil a athshocrú.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Á thosú…"
+}

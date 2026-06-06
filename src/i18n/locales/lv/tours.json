@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Palīdzība un ekskursijas", "tours": "Vadītās ekskursijas", "resetAll": "Atiestatīt visas ekskursijas" },
+  "controls": { "next": "Tālāk", "prev": "Atpakaļ", "done": "Pabeigts", "progress": "{{current}} no {{total}}" },
+  "welcome": {
+    "title": "Laipni lūgti LIpsum Writer",
+    "description": "Ātrs ievads telpās un sākuma ekrānā.",
+    "intro": { "title": "Sveicināti", "body": "LIpsum Writer ir rakstīšanas darba telpa, kas veidota ap <i>telpām</i> — viena telpa katram projektam, rakstam vai grāmatai. Ātri apskatīsim." },
+    "continue": { "title": "Turpini, kur apstājies", "body": "Tava pēdējoreiz rediģētā telpa ir šeit. Viens klikšķis to atver atkal." },
+    "startSpace": { "title": "Sāc kaut ko jaunu", "body": "Izveido jaunu telpu no veidnes — disertāciju, romānu, eseju — un sāc rakstīt sekundēs." }
+  },
+  "writer": {
+    "title": "Rakstnieka darba telpa",
+    "description": "Ekskursija pa redaktoru, sānu joslu un augšjoslu.",
+    "intro": { "title": "Rakstīšanas virsma", "body": "Šeit dari darbu. Apskatīsim navigāciju, režīmus un rīkus, kurus izmantosi visvairāk." },
+    "spaceTitle": { "title": "Telpas nosaukums", "body": "Noklikšķini uz nosaukuma, lai pārdēvētu telpu. Blakus esošā ikona atver tās iestatījumus." },
+    "sections": { "title": "Sadaļas un dokumenti", "body": "Organizē telpu sadaļās, un sadaļas dokumentos. Novieto kursoru virs sadaļas, lai pievienotu dokumentu." },
+    "settings": { "title": "Telpas iestatījumi", "body": "Pārvaldi šīs telpas veidni, sadaļas, koplietošanu un dzēšanu." },
+    "modes": { "title": "Lasi · Raksti · Sadali", "body": "Pārslēdzies starp rediģēšanu, lasīšanu vai blakus skatu. Katrs dokuments atceras pēdējo režīmu." },
+    "citations": { "title": "Citāti", "body": "Atver citātu paneli, lai ievietotu atsauces rakstīšanas laikā." },
+    "theme": { "title": "Tēma", "body": "Gaišas, tumšas un augsta kontrasta variantes — izvēlies to, kas piemērota tavām acīm." },
+    "editor": { "title": "Redaktors", "body": "Bagāta teksta redaktors ar Markdown saīsnēm, koda blokiem un citātiem. Sāc rakstīt — tavs darbs vietēji tiek saglabāts automātiski." }
+  },
+  "citations": {
+    "title": "Citāti",
+    "description": "Atsauču un bibliogrāfiju pārvaldība.",
+    "intro": { "title": "Tava bibliogrāfija", "body": "Visas telpas atsauces dzīvo šeit. Importē BibTeX failu vai pievieno ierakstus manuāli." },
+    "add": { "title": "Pievieno vai importē", "body": "Iemet .bib failu vai ielīmē BibTeX tekstu. Dublikāti tiek automātiski izlaisti." },
+    "list": { "title": "Saraksts", "body": "Meklē, filtrē un rediģē citātus iekšlīnijas režīmā. No šejienes vari arī eksportēt visu bibliogrāfiju." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Brīvs piezīmju audekls.",
+    "intro": { "title": "Domā skaļi", "body": "BrainSpace ir brīvs audekls idejām — iemet piezīmes, savieno tās un veido savu domāšanu, pirms pārej pie prozas." },
+    "addNote": { "title": "Pievieno piezīmi", "body": "Iemet jebkura veida piezīmi uz audekla. Velc, lai pārvietotu, mainī izmēru no stūriem." },
+    "canvas": { "title": "Audekls", "body": "Shift+klikšķiniet uz divām piezīmēm, lai tās savienotu. Noklikšķiniet uz fona, lai atceltu atlasi." }
+  }
+}

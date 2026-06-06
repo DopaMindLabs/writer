@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Pusty", "tag": "PU", "description": "zacznij od zera" },
+  "fiction": { "label": "Pisanie fikcji", "tag": "FI", "description": "powieść · opowiadanie · scenariusz" },
+  "humanities": { "label": "Praca · badania", "tag": "TH", "description": "długa praca akademicka" },
+  "journal": { "label": "Dziennik", "tag": "DZ", "description": "codzienny, bez presji" },
+  "serial": { "label": "Seria", "tag": "SE", "description": "cykliczne eseje · biuletyn" },
+  "six": { "label": "Sześć Drzwi · współpraca", "tag": "SD", "description": "wspólny świat · wielu autorów" },
+  "technical": { "label": "Techniczny · Raport naukowy", "tag": "TX", "description": "Naukowy · metody · równania" },
+  "bioinformatics": { "label": "Bioinformatyka", "tag": "BX", "description": "potoki · metody · dziennik laboratoryjny" }
+}

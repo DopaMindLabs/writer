@@ -1,0 +1,97 @@
+{
+  "menu": {
+    "help": "Hilfe und Touren",
+    "tours": "Geführte Touren",
+    "resetAll": "Alle Touren zurücksetzen"
+  },
+  "controls": {
+    "next": "Weiter",
+    "prev": "Zurück",
+    "done": "Fertig",
+    "progress": "{{current}} von {{total}}"
+  },
+  "welcome": {
+    "title": "Willkommen bei LIpsum Writer",
+    "description": "Eine kurze Orientierung zu Spaces und dem Startbildschirm.",
+    "intro": {
+      "title": "Willkommen",
+      "body": "LIpsum Writer ist ein Schreibarbeitsplatz, der um <i>Spaces</i> aufgebaut ist — ein Space pro Projekt, Artikel oder Buch. Schauen wir uns kurz um."
+    },
+    "continue": {
+      "title": "Mach dort weiter, wo du aufgehört hast",
+      "body": "Dein zuletzt bearbeiteter Space ist hier. Ein Klick öffnet ihn erneut."
+    },
+    "startSpace": {
+      "title": "Starte etwas Neues",
+      "body": "Erstelle einen neuen Space aus einer Vorlage — Abschlussarbeit, Roman, Essay — und schreib in Sekunden los."
+    }
+  },
+  "writer": {
+    "title": "Der Arbeitsplatz",
+    "description": "Eine Tour durch Editor, Seitenleiste und Topbar.",
+    "intro": {
+      "title": "Die Schreibfläche",
+      "body": "Hier passiert die Arbeit. Schauen wir uns die Navigation, Modi und Werkzeuge an, die du am meisten nutzen wirst."
+    },
+    "spaceTitle": {
+      "title": "Space-Titel",
+      "body": "Klick auf den Titel, um den Space umzubenennen. Das Hover-Symbol daneben öffnet seine Einstellungen."
+    },
+    "sections": {
+      "title": "Abschnitte und Dokumente",
+      "body": "Ordne einen Space in Abschnitte, und Abschnitte in Dokumente. Bewege die Maus über einen Abschnitt, um ein neues Dokument hinzuzufügen."
+    },
+    "settings": {
+      "title": "Space-Einstellungen",
+      "body": "Verwalte Vorlage, Abschnitte, Freigabe und Löschen dieses Spaces."
+    },
+    "modes": {
+      "title": "Lesen · Schreiben · Geteilt",
+      "body": "Wechsle zwischen Bearbeiten, Lesen oder einer geteilten Ansicht. Jedes Dokument behält seinen letzten Modus."
+    },
+    "citations": {
+      "title": "Zitate",
+      "body": "Öffne das Zitate-Panel, um Referenzen beim Schreiben einzufügen."
+    },
+    "theme": {
+      "title": "Thema",
+      "body": "Helle, dunkle und kontrastreiche Varianten — wähle eine, die zu deinen Augen passt."
+    },
+    "editor": {
+      "title": "Der Editor",
+      "body": "Ein Rich-Text-Editor mit Markdown-Kürzeln, Codeblöcken und Zitaten. Fang an zu tippen — deine Arbeit wird lokal automatisch gespeichert."
+    }
+  },
+  "citations": {
+    "title": "Zitate",
+    "description": "Referenzen und Bibliografien verwalten.",
+    "intro": {
+      "title": "Deine Bibliografie",
+      "body": "Alle Referenzen eines Spaces leben hier. Importiere eine BibTeX-Datei oder füge Einträge von Hand hinzu."
+    },
+    "add": {
+      "title": "Hinzufügen oder importieren",
+      "body": "Lege eine .bib-Datei ab oder füge BibTeX-Text ein. Duplikate werden automatisch übersprungen."
+    },
+    "list": {
+      "title": "Die Liste",
+      "body": "Suche, filtere und bearbeite Zitate inline. Von hier kannst du auch die gesamte Bibliografie exportieren."
+    }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Die freie Notiz-Leinwand.",
+    "intro": {
+      "title": "Denke laut",
+      "body": "BrainSpace ist eine freie Leinwand für Ideen — lege Notizen ab, verbinde sie und forme dein Denken, bevor du dich auf Prosa festlegst."
+    },
+    "addNote": {
+      "title": "Notiz hinzufügen",
+      "body": "Lege eine Notiz beliebiger Art auf die Leinwand. Ziehe zum Verschieben, an den Ecken zum Skalieren."
+    },
+    "canvas": {
+      "title": "Die Leinwand",
+      "body": "Umschalt+Klick auf zwei Notizen, um sie zu verbinden. Klick auf den Hintergrund, um die Auswahl aufzuheben."
+    }
+  }
+}
