@@ -84,7 +84,9 @@ export const parseBibtexText = (
       year: numberField(fields.year ?? fields.date) ?? 0,
       type: mapType(entry.type),
       useCount: 0,
-      raw: text.slice(0, 10_000),
+      // `raw` is intentionally omitted: the parser exposes no per-entry source,
+      // and storing a slice of the whole file on every row duplicated up to 10KB
+      // per citation for no benefit.
     });
   }
   return Promise.resolve(out);
@@ -101,21 +103,43 @@ export const parseBibtexFile = async (
 export const importCitations = async (
   citations: Citation[],
 ): Promise<{ added: number; skipped: number }> => {
+  if (citations.length === 0) return { added: 0, skipped: 0 };
+
   let added = 0;
   let skipped = 0;
   await db.transaction('rw', db.citations, async () => {
+    // Group by space so each space's existing keys are checked in one indexed
+    // batch query instead of one lookup per incoming citation.
+    const bySpace = new Map<string, Citation[]>();
     for (const c of citations) {
-      const existing = await db.citations
-        .where('[spaceId+key]')
-        .equals([c.spaceId, c.key])
-        .first();
-      if (existing) {
-        skipped += 1;
-        continue;
-      }
-      await db.citations.add(c);
-      added += 1;
+      const list = bySpace.get(c.spaceId);
+      if (list) list.push(c);
+      else bySpace.set(c.spaceId, [c]);
     }
+
+    const toAdd: Citation[] = [];
+    for (const [spaceId, group] of bySpace) {
+      const pairs = group.map((c) => [spaceId, c.key] as [string, string]);
+      const existingRows = await db.citations
+        .where('[spaceId+key]')
+        .anyOf(pairs)
+        .toArray();
+      // Keys are unique within a space, so a per-space set of keys covers both
+      // rows already in the DB and keys repeated earlier in this same import —
+      // a file with duplicate keys yields a single row.
+      const seen = new Set(existingRows.map((r) => r.key));
+      for (const c of group) {
+        if (seen.has(c.key)) {
+          skipped += 1;
+          continue;
+        }
+        seen.add(c.key);
+        toAdd.push(c);
+        added += 1;
+      }
+    }
+
+    if (toAdd.length > 0) await db.citations.bulkAdd(toAdd);
   });
   return { added, skipped };
 };
