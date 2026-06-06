@@ -14,6 +14,7 @@ import {
   ensureWritePermission,
   forgetSyncFolder,
   getEffectiveIntervalMin,
+  getEffectiveIntervalMap,
   getLastSyncForSpace,
   getLastSyncedAt,
   getSyncFolderHandle,
@@ -233,6 +234,33 @@ describe('folderSync', () => {
     ]);
     const last = await getLastSyncForSpace(sampleSpace.id);
     expect(last?.id).toBe('2');
+  });
+
+  it('getLastSyncForSpace picks the newest regardless of insertion order and scopes to the space', async () => {
+    await db.syncs.bulkPut([
+      { id: 'a', spaceId: sampleSpace.id, when: 300, kind: 'auto', status: 'ok', size: 1 },
+      { id: 'b', spaceId: sampleSpace.id, when: 100, kind: 'auto', status: 'ok', size: 1 },
+      { id: 'c', spaceId: sampleSpace.id, when: 200, kind: 'auto', status: 'ok', size: 1 },
+      // A newer entry for a different space must not win.
+      { id: 'other', spaceId: 'other-space', when: 999, kind: 'auto', status: 'ok', size: 1 },
+    ]);
+    const last = await getLastSyncForSpace(sampleSpace.id);
+    expect(last?.id).toBe('a');
+    expect(last?.when).toBe(300);
+  });
+
+  it('getLastSyncForSpace returns undefined when a space has no syncs', async () => {
+    expect(await getLastSyncForSpace('never-synced')).toBeUndefined();
+  });
+
+  it('getEffectiveIntervalMap resolves defaults, inheritance and overrides in one read', async () => {
+    await setDefaultIntervalMin(30);
+    await setSpaceIntervalMin('override', 5);
+    await setSpaceIntervalMin('inherits', INHERIT_INTERVAL);
+    const map = await getEffectiveIntervalMap(['override', 'inherits', 'unset']);
+    expect(map.get('override')).toBe(5);
+    expect(map.get('inherits')).toBe(30);
+    expect(map.get('unset')).toBe(30);
   });
 
   it('tolerates a failed history prune without failing the sync', async () => {

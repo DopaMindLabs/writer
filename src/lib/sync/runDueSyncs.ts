@@ -1,7 +1,7 @@
 import { db } from '@/db/db';
 import {
   ensureWritePermission,
-  getEffectiveIntervalMin,
+  getEffectiveIntervalMap,
   getLastSyncForSpace,
   getSyncFolderHandle,
   isFolderSyncSupported,
@@ -20,8 +20,10 @@ export const runDueSyncs = async (): Promise<void> => {
 
   const now = Date.now();
   const spaces = await db.spaces.toArray();
+  // Resolve every space's interval in one read instead of two reads per space.
+  const intervals = await getEffectiveIntervalMap(spaces.map((s) => s.id));
   for (const space of spaces) {
-    const intervalMin = await getEffectiveIntervalMin(space.id);
+    const intervalMin = intervals.get(space.id) ?? 0;
     if (intervalMin <= 0) continue; // off
     const last = await getLastSyncForSpace(space.id);
     const dueAt = (last?.when ?? 0) + intervalMin * 60_000;
