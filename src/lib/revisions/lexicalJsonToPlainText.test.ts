@@ -71,6 +71,14 @@ describe('lexicalJsonToPlainText', () => {
     expect(text).toContain('Chapter One');
     expect(text).toContain('The rain fell sideways.');
   });
+
+  it('throws when the body is serialized-shaped but not parseable Lexical', () => {
+    // Body satisfies isSerialized (has a .root) but the root is the wrong
+    // shape, so parseEditorState rejects via the editor's onError hook.
+    expect(() =>
+      lexicalJsonToPlainText('{"root":{"type":"not-a-real-node"}}'),
+    ).toThrow();
+  });
 });
 
 describe('countWords', () => {

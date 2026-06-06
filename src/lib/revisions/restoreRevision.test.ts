@@ -57,4 +57,27 @@ describe('restoreRevision', () => {
       restoreRevision(sampleDoc.id, other.id),
     ).rejects.toBeInstanceOf(InvariantError);
   });
+
+  it('rejects when the document has been deleted between revision and restore', async () => {
+    const target = await createRevision(sampleDoc.id, 'old body', {
+      kind: 'manual',
+    });
+    await db.docs.delete(sampleDoc.id);
+    await expect(
+      restoreRevision(sampleDoc.id, target.id),
+    ).rejects.toBeInstanceOf(InvariantError);
+  });
+
+  it('falls back to Date.now when no clock is supplied', async () => {
+    const target = await createRevision(sampleDoc.id, 'old body', {
+      kind: 'manual',
+      now: () => 1000,
+    });
+    const before = Date.now();
+    await restoreRevision(sampleDoc.id, target.id);
+    const after = Date.now();
+    const doc = await db.docs.get(sampleDoc.id);
+    expect(doc?.updatedAt).toBeGreaterThanOrEqual(before);
+    expect(doc?.updatedAt).toBeLessThanOrEqual(after);
+  });
 });
