@@ -6,6 +6,14 @@ import enTemplates from './locales/en/templates.json';
 import enTours from './locales/en/tours.json';
 import enHelp from './locales/en/help.json';
 
+import esCommon from './locales/es/common.json';
+import esChrome from './locales/es/chrome.json';
+import esScreens from './locales/es/screens.json';
+import esApp from './locales/es/app.json';
+import esTemplates from './locales/es/templates.json';
+import esTours from './locales/es/tours.json';
+import esHelp from './locales/es/help.json';
+
 export const resources = {
   en: {
     common: enCommon,
@@ -16,7 +24,16 @@ export const resources = {
     tours: enTours,
     help: enHelp,
   },
+  es: {
+    common: esCommon,
+    chrome: esChrome,
+    screens: esScreens,
+    app: esApp,
+    templates: esTemplates,
+    tours: esTours,
+    help: esHelp,
+  },
 } as const;
 
 export const defaultNS = 'common';
-export const supportedLngs = ['en'] as const;
+export const supportedLngs = ['en', 'es'] as const;
