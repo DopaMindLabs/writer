@@ -160,7 +160,7 @@ describe('SplitScreen', () => {
       });
     });
 
-    it('should complete a pointer drag-release cycle without error', async () => {
+    it('should keep the divider operable after a pointer drag and a cancelled re-drag', async () => {
       renderAt('/s/s1/d/d1/split?with=d2');
       const sep = await screen.findByTestId('split-divider');
       (sep as unknown as { setPointerCapture: (id: number) => void }).setPointerCapture =
@@ -174,7 +174,12 @@ describe('SplitScreen', () => {
       fireEvent.pointerUp(sep, { pointerId: 1, clientX: 500 });
       fireEvent.pointerDown(sep, { pointerId: 1, clientX: 400 });
       fireEvent.pointerCancel(sep, { pointerId: 1, clientX: 400 });
-      expect(true).toBe(true);
+      // The divider must survive the cycle (no crash, still mounted) and the
+      // committed percent must remain inside the clamp range [25, 75].
+      expect(screen.getByTestId('split-divider')).toBe(sep);
+      const pct = useUI.getState().splitDividerPct;
+      expect(pct).toBeGreaterThanOrEqual(25);
+      expect(pct).toBeLessThanOrEqual(75);
     });
   });
 });
