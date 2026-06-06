@@ -49,36 +49,65 @@ import ptPTTemplates from './locales/pt-PT/templates.json';
 import ptPTTours from './locales/pt-PT/tours.json';
 import ptPTHelp from './locales/pt-PT/help.json';
 
-// Tier 2+ — common.json only for now; other namespaces fall back to English.
+// Tier 2+ — common + app translated; other namespaces fall back to English.
 import itCommon from './locales/it/common.json';
+import itApp from './locales/it/app.json';
 import plCommon from './locales/pl/common.json';
+import plApp from './locales/pl/app.json';
 import svCommon from './locales/sv/common.json';
+import svApp from './locales/sv/app.json';
 import daCommon from './locales/da/common.json';
+import daApp from './locales/da/app.json';
 import nbCommon from './locales/nb/common.json';
+import nbApp from './locales/nb/app.json';
 import isCommon from './locales/is/common.json';
+import isApp from './locales/is/app.json';
 import gaCommon from './locales/ga/common.json';
+import gaApp from './locales/ga/app.json';
 import ltCommon from './locales/lt/common.json';
+import ltApp from './locales/lt/app.json';
 import lvCommon from './locales/lv/common.json';
+import lvApp from './locales/lv/app.json';
 import etCommon from './locales/et/common.json';
+import etApp from './locales/et/app.json';
 import csCommon from './locales/cs/common.json';
+import csApp from './locales/cs/app.json';
 import huCommon from './locales/hu/common.json';
+import huApp from './locales/hu/app.json';
 import roCommon from './locales/ro/common.json';
+import roApp from './locales/ro/app.json';
 import bgCommon from './locales/bg/common.json';
+import bgApp from './locales/bg/app.json';
 import elCommon from './locales/el/common.json';
+import elApp from './locales/el/app.json';
 import jaCommon from './locales/ja/common.json';
+import jaApp from './locales/ja/app.json';
 import zhHansCommon from './locales/zh-Hans/common.json';
+import zhHansApp from './locales/zh-Hans/app.json';
 import koCommon from './locales/ko/common.json';
+import koApp from './locales/ko/app.json';
 import hiCommon from './locales/hi/common.json';
+import hiApp from './locales/hi/app.json';
 import taCommon from './locales/ta/common.json';
+import taApp from './locales/ta/app.json';
 import siCommon from './locales/si/common.json';
+import siApp from './locales/si/app.json';
 import amCommon from './locales/am/common.json';
+import amApp from './locales/am/app.json';
 import swCommon from './locales/sw/common.json';
+import swApp from './locales/sw/app.json';
 import haCommon from './locales/ha/common.json';
+import haApp from './locales/ha/app.json';
 import yoCommon from './locales/yo/common.json';
+import yoApp from './locales/yo/app.json';
 import zuCommon from './locales/zu/common.json';
+import zuApp from './locales/zu/app.json';
 import miCommon from './locales/mi/common.json';
+import miApp from './locales/mi/app.json';
 import smCommon from './locales/sm/common.json';
+import smApp from './locales/sm/app.json';
 import toCommon from './locales/to/common.json';
+import toApp from './locales/to/app.json';
 
 /**
  * Locales the user can pick. Any locale here without a `resources` entry below
@@ -193,35 +222,35 @@ export const resources = {
     tours: ptPTTours,
     help: ptPTHelp,
   },
-  it: { common: itCommon },
-  pl: { common: plCommon },
-  sv: { common: svCommon },
-  da: { common: daCommon },
-  nb: { common: nbCommon },
-  is: { common: isCommon },
-  ga: { common: gaCommon },
-  lt: { common: ltCommon },
-  lv: { common: lvCommon },
-  et: { common: etCommon },
-  cs: { common: csCommon },
-  hu: { common: huCommon },
-  ro: { common: roCommon },
-  bg: { common: bgCommon },
-  el: { common: elCommon },
-  ja: { common: jaCommon },
-  'zh-Hans': { common: zhHansCommon },
-  ko: { common: koCommon },
-  hi: { common: hiCommon },
-  ta: { common: taCommon },
-  si: { common: siCommon },
-  am: { common: amCommon },
-  sw: { common: swCommon },
-  ha: { common: haCommon },
-  yo: { common: yoCommon },
-  zu: { common: zuCommon },
-  mi: { common: miCommon },
-  sm: { common: smCommon },
-  to: { common: toCommon },
+  it: { common: itCommon, app: itApp },
+  pl: { common: plCommon, app: plApp },
+  sv: { common: svCommon, app: svApp },
+  da: { common: daCommon, app: daApp },
+  nb: { common: nbCommon, app: nbApp },
+  is: { common: isCommon, app: isApp },
+  ga: { common: gaCommon, app: gaApp },
+  lt: { common: ltCommon, app: ltApp },
+  lv: { common: lvCommon, app: lvApp },
+  et: { common: etCommon, app: etApp },
+  cs: { common: csCommon, app: csApp },
+  hu: { common: huCommon, app: huApp },
+  ro: { common: roCommon, app: roApp },
+  bg: { common: bgCommon, app: bgApp },
+  el: { common: elCommon, app: elApp },
+  ja: { common: jaCommon, app: jaApp },
+  'zh-Hans': { common: zhHansCommon, app: zhHansApp },
+  ko: { common: koCommon, app: koApp },
+  hi: { common: hiCommon, app: hiApp },
+  ta: { common: taCommon, app: taApp },
+  si: { common: siCommon, app: siApp },
+  am: { common: amCommon, app: amApp },
+  sw: { common: swCommon, app: swApp },
+  ha: { common: haCommon, app: haApp },
+  yo: { common: yoCommon, app: yoApp },
+  zu: { common: zuCommon, app: zuApp },
+  mi: { common: miCommon, app: miApp },
+  sm: { common: smCommon, app: smApp },
+  to: { common: toCommon, app: toApp },
 } as const;
 
 export const defaultNS = 'common';

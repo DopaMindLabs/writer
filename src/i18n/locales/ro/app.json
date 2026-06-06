@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Eroare la pornire",
+  "bootErrorHintBefore": "Încearcă ",
+  "bootErrorHintAfter": " pentru a reseta baza de date locală.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Pornește…"
+}

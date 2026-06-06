@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Iphutha lokuqalisa",
+  "bootErrorHintBefore": "Zama ",
+  "bootErrorHintAfter": " ukuze usethe kabusha isizinda sedatha sasendaweni.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Iyaqalisa…"
+}

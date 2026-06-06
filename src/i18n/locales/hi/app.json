@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "बूट त्रुटि",
+  "bootErrorHintBefore": "स्थानीय डेटाबेस को रीसेट करने के लिए ",
+  "bootErrorHintAfter": " आज़माएँ।",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "बूट हो रहा है…"
+}

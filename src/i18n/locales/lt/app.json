@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Paleidimo klaida",
+  "bootErrorHintBefore": "Pabandyk ",
+  "bootErrorHintAfter": ", kad iš naujo nustatytum vietinę duomenų bazę.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Paleidžiama…"
+}
