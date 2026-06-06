@@ -16,7 +16,7 @@ const detectInitialLanguage = (): string => {
   } catch {
     // localStorage unavailable; fall through.
   }
-  const navLang = window.navigator.language?.split('-')[0];
+  const navLang = window.navigator.language.split('-')[0];
   if (navLang && isSupported(navLang)) return navLang;
   return FALLBACK;
 };
