@@ -131,6 +131,19 @@ names must be prefixed with a Conventional Commit type, enforced by the `pre-pus
 - Exempt: `main`, `develop`, and automation branches (`claude/*`, `dependabot/*`,
   `release-please*`).
 
+### Protected branches (read before any git write)
+
+**`main` is protected. Never write to it.** Do not commit, amend, rebase, force-push, or
+otherwise rewrite `main` — including its history or any commit reachable from it. `main` holds
+production releases and is changed only through the project's release process, never by an agent.
+
+- **`main` means `main`.** If a request says "main" but the context points at the integration
+  branch, do not assume — `develop` is the integration branch where day-to-day work lands.
+- **Always confirm before any branch-level git write**, regardless of which branch is named, and
+  **especially** before anything touching `main` or rewriting shared history (`develop`, release
+  branches). State the exact branch, the exact operation, and the blast radius, and wait for
+  explicit approval. When in doubt, ask — a wrong guess about the target branch is hard to undo.
+
 ## Help content (read before adding or changing features)
 
 The in-app **Help Center** (`/help`) is end-user documentation that lives beside the
