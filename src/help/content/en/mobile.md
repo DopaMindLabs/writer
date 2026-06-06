@@ -6,7 +6,7 @@ The app adapts to small screens so you can read and write on a phone or tablet.
 
 - A **bottom tab bar** replaces the sidebar on small screens.
 - The **more** tab opens a drawer with settings, help, and about.
-- **Read** mode and [BrainSpace](brainspace) work great on a phone.
+- **Read** mode and [BrainSpace](brainspace) are usable on a phone.
 - **Split view** needs a tablet or desktop.
 
 ## Navigation on small screens
