@@ -49,6 +49,37 @@ import ptPTTemplates from './locales/pt-PT/templates.json';
 import ptPTTours from './locales/pt-PT/tours.json';
 import ptPTHelp from './locales/pt-PT/help.json';
 
+// Tier 2+ — common.json only for now; other namespaces fall back to English.
+import itCommon from './locales/it/common.json';
+import plCommon from './locales/pl/common.json';
+import svCommon from './locales/sv/common.json';
+import daCommon from './locales/da/common.json';
+import nbCommon from './locales/nb/common.json';
+import isCommon from './locales/is/common.json';
+import gaCommon from './locales/ga/common.json';
+import ltCommon from './locales/lt/common.json';
+import lvCommon from './locales/lv/common.json';
+import etCommon from './locales/et/common.json';
+import csCommon from './locales/cs/common.json';
+import huCommon from './locales/hu/common.json';
+import roCommon from './locales/ro/common.json';
+import bgCommon from './locales/bg/common.json';
+import elCommon from './locales/el/common.json';
+import jaCommon from './locales/ja/common.json';
+import zhHansCommon from './locales/zh-Hans/common.json';
+import koCommon from './locales/ko/common.json';
+import hiCommon from './locales/hi/common.json';
+import taCommon from './locales/ta/common.json';
+import siCommon from './locales/si/common.json';
+import amCommon from './locales/am/common.json';
+import swCommon from './locales/sw/common.json';
+import haCommon from './locales/ha/common.json';
+import yoCommon from './locales/yo/common.json';
+import zuCommon from './locales/zu/common.json';
+import miCommon from './locales/mi/common.json';
+import smCommon from './locales/sm/common.json';
+import toCommon from './locales/to/common.json';
+
 /**
  * Locales the user can pick. Any locale here without a `resources` entry below
  * (or with a partial entry) falls back to English for missing keys — that's
@@ -162,6 +193,35 @@ export const resources = {
     tours: ptPTTours,
     help: ptPTHelp,
   },
+  it: { common: itCommon },
+  pl: { common: plCommon },
+  sv: { common: svCommon },
+  da: { common: daCommon },
+  nb: { common: nbCommon },
+  is: { common: isCommon },
+  ga: { common: gaCommon },
+  lt: { common: ltCommon },
+  lv: { common: lvCommon },
+  et: { common: etCommon },
+  cs: { common: csCommon },
+  hu: { common: huCommon },
+  ro: { common: roCommon },
+  bg: { common: bgCommon },
+  el: { common: elCommon },
+  ja: { common: jaCommon },
+  'zh-Hans': { common: zhHansCommon },
+  ko: { common: koCommon },
+  hi: { common: hiCommon },
+  ta: { common: taCommon },
+  si: { common: siCommon },
+  am: { common: amCommon },
+  sw: { common: swCommon },
+  ha: { common: haCommon },
+  yo: { common: yoCommon },
+  zu: { common: zuCommon },
+  mi: { common: miCommon },
+  sm: { common: smCommon },
+  to: { common: toCommon },
 } as const;
 
 export const defaultNS = 'common';

@@ -1,0 +1,14 @@
+{
+  "untitled": "Без заглавие",
+  "brainSpace": "Brain Space",
+  "github": "GitHub",
+  "home": "Начало",
+  "about": "Относно",
+  "settings": "Настройки",
+  "help": "Помощ",
+  "back": "назад",
+  "comingSoon": {
+    "tooltip": "Скоро",
+    "defaultHint": "Все още недостъпно — скоро."
+  }
+}
