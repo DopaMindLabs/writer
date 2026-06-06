@@ -1,0 +1,48 @@
+{
+  "title": "Abi",
+  "subtitle": "Juhendid ja vastused, et oma kirjutamisest maksimum kätte saada.",
+  "shellSubtitle": "Abi / Dokumentatsioon",
+  "navGroup": "Abi",
+  "navOverview": "Ülevaade",
+  "navAria": "Abiteemad",
+  "searchPlaceholder": "Otsi abist…",
+  "searchLabel": "Otsi abi-artikleid",
+  "noResults": "Ükski artikkel ei vasta päringule „{{query}}“.",
+  "resultsCount_one": "{{count}} tulemus",
+  "resultsCount_other": "{{count}} tulemust",
+  "browseAll": "Sirvi kõiki teemasid",
+  "languagePickerLabel": "Abi keel",
+  "allFeatures": {
+    "title": "Vaata kõiki funktsioone",
+    "subtitle": "Täielik nimekiri kõigest, mida saad teha — iga kirje viib oma juhendisse."
+  },
+  "onThisPage": "Sellel lehel",
+  "related": "Seotud",
+  "backToHelp": "Kogu abi",
+  "openCenter": "Ava täielik abikeskus",
+  "articleNotFound": "Seda abi-artiklit pole olemas.",
+  "machineTranslationBanner": {
+    "label": "Automaattõlge",
+    "body": "See artikkel on tõlgitud automaatselt. Vabandame vigade pärast — saada tagasisidet, et saaksime need parandada.",
+    "feedbackLinkLabel": "saada tagasisidet"
+  },
+  "palette": {
+    "title": "Abi",
+    "description": "Otsi abikeskusest või liigu otseteeni.",
+    "shortcutsHeading": "Klaviatuuri otseteed",
+    "hint": "Vajuta sulgemiseks Esc"
+  },
+  "shortcuts": { "help": "Ava abi", "focus": "Lülita fookuse režiim" },
+  "categories": {
+    "getting-started": "Alustamine",
+    "writing": "Kirjutamine ja toimetamine",
+    "organizing": "Organiseerimine",
+    "views": "Vaated ja režiimid",
+    "research": "Uurimine ja viited",
+    "brainspace": "BrainSpace",
+    "annotations": "Märkused ja esiletõstud",
+    "customization": "Kohandamine ja seaded",
+    "data": "Sinu andmed",
+    "mobile": "Mobiil"
+  }
+}
