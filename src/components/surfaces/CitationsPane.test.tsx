@@ -223,16 +223,10 @@ describe('CitationsPane', () => {
 
     it('should show "unknown error" when the thrown value is not an Error instance', async () => {
       await seedSpace();
-      const original = (
-        File.prototype as unknown as { text: () => Promise<string> }
-      ).text;
-      (File.prototype as unknown as { text: () => Promise<string> }).text =
-        () => Promise.reject('plain string fail');
-      const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.spyOn(File.prototype, 'text').mockRejectedValue('plain string fail');
+      vi.spyOn(console, 'error').mockImplementation(() => {});
       renderPane();
-      const fileInput = screen.getByTestId(
-        'citations-file-input',
-      );
+      const fileInput = screen.getByTestId('citations-file-input');
       const file = new File(['anything'], 'x.bib', {
         type: 'application/x-bibtex',
       });
@@ -242,9 +236,6 @@ describe('CitationsPane', () => {
           /unknown error/i,
         ),
       );
-      (File.prototype as unknown as { text: () => Promise<string> }).text =
-        original;
-      errSpy.mockRestore();
     });
 
     it('should delegate to the hidden file input when the upload button is clicked', async () => {
@@ -297,6 +288,28 @@ describe('CitationsPane', () => {
   });
 
   describe('detail row', () => {
+    // jsdom doesn't expose navigator.clipboard, and Object.defineProperty isn't
+    // covered by vitest's restoreMocks. Snapshot the original descriptor and
+    // restore after each test so the stub never leaks into the rest of the file.
+    let originalClipboardDescriptor: PropertyDescriptor | undefined;
+    beforeEach(() => {
+      originalClipboardDescriptor = Object.getOwnPropertyDescriptor(
+        navigator,
+        'clipboard',
+      );
+    });
+    afterEach(() => {
+      if (originalClipboardDescriptor) {
+        Object.defineProperty(
+          navigator,
+          'clipboard',
+          originalClipboardDescriptor,
+        );
+      } else {
+        delete (navigator as unknown as { clipboard?: unknown }).clipboard;
+      }
+    });
+
     it('should expand a row into a read-only detail view (no inputs until edit)', async () => {
       await seedSpace();
       await db.citations.put(citation());

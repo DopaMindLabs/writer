@@ -104,6 +104,9 @@ describe('DocInspector', () => {
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
       const pane = screen.getByTestId('doc-inspector-pane-outline');
+      // The OutlinePane currently shows hard-coded placeholder rows from
+      // DocInspector.tsx (`OutlinePane`). When that placeholder is replaced
+      // with a live outline, update these expectations together.
       expect(pane).toHaveTextContent(/Mira walks/);
       expect(pane).toHaveTextContent(/bell-keeper/i);
     });
