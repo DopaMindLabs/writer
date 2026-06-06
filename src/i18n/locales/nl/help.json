@@ -1,0 +1,51 @@
+{
+  "title": "Help",
+  "subtitle": "Gidsen en antwoorden om het meeste uit je schrijven te halen.",
+  "shellSubtitle": "Help / Documentatie",
+  "navGroup": "Help",
+  "navOverview": "Overzicht",
+  "navAria": "Helponderwerpen",
+  "searchPlaceholder": "Zoek in de help…",
+  "searchLabel": "Zoek helpartikelen",
+  "noResults": "Geen artikel komt overeen met „{{query}}”.",
+  "resultsCount_one": "{{count}} resultaat",
+  "resultsCount_other": "{{count}} resultaten",
+  "browseAll": "Alle onderwerpen bekijken",
+  "languagePickerLabel": "Help-taal",
+  "allFeatures": {
+    "title": "Alle functies bekijken",
+    "subtitle": "Een volledige lijst van wat je kunt doen — elk item leidt naar zijn gids."
+  },
+  "onThisPage": "Op deze pagina",
+  "related": "Verwant",
+  "backToHelp": "Alle help",
+  "openCenter": "Volledig helpcentrum openen",
+  "articleNotFound": "Dat helpartikel bestaat niet.",
+  "machineTranslationBanner": {
+    "label": "Automatische vertaling",
+    "body": "Dit artikel is automatisch vertaald. Sorry voor eventuele fouten — stuur feedback zodat we ze kunnen corrigeren.",
+    "feedbackLinkLabel": "feedback sturen"
+  },
+  "palette": {
+    "title": "Help",
+    "description": "Zoek in het helpcentrum of spring naar een sneltoets.",
+    "shortcutsHeading": "Sneltoetsen",
+    "hint": "Druk op Esc om te sluiten"
+  },
+  "shortcuts": {
+    "help": "Help openen",
+    "focus": "Focusmodus omschakelen"
+  },
+  "categories": {
+    "getting-started": "Aan de slag",
+    "writing": "Schrijven en bewerken",
+    "organizing": "Ordening",
+    "views": "Weergaven en modi",
+    "research": "Onderzoek en citaten",
+    "brainspace": "BrainSpace",
+    "annotations": "Annotaties en markeringen",
+    "customization": "Aanpassing en instellingen",
+    "data": "Je gegevens",
+    "mobile": "Mobiel"
+  }
+}

@@ -8,7 +8,7 @@ const FALLBACK = 'en';
 const isSupported = (value: string): boolean =>
   (supportedLngs as readonly string[]).includes(value);
 
-const detectInitialLanguage = (): string => {
+const readStoredLanguage = (): string => {
   if (typeof window === 'undefined') return FALLBACK;
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
@@ -16,8 +16,6 @@ const detectInitialLanguage = (): string => {
   } catch {
     // localStorage unavailable; fall through.
   }
-  const navLang = window.navigator.language.split('-')[0];
-  if (navLang && isSupported(navLang)) return navLang;
   return FALLBACK;
 };
 
@@ -37,7 +35,7 @@ const persistLanguage = (lng: string): void => {
 };
 
 if (!i18n.isInitialized) {
-  const initial = detectInitialLanguage();
+  const initial = readStoredLanguage();
   void i18n.use(initReactI18next).init({
     resources,
     lng: initial,

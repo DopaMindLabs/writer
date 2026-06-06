@@ -11,6 +11,7 @@
   "resultsCount_one": "{{count}} resultado",
   "resultsCount_other": "{{count}} resultados",
   "browseAll": "Ver todos los temas",
+  "languagePickerLabel": "Idioma de la ayuda",
   "allFeatures": {
     "title": "Ver todas las funciones",
     "subtitle": "Una lista completa de todo lo que puedes hacer — cada elemento enlaza con su guía."

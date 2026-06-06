@@ -11,6 +11,7 @@
   "resultsCount_one": "{{count}} result",
   "resultsCount_other": "{{count}} results",
   "browseAll": "Browse all topics",
+  "languagePickerLabel": "Help language",
   "allFeatures": {
     "title": "See all features",
     "subtitle": "A complete, scannable list of everything you can do — each links to its guide."

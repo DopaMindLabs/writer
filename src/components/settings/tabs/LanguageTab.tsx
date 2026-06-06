@@ -1,34 +1,10 @@
-import type { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import i18n from '@/i18n';
-import { supportedLngs } from '@/i18n/resources';
 import { SettingRow } from '@/components/settings/SettingRow';
 import { TabHeader } from '@/components/settings/TabHeader';
-import { Select, type SelectOption } from '@/components/ui/Select';
-
-const getDisplayName = (code: string, displayLocale: string): string => {
-  try {
-    const dn = new Intl.DisplayNames([displayLocale], { type: 'language' });
-    return dn.of(code) ?? code;
-  } catch {
-    return code;
-  }
-};
+import { LanguagePicker } from '@/components/ui/LanguagePicker';
 
 export const LanguageTab = () => {
-  const { t, i18n: tI18n } = useTranslation('screens');
-  const current = tI18n.language;
-
-  const options: readonly SelectOption[] = (
-    supportedLngs as readonly string[]
-  ).map((code) => ({
-    value: code,
-    label: getDisplayName(code, current),
-  }));
-
-  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    void i18n.changeLanguage(event.target.value);
-  };
+  const { t } = useTranslation('screens');
 
   return (
     <section>
@@ -42,12 +18,7 @@ export const LanguageTab = () => {
         label={t('settings.language.label')}
         hint={t('settings.language.hint')}
       >
-        <Select
-          options={options}
-          value={current}
-          onChange={handleChange}
-          aria-label={t('settings.language.label')}
-        />
+        <LanguagePicker ariaLabel={t('settings.language.label')} />
       </SettingRow>
 
       <div
