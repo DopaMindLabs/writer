@@ -94,7 +94,7 @@ const HelpLanding = ({ locale }: { readonly locale: string }) => {
         </div>
         <LanguagePicker
           ariaLabel={t('languagePickerLabel')}
-          className="w-40 shrink-0"
+          className="w-64 shrink-0"
           data-testid="help-language-picker"
         />
       </div>
@@ -177,7 +177,7 @@ export const HelpScreen = () => {
             </div>
             <LanguagePicker
               ariaLabel={t('languagePickerLabel')}
-              className="w-40 shrink-0"
+              className="w-64 shrink-0"
               data-testid="help-banner-language-picker"
             />
           </div>
