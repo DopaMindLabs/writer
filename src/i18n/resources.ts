@@ -49,122 +49,152 @@ import ptPTTemplates from './locales/pt-PT/templates.json';
 import ptPTTours from './locales/pt-PT/tours.json';
 import ptPTHelp from './locales/pt-PT/help.json';
 
-// Tier 2+ — common + app + templates + help translated; chrome, screens, tours fall back to English.
+// Tier 2+ — common + app + templates + tours + help translated.
+// chrome and screens fall back to English until per-locale translations land.
 import itCommon from './locales/it/common.json';
 import itApp from './locales/it/app.json';
 import itTemplates from './locales/it/templates.json';
+import itTours from './locales/it/tours.json';
 import itHelp from './locales/it/help.json';
 import plCommon from './locales/pl/common.json';
 import plApp from './locales/pl/app.json';
 import plTemplates from './locales/pl/templates.json';
+import plTours from './locales/pl/tours.json';
 import plHelp from './locales/pl/help.json';
 import svCommon from './locales/sv/common.json';
 import svApp from './locales/sv/app.json';
 import svTemplates from './locales/sv/templates.json';
+import svTours from './locales/sv/tours.json';
 import svHelp from './locales/sv/help.json';
 import daCommon from './locales/da/common.json';
 import daApp from './locales/da/app.json';
 import daTemplates from './locales/da/templates.json';
+import daTours from './locales/da/tours.json';
 import daHelp from './locales/da/help.json';
 import nbCommon from './locales/nb/common.json';
 import nbApp from './locales/nb/app.json';
 import nbTemplates from './locales/nb/templates.json';
+import nbTours from './locales/nb/tours.json';
 import nbHelp from './locales/nb/help.json';
 import isCommon from './locales/is/common.json';
 import isApp from './locales/is/app.json';
 import isTemplates from './locales/is/templates.json';
+import isTours from './locales/is/tours.json';
 import isHelp from './locales/is/help.json';
 import gaCommon from './locales/ga/common.json';
 import gaApp from './locales/ga/app.json';
 import gaTemplates from './locales/ga/templates.json';
+import gaTours from './locales/ga/tours.json';
 import gaHelp from './locales/ga/help.json';
 import ltCommon from './locales/lt/common.json';
 import ltApp from './locales/lt/app.json';
 import ltTemplates from './locales/lt/templates.json';
+import ltTours from './locales/lt/tours.json';
 import ltHelp from './locales/lt/help.json';
 import lvCommon from './locales/lv/common.json';
 import lvApp from './locales/lv/app.json';
 import lvTemplates from './locales/lv/templates.json';
+import lvTours from './locales/lv/tours.json';
 import lvHelp from './locales/lv/help.json';
 import etCommon from './locales/et/common.json';
 import etApp from './locales/et/app.json';
 import etTemplates from './locales/et/templates.json';
+import etTours from './locales/et/tours.json';
 import etHelp from './locales/et/help.json';
 import csCommon from './locales/cs/common.json';
 import csApp from './locales/cs/app.json';
 import csTemplates from './locales/cs/templates.json';
+import csTours from './locales/cs/tours.json';
 import csHelp from './locales/cs/help.json';
 import huCommon from './locales/hu/common.json';
 import huApp from './locales/hu/app.json';
 import huTemplates from './locales/hu/templates.json';
+import huTours from './locales/hu/tours.json';
 import huHelp from './locales/hu/help.json';
 import roCommon from './locales/ro/common.json';
 import roApp from './locales/ro/app.json';
 import roTemplates from './locales/ro/templates.json';
+import roTours from './locales/ro/tours.json';
 import roHelp from './locales/ro/help.json';
 import bgCommon from './locales/bg/common.json';
 import bgApp from './locales/bg/app.json';
 import bgTemplates from './locales/bg/templates.json';
+import bgTours from './locales/bg/tours.json';
 import bgHelp from './locales/bg/help.json';
 import elCommon from './locales/el/common.json';
 import elApp from './locales/el/app.json';
 import elTemplates from './locales/el/templates.json';
+import elTours from './locales/el/tours.json';
 import elHelp from './locales/el/help.json';
 import jaCommon from './locales/ja/common.json';
 import jaApp from './locales/ja/app.json';
 import jaTemplates from './locales/ja/templates.json';
+import jaTours from './locales/ja/tours.json';
 import jaHelp from './locales/ja/help.json';
 import zhHansCommon from './locales/zh-Hans/common.json';
 import zhHansApp from './locales/zh-Hans/app.json';
 import zhHansTemplates from './locales/zh-Hans/templates.json';
+import zhHansTours from './locales/zh-Hans/tours.json';
 import zhHansHelp from './locales/zh-Hans/help.json';
 import koCommon from './locales/ko/common.json';
 import koApp from './locales/ko/app.json';
 import koTemplates from './locales/ko/templates.json';
+import koTours from './locales/ko/tours.json';
 import koHelp from './locales/ko/help.json';
 import hiCommon from './locales/hi/common.json';
 import hiApp from './locales/hi/app.json';
 import hiTemplates from './locales/hi/templates.json';
+import hiTours from './locales/hi/tours.json';
 import hiHelp from './locales/hi/help.json';
 import taCommon from './locales/ta/common.json';
 import taApp from './locales/ta/app.json';
 import taTemplates from './locales/ta/templates.json';
+import taTours from './locales/ta/tours.json';
 import taHelp from './locales/ta/help.json';
 import siCommon from './locales/si/common.json';
 import siApp from './locales/si/app.json';
 import siTemplates from './locales/si/templates.json';
+import siTours from './locales/si/tours.json';
 import siHelp from './locales/si/help.json';
 import amCommon from './locales/am/common.json';
 import amApp from './locales/am/app.json';
 import amTemplates from './locales/am/templates.json';
+import amTours from './locales/am/tours.json';
 import amHelp from './locales/am/help.json';
 import swCommon from './locales/sw/common.json';
 import swApp from './locales/sw/app.json';
 import swTemplates from './locales/sw/templates.json';
+import swTours from './locales/sw/tours.json';
 import swHelp from './locales/sw/help.json';
 import haCommon from './locales/ha/common.json';
 import haApp from './locales/ha/app.json';
 import haTemplates from './locales/ha/templates.json';
+import haTours from './locales/ha/tours.json';
 import haHelp from './locales/ha/help.json';
 import yoCommon from './locales/yo/common.json';
 import yoApp from './locales/yo/app.json';
 import yoTemplates from './locales/yo/templates.json';
+import yoTours from './locales/yo/tours.json';
 import yoHelp from './locales/yo/help.json';
 import zuCommon from './locales/zu/common.json';
 import zuApp from './locales/zu/app.json';
 import zuTemplates from './locales/zu/templates.json';
+import zuTours from './locales/zu/tours.json';
 import zuHelp from './locales/zu/help.json';
 import miCommon from './locales/mi/common.json';
 import miApp from './locales/mi/app.json';
 import miTemplates from './locales/mi/templates.json';
+import miTours from './locales/mi/tours.json';
 import miHelp from './locales/mi/help.json';
 import smCommon from './locales/sm/common.json';
 import smApp from './locales/sm/app.json';
 import smTemplates from './locales/sm/templates.json';
+import smTours from './locales/sm/tours.json';
 import smHelp from './locales/sm/help.json';
 import toCommon from './locales/to/common.json';
 import toApp from './locales/to/app.json';
 import toTemplates from './locales/to/templates.json';
+import toTours from './locales/to/tours.json';
 import toHelp from './locales/to/help.json';
 
 /**
@@ -220,6 +250,14 @@ export const supportedLngs = [
   'sm',
   'to',
 ] as const;
+
+const partial = (
+  c: unknown,
+  a: unknown,
+  t: unknown,
+  to: unknown,
+  h: unknown,
+) => ({ common: c, app: a, templates: t, tours: to, help: h });
 
 export const resources = {
   en: {
@@ -280,35 +318,41 @@ export const resources = {
     tours: ptPTTours,
     help: ptPTHelp,
   },
-  it: { common: itCommon, app: itApp, templates: itTemplates, help: itHelp },
-  pl: { common: plCommon, app: plApp, templates: plTemplates, help: plHelp },
-  sv: { common: svCommon, app: svApp, templates: svTemplates, help: svHelp },
-  da: { common: daCommon, app: daApp, templates: daTemplates, help: daHelp },
-  nb: { common: nbCommon, app: nbApp, templates: nbTemplates, help: nbHelp },
-  is: { common: isCommon, app: isApp, templates: isTemplates, help: isHelp },
-  ga: { common: gaCommon, app: gaApp, templates: gaTemplates, help: gaHelp },
-  lt: { common: ltCommon, app: ltApp, templates: ltTemplates, help: ltHelp },
-  lv: { common: lvCommon, app: lvApp, templates: lvTemplates, help: lvHelp },
-  et: { common: etCommon, app: etApp, templates: etTemplates, help: etHelp },
-  cs: { common: csCommon, app: csApp, templates: csTemplates, help: csHelp },
-  hu: { common: huCommon, app: huApp, templates: huTemplates, help: huHelp },
-  ro: { common: roCommon, app: roApp, templates: roTemplates, help: roHelp },
-  bg: { common: bgCommon, app: bgApp, templates: bgTemplates, help: bgHelp },
-  el: { common: elCommon, app: elApp, templates: elTemplates, help: elHelp },
-  ja: { common: jaCommon, app: jaApp, templates: jaTemplates, help: jaHelp },
-  'zh-Hans': { common: zhHansCommon, app: zhHansApp, templates: zhHansTemplates, help: zhHansHelp },
-  ko: { common: koCommon, app: koApp, templates: koTemplates, help: koHelp },
-  hi: { common: hiCommon, app: hiApp, templates: hiTemplates, help: hiHelp },
-  ta: { common: taCommon, app: taApp, templates: taTemplates, help: taHelp },
-  si: { common: siCommon, app: siApp, templates: siTemplates, help: siHelp },
-  am: { common: amCommon, app: amApp, templates: amTemplates, help: amHelp },
-  sw: { common: swCommon, app: swApp, templates: swTemplates, help: swHelp },
-  ha: { common: haCommon, app: haApp, templates: haTemplates, help: haHelp },
-  yo: { common: yoCommon, app: yoApp, templates: yoTemplates, help: yoHelp },
-  zu: { common: zuCommon, app: zuApp, templates: zuTemplates, help: zuHelp },
-  mi: { common: miCommon, app: miApp, templates: miTemplates, help: miHelp },
-  sm: { common: smCommon, app: smApp, templates: smTemplates, help: smHelp },
-  to: { common: toCommon, app: toApp, templates: toTemplates, help: toHelp },
-} as const;
+  it: partial(itCommon, itApp, itTemplates, itTours, itHelp),
+  pl: partial(plCommon, plApp, plTemplates, plTours, plHelp),
+  sv: partial(svCommon, svApp, svTemplates, svTours, svHelp),
+  da: partial(daCommon, daApp, daTemplates, daTours, daHelp),
+  nb: partial(nbCommon, nbApp, nbTemplates, nbTours, nbHelp),
+  is: partial(isCommon, isApp, isTemplates, isTours, isHelp),
+  ga: partial(gaCommon, gaApp, gaTemplates, gaTours, gaHelp),
+  lt: partial(ltCommon, ltApp, ltTemplates, ltTours, ltHelp),
+  lv: partial(lvCommon, lvApp, lvTemplates, lvTours, lvHelp),
+  et: partial(etCommon, etApp, etTemplates, etTours, etHelp),
+  cs: partial(csCommon, csApp, csTemplates, csTours, csHelp),
+  hu: partial(huCommon, huApp, huTemplates, huTours, huHelp),
+  ro: partial(roCommon, roApp, roTemplates, roTours, roHelp),
+  bg: partial(bgCommon, bgApp, bgTemplates, bgTours, bgHelp),
+  el: partial(elCommon, elApp, elTemplates, elTours, elHelp),
+  ja: partial(jaCommon, jaApp, jaTemplates, jaTours, jaHelp),
+  'zh-Hans': partial(
+    zhHansCommon,
+    zhHansApp,
+    zhHansTemplates,
+    zhHansTours,
+    zhHansHelp,
+  ),
+  ko: partial(koCommon, koApp, koTemplates, koTours, koHelp),
+  hi: partial(hiCommon, hiApp, hiTemplates, hiTours, hiHelp),
+  ta: partial(taCommon, taApp, taTemplates, taTours, taHelp),
+  si: partial(siCommon, siApp, siTemplates, siTours, siHelp),
+  am: partial(amCommon, amApp, amTemplates, amTours, amHelp),
+  sw: partial(swCommon, swApp, swTemplates, swTours, swHelp),
+  ha: partial(haCommon, haApp, haTemplates, haTours, haHelp),
+  yo: partial(yoCommon, yoApp, yoTemplates, yoTours, yoHelp),
+  zu: partial(zuCommon, zuApp, zuTemplates, zuTours, zuHelp),
+  mi: partial(miCommon, miApp, miTemplates, miTours, miHelp),
+  sm: partial(smCommon, smApp, smTemplates, smTours, smHelp),
+  to: partial(toCommon, toApp, toTemplates, toTours, toHelp),
+};
 
 export const defaultNS = 'common';

@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Ajutor și tururi", "tours": "Tururi ghidate", "resetAll": "Resetează toate tururile" },
+  "controls": { "next": "Următor", "prev": "Înapoi", "done": "Gata", "progress": "{{current}} din {{total}}" },
+  "welcome": {
+    "title": "Bun venit în LIpsum Writer",
+    "description": "O orientare rapidă despre spații și ecranul de pornire.",
+    "intro": { "title": "Bun venit", "body": "LIpsum Writer este un spațiu de lucru pentru scris construit în jurul <i>spațiilor</i> — un spațiu pe proiect, articol sau carte. Să aruncăm o privire rapidă." },
+    "continue": { "title": "Continuă de unde ai rămas", "body": "Spațiul tău cel mai recent editat este aici. Un clic îl redeschide." },
+    "startSpace": { "title": "Începe ceva nou", "body": "Creează un spațiu nou dintr-un șablon — teză, roman, eseu — și începe să scrii în câteva secunde." }
+  },
+  "writer": {
+    "title": "Spațiul de lucru al scriitorului",
+    "description": "Un tur al editorului, barei laterale și a celei de sus.",
+    "intro": { "title": "Suprafața de scris", "body": "Aici faci treaba. Să vedem navigația, modurile și instrumentele pe care le vei folosi cel mai mult." },
+    "spaceTitle": { "title": "Titlul spațiului", "body": "Apasă pe titlu pentru a redenumi spațiul. Pictograma alături deschide setările." },
+    "sections": { "title": "Secțiuni și documente", "body": "Organizează un spațiu în secțiuni, iar secțiunile în documente. Treci cu mouse-ul peste o secțiune pentru a adăuga un document." },
+    "settings": { "title": "Setările spațiului", "body": "Gestionează șablonul, secțiunile, partajarea și ștergerea acestui spațiu." },
+    "modes": { "title": "Citește · Scrie · Divizat", "body": "Comută între editare, citire sau vizualizare alăturată. Fiecare document își amintește ultimul mod." },
+    "citations": { "title": "Citate", "body": "Deschide panoul de citate pentru a insera referințe în timp ce scrii." },
+    "theme": { "title": "Temă", "body": "Variante clară, întunecată și cu contrast ridicat — alege-o pe cea care îți convine." },
+    "editor": { "title": "Editorul", "body": "Un editor rich-text cu scurtături Markdown, blocuri de cod și citate. Începe să scrii — munca ta se salvează local automat." }
+  },
+  "citations": {
+    "title": "Citate",
+    "description": "Gestionarea referințelor și bibliografiilor.",
+    "intro": { "title": "Bibliografia ta", "body": "Toate referințele unui spațiu trăiesc aici. Importă un fișier BibTeX sau adaugă intrări manual." },
+    "add": { "title": "Adaugă sau importă", "body": "Lasă un fișier .bib sau lipește text BibTeX. Duplicatele sunt sărite automat." },
+    "list": { "title": "Lista", "body": "Caută, filtrează și editează citate inline. De aici poți și exporta toată bibliografia." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Pânza liberă pentru notițe.",
+    "intro": { "title": "Gândește cu voce tare", "body": "BrainSpace este o pânză liberă pentru idei — lasă notițe, conectează-le și formează-ți gândirea înainte să treci la proză." },
+    "addNote": { "title": "Adaugă o notiță", "body": "Lasă o notiță de orice tip pe pânză. Trage pentru a muta, redimensionează din colțuri." },
+    "canvas": { "title": "Pânza", "body": "Shift+clic pe două notițe pentru a le conecta. Apasă pe fundal pentru a deselecta." }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Cabhair agus turais", "tours": "Turais threoraithe", "resetAll": "Athshocraigh gach turas" },
+  "controls": { "next": "Ar aghaidh", "prev": "Siar", "done": "Déanta", "progress": "{{current}} as {{total}}" },
+  "welcome": {
+    "title": "Fáilte go LIpsum Writer",
+    "description": "Treoraíocht thapa ar spásanna agus an scáileán baile.",
+    "intro": { "title": "Fáilte", "body": "Is spás oibre scríbhneoireachta é LIpsum Writer atá tógtha timpeall <i>spásanna</i> — spás amháin in aghaidh an tionscadail, ailt nó leabhair. Déanaimis cuairt thapa." },
+    "continue": { "title": "Lean ar aghaidh ón áit ar fhág tú", "body": "Tá do spás is déanaí curtha in eagar anseo. Cliceáil amháin chun é a athoscailt." },
+    "startSpace": { "title": "Tosaigh rud éigin nua", "body": "Cruthaigh spás úr ó theimpléad — tráchtas, úrscéal, aiste — agus tosaigh ag scríobh i soicind." }
+  },
+  "writer": {
+    "title": "Spás oibre an scríbhneora",
+    "description": "Turas ar an eagarthóir, an taobh-bharra agus an barra uachtarach.",
+    "intro": { "title": "An dromchla scríbhneoireachta", "body": "Seo an áit a ndéanann tú an obair. Féachaimis ar shocrú, móid agus uirlisí a úsáidfidh tú is mó." },
+    "spaceTitle": { "title": "Teideal an spáis", "body": "Cliceáil ar an teideal chun an spás a athainmniú. Osclaíonn an deilbhín in aice leis na socruithe." },
+    "sections": { "title": "Ranna agus doiciméid", "body": "Eagraigh spás i ranna agus ranna i ndoiciméid. Cuir le do luch os cionn rann chun doiciméad a chur leis." },
+    "settings": { "title": "Socruithe an spáis", "body": "Bainistigh teimpléad, ranna, comhroinnt agus scriosadh an spáis seo." },
+    "modes": { "title": "Léigh · Scríobh · Roinn", "body": "Athraigh idir eagarthóireacht, léamh nó amharc taobh le taobh. Cuimhníonn gach doiciméad ar an mód deireanach." },
+    "citations": { "title": "Luanna", "body": "Oscail an painéal luanna chun tagairtí a chur isteach agus tú ag scríobh." },
+    "theme": { "title": "Téama", "body": "Leaganacha geala, dorcha agus ardchodarsnachta — roghnaigh ceann a fheileann do shúile." },
+    "editor": { "title": "An t-eagarthóir", "body": "Eagarthóir saibhir-théacs le haicearraí Markdown, bloic chóid agus luanna. Tosaigh ag clóscríobh — sábhálann do chuid oibre go háitiúil go huathoibríoch." }
+  },
+  "citations": {
+    "title": "Luanna",
+    "description": "Bainistiú tagairtí agus leabharliosta.",
+    "intro": { "title": "Do leabharliosta", "body": "Maireann gach tagairt spáis anseo. Iompórtáil comhad BibTeX nó cuir iontrálacha leis de láimh." },
+    "add": { "title": "Cuir leis nó iompórtáil", "body": "Scaoil comhad .bib nó greamaigh téacs BibTeX. Ní chuirtear dúblach isteach go huathoibríoch." },
+    "list": { "title": "An liosta", "body": "Cuardaigh, scag agus cuir luanna in eagar inlíne. Is féidir an leabharliosta iomlán a easpórtáil ón áit seo freisin." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "An canbhás saor le haghaidh nótaí.",
+    "intro": { "title": "Smaoinigh os ard", "body": "Is canbhás saor le haghaidh smaointe é BrainSpace — scaoil nótaí, ceangail iad agus múnlaigh do smaoineamh sula rachaidh tú go prós." },
+    "addNote": { "title": "Cuir nóta leis", "body": "Scaoil nóta de chineál ar bith ar an canbhás. Tarraing chun bogadh, athraigh méid ó na coirnéil." },
+    "canvas": { "title": "An canbhás", "body": "Shift+cliceáil ar dhá nóta chun iad a cheangal. Cliceáil ar an gcúlra chun díroghnú." }
+  }
+}
