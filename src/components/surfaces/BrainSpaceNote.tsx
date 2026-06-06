@@ -35,7 +35,6 @@ import {
 } from '@/data/note-types';
 import { IMAGE_ACCEPT_ATTR, MAX_NOTE_IMAGES } from '@/data/note-attachments';
 import { addNoteImages, deleteNoteAttachment } from '@/lib/note-attachments';
-import { useNoteAttachments } from '@/hooks/useNoteAttachments';
 import { useObjectUrl } from '@/hooks/useObjectUrl';
 import { assertNever } from '@/lib/invariant';
 import { routes } from '@/lib/routes';
@@ -59,6 +58,9 @@ interface BrainSpaceNoteProps {
   spaceId: string;
   selected: boolean;
   pending: boolean;
+  // Provided by the canvas from a single space-wide attachments query, oldest
+  // first, so each card avoids its own live query.
+  attachments: NoteAttachment[];
   onPick: (e: ReactPointerEvent<HTMLDivElement>) => void;
 }
 
@@ -1126,13 +1128,13 @@ export const BrainSpaceNote = ({
   spaceId,
   selected,
   pending,
+  attachments,
   onPick,
 }: BrainSpaceNoteProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const editing = useNoteEditing(note);
   const dragState = useNoteDrag(note, editing.editing, onPick);
   const actions = useNoteActions(note, spaceId);
-  const attachments = useNoteAttachments(note.id);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const view = useNoteView(note, attachments.length);
 

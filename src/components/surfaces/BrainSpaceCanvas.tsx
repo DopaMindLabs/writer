@@ -9,6 +9,10 @@ import {
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { useNotes } from '@/hooks/useNotes';
+import {
+  useNoteAttachmentsBySpace,
+  attachmentsForNote,
+} from '@/hooks/useNoteAttachments';
 import { useConnections } from '@/hooks/useConnections';
 import { useSpace } from '@/hooks/useSpaces';
 import { useUI } from '@/store/ui';
@@ -24,6 +28,7 @@ import {
   NoteState,
   type Note,
   type Connection,
+  type NoteAttachment,
 } from '@/db/schema';
 import { TypographyLabel, TypographyP } from '@/components/ui/typography';
 
@@ -242,6 +247,7 @@ interface CanvasScrollProps {
   notes: Note[];
   connections: Connection[];
   notesById: Map<string, Note>;
+  attachmentsByNote: Map<string, NoteAttachment[]>;
   focusedNoteId: string | null;
   pendingFrom: string | null;
   extent: ContentExtent;
@@ -258,6 +264,7 @@ const CanvasScroll = ({
   notes,
   connections,
   notesById,
+  attachmentsByNote,
   focusedNoteId,
   pendingFrom,
   extent,
@@ -293,6 +300,7 @@ const CanvasScroll = ({
           spaceId={spaceId}
           selected={focusedNoteId === n.id}
           pending={pendingFrom === n.id}
+          attachments={attachmentsForNote(attachmentsByNote, n.id)}
           onPick={(e) => { onPick(n.id, e); }}
         />
       ))}
@@ -318,6 +326,10 @@ export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
     return m;
   }, [notes]);
 
+  // One live attachments query for the whole space, grouped by note, instead of
+  // one query per note card.
+  const attachmentsByNote = useNoteAttachmentsBySpace(spaceId);
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const { pendingFrom, addNote, handlePick, onBackgroundPointerDown } =
@@ -337,6 +349,7 @@ export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
         notes={notes}
         connections={connections}
         notesById={notesById}
+        attachmentsByNote={attachmentsByNote}
         focusedNoteId={focusedNoteId}
         pendingFrom={pendingFrom}
         extent={extent}

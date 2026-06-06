@@ -68,29 +68,6 @@ const inferModeSuffix = (pathname: string): string => {
   return '';
 };
 
-const extractTextFromLexicalState = (node: unknown): string => {
-  if (!node || typeof node !== 'object') return '';
-  const obj = node as { text?: string; children?: unknown[] };
-  if (typeof obj.text === 'string') return obj.text;
-  if (Array.isArray(obj.children)) {
-    return obj.children.map(extractTextFromLexicalState).join(' ');
-  }
-  return '';
-};
-
-const countWords = (body: string): number => {
-  if (!body) return 0;
-  try {
-    const parsed = JSON.parse(body) as { root?: unknown };
-    if (parsed.root) {
-      return extractTextFromLexicalState(parsed.root).trim().split(/\s+/).filter(Boolean).length;
-    }
-  } catch {
-    /* not JSON, treat as plain text */
-  }
-  return body.trim().split(/\s+/).filter(Boolean).length;
-};
-
 interface SpaceHeaderProps {
   spaceId: string;
   space: Space | undefined;
@@ -714,7 +691,7 @@ const DocLink = ({
   active: boolean;
   indented?: boolean;
 }) => {
-  const wordCount = countWords(doc.body);
+  const wordCount = doc.meta.wordCount;
   return (
     <Link
       to={href}

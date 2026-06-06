@@ -8,6 +8,7 @@ import {
   useEffectiveInspectorConfig,
   useGlobalInspectorConfig,
 } from '@/hooks/useDocInspectorConfig';
+import type { UpdateSpec } from 'dexie';
 import { db } from '@/db/db';
 import type { Doc, Revision } from '@/db/schema';
 import { restoreRevision } from '@/lib/revisions';
@@ -184,10 +185,14 @@ const OutlinePane = () => {
 };
 
 const writeMeta = (doc: Doc, patch: Partial<Doc['meta']>): void => {
-  void db.docs.update(doc.id, {
-    meta: { ...doc.meta, ...patch },
-    updatedAt: Date.now(),
-  });
+  // Update each field by key-path instead of replacing the whole `meta` object,
+  // so a concurrent autosave (which maintains `meta.wordCount`) and these
+  // Inspector edits never clobber each other's fields through a stale read.
+  const changes: UpdateSpec<Doc> = { updatedAt: Date.now() };
+  for (const [key, value] of Object.entries(patch)) {
+    (changes as Record<string, unknown>)[`meta.${key}`] = value;
+  }
+  void db.docs.update(doc.id, changes);
 };
 
 const parseLimit = (raw: string): number | undefined => {

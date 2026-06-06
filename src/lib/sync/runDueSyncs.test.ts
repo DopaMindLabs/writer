@@ -5,16 +5,23 @@ import { sampleSpace } from '@/test/fixtures';
 const isFolderSyncSupported = vi.fn<() => boolean>(() => true);
 const getSyncFolderHandle = vi.fn<() => Promise<unknown>>();
 const ensureWritePermission = vi.fn<(...a: unknown[]) => Promise<boolean>>();
-const getEffectiveIntervalMin = vi.fn<(...a: unknown[]) => Promise<number>>();
+const getEffectiveIntervalMap =
+  vi.fn<(ids: string[]) => Promise<Map<string, number>>>();
 const getLastSyncForSpace =
   vi.fn<(...a: unknown[]) => Promise<{ when: number } | undefined>>();
 const syncSpaceToFolder = vi.fn<(...a: unknown[]) => Promise<unknown>>();
+
+// Resolve every requested space to one interval — the scheduler's common case.
+const intervalMapOf =
+  (min: number) =>
+  (ids: string[]): Promise<Map<string, number>> =>
+    Promise.resolve(new Map(ids.map((id) => [id, min])));
 
 vi.mock('./folderSync', () => ({
   isFolderSyncSupported: () => isFolderSyncSupported(),
   getSyncFolderHandle: () => getSyncFolderHandle(),
   ensureWritePermission: (...a: unknown[]) => ensureWritePermission(...a),
-  getEffectiveIntervalMin: (...a: unknown[]) => getEffectiveIntervalMin(...a),
+  getEffectiveIntervalMap: (ids: string[]) => getEffectiveIntervalMap(ids),
   getLastSyncForSpace: (...a: unknown[]) => getLastSyncForSpace(...a),
   syncSpaceToFolder: (...a: unknown[]) => syncSpaceToFolder(...a),
 }));
@@ -28,7 +35,7 @@ beforeEach(async () => {
   isFolderSyncSupported.mockReturnValue(true);
   getSyncFolderHandle.mockResolvedValue(handle);
   ensureWritePermission.mockResolvedValue(true);
-  getEffectiveIntervalMin.mockResolvedValue(5);
+  getEffectiveIntervalMap.mockImplementation(intervalMapOf(5));
   getLastSyncForSpace.mockResolvedValue(undefined);
   syncSpaceToFolder.mockResolvedValue({});
   await db.spaces.put(sampleSpace);
@@ -47,7 +54,7 @@ describe('runDueSyncs', () => {
   });
 
   it('skips when the interval is off', async () => {
-    getEffectiveIntervalMin.mockResolvedValue(0);
+    getEffectiveIntervalMap.mockImplementation(intervalMapOf(0));
     await runDueSyncs();
     expect(syncSpaceToFolder).not.toHaveBeenCalled();
   });

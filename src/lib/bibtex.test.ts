@@ -76,6 +76,14 @@ describe('parseBibtexText', () => {
     expect(out).toEqual([]);
   });
 
+  it('does not store the whole-file raw text on each citation', async () => {
+    const out = await parseBibtexText(SAMPLE, 's1');
+    expect(out).toHaveLength(4);
+    for (const c of out) {
+      expect(c.raw).toBeUndefined();
+    }
+  });
+
 });
 
 describe('parseBibtexFile', () => {
@@ -226,5 +234,35 @@ describe('importCitations', () => {
     expect(second.added).toBe(0);
     expect(second.skipped).toBe(4);
     expect(await db.citations.count()).toBe(4);
+  });
+
+  it('collapses keys repeated within a single import to one row', async () => {
+    const dupes = `
+@article{same2021, author = {A}, title = {First}, year = {2021}}
+@article{same2021, author = {A}, title = {Second}, year = {2021}}
+@book{unique2021, author = {B}, title = {Other}, year = {2021}}
+`;
+    const cs = await parseBibtexText(dupes, 's1');
+    expect(cs).toHaveLength(3);
+
+    const res = await importCitations(cs);
+    expect(res.added).toBe(2);
+    expect(res.skipped).toBe(1);
+    expect(await db.citations.where('[spaceId+key]').equals(['s1', 'same2021']).count()).toBe(1);
+  });
+
+  it('imports across multiple spaces and scopes duplicate detection per space', async () => {
+    const a = await parseBibtexText('@article{k, author = {A}, title = {T}, year = {2020}}', 's1');
+    const b = await parseBibtexText('@article{k, author = {A}, title = {T}, year = {2020}}', 's2');
+    const res = await importCitations([...a, ...b]);
+    // Same key in two different spaces are two distinct citations.
+    expect(res.added).toBe(2);
+    expect(res.skipped).toBe(0);
+    expect(await db.citations.count()).toBe(2);
+  });
+
+  it('returns zero counts for an empty import', async () => {
+    const res = await importCitations([]);
+    expect(res).toEqual({ added: 0, skipped: 0 });
   });
 });

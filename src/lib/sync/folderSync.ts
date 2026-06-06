@@ -131,6 +131,22 @@ export const getEffectiveIntervalMin = async (
   return getDefaultIntervalMin();
 };
 
+// Resolve effective intervals for many spaces with a single read of syncConfigs,
+// so the once-a-minute scheduler does not issue two reads per space.
+export const getEffectiveIntervalMap = async (
+  spaceIds: string[],
+): Promise<Map<string, number>> => {
+  const configs = await db.syncConfigs.toArray();
+  const byId = new Map(configs.map((c) => [c.spaceId, c.intervalMin]));
+  const defaultMin = byId.get(GLOBAL_CONFIG_ID) ?? DEFAULT_INTERVAL_MIN;
+  const out = new Map<string, number>();
+  for (const id of spaceIds) {
+    const own = byId.get(id) ?? INHERIT_INTERVAL;
+    out.set(id, own === INHERIT_INTERVAL ? defaultMin : own);
+  }
+  return out;
+};
+
 // ---------------------------------------------------------------------------
 // Sync history (`syncs` table).
 // ---------------------------------------------------------------------------
@@ -138,8 +154,13 @@ export const getEffectiveIntervalMin = async (
 export const getLastSyncForSpace = async (
   spaceId: string,
 ): Promise<SyncEntry | undefined> => {
-  const rows = await db.syncs.where('spaceId').equals(spaceId).toArray();
-  return rows.sort((a, b) => b.when - a.when)[0];
+  // Newest-first off the `[spaceId+when]` index, so the due-check reads a single
+  // row instead of loading and sorting the whole per-space history.
+  return db.syncs
+    .where('[spaceId+when]')
+    .between([spaceId, -Infinity], [spaceId, Infinity])
+    .reverse()
+    .first();
 };
 
 export const getLastSyncedAt = async (): Promise<number | null> => {
