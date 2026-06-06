@@ -1,7 +1,7 @@
 # BrainSpace
 
-A canvas for thinking — capture loose notes, ideas, and fragments before they
-become prose. Every space has one.
+A canvas for capturing loose notes, ideas, and fragments before they become
+prose. Every space has one.
 
 ## At a glance
 
@@ -27,8 +27,7 @@ source at a glance — a light structure on an otherwise free canvas.
 
 ## Connections
 
-Draw **connections** between notes to map how ideas relate. The web of
-connections often reveals the shape of an argument before you've written a word.
+Draw **connections** between notes to map how ideas relate.
 
 ## Images
 

@@ -35,9 +35,8 @@ your current library.
 - Connect a **sync folder** to mirror a space to local storage, set the
   interval, and run a sync on demand.
 
-Because storage is local, **regular backups are your safety net**. Export
-before clearing browser data, switching devices, or trying something
-experimental.
+Storage is local, so **regular backups are essential**. Export before clearing
+browser data, switching devices, or trying something experimental.
 
 > This is an evolving, experimental app. Treat your exports as the source of
 > truth and back up often.

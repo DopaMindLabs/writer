@@ -1,6 +1,6 @@
 # Writing & editing
 
-The editor is built for long-form prose. It stays quiet so you can think.
+The editor is built for long-form prose.
 
 ## At a glance
 
@@ -32,8 +32,8 @@ readable.
 
 ## Staying focused
 
-When you want the world to fall away, switch to **focus mode** (**⌘\\**). The
-chrome recedes and only your words remain — see [Views & modes](views-and-modes).
+Switch to **focus mode** (**⌘\\**) to hide everything but your text. See
+[Views & modes](views-and-modes).
 
 ## Related
 
