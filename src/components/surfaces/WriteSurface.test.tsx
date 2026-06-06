@@ -68,6 +68,31 @@ describe('WriteSurface', () => {
     });
   });
 
+  it('does not revert Inspector meta written after render while a save is pending', async () => {
+    // The `doc` prop is a lagging live-query value. Render with a stale prop,
+    // then simulate the Inspector writing new meta straight to the DB before the
+    // prop catches up. Autosave must not restore the prop's old meta.
+    const stale: Doc = { ...doc, meta: { wordCount: 2, status: 'draft' } };
+    await db.docs.put(stale);
+    const { getByTestId } = render(<WriteSurface doc={stale} mode="write" />);
+
+    await db.docs.update(doc.id, {
+      'meta.status': 'complete',
+      'meta.wordLimit': 500,
+    });
+
+    await userEvent.click(getByTestId('editor-stub'));
+
+    await waitFor(async () => {
+      const fresh = await db.docs.get(doc.id);
+      // Word count is refreshed by autosave...
+      expect(fresh?.meta.wordCount).toBe(1);
+      // ...but the concurrent Inspector edits are preserved, not clobbered.
+      expect(fresh?.meta.status).toBe('complete');
+      expect(fresh?.meta.wordLimit).toBe(500);
+    });
+  });
+
   it('shows no lock banner and leaves the editor editable when unlocked', () => {
     const { queryByTestId, getByTestId } = render(
       <WriteSurface doc={doc} mode="write" />,

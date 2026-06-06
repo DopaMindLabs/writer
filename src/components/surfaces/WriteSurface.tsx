@@ -36,7 +36,7 @@ const LockBanner = ({ doc }: { doc: Doc }) => {
       action={t('inspector.lock.unlock')}
       onAction={() => {
         void db.docs.update(doc.id, {
-          meta: { ...doc.meta, status: 'draft' },
+          'meta.status': 'draft',
           updatedAt: Date.now(),
         });
       }}
@@ -51,10 +51,6 @@ const LockBanner = ({ doc }: { doc: Doc }) => {
 export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) => {
   const docIdRef = useRef(doc.id);
   docIdRef.current = doc.id;
-  // Track the latest meta so autosave can refresh the cached word count without
-  // clobbering other meta fields (status, limits, due date).
-  const metaRef = useRef(doc.meta);
-  metaRef.current = doc.meta;
   const readingWidth = useUI((s) => s.readingWidth);
   const restoreNonce = useUI((s) => s.restoreNonces[doc.id] ?? 0);
 
@@ -85,9 +81,12 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
     void db.docs.update(docIdRef.current, {
       body: serialized,
       updatedAt: Date.now(),
-      // Cache the word count so the sidebar reads it cheaply instead of
-      // re-parsing the body on every render. Preserve all other meta fields.
-      meta: { ...metaRef.current, wordCount: countWords(serialized) },
+      // Cache the word count so the sidebar reads it cheaply. Write the nested
+      // field by key-path rather than replacing the whole `meta` object: autosave
+      // runs after every edit and on unmount, and its `doc` prop is a lagging
+      // live-query value, so a whole-object write could clobber an Inspector
+      // change (status/limits/due date) that the prop has not caught up to yet.
+      'meta.wordCount': countWords(serialized),
     });
     // Best-effort, throttled history capture; never blocks or throws into the
     // editor's onChange.
