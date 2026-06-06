@@ -29,9 +29,8 @@ Select text and use the floating toolbar, or use the keyboard:
 
 ## Headings and structure
 
-Headings do more than look big — they define the document **outline** shown in
-the inspector, which makes navigating long pieces effortless. Use them
-generously.
+Headings define the document **outline** shown in the inspector. Use them to
+keep long pieces navigable.
 
 ## Lists and quotes
 
