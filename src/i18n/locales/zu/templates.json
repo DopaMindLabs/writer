@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Okungenalutho", "tag": "OK", "description": "qala phansi" },
+  "fiction": { "label": "Ukubhala ngokuqambayo", "tag": "FI", "description": "inoveli · indaba emfushane · iskripthi" },
+  "humanities": { "label": "Indlela yokufunda · ucwaningo", "tag": "TH", "description": "umsebenzi omude wezemfundo" },
+  "journal": { "label": "Idayari", "tag": "ID", "description": "nsuku zonke, ngaphandle kwengcindezi" },
+  "serial": { "label": "Uchungechunge", "tag": "SE", "description": "ama-eseyi aphindaphindwayo · iphephandaba" },
+  "six": { "label": "Iminyango Eyisithupha · okuhambisanayo", "tag": "SD", "description": "umhlaba ohlanganyelwe · ababhali abaningi" },
+  "technical": { "label": "Ezobuchwepheshe · Umbiko wesayensi", "tag": "TX", "description": "Sayensi · izindlela · izibalo" },
+  "bioinformatics": { "label": "I-Bioinformatics", "tag": "BX", "description": "amapayipi · izindlela · incwadi yelabhorethri" }
+}

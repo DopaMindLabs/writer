@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Pomoc i przewodniki", "tours": "Przewodniki", "resetAll": "Zresetuj wszystkie przewodniki" },
+  "controls": { "next": "Dalej", "prev": "Wstecz", "done": "Gotowe", "progress": "{{current}} z {{total}}" },
+  "welcome": {
+    "title": "Witaj w LIpsum Writer",
+    "description": "Krótkie wprowadzenie do spacjów i ekranu głównego.",
+    "intro": { "title": "Witaj", "body": "LIpsum Writer to przestrzeń do pisania zbudowana wokół <i>spacjów</i> — jeden spacja na projekt, artykuł lub książkę. Rozejrzyjmy się szybko." },
+    "continue": { "title": "Kontynuuj od miejsca, w którym skończyłeś", "body": "Twój ostatnio edytowany spacja jest tutaj. Jedno kliknięcie i go ponownie otworzysz." },
+    "startSpace": { "title": "Zacznij coś nowego", "body": "Utwórz nowy spacja z szablonu — pracę, powieść, esej — i zacznij pisać w kilka sekund." }
+  },
+  "writer": {
+    "title": "Miejsce pracy pisarza",
+    "description": "Wycieczka po edytorze, pasku bocznym i górnym.",
+    "intro": { "title": "Powierzchnia pisania", "body": "Tutaj wykonujesz pracę. Spójrzmy na nawigację, tryby i narzędzia, których będziesz używać najczęściej." },
+    "spaceTitle": { "title": "Tytuł spacja", "body": "Kliknij tytuł, aby zmienić nazwę spacja. Ikona obok otwiera ustawienia." },
+    "sections": { "title": "Sekcje i dokumenty", "body": "Podziel spacja na sekcje, a sekcje na dokumenty. Najedź na sekcję, aby dodać dokument." },
+    "settings": { "title": "Ustawienia spacja", "body": "Zarządzaj szablonem, sekcjami, udostępnianiem i usuwaniem tego spacja." },
+    "modes": { "title": "Czytaj · Pisz · Podziel", "body": "Przełączaj się między edycją, czytaniem lub widokiem obok siebie. Każdy dokument pamięta ostatni tryb." },
+    "citations": { "title": "Cytaty", "body": "Otwórz panel cytatów, aby wstawiać odniesienia podczas pisania." },
+    "theme": { "title": "Motyw", "body": "Warianty jasny, ciemny i o wysokim kontraście — wybierz taki, który Ci pasuje." },
+    "editor": { "title": "Edytor", "body": "Edytor rich-text ze skrótami Markdown, blokami kodu i cytatami. Zacznij pisać — Twoja praca zapisuje się lokalnie automatycznie." }
+  },
+  "citations": {
+    "title": "Cytaty",
+    "description": "Zarządzanie odniesieniami i bibliografiami.",
+    "intro": { "title": "Twoja bibliografia", "body": "Wszystkie odniesienia spacja są tutaj. Zaimportuj plik BibTeX lub dodaj wpisy ręcznie." },
+    "add": { "title": "Dodaj lub zaimportuj", "body": "Upuść plik .bib lub wklej tekst BibTeX. Duplikaty są automatycznie pomijane." },
+    "list": { "title": "Lista", "body": "Wyszukuj, filtruj i edytuj cytaty inline. Stąd możesz też wyeksportować pełną bibliografię." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Wolne płótno na notatki.",
+    "intro": { "title": "Myśl na głos", "body": "BrainSpace to wolne płótno na pomysły — upuszczaj notatki, łącz je i kształtuj myśli, zanim przejdziesz do prozy." },
+    "addNote": { "title": "Dodaj notatkę", "body": "Upuść notatkę dowolnego rodzaju na płótno. Przeciągnij, aby przesunąć, zmień rozmiar z rogów." },
+    "canvas": { "title": "Płótno", "body": "Shift+klik na dwóch notatkach, aby je połączyć. Kliknij tło, aby odznaczyć." }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Palaišanas kļūda",
+  "bootErrorHintBefore": "Mēģini ",
+  "bootErrorHintAfter": ", lai atiestatītu vietējo datubāzi.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Palaiž…"
+}

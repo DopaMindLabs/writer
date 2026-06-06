@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Hapa whakaoho",
+  "bootErrorHintBefore": "Ngāna ",
+  "bootErrorHintAfter": " hei tautuhi anō i te pātengi raraunga ā-rohe.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Te whakaoho…"
+}

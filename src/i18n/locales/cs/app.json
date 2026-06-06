@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Chyba spuštění",
+  "bootErrorHintBefore": "Zkus ",
+  "bootErrorHintAfter": " k resetování místní databáze.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Spouští se…"
+}

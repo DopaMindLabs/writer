@@ -1,0 +1,14 @@
+{
+  "untitled": "無題",
+  "brainSpace": "Brain Space",
+  "github": "GitHub",
+  "home": "ホーム",
+  "about": "概要",
+  "settings": "設定",
+  "help": "ヘルプ",
+  "back": "戻る",
+  "comingSoon": {
+    "tooltip": "近日公開",
+    "defaultHint": "まだ利用できません — 近日公開。"
+  }
+}

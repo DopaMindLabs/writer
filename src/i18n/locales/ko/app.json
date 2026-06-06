@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "부팅 오류",
+  "bootErrorHintBefore": "로컬 데이터베이스를 재설정하려면 ",
+  "bootErrorHintAfter": " 을(를) 시도하세요.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "부팅 중…"
+}

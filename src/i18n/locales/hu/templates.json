@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Üres", "tag": "UR", "description": "kezdés nulláról" },
+  "fiction": { "label": "Szépirodalmi írás", "tag": "FI", "description": "regény · novella · forgatókönyv" },
+  "humanities": { "label": "Szakdolgozat · kutatás", "tag": "TH", "description": "hosszú akadémiai munka" },
+  "journal": { "label": "Napló", "tag": "NA", "description": "napi, nyomás nélkül" },
+  "serial": { "label": "Sorozat", "tag": "SO", "description": "ismétlődő esszék · hírlevél" },
+  "six": { "label": "Hat Ajtó · együttműködő", "tag": "SD", "description": "közös világ · több szerző" },
+  "technical": { "label": "Műszaki · Tudományos jelentés", "tag": "TX", "description": "Tudományos · módszerek · egyenletek" },
+  "bioinformatics": { "label": "Bioinformatika", "tag": "BX", "description": "csővezetékek · módszerek · laboratóriumi napló" }
+}

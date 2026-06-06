@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Indítási hiba",
+  "bootErrorHintBefore": "Próbáld ",
+  "bootErrorHintAfter": " a helyi adatbázis visszaállításához.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Indul…"
+}

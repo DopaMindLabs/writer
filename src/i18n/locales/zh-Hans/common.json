@@ -1,0 +1,14 @@
+{
+  "untitled": "无标题",
+  "brainSpace": "Brain Space",
+  "github": "GitHub",
+  "home": "首页",
+  "about": "关于",
+  "settings": "设置",
+  "help": "帮助",
+  "back": "返回",
+  "comingSoon": {
+    "tooltip": "即将推出",
+    "defaultHint": "尚未可用 — 即将推出。"
+  }
+}

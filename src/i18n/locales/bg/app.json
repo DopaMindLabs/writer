@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Грешка при стартиране",
+  "bootErrorHintBefore": "Опитай ",
+  "bootErrorHintAfter": ", за да нулираш локалната база данни.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Стартиране…"
+}

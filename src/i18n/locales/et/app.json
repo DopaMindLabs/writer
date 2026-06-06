@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Käivitamise viga",
+  "bootErrorHintBefore": "Proovi ",
+  "bootErrorHintAfter": " kohaliku andmebaasi lähtestamiseks.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Käivitub…"
+}

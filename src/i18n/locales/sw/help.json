@@ -1,0 +1,48 @@
+{
+  "title": "Msaada",
+  "subtitle": "Miongozo na majibu ya kupata zaidi kutoka kwa uandishi wako.",
+  "shellSubtitle": "Msaada / Hati",
+  "navGroup": "Msaada",
+  "navOverview": "Muhtasari",
+  "navAria": "Mada za msaada",
+  "searchPlaceholder": "Tafuta msaada…",
+  "searchLabel": "Tafuta makala za msaada",
+  "noResults": "Hakuna makala yanayolingana na \"{{query}}\".",
+  "resultsCount_one": "Matokeo {{count}}",
+  "resultsCount_other": "Matokeo {{count}}",
+  "browseAll": "Vinjari mada zote",
+  "languagePickerLabel": "Lugha ya msaada",
+  "allFeatures": {
+    "title": "Tazama vipengele vyote",
+    "subtitle": "Orodha kamili ya kila kitu unachoweza kufanya — kila kipengee kinaunganisha kwa mwongozo wake."
+  },
+  "onThisPage": "Kwenye ukurasa huu",
+  "related": "Inayohusiana",
+  "backToHelp": "Msaada wote",
+  "openCenter": "Fungua Kituo cha msaada kamili",
+  "articleNotFound": "Makala hiyo ya msaada haipo.",
+  "machineTranslationBanner": {
+    "label": "Tafsiri ya kiotomatiki",
+    "body": "Makala hii imetafsiriwa kiotomatiki. Tunaomba radhi kwa makosa yoyote — tuma maoni ili tuyarekebishe.",
+    "feedbackLinkLabel": "tuma maoni"
+  },
+  "palette": {
+    "title": "Msaada",
+    "description": "Tafuta katika Kituo cha msaada au ruka kwa njia ya mkato.",
+    "shortcutsHeading": "Njia za mkato za kibodi",
+    "hint": "Bonyeza Esc kufunga"
+  },
+  "shortcuts": { "help": "Fungua msaada", "focus": "Geuza hali ya umakini" },
+  "categories": {
+    "getting-started": "Kuanza",
+    "writing": "Kuandika na kuhariri",
+    "organizing": "Kupanga",
+    "views": "Mionekano na modi",
+    "research": "Utafiti na nukuu",
+    "brainspace": "BrainSpace",
+    "annotations": "Maelezo na alama",
+    "customization": "Ubinafsishaji na mipangilio",
+    "data": "Data yako",
+    "mobile": "Simu"
+  }
+}

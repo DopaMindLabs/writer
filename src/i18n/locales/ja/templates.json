@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "空白", "tag": "BL", "description": "ゼロから始める" },
+  "fiction": { "label": "フィクションの執筆", "tag": "FI", "description": "小説 · 短編 · 脚本" },
+  "humanities": { "label": "論文 · 研究", "tag": "TH", "description": "長文の学術作品" },
+  "journal": { "label": "日記", "tag": "JO", "description": "毎日、気軽に" },
+  "serial": { "label": "連載", "tag": "SE", "description": "定期エッセイ · ニュースレター" },
+  "six": { "label": "シックスドアーズ · 共同", "tag": "SD", "description": "共有世界 · 複数の作家" },
+  "technical": { "label": "技術 · 科学レポート", "tag": "TX", "description": "科学 · 方法 · 数式" },
+  "bioinformatics": { "label": "バイオインフォマティクス", "tag": "BX", "description": "パイプライン · 方法 · 実験ノート" }
+}

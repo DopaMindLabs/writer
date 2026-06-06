@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Ræsivilla",
+  "bootErrorHintBefore": "Prófaðu ",
+  "bootErrorHintAfter": " til að endurstilla staðbundinn gagnagrunn.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Ræsi upp…"
+}

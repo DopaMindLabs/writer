@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Usizo nezohambo", "tours": "Uhambo oluholwayo", "resetAll": "Setha kabusha konke uhambo" },
+  "controls": { "next": "Okulandelayo", "prev": "Emuva", "done": "Kwenziwe", "progress": "{{current}} kwabangu-{{total}}" },
+  "welcome": {
+    "title": "Siyakwamukela ku-LIpsum Writer",
+    "description": "Ukubongisa okusheshayo ngezikhala nesikrini sasekhaya.",
+    "intro": { "title": "Siyakwamukela", "body": "I-LIpsum Writer iyindawo yokusebenzela yokubhala eyakhiwe ngokuzungeza <i>izikhala</i> — isikhala esisodwa kuwo wonke umsebenzi, isihloko noma incwadi. Asibhekise ngokushesha." },
+    "continue": { "title": "Qhubeka lapho ushiye khona", "body": "Isikhala sakho sakamuva esihlelwa sikhona lapha. Ukuchofoza okukodwa kuyasivula futhi." },
+    "startSpace": { "title": "Qala okuthile okusha", "body": "Yenza isikhala esisha kusukela kuthempulethi — i-thesis, inoveli, indaba — futhi uqale ukubhala emasekhondini." }
+  },
+  "writer": {
+    "title": "Indawo yomsebenzi yombhali",
+    "description": "Uhambo lwesihleli, ibha eseceleni nebha engenhla.",
+    "intro": { "title": "Indawo yokubhala", "body": "Lapha wenza umsebenzi. Asibheke ukuzulazula, amamodi nezinsiza ozozisebenzisa kakhulu." },
+    "spaceTitle": { "title": "Isihloko sesikhala", "body": "Chofoza isihloko ukuze uqambe kabusha igama lesikhala. Isithonjana esiseduze sivula izilungiselelo zaso." },
+    "sections": { "title": "Izigaba namadokhumenti", "body": "Hlanganisa isikhala ezigabeni, nezigaba ezo emadokhumenti. Beka phezu kwesigaba ukungeza idokhumenti." },
+    "settings": { "title": "Izilungiselelo zesikhala", "body": "Phatha ithempulethi, izigaba, ukwabelana nokususa lesi sikhala." },
+    "modes": { "title": "Funda · Bhala · Hlukanisa", "body": "Shintsha phakathi kokuhlela, ukufunda noma ukubuka eduze nawe. Idokhumenti ngalinye likhumbula imodi yalo yokugcina." },
+    "citations": { "title": "Izicaphuno", "body": "Vula iphaneli yezicaphuno ukuze ufake izinkomba ngenkathi ubhala." },
+    "theme": { "title": "Itimu", "body": "Okukhanyayo, okumnyama nokuhlukile okuphezulu — khetha okufanele amehlo akho." },
+    "editor": { "title": "Umhleli", "body": "Umhleli wombhalo ocebile onezinqamuleli ze-Markdown, amabhulokhi ekhodi nezicaphuno. Qala ukuthayipha — umsebenzi wakho ulondolozwa ngokuzenzakalelayo endaweni." }
+  },
+  "citations": {
+    "title": "Izicaphuno",
+    "description": "Ukuphathwa kwezinkomba namabhayibhulografi.",
+    "intro": { "title": "Ibhibhulografi yakho", "body": "Zonke izinkomba zesikhala zihlala lapha. Ngenisa ifayela le-BibTeX noma ngeza amangenelo ngezandla." },
+    "add": { "title": "Ngeza noma ngenisa", "body": "Yehlisa ifayela le-.bib noma namathisela umbhalo we-BibTeX. Izitebhuli ziyeqelwa ngokuzenzakalelayo." },
+    "list": { "title": "Uhlu", "body": "Sesha, hlola futhi uhlele izicaphuno ngaphakathi. Lapha futhi ungakhipha ibhibhulografi ephelele." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Ikhanvasi yamanothi ekhululekile.",
+    "intro": { "title": "Cabanga kanzima", "body": "I-BrainSpace iyikhanvasi ekhululekile yemibono — yehlisa amanothi, uwaxhume futhi ulungiselele ukucabanga kwakho ngaphambi kokuya enkulumeni." },
+    "addNote": { "title": "Engeza inothi", "body": "Yehlisa inothi noma yiluphi uhlobo ekhanvasini. Donsa ukuze ukuhambise, shintsha usayizi kusukela emagumbini." },
+    "canvas": { "title": "Ikhanvasi", "body": "Shift+chofoza amanothi amabili ukuwaxhuma. Chofoza ngemuva ukuze ukhulule ukukhetha." }
+  }
+}

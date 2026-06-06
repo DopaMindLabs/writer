@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "துவக்க பிழை",
+  "bootErrorHintBefore": "உள்ளூர் தரவுத்தளத்தை மீட்டமைக்க ",
+  "bootErrorHintAfter": " முயற்சிக்கவும்.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "துவங்குகிறது…"
+}

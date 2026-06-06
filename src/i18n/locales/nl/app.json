@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Opstartfout",
+  "bootErrorHintBefore": "Probeer ",
+  "bootErrorHintAfter": " om de lokale database opnieuw te initialiseren.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Opstarten…"
+}

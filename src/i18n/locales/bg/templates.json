@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Празно", "tag": "ПР", "description": "започни от нула" },
+  "fiction": { "label": "Художествена литература", "tag": "FI", "description": "роман · разказ · сценарий" },
+  "humanities": { "label": "Дипломна работа · изследване", "tag": "TH", "description": "дълга академична работа" },
+  "journal": { "label": "Дневник", "tag": "ДН", "description": "ежедневен, без напрежение" },
+  "serial": { "label": "Поредица", "tag": "SE", "description": "повтарящи се есета · бюлетин" },
+  "six": { "label": "Шест Врати · съвместен", "tag": "SD", "description": "общ свят · много автори" },
+  "technical": { "label": "Технически · Научен доклад", "tag": "TX", "description": "Научен · методи · уравнения" },
+  "bioinformatics": { "label": "Биоинформатика", "tag": "BX", "description": "конвейери · методи · лабораторен дневник" }
+}

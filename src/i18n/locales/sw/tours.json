@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Msaada na ziara", "tours": "Ziara zilizoongozwa", "resetAll": "Weka upya ziara zote" },
+  "controls": { "next": "Inayofuata", "prev": "Rudi", "done": "Imekamilika", "progress": "{{current}} kati ya {{total}}" },
+  "welcome": {
+    "title": "Karibu kwenye LIpsum Writer",
+    "description": "Utangulizi wa haraka wa nafasi na skrini ya nyumbani.",
+    "intro": { "title": "Karibu", "body": "LIpsum Writer ni eneo la kazi la uandishi lililojengwa karibu na <i>nafasi</i> — nafasi moja kwa kila mradi, makala au kitabu. Hebu tuangalie kwa haraka." },
+    "continue": { "title": "Endelea ulipoachia", "body": "Nafasi yako iliyohaririwa hivi karibuni iko hapa. Bonyeza mara moja kuifungua tena." },
+    "startSpace": { "title": "Anza kitu kipya", "body": "Tengeneza nafasi mpya kutoka kwa kiolezo — tasnifu, riwaya, insha — na uanze kuandika kwa sekunde." }
+  },
+  "writer": {
+    "title": "Eneo la kazi la mwandishi",
+    "description": "Ziara ya mhariri, upau wa kando na upau wa juu.",
+    "intro": { "title": "Uso wa uandishi", "body": "Hapa unafanya kazi. Hebu tuangalie urambazaji, hali na zana utakazotumia sana." },
+    "spaceTitle": { "title": "Kichwa cha nafasi", "body": "Bonyeza kichwa kubadilisha jina la nafasi. Aikoni iliyo karibu inafungua mipangilio yake." },
+    "sections": { "title": "Sehemu na hati", "body": "Panga nafasi kwa sehemu, na sehemu kwa hati. Pitisha juu ya sehemu kuongeza hati." },
+    "settings": { "title": "Mipangilio ya nafasi", "body": "Dhibiti kiolezo, sehemu, kushiriki na kufuta nafasi hii." },
+    "modes": { "title": "Soma · Andika · Gawanya", "body": "Badilisha kati ya kuhariri, kusoma au mtazamo wa bega kwa bega. Kila hati hukumbuka hali yake ya mwisho." },
+    "citations": { "title": "Nukuu", "body": "Fungua paneli ya nukuu kuingiza marejeo ukiandika." },
+    "theme": { "title": "Mandhari", "body": "Mwanga, giza na tofauti kubwa — chagua inayofaa macho yako." },
+    "editor": { "title": "Mhariri", "body": "Mhariri wa maandishi tajiri wenye njia za mkato za Markdown, vizuizi vya msimbo na nukuu. Anza kuandika — kazi yako huhifadhiwa ndani ya nchi kiotomatiki." }
+  },
+  "citations": {
+    "title": "Nukuu",
+    "description": "Usimamizi wa marejeo na biblia.",
+    "intro": { "title": "Biblia yako", "body": "Marejeo yote ya nafasi yanaishi hapa. Ingiza faili ya BibTeX au ongeza vifaa kwa mkono." },
+    "add": { "title": "Ongeza au ingiza", "body": "Dondosha faili ya .bib au bandika maandishi ya BibTeX. Nakala hupitwa kiotomatiki." },
+    "list": { "title": "Orodha", "body": "Tafuta, chuja na hariri nukuu ndani ya mstari. Kutoka hapa unaweza pia kusafirisha biblia nzima." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Mkanda huru wa maelezo.",
+    "intro": { "title": "Fikiria kwa sauti", "body": "BrainSpace ni mkanda huru kwa mawazo — dondosha maelezo, yaunganishe na utengeneze mawazo yako kabla ya kwenda kwa nathari." },
+    "addNote": { "title": "Ongeza ujumbe", "body": "Dondosha ujumbe wa aina yoyote kwenye mkanda. Buruta kusonga, badilisha saizi kutoka kona." },
+    "canvas": { "title": "Mkanda", "body": "Shift+bonyeza maelezo mawili ili kuyaunganisha. Bonyeza usuli kufuta uteuzi." }
+  }
+}

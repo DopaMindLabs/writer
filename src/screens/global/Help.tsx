@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { NavShell } from '@/components/chrome/NavShell';
 import type { NavTabDef, NavTabGroup } from '@/components/chrome/NavTabs';
 import { Card } from '@/components/ui/card';
+import { LanguagePicker } from '@/components/ui/LanguagePicker';
 import { Link } from '@/components/ui/Link';
 import {
   TypographyH1,
@@ -87,8 +88,15 @@ const HelpLanding = ({ locale }: { readonly locale: string }) => {
     <div data-testid="help-landing">
       <TypographyH1>{t('title')}</TypographyH1>
       <TypographyLead className="mt-3">{t('subtitle')}</TypographyLead>
-      <div className="mt-8">
-        <HelpSearch />
+      <div className="mt-8 flex items-start gap-4">
+        <div className="flex-1">
+          <HelpSearch />
+        </div>
+        <LanguagePicker
+          ariaLabel={t('languagePickerLabel')}
+          className="w-64 shrink-0"
+          data-testid="help-language-picker"
+        />
       </div>
       <AllFeaturesLink />
       <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -146,6 +154,8 @@ export const HelpScreen = () => {
     return <HelpArticle slug={slug} />;
   };
 
+  const showMachineNotice = locale !== 'en';
+
   return (
     <NavShell
       variant="global"
@@ -155,6 +165,25 @@ export const HelpScreen = () => {
       active={active}
       onSelect={handleSelect}
     >
+      {showMachineNotice ? (
+        <div
+          role="note"
+          data-testid="help-machine-translation-banner"
+          className="mb-6 border border-rule bg-paper-2 p-3 text-[13px] text-ink-2"
+        >
+          <div className="mb-1 flex items-center justify-between gap-4">
+            <div className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
+              {t('machineTranslationBanner.label')}
+            </div>
+            <LanguagePicker
+              ariaLabel={t('languagePickerLabel')}
+              className="w-64 shrink-0"
+              data-testid="help-banner-language-picker"
+            />
+          </div>
+          {t('machineTranslationBanner.body')}
+        </div>
+      ) : null}
       {renderMain()}
     </NavShell>
   );

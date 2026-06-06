@@ -1,0 +1,51 @@
+{
+  "title": "Ayuda",
+  "subtitle": "Guías y respuestas para sacar el máximo partido a tu escritura.",
+  "shellSubtitle": "Ayuda / Documentación",
+  "navGroup": "Ayuda",
+  "navOverview": "Resumen",
+  "navAria": "Temas de ayuda",
+  "searchPlaceholder": "Buscar en la ayuda…",
+  "searchLabel": "Buscar artículos de ayuda",
+  "noResults": "Ningún artículo coincide con «{{query}}».",
+  "resultsCount_one": "{{count}} resultado",
+  "resultsCount_other": "{{count}} resultados",
+  "browseAll": "Ver todos los temas",
+  "languagePickerLabel": "Idioma de la ayuda",
+  "allFeatures": {
+    "title": "Ver todas las funciones",
+    "subtitle": "Una lista completa de todo lo que puedes hacer — cada elemento enlaza con su guía."
+  },
+  "onThisPage": "En esta página",
+  "related": "Relacionado",
+  "backToHelp": "Toda la ayuda",
+  "openCenter": "Abrir el Centro de ayuda completo",
+  "articleNotFound": "Ese artículo de ayuda no existe.",
+  "machineTranslationBanner": {
+    "label": "Traducción automática",
+    "body": "Este artículo se tradujo automáticamente. Disculpa cualquier error — por favor envía comentarios para que podamos corregirlos.",
+    "feedbackLinkLabel": "enviar comentarios"
+  },
+  "palette": {
+    "title": "Ayuda",
+    "description": "Busca en el Centro de ayuda o salta a un atajo.",
+    "shortcutsHeading": "Atajos de teclado",
+    "hint": "Pulsa Esc para cerrar"
+  },
+  "shortcuts": {
+    "help": "Abrir ayuda",
+    "focus": "Alternar modo enfoque"
+  },
+  "categories": {
+    "getting-started": "Empezar",
+    "writing": "Escritura y edición",
+    "organizing": "Organización",
+    "views": "Vistas y modos",
+    "research": "Investigación y citas",
+    "brainspace": "BrainSpace",
+    "annotations": "Anotaciones y marcadores",
+    "customization": "Personalización y configuración",
+    "data": "Tus datos",
+    "mobile": "Móvil"
+  }
+}

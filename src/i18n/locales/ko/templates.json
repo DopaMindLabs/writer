@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "빈 문서", "tag": "BL", "description": "처음부터 시작" },
+  "fiction": { "label": "소설 쓰기", "tag": "FI", "description": "소설 · 단편 · 시나리오" },
+  "humanities": { "label": "논문 · 연구", "tag": "TH", "description": "긴 학술 작업" },
+  "journal": { "label": "일기", "tag": "JO", "description": "매일, 부담 없이" },
+  "serial": { "label": "연재", "tag": "SE", "description": "반복 에세이 · 뉴스레터" },
+  "six": { "label": "여섯 문 · 협업", "tag": "SD", "description": "공유 세계 · 다수의 작가" },
+  "technical": { "label": "기술 · 과학 보고서", "tag": "TX", "description": "과학 · 방법 · 방정식" },
+  "bioinformatics": { "label": "생물정보학", "tag": "BX", "description": "파이프라인 · 방법 · 실험 노트" }
+}

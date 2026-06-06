@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Taimako da kewaye", "tours": "Yawan da aka jagoranta", "resetAll": "Sake saita dukan yawan" },
+  "controls": { "next": "Na gaba", "prev": "Baya", "done": "An kammala", "progress": "{{current}} daga {{total}}" },
+  "welcome": {
+    "title": "Barka da zuwa LIpsum Writer",
+    "description": "Gabatarwa cikin sauri ga sarari da allon gida.",
+    "intro": { "title": "Barka", "body": "LIpsum Writer wuri ne na aikin rubutu da aka gina kewaye da <i>sarari</i> — sarari ɗaya ga kowane aiki, talifi ko littafi. Bari mu duba cikin sauri." },
+    "continue": { "title": "Ci gaba daga inda ka tsaya", "body": "Sararin da ka gyara kwanan nan yana nan. Danna ɗaya ya buɗe shi." },
+    "startSpace": { "title": "Fara wani sabon abu", "body": "Ƙirƙira sabon sarari daga samfuri — bincike, labari, makala — kuma fara rubutu cikin daƙiƙa." }
+  },
+  "writer": {
+    "title": "Wurin aikin marubuci",
+    "description": "Yawo a editan, sandar gefe da sandar sama.",
+    "intro": { "title": "Saman rubutu", "body": "Anan kake aiki. Bari mu duba kewayawa, hanyoyi da kayan aiki da za ka fi amfani da su." },
+    "spaceTitle": { "title": "Take na sarari", "body": "Danna take don sake saka wa sarari suna. Alamar da ke kusa tana buɗe saituna." },
+    "sections": { "title": "Sassan da takardu", "body": "Tsara sarari zuwa sassa, da sassa zuwa takardu. Sanya linzami a kan ɓangare don ƙara takarda." },
+    "settings": { "title": "Saituna na sarari", "body": "Sarrafa samfuri, sassa, raba da goge wannan sararin." },
+    "modes": { "title": "Karanta · Rubuta · Raba", "body": "Sauya tsakanin gyarawa, karatu ko gani gefe-da-gefe. Kowane takarda yana tunawa da yanayinsa na ƙarshe." },
+    "citations": { "title": "Ambato", "body": "Buɗe panel ɗin ambato don saka magana yayin da kake rubutu." },
+    "theme": { "title": "Jigon", "body": "Haske, duhu da bambanci mai girma — zaɓi wanda ya dace da idanunka." },
+    "editor": { "title": "Editan", "body": "Editar rich-text mai gajerun hanyoyin Markdown, tubalan code da ambato. Fara rubutu — aikin ka yana ajiya a cikin gida ta atomatik." }
+  },
+  "citations": {
+    "title": "Ambato",
+    "description": "Gudanar da magana da lissafin littattafai.",
+    "intro": { "title": "Lissafin littattafanka", "body": "Duk magana ta sarari suna zaune anan. Shigo da fayil ɗin BibTeX ko ƙara abubuwa da hannu." },
+    "add": { "title": "Ƙara ko shigo", "body": "Saukar da fayil ɗin .bib ko liƙa rubutun BibTeX. Kwafe-kwafe ana tsallake su ta atomatik." },
+    "list": { "title": "Jerin", "body": "Bincika, tantance kuma gyara magana cikin layi. Daga nan kuma za ka iya fitar da dukan lissafin littattafai." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Canvas ɗin bayanan kyauta.",
+    "intro": { "title": "Yi tunani da ƙarfi", "body": "BrainSpace canvas ne na kyauta don ra'ayoyi — sauke bayanai, haɗa su kuma siffanta tunaninka kafin ka koma zuwa karatu." },
+    "addNote": { "title": "Ƙara bayani", "body": "Saukar da bayani na kowane irin nau'i a kan canvas. Ja don motsi, canza girma daga kusurwowi." },
+    "canvas": { "title": "Canvas ɗin", "body": "Shift+danna bayanai biyu don haɗa su. Danna baya don cire zaɓi." }
+  }
+}
