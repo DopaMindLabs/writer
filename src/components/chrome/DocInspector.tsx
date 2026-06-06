@@ -11,12 +11,12 @@ import {
 import type { UpdateSpec } from 'dexie';
 import { db } from '@/db/db';
 import type { Doc, Revision } from '@/db/schema';
-import { restoreRevision } from '@/lib/revisions';
 import {
   countCharacters,
   countWords,
   lexicalJsonToPlainText,
-} from '@/lib/revisions/lexicalJsonToPlainText';
+  restoreRevision,
+} from '@/lib/revisions';
 import { enabledStages } from '@/lib/docInspector/config';
 import { resolveStatus } from '@/lib/docInspector/status';
 import type { InspectorToggleKey } from '@/lib/docInspector/features';
