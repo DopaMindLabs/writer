@@ -412,12 +412,13 @@ const InfoPane = ({ docId, readOnly }: { docId: string; readOnly: boolean }) => 
     [body],
   );
 
+  const words = useMemo(() => countWords(text), [text]);
+  const chars = useMemo(() => countCharacters(text), [text]);
+
   if (!doc) {
     return <div data-testid="doc-inspector-info" className="px-4 py-3.5" />;
   }
 
-  const words = countWords(text);
-  const chars = countCharacters(text);
   const { wordLimit, charLimit } = doc.meta;
   const sectionName =
     sections?.find((s) => s.id === doc.sectionId)?.label ?? '—';
