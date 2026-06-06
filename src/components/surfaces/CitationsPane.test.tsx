@@ -223,28 +223,19 @@ describe('CitationsPane', () => {
 
     it('should show "unknown error" when the thrown value is not an Error instance', async () => {
       await seedSpace();
-      const proto = File.prototype as unknown as { text: () => Promise<string> };
-      const original = proto.text;
-      // vi.spyOn cannot replace a non-configurable prototype method on every jsdom
-      // version, so we mutate the prototype directly. Wrap in try/finally so a
-      // failed assertion never leaks the broken text() into the next test.
-      proto.text = () => Promise.reject('plain string fail');
-      try {
-        vi.spyOn(console, 'error').mockImplementation(() => {});
-        renderPane();
-        const fileInput = screen.getByTestId('citations-file-input');
-        const file = new File(['anything'], 'x.bib', {
-          type: 'application/x-bibtex',
-        });
-        fireEvent.change(fileInput, { target: { files: [file] } });
-        await waitFor(() =>
-          expect(screen.getByTestId('citations-status')).toHaveTextContent(
-            /unknown error/i,
-          ),
-        );
-      } finally {
-        proto.text = original;
-      }
+      vi.spyOn(File.prototype, 'text').mockRejectedValue('plain string fail');
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+      renderPane();
+      const fileInput = screen.getByTestId('citations-file-input');
+      const file = new File(['anything'], 'x.bib', {
+        type: 'application/x-bibtex',
+      });
+      fireEvent.change(fileInput, { target: { files: [file] } });
+      await waitFor(() =>
+        expect(screen.getByTestId('citations-status')).toHaveTextContent(
+          /unknown error/i,
+        ),
+      );
     });
 
     it('should delegate to the hidden file input when the upload button is clicked', async () => {
@@ -297,6 +288,28 @@ describe('CitationsPane', () => {
   });
 
   describe('detail row', () => {
+    // jsdom doesn't expose navigator.clipboard, and Object.defineProperty isn't
+    // covered by vitest's restoreMocks. Snapshot the original descriptor and
+    // restore after each test so the stub never leaks into the rest of the file.
+    let originalClipboardDescriptor: PropertyDescriptor | undefined;
+    beforeEach(() => {
+      originalClipboardDescriptor = Object.getOwnPropertyDescriptor(
+        navigator,
+        'clipboard',
+      );
+    });
+    afterEach(() => {
+      if (originalClipboardDescriptor) {
+        Object.defineProperty(
+          navigator,
+          'clipboard',
+          originalClipboardDescriptor,
+        );
+      } else {
+        delete (navigator as unknown as { clipboard?: unknown }).clipboard;
+      }
+    });
+
     it('should expand a row into a read-only detail view (no inputs until edit)', async () => {
       await seedSpace();
       await db.citations.put(citation());
@@ -339,38 +352,23 @@ describe('CitationsPane', () => {
       await seedSpace();
       await db.citations.put(citation());
       const writeText = vi.fn().mockResolvedValue(undefined);
-      // navigator.clipboard isn't a vi.spyOn target (jsdom doesn't expose it by
-      // default), so capture the original descriptor and restore it in finally
-      // — otherwise the stub leaks into every later test in this worker.
-      const originalDescriptor = Object.getOwnPropertyDescriptor(
-        navigator,
-        'clipboard',
-      );
       Object.defineProperty(navigator, 'clipboard', {
         configurable: true,
         value: { writeText },
       });
-      try {
-        renderPane();
-        await userEvent.click(await screen.findByTestId('citation-row-c-base'));
-        const copyBtn = await screen.findByTestId(
-          'citation-detail-c-base-copy',
-        );
-        expect(copyBtn).toHaveAttribute('aria-label', 'Copy tag smith2020');
-        await userEvent.click(copyBtn);
-        expect(writeText).toHaveBeenCalledWith('smith2020');
-        await waitFor(() =>
-          expect(
-            screen.getByTestId('citation-detail-c-base-copy'),
-          ).toHaveAttribute('aria-label', 'Copied tag smith2020'),
-        );
-      } finally {
-        if (originalDescriptor) {
-          Object.defineProperty(navigator, 'clipboard', originalDescriptor);
-        } else {
-          delete (navigator as unknown as { clipboard?: unknown }).clipboard;
-        }
-      }
+      renderPane();
+      await userEvent.click(await screen.findByTestId('citation-row-c-base'));
+      const copyBtn = await screen.findByTestId(
+        'citation-detail-c-base-copy',
+      );
+      expect(copyBtn).toHaveAttribute('aria-label', 'Copy tag smith2020');
+      await userEvent.click(copyBtn);
+      expect(writeText).toHaveBeenCalledWith('smith2020');
+      await waitFor(() =>
+        expect(
+          screen.getByTestId('citation-detail-c-base-copy'),
+        ).toHaveAttribute('aria-label', 'Copied tag smith2020'),
+      );
     });
 
     it('should toggle the bulk bar on when the detail row select checkbox is clicked', async () => {
