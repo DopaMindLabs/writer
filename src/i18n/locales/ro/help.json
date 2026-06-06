@@ -1,0 +1,48 @@
+{
+  "title": "Ajutor",
+  "subtitle": "Ghiduri și răspunsuri pentru a profita la maximum de scrisul tău.",
+  "shellSubtitle": "Ajutor / Documentație",
+  "navGroup": "Ajutor",
+  "navOverview": "Prezentare",
+  "navAria": "Subiecte de ajutor",
+  "searchPlaceholder": "Caută în ajutor…",
+  "searchLabel": "Caută articole de ajutor",
+  "noResults": "Niciun articol nu corespunde cu „{{query}}”.",
+  "resultsCount_one": "{{count}} rezultat",
+  "resultsCount_other": "{{count}} rezultate",
+  "browseAll": "Răsfoiește toate subiectele",
+  "languagePickerLabel": "Limba ajutorului",
+  "allFeatures": {
+    "title": "Vezi toate funcțiile",
+    "subtitle": "O listă completă cu tot ce poți face — fiecare element duce la ghidul său."
+  },
+  "onThisPage": "Pe această pagină",
+  "related": "Asociat",
+  "backToHelp": "Tot ajutorul",
+  "openCenter": "Deschide Centrul de ajutor complet",
+  "articleNotFound": "Acel articol de ajutor nu există.",
+  "machineTranslationBanner": {
+    "label": "Traducere automată",
+    "body": "Acest articol a fost tradus automat. Ne pare rău pentru erori — trimite feedback ca să le corectăm.",
+    "feedbackLinkLabel": "trimite feedback"
+  },
+  "palette": {
+    "title": "Ajutor",
+    "description": "Caută în Centrul de ajutor sau sari la o scurtătură.",
+    "shortcutsHeading": "Scurtături de tastatură",
+    "hint": "Apasă Esc pentru a închide"
+  },
+  "shortcuts": { "help": "Deschide ajutorul", "focus": "Comută modul focus" },
+  "categories": {
+    "getting-started": "Început",
+    "writing": "Scris și editare",
+    "organizing": "Organizare",
+    "views": "Vizualizări și moduri",
+    "research": "Cercetare și citate",
+    "brainspace": "BrainSpace",
+    "annotations": "Adnotări și evidențieri",
+    "customization": "Personalizare și setări",
+    "data": "Datele tale",
+    "mobile": "Mobil"
+  }
+}

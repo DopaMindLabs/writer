@@ -1,0 +1,14 @@
+{
+  "untitled": "Namnlös",
+  "brainSpace": "Brain Space",
+  "github": "GitHub",
+  "home": "Hem",
+  "about": "Om",
+  "settings": "Inställningar",
+  "help": "Hjälp",
+  "back": "tillbaka",
+  "comingSoon": {
+    "tooltip": "Kommer snart",
+    "defaultHint": "Inte tillgängligt ännu — kommer snart."
+  }
+}

@@ -15,6 +15,7 @@ import { TabHeader } from '@/components/settings/TabHeader';
 import { SyncTab } from '@/components/settings/SyncTab';
 import { AccessibilityTab } from '@/components/settings/tabs/AccessibilityTab';
 import { DocInspectorTab } from '@/components/settings/tabs/DocInspectorTab';
+import { LanguageTab } from '@/components/settings/tabs/LanguageTab';
 import {
   GeneralPlaceholder,
   AppearancePlaceholder,
@@ -32,6 +33,7 @@ import {
 
 const TAB_IDS = [
   'general',
+  'language',
   'appearance',
   'typography',
   'editor',
@@ -51,7 +53,7 @@ const TAB_IDS = [
 type TabId = (typeof TAB_IDS)[number];
 type PlaceholderTabId = Exclude<
   TabId,
-  'editor' | 'docInspector' | 'sync' | 'accessibility'
+  'editor' | 'docInspector' | 'sync' | 'accessibility' | 'language'
 >;
 
 const isTabId = (value: string | null): value is TabId =>
@@ -77,6 +79,7 @@ const GROUPED_TABS: { label: string; ids: readonly TabId[] }[] = [
     label: 'preferences',
     ids: [
       'general',
+      'language',
       'appearance',
       'typography',
       'editor',
@@ -101,6 +104,7 @@ const renderSection = (id: TabId): ReactElement => {
   if (id === 'docInspector') return <DocInspectorTab />;
   if (id === 'accessibility') return <AccessibilityTab />;
   if (id === 'sync') return <SyncTab />;
+  if (id === 'language') return <LanguageTab />;
   return <PlaceholderTab id={id} />;
 };
 

@@ -1,0 +1,224 @@
+{
+  "spaceRail": {
+    "landmarkLabel": "Espaços"
+  },
+  "sidebar": {
+    "landmarkLabel": "Espaço",
+    "navLabel": "Documentos",
+    "shared": "PARTILHADO",
+    "private": "PRIVADO · LOCAL",
+    "subtitleWithAge": "{{base}} · {{age}}",
+    "ageNew": "novo",
+    "ageDays": "{{count}}d",
+    "ageMonths": "{{count}}m",
+    "ageYears": "{{count}}a",
+    "workshop": "Oficina",
+    "empty": "(vazio)",
+    "addDocAria": "Adicionar documento a {{label}}",
+    "docNamePlaceholder": "Nome do documento (Enter para criar)",
+    "renameSpace": "Renomear espaço",
+    "openSpaceSettings": "Definições do espaço",
+    "openSpaceMenu": "Abrir menu do espaço"
+  },
+  "topbar": {
+    "openNav": "Abrir navegação",
+    "citations": "Citações",
+    "cite": "citar",
+    "renameDoc": "Renomear documento (duplo clique)",
+    "theme": "Tema",
+    "exitFocus": "Sair do modo de foco",
+    "enterFocus": "Entrar no modo de foco",
+    "normal": "NORMAL",
+    "focus": "FOCO",
+    "focusTitleNormal": "Normal (⌘\\)",
+    "focusTitleFocus": "Foco (⌘\\)",
+    "findInDoc": "Pesquisar no documento",
+    "inspector": "Inspetor de documento",
+    "themes": {
+      "light": "Claro",
+      "dark": "Escuro",
+      "hcLight": "Alto contraste (claro)",
+      "hcDark": "Alto contraste (escuro)"
+    }
+  },
+  "modeToggle": {
+    "write": "escrever",
+    "read": "ler",
+    "split": "dividir",
+    "space": "espaço"
+  },
+  "mobileNav": {
+    "title": "Navegação",
+    "close": "Fechar navegação"
+  },
+  "mobileTabs": {
+    "write": "escrever",
+    "read": "ler",
+    "brain": "brain",
+    "cite": "citar",
+    "more": "mais"
+  },
+  "mobileMore": {
+    "title": "Mais",
+    "close": "Fechar mais",
+    "modeLabel": "Modo",
+    "menuLabel": "Menu",
+    "settings": "Definições",
+    "spaceSettings": "Definições do espaço",
+    "about": "Acerca",
+    "help": "Ajuda e atalhos",
+    "whatsNew": "Novidades",
+    "feedback": "Enviar feedback…"
+  },
+  "mobileSplitFallback": {
+    "title": "Precisa de um ecrã maior",
+    "body": "A vista dividida coloca dois documentos lado a lado. Abre este documento no modo Escrever para um layout de telemóvel.",
+    "cta": "Abrir em Escrever →"
+  },
+  "quickSettings": {
+    "trigger": "LIpsum Writer",
+    "title": "Definições rápidas",
+    "themeLabel": "Tema",
+    "focusLabel": "Modo de foco",
+    "focusHint": "⌘\\",
+    "floatingToolbarLabel": "Barra flutuante",
+    "readingWidthLabel": "Largura de leitura",
+    "readingWidthHint": "Medida por documento",
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
+    "moreLabel": "Mais",
+    "helpToursLabel": "Tour de ajuda",
+    "helpItem": "Ajuda e atalhos",
+    "themes": {
+      "light": "Claro",
+      "dark": "Escuro",
+      "hcLight": "AC claro",
+      "hcDark": "AC escuro"
+    },
+    "helpKbd": "⌘?",
+    "whatsNew": "Novidades",
+    "feedback": "Enviar feedback…",
+    "accessibility": "Acessibilidade",
+    "about": "Acerca",
+    "helpLink": "centro de ajuda →",
+    "fullSettings": "definições completas →",
+    "fullSettingsKbd": "⌘,",
+    "off": "Desligado",
+    "on": "Ligado",
+    "tourCheckmark": "concluído"
+  },
+  "spaceMenu": {
+    "thisSpace": "ESTE ESPAÇO",
+    "rename": "Renomear",
+    "settings": "Definições",
+    "backups": "Cópias e histórico",
+    "members": "Membros e partilha",
+    "export": "Exportar…",
+    "exporting": "A exportar…",
+    "duplicate": "Duplicar · Arquivar",
+    "delete": "Eliminar espaço…"
+  },
+  "inspector": {
+    "expand": "Expandir inspetor",
+    "collapse": "Recolher inspetor",
+    "tabs": {
+      "outline": "ESTRUTURA",
+      "info": "INFO",
+      "history": "HISTÓRICO",
+      "actions": "AÇÕES"
+    },
+    "outline": {
+      "title": "ESTRUTURA",
+      "sectionSummary": "{{count}} SECÇÕES"
+    },
+    "info": {
+      "title": "INFO",
+      "words": "Palavras",
+      "characters": "Caracteres",
+      "updated": "Atualizado",
+      "section": "Secção",
+      "status": "Estado",
+      "wordLimit": "Limite de palavras",
+      "charLimit": "Limite de caracteres",
+      "dueDate": "Prazo",
+      "noLimit": "Sem limite",
+      "noDueDate": "Sem prazo"
+    },
+    "status": {
+      "draft": "Rascunho",
+      "in-progress": "Em curso",
+      "in-review": "Em revisão",
+      "complete": "Completo",
+      "published": "Publicado"
+    },
+    "lock": {
+      "title": "Bloqueado para edição",
+      "body": "O estado deste documento bloqueia-o para o preservar. Desbloqueia para fazer alterações.",
+      "unlock": "Desbloquear para editar"
+    },
+    "history": {
+      "title": "VERSÕES",
+      "now": "AGORA",
+      "full": "histórico completo de versões →",
+      "empty": "Ainda sem versões. As versões são guardadas automaticamente enquanto escreves.",
+      "summary": "{{count}} versão",
+      "summary_other": "{{count}} versões",
+      "saveVersion": "Guardar versão",
+      "pin": "Afixar versão",
+      "unpin": "Desafixar versão",
+      "restore": "Restaurar",
+      "kind": {
+        "auto": "auto",
+        "manual": "manual",
+        "baseline": "base"
+      },
+      "ageNow": "agora",
+      "ageMinutes": "há {{count}}m",
+      "ageHours": "há {{count}}h",
+      "ageDays": "há {{count}}d"
+    },
+    "actions": {
+      "label": "AÇÕES DO DOCUMENTO",
+      "rename": "Renomear",
+      "move": "Mover para secção…",
+      "export": "Exportar este documento…",
+      "exportKbd": "⌘E",
+      "print": "Imprimir…",
+      "wordCount": "Estatísticas de contagem",
+      "trash": "Mover para reciclagem"
+    }
+  },
+  "versionModal": {
+    "title": "Histórico de versões",
+    "description": "Compara e restaura versões anteriores deste documento.",
+    "close": "Fechar",
+    "listLabel": "Versões",
+    "empty": "Ainda sem versões. Continua a escrever e aparecerão aqui.",
+    "current": "Atual",
+    "compareWith": "A comparar com a atual",
+    "selectBase": "Seleciona uma versão para comparar",
+    "diffModeLabel": "Layout de diff",
+    "inline": "Inline",
+    "sideBySide": "Lado a lado",
+    "oldLabel": "Versão selecionada",
+    "newLabel": "Atual",
+    "identical": "Sem alterações entre estas versões.",
+    "restore": "Restaurar esta versão",
+    "restoreTitle": "Restaurar esta versão?",
+    "restoreConfirm": "O teu texto atual é guardado como versão antes, podes desfazer.",
+    "cancel": "Cancelar",
+    "pin": "Afixar",
+    "unpin": "Desafixar"
+  },
+  "saveVersion": {
+    "title": "Guardar versão",
+    "description": "Guarda uma captura nomeada à qual podes voltar.",
+    "label": "Nome da versão",
+    "placeholder": "Nomeia esta versão (opcional)",
+    "save": "Guardar versão",
+    "cancel": "Cancelar"
+  }
+}

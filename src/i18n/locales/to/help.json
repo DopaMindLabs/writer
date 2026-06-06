@@ -1,0 +1,48 @@
+{
+  "title": "Tokoni",
+  "subtitle": "Ngaahi tataki mo e ngaahi tali ke maʻu ai e meʻa lahi mei hoʻo tohi.",
+  "shellSubtitle": "Tokoni / Tohi fakamatala",
+  "navGroup": "Tokoni",
+  "navOverview": "Vakai fakalukufua",
+  "navAria": "Ngaahi kaveinga tokoni",
+  "searchPlaceholder": "Kumi ʻi he tokoni…",
+  "searchLabel": "Kumi ʻa e ngaahi tohi tokoni",
+  "noResults": "ʻIkai ha tohi ʻoku tatau mo e \"{{query}}\".",
+  "resultsCount_one": "{{count}} ola",
+  "resultsCount_other": "{{count}} ngaahi ola",
+  "browseAll": "Sio ki he ngaahi kaveinga kotoa",
+  "languagePickerLabel": "Lea ʻo e tokoni",
+  "allFeatures": {
+    "title": "Vakai ki he ngaahi meʻa kotoa",
+    "subtitle": "Ko e fakahokohoko kakato ʻo e meʻa kotoa pē te ke malava — ʻoku fakaʻata ʻa e meʻa kotoa ki heʻene tataki."
+  },
+  "onThisPage": "ʻI he peesi ko ʻeni",
+  "related": "Fekauʻaki",
+  "backToHelp": "Tokoni kotoa",
+  "openCenter": "Fakaʻata ʻa e Senita Tokoni kakato",
+  "articleNotFound": "ʻOku ʻikai ʻi ai e tohi tokoni ko ia.",
+  "machineTranslationBanner": {
+    "label": "Liliu fakaʻate",
+    "body": "Naʻe liliu fakaʻate ʻa e tohi ni. Kataki mo e ngaahi hala — ʻomai ha fakamatala ke mau lava ʻo fakatonutonu.",
+    "feedbackLinkLabel": "ʻomai fakamatala"
+  },
+  "palette": {
+    "title": "Tokoni",
+    "description": "Kumi ʻi he Senita Tokoni pe puna ki ha hala fakanounou.",
+    "shortcutsHeading": "Ngaahi hala fakanounou ʻo e kīpoti",
+    "hint": "Tā Esc ke tapuni"
+  },
+  "shortcuts": { "help": "Fakaʻata e tokoni", "focus": "Lakaʻi e fakamatala fakatokangaʻi" },
+  "categories": {
+    "getting-started": "Kamata",
+    "writing": "Tohi mo e fakatonutonu",
+    "organizing": "Fakaʻotuʻotu",
+    "views": "Ngaahi vakai mo e ngaahi founga",
+    "research": "Fekumi mo e ngaahi lave",
+    "brainspace": "BrainSpace",
+    "annotations": "Ngaahi fakatokanga mo e fakaʻilonga",
+    "customization": "Fakapatonu mo e ngaahi fokotuʻutuʻu",
+    "data": "Hoʻo fakamatala",
+    "mobile": "Telefoni toʻotoʻo"
+  }
+}

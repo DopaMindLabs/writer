@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "启动错误",
+  "bootErrorHintBefore": "试试 ",
+  "bootErrorHintAfter": " 来重置本地数据库。",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "启动中…"
+}

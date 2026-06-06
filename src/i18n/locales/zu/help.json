@@ -1,0 +1,48 @@
+{
+  "title": "Usizo",
+  "subtitle": "Imihlahlandlela nezimpendulo zokuthola okuningi ekubhaleni kwakho.",
+  "shellSubtitle": "Usizo / Idokhumenti",
+  "navGroup": "Usizo",
+  "navOverview": "Ukubuka konke",
+  "navAria": "Izihloko zosizo",
+  "searchPlaceholder": "Sesha kusizo…",
+  "searchLabel": "Sesha izihloko zosizo",
+  "noResults": "Asikho isihloko esivumelana ne-\"{{query}}\".",
+  "resultsCount_one": "{{count}} umphumela",
+  "resultsCount_other": "{{count}} imiphumela",
+  "browseAll": "Buyekeza zonke izindikimba",
+  "languagePickerLabel": "Ulimi losizo",
+  "allFeatures": {
+    "title": "Buka zonke izici",
+    "subtitle": "Uhlu olugcwele lakho konke ongakwenza — into ngayinye ixhuma kumhlahlandlela wayo."
+  },
+  "onThisPage": "Kuleli khasi",
+  "related": "Okuhlobene",
+  "backToHelp": "Lonke usizo",
+  "openCenter": "Vula Isikhungo Sosizo esiphelele",
+  "articleNotFound": "Leso sihloko sosizo asikho.",
+  "machineTranslationBanner": {
+    "label": "Ukuhumusha okuzenzakalelayo",
+    "body": "Lesi sihloko sihunyushwe ngokuzenzakalelayo. Sicela uxolo ngamaphutha — thumela impendulo ukuze siwalungise.",
+    "feedbackLinkLabel": "thumela impendulo"
+  },
+  "palette": {
+    "title": "Usizo",
+    "description": "Sesha eSikhungweni Sosizo noma weqele esinqamulelweni.",
+    "shortcutsHeading": "Izinqamuleli zekhibhodi",
+    "hint": "Cindezela u-Esc ukuvala"
+  },
+  "shortcuts": { "help": "Vula usizo", "focus": "Guqula imodi yokugxila" },
+  "categories": {
+    "getting-started": "Ukuqala",
+    "writing": "Ukubhala nokuhlela",
+    "organizing": "Ukuhlela",
+    "views": "Ukubuka namamodi",
+    "research": "Ucwaningo nezicaphuno",
+    "brainspace": "BrainSpace",
+    "annotations": "Ama-annotation nokugqamisa",
+    "customization": "Ukubeka kabusha nezilungiselelo",
+    "data": "Idatha yakho",
+    "mobile": "I-mobile"
+  }
+}

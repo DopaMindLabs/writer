@@ -58,7 +58,16 @@
       "export": "Export / import",
       "data": "Your data",
       "account": "Account",
-      "about": "About"
+      "about": "About",
+      "language": "Language"
+    },
+    "language": {
+      "title": "Language",
+      "subtitle": "Choose the language for the interface and Help Center articles. Missing translations fall back to English.",
+      "label": "Interface language",
+      "hint": "Changes apply instantly and are saved in this browser.",
+      "machineTranslationNotice": "Translations other than English are produced automatically. Apologies for any errors — please send feedback so we can correct them.",
+      "feedbackLinkLabel": "send feedback"
     },
     "editor": {
       "title": "Editor",

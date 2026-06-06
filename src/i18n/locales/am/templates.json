@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "ባዶ", "tag": "BL", "description": "ከባዶ ጀምር" },
+  "fiction": { "label": "ልብወለድ ጽሁፍ", "tag": "FI", "description": "ልብወለድ · አጭር ታሪክ · ስክሪፕት" },
+  "humanities": { "label": "የዶክትሬት ጥናት · ምርምር", "tag": "TH", "description": "ረዥም ምሁራዊ ስራ" },
+  "journal": { "label": "የግል ማስታወሻ", "tag": "JO", "description": "ዕለታዊ፣ ጫና የለሽ" },
+  "serial": { "label": "ተከታታይ", "tag": "SE", "description": "ተደጋጋሚ ድርሰቶች · ዜና" },
+  "six": { "label": "ስድስት በሮች · የጋራ", "tag": "SD", "description": "የጋራ ዓለም · ብዙ ጸሐፊዎች" },
+  "technical": { "label": "ቴክኒካል · ሳይንሳዊ ሪፖርት", "tag": "TX", "description": "ሳይንሳዊ · ዘዴዎች · እኩልታዎች" },
+  "bioinformatics": { "label": "ባዮኢንፎርማቲክስ", "tag": "BX", "description": "ቧንቧዎች · ዘዴዎች · የላብራቶሪ ማስታወሻ" }
+}

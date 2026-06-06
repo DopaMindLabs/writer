@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "Oppstartsfeil",
+  "bootErrorHintBefore": "Prøv ",
+  "bootErrorHintAfter": " for å tilbakestille den lokale databasen.",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "Starter…"
+}

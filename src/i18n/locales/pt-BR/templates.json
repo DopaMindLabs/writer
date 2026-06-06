@@ -1,0 +1,42 @@
+{
+  "blank": {
+    "label": "Em branco",
+    "tag": "EB",
+    "description": "começar do zero"
+  },
+  "fiction": {
+    "label": "Escrita de ficção",
+    "tag": "FI",
+    "description": "romance · conto · roteiro"
+  },
+  "humanities": {
+    "label": "Tese · pesquisa",
+    "tag": "TH",
+    "description": "trabalho acadêmico longo"
+  },
+  "journal": {
+    "label": "Diário",
+    "tag": "DI",
+    "description": "diário, sem pressão"
+  },
+  "serial": {
+    "label": "Série",
+    "tag": "SE",
+    "description": "ensaios recorrentes · newsletter"
+  },
+  "six": {
+    "label": "Seis Portas · colaborativo",
+    "tag": "SD",
+    "description": "mundo compartilhado · vários autores"
+  },
+  "technical": {
+    "label": "Técnico · Relatório científico",
+    "tag": "TX",
+    "description": "Científico · métodos · equações"
+  },
+  "bioinformatics": {
+    "label": "Bioinformática",
+    "tag": "BX",
+    "description": "pipelines · métodos · caderno de laboratório"
+  }
+}

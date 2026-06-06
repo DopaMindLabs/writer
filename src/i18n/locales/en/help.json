@@ -11,6 +11,7 @@
   "resultsCount_one": "{{count}} result",
   "resultsCount_other": "{{count}} results",
   "browseAll": "Browse all topics",
+  "languagePickerLabel": "Help language",
   "allFeatures": {
     "title": "See all features",
     "subtitle": "A complete, scannable list of everything you can do — each links to its guide."
@@ -20,6 +21,11 @@
   "backToHelp": "All help",
   "openCenter": "Open full Help Center",
   "articleNotFound": "That help article doesn’t exist.",
+  "machineTranslationBanner": {
+    "label": "Automatic translation",
+    "body": "This article was translated automatically. Apologies for any errors — please send feedback so we can correct them.",
+    "feedbackLinkLabel": "send feedback"
+  },
   "palette": {
     "title": "Help",
     "description": "Search the Help Center or jump to a shortcut.",

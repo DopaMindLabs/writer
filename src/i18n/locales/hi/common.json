@@ -1,0 +1,14 @@
+{
+  "untitled": "अनाम",
+  "brainSpace": "Brain Space",
+  "github": "GitHub",
+  "home": "मुखपृष्ठ",
+  "about": "के बारे में",
+  "settings": "सेटिंग्स",
+  "help": "सहायता",
+  "back": "वापस",
+  "comingSoon": {
+    "tooltip": "जल्द आ रहा है",
+    "defaultHint": "अभी उपलब्ध नहीं — जल्द आ रहा है।"
+  }
+}

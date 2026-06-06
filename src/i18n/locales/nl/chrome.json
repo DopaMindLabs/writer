@@ -1,0 +1,224 @@
+{
+  "spaceRail": {
+    "landmarkLabel": "Spaces"
+  },
+  "sidebar": {
+    "landmarkLabel": "Space",
+    "navLabel": "Documenten",
+    "shared": "GEDEELD",
+    "private": "PRIVÉ · LOKAAL",
+    "subtitleWithAge": "{{base}} · {{age}}",
+    "ageNew": "nieuw",
+    "ageDays": "{{count}}d",
+    "ageMonths": "{{count}}mnd",
+    "ageYears": "{{count}}j",
+    "workshop": "Werkplaats",
+    "empty": "(leeg)",
+    "addDocAria": "Document toevoegen aan {{label}}",
+    "docNamePlaceholder": "Documentnaam (Enter om te maken)",
+    "renameSpace": "Space hernoemen",
+    "openSpaceSettings": "Space-instellingen",
+    "openSpaceMenu": "Space-menu openen"
+  },
+  "topbar": {
+    "openNav": "Navigatie openen",
+    "citations": "Citaten",
+    "cite": "citeren",
+    "renameDoc": "Document hernoemen (dubbelklik)",
+    "theme": "Thema",
+    "exitFocus": "Focusmodus verlaten",
+    "enterFocus": "Focusmodus openen",
+    "normal": "NORMAAL",
+    "focus": "FOCUS",
+    "focusTitleNormal": "Normaal (⌘\\)",
+    "focusTitleFocus": "Focus (⌘\\)",
+    "findInDoc": "Zoeken in document",
+    "inspector": "Documentinspector",
+    "themes": {
+      "light": "Licht",
+      "dark": "Donker",
+      "hcLight": "Hoog contrast (licht)",
+      "hcDark": "Hoog contrast (donker)"
+    }
+  },
+  "modeToggle": {
+    "write": "schrijven",
+    "read": "lezen",
+    "split": "splitsen",
+    "space": "space"
+  },
+  "mobileNav": {
+    "title": "Navigatie",
+    "close": "Navigatie sluiten"
+  },
+  "mobileTabs": {
+    "write": "schrijven",
+    "read": "lezen",
+    "brain": "brain",
+    "cite": "cite",
+    "more": "meer"
+  },
+  "mobileMore": {
+    "title": "Meer",
+    "close": "Meer sluiten",
+    "modeLabel": "Modus",
+    "menuLabel": "Menu",
+    "settings": "Instellingen",
+    "spaceSettings": "Space-instellingen",
+    "about": "Over",
+    "help": "Help en sneltoetsen",
+    "whatsNew": "Wat is er nieuw",
+    "feedback": "Feedback sturen…"
+  },
+  "mobileSplitFallback": {
+    "title": "Heeft een groter scherm nodig",
+    "body": "De gesplitste weergave plaatst twee documenten naast elkaar. Open dit document in de Schrijf-modus voor een telefoonlay-out.",
+    "cta": "Openen in Schrijven →"
+  },
+  "quickSettings": {
+    "trigger": "LIpsum Writer",
+    "title": "Snelle instellingen",
+    "themeLabel": "Thema",
+    "focusLabel": "Focusmodus",
+    "focusHint": "⌘\\",
+    "floatingToolbarLabel": "Zwevende werkbalk",
+    "readingWidthLabel": "Leesbreedte",
+    "readingWidthHint": "Per-document maat",
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
+    "moreLabel": "Meer",
+    "helpToursLabel": "Helprondleiding",
+    "helpItem": "Help en sneltoetsen",
+    "themes": {
+      "light": "Licht",
+      "dark": "Donker",
+      "hcLight": "HC licht",
+      "hcDark": "HC donker"
+    },
+    "helpKbd": "⌘?",
+    "whatsNew": "Wat is er nieuw",
+    "feedback": "Feedback sturen…",
+    "accessibility": "Toegankelijkheid",
+    "about": "Over",
+    "helpLink": "helpcentrum →",
+    "fullSettings": "alle instellingen →",
+    "fullSettingsKbd": "⌘,",
+    "off": "Uit",
+    "on": "Aan",
+    "tourCheckmark": "voltooid"
+  },
+  "spaceMenu": {
+    "thisSpace": "DEZE SPACE",
+    "rename": "Hernoemen",
+    "settings": "Instellingen",
+    "backups": "Back-ups en geschiedenis",
+    "members": "Leden en delen",
+    "export": "Exporteren…",
+    "exporting": "Exporteren…",
+    "duplicate": "Dupliceren · Archiveren",
+    "delete": "Space verwijderen…"
+  },
+  "inspector": {
+    "expand": "Inspector uitvouwen",
+    "collapse": "Inspector inklappen",
+    "tabs": {
+      "outline": "OVERZICHT",
+      "info": "INFO",
+      "history": "GESCHIEDENIS",
+      "actions": "ACTIES"
+    },
+    "outline": {
+      "title": "OVERZICHT",
+      "sectionSummary": "{{count}} SECTIES"
+    },
+    "info": {
+      "title": "INFO",
+      "words": "Woorden",
+      "characters": "Tekens",
+      "updated": "Bijgewerkt",
+      "section": "Sectie",
+      "status": "Status",
+      "wordLimit": "Woordlimiet",
+      "charLimit": "Tekenlimiet",
+      "dueDate": "Deadline",
+      "noLimit": "Geen limiet",
+      "noDueDate": "Geen deadline"
+    },
+    "status": {
+      "draft": "Concept",
+      "in-progress": "In uitvoering",
+      "in-review": "In review",
+      "complete": "Voltooid",
+      "published": "Gepubliceerd"
+    },
+    "lock": {
+      "title": "Vergrendeld voor bewerking",
+      "body": "De status van dit document vergrendelt het ter bescherming. Ontgrendel om wijzigingen te maken.",
+      "unlock": "Ontgrendelen om te bewerken"
+    },
+    "history": {
+      "title": "VERSIES",
+      "now": "NU",
+      "full": "volledige versiegeschiedenis →",
+      "empty": "Nog geen versies. Versies worden automatisch opgeslagen terwijl je schrijft.",
+      "summary": "{{count}} versie",
+      "summary_other": "{{count}} versies",
+      "saveVersion": "Versie opslaan",
+      "pin": "Versie vastpinnen",
+      "unpin": "Versie losmaken",
+      "restore": "Herstellen",
+      "kind": {
+        "auto": "auto",
+        "manual": "handmatig",
+        "baseline": "basis"
+      },
+      "ageNow": "nu",
+      "ageMinutes": "{{count}}m geleden",
+      "ageHours": "{{count}}u geleden",
+      "ageDays": "{{count}}d geleden"
+    },
+    "actions": {
+      "label": "DOCUMENTACTIES",
+      "rename": "Hernoemen",
+      "move": "Verplaatsen naar sectie…",
+      "export": "Dit document exporteren…",
+      "exportKbd": "⌘E",
+      "print": "Afdrukken…",
+      "wordCount": "Woordtelling-statistieken",
+      "trash": "Naar prullenbak"
+    }
+  },
+  "versionModal": {
+    "title": "Versiegeschiedenis",
+    "description": "Vergelijk en herstel eerdere versies van dit document.",
+    "close": "Sluiten",
+    "listLabel": "Versies",
+    "empty": "Nog geen versies. Blijf schrijven en versies verschijnen hier.",
+    "current": "Huidig",
+    "compareWith": "Vergelijken met huidig",
+    "selectBase": "Selecteer een versie om te vergelijken",
+    "diffModeLabel": "Diff-weergave",
+    "inline": "Inline",
+    "sideBySide": "Naast elkaar",
+    "oldLabel": "Geselecteerde versie",
+    "newLabel": "Huidig",
+    "identical": "Geen verschillen tussen deze versies.",
+    "restore": "Deze versie herstellen",
+    "restoreTitle": "Deze versie herstellen?",
+    "restoreConfirm": "Je huidige tekst wordt eerst als versie opgeslagen, dus je kunt dit ongedaan maken.",
+    "cancel": "Annuleren",
+    "pin": "Vastpinnen",
+    "unpin": "Losmaken"
+  },
+  "saveVersion": {
+    "title": "Versie opslaan",
+    "description": "Sla een benoemde momentopname op waar je naar kunt terugkeren.",
+    "label": "Versienaam",
+    "placeholder": "Geef deze versie een naam (optioneel)",
+    "save": "Versie opslaan",
+    "cancel": "Annuleren"
+  }
+}

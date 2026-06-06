@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Ìrànlọ́wọ́ àti àwọn ìṣẹ̀wò", "tours": "Àwọn ìṣẹ̀wò aṣàtọ́ka", "resetAll": "Tún gbogbo ìṣẹ̀wò ṣe" },
+  "controls": { "next": "Tókàn", "prev": "Padà", "done": "Tán", "progress": "{{current}} nínú {{total}}" },
+  "welcome": {
+    "title": "Káàbọ̀ sí LIpsum Writer",
+    "description": "Ìfihàn yára nípa àwọn àyè àti ojú-ìwé ilé.",
+    "intro": { "title": "Káàbọ̀", "body": "LIpsum Writer jẹ́ ààyè iṣẹ́ ìkọ̀wé tí ó dá lórí <i>àwọn àyè</i> — àyè kan fún iṣẹ́ kọ̀ọ̀kan, àpilẹ̀kọ tàbí ìwé. Jẹ́ kí a wo yára." },
+    "continue": { "title": "Tẹ̀síwájú níbi tí o ti dúró", "body": "Àyè rẹ tí o ṣètúnṣe rẹ̀ kẹ́yìn wà nínú èyí. Tẹ̀ ẹ̀ ẹ̀kan, ó tún ṣílẹ̀." },
+    "startSpace": { "title": "Bẹ̀rẹ̀ ohunkóhun titun", "body": "Ṣẹ̀dá àyè titun láti àpẹẹrẹ — ìwádìí, ìwé ìtàn, àròkọ — kí o sì bẹ̀rẹ̀ sí ìkọ̀wé ní iṣẹ́jú díẹ̀." }
+  },
+  "writer": {
+    "title": "Ààyè iṣẹ́ òǹkọ̀wé",
+    "description": "Ìṣẹ̀wò ti olùṣàtúnṣe, ìpẹ̀gun, àti ọwọ́ òkè.",
+    "intro": { "title": "Orí ìkọ̀wé", "body": "Níbí ni o ti ń ṣiṣẹ́. Jẹ́ kí a wo ìrìnàjò, àwọn ipò, àti àwọn ohun èlò tí o yóò máa lò jùlọ." },
+    "spaceTitle": { "title": "Àkọlé àyè", "body": "Tẹ àkọlé láti tún àyè náà lórúkọ. Àmì tó wà légbèé ṣílẹ̀kùn ìṣètò rẹ̀." },
+    "sections": { "title": "Àwọn apá àti àwọn ìwé", "body": "Ṣètò àyè kan sí àwọn apá, àti àwọn apá sí àwọn ìwé. Gbé eku sí orí apá láti fi ìwé kún." },
+    "settings": { "title": "Ìṣètò àyè", "body": "Ṣàkóso àpẹẹrẹ, àwọn apá, pínpín, àti pípa àyè yìí." },
+    "modes": { "title": "Kà · Kọ̀wé · Pínyà", "body": "Yí padà láàárín ìṣàtúnṣe, kíkà, tàbí ìwò ẹ̀gbẹ́-ẹ̀gbẹ́. Gbogbo ìwé kọ̀ọ̀kan ń rántí ipò rẹ̀ ìkẹyìn." },
+    "citations": { "title": "Àyọkà", "body": "Ṣílẹ̀kùn pánẹ́ẹ̀lì àyọkà láti fi àwọn ìtọ́ka kún nígbà tí o ń kọ̀wé." },
+    "theme": { "title": "Ìṣàlàyé", "body": "Ìmọ́lẹ̀, òkùnkùn àti ìyàtọ̀ gíga — yan ìkan tó bá ojú rẹ mu." },
+    "editor": { "title": "Olùṣàtúnṣe", "body": "Olùṣàtúnṣe ọ̀rọ̀ ọlọ́rọ̀ pẹ̀lú àwọn ọ̀nà àbúyọ Markdown, àwọn ààyè kóòdù, àti àwọn àyọkà. Bẹ̀rẹ̀ sí ìtẹ̀wé — iṣẹ́ rẹ ti fipamọ́ ní agbègbè ní àdàálẹ̀." }
+  },
+  "citations": {
+    "title": "Àyọkà",
+    "description": "Ìṣàkóso àwọn ìtọ́ka àti àwọn ìwé orúkọ.",
+    "intro": { "title": "Ìwé orúkọ rẹ", "body": "Gbogbo ìtọ́ka àyè kan ń gbé níbi. Ṣípa fáìlì BibTeX kan tàbí fi àwọn ìwọlé kún pẹ̀lú ọwọ́." },
+    "add": { "title": "Fi kún tàbí ṣípa", "body": "Sọ fáìlì .bib sílẹ̀ tàbí lẹ̀ ọ̀rọ̀ BibTeX. Àwọn ẹlẹ́ẹ̀mejì ni a fò lójú ní àdàálẹ̀." },
+    "list": { "title": "Àkójọ", "body": "Wá, ṣàyẹ̀wò, kí o sì ṣàtúnṣe àwọn àyọkà inline. Láti ibí, o tún lè kó gbogbo ìwé orúkọ jáde." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Igi olómìnira fún àwọn àkíyèsí.",
+    "intro": { "title": "Ronú tóhùn", "body": "BrainSpace jẹ́ igi olómìnira fún àwọn èrò — sọ àwọn àkíyèsí sílẹ̀, so wọ́n pọ̀, kí o sì ṣe àwọn èrò rẹ kí o tó kọjá sí àkọsílẹ̀." },
+    "addNote": { "title": "Fi àkíyèsí kún", "body": "Sọ àkíyèsí ti irú èyíkéyìí sí orí igi. Fa láti gbé, yí ìwọ̀n padà láti àwọn igun." },
+    "canvas": { "title": "Igi", "body": "Shift+tẹ àwọn àkíyèsí méjì láti so wọ́n pọ̀. Tẹ ẹ̀yìn láti yan padà." }
+  }
+}

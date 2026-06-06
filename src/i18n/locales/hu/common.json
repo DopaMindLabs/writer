@@ -1,0 +1,14 @@
+{
+  "untitled": "Névtelen",
+  "brainSpace": "Brain Space",
+  "github": "GitHub",
+  "home": "Kezdőlap",
+  "about": "Névjegy",
+  "settings": "Beállítások",
+  "help": "Súgó",
+  "back": "vissza",
+  "comingSoon": {
+    "tooltip": "Hamarosan",
+    "defaultHint": "Még nem érhető el — hamarosan."
+  }
+}

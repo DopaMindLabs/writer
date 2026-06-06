@@ -1,0 +1,7 @@
+{
+  "bootErrorLabel": "የጅማሬ ስህተት",
+  "bootErrorHintBefore": "የአካባቢ ዳታቤዝን እንደገና ለማስጀመር ",
+  "bootErrorHintAfter": " ይሞክሩ።",
+  "bootErrorHintCode": "?reseed=1",
+  "booting": "በመጀመር ላይ…"
+}
