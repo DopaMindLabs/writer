@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Avanoa", "tag": "AV", "description": "amata mai le leai" },
+  "fiction": { "label": "Tusitusiga faatusatusa", "tag": "FI", "description": "tusi tala · tala puupuu · vaega tusi" },
+  "humanities": { "label": "Tusiga · suesuega", "tag": "TH", "description": "galuega faaaoaoga umi" },
+  "journal": { "label": "Api o talafaasolopito", "tag": "JO", "description": "i aso uma, e leai se mamafa" },
+  "serial": { "label": "Faasologa", "tag": "SE", "description": "tusiga toe fai · pepa fou" },
+  "six": { "label": "Faitotoa e Ono · faatasi", "tag": "SD", "description": "lalolagi faasoa · tusitala e to'atele" },
+  "technical": { "label": "Tekinisi · Lipoti faasaienisi", "tag": "TX", "description": "Faasaienisi · auala · faatusatusaga" },
+  "bioinformatics": { "label": "Bioinformatics", "tag": "BX", "description": "paipa · auala · tusi falesuesue" }
+}

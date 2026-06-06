@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Òfìfo", "tag": "OF", "description": "bẹ̀rẹ̀ láti odo" },
+  "fiction": { "label": "Ìkọwé àròsọ", "tag": "FI", "description": "ìwé ìtàn · ìtàn kúkúrú · àfọwọ́kọ" },
+  "humanities": { "label": "Ìwádìí · ìṣèwádìí", "tag": "TH", "description": "iṣẹ́ ọmọwé gígùn" },
+  "journal": { "label": "Ìwé àkọsílẹ̀", "tag": "JO", "description": "ojoojúmọ́, láìsí ìnira" },
+  "serial": { "label": "Onítẹ̀lé", "tag": "SE", "description": "àwọn àròkọ tí ń tún ṣe · ìwé ìròyìn" },
+  "six": { "label": "Ọ̀nà Mẹ́fà · ìfọwọ́sowọ́pọ̀", "tag": "SD", "description": "ayé pínpín · ọ̀pọ̀lọpọ̀ òǹkọ̀wé" },
+  "technical": { "label": "Iṣẹ́ ọnà · Ìròyìn sáyẹ́nsì", "tag": "TX", "description": "Sáyẹ́nsì · àwọn ọ̀nà · àwọn ìdọ́gba" },
+  "bioinformatics": { "label": "Bioinformatics", "tag": "BX", "description": "àwọn pípèlì · àwọn ọ̀nà · ìwé àkọsílẹ̀ ilé ìṣẹ́" }
+}

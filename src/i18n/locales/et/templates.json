@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Tühi", "tag": "TU", "description": "alusta nullist" },
+  "fiction": { "label": "Ilukirjandus", "tag": "FI", "description": "romaan · novell · stsenaarium" },
+  "humanities": { "label": "Lõputöö · uurimistöö", "tag": "TH", "description": "pikk akadeemiline töö" },
+  "journal": { "label": "Päevik", "tag": "PA", "description": "igapäevane, ilma surveta" },
+  "serial": { "label": "Sari", "tag": "SE", "description": "korduvad esseed · uudiskiri" },
+  "six": { "label": "Kuus Ust · koostöö", "tag": "SD", "description": "jagatud maailm · mitu autorit" },
+  "technical": { "label": "Tehniline · Teaduslik aruanne", "tag": "TX", "description": "Teaduslik · meetodid · võrrandid" },
+  "bioinformatics": { "label": "Bioinformaatika", "tag": "BX", "description": "torustikud · meetodid · laborivihik" }
+}

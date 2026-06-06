@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Tomt", "tag": "TO", "description": "start fra nul" },
+  "fiction": { "label": "Skønlitterær skrivning", "tag": "FI", "description": "roman · novelle · manuskript" },
+  "humanities": { "label": "Speciale · forskning", "tag": "TH", "description": "lang akademisk tekst" },
+  "journal": { "label": "Dagbog", "tag": "DA", "description": "dagligt, uden pres" },
+  "serial": { "label": "Serie", "tag": "SE", "description": "tilbagevendende essays · nyhedsbrev" },
+  "six": { "label": "Seks Døre · samarbejde", "tag": "SD", "description": "delt verden · flere forfattere" },
+  "technical": { "label": "Teknisk · Videnskabelig rapport", "tag": "TX", "description": "Videnskabeligt · metoder · ligninger" },
+  "bioinformatics": { "label": "Bioinformatik", "tag": "BX", "description": "pipelines · metoder · labjournal" }
+}

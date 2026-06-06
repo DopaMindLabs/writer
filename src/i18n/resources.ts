@@ -49,65 +49,94 @@ import ptPTTemplates from './locales/pt-PT/templates.json';
 import ptPTTours from './locales/pt-PT/tours.json';
 import ptPTHelp from './locales/pt-PT/help.json';
 
-// Tier 2+ — common + app translated; other namespaces fall back to English.
+// Tier 2+ — common + app + templates translated; remaining namespaces fall back to English.
 import itCommon from './locales/it/common.json';
 import itApp from './locales/it/app.json';
+import itTemplates from './locales/it/templates.json';
 import plCommon from './locales/pl/common.json';
 import plApp from './locales/pl/app.json';
+import plTemplates from './locales/pl/templates.json';
 import svCommon from './locales/sv/common.json';
 import svApp from './locales/sv/app.json';
+import svTemplates from './locales/sv/templates.json';
 import daCommon from './locales/da/common.json';
 import daApp from './locales/da/app.json';
+import daTemplates from './locales/da/templates.json';
 import nbCommon from './locales/nb/common.json';
 import nbApp from './locales/nb/app.json';
+import nbTemplates from './locales/nb/templates.json';
 import isCommon from './locales/is/common.json';
 import isApp from './locales/is/app.json';
+import isTemplates from './locales/is/templates.json';
 import gaCommon from './locales/ga/common.json';
 import gaApp from './locales/ga/app.json';
+import gaTemplates from './locales/ga/templates.json';
 import ltCommon from './locales/lt/common.json';
 import ltApp from './locales/lt/app.json';
+import ltTemplates from './locales/lt/templates.json';
 import lvCommon from './locales/lv/common.json';
 import lvApp from './locales/lv/app.json';
+import lvTemplates from './locales/lv/templates.json';
 import etCommon from './locales/et/common.json';
 import etApp from './locales/et/app.json';
+import etTemplates from './locales/et/templates.json';
 import csCommon from './locales/cs/common.json';
 import csApp from './locales/cs/app.json';
+import csTemplates from './locales/cs/templates.json';
 import huCommon from './locales/hu/common.json';
 import huApp from './locales/hu/app.json';
+import huTemplates from './locales/hu/templates.json';
 import roCommon from './locales/ro/common.json';
 import roApp from './locales/ro/app.json';
+import roTemplates from './locales/ro/templates.json';
 import bgCommon from './locales/bg/common.json';
 import bgApp from './locales/bg/app.json';
+import bgTemplates from './locales/bg/templates.json';
 import elCommon from './locales/el/common.json';
 import elApp from './locales/el/app.json';
+import elTemplates from './locales/el/templates.json';
 import jaCommon from './locales/ja/common.json';
 import jaApp from './locales/ja/app.json';
+import jaTemplates from './locales/ja/templates.json';
 import zhHansCommon from './locales/zh-Hans/common.json';
 import zhHansApp from './locales/zh-Hans/app.json';
+import zhHansTemplates from './locales/zh-Hans/templates.json';
 import koCommon from './locales/ko/common.json';
 import koApp from './locales/ko/app.json';
+import koTemplates from './locales/ko/templates.json';
 import hiCommon from './locales/hi/common.json';
 import hiApp from './locales/hi/app.json';
+import hiTemplates from './locales/hi/templates.json';
 import taCommon from './locales/ta/common.json';
 import taApp from './locales/ta/app.json';
+import taTemplates from './locales/ta/templates.json';
 import siCommon from './locales/si/common.json';
 import siApp from './locales/si/app.json';
+import siTemplates from './locales/si/templates.json';
 import amCommon from './locales/am/common.json';
 import amApp from './locales/am/app.json';
+import amTemplates from './locales/am/templates.json';
 import swCommon from './locales/sw/common.json';
 import swApp from './locales/sw/app.json';
+import swTemplates from './locales/sw/templates.json';
 import haCommon from './locales/ha/common.json';
 import haApp from './locales/ha/app.json';
+import haTemplates from './locales/ha/templates.json';
 import yoCommon from './locales/yo/common.json';
 import yoApp from './locales/yo/app.json';
+import yoTemplates from './locales/yo/templates.json';
 import zuCommon from './locales/zu/common.json';
 import zuApp from './locales/zu/app.json';
+import zuTemplates from './locales/zu/templates.json';
 import miCommon from './locales/mi/common.json';
 import miApp from './locales/mi/app.json';
+import miTemplates from './locales/mi/templates.json';
 import smCommon from './locales/sm/common.json';
 import smApp from './locales/sm/app.json';
+import smTemplates from './locales/sm/templates.json';
 import toCommon from './locales/to/common.json';
 import toApp from './locales/to/app.json';
+import toTemplates from './locales/to/templates.json';
 
 /**
  * Locales the user can pick. Any locale here without a `resources` entry below
@@ -222,35 +251,35 @@ export const resources = {
     tours: ptPTTours,
     help: ptPTHelp,
   },
-  it: { common: itCommon, app: itApp },
-  pl: { common: plCommon, app: plApp },
-  sv: { common: svCommon, app: svApp },
-  da: { common: daCommon, app: daApp },
-  nb: { common: nbCommon, app: nbApp },
-  is: { common: isCommon, app: isApp },
-  ga: { common: gaCommon, app: gaApp },
-  lt: { common: ltCommon, app: ltApp },
-  lv: { common: lvCommon, app: lvApp },
-  et: { common: etCommon, app: etApp },
-  cs: { common: csCommon, app: csApp },
-  hu: { common: huCommon, app: huApp },
-  ro: { common: roCommon, app: roApp },
-  bg: { common: bgCommon, app: bgApp },
-  el: { common: elCommon, app: elApp },
-  ja: { common: jaCommon, app: jaApp },
-  'zh-Hans': { common: zhHansCommon, app: zhHansApp },
-  ko: { common: koCommon, app: koApp },
-  hi: { common: hiCommon, app: hiApp },
-  ta: { common: taCommon, app: taApp },
-  si: { common: siCommon, app: siApp },
-  am: { common: amCommon, app: amApp },
-  sw: { common: swCommon, app: swApp },
-  ha: { common: haCommon, app: haApp },
-  yo: { common: yoCommon, app: yoApp },
-  zu: { common: zuCommon, app: zuApp },
-  mi: { common: miCommon, app: miApp },
-  sm: { common: smCommon, app: smApp },
-  to: { common: toCommon, app: toApp },
+  it: { common: itCommon, app: itApp, templates: itTemplates },
+  pl: { common: plCommon, app: plApp, templates: plTemplates },
+  sv: { common: svCommon, app: svApp, templates: svTemplates },
+  da: { common: daCommon, app: daApp, templates: daTemplates },
+  nb: { common: nbCommon, app: nbApp, templates: nbTemplates },
+  is: { common: isCommon, app: isApp, templates: isTemplates },
+  ga: { common: gaCommon, app: gaApp, templates: gaTemplates },
+  lt: { common: ltCommon, app: ltApp, templates: ltTemplates },
+  lv: { common: lvCommon, app: lvApp, templates: lvTemplates },
+  et: { common: etCommon, app: etApp, templates: etTemplates },
+  cs: { common: csCommon, app: csApp, templates: csTemplates },
+  hu: { common: huCommon, app: huApp, templates: huTemplates },
+  ro: { common: roCommon, app: roApp, templates: roTemplates },
+  bg: { common: bgCommon, app: bgApp, templates: bgTemplates },
+  el: { common: elCommon, app: elApp, templates: elTemplates },
+  ja: { common: jaCommon, app: jaApp, templates: jaTemplates },
+  'zh-Hans': { common: zhHansCommon, app: zhHansApp, templates: zhHansTemplates },
+  ko: { common: koCommon, app: koApp, templates: koTemplates },
+  hi: { common: hiCommon, app: hiApp, templates: hiTemplates },
+  ta: { common: taCommon, app: taApp, templates: taTemplates },
+  si: { common: siCommon, app: siApp, templates: siTemplates },
+  am: { common: amCommon, app: amApp, templates: amTemplates },
+  sw: { common: swCommon, app: swApp, templates: swTemplates },
+  ha: { common: haCommon, app: haApp, templates: haTemplates },
+  yo: { common: yoCommon, app: yoApp, templates: yoTemplates },
+  zu: { common: zuCommon, app: zuApp, templates: zuTemplates },
+  mi: { common: miCommon, app: miApp, templates: miTemplates },
+  sm: { common: smCommon, app: smApp, templates: smTemplates },
+  to: { common: toCommon, app: toApp, templates: toTemplates },
 } as const;
 
 export const defaultNS = 'common';
