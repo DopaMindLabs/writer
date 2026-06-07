@@ -271,9 +271,7 @@ exports[`BrainSpaceDetailDrawer > snapshot > should match the snapshot of the op
         class="font-mono uppercase text-ink-3 text-[10px] tracking-wider mb-2"
         data-testid="brain-detail-drawer-connections-heading"
       >
-        Connections (
-        1
-        )
+        Connections (1)
       </h3>
       <ul
         class="flex flex-col gap-1"

@@ -106,8 +106,7 @@ exports[`CitationsSidePanel > snapshot > should match the snapshot of the open p
           <div
             class="font-mono text-[10px] uppercase tracking-wider text-ink-4"
           >
-            0
-             ENTRIES
+            0 ENTRIES
           </div>
         </div>
       </div>
@@ -265,10 +264,7 @@ exports[`CitationsSidePanel > snapshot > should match the snapshot of the open p
           <span
             data-testid="citations-counts"
           >
-            0
-             SHOWN · 
-            0
-             ON THIS PAGE
+            0 SHOWN · 0 ON THIS PAGE
           </span>
         </div>
         <button

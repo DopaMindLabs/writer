@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   ExternalLink,
@@ -69,6 +70,7 @@ const ConnectionRow = ({
   onDelete,
   testIdBase,
 }: ConnectionRowProps & ConnectionRowExtras) => {
+  const { t } = useTranslation('screens');
   const titleText = note?.title ?? '';
   const firstBodyLine = note?.body.split('\n')[0] ?? '';
   const label =
@@ -76,7 +78,7 @@ const ConnectionRow = ({
       ? titleText
       : firstBodyLine !== ''
         ? firstBodyLine
-        : '(untitled)';
+        : t('brainSpace.drawer.untitledNote');
   const arrow = direction === 'out' ? '→' : '←';
   return (
     <li
@@ -102,7 +104,7 @@ const ConnectionRow = ({
       <IconButton
         data-testid={`${testIdBase}-remove`}
         icon={X}
-        label="Remove connection"
+        label={t('brainSpace.drawer.removeConnection')}
         buttonSize="sm"
         iconSize="xs"
         onClick={onDelete}
@@ -126,46 +128,49 @@ const LinkedDocSection = ({
   linkedDoc,
   onLinkDoc,
   onOpenDoc,
-}: LinkedDocSectionProps) => (
-  <section className="mb-6">
-    <Label
-      htmlFor="drawer-doc-link"
-      tone="ink3"
-      weight="regular"
-      className="mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider"
-    >
-      <Link2 className="h-3 w-3" />
-      Linked Doc
-    </Label>
-    <div className="flex items-center gap-2">
-      <Select
-        id="drawer-doc-link"
-        data-testid="brain-detail-drawer-linked-doc"
-        value={note.linkedDocId ?? ''}
-        onChange={(e) => { onLinkDoc(e.target.value); }}
-        className="flex-1"
-        options={[
-          { value: '', label: '— No linked doc —' },
-          ...docs.map((d) => ({
-            value: d.id,
-            label: d.name || 'Untitled',
-          })),
-        ]}
-      />
-      {linkedDoc && (
-        <Button
-          data-testid="brain-detail-drawer-open"
-          kind="secondary"
-          onClick={onOpenDoc}
-          className="gap-1.5 border-ink px-3 py-2 font-mono text-[10px] uppercase tracking-wider"
-        >
-          <ExternalLink className="h-3 w-3" />
-          Open
-        </Button>
-      )}
-    </div>
-  </section>
-);
+}: LinkedDocSectionProps) => {
+  const { t } = useTranslation('screens');
+  return (
+    <section className="mb-6">
+      <Label
+        htmlFor="drawer-doc-link"
+        tone="ink3"
+        weight="regular"
+        className="mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider"
+      >
+        <Link2 className="h-3 w-3" />
+        {t('brainSpace.drawer.linkedDocLabel')}
+      </Label>
+      <div className="flex items-center gap-2">
+        <Select
+          id="drawer-doc-link"
+          data-testid="brain-detail-drawer-linked-doc"
+          value={note.linkedDocId ?? ''}
+          onChange={(e) => { onLinkDoc(e.target.value); }}
+          className="flex-1"
+          options={[
+            { value: '', label: t('brainSpace.drawer.noLinkedDoc') },
+            ...docs.map((d) => ({
+              value: d.id,
+              label: d.name || t('brainSpace.drawer.untitledDoc'),
+            })),
+          ]}
+        />
+        {linkedDoc && (
+          <Button
+            data-testid="brain-detail-drawer-open"
+            kind="secondary"
+            onClick={onOpenDoc}
+            className="gap-1.5 border-ink px-3 py-2 font-mono text-[10px] uppercase tracking-wider"
+          >
+            <ExternalLink className="h-3 w-3" />
+            {t('brainSpace.drawer.openDoc')}
+          </Button>
+        )}
+      </div>
+    </section>
+  );
+};
 
 interface ConnectionsSectionProps {
   incoming: Connection[];
@@ -181,11 +186,13 @@ const ConnectionsSection = ({
   relatedById,
   onFocusNote,
   onDeleteConnection,
-}: ConnectionsSectionProps) => (
+}: ConnectionsSectionProps) => {
+  const { t } = useTranslation('screens');
+  return (
   <section>
     <TypographyLabel asChild variant="wide" className="mb-2">
       <h3 data-testid="brain-detail-drawer-connections-heading">
-        Connections ({incoming.length + outgoing.length})
+        {t('brainSpace.drawer.connectionsHeading', { count: incoming.length + outgoing.length })}
       </h3>
     </TypographyLabel>
     {incoming.length + outgoing.length === 0 ? (
@@ -193,7 +200,7 @@ const ConnectionsSection = ({
         data-testid="brain-detail-drawer-connections-empty"
         className="font-mono text-[11px] text-ink-4"
       >
-        shift-click another note on the canvas to connect.
+        {t('brainSpace.drawer.connectionsEmpty')}
       </p>
     ) : (
       <ul className="flex flex-col gap-1">
@@ -226,7 +233,8 @@ const ConnectionsSection = ({
       </ul>
     )}
   </section>
-);
+  );
+};
 
 const DrawerHeader = ({
   note,
@@ -235,6 +243,7 @@ const DrawerHeader = ({
   note: Note;
   onClose: () => void;
 }) => {
+  const { t } = useTranslation('screens');
   const [draftTitle, setDraftTitle] = useState(note.title ?? '');
 
   useEffect(() => {
@@ -263,15 +272,15 @@ const DrawerHeader = ({
           onKeyDown={(e) => {
             if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
           }}
-          placeholder="Untitled"
+          placeholder={t('brainSpace.drawer.untitledPlaceholder')}
           className="font-serif text-xl font-medium"
-          aria-label="Note title"
+          aria-label={t('brainSpace.drawer.titleAriaLabel')}
         />
       </div>
       <IconButton
         data-testid="brain-detail-drawer-close"
         icon={X}
-        label="Close drawer"
+        label={t('brainSpace.drawer.closeAriaLabel')}
         buttonSize="sm"
         iconSize="sm"
         onClick={onClose}
@@ -282,6 +291,7 @@ const DrawerHeader = ({
 };
 
 const BodySection = ({ note }: { note: Note }) => {
+  const { t } = useTranslation('screens');
   const [draftBody, setDraftBody] = useState(note.body);
 
   useEffect(() => {
@@ -302,7 +312,7 @@ const BodySection = ({ note }: { note: Note }) => {
         weight="regular"
         className="mb-2 block font-mono text-[10px] uppercase tracking-wider"
       >
-        Body
+        {t('brainSpace.drawer.bodyLabel')}
       </Label>
       <TextArea
         id="drawer-body"
@@ -310,31 +320,34 @@ const BodySection = ({ note }: { note: Note }) => {
         value={draftBody}
         onChange={(e) => { setDraftBody(e.target.value); }}
         onBlur={() => { void commitBody(); }}
-        placeholder="Write something…"
+        placeholder={t('brainSpace.drawer.bodyPlaceholder')}
         className="min-h-[160px] leading-relaxed"
       />
     </section>
   );
 };
 
-const AttachmentsHeader = ({ count }: { count: number }) => (
-  <div className="mb-2 flex items-center justify-between">
-    <Label
-      tone="ink3"
-      weight="regular"
-      className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider"
-    >
-      <ImagePlus className="h-3 w-3" />
-      Pictures
-    </Label>
-    <span
-      data-testid="brain-detail-drawer-attachments-count"
-      className="font-mono text-[10px] text-ink-4"
-    >
-      {count} / {MAX_NOTE_IMAGES}
-    </span>
-  </div>
-);
+const AttachmentsHeader = ({ count }: { count: number }) => {
+  const { t } = useTranslation('screens');
+  return (
+    <div className="mb-2 flex items-center justify-between">
+      <Label
+        tone="ink3"
+        weight="regular"
+        className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider"
+      >
+        <ImagePlus className="h-3 w-3" />
+        {t('brainSpace.drawer.picturesLabel')}
+      </Label>
+      <span
+        data-testid="brain-detail-drawer-attachments-count"
+        className="font-mono text-[10px] text-ink-4"
+      >
+        {count} / {MAX_NOTE_IMAGES}
+      </span>
+    </div>
+  );
+};
 
 interface AttachmentsGridProps {
   attachments: NoteAttachment[];
@@ -367,39 +380,42 @@ interface AttachmentsUploadProps {
   onPick: (files: File[]) => void;
 }
 
-const AttachmentsUpload = ({ atLimit, onPick }: AttachmentsUploadProps) => (
-  <>
-    <FileInputTrigger
-      accept={IMAGE_ACCEPT_ATTR}
-      multiple
-      disabled={atLimit}
-      onPick={onPick}
-      data-testid="brain-detail-drawer-attachments-input"
-    >
-      {(open) => (
-        <Button
-          kind="secondary"
-          size="sm"
-          disabled={atLimit}
-          onClick={open}
-          data-testid="brain-detail-drawer-attachments-upload"
-          className="gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
-        >
-          <Icon icon={ImagePlus} size="xs" />
-          Add picture
-        </Button>
-      )}
-    </FileInputTrigger>
-    {atLimit && (
-      <p
-        data-testid="brain-detail-drawer-attachments-limit-hint"
-        className="mt-1.5 font-mono text-[10px] text-ink-4"
+const AttachmentsUpload = ({ atLimit, onPick }: AttachmentsUploadProps) => {
+  const { t } = useTranslation('screens');
+  return (
+    <>
+      <FileInputTrigger
+        accept={IMAGE_ACCEPT_ATTR}
+        multiple
+        disabled={atLimit}
+        onPick={onPick}
+        data-testid="brain-detail-drawer-attachments-input"
       >
-        limit of {MAX_NOTE_IMAGES} reached — remove one to add another.
-      </p>
-    )}
-  </>
-);
+        {(open) => (
+          <Button
+            kind="secondary"
+            size="sm"
+            disabled={atLimit}
+            onClick={open}
+            data-testid="brain-detail-drawer-attachments-upload"
+            className="gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
+          >
+            <Icon icon={ImagePlus} size="xs" />
+            {t('brainSpace.drawer.addPicture')}
+          </Button>
+        )}
+      </FileInputTrigger>
+      {atLimit && (
+        <p
+          data-testid="brain-detail-drawer-attachments-limit-hint"
+          className="mt-1.5 font-mono text-[10px] text-ink-4"
+        >
+          {t('brainSpace.drawer.pictureLimitHint', { count: MAX_NOTE_IMAGES })}
+        </p>
+      )}
+    </>
+  );
+};
 
 interface AttachmentsSectionProps {
   note: Note;
@@ -485,20 +501,23 @@ const useRelatedNotesById = (
   }, [relatedNotes]);
 };
 
-const DrawerDeleteFooter = ({ onDelete }: { onDelete: () => void }) => (
-  <footer className="flex items-center justify-end border-t border-rule p-3">
-    <Button
-      data-testid="brain-detail-drawer-delete"
-      kind="dangerous"
-      size="sm"
-      onClick={onDelete}
-      className="gap-1.5 border-0 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
-    >
-      <Trash2 className="h-3 w-3" />
-      Delete note
-    </Button>
-  </footer>
-);
+const DrawerDeleteFooter = ({ onDelete }: { onDelete: () => void }) => {
+  const { t } = useTranslation('screens');
+  return (
+    <footer className="flex items-center justify-end border-t border-rule p-3">
+      <Button
+        data-testid="brain-detail-drawer-delete"
+        kind="dangerous"
+        size="sm"
+        onClick={onDelete}
+        className="gap-1.5 border-0 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
+      >
+        <Trash2 className="h-3 w-3" />
+        {t('brainSpace.drawer.deleteNote')}
+      </Button>
+    </footer>
+  );
+};
 
 const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) => {
   const navigate = useNavigate();
@@ -567,6 +586,7 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
 };
 
 export const BrainSpaceDetailDrawer = ({ spaceId }: BrainSpaceDetailDrawerProps) => {
+  const { t } = useTranslation('screens');
   const detailNoteId = useUI((s) => s.detailNoteId);
   const closeDetail = useUI((s) => s.closeDetail);
   const focusNote = useUI((s) => s.focusNote);
@@ -600,10 +620,10 @@ export const BrainSpaceDetailDrawer = ({ spaceId }: BrainSpaceDetailDrawerProps)
           )}
         >
           <DialogPrimitiveTitle className="sr-only">
-            Note details
+            {t('brainSpace.drawer.title')}
           </DialogPrimitiveTitle>
           <DialogPrimitiveDescription className="sr-only">
-            Edit the selected note and manage its connections.
+            {t('brainSpace.drawer.description')}
           </DialogPrimitiveDescription>
           {note ? (
             <DrawerBody

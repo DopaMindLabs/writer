@@ -6,6 +6,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type RefObject,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { useNotes } from '@/hooks/useNotes';
@@ -96,28 +97,36 @@ const ConnectionsLayer = ({
   </svg>
 );
 
-const CanvasEmptyState = () => (
-  <div
-    data-testid="brain-canvas-empty"
-    className="pointer-events-none absolute inset-0 flex items-center justify-center text-center"
-  >
-    <div>
-      <TypographyP variant="emptyHint">start dumping</TypographyP>
-      <TypographyLabel variant="wide" className="mt-1 text-ink-4">
-        pick a card type below
-      </TypographyLabel>
+const CanvasEmptyState = () => {
+  const { t } = useTranslation('screens');
+  return (
+    <div
+      data-testid="brain-canvas-empty"
+      className="pointer-events-none absolute inset-0 flex items-center justify-center text-center"
+    >
+      <div>
+        <TypographyP variant="emptyHint">
+          {t('brainSpace.canvas.emptyTitle')}
+        </TypographyP>
+        <TypographyLabel variant="wide" className="mt-1 text-ink-4">
+          {t('brainSpace.canvas.emptyHint')}
+        </TypographyLabel>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-const CanvasPendingHint = () => (
-  <div
-    data-testid="brain-canvas-pending-hint"
-    className="pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 rounded-full border border-ink bg-paper px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-ink"
-  >
-    shift-click another note to connect · esc to cancel
-  </div>
-);
+const CanvasPendingHint = () => {
+  const { t } = useTranslation('screens');
+  return (
+    <div
+      data-testid="brain-canvas-pending-hint"
+      className="pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 rounded-full border border-ink bg-paper px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-ink"
+    >
+      {t('brainSpace.canvas.pendingHint')}
+    </div>
+  );
+};
 
 interface CanvasToolbarProps {
   toolbarKinds: NoteKind[];

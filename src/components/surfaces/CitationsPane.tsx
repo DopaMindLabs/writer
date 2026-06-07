@@ -10,6 +10,7 @@ import {
   type RefObject,
   type SetStateAction,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Check,
   ChevronLeft,
@@ -73,24 +74,37 @@ const useImportActions = ({
   fileInputRef,
   setStatus,
 }: ImportActionsDeps) => {
+  const { t } = useTranslation('screens');
+
   const handleFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setStatus(`Parsing ${file.name}…`);
+    setStatus(t('citations.parsing', { name: file.name }));
     try {
       const parsed = await parseBibtexFile(file, spaceId);
       const { added, skipped } = await importCitations(parsed);
+      const addedPlural = added === 1 ? '' : 's';
+      const skippedSuffix =
+        skipped > 0
+          ? t('citations.skippedSuffix', {
+              skipped,
+              skippedPlural: skipped === 1 ? '' : 's',
+            })
+          : '';
       setStatus(
-        `Imported ${String(added)} citation${added === 1 ? '' : 's'}${
-          skipped > 0
-            ? `, skipped ${String(skipped)} duplicate${skipped === 1 ? '' : 's'}`
-            : ''
-        }.`,
+        t('citations.imported', {
+          added,
+          addedPlural,
+          skippedSuffix,
+        }),
       );
     } catch (err) {
       console.error(err);
       setStatus(
-        `Failed to parse: ${err instanceof Error ? err.message : 'unknown error'}`,
+        t('citations.failed', {
+          message:
+            err instanceof Error ? err.message : t('citations.unknownError'),
+        }),
       );
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -119,25 +133,25 @@ const useMutationActions = ({
   setSelected,
   setOpenRow,
 }: MutationActionsDeps) => {
+  const { t } = useTranslation('screens');
+
   const handleBulkDelete = async () => {
     const ids = Array.from(selected);
     if (ids.length === 0) return;
     const ok = window.confirm(
-      `Delete ${String(ids.length)} citation${ids.length === 1 ? '' : 's'}? This cannot be undone.`,
+      t('citations.bulk.confirmDelete', { count: ids.length }),
     );
     if (!ok) return;
     await db.citations.bulkDelete(ids);
     setSelected(new Set());
-    setStatus(
-      `Deleted ${String(ids.length)} citation${ids.length === 1 ? '' : 's'}.`,
-    );
+    setStatus(t('citations.bulk.deleted', { count: ids.length }));
   };
 
   const deleteCitation = async (c: Citation) => {
     const confirmMsg =
       c.useCount > 0
-        ? `This citation is used ${String(c.useCount)}× in your documents. Delete anyway?`
-        : `Delete citation "${c.key}"? This cannot be undone.`;
+        ? t('citations.edit.confirmDeleteUsed', { count: c.useCount })
+        : t('citations.edit.confirmDeleteSingle', { key: c.key });
     if (!window.confirm(confirmMsg)) return;
     try {
       await db.citations.delete(c.id);
@@ -148,10 +162,13 @@ const useMutationActions = ({
         next.delete(c.id);
         return next;
       });
-      setStatus('Deleted 1 citation.');
+      setStatus(t('citations.edit.deleteOne'));
     } catch (err) {
       setStatus(
-        `Failed: ${err instanceof Error ? err.message : 'unknown error'}`,
+        t('citations.failedManual', {
+          message:
+            err instanceof Error ? err.message : t('citations.unknownError'),
+        }),
       );
     }
   };
@@ -165,7 +182,7 @@ const useMutationActions = ({
       }
     });
     setStatus(
-      `Set type to ${type} on ${String(ids.length)} citation${ids.length === 1 ? '' : 's'}.`,
+      t('citations.bulk.typeApplied', { type, count: ids.length }),
     );
   };
 
@@ -393,6 +410,7 @@ export const CitationsPane = ({
 };
 
 const EmptyState = ({ hasCitations }: { hasCitations: boolean }) => {
+  const { t } = useTranslation('screens');
   return (
     <div
       className="flex items-center justify-center px-4 py-20 md:px-10"
@@ -404,15 +422,15 @@ const EmptyState = ({ hasCitations }: { hasCitations: boolean }) => {
           className="text-[20px]"
           data-testid="citations-empty-title"
         >
-          no citations yet
+          {t('citations.empty')}
         </TypographyP>
         <TypographyMuted
           className="mt-2 text-[13px]"
           data-testid="citations-empty-hint"
         >
           {hasCitations
-            ? 'no rows match your search.'
-            : 'import a .bib or add one manually.'}
+            ? t('citations.noMatch')
+            : t('citations.importHint')}
         </TypographyMuted>
       </div>
     </div>
@@ -428,15 +446,16 @@ const CitationsHeader = ({
   isCompact: boolean;
   count: number;
 }) => {
+  const { t } = useTranslation('screens');
   return (
     <div className={cn('border-b border-rule py-4', xPad, !isCompact && 'py-6')}>
       <div className="flex items-baseline justify-between">
         <div className="font-mono text-[10px] uppercase tracking-[0.08em]">
-          <span className="text-ink-3">Sources / </span>
-          <span className="text-ink">Citations</span>
+          <span className="text-ink-3">{t('citations.breadcrumb')}</span>
+          <span className="text-ink">{t('citations.title')}</span>
         </div>
         <div className="font-mono text-[10px] uppercase tracking-wider text-ink-4">
-          {count} ENTRIES
+          {t('citations.entries', { count })}
         </div>
       </div>
     </div>
@@ -464,6 +483,7 @@ const CitationsToolbar = ({
   fileInputRef,
   onFile,
 }: CitationsToolbarProps) => {
+  const { t } = useTranslation('screens');
   return (
     <div
       data-tour="tour-citations-add"
@@ -477,7 +497,7 @@ const CitationsToolbar = ({
           value={query}
           onChange={(e) => { onQueryChange(e.target.value); }}
           onClear={() => { onQueryChange(''); }}
-          placeholder="authors, tags, year…"
+          placeholder={t('citations.searchPlaceholder')}
           className="text-[12px]"
           data-testid="citations-search"
         />
@@ -489,7 +509,7 @@ const CitationsToolbar = ({
           onClick={onUploadClick}
           data-testid="citations-upload"
         >
-          ↑ upload .bib / .ris
+          {t('citations.upload')}
         </Button>
         {/* @lint-ignore native-button: muted text-action toggle ("+ add" / "× cancel"); no matching DS Button kind */}
         <button
@@ -498,7 +518,7 @@ const CitationsToolbar = ({
           className="text-ink-3 hover:text-ink"
           data-testid="citations-add-toggle"
         >
-          {adding ? '× cancel' : '+ add'}
+          {adding ? t('citations.cancel') : t('citations.add')}
         </button>
         {/* @lint-ignore native-input: hidden file input triggered programmatically; DS primitives intentionally don't cover this case */}
         <input
@@ -533,6 +553,7 @@ const CitationsListHeader = ({
   visibleCount,
   onToggleSelectAll,
 }: CitationsListHeaderProps) => {
+  const { t } = useTranslation('screens');
   return (
     <div
       className={cn(
@@ -549,17 +570,19 @@ const CitationsListHeader = ({
               el.indeterminate = !allVisibleSelected && someVisibleSelected;
           }}
           onChange={onToggleSelectAll}
-          aria-label="Select all citations on this page"
+          aria-label={t('citations.row.selectAllAria')}
           disabled={visibleCount === 0}
           data-testid="citations-select-all"
         />
       </span>
-      {!isCompact && <span>TAG</span>}
-      <span>AUTHORS</span>
-      <span>TITLE</span>
-      <span>YEAR</span>
-      {!isCompact && <span>TYPE</span>}
-      {!isCompact && <span className="text-right">USED</span>}
+      {!isCompact && <span>{t('citations.columns.tag')}</span>}
+      <span>{t('citations.columns.authors')}</span>
+      <span>{t('citations.columns.title')}</span>
+      <span>{t('citations.columns.year')}</span>
+      {!isCompact && <span>{t('citations.columns.type')}</span>}
+      {!isCompact && (
+        <span className="text-right">{t('citations.columns.used')}</span>
+      )}
     </div>
   );
 };
@@ -723,6 +746,7 @@ const CitationRowItem = ({
   onStatus,
   onDeleteCitation,
 }: CitationRowItemProps) => {
+  const { t } = useTranslation('screens');
   const mode = open?.id === c.id ? open.mode : null;
   if (mode === 'edit') {
     return (
@@ -732,7 +756,7 @@ const CitationRowItem = ({
         onCancel={() => { onSetOpenRow({ id: c.id, mode: 'view' }); }}
         onSaved={() => {
           onSetOpenRow({ id: c.id, mode: 'view' });
-          onStatus('Updated 1 citation.');
+          onStatus(t('citations.edit.updated'));
         }}
         onDelete={() => { onDeleteCitation(c); }}
         onError={(msg) => { onStatus(msg); }}
@@ -786,6 +810,7 @@ const CitationsFooter = ({
   onExport,
   onSetPage,
 }: CitationsFooterProps) => {
+  const { t } = useTranslation('screens');
   return (
     <div
       className={cn(
@@ -793,11 +818,11 @@ const CitationsFooter = ({
         xPad,
       )}
     >
-      <span>STYLE — CHICAGO (AUTHOR-DATE)</span>
+      <span>{t('citations.style')}</span>
 
       <div className="flex items-center gap-3">
         <span data-testid="citations-counts">
-          {shown} SHOWN · {onThisPage} ON THIS PAGE
+          {t('citations.summary', { filtered: shown, shown: onThisPage })}
         </span>
         {totalPages > 1 && (
           <Pagination
@@ -814,7 +839,7 @@ const CitationsFooter = ({
         disabled={totalCitations === 0}
         data-testid="citations-export"
       >
-        EXPORT AS .BIB
+        {t('citations.exportBib')}
       </Button>
     </div>
   );
@@ -827,11 +852,12 @@ interface PaginationProps {
 }
 
 const Pagination = ({ currentPage, totalPages, onSetPage }: PaginationProps) => {
+  const { t } = useTranslation('screens');
   return (
     <span className="flex items-center gap-2">
       <IconButton
         icon={ChevronLeft}
-        label="Previous page"
+        label={t('citations.prevPage')}
         onClick={() => { onSetPage((p) => Math.max(0, p - 1)); }}
         disabled={currentPage === 0}
         iconSize="xs"
@@ -843,7 +869,7 @@ const Pagination = ({ currentPage, totalPages, onSetPage }: PaginationProps) => 
       </span>
       <IconButton
         icon={ChevronRight}
-        label="Next page"
+        label={t('citations.nextPage')}
         onClick={() => { onSetPage((p) => Math.min(totalPages - 1, p + 1)); }}
         disabled={currentPage >= totalPages - 1}
         iconSize="xs"
@@ -873,6 +899,7 @@ const CitationRow = ({
   onToggleSelect,
   onExpand,
 }: CitationRowProps) => {
+  const { t } = useTranslation('screens');
   const handleRowClick = (e: MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     if (target.closest('input, button, a, select, label')) return;
@@ -893,7 +920,7 @@ const CitationRow = ({
       tabIndex={0}
       onClick={handleRowClick}
       onKeyDown={handleRowKeyDown}
-      aria-label={`View citation ${c.key}`}
+      aria-label={t('citations.row.viewCitationAria', { key: c.key })}
       data-testid={rowTestId}
       className={cn(
         'flex cursor-pointer flex-col gap-1 border-b border-rule py-3 hover:bg-paper-2 focus:bg-paper-2 focus:outline-none md:items-baseline md:gap-4 md:py-2.5',
@@ -906,7 +933,7 @@ const CitationRow = ({
           checked={isSelected}
           onChange={onToggleSelect}
           onClick={(e) => { e.stopPropagation(); }}
-          aria-label={`Select citation ${c.key}`}
+          aria-label={t('citations.row.selectCitationAria', { key: c.key })}
           data-testid={`${rowTestId}-select`}
         />
       </span>
@@ -973,6 +1000,7 @@ const CitationRowMeta = ({
   isCompact: boolean;
   rowTestId: string;
 }) => {
+  const { t } = useTranslation('screens');
   return (
     <>
       {!isCompact && (
@@ -998,7 +1026,11 @@ const CitationRowMeta = ({
         <span className="text-ink-4">·</span>
         <span>{c.type}</span>
         <span className="text-ink-4">·</span>
-        <span>{c.useCount > 0 ? `${String(c.useCount)}× used` : 'unused'}</span>
+        <span>
+          {c.useCount > 0
+            ? t('citations.row.usedCount', { count: c.useCount })
+            : t('citations.row.unused')}
+        </span>
       </div>
     </>
   );
@@ -1011,6 +1043,7 @@ const CopyTagButton = ({
   value: string;
   testId?: string;
 }) => {
+  const { t } = useTranslation('screens');
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -1034,8 +1067,12 @@ const CopyTagButton = ({
   return (
     <IconButton
       icon={copied ? Check : Copy}
-      label={copied ? `Copied tag ${value}` : `Copy tag ${value}`}
-      title={copied ? 'Copied' : 'Copy tag'}
+      label={
+        copied
+          ? t('citations.row.copiedTagAria', { value })
+          : t('citations.row.copyTagAria', { value })
+      }
+      title={copied ? t('citations.row.copiedTitle') : t('citations.row.copyTag')}
       onClick={() => { void handleCopy(); }}
       iconSize="xs"
       className="h-5 w-5"
@@ -1063,6 +1100,7 @@ const CitationDetailRow = ({
   onDelete,
   onClose,
 }: CitationDetailRowProps) => {
+  const { t } = useTranslation('screens');
   const labelCls = 'font-mono text-[10px] uppercase tracking-wider text-ink-3';
   const valueCls = 'text-[13px] text-ink';
 
@@ -1086,7 +1124,7 @@ const CitationDetailRow = ({
         valueCls={valueCls}
       />
       <div className="mt-3 flex flex-col gap-1">
-        <span className={labelCls}>Title</span>
+        <span className={labelCls}>{t('citations.edit.titleLabel')}</span>
         <span
           className={cn(valueCls, 'font-serif')}
           data-testid={`${detailTestId}-title`}
@@ -1119,6 +1157,7 @@ const CitationDetailHeader = ({
   onToggleSelect,
   onClose,
 }: CitationDetailHeaderProps) => {
+  const { t } = useTranslation('screens');
   return (
     <div className="mb-3 flex items-center justify-between">
       <Label
@@ -1129,14 +1168,14 @@ const CitationDetailHeader = ({
         <Checkbox
           checked={isSelected}
           onChange={onToggleSelect}
-          aria-label={`Select citation ${c.key}`}
+          aria-label={t('citations.row.selectCitationAria', { key: c.key })}
           data-testid={`${detailTestId}-select`}
         />
         {c.key}
       </Label>
       <IconButton
         icon={X}
-        label={`Collapse citation ${c.key}`}
+        label={t('citations.row.collapseCitationAria', { key: c.key })}
         onClick={onClose}
         iconSize="xs"
         className="h-5 w-5"
@@ -1159,13 +1198,16 @@ const CitationDetailActions = ({
   onEdit,
   onDelete,
 }: CitationDetailActionsProps) => {
+  const { t } = useTranslation('screens');
   return (
     <div className="mt-3 flex items-center justify-between text-[11px]">
       <span
         className="font-mono text-[10px] uppercase tracking-wider text-ink-3"
         data-testid={`${detailTestId}-used`}
       >
-        {c.useCount > 0 ? `${String(c.useCount)}× used` : 'unused'}
+        {c.useCount > 0
+          ? t('citations.row.usedCount', { count: c.useCount })
+          : t('citations.row.unused')}
       </span>
       <div className="flex items-center gap-3">
         {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
@@ -1175,7 +1217,7 @@ const CitationDetailActions = ({
           className="text-ink-3 hover:text-ink"
           data-testid={`${detailTestId}-delete`}
         >
-          delete
+          {t('citations.edit.delete')}
         </button>
         <Button
           kind="ghost"
@@ -1183,7 +1225,7 @@ const CitationDetailActions = ({
           onClick={onEdit}
           data-testid={`${detailTestId}-edit`}
         >
-          edit
+          {t('citations.edit.edit')}
         </Button>
       </div>
     </div>
@@ -1203,11 +1245,12 @@ const CitationDetailFields = ({
   labelCls,
   valueCls,
 }: CitationDetailFieldsProps) => {
+  const { t } = useTranslation('screens');
   return (
     <div className="grid gap-3 md:grid-cols-[7rem_1fr_5rem_7rem]">
       <div className="flex flex-col gap-1">
         <span className={cn(labelCls, 'flex items-center gap-1.5')}>
-          Tag
+          {t('citations.edit.tagLabel')}
           <CopyTagButton value={c.key} testId={`${detailTestId}-copy`} />
         </span>
         <span
@@ -1218,7 +1261,7 @@ const CitationDetailFields = ({
         </span>
       </div>
       <div className="flex flex-col gap-1">
-        <span className={labelCls}>Authors</span>
+        <span className={labelCls}>{t('citations.edit.authorsLabel')}</span>
         <span
           className={cn(valueCls, 'font-serif italic')}
           data-testid={`${detailTestId}-authors`}
@@ -1227,7 +1270,7 @@ const CitationDetailFields = ({
         </span>
       </div>
       <div className="flex flex-col gap-1">
-        <span className={labelCls}>Year</span>
+        <span className={labelCls}>{t('citations.edit.yearLabel')}</span>
         <span
           className={cn(valueCls, 'font-mono')}
           data-testid={`${detailTestId}-year`}
@@ -1236,7 +1279,7 @@ const CitationDetailFields = ({
         </span>
       </div>
       <div className="flex flex-col gap-1">
-        <span className={labelCls}>Type</span>
+        <span className={labelCls}>{t('citations.edit.typeLabel')}</span>
         <span
           className={cn(valueCls, 'font-mono uppercase tracking-wider')}
           data-testid={`${detailTestId}-type`}
@@ -1277,6 +1320,7 @@ const useCitationEdit = (
   onSaved: () => void,
   onError: (msg: string) => void,
 ) => {
+  const { t } = useTranslation('screens');
   const [draft, setDraft] = useState<EditDraft>({
     key: c.key,
     authors: c.authors,
@@ -1290,8 +1334,8 @@ const useCitationEdit = (
     setBusy(true);
     try {
       const trimmedKey = draft.key.trim() || c.key;
-      const trimmedTitle = draft.title.trim() || '(untitled)';
-      const trimmedAuthors = draft.authors.trim() || '(unknown)';
+      const trimmedTitle = draft.title.trim() || t('citations.edit.untitled');
+      const trimmedAuthors = draft.authors.trim() || t('citations.unknownAuthor');
       const yearNum = parseYear(draft.year);
 
       if (trimmedKey !== c.key) {
@@ -1300,7 +1344,7 @@ const useCitationEdit = (
           .equals([c.spaceId, trimmedKey])
           .first();
         if (existing && existing.id !== c.id) {
-          onError(`Tag "${trimmedKey}" is already used in this space.`);
+          onError(t('citations.edit.duplicateKey', { key: trimmedKey }));
           setBusy(false);
           return;
         }
@@ -1316,7 +1360,10 @@ const useCitationEdit = (
       onSaved();
     } catch (err) {
       onError(
-        `Failed: ${err instanceof Error ? err.message : 'unknown error'}`,
+        t('citations.failedManual', {
+          message:
+            err instanceof Error ? err.message : t('citations.unknownError'),
+        }),
       );
       setBusy(false);
     }
@@ -1390,6 +1437,7 @@ const CitationEditFields = ({
   setDraft,
   editTestId,
 }: CitationEditFieldsProps) => {
+  const { t } = useTranslation('screens');
   return (
     <>
       <CitationEditGrid
@@ -1398,14 +1446,14 @@ const CitationEditFields = ({
         editTestId={editTestId}
       />
       <Label tone="ink3" weight="regular" className={cn(EDIT_LABEL_CLS, 'mt-3')}>
-        Title
+        {t('citations.edit.titleLabel')}
         {/* @lint-ignore native-input: bordered inline-edit input; see comment above */}
         <input
           type="text"
           value={draft.title}
           onChange={(e) => { setDraft((d) => ({ ...d, title: e.target.value })); }}
           className={EDIT_INPUT_CLS}
-          aria-label="Title"
+          aria-label={t('citations.edit.titleLabel')}
           data-testid={`${editTestId}-title`}
         />
       </Label>
@@ -1456,10 +1504,11 @@ const CitationEditGrid = ({
   setDraft,
   editTestId,
 }: CitationEditFieldsProps) => {
+  const { t } = useTranslation('screens');
   return (
     <div className="grid gap-3 md:grid-cols-[7rem_1fr_5rem_7rem]">
       <EditTextField
-        label="Tag"
+        label={t('citations.edit.tagLabel')}
         value={draft.key}
         onChange={(v) => { setDraft((d) => ({ ...d, key: v })); }}
         testId={`${editTestId}-tag`}
@@ -1467,13 +1516,13 @@ const CitationEditGrid = ({
         autoFocus
       />
       <EditTextField
-        label="Authors"
+        label={t('citations.edit.authorsLabel')}
         value={draft.authors}
         onChange={(v) => { setDraft((d) => ({ ...d, authors: v })); }}
         testId={`${editTestId}-authors`}
       />
       <EditTextField
-        label="Year"
+        label={t('citations.edit.yearLabel')}
         value={draft.year}
         onChange={(v) => { setDraft((d) => ({ ...d, year: v })); }}
         testId={`${editTestId}-year`}
@@ -1481,7 +1530,7 @@ const CitationEditGrid = ({
         numeric
       />
       <Label tone="ink3" weight="regular" className={EDIT_LABEL_CLS}>
-        Type
+        {t('citations.edit.typeLabel')}
         {/* @lint-ignore native-select: bordered inline-edit select; matching variant for DS Select tracked for PR 5 */}
         <select
           value={draft.type}
@@ -1492,12 +1541,12 @@ const CitationEditGrid = ({
             })); }
           }
           className={EDIT_INPUT_CLS}
-          aria-label="Type"
+          aria-label={t('citations.edit.typeLabel')}
           data-testid={`${editTestId}-type`}
         >
-          {TYPE_OPTIONS.map((t) => (
-            <option key={t} value={t}>
-              {t}
+          {TYPE_OPTIONS.map((tOpt) => (
+            <option key={tOpt} value={tOpt}>
+              {tOpt}
             </option>
           ))}
         </select>
@@ -1521,6 +1570,7 @@ const CitationEditActions = ({
   onDelete,
   onSave,
 }: CitationEditActionsProps) => {
+  const { t } = useTranslation('screens');
   return (
     <div className="mt-3 flex items-center justify-between text-[11px]">
       {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
@@ -1531,7 +1581,7 @@ const CitationEditActions = ({
         className="text-ink-3 hover:text-ink disabled:opacity-50"
         data-testid={`${editTestId}-delete`}
       >
-        delete
+        {t('citations.edit.delete')}
       </button>
       <div className="flex items-center gap-3">
         {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
@@ -1542,7 +1592,7 @@ const CitationEditActions = ({
           className="text-ink-3 hover:text-ink disabled:opacity-50"
           data-testid={`${editTestId}-cancel`}
         >
-          cancel
+          {t('citations.edit.cancel')}
         </button>
         <Button
           kind="ghost"
@@ -1551,7 +1601,7 @@ const CitationEditActions = ({
           disabled={busy}
           data-testid={`${editTestId}-save`}
         >
-          {busy ? 'saving…' : 'save'}
+          {busy ? t('citations.edit.saving') : t('citations.edit.save')}
         </Button>
       </div>
     </div>
@@ -1567,6 +1617,7 @@ interface BulkBarProps {
 }
 
 const BulkBar = ({ xPad, count, onClear, onDelete, onSetType }: BulkBarProps) => {
+  const { t } = useTranslation('screens');
   return (
     <div
       className={cn(
@@ -1574,14 +1625,14 @@ const BulkBar = ({ xPad, count, onClear, onDelete, onSetType }: BulkBarProps) =>
         xPad,
       )}
       role="region"
-      aria-label="Bulk actions"
+      aria-label={t('citations.bulk.ariaLabel')}
       data-testid="citations-bulk-bar"
     >
       <span
         className="font-mono text-[10px] uppercase tracking-wider text-ink-3"
         data-testid="citations-bulk-bar-count"
       >
-        {count} selected
+        {t('citations.bulk.selectedSummary', { count })}
       </span>
       <div className="flex flex-wrap items-center gap-4">
         <BulkSetTypeSelect onSetType={onSetType} />
@@ -1591,7 +1642,7 @@ const BulkBar = ({ xPad, count, onClear, onDelete, onSetType }: BulkBarProps) =>
           onClick={onDelete}
           data-testid="citations-bulk-delete"
         >
-          delete
+          {t('citations.bulk.deleteSelected')}
         </Button>
         {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
         <button
@@ -1600,7 +1651,7 @@ const BulkBar = ({ xPad, count, onClear, onDelete, onSetType }: BulkBarProps) =>
           className="text-ink-3 hover:text-ink"
           data-testid="citations-bulk-clear"
         >
-          clear
+          {t('citations.bulk.clearSelection')}
         </button>
       </div>
     </div>
@@ -1612,13 +1663,14 @@ const BulkSetTypeSelect = ({
 }: {
   onSetType: (t: Citation['type']) => void;
 }) => {
+  const { t } = useTranslation('screens');
   return (
     <Label
       tone="ink3"
       weight="regular"
       className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider"
     >
-      set type
+      {t('citations.bulk.setTypePrompt')}
       {/* @lint-ignore native-select: bordered bulk-action select; matching variant for DS Select tracked for PR 5 */}
       <select
         defaultValue=""
@@ -1628,16 +1680,16 @@ const BulkSetTypeSelect = ({
           onSetType(v);
           e.currentTarget.value = '';
         }}
-        aria-label="Set type for selected citations"
+        aria-label={t('citations.bulk.setTypeAria')}
         className="rounded-sm border border-rule bg-paper px-2 py-0.5 text-[11px] text-ink outline-none focus:border-ink"
         data-testid="citations-bulk-set-type"
       >
         <option value="" disabled>
-          choose…
+          {t('citations.bulk.chooseOption')}
         </option>
-        {TYPE_OPTIONS.map((t) => (
-          <option key={t} value={t}>
-            {t}
+        {TYPE_OPTIONS.map((tOpt) => (
+          <option key={tOpt} value={tOpt}>
+            {tOpt}
           </option>
         ))}
       </select>
@@ -1657,6 +1709,7 @@ const useManualAdd = ({
   onClose,
   onStatus,
 }: Omit<ManualAddFormProps, 'xPad'>) => {
+  const { t } = useTranslation('screens');
   const [raw, setRaw] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -1667,30 +1720,36 @@ const useManualAdd = ({
       if (raw.trim().startsWith('@')) {
         const parsed = await parseBibtexText(raw, spaceId);
         const { added, skipped } = await importCitations(parsed);
+        const addedPlural = added === 1 ? '' : 's';
+        const skippedSuffix =
+          skipped > 0
+            ? t('citations.skippedSuffixShort', { skipped })
+            : '';
         onStatus(
-          `Imported ${String(added)} citation${added === 1 ? '' : 's'}${
-            skipped > 0 ? `, skipped ${String(skipped)}` : ''
-          }.`,
+          t('citations.imported', { added, addedPlural, skippedSuffix }),
         );
       } else {
         const newCitation: Citation = {
           id: newId(),
           spaceId,
           key: `manual-${String(Date.now())}`,
-          authors: '(unknown)',
+          authors: t('citations.unknownAuthor'),
           title: raw.trim(),
           year: 0,
           type: 'misc',
           useCount: 0,
         };
         await db.citations.add(newCitation);
-        onStatus('Added 1 citation.');
+        onStatus(t('citations.addedOne'));
       }
       setRaw('');
       onClose();
     } catch (err) {
       onStatus(
-        `Failed: ${err instanceof Error ? err.message : 'unknown error'}`,
+        t('citations.failedManual', {
+          message:
+            err instanceof Error ? err.message : t('citations.unknownError'),
+        }),
       );
     } finally {
       setSubmitting(false);
@@ -1701,6 +1760,7 @@ const useManualAdd = ({
 };
 
 const ManualAddForm = ({ spaceId, xPad, onClose, onStatus }: ManualAddFormProps) => {
+  const { t } = useTranslation('screens');
   const { raw, setRaw, submitting, onSubmit } = useManualAdd({
     spaceId,
     onClose,
@@ -1713,13 +1773,13 @@ const ManualAddForm = ({ spaceId, xPad, onClose, onStatus }: ManualAddFormProps)
       data-testid="citations-manual-add"
     >
       <div className="mb-2 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-        Paste BibTeX or a title
+        {t('citations.pasteHeader')}
       </div>
       <TextArea
         value={raw}
         onChange={(e) => { setRaw(e.target.value); }}
         rows={4}
-        placeholder={'@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}'}
+        placeholder={t('citations.manualAdd.bibtexPlaceholder')}
         className="rounded-sm font-mono text-[12px] placeholder:not-italic placeholder:font-mono"
         data-testid="citations-manual-add-input"
       />
@@ -1731,7 +1791,7 @@ const ManualAddForm = ({ spaceId, xPad, onClose, onStatus }: ManualAddFormProps)
           className="text-ink-3 hover:text-ink"
           data-testid="citations-manual-add-cancel"
         >
-          cancel
+          {t('citations.manualCancel')}
         </button>
         <Button
           kind="ghost"
@@ -1740,7 +1800,7 @@ const ManualAddForm = ({ spaceId, xPad, onClose, onStatus }: ManualAddFormProps)
           disabled={submitting || !raw.trim()}
           data-testid="citations-manual-add-submit"
         >
-          {submitting ? 'adding…' : 'add citation'}
+          {submitting ? t('citations.adding') : t('citations.addCitation')}
         </Button>
       </div>
     </div>
