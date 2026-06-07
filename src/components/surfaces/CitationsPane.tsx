@@ -956,6 +956,11 @@ const CitationRowMainCells = ({
   isCompact: boolean;
   rowTestId: string;
 }) => {
+  const { t } = useTranslation('screens');
+  const displayTitle =
+    c.title === '(untitled)' ? t('citations.edit.untitled') : c.title;
+  const displayAuthors =
+    c.authors === '(unknown)' ? t('citations.unknownAuthor') : c.authors;
   return (
     <>
       {!isCompact && (
@@ -967,19 +972,19 @@ const CitationRowMainCells = ({
         </span>
       )}
       <span className="font-serif text-[16px] text-ink md:hidden">
-        {c.title}
+        {displayTitle}
       </span>
       <span
         className="truncate font-serif text-[14px] italic text-ink"
         data-testid={`${rowTestId}-authors`}
       >
-        {c.authors}
+        {displayAuthors}
       </span>
       <span
         className="hidden truncate font-serif text-[14px] text-ink-2 md:inline"
         data-testid={`${rowTestId}-title`}
       >
-        {c.title}
+        {displayTitle}
       </span>
       <span
         className="hidden font-mono text-[11px] text-ink-3 md:inline"
@@ -1129,7 +1134,7 @@ const CitationDetailRow = ({
           className={cn(valueCls, 'font-serif')}
           data-testid={`${detailTestId}-title`}
         >
-          {c.title}
+          {c.title === '(untitled)' ? t('citations.edit.untitled') : c.title}
         </span>
       </div>
       <CitationDetailActions
@@ -1266,7 +1271,7 @@ const CitationDetailFields = ({
           className={cn(valueCls, 'font-serif italic')}
           data-testid={`${detailTestId}-authors`}
         >
-          {c.authors}
+          {c.authors === '(unknown)' ? t('citations.unknownAuthor') : c.authors}
         </span>
       </div>
       <div className="flex flex-col gap-1">
@@ -1334,8 +1339,8 @@ const useCitationEdit = (
     setBusy(true);
     try {
       const trimmedKey = draft.key.trim() || c.key;
-      const trimmedTitle = draft.title.trim() || t('citations.edit.untitled');
-      const trimmedAuthors = draft.authors.trim() || t('citations.unknownAuthor');
+      const trimmedTitle = draft.title.trim() || '(untitled)';
+      const trimmedAuthors = draft.authors.trim() || '(unknown)';
       const yearNum = parseYear(draft.year);
 
       if (trimmedKey !== c.key) {
@@ -1733,7 +1738,7 @@ const useManualAdd = ({
           id: newId(),
           spaceId,
           key: `manual-${String(Date.now())}`,
-          authors: t('citations.unknownAuthor'),
+          authors: '(unknown)',
           title: raw.trim(),
           year: 0,
           type: 'misc',
