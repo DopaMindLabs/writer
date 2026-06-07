@@ -1,5 +1,6 @@
 import { Navigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { Topbar } from '@/components/chrome/Topbar';
@@ -12,6 +13,7 @@ import { useAutoTour } from '@/tours';
 import { routes } from '@/lib/routes';
 
 export const CitationsScreen = () => {
+  const { t } = useTranslation('screens');
   const { spaceId } = useParams<{ spaceId: string }>();
   const space = useSpace(spaceId);
   const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
@@ -35,7 +37,7 @@ export const CitationsScreen = () => {
         <Topbar
           spaceId={spaceId}
           docId={null}
-          docName="Citations"
+          docName={t('citations.title')}
           spaceName={space?.name}
           mode="write"
           fallbackDocId={lastDocId}

@@ -9,6 +9,7 @@ import {
   type Ref,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   ExternalLink,
@@ -51,7 +52,7 @@ const MIN_H = 60;
 const MAX_W = 480;
 const MAX_H = 360;
 
-const DAY = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+const DAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
 
 interface BrainSpaceNoteProps {
   note: Note;
@@ -91,6 +92,7 @@ interface NoteContextMenuProps {
 }
 
 const NoteContextMenu = ({ x, y, onDelete, onClose }: NoteContextMenuProps) => {
+  const { t } = useTranslation('screens');
   useEffect(() => {
     const onPointerDown = (e: PointerEvent) => {
       const target = e.target as HTMLElement | null;
@@ -125,7 +127,7 @@ const NoteContextMenu = ({ x, y, onDelete, onClose }: NoteContextMenuProps) => {
         className="flex w-full items-center gap-2 px-3 py-1.5 text-left font-sans text-[12px] text-[color:var(--danger)] transition-colors hover:bg-[color:var(--danger-bg)]"
       >
         <Trash2 className="h-3.5 w-3.5 text-[color:var(--danger)]" />
-        Delete note
+        {t('brainSpace.note.deleteNote')}
       </button>
     </div>,
     document.body,
@@ -302,30 +304,33 @@ interface NoteAddImageButtonProps {
   onAddImages: (files: File[]) => void;
 }
 
-const NoteAddImageButton = ({ note, onAddImages }: NoteAddImageButtonProps) => (
-  <FileInputTrigger
-    accept={IMAGE_ACCEPT_ATTR}
-    multiple
-    onPick={onAddImages}
-    data-testid={`brain-note-${note.id}-image-input`}
-  >
-    {(open) => (
-      <IconButton
-        icon={ImagePlus}
-        label="Add picture"
-        onPointerDown={(e) => { e.stopPropagation(); }}
-        onClick={(e) => {
-          e.stopPropagation();
-          open();
-        }}
-        data-no-drag
-        iconSize="xs"
-        data-testid={`brain-note-${note.id}-add-image`}
-        className="h-4 w-4 rounded-sm text-ink-4 opacity-0 hover:bg-paper-2 group-hover:opacity-100"
-      />
-    )}
-  </FileInputTrigger>
-);
+const NoteAddImageButton = ({ note, onAddImages }: NoteAddImageButtonProps) => {
+  const { t } = useTranslation('screens');
+  return (
+    <FileInputTrigger
+      accept={IMAGE_ACCEPT_ATTR}
+      multiple
+      onPick={onAddImages}
+      data-testid={`brain-note-${note.id}-image-input`}
+    >
+      {(open) => (
+        <IconButton
+          icon={ImagePlus}
+          label={t('brainSpace.note.addPicture')}
+          onPointerDown={(e) => { e.stopPropagation(); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            open();
+          }}
+          data-no-drag
+          iconSize="xs"
+          data-testid={`brain-note-${note.id}-add-image`}
+          className="h-4 w-4 rounded-sm text-ink-4 opacity-0 hover:bg-paper-2 group-hover:opacity-100"
+        />
+      )}
+    </FileInputTrigger>
+  );
+};
 
 interface NoteHeaderProps {
   note: Note;
@@ -345,47 +350,50 @@ const NoteHeader = ({
   onAddImages,
   onOpenDetail,
   onDocLinkClick,
-}: NoteHeaderProps) => (
-  <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4">
-    <span data-testid={`brain-note-${note.id}-kind`}>
-      {NOTE_KIND_LABEL[note.kind]}
-    </span>
-    <span className="flex-1" />
-    {canAddImage && <NoteAddImageButton note={note} onAddImages={onAddImages} />}
-    {note.linkedDocId && (
+}: NoteHeaderProps) => {
+  const { t } = useTranslation('screens');
+  return (
+    <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4">
+      <span data-testid={`brain-note-${note.id}-kind`}>
+        {NOTE_KIND_LABEL[note.kind]}
+      </span>
+      <span className="flex-1" />
+      {canAddImage && <NoteAddImageButton note={note} onAddImages={onAddImages} />}
+      {note.linkedDocId && (
+        <IconButton
+          icon={ExternalLink}
+          label={t('brainSpace.note.openLinkedDoc')}
+          title={t('brainSpace.note.openLinkedDoc')}
+          onPointerDown={(e) => { e.stopPropagation(); }}
+          onClick={onDocLinkClick}
+          data-no-drag
+          iconSize="xs"
+          data-testid={`brain-note-${note.id}-doc-link`}
+          className="h-4 w-4 rounded-sm hover:bg-paper-2"
+        />
+      )}
+      {isSeedFetched && (
+        <Globe
+          className="h-3 w-3 text-ink-4"
+          aria-label={t('brainSpace.note.fetchedContent')}
+          data-testid={`brain-note-${note.id}-fetched-icon`}
+        />
+      )}
+      <span data-testid={`brain-note-${note.id}-day-chip`}>{dayChip}</span>
       <IconButton
-        icon={ExternalLink}
-        label="Open linked document"
-        title="Open linked document"
+        icon={Maximize2}
+        label={t('brainSpace.note.openDetailsLabel')}
+        title={t('brainSpace.note.openDetailsTitle')}
         onPointerDown={(e) => { e.stopPropagation(); }}
-        onClick={onDocLinkClick}
+        onClick={onOpenDetail}
         data-no-drag
         iconSize="xs"
-        data-testid={`brain-note-${note.id}-doc-link`}
-        className="h-4 w-4 rounded-sm hover:bg-paper-2"
+        data-testid={`brain-note-${note.id}-open-details`}
+        className="ml-1 h-4 w-4 rounded-sm text-ink-4 opacity-0 hover:bg-paper-2 group-hover:opacity-100"
       />
-    )}
-    {isSeedFetched && (
-      <Globe
-        className="h-3 w-3 text-ink-4"
-        aria-label="Fetched content"
-        data-testid={`brain-note-${note.id}-fetched-icon`}
-      />
-    )}
-    <span data-testid={`brain-note-${note.id}-day-chip`}>{dayChip}</span>
-    <IconButton
-      icon={Maximize2}
-      label="Open details"
-      title="Open details panel"
-      onPointerDown={(e) => { e.stopPropagation(); }}
-      onClick={onOpenDetail}
-      data-no-drag
-      iconSize="xs"
-      data-testid={`brain-note-${note.id}-open-details`}
-      className="ml-1 h-4 w-4 rounded-sm text-ink-4 opacity-0 hover:bg-paper-2 group-hover:opacity-100"
-    />
-  </div>
-);
+    </div>
+  );
+};
 
 interface NoteTitleProps {
   note: Note;
@@ -406,6 +414,7 @@ const NoteTitle = ({
   onCommit,
   onCancel,
 }: NoteTitleProps) => {
+  const { t } = useTranslation('screens');
   if (editing) {
     return (
       <TextField
@@ -418,7 +427,7 @@ const NoteTitle = ({
           if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
           if (e.key === 'Escape') onCancel();
         }}
-        placeholder="title"
+        placeholder={t('brainSpace.note.titlePlaceholder')}
         className="font-serif text-[13px] font-medium"
         data-no-drag
         data-testid={`brain-note-${note.id}-title-input`}
@@ -448,7 +457,7 @@ const NoteTitle = ({
       data-testid={`brain-note-${note.id}-add-title`}
       className="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
     >
-      + title
+      {t('brainSpace.note.addTitleCta')}
     </button>
   );
 };
@@ -474,6 +483,7 @@ const NoteBody = ({
   onCommit,
   onCancel,
 }: NoteBodyProps) => {
+  const { t } = useTranslation('screens');
   if (editing) {
     return (
       <TextArea
@@ -507,7 +517,7 @@ const NoteBody = ({
         !note.body && !isSeedPrompt && 'text-ink-4',
       )}
     >
-      {note.body || (isSeedPrompt ? '' : '(click to write)')}
+      {note.body || (isSeedPrompt ? '' : t('brainSpace.note.bodyEmpty'))}
     </div>
   );
 };
@@ -557,34 +567,37 @@ interface ImageCardEmptyProps {
 
 // Explicit, always-visible drop zone (not a hover-revealed control) so the next
 // action on a fresh image card is unambiguous.
-const ImageCardEmpty = ({ note, onAddImages }: ImageCardEmptyProps) => (
-  <FileInputTrigger
-    accept={IMAGE_ACCEPT_ATTR}
-    multiple
-    onPick={onAddImages}
-    data-testid={`brain-note-${note.id}-image-dropzone-input`}
-  >
-    {(open) => (
-      // @lint-ignore native-button: full-card image drop zone (icon + label content); not a DS Button kind
-      <button
-        type="button"
-        onPointerDown={(e) => { e.stopPropagation(); }}
-        onClick={(e) => {
-          e.stopPropagation();
-          open();
-        }}
-        data-no-drag
-        data-testid={`brain-note-${note.id}-image-dropzone`}
-        className="flex flex-1 flex-col items-center justify-center gap-1.5 border border-dashed border-rule bg-paper-2 py-6 text-ink-4 hover:border-ink hover:text-ink-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
-      >
-        <ImagePlus className="h-5 w-5" />
-        <span className="font-mono text-[10px] uppercase tracking-wider">
-          add a picture
-        </span>
-      </button>
-    )}
-  </FileInputTrigger>
-);
+const ImageCardEmpty = ({ note, onAddImages }: ImageCardEmptyProps) => {
+  const { t } = useTranslation('screens');
+  return (
+    <FileInputTrigger
+      accept={IMAGE_ACCEPT_ATTR}
+      multiple
+      onPick={onAddImages}
+      data-testid={`brain-note-${note.id}-image-dropzone-input`}
+    >
+      {(open) => (
+        // @lint-ignore native-button: full-card image drop zone (icon + label content); not a DS Button kind
+        <button
+          type="button"
+          onPointerDown={(e) => { e.stopPropagation(); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            open();
+          }}
+          data-no-drag
+          data-testid={`brain-note-${note.id}-image-dropzone`}
+          className="flex flex-1 flex-col items-center justify-center gap-1.5 border border-dashed border-rule bg-paper-2 py-6 text-ink-4 hover:border-ink hover:text-ink-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+        >
+          <ImagePlus className="h-5 w-5" />
+          <span className="font-mono text-[10px] uppercase tracking-wider">
+            {t('brainSpace.note.addPictureCta')}
+          </span>
+        </button>
+      )}
+    </FileInputTrigger>
+  );
+};
 
 interface ImageCardFilledProps {
   note: Note;
@@ -606,6 +619,7 @@ const ImageCardPrimary = ({
   onRemove: (id: string) => void;
   onOpenImage: (index: number) => void;
 }) => {
+  const { t } = useTranslation('screens');
   const url = useObjectUrl(attachment.blob);
   return (
     <div className="group/primary relative flex min-h-0 flex-1 items-center justify-center bg-paper-2">
@@ -614,7 +628,7 @@ const ImageCardPrimary = ({
         <button
           type="button"
           onClick={() => { onOpenImage(0); }}
-          aria-label={`View ${attachment.name}`}
+          aria-label={t('brainSpace.note.viewImage', { name: attachment.name })}
           data-testid={`brain-note-${note.id}-image-primary`}
           className="flex h-full w-full cursor-zoom-in items-center justify-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
         >
@@ -627,7 +641,7 @@ const ImageCardPrimary = ({
       ) : null}
       <IconButton
         icon={X}
-        label={`Remove ${attachment.name}`}
+        label={t('brainSpace.note.removeImage', { name: attachment.name })}
         buttonSize="sm"
         iconSize="xs"
         onClick={() => { onRemove(attachment.id); }}
@@ -726,25 +740,28 @@ const NoteFooter = ({
   onResizePointerDown,
   onDelete,
   onCloseMenu,
-}: NoteFooterProps) => (
-  <>
-    <div
-      data-resize-handle
-      onPointerDown={onResizePointerDown}
-      className="absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize"
-      aria-label="Resize note"
-      data-testid={`brain-note-${note.id}-resize-handle`}
-    />
-    {menu && (
-      <NoteContextMenu
-        x={menu.x}
-        y={menu.y}
-        onDelete={onDelete}
-        onClose={onCloseMenu}
+}: NoteFooterProps) => {
+  const { t } = useTranslation('screens');
+  return (
+    <>
+      <div
+        data-resize-handle
+        onPointerDown={onResizePointerDown}
+        className="absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize"
+        aria-label={t('brainSpace.note.resize')}
+        data-testid={`brain-note-${note.id}-resize-handle`}
       />
-    )}
-  </>
-);
+      {menu && (
+        <NoteContextMenu
+          x={menu.x}
+          y={menu.y}
+          onDelete={onDelete}
+          onClose={onCloseMenu}
+        />
+      )}
+    </>
+  );
+};
 
 interface NoteContentProps {
   note: Note;
@@ -1044,12 +1061,14 @@ const NoteCardContent = (props: NoteCardContentProps) => {
 };
 
 const useNoteView = (note: Note, attachmentCount: number) => {
+  const { t } = useTranslation('screens');
   const caps = getNoteLayoutConfig(note);
   const isSeedPrompt = note.state === NoteState.SeedPrompt;
   const isSeedFetched = note.state === NoteState.SeedFetched;
+  const dayKey = DAY_KEYS[new Date(note.createdAt).getDay()];
   return {
     caps,
-    dayChip: DAY[new Date(note.createdAt).getDay()] ?? 'now',
+    dayChip: t(`brainSpace.note.days.${dayKey}`),
     isSeedPrompt,
     isSeedFetched,
     isSeed: isSeedPrompt || isSeedFetched,

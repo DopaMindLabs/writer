@@ -28,8 +28,7 @@ exports[`CitationsPane > snapshot > should match the snapshot across all variant
       <div
         class="font-mono text-[10px] uppercase tracking-wider text-ink-4"
       >
-        2
-         ENTRIES
+        2 ENTRIES
       </div>
     </div>
   </div>
@@ -408,10 +407,7 @@ exports[`CitationsPane > snapshot > should match the snapshot across all variant
       <span
         data-testid="citations-counts"
       >
-        2
-         SHOWN · 
-        2
-         ON THIS PAGE
+        2 SHOWN · 2 ON THIS PAGE
       </span>
     </div>
     <button
