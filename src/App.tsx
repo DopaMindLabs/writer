@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createHashRouter, Outlet, RouterProvider } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SkipLink } from '@/components/ui/SkipLink';
 import { HelpPalette } from '@/components/help/HelpPalette';
@@ -105,18 +106,21 @@ const useAppBoot = (): { ready: boolean; error: Error | null } => {
 
 export const App = () => {
   const { ready, error } = useAppBoot();
+  const { t } = useTranslation('app');
 
   if (error) {
     return (
       <ThemeProvider>
         <div className="flex h-full items-center justify-center p-8 text-center">
           <div>
-            <TypographyLabel variant="xs">Boot error</TypographyLabel>
+            <TypographyLabel variant="xs">{t('bootErrorLabel')}</TypographyLabel>
             <TypographyP variant="empty" className="mt-2">
               {error.message}
             </TypographyP>
             <TypographyMuted variant="xs" className="mt-2">
-              Try <code>?reseed=1</code> to reset the local database.
+              {t('bootErrorHintBefore')}
+              <code>{t('bootErrorHintCode')}</code>
+              {t('bootErrorHintAfter')}
             </TypographyMuted>
           </div>
         </div>
@@ -128,7 +132,7 @@ export const App = () => {
     return (
       <ThemeProvider>
         <div className="flex h-full items-center justify-center font-sans text-ink-3">
-          <TypographyMuted>Booting…</TypographyMuted>
+          <TypographyMuted>{t('booting')}</TypographyMuted>
         </div>
       </ThemeProvider>
     );
