@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Maximize2, X } from '@/components/libs/icons';
 import { useNavigate } from 'react-router-dom';
 import { useUI } from '@/store/ui';
@@ -11,6 +12,7 @@ interface CitationsSidePanelProps {
 }
 
 export const CitationsSidePanel = ({ spaceId }: CitationsSidePanelProps) => {
+  const { t } = useTranslation('screens');
   const open = useUI((s) => s.citationsDrawerOpen);
   const close = useUI((s) => s.closeCitationsDrawer);
   const space = useSpace(spaceId);
@@ -25,24 +27,24 @@ export const CitationsSidePanel = ({ spaceId }: CitationsSidePanelProps) => {
 
   return (
     <aside
-      aria-label="Citations"
+      aria-label={t('citations.title')}
       className="fixed inset-0 z-40 flex h-full w-full flex-col bg-paper animate-in slide-in-from-right duration-200 md:static md:inset-auto md:z-auto md:max-w-[32rem] md:shrink-0 md:border-l md:border-rule"
     >
       <div className="flex h-8 shrink-0 items-center justify-between border-b border-rule px-2">
         <span className="px-2 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-          Citations
+          {t('citations.title')}
         </span>
         <div className="flex items-center">
           <IconButton
             icon={Maximize2}
             iconSize="md"
-            label="Open citations in full view"
+            label={t('citationsDrawer.expand')}
             onClick={openCitationsScreen}
           />
           <IconButton
             icon={X}
             iconSize="md"
-            label="Close citations"
+            label={t('citationsDrawer.close')}
             onClick={close}
           />
         </div>
