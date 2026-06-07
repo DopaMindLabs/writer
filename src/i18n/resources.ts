@@ -16,6 +16,7 @@ import esHelp from './locales/es/help.json';
 
 import frCommon from './locales/fr/common.json';
 import frChrome from './locales/fr/chrome.json';
+import frScreens from './locales/fr/screens.json';
 import frApp from './locales/fr/app.json';
 import frTemplates from './locales/fr/templates.json';
 import frTours from './locales/fr/tours.json';
@@ -23,6 +24,7 @@ import frHelp from './locales/fr/help.json';
 
 import deCommon from './locales/de/common.json';
 import deChrome from './locales/de/chrome.json';
+import deScreens from './locales/de/screens.json';
 import deApp from './locales/de/app.json';
 import deTemplates from './locales/de/templates.json';
 import deTours from './locales/de/tours.json';
@@ -30,6 +32,7 @@ import deHelp from './locales/de/help.json';
 
 import nlCommon from './locales/nl/common.json';
 import nlChrome from './locales/nl/chrome.json';
+import nlScreens from './locales/nl/screens.json';
 import nlApp from './locales/nl/app.json';
 import nlTemplates from './locales/nl/templates.json';
 import nlTours from './locales/nl/tours.json';
@@ -37,6 +40,7 @@ import nlHelp from './locales/nl/help.json';
 
 import ptBRCommon from './locales/pt-BR/common.json';
 import ptBRChrome from './locales/pt-BR/chrome.json';
+import ptBRScreens from './locales/pt-BR/screens.json';
 import ptBRApp from './locales/pt-BR/app.json';
 import ptBRTemplates from './locales/pt-BR/templates.json';
 import ptBRTours from './locales/pt-BR/tours.json';
@@ -44,6 +48,7 @@ import ptBRHelp from './locales/pt-BR/help.json';
 
 import ptPTCommon from './locales/pt-PT/common.json';
 import ptPTChrome from './locales/pt-PT/chrome.json';
+import ptPTScreens from './locales/pt-PT/screens.json';
 import ptPTApp from './locales/pt-PT/app.json';
 import ptPTTemplates from './locales/pt-PT/templates.json';
 import ptPTTours from './locales/pt-PT/tours.json';
@@ -311,6 +316,7 @@ export const resources = {
   fr: {
     common: frCommon,
     chrome: frChrome,
+    screens: frScreens,
     app: frApp,
     templates: frTemplates,
     tours: frTours,
@@ -319,6 +325,7 @@ export const resources = {
   de: {
     common: deCommon,
     chrome: deChrome,
+    screens: deScreens,
     app: deApp,
     templates: deTemplates,
     tours: deTours,
@@ -327,6 +334,7 @@ export const resources = {
   nl: {
     common: nlCommon,
     chrome: nlChrome,
+    screens: nlScreens,
     app: nlApp,
     templates: nlTemplates,
     tours: nlTours,
@@ -335,6 +343,7 @@ export const resources = {
   'pt-BR': {
     common: ptBRCommon,
     chrome: ptBRChrome,
+    screens: ptBRScreens,
     app: ptBRApp,
     templates: ptBRTemplates,
     tours: ptBRTours,
@@ -343,6 +352,7 @@ export const resources = {
   'pt-PT': {
     common: ptPTCommon,
     chrome: ptPTChrome,
+    screens: ptPTScreens,
     app: ptPTApp,
     templates: ptPTTemplates,
     tours: ptPTTours,

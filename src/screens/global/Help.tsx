@@ -88,13 +88,13 @@ const HelpLanding = ({ locale }: { readonly locale: string }) => {
     <div data-testid="help-landing">
       <TypographyH1>{t('title')}</TypographyH1>
       <TypographyLead className="mt-3">{t('subtitle')}</TypographyLead>
-      <div className="mt-8 flex items-start gap-4">
-        <div className="flex-1">
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+        <div className="min-w-0 flex-1">
           <HelpSearch />
         </div>
         <LanguagePicker
           ariaLabel={t('languagePickerLabel')}
-          className="w-64 shrink-0"
+          className="w-full sm:w-64 sm:shrink-0"
           data-testid="help-language-picker"
         />
       </div>
