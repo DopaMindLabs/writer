@@ -599,6 +599,58 @@
     "mobileNote": "The canvas needs a mouse or trackpad.",
     "openInWrite": "Open in Write →"
   },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "start dumping",
+      "emptyHint": "pick a card type below",
+      "pendingHint": "shift-click another note to connect · esc to cancel"
+    },
+    "note": {
+      "deleteNote": "Delete note",
+      "addPicture": "Add picture",
+      "addPictureCta": "add a picture",
+      "openLinkedDoc": "Open linked document",
+      "fetchedContent": "Fetched content",
+      "openDetailsLabel": "Open details",
+      "openDetailsTitle": "Open details panel",
+      "titlePlaceholder": "title",
+      "addTitleCta": "+ title",
+      "bodyEmpty": "(click to write)",
+      "viewImage": "View {{name}}",
+      "removeImage": "Remove {{name}}",
+      "resize": "Resize note",
+      "days": {
+        "sun": "sun",
+        "mon": "mon",
+        "tue": "tue",
+        "wed": "wed",
+        "thu": "thu",
+        "fri": "fri",
+        "sat": "sat"
+      }
+    },
+    "drawer": {
+      "title": "Note details",
+      "description": "Edit the selected note and manage its connections.",
+      "untitledPlaceholder": "Untitled",
+      "titleAriaLabel": "Note title",
+      "closeAriaLabel": "Close drawer",
+      "bodyLabel": "Body",
+      "bodyPlaceholder": "Write something…",
+      "picturesLabel": "Pictures",
+      "addPicture": "Add picture",
+      "pictureLimitHint": "limit of {{count}} reached — remove one to add another.",
+      "linkedDocLabel": "Linked Doc",
+      "noLinkedDoc": "— No linked doc —",
+      "untitledDoc": "Untitled",
+      "openDoc": "Open",
+      "connectionsHeading": "Connections ({{count}})",
+      "connectionsEmpty": "shift-click another note on the canvas to connect.",
+      "untitledNote": "(untitled)",
+      "removeConnection": "Remove connection",
+      "deleteNote": "Delete note"
+    }
+  },
   "split": {
     "title": "Split view",
     "mobileWarning": "Split view needs a larger screen.",
@@ -616,7 +668,8 @@
   "citationsDrawer": {
     "title": "Citations",
     "description": "Search, import, and export citations for this space.",
-    "close": "Close citations"
+    "close": "Close citations",
+    "expand": "Open citations in full view"
   },
   "citations": {
     "title": "Citations",
@@ -657,8 +710,10 @@
     "unknownError": "unknown error",
     "edit": {
       "save": "save",
+      "saving": "saving…",
       "cancel": "cancel",
       "delete": "delete",
+      "edit": "edit",
       "tagLabel": "Tag",
       "authorsLabel": "Authors",
       "titleLabel": "Title",
@@ -667,16 +722,36 @@
       "duplicateKey": "Tag \"{{key}}\" is already used in this space.",
       "updated": "Updated 1 citation.",
       "deleteOne": "Deleted 1 citation.",
-      "confirmDeleteUsed": "This citation is used {{count}}× in your documents. Delete anyway?"
+      "confirmDeleteUsed": "This citation is used {{count}}× in your documents. Delete anyway?",
+      "confirmDeleteSingle": "Delete citation \"{{key}}\"? This cannot be undone.",
+      "untitled": "(untitled)"
     },
     "bulk": {
       "selectedSummary": "{{count}} selected",
       "deleteSelected": "delete",
       "setTypePrompt": "set type",
+      "setTypeAria": "Set type for selected citations",
+      "chooseOption": "choose…",
+      "ariaLabel": "Bulk actions",
       "clearSelection": "clear",
       "deleted": "Deleted {{count}} citations.",
       "typeApplied": "Set type to {{type}} on {{count}} citations.",
       "confirmDelete": "Delete {{count}} citation(s)? This cannot be undone."
+    },
+    "row": {
+      "selectAllAria": "Select all citations on this page",
+      "viewCitationAria": "View citation {{key}}",
+      "selectCitationAria": "Select citation {{key}}",
+      "collapseCitationAria": "Collapse citation {{key}}",
+      "usedCount": "{{count}}× used",
+      "unused": "unused",
+      "copyTag": "Copy tag",
+      "copyTagAria": "Copy tag {{value}}",
+      "copiedTitle": "Copied",
+      "copiedTagAria": "Copied tag {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
     }
   }
 }
