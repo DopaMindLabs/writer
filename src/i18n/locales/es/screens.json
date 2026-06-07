@@ -599,6 +599,58 @@
     "mobileNote": "El lienzo necesita ratón o trackpad.",
     "openInWrite": "Abrir en Escribir →"
   },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "empieza a volcar",
+      "emptyHint": "elige un tipo de tarjeta abajo",
+      "pendingHint": "mayús-clic en otra nota para conectar · esc para cancelar"
+    },
+    "note": {
+      "deleteNote": "Eliminar nota",
+      "addPicture": "Añadir imagen",
+      "addPictureCta": "añadir una imagen",
+      "openLinkedDoc": "Abrir documento enlazado",
+      "fetchedContent": "Contenido obtenido",
+      "openDetailsLabel": "Abrir detalles",
+      "openDetailsTitle": "Abrir panel de detalles",
+      "titlePlaceholder": "título",
+      "addTitleCta": "+ título",
+      "bodyEmpty": "(clic para escribir)",
+      "viewImage": "Ver {{name}}",
+      "removeImage": "Quitar {{name}}",
+      "resize": "Redimensionar nota",
+      "days": {
+        "sun": "dom",
+        "mon": "lun",
+        "tue": "mar",
+        "wed": "mié",
+        "thu": "jue",
+        "fri": "vie",
+        "sat": "sáb"
+      }
+    },
+    "drawer": {
+      "title": "Detalles de la nota",
+      "description": "Edita la nota seleccionada y gestiona sus conexiones.",
+      "untitledPlaceholder": "Sin título",
+      "titleAriaLabel": "Título de la nota",
+      "closeAriaLabel": "Cerrar cajón",
+      "bodyLabel": "Cuerpo",
+      "bodyPlaceholder": "Escribe algo…",
+      "picturesLabel": "Imágenes",
+      "addPicture": "Añadir imagen",
+      "pictureLimitHint": "límite de {{count}} alcanzado — quita una para añadir otra.",
+      "linkedDocLabel": "Documento enlazado",
+      "noLinkedDoc": "— Sin documento enlazado —",
+      "untitledDoc": "Sin título",
+      "openDoc": "Abrir",
+      "connectionsHeading": "Conexiones ({{count}})",
+      "connectionsEmpty": "mayús-clic en otra nota del lienzo para conectar.",
+      "untitledNote": "(sin título)",
+      "removeConnection": "Quitar conexión",
+      "deleteNote": "Eliminar nota"
+    }
+  },
   "split": {
     "title": "Vista dividida",
     "mobileWarning": "La vista dividida necesita una pantalla más grande.",
@@ -616,7 +668,8 @@
   "citationsDrawer": {
     "title": "Citas",
     "description": "Busca, importa y exporta citas para este espacio.",
-    "close": "Cerrar citas"
+    "close": "Cerrar citas",
+    "expand": "Abrir citas en vista completa"
   },
   "citations": {
     "title": "Citas",
@@ -657,8 +710,10 @@
     "unknownError": "error desconocido",
     "edit": {
       "save": "guardar",
+      "saving": "guardando…",
       "cancel": "cancelar",
       "delete": "eliminar",
+      "edit": "editar",
       "tagLabel": "Etiqueta",
       "authorsLabel": "Autores",
       "titleLabel": "Título",
@@ -667,16 +722,36 @@
       "duplicateKey": "La etiqueta «{{key}}» ya se usa en este espacio.",
       "updated": "Actualizada 1 cita.",
       "deleteOne": "Eliminada 1 cita.",
-      "confirmDeleteUsed": "Esta cita se usa {{count}}× en tus documentos. ¿Eliminar igualmente?"
+      "confirmDeleteUsed": "Esta cita se usa {{count}}× en tus documentos. ¿Eliminar igualmente?",
+      "confirmDeleteSingle": "¿Eliminar la cita «{{key}}»? No se puede deshacer.",
+      "untitled": "(sin título)"
     },
     "bulk": {
       "selectedSummary": "{{count}} seleccionadas",
       "deleteSelected": "eliminar",
       "setTypePrompt": "fijar tipo",
+      "setTypeAria": "Fijar tipo para las citas seleccionadas",
+      "chooseOption": "elige…",
+      "ariaLabel": "Acciones en bloque",
       "clearSelection": "limpiar",
       "deleted": "Eliminadas {{count}} citas.",
       "typeApplied": "Tipo {{type}} aplicado a {{count}} citas.",
       "confirmDelete": "¿Eliminar {{count}} cita(s)? No se puede deshacer."
+    },
+    "row": {
+      "selectAllAria": "Seleccionar todas las citas de esta página",
+      "viewCitationAria": "Ver cita {{key}}",
+      "selectCitationAria": "Seleccionar cita {{key}}",
+      "collapseCitationAria": "Contraer cita {{key}}",
+      "usedCount": "{{count}}× usada",
+      "unused": "sin uso",
+      "copyTag": "Copiar etiqueta",
+      "copyTagAria": "Copiar etiqueta {{value}}",
+      "copiedTitle": "Copiado",
+      "copiedTagAria": "Etiqueta {{value}} copiada"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
     }
   }
 }
