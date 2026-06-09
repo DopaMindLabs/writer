@@ -2,7 +2,6 @@ import {
   useRef,
   useState,
   useEffect,
-  useMemo,
   type ChangeEvent,
   type Dispatch,
   type KeyboardEvent,
@@ -18,7 +17,8 @@ import {
   Copy,
   X,
 } from '@/components/libs/icons';
-import { useCitations } from '@/hooks/useCitations';
+import { usePagedCitations } from '@/hooks/useCitations';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import {
   parseBibtexFile,
   parseBibtexText,
@@ -47,6 +47,7 @@ interface CitationsPaneProps {
 }
 
 const PAGE_SIZE = 25;
+const SEARCH_DEBOUNCE_MS = 200;
 
 const COL_TEMPLATE_COMFORTABLE =
   'md:grid md:grid-cols-[2rem_7rem_minmax(8rem,12rem)_minmax(0,1fr)_4rem_6rem_4rem]';
@@ -62,7 +63,6 @@ type OpenRowState = { id: string; mode: RowMode } | null;
 interface ImportActionsDeps {
   spaceId: string;
   spaceName: string | undefined;
-  citations: Citation[];
   fileInputRef: RefObject<HTMLInputElement | null>;
   setStatus: Dispatch<SetStateAction<string | null>>;
 }
@@ -70,7 +70,6 @@ interface ImportActionsDeps {
 const useImportActions = ({
   spaceId,
   spaceName,
-  citations,
   fileInputRef,
   setStatus,
 }: ImportActionsDeps) => {
@@ -111,8 +110,14 @@ const useImportActions = ({
     }
   };
 
-  const handleExport = () => {
-    const bib = serializeCitationsToBibtex(citations);
+  // Export is the one deliberate bulk read: it loads the whole library on
+  // demand instead of keeping it resident for the paged table.
+  const handleExport = async () => {
+    const all = await db.citations
+      .where('spaceId')
+      .equals(spaceId)
+      .sortBy('year');
+    const bib = serializeCitationsToBibtex(all);
     const blob = new Blob([bib], { type: 'application/x-bibtex' });
     downloadBlob(blob, `${spaceName ?? 'space'}-citations.bib`);
   };
@@ -189,29 +194,6 @@ const useMutationActions = ({
   return { handleBulkDelete, deleteCitation, handleBulkSetType };
 };
 
-const usePagedCitations = (citations: Citation[], query: string, page: number) => {
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return citations;
-    return citations.filter((c) =>
-      [c.key, c.authors, c.title, String(c.year)]
-        .join(' ')
-        .toLowerCase()
-        .includes(q),
-    );
-  }, [citations, query]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const currentPage = Math.min(page, totalPages - 1);
-  const pageRows = useMemo(
-    () =>
-      filtered.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE),
-    [filtered, currentPage],
-  );
-
-  return { filtered, totalPages, currentPage, pageRows };
-};
-
 const useRowSelection = (
   pageRows: Citation[],
   selected: Set<string>,
@@ -256,7 +238,6 @@ const useCitationsPaneController = (
   spaceId: string,
   spaceName: string | undefined,
 ) => {
-  const citations = useCitations(spaceId);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [query, setQuery] = useState('');
@@ -271,12 +252,18 @@ const useCitationsPaneController = (
     setOpenRow(null);
   }, [query, spaceId]);
 
-  const paged = usePagedCitations(citations, query, page);
-  const selection = useRowSelection(paged.pageRows, selected, setSelected);
+  // Keystrokes update `query` immediately (controlled input); the live
+  // IndexedDB query only re-runs once typing settles.
+  const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
+  const paged = usePagedCitations(spaceId, {
+    page,
+    pageSize: PAGE_SIZE,
+    query: debouncedQuery,
+  });
+  const selection = useRowSelection(paged.rows, selected, setSelected);
   const importActions = useImportActions({
     spaceId,
     spaceName,
-    citations,
     fileInputRef,
     setStatus,
   });
@@ -288,7 +275,6 @@ const useCitationsPaneController = (
   });
 
   return {
-    citations,
     fileInputRef,
     status,
     setStatus,
@@ -328,7 +314,7 @@ const CitationsTopRegion = ({
       <CitationsHeader
         xPad={xPad}
         isCompact={isCompact}
-        count={c.citations.length}
+        count={c.totalInSpace}
       />
 
       <CitationsToolbar
@@ -380,9 +366,8 @@ export const CitationsPane = ({
         xPad={xPad}
         isCompact={isCompact}
         colTemplate={colTemplate}
-        citations={c.citations}
-        filtered={c.filtered}
-        pageRows={c.pageRows}
+        totalInSpace={c.totalInSpace}
+        pageRows={c.rows}
         openRow={c.openRow}
         selected={c.selected}
         visibleCount={c.visibleIds.length}
@@ -397,12 +382,12 @@ export const CitationsPane = ({
 
       <CitationsFooter
         xPad={xPad}
-        shown={c.filtered.length}
-        onThisPage={c.pageRows.length}
-        totalCitations={c.citations.length}
+        shown={c.totalCount}
+        onThisPage={c.rows.length}
+        totalCitations={c.totalInSpace}
         currentPage={c.currentPage}
         totalPages={c.totalPages}
-        onExport={c.handleExport}
+        onExport={() => { void c.handleExport(); }}
         onSetPage={c.setPage}
       />
     </div>
@@ -653,8 +638,7 @@ interface CitationsListProps {
   xPad: string;
   isCompact: boolean;
   colTemplate: string;
-  citations: Citation[];
-  filtered: Citation[];
+  totalInSpace: number;
   pageRows: Citation[];
   openRow: OpenRowState;
   selected: Set<string>;
@@ -672,8 +656,7 @@ const CitationsList = ({
   xPad,
   isCompact,
   colTemplate,
-  citations,
-  filtered,
+  totalInSpace,
   pageRows,
   openRow,
   selected,
@@ -698,8 +681,8 @@ const CitationsList = ({
         onToggleSelectAll={onToggleSelectAll}
       />
 
-      {filtered.length === 0 ? (
-        <EmptyState hasCitations={citations.length > 0} />
+      {pageRows.length === 0 ? (
+        <EmptyState hasCitations={totalInSpace > 0} />
       ) : (
         pageRows.map((c) => (
           <CitationRowItem
