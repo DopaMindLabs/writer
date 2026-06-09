@@ -6,7 +6,9 @@
       "package-name": "lorem-ipsum-writer",
       "include-component-in-tag": false,
       "include-v-in-tag": true,
-      "changelog-path": "CHANGELOG.md"
+      "changelog-path": "CHANGELOG.md",
+      "prerelease": true,
+      "prerelease-type": "alpha"
     }
   }
 }

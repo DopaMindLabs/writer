@@ -415,7 +415,7 @@ export const AboutPlaceholder = () => {
       />
       <SettingRow label={t('settings.about.versionLabel')}>
         <span className="font-serif text-[14px] text-ink">
-          {t('settings.about.versionValue')}
+          {t('settings.about.versionValue', { version: __APP_VERSION__ })}
         </span>
       </SettingRow>
       <SettingRow label={t('settings.about.buildLabel')}>
