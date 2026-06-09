@@ -171,13 +171,13 @@ export const HelpScreen = () => {
           data-testid="help-machine-translation-banner"
           className="mb-6 border border-rule bg-paper-2 p-3 text-[13px] text-ink-2"
         >
-          <div className="mb-1 flex items-center justify-between gap-4">
+          <div className="mb-1 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
               {t('machineTranslationBanner.label')}
             </div>
             <LanguagePicker
               ariaLabel={t('languagePickerLabel')}
-              className="w-64 shrink-0"
+              className="w-full sm:w-64 sm:shrink-0"
               data-testid="help-banner-language-picker"
             />
           </div>
