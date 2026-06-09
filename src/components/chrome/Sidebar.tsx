@@ -186,7 +186,7 @@ const SpaceHeader = ({ spaceId, space }: SpaceHeaderProps) => {
 
 interface AddController {
   adding: AddingState | null;
-  inputRef: RefObject<HTMLInputElement>;
+  inputRef: RefObject<HTMLInputElement | null>;
   onChange: (value: string) => void;
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
   onClear: () => void;
