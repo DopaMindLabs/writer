@@ -12,6 +12,42 @@ import {
 
 export const FIXED_TIME = 1704067200000; // 2024-01-01T00:00:00Z (Monday)
 
+/**
+ * Builds a real serialized Lexical doc body (one paragraph per line), shaped
+ * like serializeState output. Doc bodies are always serialized JSON or '' —
+ * never plain text — so fixtures must use this rather than raw strings.
+ */
+export const serializedBody = (text: string): string =>
+  JSON.stringify({
+    root: {
+      children: text.split('\n').map((line) => ({
+        children: line
+          ? [
+              {
+                detail: 0,
+                format: 0,
+                mode: 'normal',
+                style: '',
+                text: line,
+                type: 'text',
+                version: 1,
+              },
+            ]
+          : [],
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        type: 'paragraph',
+        version: 1,
+      })),
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      type: 'root',
+      version: 1,
+    },
+  });
+
 export const sampleSpace: Space = {
   id: 's1',
   tag: 'TST',
@@ -64,7 +100,7 @@ export const sampleNote: Note = {
 export const sampleRevision: Revision = {
   id: 'rev1',
   docId: 'd1',
-  body: 'First draft.',
+  body: serializedBody('First draft.'),
   text: 'First draft.',
   wordCount: 2,
   kind: 'baseline',
@@ -82,7 +118,7 @@ export async function seedDocWithRevisions() {
   await seedBasicSpace();
   await db.docs.put({
     ...sampleDoc,
-    body: 'The bell rang twice across the quiet valley.',
+    body: serializedBody('The bell rang twice across the quiet valley.'),
     meta: { wordCount: 8 },
   });
   await db.revisions.bulkPut([
@@ -91,7 +127,7 @@ export async function seedDocWithRevisions() {
       id: 'rev-base',
       kind: 'baseline',
       text: 'The bell rang once.',
-      body: 'The bell rang once.',
+      body: serializedBody('The bell rang once.'),
       wordCount: 4,
       createdAt: FIXED_TIME,
     },
@@ -100,7 +136,7 @@ export async function seedDocWithRevisions() {
       id: 'rev-auto',
       kind: 'auto',
       text: 'The bell rang twice across the valley.',
-      body: 'The bell rang twice across the valley.',
+      body: serializedBody('The bell rang twice across the valley.'),
       wordCount: 7,
       createdAt: FIXED_TIME + 600_000,
     },
@@ -111,7 +147,7 @@ export async function seedDocWithRevisions() {
       label: 'before review',
       pinned: true,
       text: 'The bell rang twice across the quiet valley.',
-      body: 'The bell rang twice across the quiet valley.',
+      body: serializedBody('The bell rang twice across the quiet valley.'),
       wordCount: 8,
       createdAt: FIXED_TIME + 1_200_000,
     },

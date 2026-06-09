@@ -5,17 +5,18 @@ import { sampleDoc, sampleSpace, sampleSection } from '@/test/fixtures';
 import { createRevision } from './createRevision';
 import { restoreRevision } from './restoreRevision';
 import { InvariantError } from '@/lib/invariant';
+import { serializedBody } from '@/test/fixtures';
 
 describe('restoreRevision', () => {
   beforeEach(async () => {
     useUI.setState({ restoreNonces: {} });
     await db.spaces.put(sampleSpace);
     await db.sections.put(sampleSection);
-    await db.docs.put({ ...sampleDoc, body: 'current body', meta: { wordCount: 2 } });
+    await db.docs.put({ ...sampleDoc, body: serializedBody('current body'), meta: { wordCount: 2 } });
   });
 
   it('restores the target body and snapshots the current state first', async () => {
-    const target = await createRevision(sampleDoc.id, 'old body text', {
+    const target = await createRevision(sampleDoc.id, serializedBody('old body text'), {
       kind: 'manual',
       now: () => 1000,
     });
@@ -23,18 +24,18 @@ describe('restoreRevision', () => {
     await restoreRevision(sampleDoc.id, target.id, { now: () => 5000 });
 
     const doc = await db.docs.get(sampleDoc.id);
-    expect(doc?.body).toBe('old body text');
+    expect(doc?.body).toBe(serializedBody('old body text'));
     expect(doc?.updatedAt).toBe(5000);
 
     const safety = (await db.revisions.where('docId').equals(sampleDoc.id).toArray())
       .find((r) => r.label === 'pre-restore');
     expect(safety).toBeDefined();
-    expect(safety?.body).toBe('current body');
+    expect(safety?.body).toBe(serializedBody('current body'));
     expect(safety?.kind).toBe('manual');
   });
 
   it('bumps only the restored doc\'s nonce so other open docs do not remount', async () => {
-    const target = await createRevision(sampleDoc.id, 'old body text', {
+    const target = await createRevision(sampleDoc.id, serializedBody('old body text'), {
       kind: 'manual',
     });
 
@@ -52,14 +53,14 @@ describe('restoreRevision', () => {
   });
 
   it('rejects a revision that belongs to a different document', async () => {
-    const other = await createRevision('other-doc', 'x', { kind: 'manual' });
+    const other = await createRevision('other-doc', serializedBody('x'), { kind: 'manual' });
     await expect(
       restoreRevision(sampleDoc.id, other.id),
     ).rejects.toBeInstanceOf(InvariantError);
   });
 
   it('rejects when the document has been deleted between revision and restore', async () => {
-    const target = await createRevision(sampleDoc.id, 'old body', {
+    const target = await createRevision(sampleDoc.id, serializedBody('old body'), {
       kind: 'manual',
     });
     await db.docs.delete(sampleDoc.id);
@@ -92,7 +93,7 @@ describe('restoreRevision', () => {
 
     // The doc is untouched and no pre-restore snapshot was left behind.
     const doc = await db.docs.get(sampleDoc.id);
-    expect(doc?.body).toBe('current body');
+    expect(doc?.body).toBe(serializedBody('current body'));
     const snapshots = (
       await db.revisions.where('docId').equals(sampleDoc.id).toArray()
     ).filter((r) => r.label === 'pre-restore');
@@ -100,7 +101,7 @@ describe('restoreRevision', () => {
   });
 
   it('falls back to Date.now when no clock is supplied', async () => {
-    const target = await createRevision(sampleDoc.id, 'old body', {
+    const target = await createRevision(sampleDoc.id, serializedBody('old body'), {
       kind: 'manual',
       now: () => 1000,
     });

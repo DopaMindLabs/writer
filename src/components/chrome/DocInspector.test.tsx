@@ -1,4 +1,5 @@
 import { vi } from 'vitest';
+import { serializedBody } from '@/test/fixtures';
 import { act, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, within } from '@/test/test-utils';
@@ -12,7 +13,7 @@ const SECTIONS: InspectorSection[] = ['outline', 'info', 'history', 'actions'];
 const makeRevision = (overrides: Partial<Revision>): Revision => ({
   id: overrides.id ?? 'r',
   docId: overrides.docId ?? 'd1',
-  body: overrides.body ?? 'body',
+  body: overrides.body ?? serializedBody('body'),
   text: overrides.text ?? 'body',
   wordCount: overrides.wordCount ?? 1,
   kind: overrides.kind ?? 'auto',
@@ -27,7 +28,7 @@ const seedDoc = (overrides: Partial<Doc> = {}): Promise<string> =>
     spaceId: 's1',
     sectionId: 'sec1',
     name: 'Doc',
-    body: 'Hello world',
+    body: serializedBody('Hello world'),
     meta: { wordCount: 2 },
     updatedAt: Date.now(),
     ...overrides,
@@ -113,7 +114,7 @@ describe('DocInspector', () => {
     });
 
     it('should render live document info when section is "info"', async () => {
-      await seedDoc({ body: 'Hello world' });
+      await seedDoc({ body: serializedBody('Hello world') });
       act(() => {
         useUI.getState().setInspectorSection('info');
       });
@@ -375,12 +376,12 @@ describe('DocInspector', () => {
         spaceId: 's1',
         sectionId: 'sec1',
         name: 'Doc',
-        body: 'current body',
+        body: serializedBody('current body'),
         meta: { wordCount: 2 },
         updatedAt: 1,
       });
       await db.revisions.put(
-        makeRevision({ id: 'rev-old', body: 'older body', createdAt: 1 }),
+        makeRevision({ id: 'rev-old', body: serializedBody('older body'), createdAt: 1 }),
       );
       act(() => {
         useUI.getState().setInspectorSection('history');
@@ -393,7 +394,7 @@ describe('DocInspector', () => {
 
       await waitFor(async () => {
         const updated = await db.docs.get('d1');
-        expect(updated?.body).toBe('older body');
+        expect(updated?.body).toBe(serializedBody('older body'));
       });
     });
 
@@ -452,12 +453,12 @@ describe('DocInspector', () => {
         spaceId: 's1',
         sectionId: 'sec1',
         name: 'Doc',
-        body: 'current body',
+        body: serializedBody('current body'),
         meta: { wordCount: 2 },
         updatedAt: 1,
       });
       await db.revisions.put(
-        makeRevision({ id: 'rev-x', body: 'older', createdAt: 1 }),
+        makeRevision({ id: 'rev-x', body: serializedBody('older'), createdAt: 1 }),
       );
       // Inject a transient DB failure so restoreRevision rejects; the rejection
       // must surface through console.error rather than crashing React.

@@ -2,7 +2,7 @@ import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { render, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
-import { FIXED_TIME } from '@/test/fixtures';
+import { FIXED_TIME, serializedBody } from '@/test/fixtures';
 import type { Doc } from '@/db/schema';
 
 // Captures the onChange prop the stub editor was last rendered with, so tests
@@ -28,7 +28,7 @@ vi.mock('@/editor/EditorFacade', () => ({
       data-mode={props.mode}
       data-locked={props.locked ? 'true' : undefined}
       data-placeholder={props.placeholder}
-        onClick={() => props.onChange?.('new-serialized-body')}
+        onClick={() => props.onChange?.(NEW_BODY)}
       >
         {props.initialValue || '(empty)'}
       </button>
@@ -38,12 +38,16 @@ vi.mock('@/editor/EditorFacade', () => ({
 
 const { WriteSurface } = await import('./WriteSurface');
 
+// What the stub editor emits on click: a real serialized body whose plaintext
+// is the single word "rewritten" (so the cached wordCount becomes 1).
+const NEW_BODY = serializedBody('rewritten');
+
 const doc: Doc = {
   id: 'd1',
   spaceId: 's1',
   sectionId: 'sec1',
   name: 'Sample',
-  body: 'hello world',
+  body: serializedBody('hello world'),
   meta: { wordCount: 2 },
   updatedAt: FIXED_TIME,
 };
@@ -60,7 +64,7 @@ describe('WriteSurface', () => {
     await userEvent.click(getByTestId('editor-stub'));
     await waitFor(async () => {
       const fresh = await db.docs.get(doc.id);
-      expect(fresh?.body).toBe('new-serialized-body');
+      expect(fresh?.body).toBe(NEW_BODY);
     });
   });
 
@@ -71,7 +75,7 @@ describe('WriteSurface', () => {
     await userEvent.click(getByTestId('editor-stub'));
     await waitFor(async () => {
       const fresh = await db.docs.get(doc.id);
-      // 'new-serialized-body' is a single whitespace-delimited token.
+      // The stub body's plaintext is the single word "rewritten".
       expect(fresh?.meta.wordCount).toBe(1);
       // Sibling meta fields survive the update.
       expect(fresh?.meta.status).toBe('draft');
@@ -112,7 +116,7 @@ describe('WriteSurface', () => {
       ...doc,
       id: 'd2',
       name: 'Other',
-      body: 'other body',
+      body: serializedBody('other body'),
       meta: { wordCount: 2 },
     };
     await db.docs.put(doc);
@@ -121,13 +125,13 @@ describe('WriteSurface', () => {
     const { rerender } = render(<WriteSurface doc={doc} mode="write" />);
     const flushForDocA = editorMocks.capturedOnChange;
     rerender(<WriteSurface doc={docB} mode="write" />);
-    flushForDocA?.('pending-edit-from-doc-a');
+    flushForDocA?.(serializedBody('pending-edit-from-doc-a'));
 
     await waitFor(async () => {
       const freshA = await db.docs.get(doc.id);
       const freshB = await db.docs.get(docB.id);
-      expect(freshA?.body).toBe('pending-edit-from-doc-a');
-      expect(freshB?.body).toBe('other body');
+      expect(freshA?.body).toBe(serializedBody('pending-edit-from-doc-a'));
+      expect(freshB?.body).toBe(serializedBody('other body'));
     });
   });
 

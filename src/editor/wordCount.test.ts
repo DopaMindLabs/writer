@@ -4,6 +4,7 @@ import {
   lexicalJsonToPlainText,
   countWords as countPlainTextWords,
 } from '@/lib/revisions/lexicalJsonToPlainText';
+import { serializedBody } from '@/test/fixtures';
 
 // A real serialized editor state: one paragraph, "hello" split across three
 // text nodes because "ll" is bold. Word boundaries must not be invented at
@@ -39,6 +40,14 @@ const midWordFormattedBody = JSON.stringify({
 });
 
 describe('countWords', () => {
+  it('counts words in a serialized Lexical body', () => {
+    expect(countWords(serializedBody('one two three four five'))).toBe(5);
+  });
+
+  it('counts words across paragraphs', () => {
+    expect(countWords(serializedBody('one two\nthree'))).toBe(3);
+  });
+
   it('does not split a word at inline-formatting boundaries', () => {
     expect(countWords(midWordFormattedBody)).toBe(1);
   });
@@ -49,43 +58,17 @@ describe('countWords', () => {
     );
   });
 
-  it('counts words in a Lexical JSON tree, walking nested children', () => {
-    const body = JSON.stringify({
-      root: {
-        children: [
-          {
-            children: [{ text: 'one two' }, { text: ' three four five' }],
-          },
-        ],
-      },
-    });
-    expect(countWords(body)).toBe(5);
-  });
-
-  it('reads text directly off a root with no children', () => {
-    const body = JSON.stringify({ root: { text: 'just root text' } });
-    expect(countWords(body)).toBe(3);
-  });
-
-  it('returns 0 for a Lexical root with neither text nor children', () => {
-    const body = JSON.stringify({ root: { type: 'unknown' } });
-    expect(countWords(body)).toBe(0);
-  });
-
-  it('returns 0 for an empty string', () => {
+  it('returns 0 for an empty body (fresh doc)', () => {
     expect(countWords('')).toBe(0);
   });
 
-  it('returns 0 for a whitespace-only body', () => {
-    expect(countWords('   \n  \t  ')).toBe(0);
+  it('returns 0 for a body with only empty paragraphs', () => {
+    expect(countWords(serializedBody('\n'))).toBe(0);
   });
 
-  it('falls back to plain-text counting when the body is not JSON', () => {
-    expect(countWords('plain words here today')).toBe(4);
-  });
-
-  it('falls back to plain-text counting when JSON has no root field', () => {
-    // '{"foo":"bar"}' splits on whitespace into a single token.
-    expect(countWords('{"foo":"bar"}')).toBe(1);
+  it('throws on a body that is not serialized Lexical JSON', () => {
+    // Doc bodies are only ever '' or serializeState output; anything else is
+    // corrupt and must fail loudly instead of being miscounted.
+    expect(() => countWords('plain words here today')).toThrow();
   });
 });

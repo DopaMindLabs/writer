@@ -4,10 +4,10 @@ import { renderWithProviders, screen } from '@/test/test-utils';
 import { useUI } from '@/store/ui';
 import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
-import { sampleDoc, sampleSpace, sampleSection } from '@/test/fixtures';
+import { sampleDoc, sampleSpace, sampleSection, serializedBody } from '@/test/fixtures';
 import { SaveVersionDialog } from './SaveVersionDialog';
 
-const doc: Doc = { ...sampleDoc, body: 'the quick brown fox' };
+const doc: Doc = { ...sampleDoc, body: serializedBody('the quick brown fox') };
 
 const openDialog = (): void => {
   act(() => { useUI.getState().setSaveVersionOpen(true); });
