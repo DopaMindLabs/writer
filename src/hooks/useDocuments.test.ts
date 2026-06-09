@@ -15,7 +15,7 @@ describe('useSections', () => {
     ]);
     const { result } = renderHook(() => useSections('s1'));
     await waitFor(() => {
-      expect(result.current.map((s) => s.id)).toEqual(['b', 'a']);
+      expect(result.current?.map((s) => s.id)).toEqual(['b', 'a']);
     });
   });
 

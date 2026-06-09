@@ -9,6 +9,8 @@ const meta = {
   args: {
     label: 'Type "Novel" to confirm',
     testId: 'delete-confirm',
+    value: '',
+    onChange: () => undefined,
   },
 } satisfies Meta<typeof DeleteConfirmField>;
 

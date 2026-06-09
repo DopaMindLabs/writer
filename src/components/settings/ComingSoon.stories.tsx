@@ -6,7 +6,7 @@ const meta = {
   title: 'Settings/ComingSoon',
   component: ComingSoon,
   parameters: { layout: 'padded' },
-  args: { hint: 'Find in doc' },
+  args: { hint: 'Find in doc', children: null },
 } satisfies Meta<typeof ComingSoon>;
 
 export default meta;

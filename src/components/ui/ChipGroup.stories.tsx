@@ -24,6 +24,7 @@ export const Mode: Story = {
 };
 
 export const Interactive: Story = {
+  args: { options: ['Write', 'Focus', 'Read'], active: 0 },
   render: () => {
     const Stateful = () => {
       const [active, setActive] = useState(0);
@@ -41,6 +42,7 @@ export const Interactive: Story = {
 };
 
 export const ValueMode: Story = {
+  args: { options: ['Write', 'Focus', 'Read'], active: 0 },
   render: () => {
     const Stateful = () => {
       const [value, setValue] = useState(5);

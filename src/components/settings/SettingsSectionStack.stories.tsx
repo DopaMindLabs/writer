@@ -13,6 +13,7 @@ const meta = {
   title: 'Settings/SettingsSectionStack',
   component: SettingsSectionStack,
   parameters: { layout: 'fullscreen' },
+  args: { sections: [], scrollTarget: 'general', scrollNonce: 0 },
 } satisfies Meta<typeof SettingsSectionStack>;
 
 export default meta;

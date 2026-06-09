@@ -33,6 +33,7 @@ const meta = {
     spaceId: 's1',
     selected: false,
     pending: false,
+    attachments: [],
     onPick: fn(),
   },
 } satisfies Meta<typeof BrainSpaceNote>;

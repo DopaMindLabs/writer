@@ -24,8 +24,8 @@ describe('TemplatesScreen', () => {
       const user = userEvent.setup();
       renderWithProviders(<TemplatesScreen />);
       await user.click(screen.getByTestId('templates-card-blank'));
-      const name = screen.getByTestId('templates-name-input');
-      const tag = screen.getByTestId('templates-tag-input');
+      const name = screen.getByTestId('templates-name-input') as HTMLInputElement;
+      const tag = screen.getByTestId('templates-tag-input') as HTMLInputElement;
       expect(name.value).toBe('Blank');
       expect(tag.value).toBe('BL');
     });
@@ -43,8 +43,8 @@ describe('TemplatesScreen', () => {
     it('should update the name and tag inputs when the user types', async () => {
       const user = userEvent.setup();
       renderWithProviders(<TemplatesScreen />);
-      const name = screen.getByTestId('templates-name-input');
-      const tag = screen.getByTestId('templates-tag-input');
+      const name = screen.getByTestId('templates-name-input') as HTMLInputElement;
+      const tag = screen.getByTestId('templates-tag-input') as HTMLInputElement;
       await user.clear(name);
       await user.type(name, 'My space');
       await user.clear(tag);
