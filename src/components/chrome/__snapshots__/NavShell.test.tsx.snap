@@ -22,42 +22,12 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
             L
           </a>
           <span
-            class="mb-2.5 cursor-help rounded-sm border border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-[color:var(--warning)]"
+            class="mb-2.5 cursor-help rounded-sm border border-[color:var(--info)] bg-[color:var(--info-bg)] px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-[color:var(--info)]"
             data-state="closed"
             tabindex="0"
           >
             alpha
           </span>
-          <a
-            class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
-            data-discover="true"
-            data-state="closed"
-            data-testid="space-rail-space-s3"
-            href="/s/s3"
-          >
-            CCC
-          </a>
-          <a
-            class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
-            data-discover="true"
-            data-state="closed"
-            data-testid="space-rail-space-s2"
-            href="/s/s2"
-          >
-            BBB
-            <span
-              class="absolute right-0.5 top-0.5 h-1 w-1 rounded-full bg-ink"
-            />
-          </a>
-          <a
-            class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
-            data-discover="true"
-            data-state="closed"
-            data-testid="space-rail-space-s1"
-            href="/s/s1"
-          >
-            AAA
-          </a>
           <a
             aria-label="Create new space"
             class="flex h-9 w-9 items-center justify-center rounded-md text-ink-4 hover:bg-paper hover:text-ink-2"
@@ -298,42 +268,12 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
             L
           </a>
           <span
-            class="mb-2.5 cursor-help rounded-sm border border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-[color:var(--warning)]"
+            class="mb-2.5 cursor-help rounded-sm border border-[color:var(--info)] bg-[color:var(--info-bg)] px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-[color:var(--info)]"
             data-state="closed"
             tabindex="0"
           >
             alpha
           </span>
-          <a
-            class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
-            data-discover="true"
-            data-state="closed"
-            data-testid="space-rail-space-s3"
-            href="/s/s3"
-          >
-            CCC
-          </a>
-          <a
-            class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
-            data-discover="true"
-            data-state="closed"
-            data-testid="space-rail-space-s2"
-            href="/s/s2"
-          >
-            BBB
-            <span
-              class="absolute right-0.5 top-0.5 h-1 w-1 rounded-full bg-ink"
-            />
-          </a>
-          <a
-            class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-ink text-paper"
-            data-discover="true"
-            data-state="closed"
-            data-testid="space-rail-space-s1"
-            href="/s/s1"
-          >
-            AAA
-          </a>
           <a
             aria-label="Create new space"
             class="flex h-9 w-9 items-center justify-center rounded-md text-ink-4 hover:bg-paper hover:text-ink-2"

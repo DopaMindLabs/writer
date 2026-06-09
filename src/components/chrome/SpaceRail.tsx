@@ -62,7 +62,7 @@ const SpaceRailHeader = () => (
       <TooltipTrigger asChild>
         <span
           tabIndex={0}
-          className="mb-2.5 cursor-help rounded-sm border border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-[color:var(--warning)]"
+          className="mb-2.5 cursor-help rounded-sm border border-[color:var(--info)] bg-[color:var(--info-bg)] px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-[color:var(--info)]"
         >
           alpha
         </span>
