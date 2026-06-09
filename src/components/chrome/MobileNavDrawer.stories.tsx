@@ -23,6 +23,7 @@ const meta = {
   title: 'Navigation/MobileNavDrawer',
   component: MobileNavDrawer,
   parameters: { layout: 'fullscreen', seed: 'basicSpace' },
+  args: { spaceId: 's1', activeDocId: null },
 } satisfies Meta<typeof MobileNavDrawer>;
 
 export default meta;

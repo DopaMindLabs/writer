@@ -23,6 +23,7 @@ const meta = {
   title: 'Navigation/MobileMoreSheet',
   component: MobileMoreSheet,
   parameters: { layout: 'fullscreen', seed: 'basicSpace' },
+  args: { spaceId: 's1' },
 } satisfies Meta<typeof MobileMoreSheet>;
 
 export default meta;

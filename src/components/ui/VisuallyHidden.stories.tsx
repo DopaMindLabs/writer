@@ -5,6 +5,7 @@ const meta = {
   title: 'UI/VisuallyHidden',
   component: VisuallyHidden,
   parameters: { layout: 'centered' },
+  args: { children: null },
 } satisfies Meta<typeof VisuallyHidden>;
 
 export default meta;

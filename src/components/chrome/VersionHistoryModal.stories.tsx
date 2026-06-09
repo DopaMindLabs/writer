@@ -28,6 +28,7 @@ const meta = {
   title: 'Navigation/VersionHistoryModal',
   component: VersionHistoryModal,
   parameters: { layout: 'fullscreen', seed: 'docWithRevisions' },
+  args: { doc },
 } satisfies Meta<typeof VersionHistoryModal>;
 
 export default meta;

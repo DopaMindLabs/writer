@@ -166,6 +166,7 @@ const initialState = () => ({
   readingWidth: sanitizeReadingWidth(persisted.readingWidth),
   restoreNonces: {},
   versionModalOpen: false,
+  saveVersionOpen: false,
   diffMode: sanitizeDiffMode(persisted.diffMode),
   compareRevisionIds: { base: null, compare: null },
 });
