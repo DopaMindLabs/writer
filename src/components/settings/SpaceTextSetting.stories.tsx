@@ -11,6 +11,10 @@ const meta = {
     hint: 'Shown in the rail and the title bar.',
     ariaLabel: 'Space name',
     testId: 'space-name',
+    value: '',
+    onChange: () => undefined,
+    onCommit: () => undefined,
+    onReset: () => undefined,
   },
 } satisfies Meta<typeof SpaceTextSetting>;
 

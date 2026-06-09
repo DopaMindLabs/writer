@@ -6,7 +6,7 @@ const meta = {
   title: 'Settings/SettingRow',
   component: SettingRow,
   parameters: { layout: 'padded' },
-  args: { label: 'Compact density' },
+  args: { label: 'Compact density', children: null },
 } satisfies Meta<typeof SettingRow>;
 
 export default meta;

@@ -64,7 +64,8 @@ const coerce = <K extends PrefKey>(key: K, value: unknown): A11yPrefs[K] => {
 export const sanitizeA11yPrefs = (raw: unknown): A11yPrefs => {
   const o = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
   const out = {} as { [K in PrefKey]: A11yPrefs[K] };
-  for (const key of PREF_KEYS) out[key] = coerce(key, o[key]);
+  const assign = <K extends PrefKey>(k: K, v: A11yPrefs[K]): void => { out[k] = v; };
+  for (const key of PREF_KEYS) assign(key, coerce(key, o[key]));
   return out;
 };
 

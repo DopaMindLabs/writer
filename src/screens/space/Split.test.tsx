@@ -84,7 +84,7 @@ describe('SplitScreen', () => {
       renderAt('/s/s1/d/d1/split?with=d2');
       const select = (await screen.findByTestId(
         'split-right-pane-select',
-      ));
+      )) as HTMLSelectElement;
       expect(select).toHaveAttribute('aria-label', 'Right pane document');
       await userEvent.selectOptions(select, 'd3');
       await waitFor(() => { expect(select.value).toBe('d3'); });

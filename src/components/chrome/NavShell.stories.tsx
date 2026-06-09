@@ -27,6 +27,13 @@ const meta = {
   title: 'Chrome/NavShell',
   component: NavShell,
   parameters: { layout: 'fullscreen', seed: 'multipleSpaces' },
+  args: {
+    variant: 'global',
+    groups,
+    active: 'sync',
+    onSelect: () => undefined,
+    children: null,
+  },
 } satisfies Meta<typeof NavShell>;
 
 export default meta;

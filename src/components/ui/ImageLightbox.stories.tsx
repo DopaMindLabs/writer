@@ -16,6 +16,12 @@ const sampleImages = (n: number): LightboxImage[] =>
 const meta = {
   title: 'Molecules/ImageLightbox',
   component: ImageLightbox,
+  args: {
+    images: [],
+    index: 0,
+    open: false,
+    onOpenChange: () => undefined,
+  },
 } satisfies Meta<typeof ImageLightbox>;
 
 export default meta;

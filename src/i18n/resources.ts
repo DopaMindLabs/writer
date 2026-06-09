@@ -285,13 +285,14 @@ export const supportedLngs = [
   'to',
 ] as const;
 
+type NSResource = Record<string, unknown>;
 const partial = (r: {
-  common: unknown;
-  chrome: unknown;
-  app: unknown;
-  templates: unknown;
-  tours: unknown;
-  help: unknown;
+  common: NSResource;
+  chrome: NSResource;
+  app: NSResource;
+  templates: NSResource;
+  tours: NSResource;
+  help: NSResource;
 }) => r;
 
 export const resources = {

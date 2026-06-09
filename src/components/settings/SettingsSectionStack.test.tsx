@@ -12,7 +12,8 @@ describe('SettingsSectionStack', () => {
 
   beforeEach(() => {
     scrollIntoView = vi.fn();
-    Element.prototype.scrollIntoView = scrollIntoView;
+    Element.prototype.scrollIntoView =
+      scrollIntoView as unknown as (typeof Element.prototype.scrollIntoView);
   });
 
   afterEach(() => {

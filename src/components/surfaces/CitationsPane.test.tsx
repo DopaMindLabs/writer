@@ -780,7 +780,7 @@ describe('CitationsPane', () => {
       await userEvent.click(screen.getByTestId('citation-row-c1-select'));
       const typeSelect = (await screen.findByTestId(
         'citations-bulk-set-type',
-      ));
+      )) as HTMLSelectElement;
       await userEvent.selectOptions(typeSelect, 'book');
       await waitFor(() => { expect(typeSelect.value).toBe(''); });
     });
