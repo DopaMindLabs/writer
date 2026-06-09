@@ -6,7 +6,7 @@ const template: Template = {
   label: 'Thesis · research',
   tag: 'TH',
   version: '0.1.0',
-  stage: TemplateStage.Experimental,
+  stage: TemplateStage.Alpha,
   enabled: true,
   description: 'long-form academic',
   pickerOrder: 3,

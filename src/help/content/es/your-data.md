@@ -35,9 +35,9 @@ contenido con tu biblioteca actual.
 
 Como el almacenamiento es local, las **copias regulares son esenciales**.
 Exporta antes de borrar datos del navegador, cambiar de dispositivo o probar
-algo experimental.
+algo nuevo.
 
-> Esta es una app en evolución y experimental. Trata tus exportaciones como la
+> Esta es una app alpha en evolución. Trata tus exportaciones como la
 > fuente de verdad y haz copias a menudo.
 
 ## Relacionado

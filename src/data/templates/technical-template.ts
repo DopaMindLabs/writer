@@ -6,7 +6,7 @@ const template: Template = {
   label: 'Technical · Scientific report',
   tag: 'TX',
   version: '0.1.0',
-  stage: TemplateStage.Experimental,
+  stage: TemplateStage.Alpha,
   enabled: true,
   description: 'Scientific · methods · equations',
   pickerOrder: 2,

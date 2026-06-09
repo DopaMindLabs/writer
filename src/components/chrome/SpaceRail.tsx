@@ -64,11 +64,11 @@ const SpaceRailHeader = () => (
           tabIndex={0}
           className="mb-2.5 cursor-help rounded-sm border border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-[color:var(--warning)]"
         >
-          exp
+          alpha
         </span>
       </TooltipTrigger>
       <TooltipContent side="right" className="max-w-[220px]">
-        <div className="font-medium">Experimental build</div>
+        <div className="font-medium">Alpha build</div>
         <div className="mt-0.5 text-[11px] opacity-80">
           No data sync. Everything lives in your browser. If you clear your cache, your work will be lost
         </div>

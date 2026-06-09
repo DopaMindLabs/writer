@@ -6,7 +6,7 @@ const template: Template = {
   label: 'Blank',
   tag: 'BL',
   version: '0.1.0',
-  stage: TemplateStage.Experimental,
+  stage: TemplateStage.Alpha,
   enabled: true,
   description: 'start from nothing',
   pickerOrder: 8,
