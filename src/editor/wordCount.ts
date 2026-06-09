@@ -1,10 +1,14 @@
 // Word counting for serialized Lexical document bodies.
 //
-// Bodies are stored as serialized Lexical JSON. `countWords` walks the node tree
-// to extract text and counts whitespace-delimited tokens, falling back to plain
-// text when the body is not Lexical JSON. Counting is cheap to run when content
-// changes and the result is cached in `doc.meta.wordCount`, so navigation
-// surfaces can read the number without re-parsing the body on every render.
+// Bodies are stored as serialized Lexical JSON. `countWords` extracts plaintext
+// with the same headless-editor path the Doc Inspector and revision capture use
+// (`lexicalJsonToPlainText`), so the cached `doc.meta.wordCount` and the
+// Inspector's live count always agree — a tree-walk that joins text nodes with
+// spaces would invent word boundaries at inline-formatting splits. The walk is
+// kept only as a fallback so counting never throws into the autosave path when
+// a body fails to parse.
+
+import { lexicalJsonToPlainText } from '@/lib/revisions/lexicalJsonToPlainText';
 
 const countTokens = (text: string): number =>
   text.trim().split(/\s+/).filter(Boolean).length;
@@ -21,6 +25,13 @@ const extractTextFromLexicalState = (node: unknown): string => {
 
 export const countWords = (body: string): number => {
   if (!body) return 0;
+  try {
+    // lexicalJsonToPlainText returns non-serialized bodies unchanged, so this
+    // also covers legacy plain-text bodies.
+    return countTokens(lexicalJsonToPlainText(body));
+  } catch {
+    /* unparseable Lexical JSON — fall back to the lenient tree walk */
+  }
   try {
     const parsed = JSON.parse(body) as { root?: unknown };
     if (parsed.root) {
