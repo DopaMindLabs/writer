@@ -8,7 +8,8 @@
       "include-v-in-tag": true,
       "changelog-path": "CHANGELOG.md",
       "prerelease": true,
-      "prerelease-type": "alpha"
+      "prerelease-type": "alpha",
+      "versioning": "prerelease"
     }
   }
 }
