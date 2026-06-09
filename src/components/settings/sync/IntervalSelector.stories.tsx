@@ -7,7 +7,7 @@ const meta = {
   title: 'Settings/Sync/IntervalSelector',
   component: IntervalSelector,
   parameters: { layout: 'padded' },
-  args: { ariaLabel: 'Auto-sync interval' },
+  args: { ariaLabel: 'Auto-sync interval', value: 10, onChange: () => undefined },
 } satisfies Meta<typeof IntervalSelector>;
 
 export default meta;

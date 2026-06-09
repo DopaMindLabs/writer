@@ -24,6 +24,7 @@ const meta = {
   title: 'Chrome/NavTabs',
   component: NavTabs,
   parameters: { layout: 'padded' },
+  args: { groups, active: 'general', onSelect: () => undefined },
 } satisfies Meta<typeof NavTabs>;
 
 export default meta;

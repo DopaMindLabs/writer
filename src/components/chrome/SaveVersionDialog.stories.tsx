@@ -17,6 +17,7 @@ const meta = {
   title: 'Overlays/SaveVersionDialog',
   component: SaveVersionDialog,
   parameters: { layout: 'fullscreen', seed: 'docWithRevisions' },
+  args: { docId: 'd1' },
 } satisfies Meta<typeof SaveVersionDialog>;
 
 export default meta;
