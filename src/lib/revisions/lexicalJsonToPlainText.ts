@@ -52,6 +52,20 @@ export const lexicalJsonToPlainText = (body: string): string => {
   return out;
 };
 
+// Whether a stored body can be loaded by the editor: legacy plain text always
+// can; anything shaped like serialized Lexical JSON must actually parse.
+// Restore paths check this before overwriting a live document, so a corrupt
+// revision fails the restore instead of bricking the doc.
+export const isParseableBody = (body: string): boolean => {
+  if (!isSerialized(body)) return true;
+  try {
+    getSharedEditor().parseEditorState(body);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 // Cheap, dependency-free word count over extracted plaintext.
 export const countWords = (text: string): number => {
   const trimmed = text.trim();
