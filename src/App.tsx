@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { createHashRouter, Outlet, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  createHashRouter,
+  Outlet,
+  RouterProvider,
+} from 'react-router-dom';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SkipLink } from '@/components/ui/SkipLink';
 import { HelpPalette } from '@/components/help/HelpPalette';
@@ -45,7 +50,15 @@ const RootLayout = () => {
   );
 };
 
-const router = createHashRouter([
+// Vercel serves the app from `/` and supports SPA rewrites, so a browser
+// router gives clean URLs there. GitHub Pages can't rewrite, so it keeps the
+// hash router. Driven by `VITE_ROUTER`, set in `vercel.json`.
+const createAppRouter =
+  import.meta.env.VITE_ROUTER === 'browser'
+    ? createBrowserRouter
+    : createHashRouter;
+
+const router = createAppRouter([
   {
     element: <RootLayout />,
     children: [

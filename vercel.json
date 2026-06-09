@@ -1,0 +1,4 @@
+{
+  "buildCommand": "VITE_BASE=/ VITE_ROUTER=browser npm run build",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
