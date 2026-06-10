@@ -253,73 +253,19 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
         class="px-4 py-3.5"
       >
         <div
-          class="mb-2 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+          class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 mb-2"
         >
           OUTLINE
            ·
            
-          4 SECTIONS
+          0 SECTIONS
         </div>
-        <div
-          class="-ml-3.5"
+        <p
+          class="font-serif text-[12px] italic text-ink-3"
+          data-testid="outline-empty"
         >
-          <div
-            class="flex items-baseline gap-2 border-l-2 py-1.5 pl-3.5 border-ink"
-          >
-            <span
-              class="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4"
-            >
-              H1
-            </span>
-            <span
-              class="flex-1 font-serif text-[13px] font-medium text-ink"
-            >
-              The bell-keeper's last morning
-            </span>
-          </div>
-          <div
-            class="flex items-baseline gap-2 border-l-2 py-1.5 pl-7 border-transparent"
-          >
-            <span
-              class="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4"
-            >
-              H2
-            </span>
-            <span
-              class="flex-1 font-serif text-[13px] text-ink-2"
-            >
-              Mira walks
-            </span>
-          </div>
-          <div
-            class="flex items-baseline gap-2 border-l-2 py-1.5 pl-7 border-transparent"
-          >
-            <span
-              class="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4"
-            >
-              H2
-            </span>
-            <span
-              class="flex-1 font-serif text-[13px] text-ink-2"
-            >
-              The tower
-            </span>
-          </div>
-          <div
-            class="flex items-baseline gap-2 border-l-2 py-1.5 pl-7 border-transparent"
-          >
-            <span
-              class="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4"
-            >
-              H2
-            </span>
-            <span
-              class="flex-1 font-serif text-[13px] text-ink-2"
-            >
-              Counting
-            </span>
-          </div>
-        </div>
+          No headings yet. Add headings to the document to build its outline.
+        </p>
       </div>
     </div>
   </aside>

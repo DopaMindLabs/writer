@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { serializedBody } from '@/test/fixtures';
+import { serializedBlocks, serializedBody } from '@/test/fixtures';
 import { act, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, within } from '@/test/test-utils';
@@ -100,17 +100,50 @@ describe('DocInspector', () => {
   });
 
   describe('panes', () => {
-    it('should render the OutlinePane when section is "outline"', () => {
+    it('builds the outline from the document headings, skipping body prose', async () => {
+      await seedDoc({
+        body: serializedBlocks([
+          { tag: 'h1', text: "The bell-keeper's last morning" },
+          { text: 'Morning prose between the headings.' },
+          { tag: 'h2', text: 'Mira walks' },
+          { tag: 'h3', text: 'Counting' },
+        ]),
+      });
       act(() => {
         useUI.getState().setInspectorSection('outline');
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
       const pane = screen.getByTestId('doc-inspector-pane-outline');
-      // The OutlinePane currently shows hard-coded placeholder rows from
-      // DocInspector.tsx (`OutlinePane`). When that placeholder is replaced
-      // with a live outline, update these expectations together.
-      expect(pane).toHaveTextContent(/Mira walks/);
-      expect(pane).toHaveTextContent(/bell-keeper/i);
+      await waitFor(() => {
+        expect(within(pane).getAllByTestId('outline-row')).toHaveLength(3);
+      });
+      const rows = within(pane).getAllByTestId('outline-row');
+      expect(rows[0]).toHaveTextContent(/bell-keeper/i);
+      expect(rows[0]).toHaveAttribute('data-level', '1');
+      expect(rows[0]).toHaveTextContent('H1');
+      expect(rows[1]).toHaveTextContent('Mira walks');
+      expect(rows[1]).toHaveAttribute('data-level', '2');
+      expect(rows[2]).toHaveTextContent('Counting');
+      expect(rows[2]).toHaveAttribute('data-level', '3');
+      // Prose paragraphs never appear in the outline.
+      expect(pane).not.toHaveTextContent('Morning prose');
+      // The summary reflects the live heading count.
+      expect(pane).toHaveTextContent('3 SECTIONS');
+      expect(within(pane).queryByTestId('outline-empty')).toBeNull();
+    });
+
+    it('shows an empty outline state when the document has no headings', async () => {
+      await seedDoc({ body: serializedBody('Hello world') });
+      act(() => {
+        useUI.getState().setInspectorSection('outline');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      const empty = await screen.findByTestId('outline-empty');
+      expect(empty).toHaveTextContent(/no headings yet/i);
+      expect(screen.queryAllByTestId('outline-row')).toHaveLength(0);
+      expect(screen.getByTestId('doc-inspector-pane-outline')).toHaveTextContent(
+        '0 SECTIONS',
+      );
     });
 
     it('should render live document info when section is "info"', async () => {

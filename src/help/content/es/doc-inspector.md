@@ -1,9 +1,22 @@
 # El inspector del documento
 
-El inspector del documento es el panel que está junto al editor. Su pestaña **Info**
-muestra detalles en vivo del documento que estás escribiendo y te permite fijar
+El inspector del documento es el panel que está junto al editor. Su pestaña
+**Outline** muestra la estructura del documento, y su pestaña **Info** muestra
+detalles en vivo del documento que estás escribiendo y te permite fijar
 algunos límites opcionales y un estado. Tú eliges qué campos aparecen — global y
 por espacio — para que el inspector muestre solo lo que te importa.
+
+## El esquema
+
+La pestaña **Outline** lista los encabezados del documento en orden, con sangría
+según su nivel, para que veas la forma de una pieza larga de un vistazo. Se
+actualiza un momento después de que dejas de escribir.
+
+El esquema se construye a partir de tus encabezados — escribe `# `, `## ` o
+`### ` al principio de una línea (o usa la barra flotante) para añadir uno. Un
+documento sin encabezados muestra un esquema vacío; consulta
+[Formato y markdown](formatting-and-markdown#headings-and-structure) para saber
+cómo funcionan los encabezados.
 
 ## Recuentos de palabras y caracteres
 
