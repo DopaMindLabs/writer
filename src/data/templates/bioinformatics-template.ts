@@ -6,7 +6,7 @@ const template: Template = {
   label: 'Bioinformatics',
   tag: 'BX',
   version: '0.1.0',
-  stage: TemplateStage.Experimental,
+  stage: TemplateStage.Alpha,
   enabled: false,
   description: 'pipelines · methods · lab notebook',
   pickerOrder: 1,

@@ -6,7 +6,7 @@ const template: Template = {
   label: 'Fictional writing',
   tag: 'FI',
   version: '0.1.0',
-  stage: TemplateStage.Experimental,
+  stage: TemplateStage.Alpha,
   enabled: true,
   description: 'novel · short story · script',
   pickerOrder: 4,

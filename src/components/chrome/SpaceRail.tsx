@@ -49,33 +49,36 @@ const SpaceRailTile = ({ space, isActive }: SpaceRailTileProps) => (
   </Tooltip>
 );
 
-const SpaceRailHeader = () => (
-  <>
-    <Link
-      to={routes.home()}
-      aria-label="Home"
-      className="mb-1 flex h-7 w-7 items-center justify-center rounded-md font-serif text-lg leading-none tracking-tight text-ink hover:bg-paper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
-    >
-      L
-    </Link>
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <span
-          tabIndex={0}
-          className="mb-2.5 cursor-help rounded-sm border border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-[color:var(--warning)]"
-        >
-          exp
-        </span>
-      </TooltipTrigger>
-      <TooltipContent side="right" className="max-w-[220px]">
-        <div className="font-medium">Experimental build</div>
-        <div className="mt-0.5 text-[11px] opacity-80">
-          No data sync. Everything lives in your browser. If you clear your cache, your work will be lost
-        </div>
-      </TooltipContent>
-    </Tooltip>
-  </>
-);
+const SpaceRailHeader = () => {
+  const { t } = useTranslation('screens');
+  return (
+    <>
+      <Link
+        to={routes.home()}
+        aria-label="Home"
+        className="mb-1 flex h-7 w-7 items-center justify-center rounded-md font-serif text-lg leading-none tracking-tight text-ink hover:bg-paper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+      >
+        L
+      </Link>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span
+            tabIndex={0}
+            className="mb-2.5 cursor-help rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
+          >
+            alpha
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="right" className="max-w-[220px]">
+          <div className="font-medium">{t('home.warningTitle')}</div>
+          <div className="mt-0.5 text-[11px] opacity-80">
+            {t('home.warningBody')}
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </>
+  );
+};
 
 const SpaceRailSettings = () => {
   const { t } = useTranslation('chrome');

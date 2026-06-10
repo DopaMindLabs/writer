@@ -4,7 +4,7 @@ A pair of static landing pages that replace the silent boot-time redirect at `/`
 
 ## Why
 
-Previously `/` was a `BootScreen` that auto-navigated to the user's most recent world. There was no surface to introduce the app, no link to source, and no place to communicate that it is local-only and experimental. The home and about pages fix that.
+Previously `/` was a `BootScreen` that auto-navigated to the user's most recent world. There was no surface to introduce the app, no link to source, and no place to communicate that it is local-only and in alpha. The home and about pages fix that.
 
 ## Routes
 
@@ -19,11 +19,11 @@ Wired up in [src/App.tsx](../src/App.tsx).
 
 - **Continue writing →** renders only when at least one world exists. The most recent world is fetched on mount via `db.worlds.orderBy('updatedAt').reverse().first()`.
 - **Start a new world →** always renders; links to `/new` ([TemplatesScreen](../src/screens/Templates.tsx)).
-- Bottom row: `About` link, `GitHub` link (placeholder), and an "experimental · local only" chip.
+- Bottom row: `About` link, `GitHub` link (placeholder), and an "alpha · local only" chip.
 
 ## About page content
 
-Static page with sections for the maker's note (ADHD/Autism framing), status (experimental, IndexedDB-only, no sync), license ([GNU AGPL](https://www.gnu.org/licenses/agpl-3.0.html)), and source (GitHub link placeholder). Includes a `← back` link to `/`.
+Static page with sections for the maker's note (ADHD/Autism framing), status (alpha, IndexedDB-only, no sync), license ([GNU AGPL](https://www.gnu.org/licenses/agpl-3.0.html)), and source (GitHub link placeholder). Includes a `← back` link to `/`.
 
 ## In-app navigation
 

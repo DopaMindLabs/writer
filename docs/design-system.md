@@ -493,7 +493,7 @@ colour for legibility on tint, and hover/active states).
 | **Error** | `#FBEBE7` | `#E8341A` (chili) | `#A11808` | Field errors, danger toasts, destructive confirms. |
 | **Warning** | `#FAEFD4` | `#F4B41A` (saffron) | `#9A7005` | About-to-overwrite notices, quota nudges, "unsaved changes". |
 | **Success** | `#E8EFE6` | `#A7B92E` (chartreuse) | `#677515` | "Saved", "Sent", finished imports. |
-| **Info** | `#E7ECF4` | `#1F86D6` (electric blue) | `#14568F` | Tips, "what's new", neutral notices. |
+| **Info** | `#E7ECF4` | `#1F86D6` (electric blue) | `#14568F` | Tips, "what's new", neutral notices; alpha build status badge and banner. |
 
 **Glyph pairing** (used inside components, never standalone):
 

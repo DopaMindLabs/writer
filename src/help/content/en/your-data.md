@@ -36,9 +36,9 @@ your current library.
   interval, and run a sync on demand.
 
 Storage is local, so **regular backups are essential**. Export before clearing
-browser data, switching devices, or trying something experimental.
+browser data, switching devices, or trying something new.
 
-> This is an evolving, experimental app. Treat your exports as the source of
+> This is an evolving alpha app. Treat your exports as the source of
 > truth and back up often.
 
 ## Related
