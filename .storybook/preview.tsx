@@ -8,6 +8,7 @@ import {
   seedBrainSpaceCanvas,
   seedDocWithRevisions,
 } from '@/test/fixtures';
+import '@/fonts';
 import '@/index.css';
 
 const themes = ['light', 'dark', 'hc-light', 'hc-dark'] as const;

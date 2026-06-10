@@ -36,6 +36,9 @@
     "*.{ts,tsx}": "eslint --max-warnings=0 --no-warn-ignored"
   },
   "dependencies": {
+    "@fontsource/geist": "^5.2.9",
+    "@fontsource/geist-mono": "^5.2.8",
+    "@fontsource/source-serif-4": "^5.2.9",
     "@lexical/code": "^0.45.0",
     "@lexical/headless": "^0.45.0",
     "@lexical/history": "^0.45.0",
