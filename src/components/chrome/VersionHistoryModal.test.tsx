@@ -4,19 +4,19 @@ import { renderWithProviders, screen } from '@/test/test-utils';
 import { useUI } from '@/store/ui';
 import { db } from '@/db/db';
 import type { Doc, Revision } from '@/db/schema';
-import { sampleDoc, sampleSpace, sampleSection } from '@/test/fixtures';
+import { sampleDoc, sampleSpace, sampleSection, serializedBody } from '@/test/fixtures';
 import { VersionHistoryModal } from './VersionHistoryModal';
 
 const doc: Doc = {
   ...sampleDoc,
-  body: 'the quick brown fox',
+  body: serializedBody('the quick brown fox'),
   meta: { wordCount: 4 },
 };
 
 const makeRevision = (overrides: Partial<Revision>): Revision => ({
   id: overrides.id ?? 'r',
   docId: overrides.docId ?? doc.id,
-  body: overrides.body ?? 'body',
+  body: overrides.body ?? serializedBody('body'),
   text: overrides.text ?? 'body',
   wordCount: overrides.wordCount ?? 1,
   kind: overrides.kind ?? 'manual',
@@ -98,7 +98,7 @@ describe('VersionHistoryModal', () => {
 
   it('restores a version through the confirm dialog (no native popup)', async () => {
     await db.revisions.put(
-      makeRevision({ id: 'rev1', text: 'old text', body: 'old text', createdAt: 10 }),
+      makeRevision({ id: 'rev1', text: 'old text', body: serializedBody('old text'), createdAt: 10 }),
     );
     openModal();
     renderWithProviders(<VersionHistoryModal doc={doc} />);
@@ -109,7 +109,7 @@ describe('VersionHistoryModal', () => {
 
     await waitFor(async () => {
       const updated = await db.docs.get(doc.id);
-      expect(updated?.body).toBe('old text');
+      expect(updated?.body).toBe(serializedBody('old text'));
     });
     // The pre-restore safety snapshot was captured.
     const rows = await db.revisions.where('docId').equals(doc.id).toArray();
@@ -118,7 +118,7 @@ describe('VersionHistoryModal', () => {
 
   it('does not restore when the confirm dialog is cancelled', async () => {
     await db.revisions.put(
-      makeRevision({ id: 'rev1', text: 'old text', body: 'old text', createdAt: 10 }),
+      makeRevision({ id: 'rev1', text: 'old text', body: serializedBody('old text'), createdAt: 10 }),
     );
     openModal();
     renderWithProviders(<VersionHistoryModal doc={doc} />);
@@ -127,6 +127,6 @@ describe('VersionHistoryModal', () => {
     await userEvent.click(await screen.findByTestId('confirm-dialog-cancel'));
 
     const updated = await db.docs.get(doc.id);
-    expect(updated?.body).toBe('the quick brown fox');
+    expect(updated?.body).toBe(serializedBody('the quick brown fox'));
   });
 });

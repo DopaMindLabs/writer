@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor, type EditorMode } from '@/editor/EditorFacade';
 import { countWords } from '@/editor/wordCount';
@@ -49,8 +49,6 @@ const LockBanner = ({ doc }: { doc: Doc }) => {
 };
 
 export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) => {
-  const docIdRef = useRef(doc.id);
-  docIdRef.current = doc.id;
   const readingWidth = useUI((s) => s.readingWidth);
   const restoreNonce = useUI((s) => s.restoreNonces[doc.id] ?? 0);
 
@@ -77,8 +75,14 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doc.id]);
 
+  // Close over doc.id rather than reading a mutable ref: AutosavePlugin flushes
+  // a pending edit on unmount, and on a doc switch that flush runs after this
+  // component has re-rendered with the new doc — a ref would route the old
+  // doc's pending edit into the newly-opened doc. The keyed Editor never
+  // re-renders across a switch, so it keeps the onChange bound to the doc it
+  // mounted for.
   const handleChange = useCallback((serialized: string) => {
-    void db.docs.update(docIdRef.current, {
+    void db.docs.update(doc.id, {
       body: serialized,
       updatedAt: Date.now(),
       // Cache the word count so the sidebar reads it cheaply. Write the nested
@@ -90,12 +94,12 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
     });
     // Best-effort, throttled history capture; never blocks or throws into the
     // editor's onChange.
-    void captureAutoRevision(docIdRef.current, serialized).catch(
+    void captureAutoRevision(doc.id, serialized).catch(
       (err: unknown) => {
         console.error('Failed to capture revision', err);
       },
     );
-  }, []);
+  }, [doc.id]);
 
   return (
     <div

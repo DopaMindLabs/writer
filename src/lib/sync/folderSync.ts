@@ -164,9 +164,10 @@ export const getLastSyncForSpace = async (
 };
 
 export const getLastSyncedAt = async (): Promise<number | null> => {
-  const rows = await db.syncs.toArray();
-  if (rows.length === 0) return null;
-  return rows.reduce((max, r) => Math.max(max, r.when), 0);
+  // Runs on startup: read the single newest row off the `when` index instead
+  // of loading the whole sync history to reduce it.
+  const last = await db.syncs.orderBy('when').last();
+  return last?.when ?? null;
 };
 
 const pruneSyncHistory = async (spaceId: string): Promise<void> => {

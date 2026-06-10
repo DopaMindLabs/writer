@@ -169,4 +169,30 @@ describe('LoremDB migrations', () => {
     );
     await upgraded.close();
   });
+
+  it('version(10) adds the [spaceId+year] citation index without disturbing rows', async () => {
+    dbName = `lipsum-migration-${crypto.randomUUID()}`;
+    const v9 = new Dexie(dbName);
+    v9.version(9).stores({
+      citations: 'id, spaceId, year, [spaceId+key]',
+    });
+    await v9.open();
+    await v9.table('citations').bulkAdd([
+      { id: 'c-new', spaceId: 's1', key: 'new', authors: 'A', title: 'T', year: 2020, type: 'misc', useCount: 0 },
+      { id: 'c-old', spaceId: 's1', key: 'old', authors: 'B', title: 'U', year: 1995, type: 'misc', useCount: 0 },
+      { id: 'c-other', spaceId: 's2', key: 'x', authors: 'C', title: 'V', year: 2000, type: 'misc', useCount: 0 },
+    ]);
+    await v9.close();
+
+    const upgraded = new LoremDB(dbName);
+    await upgraded.open();
+    // Existing rows survive and the new compound index serves a space-scoped,
+    // year-ordered query without a table scan.
+    const ordered = await upgraded.citations
+      .where('[spaceId+year]')
+      .between(['s1', Dexie.minKey], ['s1', Dexie.maxKey])
+      .toArray();
+    expect(ordered.map((c) => c.id)).toEqual(['c-old', 'c-new']);
+    await upgraded.close();
+  });
 });
