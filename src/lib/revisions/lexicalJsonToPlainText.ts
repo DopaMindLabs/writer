@@ -34,22 +34,23 @@ const getSharedEditor = (): ReturnType<typeof createHeadlessEditor> => {
   return sharedEditor;
 };
 
-// Extracts plaintext from serialized Lexical JSON, off-React. This is the
-// single place Revision capture parses Lexical outside the editor. Doc bodies
-// are always either empty or serializeState output (the editor refuses to
-// load anything else), so a non-empty body that fails to parse throws.
-export const lexicalJsonToPlainText = (body: string): string => {
-  if (!body) return '';
-
+// Parses a serialized body with the shared headless editor and evaluates
+// `read` inside its EditorState — the single place doc bodies are parsed
+// outside the editor (Revision capture, the Doc Inspector outline). Callers
+// compose `$`-functions (e.g. `$getRoot`) inside `read`. Doc bodies are
+// always either empty or serializeState output (the editor refuses to load
+// anything else), so a non-empty body that fails to parse throws.
+export const readLexicalBody = <T>(body: string, read: () => T): T => {
   const editor = getSharedEditor();
   const state = editor.parseEditorState(body);
   editor.setEditorState(state);
+  return editor.getEditorState().read(read);
+};
 
-  let out = '';
-  editor.getEditorState().read(() => {
-    out = $getRoot().getTextContent();
-  });
-  return out;
+// Extracts plaintext from serialized Lexical JSON, off-React.
+export const lexicalJsonToPlainText = (body: string): string => {
+  if (!body) return '';
+  return readLexicalBody(body, () => $getRoot().getTextContent());
 };
 
 // Whether a stored body can be loaded by the editor: empty (a fresh doc) or

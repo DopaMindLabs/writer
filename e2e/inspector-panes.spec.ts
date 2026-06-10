@@ -33,3 +33,38 @@ test('inspector expands and switches between every section pane', async ({
   await inspector.getByTestId('doc-inspector-collapse').click();
   await expect(inspector).toBeHidden();
 });
+
+test('outline pane lists the document headings as they are written', async ({
+  page,
+}) => {
+  await gotoFirstDoc(page);
+
+  await page.getByRole('button', { name: /doc inspector/i }).click();
+  await page.getByTestId('doc-inspector-icons-outline').click();
+
+  const pane = page.getByTestId('doc-inspector-pane-outline');
+  await expect(pane).toBeVisible();
+  // Seeded docs are empty, so the outline starts in its empty state.
+  await expect(pane.getByTestId('outline-empty')).toBeVisible();
+  await expect(pane).toContainText('0 SECTIONS');
+
+  // Markdown shortcuts turn "# " / "## " into real headings as we type.
+  const body = page.getByLabel('Document body');
+  await body.click();
+  await body.pressSequentially(
+    '# The tower\nMorning prose under the heading.\n## Counting\nMore prose.',
+    { delay: 0 },
+  );
+
+  // The outline reflects the autosaved body shortly after typing pauses.
+  const rows = pane.getByTestId('outline-row');
+  await expect(rows).toHaveCount(2);
+  await expect(rows.nth(0)).toContainText('The tower');
+  await expect(rows.nth(0)).toHaveAttribute('data-level', '1');
+  await expect(rows.nth(1)).toContainText('Counting');
+  await expect(rows.nth(1)).toHaveAttribute('data-level', '2');
+  await expect(pane).toContainText('2 SECTIONS');
+  // Prose paragraphs never appear in the outline.
+  await expect(pane).not.toContainText('Morning prose');
+  await expect(pane.getByTestId('outline-empty')).toBeHidden();
+});

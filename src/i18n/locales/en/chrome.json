@@ -132,7 +132,8 @@
     },
     "outline": {
       "title": "OUTLINE",
-      "sectionSummary": "{{count}} SECTIONS"
+      "sectionSummary": "{{count}} SECTIONS",
+      "empty": "No headings yet. Add headings to the document to build its outline."
     },
     "info": {
       "title": "INFO",
