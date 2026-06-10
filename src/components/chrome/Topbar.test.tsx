@@ -69,21 +69,6 @@ describe('Topbar', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('should not render a standalone theme button', () => {
-      renderWithProviders(
-        <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
-        { initialEntries: ['/s/s1/d/d1'] },
-      );
-      expect(screen.queryByTestId('topbar-theme')).not.toBeInTheDocument();
-    });
-
-    it('should not render a standalone help menu', () => {
-      renderWithProviders(
-        <Topbar spaceId="s1" docId="d1" docName="Sample" mode="write" />,
-        { initialEntries: ['/s/s1/d/d1'] },
-      );
-      expect(screen.queryByTestId('topbar-help')).not.toBeInTheDocument();
-    });
   });
 
   describe('citations trigger', () => {

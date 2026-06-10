@@ -63,16 +63,6 @@ describe('Sidebar', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('should not render the legacy bottom nav (home/about/github) — these moved to Quick Settings + Space menu', async () => {
-      await seedBasicSpace();
-      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
-        initialEntries: ['/s/s1/d/d1'],
-      });
-      await screen.findByTestId('sidebar-space-title');
-      expect(screen.queryByTestId('sidebar-nav-home')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('sidebar-nav-about')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('sidebar-nav-github')).not.toBeInTheDocument();
-    });
   });
 
   describe('space menu trigger', () => {

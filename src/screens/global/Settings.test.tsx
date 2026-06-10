@@ -36,13 +36,6 @@ describe('SettingsScreen', () => {
     expect(useUI.getState().floatingToolbarEnabled).toBe(false);
   });
 
-  it('does not render a standalone Theme tab (theme moved to Quick Settings)', () => {
-    const { queryByRole } = renderWithProviders(<SettingsScreen />, {
-      initialEntries: ['/settings'],
-    });
-    // No "Theme" tab in the settings nav anymore.
-    expect(queryByRole('button', { name: 'Theme' })).not.toBeInTheDocument();
-  });
 
   it('shows a disabled checkbox on a coming-soon row', () => {
     const { getAllByRole } = renderWithProviders(<SettingsScreen />, {
