@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Erro de arranque",
-  "bootErrorHintBefore": "Tenta ",
-  "bootErrorHintAfter": " para reiniciar a base de dados local.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Se isto continuar a acontecer, podes apagar os dados locais da app e começar de novo.",
+  "bootErrorResetAction": "Repor dados locais…",
+  "bootErrorResetTitle": "Apagar todos os dados locais?",
+  "bootErrorResetBody": "Isto elimina permanentemente tudo o que a app guardou neste navegador — documentos, notas, citações e cópias de segurança. Não pode ser anulado.",
+  "bootErrorResetConfirm": "Apagar tudo",
+  "bootErrorResetCancel": "Cancelar",
   "booting": "A iniciar…"
 }

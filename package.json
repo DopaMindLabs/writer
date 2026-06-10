@@ -20,7 +20,7 @@
     "test:e2e:report": "playwright show-report",
     "test:e2e:coverage": "playwright test && node scripts/coverage-ratchet.mjs e2e",
     "coverage:ratchet": "node scripts/coverage-ratchet.mjs e2e",
-    "build:e2e": "VITE_BASE=/ vite build",
+    "build:e2e": "VITE_E2E=1 VITE_BASE=/ vite build",
     "preview:e2e": "VITE_BASE=/ vite preview --port 4173",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",

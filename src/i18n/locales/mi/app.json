@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Hapa whakaoho",
-  "bootErrorHintBefore": "Ngāna ",
-  "bootErrorHintAfter": " hei tautuhi anō i te pātengi raraunga ā-rohe.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Mēnā ka mau tonu tēnei, ka taea e koe te muku i ngā raraunga ā-rohe o te taupānga, ka tīmata anō.",
+  "bootErrorResetAction": "Tautuhi anō i ngā raraunga ā-rohe…",
+  "bootErrorResetTitle": "Mukua ngā raraunga ā-rohe katoa?",
+  "bootErrorResetBody": "Mā tēnei e muku tūturu ngā mea katoa kua tiakina e te taupānga ki tēnei pūtirotiro — ngā tuhinga, ngā tuhipoka, ngā tohutoro me ngā pūrua. Kāore e taea te whakahoki.",
+  "bootErrorResetConfirm": "Mukua te katoa",
+  "bootErrorResetCancel": "Whakakore",
   "booting": "Te whakaoho…"
 }

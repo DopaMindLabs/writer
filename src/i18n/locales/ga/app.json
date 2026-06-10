@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Earráid tosaithe",
-  "bootErrorHintBefore": "Bain triail as ",
-  "bootErrorHintAfter": " chun an bunachar sonraí áitiúil a athshocrú.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Má leanann sé seo ag tarlú, is féidir leat sonraí áitiúla na haipe a scriosadh agus tosú as an nua.",
+  "bootErrorResetAction": "Athshocraigh sonraí áitiúla…",
+  "bootErrorResetTitle": "Scrios gach sonra áitiúil?",
+  "bootErrorResetBody": "Scriosfaidh sé seo go buan gach rud atá sábháilte ag an aip sa bhrabhsálaí seo — doiciméid, nótaí, tagairtí agus cúltacaí. Ní féidir é a chealú.",
+  "bootErrorResetConfirm": "Scrios gach rud",
+  "bootErrorResetCancel": "Cealaigh",
   "booting": "Á thosú…"
 }

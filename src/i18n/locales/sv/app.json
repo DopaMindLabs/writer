@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Startfel",
-  "bootErrorHintBefore": "Prova ",
-  "bootErrorHintAfter": " för att återställa den lokala databasen.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Om detta fortsätter kan du radera appens lokala data och börja om.",
+  "bootErrorResetAction": "Återställ lokala data…",
+  "bootErrorResetTitle": "Radera alla lokala data?",
+  "bootErrorResetBody": "Detta raderar permanent allt som appen har sparat i den här webbläsaren — dokument, anteckningar, källhänvisningar och säkerhetskopior. Det kan inte ångras.",
+  "bootErrorResetConfirm": "Radera allt",
+  "bootErrorResetCancel": "Avbryt",
   "booting": "Startar…"
 }

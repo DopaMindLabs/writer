@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Opstartfout",
-  "bootErrorHintBefore": "Probeer ",
-  "bootErrorHintAfter": " om de lokale database opnieuw te initialiseren.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Als dit blijft gebeuren, kun je de lokale gegevens van de app wissen en opnieuw beginnen.",
+  "bootErrorResetAction": "Lokale gegevens opnieuw instellen…",
+  "bootErrorResetTitle": "Alle lokale gegevens wissen?",
+  "bootErrorResetBody": "Hiermee wordt alles permanent verwijderd wat deze app in je browser heeft opgeslagen — documenten, notities, citaten en back-ups. Dit kan niet ongedaan worden gemaakt.",
+  "bootErrorResetConfirm": "Alles wissen",
+  "bootErrorResetCancel": "Annuleren",
   "booting": "Opstarten…"
 }

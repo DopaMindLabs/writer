@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Błąd uruchamiania",
-  "bootErrorHintBefore": "Spróbuj ",
-  "bootErrorHintAfter": ", aby zresetować lokalną bazę danych.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Jeśli to się powtarza, możesz usunąć lokalne dane aplikacji i zacząć od nowa.",
+  "bootErrorResetAction": "Zresetuj dane lokalne…",
+  "bootErrorResetTitle": "Usunąć wszystkie dane lokalne?",
+  "bootErrorResetBody": "Spowoduje to trwałe usunięcie wszystkiego, co aplikacja zapisała w tej przeglądarce — dokumentów, notatek, cytowań i kopii zapasowych. Nie można tego cofnąć.",
+  "bootErrorResetConfirm": "Usuń wszystko",
+  "bootErrorResetCancel": "Anuluj",
   "booting": "Uruchamianie…"
 }

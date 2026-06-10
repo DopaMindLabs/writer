@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Грешка при стартиране",
-  "bootErrorHintBefore": "Опитай ",
-  "bootErrorHintAfter": ", за да нулираш локалната база данни.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Ако това продължава, можеш да изтриеш локалните данни на приложението и да започнеш отначало.",
+  "bootErrorResetAction": "Нулиране на локалните данни…",
+  "bootErrorResetTitle": "Изтриване на всички локални данни?",
+  "bootErrorResetBody": "Това изтрива завинаги всичко, което приложението е запазило в този браузър — документи, бележки, цитати и резервни копия. Не може да бъде отменено.",
+  "bootErrorResetConfirm": "Изтрий всичко",
+  "bootErrorResetCancel": "Отказ",
   "booting": "Стартиране…"
 }

@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Erro de inicialização",
-  "bootErrorHintBefore": "Tente ",
-  "bootErrorHintAfter": " para redefinir o banco de dados local.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Se isso continuar acontecendo, você pode apagar os dados locais do app e começar de novo.",
+  "bootErrorResetAction": "Redefinir dados locais…",
+  "bootErrorResetTitle": "Apagar todos os dados locais?",
+  "bootErrorResetBody": "Isso exclui permanentemente tudo o que o app guardou neste navegador — documentos, notas, citações e backups. Não é possível desfazer.",
+  "bootErrorResetConfirm": "Apagar tudo",
+  "bootErrorResetCancel": "Cancelar",
   "booting": "Inicializando…"
 }

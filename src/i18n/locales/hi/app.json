@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "बूट त्रुटि",
-  "bootErrorHintBefore": "स्थानीय डेटाबेस को रीसेट करने के लिए ",
-  "bootErrorHintAfter": " आज़माएँ।",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "अगर यह बार-बार होता है, तो आप ऐप का स्थानीय डेटा मिटाकर नए सिरे से शुरुआत कर सकते हैं।",
+  "bootErrorResetAction": "स्थानीय डेटा रीसेट करें…",
+  "bootErrorResetTitle": "सारा स्थानीय डेटा मिटाएँ?",
+  "bootErrorResetBody": "इससे इस ब्राउज़र में ऐप द्वारा सहेजा गया सब कुछ — दस्तावेज़, नोट्स, उद्धरण और बैकअप — स्थायी रूप से हट जाएगा। इसे पूर्ववत नहीं किया जा सकता।",
+  "bootErrorResetConfirm": "सब कुछ मिटाएँ",
+  "bootErrorResetCancel": "रद्द करें",
   "booting": "बूट हो रहा है…"
 }

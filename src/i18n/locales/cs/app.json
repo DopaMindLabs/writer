@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Chyba spuštění",
-  "bootErrorHintBefore": "Zkus ",
-  "bootErrorHintAfter": " k resetování místní databáze.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Pokud se to opakuje, můžeš smazat místní data aplikace a začít znovu.",
+  "bootErrorResetAction": "Obnovit místní data…",
+  "bootErrorResetTitle": "Smazat všechna místní data?",
+  "bootErrorResetBody": "Tím se trvale smaže vše, co aplikace uložila v tomto prohlížeči — dokumenty, poznámky, citace i zálohy. Nelze to vrátit zpět.",
+  "bootErrorResetConfirm": "Smazat vše",
+  "bootErrorResetCancel": "Zrušit",
   "booting": "Spouští se…"
 }

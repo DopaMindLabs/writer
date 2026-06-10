@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "துவக்க பிழை",
-  "bootErrorHintBefore": "உள்ளூர் தரவுத்தளத்தை மீட்டமைக்க ",
-  "bootErrorHintAfter": " முயற்சிக்கவும்.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "இது தொடர்ந்து நிகழ்ந்தால், செயலியின் உள்ளூர் தரவை அழித்து புதிதாகத் தொடங்கலாம்.",
+  "bootErrorResetAction": "உள்ளூர் தரவை மீட்டமை…",
+  "bootErrorResetTitle": "எல்லா உள்ளூர் தரவையும் அழிக்கவா?",
+  "bootErrorResetBody": "இந்த உலாவியில் செயலி சேமித்த அனைத்தும் — ஆவணங்கள், குறிப்புகள், மேற்கோள்கள், காப்புப்பிரதிகள் — நிரந்தரமாக நீக்கப்படும். இதை மீட்க முடியாது.",
+  "bootErrorResetConfirm": "அனைத்தையும் அழி",
+  "bootErrorResetCancel": "ரத்து",
   "booting": "துவங்குகிறது…"
 }

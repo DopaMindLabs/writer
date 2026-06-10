@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "起動エラー",
-  "bootErrorHintBefore": "ローカルデータベースをリセットするには ",
-  "bootErrorHintAfter": " を試してください。",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "これが繰り返し発生する場合は、アプリのローカルデータを消去して最初からやり直せます。",
+  "bootErrorResetAction": "ローカルデータをリセット…",
+  "bootErrorResetTitle": "すべてのローカルデータを消去しますか？",
+  "bootErrorResetBody": "このブラウザにアプリが保存したすべてのもの（ドキュメント、ノート、引用、バックアップ）が完全に削除されます。元に戻すことはできません。",
+  "bootErrorResetConfirm": "すべて消去",
+  "bootErrorResetCancel": "キャンセル",
   "booting": "起動中…"
 }

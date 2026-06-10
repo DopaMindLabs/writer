@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Palaišanas kļūda",
-  "bootErrorHintBefore": "Mēģini ",
-  "bootErrorHintAfter": ", lai atiestatītu vietējo datubāzi.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Ja tas atkārtojas, vari izdzēst lietotnes vietējos datus un sākt no jauna.",
+  "bootErrorResetAction": "Atiestatīt vietējos datus…",
+  "bootErrorResetTitle": "Dzēst visus vietējos datus?",
+  "bootErrorResetBody": "Tas neatgriezeniski izdzēsīs visu, ko lietotne saglabājusi šajā pārlūkā — dokumentus, piezīmes, atsauces un dublējumus. To nevar atsaukt.",
+  "bootErrorResetConfirm": "Dzēst visu",
+  "bootErrorResetCancel": "Atcelt",
   "booting": "Palaiž…"
 }

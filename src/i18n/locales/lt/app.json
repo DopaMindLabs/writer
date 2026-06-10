@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Paleidimo klaida",
-  "bootErrorHintBefore": "Pabandyk ",
-  "bootErrorHintAfter": ", kad iš naujo nustatytum vietinę duomenų bazę.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Jei tai kartojasi, gali ištrinti programos vietinius duomenis ir pradėti iš naujo.",
+  "bootErrorResetAction": "Atstatyti vietinius duomenis…",
+  "bootErrorResetTitle": "Ištrinti visus vietinius duomenis?",
+  "bootErrorResetBody": "Tai visam laikui ištrins viską, ką programa išsaugojo šioje naršyklėje — dokumentus, užrašus, citatas ir atsargines kopijas. To negalima atšaukti.",
+  "bootErrorResetConfirm": "Ištrinti viską",
+  "bootErrorResetCancel": "Atšaukti",
   "booting": "Paleidžiama…"
 }
