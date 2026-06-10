@@ -20,6 +20,7 @@ export {
 } from './diff';
 export {
   lexicalJsonToPlainText,
+  isParseableBody,
   countWords,
   countCharacters,
 } from './lexicalJsonToPlainText';

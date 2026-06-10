@@ -2,6 +2,7 @@ import { db } from '@/db/db';
 import { invariant } from '@/lib/invariant';
 import { useUI } from '@/store/ui';
 import { createRevision } from './createRevision';
+import { isParseableBody } from './lexicalJsonToPlainText';
 
 export interface RestoreRevisionOpts {
   label?: string;
@@ -24,6 +25,10 @@ export const restoreRevision = async (
     invariant(
       target.docId === docId,
       () => `revision ${revisionId} does not belong to doc ${docId}`,
+    );
+    invariant(
+      isParseableBody(target.body),
+      () => `revision ${revisionId} body is corrupt and cannot be restored`,
     );
 
     const doc = await db.docs.get(docId);

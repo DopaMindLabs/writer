@@ -34,12 +34,12 @@ const getSharedEditor = (): ReturnType<typeof createHeadlessEditor> => {
   return sharedEditor;
 };
 
-// Extracts plaintext from serialized Lexical JSON, off-React. A non-serialized
-// string (legacy plain body) is returned as-is. This is the single place
-// Revision capture parses Lexical outside the editor.
+// Extracts plaintext from serialized Lexical JSON, off-React. This is the
+// single place Revision capture parses Lexical outside the editor. Doc bodies
+// are always either empty or serializeState output (the editor refuses to
+// load anything else), so a non-empty body that fails to parse throws.
 export const lexicalJsonToPlainText = (body: string): string => {
   if (!body) return '';
-  if (!isSerialized(body)) return body;
 
   const editor = getSharedEditor();
   const state = editor.parseEditorState(body);
@@ -50,6 +50,21 @@ export const lexicalJsonToPlainText = (body: string): string => {
     out = $getRoot().getTextContent();
   });
   return out;
+};
+
+// Whether a stored body can be loaded by the editor: empty (a fresh doc) or
+// serialized Lexical JSON that actually parses. Restore paths check this
+// before overwriting a live document, so a corrupt revision fails the restore
+// instead of bricking the doc.
+export const isParseableBody = (body: string): boolean => {
+  if (!body) return true;
+  if (!isSerialized(body)) return false;
+  try {
+    getSharedEditor().parseEditorState(body);
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 // Cheap, dependency-free word count over extracted plaintext.

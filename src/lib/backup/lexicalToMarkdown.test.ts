@@ -40,10 +40,9 @@ describe('lexicalJsonToMarkdown', () => {
     expect(lexicalJsonToMarkdown('')).toBe('');
   });
 
-  it('passes plain text through unchanged when not serialized Lexical JSON', () => {
-    expect(lexicalJsonToMarkdown('Dr. Kirchner walks in.')).toBe(
-      'Dr. Kirchner walks in.',
-    );
+  it('throws on a body that is not serialized Lexical JSON', () => {
+    // Doc bodies are only ever '' or serializeState output.
+    expect(() => lexicalJsonToMarkdown('Dr. Kirchner walks in.')).toThrow();
   });
 
   it('converts a Lexical heading + paragraph to markdown', () => {

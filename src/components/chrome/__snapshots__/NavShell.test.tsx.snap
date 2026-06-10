@@ -132,10 +132,10 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
         </aside>
       </div>
       <div
-        class="flex min-h-0 flex-1 flex-col md:flex-row"
+        class="flex min-h-0 min-w-0 flex-1 flex-col md:flex-row"
       >
         <div
-          class="flex min-h-0 shrink-0 flex-col border-r border-rule bg-paper-2 md:w-[240px]"
+          class="flex min-h-0 min-w-0 shrink-0 flex-col border-r border-rule bg-paper-2 md:w-[240px]"
         >
           <div
             class="flex items-center gap-3 border-b border-rule px-6 pb-4 pt-5"
@@ -408,10 +408,10 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
         </aside>
       </div>
       <div
-        class="flex min-h-0 flex-1 flex-col md:flex-row"
+        class="flex min-h-0 min-w-0 flex-1 flex-col md:flex-row"
       >
         <div
-          class="flex min-h-0 shrink-0 flex-col border-r border-rule bg-paper-2 md:w-[240px]"
+          class="flex min-h-0 min-w-0 shrink-0 flex-col border-r border-rule bg-paper-2 md:w-[240px]"
         >
           <div
             class="flex items-center gap-3 border-b border-rule px-6 pb-4 pt-5"

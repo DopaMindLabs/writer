@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { serializedBody } from '@/test/fixtures';
 import i18n from '@/i18n';
 import type { Revision } from '@/db/schema';
 import {
@@ -11,7 +12,7 @@ const t = i18n.getFixedT('en', 'chrome');
 const makeRevision = (overrides: Partial<Revision>): Revision => ({
   id: 'r',
   docId: 'd1',
-  body: 'b',
+  body: serializedBody('b'),
   text: 'b',
   wordCount: 1,
   kind: overrides.kind ?? 'auto',
