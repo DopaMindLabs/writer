@@ -7,8 +7,8 @@
     "tagline": "Un espace sans distraction pour l'écriture longue — fiction, recherche, essais, journaux.",
     "continueWriting": "Continuer à écrire",
     "startNewSpace": "Commencer un nouvel espace",
-    "statusLine": "expérimental · local uniquement · les données peuvent être perdues",
-    "warningTitle": "Build expérimental",
+    "statusLine": "alpha · local uniquement · les données peuvent être perdues",
+    "warningTitle": "Build alpha",
     "warningBody": "Pas de synchronisation des données. Tout vit dans ton navigateur. Si tu vides le cache, ton travail sera perdu"
   },
   "about": {
@@ -22,7 +22,7 @@
     "paragraph4Before": "Une dernière chose… Je crois en la tech pour le bien et je déteste la publicité. Donc ça sera toujours sans pub et GRATUIT pour un usage non commercial. Tu peux le forker et le modifier comme tu veux sous ",
     "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
     "statusLabel": "Statut",
-    "statusValueStrong": "Expérimental",
+    "statusValueStrong": "Alpha",
     "statusValueRest": " — il n'y a pas de synchronisation des données. Tout est enregistré dans IndexedDB dans ton navigateur local. Si tu vides le cache du navigateur, ton travail sera perdu.",
     "feedbackBefore": "Je suis encore en train de construire ça et j'ai plein d'idées ",
     "feedbackAfter": ". J'adorerais savoir ce qui fonctionne, ce qui ne fonctionne pas, et ce que tu aimerais voir exister. Les retours sont les bienvenus.",
@@ -290,7 +290,7 @@
       "subtitle": "Infos du build et liens.",
       "comingSoonBody": "Voir la page /about pour l'histoire ; cet onglet hébergera les infos du build, la licence et le changelog.",
       "versionLabel": "Version",
-      "versionValue": "0.5.0 · expérimental",
+      "versionValue": "{{version}} · alpha",
       "buildLabel": "Build",
       "buildValue": "local",
       "licenseLabel": "Licence",

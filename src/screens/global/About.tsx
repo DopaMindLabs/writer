@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, Smile, Lightbulb } from '@/components/libs/icons';
+import { Info, Smile, Lightbulb } from '@/components/libs/icons';
 import { BlockQuote } from '@/components/ui/block-quote';
 import { Link } from '@/components/ui/Link';
 import {
@@ -74,13 +74,13 @@ const AboutStatusSection = () => {
   return (
     <section className="mt-12 border-t border-rule pt-8">
       <TypographyLabel
-        className="tracking-[0.12em] text-[color:var(--warning)]"
+        className="tracking-[0.12em] text-info"
       >
         {t('about.statusLabel')}
       </TypographyLabel>
-      <div className="mt-3 flex gap-3 rounded-sm border-l-2 border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-4 py-3">
-        <AlertTriangle className="mt-1 h-4 w-4 shrink-0 text-[color:var(--warning)]" />
-        <TypographyLead className="text-[color:var(--warning)]">
+      <div className="mt-3 flex gap-3 rounded-sm border-l-2 border-info bg-info-bg px-4 py-3">
+        <Info className="mt-1 h-4 w-4 shrink-0 text-info" />
+        <TypographyLead className="text-info">
           <strong className="font-semibold">{t('about.statusValueStrong')}</strong>
           {t('about.statusValueRest')}
         </TypographyLead>

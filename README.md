@@ -10,7 +10,7 @@ A local-first, browser-based writing app built with React, Vite, and TypeScript.
 
 ## Status
 
-> ⚠️ **Experimental** — there is no data sync. All data is saved in IndexedDB in your local browser. If you clear your browser cache, your work will be lost.
+> ⚠️ **Alpha** — there is no data sync. All data is saved in IndexedDB in your local browser. If you clear your browser cache, your work will be lost.
 
 ## Requirements
 

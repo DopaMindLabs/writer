@@ -35,9 +35,9 @@ Import führt den Inhalt in deine aktuelle Bibliothek zusammen.
 
 Da Speicherung lokal ist, sind **regelmäßige Sicherungen
 unerlässlich**. Exportiere vor dem Löschen von Browser-Daten, dem
-Gerätewechsel oder dem Ausprobieren von etwas Experimentellem.
+Gerätewechsel oder dem Ausprobieren von etwas Neuem.
 
-> Dies ist eine sich entwickelnde, experimentelle App. Behandle deine
+> Dies ist eine sich entwickelnde Alpha-App. Behandle deine
 > Exporte als Quelle der Wahrheit und sichere oft.
 
 ## Verwandt
