@@ -2,8 +2,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { readFileSync } from 'node:fs';
+
+const { version: appVersion } = JSON.parse(
+  readFileSync(new URL('./package.json', import.meta.url), 'utf8')
+) as { version: string };
 
 export default defineConfig(({ command }) => ({
+  define: { __APP_VERSION__: JSON.stringify(appVersion) },
   base:
     command === 'build'
       ? process.env.VITE_BASE ?? '/writer/'
