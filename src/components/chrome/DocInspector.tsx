@@ -18,6 +18,7 @@ import {
   restoreRevision,
 } from '@/lib/revisions';
 import { enabledStages } from '@/lib/docInspector/config';
+import { lexicalJsonToOutline, type OutlineEntry } from '@/lib/docInspector/outline';
 import { resolveStatus } from '@/lib/docInspector/status';
 import type { InspectorToggleKey } from '@/lib/docInspector/features';
 import { ComingSoon } from '@/components/settings/ComingSoon';
@@ -131,7 +132,7 @@ export const DocInspector = ({
         data-testid={`doc-inspector-pane-${activeSection}`}
         className="flex-1 overflow-auto"
       >
-        {activeSection === 'outline' && <OutlinePane />}
+        {activeSection === 'outline' && <OutlinePane docId={docId} />}
         {activeSection === 'info' && (
           <InfoPane docId={docId} readOnly={readOnly} />
         )}
@@ -142,44 +143,57 @@ export const DocInspector = ({
   );
 };
 
-const OutlinePane = () => {
+// Indentation per heading level, stepping the 14px grid the pane already uses
+// (pl-3.5 = 14px). Levels deeper than h4 share the deepest step so a narrow
+// pane never squeezes the text; the H-badge still shows the true level.
+const outlineIndent = (level: number): string => {
+  if (level <= 1) return 'pl-0';
+  if (level === 2) return 'pl-3.5';
+  if (level === 3) return 'pl-7';
+  return 'pl-[42px]';
+};
+
+const OutlineRow = ({ entry }: { entry: OutlineEntry }) => (
+  <li
+    data-testid="outline-row"
+    data-level={entry.level}
+    className={cn('flex items-baseline gap-2 py-1.5', outlineIndent(entry.level))}
+  >
+    <span className="w-5 shrink-0 font-mono text-[8px] uppercase tracking-wider text-ink-4">
+      {`H${String(entry.level)}`}
+    </span>
+    <span className="flex-1 font-serif text-[13px] text-ink-2">{entry.text}</span>
+  </li>
+);
+
+const OutlinePane = ({ docId }: { docId: string }) => {
   const { t } = useTranslation('chrome');
-  const rows: [string, string, boolean][] = [
-    ['H1', "The bell-keeper's last morning", true],
-    ['H2', 'Mira walks', false],
-    ['H2', 'The tower', false],
-    ['H2', 'Counting', false],
-  ];
+  const doc = useDocument(docId);
+  const body = doc?.body;
+  const entries = useMemo(
+    () => (body ? lexicalJsonToOutline(body) : []),
+    [body],
+  );
   return (
     <div className="px-4 py-3.5">
-      <div className="mb-2 font-mono text-[9px] uppercase tracking-wider text-ink-4">
+      <Eyebrow size={9} tone="ink4" className="mb-2">
         {t('inspector.outline.title')} ·{' '}
-        {t('inspector.outline.sectionSummary', { count: rows.length })}
-      </div>
-      <div className="-ml-3.5">
-        {rows.map(([level, text, active], i) => (
-          <div
-            key={i}
-            className={cn(
-              'flex items-baseline gap-2 border-l-2 py-1.5',
-              level === 'H2' ? 'pl-7' : 'pl-3.5',
-              active ? 'border-ink' : 'border-transparent',
-            )}
-          >
-            <span className="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4">
-              {level}
-            </span>
-            <span
-              className={cn(
-                'flex-1 font-serif text-[13px]',
-                active ? 'font-medium text-ink' : 'text-ink-2',
-              )}
-            >
-              {text}
-            </span>
-          </div>
-        ))}
-      </div>
+        {t('inspector.outline.sectionSummary', { count: entries.length })}
+      </Eyebrow>
+      {entries.length === 0 ? (
+        <p
+          data-testid="outline-empty"
+          className="font-serif text-[12px] italic text-ink-3"
+        >
+          {t('inspector.outline.empty')}
+        </p>
+      ) : (
+        <ul aria-label={t('inspector.outline.title')}>
+          {entries.map((entry, i) => (
+            <OutlineRow key={i} entry={entry} />
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
