@@ -19,6 +19,7 @@ export {
   type RowKind,
 } from './diff';
 export {
+  readLexicalBody,
   lexicalJsonToPlainText,
   isParseableBody,
   countWords,

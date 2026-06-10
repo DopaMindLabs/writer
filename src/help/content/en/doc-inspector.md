@@ -1,9 +1,19 @@
 # The document inspector
 
-The document inspector is the panel beside the editor. Its **Info** tab shows live details
-about the document you're writing and lets you set a few optional limits and a status. You
-choose which of these fields appear — globally and per space — so the inspector only shows
-what you care about.
+The document inspector is the panel beside the editor. Its **Outline** tab maps the
+document's structure, and its **Info** tab shows live details about the document you're
+writing and lets you set a few optional limits and a status. You choose which of these
+fields appear — globally and per space — so the inspector only shows what you care about.
+
+## The outline
+
+The **Outline** tab lists the document's headings in order, indented by level, so you can
+see the shape of a long piece at a glance. It updates a moment after you pause typing.
+
+The outline is built from your headings — type `# `, `## ` or `### ` at the start of a
+line (or use the floating toolbar) to add one. A document without headings shows an empty
+outline; see [Formatting & markdown](formatting-and-markdown#headings-and-structure) for
+how headings work.
 
 ## Word and character counts
 
