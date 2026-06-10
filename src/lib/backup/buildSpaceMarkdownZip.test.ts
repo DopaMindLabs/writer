@@ -8,6 +8,7 @@ import {
   sampleSubsection,
   sampleDoc,
   sampleNote,
+  serializedBody,
 } from '@/test/fixtures';
 import { NoteKind, NoteState } from '@/db/schema';
 import {
@@ -111,7 +112,7 @@ describe('buildSpaceMarkdownZipFor', () => {
   beforeEach(async () => {
     await db.spaces.put(sampleSpace);
     await db.sections.bulkPut([sampleSection, sampleSubsection]);
-    await db.docs.put({ ...sampleDoc, name: 'Opening', body: 'Plain seed text.' });
+    await db.docs.put({ ...sampleDoc, name: 'Opening', body: serializedBody('Plain seed text.') });
     await db.notes.put(sampleNote);
   });
 

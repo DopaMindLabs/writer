@@ -4,7 +4,6 @@ import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { LinkNode } from '@lexical/link';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
-import { isSerialized } from '@/editor/serialize';
 
 const HEADLESS_NODES = [
   HeadingNode,
@@ -16,9 +15,10 @@ const HEADLESS_NODES = [
   CodeHighlightNode,
 ];
 
+// Doc bodies are always empty or serializeState output, so a non-empty body
+// that fails to parse throws rather than leaking raw text into a backup.
 export const lexicalJsonToMarkdown = (body: string): string => {
   if (!body) return '';
-  if (!isSerialized(body)) return body;
 
   const editor = createHeadlessEditor({
     namespace: 'lorem-backup',

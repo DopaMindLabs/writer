@@ -60,10 +60,9 @@ describe('lexicalJsonToPlainText', () => {
     expect(lexicalJsonToPlainText('')).toBe('');
   });
 
-  it('passes plain text through unchanged when not serialized Lexical JSON', () => {
-    expect(lexicalJsonToPlainText('Dr. Kirchner walks in.')).toBe(
-      'Dr. Kirchner walks in.',
-    );
+  it('throws on a body that is not serialized Lexical JSON', () => {
+    // Doc bodies are only ever '' or serializeState output.
+    expect(() => lexicalJsonToPlainText('Dr. Kirchner walks in.')).toThrow();
   });
 
   it('extracts plaintext from serialized Lexical JSON', () => {

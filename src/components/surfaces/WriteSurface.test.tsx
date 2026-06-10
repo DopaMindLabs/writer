@@ -2,8 +2,15 @@ import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { render, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
-import { FIXED_TIME } from '@/test/fixtures';
+import { FIXED_TIME, serializedBody } from '@/test/fixtures';
 import type { Doc } from '@/db/schema';
+
+// Captures the onChange prop the stub editor was last rendered with, so tests
+// can replay a pending autosave flush from a previous render (the unmount
+// flush in AutosavePlugin calls the onChange of the render it mounted under).
+const editorMocks = vi.hoisted(() => ({
+  capturedOnChange: undefined as ((s: string) => void) | undefined,
+}));
 
 vi.mock('@/editor/EditorFacade', () => ({
   Editor: (props: {
@@ -12,28 +19,35 @@ vi.mock('@/editor/EditorFacade', () => ({
     placeholder?: string;
     locked?: boolean;
     onChange?: (s: string) => void;
-  }) => (
-    <button
+  }) => {
+    editorMocks.capturedOnChange = props.onChange;
+    return (
+      <button
       type="button"
       data-testid="editor-stub"
       data-mode={props.mode}
       data-locked={props.locked ? 'true' : undefined}
       data-placeholder={props.placeholder}
-      onClick={() => props.onChange?.('new-serialized-body')}
-    >
-      {props.initialValue || '(empty)'}
-    </button>
-  ),
+        onClick={() => props.onChange?.(NEW_BODY)}
+      >
+        {props.initialValue || '(empty)'}
+      </button>
+    );
+  },
 }));
 
 const { WriteSurface } = await import('./WriteSurface');
+
+// What the stub editor emits on click: a real serialized body whose plaintext
+// is the single word "rewritten" (so the cached wordCount becomes 1).
+const NEW_BODY = serializedBody('rewritten');
 
 const doc: Doc = {
   id: 'd1',
   spaceId: 's1',
   sectionId: 'sec1',
   name: 'Sample',
-  body: 'hello world',
+  body: serializedBody('hello world'),
   meta: { wordCount: 2 },
   updatedAt: FIXED_TIME,
 };
@@ -50,7 +64,7 @@ describe('WriteSurface', () => {
     await userEvent.click(getByTestId('editor-stub'));
     await waitFor(async () => {
       const fresh = await db.docs.get(doc.id);
-      expect(fresh?.body).toBe('new-serialized-body');
+      expect(fresh?.body).toBe(NEW_BODY);
     });
   });
 
@@ -61,7 +75,7 @@ describe('WriteSurface', () => {
     await userEvent.click(getByTestId('editor-stub'));
     await waitFor(async () => {
       const fresh = await db.docs.get(doc.id);
-      // 'new-serialized-body' is a single whitespace-delimited token.
+      // The stub body's plaintext is the single word "rewritten".
       expect(fresh?.meta.wordCount).toBe(1);
       // Sibling meta fields survive the update.
       expect(fresh?.meta.status).toBe('draft');
@@ -90,6 +104,34 @@ describe('WriteSurface', () => {
       // ...but the concurrent Inspector edits are preserved, not clobbered.
       expect(fresh?.meta.status).toBe('complete');
       expect(fresh?.meta.wordLimit).toBe(500);
+    });
+  });
+
+  it('saves a pending edit to the doc it was typed in, not the doc shown after a switch', async () => {
+    // Typing then switching documents inside the autosave debounce window makes
+    // AutosavePlugin flush on unmount using the onChange it mounted under. That
+    // flush must write to the document the edit came from — never to the
+    // newly-opened one.
+    const docB: Doc = {
+      ...doc,
+      id: 'd2',
+      name: 'Other',
+      body: serializedBody('other body'),
+      meta: { wordCount: 2 },
+    };
+    await db.docs.put(doc);
+    await db.docs.put(docB);
+
+    const { rerender } = render(<WriteSurface doc={doc} mode="write" />);
+    const flushForDocA = editorMocks.capturedOnChange;
+    rerender(<WriteSurface doc={docB} mode="write" />);
+    flushForDocA?.(serializedBody('pending-edit-from-doc-a'));
+
+    await waitFor(async () => {
+      const freshA = await db.docs.get(doc.id);
+      const freshB = await db.docs.get(docB.id);
+      expect(freshA?.body).toBe(serializedBody('pending-edit-from-doc-a'));
+      expect(freshB?.body).toBe(serializedBody('other body'));
     });
   });
 

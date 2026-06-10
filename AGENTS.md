@@ -14,6 +14,11 @@ This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
   `foo.tsx` → `foo.test.tsx`.
 - `src/tours/` is exempt; `src/editor/` relaxes size limits only. For a one-off exception,
   add `// nasa-exception: <rule> (<reason>)` above an `// eslint-disable-next-line`.
+- **Legacy support requires explicit permission.** Do not add new code paths, fallbacks,
+  fixtures, or migrations whose purpose is to support legacy formats or behaviour (e.g.
+  pre-Lexical plain-text bodies) without asking the user first and getting an explicit yes.
+  Existing legacy handling stays as-is until its removal is explicitly agreed — don't extend
+  it, and don't silently remove it either.
 
 ## Language (read before writing copy)
 

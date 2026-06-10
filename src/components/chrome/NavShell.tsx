@@ -86,8 +86,11 @@ export const NavShell = ({
       <div className="hidden md:flex">
         <SpaceRail activeSpaceId={activeSpaceId} />
       </div>
-      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-        <div className="flex min-h-0 shrink-0 flex-col border-r border-rule bg-paper-2 md:w-[240px]">
+      {/* min-w-0: without it the mobile tab strip's content width becomes the
+          column's min-content width and forces the whole page to overflow
+          horizontally on narrow viewports. */}
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col md:flex-row">
+        <div className="flex min-h-0 min-w-0 shrink-0 flex-col border-r border-rule bg-paper-2 md:w-[240px]">
           <NavShellHeader
             variant={variant}
             space={space}
