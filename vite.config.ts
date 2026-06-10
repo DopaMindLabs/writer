@@ -18,9 +18,8 @@ export default defineConfig(({ command }) => ({
   server: {
     port: 5173,
   },
-  // Source maps are emitted only for the e2e build (`npm run build:e2e`),
-  // where monocart-reporter needs them to map v8 coverage ranges back to the
-  // original .tsx files. Real production builds ship without them.
+  // Source maps only in the e2e build, where monocart-reporter needs them to
+  // map v8 coverage back to the original .tsx files. Production ships none.
   build: {
     sourcemap: process.env.VITE_E2E === '1',
   },

@@ -38,7 +38,6 @@ describe('App', () => {
     expect(link).toHaveAttribute('href', '#main-content');
   });
 
-  // Vitest runs with DEV=true, so the reseed param is honoured here.
   it('calls resetAndReseed when ?reseed=1 query param is present', async () => {
     window.history.replaceState({}, '', '/?reseed=1');
     render(<App />);

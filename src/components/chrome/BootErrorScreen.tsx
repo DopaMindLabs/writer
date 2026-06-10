@@ -13,12 +13,6 @@ export interface BootErrorScreenProps {
   /** Erases all local data and reseeds; only invoked after explicit confirm. */
   onReset: () => void;
 }
-
-/**
- * Full-screen fallback shown when the boot sequence fails. Offers a guarded
- * "Reset local data" escape hatch behind a destructive ConfirmDialog — this
- * replaces the old `?reseed=1` URL hint, which production builds now ignore.
- */
 export const BootErrorScreen = ({ error, onReset }: BootErrorScreenProps) => {
   const { t } = useTranslation('app');
   const [confirmOpen, setConfirmOpen] = useState(false);

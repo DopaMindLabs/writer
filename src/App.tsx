@@ -81,10 +81,8 @@ const router = createAppRouter([
   },
 ]);
 
-// The `?reseed` parameter erases the whole local database, so production
-// builds must never honour it — a crafted link would otherwise wipe a user's
-// writing. It stays available to dev servers and the e2e build (VITE_E2E=1);
-// everyone else gets the guarded reset on the boot-error screen instead.
+// `?reseed` erases the whole local database, so production builds must never
+// honour it; only dev servers and the e2e build (VITE_E2E=1) may.
 const isReseedParamEnabled = (): boolean =>
   import.meta.env.DEV || import.meta.env.VITE_E2E === '1';
 
@@ -93,8 +91,8 @@ const toError = (e: unknown): Error =>
 
 /**
  * Run the one-time boot sequence (optional `?reseed=1` reset in dev/e2e) and
- * expose the ready/error state plus the guarded reset used by the boot-error
- * screen. Extracted from <App /> so the component stays small.
+ * expose the ready/error state. Extracted from <App /> so the component stays
+ * small.
  */
 const useAppBoot = (): {
   ready: boolean;
