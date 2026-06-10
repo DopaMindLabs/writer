@@ -122,7 +122,7 @@ const HomeStatus = () => {
         <TooltipTrigger asChild>
           <span
             tabIndex={0}
-            className="cursor-help rounded-sm border border-[color:var(--warning)] bg-[color:var(--warning-bg)] px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[color:var(--warning)]"
+            className="cursor-help rounded-sm border border-info bg-info-bg px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-info"
           >
             {t('home.statusLine')}
           </span>

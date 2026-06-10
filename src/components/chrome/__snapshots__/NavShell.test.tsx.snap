@@ -22,7 +22,7 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
             L
           </a>
           <span
-            class="mb-2.5 cursor-help rounded-sm border border-[color:var(--info)] bg-[color:var(--info-bg)] px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-[color:var(--info)]"
+            class="mb-2.5 cursor-help rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
             data-state="closed"
             tabindex="0"
           >
@@ -298,7 +298,7 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
             L
           </a>
           <span
-            class="mb-2.5 cursor-help rounded-sm border border-[color:var(--info)] bg-[color:var(--info-bg)] px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-[color:var(--info)]"
+            class="mb-2.5 cursor-help rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
             data-state="closed"
             tabindex="0"
           >
