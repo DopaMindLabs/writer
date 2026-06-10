@@ -59,6 +59,9 @@ describe('SyncTab', () => {
     expect(
       screen.getByText(/not available in this browser/i),
     ).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(
+      /brave:\/\/flags\/#file-system-access-api/i,
+    );
     expect(
       screen.queryByRole('button', { name: /sync all spaces/i }),
     ).not.toBeInTheDocument();

@@ -66,3 +66,44 @@ test.describe('Folder sync settings', () => {
     await expect(page.getByRole('alert')).toBeVisible();
   });
 });
+
+test.describe('Folder sync settings (unsupported browser)', () => {
+  test.beforeEach(async ({ page }) => {
+    // Simulate a browser without the File System Access API (e.g. Brave with
+    // its flag off) by removing showDirectoryPicker before the app boots.
+    await page.addInitScript(() => {
+      delete (window as { showDirectoryPicker?: unknown }).showDirectoryPicker;
+      delete (Window.prototype as { showDirectoryPicker?: unknown })
+        .showDirectoryPicker;
+    });
+    await reseedAndGoHome(page);
+  });
+
+  test('global Sync tab: shows the unsupported notice and the feature-flag warning', async ({
+    page,
+  }) => {
+    await page.goto('/#/settings?tab=sync');
+    await page.waitForLoadState('networkidle');
+
+    await expect(
+      page.getByText(/not available in this browser/i),
+    ).toBeVisible();
+    const banner = page
+      .getByRole('status')
+      .filter({ hasText: 'brave://flags' });
+    await expect(banner).toContainText(/privacy and security precaution/i);
+  });
+
+  test('space Sync tab: shows the unsupported notice and the feature-flag warning', async ({
+    page,
+  }) => {
+    const spaceId = await getFirstSpaceIdFromHome(page);
+    await page.goto(`/#/s/${spaceId}/settings?tab=sync`);
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.getByText(/folder sync needs/i)).toBeVisible();
+    await expect(
+      page.getByRole('status').filter({ hasText: 'brave://flags' }),
+    ).toBeVisible();
+  });
+});

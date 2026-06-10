@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import type { Space } from '@/db/schema';
 import { TabHeader } from '@/components/settings/TabHeader';
 import { SettingRow } from '@/components/settings/SettingRow';
-import { EmptyState } from '@/components/ui/EmptyState';
 import { StatusGlyph } from '@/components/ui/StatusGlyph';
 import { useSyncFolder } from '@/hooks/useSyncFolder';
 import {
@@ -17,6 +16,7 @@ import { SyncFolderRow } from '@/components/settings/sync/SyncFolderRow';
 import { SyncRunRow } from '@/components/settings/sync/SyncRunRow';
 import { SyncHistoryTable } from '@/components/settings/sync/SyncHistoryTable';
 import { SyncPermissionHint } from '@/components/settings/sync/SyncPermissionHint';
+import { SyncUnsupportedNotice } from '@/components/settings/sync/SyncUnsupportedNotice';
 import { intervalLabel } from '@/components/settings/sync/syncFormat';
 
 export const SpaceSyncTab = ({ space }: { space: Space }) => {
@@ -36,7 +36,7 @@ export const SpaceSyncTab = ({ space }: { space: Space }) => {
       />
 
       {!supported ? (
-        <EmptyState caption={t('settings.sync.unsupportedBody')} />
+        <SyncUnsupportedNotice />
       ) : (
         <>
           <SyncPermissionHint folderName={folderName} />

@@ -58,6 +58,9 @@ describe('SpaceSyncTab', () => {
     });
     renderWithProviders(<SpaceSyncTab space={space} />);
     expect(screen.getByText(/folder sync needs/i)).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(
+      /brave:\/\/flags\/#file-system-access-api/i,
+    );
   });
 
   it('offers a Default inherit chip and records overrides', () => {

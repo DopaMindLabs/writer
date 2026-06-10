@@ -35,6 +35,17 @@ your current library.
 - Connect a **sync folder** to mirror a space to local storage, set the
   interval, and run a sync on demand.
 
+Folder sync needs the **File System Access API**, available in Chrome, Edge,
+and other Chromium browsers on desktop. Some Chromium browsers, such as Brave,
+include the API but ship it switched off — in Brave you can turn it on
+manually at `brave://flags/#file-system-access-api` and relaunch the browser.
+
+> **Know the implications first.** Brave disables the API deliberately as a
+> privacy and security precaution. The flag applies to every site you visit,
+> and any site you grant folder access to can read and change the files in
+> that folder. Enable it only if you accept that, and only grant access to
+> folders you trust a site with.
+
 Storage is local, so **regular backups are essential**. Export before clearing
 browser data, switching devices, or trying something new.
 

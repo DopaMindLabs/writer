@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { TabHeader } from '@/components/settings/TabHeader';
 import { SettingRow } from '@/components/settings/SettingRow';
-import { EmptyState } from '@/components/ui/EmptyState';
 import { StatusGlyph } from '@/components/ui/StatusGlyph';
 import { useSyncFolder } from '@/hooks/useSyncFolder';
 import { useDefaultInterval, useSyncHistory } from '@/hooks/useSync';
@@ -14,6 +13,7 @@ import { SyncRunRow } from '@/components/settings/sync/SyncRunRow';
 import { SyncHistoryTable } from '@/components/settings/sync/SyncHistoryTable';
 import { SyncResultsTable } from '@/components/settings/sync/SyncResultsTable';
 import { SyncPermissionHint } from '@/components/settings/sync/SyncPermissionHint';
+import { SyncUnsupportedNotice } from '@/components/settings/sync/SyncUnsupportedNotice';
 
 const SyncTabConnected = () => {
   const { t } = useTranslation('screens');
@@ -63,7 +63,6 @@ const SyncTabConnected = () => {
 };
 
 export const SyncTab = () => {
-  const { t } = useTranslation('screens');
   const { supported } = useSyncFolder();
 
   return (
@@ -72,14 +71,7 @@ export const SyncTab = () => {
         titleKey="settings.sync.title"
         subtitleKey="settings.sync.subtitle"
       />
-      {supported ? (
-        <SyncTabConnected />
-      ) : (
-        <EmptyState
-          title={t('settings.sync.unsupportedTitle')}
-          caption={t('settings.sync.unsupportedBody')}
-        />
-      )}
+      {supported ? <SyncTabConnected /> : <SyncUnsupportedNotice withTitle />}
     </section>
   );
 };
