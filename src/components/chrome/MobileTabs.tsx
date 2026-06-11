@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Pencil, BookOpen, Columns2, Brain, Quote, MoreHorizontal } from '@/components/libs/icons';
+import { Pencil, BookOpen, Brain, Quote, MoreHorizontal } from '@/components/libs/icons';
 import { useUI } from '@/store/ui';
 import { Link } from '@/components/ui/Link';
 import { routes } from '@/lib/routes';
@@ -11,7 +11,7 @@ interface MobileTabsProps {
   docId?: string | null;
 }
 
-type TabKey = 'write' | 'read' | 'split' | 'brain' | 'cite' | 'more';
+type TabKey = 'write' | 'read' | 'brain' | 'cite' | 'more';
 
 interface TabItem {
   key: TabKey;
@@ -57,12 +57,9 @@ const useTabItems = ({ spaceId, docId }: MobileTabsProps): TabItem[] => {
       href: brainHref ?? undefined,
       match: (p) => p.endsWith('/dump'),
     },
-    {
-      key: 'split',
-      Icon: Columns2,
-      href: spaceId && docId ? routes.docSplit(spaceId, docId) : undefined,
-      match: (p) => p.endsWith('/split'),
-    },
+    // Split view is desktop-only for now: the divider isn't reliably
+    // touch-draggable on phones, so the tab is withheld until the mobile
+    // split UX lands in its own PR. The /split route itself still stacks.
     {
       key: 'cite',
       Icon: Quote,

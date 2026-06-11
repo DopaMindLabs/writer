@@ -35,22 +35,14 @@ test('brain tab navigates to /dump', async ({ page }) => {
   await expect(page.getByTestId('brain-canvas')).toBeVisible();
 });
 
-test('split tab navigates to /split', async ({ page }) => {
+test('does not offer a split tab (mobile split is deferred to its own PR)', async ({
+  page,
+}) => {
   const { spaceId, docId } = await gotoFirstDoc(page);
   await page.goto(`/#/s/${spaceId}/d/${docId}`);
   const tabs = page.getByTestId('mobile-tabs');
-  await tabs.getByRole('link', { name: /split/i }).click();
-  await expect(page).toHaveURL(/\/split/);
-});
-
-test('split tab works from the brain screen via the fallback doc', async ({ page }) => {
-  const { spaceId } = await gotoFirstDoc(page);
-  await page.goto(`/#/s/${spaceId}/dump`);
-  const tabs = page.getByTestId('mobile-tabs');
-  // On the brain screen the split tab resolves to the fallback document, so it
-  // is a live link rather than a dead button.
-  await tabs.getByRole('link', { name: /split/i }).click();
-  await expect(page).toHaveURL(new RegExp(`/s/${spaceId}/d/[^/]+/split`));
+  await expect(tabs.getByTestId('mobile-tabs-write')).toBeVisible();
+  await expect(tabs.getByTestId('mobile-tabs-split')).toHaveCount(0);
 });
 
 test('cite tab opens the citations drawer', async ({ page }) => {

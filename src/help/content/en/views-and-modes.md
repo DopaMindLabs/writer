@@ -29,8 +29,7 @@ your reader will see it.
 ## Split
 
 Split view shows two documents side by side — handy for referencing notes while
-you write, or comparing two drafts. On a phone the panes follow the
-orientation: stacked top and bottom in portrait, side by side in landscape.
+you write, or comparing two drafts. It is available on larger screens.
 
 ## The inspector
 
