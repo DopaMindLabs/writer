@@ -6,19 +6,25 @@ const STORAGE_VERSION = 1;
 interface PersistedShape {
   version: number;
   completed: string[];
+  /** True once the user dismissed an auto-started tour part-way; suppresses all auto tours. */
+  autoOptOut: boolean;
 }
 
 function read(): PersistedShape {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { version: STORAGE_VERSION, completed: [] };
+    if (!raw) return { version: STORAGE_VERSION, completed: [], autoOptOut: false };
     const parsed = JSON.parse(raw) as Partial<PersistedShape>;
     const completed = Array.isArray(parsed.completed)
       ? parsed.completed.filter((id): id is string => typeof id === 'string')
       : [];
-    return { version: STORAGE_VERSION, completed };
+    return {
+      version: STORAGE_VERSION,
+      completed,
+      autoOptOut: parsed.autoOptOut === true,
+    };
   } catch {
-    return { version: STORAGE_VERSION, completed: [] };
+    return { version: STORAGE_VERSION, completed: [], autoOptOut: false };
   }
 }
 
@@ -50,8 +56,16 @@ export function resetTour(id: TourId): void {
   write({ ...state, completed: state.completed.filter((x) => x !== id) });
 }
 
+export function isAutoOptOut(): boolean {
+  return read().autoOptOut;
+}
+
+export function setAutoOptOut(value: boolean): void {
+  write({ ...read(), autoOptOut: value });
+}
+
 export function resetAll(): void {
-  write({ version: STORAGE_VERSION, completed: [] });
+  write({ version: STORAGE_VERSION, completed: [], autoOptOut: false });
 }
 
 export const TOURS_STORAGE_KEY = STORAGE_KEY;

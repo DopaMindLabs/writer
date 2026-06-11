@@ -5,6 +5,8 @@ import {
   markCompleted,
   resetTour,
   resetAll,
+  isAutoOptOut,
+  setAutoOptOut,
   TOURS_STORAGE_KEY,
 } from './storage';
 
@@ -16,6 +18,23 @@ describe('tours/storage', () => {
   it('returns an empty list when nothing has been persisted yet', () => {
     expect(getCompleted()).toEqual([]);
     expect(isCompleted('welcome')).toBe(false);
+  });
+
+  it('auto opt-out defaults to false, persists, and survives markCompleted', () => {
+    expect(isAutoOptOut()).toBe(false);
+    setAutoOptOut(true);
+    expect(isAutoOptOut()).toBe(true);
+    markCompleted('welcome');
+    expect(isAutoOptOut()).toBe(true);
+    expect(getCompleted()).toEqual(['welcome']);
+  });
+
+  it('resetAll clears the auto opt-out alongside completions', () => {
+    setAutoOptOut(true);
+    markCompleted('welcome');
+    resetAll();
+    expect(isAutoOptOut()).toBe(false);
+    expect(getCompleted()).toEqual([]);
   });
 
   it('markCompleted persists the tour id to the lipsum-tours entry', () => {

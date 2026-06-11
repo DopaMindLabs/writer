@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { useAutoTour } from './useAutoTour';
-import { markCompleted, resetAll } from './storage';
+import { markCompleted, resetAll, setAutoOptOut } from './storage';
 import * as driverSetup from './driver-setup';
 
 describe('useAutoTour', () => {
@@ -55,6 +55,32 @@ describe('useAutoTour', () => {
     const raf = vi.spyOn(window, 'requestAnimationFrame');
     renderHook(() => useAutoTour('welcome'));
     expect(raf).not.toHaveBeenCalled();
+  });
+
+  it('does not schedule any tour once the user has skipped an auto tour', () => {
+    vi.stubEnv('MODE', 'production');
+    setAutoOptOut(true);
+    const raf = vi.spyOn(window, 'requestAnimationFrame');
+    renderHook(() => useAutoTour('welcome'));
+    renderHook(() => useAutoTour('writer'));
+    expect(raf).not.toHaveBeenCalled();
+  });
+
+  it('starts auto tours with source "auto" so a skip can opt out globally', () => {
+    vi.stubEnv('MODE', 'production');
+    let scheduled: FrameRequestCallback | null = null;
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+      scheduled = cb;
+      return 7;
+    });
+    const runTourSpy = vi
+      .spyOn(driverSetup, 'runTour')
+      .mockImplementation(() => ({}) as ReturnType<typeof driverSetup.runTour>);
+    renderHook(() => useAutoTour('welcome'));
+    scheduled!(performance.now());
+    expect(runTourSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ source: 'auto' }),
+    );
   });
 
   it('cancels the queued animation frame on unmount before it fires', () => {

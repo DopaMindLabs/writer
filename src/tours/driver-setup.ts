@@ -1,7 +1,7 @@
 import { driver, type DriveStep, type Driver } from 'driver.js';
 import type { TFunction } from 'i18next';
 import { TOURS, type TourDefinition, type TourId } from './tours';
-import { markCompleted } from './storage';
+import { markCompleted, setAutoOptOut } from './storage';
 import { prefersReducedMotion } from '@/theme/a11y-prefs';
 
 function tourMotionReduced(): boolean {
@@ -16,6 +16,11 @@ interface RunTourOptions {
   t: TFunction;
   tour: TourDefinition;
   onFinish?: () => void;
+  /**
+   * How the tour was started. Dismissing an auto-started tour before its last
+   * step opts the user out of all future auto tours; manual replays never do.
+   */
+  source?: 'auto' | 'manual';
 }
 
 function toDriveSteps(t: TFunction, tour: TourDefinition): DriveStep[] {
@@ -30,7 +35,7 @@ function toDriveSteps(t: TFunction, tour: TourDefinition): DriveStep[] {
   }));
 }
 
-export function runTour({ t, tour, onFinish }: RunTourOptions): Driver {
+export function runTour({ t, tour, onFinish, source = 'manual' }: RunTourOptions): Driver {
   const steps = toDriveSteps(t, tour);
   const instance: Driver = driver({
     showProgress: true,
@@ -47,6 +52,11 @@ export function runTour({ t, tour, onFinish }: RunTourOptions): Driver {
     }),
     onDestroyed: () => {
       markCompleted(tour.id);
+      // Closing an auto tour part-way is a skip: stop auto-starting tours on
+      // other screens too. Finishing the last step keeps them enabled.
+      if (source === 'auto' && !instance.isLastStep()) {
+        setAutoOptOut(true);
+      }
       onFinish?.();
     },
     steps,
