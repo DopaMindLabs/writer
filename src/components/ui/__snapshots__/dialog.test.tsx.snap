@@ -3,7 +3,6 @@
 exports[`Dialog > renders closed dialog with trigger 1`] = `
 <div>
   <button
-    aria-controls="radix-_r_*_"
     aria-expanded="false"
     aria-haspopup="dialog"
     data-state="closed"

@@ -43,6 +43,8 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
           aria-label="Light"
           aria-pressed="true"
           class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper px-2 py-0.5 text-[10px]"
+          data-radix-popper-align="center"
+          data-radix-popper-side="bottom"
           data-state="instant-open"
           data-testid="quick-settings-theme-light"
           type="button"

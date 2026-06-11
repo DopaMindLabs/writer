@@ -90,7 +90,6 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
             class="flex-1"
           />
           <button
-            aria-controls="radix-_r_*_"
             aria-expanded="false"
             aria-haspopup="dialog"
             aria-label="LIpsum Writer"
@@ -366,7 +365,6 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
             class="flex-1"
           />
           <button
-            aria-controls="radix-_r_*_"
             aria-expanded="false"
             aria-haspopup="dialog"
             aria-label="LIpsum Writer"
