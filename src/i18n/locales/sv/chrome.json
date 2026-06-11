@@ -58,11 +58,6 @@
     "whatsNew": "Nyheter",
     "feedback": "Skicka feedback…"
   },
-  "mobileSplitFallback": {
-    "title": "Behöver en större skärm",
-    "body": "Delad vy placerar två dokument bredvid varandra. Öppna det här dokumentet i Skriv-läge för en telefonlayout.",
-    "cta": "Öppna i Skriv →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Snabbinställningar",

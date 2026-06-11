@@ -58,11 +58,6 @@
     "whatsNew": "Co nowego",
     "feedback": "Wyślij opinię…"
   },
-  "mobileSplitFallback": {
-    "title": "Potrzebny większy ekran",
-    "body": "Widok podzielony umieszcza dwa dokumenty obok siebie. Otwórz ten dokument w trybie Pisz, aby uzyskać układ telefonu.",
-    "cta": "Otwórz w trybie Pisz →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Szybkie ustawienia",

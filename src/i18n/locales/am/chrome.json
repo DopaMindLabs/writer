@@ -58,11 +58,6 @@
     "whatsNew": "አዲስ ምን አለ",
     "feedback": "አስተያየት ላክ…"
   },
-  "mobileSplitFallback": {
-    "title": "ትልቅ ስክሪን ያስፈልጋል",
-    "body": "የተከፋፈለ እይታ ሁለት ሰነዶችን አጠገብ ለአጠገብ ያስቀምጣል. ለስልክ አቀማመጥ ይህንን ሰነድ በጻፍ ሁነታ ይክፈቱ.",
-    "cta": "በጻፍ ክፈት →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "ፈጣን ቅንብሮች",

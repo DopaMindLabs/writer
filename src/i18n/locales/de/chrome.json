@@ -79,11 +79,6 @@
     "whatsNew": "Neuheiten",
     "feedback": "Feedback senden…"
   },
-  "mobileSplitFallback": {
-    "title": "Braucht einen größeren Bildschirm",
-    "body": "Geteilte Ansicht zeigt zwei Dokumente nebeneinander. Öffne dieses Dokument im Schreibmodus für ein Telefon-Layout.",
-    "cta": "Im Schreibmodus öffnen →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Schnelleinstellungen",

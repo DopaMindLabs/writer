@@ -58,11 +58,6 @@
     "whatsNew": "O le a le mea fou",
     "feedback": "Auina mai faamatalaga…"
   },
-  "mobileSplitFallback": {
-    "title": "E manaomia se mata tele",
-    "body": "O le vaaiga vaevae e tuu ai faamaumauga e lua faatasi. Tatala lenei faamaumauga i le tulaga Tusi mo se tulaga telefoni.",
-    "cta": "Tatala i Tusi →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Faatulagaga vave",

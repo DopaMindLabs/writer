@@ -79,11 +79,6 @@
     "whatsNew": "Nouveautés",
     "feedback": "Envoyer un retour…"
   },
-  "mobileSplitFallback": {
-    "title": "Écran trop petit",
-    "body": "La vue fractionnée place deux documents côte à côte. Ouvre ce document en mode Écrire pour une mise en page mobile.",
-    "cta": "Ouvrir en Écrire →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Paramètres rapides",

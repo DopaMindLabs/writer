@@ -79,11 +79,6 @@
     "whatsNew": "What's new",
     "contact": "Contact"
   },
-  "mobileSplitFallback": {
-    "title": "Needs a larger screen",
-    "body": "Split view sits two documents side-by-side. Open this doc in Write mode for a phone-sized layout.",
-    "cta": "Open in Write →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Quick settings",

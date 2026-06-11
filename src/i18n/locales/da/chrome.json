@@ -58,11 +58,6 @@
     "whatsNew": "Nyheder",
     "feedback": "Send feedback…"
   },
-  "mobileSplitFallback": {
-    "title": "Behøver en større skærm",
-    "body": "Delt visning placerer to dokumenter side om side. Åbn dette dokument i Skriv-tilstand for et telefonlayout.",
-    "cta": "Åbn i Skriv →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Hurtigindstillinger",

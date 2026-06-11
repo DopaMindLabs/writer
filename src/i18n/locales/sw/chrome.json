@@ -58,11 +58,6 @@
     "whatsNew": "Habari mpya",
     "feedback": "Tuma maoni…"
   },
-  "mobileSplitFallback": {
-    "title": "Inahitaji skrini kubwa",
-    "body": "Mwonekano uliogawanyika unaweka hati mbili kando kando. Fungua hati hii katika hali ya Andika kwa mpangilio wa simu.",
-    "cta": "Fungua katika Andika →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Mipangilio ya haraka",

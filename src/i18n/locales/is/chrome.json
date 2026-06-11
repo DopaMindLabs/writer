@@ -58,11 +58,6 @@
     "whatsNew": "Hvað er nýtt",
     "feedback": "Senda ábendingu…"
   },
-  "mobileSplitFallback": {
-    "title": "Þarf stærri skjá",
-    "body": "Skipt sýn setur tvö skjöl hlið við hlið. Opnaðu þetta skjal í Skrifa-ham fyrir símauppsetningu.",
-    "cta": "Opna í Skrifa →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Skyndistillingar",

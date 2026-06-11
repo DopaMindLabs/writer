@@ -58,11 +58,6 @@
     "whatsNew": "Yini okusha",
     "feedback": "Thumela impendulo…"
   },
-  "mobileSplitFallback": {
-    "title": "Idinga isikrini esikhulu",
-    "body": "Ukubuka okuhlukene kufaka amadokhumenti amabili eduzane. Vula leli dokhumenti kumodi yokuBhala ukuze uthole isakhiwo sefoni.",
-    "cta": "Vula kuBhala →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Izilungiselelo ezisheshayo",

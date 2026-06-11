@@ -58,11 +58,6 @@
     "whatsNew": "Jaunumi",
     "feedback": "Sūtīt atsauksmes…"
   },
-  "mobileSplitFallback": {
-    "title": "Vajadzīgs lielāks ekrāns",
-    "body": "Sadalītais skats novieto divus dokumentus blakus. Atveriet šo dokumentu Rakstīšanas režīmā telefona izkārtojumam.",
-    "cta": "Atvērt Rakstīt →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Ātrie iestatījumi",

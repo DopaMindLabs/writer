@@ -58,11 +58,6 @@
     "whatsNew": "Ohun tuntun",
     "feedback": "Fi èrò ránṣẹ́…"
   },
-  "mobileSplitFallback": {
-    "title": "Nílò ojú-iwòran tó tóbi",
-    "body": "Ìwò pípín ń sí àwọn doko méjì ní ẹ̀gbẹ́. Ṣílẹ̀kùn doko yìí ní ipo Kọ fún ètò fóònù.",
-    "cta": "Ṣílẹ̀kùn ní Kọ →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Àwọn ètò yára",

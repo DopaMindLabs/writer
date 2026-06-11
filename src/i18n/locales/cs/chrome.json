@@ -58,11 +58,6 @@
     "whatsNew": "Co je nového",
     "feedback": "Poslat zpětnou vazbu…"
   },
-  "mobileSplitFallback": {
-    "title": "Potřebuje větší obrazovku",
-    "body": "Rozdělené zobrazení umístí dva dokumenty vedle sebe. Otevřete tento dokument v režimu Psát pro telefonní rozložení.",
-    "cta": "Otevřít v Psát →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Rychlé nastavení",

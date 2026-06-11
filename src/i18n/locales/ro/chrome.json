@@ -58,11 +58,6 @@
     "whatsNew": "Noutăți",
     "feedback": "Trimite feedback…"
   },
-  "mobileSplitFallback": {
-    "title": "Necesită un ecran mai mare",
-    "body": "Vederea divizată plasează două documente alăturat. Deschide acest document în modul Scrie pentru un aspect de telefon.",
-    "cta": "Deschide în Scrie →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Setări rapide",

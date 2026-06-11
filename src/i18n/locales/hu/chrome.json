@@ -58,11 +58,6 @@
     "whatsNew": "Mi újság",
     "feedback": "Visszajelzés küldése…"
   },
-  "mobileSplitFallback": {
-    "title": "Nagyobb képernyő szükséges",
-    "body": "Az osztott nézet két dokumentumot helyez egymás mellé. Nyisd meg ezt a dokumentumot Írás módban a telefonelrendezéshez.",
-    "cta": "Megnyitás Írás módban →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Gyorsbeállítások",

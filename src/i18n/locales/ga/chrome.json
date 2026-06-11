@@ -58,11 +58,6 @@
     "whatsNew": "Cad atá nua",
     "feedback": "Seol aiseolas…"
   },
-  "mobileSplitFallback": {
-    "title": "Tá scáileán níos mó ag teastáil",
-    "body": "Cuireann amharc roinnte dhá dhoiciméad le chéile. Oscail an doiciméad seo i mód Scríobh le haghaidh leagan amach fón.",
-    "cta": "Oscail i Scríobh →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Tapa-shocruithe",

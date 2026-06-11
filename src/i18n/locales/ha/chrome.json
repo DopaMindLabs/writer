@@ -58,11 +58,6 @@
     "whatsNew": "Sabbin abubuwa",
     "feedback": "Aiko ra'ayi…"
   },
-  "mobileSplitFallback": {
-    "title": "Yana buƙatar babban allo",
-    "body": "Ra'ayin raba ya sanya takardu biyu gefe-gefe. Bude wannan takarda a yanayin Rubuta don tsarin waya.",
-    "cta": "Bude a Rubuta →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Saituna masu sauri",

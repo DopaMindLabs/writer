@@ -58,11 +58,6 @@
     "whatsNew": "新着情報",
     "feedback": "フィードバックを送信…"
   },
-  "mobileSplitFallback": {
-    "title": "大きな画面が必要です",
-    "body": "分割表示は2つのドキュメントを並べて表示します。スマートフォン用レイアウトには、このドキュメントを書くモードで開いてください。",
-    "cta": "書くモードで開く →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "クイック設定",

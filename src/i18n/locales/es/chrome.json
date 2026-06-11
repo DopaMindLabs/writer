@@ -79,11 +79,6 @@
     "whatsNew": "Novedades",
     "feedback": "Enviar comentarios…"
   },
-  "mobileSplitFallback": {
-    "title": "Necesita una pantalla más grande",
-    "body": "La vista dividida coloca dos documentos lado a lado. Abre este documento en modo Escribir para una distribución de móvil.",
-    "cta": "Abrir en Escribir →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Configuración rápida",

@@ -58,11 +58,6 @@
     "whatsNew": "Ko e hā ʻa e foʻou",
     "feedback": "ʻOmai fakamatala…"
   },
-  "mobileSplitFallback": {
-    "title": "ʻOku fie maʻu ha mata lahi ange",
-    "body": "ʻOku tuku ʻe he sio vaeua ʻa e ongo tohi ki he ongo tafaʻaki. Fakaʻata ʻa e tohi ko ʻeni ʻi he founga Tohi maʻa ha tukunga telefoni.",
-    "cta": "Fakaʻata ʻi he Tohi →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Fokotuʻutuʻu vave",

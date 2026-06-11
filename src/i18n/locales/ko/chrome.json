@@ -58,11 +58,6 @@
     "whatsNew": "새 소식",
     "feedback": "피드백 보내기…"
   },
-  "mobileSplitFallback": {
-    "title": "더 큰 화면이 필요합니다",
-    "body": "분할 보기는 두 문서를 나란히 표시합니다. 휴대폰 레이아웃을 위해 이 문서를 쓰기 모드로 열어주세요.",
-    "cta": "쓰기에서 열기 →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "빠른 설정",

@@ -58,11 +58,6 @@
     "whatsNew": "Kas naujo",
     "feedback": "Siųsti atsiliepimą…"
   },
-  "mobileSplitFallback": {
-    "title": "Reikia didesnio ekrano",
-    "body": "Padalintas vaizdas talpina du dokumentus vienas šalia kito. Atverkite šį dokumentą Rašymo režime telefono išdėstymui.",
-    "cta": "Atverti Rašyti →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Greitieji nustatymai",

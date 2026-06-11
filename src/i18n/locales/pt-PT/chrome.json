@@ -79,11 +79,6 @@
     "whatsNew": "Novidades",
     "feedback": "Enviar feedback…"
   },
-  "mobileSplitFallback": {
-    "title": "Precisa de um ecrã maior",
-    "body": "A vista dividida coloca dois documentos lado a lado. Abre este documento no modo Escrever para um layout de telemóvel.",
-    "cta": "Abrir em Escrever →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Definições rápidas",

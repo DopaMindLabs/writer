@@ -79,11 +79,6 @@
     "whatsNew": "Wat is er nieuw",
     "feedback": "Feedback sturen…"
   },
-  "mobileSplitFallback": {
-    "title": "Heeft een groter scherm nodig",
-    "body": "De gesplitste weergave plaatst twee documenten naast elkaar. Open dit document in de Schrijf-modus voor een telefoonlay-out.",
-    "cta": "Openen in Schrijven →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Snelle instellingen",

@@ -58,11 +58,6 @@
     "whatsNew": "Hou",
     "feedback": "Tuku urupare…"
   },
-  "mobileSplitFallback": {
-    "title": "Me whakamahi mata nui ake",
-    "body": "Ka tukuna e te tirohanga wehe ngā tuhinga e rua ki ngā taha. Whakatuwhera tēnei tuhinga i te aratau Tuhi mō te tahua waea.",
-    "cta": "Whakatuwhera ki Tuhi →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Tautuhinga tere",
