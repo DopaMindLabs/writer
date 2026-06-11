@@ -134,8 +134,8 @@ const CitationsTrigger = ({
     <span>{t('topbar.cite')}</span>
   );
   const citeBaseClass = focus
-    ? 'inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors'
-    : 'inline-flex items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors';
+    ? 'hidden h-7 w-7 items-center justify-center rounded-md transition-colors md:inline-flex'
+    : 'hidden items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors md:inline-flex';
   const citeRestClass = onCitations
     ? 'text-ink hover:bg-paper-2'
     : 'text-ink-3 hover:bg-paper-2 hover:text-ink';
@@ -219,7 +219,10 @@ const TopbarLeftTools = ({
   return (
     <>
       {!onCitations && (
-        <div data-tour="tour-topbar-modes" className="inline-flex items-center">
+        <div
+          data-tour="tour-topbar-modes"
+          className="hidden items-center md:inline-flex"
+        >
           <ModeTabs
             mode={mode}
             spaceId={spaceId}

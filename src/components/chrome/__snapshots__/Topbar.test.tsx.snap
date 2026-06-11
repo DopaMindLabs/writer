@@ -90,7 +90,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > cit
     </span>
     <a
       aria-label="Citations"
-      class="inline-flex items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors text-ink hover:bg-paper-2"
+      class="hidden items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors md:inline-flex text-ink hover:bg-paper-2"
       data-discover="true"
       data-testid="topbar-citations"
       data-tour="tour-topbar-citations"
@@ -156,7 +156,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > foc
       class="flex-1"
     />
     <div
-      class="inline-flex items-center"
+      class="hidden items-center md:inline-flex"
       data-tour="tour-topbar-modes"
     >
       <nav
@@ -301,7 +301,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > foc
     </div>
     <button
       aria-label="Citations"
-      class="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink"
+      class="hidden h-7 w-7 items-center justify-center rounded-md transition-colors md:inline-flex text-ink-3 hover:bg-paper-2 hover:text-ink"
       data-state="closed"
       data-testid="topbar-citations"
       data-tour="tour-topbar-citations"
@@ -429,7 +429,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > wri
       class="flex-1"
     />
     <div
-      class="inline-flex items-center"
+      class="hidden items-center md:inline-flex"
       data-tour="tour-topbar-modes"
     >
       <nav
@@ -511,7 +511,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > wri
     </span>
     <button
       aria-label="Citations"
-      class="inline-flex items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink"
+      class="hidden items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors md:inline-flex text-ink-3 hover:bg-paper-2 hover:text-ink"
       data-testid="topbar-citations"
       data-tour="tour-topbar-citations"
       type="button"
