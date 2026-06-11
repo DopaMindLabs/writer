@@ -73,7 +73,7 @@ describe('QuickSettingsPopover', () => {
         screen.getByTestId('quick-settings-floating-toolbar-toggle'),
       ).toHaveAttribute('role', 'switch');
       expect(screen.getByTestId('quick-settings-full-settings')).toHaveTextContent(
-        /full settings/i,
+        /universal settings/i,
       );
       const about = screen.getByTestId('quick-settings-about');
       expect(about).toHaveTextContent(/about/i);
@@ -207,8 +207,8 @@ describe('QuickSettingsPopover', () => {
     });
   });
 
-  describe('full settings navigation', () => {
-    it('should navigate to /settings when the full-settings link is clicked', async () => {
+  describe('universal settings navigation', () => {
+    it('should navigate to /settings when the universal-settings link is clicked', async () => {
       renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
       expect(screen.getByTestId('probe-pathname').textContent).toBe(
         '/s/s1/d/d1',

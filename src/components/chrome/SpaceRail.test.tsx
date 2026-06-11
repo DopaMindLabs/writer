@@ -60,6 +60,6 @@ describe('SpaceRail', () => {
     expect(
       screen.getByRole('switch', { name: /focus mode/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/full settings/i)).toBeInTheDocument();
+    expect(screen.getByText(/universal settings/i)).toBeInTheDocument();
   });
 });

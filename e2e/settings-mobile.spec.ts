@@ -16,7 +16,7 @@ async function expectNoHorizontalOverflow(page: Page) {
   expect(overflow).toBeLessThanOrEqual(1);
 }
 
-test.skip('global Settings screen renders without horizontal overflow on mobile', async ({ page }) => {
+test.skip('universal settings screen renders without horizontal overflow on mobile', async ({ page }) => {
   await page.goto('/#/settings');
   await page.waitForLoadState('networkidle');
 

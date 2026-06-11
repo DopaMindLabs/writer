@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
 });
 
-test('global settings placeholder tabs render the coming-soon overlay', async ({
+test('universal settings placeholder tabs render the coming-soon overlay', async ({
   page,
 }) => {
   await page.goto('/#/settings?tab=general');

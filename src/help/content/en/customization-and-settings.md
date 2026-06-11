@@ -1,7 +1,7 @@
 # Customisation & settings
 
-Adjust theme, typography, and reading width to suit you. Open the full
-**Settings** screen from the page navigation, or change the essentials fast
+Adjust theme, typography, and reading width to suit you. Open the
+**Universal settings** screen from the page navigation, or change the essentials fast
 from **Quick settings**.
 
 ## At a glance
@@ -21,12 +21,12 @@ your document. Open it from the app rail. Controls are grouped by purpose:
 - **Writing** — the **focus mode** and **floating toolbar** toggles.
 - **Help tour** — replay a guided tour.
 - **More** — what's new, accessibility, and about.
-- A **help center →** link (the same way it links to **full settings →**), so
+- A **help center →** link (the same way it links to **universal settings →**), so
   help and settings are always one click away.
 
 ## Finding a setting
 
-The full Settings screen groups options into **Preferences**, **Writing**,
+The Universal settings screen groups options into **Preferences**, **Writing**,
 **Data**, and **Account**. Each group is a single page with its sections stacked
 top to bottom. Pick an item in the side navigation and the page scrolls straight
 to that section — and the navigation highlights the section you're reading as
