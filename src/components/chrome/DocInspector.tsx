@@ -42,6 +42,7 @@ interface DocInspectorProps {
   docId: string;
   hideHistory?: boolean;
   readOnly?: boolean;
+  className?: string;
 }
 
 interface DocInspectorTabsProps {
@@ -87,6 +88,7 @@ export const DocInspector = ({
   docId,
   hideHistory = false,
   readOnly = false,
+  className,
 }: DocInspectorProps) => {
   const { t } = useTranslation('chrome');
   const setInspectorMode = useUI((s) => s.setInspectorMode);
@@ -100,7 +102,10 @@ export const DocInspector = ({
   return (
     <aside
       data-testid="doc-inspector"
-      className="relative hidden w-72 shrink-0 flex-col border-l border-rule bg-paper-2 md:flex"
+      className={cn(
+        'relative hidden w-72 shrink-0 flex-col border-l border-rule bg-paper-2 md:flex',
+        className,
+      )}
     >
       <div className="flex items-center gap-2 border-b border-rule px-4 py-3">
         <span
@@ -114,7 +119,7 @@ export const DocInspector = ({
           icon={ChevronRight}
           label={t('inspector.collapse')}
           onClick={() => { setInspectorMode('icons'); }}
-          className="h-5 w-5"
+          className="hidden h-5 w-5 md:inline-flex"
         />
       </div>
 

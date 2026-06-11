@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Dokumentnavn (Enter for at oprette)",
     "renameSpace": "Omdøb rum",
     "openSpaceSettings": "Rumindstillinger",
-    "openSpaceMenu": "Åbn rummenu"
+    "openSpaceMenu": "Åbn rummenu",
+    "docMenuAria": "Muligheder for {{name}}",
+    "renameDoc": "Omdøb",
+    "renameDialog": {
+      "title": "Omdøb dokument",
+      "description": "Vælg et nyt navn til dette dokument.",
+      "label": "Dokumentnavn",
+      "cancel": "Annullér",
+      "save": "Omdøb"
+    }
   },
   "topbar": {
     "openNav": "Åbn navigation",
@@ -49,14 +58,11 @@
     "whatsNew": "Nyheder",
     "feedback": "Send feedback…"
   },
-  "mobileSplitFallback": {
-    "title": "Behøver en større skærm",
-    "body": "Delt visning placerer to dokumenter side om side. Åbn dette dokument i Skriv-tilstand for et telefonlayout.",
-    "cta": "Åbn i Skriv →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Hurtigindstillinger",
+    "appearanceLabel": "Udseende",
+    "writingLabel": "Skrivning",
     "themeLabel": "Tema",
     "focusLabel": "Fokustilstand",
     "focusHint": "⌘\\",

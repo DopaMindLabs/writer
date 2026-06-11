@@ -11,6 +11,7 @@ import {
   PlaceholderThemeCards,
   PlaceholderToggle,
 } from './PlaceholderPrimitives';
+import { APP_VERSION_LABEL } from '@/lib/version';
 
 export const GeneralPlaceholder = () => {
   const { t } = useTranslation('screens');
@@ -415,7 +416,7 @@ export const AboutPlaceholder = () => {
       />
       <SettingRow label={t('settings.about.versionLabel')}>
         <span className="font-serif text-[14px] text-ink">
-          {t('settings.about.versionValue', { version: __APP_VERSION__ })}
+          {t('settings.about.versionValue', { version: APP_VERSION_LABEL })}
         </span>
       </SettingRow>
       <SettingRow label={t('settings.about.buildLabel')}>

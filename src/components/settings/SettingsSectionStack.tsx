@@ -46,11 +46,20 @@ const pickActive = (
 const useScrollToTarget = (refs: StackRefs, target: string, nonce: number) => {
   useEffect(() => {
     const el = refs.map.current.get(target);
-    if (!el || typeof el.scrollIntoView !== 'function') return;
+    if (!el) return;
+    const scroller = findScroller(el);
+    if (!scroller || typeof scroller.scrollTo !== 'function') return;
     refs.suppress.current = true;
     const behavior: ScrollBehavior = motionReduced() ? 'auto' : 'smooth';
     const raf = requestAnimationFrame(() => {
-      el.scrollIntoView({ behavior, block: 'start' });
+      // Scroll only the settings pane. scrollIntoView would also scroll every
+      // ancestor — on mobile that pushes the window past the shell header and
+      // tab strip, leaving the page with no visible navigation.
+      const top =
+        el.getBoundingClientRect().top -
+        scroller.getBoundingClientRect().top +
+        scroller.scrollTop;
+      scroller.scrollTo({ top, behavior });
     });
     const timer = window.setTimeout(() => {
       refs.suppress.current = false;

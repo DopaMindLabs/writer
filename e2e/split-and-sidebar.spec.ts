@@ -150,22 +150,52 @@ test('sidebar Brain space link navigates to /dump and marks itself active', asyn
   await expect(brainLink).toHaveClass(/border-ink/);
 });
 
-test('mobile viewport on a split URL shows the larger-screen notice and links back to write', async ({
-  page,
-}) => {
+const openSplitUrl = async (page: import('@playwright/test').Page) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}`);
   await page.getByRole('link', { name: /^Abstract/ }).click();
   await page.getByRole('link', { name: 'split', exact: true }).click();
-  const splitUrl = page.url();
+  await page.waitForURL(/with=dump/);
+  return page.url();
+};
+
+test('portrait phone stacks the split panes top and bottom', async ({ page }) => {
+  const splitUrl = await openSplitUrl(page);
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(splitUrl);
 
-  await expect(
-    page.getByText(/Needs a larger screen/i),
-  ).toBeVisible();
+  const panes = page.locator('#main-content > section');
+  await expect(panes).toHaveCount(2);
+  const separator = page.getByRole('separator', { name: /Resize split panes/i });
+  await expect(separator).toHaveAttribute('aria-orientation', 'horizontal');
 
-  await page.getByRole('link', { name: /Open in Write/i }).click();
-  await expect(page).not.toHaveURL(/\/split/);
+  const top = await panes.nth(0).boundingBox();
+  const bottom = await panes.nth(1).boundingBox();
+  expect(top).not.toBeNull();
+  expect(bottom).not.toBeNull();
+  // Stacked: the first pane sits fully above the second.
+  expect(top!.y + top!.height).toBeLessThanOrEqual(bottom!.y + 1);
+  expect(Math.abs(top!.x - bottom!.x)).toBeLessThan(2);
+});
+
+test('landscape phone keeps the split panes side by side', async ({ page }) => {
+  const splitUrl = await openSplitUrl(page);
+
+  // Sub-md width in landscape orientation: panes stay side by side.
+  await page.setViewportSize({ width: 740, height: 390 });
+  await page.goto(splitUrl);
+
+  const panes = page.locator('#main-content > section');
+  await expect(panes).toHaveCount(2);
+  const separator = page.getByRole('separator', { name: /Resize split panes/i });
+  await expect(separator).toHaveAttribute('aria-orientation', 'vertical');
+
+  const left = await panes.nth(0).boundingBox();
+  const right = await panes.nth(1).boundingBox();
+  expect(left).not.toBeNull();
+  expect(right).not.toBeNull();
+  // Side by side: the first pane sits fully left of the second.
+  expect(left!.x + left!.width).toBeLessThanOrEqual(right!.x + 1);
+  expect(Math.abs(left!.y - right!.y)).toBeLessThan(2);
 });

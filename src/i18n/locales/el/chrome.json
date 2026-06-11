@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Όνομα εγγράφου (Enter για δημιουργία)",
     "renameSpace": "Μετονομασία χώρου",
     "openSpaceSettings": "Ρυθμίσεις χώρου",
-    "openSpaceMenu": "Άνοιγμα μενού χώρου"
+    "openSpaceMenu": "Άνοιγμα μενού χώρου",
+    "docMenuAria": "Επιλογές για {{name}}",
+    "renameDoc": "Μετονομασία",
+    "renameDialog": {
+      "title": "Μετονομασία εγγράφου",
+      "description": "Επιλέξτε νέο όνομα για αυτό το έγγραφο.",
+      "label": "Όνομα εγγράφου",
+      "cancel": "Άκυρο",
+      "save": "Μετονομασία"
+    }
   },
   "topbar": {
     "openNav": "Άνοιγμα πλοήγησης",
@@ -49,14 +58,11 @@
     "whatsNew": "Τι νέο υπάρχει",
     "feedback": "Αποστολή σχολίων…"
   },
-  "mobileSplitFallback": {
-    "title": "Χρειάζεται μεγαλύτερη οθόνη",
-    "body": "Η προβολή διαίρεσης τοποθετεί δύο έγγραφα δίπλα-δίπλα. Άνοιξε αυτό το έγγραφο σε κατάσταση Γράψε για διάταξη τηλεφώνου.",
-    "cta": "Άνοιγμα σε Γράψε →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Γρήγορες ρυθμίσεις",
+    "appearanceLabel": "Εμφάνιση",
+    "writingLabel": "Γραφή",
     "themeLabel": "Θέμα",
     "focusLabel": "Κατάσταση εστίασης",
     "focusHint": "⌘\\",

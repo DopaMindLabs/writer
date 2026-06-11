@@ -18,7 +18,16 @@
     "docNamePlaceholder": "Documentnaam (Enter om te maken)",
     "renameSpace": "Space hernoemen",
     "openSpaceSettings": "Space-instellingen",
-    "openSpaceMenu": "Space-menu openen"
+    "openSpaceMenu": "Space-menu openen",
+    "docMenuAria": "Opties voor {{name}}",
+    "renameDoc": "Hernoemen",
+    "renameDialog": {
+      "title": "Document hernoemen",
+      "description": "Kies een nieuwe naam voor dit document.",
+      "label": "Documentnaam",
+      "cancel": "Annuleren",
+      "save": "Hernoemen"
+    }
   },
   "topbar": {
     "openNav": "Navigatie openen",
@@ -70,14 +79,11 @@
     "whatsNew": "Wat is er nieuw",
     "feedback": "Feedback sturen…"
   },
-  "mobileSplitFallback": {
-    "title": "Heeft een groter scherm nodig",
-    "body": "De gesplitste weergave plaatst twee documenten naast elkaar. Open dit document in de Schrijf-modus voor een telefoonlay-out.",
-    "cta": "Openen in Schrijven →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Snelle instellingen",
+    "appearanceLabel": "Uiterlijk",
+    "writingLabel": "Schrijven",
     "themeLabel": "Thema",
     "focusLabel": "Focusmodus",
     "focusHint": "⌘\\",

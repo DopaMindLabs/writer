@@ -31,6 +31,18 @@ test('brain tab navigates to /dump', async ({ page }) => {
   const tabs = page.getByTestId('mobile-tabs');
   await tabs.getByRole('link', { name: /brain/i }).click();
   await expect(page).toHaveURL(/\/dump(\?|$)/);
+  // The canvas renders on phones (mobile notice temporarily disabled).
+  await expect(page.getByTestId('brain-canvas')).toBeVisible();
+});
+
+test('does not offer a split tab (mobile split is deferred to its own PR)', async ({
+  page,
+}) => {
+  const { spaceId, docId } = await gotoFirstDoc(page);
+  await page.goto(`/#/s/${spaceId}/d/${docId}`);
+  const tabs = page.getByTestId('mobile-tabs');
+  await expect(tabs.getByTestId('mobile-tabs-write')).toBeVisible();
+  await expect(tabs.getByTestId('mobile-tabs-split')).toHaveCount(0);
 });
 
 test('cite tab opens the citations drawer', async ({ page }) => {

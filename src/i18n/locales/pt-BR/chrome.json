@@ -18,7 +18,16 @@
     "docNamePlaceholder": "Nome do documento (Enter para criar)",
     "renameSpace": "Renomear espaço",
     "openSpaceSettings": "Configurações do espaço",
-    "openSpaceMenu": "Abrir menu do espaço"
+    "openSpaceMenu": "Abrir menu do espaço",
+    "docMenuAria": "Opções para {{name}}",
+    "renameDoc": "Renomear",
+    "renameDialog": {
+      "title": "Renomear documento",
+      "description": "Escolha um novo nome para este documento.",
+      "label": "Nome do documento",
+      "cancel": "Cancelar",
+      "save": "Renomear"
+    }
   },
   "topbar": {
     "openNav": "Abrir navegação",
@@ -70,14 +79,11 @@
     "whatsNew": "Novidades",
     "feedback": "Enviar feedback…"
   },
-  "mobileSplitFallback": {
-    "title": "Precisa de uma tela maior",
-    "body": "A visão dividida coloca dois documentos lado a lado. Abra este documento no modo Escrever para um layout de celular.",
-    "cta": "Abrir em Escrever →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Configurações rápidas",
+    "appearanceLabel": "Aparência",
+    "writingLabel": "Escrita",
     "themeLabel": "Tema",
     "focusLabel": "Modo foco",
     "focusHint": "⌘\\",

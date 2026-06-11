@@ -16,7 +16,16 @@
     "docNamePlaceholder": "ලේඛන නාමය (නිර්මාණයට Enter)",
     "renameSpace": "අවකාශය නැවත නම් කරන්න",
     "openSpaceSettings": "අවකාශ සැකසුම්",
-    "openSpaceMenu": "අවකාශ මෙනුව විවෘත කරන්න"
+    "openSpaceMenu": "අවකාශ මෙනුව විවෘත කරන්න",
+    "docMenuAria": "{{name}} සඳහා විකල්ප",
+    "renameDoc": "නැවත නම් කරන්න",
+    "renameDialog": {
+      "title": "ලේඛනය නැවත නම් කරන්න",
+      "description": "මෙම ලේඛනය සඳහා නව නමක් තෝරන්න.",
+      "label": "ලේඛනයේ නම",
+      "cancel": "අවලංගු",
+      "save": "නැවත නම් කරන්න"
+    }
   },
   "topbar": {
     "openNav": "සංචාලනය විවෘත කරන්න",
@@ -49,14 +58,11 @@
     "whatsNew": "අලුත් කුමක්ද",
     "feedback": "ප්‍රතිපෝෂණය යවන්න…"
   },
-  "mobileSplitFallback": {
-    "title": "විශාල තිරයක් අවශ්‍යයි",
-    "body": "බෙදුණු දසුන ලේඛන දෙකක් අසලින් තබයි. දුරකථන සැකැස්ම සඳහා මෙම ලේඛනය ලියන්න මාදිලියෙන් විවෘත කරන්න.",
-    "cta": "ලියන්න තුළ විවෘත කරන්න →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "ඉක්මන් සැකසුම්",
+    "appearanceLabel": "පෙනුම",
+    "writingLabel": "ලිවීම",
     "themeLabel": "තේමාව",
     "focusLabel": "අවධාන මාදිලිය",
     "focusHint": "⌘\\",

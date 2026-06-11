@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Nazwa dokumentu (Enter, aby utworzyć)",
     "renameSpace": "Zmień nazwę przestrzeni",
     "openSpaceSettings": "Ustawienia przestrzeni",
-    "openSpaceMenu": "Otwórz menu przestrzeni"
+    "openSpaceMenu": "Otwórz menu przestrzeni",
+    "docMenuAria": "Opcje dla {{name}}",
+    "renameDoc": "Zmień nazwę",
+    "renameDialog": {
+      "title": "Zmień nazwę dokumentu",
+      "description": "Wybierz nową nazwę dla tego dokumentu.",
+      "label": "Nazwa dokumentu",
+      "cancel": "Anuluj",
+      "save": "Zmień nazwę"
+    }
   },
   "topbar": {
     "openNav": "Otwórz nawigację",
@@ -49,14 +58,11 @@
     "whatsNew": "Co nowego",
     "feedback": "Wyślij opinię…"
   },
-  "mobileSplitFallback": {
-    "title": "Potrzebny większy ekran",
-    "body": "Widok podzielony umieszcza dwa dokumenty obok siebie. Otwórz ten dokument w trybie Pisz, aby uzyskać układ telefonu.",
-    "cta": "Otwórz w trybie Pisz →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Szybkie ustawienia",
+    "appearanceLabel": "Wygląd",
+    "writingLabel": "Pisanie",
     "themeLabel": "Motyw",
     "focusLabel": "Tryb skupienia",
     "focusHint": "⌘\\",

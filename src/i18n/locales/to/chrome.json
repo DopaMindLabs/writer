@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Hingoa tohi (Enter ke fakatupu)",
     "renameSpace": "Toe fakahingoa ʻa e vāhā",
     "openSpaceSettings": "Ngaahi fokotuʻutuʻu vāhā",
-    "openSpaceMenu": "Fakaʻata ʻa e meinū vāhā"
+    "openSpaceMenu": "Fakaʻata ʻa e meinū vāhā",
+    "docMenuAria": "Ngaahi fili ki he {{name}}",
+    "renameDoc": "Toe fakahingoa",
+    "renameDialog": {
+      "title": "Toe fakahingoa ʻa e tohi",
+      "description": "Fili ha hingoa foʻou ki he tohi ko ʻeni.",
+      "label": "Hingoa ʻo e tohi",
+      "cancel": "Fakaʻikai",
+      "save": "Toe fakahingoa"
+    }
   },
   "topbar": {
     "openNav": "Fakaʻata ʻa e folau",
@@ -49,14 +58,11 @@
     "whatsNew": "Ko e hā ʻa e foʻou",
     "feedback": "ʻOmai fakamatala…"
   },
-  "mobileSplitFallback": {
-    "title": "ʻOku fie maʻu ha mata lahi ange",
-    "body": "ʻOku tuku ʻe he sio vaeua ʻa e ongo tohi ki he ongo tafaʻaki. Fakaʻata ʻa e tohi ko ʻeni ʻi he founga Tohi maʻa ha tukunga telefoni.",
-    "cta": "Fakaʻata ʻi he Tohi →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Fokotuʻutuʻu vave",
+    "appearanceLabel": "Fōtunga",
+    "writingLabel": "Tohi",
     "themeLabel": "Kaveinga",
     "focusLabel": "Founga fakatokangaʻi",
     "focusHint": "⌘\\",

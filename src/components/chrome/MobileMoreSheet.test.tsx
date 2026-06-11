@@ -1,12 +1,15 @@
 import { act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { useUI } from '@/store/ui';
+import { seedBasicSpace } from '@/test/fixtures';
 import { MobileMoreSheet } from './MobileMoreSheet';
 
 describe('MobileMoreSheet', () => {
   beforeEach(() => {
     act(() => {
       useUI.getState().setMobileMoreOpen(false);
+      useUI.getState().setMobileInspectorOpen(false);
     });
   });
 
@@ -17,7 +20,7 @@ describe('MobileMoreSheet', () => {
     expect(screen.queryByTestId('mobile-more-sheet')).not.toBeInTheDocument();
   });
 
-  it('renders mode buttons and menu items when open with spaceId+docId', () => {
+  it('renders menu items when open with spaceId+docId', () => {
     act(() => {
       useUI.getState().setMobileMoreOpen(true);
     });
@@ -25,15 +28,6 @@ describe('MobileMoreSheet', () => {
       initialEntries: ['/s/s1/d/d1'],
     });
     expect(screen.getByTestId('mobile-more-sheet')).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: /write/i }).getAttribute('href'),
-    ).toBe('/s/s1/d/d1');
-    expect(
-      screen.getByRole('link', { name: /read/i }).getAttribute('href'),
-    ).toBe('/s/s1/d/d1/read');
-    expect(
-      screen.getByRole('link', { name: /split/i }).getAttribute('href'),
-    ).toBe('/s/s1/d/d1/split');
     expect(
       screen.getByRole('link', { name: /space settings/i }),
     ).toHaveAttribute('href', '/s/s1/settings');
@@ -44,9 +38,37 @@ describe('MobileMoreSheet', () => {
     expect(
       screen.getByRole('link', { name: /help & shortcuts/i }),
     ).toHaveAttribute('href', '/help');
+    expect(
+      screen.getByRole('link', { name: /universal settings/i }),
+    ).toHaveAttribute('href', '/settings');
+    expect(
+      screen.getByRole('link', { name: /what's new/i }),
+    ).toHaveAttribute('href', '/help/whats-new');
+    // Items are grouped by context.
+    expect(screen.getByText('This doc')).toBeInTheDocument();
+    expect(screen.getByText('This space')).toBeInTheDocument();
+    expect(screen.getByText('App')).toBeInTheDocument();
+    const contact = screen.getByRole('link', { name: /contact/i });
+    expect(contact).toHaveAttribute(
+      'href',
+      'https://github.com/DopaMindLabs/Writer/issues/new',
+    );
+    expect(contact).toHaveAttribute('target', '_blank');
   });
 
-  it('falls back to ComingSoon mode chips when there is no docId (read/split disabled)', () => {
+  it('shows the Doc inspector item only when a doc is active', () => {
+    act(() => {
+      useUI.getState().setMobileMoreOpen(true);
+    });
+    const { unmount } = renderWithProviders(
+      <MobileMoreSheet spaceId="s1" docId="d1" />,
+      { initialEntries: ['/s/s1/d/d1'] },
+    );
+    expect(screen.getByTestId('mobile-more-inspector')).toHaveTextContent(
+      'Doc inspector',
+    );
+    unmount();
+
     act(() => {
       useUI.getState().setMobileMoreOpen(true);
     });
@@ -54,50 +76,26 @@ describe('MobileMoreSheet', () => {
       initialEntries: ['/s/s1'],
     });
     expect(
-      screen.queryByRole('link', { name: /^read$/i }),
+      screen.queryByTestId('mobile-more-inspector'),
     ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('link', { name: /^split$/i }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: /^write$/i }).getAttribute('href'),
-    ).toBe('/s/s1');
   });
 
-  it('marks the read mode chip active when route ends with /read', () => {
+  it('opens the mobile inspector drawer from the Doc inspector item', async () => {
+    await seedBasicSpace();
     act(() => {
       useUI.getState().setMobileMoreOpen(true);
     });
     renderWithProviders(<MobileMoreSheet spaceId="s1" docId="d1" />, {
-      initialEntries: ['/s/s1/d/d1/read'],
+      initialEntries: ['/s/s1/d/d1'],
     });
-    expect(
-      screen.getByRole('link', { name: /read/i }).className,
-    ).toContain('bg-ink');
-  });
-
-  it('marks the split mode chip active when route ends with /split', () => {
-    act(() => {
-      useUI.getState().setMobileMoreOpen(true);
-    });
-    renderWithProviders(<MobileMoreSheet spaceId="s1" docId="d1" />, {
-      initialEntries: ['/s/s1/d/d1/split'],
-    });
-    expect(
-      screen.getByRole('link', { name: /split/i }).className,
-    ).toContain('bg-ink');
-  });
-
-  it('preserves the ?focus=1 query when computing the write href in focus mode', () => {
-    act(() => {
-      useUI.getState().setMobileMoreOpen(true);
-    });
-    renderWithProviders(<MobileMoreSheet spaceId="s1" docId="d1" />, {
-      initialEntries: ['/s/s1/d/d1?focus=1'],
-    });
-    expect(
-      screen.getByRole('link', { name: /write/i }).getAttribute('href'),
-    ).toBe('/s/s1/d/d1?focus=1');
+    await userEvent.click(screen.getByTestId('mobile-more-inspector'));
+    expect(useUI.getState().mobileInspectorOpen).toBe(true);
+    expect(useUI.getState().mobileMoreOpen).toBe(false);
+    const drawer = await screen.findByTestId('mobile-inspector-drawer');
+    expect(drawer).toBeInTheDocument();
+    expect(screen.getByTestId('doc-inspector-name')).toHaveTextContent(
+      'Sample Doc',
+    );
   });
 });
 
@@ -105,6 +103,7 @@ describe('snapshot', () => {
   beforeEach(() => {
     act(() => {
       useUI.getState().setMobileMoreOpen(false);
+      useUI.getState().setMobileInspectorOpen(false);
     });
   });
 

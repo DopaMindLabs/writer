@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Dokumentnamn (Enter för att skapa)",
     "renameSpace": "Byt namn på utrymme",
     "openSpaceSettings": "Utrymmesinställningar",
-    "openSpaceMenu": "Öppna utrymmesmeny"
+    "openSpaceMenu": "Öppna utrymmesmeny",
+    "docMenuAria": "Alternativ för {{name}}",
+    "renameDoc": "Byt namn",
+    "renameDialog": {
+      "title": "Byt namn på dokument",
+      "description": "Välj ett nytt namn för det här dokumentet.",
+      "label": "Dokumentnamn",
+      "cancel": "Avbryt",
+      "save": "Byt namn"
+    }
   },
   "topbar": {
     "openNav": "Öppna navigering",
@@ -49,14 +58,11 @@
     "whatsNew": "Nyheter",
     "feedback": "Skicka feedback…"
   },
-  "mobileSplitFallback": {
-    "title": "Behöver en större skärm",
-    "body": "Delad vy placerar två dokument bredvid varandra. Öppna det här dokumentet i Skriv-läge för en telefonlayout.",
-    "cta": "Öppna i Skriv →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Snabbinställningar",
+    "appearanceLabel": "Utseende",
+    "writingLabel": "Skrivande",
     "themeLabel": "Tema",
     "focusLabel": "Fokusläge",
     "focusHint": "⌘\\",

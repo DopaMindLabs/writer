@@ -71,6 +71,13 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     related: ['getting-started', 'views-and-modes', 'keyboard-shortcuts'],
   },
   {
+    slug: 'whats-new',
+    category: 'getting-started',
+    featureArea: 'getting-started',
+    keywords: ['new', 'changelog', 'release', 'updates', 'latest', 'recent'],
+    related: ['getting-started', 'features'],
+  },
+  {
     slug: 'writing-and-editing',
     category: 'writing',
     featureArea: 'writing',

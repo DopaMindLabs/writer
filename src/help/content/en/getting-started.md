@@ -26,8 +26,9 @@ That's the whole loop. Everything below is detail you can come back to.
 ## Guided tours
 
 The first time you open a key screen, a short interactive tour points out the
-essentials. Replay any tour later from the help (**?**) menu or
-[Quick settings](customization-and-settings#quick-settings).
+essentials. Skip a tour part-way and tours stop starting automatically on
+other screens too. Replay any tour whenever you like from the help (**?**)
+menu or [Quick settings](customization-and-settings#quick-settings).
 
 ## Related
 

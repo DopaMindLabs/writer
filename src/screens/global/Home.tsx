@@ -7,6 +7,9 @@ import { TypographyH1, TypographyP } from '@/components/ui/typography';
 import { PageNav } from '@/components/chrome/PageNav';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { routes } from '@/lib/routes';
+import { APP_VERSION_LABEL } from '@/lib/version';
+import { cn } from '@/lib/utils';
+import { useSyncFolder } from '@/hooks/useSyncFolder';
 import { useAutoTour } from '@/tours';
 
 export const HomeScreen = () => {
@@ -117,23 +120,65 @@ const HomeActions = ({
 const HomeStatus = () => {
   const { t } = useTranslation(['screens', 'common']);
   return (
-    <div className="mt-10 flex items-center justify-end">
+    <div className="mt-10 flex flex-wrap items-center justify-end gap-1.5">
       <Tooltip>
         <TooltipTrigger asChild>
           <span
             tabIndex={0}
+            data-testid="home-version-chip"
             className="cursor-help rounded-sm border border-info bg-info-bg px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-info"
           >
-            {t('home.statusLine')}
+            {APP_VERSION_LABEL}
           </span>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-[220px]">
           <div className="font-medium">{t('home.warningTitle')}</div>
           <div className="mt-0.5 text-[11px] opacity-80">
-            {t('home.warningBody')}
+            {t('home.versionLine', { version: APP_VERSION_LABEL })}
           </div>
         </TooltipContent>
       </Tooltip>
+      <SyncStatusChip />
     </div>
+  );
+};
+
+/**
+ * Data-safety chip beside the version chip: warns while no sync folder is
+ * connected, flips to a success state once folder sync is on. Separate from
+ * the version chip so the by-design alpha tag isn't conflated with the
+ * fixable backups warning.
+ */
+const SyncStatusChip = () => {
+  const { t } = useTranslation('screens');
+  const { folderName } = useSyncFolder();
+  const enabled = folderName !== null;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          tabIndex={0}
+          data-testid="home-sync-chip"
+          className={cn(
+            'cursor-help rounded-sm border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider',
+            enabled
+              ? 'border-success bg-success-bg text-success'
+              : 'border-warning bg-warning-bg text-warning',
+          )}
+        >
+          {enabled ? t('home.syncOnChip') : t('home.syncOffChip')}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-[220px]">
+        <div className="font-medium">
+          {enabled ? t('home.syncOnTitle') : t('home.warningTitle')}
+        </div>
+        <div className="mt-0.5 text-[11px] opacity-80">
+          {enabled
+            ? t('home.syncOnBody', { folder: folderName })
+            : t('home.warningBody')}
+        </div>
+      </TooltipContent>
+    </Tooltip>
   );
 };

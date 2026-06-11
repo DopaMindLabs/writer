@@ -57,6 +57,9 @@ const useTabItems = ({ spaceId, docId }: MobileTabsProps): TabItem[] => {
       href: brainHref ?? undefined,
       match: (p) => p.endsWith('/dump'),
     },
+    // Split view is desktop-only for now: the divider isn't reliably
+    // touch-draggable on phones, so the tab is withheld until the mobile
+    // split UX lands in its own PR. The /split route itself still stacks.
     {
       key: 'cite',
       Icon: Quote,

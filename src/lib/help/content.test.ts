@@ -18,7 +18,7 @@ describe('help content loader', () => {
     const doc = getHelpDoc('keyboard-shortcuts');
     expect(doc).toBeDefined();
     const ids = doc!.headings.map((h) => h.id);
-    expect(ids).toContain('global');
+    expect(ids).toContain('universal');
     expect(doc!.headings.length).toBeGreaterThan(0);
     expect(doc!.headings.every((h) => h.id.length > 0)).toBe(true);
   });

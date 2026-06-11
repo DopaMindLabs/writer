@@ -29,23 +29,26 @@ const TemplateCardTitle = ({
   tpl: Template;
   label: string;
   description?: string;
-}) => (
-  <span className="flex flex-col">
-    <span className="font-serif text-[18px] leading-tight text-ink">
-      {label}
-      {tpl.stage && tpl.stage !== TemplateStage.Stable && (
-        <span className="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3">
-          {tpl.stage}
+}) => {
+  const { t } = useTranslation('screens');
+  return (
+    <span className="flex flex-col">
+      <span className="font-serif text-[18px] leading-tight text-ink">
+        {label}
+        {tpl.stage && tpl.stage !== TemplateStage.Stable && (
+          <span className="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3">
+            {t(`templates.stage.${tpl.stage}`)}
+          </span>
+        )}
+      </span>
+      {description && (
+        <span className="mt-1 font-serif text-[13px] italic text-ink-3">
+          {description}
         </span>
       )}
     </span>
-    {description && (
-      <span className="mt-1 font-serif text-[13px] italic text-ink-3">
-        {description}
-      </span>
-    )}
-  </span>
-);
+  );
+};
 
 const TemplateCard = ({
   tpl,
@@ -62,7 +65,7 @@ const TemplateCard = ({
       type="button"
       onClick={() => { onSelect(tpl); }}
       className={cn(
-        'grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6',
+        'grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-3.5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6 md:py-5',
         active && 'bg-paper-2',
       )}
       aria-pressed={active}
@@ -107,7 +110,7 @@ const TemplatesFooterFields = ({
 }: Pick<TemplatesFooterProps, 'name' | 'tag' | 'onNameChange' | 'onTagChange'>) => {
   const { t } = useTranslation('screens');
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_8rem] sm:gap-6">
+    <div className="grid grid-cols-[1fr_5.5rem] gap-3 sm:grid-cols-[1fr_8rem] sm:gap-6">
       <div>
         <Label
           htmlFor="space-name"
@@ -122,7 +125,7 @@ const TemplatesFooterFields = ({
           data-testid="templates-name-input"
           value={name}
           onChange={(e) => { onNameChange(e.target.value); }}
-          className="mt-1 h-10 py-0 font-serif text-[22px] leading-none"
+          className="mt-1 h-9 py-0 font-serif text-[18px] leading-none md:h-10 md:text-[22px]"
         />
       </div>
       <div>
@@ -140,7 +143,7 @@ const TemplatesFooterFields = ({
           maxLength={3}
           value={tag}
           onChange={(e) => { onTagChange(e.target.value.toUpperCase()); }}
-          className="mt-1 h-10 py-0 text-center font-mono text-[18px] leading-none tracking-widest"
+          className="mt-1 h-9 py-0 text-center font-mono text-[16px] leading-none tracking-widest md:h-10 md:text-[18px]"
         />
       </div>
     </div>
@@ -192,7 +195,7 @@ const TemplatesFooter = ({
   onTagChange,
 }: TemplatesFooterProps) => (
   <div className="sticky bottom-0 z-10 border-t border-rule bg-paper">
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-6 md:px-12">
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-3 px-4 py-4 md:gap-6 md:px-12 md:py-6">
       <TemplatesFooterFields
         name={name}
         tag={tag}
@@ -211,7 +214,7 @@ const TemplatesFooter = ({
 const TemplatesHeader = () => {
   const { t } = useTranslation('screens');
   return (
-    <header className="flex items-center justify-between border-b border-rule px-4 py-4 md:px-12 md:py-5">
+    <header className="flex items-center justify-between border-b border-rule px-4 py-3 md:px-12 md:py-5">
       <Link
         data-testid="templates-back"
         to={routes.home()}
@@ -244,7 +247,7 @@ const TemplatesBody = ({
 }: TemplatesBodyProps) => {
   const { t } = useTranslation('screens');
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-4 pt-10 pb-12 md:px-12 md:pt-16">
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 pt-6 pb-8 md:gap-12 md:px-12 md:pt-16 md:pb-12">
       <div>
         <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
           {t('templates.crumb')}

@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Nume document (Enter pentru a crea)",
     "renameSpace": "Redenumește spațiul",
     "openSpaceSettings": "Setări spațiu",
-    "openSpaceMenu": "Deschide meniul spațiului"
+    "openSpaceMenu": "Deschide meniul spațiului",
+    "docMenuAria": "Opțiuni pentru {{name}}",
+    "renameDoc": "Redenumește",
+    "renameDialog": {
+      "title": "Redenumește documentul",
+      "description": "Alege un nume nou pentru acest document.",
+      "label": "Numele documentului",
+      "cancel": "Anulează",
+      "save": "Redenumește"
+    }
   },
   "topbar": {
     "openNav": "Deschide navigația",
@@ -49,14 +58,11 @@
     "whatsNew": "Noutăți",
     "feedback": "Trimite feedback…"
   },
-  "mobileSplitFallback": {
-    "title": "Necesită un ecran mai mare",
-    "body": "Vederea divizată plasează două documente alăturat. Deschide acest document în modul Scrie pentru un aspect de telefon.",
-    "cta": "Deschide în Scrie →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Setări rapide",
+    "appearanceLabel": "Aspect",
+    "writingLabel": "Scriere",
     "themeLabel": "Temă",
     "focusLabel": "Mod focus",
     "focusHint": "⌘\\",
