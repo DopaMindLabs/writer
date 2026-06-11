@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Име на документ (Enter за създаване)",
     "renameSpace": "Преименувай пространството",
     "openSpaceSettings": "Настройки на пространството",
-    "openSpaceMenu": "Отвори меню на пространството"
+    "openSpaceMenu": "Отвори меню на пространството",
+    "docMenuAria": "Опции за {{name}}",
+    "renameDoc": "Преименувай",
+    "renameDialog": {
+      "title": "Преименувай документ",
+      "description": "Изберете ново име за този документ.",
+      "label": "Име на документа",
+      "cancel": "Отказ",
+      "save": "Преименувай"
+    }
   },
   "topbar": {
     "openNav": "Отвори навигация",
@@ -49,14 +58,11 @@
     "whatsNew": "Какво е новото",
     "feedback": "Изпрати обратна връзка…"
   },
-  "mobileSplitFallback": {
-    "title": "Нужен е по-голям екран",
-    "body": "Разделеният изглед поставя два документа един до друг. Отвори този документ в режим Пиши за оформление за телефон.",
-    "cta": "Отвори в Пиши →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Бързи настройки",
+    "appearanceLabel": "Външен вид",
+    "writingLabel": "Писане",
     "themeLabel": "Тема",
     "focusLabel": "Режим на фокус",
     "focusHint": "⌘\\",

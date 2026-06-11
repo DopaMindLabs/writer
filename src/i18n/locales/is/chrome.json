@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Heiti skjals (Enter til að búa til)",
     "renameSpace": "Endurnefna svæði",
     "openSpaceSettings": "Stillingar svæðis",
-    "openSpaceMenu": "Opna valmynd svæðis"
+    "openSpaceMenu": "Opna valmynd svæðis",
+    "docMenuAria": "Valkostir fyrir {{name}}",
+    "renameDoc": "Endurnefna",
+    "renameDialog": {
+      "title": "Endurnefna skjal",
+      "description": "Veldu nýtt nafn fyrir þetta skjal.",
+      "label": "Heiti skjals",
+      "cancel": "Hætta við",
+      "save": "Endurnefna"
+    }
   },
   "topbar": {
     "openNav": "Opna leiðsögn",
@@ -49,14 +58,11 @@
     "whatsNew": "Hvað er nýtt",
     "feedback": "Senda ábendingu…"
   },
-  "mobileSplitFallback": {
-    "title": "Þarf stærri skjá",
-    "body": "Skipt sýn setur tvö skjöl hlið við hlið. Opnaðu þetta skjal í Skrifa-ham fyrir símauppsetningu.",
-    "cta": "Opna í Skrifa →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Skyndistillingar",
+    "appearanceLabel": "Útlit",
+    "writingLabel": "Skrif",
     "themeLabel": "Þema",
     "focusLabel": "Einbeitingarhamur",
     "focusHint": "⌘\\",

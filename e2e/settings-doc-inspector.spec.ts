@@ -32,7 +32,7 @@ const setToggle = async (
     .click();
 };
 
-test('global tab toggles a feature off, hiding it in the inspector', async ({
+test('universal tab toggles a feature off, hiding it in the inspector', async ({
   page,
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
@@ -56,7 +56,7 @@ test('global tab toggles a feature off, hiding it in the inspector', async ({
   await expect(page.getByTestId('inspector-due-date')).toHaveCount(0);
 });
 
-test('a space overrides a globally disabled feature back on', async ({
+test('a space overrides a universally disabled feature back on', async ({
   page,
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
@@ -96,7 +96,7 @@ test('turning a limit feature off keeps the count but hides the limit suffix and
   await expect(page.getByTestId('inspector-row-section')).toBeVisible();
 });
 
-test('the space default chip explains it inherits from global settings', async ({
+test('the space default chip explains it inherits from universal settings', async ({
   page,
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
@@ -108,7 +108,7 @@ test('the space default chip explains it inherits from global settings', async (
     .hover();
   await expect(
     page.getByTestId('inspector-toggle-inherit-tooltip'),
-  ).toContainText(/inherited from global settings/i);
+  ).toContainText(/inherited from universal settings/i);
 });
 
 test('the gating behaves the same way in a different template (serial)', async ({

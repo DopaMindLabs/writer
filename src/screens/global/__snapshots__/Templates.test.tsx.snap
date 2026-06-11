@@ -7,7 +7,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
     data-testid="templates-screen"
   >
     <header
-      class="flex items-center justify-between border-b border-rule px-4 py-4 md:px-12 md:py-5"
+      class="flex items-center justify-between border-b border-rule px-4 py-3 md:px-12 md:py-5"
     >
       <a
         class="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:text-ink"
@@ -49,7 +49,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
       tabindex="-1"
     >
       <div
-        class="mx-auto flex w-full max-w-4xl flex-col gap-12 px-4 pt-10 pb-12 md:px-12 md:pt-16"
+        class="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 pt-6 pb-8 md:gap-12 md:px-12 md:pt-16 md:pb-12"
       >
         <div>
           <div
@@ -79,7 +79,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
           </legend>
           <button
             aria-pressed="true"
-            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6 bg-paper-2"
+            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-3.5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6 md:py-5 bg-paper-2"
             data-testid="templates-card-technical"
             type="button"
           >
@@ -98,7 +98,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
                 <span
                   class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
                 >
-                  alpha
+                  early
                 </span>
               </span>
               <span
@@ -127,7 +127,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
           </button>
           <button
             aria-pressed="false"
-            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6"
+            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-3.5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6 md:py-5"
             data-testid="templates-card-humanities"
             type="button"
           >
@@ -146,7 +146,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
                 <span
                   class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
                 >
-                  alpha
+                  early
                 </span>
               </span>
               <span
@@ -171,7 +171,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
           </button>
           <button
             aria-pressed="false"
-            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6"
+            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-3.5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6 md:py-5"
             data-testid="templates-card-fiction"
             type="button"
           >
@@ -190,7 +190,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
                 <span
                   class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
                 >
-                  alpha
+                  early
                 </span>
               </span>
               <span
@@ -215,7 +215,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
           </button>
           <button
             aria-pressed="false"
-            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6"
+            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-3.5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6 md:py-5"
             data-testid="templates-card-serial"
             type="button"
           >
@@ -234,7 +234,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
                 <span
                   class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
                 >
-                  alpha
+                  early
                 </span>
               </span>
               <span
@@ -259,7 +259,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
           </button>
           <button
             aria-pressed="false"
-            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6"
+            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-3.5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6 md:py-5"
             data-testid="templates-card-journal"
             type="button"
           >
@@ -278,7 +278,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
                 <span
                   class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
                 >
-                  alpha
+                  early
                 </span>
               </span>
               <span
@@ -303,7 +303,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
           </button>
           <button
             aria-pressed="false"
-            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6"
+            class="grid w-full grid-cols-[1.5rem_1fr_2rem] items-baseline gap-4 border-b border-rule px-2 py-3.5 text-left transition-colors last:border-b-0 hover:bg-paper-2 md:grid-cols-[2rem_14rem_1fr_2rem] md:gap-6 md:py-5"
             data-testid="templates-card-blank"
             type="button"
           >
@@ -322,7 +322,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
                 <span
                   class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
                 >
-                  alpha
+                  early
                 </span>
               </span>
               <span
@@ -351,10 +351,10 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
         class="sticky bottom-0 z-10 border-t border-rule bg-paper"
       >
         <div
-          class="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-6 md:px-12"
+          class="mx-auto flex w-full max-w-4xl flex-col gap-3 px-4 py-4 md:gap-6 md:px-12 md:py-6"
         >
           <div
-            class="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_8rem] sm:gap-6"
+            class="grid grid-cols-[1fr_5.5rem] gap-3 sm:grid-cols-[1fr_8rem] sm:gap-6"
           >
             <div>
               <label
@@ -364,7 +364,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
                 Name
               </label>
               <input
-                class="block w-full bg-transparent text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 border-rule focus:border-ink mt-1 h-10 py-0 font-serif text-[22px] leading-none"
+                class="block w-full bg-transparent text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 border-rule focus:border-ink mt-1 h-9 py-0 font-serif text-[18px] leading-none md:h-10 md:text-[22px]"
                 data-testid="templates-name-input"
                 id="space-name"
                 type="text"
@@ -379,7 +379,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
                 Tag
               </label>
               <input
-                class="block w-full bg-transparent text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 border-rule focus:border-ink mt-1 h-10 py-0 text-center font-mono text-[18px] leading-none tracking-widest"
+                class="block w-full bg-transparent text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 border-rule focus:border-ink mt-1 h-9 py-0 text-center font-mono text-[16px] leading-none tracking-widest md:h-10 md:text-[18px]"
                 data-testid="templates-tag-input"
                 id="space-tag"
                 maxlength="3"

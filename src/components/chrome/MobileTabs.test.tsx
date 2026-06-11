@@ -35,6 +35,13 @@ describe('MobileTabs', () => {
       expect(brain).toHaveAttribute('href', '/s/s1/dump');
     });
 
+    it('should not render a split tab (mobile split is deferred to its own PR)', () => {
+      renderWithProviders(<MobileTabs spaceId="s1" docId="d1" />, {
+        initialEntries: ['/s/s1/d/d1'],
+      });
+      expect(screen.queryByTestId('mobile-tabs-split')).not.toBeInTheDocument();
+    });
+
     it('should degrade read to a <button> when there is no docId; write falls back to /s/:spaceId', () => {
       renderWithProviders(<MobileTabs spaceId="s1" docId={null} />, {
         initialEntries: ['/s/s1'],

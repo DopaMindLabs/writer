@@ -22,6 +22,21 @@ const THEMES: { id: Theme; labelKey: string; titleKey: string }[] = [
   { id: 'hc-dark', labelKey: 'quickSettings.themes.hcDark', titleKey: 'topbar.themes.hcDark' },
 ];
 
+const SectionLabel = ({
+  children,
+  testId,
+}: {
+  children: ReactNode;
+  testId?: string;
+}) => (
+  <div
+    data-testid={testId}
+    className="px-4 pb-1.5 pt-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+  >
+    {children}
+  </div>
+);
+
 interface RowProps {
   label: string;
   hint?: string;
@@ -194,9 +209,9 @@ const HelpToursSection = () => {
 
   return (
     <>
-      <div className="px-4 pb-1.5 pt-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
+      <SectionLabel testId="quick-settings-section-help-tours">
         {t('chrome:quickSettings.helpToursLabel')}
-      </div>
+      </SectionLabel>
 
       {TOUR_IDS.map((id) => {
         const done = completedSnapshot.includes(id);
@@ -220,22 +235,17 @@ const MoreSection = () => {
   const { t } = useTranslation(['chrome', 'tours']);
   return (
     <>
-      <div className="px-4 pb-1.5 pt-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
+      <SectionLabel testId="quick-settings-section-more">
         {t('chrome:quickSettings.moreLabel')}
-      </div>
+      </SectionLabel>
 
-      <ComingSoon
-        hint={t('chrome:quickSettings.whatsNew')}
-        side="left"
-        className="w-full"
+      <MenuItem
+        asChild
+        href={routes.helpArticle('whats-new')}
+        testId="quick-settings-whats-new"
       >
-        <span className="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2">
-          <span className="h-3 w-3 shrink-0 opacity-0" />
-          <span className="flex-1 text-left">
-            {t('chrome:quickSettings.whatsNew')}
-          </span>
-        </span>
-      </ComingSoon>
+        {t('chrome:quickSettings.whatsNew')}
+      </MenuItem>
 
       <ComingSoon
         hint={t('chrome:quickSettings.feedback')}
@@ -346,7 +356,17 @@ export const QuickSettingsPopover = () => {
         </div>
       </div>
 
+      <SectionLabel testId="quick-settings-section-appearance">
+        {t('chrome:quickSettings.appearanceLabel')}
+      </SectionLabel>
+
       <ThemeRow />
+
+      <ReadingWidthRow />
+
+      <SectionLabel testId="quick-settings-section-writing">
+        {t('chrome:quickSettings.writingLabel')}
+      </SectionLabel>
 
       <Row
         label={t('chrome:quickSettings.focusLabel')}
@@ -368,8 +388,6 @@ export const QuickSettingsPopover = () => {
           data-testid="quick-settings-floating-toolbar-toggle"
         />
       </Row>
-
-      <ReadingWidthRow />
 
       <HelpToursSection />
 

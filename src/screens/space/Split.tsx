@@ -20,7 +20,6 @@ import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
 import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
-import { MobileSplitFallback } from '@/components/chrome/MobileSplitFallback';
 import { WriteSurface } from '@/components/surfaces/WriteSurface';
 import { BrainSpaceCanvas } from '@/components/surfaces/BrainSpaceCanvas';
 import { CitationsPane } from '@/components/surfaces/CitationsPane';
@@ -29,6 +28,8 @@ import { useSpace } from '@/hooks/useSpaces';
 import { useDocuments, useDocument } from '@/hooks/useDocuments';
 import type { Doc } from '@/db/schema';
 import { useUI } from '@/store/ui';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { cn } from '@/lib/utils';
 import { isLockedStatus } from '@/lib/docInspector/status';
 import { routes } from '@/lib/routes';
 import { Select, type SelectOption } from '@/components/ui/Select';
@@ -41,6 +42,9 @@ const MIN_PCT = 25;
 const MAX_PCT = 75;
 const SNAP_PCT = 50;
 const SNAP_TOLERANCE = 5;
+
+/** Below the md breakpoint in portrait, the panes stack top/bottom. */
+const STACKED_QUERY = '(max-width: 767px) and (orientation: portrait)';
 
 export const SplitScreen = () => {
   const { spaceId, docId } = useParams<{ spaceId: string; docId: string }>();
@@ -132,7 +136,6 @@ const SplitMain = ({
         spaceName={space?.name}
         mode="split"
       />
-      <MobileSplitFallback spaceId={spaceId} docId={docId} />
       <SplitPanes
         spaceId={spaceId}
         leftHeader={<span>{t('split.leftPrefix')} {leftDoc?.name ?? '…'}</span>}
@@ -283,6 +286,7 @@ interface SplitPanesProps {
 
 interface DividerControls {
   pct: number;
+  stacked: boolean;
   containerRef: React.RefObject<HTMLElement | null>;
   commitPct: (next: number) => void;
   onPointerDown: (e: ReactPointerEvent<HTMLDivElement>) => void;
@@ -306,6 +310,7 @@ const releaseCapture = (
 
 interface DragState {
   pct: number;
+  stacked: boolean;
   setPct: (n: number) => void;
   containerRef: React.RefObject<HTMLElement | null>;
   draggingRef: React.RefObject<boolean>;
@@ -322,7 +327,7 @@ interface PointerHandlers {
 }
 
 const usePointerHandlers = (state: DragState): PointerHandlers => {
-  const { pct, setPct, containerRef, draggingRef } = state;
+  const { pct, stacked, setPct, containerRef, draggingRef } = state;
   const { prevCursorRef, prevUserSelectRef, commitPct } = state;
 
   const releasePointer = useCallback(() => {
@@ -339,10 +344,10 @@ const usePointerHandlers = (state: DragState): PointerHandlers => {
       draggingRef.current = true;
       prevCursorRef.current = document.body.style.cursor;
       prevUserSelectRef.current = document.body.style.userSelect;
-      document.body.style.cursor = 'col-resize';
+      document.body.style.cursor = stacked ? 'row-resize' : 'col-resize';
       document.body.style.userSelect = 'none';
     },
-    [draggingRef, prevCursorRef, prevUserSelectRef],
+    [draggingRef, prevCursorRef, prevUserSelectRef, stacked],
   );
 
   const onPointerMove = useCallback(
@@ -351,11 +356,12 @@ const usePointerHandlers = (state: DragState): PointerHandlers => {
       const container = containerRef.current;
       if (!container) return;
       const rect = container.getBoundingClientRect();
-      if (rect.width === 0) return;
-      const next = ((e.clientX - rect.left) / rect.width) * 100;
-      setPct(clampPct(next));
+      const extent = stacked ? rect.height : rect.width;
+      if (extent === 0) return;
+      const offset = stacked ? e.clientY - rect.top : e.clientX - rect.left;
+      setPct(clampPct((offset / extent) * 100));
     },
-    [draggingRef, containerRef, setPct],
+    [draggingRef, containerRef, setPct, stacked],
   );
 
   const onPointerUp = useCallback(
@@ -392,10 +398,12 @@ const useKeyboardHandler = (
       const step = e.shiftKey ? 10 : 2;
       switch (e.key) {
         case 'ArrowLeft':
+        case 'ArrowUp':
           e.preventDefault();
           commitPct(pct - step);
           return;
         case 'ArrowRight':
+        case 'ArrowDown':
           e.preventDefault();
           commitPct(pct + step);
           return;
@@ -418,6 +426,7 @@ const useKeyboardHandler = (
   );
 
 const useDividerControls = (): DividerControls => {
+  const stacked = useMediaQuery(STACKED_QUERY);
   const storedPct = useUI((s) => s.splitDividerPct);
   const setStoredPct = useUI((s) => s.setSplitDividerPct);
   const [pct, setPct] = useState<number>(storedPct);
@@ -426,21 +435,28 @@ const useDividerControls = (): DividerControls => {
   const prevCursorRef = useRef<string>('');
   const prevUserSelectRef = useRef<string>('');
 
+  // Sync local state when external store changes (e.g., other tabs). The
+  // stacked (portrait phone) layout always starts at an even split rather
+  // than inheriting a divider position dragged on a wide screen.
   useEffect(() => {
-    if (!draggingRef.current) setPct(storedPct);
-  }, [storedPct]);
+    if (draggingRef.current) return;
+    setPct(stacked ? SNAP_PCT : storedPct);
+  }, [storedPct, stacked]);
 
   const commitPct = useCallback(
     (next: number) => {
       const clamped = clampPct(next);
       setPct(clamped);
-      setStoredPct(clamped);
+      // Stacked drags stay session-local so they don't clobber the persisted
+      // side-by-side position.
+      if (!stacked) setStoredPct(clamped);
     },
-    [setStoredPct],
+    [setStoredPct, stacked],
   );
 
   const pointer = usePointerHandlers({
     pct,
+    stacked,
     setPct,
     containerRef,
     draggingRef,
@@ -450,16 +466,16 @@ const useDividerControls = (): DividerControls => {
   });
   const onKeyDown = useKeyboardHandler(pct, commitPct);
 
-  return { pct, containerRef, commitPct, onKeyDown, ...pointer };
+  return { pct, stacked, containerRef, commitPct, onKeyDown, ...pointer };
 };
 
 const DividerHandle = ({ controls }: { controls: DividerControls }) => {
-  const { pct, commitPct } = controls;
+  const { pct, stacked, commitPct } = controls;
   return (
     <div
       data-testid="split-divider"
       role="separator"
-      aria-orientation="vertical"
+      aria-orientation={stacked ? 'horizontal' : 'vertical'}
       aria-valuemin={MIN_PCT}
       aria-valuemax={MAX_PCT}
       aria-valuenow={Math.round(pct)}
@@ -471,9 +487,18 @@ const DividerHandle = ({ controls }: { controls: DividerControls }) => {
       onPointerCancel={controls.onPointerCancel}
       onKeyDown={controls.onKeyDown}
       onDoubleClick={() => { commitPct(SNAP_PCT); }}
-      className="group relative flex w-1 shrink-0 cursor-col-resize touch-none items-stretch bg-rule outline-none hover:bg-ink/30 focus-visible:bg-ink/40"
+      className={cn(
+        'group relative flex shrink-0 touch-none items-stretch bg-rule outline-none hover:bg-ink/30 focus-visible:bg-ink/40',
+        stacked ? 'h-1 cursor-row-resize' : 'w-1 cursor-col-resize',
+      )}
     >
-      <span className="absolute inset-y-0 -left-1.5 w-4" aria-hidden />
+      <span
+        className={cn(
+          'absolute',
+          stacked ? 'inset-x-0 -top-1.5 h-4' : 'inset-y-0 -left-1.5 w-4',
+        )}
+        aria-hidden
+      />
     </div>
   );
 };
@@ -486,7 +511,7 @@ const SplitPanes = ({
   aside,
 }: SplitPanesProps) => {
   const controls = useDividerControls();
-  const { pct, containerRef } = controls;
+  const { pct, stacked, containerRef } = controls;
 
   return (
     <main
@@ -495,7 +520,7 @@ const SplitPanes = ({
       ref={(el) => {
         containerRef.current = el;
       }}
-      className="hidden flex-1 overflow-hidden md:flex"
+      className={cn('flex flex-1 overflow-hidden', stacked && 'flex-col')}
     >
       <section
         className="flex min-w-0 flex-col"

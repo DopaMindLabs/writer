@@ -70,6 +70,7 @@ export type NavItem = InternalNavItem | ExternalNavItem;
 
 export const EXTERNAL_LINKS = {
   github: 'https://github.com/DopaMindLabs/Writer',
+  githubNewIssue: 'https://github.com/DopaMindLabs/Writer/issues/new',
   githubSource: 'https://github.com/DopaMindLabs/writer/',
   license: 'https://github.com/DopaMindLabs/Writer?tab=License-1-ov-file',
 } as const;

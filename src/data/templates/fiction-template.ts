@@ -16,9 +16,9 @@ const template: Template = {
     { label: 'Workshop', order: 2 },
   ],
   seedDocs: [
-    { sectionLabel: 'Manuscript', name: 'Chapter 03 — The Collective' },
-    { sectionLabel: 'Manuscript', name: 'Chapter 02 — Outpost Meridian' },
-    { sectionLabel: 'Manuscript', name: 'Chapter 01 - The Waypoint' },
+    { sectionLabel: 'Manuscript', name: 'Chapter 01' },
+    { sectionLabel: 'Manuscript', name: 'Chapter 02' },
+    { sectionLabel: 'Manuscript', name: 'Chapter 03' },
     { sectionLabel: 'World', name: 'Characters' },
     { sectionLabel: 'World', name: 'Places' },
     { sectionLabel: 'World', name: 'Lore & rules' },
@@ -31,7 +31,7 @@ const template: Template = {
       w: 196,
       h: 76,
       kind: NoteKind.Note,
-      body: 'the Luna relay cycles on the wrong stardate — carrier wave logged at 85Hz on departure. intercepted at 255Hz. no equipment fault found.',
+      body: 'a loose plot thread — a detail that does not add up yet. where does it lead?',
     },
     {
       l: 248,
@@ -39,8 +39,8 @@ const template: Template = {
       w: 168,
       h: 76,
       kind: NoteKind.Char,
-      title: 'Cmdr. Mira Voss',
-      body: '34. reclaimed at twelve. longtime roommates with Dr. Stephanie Kirchner — the arrangement predates this posting by two years.',
+      title: 'Character — Name',
+      body: 'who they are, what they want, and what stands in their way.',
     },
     {
       l: 32,
@@ -48,7 +48,7 @@ const template: Template = {
       w: 184,
       h: 64,
       kind: NoteKind.Note,
-      body: "Dr. Kirchner's quarters smell of ylang-ylang and warm skin and something coconut-bright that lingers in the corridor long after she has gone. Mira has never mentioned it.",
+      body: 'a sensory detail worth keeping — a smell, a sound, a texture that brings a scene to life.',
     },
     {
       l: 236,
@@ -56,8 +56,8 @@ const template: Template = {
       w: 180,
       h: 82,
       kind: NoteKind.Place,
-      title: 'Outpost Meridian',
-      body: 'former Borg structure, now Federation listening post. older than the treaty. a corridor that reads as two corridors depending on who walks it.',
+      title: 'Place — Name',
+      body: 'where it is, what it feels like, and who passes through it.',
     },
     {
       l: 436,
@@ -65,7 +65,7 @@ const template: Template = {
       w: 152,
       h: 56,
       kind: NoteKind.Note,
-      body: '"Cmdr. Voss was already off-rotation when the Luna relay came through" — opener?',
+      body: '"an opening line you do not want to lose" — opener?',
     },
     {
       l: 32,
@@ -73,8 +73,8 @@ const template: Template = {
       w: 260,
       h: 60,
       kind: NoteKind.Lore,
-      title: 'The Long Silence',
-      body: 'stardate redacted from all records following first contact with the Collective. the directive is to not ask which year. the directive is the year.',
+      title: 'Lore — A rule of the world',
+      body: 'a rule your world follows, and what it costs to break it.',
     },
     {
       l: 312,
@@ -82,8 +82,8 @@ const template: Template = {
       w: 152,
       h: 64,
       kind: NoteKind.Char,
-      title: 'Cadet Oen Talis',
-      body: 'Trill, unjoined. keeps to herself. writes the pauses between subspace bursts in a private log nobody asked her to keep.',
+      title: 'Character — Another name',
+      body: 'a supporting character. what do they notice that the others miss?',
     },
   ],
   noteKinds: [

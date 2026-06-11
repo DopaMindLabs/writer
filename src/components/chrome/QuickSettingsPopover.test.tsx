@@ -73,11 +73,41 @@ describe('QuickSettingsPopover', () => {
         screen.getByTestId('quick-settings-floating-toolbar-toggle'),
       ).toHaveAttribute('role', 'switch');
       expect(screen.getByTestId('quick-settings-full-settings')).toHaveTextContent(
-        /full settings/i,
+        /universal settings/i,
       );
       const about = screen.getByTestId('quick-settings-about');
       expect(about).toHaveTextContent(/about/i);
       expect(about).toHaveAttribute('href', '/about');
+    });
+  });
+
+  describe('grouping', () => {
+    it('should group the controls under Appearance and Writing section labels', () => {
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      expect(
+        screen.getByTestId('quick-settings-section-appearance'),
+      ).toHaveTextContent(/appearance/i);
+      expect(
+        screen.getByTestId('quick-settings-section-writing'),
+      ).toHaveTextContent(/writing/i);
+
+      // Appearance holds theme + reading width, Writing holds focus +
+      // floating toolbar, in document order.
+      const popover = screen.getByTestId('quick-settings-popover');
+      const order = Array.from(popover.querySelectorAll('[data-testid]')).map(
+        (el) => el.getAttribute('data-testid'),
+      );
+      const expectedOrder = [
+        'quick-settings-section-appearance',
+        'quick-settings-theme-light',
+        'quick-settings-width-m',
+        'quick-settings-section-writing',
+        'quick-settings-focus-toggle',
+        'quick-settings-floating-toolbar-toggle',
+      ];
+      const positions = expectedOrder.map((id) => order.indexOf(id));
+      expect(positions).not.toContain(-1);
+      expect(positions).toEqual([...positions].sort((a, b) => a - b));
     });
   });
 
@@ -177,8 +207,8 @@ describe('QuickSettingsPopover', () => {
     });
   });
 
-  describe('full settings navigation', () => {
-    it('should navigate to /settings when the full-settings link is clicked', async () => {
+  describe('universal settings navigation', () => {
+    it('should navigate to /settings when the universal-settings link is clicked', async () => {
       renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
       expect(screen.getByTestId('probe-pathname').textContent).toBe(
         '/s/s1/d/d1',

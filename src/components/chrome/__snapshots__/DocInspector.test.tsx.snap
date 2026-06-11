@@ -17,7 +17,7 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
       </span>
       <button
         aria-label="Collapse inspector"
-        class="inline-flex items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5"
+        class="items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink hidden h-5 w-5 md:inline-flex"
         data-testid="doc-inspector-collapse"
         type="button"
       >
@@ -103,7 +103,7 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
       </span>
       <button
         aria-label="Collapse inspector"
-        class="inline-flex items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5"
+        class="items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink hidden h-5 w-5 md:inline-flex"
         data-testid="doc-inspector-collapse"
         type="button"
       >
@@ -189,7 +189,7 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
       </span>
       <button
         aria-label="Collapse inspector"
-        class="inline-flex items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5"
+        class="items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink hidden h-5 w-5 md:inline-flex"
         data-testid="doc-inspector-collapse"
         type="button"
       >

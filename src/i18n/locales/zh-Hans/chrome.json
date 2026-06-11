@@ -16,7 +16,16 @@
     "docNamePlaceholder": "文档名称(回车创建)",
     "renameSpace": "重命名空间",
     "openSpaceSettings": "空间设置",
-    "openSpaceMenu": "打开空间菜单"
+    "openSpaceMenu": "打开空间菜单",
+    "docMenuAria": "{{name}} 的选项",
+    "renameDoc": "重命名",
+    "renameDialog": {
+      "title": "重命名文档",
+      "description": "为此文档选择一个新名称。",
+      "label": "文档名称",
+      "cancel": "取消",
+      "save": "重命名"
+    }
   },
   "topbar": {
     "openNav": "打开导航",
@@ -49,14 +58,11 @@
     "whatsNew": "新功能",
     "feedback": "发送反馈…"
   },
-  "mobileSplitFallback": {
-    "title": "需要更大的屏幕",
-    "body": "分屏视图将两个文档并排显示。请在写作模式下打开此文档以适应手机布局。",
-    "cta": "在写作中打开 →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "快速设置",
+    "appearanceLabel": "外观",
+    "writingLabel": "写作",
     "themeLabel": "主题",
     "focusLabel": "专注模式",
     "focusHint": "⌘\\",

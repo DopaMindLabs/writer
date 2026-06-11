@@ -92,6 +92,10 @@ test.describe('Workflow: space setup, backup, and sync', () => {
       await expect(popover).toBeVisible();
       await popover.getByRole('button', { name: /^dark$/i }).click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+      // Theme chips keep the popover open for further tweaks; dismiss it so
+      // it doesn't sit over the sidebar controls the next step clicks.
+      await page.getByRole('button', { name: /LIpsum Writer/i }).first().click();
+      await expect(popover).toBeHidden();
     });
 
     await test.step('Then they export the whole space as a timestamped markdown zip', async () => {

@@ -25,9 +25,9 @@ describe('HelpArticle', () => {
     const scrollIntoView = vi.fn();
     Element.prototype.scrollIntoView = scrollIntoView;
     renderWithProviders(<HelpArticle slug="keyboard-shortcuts" />, {
-      initialEntries: ['/help/keyboard-shortcuts#global'],
+      initialEntries: ['/help/keyboard-shortcuts#universal'],
     });
-    expect(document.getElementById('global')).not.toBeNull();
+    expect(document.getElementById('universal')).not.toBeNull();
     expect(scrollIntoView).toHaveBeenCalled();
   });
 });

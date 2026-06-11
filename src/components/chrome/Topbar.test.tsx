@@ -32,6 +32,11 @@ describe('Topbar', () => {
         expect.stringMatching(/open nav/i),
       );
       expect(screen.getByTestId('topbar-doc-name')).toHaveTextContent('Sample');
+      // Long doc names must ellipsise rather than wrap the 40px topbar.
+      expect(screen.getByTestId('topbar-doc-name')).toHaveClass(
+        'min-w-0',
+        'truncate',
+      );
       expect(screen.getByTestId('topbar-citations')).toHaveAttribute(
         'aria-label',
         expect.stringMatching(/citations/i),

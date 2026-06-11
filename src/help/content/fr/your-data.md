@@ -37,7 +37,7 @@ Comme le stockage est local, les **sauvegardes régulières sont
 essentielles**. Exporte avant d'effacer les données du navigateur, de
 changer d'appareil, ou d'essayer quelque chose de nouveau.
 
-> C'est une app alpha en évolution. Traite tes exports
+> C'est une app préliminaire en évolution. Traite tes exports
 > comme la source de vérité et sauvegarde souvent.
 
 ## Voir aussi

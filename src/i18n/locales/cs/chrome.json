@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Název dokumentu (Enter pro vytvoření)",
     "renameSpace": "Přejmenovat prostor",
     "openSpaceSettings": "Nastavení prostoru",
-    "openSpaceMenu": "Otevřít menu prostoru"
+    "openSpaceMenu": "Otevřít menu prostoru",
+    "docMenuAria": "Možnosti pro {{name}}",
+    "renameDoc": "Přejmenovat",
+    "renameDialog": {
+      "title": "Přejmenovat dokument",
+      "description": "Zvolte nový název pro tento dokument.",
+      "label": "Název dokumentu",
+      "cancel": "Zrušit",
+      "save": "Přejmenovat"
+    }
   },
   "topbar": {
     "openNav": "Otevřít navigaci",
@@ -49,14 +58,11 @@
     "whatsNew": "Co je nového",
     "feedback": "Poslat zpětnou vazbu…"
   },
-  "mobileSplitFallback": {
-    "title": "Potřebuje větší obrazovku",
-    "body": "Rozdělené zobrazení umístí dva dokumenty vedle sebe. Otevřete tento dokument v režimu Psát pro telefonní rozložení.",
-    "cta": "Otevřít v Psát →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Rychlé nastavení",
+    "appearanceLabel": "Vzhled",
+    "writingLabel": "Psaní",
     "themeLabel": "Motiv",
     "focusLabel": "Režim soustředění",
     "focusHint": "⌘\\",

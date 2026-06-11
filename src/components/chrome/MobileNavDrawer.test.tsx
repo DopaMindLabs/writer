@@ -1,5 +1,10 @@
-import { renderWithProviders, screen, act, waitFor } from '@/test/test-utils';
-import userEvent from '@testing-library/user-event';
+import {
+  renderWithProviders,
+  screen,
+  act,
+  waitFor,
+  fireEvent,
+} from '@/test/test-utils';
 import { sampleSpace, seedBasicSpace } from '@/test/fixtures';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
@@ -29,12 +34,15 @@ describe('MobileNavDrawer', () => {
     expect(await screen.findByText('Sample Doc')).toBeInTheDocument();
   });
 
-  it('closes when the close button is clicked', async () => {
+  it('closes on Escape', async () => {
     await db.spaces.put(sampleSpace);
     renderWithProviders(<MobileNavDrawer spaceId="s1" activeDocId={null} />);
     await openAfterMount();
-    const close = await screen.findByRole('button', { name: /close|nav\.close/i });
-    await userEvent.click(close);
+    await screen.findByRole('dialog');
+    // Opening the drawer autofocuses the SpaceRail alpha chip, whose tooltip
+    // becomes the topmost dismissable layer; blur it so Escape hits the drawer.
+    act(() => { (document.activeElement as HTMLElement | null)?.blur(); });
+    fireEvent.keyDown(document, { key: 'Escape' });
     await waitFor(() =>
       { expect(useUI.getState().mobileNavOpen).toBe(false); },
     );
