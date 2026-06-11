@@ -8,8 +8,10 @@ const { version: appVersion } = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8')
 ) as { version: string };
 
-export default defineConfig(({ command }) => ({
-  define: { __APP_VERSION__: JSON.stringify(appVersion) },
+export default defineConfig(({ command, mode }) => ({
+  define: {
+    __APP_VERSION__: JSON.stringify(mode === 'test' ? '0.0.0-test' : appVersion),
+  },
   base:
     command === 'build'
       ? process.env.VITE_BASE ?? '/writer/'
