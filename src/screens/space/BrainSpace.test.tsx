@@ -48,6 +48,21 @@ describe('BrainSpaceScreen', () => {
     useUI.getState().setCurrentDocId(null);
   });
 
+  it('links the mobile Read and Split tabs to the fallback doc', async () => {
+    await db.spaces.put(sampleSpace);
+    await db.docs.put(sampleDoc);
+    const { findByTestId } = renderAtRoute(<BrainSpaceScreen />, {
+      path: '/s/:spaceId/dump',
+      initialEntries: ['/s/s1/dump'],
+    });
+    await waitFor(async () => {
+      const splitTab = await findByTestId('mobile-tabs-split');
+      expect(splitTab).toHaveAttribute('href', '/s/s1/d/d1/split');
+    });
+    const readTab = await findByTestId('mobile-tabs-read');
+    expect(readTab).toHaveAttribute('href', '/s/s1/d/d1/read');
+  });
+
   it('falls back to docs[0] when the persisted lastDocId no longer exists', async () => {
     await db.spaces.put(sampleSpace);
     await db.docs.put(sampleDoc);

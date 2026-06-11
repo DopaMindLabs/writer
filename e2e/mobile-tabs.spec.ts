@@ -43,6 +43,16 @@ test('split tab navigates to /split', async ({ page }) => {
   await expect(page).toHaveURL(/\/split/);
 });
 
+test('split tab works from the brain screen via the fallback doc', async ({ page }) => {
+  const { spaceId } = await gotoFirstDoc(page);
+  await page.goto(`/#/s/${spaceId}/dump`);
+  const tabs = page.getByTestId('mobile-tabs');
+  // On the brain screen the split tab resolves to the fallback document, so it
+  // is a live link rather than a dead button.
+  await tabs.getByRole('link', { name: /split/i }).click();
+  await expect(page).toHaveURL(new RegExp(`/s/${spaceId}/d/[^/]+/split`));
+});
+
 test('cite tab opens the citations drawer', async ({ page }) => {
   const { spaceId, docId } = await gotoFirstDoc(page);
   await page.goto(`/#/s/${spaceId}/d/${docId}`);

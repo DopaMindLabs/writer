@@ -76,8 +76,8 @@ export const BrainSpaceScreen = () => {
         </main>
         {!focus && (
           <>
-            <MobileTabs spaceId={spaceId} />
-            <MobileMoreSheet spaceId={spaceId} />
+            <MobileTabs spaceId={spaceId} docId={fallbackDocId} />
+            <MobileMoreSheet spaceId={spaceId} docId={fallbackDocId} />
           </>
         )}
       </div>
