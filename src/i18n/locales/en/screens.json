@@ -7,7 +7,10 @@
     "tagline": "A clutter-free space for long-form writing — fiction, research, essays, journals.",
     "continueWriting": "Continue writing",
     "startNewSpace": "Start a new space",
-    "statusLine": "{{version}} · local only · data can be lost",
+    "syncOffChip": "sync/backups not enabled · data can be lost",
+    "syncOnChip": "folder sync on",
+    "syncOnTitle": "Folder sync enabled",
+    "syncOnBody": "Your work syncs to the “{{folder}}” folder on this device.",
     "warningTitle": "Alpha build",
     "warningBody": "No data sync. Everything lives in your browser. If you clear your cache, your work will be lost",
     "versionLine": "Version {{version}}"

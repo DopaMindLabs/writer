@@ -34,6 +34,9 @@ your current library.
   download or delete.
 - Connect a **sync folder** to mirror a space to local storage, set the
   interval, and run a sync on demand.
+- The home screen shows a status chip: a warning while sync and backups are
+  not enabled, switching to **folder sync on** once a sync folder is
+  connected.
 
 Storage is local, so **regular backups are essential**. Export before clearing
 browser data, switching devices, or trying something new.

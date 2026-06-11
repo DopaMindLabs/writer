@@ -7,7 +7,6 @@
     "tagline": "Un espacio sin distracciones para escritura larga — ficción, investigación, ensayos, diarios.",
     "continueWriting": "Continuar escribiendo",
     "startNewSpace": "Empezar un nuevo espacio",
-    "statusLine": "{{version}} · solo local · los datos pueden perderse",
     "warningTitle": "Build alpha",
     "warningBody": "Sin sincronización de datos. Todo vive en tu navegador. Si borras la caché, perderás tu trabajo",
     "versionLine": "Versión {{version}}"

@@ -7,7 +7,6 @@
     "tagline": "Ein aufgeräumter Raum für langes Schreiben — Fiktion, Forschung, Essays, Tagebücher.",
     "continueWriting": "Weiterschreiben",
     "startNewSpace": "Neuen Space starten",
-    "statusLine": "{{version}} · nur lokal · Daten können verloren gehen",
     "warningTitle": "Alpha-Build",
     "warningBody": "Keine Datensynchronisation. Alles lebt in deinem Browser. Wenn du den Cache löschst, geht deine Arbeit verloren",
     "versionLine": "Version {{version}}"

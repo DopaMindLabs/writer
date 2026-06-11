@@ -7,7 +7,6 @@
     "tagline": "Een opgeruimde plek voor lange teksten — fictie, onderzoek, essays, dagboeken.",
     "continueWriting": "Verder schrijven",
     "startNewSpace": "Nieuwe space starten",
-    "statusLine": "{{version}} · alleen lokaal · gegevens kunnen verloren gaan",
     "warningTitle": "Alpha build",
     "warningBody": "Geen gegevenssynchronisatie. Alles leeft in je browser. Als je je cache wist, gaat je werk verloren",
     "versionLine": "Versie {{version}}"
