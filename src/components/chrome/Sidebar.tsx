@@ -702,6 +702,7 @@ const DocRowMenu = ({ doc }: { doc: Doc }) => {
             data-testid={`sidebar-doc-${doc.id}-menu`}
             icon={MoreVertical}
             iconSize="xs"
+            strokeWidth={1.25}
             label={t('sidebar.docMenuAria', { name: doc.name })}
             className="text-ink-4 md:hidden"
           />
