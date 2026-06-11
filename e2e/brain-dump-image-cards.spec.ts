@@ -2,8 +2,6 @@ import type { Page } from '@playwright/test';
 import { test, expect } from './_helpers';
 import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
 
-// A 1×1 transparent PNG, supplied as an in-memory payload so no fixture file is
-// needed on disk.
 const PNG_1PX =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M8AAAMBAQDJ/1eHAAAAAElFTkSuQmCC';
 
@@ -34,24 +32,20 @@ test('creates an image card, uploads through its drop zone, and views it full si
 }) => {
   await gotoDump(page);
 
-  // The image toolbar button exists and creates an image-first card.
   await page.getByTestId('brain-canvas-tool-image').click();
   const card = lastCard(page);
   const dropzone = card.locator('[data-testid$="-image-dropzone"]');
   await expect(dropzone).toBeVisible();
   await expect(dropzone).toContainText(/add a picture/i);
 
-  // Upload through the drop zone's hidden input.
   await card
     .locator('[data-testid$="-image-dropzone-input"]')
     .setInputFiles(pngPayload('shot.png'));
 
-  // The picture now renders large in the card (and the drop zone is gone).
   const primary = card.locator('[data-testid$="-image-primary"]');
   await expect(primary).toBeVisible();
   await expect(card.locator('[data-testid$="-image-dropzone"]')).toHaveCount(0);
 
-  // Clicking it opens the full-size viewer; Escape closes it.
   await primary.click();
   const lightbox = page.getByTestId('image-lightbox');
   await expect(lightbox).toBeVisible();
@@ -70,10 +64,8 @@ test('image cards have no body editor and survive a reload', async ({ page }) =>
     .setInputFiles(pngPayload('keep.png'));
   await expect(card.locator('[data-testid$="-image-primary"]')).toBeVisible();
 
-  // An image card is picture-first: no body editor is rendered.
   await expect(card.locator('[data-testid$="-body"]')).toHaveCount(0);
 
-  // The card and its picture persist across a hard reload (IndexedDB).
   await page.reload();
   card = lastCard(page);
   await expect(card.locator('[data-testid$="-image-primary"]')).toBeVisible();
@@ -89,13 +81,11 @@ test('pages between two pictures in the viewer', async ({ page }) => {
     .setInputFiles(pngPayload('one.png'));
   await expect(card.locator('[data-testid$="-image-primary"]')).toBeVisible();
 
-  // Add a second picture via the in-card quick-add control.
   await card.hover();
   await card
     .locator('[data-testid$="-image-input"]')
     .setInputFiles(pngPayload('two.png'));
 
-  // Open the viewer and page to the next image.
   await card.locator('[data-testid$="-image-primary"]').click();
   await expect(page.getByTestId('image-lightbox-counter')).toHaveText('1 / 2');
   await page.getByTestId('image-lightbox-next').click();

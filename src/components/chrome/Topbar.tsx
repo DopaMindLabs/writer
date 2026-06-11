@@ -80,7 +80,6 @@ const EditableDocName = ({ docId, docName }: EditableDocNameProps) => {
     );
   }
   return (
-    // @lint-ignore native-button: editable-text trigger (double-click to rename); not a DS Button
     <button
       data-testid="topbar-doc-name"
       type="button"
@@ -152,7 +151,6 @@ const CitationsTrigger = ({
       {citeContent}
     </Link>
   ) : (
-    // @lint-ignore native-button: custom toolbar trigger (rendered as either icon-pill in focus mode or lowercase text in normal mode); DS Button kinds don't fit either shape
     <button
       type="button"
       onClick={() => { openCitationsDrawer(); }}

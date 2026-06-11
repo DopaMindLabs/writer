@@ -57,7 +57,6 @@ const TemplateCard = ({
 }: TemplateCardProps) => {
   const sectionPreview = tpl.sections.map((s) => s.label).join(' · ');
   return (
-    // @lint-ignore native-button: large card-style radio row with multi-column grid content; not a DS Button kind
     <button
       data-testid={`templates-card-${tpl.id}`}
       type="button"
@@ -171,7 +170,6 @@ const TemplatesFooterActions = ({
           <span className="italic text-ink-4">{t('templates.syncValue')}</span>
         </span>
       </div>
-      {/* @lint-ignore native-button: italic-serif submit treatment unique to Templates; DS Button ghost is sans + thin underline and visually wrong here */}
       <button
         data-testid="templates-submit"
         type="submit"

@@ -16,15 +16,12 @@ test('content typed into a doc survives a hard reload (IndexedDB persistence)', 
   await page.keyboard.type(probe);
   await expect(editor).toContainText(probe);
 
-  // Autosave debounce is 600ms — wait long enough for it to flush to IndexedDB.
   await page.waitForTimeout(1000);
 
-  // Reload WITHOUT ?reseed so the existing IndexedDB state stays intact.
   await page.goto(docUrl);
 
   await expect(page.locator('[aria-label="Document body"]')).toContainText(probe);
 
-  // Home page should also still surface the existing space.
   await page.goto('/#/');
   await expect(page.getByRole('link', { name: /Continue writing/i })).toBeVisible();
 });

@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Indítási hiba",
-  "bootErrorHintBefore": "Próbáld ",
-  "bootErrorHintAfter": " a helyi adatbázis visszaállításához.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Ha ez továbbra is előfordul, törölheted az alkalmazás helyi adatait, és újrakezdheted.",
+  "bootErrorResetAction": "Helyi adatok visszaállítása…",
+  "bootErrorResetTitle": "Minden helyi adat törlése?",
+  "bootErrorResetBody": "Ez véglegesen töröl mindent, amit az alkalmazás ebben a böngészőben tárolt — dokumentumokat, jegyzeteket, hivatkozásokat és biztonsági mentéseket. Nem vonható vissza.",
+  "bootErrorResetConfirm": "Minden törlése",
+  "bootErrorResetCancel": "Mégse",
   "booting": "Indul…"
 }

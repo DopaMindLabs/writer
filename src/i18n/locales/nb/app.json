@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Oppstartsfeil",
-  "bootErrorHintBefore": "Prøv ",
-  "bootErrorHintAfter": " for å tilbakestille den lokale databasen.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Hvis dette fortsetter, kan du slette appens lokale data og starte på nytt.",
+  "bootErrorResetAction": "Tilbakestill lokale data…",
+  "bootErrorResetTitle": "Slette alle lokale data?",
+  "bootErrorResetBody": "Dette sletter permanent alt appen har lagret i denne nettleseren — dokumenter, notater, kildehenvisninger og sikkerhetskopier. Det kan ikke angres.",
+  "bootErrorResetConfirm": "Slett alt",
+  "bootErrorResetCancel": "Avbryt",
   "booting": "Starter…"
 }

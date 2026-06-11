@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Kuskuren farawa",
-  "bootErrorHintBefore": "Gwada ",
-  "bootErrorHintAfter": " don sake saita rumbun adana data na cikin gida.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Idan wannan ya ci gaba da faruwa, za ka iya goge bayanan cikin gida na manhajar ka fara sabuwa.",
+  "bootErrorResetAction": "Sake saita bayanan cikin gida…",
+  "bootErrorResetTitle": "A goge duk bayanan cikin gida?",
+  "bootErrorResetBody": "Wannan zai goge har abada duk abin da manhajar ta adana a wannan burauzar — takardu, bayanin kula, ambato da madadin ajiya. Ba za a iya mayar da shi ba.",
+  "bootErrorResetConfirm": "Goge duka",
+  "bootErrorResetCancel": "Soke",
   "booting": "Ana farawa…"
 }

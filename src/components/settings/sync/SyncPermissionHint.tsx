@@ -4,9 +4,6 @@ import { InlineBanner } from '@/components/ui/InlineBanner';
 import { useFolderPermission } from '@/hooks/useSync';
 import { requestFolderPermission } from '@/lib/sync/folderSync';
 
-// Shown in the Sync tabs when a folder is connected but write permission has
-// lapsed for this session (e.g. after a reload). Re-granting permission from
-// this click resumes manual and scheduled auto-sync.
 export const SyncPermissionHint = ({
   folderName,
 }: {

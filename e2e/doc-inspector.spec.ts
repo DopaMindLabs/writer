@@ -23,29 +23,21 @@ test('sets a word limit and shows the over-limit highlight overlay', async ({
 }) => {
   await gotoFirstDoc(page);
 
-  // Seeded docs are empty, so type a paragraph that wraps over several lines.
   const body = page.getByLabel('Document body');
   await body.click();
   await body.pressSequentially(LONG_PARAGRAPH, { delay: 0 });
 
   await openInspectorInfo(page);
   await page.getByTestId('inspector-wordLimit').fill('3');
-  // The words row now reads "current / 3" and the editor mounts the overlay.
   await expect(page.getByTestId('doc-inspector-info')).toContainText('/ 3');
 
   const overlay = page.getByTestId('limit-highlight-overlay');
   await expect(overlay).toBeVisible();
-  // The overlay must layer above the text, not behind the page paper — a
-  // negative z-index regressed this and hid the highlight on the write surface.
   const zIndex = await overlay.evaluate(
     (el) => window.getComputedStyle(el).zIndex,
   );
   expect(zIndex === 'auto' || Number(zIndex) >= 0).toBe(true);
 
-  // The highlight must cover whole wrapped lines, not just the ragged ones:
-  // Lexical's createRectsFromDOMRange drops full-width rects, which scattered
-  // the highlight. With a 3-word limit almost the paragraph is over the limit,
-  // so at least one highlight box should span most of the editor width.
   await expect(overlay.locator('div').first()).toBeVisible();
   const widths = await overlay
     .locator('div')

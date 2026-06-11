@@ -1,11 +1,6 @@
 import { forwardRef, type ChangeEvent, type InputHTMLAttributes } from 'react';
 import { TextField } from './TextField';
 
-// A date input that speaks epoch milliseconds, composed from the TextField
-// primitive so it inherits the hairline baseline, disabled and error styling.
-// The native <input type="date"> value is a local `yyyy-mm-dd` string; we
-// convert to/from epoch ms (local midnight) at the boundary.
-
 const pad = (value: number): string => String(value).padStart(2, '0');
 
 const toInputValue = (ms: number | undefined): string => {
@@ -28,11 +23,8 @@ export interface DateFieldProps
     InputHTMLAttributes<HTMLInputElement>,
     'value' | 'onChange' | 'min' | 'max' | 'type'
   > {
-  /** The selected date as epoch milliseconds, or undefined when empty. */
   value?: number;
-  /** Fired with the new date as epoch ms, or undefined when cleared. */
   onChange: (value: number | undefined) => void;
-  /** Optional bounds, as epoch milliseconds. */
   min?: number;
   max?: number;
   error?: boolean;

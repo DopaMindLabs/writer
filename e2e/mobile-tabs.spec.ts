@@ -46,6 +46,5 @@ test('more tab opens the mobile-more drawer', async ({ page }) => {
   await page.goto(`/#/s/${spaceId}/d/${docId}`);
   const tabs = page.getByTestId('mobile-tabs');
   await tabs.getByRole('button', { name: /more/i }).click();
-  // The MobileMoreSheet renders inside a Radix Dialog portal.
   await expect(page.getByRole('dialog').first()).toBeVisible();
 });

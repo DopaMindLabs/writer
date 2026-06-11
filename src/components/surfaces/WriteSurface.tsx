@@ -17,7 +17,6 @@ import { cn } from '@/lib/utils';
 interface WriteSurfaceProps {
   doc: Doc;
   mode: EditorMode;
-  /** Read-only because the document's status is a locked stage. */
   locked?: boolean;
 }
 
@@ -52,10 +51,6 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
   const readingWidth = useUI((s) => s.readingWidth);
   const restoreNonce = useUI((s) => s.restoreNonces[doc.id] ?? 0);
 
-  // The over-limit highlight needs both the highlight toggle and the relevant
-  // limit feature enabled. Disabling the highlight keeps the limit and the
-  // inspector counter (just no editor decoration); disabling a limit feature
-  // turns that limit off entirely.
   const { effective } = useEffectiveInspectorConfig(doc.spaceId);
   const highlightOn = effective.highlightOverLimit;
   const wordLimit =
@@ -63,37 +58,20 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
   const charLimit =
     highlightOn && effective.charLimit ? doc.meta.charLimit : undefined;
 
-  // Record a starting snapshot when a document is opened, and clear the
-  // auto-capture throttle so the next document starts fresh.
   useEffect(() => {
     void captureBaselineRevision(doc.id, doc.body).catch((err: unknown) => {
       console.error('Failed to capture baseline revision', err);
     });
     return () => { resetAutoThrottle(doc.id); };
-    // Keyed on doc.id only: we want the baseline at open time, not on every
-    // body change (auto-capture in handleChange covers ongoing edits).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doc.id]);
 
-  // Close over doc.id rather than reading a mutable ref: AutosavePlugin flushes
-  // a pending edit on unmount, and on a doc switch that flush runs after this
-  // component has re-rendered with the new doc — a ref would route the old
-  // doc's pending edit into the newly-opened doc. The keyed Editor never
-  // re-renders across a switch, so it keeps the onChange bound to the doc it
-  // mounted for.
   const handleChange = useCallback((serialized: string) => {
     void db.docs.update(doc.id, {
       body: serialized,
       updatedAt: Date.now(),
-      // Cache the word count so the sidebar reads it cheaply. Write the nested
-      // field by key-path rather than replacing the whole `meta` object: autosave
-      // runs after every edit and on unmount, and its `doc` prop is a lagging
-      // live-query value, so a whole-object write could clobber an Inspector
-      // change (status/limits/due date) that the prop has not caught up to yet.
       'meta.wordCount': countWords(serialized),
     });
-    // Best-effort, throttled history capture; never blocks or throws into the
-    // editor's onChange.
     void captureAutoRevision(doc.id, serialized).catch(
       (err: unknown) => {
         console.error('Failed to capture revision', err);

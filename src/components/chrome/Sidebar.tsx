@@ -160,7 +160,6 @@ const SpaceHeader = ({ spaceId, space }: SpaceHeaderProps) => {
         />
       ) : (
         <div className="flex items-center gap-2" data-tour="tour-sidebar-space-title">
-          {/* @lint-ignore native-button: editable-text trigger (click to rename); not a DS Button */}
           <button
             type="button"
             onClick={() => { if (space) setEditingSpaceName(true); }}

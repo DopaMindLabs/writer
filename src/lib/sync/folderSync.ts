@@ -7,20 +7,12 @@ import {
   slugify,
 } from '@/lib/backup/buildSpaceMarkdownZip';
 
-// Push-only folder sync built on the File System Access API. Sync is distinct
-// from Backup: it writes the space's md-zip into a user-chosen folder (never the
-// backups table) and records each run in the `syncs` table. Per space we keep a
-// rotating history of MAX_SYNCS_PER_SPACE files plus a stable `latest.zip`, all
-// inside a per-space subfolder. The folder handle is persisted in `meta` so it
-// survives reloads; browsers require a one-click permission re-grant per session.
-
 const HANDLE_KEY = 'syncFolderHandle';
 const GLOBAL_CONFIG_ID = 'global';
 
 export const MAX_SYNCS_PER_SPACE = 5;
 export const DEFAULT_INTERVAL_MIN = 10;
 export const INHERIT_INTERVAL = -1;
-// 0 = off. Used by the settings UI; the global default may not be "inherit".
 export const INTERVAL_OPTIONS = [0, 5, 10, 30] as const;
 export const LATEST_FILENAME = 'latest.zip';
 
@@ -50,12 +42,10 @@ export const forgetSyncFolder = async (): Promise<void> => {
 };
 
 export type WritePermissionState =
-  | PermissionState // 'granted' | 'prompt' | 'denied'
-  | 'no-folder' // nothing connected
-  | 'unknown'; // permission API unavailable — treat as usable
+  | PermissionState
+  | 'no-folder'
+  | 'unknown';
 
-// Non-interactively report the current write-permission state of the connected
-// folder. Used by the UI to decide whether to show a "reconnect" hint.
 export const getWritePermissionState = async (
   handleArg?: FileSystemDirectoryHandle,
 ): Promise<WritePermissionState> => {
@@ -65,8 +55,6 @@ export const getWritePermissionState = async (
   return handle.queryPermission({ mode: 'readwrite' });
 };
 
-// Re-request write permission. Must run inside a user gesture. Returns whether
-// permission is now granted.
 export const requestFolderPermission = async (
   handleArg?: FileSystemDirectoryHandle,
 ): Promise<boolean> => {
@@ -75,8 +63,6 @@ export const requestFolderPermission = async (
   return ensureWritePermission(handle, { interactive: true });
 };
 
-// Resolve write permission. With { interactive: false } we only query (never
-// prompt) — required for background auto-sync, which has no user gesture.
 export const ensureWritePermission = async (
   handle: FileSystemDirectoryHandle,
   { interactive = true }: { interactive?: boolean } = {},
@@ -91,13 +77,8 @@ export const ensureWritePermission = async (
     const next = await handle.requestPermission(opts);
     return next === 'granted';
   }
-  // Permission APIs unavailable — assume the handle is usable.
   return !handle.queryPermission;
 };
-
-// ---------------------------------------------------------------------------
-// Config (global default + per-space override), stored in `syncConfigs`.
-// ---------------------------------------------------------------------------
 
 export const getDefaultIntervalMin = async (): Promise<number> => {
   const row = await db.syncConfigs.get(GLOBAL_CONFIG_ID);
@@ -110,7 +91,6 @@ export const setDefaultIntervalMin = async (
   await db.syncConfigs.put({ spaceId: GLOBAL_CONFIG_ID, intervalMin });
 };
 
-// Per-space interval. INHERIT_INTERVAL means "use the global default".
 export const getSpaceIntervalMin = async (spaceId: string): Promise<number> => {
   const row = await db.syncConfigs.get(spaceId);
   return row ? row.intervalMin : INHERIT_INTERVAL;
@@ -131,8 +111,6 @@ export const getEffectiveIntervalMin = async (
   return getDefaultIntervalMin();
 };
 
-// Resolve effective intervals for many spaces with a single read of syncConfigs,
-// so the once-a-minute scheduler does not issue two reads per space.
 export const getEffectiveIntervalMap = async (
   spaceIds: string[],
 ): Promise<Map<string, number>> => {
@@ -147,15 +125,9 @@ export const getEffectiveIntervalMap = async (
   return out;
 };
 
-// ---------------------------------------------------------------------------
-// Sync history (`syncs` table).
-// ---------------------------------------------------------------------------
-
 export const getLastSyncForSpace = async (
   spaceId: string,
 ): Promise<SyncEntry | undefined> => {
-  // Newest-first off the `[spaceId+when]` index, so the due-check reads a single
-  // row instead of loading and sorting the whole per-space history.
   return db.syncs
     .where('[spaceId+when]')
     .between([spaceId, -Infinity], [spaceId, Infinity])
@@ -164,8 +136,6 @@ export const getLastSyncForSpace = async (
 };
 
 export const getLastSyncedAt = async (): Promise<number | null> => {
-  // Runs on startup: read the single newest row off the `when` index instead
-  // of loading the whole sync history to reduce it.
   const last = await db.syncs.orderBy('when').last();
   return last?.when ?? null;
 };
@@ -179,14 +149,7 @@ const pruneSyncHistory = async (spaceId: string): Promise<void> => {
   if (stale.length > 0) await db.syncs.bulkDelete(stale);
 };
 
-// ---------------------------------------------------------------------------
-// Folder writes.
-// ---------------------------------------------------------------------------
-
 const spaceDirName = (space: Space): string =>
-  // Full space id (a unique primary key) guarantees a distinct subfolder per
-  // space, so two spaces with the same name can never overwrite each other. The
-  // slug is just a human-readable prefix; nanoid chars are filesystem-safe.
   `${slugify(space.name, 'space')}-${space.id}`;
 
 const isHistoryFilename = (name: string): boolean =>
@@ -207,15 +170,12 @@ const pruneFolderHistory = async (
   dir: FileSystemDirectoryHandle,
 ): Promise<void> => {
   const names: string[] = [];
-  // FileSystemDirectoryHandle is async-iterable over [name, handle] pairs, but
-  // lib.dom.d.ts does not yet type the iterator, so the cast is unavoidable.
   // nasa-exception: no-unsafe-type-assertion (FSAA async-iterable untyped in lib.dom)
   for await (const [name, entry] of dir as unknown as AsyncIterable<
     [string, FileSystemHandle]
   >) {
     if (entry.kind === 'file' && isHistoryFilename(name)) names.push(name);
   }
-  // History filenames are timestamp-prefixed, so lexical sort is chronological.
   const stale = names.sort().reverse().slice(MAX_SYNCS_PER_SPACE);
   for (const name of stale) {
     await dir.removeEntry(name).catch(() => {
@@ -233,8 +193,6 @@ const historyFilename = (when: number): string => {
   );
 };
 
-// Sync a single space: build the md-zip, write a timestamped history file plus
-// the rolling latest.zip, prune to MAX_SYNCS_PER_SPACE, and record the run.
 export const syncSpaceToFolder = async (
   handle: FileSystemDirectoryHandle,
   space: Space,
@@ -303,7 +261,6 @@ const toResult = (space: Space, entry: SyncEntry): SpaceSyncResult => ({
   error: entry.error,
 });
 
-// Manually sync one space. Throws if no folder is connected.
 export const syncOneSpace = async (
   spaceId: string,
   kind: SyncEntry['kind'] = 'manual',
@@ -319,7 +276,6 @@ export const syncOneSpace = async (
   return toResult(space, entry);
 };
 
-// Manually sync every space. Per-space failures are captured, not fatal.
 export const syncAllSpacesToFolder = async (
   handleArg?: FileSystemDirectoryHandle,
   kind: SyncEntry['kind'] = 'manual',

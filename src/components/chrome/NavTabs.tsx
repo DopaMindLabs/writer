@@ -14,7 +14,6 @@ interface NavTabsProps {
   groups: NavTabGroup[];
   active: string;
   onSelect: (id: string) => void;
-  /** Accessible name for the nav landmark. Defaults to the Settings wording. */
   label?: string;
 }
 
@@ -29,7 +28,6 @@ const TabButton = ({
   onSelect: (id: string) => void;
   testId?: string;
 }) => {
-  // @lint-ignore native-button: tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
   return (
     <button
       type="button"
@@ -55,7 +53,6 @@ export const NavTabs = ({ groups, active, onSelect, label = 'Settings sections' 
       aria-label={label}
       className="contents"
     >
-      {/* Mobile: a single horizontal scroll strip, groups flattened */}
       <ul
         data-testid="settings-tabs-mobile"
         className="flex overflow-x-auto border-b border-rule/60 bg-paper-2 md:hidden"
@@ -73,7 +70,6 @@ export const NavTabs = ({ groups, active, onSelect, label = 'Settings sections' 
           )),
         )}
       </ul>
-      {/* Desktop: grouped vertical sections (chrome owned by NavShell) */}
       <div
         data-testid="settings-tabs-desktop"
         className="hidden flex-1 overflow-auto pb-3 pt-1.5 md:-ml-px md:block"

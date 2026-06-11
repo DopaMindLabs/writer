@@ -4,9 +4,6 @@ import type { ReactNode } from 'react';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { LimitHighlightPlugin } from './LimitHighlightPlugin';
 
-// JSDOM has no layout, so client rects are empty here — the offset maths is
-// covered exhaustively in boundary.test.ts. This smoke test proves the plugin
-// mounts an overlay layer and tears down its listeners without throwing.
 const withComposer = (ui: ReactNode) => (
   <LexicalComposer
     initialConfig={{
@@ -33,8 +30,6 @@ describe('LimitHighlightPlugin', () => {
   });
 
   it('does not push the overlay behind the page with a negative z-index', () => {
-    // A negative z-index hid the highlight behind the write surface's paper
-    // background; the overlay must layer above the text instead.
     const { getByTestId } = render(
       withComposer(<LimitHighlightPlugin charLimit={5} />),
     );

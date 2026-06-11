@@ -10,11 +10,8 @@ export interface SettingsSection {
 
 interface SettingsSectionStackProps {
   sections: SettingsSection[];
-  /** Id of the section to scroll into view (the selected nav item). */
   scrollTarget: string;
-  /** Bumped on every nav click so re-selecting the same target re-scrolls. */
   scrollNonce: number;
-  /** Reports the section nearest the top as the user scrolls (scroll-spy). */
   onVisibleChange?: (id: string) => void;
 }
 
@@ -26,11 +23,7 @@ interface StackRefs {
   suppress: RefObject<boolean>;
 }
 
-// How long to ignore scroll-spy after a programmatic scroll, so the smooth
-// animation doesn't fight the active-section highlight.
 const SCROLL_SUPPRESS_MS = 600;
-// A section counts as "current" once its top passes this far below the
-// scroll container's top edge.
 const ACTIVATION_OFFSET_PX = 120;
 
 const findScroller = (el: HTMLElement | null): Element | null =>
@@ -55,7 +48,6 @@ const useScrollToTarget = (refs: StackRefs, target: string, nonce: number) => {
     const el = refs.map.current.get(target);
     if (!el || typeof el.scrollIntoView !== 'function') return;
     refs.suppress.current = true;
-    // Respect the motion preference: a reduced-motion user gets an instant jump.
     const behavior: ScrollBehavior = motionReduced() ? 'auto' : 'smooth';
     const raf = requestAnimationFrame(() => {
       el.scrollIntoView({ behavior, block: 'start' });

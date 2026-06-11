@@ -1,9 +1,6 @@
 import { test, expect } from './_helpers';
 import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
 
-// Long, theme-based journey: a writer drafts a manuscript end to end —
-// editing, renaming, adding a doc, cycling view modes, and confirming the work
-// survives a hard reload (local-drive / IndexedDB persistence).
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
 });
@@ -27,7 +24,6 @@ test.describe('Workflow: authoring a manuscript', () => {
       await editor.click();
       await page.keyboard.type('Intro paragraph from the authoring journey');
       await expect(editor).toContainText('Intro paragraph from the authoring journey');
-      // Autosave debounce is 600ms — wait long enough for it to flush to IndexedDB.
       await page.waitForTimeout(1000);
     });
 

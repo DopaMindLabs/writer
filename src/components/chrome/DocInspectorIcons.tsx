@@ -27,7 +27,6 @@ interface SectionIconProps {
 
 const SectionIcon = ({ id, Icon, active, onSelect }: SectionIconProps) => {
   const { t } = useTranslation('chrome');
-  // @lint-ignore native-button: icon tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
   return (
     <button
       data-testid={`doc-inspector-icons-${id}`}

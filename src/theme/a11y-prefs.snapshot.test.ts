@@ -1,13 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { applyA11yPrefs, DEFAULT_A11Y_PREFS } from './a11y-prefs';
 
-/**
- * Snapshots the `<html>` attribute state the accessibility preference layer
- * produces. The default snapshot proves no behaviour-changing `data-*` is
- * applied until the user opts in; each opt-in state is captured in its own
- * snapshot so additive states are tested without ever editing the default.
- */
-
 const A11Y_ATTRS = [
   'data-motion',
   'data-text-scale',

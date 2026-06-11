@@ -1,12 +1,6 @@
 import { test, expect } from './_helpers';
 import { reseedAndGoHome, stubDirectoryPicker } from './_helpers';
 
-// Long, theme-based journey: setting up a space and operating its data tools —
-// creating it from a template, renaming, editing general settings, running the
-// full backup lifecycle, driving the real push-only folder sync (PR #44), and
-// exporting. The folder-sync UI needs a stubbed directory picker (headless
-// Chromium has no real one); the method-free handle makes writes fail, which
-// exercises the sync results/history/error paths.
 test.beforeEach(async ({ page }) => {
   await stubDirectoryPicker(page);
   await reseedAndGoHome(page);
@@ -80,8 +74,6 @@ test.describe('Workflow: space setup, backup, and sync', () => {
 
       await page.getByRole('button', { name: /^30 min$/ }).click();
 
-      // The method-free stub handle makes every write fail, so the run still
-      // produces a results table and error history rows.
       await page.getByRole('button', { name: /sync all spaces/i }).click();
       await expect(page.getByTestId('sync-results')).toBeVisible();
       await expect(page.getByTestId('sync-history')).toBeVisible();

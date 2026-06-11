@@ -52,13 +52,13 @@ describe('createSpaceFromTemplate', () => {
     expect(space?.template).toBe('test-tpl');
 
     const sections = await db.sections.where('spaceId').equals(id).toArray();
-    expect(sections).toHaveLength(3); // Drafts + Ideas + Final
+    expect(sections).toHaveLength(3);
     const drafts = sections.find((s) => s.label === 'Drafts');
     const ideas = sections.find((s) => s.label === 'Ideas');
     expect(ideas?.parentSectionId).toBe(drafts?.id);
 
     const docs = await db.docs.where('spaceId').equals(id).toArray();
-    expect(docs).toHaveLength(3); // Skipped doc has unknown section
+    expect(docs).toHaveLength(3);
     expect(docs.some((d) => d.body === 'b')).toBe(true);
 
     const notes = await db.notes.where('spaceId').equals(id).toArray();

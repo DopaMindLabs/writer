@@ -9,7 +9,6 @@ export interface EditorProps {
   placeholder?: string;
   autoFocus?: boolean;
   locked?: boolean;
-  /** Active word/character limits (already resolved) for the over-limit highlight. */
   wordLimit?: number;
   charLimit?: number;
 }

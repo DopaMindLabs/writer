@@ -8,7 +8,6 @@ import {
   getWritePermissionState,
 } from '@/lib/sync/folderSync';
 
-// The global default auto-sync interval (minutes; 0 = off).
 export const useDefaultInterval = (): number =>
   useLiveQuery(async () => {
     const row = await db.syncConfigs.get('global');
@@ -16,9 +15,7 @@ export const useDefaultInterval = (): number =>
   }, []) ?? DEFAULT_INTERVAL_MIN;
 
 export interface SpaceIntervalState {
-  /** The space's own setting: INHERIT_INTERVAL when inheriting the default. */
   own: number;
-  /** The interval actually in effect (after resolving inheritance). */
   effective: number;
 }
 
@@ -46,19 +43,11 @@ export const useSpaceInterval = (
   ) ?? { own: INHERIT_INTERVAL, effective: DEFAULT_INTERVAL_MIN };
 
 export interface FolderPermissionState {
-  /** Permission is usable right now (granted, or no permission API). */
   granted: boolean;
-  /** A folder is connected but the browser needs permission again this session. */
   lapsed: boolean;
-  /** Re-query the live permission state. */
   refresh: () => void;
 }
 
-// Tracks the connected folder's write permission. Browsers only grant file
-// access in response to a user gesture, so after a reload permission is
-// "prompt" until the user acts — the UI uses `lapsed` to nudge a reconnect.
-// Re-queries on mount, on window focus, on a short poll, and when the connected
-// folder (folderName) changes.
 export const useFolderPermission = (
   folderName: string | null,
 ): FolderPermissionState => {
@@ -90,7 +79,6 @@ export const useFolderPermission = (
   };
 };
 
-// Recent sync history. Pass a spaceId for one space, or omit for all spaces.
 export const useSyncHistory = (spaceId?: string | null): SyncEntry[] =>
   useLiveQuery(
     async () => {

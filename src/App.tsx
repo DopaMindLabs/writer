@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   createBrowserRouter,
@@ -9,12 +9,9 @@ import {
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SkipLink } from '@/components/ui/SkipLink';
 import { HelpPalette } from '@/components/help/HelpPalette';
+import { BootErrorScreen } from '@/components/chrome/BootErrorScreen';
 import { useGlobalShortcuts } from '@/hooks/useGlobalShortcuts';
-import {
-  TypographyLabel,
-  TypographyMuted,
-  TypographyP,
-} from '@/components/ui/typography';
+import { TypographyMuted } from '@/components/ui/typography';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { A11yPreferenceProvider } from '@/theme/A11yPreferenceProvider';
 import { SyncScheduler } from '@/lib/sync/SyncScheduler';
@@ -34,11 +31,6 @@ import { TemplatesScreen } from '@/screens/global/Templates';
 import { HelpScreen } from '@/screens/global/Help';
 import { NotFoundScreen } from '@/screens/global/NotFound';
 
-/**
- * Pathless layout route: mounts app-wide concerns once (global keyboard
- * shortcuts + the Quick Help overlay) with full router context, then renders
- * the matched screen via <Outlet />.
- */
 const RootLayout = () => {
   useGlobalShortcuts();
   return (
@@ -50,9 +42,6 @@ const RootLayout = () => {
   );
 };
 
-// Vercel serves the app from `/` and supports SPA rewrites, so a browser
-// router gives clean URLs there. GitHub Pages can't rewrite, so it keeps the
-// hash router. Driven by `VITE_ROUTER`, set in `vercel.json`.
 const createAppRouter =
   import.meta.env.VITE_ROUTER === 'browser'
     ? createBrowserRouter
@@ -84,11 +73,17 @@ const router = createAppRouter([
   },
 ]);
 
-/**
- * Run the one-time boot sequence (optional `?reseed=1` reset) and expose the
- * ready/error state. Extracted from <App /> so the component stays small.
- */
-const useAppBoot = (): { ready: boolean; error: Error | null } => {
+const isReseedParamEnabled = (): boolean =>
+  import.meta.env.DEV || import.meta.env.VITE_E2E === '1';
+
+const toError = (e: unknown): Error =>
+  e instanceof Error ? e : new Error(String(e));
+
+const useAppBoot = (): {
+  ready: boolean;
+  error: Error | null;
+  resetLocalData: () => void;
+} => {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -96,7 +91,7 @@ const useAppBoot = (): { ready: boolean; error: Error | null } => {
     let cancelled = false;
     const run = async () => {
       const url = new URL(window.location.href);
-      if (url.searchParams.has('reseed')) {
+      if (isReseedParamEnabled() && url.searchParams.has('reseed')) {
         await resetAndReseed();
         url.searchParams.delete('reseed');
         window.history.replaceState({}, '', url.pathname + url.search);
@@ -107,36 +102,36 @@ const useAppBoot = (): { ready: boolean; error: Error | null } => {
         if (!cancelled) setReady(true);
       })
       .catch((e: unknown) => {
-        if (!cancelled) setError(e instanceof Error ? e : new Error(String(e)));
+        if (!cancelled) setError(toError(e));
       });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  return { ready, error };
+  const resetLocalData = useCallback(() => {
+    setReady(false);
+    setError(null);
+    resetAndReseed()
+      .then(() => {
+        setReady(true);
+      })
+      .catch((e: unknown) => {
+        setError(toError(e));
+      });
+  }, []);
+
+  return { ready, error, resetLocalData };
 };
 
 export const App = () => {
   const { t } = useTranslation('app');
-  const { ready, error } = useAppBoot();
+  const { ready, error, resetLocalData } = useAppBoot();
 
   if (error) {
     return (
       <ThemeProvider>
-        <div className="flex h-full items-center justify-center p-8 text-center">
-          <div>
-            <TypographyLabel variant="xs">{t('bootErrorLabel')}</TypographyLabel>
-            <TypographyP variant="empty" className="mt-2">
-              {error.message}
-            </TypographyP>
-            <TypographyMuted variant="xs" className="mt-2">
-              {t('bootErrorHintBefore')}
-              <code>{t('bootErrorHintCode')}</code>
-              {t('bootErrorHintAfter')}
-            </TypographyMuted>
-          </div>
-        </div>
+        <BootErrorScreen error={error} onReset={resetLocalData} />
       </ThemeProvider>
     );
   }

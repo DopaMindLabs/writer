@@ -82,7 +82,6 @@ describe('AccessibilityTab', () => {
     expect(useA11y.getState().lineSpacing).toBe('normal');
     expect(useA11y.getState().linkUnderline).toBe('auto');
     expect(useA11y.getState().focusRing).toBe('standard');
-    // The theme preference is intentionally left untouched.
     expect(useUI.getState().theme).toBe('dark');
   });
 });

@@ -5,8 +5,6 @@ const MINUTE_MS = 60_000;
 const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
 
-// Human-readable, i18n-backed age for a revision relative to `now`. Falls back
-// through minute/hour/day buckets, mirroring the Sidebar/backup conventions.
 export const formatRevisionAge = (
   createdAt: number,
   t: TFunction,
@@ -25,6 +23,5 @@ export const formatRevisionAge = (
   return t('inspector.history.ageDays', { count: Math.floor(diff / DAY_MS) });
 };
 
-// Secondary line for a revision: its user label if present, otherwise its kind.
 export const formatRevisionSubtitle = (rev: Revision, t: TFunction): string =>
   rev.label ?? t(`inspector.history.kind.${rev.kind}`);

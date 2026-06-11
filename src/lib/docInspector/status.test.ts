@@ -37,7 +37,7 @@ describe('isDocStatus', () => {
   });
 
   it('rejects unknown or non-string values', () => {
-    expect(isDocStatus('Draft')).toBe(false); // legacy capitalised
+    expect(isDocStatus('Draft')).toBe(false);
     expect(isDocStatus('done')).toBe(false);
     expect(isDocStatus(undefined)).toBe(false);
     expect(isDocStatus(3)).toBe(false);
@@ -63,7 +63,6 @@ describe('isLockedStatus', () => {
     expect(isLockedStatus('draft')).toBe(false);
     expect(isLockedStatus('in-progress')).toBe(false);
     expect(isLockedStatus('in-review')).toBe(false);
-    // legacy value resolves to draft → unlocked
     expect(isLockedStatus('Draft')).toBe(false);
   });
 

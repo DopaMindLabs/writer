@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Erreur de démarrage",
-  "bootErrorHintBefore": "Essaie ",
-  "bootErrorHintAfter": " pour réinitialiser la base de données locale.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Si cela se reproduit, tu peux effacer les données locales de l'app et repartir de zéro.",
+  "bootErrorResetAction": "Réinitialiser les données locales…",
+  "bootErrorResetTitle": "Effacer toutes les données locales ?",
+  "bootErrorResetBody": "Cela supprime définitivement tout ce que l'app a enregistré dans ce navigateur — documents, notes, citations et sauvegardes. Cette action est irréversible.",
+  "bootErrorResetConfirm": "Tout effacer",
+  "bootErrorResetCancel": "Annuler",
   "booting": "Démarrage…"
 }

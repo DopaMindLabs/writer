@@ -56,7 +56,6 @@ describe('useSync hooks', () => {
       window.dispatchEvent(new Event('focus'));
       await Promise.resolve();
     });
-    // No folder connected, so focus re-query keeps it non-lapsed.
     expect(result.current.lapsed).toBe(false);
   });
 
@@ -92,7 +91,6 @@ describe('useSync hooks', () => {
     });
     const { result } = renderHook(() => useSyncFolder());
     await waitFor(() => { expect(result.current.lastSyncedAt).toBe(1234); });
-    // jsdom has no showDirectoryPicker.
     expect(result.current.supported).toBe(false);
     expect(result.current.folderName).toBeNull();
   });

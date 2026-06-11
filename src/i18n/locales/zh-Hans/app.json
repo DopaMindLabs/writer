@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "启动错误",
-  "bootErrorHintBefore": "试试 ",
-  "bootErrorHintAfter": " 来重置本地数据库。",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "如果此问题反复出现，你可以清除应用的本地数据并重新开始。",
+  "bootErrorResetAction": "重置本地数据…",
+  "bootErrorResetTitle": "清除所有本地数据？",
+  "bootErrorResetBody": "这将永久删除应用在此浏览器中保存的所有内容——文档、笔记、引用和备份。此操作无法撤销。",
+  "bootErrorResetConfirm": "全部清除",
+  "bootErrorResetCancel": "取消",
   "booting": "启动中…"
 }

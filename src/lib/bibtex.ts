@@ -84,9 +84,6 @@ export const parseBibtexText = (
       year: numberField(fields.year ?? fields.date) ?? 0,
       type: mapType(entry.type),
       useCount: 0,
-      // `raw` is intentionally omitted: the parser exposes no per-entry source,
-      // and storing a slice of the whole file on every row duplicated up to 10KB
-      // per citation for no benefit.
     });
   }
   return Promise.resolve(out);
@@ -108,8 +105,6 @@ export const importCitations = async (
   let added = 0;
   let skipped = 0;
   await db.transaction('rw', db.citations, async () => {
-    // Group by space so each space's existing keys are checked in one indexed
-    // batch query instead of one lookup per incoming citation.
     const bySpace = new Map<string, Citation[]>();
     for (const c of citations) {
       const list = bySpace.get(c.spaceId);
@@ -124,9 +119,6 @@ export const importCitations = async (
         .where('[spaceId+key]')
         .anyOf(pairs)
         .toArray();
-      // Keys are unique within a space, so a per-space set of keys covers both
-      // rows already in the DB and keys repeated earlier in this same import —
-      // a file with duplicate keys yields a single row.
       const seen = new Set(existingRows.map((r) => r.key));
       for (const c of group) {
         if (seen.has(c.key)) {

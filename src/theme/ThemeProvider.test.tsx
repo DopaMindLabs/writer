@@ -122,7 +122,6 @@ describe('ThemeProvider', () => {
         <div />
       </ThemeProvider>,
     );
-    // No contrast preference → no detected theme → stays at initial 'light'
     expect(useUI.getState().theme).toBe('light');
     matchSpy.mockRestore();
   });

@@ -45,7 +45,6 @@ describe('SpaceRail', () => {
       await screen.findByRole('button', { name: /LIpsum Writer/i }),
     );
     expect(await screen.findByTestId('quick-settings-popover')).toBeInTheDocument();
-    // Theme chips, focus toggle, floating toolbar toggle, and the full-settings escape are present.
     expect(screen.getByText(/^quick settings$/i)).toBeInTheDocument();
     expect(screen.getByText(/^theme$/i)).toBeInTheDocument();
     expect(

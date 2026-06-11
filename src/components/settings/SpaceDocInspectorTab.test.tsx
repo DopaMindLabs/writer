@@ -28,7 +28,6 @@ describe('SpaceDocInspectorTab', () => {
 
   it('persists a per-space override', async () => {
     render(<SpaceDocInspectorTab space={space} />);
-    // Rows are ordered status, wordLimit, …; the first Off chip is the status row.
     const offChips = screen.getAllByTestId('inspector-toggle-off');
     await userEvent.click(offChips[0]);
     await waitFor(async () => {

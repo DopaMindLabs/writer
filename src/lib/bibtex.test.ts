@@ -255,7 +255,6 @@ describe('importCitations', () => {
     const a = await parseBibtexText('@article{k, author = {A}, title = {T}, year = {2020}}', 's1');
     const b = await parseBibtexText('@article{k, author = {A}, title = {T}, year = {2020}}', 's2');
     const res = await importCitations([...a, ...b]);
-    // Same key in two different spaces are two distinct citations.
     expect(res.added).toBe(2);
     expect(res.skipped).toBe(0);
     expect(await db.citations.count()).toBe(2);

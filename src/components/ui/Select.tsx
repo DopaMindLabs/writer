@@ -35,7 +35,6 @@ export interface SelectProps
     Omit<SelectRecipeVariants, 'tone'> {
   options: readonly SelectOption[];
   error?: boolean;
-  /** Hide the trailing chevron (only meaningful for variant="bare"). */
   hideChevron?: boolean;
 }
 

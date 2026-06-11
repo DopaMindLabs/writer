@@ -50,7 +50,6 @@ describe('useDebouncedValue', () => {
     act(() => {
       vi.advanceTimersByTime(150);
     });
-    // Neither intermediate value was ever adopted.
     expect(result.current).toBe('a');
 
     act(() => {

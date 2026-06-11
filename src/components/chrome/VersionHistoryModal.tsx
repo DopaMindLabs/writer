@@ -41,8 +41,6 @@ export const VersionHistoryModal = ({ doc }: VersionHistoryModalProps) => {
   const compare = useUI((s) => s.compareRevisionIds);
   const setCompare = useUI((s) => s.setCompareRevisionIds);
 
-  // Default the comparison to the newest revision whenever the list changes
-  // and nothing valid is selected.
   useEffect(() => {
     if (!open) return;
     const stillValid = revisions.some((r) => r.id === compare.base);

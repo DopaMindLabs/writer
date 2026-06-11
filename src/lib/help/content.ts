@@ -1,11 +1,5 @@
 import { invariant } from '@/lib/invariant';
 
-/**
- * Loads localized Help article bodies from `src/help/content/<locale>/<slug>.md`.
- * The first level-1 heading (`# …`) is the article title; the remaining markdown
- * is the body. Missing translations fall back to English.
- */
-
 export const FALLBACK_LOCALE = 'en';
 
 export interface HelpHeading {
@@ -27,7 +21,6 @@ const rawModules = import.meta.glob('../../help/content/*/*.md', {
   eager: true,
 });
 
-/** locale -> slug -> raw markdown */
 const byLocale = ((): Map<string, Map<string, string>> => {
   const out = new Map<string, Map<string, string>>();
   for (const [key, raw] of Object.entries(rawModules)) {
@@ -41,7 +34,6 @@ const byLocale = ((): Map<string, Map<string, string>> => {
   return out;
 })();
 
-/** Turns heading text into a stable, URL-safe anchor id. */
 export const slugify = (text: string): string =>
   text
     .toLowerCase()
@@ -75,7 +67,6 @@ const parse = (slug: string, raw: string): HelpDoc => {
 const resolveRaw = (slug: string, locale: string): string | undefined =>
   byLocale.get(locale)?.get(slug) ?? byLocale.get(FALLBACK_LOCALE)?.get(slug);
 
-/** Returns the parsed article for the active locale, or undefined if unknown. */
 export const getHelpDoc = (
   slug: string,
   locale: string = FALLBACK_LOCALE,
@@ -85,10 +76,8 @@ export const getHelpDoc = (
   return parse(slug, raw);
 };
 
-/** True when an article body exists in any locale (English fallback counts). */
 export const hasHelpDoc = (slug: string): boolean =>
   byLocale.get(FALLBACK_LOCALE)?.has(slug) ?? false;
 
-/** Every slug that has at least an English body, for sync/coverage checks. */
 export const listHelpDocSlugs = (): readonly string[] =>
   Array.from(byLocale.get(FALLBACK_LOCALE)?.keys() ?? []);

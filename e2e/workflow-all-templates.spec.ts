@@ -1,13 +1,6 @@
 import { test, expect } from './_helpers';
 import { reseedAndGoHome, createSpaceFromTemplate } from './_helpers';
 
-// Long, theme-based journey across every *creatable* template: each one creates
-// a usable space whose drafted content persists to the local drive (IndexedDB)
-// across a hard reload. One scenario per template keeps failures isolated.
-//
-// Covers every template the picker offers (those with `enabled: true` in
-// src/data/templates/*). `bioinformatics` and `six` are `enabled: false` — they
-// have no picker card and cannot be created through the UI, so they are omitted.
 const TEMPLATE_IDS = [
   'blank',
   'fiction',
@@ -36,7 +29,6 @@ test.describe('Workflow: every template drafts and persists', () => {
         await editor.click();
         await page.keyboard.type(probe);
         await expect(editor).toContainText(probe);
-        // Autosave debounce is 600ms — wait long enough for it to flush to IndexedDB.
         await page.waitForTimeout(1000);
       });
 

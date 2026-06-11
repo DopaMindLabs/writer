@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Käivitamise viga",
-  "bootErrorHintBefore": "Proovi ",
-  "bootErrorHintAfter": " kohaliku andmebaasi lähtestamiseks.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Kui see kordub, võid kustutada rakenduse kohalikud andmed ja alustada otsast peale.",
+  "bootErrorResetAction": "Lähtesta kohalikud andmed…",
+  "bootErrorResetTitle": "Kas kustutada kõik kohalikud andmed?",
+  "bootErrorResetBody": "See kustutab jäädavalt kõik, mille rakendus on sellesse brauserisse salvestanud — dokumendid, märkmed, viited ja varukoopiad. Seda ei saa tagasi võtta.",
+  "bootErrorResetConfirm": "Kustuta kõik",
+  "bootErrorResetCancel": "Tühista",
   "booting": "Käivitub…"
 }

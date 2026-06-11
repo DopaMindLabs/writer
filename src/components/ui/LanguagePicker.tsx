@@ -5,13 +5,6 @@ import { supportedLngs } from '@/i18n/resources';
 import { Select, type SelectOption } from '@/components/ui/Select';
 import { cn } from '@/lib/utils';
 
-/**
- * Render each option as `Native (English)` — e.g. `Español (Spanish)`,
- * `日本語 (Japanese)`. The label is derived only from the locale code, so it
- * does not change with the active UI language. This means a user who picks the
- * wrong locale can still recognise and revert to their preferred one without
- * needing to read the now-foreign chrome.
- */
 const getOptionLabel = (code: string): string => {
   try {
     const nativeFmt = new Intl.DisplayNames([code], { type: 'language' });
@@ -26,7 +19,6 @@ const getOptionLabel = (code: string): string => {
   }
 };
 
-/** Computed once at module load — labels never change with i18n.language. */
 const LANGUAGE_OPTIONS: readonly SelectOption[] = (
   supportedLngs as readonly string[]
 ).map((code) => ({

@@ -1,7 +1,6 @@
 import { formatDocName } from './doc-naming';
 
 describe('formatDocName', () => {
-  // 2024-01-08T14:30:00Z is a Monday.
   const fixed = new Date('2024-01-08T14:30:00Z');
 
   it('replaces {{date}} with YYYY-MM-DD', () => {

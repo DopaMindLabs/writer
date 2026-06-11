@@ -38,6 +38,15 @@ your current library.
 Storage is local, so **regular backups are essential**. Export before clearing
 browser data, switching devices, or trying something new.
 
+## If the app fails to start
+
+If the app can't open its local database, it shows a boot error screen. From
+there you can choose **Reset local data**, which — after an explicit
+confirmation — erases everything the app has stored in this browser and starts
+afresh with the demo content. This permanently deletes your documents, notes,
+citations and in-app backups, so treat it as a last resort and keep exports
+somewhere safe.
+
 > This is an evolving alpha app. Treat your exports as the source of
 > truth and back up often.
 

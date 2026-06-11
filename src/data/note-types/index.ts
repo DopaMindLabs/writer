@@ -29,12 +29,10 @@ export const getNoteType = (kind: NoteKind): NoteTypeDescriptor => REGISTRY[kind
 export const listNoteTypes = (): NoteTypeDescriptor[] =>
   Object.values(REGISTRY).sort(compareForToolbar);
 
-/** Resolve a note's effective layout: explicit override, else the kind default. */
 export const resolveNoteLayout = (
   note: Pick<Note, 'kind' | 'layout'>,
 ): NoteLayout => note.layout ?? REGISTRY[note.kind].layout;
 
-/** Resolve a note's layout capabilities. */
 export const getNoteLayoutConfig = (
   note: Pick<Note, 'kind' | 'layout'>,
 ): NoteLayoutConfig => NOTE_LAYOUT_CONFIG[resolveNoteLayout(note)];

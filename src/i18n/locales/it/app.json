@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Errore di avvio",
-  "bootErrorHintBefore": "Prova ",
-  "bootErrorHintAfter": " per reimpostare il database locale.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Se il problema persiste, puoi cancellare i dati locali dell’app e ricominciare da capo.",
+  "bootErrorResetAction": "Reimposta i dati locali…",
+  "bootErrorResetTitle": "Cancellare tutti i dati locali?",
+  "bootErrorResetBody": "Questa operazione elimina definitivamente tutto ciò che l’app ha salvato in questo browser: documenti, note, citazioni e backup. Non può essere annullata.",
+  "bootErrorResetConfirm": "Cancella tutto",
+  "bootErrorResetCancel": "Annulla",
   "booting": "Avvio…"
 }

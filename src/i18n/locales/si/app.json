@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "ආරම්භක දෝෂය",
-  "bootErrorHintBefore": "පෙදෙසීය දත්ත සමුදාය යළි පිහිටුවීමට ",
-  "bootErrorHintAfter": " උත්සාහ කරන්න.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "මෙය දිගටම සිදුවන්නේ නම්, යෙදුමේ දේශීය දත්ත මකා අලුතින් ආරම්භ කළ හැකිය.",
+  "bootErrorResetAction": "දේශීය දත්ත යළි පිහිටුවන්න…",
+  "bootErrorResetTitle": "සියලු දේශීය දත්ත මකන්නද?",
+  "bootErrorResetBody": "මෙය මෙම බ්‍රව්සරයේ යෙදුම ගබඩා කළ සියල්ල — ලේඛන, සටහන්, උපුටා දැක්වීම් සහ උපස්ථ — ස්ථිරවම මකා දමයි. මෙය අහෝසි කළ නොහැක.",
+  "bootErrorResetConfirm": "සියල්ල මකන්න",
+  "bootErrorResetCancel": "අවලංගු",
   "booting": "ආරම්භ වෙමින්…"
 }

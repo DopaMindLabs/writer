@@ -16,8 +16,6 @@ const eyebrowRecipe = cva(
         ink2: 'text-ink-2',
         ink3: 'text-ink-3',
         ink4: 'text-ink-4',
-        // Inverted: for eyebrows sitting on an ink-filled ground (e.g. a "NOW"
-        // badge). Pair with a `bg-ink` wrapper.
         paper: 'text-paper',
       },
     },
@@ -28,8 +26,6 @@ const eyebrowRecipe = cva(
 export interface EyebrowProps
   extends HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof eyebrowRecipe> {
-  /** Render through Radix Slot so the eyebrow style lands on the child element
-   * (e.g. a <th> or <td>) instead of a wrapper div. */
   asChild?: boolean;
 }
 

@@ -20,8 +20,6 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-// Mirrors how BrainSpaceCanvas feeds attachments: a single space-wide live
-// query, sliced per note. Keeps upload/remove reactivity in these unit tests.
 const NoteHarness = ({
   note,
   selected,
@@ -250,7 +248,6 @@ describe('BrainSpaceNote', () => {
       const user = userEvent.setup();
       renderNote();
       expect(useUI.getState().detailNoteId).toBeNull();
-      // clicking the body enters edit mode, but should not open the drawer
       await user.click(screen.getByTestId(`brain-note-${sampleNote.id}-body`));
       expect(useUI.getState().detailNoteId).toBeNull();
     });
@@ -297,7 +294,6 @@ describe('BrainSpaceNote', () => {
       );
       await screen.findByTestId('brain-note-context-menu-delete');
       fireEvent.keyDown(document, { key: 'a' });
-      // Menu is still open
       expect(
         screen.queryByTestId('brain-note-context-menu-delete'),
       ).toBeInTheDocument();
@@ -312,8 +308,6 @@ describe('BrainSpaceNote', () => {
       const menuItem = await screen.findByTestId(
         'brain-note-context-menu-delete',
       );
-      // Pointerdown on a descendant of the menu (with the data attribute)
-      // should NOT close the menu (the listener returns early).
       fireEvent.pointerDown(menuItem);
       expect(
         screen.queryByTestId('brain-note-context-menu-delete'),
@@ -327,7 +321,6 @@ describe('BrainSpaceNote', () => {
         screen.getByTestId(`brain-note-${sampleNote.id}-body`),
       );
       await screen.findByTestId('brain-note-context-menu-delete');
-      // simulate a pointerdown on document outside the menu
       fireEvent.pointerDown(document.body);
       await waitFor(() => {
         expect(
@@ -378,9 +371,7 @@ describe('BrainSpaceNote', () => {
       await db.notes.put(seedPrompt);
       renderNote(seedPrompt);
       const body = screen.getByTestId(`brain-note-${seedPrompt.id}-body`);
-      // The placeholder text "(click to write)" should NOT be shown for seed prompts
       expect(body).not.toHaveTextContent('(click to write)');
-      // The body wrapper still applies italic styling for seed prompts
       expect(body.className).toMatch(/italic/);
     });
 
@@ -403,7 +394,6 @@ describe('BrainSpaceNote', () => {
       await db.notes.put(sampleNote);
       renderNote();
       const surface = screen.getByTestId(`brain-note-${sampleNote.id}`);
-      // pointerdown at (100, 100), move to (-500, -500), up
       fireEvent.pointerDown(surface, {
         button: 0,
         pointerId: 1,
@@ -422,7 +412,6 @@ describe('BrainSpaceNote', () => {
       });
       await waitFor(async () => {
         const fresh = await db.notes.get(sampleNote.id);
-        // origL=24 + dx=-600 clamped to 0; origT=24 + dy=-600 clamped to 0
         expect(fresh?.l).toBe(0);
         expect(fresh?.t).toBe(0);
       });
@@ -434,7 +423,6 @@ describe('BrainSpaceNote', () => {
       const handle = screen.getByTestId(
         `brain-note-${sampleNote.id}-resize-handle`,
       );
-      // grow well beyond MAX_W=480 / MAX_H=360 → clamped to max
       fireEvent.pointerDown(handle, {
         button: 0,
         pointerId: 1,
@@ -464,7 +452,6 @@ describe('BrainSpaceNote', () => {
       const handle = screen.getByTestId(
         `brain-note-${sampleNote.id}-resize-handle`,
       );
-      // shrink well below MIN_W=120 / MIN_H=60 → clamped to min
       fireEvent.pointerDown(handle, {
         button: 0,
         pointerId: 1,
@@ -533,7 +520,6 @@ describe('BrainSpaceNote', () => {
         clientY: 200,
       });
       expect(onPick).toHaveBeenCalled();
-      // no DB write because shift-click skipped the drag state
       expect(updateSpy).not.toHaveBeenCalled();
       updateSpy.mockRestore();
     });
@@ -548,8 +534,6 @@ describe('BrainSpaceNote', () => {
         clientX: 0,
         clientY: 0,
       });
-      // unrelated pointer's move event arrives — should be ignored, then a
-      // matching up event should still commit (with no movement so far).
       fireEvent.pointerMove(surface, {
         pointerId: 99,
         clientX: 200,
@@ -562,7 +546,6 @@ describe('BrainSpaceNote', () => {
       });
       await waitFor(async () => {
         const fresh = await db.notes.get(sampleNote.id);
-        // no movement from the wrong-id pointermove
         expect(fresh?.l).toBe(sampleNote.l);
         expect(fresh?.t).toBe(sampleNote.t);
       });
@@ -579,7 +562,6 @@ describe('BrainSpaceNote', () => {
         clientX: 0,
         clientY: 0,
       });
-      // wrong-id up — should not commit
       fireEvent.pointerUp(surface, { pointerId: 99 });
       expect(updateSpy).not.toHaveBeenCalled();
       updateSpy.mockRestore();
@@ -588,7 +570,6 @@ describe('BrainSpaceNote', () => {
     it('should not start a drag when pointerdown originates from a [data-no-drag] descendant', async () => {
       await db.notes.put(sampleNote);
       renderNote();
-      // the Open-details button is data-no-drag
       const updateSpy = vi.spyOn(db.notes, 'update');
       const button = screen.getByTestId(
         `brain-note-${sampleNote.id}-open-details`,
@@ -628,7 +609,6 @@ describe('BrainSpaceNote', () => {
     };
 
     it('renders images from the attachments prop without its own query', async () => {
-      // The canvas owns the query; the card just renders what it is given.
       renderAtRoute(
         <BrainSpaceNote
           note={sampleNote}

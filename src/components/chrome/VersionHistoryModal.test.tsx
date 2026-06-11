@@ -60,11 +60,9 @@ describe('VersionHistoryModal', () => {
     await waitFor(() => {
       expect(screen.getByTestId('version-modal-item-rev1')).toBeInTheDocument();
     });
-    // Default selection is the newest revision; the diff view should render.
     await waitFor(() => {
       expect(screen.getByTestId('diff-view')).toBeInTheDocument();
     });
-    // "slow" was removed, "quick" added between the revision and current text.
     expect(screen.getByTestId('diff-view')).toHaveTextContent(/quick/);
   });
 
@@ -104,14 +102,12 @@ describe('VersionHistoryModal', () => {
     renderWithProviders(<VersionHistoryModal doc={doc} />);
 
     await userEvent.click(await screen.findByTestId('modal-restore'));
-    // A DS confirm dialog appears instead of window.confirm.
     await userEvent.click(await screen.findByTestId('confirm-dialog-confirm'));
 
     await waitFor(async () => {
       const updated = await db.docs.get(doc.id);
       expect(updated?.body).toBe(serializedBody('old text'));
     });
-    // The pre-restore safety snapshot was captured.
     const rows = await db.revisions.where('docId').equals(doc.id).toArray();
     expect(rows.some((r) => r.label === 'pre-restore')).toBe(true);
   });

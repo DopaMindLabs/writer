@@ -2,8 +2,6 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db/db';
 import type { Revision } from '@/db/schema';
 
-// Live per-document revision list, newest first. Returns [] for a null/empty
-// docId so callers can render before a document is selected.
 export const useRevisions = (
   docId: string | null | undefined,
 ): Revision[] => {

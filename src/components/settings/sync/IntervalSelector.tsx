@@ -6,7 +6,6 @@ import { intervalLabel } from './syncFormat';
 interface IntervalSelectorProps {
   value: number;
   onChange: (value: number) => void;
-  /** When set, prepends a "Default (…)" chip mapped to INHERIT_INTERVAL. */
   inheritLabel?: string;
   ariaLabel?: string;
 }

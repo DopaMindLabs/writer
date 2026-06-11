@@ -33,13 +33,10 @@ describe('BrainSpaceScreen', () => {
       path: '/s/:spaceId/dump',
       initialEntries: ['/s/s1/dump?focus=1'],
     });
-    // FocusRail is identified by its compact-dot styling; the regular
-    // SpaceRail would render the full label.
     expect(container.querySelector('aside')).toBeInTheDocument();
   });
 
   it('uses the previously-current doc as the fallback when it still exists', async () => {
-    // Pre-set the persisted "current doc" so fallbackDocId resolves to it.
     await db.spaces.put(sampleSpace);
     await db.docs.put(sampleDoc);
     useUI.getState().setCurrentDocId(sampleDoc.id);
@@ -47,8 +44,6 @@ describe('BrainSpaceScreen', () => {
       path: '/s/:spaceId/dump',
       initialEntries: ['/s/s1/dump'],
     });
-    // Just assert the screen renders successfully; the fallbackDocId useMemo
-    // executes during render (covers the lastDocId-matched branch).
     await waitFor(() => { expect(container.querySelector('main')).not.toBeNull(); });
     useUI.getState().setCurrentDocId(null);
   });
@@ -56,7 +51,7 @@ describe('BrainSpaceScreen', () => {
   it('falls back to docs[0] when the persisted lastDocId no longer exists', async () => {
     await db.spaces.put(sampleSpace);
     await db.docs.put(sampleDoc);
-    useUI.getState().setCurrentDocId('ghost-doc'); // doesn't exist in db
+    useUI.getState().setCurrentDocId('ghost-doc');
     const { container } = renderAtRoute(<BrainSpaceScreen />, {
       path: '/s/:spaceId/dump',
       initialEntries: ['/s/s1/dump'],

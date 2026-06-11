@@ -47,8 +47,6 @@ describe('useNoteAttachments', () => {
   });
 
   it('returns an empty list when no noteId is given', async () => {
-    // Seed an attachment to prove the empty result is the no-noteId short
-    // circuit, not just an empty table.
     await db.noteAttachments.put(makeAttachment({ id: 'x', noteId: 'n1' }));
     const { result } = renderHook(() => useNoteAttachments(null));
     await waitFor(() => {
@@ -75,7 +73,6 @@ describe('useNoteAttachmentsBySpace', () => {
       ]);
     });
     expect(result.current.get('n2')?.map((a) => a.id)).toEqual(['n2-only']);
-    // Attachments from other spaces are excluded.
     expect(result.current.has('n3')).toBe(false);
   });
 

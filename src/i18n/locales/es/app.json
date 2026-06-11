@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Error de arranque",
-  "bootErrorHintBefore": "Prueba ",
-  "bootErrorHintAfter": " para reiniciar la base de datos local.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Si esto sigue ocurriendo, puedes borrar los datos locales de la app y empezar de nuevo.",
+  "bootErrorResetAction": "Restablecer datos locales…",
+  "bootErrorResetTitle": "¿Borrar todos los datos locales?",
+  "bootErrorResetBody": "Esto elimina permanentemente todo lo que la app guarda en este navegador: documentos, notas, citas y copias de seguridad. No se puede deshacer.",
+  "bootErrorResetConfirm": "Borrar todo",
+  "bootErrorResetCancel": "Cancelar",
   "booting": "Arrancando…"
 }

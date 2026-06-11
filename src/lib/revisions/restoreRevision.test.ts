@@ -70,10 +70,6 @@ describe('restoreRevision', () => {
   });
 
   it('rejects a corrupt Lexical body instead of writing it over the doc', async () => {
-    // Looks like serialized Lexical JSON (has a root) but contains a node type
-    // the editor cannot parse — e.g. a row written under a different editor
-    // version, or corrupted in storage. Inserted directly because
-    // createRevision would refuse to snapshot it in the first place.
     const corrupt =
       '{"root":{"children":[{"type":"no-such-node","version":1}],' +
       '"direction":null,"format":"","indent":0,"type":"root","version":1}}';
@@ -91,7 +87,6 @@ describe('restoreRevision', () => {
       restoreRevision(sampleDoc.id, 'rev-corrupt'),
     ).rejects.toBeInstanceOf(InvariantError);
 
-    // The doc is untouched and no pre-restore snapshot was left behind.
     const doc = await db.docs.get(sampleDoc.id);
     expect(doc?.body).toBe(serializedBody('current body'));
     const snapshots = (

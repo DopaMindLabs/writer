@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Àṣìṣe Ìbẹ̀rẹ̀",
-  "bootErrorHintBefore": "Gbìyànjú ",
-  "bootErrorHintAfter": " láti tún ibi ìpamọ́ orílẹ̀ ṣe.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Tí èyí bá ń ṣẹlẹ̀ léraléra, o lè pa dátà orílẹ̀ àppù rẹ́ kí o sì bẹ̀rẹ̀ tuntun.",
+  "bootErrorResetAction": "Tún dátà orílẹ̀ ṣe…",
+  "bootErrorResetTitle": "Pa gbogbo dátà orílẹ̀ rẹ́?",
+  "bootErrorResetBody": "Èyí yóò pa gbogbo ohun tí àppù ti fi pamọ́ sínú aṣàwákiri yìí rẹ́ pátápátá — àwọn àkọsílẹ̀, àkíyèsí, ìtọ́kasí àti àfipamọ́. Kò ṣeé dá padà.",
+  "bootErrorResetConfirm": "Pa gbogbo rẹ̀ rẹ́",
+  "bootErrorResetCancel": "Fagilé",
   "booting": "Ń bẹ̀rẹ̀…"
 }
