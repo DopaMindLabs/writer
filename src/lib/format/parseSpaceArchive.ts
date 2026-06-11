@@ -78,7 +78,7 @@ const bindAttachmentBlobs = async (
   for (const { assetPath, ...record } of records) {
     const asset = zip.file(assetPath);
     invariant(asset, () => `Archive is missing attachment asset ${assetPath}`);
-    const data = await asset.async('uint8array');
+    const data = Uint8Array.from(await asset.async('uint8array'));
     out.push({ ...record, blob: new Blob([data], { type: record.mime }) });
   }
   return out;

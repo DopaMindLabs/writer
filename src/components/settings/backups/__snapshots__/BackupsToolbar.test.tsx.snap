@@ -14,18 +14,6 @@ exports[`BackupsToolbar > snapshot > should match the snapshot for idle and busy
       <div
         class="flex items-center gap-4 text-[12px]"
       >
-        <span
-          aria-disabled="true"
-          class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-4 inline-flex cursor-not-allowed items-center gap-2"
-        >
-          ↑ restore from file
-          <span
-            class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
-            data-testid="coming-soon-badge"
-          >
-            coming soon
-          </span>
-        </span>
         <button
           class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 bg-ink text-paper hover:bg-ink-2 h-7 px-3 text-xs"
           data-testid="space-settings-backups-snapshot"
@@ -46,18 +34,6 @@ exports[`BackupsToolbar > snapshot > should match the snapshot for idle and busy
       <div
         class="flex items-center gap-4 text-[12px]"
       >
-        <span
-          aria-disabled="true"
-          class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-4 inline-flex cursor-not-allowed items-center gap-2"
-        >
-          ↑ restore from file
-          <span
-            class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
-            data-testid="coming-soon-badge"
-          >
-            coming soon
-          </span>
-        </span>
         <button
           class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-sans font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 bg-ink text-paper hover:bg-ink-2 h-7 px-3 text-xs"
           data-testid="space-settings-backups-snapshot"

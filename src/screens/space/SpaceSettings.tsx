@@ -8,6 +8,7 @@ import { Trash2 } from '@/components/libs/icons';
 import { useSpace } from '@/hooks/useSpaces';
 import { useBackups } from '@/hooks/useBackups';
 import { useDeleteSpace } from '@/hooks/useDeleteSpace';
+import { useRestoreBackup } from '@/hooks/useRestoreBackup';
 import { db } from '@/db/db';
 import type { Backup, Space } from '@/db/schema';
 import { NavShell } from '@/components/chrome/NavShell';
@@ -34,6 +35,7 @@ import { SpaceTextSetting } from '@/components/settings/SpaceTextSetting';
 import { DeleteConfirmField } from '@/components/settings/DeleteConfirmField';
 import { BackupsToolbar } from '@/components/settings/backups/BackupsToolbar';
 import { BackupsHistoryTable } from '@/components/settings/backups/BackupsHistoryTable';
+import { RestoreBackupDialog } from '@/components/settings/backups/RestoreBackupDialog';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import {
   SpaceTemplatePlaceholder,
@@ -271,11 +273,45 @@ const ExportTab = () => {
   );
 };
 
+const BackupsStatus = ({
+  snapshotError,
+  restoreError,
+  restored,
+}: {
+  snapshotError: string | null;
+  restoreError: string | null;
+  restored: boolean;
+}) => {
+  const { t } = useTranslation('screens');
+  return (
+    <>
+      {snapshotError && (
+        <StatusGlyph kind="error" role="alert" className="mt-3">
+          {t('settings.space.backups.snapshotFailed', { message: snapshotError })}
+        </StatusGlyph>
+      )}
+      {restoreError && (
+        <StatusGlyph kind="error" role="alert" className="mt-3">
+          {t('settings.space.backups.restoreFailed', { message: restoreError })}
+        </StatusGlyph>
+      )}
+      <div role="status" aria-live="polite">
+        {restored && (
+          <StatusGlyph kind="success" className="mt-3">
+            {t('settings.space.backups.restored')}
+          </StatusGlyph>
+        )}
+      </div>
+    </>
+  );
+};
+
 const BackupsTab = ({ space }: { space: Space }) => {
   const { t } = useTranslation('screens');
   const backups = useBackups(space.id);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const restore = useRestoreBackup(space);
 
   const handleSnapshot = async () => {
     setBusy(true);
@@ -310,16 +346,24 @@ const BackupsTab = ({ space }: { space: Space }) => {
 
       <BackupsToolbar busy={busy} onSnapshot={() => void handleSnapshot()} />
 
-      {error && (
-        <StatusGlyph kind="error" role="alert" className="mt-3">
-          {t('settings.space.backups.snapshotFailed', { message: error })}
-        </StatusGlyph>
-      )}
+      <BackupsStatus
+        snapshotError={error}
+        restoreError={restore.error}
+        restored={restore.restored}
+      />
 
       <BackupsHistoryTable
         backups={backups}
         onDownload={handleDownload}
         onDelete={(b) => void handleDelete(b)}
+        onRestore={restore.request}
+      />
+
+      <RestoreBackupDialog
+        open={restore.pending !== null}
+        busy={restore.busy}
+        onOpenChange={restore.handleOpenChange}
+        onConfirm={() => void restore.handleConfirm()}
       />
     </section>
   );

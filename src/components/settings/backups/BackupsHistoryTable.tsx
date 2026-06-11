@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { Backup } from '@/db/schema';
+import { isRestorableBackup } from '@/hooks/useRestoreBackup';
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -9,6 +10,7 @@ interface BackupsHistoryTableProps {
   backups: Backup[];
   onDownload: (backup: Backup) => void;
   onDelete: (backup: Backup) => void;
+  onRestore?: (backup: Backup) => void;
 }
 
 const formatBytes = (bytes: number): string => {
@@ -37,9 +39,32 @@ interface BackupRowProps {
   backup: Backup;
   onDownload: (backup: Backup) => void;
   onDelete: (backup: Backup) => void;
+  onRestore?: (backup: Backup) => void;
 }
 
-const BackupRow = ({ backup, onDownload, onDelete }: BackupRowProps) => {
+const RestoreButton = ({ backup, onRestore }: Pick<BackupRowProps, 'backup' | 'onRestore'>) => {
+  const { t } = useTranslation('screens');
+  if (!onRestore) return null;
+  const restorable = isRestorableBackup(backup);
+  return (
+    <Button
+      data-testid={`backup-row-${backup.id}-restore`}
+      kind="ghost"
+      size="sm"
+      disabled={!restorable}
+      title={
+        restorable ? undefined : t('settings.space.backups.restoreUnavailable')
+      }
+      onClick={() => {
+        onRestore(backup);
+      }}
+    >
+      {t('settings.space.backups.restore')}
+    </Button>
+  );
+};
+
+const BackupRow = ({ backup, onDownload, onDelete, onRestore }: BackupRowProps) => {
   const { t } = useTranslation('screens');
   return (
     <tr data-testid={`backup-row-${backup.id}`} className="border-b border-rule">
@@ -54,6 +79,7 @@ const BackupRow = ({ backup, onDownload, onDelete }: BackupRowProps) => {
       </td>
       <td className="py-2.5 text-right">
         <div className="flex items-center justify-end gap-3 text-[12px]">
+          <RestoreButton backup={backup} onRestore={onRestore} />
           <Button
             data-testid={`backup-row-${backup.id}-download`}
             kind="ghost"
@@ -85,6 +111,7 @@ export const BackupsHistoryTable = ({
   backups,
   onDownload,
   onDelete,
+  onRestore,
 }: BackupsHistoryTableProps) => {
   const { t } = useTranslation('screens');
   return (
@@ -124,6 +151,7 @@ export const BackupsHistoryTable = ({
                 backup={b}
                 onDownload={onDownload}
                 onDelete={onDelete}
+                onRestore={onRestore}
               />
             ))}
           </tbody>

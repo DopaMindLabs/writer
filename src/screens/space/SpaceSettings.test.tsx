@@ -405,6 +405,89 @@ describe('SpaceSettingsScreen', () => {
     });
   });
 
+  describe('restore from backup', () => {
+    const snapshotThenEdit = async (user: ReturnType<typeof userEvent.setup>) => {
+      vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(
+        () => undefined,
+      );
+      renderAtSpaceSettings('/s/s1/settings?tab=backups');
+      await user.click(
+        await screen.findByTestId('space-settings-backups-snapshot'),
+      );
+      await waitFor(async () => {
+        expect(await db.backups.where('scope').equals('s1').count()).toBe(1);
+      });
+      await act(async () => {
+        await db.docs.update('d1', { name: 'Edited After Snapshot' });
+      });
+      const ids = await db.backups.where('scope').equals('s1').primaryKeys();
+      return ids[0];
+    };
+
+    it('should restore the snapshot after confirming, and store a pre-restore snapshot', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      const backupId = await snapshotThenEdit(user);
+
+      await user.click(screen.getByTestId(`backup-row-${backupId}-restore`));
+      await user.click(
+        await screen.findByTestId('restore-backup-dialog-confirm'),
+      );
+
+      await waitFor(async () => {
+        expect((await db.docs.get('d1'))?.name).toBe('Sample Doc');
+      });
+      expect(await screen.findByRole('status')).toHaveTextContent(
+        /snapshot restored/i,
+      );
+      const kinds = (
+        await db.backups.where('scope').equals('s1').toArray()
+      ).map((b) => b.kind);
+      expect(kinds).toContain('snapshot');
+    });
+
+    it('should leave the space untouched when the restore dialog is cancelled', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      const backupId = await snapshotThenEdit(user);
+
+      await user.click(screen.getByTestId(`backup-row-${backupId}-restore`));
+      await user.click(
+        await screen.findByTestId('restore-backup-dialog-cancel'),
+      );
+
+      expect((await db.docs.get('d1'))?.name).toBe('Edited After Snapshot');
+      expect(await db.backups.where('scope').equals('s1').count()).toBe(1);
+    });
+
+    it('should surface an error when the backup payload is corrupt', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      await db.backups.put({
+        id: 'b-corrupt',
+        when: FIXED_TIME,
+        scope: 's1',
+        kind: 'manual',
+        format: 'archive-v2',
+        size: 4,
+        payload: new Blob(['junk']),
+      });
+      renderAtSpaceSettings('/s/s1/settings?tab=backups');
+
+      await user.click(
+        await screen.findByTestId('backup-row-b-corrupt-restore'),
+      );
+      await user.click(
+        await screen.findByTestId('restore-backup-dialog-confirm'),
+      );
+
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        /restore failed/i,
+      );
+      expect((await db.docs.get('d1'))?.name).toBe('Sample Doc');
+    });
+  });
+
   describe('danger zone', () => {
     it('should render the danger tab with the delete trigger', async () => {
       await seedBasicSpace();

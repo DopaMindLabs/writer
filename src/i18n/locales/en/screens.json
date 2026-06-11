@@ -275,7 +275,15 @@
         "bundle": "LIpsum bundle (.zip)",
         "markdown": "Markdown folder",
         "obsidian": "Obsidian vault"
-      }
+      },
+      "importSpaceLabel": "Import a space",
+      "importSpaceHint": "Bring a space into this browser from a Writer archive (.zip) — a snapshot download or a folder-sync export from another device.",
+      "importChooseFile": "Choose archive…",
+      "importing": "importing…",
+      "importFailed": "Import failed: {{message}}",
+      "comingSoonLabel": "More formats",
+      "comingSoonHint": "Bulk export and import from Markdown folders or Obsidian vaults.",
+      "comingSoonTooltip": "Planned — not available yet."
     },
     "data": {
       "title": "Your data",
@@ -528,13 +536,11 @@
       },
       "backups": {
         "title": "Backups",
-        "subtitle": "Snapshot this space as a Markdown .zip you can download and keep.",
-        "comingSoonHint": "LaTeX, HTML, and PDF formats are coming. Restore from file lands with import.",
+        "subtitle": "Snapshot this space as a .zip you can download, keep, and restore from.",
         "retentionHint": "Keeping the {{count}} most recent snapshots — older ones are removed automatically.",
         "snapshotNow": "+ snapshot now",
         "snapshotting": "snapshotting…",
         "snapshotFailed": "Snapshot failed: {{message}}",
-        "restoreLabel": "↑ restore from file",
         "historyTitle": "History",
         "empty": "No snapshots yet — create one with + snapshot now.",
         "columns": {
@@ -552,7 +558,16 @@
         "delete": "delete",
         "deleteConfirm": "Delete this snapshot? This cannot be undone.",
         "deleted": "Snapshot deleted.",
-        "justNow": "just now"
+        "justNow": "just now",
+        "restore": "↺ restore",
+        "restoreUnavailable": "This snapshot predates restore support — it can only be downloaded.",
+        "restoreDialogTitle": "Restore this snapshot?",
+        "restoreDialogBody": "The current content of this space will be replaced with the snapshot. A snapshot of the current state is saved first, so you can undo this restore.",
+        "restoreConfirm": "Restore",
+        "restoreCancel": "Cancel",
+        "restoring": "restoring…",
+        "restored": "Snapshot restored.",
+        "restoreFailed": "Restore failed: {{message}}"
       },
       "sync": {
         "title": "Sync",

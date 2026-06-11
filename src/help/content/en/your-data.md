@@ -20,18 +20,30 @@ own device. Nothing is uploaded to a server, and the app works fully offline.
 ## Exporting
 
 Export your writing to take it with you or keep a safe copy. A whole space
-exports as a timestamped markdown zip; citations export as
+exports as a timestamped **space archive** (.zip); citations export as
 [BibTeX](citations-and-bibliography).
+
+A space archive contains two layers: a readable tree of markdown files you can
+open anywhere, and a complete machine-readable copy of every record — docs,
+notes, attachments, annotations, citations, connections, version history, and
+settings — so the archive can be faithfully restored or imported later.
 
 ## Importing
 
-Bring work in by importing a previous export. Importing merges the content into
-your current library.
+Bring a space into this browser from a space archive — for example a snapshot
+you downloaded, or a folder-sync export from another device. Go to
+**Settings → Export / import**, choose the archive file, and it is imported as
+a **new space** alongside your existing ones. Importing never overwrites
+anything; this is also the way to move a space between devices.
 
-## Backups & sync
+## Backups, restore & sync
 
 - Create **snapshots** from the space's backups area; each adds a row you can
-  download or delete.
+  download, restore, or delete.
+- **Restore** a snapshot to roll the whole space back to that moment. The
+  current state is saved as a fresh snapshot first, so a restore can itself be
+  undone. Snapshots created before restore support existed (markdown-only)
+  can only be downloaded.
 - Connect a **sync folder** to mirror a space to local storage, set the
   interval, and run a sync on demand.
 - The home screen shows a status chip: a warning while sync and backups are
