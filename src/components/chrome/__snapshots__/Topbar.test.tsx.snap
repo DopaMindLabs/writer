@@ -37,7 +37,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > cit
       </svg>
     </button>
     <div
-      class="flex items-center gap-1.5 font-serif text-[14px] text-ink-3"
+      class="flex min-w-0 items-center gap-1.5 font-serif text-[14px] text-ink-3"
     >
       <span
         class="hidden md:inline"
@@ -141,10 +141,10 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > foc
       </svg>
     </button>
     <div
-      class="flex items-center gap-1.5 font-serif text-[14px] text-ink-3"
+      class="flex min-w-0 items-center gap-1.5 font-serif text-[14px] text-ink-3"
     >
       <button
-        class="cursor-text font-medium text-ink hover:text-ink"
+        class="min-w-0 cursor-text truncate text-left font-medium text-ink hover:text-ink"
         data-testid="topbar-doc-name"
         title="Rename doc (double-click)"
         type="button"
@@ -404,7 +404,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > wri
       </svg>
     </button>
     <div
-      class="flex items-center gap-1.5 font-serif text-[14px] text-ink-3"
+      class="flex min-w-0 items-center gap-1.5 font-serif text-[14px] text-ink-3"
     >
       <span
         class="hidden md:inline"
@@ -417,7 +417,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > wri
         /
       </span>
       <button
-        class="cursor-text font-medium text-ink hover:text-ink"
+        class="min-w-0 cursor-text truncate text-left font-medium text-ink hover:text-ink"
         data-testid="topbar-doc-name"
         title="Rename doc (double-click)"
         type="button"

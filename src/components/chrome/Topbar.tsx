@@ -86,7 +86,7 @@ const EditableDocName = ({ docId, docName }: EditableDocNameProps) => {
       onDoubleClick={() => { if (docId) setEditingDoc(true); }}
       disabled={!docId}
       title={docId ? t('topbar.renameDoc') : undefined}
-      className="cursor-text font-medium text-ink hover:text-ink"
+      className="min-w-0 cursor-text truncate text-left font-medium text-ink hover:text-ink"
     >
       {docName}
     </button>
@@ -100,7 +100,7 @@ const DocBreadcrumb = ({
   focus,
 }: DocBreadcrumbProps) => {
   return (
-    <div className="flex items-center gap-1.5 font-serif text-[14px] text-ink-3">
+    <div className="flex min-w-0 items-center gap-1.5 font-serif text-[14px] text-ink-3">
       {!focus && <span className="hidden md:inline">{spaceName ?? '…'}</span>}
       {docName && (
         <>
