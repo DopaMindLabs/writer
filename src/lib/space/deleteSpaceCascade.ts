@@ -8,7 +8,9 @@ export const deleteSpaceCascade = async (spaceId: string): Promise<void> => {
       db.sections,
       db.docs,
       db.notes,
+      db.noteAttachments,
       db.annotations,
+      db.revisions,
       db.citations,
       db.connections,
       db.palettes,
@@ -20,9 +22,11 @@ export const deleteSpaceCascade = async (spaceId: string): Promise<void> => {
       const docIds = await db.docs.where({ spaceId }).primaryKeys();
       if (docIds.length > 0) {
         await db.annotations.where('docId').anyOf(docIds).delete();
+        await db.revisions.where('docId').anyOf(docIds).delete();
       }
       await db.docs.where({ spaceId }).delete();
       await db.sections.where({ spaceId }).delete();
+      await db.noteAttachments.where({ spaceId }).delete();
       await db.notes.where({ spaceId }).delete();
       await db.citations.where({ spaceId }).delete();
       await db.connections.where({ spaceId }).delete();
