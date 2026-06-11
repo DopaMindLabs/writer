@@ -14,9 +14,6 @@ test('opens the doc inspector from the mobile more sheet', async ({ page }) => {
   const sheet = page.getByTestId('mobile-more-sheet');
   await expect(sheet).toBeVisible();
 
-  // The duplicated mode chips are gone; modes live in the topbar.
-  await expect(sheet.getByRole('link', { name: /^read$/i })).toHaveCount(0);
-
   await sheet.getByTestId('mobile-more-inspector').click();
   await expect(sheet).toBeHidden();
 

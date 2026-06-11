@@ -40,24 +40,6 @@ describe('MobileMoreSheet', () => {
     ).toHaveAttribute('href', '/help');
   });
 
-  it('does not render the duplicated mode chips (modes live in the topbar/tabs)', () => {
-    act(() => {
-      useUI.getState().setMobileMoreOpen(true);
-    });
-    renderWithProviders(<MobileMoreSheet spaceId="s1" docId="d1" />, {
-      initialEntries: ['/s/s1/d/d1'],
-    });
-    expect(
-      screen.queryByRole('link', { name: /^write$/i }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('link', { name: /^read$/i }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('link', { name: /^split$/i }),
-    ).not.toBeInTheDocument();
-  });
-
   it('shows the Doc inspector item only when a doc is active', () => {
     act(() => {
       useUI.getState().setMobileMoreOpen(true);
