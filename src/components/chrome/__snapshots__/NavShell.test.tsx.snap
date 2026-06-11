@@ -26,7 +26,7 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
             data-state="closed"
             tabindex="0"
           >
-            0.5.0-alpha
+            0.0.0-test
           </span>
           <a
             class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
@@ -301,7 +301,7 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
             data-state="closed"
             tabindex="0"
           >
-            0.5.0-alpha
+            0.0.0-test
           </span>
           <a
             class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
