@@ -7,7 +7,7 @@
     "tagline": "A clutter-free space for long-form writing — fiction, research, essays, journals.",
     "continueWriting": "Continue writing",
     "startNewSpace": "Start a new space",
-    "statusLine": "alpha · local only · data can be lost",
+    "statusLine": "{{version}} · local only · data can be lost",
     "warningTitle": "Alpha build",
     "warningBody": "No data sync. Everything lives in your browser. If you clear your cache, your work will be lost",
     "versionLine": "Version {{version}}"
@@ -23,7 +23,7 @@
     "paragraph4Before": "One more thing... I believe in tech for good & I hate advertsing. So, this will always be advert free and FREE for non-commercial use. You can fork it modify it as you like under ",
     "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
     "statusLabel": "Status",
-    "statusValueStrong": "Alpha",
+    "statusValueStrong": "{{version}}",
     "statusValueRest": " — there is no data sync. All data is saved in IndexedDB in your local browser. If you clear your browser cache, your work will be lost.",
     "feedbackBefore": "I am still building this and I have alot ideas ",
     "feedbackAfter": ". I'd love to hear what works, what doesn't, and what you wish existed. Feedback is welcome.",

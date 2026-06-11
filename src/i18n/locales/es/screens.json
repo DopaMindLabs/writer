@@ -7,7 +7,7 @@
     "tagline": "Un espacio sin distracciones para escritura larga — ficción, investigación, ensayos, diarios.",
     "continueWriting": "Continuar escribiendo",
     "startNewSpace": "Empezar un nuevo espacio",
-    "statusLine": "alpha · solo local · los datos pueden perderse",
+    "statusLine": "{{version}} · solo local · los datos pueden perderse",
     "warningTitle": "Build alpha",
     "warningBody": "Sin sincronización de datos. Todo vive en tu navegador. Si borras la caché, perderás tu trabajo",
     "versionLine": "Versión {{version}}"
@@ -23,7 +23,7 @@
     "paragraph4Before": "Una cosa más… Creo en la tecnología para el bien y odio la publicidad. Por eso esto siempre estará libre de anuncios y será GRATIS para uso no comercial. Puedes hacer un fork y modificarlo como quieras bajo ",
     "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
     "statusLabel": "Estado",
-    "statusValueStrong": "Alpha",
+    "statusValueStrong": "{{version}}",
     "statusValueRest": " — no hay sincronización de datos. Todo se guarda en IndexedDB en tu navegador local. Si borras la caché del navegador, perderás tu trabajo.",
     "feedbackBefore": "Aún estoy construyendo esto y tengo un montón de ideas ",
     "feedbackAfter": ". Me encantaría saber qué te funciona, qué no, y qué te gustaría que existiera. Los comentarios son bienvenidos.",

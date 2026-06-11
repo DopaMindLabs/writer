@@ -7,7 +7,7 @@
     "tagline": "Ein aufgeräumter Raum für langes Schreiben — Fiktion, Forschung, Essays, Tagebücher.",
     "continueWriting": "Weiterschreiben",
     "startNewSpace": "Neuen Space starten",
-    "statusLine": "alpha · nur lokal · Daten können verloren gehen",
+    "statusLine": "{{version}} · nur lokal · Daten können verloren gehen",
     "warningTitle": "Alpha-Build",
     "warningBody": "Keine Datensynchronisation. Alles lebt in deinem Browser. Wenn du den Cache löschst, geht deine Arbeit verloren",
     "versionLine": "Version {{version}}"
@@ -23,7 +23,7 @@
     "paragraph4Before": "Noch eine Sache… Ich glaube an Tech for Good und ich hasse Werbung. Daher wird das immer werbefrei und KOSTENLOS für nicht-kommerzielle Nutzung sein. Du kannst es forken und ändern wie du willst unter ",
     "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
     "statusLabel": "Status",
-    "statusValueStrong": "Alpha",
+    "statusValueStrong": "{{version}}",
     "statusValueRest": " — es gibt keine Datensynchronisation. Alles wird in IndexedDB in deinem lokalen Browser gespeichert. Wenn du den Browser-Cache löschst, geht deine Arbeit verloren.",
     "feedbackBefore": "Ich baue das noch und habe viele Ideen ",
     "feedbackAfter": ". Ich höre gern, was funktioniert, was nicht, und was du gern hättest. Feedback ist willkommen.",

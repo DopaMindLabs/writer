@@ -7,6 +7,7 @@ import { TypographyH1, TypographyP } from '@/components/ui/typography';
 import { PageNav } from '@/components/chrome/PageNav';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { routes } from '@/lib/routes';
+import { APP_VERSION_LABEL } from '@/lib/version';
 import { useAutoTour } from '@/tours';
 
 export const HomeScreen = () => {
@@ -124,7 +125,7 @@ const HomeStatus = () => {
             tabIndex={0}
             className="cursor-help rounded-sm border border-info bg-info-bg px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-info"
           >
-            {t('home.statusLine')}
+            {t('home.statusLine', { version: APP_VERSION_LABEL })}
           </span>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-[220px]">

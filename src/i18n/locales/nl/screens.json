@@ -7,7 +7,7 @@
     "tagline": "Een opgeruimde plek voor lange teksten — fictie, onderzoek, essays, dagboeken.",
     "continueWriting": "Verder schrijven",
     "startNewSpace": "Nieuwe space starten",
-    "statusLine": "alpha · alleen lokaal · gegevens kunnen verloren gaan",
+    "statusLine": "{{version}} · alleen lokaal · gegevens kunnen verloren gaan",
     "warningTitle": "Alpha build",
     "warningBody": "Geen gegevenssynchronisatie. Alles leeft in je browser. Als je je cache wist, gaat je werk verloren",
     "versionLine": "Versie {{version}}"
@@ -23,7 +23,7 @@
     "paragraph4Before": "Nog één ding… Ik geloof in tech for good en ik haat reclame. Daarom blijft dit altijd reclamevrij en GRATIS voor niet-commercieel gebruik. Je kunt het forken en aanpassen zoals je wilt onder ",
     "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
     "statusLabel": "Status",
-    "statusValueStrong": "Alpha",
+    "statusValueStrong": "{{version}}",
     "statusValueRest": " — er is geen gegevenssynchronisatie. Alles wordt opgeslagen in IndexedDB in je lokale browser. Als je je browsercache wist, gaat je werk verloren.",
     "feedbackBefore": "Ik bouw dit nog en heb veel ideeën ",
     "feedbackAfter": ". Ik hoor graag wat werkt, wat niet werkt, en wat je zou willen dat bestond. Feedback is welkom.",
