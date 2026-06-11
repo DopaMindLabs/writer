@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Izilungiselelo ezisheshayo",
+    "appearanceLabel": "Ukubukeka",
+    "writingLabel": "Ukubhala",
     "themeLabel": "Itimu",
     "focusLabel": "Imodi yokugxila",
     "focusHint": "⌘\\",

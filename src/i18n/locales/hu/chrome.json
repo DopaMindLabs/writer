@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Gyorsbeállítások",
+    "appearanceLabel": "Megjelenés",
+    "writingLabel": "Írás",
     "themeLabel": "Téma",
     "focusLabel": "Fókuszmód",
     "focusHint": "⌘\\",

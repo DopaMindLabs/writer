@@ -15,11 +15,12 @@ from **Quick settings**.
 ## Quick settings
 
 The **Quick settings** popover gives you the everyday controls without leaving
-your document. Open it from the app rail. It includes:
+your document. Open it from the app rail. Controls are grouped by purpose:
 
-- **Theme** switch and **reading width**.
-- **Focus mode** and **floating toolbar** toggles.
-- **Replay a guided tour**.
+- **Appearance** — the **theme** switch and **reading width**.
+- **Writing** — the **focus mode** and **floating toolbar** toggles.
+- **Help tour** — replay a guided tour.
+- **More** — what's new, accessibility, and about.
 - A **help center →** link (the same way it links to **full settings →**), so
   help and settings are always one click away.
 

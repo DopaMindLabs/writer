@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "快速设置",
+    "appearanceLabel": "外观",
+    "writingLabel": "写作",
     "themeLabel": "主题",
     "focusLabel": "专注模式",
     "focusHint": "⌘\\",

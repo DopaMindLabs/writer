@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "ඉක්මන් සැකසුම්",
+    "appearanceLabel": "පෙනුම",
+    "writingLabel": "ලිවීම",
     "themeLabel": "තේමාව",
     "focusLabel": "අවධාන මාදිලිය",
     "focusHint": "⌘\\",

@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Kiirseaded",
+    "appearanceLabel": "Välimus",
+    "writingLabel": "Kirjutamine",
     "themeLabel": "Teema",
     "focusLabel": "Fookuse režiim",
     "focusHint": "⌘\\",

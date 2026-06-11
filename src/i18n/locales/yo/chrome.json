@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Àwọn ètò yára",
+    "appearanceLabel": "Ìrísí",
+    "writingLabel": "Kíkọ",
     "themeLabel": "Ìṣàlàyé",
     "focusLabel": "Ipo ìfọkànsí",
     "focusHint": "⌘\\",

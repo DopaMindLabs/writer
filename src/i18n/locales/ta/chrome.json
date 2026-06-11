@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "விரைவு அமைப்புகள்",
+    "appearanceLabel": "தோற்றம்",
+    "writingLabel": "எழுத்து",
     "themeLabel": "தீம்",
     "focusLabel": "கவன முறை",
     "focusHint": "⌘\\",

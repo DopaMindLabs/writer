@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Skyndistillingar",
+    "appearanceLabel": "Útlit",
+    "writingLabel": "Skrif",
     "themeLabel": "Þema",
     "focusLabel": "Einbeitingarhamur",
     "focusHint": "⌘\\",

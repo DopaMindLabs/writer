@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Tapa-shocruithe",
+    "appearanceLabel": "Cuma",
+    "writingLabel": "Scríbhneoireacht",
     "themeLabel": "Téama",
     "focusLabel": "Mód fócais",
     "focusHint": "⌘\\",

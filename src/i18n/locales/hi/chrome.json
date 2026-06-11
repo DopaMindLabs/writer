@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "त्वरित सेटिंग्स",
+    "appearanceLabel": "दिखावट",
+    "writingLabel": "लेखन",
     "themeLabel": "थीम",
     "focusLabel": "फ़ोकस मोड",
     "focusHint": "⌘\\",

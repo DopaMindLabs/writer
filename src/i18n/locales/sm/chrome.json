@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Faatulagaga vave",
+    "appearanceLabel": "Foliga",
+    "writingLabel": "Tusitusiga",
     "themeLabel": "Autu",
     "focusLabel": "Tulaga taulai",
     "focusHint": "⌘\\",

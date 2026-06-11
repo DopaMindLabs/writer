@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Mipangilio ya haraka",
+    "appearanceLabel": "Mwonekano",
+    "writingLabel": "Uandishi",
     "themeLabel": "Mandhari",
     "focusLabel": "Hali ya umakini",
     "focusHint": "⌘\\",

@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Tautuhinga tere",
+    "appearanceLabel": "Āhua",
+    "writingLabel": "Tuhituhi",
     "themeLabel": "Tāhuhu",
     "focusLabel": "Aratau arotahi",
     "focusHint": "⌘\\",

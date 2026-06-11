@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Fokotuʻutuʻu vave",
+    "appearanceLabel": "Fōtunga",
+    "writingLabel": "Tohi",
     "themeLabel": "Kaveinga",
     "focusLabel": "Founga fakatokangaʻi",
     "focusHint": "⌘\\",

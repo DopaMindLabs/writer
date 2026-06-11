@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Greitieji nustatymai",
+    "appearanceLabel": "Išvaizda",
+    "writingLabel": "Rašymas",
     "themeLabel": "Tema",
     "focusLabel": "Fokuso režimas",
     "focusHint": "⌘\\",

@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Rychlé nastavení",
+    "appearanceLabel": "Vzhled",
+    "writingLabel": "Psaní",
     "themeLabel": "Motiv",
     "focusLabel": "Režim soustředění",
     "focusHint": "⌘\\",

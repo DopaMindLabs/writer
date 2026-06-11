@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Hurtiginnstillinger",
+    "appearanceLabel": "Utseende",
+    "writingLabel": "Skriving",
     "themeLabel": "Tema",
     "focusLabel": "Fokusmodus",
     "focusHint": "⌘\\",

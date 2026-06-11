@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Saituna masu sauri",
+    "appearanceLabel": "Kamanni",
+    "writingLabel": "Rubutu",
     "themeLabel": "Jigon",
     "focusLabel": "Yanayin mai da hankali",
     "focusHint": "⌘\\",

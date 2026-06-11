@@ -61,6 +61,8 @@
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "ፈጣን ቅንብሮች",
+    "appearanceLabel": "መልክ",
+    "writingLabel": "መጻፍ",
     "themeLabel": "ገጽታ",
     "focusLabel": "የትኩረት ሁነታ",
     "focusHint": "⌘\\",
