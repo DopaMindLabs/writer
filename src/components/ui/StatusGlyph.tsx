@@ -26,8 +26,6 @@ export interface StatusGlyphProps
   kind?: StatusKind;
 }
 
-/** Inline icon + label — the lightest §5 status expression, for status that
- * reads as text (toolbars, footers, an alert line). */
 export const StatusGlyph = forwardRef<HTMLSpanElement, StatusGlyphProps>(
   ({ kind = 'info', mono, className, children, ...props }, ref) => (
     <span

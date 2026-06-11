@@ -17,10 +17,8 @@ test('typed content appears in the Lexical editor and persists across navigation
   await page.keyboard.type(probe);
   await expect(editor).toContainText(probe);
 
-  // Autosave debounce is 600ms — wait long enough for it to flush to IndexedDB.
   await page.waitForTimeout(1000);
 
-  // Navigate away then back; content should rehydrate from Dexie.
   await page.goto('/#/about');
   await expect(page.getByRole('heading', { name: 'Hi,' })).toBeVisible();
   await page.goto(`/#/s/${spaceId}`);
@@ -32,8 +30,6 @@ test('renames a doc by double-clicking its name in the topbar breadcrumb', async
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}`);
 
-  // The first-loaded doc varies because Dexie's primary-key order isn't
-  // insertion order. Click the seeded "Abstract" sidebar link to be explicit.
   await page.getByRole('link', { name: /^Abstract/ }).click();
 
   const header = page.locator('header').first();
@@ -53,7 +49,6 @@ test('renames a doc by double-clicking its name in the topbar breadcrumb', async
   await expect(header.getByRole('button', { name: newName })).toBeVisible();
   await expect(page.getByRole('link', { name: new RegExp(newName) })).toBeVisible();
 
-  // Persists after navigation away and back.
   const docUrl = page.url();
   await page.goto('/#/about');
   await expect(page.getByRole('heading', { name: 'Hi,' })).toBeVisible();

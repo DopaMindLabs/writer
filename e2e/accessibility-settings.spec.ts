@@ -48,13 +48,9 @@ test.describe('Accessibility settings panel', () => {
   }) => {
     await gotoAccessibilityTab(page);
 
-    // Text size is a ChipGroup (buttons); "Large" must be exact so it doesn't
-    // also match "Extra large".
     await page.getByRole('button', { name: 'Large', exact: true }).click();
     await expect(page.locator('html')).toHaveAttribute('data-text-scale', 'lg');
 
-    // Motion is a RadioRow whose <input> is visually hidden (peer sr-only);
-    // click the visible label text rather than the input itself.
     await page.getByText('Reduced', { exact: true }).click();
     await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
 
@@ -97,7 +93,6 @@ test.describe('Accessibility settings panel', () => {
 
     await page.getByTestId('a11y-reset').click();
 
-    // Default-valued preferences remove their attribute entirely.
     await expect(page.locator('html')).not.toHaveAttribute(
       'data-text-scale',
       /.*/,

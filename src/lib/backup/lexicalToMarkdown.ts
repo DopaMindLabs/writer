@@ -15,8 +15,6 @@ const HEADLESS_NODES = [
   CodeHighlightNode,
 ];
 
-// Doc bodies are always empty or serializeState output, so a non-empty body
-// that fails to parse throws rather than leaking raw text into a backup.
 export const lexicalJsonToMarkdown = (body: string): string => {
   if (!body) return '';
 

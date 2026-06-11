@@ -112,7 +112,6 @@ export default tseslint.config(
       '.storybook/**/*.{ts,tsx}',
     ],
     rules: {
-      // Test/stories/storybook ergonomics: relax production-only rules here.
       'max-lines-per-function': 'off',
       complexity: 'off',
       'func-style': 'off',
@@ -157,7 +156,6 @@ export default tseslint.config(
   },
 
   {
-    // Require the "@/" alias for parent-relative ("../") imports; "./" is fine.
     files: ['src/**/*.{ts,tsx}', '.storybook/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': [

@@ -9,11 +9,9 @@ interface SyncRunRowProps {
   disabled: boolean;
   idleLabel: string;
   onSync: () => void;
-  /** When provided, shows a "last synced …" caption under the button. */
   lastSyncedAt?: number | null;
 }
 
-/** The "Sync now" SettingRow shared by the global and per-space Sync tabs. */
 export const SyncRunRow = ({
   busy,
   disabled,

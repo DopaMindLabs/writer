@@ -28,17 +28,6 @@ const rejectionReason = (file: File): string | null => {
   return null;
 };
 
-// Adds the given image files to a note, enforcing the per-note image limit and
-// accepted MIME types. Returns the attachments that were stored and a list of
-// human-readable reasons for any files that were rejected. Promotes a seed note
-// to a user note, matching the body/title commit behaviour.
-//
-// The per-note limit is enforced inside a single read-write transaction: the
-// existing-count read and the inserts are atomic, so two overlapping uploads to
-// the same note can never both "see" a sub-limit count and collectively exceed
-// MAX_NOTE_IMAGES. File bytes are read up front (before the transaction) because
-// the async arrayBuffer() read is not an IndexedDB operation and would otherwise
-// let Dexie auto-commit the transaction early.
 const toAttachment = (note: Note, file: File, blob: Blob): NoteAttachment => ({
   id: newId(),
   noteId: note.id,

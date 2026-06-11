@@ -21,14 +21,11 @@ const toSegment = (change: Change): DiffSegment => {
   return { op: 'equal', value: change.value };
 };
 
-// Word-level inline (unified) diff of two plaintext blocks.
 export const computeInlineDiff = (
   oldText: string,
   newText: string,
 ): DiffSegment[] => diffWords(oldText, newText).map(toSegment);
 
-// Splits a line-diff change into individual lines, dropping a single trailing
-// empty line that jsdiff appends when the block ends in a newline.
 const splitLines = (value: string): string[] => {
   const lines = value.split('\n');
   if (lines.length > 1 && lines[lines.length - 1] === '') lines.pop();
@@ -64,9 +61,6 @@ const flushPending = (
   added.length = 0;
 };
 
-// Line-level side-by-side diff: removed lines on the left, added lines on the
-// right, equal lines mirrored on both sides. Adjacent removed/added runs are
-// paired up as "changed" rows for aligned reading.
 export const computeSideBySideDiff = (
   oldText: string,
   newText: string,

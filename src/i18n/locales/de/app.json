@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Startfehler",
-  "bootErrorHintBefore": "Versuche ",
-  "bootErrorHintAfter": ", um die lokale Datenbank zurückzusetzen.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Wenn das wiederholt passiert, kannst du die lokalen Daten der App löschen und neu beginnen.",
+  "bootErrorResetAction": "Lokale Daten zurücksetzen…",
+  "bootErrorResetTitle": "Alle lokalen Daten löschen?",
+  "bootErrorResetBody": "Dadurch wird alles dauerhaft gelöscht, was diese App in deinem Browser gespeichert hat — Dokumente, Notizen, Quellenangaben und Backups. Das kann nicht rückgängig gemacht werden.",
+  "bootErrorResetConfirm": "Alles löschen",
+  "bootErrorResetCancel": "Abbrechen",
   "booting": "Wird gestartet…"
 }

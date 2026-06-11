@@ -66,10 +66,7 @@ describe('FocusToggle', () => {
       <FocusToggle mode="write" spaceId="s1" docId="d1" />,
       { initialEntries: ['/s/s1/d/d1'] },
     );
-    // The shortcut handler is a window-level keydown listener; verify it does
-    // not throw when the modifier+key are pressed.
     fireEvent.keyDown(window, { key: '\\', metaKey: true });
-    // Render still mounted (the navigation happens through router, no error)
     expect(
       screen.getByRole('link', { name: /enter focus|focus/i }),
     ).toBeInTheDocument();

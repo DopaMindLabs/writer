@@ -5,9 +5,6 @@ import { db } from '@/db/db';
 import { FIXED_TIME, serializedBody } from '@/test/fixtures';
 import type { Doc } from '@/db/schema';
 
-// Captures the onChange prop the stub editor was last rendered with, so tests
-// can replay a pending autosave flush from a previous render (the unmount
-// flush in AutosavePlugin calls the onChange of the render it mounted under).
 const editorMocks = vi.hoisted(() => ({
   capturedOnChange: undefined as ((s: string) => void) | undefined,
 }));
@@ -38,8 +35,6 @@ vi.mock('@/editor/EditorFacade', () => ({
 
 const { WriteSurface } = await import('./WriteSurface');
 
-// What the stub editor emits on click: a real serialized body whose plaintext
-// is the single word "rewritten" (so the cached wordCount becomes 1).
 const NEW_BODY = serializedBody('rewritten');
 
 const doc: Doc = {
@@ -75,17 +70,12 @@ describe('WriteSurface', () => {
     await userEvent.click(getByTestId('editor-stub'));
     await waitFor(async () => {
       const fresh = await db.docs.get(doc.id);
-      // The stub body's plaintext is the single word "rewritten".
       expect(fresh?.meta.wordCount).toBe(1);
-      // Sibling meta fields survive the update.
       expect(fresh?.meta.status).toBe('draft');
     });
   });
 
   it('does not revert Inspector meta written after render while a save is pending', async () => {
-    // The `doc` prop is a lagging live-query value. Render with a stale prop,
-    // then simulate the Inspector writing new meta straight to the DB before the
-    // prop catches up. Autosave must not restore the prop's old meta.
     const stale: Doc = { ...doc, meta: { wordCount: 2, status: 'draft' } };
     await db.docs.put(stale);
     const { getByTestId } = render(<WriteSurface doc={stale} mode="write" />);
@@ -99,19 +89,13 @@ describe('WriteSurface', () => {
 
     await waitFor(async () => {
       const fresh = await db.docs.get(doc.id);
-      // Word count is refreshed by autosave...
       expect(fresh?.meta.wordCount).toBe(1);
-      // ...but the concurrent Inspector edits are preserved, not clobbered.
       expect(fresh?.meta.status).toBe('complete');
       expect(fresh?.meta.wordLimit).toBe(500);
     });
   });
 
   it('saves a pending edit to the doc it was typed in, not the doc shown after a switch', async () => {
-    // Typing then switching documents inside the autosave debounce window makes
-    // AutosavePlugin flush on unmount using the onChange it mounted under. That
-    // flush must write to the document the edit came from — never to the
-    // newly-opened one.
     const docB: Doc = {
       ...doc,
       id: 'd2',

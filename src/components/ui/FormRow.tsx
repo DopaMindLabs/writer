@@ -61,11 +61,6 @@ const FormRowLabel = ({
   </div>
 );
 
-/**
- * Link the hint/error text to the control via `aria-describedby` so screen
- * readers announce them with the field. Only augments a single valid React
- * element child, and preserves any `aria-describedby` it already declares.
- */
 const describeChild = (
   children: ReactNode,
   ids: string[],

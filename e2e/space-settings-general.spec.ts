@@ -15,22 +15,18 @@ test('space settings general tab reverts invalid edits and commits valid ones', 
   await expect(name).toBeVisible();
   const original = await name.inputValue();
 
-  // Escape reverts the in-flight edit without committing.
   await name.fill('Escaped Edit');
   await name.press('Escape');
   await expect(name).toHaveValue(original);
 
-  // Whitespace-only is rejected on blur and reverts.
   await name.fill('   ');
   await name.blur();
   await expect(name).toHaveValue(original);
 
-  // A valid name commits (Enter blurs) and sticks.
   await name.fill('Renamed Space');
   await name.press('Enter');
   await expect(name).toHaveValue('Renamed Space');
 
-  // Tag commits the same way.
   const tag = page.getByTestId('space-settings-tag-input');
   await tag.fill('NEWTAG');
   await tag.press('Enter');

@@ -12,17 +12,12 @@ import { errorMessage } from '@/lib/errorMessage';
 export interface FolderSyncActions {
   busy: boolean;
   error: string | null;
-  /** Per-space outcomes of the last "sync all" run; null in single-space mode. */
   results: SpaceSyncResult[] | null;
   choose: () => Promise<void>;
   disconnect: () => Promise<void>;
   sync: () => Promise<void>;
 }
 
-/**
- * Imperative folder-sync actions + transient UI state for the Sync settings
- * tabs. Pass a `spaceId` to sync a single space; omit it to sync all spaces.
- */
 export const useFolderSyncActions = (spaceId?: string): FolderSyncActions => {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);

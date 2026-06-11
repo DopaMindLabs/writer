@@ -47,7 +47,6 @@ const makeMockDir = (): MockDir => {
         close: () => undefined,
       }),
     })),
-    // Production code chains `.catch` on this, so it must return a promise.
     removeEntry: vi.fn((name: string) => {
       files.delete(name);
       return Promise.resolve();
@@ -89,7 +88,6 @@ const onlyDir = (h: MockHandle) => [...h.dirs.values()][0];
 
 describe('folderSync', () => {
   beforeEach(async () => {
-    // Global setup clears all tables before each test; seed a space here.
     await db.spaces.put(sampleSpace);
     await db.sections.put(sampleSection);
     await db.docs.put(sampleDoc);
@@ -111,13 +109,11 @@ describe('folderSync', () => {
 
     const syncs = await db.syncs.where('spaceId').equals(sampleSpace.id).toArray();
     expect(syncs).toHaveLength(1);
-    // Sync must NOT create a backup row.
     const backups = await db.backups.where('scope').equals(sampleSpace.id).toArray();
     expect(backups).toHaveLength(0);
   });
 
   it('keeps same-named spaces in separate subfolders', async () => {
-    // Two distinct spaces sharing a name must not collide.
     const spaceB = {
       ...sampleSpace,
       id: 'space-b-00000000',
@@ -209,8 +205,6 @@ describe('folderSync', () => {
   it('falls back to the stored handle when none is passed', async () => {
     await db.meta.put({ key: 'syncFolderHandle', value: { name: 'stored' } });
     const run = await syncAllSpacesToFolder(undefined, 'auto');
-    // The stored plain handle has no getDirectoryHandle, so the write fails —
-    // but the guard passed via getSyncFolderHandle().
     expect(run.results[0]).toMatchObject({ spaceId: sampleSpace.id, ok: false });
   });
 
@@ -241,7 +235,6 @@ describe('folderSync', () => {
       { id: 'a', spaceId: sampleSpace.id, when: 300, kind: 'auto', status: 'ok', size: 1 },
       { id: 'b', spaceId: sampleSpace.id, when: 100, kind: 'auto', status: 'ok', size: 1 },
       { id: 'c', spaceId: sampleSpace.id, when: 200, kind: 'auto', status: 'ok', size: 1 },
-      // A newer entry for a different space must not win.
       { id: 'other', spaceId: 'other-space', when: 999, kind: 'auto', status: 'ok', size: 1 },
     ]);
     const last = await getLastSyncForSpace(sampleSpace.id);
@@ -275,7 +268,6 @@ describe('folderSync', () => {
           close: () => undefined,
         }),
       })),
-      // Best-effort cleanup: removeEntry rejects, which must not fail the sync.
       removeEntry: vi.fn(() => Promise.reject(new Error('locked'))),
       async *[Symbol.asyncIterator]() {
         await Promise.resolve();
@@ -321,7 +313,6 @@ describe('folderSync', () => {
   });
 
   it('resolves the effective interval from default + per-space override', async () => {
-    // No config rows → falls back to the default constant.
     expect(await getEffectiveIntervalMin(sampleSpace.id)).toBe(
       DEFAULT_INTERVAL_MIN,
     );
@@ -332,7 +323,6 @@ describe('folderSync', () => {
     await setSpaceIntervalMin(sampleSpace.id, 5);
     expect(await getEffectiveIntervalMin(sampleSpace.id)).toBe(5);
 
-    // Inherit → back to the default.
     await setSpaceIntervalMin(sampleSpace.id, INHERIT_INTERVAL);
     expect(await getEffectiveIntervalMin(sampleSpace.id)).toBe(30);
   });
@@ -383,7 +373,6 @@ describe('folderSync', () => {
     const spy = vi.spyOn(Date, 'now');
     try {
       for (let i = 0; i < MAX_SYNCS_PER_SPACE + 2; i += 1) {
-        // Space writes one history file per second → distinct filenames.
         spy.mockReturnValue(base + i * 1000);
         await syncSpaceToFolder(asHandle(handle), sampleSpace, 'auto');
       }

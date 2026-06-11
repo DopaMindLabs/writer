@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Mea sese o le amataga",
-  "bootErrorHintBefore": "Taumafai ",
-  "bootErrorHintAfter": " e toe seti le faamaumauga i totonu.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Afai e faaauau ona tupu lenei mea, e mafai ona e tapeina faamaumauga i totonu o le polokalama ma toe amata.",
+  "bootErrorResetAction": "Toe seti faamaumauga i totonu…",
+  "bootErrorResetTitle": "Tape uma faamaumauga i totonu?",
+  "bootErrorResetBody": "O le a tape tumau ai mea uma ua teuina e le polokalama i lenei suʻesuʻega — pepa, faamatalaga, upusii ma kopi faasao. E lē mafai ona toe faafoʻi.",
+  "bootErrorResetConfirm": "Tape mea uma",
+  "bootErrorResetCancel": "Faaleaogaina",
   "booting": "O amata…"
 }

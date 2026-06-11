@@ -28,7 +28,6 @@ describe('useTour', () => {
     const { result } = renderHook(() => useTour());
     act(() => result.current.replay('welcome'));
     expect(runTourSpy).toHaveBeenCalledTimes(1);
-    // Completion flag is cleared by resetTour
     expect(result_isCompleted('welcome')).toBe(false);
   });
 
@@ -40,7 +39,6 @@ describe('useTour', () => {
   });
 });
 
-// Helper to read completion without importing isCompleted twice
 const result_isCompleted = (id: string): boolean => {
   const raw = window.localStorage.getItem('lipsum-tours');
   if (!raw) return false;

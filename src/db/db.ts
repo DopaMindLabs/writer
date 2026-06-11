@@ -96,14 +96,10 @@ export class LoremDB extends Dexie {
       revisions: 'id, docId, createdAt, kind, [docId+createdAt]',
     });
 
-    // Doc Inspector enablement config (global defaults + per-space overrides).
-    // Purely additive: absent rows resolve to the declarative defaults.
     this.version(9).stores({
       docInspectorConfigs: 'spaceId',
     });
 
-    // Space-scoped, year-ordered citation paging straight off the index, so
-    // the citations table never needs a full load to render one page.
     this.version(10).stores({
       citations: 'id, spaceId, year, [spaceId+key], [spaceId+year]',
     });

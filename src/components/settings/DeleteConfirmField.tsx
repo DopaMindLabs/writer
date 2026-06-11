@@ -7,7 +7,6 @@ interface DeleteConfirmFieldProps {
   testId: string;
 }
 
-/** "Type the space name to confirm" field for the delete-space dialog. */
 export const DeleteConfirmField = ({
   label,
   value,
@@ -20,7 +19,6 @@ export const DeleteConfirmField = ({
     className="flex flex-col gap-2 font-mono text-[10px] uppercase tracking-wider"
   >
     {label}
-    {/* @lint-ignore native-input: bordered (not baseline) input; TextField currently only exposes baseline/bare — bordered variant tracked for PR 5 */}
     <input
       data-testid={testId}
       type="text"

@@ -20,7 +20,6 @@ async function gotoFirstDoc(page: import('@playwright/test').Page): Promise<{
 test('shows the inspector icons rail after toggling from the topbar', async ({ page }) => {
   const { spaceId, docId } = await gotoFirstDoc(page);
   await page.goto(`/#/s/${spaceId}/d/${docId}`);
-  // First click of "Doc inspector" goes to 'icons' mode → rail visible.
   await page.getByRole('button', { name: /doc inspector/i }).click();
   await expect(page.getByTestId('doc-inspector-icons')).toBeVisible();
 });
@@ -31,9 +30,7 @@ test('clicking a section icon expands the inspector to full width', async ({ pag
   await page.getByRole('button', { name: /doc inspector/i }).click();
   const rail = page.getByTestId('doc-inspector-icons');
   await expect(rail).toBeVisible();
-  // Click the OUTLINE section button.
   await rail.getByRole('button', { name: /outline/i }).click();
-  // Once expanded the icons rail is hidden; the wider inspector panel is shown.
   await expect(rail).toBeHidden();
 });
 

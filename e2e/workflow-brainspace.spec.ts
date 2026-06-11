@@ -1,9 +1,6 @@
 import { test, expect } from './_helpers';
 import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
 
-// Long, theme-based journey: capturing ideas in the brain space — adding notes
-// from the toolbar, editing a note inline, enriching it in the detail drawer,
-// and confirming the sidebar reflects the non-empty note count.
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
 });
@@ -30,8 +27,6 @@ test.describe('Workflow: capturing ideas in the brain space', () => {
     });
 
     await test.step('And they edit a note title inline', async () => {
-      // Operate on the most-recently-added note: canvas notes are absolutely
-      // positioned and overlap, so the last one is painted on top (not occluded).
       const note = noteCards.last();
       await note.hover();
       await note.locator('[data-testid$="-add-title"]').click();

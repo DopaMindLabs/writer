@@ -9,9 +9,6 @@ export interface RestoreRevisionOpts {
   now?: () => number;
 }
 
-// Rolls a document back to an earlier revision. Before overwriting, it captures
-// a manual "pre-restore" safety snapshot of the current body so the restore can
-// itself be undone. Both writes happen in one transaction.
 export const restoreRevision = async (
   docId: string,
   revisionId: string,

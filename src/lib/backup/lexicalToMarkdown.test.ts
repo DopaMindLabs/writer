@@ -41,7 +41,6 @@ describe('lexicalJsonToMarkdown', () => {
   });
 
   it('throws on a body that is not serialized Lexical JSON', () => {
-    // Doc bodies are only ever '' or serializeState output.
     expect(() => lexicalJsonToMarkdown('Dr. Kirchner walks in.')).toThrow();
   });
 

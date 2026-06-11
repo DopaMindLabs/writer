@@ -119,7 +119,6 @@ describe('usePagedCitations', () => {
     await waitFor(() => {
       expect(result.current.rows.map((c) => c.id)).toEqual(['hit']);
       expect(result.current.totalCount).toBe(1);
-      // The unfiltered space count is still reported for the header.
       expect(result.current.totalInSpace).toBe(9);
       expect(result.current.totalPages).toBe(1);
     });

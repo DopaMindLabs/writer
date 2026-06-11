@@ -3,13 +3,10 @@ import { TypographyLabel, TypographyP } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
 
 export interface EmptyStateProps extends HTMLAttributes<HTMLDivElement> {
-  /** Optional eyebrow-style heading shown above the caption. */
   title?: string;
   caption: string;
 }
 
-/** Dashed, centered placeholder card for when a list or feature has nothing to
- * show (no history yet, an unsupported browser). */
 export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
   ({ title, caption, className, ...props }, ref) => (
     <div

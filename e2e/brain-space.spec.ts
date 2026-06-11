@@ -10,6 +10,5 @@ test('brain space screen mounts with topbar showing the unsorted-notes count', a
   await page.goto(`/#/s/${spaceId}/dump`);
 
   await expect(page.getByText(/Brain space · \d+ unsorted/i)).toBeVisible();
-  // SpaceRail is present in non-focus brain space view.
   await expect(page.getByRole('link', { name: 'Create new space' })).toBeVisible();
 });

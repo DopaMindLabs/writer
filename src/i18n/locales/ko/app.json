@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "부팅 오류",
-  "bootErrorHintBefore": "로컬 데이터베이스를 재설정하려면 ",
-  "bootErrorHintAfter": " 을(를) 시도하세요.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "이 문제가 계속되면 앱의 로컬 데이터를 지우고 처음부터 다시 시작할 수 있습니다.",
+  "bootErrorResetAction": "로컬 데이터 재설정…",
+  "bootErrorResetTitle": "모든 로컬 데이터를 지울까요?",
+  "bootErrorResetBody": "이 브라우저에 앱이 저장한 모든 것(문서, 노트, 인용, 백업)이 영구적으로 삭제됩니다. 되돌릴 수 없습니다.",
+  "bootErrorResetConfirm": "모두 지우기",
+  "bootErrorResetCancel": "취소",
   "booting": "부팅 중…"
 }

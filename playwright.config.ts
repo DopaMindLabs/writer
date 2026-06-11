@@ -17,8 +17,6 @@ export default defineConfig({
         outputFile: './e2e-coverage/index.html',
         coverage: {
           name: 'E2E coverage',
-          // Accept every JS asset the preview server serves (we filter to
-          // app source via sourceFilter once monocart applies source maps).
           entryFilter: (entry: { url?: string }) => {
             if (!entry.url) return false;
             return (
@@ -27,10 +25,6 @@ export default defineConfig({
                 entry.url.includes('/src/'))
             );
           },
-          // After source-mapping, monocart hands us source paths from the
-          // emitted source map. Vite emits relative paths like
-          // `../../src/components/Topbar.tsx`, so match `src/` (no leading
-          // slash) but exclude `node_modules/`.
           sourceFilter: (path: string) => {
             if (path.includes('node_modules/')) return false;
             if (!/(^|\/)src\//.test(path)) return false;
@@ -42,10 +36,6 @@ export default defineConfig({
             if (/(^|\/)src\/main\.tsx$/.test(path)) return false;
             if (path.includes('src/editor/')) return false;
             if (path.includes('src/test/')) return false;
-            // Tours are suppressed in e2e via the localStorage init-script
-            // in e2e/_helpers.ts (so the driver.js overlay doesn't intercept
-            // pointer events), so they can't contribute to e2e coverage.
-            // Cover them via unit tests instead.
             if (path.includes('src/tours/')) return false;
             if (path.includes('.test.')) return false;
             if (path.includes('__snapshots__')) return false;
@@ -84,9 +74,6 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
-  // E2E runs against a production preview build so monocart-reporter can
-  // map V8 coverage back to original .tsx files via emitted source maps.
-  // `npm run dev` works for ad-hoc debugging but yields broken coverage.
   webServer: {
     command: 'npm run build:e2e && npm run preview:e2e',
     url: 'http://localhost:4173',

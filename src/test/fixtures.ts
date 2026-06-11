@@ -10,20 +10,13 @@ import {
   type Space,
 } from '@/db/schema';
 
-export const FIXED_TIME = 1704067200000; // 2024-01-01T00:00:00Z (Monday)
+export const FIXED_TIME = 1704067200000;
 
 export interface BodyBlock {
   text: string;
-  /** When set, the block is a heading of that tag; otherwise a paragraph. */
   tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 }
 
-/**
- * Builds a real serialized Lexical doc body from typed blocks (headings and
- * paragraphs), shaped like serializeState output. Doc bodies are always
- * serialized JSON or '' — never plain text — so fixtures must use this (or
- * serializedBody below) rather than raw strings.
- */
 export const serializedBlocks = (blocks: BodyBlock[]): string =>
   JSON.stringify({
     root: {
@@ -55,7 +48,6 @@ export const serializedBlocks = (blocks: BodyBlock[]): string =>
     },
   });
 
-/** Builds a serialized Lexical doc body of one paragraph per line of `text`. */
 export const serializedBody = (text: string): string =>
   serializedBlocks(text.split('\n').map((line) => ({ text: line })));
 

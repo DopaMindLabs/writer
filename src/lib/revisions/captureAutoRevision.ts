@@ -5,9 +5,6 @@ import {
 } from './createRevision';
 import { lexicalJsonToPlainText } from './lexicalJsonToPlainText';
 
-// Per-document throttle state for automatic captures. Bounded by the number of
-// open documents and cleared on doc switch via resetAutoThrottle; not an
-// unbounded cache.
 interface ThrottleEntry {
   lastAt: number;
   lastText: string;
@@ -15,8 +12,6 @@ interface ThrottleEntry {
 
 const throttle = new Map<string, ThrottleEntry>();
 
-// Clears throttle state for one document, or all of them when no id is given
-// (used on document switch and between tests).
 export const resetAutoThrottle = (docId?: string): void => {
   if (docId === undefined) {
     throttle.clear();
@@ -25,9 +20,6 @@ export const resetAutoThrottle = (docId?: string): void => {
   throttle.delete(docId);
 };
 
-// Records the first snapshot for a freshly opened document, so its history
-// always has a starting point to diff against. No-op if a baseline (or any
-// revision) already exists for the doc.
 export const captureBaselineRevision = async (
   docId: string,
   body: string,
@@ -42,8 +34,6 @@ export const captureBaselineRevision = async (
   throttle.set(docId, { lastAt: now(), lastText: lexicalJsonToPlainText(body) });
 };
 
-// Best-effort automatic capture. Skips when the last capture was within the
-// minimum interval, or when the document text has not changed since then.
 export const captureAutoRevision = async (
   docId: string,
   body: string,

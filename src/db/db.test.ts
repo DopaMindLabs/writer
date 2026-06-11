@@ -32,7 +32,6 @@ describe('LoremDB migrations', () => {
     });
     await v1.close();
 
-    // Re-opening with LoremDB triggers all upgrade paths through v5.
     const upgraded = new LoremDB(dbName);
     await upgraded.open();
     const sec = await upgraded.sections.get('sec-legacy');
@@ -75,7 +74,6 @@ describe('LoremDB migrations', () => {
       kind: 'note',
       body: 'orig',
       createdAt: 0,
-      // state intentionally omitted to exercise the v4 upgrade
     });
     await v3.close();
 
@@ -115,7 +113,6 @@ describe('LoremDB migrations', () => {
     const upgraded = new LoremDB(dbName);
     await upgraded.open();
     expect((await upgraded.notes.get('n-keep'))?.body).toBe('keep me');
-    // The new table exists and is writable.
     await upgraded.noteAttachments.add({
       id: 'att1',
       noteId: 'n-keep',
@@ -155,7 +152,6 @@ describe('LoremDB migrations', () => {
     const upgraded = new LoremDB(dbName);
     await upgraded.open();
     expect((await upgraded.docs.get('d-keep'))?.body).toBe('keep me');
-    // The new table exists and is writable.
     await upgraded.docInspectorConfigs.add({
       spaceId: 'global',
       wordLimit: 'on',
@@ -186,8 +182,6 @@ describe('LoremDB migrations', () => {
 
     const upgraded = new LoremDB(dbName);
     await upgraded.open();
-    // Existing rows survive and the new compound index serves a space-scoped,
-    // year-ordered query without a table scan.
     const ordered = await upgraded.citations
       .where('[spaceId+year]')
       .between(['s1', Dexie.minKey], ['s1', Dexie.maxKey])

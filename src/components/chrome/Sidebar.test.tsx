@@ -82,8 +82,6 @@ describe('Sidebar', () => {
         initialEntries: ['/s/s1/d/d1'],
       });
       const trigger = await screen.findByTestId('sidebar-space-menu-trigger');
-      // Trigger uses opacity-0 + group-hover:opacity-100 so it's hidden until
-      // the header is hovered or the trigger is focused.
       expect(trigger.className).toMatch(/opacity-0/);
       expect(trigger.className).toMatch(/group-hover:opacity-100/);
     });
@@ -323,7 +321,6 @@ describe('Sidebar', () => {
     });
 
     it('should pre-fill the add-doc input with the template defaultDocName when the section matches', async () => {
-      // Fiction template has a "Manuscript" section with defaultDocName.
       await db.spaces.put({ ...sampleSpace, template: 'fiction' });
       await db.sections.put({
         id: 'sec-ms',
@@ -346,7 +343,6 @@ describe('Sidebar', () => {
     });
 
     it('should use the "untitled" fallback for a template section without a defaultDocName', async () => {
-      // fiction template has "World" section without defaultDocName.
       await db.spaces.put({ ...sampleSpace, template: 'fiction' });
       await db.sections.put({
         id: 'sec-w',
@@ -425,10 +421,7 @@ describe('Sidebar', () => {
       renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
         initialEntries: ['/s/s1'],
       });
-      // Wait for the seeded section to mount so the fallback is unmounted
       await screen.findByTestId('sidebar-section-sec-ws');
-      // Just one Brain space link, rendered inline under the seeded Workshop
-      // (and NOT the fallback section)
       await waitFor(() => {
         const links = screen.getAllByTestId('sidebar-brain-space-link');
         expect(links).toHaveLength(1);
@@ -460,9 +453,6 @@ describe('Sidebar', () => {
   });
 
   describe('word count', () => {
-    // The sidebar now renders the cached `doc.meta.wordCount` rather than
-    // parsing the document body on every render; the counting logic itself is
-    // covered in src/editor/wordCount.test.ts.
     it('should render the cached meta.wordCount', async () => {
       await seedBasicSpace();
       await db.docs.update('d1', { meta: { wordCount: 1234 } });

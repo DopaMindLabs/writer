@@ -16,17 +16,10 @@ export interface ConfirmDialogProps {
   description?: string;
   confirmLabel: string;
   cancelLabel: string;
-  /** Tone of the confirm button. Destructive actions use `dangerous`. */
   confirmKind?: ButtonKind;
   onConfirm: () => void;
 }
 
-/**
- * A small, reusable confirm/cancel modal. Composes the `Dialog` primitive with
- * two `Button`s so destructive or irreversible actions get a DS-consistent
- * prompt instead of the native `window.confirm`. The confirm button is
- * autofocused and the description is wired via `aria-describedby`.
- */
 export const ConfirmDialog = ({
   open,
   onOpenChange,

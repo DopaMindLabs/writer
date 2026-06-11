@@ -15,7 +15,6 @@ import { useHelp } from '@/store/help';
 import { searchHelp, type HelpSearchResult } from '@/lib/help/search';
 import { HelpResultList } from './HelpSearch';
 
-/** Static reference of the shortcuts that are actually wired in the app. */
 const SHORTCUTS: readonly { readonly keys: string; readonly labelKey: string }[] = [
   { keys: '⌘K', labelKey: 'shortcuts.help' },
   { keys: '⌘\\', labelKey: 'shortcuts.focus' },

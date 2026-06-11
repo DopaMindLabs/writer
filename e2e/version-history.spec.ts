@@ -13,9 +13,6 @@ const gotoFirstDoc = async (page: Page): Promise<void> => {
   await expect(page.locator('[aria-label="Document body"]')).toBeVisible();
 };
 
-// Open the doc inspector and switch to the given section. The inspector starts
-// collapsed; the topbar button reveals the icon rail, and clicking a section
-// icon both selects it and expands the full panel.
 const openInspectorSection = async (
   page: Page,
   section: string,
@@ -40,7 +37,6 @@ test('captures a baseline version and lists it in the history pane', async ({
   await openInspectorSection(page, 'history');
 
   const pane = page.getByTestId('doc-inspector-pane-history');
-  // A baseline revision is recorded when the document is opened.
   await expect(pane.getByText(/baseline/i)).toBeVisible();
   await expect(pane.getByText(/NOW/)).toBeVisible();
 });
@@ -51,7 +47,6 @@ test('saves a manual version from the history pane', async ({ page }) => {
   await openInspectorSection(page, 'history');
   await page.getByTestId('history-save-version').click();
 
-  // A styled in-app dialog collects the optional label (no native prompt).
   const dialog = page.getByTestId('save-version-dialog');
   await expect(dialog).toBeVisible();
   await page.getByTestId('save-version-label').fill('milestone draft');
@@ -67,7 +62,6 @@ test('compares versions and toggles the diff layout in the modal', async ({
 }) => {
   await gotoFirstDoc(page);
 
-  // Make an edit so there is a difference between the baseline and current text.
   const editor = page.locator('[aria-label="Document body"]');
   await editor.click();
   await page.keyboard.type(' an added sentence');
@@ -80,22 +74,18 @@ test('compares versions and toggles the diff layout in the modal', async ({
   await expect(modal).toBeVisible();
   await expect(page.getByTestId('diff-view')).toBeVisible();
 
-  // Toggle between side-by-side (default) and inline layouts.
   await page.getByTestId('diff-mode-toggle').click();
   await expect(page.getByTestId('diff-view')).toBeVisible();
 });
 
 test('hides all version controls in read mode', async ({ page }) => {
   await gotoFirstDoc(page);
-  // Capture the resolved space/doc ids, then view the same doc in read mode.
   const m = /#\/s\/([^/]+)\/d\/([^/]+)/.exec(page.url());
   if (!m) throw new Error(`expected a doc URL, got ${page.url()}`);
   const [, spaceId, docId] = m;
   await page.goto(`/#/s/${spaceId}/d/${docId}/read`);
   await expect(page.locator('[aria-label="Document body"]')).toBeVisible();
 
-  // Open the inspector; versioning is a write-surface concern, so the History
-  // tab/icon and its controls must be absent here.
   await openInspectorSection(page, 'outline');
   await expect(page.getByTestId('doc-inspector-tab-outline')).toBeVisible();
   await expect(page.getByTestId('doc-inspector-tab-history')).toHaveCount(0);
@@ -122,14 +112,11 @@ test('restores an earlier version, creating a safety snapshot', async ({
   await expect(modal).toBeVisible();
   await page.getByTestId('modal-restore').click();
 
-  // A styled confirm dialog appears (no native confirm); accept it.
   await expect(page.getByTestId('confirm-dialog')).toBeVisible();
   await page.getByTestId('confirm-dialog-confirm').click();
 
-  // Modal closes after a restore.
   await expect(modal).toBeHidden();
 
-  // A pre-restore safety snapshot now exists in the history list.
   await openInspectorSection(page, 'history');
   const pane = page.getByTestId('doc-inspector-pane-history');
   await expect(pane.getByText('pre-restore')).toBeVisible();

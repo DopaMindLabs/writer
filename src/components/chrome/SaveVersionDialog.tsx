@@ -76,11 +76,6 @@ const SaveVersionForm = ({ docId, onClose }: SaveVersionFormProps) => {
   );
 };
 
-/**
- * Collects an optional label for a manual version snapshot via a DS dialog
- * (replacing the native `window.prompt`). Driven by the transient
- * `saveVersionOpen` flag in the UI store, mirroring `versionModalOpen`.
- */
 export const SaveVersionDialog = ({ docId }: SaveVersionDialogProps) => {
   const { t } = useTranslation('chrome');
   const open = useUI((s) => s.saveVersionOpen);

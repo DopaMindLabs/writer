@@ -338,8 +338,6 @@ describe('SpaceSettingsScreen', () => {
       const clickSpy = vi
         .spyOn(HTMLAnchorElement.prototype, 'click')
         .mockImplementation(() => undefined);
-      // A Blob round-tripped through fake-indexeddb is not a real Blob, so stub
-      // the object-URL calls that downloadBlob makes on the stored payload.
       vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock');
       vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
       renderAtSpaceSettings('/s/s1/settings?tab=backups');
@@ -503,8 +501,6 @@ describe('SpaceSettingsScreen', () => {
       await seedBasicSpace();
       const user = userEvent.setup();
       renderAtSpaceSettings();
-      // NavTabs renders both a mobile and a desktop variant in the DOM;
-      // either testid resolves to the same logical tab.
       await user.click(
         await screen.findByTestId('settings-tab-mobile-sharing'),
       );

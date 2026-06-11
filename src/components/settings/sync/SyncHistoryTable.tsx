@@ -8,9 +8,7 @@ import { formatBytes, formatRelativeTime } from './syncFormat';
 
 interface SyncHistoryTableProps {
   entries: SyncEntry[];
-  /** Show a Space column (used in the global view across spaces). */
   showSpace?: boolean;
-  /** Maps spaceId → display name, for the Space column. */
   spaceNames?: Record<string, string>;
 }
 

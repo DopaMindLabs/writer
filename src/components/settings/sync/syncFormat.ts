@@ -22,7 +22,6 @@ export const formatRelativeTime = (
   return new Date(when).toISOString().slice(0, 10);
 };
 
-// Human label for an auto-sync interval in minutes (0 = off).
 export const intervalLabel = (min: number, t: TFunction): string => {
   if (min <= 0) return t('settings.sync.intervalOff');
   return t('settings.sync.intervalMinutes', { count: min });

@@ -8,6 +8,7 @@ import {
   seedBrainSpaceCanvas,
   seedDocWithRevisions,
 } from '@/test/fixtures';
+import '@/fonts';
 import '@/index.css';
 
 const themes = ['light', 'dark', 'hc-light', 'hc-dark'] as const;
@@ -34,8 +35,6 @@ const withTooltip: Decorator = (Story) => (
   </TooltipProvider>
 );
 
-// `parameters: { seed }` reseeds the shared Dexie DB per story; seeded stories
-// set `tags: ['!autodocs']` so they render one at a time, never side by side.
 const seeders = {
   basicSpace: seedBasicSpace,
   multipleSpaces: seedMultipleSpaces,
@@ -54,7 +53,6 @@ const seedLoader: Loader = async (context) => {
 };
 
 const preview: Preview = {
-  // Autodocs on by default; data-driven stories opt out with `!autodocs`.
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',

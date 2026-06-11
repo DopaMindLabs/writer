@@ -54,8 +54,6 @@ import ptPTTemplates from './locales/pt-PT/templates.json';
 import ptPTTours from './locales/pt-PT/tours.json';
 import ptPTHelp from './locales/pt-PT/help.json';
 
-// Tier 2+ — common + app + templates + tours + help + chrome translated.
-// screens.json falls back to English until per-locale translations land.
 import itCommon from './locales/it/common.json';
 import itApp from './locales/it/app.json';
 import itTemplates from './locales/it/templates.json';
@@ -231,25 +229,14 @@ import toTours from './locales/to/tours.json';
 import toHelp from './locales/to/help.json';
 import toChrome from './locales/to/chrome.json';
 
-/**
- * Locales the user can pick. Any locale here without a `resources` entry below
- * (or with a partial entry) falls back to English for missing keys — that's
- * i18next's built-in behaviour, gated by `fallbackLng`. The help-centre banner
- * and the Settings disclaimer make the partial state visible to the user.
- *
- * Tiered in chronological order of authoring effort. Native-speaker review is
- * required before any of these locales should be treated as production-quality.
- */
 export const supportedLngs = [
   'en',
-  // Tier 1 — Western Europe baseline
   'es',
   'pt-BR',
   'pt-PT',
   'fr',
   'de',
   'nl',
-  // Tier 2 — wider Europe (Latin)
   'it',
   'pl',
   'sv',
@@ -260,26 +247,22 @@ export const supportedLngs = [
   'lt',
   'lv',
   'et',
-  // Tier 3 — Central/SE Europe
   'cs',
   'hu',
   'ro',
   'bg',
   'el',
-  // Tier 4 — East/South Asia
   'ja',
   'zh-Hans',
   'ko',
   'hi',
   'ta',
   'si',
-  // Tier 5 — Africa
   'sw',
   'ha',
   'yo',
   'am',
   'zu',
-  // Tier 6 — Polynesia
   'mi',
   'sm',
   'to',

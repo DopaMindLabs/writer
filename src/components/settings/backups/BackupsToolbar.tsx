@@ -10,7 +10,6 @@ interface BackupsToolbarProps {
   onSnapshot: () => void;
 }
 
-/** Retention hint + (coming-soon) restore label + "snapshot now" action. */
 export const BackupsToolbar = ({ busy, onSnapshot }: BackupsToolbarProps) => {
   const { t } = useTranslation('screens');
   return (

@@ -5,9 +5,7 @@ import { runTour } from './driver-setup';
 import { isCompleted } from './storage';
 
 interface UseAutoTourOptions {
-  /** Skip auto-start regardless of completion state. */
   disabled?: boolean;
-  /** When this becomes true, the tour is allowed to start (e.g. data has loaded). Defaults to true. */
   ready?: boolean;
 }
 

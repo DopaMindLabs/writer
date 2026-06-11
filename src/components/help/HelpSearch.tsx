@@ -10,7 +10,6 @@ interface HelpResultListProps {
   readonly onNavigate?: () => void;
 }
 
-/** Shared, presentational results list used by the landing page and palette. */
 export const HelpResultList = ({ results, onNavigate }: HelpResultListProps) => {
   const { t } = useTranslation('help');
   return (

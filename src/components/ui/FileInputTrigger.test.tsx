@@ -50,7 +50,6 @@ describe('FileInputTrigger', () => {
     const onPick = vi.fn();
     renderTrigger({ onPick });
     const input = screen.getByTestId('trigger-input') as HTMLInputElement;
-    // Fire a change with an empty file list.
     input.dispatchEvent(new Event('change', { bubbles: true }));
     expect(onPick).not.toHaveBeenCalled();
   });

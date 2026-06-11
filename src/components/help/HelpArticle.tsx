@@ -82,10 +82,6 @@ export const HelpArticle = ({ slug }: HelpArticleProps) => {
   const meta = getArticleMeta(slug);
   const { hash } = useLocation();
 
-  // Under the hash router the in-page anchor is a second fragment
-  // (`#/help/slug#anchor`) the browser won't scroll to on its own; under the
-  // browser router we still want to scroll on client-side nav between
-  // anchors. Scroll the targeted heading into view whenever it changes.
   useEffect(() => {
     if (hash.length <= 1) return;
     const el = document.getElementById(decodeURIComponent(hash.slice(1)));

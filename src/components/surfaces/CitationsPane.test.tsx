@@ -288,9 +288,6 @@ describe('CitationsPane', () => {
   });
 
   describe('detail row', () => {
-    // jsdom doesn't expose navigator.clipboard, and Object.defineProperty isn't
-    // covered by vitest's restoreMocks. Snapshot the original descriptor and
-    // restore after each test so the stub never leaks into the rest of the file.
     let originalClipboardDescriptor: PropertyDescriptor | undefined;
     beforeEach(() => {
       originalClipboardDescriptor = Object.getOwnPropertyDescriptor(

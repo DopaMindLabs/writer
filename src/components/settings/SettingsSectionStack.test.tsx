@@ -29,7 +29,6 @@ describe('SettingsSectionStack', () => {
     expect(getByText('Section A')).toBeInTheDocument();
     expect(getByText('Section B')).toBeInTheDocument();
     expect(container.querySelector('#settings-section-c')).not.toBeNull();
-    // Sections after the first get a divider rule.
     expect(container.querySelector('#settings-section-b')).toHaveClass(
       'border-t',
     );
@@ -111,8 +110,6 @@ describe('SettingsSectionStack', () => {
     const { container } = render(
       <SettingsSectionStack
         sections={sections}
-        // A target that isn't present skips the programmatic scroll, so the
-        // spy isn't suppressed and we can drive it directly.
         scrollTarget="missing"
         scrollNonce={0}
         onVisibleChange={onVisibleChange}
@@ -129,8 +126,6 @@ describe('SettingsSectionStack', () => {
     triggers.forEach((fire) => {
       fire();
     });
-    // Activation line sits 120px below the container top; b is the lowest
-    // section whose top is still above it.
     expect(onVisibleChange).toHaveBeenLastCalledWith('b');
   });
 });
