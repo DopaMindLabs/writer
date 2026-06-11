@@ -2,18 +2,15 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  DialogPrimitiveClose,
   DialogPrimitiveContent,
   DialogPrimitiveOverlay,
   DialogPrimitivePortal,
   DialogPrimitiveRoot,
   DialogPrimitiveTitle,
 } from '@/components/ui/dialog.primitives';
-import { X } from '@/components/libs/icons';
 import { useUI } from '@/store/ui';
 import { SpaceRail } from './SpaceRail';
 import { Sidebar } from './Sidebar';
-import { IconButton } from '@/components/ui/icon';
 import { cn } from '@/lib/utils';
 
 interface MobileNavDrawerProps {
@@ -56,13 +53,6 @@ export const MobileNavDrawer = ({ spaceId, activeDocId }: MobileNavDrawerProps) 
             activeDocId={activeDocId}
             className="w-auto flex-1 border-r-0"
           />
-          <DialogPrimitiveClose asChild>
-            <IconButton
-              icon={X}
-              label={t('mobileNav.close')}
-              className="absolute right-1.5 top-1.5 text-ink-3"
-            />
-          </DialogPrimitiveClose>
         </DialogPrimitiveContent>
       </DialogPrimitivePortal>
     </DialogPrimitiveRoot>

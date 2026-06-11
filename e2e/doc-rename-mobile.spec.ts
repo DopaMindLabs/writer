@@ -26,8 +26,8 @@ test('renames a doc from the nav drawer row menu on mobile', async ({ page }) =>
     drawer.getByTestId(`sidebar-doc-${docId}-name`),
   ).toHaveText('Renamed on mobile');
 
-  // Closing the drawer reveals the topbar with the new name.
-  await drawer.getByRole('button', { name: 'Close navigation' }).click();
+  // Closing the drawer (Escape) reveals the topbar with the new name.
+  await page.keyboard.press('Escape');
   await expect(drawer).toBeHidden();
   await expect(page.getByTestId('topbar-doc-name')).toHaveText(
     'Renamed on mobile',
