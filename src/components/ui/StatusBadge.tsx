@@ -27,11 +27,9 @@ export interface StatusBadgeProps
   extends HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof statusBadgeRecipe> {
   kind?: StatusKind;
-  /** Hide the leading icon (rare; for word-only badges). */
   glyph?: boolean;
 }
 
-/** Small pill on a tint ground — for state attached to a thing (a table row). */
 export const StatusBadge = forwardRef<HTMLSpanElement, StatusBadgeProps>(
   ({ kind = 'info', size, glyph = true, className, children, ...props }, ref) => (
     <span

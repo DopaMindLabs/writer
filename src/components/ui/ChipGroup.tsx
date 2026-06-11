@@ -5,7 +5,6 @@ interface ChipGroupBaseProps {
   className?: string;
 }
 
-/** Legacy index-based API: a flat list of labels selected by position. */
 export interface ChipGroupIndexProps extends ChipGroupBaseProps {
   options: string[];
   active: number;
@@ -17,7 +16,6 @@ export interface ChipGroupOption {
   value: number;
 }
 
-/** Value-based API: each chip carries its own value, selected by equality. */
 export interface ChipGroupValueProps extends ChipGroupBaseProps {
   options: ChipGroupOption[];
   value: number;

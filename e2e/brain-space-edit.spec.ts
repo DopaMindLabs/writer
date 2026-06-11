@@ -42,8 +42,6 @@ test('a card added while scrolled away lands in the visible viewport', async ({
 }) => {
   const first = await addNote(page);
 
-  // Drag the seed note toward the bottom-right corner so the content extent
-  // grows past the viewport, making the canvas scrollable.
   const box = (await first.boundingBox())!;
   const vp = page.viewportSize()!;
   await page.mouse.move(box.x + box.width / 2, box.y + 6);
@@ -51,7 +49,6 @@ test('a card added while scrolled away lands in the visible viewport', async ({
   await page.mouse.move(vp.width - 30, vp.height - 30, { steps: 14 });
   await page.mouse.up();
 
-  // Scroll to the far cluster, away from the (0, 0) origin.
   const scroll = page.getByTestId('brain-canvas-scroll');
   await scroll.evaluate((el) => {
     el.scrollLeft = el.scrollWidth;
@@ -71,8 +68,6 @@ test('a card added while scrolled away lands in the visible viewport', async ({
     els.map((el) => el.getAttribute('data-testid')),
   );
 
-  // Add a card while scrolled far away. The regression: it would be created at
-  // the canvas origin, off-screen, looking like the click did nothing.
   await page.getByTestId('brain-canvas-tool-question').click();
   await expect(cards).toHaveCount(idsBefore.length + 1);
 
@@ -83,7 +78,6 @@ test('a card added while scrolled away lands in the visible viewport', async ({
   ).find((id) => id !== null && !idsBefore.includes(id));
   expect(newTestId).toBeTruthy();
 
-  // The new card sits within the scroll viewport's bounds, not off-screen.
   const view = (await scroll.boundingBox())!;
   const card = (await page.getByTestId(newTestId!).boundingBox())!;
   expect(card.x).toBeGreaterThanOrEqual(view.x - 1);

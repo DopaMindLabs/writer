@@ -31,11 +31,6 @@ import { TemplatesScreen } from '@/screens/global/Templates';
 import { HelpScreen } from '@/screens/global/Help';
 import { NotFoundScreen } from '@/screens/global/NotFound';
 
-/**
- * Pathless layout route: mounts app-wide concerns once (global keyboard
- * shortcuts + the Quick Help overlay) with full router context, then renders
- * the matched screen via <Outlet />.
- */
 const RootLayout = () => {
   useGlobalShortcuts();
   return (
@@ -47,9 +42,6 @@ const RootLayout = () => {
   );
 };
 
-// Vercel serves the app from `/` and supports SPA rewrites, so a browser
-// router gives clean URLs there. GitHub Pages can't rewrite, so it keeps the
-// hash router. Driven by `VITE_ROUTER`, set in `vercel.json`.
 const createAppRouter =
   import.meta.env.VITE_ROUTER === 'browser'
     ? createBrowserRouter
@@ -81,19 +73,12 @@ const router = createAppRouter([
   },
 ]);
 
-// `?reseed` erases the whole local database, so production builds must never
-// honour it; only dev servers and the e2e build (VITE_E2E=1) may.
 const isReseedParamEnabled = (): boolean =>
   import.meta.env.DEV || import.meta.env.VITE_E2E === '1';
 
 const toError = (e: unknown): Error =>
   e instanceof Error ? e : new Error(String(e));
 
-/**
- * Run the one-time boot sequence (optional `?reseed=1` reset in dev/e2e) and
- * expose the ready/error state. Extracted from <App /> so the component stays
- * small.
- */
 const useAppBoot = (): {
   ready: boolean;
   error: Error | null;

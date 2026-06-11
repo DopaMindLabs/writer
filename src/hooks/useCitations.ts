@@ -3,9 +3,6 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db/db';
 import type { Citation } from '@/db/schema';
 
-// Loads every citation in a space, year-ascending. Reserved for explicit bulk
-// operations (export); interactive rendering should use usePagedCitations so
-// the table never materialises the whole library.
 export const useCitations = (
   spaceId: string | null | undefined,
 ): Citation[] => {
@@ -26,14 +23,10 @@ export interface PagedCitationsOpts {
 }
 
 export interface PagedCitations {
-  /** The rows for the current page only. */
   rows: Citation[];
-  /** Citations matching the query across all pages. */
   totalCount: number;
-  /** Unfiltered citation count for the space (drives header/empty state). */
   totalInSpace: number;
   totalPages: number;
-  /** The requested page clamped into range. */
   currentPage: number;
 }
 
@@ -56,11 +49,6 @@ const matchesQuery = (c: Citation, q: string): boolean =>
     .toLowerCase()
     .includes(q);
 
-// Year-ordered, space-scoped citation page served from the [spaceId+year]
-// index. Without a query, only the visible page is materialised (index-based
-// offset/limit). With a query, rows stream through an index cursor and only
-// matches are kept — a bounded client-side fallback until full-text search
-// exists; callers should debounce the query (see useDebouncedValue).
 export const usePagedCitations = (
   spaceId: string | null | undefined,
   { page, pageSize, query }: PagedCitationsOpts,

@@ -10,5 +10,4 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Interactive: type a query (e.g. "bibtex", "shortcuts") to see live results.
 export const Default: Story = {};

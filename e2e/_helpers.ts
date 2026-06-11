@@ -3,20 +3,11 @@ import type { Page } from '@playwright/test';
 import { addCoverageReport } from 'monocart-reporter';
 import axe from 'axe-core';
 
-/**
- * Navigate to the app with `?reseed=1`, which wipes IndexedDB and reseeds
- * the default Bioinformatics template before the router mounts. Waits for
- * the boot sequence to finish (i.e. the "Booting…" placeholder is gone).
- */
 export const reseedAndGoHome = async (page: Page): Promise<void> => {
   await page.goto('/?reseed=1#/');
   await page.waitForFunction(() => !document.body.innerText.includes('Booting…'));
 };
 
-/**
- * Resolve the first space's UUID from the SpaceRail tag link tooltip target.
- * Used by tests that want to skip the home page and jump directly into a doc.
- */
 export const getFirstSpaceIdFromHome = async (page: Page): Promise<string> => {
   const continueLink = page.getByRole('link', { name: /Continue writing/i });
   const href = await continueLink.getAttribute('href');
@@ -26,10 +17,6 @@ export const getFirstSpaceIdFromHome = async (page: Page): Promise<string> => {
   return match[1];
 };
 
-/**
- * Navigate to a freshly seeded space and return both its id and the first doc's
- * id. WriteScreen redirects `/s/:id` → `/s/:id/d/:firstDocId` once Dexie loads.
- */
 export const gotoFirstDoc = async (
   page: Page,
 ): Promise<{ spaceId: string; docId: string }> => {
@@ -41,14 +28,6 @@ export const gotoFirstDoc = async (
   return { spaceId, docId };
 };
 
-/**
- * Create a space from the given template via the Templates screen and return
- * the new space's UUID. Optionally override the template-prefilled name/tag.
- *
- * Reaches the Templates screen by clicking the in-app "new space" link (present
- * on both the home dashboard and a space's SpaceRail) rather than a direct hash
- * `goto`, which can race the hash router mounting right after boot.
- */
 export const createSpaceFromTemplate = async (
   page: Page,
   templateId: string,
@@ -69,14 +48,6 @@ export const createSpaceFromTemplate = async (
   return spaceId;
 };
 
-/**
- * Stub `window.showDirectoryPicker` so the File System Access folder-sync UI is
- * reachable in headless Chromium. Resolves a *method-free* handle: it is
- * structured-cloneable into IndexedDB (so `folderName` populates and the
- * connected UI renders) but lacks the directory/permission methods, so writes
- * fail — which exercises the sync error/results paths. Must run before
- * navigation (i.e. before `reseedAndGoHome`). Mirrors `sync-settings.spec.ts`.
- */
 export const stubDirectoryPicker = async (page: Page): Promise<void> => {
   await page.addInitScript(() => {
     Object.defineProperty(window, 'showDirectoryPicker', {
@@ -87,14 +58,9 @@ export const stubDirectoryPicker = async (page: Page): Promise<void> => {
   });
 };
 
-// Mirrors src/tours/storage.ts — keep the key/shape in sync if those change.
 const TOURS_STORAGE_KEY = 'lipsum-tours';
 const ALL_TOUR_IDS = ['welcome', 'writer', 'citations', 'brainspace'];
 
-// Extended test that (a) suppresses the driver.js guided tours so their
-// overlay doesn't intercept pointer events, and (b) auto-collects V8 JS
-// coverage from Chromium and pushes it to monocart-reporter. Specs should
-// import `test` from this module instead of `@playwright/test`.
 // nasa-exception: no-invalid-void-type (a Playwright fixture with no value is typed `void`)
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 export const test = base.extend<{ autoCoverage: void }>({
@@ -137,23 +103,10 @@ interface AxeViolation {
 }
 
 interface A11yScanOptions {
-  /** Label included in the failure message. */
   context?: string;
-  /**
-   * Rule ids to disable for this scan. Use to exclude `color-contrast` on the
-   * default `light`/`dark` themes, whose grayscale "meta" inks (e.g. `ink-4`
-   * for counts/shortcuts) are an intentional, documented sub-AA exception — see
-   * docs/design-system.md §11.3 and ACCESSIBILITY.md. Contrast is asserted in
-   * full against the high-contrast themes instead.
-   */
   disableRules?: string[];
 }
 
-/**
- * Run axe-core (already a dependency via the Storybook a11y addon) against the
- * current page and fail on any WCAG 2.1 A/AA violation. Injects the bundled axe
- * source rather than a Playwright wrapper, so it needs no extra install.
- */
 export const expectNoA11yViolations = async (
   page: Page,
   options: A11yScanOptions = {},

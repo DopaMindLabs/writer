@@ -20,7 +20,6 @@ describe('DocInspectorTab', () => {
       'aria-pressed',
       'false',
     );
-    // Global has no inherit chip — that exists only per space.
     expect(
       within(status).queryByTestId('inspector-toggle-inherit'),
     ).toBeNull();

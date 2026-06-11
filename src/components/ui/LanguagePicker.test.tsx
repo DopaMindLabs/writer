@@ -14,9 +14,7 @@ describe('LanguagePicker', () => {
     const select = screen.getByLabelText('Language') as HTMLSelectElement;
     const labels = Array.from(select.options).map((o) => o.text);
 
-    // English itself collapses to just the English name.
     expect(labels).toContain('English');
-    // Other locales render Native (English).
     expect(labels.some((l) => l.endsWith('(Spanish)'))).toBe(true);
     expect(labels.some((l) => l.endsWith('(Japanese)'))).toBe(true);
   });

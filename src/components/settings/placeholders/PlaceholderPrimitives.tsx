@@ -1,13 +1,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-// Design-system exception: the literal hex values in the accent-dot, theme-card
-// and swatch mocks below are *depictions* of specific future theme colours
-// ("Midnight" stays #111111 even when the app runs in dark or high-contrast
-// themes), not UI surface colours — mapping them to tokens would make the
-// previews change with the active theme and misrepresent what they advertise.
-// Everything interactive in these placeholders uses token-backed classes.
-
 export const PlaceholderToggle = ({ on = false }: { on?: boolean }) => {
   return (
     <span

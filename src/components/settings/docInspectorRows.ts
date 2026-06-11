@@ -1,8 +1,5 @@
 import type { InspectorToggleKey } from '@/lib/docInspector/features';
 
-// Shared row descriptors for the global and per-space Doc Inspector settings
-// tabs. labelKey/hintKey are suffixes under the `settings.docInspector.*`
-// translation namespace, so both tabs label the same toggles identically.
 export interface InspectorToggleRow {
   key: InspectorToggleKey;
   labelKey: string;

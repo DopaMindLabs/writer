@@ -1,13 +1,5 @@
 import type { TourId } from '@/tours/tours';
 
-/**
- * Language-independent structure of the Help Center. Article *titles* live in
- * the markdown files themselves (`src/help/content/<locale>/<slug>.md`); this
- * registry only describes how articles are grouped, searched, and kept in sync
- * with the features they document.
- */
-
-/** Stable identifiers for every user-facing feature area the help must cover. */
 export const FEATURE_AREAS = [
   'getting-started',
   'writing',
@@ -28,9 +20,7 @@ export const FEATURE_AREAS = [
 export type FeatureArea = (typeof FEATURE_AREAS)[number];
 
 export interface HelpCategory {
-  /** Stable id, also used as the i18n sub-key under `help:categories`. */
   readonly id: string;
-  /** Lucide icon name resolved to a component in `HelpNav`. */
   readonly icon: string;
 }
 
@@ -40,11 +30,9 @@ export interface HelpArticle {
   readonly featureArea: FeatureArea;
   readonly keywords: readonly string[];
   readonly related?: readonly string[];
-  /** Links the article to a guided tour so coverage stays enforced. */
   readonly tourId?: TourId;
 }
 
-/** Ordered top-level groups shown in the Help nav and landing page. */
 export const HELP_CATEGORIES: readonly HelpCategory[] = [
   { id: 'getting-started', icon: 'Sparkles' },
   { id: 'writing', icon: 'Pencil' },
@@ -58,7 +46,6 @@ export const HELP_CATEGORIES: readonly HelpCategory[] = [
   { id: 'mobile', icon: 'Smartphone' },
 ] as const;
 
-/** Ordered articles. Order within a category is the order shown in the nav. */
 export const HELP_ARTICLES: readonly HelpArticle[] = [
   {
     slug: 'getting-started',
@@ -230,7 +217,6 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
   },
 ] as const;
 
-/** All known article slugs, for validation at trust boundaries (URL params). */
 export const HELP_SLUGS: readonly string[] = HELP_ARTICLES.map((a) => a.slug);
 
 export const getArticleMeta = (slug: string): HelpArticle | undefined =>

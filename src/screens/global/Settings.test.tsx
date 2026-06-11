@@ -26,8 +26,6 @@ describe('SettingsScreen', () => {
     const { getByTestId } = renderWithProviders(<SettingsScreen />, {
       initialEntries: ['/settings'],
     });
-    // Scope to the floating-toolbar row: the Doc inspector section (same group)
-    // also renders On/Off chips on this stacked page.
     const row = within(getByTestId('setting-floating-toolbar'));
     expect(useUI.getState().floatingToolbarEnabled).toBe(false);
     fireEvent.click(row.getByRole('button', { name: 'On' }));
@@ -40,7 +38,6 @@ describe('SettingsScreen', () => {
     const { queryByRole } = renderWithProviders(<SettingsScreen />, {
       initialEntries: ['/settings'],
     });
-    // No "Theme" tab in the settings nav anymore.
     expect(queryByRole('button', { name: 'Theme' })).not.toBeInTheDocument();
   });
 
@@ -61,9 +58,7 @@ describe('SettingsScreen', () => {
       { initialEntries: ['/settings?tab=account'] },
     );
     expect(getByRole('heading', { name: 'Account' })).toBeInTheDocument();
-    // Placeholder hint mirrors the design's wording.
     expect(getByText(/Cloud sync is not available yet/i)).toBeInTheDocument();
-    // And the placeholder is wrapped in a non-closable Coming Soon overlay.
     expect(
       container.querySelector('[data-coming-soon-overlay="true"]'),
     ).not.toBeNull();
@@ -94,8 +89,6 @@ describe('SettingsScreen', () => {
     const { getByRole } = renderWithProviders(<SettingsScreen />, {
       initialEntries: ['/settings'],
     });
-    // The Preferences group renders General … Editor … Typography together,
-    // not just the selected Editor section.
     expect(getByRole('heading', { name: 'General' })).toBeInTheDocument();
     expect(getByRole('heading', { name: 'Editor' })).toBeInTheDocument();
     expect(getByRole('heading', { name: /typography/i })).toBeInTheDocument();
@@ -108,7 +101,6 @@ describe('SettingsScreen', () => {
     );
     fireEvent.click(getByTestId('settings-tab-account'));
     expect(getByRole('heading', { name: 'Account' })).toBeInTheDocument();
-    // The Preferences group is no longer mounted.
     expect(queryByRole('heading', { name: 'Editor' })).not.toBeInTheDocument();
   });
 });

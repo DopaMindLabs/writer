@@ -41,7 +41,6 @@ describe('createRevision', () => {
 
     const remaining = await db.revisions.where('docId').equals(DOC).count();
     expect(remaining).toBe(MAX_AUTO_REVISIONS_PER_DOC);
-    // Oldest three pruned, newest kept.
     expect(await db.revisions.get(ids[0])).toBeUndefined();
     expect(await db.revisions.get(ids[2])).toBeUndefined();
     expect(await db.revisions.get(ids[ids.length - 1])).toBeDefined();

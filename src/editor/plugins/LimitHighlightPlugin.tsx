@@ -15,12 +15,6 @@ import {
   type TextSegment,
 } from '@/lib/docInspector/boundary';
 
-// A non-destructive overlay that paints a warning-coloured highlight behind any
-// text beyond the document's word/character limit. It never mutates the
-// document (no node splitting, no formatting), so nothing is persisted or
-// cropped: on each change it recomputes a DOM range from the over-limit
-// boundary to the end of the document and paints that range's client rects.
-
 interface LimitHighlightPluginProps {
   wordLimit?: number;
   charLimit?: number;
@@ -33,13 +27,9 @@ interface Box {
   height: number;
 }
 
-// Reads the editor state for the over-limit range and returns its client rects
-// (viewport coordinates). Runs inside editor.read() so the Lexical nodes are
-// valid; returns an empty list when nothing is over the limit.
 const readOverLimitRects = (editor: LexicalEditor, limits: Limits) => {
   const segments: TextSegment[] = [];
   let lastTextNode: TextNode | null = null;
-  // A plain loop (not forEach) so TypeScript tracks the lastTextNode assignment.
   for (const [index, block] of $getRoot().getChildren().entries()) {
     if (index > 0) segments.push({ text: '\n\n', nodeKey: null });
     if (!$isElementNode(block)) continue;
@@ -61,10 +51,6 @@ const readOverLimitRects = (editor: LexicalEditor, limits: Limits) => {
     lastTextNode.getTextContentSize(),
   );
   if (!range) return [];
-  // Use the range's own client rects rather than @lexical/selection's
-  // createRectsFromDOMRange: that helper drops any rect spanning the full
-  // content width, which with justified prose removes most lines and leaves
-  // the highlight scattered across only the ragged lines.
   return Array.from(range.getClientRects()).filter(
     (rect) => rect.width > 0 && rect.height > 0,
   );
@@ -124,17 +110,11 @@ export const LimitHighlightPlugin = ({
   }, [editor, wordLimit, charLimit]);
 
   return (
-    // The overlay renders after the ContentEditable in the editor surface, so it
-    // paints ABOVE the text and tints it translucently. It must not use a
-    // negative z-index: the surface forms no stacking context, so that would
-    // push the highlight behind the page paper and hide it entirely.
     <div
       ref={overlayRef}
       data-testid="limit-highlight-overlay"
       aria-hidden
       className="pointer-events-none absolute inset-0"
-      // Opacity on the layer (not each box) so adjacent/overlapping line rects
-      // read as one even tint instead of doubling up where they meet.
       style={{ opacity: 0.25 }}
     >
       {boxes.map((box) => (

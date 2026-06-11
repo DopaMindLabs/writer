@@ -99,7 +99,6 @@ const Item = ({
   }
   return (
     <PopoverClose asChild>
-      {/* @lint-ignore native-button: full-row PopoverClose asChild shell wrapping styled inner content; not a DS Button kind */}
       <button
         type="button"
         onClick={onClick}

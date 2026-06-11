@@ -85,7 +85,6 @@ const ConnectionRow = ({
       data-testid={testIdBase}
       className="flex items-center gap-2 border border-rule bg-paper px-2 py-1.5"
     >
-      {/* @lint-ignore native-button: connection-row content trigger (multi-element label inside a list item); not a DS Button kind */}
       <button
         type="button"
         data-testid={`${testIdBase}-focus`}

@@ -46,11 +46,8 @@ describe('WriteScreen', () => {
       <WriteScreen />,
       { path: '/s/:spaceId', initialEntries: ['/s/empty'] },
     );
-    // Before the live queries resolve we render the loading indicator, not a
-    // flash of the empty state (the previous jumpy behaviour on space switch).
     expect(queryByTestId('write-loading')).toBeInTheDocument();
     expect(queryByText('Empty space')).not.toBeInTheDocument();
-    // Once resolved to a genuinely empty space, the empty state renders.
     expect(await findByText('Empty space')).toBeInTheDocument();
   });
 
@@ -68,8 +65,6 @@ describe('WriteScreen', () => {
       path: '/s/:spaceId',
       initialEntries: ['/s/s1'],
     });
-    // seedBasicSpace seeds doc d1; Write should issue <Navigate> to
-    // /s/s1/d/d1, which the test router catches via the catch-all route.
     expect(await findByTestId('catch-all')).toBeInTheDocument();
   });
 

@@ -238,7 +238,6 @@ describe('buildSpaceMarkdownZipFor', () => {
     const zip = await loadZip(blob);
     const path = Object.keys(zip.files).find((p) => p.includes('stranded.md'));
     expect(path).toBeDefined();
-    // No `${parentSlug}/` prefix because the parent slug couldn't be resolved.
     expect(path).toBe('manuscript/orphan-sub/01-stranded.md');
   });
 
@@ -308,21 +307,16 @@ describe('buildSpaceMarkdownZipFor', () => {
     expect(md).toContain('# Notes');
     expect(md).toContain('## note');
     expect(md).toContain('## question');
-    // Titled note: heading is title, indented body lines follow
     expect(md).toContain('- **Hero arc**');
     expect(md).toContain('  Body line 1');
     expect(md).toContain('  Body line 2');
-    // Untitled note: heading is first body line, rest indented
     expect(md).toContain('- **Heading line**');
     expect(md).toContain('  Detail line');
-    // Whitespace-only title falls back further to the empty-body sentinel
     expect(md).toContain('- **_(empty)_**');
-    // 'question' kind appears even with a different kind enum
     expect(md).toContain('- **Why?**');
   });
 
   it('writes the empty-state placeholders when no notes/citations/connections/annotations/palettes exist', async () => {
-    // beforeEach seeds a note; clear it so we hit the empty branches.
     await db.notes.clear();
     const { blob } = await buildSpaceMarkdownZipFor(sampleSpace.id, WHEN);
     const zip = await loadZip(blob);
@@ -361,9 +355,6 @@ describe('buildSpaceMarkdownZipFor', () => {
         type: 'misc',
         useCount: 0,
       },
-      // Second empty-authors citation: sort callback now sees pairs where
-      // BOTH a.authors and b.authors are falsy, covering the remaining
-      // `(b.authors || '')` falsy branch in renderCitationsMd.
       {
         id: 'c-a2',
         spaceId: 's1',
@@ -383,7 +374,6 @@ describe('buildSpaceMarkdownZipFor', () => {
     expect(md).toContain('n.d.');
     expect(md).toContain('(untitled)');
     expect(md).toContain('Zhang, L.');
-    // Empty-authors row should sort before "Zhang..."
     const anonIdx = md.indexOf('anonNd');
     const zenithIdx = md.indexOf('zenith2020');
     expect(anonIdx).toBeGreaterThan(-1);
@@ -395,7 +385,6 @@ describe('buildSpaceMarkdownZipFor', () => {
     await db.notes.bulkPut([
       { ...sampleNote, id: 'src-note', title: 'Source' },
       { ...sampleNote, id: 'dst-note', title: undefined, body: 'Sink heading\nmore' },
-      // Empty title AND empty body — labelFor falls through to the note id.
       { ...sampleNote, id: 'empty-note', title: undefined, body: '' },
     ]);
     await db.connections.bulkPut([
@@ -416,8 +405,8 @@ describe('buildSpaceMarkdownZipFor', () => {
       {
         id: 'conn3',
         spaceId: 's1',
-        fromNoteId: 'ghost-from', // not present in notes
-        toNoteId: 'ghost-to', // not present in notes
+        fromNoteId: 'ghost-from',
+        toNoteId: 'ghost-to',
         createdAt: FIXED_TIME,
       },
     ]);
@@ -426,9 +415,7 @@ describe('buildSpaceMarkdownZipFor', () => {
     const md = await zip.file('connections.md')!.async('string');
     expect(md).toContain('# Connections');
     expect(md).toContain('Source → Sink heading');
-    // labelFor entry exists but resolved to the note id (empty title+body)
     expect(md).toContain('empty-note → Source');
-    // labelFor map miss on both ends — verbatim ids on both sides
     expect(md).toContain('ghost-from → ghost-to');
   });
 
@@ -485,10 +472,6 @@ describe('buildSpaceMarkdownZipFor', () => {
   });
 
   it('falls back to the docId when an annotation targets a doc not in the snapshot', async () => {
-    // The DB query in readSpaceSnapshot only collects annotations whose docId
-    // matches a known doc, so the `docName.get(docId) ?? docId` fallback in
-    // renderAnnotationsMd can't be reached via buildSpaceMarkdownZipFor. Call
-    // buildSpaceMarkdownZip directly with a hand-crafted snapshot to cover it.
     const snapshot: SpaceSnapshot = {
       space: sampleSpace,
       sections: [],
@@ -518,8 +501,6 @@ describe('buildSpaceMarkdownZipFor', () => {
   });
 
   it('bundles note image attachments and references them in notes.md', async () => {
-    // Use a hand-crafted snapshot so real Blobs reach JSZip (fake-indexeddb
-    // does not preserve Blob instances through a round-trip).
     const snapshot: SpaceSnapshot = {
       space: sampleSpace,
       sections: [],
@@ -559,7 +540,6 @@ describe('buildSpaceMarkdownZipFor', () => {
       .filter((f) => !f.dir && f.name.startsWith('assets/notes/n1/'))
       .map((f) => f.name);
 
-    // Two files written, with colliding names de-duplicated.
     expect(assetPaths).toHaveLength(2);
     expect(assetPaths).toContain('assets/notes/n1/sketch.png');
     expect(assetPaths).toContain('assets/notes/n1/sketch-2.png');
@@ -568,7 +548,6 @@ describe('buildSpaceMarkdownZipFor', () => {
     expect(notesMd).toContain('![sketch.png](assets/notes/n1/sketch.png)');
     expect(notesMd).toContain('![sketch.png](assets/notes/n1/sketch-2.png)');
 
-    // The blob content is preserved.
     const stored = await zip.file('assets/notes/n1/sketch.png')!.async('string');
     expect(stored).toBe('one');
   });
@@ -594,7 +573,6 @@ describe('buildSpaceMarkdownZipFor', () => {
     expect(entry).toBeDefined();
     const md = await entry!.async('string');
     expect(md).toContain('name: Stray');
-    // A section-less doc emits no `section:` frontmatter line.
     expect(md).not.toContain('section:');
   });
 
@@ -620,11 +598,8 @@ describe('buildSpaceMarkdownZipFor', () => {
       docs: [],
       notes: [{ ...sampleNote, id: 'n1', title: 'N' }],
       attachments: [
-        // No extension → fall back to the MIME-derived extension.
         att('a1', 'diagram', 'image/webp'),
-        // Extension strips to empty → fall back to MIME (png).
         att('a2', 'shot.@@@', 'image/png'),
-        // Unknown MIME and no usable extension → generic 'img'.
         att('a3', 'blob', 'image/tiff'),
       ],
       annotations: [],
@@ -645,8 +620,6 @@ describe('buildSpaceMarkdownZipFor', () => {
   });
 
   it('renders untitled notes whose body collapses to empty', async () => {
-    // Forces n.body.split('\n')[0]?.trim() → '' → final '_(empty)_' fallback,
-    // separately from the whitespace-title path covered above.
     await db.notes.clear();
     await db.notes.put({
       ...sampleNote,

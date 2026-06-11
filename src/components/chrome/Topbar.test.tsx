@@ -8,7 +8,6 @@ import { Topbar } from './Topbar';
 
 describe('Topbar', () => {
   beforeEach(() => {
-    // Reset transient UI between tests so prior in_progress state doesn't bleed.
     act(() => {
       useUI.getState().setInspectorMode('none');
       useUI.getState().closeCitationsDrawer();

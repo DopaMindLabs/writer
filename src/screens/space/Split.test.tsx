@@ -92,8 +92,6 @@ describe('SplitScreen', () => {
 
     it('should default the right pane to Brain space when withParam is missing', async () => {
       renderAt('/s/s1/d/d1/split');
-      // The right pane defaults to Brain space (no other doc required), so the
-      // canvas renders rather than a sibling document.
       expect(await screen.findByTestId('brain-canvas')).toBeInTheDocument();
     });
   });
@@ -174,8 +172,6 @@ describe('SplitScreen', () => {
       fireEvent.pointerUp(sep, { pointerId: 1, clientX: 500 });
       fireEvent.pointerDown(sep, { pointerId: 1, clientX: 400 });
       fireEvent.pointerCancel(sep, { pointerId: 1, clientX: 400 });
-      // The divider must survive the cycle (no crash, still mounted) and the
-      // committed percent must remain inside the clamp range [25, 75].
       expect(screen.getByTestId('split-divider')).toBe(sep);
       const pct = useUI.getState().splitDividerPct;
       expect(pct).toBeGreaterThanOrEqual(25);

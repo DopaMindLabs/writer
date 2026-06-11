@@ -4,11 +4,6 @@ import { TOURS, type TourDefinition, type TourId } from './tours';
 import { markCompleted } from './storage';
 import { prefersReducedMotion } from '@/theme/a11y-prefs';
 
-/**
- * Whether tour motion (smooth scrolling) should be suppressed: when the user has
- * chosen Reduced motion in Accessibility settings, or — unless they forced it on
- * — when the OS requests reduced motion. Mirrors the CSS gating in index.css.
- */
 function tourMotionReduced(): boolean {
   if (typeof document === 'undefined') return false;
   const motion = document.documentElement.getAttribute('data-motion');

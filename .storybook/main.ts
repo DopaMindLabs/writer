@@ -9,7 +9,6 @@ const config: StorybookConfig = {
     name: '@storybook/react-vite',
     options: {},
   },
-  // vite-tsconfig-paths only aliases files under src, so register "@/" here too.
   viteFinal: (viteConfig) =>
     mergeConfig(viteConfig, {
       resolve: {

@@ -119,7 +119,6 @@ const MobileTab = ({ item, active }: { item: TabItem; active: boolean }) => {
       </Link>
     );
   }
-  // @lint-ignore native-button: tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
   return (
     <button
       data-testid={`mobile-tabs-${item.key}`}

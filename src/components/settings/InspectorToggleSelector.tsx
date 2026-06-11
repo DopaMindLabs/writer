@@ -7,18 +7,11 @@ import {
 } from '@/components/ui/tooltip';
 import type { InspectorToggle } from '@/db/schema';
 
-// A segmented selector for a Doc Inspector toggle, used in both settings scopes
-// so they share one control (mirroring the Editor and Sync tabs):
-//   - global: On / Off (includeInherit = false);
-//   - space:  Default / On / Off — the "Default" chip shows the resolved global
-//     state so the user can see what inheriting means before choosing it.
 interface InspectorToggleSelectorProps {
   value: InspectorToggle;
   onChange: (value: InspectorToggle) => void;
   ariaLabel: string;
-  /** Include the inherit ("Default") chip — true for space, false for global. */
   includeInherit?: boolean;
-  /** The resolved global default, shown on the inherit chip. */
   defaultOn?: boolean;
 }
 
@@ -60,7 +53,6 @@ export const InspectorToggleSelector = ({
             {labelFor(toggle)}
           </Chip>
         );
-        // The "Default" chip explains that it defers to the global setting.
         if (toggle !== 'inherit') return chip;
         return (
           <Tooltip key={toggle}>

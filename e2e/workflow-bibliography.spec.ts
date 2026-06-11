@@ -2,9 +2,6 @@ import { test, expect } from './_helpers';
 import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
 import { Buffer } from 'node:buffer';
 
-// Long, theme-based journey: a researcher curates a bibliography — adding a
-// BibTeX entry, importing a .bib file, searching, editing (with a rejected
-// duplicate tag), bulk-deleting, and exporting back to .bib.
 const CITATION_A = `@article{wfSmith2021,
   author = {Smith, Jane},
   title  = {Workflow Edit Subject},

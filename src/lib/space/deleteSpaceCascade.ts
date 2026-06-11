@@ -1,7 +1,5 @@
 import { db } from '@/db/db';
 
-// Delete a space and every record that belongs to it, in a single transaction
-// so the space never lingers in a half-deleted state.
 export const deleteSpaceCascade = async (spaceId: string): Promise<void> => {
   await db.transaction(
     'rw',

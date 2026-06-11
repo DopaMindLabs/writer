@@ -10,8 +10,6 @@ test('opens the citations side panel from the Write topbar and closes it', async
   await page.goto(`/#/s/${spaceId}`);
   await page.waitForLoadState('networkidle');
 
-  // The Topbar exposes a citations button (icon + optional label) at the top
-  // of the chrome. Pick the desktop variant in the header.
   const citationsBtn = page
     .getByRole('button', { name: /citations/i })
     .first();

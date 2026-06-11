@@ -25,16 +25,12 @@ export interface InlineBannerProps
     VariantProps<typeof inlineBannerRecipe> {
   kind?: StatusKind;
   title?: ReactNode;
-  /** Inline action label; renders a hairline-underlined button. */
   action?: string;
   onAction?: () => void;
-  /** Show the trailing × dismiss control. */
   dismissible?: boolean;
   onDismiss?: () => void;
 }
 
-/** Full-width feedback strip at the top of a card or form. Persistent (use a
- * toast for transient feedback); one per surface at a time. */
 export const InlineBanner = forwardRef<HTMLDivElement, InlineBannerProps>(
   (
     {

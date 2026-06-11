@@ -23,7 +23,6 @@ test('brain space detail drawer edits a note and links a doc', async ({
 
   const drawer = page.getByTestId('brain-detail-drawer');
   await expect(drawer).toBeVisible();
-  // A fresh note has no connections and no linked doc yet.
   await expect(
     page.getByTestId('brain-detail-drawer-connections-empty'),
   ).toBeVisible();
@@ -32,7 +31,6 @@ test('brain space detail drawer edits a note and links a doc', async ({
   await page.getByTestId('brain-detail-drawer-title').fill('Linked question');
   await page.getByTestId('brain-detail-drawer-body').fill('Some note body');
 
-  // Linking the first available doc reveals the open-doc button.
   await page
     .getByTestId('brain-detail-drawer-linked-doc')
     .selectOption({ index: 1 });

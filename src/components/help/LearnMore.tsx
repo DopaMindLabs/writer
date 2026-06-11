@@ -5,20 +5,12 @@ import { cn } from '@/lib/utils';
 import { routes } from '@/lib/routes';
 
 export interface LearnMoreProps {
-  /** Help article slug to deep-link into. */
   readonly slug: string;
-  /** Optional heading anchor id within the article. */
   readonly anchor?: string;
-  /** Optional override for the link text; defaults to "Learn more". */
   readonly label?: string;
   readonly className?: string;
 }
 
-/**
- * Contextual deep-link from anywhere in the app into a specific help article.
- * Drop next to a feature ("coming soon" rows, empty states, panes) to give
- * users an in-context path to written guidance.
- */
 export const LearnMore = ({ slug, anchor, label, className }: LearnMoreProps) => {
   const { t } = useTranslation('common');
   return (

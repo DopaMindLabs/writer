@@ -1,12 +1,6 @@
 import { type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-/**
- * "Skip to content" link (WCAG 2.4.1 Bypass Blocks). Hidden until it receives
- * keyboard focus, at which point it becomes a visible, ink-filled chip in the
- * top-left. Render it as the first focusable element of the app shell, pointing
- * at the `id` of the main landmark.
- */
 export const SkipLink = ({
   targetId = 'main-content',
   children = 'Skip to content',

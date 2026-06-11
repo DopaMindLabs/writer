@@ -59,8 +59,6 @@ interface BrainSpaceNoteProps {
   spaceId: string;
   selected: boolean;
   pending: boolean;
-  // Provided by the canvas from a single space-wide attachments query, oldest
-  // first, so each card avoids its own live query.
   attachments: NoteAttachment[];
   onPick: (e: ReactPointerEvent<HTMLDivElement>) => void;
 }
@@ -118,7 +116,6 @@ const NoteContextMenu = ({ x, y, onDelete, onClose }: NoteContextMenuProps) => {
       style={{ left: x, top: y }}
       className="fixed z-50 min-w-[10rem] border border-ink bg-paper py-1 shadow-md"
     >
-      {/* @lint-ignore native-button: menuitem in a context menu; danger-tinted row not a DS Button kind */}
       <button
         type="button"
         role="menuitem"
@@ -448,7 +445,6 @@ const NoteTitle = ({
     );
   }
   return (
-    // @lint-ignore native-button: "+ title" hover-revealed placeholder trigger (begins inline edit); not a DS Button kind
     <button
       type="button"
       onPointerDown={(e) => { e.stopPropagation(); }}
@@ -565,8 +561,6 @@ interface ImageCardEmptyProps {
   onAddImages: (files: File[]) => void;
 }
 
-// Explicit, always-visible drop zone (not a hover-revealed control) so the next
-// action on a fresh image card is unambiguous.
 const ImageCardEmpty = ({ note, onAddImages }: ImageCardEmptyProps) => {
   const { t } = useTranslation('screens');
   return (
@@ -577,7 +571,6 @@ const ImageCardEmpty = ({ note, onAddImages }: ImageCardEmptyProps) => {
       data-testid={`brain-note-${note.id}-image-dropzone-input`}
     >
       {(open) => (
-        // @lint-ignore native-button: full-card image drop zone (icon + label content); not a DS Button kind
         <button
           type="button"
           onPointerDown={(e) => { e.stopPropagation(); }}
@@ -624,7 +617,6 @@ const ImageCardPrimary = ({
   return (
     <div className="group/primary relative flex min-h-0 flex-1 items-center justify-center bg-paper-2">
       {url ? (
-        // @lint-ignore native-button: zoomable primary image trigger; not a DS Button kind
         <button
           type="button"
           onClick={() => { onOpenImage(0); }}
@@ -1032,7 +1024,6 @@ const ImageCardContent = ({
         onOpenImage={onOpenImage}
       />
     )}
-    {/* The title doubles as an optional caption on an image card. */}
     <NoteTitle
       note={note}
       editing={editing.editing === 'title'}

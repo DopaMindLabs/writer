@@ -42,7 +42,6 @@ describe('App', () => {
     window.history.replaceState({}, '', '/?reseed=1');
     render(<App />);
     await waitFor(() => { expect(resetAndReseed).toHaveBeenCalled(); });
-    // Param is stripped after reset.
     expect(window.location.search).not.toContain('reseed');
   });
 

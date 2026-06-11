@@ -1,27 +1,14 @@
 import { useRef, type ChangeEvent, type ReactNode } from 'react';
 
 export interface FileInputTriggerProps {
-  /** Comma-separated `accept` attribute, e.g. "image/png,image/jpeg". */
   accept?: string;
-  /** Allow selecting more than one file. */
   multiple?: boolean;
-  /** When true the hidden input is disabled and `open()` is a no-op. */
   disabled?: boolean;
-  /** Called with the chosen files; the input is reset afterwards so the same
-   * file can be picked again. */
   onPick: (files: File[]) => void;
-  /** Render prop receiving an `open()` callback to wire to any DS button. */
   children: (open: () => void) => ReactNode;
   'data-testid'?: string;
 }
 
-/**
- * Logic-only primitive that owns a hidden `<input type="file">` and exposes an
- * `open()` callback to its render-prop child. Compose it with an existing DS
- * `Button`/`IconButton` rather than styling a bespoke upload control, so every
- * file picker in the app looks like every other action. No visual output of its
- * own beyond the (visually hidden) input.
- */
 export const FileInputTrigger = ({
   accept,
   multiple = false,

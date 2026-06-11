@@ -10,7 +10,6 @@ import {
 
 export interface BootErrorScreenProps {
   error: Error;
-  /** Erases all local data and reseeds; only invoked after explicit confirm. */
   onReset: () => void;
 }
 export const BootErrorScreen = ({ error, onReset }: BootErrorScreenProps) => {

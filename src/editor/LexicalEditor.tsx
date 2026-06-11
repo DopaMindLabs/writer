@@ -65,8 +65,6 @@ export const LexicalEditor = ({
   wordLimit,
   charLimit,
 }: LexicalEditorProps) => {
-  // initialConfig.editable keys only on mode, so locking/unlocking never
-  // re-initialises the composer; EditablePlugin applies the live lock flip.
   const baseEditable = mode !== 'read';
   const editable = baseEditable && !locked;
   const floatingToolbarEnabled = useUI((s) => s.floatingToolbarEnabled);
@@ -93,9 +91,6 @@ export const LexicalEditor = ({
     [initialValue, baseEditable],
   );
 
-  // Font size and leading consume the accessibility scale multipliers
-  // (default 1 → identical to the previous fixed values), so the Text size and
-  // Line spacing preferences scale the surface without changing the default.
   const surfaceClasses = cn(
     'relative mx-auto w-full font-serif text-ink',
     mode === 'focus' &&

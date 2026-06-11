@@ -22,13 +22,11 @@ test('citations manual-add opens, cancels, and adds a plain-text reference', asy
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}/citations`);
 
-  // Open the form, then cancel it (covers the open + cancel branches).
   await page.getByTestId('citations-add-toggle').click();
   await expect(page.getByTestId('citations-manual-add')).toBeVisible();
   await page.getByTestId('citations-manual-add-cancel').click();
   await expect(page.getByTestId('citations-manual-add')).toHaveCount(0);
 
-  // Re-open and add a plain-text (non-BibTeX) reference → the `misc` branch.
   await page.getByTestId('citations-add-toggle').click();
   await page
     .getByTestId('citations-manual-add-input')
@@ -45,7 +43,6 @@ test('citations import reports plural counts and skips duplicate keys', async ({
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}/citations`);
 
-  // Importing two entries hits the plural status branch.
   await page.getByTestId('citations-add-toggle').click();
   await page.getByTestId('citations-manual-add-input').fill(TWO_ENTRIES);
   await page.getByTestId('citations-manual-add-submit').click();
@@ -53,7 +50,6 @@ test('citations import reports plural counts and skips duplicate keys', async ({
     /imported 2 citations/i,
   );
 
-  // Re-importing the same keys adds nothing and reports the skipped branch.
   await page.getByTestId('citations-add-toggle').click();
   await page.getByTestId('citations-manual-add-input').fill(TWO_ENTRIES);
   await page.getByTestId('citations-manual-add-submit').click();

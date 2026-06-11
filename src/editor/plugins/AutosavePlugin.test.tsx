@@ -7,7 +7,6 @@ import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { AutosavePlugin } from './AutosavePlugin';
 
-// Captures the editor instance so tests can drive content updates directly.
 const CaptureEditor = ({ onReady }: { onReady: (e: LexicalEditor) => void }) => {
   const [editor] = useLexicalComposerContext();
   onReady(editor);
@@ -38,7 +37,6 @@ const typeInto = (editor: LexicalEditor, text: string) => {
         p.append($createTextNode(text));
         root.append(p);
       },
-      // Commit synchronously so the update listener fires before we assert.
       { discrete: true },
     );
   });
@@ -65,7 +63,6 @@ describe('AutosavePlugin', () => {
     );
 
     typeInto(editor, 'unsaved words');
-    // Navigate away well within the debounce window: the timer has not fired.
     expect(onChange).not.toHaveBeenCalled();
 
     act(() => {
@@ -91,7 +88,6 @@ describe('AutosavePlugin', () => {
     typeInto(editor, 'one');
     typeInto(editor, 'two');
     typeInto(editor, 'three');
-    // Rapid edits coalesce into a single debounced write.
     expect(onChange).not.toHaveBeenCalled();
 
     act(() => {
@@ -120,7 +116,6 @@ describe('AutosavePlugin', () => {
     });
     expect(onChange).toHaveBeenCalledTimes(1);
 
-    // Nothing changed since the debounced save, so the unmount flush is a no-op.
     act(() => {
       unmount();
     });

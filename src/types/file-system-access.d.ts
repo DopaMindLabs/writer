@@ -1,7 +1,3 @@
-// Minimal ambient declarations for the File System Access API members we use in
-// folder sync. Some of these are not present in the project's current lib.dom
-// typings, so we augment them here (only the members we actually call) instead
-// of casting to `any`.
 
 export {};
 

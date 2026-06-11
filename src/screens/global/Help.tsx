@@ -20,7 +20,6 @@ import { getHelpDoc } from '@/lib/help/content';
 import { HelpArticle } from '@/components/help/HelpArticle';
 import { HelpSearch } from '@/components/help/HelpSearch';
 
-/** Sentinel tab id for the landing overview (no article slug). */
 const OVERVIEW_ID = 'overview';
 
 interface CategoryCardProps {
@@ -108,10 +107,6 @@ const HelpLanding = ({ locale }: { readonly locale: string }) => {
   );
 };
 
-/**
- * Builds the left-rail sub-navigation that mirrors Settings: a leading
- * "Overview" entry, then one group per help category listing its articles.
- */
 const useHelpNavGroups = (locale: string): NavTabGroup[] => {
   const { t } = useTranslation('help');
   const groups: NavTabGroup[] = [

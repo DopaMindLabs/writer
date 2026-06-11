@@ -3,11 +3,8 @@ import { newId } from '@/lib/ids';
 import type { Revision, RevisionKind } from '@/db/schema';
 import { countWords, lexicalJsonToPlainText } from './lexicalJsonToPlainText';
 
-// Cap on retained automatic revisions per document. Manual, baseline, and
-// pinned revisions are never counted against this and never auto-pruned.
 export const MAX_AUTO_REVISIONS_PER_DOC = 30;
 
-// Minimum spacing between automatic captures for a single document.
 export const AUTO_REVISION_MIN_INTERVAL_MS = 5 * 60_000;
 
 export interface CreateRevisionOpts {
@@ -17,9 +14,6 @@ export interface CreateRevisionOpts {
   now?: () => number;
 }
 
-// Drops the oldest automatic, unpinned revisions beyond the retention cap.
-// Pinned/manual/baseline revisions are excluded from both the count and the
-// deletion set, so they are kept indefinitely.
 const pruneAutoRevisions = async (docId: string): Promise<void> => {
   const autos = await db.revisions
     .where('docId')
@@ -37,8 +31,6 @@ const pruneAutoRevisions = async (docId: string): Promise<void> => {
   }
 };
 
-// Writes a full snapshot of `body` for `docId` and prunes stale autos in one
-// transaction. Returns the stored row.
 export const createRevision = async (
   docId: string,
   body: string,

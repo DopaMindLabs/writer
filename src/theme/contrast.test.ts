@@ -2,20 +2,6 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-/**
- * Locks the contrast policy from docs/design-system.md §11.3:
- *   - hc-light/hc-dark target WCAG AAA (>= 7:1) for status text — the
- *     accessibility deliverable, enforced strictly here;
- *   - light/dark are held to a >= 3:1 floor (WCAG AA for large text / UI
- *     components). The default `danger`/`success` tokens sit below the 4.5:1
- *     small-text AA bar (danger is ~3.2:1 on its tint); raising them would
- *     change the default experience for existing users, so users who need
- *     stronger contrast opt into the high-contrast themes (which meet AAA).
- *
- * Parses the actual custom properties from index.css so the guarantee can't
- * silently regress when a token value is edited.
- */
-
 const css = readFileSync(resolve(process.cwd(), 'src/index.css'), 'utf8');
 
 const relLuminance = (hex: string): number => {
@@ -35,7 +21,6 @@ const contrast = (a: string, b: string): number => {
   return (hi + 0.05) / (lo + 0.05);
 };
 
-/** Read the custom properties declared inside a given selector block. */
 const readBlock = (selector: string): Record<string, string> => {
   const escaped = selector.replace(/[[\]'=*-]/g, '\\$&');
   const re = new RegExp(`${escaped}\\s*\\{([^}]*)\\}`);
@@ -63,7 +48,6 @@ const THEMES: ThemeCase[] = [
   { selector: "[data-theme='hc-dark']", paper: '--paper', min: 7 },
 ];
 
-// :root and dark inherit --paper from :root; resolve a paper value per theme.
 const paperFor = (vars: Record<string, string>): string =>
   vars['--paper'] ?? readBlock(':root')['--paper'];
 

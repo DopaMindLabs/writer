@@ -18,8 +18,6 @@ export default defineConfig(({ command }) => ({
   server: {
     port: 5173,
   },
-  // Source maps only in the e2e build, where monocart-reporter needs them to
-  // map v8 coverage back to the original .tsx files. Production ships none.
   build: {
     sourcemap: process.env.VITE_E2E === '1',
   },
@@ -56,9 +54,6 @@ export default defineConfig(({ command }) => ({
         lines: 98,
         statements: 97,
         functions: 96,
-        // Branches at 91 — reflects defensive branches (??-fallbacks, optional
-        // field ternaries) that are unreachable with the project's real data
-        // unless we mock it. Raise if we ever refactor those out.
         branches: 91,
       },
     },

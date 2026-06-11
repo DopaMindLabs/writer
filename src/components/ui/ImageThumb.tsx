@@ -21,24 +21,14 @@ const imageThumbRecipe = cva(
 export interface ImageThumbProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'children'>,
     VariantProps<typeof imageThumbRecipe> {
-  /** Image data to preview. An object URL is created and revoked for it. */
   blob: Blob;
-  /** Accessible description / alt text for the image. */
   name: string;
-  /** When provided, a hover-revealed remove control is shown. */
   onRemove?: () => void;
   removeTestId?: string;
-  /** When provided, the image becomes a button that opens it (e.g. full size). */
   onOpen?: () => void;
   openTestId?: string;
 }
 
-/**
- * Square image tile rendered from a Blob, framed with a hairline rule per the
- * design system. Optionally shows a borderless remove control on hover, and —
- * when `onOpen` is given — makes the image a keyboard-operable button that
- * opens it (e.g. in a full-size viewer).
- */
 export const ImageThumb = forwardRef<HTMLDivElement, ImageThumbProps>(
   (
     { blob, name, size, onRemove, removeTestId, onOpen, openTestId, className, ...props },

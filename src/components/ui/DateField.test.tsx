@@ -3,7 +3,7 @@ import { fireEvent } from '@testing-library/react';
 import { render, screen } from '@/test/test-utils';
 import { DateField } from './DateField';
 
-const EPOCH = new Date(2026, 2, 14).getTime(); // 2026-03-14, local midnight
+const EPOCH = new Date(2026, 2, 14).getTime();
 
 describe('DateField', () => {
   it('renders a date input reflecting the epoch value', () => {

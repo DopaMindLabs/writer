@@ -3,13 +3,6 @@ import type { ReactNode } from 'react';
 import { useA11y } from '@/store/a11y';
 import { applyA11yPrefs } from './a11y-prefs';
 
-/**
- * Applies the accessibility preference layer to the document element. Composes
- * with `ThemeProvider` (which owns `data-theme`); this provider owns the
- * orthogonal `data-motion` / `data-text-scale` / `data-line-spacing` /
- * `data-link-underline` / `data-focus` attributes. Under default preferences it
- * writes nothing, leaving the existing experience untouched.
- */
 export const A11yPreferenceProvider = ({
   children,
 }: {

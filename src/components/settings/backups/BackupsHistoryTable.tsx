@@ -64,7 +64,6 @@ const BackupRow = ({ backup, onDownload, onDelete }: BackupRowProps) => {
           >
             {t('settings.space.backups.download')}
           </Button>
-          {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
           <button
             data-testid={`backup-row-${backup.id}-delete`}
             type="button"
@@ -82,7 +81,6 @@ const BackupRow = ({ backup, onDownload, onDelete }: BackupRowProps) => {
   );
 };
 
-/** The backups history block: title + dashed empty state or the snapshots table. */
 export const BackupsHistoryTable = ({
   backups,
   onDownload,

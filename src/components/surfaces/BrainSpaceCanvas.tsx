@@ -39,11 +39,8 @@ interface BrainSpaceCanvasProps {
 
 const DEFAULT_W = 184;
 const DEFAULT_H = 80;
-// Image cards lead with the picture, so they start larger than a text note.
 const IMAGE_DEFAULT_W = 240;
 const IMAGE_DEFAULT_H = 200;
-// Breathing room added past the furthest note so it never sits flush against
-// the scroll edge.
 const CONTENT_MARGIN = 200;
 
 interface ContentExtent {
@@ -51,9 +48,6 @@ interface ContentExtent {
   height: number;
 }
 
-// The scrollable content size: the bounding box of every note plus a margin, so
-// notes positioned beyond the viewport stay reachable by scrolling. The content
-// layer is also stretched to at least fill the viewport via `min-w/min-h-full`.
 const contentExtent = (notes: Note[]): ContentExtent => {
   let width = 0;
   let height = 0;
@@ -140,7 +134,6 @@ const CanvasToolbar = ({ toolbarKinds, onAddNote }: CanvasToolbarProps) => (
     className="absolute bottom-5 left-1/2 -translate-x-1/2 border border-ink bg-paper"
   >
     {toolbarKinds.map((kind, i) => (
-      // @lint-ignore native-button: segmented toolbar with vertical dividers; DS Button ghost variant has incompatible padding + bottom-border
       <button
         key={kind}
         data-testid={`brain-canvas-tool-${kind}`}
@@ -157,18 +150,11 @@ const CanvasToolbar = ({ toolbarKinds, onAddNote }: CanvasToolbarProps) => (
   </div>
 );
 
-// Top-left of the visible viewport in content coordinates. New cards are
-// anchored here rather than the canvas origin: with a scrollable canvas the
-// toolbar stays pinned while the user may be scrolled far from (0, 0), so a
-// card placed at (24, 24) would appear off-screen and look like the click did
-// nothing. Offsetting by the scroll position lands it in the current view.
 const viewportOrigin = (scroller: HTMLDivElement | null) => ({
   l: scroller ? Math.round(scroller.scrollLeft) : 0,
   t: scroller ? Math.round(scroller.scrollTop) : 0,
 });
 
-// Build a fresh note record anchored to the viewport origin. The cascading
-// jitter fans successive cards out from the top-left so they don't stack.
 const buildNote = (
   spaceId: string,
   kind: NoteKind,
@@ -240,8 +226,6 @@ const useCanvasInteractions = (
   );
 
   const onBackgroundPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
-    // Deselect on a click that doesn't land on a note — either the scroll
-    // viewport or the (empty) content layer beneath it.
     const target = e.target as HTMLElement;
     if (target.closest('[data-testid^="brain-note-"]')) return;
     focusNote(null);
@@ -264,10 +248,6 @@ interface CanvasScrollProps {
   onPick: (id: string, e: ReactPointerEvent<HTMLDivElement>) => void;
 }
 
-// Scroll viewport in its own layer so the canvas chrome (toolbar, hint, empty
-// state, drawer) stays pinned to the visible pane instead of scrolling away.
-// The inner content layer is sized to the bounding box of all notes, so notes
-// placed beyond the viewport (e.g. in a narrow split pane) stay reachable.
 const CanvasScroll = ({
   spaceId,
   notes,
@@ -335,8 +315,6 @@ export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
     return m;
   }, [notes]);
 
-  // One live attachments query for the whole space, grouped by note, instead of
-  // one query per note card.
   const attachmentsByNote = useNoteAttachmentsBySpace(spaceId);
 
   const scrollRef = useRef<HTMLDivElement>(null);

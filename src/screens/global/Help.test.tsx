@@ -17,12 +17,10 @@ describe('HelpScreen', () => {
       path: '/help',
       initialEntries: ['/help'],
     });
-    // Same shell chrome as Settings: branded header + grouped sub-nav.
     expect(screen.getByText('Help / Documentation')).toBeInTheDocument();
     expect(
       screen.getByRole('navigation', { name: 'Help topics' }),
     ).toBeInTheDocument();
-    // Overview is the active tab on the landing; articles appear as tabs.
     expect(
       screen.getByTestId('settings-tab-overview').getAttribute('aria-current'),
     ).toBe('page');

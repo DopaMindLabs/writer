@@ -13,8 +13,6 @@ export interface DeleteSpaceController {
   handleConfirm: () => Promise<void>;
 }
 
-/** State + actions for the "delete space" confirmation dialog: the typed
- * confirmation, the cascade delete, and navigation home on success. */
 export const useDeleteSpace = (
   space: Space,
   onOpenChange: (next: boolean) => void,

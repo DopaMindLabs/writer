@@ -18,13 +18,10 @@ export interface LightboxImage {
 }
 
 export interface ImageLightboxProps {
-  /** Images available to view. */
   images: readonly LightboxImage[];
-  /** Index of the image currently shown. */
   index: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** When provided with more than one image, enables paging controls. */
   onIndexChange?: (index: number) => void;
 }
 
@@ -107,15 +104,6 @@ const useArrowKeyPaging = (
   }, [enabled, onPage]);
 };
 
-/**
- * Full-size image viewer in a centred modal. The image is shown with
- * `object-contain` (never cropped) inside a hairline, square-cornered frame per
- * the design system, and the chrome is kept deliberately quiet. Built on the
- * Radix dialog primitive, so focus is trapped and restored, Escape and a click
- * outside close it, and it carries dialog semantics. Animations follow the
- * global motion preference (see `src/index.css`), not hard-coded here. Paging is
- * available via on-screen controls and the arrow keys.
- */
 export const ImageLightbox = ({
   images,
   index,

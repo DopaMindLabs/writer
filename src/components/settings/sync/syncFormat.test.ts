@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import type { TFunction } from 'i18next';
 import { formatBytes, formatRelativeTime, intervalLabel } from './syncFormat';
 
-// Minimal TFunction stand-in: echoes the key, applying {{count}}/{{label}}.
 const t = ((key: string, opts?: Record<string, unknown>) => {
   if (opts && 'count' in opts) return `${String(opts.count)} min`;
   if (opts && 'label' in opts) return String(opts.label);
@@ -22,7 +21,6 @@ describe('syncFormat', () => {
     expect(formatRelativeTime(now - 5 * 60_000, t, now)).toBe('5 min ago');
     expect(formatRelativeTime(now - 3 * 3_600_000, t, now)).toBe('3 h ago');
     expect(formatRelativeTime(now - 2 * 86_400_000, t, now)).toBe('2 d ago');
-    // Older than a week → ISO date.
     expect(formatRelativeTime(now - 30 * 86_400_000, t, now)).toMatch(
       /^\d{4}-\d{2}-\d{2}$/,
     );

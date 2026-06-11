@@ -59,17 +59,10 @@ interface NavShellProps {
   children: ReactNode;
   space?: Space | null;
   activeSpaceId?: string | null;
-  /** Overrides the variant-derived nav header subtitle (e.g. for the Help shell). */
   subtitle?: string;
-  /** Accessible name for the sub-nav landmark (defaults to the Settings wording). */
   navLabel?: string;
 }
 
-/**
- * Branded sidebar-nav + detail-pane shell shared by the Settings, Space settings
- * and Help surfaces: a left rail (SpaceRail + grouped {@link NavTabs}) beside a
- * scrollable content pane.
- */
 export const NavShell = ({
   variant,
   groups,
@@ -86,9 +79,6 @@ export const NavShell = ({
       <div className="hidden md:flex">
         <SpaceRail activeSpaceId={activeSpaceId} />
       </div>
-      {/* min-w-0: without it the mobile tab strip's content width becomes the
-          column's min-content width and forces the whole page to overflow
-          horizontally on narrow viewports. */}
       <div className="flex min-h-0 min-w-0 flex-1 flex-col md:flex-row">
         <div className="flex min-h-0 min-w-0 shrink-0 flex-col border-r border-rule bg-paper-2 md:w-[240px]">
           <NavShellHeader

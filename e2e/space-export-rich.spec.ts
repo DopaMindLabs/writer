@@ -8,9 +8,6 @@ test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
 });
 
-// Populates a space with citations + notes so the markdown-zip export walks
-// its populated render paths (renderCitationsMd / renderNotesMd byKind +
-// title-heading vs body-heading), not just the empty-state branches.
 test('exports a space populated with citations and notes', async ({ page }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
 
@@ -25,7 +22,6 @@ test('exports a space populated with citations and notes', async ({ page }) => {
     .getByTestId('brain-canvas-content')
     .locator(':scope > [data-testid^="brain-note-"]');
 
-  // A titled note (heading from title) of one kind...
   await page.getByTestId('brain-canvas-tool-question').click();
   await expect(notes).toHaveCount(1);
   const titled = notes.first();
@@ -34,7 +30,6 @@ test('exports a space populated with citations and notes', async ({ page }) => {
   await titled.locator('[data-testid$="-title-input"]').fill('A titled note');
   await titled.locator('[data-testid$="-title-input"]').press('Enter');
 
-  // ...and a body-only note of another kind (heading from first body line).
   await page.getByTestId('brain-canvas-tool-source').click();
   await expect(notes).toHaveCount(2);
   const bodyOnly = notes.nth(1);

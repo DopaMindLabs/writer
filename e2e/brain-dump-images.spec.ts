@@ -2,8 +2,6 @@ import type { Page } from '@playwright/test';
 import { test, expect } from './_helpers';
 import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
 
-// A 1×1 transparent PNG, supplied as an in-memory payload so no fixture file is
-// needed on disk.
 const PNG_1PX =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M8AAAMBAQDJ/1eHAAAAAElFTkSuQmCC';
 
@@ -51,7 +49,6 @@ test('uploads a picture via the drawer, persists across reload, and removes it',
   ).toHaveText('1 / 2');
   await expect(drawer.getByRole('img', { name: 'ref.png' })).toBeVisible();
 
-  // Close the drawer and hard-reload: the attachment lives in IndexedDB.
   await page.getByTestId('brain-detail-drawer-close').click();
   await page.reload();
 
@@ -62,7 +59,6 @@ test('uploads a picture via the drawer, persists across reload, and removes it',
   await expect(card.locator('[data-testid$="-images"]')).toBeVisible();
   await expect(card.getByRole('img', { name: 'ref.png' })).toBeVisible();
 
-  // Reopen the drawer and remove the picture.
   await card.hover();
   await card.locator('[data-testid$="-open-details"]').click();
   const reopened = page.getByTestId('brain-detail-drawer');
@@ -94,7 +90,6 @@ test('enforces the two-image limit per note', async ({ page }) => {
     drawer.getByTestId('brain-detail-drawer-attachments-limit-hint'),
   ).toBeVisible();
 
-  // The card's quick-add button disappears once the limit is reached.
   await page.getByTestId('brain-detail-drawer-close').click();
   const card = page
     .getByTestId('brain-canvas-content')

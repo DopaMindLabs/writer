@@ -17,11 +17,9 @@ test('loads with the Settings-style shell and navigates via the sub-nav', async 
   page,
 }) => {
   await page.goto('/#/help');
-  // Same shell chrome as Settings: branded "Help / Documentation" header + sub-nav.
   await expect(page.getByText('Help / Documentation')).toBeVisible();
   const nav = page.getByRole('navigation', { name: 'Help topics' });
   await expect(nav).toBeVisible();
-  // Selecting an article tab routes to it and marks it current.
   const tab = page.getByTestId('settings-tab-keyboard-shortcuts').first();
   await tab.click();
   await expect(page).toHaveURL(/#\/help\/keyboard-shortcuts$/);
