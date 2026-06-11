@@ -7,7 +7,6 @@ interface SyncResultsTableProps {
   results: SpaceSyncResult[];
 }
 
-/** Per-space outcome of a "Sync now (all spaces)" run. */
 export const SyncResultsTable = ({ results }: SyncResultsTableProps) => {
   const { t } = useTranslation('screens');
   if (results.length === 0) return null;

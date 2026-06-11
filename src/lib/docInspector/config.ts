@@ -1,8 +1,3 @@
-// Read/resolve/write helpers for Doc Inspector enablement, mirroring the
-// SyncConfig cascade (src/lib/sync/folderSync.ts). A row with spaceId ===
-// 'global' holds the defaults; per-space rows override per toggle. Resolution
-// per toggle: a space value of 'inherit' (or an absent space row) defers to the
-// global default; otherwise the space value wins.
 
 import { db } from '@/db/db';
 import type { DocInspectorConfig, InspectorToggle } from '@/db/schema';
@@ -20,9 +15,6 @@ const defaultToggle = (key: InspectorToggleKey): InspectorToggle =>
     ? 'on'
     : 'off';
 
-// Declarative defaults: every toggle resolves from features.ts. Used when no
-// global row has been written yet, so changing an enabledByDefault flag there
-// changes the out-of-the-box behaviour here.
 export const DEFAULT_GLOBAL_CONFIG: DocInspectorConfig = {
   spaceId: GLOBAL_INSPECTOR_ID,
   wordLimit: defaultToggle('wordLimit'),
@@ -85,7 +77,6 @@ export const setStatusStageEnabled = async (
   });
 };
 
-// Resolve a single toggle through the global -> space cascade.
 export const resolveToggle = (
   global: DocInspectorConfig,
   space: DocInspectorConfig | null,
@@ -96,9 +87,6 @@ export const resolveToggle = (
   return own === 'on';
 };
 
-// Resolve every toggle at once into a plain enabled/disabled record. Derived
-// from INSPECTOR_TOGGLE_KEYS so adding a new toggle in features.ts propagates
-// here without a parallel edit.
 export const resolveAll = (
   global: DocInspectorConfig,
   space: DocInspectorConfig | null,
@@ -107,7 +95,6 @@ export const resolveAll = (
     INSPECTOR_TOGGLE_KEYS.map((key) => [key, resolveToggle(global, space, key)]),
   ) as Record<InspectorToggleKey, boolean>;
 
-// The status stages currently offered by the picker (global row only in v1).
 export const enabledStages = (global: DocInspectorConfig): DocStatus[] =>
   DOC_STATUS_STAGES.filter(
     (stage) => global.statusStages?.[stage.id] ?? stage.enabledByDefault,

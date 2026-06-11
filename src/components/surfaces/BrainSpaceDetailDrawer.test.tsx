@@ -398,9 +398,6 @@ describe('BrainSpaceDetailDrawer', () => {
       useUI.getState().openDetail(SECOND_NOTE.id);
       const drawer = await screen.findByTestId('brain-detail-drawer');
       await screen.findByTestId('brain-detail-drawer-connections-heading');
-      // Wait for the related-note live query to settle so the snapshot captures
-      // the resolved connection row rather than its transient loading state: the
-      // focus button is disabled until the connected note loads.
       await waitFor(() => {
         expect(
           screen.getByTestId('brain-detail-drawer-connection-c1-focus'),
@@ -481,8 +478,6 @@ describe('BrainSpaceDetailDrawer', () => {
     it('warns when an unsupported file type is chosen', async () => {
       await openDrawerForSecondNote();
       const input = screen.getByTestId('brain-detail-drawer-attachments-input');
-      // Drive the change directly so the non-image file bypasses the input's
-      // accept filter and reaches the component's own validation path.
       fireEvent.change(input, {
         target: { files: [new File(['x'], 'notes.txt', { type: 'text/plain' })] },
       });
@@ -492,7 +487,6 @@ describe('BrainSpaceDetailDrawer', () => {
       );
       expect(banner).toHaveTextContent(/unsupported type/);
 
-      // Dismissing clears the warning.
       const user = userEvent.setup();
       await user.click(within(banner).getByRole('button', { name: 'Dismiss' }));
       await waitFor(() => {

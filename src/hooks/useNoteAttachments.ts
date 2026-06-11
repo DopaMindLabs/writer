@@ -2,7 +2,6 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db/db';
 import type { NoteAttachment } from '@/db/schema';
 
-// Live list of a note's image attachments, oldest first.
 export const useNoteAttachments = (
   noteId: string | null | undefined,
 ): NoteAttachment[] => {
@@ -21,11 +20,6 @@ export const useNoteAttachments = (
 
 const EMPTY_ATTACHMENTS: NoteAttachment[] = [];
 
-// Live map of all of a space's image attachments, grouped by note id and ordered
-// oldest first within each note. One live query for the whole canvas instead of
-// one per note card, so boards with many notes don't spin up many IndexedDB
-// observers. Reuse the shared empty array for notes with no attachments so a
-// consumer's referential-equality memoisation stays stable.
 export const useNoteAttachmentsBySpace = (
   spaceId: string | null | undefined,
 ): Map<string, NoteAttachment[]> => {

@@ -1,13 +1,3 @@
-// Pure offset math for the over-limit highlight. Kept free of Lexical/DOM so it
-// can be unit-tested in isolation — the editor plugin feeds it the ordered text
-// of the document and maps the result back to a DOM range.
-//
-// Segments are the document's text nodes in order; a segment with nodeKey ===
-// null is a structural separator (a block break) that counts toward the text
-// but carries no editable position. Counting is done over the concatenation of
-// every segment's text; the returned boundary is the first OVER-limit character
-// expressed as a UTF-16 offset within a real text node (the unit DOM ranges
-// use), so everything from there to the end of the document is over the limit.
 
 export interface TextSegment {
   text: string;
@@ -24,9 +14,6 @@ export interface Limits {
   charLimit?: number;
 }
 
-// UTF-16 index at which the (limit+1)-th code point begins, or null when the
-// text has at most `limit` code points. Counting in code points keeps a
-// surrogate-pair emoji as one character while the offset stays in UTF-16 units.
 const charBoundary = (full: string, limit: number): number | null => {
   let count = 0;
   let utf16 = 0;
@@ -38,9 +25,6 @@ const charBoundary = (full: string, limit: number): number | null => {
   return null;
 };
 
-// UTF-16 index just after the end of the `limit`-th word (whitespace-delimited,
-// matching countWords), or null when the text has at most `limit` words or no
-// text follows the limit.
 const wordBoundary = (full: string, limit: number): number | null => {
   const re = /\S+/g;
   let count = 0;
@@ -54,9 +38,6 @@ const wordBoundary = (full: string, limit: number): number | null => {
   return null;
 };
 
-// Map a global UTF-16 index in the concatenated text to a position in a real
-// text node. When the index lands inside a structural separator, snap to the
-// start of the next text node.
 const mapToNode = (
   segments: TextSegment[],
   index: number,
@@ -72,7 +53,7 @@ const mapToNode = (
       }
     } else if (index < end) {
       if (key !== null) return { nodeKey: key, offset: index - start };
-      pendingNextNode = true; // boundary fell in a separator
+      pendingNextNode = true;
     }
     start = end;
   }

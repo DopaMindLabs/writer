@@ -6,12 +6,9 @@ interface SyncFolderRowProps {
   folderName: string | null;
   hint: string;
   onChoose: () => void;
-  /** When provided, the row offers change + disconnect once a folder is set
-   * (the global Sync tab). Omit for the per-space tab, which only connects. */
   onDisconnect?: () => void;
 }
 
-/** The "Folder" SettingRow shared by the global and per-space Sync tabs. */
 export const SyncFolderRow = ({
   folderName,
   hint,

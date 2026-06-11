@@ -21,8 +21,6 @@ const openInspectorInfo = async (page: Page): Promise<void> => {
   await expect(page.getByTestId('doc-inspector-info')).toBeVisible();
 };
 
-// Set a feature's segmented selector (used in both scopes) to On/Off/Default,
-// scoped to its row by the group's accessible name (the feature label).
 const setToggle = async (
   page: Page,
   label: string,
@@ -86,17 +84,14 @@ test('turning a limit feature off keeps the count but hides the limit suffix and
 
   await gotoFirstDocIn(page, spaceId);
   await openInspectorInfo(page);
-  // Counts stay (just informational).
   await expect(page.getByTestId('inspector-row-words')).toBeVisible();
   await expect(page.getByTestId('inspector-row-characters')).toBeVisible();
   await expect(page.getByTestId('inspector-row-words')).not.toContainText('/');
   await expect(page.getByTestId('inspector-row-characters')).not.toContainText(
     '/',
   );
-  // Limit input rows disappear.
   await expect(page.getByTestId('inspector-wordLimit')).toHaveCount(0);
   await expect(page.getByTestId('inspector-charLimit')).toHaveCount(0);
-  // Updated and Section stay (they aren't toggleable features).
   await expect(page.getByTestId('inspector-row-updated')).toBeVisible();
   await expect(page.getByTestId('inspector-row-section')).toBeVisible();
 });
@@ -119,7 +114,6 @@ test('the space default chip explains it inherits from global settings', async (
 test('the gating behaves the same way in a different template (serial)', async ({
   page,
 }) => {
-  // Reproduces the user-reported scenario: "Issue 01" in the Serial template.
   await page.goto('/#/settings?tab=docInspector');
   await setToggle(page, 'Due date', 'off');
   await setToggle(page, 'Word limit', 'off');
@@ -128,7 +122,6 @@ test('the gating behaves the same way in a different template (serial)', async (
   await page.goto(`/#/s/${serialSpaceId}`);
   await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
   await openInspectorInfo(page);
-  // The Serial seed doc has no meta values, so disabled features must stay hidden.
   await expect(page.getByTestId('inspector-row-words')).toBeVisible();
   await expect(page.getByTestId('inspector-row-words')).not.toContainText('/');
   await expect(page.getByTestId('inspector-wordLimit')).toHaveCount(0);

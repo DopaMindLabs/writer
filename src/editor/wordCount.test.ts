@@ -6,9 +6,6 @@ import {
 } from '@/lib/revisions/lexicalJsonToPlainText';
 import { serializedBody } from '@/test/fixtures';
 
-// A real serialized editor state: one paragraph, "hello" split across three
-// text nodes because "ll" is bold. Word boundaries must not be invented at
-// text-node boundaries.
 const textNode = (text: string, format = 0) => ({
   detail: 0,
   format,
@@ -67,8 +64,6 @@ describe('countWords', () => {
   });
 
   it('throws on a body that is not serialized Lexical JSON', () => {
-    // Doc bodies are only ever '' or serializeState output; anything else is
-    // corrupt and must fail loudly instead of being miscounted.
     expect(() => countWords('plain words here today')).toThrow();
   });
 });

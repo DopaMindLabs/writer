@@ -1,8 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { lexicalJsonToOutline } from './outline';
 
-// Minimal serialized-node builders mirroring serializeState output (the same
-// hand-rolled shape as lexicalJsonToPlainText.test.ts).
 const textNode = (text: string) => ({
   detail: 0,
   format: 0,
@@ -110,8 +108,6 @@ describe('lexicalJsonToOutline', () => {
   });
 
   it('throws on a body that is not serialized Lexical JSON', () => {
-    // Doc bodies are only ever '' or serializeState output, matching
-    // lexicalJsonToPlainText's contract.
     expect(() => lexicalJsonToOutline('A plain-text body.')).toThrow();
   });
 });

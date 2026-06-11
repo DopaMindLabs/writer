@@ -37,10 +37,6 @@ export const WriteScreen = () => {
 
   useAutoTour('writer', { ready: !focus && !!doc });
 
-  // Redirect `/s/:spaceId` to its first document imperatively. Returning a
-  // <Navigate> element here would unmount the whole screen (rails, sidebar,
-  // topbar) for a frame and remount it after the redirect — perceived as the
-  // page "reloading" on every space switch. An effect keeps the chrome mounted.
   const redirecting = useFirstDocRedirect(spaceId, docId, sections, docs);
 
   useEffect(() => {
@@ -141,13 +137,6 @@ const pickFirstDocId = (
   return firstDoc.id;
 };
 
-/**
- * When `/s/:spaceId` has no doc selected, redirect to the space's first
- * document once its data has loaded. The redirect runs in an effect (rather
- * than by returning <Navigate>) so the surrounding chrome stays mounted across
- * the switch. Returns whether a redirect is pending, so the caller can show a
- * loading indicator instead of flashing the empty state.
- */
 const useFirstDocRedirect = (
   spaceId: string | undefined,
   docId: string | undefined,
@@ -166,11 +155,6 @@ const useFirstDocRedirect = (
   return !docId && (!dataReady || firstDocId !== undefined);
 };
 
-/**
- * The selected document is still loading while its query resolves. A docId
- * absent from the loaded list is treated as genuinely missing (e.g. a stale
- * URL) rather than loading forever.
- */
 const isSelectedDocLoading = (
   docId: string | undefined,
   doc: Doc | undefined,

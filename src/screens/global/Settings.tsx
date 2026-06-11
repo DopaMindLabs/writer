@@ -126,7 +126,6 @@ export const SettingsScreen = () => {
   }));
   const active = sectionIds.includes(visibleId) ? visibleId : activeTab;
 
-  // Keep the highlight in sync when the group changes (deep links, back/forward).
   useEffect(() => {
     setVisibleId(activeTab);
   }, [activeTab]);

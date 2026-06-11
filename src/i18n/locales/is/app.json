@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Ræsivilla",
-  "bootErrorHintBefore": "Prófaðu ",
-  "bootErrorHintAfter": " til að endurstilla staðbundinn gagnagrunn.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Ef þetta heldur áfram geturðu eytt staðbundnum gögnum forritsins og byrjað upp á nýtt.",
+  "bootErrorResetAction": "Endurstilla staðbundin gögn…",
+  "bootErrorResetTitle": "Eyða öllum staðbundnum gögnum?",
+  "bootErrorResetBody": "Þetta eyðir varanlega öllu sem forritið hefur vistað í þessum vafra — skjölum, glósum, tilvitnunum og öryggisafritum. Það er ekki hægt að afturkalla.",
+  "bootErrorResetConfirm": "Eyða öllu",
+  "bootErrorResetCancel": "Hætta við",
   "booting": "Ræsi upp…"
 }

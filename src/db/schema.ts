@@ -28,12 +28,9 @@ export interface Doc {
   meta: {
     wordCount: number;
     status?: string;
-    // Optional per-document writing limits and deadline surfaced by the Doc
-    // Inspector. All absent by default (no limit / no due date); read with
-    // `?? default` so existing documents stay back-compatible.
-    wordLimit?: number; // absent or 0 = no limit
-    charLimit?: number; // absent or 0 = no limit
-    dueDate?: number; // epoch ms; absent = no due date
+    wordLimit?: number;
+    charLimit?: number;
+    dueDate?: number;
   };
   updatedAt: number;
 }
@@ -53,12 +50,8 @@ export enum NoteKind {
   Image = 'image',
 }
 
-// How a note card presents itself. Decoupled from NoteKind (which is semantic)
-// so a kind maps to a layout and rendering can dispatch on the layout exhaustively.
 export enum NoteLayout {
-  // Title + body, with an optional strip of image thumbnails.
   Text = 'text',
-  // Image-first: the picture is primary, the title is an optional caption, no body.
   Image = 'image',
 }
 
@@ -81,17 +74,10 @@ export interface Note {
   body: string;
   linkedDocId?: string;
   createdAt: number;
-  // Optional per-note presentation override; when absent the layout is derived
-  // from the note's kind via the note-type registry. Additive/non-indexed.
   layout?: NoteLayout;
-  // Card-type descriptor version stamped at creation; anchors any future
-  // per-card migration. Additive/non-indexed.
   typeVersion?: string;
 }
 
-// An image attached to a brain-dump note. The binary payload is stored as a
-// Blob directly in IndexedDB (mirrors Backup.payload), never base64'd into the
-// note row. Attachments are space-scoped for efficient export queries.
 export interface NoteAttachment {
   id: string;
   noteId: string;
@@ -135,10 +121,6 @@ export interface Citation {
   raw?: string;
 }
 
-// A point-in-time snapshot of a single document's body. Stored as a full
-// snapshot (not a delta) so rollback is trivial and robust. `body` is the
-// canonical serialized Lexical JSON; `text` is the extracted plaintext kept
-// alongside it so diffing and previews never re-parse Lexical off-React.
 export type RevisionKind = 'auto' | 'manual' | 'baseline';
 
 export interface Revision {
@@ -151,8 +133,6 @@ export interface Revision {
   label?: string;
   pinned?: boolean;
   createdAt: number;
-  // RESERVED for a later "tracked changes" phase (inline accept/reject
-  // change-set metadata). Untouched today.
   meta?: Record<string, unknown>;
 }
 
@@ -190,8 +170,6 @@ export interface Meta {
   value: unknown;
 }
 
-// A recorded sync run for a space. Sync is distinct from Backup: it pushes the
-// space to the connected folder and is tracked here (not in the backups table).
 export interface SyncEntry {
   id: string;
   spaceId: string;
@@ -203,19 +181,11 @@ export interface SyncEntry {
   error?: string;
 }
 
-// Auto-sync configuration. A single row with spaceId === 'global' holds the
-// default; per-space rows override it. intervalMin: 0 = off, INHERIT_INTERVAL
-// (-1) = use the global default (per-space rows only).
 export interface SyncConfig {
   spaceId: string;
   intervalMin: number;
 }
 
-// Doc Inspector enablement. A single row with spaceId === 'global' holds the
-// defaults; per-space rows override it. Each toggle is 'on' | 'off' at the
-// global level; per-space rows may also be 'inherit' to defer to the global
-// default. `statusStages` (global row only) selects which workflow stages the
-// Status control offers.
 export type InspectorToggle = 'on' | 'off' | 'inherit';
 
 export interface DocInspectorConfig {

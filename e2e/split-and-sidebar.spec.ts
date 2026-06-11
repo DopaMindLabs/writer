@@ -16,8 +16,6 @@ test('split view renders both panes, divider responds to keyboard, and right pan
   await page.getByRole('link', { name: 'split', exact: true }).click();
   await page.waitForURL(/\/split/);
 
-  // The right pane defaults to Brain space: the URL gains with=dump and the
-  // canvas is shown without needing a second document.
   await page.waitForURL(/with=dump/);
   await expect(page.getByTestId('brain-canvas')).toBeVisible();
 

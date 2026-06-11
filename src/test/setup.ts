@@ -8,10 +8,6 @@ import { useUI } from '@/store/ui';
 
 const initialUIState = useUI.getState();
 
-// React's useId() emits tokens like `_r_5h_` whose value depends on render
-// order across the suite. Radix primitives (DropdownMenu, etc.) wire these
-// into `aria-controls="radix-_r_…_"` for a11y, so we can't strip them at
-// the source. Mask the variable suffix in snapshots to keep them stable.
 const REACT_ID_TOKEN = /^(?:radix-)?_r_[a-z0-9]+_$/i;
 expect.addSnapshotSerializer({
   test: (val) => typeof val === 'string' && REACT_ID_TOKEN.test(val),
@@ -25,10 +21,6 @@ expect.addSnapshotSerializer({
     ),
 });
 
-// Some vitest+jsdom combinations don't expose window.localStorage. Install
-// a Map-backed polyfill before any module imports it.
-// jsdom doesn't implement HTMLElement.setPointerCapture / hasPointerCapture
-// / releasePointerCapture. SplitScreen's divider uses these for drag.
 if (typeof Element !== 'undefined') {
   type WithPointerCapture = Element & {
     setPointerCapture: (id: number) => void;
@@ -41,9 +33,6 @@ if (typeof Element !== 'undefined') {
   if (!proto.releasePointerCapture) proto.releasePointerCapture = () => {};
 }
 
-// jsdom < 24 doesn't implement File.prototype.text. parseBibtexFile in
-// src/lib/bibtex.ts calls file.text() to read the .bib contents, so we
-// polyfill it here using FileReader.readAsText.
 if (typeof File !== 'undefined' && !('text' in File.prototype)) {
   (
     File.prototype as unknown as { text: () => Promise<string> }
@@ -57,13 +46,6 @@ if (typeof File !== 'undefined' && !('text' in File.prototype)) {
   };
 }
 
-// Stub URL.createObjectURL / revokeObjectURL for jsdom. We override
-// unconditionally (not just when missing): on Node runtimes that DO provide a
-// native createObjectURL it throws on anything that isn't a real Blob, and
-// fake-indexeddb degrades stored Blobs to plain objects on read — so the native
-// implementation would throw inside useObjectUrl's effect. A counter-based fake
-// that ignores its argument keeps previews working in tests without throwing.
-// Tests that need specific behaviour still vi.spyOn over this stub.
 if (typeof URL !== 'undefined') {
   const u = URL as unknown as {
     createObjectURL: (obj: Blob) => string;
@@ -75,8 +57,6 @@ if (typeof URL !== 'undefined') {
 }
 
 if (typeof window !== 'undefined') {
-  // jsdom doesn't implement matchMedia. Install a default stub so code paths
-  // that read it (and tests that vi.spyOn it) have a function to operate on.
   const w = window as unknown as {
     localStorage?: Storage;
     matchMedia?: (q: string) => MediaQueryList;

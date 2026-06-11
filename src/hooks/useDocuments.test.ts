@@ -65,7 +65,6 @@ describe('useDocuments — cross-space staleness guard', () => {
       expect(result.current?.map((d) => d.id)).toEqual(['d1']);
     });
     rerender({ sid: 's2' });
-    // Synchronously after the key changes the stale s1 result must not leak.
     expect(result.current).toBeUndefined();
     await waitFor(() => {
       expect(result.current?.map((d) => d.id)).toEqual(['d2']);

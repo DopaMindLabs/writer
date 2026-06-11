@@ -7,7 +7,6 @@ describe('FocusScreen', () => {
       path: '/s/:spaceId/d/:docId/focus',
       initialEntries: ['/s/s1/d/d1/focus'],
     });
-    // The screen unmounts after Navigate; the catch-all renders.
     expect(queryByTestId('catch-all')).toBeInTheDocument();
   });
 

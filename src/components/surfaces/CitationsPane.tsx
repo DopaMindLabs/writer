@@ -110,8 +110,6 @@ const useImportActions = ({
     }
   };
 
-  // Export is the one deliberate bulk read: it loads the whole library on
-  // demand instead of keeping it resident for the paged table.
   const handleExport = async () => {
     const all = await db.citations
       .where('spaceId')
@@ -252,8 +250,6 @@ const useCitationsPaneController = (
     setOpenRow(null);
   }, [query, spaceId]);
 
-  // Keystrokes update `query` immediately (controlled input); the live
-  // IndexedDB query only re-runs once typing settles.
   const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
   const paged = usePagedCitations(spaceId, {
     page,
@@ -496,7 +492,6 @@ const CitationsToolbar = ({
         >
           {t('citations.upload')}
         </Button>
-        {/* @lint-ignore native-button: muted text-action toggle ("+ add" / "× cancel"); no matching DS Button kind */}
         <button
           type="button"
           onClick={onToggleAdding}
@@ -505,7 +500,6 @@ const CitationsToolbar = ({
         >
           {adding ? t('citations.cancel') : t('citations.add')}
         </button>
-        {/* @lint-ignore native-input: hidden file input triggered programmatically; DS primitives intentionally don't cover this case */}
         <input
           ref={fileInputRef}
           type="file"
@@ -1198,7 +1192,6 @@ const CitationDetailActions = ({
           : t('citations.row.unused')}
       </span>
       <div className="flex items-center gap-3">
-        {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
         <button
           type="button"
           onClick={onDelete}
@@ -1407,8 +1400,6 @@ const CitationEditRow = ({
   );
 };
 
-// Inline-edit form uses bordered (not baseline) inputs — DS TextField currently exposes baseline/bare only.
-// Bordered variant tracked for PR 5; until then these stay raw with @lint-ignore native-input.
 const EDIT_INPUT_CLS =
   'w-full rounded-sm border border-rule bg-paper px-2 py-1 text-[13px] text-ink outline-none focus:border-ink';
 const EDIT_LABEL_CLS =
@@ -1435,7 +1426,6 @@ const CitationEditFields = ({
       />
       <Label tone="ink3" weight="regular" className={cn(EDIT_LABEL_CLS, 'mt-3')}>
         {t('citations.edit.titleLabel')}
-        {/* @lint-ignore native-input: bordered inline-edit input; see comment above */}
         <input
           type="text"
           value={draft.title}
@@ -1471,7 +1461,6 @@ const EditTextField = ({
   return (
     <Label tone="ink3" weight="regular" className={EDIT_LABEL_CLS}>
       {label}
-      {/* @lint-ignore native-input: bordered inline-edit input; see comment above */}
       <input
         type="text"
         inputMode={numeric ? 'numeric' : undefined}
@@ -1519,7 +1508,6 @@ const CitationEditGrid = ({
       />
       <Label tone="ink3" weight="regular" className={EDIT_LABEL_CLS}>
         {t('citations.edit.typeLabel')}
-        {/* @lint-ignore native-select: bordered inline-edit select; matching variant for DS Select tracked for PR 5 */}
         <select
           value={draft.type}
           onChange={(e) =>
@@ -1561,7 +1549,6 @@ const CitationEditActions = ({
   const { t } = useTranslation('screens');
   return (
     <div className="mt-3 flex items-center justify-between text-[11px]">
-      {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
       <button
         type="button"
         onClick={onDelete}
@@ -1572,7 +1559,6 @@ const CitationEditActions = ({
         {t('citations.edit.delete')}
       </button>
       <div className="flex items-center gap-3">
-        {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
         <button
           type="button"
           onClick={onCancel}
@@ -1632,7 +1618,6 @@ const BulkBar = ({ xPad, count, onClear, onDelete, onSetType }: BulkBarProps) =>
         >
           {t('citations.bulk.deleteSelected')}
         </Button>
-        {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
         <button
           type="button"
           onClick={onClear}
@@ -1659,7 +1644,6 @@ const BulkSetTypeSelect = ({
       className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider"
     >
       {t('citations.bulk.setTypePrompt')}
-      {/* @lint-ignore native-select: bordered bulk-action select; matching variant for DS Select tracked for PR 5 */}
       <select
         defaultValue=""
         onChange={(e) => {
@@ -1772,7 +1756,6 @@ const ManualAddForm = ({ spaceId, xPad, onClose, onStatus }: ManualAddFormProps)
         data-testid="citations-manual-add-input"
       />
       <div className="mt-2 flex items-center justify-end gap-3 text-[11px]">
-        {/* @lint-ignore native-button: muted secondary text-action (text-ink-3, no underline); no matching DS Button kind */}
         <button
           type="button"
           onClick={onClose}

@@ -32,7 +32,6 @@ test('toggling the focus switch adds and removes focus=1 from the URL', async ({
   await openQuickSettings(page);
   await page.getByRole('switch', { name: /focus mode/i }).click();
   await expect(page).toHaveURL(/focus=1/);
-  // Trigger may have moved (FocusRail vs SpaceRail). Re-open and toggle off.
   await page.getByRole('button', { name: /LIpsum Writer/i }).first().click();
   await expect(page.getByTestId('quick-settings-popover')).toBeVisible();
   await page.getByRole('switch', { name: /focus mode/i }).click();
@@ -45,7 +44,6 @@ test('changes the reading width via an S chip click', async ({ page }) => {
   await openQuickSettings(page);
   const popover = page.getByTestId('quick-settings-popover');
   await popover.getByRole('button', { name: /^s$/i }).click();
-  // WriteSurface stamps data-reading-width on its scroller.
   await expect(page.locator('[data-reading-width="s"]').first()).toBeVisible();
 });
 
@@ -53,14 +51,12 @@ test('clicking a help-tour menu item dismisses the popover', async ({ page }) =>
   const { spaceId, docId } = await gotoFirstDoc(page);
   await page.goto(`/#/s/${spaceId}/d/${docId}`);
   await openQuickSettings(page);
-  // Pick any tour menu item (welcome is first).
   const popover = page.getByTestId('quick-settings-popover');
   const tourItem = popover
     .locator('button')
     .filter({ hasText: /welcome|writer|citations|brainspace/i })
     .first();
   await tourItem.click();
-  // PopoverClose wraps each MenuItem, so the popover closes on click.
   await expect(page.getByTestId('quick-settings-popover')).toBeHidden();
 });
 

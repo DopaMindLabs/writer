@@ -11,7 +11,6 @@ const getLastSyncForSpace =
   vi.fn<(...a: unknown[]) => Promise<{ when: number } | undefined>>();
 const syncSpaceToFolder = vi.fn<(...a: unknown[]) => Promise<unknown>>();
 
-// Resolve every requested space to one interval — the scheduler's common case.
 const intervalMapOf =
   (min: number) =>
   (ids: string[]): Promise<Map<string, number>> =>

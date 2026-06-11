@@ -17,8 +17,6 @@ describe('ComingSoonRow', () => {
       const checkbox = screen.getByTestId('coming-soon-row-checkbox');
       expect(checkbox).toBeDisabled();
       expect(checkbox).toHaveAttribute('type', 'checkbox');
-      // The control carries an accessible name so screen readers (and axe)
-      // can identify it even though the row label sits in a sibling element.
       expect(checkbox).toHaveAccessibleName('Sync');
       expect(screen.getByTestId('coming-soon-row-help')).toHaveAttribute(
         'aria-label',

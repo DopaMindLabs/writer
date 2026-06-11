@@ -1,17 +1,10 @@
 import { HELP_ARTICLES } from './registry';
 import { FALLBACK_LOCALE, getHelpDoc } from './content';
 
-/**
- * Lightweight client-side help search. Scores each article against the query
- * tokens across weighted fields (title > keywords > headings > body). No index
- * is persisted; the corpus is small and rebuilt per call for the active locale.
- */
-
 export interface HelpSearchResult {
   readonly slug: string;
   readonly title: string;
   readonly category: string;
-  /** A short body excerpt around the first match, for result previews. */
   readonly excerpt: string;
   readonly score: number;
 }
@@ -52,7 +45,6 @@ const countOccurrences = (haystack: string, token: string): number => {
   if (token.length === 0) return 0;
   let count = 0;
   let from = haystack.indexOf(token);
-  // Bounded by string length; advances past each hit.
   while (from !== -1) {
     count += 1;
     from = haystack.indexOf(token, from + token.length);

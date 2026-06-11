@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Iphutha lokuqalisa",
-  "bootErrorHintBefore": "Zama ",
-  "bootErrorHintAfter": " ukuze usethe kabusha isizinda sedatha sasendaweni.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Uma lokhu kuqhubeka, ungasula idatha yendawo ye-app uqale kabusha.",
+  "bootErrorResetAction": "Setha kabusha idatha yendawo…",
+  "bootErrorResetTitle": "Sula yonke idatha yendawo?",
+  "bootErrorResetBody": "Lokhu kususa unomphela konke okugcinwe yi-app kulesi siphequluli — amadokhumenti, amanothi, izicaphuno nezipele. Akunakuhlehliswa.",
+  "bootErrorResetConfirm": "Sula konke",
+  "bootErrorResetCancel": "Khansela",
   "booting": "Iyaqalisa…"
 }

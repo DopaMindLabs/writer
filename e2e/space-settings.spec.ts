@@ -11,13 +11,10 @@ test('navigates from the sidebar space menu to per-space settings', async ({
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}`);
 
-  // The sidebar cog now opens a space-menu popover instead of linking
-  // directly to settings.
   const trigger = page.getByRole('button', { name: /open space menu/i });
   await trigger.scrollIntoViewIfNeeded();
   await trigger.click({ force: true });
 
-  // The popover exposes a "Settings" link that navigates to /s/:id/settings.
   await page.getByTestId('space-menu-popover')
     .getByRole('link', { name: /^settings$/i })
     .click();
@@ -44,7 +41,6 @@ test('Sharing tab shows the Sharing placeholder content', async ({ page }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}/settings?tab=sharing`);
 
-  // The placeholder body renders the Sharing heading + the Visibility section.
   await expect(
     page.getByRole('heading', { name: /^sharing$/i }),
   ).toBeVisible();
@@ -67,8 +63,6 @@ test('Sidebar SpaceRail remains visible in space settings (lets the user return 
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}/settings`);
 
-  // SpaceSettings no longer surfaces a top-level Back affordance; the SpaceRail
-  // on the left is what returns the user to writing.
   await expect(
     page.getByRole('link', { name: /Create new space/i }),
   ).toBeVisible();
@@ -77,12 +71,10 @@ test('Sidebar SpaceRail remains visible in space settings (lets the user return 
 test('Backups tab snapshot now generates a manifest entry', async ({ page }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}/settings?tab=backups`);
-  // Suppress the actual download click so the browser doesn't open a dialog.
   await page.evaluate(() => {
     HTMLAnchorElement.prototype.click = function () {};
   });
   await page.getByRole('button', { name: /snapshot now/i }).click();
-  // The history list flips from "no snapshots" to a non-empty list.
   await expect(page.getByTestId('backups-history')).toBeVisible();
 });
 
@@ -116,7 +108,6 @@ test('renames the space via the General tab', async ({ page }) => {
   await nameInput.fill('Renamed via E2E');
   await nameInput.press('Enter');
 
-  // Go to the writing view and verify the sidebar header reflects the change.
   await page.goto(`/#/s/${spaceId}`);
   await expect(page.locator('aside').getByText('Renamed via E2E')).toBeVisible();
 });

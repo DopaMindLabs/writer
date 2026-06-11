@@ -28,7 +28,6 @@ describe('useAutoTour', () => {
   it('does nothing when running under MODE === "test" even without disabled/ready blocks', () => {
     const raf = vi.spyOn(window, 'requestAnimationFrame');
     renderHook(() => useAutoTour('welcome'));
-    // Vitest sets MODE to 'test' by default — the guard short-circuits.
     expect(raf).not.toHaveBeenCalled();
   });
 
@@ -46,7 +45,6 @@ describe('useAutoTour', () => {
       .mockImplementation(() => ({}) as ReturnType<typeof driverSetup.runTour>);
     renderHook(() => useAutoTour('welcome'));
     expect(raf).toHaveBeenCalledTimes(1);
-    // Execute the queued callback synchronously
     scheduled!(performance.now());
     expect(runTourSpy).toHaveBeenCalledTimes(1);
   });

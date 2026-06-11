@@ -125,9 +125,7 @@ describe('DocInspector', () => {
       expect(rows[1]).toHaveAttribute('data-level', '2');
       expect(rows[2]).toHaveTextContent('Counting');
       expect(rows[2]).toHaveAttribute('data-level', '3');
-      // Prose paragraphs never appear in the outline.
       expect(pane).not.toHaveTextContent('Morning prose');
-      // The summary reflects the live heading count.
       expect(pane).toHaveTextContent('3 SECTIONS');
       expect(within(pane).queryByTestId('outline-empty')).toBeNull();
     });
@@ -155,7 +153,6 @@ describe('DocInspector', () => {
       const status = await screen.findByTestId('inspector-status');
       expect(status).toHaveValue('draft');
       const pane = screen.getByTestId('doc-inspector-info');
-      // "Hello world" → 2 words, 11 characters (label and value concatenate)
       expect(pane).toHaveTextContent('Words2');
       expect(pane).toHaveTextContent('Characters11');
     });
@@ -227,16 +224,14 @@ describe('DocInspector', () => {
         dueDate: 'on',
         highlightOverLimit: 'on',
       });
-      await seedDoc(); // Hello world → 2 words
+      await seedDoc();
       act(() => {
         useUI.getState().setInspectorSection('info');
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
       const row = await screen.findByTestId('inspector-row-words');
-      // Count present, limit suffix absent.
       expect(row).toHaveTextContent(/Words\s*2$/);
       expect(row).not.toHaveTextContent('/');
-      // Limit input row hidden.
       expect(screen.queryByTestId('inspector-row-wordLimit')).toBeNull();
       expect(screen.queryByTestId('inspector-wordLimit')).toBeNull();
     });
@@ -285,14 +280,12 @@ describe('DocInspector', () => {
         dueDate: 'on',
         highlightOverLimit: 'on',
       });
-      // The document already has a stored limit, but the feature is off.
       await seedDoc({ meta: { wordCount: 2, wordLimit: 250 } });
       act(() => {
         useUI.getState().setInspectorSection('info');
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
       const row = await screen.findByTestId('inspector-row-words');
-      // Count still shows; the stored limit is hidden, not applied.
       expect(row).toHaveTextContent(/Words\s*2$/);
       expect(row).not.toHaveTextContent('/');
       expect(screen.queryByTestId('inspector-wordLimit')).toBeNull();
@@ -312,7 +305,6 @@ describe('DocInspector', () => {
         useUI.getState().setInspectorSection('info');
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
-      // Counts and metadata stay; gated controls go away.
       expect(await screen.findByTestId('inspector-row-words')).toHaveTextContent(
         /Words\s*2$/,
       );
@@ -366,7 +358,6 @@ describe('DocInspector', () => {
         dueDate: 'off',
         highlightOverLimit: 'on',
       });
-      // A stored due date must not resurrect a feature the user turned off.
       await seedDoc({ meta: { wordCount: 2, dueDate: 1_700_000_000_000 } });
       act(() => {
         useUI.getState().setInspectorSection('info');
@@ -493,8 +484,6 @@ describe('DocInspector', () => {
       await db.revisions.put(
         makeRevision({ id: 'rev-x', body: serializedBody('older'), createdAt: 1 }),
       );
-      // Inject a transient DB failure so restoreRevision rejects; the rejection
-      // must surface through console.error rather than crashing React.
       const txSpy = vi
         .spyOn(db, 'transaction')
         .mockRejectedValueOnce(new Error('boom') as never);
@@ -542,8 +531,6 @@ describe('DocInspector', () => {
       expect(
         screen.queryByTestId('doc-inspector-tab-history'),
       ).not.toBeInTheDocument();
-      // The persisted "history" section is coerced to "outline" locally without
-      // mutating the store, so the write surface still restores it.
       expect(screen.getByTestId('doc-inspector-pane-outline')).toBeInTheDocument();
       expect(
         screen.queryByTestId('doc-inspector-pane-history'),

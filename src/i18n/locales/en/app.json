@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Boot error",
-  "bootErrorHintBefore": "Try ",
-  "bootErrorHintAfter": " to reset the local database.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "If this keeps happening, you can erase the app's local data and start afresh.",
+  "bootErrorResetAction": "Reset local data…",
+  "bootErrorResetTitle": "Erase all local data?",
+  "bootErrorResetBody": "This permanently deletes everything stored in this browser — documents, notes, citations and backups. It cannot be undone.",
+  "bootErrorResetConfirm": "Erase everything",
+  "bootErrorResetCancel": "Cancel",
   "booting": "Booting…"
 }

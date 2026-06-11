@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "የጅማሬ ስህተት",
-  "bootErrorHintBefore": "የአካባቢ ዳታቤዝን እንደገና ለማስጀመር ",
-  "bootErrorHintAfter": " ይሞክሩ።",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "ይህ ከቀጠለ የመተግበሪያውን አካባቢያዊ ውሂብ አጥፍተው እንደገና መጀመር ይችላሉ።",
+  "bootErrorResetAction": "አካባቢያዊ ውሂብ ዳግም አስጀምር…",
+  "bootErrorResetTitle": "ሁሉንም አካባቢያዊ ውሂብ ይጥፋ?",
+  "bootErrorResetBody": "ይህ መተግበሪያው በዚህ አሳሽ ውስጥ ያስቀመጠውን ሁሉ — ሰነዶች፣ ማስታወሻዎች፣ ጥቅሶች እና መጠባበቂያዎች — እስከመጨረሻው ይሰርዛል። መመለስ አይቻልም።",
+  "bootErrorResetConfirm": "ሁሉንም አጥፋ",
+  "bootErrorResetCancel": "ሰርዝ",
   "booting": "በመጀመር ላይ…"
 }

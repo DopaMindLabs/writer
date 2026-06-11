@@ -41,7 +41,6 @@ interface DocInspectorProps {
   docName: string;
   docId: string;
   hideHistory?: boolean;
-  /** Render the info controls as read-only values (the Read surface). */
   readOnly?: boolean;
 }
 
@@ -61,7 +60,6 @@ const DocInspectorTabs = ({
     <div className="flex border-b border-rule">
       {tabs.map((id) => {
         const on = section === id;
-        // @lint-ignore native-button: tab strip; needs a LinkedTabStrip primitive (tracked for PR 5)
         return (
           <button
             key={id}
@@ -96,8 +94,6 @@ export const DocInspector = ({
   const setSection = useUI((s) => s.setInspectorSection);
 
   const tabs = hideHistory ? TABS.filter((id) => id !== 'history') : TABS;
-  // Don't mutate the persisted section: coerce locally so returning to the
-  // write surface restores the History tab the user last had open.
   const activeSection =
     hideHistory && section === 'history' ? 'outline' : section;
 
@@ -143,9 +139,6 @@ export const DocInspector = ({
   );
 };
 
-// Indentation per heading level, stepping the 14px grid the pane already uses
-// (pl-3.5 = 14px). Levels deeper than h4 share the deepest step so a narrow
-// pane never squeezes the text; the H-badge still shows the true level.
 const outlineIndent = (level: number): string => {
   if (level <= 1) return 'pl-0';
   if (level === 2) return 'pl-3.5';
@@ -199,9 +192,6 @@ const OutlinePane = ({ docId }: { docId: string }) => {
 };
 
 const writeMeta = (doc: Doc, patch: Partial<Doc['meta']>): void => {
-  // Update each field by key-path instead of replacing the whole `meta` object,
-  // so a concurrent autosave (which maintains `meta.wordCount`) and these
-  // Inspector edits never clobber each other's fields through a stale read.
   const changes: UpdateSpec<Doc> = { updatedAt: Date.now() };
   for (const [key, value] of Object.entries(patch)) {
     (changes as Record<string, unknown>)[`meta.${key}`] = value;
@@ -438,9 +428,6 @@ const InfoPane = ({ docId, readOnly }: { docId: string; readOnly: boolean }) => 
     sections?.find((s) => s.id === doc.sectionId)?.label ?? '—';
   const eff = inspector.effective;
 
-  // Counts are always informational and shown for every document. The "/ limit"
-  // suffix and the editable limit/input row appear only while the feature is
-  // enabled; turning it off hides them (the stored value is kept, not deleted).
   const displayWordLimit = eff.wordLimit ? wordLimit : undefined;
   const displayCharLimit = eff.charLimit ? charLimit : undefined;
 

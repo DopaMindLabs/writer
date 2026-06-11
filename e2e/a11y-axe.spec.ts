@@ -13,10 +13,6 @@ const settle = async (page: Page) => {
   );
 };
 
-// The default light/dark themes use intentionally faint "meta" inks (counts,
-// shortcuts) that sit below the 4.5:1 small-text AA bar by design — a documented
-// exception (docs/design-system.md §11.3). Structure/semantics are still scanned
-// in full; contrast is asserted against the high-contrast theme below.
 const STRUCTURE_ONLY = { disableRules: ['color-contrast'] };
 
 test.describe('axe accessibility scans (structure & semantics)', () => {
@@ -58,7 +54,6 @@ test.describe('axe accessibility scans (high-contrast theme, full contrast)', ()
   test('home page meets full WCAG A/AA including contrast in hc-light', async ({
     page,
   }) => {
-    // Seed the high-contrast theme before the app boots.
     await page.addInitScript(() => {
       try {
         localStorage.setItem('lorem-ui', JSON.stringify({ theme: 'hc-light' }));

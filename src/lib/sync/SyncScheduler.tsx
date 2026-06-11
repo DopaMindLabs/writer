@@ -2,10 +2,8 @@ import { useEffect, useRef } from 'react';
 import { isFolderSyncSupported } from './folderSync';
 import { runDueSyncs } from './runDueSyncs';
 
-// How often the scheduler wakes to check whether any space is due.
 const TICK_MS = 60_000;
 
-// Mounted once at the app root. Drives periodic auto-sync; renders nothing.
 export const SyncScheduler = () => {
   const running = useRef(false);
 

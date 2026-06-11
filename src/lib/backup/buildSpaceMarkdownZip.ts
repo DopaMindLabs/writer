@@ -289,7 +289,6 @@ const uniqueAssetName = (att: NoteAttachment, used: Set<string>): string => {
   return name;
 };
 
-// Assigns each attachment a collision-free path under assets/notes/<noteId>/.
 const buildAttachmentPaths = (
   attachments: NoteAttachment[],
 ): Map<string, AttachmentPath> => {
@@ -341,8 +340,6 @@ const renderNoteLines = (n: Note, assets: NoteAssets): string[] => {
   return out;
 };
 
-// Writes each attachment blob into the zip and returns the lookup tables that
-// renderNotesMd needs to reference them.
 const writeAttachments = (
   zip: JSZip,
   attachments: NoteAttachment[],

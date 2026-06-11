@@ -16,9 +16,6 @@ async function expectNoHorizontalOverflow(page: Page) {
   expect(overflow).toBeLessThanOrEqual(1);
 }
 
-// Skipped: the SettingsShell refactor introduced a horizontal-overflow regression
-// on mobile that is out of scope for the test-coverage branch. Re-enable once
-// the shell is made responsive.
 test.skip('global Settings screen renders without horizontal overflow on mobile', async ({ page }) => {
   await page.goto('/#/settings');
   await page.waitForLoadState('networkidle');
@@ -26,7 +23,6 @@ test.skip('global Settings screen renders without horizontal overflow on mobile'
   await expect(page.getByRole('button', { name: /^Editor$/ })).toBeVisible();
   await expectNoHorizontalOverflow(page);
 
-  // Tab nav should be a horizontal strip — siblings sit on a single row.
   const nav = page.getByRole('navigation', { name: /settings sections/i });
   const navBox = await nav.boundingBox();
   expect(navBox).not.toBeNull();

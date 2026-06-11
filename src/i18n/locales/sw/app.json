@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Hitilafu ya kuanzisha",
-  "bootErrorHintBefore": "Jaribu ",
-  "bootErrorHintAfter": " kuanzisha upya hifadhidata ya ndani.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Hili likiendelea kutokea, unaweza kufuta data ya ndani ya programu na kuanza upya.",
+  "bootErrorResetAction": "Weka upya data ya ndani…",
+  "bootErrorResetTitle": "Futa data yote ya ndani?",
+  "bootErrorResetBody": "Hii itafuta kabisa kila kitu ambacho programu imehifadhi kwenye kivinjari hiki — hati, madokezo, manukuu na nakala rudufu. Haiwezi kutenduliwa.",
+  "bootErrorResetConfirm": "Futa yote",
+  "bootErrorResetCancel": "Ghairi",
   "booting": "Inaanzisha…"
 }

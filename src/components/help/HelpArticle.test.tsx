@@ -33,6 +33,5 @@ describe('HelpArticle', () => {
 });
 
 afterEach(() => {
-  // Drop the jsdom scrollIntoView shim installed by the anchor test.
   delete (Element.prototype as { scrollIntoView?: unknown }).scrollIntoView;
 });

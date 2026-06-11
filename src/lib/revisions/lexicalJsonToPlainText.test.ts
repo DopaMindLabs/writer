@@ -61,7 +61,6 @@ describe('lexicalJsonToPlainText', () => {
   });
 
   it('throws on a body that is not serialized Lexical JSON', () => {
-    // Doc bodies are only ever '' or serializeState output.
     expect(() => lexicalJsonToPlainText('Dr. Kirchner walks in.')).toThrow();
   });
 
@@ -72,8 +71,6 @@ describe('lexicalJsonToPlainText', () => {
   });
 
   it('throws when the body is serialized-shaped but not parseable Lexical', () => {
-    // Body satisfies isSerialized (has a .root) but the root is the wrong
-    // shape, so parseEditorState rejects via the editor's onError hook.
     expect(() =>
       lexicalJsonToPlainText('{"root":{"type":"not-a-real-node"}}'),
     ).toThrow();

@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Eroare la pornire",
-  "bootErrorHintBefore": "Încearcă ",
-  "bootErrorHintAfter": " pentru a reseta baza de date locală.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Dacă problema persistă, poți șterge datele locale ale aplicației și poți începe din nou.",
+  "bootErrorResetAction": "Resetează datele locale…",
+  "bootErrorResetTitle": "Ștergi toate datele locale?",
+  "bootErrorResetBody": "Aceasta șterge definitiv tot ce a salvat aplicația în acest browser — documente, notițe, citări și copii de rezervă. Nu se poate anula.",
+  "bootErrorResetConfirm": "Șterge tot",
+  "bootErrorResetCancel": "Anulează",
   "booting": "Pornește…"
 }

@@ -37,7 +37,6 @@ describe('BrainSpaceCanvas', () => {
 
     it('grows the scrollable content to reach a far-off note', async () => {
       await db.spaces.put(sampleSpace);
-      // A note pushed far to the right/down — beyond any viewport.
       await db.notes.put({
         ...sampleNote,
         id: 'far',
@@ -49,8 +48,6 @@ describe('BrainSpaceCanvas', () => {
       renderWithProviders(<BrainSpaceCanvas spaceId="s1" />);
       await screen.findByTestId('brain-note-far');
       const content = screen.getByTestId('brain-canvas-content');
-      // Content extent = note's far edge (l+w / t+h) plus the margin, so the
-      // note stays reachable by scrolling rather than being clipped.
       expect(content.style.width).toBe('2384px');
       expect(content.style.height).toBe('1780px');
     });
@@ -58,7 +55,6 @@ describe('BrainSpaceCanvas', () => {
     it('should render one toolbar button per noteKind on the space template', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'fiction' });
       renderWithProviders(<BrainSpaceCanvas spaceId="s1" />);
-      // fiction template defines noteKinds [Note, Char, Place, Lore, Image]
       expect(
         await screen.findByTestId('brain-canvas-tool-note'),
       ).toHaveTextContent(/\+ thought/i);
@@ -101,7 +97,6 @@ describe('BrainSpaceCanvas', () => {
         expect(await db.notes.count()).toBe(1);
       });
       const [note] = await db.notes.toArray();
-      // First note, no scroll, no jitter: sits at the (24, 24) inset.
       expect(note.l).toBe(24);
       expect(note.t).toBe(24);
     });
@@ -110,7 +105,6 @@ describe('BrainSpaceCanvas', () => {
       await db.spaces.put(sampleSpace);
       const user = userEvent.setup();
       renderWithProviders(<BrainSpaceCanvas spaceId="s1" />);
-      // Simulate the user scrolling to a far-off cluster before adding a card.
       const scroll = await screen.findByTestId('brain-canvas-scroll');
       scroll.scrollLeft = 1800;
       scroll.scrollTop = 1300;
@@ -120,7 +114,6 @@ describe('BrainSpaceCanvas', () => {
         expect(await db.notes.count()).toBe(1);
       });
       const [note] = await db.notes.toArray();
-      // Offset by the scroll position so the card lands in view, not at (24, 24).
       expect(note.l).toBe(1824);
       expect(note.t).toBe(1324);
     });
@@ -197,7 +190,6 @@ describe('BrainSpaceCanvas', () => {
         <BrainSpaceCanvas spaceId="s1" />,
       );
       await screen.findByTestId('brain-note-n1');
-      // Only the SVG <g> wrapper exists; no children for orphan connections.
       const g = container.querySelector('svg g');
       expect(g).not.toBeNull();
       expect(g?.children.length).toBe(0);
@@ -223,8 +215,6 @@ describe('BrainSpaceCanvas', () => {
       const { container } = renderWithProviders(
         <BrainSpaceCanvas spaceId="s1" />,
       );
-      // Wait for BOTH notes so the content extent (derived from their bounding
-      // box) is settled before snapshotting, rather than a mid-load value.
       await screen.findByTestId('brain-note-n1');
       await screen.findByTestId('brain-note-n2');
       expect(container).toMatchSnapshot();

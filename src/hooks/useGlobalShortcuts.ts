@@ -1,13 +1,6 @@
 import { useEffect } from 'react';
 import { useHelp } from '@/store/help';
 
-/**
- * Central registry for app-wide keyboard shortcuts. Mounted once at the router
- * root. Today it binds the Quick Help overlay to ⌘K / Ctrl+K (and the
- * already-advertised ⌘?), preventing the browser default for those combos.
- *
- * Per-surface shortcuts (e.g. ⌘\ focus toggle) remain where they are scoped.
- */
 export const useGlobalShortcuts = (): void => {
   const toggleHelp = useHelp((s) => s.toggle);
 

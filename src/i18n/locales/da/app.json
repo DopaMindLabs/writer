@@ -1,7 +1,10 @@
 {
   "bootErrorLabel": "Startfejl",
-  "bootErrorHintBefore": "Prøv ",
-  "bootErrorHintAfter": " for at nulstille den lokale database.",
-  "bootErrorHintCode": "?reseed=1",
+  "bootErrorResetHint": "Hvis det bliver ved med at ske, kan du slette appens lokale data og starte forfra.",
+  "bootErrorResetAction": "Nulstil lokale data…",
+  "bootErrorResetTitle": "Slet alle lokale data?",
+  "bootErrorResetBody": "Dette sletter permanent alt, hvad appen har gemt i denne browser — dokumenter, noter, citater og sikkerhedskopier. Det kan ikke fortrydes.",
+  "bootErrorResetConfirm": "Slet alt",
+  "bootErrorResetCancel": "Annullér",
   "booting": "Starter…"
 }

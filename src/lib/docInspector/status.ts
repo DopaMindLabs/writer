@@ -1,8 +1,3 @@
-// The document workflow stages offered by the Doc Inspector's Status control.
-// This registry is the single source of truth: `order` drives the picker order,
-// `locks` marks the stages that lock the document body from editing (so a
-// finished document is preserved), and `enabledByDefault` seeds which stages
-// appear before the user customises them in settings.
 
 export type DocStatus =
   | 'draft'
@@ -35,9 +30,6 @@ const STAGE_BY_ID = new Map<string, DocStatusStage>(
 export const isDocStatus = (value: unknown): value is DocStatus =>
   typeof value === 'string' && STAGE_BY_ID.has(value);
 
-// Coerce a persisted/untrusted status into a known stage. Legacy values (the
-// old capitalised 'Draft' literal, or undefined) resolve to the default draft
-// stage, which is editable — so existing documents never become locked.
 export const resolveStatus = (raw: string | undefined): DocStatus =>
   isDocStatus(raw) ? raw : DEFAULT_STATUS;
 

@@ -12,12 +12,7 @@ export const AutosavePlugin = ({ onChange, debounceMs = 600 }: AutosavePluginPro
   const [editor] = useLexicalComposerContext();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSavedRef = useRef<string | null>(null);
-  // Most recent dirty editor state, captured by the update listener. The unmount
-  // flush serializes this so the user's last edit is never dropped when they
-  // navigate away inside the debounce window.
   const latestStateRef = useRef<EditorState | null>(null);
-  // Keep the latest onChange reachable from the stable flush helper without
-  // re-subscribing the update listener on every render.
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
@@ -43,8 +38,6 @@ export const AutosavePlugin = ({ onChange, debounceMs = 600 }: AutosavePluginPro
     });
   }, [editor, debounceMs, flushPendingSave]);
 
-  // On unmount, persist any edit still waiting behind the debounce instead of
-  // discarding the timer.
   useEffect(() => {
     return () => {
       flushPendingSave();

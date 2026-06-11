@@ -14,11 +14,6 @@ import { slugify } from '@/lib/help/content';
 const LINK_CLASS =
   'underline decoration-rule underline-offset-4 hover:text-ink hover:decoration-ink';
 
-/**
- * Resolves markdown links. Bare targets (`[text](some-slug)` or
- * `[text](some-slug#anchor)`) are treated as in-app help articles and routed
- * through the router; absolute URLs open externally.
- */
 const MarkdownLink = ({
   href,
   children,
@@ -47,7 +42,6 @@ const MarkdownLink = ({
   );
 };
 
-/** Flattens heading children to plain text for stable anchor ids. */
 const toText = (children: ReactNode): string => {
   if (typeof children === 'string') return children;
   if (typeof children === 'number') return String(children);
