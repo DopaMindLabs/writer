@@ -7,8 +7,8 @@
     "tagline": "Un espace sans distraction pour l'écriture longue — fiction, recherche, essais, journaux.",
     "continueWriting": "Continuer à écrire",
     "startNewSpace": "Commencer un nouvel espace",
-    "warningTitle": "Build alpha",
-    "warningBody": "Pas de synchronisation des données. Tout vit dans ton navigateur. Si tu vides le cache, ton travail sera perdu",
+    "warningTitle": "Build préliminaire",
+    "warningBody": "Pas de synchronisation des données. Tout vit dans ton navigateur et vider le cache fait perdre ton travail. Tu peux activer la synchronisation vers un dossier local dans Réglages → Sync.",
     "versionLine": "Version {{version}}"
   },
   "about": {

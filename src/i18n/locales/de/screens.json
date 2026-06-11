@@ -7,8 +7,8 @@
     "tagline": "Ein aufgeräumter Raum für langes Schreiben — Fiktion, Forschung, Essays, Tagebücher.",
     "continueWriting": "Weiterschreiben",
     "startNewSpace": "Neuen Space starten",
-    "warningTitle": "Alpha-Build",
-    "warningBody": "Keine Datensynchronisation. Alles lebt in deinem Browser. Wenn du den Cache löschst, geht deine Arbeit verloren",
+    "warningTitle": "Vorab-Build",
+    "warningBody": "Keine Datensynchronisation. Alles lebt in deinem Browser; beim Löschen des Caches geht deine Arbeit verloren. Du kannst die Synchronisation mit einem lokalen Ordner unter Einstellungen → Sync aktivieren.",
     "versionLine": "Version {{version}}"
   },
   "about": {

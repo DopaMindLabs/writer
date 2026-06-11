@@ -7,8 +7,8 @@
     "tagline": "Um espaço sem distracções para escrita longa — ficção, investigação, ensaios, diários.",
     "continueWriting": "Continuar a escrever",
     "startNewSpace": "Começar um novo espaço",
-    "warningTitle": "Build alpha",
-    "warningBody": "Sem sincronização de dados. Tudo vive no teu navegador. Se limpares a cache, perderás o teu trabalho",
+    "warningTitle": "Build de pré-lançamento",
+    "warningBody": "Sem sincronização de dados. Tudo vive no teu navegador e limpar a cache perde o teu trabalho. Podes ativar a sincronização com uma pasta local em Definições → Sync.",
     "versionLine": "Versão {{version}}"
   },
   "about": {

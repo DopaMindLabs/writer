@@ -50,7 +50,7 @@ afresh with the demo content. This permanently deletes your documents, notes,
 citations and in-app backups, so treat it as a last resort and keep exports
 somewhere safe.
 
-> This is an evolving alpha app. Treat your exports as the source of
+> This is an evolving pre-release app. Treat your exports as the source of
 > truth and back up often.
 
 ## Related

@@ -11,8 +11,8 @@
     "syncOnChip": "folder sync on",
     "syncOnTitle": "Folder sync enabled",
     "syncOnBody": "Your work syncs to the “{{folder}}” folder on this device.",
-    "warningTitle": "Alpha build",
-    "warningBody": "No data sync. Everything lives in your browser. If you clear your cache, your work will be lost",
+    "warningTitle": "Pre-release build",
+    "warningBody": "No data sync. Everything lives in your browser and clearing its cache loses your work. You can enable sync to a local folder in Universal settings → Sync.",
     "versionLine": "Version {{version}}"
   },
   "about": {
@@ -586,6 +586,11 @@
     "headingMain": "What kind of space",
     "headingAccent": "are you starting?",
     "chooseLegend": "Choose a template",
+    "stage": {
+      "pre-alpha": "experimental",
+      "alpha": "early",
+      "beta": "beta"
+    },
     "nameLabel": "Name",
     "tagLabel": "Tag",
     "syncLabel": "cloud sync —",

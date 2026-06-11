@@ -38,7 +38,7 @@ describe('SpaceRail', () => {
     const chip = await screen.findByText(APP_VERSION_LABEL);
     chip.focus();
     const tooltip = await screen.findByRole('tooltip');
-    expect(tooltip).toHaveTextContent(/alpha build/i);
+    expect(tooltip).toHaveTextContent(/pre-release build/i);
     expect(tooltip).toHaveTextContent(`Version ${APP_VERSION_LABEL}`);
   });
 

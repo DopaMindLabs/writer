@@ -7,8 +7,8 @@
     "tagline": "Een opgeruimde plek voor lange teksten — fictie, onderzoek, essays, dagboeken.",
     "continueWriting": "Verder schrijven",
     "startNewSpace": "Nieuwe space starten",
-    "warningTitle": "Alpha build",
-    "warningBody": "Geen gegevenssynchronisatie. Alles leeft in je browser. Als je je cache wist, gaat je werk verloren",
+    "warningTitle": "Pre-releasebuild",
+    "warningBody": "Geen gegevenssynchronisatie. Alles leeft in je browser en bij het wissen van de cache gaat je werk verloren. Je kunt synchronisatie naar een lokale map inschakelen via Instellingen → Sync.",
     "versionLine": "Versie {{version}}"
   },
   "about": {
