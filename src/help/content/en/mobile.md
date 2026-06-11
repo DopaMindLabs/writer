@@ -7,7 +7,7 @@ The app adapts to small screens so you can read and write on a phone or tablet.
 - A **bottom tab bar** replaces the sidebar on small screens.
 - The **more** tab opens a drawer with settings, help, and about.
 - **Read** mode and [BrainSpace](brainspace) are usable on a phone.
-- **Split view** needs a tablet or desktop.
+- **Split view** is available on larger screens.
 
 ## Navigation on small screens
 
@@ -21,11 +21,21 @@ documents, and open **more** for settings, **Help**, and about.
 - Quick edits and capturing ideas in [BrainSpace](brainspace).
 - Light formatting via the floating toolbar.
 
+## Renaming a document
+
+In the nav drawer, tap the **⋮** button on a document row and choose
+**Rename** to give the document a new name.
+
+## The document inspector
+
+Open the **more** tab and choose **Doc inspector** to slide in the
+[document inspector](doc-inspector) — outline, info, history, and actions —
+from the right.
+
 ## What's better on a larger screen
 
-- **Split view**, which needs the width of a tablet or desktop — on a phone a
-  split URL shows a notice with a link back to Write.
 - Heavy structural work across many documents.
+- [Split view](views-and-modes#split) — comparing two documents side by side.
 
 ## Tips
 

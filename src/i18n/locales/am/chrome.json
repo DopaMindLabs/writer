@@ -16,7 +16,16 @@
     "docNamePlaceholder": "የሰነድ ስም (ለመፍጠር Enter)",
     "renameSpace": "ቦታን እንደገና ሰይም",
     "openSpaceSettings": "የቦታ ቅንብሮች",
-    "openSpaceMenu": "የቦታ ምናሌን ክፈት"
+    "openSpaceMenu": "የቦታ ምናሌን ክፈት",
+    "docMenuAria": "ለ {{name}} አማራጮች",
+    "renameDoc": "እንደገና ሰይም",
+    "renameDialog": {
+      "title": "ሰነድ እንደገና ሰይም",
+      "description": "ለዚህ ሰነድ አዲስ ስም ይምረጡ።",
+      "label": "የሰነድ ስም",
+      "cancel": "ሰርዝ",
+      "save": "እንደገና ሰይም"
+    }
   },
   "topbar": {
     "openNav": "ዳሰሳ ክፈት",
@@ -49,14 +58,11 @@
     "whatsNew": "አዲስ ምን አለ",
     "feedback": "አስተያየት ላክ…"
   },
-  "mobileSplitFallback": {
-    "title": "ትልቅ ስክሪን ያስፈልጋል",
-    "body": "የተከፋፈለ እይታ ሁለት ሰነዶችን አጠገብ ለአጠገብ ያስቀምጣል. ለስልክ አቀማመጥ ይህንን ሰነድ በጻፍ ሁነታ ይክፈቱ.",
-    "cta": "በጻፍ ክፈት →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "ፈጣን ቅንብሮች",
+    "appearanceLabel": "መልክ",
+    "writingLabel": "መጻፍ",
     "themeLabel": "ገጽታ",
     "focusLabel": "የትኩረት ሁነታ",
     "focusHint": "⌘\\",

@@ -16,7 +16,16 @@
     "docNamePlaceholder": "문서 이름 (Enter로 생성)",
     "renameSpace": "스페이스 이름 변경",
     "openSpaceSettings": "스페이스 설정",
-    "openSpaceMenu": "스페이스 메뉴 열기"
+    "openSpaceMenu": "스페이스 메뉴 열기",
+    "docMenuAria": "{{name}} 옵션",
+    "renameDoc": "이름 변경",
+    "renameDialog": {
+      "title": "문서 이름 변경",
+      "description": "이 문서의 새 이름을 선택하세요.",
+      "label": "문서 이름",
+      "cancel": "취소",
+      "save": "이름 변경"
+    }
   },
   "topbar": {
     "openNav": "탐색 열기",
@@ -49,14 +58,11 @@
     "whatsNew": "새 소식",
     "feedback": "피드백 보내기…"
   },
-  "mobileSplitFallback": {
-    "title": "더 큰 화면이 필요합니다",
-    "body": "분할 보기는 두 문서를 나란히 표시합니다. 휴대폰 레이아웃을 위해 이 문서를 쓰기 모드로 열어주세요.",
-    "cta": "쓰기에서 열기 →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "빠른 설정",
+    "appearanceLabel": "모양",
+    "writingLabel": "쓰기",
     "themeLabel": "테마",
     "focusLabel": "포커스 모드",
     "focusHint": "⌘\\",

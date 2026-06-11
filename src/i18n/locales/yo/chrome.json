@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Orúkọ doko (Enter láti ṣẹ̀dá)",
     "renameSpace": "Tún àyè sọ orúkọ",
     "openSpaceSettings": "Àwọn ètò àyè",
-    "openSpaceMenu": "Ṣílẹ̀kùn àkójọpọ̀ àyè"
+    "openSpaceMenu": "Ṣílẹ̀kùn àkójọpọ̀ àyè",
+    "docMenuAria": "Àwọn àṣàyàn fún {{name}}",
+    "renameDoc": "Tún sọ orúkọ",
+    "renameDialog": {
+      "title": "Tún doko sọ orúkọ",
+      "description": "Yan orúkọ tuntun fún doko yìí.",
+      "label": "Orúkọ doko",
+      "cancel": "Fagilé",
+      "save": "Tún sọ orúkọ"
+    }
   },
   "topbar": {
     "openNav": "Ṣílẹ̀kùn ìrìnàjò",
@@ -49,14 +58,11 @@
     "whatsNew": "Ohun tuntun",
     "feedback": "Fi èrò ránṣẹ́…"
   },
-  "mobileSplitFallback": {
-    "title": "Nílò ojú-iwòran tó tóbi",
-    "body": "Ìwò pípín ń sí àwọn doko méjì ní ẹ̀gbẹ́. Ṣílẹ̀kùn doko yìí ní ipo Kọ fún ètò fóònù.",
-    "cta": "Ṣílẹ̀kùn ní Kọ →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Àwọn ètò yára",
+    "appearanceLabel": "Ìrísí",
+    "writingLabel": "Kíkọ",
     "themeLabel": "Ìṣàlàyé",
     "focusLabel": "Ipo ìfọkànsí",
     "focusHint": "⌘\\",

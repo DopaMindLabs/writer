@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Dokumento pavadinimas (Enter sukurti)",
     "renameSpace": "Pervadinti erdvę",
     "openSpaceSettings": "Erdvės nustatymai",
-    "openSpaceMenu": "Atverti erdvės meniu"
+    "openSpaceMenu": "Atverti erdvės meniu",
+    "docMenuAria": "„{{name}}“ parinktys",
+    "renameDoc": "Pervadinti",
+    "renameDialog": {
+      "title": "Pervadinti dokumentą",
+      "description": "Pasirinkite naują šio dokumento pavadinimą.",
+      "label": "Dokumento pavadinimas",
+      "cancel": "Atšaukti",
+      "save": "Pervadinti"
+    }
   },
   "topbar": {
     "openNav": "Atverti navigaciją",
@@ -49,14 +58,11 @@
     "whatsNew": "Kas naujo",
     "feedback": "Siųsti atsiliepimą…"
   },
-  "mobileSplitFallback": {
-    "title": "Reikia didesnio ekrano",
-    "body": "Padalintas vaizdas talpina du dokumentus vienas šalia kito. Atverkite šį dokumentą Rašymo režime telefono išdėstymui.",
-    "cta": "Atverti Rašyti →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Greitieji nustatymai",
+    "appearanceLabel": "Išvaizda",
+    "writingLabel": "Rašymas",
     "themeLabel": "Tema",
     "focusLabel": "Fokuso režimas",
     "focusHint": "⌘\\",

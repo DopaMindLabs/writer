@@ -16,7 +16,16 @@
     "docNamePlaceholder": "दस्तावेज़ का नाम (बनाने के लिए Enter)",
     "renameSpace": "स्पेस का नाम बदलें",
     "openSpaceSettings": "स्पेस सेटिंग्स",
-    "openSpaceMenu": "स्पेस मेनू खोलें"
+    "openSpaceMenu": "स्पेस मेनू खोलें",
+    "docMenuAria": "{{name}} के लिए विकल्प",
+    "renameDoc": "नाम बदलें",
+    "renameDialog": {
+      "title": "दस्तावेज़ का नाम बदलें",
+      "description": "इस दस्तावेज़ के लिए नया नाम चुनें।",
+      "label": "दस्तावेज़ का नाम",
+      "cancel": "रद्द करें",
+      "save": "नाम बदलें"
+    }
   },
   "topbar": {
     "openNav": "नेविगेशन खोलें",
@@ -49,14 +58,11 @@
     "whatsNew": "नया क्या है",
     "feedback": "फीडबैक भेजें…"
   },
-  "mobileSplitFallback": {
-    "title": "एक बड़ी स्क्रीन चाहिए",
-    "body": "स्प्लिट दृश्य दो दस्तावेज़ों को साथ-साथ रखता है। फ़ोन लेआउट के लिए इस दस्तावेज़ को लिखें मोड में खोलें।",
-    "cta": "लिखें में खोलें →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "त्वरित सेटिंग्स",
+    "appearanceLabel": "दिखावट",
+    "writingLabel": "लेखन",
     "themeLabel": "थीम",
     "focusLabel": "फ़ोकस मोड",
     "focusHint": "⌘\\",

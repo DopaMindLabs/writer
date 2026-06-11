@@ -26,9 +26,10 @@ You can turn the floating toolbar off in
 
 ## Renaming a document
 
-Click the document name in the top bar to rename it. If you never name a
-document, a title is inferred from your first line so the sidebar stays
-readable.
+Click the document name in the top bar to rename it. On a phone, tap the
+**⋮** button on a document row in the nav drawer and choose **Rename**. If
+you never name a document, a title is inferred from your first line so the
+sidebar stays readable.
 
 ## Staying focused
 

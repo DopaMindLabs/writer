@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Ainm doiciméid (Enter chun a chruthú)",
     "renameSpace": "Athainmnigh an spás",
     "openSpaceSettings": "Socruithe an spáis",
-    "openSpaceMenu": "Oscail roghchlár an spáis"
+    "openSpaceMenu": "Oscail roghchlár an spáis",
+    "docMenuAria": "Roghanna do {{name}}",
+    "renameDoc": "Athainmnigh",
+    "renameDialog": {
+      "title": "Athainmnigh doiciméad",
+      "description": "Roghnaigh ainm nua don doiciméad seo.",
+      "label": "Ainm an doiciméid",
+      "cancel": "Cealaigh",
+      "save": "Athainmnigh"
+    }
   },
   "topbar": {
     "openNav": "Oscail nascleanúint",
@@ -49,14 +58,11 @@
     "whatsNew": "Cad atá nua",
     "feedback": "Seol aiseolas…"
   },
-  "mobileSplitFallback": {
-    "title": "Tá scáileán níos mó ag teastáil",
-    "body": "Cuireann amharc roinnte dhá dhoiciméad le chéile. Oscail an doiciméad seo i mód Scríobh le haghaidh leagan amach fón.",
-    "cta": "Oscail i Scríobh →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Tapa-shocruithe",
+    "appearanceLabel": "Cuma",
+    "writingLabel": "Scríbhneoireacht",
     "themeLabel": "Téama",
     "focusLabel": "Mód fócais",
     "focusHint": "⌘\\",

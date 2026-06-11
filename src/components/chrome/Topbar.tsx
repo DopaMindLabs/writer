@@ -2,7 +2,7 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import { useEffect, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Quote, Menu, Search, MoreHorizontal } from '@/components/libs/icons';
-import { db } from '@/db/db';
+import { renameDoc } from '@/lib/doc-actions';
 import { useUI } from '@/store/ui';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { IconButton } from '@/components/ui/icon';
@@ -49,7 +49,7 @@ const EditableDocName = ({ docId, docName }: EditableDocNameProps) => {
     if (!docId) return;
     const next = draftDocName.trim();
     if (!next || next === docName) return;
-    await db.docs.update(docId, { name: next, updatedAt: Date.now() });
+    await renameDoc(docId, next);
   };
 
   const onDocKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -86,7 +86,7 @@ const EditableDocName = ({ docId, docName }: EditableDocNameProps) => {
       onDoubleClick={() => { if (docId) setEditingDoc(true); }}
       disabled={!docId}
       title={docId ? t('topbar.renameDoc') : undefined}
-      className="cursor-text font-medium text-ink hover:text-ink"
+      className="min-w-0 cursor-text truncate text-left font-medium text-ink hover:text-ink"
     >
       {docName}
     </button>
@@ -100,7 +100,7 @@ const DocBreadcrumb = ({
   focus,
 }: DocBreadcrumbProps) => {
   return (
-    <div className="flex items-center gap-1.5 font-serif text-[14px] text-ink-3">
+    <div className="flex min-w-0 items-center gap-1.5 font-serif text-[14px] text-ink-3">
       {!focus && <span className="hidden md:inline">{spaceName ?? '…'}</span>}
       {docName && (
         <>
@@ -134,8 +134,8 @@ const CitationsTrigger = ({
     <span>{t('topbar.cite')}</span>
   );
   const citeBaseClass = focus
-    ? 'inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors'
-    : 'inline-flex items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors';
+    ? 'hidden h-7 w-7 items-center justify-center rounded-md transition-colors md:inline-flex'
+    : 'hidden items-center rounded-md px-2 py-1 font-sans text-[12px] lowercase transition-colors md:inline-flex';
   const citeRestClass = onCitations
     ? 'text-ink hover:bg-paper-2'
     : 'text-ink-3 hover:bg-paper-2 hover:text-ink';
@@ -219,7 +219,10 @@ const TopbarLeftTools = ({
   return (
     <>
       {!onCitations && (
-        <div data-tour="tour-topbar-modes" className="inline-flex items-center">
+        <div
+          data-tour="tour-topbar-modes"
+          className="hidden items-center md:inline-flex"
+        >
           <ModeTabs
             mode={mode}
             spaceId={spaceId}

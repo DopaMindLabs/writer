@@ -16,7 +16,16 @@
     "docNamePlaceholder": "ஆவண பெயர் (உருவாக்க Enter)",
     "renameSpace": "இடத்தை மறுபெயரிடு",
     "openSpaceSettings": "இட அமைப்புகள்",
-    "openSpaceMenu": "இட பட்டியலைத் திற"
+    "openSpaceMenu": "இட பட்டியலைத் திற",
+    "docMenuAria": "{{name}} விருப்பங்கள்",
+    "renameDoc": "மறுபெயரிடு",
+    "renameDialog": {
+      "title": "ஆவணத்தை மறுபெயரிடு",
+      "description": "இந்த ஆவணத்திற்கு புதிய பெயரைத் தேர்ந்தெடுக்கவும்.",
+      "label": "ஆவணப் பெயர்",
+      "cancel": "ரத்து",
+      "save": "மறுபெயரிடு"
+    }
   },
   "topbar": {
     "openNav": "வழிசெலுத்தலைத் திற",
@@ -49,14 +58,11 @@
     "whatsNew": "புதியது என்ன",
     "feedback": "கருத்தை அனுப்பு…"
   },
-  "mobileSplitFallback": {
-    "title": "பெரிய திரை தேவை",
-    "body": "பிரித்த காட்சி இரண்டு ஆவணங்களை அருகருகே வைக்கிறது. தொலைபேசி தளவமைப்பிற்கு இந்த ஆவணத்தை எழுதும் முறையில் திற.",
-    "cta": "எழுது இல் திற →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "விரைவு அமைப்புகள்",
+    "appearanceLabel": "தோற்றம்",
+    "writingLabel": "எழுத்து",
     "themeLabel": "தீம்",
     "focusLabel": "கவன முறை",
     "focusHint": "⌘\\",

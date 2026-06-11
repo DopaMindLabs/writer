@@ -7,9 +7,9 @@
     "tagline": "Um espaço sem distracções para escrita longa — ficção, investigação, ensaios, diários.",
     "continueWriting": "Continuar a escrever",
     "startNewSpace": "Começar um novo espaço",
-    "statusLine": "alpha · só local · os dados podem perder-se",
-    "warningTitle": "Build alpha",
-    "warningBody": "Sem sincronização de dados. Tudo vive no teu navegador. Se limpares a cache, perderás o teu trabalho"
+    "warningTitle": "Build de pré-lançamento",
+    "warningBody": "Sem sincronização de dados. Tudo vive no teu navegador e limpar a cache perde o teu trabalho. Podes ativar a sincronização com uma pasta local em Definições → Sync.",
+    "versionLine": "Versão {{version}}"
   },
   "about": {
     "back": "voltar",
@@ -22,7 +22,7 @@
     "paragraph4Before": "Mais uma coisa… Acredito em tecnologia para o bem e detesto publicidade. Por isso, isto será sempre livre de anúncios e GRATUITO para uso não comercial. Podes fazer fork e modificar como quiseres sob a ",
     "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
     "statusLabel": "Estado",
-    "statusValueStrong": "Alpha",
+    "statusValueStrong": "{{version}}",
     "statusValueRest": " — não existe sincronização de dados. Tudo é guardado em IndexedDB no teu navegador local. Se limpares a cache do navegador, o teu trabalho será perdido.",
     "feedbackBefore": "Ainda estou a construir isto e tenho muitas ideias ",
     "feedbackAfter": ". Adoraria saber o que funciona, o que não funciona, e o que gostarias que existisse. Comentários são bem-vindos.",
@@ -262,7 +262,7 @@
       "subtitle": "Informação do build e ligações.",
       "comingSoonBody": "Vê a página /about para a história; este separador terá informação do build, licença e changelog.",
       "versionLabel": "Versão",
-      "versionValue": "{{version}} · alpha",
+      "versionValue": "{{version}}",
       "buildLabel": "Build",
       "buildValue": "local",
       "licenseLabel": "Licença",

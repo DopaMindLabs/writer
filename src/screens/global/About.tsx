@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/typography';
 import { PageNav } from '@/components/chrome/PageNav';
 import { EXTERNAL_LINKS } from '@/lib/routes';
+import { APP_VERSION_LABEL } from '@/lib/version';
 
 export const AboutScreen = () => {
   const { t } = useTranslation(['screens', 'common']);
@@ -81,7 +82,9 @@ const AboutStatusSection = () => {
       <div className="mt-3 flex gap-3 rounded-sm border-l-2 border-info bg-info-bg px-4 py-3">
         <Info className="mt-1 h-4 w-4 shrink-0 text-info" />
         <TypographyLead className="text-info">
-          <strong className="font-semibold">{t('about.statusValueStrong')}</strong>
+          <strong className="font-semibold">
+            {t('about.statusValueStrong', { version: APP_VERSION_LABEL })}
+          </strong>
           {t('about.statusValueRest')}
         </TypographyLead>
       </div>

@@ -37,7 +37,7 @@ describe('InspectorToggleSelector', () => {
     );
   });
 
-  it('explains on hover that the default inherits from global settings', async () => {
+  it('explains on hover that the default inherits from universal settings', async () => {
     render(
       <InspectorToggleSelector
         value="inherit"
@@ -48,7 +48,7 @@ describe('InspectorToggleSelector', () => {
     );
     await userEvent.hover(screen.getByTestId('inspector-toggle-inherit'));
     const tip = await screen.findByTestId('inspector-toggle-inherit-tooltip');
-    expect(tip).toHaveTextContent(/inherited from global settings/i);
+    expect(tip).toHaveTextContent(/inherited from universal settings/i);
   });
 
   it('emits the chosen value', async () => {

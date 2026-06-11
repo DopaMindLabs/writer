@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Dokumentnavn (Enter for å opprette)",
     "renameSpace": "Gi rommet nytt navn",
     "openSpaceSettings": "Rominnstillinger",
-    "openSpaceMenu": "Åpne rommeny"
+    "openSpaceMenu": "Åpne rommeny",
+    "docMenuAria": "Alternativer for {{name}}",
+    "renameDoc": "Gi nytt navn",
+    "renameDialog": {
+      "title": "Gi dokumentet nytt navn",
+      "description": "Velg et nytt navn for dette dokumentet.",
+      "label": "Dokumentnavn",
+      "cancel": "Avbryt",
+      "save": "Gi nytt navn"
+    }
   },
   "topbar": {
     "openNav": "Åpne navigasjon",
@@ -49,14 +58,11 @@
     "whatsNew": "Nyheter",
     "feedback": "Send tilbakemelding…"
   },
-  "mobileSplitFallback": {
-    "title": "Trenger en større skjerm",
-    "body": "Delt visning plasserer to dokumenter side om side. Åpne dette dokumentet i Skriv-modus for en telefonlayout.",
-    "cta": "Åpne i Skriv →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Hurtiginnstillinger",
+    "appearanceLabel": "Utseende",
+    "writingLabel": "Skriving",
     "themeLabel": "Tema",
     "focusLabel": "Fokusmodus",
     "focusHint": "⌘\\",

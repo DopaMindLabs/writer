@@ -10,7 +10,7 @@ Keep your hands on the keyboard. On macOS use **⌘**; on Windows and Linux use
 - **Esc** — close an overlay or cancel an edit.
 - **Ctrl/⌘ + Enter** — save a citation you're editing.
 
-## Global
+## Universal
 
 - **⌘K** — open the **Quick Help** overlay from anywhere. Search the Help Center
   or jump to a shortcut, then press **Esc** to close.

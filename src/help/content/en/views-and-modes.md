@@ -8,7 +8,7 @@ in the top bar.
 - **Write** — the default editing surface.
 - **Focus** — hide the chrome (**⌘\\**).
 - **Read** — a clean, non-editable reading view.
-- **Split** — two documents side by side (wider screens).
+- **Split** — two documents side by side.
 - **Inspector** — outline, info, and history for the current doc.
 
 ## Write
@@ -29,8 +29,7 @@ your reader will see it.
 ## Split
 
 Split view shows two documents side by side — handy for referencing notes while
-you write, or comparing two drafts. Split needs the width of a tablet or
-desktop; on a phone you'll see a prompt to open in Write instead.
+you write, or comparing two drafts. It is available on larger screens.
 
 ## The inspector
 

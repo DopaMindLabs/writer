@@ -3,7 +3,7 @@
 The document inspector is the panel beside the editor. Its **Outline** tab maps the
 document's structure, and its **Info** tab shows live details about the document you're
 writing and lets you set a few optional limits and a status. You choose which of these
-fields appear — globally and per space — so the inspector only shows what you care about.
+fields appear — universally and per space — so the inspector only shows what you care about.
 
 ## The outline
 
@@ -14,6 +14,9 @@ The outline is built from your headings — type `# `, `## ` or `### ` at the st
 line (or use the floating toolbar) to add one. A document without headings shows an empty
 outline; see [Formatting & markdown](formatting-and-markdown#headings-and-structure) for
 how headings work.
+
+On a phone, open the inspector from the **more** tab: choose **Doc inspector** from the
+menu and it slides in from the right.
 
 ## Word and character counts
 
@@ -48,10 +51,10 @@ shown in red.
 
 Every inspector field is optional. To choose which appear:
 
-- **Globally:** open **Settings → Doc inspector** and turn each field on or off. You can
+- **Universally:** open **Universal settings → Doc inspector** and turn each field on or off. You can
   also choose which status stages appear in the picker.
 - **Per space:** open a space's **Settings → Doc inspector**. Each field can inherit the
-  global default or be turned on or off just for that space.
+  universal default or be turned on or off just for that space.
 
 Turning a field off hides it from the inspector — along with its limit and the editor highlight —
 even if you'd set a value earlier. The value isn't deleted: turn the field back on and it reappears.

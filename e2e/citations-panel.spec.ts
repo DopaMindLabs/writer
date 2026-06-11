@@ -31,10 +31,8 @@ test.describe('mobile viewport', () => {
     await page.goto(`/#/s/${spaceId}`);
     await page.waitForLoadState('networkidle');
 
-    await page
-      .getByRole('button', { name: /citations/i })
-      .first()
-      .click();
+    // On mobile the citations trigger lives in the bottom tab bar, not the topbar.
+    await page.getByTestId('mobile-tabs-cite').click();
 
     const panel = page.getByRole('complementary', { name: 'Citations' });
     await expect(panel).toBeVisible();

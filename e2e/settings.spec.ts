@@ -48,7 +48,7 @@ test('stacks a group on one page and scrolls to the selected section', async ({
   await expect(page.getByRole('heading', { name: /^Editor$/ })).toHaveCount(0);
 });
 
-test('cycles through every global settings tab without crashing', async ({ page }) => {
+test('cycles through every universal settings tab without crashing', async ({ page }) => {
   await page.goto('/#/settings');
   await page.waitForLoadState('networkidle');
   const tabs: { id: string; heading: RegExp }[] = [

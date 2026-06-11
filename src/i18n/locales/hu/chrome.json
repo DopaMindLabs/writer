@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Dokumentum neve (Enter a létrehozáshoz)",
     "renameSpace": "Tér átnevezése",
     "openSpaceSettings": "Tér beállításai",
-    "openSpaceMenu": "Tér menü megnyitása"
+    "openSpaceMenu": "Tér menü megnyitása",
+    "docMenuAria": "Beállítások ehhez: {{name}}",
+    "renameDoc": "Átnevezés",
+    "renameDialog": {
+      "title": "Dokumentum átnevezése",
+      "description": "Válassz új nevet ennek a dokumentumnak.",
+      "label": "Dokumentum neve",
+      "cancel": "Mégse",
+      "save": "Átnevezés"
+    }
   },
   "topbar": {
     "openNav": "Navigáció megnyitása",
@@ -49,14 +58,11 @@
     "whatsNew": "Mi újság",
     "feedback": "Visszajelzés küldése…"
   },
-  "mobileSplitFallback": {
-    "title": "Nagyobb képernyő szükséges",
-    "body": "Az osztott nézet két dokumentumot helyez egymás mellé. Nyisd meg ezt a dokumentumot Írás módban a telefonelrendezéshez.",
-    "cta": "Megnyitás Írás módban →"
-  },
   "quickSettings": {
     "trigger": "LIpsum Writer",
     "title": "Gyorsbeállítások",
+    "appearanceLabel": "Megjelenés",
+    "writingLabel": "Írás",
     "themeLabel": "Téma",
     "focusLabel": "Fókuszmód",
     "focusHint": "⌘\\",

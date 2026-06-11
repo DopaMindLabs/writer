@@ -7,9 +7,9 @@
     "tagline": "Un espace sans distraction pour l'écriture longue — fiction, recherche, essais, journaux.",
     "continueWriting": "Continuer à écrire",
     "startNewSpace": "Commencer un nouvel espace",
-    "statusLine": "alpha · local uniquement · les données peuvent être perdues",
-    "warningTitle": "Build alpha",
-    "warningBody": "Pas de synchronisation des données. Tout vit dans ton navigateur. Si tu vides le cache, ton travail sera perdu"
+    "warningTitle": "Build préliminaire",
+    "warningBody": "Pas de synchronisation des données. Tout vit dans ton navigateur et vider le cache fait perdre ton travail. Tu peux activer la synchronisation vers un dossier local dans Réglages → Sync.",
+    "versionLine": "Version {{version}}"
   },
   "about": {
     "back": "retour",
@@ -22,7 +22,7 @@
     "paragraph4Before": "Une dernière chose… Je crois en la tech pour le bien et je déteste la publicité. Donc ça sera toujours sans pub et GRATUIT pour un usage non commercial. Tu peux le forker et le modifier comme tu veux sous ",
     "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
     "statusLabel": "Statut",
-    "statusValueStrong": "Alpha",
+    "statusValueStrong": "{{version}}",
     "statusValueRest": " — il n'y a pas de synchronisation des données. Tout est enregistré dans IndexedDB dans ton navigateur local. Si tu vides le cache du navigateur, ton travail sera perdu.",
     "feedbackBefore": "Je suis encore en train de construire ça et j'ai plein d'idées ",
     "feedbackAfter": ". J'adorerais savoir ce qui fonctionne, ce qui ne fonctionne pas, et ce que tu aimerais voir exister. Les retours sont les bienvenus.",
@@ -290,7 +290,7 @@
       "subtitle": "Infos du build et liens.",
       "comingSoonBody": "Voir la page /about pour l'histoire ; cet onglet hébergera les infos du build, la licence et le changelog.",
       "versionLabel": "Version",
-      "versionValue": "{{version}} · alpha",
+      "versionValue": "{{version}}",
       "buildLabel": "Build",
       "buildValue": "local",
       "licenseLabel": "Licence",
