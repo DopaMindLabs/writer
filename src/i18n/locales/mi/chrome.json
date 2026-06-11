@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Ingoa tuhinga (Whakauru hei hanga)",
     "renameSpace": "Whakaingoa anō te wāhi",
     "openSpaceSettings": "Tautuhinga wāhi",
-    "openSpaceMenu": "Whakatuwhera tahua wāhi"
+    "openSpaceMenu": "Whakatuwhera tahua wāhi",
+    "docMenuAria": "Ngā kōwhiringa mō {{name}}",
+    "renameDoc": "Whakaingoa anō",
+    "renameDialog": {
+      "title": "Whakaingoa anō te tuhinga",
+      "description": "Kōwhiria he ingoa hou mō tēnei tuhinga.",
+      "label": "Ingoa tuhinga",
+      "cancel": "Whakakore",
+      "save": "Whakaingoa anō"
+    }
   },
   "topbar": {
     "openNav": "Whakatuwhera te whakatere",

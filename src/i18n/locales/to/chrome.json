@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Hingoa tohi (Enter ke fakatupu)",
     "renameSpace": "Toe fakahingoa ʻa e vāhā",
     "openSpaceSettings": "Ngaahi fokotuʻutuʻu vāhā",
-    "openSpaceMenu": "Fakaʻata ʻa e meinū vāhā"
+    "openSpaceMenu": "Fakaʻata ʻa e meinū vāhā",
+    "docMenuAria": "Ngaahi fili ki he {{name}}",
+    "renameDoc": "Toe fakahingoa",
+    "renameDialog": {
+      "title": "Toe fakahingoa ʻa e tohi",
+      "description": "Fili ha hingoa foʻou ki he tohi ko ʻeni.",
+      "label": "Hingoa ʻo e tohi",
+      "cancel": "Fakaʻikai",
+      "save": "Toe fakahingoa"
+    }
   },
   "topbar": {
     "openNav": "Fakaʻata ʻa e folau",

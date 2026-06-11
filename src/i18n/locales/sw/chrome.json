@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Jina la hati (Enter kuunda)",
     "renameSpace": "Pa jina jipya nafasi",
     "openSpaceSettings": "Mipangilio ya nafasi",
-    "openSpaceMenu": "Fungua menyu ya nafasi"
+    "openSpaceMenu": "Fungua menyu ya nafasi",
+    "docMenuAria": "Chaguo za {{name}}",
+    "renameDoc": "Pa jina jipya",
+    "renameDialog": {
+      "title": "Pa jina jipya hati",
+      "description": "Chagua jina jipya kwa hati hii.",
+      "label": "Jina la hati",
+      "cancel": "Ghairi",
+      "save": "Pa jina jipya"
+    }
   },
   "topbar": {
     "openNav": "Fungua urambazaji",

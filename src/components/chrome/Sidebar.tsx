@@ -9,7 +9,7 @@ import {
   type RefObject,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Settings } from '@/components/libs/icons';
+import { MoreVertical, Plus, Settings } from '@/components/libs/icons';
 import {
   Tooltip,
   TooltipContent,
@@ -23,7 +23,14 @@ import {
 import { Link } from '@/components/ui/Link';
 import { TextField } from '@/components/ui/TextField';
 import { IconButton } from '@/components/ui/icon';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { SpaceMenuPopover } from './SpaceMenuPopover';
+import { RenameDocDialog } from './RenameDocDialog';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
@@ -679,6 +686,44 @@ const BrainSpaceLink = ({
   );
 };
 
+const DocRowMenu = ({ doc }: { doc: Doc }) => {
+  const { t } = useTranslation('chrome');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [renameOpen, setRenameOpen] = useState(false);
+  return (
+    <>
+      <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+        <DropdownMenuTrigger asChild>
+          <IconButton
+            data-testid={`sidebar-doc-${doc.id}-menu`}
+            icon={MoreVertical}
+            label={t('sidebar.docMenuAria', { name: doc.name })}
+            className="md:hidden"
+          />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            data-testid={`sidebar-doc-${doc.id}-rename`}
+            onSelect={(e) => {
+              e.preventDefault();
+              setMenuOpen(false);
+              setRenameOpen(true);
+            }}
+          >
+            {t('sidebar.renameDoc')}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <RenameDocDialog
+        docId={doc.id}
+        docName={doc.name}
+        open={renameOpen}
+        onOpenChange={setRenameOpen}
+      />
+    </>
+  );
+};
+
 const DocLink = ({
   doc,
   href,
@@ -692,33 +737,38 @@ const DocLink = ({
 }) => {
   const wordCount = doc.meta.wordCount;
   return (
-    <Link
-      to={href}
-      data-testid={`sidebar-doc-${doc.id}`}
+    <div
       className={cn(
-        '-ml-px flex items-center gap-2 border-l-2 py-1.5 transition-colors',
+        '-ml-px flex items-center gap-2 border-l-2 transition-colors',
         indented ? 'pl-7 pr-5' : 'px-5',
         active
           ? 'border-ink bg-paper'
           : 'border-transparent hover:bg-paper',
       )}
     >
-      <span
-        data-testid={`sidebar-doc-${doc.id}-name`}
-        className={cn(
-          'flex-1 truncate text-[13px]',
-          active ? 'font-medium text-ink' : 'text-ink-2',
-        )}
+      <Link
+        to={href}
+        data-testid={`sidebar-doc-${doc.id}`}
+        className="flex min-w-0 flex-1 items-center gap-2 py-1.5"
       >
-        {doc.name}
-      </span>
-      <span
-        data-testid={`sidebar-doc-${doc.id}-count`}
-        className="font-mono text-[10px] text-ink-4"
-      >
-        {wordCount > 0 ? wordCount.toLocaleString() : '◌'}
-      </span>
-    </Link>
+        <span
+          data-testid={`sidebar-doc-${doc.id}-name`}
+          className={cn(
+            'flex-1 truncate text-[13px]',
+            active ? 'font-medium text-ink' : 'text-ink-2',
+          )}
+        >
+          {doc.name}
+        </span>
+        <span
+          data-testid={`sidebar-doc-${doc.id}-count`}
+          className="font-mono text-[10px] text-ink-4"
+        >
+          {wordCount > 0 ? wordCount.toLocaleString() : '◌'}
+        </span>
+      </Link>
+      <DocRowMenu doc={doc} />
+    </div>
   );
 };
 

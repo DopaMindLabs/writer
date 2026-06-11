@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Dokumentnavn (Enter for at oprette)",
     "renameSpace": "Omdøb rum",
     "openSpaceSettings": "Rumindstillinger",
-    "openSpaceMenu": "Åbn rummenu"
+    "openSpaceMenu": "Åbn rummenu",
+    "docMenuAria": "Muligheder for {{name}}",
+    "renameDoc": "Omdøb",
+    "renameDialog": {
+      "title": "Omdøb dokument",
+      "description": "Vælg et nyt navn til dette dokument.",
+      "label": "Dokumentnavn",
+      "cancel": "Annullér",
+      "save": "Omdøb"
+    }
   },
   "topbar": {
     "openNav": "Åbn navigation",

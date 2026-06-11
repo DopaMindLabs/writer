@@ -16,7 +16,16 @@
     "docNamePlaceholder": "የሰነድ ስም (ለመፍጠር Enter)",
     "renameSpace": "ቦታን እንደገና ሰይም",
     "openSpaceSettings": "የቦታ ቅንብሮች",
-    "openSpaceMenu": "የቦታ ምናሌን ክፈት"
+    "openSpaceMenu": "የቦታ ምናሌን ክፈት",
+    "docMenuAria": "ለ {{name}} አማራጮች",
+    "renameDoc": "እንደገና ሰይም",
+    "renameDialog": {
+      "title": "ሰነድ እንደገና ሰይም",
+      "description": "ለዚህ ሰነድ አዲስ ስም ይምረጡ።",
+      "label": "የሰነድ ስም",
+      "cancel": "ሰርዝ",
+      "save": "እንደገና ሰይም"
+    }
   },
   "topbar": {
     "openNav": "ዳሰሳ ክፈት",

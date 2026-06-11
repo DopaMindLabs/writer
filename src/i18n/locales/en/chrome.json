@@ -18,7 +18,16 @@
     "docNamePlaceholder": "Doc name (Enter to create)",
     "renameSpace": "Rename space",
     "openSpaceSettings": "Space settings",
-    "openSpaceMenu": "Open space menu"
+    "openSpaceMenu": "Open space menu",
+    "docMenuAria": "Options for {{name}}",
+    "renameDoc": "Rename",
+    "renameDialog": {
+      "title": "Rename document",
+      "description": "Choose a new name for this document.",
+      "label": "Document name",
+      "cancel": "Cancel",
+      "save": "Rename"
+    }
   },
   "topbar": {
     "openNav": "Open navigation",

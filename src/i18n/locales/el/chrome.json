@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Όνομα εγγράφου (Enter για δημιουργία)",
     "renameSpace": "Μετονομασία χώρου",
     "openSpaceSettings": "Ρυθμίσεις χώρου",
-    "openSpaceMenu": "Άνοιγμα μενού χώρου"
+    "openSpaceMenu": "Άνοιγμα μενού χώρου",
+    "docMenuAria": "Επιλογές για {{name}}",
+    "renameDoc": "Μετονομασία",
+    "renameDialog": {
+      "title": "Μετονομασία εγγράφου",
+      "description": "Επιλέξτε νέο όνομα για αυτό το έγγραφο.",
+      "label": "Όνομα εγγράφου",
+      "cancel": "Άκυρο",
+      "save": "Μετονομασία"
+    }
   },
   "topbar": {
     "openNav": "Άνοιγμα πλοήγησης",

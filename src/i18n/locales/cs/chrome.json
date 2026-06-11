@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Název dokumentu (Enter pro vytvoření)",
     "renameSpace": "Přejmenovat prostor",
     "openSpaceSettings": "Nastavení prostoru",
-    "openSpaceMenu": "Otevřít menu prostoru"
+    "openSpaceMenu": "Otevřít menu prostoru",
+    "docMenuAria": "Možnosti pro {{name}}",
+    "renameDoc": "Přejmenovat",
+    "renameDialog": {
+      "title": "Přejmenovat dokument",
+      "description": "Zvolte nový název pro tento dokument.",
+      "label": "Název dokumentu",
+      "cancel": "Zrušit",
+      "save": "Přejmenovat"
+    }
   },
   "topbar": {
     "openNav": "Otevřít navigaci",

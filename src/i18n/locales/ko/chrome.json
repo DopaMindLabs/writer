@@ -16,7 +16,16 @@
     "docNamePlaceholder": "문서 이름 (Enter로 생성)",
     "renameSpace": "스페이스 이름 변경",
     "openSpaceSettings": "스페이스 설정",
-    "openSpaceMenu": "스페이스 메뉴 열기"
+    "openSpaceMenu": "스페이스 메뉴 열기",
+    "docMenuAria": "{{name}} 옵션",
+    "renameDoc": "이름 변경",
+    "renameDialog": {
+      "title": "문서 이름 변경",
+      "description": "이 문서의 새 이름을 선택하세요.",
+      "label": "문서 이름",
+      "cancel": "취소",
+      "save": "이름 변경"
+    }
   },
   "topbar": {
     "openNav": "탐색 열기",

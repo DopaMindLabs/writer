@@ -21,6 +21,11 @@ documents, and open **more** for settings, **Help**, and about.
 - Quick edits and capturing ideas in [BrainSpace](brainspace).
 - Light formatting via the floating toolbar.
 
+## Renaming a document
+
+In the nav drawer, tap the **⋮** button on a document row and choose
+**Rename** to give the document a new name.
+
 ## What's better on a larger screen
 
 - **Split view**, which needs the width of a tablet or desktop — on a phone a

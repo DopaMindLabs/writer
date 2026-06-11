@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Nume document (Enter pentru a crea)",
     "renameSpace": "Redenumește spațiul",
     "openSpaceSettings": "Setări spațiu",
-    "openSpaceMenu": "Deschide meniul spațiului"
+    "openSpaceMenu": "Deschide meniul spațiului",
+    "docMenuAria": "Opțiuni pentru {{name}}",
+    "renameDoc": "Redenumește",
+    "renameDialog": {
+      "title": "Redenumește documentul",
+      "description": "Alege un nume nou pentru acest document.",
+      "label": "Numele documentului",
+      "cancel": "Anulează",
+      "save": "Redenumește"
+    }
   },
   "topbar": {
     "openNav": "Deschide navigația",

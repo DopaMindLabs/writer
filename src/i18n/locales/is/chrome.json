@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Heiti skjals (Enter til að búa til)",
     "renameSpace": "Endurnefna svæði",
     "openSpaceSettings": "Stillingar svæðis",
-    "openSpaceMenu": "Opna valmynd svæðis"
+    "openSpaceMenu": "Opna valmynd svæðis",
+    "docMenuAria": "Valkostir fyrir {{name}}",
+    "renameDoc": "Endurnefna",
+    "renameDialog": {
+      "title": "Endurnefna skjal",
+      "description": "Veldu nýtt nafn fyrir þetta skjal.",
+      "label": "Heiti skjals",
+      "cancel": "Hætta við",
+      "save": "Endurnefna"
+    }
   },
   "topbar": {
     "openNav": "Opna leiðsögn",

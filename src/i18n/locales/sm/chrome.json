@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Igoa o le faamaumauga (Enter e faia)",
     "renameSpace": "Toe faaigoa avanoa",
     "openSpaceSettings": "Faatulagaga o le avanoa",
-    "openSpaceMenu": "Tatala lisi avanoa"
+    "openSpaceMenu": "Tatala lisi avanoa",
+    "docMenuAria": "Filifiliga mo {{name}}",
+    "renameDoc": "Toe faaigoa",
+    "renameDialog": {
+      "title": "Toe faaigoa faamaumauga",
+      "description": "Filifili se igoa fou mo lenei faamaumauga.",
+      "label": "Igoa o le faamaumauga",
+      "cancel": "Faaleaogaina",
+      "save": "Toe faaigoa"
+    }
   },
   "topbar": {
     "openNav": "Tatala folauga",

@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Име на документ (Enter за създаване)",
     "renameSpace": "Преименувай пространството",
     "openSpaceSettings": "Настройки на пространството",
-    "openSpaceMenu": "Отвори меню на пространството"
+    "openSpaceMenu": "Отвори меню на пространството",
+    "docMenuAria": "Опции за {{name}}",
+    "renameDoc": "Преименувай",
+    "renameDialog": {
+      "title": "Преименувай документ",
+      "description": "Изберете ново име за този документ.",
+      "label": "Име на документа",
+      "cancel": "Отказ",
+      "save": "Преименувай"
+    }
   },
   "topbar": {
     "openNav": "Отвори навигация",

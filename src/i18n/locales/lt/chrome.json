@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Dokumento pavadinimas (Enter sukurti)",
     "renameSpace": "Pervadinti erdvę",
     "openSpaceSettings": "Erdvės nustatymai",
-    "openSpaceMenu": "Atverti erdvės meniu"
+    "openSpaceMenu": "Atverti erdvės meniu",
+    "docMenuAria": "„{{name}}“ parinktys",
+    "renameDoc": "Pervadinti",
+    "renameDialog": {
+      "title": "Pervadinti dokumentą",
+      "description": "Pasirinkite naują šio dokumento pavadinimą.",
+      "label": "Dokumento pavadinimas",
+      "cancel": "Atšaukti",
+      "save": "Pervadinti"
+    }
   },
   "topbar": {
     "openNav": "Atverti navigaciją",

@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Orúkọ doko (Enter láti ṣẹ̀dá)",
     "renameSpace": "Tún àyè sọ orúkọ",
     "openSpaceSettings": "Àwọn ètò àyè",
-    "openSpaceMenu": "Ṣílẹ̀kùn àkójọpọ̀ àyè"
+    "openSpaceMenu": "Ṣílẹ̀kùn àkójọpọ̀ àyè",
+    "docMenuAria": "Àwọn àṣàyàn fún {{name}}",
+    "renameDoc": "Tún sọ orúkọ",
+    "renameDialog": {
+      "title": "Tún doko sọ orúkọ",
+      "description": "Yan orúkọ tuntun fún doko yìí.",
+      "label": "Orúkọ doko",
+      "cancel": "Fagilé",
+      "save": "Tún sọ orúkọ"
+    }
   },
   "topbar": {
     "openNav": "Ṣílẹ̀kùn ìrìnàjò",

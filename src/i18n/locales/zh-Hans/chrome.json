@@ -16,7 +16,16 @@
     "docNamePlaceholder": "文档名称(回车创建)",
     "renameSpace": "重命名空间",
     "openSpaceSettings": "空间设置",
-    "openSpaceMenu": "打开空间菜单"
+    "openSpaceMenu": "打开空间菜单",
+    "docMenuAria": "{{name}} 的选项",
+    "renameDoc": "重命名",
+    "renameDialog": {
+      "title": "重命名文档",
+      "description": "为此文档选择一个新名称。",
+      "label": "文档名称",
+      "cancel": "取消",
+      "save": "重命名"
+    }
   },
   "topbar": {
     "openNav": "打开导航",

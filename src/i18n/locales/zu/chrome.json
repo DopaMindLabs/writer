@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Igama lidokhumenti (Enter ukuze udale)",
     "renameSpace": "Qamba kabusha isikhala",
     "openSpaceSettings": "Izilungiselelo zesikhala",
-    "openSpaceMenu": "Vula imenyu yesikhala"
+    "openSpaceMenu": "Vula imenyu yesikhala",
+    "docMenuAria": "Izinketho ze-{{name}}",
+    "renameDoc": "Qamba kabusha",
+    "renameDialog": {
+      "title": "Qamba kabusha idokhumenti",
+      "description": "Khetha igama elisha lale dokhumenti.",
+      "label": "Igama ledokhumenti",
+      "cancel": "Khansela",
+      "save": "Qamba kabusha"
+    }
   },
   "topbar": {
     "openNav": "Vula ukuzulazula",

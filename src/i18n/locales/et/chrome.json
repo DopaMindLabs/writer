@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Dokumendi nimi (Enter loomiseks)",
     "renameSpace": "Nimeta ruum ümber",
     "openSpaceSettings": "Ruumi seaded",
-    "openSpaceMenu": "Ava ruumi menüü"
+    "openSpaceMenu": "Ava ruumi menüü",
+    "docMenuAria": "Valikud: {{name}}",
+    "renameDoc": "Nimeta ümber",
+    "renameDialog": {
+      "title": "Nimeta dokument ümber",
+      "description": "Vali sellele dokumendile uus nimi.",
+      "label": "Dokumendi nimi",
+      "cancel": "Tühista",
+      "save": "Nimeta ümber"
+    }
   },
   "topbar": {
     "openNav": "Ava navigatsioon",

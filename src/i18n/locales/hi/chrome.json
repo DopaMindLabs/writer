@@ -16,7 +16,16 @@
     "docNamePlaceholder": "दस्तावेज़ का नाम (बनाने के लिए Enter)",
     "renameSpace": "स्पेस का नाम बदलें",
     "openSpaceSettings": "स्पेस सेटिंग्स",
-    "openSpaceMenu": "स्पेस मेनू खोलें"
+    "openSpaceMenu": "स्पेस मेनू खोलें",
+    "docMenuAria": "{{name}} के लिए विकल्प",
+    "renameDoc": "नाम बदलें",
+    "renameDialog": {
+      "title": "दस्तावेज़ का नाम बदलें",
+      "description": "इस दस्तावेज़ के लिए नया नाम चुनें।",
+      "label": "दस्तावेज़ का नाम",
+      "cancel": "रद्द करें",
+      "save": "नाम बदलें"
+    }
   },
   "topbar": {
     "openNav": "नेविगेशन खोलें",

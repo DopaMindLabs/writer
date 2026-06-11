@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Dokumentnavn (Enter for å opprette)",
     "renameSpace": "Gi rommet nytt navn",
     "openSpaceSettings": "Rominnstillinger",
-    "openSpaceMenu": "Åpne rommeny"
+    "openSpaceMenu": "Åpne rommeny",
+    "docMenuAria": "Alternativer for {{name}}",
+    "renameDoc": "Gi nytt navn",
+    "renameDialog": {
+      "title": "Gi dokumentet nytt navn",
+      "description": "Velg et nytt navn for dette dokumentet.",
+      "label": "Dokumentnavn",
+      "cancel": "Avbryt",
+      "save": "Gi nytt navn"
+    }
   },
   "topbar": {
     "openNav": "Åpne navigasjon",

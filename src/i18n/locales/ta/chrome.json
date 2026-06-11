@@ -16,7 +16,16 @@
     "docNamePlaceholder": "ஆவண பெயர் (உருவாக்க Enter)",
     "renameSpace": "இடத்தை மறுபெயரிடு",
     "openSpaceSettings": "இட அமைப்புகள்",
-    "openSpaceMenu": "இட பட்டியலைத் திற"
+    "openSpaceMenu": "இட பட்டியலைத் திற",
+    "docMenuAria": "{{name}} விருப்பங்கள்",
+    "renameDoc": "மறுபெயரிடு",
+    "renameDialog": {
+      "title": "ஆவணத்தை மறுபெயரிடு",
+      "description": "இந்த ஆவணத்திற்கு புதிய பெயரைத் தேர்ந்தெடுக்கவும்.",
+      "label": "ஆவணப் பெயர்",
+      "cancel": "ரத்து",
+      "save": "மறுபெயரிடு"
+    }
   },
   "topbar": {
     "openNav": "வழிசெலுத்தலைத் திற",

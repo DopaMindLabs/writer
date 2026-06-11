@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Dokumenta nosaukums (Enter, lai izveidotu)",
     "renameSpace": "Pārdēvēt telpu",
     "openSpaceSettings": "Telpas iestatījumi",
-    "openSpaceMenu": "Atvērt telpas izvēlni"
+    "openSpaceMenu": "Atvērt telpas izvēlni",
+    "docMenuAria": "Opcijas: {{name}}",
+    "renameDoc": "Pārdēvēt",
+    "renameDialog": {
+      "title": "Pārdēvēt dokumentu",
+      "description": "Izvēlieties jaunu nosaukumu šim dokumentam.",
+      "label": "Dokumenta nosaukums",
+      "cancel": "Atcelt",
+      "save": "Pārdēvēt"
+    }
   },
   "topbar": {
     "openNav": "Atvērt navigāciju",

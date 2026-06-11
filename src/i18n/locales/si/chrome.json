@@ -16,7 +16,16 @@
     "docNamePlaceholder": "ලේඛන නාමය (නිර්මාණයට Enter)",
     "renameSpace": "අවකාශය නැවත නම් කරන්න",
     "openSpaceSettings": "අවකාශ සැකසුම්",
-    "openSpaceMenu": "අවකාශ මෙනුව විවෘත කරන්න"
+    "openSpaceMenu": "අවකාශ මෙනුව විවෘත කරන්න",
+    "docMenuAria": "{{name}} සඳහා විකල්ප",
+    "renameDoc": "නැවත නම් කරන්න",
+    "renameDialog": {
+      "title": "ලේඛනය නැවත නම් කරන්න",
+      "description": "මෙම ලේඛනය සඳහා නව නමක් තෝරන්න.",
+      "label": "ලේඛනයේ නම",
+      "cancel": "අවලංගු",
+      "save": "නැවත නම් කරන්න"
+    }
   },
   "topbar": {
     "openNav": "සංචාලනය විවෘත කරන්න",

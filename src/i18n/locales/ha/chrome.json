@@ -16,7 +16,16 @@
     "docNamePlaceholder": "Sunan takarda (Enter don ƙirƙirar)",
     "renameSpace": "Sake suna wurin",
     "openSpaceSettings": "Saituna na wuri",
-    "openSpaceMenu": "Bude menu na wuri"
+    "openSpaceMenu": "Bude menu na wuri",
+    "docMenuAria": "Zaɓuɓɓuka don {{name}}",
+    "renameDoc": "Sake suna",
+    "renameDialog": {
+      "title": "Sake suna takarda",
+      "description": "Zaɓi sabon suna don wannan takarda.",
+      "label": "Sunan takarda",
+      "cancel": "Soke",
+      "save": "Sake suna"
+    }
   },
   "topbar": {
     "openNav": "Bude kewayawa",

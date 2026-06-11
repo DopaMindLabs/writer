@@ -16,7 +16,16 @@
     "docNamePlaceholder": "ドキュメント名 (Enter で作成)",
     "renameSpace": "スペースの名前を変更",
     "openSpaceSettings": "スペース設定",
-    "openSpaceMenu": "スペースメニューを開く"
+    "openSpaceMenu": "スペースメニューを開く",
+    "docMenuAria": "{{name}} のオプション",
+    "renameDoc": "名前を変更",
+    "renameDialog": {
+      "title": "ドキュメントの名前変更",
+      "description": "このドキュメントの新しい名前を選択してください。",
+      "label": "ドキュメント名",
+      "cancel": "キャンセル",
+      "save": "名前を変更"
+    }
   },
   "topbar": {
     "openNav": "ナビゲーションを開く",
