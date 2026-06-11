@@ -9,7 +9,8 @@
     "startNewSpace": "Nieuwe space starten",
     "statusLine": "alpha · alleen lokaal · gegevens kunnen verloren gaan",
     "warningTitle": "Alpha build",
-    "warningBody": "Geen gegevenssynchronisatie. Alles leeft in je browser. Als je je cache wist, gaat je werk verloren"
+    "warningBody": "Geen gegevenssynchronisatie. Alles leeft in je browser. Als je je cache wist, gaat je werk verloren",
+    "versionLine": "Versie {{version}} · alpha"
   },
   "about": {
     "back": "terug",

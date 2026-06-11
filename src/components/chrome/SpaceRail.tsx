@@ -74,6 +74,9 @@ const SpaceRailHeader = () => {
           <div className="mt-0.5 text-[11px] opacity-80">
             {t('home.warningBody')}
           </div>
+          <div className="mt-1 font-mono text-[10px] uppercase tracking-wider opacity-80">
+            {t('home.versionLine', { version: __APP_VERSION__ })}
+          </div>
         </TooltipContent>
       </Tooltip>
     </>

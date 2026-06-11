@@ -9,7 +9,8 @@
     "startNewSpace": "Neuen Space starten",
     "statusLine": "alpha · nur lokal · Daten können verloren gehen",
     "warningTitle": "Alpha-Build",
-    "warningBody": "Keine Datensynchronisation. Alles lebt in deinem Browser. Wenn du den Cache löschst, geht deine Arbeit verloren"
+    "warningBody": "Keine Datensynchronisation. Alles lebt in deinem Browser. Wenn du den Cache löschst, geht deine Arbeit verloren",
+    "versionLine": "Version {{version}} · alpha"
   },
   "about": {
     "back": "zurück",

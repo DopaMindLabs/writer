@@ -9,7 +9,8 @@
     "startNewSpace": "Começar um novo espaço",
     "statusLine": "alpha · só local · dados podem ser perdidos",
     "warningTitle": "Build alpha",
-    "warningBody": "Sem sincronização de dados. Tudo vive no seu navegador. Se limpar o cache, seu trabalho será perdido"
+    "warningBody": "Sem sincronização de dados. Tudo vive no seu navegador. Se limpar o cache, seu trabalho será perdido",
+    "versionLine": "Versão {{version}} · alpha"
   },
   "about": {
     "back": "voltar",

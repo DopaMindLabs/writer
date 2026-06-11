@@ -32,6 +32,15 @@ describe('SpaceRail', () => {
     expect(await screen.findByRole('link', { name: /^AAA$/ })).toBeInTheDocument();
   });
 
+  it('shows the app version in the alpha chip tooltip on focus', async () => {
+    renderWithProviders(<SpaceRail activeSpaceId="s1" />);
+    const chip = await screen.findByText('alpha');
+    chip.focus();
+    const tooltip = await screen.findByRole('tooltip');
+    expect(tooltip).toHaveTextContent(/alpha build/i);
+    expect(tooltip).toHaveTextContent(`Version ${__APP_VERSION__} · alpha`);
+  });
+
   it('exposes a Quick Settings trigger at the bottom of the rail', async () => {
     renderWithProviders(<SpaceRail activeSpaceId="s1" />);
     expect(
