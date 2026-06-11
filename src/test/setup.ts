@@ -1,10 +1,17 @@
 import '@testing-library/jest-dom/vitest';
 import 'fake-indexeddb/auto';
 import '@/i18n';
+import { Blob as NodeBlob } from 'node:buffer';
 import { afterEach, beforeEach, expect } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
+
+// fake-indexeddb clones stored values with Node's structuredClone, which
+// degrades jsdom Blobs to empty objects; Node's own Blob survives the clone,
+// so tests that round-trip Blobs through Dexie need it as the global.
+(globalThis as { Blob: typeof globalThis.Blob }).Blob =
+  NodeBlob as unknown as typeof globalThis.Blob;
 
 const initialUIState = useUI.getState();
 

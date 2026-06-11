@@ -1,7 +1,7 @@
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import type { Backup } from '@/db/schema';
-import { buildSpaceMarkdownZipFor } from './buildSpaceMarkdownZip';
+import { buildSpaceArchiveFor } from '@/lib/format/buildSpaceArchive';
 
 export const MAX_BACKUPS_PER_SPACE = 3;
 
@@ -20,18 +20,18 @@ const pruneOldBackups = async (spaceId: string): Promise<void> => {
 
 export const createSpaceBackup = async (
   spaceId: string,
-  options: { label?: string; now?: () => number } = {},
+  options: { label?: string; kind?: Backup['kind']; now?: () => number } = {},
 ): Promise<{ backup: Backup; filename: string }> =>  {
   const now = options.now ?? Date.now;
   const when = now();
-  const { blob, filename } = await buildSpaceMarkdownZipFor(spaceId, when);
+  const { blob, filename } = await buildSpaceArchiveFor(spaceId, when);
 
   const backup: Backup = {
     id: newId(),
     when,
     scope: spaceId,
-    kind: 'manual',
-    format: 'md-zip',
+    kind: options.kind ?? 'manual',
+    format: 'archive-v2',
     size: blob.size,
     payload: blob,
     label: options.label,
