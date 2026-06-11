@@ -48,6 +48,7 @@ import { cn } from '@/lib/utils';
 interface SidebarProps {
   spaceId: string;
   activeDocId: string | null;
+  className?: string;
 }
 
 interface AddingState {
@@ -492,7 +493,7 @@ const useAddDoc = (spaceId: string, space: Space | undefined) => {
   return { add, startAdd };
 };
 
-export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
+export const Sidebar = ({ spaceId, activeDocId, className }: SidebarProps) => {
   const { t } = useTranslation(['chrome', 'common']);
   const space = useSpace(spaceId);
   const sections = useSections(spaceId) ?? [];
@@ -513,7 +514,10 @@ export const Sidebar = ({ spaceId, activeDocId }: SidebarProps) => {
   return (
     <aside
       aria-label={t('chrome:sidebar.landmarkLabel')}
-      className="flex w-56 shrink-0 flex-col border-r border-rule bg-paper-2"
+      className={cn(
+        'flex w-56 shrink-0 flex-col border-r border-rule bg-paper-2',
+        className,
+      )}
     >
       <SpaceHeader spaceId={spaceId} space={space} />
       <nav
@@ -697,8 +701,9 @@ const DocRowMenu = ({ doc }: { doc: Doc }) => {
           <IconButton
             data-testid={`sidebar-doc-${doc.id}-menu`}
             icon={MoreVertical}
+            iconSize="xs"
             label={t('sidebar.docMenuAria', { name: doc.name })}
-            className="md:hidden"
+            className="text-ink-4 md:hidden"
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -740,7 +745,7 @@ const DocLink = ({
     <div
       className={cn(
         '-ml-px flex items-center gap-2 border-l-2 transition-colors',
-        indented ? 'pl-7 pr-5' : 'px-5',
+        indented ? 'pl-7 pr-1 md:pr-5' : 'pl-5 pr-1 md:pr-5',
         active
           ? 'border-ink bg-paper'
           : 'border-transparent hover:bg-paper',

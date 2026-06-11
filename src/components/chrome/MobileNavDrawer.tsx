@@ -51,13 +51,16 @@ export const MobileNavDrawer = ({ spaceId, activeDocId }: MobileNavDrawerProps) 
         >
           <DialogPrimitiveTitle className="sr-only">{t('mobileNav.title')}</DialogPrimitiveTitle>
           <SpaceRail activeSpaceId={spaceId} />
-          <Sidebar spaceId={spaceId} activeDocId={activeDocId} />
+          <Sidebar
+            spaceId={spaceId}
+            activeDocId={activeDocId}
+            className="w-auto flex-1 border-r-0"
+          />
           <DialogPrimitiveClose asChild>
             <IconButton
               icon={X}
-              iconSize="md"
               label={t('mobileNav.close')}
-              className="absolute right-2 top-2"
+              className="absolute right-1.5 top-1.5 text-ink-3"
             />
           </DialogPrimitiveClose>
         </DialogPrimitiveContent>

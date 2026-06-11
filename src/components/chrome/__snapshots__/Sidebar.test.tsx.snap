@@ -111,7 +111,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
           </button>
         </div>
         <div
-          class="-ml-px flex items-center gap-2 border-l-2 transition-colors px-5 border-ink bg-paper"
+          class="-ml-px flex items-center gap-2 border-l-2 transition-colors pl-5 pr-1 md:pr-5 border-ink bg-paper"
         >
           <a
             class="flex min-w-0 flex-1 items-center gap-2 py-1.5"
@@ -136,7 +136,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
             aria-expanded="false"
             aria-haspopup="menu"
             aria-label="Options for Sample Doc"
-            class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink md:hidden"
+            class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink text-ink-4 md:hidden"
             data-state="closed"
             data-testid="sidebar-doc-d1-menu"
             id="radix-_r_*_"
@@ -144,7 +144,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
           >
             <svg
               aria-hidden="true"
-              class="lucide lucide-ellipsis-vertical h-3.5 w-3.5"
+              class="lucide lucide-ellipsis-vertical h-3 w-3"
               fill="none"
               height="24"
               stroke="currentColor"
