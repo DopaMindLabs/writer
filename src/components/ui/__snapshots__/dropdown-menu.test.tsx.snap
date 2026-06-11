@@ -20,6 +20,8 @@ exports[`DropdownMenu primitives > snapshot > should match the snapshot of the o
       aria-controls="radix-_r_*_"
       aria-expanded="true"
       aria-haspopup="menu"
+      data-radix-popper-align="center"
+      data-radix-popper-side="bottom"
       data-state="open"
       id="radix-_r_*_"
       type="button"

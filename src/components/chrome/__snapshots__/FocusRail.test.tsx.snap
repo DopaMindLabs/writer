@@ -35,7 +35,6 @@ exports[`FocusRail > renders space dots with active highlight 1`] = `
       class="flex-1"
     />
     <button
-      aria-controls="radix-_r_*_"
       aria-expanded="false"
       aria-haspopup="dialog"
       aria-label="LIpsum Writer"
