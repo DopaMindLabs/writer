@@ -33,6 +33,14 @@ test('brain tab navigates to /dump', async ({ page }) => {
   await expect(page).toHaveURL(/\/dump(\?|$)/);
 });
 
+test('split tab navigates to /split', async ({ page }) => {
+  const { spaceId, docId } = await gotoFirstDoc(page);
+  await page.goto(`/#/s/${spaceId}/d/${docId}`);
+  const tabs = page.getByTestId('mobile-tabs');
+  await tabs.getByRole('link', { name: /split/i }).click();
+  await expect(page).toHaveURL(/\/split/);
+});
+
 test('cite tab opens the citations drawer', async ({ page }) => {
   const { spaceId, docId } = await gotoFirstDoc(page);
   await page.goto(`/#/s/${spaceId}/d/${docId}`);

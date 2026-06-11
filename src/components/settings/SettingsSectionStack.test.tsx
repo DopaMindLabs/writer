@@ -8,16 +8,16 @@ const sections = [
 ];
 
 describe('SettingsSectionStack', () => {
-  let scrollIntoView: ReturnType<typeof vi.fn>;
+  let scrollTo: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    scrollIntoView = vi.fn();
-    Element.prototype.scrollIntoView =
-      scrollIntoView as unknown as (typeof Element.prototype.scrollIntoView);
+    scrollTo = vi.fn();
+    Element.prototype.scrollTo =
+      scrollTo as unknown as (typeof Element.prototype.scrollTo);
   });
 
   afterEach(() => {
-    delete (Element.prototype as { scrollIntoView?: unknown }).scrollIntoView;
+    delete (Element.prototype as { scrollTo?: unknown }).scrollTo;
     document.documentElement.removeAttribute('data-motion');
     vi.unstubAllGlobals();
   });
@@ -37,12 +37,12 @@ describe('SettingsSectionStack', () => {
     );
   });
 
-  it('scrolls the target section into view on mount', async () => {
+  it('scrolls the pane to the target section on mount without touching ancestors', async () => {
     render(
       <SettingsSectionStack sections={sections} scrollTarget="b" scrollNonce={0} />,
     );
     await waitFor(() => {
-      expect(scrollIntoView).toHaveBeenCalledTimes(1);
+      expect(scrollTo).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -52,23 +52,21 @@ describe('SettingsSectionStack', () => {
       <SettingsSectionStack sections={sections} scrollTarget="b" scrollNonce={0} />,
     );
     await waitFor(() => {
-      expect(scrollIntoView).toHaveBeenCalledWith({
-        behavior: 'auto',
-        block: 'start',
-      });
+      expect(scrollTo).toHaveBeenCalledWith(
+        expect.objectContaining({ behavior: 'auto' }),
+      );
     });
     unmount();
     document.documentElement.removeAttribute('data-motion');
 
-    scrollIntoView.mockClear();
+    scrollTo.mockClear();
     render(
       <SettingsSectionStack sections={sections} scrollTarget="b" scrollNonce={0} />,
     );
     await waitFor(() => {
-      expect(scrollIntoView).toHaveBeenCalledWith({
-        behavior: 'smooth',
-        block: 'start',
-      });
+      expect(scrollTo).toHaveBeenCalledWith(
+        expect.objectContaining({ behavior: 'smooth' }),
+      );
     });
   });
 
@@ -77,13 +75,13 @@ describe('SettingsSectionStack', () => {
       <SettingsSectionStack sections={sections} scrollTarget="b" scrollNonce={0} />,
     );
     await waitFor(() => {
-      expect(scrollIntoView).toHaveBeenCalledTimes(1);
+      expect(scrollTo).toHaveBeenCalledTimes(1);
     });
     rerender(
       <SettingsSectionStack sections={sections} scrollTarget="b" scrollNonce={1} />,
     );
     await waitFor(() => {
-      expect(scrollIntoView).toHaveBeenCalledTimes(2);
+      expect(scrollTo).toHaveBeenCalledTimes(2);
     });
   });
 

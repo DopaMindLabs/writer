@@ -65,7 +65,7 @@ so you can jump straight to the detail.
 
 ## Keyboard
 
-- **Quick Help (⌘K)** and **focus (⌘\\)**, plus editor and citation shortcuts. [Learn more](keyboard-shortcuts#global)
+- **Quick Help (⌘K)** and **focus (⌘\\)**, plus editor and citation shortcuts. [Learn more](keyboard-shortcuts#universal)
 
 ## Your data
 

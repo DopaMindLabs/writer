@@ -63,6 +63,7 @@
   "mobileTabs": {
     "write": "write",
     "read": "read",
+    "split": "split",
     "brain": "brain",
     "cite": "cite",
     "more": "more"
@@ -70,9 +71,10 @@
   "mobileMore": {
     "title": "More",
     "close": "Close more",
-    "modeLabel": "Mode",
-    "menuLabel": "Menu",
-    "settings": "Global settings",
+    "groupDoc": "This doc",
+    "groupSpace": "This space",
+    "groupApp": "App",
+    "settings": "Universal settings",
     "spaceSettings": "Space settings",
     "about": "About",
     "help": "Help & shortcuts",

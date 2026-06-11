@@ -32,7 +32,7 @@ exports[`SpaceSyncTab > snapshot > should match the snapshot of the connected pe
         <div
           class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
         >
-          Connect a folder in global Settings → Sync. The same folder is used for every space.
+          Connect a folder in Universal settings → Sync. The same folder is used for every space.
         </div>
       </div>
       <div>
@@ -59,7 +59,7 @@ exports[`SpaceSyncTab > snapshot > should match the snapshot of the connected pe
         <div
           class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
         >
-          How often this space syncs automatically. Choose Default to follow the global auto-sync setting.
+          How often this space syncs automatically. Choose Default to follow the universal auto-sync setting.
         </div>
       </div>
       <div>

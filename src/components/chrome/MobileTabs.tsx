@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Pencil, BookOpen, Brain, Quote, MoreHorizontal } from '@/components/libs/icons';
+import { Pencil, BookOpen, Columns2, Brain, Quote, MoreHorizontal } from '@/components/libs/icons';
 import { useUI } from '@/store/ui';
 import { Link } from '@/components/ui/Link';
 import { routes } from '@/lib/routes';
@@ -11,7 +11,7 @@ interface MobileTabsProps {
   docId?: string | null;
 }
 
-type TabKey = 'write' | 'read' | 'brain' | 'cite' | 'more';
+type TabKey = 'write' | 'read' | 'split' | 'brain' | 'cite' | 'more';
 
 interface TabItem {
   key: TabKey;
@@ -50,6 +50,12 @@ const useTabItems = ({ spaceId, docId }: MobileTabsProps): TabItem[] => {
       Icon: BookOpen,
       href: readHref ?? undefined,
       match: (p) => p.endsWith('/read'),
+    },
+    {
+      key: 'split',
+      Icon: Columns2,
+      href: spaceId && docId ? routes.docSplit(spaceId, docId) : undefined,
+      match: (p) => p.endsWith('/split'),
     },
     {
       key: 'brain',

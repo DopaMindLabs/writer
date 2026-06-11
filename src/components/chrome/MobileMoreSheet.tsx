@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import type { ReactNode } from 'react';
 import {
   DialogPrimitiveClose,
   DialogPrimitiveContent,
@@ -7,10 +8,7 @@ import {
   DialogPrimitiveRoot,
   DialogPrimitiveTitle,
 } from '@/components/ui/dialog.primitives';
-import { MoreHorizontal } from '@/components/libs/icons';
-import { Icon } from '@/components/ui/icon';
 import { useUI } from '@/store/ui';
-import { ComingSoon } from '@/components/settings/ComingSoon';
 import { Link } from '@/components/ui/Link';
 import { EXTERNAL_LINKS, routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
@@ -69,29 +67,50 @@ const MenuSection = ({
   const { t } = useTranslation(['chrome', 'common']);
   return (
     <div className="px-4 pb-3 pt-4">
-      <div className="font-mono text-[9px] uppercase tracking-wider text-ink-4">
-        {t('mobileMore.menuLabel')}
-      </div>
-      <ul className="mt-1 flex flex-col">
-        {docId && <InspectorItem />}
-        <MoreItem
-          to={spaceId ? routes.spaceSettings(spaceId) : routes.settings()}
-          label={t(
-            spaceId ? 'mobileMore.spaceSettings' : 'mobileMore.settings',
-          )}
-        />
+      {docId && (
+        <MenuGroup label={t('mobileMore.groupDoc')}>
+          <InspectorItem />
+        </MenuGroup>
+      )}
+      {spaceId && (
+        <MenuGroup label={t('mobileMore.groupSpace')}>
+          <MoreItem
+            to={routes.spaceSettings(spaceId)}
+            label={t('mobileMore.spaceSettings')}
+          />
+        </MenuGroup>
+      )}
+      <MenuGroup label={t('mobileMore.groupApp')}>
         <MoreItem to={routes.settings()} label={t('mobileMore.settings')} />
         <MoreItem to={routes.about()} label={t('mobileMore.about')} />
         <MoreItem to={routes.help()} label={t('mobileMore.help')} />
-        <ComingSoonItem label={t('mobileMore.whatsNew')} />
+        <MoreItem
+          to={routes.helpArticle('whats-new')}
+          label={t('mobileMore.whatsNew')}
+        />
         <ExternalMoreItem
           href={EXTERNAL_LINKS.githubNewIssue}
           label={t('mobileMore.contact')}
         />
-      </ul>
+      </MenuGroup>
     </div>
   );
 };
+
+const MenuGroup = ({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) => (
+  <div className="mb-3 last:mb-0">
+    <div className="font-mono text-[9px] uppercase tracking-wider text-ink-4">
+      {label}
+    </div>
+    <ul className="mt-1 flex flex-col">{children}</ul>
+  </div>
+);
 
 const InspectorItem = () => {
   const { t } = useTranslation('chrome');
@@ -104,9 +123,8 @@ const InspectorItem = () => {
           type="button"
           data-testid="mobile-more-inspector"
           onClick={() => { setMobileInspectorOpen(true); }}
-          className="flex w-full items-center gap-2 border-b border-rule/60 px-1 py-3 text-left text-[14px] text-ink hover:bg-paper-2"
+          className="flex w-full items-center border-b border-rule/60 px-1 py-3 text-left text-[14px] text-ink hover:bg-paper-2"
         >
-          <Icon icon={MoreHorizontal} size="sm" className="text-ink-3" />
           {t('topbar.inspector')}
         </button>
       </DialogPrimitiveClose>
@@ -144,14 +162,3 @@ const ExternalMoreItem = ({ href, label }: { href: string; label: string }) => {
   );
 };
 
-const ComingSoonItem = ({ label }: { label: string }) => {
-  return (
-    <li>
-      <ComingSoon hint={label} className="w-full">
-        <span className="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink">
-          {label}
-        </span>
-      </ComingSoon>
-    </li>
-  );
-};

@@ -35,8 +35,8 @@
   "settings": {
     "back": "back",
     "windowTitle": "lotem · settings",
-    "breadcrumb": "SETTINGS",
-    "shellSubtitle": "GLOBAL SETTINGS",
+    "breadcrumb": "UNIVERSAL SETTINGS",
+    "shellSubtitle": "UNIVERSAL SETTINGS",
     "comingSoonBadge": "coming soon",
     "helpAria": "What is this?",
     "groups": {
@@ -95,7 +95,7 @@
     },
     "docInspector": {
       "title": "Doc inspector",
-      "subtitle": "Choose which fields appear in the document inspector. Each can be turned off globally and overridden per space.",
+      "subtitle": "Choose which fields appear in the document inspector. Each can be turned off universally and overridden per space.",
       "statusLabel": "Status",
       "statusHint": "Show the document status and lock completed documents from editing.",
       "wordLimitLabel": "Word limit",
@@ -111,7 +111,7 @@
       "on": "On",
       "off": "Off",
       "inherit": "Default ({{state}})",
-      "inheritTooltip": "Inherited from global settings",
+      "inheritTooltip": "Inherited from universal settings",
       "stateOn": "on",
       "stateOff": "off"
     },
@@ -235,7 +235,7 @@
     "citations": {
       "title": "Citation style",
       "subtitle": "Default citation style across spaces.",
-      "comingSoonBody": "Pick a global style (Chicago, APA, MLA…) with per-space overrides.",
+      "comingSoonBody": "Pick a universal style (Chicago, APA, MLA…) with per-space overrides.",
       "styleLabel": "Default style",
       "styleHint": "Used when inserting a new citation. Per-space overrides land later.",
       "options": {
@@ -445,7 +445,7 @@
       },
       "docInspector": {
         "title": "Doc inspector",
-        "subtitle": "Override the global inspector settings for this space."
+        "subtitle": "Override the universal inspector settings for this space."
       },
       "palette": {
         "title": "Highlight palette",
@@ -557,8 +557,8 @@
       "sync": {
         "title": "Sync",
         "subtitle": "Push this space to the connected folder, manually or on a schedule. Sync is separate from Backups.",
-        "folderHint": "Connect a folder in global Settings → Sync. The same folder is used for every space.",
-        "intervalHint": "How often this space syncs automatically. Choose Default to follow the global auto-sync setting.",
+        "folderHint": "Connect a folder in Universal settings → Sync. The same folder is used for every space.",
+        "intervalHint": "How often this space syncs automatically. Choose Default to follow the universal auto-sync setting.",
         "syncNow": "Sync this space"
       },
       "danger": {

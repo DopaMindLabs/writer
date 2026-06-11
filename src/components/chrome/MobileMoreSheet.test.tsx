@@ -39,8 +39,15 @@ describe('MobileMoreSheet', () => {
       screen.getByRole('link', { name: /help & shortcuts/i }),
     ).toHaveAttribute('href', '/help');
     expect(
-      screen.getByRole('link', { name: /global settings/i }),
+      screen.getByRole('link', { name: /universal settings/i }),
     ).toHaveAttribute('href', '/settings');
+    expect(
+      screen.getByRole('link', { name: /what's new/i }),
+    ).toHaveAttribute('href', '/help/whats-new');
+    // Items are grouped by context.
+    expect(screen.getByText('This doc')).toBeInTheDocument();
+    expect(screen.getByText('This space')).toBeInTheDocument();
+    expect(screen.getByText('App')).toBeInTheDocument();
     const contact = screen.getByRole('link', { name: /contact/i });
     expect(contact).toHaveAttribute(
       'href',

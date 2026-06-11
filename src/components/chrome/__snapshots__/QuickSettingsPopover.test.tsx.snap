@@ -339,31 +339,23 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
   >
     More
   </div>
-  <span
-    aria-disabled="true"
-    class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink w-full"
-    data-coming-soon="true"
-    data-state="closed"
-    tabindex="0"
+  <a
+    class="block w-full text-left"
+    data-discover="true"
+    data-testid="quick-settings-whats-new"
+    href="/help/whats-new"
+    type="button"
   >
     <span
-      aria-hidden="true"
-      class="pointer-events-none inline-flex max-w-full items-center opacity-60"
+      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
     >
       <span
-        class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2"
+        class="flex-1 text-left"
       >
-        <span
-          class="h-3 w-3 shrink-0 opacity-0"
-        />
-        <span
-          class="flex-1 text-left"
-        >
-          What's new
-        </span>
+        What's new
       </span>
     </span>
-  </span>
+  </a>
   <span
     aria-disabled="true"
     class="relative inline-flex max-w-full cursor-not-allowed items-center align-middle outline-none focus-visible:ring-1 focus-visible:ring-ink w-full"

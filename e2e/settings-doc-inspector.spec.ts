@@ -108,7 +108,7 @@ test('the space default chip explains it inherits from global settings', async (
     .hover();
   await expect(
     page.getByTestId('inspector-toggle-inherit-tooltip'),
-  ).toContainText(/inherited from global settings/i);
+  ).toContainText(/inherited from universal settings/i);
 });
 
 test('the gating behaves the same way in a different template (serial)', async ({

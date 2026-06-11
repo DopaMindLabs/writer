@@ -224,18 +224,13 @@ const MoreSection = () => {
         {t('chrome:quickSettings.moreLabel')}
       </div>
 
-      <ComingSoon
-        hint={t('chrome:quickSettings.whatsNew')}
-        side="left"
-        className="w-full"
+      <MenuItem
+        asChild
+        href={routes.helpArticle('whats-new')}
+        testId="quick-settings-whats-new"
       >
-        <span className="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2">
-          <span className="h-3 w-3 shrink-0 opacity-0" />
-          <span className="flex-1 text-left">
-            {t('chrome:quickSettings.whatsNew')}
-          </span>
-        </span>
-      </ComingSoon>
+        {t('chrome:quickSettings.whatsNew')}
+      </MenuItem>
 
       <ComingSoon
         hint={t('chrome:quickSettings.feedback')}
