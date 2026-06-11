@@ -16,21 +16,24 @@ async function expectNoHorizontalOverflow(page: Page) {
   expect(overflow).toBeLessThanOrEqual(1);
 }
 
-test.skip('universal settings screen renders without horizontal overflow on mobile', async ({ page }) => {
+test('universal settings screen renders without horizontal overflow on mobile', async ({ page }) => {
   await page.goto('/#/settings');
   await page.waitForLoadState('networkidle');
 
   await expect(page.getByRole('button', { name: /^Editor$/ })).toBeVisible();
   await expectNoHorizontalOverflow(page);
 
-  const nav = page.getByRole('navigation', { name: /settings sections/i });
-  const navBox = await nav.boundingBox();
-  expect(navBox).not.toBeNull();
-  expect(navBox!.width).toBeGreaterThan(300);
-  expect(navBox!.height).toBeLessThan(80);
+  // The nav landmark itself renders with display: contents (no box of its
+  // own); the visible mobile strip is its tab list.
+  await expect(page.getByRole('navigation', { name: /settings sections/i })).toBeAttached();
+  const tabStrip = page.getByTestId('settings-tabs-mobile');
+  const stripBox = await tabStrip.boundingBox();
+  expect(stripBox).not.toBeNull();
+  expect(stripBox!.width).toBeGreaterThan(300);
+  expect(stripBox!.height).toBeLessThan(80);
 });
 
-test.skip('switching tabs on mobile keeps content within viewport', async ({ page }) => {
+test('switching tabs on mobile keeps content within viewport', async ({ page }) => {
   await page.goto('/#/settings');
   await page.waitForLoadState('networkidle');
 
@@ -40,7 +43,7 @@ test.skip('switching tabs on mobile keeps content within viewport', async ({ pag
   }
 });
 
-test.skip('Space settings screen renders without horizontal overflow on mobile', async ({ page }) => {
+test('Space settings screen renders without horizontal overflow on mobile', async ({ page }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}/settings`);
   await page.waitForLoadState('networkidle');
