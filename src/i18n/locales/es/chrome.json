@@ -63,6 +63,7 @@
   "mobileTabs": {
     "write": "escribir",
     "read": "leer",
+    "split": "dividir",
     "brain": "brain",
     "cite": "citar",
     "more": "más"
@@ -70,6 +71,9 @@
   "mobileMore": {
     "title": "Más",
     "close": "Cerrar más",
+    "groupDoc": "Este documento",
+    "groupSpace": "Este espacio",
+    "groupApp": "App",
     "modeLabel": "Modo",
     "menuLabel": "Menú",
     "settings": "Configuración",
@@ -77,6 +81,7 @@
     "about": "Acerca de",
     "help": "Ayuda y atajos",
     "whatsNew": "Novedades",
+    "contact": "Contacto",
     "feedback": "Enviar comentarios…"
   },
   "quickSettings": {
@@ -138,7 +143,8 @@
     },
     "outline": {
       "title": "ESQUEMA",
-      "sectionSummary": "{{count}} SECCIONES"
+      "sectionSummary": "{{count}} SECCIONES",
+      "empty": "Aún no hay títulos. Añade títulos al documento para construir su esquema."
     },
     "info": {
       "title": "INFO",

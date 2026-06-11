@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "tuhi", "read": "pānui", "split": "wehe", "space": "wāhi" },
   "mobileNav": { "title": "Whakatere", "close": "Kati te whakatere" },
-  "mobileTabs": { "write": "tuhi", "read": "pānui", "brain": "brain", "cite": "tohutoro", "more": "atu" },
+  "mobileTabs": { "write": "tuhi", "read": "pānui", "split": "wehewehe", "brain": "brain", "cite": "tohutoro", "more": "atu" },
   "mobileMore": {
     "title": "Atu",
     "close": "Kati atu",
+    "groupDoc": "Tēnei tuhinga",
+    "groupSpace": "Tēnei wāhi",
+    "groupApp": "App",
     "modeLabel": "Aratau",
     "menuLabel": "Tahua",
     "settings": "Tautuhinga",
@@ -56,6 +59,7 @@
     "about": "Mō",
     "help": "Āwhina me ngā pātuhi tere",
     "whatsNew": "Hou",
+    "contact": "Whakapā",
     "feedback": "Tuku urupare…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "Whākī kaitirotiro",
     "collapse": "Whakaiti kaitirotiro",
     "tabs": { "outline": "WHAKARĀPOPOTO", "info": "MŌHIO", "history": "HĪTORI", "actions": "MAHI" },
-    "outline": { "title": "WHAKARĀPOPOTO", "sectionSummary": "{{count}} WĀHANGA" },
+    "outline": { "title": "WHAKARĀPOPOTO", "sectionSummary": "{{count}} WĀHANGA", "empty": "Kāore anō he taitara. Tāpiri taitara ki te tuhinga hei hanga i tōna hōtaka." },
     "info": {
       "title": "MŌHIO",
       "words": "Ngā kupu",

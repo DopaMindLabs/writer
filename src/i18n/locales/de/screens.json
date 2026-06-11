@@ -533,6 +533,58 @@
     "mobileNote": "Die Leinwand braucht Maus oder Trackpad.",
     "openInWrite": "In Schreiben öffnen →"
   },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "Gedanken abladen",
+      "emptyHint": "Wähle unten einen Kartentyp",
+      "pendingHint": "Shift-Klick auf eine andere Notiz zum Verbinden · Esc zum Abbrechen"
+    },
+    "note": {
+      "deleteNote": "Notiz löschen",
+      "addPicture": "Bild hinzufügen",
+      "addPictureCta": "ein Bild hinzufügen",
+      "openLinkedDoc": "Verknüpftes Dokument öffnen",
+      "fetchedContent": "Abgerufener Inhalt",
+      "openDetailsLabel": "Details öffnen",
+      "openDetailsTitle": "Detailbereich öffnen",
+      "titlePlaceholder": "Titel",
+      "addTitleCta": "+ Titel",
+      "bodyEmpty": "(Klicken zum Schreiben)",
+      "viewImage": "{{name}} anzeigen",
+      "removeImage": "{{name}} entfernen",
+      "resize": "Notiz skalieren",
+      "days": {
+        "sun": "So",
+        "mon": "Mo",
+        "tue": "Di",
+        "wed": "Mi",
+        "thu": "Do",
+        "fri": "Fr",
+        "sat": "Sa"
+      }
+    },
+    "drawer": {
+      "title": "Notizdetails",
+      "description": "Bearbeite die ausgewählte Notiz und verwalte ihre Verbindungen.",
+      "untitledPlaceholder": "Ohne Titel",
+      "titleAriaLabel": "Notiztitel",
+      "closeAriaLabel": "Bereich schließen",
+      "bodyLabel": "Text",
+      "bodyPlaceholder": "Schreib etwas…",
+      "picturesLabel": "Bilder",
+      "addPicture": "Bild hinzufügen",
+      "pictureLimitHint": "Limit von {{count}} erreicht — entferne eines, um ein weiteres hinzuzufügen.",
+      "linkedDocLabel": "Verknüpftes Dokument",
+      "noLinkedDoc": "— Kein verknüpftes Dokument —",
+      "untitledDoc": "Ohne Titel",
+      "openDoc": "Öffnen",
+      "connectionsHeading": "Verbindungen ({{count}})",
+      "connectionsEmpty": "Shift-Klick auf eine andere Notiz im Bereich zum Verbinden.",
+      "untitledNote": "(ohne Titel)",
+      "removeConnection": "Verbindung entfernen",
+      "deleteNote": "Notiz löschen"
+    }
+  },
   "split": {
     "title": "Geteilte Ansicht",
     "mobileWarning": "Geteilte Ansicht braucht einen größeren Bildschirm.",

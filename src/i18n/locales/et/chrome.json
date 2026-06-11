@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "kirjuta", "read": "loe", "split": "jaga", "space": "ruum" },
   "mobileNav": { "title": "Navigatsioon", "close": "Sulge navigatsioon" },
-  "mobileTabs": { "write": "kirjuta", "read": "loe", "brain": "brain", "cite": "tsiteeri", "more": "rohkem" },
+  "mobileTabs": { "write": "kirjuta", "read": "loe", "split": "jagatud", "brain": "brain", "cite": "tsiteeri", "more": "rohkem" },
   "mobileMore": {
     "title": "Rohkem",
     "close": "Sulge rohkem",
+    "groupDoc": "See dokument",
+    "groupSpace": "See ruum",
+    "groupApp": "Rakendus",
     "modeLabel": "Režiim",
     "menuLabel": "Menüü",
     "settings": "Seaded",
@@ -56,6 +59,7 @@
     "about": "Teave",
     "help": "Abi ja otseteed",
     "whatsNew": "Mis uut",
+    "contact": "Kontakt",
     "feedback": "Saada tagasisidet…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "Laienda inspektorit",
     "collapse": "Ahenda inspektorit",
     "tabs": { "outline": "ÜLEVAADE", "info": "INFO", "history": "AJALUGU", "actions": "TEGEVUSED" },
-    "outline": { "title": "ÜLEVAADE", "sectionSummary": "{{count}} SEKTSIOONI" },
+    "outline": { "title": "ÜLEVAADE", "sectionSummary": "{{count}} SEKTSIOONI", "empty": "Pealkirju pole veel. Lisage dokumenti pealkirjad, et luua selle ülevaade." },
     "info": {
       "title": "INFO",
       "words": "Sõnad",

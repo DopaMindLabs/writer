@@ -515,6 +515,58 @@
     "mobileNote": "O canvas precisa de rato ou trackpad.",
     "openInWrite": "Abrir em Escrever →"
   },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "começa a despejar",
+      "emptyHint": "escolhe um tipo de cartão abaixo",
+      "pendingHint": "shift-clique noutra nota para ligar · esc para cancelar"
+    },
+    "note": {
+      "deleteNote": "Eliminar nota",
+      "addPicture": "Adicionar imagem",
+      "addPictureCta": "adicionar uma imagem",
+      "openLinkedDoc": "Abrir documento ligado",
+      "fetchedContent": "Conteúdo obtido",
+      "openDetailsLabel": "Abrir detalhes",
+      "openDetailsTitle": "Abrir painel de detalhes",
+      "titlePlaceholder": "título",
+      "addTitleCta": "+ título",
+      "bodyEmpty": "(clique para escrever)",
+      "viewImage": "Ver {{name}}",
+      "removeImage": "Remover {{name}}",
+      "resize": "Redimensionar nota",
+      "days": {
+        "sun": "dom",
+        "mon": "seg",
+        "tue": "ter",
+        "wed": "qua",
+        "thu": "qui",
+        "fri": "sex",
+        "sat": "sáb"
+      }
+    },
+    "drawer": {
+      "title": "Detalhes da nota",
+      "description": "Edita a nota seleccionada e gere as suas ligações.",
+      "untitledPlaceholder": "Sem título",
+      "titleAriaLabel": "Título da nota",
+      "closeAriaLabel": "Fechar painel",
+      "bodyLabel": "Corpo",
+      "bodyPlaceholder": "Escreve algo…",
+      "picturesLabel": "Imagens",
+      "addPicture": "Adicionar imagem",
+      "pictureLimitHint": "limite de {{count}} atingido — remove uma para adicionar outra.",
+      "linkedDocLabel": "Documento ligado",
+      "noLinkedDoc": "— Sem documento ligado —",
+      "untitledDoc": "Sem título",
+      "openDoc": "Abrir",
+      "connectionsHeading": "Ligações ({{count}})",
+      "connectionsEmpty": "shift-clique noutra nota na tela para ligar.",
+      "untitledNote": "(sem título)",
+      "removeConnection": "Remover ligação",
+      "deleteNote": "Eliminar nota"
+    }
+  },
   "split": {
     "title": "Vista dividida",
     "mobileWarning": "A vista dividida precisa de um ecrã maior.",

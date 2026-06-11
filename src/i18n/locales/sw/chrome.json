@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "andika", "read": "soma", "split": "gawanya", "space": "nafasi" },
   "mobileNav": { "title": "Urambazaji", "close": "Funga urambazaji" },
-  "mobileTabs": { "write": "andika", "read": "soma", "brain": "brain", "cite": "nukuu", "more": "zaidi" },
+  "mobileTabs": { "write": "andika", "read": "soma", "split": "gawanywa", "brain": "brain", "cite": "nukuu", "more": "zaidi" },
   "mobileMore": {
     "title": "Zaidi",
     "close": "Funga zaidi",
+    "groupDoc": "Hati hii",
+    "groupSpace": "Nafasi hii",
+    "groupApp": "Programu",
     "modeLabel": "Hali",
     "menuLabel": "Menyu",
     "settings": "Mipangilio",
@@ -56,6 +59,7 @@
     "about": "Kuhusu",
     "help": "Msaada na njia za mkato",
     "whatsNew": "Habari mpya",
+    "contact": "Wasiliana",
     "feedback": "Tuma maoni…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "Panua mkaguzi",
     "collapse": "Kunja mkaguzi",
     "tabs": { "outline": "MUHTASARI", "info": "INFO", "history": "HISTORIA", "actions": "VITENDO" },
-    "outline": { "title": "MUHTASARI", "sectionSummary": "{{count}} SEHEMU" },
+    "outline": { "title": "MUHTASARI", "sectionSummary": "{{count}} SEHEMU", "empty": "Hakuna vichwa bado. Ongeza vichwa kwenye hati kuunda muhtasari wake." },
     "info": {
       "title": "INFO",
       "words": "Maneno",

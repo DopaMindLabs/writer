@@ -1,0 +1,766 @@
+{
+  "home": {
+    "subtitle": "Multiverso della scrittura libera",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Il tuo primo spazio è vuoto. Scegli un modello per iniziare, oppure parti da zero.",
+    "tagline": "Uno spazio senza distrazioni per la scrittura lunga — narrativa, ricerca, saggi, diari.",
+    "continueWriting": "Continua a scrivere",
+    "startNewSpace": "Crea un nuovo spazio",
+    "syncOffChip": "sincronizzazione/backup non attivi · i dati possono andare persi",
+    "syncOnChip": "sincronizzazione cartella attiva",
+    "syncOnTitle": "Sincronizzazione cartella attiva",
+    "syncOnBody": "Il tuo lavoro viene sincronizzato nella cartella "{{folder}}" su questo dispositivo.",
+    "warningTitle": "Build pre-rilascio",
+    "warningBody": "Nessuna sincronizzazione dati. Tutto è salvato nel browser; svuotare la cache fa perdere il lavoro. Puoi abilitare la sincronizzazione su una cartella locale in Impostazioni universali → Sincronizzazione.",
+    "versionLine": "Versione {{version}}"
+  },
+  "about": {
+    "back": "indietro",
+    "title": "informazioni",
+    "greeting": "Ciao,",
+    "paragraph1": "Questo è per lo scrittore che ricomincia sempre da capo. Quello che apre un nuovo documento, scrive tre frasi (o nessuna), poi passa 40 minuti a regolare il font. Quello le cui migliori idee arrivano alle 2 di notte e si distrae. Quello con quattordici schede, sei quaderni e una bozza ferma da un mese.",
+    "paragraph2Before": "Lo so, perché sono io ",
+    "paragraph2After": ". Ho ADHD, autismo e probabilmente altri -ismi non ancora diagnosticati. Ho bisogno di qualcosa che capisca il mio cervello caotico ma meraviglioso. Un posto dove buttare tutto prima che scompaia (o iniziare a scrivere). I frammenti, i mezzi pensieri, i collegamenti delle 3 di notte. Tutto, in un unico posto.",
+    "paragraph3": "Così ho costruito questo spazio per noi. Spero che ti dia la stessa scarica di dopamina che mi ha dato costruirlo.",
+    "paragraph4Before": "Un'ultima cosa… Credo nella tecnologia per il bene comune e odio la pubblicità. Quindi, questo sarà sempre privo di pubblicità e GRATUITO per uso non commerciale. Puoi biforcarlo e modificarlo come preferisci secondo la ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Stato",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — non è disponibile sincronizzazione dei dati. Tutti i dati sono salvati in IndexedDB nel browser locale. Se svuoti la cache del browser, il tuo lavoro andrà perso.",
+    "feedbackBefore": "Sto ancora costruendo questo e ho molte idee ",
+    "feedbackAfter": ". Mi piacerebbe sapere cosa funziona, cosa no e cosa vorresti che esistesse. Il feedback è benvenuto.",
+    "sourceLabel": "Sorgente"
+  },
+  "settings": {
+    "back": "indietro",
+    "windowTitle": "lotem · impostazioni",
+    "breadcrumb": "IMPOSTAZIONI UNIVERSALI",
+    "shellSubtitle": "IMPOSTAZIONI UNIVERSALI",
+    "comingSoonBadge": "prossimamente",
+    "helpAria": "Che cos'è questo?",
+    "groups": {
+      "preferences": "Preferenze",
+      "writing": "Scrittura",
+      "data": "Dati",
+      "account": "Account"
+    },
+    "tabs": {
+      "general": "Generale",
+      "appearance": "Aspetto",
+      "editor": "Editor",
+      "docInspector": "Ispettore documenti",
+      "accessibility": "Accessibilità",
+      "typography": "Tipografia",
+      "shortcuts": "Tastiera",
+      "templates": "Modelli",
+      "palettes": "Tavolozze di evidenziazione",
+      "citations": "Stile citazioni",
+      "annotation": "Annotazioni",
+      "backups": "Backup",
+      "sync": "Sincronizzazione",
+      "export": "Esporta / importa",
+      "data": "I tuoi dati",
+      "account": "Account",
+      "about": "Informazioni",
+      "language": "Lingua"
+    },
+    "language": {
+      "title": "Lingua",
+      "subtitle": "Scegli la lingua per l'interfaccia e gli articoli del Centro assistenza. Le traduzioni mancanti tornano all'inglese.",
+      "label": "Lingua dell'interfaccia",
+      "hint": "Le modifiche vengono applicate immediatamente e salvate in questo browser.",
+      "machineTranslationNotice": "Le traduzioni diverse dall'inglese sono prodotte automaticamente. Ci scusiamo per eventuali errori — ti preghiamo di inviare feedback per correggerli.",
+      "feedbackLinkLabel": "invia feedback"
+    },
+    "editor": {
+      "title": "Editor",
+      "subtitle": "Barra degli strumenti e supporti alla scrittura. Le scorciatoie Markdown (#, >, -, **) continuano a funzionare indipendentemente da queste impostazioni.",
+      "floatingToolbarLabel": "Barra degli strumenti mobile",
+      "floatingToolbarHint": "Appare all'evidenziazione o al clic destro in modalità scrittura.",
+      "floatingToolbarOff": "Disattivato",
+      "floatingToolbarOn": "Attivato",
+      "rightClickLabel": "Menu tasto destro",
+      "rightClickHint": "Passa dalla barra degli strumenti mobile al menu contestuale nativo del browser.",
+      "rightClickTooltip": "Usa il menu contestuale nativo al clic destro invece della barra degli strumenti mobile. La barra apparirà comunque alla selezione con evidenziazione.",
+      "inlineTogglesLabel": "Interruttori in linea",
+      "inlineTogglesHint": "Pulsanti grassetto e corsivo nella barra degli strumenti mobile.",
+      "inlineTogglesTooltip": "Nascondi i pulsanti G e I dalla barra degli strumenti mobile. Le scorciatoie Markdown (**, _) continuano a funzionare.",
+      "listDepthLabel": "Profondità di annidamento elenchi",
+      "listDepthHint": "Quanti livelli possono annidarsi gli elenchi puntati e numerati.",
+      "listDepthTooltip": "Aumenta o diminuisci il limite di annidamento degli elenchi. Attualmente fisso a 2 livelli.",
+      "templateDefaultsLabel": "Impostazioni predefinite per modello",
+      "templateDefaultsHint": "Diversi sottoinsiemi di formattazione per ogni modello.",
+      "templateDefaultsTooltip": "Permetti a ogni modello (narrativa, diario, tecnico…) di scegliere il proprio sottoinsieme di formattazione."
+    },
+    "docInspector": {
+      "title": "Ispettore documenti",
+      "subtitle": "Scegli quali campi appaiono nell'ispettore documenti. Ognuno può essere disattivato universalmente e sovrascritto per spazio.",
+      "statusLabel": "Stato",
+      "statusHint": "Mostra lo stato del documento e blocca i documenti completati dalla modifica.",
+      "wordLimitLabel": "Limite parole",
+      "wordLimitHint": "Mostra un limite di conteggio parole impostabile per documento.",
+      "charLimitLabel": "Limite caratteri",
+      "charLimitHint": "Mostra un limite di conteggio caratteri impostabile per documento.",
+      "dueDateLabel": "Scadenza",
+      "dueDateHint": "Mostra una scadenza impostabile per documento.",
+      "highlightLabel": "Evidenzia testo oltre il limite",
+      "highlightHint": "Segna nell'editor il testo che supera il limite.",
+      "statusStagesLabel": "Fasi di stato",
+      "statusStagesHint": "Scegli quali fasi appaiono nel selettore di stato.",
+      "on": "Attivato",
+      "off": "Disattivato",
+      "inherit": "Predefinito ({{state}})",
+      "inheritTooltip": "Ereditato dalle impostazioni universali",
+      "stateOn": "attivato",
+      "stateOff": "disattivato"
+    },
+    "accessibility": {
+      "title": "Accessibilità",
+      "subtitle": "Regola l'interfaccia per il comfort e le tecnologie assistive. Ogni opzione parte dall'esperienza attuale — nulla cambia finché non lo scegli.",
+      "theme": {
+        "label": "Tema e contrasto",
+        "hint": "I temi ad alto contrasto soddisfano lo standard di contrasto WCAG AAA.",
+        "light": "Chiaro",
+        "dark": "Scuro",
+        "hcLight": "Alto contrasto (chiaro)",
+        "hcDark": "Alto contrasto (scuro)"
+      },
+      "motion": {
+        "label": "Movimento",
+        "hint": "Riduci o disabilita le animazioni dell'interfaccia.",
+        "auto": "Segui sistema",
+        "reduced": "Ridotto",
+        "full": "Completo"
+      },
+      "textSize": {
+        "label": "Dimensione testo",
+        "hint": "Scala la superficie di lettura e scrittura.",
+        "sm": "Piccolo",
+        "base": "Predefinito",
+        "lg": "Grande",
+        "xl": "Molto grande"
+      },
+      "lineSpacing": {
+        "label": "Interlinea",
+        "hint": "Aggiungi spazio tra le righe del testo.",
+        "normal": "Normale",
+        "relaxed": "Rilassato",
+        "loose": "Ampio"
+      },
+      "linkUnderline": {
+        "label": "Sottolinea sempre i link",
+        "hint": "Mostra la sottolineatura così i link non dipendono solo dal colore."
+      },
+      "focus": {
+        "label": "Indicatore di focus migliorato",
+        "hint": "Usa un contorno più spesso e ad alto contrasto sul focus."
+      },
+      "reset": {
+        "label": "Ripristina impostazioni predefinite",
+        "hint": "Ripristina movimento, dimensione testo, interlinea, link e focus ai valori predefiniti. Il tema rimane invariato.",
+        "action": "Ripristina"
+      }
+    },
+    "general": {
+      "title": "Generale",
+      "subtitle": "Come LIpsum Writer appare per impostazione predefinita. Nulla di questo è distruttivo.",
+      "comingSoonBody": "Densità compatta, riduzione movimento, visibilità suggerimenti tastiera e quale vista si apre all'avvio.",
+      "compactDensityLabel": "Densità compatta",
+      "compactDensityHint": "Righe più strette negli elenchi, spaziatura ridotta ovunque.",
+      "reduceMotionLabel": "Riduci movimento",
+      "reduceMotionHint": "Salta le transizioni animate tra le viste.",
+      "keyboardHintsLabel": "Mostra suggerimenti tastiera",
+      "keyboardHintsHint": "Mostra le scorciatoie ⌘ nei tooltip e nell'angolo dei pulsanti.",
+      "startupLabel": "Apri all'avvio",
+      "startupHint": "Cosa vedi quando avvii l'app.",
+      "startupOptions": {
+        "lastView": "Ultima vista",
+        "home": "Home",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Aspetto",
+      "subtitle": "Colore, tipo, densità. L'atmosfera che vuoi creare.",
+      "comingSoonBody": "Tavolozze di temi curate, colore d'accento e densità. L'interruttore del tema attuale si trova nelle impostazioni rapide del rail globale.",
+      "themeLabel": "Tema",
+      "themeHint": "Tre tavolozze curate. Regolano tutto — colori dei blocchi, linee sottili, persino la grana.",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "predefinito",
+        "studio": "Studio",
+        "studioSub": "neutro",
+        "midnight": "Midnight",
+        "midnightSub": "scuro"
+      },
+      "accentLabel": "Accento",
+      "accentHint": "Usato per hover, focus, anello di modifica attiva.",
+      "densityLabel": "Densità",
+      "densityOptions": {
+        "cozy": "Accogliente",
+        "default": "Predefinito",
+        "compact": "Compatto"
+      }
+    },
+    "templates": {
+      "title": "Modelli",
+      "subtitle": "Strutture riutilizzabili per nuovi spazi e documenti.",
+      "comingSoonBody": "Crea i tuoi modelli con sezioni, nomi di documenti predefiniti e bozze di testo.",
+      "items": {
+        "fiction": "Narrativa",
+        "fictionSub": "Manoscritto · Mondo · Laboratorio",
+        "research": "Ricerca",
+        "researchSub": "Fonti · Note · Bozze",
+        "journal": "Diario",
+        "journalSub": "Quotidiano · Settimanale · Riflessioni",
+        "essay": "Saggio",
+        "essaySub": "Schema · Bozze · Finale"
+      }
+    },
+    "palettes": {
+      "title": "Tavolozze di evidenziazione",
+      "subtitle": "Tavolozze a cinque slot per spazio — nomina e regola ogni colore.",
+      "comingSoonBody": "Modifica, salva e cambia tavolozze di evidenziazione con nome (Prove, Da rivedere, Riferimento…) tra gli spazi.",
+      "items": {
+        "evidence": "Prove",
+        "revise": "Da rivedere",
+        "reference": "Riferimento",
+        "quote": "Citazione",
+        "loose": "Capo sciolto"
+      },
+      "rename": "rinomina",
+      "tune": "regola"
+    },
+    "citations": {
+      "title": "Stile citazioni",
+      "subtitle": "Stile di citazione predefinito tra gli spazi.",
+      "comingSoonBody": "Scegli uno stile universale (Chicago, APA, MLA…) con sovrascritture per spazio.",
+      "styleLabel": "Stile predefinito",
+      "styleHint": "Usato quando si inserisce una nuova citazione. Le sovrascritture per spazio arriveranno più tardi.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Annotazioni",
+      "subtitle": "Note a margine e annotazioni in linea.",
+      "comingSoonBody": "Tipi di annotazione, impostazioni predefinite di visibilità e comportamento di esportazione.",
+      "showMarginLabel": "Mostra note a margine",
+      "showMarginHint": "Le annotazioni fluttuano nel margine destro quando c'è spazio.",
+      "showInlineLabel": "Mostra evidenziazioni in linea",
+      "showInlineHint": "Il colore dell'annotazione si estende al testo sottostante.",
+      "exportLabel": "Includi nelle esportazioni",
+      "exportHint": "Le annotazioni vengono scritte insieme al corpo del documento."
+    },
+    "export": {
+      "title": "Esporta / importa",
+      "subtitle": "Sposta i dati dentro e fuori da LIpsum Writer.",
+      "comingSoonBody": "Esportazione massiva in .zip, importazione da un altro bundle LIpsum o directory Markdown.",
+      "formatLabel": "Formato di esportazione",
+      "formatHint": "Le esportazioni per documento e per spazio usano lo stesso formato predefinito.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Importa da",
+      "importHint": "Importa un altro bundle LIpsum o una directory di file Markdown.",
+      "importOptions": {
+        "bundle": "Bundle LIpsum (.zip)",
+        "markdown": "Cartella Markdown",
+        "obsidian": "Vault Obsidian"
+      }
+    },
+    "data": {
+      "title": "I tuoi dati",
+      "subtitle": "Dove vive il tuo lavoro e quanto spazio occupa.",
+      "comingSoonBody": "Utilizzo IndexedDB, stima dello storage e cancellazione completa con un clic.",
+      "storageLabel": "Spazio utilizzato",
+      "storageValue": "≈ 12,4 MB · 4 spazi, 38 documenti",
+      "engineLabel": "Motore di storage",
+      "engineValue": "IndexedDB (browser locale)",
+      "wipeLabel": "Cancella tutto",
+      "wipeHint": "Rimuove ogni spazio, documento e istantanea da questo browser. Non è possibile annullare.",
+      "wipeButton": "Cancella dati locali…"
+    },
+    "about": {
+      "title": "Informazioni",
+      "subtitle": "Informazioni build e link.",
+      "comingSoonBody": "Vedi la pagina /about per la storia; questa scheda ospiterà informazioni build, licenza e registro delle modifiche.",
+      "versionLabel": "Versione",
+      "versionValue": "{{version}}",
+      "buildLabel": "Build",
+      "buildValue": "locale",
+      "licenseLabel": "Licenza",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Link",
+      "links": {
+        "source": "Sorgente",
+        "changelog": "Registro modifiche",
+        "feedback": "Invia feedback"
+      }
+    },
+    "account": {
+      "title": "Account",
+      "subtitle": "Accesso, sincronizzazione tra dispositivi e spazi di lavoro condivisi.",
+      "comingSoonBody": "La sincronizzazione cloud non è disponibile oggi — Lotem è solo locale. Account, accesso e spazi di lavoro condivisi arrivano quando la sincronizzazione sarà disponibile.",
+      "signedOutLabel": "Accedi",
+      "signedOutHint": "La sincronizzazione cloud non è ancora disponibile. Questo è qui per mostrare il design.",
+      "signInButton": "Accedi con email",
+      "syncLabel": "Sincronizza questo dispositivo",
+      "syncHint": "Una volta effettuato l'accesso, i tuoi spazi si replicheranno su altri dispositivi."
+    },
+    "typography": {
+      "title": "Tipografia",
+      "subtitle": "Impostazioni predefinite per tutti i mondi. I singoli mondi possono sovrascrivere.",
+      "comingSoonBody": "Scegli il font del testo, il font UI, la dimensione di lettura predefinita, l'interlinea e la misura per i nuovi mondi.",
+      "proseFontLabel": "Font del testo",
+      "uiFontLabel": "Font UI",
+      "proseSizeLabel": "Dimensione testo",
+      "proseSizeHint": "Predefinito per i nuovi mondi.",
+      "lineHeightLabel": "Altezza riga",
+      "measureLabel": "Misura",
+      "measureHint": "Larghezza massima della riga.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Scorciatoie",
+      "subtitle": "Combinazioni di tasti per navigazione, formattazione e modalità.",
+      "comingSoonBody": "Scorciatoie ridefinibili per scrittura/lettura/divisione, modalità focus e barra degli strumenti di formattazione.",
+      "navHeader": "Navigazione",
+      "formatHeader": "Formattazione",
+      "modeHeader": "Modalità",
+      "items": {
+        "openSettings": "Apri impostazioni",
+        "quickSettings": "Impostazioni rapide",
+        "findInDoc": "Trova nel documento",
+        "toggleFocus": "Attiva/disattiva focus",
+        "toggleInspector": "Attiva/disattiva ispettore",
+        "bold": "Grassetto",
+        "italic": "Corsivo",
+        "underline": "Sottolineato",
+        "heading1": "Intestazione 1",
+        "heading2": "Intestazione 2",
+        "write": "Modalità scrittura",
+        "read": "Modalità lettura",
+        "split": "Modalità divisione"
+      }
+    },
+    "backups": {
+      "title": "Backup",
+      "subtitle": "Esporta, ripristina e crea istantanee dei tuoi dati locali.",
+      "comingSoonBody": "Istantanee locali pianificate, esportazione manuale in .zip e ripristino da un backup precedente.",
+      "intervalLabel": "Intervallo auto-istantanea",
+      "intervalOptions": {
+        "5min": "5 min",
+        "10min": "10 min",
+        "30min": "30 min",
+        "off": "Disattivato"
+      },
+      "keepLabel": "Conserva",
+      "keepHint": "Le istantanee più vecchie vengono rimosse automaticamente.",
+      "keepOptions": {
+        "last50": "Ultime 50",
+        "days7": "7 giorni",
+        "days30": "30 giorni"
+      },
+      "latestLabel": "Ultima",
+      "latestValue": "12 min fa · 1.190 parole"
+    },
+    "sync": {
+      "title": "Sincronizzazione",
+      "subtitle": "Invia i tuoi spazi a una cartella di tua scelta. Puntala su una cartella Google Drive, Dropbox o iCloud per sincronizzare tra dispositivi.",
+      "unsupportedTitle": "Non disponibile in questo browser",
+      "unsupportedBody": "La sincronizzazione cartella richiede l'API File System Access, disponibile in Chrome, Edge e altri browser Chromium su desktop. Passa a un browser supportato per usarla.",
+      "folderLabel": "Cartella sincronizzata",
+      "folderHint": "Ogni sincronizzazione scrive un .zip Markdown per spazio qui, mantenendo gli ultimi 5 più un latest.zip. La sincronizzazione è separata dai Backup.",
+      "noFolder": "Nessuna cartella connessa",
+      "chooseFolder": "Scegli cartella…",
+      "changeFolder": "Cambia…",
+      "disconnect": "Disconnetti",
+      "intervalLabel": "Sincronizzazione automatica",
+      "intervalHint": "Con quale frequenza gli spazi si sincronizzano automaticamente mentre l'app è aperta e la cartella è connessa. Ogni spazio può sovrascrivere questa impostazione predefinita.",
+      "intervalOff": "Disattivato",
+      "intervalMinutes": "{{count}} min",
+      "intervalDefault": "Predefinito ({{label}})",
+      "syncLabel": "Sincronizzazione manuale",
+      "pushOnlyHint": "Solo push per ora — scrive i dati locali nella cartella. Il pull delle modifiche arriverà più tardi.",
+      "syncNow": "Sincronizza ora",
+      "syncNowAll": "Sincronizza tutti gli spazi",
+      "reconnectHint": "La sincronizzazione è in pausa — il browser ha di nuovo bisogno dell'autorizzazione alla cartella per questa sessione. Riconnetti per riprendere la sincronizzazione manuale e automatica.",
+      "reconnectButton": "Riconnetti",
+      "reconnecting": "Riconnessione…",
+      "syncing": "Sincronizzazione…",
+      "syncFailed": "Sincronizzazione fallita: {{message}}",
+      "lastSynced": "Ultima sincronizzazione {{when}}",
+      "neverSynced": "Mai sincronizzato",
+      "justNow": "proprio ora",
+      "resultsTitle": "Ultima esecuzione",
+      "spaceOk": "sincronizzato",
+      "spaceFailed": "fallito",
+      "historyTitle": "Sincronizzazioni recenti",
+      "historyEmpty": "Nessuna sincronizzazione ancora.",
+      "columns": {
+        "when": "QUANDO",
+        "space": "SPAZIO",
+        "kind": "TIPO",
+        "size": "DIMENSIONE",
+        "status": "STATO"
+      },
+      "kind": {
+        "auto": "automatico",
+        "manual": "manuale"
+      },
+      "status": {
+        "ok": "ok",
+        "error": "errore"
+      }
+    },
+    "space": {
+      "breadcrumb": "SPAZIO · IMPOSTAZIONI",
+      "shellSubtitle": "IMPOSTAZIONI SPAZIO",
+      "loading": "Caricamento spazio…",
+      "groups": {
+        "thisSpace": "Questo spazio",
+        "sharingMembers": "Condivisione e membri",
+        "data": "Dati"
+      },
+      "tabs": {
+        "general": "Generale",
+        "docInspector": "Ispettore documenti",
+        "template": "Modello",
+        "palette": "Tavolozza evidenziazione",
+        "sharing": "Condivisione",
+        "members": "Membri",
+        "backups": "Backup",
+        "sync": "Sincronizzazione",
+        "export": "Esporta",
+        "danger": "Zona pericolosa"
+      },
+      "docInspector": {
+        "title": "Ispettore documenti",
+        "subtitle": "Sovrascrivi le impostazioni universali dell'ispettore per questo spazio."
+      },
+      "palette": {
+        "title": "Tavolozza evidenziazione",
+        "subtitle": "Cinque colori di evidenziazione nominati e regolabili per questo spazio.",
+        "comingSoonBody": "Rinomina, ritinta e riordina gli slot di evidenziazione di questo spazio.",
+        "items": {
+          "evidence": "Prove",
+          "revise": "Da rivedere",
+          "reference": "Riferimento",
+          "quote": "Citazione",
+          "loose": "Capo sciolto"
+        },
+        "rename": "rinomina",
+        "tune": "regola"
+      },
+      "export": {
+        "title": "Esporta",
+        "subtitle": "Sposta il contenuto di questo spazio in un altro strumento.",
+        "comingSoonBody": "Esporta in .zip Markdown (oggi tramite Backup), LaTeX, HTML o PDF — tutto in un posto.",
+        "formatLabel": "Formato",
+        "formatHint": "Markdown è disponibile per primo; il resto seguirà.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Ultima esportazione",
+        "lastValue": "mai"
+      },
+      "general": {
+        "title": "Generale",
+        "subtitle": "Dettagli identificativi per questo spazio. Le modifiche si applicano immediatamente e si sincronizzano tra le viste.",
+        "nameLabel": "Nome spazio",
+        "nameHint": "Mostrato nell'intestazione della barra laterale e nel tooltip del rail degli spazi.",
+        "tagLabel": "Tag",
+        "tagHint": "Un codice breve (2–4 caratteri) mostrato sulla tessera del rail degli spazi."
+      },
+      "sharing": {
+        "title": "Condivisione",
+        "subtitle": "Controlla come viene condiviso questo spazio.",
+        "comingSoonBody": "Visibilità per spazio e link condivisi. Arriva quando la sincronizzazione cloud è disponibile.",
+        "visibilityLabel": "Visibilità",
+        "visibilityOptions": {
+          "private": "Privato",
+          "link": "Chiunque con il link",
+          "members": "Solo membri"
+        },
+        "linkLabel": "Link condivisibile",
+        "linkHint": "Solo lettura per impostazione predefinita. I privilegi di modifica seguono i Membri.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "copia"
+      },
+      "template": {
+        "title": "Modello",
+        "subtitle": "Il modello strutturale con cui è stato creato questo spazio.",
+        "comingSoonBody": "La modifica del modello di uno spazio dopo la creazione non è ancora supportata. Arriva quando potremo migrare sezioni e documenti in sicurezza.",
+        "currentLabel": "Modello attuale",
+        "currentValue": "Narrativa",
+        "currentSub": "Manoscritto · Mondo · Laboratorio",
+        "changeLabel": "Cambia modello",
+        "changeHint": "Ridispone le sezioni e i documenti esistenti nel nuovo modello.",
+        "changeButton": "Cambia modello…"
+      },
+      "members": {
+        "title": "Membri",
+        "subtitle": "Co-scrittori e revisori con accesso a questo spazio.",
+        "comingSoonBody": "Invita collaboratori, gestisci ruoli e rivedi le modifiche. Arriva con la sincronizzazione cloud.",
+        "inviteLabel": "Invita tramite email",
+        "inviteHint": "Invieremo loro un link per unirsi a questo spazio.",
+        "invitePlaceholder": "nome@esempio.com",
+        "inviteButton": "invia invito",
+        "membersLabel": "Membri",
+        "roles": {
+          "owner": "proprietario",
+          "editor": "editor",
+          "viewer": "visualizzatore"
+        },
+        "you": "tu"
+      },
+      "backups": {
+        "title": "Backup",
+        "subtitle": "Crea un'istantanea di questo spazio come .zip Markdown che puoi scaricare e conservare.",
+        "comingSoonHint": "I formati LaTeX, HTML e PDF sono in arrivo. Il ripristino da file arriva con l'importazione.",
+        "retentionHint": "Conservando le {{count}} istantanee più recenti — quelle più vecchie vengono rimosse automaticamente.",
+        "snapshotNow": "+ istantanea ora",
+        "snapshotting": "creazione istantanea…",
+        "snapshotFailed": "Istantanea fallita: {{message}}",
+        "restoreLabel": "↑ ripristina da file",
+        "historyTitle": "Cronologia",
+        "empty": "Nessuna istantanea ancora — creane una con + istantanea ora.",
+        "columns": {
+          "when": "QUANDO",
+          "kind": "TIPO",
+          "size": "DIMENSIONE",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "manuale",
+          "auto": "automatico",
+          "snapshot": "istantanea"
+        },
+        "download": "↓ scarica",
+        "delete": "elimina",
+        "deleteConfirm": "Eliminare questa istantanea? Non è possibile annullare.",
+        "deleted": "Istantanea eliminata.",
+        "justNow": "proprio ora"
+      },
+      "sync": {
+        "title": "Sincronizzazione",
+        "subtitle": "Invia questo spazio alla cartella connessa, manualmente o secondo un programma. La sincronizzazione è separata dai Backup.",
+        "folderHint": "Connetti una cartella in Impostazioni universali → Sincronizzazione. La stessa cartella è usata per ogni spazio.",
+        "intervalHint": "Con quale frequenza questo spazio si sincronizza automaticamente. Scegli Predefinito per seguire l'impostazione di sincronizzazione automatica universale.",
+        "syncNow": "Sincronizza questo spazio"
+      },
+      "danger": {
+        "title": "Zona pericolosa",
+        "subtitle": "Azioni irreversibili. Leggi attentamente prima di continuare.",
+        "deleteCardTitle": "Elimina questo spazio",
+        "deleteCardBody": "Rimuove definitivamente questo spazio insieme a ogni documento, sezione, nota brain space, annotazione, citazione e connessione. Non è possibile annullare.",
+        "deleteButton": "Elimina questo spazio",
+        "dialogTitle": "Eliminare \"{{name}}\"?",
+        "dialogBody": "Questo rimuove definitivamente lo spazio e tutto il suo contenuto. Non è possibile annullare.",
+        "typeToConfirm": "Digita {{name}} per confermare",
+        "cancel": "Annulla",
+        "confirm": "Elimina spazio"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Perso tra i margini",
+    "body": "Questa pagina non esiste (ancora).",
+    "goHome": "Vai alla home"
+  },
+  "templates": {
+    "crumb": "01 — UN TIPO DI STANZA",
+    "headingMain": "Che tipo di spazio",
+    "headingAccent": "stai iniziando?",
+    "chooseLegend": "Scegli un modello",
+    "stage": {
+      "pre-alpha": "sperimentale",
+      "alpha": "precoce",
+      "beta": "beta"
+    },
+    "nameLabel": "Nome",
+    "tagLabel": "Tag",
+    "syncLabel": "sincronizzazione cloud —",
+    "syncValue": "disattivata, locale",
+    "syncTooltip": "La sincronizzazione cloud non è disponibile — questa app è solo locale per ora.",
+    "creating": "creazione…",
+    "submitLabel": "entra in {{name}} →",
+    "newSpace": "nuovo spazio",
+    "back": "indietro"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} non ordinati",
+    "title": "Brain space",
+    "mobileWarning": "Brain space funziona meglio su uno schermo più grande.",
+    "mobileNote": "Il canvas ha bisogno di un mouse o trackpad.",
+    "openInWrite": "Apri in Scrittura →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "inizia a scaricare",
+      "emptyHint": "scegli un tipo di scheda qui sotto",
+      "pendingHint": "shift-click su un'altra nota per connettere · esc per annullare"
+    },
+    "note": {
+      "deleteNote": "Elimina nota",
+      "addPicture": "Aggiungi immagine",
+      "addPictureCta": "aggiungi un'immagine",
+      "openLinkedDoc": "Apri documento collegato",
+      "fetchedContent": "Contenuto recuperato",
+      "openDetailsLabel": "Apri dettagli",
+      "openDetailsTitle": "Apri pannello dettagli",
+      "titlePlaceholder": "titolo",
+      "addTitleCta": "+ titolo",
+      "bodyEmpty": "(clicca per scrivere)",
+      "viewImage": "Visualizza {{name}}",
+      "removeImage": "Rimuovi {{name}}",
+      "resize": "Ridimensiona nota",
+      "days": {
+        "sun": "dom",
+        "mon": "lun",
+        "tue": "mar",
+        "wed": "mer",
+        "thu": "gio",
+        "fri": "ven",
+        "sat": "sab"
+      }
+    },
+    "drawer": {
+      "title": "Dettagli nota",
+      "description": "Modifica la nota selezionata e gestisci le sue connessioni.",
+      "untitledPlaceholder": "Senza titolo",
+      "titleAriaLabel": "Titolo nota",
+      "closeAriaLabel": "Chiudi pannello",
+      "bodyLabel": "Corpo",
+      "bodyPlaceholder": "Scrivi qualcosa…",
+      "picturesLabel": "Immagini",
+      "addPicture": "Aggiungi immagine",
+      "pictureLimitHint": "limite di {{count}} raggiunto — rimuovine una per aggiungerne un'altra.",
+      "linkedDocLabel": "Documento collegato",
+      "noLinkedDoc": "— Nessun documento collegato —",
+      "untitledDoc": "Senza titolo",
+      "openDoc": "Apri",
+      "connectionsHeading": "Connessioni ({{count}})",
+      "connectionsEmpty": "shift-click su un'altra nota sul canvas per connettere.",
+      "untitledNote": "(senza titolo)",
+      "removeConnection": "Rimuovi connessione",
+      "deleteNote": "Elimina nota"
+    }
+  },
+  "split": {
+    "title": "Vista divisa",
+    "mobileWarning": "La vista divisa richiede uno schermo più grande.",
+    "mobileNote": "Apri questo documento in modalità Scrittura.",
+    "openInWrite": "Apri in Scrittura →",
+    "leftPrefix": "SINISTRA —",
+    "rightPrefix": "DESTRA —",
+    "rightPaneAria": "Documento riquadro destro",
+    "noOtherDocs": "(nessun altro documento)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Citazioni",
+    "pickDoc": "Scegli un documento dal menu a tendina sopra.",
+    "dividerAria": "Ridimensiona i riquadri divisi"
+  },
+  "citationsDrawer": {
+    "title": "Citazioni",
+    "description": "Cerca, importa ed esporta citazioni per questo spazio.",
+    "close": "Chiudi citazioni",
+    "expand": "Apri citazioni in vista completa"
+  },
+  "citations": {
+    "title": "Citazioni",
+    "breadcrumb": "Fonti / ",
+    "entries": "{{count}} VOCI",
+    "searchPlaceholder": "autori, tag, anno…",
+    "upload": "↑ carica .bib / .ris",
+    "add": "+ aggiungi",
+    "cancel": "× annulla",
+    "columns": {
+      "tag": "TAG",
+      "authors": "AUTORI",
+      "title": "TITOLO",
+      "year": "ANNO",
+      "type": "TIPO",
+      "used": "USATO"
+    },
+    "style": "STILE — CHICAGO (AUTORE-DATA)",
+    "exportBib": "ESPORTA COME .BIB",
+    "summary": "{{filtered}} MOSTRATI · {{shown}} IN QUESTA PAGINA",
+    "prevPage": "Pagina precedente",
+    "nextPage": "Pagina successiva",
+    "empty": "nessuna citazione ancora",
+    "noMatch": "nessuna riga corrisponde alla ricerca.",
+    "importHint": "importa un .bib o aggiungine uno manualmente.",
+    "pasteHeader": "Incolla BibTeX o un titolo",
+    "addCitation": "aggiungi citazione",
+    "manualCancel": "annulla",
+    "adding": "aggiunta…",
+    "parsing": "Analisi {{name}}…",
+    "imported": "Importate {{added}} citazione{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", saltate {{skipped}} duplicate{{skippedPlural}}",
+    "skippedSuffixShort": ", saltate {{skipped}}",
+    "failed": "Analisi fallita: {{message}}",
+    "failedManual": "Fallito: {{message}}",
+    "addedOne": "Aggiunta 1 citazione.",
+    "unknownAuthor": "(sconosciuto)",
+    "unknownError": "errore sconosciuto",
+    "edit": {
+      "save": "salva",
+      "saving": "salvataggio…",
+      "cancel": "annulla",
+      "delete": "elimina",
+      "edit": "modifica",
+      "tagLabel": "Tag",
+      "authorsLabel": "Autori",
+      "titleLabel": "Titolo",
+      "yearLabel": "Anno",
+      "typeLabel": "Tipo",
+      "duplicateKey": "Il tag \"{{key}}\" è già usato in questo spazio.",
+      "updated": "Aggiornata 1 citazione.",
+      "deleteOne": "Eliminata 1 citazione.",
+      "confirmDeleteUsed": "Questa citazione è usata {{count}}× nei tuoi documenti. Eliminare comunque?",
+      "confirmDeleteSingle": "Eliminare la citazione \"{{key}}\"? Non è possibile annullare.",
+      "untitled": "(senza titolo)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} selezionati",
+      "deleteSelected": "elimina",
+      "setTypePrompt": "imposta tipo",
+      "setTypeAria": "Imposta tipo per le citazioni selezionate",
+      "chooseOption": "scegli…",
+      "ariaLabel": "Azioni in blocco",
+      "clearSelection": "cancella",
+      "deleted": "Eliminate {{count}} citazioni.",
+      "typeApplied": "Tipo impostato su {{type}} per {{count}} citazioni.",
+      "confirmDelete": "Eliminare {{count}} citazione/i? Non è possibile annullare."
+    },
+    "row": {
+      "selectAllAria": "Seleziona tutte le citazioni in questa pagina",
+      "viewCitationAria": "Visualizza citazione {{key}}",
+      "selectCitationAria": "Seleziona citazione {{key}}",
+      "collapseCitationAria": "Comprimi citazione {{key}}",
+      "usedCount": "{{count}}× usato",
+      "unused": "non usato",
+      "copyTag": "Copia tag",
+      "copyTagAria": "Copia tag {{value}}",
+      "copiedTitle": "Copiato",
+      "copiedTagAria": "Tag copiato {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

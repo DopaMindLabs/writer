@@ -63,6 +63,7 @@
   "mobileTabs": {
     "write": "schreiben",
     "read": "lesen",
+    "split": "geteilt",
     "brain": "brain",
     "cite": "zitat",
     "more": "mehr"
@@ -70,6 +71,9 @@
   "mobileMore": {
     "title": "Mehr",
     "close": "Mehr schließen",
+    "groupDoc": "Dieses Dokument",
+    "groupSpace": "Dieser Space",
+    "groupApp": "App",
     "modeLabel": "Modus",
     "menuLabel": "Menü",
     "settings": "Einstellungen",
@@ -77,6 +81,7 @@
     "about": "Über",
     "help": "Hilfe und Tastenkürzel",
     "whatsNew": "Neuheiten",
+    "contact": "Kontakt",
     "feedback": "Feedback senden…"
   },
   "quickSettings": {
@@ -138,7 +143,8 @@
     },
     "outline": {
       "title": "GLIEDERUNG",
-      "sectionSummary": "{{count}} ABSCHNITTE"
+      "sectionSummary": "{{count}} ABSCHNITTE",
+      "empty": "Noch keine Überschriften. Füge Überschriften zum Dokument hinzu, um die Gliederung zu erstellen."
     },
     "info": {
       "title": "INFO",

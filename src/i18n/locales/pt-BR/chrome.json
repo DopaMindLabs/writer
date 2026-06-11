@@ -63,6 +63,7 @@
   "mobileTabs": {
     "write": "escrever",
     "read": "ler",
+    "split": "dividir",
     "brain": "brain",
     "cite": "citar",
     "more": "mais"
@@ -70,6 +71,9 @@
   "mobileMore": {
     "title": "Mais",
     "close": "Fechar mais",
+    "groupDoc": "Este documento",
+    "groupSpace": "Este espaço",
+    "groupApp": "App",
     "modeLabel": "Modo",
     "menuLabel": "Menu",
     "settings": "Configurações",
@@ -77,6 +81,7 @@
     "about": "Sobre",
     "help": "Ajuda e atalhos",
     "whatsNew": "Novidades",
+    "contact": "Contato",
     "feedback": "Enviar feedback…"
   },
   "quickSettings": {
@@ -138,7 +143,8 @@
     },
     "outline": {
       "title": "ESTRUTURA",
-      "sectionSummary": "{{count}} SEÇÕES"
+      "sectionSummary": "{{count}} SEÇÕES",
+      "empty": "Nenhum título ainda. Adicione títulos ao documento para criar o esboço."
     },
     "info": {
       "title": "INFO",

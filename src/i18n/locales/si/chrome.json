@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "ලියන්න", "read": "කියවන්න", "split": "බෙදන්න", "space": "අවකාශය" },
   "mobileNav": { "title": "සංචාලනය", "close": "සංචාලනය වසන්න" },
-  "mobileTabs": { "write": "ලියන්න", "read": "කියවන්න", "brain": "brain", "cite": "උද්ධෘතය", "more": "තවත්" },
+  "mobileTabs": { "write": "ලියන්න", "read": "කියවන්න", "split": "බෙදා", "brain": "brain", "cite": "උද්ධෘතය", "more": "තවත්" },
   "mobileMore": {
     "title": "තවත්",
     "close": "තවත් වසන්න",
+    "groupDoc": "මෙම ලේඛනය",
+    "groupSpace": "මෙම ඉඩ",
+    "groupApp": "යෙදුම",
     "modeLabel": "මාදිලිය",
     "menuLabel": "මෙනුව",
     "settings": "සැකසුම්",
@@ -56,6 +59,7 @@
     "about": "ගැන",
     "help": "උපකාර සහ කෙටිමං",
     "whatsNew": "අලුත් කුමක්ද",
+    "contact": "සම්බන්ධ කරන්න",
     "feedback": "ප්‍රතිපෝෂණය යවන්න…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "පරීක්ෂකය විකසවන්න",
     "collapse": "පරීක්ෂකය හකුළන්න",
     "tabs": { "outline": "සටහන", "info": "තොරතුරු", "history": "ඉතිහාසය", "actions": "ක්‍රියා" },
-    "outline": { "title": "සටහන", "sectionSummary": "{{count}} කොටස්" },
+    "outline": { "title": "සටහන", "sectionSummary": "{{count}} කොටස්", "empty": "තවම ශීර්ෂ නැත. දළ සටහනක් ගොඩනැගීමට ලේඛනයට ශීර්ෂ එකතු කරන්න." },
     "info": {
       "title": "තොරතුරු",
       "words": "වචන",

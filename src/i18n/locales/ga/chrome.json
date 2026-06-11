@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "scríobh", "read": "léigh", "split": "roinn", "space": "spás" },
   "mobileNav": { "title": "Nascleanúint", "close": "Dún nascleanúint" },
-  "mobileTabs": { "write": "scríobh", "read": "léigh", "brain": "brain", "cite": "luaigh", "more": "tuilleadh" },
+  "mobileTabs": { "write": "scríobh", "read": "léigh", "split": "scoilte", "brain": "brain", "cite": "luaigh", "more": "tuilleadh" },
   "mobileMore": {
     "title": "Tuilleadh",
     "close": "Dún tuilleadh",
+    "groupDoc": "An cháipéis seo",
+    "groupSpace": "An spás seo",
+    "groupApp": "Aip",
     "modeLabel": "Mód",
     "menuLabel": "Roghchlár",
     "settings": "Socruithe",
@@ -56,6 +59,7 @@
     "about": "Maidir le",
     "help": "Cabhair agus aicearraí",
     "whatsNew": "Cad atá nua",
+    "contact": "Teagmháil",
     "feedback": "Seol aiseolas…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "Leathnaigh cigire",
     "collapse": "Cuir cigire i leataobh",
     "tabs": { "outline": "IMLÍNE", "info": "EOL", "history": "STAIR", "actions": "GNÍOMHAÍOCHTAÍ" },
-    "outline": { "title": "IMLÍNE", "sectionSummary": "{{count}} RANNA" },
+    "outline": { "title": "IMLÍNE", "sectionSummary": "{{count}} RANNA", "empty": "Gan cheannteideal fós. Cuir ceannteidil leis an gcáipéis chun a himlíne a thógáil." },
     "info": {
       "title": "EOL",
       "words": "Focail",

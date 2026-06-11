@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "пиши", "read": "чети", "split": "раздели", "space": "пространство" },
   "mobileNav": { "title": "Навигация", "close": "Затвори навигация" },
-  "mobileTabs": { "write": "пиши", "read": "чети", "brain": "brain", "cite": "цитирай", "more": "още" },
+  "mobileTabs": { "write": "пиши", "read": "чети", "split": "разделен", "brain": "brain", "cite": "цитирай", "more": "още" },
   "mobileMore": {
     "title": "Още",
     "close": "Затвори още",
+    "groupDoc": "Този документ",
+    "groupSpace": "Това пространство",
+    "groupApp": "Приложение",
     "modeLabel": "Режим",
     "menuLabel": "Меню",
     "settings": "Настройки",
@@ -56,6 +59,7 @@
     "about": "Относно",
     "help": "Помощ и преки пътища",
     "whatsNew": "Какво е новото",
+    "contact": "Контакт",
     "feedback": "Изпрати обратна връзка…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "Разшири инспектора",
     "collapse": "Свий инспектора",
     "tabs": { "outline": "СТРУКТУРА", "info": "ИНФО", "history": "ИСТОРИЯ", "actions": "ДЕЙСТВИЯ" },
-    "outline": { "title": "СТРУКТУРА", "sectionSummary": "{{count}} СЕКЦИИ" },
+    "outline": { "title": "СТРУКТУРА", "sectionSummary": "{{count}} СЕКЦИИ", "empty": "Все още няма заглавия. Добавете заглавия към документа, за да изградите структурата му." },
     "info": {
       "title": "ИНФО",
       "words": "Думи",

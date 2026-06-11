@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "kọ", "read": "kà", "split": "pínyà", "space": "àyè" },
   "mobileNav": { "title": "Ìrìnàjò", "close": "Pa ìrìnàjò" },
-  "mobileTabs": { "write": "kọ", "read": "kà", "brain": "brain", "cite": "yọ àyọkà", "more": "síwájú" },
+  "mobileTabs": { "write": "kọ", "read": "kà", "split": "pin", "brain": "brain", "cite": "yọ àyọkà", "more": "síwájú" },
   "mobileMore": {
     "title": "Síwájú",
     "close": "Pa síwájú",
+    "groupDoc": "Iwe yii",
+    "groupSpace": "Aaye yii",
+    "groupApp": "Ohun elo",
     "modeLabel": "Ipo",
     "menuLabel": "Àkójọpọ̀",
     "settings": "Àwọn ètò",
@@ -56,6 +59,7 @@
     "about": "Nípa",
     "help": "Ìrànlọ́wọ́ àti àwọn ọ̀nà àbúyọ",
     "whatsNew": "Ohun tuntun",
+    "contact": "Kan si",
     "feedback": "Fi èrò ránṣẹ́…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "Faagun olùyẹ̀wò",
     "collapse": "Dín olùyẹ̀wò kù",
     "tabs": { "outline": "ÀKÓJỌPỌ̀", "info": "ÌTÀNYỌ", "history": "ÌTÀN", "actions": "ÌGBÉSÉ" },
-    "outline": { "title": "ÀKÓJỌPỌ̀", "sectionSummary": "{{count}} ÀWỌN APÁ" },
+    "outline": { "title": "ÀKÓJỌPỌ̀", "sectionSummary": "{{count}} ÀWỌN APÁ", "empty": "Ko si awọn akọle sibẹsibẹ. Fi awọn akọle kun si iwe lati kọ ìlànà rẹ." },
     "info": {
       "title": "ÌTÀNYỌ",
       "words": "Àwọn ọ̀rọ̀",

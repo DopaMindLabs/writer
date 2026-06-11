@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "pisz", "read": "czytaj", "split": "podziel", "space": "przestrzeń" },
   "mobileNav": { "title": "Nawigacja", "close": "Zamknij nawigację" },
-  "mobileTabs": { "write": "pisz", "read": "czytaj", "brain": "brain", "cite": "cytuj", "more": "więcej" },
+  "mobileTabs": { "write": "pisz", "read": "czytaj", "split": "podzielony", "brain": "brain", "cite": "cytuj", "more": "więcej" },
   "mobileMore": {
     "title": "Więcej",
     "close": "Zamknij więcej",
+    "groupDoc": "Ten dokument",
+    "groupSpace": "Ta przestrzeń",
+    "groupApp": "Aplikacja",
     "modeLabel": "Tryb",
     "menuLabel": "Menu",
     "settings": "Ustawienia",
@@ -56,6 +59,7 @@
     "about": "O aplikacji",
     "help": "Pomoc i skróty",
     "whatsNew": "Co nowego",
+    "contact": "Kontakt",
     "feedback": "Wyślij opinię…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "Rozwiń inspektora",
     "collapse": "Zwiń inspektora",
     "tabs": { "outline": "ZARYS", "info": "INFO", "history": "HISTORIA", "actions": "AKCJE" },
-    "outline": { "title": "ZARYS", "sectionSummary": "{{count}} SEKCJI" },
+    "outline": { "title": "ZARYS", "sectionSummary": "{{count}} SEKCJI", "empty": "Brak nagłówków. Dodaj nagłówki do dokumentu, aby zbudować jego strukturę." },
     "info": {
       "title": "INFO",
       "words": "Słowa",

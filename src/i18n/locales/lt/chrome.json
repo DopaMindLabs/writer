@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "rašyti", "read": "skaityti", "split": "padalinti", "space": "erdvė" },
   "mobileNav": { "title": "Navigacija", "close": "Uždaryti navigaciją" },
-  "mobileTabs": { "write": "rašyti", "read": "skaityti", "brain": "brain", "cite": "cituoti", "more": "daugiau" },
+  "mobileTabs": { "write": "rašyti", "read": "skaityti", "split": "padalinta", "brain": "brain", "cite": "cituoti", "more": "daugiau" },
   "mobileMore": {
     "title": "Daugiau",
     "close": "Uždaryti daugiau",
+    "groupDoc": "Šis dokumentas",
+    "groupSpace": "Šis erdvė",
+    "groupApp": "Programa",
     "modeLabel": "Režimas",
     "menuLabel": "Meniu",
     "settings": "Nustatymai",
@@ -56,6 +59,7 @@
     "about": "Apie",
     "help": "Pagalba ir nuorodos",
     "whatsNew": "Kas naujo",
+    "contact": "Kontaktas",
     "feedback": "Siųsti atsiliepimą…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "Išplėsti inspektorių",
     "collapse": "Suskleisti inspektorių",
     "tabs": { "outline": "STRUKTŪRA", "info": "INFO", "history": "ISTORIJA", "actions": "VEIKSMAI" },
-    "outline": { "title": "STRUKTŪRA", "sectionSummary": "{{count}} SKYRIAI" },
+    "outline": { "title": "STRUKTŪRA", "sectionSummary": "{{count}} SKYRIAI", "empty": "Kol kas nėra antraščių. Pridėkite antraštes prie dokumento, kad sukurtumėte jo struktūrą." },
     "info": {
       "title": "INFO",
       "words": "Žodžiai",

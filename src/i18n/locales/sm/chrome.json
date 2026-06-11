@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "tusi", "read": "faitau", "split": "vaeluaga", "space": "avanoa" },
   "mobileNav": { "title": "Folauga", "close": "Tapuni folauga" },
-  "mobileTabs": { "write": "tusi", "read": "faitau", "brain": "brain", "cite": "upu sii", "more": "atili" },
+  "mobileTabs": { "write": "tusi", "read": "faitau", "split": "vaeluaina", "brain": "brain", "cite": "upu sii", "more": "atili" },
   "mobileMore": {
     "title": "Atili",
     "close": "Tapuni atili",
+    "groupDoc": "O le faila lenei",
+    "groupSpace": "O le avanoa lenei",
+    "groupApp": "App",
     "modeLabel": "Tulaga",
     "menuLabel": "Lisi",
     "settings": "Faatulagaga",
@@ -56,6 +59,7 @@
     "about": "E uiga",
     "help": "Fesoasoani ma vavalo",
     "whatsNew": "O le a le mea fou",
+    "contact": "Faafeso'otai",
     "feedback": "Auina mai faamatalaga…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "Faalautele faatonu",
     "collapse": "Faaitiitia faatonu",
     "tabs": { "outline": "FAAVASEGA", "info": "INFO", "history": "TALAFAASOLOPITO", "actions": "GAOIOIGA" },
-    "outline": { "title": "FAAVASEGA", "sectionSummary": "{{count}} VAEGA" },
+    "outline": { "title": "FAAVASEGA", "sectionSummary": "{{count}} VAEGA", "empty": "Leai ni ulutala. Faaopoopo ulutala i le faila e fausia ai le togiga." },
     "info": {
       "title": "INFO",
       "words": "Upu",

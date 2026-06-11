@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "skriv", "read": "läs", "split": "dela", "space": "utrymme" },
   "mobileNav": { "title": "Navigering", "close": "Stäng navigering" },
-  "mobileTabs": { "write": "skriv", "read": "läs", "brain": "brain", "cite": "citera", "more": "mer" },
+  "mobileTabs": { "write": "skriv", "read": "läs", "split": "delad", "brain": "brain", "cite": "citera", "more": "mer" },
   "mobileMore": {
     "title": "Mer",
     "close": "Stäng mer",
+    "groupDoc": "Det här dokumentet",
+    "groupSpace": "Det här utrymmet",
+    "groupApp": "App",
     "modeLabel": "Läge",
     "menuLabel": "Meny",
     "settings": "Inställningar",
@@ -56,6 +59,7 @@
     "about": "Om",
     "help": "Hjälp och genvägar",
     "whatsNew": "Nyheter",
+    "contact": "Kontakt",
     "feedback": "Skicka feedback…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "Expandera inspektören",
     "collapse": "Komprimera inspektören",
     "tabs": { "outline": "DISPOSITION", "info": "INFO", "history": "HISTORIK", "actions": "ÅTGÄRDER" },
-    "outline": { "title": "DISPOSITION", "sectionSummary": "{{count}} SEKTIONER" },
+    "outline": { "title": "DISPOSITION", "sectionSummary": "{{count}} SEKTIONER", "empty": "Inga rubriker ännu. Lägg till rubriker i dokumentet för att bygga dess disposition." },
     "info": {
       "title": "INFO",
       "words": "Ord",

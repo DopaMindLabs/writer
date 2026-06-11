@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "tohi", "read": "lau", "split": "vaeua", "space": "vāhā" },
   "mobileNav": { "title": "Folau", "close": "Tāpuni folau" },
-  "mobileTabs": { "write": "tohi", "read": "lau", "brain": "brain", "cite": "lave", "more": "lahi" },
+  "mobileTabs": { "write": "tohi", "read": "lau", "split": "māvahevahe", "brain": "brain", "cite": "lave", "more": "lahi" },
   "mobileMore": {
     "title": "Lahi",
     "close": "Tāpuni lahi",
+    "groupDoc": "Ko e tohi ko eni",
+    "groupSpace": "Ko e faloa ko eni",
+    "groupApp": "App",
     "modeLabel": "Founga",
     "menuLabel": "Meinū",
     "settings": "Fokotuʻutuʻu",
@@ -56,6 +59,7 @@
     "about": "Fekauʻaki",
     "help": "Tokoni mo e ngaahi hala fakanounou",
     "whatsNew": "Ko e hā ʻa e foʻou",
+    "contact": "Fetu'utaki",
     "feedback": "ʻOmai fakamatala…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "Fakalahi fakatonutonu",
     "collapse": "Fakaiti fakatonutonu",
     "tabs": { "outline": "FAKAMATALA", "info": "FAKAMATALA", "history": "HISITŌLIA", "actions": "NGAAHI NGĀUE" },
-    "outline": { "title": "FAKAMATALA", "sectionSummary": "{{count}} NGAAHI KONGA" },
+    "outline": { "title": "FAKAMATALA", "sectionSummary": "{{count}} NGAAHI KONGA", "empty": "Ikai ke ʻi ai ha ngaahi ulumotu'a. Tānaki ngaahi ulumotu'a ki he tohi ke langa ha 'outline." },
     "info": {
       "title": "FAKAMATALA",
       "words": "Ngaahi foʻi lea",

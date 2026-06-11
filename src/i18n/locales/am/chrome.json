@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "ጻፍ", "read": "አንብብ", "split": "ክፈል", "space": "ቦታ" },
   "mobileNav": { "title": "ዳሰሳ", "close": "ዳሰሳ ዝጋ" },
-  "mobileTabs": { "write": "ጻፍ", "read": "አንብብ", "brain": "brain", "cite": "ጥቀስ", "more": "ተጨማሪ" },
+  "mobileTabs": { "write": "ጻፍ", "read": "አንብብ", "split": "ክፍፍል", "brain": "brain", "cite": "ጥቀስ", "more": "ተጨማሪ" },
   "mobileMore": {
     "title": "ተጨማሪ",
     "close": "ተጨማሪ ዝጋ",
+    "groupDoc": "ይህ ሰነድ",
+    "groupSpace": "ይህ ቦታ",
+    "groupApp": "መተግበሪያ",
     "modeLabel": "ሁነታ",
     "menuLabel": "ምናሌ",
     "settings": "ቅንብሮች",
@@ -56,6 +59,7 @@
     "about": "ስለ",
     "help": "እገዛ እና አቋራጭ",
     "whatsNew": "አዲስ ምን አለ",
+    "contact": "አግኙ",
     "feedback": "አስተያየት ላክ…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "መርማሪ አስፋ",
     "collapse": "መርማሪ ሰብስብ",
     "tabs": { "outline": "አጠቃላይ", "info": "መረጃ", "history": "ታሪክ", "actions": "ድርጊቶች" },
-    "outline": { "title": "አጠቃላይ", "sectionSummary": "{{count}} ክፍሎች" },
+    "outline": { "title": "አጠቃላይ", "sectionSummary": "{{count}} ክፍሎች", "empty": "እስካሁን ርዕሶች የሉም። ዝርዝር ለመፍጠር ለሰነዱ ርዕሶችን ያክሉ።" },
     "info": {
       "title": "መረጃ",
       "words": "ቃላት",

@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "psát", "read": "číst", "split": "rozdělit", "space": "prostor" },
   "mobileNav": { "title": "Navigace", "close": "Zavřít navigaci" },
-  "mobileTabs": { "write": "psát", "read": "číst", "brain": "brain", "cite": "citovat", "more": "víc" },
+  "mobileTabs": { "write": "psát", "read": "číst", "split": "rozdělit", "brain": "brain", "cite": "citovat", "more": "víc" },
   "mobileMore": {
     "title": "Víc",
     "close": "Zavřít víc",
+    "groupDoc": "Tento dokument",
+    "groupSpace": "Tento prostor",
+    "groupApp": "Aplikace",
     "modeLabel": "Režim",
     "menuLabel": "Menu",
     "settings": "Nastavení",
@@ -56,6 +59,7 @@
     "about": "O aplikaci",
     "help": "Nápověda a zkratky",
     "whatsNew": "Co je nového",
+    "contact": "Kontakt",
     "feedback": "Poslat zpětnou vazbu…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "Rozbalit inspektor",
     "collapse": "Sbalit inspektor",
     "tabs": { "outline": "OSNOVA", "info": "INFO", "history": "HISTORIE", "actions": "AKCE" },
-    "outline": { "title": "OSNOVA", "sectionSummary": "{{count}} SEKCÍ" },
+    "outline": { "title": "OSNOVA", "sectionSummary": "{{count}} SEKCÍ", "empty": "Zatím žádné nadpisy. Přidejte do dokumentu nadpisy a vytvořte jeho osnovu." },
     "info": {
       "title": "INFO",
       "words": "Slova",

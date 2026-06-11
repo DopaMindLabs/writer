@@ -520,6 +520,58 @@
     "mobileNote": "Het canvas heeft een muis of trackpad nodig.",
     "openInWrite": "Openen in Schrijven →"
   },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "begin te dumpen",
+      "emptyHint": "kies hieronder een kaarttype",
+      "pendingHint": "shift-klik op een andere notitie om te verbinden · esc om te annuleren"
+    },
+    "note": {
+      "deleteNote": "Notitie verwijderen",
+      "addPicture": "Afbeelding toevoegen",
+      "addPictureCta": "een afbeelding toevoegen",
+      "openLinkedDoc": "Gekoppeld document openen",
+      "fetchedContent": "Opgehaalde inhoud",
+      "openDetailsLabel": "Details openen",
+      "openDetailsTitle": "Detailpaneel openen",
+      "titlePlaceholder": "titel",
+      "addTitleCta": "+ titel",
+      "bodyEmpty": "(klik om te schrijven)",
+      "viewImage": "{{name}} bekijken",
+      "removeImage": "{{name}} verwijderen",
+      "resize": "Notitie vergroten/verkleinen",
+      "days": {
+        "sun": "zo",
+        "mon": "ma",
+        "tue": "di",
+        "wed": "wo",
+        "thu": "do",
+        "fri": "vr",
+        "sat": "za"
+      }
+    },
+    "drawer": {
+      "title": "Notitiedetails",
+      "description": "Bewerk de geselecteerde notitie en beheer de verbindingen.",
+      "untitledPlaceholder": "Zonder titel",
+      "titleAriaLabel": "Notitietitel",
+      "closeAriaLabel": "Paneel sluiten",
+      "bodyLabel": "Inhoud",
+      "bodyPlaceholder": "Schrijf iets…",
+      "picturesLabel": "Afbeeldingen",
+      "addPicture": "Afbeelding toevoegen",
+      "pictureLimitHint": "limiet van {{count}} bereikt — verwijder er een om er een toe te voegen.",
+      "linkedDocLabel": "Gekoppeld document",
+      "noLinkedDoc": "— Geen gekoppeld document —",
+      "untitledDoc": "Zonder titel",
+      "openDoc": "Openen",
+      "connectionsHeading": "Verbindingen ({{count}})",
+      "connectionsEmpty": "shift-klik op een andere notitie op het canvas om te verbinden.",
+      "untitledNote": "(zonder titel)",
+      "removeConnection": "Verbinding verwijderen",
+      "deleteNote": "Notitie verwijderen"
+    }
+  },
   "split": {
     "title": "Gesplitste weergave",
     "mobileWarning": "Gesplitste weergave heeft een groter scherm nodig.",

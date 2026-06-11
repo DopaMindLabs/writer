@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "書く", "read": "読む", "split": "分割", "space": "スペース" },
   "mobileNav": { "title": "ナビゲーション", "close": "ナビゲーションを閉じる" },
-  "mobileTabs": { "write": "書く", "read": "読む", "brain": "brain", "cite": "引用", "more": "詳細" },
+  "mobileTabs": { "write": "書く", "read": "読む", "split": "分割", "brain": "brain", "cite": "引用", "more": "詳細" },
   "mobileMore": {
     "title": "詳細",
     "close": "詳細を閉じる",
+    "groupDoc": "このドキュメント",
+    "groupSpace": "このスペース",
+    "groupApp": "アプリ",
     "modeLabel": "モード",
     "menuLabel": "メニュー",
     "settings": "設定",
@@ -56,6 +59,7 @@
     "about": "概要",
     "help": "ヘルプとショートカット",
     "whatsNew": "新着情報",
+    "contact": "お問い合わせ",
     "feedback": "フィードバックを送信…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "インスペクターを展開",
     "collapse": "インスペクターを折りたたむ",
     "tabs": { "outline": "アウトライン", "info": "情報", "history": "履歴", "actions": "アクション" },
-    "outline": { "title": "アウトライン", "sectionSummary": "{{count}} セクション" },
+    "outline": { "title": "アウトライン", "sectionSummary": "{{count}} セクション", "empty": "まだ見出しがありません。アウトラインを作成するには、文書に見出しを追加してください。" },
     "info": {
       "title": "情報",
       "words": "単語数",

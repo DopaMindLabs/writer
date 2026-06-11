@@ -63,6 +63,7 @@
   "mobileTabs": {
     "write": "écrire",
     "read": "lire",
+    "split": "fractionné",
     "brain": "brain",
     "cite": "citer",
     "more": "plus"
@@ -70,6 +71,9 @@
   "mobileMore": {
     "title": "Plus",
     "close": "Fermer plus",
+    "groupDoc": "Ce document",
+    "groupSpace": "Cet espace",
+    "groupApp": "App",
     "modeLabel": "Mode",
     "menuLabel": "Menu",
     "settings": "Paramètres",
@@ -77,6 +81,7 @@
     "about": "À propos",
     "help": "Aide et raccourcis",
     "whatsNew": "Nouveautés",
+    "contact": "Contact",
     "feedback": "Envoyer un retour…"
   },
   "quickSettings": {
@@ -138,7 +143,8 @@
     },
     "outline": {
       "title": "PLAN",
-      "sectionSummary": "{{count}} SECTIONS"
+      "sectionSummary": "{{count}} SECTIONS",
+      "empty": "Aucun titre pour l'instant. Ajoutez des titres au document pour construire son plan."
     },
     "info": {
       "title": "INFO",

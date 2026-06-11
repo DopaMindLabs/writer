@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "rakstīt", "read": "lasīt", "split": "sadalīt", "space": "telpa" },
   "mobileNav": { "title": "Navigācija", "close": "Aizvērt navigāciju" },
-  "mobileTabs": { "write": "rakstīt", "read": "lasīt", "brain": "brain", "cite": "citēt", "more": "vairāk" },
+  "mobileTabs": { "write": "rakstīt", "read": "lasīt", "split": "sadalīts", "brain": "brain", "cite": "citēt", "more": "vairāk" },
   "mobileMore": {
     "title": "Vairāk",
     "close": "Aizvērt vairāk",
+    "groupDoc": "Šis dokuments",
+    "groupSpace": "Šī telpa",
+    "groupApp": "Lietotne",
     "modeLabel": "Režīms",
     "menuLabel": "Izvēlne",
     "settings": "Iestatījumi",
@@ -56,6 +59,7 @@
     "about": "Par",
     "help": "Palīdzība un saīsnes",
     "whatsNew": "Jaunumi",
+    "contact": "Kontakts",
     "feedback": "Sūtīt atsauksmes…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "Izvērst inspektoru",
     "collapse": "Sakļaut inspektoru",
     "tabs": { "outline": "STRUKTŪRA", "info": "INFO", "history": "VĒSTURE", "actions": "DARBĪBAS" },
-    "outline": { "title": "STRUKTŪRA", "sectionSummary": "{{count}} SADAĻAS" },
+    "outline": { "title": "STRUKTŪRA", "sectionSummary": "{{count}} SADAĻAS", "empty": "Vēl nav virsrakstu. Pievienojiet virsrakstus dokumentam, lai izveidotu tā struktūru." },
     "info": {
       "title": "INFO",
       "words": "Vārdi",

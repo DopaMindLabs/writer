@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "எழுது", "read": "படி", "split": "பிரி", "space": "இடம்" },
   "mobileNav": { "title": "வழிசெலுத்தல்", "close": "வழிசெலுத்தலை மூடு" },
-  "mobileTabs": { "write": "எழுது", "read": "படி", "brain": "brain", "cite": "மேற்கோள்", "more": "மேலும்" },
+  "mobileTabs": { "write": "எழுது", "read": "படி", "split": "பிரிப்பு", "brain": "brain", "cite": "மேற்கோள்", "more": "மேலும்" },
   "mobileMore": {
     "title": "மேலும்",
     "close": "மேலும் மூடு",
+    "groupDoc": "இந்த ஆவணம்",
+    "groupSpace": "இந்த இடம்",
+    "groupApp": "பயன்பாடு",
     "modeLabel": "முறை",
     "menuLabel": "மெனு",
     "settings": "அமைப்புகள்",
@@ -56,6 +59,7 @@
     "about": "பற்றி",
     "help": "உதவி மற்றும் குறுக்குவழிகள்",
     "whatsNew": "புதியது என்ன",
+    "contact": "தொடர்பு",
     "feedback": "கருத்தை அனுப்பு…"
   },
   "quickSettings": {
@@ -101,7 +105,7 @@
     "expand": "பரிசோதகரை விரிவாக்கு",
     "collapse": "பரிசோதகரை சுருக்கு",
     "tabs": { "outline": "வரைபடம்", "info": "தகவல்", "history": "வரலாறு", "actions": "செயல்கள்" },
-    "outline": { "title": "வரைபடம்", "sectionSummary": "{{count}} பிரிவுகள்" },
+    "outline": { "title": "வரைபடம்", "sectionSummary": "{{count}} பிரிவுகள்", "empty": "இன்னும் தலைப்புகள் இல்லை. கோடுபடுத்தல் உருவாக்க ஆவணத்தில் தலைப்புகளை சேர்க்கவும்." },
     "info": {
       "title": "தகவல்",
       "words": "சொற்கள்",

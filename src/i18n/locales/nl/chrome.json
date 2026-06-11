@@ -63,6 +63,7 @@
   "mobileTabs": {
     "write": "schrijven",
     "read": "lezen",
+    "split": "splitsen",
     "brain": "brain",
     "cite": "cite",
     "more": "meer"
@@ -70,6 +71,9 @@
   "mobileMore": {
     "title": "Meer",
     "close": "Meer sluiten",
+    "groupDoc": "Dit document",
+    "groupSpace": "Deze ruimte",
+    "groupApp": "App",
     "modeLabel": "Modus",
     "menuLabel": "Menu",
     "settings": "Instellingen",
@@ -77,6 +81,7 @@
     "about": "Over",
     "help": "Help en sneltoetsen",
     "whatsNew": "Wat is er nieuw",
+    "contact": "Contact",
     "feedback": "Feedback sturen…"
   },
   "quickSettings": {
@@ -138,7 +143,8 @@
     },
     "outline": {
       "title": "OVERZICHT",
-      "sectionSummary": "{{count}} SECTIES"
+      "sectionSummary": "{{count}} SECTIES",
+      "empty": "Nog geen koppen. Voeg koppen toe aan het document om de inhoudsopgave te maken."
     },
     "info": {
       "title": "INFO",

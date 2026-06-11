@@ -593,6 +593,58 @@
     "mobileNote": "La toile a besoin d'une souris ou d'un trackpad.",
     "openInWrite": "Ouvrir en Écrire →"
   },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "commencer à déposer",
+      "emptyHint": "choisissez un type de carte ci-dessous",
+      "pendingHint": "maj-clic sur une autre note pour connecter · échap pour annuler"
+    },
+    "note": {
+      "deleteNote": "Supprimer la note",
+      "addPicture": "Ajouter une image",
+      "addPictureCta": "ajouter une image",
+      "openLinkedDoc": "Ouvrir le document lié",
+      "fetchedContent": "Contenu récupéré",
+      "openDetailsLabel": "Ouvrir les détails",
+      "openDetailsTitle": "Ouvrir le panneau de détails",
+      "titlePlaceholder": "titre",
+      "addTitleCta": "+ titre",
+      "bodyEmpty": "(cliquer pour écrire)",
+      "viewImage": "Voir {{name}}",
+      "removeImage": "Supprimer {{name}}",
+      "resize": "Redimensionner la note",
+      "days": {
+        "sun": "dim",
+        "mon": "lun",
+        "tue": "mar",
+        "wed": "mer",
+        "thu": "jeu",
+        "fri": "ven",
+        "sat": "sam"
+      }
+    },
+    "drawer": {
+      "title": "Détails de la note",
+      "description": "Modifiez la note sélectionnée et gérez ses connexions.",
+      "untitledPlaceholder": "Sans titre",
+      "titleAriaLabel": "Titre de la note",
+      "closeAriaLabel": "Fermer le panneau",
+      "bodyLabel": "Corps",
+      "bodyPlaceholder": "Écrivez quelque chose…",
+      "picturesLabel": "Images",
+      "addPicture": "Ajouter une image",
+      "pictureLimitHint": "limite de {{count}} atteinte — supprimez-en une pour en ajouter une autre.",
+      "linkedDocLabel": "Document lié",
+      "noLinkedDoc": "— Aucun document lié —",
+      "untitledDoc": "Sans titre",
+      "openDoc": "Ouvrir",
+      "connectionsHeading": "Connexions ({{count}})",
+      "connectionsEmpty": "maj-clic sur une autre note du canevas pour connecter.",
+      "untitledNote": "(sans titre)",
+      "removeConnection": "Supprimer la connexion",
+      "deleteNote": "Supprimer la note"
+    }
+  },
   "split": {
     "title": "Vue fractionnée",
     "mobileWarning": "La vue fractionnée a besoin d'un écran plus grand.",
