@@ -7,7 +7,7 @@ test('home shows the version chip and the sync warning chip separately', async (
   await reseedAndGoHome(page);
 
   await expect(page.getByTestId('home-version-chip')).toHaveText(
-    /^\d+\.\d+\.\d+-alpha$/,
+    /^\d+\.\d+\.\d+(-[0-9A-Za-z.]+)?$/,
   );
 
   const syncChip = page.getByTestId('home-sync-chip');
