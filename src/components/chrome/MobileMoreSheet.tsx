@@ -12,7 +12,7 @@ import { Icon } from '@/components/ui/icon';
 import { useUI } from '@/store/ui';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { Link } from '@/components/ui/Link';
-import { routes } from '@/lib/routes';
+import { EXTERNAL_LINKS, routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import { MobileInspectorDrawer } from './MobileInspectorDrawer';
 
@@ -84,7 +84,10 @@ const MenuSection = ({
         <MoreItem to={routes.about()} label={t('mobileMore.about')} />
         <MoreItem to={routes.help()} label={t('mobileMore.help')} />
         <ComingSoonItem label={t('mobileMore.whatsNew')} />
-        <ComingSoonItem label={t('mobileMore.feedback')} />
+        <ExternalMoreItem
+          href={EXTERNAL_LINKS.githubNewIssue}
+          label={t('mobileMore.contact')}
+        />
       </ul>
     </div>
   );
@@ -117,6 +120,21 @@ const MoreItem = ({ to, label }: { to: string; label: string }) => {
       <DialogPrimitiveClose asChild>
         <Link
           to={to}
+          className="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink hover:bg-paper-2"
+        >
+          {label}
+        </Link>
+      </DialogPrimitiveClose>
+    </li>
+  );
+};
+
+const ExternalMoreItem = ({ href, label }: { href: string; label: string }) => {
+  return (
+    <li>
+      <DialogPrimitiveClose asChild>
+        <Link
+          href={href}
           className="flex w-full items-center border-b border-rule/60 px-1 py-3 text-[14px] text-ink hover:bg-paper-2"
         >
           {label}

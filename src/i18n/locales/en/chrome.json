@@ -72,12 +72,12 @@
     "close": "Close more",
     "modeLabel": "Mode",
     "menuLabel": "Menu",
-    "settings": "Settings",
+    "settings": "Global settings",
     "spaceSettings": "Space settings",
     "about": "About",
     "help": "Help & shortcuts",
     "whatsNew": "What's new",
-    "feedback": "Send feedback…"
+    "contact": "Contact"
   },
   "mobileSplitFallback": {
     "title": "Needs a larger screen",

@@ -38,6 +38,15 @@ describe('MobileMoreSheet', () => {
     expect(
       screen.getByRole('link', { name: /help & shortcuts/i }),
     ).toHaveAttribute('href', '/help');
+    expect(
+      screen.getByRole('link', { name: /global settings/i }),
+    ).toHaveAttribute('href', '/settings');
+    const contact = screen.getByRole('link', { name: /contact/i });
+    expect(contact).toHaveAttribute(
+      'href',
+      'https://github.com/DopaMindLabs/Writer/issues/new',
+    );
+    expect(contact).toHaveAttribute('target', '_blank');
   });
 
   it('shows the Doc inspector item only when a doc is active', () => {
