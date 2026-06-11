@@ -2,7 +2,7 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import { useEffect, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Quote, Menu, Search, MoreHorizontal } from '@/components/libs/icons';
-import { db } from '@/db/db';
+import { renameDoc } from '@/lib/doc-actions';
 import { useUI } from '@/store/ui';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { IconButton } from '@/components/ui/icon';
@@ -49,7 +49,7 @@ const EditableDocName = ({ docId, docName }: EditableDocNameProps) => {
     if (!docId) return;
     const next = draftDocName.trim();
     if (!next || next === docName) return;
-    await db.docs.update(docId, { name: next, updatedAt: Date.now() });
+    await renameDoc(docId, next);
   };
 
   const onDocKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
