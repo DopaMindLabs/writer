@@ -15,6 +15,9 @@ line (or use the floating toolbar) to add one. A document without headings shows
 outline; see [Formatting & markdown](formatting-and-markdown#headings-and-structure) for
 how headings work.
 
+On a phone, open the inspector from the **more** tab: choose **Doc inspector** from the
+menu and it slides in from the right.
+
 ## Word and character counts
 
 The Info tab always shows the live **word** and **character** counts for the document.

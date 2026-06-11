@@ -1,4 +1,3 @@
-import { useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   DialogPrimitiveClose,
@@ -8,18 +7,19 @@ import {
   DialogPrimitiveRoot,
   DialogPrimitiveTitle,
 } from '@/components/ui/dialog.primitives';
+import { MoreHorizontal } from '@/components/libs/icons';
+import { Icon } from '@/components/ui/icon';
 import { useUI } from '@/store/ui';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { Link } from '@/components/ui/Link';
 import { routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
+import { MobileInspectorDrawer } from './MobileInspectorDrawer';
 
 interface MobileMoreSheetProps {
   spaceId: string | null;
   docId?: string | null;
 }
-
-type ModeKey = 'write' | 'read' | 'split';
 
 export const MobileMoreSheet = ({ spaceId, docId }: MobileMoreSheetProps) => {
   const { t } = useTranslation(['chrome', 'common']);
@@ -27,7 +27,8 @@ export const MobileMoreSheet = ({ spaceId, docId }: MobileMoreSheetProps) => {
   const setOpen = useUI((s) => s.setMobileMoreOpen);
 
   return (
-    <DialogPrimitiveRoot open={open} onOpenChange={setOpen}>
+    <>
+      <DialogPrimitiveRoot open={open} onOpenChange={setOpen}>
       <DialogPrimitivePortal>
         <DialogPrimitiveOverlay
           className={cn(
@@ -49,94 +50,22 @@ export const MobileMoreSheet = ({ spaceId, docId }: MobileMoreSheetProps) => {
           </DialogPrimitiveTitle>
           <div className="mx-auto mt-2 h-1 w-9 rounded-full bg-rule" aria-hidden />
 
-          <ModeSection spaceId={spaceId} docId={docId} />
-          <MenuSection spaceId={spaceId} />
+          <MenuSection spaceId={spaceId} docId={docId ?? null} />
         </DialogPrimitiveContent>
       </DialogPrimitivePortal>
-    </DialogPrimitiveRoot>
+      </DialogPrimitiveRoot>
+      <MobileInspectorDrawer docId={docId ?? null} />
+    </>
   );
 };
 
-const ModeSection = ({ spaceId, docId }: MobileMoreSheetProps) => {
-  const { t } = useTranslation(['chrome', 'common']);
-  const location = useLocation();
-  const [params] = useSearchParams();
-  const focused = params.get('focus') === '1';
-
-  const modes: { key: ModeKey; href: string | null }[] = [
-    {
-      key: 'write',
-      href:
-        spaceId && docId
-          ? `${routes.docWrite(spaceId, docId)}${focused ? '?focus=1' : ''}`
-          : spaceId
-            ? routes.spaceWrite(spaceId)
-            : null,
-    },
-    {
-      key: 'read',
-      href: spaceId && docId ? routes.docRead(spaceId, docId) : null,
-    },
-    {
-      key: 'split',
-      href: spaceId && docId ? routes.docSplit(spaceId, docId) : null,
-    },
-  ];
-
-  const modeActive = (key: ModeKey): boolean => {
-    const p = location.pathname;
-    if (key === 'read') return p.endsWith('/read');
-    if (key === 'split') return p.endsWith('/split');
-    return !p.endsWith('/read') && !p.endsWith('/split') && !p.endsWith('/dump');
-  };
-
-  return (
-    <div className="px-4 pb-2 pt-4">
-      <div className="font-mono text-[9px] uppercase tracking-wider text-ink-4">
-        {t('mobileMore.modeLabel')}
-      </div>
-      <div className="mt-2 flex gap-1.5">
-        {modes.map((m) => (
-          <ModeButton key={m.key} mode={m} active={modeActive(m.key)} />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const ModeButton = ({
-  mode,
-  active,
+const MenuSection = ({
+  spaceId,
+  docId,
 }: {
-  mode: { key: ModeKey; href: string | null };
-  active: boolean;
+  spaceId: string | null;
+  docId: string | null;
 }) => {
-  const { t } = useTranslation(['chrome', 'common']);
-  const className = cn(
-    'flex-1 border px-3 py-2 text-center text-[12px] uppercase tracking-wider',
-    active
-      ? 'border-ink bg-ink font-medium text-paper'
-      : 'border-rule bg-paper text-ink',
-  );
-  if (!mode.href) {
-    return (
-      <ComingSoon hint={t(`modeToggle.${mode.key}`)} className="flex-1">
-        <span className={cn(className, 'block w-full')}>
-          {t(`modeToggle.${mode.key}`)}
-        </span>
-      </ComingSoon>
-    );
-  }
-  return (
-    <DialogPrimitiveClose asChild>
-      <Link to={mode.href} className={className}>
-        {t(`modeToggle.${mode.key}`)}
-      </Link>
-    </DialogPrimitiveClose>
-  );
-};
-
-const MenuSection = ({ spaceId }: { spaceId: string | null }) => {
   const { t } = useTranslation(['chrome', 'common']);
   return (
     <div className="px-4 pb-3 pt-4">
@@ -144,6 +73,7 @@ const MenuSection = ({ spaceId }: { spaceId: string | null }) => {
         {t('mobileMore.menuLabel')}
       </div>
       <ul className="mt-1 flex flex-col">
+        {docId && <InspectorItem />}
         <MoreItem
           to={spaceId ? routes.spaceSettings(spaceId) : routes.settings()}
           label={t(
@@ -157,6 +87,27 @@ const MenuSection = ({ spaceId }: { spaceId: string | null }) => {
         <ComingSoonItem label={t('mobileMore.feedback')} />
       </ul>
     </div>
+  );
+};
+
+const InspectorItem = () => {
+  const { t } = useTranslation('chrome');
+  const setMobileInspectorOpen = useUI((s) => s.setMobileInspectorOpen);
+  return (
+    <li>
+      <DialogPrimitiveClose asChild>
+        {/* @lint-ignore native-button: full-width sheet row matching MoreItem's link treatment; not a DS Button kind */}
+        <button
+          type="button"
+          data-testid="mobile-more-inspector"
+          onClick={() => { setMobileInspectorOpen(true); }}
+          className="flex w-full items-center gap-2 border-b border-rule/60 px-1 py-3 text-left text-[14px] text-ink hover:bg-paper-2"
+        >
+          <Icon icon={MoreHorizontal} size="sm" className="text-ink-3" />
+          {t('topbar.inspector')}
+        </button>
+      </DialogPrimitiveClose>
+    </li>
   );
 };
 

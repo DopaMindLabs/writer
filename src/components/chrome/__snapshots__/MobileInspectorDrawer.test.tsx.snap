@@ -1,0 +1,170 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`snapshot > matches the open inspector drawer 1`] = `
+<div
+  aria-labelledby="radix-_r_*_"
+  class="fixed inset-y-0 right-0 z-50 flex w-[min(320px,85vw)] bg-paper-2 shadow-lg md:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right duration-200"
+  data-state="open"
+  data-testid="mobile-inspector-drawer"
+  id="radix-_r_*_"
+  role="dialog"
+  style="pointer-events: auto;"
+  tabindex="-1"
+>
+  <h2
+    class="sr-only"
+    id="radix-_r_*_"
+  >
+    Doc inspector
+  </h2>
+  <aside
+    class="relative shrink-0 flex-col border-rule bg-paper-2 md:flex flex w-full border-l-0"
+    data-testid="doc-inspector"
+  >
+    <div
+      class="flex items-center gap-2 border-b border-rule px-4 py-3"
+    >
+      <span
+        class="flex-1 truncate font-mono text-[9px] uppercase tracking-wider text-ink-3"
+        data-testid="doc-inspector-name"
+      >
+        Sample Doc
+      </span>
+      <button
+        aria-label="Collapse inspector"
+        class="items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink hidden h-5 w-5 md:inline-flex"
+        data-testid="doc-inspector-collapse"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-chevron-right h-3.5 w-3.5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m9 18 6-6-6-6"
+          />
+        </svg>
+      </button>
+    </div>
+    <div
+      class="flex border-b border-rule"
+    >
+      <button
+        aria-current="page"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-ink text-ink"
+        data-testid="doc-inspector-tab-outline"
+        type="button"
+      >
+        OUTLINE
+      </button>
+      <button
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        data-testid="doc-inspector-tab-info"
+        type="button"
+      >
+        INFO
+      </button>
+      <button
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        data-testid="doc-inspector-tab-history"
+        type="button"
+      >
+        HISTORY
+      </button>
+      <button
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        data-testid="doc-inspector-tab-actions"
+        type="button"
+      >
+        ACTIONS
+      </button>
+    </div>
+    <div
+      class="flex-1 overflow-auto"
+      data-testid="doc-inspector-pane-outline"
+    >
+      <div
+        class="px-4 py-3.5"
+      >
+        <div
+          class="mb-2 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+        >
+          OUTLINE
+           ·
+           
+          4 SECTIONS
+        </div>
+        <div
+          class="-ml-3.5"
+        >
+          <div
+            class="flex items-baseline gap-2 border-l-2 py-1.5 pl-3.5 border-ink"
+          >
+            <span
+              class="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4"
+            >
+              H1
+            </span>
+            <span
+              class="flex-1 font-serif text-[13px] font-medium text-ink"
+            >
+              The bell-keeper's last morning
+            </span>
+          </div>
+          <div
+            class="flex items-baseline gap-2 border-l-2 py-1.5 pl-7 border-transparent"
+          >
+            <span
+              class="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4"
+            >
+              H2
+            </span>
+            <span
+              class="flex-1 font-serif text-[13px] text-ink-2"
+            >
+              Mira walks
+            </span>
+          </div>
+          <div
+            class="flex items-baseline gap-2 border-l-2 py-1.5 pl-7 border-transparent"
+          >
+            <span
+              class="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4"
+            >
+              H2
+            </span>
+            <span
+              class="flex-1 font-serif text-[13px] text-ink-2"
+            >
+              The tower
+            </span>
+          </div>
+          <div
+            class="flex items-baseline gap-2 border-l-2 py-1.5 pl-7 border-transparent"
+          >
+            <span
+              class="w-5 font-mono text-[8px] uppercase tracking-wider text-ink-4"
+            >
+              H2
+            </span>
+            <span
+              class="flex-1 font-serif text-[13px] text-ink-2"
+            >
+              Counting
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+`;

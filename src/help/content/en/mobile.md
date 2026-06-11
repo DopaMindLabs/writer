@@ -26,6 +26,12 @@ documents, and open **more** for settings, **Help**, and about.
 In the nav drawer, tap the **⋮** button on a document row and choose
 **Rename** to give the document a new name.
 
+## The document inspector
+
+Open the **more** tab and choose **Doc inspector** to slide in the
+[document inspector](doc-inspector) — outline, info, history, and actions —
+from the right.
+
 ## What's better on a larger screen
 
 - **Split view**, which needs the width of a tablet or desktop — on a phone a

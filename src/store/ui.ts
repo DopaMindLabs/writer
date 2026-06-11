@@ -13,6 +13,7 @@ interface UIState {
   exportOpen: boolean;
   mobileNavOpen: boolean;
   mobileMoreOpen: boolean;
+  mobileInspectorOpen: boolean;
   detailNoteId: string | null;
   focusedNoteId: string | null;
   floatingToolbarEnabled: boolean;
@@ -32,6 +33,7 @@ interface UIState {
   setExportOpen: (open: boolean) => void;
   setMobileNavOpen: (open: boolean) => void;
   setMobileMoreOpen: (open: boolean) => void;
+  setMobileInspectorOpen: (open: boolean) => void;
   openDetail: (id: string) => void;
   closeDetail: () => void;
   focusNote: (id: string | null) => void;
@@ -154,6 +156,7 @@ const initialState = () => ({
   exportOpen: false,
   mobileNavOpen: false,
   mobileMoreOpen: false,
+  mobileInspectorOpen: false,
   detailNoteId: null,
   focusedNoteId: null,
   floatingToolbarEnabled: persisted.floatingToolbarEnabled ?? false,
@@ -206,6 +209,9 @@ const createToggleActions = (set: SetState, get: GetState) => ({
   setExportOpen: (exportOpen: boolean) => { set({ exportOpen }); },
   setMobileNavOpen: (mobileNavOpen: boolean) => { set({ mobileNavOpen }); },
   setMobileMoreOpen: (mobileMoreOpen: boolean) => { set({ mobileMoreOpen }); },
+  setMobileInspectorOpen: (mobileInspectorOpen: boolean) => {
+    set({ mobileInspectorOpen });
+  },
   openDetail: (id: string) => { set({ detailNoteId: id, focusedNoteId: id }); },
   closeDetail: () => { set({ detailNoteId: null }); },
   focusNote: (id: string | null) => { set({ focusedNoteId: id }); },
