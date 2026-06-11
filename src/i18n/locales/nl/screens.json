@@ -10,7 +10,7 @@
     "statusLine": "alpha · alleen lokaal · gegevens kunnen verloren gaan",
     "warningTitle": "Alpha build",
     "warningBody": "Geen gegevenssynchronisatie. Alles leeft in je browser. Als je je cache wist, gaat je werk verloren",
-    "versionLine": "Versie {{version}} · alpha"
+    "versionLine": "Versie {{version}}"
   },
   "about": {
     "back": "terug",
@@ -263,7 +263,7 @@
       "subtitle": "Build-info en links.",
       "comingSoonBody": "Zie de /about-pagina voor het verhaal; dit tabblad bevat build-info, licentie en changelog.",
       "versionLabel": "Versie",
-      "versionValue": "{{version}} · alpha",
+      "versionValue": "{{version}}",
       "buildLabel": "Build",
       "buildValue": "lokaal",
       "licenseLabel": "Licentie",

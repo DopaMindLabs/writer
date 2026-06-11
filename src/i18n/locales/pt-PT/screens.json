@@ -10,7 +10,7 @@
     "statusLine": "alpha · só local · os dados podem perder-se",
     "warningTitle": "Build alpha",
     "warningBody": "Sem sincronização de dados. Tudo vive no teu navegador. Se limpares a cache, perderás o teu trabalho",
-    "versionLine": "Versão {{version}} · alpha"
+    "versionLine": "Versão {{version}}"
   },
   "about": {
     "back": "voltar",
@@ -263,7 +263,7 @@
       "subtitle": "Informação do build e ligações.",
       "comingSoonBody": "Vê a página /about para a história; este separador terá informação do build, licença e changelog.",
       "versionLabel": "Versão",
-      "versionValue": "{{version}} · alpha",
+      "versionValue": "{{version}}",
       "buildLabel": "Build",
       "buildValue": "local",
       "licenseLabel": "Licença",

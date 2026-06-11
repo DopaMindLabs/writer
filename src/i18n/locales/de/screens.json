@@ -10,7 +10,7 @@
     "statusLine": "alpha · nur lokal · Daten können verloren gehen",
     "warningTitle": "Alpha-Build",
     "warningBody": "Keine Datensynchronisation. Alles lebt in deinem Browser. Wenn du den Cache löschst, geht deine Arbeit verloren",
-    "versionLine": "Version {{version}} · alpha"
+    "versionLine": "Version {{version}}"
   },
   "about": {
     "back": "zurück",
@@ -276,7 +276,7 @@
       "subtitle": "Build-Info und Links.",
       "comingSoonBody": "Siehe /about-Seite für die Story; dieser Tab beherbergt Build-Info, Lizenz und Changelog.",
       "versionLabel": "Version",
-      "versionValue": "{{version}} · alpha",
+      "versionValue": "{{version}}",
       "buildLabel": "Build",
       "buildValue": "lokal",
       "licenseLabel": "Lizenz",

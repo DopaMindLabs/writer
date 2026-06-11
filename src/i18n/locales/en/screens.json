@@ -10,7 +10,7 @@
     "statusLine": "alpha · local only · data can be lost",
     "warningTitle": "Alpha build",
     "warningBody": "No data sync. Everything lives in your browser. If you clear your cache, your work will be lost",
-    "versionLine": "Version {{version}} · alpha"
+    "versionLine": "Version {{version}}"
   },
   "about": {
     "back": "back",
@@ -291,7 +291,7 @@
       "subtitle": "Build info and links.",
       "comingSoonBody": "See the /about page for the story; this tab will host build info, license, and changelog.",
       "versionLabel": "Version",
-      "versionValue": "{{version}} · alpha",
+      "versionValue": "{{version}}",
       "buildLabel": "Build",
       "buildValue": "local",
       "licenseLabel": "License",

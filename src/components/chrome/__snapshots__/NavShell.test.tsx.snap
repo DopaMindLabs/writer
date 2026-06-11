@@ -22,11 +22,11 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
             L
           </a>
           <span
-            class="mb-2.5 cursor-help rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
+            class="mb-2.5 max-w-full cursor-help truncate rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
             data-state="closed"
             tabindex="0"
           >
-            alpha
+            0.5.0-alpha
           </span>
           <a
             class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"
@@ -298,11 +298,11 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
             L
           </a>
           <span
-            class="mb-2.5 cursor-help rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
+            class="mb-2.5 max-w-full cursor-help truncate rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
             data-state="closed"
             tabindex="0"
           >
-            alpha
+            0.5.0-alpha
           </span>
           <a
             class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-transparent text-ink-2 hover:bg-paper hover:text-ink"

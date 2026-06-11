@@ -2,6 +2,7 @@ import { MoreVertical, Plus } from '@/components/libs/icons';
 import { useTranslation } from 'react-i18next';
 import { useSpaces } from '@/hooks/useSpaces';
 import { routes } from '@/lib/routes';
+import { APP_VERSION_LABEL } from '@/lib/version';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
@@ -64,9 +65,9 @@ const SpaceRailHeader = () => {
         <TooltipTrigger asChild>
           <span
             tabIndex={0}
-            className="mb-2.5 cursor-help rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
+            className="mb-2.5 max-w-full cursor-help truncate rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
           >
-            alpha
+            {APP_VERSION_LABEL}
           </span>
         </TooltipTrigger>
         <TooltipContent side="right" className="max-w-[220px]">
@@ -75,7 +76,7 @@ const SpaceRailHeader = () => {
             {t('home.warningBody')}
           </div>
           <div className="mt-1 font-mono text-[10px] uppercase tracking-wider opacity-80">
-            {t('home.versionLine', { version: __APP_VERSION__ })}
+            {t('home.versionLine', { version: APP_VERSION_LABEL })}
           </div>
         </TooltipContent>
       </Tooltip>

@@ -10,7 +10,7 @@
     "statusLine": "alpha · solo local · los datos pueden perderse",
     "warningTitle": "Build alpha",
     "warningBody": "Sin sincronización de datos. Todo vive en tu navegador. Si borras la caché, perderás tu trabajo",
-    "versionLine": "Versión {{version}} · alpha"
+    "versionLine": "Versión {{version}}"
   },
   "about": {
     "back": "atrás",
@@ -291,7 +291,7 @@
       "subtitle": "Información del build y enlaces.",
       "comingSoonBody": "Visita la página /about para la historia; esta pestaña albergará información del build, la licencia y el changelog.",
       "versionLabel": "Versión",
-      "versionValue": "{{version}} · alpha",
+      "versionValue": "{{version}}",
       "buildLabel": "Build",
       "buildValue": "local",
       "licenseLabel": "Licencia",
