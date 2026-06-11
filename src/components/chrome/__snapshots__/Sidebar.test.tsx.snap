@@ -22,7 +22,6 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
           Test Space
         </button>
         <button
-          aria-controls="radix-_r_*_"
           aria-expanded="false"
           aria-haspopup="dialog"
           aria-label="Open space menu"

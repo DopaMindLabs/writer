@@ -12,6 +12,8 @@ exports[`Popover primitives > snapshot > should match the snapshot of the open p
       aria-controls="radix-_r_*_"
       aria-expanded="true"
       aria-haspopup="dialog"
+      data-radix-popper-align="start"
+      data-radix-popper-side="bottom"
       data-state="open"
       type="button"
     >
