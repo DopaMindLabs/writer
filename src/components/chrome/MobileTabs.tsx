@@ -52,16 +52,16 @@ const useTabItems = ({ spaceId, docId }: MobileTabsProps): TabItem[] => {
       match: (p) => p.endsWith('/read'),
     },
     {
-      key: 'split',
-      Icon: Columns2,
-      href: spaceId && docId ? routes.docSplit(spaceId, docId) : undefined,
-      match: (p) => p.endsWith('/split'),
-    },
-    {
       key: 'brain',
       Icon: Brain,
       href: brainHref ?? undefined,
       match: (p) => p.endsWith('/dump'),
+    },
+    {
+      key: 'split',
+      Icon: Columns2,
+      href: spaceId && docId ? routes.docSplit(spaceId, docId) : undefined,
+      match: (p) => p.endsWith('/split'),
     },
     {
       key: 'cite',

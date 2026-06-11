@@ -14,8 +14,9 @@ import { useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
 import { useUI } from '@/store/ui';
 import { useAutoTour } from '@/tours';
-import { Link } from '@/components/ui/Link';
-import { TypographyP } from '@/components/ui/typography';
+// Temporarily unused with BrainSpaceMobileNotice (commented out below):
+// import { Link } from '@/components/ui/Link';
+// import { TypographyP } from '@/components/ui/typography';
 import { routes } from '@/lib/routes';
 
 export const BrainSpaceScreen = () => {
@@ -64,11 +65,11 @@ export const BrainSpaceScreen = () => {
           mode="dump"
           fallbackDocId={fallbackDocId}
         />
-        <BrainSpaceMobileNotice spaceId={spaceId} />
+        {/* Temporarily disabled: <BrainSpaceMobileNotice spaceId={spaceId} /> */}
         <main
           id="main-content"
           tabIndex={-1}
-          className="hidden flex-1 overflow-hidden md:flex"
+          className="flex flex-1 overflow-hidden"
         >
           <BrainSpaceCanvas spaceId={spaceId} />
           <CitationsSidePanel spaceId={spaceId} />
@@ -84,6 +85,8 @@ export const BrainSpaceScreen = () => {
   );
 };
 
+/* Temporarily unused: BrainSpace renders its canvas on phones while we trial
+   it there. Restore the render above if the canvas doesn't hold up on mobile.
 const BrainSpaceMobileNotice = ({ spaceId }: { spaceId: string }) => {
   const { t } = useTranslation('screens');
   return (
@@ -108,3 +111,4 @@ const BrainSpaceMobileNotice = ({ spaceId }: { spaceId: string }) => {
     </div>
   );
 };
+*/

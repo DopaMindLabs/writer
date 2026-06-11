@@ -31,6 +31,8 @@ test('brain tab navigates to /dump', async ({ page }) => {
   const tabs = page.getByTestId('mobile-tabs');
   await tabs.getByRole('link', { name: /brain/i }).click();
   await expect(page).toHaveURL(/\/dump(\?|$)/);
+  // The canvas renders on phones (mobile notice temporarily disabled).
+  await expect(page.getByTestId('brain-canvas')).toBeVisible();
 });
 
 test('split tab navigates to /split', async ({ page }) => {

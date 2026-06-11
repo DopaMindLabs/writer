@@ -435,17 +435,23 @@ const useDividerControls = (): DividerControls => {
   const prevCursorRef = useRef<string>('');
   const prevUserSelectRef = useRef<string>('');
 
+  // Sync local state when external store changes (e.g., other tabs). The
+  // stacked (portrait phone) layout always starts at an even split rather
+  // than inheriting a divider position dragged on a wide screen.
   useEffect(() => {
-    if (!draggingRef.current) setPct(storedPct);
-  }, [storedPct]);
+    if (draggingRef.current) return;
+    setPct(stacked ? SNAP_PCT : storedPct);
+  }, [storedPct, stacked]);
 
   const commitPct = useCallback(
     (next: number) => {
       const clamped = clampPct(next);
       setPct(clamped);
-      setStoredPct(clamped);
+      // Stacked drags stay session-local so they don't clobber the persisted
+      // side-by-side position.
+      if (!stacked) setStoredPct(clamped);
     },
-    [setStoredPct],
+    [setStoredPct, stacked],
   );
 
   const pointer = usePointerHandlers({
