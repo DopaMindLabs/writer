@@ -31,6 +31,8 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
     <span
       aria-describedby="radix-_r_*_"
       class="mb-2.5 max-w-full cursor-help truncate rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
+      data-radix-popper-align="center"
+      data-radix-popper-side="right"
       data-state="instant-open"
       tabindex="0"
     >
@@ -77,7 +79,6 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
       class="flex-1"
     />
     <button
-      aria-controls="radix-_r_*_"
       aria-expanded="false"
       aria-haspopup="dialog"
       aria-label="LIpsum Writer"
@@ -137,7 +138,6 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
           Test Space
         </button>
         <button
-          aria-controls="radix-_r_*_"
           aria-expanded="false"
           aria-haspopup="dialog"
           aria-label="Open space menu"
