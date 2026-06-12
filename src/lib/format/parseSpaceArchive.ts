@@ -87,6 +87,55 @@ const bindAttachmentBlobs = async (
 const parseAttachmentRecords = (zip: JSZip): Promise<NoteAttachmentRecord[]> =>
   parseTable(zip, 'noteAttachments', parseNoteAttachmentRecord);
 
+const COUNTED_TABLES: readonly (keyof ArchiveManifest['counts'])[] = [
+  'sections',
+  'docs',
+  'notes',
+  'noteAttachments',
+  'annotations',
+  'citations',
+  'connections',
+  'revisions',
+  'palettes',
+  'docInspectorConfigs',
+];
+
+const actualCounts = (
+  archive: ParsedSpaceArchive,
+  inspectorConfigCount: number,
+): ArchiveManifest['counts'] => ({
+  sections: archive.sections.length,
+  docs: archive.docs.length,
+  notes: archive.notes.length,
+  noteAttachments: archive.attachments.length,
+  annotations: archive.annotations.length,
+  citations: archive.citations.length,
+  connections: archive.connections.length,
+  revisions: archive.revisions.length,
+  palettes: archive.palettes.length,
+  docInspectorConfigs: inspectorConfigCount,
+});
+
+/**
+ * A truncated zip can lose records that nothing cross-references (a citation,
+ * a palette, a whole doc); the manifest counts are the only way to notice.
+ */
+const checkCounts = (
+  archive: ParsedSpaceArchive,
+  inspectorConfigCount: number,
+): void => {
+  const expected = archive.manifest.counts;
+  const found = actualCounts(archive, inspectorConfigCount);
+  for (const table of COUNTED_TABLES) {
+    invariant(
+      found[table] === expected[table],
+      () =>
+        `Archive record counts do not match its manifest: expected ` +
+        `${String(expected[table])} ${table} record(s), found ${String(found[table])}`,
+    );
+  }
+};
+
 const checkReferences = (archive: ParsedSpaceArchive): void => {
   const spaceId = archive.space.id;
   const docIds = new Set(archive.docs.map((d) => d.id));
@@ -162,6 +211,12 @@ export const parseSpaceArchive = async (
     'docInspectorConfigs',
     parseDocInspectorConfigRecord,
   );
+  for (const config of inspectorConfigs) {
+    invariant(
+      config.spaceId === space.id,
+      'Archive doc-inspector config belongs to a different space',
+    );
+  }
   const archive: ParsedSpaceArchive = {
     manifest,
     space,
@@ -176,6 +231,7 @@ export const parseSpaceArchive = async (
     palettes: await parseTable(zip, 'palettes', parsePaletteRecord),
     docInspectorConfig: inspectorConfigs[0] ?? null,
   };
+  checkCounts(archive, inspectorConfigs.length);
   checkReferences(archive);
   return archive;
 };

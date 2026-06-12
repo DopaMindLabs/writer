@@ -19,6 +19,7 @@ export interface ArchiveManifest {
     connections: number;
     revisions: number;
     palettes: number;
+    docInspectorConfigs: number;
   };
 }
 
@@ -44,6 +45,7 @@ export const buildManifest = (
     connections: snapshot.connections.length,
     revisions: snapshot.revisions.length,
     palettes: snapshot.palettes.length,
+    docInspectorConfigs: snapshot.docInspectorConfig ? 1 : 0,
   },
 });
 
@@ -71,6 +73,7 @@ const parseCounts = (value: unknown): ArchiveManifest['counts'] => {
     connections: readCount(value, 'connections'),
     revisions: readCount(value, 'revisions'),
     palettes: readCount(value, 'palettes'),
+    docInspectorConfigs: readCount(value, 'docInspectorConfigs'),
   };
 };
 

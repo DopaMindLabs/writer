@@ -30,6 +30,7 @@ describe('archive manifest', () => {
       connections: 1,
       revisions: 3,
       palettes: 1,
+      docInspectorConfigs: 1,
     });
   });
 

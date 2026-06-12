@@ -4,7 +4,12 @@ import {
   buildSpaceMarkdownZip,
   readSpaceSnapshot,
 } from '@/lib/backup/buildSpaceMarkdownZip';
-import { ATTACHMENT_BYTES, seedRichSpace } from '@/test/fixtures';
+import {
+  ATTACHMENT_BYTES,
+  sampleAnnotation,
+  sampleInspectorConfig,
+  seedRichSpace,
+} from '@/test/fixtures';
 import { buildSpaceArchive } from './buildSpaceArchive';
 import { parseSpaceArchive } from './parseSpaceArchive';
 
@@ -144,11 +149,71 @@ describe('parseSpaceArchive', () => {
     const tampered = await rebuildWith(
       await buildSpaceArchive(snapshot, WHEN),
       (zip) => {
-        zip.remove('records/docs/d1.json');
+        zip.file(
+          'records/annotations/ann1.json',
+          JSON.stringify({ ...sampleAnnotation, docId: 'ghost-doc' }),
+        );
       },
     );
     await expect(parseSpaceArchive(tampered)).rejects.toThrow(
       /references a missing doc/,
+    );
+  });
+
+  it('rejects truncated archives whose record counts disagree with the manifest', async () => {
+    const snapshot = await readSpaceSnapshot('s1');
+    // A citation has no cross-references, so without the manifest count
+    // check its loss would go unnoticed.
+    const truncated = await rebuildWith(
+      await buildSpaceArchive(snapshot, WHEN),
+      (zip) => {
+        zip.remove('records/citations/cit1.json');
+      },
+    );
+    await expect(parseSpaceArchive(truncated)).rejects.toThrow(
+      /counts do not match.*citations/,
+    );
+
+    const missingDoc = await rebuildWith(
+      await buildSpaceArchive(snapshot, WHEN),
+      (zip) => {
+        zip.remove('records/docs/d1.json');
+      },
+    );
+    await expect(parseSpaceArchive(missingDoc)).rejects.toThrow(
+      /counts do not match.*docs/,
+    );
+  });
+
+  it('rejects archives with extra records the manifest does not list', async () => {
+    const snapshot = await readSpaceSnapshot('s1');
+    const padded = await rebuildWith(
+      await buildSpaceArchive(snapshot, WHEN),
+      (zip) => {
+        zip.file(
+          'records/palettes/pal-smuggled.json',
+          JSON.stringify({ id: 'pal-smuggled', spaceId: 's1', slots: [] }),
+        );
+      },
+    );
+    await expect(parseSpaceArchive(padded)).rejects.toThrow(
+      /counts do not match.*palettes/,
+    );
+  });
+
+  it('rejects an inspector config scoped to a different space', async () => {
+    const snapshot = await readSpaceSnapshot('s1');
+    const tampered = await rebuildWith(
+      await buildSpaceArchive(snapshot, WHEN),
+      (zip) => {
+        zip.file(
+          'records/docInspectorConfigs/s1.json',
+          JSON.stringify({ ...sampleInspectorConfig, spaceId: 'other-space' }),
+        );
+      },
+    );
+    await expect(parseSpaceArchive(tampered)).rejects.toThrow(
+      /doc-inspector config belongs to a different space/,
     );
   });
 
@@ -157,11 +222,14 @@ describe('parseSpaceArchive', () => {
     const tampered = await rebuildWith(
       await buildSpaceArchive(snapshot, WHEN),
       (zip) => {
-        zip.remove('records/sections/sec1.json');
+        zip.file(
+          'records/docs/d1.json',
+          JSON.stringify({ ...snapshot.docs[0], sectionId: 'ghost-section' }),
+        );
       },
     );
     const archive = await parseSpaceArchive(tampered);
-    expect(archive.docs[0].sectionId).toBe('sec1');
-    expect(archive.sections.map((s) => s.id)).toEqual(['sec1a']);
+    expect(archive.docs[0].sectionId).toBe('ghost-section');
+    expect(archive.sections.map((s) => s.id).sort()).toEqual(['sec1', 'sec1a']);
   });
 });
