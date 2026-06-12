@@ -6,12 +6,21 @@ import { serializeState } from '@/editor/serialize';
 interface AutosavePluginProps {
   onChange: (serialized: string) => void;
   debounceMs?: number;
+  /**
+   * Seeds the last-saved snapshot so the binding's bootstrap update doesn't
+   * fire `onChange` for content the body projection already holds.
+   */
+  initialSerialized?: string;
 }
 
-export const AutosavePlugin = ({ onChange, debounceMs = 600 }: AutosavePluginProps) => {
+export const AutosavePlugin = ({
+  onChange,
+  debounceMs = 600,
+  initialSerialized,
+}: AutosavePluginProps) => {
   const [editor] = useLexicalComposerContext();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastSavedRef = useRef<string | null>(null);
+  const lastSavedRef = useRef<string | null>(initialSerialized ?? null);
   const latestStateRef = useRef<EditorState | null>(null);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
