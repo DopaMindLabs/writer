@@ -11,6 +11,9 @@ export const FileRestoreHint = () => {
     <InlineBanner
       data-testid="space-settings-backups-file-restore-hint"
       kind="info"
+      // Static instructional content, not an announcement — role="note"
+      // keeps it out of the live-region the restore status announces in.
+      role="note"
       className="mt-6"
       title={t('settings.space.backups.fileRestoreTitle')}
     >
