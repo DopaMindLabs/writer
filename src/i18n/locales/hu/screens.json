@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Ingyenes írói multiverzum",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Az első tered üres. Válassz sablont a kezdéshez, vagy kezdj a semmiből.",
+    "tagline": "Rendetlen mentes tér a hosszú formátumú íráshoz — fikció, kutatás, esszék, naplók.",
+    "continueWriting": "Írás folytatása",
+    "startNewSpace": "Új tér létrehozása",
+    "syncOffChip": "szinkronizáció/mentések nem engedélyezve · adatok elveszhetnek",
+    "syncOnChip": "mappa-szinkronizáció bekapcsolva",
+    "syncOnTitle": "Mappa-szinkronizáció bekapcsolva",
+    "syncOnBody": "A munkád szinkronizálódik a(z) „{{folder}}" mappával ezen az eszközön.",
+    "warningTitle": "Előzetes verzió",
+    "warningBody": "Nincs adatszinkronizáció. Minden a böngészőben van tárolva — a gyorsítótár törlése elveszíti a munkádat. A helyi mappával való szinkronizációt engedélyezheted az Általános beállítások → Szinkronizáció menüben.",
+    "versionLine": "{{version}} verzió"
+  },
+  "about": {
+    "back": "vissza",
+    "title": "névjegy",
+    "greeting": "Szia,",
+    "paragraph1": "Ez az írónak szól, aki mindig újrakezdik. Annak, aki megnyit egy új dokumentumot, ír három mondatot (vagy egyet sem), majd 40 percet tölt a betűtípus beállításával. Annak, akinek a legjobb ötletei reggel 2-kor jönnek és elvesznek. Annak, akinek tizennégy lapja van nyitva, hat füzete, és egy hónapja nem mozdult a vázlata.",
+    "paragraph2Before": "Tudom, mert ez én vagyok ",
+    "paragraph2After": ". ADHD-m, autizmusom van, és valószínűleg más -izmusok is, amelyeket még nem diagnosztizáltak. Szükségem van valamire, ami érti a kaotikus, de csodálatos agyamat. Valahova, ahol mindent lerakhat, mielőtt eltűnik (vagy elkezdek írni). A töredékeket, a félgondolatokat, a reggel 3-as kapcsolatokat. Mindent, egy helyen.",
+    "paragraph3": "Ezért építettem ezt a teret nekünk. Remélem, annyi dopamint ad neked, amennyit az építése nekem adott.",
+    "paragraph4Before": "Még egy dolog... Hiszek a jó technológiában, és gyűlölöm a reklámokat. Ezért ez mindig reklámmentes és INGYENES lesz nem kereskedelmi felhasználásra. Módosíthatod és ágaztathatod el tetszésed szerint a következő licenc alapján: ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Állapot",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — nincs adatszinkronizáció. Minden adat az IndexedDB-ben van mentve a helyi böngészőben. Ha törlöd a böngésző gyorsítótárát, a munkád elvész.",
+    "feedbackBefore": "Még mindig épülgetek, és rengeteg ötletem van ",
+    "feedbackAfter": ". Szívesen meghallgatnám, mi működik, mi nem, és mit szeretnél, ha létezne. A visszajelzések szívesen fogadottak.",
+    "sourceLabel": "Forráskód"
+  },
+  "settings": {
+    "back": "vissza",
+    "windowTitle": "lotem · beállítások",
+    "breadcrumb": "ÁLTALÁNOS BEÁLLÍTÁSOK",
+    "shellSubtitle": "ÁLTALÁNOS BEÁLLÍTÁSOK",
+    "comingSoonBadge": "hamarosan",
+    "helpAria": "Mi ez?",
+    "groups": {
+      "preferences": "Beállítások",
+      "writing": "Írás",
+      "data": "Adatok",
+      "account": "Fiók"
+    },
+    "tabs": {
+      "general": "Általános",
+      "appearance": "Megjelenés",
+      "editor": "Szerkesztő",
+      "docInspector": "Dokumentum-ellenőrző",
+      "accessibility": "Akadálymentesítés",
+      "typography": "Tipográfia",
+      "shortcuts": "Billentyűzet",
+      "templates": "Sablonok",
+      "palettes": "Kiemelési paletta",
+      "citations": "Hivatkozási stílus",
+      "annotation": "Annotációk",
+      "backups": "Biztonsági mentések",
+      "sync": "Szinkronizáció",
+      "export": "Export / import",
+      "data": "Az adataid",
+      "account": "Fiók",
+      "about": "Névjegy",
+      "language": "Nyelv"
+    },
+    "language": {
+      "title": "Nyelv",
+      "subtitle": "Válassza ki a felület és a Súgóközpont cikkeinek nyelvét. A hiányzó fordítások angolra váltanak vissza.",
+      "label": "Felület nyelve",
+      "hint": "A változtatások azonnal érvénybe lépnek és ebben a böngészőben kerülnek mentésre.",
+      "machineTranslationNotice": "Az angoltól eltérő fordítások automatikusan készülnek. Elnézést kérünk az esetleges hibákért — kérjük, küldjön visszajelzést a javítás érdekében.",
+      "feedbackLinkLabel": "visszajelzés küldése"
+    },
+    "editor": {
+      "title": "Szerkesztő",
+      "subtitle": "Eszköztár és írási lehetőségek. A Markdown parancsikonok (#, >, -, **) ezektől a beállításoktól függetlenül működnek.",
+      "floatingToolbarLabel": "Lebegő eszköztár",
+      "floatingToolbarHint": "Megjelenik szövegkijelöléskor vagy jobb kattintáskor írási módban.",
+      "floatingToolbarOff": "Ki",
+      "floatingToolbarOn": "Be",
+      "rightClickLabel": "Jobb kattintás menü",
+      "rightClickHint": "Váltás a lebegő eszköztár és a böngésző natív helyi menüje között.",
+      "rightClickTooltip": "A jobb kattintáskor használja a natív helyi menüt a lebegő eszköztár helyett. Az eszköztár szövegkijelöléskor még megjelenik.",
+      "inlineTogglesLabel": "Beágyazott kapcsolók",
+      "inlineTogglesHint": "Félkövér és dőlt betű gombok a lebegő eszköztárban.",
+      "inlineTogglesTooltip": "Rejtse el a B és I gombokat a lebegő eszköztárból. A Markdown parancsikonok (**, _) továbbra is működnek.",
+      "listDepthLabel": "Lista beágyazási mélysége",
+      "listDepthHint": "Milyen mélyen ágyazhatók egymásba a felsorolás- és számozottlisták.",
+      "listDepthTooltip": "Növelje vagy csökkentse a lista beágyazási határát. Jelenleg 2 szintre rögzítve.",
+      "templateDefaultsLabel": "Sablononkénti alapértelmezések",
+      "templateDefaultsHint": "Különböző formázási részhalmazok sablononként.",
+      "templateDefaultsTooltip": "Engedje meg, hogy minden sablon (fikció, napló, technikai…) saját formázási részhalmazt válasszon."
+    },
+    "docInspector": {
+      "title": "Dokumentum-ellenőrző",
+      "subtitle": "Válassza ki, mely mezők jelenjenek meg a dokumentum-ellenőrzőben. Mindegyik kikapcsolható általánosan és felülírható terenként.",
+      "statusLabel": "Állapot",
+      "statusHint": "A dokumentum állapotának megjelenítése és a befejezett dokumentumok zárolása a szerkesztés ellen.",
+      "wordLimitLabel": "Szókorlát",
+      "wordLimitHint": "Dokumentumonként beállítható szószámkorlát megjelenítése.",
+      "charLimitLabel": "Karakterkorlát",
+      "charLimitHint": "Dokumentumonként beállítható karakterszámkorlát megjelenítése.",
+      "dueDateLabel": "Határidő",
+      "dueDateHint": "Dokumentumonként beállítható határidő megjelenítése.",
+      "highlightLabel": "Korlátot meghaladó szöveg kiemelése",
+      "highlightHint": "A korlátot meghaladó szöveg megjelölése a szerkesztőben.",
+      "statusStagesLabel": "Állapotszakaszok",
+      "statusStagesHint": "Válassza ki, mely szakaszok jelenjenek meg az állapotválasztóban.",
+      "on": "Be",
+      "off": "Ki",
+      "inherit": "Alapértelmezett ({{state}})",
+      "inheritTooltip": "Az általános beállításokból örökölve",
+      "stateOn": "be",
+      "stateOff": "ki"
+    },
+    "accessibility": {
+      "title": "Akadálymentesítés",
+      "subtitle": "Hangolja a felületet a kényelemhez és a kisegítő technológiákhoz. Minden lehetőség a jelenlegi élménnyel kezd — semmi sem változik, amíg nem választja.",
+      "theme": {
+        "label": "Téma és kontraszt",
+        "hint": "A nagy kontrasztú témák megfelelnek a WCAG AAA kontrasztstandardnak.",
+        "light": "Világos",
+        "dark": "Sötét",
+        "hcLight": "Nagy kontraszt (világos)",
+        "hcDark": "Nagy kontraszt (sötét)"
+      },
+      "motion": {
+        "label": "Mozgás",
+        "hint": "Csökkentse vagy tiltsa le a felület animációit.",
+        "auto": "Rendszer alapján",
+        "reduced": "Csökkentett",
+        "full": "Teljes"
+      },
+      "textSize": {
+        "label": "Szövegméret",
+        "hint": "Az olvasási és írási felület méretezése.",
+        "sm": "Kicsi",
+        "base": "Alapértelmezett",
+        "lg": "Nagy",
+        "xl": "Extra nagy"
+      },
+      "lineSpacing": {
+        "label": "Sorköz",
+        "hint": "Adjon légzési teret a prózasorok közé.",
+        "normal": "Normál",
+        "relaxed": "Lazított",
+        "loose": "Tágas"
+      },
+      "linkUnderline": {
+        "label": "Hivatkozások mindig aláhúzva",
+        "hint": "Aláhúzás megjelenítése, hogy a hivatkozások ne kizárólag a színre hagyatkozzanak."
+      },
+      "focus": {
+        "label": "Továbbfejlesztett fókuszjelző",
+        "hint": "Vastagabb, nagyobb kontrasztú keret használata fókusznál."
+      },
+      "reset": {
+        "label": "Visszaállítás alapértelmezettre",
+        "hint": "A mozgás, szövegméret, sorköz, hivatkozások és fókusz visszaállítása az alapértelmezettre. A téma változatlan marad.",
+        "action": "Visszaállítás"
+      }
+    },
+    "general": {
+      "title": "Általános",
+      "subtitle": "Hogyan jelenik meg a LIpsum Writer alapértelmezés szerint. Ezek egyike sem roncsoló.",
+      "comingSoonBody": "Kompakt sűrűség, mozgáscsökkentés, billentyűzet-tippek láthatósága és az indításkor megnyíló nézet.",
+      "compactDensityLabel": "Kompakt sűrűség",
+      "compactDensityHint": "Szűkebb sorok listákban, szűkebb kitöltés mindenhol.",
+      "reduceMotionLabel": "Mozgás csökkentése",
+      "reduceMotionHint": "Animált átmenetek kihagyása a nézetek között.",
+      "keyboardHintsLabel": "Billentyűzet-tippek megjelenítése",
+      "keyboardHintsHint": "⌘ billentyűparancsok megjelenítése eszköztippekben és gombok sarkában.",
+      "startupLabel": "Megnyitás indításkor",
+      "startupHint": "Mit látsz az alkalmazás indításakor.",
+      "startupOptions": {
+        "lastView": "Utolsó nézet",
+        "home": "Kezdőlap",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Megjelenés",
+      "subtitle": "Szín, betűtípus, sűrűség. A hangulat, amelyet az alkalmazásnak meg kell teremtenie.",
+      "comingSoonBody": "Válogatott témapalettákat, kiemelési színt és sűrűséget. A jelenlegi témaváltó a world sín gyorsbeállításaiban van.",
+      "themeLabel": "Téma",
+      "themeHint": "Három válogatott paletta. Mindent hangolnak — a blokk-színeket, a vonalakat, még a szemcsézettséget is.",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "alapértelmezett",
+        "studio": "Studio",
+        "studioSub": "semleges",
+        "midnight": "Midnight",
+        "midnightSub": "sötét"
+      },
+      "accentLabel": "Kiemelés",
+      "accentHint": "Hover, fókusz, aktív szerkesztési gyűrűhöz használva.",
+      "densityLabel": "Sűrűség",
+      "densityOptions": {
+        "cozy": "Kényelmes",
+        "default": "Alapértelmezett",
+        "compact": "Kompakt"
+      }
+    },
+    "templates": {
+      "title": "Sablonok",
+      "subtitle": "Újrafelhasználható keretek új terekhez és dokumentumokhoz.",
+      "comingSoonBody": "Saját sablonok készítése szakaszokkal, alapértelmezett dokumentumnevekkel és prózavázzal.",
+      "items": {
+        "fiction": "Fikció",
+        "fictionSub": "Kézirat · Világ · Műhely",
+        "research": "Kutatás",
+        "researchSub": "Források · Jegyzetek · Vázlatok",
+        "journal": "Napló",
+        "journalSub": "Napi · Heti · Elmélkedések",
+        "essay": "Esszé",
+        "essaySub": "Vázlat · Fogalmazványok · Végleges"
+      }
+    },
+    "palettes": {
+      "title": "Kiemelési paletta",
+      "subtitle": "Öt slotos paletta terenként — nevezze el és hangolja az egyes színeket.",
+      "comingSoonBody": "Szerkessze, mentse és váltson elnevezett kiemelési paletták (Bizonyíték, Átdolgozandó, Hivatkozás…) között a terek között.",
+      "items": {
+        "evidence": "Bizonyíték",
+        "revise": "Átdolgozandó",
+        "reference": "Hivatkozás",
+        "quote": "Idézet",
+        "loose": "Lógó szál"
+      },
+      "rename": "átnevezés",
+      "tune": "hangolás"
+    },
+    "citations": {
+      "title": "Hivatkozási stílus",
+      "subtitle": "Alapértelmezett hivatkozási stílus az összes tér számára.",
+      "comingSoonBody": "Válasszon univerzális stílust (Chicago, APA, MLA…) térenként felülírható beállításokkal.",
+      "styleLabel": "Alapértelmezett stílus",
+      "styleHint": "Új hivatkozás beillesztésekor használt. A térenként felülírható beállítások később érkeznek.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Annotációk",
+      "subtitle": "Margójegyzetek és beágyazott annotációk.",
+      "comingSoonBody": "Annotációtípusok, láthatósági alapértelmezések és exportálási viselkedés.",
+      "showMarginLabel": "Margójegyzetek megjelenítése",
+      "showMarginHint": "Az annotációk a jobb margón lebegnek, ha van elég hely.",
+      "showInlineLabel": "Beágyazott kiemelések megjelenítése",
+      "showInlineHint": "Az annotáció színe átkerül az alatta lévő prózára.",
+      "exportLabel": "Exportálásba belefoglalva",
+      "exportHint": "Az annotációk a dokumentum tartalmával együtt kerülnek kiírásra."
+    },
+    "export": {
+      "title": "Export / import",
+      "subtitle": "Adatok be- és kivitele a LIpsum Writerből.",
+      "comingSoonBody": "Tömeges export .zip-ként, import másik LIpsum csomagból vagy Markdown könyvtárból.",
+      "formatLabel": "Export formátum",
+      "formatHint": "A dokumentumonkénti és térenként exportok ugyanazt az alapértelmezettet használják.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Importálás forrása",
+      "importHint": "Másik LIpsum csomag vagy Markdown fájlokat tartalmazó könyvtár importálása.",
+      "importOptions": {
+        "bundle": "LIpsum csomag (.zip)",
+        "markdown": "Markdown mappa",
+        "obsidian": "Obsidian tár"
+      },
+      "importSpaceLabel": "Tér importálása",
+      "importSpaceHint": "Tér importálása ebbe a böngészőbe egy Writer archívumból (.zip) — letöltött pillanatkép vagy mappaszinkronizációs export egy másik eszközről.",
+      "importChooseFile": "Archívum kiválasztása…",
+      "importing": "importálás…",
+      "importFailed": "Az import sikertelen: {{message}}",
+      "comingSoonLabel": "További formátumok",
+      "comingSoonHint": "Tömeges export és import Markdown mappákból vagy Obsidian tárakból.",
+      "comingSoonTooltip": "Tervezett — még nem elérhető."
+    },
+    "data": {
+      "title": "Az adataid",
+      "subtitle": "Hol él a munkád és mennyi helyet foglal.",
+      "comingSoonBody": "IndexedDB-használat, tárolóbecslés és egykattintásos teljes törlés.",
+      "storageLabel": "Felhasznált tárhely",
+      "storageValue": "≈ 12,4 MB · 4 tér, 38 dokumentum",
+      "engineLabel": "Tárolómotor",
+      "engineValue": "IndexedDB (helyi böngésző)",
+      "wipeLabel": "Mindent töröl",
+      "wipeHint": "Eltávolít minden teret, dokumentumot és pillanatfelvételt ebből a böngészőből. Nem vonható vissza.",
+      "wipeButton": "Helyi adatok törlése…"
+    },
+    "about": {
+      "title": "Névjegy",
+      "subtitle": "Verziószám és hivatkozások.",
+      "comingSoonBody": "Tekintse meg a /about oldalt a történetért; ez a lap az alkalmazás verziójának adatait, licencét és változásnaplóját fogja tartalmazni.",
+      "versionLabel": "Verzió",
+      "versionValue": "{{version}}",
+      "buildLabel": "Build",
+      "buildValue": "helyi",
+      "licenseLabel": "Licenc",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Hivatkozások",
+      "links": {
+        "source": "Forráskód",
+        "changelog": "Változásnapló",
+        "feedback": "Visszajelzés küldése"
+      }
+    },
+    "account": {
+      "title": "Fiók",
+      "subtitle": "Bejelentkezés, eszközök közötti szinkronizáció és megosztott munkaterületek.",
+      "comingSoonBody": "A felhőszinkronizáció ma nem elérhető — a Lotem csak helyileg működik. A fiók, a bejelentkezés és a megosztott munkaterületek a szinkronizáció megjelenésekor lesznek elérhetők.",
+      "signedOutLabel": "Bejelentkezés",
+      "signedOutHint": "A felhőszinkronizáció még nem elérhető. Ez itt a dizájn bemutatására szolgál.",
+      "signInButton": "Bejelentkezés e-maillel",
+      "syncLabel": "Az eszköz szinkronizálása",
+      "syncHint": "Bejelentkezés után a tereid más eszközökre is replikálódnak."
+    },
+    "typography": {
+      "title": "Tipográfia",
+      "subtitle": "Alapértelmezések az összes világban. Az egyes világok felülírhatják.",
+      "comingSoonBody": "Válassza ki a próza betűtípusát, a felület betűtípusát, az alapértelmezett olvasási méretet, a sormagasságot és a mértéket az új világokhoz.",
+      "proseFontLabel": "Próza betűtípus",
+      "uiFontLabel": "Felület betűtípus",
+      "proseSizeLabel": "Próza mérete",
+      "proseSizeHint": "Alapértelmezett az új világokhoz.",
+      "lineHeightLabel": "Sormagasság",
+      "measureLabel": "Mérték",
+      "measureHint": "Maximális sorszélesség.",
+      "measureValue": "64 kar · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Parancsikonok",
+      "subtitle": "Billentyűparancsok navigációhoz, formázáshoz és módokhoz.",
+      "comingSoonBody": "Átrendelhető parancsikonok az írás/olvasás/osztott módhoz, fókuszmódhoz és a formázási eszköztárhoz.",
+      "navHeader": "Navigáció",
+      "formatHeader": "Formázás",
+      "modeHeader": "Módok",
+      "items": {
+        "openSettings": "Beállítások megnyitása",
+        "quickSettings": "Gyorsbeállítások",
+        "findInDoc": "Keresés a dokumentumban",
+        "toggleFocus": "Fókusz váltása",
+        "toggleInspector": "Ellenőrző váltása",
+        "bold": "Félkövér",
+        "italic": "Dőlt",
+        "underline": "Aláhúzott",
+        "heading1": "1. fejléc",
+        "heading2": "2. fejléc",
+        "write": "Írás mód",
+        "read": "Olvasás mód",
+        "split": "Osztott mód"
+      }
+    },
+    "backups": {
+      "title": "Biztonsági mentések",
+      "subtitle": "Helyi adatok exportálása, visszaállítása és pillanatkép-készítése.",
+      "comingSoonBody": "Ütemezett helyi pillanatfelvételek, manuális export .zip-ként és visszaállítás korábbi mentésből.",
+      "intervalLabel": "Automatikus pillanatkép-intervallum",
+      "intervalOptions": {
+        "5min": "5 perc",
+        "10min": "10 perc",
+        "30min": "30 perc",
+        "off": "Ki"
+      },
+      "keepLabel": "Megőrzés",
+      "keepHint": "A régebbi pillanatfelvételek automatikusan törlődnek.",
+      "keepOptions": {
+        "last50": "Utolsó 50",
+        "days7": "7 nap",
+        "days30": "30 nap"
+      },
+      "latestLabel": "Legutóbbi",
+      "latestValue": "12 perce · 1 190 szó"
+    },
+    "sync": {
+      "title": "Szinkronizáció",
+      "subtitle": "Tereid egy választott mappába küldése. Mutass egy Google Drive, Dropbox vagy iCloud mappára az eszközök közötti szinkronizációhoz.",
+      "unsupportedTitle": "Ebben a böngészőben nem elérhető",
+      "unsupportedBody": "A mappaszinkronizációhoz szükséges a File System Access API, amely Chrome, Edge és más Chromium-alapú asztali böngészőkben érhető el. Váltson egy támogatott böngészőre a funkció használatához.",
+      "folderLabel": "Szinkronizált mappa",
+      "folderHint": "Minden szinkronizáció ide ír egy Markdown .zip-et terenként, megőrizve az utolsó 5-öt plusz egy latest.zip-et. A szinkronizáció elkülönül a Biztonsági mentésektől.",
+      "noFolder": "Nincs csatlakoztatott mappa",
+      "chooseFolder": "Mappa kiválasztása…",
+      "changeFolder": "Módosítás…",
+      "disconnect": "Leválasztás",
+      "intervalLabel": "Automatikus szinkronizáció",
+      "intervalHint": "Milyen gyakran szinkronizálódnak automatikusan a terek, miközben az alkalmazás nyitva van és a mappa csatlakoztatva van. Minden tér felülírhatja ezt az alapértelmezést.",
+      "intervalOff": "Ki",
+      "intervalMinutes": "{{count}} perc",
+      "intervalDefault": "Alapértelmezett ({{label}})",
+      "syncLabel": "Manuális szinkronizáció",
+      "pushOnlyHint": "Egyelőre csak küldés — ez a helyi adatokat írja a mappába. A változások visszahúzása később érkezik.",
+      "syncNow": "Szinkronizálás most",
+      "syncNowAll": "Összes tér szinkronizálása",
+      "reconnectHint": "A szinkronizáció szünetel — a böngészőnek ismét szüksége van a mappa engedélyére ehhez a munkamenethez. Csatlakozzon újra a manuális és automatikus szinkronizáció folytatásához.",
+      "reconnectButton": "Újracsatlakozás",
+      "reconnecting": "Újracsatlakozás…",
+      "syncing": "Szinkronizálás…",
+      "syncFailed": "A szinkronizáció sikertelen: {{message}}",
+      "lastSynced": "Utoljára szinkronizálva: {{when}}",
+      "neverSynced": "Még nem szinkronizált",
+      "justNow": "imént",
+      "resultsTitle": "Legutóbbi futás",
+      "spaceOk": "szinkronizálva",
+      "spaceFailed": "sikertelen",
+      "historyTitle": "Legutóbbi szinkronizációk",
+      "historyEmpty": "Még nincs szinkronizáció.",
+      "columns": {
+        "when": "MIKOR",
+        "space": "TÉR",
+        "kind": "TÍPUS",
+        "size": "MÉRET",
+        "status": "ÁLLAPOT"
+      },
+      "kind": {
+        "auto": "automatikus",
+        "manual": "manuális"
+      },
+      "status": {
+        "ok": "ok",
+        "error": "hiba"
+      }
+    },
+    "space": {
+      "breadcrumb": "TÉR · BEÁLLÍTÁSOK",
+      "shellSubtitle": "TÉR BEÁLLÍTÁSAI",
+      "loading": "Tér betöltése…",
+      "groups": {
+        "thisSpace": "Ez a tér",
+        "sharingMembers": "Megosztás és tagok",
+        "data": "Adatok",
+        "dangerZone": "Veszélyzóna"
+      },
+      "tabs": {
+        "general": "Általános",
+        "docInspector": "Dokumentum-ellenőrző",
+        "template": "Sablon",
+        "palette": "Kiemelési paletta",
+        "sharing": "Megosztás",
+        "members": "Tagok",
+        "backups": "Biztonsági mentések",
+        "sync": "Szinkronizáció",
+        "export": "Export",
+        "danger": "Veszélyzóna"
+      },
+      "docInspector": {
+        "title": "Dokumentum-ellenőrző",
+        "subtitle": "Az általános ellenőrző beállítások felülírása ehhez a térhez."
+      },
+      "palette": {
+        "title": "Kiemelési paletta",
+        "subtitle": "Öt elnevezett, hangolható kiemelési szín ehhez a térhez.",
+        "comingSoonBody": "Nevezze át, festse újra és rendezze át e tér kiemelési slotjait.",
+        "items": {
+          "evidence": "Bizonyíték",
+          "revise": "Átdolgozandó",
+          "reference": "Hivatkozás",
+          "quote": "Idézet",
+          "loose": "Lógó szál"
+        },
+        "rename": "átnevezés",
+        "tune": "hangolás"
+      },
+      "export": {
+        "title": "Export",
+        "subtitle": "E tér tartalmának áthelyezése egy másik eszközbe.",
+        "comingSoonBody": "Export Markdown .zip-ként (ma a Biztonsági mentéseken keresztül), LaTeX, HTML vagy PDF — mindezt egy helyen.",
+        "formatLabel": "Formátum",
+        "formatHint": "A Markdown az első; a többi követi.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Utolsó export",
+        "lastValue": "soha"
+      },
+      "general": {
+        "title": "Általános",
+        "subtitle": "E tér azonosítási adatai. A módosítások azonnal érvénybe lépnek és szinkronizálódnak a nézetek között.",
+        "nameLabel": "Tér neve",
+        "nameHint": "Az oldalsáv fejlécében és a tér sín csempéjének eszköztippjében jelenik meg.",
+        "tagLabel": "Címke",
+        "tagHint": "Rövid kód (2–4 karakter), amely a tér sín csempéjén jelenik meg."
+      },
+      "sharing": {
+        "title": "Megosztás",
+        "subtitle": "Szabályozza, hogyan legyen megosztva ez a tér.",
+        "comingSoonBody": "Terenként láthatóság és megosztható hivatkozások. A felhőszinkronizáció megjelenésekor érkezik.",
+        "visibilityLabel": "Láthatóság",
+        "visibilityOptions": {
+          "private": "Privát",
+          "link": "Bárki hivatkozással",
+          "members": "Csak tagok"
+        },
+        "linkLabel": "Megosztható hivatkozás",
+        "linkHint": "Alapértelmezés szerint csak olvasható. A szerkesztési jogosultságok a Tagok beállításait követik.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "másolás"
+      },
+      "template": {
+        "title": "Sablon",
+        "subtitle": "A strukturális sablon, amellyel ez a tér létrejött.",
+        "comingSoonBody": "A tér sablonjának módosítása a létrehozás után még nem támogatott. Akkor érkezik, ha biztonságosan tudjuk migrálni a szakaszokat és dokumentumokat.",
+        "currentLabel": "Jelenlegi sablon",
+        "currentValue": "Fikció",
+        "currentSub": "Kézirat · Világ · Műhely",
+        "changeLabel": "Sablon módosítása",
+        "changeHint": "A meglévő szakaszokat és dokumentumokat az új sablonhoz igazítja.",
+        "changeButton": "Sablon módosítása…"
+      },
+      "members": {
+        "title": "Tagok",
+        "subtitle": "Társszerzők és lektorok, akiknek hozzáférésük van ehhez a térhez.",
+        "comingSoonBody": "Közreműködők meghívása, szerepkörök kezelése és módosítások áttekintése. A felhőszinkronizációval érkezik.",
+        "inviteLabel": "Meghívás e-maillel",
+        "inviteHint": "Küldünk nekik egy hivatkozást, amellyel csatlakozhatnak ehhez a térhez.",
+        "invitePlaceholder": "nev@pelda.hu",
+        "inviteButton": "meghívó küldése",
+        "membersLabel": "Tagok",
+        "roles": {
+          "owner": "tulajdonos",
+          "editor": "szerkesztő",
+          "viewer": "megtekintő"
+        },
+        "you": "te"
+      },
+      "backups": {
+        "title": "Biztonsági mentések",
+        "subtitle": "Pillanatfelvétel készítése erről a térről .zip formátumban, amelyet letölthetsz, megőrizhetsz és visszaállíthatsz belőle.",
+        "retentionHint": "A(z) {{count}} legutóbbi pillanatkép megőrzése — a régebbiek automatikusan törlődnek.",
+        "snapshotNow": "+ pillanatkép most",
+        "snapshotting": "pillanatkép készítése…",
+        "snapshotFailed": "A pillanatkép sikertelen: {{message}}",
+        "historyTitle": "Előzmények",
+        "empty": "Még nincs pillanatkép — hozzon létre egyet a + pillanatkép most gombbal.",
+        "columns": {
+          "when": "MIKOR",
+          "kind": "TÍPUS",
+          "size": "MÉRET",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "manuális",
+          "auto": "automatikus",
+          "snapshot": "pillanatkép"
+        },
+        "download": "↓ letöltés",
+        "delete": "törlés",
+        "deleteConfirm": "Törli ezt a pillanatképet? Ez nem vonható vissza.",
+        "deleted": "Pillanatkép törölve.",
+        "justNow": "imént",
+        "restore": "↺ visszaállítás",
+        "restoreUnavailable": "Ez a pillanatkép a visszaállítási támogatás előtti — csak letölthető.",
+        "restoreDialogTitle": "Visszaállítja ezt a pillanatképet?",
+        "restoreDialogBody": "E tér jelenlegi tartalma a pillanatképpel lesz felváltva. Először a jelenlegi állapotból készül pillanatkép, így visszavonhatja ezt a visszaállítást.",
+        "restoreConfirm": "Visszaállítás",
+        "restoreCancel": "Mégse",
+        "restoring": "visszaállítás…",
+        "restored": "Pillanatkép visszaállítva.",
+        "restoreFailed": "A visszaállítás sikertelen: {{message}}",
+        "fileRestoreTitle": "Visszaállítás letöltött .zip-ből?",
+        "fileRestoreBody": "Importálja az Általános beállítások → Export / import menün keresztül — új térként tér vissza, ezt a teret érintetlenül hagyva."
+      },
+      "sync": {
+        "title": "Szinkronizáció",
+        "subtitle": "E tér küldése a csatlakoztatott mappába, manuálisan vagy ütemezetten. A szinkronizáció elkülönül a Biztonsági mentésektől.",
+        "folderHint": "Mappa csatlakoztatása az Általános beállítások → Szinkronizáció menüben. Ugyanaz a mappa szolgál minden térhez.",
+        "intervalHint": "Milyen gyakran szinkronizálódik automatikusan ez a tér. Válassza az Alapértelmezett lehetőséget az általános automatikus szinkronizáció beállításának követéséhez.",
+        "syncNow": "Ez a tér szinkronizálása"
+      },
+      "danger": {
+        "title": "Veszélyzóna",
+        "subtitle": "Visszafordíthatatlan műveletek. Gondosan olvasd el a folytatás előtt.",
+        "deleteCardTitle": "A tér törlése",
+        "deleteCardBody": "Véglegesen eltávolítja ezt a teret minden dokumentummal, szakasszal, brain-space-jegyzettel, annotációval, hivatkozással és kapcsolattal együtt. Ez nem vonható vissza.",
+        "deleteButton": "A tér törlése",
+        "dialogTitle": "Törli a következőt: „{{name}}"?",
+        "dialogBody": "Ez véglegesen eltávolítja a teret és annak teljes tartalmát. Ez nem vonható vissza.",
+        "typeToConfirm": "A megerősítéshez írd be: {{name}}",
+        "cancel": "Mégse",
+        "confirm": "Tér törlése"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Elveszve a margón",
+    "body": "Ez az oldal (még) nem létezik.",
+    "goHome": "Vissza a főoldalra"
+  },
+  "templates": {
+    "crumb": "01 — EGY TÉRTÍPUS",
+    "headingMain": "Milyen teret",
+    "headingAccent": "hozol létre?",
+    "chooseLegend": "Válassz sablont",
+    "stage": {
+      "pre-alpha": "kísérleti",
+      "alpha": "korai",
+      "beta": "béta"
+    },
+    "nameLabel": "Név",
+    "tagLabel": "Címke",
+    "syncLabel": "felhőszinkronizáció —",
+    "syncValue": "ki, helyi",
+    "syncTooltip": "A felhőszinkronizáció nem elérhető — az alkalmazás egyelőre csak helyi.",
+    "creating": "létrehozás…",
+    "submitLabel": "belépés: {{name}} →",
+    "newSpace": "új tér",
+    "back": "vissza"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} rendezetlen",
+    "title": "Brain space",
+    "mobileWarning": "A Brain space nagyobb képernyőn működik a legjobban.",
+    "mobileNote": "A vászonhoz egér vagy érintőpad szükséges.",
+    "openInWrite": "Megnyitás Írásban →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "kezdj el ötleteket lerakni",
+      "emptyHint": "válassz kártyatípust alul",
+      "pendingHint": "shift-kattints egy másik jegyzetre a kapcsolódáshoz · esc a megszakításhoz"
+    },
+    "note": {
+      "deleteNote": "Jegyzet törlése",
+      "addPicture": "Kép hozzáadása",
+      "addPictureCta": "kép hozzáadása",
+      "openLinkedDoc": "Kapcsolt dokumentum megnyitása",
+      "fetchedContent": "Lekért tartalom",
+      "openDetailsLabel": "Részletek megnyitása",
+      "openDetailsTitle": "Részletek panel megnyitása",
+      "titlePlaceholder": "cím",
+      "addTitleCta": "+ cím",
+      "bodyEmpty": "(kattints az íráshoz)",
+      "viewImage": "{{name}} megtekintése",
+      "removeImage": "{{name}} eltávolítása",
+      "resize": "Jegyzet átméretezése",
+      "days": {
+        "sun": "vas",
+        "mon": "hét",
+        "tue": "kedd",
+        "wed": "sze",
+        "thu": "csüt",
+        "fri": "pén",
+        "sat": "szo"
+      }
+    },
+    "drawer": {
+      "title": "Jegyzet részletei",
+      "description": "Szerkeszd a kijelölt jegyzetet és kezeld a kapcsolatait.",
+      "untitledPlaceholder": "Cím nélkül",
+      "titleAriaLabel": "Jegyzet címe",
+      "closeAriaLabel": "Panel bezárása",
+      "bodyLabel": "Tartalom",
+      "bodyPlaceholder": "Írj valamit…",
+      "picturesLabel": "Képek",
+      "addPicture": "Kép hozzáadása",
+      "pictureLimitHint": "{{count}} korlát elérve — távolíts el egyet, hogy újat adhass hozzá.",
+      "linkedDocLabel": "Kapcsolt dokumentum",
+      "noLinkedDoc": "— Nincs kapcsolt dokumentum —",
+      "untitledDoc": "Cím nélkül",
+      "openDoc": "Megnyitás",
+      "connectionsHeading": "Kapcsolatok ({{count}})",
+      "connectionsEmpty": "shift-kattints egy másik jegyzetre a vásznon a kapcsolódáshoz.",
+      "untitledNote": "(cím nélkül)",
+      "removeConnection": "Kapcsolat eltávolítása",
+      "deleteNote": "Jegyzet törlése"
+    }
+  },
+  "split": {
+    "title": "Osztott nézet",
+    "mobileWarning": "Az osztott nézet nagyobb képernyőt igényel.",
+    "mobileNote": "Nyisd meg a dokumentumot Írás módban.",
+    "openInWrite": "Megnyitás Írásban →",
+    "leftPrefix": "BAL —",
+    "rightPrefix": "JOBB —",
+    "rightPaneAria": "Jobb panel dokumentuma",
+    "noOtherDocs": "(nincs más dokumentum)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Hivatkozások",
+    "pickDoc": "Válassz dokumentumot a fenti legördülő listából.",
+    "dividerAria": "Osztott panelek átméretezése"
+  },
+  "citationsDrawer": {
+    "title": "Hivatkozások",
+    "description": "Hivatkozások keresése, importálása és exportálása ehhez a térhez.",
+    "close": "Hivatkozások bezárása",
+    "expand": "Hivatkozások megnyitása teljes nézetben"
+  },
+  "citations": {
+    "title": "Hivatkozások",
+    "breadcrumb": "Források / ",
+    "entries": "{{count}} BEJEGYZÉS",
+    "searchPlaceholder": "szerzők, címkék, év…",
+    "upload": "↑ .bib / .ris feltöltése",
+    "add": "+ hozzáadás",
+    "cancel": "× mégse",
+    "columns": {
+      "tag": "CÍMKE",
+      "authors": "SZERZŐK",
+      "title": "CÍM",
+      "year": "ÉV",
+      "type": "TÍPUS",
+      "used": "HASZNÁLT"
+    },
+    "style": "STÍLUS — CHICAGO (SZERZŐ-DÁTUM)",
+    "exportBib": "EXPORTÁLÁS .BIB-KÉNT",
+    "summary": "{{filtered}} MEGJELENÍTVE · {{shown}} EZen az OLDALON",
+    "prevPage": "Előző oldal",
+    "nextPage": "Következő oldal",
+    "empty": "még nincs hivatkozás",
+    "noMatch": "egyetlen sor sem egyezik a kereséseddel.",
+    "importHint": "importálj .bib fájlt vagy adj hozzá manuálisan.",
+    "pasteHeader": "BibTeX vagy cím beillesztése",
+    "addCitation": "hivatkozás hozzáadása",
+    "manualCancel": "mégse",
+    "adding": "hozzáadás…",
+    "parsing": "{{name}} feldolgozása…",
+    "imported": "{{added}} hivatkozás{{addedPlural}} importálva{{skippedSuffix}}.",
+    "skippedSuffix": ", {{skipped}} duplikát{{skippedPlural}} kihagyva",
+    "skippedSuffixShort": ", {{skipped}} kihagyva",
+    "failed": "Feldolgozás sikertelen: {{message}}",
+    "failedManual": "Sikertelen: {{message}}",
+    "addedOne": "1 hivatkozás hozzáadva.",
+    "unknownAuthor": "(ismeretlen)",
+    "unknownError": "ismeretlen hiba",
+    "edit": {
+      "save": "mentés",
+      "saving": "mentés…",
+      "cancel": "mégse",
+      "delete": "törlés",
+      "edit": "szerkesztés",
+      "tagLabel": "Címke",
+      "authorsLabel": "Szerzők",
+      "titleLabel": "Cím",
+      "yearLabel": "Év",
+      "typeLabel": "Típus",
+      "duplicateKey": "A(z) „{{key}}" címke már használatban van ebben a térben.",
+      "updated": "1 hivatkozás frissítve.",
+      "deleteOne": "1 hivatkozás törölve.",
+      "confirmDeleteUsed": "Ez a hivatkozás {{count}}× szerepel a dokumentumaidban. Mégis törli?",
+      "confirmDeleteSingle": "Törli a(z) „{{key}}" hivatkozást? Ez nem vonható vissza.",
+      "untitled": "(cím nélkül)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} kijelölve",
+      "deleteSelected": "törlés",
+      "setTypePrompt": "típus beállítása",
+      "setTypeAria": "Típus beállítása a kijelölt hivatkozásokhoz",
+      "chooseOption": "válassz…",
+      "ariaLabel": "Tömeges műveletek",
+      "clearSelection": "törlés",
+      "deleted": "{{count}} hivatkozás törölve.",
+      "typeApplied": "{{count}} hivatkozásnál a típus beállítva erre: {{type}}.",
+      "confirmDelete": "Törli a(z) {{count}} hivatkozást? Ez nem vonható vissza."
+    },
+    "row": {
+      "selectAllAria": "Az összes hivatkozás kijelölése ezen az oldalon",
+      "viewCitationAria": "{{key}} hivatkozás megtekintése",
+      "selectCitationAria": "{{key}} hivatkozás kijelölése",
+      "collapseCitationAria": "{{key}} hivatkozás összecsukása",
+      "usedCount": "{{count}}× használva",
+      "unused": "nem használt",
+      "copyTag": "Címke másolása",
+      "copyTagAria": "{{value}} címke másolása",
+      "copiedTitle": "Másolva",
+      "copiedTagAria": "{{value}} címke másolva"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

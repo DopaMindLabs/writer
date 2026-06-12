@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Fritt skrivende multiversum",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Ditt første rom er tomt. Velg en mal for å komme i gang, eller start fra bunnen.",
+    "tagline": "Et ryddig rom for langformat skriving — fiksjon, forskning, essay, dagbøker.",
+    "continueWriting": "Fortsett å skrive",
+    "startNewSpace": "Start et nytt rom",
+    "syncOffChip": "synkronisering/sikkerhetskopier ikke aktivert · data kan gå tapt",
+    "syncOnChip": "mappesynkronisering på",
+    "syncOnTitle": "Mappesynkronisering aktivert",
+    "syncOnBody": "Arbeidet ditt synkroniseres til mappen «{{folder}}» på denne enheten.",
+    "warningTitle": "Forhåndsversjon",
+    "warningBody": "Ingen datasynkronisering. Alt ligger i nettleseren din, og sletter du hurtigbufferen mister du arbeidet. Du kan aktivere synkronisering til en lokal mappe i Universelle innstillinger → Synkronisering.",
+    "versionLine": "Versjon {{version}}"
+  },
+  "about": {
+    "back": "tilbake",
+    "title": "om",
+    "greeting": "Hei,",
+    "paragraph1": "Dette er for skribenten som hele tiden starter på nytt. Den som åpner et nytt dokument, skriver tre setninger (eller ingen), og deretter bruker 40 minutter på å justere skrifttypen. Den hvis beste ideer dukker opp klokken 2 om natten og fort blir borte. Den med fjorten faner, seks notatbøker og et utkast som ikke har beveget seg på en måned.",
+    "paragraph2Before": "Jeg vet det, for det er meg ",
+    "paragraph2After": ". Jeg har ADHD, autisme og sannsynligvis andre -ismer som ennå ikke er diagnostisert. Jeg trenger noe som forstår min kaotiske men vidunderlige hjerne. Et sted å dumpe alt før det forsvinner (eller begynne å skrive). Fragmentene, halvtankene, forbindelsene klokken 3 om natten. Alt, på ett sted.",
+    "paragraph3": "Så jeg bygde dette rommet for oss. Jeg håper det gir deg samme dopaminkick som det gir meg å bygge det.",
+    "paragraph4Before": "Én ting til... Jeg tror på teknologi for det gode og hater reklame. Så dette vil alltid være reklamefritt og GRATIS til ikke-kommersiell bruk. Du kan forke det og endre det som du vil under ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Status",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — det er ingen datasynkronisering. Alle data lagres i IndexedDB i den lokale nettleseren. Sletter du nettleserens hurtigbuffer, vil arbeidet gå tapt.",
+    "feedbackBefore": "Jeg bygger fortsatt på dette og har mange ideer ",
+    "feedbackAfter": ". Jeg vil gjerne høre hva som fungerer, hva som ikke gjør det, og hva du savner. Tilbakemeldinger er velkomne.",
+    "sourceLabel": "Kildekode"
+  },
+  "settings": {
+    "back": "tilbake",
+    "windowTitle": "lotem · innstillinger",
+    "breadcrumb": "UNIVERSELLE INNSTILLINGER",
+    "shellSubtitle": "UNIVERSELLE INNSTILLINGER",
+    "comingSoonBadge": "kommer snart",
+    "helpAria": "Hva er dette?",
+    "groups": {
+      "preferences": "Preferanser",
+      "writing": "Skriving",
+      "data": "Data",
+      "account": "Konto"
+    },
+    "tabs": {
+      "general": "Generelt",
+      "appearance": "Utseende",
+      "editor": "Redigeringsprogram",
+      "docInspector": "Dokumentinspektor",
+      "accessibility": "Tilgjengelighet",
+      "typography": "Typografi",
+      "shortcuts": "Tastatur",
+      "templates": "Maler",
+      "palettes": "Uthevingspaletter",
+      "citations": "Siteringsstil",
+      "annotation": "Merknader",
+      "backups": "Sikkerhetskopier",
+      "sync": "Synkronisering",
+      "export": "Eksport / import",
+      "data": "Dine data",
+      "account": "Konto",
+      "about": "Om",
+      "language": "Språk"
+    },
+    "language": {
+      "title": "Språk",
+      "subtitle": "Velg språk for grensesnittet og Hjelpesenter-artikler. Manglende oversettelser faller tilbake til engelsk.",
+      "label": "Grensesnittspråk",
+      "hint": "Endringer trer i kraft umiddelbart og lagres i denne nettleseren.",
+      "machineTranslationNotice": "Oversettelser utover engelsk produseres automatisk. Vi beklager eventuelle feil — send gjerne tilbakemelding slik at vi kan rette dem.",
+      "feedbackLinkLabel": "send tilbakemelding"
+    },
+    "editor": {
+      "title": "Redigeringsprogram",
+      "subtitle": "Verktøylinje og skrivehjelpemidler. Markdown-snarveier (#, >, -, **) fungerer uavhengig av disse innstillingene.",
+      "floatingToolbarLabel": "Flytende verktøylinje",
+      "floatingToolbarHint": "Vises ved uthevning eller høyreklikk i skrivetilstand.",
+      "floatingToolbarOff": "Av",
+      "floatingToolbarOn": "På",
+      "rightClickLabel": "Høyreklikksmeny",
+      "rightClickHint": "Bytt mellom den flytende verktøylinjen og nettleserens native kontekstmeny.",
+      "rightClickTooltip": "Bruk den native kontekstmenyen ved høyreklikk i stedet for den flytende verktøylinjen. Verktøylinjen vises fortsatt ved tekstuthevning.",
+      "inlineTogglesLabel": "Inline-knapper",
+      "inlineTogglesHint": "Fet og kursiv-knapper i den flytende verktøylinjen.",
+      "inlineTogglesTooltip": "Skjul F- og K-knappene fra den flytende verktøylinjen. Markdown-snarveier (**, _) fungerer fortsatt.",
+      "listDepthLabel": "Listehakkingsdybde",
+      "listDepthHint": "Hvor dypt punkt- og nummererte lister kan hakkes.",
+      "listDepthTooltip": "Hev eller senk taket på listehakking. For øyeblikket fast på 2 nivåer.",
+      "templateDefaultsLabel": "Standardinnstillinger per mal",
+      "templateDefaultsHint": "Ulike formateringsundersett per mal.",
+      "templateDefaultsTooltip": "La hver mal (fiksjon, dagbok, teknisk…) velge sitt eget formateringsundersett."
+    },
+    "docInspector": {
+      "title": "Dokumentinspektor",
+      "subtitle": "Velg hvilke felter som vises i dokumentinspektoren. Hvert felt kan deaktiveres universelt og overstyres per rom.",
+      "statusLabel": "Status",
+      "statusHint": "Vis dokumentstatus og lås ferdigstilte dokumenter fra redigering.",
+      "wordLimitLabel": "Ordgrense",
+      "wordLimitHint": "Vis en ordtellergrense du kan sette per dokument.",
+      "charLimitLabel": "Tegngrense",
+      "charLimitHint": "Vis en tegntellergrense du kan sette per dokument.",
+      "dueDateLabel": "Forfallsdato",
+      "dueDateHint": "Vis en frist du kan sette per dokument.",
+      "highlightLabel": "Uthev tekst over grensen",
+      "highlightHint": "Merk all tekst som overskrider grensen i redigeringsprogrammet.",
+      "statusStagesLabel": "Statusfaser",
+      "statusStagesHint": "Velg hvilke faser som vises i statusvelgeren.",
+      "on": "På",
+      "off": "Av",
+      "inherit": "Standard ({{state}})",
+      "inheritTooltip": "Arvet fra universelle innstillinger",
+      "stateOn": "på",
+      "stateOff": "av"
+    },
+    "accessibility": {
+      "title": "Tilgjengelighet",
+      "subtitle": "Tilpass grensesnittet for komfort og hjelpeteknologi. Hvert alternativ starter ved den gjeldende opplevelsen — ingenting endres før du velger det.",
+      "theme": {
+        "label": "Tema og kontrast",
+        "hint": "Høykontrasttemaer oppfyller WCAG AAA-kontraststandarden.",
+        "light": "Lys",
+        "dark": "Mørk",
+        "hcLight": "Høy kontrast (lys)",
+        "hcDark": "Høy kontrast (mørk)"
+      },
+      "motion": {
+        "label": "Bevegelse",
+        "hint": "Reduser eller deaktiver grensesnittanimasjoner.",
+        "auto": "Følg system",
+        "reduced": "Redusert",
+        "full": "Full"
+      },
+      "textSize": {
+        "label": "Tekststørrelse",
+        "hint": "Skaler lese- og skriveflaten.",
+        "sm": "Liten",
+        "base": "Standard",
+        "lg": "Stor",
+        "xl": "Ekstra stor"
+      },
+      "lineSpacing": {
+        "label": "Linjeavstand",
+        "hint": "Legg til pusterom mellom tekstlinjer.",
+        "normal": "Normal",
+        "relaxed": "Avslappet",
+        "loose": "Løs"
+      },
+      "linkUnderline": {
+        "label": "Understrek alltid lenker",
+        "hint": "Vis understreker slik at lenker ikke bare er avhengige av farge."
+      },
+      "focus": {
+        "label": "Forbedret fokusindikator",
+        "hint": "Bruk en tykkere, høykontrastkontur ved fokus."
+      },
+      "reset": {
+        "label": "Tilbakestill til standarder",
+        "hint": "Gjenopprett bevegelse, tekststørrelse, linjeavstand, lenker og fokus til standardverdiene. Temaet ditt endres ikke.",
+        "action": "Tilbakestill"
+      }
+    },
+    "general": {
+      "title": "Generelt",
+      "subtitle": "Slik vises LIpsum Writer som standard. Ingenting av dette er destruktivt.",
+      "comingSoonBody": "Kompakt tetthet, reduser bevegelse, synlighet av tastaturtips og hvilken visning som åpnes ved oppstart.",
+      "compactDensityLabel": "Kompakt tetthet",
+      "compactDensityHint": "Tettere rader i lister, strammere polstring overalt.",
+      "reduceMotionLabel": "Reduser bevegelse",
+      "reduceMotionHint": "Hopp over animerte overganger mellom visninger.",
+      "keyboardHintsLabel": "Vis tastaturtips",
+      "keyboardHintsHint": "Vis ⌘-tastatursnarveier i verktøytips og i hjørnene av knapper.",
+      "startupLabel": "Åpne ved oppstart",
+      "startupHint": "Hva du ser når du starter appen.",
+      "startupOptions": {
+        "lastView": "Siste visning",
+        "home": "Hjem",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Utseende",
+      "subtitle": "Farge, type, tetthet. Stemningen du vil sette.",
+      "comingSoonBody": "Kuratorerte temapaletter, aksentfarge og tetthet. Dagens temaknapp finnes i verdensrailens hurtiginnstillinger.",
+      "themeLabel": "Tema",
+      "themeHint": "Tre kuratorerte paletter. De justerer alt — blokkarger, hårlinjer, til og med kornet.",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "standard",
+        "studio": "Studio",
+        "studioSub": "nøytral",
+        "midnight": "Midnight",
+        "midnightSub": "mørk"
+      },
+      "accentLabel": "Aksent",
+      "accentHint": "Brukes for hover, fokus, aktiv redigeringsring.",
+      "densityLabel": "Tetthet",
+      "densityOptions": {
+        "cozy": "Koselig",
+        "default": "Standard",
+        "compact": "Kompakt"
+      }
+    },
+    "templates": {
+      "title": "Maler",
+      "subtitle": "Gjenbrukbare strukturer for nye rom og dokumenter.",
+      "comingSoonBody": "Lag dine egne maler med seksjoner, standard dokumentnavn og teksteksempler.",
+      "items": {
+        "fiction": "Fiksjon",
+        "fictionSub": "Manuskript · Verden · Verksted",
+        "research": "Forskning",
+        "researchSub": "Kilder · Notater · Utkast",
+        "journal": "Dagbok",
+        "journalSub": "Daglig · Ukentlig · Refleksjoner",
+        "essay": "Essay",
+        "essaySub": "Disposisjon · Utkast · Ferdig"
+      }
+    },
+    "palettes": {
+      "title": "Uthevingspaletter",
+      "subtitle": "Paletter med fem plasser per rom — gi navn til og juster hver farge.",
+      "comingSoonBody": "Rediger, lagre og bytt navngitte uthevingspaletter (Bevis, Til revisjon, Referanse…) på tvers av rom.",
+      "items": {
+        "evidence": "Bevis",
+        "revise": "Til revisjon",
+        "reference": "Referanse",
+        "quote": "Sitat",
+        "loose": "Løs tråd"
+      },
+      "rename": "gi nytt navn",
+      "tune": "juster"
+    },
+    "citations": {
+      "title": "Siteringsstil",
+      "subtitle": "Standard siteringsstil på tvers av rom.",
+      "comingSoonBody": "Velg en universell stil (Chicago, APA, MLA…) med overstyring per rom.",
+      "styleLabel": "Standardstil",
+      "styleHint": "Brukes ved innsetting av en ny sitering. Overstyringer per rom kommer senere.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Merknader",
+      "subtitle": "Margmerknader og inline-merknader.",
+      "comingSoonBody": "Merknadstyper, standardsynlighet og eksportatferd.",
+      "showMarginLabel": "Vis margmerknader",
+      "showMarginHint": "Merknader flyter i høyre marg når det er plass.",
+      "showInlineLabel": "Vis inline-uthevinger",
+      "showInlineHint": "Merknadsfarge flyter over i den underliggende teksten.",
+      "exportLabel": "Inkluder i eksporter",
+      "exportHint": "Merknader skrives ut ved siden av dokumentteksten."
+    },
+    "export": {
+      "title": "Eksport / import",
+      "subtitle": "Flytt data inn og ut av LIpsum Writer.",
+      "comingSoonBody": "Masseeksport til .zip, import fra et annet LIpsum-bundt eller Markdown-mappe.",
+      "formatLabel": "Eksportformat",
+      "formatHint": "Eksporter per dokument og per rom bruker samme standard.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Importer fra",
+      "importHint": "Hent inn et annet LIpsum-bundt eller en mappe med Markdown-filer.",
+      "importOptions": {
+        "bundle": "LIpsum-bundt (.zip)",
+        "markdown": "Markdown-mappe",
+        "obsidian": "Obsidian-vault"
+      },
+      "importSpaceLabel": "Importer et rom",
+      "importSpaceHint": "Hent et rom inn i denne nettleseren fra et Writer-arkiv (.zip) — et nedlastet øyeblikksbilde eller en mappesynkroniseringseksport fra en annen enhet.",
+      "importChooseFile": "Velg arkiv…",
+      "importing": "importerer…",
+      "importFailed": "Import mislyktes: {{message}}",
+      "comingSoonLabel": "Flere formater",
+      "comingSoonHint": "Masseeksport og -import fra Markdown-mapper eller Obsidian-vaults.",
+      "comingSoonTooltip": "Planlagt — ikke tilgjengelig ennå."
+    },
+    "data": {
+      "title": "Dine data",
+      "subtitle": "Hvor arbeidet ditt bor og hvor mye plass det tar.",
+      "comingSoonBody": "IndexedDB-bruk, lagringsestimat og ett-klikks fullstendig sletting.",
+      "storageLabel": "Lagring brukt",
+      "storageValue": "≈ 12,4 MB · 4 rom, 38 dokumenter",
+      "engineLabel": "Lagringsmotor",
+      "engineValue": "IndexedDB (lokal nettleser)",
+      "wipeLabel": "Slett alt",
+      "wipeHint": "Fjerner hvert rom, dokument og øyeblikksbilde fra denne nettleseren. Dette kan ikke angres.",
+      "wipeButton": "Slett lokale data…"
+    },
+    "about": {
+      "title": "Om",
+      "subtitle": "Byggeinfo og lenker.",
+      "comingSoonBody": "Se /about-siden for historien; denne fanen vil vise byggeinfo, lisens og endringslogg.",
+      "versionLabel": "Versjon",
+      "versionValue": "{{version}}",
+      "buildLabel": "Bygg",
+      "buildValue": "lokal",
+      "licenseLabel": "Lisens",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Lenker",
+      "links": {
+        "source": "Kildekode",
+        "changelog": "Endringslogg",
+        "feedback": "Send tilbakemelding"
+      }
+    },
+    "account": {
+      "title": "Konto",
+      "subtitle": "Innlogging, synkronisering på tvers av enheter og delte arbeidsrom.",
+      "comingSoonBody": "Skysynkronisering er ikke tilgjengelig i dag — Lotem er kun lokal. Konto, innlogging og delte arbeidsrom kommer når synkronisering lanseres.",
+      "signedOutLabel": "Logg inn",
+      "signedOutHint": "Skysynkronisering er ikke tilgjengelig ennå. Dette er her for å vise designet.",
+      "signInButton": "Logg inn med e-post",
+      "syncLabel": "Synkroniser denne enheten",
+      "syncHint": "Når du logger inn, replikeres rommene dine til andre enheter."
+    },
+    "typography": {
+      "title": "Typografi",
+      "subtitle": "Standarder for alle verdener. Individuelle verdener kan overstyre.",
+      "comingSoonBody": "Velg prosasskrifttype, UI-skrifttype, standard lesestørrelse, linjehøyde og mål for nye verdener.",
+      "proseFontLabel": "Prosasskrifttype",
+      "uiFontLabel": "UI-skrifttype",
+      "proseSizeLabel": "Prosastørrelse",
+      "proseSizeHint": "Standard for nye verdener.",
+      "lineHeightLabel": "Linjehøyde",
+      "measureLabel": "Mål",
+      "measureHint": "Maksimal linjebredde.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Snarveier",
+      "subtitle": "Tastaturbindinger for navigasjon, formatering og moduser.",
+      "comingSoonBody": "Omkonfigurerbare snarveier for skriv/les/delt, fokusmodus og formateringsverktøylinje.",
+      "navHeader": "Navigasjon",
+      "formatHeader": "Formatering",
+      "modeHeader": "Moduser",
+      "items": {
+        "openSettings": "Åpne innstillinger",
+        "quickSettings": "Hurtiginnstillinger",
+        "findInDoc": "Finn i dokument",
+        "toggleFocus": "Slå fokus av/på",
+        "toggleInspector": "Slå inspektor av/på",
+        "bold": "Fet",
+        "italic": "Kursiv",
+        "underline": "Understreking",
+        "heading1": "Overskrift 1",
+        "heading2": "Overskrift 2",
+        "write": "Skrivetilstand",
+        "read": "Lesetilstand",
+        "split": "Delt tilstand"
+      }
+    },
+    "backups": {
+      "title": "Sikkerhetskopier",
+      "subtitle": "Eksporter, gjenopprett og ta øyeblikksbilder av de lokale dataene dine.",
+      "comingSoonBody": "Planlagte lokale øyeblikksbilder, manuell eksport til .zip og gjenoppretting fra en tidligere sikkerhetskopi.",
+      "intervalLabel": "Intervall for automatiske øyeblikksbilder",
+      "intervalOptions": {
+        "5min": "5 min",
+        "10min": "10 min",
+        "30min": "30 min",
+        "off": "Av"
+      },
+      "keepLabel": "Behold",
+      "keepHint": "Eldre øyeblikksbilder rulles av automatisk.",
+      "keepOptions": {
+        "last50": "Siste 50",
+        "days7": "7 dager",
+        "days30": "30 dager"
+      },
+      "latestLabel": "Nyeste",
+      "latestValue": "for 12 min siden · 1 190 ord"
+    },
+    "sync": {
+      "title": "Synkronisering",
+      "subtitle": "Send rommene dine til en mappe du velger. Pek den mot en Google Drive-, Dropbox- eller iCloud-mappe for å synkronisere på tvers av enheter.",
+      "unsupportedTitle": "Ikke tilgjengelig i denne nettleseren",
+      "unsupportedBody": "Mappesynkronisering krever File System Access API, som er tilgjengelig i Chrome, Edge og andre Chromium-nettlesere på skrivebord. Bytt til en støttet nettleser for å bruke det.",
+      "folderLabel": "Synkronisert mappe",
+      "folderHint": "Hver synkronisering skriver en Markdown .zip per rom her og beholder de siste 5 pluss en latest.zip. Synkronisering er atskilt fra sikkerhetskopier.",
+      "noFolder": "Ingen mappe tilkoblet",
+      "chooseFolder": "Velg mappe…",
+      "changeFolder": "Endre…",
+      "disconnect": "Koble fra",
+      "intervalLabel": "Automatisk synkronisering",
+      "intervalHint": "Hvor ofte rom synkroniseres automatisk mens appen er åpen og mappen er tilkoblet. Hvert rom kan overstyre denne standarden.",
+      "intervalOff": "Av",
+      "intervalMinutes": "{{count}} min",
+      "intervalDefault": "Standard ({{label}})",
+      "syncLabel": "Manuell synkronisering",
+      "pushOnlyHint": "Bare push for nå — dette skriver lokale data til mappen. Henting av endringer kommer senere.",
+      "syncNow": "Synkroniser nå",
+      "syncNowAll": "Synkroniser alle rom",
+      "reconnectHint": "Synkronisering er satt på pause — nettleseren trenger mapperettigheter igjen for denne sesjonen. Koble til på nytt for å gjenoppta manuell og automatisk synkronisering.",
+      "reconnectButton": "Koble til igjen",
+      "reconnecting": "Kobler til igjen…",
+      "syncing": "Synkroniserer…",
+      "syncFailed": "Synkronisering mislyktes: {{message}}",
+      "lastSynced": "Sist synkronisert {{when}}",
+      "neverSynced": "Aldri synkronisert",
+      "justNow": "akkurat nå",
+      "resultsTitle": "Siste kjøring",
+      "spaceOk": "synkronisert",
+      "spaceFailed": "mislyktes",
+      "historyTitle": "Nylige synkroniseringer",
+      "historyEmpty": "Ingen synkroniseringer ennå.",
+      "columns": {
+        "when": "NÅR",
+        "space": "ROM",
+        "kind": "TYPE",
+        "size": "STØRRELSE",
+        "status": "STATUS"
+      },
+      "kind": {
+        "auto": "auto",
+        "manual": "manuell"
+      },
+      "status": {
+        "ok": "ok",
+        "error": "feil"
+      }
+    },
+    "space": {
+      "breadcrumb": "ROM · INNSTILLINGER",
+      "shellSubtitle": "ROMINNSTILLINGER",
+      "loading": "Laster rom…",
+      "groups": {
+        "thisSpace": "Dette rommet",
+        "sharingMembers": "Deling og medlemmer",
+        "data": "Data",
+        "dangerZone": "Fare"
+      },
+      "tabs": {
+        "general": "Generelt",
+        "docInspector": "Dokumentinspektor",
+        "template": "Mal",
+        "palette": "Uthevingspalett",
+        "sharing": "Deling",
+        "members": "Medlemmer",
+        "backups": "Sikkerhetskopier",
+        "sync": "Synkronisering",
+        "export": "Eksport",
+        "danger": "Faresone"
+      },
+      "docInspector": {
+        "title": "Dokumentinspektor",
+        "subtitle": "Overstyr de universelle inspektorinnstillingene for dette rommet."
+      },
+      "palette": {
+        "title": "Uthevingspalett",
+        "subtitle": "Fem navngitte, justerbare uthevingsfarger for dette rommet.",
+        "comingSoonBody": "Gi nytt navn til, endre farge på og reordner uthevingsplassene i dette rommet.",
+        "items": {
+          "evidence": "Bevis",
+          "revise": "Til revisjon",
+          "reference": "Referanse",
+          "quote": "Sitat",
+          "loose": "Løs tråd"
+        },
+        "rename": "gi nytt navn",
+        "tune": "juster"
+      },
+      "export": {
+        "title": "Eksport",
+        "subtitle": "Flytt innholdet i dette rommet til et annet verktøy.",
+        "comingSoonBody": "Eksporter til Markdown .zip (i dag via Sikkerhetskopier), LaTeX, HTML eller PDF — alt på ett sted.",
+        "formatLabel": "Format",
+        "formatHint": "Markdown kommer først; resten følger.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Siste eksport",
+        "lastValue": "aldri"
+      },
+      "general": {
+        "title": "Generelt",
+        "subtitle": "Identifiserende detaljer for dette rommet. Endringer trer i kraft umiddelbart og synkroniseres på tvers av visninger.",
+        "nameLabel": "Romnavn",
+        "nameHint": "Vises i sidefelts overskrift og i rommets rail-verktøytips.",
+        "tagLabel": "Kode",
+        "tagHint": "En kort kode (2–4 tegn) vist på rommets rail-flis."
+      },
+      "sharing": {
+        "title": "Deling",
+        "subtitle": "Kontroller hvordan dette rommet deles.",
+        "comingSoonBody": "Synlighet per rom og delbare lenker. Kommer når skysynkronisering lanseres.",
+        "visibilityLabel": "Synlighet",
+        "visibilityOptions": {
+          "private": "Privat",
+          "link": "Alle med lenke",
+          "members": "Bare medlemmer"
+        },
+        "linkLabel": "Delbar lenke",
+        "linkHint": "Skrivebeskyttet som standard. Redigeringsrettigheter følger Medlemmer.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "kopier"
+      },
+      "template": {
+        "title": "Mal",
+        "subtitle": "Den strukturelle malen dette rommet ble opprettet med.",
+        "comingSoonBody": "Endring av et roms mal etter opprettelse støttes ikke ennå. Kommer når vi kan migrere seksjoner og dokumenter på en trygg måte.",
+        "currentLabel": "Gjeldende mal",
+        "currentValue": "Fiksjon",
+        "currentSub": "Manuskript · Verden · Verksted",
+        "changeLabel": "Endre mal",
+        "changeHint": "Omstrukturerer eksisterende seksjoner og dokumenter til den nye malen.",
+        "changeButton": "Endre mal…"
+      },
+      "members": {
+        "title": "Medlemmer",
+        "subtitle": "Medforfattere og korrekturlesere med tilgang til dette rommet.",
+        "comingSoonBody": "Inviter samarbeidspartnere, administrer roller og gjennomgå endringer. Kommer med skysynkronisering.",
+        "inviteLabel": "Inviter via e-post",
+        "inviteHint": "Vi sender dem en lenke for å bli med i dette rommet.",
+        "invitePlaceholder": "navn@eksempel.no",
+        "inviteButton": "send invitasjon",
+        "membersLabel": "Medlemmer",
+        "roles": {
+          "owner": "eier",
+          "editor": "redaktør",
+          "viewer": "leser"
+        },
+        "you": "deg"
+      },
+      "backups": {
+        "title": "Sikkerhetskopier",
+        "subtitle": "Ta et øyeblikksbilde av dette rommet som en .zip du kan laste ned, beholde og gjenopprette fra.",
+        "retentionHint": "Beholder de {{count}} nyeste øyeblikksbildene — eldre fjernes automatisk.",
+        "snapshotNow": "+ øyeblikksbilde nå",
+        "snapshotting": "tar øyeblikksbilde…",
+        "snapshotFailed": "Øyeblikksbilde mislyktes: {{message}}",
+        "historyTitle": "Historikk",
+        "empty": "Ingen øyeblikksbilder ennå — opprett ett med + øyeblikksbilde nå.",
+        "columns": {
+          "when": "NÅR",
+          "kind": "TYPE",
+          "size": "STØRRELSE",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "manuell",
+          "auto": "auto",
+          "snapshot": "øyeblikksbilde"
+        },
+        "download": "↓ last ned",
+        "delete": "slett",
+        "deleteConfirm": "Slett dette øyeblikksbildet? Dette kan ikke angres.",
+        "deleted": "Øyeblikksbilde slettet.",
+        "justNow": "akkurat nå",
+        "restore": "↺ gjenopprett",
+        "restoreUnavailable": "Dette øyeblikksbildet er fra før gjenopprettingsstøtte — det kan bare lastes ned.",
+        "restoreDialogTitle": "Gjenopprett dette øyeblikksbildet?",
+        "restoreDialogBody": "Det gjeldende innholdet i dette rommet vil bli erstattet med øyeblikksbildet. Et øyeblikksbilde av den gjeldende tilstanden lagres først, slik at du kan angre denne gjenoppretting.",
+        "restoreConfirm": "Gjenopprett",
+        "restoreCancel": "Avbryt",
+        "restoring": "gjenoppretter…",
+        "restored": "Øyeblikksbilde gjenopprettet.",
+        "restoreFailed": "Gjenoppretting mislyktes: {{message}}",
+        "fileRestoreTitle": "Gjenoppretter fra en nedlastet .zip?",
+        "fileRestoreBody": "Importer den via Universelle innstillinger → Eksport / import — den kommer tilbake som et nytt rom og lar dette være urørt."
+      },
+      "sync": {
+        "title": "Synkronisering",
+        "subtitle": "Send dette rommet til den tilkoblede mappen, manuelt eller etter en tidsplan. Synkronisering er atskilt fra sikkerhetskopier.",
+        "folderHint": "Koble til en mappe i Universelle innstillinger → Synkronisering. Den samme mappen brukes for hvert rom.",
+        "intervalHint": "Hvor ofte dette rommet synkroniseres automatisk. Velg Standard for å følge den universelle automatiske synkroniseringsinnstillingen.",
+        "syncNow": "Synkroniser dette rommet"
+      },
+      "danger": {
+        "title": "Faresone",
+        "subtitle": "Irreversible handlinger. Les nøye før du fortsetter.",
+        "deleteCardTitle": "Slett dette rommet",
+        "deleteCardBody": "Fjerner permanent dette rommet sammen med hvert dokument, seksjon, Brain space-notat, merknad, sitering og forbindelse. Dette kan ikke angres.",
+        "deleteButton": "Slett dette rommet",
+        "dialogTitle": "Slett «{{name}}»?",
+        "dialogBody": "Dette fjerner permanent rommet og alt innholdet. Dette kan ikke angres.",
+        "typeToConfirm": "Skriv {{name}} for å bekrefte",
+        "cancel": "Avbryt",
+        "confirm": "Slett rom"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Fortapt i margen",
+    "body": "Den siden eksisterer ikke (ennå).",
+    "goHome": "Gå hjem"
+  },
+  "templates": {
+    "crumb": "01 — EN SLAGS ROM",
+    "headingMain": "Hva slags rom",
+    "headingAccent": "starter du?",
+    "chooseLegend": "Velg en mal",
+    "stage": {
+      "pre-alpha": "eksperimentell",
+      "alpha": "tidlig",
+      "beta": "beta"
+    },
+    "nameLabel": "Navn",
+    "tagLabel": "Kode",
+    "syncLabel": "skysynkronisering —",
+    "syncValue": "av, lokal",
+    "syncTooltip": "Skysynkronisering er ikke tilgjengelig — denne appen er kun lokal for nå.",
+    "creating": "oppretter…",
+    "submitLabel": "gå inn i {{name}} →",
+    "newSpace": "nytt rom",
+    "back": "tilbake"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} usorterte",
+    "title": "Brain space",
+    "mobileWarning": "Brain space fungerer best på en større skjerm.",
+    "mobileNote": "Lerretet trenger en mus eller en pekeplate.",
+    "openInWrite": "Åpne i Skrivetilstand →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "begynn å dumpe",
+      "emptyHint": "velg en korttype nedenfor",
+      "pendingHint": "shift-klikk et annet notat for å koble til · esc for å avbryte"
+    },
+    "note": {
+      "deleteNote": "Slett notat",
+      "addPicture": "Legg til bilde",
+      "addPictureCta": "legg til et bilde",
+      "openLinkedDoc": "Åpne tilknyttet dokument",
+      "fetchedContent": "Hentet innhold",
+      "openDetailsLabel": "Åpne detaljer",
+      "openDetailsTitle": "Åpne detaljpanel",
+      "titlePlaceholder": "tittel",
+      "addTitleCta": "+ tittel",
+      "bodyEmpty": "(klikk for å skrive)",
+      "viewImage": "Vis {{name}}",
+      "removeImage": "Fjern {{name}}",
+      "resize": "Endre størrelse på notat",
+      "days": {
+        "sun": "søn",
+        "mon": "man",
+        "tue": "tir",
+        "wed": "ons",
+        "thu": "tor",
+        "fri": "fre",
+        "sat": "lør"
+      }
+    },
+    "drawer": {
+      "title": "Notatdetaljer",
+      "description": "Rediger det valgte notatet og administrer forbindelsene.",
+      "untitledPlaceholder": "Uten tittel",
+      "titleAriaLabel": "Notattittel",
+      "closeAriaLabel": "Lukk panel",
+      "bodyLabel": "Innhold",
+      "bodyPlaceholder": "Skriv noe…",
+      "picturesLabel": "Bilder",
+      "addPicture": "Legg til bilde",
+      "pictureLimitHint": "grense på {{count}} nådd — fjern ett for å legge til et annet.",
+      "linkedDocLabel": "Tilknyttet dokument",
+      "noLinkedDoc": "— Intet tilknyttet dokument —",
+      "untitledDoc": "Uten tittel",
+      "openDoc": "Åpne",
+      "connectionsHeading": "Forbindelser ({{count}})",
+      "connectionsEmpty": "shift-klikk et annet notat på lerretet for å koble til.",
+      "untitledNote": "(uten tittel)",
+      "removeConnection": "Fjern forbindelse",
+      "deleteNote": "Slett notat"
+    }
+  },
+  "split": {
+    "title": "Delt visning",
+    "mobileWarning": "Delt visning krever en større skjerm.",
+    "mobileNote": "Åpne dette dokumentet i Skrivetilstand i stedet.",
+    "openInWrite": "Åpne i Skrivetilstand →",
+    "leftPrefix": "VENSTRE —",
+    "rightPrefix": "HØYRE —",
+    "rightPaneAria": "Dokument i høyre rute",
+    "noOtherDocs": "(ingen andre dokumenter)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Siteringer",
+    "pickDoc": "Velg et dokument fra nedtrekksmenyen ovenfor.",
+    "dividerAria": "Endre størrelse på delte ruter"
+  },
+  "citationsDrawer": {
+    "title": "Siteringer",
+    "description": "Søk, importer og eksporter siteringer for dette rommet.",
+    "close": "Lukk siteringer",
+    "expand": "Åpne siteringer i fullvisning"
+  },
+  "citations": {
+    "title": "Siteringer",
+    "breadcrumb": "Kilder / ",
+    "entries": "{{count}} OPPFØRINGER",
+    "searchPlaceholder": "forfattere, koder, år…",
+    "upload": "↑ last opp .bib / .ris",
+    "add": "+ legg til",
+    "cancel": "× avbryt",
+    "columns": {
+      "tag": "KODE",
+      "authors": "FORFATTERE",
+      "title": "TITTEL",
+      "year": "ÅR",
+      "type": "TYPE",
+      "used": "BRUKT"
+    },
+    "style": "STIL — CHICAGO (FORFATTER-DATO)",
+    "exportBib": "EKSPORTER SOM .BIB",
+    "summary": "{{filtered}} VIST · {{shown}} PÅ DENNE SIDEN",
+    "prevPage": "Forrige side",
+    "nextPage": "Neste side",
+    "empty": "ingen siteringer ennå",
+    "noMatch": "ingen rader samsvarer med søket.",
+    "importHint": "importer en .bib eller legg til en manuelt.",
+    "pasteHeader": "Lim inn BibTeX eller en tittel",
+    "addCitation": "legg til sitering",
+    "manualCancel": "avbryt",
+    "adding": "legger til…",
+    "parsing": "Analyserer {{name}}…",
+    "imported": "Importerte {{added}} sitering{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", hoppet over {{skipped}} duplikat{{skippedPlural}}",
+    "skippedSuffixShort": ", hoppet over {{skipped}}",
+    "failed": "Parsing mislyktes: {{message}}",
+    "failedManual": "Mislyktes: {{message}}",
+    "addedOne": "La til 1 sitering.",
+    "unknownAuthor": "(ukjent)",
+    "unknownError": "ukjent feil",
+    "edit": {
+      "save": "lagre",
+      "saving": "lagrer…",
+      "cancel": "avbryt",
+      "delete": "slett",
+      "edit": "rediger",
+      "tagLabel": "Kode",
+      "authorsLabel": "Forfattere",
+      "titleLabel": "Tittel",
+      "yearLabel": "År",
+      "typeLabel": "Type",
+      "duplicateKey": "Koden «{{key}}» er allerede i bruk i dette rommet.",
+      "updated": "Oppdaterte 1 sitering.",
+      "deleteOne": "Slettet 1 sitering.",
+      "confirmDeleteUsed": "Denne siteringen brukes {{count}}× i dokumentene dine. Slett likevel?",
+      "confirmDeleteSingle": "Slett siteringen «{{key}}»? Dette kan ikke angres.",
+      "untitled": "(uten tittel)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} valgt",
+      "deleteSelected": "slett",
+      "setTypePrompt": "angi type",
+      "setTypeAria": "Angi type for valgte siteringer",
+      "chooseOption": "velg…",
+      "ariaLabel": "Massehandlinger",
+      "clearSelection": "fjern valg",
+      "deleted": "Slettet {{count}} siteringer.",
+      "typeApplied": "Angav type som {{type}} for {{count}} siteringer.",
+      "confirmDelete": "Slett {{count}} sitering(er)? Dette kan ikke angres."
+    },
+    "row": {
+      "selectAllAria": "Velg alle siteringer på denne siden",
+      "viewCitationAria": "Vis sitering {{key}}",
+      "selectCitationAria": "Velg sitering {{key}}",
+      "collapseCitationAria": "Skjul sitering {{key}}",
+      "usedCount": "{{count}}× brukt",
+      "unused": "ubrukt",
+      "copyTag": "Kopier kode",
+      "copyTagAria": "Kopier kode {{value}}",
+      "copiedTitle": "Kopiert",
+      "copiedTagAria": "Kopierte kode {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

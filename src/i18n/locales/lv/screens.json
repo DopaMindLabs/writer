@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Brīvās rakstīšanas multivisums",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Jūsu pirmā telpa ir tukša. Izvēlieties veidni, lai sāktu, vai sāciet no nulles.",
+    "tagline": "Kārtīga vide garu darbu rakstīšanai — daiļliteratūra, pētījumi, esejas, dienasgrāmatas.",
+    "continueWriting": "Turpināt rakstīt",
+    "startNewSpace": "Sākt jaunu telpu",
+    "syncOffChip": "sinhronizācija/dublējumi nav iespējoti · dati var tikt pazaudēti",
+    "syncOnChip": "mapes sinhronizācija ieslēgta",
+    "syncOnTitle": "Mapes sinhronizācija iespējota",
+    "syncOnBody": "Jūsu darbs tiek sinhronizēts ar mapi „{{folder}}" šajā ierīcē.",
+    "warningTitle": "Pirmspublicējuma versija",
+    "warningBody": "Nav datu sinhronizācijas. Viss tiek glabāts jūsu pārlūkprogrammā, un, notīrot tās kešatmiņu, jūsu darbs tiks pazaudēts. Varat iespējot sinhronizāciju ar vietējo mapi Universālajos iestatījumos → Sinhronizācija.",
+    "versionLine": "Versija {{version}}"
+  },
+  "about": {
+    "back": "atpakaļ",
+    "title": "par",
+    "greeting": "Sveiki,",
+    "paragraph1": "Tas ir paredzēts rakstnieks, kurš vienmēr sāk no jauna. Tam, kurš atver jaunu dokumentu, ieraksta trīs teikumus (vai nevienu), pēc tam pavada 40 minūtes, pielāgojot fontu. Tam, kura labākās idejas nāk pulksten 2 naktī un novērš uzmanību. Tam ar četrpadsmit cilnēm, sešām piezīmju grāmatiņām un melnrakstu, kas mēnesi nav kustējies.",
+    "paragraph2Before": "Es to zinu, jo tas esmu es ",
+    "paragraph2After": ". Man ir ADHD, autisms, iespējams, arī citi -ismi, kas vēl nav diagnosticēti. Man vajag kaut ko, kas saprot manu haotisko, bet brīnišķīgo prātu. Vietu, kur izgāzt visu, pirms tas pazūd (vai sākt rakstīt). Fragmentus, pusdomāšanu, pulksten 3 naktī radušās sakarības. Visu, vienā vietā.",
+    "paragraph3": "Tāpēc es izveidoju šo telpu mums. Ceru, ka tas dos jums dopamīna pieplūdumu tāpat kā man patīk to veidot.",
+    "paragraph4Before": "Vēl viena lieta... Es ticu tehnoloģijām labā nolūkā un ienīstu reklāmas. Tāpēc tas vienmēr būs bez reklāmām un BEZMAKSAS nekomerciālai lietošanai. Jūs varat to forkot un modificēt pēc savas vēlēšanās saskaņā ar ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Statuss",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — nav datu sinhronizācijas. Visi dati tiek glabāti IndexedDB jūsu vietējā pārlūkprogrammā. Ja notīrīsiet pārlūkprogrammas kešatmiņu, jūsu darbs tiks pazaudēts.",
+    "feedbackBefore": "Es joprojām veidoju šo un man ir daudz ideju ",
+    "feedbackAfter": ". Labprāt dzirdētu, kas strādā, kas ne, un ko jūs vēlētos. Atsauksmes ir laipni gaidītas.",
+    "sourceLabel": "Avots"
+  },
+  "settings": {
+    "back": "atpakaļ",
+    "windowTitle": "lotem · iestatījumi",
+    "breadcrumb": "UNIVERSĀLIE IESTATĪJUMI",
+    "shellSubtitle": "UNIVERSĀLIE IESTATĪJUMI",
+    "comingSoonBadge": "drīzumā",
+    "helpAria": "Kas tas ir?",
+    "groups": {
+      "preferences": "Preferences",
+      "writing": "Rakstīšana",
+      "data": "Dati",
+      "account": "Konts"
+    },
+    "tabs": {
+      "general": "Vispārīgi",
+      "appearance": "Izskats",
+      "editor": "Redaktors",
+      "docInspector": "Dok. inspektors",
+      "accessibility": "Pieejamība",
+      "typography": "Tipogrāfija",
+      "shortcuts": "Tastatūra",
+      "templates": "Veidnes",
+      "palettes": "Izcēlumu paletes",
+      "citations": "Citēšanas stils",
+      "annotation": "Anotācijas",
+      "backups": "Dublējumi",
+      "sync": "Sinhronizācija",
+      "export": "Eksports / imports",
+      "data": "Jūsu dati",
+      "account": "Konts",
+      "about": "Par",
+      "language": "Valoda"
+    },
+    "language": {
+      "title": "Valoda",
+      "subtitle": "Izvēlieties valodu saskarnei un Palīdzības centra rakstiem. Trūkstošie tulkojumi tiek aizstāti ar angļu valodu.",
+      "label": "Saskarnes valoda",
+      "hint": "Izmaiņas stājas spēkā uzreiz un tiek saglabātas šajā pārlūkprogrammā.",
+      "machineTranslationNotice": "Tulkojumi, izņemot angļu valodu, tiek veidoti automātiski. Atvainojamies par iespējamām kļūdām — lūdzu, nosūtiet atsauksmes, lai mēs varētu tās labot.",
+      "feedbackLinkLabel": "nosūtīt atsauksmi"
+    },
+    "editor": {
+      "title": "Redaktors",
+      "subtitle": "Rīkjosla un rakstīšanas funkcijas. Markdown īsinājumtaustiņi (#, >, -, **) darbojas neatkarīgi no šiem iestatījumiem.",
+      "floatingToolbarLabel": "Peldošā rīkjosla",
+      "floatingToolbarHint": "Parādās, izcēlot vai ar peles labo pogu klikšķinot rakstīšanas režīmā.",
+      "floatingToolbarOff": "Izslēgts",
+      "floatingToolbarOn": "Ieslēgts",
+      "rightClickLabel": "Labās pogas izvēlne",
+      "rightClickHint": "Pārslēdzieties starp peldošo rīkjoslu un pārlūkprogrammas iebūvēto konteksta izvēlni.",
+      "rightClickTooltip": "Izmantot pārlūkprogrammas konteksta izvēlni ar labo klikšķi, nevis peldošo rīkjoslu. Rīkjosla joprojām parādīsies izcēluma laikā.",
+      "inlineTogglesLabel": "Iekļautās pārslēgšanas pogas",
+      "inlineTogglesHint": "Treknraksta un slīpraksta pogas peldošajā rīkjoslā.",
+      "inlineTogglesTooltip": "Paslēpt B un I pogas no peldošās rīkjoslas. Markdown īsinājumtaustiņi (**, _) turpina darboties.",
+      "listDepthLabel": "Saraksta ligzdošanas dziļums",
+      "listDepthHint": "Cik dziļi var ligzdot aizzīmju un numurētos sarakstus.",
+      "listDepthTooltip": "Palielināt vai samazināt sarakstu ligzdošanas ierobežojumu. Pašlaik fiksēts pie 2 līmeņiem.",
+      "templateDefaultsLabel": "Noklusētās vērtības pēc veidnes",
+      "templateDefaultsHint": "Dažādi formatēšanas apakškopu katrai veidnei.",
+      "templateDefaultsTooltip": "Ļaut katrai veidnei (daiļliteratūra, dienasgrāmata, tehniskā…) izvēlēties savu formatēšanas apakškopu."
+    },
+    "docInspector": {
+      "title": "Dok. inspektors",
+      "subtitle": "Izvēlieties, kuri lauki parādās dokumentu inspektorā. Katru var izslēgt universāli un ignorēt katrai telpai.",
+      "statusLabel": "Statuss",
+      "statusHint": "Rādīt dokumenta statusu un bloķēt pabeigtos dokumentus no rediģēšanas.",
+      "wordLimitLabel": "Vārdu ierobežojums",
+      "wordLimitHint": "Rādīt vārdu skaita ierobežojumu, ko var iestatīt katram dokumentam.",
+      "charLimitLabel": "Rakstzīmju ierobežojums",
+      "charLimitHint": "Rādīt rakstzīmju skaita ierobežojumu, ko var iestatīt katram dokumentam.",
+      "dueDateLabel": "Izpildes termiņš",
+      "dueDateHint": "Rādīt termiņu, ko var iestatīt katram dokumentam.",
+      "highlightLabel": "Izcelt tekstu virs ierobežojuma",
+      "highlightHint": "Atzīmēt jebkuru tekstu, kas pārsniedz ierobežojumu, redaktorā.",
+      "statusStagesLabel": "Statusa posmi",
+      "statusStagesHint": "Izvēlieties, kuri posmi parādās statusa atlasītājā.",
+      "on": "Ieslēgts",
+      "off": "Izslēgts",
+      "inherit": "Noklusētais ({{state}})",
+      "inheritTooltip": "Mantots no universālajiem iestatījumiem",
+      "stateOn": "ieslēgts",
+      "stateOff": "izslēgts"
+    },
+    "accessibility": {
+      "title": "Pieejamība",
+      "subtitle": "Pielāgojiet saskarni ērtībai un palīgtehnoloģijām. Katra opcija sākas ar pašreizējo pieredzi — nekas nemainās, kamēr jūs to nevēlaties.",
+      "theme": {
+        "label": "Tēma un kontrasts",
+        "hint": "Augsta kontrasta tēmas atbilst WCAG AAA kontrasta standartam.",
+        "light": "Gaišs",
+        "dark": "Tumšs",
+        "hcLight": "Augsts kontrasts (gaišs)",
+        "hcDark": "Augsts kontrasts (tumšs)"
+      },
+      "motion": {
+        "label": "Animācija",
+        "hint": "Samazināt vai atspējot saskarnes animācijas.",
+        "auto": "Atbilstoši sistēmai",
+        "reduced": "Samazināts",
+        "full": "Pilns"
+      },
+      "textSize": {
+        "label": "Teksta izmērs",
+        "hint": "Mērogot lasīšanas un rakstīšanas virsmu.",
+        "sm": "Mazs",
+        "base": "Noklusētais",
+        "lg": "Liels",
+        "xl": "Ļoti liels"
+      },
+      "lineSpacing": {
+        "label": "Rindu atstarpe",
+        "hint": "Pievienot elpošanas telpu starp prozas rindām.",
+        "normal": "Normāla",
+        "relaxed": "Atpūtināta",
+        "loose": "Brīva"
+      },
+      "linkUnderline": {
+        "label": "Vienmēr pasvītrot saites",
+        "hint": "Rādīt pasvītrojumus, lai saites netiktu atšķirtas tikai pēc krāsas."
+      },
+      "focus": {
+        "label": "Uzlabots fokusa indikators",
+        "hint": "Izmantot biezāku, augstāka kontrasta kontūru fokusam."
+      },
+      "reset": {
+        "label": "Atiestatīt uz noklusētajiem",
+        "hint": "Atjaunot animāciju, teksta izmēru, rindu atstarpi, saites un fokusu uz noklusētajiem. Jūsu tēma paliek nemainīga.",
+        "action": "Atiestatīt"
+      }
+    },
+    "general": {
+      "title": "Vispārīgi",
+      "subtitle": "Kā LIpsum Writer izskatās pēc noklusējuma. Nekas šeit nav destruktīvs.",
+      "comingSoonBody": "Kompakts blīvums, samazināta animācija, tastatūras padomu redzamība un kurš skats atveras startēšanas laikā.",
+      "compactDensityLabel": "Kompakts blīvums",
+      "compactDensityHint": "Šaurākas rindas sarakstos, šaurākas atkāpes visur.",
+      "reduceMotionLabel": "Samazināt animāciju",
+      "reduceMotionHint": "Izlaist animētus pārejus starp skatiem.",
+      "keyboardHintsLabel": "Rādīt tastatūras padomus",
+      "keyboardHintsHint": "Attēlot ⌘-taustiņu īsinājumtaustiņus rādītājpārdēvēs un pogu stūros.",
+      "startupLabel": "Atvērt startēšanas laikā",
+      "startupHint": "Ko jūs redzat, palaižot lietotni.",
+      "startupOptions": {
+        "lastView": "Pēdējais skats",
+        "home": "Sākums",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Izskats",
+      "subtitle": "Krāsa, veids, blīvums. Noskaņa, kādu vēlaties radīt.",
+      "comingSoonBody": "Kurētās tēmu paletes, akcenta krāsa un blīvums. Šodienas tēmas pārslēgs ir pasaules sliedes ātrās iestatīšanas sadaļā.",
+      "themeLabel": "Tēma",
+      "themeHint": "Trīs kurētās paletes. Tās regulē visu — bloku krāsas, matiņus, pat graudainību.",
+      "themes": {
+        "linen": "Lins",
+        "linenSub": "noklusētais",
+        "studio": "Studija",
+        "studioSub": "neitrāls",
+        "midnight": "Pusnakts",
+        "midnightSub": "tumšs"
+      },
+      "accentLabel": "Akcents",
+      "accentHint": "Izmantots virzīšanai, fokusam, aktīvai rediģēšanas gredzena krāsai.",
+      "densityLabel": "Blīvums",
+      "densityOptions": {
+        "cozy": "Mājīgs",
+        "default": "Noklusētais",
+        "compact": "Kompakts"
+      }
+    },
+    "templates": {
+      "title": "Veidnes",
+      "subtitle": "Atkārtoti lietojami karkasi jaunām telpām un dokumentiem.",
+      "comingSoonBody": "Veidojiet savas veidnes ar sadaļām, noklusētajiem dokumentu nosaukumiem un prozas skicēm.",
+      "items": {
+        "fiction": "Daiļliteratūra",
+        "fictionSub": "Rokraksts · Pasaule · Darbnīca",
+        "research": "Pētījumi",
+        "researchSub": "Avoti · Piezīmes · Melnraksti",
+        "journal": "Dienasgrāmata",
+        "journalSub": "Ikdienas · Iknedēļas · Pārdomas",
+        "essay": "Eseja",
+        "essaySub": "Kontūra · Melnraksti · Galīgais"
+      }
+    },
+    "palettes": {
+      "title": "Izcēlumu paletes",
+      "subtitle": "Piecu slotu paletes katrai telpai — nosauciet un pielāgojiet katru krāsu.",
+      "comingSoonBody": "Rediģēt, saglabāt un pārslēgt nosauktās izcēlumu paletes (Pierādījumi, Pārskatīt, Atsauce…) telpās.",
+      "items": {
+        "evidence": "Pierādījumi",
+        "revise": "Pārskatīt",
+        "reference": "Atsauce",
+        "quote": "Citāts",
+        "loose": "Vaļīga nīte"
+      },
+      "rename": "pārsaukt",
+      "tune": "pielāgot"
+    },
+    "citations": {
+      "title": "Citēšanas stils",
+      "subtitle": "Noklusētais citēšanas stils visās telpās.",
+      "comingSoonBody": "Izvēlieties universālu stilu (Chicago, APA, MLA…) ar telpas līmeņa ignorēšanu.",
+      "styleLabel": "Noklusētais stils",
+      "styleHint": "Izmantots, ievietojot jaunu citātu. Ignorēšana pa telpām nāks vēlāk.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Anotācijas",
+      "subtitle": "Malās piezīmes un iekļautās anotācijas.",
+      "comingSoonBody": "Anotāciju veidi, noklusētā redzamība un eksporta uzvedība.",
+      "showMarginLabel": "Rādīt malās piezīmes",
+      "showMarginHint": "Anotācijas peld labajā piemalē, kad ir vieta.",
+      "showInlineLabel": "Rādīt iekļautu izcēlumu",
+      "showInlineHint": "Anotācijas krāsa iesūcas apakšējā prozā.",
+      "exportLabel": "Iekļaut eksportos",
+      "exportHint": "Anotācijas tiek rakstītas blakus dokumenta pamattekstam."
+    },
+    "export": {
+      "title": "Eksports / imports",
+      "subtitle": "Pārvietot datus iekšā un ārā no LIpsum Writer.",
+      "comingSoonBody": "Lielapjoma eksports uz .zip, imports no citas LIpsum pakotnes vai Markdown direktorija.",
+      "formatLabel": "Eksporta formāts",
+      "formatHint": "Dokumentu un telpu eksporti izmanto to pašu noklusēto.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Importēt no",
+      "importHint": "Ievest citu LIpsum pakotni vai Markdown failu direktoriju.",
+      "importOptions": {
+        "bundle": "LIpsum pakotne (.zip)",
+        "markdown": "Markdown mape",
+        "obsidian": "Obsidian vault"
+      },
+      "importSpaceLabel": "Importēt telpu",
+      "importSpaceHint": "Ievest telpu šajā pārlūkprogrammā no Writer arhīva (.zip) — momentuzņēmuma lejupielāde vai mapes sinhronizācijas eksports no citas ierīces.",
+      "importChooseFile": "Izvēlēties arhīvu…",
+      "importing": "importē…",
+      "importFailed": "Imports neizdevās: {{message}}",
+      "comingSoonLabel": "Vairāk formātu",
+      "comingSoonHint": "Lielapjoma eksports un imports no Markdown mapēm vai Obsidian vault.",
+      "comingSoonTooltip": "Plānots — vēl nav pieejams."
+    },
+    "data": {
+      "title": "Jūsu dati",
+      "subtitle": "Kur dzīvo jūsu darbs un cik vietas tas aizņem.",
+      "comingSoonBody": "IndexedDB lietojums, krātuves novērtējums un vienas klikšķa pilna dzēšana.",
+      "storageLabel": "Izmantotā krātuve",
+      "storageValue": "≈ 12.4 MB · 4 telpas, 38 dok.",
+      "engineLabel": "Krātuves dzinējs",
+      "engineValue": "IndexedDB (vietējā pārlūkprogramma)",
+      "wipeLabel": "Dzēst visu",
+      "wipeHint": "Noņem visas telpas, dokumentus un momentuzņēmumus no šīs pārlūkprogrammas. To nevar atsaukt.",
+      "wipeButton": "Dzēst vietējos datus…"
+    },
+    "about": {
+      "title": "Par",
+      "subtitle": "Versijas informācija un saites.",
+      "comingSoonBody": "Skatiet /about lapu stāstam; šī cilne saturēs versijas informāciju, licenci un izmaiņu žurnālu.",
+      "versionLabel": "Versija",
+      "versionValue": "{{version}}",
+      "buildLabel": "Versija",
+      "buildValue": "vietējā",
+      "licenseLabel": "Licence",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Saites",
+      "links": {
+        "source": "Avots",
+        "changelog": "Izmaiņu žurnāls",
+        "feedback": "Nosūtīt atsauksmi"
+      }
+    },
+    "account": {
+      "title": "Konts",
+      "subtitle": "Pieteikšanās, sinhronizācija starp ierīcēm un koplietotās darbvietas.",
+      "comingSoonBody": "Mākoņa sinhronizācija šodien nav pieejama — Lotem darbojas tikai lokāli. Konts, pieteikšanās un koplietotās darbvietas parādīsies, kad tiks ieviesta sinhronizācija.",
+      "signedOutLabel": "Pieteikties",
+      "signedOutHint": "Mākoņa sinhronizācija vēl nav pieejama. Tas šeit ir, lai parādītu dizainu.",
+      "signInButton": "Pieteikties ar e-pastu",
+      "syncLabel": "Sinhronizēt šo ierīci",
+      "syncHint": "Pēc pieteikšanās jūsu telpas tiks replicētas citās ierīcēs."
+    },
+    "typography": {
+      "title": "Tipogrāfija",
+      "subtitle": "Noklusētie visās pasaulēs. Atsevišķas pasaules var ignorēt.",
+      "comingSoonBody": "Izvēlieties prozas fontu, UI fontu, noklusēto lasīšanas izmēru, rindas augstumu un mēru jaunām pasaulēm.",
+      "proseFontLabel": "Prozas fonts",
+      "uiFontLabel": "UI fonts",
+      "proseSizeLabel": "Prozas izmērs",
+      "proseSizeHint": "Noklusētais jaunām pasaulēm.",
+      "lineHeightLabel": "Rindas augstums",
+      "measureLabel": "Mērs",
+      "measureHint": "Maksimālais rindas platums.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Īsinājumtaustiņi",
+      "subtitle": "Tastatūras saistījumi navigācijai, formatēšanai un režīmiem.",
+      "comingSoonBody": "Pārsaistāmi īsinājumtaustiņi rakstīšanas/lasīšanas/sadalīšanas, fokusa režīma un formatēšanas rīkjoslas funkcijām.",
+      "navHeader": "Navigācija",
+      "formatHeader": "Formatēšana",
+      "modeHeader": "Režīmi",
+      "items": {
+        "openSettings": "Atvērt iestatījumus",
+        "quickSettings": "Ātriestatījumi",
+        "findInDoc": "Meklēt dokumentā",
+        "toggleFocus": "Pārslēgt fokusu",
+        "toggleInspector": "Pārslēgt inspektoru",
+        "bold": "Treknraksts",
+        "italic": "Slīpraksts",
+        "underline": "Pasvītrots",
+        "heading1": "1. virsraksts",
+        "heading2": "2. virsraksts",
+        "write": "Rakstīšanas režīms",
+        "read": "Lasīšanas režīms",
+        "split": "Dalītais režīms"
+      }
+    },
+    "backups": {
+      "title": "Dublējumi",
+      "subtitle": "Eksportēt, atjaunot un momentuzņemt vietējos datus.",
+      "comingSoonBody": "Ieplānoti vietēji momentuzņēmumi, manuāls eksports uz .zip un atjaunošana no iepriekšēja dublējuma.",
+      "intervalLabel": "Automātisko momentuzņēmumu intervāls",
+      "intervalOptions": {
+        "5min": "5 min",
+        "10min": "10 min",
+        "30min": "30 min",
+        "off": "Izslēgts"
+      },
+      "keepLabel": "Saglabāt",
+      "keepHint": "Vecākie momentuzņēmumi automātiski tiek noņemti.",
+      "keepOptions": {
+        "last50": "Pēdējie 50",
+        "days7": "7 dienas",
+        "days30": "30 dienas"
+      },
+      "latestLabel": "Jaunākais",
+      "latestValue": "pirms 12 min · 1 190 vārdi"
+    },
+    "sync": {
+      "title": "Sinhronizācija",
+      "subtitle": "Nosūtiet telpas uz izvēlētu mapi. Norādiet uz Google Drive, Dropbox vai iCloud mapi, lai sinhronizētu starp ierīcēm.",
+      "unsupportedTitle": "Nav pieejams šajā pārlūkprogrammā",
+      "unsupportedBody": "Mapes sinhronizācijai nepieciešama File System Access API, kas pieejama Chrome, Edge un citos Chromium pārlūkprogrammās darbvirsmā. Pārslēdzieties uz atbalstītu pārlūkprogrammu, lai to izmantotu.",
+      "folderLabel": "Sinhronizētā mape",
+      "folderHint": "Katras sinhronizācijas laikā šeit tiek ierakstīts Markdown .zip katrai telpai, saglabājot pēdējos 5 un latest.zip. Sinhronizācija ir atdalīta no dublējumiem.",
+      "noFolder": "Nav pievienotas mapes",
+      "chooseFolder": "Izvēlēties mapi…",
+      "changeFolder": "Mainīt…",
+      "disconnect": "Atvienot",
+      "intervalLabel": "Automātiskā sinhronizācija",
+      "intervalHint": "Cik bieži telpas tiek sinhronizētas automātiski, kamēr lietotne ir atvērta un mape ir pievienota. Katra telpa var ignorēt šo noklusēto.",
+      "intervalOff": "Izslēgts",
+      "intervalMinutes": "{{count}} min",
+      "intervalDefault": "Noklusētais ({{label}})",
+      "syncLabel": "Manuālā sinhronizācija",
+      "pushOnlyHint": "Pagaidām tikai nosūtīšana — tas ieraksta jūsu vietējos datus mapē. Izmaiņu atvilkšana atpakaļ nāks vēlāk.",
+      "syncNow": "Sinhronizēt tagad",
+      "syncNowAll": "Sinhronizēt visas telpas",
+      "reconnectHint": "Sinhronizācija ir pauzēta — pārlūkprogrammai šai sesijai atkal nepieciešama mapes atļauja. Atkārtoti pievienojieties, lai atsāktu manuālo un automātisko sinhronizāciju.",
+      "reconnectButton": "Atkārtoti pievienoties",
+      "reconnecting": "Atkārtoti pievienojas…",
+      "syncing": "Sinhronizē…",
+      "syncFailed": "Sinhronizācija neizdevās: {{message}}",
+      "lastSynced": "Pēdējo reizi sinhronizēts {{when}}",
+      "neverSynced": "Nekad nav sinhronizēts",
+      "justNow": "tikko",
+      "resultsTitle": "Pēdējā izpilde",
+      "spaceOk": "sinhronizēts",
+      "spaceFailed": "neizdevās",
+      "historyTitle": "Nesenās sinhronizācijas",
+      "historyEmpty": "Sinhronizāciju vēl nav.",
+      "columns": {
+        "when": "KAD",
+        "space": "TELPA",
+        "kind": "VEIDS",
+        "size": "IZMĒRS",
+        "status": "STATUSS"
+      },
+      "kind": {
+        "auto": "automātisks",
+        "manual": "manuāls"
+      },
+      "status": {
+        "ok": "labi",
+        "error": "kļūda"
+      }
+    },
+    "space": {
+      "breadcrumb": "TELPA · IESTATĪJUMI",
+      "shellSubtitle": "TELPAS IESTATĪJUMI",
+      "loading": "Ielādē telpu…",
+      "groups": {
+        "thisSpace": "Šī telpa",
+        "sharingMembers": "Koplietošana un dalībnieki",
+        "data": "Dati",
+        "dangerZone": "Briesmas"
+      },
+      "tabs": {
+        "general": "Vispārīgi",
+        "docInspector": "Dok. inspektors",
+        "template": "Veidne",
+        "palette": "Izcēlumu palete",
+        "sharing": "Koplietošana",
+        "members": "Dalībnieki",
+        "backups": "Dublējumi",
+        "sync": "Sinhronizācija",
+        "export": "Eksports",
+        "danger": "Bīstamā zona"
+      },
+      "docInspector": {
+        "title": "Dok. inspektors",
+        "subtitle": "Ignorēt universālos inspektora iestatījumus šai telpai."
+      },
+      "palette": {
+        "title": "Izcēlumu palete",
+        "subtitle": "Piecas nosauktas, pielāgojamas izcēlumu krāsas šai telpai.",
+        "comingSoonBody": "Pārsaukt, pārkrāsot un pārkārtot šīs telpas izcēlumu slotus.",
+        "items": {
+          "evidence": "Pierādījumi",
+          "revise": "Pārskatīt",
+          "reference": "Atsauce",
+          "quote": "Citāts",
+          "loose": "Vaļīga nīte"
+        },
+        "rename": "pārsaukt",
+        "tune": "pielāgot"
+      },
+      "export": {
+        "title": "Eksports",
+        "subtitle": "Pārvietot šīs telpas saturu citā rīkā.",
+        "comingSoonBody": "Eksports uz Markdown .zip (šodien caur Dublējumiem), LaTeX, HTML vai PDF — viss vienā vietā.",
+        "formatLabel": "Formāts",
+        "formatHint": "Markdown ir pirmais; pārējie seko.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Pēdējais eksports",
+        "lastValue": "nekad"
+      },
+      "general": {
+        "title": "Vispārīgi",
+        "subtitle": "Identificējoša informācija par šo telpu. Izmaiņas stājas spēkā uzreiz un tiek sinhronizētas visos skatos.",
+        "nameLabel": "Telpas nosaukums",
+        "nameHint": "Rādīts sānjoslas galvenē un telpas sliedes rīka padomā.",
+        "tagLabel": "Birka",
+        "tagHint": "Īss kods (2–4 rakstzīmes), kas rādīts telpas sliedes flīzē."
+      },
+      "sharing": {
+        "title": "Koplietošana",
+        "subtitle": "Kontrolēt, kā tiek koplietota šī telpa.",
+        "comingSoonBody": "Telpas redzamība un koplietojamās saites. Parādīsies, kad tiks ieviesta mākoņa sinhronizācija.",
+        "visibilityLabel": "Redzamība",
+        "visibilityOptions": {
+          "private": "Privāts",
+          "link": "Ikviens ar saiti",
+          "members": "Tikai dalībnieki"
+        },
+        "linkLabel": "Koplietojamā saite",
+        "linkHint": "Noklusēti tikai lasīšanai. Rediģēšanas privilēģijas seko Dalībniekiem.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "kopēt"
+      },
+      "template": {
+        "title": "Veidne",
+        "subtitle": "Strukturālā veidne, ar kuru tika izveidota šī telpa.",
+        "comingSoonBody": "Telpas veidnes maiņa pēc izveides vēl netiek atbalstīta. Parādīsies, kad varēsim droši migrēt sadaļas un dokumentus.",
+        "currentLabel": "Pašreizējā veidne",
+        "currentValue": "Daiļliteratūra",
+        "currentSub": "Rokraksts · Pasaule · Darbnīca",
+        "changeLabel": "Mainīt veidni",
+        "changeHint": "Pārkārto esošās sadaļas un dokumentus jaunajai veidnei.",
+        "changeButton": "Mainīt veidni…"
+      },
+      "members": {
+        "title": "Dalībnieki",
+        "subtitle": "Līdzautori un recenzenti ar piekļuvi šai telpai.",
+        "comingSoonBody": "Uzaicināt sadarbības partnerus, pārvaldīt lomas un pārskatīt izmaiņas. Parādīsies ar mākoņa sinhronizāciju.",
+        "inviteLabel": "Uzaicināt pa e-pastu",
+        "inviteHint": "Nosūtīsim tiem saiti, lai pievienotos šai telpai.",
+        "invitePlaceholder": "vards@piemers.lv",
+        "inviteButton": "sūtīt uzaicinājumu",
+        "membersLabel": "Dalībnieki",
+        "roles": {
+          "owner": "īpašnieks",
+          "editor": "redaktors",
+          "viewer": "skatītājs"
+        },
+        "you": "jūs"
+      },
+      "backups": {
+        "title": "Dublējumi",
+        "subtitle": "Momentuzņēmt šo telpu kā .zip, ko varat lejupielādēt, saglabāt un atjaunot.",
+        "retentionHint": "Tiek saglabāti {{count}} jaunākie momentuzņēmumi — vecākie tiek automātiski noņemti.",
+        "snapshotNow": "+ momentuzņēmt tagad",
+        "snapshotting": "veic momentuzņēmumu…",
+        "snapshotFailed": "Momentuzņēmums neizdevās: {{message}}",
+        "historyTitle": "Vēsture",
+        "empty": "Momentuzņēmumu vēl nav — izveidojiet vienu ar + momentuzņēmt tagad.",
+        "columns": {
+          "when": "KAD",
+          "kind": "VEIDS",
+          "size": "IZMĒRS",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "manuāls",
+          "auto": "automātisks",
+          "snapshot": "momentuzņēmums"
+        },
+        "download": "↓ lejupielādēt",
+        "delete": "dzēst",
+        "deleteConfirm": "Dzēst šo momentuzņēmumu? To nevar atsaukt.",
+        "deleted": "Momentuzņēmums izdzēsts.",
+        "justNow": "tikko",
+        "restore": "↺ atjaunot",
+        "restoreUnavailable": "Šis momentuzņēmums ir vecāks par atjaunošanas atbalstu — to var tikai lejupielādēt.",
+        "restoreDialogTitle": "Atjaunot šo momentuzņēmumu?",
+        "restoreDialogBody": "Šīs telpas pašreizējais saturs tiks aizstāts ar momentuzņēmumu. Vispirms tiek saglabāts pašreizējā stāvokļa momentuzņēmums, lai jūs varētu atsaukt šo atjaunošanu.",
+        "restoreConfirm": "Atjaunot",
+        "restoreCancel": "Atcelt",
+        "restoring": "atjauno…",
+        "restored": "Momentuzņēmums atjaunots.",
+        "restoreFailed": "Atjaunošana neizdevās: {{message}}",
+        "fileRestoreTitle": "Atjaunojat no lejupielādēta .zip?",
+        "fileRestoreBody": "Importējiet to caur Universālajiem iestatījumiem → Eksports / imports — tas atgriežas kā jauna telpa, atstājot šo neskartu."
+      },
+      "sync": {
+        "title": "Sinhronizācija",
+        "subtitle": "Nosūtiet šo telpu uz pievienoto mapi, manuāli vai pēc grafika. Sinhronizācija ir atdalīta no dublējumiem.",
+        "folderHint": "Pievienojiet mapi Universālajos iestatījumos → Sinhronizācija. Tā pati mape tiek izmantota katrai telpai.",
+        "intervalHint": "Cik bieži šī telpa tiek sinhronizēta automātiski. Izvēlieties Noklusēto, lai sekotu universālajam automātiskās sinhronizācijas iestatījumam.",
+        "syncNow": "Sinhronizēt šo telpu"
+      },
+      "danger": {
+        "title": "Bīstamā zona",
+        "subtitle": "Neatgriezeniski pasākumi. Uzmanīgi izlasiet pirms turpināt.",
+        "deleteCardTitle": "Dzēst šo telpu",
+        "deleteCardBody": "Neatgriezeniski noņem šo telpu kopā ar katru dokumentu, sadaļu, Brain space piezīmi, anotāciju, citātu un savienojumu. To nevar atsaukt.",
+        "deleteButton": "Dzēst šo telpu",
+        "dialogTitle": "Dzēst „{{name}}"?",
+        "dialogBody": "Tas neatgriezeniski noņem telpu un visu tās saturu. To nevar atsaukt.",
+        "typeToConfirm": "Ierakstiet {{name}}, lai apstiprinātu",
+        "cancel": "Atcelt",
+        "confirm": "Dzēst telpu"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Pazudis piemalēs",
+    "body": "Šādas lapas nav (vēl).",
+    "goHome": "Doties uz sākumu"
+  },
+  "templates": {
+    "crumb": "01 — ISTABAS VEIDS",
+    "headingMain": "Kādu telpu",
+    "headingAccent": "jūs sākat?",
+    "chooseLegend": "Izvēlieties veidni",
+    "stage": {
+      "pre-alpha": "eksperimentāls",
+      "alpha": "agrīns",
+      "beta": "beta"
+    },
+    "nameLabel": "Nosaukums",
+    "tagLabel": "Birka",
+    "syncLabel": "mākoņa sinhronizācija —",
+    "syncValue": "izslēgts, vietējais",
+    "syncTooltip": "Mākoņa sinhronizācija nav pieejama — šī lietotne pagaidām darbojas tikai lokāli.",
+    "creating": "izveido…",
+    "submitLabel": "ieiet {{name}} →",
+    "newSpace": "jauna telpa",
+    "back": "atpakaļ"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} nešķirots",
+    "title": "Brain space",
+    "mobileWarning": "Brain space vislabāk darbojas lielākā ekrānā.",
+    "mobileNote": "Audeklam nepieciešama pele vai skārienpanelis.",
+    "openInWrite": "Atvērt rakstīšanā →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "sāciet izgāzt",
+      "emptyHint": "izvēlieties kartes veidu zemāk",
+      "pendingHint": "shift-klikšķiniet citu piezīmi, lai savienotu · esc, lai atceltu"
+    },
+    "note": {
+      "deleteNote": "Dzēst piezīmi",
+      "addPicture": "Pievienot attēlu",
+      "addPictureCta": "pievienot attēlu",
+      "openLinkedDoc": "Atvērt saistīto dokumentu",
+      "fetchedContent": "Iegūtais saturs",
+      "openDetailsLabel": "Atvērt detaļas",
+      "openDetailsTitle": "Atvērt detaļu paneli",
+      "titlePlaceholder": "virsraksts",
+      "addTitleCta": "+ virsraksts",
+      "bodyEmpty": "(klikšķiniet, lai rakstītu)",
+      "viewImage": "Skatīt {{name}}",
+      "removeImage": "Noņemt {{name}}",
+      "resize": "Mainīt piezīmes izmēru",
+      "days": {
+        "sun": "svt",
+        "mon": "pir",
+        "tue": "otr",
+        "wed": "tre",
+        "thu": "cet",
+        "fri": "pkt",
+        "sat": "ses"
+      }
+    },
+    "drawer": {
+      "title": "Piezīmes detaļas",
+      "description": "Rediģēt izvēlēto piezīmi un pārvaldīt tās savienojumus.",
+      "untitledPlaceholder": "Bez virsraksta",
+      "titleAriaLabel": "Piezīmes virsraksts",
+      "closeAriaLabel": "Aizvērt atvilktni",
+      "bodyLabel": "Pamatteksts",
+      "bodyPlaceholder": "Rakstiet kaut ko…",
+      "picturesLabel": "Attēli",
+      "addPicture": "Pievienot attēlu",
+      "pictureLimitHint": "sasniegts {{count}} ierobežojums — noņemiet vienu, lai pievienotu citu.",
+      "linkedDocLabel": "Saistītais dokuments",
+      "noLinkedDoc": "— Nav saistīta dok. —",
+      "untitledDoc": "Bez virsraksta",
+      "openDoc": "Atvērt",
+      "connectionsHeading": "Savienojumi ({{count}})",
+      "connectionsEmpty": "shift-klikšķiniet citu piezīmi audeklā, lai savienotu.",
+      "untitledNote": "(bez virsraksta)",
+      "removeConnection": "Noņemt savienojumu",
+      "deleteNote": "Dzēst piezīmi"
+    }
+  },
+  "split": {
+    "title": "Dalītais skats",
+    "mobileWarning": "Dalītajam skatam nepieciešams lielāks ekrāns.",
+    "mobileNote": "Tā vietā atveriet šo dokumentu rakstīšanas režīmā.",
+    "openInWrite": "Atvērt rakstīšanā →",
+    "leftPrefix": "KREISĀ —",
+    "rightPrefix": "LABĀ —",
+    "rightPaneAria": "Labās rūts dokuments",
+    "noOtherDocs": "(nav citu dok.)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Citāti",
+    "pickDoc": "Izvēlieties dokumentu no nolaižamās izvēlnes augstāk.",
+    "dividerAria": "Mainīt dalīto rūšu izmēru"
+  },
+  "citationsDrawer": {
+    "title": "Citāti",
+    "description": "Meklēt, importēt un eksportēt citātus šai telpai.",
+    "close": "Aizvērt citātus",
+    "expand": "Atvērt citātus pilnā skatā"
+  },
+  "citations": {
+    "title": "Citāti",
+    "breadcrumb": "Avoti / ",
+    "entries": "{{count}} IERAKSTI",
+    "searchPlaceholder": "autori, birkas, gads…",
+    "upload": "↑ augšupielādēt .bib / .ris",
+    "add": "+ pievienot",
+    "cancel": "× atcelt",
+    "columns": {
+      "tag": "BIRKA",
+      "authors": "AUTORI",
+      "title": "VIRSRAKSTS",
+      "year": "GADS",
+      "type": "VEIDS",
+      "used": "IZMANTOTS"
+    },
+    "style": "STILS — CHICAGO (AUTORS-DATUMS)",
+    "exportBib": "EKSPORTĒT KĀ .BIB",
+    "summary": "{{filtered}} RĀDĪTS · {{shown}} ŠAJā LAPĀ",
+    "prevPage": "Iepriekšējā lapa",
+    "nextPage": "Nākamā lapa",
+    "empty": "citātu vēl nav",
+    "noMatch": "neviena rinda neatbilst jūsu meklēšanai.",
+    "importHint": "importējiet .bib vai pievienojiet manuāli.",
+    "pasteHeader": "Ielīmēt BibTeX vai virsrakstu",
+    "addCitation": "pievienot citātu",
+    "manualCancel": "atcelt",
+    "adding": "pievieno…",
+    "parsing": "Parsē {{name}}…",
+    "imported": "Importēts {{added}} citāts(-i){{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", izlaists {{skipped}} dublikāts(-i){{skippedPlural}}",
+    "skippedSuffixShort": ", izlaists {{skipped}}",
+    "failed": "Neizdevās parsēt: {{message}}",
+    "failedManual": "Neizdevās: {{message}}",
+    "addedOne": "Pievienots 1 citāts.",
+    "unknownAuthor": "(nezināms)",
+    "unknownError": "nezināma kļūda",
+    "edit": {
+      "save": "saglabāt",
+      "saving": "saglabā…",
+      "cancel": "atcelt",
+      "delete": "dzēst",
+      "edit": "rediģēt",
+      "tagLabel": "Birka",
+      "authorsLabel": "Autori",
+      "titleLabel": "Virsraksts",
+      "yearLabel": "Gads",
+      "typeLabel": "Veids",
+      "duplicateKey": "Birka „{{key}}" jau tiek izmantota šajā telpā.",
+      "updated": "Atjaunināts 1 citāts.",
+      "deleteOne": "Izdzēsts 1 citāts.",
+      "confirmDeleteUsed": "Šis citāts tiek izmantots {{count}}× jūsu dokumentos. Tomēr dzēst?",
+      "confirmDeleteSingle": "Dzēst citātu „{{key}}"? To nevar atsaukt.",
+      "untitled": "(bez virsraksta)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} atlasīts",
+      "deleteSelected": "dzēst",
+      "setTypePrompt": "iestatīt veidu",
+      "setTypeAria": "Iestatīt veidu atlasītajiem citātiem",
+      "chooseOption": "izvēlēties…",
+      "ariaLabel": "Lielapjoma darbības",
+      "clearSelection": "notīrīt",
+      "deleted": "Izdzēsti {{count}} citāti.",
+      "typeApplied": "Veids iestatīts uz {{type}} {{count}} citātiem.",
+      "confirmDelete": "Dzēst {{count}} citātu(-s)? To nevar atsaukt."
+    },
+    "row": {
+      "selectAllAria": "Atlasīt visus citātus šajā lapā",
+      "viewCitationAria": "Skatīt citātu {{key}}",
+      "selectCitationAria": "Atlasīt citātu {{key}}",
+      "collapseCitationAria": "Sakļaut citātu {{key}}",
+      "usedCount": "{{count}}× izmantots",
+      "unused": "neizmantots",
+      "copyTag": "Kopēt birku",
+      "copyTagAria": "Kopēt birku {{value}}",
+      "copiedTitle": "Nokopēts",
+      "copiedTagAria": "Nokopēta birka {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}
