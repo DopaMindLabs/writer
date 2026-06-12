@@ -1,4 +1,5 @@
 import JSZip from 'jszip';
+import { invariant } from '@/lib/invariant';
 import {
   backupFilename,
   generateZipBlob,
@@ -34,7 +35,7 @@ const writeAttachmentRecords = (
 ): void => {
   for (const attachment of snapshot.attachments) {
     const asset = assets.pathById.get(attachment.id);
-    if (!asset) continue;
+    invariant(asset, `attachment ${attachment.id} has no asset path`);
     zip.file(
       recordPath('noteAttachments', attachment.id),
       toJson(serializeNoteAttachment(attachment, asset.path)),

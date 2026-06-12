@@ -109,6 +109,13 @@ describe('record codecs', () => {
     );
   });
 
+  it('keeps optional fields absent: annotation colour and config status stages', () => {
+    const colourless = { ...sampleAnnotation, color: undefined };
+    expect(parseAnnotationRecord(viaJson(colourless))).toEqual(colourless);
+    const stageless = { ...sampleInspectorConfig, statusStages: undefined };
+    expect(parseDocInspectorConfigRecord(viaJson(stageless))).toEqual(stageless);
+  });
+
   it('drops unknown extra fields instead of carrying them through', () => {
     const parsed = parseSpaceRecord({ ...viaJson(sampleSpace) as object, evil: 1 });
     expect(parsed).not.toHaveProperty('evil');

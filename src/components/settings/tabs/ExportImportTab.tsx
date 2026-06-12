@@ -12,11 +12,13 @@ export const ExportImportTab = () => {
   const { busy, error, importFile } = useImportSpace();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (files: FileList | null) => {
-    const file = files?.[0];
+  const handleFileChange = async (input: HTMLInputElement) => {
+    const file = input.files?.[0];
     if (!file) return;
+    // Reset before importing so the same archive can be chosen again, even
+    // after a failed attempt.
+    input.value = '';
     await importFile(file);
-    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
@@ -38,7 +40,7 @@ export const ExportImportTab = () => {
           accept=".zip,application/zip"
           className="sr-only"
           aria-label={t('settings.export.importSpaceLabel')}
-          onChange={(e) => void handleFileChange(e.target.files)}
+          onChange={(e) => void handleFileChange(e.currentTarget)}
         />
         <Button
           data-testid="settings-import-button"

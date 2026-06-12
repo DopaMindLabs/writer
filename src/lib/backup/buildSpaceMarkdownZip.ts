@@ -1,5 +1,6 @@
 import JSZip from 'jszip';
 import { db } from '@/db/db';
+import { invariant } from '@/lib/invariant';
 import type {
   Annotation,
   Citation,
@@ -227,7 +228,8 @@ const buildSectionPaths = (
 
   const result = new Map<string, SectionPathInfo>();
   for (const s of sections) {
-    const folder = slugBySection.get(s.id) ?? slugify(s.label, s.id);
+    const folder = slugBySection.get(s.id);
+    invariant(folder, `section ${s.id} has no slug`);
     const parent = s.parentSectionId ? byId.get(s.parentSectionId) : null;
     const label = parent ? `${parent.label} / ${s.label}` : s.label;
     result.set(s.id, { folder, label });
@@ -347,7 +349,8 @@ const renderNoteLines = (n: Note, assets: NoteAssets): string[] => {
   }
   for (const att of assets.byNote.get(n.id) ?? []) {
     const info = assets.pathById.get(att.id);
-    if (info) out.push(`  ![${att.name}](${info.path})`);
+    invariant(info, `attachment ${att.id} has no asset path`);
+    out.push(`  ![${att.name}](${info.path})`);
   }
   return out;
 };
@@ -359,15 +362,14 @@ const writeAttachments = (
   const pathById = buildAttachmentPaths(attachments);
   for (const att of attachments) {
     const info = pathById.get(att.id);
+    invariant(info, `attachment ${att.id} has no asset path`);
     // Bytes rather than the Blob itself: JSZip accepts promised byte arrays
     // everywhere, while Blob inputs require a same-realm FileReader. The
     // Uint8Array wrapper keeps the bytes recognisable across realms.
-    if (info) {
-      zip.file(
-        info.path,
-        att.blob.arrayBuffer().then((buf) => new Uint8Array(buf)),
-      );
-    }
+    zip.file(
+      info.path,
+      att.blob.arrayBuffer().then((buf) => new Uint8Array(buf)),
+    );
   }
   return { byNote: groupAttachmentsByNote(attachments), pathById };
 };
@@ -500,7 +502,7 @@ export const writeMarkdownProjection = (
   for (const [sectionId, list] of docsBySection) {
     list.sort((a, b) => a.name.localeCompare(b.name));
     const info = pathInfo.get(sectionId);
-    if (!info) continue;
+    invariant(info, `section ${sectionId} has no path info`);
     list.forEach((doc, i) => {
       const file = `${pad2(i + 1)}-${slugify(doc.name, doc.id)}.md`;
       zip.file(`manuscript/${info.folder}/${file}`, renderDocMd(doc, info.label));

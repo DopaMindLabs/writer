@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { waitFor } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { Route, Routes } from 'react-router-dom';
 import { db } from '@/db/db';
@@ -52,6 +52,28 @@ describe('ExportImportTab', () => {
     const imported = spaces.find((s) => s.id !== 's1');
     expect(imported?.name).toBe('Test Space');
     expect(await db.docs.where({ spaceId: imported!.id }).count()).toBe(1);
+  });
+
+  it('the choose-archive button opens the hidden file picker', async () => {
+    const user = userEvent.setup();
+    const clickSpy = vi
+      .spyOn(HTMLInputElement.prototype, 'click')
+      .mockImplementation(() => undefined);
+    renderTab();
+
+    await user.click(screen.getByTestId('settings-import-button'));
+    expect(clickSpy).toHaveBeenCalled();
+    clickSpy.mockRestore();
+  });
+
+  it('does nothing when the file dialog is dismissed without a file', async () => {
+    renderTab();
+    const input = screen.getByTestId('settings-import-file-input');
+    fireEvent.change(input, { target: { files: [] } });
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.getByTestId('settings-import-button')).toBeEnabled();
+    expect(await db.spaces.count()).toBe(0);
   });
 
   it('surfaces a clear error for files that are not Writer archives', async () => {

@@ -92,6 +92,15 @@ describe('importSpaceArchive', () => {
     expect(comparable(after)).toEqual(comparable(before));
   });
 
+  it('imports an archive without a doc-inspector config', async () => {
+    await db.docInspectorConfigs.delete('s1');
+    const { spaceId } = await importSpaceArchive(
+      await parseSpaceArchive(await buildArchiveBlob()),
+    );
+    const imported = await readSpaceSnapshot(spaceId);
+    expect(imported.docInspectorConfig).toBeNull();
+  });
+
   it('imports into an empty database (the cross-device case)', async () => {
     const blob = await buildArchiveBlob();
     await Promise.all(db.tables.map((t) => t.clear()));

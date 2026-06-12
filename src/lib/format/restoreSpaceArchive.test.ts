@@ -79,6 +79,17 @@ describe('restoreSpaceArchive', () => {
     expect(useUI.getState().restoreNonces.d1).toBe(1);
   });
 
+  it('restores a space that has no docs and no inspector config', async () => {
+    await db.spaces.put({ ...sampleSpace, id: 's3', name: 'Sparse' });
+    const blob = await buildSpaceArchive(await readSpaceSnapshot('s3'), WHEN);
+    await db.spaces.update('s3', { name: 'Sparse Renamed' });
+    await restoreSpaceArchive('s3', await parseSpaceArchive(blob));
+    const after = await readSpaceSnapshot('s3');
+    expect(after.space.name).toBe('Sparse');
+    expect(after.docs).toEqual([]);
+    expect(after.docInspectorConfig).toBeNull();
+  });
+
   it('refuses to restore an archive from a different space', async () => {
     await db.spaces.put({ ...sampleSpace, id: 's2', name: 'Other' });
     const blob = await buildSpaceArchive(await readSpaceSnapshot('s1'), WHEN);

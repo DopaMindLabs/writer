@@ -60,6 +60,28 @@ describe('useRestoreBackup', () => {
     expect(result.current.pending).toBeNull();
   });
 
+  it('confirm is a no-op without a pending backup', async () => {
+    const { result } = renderHook(() => useRestoreBackup(sampleSpace));
+    await act(async () => {
+      await result.current.handleConfirm();
+    });
+    expect(result.current.busy).toBe(false);
+    expect(result.current.restored).toBe(false);
+    expect(result.current.error).toBeNull();
+  });
+
+  it('opening the dialog does not clear the pending backup', async () => {
+    const { backup } = await createSpaceBackup('s1');
+    const { result } = renderHook(() => useRestoreBackup(sampleSpace));
+    act(() => {
+      result.current.request(backup);
+    });
+    act(() => {
+      result.current.handleOpenChange(true);
+    });
+    expect(result.current.pending?.id).toBe(backup.id);
+  });
+
   it('keeps the dialog open while busy and clears pending on close', async () => {
     const { backup } = await createSpaceBackup('s1');
     const { result } = renderHook(() => useRestoreBackup(sampleSpace));

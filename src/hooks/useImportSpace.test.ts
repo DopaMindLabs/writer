@@ -37,6 +37,23 @@ describe('useImportSpace', () => {
     expect(result.current.busy).toBe(false);
   });
 
+  it('ignores a second import while one is already running', async () => {
+    const file = await archiveFile();
+    const { result } = renderHook(() => useImportSpace(), { wrapper });
+
+    let first: Promise<void> = Promise.resolve();
+    act(() => {
+      first = result.current.importFile(file);
+    });
+    expect(result.current.busy).toBe(true);
+    await act(async () => {
+      await result.current.importFile(file);
+      await first;
+    });
+
+    expect(await db.spaces.count()).toBe(2);
+  });
+
   it('reports an error for invalid files without touching the database', async () => {
     const { result } = renderHook(() => useImportSpace(), { wrapper });
 
