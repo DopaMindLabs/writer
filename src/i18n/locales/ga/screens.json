@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Ilchruinne shaor an scríbhneora",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Is spás bán é do chéad spás. Roghnaigh teimpléad le tosú, nó tosaigh ó thús.",
+    "tagline": "Spás saor ó chur isteach d'fhoirmeacha fada scríbhneoireachta — ficsean, taighde, aistí, dialanna.",
+    "continueWriting": "Lean ar aghaidh ag scríobh",
+    "startNewSpace": "Tosaigh spás nua",
+    "syncOffChip": "sionc/cúltacaí gan chumasú · féadfar sonraí a chailleadh",
+    "syncOnChip": "sionc fillteáin ar siúl",
+    "syncOnTitle": "Sionc fillteáin cumasaithe",
+    "syncOnBody": "Déantar do chuid oibre a shioncrónú leis an bhfillteán „{{folder}}" ar an bhfeiste seo.",
+    "warningTitle": "Tógáil réamheisiúna",
+    "warningBody": "Gan sioncrónú sonraí. Maireann gach rud i do bhrabhsálaí agus má ghlanar an taisce caillfear do chuid oibre. Is féidir leat sioncrónú le fillteán áitiúil a chumasú i Socruithe Uilíocha → Sionc.",
+    "versionLine": "Leagan {{version}}"
+  },
+  "about": {
+    "back": "ar ais",
+    "title": "faoi",
+    "greeting": "Dia dhuit,",
+    "paragraph1": "Tá sé seo don scríbhneoir a thosaíonn ar ais i gcónaí. An duine a osclaíonn doiciméad nua, a chlóscríobhann trí abairt (nó ceann ar bith), ansin a chaitheann 40 nóiméad ag coigeartú an chló. An duine a dtagann a smaointe is fearr chuige ag 2am agus a dhéantar orthu a sheachaint. An duine a bhfuil ceithre chlár déag, sé cóipleabhar, agus dréacht nach bhfuil bogtha le mí aige.",
+    "paragraph2Before": "Tá a fhios agam, mar is mise é sin ",
+    "paragraph2After": ". Tá ADHD agam, Uathachas, agus -izm eile nach bhfuil diagnóisithe fós. Tá gá agam le rud éigin a thuigeann m'inchinn chaotach ach iontach. Áit le gach rud a chaitheamh amach sula n-imíonn sé (nó scríbhneoireacht a thosú). Na blúiríní, na leathsmaointe, na naisc ag 3am. Gach rud, in aon áit amháin.",
+    "paragraph3": "Mar sin thóg mé an spás seo dúinn. Tá súil agam go dtabharfaidh sé rith dópaimín duit díreach mar a thugann sé dom é a thógáil.",
+    "paragraph4Before": "Rud amháin eile... Creidim i dteicneolaíocht ar mhaithe le maitheas agus fuath orm fógraíocht. Mar sin, beidh sé seo saor ó fhógraí agus IN AISCE do úsáid neamhthráchtála i gcónaí. Is féidir leat é a phriocadh agus a mhodhnú mar is maith leat faoi ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Stádas",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — gan sioncrónú sonraí. Sábháiltear gach sonra in IndexedDB i do bhrabhsálaí áitiúil. Má ghlanar do thaisce brabhsálaí, caillfear do chuid oibre.",
+    "feedbackBefore": "Táim fós ag tógáil seo agus tá go leor smaointe agam ",
+    "feedbackAfter": ". Ba bhreá liom a chloisteáil cad a oibríonn, cad nach n-oibríonn, agus cad ba mhaith leat a bheith ann. Tá fáilte roimh aiseolas.",
+    "sourceLabel": "Foinse"
+  },
+  "settings": {
+    "back": "ar ais",
+    "windowTitle": "lotem · socruithe",
+    "breadcrumb": "SOCRUITHE UILÍOCHA",
+    "shellSubtitle": "SOCRUITHE UILÍOCHA",
+    "comingSoonBadge": "ag teacht go luath",
+    "helpAria": "Cad é seo?",
+    "groups": {
+      "preferences": "Roghanna",
+      "writing": "Scríbhneoireacht",
+      "data": "Sonraí",
+      "account": "Cuntas"
+    },
+    "tabs": {
+      "general": "Ginearálta",
+      "appearance": "Cuma",
+      "editor": "Eagarthóir",
+      "docInspector": "Cigire doic.",
+      "accessibility": "Inrochtaineacht",
+      "typography": "Cló",
+      "shortcuts": "Méarchlár",
+      "templates": "Teimpléid",
+      "palettes": "Pailéid aibhsithe",
+      "citations": "Stíl luaite",
+      "annotation": "Nótaí mínithe",
+      "backups": "Cúltacaí",
+      "sync": "Sionc",
+      "export": "Onnmhairiú / iompórtáil",
+      "data": "Do chuid sonraí",
+      "account": "Cuntas",
+      "about": "Faoi",
+      "language": "Teanga"
+    },
+    "language": {
+      "title": "Teanga",
+      "subtitle": "Roghnaigh an teanga don chomhéadan agus d'ailt an Ionaid Chabhrach. Titfidh aistriúcháin in easnamh ar ais go Béarla.",
+      "label": "Teanga an chomhéadain",
+      "hint": "Cuirtear athruithe i bhfeidhm láithreach agus sábháiltear sa bhrabhsálaí seo iad.",
+      "machineTranslationNotice": "Déantar aistriúcháin seachas Béarla go huathoibríoch. Leithscéal as aon earráidí — seol aiseolas le do thoil ionas gur féidir linn iad a cheartú.",
+      "feedbackLinkLabel": "seol aiseolas"
+    },
+    "editor": {
+      "title": "Eagarthóir",
+      "subtitle": "Barra uirlisí agus áiseanna scríbhneoireachta. Leanann aicearra Markdown (#, >, -, **) ag obair beag beann ar na socruithe seo.",
+      "floatingToolbarLabel": "Barra uirlisí snámhach",
+      "floatingToolbarHint": "Léiríonn ar aibhsiú nó ar chliceáil deas i mód scríbhneoireachta.",
+      "floatingToolbarOff": "As",
+      "floatingToolbarOn": "Air",
+      "rightClickLabel": "Roghchlár cliceáil deis",
+      "rightClickHint": "Aistrigh idir an barra uirlisí snámhach agus roghchlár comhthéacs dúchasach an bhrabhsálaí.",
+      "rightClickTooltip": "Úsáid roghchlár comhthéacs dúchasach ar chliceáil deas in ionad an bharra uirlisí snámhaigh. Leanfaidh an barra uirlisí le léiriú ar aibhsiú-roghnú.",
+      "inlineTogglesLabel": "Lasc-cnaipí línte inmheánacha",
+      "inlineTogglesHint": "Cnaipí trom agus iodálach sa bharra uirlisí snámhach.",
+      "inlineTogglesTooltip": "Folaigh na cnaipí B agus I ón mbarra uirlisí snámhach. Leanann aicearra Markdown (**, _) ag obair.",
+      "listDepthLabel": "Doimhneacht neadaithe liosta",
+      "listDepthHint": "Cé chomh domhain is féidir le liostaí bulleted agus uimhrithe neadú.",
+      "listDepthTooltip": "Ardaigh nó ísligh an uasteorainn ar neadú liosta. Seasta faoi láthair ag 2 leibhéal.",
+      "templateDefaultsLabel": "Réamhshocruithe in aghaidh an teimpléid",
+      "templateDefaultsHint": "Fo-thacar formáidithe difriúil in aghaidh an teimpléid.",
+      "templateDefaultsTooltip": "Lig do gach teimpléad (ficsean, dialann, teicniúil…) a fho-thacar formáidithe féin a roghnú."
+    },
+    "docInspector": {
+      "title": "Cigire doiciméad",
+      "subtitle": "Roghnaigh na réimsí a léirítear sa chigire doiciméad. Is féidir gach ceann a mhúchadh go huilíoch agus a shárú in aghaidh an spáis.",
+      "statusLabel": "Stádas",
+      "statusHint": "Taispeáin stádas an doiciméid agus glasáil doiciméid chríochnaithe ón gceartú.",
+      "wordLimitLabel": "Teorainn focal",
+      "wordLimitHint": "Taispeáin teorainn chomhaireamh focal is féidir a shocrú in aghaidh an doiciméid.",
+      "charLimitLabel": "Teorainn carachtair",
+      "charLimitHint": "Taispeáin teorainn chomhaireamh carachtair is féidir a shocrú in aghaidh an doiciméid.",
+      "dueDateLabel": "Spriocdháta",
+      "dueDateHint": "Taispeáin spriocdháta is féidir a shocrú in aghaidh an doiciméid.",
+      "highlightLabel": "Aibhsigh téacs thar an teorainn",
+      "highlightHint": "Marcáil aon téacs thar an teorainn san eagarthóir.",
+      "statusStagesLabel": "Céimeanna stádais",
+      "statusStagesHint": "Roghnaigh na céimeanna a léirítear sa roghnóir stádais.",
+      "on": "Air",
+      "off": "As",
+      "inherit": "Réamhshocrú ({{state}})",
+      "inheritTooltip": "Oidhreacht ó shocruithe uilíocha",
+      "stateOn": "air",
+      "stateOff": "as"
+    },
+    "accessibility": {
+      "title": "Inrochtaineacht",
+      "subtitle": "Coigeartaigh an comhéadan le haghaidh compord agus teicneolaíocht chúnta. Tosaíonn gach rogha ag an taithí reatha — ní athraíonn aon rud go dtí go roghnaíonn tú é.",
+      "theme": {
+        "label": "Téama agus codarsnacht",
+        "hint": "Comhlíonann téamaí ardcodarsnachta caighdeán codarsnachta WCAG AAA.",
+        "light": "Éadrom",
+        "dark": "Dorcha",
+        "hcLight": "Ardcodarsnacht (éadrom)",
+        "hcDark": "Ardcodarsnacht (dorcha)"
+      },
+      "motion": {
+        "label": "Gluaiseacht",
+        "hint": "Laghdaigh nó díchumasaigh beochana comhéadain.",
+        "auto": "Meaitseáil córas",
+        "reduced": "Laghdaithe",
+        "full": "Iomlán"
+      },
+      "textSize": {
+        "label": "Méid téacs",
+        "hint": "Scálaigh an dromchla léitheoireachta agus scríbhneoireachta.",
+        "sm": "Beag",
+        "base": "Réamhshocrú",
+        "lg": "Mór",
+        "xl": "An-mhór"
+      },
+      "lineSpacing": {
+        "label": "Spásáil líne",
+        "hint": "Cuir spás anála idir línte próis.",
+        "normal": "Gnáth",
+        "relaxed": "Scaoilte",
+        "loose": "Lúfar"
+      },
+      "linkUnderline": {
+        "label": "Naisc a fholíniú i gcónaí",
+        "hint": "Taispeáin fo-línte ionas nach mbíonn naisc ag brath ar dath amháin."
+      },
+      "focus": {
+        "label": "Táscaire fócais feabhsaithe",
+        "hint": "Úsáid imlíne níos tiubha, ardcodarsnachta ar fhócas."
+      },
+      "reset": {
+        "label": "Athshocraigh go réamhshocruithe",
+        "hint": "Athchóirigh gluaiseacht, méid téacs, spásáil líne, naisc, agus fócas go dtí a réamhshocruithe. Fanann do théama gan athrú.",
+        "action": "Athshocraigh"
+      }
+    },
+    "general": {
+      "title": "Ginearálta",
+      "subtitle": "Conas a léirítear LIpsum Writer de réir réamhshocraithe. Ní scriosta aon rud anseo.",
+      "comingSoonBody": "Dlús compord, laghdú gluaiseachta, infheictheacht leideanna méarchláir, agus cén radharc a osclaíonn ag tosú.",
+      "compactDensityLabel": "Dlús compord",
+      "compactDensityHint": "Sraitheanna níos dlúithe i liostaí, stuáil níos dlúithe ar gach taobh.",
+      "reduceMotionLabel": "Laghdaigh gluaiseacht",
+      "reduceMotionHint": "Ná taispeáin aistrithe beoite idir radhairc.",
+      "keyboardHintsLabel": "Taispeáin leideanna méarchláir",
+      "keyboardHintsHint": "Taispeáin aicearraí ⌘-eochair i mboscaí leide agus i gcúinne na gcnaipí.",
+      "startupLabel": "Oscail ag tosú",
+      "startupHint": "An méid a fheiceann tú nuair a sheolann tú an aip.",
+      "startupOptions": {
+        "lastView": "An radharc deireanach",
+        "home": "Baile",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Cuma",
+      "subtitle": "Dath, cló, dlús. An giúmar atá uait a shocrú.",
+      "comingSoonBody": "Pailéid téama curtha, dath aicme, agus dlús. Tá an lasc téama inniu i socruithe tapa ráille an domhain.",
+      "themeLabel": "Téama",
+      "themeHint": "Trí phailéad curtha. Tiúnaíonn siad gach rud — dathanna bloc, sreangáin gruaige, fiú an ghráin.",
+      "themes": {
+        "linen": "Línéadach",
+        "linenSub": "réamhshocrú",
+        "studio": "Stiúideo",
+        "studioSub": "neodrach",
+        "midnight": "Meán oíche",
+        "midnightSub": "dorcha"
+      },
+      "accentLabel": "Aicme",
+      "accentHint": "Úsáidtear do hover, fócas, fáinne eagarthóireachta gníomhach.",
+      "densityLabel": "Dlús",
+      "densityOptions": {
+        "cozy": "Cluthar",
+        "default": "Réamhshocrú",
+        "compact": "Compord"
+      }
+    },
+    "templates": {
+      "title": "Teimpléid",
+      "subtitle": "Scafall in-atháite le haghaidh spásanna agus doiciméid nua.",
+      "comingSoonBody": "Údar do theimpléid féin le codanna, ainmneacha doiciméid réamhshocraithe, agus stubaí próis.",
+      "items": {
+        "fiction": "Ficsean",
+        "fictionSub": "Lámhscríbhinn · Domhan · Ceardlann",
+        "research": "Taighde",
+        "researchSub": "Foinsí · Nótaí · Dréachtaí",
+        "journal": "Dialann",
+        "journalSub": "Laethúil · Seachtainiúil · Machnamh",
+        "essay": "Aiste",
+        "essaySub": "Imlíne · Dréachtaí · Críochnaitheach"
+      }
+    },
+    "palettes": {
+      "title": "Pailéid aibhsithe",
+      "subtitle": "Pailéid cúig sliotán in aghaidh an spáis — ainmnigh agus tiúnaigh gach dath.",
+      "comingSoonBody": "Cuir in eagar, sábháil, agus athraigh pailéid aibhsithe ainmnithe (Fianaise, Le hathbhreithniú, Tagairt…) thar spásanna.",
+      "items": {
+        "evidence": "Fianaise",
+        "revise": "Le hathbhreithniú",
+        "reference": "Tagairt",
+        "quote": "Luachan",
+        "loose": "Ceann scaoilte"
+      },
+      "rename": "athainmnigh",
+      "tune": "tiúnaigh"
+    },
+    "citations": {
+      "title": "Stíl luaite",
+      "subtitle": "Stíl luaite réamhshocraithe thar spásanna.",
+      "comingSoonBody": "Roghnaigh stíl uilíoch (Chicago, APA, MLA…) le sáruithe in aghaidh an spáis.",
+      "styleLabel": "Stíl réamhshocraithe",
+      "styleHint": "Úsáidtear agus lua nua á chur isteach. Tagann sáruithe in aghaidh an spáis níos déanaí.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Nótaí mínithe",
+      "subtitle": "Nótaí imeallacha agus nótaí mínithe línte inmheánacha.",
+      "comingSoonBody": "Cineálacha nótaí mínithe, réamhshocruithe infheictheachta, agus iompar onnmhairiúcháin.",
+      "showMarginLabel": "Taispeáin nótaí imeallacha",
+      "showMarginHint": "Snámhann nótaí mínithe sa ghráta ar dheis nuair atá áit ann.",
+      "showInlineLabel": "Taispeáin aibhsithe línte inmheánacha",
+      "showInlineHint": "Sileann dath an nóta mhínithe isteach sa phróis bhunúsach.",
+      "exportLabel": "Cuir san áireamh in onnmhairiúcháin",
+      "exportHint": "Scríobhtar nótaí mínithe amach in éineacht le corp an doiciméid."
+    },
+    "export": {
+      "title": "Onnmhairiú / iompórtáil",
+      "subtitle": "Bog sonraí isteach agus amach as LIpsum Writer.",
+      "comingSoonBody": "Onnmhairiú ollmhór go .zip, iompórtáil ó bhunsraith LIpsum eile nó ó eolaire Markdown.",
+      "formatLabel": "Formáid onnmhairiúcháin",
+      "formatHint": "Úsáideann onnmhairiúcháin in aghaidh an doiciméid agus in aghaidh an spáis an réamhshocrú céanna.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Iompórtáil ó",
+      "importHint": "Tabhair isteach bunsraith LIpsum eile nó eolaire comhad Markdown.",
+      "importOptions": {
+        "bundle": "Bunsraith LIpsum (.zip)",
+        "markdown": "Fillteán Markdown",
+        "obsidian": "Obsidian vault"
+      },
+      "importSpaceLabel": "Iompórtáil spás",
+      "importSpaceHint": "Tabhair spás isteach sa bhrabhsálaí seo ó chartlann Writer (.zip) — íoslódáil pictiúir-ghrianghraf nó onnmhairiú sionc-fillteáin ó ghléas eile.",
+      "importChooseFile": "Roghnaigh cartlann…",
+      "importing": "ag iompórtáil…",
+      "importFailed": "Theip ar an iompórtáil: {{message}}",
+      "comingSoonLabel": "Níos mó formáidí",
+      "comingSoonHint": "Onnmhairiú agus iompórtáil ollmhór ó fhillteáin Markdown nó ó vault Obsidian.",
+      "comingSoonTooltip": "Beartaithe — níl sé ar fáil fós."
+    },
+    "data": {
+      "title": "Do chuid sonraí",
+      "subtitle": "Cá maireann do chuid oibre agus cé mhéad spáis a ghlacann sé.",
+      "comingSoonBody": "Úsáid IndexedDB, meastachán stórála, agus scriosadh iomlán aon-chliceáil.",
+      "storageLabel": "Stóráil á húsáid",
+      "storageValue": "≈ 12.4 MB · 4 spás, 38 doic.",
+      "engineLabel": "Inneall stórála",
+      "engineValue": "IndexedDB (brabhsálaí áitiúil)",
+      "wipeLabel": "Glan gach rud",
+      "wipeHint": "Baineann gach spás, doiciméad, agus pictiúr-ghrianghraf ón mbrabhsálaí seo. Ní féidir seo a chúlghairm.",
+      "wipeButton": "Glan sonraí áitiúla…"
+    },
+    "about": {
+      "title": "Faoi",
+      "subtitle": "Eolas tógála agus naisc.",
+      "comingSoonBody": "Féach ar an leathanach /about don scéal; óstálfaidh an cluaisín seo eolas tógála, ceadúnas, agus loga athruithe.",
+      "versionLabel": "Leagan",
+      "versionValue": "{{version}}",
+      "buildLabel": "Tógáil",
+      "buildValue": "áitiúil",
+      "licenseLabel": "Ceadúnas",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Naisc",
+      "links": {
+        "source": "Foinse",
+        "changelog": "Loga athruithe",
+        "feedback": "Seol aiseolas"
+      }
+    },
+    "account": {
+      "title": "Cuntas",
+      "subtitle": "Sínigh isteach, sionc thar ghléasanna, agus spásanna oibre comhroinnte.",
+      "comingSoonBody": "Níl sioncrónú scamaill ar fáil inniu — tá Lotem áitiúil amháin. Tagann cuntas, síniú isteach, agus spásanna oibre comhroinnte nuair a sheoltar sionc.",
+      "signedOutLabel": "Sínigh isteach",
+      "signedOutHint": "Níl sioncrónú scamaill ar fáil fós. Tá sé seo anseo le dearadh a thaispeáint.",
+      "signInButton": "Sínigh isteach le ríomhphost",
+      "syncLabel": "Sionc an gléas seo",
+      "syncHint": "Nuair a shíníonn tú isteach, déanfar do spásanna a mhacasamhlú chuig gléasanna eile."
+    },
+    "typography": {
+      "title": "Cló",
+      "subtitle": "Réamhshocruithe thar na domhain ar fad. Féadfaidh domhain aonair sárú.",
+      "comingSoonBody": "Roghnaigh cló próis, cló UI, méid léitheoireachta réamhshocraithe, airde líne, agus tomhas do dhomhain nua.",
+      "proseFontLabel": "Cló próis",
+      "uiFontLabel": "Cló UI",
+      "proseSizeLabel": "Méid próis",
+      "proseSizeHint": "Réamhshocrú do dhomhain nua.",
+      "lineHeightLabel": "Airde líne",
+      "measureLabel": "Tomhas",
+      "measureHint": "Leithead líne uasta.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Aicearraí",
+      "subtitle": "Ceangail méarchláir do nascleanúint, formáidiú, agus modhanna.",
+      "comingSoonBody": "Aicearraí in-athcheangail do scríobh/léamh/roinnt, mód fócais, agus barra uirlisí formáidithe.",
+      "navHeader": "Nascleanúint",
+      "formatHeader": "Formáidiú",
+      "modeHeader": "Modhanna",
+      "items": {
+        "openSettings": "Oscail socruithe",
+        "quickSettings": "Socruithe tapa",
+        "findInDoc": "Aimsigh sa doiciméad",
+        "toggleFocus": "Scoránaigh fócas",
+        "toggleInspector": "Scoránaigh cigire",
+        "bold": "Trom",
+        "italic": "Iodálach",
+        "underline": "Folínithe",
+        "heading1": "Ceannteideal 1",
+        "heading2": "Ceannteideal 2",
+        "write": "Mód scríbhneoireachta",
+        "read": "Mód léitheoireachta",
+        "split": "Mód roinnte"
+      }
+    },
+    "backups": {
+      "title": "Cúltacaí",
+      "subtitle": "Onnmhairigh, athchóirigh, agus déan pictiúir-ghrianghraf de do shonraí áitiúla.",
+      "comingSoonBody": "Pictiúir-ghrianghraif áitiúla sceidealaithe, onnmhairiú láimhe go .zip, agus athchóiriú ó chúltaca roimhe.",
+      "intervalLabel": "Eatramh uath-phictiúr-ghrianghraf",
+      "intervalOptions": {
+        "5min": "5 nóim",
+        "10min": "10 nóim",
+        "30min": "30 nóim",
+        "off": "As"
+      },
+      "keepLabel": "Coimeád",
+      "keepHint": "Titeann pictiúir-ghrianghraif níos sine as go huathoibríoch.",
+      "keepOptions": {
+        "last50": "Na 50 deireanach",
+        "days7": "7 lá",
+        "days30": "30 lá"
+      },
+      "latestLabel": "Is déanaí",
+      "latestValue": "12 nóim ó shin · 1,190 focal"
+    },
+    "sync": {
+      "title": "Sionc",
+      "subtitle": "Brúigh do spásanna chuig fillteán dá rogha féin. Dírígh é ar fhillteán Google Drive, Dropbox, nó iCloud le sioncrónú thar ghléasanna.",
+      "unsupportedTitle": "Níl sé ar fáil sa bhrabhsálaí seo",
+      "unsupportedBody": "Teastaíonn File System Access API ó shionc fillteáin, atá ar fáil in Chrome, Edge, agus brabhsálaithe Chromium eile ar an deisce. Athraigh go brabhsálaí tacaithe lena úsáid.",
+      "folderLabel": "Fillteán sioncrónaithe",
+      "folderHint": "Scríobhann gach sionc Markdown .zip in aghaidh an spáis anseo, ag coinneáil na 5 deiridh móide latest.zip. Tá sionc ar leithligh ó Chúltacaí.",
+      "noFolder": "Gan fillteán nasctha",
+      "chooseFolder": "Roghnaigh fillteán…",
+      "changeFolder": "Athraigh…",
+      "disconnect": "Dínasctar",
+      "intervalLabel": "Uath-shionc",
+      "intervalHint": "Cé chomh minic is a shioncrónítear spásanna go huathoibríoch agus an aip oscailte agus an fillteán nasctha. Is féidir le gach spás an réamhshocrú seo a shárú.",
+      "intervalOff": "As",
+      "intervalMinutes": "{{count}} nóim",
+      "intervalDefault": "Réamhshocrú ({{label}})",
+      "syncLabel": "Sionc láimhe",
+      "pushOnlyHint": "Brú amháin faoi láthair — scríobhann sé seo do chuid sonraí áitiúla chuig an bhfillteán. Tagann athruithe a tharraingt ar ais níos déanaí.",
+      "syncNow": "Sionc anois",
+      "syncNowAll": "Sionc gach spás",
+      "reconnectHint": "Tá sionc ar sos — tá cead fillteáin de dhíth ar an mbrabhsálaí arís don seisiún seo. Nasc arís le sionc láimhe agus uathoibríoch a atosú.",
+      "reconnectButton": "Nasc arís",
+      "reconnecting": "Ag nascadh arís…",
+      "syncing": "Ag sioncrónú…",
+      "syncFailed": "Theip ar shionc: {{message}}",
+      "lastSynced": "Sioncrónaithe go deireanach {{when}}",
+      "neverSynced": "Gan sioncrónú riamh",
+      "justNow": "díreach anois",
+      "resultsTitle": "An reáchtáil deireanach",
+      "spaceOk": "sioncrónaithe",
+      "spaceFailed": "theip",
+      "historyTitle": "Sioncanna le déanaí",
+      "historyEmpty": "Gan sioncanna fós.",
+      "columns": {
+        "when": "CATHAIN",
+        "space": "SPÁS",
+        "kind": "CINEÁL",
+        "size": "MÉID",
+        "status": "STÁDAS"
+      },
+      "kind": {
+        "auto": "uathoibríoch",
+        "manual": "láimhe"
+      },
+      "status": {
+        "ok": "ceart go leor",
+        "error": "earráid"
+      }
+    },
+    "space": {
+      "breadcrumb": "SPÁS · SOCRUITHE",
+      "shellSubtitle": "SOCRUITHE SPÁIS",
+      "loading": "Spás á luchtú…",
+      "groups": {
+        "thisSpace": "An spás seo",
+        "sharingMembers": "Roinnt agus comhaltaí",
+        "data": "Sonraí",
+        "dangerZone": "Contúirt"
+      },
+      "tabs": {
+        "general": "Ginearálta",
+        "docInspector": "Cigire doic.",
+        "template": "Teimpléad",
+        "palette": "Pailéad aibhsithe",
+        "sharing": "Roinnt",
+        "members": "Comhaltaí",
+        "backups": "Cúltacaí",
+        "sync": "Sionc",
+        "export": "Onnmhairiú",
+        "danger": "Crios contúirte"
+      },
+      "docInspector": {
+        "title": "Cigire doiciméad",
+        "subtitle": "Sáraigh socruithe uilíocha an chigire don spás seo."
+      },
+      "palette": {
+        "title": "Pailéad aibhsithe",
+        "subtitle": "Cúig dhath aibhsithe ainmnithe, so-thiúnaithe don spás seo.",
+        "comingSoonBody": "Athainmnigh, athdhathigh, agus athordaigh sliotáin aibhsithe an spáis seo.",
+        "items": {
+          "evidence": "Fianaise",
+          "revise": "Le hathbhreithniú",
+          "reference": "Tagairt",
+          "quote": "Luachan",
+          "loose": "Ceann scaoilte"
+        },
+        "rename": "athainmnigh",
+        "tune": "tiúnaigh"
+      },
+      "export": {
+        "title": "Onnmhairiú",
+        "subtitle": "Bog ábhar an spáis seo isteach in uirlis eile.",
+        "comingSoonBody": "Onnmhairigh go Markdown .zip (inniu tríd na Cúltacaí), LaTeX, HTML, nó PDF — gach rud in aon áit amháin.",
+        "formatLabel": "Formáid",
+        "formatHint": "Tagann Markdown ar dtús; leanann an chuid eile.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Onnmhairiú deireanach",
+        "lastValue": "riamh"
+      },
+      "general": {
+        "title": "Ginearálta",
+        "subtitle": "Sonraí aitheantais don spás seo. Cuirtear athruithe i bhfeidhm láithreach agus déantar iad a shioncrónú thar radhairc.",
+        "nameLabel": "Ainm spáis",
+        "nameHint": "Léirítear i gceanntásc an tscreathail taoibh agus i mbosca leide tíl ráille an spáis.",
+        "tagLabel": "Clib",
+        "tagHint": "Cód gearr (2–4 carachtar) léirithe ar thíl ráille an spáis."
+      },
+      "sharing": {
+        "title": "Roinnt",
+        "subtitle": "Rialú conas a roinntear an spás seo.",
+        "comingSoonBody": "Infheictheacht in aghaidh an spáis agus naisc inroinnte. Tagann le sioncrónú scamaill.",
+        "visibilityLabel": "Infheictheacht",
+        "visibilityOptions": {
+          "private": "Príobháideach",
+          "link": "Aon duine le nasc",
+          "members": "Comhaltaí amháin"
+        },
+        "linkLabel": "Nasc inroinnte",
+        "linkHint": "Léamh amháin de réir réamhshocraithe. Leanann pribhléidí eagarthóireachta Comhaltaí.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "cóipeáil"
+      },
+      "template": {
+        "title": "Teimpléad",
+        "subtitle": "An teimpléad struchtúrach a cruthaíodh an spás seo leis.",
+        "comingSoonBody": "Níl athrú teimpléid spáis tar éis a chruthaithe tacaithe fós. Tagann nuair is féidir linn codanna agus doiciméid a imirce go sábháilte.",
+        "currentLabel": "Teimpléad reatha",
+        "currentValue": "Ficsean",
+        "currentSub": "Lámhscríbhinn · Domhan · Ceardlann",
+        "changeLabel": "Athraigh teimpléad",
+        "changeHint": "Athdhealbhaíonn codanna agus doiciméid reatha don teimpléad nua.",
+        "changeButton": "Athraigh teimpléad…"
+      },
+      "members": {
+        "title": "Comhaltaí",
+        "subtitle": "Comh-scríbhneoirí agus léirmheastóirí le rochtain ar an spás seo.",
+        "comingSoonBody": "Tabhair cuireadh do chomhoibrithe, bainistigh róil, agus déan athbhreithniú ar athruithe. Tagann le sioncrónú scamaill.",
+        "inviteLabel": "Tabhair cuireadh de réir ríomhphoist",
+        "inviteHint": "Seolfaimid nasc chucu le hdul isteach sa spás seo.",
+        "invitePlaceholder": "ainm@sampla.ie",
+        "inviteButton": "seol cuireadh",
+        "membersLabel": "Comhaltaí",
+        "roles": {
+          "owner": "úinéir",
+          "editor": "eagarthóir",
+          "viewer": "féachadóir"
+        },
+        "you": "tú féin"
+      },
+      "backups": {
+        "title": "Cúltacaí",
+        "subtitle": "Déan pictiúr-ghrianghraf den spás seo mar .zip is féidir leat a íoslódáil, a choinneáil, agus athchóiriú uaidh.",
+        "retentionHint": "Ag coinneáil na {{count}} pictiúr-ghrianghraf is déanaí — baintear cinn níos sine go huathoibríoch.",
+        "snapshotNow": "+ pictiúr-ghrianghraf anois",
+        "snapshotting": "pictiúr-ghrianghraf á dhéanamh…",
+        "snapshotFailed": "Theip ar phictiúr-ghrianghraf: {{message}}",
+        "historyTitle": "Stair",
+        "empty": "Gan pictiúir-ghrianghraif fós — cruthaigh ceann le + pictiúr-ghrianghraf anois.",
+        "columns": {
+          "when": "CATHAIN",
+          "kind": "CINEÁL",
+          "size": "MÉID",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "láimhe",
+          "auto": "uathoibríoch",
+          "snapshot": "pictiúr-ghrianghraf"
+        },
+        "download": "↓ íoslódáil",
+        "delete": "scrios",
+        "deleteConfirm": "An bhfuil tú ag iarraidh an pictiúr-ghrianghraf seo a scriosadh? Ní féidir seo a chúlghairm.",
+        "deleted": "Pictiúr-ghrianghraf scriosta.",
+        "justNow": "díreach anois",
+        "restore": "↺ athchóirigh",
+        "restoreUnavailable": "Tá an pictiúr-ghrianghraf seo ó roimh thacaíocht athchóirithe — ní féidir é a íoslódáil amháin.",
+        "restoreDialogTitle": "An bhfuil tú ag iarraidh an pictiúr-ghrianghraf seo a athchóiriú?",
+        "restoreDialogBody": "Cuirfear ábhar reatha an spáis seo in ionad an phictiúir-ghrianghraif. Sábháiltear pictiúr-ghrianghraf den staid reatha ar dtús, ionas gur féidir leat an t-athchóiriú seo a chúlghairm.",
+        "restoreConfirm": "Athchóirigh",
+        "restoreCancel": "Cealaigh",
+        "restoring": "ag athchóiriú…",
+        "restored": "Pictiúr-ghrianghraf athchóirithe.",
+        "restoreFailed": "Theip ar athchóiriú: {{message}}",
+        "fileRestoreTitle": "Ag athchóiriú ó .zip íoslódáilte?",
+        "fileRestoreBody": "Iompórtáil é tríd na Socruithe Uilíocha → Onnmhairiú / iompórtáil — tagann sé ar ais mar spás nua, ag fágáil an ceann seo gan athrú."
+      },
+      "sync": {
+        "title": "Sionc",
+        "subtitle": "Brúigh an spás seo chuig an bhfillteán nasctha, de láimh nó de réir sceidil. Tá sionc ar leithligh ó Chúltacaí.",
+        "folderHint": "Nasc fillteán i Socruithe Uilíocha → Sionc. Úsáidtear an fillteán céanna do gach spás.",
+        "intervalHint": "Cé chomh minic is a shioncrónítear an spás seo go huathoibríoch. Roghnaigh Réamhshocrú le leanúint de shocrú uilíoch uath-shionc.",
+        "syncNow": "Sionc an spás seo"
+      },
+      "danger": {
+        "title": "Crios contúirte",
+        "subtitle": "Gníomhartha dochúlghairthe. Léigh go cúramach roimh leanúint ar aghaidh.",
+        "deleteCardTitle": "Scrios an spás seo",
+        "deleteCardBody": "Baineann an spás seo in éineacht le gach doiciméad, cuid, nóta Brain space, nóta mínithe, lua, agus nasc go buan. Ní féidir seo a chúlghairm.",
+        "deleteButton": "Scrios an spás seo",
+        "dialogTitle": "Scrios „{{name}}"?",
+        "dialogBody": "Baineann sé seo an spás agus a ábhar ar fad go buan. Ní féidir seo a chúlghairm.",
+        "typeToConfirm": "Clóscríobh {{name}} le deimhniú",
+        "cancel": "Cealaigh",
+        "confirm": "Scrios spás"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Caillte sna himill",
+    "body": "Níl an leathanach sin ann (fós).",
+    "goHome": "Téigh abhaile"
+  },
+  "templates": {
+    "crumb": "01 — CINEÁL SEOMRA",
+    "headingMain": "Cén cineál spáis",
+    "headingAccent": "atá tú ag tosú?",
+    "chooseLegend": "Roghnaigh teimpléad",
+    "stage": {
+      "pre-alpha": "turgnamhach",
+      "alpha": "luath",
+      "beta": "béite"
+    },
+    "nameLabel": "Ainm",
+    "tagLabel": "Clib",
+    "syncLabel": "sioncrónú scamaill —",
+    "syncValue": "as, áitiúil",
+    "syncTooltip": "Níl sioncrónú scamaill ar fáil — tá an aip seo áitiúil amháin faoi láthair.",
+    "creating": "ag cruthú…",
+    "submitLabel": "iontráil {{name}} →",
+    "newSpace": "spás nua",
+    "back": "ar ais"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} gan sórtáil",
+    "title": "Brain space",
+    "mobileWarning": "Oibríonn Brain space is fearr ar scáileán níos mó.",
+    "mobileNote": "Teastaíonn luch nó ceap tadhaill ón gcanabhas.",
+    "openInWrite": "Oscail in Write →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "tosaigh ag caitheamh amach",
+      "emptyHint": "roghnaigh cineál cárta thíos",
+      "pendingHint": "shift-cliceáil nóta eile le nascadh · esc le cealú"
+    },
+    "note": {
+      "deleteNote": "Scrios nóta",
+      "addPicture": "Cuir pictiúr leis",
+      "addPictureCta": "cuir pictiúr leis",
+      "openLinkedDoc": "Oscail doiciméad nasctha",
+      "fetchedContent": "Ábhar faighte",
+      "openDetailsLabel": "Oscail sonraí",
+      "openDetailsTitle": "Oscail painéal sonraí",
+      "titlePlaceholder": "teideal",
+      "addTitleCta": "+ teideal",
+      "bodyEmpty": "(cliceáil le scríobh)",
+      "viewImage": "Féach ar {{name}}",
+      "removeImage": "Bain {{name}}",
+      "resize": "Athraigh méid nóta",
+      "days": {
+        "sun": "Dom",
+        "mon": "Luan",
+        "tue": "Máirt",
+        "wed": "Céad",
+        "thu": "Déar",
+        "fri": "Aoine",
+        "sat": "Sath"
+      }
+    },
+    "drawer": {
+      "title": "Sonraí nóta",
+      "description": "Cuir in eagar an nóta roghnaithe agus bainistigh a chuid naisc.",
+      "untitledPlaceholder": "Gan teideal",
+      "titleAriaLabel": "Teideal nóta",
+      "closeAriaLabel": "Dún tarraiceán",
+      "bodyLabel": "Corp",
+      "bodyPlaceholder": "Scríobh rud éigin…",
+      "picturesLabel": "Pictiúir",
+      "addPicture": "Cuir pictiúr leis",
+      "pictureLimitHint": "teorainn {{count}} bainte amach — bain ceann le ceann eile a chur leis.",
+      "linkedDocLabel": "Doiciméad Nasctha",
+      "noLinkedDoc": "— Gan doic. nasctha —",
+      "untitledDoc": "Gan teideal",
+      "openDoc": "Oscail",
+      "connectionsHeading": "Naisc ({{count}})",
+      "connectionsEmpty": "shift-cliceáil nóta eile ar an gcanabhas le nascadh.",
+      "untitledNote": "(gan teideal)",
+      "removeConnection": "Bain nasc",
+      "deleteNote": "Scrios nóta"
+    }
+  },
+  "split": {
+    "title": "Radharc roinnte",
+    "mobileWarning": "Teastaíonn scáileán níos mó ón radharc roinnte.",
+    "mobileNote": "Oscail an doiciméad seo i mód scríbhneoireachta ina ionad sin.",
+    "openInWrite": "Oscail in Write →",
+    "leftPrefix": "CLIÉ —",
+    "rightPrefix": "DEAS —",
+    "rightPaneAria": "Doiciméad phána deis",
+    "noOtherDocs": "(gan doiciméid eile)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Luachana",
+    "pickDoc": "Roghnaigh doiciméad ón roghchlár anuas thuas.",
+    "dividerAria": "Athraigh méid phánna roinnte"
+  },
+  "citationsDrawer": {
+    "title": "Luachana",
+    "description": "Cuardaigh, iompórtáil, agus onnmhairigh luachana don spás seo.",
+    "close": "Dún luachana",
+    "expand": "Oscail luachana i radharc iomlán"
+  },
+  "citations": {
+    "title": "Luachana",
+    "breadcrumb": "Foinsí / ",
+    "entries": "{{count}} IONTRÁLACHA",
+    "searchPlaceholder": "údair, clibeanna, bliain…",
+    "upload": "↑ uaslódáil .bib / .ris",
+    "add": "+ cuir leis",
+    "cancel": "× cealaigh",
+    "columns": {
+      "tag": "CLIB",
+      "authors": "ÚDAIR",
+      "title": "TEIDEAL",
+      "year": "BLIAIN",
+      "type": "CINEÁL",
+      "used": "ÚSÁIDTE"
+    },
+    "style": "STÍL — CHICAGO (ÚDAR-DÁTA)",
+    "exportBib": "ONNMHAIRIGH MAR .BIB",
+    "summary": "{{filtered}} Á TAISPEÁINT · {{shown}} AR AN LEATHANACH SEO",
+    "prevPage": "Leathanach roimhe",
+    "nextPage": "An chéad leathanach eile",
+    "empty": "gan luachana fós",
+    "noMatch": "ní meaitseálann aon sraith do chuardach.",
+    "importHint": "iompórtáil .bib nó cuir ceann leis de láimh.",
+    "pasteHeader": "Greamaigh BibTeX nó teideal",
+    "addCitation": "cuir lua leis",
+    "manualCancel": "cealaigh",
+    "adding": "ag cur leis…",
+    "parsing": "Ag parsáil {{name}}…",
+    "imported": "Iompórtáladh {{added}} lua{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", léimadh thar {{skipped}} dúblach{{skippedPlural}}",
+    "skippedSuffixShort": ", léimadh thar {{skipped}}",
+    "failed": "Theip ar pharsáil: {{message}}",
+    "failedManual": "Theip: {{message}}",
+    "addedOne": "Cuireadh 1 lua leis.",
+    "unknownAuthor": "(anaithnid)",
+    "unknownError": "earráid anaithnid",
+    "edit": {
+      "save": "sábháil",
+      "saving": "ag sábháil…",
+      "cancel": "cealaigh",
+      "delete": "scrios",
+      "edit": "cuir in eagar",
+      "tagLabel": "Clib",
+      "authorsLabel": "Údair",
+      "titleLabel": "Teideal",
+      "yearLabel": "Bliain",
+      "typeLabel": "Cineál",
+      "duplicateKey": "Tá an chlib „{{key}}" á húsáid cheana féin sa spás seo.",
+      "updated": "Nuashonraíodh 1 lua.",
+      "deleteOne": "Scriosadh 1 lua.",
+      "confirmDeleteUsed": "Úsáidtear an lua seo {{count}}× i do chuid doiciméad. Scrios ar aon nós?",
+      "confirmDeleteSingle": "Scrios lua „{{key}}"? Ní féidir seo a chúlghairm.",
+      "untitled": "(gan teideal)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} roghnaithe",
+      "deleteSelected": "scrios",
+      "setTypePrompt": "socraigh cineál",
+      "setTypeAria": "Socraigh cineál do luachana roghnaithe",
+      "chooseOption": "roghnaigh…",
+      "ariaLabel": "Gníomhartha ollmhóra",
+      "clearSelection": "glan",
+      "deleted": "Scriosadh {{count}} lua.",
+      "typeApplied": "Socraíodh cineál go {{type}} ar {{count}} lua.",
+      "confirmDelete": "Scrios {{count}} lua(chana)? Ní féidir seo a chúlghairm."
+    },
+    "row": {
+      "selectAllAria": "Roghnaigh gach lua ar an leathanach seo",
+      "viewCitationAria": "Féach ar lua {{key}}",
+      "selectCitationAria": "Roghnaigh lua {{key}}",
+      "collapseCitationAria": "Crap lua {{key}}",
+      "usedCount": "{{count}}× úsáidte",
+      "unused": "gan úsáid",
+      "copyTag": "Cóipeáil clib",
+      "copyTagAria": "Cóipeáil clib {{value}}",
+      "copiedTitle": "Cóipeáilte",
+      "copiedTagAria": "Cóipeáladh clib {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}
