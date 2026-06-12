@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Frit skrivende multiversum",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Dit første rum er tomt. Vælg en skabelon for at komme i gang, eller start fra bunden.",
+    "tagline": "Et roligt rum til langformat skrivning — fiktion, forskning, essays, dagbøger.",
+    "continueWriting": "Fortsæt med at skrive",
+    "startNewSpace": "Start et nyt rum",
+    "syncOffChip": "synkronisering/sikkerhedskopier ikke aktiveret · data kan gå tabt",
+    "syncOnChip": "mappesynkronisering slået til",
+    "syncOnTitle": "Mappesynkronisering aktiveret",
+    "syncOnBody": "Dit arbejde synkroniseres til mappen "{{folder}}" på denne enhed.",
+    "warningTitle": "Forhåndsudgivelsesversion",
+    "warningBody": "Ingen datasynkronisering. Alt ligger i din browser, og hvis du rydder browserens cache, mister du dit arbejde. Du kan aktivere synkronisering til en lokal mappe i Universelle indstillinger → Synkronisering.",
+    "versionLine": "Version {{version}}"
+  },
+  "about": {
+    "back": "tilbage",
+    "title": "om",
+    "greeting": "Hej,",
+    "paragraph1": "Dette er til den skribent, der hele tiden starter forfra. Den, der åbner et nyt dokument, skriver tre sætninger (eller ingen) og derefter bruger 40 minutter på at justere skrifttypen. Den, hvis bedste idéer dukker op klokken 2 om natten og straks bliver glemt. Den med fjorten faner, seks notesbøger og et udkast, der ikke er rykket sig en tøddel i en måned.",
+    "paragraph2Before": "Jeg ved det, for det er mig ",
+    "paragraph2After": ". Jeg har ADHD, autisme og sandsynligvis andre -ismer, der endnu ikke er diagnosticeret. Jeg har brug for noget, der forstår min kaotiske men vidunderlige hjerne. Et sted at smide alt hen, inden det forsvinder (eller begynde at skrive). Fragmenterne, halvtankerne, forbindelserne klokken 3 om natten. Det hele, på ét sted.",
+    "paragraph3": "Så jeg byggede dette rum til os. Jeg håber, det giver dig samme dopaminrush som det giver mig at bygge det.",
+    "paragraph4Before": "Én ting mere... Jeg tror på teknologi til det gode, og jeg hader reklamer. Så dette vil altid være reklamefrit og GRATIS til ikke-kommerciel brug. Du kan forke det og ændre det, som du vil, under ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Status",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — der er ingen datasynkronisering. Alle data gemmes i IndexedDB i din lokale browser. Hvis du rydder din browsercache, vil dit arbejde gå tabt.",
+    "feedbackBefore": "Jeg bygger stadig på dette og har masser af idéer ",
+    "feedbackAfter": ". Jeg vil meget gerne høre, hvad der virker, hvad der ikke gør, og hvad du savner. Feedback er velkommen.",
+    "sourceLabel": "Kildekode"
+  },
+  "settings": {
+    "back": "tilbage",
+    "windowTitle": "lotem · indstillinger",
+    "breadcrumb": "UNIVERSELLE INDSTILLINGER",
+    "shellSubtitle": "UNIVERSELLE INDSTILLINGER",
+    "comingSoonBadge": "kommer snart",
+    "helpAria": "Hvad er dette?",
+    "groups": {
+      "preferences": "Præferencer",
+      "writing": "Skrivning",
+      "data": "Data",
+      "account": "Konto"
+    },
+    "tabs": {
+      "general": "Generelt",
+      "appearance": "Udseende",
+      "editor": "Redaktør",
+      "docInspector": "Dokumentinspektor",
+      "accessibility": "Tilgængelighed",
+      "typography": "Typografi",
+      "shortcuts": "Tastatur",
+      "templates": "Skabeloner",
+      "palettes": "Fremhævningspaletter",
+      "citations": "Citationsstil",
+      "annotation": "Annotationer",
+      "backups": "Sikkerhedskopier",
+      "sync": "Synkronisering",
+      "export": "Eksport / import",
+      "data": "Dine data",
+      "account": "Konto",
+      "about": "Om",
+      "language": "Sprog"
+    },
+    "language": {
+      "title": "Sprog",
+      "subtitle": "Vælg sproget for grænsefladen og Hjælpecenter-artikler. Manglende oversættelser falder tilbage til engelsk.",
+      "label": "Grænsefladesprog",
+      "hint": "Ændringer træder i kraft med det samme og gemmes i denne browser.",
+      "machineTranslationNotice": "Oversættelser ud over engelsk produceres automatisk. Vi beklager eventuelle fejl — send venligst feedback, så vi kan rette dem.",
+      "feedbackLinkLabel": "send feedback"
+    },
+    "editor": {
+      "title": "Redaktør",
+      "subtitle": "Værktøjslinje og skrivehjælpemidler. Markdown-genveje (#, >, -, **) virker uanset disse indstillinger.",
+      "floatingToolbarLabel": "Flydende værktøjslinje",
+      "floatingToolbarHint": "Vises ved fremhævning eller højreklik i skrivetilstand.",
+      "floatingToolbarOff": "Fra",
+      "floatingToolbarOn": "Til",
+      "rightClickLabel": "Højrekliksmenu",
+      "rightClickHint": "Skift mellem den flydende værktøjslinje og browserens native kontekstmenu.",
+      "rightClickTooltip": "Brug den native kontekstmenu ved højreklik i stedet for den flydende værktøjslinje. Værktøjslinjen vises stadig ved tekstmarkering.",
+      "inlineTogglesLabel": "Inline-knapper",
+      "inlineTogglesHint": "Fed og kursiv-knapper i den flydende værktøjslinje.",
+      "inlineTogglesTooltip": "Skjul F- og K-knapperne fra den flydende værktøjslinje. Markdown-genveje (**, _) virker stadig.",
+      "listDepthLabel": "Listenestingdybde",
+      "listDepthHint": "Hvor dybt punktlister og nummererede lister kan nestes.",
+      "listDepthTooltip": "Hæv eller sænk loftet for listenesting. Aktuelt fast på 2 niveauer.",
+      "templateDefaultsLabel": "Standardindstillinger pr. skabelon",
+      "templateDefaultsHint": "Forskellige formateringsundersæt pr. skabelon.",
+      "templateDefaultsTooltip": "Lad hver skabelon (fiktion, dagbog, teknisk…) vælge sit eget formateringsundersæt."
+    },
+    "docInspector": {
+      "title": "Dokumentinspektor",
+      "subtitle": "Vælg hvilke felter der vises i dokumentinspektoren. Hvert felt kan deaktiveres universelt og tilsidesættes pr. rum.",
+      "statusLabel": "Status",
+      "statusHint": "Vis dokumentstatus og lås færdige dokumenter fra redigering.",
+      "wordLimitLabel": "Ordgrænse",
+      "wordLimitHint": "Vis en ordtælingsgrænse, du kan indstille pr. dokument.",
+      "charLimitLabel": "Tegngrænse",
+      "charLimitHint": "Vis en tegntælingsgrænse, du kan indstille pr. dokument.",
+      "dueDateLabel": "Forfaldsdato",
+      "dueDateHint": "Vis en deadline, du kan indstille pr. dokument.",
+      "highlightLabel": "Fremhæv tekst over grænsen",
+      "highlightHint": "Markér al tekst ud over grænsen i redaktøren.",
+      "statusStagesLabel": "Statusfaser",
+      "statusStagesHint": "Vælg hvilke faser der vises i statusvælgeren.",
+      "on": "Til",
+      "off": "Fra",
+      "inherit": "Standard ({{state}})",
+      "inheritTooltip": "Nedarvet fra universelle indstillinger",
+      "stateOn": "til",
+      "stateOff": "fra"
+    },
+    "accessibility": {
+      "title": "Tilgængelighed",
+      "subtitle": "Tilpas grænsefladen for komfort og hjælpeteknologi. Hver indstilling starter ved den nuværende oplevelse — intet ændrer sig, før du vælger det.",
+      "theme": {
+        "label": "Tema og kontrast",
+        "hint": "Høj-kontrast-temaer opfylder WCAG AAA-kontraststandarden.",
+        "light": "Lys",
+        "dark": "Mørk",
+        "hcLight": "Høj kontrast (lys)",
+        "hcDark": "Høj kontrast (mørk)"
+      },
+      "motion": {
+        "label": "Bevægelse",
+        "hint": "Reducér eller deaktivér grænsefladeanimationer.",
+        "auto": "Følg system",
+        "reduced": "Reduceret",
+        "full": "Fuld"
+      },
+      "textSize": {
+        "label": "Tekststørrelse",
+        "hint": "Skalér læse- og skriveoverfladen.",
+        "sm": "Lille",
+        "base": "Standard",
+        "lg": "Stor",
+        "xl": "Ekstra stor"
+      },
+      "lineSpacing": {
+        "label": "Linjeafstand",
+        "hint": "Tilføj vejrtrækning mellem tekstlinjer.",
+        "normal": "Normal",
+        "relaxed": "Afslappet",
+        "loose": "Løs"
+      },
+      "linkUnderline": {
+        "label": "Understregning af links altid",
+        "hint": "Vis understregninger, så links ikke kun er afhængige af farve."
+      },
+      "focus": {
+        "label": "Forbedret fokusindikator",
+        "hint": "Brug en tykkere, mere kontrastrig kontur ved fokus."
+      },
+      "reset": {
+        "label": "Nulstil til standarder",
+        "hint": "Gendan bevægelse, tekststørrelse, linjeafstand, links og fokus til standardværdier. Dit tema ændres ikke.",
+        "action": "Nulstil"
+      }
+    },
+    "general": {
+      "title": "Generelt",
+      "subtitle": "Sådan vises LIpsum Writer som standard. Intet af dette er destruktivt.",
+      "comingSoonBody": "Kompakt tæthed, reducér bevægelse, synlighed af tastaturhints og hvilken visning der åbnes ved opstart.",
+      "compactDensityLabel": "Kompakt tæthed",
+      "compactDensityHint": "Tættere rækker i lister, strammere polstring overalt.",
+      "reduceMotionLabel": "Reducér bevægelse",
+      "reduceMotionHint": "Spring animerede overgange mellem visninger over.",
+      "keyboardHintsLabel": "Vis tastaturhints",
+      "keyboardHintsHint": "Vis ⌘-tastaturgenveje i tooltips og hjørnerne af knapper.",
+      "startupLabel": "Åbn ved opstart",
+      "startupHint": "Hvad du ser, når du starter appen.",
+      "startupOptions": {
+        "lastView": "Seneste visning",
+        "home": "Startside",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Udseende",
+      "subtitle": "Farve, type, tæthed. Den stemning du vil sætte.",
+      "comingSoonBody": "Kuratorede temapaletter, accentfarve og tæthed. Nutidens temaknap findes i verdensrailens hurtige indstillinger.",
+      "themeLabel": "Tema",
+      "themeHint": "Tre kuratorede paletter. De justerer alt — blokfarver, hårlinjer, endda kornet.",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "standard",
+        "studio": "Studio",
+        "studioSub": "neutral",
+        "midnight": "Midnight",
+        "midnightSub": "mørk"
+      },
+      "accentLabel": "Accent",
+      "accentHint": "Bruges til hover, fokus, aktiv redigeringsring.",
+      "densityLabel": "Tæthed",
+      "densityOptions": {
+        "cozy": "Hyggelig",
+        "default": "Standard",
+        "compact": "Kompakt"
+      }
+    },
+    "templates": {
+      "title": "Skabeloner",
+      "subtitle": "Genanvendelige strukturer for nye rum og dokumenter.",
+      "comingSoonBody": "Opret dine egne skabeloner med sektioner, standarddokumentnavne og teksteksempler.",
+      "items": {
+        "fiction": "Fiktion",
+        "fictionSub": "Manuskript · Verden · Værksted",
+        "research": "Forskning",
+        "researchSub": "Kilder · Noter · Udkast",
+        "journal": "Dagbog",
+        "journalSub": "Daglig · Ugentlig · Refleksioner",
+        "essay": "Essay",
+        "essaySub": "Disposition · Udkast · Færdig"
+      }
+    },
+    "palettes": {
+      "title": "Fremhævningspaletter",
+      "subtitle": "Paletter med fem pladser pr. rum — navngiv og juster hver farve.",
+      "comingSoonBody": "Redigér, gem og skift navngivne fremhævningspaletter (Evidens, Til revision, Reference…) på tværs af rum.",
+      "items": {
+        "evidence": "Evidens",
+        "revise": "Til revision",
+        "reference": "Reference",
+        "quote": "Citat",
+        "loose": "Løs tråd"
+      },
+      "rename": "omdøb",
+      "tune": "juster"
+    },
+    "citations": {
+      "title": "Citationsstil",
+      "subtitle": "Standard citationsstil på tværs af rum.",
+      "comingSoonBody": "Vælg en universel stil (Chicago, APA, MLA…) med tilsidesættelse pr. rum.",
+      "styleLabel": "Standardstil",
+      "styleHint": "Bruges ved indsætning af en ny citation. Tilsidesættelser pr. rum kommer senere.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Annotationer",
+      "subtitle": "Marginalnoter og inline-annotationer.",
+      "comingSoonBody": "Annotationstyper, standardsynlighed og eksportadfærd.",
+      "showMarginLabel": "Vis marginalnoter",
+      "showMarginHint": "Annotationer flyder i den højre margen, når der er plads.",
+      "showInlineLabel": "Vis inline-fremhævninger",
+      "showInlineHint": "Annotationsfarven løber ind i den underliggende tekst.",
+      "exportLabel": "Inkludér i eksporter",
+      "exportHint": "Annotationer skrives ud ved siden af dokumentteksten."
+    },
+    "export": {
+      "title": "Eksport / import",
+      "subtitle": "Flyt data ind og ud af LIpsum Writer.",
+      "comingSoonBody": "Masseeksport til .zip, import fra et andet LIpsum-bundt eller Markdown-mappe.",
+      "formatLabel": "Eksportformat",
+      "formatHint": "Pr.-dokument- og pr.-rum-eksporter bruger samme standard.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Importér fra",
+      "importHint": "Hent et andet LIpsum-bundt eller en mappe med Markdown-filer.",
+      "importOptions": {
+        "bundle": "LIpsum-bundt (.zip)",
+        "markdown": "Markdown-mappe",
+        "obsidian": "Obsidian-vault"
+      },
+      "importSpaceLabel": "Importér et rum",
+      "importSpaceHint": "Hent et rum ind i denne browser fra et Writer-arkiv (.zip) — et snapshotdownload eller en mappesynkroniseringseksport fra en anden enhed.",
+      "importChooseFile": "Vælg arkiv…",
+      "importing": "importerer…",
+      "importFailed": "Import mislykkedes: {{message}}",
+      "comingSoonLabel": "Flere formater",
+      "comingSoonHint": "Masseeksport og -import fra Markdown-mapper eller Obsidian-vaults.",
+      "comingSoonTooltip": "Planlagt — ikke tilgængeligt endnu."
+    },
+    "data": {
+      "title": "Dine data",
+      "subtitle": "Hvor dit arbejde bor, og hvor meget plads det fylder.",
+      "comingSoonBody": "IndexedDB-forbrug, lagerestimering og et enkelt-klik-fuld-slet.",
+      "storageLabel": "Lager brugt",
+      "storageValue": "≈ 12,4 MB · 4 rum, 38 dokumenter",
+      "engineLabel": "Lagringsmotor",
+      "engineValue": "IndexedDB (lokal browser)",
+      "wipeLabel": "Slet alt",
+      "wipeHint": "Fjerner hvert rum, dokument og snapshot fra denne browser. Det kan ikke fortrydes.",
+      "wipeButton": "Slet lokale data…"
+    },
+    "about": {
+      "title": "Om",
+      "subtitle": "Byggeinfo og links.",
+      "comingSoonBody": "Se /about-siden for historien; denne fane vil huse byggeinfo, licens og changelog.",
+      "versionLabel": "Version",
+      "versionValue": "{{version}}",
+      "buildLabel": "Build",
+      "buildValue": "lokal",
+      "licenseLabel": "Licens",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Links",
+      "links": {
+        "source": "Kildekode",
+        "changelog": "Changelog",
+        "feedback": "Send feedback"
+      }
+    },
+    "account": {
+      "title": "Konto",
+      "subtitle": "Log ind, synkronisér på tværs af enheder og delte arbejdsrum.",
+      "comingSoonBody": "Skysynkronisering er ikke tilgængeligt i dag — Lotem er kun lokal. Konto, login og delte arbejdsrum kommer, når synkronisering lanceres.",
+      "signedOutLabel": "Log ind",
+      "signedOutHint": "Skysynkronisering er ikke tilgængeligt endnu. Dette er her for at vise designet.",
+      "signInButton": "Log ind med e-mail",
+      "syncLabel": "Synkronisér denne enhed",
+      "syncHint": "Når du logger ind, replikeres dine rum til andre enheder."
+    },
+    "typography": {
+      "title": "Typografi",
+      "subtitle": "Standarder på tværs af alle verdener. Individuelle verdener kan tilsidesætte.",
+      "comingSoonBody": "Vælg prosaskrifttype, UI-skrifttype, standard læsestørrelse, linjehøjde og mål for nye verdener.",
+      "proseFontLabel": "Prosaeskrifttype",
+      "uiFontLabel": "UI-skrifttype",
+      "proseSizeLabel": "Prosastørrelse",
+      "proseSizeHint": "Standard for nye verdener.",
+      "lineHeightLabel": "Linjehøjde",
+      "measureLabel": "Mål",
+      "measureHint": "Maksimal linjebredde.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Genveje",
+      "subtitle": "Tastaturkombinationer til navigation, formatering og tilstande.",
+      "comingSoonBody": "Genanvendelige genveje til skrive/læse/opdelt, fokusmodus og formateringsværktøjslinjen.",
+      "navHeader": "Navigation",
+      "formatHeader": "Formatering",
+      "modeHeader": "Tilstande",
+      "items": {
+        "openSettings": "Åbn indstillinger",
+        "quickSettings": "Hurtige indstillinger",
+        "findInDoc": "Find i dokument",
+        "toggleFocus": "Slå fokus til/fra",
+        "toggleInspector": "Slå inspektor til/fra",
+        "bold": "Fed",
+        "italic": "Kursiv",
+        "underline": "Understreget",
+        "heading1": "Overskrift 1",
+        "heading2": "Overskrift 2",
+        "write": "Skrivetilstand",
+        "read": "Læsetilstand",
+        "split": "Opdelt tilstand"
+      }
+    },
+    "backups": {
+      "title": "Sikkerhedskopier",
+      "subtitle": "Eksportér, gendan og tag snapshots af dine lokale data.",
+      "comingSoonBody": "Planlagte lokale snapshots, manuel eksport til .zip og gendannelse fra en tidligere sikkerhedskopi.",
+      "intervalLabel": "Auto-snapshot-interval",
+      "intervalOptions": {
+        "5min": "5 min",
+        "10min": "10 min",
+        "30min": "30 min",
+        "off": "Fra"
+      },
+      "keepLabel": "Behold",
+      "keepHint": "Ældre snapshots rulles automatisk af.",
+      "keepOptions": {
+        "last50": "Seneste 50",
+        "days7": "7 dage",
+        "days30": "30 dage"
+      },
+      "latestLabel": "Seneste",
+      "latestValue": "for 12 min siden · 1.190 ord"
+    },
+    "sync": {
+      "title": "Synkronisering",
+      "subtitle": "Send dine rum til en mappe du vælger. Peg den mod en Google Drive-, Dropbox- eller iCloud-mappe for at synkronisere på tværs af enheder.",
+      "unsupportedTitle": "Ikke tilgængeligt i denne browser",
+      "unsupportedBody": "Mappesynkronisering kræver File System Access API, som er tilgængeligt i Chrome, Edge og andre Chromium-browsere på desktop. Skift til en understøttet browser for at bruge det.",
+      "folderLabel": "Synkroniseret mappe",
+      "folderHint": "Hver synkronisering skriver en Markdown .zip pr. rum her og beholder de seneste 5 plus en latest.zip. Synkronisering er adskilt fra sikkerhedskopier.",
+      "noFolder": "Ingen mappe tilsluttet",
+      "chooseFolder": "Vælg mappe…",
+      "changeFolder": "Skift…",
+      "disconnect": "Afbryd forbindelsen",
+      "intervalLabel": "Auto-synkronisering",
+      "intervalHint": "Hvor ofte rum synkroniseres automatisk, mens appen er åben og mappen er tilsluttet. Hvert rum kan tilsidesætte denne standard.",
+      "intervalOff": "Fra",
+      "intervalMinutes": "{{count}} min",
+      "intervalDefault": "Standard ({{label}})",
+      "syncLabel": "Manuel synkronisering",
+      "pushOnlyHint": "Kun push for nu — dette skriver dine lokale data til mappen. Hentning af ændringer kommer senere.",
+      "syncNow": "Synkronisér nu",
+      "syncNowAll": "Synkronisér alle rum",
+      "reconnectHint": "Synkronisering er sat på pause — browseren har brug for mappetilladelse igen til denne session. Genopret forbindelsen for at genoptage manuel og auto-synkronisering.",
+      "reconnectButton": "Genopret forbindelsen",
+      "reconnecting": "Genopretter forbindelsen…",
+      "syncing": "Synkroniserer…",
+      "syncFailed": "Synkronisering mislykkedes: {{message}}",
+      "lastSynced": "Sidst synkroniseret {{when}}",
+      "neverSynced": "Aldrig synkroniseret",
+      "justNow": "lige nu",
+      "resultsTitle": "Seneste kørsel",
+      "spaceOk": "synkroniseret",
+      "spaceFailed": "mislykkedes",
+      "historyTitle": "Nylige synkroniseringer",
+      "historyEmpty": "Ingen synkroniseringer endnu.",
+      "columns": {
+        "when": "HVORNÅR",
+        "space": "RUM",
+        "kind": "TYPE",
+        "size": "STØRRELSE",
+        "status": "STATUS"
+      },
+      "kind": {
+        "auto": "auto",
+        "manual": "manuel"
+      },
+      "status": {
+        "ok": "ok",
+        "error": "fejl"
+      }
+    },
+    "space": {
+      "breadcrumb": "RUM · INDSTILLINGER",
+      "shellSubtitle": "RUMINDSTILLINGER",
+      "loading": "Indlæser rum…",
+      "groups": {
+        "thisSpace": "Dette rum",
+        "sharingMembers": "Deling og medlemmer",
+        "data": "Data",
+        "dangerZone": "Fare"
+      },
+      "tabs": {
+        "general": "Generelt",
+        "docInspector": "Dokumentinspektor",
+        "template": "Skabelon",
+        "palette": "Fremhævningspalette",
+        "sharing": "Deling",
+        "members": "Medlemmer",
+        "backups": "Sikkerhedskopier",
+        "sync": "Synkronisering",
+        "export": "Eksport",
+        "danger": "Farezone"
+      },
+      "docInspector": {
+        "title": "Dokumentinspektor",
+        "subtitle": "Tilsidesæt de universelle inspektorindstillinger for dette rum."
+      },
+      "palette": {
+        "title": "Fremhævningspalette",
+        "subtitle": "Fem navngivne, justerbare fremhævningsfarver for dette rum.",
+        "comingSoonBody": "Omdøb, omfarv og omordne dette rums fremhævningspladser.",
+        "items": {
+          "evidence": "Evidens",
+          "revise": "Til revision",
+          "reference": "Reference",
+          "quote": "Citat",
+          "loose": "Løs tråd"
+        },
+        "rename": "omdøb",
+        "tune": "juster"
+      },
+      "export": {
+        "title": "Eksport",
+        "subtitle": "Flyt dette rums indhold til et andet værktøj.",
+        "comingSoonBody": "Eksportér til Markdown .zip (i dag via Sikkerhedskopier), LaTeX, HTML eller PDF — alt på ét sted.",
+        "formatLabel": "Format",
+        "formatHint": "Markdown kommer først; resten følger.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Seneste eksport",
+        "lastValue": "aldrig"
+      },
+      "general": {
+        "title": "Generelt",
+        "subtitle": "Identifikationsoplysninger for dette rum. Ændringer træder i kraft med det samme og synkroniseres på tværs af visninger.",
+        "nameLabel": "Rumnavn",
+        "nameHint": "Vises i sidebjælkens overskrift og i rummets rail-tooltip.",
+        "tagLabel": "Kode",
+        "tagHint": "En kort kode (2–4 tegn) vist på rummets rail-flis."
+      },
+      "sharing": {
+        "title": "Deling",
+        "subtitle": "Kontrollér, hvordan dette rum deles.",
+        "comingSoonBody": "Synlighed pr. rum og delte links. Kommer, når skysynkronisering lanceres.",
+        "visibilityLabel": "Synlighed",
+        "visibilityOptions": {
+          "private": "Privat",
+          "link": "Alle med link",
+          "members": "Kun medlemmer"
+        },
+        "linkLabel": "Delbart link",
+        "linkHint": "Skrivebeskyttet som standard. Redigeringsprivilegier følger Medlemmer.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "kopiér"
+      },
+      "template": {
+        "title": "Skabelon",
+        "subtitle": "Den strukturelle skabelon, dette rum blev oprettet med.",
+        "comingSoonBody": "Ændring af et rums skabelon efter oprettelse er endnu ikke understøttet. Kommer, når vi kan migrere sektioner og dokumenter sikkert.",
+        "currentLabel": "Aktuel skabelon",
+        "currentValue": "Fiktion",
+        "currentSub": "Manuskript · Verden · Værksted",
+        "changeLabel": "Skift skabelon",
+        "changeHint": "Omarrangerer eksisterende sektioner og dokumenter til den nye skabelon.",
+        "changeButton": "Skift skabelon…"
+      },
+      "members": {
+        "title": "Medlemmer",
+        "subtitle": "Medforfattere og korrekturlæsere med adgang til dette rum.",
+        "comingSoonBody": "Invitér samarbejdspartnere, administrér roller og gennemgå ændringer. Kommer med skysynkronisering.",
+        "inviteLabel": "Invitér via e-mail",
+        "inviteHint": "Vi sender dem et link til at deltage i dette rum.",
+        "invitePlaceholder": "navn@eksempel.dk",
+        "inviteButton": "send invitation",
+        "membersLabel": "Medlemmer",
+        "roles": {
+          "owner": "ejer",
+          "editor": "redaktør",
+          "viewer": "læser"
+        },
+        "you": "dig"
+      },
+      "backups": {
+        "title": "Sikkerhedskopier",
+        "subtitle": "Tag et snapshot af dette rum som en .zip, du kan downloade, beholde og gendanne fra.",
+        "retentionHint": "Beholder de {{count}} seneste snapshots — ældre fjernes automatisk.",
+        "snapshotNow": "+ snapshot nu",
+        "snapshotting": "tager snapshot…",
+        "snapshotFailed": "Snapshot mislykkedes: {{message}}",
+        "historyTitle": "Historik",
+        "empty": "Ingen snapshots endnu — opret et med + snapshot nu.",
+        "columns": {
+          "when": "HVORNÅR",
+          "kind": "TYPE",
+          "size": "STØRRELSE",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "manuel",
+          "auto": "auto",
+          "snapshot": "snapshot"
+        },
+        "download": "↓ download",
+        "delete": "slet",
+        "deleteConfirm": "Slet dette snapshot? Det kan ikke fortrydes.",
+        "deleted": "Snapshot slettet.",
+        "justNow": "lige nu",
+        "restore": "↺ gendan",
+        "restoreUnavailable": "Dette snapshot er fra før genoprettelsessupport — det kan kun downloades.",
+        "restoreDialogTitle": "Gendan dette snapshot?",
+        "restoreDialogBody": "Det aktuelle indhold i dette rum erstattes med snapshot'et. Et snapshot af den aktuelle tilstand gemmes først, så du kan fortryde denne gendannelse.",
+        "restoreConfirm": "Gendan",
+        "restoreCancel": "Annullér",
+        "restoring": "gendanner…",
+        "restored": "Snapshot gendannet.",
+        "restoreFailed": "Gendannelse mislykkedes: {{message}}",
+        "fileRestoreTitle": "Gendanner fra et downloadet .zip?",
+        "fileRestoreBody": "Importér det via Universelle indstillinger → Eksport / import — det vender tilbage som et nyt rum og lader dette være urørt."
+      },
+      "sync": {
+        "title": "Synkronisering",
+        "subtitle": "Send dette rum til den tilsluttede mappe, manuelt eller efter en tidsplan. Synkronisering er adskilt fra sikkerhedskopier.",
+        "folderHint": "Tilslut en mappe i Universelle indstillinger → Synkronisering. Den samme mappe bruges til hvert rum.",
+        "intervalHint": "Hvor ofte dette rum synkroniseres automatisk. Vælg Standard for at følge den universelle auto-synkroniseringsindstilling.",
+        "syncNow": "Synkronisér dette rum"
+      },
+      "danger": {
+        "title": "Farezone",
+        "subtitle": "Uigenkaldelige handlinger. Læs nøje, inden du fortsætter.",
+        "deleteCardTitle": "Slet dette rum",
+        "deleteCardBody": "Fjerner permanent dette rum sammen med hvert dokument, afsnit, Brain space-note, annotation, citation og forbindelse. Det kan ikke fortrydes.",
+        "deleteButton": "Slet dette rum",
+        "dialogTitle": "Slet \"{{name}}\"?",
+        "dialogBody": "Dette fjerner permanent rummet og alt dets indhold. Det kan ikke fortrydes.",
+        "typeToConfirm": "Skriv {{name}} for at bekræfte",
+        "cancel": "Annullér",
+        "confirm": "Slet rum"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Fortabt i margenen",
+    "body": "Den side eksisterer ikke (endnu).",
+    "goHome": "Gå hjem"
+  },
+  "templates": {
+    "crumb": "01 — EN SLAGS RUM",
+    "headingMain": "Hvilken slags rum",
+    "headingAccent": "starter du?",
+    "chooseLegend": "Vælg en skabelon",
+    "stage": {
+      "pre-alpha": "eksperimentel",
+      "alpha": "tidlig",
+      "beta": "beta"
+    },
+    "nameLabel": "Navn",
+    "tagLabel": "Kode",
+    "syncLabel": "skysynkronisering —",
+    "syncValue": "fra, lokal",
+    "syncTooltip": "Skysynkronisering er ikke tilgængeligt — denne app er kun lokal for nu.",
+    "creating": "opretter…",
+    "submitLabel": "gå ind i {{name}} →",
+    "newSpace": "nyt rum",
+    "back": "tilbage"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} usorterede",
+    "title": "Brain space",
+    "mobileWarning": "Brain space fungerer bedst på en større skærm.",
+    "mobileNote": "Lærredet kræver en mus eller trackpad.",
+    "openInWrite": "Åbn i Skrivetilstand →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "begynd at dumpe",
+      "emptyHint": "vælg en korttype nedenfor",
+      "pendingHint": "shift-klik en anden note for at forbinde · esc for at annullere"
+    },
+    "note": {
+      "deleteNote": "Slet note",
+      "addPicture": "Tilføj billede",
+      "addPictureCta": "tilføj et billede",
+      "openLinkedDoc": "Åbn tilknyttet dokument",
+      "fetchedContent": "Hentet indhold",
+      "openDetailsLabel": "Åbn detaljer",
+      "openDetailsTitle": "Åbn detaljer-panel",
+      "titlePlaceholder": "titel",
+      "addTitleCta": "+ titel",
+      "bodyEmpty": "(klik for at skrive)",
+      "viewImage": "Vis {{name}}",
+      "removeImage": "Fjern {{name}}",
+      "resize": "Tilpas notestørrelse",
+      "days": {
+        "sun": "søn",
+        "mon": "man",
+        "tue": "tir",
+        "wed": "ons",
+        "thu": "tor",
+        "fri": "fre",
+        "sat": "lør"
+      }
+    },
+    "drawer": {
+      "title": "Notedetaljer",
+      "description": "Rediger den valgte note og administrér dens forbindelser.",
+      "untitledPlaceholder": "Uden titel",
+      "titleAriaLabel": "Notetitel",
+      "closeAriaLabel": "Luk panel",
+      "bodyLabel": "Indhold",
+      "bodyPlaceholder": "Skriv noget…",
+      "picturesLabel": "Billeder",
+      "addPicture": "Tilføj billede",
+      "pictureLimitHint": "grænse på {{count}} nået — fjern et for at tilføje et andet.",
+      "linkedDocLabel": "Tilknyttet dokument",
+      "noLinkedDoc": "— Intet tilknyttet dokument —",
+      "untitledDoc": "Uden titel",
+      "openDoc": "Åbn",
+      "connectionsHeading": "Forbindelser ({{count}})",
+      "connectionsEmpty": "shift-klik en anden note på lærredet for at forbinde.",
+      "untitledNote": "(uden titel)",
+      "removeConnection": "Fjern forbindelse",
+      "deleteNote": "Slet note"
+    }
+  },
+  "split": {
+    "title": "Delt visning",
+    "mobileWarning": "Delt visning kræver en større skærm.",
+    "mobileNote": "Åbn dette dokument i Skrivetilstand i stedet.",
+    "openInWrite": "Åbn i Skrivetilstand →",
+    "leftPrefix": "VENSTRE —",
+    "rightPrefix": "HØJRE —",
+    "rightPaneAria": "Dokument i højre rude",
+    "noOtherDocs": "(ingen andre dokumenter)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Citationer",
+    "pickDoc": "Vælg et dokument fra rullemenuen ovenfor.",
+    "dividerAria": "Tilpas størrelsen på de delte ruder"
+  },
+  "citationsDrawer": {
+    "title": "Citationer",
+    "description": "Søg, importér og eksportér citationer for dette rum.",
+    "close": "Luk citationer",
+    "expand": "Åbn citationer i fuld visning"
+  },
+  "citations": {
+    "title": "Citationer",
+    "breadcrumb": "Kilder / ",
+    "entries": "{{count}} POSTER",
+    "searchPlaceholder": "forfattere, koder, år…",
+    "upload": "↑ upload .bib / .ris",
+    "add": "+ tilføj",
+    "cancel": "× annullér",
+    "columns": {
+      "tag": "KODE",
+      "authors": "FORFATTERE",
+      "title": "TITEL",
+      "year": "ÅR",
+      "type": "TYPE",
+      "used": "BRUGT"
+    },
+    "style": "STIL — CHICAGO (FORFATTER-DATO)",
+    "exportBib": "EKSPORTÉR SOM .BIB",
+    "summary": "{{filtered}} VIST · {{shown}} PÅ DENNE SIDE",
+    "prevPage": "Forrige side",
+    "nextPage": "Næste side",
+    "empty": "ingen citationer endnu",
+    "noMatch": "ingen rækker matcher din søgning.",
+    "importHint": "importér en .bib eller tilføj en manuelt.",
+    "pasteHeader": "Indsæt BibTeX eller en titel",
+    "addCitation": "tilføj citation",
+    "manualCancel": "annullér",
+    "adding": "tilføjer…",
+    "parsing": "Analyserer {{name}}…",
+    "imported": "Importerede {{added}} citation{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", sprang {{skipped}} duplikat{{skippedPlural}} over",
+    "skippedSuffixShort": ", sprang {{skipped}} over",
+    "failed": "Parsing mislykkedes: {{message}}",
+    "failedManual": "Mislykkedes: {{message}}",
+    "addedOne": "Tilføjede 1 citation.",
+    "unknownAuthor": "(ukendt)",
+    "unknownError": "ukendt fejl",
+    "edit": {
+      "save": "gem",
+      "saving": "gemmer…",
+      "cancel": "annullér",
+      "delete": "slet",
+      "edit": "rediger",
+      "tagLabel": "Kode",
+      "authorsLabel": "Forfattere",
+      "titleLabel": "Titel",
+      "yearLabel": "År",
+      "typeLabel": "Type",
+      "duplicateKey": "Koden \"{{key}}\" er allerede i brug i dette rum.",
+      "updated": "Opdaterede 1 citation.",
+      "deleteOne": "Slettede 1 citation.",
+      "confirmDeleteUsed": "Denne citation bruges {{count}}× i dine dokumenter. Slet alligevel?",
+      "confirmDeleteSingle": "Slet citationen \"{{key}}\"? Det kan ikke fortrydes.",
+      "untitled": "(uden titel)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} valgt",
+      "deleteSelected": "slet",
+      "setTypePrompt": "angiv type",
+      "setTypeAria": "Angiv type for valgte citationer",
+      "chooseOption": "vælg…",
+      "ariaLabel": "Massehandlinger",
+      "clearSelection": "ryd",
+      "deleted": "Slettede {{count}} citationer.",
+      "typeApplied": "Satte type til {{type}} på {{count}} citationer.",
+      "confirmDelete": "Slet {{count}} citation(er)? Det kan ikke fortrydes."
+    },
+    "row": {
+      "selectAllAria": "Vælg alle citationer på denne side",
+      "viewCitationAria": "Se citation {{key}}",
+      "selectCitationAria": "Vælg citation {{key}}",
+      "collapseCitationAria": "Skjul citation {{key}}",
+      "usedCount": "{{count}}× brugt",
+      "unused": "ubrugt",
+      "copyTag": "Kopiér kode",
+      "copyTagAria": "Kopiér kode {{value}}",
+      "copiedTitle": "Kopieret",
+      "copiedTagAria": "Kopierede kode {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}
