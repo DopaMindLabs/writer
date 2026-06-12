@@ -10,7 +10,7 @@
     "syncOffChip": "sünkroonimine/varundamine pole lubatud · andmed võivad kaduda",
     "syncOnChip": "kausta sünkroonimine sees",
     "syncOnTitle": "Kausta sünkroonimine lubatud",
-    "syncOnBody": "Teie töö sünkroonitakse selle seadme kaustaga „{{folder}}”.",
+    "syncOnBody": "Teie töö sünkroonitakse selle seadme kaustaga „{{folder}}".",
     "warningTitle": "Eelversiooni build",
     "warningBody": "Andmete sünkroonimist pole. Kõik elab teie brauseris ja selle vahemälu tühjendamine kaotab teie töö. Saate lubada sünkroonimise kohaliku kaustaga Universaalsetes seadetes → Sünkroonimine.",
     "versionLine": "Versioon {{version}}"
@@ -585,7 +585,7 @@
         "deleteCardTitle": "Kustuta see ruum",
         "deleteCardBody": "Eemaldab selle ruumi koos iga dokumendi, sektsiooni, Brain space märkme, annotatsiooni, tsitaadi ja ühendusega jäädavalt. Seda ei saa tagasi võtta.",
         "deleteButton": "Kustuta see ruum",
-        "dialogTitle": "Kustuta „{{name}}”?",
+        "dialogTitle": "Kustuta „{{name}}"?",
         "dialogBody": "See eemaldab ruumi ja kogu selle sisu jäädavalt. Seda ei saa tagasi võtta.",
         "typeToConfirm": "Trüki {{name}} kinnitamiseks",
         "cancel": "Tühista",
@@ -746,11 +746,11 @@
       "titleLabel": "Pealkiri",
       "yearLabel": "Aasta",
       "typeLabel": "Tüüp",
-      "duplicateKey": "Silt „{{key}}” on juba selles ruumis kasutusel.",
+      "duplicateKey": "Silt „{{key}}" on juba selles ruumis kasutusel.",
       "updated": "Uuendati 1 tsitaat.",
       "deleteOne": "Kustutati 1 tsitaat.",
       "confirmDeleteUsed": "Seda tsitaati kasutatakse teie dokumentides {{count}}× korral. Kustuta ikkagi?",
-      "confirmDeleteSingle": "Kustuta tsitaat „{{key}}”? Seda ei saa tagasi võtta.",
+      "confirmDeleteSingle": "Kustuta tsitaat „{{key}}"? Seda ei saa tagasi võtta.",
       "untitled": "(pealkirjata)"
     },
     "bulk": {
