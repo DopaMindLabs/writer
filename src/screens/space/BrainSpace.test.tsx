@@ -1,4 +1,4 @@
-import { renderAtRoute, waitFor } from '@/test/test-utils';
+import { act, renderAtRoute, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 import {
@@ -45,7 +45,7 @@ describe('BrainSpaceScreen', () => {
       initialEntries: ['/s/s1/dump'],
     });
     await waitFor(() => { expect(container.querySelector('main')).not.toBeNull(); });
-    useUI.getState().setCurrentDocId(null);
+    await act(async () => { useUI.getState().setCurrentDocId(null); });
   });
 
   it('links the mobile Read tab to the fallback doc', async () => {
@@ -70,6 +70,6 @@ describe('BrainSpaceScreen', () => {
       initialEntries: ['/s/s1/dump'],
     });
     await waitFor(() => { expect(container.querySelector('main')).not.toBeNull(); });
-    useUI.getState().setCurrentDocId(null);
+    await act(async () => { useUI.getState().setCurrentDocId(null); });
   });
 });
