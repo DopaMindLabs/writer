@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Umhlaba wokubhala wamahhala",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Indawo yakho yokuqala ingenalutho. Khetha ithempulethi ukuze uqale, noma uqale kusukela ekuqaleni.",
+    "tagline": "Indawo ekhululekile yokubhala obudude — izindaba, ucwaningo, iziqephu, ijenali.",
+    "continueWriting": "Qhubeka nokubhala",
+    "startNewSpace": "Qala indawo entsha",
+    "syncOffChip": "ukuvumelanisa/amakhophi asandulela awakho · idatha ingalahleka",
+    "syncOnChip": "ukuvumelanisa kwefoldha kusebenza",
+    "syncOnTitle": "Ukuvumelanisa Kwefoldha Kusebenza",
+    "syncOnBody": "Umsebenzi wakho uvumelaniswa ku-foldha ethi «{{folder}}» kule divayisi.",
+    "warningTitle": "Ukwakhiwa ngaphambi kokukhishwa",
+    "warningBody": "Ayikho ukuvumelanisa kwedatha. Konke kuhlala esiphequluli sakho futhi ukusula isigcino sawo kuzakulahleka umsebenzi wakho. Ungavumela ukuvumelanisa kufoldha yendawo ku-Izilungiselelo Zomhlaba → Ukuvumelanisa.",
+    "versionLine": "Inguqulo {{version}}"
+  },
+  "about": {
+    "back": "buyela",
+    "title": "mayelana",
+    "greeting": "Sawubona,",
+    "paragraph1": "Loku kwenzelwe umbhali oqala kabusha ngaso sonke isikhathi. Lowo ovula idokhumenti entsha, abhale izigatjana ezintathu (noma ayikho), bese athi cishe amaminithi angama-40 elungisa uhlobo lwamagama. Lowo izinhlelo zakhe ezinhle ezibuya phakathi nobusuku futhi zimphazamise. Lowo onezikhangelo eziyishumi nane, amadaftha ayisithupha, nedaftha elingangeni phambili inyanga yonke.",
+    "paragraph2Before": "Ngazi, ngoba lowo ngikhona ",
+    "paragraph2After": ". Ngine-ADHD, Autism, mhlawumbe nezinye izinkinga ezingakatholi ukuxilongwa. Ngidinga okuthile okuzwisisa ingqondo yami eyinkinge kodwa emnandi. Indawo yokuphonsa konke ngaphambi kokuba kuphele (noma ukuqala ukubhala). Iziqephu, imicabango engaphelele, izixhumaniso zokusebusuku. Konke, endaweni eyodwa.",
+    "paragraph3": "Ngakho-ke ngakha le ndawo ngakho sonke. Ngithemba izokunika intokozo ye-dopamine njengoba ingipha mina ngenkathi ngiyakha.",
+    "paragraph4Before": "Into enye... Ngikholelwa kutheknoloji enhle futhi ngiyazonda izikhangelo. Ngakho-ke, loku kuzohlala kuvikelekile ezikhangelo futhi MAHHALA ukusetshenziswa okungeyona inzuzo. Ungakuguqula njengoba ufuna ngaphansi kwe-",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Isimo",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — ayikho ukuvumelanisa kwedatha. Yonke idatha igcinwa ku-IndexedDB kusiphequluli sakho sendawo. Uma usula isigcino sesiphequluli sakho, umsebenzi wakho uzalahleka.",
+    "feedbackBefore": "Ngisalwakha loku futhi nginemicabango eminingi ",
+    "feedbackAfter": ". Ngingathanda ukuzwa okusebenzayo, okungasebenzi, nokufisa ukuba khona. Impendulo iwamukelekile.",
+    "sourceLabel": "Umthombo"
+  },
+  "settings": {
+    "back": "buyela",
+    "windowTitle": "lotem · izilungiselelo",
+    "breadcrumb": "IZILUNGISELELO ZOMHLABA",
+    "shellSubtitle": "IZILUNGISELELO ZOMHLABA",
+    "comingSoonBadge": "kuzofika maduze",
+    "helpAria": "Lokhu kuyini?",
+    "groups": {
+      "preferences": "Izintandokazi",
+      "writing": "Ukubhala",
+      "data": "Idatha",
+      "account": "I-akhawunti"
+    },
+    "tabs": {
+      "general": "Jikelele",
+      "appearance": "Ukubonakala",
+      "editor": "Uhlelo",
+      "docInspector": "Umhloli wedokhumenti",
+      "accessibility": "Ukufinyelela",
+      "typography": "Ukubhala ngezinhlamvu",
+      "shortcuts": "Izikhombisi",
+      "templates": "Amathempulethi",
+      "palettes": "Imibala yokukhanyisa",
+      "citations": "Isitayela sokukhomba",
+      "annotation": "Iziqaphelo",
+      "backups": "Amakhophi asandulela",
+      "sync": "Ukuvumelanisa",
+      "export": "Thuma / Ngenisa",
+      "data": "Idatha yakho",
+      "account": "I-akhawunti",
+      "about": "Mayelana",
+      "language": "Ulimi"
+    },
+    "language": {
+      "title": "Ulimi",
+      "subtitle": "Khetha ulimi lwe-interface nezindaba ze-Help Center. Izinguqulelo ezisilele zibuyela ku-Siingilisi.",
+      "label": "Ulimi lwe-interface",
+      "hint": "Izinguquko zisebenza ngokushesha futhi zigcinwa kulesi siphequluli.",
+      "machineTranslationNotice": "Izinguqulelo ngaphandle kwesi-Siingilisi zikhiqizwa ngokuzenzakalelayo. Siyaxolisa noma yimaphi amaphutha — thumela impendulo ukuze sikwazi ukuwaqondisa.",
+      "feedbackLinkLabel": "thumela impendulo"
+    },
+    "editor": {
+      "title": "Uhlelo",
+      "subtitle": "Ibha yamathuluzi nezidingongqangi zokubhala. Izikhombisi ze-Markdown (#, >, -, **) ziyaqhubeka zisebenze noma zinjani lezi zilungiselelo.",
+      "floatingToolbarLabel": "Ibha yamathuluzi entantayo",
+      "floatingToolbarHint": "Ibonakala uma ukhanyisa noma ucindezele okwesokudla kwindlela yokubhala.",
+      "floatingToolbarOff": "Ivaliwe",
+      "floatingToolbarOn": "Ivulekile",
+      "rightClickLabel": "Imenyu yokucindezela okwesokudla",
+      "rightClickHint": "Shintsha phakathi kwebar yamathuluzi entantayo nemenyu yesiphequluli.",
+      "rightClickTooltip": "Sebenzisa imenyu eyimvelo ekucindelezeni kwesokudla endaweni yebha yamathuluzi entantayo. Ibha yamathuluzi izovela ngesikhathi sokhanyiselo.",
+      "inlineTogglesLabel": "Izinkinobho zokushintsha",
+      "inlineTogglesHint": "Izinkinobho ze-Bold ne-Italic ngaphakathi kwebar yamathuluzi entantayo.",
+      "inlineTogglesTooltip": "Fihla izinkinobho ze-B ne-I ebheni yamathuluzi entantayo. Izikhombisi ze-Markdown (**, _) ziyaqhubeka zisebenze.",
+      "listDepthLabel": "Ukujula kwehlu",
+      "listDepthHint": "Ukujula amahlu ababili namanani angangena kuwo.",
+      "listDepthTooltip": "Phakamisa noma wehlisa umkhawulo wokujula kwehlu. Okwamanje kubekiwe emazingeni angu-2.",
+      "templateDefaultsLabel": "Izimiso ezizenzakalelayo zethempulethi",
+      "templateDefaultsHint": "Iziseti ezahlukene zokufomatha ngalinye ithempulethi.",
+      "templateDefaultsTooltip": "Vumela itempulethi ngalinye (izindaba, ijenali, efuna umshini…) ukuba izikhethele iziseti zayo zokufomatha."
+    },
+    "docInspector": {
+      "title": "Umhloli wedokhumenti",
+      "subtitle": "Khetha ukuthi yiziphi izinkambu ezibonakalayo kumhloli wedokhumenti. Ngalinye lingavaliwa jikelele futhi leqiwe ngalinye indawo.",
+      "statusLabel": "Isimo",
+      "statusHint": "Bonisa isimo sedokhumenti futhi uvale amadokhumenti aqedile ekuhleleni.",
+      "wordLimitLabel": "Umkhawulo wamagama",
+      "wordLimitHint": "Bonisa umkhawulo wokubalwa kwamagama ongawubeka ngalinye idokhumenti.",
+      "charLimitLabel": "Umkhawulo wezinhlamvu",
+      "charLimitHint": "Bonisa umkhawulo wokubalwa kwezinhlamvu ongawubeka ngalinye idokhumenti.",
+      "dueDateLabel": "Usuku lokuphela",
+      "dueDateHint": "Bonisa usuku lokuphela ongalubeka ngalinye idokhumenti.",
+      "highlightLabel": "Khanyisa umbhalo owedlula umkhawulo",
+      "highlightHint": "Phawula umbhalo onge naphezulu komkhawulo kumhleli.",
+      "statusStagesLabel": "Izigaba zesimo",
+      "statusStagesHint": "Khetha iziphi izigaba ezibonakalayo kokhetha isimo.",
+      "on": "Ivulekile",
+      "off": "Ivaliwe",
+      "inherit": "Okuzenzakalelayo ({{state}})",
+      "inheritTooltip": "Iphiwe nge-izilungiselelo zomhlaba",
+      "stateOn": "ivulekile",
+      "stateOff": "ivaliwe"
+    },
+    "accessibility": {
+      "title": "Ukufinyelela",
+      "subtitle": "Lungisa i-interface yokweluleka neteknolojia yosizo. Inketho nganye iqala ngolwazi lwamanje — akukho okuguqukayo kuze ukhethe.",
+      "theme": {
+        "label": "Isifanekiso nombandela",
+        "hint": "Izifanekiso ezinamazinga omphakamisi ophezulu zihlangabezana nomkhawulo wombandela we-WCAG AAA.",
+        "light": "Ukukhanya",
+        "dark": "Ubumnyama",
+        "hcLight": "Umbandela ophezulu (ukukhanya)",
+        "hcDark": "Umbandela ophezulu (ubumnyama)"
+      },
+      "motion": {
+        "label": "Ukugijima",
+        "hint": "Nciphisa noma vala ukugijima kwe-interface.",
+        "auto": "Fana nohlelo",
+        "reduced": "Kuncinyisiwe",
+        "full": "Ogcwele"
+      },
+      "textSize": {
+        "label": "Ubukhulu bombhalo",
+        "hint": "Linganisa ubuso bokufunda nokubhala.",
+        "sm": "Omncane",
+        "base": "Okuzenzakalelayo",
+        "lg": "Omkhulu",
+        "xl": "Omkhulu kakhulu"
+      },
+      "lineSpacing": {
+        "label": "Isikhala semigqa",
+        "hint": "Engeza isikhala phakathi kwemigqa yendaba.",
+        "normal": "Ejwayelekile",
+        "relaxed": "Ephumuzekile",
+        "loose": "Evulekile"
+      },
+      "linkUnderline": {
+        "label": "Hlala ukhomba izixhumaniso",
+        "hint": "Bonisa imigqa ukuze izixhumaniso zingathembeli kumibala yodwa."
+      },
+      "focus": {
+        "label": "Isikhombisi sokugxila esinamandla",
+        "hint": "Sebenzisa umugqa omkhulu nombandela ophezulu uma ugxila."
+      },
+      "reset": {
+        "label": "Buya ezimweni zokuzenzakalelayo",
+        "hint": "Buyisela ukugijima, ubukhulu bombhalo, isikhala semigqa, izixhumaniso, nokugxila ezimweni zazo zokuzenzakalelayo. Isifanekiso sakho asiguquki.",
+        "action": "Seta Kabusha"
+      }
+    },
+    "general": {
+      "title": "Jikelele",
+      "subtitle": "Indlela LIpsum Writer ebonakala ngayo ngokuzenzakalelayo. Akukho okukonayo.",
+      "comingSoonBody": "Ukuvina kwedensiti, ukunciphisa ukugijima, ukubonakala kwezifundiso zekhomputha, nokuvulwa kwini ekuqaleni.",
+      "compactDensityLabel": "Densiti evinikile",
+      "compactDensityHint": "Imigqa ekhinyabezekile emahlwini, ukuvina okunangcilenye yonke indawo.",
+      "reduceMotionLabel": "Nciphisa ukugijima",
+      "reduceMotionHint": "Yeqa ukushintsha kwe-animated phakathi kwezibukeli.",
+      "keyboardHintsLabel": "Bonisa izifundiso zekhomputha",
+      "keyboardHintsHint": "Bonisa izikhombisi ze-⌘-key ku-tooltips nakogonqweni lwamathuluzi.",
+      "startupLabel": "Vula ekuqaleni",
+      "startupHint": "Lokho okubona uma uqalisa uhlelo.",
+      "startupOptions": {
+        "lastView": "Isibukeli sokugcina",
+        "home": "Ekhaya",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Ukubonakala",
+      "subtitle": "Imibala, uhlobo lwamagama, densiti. Imizwa ofuna lolu hlelo ilubekele.",
+      "comingSoonBody": "Amapaleti ezifanekiso eziqoqiwe, umbala wesikhombisi, nedensiti. Ukushintsha isifanekiso sanamuhla kusekulawuleni okusheshayo kwengwe yomhlaba.",
+      "themeLabel": "Isifanekiso",
+      "themeHint": "Amapaleti amathathu aqulunqiwe. Alungisa konke — imibala yamabhlogo, imigqa yezinwele, neyombhlaba.",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "okuzenzakalelayo",
+        "studio": "Studio",
+        "studioSub": "neutral",
+        "midnight": "Midnight",
+        "midnightSub": "ubumnyama"
+      },
+      "accentLabel": "Isikhombisi",
+      "accentHint": "Kusetshenziswa ku-hover, ukugxila, indandatho yokuhlelela esebenzayo.",
+      "densityLabel": "Densiti",
+      "densityOptions": {
+        "cozy": "Ekhomfothe",
+        "default": "Okuzenzakalelayo",
+        "compact": "Evinikile"
+      }
+    },
+    "templates": {
+      "title": "Amathempulethi",
+      "subtitle": "Izinhlaka ezingasetshenziswa kabusha zezindawo namadokhumenti amasha.",
+      "comingSoonBody": "Bhala amathempulethi akho ngezigaba, amagama amandla odokhumenti, neziqephu zendaba.",
+      "items": {
+        "fiction": "Izindaba",
+        "fictionSub": "Ithekisi · Umhlaba · Ikhishi lezandla",
+        "research": "Ucwaningo",
+        "researchSub": "Imithombo · Amaqophelo · Amadaftha",
+        "journal": "IJenali",
+        "journalSub": "Nsuku zonke · Masonto onke · Ukucabanga",
+        "essay": "Isiqephu",
+        "essaySub": "Isikhombo · Amadaftha · Sokugcina"
+      }
+    },
+    "palettes": {
+      "title": "Imibala yokukhanyisa",
+      "subtitle": "Amapaleti amaslothi amahlanu ngalinye indawo — wahe amagama futhi lungisa imibala ngalinye.",
+      "comingSoonBody": "Hlela, gcina, futhi shintsha amapaleti yokukhanyisa anesigama (Ubufakazi, Ukubuyekeza, Imiyalelo…) ezindaweni.",
+      "items": {
+        "evidence": "Ubufakazi",
+        "revise": "Ukubuyekeza",
+        "reference": "Imiyalelo",
+        "quote": "Iqotsho",
+        "loose": "Isiphetho esingaqediwe"
+      },
+      "rename": "nika igama elisha",
+      "tune": "lungisa"
+    },
+    "citations": {
+      "title": "Isitayela sokukhomba",
+      "subtitle": "Isitayela sokukhomba esizenzakalelayo ezindaweni.",
+      "comingSoonBody": "Khetha isitayela somhlaba (Chicago, APA, MLA…) nezinguquko ngalinye indawo.",
+      "styleLabel": "Isitayela esizenzakalelayo",
+      "styleHint": "Kusetshenziswa ukufaka isikhombo esisha. Izinguquko ngalinye indawo zizofika kamuva.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Iziqaphelo",
+      "subtitle": "Amaqaphelo omkhondo nezikhombo ekhathalelwe umbhalo.",
+      "comingSoonBody": "Izinhlobo zeziqaphelo, izimiso zokubona ezizenzakalelayo, nendlela yokuthumela.",
+      "showMarginLabel": "Bonisa amaqaphelo omkhondo",
+      "showMarginHint": "Amaqaphelo antanta ekhoneni elisokunene uma kunendawo.",
+      "showInlineLabel": "Bonisa ukukhanyisa okukhathalele umbhalo",
+      "showInlineHint": "Umbala weziqaphelo ugeleza kumbhalo ongaphansi.",
+      "exportLabel": "Faka ekuthumelweni",
+      "exportHint": "Iziqaphelo zibhalwa ngokushesha nomzimba wedokhumenti."
+    },
+    "export": {
+      "title": "Thuma / Ngenisa",
+      "subtitle": "Susa idatha ngaphakathi nangaphandle kwe-LIpsum Writer.",
+      "comingSoonBody": "Thumela ngokugcwele ku-.zip, ngenisa kusuka kwinqolobane enye ye-LIpsum noma indlela ye-Markdown.",
+      "formatLabel": "Ifomathi yokuthumela",
+      "formatHint": "Ukuthumela ngalinye idokhumenti nangalinye indawo kusebenzisa okuzenzakalelayo okufanayo.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Ngenisa kusuka",
+      "importHint": "Letha inqolobane enye ye-LIpsum noma indlela yamafayela e-Markdown.",
+      "importOptions": {
+        "bundle": "Inqolobane ye-LIpsum (.zip)",
+        "markdown": "Ifoldha ye-Markdown",
+        "obsidian": "Obsidian vault"
+      },
+      "importSpaceLabel": "Ngenisa indawo",
+      "importSpaceHint": "Letha indawo kulesi siphequluli kusuka ku-akayivi ye-Writer (.zip) — ukudownlouda isithombe sesimo noma ukuthumela ukuvumelanisa kwefoldha kusuka kudivayisi enye.",
+      "importChooseFile": "Khetha i-akayivi…",
+      "importing": "kuyangena…",
+      "importFailed": "Ukungena kuhlulekile: {{message}}",
+      "comingSoonLabel": "Amaformat angeziwe",
+      "comingSoonHint": "Thumela ngokugcwele futhi ngenisa kusuka kumafoldha e-Markdown noma amavault e-Obsidian.",
+      "comingSoonTooltip": "Kuhlelelwe — akukho okutholakalayo okwamanje."
+    },
+    "data": {
+      "title": "Idatha yakho",
+      "subtitle": "Lapho umsebenzi wakho uhlala khona nokuthi ithatha isikhala esingakanani.",
+      "comingSoonBody": "Ukusetshenziswa kwe-IndexedDB, isilinganiso sesigcino, nokulayisha konke ngokucindezela kwakho.",
+      "storageLabel": "Isigcino esisetshenzisiwe",
+      "storageValue": "≈ 12.4 MB · izindawo ze-4, amadokhumenti e-38",
+      "engineLabel": "Enjini yesigcino",
+      "engineValue": "IndexedDB (isiphequluli sendawo)",
+      "wipeLabel": "Sula konke",
+      "wipeHint": "Isusa zonke izindawo, amadokhumenti, nezithombe zesimo kulesi siphequluli. Ayikho indlela yokubuya.",
+      "wipeButton": "Sula idatha yendawo…"
+    },
+    "about": {
+      "title": "Mayelana",
+      "subtitle": "Ulwazi lokwakhiwa nezixhumaniso.",
+      "comingSoonBody": "Bona ikhasi /about ngendaba; leli thebhu lizoba nolwazi lokwakhiwa, ilayisense, nomlando wezinguquko.",
+      "versionLabel": "Inguqulo",
+      "versionValue": "{{version}}",
+      "buildLabel": "Ukwakhiwa",
+      "buildValue": "yendawo",
+      "licenseLabel": "Ilayisense",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Izixhumaniso",
+      "links": {
+        "source": "Umthombo",
+        "changelog": "Umlando wezinguquko",
+        "feedback": "Thumela impendulo"
+      }
+    },
+    "account": {
+      "title": "I-akhawunti",
+      "subtitle": "Ukungena, ukuvumelanisa phakathi kwezidivayisi, namaziko omsebenzi axhumanisiwe.",
+      "comingSoonBody": "Ukuvumelanisa kwefu akutholakali namuhla — i-Lotem iyendawo kuphela. I-akhawunti, ukungena, namaziko omsebenzi axhumanisiwe kuzofika ukuvumelanisa kukufika.",
+      "signedOutLabel": "Ngena",
+      "signedOutHint": "Ukuvumelanisa kwefu akukho okwamanje. Lokhu kukhona ukuze kubonise umklamo.",
+      "signInButton": "Ngena nge-imeyili",
+      "syncLabel": "Vumelanisa le divayisi",
+      "syncHint": "Uma ungene, izindawo zakho zizosinakwa kwezinye izidivayisi."
+    },
+    "typography": {
+      "title": "Ukubhala ngezinhlamvu",
+      "subtitle": "Okuzenzakalelayo ezindaweni zonke. Umhlaba ngamunye unganqoba.",
+      "comingSoonBody": "Khetha uhlobo lwamagama lwendaba, uhlobo lwamagama le-UI, ubukhulu bokufunda obuzenzakalelayo, ubude bemigqa, nesilinganiso somhlaba omusha.",
+      "proseFontLabel": "Uhlobo lwamagama lwendaba",
+      "uiFontLabel": "Uhlobo lwamagama le-UI",
+      "proseSizeLabel": "Ubukhulu bendaba",
+      "proseSizeHint": "Okuzenzakalelayo komhlaba omusha.",
+      "lineHeightLabel": "Ubude bemigqa",
+      "measureLabel": "Isilinganiso",
+      "measureHint": "Ukukhula komugqa okukhulu.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Izikhombisi",
+      "subtitle": "Ukuboshwa kwezingonga zokukhomba ukuphaphatha, ukufomatha, nezindlela.",
+      "comingSoonBody": "Izikhombisi ezingaboshwa kabusha zokubhala/ukufunda/ukuhlukanisa, indlela yokugxila, nebha yamathuluzi yokufomatha.",
+      "navHeader": "Ukuphaphatha",
+      "formatHeader": "Ukufomatha",
+      "modeHeader": "Izindlela",
+      "items": {
+        "openSettings": "Vula izilungiselelo",
+        "quickSettings": "Izilungiselelo ezisheshayo",
+        "findInDoc": "Thola edokhumentin",
+        "toggleFocus": "Shintsha ukugxila",
+        "toggleInspector": "Shintsha umhloli",
+        "bold": "Gwamanda",
+        "italic": "I-Italiki",
+        "underline": "Khomba ngomugqa",
+        "heading1": "Isihloko 1",
+        "heading2": "Isihloko 2",
+        "write": "Indlela yokubhala",
+        "read": "Indlela yokufunda",
+        "split": "Indlela yokuhlukanisa"
+      }
+    },
+    "backups": {
+      "title": "Amakhophi asandulela",
+      "subtitle": "Thumela, buyisela, futhi thatha izithombe zedatha yakho yendawo.",
+      "comingSoonBody": "Izithombe zendawo ezihlelewe, ukuthumela ngesandla ku-.zip, nokubuyisela kubheki langaphambilini.",
+      "intervalLabel": "Isikhathi sezithombe zezimo zokuzenzakalelayo",
+      "intervalOptions": {
+        "5min": "imizuzu e-5",
+        "10min": "imizuzu e-10",
+        "30min": "imizuzu e-30",
+        "off": "Ivaliwe"
+      },
+      "keepLabel": "Gcina",
+      "keepHint": "Izithombe ezindala zisuswa ngokuzenzakalelayo.",
+      "keepOptions": {
+        "last50": "Ezokugcina ze-50",
+        "days7": "Izinsuku ze-7",
+        "days30": "Izinsuku ze-30"
+      },
+      "latestLabel": "Yakamuva",
+      "latestValue": "imizuzu e-12 edlule · amagama e-1,190"
+    },
+    "sync": {
+      "title": "Ukuvumelanisa",
+      "subtitle": "Sukazelela izindawo zakho kufoldha oyikhethayo. Khomba ku-foldha ye-Google Drive, Dropbox, noma iCloud ukuze uvumelanise phakathi kwezidivayisi.",
+      "unsupportedTitle": "Akutholakali kulesi siphequluli",
+      "unsupportedBody": "Ukuvumelanisa kwefoldha kudinga i-File System Access API, etholakala ku-Chrome, Edge, neziphequluli ezinye ze-Chromium ku-desktop. Shintsha kwisiphequluli esisekelelwa ukusisebenzisa.",
+      "folderLabel": "Ifoldha evumelanisiwe",
+      "folderHint": "Ukuvumelanisa ngakunye kubhala i-Markdown .zip ngalinye indawo lapha, igcina ezokugcina ze-5 kanye ne-latest.zip. Ukuvumelanisa kuhlukanisiwe ne-Amakhophi asandulela.",
+      "noFolder": "Ayikho ifoldha exhunyiwe",
+      "chooseFolder": "Khetha ifoldha…",
+      "changeFolder": "Shintsha…",
+      "disconnect": "Susa uxhumano",
+      "intervalLabel": "Ukuvumelanisa okuzenzakalelayo",
+      "intervalHint": "Kangaki izindawo zivumelaniswa ngokuzenzakalelayo njengoba uhlelo luvulekile futhi ifoldha ixhunyiwe. Ngalinye indawo inganqoba lezi zilungiselelo zokuzenzakalelayo.",
+      "intervalOff": "Ivaliwe",
+      "intervalMinutes": "imizuzu {{count}}",
+      "intervalDefault": "Okuzenzakalelayo ({{label}})",
+      "syncLabel": "Ukuvumelanisa ngesandla",
+      "pushOnlyHint": "Ukusukazelela kuphela okwamanje — lokhu kubhala idatha yakho yendawo kufoldha. Ukudonsela izinguquko kubuye kuzofika kamuva.",
+      "syncNow": "Vumelanisa manje",
+      "syncNowAll": "Vumelanisa zonke izindawo",
+      "reconnectHint": "Ukuvumelanisa kumisiwe — isiphequluli sidinga imvume yefoldha futhi kulesi sithangami. Xhuma kabusha ukuze uqhubeke ukuvumelanisa ngesandla nokuzenzakalelayo.",
+      "reconnectButton": "Xhuma Kabusha",
+      "reconnecting": "Iyaxhuma kabusha…",
+      "syncing": "Iyavumelanisa…",
+      "syncFailed": "Ukuvumelanisa kuhlulekile: {{message}}",
+      "lastSynced": "Kwavumelaniswa okwesibhabhu {{when}}",
+      "neverSynced": "Akukaze kuvumelaniswe",
+      "justNow": "manje nje",
+      "resultsTitle": "Ukugijima kokugcina",
+      "spaceOk": "kuvumelanisiwe",
+      "spaceFailed": "kuhlulekile",
+      "historyTitle": "Ukuvumelanisa kwakamuva",
+      "historyEmpty": "Akukho ukuvumelanisa okwamanje.",
+      "columns": {
+        "when": "NINI",
+        "space": "INDAWO",
+        "kind": "UHLOBO",
+        "size": "UBUKHULU",
+        "status": "ISIMO"
+      },
+      "kind": {
+        "auto": "okuzenzakalelayo",
+        "manual": "ngesandla"
+      },
+      "status": {
+        "ok": "kulungile",
+        "error": "iphutha"
+      }
+    },
+    "space": {
+      "breadcrumb": "INDAWO · IZILUNGISELELO",
+      "shellSubtitle": "IZILUNGISELELO ZENDAWO",
+      "loading": "Iyalayisha indawo…",
+      "groups": {
+        "thisSpace": "Le ndawo",
+        "sharingMembers": "Ukwabelana & Amalungu",
+        "data": "Idatha",
+        "dangerZone": "Ingozi"
+      },
+      "tabs": {
+        "general": "Jikelele",
+        "docInspector": "Umhloli wedokhumenti",
+        "template": "Ithempulethi",
+        "palette": "Iphaleti yokukhanyisa",
+        "sharing": "Ukwabelana",
+        "members": "Amalungu",
+        "backups": "Amakhophi asandulela",
+        "sync": "Ukuvumelanisa",
+        "export": "Thumela",
+        "danger": "Indawo yengozi"
+      },
+      "docInspector": {
+        "title": "Umhloli wedokhumenti",
+        "subtitle": "Nqoba izilungiselelo zomhloli womhlaba walesi simo sendawo."
+      },
+      "palette": {
+        "title": "Iphaleti yokukhanyisa",
+        "subtitle": "Imibala eyisihlanu yokukhanyisa enamagama nezilungisiwe kule ndawo.",
+        "comingSoonBody": "Nika igama elisha, shintsha umbala, futhi phinda ulayisha iziqephu zokukhanyisa zalesi simo sendawo.",
+        "items": {
+          "evidence": "Ubufakazi",
+          "revise": "Ukubuyekeza",
+          "reference": "Imiyalelo",
+          "quote": "Iqotsho",
+          "loose": "Isiphetho esingaqediwe"
+        },
+        "rename": "nika igama elisha",
+        "tune": "lungisa"
+      },
+      "export": {
+        "title": "Thumela",
+        "subtitle": "Susa okuqukethwe kule ndawo ku-ithuluzi lenye.",
+        "comingSoonBody": "Thumela ku-Markdown .zip (namuhla nge-Amakhophi asandulela), LaTeX, HTML, noma PDF — konke endaweni eyodwa.",
+        "formatLabel": "Ifomathi",
+        "formatHint": "I-Markdown iqala kuqala; ezinye zilandela.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Ukuthumela kokugcina",
+        "lastValue": "akukaze kwenzeke"
+      },
+      "general": {
+        "title": "Jikelele",
+        "subtitle": "Imininingwane ekhomba lendawo. Izinguquko zisebenza ngokushesha futhi zivumelaniswa phakathi kwezibukeli.",
+        "nameLabel": "Igama lendawo",
+        "nameHint": "Liboniswa ngohlaka lwesidini sakho nase-tooltip yeshila lendawo.",
+        "tagLabel": "Umfanekiso",
+        "tagHint": "Ikhodi emfishane (izinhlamvu ze-2–4) ezibonakalayo ku-thayili lendawo."
+      },
+      "sharing": {
+        "title": "Ukwabelana",
+        "subtitle": "Lawula indlela lendawo esetshenziswa ngayo.",
+        "comingSoonBody": "Ukubonakala ngalinye indawo nezixhumaniso zokwabelana. Kuzofika ukuvumelanisa kwefu kukufika.",
+        "visibilityLabel": "Ukubonakala",
+        "visibilityOptions": {
+          "private": "Yomuntu siqu",
+          "link": "Noma ubani onexhumaniso",
+          "members": "Amalungu kuphela"
+        },
+        "linkLabel": "Ixhumaniso elingabelwana nalo",
+        "linkHint": "Ukufunda kuphela ngokuzenzakalelayo. Amalungelo okuhlelela alandela Amalungu.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "kopisha"
+      },
+      "template": {
+        "title": "Ithempulethi",
+        "subtitle": "Ithempulethi lomuklamo idalwe nalo lendawo.",
+        "comingSoonBody": "Ukushintsha ithempulethi lendawo ngemuva kokudala akusekelwa okwamanje. Kuzofika uma singanqanqa izigaba namadokhumenti ngokuphepha.",
+        "currentLabel": "Ithempulethi langokwamanje",
+        "currentValue": "Izindaba",
+        "currentSub": "Ithekisi · Umhlaba · Ikhishi lezandla",
+        "changeLabel": "Shintsha ithempulethi",
+        "changeHint": "Ilungisa kabusha izigaba namadokhumenti akhona ku-ithempulethi elisha.",
+        "changeButton": "Shintsha ithempulethi…"
+      },
+      "members": {
+        "title": "Amalungu",
+        "subtitle": "Ababhali abaxhumanayo nabahlaziyi abanokufinyelela kule ndawo.",
+        "comingSoonBody": "Mema ababambisani, lawula izindima, futhi hlaziya izinguquko. Kuzofika nokuvumelanisa kwefu.",
+        "inviteLabel": "Mema nge-imeyili",
+        "inviteHint": "Sizobathumela ixhumaniso lokujoyina lendawo.",
+        "invitePlaceholder": "igama@isibonelo.com",
+        "inviteButton": "thumela isimemo",
+        "membersLabel": "Amalungu",
+        "roles": {
+          "owner": "umnikazi",
+          "editor": "umhleli",
+          "viewer": "umbukeli"
+        },
+        "you": "wena"
+      },
+      "backups": {
+        "title": "Amakhophi asandulela",
+        "subtitle": "Thatha isithombe sesimo salendawo njengo-.zip ongasiklandula, ugcine, futhi ubuyisele kusona.",
+        "retentionHint": "Igcina izithombe ze-{{count}} zakamuva — ezindala zisuswa ngokuzenzakalelayo.",
+        "snapshotNow": "+ thatha isithombe sesimo manje",
+        "snapshotting": "ithatha isithombe sesimo…",
+        "snapshotFailed": "Ukuthatha isithombe sesimo kuhlulekile: {{message}}",
+        "historyTitle": "Umlando",
+        "empty": "Azikho izithombe okwamanje — dala enye nge-+ thatha isithombe sesimo manje.",
+        "columns": {
+          "when": "NINI",
+          "kind": "UHLOBO",
+          "size": "UBUKHULU",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "ngesandla",
+          "auto": "okuzenzakalelayo",
+          "snapshot": "isithombe sesimo"
+        },
+        "download": "↓ klandula",
+        "delete": "susa",
+        "deleteConfirm": "Susa lesi sithombe sesimo? Akubuyi.",
+        "deleted": "Isithombe sesimo sisusiwe.",
+        "justNow": "manje nje",
+        "restore": "↺ buyisela",
+        "restoreUnavailable": "Lesi sithombe sesimo sidlula ukusekela kokubuyiselwa — singaklandulwa kuphela.",
+        "restoreDialogTitle": "Buyisela lesi sithombe sesimo?",
+        "restoreDialogBody": "Okuqukethwe okwamanje kwalendawo kuzobuyiselwa ngesithombe sesimo. Isithombe sesimo sezimo zamanje sigcinwa kuqala, ukuze ube nevolisa ukubuyisela loku.",
+        "restoreConfirm": "Buyisela",
+        "restoreCancel": "Khansela",
+        "restoring": "iyabuyisela…",
+        "restored": "Isithombe sesimo sibuyiselwe.",
+        "restoreFailed": "Ukubuyisela kuhlulekile: {{message}}",
+        "fileRestoreTitle": "Ubuyiselela kusuka ku-.zip eklandulwayo?",
+        "fileRestoreBody": "Ngenisa ngokuya ku-Izilungiselelo Zomhlaba → Thumela / Ngenisa — ibuya njengeindawo entsha, ushiya le ingaqiniseki."
+      },
+      "sync": {
+        "title": "Ukuvumelanisa",
+        "subtitle": "Sukazelela lendawo kufoldha exhunyiwe, ngesandla noma ngeshejuli. Ukuvumelanisa kuhlukanisiwe ne-Amakhophi asandulela.",
+        "folderHint": "Xhuma ifoldha ku-Izilungiselelo Zomhlaba → Ukuvumelanisa. Ifoldha efanayo isetshenziswa kuzonke izindawo.",
+        "intervalHint": "Kangaki lendawo ivumelaniswa ngokuzenzakalelayo. Khetha Okuzenzakalelayo ukuze ulandele izilungiselelo ze-ukuvumelanisa okuzenzakalelayo womhlaba.",
+        "syncNow": "Vumelanisa lendawo"
+      },
+      "danger": {
+        "title": "Indawo yengozi",
+        "subtitle": "Izenzo ezingaphindwa. Funda ngokunakekela ngaphambi kokuqhubeka.",
+        "deleteCardTitle": "Susa lendawo",
+        "deleteCardBody": "Isusa ngokuphelele lendawo nayo yonke idokhumenti, isigaba, inothi le-brain-space, isiqaphelo, isikhombo, noxhumano. Akubuyi.",
+        "deleteButton": "Susa lendawo",
+        "dialogTitle": "Susa «{{name}}»?",
+        "dialogBody": "Lokhu kususa ngokuphelele indawo nokuqukethwe kwayo konke. Akubuyi.",
+        "typeToConfirm": "Bhala {{name}} ukuqinisekisa",
+        "cancel": "Khansela",
+        "confirm": "Susa indawo"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Ulahlekile emaceleni",
+    "body": "Leyo khasi ayikho (okwamanje).",
+    "goHome": "Buyela ekhaya"
+  },
+  "templates": {
+    "crumb": "01 — UHLOBO LWENDLU",
+    "headingMain": "Uhlobo lwendawo",
+    "headingAccent": "iqala ngani?",
+    "chooseLegend": "Khetha ithempulethi",
+    "stage": {
+      "pre-alpha": "ukuhlolwa",
+      "alpha": "ekuqaleni",
+      "beta": "beta"
+    },
+    "nameLabel": "Igama",
+    "tagLabel": "Umfanekiso",
+    "syncLabel": "ukuvumelanisa kwefu —",
+    "syncValue": "ivaliwe, yendawo",
+    "syncTooltip": "Ukuvumelanisa kwefu akutholakali — lolu hlelo lweyendawo kuphela okwamanje.",
+    "creating": "iyakha…",
+    "submitLabel": "ngena {{name}} →",
+    "newSpace": "indawo entsha",
+    "back": "buyela"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} ezihlelelwanga",
+    "title": "Brain space",
+    "mobileWarning": "Brain space isebenza kahle kakhulu kusikrini esikhulu.",
+    "mobileNote": "Icanvas idinga imouse noma itrackpad.",
+    "openInWrite": "Vula ku-Write →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "qala ukukhipha imicabango",
+      "emptyHint": "khetha uhlobo lekhadi ngezansi",
+      "pendingHint": "shift-cindezela inothi elinye ukuxhuma · esc ukukhansela"
+    },
+    "note": {
+      "deleteNote": "Susa inothi",
+      "addPicture": "Engeza isithombe",
+      "addPictureCta": "engeza isithombe",
+      "openLinkedDoc": "Vula idokhumenti exhunyiwe",
+      "fetchedContent": "Okuqukethwe okutholiwe",
+      "openDetailsLabel": "Vula imininingwane",
+      "openDetailsTitle": "Vula iphaneli yemiiningwane",
+      "titlePlaceholder": "isihloko",
+      "addTitleCta": "+ isihloko",
+      "bodyEmpty": "(cindezela ukubhala)",
+      "viewImage": "Buka {{name}}",
+      "removeImage": "Susa {{name}}",
+      "resize": "Guqula ubukhulu bwenothi",
+      "days": {
+        "sun": "Son",
+        "mon": "Mso",
+        "tue": "Mbl",
+        "wed": "Lar",
+        "thu": "Lil",
+        "fri": "Sir",
+        "sat": "Mgq"
+      }
+    },
+    "drawer": {
+      "title": "Imininingwane yenothi",
+      "description": "Hlela inothi elikhethiwe futhi lawula izixhumaniso zalo.",
+      "untitledPlaceholder": "Engenasihloho",
+      "titleAriaLabel": "Isihloko senothi",
+      "closeAriaLabel": "Vala isiqonco",
+      "bodyLabel": "Umzimba",
+      "bodyPlaceholder": "Bhala okuthile…",
+      "picturesLabel": "Izithombe",
+      "addPicture": "Engeza isithombe",
+      "pictureLimitHint": "umkhawulo we-{{count}} ufinyelele — susa enye ukuze weneze enye.",
+      "linkedDocLabel": "Idokhumenti Exhunyiwe",
+      "noLinkedDoc": "— Ayikho idokhumenti exhunyiwe —",
+      "untitledDoc": "Engenasihloho",
+      "openDoc": "Vula",
+      "connectionsHeading": "Izixhumaniso ({{count}})",
+      "connectionsEmpty": "shift-cindezela inothi elinye ku-canvas ukuxhuma.",
+      "untitledNote": "(engenasihloho)",
+      "removeConnection": "Susa uxhumaniso",
+      "deleteNote": "Susa inothi"
+    }
+  },
+  "split": {
+    "title": "Isibukeli sokuhlukanisa",
+    "mobileWarning": "Isibukeli sokuhlukanisa sidinga isikrini esikhulu.",
+    "mobileNote": "Vula leli dokhumenti kwindlela ye-Write esikhundleni sayo.",
+    "openInWrite": "Vula ku-Write →",
+    "leftPrefix": "KWESOBUNXELE —",
+    "rightPrefix": "KWESOKUDLA —",
+    "rightPaneAria": "Idokhumenti yegceke elisokudla",
+    "noOtherDocs": "(azikho ezinye izindokhumenti)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Izikhombo",
+    "pickDoc": "Khetha idokhumenti ku-dropdown engentla.",
+    "dividerAria": "Guqula ubukhulu bemagceke okukhlukanisa"
+  },
+  "citationsDrawer": {
+    "title": "Izikhombo",
+    "description": "Cinga, ngenisa, futhi thumela izikhombo zalendawo.",
+    "close": "Vala izikhombo",
+    "expand": "Vula izikhombo esibukeli esigcwele"
+  },
+  "citations": {
+    "title": "Izikhombo",
+    "breadcrumb": "Imithombo / ",
+    "entries": "{{count}} IZINGENISO",
+    "searchPlaceholder": "ababhali, imilayezo, unyaka…",
+    "upload": "↑ layisha .bib / .ris",
+    "add": "+ engeza",
+    "cancel": "× khansela",
+    "columns": {
+      "tag": "UMFANEKISO",
+      "authors": "ABABHALI",
+      "title": "ISIHLOKO",
+      "year": "UNYAKA",
+      "type": "UHLOBO",
+      "used": "ESETSHENZISIWE"
+    },
+    "style": "ISITAYELA — CHICAGO (UMBHALI-USUKU)",
+    "exportBib": "THUMELA NJENGO-.BIB",
+    "summary": "{{filtered}} ZIBONAKALAYO · {{shown}} KULELI KHASI",
+    "prevPage": "Ikhasi langaphambilini",
+    "nextPage": "Ikhasi elilandelayo",
+    "empty": "azikho izikhombo okwamanje",
+    "noMatch": "azikho izingqimba ezifanayo nasosolweni lwakho.",
+    "importHint": "ngenisa .bib noma engeza enye ngesandla.",
+    "pasteHeader": "Namathisela i-BibTeX noma isihloko",
+    "addCitation": "engeza isikhombo",
+    "manualCancel": "khansela",
+    "adding": "iyengeza…",
+    "parsing": "Iphihliza {{name}}…",
+    "imported": "Zingenisiwe izikhombo {{added}}{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", zwelwa amakhophi {{skipped}}{{skippedPlural}}",
+    "skippedSuffixShort": ", zwelwa {{skipped}}",
+    "failed": "Kuhlulekile ukuphihliza: {{message}}",
+    "failedManual": "Kuhlulekile: {{message}}",
+    "addedOne": "Engeziwe isikhombo se-1.",
+    "unknownAuthor": "(akwaziwa)",
+    "unknownError": "iphutha elingawaziwa",
+    "edit": {
+      "save": "gcina",
+      "saving": "iyagcina…",
+      "cancel": "khansela",
+      "delete": "susa",
+      "edit": "hlela",
+      "tagLabel": "Umfanekiso",
+      "authorsLabel": "Ababhali",
+      "titleLabel": "Isihloko",
+      "yearLabel": "Unyaka",
+      "typeLabel": "Uhlobo",
+      "duplicateKey": "Umfanekiso «{{key}}» ususetshenziswa kule ndawo.",
+      "updated": "Kubuyekeziwe isikhombo se-1.",
+      "deleteOne": "Sisusiwe isikhombo se-1.",
+      "confirmDeleteUsed": "Lesi sikhombo sisetshenziswa ngamahlandla {{count}}× kumadokhumenti akho. Susa ngale kwazo zonke?",
+      "confirmDeleteSingle": "Susa isikhombo «{{key}}»? Akubuyi.",
+      "untitled": "(engenasihloho)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} ezikhethiwe",
+      "deleteSelected": "susa",
+      "setTypePrompt": "beka uhlobo",
+      "setTypeAria": "Beka uhlobo kwezikhombo ezikhethiwe",
+      "chooseOption": "khetha…",
+      "ariaLabel": "Izenzo zequthu",
+      "clearSelection": "sula ukukhetha",
+      "deleted": "Zisusiwe izikhombo {{count}}.",
+      "typeApplied": "Ubeka uhlobo lwe-{{type}} ku-izikhombo ze-{{count}}.",
+      "confirmDelete": "Susa izikhombo ze-{{count}}? Akubuyi."
+    },
+    "row": {
+      "selectAllAria": "Khetha zonke izikhombo kuleli khasi",
+      "viewCitationAria": "Buka isikhombo {{key}}",
+      "selectCitationAria": "Khetha isikhombo {{key}}",
+      "collapseCitationAria": "Songa isikhombo {{key}}",
+      "usedCount": "esetshenzisiwe ngamahlandla {{count}}×",
+      "unused": "ayikasetshenziswa",
+      "copyTag": "Kopisha umfanekiso",
+      "copyTagAria": "Kopisha umfanekiso {{value}}",
+      "copiedTitle": "Ikopiwe",
+      "copiedTagAria": "Ikopiwe umfanekiso {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}
