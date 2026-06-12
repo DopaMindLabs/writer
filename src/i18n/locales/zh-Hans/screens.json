@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "自由写作多元宇宙",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "你的第一个空间是空白的。选择一个模板开始，或从零开始。",
+    "tagline": "为长文写作打造的简洁空间——小说、研究、随笔、日记。",
+    "continueWriting": "继续写作",
+    "startNewSpace": "新建空间",
+    "syncOffChip": "同步/备份未启用 · 数据可能丢失",
+    "syncOnChip": "文件夹同步已开启",
+    "syncOnTitle": "文件夹同步已启用",
+    "syncOnBody": "你的工作将同步到此设备上的“{{folder}}”文件夹。",
+    "warningTitle": "预发布版本",
+    "warningBody": "暂无数据同步。所有内容保存在浏览器中，清除缓存将丢失数据。可在通用设置 → 同步中启用本地文件夹同步。",
+    "versionLine": "版本 {{version}}"
+  },
+  "about": {
+    "back": "返回",
+    "title": "关于",
+    "greeting": "你好，",
+    "paragraph1": "这是为那些不停重新开始的写作者打造的。那些打开新文档，写了三句话（或者一句没写），然后花四十分钟调整字体的人。那些最好的想法在凌晨两点涌现却又被打断的人。那些有十四个标签页、六本笔记本、一份停滞了一个月的草稿的人。",
+    "paragraph2Before": "我懂，因为我就是这样",
+    "paragraph2After": "。我有 ADHD 和自闭症，可能还有其他尚未确诊的特质。我需要一个能理解我那混乱却精彩的大脑的地方。在想法消失之前把一切倾倒出来（或者开始写作）的地方。碎片、半成形的思考、凌晨三点的联想。所有这些，放在同一个地方。",
+    "paragraph3": "所以我为我们建了这个空间。希望它带给你的多巴胺愉悦感，和我构建它时一样多。",
+    "paragraph4Before": "还有一件事……我相信技术向善，我讨厌广告。所以这个应用将永远无广告，非商业用途永久免费。你可以在以下许可证下自由 fork 和修改：",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "状态",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — 暂无数据同步。所有数据保存在本地浏览器的 IndexedDB 中。清除浏览器缓存将导致数据丢失。",
+    "feedbackBefore": "我仍在开发中，有很多想法",
+    "feedbackAfter": "。很想听听哪些有用、哪些没用，以及你希望有什么功能。欢迎反馈。",
+    "sourceLabel": "源码"
+  },
+  "settings": {
+    "back": "返回",
+    "windowTitle": "lotem · 设置",
+    "breadcrumb": "通用设置",
+    "shellSubtitle": "通用设置",
+    "comingSoonBadge": "即将推出",
+    "helpAria": "这是什么？",
+    "groups": {
+      "preferences": "偏好设置",
+      "writing": "写作",
+      "data": "数据",
+      "account": "账户"
+    },
+    "tabs": {
+      "general": "通用",
+      "appearance": "外观",
+      "editor": "编辑器",
+      "docInspector": "文档检查",
+      "accessibility": "无障碍",
+      "typography": "排版",
+      "shortcuts": "键盘",
+      "templates": "模板",
+      "palettes": "高亮调色板",
+      "citations": "引用样式",
+      "annotation": "批注",
+      "backups": "备份",
+      "sync": "同步",
+      "export": "导出 / 导入",
+      "data": "我的数据",
+      "account": "账户",
+      "about": "关于",
+      "language": "语言"
+    },
+    "language": {
+      "title": "语言",
+      "subtitle": "选择界面和 Help Center 文章的语言。缺少翻译时将回退到英语。",
+      "label": "界面语言",
+      "hint": "更改立即生效并保存在此浏览器中。",
+      "machineTranslationNotice": "非英语翻译由机器自动生成。如有错误敬请谅解——请发送反馈以便我们改正。",
+      "feedbackLinkLabel": "发送反馈"
+    },
+    "editor": {
+      "title": "编辑器",
+      "subtitle": "工具栏与写作辅助功能。无论这些设置如何，Markdown 快捷键（#、>、-、**）始终有效。",
+      "floatingToolbarLabel": "浮动工具栏",
+      "floatingToolbarHint": "在写作模式下高亮或右键时出现。",
+      "floatingToolbarOff": "关闭",
+      "floatingToolbarOn": "开启",
+      "rightClickLabel": "右键菜单",
+      "rightClickHint": "在浮动工具栏和浏览器原生上下文菜单之间切换。",
+      "rightClickTooltip": "右键时使用原生上下文菜单而非浮动工具栏。高亮选择时工具栏仍会显示。",
+      "inlineTogglesLabel": "内联切换",
+      "inlineTogglesHint": "浮动工具栏中的粗体和斜体按钮。",
+      "inlineTogglesTooltip": "从浮动工具栏中隐藏 B 和 I 按钮。Markdown 快捷键（**、_）仍然有效。",
+      "listDepthLabel": "列表嵌套深度",
+      "listDepthHint": "项目符号和编号列表可嵌套的深度。",
+      "listDepthTooltip": "提高或降低列表嵌套上限。当前固定为 2 级。",
+      "templateDefaultsLabel": "每模板默认值",
+      "templateDefaultsHint": "每个模板使用不同的格式子集。",
+      "templateDefaultsTooltip": "让每个模板（小说、日记、技术等）选择自己的格式子集。"
+    },
+    "docInspector": {
+      "title": "文档检查",
+      "subtitle": "选择文档检查面板中显示的字段。每个字段可以全局关闭，也可以按空间覆盖。",
+      "statusLabel": "状态",
+      "statusHint": "显示文档状态，并锁定已完成文档不可编辑。",
+      "wordLimitLabel": "字数限制",
+      "wordLimitHint": "显示可按文档设置的字数上限。",
+      "charLimitLabel": "字符限制",
+      "charLimitHint": "显示可按文档设置的字符数上限。",
+      "dueDateLabel": "截止日期",
+      "dueDateHint": "显示可按文档设置的截止日期。",
+      "highlightLabel": "高亮超限文本",
+      "highlightHint": "在编辑器中标记超出限制的文本。",
+      "statusStagesLabel": "状态阶段",
+      "statusStagesHint": "选择状态选择器中显示的阶段。",
+      "on": "开启",
+      "off": "关闭",
+      "inherit": "默认（{{state}}）",
+      "inheritTooltip": "从通用设置继承",
+      "stateOn": "开启",
+      "stateOff": "关闭"
+    },
+    "accessibility": {
+      "title": "无障碍",
+      "subtitle": "为舒适度和辅助技术调整界面。所有选项从当前体验开始——在你做出选择之前不会发生任何变化。",
+      "theme": {
+        "label": "主题与对比度",
+        "hint": "高对比度主题符合 WCAG AAA 对比标准。",
+        "light": "浅色",
+        "dark": "深色",
+        "hcLight": "高对比度（浅色）",
+        "hcDark": "高对比度（深色）"
+      },
+      "motion": {
+        "label": "动效",
+        "hint": "减少或禁用界面动画。",
+        "auto": "跟随系统",
+        "reduced": "减少",
+        "full": "完整"
+      },
+      "textSize": {
+        "label": "文字大小",
+        "hint": "缩放阅读和写作界面。",
+        "sm": "小",
+        "base": "默认",
+        "lg": "大",
+        "xl": "超大"
+      },
+      "lineSpacing": {
+        "label": "行间距",
+        "hint": "在文章行间增加呼吸空间。",
+        "normal": "正常",
+        "relaxed": "宽松",
+        "loose": "疏松"
+      },
+      "linkUnderline": {
+        "label": "始终为链接添加下划线",
+        "hint": "显示下划线，使链接不仅依赖颜色区分。"
+      },
+      "focus": {
+        "label": "增强焦点指示器",
+        "hint": "聚焦时使用更粗、更高对比度的轮廓线。"
+      },
+      "reset": {
+        "label": "恢复默认值",
+        "hint": "将动效、文字大小、行间距、链接和焦点恢复为默认值。主题不受影响。",
+        "action": "重置"
+      }
+    },
+    "general": {
+      "title": "通用",
+      "subtitle": "LIpsum Writer 的默认显示方式。这些设置不会破坏任何数据。",
+      "comingSoonBody": "紧凑密度、减少动效、键盘提示可见性，以及启动时打开的视图。",
+      "compactDensityLabel": "紧凑密度",
+      "compactDensityHint": "列表行距更紧，整体内边距更小。",
+      "reduceMotionLabel": "减少动效",
+      "reduceMotionHint": "跳过视图间的动画过渡。",
+      "keyboardHintsLabel": "显示键盘提示",
+      "keyboardHintsHint": "在工具提示和按钮角落显示 ⌘ 键快捷键。",
+      "startupLabel": "启动时打开",
+      "startupHint": "启动应用时显示的界面。",
+      "startupOptions": {
+        "lastView": "上次视图",
+        "home": "主页",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "外观",
+      "subtitle": "颜色、字体、密度。你希望这个应用呈现的氛围。",
+      "comingSoonBody": "精选主题调色板、强调色和密度。当前主题切换位于世界轨道的快速设置中。",
+      "themeLabel": "主题",
+      "themeHint": "三款精选调色板，调整一切——色块、发丝线，甚至纹理。",
+      "themes": {
+        "linen": "亚麻",
+        "linenSub": "默认",
+        "studio": "工作室",
+        "studioSub": "中性",
+        "midnight": "午夜",
+        "midnightSub": "深色"
+      },
+      "accentLabel": "强调色",
+      "accentHint": "用于悬停、焦点和活动编辑光环。",
+      "densityLabel": "密度",
+      "densityOptions": {
+        "cozy": "舒适",
+        "default": "默认",
+        "compact": "紧凑"
+      }
+    },
+    "templates": {
+      "title": "模板",
+      "subtitle": "新空间和文档的可复用结构框架。",
+      "comingSoonBody": "创建包含章节、默认文档名称和文字存根的自定义模板。",
+      "items": {
+        "fiction": "小说",
+        "fictionSub": "手稿 · 世界观 · 工作坊",
+        "research": "研究",
+        "researchSub": "资料 · 笔记 · 草稿",
+        "journal": "日记",
+        "journalSub": "日记 · 周记 · 反思",
+        "essay": "随笔",
+        "essaySub": "提纲 · 草稿 · 终稿"
+      }
+    },
+    "palettes": {
+      "title": "高亮调色板",
+      "subtitle": "每个空间五个槽位的调色板——为每种颜色命名并调整。",
+      "comingSoonBody": "在空间间编辑、保存和切换已命名的高亮调色板（证据、待修改、参考等）。",
+      "items": {
+        "evidence": "证据",
+        "revise": "待修改",
+        "reference": "参考",
+        "quote": "引用",
+        "loose": "未解决"
+      },
+      "rename": "重命名",
+      "tune": "调整"
+    },
+    "citations": {
+      "title": "引用样式",
+      "subtitle": "跨空间的默认引用样式。",
+      "comingSoonBody": "选择通用样式（Chicago、APA、MLA 等）并支持按空间覆盖。",
+      "styleLabel": "默认样式",
+      "styleHint": "插入新引用时使用。按空间覆盖功能稍后推出。",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "批注",
+      "subtitle": "页边注释和内联批注。",
+      "comingSoonBody": "批注类型、显示默认值和导出行为。",
+      "showMarginLabel": "显示页边注释",
+      "showMarginHint": "有空间时批注浮于右侧页边。",
+      "showInlineLabel": "显示内联高亮",
+      "showInlineHint": "批注颜色渗透到下方文字。",
+      "exportLabel": "包含在导出中",
+      "exportHint": "批注与文档正文一同输出。"
+    },
+    "export": {
+      "title": "导出 / 导入",
+      "subtitle": "在 LIpsum Writer 中导入或导出数据。",
+      "comingSoonBody": "批量导出为 .zip，从其他 LIpsum 包或 Markdown 目录导入。",
+      "formatLabel": "导出格式",
+      "formatHint": "按文档和按空间的导出使用相同默认值。",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "导入来源",
+      "importHint": "导入其他 LIpsum 包或 Markdown 文件目录。",
+      "importOptions": {
+        "bundle": "LIpsum 包（.zip）",
+        "markdown": "Markdown 文件夹",
+        "obsidian": "Obsidian vault"
+      },
+      "importSpaceLabel": "导入空间",
+      "importSpaceHint": "从 Writer 存档（.zip）将空间导入此浏览器——可以是快照下载或其他设备的文件夹同步导出。",
+      "importChooseFile": "选择存档…",
+      "importing": "导入中…",
+      "importFailed": "导入失败：{{message}}",
+      "comingSoonLabel": "更多格式",
+      "comingSoonHint": "从 Markdown 文件夹或 Obsidian vault 批量导出和导入。",
+      "comingSoonTooltip": "计划中——暂不可用。"
+    },
+    "data": {
+      "title": "我的数据",
+      "subtitle": "你的工作存储在哪里，占用了多少空间。",
+      "comingSoonBody": "IndexedDB 使用情况、存储估算和一键全部清除。",
+      "storageLabel": "已用存储",
+      "storageValue": "≈ 12.4 MB · 4 个空间，38 个文档",
+      "engineLabel": "存储引擎",
+      "engineValue": "IndexedDB（本地浏览器）",
+      "wipeLabel": "清除所有数据",
+      "wipeHint": "从此浏览器中删除所有空间、文档和快照。此操作无法撤销。",
+      "wipeButton": "清除本地数据…"
+    },
+    "about": {
+      "title": "关于",
+      "subtitle": "构建信息和链接。",
+      "comingSoonBody": "故事请访问 /about 页面；此标签页将显示构建信息、许可证和更新日志。",
+      "versionLabel": "版本",
+      "versionValue": "{{version}}",
+      "buildLabel": "构建",
+      "buildValue": "本地",
+      "licenseLabel": "许可证",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "链接",
+      "links": {
+        "source": "源码",
+        "changelog": "更新日志",
+        "feedback": "发送反馈"
+      }
+    },
+    "account": {
+      "title": "账户",
+      "subtitle": "登录、跨设备同步和共享工作区。",
+      "comingSoonBody": "云同步目前不可用——Lotem 仅限本地使用。账户、登录和共享工作区将在同步功能上线时推出。",
+      "signedOutLabel": "登录",
+      "signedOutHint": "云同步尚不可用。此处仅用于展示设计。",
+      "signInButton": "用邮箱登录",
+      "syncLabel": "同步此设备",
+      "syncHint": "登录后，你的空间将同步到其他设备。"
+    },
+    "typography": {
+      "title": "排版",
+      "subtitle": "所有世界的默认设置。各个世界可以覆盖。",
+      "comingSoonBody": "为新世界选择正文字体、界面字体、默认阅读大小、行高和行宽。",
+      "proseFontLabel": "正文字体",
+      "uiFontLabel": "界面字体",
+      "proseSizeLabel": "正文大小",
+      "proseSizeHint": "新世界的默认值。",
+      "lineHeightLabel": "行高",
+      "measureLabel": "行宽",
+      "measureHint": "最大行宽。",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "快捷键",
+      "subtitle": "导航、格式和模式的键盘绑定。",
+      "comingSoonBody": "写作/阅读/分屏、专注模式和格式工具栏的可重绑定快捷键。",
+      "navHeader": "导航",
+      "formatHeader": "格式",
+      "modeHeader": "模式",
+      "items": {
+        "openSettings": "打开设置",
+        "quickSettings": "快速设置",
+        "findInDoc": "文档内查找",
+        "toggleFocus": "切换专注",
+        "toggleInspector": "切换检查器",
+        "bold": "粗体",
+        "italic": "斜体",
+        "underline": "下划线",
+        "heading1": "标题 1",
+        "heading2": "标题 2",
+        "write": "写作模式",
+        "read": "阅读模式",
+        "split": "分屏模式"
+      }
+    },
+    "backups": {
+      "title": "备份",
+      "subtitle": "导出、恢复和快照本地数据。",
+      "comingSoonBody": "定时本地快照、手动导出为 .zip，以及从之前的备份恢复。",
+      "intervalLabel": "自动快照间隔",
+      "intervalOptions": {
+        "5min": "5 分钟",
+        "10min": "10 分钟",
+        "30min": "30 分钟",
+        "off": "关闭"
+      },
+      "keepLabel": "保留",
+      "keepHint": "旧快照将自动滚动删除。",
+      "keepOptions": {
+        "last50": "最近 50 个",
+        "days7": "7 天",
+        "days30": "30 天"
+      },
+      "latestLabel": "最新",
+      "latestValue": "12 分钟前 · 1,190 字"
+    },
+    "sync": {
+      "title": "同步",
+      "subtitle": "将你的空间推送到所选文件夹。指向 Google Drive、Dropbox 或 iCloud 文件夹以跨设备同步。",
+      "unsupportedTitle": "此浏览器不支持",
+      "unsupportedBody": "文件夹同步需要 File System Access API，可在桌面端 Chrome、Edge 及其他 Chromium 浏览器中使用。请切换到支持的浏览器。",
+      "folderLabel": "同步文件夹",
+      "folderHint": "每次同步会在此写入每个空间的 Markdown .zip，保留最近 5 个及一个 latest.zip。同步与备份相互独立。",
+      "noFolder": "未连接文件夹",
+      "chooseFolder": "选择文件夹…",
+      "changeFolder": "更改…",
+      "disconnect": "断开连接",
+      "intervalLabel": "自动同步",
+      "intervalHint": "应用打开且文件夹已连接时空间自动同步的频率。每个空间可覆盖此默认值。",
+      "intervalOff": "关闭",
+      "intervalMinutes": "{{count}} 分钟",
+      "intervalDefault": "默认（{{label}}）",
+      "syncLabel": "手动同步",
+      "pushOnlyHint": "目前仅支持推送——将本地数据写入文件夹。拉取更改功能稍后推出。",
+      "syncNow": "立即同步",
+      "syncNowAll": "同步所有空间",
+      "reconnectHint": "同步已暂停——浏览器需要重新获取此会话的文件夹权限。重新连接以恢复手动和自动同步。",
+      "reconnectButton": "重新连接",
+      "reconnecting": "重新连接中…",
+      "syncing": "同步中…",
+      "syncFailed": "同步失败：{{message}}",
+      "lastSynced": "上次同步于 {{when}}",
+      "neverSynced": "从未同步",
+      "justNow": "刚刚",
+      "resultsTitle": "上次运行",
+      "spaceOk": "已同步",
+      "spaceFailed": "失败",
+      "historyTitle": "近期同步",
+      "historyEmpty": "暂无同步记录。",
+      "columns": {
+        "when": "时间",
+        "space": "空间",
+        "kind": "类型",
+        "size": "大小",
+        "status": "状态"
+      },
+      "kind": {
+        "auto": "自动",
+        "manual": "手动"
+      },
+      "status": {
+        "ok": "成功",
+        "error": "错误"
+      }
+    },
+    "space": {
+      "breadcrumb": "空间 · 设置",
+      "shellSubtitle": "空间设置",
+      "loading": "正在加载空间…",
+      "groups": {
+        "thisSpace": "此空间",
+        "sharingMembers": "共享与成员",
+        "data": "数据",
+        "dangerZone": "危险"
+      },
+      "tabs": {
+        "general": "通用",
+        "docInspector": "文档检查",
+        "template": "模板",
+        "palette": "高亮调色板",
+        "sharing": "共享",
+        "members": "成员",
+        "backups": "备份",
+        "sync": "同步",
+        "export": "导出",
+        "danger": "危险区域"
+      },
+      "docInspector": {
+        "title": "文档检查",
+        "subtitle": "为此空间覆盖通用检查器设置。"
+      },
+      "palette": {
+        "title": "高亮调色板",
+        "subtitle": "此空间的五个命名可调高亮颜色。",
+        "comingSoonBody": "重命名、重新着色和重新排列此空间的高亮槽位。",
+        "items": {
+          "evidence": "证据",
+          "revise": "待修改",
+          "reference": "参考",
+          "quote": "引用",
+          "loose": "未解决"
+        },
+        "rename": "重命名",
+        "tune": "调整"
+      },
+      "export": {
+        "title": "导出",
+        "subtitle": "将此空间的内容迁移到其他工具。",
+        "comingSoonBody": "导出为 Markdown .zip（目前通过备份实现）、LaTeX、HTML 或 PDF——一处搞定。",
+        "formatLabel": "格式",
+        "formatHint": "Markdown 率先推出，其余格式随后跟进。",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "上次导出",
+        "lastValue": "从未"
+      },
+      "general": {
+        "title": "通用",
+        "subtitle": "此空间的标识信息。更改立即生效并跨视图同步。",
+        "nameLabel": "空间名称",
+        "nameHint": "显示在侧边栏标题和空间轨道工具提示中。",
+        "tagLabel": "标签",
+        "tagHint": "显示在空间轨道磁贴上的短代码（2–4 个字符）。"
+      },
+      "sharing": {
+        "title": "共享",
+        "subtitle": "控制此空间的共享方式。",
+        "comingSoonBody": "按空间的可见性和共享链接。云同步上线时推出。",
+        "visibilityLabel": "可见性",
+        "visibilityOptions": {
+          "private": "私密",
+          "link": "有链接者均可访问",
+          "members": "仅成员"
+        },
+        "linkLabel": "共享链接",
+        "linkHint": "默认为只读。编辑权限取决于成员设置。",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "复制"
+      },
+      "template": {
+        "title": "模板",
+        "subtitle": "此空间创建时使用的结构模板。",
+        "comingSoonBody": "创建后更改空间模板尚不支持。能安全迁移章节和文档后将会推出。",
+        "currentLabel": "当前模板",
+        "currentValue": "小说",
+        "currentSub": "手稿 · 世界观 · 工作坊",
+        "changeLabel": "更改模板",
+        "changeHint": "将现有章节和文档重新排列到新模板。",
+        "changeButton": "更改模板…"
+      },
+      "members": {
+        "title": "成员",
+        "subtitle": "有权访问此空间的合著者和审阅者。",
+        "comingSoonBody": "邀请协作者、管理角色和审阅更改。云同步上线时推出。",
+        "inviteLabel": "通过邮箱邀请",
+        "inviteHint": "我们将向他们发送加入此空间的链接。",
+        "invitePlaceholder": "name@example.com",
+        "inviteButton": "发送邀请",
+        "membersLabel": "成员",
+        "roles": {
+          "owner": "所有者",
+          "editor": "编辑者",
+          "viewer": "查看者"
+        },
+        "you": "你"
+      },
+      "backups": {
+        "title": "备份",
+        "subtitle": "将此空间快照为可下载、保存和恢复的 .zip 文件。",
+        "retentionHint": "保留最近 {{count}} 个快照——旧快照将自动删除。",
+        "snapshotNow": "+ 立即快照",
+        "snapshotting": "快照中…",
+        "snapshotFailed": "快照失败：{{message}}",
+        "historyTitle": "历史记录",
+        "empty": "暂无快照——点击 + 立即快照创建一个。",
+        "columns": {
+          "when": "时间",
+          "kind": "类型",
+          "size": "大小",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "手动",
+          "auto": "自动",
+          "snapshot": "快照"
+        },
+        "download": "↓ 下载",
+        "delete": "删除",
+        "deleteConfirm": "删除此快照？此操作无法撤销。",
+        "deleted": "快照已删除。",
+        "justNow": "刚刚",
+        "restore": "↺ 恢复",
+        "restoreUnavailable": "此快照早于恢复功能支持时期——只能下载。",
+        "restoreDialogTitle": "恢复此快照？",
+        "restoreDialogBody": "此空间的当前内容将被快照替换。当前状态的快照会先保存，因此你可以撤销此次恢复。",
+        "restoreConfirm": "恢复",
+        "restoreCancel": "取消",
+        "restoring": "恢复中…",
+        "restored": "快照已恢复。",
+        "restoreFailed": "恢复失败：{{message}}",
+        "fileRestoreTitle": "要从下载的 .zip 恢复？",
+        "fileRestoreBody": "通过通用设置 → 导出 / 导入进行导入——它将作为新空间恢复，此空间保持不变。"
+      },
+      "sync": {
+        "title": "同步",
+        "subtitle": "手动或按计划将此空间推送到已连接的文件夹。同步与备份相互独立。",
+        "folderHint": "在通用设置 → 同步中连接文件夹。所有空间使用同一文件夹。",
+        "intervalHint": "此空间自动同步的频率。选择默认以遵循通用自动同步设置。",
+        "syncNow": "同步此空间"
+      },
+      "danger": {
+        "title": "危险区域",
+        "subtitle": "不可逆操作。继续前请仔细阅读。",
+        "deleteCardTitle": "删除此空间",
+        "deleteCardBody": "永久删除此空间及其所有文档、章节、Brain space 笔记、批注、引用和连接。此操作无法撤销。",
+        "deleteButton": "删除此空间",
+        "dialogTitle": "删除“{{name}}”？",
+        "dialogBody": "这将永久删除该空间及其所有内容。此操作无法撤销。",
+        "typeToConfirm": "输入 {{name}} 以确认",
+        "cancel": "取消",
+        "confirm": "删除空间"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "迷失在页边",
+    "body": "该页面（尚）不存在。",
+    "goHome": "回到主页"
+  },
+  "templates": {
+    "crumb": "01 — 某种房间",
+    "headingMain": "你想创建",
+    "headingAccent": "什么类型的空间？",
+    "chooseLegend": "选择模板",
+    "stage": {
+      "pre-alpha": "实验性",
+      "alpha": "早期",
+      "beta": "测试版"
+    },
+    "nameLabel": "名称",
+    "tagLabel": "标签",
+    "syncLabel": "云同步 —",
+    "syncValue": "关闭，本地",
+    "syncTooltip": "云同步不可用——此应用目前仅限本地使用。",
+    "creating": "创建中…",
+    "submitLabel": "进入 {{name}} →",
+    "newSpace": "新空间",
+    "back": "返回"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} 条未整理",
+    "title": "Brain space",
+    "mobileWarning": "Brain space 在较大屏幕上效果最佳。",
+    "mobileNote": "画布需要鼠标或触控板。",
+    "openInWrite": "在写作模式中打开 →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "开始倾倒",
+      "emptyHint": "从下方选择卡片类型",
+      "pendingHint": "Shift+点击另一张笔记以连接 · Esc 取消"
+    },
+    "note": {
+      "deleteNote": "删除笔记",
+      "addPicture": "添加图片",
+      "addPictureCta": "添加图片",
+      "openLinkedDoc": "打开关联文档",
+      "fetchedContent": "已获取的内容",
+      "openDetailsLabel": "打开详情",
+      "openDetailsTitle": "打开详情面板",
+      "titlePlaceholder": "标题",
+      "addTitleCta": "+ 标题",
+      "bodyEmpty": "（点击以写作）",
+      "viewImage": "查看 {{name}}",
+      "removeImage": "移除 {{name}}",
+      "resize": "调整笔记大小",
+      "days": {
+        "sun": "日",
+        "mon": "一",
+        "tue": "二",
+        "wed": "三",
+        "thu": "四",
+        "fri": "五",
+        "sat": "六"
+      }
+    },
+    "drawer": {
+      "title": "笔记详情",
+      "description": "编辑所选笔记并管理其连接。",
+      "untitledPlaceholder": "无标题",
+      "titleAriaLabel": "笔记标题",
+      "closeAriaLabel": "关闭抽屉",
+      "bodyLabel": "正文",
+      "bodyPlaceholder": "写点什么…",
+      "picturesLabel": "图片",
+      "addPicture": "添加图片",
+      "pictureLimitHint": "已达到 {{count}} 张限制——请先删除一张再添加。",
+      "linkedDocLabel": "关联文档",
+      "noLinkedDoc": "——无关联文档——",
+      "untitledDoc": "无标题",
+      "openDoc": "打开",
+      "connectionsHeading": "连接（{{count}}）",
+      "connectionsEmpty": "在画布上 Shift+点击另一张笔记以建立连接。",
+      "untitledNote": "（无标题）",
+      "removeConnection": "移除连接",
+      "deleteNote": "删除笔记"
+    }
+  },
+  "split": {
+    "title": "分屏视图",
+    "mobileWarning": "分屏视图需要较大的屏幕。",
+    "mobileNote": "请在写作模式下打开此文档。",
+    "openInWrite": "在写作模式中打开 →",
+    "leftPrefix": "左 —",
+    "rightPrefix": "右 —",
+    "rightPaneAria": "右侧窗格文档",
+    "noOtherDocs": "（无其他文档）",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Citations",
+    "pickDoc": "从上方下拉菜单中选择文档。",
+    "dividerAria": "调整分屏窗格大小"
+  },
+  "citationsDrawer": {
+    "title": "Citations",
+    "description": "搜索、导入和导出此空间的引用。",
+    "close": "关闭引用",
+    "expand": "在全屏视图中打开引用"
+  },
+  "citations": {
+    "title": "Citations",
+    "breadcrumb": "资料 / ",
+    "entries": "{{count}} 条",
+    "searchPlaceholder": "作者、标签、年份…",
+    "upload": "↑ 上传 .bib / .ris",
+    "add": "+ 添加",
+    "cancel": "× 取消",
+    "columns": {
+      "tag": "标签",
+      "authors": "作者",
+      "title": "标题",
+      "year": "年份",
+      "type": "类型",
+      "used": "已用"
+    },
+    "style": "样式 — CHICAGO（作者-日期）",
+    "exportBib": "导出为 .BIB",
+    "summary": "已显示 {{filtered}} 条 · 本页 {{shown}} 条",
+    "prevPage": "上一页",
+    "nextPage": "下一页",
+    "empty": "暂无引用",
+    "noMatch": "没有与搜索匹配的行。",
+    "importHint": "导入 .bib 文件或手动添加。",
+    "pasteHeader": "粘贴 BibTeX 或标题",
+    "addCitation": "添加引用",
+    "manualCancel": "取消",
+    "adding": "添加中…",
+    "parsing": "正在解析 {{name}}…",
+    "imported": "已导入 {{added}} 条引用{{addedPlural}}{{skippedSuffix}}。",
+    "skippedSuffix": "，已跳过 {{skipped}} 条重复{{skippedPlural}}",
+    "skippedSuffixShort": "，已跳过 {{skipped}} 条",
+    "failed": "解析失败：{{message}}",
+    "failedManual": "失败：{{message}}",
+    "addedOne": "已添加 1 条引用。",
+    "unknownAuthor": "（未知）",
+    "unknownError": "未知错误",
+    "edit": {
+      "save": "保存",
+      "saving": "保存中…",
+      "cancel": "取消",
+      "delete": "删除",
+      "edit": "编辑",
+      "tagLabel": "标签",
+      "authorsLabel": "作者",
+      "titleLabel": "标题",
+      "yearLabel": "年份",
+      "typeLabel": "类型",
+      "duplicateKey": "标签“{{key}}”在此空间中已被使用。",
+      "updated": "已更新 1 条引用。",
+      "deleteOne": "已删除 1 条引用。",
+      "confirmDeleteUsed": "此引用在文档中被使用了 {{count}} 次。仍然删除？",
+      "confirmDeleteSingle": "删除引用“{{key}}”？此操作无法撤销。",
+      "untitled": "（无标题）"
+    },
+    "bulk": {
+      "selectedSummary": "已选 {{count}} 条",
+      "deleteSelected": "删除",
+      "setTypePrompt": "设置类型",
+      "setTypeAria": "为所选引用设置类型",
+      "chooseOption": "选择…",
+      "ariaLabel": "批量操作",
+      "clearSelection": "清除",
+      "deleted": "已删除 {{count}} 条引用。",
+      "typeApplied": "已将 {{count}} 条引用的类型设为 {{type}}。",
+      "confirmDelete": "删除 {{count}} 条引用？此操作无法撤销。"
+    },
+    "row": {
+      "selectAllAria": "选择本页所有引用",
+      "viewCitationAria": "查看引用 {{key}}",
+      "selectCitationAria": "选择引用 {{key}}",
+      "collapseCitationAria": "折叠引用 {{key}}",
+      "usedCount": "已用 {{count}} 次",
+      "unused": "未使用",
+      "copyTag": "复制标签",
+      "copyTagAria": "复制标签 {{value}}",
+      "copiedTitle": "已复制",
+      "copiedTagAria": "已复制标签 {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

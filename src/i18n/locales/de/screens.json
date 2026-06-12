@@ -7,6 +7,10 @@
     "tagline": "Ein aufgeräumter Raum für langes Schreiben — Fiktion, Forschung, Essays, Tagebücher.",
     "continueWriting": "Weiterschreiben",
     "startNewSpace": "Neuen Space starten",
+    "syncOffChip": "Sync/Sicherungen nicht aktiviert · Daten können verloren gehen",
+    "syncOnChip": "Ordner-Sync aktiv",
+    "syncOnTitle": "Ordner-Sync aktiviert",
+    "syncOnBody": "Deine Arbeit wird mit dem Ordner „{{folder}}” auf diesem Gerät synchronisiert.",
     "warningTitle": "Vorab-Build",
     "warningBody": "Keine Datensynchronisation. Alles lebt in deinem Browser; beim Löschen des Caches geht deine Arbeit verloren. Du kannst die Synchronisation mit einem lokalen Ordner unter Einstellungen → Sync aktivieren.",
     "versionLine": "Version {{version}}"
@@ -256,7 +260,15 @@
         "bundle": "LIpsum-Bundle (.zip)",
         "markdown": "Markdown-Ordner",
         "obsidian": "Obsidian-Vault"
-      }
+      },
+      "importSpaceLabel": "Einen Space importieren",
+      "importSpaceHint": "Bringe einen Space aus einem Writer-Archiv (.zip) in diesen Browser — ein Snapshot-Download oder ein Ordner-Sync-Export von einem anderen Gerät.",
+      "importChooseFile": "Archiv wählen…",
+      "importing": "importiere…",
+      "importFailed": "Import fehlgeschlagen: {{message}}",
+      "comingSoonLabel": "Weitere Formate",
+      "comingSoonHint": "Massenexport und -import aus Markdown-Ordnern oder Obsidian-Vaults.",
+      "comingSoonTooltip": "Geplant — noch nicht verfügbar."
     },
     "data": {
       "title": "Deine Daten",
@@ -382,7 +394,12 @@
       "breadcrumb": "SPACE · EINSTELLUNGEN",
       "shellSubtitle": "SPACE-EINSTELLUNGEN",
       "loading": "Space lädt…",
-      "groups": { "thisSpace": "Dieser Space", "sharingMembers": "Freigabe und Mitglieder", "data": "Daten" },
+      "groups": {
+        "thisSpace": "Dieser Space",
+        "sharingMembers": "Freigabe und Mitglieder",
+        "data": "Daten",
+        "dangerZone": "Gefahr"
+      },
       "tabs": {
         "general": "Allgemein",
         "docInspector": "Dokument-Inspektor",
@@ -482,7 +499,18 @@
         "delete": "löschen",
         "deleteConfirm": "Diesen Snapshot löschen? Kein Zurück.",
         "deleted": "Snapshot gelöscht.",
-        "justNow": "gerade eben"
+        "justNow": "gerade eben",
+        "restore": "↺ wiederherstellen",
+        "restoreUnavailable": "Dieser Snapshot stammt aus der Zeit vor der Wiederherstellungsfunktion — er kann nur heruntergeladen werden.",
+        "restoreDialogTitle": "Diesen Snapshot wiederherstellen?",
+        "restoreDialogBody": "Der aktuelle Inhalt dieses Space wird durch den Snapshot ersetzt. Ein Snapshot des aktuellen Zustands wird zuerst gespeichert, sodass du diese Wiederherstellung rückgängig machen kannst.",
+        "restoreConfirm": "Wiederherstellen",
+        "restoreCancel": "Abbrechen",
+        "restoring": "wird wiederhergestellt…",
+        "restored": "Snapshot wiederhergestellt.",
+        "restoreFailed": "Wiederherstellung fehlgeschlagen: {{message}}",
+        "fileRestoreTitle": "Aus einer heruntergeladenen .zip wiederherstellen?",
+        "fileRestoreBody": "Importiere sie über Globale Einstellungen → Exportieren / importieren — sie kommt als neuer Space zurück und lässt diesen unberührt."
       },
       "sync": {
         "title": "Synchronisation",
@@ -516,6 +544,11 @@
     "headingMain": "Welche Art Space",
     "headingAccent": "startest du?",
     "chooseLegend": "Wähle eine Vorlage",
+    "stage": {
+      "pre-alpha": "experimentell",
+      "alpha": "früh",
+      "beta": "beta"
+    },
     "nameLabel": "Name",
     "tagLabel": "Tag",
     "syncLabel": "Cloud-Sync —",
@@ -532,6 +565,58 @@
     "mobileWarning": "Brain Space funktioniert am besten auf einem größeren Bildschirm.",
     "mobileNote": "Die Leinwand braucht Maus oder Trackpad.",
     "openInWrite": "In Schreiben öffnen →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "Gedanken abladen",
+      "emptyHint": "Kartentyp unten wählen",
+      "pendingHint": "Shift-Klick auf eine andere Notiz zum Verbinden · Esc zum Abbrechen"
+    },
+    "note": {
+      "deleteNote": "Notiz löschen",
+      "addPicture": "Bild hinzufügen",
+      "addPictureCta": "Bild hinzufügen",
+      "openLinkedDoc": "Verknüpftes Dokument öffnen",
+      "fetchedContent": "Abgerufener Inhalt",
+      "openDetailsLabel": "Details öffnen",
+      "openDetailsTitle": "Detailbereich öffnen",
+      "titlePlaceholder": "Titel",
+      "addTitleCta": "+ Titel",
+      "bodyEmpty": "(Klicken zum Schreiben)",
+      "viewImage": "{{name}} anzeigen",
+      "removeImage": "{{name}} entfernen",
+      "resize": "Notiz skalieren",
+      "days": {
+        "sun": "So",
+        "mon": "Mo",
+        "tue": "Di",
+        "wed": "Mi",
+        "thu": "Do",
+        "fri": "Fr",
+        "sat": "Sa"
+      }
+    },
+    "drawer": {
+      "title": "Notizdetails",
+      "description": "Bearbeite die ausgewählte Notiz und verwalte ihre Verbindungen.",
+      "untitledPlaceholder": "Ohne Titel",
+      "titleAriaLabel": "Notiztitel",
+      "closeAriaLabel": "Bereich schließen",
+      "bodyLabel": "Inhalt",
+      "bodyPlaceholder": "Schreib etwas…",
+      "picturesLabel": "Bilder",
+      "addPicture": "Bild hinzufügen",
+      "pictureLimitHint": "Limit von {{count}} erreicht — entferne eines, um ein weiteres hinzuzufügen.",
+      "linkedDocLabel": "Verknüpftes Dokument",
+      "noLinkedDoc": "— Kein verknüpftes Dokument —",
+      "untitledDoc": "Ohne Titel",
+      "openDoc": "Öffnen",
+      "connectionsHeading": "Verbindungen ({{count}})",
+      "connectionsEmpty": "Shift-Klick auf eine andere Notiz auf der Leinwand zum Verbinden.",
+      "untitledNote": "(ohne Titel)",
+      "removeConnection": "Verbindung entfernen",
+      "deleteNote": "Notiz löschen"
+    }
   },
   "split": {
     "title": "Geteilte Ansicht",
@@ -550,7 +635,8 @@
   "citationsDrawer": {
     "title": "Zitate",
     "description": "Suche, importiere und exportiere Zitate für diesen Space.",
-    "close": "Zitate schließen"
+    "close": "Zitate schließen",
+    "expand": "Zitate in Vollansicht öffnen"
   },
   "citations": {
     "title": "Zitate",
@@ -584,8 +670,10 @@
     "unknownError": "unbekannter Fehler",
     "edit": {
       "save": "speichern",
+      "saving": "speichert…",
       "cancel": "abbrechen",
       "delete": "löschen",
+      "edit": "bearbeiten",
       "tagLabel": "Tag",
       "authorsLabel": "Autoren",
       "titleLabel": "Titel",
@@ -594,16 +682,36 @@
       "duplicateKey": "Tag „{{key}}\" wird in diesem Space bereits verwendet.",
       "updated": "1 Zitat aktualisiert.",
       "deleteOne": "1 Zitat gelöscht.",
-      "confirmDeleteUsed": "Dieses Zitat wird {{count}}× in deinen Dokumenten verwendet. Trotzdem löschen?"
+      "confirmDeleteUsed": "Dieses Zitat wird {{count}}× in deinen Dokumenten verwendet. Trotzdem löschen?",
+      "confirmDeleteSingle": "Zitat „{{key}}\" löschen? Kein Zurück.",
+      "untitled": "(ohne Titel)"
     },
     "bulk": {
       "selectedSummary": "{{count}} ausgewählt",
       "deleteSelected": "löschen",
       "setTypePrompt": "Typ setzen",
+      "setTypeAria": "Typ für ausgewählte Zitate setzen",
+      "chooseOption": "wählen…",
+      "ariaLabel": "Massenaktionen",
       "clearSelection": "leeren",
       "deleted": "{{count}} Zitate gelöscht.",
       "typeApplied": "Typ {{type}} auf {{count}} Zitate angewendet.",
       "confirmDelete": "{{count}} Zitat(e) löschen? Kein Zurück."
+    },
+    "row": {
+      "selectAllAria": "Alle Zitate auf dieser Seite auswählen",
+      "viewCitationAria": "Zitat {{key}} anzeigen",
+      "selectCitationAria": "Zitat {{key}} auswählen",
+      "collapseCitationAria": "Zitat {{key}} einklappen",
+      "usedCount": "{{count}}× verwendet",
+      "unused": "nicht verwendet",
+      "copyTag": "Tag kopieren",
+      "copyTagAria": "Tag {{value}} kopieren",
+      "copiedTitle": "Kopiert",
+      "copiedTagAria": "Tag {{value}} kopiert"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
     }
   }
 }

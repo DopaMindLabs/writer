@@ -7,6 +7,10 @@
     "tagline": "Een opgeruimde plek voor lange teksten — fictie, onderzoek, essays, dagboeken.",
     "continueWriting": "Verder schrijven",
     "startNewSpace": "Nieuwe space starten",
+    "syncOffChip": "sync/back-ups niet ingeschakeld · gegevens kunnen verloren gaan",
+    "syncOnChip": "mapsync aan",
+    "syncOnTitle": "Mapsync ingeschakeld",
+    "syncOnBody": "Je werk wordt gesynchroniseerd naar de map „{{folder}}” op dit apparaat.",
     "warningTitle": "Pre-releasebuild",
     "warningBody": "Geen gegevenssynchronisatie. Alles leeft in je browser en bij het wissen van de cache gaat je werk verloren. Je kunt synchronisatie naar een lokale map inschakelen via Instellingen → Sync.",
     "versionLine": "Versie {{version}}"
@@ -243,7 +247,15 @@
       "formats": { "markdown": "Markdown", "html": "HTML", "pdf": "PDF", "docx": ".docx", "latex": "LaTeX" },
       "importLabel": "Importeren uit",
       "importHint": "Breng een andere LIpsum-bundel of een directory met Markdown-bestanden binnen.",
-      "importOptions": { "bundle": "LIpsum-bundel (.zip)", "markdown": "Markdown-map", "obsidian": "Obsidian-vault" }
+      "importOptions": { "bundle": "LIpsum-bundel (.zip)", "markdown": "Markdown-map", "obsidian": "Obsidian-vault" },
+      "importSpaceLabel": "Een space importeren",
+      "importSpaceHint": "Breng een space in deze browser vanuit een Writer-archief (.zip) — een snapshot-download of een mapsync-export van een ander apparaat.",
+      "importChooseFile": "Archief kiezen…",
+      "importing": "importeren…",
+      "importFailed": "Importeren mislukt: {{message}}",
+      "comingSoonLabel": "Meer formaten",
+      "comingSoonHint": "Bulk-export en -import vanuit Markdown-mappen of Obsidian-vaults.",
+      "comingSoonTooltip": "Gepland — nog niet beschikbaar."
     },
     "data": {
       "title": "Je gegevens",
@@ -369,7 +381,12 @@
       "breadcrumb": "SPACE · INSTELLINGEN",
       "shellSubtitle": "SPACE-INSTELLINGEN",
       "loading": "Space laden…",
-      "groups": { "thisSpace": "Deze space", "sharingMembers": "Delen en leden", "data": "Gegevens" },
+      "groups": {
+        "thisSpace": "Deze space",
+        "sharingMembers": "Delen en leden",
+        "data": "Gegevens",
+        "dangerZone": "Gevaar"
+      },
       "tabs": {
         "general": "Algemeen",
         "docInspector": "Documentinspector",
@@ -469,7 +486,18 @@
         "delete": "verwijderen",
         "deleteConfirm": "Deze snapshot verwijderen? Geen ongedaan maken.",
         "deleted": "Snapshot verwijderd.",
-        "justNow": "zojuist"
+        "justNow": "zojuist",
+        "restore": "↺ herstellen",
+        "restoreUnavailable": "Deze snapshot dateert van vóór herstelondersteuning — hij kan alleen worden gedownload.",
+        "restoreDialogTitle": "Deze snapshot herstellen?",
+        "restoreDialogBody": "De huidige inhoud van deze space wordt vervangen door de snapshot. Eerst wordt een snapshot van de huidige toestand opgeslagen, zodat je dit herstel ongedaan kunt maken.",
+        "restoreConfirm": "Herstellen",
+        "restoreCancel": "Annuleren",
+        "restoring": "herstellen…",
+        "restored": "Snapshot hersteld.",
+        "restoreFailed": "Herstellen mislukt: {{message}}",
+        "fileRestoreTitle": "Herstellen vanuit een gedownloade .zip?",
+        "fileRestoreBody": "Importeer via Instellingen → Exporteren / importeren — het komt terug als een nieuwe space en laat deze ongewijzigd."
       },
       "sync": {
         "title": "Synchronisatie",
@@ -503,6 +531,11 @@
     "headingMain": "Wat voor space",
     "headingAccent": "ga je starten?",
     "chooseLegend": "Kies een sjabloon",
+    "stage": {
+      "pre-alpha": "experimenteel",
+      "alpha": "vroeg",
+      "beta": "beta"
+    },
     "nameLabel": "Naam",
     "tagLabel": "Tag",
     "syncLabel": "cloud-sync —",
@@ -519,6 +552,58 @@
     "mobileWarning": "Brain Space werkt het beste op een groter scherm.",
     "mobileNote": "Het canvas heeft een muis of trackpad nodig.",
     "openInWrite": "Openen in Schrijven →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "begin te dumpen",
+      "emptyHint": "kies een kaarttype hieronder",
+      "pendingHint": "shift-klik een andere notitie om te verbinden · esc om te annuleren"
+    },
+    "note": {
+      "deleteNote": "Notitie verwijderen",
+      "addPicture": "Afbeelding toevoegen",
+      "addPictureCta": "voeg een afbeelding toe",
+      "openLinkedDoc": "Gekoppeld document openen",
+      "fetchedContent": "Opgehaalde inhoud",
+      "openDetailsLabel": "Details openen",
+      "openDetailsTitle": "Detailpaneel openen",
+      "titlePlaceholder": "titel",
+      "addTitleCta": "+ titel",
+      "bodyEmpty": "(klik om te schrijven)",
+      "viewImage": "{{name}} bekijken",
+      "removeImage": "{{name}} verwijderen",
+      "resize": "Notitie vergroten/verkleinen",
+      "days": {
+        "sun": "zo",
+        "mon": "ma",
+        "tue": "di",
+        "wed": "wo",
+        "thu": "do",
+        "fri": "vr",
+        "sat": "za"
+      }
+    },
+    "drawer": {
+      "title": "Notitiedetails",
+      "description": "Bewerk de geselecteerde notitie en beheer de verbindingen.",
+      "untitledPlaceholder": "Naamloos",
+      "titleAriaLabel": "Notitietitel",
+      "closeAriaLabel": "Paneel sluiten",
+      "bodyLabel": "Tekst",
+      "bodyPlaceholder": "Schrijf iets…",
+      "picturesLabel": "Afbeeldingen",
+      "addPicture": "Afbeelding toevoegen",
+      "pictureLimitHint": "limiet van {{count}} bereikt — verwijder er één om een nieuwe toe te voegen.",
+      "linkedDocLabel": "Gekoppeld document",
+      "noLinkedDoc": "— Geen gekoppeld document —",
+      "untitledDoc": "Naamloos",
+      "openDoc": "Openen",
+      "connectionsHeading": "Verbindingen ({{count}})",
+      "connectionsEmpty": "shift-klik een andere notitie op het canvas om te verbinden.",
+      "untitledNote": "(naamloos)",
+      "removeConnection": "Verbinding verwijderen",
+      "deleteNote": "Notitie verwijderen"
+    }
   },
   "split": {
     "title": "Gesplitste weergave",
@@ -537,7 +622,8 @@
   "citationsDrawer": {
     "title": "Citaten",
     "description": "Zoek, importeer en exporteer citaten voor deze space.",
-    "close": "Citaten sluiten"
+    "close": "Citaten sluiten",
+    "expand": "Citaten in volledige weergave openen"
   },
   "citations": {
     "title": "Citaten",
@@ -571,8 +657,10 @@
     "unknownError": "onbekende fout",
     "edit": {
       "save": "opslaan",
+      "saving": "opslaan…",
       "cancel": "annuleren",
       "delete": "verwijderen",
+      "edit": "bewerken",
       "tagLabel": "Tag",
       "authorsLabel": "Auteurs",
       "titleLabel": "Titel",
@@ -581,16 +669,36 @@
       "duplicateKey": "Tag „{{key}}\" wordt al gebruikt in deze space.",
       "updated": "1 citaat bijgewerkt.",
       "deleteOne": "1 citaat verwijderd.",
-      "confirmDeleteUsed": "Dit citaat wordt {{count}}× gebruikt in je documenten. Toch verwijderen?"
+      "confirmDeleteUsed": "Dit citaat wordt {{count}}× gebruikt in je documenten. Toch verwijderen?",
+      "confirmDeleteSingle": "Citaat „{{key}}\" verwijderen? Geen ongedaan maken.",
+      "untitled": "(naamloos)"
     },
     "bulk": {
       "selectedSummary": "{{count}} geselecteerd",
       "deleteSelected": "verwijderen",
       "setTypePrompt": "type instellen",
+      "setTypeAria": "Type instellen voor geselecteerde citaten",
+      "chooseOption": "kies…",
+      "ariaLabel": "Bulkacties",
       "clearSelection": "wissen",
       "deleted": "{{count}} citaten verwijderd.",
       "typeApplied": "Type {{type}} toegepast op {{count}} citaten.",
       "confirmDelete": "{{count}} citaat(en) verwijderen? Geen ongedaan maken."
+    },
+    "row": {
+      "selectAllAria": "Alle citaten op deze pagina selecteren",
+      "viewCitationAria": "Citaat {{key}} bekijken",
+      "selectCitationAria": "Citaat {{key}} selecteren",
+      "collapseCitationAria": "Citaat {{key}} samenvouwen",
+      "usedCount": "{{count}}× gebruikt",
+      "unused": "ongebruikt",
+      "copyTag": "Tag kopiëren",
+      "copyTagAria": "Tag {{value}} kopiëren",
+      "copiedTitle": "Gekopieerd",
+      "copiedTagAria": "Tag {{value}} gekopieerd"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
     }
   }
 }
