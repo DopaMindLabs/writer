@@ -10,7 +10,7 @@
     "syncOffChip": "sync/backups não ativados · dados podem ser perdidos",
     "syncOnChip": "sincronização de pasta ativa",
     "syncOnTitle": "Sincronização de pasta ativada",
-    "syncOnBody": "Seu trabalho sincroniza com a pasta “{{folder}}” neste dispositivo.",
+    "syncOnBody": "Seu trabalho sincroniza com a pasta "{{folder}}" neste dispositivo.",
     "warningTitle": "Build de pré-lançamento",
     "warningBody": "Sem sincronização de dados. Tudo vive no seu navegador e limpar o cache perde seu trabalho. Você pode ativar a sincronização com uma pasta local em Configurações → Sync.",
     "versionLine": "Versão {{version}}"
@@ -512,7 +512,7 @@
         "deleteCardTitle": "Excluir este espaço",
         "deleteCardBody": "Remove permanentemente este espaço junto com cada documento, seção, nota de brain-space, anotação, citação e conexão. Sem desfazer.",
         "deleteButton": "Excluir este espaço",
-        "dialogTitle": "Excluir “{{name}}”?",
+        "dialogTitle": "Excluir "{{name}}"?",
         "dialogBody": "Remove permanentemente o espaço e todo o seu conteúdo. Sem desfazer.",
         "typeToConfirm": "Digite {{name}} para confirmar",
         "cancel": "Cancelar",
@@ -661,11 +661,11 @@
       "titleLabel": "Título",
       "yearLabel": "Ano",
       "typeLabel": "Tipo",
-      "duplicateKey": "Tag “{{key}}” já está em uso neste espaço.",
+      "duplicateKey": "Tag "{{key}}" já está em uso neste espaço.",
       "updated": "1 citação atualizada.",
       "deleteOne": "1 citação excluída.",
       "confirmDeleteUsed": "Esta citação é usada {{count}}× em seus documentos. Excluir mesmo assim?",
-      "confirmDeleteSingle": "Excluir citação “{{key}}”? Sem desfazer.",
+      "confirmDeleteSingle": "Excluir citação "{{key}}"? Sem desfazer.",
       "untitled": "(sem título)"
     },
     "bulk": {

@@ -10,7 +10,7 @@
     "syncOffChip": "sync/back-ups niet ingeschakeld · gegevens kunnen verloren gaan",
     "syncOnChip": "mapsync aan",
     "syncOnTitle": "Mapsync ingeschakeld",
-    "syncOnBody": "Je werk wordt gesynchroniseerd naar de map „{{folder}}” op dit apparaat.",
+    "syncOnBody": "Je werk wordt gesynchroniseerd naar de map „{{folder}}" op dit apparaat.",
     "warningTitle": "Pre-releasebuild",
     "warningBody": "Geen gegevenssynchronisatie. Alles leeft in je browser en bij het wissen van de cache gaat je werk verloren. Je kunt synchronisatie naar een lokale map inschakelen via Instellingen → Sync.",
     "versionLine": "Versie {{version}}"
