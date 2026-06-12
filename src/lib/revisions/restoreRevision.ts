@@ -1,5 +1,6 @@
 import { db } from '@/db/db';
 import { invariant } from '@/lib/invariant';
+import { invalidateDocSyncState } from '@/lib/docsync/docBodyStore';
 import { useUI } from '@/store/ui';
 import { createRevision } from './createRevision';
 import { isParseableBody } from './lexicalJsonToPlainText';
@@ -44,5 +45,6 @@ export const restoreRevision = async (
     });
   });
 
+  await invalidateDocSyncState(docId);
   useUI.getState().bumpRestoreNonce(docId);
 };
