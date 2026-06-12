@@ -1,13 +1,16 @@
 import JSZip from 'jszip';
 import { db } from '@/db/db';
+import { invariant } from '@/lib/invariant';
 import type {
   Annotation,
   Citation,
   Connection,
   Doc,
+  DocInspectorConfig,
   HighlightPalette,
   Note,
   NoteAttachment,
+  Revision,
   Section,
   Space,
 } from '@/db/schema';
@@ -23,23 +26,26 @@ export interface SpaceSnapshot {
   citations: Citation[];
   connections: Connection[];
   palettes: HighlightPalette[];
+  revisions: Revision[];
+  docInspectorConfig: DocInspectorConfig | null;
 }
 
+const SNAPSHOT_TABLES = [
+  db.spaces,
+  db.sections,
+  db.docs,
+  db.notes,
+  db.noteAttachments,
+  db.annotations,
+  db.citations,
+  db.connections,
+  db.palettes,
+  db.revisions,
+  db.docInspectorConfigs,
+];
+
 export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot> => {
-  return db.transaction(
-    'r',
-    [
-      db.spaces,
-      db.sections,
-      db.docs,
-      db.notes,
-      db.noteAttachments,
-      db.annotations,
-      db.citations,
-      db.connections,
-      db.palettes,
-    ],
-    async () => {
+  return db.transaction('r', SNAPSHOT_TABLES, async () => {
       const space = await db.spaces.get(spaceId);
       if (!space) throw new Error(`Space not found: ${spaceId}`);
       const sections = await db.sections
@@ -68,6 +74,11 @@ export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot>
         .where('spaceId')
         .equals(spaceId)
         .toArray();
+      const revisions = docIds.length
+        ? await db.revisions.where('docId').anyOf(docIds).toArray()
+        : [];
+      const docInspectorConfig =
+        (await db.docInspectorConfigs.get(spaceId)) ?? null;
       return {
         space,
         sections,
@@ -78,6 +89,8 @@ export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot>
         citations,
         connections,
         palettes,
+        revisions,
+        docInspectorConfig,
       };
     },
   );
@@ -215,7 +228,8 @@ const buildSectionPaths = (
 
   const result = new Map<string, SectionPathInfo>();
   for (const s of sections) {
-    const folder = slugBySection.get(s.id) ?? slugify(s.label, s.id);
+    const folder = slugBySection.get(s.id);
+    invariant(folder, `section ${s.id} has no slug`);
     const parent = s.parentSectionId ? byId.get(s.parentSectionId) : null;
     const label = parent ? `${parent.label} / ${s.label}` : s.label;
     result.set(s.id, { folder, label });
@@ -255,7 +269,7 @@ const noteHeading = (n: Note, fallback: string): string => {
   return firstNonEmpty([n.title, n.body.split('\n')[0]], fallback);
 };
 
-interface AttachmentPath {
+export interface AttachmentPath {
   path: string;
   filename: string;
 }
@@ -322,7 +336,7 @@ const groupAttachmentsByNote = (
   return byNote;
 };
 
-interface NoteAssets {
+export interface NoteAssets {
   byNote: Map<string, NoteAttachment[]>;
   pathById: Map<string, AttachmentPath>;
 }
@@ -335,7 +349,8 @@ const renderNoteLines = (n: Note, assets: NoteAssets): string[] => {
   }
   for (const att of assets.byNote.get(n.id) ?? []) {
     const info = assets.pathById.get(att.id);
-    if (info) out.push(`  ![${att.name}](${info.path})`);
+    invariant(info, `attachment ${att.id} has no asset path`);
+    out.push(`  ![${att.name}](${info.path})`);
   }
   return out;
 };
@@ -347,7 +362,14 @@ const writeAttachments = (
   const pathById = buildAttachmentPaths(attachments);
   for (const att of attachments) {
     const info = pathById.get(att.id);
-    if (info) zip.file(info.path, att.blob);
+    invariant(info, `attachment ${att.id} has no asset path`);
+    // Bytes rather than the Blob itself: JSZip accepts promised byte arrays
+    // everywhere, while Blob inputs require a same-realm FileReader. The
+    // Uint8Array wrapper keeps the bytes recognisable across realms.
+    zip.file(
+      info.path,
+      att.blob.arrayBuffer().then((buf) => new Uint8Array(buf)),
+    );
   }
   return { byNote: groupAttachmentsByNote(attachments), pathById };
 };
@@ -447,11 +469,11 @@ const renderPaletteMd = (palettes: HighlightPalette[]): string => {
   return lines.join('\n');
 };
 
-export const buildSpaceMarkdownZip = async (
+export const writeMarkdownProjection = (
+  zip: JSZip,
   snapshot: SpaceSnapshot,
-  when: number = Date.now(),
-): Promise<Blob> => {
-  const zip = new JSZip();
+  when: number,
+): NoteAssets => {
   const {
     sections,
     docs,
@@ -480,7 +502,7 @@ export const buildSpaceMarkdownZip = async (
   for (const [sectionId, list] of docsBySection) {
     list.sort((a, b) => a.name.localeCompare(b.name));
     const info = pathInfo.get(sectionId);
-    if (!info) continue;
+    invariant(info, `section ${sectionId} has no path info`);
     list.forEach((doc, i) => {
       const file = `${pad2(i + 1)}-${slugify(doc.name, doc.id)}.md`;
       zip.file(`manuscript/${info.folder}/${file}`, renderDocMd(doc, info.label));
@@ -502,12 +524,24 @@ export const buildSpaceMarkdownZip = async (
   zip.file('annotations.md', renderAnnotationsMd(annotations, docs));
   zip.file('palette.md', renderPaletteMd(palettes));
 
-  return zip.generateAsync({
+  return noteAssets;
+};
+
+export const generateZipBlob = (zip: JSZip): Promise<Blob> =>
+  zip.generateAsync({
     type: 'blob',
     mimeType: 'application/zip',
     compression: 'DEFLATE',
     compressionOptions: { level: 6 },
   });
+
+export const buildSpaceMarkdownZip = async (
+  snapshot: SpaceSnapshot,
+  when: number = Date.now(),
+): Promise<Blob> => {
+  const zip = new JSZip();
+  writeMarkdownProjection(zip, snapshot, when);
+  return generateZipBlob(zip);
 };
 
 export const buildSpaceMarkdownZipFor = async (

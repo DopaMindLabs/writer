@@ -37,6 +37,57 @@ describe('BackupsHistoryTable', () => {
     expect(onDelete).toHaveBeenCalledOnce();
   });
 
+  it('omits the restore action when no handler is provided', () => {
+    renderWithProviders(
+      <BackupsHistoryTable
+        backups={backups}
+        onDownload={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+    expect(screen.queryByTestId('backup-row-b1-restore')).not.toBeInTheDocument();
+  });
+
+  it('fires restore for archive-v2 backups', () => {
+    const onRestore = vi.fn();
+    const rows = [
+      { id: 'b1', when: Date.now(), kind: 'manual', size: 1, format: 'archive-v2' },
+    ] as unknown as Backup[];
+    renderWithProviders(
+      <BackupsHistoryTable
+        backups={rows}
+        onDownload={vi.fn()}
+        onDelete={vi.fn()}
+        onRestore={onRestore}
+      />,
+    );
+    const restoreBtn = screen.getByTestId('backup-row-b1-restore');
+    expect(restoreBtn).toBeEnabled();
+    fireEvent.click(restoreBtn);
+    expect(onRestore).toHaveBeenCalledOnce();
+  });
+
+  it('disables restore for markdown-only backups and explains why', () => {
+    const onRestore = vi.fn();
+    const rows = [
+      { id: 'b1', when: Date.now(), kind: 'manual', size: 1, format: 'md-zip' },
+    ] as unknown as Backup[];
+    renderWithProviders(
+      <BackupsHistoryTable
+        backups={rows}
+        onDownload={vi.fn()}
+        onDelete={vi.fn()}
+        onRestore={onRestore}
+      />,
+    );
+    const restoreBtn = screen.getByTestId('backup-row-b1-restore');
+    expect(restoreBtn).toBeDisabled();
+    expect(restoreBtn).toHaveAttribute(
+      'title',
+      expect.stringMatching(/predates restore/i),
+    );
+  });
+
   describe('snapshot', () => {
     it('should match the snapshot for the empty state and a populated table', () => {
       const fixed = Date.UTC(2024, 0, 1, 0, 0, 0);

@@ -25,7 +25,7 @@ const WHEN = Date.UTC(2026, 4, 15, 14, 32);
 
 const loadZip = async (blob: Blob): Promise<JSZip> => {
   const buf = await blob.arrayBuffer();
-  return JSZip.loadAsync(buf);
+  return JSZip.loadAsync(new Uint8Array(buf));
 };
 
 describe('slugify', () => {
@@ -492,6 +492,8 @@ describe('buildSpaceMarkdownZipFor', () => {
       citations: [],
       connections: [],
       palettes: [],
+      revisions: [],
+      docInspectorConfig: null,
     };
     const blob = await buildSpaceMarkdownZip(snapshot, WHEN);
     const zip = await loadZip(blob);
@@ -532,6 +534,8 @@ describe('buildSpaceMarkdownZipFor', () => {
       citations: [],
       connections: [],
       palettes: [],
+      revisions: [],
+      docInspectorConfig: null,
     };
 
     const blob = await buildSpaceMarkdownZip(snapshot, WHEN);
@@ -552,26 +556,35 @@ describe('buildSpaceMarkdownZipFor', () => {
     expect(stored).toBe('one');
   });
 
-  it('places docs whose section is missing under manuscript/_unsorted', async () => {
+  it('places docs whose section is missing under manuscript/_unsorted, sorted by name', async () => {
     const snapshot: SpaceSnapshot = {
       space: sampleSpace,
       sections: [],
-      docs: [{ ...sampleDoc, id: 'orphan', name: 'Stray', sectionId: 'ghost' }],
+      docs: [
+        { ...sampleDoc, id: 'orphan-z', name: 'Zebra', sectionId: 'ghost' },
+        { ...sampleDoc, id: 'orphan', name: 'Stray', sectionId: 'ghost' },
+      ],
       notes: [],
       attachments: [],
       annotations: [],
       citations: [],
       connections: [],
       palettes: [],
+      revisions: [],
+      docInspectorConfig: null,
     };
 
     const blob = await buildSpaceMarkdownZip(snapshot, WHEN);
     const zip = await loadZip(blob);
-    const entry = Object.values(zip.files).find(
-      (f) => !f.dir && f.name.startsWith('manuscript/_unsorted/'),
-    );
-    expect(entry).toBeDefined();
-    const md = await entry!.async('string');
+    const names = Object.values(zip.files)
+      .filter((f) => !f.dir && f.name.startsWith('manuscript/_unsorted/'))
+      .map((f) => f.name)
+      .sort();
+    expect(names).toEqual([
+      'manuscript/_unsorted/01-stray.md',
+      'manuscript/_unsorted/02-zebra.md',
+    ]);
+    const md = await zip.file('manuscript/_unsorted/01-stray.md')!.async('string');
     expect(md).toContain('name: Stray');
     expect(md).not.toContain('section:');
   });
@@ -606,6 +619,8 @@ describe('buildSpaceMarkdownZipFor', () => {
       citations: [],
       connections: [],
       palettes: [],
+      revisions: [],
+      docInspectorConfig: null,
     };
 
     const blob = await buildSpaceMarkdownZip(snapshot, WHEN);
