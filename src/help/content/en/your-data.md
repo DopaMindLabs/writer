@@ -44,6 +44,8 @@ anything; this is also the way to move a space between devices.
   current state is saved as a fresh snapshot first, so a restore can itself be
   undone. Snapshots created before restore support existed (markdown-only)
   can only be downloaded.
+- Restoring from a **downloaded** .zip works through importing — the archive
+  comes back as a new space, and the existing space is left untouched.
 - Connect a **sync folder** to mirror a space to local storage, set the
   interval, and run a sync on demand.
 - The home screen shows a status chip: a warning while sync and backups are

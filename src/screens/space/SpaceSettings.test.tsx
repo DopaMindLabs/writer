@@ -240,6 +240,9 @@ describe('SpaceSettingsScreen', () => {
       expect(tab).toHaveTextContent(/No snapshots yet/i);
       const snapshot = screen.getByTestId('space-settings-backups-snapshot');
       expect(snapshot).toHaveTextContent(/snapshot now/i);
+      expect(
+        screen.getByTestId('space-settings-backups-file-restore-hint'),
+      ).toHaveTextContent(/comes back as a new space/i);
     });
 
     it('should create a snapshot, write a Backups row, and show it in the history', async () => {

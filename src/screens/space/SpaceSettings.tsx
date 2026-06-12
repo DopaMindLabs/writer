@@ -306,6 +306,19 @@ const BackupsStatus = ({
   );
 };
 
+const FileRestoreHint = () => {
+  const { t } = useTranslation('screens');
+  return (
+    <TypographyP
+      data-testid="space-settings-backups-file-restore-hint"
+      variant="caption"
+      className="mt-4"
+    >
+      {t('settings.space.backups.fileRestoreHint')}
+    </TypographyP>
+  );
+};
+
 const BackupsTab = ({ space }: { space: Space }) => {
   const { t } = useTranslation('screens');
   const backups = useBackups(space.id);
@@ -358,6 +371,8 @@ const BackupsTab = ({ space }: { space: Space }) => {
         onDelete={(b) => void handleDelete(b)}
         onRestore={restore.request}
       />
+
+      <FileRestoreHint />
 
       <RestoreBackupDialog
         open={restore.pending !== null}
