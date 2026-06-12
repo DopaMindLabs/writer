@@ -44,6 +44,13 @@ System" design spec. When adding or changing any component or feature, verify it
   grayscale palette with status as the only colour exception, three type families (Geist /
   Source Serif 4 / Geist Mono), square corners, borderless icons. **Never hard-code a hex or
   px colour** — there is a token for it.
+- **Survey the whole catalogue before choosing a primitive.** When planning *any* UI
+  addition or change — even a single line of copy — read the full component inventory first
+  (`docs/design-system.md` component tables and `src/components/ui/`, mirrored in Storybook)
+  and pick the primitive whose **documented use** matches the intent: a persistent notice is
+  `InlineBanner`, inline status is `StatusGlyph`, row state is `StatusBadge`, meta/blurb voice
+  is the `caption` typography, and so on. Never choose by copying whatever the neighbouring
+  code happens to use.
 - **Compose, don't reinvent.** Build from the existing primitives in `src/components/ui/`
   (Button, TextField, Select, Checkbox, RadioRow, FormRow, Fieldset, Chip/ChipGroup, dialog,
   popover, tooltip, tabs, …). Style variants with `cva` (`@/components/libs/variants`) + `cn`
