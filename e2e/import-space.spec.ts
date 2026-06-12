@@ -1,5 +1,53 @@
+import type { Page } from '@playwright/test';
 import { test, expect } from './_helpers';
 import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
+
+const PNG_1PX =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M8AAAMBAQDJ/1eHAAAAAElFTkSuQmCC';
+
+const pngPayload = (name: string) => ({
+  name,
+  mimeType: 'image/png',
+  buffer: Buffer.from(PNG_1PX, 'base64'),
+});
+
+/**
+ * Same enrichment as in space-settings-backups.spec — kept inline so each
+ * spec is self-contained. The point is to exercise every archive codec
+ * (revisions, inspector config, attachments) through the import path too.
+ */
+const enrichSpace = async (page: Page, spaceId: string): Promise<void> => {
+  await page.goto(`/#/s/${spaceId}`);
+  await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
+  const editor = page.locator('[aria-label="Document body"]');
+  await editor.click();
+  await editor.pressSequentially('Coverage seed.', { delay: 10 });
+
+  await page.goto(`/#/s/${spaceId}/settings?tab=docInspector`);
+  await page
+    .getByRole('group', { name: 'Due date', exact: true })
+    .getByTestId('inspector-toggle-off')
+    .click();
+
+  await page.goto(`/#/s/${spaceId}/dump`);
+  await expect(page.getByTestId('brain-canvas')).toBeVisible();
+  await page.getByTestId('brain-canvas-tool-question').click();
+  const note = page
+    .getByTestId('brain-canvas-content')
+    .locator(':scope > [data-testid^="brain-note-"]')
+    .first();
+  await note.hover();
+  await note.locator('[data-testid$="-open-details"]').click();
+  const drawer = page.getByTestId('brain-detail-drawer');
+  await expect(drawer).toBeVisible();
+  await drawer
+    .getByTestId('brain-detail-drawer-attachments-input')
+    .setInputFiles(pngPayload('cover.png'));
+  await expect(
+    drawer.getByTestId('brain-detail-drawer-attachments-count'),
+  ).toHaveText('1 / 2');
+  await page.getByTestId('brain-detail-drawer-close').click();
+};
 
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
@@ -9,6 +57,9 @@ test('a downloaded space archive can be imported as a new space', async ({
   page,
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
+  // Rich snapshot so importSpaceArchive remaps every cross-reference, not
+  // just the trivial space/section/doc ones.
+  await enrichSpace(page, spaceId);
 
   await page.goto(`/#/s/${spaceId}/settings?tab=backups`);
   const downloadPromise = page.waitForEvent('download');
@@ -24,6 +75,14 @@ test('a downloaded space archive can be imported as a new space', async ({
     (url) => url.hash.startsWith('#/s/') && !url.hash.includes(spaceId),
   );
   await expect(page.locator('[aria-label="Document body"]')).toBeVisible();
+
+  // The imported attachment should be reachable from the new space's brain
+  // canvas, which proves the noteAttachments codec + binding + id-remap path.
+  const newSpaceMatch = page.url().match(/#\/s\/([^/?]+)/);
+  if (newSpaceMatch) {
+    await page.goto(`/#/s/${newSpaceMatch[1]}/dump`);
+    await expect(page.getByRole('img', { name: 'cover.png' })).toBeVisible();
+  }
 });
 
 test('importing a file that is not a space archive shows a clear error', async ({
