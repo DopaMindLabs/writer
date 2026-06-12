@@ -1,6 +1,11 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { defaultNS, resources, supportedLngs } from './resources';
+import {
+  defaultNS,
+  resources,
+  supportedLngs,
+  translationNamespaces,
+} from './resources';
 
 const STORAGE_KEY = 'lipsum:language';
 const FALLBACK = 'en';
@@ -42,7 +47,7 @@ if (!i18n.isInitialized) {
     fallbackLng: FALLBACK,
     supportedLngs,
     defaultNS,
-    ns: ['common', 'chrome', 'screens', 'app', 'templates', 'tours', 'help'],
+    ns: [...translationNamespaces],
     interpolation: { escapeValue: false },
     returnNull: false,
   });
