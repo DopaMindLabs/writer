@@ -186,6 +186,24 @@ export interface SyncConfig {
   intervalMin: number;
 }
 
+/**
+ * One CRDT update for a document body, appended by the doc-sync layer.
+ * `epoch` must match the doc's `DocSyncMetaRow.epoch` to be valid; rows from
+ * older epochs are discarded on load (see `src/lib/docsync`).
+ */
+export interface DocSyncUpdateRow {
+  seq?: number;
+  readonly docId: string;
+  readonly epoch: number;
+  readonly update: Uint8Array;
+  readonly createdAt: number;
+}
+
+export interface DocSyncMetaRow {
+  readonly docId: string;
+  readonly epoch: number;
+}
+
 export type InspectorToggle = 'on' | 'off' | 'inherit';
 
 export interface DocInspectorConfig {
