@@ -66,7 +66,8 @@ const isTabId = (value: string | null): value is TabId =>
 const GROUPED_TABS: { label: string; ids: readonly TabId[] }[] = [
   { label: 'thisSpace', ids: ['general', 'docInspector', 'template', 'palette'] },
   { label: 'sharingMembers', ids: ['sharing', 'members'] },
-  { label: 'data', ids: ['backups', 'sync', 'export', 'danger'] },
+  { label: 'data', ids: ['backups', 'sync', 'export'] },
+  { label: 'dangerZone', ids: ['danger'] },
 ];
 
 const buildGroups = (t: TFunction): NavTabGroup[] =>

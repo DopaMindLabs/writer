@@ -503,6 +503,16 @@ describe('SpaceSettingsScreen', () => {
       ).toHaveTextContent(/delete this space/i);
     });
 
+    it('should live in its own nav group, not stacked with the data tabs', async () => {
+      await seedBasicSpace();
+      renderAtSpaceSettings('/s/s1/settings?tab=danger');
+      await screen.findByTestId('space-settings-tab-danger');
+      expect(
+        screen.queryByTestId('space-settings-tab-backups'),
+      ).not.toBeInTheDocument();
+      expect(screen.getByText('Danger')).toBeInTheDocument();
+    });
+
     it('should keep the confirm button disabled until the space name is typed exactly', async () => {
       await seedBasicSpace();
       const user = userEvent.setup();

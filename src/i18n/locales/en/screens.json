@@ -437,7 +437,8 @@
       "groups": {
         "thisSpace": "This space",
         "sharingMembers": "Sharing & members",
-        "data": "Data"
+        "data": "Data",
+        "dangerZone": "Danger"
       },
       "tabs": {
         "general": "General",
