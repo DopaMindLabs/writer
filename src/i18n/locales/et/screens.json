@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Vaba kirjutamise multiversum",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Teie esimene ruum on tühi. Valige mall alustamiseks või alustage nullist.",
+    "tagline": "Häirivabas ruumis pika vormi kirjutamiseks — ilukirjandus, uurimused, esseed, päevikud.",
+    "continueWriting": "Jätka kirjutamist",
+    "startNewSpace": "Alusta uut ruumi",
+    "syncOffChip": "sünkroonimine/varundamine pole lubatud · andmed võivad kaduda",
+    "syncOnChip": "kausta sünkroonimine sees",
+    "syncOnTitle": "Kausta sünkroonimine lubatud",
+    "syncOnBody": "Teie töö sünkroonitakse selle seadme kaustaga „{{folder}}".",
+    "warningTitle": "Eelversiooni build",
+    "warningBody": "Andmete sünkroonimist pole. Kõik elab teie brauseris ja selle vahemälu tühjendamine kaotab teie töö. Saate lubada sünkroonimise kohaliku kaustaga Universaalsetes seadetes → Sünkroonimine.",
+    "versionLine": "Versioon {{version}}"
+  },
+  "about": {
+    "back": "tagasi",
+    "title": "teave",
+    "greeting": "Tere,",
+    "paragraph1": "See on kirjanikule, kes alustab ikka uuesti. Sellele, kes avab uue dokumendi, kirjutab kolm lauset (või mitte ühtegi), seejärel veedab 40 minutit fondi kohandamisel. Sellele, kelle parimad ideed saabuvad kell 2 öösel ja hajuvad. Sellele, kellel on neliteist vahekaarti, kuus märkmikku ja mustand, mis pole kuu aega liikunud.",
+    "paragraph2Before": "Ma tean, sest see olen mina ",
+    "paragraph2After": ". Mul on ADHD, autism, tõenäoliselt ka teisi -isme, mida pole veel diagnoositud. Mul on vaja midagi, mis mõistab minu kaootilise, kuid imepärase aju. Koht, kuhu kõik välja valada enne, kui see kaob (või kirjutamist alustada). Katkendid, poolmõtted, kell 3 öösel tekkinud seosed. Kõik, ühes kohas.",
+    "paragraph3": "Nii ehitasin ma selle ruumi meie jaoks. Loodan, et see annab teile dopamiini tõuke samavõrd kui mulle selle loomine.",
+    "paragraph4Before": "Veel üks asi... Ma usun heaks kasutatavasse tehnoloogiasse ja vihkan reklaame. Nii et see on alati reklaamivaba ja TASUTA mitteäriliseks kasutamiseks. Saate seda hargnemist muuta nii nagu soovite ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Staatus",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — andmete sünkroonimist pole. Kõik andmed salvestatakse teie kohaliku brauseri IndexedDB-s. Kui tühjendad brauseri vahemälu, kaob sinu töö.",
+    "feedbackBefore": "Ma ehitan seda ikka veel ja mul on palju ideid ",
+    "feedbackAfter": ". Tahaksin kuulda, mis toimib, mis mitte ja mida sooviksite olemas olla. Tagasiside on teretulnud.",
+    "sourceLabel": "Allikas"
+  },
+  "settings": {
+    "back": "tagasi",
+    "windowTitle": "lotem · seaded",
+    "breadcrumb": "UNIVERSAALSED SEADED",
+    "shellSubtitle": "UNIVERSAALSED SEADED",
+    "comingSoonBadge": "tulemas peagi",
+    "helpAria": "Mis see on?",
+    "groups": {
+      "preferences": "Eelistused",
+      "writing": "Kirjutamine",
+      "data": "Andmed",
+      "account": "Konto"
+    },
+    "tabs": {
+      "general": "Üldine",
+      "appearance": "Välimus",
+      "editor": "Redaktor",
+      "docInspector": "Dok. inspektor",
+      "accessibility": "Ligipääsetavus",
+      "typography": "Tüpograafia",
+      "shortcuts": "Klaviatuur",
+      "templates": "Mallid",
+      "palettes": "Esiletõstu paletid",
+      "citations": "Tsiteerimisstiil",
+      "annotation": "Annotatsioonid",
+      "backups": "Varukoopiad",
+      "sync": "Sünkroonimine",
+      "export": "Eksport / import",
+      "data": "Teie andmed",
+      "account": "Konto",
+      "about": "Teave",
+      "language": "Keel"
+    },
+    "language": {
+      "title": "Keel",
+      "subtitle": "Valige keel liidese ja Abikeskuse artiklite jaoks. Puuduvad tõlked asendatakse inglise keelega.",
+      "label": "Liidese keel",
+      "hint": "Muudatused rakenduvad kohe ja salvestatakse selles brauseris.",
+      "machineTranslationNotice": "Tõlked, välja arvatud inglise keeles, luuakse automaatselt. Vabandame võimalike vigade eest — palun saatke tagasidet, et saaksime neid parandada.",
+      "feedbackLinkLabel": "saada tagasidet"
+    },
+    "editor": {
+      "title": "Redaktor",
+      "subtitle": "Tööriistariba ja kirjutamise vahendid. Markdown kiirklahvid (#, >, -, **) töötavad olenemata nendest seadetest.",
+      "floatingToolbarLabel": "Hõljuv tööriistariba",
+      "floatingToolbarHint": "Ilmub esiletõstmisel või paremklõpsamisel kirjutamisrežiimis.",
+      "floatingToolbarOff": "Väljas",
+      "floatingToolbarOn": "Sees",
+      "rightClickLabel": "Paremklõpsu menüü",
+      "rightClickHint": "Lülitage hõljuva tööriistariba ja brauseri natiivse kontekstimenüü vahel.",
+      "rightClickTooltip": "Kasutage paremklõpsamisel brauseri natiivset kontekstimenüüd hõljuva tööriistariba asemel. Tööriistariba ilmub ikka esiletõstmisel.",
+      "inlineTogglesLabel": "Reasisesed lülitid",
+      "inlineTogglesHint": "Rasvase ja kaldkirja nupud hõljuvas tööriistaribal.",
+      "inlineTogglesTooltip": "Peida B ja I nupud hõljuvast tööriistaribast. Markdown kiirklahvid (**, _) töötavad edasi.",
+      "listDepthLabel": "Loendi pesastamissügavus",
+      "listDepthHint": "Kui sügavale saavad täpp- ja nummerdatud loendid pesastuda.",
+      "listDepthTooltip": "Tõsta või alanda loendi pesastamise piirangut. Praegu fikseeritud 2 tasemele.",
+      "templateDefaultsLabel": "Malli vaikeväärtused",
+      "templateDefaultsHint": "Erinevad vormindamise alamhulgad iga malli jaoks.",
+      "templateDefaultsTooltip": "Laske igal mallil (ilukirjandus, päevik, tehniline…) valida oma vormindamise alamhulk."
+    },
+    "docInspector": {
+      "title": "Dok. inspektor",
+      "subtitle": "Valige, millised väljad dokumendi inspektoris ilmuvad. Igaüks saab universaalselt välja lülitada ja ruumi kaupa tühistada.",
+      "statusLabel": "Staatus",
+      "statusHint": "Kuva dokumendi staatus ja lukusta lõpetatud dokumendid muutmise eest.",
+      "wordLimitLabel": "Sõnade limiit",
+      "wordLimitHint": "Kuva sõnade arvu limiit, mida saab iga dokumendi jaoks seada.",
+      "charLimitLabel": "Märkide limiit",
+      "charLimitHint": "Kuva märkide arvu limiit, mida saab iga dokumendi jaoks seada.",
+      "dueDateLabel": "Tähtaeg",
+      "dueDateHint": "Kuva tähtaeg, mida saab iga dokumendi jaoks seada.",
+      "highlightLabel": "Tõsta esile limiiti ületav tekst",
+      "highlightHint": "Märgi redaktoris limiiti ületav tekst.",
+      "statusStagesLabel": "Staatuse etapid",
+      "statusStagesHint": "Valige, millised etapid staatuse valijas ilmuvad.",
+      "on": "Sees",
+      "off": "Väljas",
+      "inherit": "Vaikimisi ({{state}})",
+      "inheritTooltip": "Päritakse universaalsetest seadetest",
+      "stateOn": "sees",
+      "stateOff": "väljas"
+    },
+    "accessibility": {
+      "title": "Ligipääsetavus",
+      "subtitle": "Kohandage liides mugavuse ja abitehnoloogia jaoks. Iga valik algab praegusest kogemusest — miski ei muutu, kuni te seda ei vali.",
+      "theme": {
+        "label": "Teema ja kontrast",
+        "hint": "Kõrge kontrasti teemad vastavad WCAG AAA kontrasti standardile.",
+        "light": "Hele",
+        "dark": "Tume",
+        "hcLight": "Kõrge kontrast (hele)",
+        "hcDark": "Kõrge kontrast (tume)"
+      },
+      "motion": {
+        "label": "Liikumine",
+        "hint": "Vähenda või keela liidese animatsioonid.",
+        "auto": "Sobita süsteemiga",
+        "reduced": "Vähendatud",
+        "full": "Täis"
+      },
+      "textSize": {
+        "label": "Teksti suurus",
+        "hint": "Skaala lugemise ja kirjutamise pinda.",
+        "sm": "Väike",
+        "base": "Vaikimisi",
+        "lg": "Suur",
+        "xl": "Väga suur"
+      },
+      "lineSpacing": {
+        "label": "Reavahe",
+        "hint": "Lisa proosakujundile ridade vahele hingamisruumi.",
+        "normal": "Tavaline",
+        "relaxed": "Lõdvestatud",
+        "loose": "Lõtv"
+      },
+      "linkUnderline": {
+        "label": "Alati allajoonitud lingid",
+        "hint": "Kuva allajoonimised, et lingid ei sõltuks ainult värvust."
+      },
+      "focus": {
+        "label": "Täiustatud fookusindikator",
+        "hint": "Kasuta fookuse jaoks paksemat, suurema kontrastiga piirdjoont."
+      },
+      "reset": {
+        "label": "Lähtesta vaikeväärtustele",
+        "hint": "Taasta liikumine, teksti suurus, reavahe, lingid ja fookus vaikeväärtustele. Teie teema jääb muutumatuks.",
+        "action": "Lähtesta"
+      }
+    },
+    "general": {
+      "title": "Üldine",
+      "subtitle": "Kuidas LIpsum Writer vaikimisi kuvatakse. Miski siin pole destruktiivne.",
+      "comingSoonBody": "Kompaktne tihedus, liikumise vähendamine, klaviatuurivihjete nähtavus ja milline vaade käivitamisel avaneb.",
+      "compactDensityLabel": "Kompaktne tihedus",
+      "compactDensityHint": "Tihedamad read loendites, tihedam polster kõikjal.",
+      "reduceMotionLabel": "Vähenda liikumist",
+      "reduceMotionHint": "Jäta vahele animeeritud üleminekud vaadete vahel.",
+      "keyboardHintsLabel": "Kuva klaviatuurivihjeid",
+      "keyboardHintsHint": "Kuva ⌘-klahvi kiirklahve kohtspikrites ja nuppude nurgas.",
+      "startupLabel": "Ava käivitamisel",
+      "startupHint": "Mida näete, kui käivitate rakenduse.",
+      "startupOptions": {
+        "lastView": "Viimane vaade",
+        "home": "Avaleht",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Välimus",
+      "subtitle": "Värv, kiri, tihedus. Meeleolu, mida soovite luua.",
+      "comingSoonBody": "Kureeritud teemapaletid, aktsentvärvus ja tihedus. Tänane teema lüliti asub maailma rööbas' kiirseadetes.",
+      "themeLabel": "Teema",
+      "themeHint": "Kolm kureeritud paletti. Need häälestuvad kõike — blokivärvid, juukseniidid, isegi tera.",
+      "themes": {
+        "linen": "Lina",
+        "linenSub": "vaikimisi",
+        "studio": "Stuudio",
+        "studioSub": "neutraalne",
+        "midnight": "Kesköö",
+        "midnightSub": "tume"
+      },
+      "accentLabel": "Aktsent",
+      "accentHint": "Kasutatakse hover'i, fookuse, aktiivse redigeerimisringi jaoks.",
+      "densityLabel": "Tihedus",
+      "densityOptions": {
+        "cozy": "Hubane",
+        "default": "Vaikimisi",
+        "compact": "Kompaktne"
+      }
+    },
+    "templates": {
+      "title": "Mallid",
+      "subtitle": "Korduvkasutatavad karkassid uute ruumide ja dokumentide jaoks.",
+      "comingSoonBody": "Looge oma mallid sektsioonide, vaikimisi dokumendinimede ja proosatükkidega.",
+      "items": {
+        "fiction": "Ilukirjandus",
+        "fictionSub": "Käsikiri · Maailm · Töötuba",
+        "research": "Uurimus",
+        "researchSub": "Allikad · Märkmed · Mustandid",
+        "journal": "Päevik",
+        "journalSub": "Igapäevane · Iganädalane · Mõtisklused",
+        "essay": "Essee",
+        "essaySub": "Ülevaade · Mustandid · Lõplik"
+      }
+    },
+    "palettes": {
+      "title": "Esiletõstu paletid",
+      "subtitle": "Viie pesaga paletid iga ruumi kohta — nimetage ja häälestage iga värv.",
+      "comingSoonBody": "Redigeerige, salvestage ja vahetage nimetatud esiletõstu palette (Tõendid, Ülevaatamiseks, Viide…) ruumide vahel.",
+      "items": {
+        "evidence": "Tõendid",
+        "revise": "Ülevaatamiseks",
+        "reference": "Viide",
+        "quote": "Tsitaat",
+        "loose": "Lahtine ots"
+      },
+      "rename": "nimeta ümber",
+      "tune": "häälesta"
+    },
+    "citations": {
+      "title": "Tsiteerimisstiil",
+      "subtitle": "Vaikimisi tsiteerimisstiil kõikides ruumides.",
+      "comingSoonBody": "Valige universaalne stiil (Chicago, APA, MLA…) ruumipõhiste tühistamisvõimalustega.",
+      "styleLabel": "Vaikimisi stiil",
+      "styleHint": "Kasutatakse uue tsitaadi lisamisel. Ruumipõhised tühistamised tulevad hiljem.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Annotatsioonid",
+      "subtitle": "Ääremärkused ja reasisesed annotatsioonid.",
+      "comingSoonBody": "Annotatsiooni liigid, nähtavuse vaikeväärtused ja ekspordi käitumine.",
+      "showMarginLabel": "Kuva ääremärkused",
+      "showMarginHint": "Annotatsioonid hõljuvad paremas servas, kui ruumi on.",
+      "showInlineLabel": "Kuva reasisesed esiletõstud",
+      "showInlineHint": "Annotatsiooni värv imendub alloleva teksti sisse.",
+      "exportLabel": "Kaasa eksportides",
+      "exportHint": "Annotatsioonid kirjutatakse välja koos dokumendi põhiosaga."
+    },
+    "export": {
+      "title": "Eksport / import",
+      "subtitle": "Liigutage andmeid LIpsum Writeri sisse ja välja.",
+      "comingSoonBody": "Hulgieksport .zip-i, import teisest LIpsum paketist või Markdown kataloogist.",
+      "formatLabel": "Ekspordi vorming",
+      "formatHint": "Dokumendi ja ruumi eksportid kasutavad sama vaikeväärtust.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Impordi allikast",
+      "importHint": "Too sisse teine LIpsum pakett või Markdown failide kataloog.",
+      "importOptions": {
+        "bundle": "LIpsum pakett (.zip)",
+        "markdown": "Markdown kaust",
+        "obsidian": "Obsidian vault"
+      },
+      "importSpaceLabel": "Impordi ruum",
+      "importSpaceHint": "Too ruum sellesse brauserisse Writer arhiivist (.zip) — hetktõmmise allalaadimine või kausta-sünkroonimise eksport teisest seadmest.",
+      "importChooseFile": "Vali arhiiv…",
+      "importing": "importimine…",
+      "importFailed": "Import ebaõnnestus: {{message}}",
+      "comingSoonLabel": "Rohkem vorminguid",
+      "comingSoonHint": "Hulgieksport ja -import Markdown kaustadest või Obsidian vault'idest.",
+      "comingSoonTooltip": "Planeeritud — pole veel saadaval."
+    },
+    "data": {
+      "title": "Teie andmed",
+      "subtitle": "Kus teie töö elab ja kui palju ruumi see võtab.",
+      "comingSoonBody": "IndexedDB kasutus, salvestusruumi hinnang ja ühe klõpsuga täielik pühkimine.",
+      "storageLabel": "Kasutatud salvestusruum",
+      "storageValue": "≈ 12.4 MB · 4 ruumi, 38 dok.",
+      "engineLabel": "Salvestusmootor",
+      "engineValue": "IndexedDB (kohalik brauser)",
+      "wipeLabel": "Kustuta kõik",
+      "wipeHint": "Eemaldab iga ruumi, dokumendi ja hetktõmmise sellest brauserist. Seda ei saa tagasi võtta.",
+      "wipeButton": "Kustuta kohalikud andmed…"
+    },
+    "about": {
+      "title": "Teave",
+      "subtitle": "Versiooni info ja lingid.",
+      "comingSoonBody": "Vaadake /about lehte loo jaoks; see vahekaart majutab versiooni infot, litsentsi ja muudatuste logi.",
+      "versionLabel": "Versioon",
+      "versionValue": "{{version}}",
+      "buildLabel": "Build",
+      "buildValue": "kohalik",
+      "licenseLabel": "Litsents",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Lingid",
+      "links": {
+        "source": "Allikas",
+        "changelog": "Muudatuste logi",
+        "feedback": "Saada tagasidet"
+      }
+    },
+    "account": {
+      "title": "Konto",
+      "subtitle": "Sisselogimine, sünkroonimine seadmete vahel ja jagatud tööruumid.",
+      "comingSoonBody": "Pilve sünkroonimine pole täna saadaval — Lotem on ainult kohalik. Konto, sisselogimine ja jagatud tööruumid saabuvad sünkroonimise toimetamisel.",
+      "signedOutLabel": "Logi sisse",
+      "signedOutHint": "Pilve sünkroonimine pole veel saadaval. See on siin disaini näitamiseks.",
+      "signInButton": "Logi sisse e-postiga",
+      "syncLabel": "Sünkrooni see seade",
+      "syncHint": "Pärast sisselogimist replitseeritakse teie ruumid teistesse seadmetesse."
+    },
+    "typography": {
+      "title": "Tüpograafia",
+      "subtitle": "Vaikeväärtused kõikides maailmades. Üksikud maailmad võivad tühistada.",
+      "comingSoonBody": "Valige proosafont, UI font, vaikimisi lugemissuurus, reavahekõrgus ja mõõt uute maailmade jaoks.",
+      "proseFontLabel": "Proosafont",
+      "uiFontLabel": "UI font",
+      "proseSizeLabel": "Proosasuurus",
+      "proseSizeHint": "Vaikimisi uute maailmade jaoks.",
+      "lineHeightLabel": "Reavahekõrgus",
+      "measureLabel": "Mõõt",
+      "measureHint": "Rea maksimaalne laius.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Kiirklahvid",
+      "subtitle": "Klaviatuurisidumised navigatsiooni, vormindamise ja režiimide jaoks.",
+      "comingSoonBody": "Ümbersidumisvõimalusega kiirklahvid kirjutamis-/lugemis-/jagamisrežiimile, fookusrežiimile ja vormindamistööriistaribale.",
+      "navHeader": "Navigatsioon",
+      "formatHeader": "Vormindamine",
+      "modeHeader": "Režiimid",
+      "items": {
+        "openSettings": "Ava seaded",
+        "quickSettings": "Kiirseaded",
+        "findInDoc": "Otsi dokumendist",
+        "toggleFocus": "Lülita fookus",
+        "toggleInspector": "Lülita inspektor",
+        "bold": "Rasvane",
+        "italic": "Kaldkiri",
+        "underline": "Allajoonitud",
+        "heading1": "Pealkiri 1",
+        "heading2": "Pealkiri 2",
+        "write": "Kirjutamisrežiim",
+        "read": "Lugemisrežiim",
+        "split": "Jagatud režiim"
+      }
+    },
+    "backups": {
+      "title": "Varukoopiad",
+      "subtitle": "Ekspordi, taasta ja tee hetktõmmiseid kohalikest andmetest.",
+      "comingSoonBody": "Ajastatud kohalikud hetktõmmised, käsitsi eksport .zip-i ja taastamine eelmisest varukoopiast.",
+      "intervalLabel": "Automaatsete hetktõmmiste intervall",
+      "intervalOptions": {
+        "5min": "5 min",
+        "10min": "10 min",
+        "30min": "30 min",
+        "off": "Väljas"
+      },
+      "keepLabel": "Hoia",
+      "keepHint": "Vanemad hetktõmmised eemaldatakse automaatselt.",
+      "keepOptions": {
+        "last50": "Viimased 50",
+        "days7": "7 päeva",
+        "days30": "30 päeva"
+      },
+      "latestLabel": "Viimane",
+      "latestValue": "12 min tagasi · 1 190 sõna"
+    },
+    "sync": {
+      "title": "Sünkroonimine",
+      "subtitle": "Saatke ruumid valitud kausta. Suunake see Google Drive'i, Dropboxi või iCloudi kaustale, et sünkroonida seadmete vahel.",
+      "unsupportedTitle": "Pole saadaval selles brauseris",
+      "unsupportedBody": "Kausta sünkroonimine vajab File System Access API-t, mis on saadaval Chrome'is, Edge'is ja teistes Chromiumi brauserites töölaual. Lülitage toetatud brauserile, et seda kasutada.",
+      "folderLabel": "Sünkroonitud kaust",
+      "folderHint": "Iga sünkroonimine kirjutab siia Markdown .zip iga ruumi kohta, hoides viimased 5 ja latest.zip. Sünkroonimine on varukoopiatest eraldi.",
+      "noFolder": "Ühtegi kausta pole ühendatud",
+      "chooseFolder": "Vali kaust…",
+      "changeFolder": "Muuda…",
+      "disconnect": "Katkesta ühendus",
+      "intervalLabel": "Automaatne sünkroonimine",
+      "intervalHint": "Kui tihti ruumid automaatselt sünkroonitakse, kui rakendus on avatud ja kaust on ühendatud. Iga ruum saab seda vaikeväärtust tühistada.",
+      "intervalOff": "Väljas",
+      "intervalMinutes": "{{count}} min",
+      "intervalDefault": "Vaikimisi ({{label}})",
+      "syncLabel": "Käsitsisünkroonimine",
+      "pushOnlyHint": "Praegu ainult saatmine — see kirjutab teie kohalikud andmed kausta. Muudatuste tagasirakendamine tuleb hiljem.",
+      "syncNow": "Sünkrooni kohe",
+      "syncNowAll": "Sünkrooni kõik ruumid",
+      "reconnectHint": "Sünkroonimine on peatatud — brauser vajab selle seansi jaoks uuesti kausta luba. Ühenduge uuesti käsitsi ja automaatse sünkroonimise jätkamiseks.",
+      "reconnectButton": "Ühenda uuesti",
+      "reconnecting": "Uuesti ühendamine…",
+      "syncing": "Sünkroonimine…",
+      "syncFailed": "Sünkroonimine ebaõnnestus: {{message}}",
+      "lastSynced": "Viimati sünkroonitud {{when}}",
+      "neverSynced": "Pole kunagi sünkroonitud",
+      "justNow": "just praegu",
+      "resultsTitle": "Viimane käivitus",
+      "spaceOk": "sünkroonitud",
+      "spaceFailed": "ebaõnnestus",
+      "historyTitle": "Hiljutised sünkroonimised",
+      "historyEmpty": "Sünkroonimisi pole veel.",
+      "columns": {
+        "when": "MILLAL",
+        "space": "RUUM",
+        "kind": "LIIK",
+        "size": "SUURUS",
+        "status": "STAATUS"
+      },
+      "kind": {
+        "auto": "automaatne",
+        "manual": "käsitsi"
+      },
+      "status": {
+        "ok": "ok",
+        "error": "viga"
+      }
+    },
+    "space": {
+      "breadcrumb": "RUUM · SEADED",
+      "shellSubtitle": "RUUMI SEADED",
+      "loading": "Ruumi laadimine…",
+      "groups": {
+        "thisSpace": "See ruum",
+        "sharingMembers": "Jagamine ja liikmed",
+        "data": "Andmed",
+        "dangerZone": "Oht"
+      },
+      "tabs": {
+        "general": "Üldine",
+        "docInspector": "Dok. inspektor",
+        "template": "Mall",
+        "palette": "Esiletõstu palett",
+        "sharing": "Jagamine",
+        "members": "Liikmed",
+        "backups": "Varukoopiad",
+        "sync": "Sünkroonimine",
+        "export": "Eksport",
+        "danger": "Ohtlik tsoon"
+      },
+      "docInspector": {
+        "title": "Dok. inspektor",
+        "subtitle": "Tühista universaalsed inspektori seaded selle ruumi jaoks."
+      },
+      "palette": {
+        "title": "Esiletõstu palett",
+        "subtitle": "Viis nimetatud, häälestuvat esiletõstu värvi selle ruumi jaoks.",
+        "comingSoonBody": "Nimeta ümber, värvi ümber ja järjesta ümber selle ruumi esiletõstu pesad.",
+        "items": {
+          "evidence": "Tõendid",
+          "revise": "Ülevaatamiseks",
+          "reference": "Viide",
+          "quote": "Tsitaat",
+          "loose": "Lahtine ots"
+        },
+        "rename": "nimeta ümber",
+        "tune": "häälesta"
+      },
+      "export": {
+        "title": "Eksport",
+        "subtitle": "Liiguta selle ruumi sisu teise tööriista.",
+        "comingSoonBody": "Eksport Markdown .zip-i (täna Varukoopiate kaudu), LaTeX-i, HTML-i või PDF-i — kõik ühes kohas.",
+        "formatLabel": "Vorming",
+        "formatHint": "Markdown on esimene; ülejäänud järgnevad.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Viimane eksport",
+        "lastValue": "pole kunagi"
+      },
+      "general": {
+        "title": "Üldine",
+        "subtitle": "Selle ruumi identifitseerivad andmed. Muudatused rakenduvad kohe ja sünkroonitakse üle vaadete.",
+        "nameLabel": "Ruumi nimi",
+        "nameHint": "Kuvatakse külgriba päises ja ruumi rööbas' kohtspikris.",
+        "tagLabel": "Silt",
+        "tagHint": "Lühike kood (2–4 märki), mis kuvatakse ruumi rööbas' plaadil."
+      },
+      "sharing": {
+        "title": "Jagamine",
+        "subtitle": "Juhtige, kuidas seda ruumi jagatakse.",
+        "comingSoonBody": "Ruumipõhine nähtavus ja jagamislingid. Saabub pilve sünkroonimisega.",
+        "visibilityLabel": "Nähtavus",
+        "visibilityOptions": {
+          "private": "Privaatne",
+          "link": "Kõik lingiga",
+          "members": "Ainult liikmed"
+        },
+        "linkLabel": "Jagatav link",
+        "linkHint": "Vaikimisi ainult lugemiseks. Redigeerimise õigused järgivad liikmeid.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "kopeeri"
+      },
+      "template": {
+        "title": "Mall",
+        "subtitle": "Struktuurne mall, millega see ruum loodi.",
+        "comingSoonBody": "Ruumi malli muutmine pärast loomist pole veel toetatud. Saabub, kui suudame sektsioone ja dokumente turvaliselt migreerida.",
+        "currentLabel": "Praegune mall",
+        "currentValue": "Ilukirjandus",
+        "currentSub": "Käsikiri · Maailm · Töötuba",
+        "changeLabel": "Muuda malli",
+        "changeHint": "Rearranzeerib olemasolevad sektsioonid ja dokumendid uuele mallile.",
+        "changeButton": "Muuda malli…"
+      },
+      "members": {
+        "title": "Liikmed",
+        "subtitle": "Kaaskirjanikud ja retsensendid, kellel on juurdepääs sellele ruumile.",
+        "comingSoonBody": "Kutsu koostöötegijaid, halda rolle ja vaata üle muudatused. Saabub pilve sünkroonimisega.",
+        "inviteLabel": "Kutsu e-postiga",
+        "inviteHint": "Saadame neile lingi selle ruumiga liitumiseks.",
+        "invitePlaceholder": "nimi@näide.ee",
+        "inviteButton": "saada kutse",
+        "membersLabel": "Liikmed",
+        "roles": {
+          "owner": "omanik",
+          "editor": "toimetaja",
+          "viewer": "vaataja"
+        },
+        "you": "sina"
+      },
+      "backups": {
+        "title": "Varukoopiad",
+        "subtitle": "Tee sellest ruumist hetktõmmis .zip-ina, mille saad alla laadida, hoida ja taastada.",
+        "retentionHint": "Hoitakse {{count}} viimast hetktõmmist — vanemad eemaldatakse automaatselt.",
+        "snapshotNow": "+ hetktõmmis kohe",
+        "snapshotting": "hetktõmmise tegemine…",
+        "snapshotFailed": "Hetktõmmis ebaõnnestus: {{message}}",
+        "historyTitle": "Ajalugu",
+        "empty": "Hetktõmmiseid pole veel — looge üks + hetktõmmis kohe abil.",
+        "columns": {
+          "when": "MILLAL",
+          "kind": "LIIK",
+          "size": "SUURUS",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "käsitsi",
+          "auto": "automaatne",
+          "snapshot": "hetktõmmis"
+        },
+        "download": "↓ laadi alla",
+        "delete": "kustuta",
+        "deleteConfirm": "Kustuta see hetktõmmis? Seda ei saa tagasi võtta.",
+        "deleted": "Hetktõmmis kustutatud.",
+        "justNow": "just praegu",
+        "restore": "↺ taasta",
+        "restoreUnavailable": "See hetktõmmis pärineb ajast enne taastamise toe lisamist — seda saab ainult alla laadida.",
+        "restoreDialogTitle": "Taasta see hetktõmmis?",
+        "restoreDialogBody": "Selle ruumi praegune sisu asendatakse hetktõmmisega. Esmalt salvestatakse praeguse seisundi hetktõmmis, et saaksite selle taastamise tagasi võtta.",
+        "restoreConfirm": "Taasta",
+        "restoreCancel": "Tühista",
+        "restoring": "taastamine…",
+        "restored": "Hetktõmmis taastatud.",
+        "restoreFailed": "Taastamine ebaõnnestus: {{message}}",
+        "fileRestoreTitle": "Taastate allalaaditud .zip-ist?",
+        "fileRestoreBody": "Importige see Universaalsete seadete → Eksport / import kaudu — see tuleb tagasi uue ruumina, jättes selle puutumata."
+      },
+      "sync": {
+        "title": "Sünkroonimine",
+        "subtitle": "Saatke see ruum ühendatud kausta, käsitsi või ajakava järgi. Sünkroonimine on varukoopiatest eraldi.",
+        "folderHint": "Ühendage kaust Universaalsetes seadetes → Sünkroonimine. Sama kausta kasutatakse iga ruumi jaoks.",
+        "intervalHint": "Kui tihti see ruum automaatselt sünkroonitakse. Valige Vaikimisi, et järgida universaalset automaatse sünkroonimise seadet.",
+        "syncNow": "Sünkrooni see ruum"
+      },
+      "danger": {
+        "title": "Ohtlik tsoon",
+        "subtitle": "Pöördumatud toimingud. Lugege hoolikalt enne jätkamist.",
+        "deleteCardTitle": "Kustuta see ruum",
+        "deleteCardBody": "Eemaldab selle ruumi koos iga dokumendi, sektsiooni, Brain space märkme, annotatsiooni, tsitaadi ja ühendusega jäädavalt. Seda ei saa tagasi võtta.",
+        "deleteButton": "Kustuta see ruum",
+        "dialogTitle": "Kustuta „{{name}}"?",
+        "dialogBody": "See eemaldab ruumi ja kogu selle sisu jäädavalt. Seda ei saa tagasi võtta.",
+        "typeToConfirm": "Trüki {{name}} kinnitamiseks",
+        "cancel": "Tühista",
+        "confirm": "Kustuta ruum"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Kadunud servades",
+    "body": "Seda lehte pole (veel) olemas.",
+    "goHome": "Mine avalehele"
+  },
+  "templates": {
+    "crumb": "01 — TUB A LIIK",
+    "headingMain": "Mis tüüpi ruumi",
+    "headingAccent": "te alustate?",
+    "chooseLegend": "Vali mall",
+    "stage": {
+      "pre-alpha": "eksperimentaalne",
+      "alpha": "varajane",
+      "beta": "beeta"
+    },
+    "nameLabel": "Nimi",
+    "tagLabel": "Silt",
+    "syncLabel": "pilve sünkroonimine —",
+    "syncValue": "väljas, kohalik",
+    "syncTooltip": "Pilve sünkroonimine pole saadaval — see rakendus on praegu ainult kohalik.",
+    "creating": "loomine…",
+    "submitLabel": "sisenege {{name}} →",
+    "newSpace": "uus ruum",
+    "back": "tagasi"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} sorteerimata",
+    "title": "Brain space",
+    "mobileWarning": "Brain space töötab kõige paremini suurel ekraanil.",
+    "mobileNote": "Lõuend vajab hiirt või puuteplaati.",
+    "openInWrite": "Ava Write'is →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "alusta väljavalamist",
+      "emptyHint": "vali allpool kaardi tüüp",
+      "pendingHint": "shift-klõpsa teist märkust ühendamiseks · esc tühistamiseks"
+    },
+    "note": {
+      "deleteNote": "Kustuta märkus",
+      "addPicture": "Lisa pilt",
+      "addPictureCta": "lisa pilt",
+      "openLinkedDoc": "Ava lingitud dokument",
+      "fetchedContent": "Toodud sisu",
+      "openDetailsLabel": "Ava üksikasjad",
+      "openDetailsTitle": "Ava üksikasjade paneel",
+      "titlePlaceholder": "pealkiri",
+      "addTitleCta": "+ pealkiri",
+      "bodyEmpty": "(klõpsa kirjutamiseks)",
+      "viewImage": "Vaata {{name}}",
+      "removeImage": "Eemalda {{name}}",
+      "resize": "Muuda märkuse suurust",
+      "days": {
+        "sun": "pühap",
+        "mon": "esmasp",
+        "tue": "teisip",
+        "wed": "kolmap",
+        "thu": "neljap",
+        "fri": "reede",
+        "sat": "laup"
+      }
+    },
+    "drawer": {
+      "title": "Märkuse üksikasjad",
+      "description": "Redigeeri valitud märkust ja halda selle ühendusi.",
+      "untitledPlaceholder": "Pealkirjata",
+      "titleAriaLabel": "Märkuse pealkiri",
+      "closeAriaLabel": "Sulge sahtel",
+      "bodyLabel": "Sisu",
+      "bodyPlaceholder": "Kirjuta midagi…",
+      "picturesLabel": "Pildid",
+      "addPicture": "Lisa pilt",
+      "pictureLimitHint": "{{count}} limiit täis — eemalda üks teise lisamiseks.",
+      "linkedDocLabel": "Lingitud dokument",
+      "noLinkedDoc": "— Lingitud dok. pole —",
+      "untitledDoc": "Pealkirjata",
+      "openDoc": "Ava",
+      "connectionsHeading": "Ühendused ({{count}})",
+      "connectionsEmpty": "shift-klõpsa teist märkust lõuendil ühendamiseks.",
+      "untitledNote": "(pealkirjata)",
+      "removeConnection": "Eemalda ühendus",
+      "deleteNote": "Kustuta märkus"
+    }
+  },
+  "split": {
+    "title": "Jagatud vaade",
+    "mobileWarning": "Jagatud vaade vajab suuremat ekraani.",
+    "mobileNote": "Avage see dokument Write'i režiimis.",
+    "openInWrite": "Ava Write'is →",
+    "leftPrefix": "VASAK —",
+    "rightPrefix": "PAREM —",
+    "rightPaneAria": "Parema paani dokument",
+    "noOtherDocs": "(teisi dok. pole)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Tsitaadid",
+    "pickDoc": "Valige dokument ülaltoodud rippmenüüst.",
+    "dividerAria": "Muuda jagatud paanide suurust"
+  },
+  "citationsDrawer": {
+    "title": "Tsitaadid",
+    "description": "Otsige, importige ja eksportinge tsitaate selle ruumi jaoks.",
+    "close": "Sulge tsitaadid",
+    "expand": "Ava tsitaadid täisvaates"
+  },
+  "citations": {
+    "title": "Tsitaadid",
+    "breadcrumb": "Allikad / ",
+    "entries": "{{count}} KIRJET",
+    "searchPlaceholder": "autorid, sildid, aasta…",
+    "upload": "↑ lae üles .bib / .ris",
+    "add": "+ lisa",
+    "cancel": "× tühista",
+    "columns": {
+      "tag": "SILT",
+      "authors": "AUTORID",
+      "title": "PEALKIRI",
+      "year": "AASTA",
+      "type": "TÜÜP",
+      "used": "KASUTATUD"
+    },
+    "style": "STIIL — CHICAGO (AUTOR-KUUPÄEV)",
+    "exportBib": "EKSPORDI .BIB-INA",
+    "summary": "{{filtered}} KUVATUD · {{shown}} SELLEL LEHEL",
+    "prevPage": "Eelmine leht",
+    "nextPage": "Järgmine leht",
+    "empty": "tsitaate pole veel",
+    "noMatch": "ükski rida ei vasta teie otsingule.",
+    "importHint": "importige .bib või lisage käsitsi.",
+    "pasteHeader": "Kleebi BibTeX või pealkiri",
+    "addCitation": "lisa tsitaat",
+    "manualCancel": "tühista",
+    "adding": "lisamine…",
+    "parsing": "Töödeldakse {{name}}…",
+    "imported": "Imporditi {{added}} tsitaat(-i){{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", vahele jäeti {{skipped}} duplikaat(-i){{skippedPlural}}",
+    "skippedSuffixShort": ", vahele jäeti {{skipped}}",
+    "failed": "Töötlemine ebaõnnestus: {{message}}",
+    "failedManual": "Ebaõnnestus: {{message}}",
+    "addedOne": "Lisati 1 tsitaat.",
+    "unknownAuthor": "(tundmatu)",
+    "unknownError": "tundmatu viga",
+    "edit": {
+      "save": "salvesta",
+      "saving": "salvestamine…",
+      "cancel": "tühista",
+      "delete": "kustuta",
+      "edit": "redigeeri",
+      "tagLabel": "Silt",
+      "authorsLabel": "Autorid",
+      "titleLabel": "Pealkiri",
+      "yearLabel": "Aasta",
+      "typeLabel": "Tüüp",
+      "duplicateKey": "Silt „{{key}}" on juba selles ruumis kasutusel.",
+      "updated": "Uuendati 1 tsitaat.",
+      "deleteOne": "Kustutati 1 tsitaat.",
+      "confirmDeleteUsed": "Seda tsitaati kasutatakse teie dokumentides {{count}}× korral. Kustuta ikkagi?",
+      "confirmDeleteSingle": "Kustuta tsitaat „{{key}}"? Seda ei saa tagasi võtta.",
+      "untitled": "(pealkirjata)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} valitud",
+      "deleteSelected": "kustuta",
+      "setTypePrompt": "määra tüüp",
+      "setTypeAria": "Määra tüüp valitud tsitaatidele",
+      "chooseOption": "vali…",
+      "ariaLabel": "Hulgtoimingud",
+      "clearSelection": "tühjenda",
+      "deleted": "Kustutati {{count}} tsitaati.",
+      "typeApplied": "Seati tüübiks {{type}} {{count}} tsitaadil.",
+      "confirmDelete": "Kustuta {{count}} tsitaati? Seda ei saa tagasi võtta."
+    },
+    "row": {
+      "selectAllAria": "Vali kõik tsitaadid sellel lehel",
+      "viewCitationAria": "Vaata tsitaati {{key}}",
+      "selectCitationAria": "Vali tsitaat {{key}}",
+      "collapseCitationAria": "Ahenda tsitaat {{key}}",
+      "usedCount": "{{count}}× kasutatud",
+      "unused": "kasutamata",
+      "copyTag": "Kopeeri silt",
+      "copyTagAria": "Kopeeri silt {{value}}",
+      "copiedTitle": "Kopeeritud",
+      "copiedTagAria": "Kopeeritud silt {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}
