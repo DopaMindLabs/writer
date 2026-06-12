@@ -7,6 +7,10 @@
     "tagline": "Um espaço sem distrações para escrita longa — ficção, pesquisa, ensaios, diários.",
     "continueWriting": "Continuar escrevendo",
     "startNewSpace": "Começar um novo espaço",
+    "syncOffChip": "sync/backups não ativados · dados podem ser perdidos",
+    "syncOnChip": "sincronização de pasta ativa",
+    "syncOnTitle": "Sincronização de pasta ativada",
+    "syncOnBody": "Seu trabalho sincroniza com a pasta "{{folder}}" neste dispositivo.",
     "warningTitle": "Build de pré-lançamento",
     "warningBody": "Sem sincronização de dados. Tudo vive no seu navegador e limpar o cache perde seu trabalho. Você pode ativar a sincronização com uma pasta local em Configurações → Sync.",
     "versionLine": "Versão {{version}}"
@@ -243,7 +247,15 @@
       "formats": { "markdown": "Markdown", "html": "HTML", "pdf": "PDF", "docx": ".docx", "latex": "LaTeX" },
       "importLabel": "Importar de",
       "importHint": "Traga outro pacote LIpsum ou um diretório de arquivos Markdown.",
-      "importOptions": { "bundle": "Pacote LIpsum (.zip)", "markdown": "Pasta Markdown", "obsidian": "Vault do Obsidian" }
+      "importOptions": { "bundle": "Pacote LIpsum (.zip)", "markdown": "Pasta Markdown", "obsidian": "Vault do Obsidian" },
+      "importSpaceLabel": "Importar um espaço",
+      "importSpaceHint": "Traga um espaço para este navegador a partir de um arquivo Writer (.zip) — um download de snapshot ou exportação de sincronização de pasta de outro dispositivo.",
+      "importChooseFile": "Escolher arquivo…",
+      "importing": "importando…",
+      "importFailed": "Importação falhou: {{message}}",
+      "comingSoonLabel": "Mais formatos",
+      "comingSoonHint": "Exportação e importação em massa de pastas Markdown ou vaults do Obsidian.",
+      "comingSoonTooltip": "Planejado — ainda não disponível."
     },
     "data": {
       "title": "Seus dados",
@@ -369,7 +381,12 @@
       "breadcrumb": "ESPAÇO · CONFIGURAÇÕES",
       "shellSubtitle": "CONFIGURAÇÕES DO ESPAÇO",
       "loading": "Carregando espaço…",
-      "groups": { "thisSpace": "Este espaço", "sharingMembers": "Compartilhamento e membros", "data": "Dados" },
+      "groups": {
+        "thisSpace": "Este espaço",
+        "sharingMembers": "Compartilhamento e membros",
+        "data": "Dados",
+        "dangerZone": "Perigo"
+      },
       "tabs": {
         "general": "Geral",
         "docInspector": "Inspetor de documento",
@@ -469,7 +486,18 @@
         "delete": "excluir",
         "deleteConfirm": "Excluir este snapshot? Sem desfazer.",
         "deleted": "Snapshot excluído.",
-        "justNow": "agora mesmo"
+        "justNow": "agora mesmo",
+        "restore": "↺ restaurar",
+        "restoreUnavailable": "Este snapshot é anterior ao suporte a restauração — só pode ser baixado.",
+        "restoreDialogTitle": "Restaurar este snapshot?",
+        "restoreDialogBody": "O conteúdo atual deste espaço será substituído pelo snapshot. Um snapshot do estado atual é salvo primeiro, para que você possa desfazer esta restauração.",
+        "restoreConfirm": "Restaurar",
+        "restoreCancel": "Cancelar",
+        "restoring": "restaurando…",
+        "restored": "Snapshot restaurado.",
+        "restoreFailed": "Restauração falhou: {{message}}",
+        "fileRestoreTitle": "Restaurando a partir de um .zip baixado?",
+        "fileRestoreBody": "Importe-o via Configurações globais → Exportar / importar — ele volta como um novo espaço, deixando este intacto."
       },
       "sync": {
         "title": "Sincronização",
@@ -484,7 +512,7 @@
         "deleteCardTitle": "Excluir este espaço",
         "deleteCardBody": "Remove permanentemente este espaço junto com cada documento, seção, nota de brain-space, anotação, citação e conexão. Sem desfazer.",
         "deleteButton": "Excluir este espaço",
-        "dialogTitle": "Excluir “{{name}}”?",
+        "dialogTitle": "Excluir "{{name}}"?",
         "dialogBody": "Remove permanentemente o espaço e todo o seu conteúdo. Sem desfazer.",
         "typeToConfirm": "Digite {{name}} para confirmar",
         "cancel": "Cancelar",
@@ -506,7 +534,12 @@
     "creating": "criando…",
     "submitLabel": "entrar em {{name}} →",
     "newSpace": "novo espaço",
-    "back": "voltar"
+    "back": "voltar",
+    "stage": {
+      "pre-alpha": "experimental",
+      "alpha": "inicial",
+      "beta": "beta"
+    }
   },
   "dump": {
     "headerCount": "Brain space · {{count}} sem classificar",
@@ -514,6 +547,58 @@
     "mobileWarning": "Brain space funciona melhor em tela maior.",
     "mobileNote": "O canvas precisa de mouse ou trackpad.",
     "openInWrite": "Abrir em Escrever →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "comece a despejar",
+      "emptyHint": "escolha um tipo de cartão abaixo",
+      "pendingHint": "shift-clique em outra nota para conectar · esc para cancelar"
+    },
+    "note": {
+      "deleteNote": "Excluir nota",
+      "addPicture": "Adicionar imagem",
+      "addPictureCta": "adicionar imagem",
+      "openLinkedDoc": "Abrir documento vinculado",
+      "fetchedContent": "Conteúdo obtido",
+      "openDetailsLabel": "Abrir detalhes",
+      "openDetailsTitle": "Abrir painel de detalhes",
+      "titlePlaceholder": "título",
+      "addTitleCta": "+ título",
+      "bodyEmpty": "(clique para escrever)",
+      "viewImage": "Ver {{name}}",
+      "removeImage": "Remover {{name}}",
+      "resize": "Redimensionar nota",
+      "days": {
+        "sun": "dom",
+        "mon": "seg",
+        "tue": "ter",
+        "wed": "qua",
+        "thu": "qui",
+        "fri": "sex",
+        "sat": "sáb"
+      }
+    },
+    "drawer": {
+      "title": "Detalhes da nota",
+      "description": "Edite a nota selecionada e gerencie suas conexões.",
+      "untitledPlaceholder": "Sem título",
+      "titleAriaLabel": "Título da nota",
+      "closeAriaLabel": "Fechar painel",
+      "bodyLabel": "Corpo",
+      "bodyPlaceholder": "Escreva algo…",
+      "picturesLabel": "Imagens",
+      "addPicture": "Adicionar imagem",
+      "pictureLimitHint": "limite de {{count}} atingido — remova uma para adicionar outra.",
+      "linkedDocLabel": "Documento vinculado",
+      "noLinkedDoc": "— Sem documento vinculado —",
+      "untitledDoc": "Sem título",
+      "openDoc": "Abrir",
+      "connectionsHeading": "Conexões ({{count}})",
+      "connectionsEmpty": "shift-clique em outra nota no canvas para conectar.",
+      "untitledNote": "(sem título)",
+      "removeConnection": "Remover conexão",
+      "deleteNote": "Excluir nota"
+    }
   },
   "split": {
     "title": "Visualização dividida",
@@ -532,7 +617,8 @@
   "citationsDrawer": {
     "title": "Citações",
     "description": "Busque, importe e exporte citações para este espaço.",
-    "close": "Fechar citações"
+    "close": "Fechar citações",
+    "expand": "Abrir citações em visualização completa"
   },
   "citations": {
     "title": "Citações",
@@ -566,26 +652,48 @@
     "unknownError": "erro desconhecido",
     "edit": {
       "save": "salvar",
+      "saving": "salvando…",
       "cancel": "cancelar",
       "delete": "excluir",
+      "edit": "editar",
       "tagLabel": "Tag",
       "authorsLabel": "Autores",
       "titleLabel": "Título",
       "yearLabel": "Ano",
       "typeLabel": "Tipo",
-      "duplicateKey": "Tag “{{key}}” já está em uso neste espaço.",
+      "duplicateKey": "Tag "{{key}}" já está em uso neste espaço.",
       "updated": "1 citação atualizada.",
       "deleteOne": "1 citação excluída.",
-      "confirmDeleteUsed": "Esta citação é usada {{count}}× em seus documentos. Excluir mesmo assim?"
+      "confirmDeleteUsed": "Esta citação é usada {{count}}× em seus documentos. Excluir mesmo assim?",
+      "confirmDeleteSingle": "Excluir citação "{{key}}"? Sem desfazer.",
+      "untitled": "(sem título)"
     },
     "bulk": {
       "selectedSummary": "{{count}} selecionadas",
       "deleteSelected": "excluir",
       "setTypePrompt": "definir tipo",
+      "setTypeAria": "Definir tipo para citações selecionadas",
+      "chooseOption": "escolher…",
+      "ariaLabel": "Ações em massa",
       "clearSelection": "limpar",
       "deleted": "{{count}} citações excluídas.",
       "typeApplied": "Tipo {{type}} aplicado a {{count}} citações.",
       "confirmDelete": "Excluir {{count}} citação(ões)? Sem desfazer."
+    },
+    "row": {
+      "selectAllAria": "Selecionar todas as citações desta página",
+      "viewCitationAria": "Ver citação {{key}}",
+      "selectCitationAria": "Selecionar citação {{key}}",
+      "collapseCitationAria": "Recolher citação {{key}}",
+      "usedCount": "{{count}}× usada",
+      "unused": "não usada",
+      "copyTag": "Copiar tag",
+      "copyTagAria": "Copiar tag {{value}}",
+      "copiedTitle": "Copiado",
+      "copiedTagAria": "Tag {{value}} copiada"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
     }
   }
 }
