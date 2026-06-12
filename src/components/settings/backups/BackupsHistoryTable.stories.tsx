@@ -37,3 +37,16 @@ export const Empty: Story = {
 export const WithBackups: Story = {
   args: { backups },
 };
+
+const mixedFormats = [
+  { id: 'b1', when: NOW, kind: 'manual', size: 2048, format: 'archive-v2' },
+  { id: 'b2', when: NOW, kind: 'snapshot', size: 1024, format: 'archive-v2' },
+  { id: 'b3', when: NOW, kind: 'manual', size: 512, format: 'md-zip' },
+] as unknown as Backup[];
+
+export const WithRestore: Story = {
+  args: {
+    backups: mixedFormats,
+    onRestore: () => undefined,
+  },
+};

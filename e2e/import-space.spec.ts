@@ -12,11 +12,9 @@ const pngPayload = (name: string) => ({
 });
 
 /**
- * Populates a space with content across every archivable table — revisions
- * (via the auto-revision system on doc edit), a doc-inspector config (via the
- * space's Doc inspector tab), and a note attachment (via the brain canvas).
- * Used to make snapshot/restore/import end-to-end coverage exercise every
- * codec parser.
+ * Same enrichment as in space-settings-backups.spec — kept inline so each
+ * spec is self-contained. The point is to exercise every archive codec
+ * (revisions, inspector config, attachments) through the import path too.
  */
 const enrichSpace = async (page: Page, spaceId: string): Promise<void> => {
   await page.goto(`/#/s/${spaceId}`);
@@ -73,67 +71,48 @@ test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
 });
 
-test('backups tab: snapshot adds a row that can be downloaded and deleted', async ({
+test('a downloaded space archive can be imported as a new space', async ({
   page,
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
-  await page.goto(`/#/s/${spaceId}/settings?tab=backups`);
-
-  const snapDownload = page.waitForEvent('download');
-  await page.getByTestId('space-settings-backups-snapshot').click();
-  await snapDownload;
-
-  const history = page.getByTestId('backups-history');
-  await expect(history).toBeVisible();
-
-  const rowDownload = page.waitForEvent('download');
-  await history.locator('[data-testid$="-download"]').first().click();
-  await rowDownload;
-
-  page.once('dialog', (d) => void d.accept());
-  await history.locator('[data-testid$="-delete"]').first().click();
-  await expect(page.getByTestId('backups-history')).toHaveCount(0);
-});
-
-test('backups tab: restoring a snapshot rolls the space back and keeps a pre-restore snapshot', async ({
-  page,
-}) => {
-  const spaceId = await getFirstSpaceIdFromHome(page);
-
-  // Populate every archivable table before snapshotting so the round-trip
-  // exercises every codec parser, including attachments, revisions, and the
-  // doc-inspector config.
+  // Rich snapshot so importSpaceArchive remaps every cross-reference, not
+  // just the trivial space/section/doc ones.
   await enrichSpace(page, spaceId);
 
   await page.goto(`/#/s/${spaceId}/settings?tab=backups`);
-  const snapDownload = page.waitForEvent('download');
+  const downloadPromise = page.waitForEvent('download');
   await page.getByTestId('space-settings-backups-snapshot').click();
-  await snapDownload;
-  await expect(page.getByTestId('backups-history')).toBeVisible();
+  const download = await downloadPromise;
+  const archivePath = await download.path();
 
-  await page.goto(`/#/s/${spaceId}/settings?tab=general`);
-  const nameInput = page.getByTestId('space-settings-name-input');
-  const originalName = await nameInput.inputValue();
-  await nameInput.fill('Renamed After Snapshot');
-  await nameInput.press('Enter');
+  await page.goto('/#/settings?tab=export');
+  await expect(page.getByTestId('settings-import-button')).toBeVisible();
+  await page.getByTestId('settings-import-file-input').setInputFiles(archivePath);
 
-  await page.goto(`/#/s/${spaceId}/settings?tab=backups`);
-  const history = page.getByTestId('backups-history');
-  await history.locator('[data-testid$="-restore"]').first().click();
-  await page.getByTestId('restore-backup-dialog-confirm').click();
-  await expect(page.getByText(/snapshot restored/i)).toBeVisible();
-
-  await expect(
-    history.locator('tbody tr').filter({ hasText: 'snapshot' }),
-  ).toHaveCount(1);
-
-  await page.goto(`/#/s/${spaceId}/settings?tab=general`);
-  await expect(page.getByTestId('space-settings-name-input')).toHaveValue(
-    originalName,
+  await page.waitForURL(
+    (url) => url.hash.startsWith('#/s/') && !url.hash.includes(spaceId),
   );
+  await expect(page.locator('[aria-label="Document body"]')).toBeVisible();
 
-  // Attachment from before the snapshot must survive the restore — proves
-  // bindAttachmentBlobs round-tripped the image bytes.
-  await page.goto(`/#/s/${spaceId}/dump`);
-  await expect(page.getByRole('img', { name: 'cover.png' })).toBeVisible();
+  // The imported attachment should be reachable from the new space's brain
+  // canvas, which proves the noteAttachments codec + binding + id-remap path.
+  const newSpaceMatch = page.url().match(/#\/s\/([^/?]+)/);
+  if (newSpaceMatch) {
+    await page.goto(`/#/s/${newSpaceMatch[1]}/dump`);
+    await expect(page.getByRole('img', { name: 'cover.png' })).toBeVisible();
+  }
+});
+
+test('importing a file that is not a space archive shows a clear error', async ({
+  page,
+}) => {
+  await page.goto('/#/settings?tab=export');
+  await expect(page.getByTestId('settings-import-button')).toBeVisible();
+  await page.getByTestId('settings-import-file-input').setInputFiles({
+    name: 'junk.zip',
+    mimeType: 'application/zip',
+    buffer: Buffer.from('not a zip at all'),
+  });
+
+  await expect(page.getByText(/import failed/i)).toBeVisible();
 });

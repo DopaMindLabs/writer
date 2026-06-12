@@ -195,7 +195,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     slug: 'your-data',
     category: 'data',
     featureArea: 'data',
-    keywords: ['export', 'import', 'backup', 'local', 'storage', 'offline'],
+    keywords: ['export', 'import', 'backup', 'restore', 'archive', 'local', 'storage', 'offline'],
     related: ['getting-started', 'customization-and-settings'],
   },
   {

@@ -2,9 +2,14 @@ import { db } from '@/db/db';
 import {
   NoteKind,
   NoteState,
+  type Annotation,
+  type Citation,
   type Connection,
   type Doc,
+  type DocInspectorConfig,
+  type HighlightPalette,
   type Note,
+  type NoteAttachment,
   type Revision,
   type Section,
   type Space,
@@ -155,6 +160,92 @@ export async function seedDocWithRevisions() {
       createdAt: FIXED_TIME + 1_200_000,
     },
   ]);
+}
+
+export const sampleCitation: Citation = {
+  id: 'cit1',
+  spaceId: 's1',
+  key: 'doe2020',
+  authors: 'Doe, J.',
+  title: 'On Bells',
+  year: 2020,
+  type: 'article',
+  useCount: 2,
+  raw: '@article{doe2020, title={On Bells}}',
+};
+
+export const sampleAnnotation: Annotation = {
+  id: 'ann1',
+  docId: 'd1',
+  rangeStart: 0,
+  rangeEnd: 4,
+  kind: 'highlight',
+  color: 'yellow',
+  body: 'check this',
+  author: 'me',
+  createdAt: FIXED_TIME,
+};
+
+export const ATTACHMENT_BYTES = 'png-bytes';
+
+export const sampleAttachment: NoteAttachment = {
+  id: 'att1',
+  noteId: 'n1',
+  spaceId: 's1',
+  name: 'sketch.png',
+  mime: 'image/png',
+  size: ATTACHMENT_BYTES.length,
+  blob: new Blob([ATTACHMENT_BYTES], { type: 'image/png' }),
+  createdAt: FIXED_TIME,
+};
+
+export const samplePalette: HighlightPalette = {
+  id: 'pal1',
+  spaceId: 's1',
+  slots: [
+    { name: 'Hero', color: '#ffcc00' },
+    { name: 'Foil', color: '#33aaff' },
+  ],
+};
+
+export const sampleInspectorConfig: DocInspectorConfig = {
+  spaceId: 's1',
+  wordLimit: 'on',
+  charLimit: 'inherit',
+  status: 'on',
+  dueDate: 'off',
+  highlightOverLimit: 'inherit',
+  statusStages: { draft: true, complete: false },
+};
+
+/**
+ * Seeds a space exercising every archivable table: nested sections, a doc
+ * with body + revisions, two notes (one linked to the doc) with a connection,
+ * an image attachment, an annotation, a citation, a palette, and a
+ * doc-inspector config.
+ */
+export async function seedRichSpace() {
+  await seedDocWithRevisions();
+  await db.notes.put({
+    ...sampleNote,
+    id: 'n2',
+    l: 240,
+    t: 120,
+    title: 'Second',
+    linkedDocId: 'd1',
+  });
+  await db.connections.put({
+    id: 'c1',
+    spaceId: 's1',
+    fromNoteId: 'n1',
+    toNoteId: 'n2',
+    createdAt: FIXED_TIME,
+  });
+  await db.noteAttachments.put(sampleAttachment);
+  await db.annotations.put(sampleAnnotation);
+  await db.citations.put(sampleCitation);
+  await db.palettes.put(samplePalette);
+  await db.docInspectorConfigs.put(sampleInspectorConfig);
 }
 
 export async function seedMultipleSpaces() {
