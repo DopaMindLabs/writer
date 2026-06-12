@@ -10,7 +10,7 @@
     "syncOffChip": "sincronizzazione/backup non abilitati · i dati possono andare persi",
     "syncOnChip": "sincronizzazione cartella attiva",
     "syncOnTitle": "Sincronizzazione cartella abilitata",
-    "syncOnBody": "Il tuo lavoro si sincronizza nella cartella “{{folder}}” su questo dispositivo.",
+    "syncOnBody": "Il tuo lavoro si sincronizza nella cartella "{{folder}}" su questo dispositivo.",
     "warningTitle": "Build pre-release",
     "warningBody": "Nessuna sincronizzazione dati. Tutto vive nel tuo browser e cancellare la cache fa perdere il lavoro. Puoi abilitare la sincronizzazione in una cartella locale in Impostazioni universali → Sincronizzazione.",
     "versionLine": "Versione {{version}}"

@@ -10,7 +10,7 @@
     "syncOffChip": "synchronizacja/kopie zapasowe wyłączone · dane mogą zostać utracone",
     "syncOnChip": "synchronizacja folderów włączona",
     "syncOnTitle": "Synchronizacja folderów włączona",
-    "syncOnBody": "Twoja praca synchronizuje się z folderem „{{folder}}” na tym urządzeniu.",
+    "syncOnBody": "Twoja praca synchronizuje się z folderem „{{folder}}" na tym urządzeniu.",
     "warningTitle": "Wersja przedpremierowa",
     "warningBody": "Brak synchronizacji danych. Wszystko jest przechowywane w przeglądarce — wyczyszczenie pamięci podręcznej spowoduje utratę pracy. Możesz włączyć synchronizację z lokalnym folderem w Ustawieniach globalnych → Synchronizacja.",
     "versionLine": "Wersja {{version}}"
@@ -585,7 +585,7 @@
         "deleteCardTitle": "Usuń tę przestrzeń",
         "deleteCardBody": "Trwale usuwa tę przestrzeń wraz z każdym dokumentem, sekcją, notatką brain space, adnotacją, cytowaniem i połączeniem. Tej operacji nie można cofnąć.",
         "deleteButton": "Usuń tę przestrzeń",
-        "dialogTitle": "Usunąć „{{name}}”?",
+        "dialogTitle": "Usunąć „{{name}}"?",
         "dialogBody": "Trwale usuwa przestrzeń i całą jej zawartość. Tej operacji nie można cofnąć.",
         "typeToConfirm": "Wpisz {{name}}, aby potwierdzić",
         "cancel": "Anuluj",
@@ -746,11 +746,11 @@
       "titleLabel": "Tytuł",
       "yearLabel": "Rok",
       "typeLabel": "Typ",
-      "duplicateKey": "Etykieta „{{key}}” jest już używana w tej przestrzeni.",
+      "duplicateKey": "Etykieta „{{key}}" jest już używana w tej przestrzeni.",
       "updated": "Zaktualizowano 1 cytowanie.",
       "deleteOne": "Usunięto 1 cytowanie.",
       "confirmDeleteUsed": "To cytowanie jest używane {{count}}× w Twoich dokumentach. Usunąć mimo to?",
-      "confirmDeleteSingle": "Usunąć cytowanie „{{key}}”? Tej operacji nie można cofnąć.",
+      "confirmDeleteSingle": "Usunąć cytowanie „{{key}}"? Tej operacji nie można cofnąć.",
       "untitled": "(bez tytułu)"
     },
     "bulk": {
