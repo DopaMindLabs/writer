@@ -10,7 +10,7 @@
     "syncOffChip": "szinkronizáció/mentések nem engedélyezve · adatok elveszhetnek",
     "syncOnChip": "mappa-szinkronizáció bekapcsolva",
     "syncOnTitle": "Mappa-szinkronizáció bekapcsolva",
-    "syncOnBody": "A munkád szinkronizálódik a(z) „{{folder}}" mappával ezen az eszközön.",
+    "syncOnBody": "A munkád szinkronizálódik a(z) „{{folder}}” mappával ezen az eszközön.",
     "warningTitle": "Előzetes verzió",
     "warningBody": "Nincs adatszinkronizáció. Minden a böngészőben van tárolva — a gyorsítótár törlése elveszíti a munkádat. A helyi mappával való szinkronizációt engedélyezheted az Általános beállítások → Szinkronizáció menüben.",
     "versionLine": "{{version}} verzió"
@@ -585,7 +585,7 @@
         "deleteCardTitle": "A tér törlése",
         "deleteCardBody": "Véglegesen eltávolítja ezt a teret minden dokumentummal, szakasszal, brain-space-jegyzettel, annotációval, hivatkozással és kapcsolattal együtt. Ez nem vonható vissza.",
         "deleteButton": "A tér törlése",
-        "dialogTitle": "Törli a következőt: „{{name}}"?",
+        "dialogTitle": "Törli a következőt: „{{name}}”?",
         "dialogBody": "Ez véglegesen eltávolítja a teret és annak teljes tartalmát. Ez nem vonható vissza.",
         "typeToConfirm": "A megerősítéshez írd be: {{name}}",
         "cancel": "Mégse",
@@ -746,11 +746,11 @@
       "titleLabel": "Cím",
       "yearLabel": "Év",
       "typeLabel": "Típus",
-      "duplicateKey": "A(z) „{{key}}" címke már használatban van ebben a térben.",
+      "duplicateKey": "A(z) „{{key}}” címke már használatban van ebben a térben.",
       "updated": "1 hivatkozás frissítve.",
       "deleteOne": "1 hivatkozás törölve.",
       "confirmDeleteUsed": "Ez a hivatkozás {{count}}× szerepel a dokumentumaidban. Mégis törli?",
-      "confirmDeleteSingle": "Törli a(z) „{{key}}" hivatkozást? Ez nem vonható vissza.",
+      "confirmDeleteSingle": "Törli a(z) „{{key}}” hivatkozást? Ez nem vonható vissza.",
       "untitled": "(cím nélkül)"
     },
     "bulk": {

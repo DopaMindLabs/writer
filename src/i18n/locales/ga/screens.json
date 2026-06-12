@@ -10,7 +10,7 @@
     "syncOffChip": "sionc/cúltacaí gan chumasú · féadfar sonraí a chailleadh",
     "syncOnChip": "sionc fillteáin ar siúl",
     "syncOnTitle": "Sionc fillteáin cumasaithe",
-    "syncOnBody": "Déantar do chuid oibre a shioncrónú leis an bhfillteán „{{folder}}" ar an bhfeiste seo.",
+    "syncOnBody": "Déantar do chuid oibre a shioncrónú leis an bhfillteán „{{folder}}” ar an bhfeiste seo.",
     "warningTitle": "Tógáil réamheisiúna",
     "warningBody": "Gan sioncrónú sonraí. Maireann gach rud i do bhrabhsálaí agus má ghlanar an taisce caillfear do chuid oibre. Is féidir leat sioncrónú le fillteán áitiúil a chumasú i Socruithe Uilíocha → Sionc.",
     "versionLine": "Leagan {{version}}"
@@ -585,7 +585,7 @@
         "deleteCardTitle": "Scrios an spás seo",
         "deleteCardBody": "Baineann an spás seo in éineacht le gach doiciméad, cuid, nóta Brain space, nóta mínithe, lua, agus nasc go buan. Ní féidir seo a chúlghairm.",
         "deleteButton": "Scrios an spás seo",
-        "dialogTitle": "Scrios „{{name}}"?",
+        "dialogTitle": "Scrios „{{name}}”?",
         "dialogBody": "Baineann sé seo an spás agus a ábhar ar fad go buan. Ní féidir seo a chúlghairm.",
         "typeToConfirm": "Clóscríobh {{name}} le deimhniú",
         "cancel": "Cealaigh",
@@ -746,11 +746,11 @@
       "titleLabel": "Teideal",
       "yearLabel": "Bliain",
       "typeLabel": "Cineál",
-      "duplicateKey": "Tá an chlib „{{key}}" á húsáid cheana féin sa spás seo.",
+      "duplicateKey": "Tá an chlib „{{key}}” á húsáid cheana féin sa spás seo.",
       "updated": "Nuashonraíodh 1 lua.",
       "deleteOne": "Scriosadh 1 lua.",
       "confirmDeleteUsed": "Úsáidtear an lua seo {{count}}× i do chuid doiciméad. Scrios ar aon nós?",
-      "confirmDeleteSingle": "Scrios lua „{{key}}"? Ní féidir seo a chúlghairm.",
+      "confirmDeleteSingle": "Scrios lua „{{key}}”? Ní féidir seo a chúlghairm.",
       "untitled": "(gan teideal)"
     },
     "bulk": {
