@@ -35,6 +35,7 @@ import { SpaceTextSetting } from '@/components/settings/SpaceTextSetting';
 import { DeleteConfirmField } from '@/components/settings/DeleteConfirmField';
 import { BackupsToolbar } from '@/components/settings/backups/BackupsToolbar';
 import { BackupsHistoryTable } from '@/components/settings/backups/BackupsHistoryTable';
+import { FileRestoreHint } from '@/components/settings/backups/FileRestoreHint';
 import { RestoreBackupDialog } from '@/components/settings/backups/RestoreBackupDialog';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import {
@@ -303,19 +304,6 @@ const BackupsStatus = ({
         )}
       </div>
     </>
-  );
-};
-
-const FileRestoreHint = () => {
-  const { t } = useTranslation('screens');
-  return (
-    <TypographyP
-      data-testid="space-settings-backups-file-restore-hint"
-      variant="caption"
-      className="mt-4"
-    >
-      {t('settings.space.backups.fileRestoreHint')}
-    </TypographyP>
   );
 };
 
