@@ -10,7 +10,7 @@
     "syncOffChip": "sincronizare/copii de rezervă dezactivate · datele pot fi pierdute",
     "syncOnChip": "sincronizare folder activată",
     "syncOnTitle": "Sincronizare folder activată",
-    "syncOnBody": "Munca ta se sincronizează cu folderul „{{folder}}” de pe acest dispozitiv.",
+    "syncOnBody": "Munca ta se sincronizează cu folderul „{{folder}}" de pe acest dispozitiv.",
     "warningTitle": "Versiune pre-lansare",
     "warningBody": "Fără sincronizare de date. Totul se află în browser — ștergerea cache-ului duce la pierderea muncii. Poți activa sincronizarea cu un folder local în Setări universale → Sincronizare.",
     "versionLine": "Versiunea {{version}}"
@@ -585,7 +585,7 @@
         "deleteCardTitle": "Șterge acest spațiu",
         "deleteCardBody": "Elimină permanent acest spațiu împreună cu fiecare document, secțiune, notă brain-space, adnotare, citat și conexiune. Această acțiune nu poate fi anulată.",
         "deleteButton": "Șterge acest spațiu",
-        "dialogTitle": "Ștergi „{{name}}”?",
+        "dialogTitle": "Ștergi „{{name}}"?",
         "dialogBody": "Aceasta elimină permanent spațiul și tot conținutul său. Această acțiune nu poate fi anulată.",
         "typeToConfirm": "Scrie {{name}} pentru a confirma",
         "cancel": "Anulează",
@@ -746,11 +746,11 @@
       "titleLabel": "Titlu",
       "yearLabel": "An",
       "typeLabel": "Tip",
-      "duplicateKey": "Eticheta „{{key}}” este deja folosită în acest spațiu.",
+      "duplicateKey": "Eticheta „{{key}}" este deja folosită în acest spațiu.",
       "updated": "S-a actualizat 1 citație.",
       "deleteOne": "S-a șters 1 citație.",
       "confirmDeleteUsed": "Această citație este folosită de {{count}}× în documentele tale. Ștergi oricum?",
-      "confirmDeleteSingle": "Ștergi citația „{{key}}”? Această acțiune nu poate fi anulată.",
+      "confirmDeleteSingle": "Ștergi citația „{{key}}"? Această acțiune nu poate fi anulată.",
       "untitled": "(fără titlu)"
     },
     "bulk": {
