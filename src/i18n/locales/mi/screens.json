@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Te ao tuhituhi kore-mutunga",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Ko tō wāhi tuatahi he wāhi kau. Tīpakohia he tauira hei tīmata, rānei tīmata noa mai.",
+    "tagline": "He wāhi māmā mō te tuhituhi roa — kōrero pūrākau, rangahau, tuhinga whakaaro, tuhinga rā.",
+    "continueWriting": "Tāria tonu te tuhituhi",
+    "startNewSpace": "Tīmata i tētahi wāhi hou",
+    "syncOffChip": "kāore i whakahohea te tūhono/taurua · ka ngaro ngā raraunga",
+    "syncOnChip": "e tūhono ana ki te kōpaki",
+    "syncOnTitle": "Kua whakahohea te tūhono kōpaki",
+    "syncOnBody": "Ka tūhono tō mahi ki te kōpaki \"{{folder}}\" i tēnei pūrere.",
+    "warningTitle": "Hanganga i mua i te whakaputanga",
+    "warningBody": "Kāore he tūhono raraunga. Ko ngā mea katoa kei roto i tō pūtirotiro, ā, mēnā ka ūkuihia tōna kohinga ka ngaro tō mahi. Ka taea e koe te whakahohea te tūhono ki tētahi kōpaki ā-rohe i Ngā Tautuhinga Whānui → Tūhono.",
+    "versionLine": "Putanga {{version}}"
+  },
+  "about": {
+    "back": "hoki",
+    "title": "mō mātou",
+    "greeting": "Tēnā koe,",
+    "paragraph1": "Mō te kaituhi e tīmata ana anō, anō. Te tangata e huaki ana i tētahi tuhinga hou, e tuhituhi ana i ngā rerenga toru (rānei kore), ka noho rawa atu e 40 mīniti ana e āta whakatikatika ana i te momotuhi. Te tangata e tae ana ōna whakaaro pai ki te horo o te pō, ka ngaro. Te tangata whai ana i ngā tapanga tekau mā whā, ngā pukapuka e ono, me tētahi ipu tuhituhi kāore i neke i tētahi marama.",
+    "paragraph2Before": "E mārama ana ahau, nō reira ko ahau tērā ",
+    "paragraph2After": ". He ADHD tōku, he Otakiakia, ētahi atu āhua kāore anō kia kitea. Me matua kimi i tētahi mea e mārama ana ki tōku hinengaro pakiaka engari miharo. Tētahi wāhi hei tūkino i ngā mea katoa i mua i tana ngaro (rānei tīmata te tuhituhi). Ngā iti iti, ngā whakaaro haurua, ngā hononga o te horo pō. Katoa, ki tētahi wāhi.",
+    "paragraph3": "Nō reira i hanga ai ahau i tēnei wāhi mō tāua. E tūmanako ana ka riro māu he hari pērā i tāku i hari ai i te hanga.",
+    "paragraph4Before": "Tētahi atu mea... E whakapono ana ahau ki te hangarau hei painga, ā, e kino ana ahau ki te pānui hoko. Nō reira, ka noho tonu tēnei hei wāhi kore-pānui-hoko, KORE UTUNGA mō ngā mahi ā-moni-kore. Ka taea e koe te kopuku, whakarereke rānei i ōu hiahia i raro i te ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Āhua",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — kāore he tūhono raraunga. Ko ngā raraunga katoa e tiakina ana ki roto i te IndexedDB o tō pūtirotiro ā-rohe. Mēnā ka ūkuihia tō kohinga pūtirotiro, ka ngaro tō mahi.",
+    "feedbackBefore": "Kei te hanga tonu ahau i tēnei, ā, he nui ōku whakaaro ",
+    "feedbackAfter": ". E hiahia ana ahau ki te rongo he aha ngā mea pai, he aha ngā kino, me he aha ōu hiahia. E harikoa ana ki ngā kōrero whakahoki.",
+    "sourceLabel": "Puna"
+  },
+  "settings": {
+    "back": "hoki",
+    "windowTitle": "lotem · ngā tautuhinga",
+    "breadcrumb": "NGĀ TAUTUHINGA WHĀNUI",
+    "shellSubtitle": "NGĀ TAUTUHINGA WHĀNUI",
+    "comingSoonBadge": "ka heke mai",
+    "helpAria": "He aha tēnei?",
+    "groups": {
+      "preferences": "Ngā Hiahia",
+      "writing": "Tuhituhi",
+      "data": "Raraunga",
+      "account": "Pūkete"
+    },
+    "tabs": {
+      "general": "Whānui",
+      "appearance": "Āhua",
+      "editor": "Ētita",
+      "docInspector": "Tirotiro tuhinga",
+      "accessibility": "Āheinga",
+      "typography": "Momotuhi",
+      "shortcuts": "Papapātuhi",
+      "templates": "Tauira",
+      "palettes": "Ngā tae tōpuni",
+      "citations": "Āhua tohu",
+      "annotation": "Ngā tāpirihanga",
+      "backups": "Taurua",
+      "sync": "Tūhono",
+      "export": "Kaweake / Kawemai",
+      "data": "Ō raraunga",
+      "account": "Pūkete",
+      "about": "Mō mātou",
+      "language": "Reo"
+    },
+    "language": {
+      "title": "Reo",
+      "subtitle": "Tīpakohia te reo mō te kanohi-mata me ngā tuhinga o te Pokapū Āwhina. Ka huri ngā whakamāoritanga ngaro ki te reo Ingarihi.",
+      "label": "Reo kanohi-mata",
+      "hint": "Ka tūāpōngia ngā hurihanga ā-ohorere, ka tiakina ki tēnei pūtirotiro.",
+      "machineTranslationNotice": "Ko ngā whakamāoritanga, ko te reo Ingarihi anake kāore i hangaia aunoa. Aroha mai mō ngā hapa — tukua mai ōu kōrero whakahoki kia taea ai e mātou te whakatika.",
+      "feedbackLinkLabel": "tukua kōrero whakahoki"
+    },
+    "editor": {
+      "title": "Ētita",
+      "subtitle": "Parekura me ngā āhua tuhituhi. Ka mahi tonu ngā ara Markdown (#, >, -, **) ahakoa ēnei tautuhinga.",
+      "floatingToolbarLabel": "Parekura rewa",
+      "floatingToolbarHint": "Ka puta i te tōpuni mai rānei i te pāwhiri-matau i te āhua tuhituhi.",
+      "floatingToolbarOff": "Kāti",
+      "floatingToolbarOn": "Tuwhera",
+      "rightClickLabel": "Tahua pāwhiri-matau",
+      "rightClickHint": "Huri i waenga i te parekura rewa me te tahua horopaki ā-pūtirotiro.",
+      "rightClickTooltip": "Whakamahia te tahua horopaki ā-pūtirotiro i te pāwhiri-matau engā parekura rewa. Ka tonatona tonu te parekura i te tōpuni-tīpako.",
+      "inlineTogglesLabel": "Ngā pātiti ā-roto",
+      "inlineTogglesHint": "Ngā pātene Taumaha me Auahi kei roto i te parekura rewa.",
+      "inlineTogglesTooltip": "Huna i ngā pātene T me A mai i te parekura rewa. Ka mahi tonu ngā ara Markdown (**, _).",
+      "listDepthLabel": "Hōhonu kōpae rārangi",
+      "listDepthHint": "Tōhia te hōhonu e taea ai e ngā rārangi poka me ngā nama te noho.",
+      "listDepthTooltip": "Whakatauria te pae o te noho kōpae rārangi. Kei te tūtohu ana ki ngā taumata 2 inaianei.",
+      "templateDefaultsLabel": "Ngā taunoa ā-tauira",
+      "templateDefaultsHint": "Ngā huinga āhua rōpū rerekē mō ia tauira.",
+      "templateDefaultsTooltip": "Tukua ia tauira (kōrero pūrākau, tuhinga rā, hangarau…) ki te tīpako i tōna ake huinga āhua rōpū."
+    },
+    "docInspector": {
+      "title": "Tirotiro tuhinga",
+      "subtitle": "Tīpakohia ngā āpure ka puta ki te tirotiro tuhinga. Ka taea ia mea te whakakāti whānuitia, ka taea te huri mō ia wāhi.",
+      "statusLabel": "Āhua",
+      "statusHint": "Whakaatu i te āhua o te tuhinga, ārai i ngā tuhinga oti mai i te ētita.",
+      "wordLimitLabel": "Tepe kupu",
+      "wordLimitHint": "Whakaatu i te tepe tatau kupu ka taea te tautuhia mō ia tuhinga.",
+      "charLimitLabel": "Tepe pūāhua",
+      "charLimitHint": "Whakaatu i te tepe tatau pūāhua ka taea te tautuhia mō ia tuhinga.",
+      "dueDateLabel": "Rā mutunga",
+      "dueDateHint": "Whakaatu i te rā mutunga ka taea te tautuhia mō ia tuhinga.",
+      "highlightLabel": "Tōpuni i ngā kupu raka tepe",
+      "highlightHint": "Tohua ngā kupu i tua atu o te tepe i roto i te ētita.",
+      "statusStagesLabel": "Ngā wāhanga āhua",
+      "statusStagesHint": "Tīpakohia ngā wāhanga ka puta ki te kōwhiri āhua.",
+      "on": "Tuwhera",
+      "off": "Kāti",
+      "inherit": "Taunoa ({{state}})",
+      "inheritTooltip": "I tīkina mai i ngā tautuhinga whānui",
+      "stateOn": "tuwhera",
+      "stateOff": "kāti"
+    },
+    "accessibility": {
+      "title": "Āheinga",
+      "subtitle": "Whakaritea te kanohi-mata mō te āhuru me ngā hangarau āwhina. Ka tīmata ia kōwhiri i te wheako o nāianei — kāore he hurihanga tae noa ki tō tīpakohia.",
+      "theme": {
+        "label": "Kaupeka me te ātea",
+        "hint": "Ko ngā kaupeka ātea-nui e tutuki ana ki te paerewa ātea WCAG AAA.",
+        "light": "Mārama",
+        "dark": "Pōuri",
+        "hcLight": "Ātea nui (mārama)",
+        "hcDark": "Ātea nui (pōuri)"
+      },
+      "motion": {
+        "label": "Neke",
+        "hint": "Whakaitia, whakamutu rānei ngā nekehanga kanohi-mata.",
+        "auto": "Hāngai ki te pūnaha",
+        "reduced": "Iti",
+        "full": "Katoa"
+      },
+      "textSize": {
+        "label": "Rahi kuputuhi",
+        "hint": "Whakarereke i te mata pānui me tuhituhi.",
+        "sm": "Iti",
+        "base": "Taunoa",
+        "lg": "Nui",
+        "xl": "Nui rawa"
+      },
+      "lineSpacing": {
+        "label": "Wātea rārangi",
+        "hint": "Tāpiria he manawa i waenga i ngā rārangi kupu.",
+        "normal": "Tikanga",
+        "relaxed": "Māmā",
+        "loose": "Wātea"
+      },
+      "linkUnderline": {
+        "label": "Taurite i ngā hononga tonu",
+        "hint": "Whakaatuhia ngā taurite kia kaua ngā hononga e tūwhiwhia ki tae anake."
+      },
+      "focus": {
+        "label": "Tōpuni arotahi kaha ake",
+        "hint": "Whakamahia he tōwaha matotoru, ātea-nui ake i te arotahi."
+      },
+      "reset": {
+        "label": "Whakahoki ki ngā taunoa",
+        "hint": "Whakahokia te neke, rahi kuputuhi, wātea rārangi, hononga, me te arotahi ki ō taunoa. Kāore e hurihia tō kaupeka.",
+        "action": "Whakahoki"
+      }
+    },
+    "general": {
+      "title": "Whānui",
+      "subtitle": "Pēhea te puta o LIpsum Writer hei taunoa. Kāore he kino i ēnei.",
+      "comingSoonBody": "Pāpātanga āputa, whakaitia neke, kitea tohu papapātuhi, me te tirohanga e tuwhera ana i te tīmatanga.",
+      "compactDensityLabel": "Pāpātanga āputa",
+      "compactDensityHint": "Ngā rārangi piri ake i ngā rārangi, wātea piri ake i ia wāhi.",
+      "reduceMotionLabel": "Whakaitia neke",
+      "reduceMotionHint": "Huri noa i ngā nekehanga i waenga i ngā tirohanga.",
+      "keyboardHintsLabel": "Whakaatu tohu papapātuhi",
+      "keyboardHintsHint": "Whakaatu i ngā ara ⌘-kī i roto i ngā tūāhoa me ngā kokonga pātene.",
+      "startupLabel": "Tuwhera i te tīmatanga",
+      "startupHint": "He aha tāu e kite ana i tō whakarite i te tono.",
+      "startupOptions": {
+        "lastView": "Tirohanga mutunga",
+        "home": "Kāinga",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Āhua",
+      "subtitle": "Tae, momotuhi, pāpātanga. Te āhua e hiahia ana koe.",
+      "comingSoonBody": "Ngā kaupeka tae āhuatia, tae ā-ira, me te pāpātanga. Ko te hurihanga kaupeka o nāianei kei roto i ngā tautuhinga tere o te rēlia ao.",
+      "themeLabel": "Kaupeka",
+      "themeHint": "Ngā kaupeka e toru i āhuatia. Ka whakatikatika katoa — ngā tae poraka, ngā aho māuiui, tae noa ki te kiri.",
+      "themes": {
+        "linen": "Aho",
+        "linenSub": "taunoa",
+        "studio": "Tari",
+        "studioSub": "māori",
+        "midnight": "Waenganui pō",
+        "midnightSub": "pōuri"
+      },
+      "accentLabel": "Ira",
+      "accentHint": "Whakamahia mō te haupū, arotahi, here ētita hohe.",
+      "densityLabel": "Pāpātanga",
+      "densityOptions": {
+        "cozy": "Āhuru",
+        "default": "Taunoa",
+        "compact": "Āputa"
+      }
+    },
+    "templates": {
+      "title": "Tauira",
+      "subtitle": "Ngā hanganga ka taea te whakamahi anō mō ngā wāhi me ngā tuhinga hou.",
+      "comingSoonBody": "Hangaia ōu ake tauira me ngā wāhanga, ngā ingoa tuhinga taunoa, me ngā purapura kupu.",
+      "items": {
+        "fiction": "Kōrero Pūrākau",
+        "fictionSub": "Tuhinga · Ao · Tari",
+        "research": "Rangahau",
+        "researchSub": "Puna · Menemene · Ipu",
+        "journal": "Tuhinga Rā",
+        "journalSub": "Rā · Wiki · Whakaaro",
+        "essay": "Tuhinga Whakaaro",
+        "essaySub": "Raupapa · Ipu · Mutunga"
+      }
+    },
+    "palettes": {
+      "title": "Ngā tae tōpuni",
+      "subtitle": "Ngā kaupeka rima-wāhi mō ia wāhi — ingoa me te āta whakarite ia tae.",
+      "comingSoonBody": "Whakatikahia, tiakina, me te huri i ngā kaupeka tōpuni ingoa (Taunakitanga, Huri anō, Tohutoro…) i ngā wāhi.",
+      "items": {
+        "evidence": "Taunakitanga",
+        "revise": "Huri anō",
+        "reference": "Tohutoro",
+        "quote": "Kōrero kōpē",
+        "loose": "Mutunga ngaro"
+      },
+      "rename": "ingoa hou",
+      "tune": "whakarite"
+    },
+    "citations": {
+      "title": "Āhua tohu",
+      "subtitle": "Āhua tohu taunoa i ngā wāhi.",
+      "comingSoonBody": "Tīpakohia he āhua whānui (Chicago, APA, MLA…) me ngā huri mō ia wāhi.",
+      "styleLabel": "Āhua taunoa",
+      "styleHint": "Whakamahia i te tāpiritanga o tētahi tohu hou. Ko ngā huri ā-wāhi ka heke mai.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Ngā tāpirihanga",
+      "subtitle": "Ngā menemene tapa me ngā tāpirihanga ā-roto.",
+      "comingSoonBody": "Ngā momo tāpirihanga, ngā taunoa kitea, me te āhua kaweake.",
+      "showMarginLabel": "Whakaatu menemene tapa",
+      "showMarginHint": "Ka rewa ngā tāpirihanga ki te taha matau ina rite te wāhi.",
+      "showInlineLabel": "Whakaatu tōpuni ā-roto",
+      "showInlineHint": "Ka tatū te tae tāpirihanga ki runga i ngā kupu.",
+      "exportLabel": "Tāpirihia ki ngā kaweake",
+      "exportHint": "Ka tuhia ngā tāpirihanga tahi me te tinana o te tuhinga."
+    },
+    "export": {
+      "title": "Kaweake / Kawemai",
+      "subtitle": "Neke raraunga ki raro me ki runga i LIpsum Writer.",
+      "comingSoonBody": "Kaweake nui ki .zip, kawemai mai i tētahi pōkai LIpsum rānei kōpaki Markdown.",
+      "formatLabel": "Āhua kaweake",
+      "formatHint": "Ko ngā kaweake ā-tuhinga me ā-wāhi e whakamahi ana i te taunoa kotahi.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Kawemai mai i",
+      "importHint": "Kawemai i tētahi pōkai LIpsum rānei kōpaki kōnae Markdown.",
+      "importOptions": {
+        "bundle": "Pōkai LIpsum (.zip)",
+        "markdown": "Kōpaki Markdown",
+        "obsidian": "Vōti Obsidian"
+      },
+      "importSpaceLabel": "Kawemai he wāhi",
+      "importSpaceHint": "Kawea mai tētahi wāhi ki tēnei pūtirotiro mai i tētahi pūtea Writer (.zip) — he tikiake tirohanga rānei he kaweake tūhono-kōpaki mai i tētahi atu pūrere.",
+      "importChooseFile": "Tīpakohia te pūtea…",
+      "importing": "e kawemai ana…",
+      "importFailed": "I hinga te kawemai: {{message}}",
+      "comingSoonLabel": "Ētahi atu āhua",
+      "comingSoonHint": "Kaweake nui me te kawemai mai i ngā kōpaki Markdown rānei ngā vōti Obsidian.",
+      "comingSoonTooltip": "Kua whakaarohia — kāore anō i rite."
+    },
+    "data": {
+      "title": "Ō raraunga",
+      "subtitle": "Kei hea tō mahi e noho ana me tōna rahi.",
+      "comingSoonBody": "Whakamahinga IndexedDB, aromatawai rokiroki, me te mūkahi kotahi.",
+      "storageLabel": "Rokiroki whakamahia",
+      "storageValue": "≈ 12.4 MB · 4 wāhi, 38 tuhinga",
+      "engineLabel": "Ūkui rokiroki",
+      "engineValue": "IndexedDB (pūtirotiro ā-rohe)",
+      "wipeLabel": "Mukua katoa",
+      "wipeHint": "Ka tangohia ngā wāhi, tuhinga, me ngā tirohanga katoa mai i tēnei pūtirotiro. Kāore he whakahoki.",
+      "wipeButton": "Mukua raraunga ā-rohe…"
+    },
+    "about": {
+      "title": "Mō mātou",
+      "subtitle": "Mōhiohio hanganga me ngā hononga.",
+      "comingSoonBody": "Tirohia te whārangi /about mō te kōrero; ko tēnei ripa ka mau ai mōhiohio hanganga, raihana, me ngā hurihanga.",
+      "versionLabel": "Putanga",
+      "versionValue": "{{version}}",
+      "buildLabel": "Hanganga",
+      "buildValue": "ā-rohe",
+      "licenseLabel": "Raihana",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Hononga",
+      "links": {
+        "source": "Puna",
+        "changelog": "Rārangi Hurihanga",
+        "feedback": "Tukua kōrero whakahoki"
+      }
+    },
+    "account": {
+      "title": "Pūkete",
+      "subtitle": "Takiuru, tūhono i ngā pūrere, me ngā wāhi mahi tahi.",
+      "comingSoonBody": "Kāore i rite te tūhono kapua inaianei — ko Lotem he ā-rohe anake. Ka tae te pūkete, takiuru, me ngā wāhi mahi tahi ina tukuna te tūhono.",
+      "signedOutLabel": "Takiuru",
+      "signedOutHint": "Kāore anō i rite te tūhono kapua. Kei konei tēnei hei whakaatu i te hoahoa.",
+      "signInButton": "Takiuru me te īmēra",
+      "syncLabel": "Tūhono tēnei pūrere",
+      "syncHint": "Ina takiuru koe, ka hōkakatia ō wāhi ki ētahi atu pūrere."
+    },
+    "typography": {
+      "title": "Momotuhi",
+      "subtitle": "Ngā taunoa i ngā ao katoa. Ka taea e ngā ao takitahi te huri.",
+      "comingSoonBody": "Tīpakohia te momotuhi kupu, momotuhi kanohi-mata, rahi pānui taunoa, teitei rārangi, me te ine mō ngā ao hou.",
+      "proseFontLabel": "Momotuhi kupu",
+      "uiFontLabel": "Momotuhi kanohi-mata",
+      "proseSizeLabel": "Rahi kupu",
+      "proseSizeHint": "Taunoa mō ngā ao hou.",
+      "lineHeightLabel": "Teitei rārangi",
+      "measureLabel": "Ine",
+      "measureHint": "Whānui rārangi nui rawa.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Ara Poto",
+      "subtitle": "Ngā hononga papapātuhi mō te whakahaere, āhua rōpū, me ngā āhua.",
+      "comingSoonBody": "Ngā ara poto ka taea te huri mō te tuhituhi/pānui/wehewehe, āhua arotahi, me te parekura āhua rōpū.",
+      "navHeader": "Whakahaere",
+      "formatHeader": "Āhua Rōpū",
+      "modeHeader": "Ngā Āhua",
+      "items": {
+        "openSettings": "Tuwhera tautuhinga",
+        "quickSettings": "Tautuhinga tere",
+        "findInDoc": "Rapua i te tuhinga",
+        "toggleFocus": "Huri arotahi",
+        "toggleInspector": "Huri tirotiro",
+        "bold": "Taumaha",
+        "italic": "Auahi",
+        "underline": "Taurite",
+        "heading1": "Upoko 1",
+        "heading2": "Upoko 2",
+        "write": "Āhua tuhituhi",
+        "read": "Āhua pānui",
+        "split": "Āhua wehewehe"
+      }
+    },
+    "backups": {
+      "title": "Taurua",
+      "subtitle": "Kaweakehia, whakahokia, me te tirohanga ō raraunga ā-rohe.",
+      "comingSoonBody": "Ngā tirohanga ā-rohe ōkawa, kaweake ā-ringaringa ki .zip, me te whakahoki mai i tētahi taurua o mua.",
+      "intervalLabel": "Wā-o-wā tirohanga aunoa",
+      "intervalOptions": {
+        "5min": "5 mīniti",
+        "10min": "10 mīniti",
+        "30min": "30 mīniti",
+        "off": "Kāti"
+      },
+      "keepLabel": "Puritia",
+      "keepHint": "Ka tanumia aunoa ngā tirohanga tawhito.",
+      "keepOptions": {
+        "last50": "50 mutunga",
+        "days7": "7 rā",
+        "days30": "30 rā"
+      },
+      "latestLabel": "Hou rawa",
+      "latestValue": "12 mīniti ki mua · 1,190 kupu"
+    },
+    "sync": {
+      "title": "Tūhono",
+      "subtitle": "Tukuna ō wāhi ki tētahi kōpaki e tīpakohia ana e koe. Tohua ki tētahi kōpaki Google Drive, Dropbox, rānei iCloud hei tūhono i ngā pūrere.",
+      "unsupportedTitle": "Kāore i rite ki tēnei pūtirotiro",
+      "unsupportedBody": "Me matua whai te tūhono kōpaki i te API Uru Pūnaha Kōnae, e rite ana ki Chrome, Edge, me ētahi atu pūtirotiro Chromium i runga i te papakuoro. Huri ki tētahi pūtirotiro e tautokohia ana hei whakamahi.",
+      "folderLabel": "Kōpaki tūhona",
+      "folderHint": "Ka tuhia ia tūhono i tētahi Markdown .zip mō ia wāhi ki konei, me te mau ana i ngā 5 mutunga me tētahi latest.zip. Ko te Tūhono he mea motuhake i ngā Taurua.",
+      "noFolder": "Kāore he kōpaki i tūhona",
+      "chooseFolder": "Tīpakohia kōpaki…",
+      "changeFolder": "Huri…",
+      "disconnect": "Wehe",
+      "intervalLabel": "Tūhono aunoa",
+      "intervalHint": "Tōhia te pēhea te auautia o te tūhono aunoa o ngā wāhi i a tuwhera ana te tono me te kōpaki kua hono. Ka taea e ia wāhi te huri i tēnei taunoa.",
+      "intervalOff": "Kāti",
+      "intervalMinutes": "{{count}} mīniti",
+      "intervalDefault": "Taunoa ({{label}})",
+      "syncLabel": "Tūhono ā-ringaringa",
+      "pushOnlyHint": "Ko te tuku anake i nāianei — ka tuhia ō raraunga ā-rohe ki te kōpaki. Ko te tango whakaaro hoki ka heke mai.",
+      "syncNow": "Tūhono ināianei",
+      "syncNowAll": "Tūhono ngā wāhi katoa",
+      "reconnectHint": "Kua tūāhuke te tūhono — me hiahia anō te pūtirotiro ki te whakaaetanga kōpaki mō tēnei taupānga. Hono anō hei whakahoki i te tūhono ā-ringaringa me te aunoa.",
+      "reconnectButton": "Hono anō",
+      "reconnecting": "E hono ana anō…",
+      "syncing": "E tūhono ana…",
+      "syncFailed": "I hinga te tūhono: {{message}}",
+      "lastSynced": "I tūhono mutunga {{when}}",
+      "neverSynced": "Kāore anō i tūhono",
+      "justNow": "ināianei tonu",
+      "resultsTitle": "Whakahaerenga mutunga",
+      "spaceOk": "i tūhono",
+      "spaceFailed": "i hinga",
+      "historyTitle": "Ngā tūhono tata",
+      "historyEmpty": "Kāore anō he tūhono.",
+      "columns": {
+        "when": "ĀHEA",
+        "space": "WĀHI",
+        "kind": "MOMO",
+        "size": "RAHI",
+        "status": "ĀHUA"
+      },
+      "kind": {
+        "auto": "aunoa",
+        "manual": "ā-ringaringa"
+      },
+      "status": {
+        "ok": "pai",
+        "error": "hapa"
+      }
+    },
+    "space": {
+      "breadcrumb": "WĀHI · TAUTUHINGA",
+      "shellSubtitle": "NGĀ TAUTUHINGA WĀHI",
+      "loading": "E uta ana te wāhi…",
+      "groups": {
+        "thisSpace": "Tēnei wāhi",
+        "sharingMembers": "Toha & ngā mema",
+        "data": "Raraunga",
+        "dangerZone": "Wāhi Kino"
+      },
+      "tabs": {
+        "general": "Whānui",
+        "docInspector": "Tirotiro tuhinga",
+        "template": "Tauira",
+        "palette": "Kaupeka tōpuni",
+        "sharing": "Toha",
+        "members": "Ngā mema",
+        "backups": "Taurua",
+        "sync": "Tūhono",
+        "export": "Kaweake",
+        "danger": "Wāhi kino"
+      },
+      "docInspector": {
+        "title": "Tirotiro tuhinga",
+        "subtitle": "Hurihia ngā tautuhinga tirotiro whānui mō tēnei wāhi."
+      },
+      "palette": {
+        "title": "Kaupeka tōpuni",
+        "subtitle": "Ngā tae tōpuni e rima, he ingoa, ka taea te whakarite mō tēnei wāhi.",
+        "comingSoonBody": "Ingoa hou, tae hou, me te raupapa hou i ngā wāhi tōpuni o tēnei wāhi.",
+        "items": {
+          "evidence": "Taunakitanga",
+          "revise": "Huri anō",
+          "reference": "Tohutoro",
+          "quote": "Kōrero kōpē",
+          "loose": "Mutunga ngaro"
+        },
+        "rename": "ingoa hou",
+        "tune": "whakarite"
+      },
+      "export": {
+        "title": "Kaweake",
+        "subtitle": "Nekehia ngā ihirangi o tēnei wāhi ki tētahi atu tono.",
+        "comingSoonBody": "Kaweake ki Markdown .zip (inaianei mā Taurua), LaTeX, HTML, rānei PDF — katoa ki tētahi wāhi.",
+        "formatLabel": "Āhua",
+        "formatHint": "Ko Markdown ka tukuna tuatahi; ko ērā atu ka whai.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Kaweake mutunga",
+        "lastValue": "kāore anō"
+      },
+      "general": {
+        "title": "Whānui",
+        "subtitle": "Ngā taipitopito mō tēnei wāhi. Ka tūāpōngia ngā hurihanga ā-ohorere, ka tūhonohia i ngā tirohanga.",
+        "nameLabel": "Ingoa wāhi",
+        "nameHint": "Ka kitea i te upoko taha me te tūāhoa ara wāhi.",
+        "tagLabel": "Tohu",
+        "tagHint": "He waehere poto (pūāhua 2–4) ka kitea i runga i te poraka ara wāhi."
+      },
+      "sharing": {
+        "title": "Toha",
+        "subtitle": "Whakahaere i te pēhea o te toha o tēnei wāhi.",
+        "comingSoonBody": "Kitea ā-wāhi me ngā hononga toha. Ka heke mai ina tukuna te tūhono kapua.",
+        "visibilityLabel": "Kitea",
+        "visibilityOptions": {
+          "private": "Tūmataiti",
+          "link": "Ko ia tangata whai hononga",
+          "members": "Ngā mema anake"
+        },
+        "linkLabel": "Hononga toha",
+        "linkHint": "Ko te pānui anake hei taunoa. Ka whai ngā tūāhu ētita i ngā Mema.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "kape"
+      },
+      "template": {
+        "title": "Tauira",
+        "subtitle": "Ko te tauira hanga i hangaia ai tēnei wāhi.",
+        "comingSoonBody": "Kāore anō i tautokohia te huri i te tauira wāhi i muri i te hanga. Ka heke mai ina taea te nekeneke i ngā wāhanga me ngā tuhinga.",
+        "currentLabel": "Tauira o nāianei",
+        "currentValue": "Kōrero Pūrākau",
+        "currentSub": "Tuhinga · Ao · Tari",
+        "changeLabel": "Hurihia te tauira",
+        "changeHint": "Ka whakahōua ngā wāhanga me ngā tuhinga ki te tauira hou.",
+        "changeButton": "Hurihia te tauira…"
+      },
+      "members": {
+        "title": "Ngā mema",
+        "subtitle": "Ngā kaituhi tahi me ngā kaitirotiro whai uru ki tēnei wāhi.",
+        "comingSoonBody": "Tono kaiwhakamahi, whakahaere mahi, me te arotake hurihanga. Ka heke mai me te tūhono kapua.",
+        "inviteLabel": "Tono mā te īmēra",
+        "inviteHint": "Ka tukuna e mātou he hononga hei uru ki tēnei wāhi.",
+        "invitePlaceholder": "ingoa@tauira.com",
+        "inviteButton": "tukua tono",
+        "membersLabel": "Ngā mema",
+        "roles": {
+          "owner": "rangatira",
+          "editor": "ētita",
+          "viewer": "kaitiro"
+        },
+        "you": "koe"
+      },
+      "backups": {
+        "title": "Taurua",
+        "subtitle": "Tiakina tēnei wāhi hei .zip ka taea te tikiake, puritia, me te whakahoki.",
+        "retentionHint": "E mau ana i ngā tirohanga {{count}} hou rawa — ka tangohia aunoa ngā mea tawhito.",
+        "snapshotNow": "+ tirohanga ināianei",
+        "snapshotting": "e tirohanga ana…",
+        "snapshotFailed": "I hinga te tirohanga: {{message}}",
+        "historyTitle": "Hītori",
+        "empty": "Kāore anō he tirohanga — hangaia tētahi mā te + tirohanga ināianei.",
+        "columns": {
+          "when": "ĀHEA",
+          "kind": "MOMO",
+          "size": "RAHI",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "ā-ringaringa",
+          "auto": "aunoa",
+          "snapshot": "tirohanga"
+        },
+        "download": "↓ tikiake",
+        "delete": "mukua",
+        "deleteConfirm": "Mukua tēnei tirohanga? Kāore e taea te whakahoki.",
+        "deleted": "Kua mukua te tirohanga.",
+        "justNow": "ināianei tonu",
+        "restore": "↺ whakahoki",
+        "restoreUnavailable": "I hangaia tēnei tirohanga i mua o te tautoko whakahoki — ko te tikiake anake e taea ana.",
+        "restoreDialogTitle": "Whakahoki tēnei tirohanga?",
+        "restoreDialogBody": "Ka whakakapia ngā ihirangi o nāianei o tēnei wāhi ki te tirohanga. Ka tiakina tētahi tirohanga o te āhua o nāianei i mua, ā, ka taea ai te whakakore i tēnei whakahoki.",
+        "restoreConfirm": "Whakahoki",
+        "restoreCancel": "Whakakore",
+        "restoring": "e whakahoki ana…",
+        "restored": "Kua whakahokia te tirohanga.",
+        "restoreFailed": "I hinga te whakahoki: {{message}}",
+        "fileRestoreTitle": "E whakahoki ana mai i tētahi .zip i tikiakehia?",
+        "fileRestoreBody": "Kawemaia mā ngā Tautuhinga Whānui → Kaweake / Kawemai — ka hoki mai hei wāhi hou, me tēnei wāhi kāore i huri."
+      },
+      "sync": {
+        "title": "Tūhono",
+        "subtitle": "Tukuna tēnei wāhi ki te kōpaki i hono, ā-ringaringa rānei ki tētahi ōkawa. Ko te Tūhono he mea motuhake i ngā Taurua.",
+        "folderHint": "Honoa tētahi kōpaki i ngā Tautuhinga Whānui → Tūhono. Ko te kōpaki kotahi ka whakamahia mō ngā wāhi katoa.",
+        "intervalHint": "Tōhia te pēhea te auautia o te tūhono aunoa o tēnei wāhi. Tīpakohia Taunoa hei whai i te tautuhinga tūhono aunoa whānui.",
+        "syncNow": "Tūhono tēnei wāhi"
+      },
+      "danger": {
+        "title": "Wāhi kino",
+        "subtitle": "Ngā mahi kāore e huri. Pānuihia āta i mua i te haere tonu.",
+        "deleteCardTitle": "Mukua tēnei wāhi",
+        "deleteCardBody": "Ka mukua tonu tēnei wāhi me ngā tuhinga katoa, wāhanga, menemene Brain space, tāpirihanga, tohu, me ngā hononga. Kāore e taea te whakahoki.",
+        "deleteButton": "Mukua tēnei wāhi",
+        "dialogTitle": "Mukua \"{{name}}\"?",
+        "dialogBody": "Ka mukua tonu te wāhi me ōna ihirangi katoa. Kāore e taea te whakahoki.",
+        "typeToConfirm": "Tāuruhia {{name}} hei whakaū",
+        "cancel": "Whakakore",
+        "confirm": "Mukua wāhi"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Ngaro i ngā tapa",
+    "body": "Kāore tērā whārangi (ināianei).",
+    "goHome": "Hoki ki te kāinga"
+  },
+  "templates": {
+    "crumb": "01 — HE MOMO RŪM",
+    "headingMain": "He aha te momo wāhi",
+    "headingAccent": "e tīmata ana koe?",
+    "chooseLegend": "Tīpakohia he tauira",
+    "stage": {
+      "pre-alpha": "whakamātautau",
+      "alpha": "tīmatanga",
+      "beta": "beta"
+    },
+    "nameLabel": "Ingoa",
+    "tagLabel": "Tohu",
+    "syncLabel": "tūhono kapua —",
+    "syncValue": "kāti, ā-rohe",
+    "syncTooltip": "Kāore i rite te tūhono kapua — ko tēnei tono he ā-rohe anake i nāianei.",
+    "creating": "e hanga ana…",
+    "submitLabel": "tomo ki {{name}} →",
+    "newSpace": "wāhi hou",
+    "back": "hoki"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} kāore i raupapahia",
+    "title": "Brain space",
+    "mobileWarning": "Ka pai ake te Brain space i runga i tētahi mata nui ake.",
+    "mobileNote": "Me matua whai te kānava i tētahi kiore rānei pae.",
+    "openInWrite": "Tuwhera ki te Tuhituhi →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "tīmata te tukino",
+      "emptyHint": "tīpakohia he momo kāri i raro",
+      "pendingHint": "pāwhiri-shift ki tētahi atu menemene hei hono · esc hei whakakore"
+    },
+    "note": {
+      "deleteNote": "Mukua menemene",
+      "addPicture": "Tāpirihia atahanga",
+      "addPictureCta": "tāpirihia he atahanga",
+      "openLinkedDoc": "Tuwhera tuhinga i hono",
+      "fetchedContent": "Ihirangi i tikina",
+      "openDetailsLabel": "Tuwhera taipitopito",
+      "openDetailsTitle": "Tuwhera kūiti taipitopito",
+      "titlePlaceholder": "taitara",
+      "addTitleCta": "+ taitara",
+      "bodyEmpty": "(pāwhiria hei tuhituhi)",
+      "viewImage": "Tirohia {{name}}",
+      "removeImage": "Tangohia {{name}}",
+      "resize": "Whakarerekē rahi menemene",
+      "days": {
+        "sun": "rāt",
+        "mon": "rāh",
+        "tue": "rāt",
+        "wed": "rāā",
+        "thu": "rāp",
+        "fri": "rām",
+        "sat": "rāh"
+      }
+    },
+    "drawer": {
+      "title": "Taipitopito menemene",
+      "description": "Whakatikahia te menemene kua tīpakohia me te whakahaere i ōna hononga.",
+      "untitledPlaceholder": "Kāore he taitara",
+      "titleAriaLabel": "Taitara menemene",
+      "closeAriaLabel": "Katia te toroa",
+      "bodyLabel": "Tinana",
+      "bodyPlaceholder": "Tuhia he mea…",
+      "picturesLabel": "Ngā atahanga",
+      "addPicture": "Tāpirihia atahanga",
+      "pictureLimitHint": "kua tae ki te tepe {{count}} — tangohia tētahi hei tāpiri i tētahi atu.",
+      "linkedDocLabel": "Tuhinga i Hono",
+      "noLinkedDoc": "— Kāore he tuhinga i hono —",
+      "untitledDoc": "Kāore he taitara",
+      "openDoc": "Tuwhera",
+      "connectionsHeading": "Ngā hononga ({{count}})",
+      "connectionsEmpty": "pāwhiri-shift ki tētahi atu menemene i runga i te kānava hei hono.",
+      "untitledNote": "(kāore he taitara)",
+      "removeConnection": "Tangohia hononga",
+      "deleteNote": "Mukua menemene"
+    }
+  },
+  "split": {
+    "title": "Tirohanga wehewehe",
+    "mobileWarning": "Me matua whai te tirohanga wehewehe i tētahi mata nui ake.",
+    "mobileNote": "Tuwhera tēnei tuhinga ki te Āhua Tuhituhi.",
+    "openInWrite": "Tuwhera ki te Tuhituhi →",
+    "leftPrefix": "MAUĪ —",
+    "rightPrefix": "MATAU —",
+    "rightPaneAria": "Tuhinga kūiti matau",
+    "noOtherDocs": "(kāore ērā atu tuhinga)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Ngā tohu",
+    "pickDoc": "Tīpakohia he tuhinga mai i te tāroaroa i runga ake.",
+    "dividerAria": "Whakarerekē rahi ngā kūiti wehewehe"
+  },
+  "citationsDrawer": {
+    "title": "Ngā tohu",
+    "description": "Rapua, kawemai, me te kaweake ngā tohu mō tēnei wāhi.",
+    "close": "Katia ngā tohu",
+    "expand": "Tuwhera ngā tohu ki te tirohanga katoa"
+  },
+  "citations": {
+    "title": "Ngā tohu",
+    "breadcrumb": "Ngā Puna / ",
+    "entries": "{{count}} URUNGA",
+    "searchPlaceholder": "ngā kaituhi, ngā tohu, te tau…",
+    "upload": "↑ tukiake .bib / .ris",
+    "add": "+ tāpiri",
+    "cancel": "× whakakore",
+    "columns": {
+      "tag": "TOHU",
+      "authors": "NGĀ KAITUHI",
+      "title": "TAITARA",
+      "year": "TAU",
+      "type": "MOMO",
+      "used": "WHAKAMAHIA"
+    },
+    "style": "ĀHUA — CHICAGO (KAITUHI-RĀ)",
+    "exportBib": "KAWEAKEHIA HEI .BIB",
+    "summary": "{{filtered}} WHAKAATUHIA · {{shown}} I TĒNEI WHĀRANGI",
+    "prevPage": "Whārangi o mua",
+    "nextPage": "Whārangi e whai ake",
+    "empty": "kāore anō he tohu",
+    "noMatch": "kāore he rārangi e hāngai ana ki tō rapu.",
+    "importHint": "kawemaia tētahi .bib, tāpiritia rānei tētahi ā-ringaringa.",
+    "pasteHeader": "Peita BibTeX rānei he taitara",
+    "addCitation": "tāpiri tohu",
+    "manualCancel": "whakakore",
+    "adding": "e tāpiri ana…",
+    "parsing": "E wetewete ana {{name}}…",
+    "imported": "I kawemaia {{added}} tohu{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", prukana {{skipped}} tātūtanga{{skippedPlural}}",
+    "skippedSuffixShort": ", prukana {{skipped}}",
+    "failed": "I hinga te wetewete: {{message}}",
+    "failedManual": "I hinga: {{message}}",
+    "addedOne": "Kua tāpiria 1 tohu.",
+    "unknownAuthor": "(unknown)",
+    "unknownError": "hapa unknown",
+    "edit": {
+      "save": "tiaki",
+      "saving": "e tiaki ana…",
+      "cancel": "whakakore",
+      "delete": "mukua",
+      "edit": "whakatika",
+      "tagLabel": "Tohu",
+      "authorsLabel": "Ngā Kaituhi",
+      "titleLabel": "Taitara",
+      "yearLabel": "Tau",
+      "typeLabel": "Momo",
+      "duplicateKey": "Kua whakamahia kē te tohu \"{{key}}\" i tēnei wāhi.",
+      "updated": "Kua hōuatia 1 tohu.",
+      "deleteOne": "Kua mukua 1 tohu.",
+      "confirmDeleteUsed": "Ka whakamahia tēnei tohu {{count}}× i ō tuhinga. Mukua tonu?",
+      "confirmDeleteSingle": "Mukua te tohu \"{{key}}\"? Kāore e taea te whakahoki.",
+      "untitled": "(kāore he taitara)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} i tīpakohia",
+      "deleteSelected": "mukua",
+      "setTypePrompt": "tautuhia momo",
+      "setTypeAria": "Tautuhia momo mō ngā tohu i tīpakohia",
+      "chooseOption": "tīpakohia…",
+      "ariaLabel": "Ngā mahi nui",
+      "clearSelection": "ūkui",
+      "deleted": "Kua mukua {{count}} tohu.",
+      "typeApplied": "Kua tautuhia te momo {{type}} ki runga i {{count}} tohu.",
+      "confirmDelete": "Mukua {{count}} tohu? Kāore e taea te whakahoki."
+    },
+    "row": {
+      "selectAllAria": "Tīpakohia ngā tohu katoa i tēnei whārangi",
+      "viewCitationAria": "Tirohia te tohu {{key}}",
+      "selectCitationAria": "Tīpakohia te tohu {{key}}",
+      "collapseCitationAria": "Whakakōpikopiko te tohu {{key}}",
+      "usedCount": "{{count}}× whakamahia",
+      "unused": "kāore i whakamahia",
+      "copyTag": "Kapehia tohu",
+      "copyTagAria": "Kapehia tohu {{value}}",
+      "copiedTitle": "Kua kapehia",
+      "copiedTagAria": "Kua kapehia tohu {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

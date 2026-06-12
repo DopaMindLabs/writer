@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Frjálst ritunararalheimur",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Fyrsta rýmið þitt er autt. Veldu sniðmát til að byrja, eða byrjaðu frá grunni.",
+    "tagline": "Ótruflaðar aðstæður fyrir langar ritsmíðar — skáldskapur, rannsóknir, ritgerðir, dagbækur.",
+    "continueWriting": "Halda áfram að skrifa",
+    "startNewSpace": "Byrja nýtt rými",
+    "syncOffChip": "samstilling/öryggisafrit ekki virkt · gögn geta glatast",
+    "syncOnChip": "möppusamstilling virk",
+    "syncOnTitle": "Möppusamstilling virk",
+    "syncOnBody": "Verk þitt samstillist við „{{folder}}" möppuna í þessum tæki.",
+    "warningTitle": "Forskráning útgáfa",
+    "warningBody": "Engin gagnsamstilling. Allt er geymt í vafranum þínum og ef þú hreinsaðir skyndiminni hans tapar þú vinnu þinni. Þú getur virkjað samstillingu við staðbundna möppu í Altækum stillingum → Samstilling.",
+    "versionLine": "Útgáfa {{version}}"
+  },
+  "about": {
+    "back": "til baka",
+    "title": "um",
+    "greeting": "Hæ,",
+    "paragraph1": "Þetta er fyrir höfundinn sem byrjar alltaf upp á nýtt. Þann sem opnar nýtt skjal, skrifar þrjár setningar (eða engar), og eyðir síðan 40 mínútum í að stilla leturgerðina. Þann sem bestu hugmyndirnar koma að klukkan 2 á nóttunni og trufla sig. Þann með fjórtán flipa, sex minnisbækur og drög sem hafa ekki hreyft sig í mánuð.",
+    "paragraph2Before": "Ég veit það, vegna þess að það er ég ",
+    "paragraph2After": ". Ég er með ADHD, einlægni, og líklega aðra -isma sem hafa ekki verið greindir enn. Ég þarf eitthvað sem skilur hinn glundroðakennda en dásamlega heila minn. Stað til að hella öllu úr mér áður en það hverfur (eða byrja að skrifa). Brotin, hálftilfinningarnar, tengingar klukkan 3 að morgni. Allt saman, á einum stað.",
+    "paragraph3": "Svo ég smíðaði þetta rými fyrir okkur. Ég vona að það gefi þér dópamínhlöðun alveg eins og mér þótti gaman að smíða þetta.",
+    "paragraph4Before": "Enn ein hluturinn... Ég trúi á tækni í þágu góðs og hata auglýsingar. Svo þetta verður alltaf laust við auglýsingar og ÓKEYPIS fyrir ekki-viðskiptaleg not. Þú getur gaffaðt það og breytt því eins og þér líkar undir ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Staða",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — engin gagnsamstilling. Öll gögn eru vistuð í IndexedDB í staðbundnum vafra þínum. Ef þú hreinsaðir vafraþjónustuminni þitt glatast verk þitt.",
+    "feedbackBefore": "Ég er enn að smíða þetta og hef margar hugmyndir ",
+    "feedbackAfter": ". Mig langar að heyra hvað virkar, hvað virkar ekki og hvað þú vildir að væri til. Endurgjöf er velkomin.",
+    "sourceLabel": "Uppspretta"
+  },
+  "settings": {
+    "back": "til baka",
+    "windowTitle": "lotem · stillingar",
+    "breadcrumb": "ALTÆKAR STILLINGAR",
+    "shellSubtitle": "ALTÆKAR STILLINGAR",
+    "comingSoonBadge": "kemur fljótlega",
+    "helpAria": "Hvað er þetta?",
+    "groups": {
+      "preferences": "Kjörstillingar",
+      "writing": "Ritun",
+      "data": "Gögn",
+      "account": "Aðgangur"
+    },
+    "tabs": {
+      "general": "Almennt",
+      "appearance": "Útlit",
+      "editor": "Ritill",
+      "docInspector": "Skjalaskoðun",
+      "accessibility": "Aðgengi",
+      "typography": "Leturhönnun",
+      "shortcuts": "Lyklaborð",
+      "templates": "Sniðmát",
+      "palettes": "Auðkennilitar",
+      "citations": "Heimildastíll",
+      "annotation": "Athugasemdir",
+      "backups": "Öryggisafrit",
+      "sync": "Samstilling",
+      "export": "Flytja út / inn",
+      "data": "Gögnin þín",
+      "account": "Aðgangur",
+      "about": "Um",
+      "language": "Tungumál"
+    },
+    "language": {
+      "title": "Tungumál",
+      "subtitle": "Veldu tungumál fyrir viðmótið og greinar hjálparmiðstöðvarinnar. Þýðingar sem vantar falla aftur á ensku.",
+      "label": "Viðmótstungumál",
+      "hint": "Breytingar taka strax gildi og eru vistaðar í þessum vafra.",
+      "machineTranslationNotice": "Þýðingar aðrar en enska eru búnar til sjálfvirkt. Fyrirgefðu ef villur eru til staðar — vinsamlegast sendið endurgjöf svo við getum leiðrétt þær.",
+      "feedbackLinkLabel": "senda endurgjöf"
+    },
+    "editor": {
+      "title": "Ritill",
+      "subtitle": "Tækjastikan og ritstjórnartæki. Markdown flýtilyklar (#, >, -, **) virka áfram óháð þessum stillingum.",
+      "floatingToolbarLabel": "Fljótandi tækjastikan",
+      "floatingToolbarHint": "Birtist við auðkenningu eða hægrismell í ritunarham.",
+      "floatingToolbarOff": "Af",
+      "floatingToolbarOn": "Kveikt",
+      "rightClickLabel": "Hægrismellsvalmynd",
+      "rightClickHint": "Skiptu á milli fljótandi tækjastikunnar og innbyggðrar samhengisvalmyndar vafrans.",
+      "rightClickTooltip": "Notaðu innbyggða samhengisvalmyndina við hægrismell í stað fljótandi tækjastikunnar. Tækjastikan birtist áfram við auðkenningu.",
+      "inlineTogglesLabel": "Innbyggð víxlhnöpp",
+      "inlineTogglesHint": "Feitletur og skáleturshnappar í fljótandi tækjastikunni.",
+      "inlineTogglesTooltip": "Fela B og I hnappana í fljótandi tækjastikunni. Markdown flýtilyklar (**, _) virka áfram.",
+      "listDepthLabel": "Dýpt listafaldningar",
+      "listDepthHint": "Hversu djúpt punktalistar og númeraðar listar geta faldast.",
+      "listDepthTooltip": "Hækka eða lækka hámark listafaldningar. Þetta er sem stendur fast við 2 stig.",
+      "templateDefaultsLabel": "Sjálfgefin gildi per sniðmát",
+      "templateDefaultsHint": "Mismunandi sniðmót nota mismunandi snið.",
+      "templateDefaultsTooltip": "Leyfðu hverju sniðmáti (skáldskapur, dagbók, tæknilegt…) að velja sitt eigið sniðsett."
+    },
+    "docInspector": {
+      "title": "Skjalaskoðun",
+      "subtitle": "Veldu hvaða svæði birtast í skjalaskoðuninni. Hvert og eitt er hægt að slökkva á algildu og hnekkja per rými.",
+      "statusLabel": "Staða",
+      "statusHint": "Sýna skjalastöðu og læsa fullkláruðum skjölum gegn breytingum.",
+      "wordLimitLabel": "Orðafjöldamörk",
+      "wordLimitHint": "Sýna orðafjöldamörk sem hægt er að stilla per skjal.",
+      "charLimitLabel": "Stafafjöldamörk",
+      "charLimitHint": "Sýna stafafjöldamörk sem hægt er að stilla per skjal.",
+      "dueDateLabel": "Skiladagur",
+      "dueDateHint": "Sýna skiladag sem hægt er að stilla per skjal.",
+      "highlightLabel": "Auðkenna texta yfir mörk",
+      "highlightHint": "Merkja texta umfram mörkin í ritlinum.",
+      "statusStagesLabel": "Stöðustig",
+      "statusStagesHint": "Veldu hvaða stig birtast í stöðuvalinu.",
+      "on": "Kveikt",
+      "off": "Slökkt",
+      "inherit": "Sjálfgefið ({{state}})",
+      "inheritTooltip": "Erft frá altækum stillingum",
+      "stateOn": "kveikt",
+      "stateOff": "slökkt"
+    },
+    "accessibility": {
+      "title": "Aðgengi",
+      "subtitle": "Stilltu viðmótið fyrir þægindi og hjálpartækni. Allar valkostir byrja við núverandi upplifun — ekkert breytist fyrr en þú velur það.",
+      "theme": {
+        "label": "Þema og skerpu",
+        "hint": "Háskerpuþemu uppfylla WCAG AAA skerpu staðalinn.",
+        "light": "Ljóst",
+        "dark": "Dökkt",
+        "hcLight": "Há skerpa (ljóst)",
+        "hcDark": "Há skerpa (dökkt)"
+      },
+      "motion": {
+        "label": "Hreyfing",
+        "hint": "Minnka eða slökkva á viðmótshreyfiörskotum.",
+        "auto": "Passa kerfi",
+        "reduced": "Minnkað",
+        "full": "Fullt"
+      },
+      "textSize": {
+        "label": "Leturstærð",
+        "hint": "Stækka eða minnka lestrar- og ritunarflöt.",
+        "sm": "Lítið",
+        "base": "Sjálfgefið",
+        "lg": "Stórt",
+        "xl": "Mjög stórt"
+      },
+      "lineSpacing": {
+        "label": "Línubil",
+        "hint": "Bæta við andrými milli textalína.",
+        "normal": "Venjulegt",
+        "relaxed": "Rúmgott",
+        "loose": "Vítt"
+      },
+      "linkUnderline": {
+        "label": "Alltaf undirstrika tengla",
+        "hint": "Sýna undirstrikar svo tenglar séu ekki bara greindir á lit."
+      },
+      "focus": {
+        "label": "Aukinn fókusvísir",
+        "hint": "Nota þykkari, háskerpu útlínu við fókus."
+      },
+      "reset": {
+        "label": "Endurstilla á sjálfgefnar stillingar",
+        "hint": "Endurheimta hreyfingu, leturstærð, línubil, tengla og fókus á sjálfgefnar stillingar. Þema þitt helst óbreytt.",
+        "action": "Endurstilla"
+      }
+    },
+    "general": {
+      "title": "Almennt",
+      "subtitle": "Hvernig LIpsum Writer birtist sjálfkrafa. Þetta er ekki eyðileggjandi.",
+      "comingSoonBody": "Þétt þéttleiki, minnkuð hreyfing, sýnileiki lyklaborðs vísbendinga og hvaða yfirlit opnast við ræsingu.",
+      "compactDensityLabel": "Þéttur þéttleiki",
+      "compactDensityHint": "Þrengri raðir í listum, þrengri innfelling alls staðar.",
+      "reduceMotionLabel": "Minnka hreyfingu",
+      "reduceMotionHint": "Sleppa lifandi umskiptum á milli yfirlita.",
+      "keyboardHintsLabel": "Sýna lyklaborðs vísbendingar",
+      "keyboardHintsHint": "Sýna ⌘-lykla flýtileiðir í ábendingum og horni hnappa.",
+      "startupLabel": "Opna við ræsingu",
+      "startupHint": "Það sem þú sérð þegar þú ræsir forritið.",
+      "startupOptions": {
+        "lastView": "Síðasta yfirlit",
+        "home": "Heim",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Útlit",
+      "subtitle": "Litur, letur, þéttleiki. Stemmningin sem þú vilt að þetta setti.",
+      "comingSoonBody": "Sérstakar þemapallettur, áherslulitur og þéttleiki. Þemaskiptirinn í dag er í skynda stillingum heimsreinunnar.",
+      "themeLabel": "Þema",
+      "themeHint": "Þrjár sérstakar pallettur. Þær stilla allt — blokkalitur, hárþunnar línur, jafnvel kornið.",
+      "themes": {
+        "linen": "Lín",
+        "linenSub": "sjálfgefið",
+        "studio": "Vinnustofa",
+        "studioSub": "hlutlægt",
+        "midnight": "Miðnætti",
+        "midnightSub": "dökkt"
+      },
+      "accentLabel": "Áhersla",
+      "accentHint": "Notað við svif, fókus, virkan ritunarbaug.",
+      "densityLabel": "Þéttleiki",
+      "densityOptions": {
+        "cozy": "Þægilegt",
+        "default": "Sjálfgefið",
+        "compact": "Þétt"
+      }
+    },
+    "templates": {
+      "title": "Sniðmát",
+      "subtitle": "Endurnýtanlegar uppbyggingar fyrir ný rými og skjöl.",
+      "comingSoonBody": "Búðu til þín eigin sniðmát með hlutar, sjálfgefin skjalheiti og texta stinga.",
+      "items": {
+        "fiction": "Skáldskapur",
+        "fictionSub": "Handrit · Heimur · Vinnustofa",
+        "research": "Rannsóknir",
+        "researchSub": "Heimildir · Glósur · Drög",
+        "journal": "Dagbók",
+        "journalSub": "Daglegt · Vikulegt · Hugleiðingar",
+        "essay": "Ritgerð",
+        "essaySub": "Útlíning · Drög · Endanlegt"
+      }
+    },
+    "palettes": {
+      "title": "Auðkennilitar",
+      "subtitle": "Fimm stiga pallettur per rými — nafngreindu og stilltu hvern lit.",
+      "comingSoonBody": "Breyta, vista og skipta um nafngreindar auðkennipalllettur (Sönnunargögn, Til endurskoðunar, Tilvísun…) yfir rými.",
+      "items": {
+        "evidence": "Sönnunargögn",
+        "revise": "Til endurskoðunar",
+        "reference": "Tilvísun",
+        "quote": "Tilvitnun",
+        "loose": "Lausa enda"
+      },
+      "rename": "endurnefna",
+      "tune": "stilla"
+    },
+    "citations": {
+      "title": "Heimildastíll",
+      "subtitle": "Sjálfgefinn heimildastíll yfir rými.",
+      "comingSoonBody": "Veldu altækan stíl (Chicago, APA, MLA…) með hnekkingarheimildum per rými.",
+      "styleLabel": "Sjálfgefinn stíll",
+      "styleHint": "Notað þegar ný heimild er sett inn. Hnekking per rými kemur síðar.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Athugasemdir",
+      "subtitle": "Jaðarglósur og innbyggðar athugasemdir.",
+      "comingSoonBody": "Gerðir athugasemda, sjálfgefinn sýnileiki og útflutningshegðun.",
+      "showMarginLabel": "Sýna jaðarglósur",
+      "showMarginHint": "Athugasemdir flæða í hægri spássíunni þegar pláss er.",
+      "showInlineLabel": "Sýna innbyggð auðkenni",
+      "showInlineHint": "Litur athugasemdarinnar blæðir yfir undirliggjandi texta.",
+      "exportLabel": "Taka með í útflutning",
+      "exportHint": "Athugasemdir eru skrifaðar út ásamt skjalsmegninni."
+    },
+    "export": {
+      "title": "Flytja út / inn",
+      "subtitle": "Færa gögn inn í og út úr LIpsum Writer.",
+      "comingSoonBody": "Fjöldaútflutningur í .zip, innflutningur úr öðrum LIpsum pakka eða Markdown möppu.",
+      "formatLabel": "Útflutningssnið",
+      "formatHint": "Per skjal og per rými útflutningar nota sama sjálfgefna.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Flytja inn frá",
+      "importHint": "Settu inn annan LIpsum pakka eða möppu af Markdown skrám.",
+      "importOptions": {
+        "bundle": "LIpsum pakki (.zip)",
+        "markdown": "Markdown mappa",
+        "obsidian": "Obsidian vault"
+      },
+      "importSpaceLabel": "Flytja inn rými",
+      "importSpaceHint": "Settu rými inn í þennan vafra úr Writer safni (.zip) — skyndimyndarniðurhal eða möppusamstillingarútflutningur frá öðrum tæki.",
+      "importChooseFile": "Velja safn…",
+      "importing": "flytur inn…",
+      "importFailed": "Innflutningur mistókst: {{message}}",
+      "comingSoonLabel": "Fleiri snið",
+      "comingSoonHint": "Fjöldaútflutningur og innflutningur úr Markdown möppum eða Obsidian vaults.",
+      "comingSoonTooltip": "Áætlað — ekki tiltækt enn."
+    },
+    "data": {
+      "title": "Gögnin þín",
+      "subtitle": "Hvar verk þitt er geymt og hversu mikinn pláss það tekur.",
+      "comingSoonBody": "IndexedDB notkun, geymslumat og einnar smellitilkynnta fullur þurrka.",
+      "storageLabel": "Geymsla notuð",
+      "storageValue": "≈ 12.4 MB · 4 rými, 38 skjöl",
+      "engineLabel": "Geymsluvél",
+      "engineValue": "IndexedDB (staðbundinn vafri)",
+      "wipeLabel": "Eyða öllu",
+      "wipeHint": "Fjarlægir hvert rými, skjal og skyndimynd úr þessum vafra. Þetta er ekki hægt að afturkalla.",
+      "wipeButton": "Eyða staðbundnum gögnum…"
+    },
+    "about": {
+      "title": "Um",
+      "subtitle": "Smíðaupplýsingar og tenglar.",
+      "comingSoonBody": "Sjá /about síðuna fyrir söguna; þessi flipi mun hýsa smíðaupplýsingar, leyfi og breytingaskrá.",
+      "versionLabel": "Útgáfa",
+      "versionValue": "{{version}}",
+      "buildLabel": "Smíð",
+      "buildValue": "staðbundin",
+      "licenseLabel": "Leyfi",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Tenglar",
+      "links": {
+        "source": "Uppspretta",
+        "changelog": "Breytingaskrá",
+        "feedback": "Senda endurgjöf"
+      }
+    },
+    "account": {
+      "title": "Aðgangur",
+      "subtitle": "Innskráning, samstilling yfir tæki og sameiginlegar vinnusvæði.",
+      "comingSoonBody": "Skýjasamstilling er ekki tiltæk í dag — Lotem er eingöngu staðbundið. Aðgangur, innskráning og sameiginlegar vinnusvæði koma þegar samstilling er send.",
+      "signedOutLabel": "Skrá inn",
+      "signedOutHint": "Skýjasamstilling er ekki tiltæk enn. Þetta er hér til að sýna hönnunina.",
+      "signInButton": "Skrá inn með tölvupósti",
+      "syncLabel": "Samstilla þetta tæki",
+      "syncHint": "Þegar þú skráir þig inn munu rými þín afritast yfir á önnur tæki."
+    },
+    "typography": {
+      "title": "Leturhönnun",
+      "subtitle": "Sjálfgefið yfir alla heima. Einstakir heimar geta hnekkt.",
+      "comingSoonBody": "Veldu prósaletur, viðmótsletur, sjálfgefna lesturstærð, línuhæð og mál fyrir nýja heima.",
+      "proseFontLabel": "Prósaletur",
+      "uiFontLabel": "Viðmótsletur",
+      "proseSizeLabel": "Prósastærð",
+      "proseSizeHint": "Sjálfgefið fyrir nýja heima.",
+      "lineHeightLabel": "Línuhæð",
+      "measureLabel": "Mál",
+      "measureHint": "Hámarksbreidd línu.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Flýtilyklar",
+      "subtitle": "Lyklaborðsbindingar fyrir leiðsögn, snið og hætti.",
+      "comingSoonBody": "Endurbindanlegir flýtilyklar fyrir skrifa/lesa/skipta, einbeiting og snið tækjastöng.",
+      "navHeader": "Leiðsögn",
+      "formatHeader": "Snið",
+      "modeHeader": "Hættir",
+      "items": {
+        "openSettings": "Opna stillingar",
+        "quickSettings": "Skynda stillingar",
+        "findInDoc": "Finna í skjali",
+        "toggleFocus": "Víxla einbeitingu",
+        "toggleInspector": "Víxla skoðun",
+        "bold": "Feitletur",
+        "italic": "Skáletrað",
+        "underline": "Undirstrikað",
+        "heading1": "Fyrirsögn 1",
+        "heading2": "Fyrirsögn 2",
+        "write": "Ritunarham",
+        "read": "Lesham",
+        "split": "Skipt ham"
+      }
+    },
+    "backups": {
+      "title": "Öryggisafrit",
+      "subtitle": "Flytja út, endurheimta og taka skyndimyndir af staðbundnum gögnum þínum.",
+      "comingSoonBody": "Tímasettir staðbundnir skyndimyndaskurðir, handvirkur útflutningur í .zip og endurheimta úr fyrra öryggisafrit.",
+      "intervalLabel": "Sjálfvirkur skyndimyndabilbil",
+      "intervalOptions": {
+        "5min": "5 mín",
+        "10min": "10 mín",
+        "30min": "30 mín",
+        "off": "Slökkt"
+      },
+      "keepLabel": "Geyma",
+      "keepHint": "Eldri skyndimyndir falla sjálfkrafa af.",
+      "keepOptions": {
+        "last50": "Síðustu 50",
+        "days7": "7 dagar",
+        "days30": "30 dagar"
+      },
+      "latestLabel": "Nýjast",
+      "latestValue": "12 mín síðan · 1.190 orð"
+    },
+    "sync": {
+      "title": "Samstilling",
+      "subtitle": "Ýttu rýmunum þínum í möppu að eigin vali. Beindu henni að Google Drive, Dropbox eða iCloud möppu til að samstilla yfir tæki.",
+      "unsupportedTitle": "Ekki tiltækt í þessum vafra",
+      "unsupportedBody": "Möppusamstilling þarfnast File System Access API, sem er tiltækt í Chrome, Edge og öðrum Chromium vöfrum á borðtölvu. Skiptu yfir í stuðlaðan vafra til að nota það.",
+      "folderLabel": "Samstillt mappa",
+      "folderHint": "Hvert samstilling skrifar Markdown .zip per rými hér og geymir þær síðustu 5 auk latest.zip. Samstilling er aðskilin frá Öryggisafritum.",
+      "noFolder": "Engin mappa tengd",
+      "chooseFolder": "Velja möppu…",
+      "changeFolder": "Breyta…",
+      "disconnect": "Aftengja",
+      "intervalLabel": "Sjálfvirk samstilling",
+      "intervalHint": "Hversu oft rými samstillast sjálfkrafa á meðan forritið er opið og mappan tengd. Hvert rými getur hnekkt þessum sjálfgefna.",
+      "intervalOff": "Slökkt",
+      "intervalMinutes": "{{count}} mín",
+      "intervalDefault": "Sjálfgefið ({{label}})",
+      "syncLabel": "Handvirk samstilling",
+      "pushOnlyHint": "Ýta-eingöngu sem stendur — þetta skrifar staðbundin gögn þín í möppuna. Að draga breytingar til baka kemur síðar.",
+      "syncNow": "Samstilla núna",
+      "syncNowAll": "Samstilla öll rými",
+      "reconnectHint": "Samstilling er í pásu — vafri þarf möppuheimild aftur fyrir þessa setu. Endurtengdu til að halda áfram handvirkri og sjálfvirkri samstillingu.",
+      "reconnectButton": "Endurtengja",
+      "reconnecting": "Endurtengur…",
+      "syncing": "Samstilli…",
+      "syncFailed": "Samstilling mistókst: {{message}}",
+      "lastSynced": "Síðast samstillt {{when}}",
+      "neverSynced": "Aldrei samstillt",
+      "justNow": "rétt í þessu",
+      "resultsTitle": "Síðasta keyrsla",
+      "spaceOk": "samstillt",
+      "spaceFailed": "mistókst",
+      "historyTitle": "Nýlegar samstillingar",
+      "historyEmpty": "Engar samstillingar enn.",
+      "columns": {
+        "when": "HVENÆR",
+        "space": "RÝMI",
+        "kind": "TEGUND",
+        "size": "STÆRÐ",
+        "status": "STAÐA"
+      },
+      "kind": {
+        "auto": "sjálfvirkt",
+        "manual": "handvirkt"
+      },
+      "status": {
+        "ok": "í lagi",
+        "error": "villa"
+      }
+    },
+    "space": {
+      "breadcrumb": "RÝMI · STILLINGAR",
+      "shellSubtitle": "RÝMISSTILLINGAR",
+      "loading": "Hleður rými…",
+      "groups": {
+        "thisSpace": "Þetta rými",
+        "sharingMembers": "Deiling og meðlimir",
+        "data": "Gögn",
+        "dangerZone": "Hætta"
+      },
+      "tabs": {
+        "general": "Almennt",
+        "docInspector": "Skjalaskoðun",
+        "template": "Sniðmát",
+        "palette": "Auðkennilitar",
+        "sharing": "Deiling",
+        "members": "Meðlimir",
+        "backups": "Öryggisafrit",
+        "sync": "Samstilling",
+        "export": "Útflutningur",
+        "danger": "Hættusvæði"
+      },
+      "docInspector": {
+        "title": "Skjalaskoðun",
+        "subtitle": "Hnekkja altækum skoðunarstillingum fyrir þetta rými."
+      },
+      "palette": {
+        "title": "Auðkennilitar",
+        "subtitle": "Fimm nafngreind, stillanlegar auðkennilitar fyrir þetta rými.",
+        "comingSoonBody": "Endurnefna, endurlit og endurraða auðkenningahólfum þessa rýmis.",
+        "items": {
+          "evidence": "Sönnunargögn",
+          "revise": "Til endurskoðunar",
+          "reference": "Tilvísun",
+          "quote": "Tilvitnun",
+          "loose": "Lausa enda"
+        },
+        "rename": "endurnefna",
+        "tune": "stilla"
+      },
+      "export": {
+        "title": "Útflutningur",
+        "subtitle": "Flytja innihald þessa rýmis yfir í annað tól.",
+        "comingSoonBody": "Útflutningur í Markdown .zip (í dag í gegnum Öryggisafrit), LaTeX, HTML eða PDF — allt á einum stað.",
+        "formatLabel": "Snið",
+        "formatHint": "Markdown kemur fyrst; restin fylgir.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Síðasti útflutningur",
+        "lastValue": "aldrei"
+      },
+      "general": {
+        "title": "Almennt",
+        "subtitle": "Auðkennandi upplýsingar fyrir þetta rými. Breytingar taka strax gildi og samstillast yfir yfirlit.",
+        "nameLabel": "Nafn rýmis",
+        "nameHint": "Sýnt í hliðarstikunni haus og ábendingu rýmisreinuflísar.",
+        "tagLabel": "Merki",
+        "tagHint": "Stuttur kóði (2–4 stafir) sýndur á rýmisreinuflísinni."
+      },
+      "sharing": {
+        "title": "Deiling",
+        "subtitle": "Stjórna hvernig þessu rými er deilt.",
+        "comingSoonBody": "Sýnileiki per rými og deililar. Kemur þegar skýjasamstilling er send.",
+        "visibilityLabel": "Sýnileiki",
+        "visibilityOptions": {
+          "private": "Einkamál",
+          "link": "Allir með tengil",
+          "members": "Meðlimir eingöngu"
+        },
+        "linkLabel": "Deilanlegur tengill",
+        "linkHint": "Lesaðgangur sjálfgefið. Breytingaheimildir fylgja Meðlimum.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "afrita"
+      },
+      "template": {
+        "title": "Sniðmát",
+        "subtitle": "Skipulags sniðmátið sem þetta rými var búið til með.",
+        "comingSoonBody": "Breyting á sniðmáti rýmis eftir stofnun er ekki studd enn. Kemur þegar við getum flutt kafla og skjöl örugglega.",
+        "currentLabel": "Núverandi sniðmát",
+        "currentValue": "Skáldskapur",
+        "currentSub": "Handrit · Heimur · Vinnustofa",
+        "changeLabel": "Breyta sniðmáti",
+        "changeHint": "Umraðar núverandi köflum og skjölum yfir í nýja sniðmátið.",
+        "changeButton": "Breyta sniðmáti…"
+      },
+      "members": {
+        "title": "Meðlimir",
+        "subtitle": "Meðhöfundar og endurskoðendur með aðgang að þessu rými.",
+        "comingSoonBody": "Bjóða samstarfsmönnum, stjórna hlutverkum og fara yfir breytingar. Kemur með skýjasamstillingu.",
+        "inviteLabel": "Bjóða með tölvupósti",
+        "inviteHint": "Við munum senda þeim tengil til að ganga í þetta rými.",
+        "invitePlaceholder": "nafn@dæmi.is",
+        "inviteButton": "senda boð",
+        "membersLabel": "Meðlimir",
+        "roles": {
+          "owner": "eigandi",
+          "editor": "ritstjóri",
+          "viewer": "áhorfandi"
+        },
+        "you": "þú"
+      },
+      "backups": {
+        "title": "Öryggisafrit",
+        "subtitle": "Taka skyndimynd af þessu rými sem .zip sem þú getur halað niður, geymt og endurheimt úr.",
+        "retentionHint": "Geymir {{count}} nýlegustu skyndimyndirnar — eldri eru fjarlægðar sjálfkrafa.",
+        "snapshotNow": "+ skyndimynd núna",
+        "snapshotting": "tekur skyndimynd…",
+        "snapshotFailed": "Skyndimynd mistókst: {{message}}",
+        "historyTitle": "Saga",
+        "empty": "Engar skyndimyndir enn — búðu til eina með + skyndimynd núna.",
+        "columns": {
+          "when": "HVENÆR",
+          "kind": "TEGUND",
+          "size": "STÆRÐ",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "handvirkt",
+          "auto": "sjálfvirkt",
+          "snapshot": "skyndimynd"
+        },
+        "download": "↓ hlaða niður",
+        "delete": "eyða",
+        "deleteConfirm": "Eyða þessari skyndimynd? Þetta er ekki hægt að afturkalla.",
+        "deleted": "Skyndimynd eytt.",
+        "justNow": "rétt í þessu",
+        "restore": "↺ endurheimta",
+        "restoreUnavailable": "Þessi skyndimynd er til frá áður en endurheimtustuðningur var bætt við — hana er aðeins hægt að hlaða niður.",
+        "restoreDialogTitle": "Endurheimta þessa skyndimynd?",
+        "restoreDialogBody": "Núverandi innihald þessa rýmis verður skipt út fyrir skyndimyndina. Skyndimynd af núverandi ástandi er vistuð fyrst, svo þú getur afturkallað þessa endurheimtu.",
+        "restoreConfirm": "Endurheimta",
+        "restoreCancel": "Hætta við",
+        "restoring": "endurheimtir…",
+        "restored": "Skyndimynd endurheimtist.",
+        "restoreFailed": "Endurheimta mistókst: {{message}}",
+        "fileRestoreTitle": "Endurheimta úr niðurhaladu .zip?",
+        "fileRestoreBody": "Flytðu það inn í gegnum Altækar stillingar → Flytja út / inn — það kemur aftur sem nýtt rými og lætur þetta óbreytt."
+      },
+      "sync": {
+        "title": "Samstilling",
+        "subtitle": "Ýttu þessu rými í tengdu möppuna, handvirkt eða á tímaáætlun. Samstilling er aðskilin frá Öryggisafritum.",
+        "folderHint": "Tengdu möppu í Altækum stillingum → Samstilling. Sama mappan er notuð fyrir öll rými.",
+        "intervalHint": "Hversu oft þetta rými samstillist sjálfkrafa. Veldu Sjálfgefið til að fylgja altæku sjálfvirkri samstillingarstillingu.",
+        "syncNow": "Samstilla þetta rými"
+      },
+      "danger": {
+        "title": "Hættusvæði",
+        "subtitle": "Óafturkræfar aðgerðir. Lestu vandlega áður en þú heldur áfram.",
+        "deleteCardTitle": "Eyða þessu rými",
+        "deleteCardBody": "Fjarlægir þetta rými varanlega ásamt hverju skjali, kafla, Brain space glósu, athugasemd, heimild og tengingu. Þetta er ekki hægt að afturkalla.",
+        "deleteButton": "Eyða þessu rými",
+        "dialogTitle": "Eyða „{{name}}"?",
+        "dialogBody": "Þetta fjarlægir rýmið og allt efni þess varanlega. Þetta er ekki hægt að afturkalla.",
+        "typeToConfirm": "Sláðu inn {{name}} til að staðfesta",
+        "cancel": "Hætta við",
+        "confirm": "Eyða rými"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Týndur í spássíunum",
+    "body": "Sú síða er ekki til (enn).",
+    "goHome": "Fara heim"
+  },
+  "templates": {
+    "crumb": "01 — EINS KONAR HERBERGI",
+    "headingMain": "Hvers konar rými",
+    "headingAccent": "ert þú að byrja?",
+    "chooseLegend": "Veldu sniðmát",
+    "stage": {
+      "pre-alpha": "tilraunastig",
+      "alpha": "snemmbúið",
+      "beta": "beta"
+    },
+    "nameLabel": "Nafn",
+    "tagLabel": "Merki",
+    "syncLabel": "skýjasamstilling —",
+    "syncValue": "slökkt, staðbundið",
+    "syncTooltip": "Skýjasamstilling er ekki tiltæk — þetta forrit er eingöngu staðbundið sem stendur.",
+    "creating": "býr til…",
+    "submitLabel": "fara inn í {{name}} →",
+    "newSpace": "nýtt rými",
+    "back": "til baka"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} óflokkaðar",
+    "title": "Brain space",
+    "mobileWarning": "Brain space virkar best á stærri skjá.",
+    "mobileNote": "Striginn þarf mús eða snertiplötu.",
+    "openInWrite": "Opna í Write →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "byrjaðu að hella út",
+      "emptyHint": "veldu kortatýpu hér að neðan",
+      "pendingHint": "shift-smelltu á aðra glósu til að tengja · esc til að hætta við"
+    },
+    "note": {
+      "deleteNote": "Eyða glósu",
+      "addPicture": "Bæta við mynd",
+      "addPictureCta": "bæta við mynd",
+      "openLinkedDoc": "Opna tengt skjal",
+      "fetchedContent": "Sótt efni",
+      "openDetailsLabel": "Opna upplýsingar",
+      "openDetailsTitle": "Opna upplýsingasvæði",
+      "titlePlaceholder": "titill",
+      "addTitleCta": "+ titill",
+      "bodyEmpty": "(smelltu til að skrifa)",
+      "viewImage": "Skoða {{name}}",
+      "removeImage": "Fjarlægja {{name}}",
+      "resize": "Breyta stærð glósu",
+      "days": {
+        "sun": "sun",
+        "mon": "mán",
+        "tue": "þri",
+        "wed": "mið",
+        "thu": "fim",
+        "fri": "fös",
+        "sat": "lau"
+      }
+    },
+    "drawer": {
+      "title": "Glósuupplýsingar",
+      "description": "Breyttu valinni glósu og stjórnaðu tengingum hennar.",
+      "untitledPlaceholder": "Án titils",
+      "titleAriaLabel": "Titill glósu",
+      "closeAriaLabel": "Loka skúffu",
+      "bodyLabel": "Meginmál",
+      "bodyPlaceholder": "Skrifaðu eitthvað…",
+      "picturesLabel": "Myndir",
+      "addPicture": "Bæta við mynd",
+      "pictureLimitHint": "hámark {{count}} náð — fjarlægðu eina til að bæta við annarri.",
+      "linkedDocLabel": "Tengt skjal",
+      "noLinkedDoc": "— Ekkert tengt skjal —",
+      "untitledDoc": "Án titils",
+      "openDoc": "Opna",
+      "connectionsHeading": "Tengingar ({{count}})",
+      "connectionsEmpty": "shift-smelltu á aðra glósu á striganum til að tengja.",
+      "untitledNote": "(án titils)",
+      "removeConnection": "Fjarlægja tengingu",
+      "deleteNote": "Eyða glósu"
+    }
+  },
+  "split": {
+    "title": "Skiptur yfirlit",
+    "mobileWarning": "Skiptur yfirlit þarf stærri skjá.",
+    "mobileNote": "Opnaðu þetta skjal í Ritunarham í staðinn.",
+    "openInWrite": "Opna í Write →",
+    "leftPrefix": "VINSTRI —",
+    "rightPrefix": "HÆGRI —",
+    "rightPaneAria": "Skjal í hægri glugga",
+    "noOtherDocs": "(engin önnur skjöl)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Heimildir",
+    "pickDoc": "Veldu skjal úr fellivalmyndinni hér að ofan.",
+    "dividerAria": "Breyta stærð skipttra glugga"
+  },
+  "citationsDrawer": {
+    "title": "Heimildir",
+    "description": "Leita að, flytja inn og flytja út heimildir fyrir þetta rými.",
+    "close": "Loka heimildum",
+    "expand": "Opna heimildir í fullri sýn"
+  },
+  "citations": {
+    "title": "Heimildir",
+    "breadcrumb": "Heimildir / ",
+    "entries": "{{count}} FÆRSLUR",
+    "searchPlaceholder": "höfundar, merki, ár…",
+    "upload": "↑ hlaða upp .bib / .ris",
+    "add": "+ bæta við",
+    "cancel": "× hætta við",
+    "columns": {
+      "tag": "MERKI",
+      "authors": "HÖFUNDAR",
+      "title": "TITILL",
+      "year": "ÁR",
+      "type": "TEGUND",
+      "used": "NOTAÐ"
+    },
+    "style": "STÍLL — CHICAGO (HÖFUNDUR-DAGSETNING)",
+    "exportBib": "FLYTJA ÚT SEM .BIB",
+    "summary": "{{filtered}} SÝND · {{shown}} Á ÞESSARI SÍÐU",
+    "prevPage": "Fyrri síða",
+    "nextPage": "Næsta síða",
+    "empty": "engar heimildir enn",
+    "noMatch": "engar raðir passa við leit þína.",
+    "importHint": "flytja inn .bib eða bæta við handvirkt.",
+    "pasteHeader": "Líma BibTeX eða titil",
+    "addCitation": "bæta við heimild",
+    "manualCancel": "hætta við",
+    "adding": "bætir við…",
+    "parsing": "Þáttar {{name}}…",
+    "imported": "Flutti inn {{added}} heimild{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", sleppti {{skipped}} tvítekningu{{skippedPlural}}",
+    "skippedSuffixShort": ", sleppti {{skipped}}",
+    "failed": "Tókst ekki að þátta: {{message}}",
+    "failedManual": "Mistókst: {{message}}",
+    "addedOne": "Bætti við 1 heimild.",
+    "unknownAuthor": "(óþekktur)",
+    "unknownError": "óþekkt villa",
+    "edit": {
+      "save": "vista",
+      "saving": "vistar…",
+      "cancel": "hætta við",
+      "delete": "eyða",
+      "edit": "breyta",
+      "tagLabel": "Merki",
+      "authorsLabel": "Höfundar",
+      "titleLabel": "Titill",
+      "yearLabel": "Ár",
+      "typeLabel": "Tegund",
+      "duplicateKey": "Merki „{{key}}" er þegar í notkun í þessu rými.",
+      "updated": "Uppfærði 1 heimild.",
+      "deleteOne": "Eyddi 1 heimild.",
+      "confirmDeleteUsed": "Þessi heimild er notuð {{count}}× í skjölum þínum. Eyða engu að síður?",
+      "confirmDeleteSingle": "Eyða heimild „{{key}}"? Þetta er ekki hægt að afturkalla.",
+      "untitled": "(án titils)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} valin",
+      "deleteSelected": "eyða",
+      "setTypePrompt": "stilla tegund",
+      "setTypeAria": "Stilla tegund fyrir valdar heimildir",
+      "chooseOption": "velja…",
+      "ariaLabel": "Fjöldaaðgerðir",
+      "clearSelection": "hreinsa",
+      "deleted": "Eyddi {{count}} heimildum.",
+      "typeApplied": "Stillti tegund á {{type}} á {{count}} heimildum.",
+      "confirmDelete": "Eyða {{count}} heimild(um)? Þetta er ekki hægt að afturkalla."
+    },
+    "row": {
+      "selectAllAria": "Velja allar heimildir á þessari síðu",
+      "viewCitationAria": "Skoða heimild {{key}}",
+      "selectCitationAria": "Velja heimild {{key}}",
+      "collapseCitationAria": "Fella saman heimild {{key}}",
+      "usedCount": "{{count}}× notað",
+      "unused": "ónotað",
+      "copyTag": "Afrita merki",
+      "copyTagAria": "Afrita merki {{value}}",
+      "copiedTitle": "Afritað",
+      "copiedTagAria": "Afritaði merki {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

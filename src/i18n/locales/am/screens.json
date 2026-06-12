@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "ነፃ የጽሑፍ ዓለም",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "የመጀመሪያዎ ቦታ ባዶ ነው። ለመጀመር አብነት ይምረጡ ወይም ከምንም ይጀምሩ።",
+    "tagline": "ለረዥም ጽሑፍ — ልቦለድ፣ ምርምር፣ ድርሰት፣ ማስታወሻ — ሁከት የሌለበት ቦታ።",
+    "continueWriting": "መጻፍ ቀጥሉ",
+    "startNewSpace": "አዲስ ቦታ ጀምሩ",
+    "syncOffChip": "ሲንክ/ምትኬ አልተነቃቃም · ውሂብ ሊጠፋ ይችላል",
+    "syncOnChip": "የአቃፊ ሲንክ ነቃ",
+    "syncOnTitle": "የአቃፊ ሲንክ ተነቅቷል",
+    "syncOnBody": "ሥራዎ ወደ «{{folder}}» አቃፊ በዚህ መሣሪያ ሲንክ ይደረጋል።",
+    "warningTitle": "ቅድመ-ልቀት ግንባታ",
+    "warningBody": "ምንም ውሂብ ሲንክ የለም። ሁሉም ነገር በአሳሽዎ ይቀመጣል፤ ቀሽ ሲጸዳ ሥራዎ ይጠፋል። ሲንክን ወደ አካባቢያዊ አቃፊ ማስተዳደሪያ ቅንብሮች → ሲንክ ማንቃት ይችላሉ።",
+    "versionLine": "ስሪት {{version}}"
+  },
+  "about": {
+    "back": "ተመለስ",
+    "title": "ስለ",
+    "greeting": "ሰላም፣",
+    "paragraph1": "ይህ ለዚያ ጸሐፊ ነው — ሁልጊዜ ከዜሮ የሚጀምረው። አዲስ ሰነድ የሚከፍተው፣ ሦስት ዓረፍተ ነገር (ወይም ምንም) ያይፍርቀው፣ ከዛ 40 ደቂቃ ፊደሉን ሲያስተካክል ያሳልፈው። ምርጥ ሃሳቦቹ ሌሊቱ 2 ሰዓት ሲደርሱ ትኩረቱ ሌላ ቦታ ያለው። አሥራ አራት 탭 ያለው፣ ስድስት ማስታወሻ ደብተሮች ያሉት፣ ከወር በላይ ያልተዘዋወረ ቅድመ-ጽሑፍ ያለው።",
+    "paragraph2Before": "አውቀዋለሁ — ምክንያቱም ያ እኔ ነኝ ",
+    "paragraph2After": "። ADHD አለኝ፣ ኦቲዝምም አለ፣ ምናልባት ሌሎች ያልታወቁ ነገሮችም ይኖሩ ይሆናል። አዕምሮዬን — ምሰሶ ቢሆንም ቆንጆ — የሚረዳ ነገር እፈልጋለሁ። ሁሉ ነገር ከመጥፋቱ በፊት ወደ አንድ ቦታ ለማፍሰስ። ቁርጥራጮቹን፣ ሳይጠናቀቁ የቀሩ ሃሳቦቹን፣ ሌሊቱ 3 ሰዓት ያሉ ግኝቶቹን። ሁሉም፣ በአንድ ቦታ።",
+    "paragraph3": "ስለዚህ ይህን ቦታ ለእኛ ሠራሁት። ለእኔ ሲያደርገው ያህል ዶፓሚን ደስታ ይሰጥዎ ዘንድ ተስፋ አደርጋለሁ።",
+    "paragraph4Before": "አንድ ነገር ተጨምሬ... ቴክኖሎጂ ለደህና ነው ብዬ አምናለሁ፤ ማስታወቂያን ጠልቼዋለሁ። ስለዚህ ይህ ሁልጊዜ ያለ ማስታወቂያ ይሆናል፤ ለዘዴ-ያልሆነ አጠቃቀም ደግሞ ነፃ ነው። ስር ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "ሁኔታ",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — ምንም ውሂብ ሲንክ የለም። ሁሉም ውሂብ IndexedDB ውስጥ በአካባቢያዊ አሳሽዎ ይቀመጣል። ቀሽዎን ካጸዱ ሥራዎ ይጠፋል።",
+    "feedbackBefore": "አሁንም እየሠራሁት ነው፤ ብዙ ሃሳቦች አሉኝ ",
+    "feedbackAfter": "። ምን እንደሚሠራ፣ ምን እንደማይሠራ፣ ምን ቢኖር ኖሮ ብለው ምን ምን ቢናፍቁ — ማወቅ ደስ ይለኛል። ሃሳብ አስተያየት ይቀበላሉ።",
+    "sourceLabel": "ምንጭ"
+  },
+  "settings": {
+    "back": "ተመለስ",
+    "windowTitle": "lotem · ቅንብሮች",
+    "breadcrumb": "ዓለም አቀፍ ቅንብሮች",
+    "shellSubtitle": "ዓለም አቀፍ ቅንብሮች",
+    "comingSoonBadge": "በቅርቡ ይመጣል",
+    "helpAria": "ይህ ምንድነው?",
+    "groups": {
+      "preferences": "ምርጫዎች",
+      "writing": "መጻፍ",
+      "data": "ውሂብ",
+      "account": "መለያ"
+    },
+    "tabs": {
+      "general": "አጠቃላይ",
+      "appearance": "መልክ",
+      "editor": "አርታዒ",
+      "docInspector": "ሰነድ ተቆጣጣሪ",
+      "accessibility": "ተደራሽነት",
+      "typography": "ፊደል ጥበብ",
+      "shortcuts": "ቁልፍ ሰሌዳ",
+      "templates": "አብነቶች",
+      "palettes": "ማድመቂያ ቀለሞች",
+      "citations": "ጥቅስ ዘዴ",
+      "annotation": "ማስታወሻዎች",
+      "backups": "ምትኬዎች",
+      "sync": "ሲንክ",
+      "export": "ወደ ውጭ ላክ / አስገባ",
+      "data": "ውሂብዎ",
+      "account": "መለያ",
+      "about": "ስለ",
+      "language": "ቋንቋ"
+    },
+    "language": {
+      "title": "ቋንቋ",
+      "subtitle": "ለበይነ-ገጹና ለ Help Center ጽሑፎች ቋንቋ ይምረጡ። ያልተተረጎሙ ይዘቶች ወደ እንግሊዝኛ ይመለሳሉ።",
+      "label": "የበይነ-ገጽ ቋንቋ",
+      "hint": "ለውጦች ወዲያው ይተገበራሉ፤ በዚህ አሳሽ ይቀመጣሉ።",
+      "machineTranslationNotice": "ከእንግሊዝኛ ውጭ ያሉ ትርጉሞች በራስ-ሰር ይዘጋጃሉ። ለስህተቶቹ ይቅርታ — ሃሳብ አስተያየት ይልኩ።",
+      "feedbackLinkLabel": "ሃሳብ አስተያየት ላክ"
+    },
+    "editor": {
+      "title": "አርታዒ",
+      "subtitle": "የመሣሪያ አሞሌና የጽሑፍ አቅርቦቶች። Markdown አቋራጮች (#، >، -، **) ሁልጊዜ ይሠራሉ።",
+      "floatingToolbarLabel": "ተንሳፋፊ መሣሪያ አሞሌ",
+      "floatingToolbarHint": "ሲደምቅ ወይም ወደ ቀኝ ሲጫን ይታያል።",
+      "floatingToolbarOff": "ጠፍቷል",
+      "floatingToolbarOn": "ነቅቷል",
+      "rightClickLabel": "ወደ ቀኝ-ጠቅ ምናሌ",
+      "rightClickHint": "ተንሳፋፊ መሣሪያ አሞሌና ተፈጥሮ ምናሌ ይቀያይሩ።",
+      "rightClickTooltip": "ወደ ቀኝ ሲጫን ተፈጥሮ ምናሌ ይጠቀሙ። አሞሌ ሲደምቅ ይቀጥላል።",
+      "inlineTogglesLabel": "ሙቀጫ ቁልፎች",
+      "inlineTogglesHint": "ወፍራምና ሰያፍ ቁልፎች ተንሳፋፊ አሞሌ ውስጥ።",
+      "inlineTogglesTooltip": "B እና I ቁልፎቹን ከተንሳፋፊ አሞሌ ይደብቁ። Markdown አቋራጮች (**, _) ይቀጥላሉ።",
+      "listDepthLabel": "የዝርዝር ጥልቀት",
+      "listDepthHint": "የነጥብና ቁጥር ዝርዝሮች ምን ያህል ሊጠለቁ ይችላሉ።",
+      "listDepthTooltip": "የዝርዝር ጥልቀት ወሰን ይጨምሩ ወይም ይቀንሱ። አሁን በ2 ደረጃ ቋሚ ነው።",
+      "templateDefaultsLabel": "የአብነት ነባሪዎች",
+      "templateDefaultsHint": "በእያንዳንዱ አብነት የተለዩ ቅርጸት ስብስቦች።",
+      "templateDefaultsTooltip": "እያንዳንዱ አብነት (ልቦለድ፣ ማስታወሻ፣ ቴክኒካዊ) የራሱ ቅርጸት ስብስብ ይምረጥ።"
+    },
+    "docInspector": {
+      "title": "ሰነድ ተቆጣጣሪ",
+      "subtitle": "በሰነድ ተቆጣጣሪ ውስጥ ምን ዓይነት መስኮች ይታዩ ይምረጡ። እያንዳንዱ ዓለም አቀፍ ሊዘጋ ወይም በቦታ ሊሻሻል ይችላል።",
+      "statusLabel": "ሁኔታ",
+      "statusHint": "የሰነድ ሁኔታ አሳይ፤ የተጠናቀቁ ሰነዶችን ከማርትዕ ቆልፍ።",
+      "wordLimitLabel": "የቃላት ወሰን",
+      "wordLimitHint": "በሰነድ የሚቀመጥ የቃላት ቁጥር ወሰን አሳይ።",
+      "charLimitLabel": "የቁምፊ ወሰን",
+      "charLimitHint": "በሰነድ የሚቀመጥ የቁምፊ ቁጥር ወሰን አሳይ።",
+      "dueDateLabel": "የቀነ ሰዓት",
+      "dueDateHint": "በሰነድ የሚቀመጥ የቀነ ሰዓት አሳይ።",
+      "highlightLabel": "ወሰን ያለፈ ጽሑፍ ደምቅ",
+      "highlightHint": "ወሰን ያለፈ ጽሑፍ በአርታዒ ምልክት ያድርጉ።",
+      "statusStagesLabel": "የሁኔታ ደረጃዎች",
+      "statusStagesHint": "በሁኔታ መምረጫ ምን ደረጃዎች ይታዩ ይምረጡ።",
+      "on": "ነቅቷል",
+      "off": "ጠፍቷል",
+      "inherit": "ነባሪ ({{state}})",
+      "inheritTooltip": "ከዓለም አቀፍ ቅንብሮች ተወርሷል",
+      "stateOn": "ነቅቷል",
+      "stateOff": "ጠፍቷል"
+    },
+    "accessibility": {
+      "title": "ተደራሽነት",
+      "subtitle": "ምቾት እና ረዳት ቴክኖሎጂ ለማስተካከል። ሁሉም አማራጮች ከአሁኑ ልምምድ ይጀምራሉ — እስከ ምርጫዎ ምንም አይለወጥም።",
+      "theme": {
+        "label": "ገጽታ እና ንፅፅር",
+        "hint": "ከፍተኛ-ንፅፅር ገጽታዎች የ WCAG AAA ንፅፅር ደረጃ ያሟሉ።",
+        "light": "ቀላል",
+        "dark": "ጨለማ",
+        "hcLight": "ከፍተኛ ንፅፅር (ቀላል)",
+        "hcDark": "ከፍተኛ ንፅፅር (ጨለማ)"
+      },
+      "motion": {
+        "label": "እንቅስቃሴ",
+        "hint": "የበይነ-ገጽ አኒሜሽኖችን ቀንሱ ወይም ያጥፉ።",
+        "auto": "ከስርዓት ጋር አዛምድ",
+        "reduced": "የቀነሰ",
+        "full": "ሙሉ"
+      },
+      "textSize": {
+        "label": "የጽሑፍ መጠን",
+        "hint": "የማንበብና የመጻፍ ቦታ ሚዛን።",
+        "sm": "ትንሽ",
+        "base": "ነባሪ",
+        "lg": "ትልቅ",
+        "xl": "በጣም ትልቅ"
+      },
+      "lineSpacing": {
+        "label": "የመስመር ክፍተት",
+        "hint": "በፕሮዝ መስመሮች መካከል ተጨማሪ ቦታ።",
+        "normal": "መደበኛ",
+        "relaxed": "ዘና ያለ",
+        "loose": "ልቅ"
+      },
+      "linkUnderline": {
+        "label": "ሁልጊዜ አገናኞችን አስምር",
+        "hint": "አገናኞች ቀለምን ብቻ ሳይሆኑ መስመር ያላቸው ሆነው ይታዩ።"
+      },
+      "focus": {
+        "label": "የተሻሻለ ትኩረት አመልካች",
+        "hint": "ትኩረት ሲደረስ ወፍራምና ከፍተኛ-ንፅፅር ዝርዝር ይጠቀሙ።"
+      },
+      "reset": {
+        "label": "ወደ ነባሪ መልስ",
+        "hint": "እንቅስቃሴ፣ የጽሑፍ መጠን፣ የመስመር ክፍተት፣ አገናኞችና ትኩረትን ወደ ነባሪ ይመልሱ። ገጽታዎ ሳይለወጥ ይቆያል።",
+        "action": "ዳግም አስጀምር"
+      }
+    },
+    "general": {
+      "title": "አጠቃላይ",
+      "subtitle": "LIpsum Writer ነባሪ ሆኖ የሚታይ ስዕሎ። ምንም አያፈርስም።",
+      "comingSoonBody": "ጠቅ ያለ ጥግ፣ ቀነሰ-እንቅስቃሴ፣ የቁልፍ ሰሌዳ ፍንጭ ተሬቃ፣ እና መጀመሪያ ምን ይታይ።",
+      "compactDensityLabel": "ጠቅ ያለ ጥግ",
+      "compactDensityHint": "ዝርዝሮቹ ጠበቅ ያሉ ረድፎች፣ ሁሉም ቦታ ጠበቅ ያለ ስፋት።",
+      "reduceMotionLabel": "እንቅስቃሴ ቀንስ",
+      "reduceMotionHint": "ከእይታ ወደ እይታ ሽጋ አኒሜሽኖችን ዝለሉ።",
+      "keyboardHintsLabel": "የቁልፍ ሰሌዳ ፍንጮች አሳይ",
+      "keyboardHintsHint": "ቶልቲፕና ቁልፎች ማዕዘን ⌘-key አቋራጮችን አሳዩ።",
+      "startupLabel": "ሲከፈት ምን ይምጣ",
+      "startupHint": "አፕሊኬሽን ሲጀምሩ ምን ያዩ።",
+      "startupOptions": {
+        "lastView": "የመጨረሻ እይታ",
+        "home": "ዋና ገጽ",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "መልክ",
+      "subtitle": "ቀለም፣ ፊደል፣ ጥግ። ለዚህ ቦታ የሚፈልጉት ስሜት።",
+      "comingSoonBody": "የተዘጋጁ ገጽታ ቀለሞች፣ አክሰንት ቀለም፣ እና ጥግ። አሁን ያለው ገጽታ ቀያሪ በዓለሙ ምሰሶ ፈጣን ቅንብሮች ውስጥ ነው።",
+      "themeLabel": "ገጽታ",
+      "themeHint": "ሦስት የተዘጋጁ ቀለሞች። ሁሉ ነገር ይቀይራሉ — ቁናዎቹ ቀለሞች፣ ፀጉሮቹ መስመሮች፣ ቅርጸቱ ጭምር።",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "ነባሪ",
+        "studio": "Studio",
+        "studioSub": "ገለልተኛ",
+        "midnight": "Midnight",
+        "midnightSub": "ጨለማ"
+      },
+      "accentLabel": "አክሰንት",
+      "accentHint": "ሆቨር፣ ትኩረት፣ ንቁ ማርትዕ ቀለበት ለ።",
+      "densityLabel": "ጥግ",
+      "densityOptions": {
+        "cozy": "ምቹ",
+        "default": "ነባሪ",
+        "compact": "ጠቅ ያለ"
+      }
+    },
+    "templates": {
+      "title": "አብነቶች",
+      "subtitle": "ለአዲስ ቦታዎችና ሰነዶች ዳግም ጥቅም ሊሰጡ የሚችሉ ጥለቶች።",
+      "comingSoonBody": "ክፍሎች፣ ነባሪ ሰነድ ስሞች፣ እና ፕሮዝ ስቱቦች ያሉ የራስዎ አብነቶች ያዘጋጁ።",
+      "items": {
+        "fiction": "ልቦለድ",
+        "fictionSub": "ጽሑፍ · ዓለም · ወርክሾፕ",
+        "research": "ምርምር",
+        "researchSub": "ምንጮች · ማስታወሻዎች · ቅድመ-ጽሑፎች",
+        "journal": "ማስታወሻ ደብተር",
+        "journalSub": "ዕለታዊ · ሳምንታዊ · ነጸብራቆች",
+        "essay": "ድርሰት",
+        "essaySub": "ዝርዝር · ቅድመ-ጽሑፎች · የመጨረሻ"
+      }
+    },
+    "palettes": {
+      "title": "ማድመቂያ ቀለሞች",
+      "subtitle": "በቦታ አምስት ቦታዎች ያሉ — እያንዳንዱ ስም ሰጡ እና ቀለሙን ቀይሩ።",
+      "comingSoonBody": "በቦታዎቹ መካከል ስም ያላቸው ማድመቂያ ቀለሞችን (ማስረጃ፣ ለማሻሻያ፣ ማጣቀሻ…) ያርትዑ፣ ያስቀምጡ፣ ቀያይሩ።",
+      "items": {
+        "evidence": "ማስረጃ",
+        "revise": "ለማሻሻያ",
+        "reference": "ማጣቀሻ",
+        "quote": "ጥቅስ",
+        "loose": "ያልተጠናቀቀ"
+      },
+      "rename": "ዳግም ሰይም",
+      "tune": "ቀይር"
+    },
+    "citations": {
+      "title": "ጥቅስ ዘዴ",
+      "subtitle": "በቦታዎቹ ሁሉ ነባሪ ጥቅስ ዘዴ።",
+      "comingSoonBody": "ዓለም አቀፍ ዘዴ (Chicago, APA, MLA…) ይምረጡ፤ በቦታ ሊሻሻሉ ይችላሉ።",
+      "styleLabel": "ነባሪ ዘዴ",
+      "styleHint": "አዲስ ጥቅስ ሲያስገቡ ይጠቀማል። የቦታ ማሻሻያዎች ወደፊት ይመጣሉ።",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "ማስታወሻዎች",
+      "subtitle": "የጠርዝ ማስታወሻዎች እና ሙቀጫ ማስታወሻዎች።",
+      "comingSoonBody": "የማስታወሻ ዓይነቶች፣ ነባሪ ታይነት፣ እና ወደ ውጭ ላክ ባህሪ።",
+      "showMarginLabel": "የጠርዝ ማስታወሻ አሳይ",
+      "showMarginHint": "ቦታ ሲኖር ማስታወሻዎቹ ቀኝ ጠርዝ ላይ ይንሳፈፋሉ።",
+      "showInlineLabel": "ሙቀጫ ማድመቂያ አሳይ",
+      "showInlineHint": "የማስታወሻ ቀለም ወደ ታች ያለው ፕሮዝ ላይ ያፈስሳል።",
+      "exportLabel": "ወደ ውጭ ልኬ ጨምር",
+      "exportHint": "ማስታወሻዎቹ ከሰነዱ ጋር ወደ ውጭ ይላካሉ።"
+    },
+    "export": {
+      "title": "ወደ ውጭ ላክ / አስገባ",
+      "subtitle": "ውሂብ ከ LIpsum Writer ያስወጡ ወይም ያስገቡ።",
+      "comingSoonBody": "ወደ .zip ጅምላ ላክ፣ ከሌላ LIpsum ጥቅል ወይም Markdown ዳይሬክቶሪ አስገባ።",
+      "formatLabel": "የወደ ውጭ ቅርጸት",
+      "formatHint": "የሰነድና ቦታ ወደ ውጭ ላኮቹ ተመሳሳይ ነባሪ ይጠቀማሉ።",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "ከምን አስገባ",
+      "importHint": "ሌላ LIpsum ጥቅል ወይም Markdown ፋይሎች ያሉ ዳይሬክቶሪ አስገባ።",
+      "importOptions": {
+        "bundle": "LIpsum ጥቅል (.zip)",
+        "markdown": "Markdown አቃፊ",
+        "obsidian": "Obsidian vault"
+      },
+      "importSpaceLabel": "ቦታ አስገባ",
+      "importSpaceHint": "ቦታ ከ Writer ማህደር (.zip) ወደዚህ አሳሽ አስገቡ — ስናፕሾት ወረዶ ወይም ከሌላ መሣሪያ ወደ አቃፊ ሲንክ ወደ ውጭ ተልኮ።",
+      "importChooseFile": "ማህደር ምረጥ…",
+      "importing": "እያስገባ ነው…",
+      "importFailed": "ማስገባት ከሸፈ፡ {{message}}",
+      "comingSoonLabel": "ተጨማሪ ቅርጸቶች",
+      "comingSoonHint": "ጅምላ ወደ ውጭ ላክ፣ ከ Markdown አቃፊዎች ወይም Obsidian ማህደሮች አስገባ።",
+      "comingSoonTooltip": "ታቅዷል — ገና አይደለም።"
+    },
+    "data": {
+      "title": "ውሂብዎ",
+      "subtitle": "ሥራዎ የሚቀመጥበትና ምን ያህል ቦታ እንደሚወስድ።",
+      "comingSoonBody": "IndexedDB አጠቃቀም፣ ማከማቻ ግምት፣ እና አንድ-ጠቅ ሙሉ ሰርዝ።",
+      "storageLabel": "ጥቅም ላይ ያለ ማከማቻ",
+      "storageValue": "≈ 12.4 MB · 4 ቦታዎች፣ 38 ሰነዶች",
+      "engineLabel": "የማከማቻ ሞተር",
+      "engineValue": "IndexedDB (አካባቢያዊ አሳሽ)",
+      "wipeLabel": "ሁሉ ነገር ጥረጉ",
+      "wipeHint": "ከዚህ አሳሽ ሁሉንም ቦታዎች፣ ሰነዶች፣ እና ስናፕሾቶች ያስወግዳል። ቀልብ የለም።",
+      "wipeButton": "አካባቢያዊ ውሂብ ጥረጉ…"
+    },
+    "about": {
+      "title": "ስለ",
+      "subtitle": "ግንባታ መረጃ እና አገናኞች።",
+      "comingSoonBody": "ታሪኩ ለ /about ገጽ ይዩ፤ ይህ ትሩፍ ግንባታ መረጃ፣ ፈቃድ፣ እና ለውጥ ዝርዝር ይይዛል።",
+      "versionLabel": "ስሪት",
+      "versionValue": "{{version}}",
+      "buildLabel": "ግንባታ",
+      "buildValue": "አካባቢያዊ",
+      "licenseLabel": "ፈቃድ",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "አገናኞች",
+      "links": {
+        "source": "ምንጭ",
+        "changelog": "ለውጥ ዝርዝር",
+        "feedback": "ሃሳብ ላክ"
+      }
+    },
+    "account": {
+      "title": "መለያ",
+      "subtitle": "ግቤት፣ በመሣሪያዎች ሲንክ፣ እና የጋራ የሥራ ቦታዎች።",
+      "comingSoonBody": "ክላውድ ሲንክ አሁን አይገኝም — Lotem አካባቢያዊ ብቻ ነው። ሲንክ ሲጀምር መለያ፣ ግቤት፣ እና የጋራ የሥራ ቦታዎች ይመጣሉ።",
+      "signedOutLabel": "ግባ",
+      "signedOutHint": "ክላውድ ሲንክ ገና አይደለም። ይህ ዲዛይኑን ለማሳየት ነው።",
+      "signInButton": "ከኢሜይል ጋር ግባ",
+      "syncLabel": "ይህን መሣሪያ ሲንክ አድርግ",
+      "syncHint": "ሲገቡ ቦታዎቹ ወደ ሌሎች መሣሪያዎች ይተላለፋሉ።"
+    },
+    "typography": {
+      "title": "ፊደል ጥበብ",
+      "subtitle": "ለሁሉም ዓለሞች ነባሪ። እያንዳንዱ ዓለም ሊሻሻል ይችላል።",
+      "comingSoonBody": "ለአዲስ ዓለሞች የፕሮዝ ፊደል፣ UI ፊደል፣ ነባሪ ማንበቢያ መጠን፣ መስመር ቁመት፣ እና ልኬት ይምረጡ።",
+      "proseFontLabel": "የፕሮዝ ፊደል",
+      "uiFontLabel": "የUI ፊደል",
+      "proseSizeLabel": "የፕሮዝ መጠን",
+      "proseSizeHint": "ለአዲስ ዓለሞች ነባሪ።",
+      "lineHeightLabel": "የመስመር ቁመት",
+      "measureLabel": "ልኬት",
+      "measureHint": "ከፍተኛ የመስመር ስፋት።",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "አቋራጮች",
+      "subtitle": "ለአሰሳ፣ ቅርጸት፣ እና ሁነቶች የቁልፍ ሰሌዳ ትስስሮች።",
+      "comingSoonBody": "ለጻፍ/አንብብ/ክፈፈጥ፣ ትኩረት ሁነት፣ እና ቅርጸት አሞሌ ዳግም የሚሰሩ አቋራጮች።",
+      "navHeader": "አሰሳ",
+      "formatHeader": "ቅርጸት",
+      "modeHeader": "ሁነቶች",
+      "items": {
+        "openSettings": "ቅንብሮች ክፈት",
+        "quickSettings": "ፈጣን ቅንብሮች",
+        "findInDoc": "በሰነዱ ፈልግ",
+        "toggleFocus": "ትኩረት ቀያይር",
+        "toggleInspector": "ተቆጣጣሪ ቀያይር",
+        "bold": "ወፍራም",
+        "italic": "ሰያፍ",
+        "underline": "ሰምር",
+        "heading1": "ርዕስ 1",
+        "heading2": "ርዕስ 2",
+        "write": "የጽሑፍ ሁነት",
+        "read": "የማንበቢያ ሁነት",
+        "split": "የመክፈያ ሁነት"
+      }
+    },
+    "backups": {
+      "title": "ምትኬዎች",
+      "subtitle": "አካባቢያዊ ውሂብዎን ወደ ውጭ ላኩ፣ ወደ ቀድሞ ሁኔታ ይመልሱ፣ ስናፕሾት ይውሰዱ።",
+      "comingSoonBody": "ጊዜ-ተኮር አካባቢያዊ ስናፕሾቶች፣ ወደ .zip ዓካፋ ወደ ውጭ ላክ፣ ከቀዳሚ ምትኬ ወደ ቀድሞ ሁኔታ ይመልሱ።",
+      "intervalLabel": "የራስ-ስናፕሾት ልዩነት",
+      "intervalOptions": {
+        "5min": "5 ደቂቃ",
+        "10min": "10 ደቂቃ",
+        "30min": "30 ደቂቃ",
+        "off": "ጠፍቷል"
+      },
+      "keepLabel": "ያቆዩ",
+      "keepHint": "ያረጁ ስናፕሾቶቹ ራስ-ሰር ይወድቃሉ።",
+      "keepOptions": {
+        "last50": "የመጨረሻ 50",
+        "days7": "7 ቀናት",
+        "days30": "30 ቀናት"
+      },
+      "latestLabel": "የቅርብ ጊዜ",
+      "latestValue": "ከ12 ደቂቃ በፊት · 1,190 ቃላት"
+    },
+    "sync": {
+      "title": "ሲንክ",
+      "subtitle": "ቦታዎቹን ወደ የሚፈልጉት አቃፊ ላኩ። Google Drive፣ Dropbox፣ ወይም iCloud አቃፊ ዘንድ ያቅዱ — ከዚያ ሲንክ ይሰራል።",
+      "unsupportedTitle": "በዚህ አሳሽ አይደለም",
+      "unsupportedBody": "የአቃፊ ሲንክ File System Access API ይፈልጋል። Chrome፣ Edge፣ እና ሌሎች Chromium አሳሾች ዴስክቶፕ ላይ ይሠራሉ። ለመጠቀም ወደ ደጋፊ አሳሽ ቀይሩ።",
+      "folderLabel": "የሲንክ አቃፊ",
+      "folderHint": "እያንዳንዱ ሲንክ ለያንዳንዱ ቦታ Markdown .zip ወደዚሁ ይጽፋል — የመጨረሻ 5 ተጨምሮ latest.zip። ሲንክ ከምትኬ ተለይቷል።",
+      "noFolder": "ምንም አቃፊ አልተያያዘም",
+      "chooseFolder": "አቃፊ ምረጥ…",
+      "changeFolder": "ቀይር…",
+      "disconnect": "አቋርጥ",
+      "intervalLabel": "ራስ-ሲንክ",
+      "intervalHint": "አፕሊኬሽን ክፍት ሆኖ አቃፊ ሲገናኝ ቦታዎቹ ምን ያህል ጊዜ ይሲንካሉ። እያንዳንዱ ቦታ ይህን ነባሪ ሊሻሻል ይችላል።",
+      "intervalOff": "ጠፍቷል",
+      "intervalMinutes": "{{count}} ደቂቃ",
+      "intervalDefault": "ነባሪ ({{label}})",
+      "syncLabel": "ዓካፋ ሲንክ",
+      "pushOnlyHint": "አሁን ወደ ውጭ ላክ ብቻ — ይህ አካባቢያዊ ውሂብዎን ወደ አቃፊ ይጽፋል። ወደ ውስጥ መሳብ ወደፊት ይመጣል።",
+      "syncNow": "አሁን ሲንክ አድርግ",
+      "syncNowAll": "ሁሉም ቦታዎች ሲንክ አድርግ",
+      "reconnectHint": "ሲንክ ቆሟል — አሳሹ ለዚህ ክፍለ-ጊዜ እንደገና የአቃፊ ፈቃድ ያስፈልገዋል። ለዓካፋ እና ራስ-ሲንክ ዳግም ያገናኙ።",
+      "reconnectButton": "ዳግም አገናኝ",
+      "reconnecting": "ዳግም እያገናኝ ነው…",
+      "syncing": "እየሲንክ ነው…",
+      "syncFailed": "ሲንክ ከሸፈ፡ {{message}}",
+      "lastSynced": "{{when}} ሲንክ ተደርጓል",
+      "neverSynced": "ሲንክ ተደርጎ አያውቅም",
+      "justNow": "አሁን ብቻ",
+      "resultsTitle": "የመጨረሻ ሩጫ",
+      "spaceOk": "ሲንክ ሆኗል",
+      "spaceFailed": "ከሸፈ",
+      "historyTitle": "የቅርብ ጊዜ ሲንኮች",
+      "historyEmpty": "ሲንክ ገና የለም።",
+      "columns": {
+        "when": "መቼ",
+        "space": "ቦታ",
+        "kind": "ዓይነት",
+        "size": "መጠን",
+        "status": "ሁኔታ"
+      },
+      "kind": {
+        "auto": "ራስ-ሰር",
+        "manual": "ዓካፋ"
+      },
+      "status": {
+        "ok": "ሆነ",
+        "error": "ስህተት"
+      }
+    },
+    "space": {
+      "breadcrumb": "ቦታ · ቅንብሮች",
+      "shellSubtitle": "የቦታ ቅንብሮች",
+      "loading": "ቦታ እየጫነ ነው…",
+      "groups": {
+        "thisSpace": "ይህ ቦታ",
+        "sharingMembers": "ማጋራት & አባላት",
+        "data": "ውሂብ",
+        "dangerZone": "አደጋ"
+      },
+      "tabs": {
+        "general": "አጠቃላይ",
+        "docInspector": "ሰነድ ተቆጣጣሪ",
+        "template": "አብነት",
+        "palette": "ማድመቂያ ቀለሞች",
+        "sharing": "ማጋራት",
+        "members": "አባላት",
+        "backups": "ምትኬዎች",
+        "sync": "ሲንክ",
+        "export": "ወደ ውጭ ላክ",
+        "danger": "አደጋ ዞን"
+      },
+      "docInspector": {
+        "title": "ሰነድ ተቆጣጣሪ",
+        "subtitle": "ለዚህ ቦታ ዓለም አቀፍ ተቆጣጣሪ ቅንብሮችን ሻሽሉ።"
+      },
+      "palette": {
+        "title": "ማድመቂያ ቀለሞች",
+        "subtitle": "ለዚህ ቦታ አምስት ስም ያላቸው ቀይር ሊሆኑ የሚችሉ ማድመቂያ ቀለሞች።",
+        "comingSoonBody": "ለዚህ ቦታ ማድመቂያ ቦታዎቹን ዳግም ሰይሙ፣ ቀለም ቀይሩ፣ ዳግም ይደርድሩ።",
+        "items": {
+          "evidence": "ማስረጃ",
+          "revise": "ለማሻሻያ",
+          "reference": "ማጣቀሻ",
+          "quote": "ጥቅስ",
+          "loose": "ያልተጠናቀቀ"
+        },
+        "rename": "ዳግም ሰይም",
+        "tune": "ቀይር"
+      },
+      "export": {
+        "title": "ወደ ውጭ ላክ",
+        "subtitle": "ይህ ቦታ ይዘት ወደ ሌላ መሣሪያ ላኩ።",
+        "comingSoonBody": "ወደ Markdown .zip (አሁን ከምትኬ)፣ LaTeX፣ HTML፣ ወይም PDF — ሁሉ በአንድ ቦታ።",
+        "formatLabel": "ቅርጸት",
+        "formatHint": "Markdown ቀዳሚ ነው፤ ሌሎቹ ይቀጥላሉ።",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "የቅርብ ጊዜ ወደ ውጭ ልኬ",
+        "lastValue": "ሂደት አልተጀምረም"
+      },
+      "general": {
+        "title": "አጠቃላይ",
+        "subtitle": "ለዚህ ቦታ የሚለዩ ዝርዝሮች። ለውጦቹ ወዲያው ይፈጸማሉ።",
+        "nameLabel": "የቦታ ስም",
+        "nameHint": "ጎን-አሞሌ ርዕሰ-ጉዳይ እና የቦታ ምሰሶ ቶልቲፕ ላይ ይታያሉ።",
+        "tagLabel": "መለያ",
+        "tagHint": "ለቦታ ምሰሶ ሰሌዳ ላይ ሚታይ አጭር ኮድ (2–4 ቁምፊዎች)።"
+      },
+      "sharing": {
+        "title": "ማጋራት",
+        "subtitle": "ይህ ቦታ እንዴት ይጋራ ይቆጣጠሩ።",
+        "comingSoonBody": "በቦታ ታይነት እና ጋራ-ሊቶ አገናኞች። ክላውድ ሲንክ ሲጀምር ይመጣሉ።",
+        "visibilityLabel": "ታይነት",
+        "visibilityOptions": {
+          "private": "ግላዊ",
+          "link": "አገናኝ ያለው ሁሉ",
+          "members": "አባላት ብቻ"
+        },
+        "linkLabel": "ሊጋራ የሚችል አገናኝ",
+        "linkHint": "ነባሪ ሆኖ ማንበብ-ብቻ ነው። ማርትዕ ፈቃድ አባላትን ይከተላል።",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "ቅዳ"
+      },
+      "template": {
+        "title": "አብነት",
+        "subtitle": "ይህ ቦታ ሲፈጠር የተጠቀመው የአወቃቀር አብነት።",
+        "comingSoonBody": "ቦታ ከተፈጠረ በኋላ አብነቱን መቀየር ገና አይቻልም። ክፍሎችና ሰነዶች ደህና ሲፈናቀሉ ይመጣል።",
+        "currentLabel": "አሁናዊ አብነት",
+        "currentValue": "ልቦለድ",
+        "currentSub": "ጽሑፍ · ዓለም · ወርክሾፕ",
+        "changeLabel": "አብነት ቀይር",
+        "changeHint": "ያሉ ክፍሎችና ሰነዶች ወደ አዲሱ አብነት ይፈናቀላሉ።",
+        "changeButton": "አብነት ቀይር…"
+      },
+      "members": {
+        "title": "አባላት",
+        "subtitle": "ለዚህ ቦታ ዳርቻ ያላቸው ሠራተኛ-ጸሐፊዎች እና ገምጋሚዎች።",
+        "comingSoonBody": "ሠራተኞችን ጋብዙ፣ ሚናዎችን ያስተዳድሩ፣ ለውጦቹን ይገምግሙ። ክላውድ ሲንክ ሲጀምር ይመጣሉ።",
+        "inviteLabel": "ከኢሜይል ጋብዝ",
+        "inviteHint": "ወደዚህ ቦታ ለመቀላቀል አገናኝ ይልካቸዋለሁ።",
+        "invitePlaceholder": "name@example.com",
+        "inviteButton": "ጥሪ ላክ",
+        "membersLabel": "አባላት",
+        "roles": {
+          "owner": "ባለቤት",
+          "editor": "አርታዒ",
+          "viewer": "ተመልካች"
+        },
+        "you": "እርስዎ"
+      },
+      "backups": {
+        "title": "ምትኬዎች",
+        "subtitle": "ይህ ቦታ ወደ .zip ስናፕሾት ያድርጉ — ወርደው ያቆዩ እና ወደ ቀድሞ ሁኔታ ይመልሱ።",
+        "retentionHint": "{{count}} የቅርብ ጊዜ ስናፕሾቶችን እያቆዩ — ያረጁ ራስ-ሰር ይወገዳሉ።",
+        "snapshotNow": "+ አሁን ስናፕሾት",
+        "snapshotting": "ስናፕሾት እየወሰደ ነው…",
+        "snapshotFailed": "ስናፕሾት ከሸፈ፡ {{message}}",
+        "historyTitle": "ታሪክ",
+        "empty": "ስናፕሾቶቹ ገና ምንም — + አሁን ስናፕሾት ብለው ይፍጠሩ።",
+        "columns": {
+          "when": "መቼ",
+          "kind": "ዓይነት",
+          "size": "መጠን",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "ዓካፋ",
+          "auto": "ራስ-ሰር",
+          "snapshot": "ስናፕሾት"
+        },
+        "download": "↓ አውርድ",
+        "delete": "ሰርዝ",
+        "deleteConfirm": "ይህን ስናፕሾት ሰርዝ? ቀልብ የለም።",
+        "deleted": "ስናፕሾቱ ተሰርዟል።",
+        "justNow": "አሁን ብቻ",
+        "restore": "↺ ወደ ቀድሞ ሁኔታ ይመልሱ",
+        "restoreUnavailable": "ይህ ስናፕሾት ወደ ቀድሞ ሁኔታ ከሚመልሰው ድጋፍ ቀዳሚ ነው — ማውረድ ብቻ ይቻላል።",
+        "restoreDialogTitle": "ይህን ስናፕሾት ወደ ቀድሞ ሁኔታ ይምለስ?",
+        "restoreDialogBody": "ይህ ቦታ አሁናዊ ይዘት ስናፕሾቱ ይተካዋል። የአሁናዊ ሁኔታ ስናፕሾቱ ቀዲሞ ይቀመጣል — ይህን ወደ ቀድሞ ሁኔታ ለመመለስ መሰናዶ አለ።",
+        "restoreConfirm": "ወደ ቀድሞ ሁኔታ ይምለስ",
+        "restoreCancel": "ሰርዝ",
+        "restoring": "ወደ ቀድሞ ሁኔታ እየመለሰ ነው…",
+        "restored": "ስናፕሾቱ ተወደ ቀድሞ ሁኔታ ተመልሷል።",
+        "restoreFailed": "ወደ ቀድሞ ሁኔታ ከሸፈ፡ {{message}}",
+        "fileRestoreTitle": "ከወረደ .zip ወደ ቀድሞ ሁኔታ ይምለሱ?",
+        "fileRestoreBody": "ከዓለም አቀፍ ቅንብሮች → ወደ ውጭ ላክ / አስገባ አስገቡ — እንደ አዲስ ቦታ ይመጣ፤ ይህ ቦታ ሳይነካ ይቀጥላል።"
+      },
+      "sync": {
+        "title": "ሲንክ",
+        "subtitle": "ይህ ቦታ ወደ ተያያዘው አቃፊ ዓካፋ ወይም ጊዜ-ተኮር ላኩ። ሲንክ ከምትኬ ተለይቷል።",
+        "folderHint": "አቃፊ ዓለም አቀፍ ቅንብሮች → ሲንክ ውስጥ ያገናኙ። ለሁሉም ቦታዎቹ ተመሳሳይ አቃፊ ይጠቀማሉ።",
+        "intervalHint": "ይህ ቦታ ምን ያህል ጊዜ ራስ-ሰር ሲንክ ይደረጋል። ዓለም አቀፍ ራስ-ሲንክ ቅንብር ለመከተል ነባሪ ይምረጡ።",
+        "syncNow": "ይህን ቦታ ሲንክ አድርግ"
+      },
+      "danger": {
+        "title": "አደጋ ዞን",
+        "subtitle": "የማይቀለበሱ ድርጊቶች። ከመቀጠልዎ በፊት በጥንቃቄ ያንብቡ።",
+        "deleteCardTitle": "ይህን ቦታ ሰርዝ",
+        "deleteCardBody": "ይህ ቦታ ሙሉ ሰነዶቹን፣ ክፍሎቹን፣ Brain space ማስታወሻዎቹን፣ ማስታወሻዎቹን፣ ጥቅሶቹን፣ እና ግንኙነቶቹን ለዘለዓለም ያስወግዳቸዋል። ቀልብ የለም።",
+        "deleteButton": "ይህን ቦታ ሰርዝ",
+        "dialogTitle": "«{{name}}» ሰርዝ?",
+        "dialogBody": "ቦታውን እና ይዘቶቹን ሁሉ ለዘለዓለም ያስወግዳቸዋል። ቀልብ የለም።",
+        "typeToConfirm": "ለማረጋገጥ {{name}} ይፃፉ",
+        "cancel": "ሰርዝ",
+        "confirm": "ቦታ ሰርዝ"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "ጠርዙ ላይ ጠፋ",
+    "body": "ያ ገጽ (ገና) የለም።",
+    "goHome": "ወደ ዋና ገጽ ሂድ"
+  },
+  "templates": {
+    "crumb": "01 — አንድ ዓይነት ክፍል",
+    "headingMain": "ምን ዓይነት ቦታ",
+    "headingAccent": "ትጀምራለህ?",
+    "chooseLegend": "አብነት ምረጥ",
+    "stage": {
+      "pre-alpha": "ሙከራ",
+      "alpha": "ቀደምት",
+      "beta": "beta"
+    },
+    "nameLabel": "ስም",
+    "tagLabel": "መለያ",
+    "syncLabel": "ክላውድ ሲንክ —",
+    "syncValue": "ጠፍቷል፣ አካባቢያዊ",
+    "syncTooltip": "ክላውድ ሲንክ አይደለም — አፕሊኬሽኑ አሁን አካባቢያዊ ብቻ ነው።",
+    "creating": "እየፈጠረ ነው…",
+    "submitLabel": "ወደ {{name}} ግባ →",
+    "newSpace": "አዲስ ቦታ",
+    "back": "ተመለስ"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} ያልተደረደሩ",
+    "title": "Brain space",
+    "mobileWarning": "Brain space ትልቅ ማሳያ ላይ የተሻለ ይሰራል።",
+    "mobileNote": "ካንቫሱ መዳፊት ወይም ትራክፓድ ያስፈልገዋል።",
+    "openInWrite": "በ Write ክፈት →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "ማፍሰስ ይጀምሩ",
+      "emptyHint": "ከታች ካርድ ዓይነት ምረጡ",
+      "pendingHint": "ለማገናኘት shift-click ሌላ ማስታወሻ ላይ · ለመሰናዶ esc ይጫኑ"
+    },
+    "note": {
+      "deleteNote": "ማስታወሻ ሰርዝ",
+      "addPicture": "ምስል አክል",
+      "addPictureCta": "ምስል ጨምር",
+      "openLinkedDoc": "የተያያዘ ሰነድ ክፈት",
+      "fetchedContent": "የተወሰደ ይዘት",
+      "openDetailsLabel": "ዝርዝሮች ክፈት",
+      "openDetailsTitle": "የዝርዝሮች ፓናል ክፈት",
+      "titlePlaceholder": "ርዕስ",
+      "addTitleCta": "+ ርዕስ",
+      "bodyEmpty": "(ለመጻፍ ጠቅ አድርጉ)",
+      "viewImage": "{{name}} ይዩ",
+      "removeImage": "{{name}} አስወግዱ",
+      "resize": "ማስታወሻ መጠን ቀይሩ",
+      "days": {
+        "sun": "እሑድ",
+        "mon": "ሰኞ",
+        "tue": "ሠለስ",
+        "wed": "ረቡዕ",
+        "thu": "ሐሙስ",
+        "fri": "ዓርብ",
+        "sat": "ቅዳሜ"
+      }
+    },
+    "drawer": {
+      "title": "የማስታወሻ ዝርዝሮች",
+      "description": "የተመረጠ ማስታወሻ ያርትዑ፤ ግንኙነቶቹን ያስተዳድሩ።",
+      "untitledPlaceholder": "ስም ያልተሰጠ",
+      "titleAriaLabel": "የማስታወሻ ርዕስ",
+      "closeAriaLabel": "መሳቢያ ዝጋ",
+      "bodyLabel": "ሰውነት",
+      "bodyPlaceholder": "ነገር ፃፉ…",
+      "picturesLabel": "ምስሎች",
+      "addPicture": "ምስል አክል",
+      "pictureLimitHint": "{{count}} ወሰን ደርሷል — ሌላ ለማክለል አንዱን አስወግዱ።",
+      "linkedDocLabel": "የተያያዘ ሰነድ",
+      "noLinkedDoc": "— ሰነድ አልተያያዘም —",
+      "untitledDoc": "ስም ያልተሰጠ",
+      "openDoc": "ክፈት",
+      "connectionsHeading": "ግንኙነቶች ({{count}})",
+      "connectionsEmpty": "ለማገናኘት ካንቫሱ ላይ ሌላ ማስታወሻ shift-click ይጫኑ።",
+      "untitledNote": "(ስም ያልተሰጠ)",
+      "removeConnection": "ግንኙነት አስወግዱ",
+      "deleteNote": "ማስታወሻ ሰርዝ"
+    }
+  },
+  "split": {
+    "title": "የክፈፈጥ እይታ",
+    "mobileWarning": "የክፈፈጥ እይታ ትልቅ ማሳያ ያስፈልጋል።",
+    "mobileNote": "ይህ ሰነድ ፈንቁ Write ሁነት ውስጥ ክፈቱ።",
+    "openInWrite": "በ Write ክፈት →",
+    "leftPrefix": "ግራ —",
+    "rightPrefix": "ቀኝ —",
+    "rightPaneAria": "ቀኝ ፓናል ሰነድ",
+    "noOtherDocs": "(ሌሎች ሰነዶች የሉም)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "ጥቅሶች",
+    "pickDoc": "ከላይ ካለው ዝቅ-ዝቅ ሰነድ ምረጡ።",
+    "dividerAria": "የክፈፈጥ ፓናሎችን ይቀያይሩ"
+  },
+  "citationsDrawer": {
+    "title": "ጥቅሶች",
+    "description": "ለዚህ ቦታ ጥቅሶችን ይፈልጉ፣ ያስገቡ፣ ወደ ውጭ ላኩ።",
+    "close": "ጥቅሶች ዝጋ",
+    "expand": "ጥቅሶች ሙሉ እይታ ውስጥ ክፈት"
+  },
+  "citations": {
+    "title": "ጥቅሶች",
+    "breadcrumb": "ምንጮች / ",
+    "entries": "{{count}} ግቤቶች",
+    "searchPlaceholder": "ደራሲዎች፣ መለያዎች፣ ዓመት…",
+    "upload": "↑ .bib / .ris አስጫን",
+    "add": "+ አክል",
+    "cancel": "× ሰርዝ",
+    "columns": {
+      "tag": "መለያ",
+      "authors": "ደራሲዎች",
+      "title": "ርዕስ",
+      "year": "ዓመት",
+      "type": "ዓይነት",
+      "used": "ጥቅም ላይ"
+    },
+    "style": "ዘዴ — CHICAGO (ደራሲ-ቀን)",
+    "exportBib": "ወደ .BIB ወደ ውጭ ላክ",
+    "summary": "{{filtered}} ይታያሉ · {{shown}} ይህ ገጽ",
+    "prevPage": "ቀዳሚ ገጽ",
+    "nextPage": "ቀጣይ ገጽ",
+    "empty": "ጥቅሶቹ ገና ምንም",
+    "noMatch": "ምንም ረድፎቹ ፍለጋዎን አያዛምዱም።",
+    "importHint": "የ .bib አስገቡ ወይም ዓካፋ ያክሉ።",
+    "pasteHeader": "BibTeX ወይም ርዕስ ለጥፉ",
+    "addCitation": "ጥቅስ ጨምር",
+    "manualCancel": "ሰርዝ",
+    "adding": "እየጨመረ ነው…",
+    "parsing": "{{name}} እየተነተነ…",
+    "imported": "{{added}} ጥቅስ{{addedPlural}} ገብቷል{{skippedSuffix}}።",
+    "skippedSuffix": "፣ {{skipped}} ድግምት{{skippedPlural}} ተዝሏል",
+    "skippedSuffixShort": "፣ {{skipped}} ተዝሏል",
+    "failed": "ለማተናተን ከሸፈ፡ {{message}}",
+    "failedManual": "ከሸፈ፡ {{message}}",
+    "addedOne": "1 ጥቅስ ታክሏል።",
+    "unknownAuthor": "(ያልታወቀ)",
+    "unknownError": "ያልታወቀ ስህተት",
+    "edit": {
+      "save": "አስቀምጥ",
+      "saving": "እያስቀመጠ ነው…",
+      "cancel": "ሰርዝ",
+      "delete": "ሰርዝ",
+      "edit": "አርትዕ",
+      "tagLabel": "መለያ",
+      "authorsLabel": "ደራሲዎች",
+      "titleLabel": "ርዕስ",
+      "yearLabel": "ዓመት",
+      "typeLabel": "ዓይነት",
+      "duplicateKey": "«{{key}}» መለያ ቀድሞ ጥቅም ላይ ነው።",
+      "updated": "1 ጥቅስ ተሻሽሏል።",
+      "deleteOne": "1 ጥቅስ ተሰርዟል።",
+      "confirmDeleteUsed": "ይህ ጥቅስ ሰነዶቹ ውስጥ {{count}}× ጥቅም ላይ ነው። እናውም ይሰርዝ?",
+      "confirmDeleteSingle": "«{{key}}» ጥቅስ ሰርዝ? ቀልብ የለም።",
+      "untitled": "(ስም ያልተሰጠ)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} ተመርጠዋል",
+      "deleteSelected": "ሰርዝ",
+      "setTypePrompt": "ዓይነት ቀይር",
+      "setTypeAria": "ለተመረጡ ጥቅሶቹ ዓይነት ቀይር",
+      "chooseOption": "ምረጥ…",
+      "ariaLabel": "ጅምላ ድርጊቶች",
+      "clearSelection": "ምርጫ ጽዳ",
+      "deleted": "{{count}} ጥቅሶቹ ተሰርዘዋል።",
+      "typeApplied": "{{count}} ጥቅሶቹ ዓይነት {{type}} ተቀይሯል።",
+      "confirmDelete": "{{count}} ጥቅስ(ቶቹ) ሰርዝ? ቀልብ የለም።"
+    },
+    "row": {
+      "selectAllAria": "ሁሉም ጥቅሶቹ ይህ ገጽ ምረጥ",
+      "viewCitationAria": "ጥቅስ {{key}} ይዩ",
+      "selectCitationAria": "ጥቅስ {{key}} ምረጥ",
+      "collapseCitationAria": "ጥቅስ {{key}} አስጠልቅ",
+      "usedCount": "{{count}}× ጥቅም ላይ",
+      "unused": "ጥቅም ላይ ያልዋለ",
+      "copyTag": "መለያ ቅዳ",
+      "copyTagAria": "መለያ {{value}} ቅዳ",
+      "copiedTitle": "ተቀድቷል",
+      "copiedTagAria": "መለያ {{value}} ተቀድቷል"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

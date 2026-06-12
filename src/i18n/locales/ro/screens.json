@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Multivers de scriere gratuit",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Primul tău spațiu este gol. Alege un șablon pentru a începe sau pornește de la zero.",
+    "tagline": "Un spațiu curat pentru scriere de lungă durată — ficțiune, cercetare, eseuri, jurnale.",
+    "continueWriting": "Continuă să scrii",
+    "startNewSpace": "Creează un spațiu nou",
+    "syncOffChip": "sincronizare/copii de rezervă dezactivate · datele pot fi pierdute",
+    "syncOnChip": "sincronizare folder activată",
+    "syncOnTitle": "Sincronizare folder activată",
+    "syncOnBody": "Munca ta se sincronizează cu folderul „{{folder}}" de pe acest dispozitiv.",
+    "warningTitle": "Versiune pre-lansare",
+    "warningBody": "Fără sincronizare de date. Totul se află în browser — ștergerea cache-ului duce la pierderea muncii. Poți activa sincronizarea cu un folder local în Setări universale → Sincronizare.",
+    "versionLine": "Versiunea {{version}}"
+  },
+  "about": {
+    "back": "înapoi",
+    "title": "despre",
+    "greeting": "Bună,",
+    "paragraph1": "Aceasta este pentru scriitorul care tot reia de la capăt. Cel care deschide un document nou, scrie trei propoziții (sau niciuna), apoi petrece 40 de minute ajustând fontul. Cel ale cărui idei bune vin la 2 noaptea și se pierd. Cel cu paisprezece file deschise, șase caiete și un draft care n-a mai avansat de o lună.",
+    "paragraph2Before": "Știu, pentru că acesta sunt eu ",
+    "paragraph2After": ". Am ADHD, autism și probabil alte -isme care nu au fost diagnosticate încă. Am nevoie de ceva care să înțeleagă creierul meu haotic, dar minunat. Un loc unde să arunc totul înainte să dispară (sau să încep să scriu). Fragmentele, gândurile pe jumătate, conexiunile de la 3 dimineața. Toate, într-un singur loc.",
+    "paragraph3": "Așa că am construit acest spațiu pentru noi. Sper că îți oferă la fel de multă dopamină pe cât mi-a oferit construirea lui.",
+    "paragraph4Before": "Încă un lucru... Cred în tehnologia pentru bine și urăsc publicitatea. Deci, aceasta va fi întotdeauna fără reclame și GRATUITĂ pentru uz necomercial. O poți bifurca și modifica după bunul plac sub ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Status",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — nu există sincronizare de date. Toate datele sunt salvate în IndexedDB în browserul tău local. Dacă ștergi cache-ul browserului, munca ta se va pierde.",
+    "feedbackBefore": "Încă construiesc asta și am o mulțime de idei ",
+    "feedbackAfter": ". Aș adorea să aud ce funcționează, ce nu și ce ai dori să existe. Feedback-ul este binevenit.",
+    "sourceLabel": "Sursă"
+  },
+  "settings": {
+    "back": "înapoi",
+    "windowTitle": "lotem · setări",
+    "breadcrumb": "SETĂRI UNIVERSALE",
+    "shellSubtitle": "SETĂRI UNIVERSALE",
+    "comingSoonBadge": "în curând",
+    "helpAria": "Ce este aceasta?",
+    "groups": {
+      "preferences": "Preferințe",
+      "writing": "Scriere",
+      "data": "Date",
+      "account": "Cont"
+    },
+    "tabs": {
+      "general": "General",
+      "appearance": "Aspect",
+      "editor": "Editor",
+      "docInspector": "Inspector document",
+      "accessibility": "Accesibilitate",
+      "typography": "Tipografie",
+      "shortcuts": "Tastatură",
+      "templates": "Șabloane",
+      "palettes": "Palete de evidențiere",
+      "citations": "Stil citate",
+      "annotation": "Adnotări",
+      "backups": "Copii de rezervă",
+      "sync": "Sincronizare",
+      "export": "Export / import",
+      "data": "Datele tale",
+      "account": "Cont",
+      "about": "Despre",
+      "language": "Limbă"
+    },
+    "language": {
+      "title": "Limbă",
+      "subtitle": "Alege limba pentru interfață și articolele din Centrul de ajutor. Traducerile lipsă revin la engleză.",
+      "label": "Limba interfeței",
+      "hint": "Modificările se aplică imediat și sunt salvate în acest browser.",
+      "machineTranslationNotice": "Traducerile altele decât engleza sunt produse automat. Ne cerem scuze pentru orice erori — vă rugăm să trimiteți feedback pentru a le corecta.",
+      "feedbackLinkLabel": "trimite feedback"
+    },
+    "editor": {
+      "title": "Editor",
+      "subtitle": "Bara de instrumente și opțiuni de scriere. Scurtăturile Markdown (#, >, -, **) funcționează indiferent de aceste setări.",
+      "floatingToolbarLabel": "Bară de instrumente flotantă",
+      "floatingToolbarHint": "Apare la selectarea textului sau clic dreapta în modul scriere.",
+      "floatingToolbarOff": "Dezactivată",
+      "floatingToolbarOn": "Activată",
+      "rightClickLabel": "Meniu clic dreapta",
+      "rightClickHint": "Comută între bara de instrumente flotantă și meniul contextual nativ al browserului.",
+      "rightClickTooltip": "Folosește meniul contextual nativ la clic dreapta în loc de bara flotantă. Bara va apărea în continuare la selectarea textului.",
+      "inlineTogglesLabel": "Butoane inline",
+      "inlineTogglesHint": "Butoane aldine și cursive în bara de instrumente flotantă.",
+      "inlineTogglesTooltip": "Ascunde butoanele B și I din bara de instrumente flotantă. Scurtăturile Markdown (**, _) continuă să funcționeze.",
+      "listDepthLabel": "Adâncime imbricare listă",
+      "listDepthHint": "Cât de adânc pot fi imbricate listele cu marcatori și numerotate.",
+      "listDepthTooltip": "Mărește sau micșorează limita de imbricare a listelor. Fixat momentan la 2 niveluri.",
+      "templateDefaultsLabel": "Valori implicite per șablon",
+      "templateDefaultsHint": "Seturi diferite de formatare pentru fiecare șablon.",
+      "templateDefaultsTooltip": "Permite fiecărui șablon (ficțiune, jurnal, tehnic…) să aleagă propriul set de formatare."
+    },
+    "docInspector": {
+      "title": "Inspector document",
+      "subtitle": "Alege care câmpuri apar în inspectorul de documente. Fiecare poate fi dezactivat universal și suprascris per spațiu.",
+      "statusLabel": "Status",
+      "statusHint": "Afișează statusul documentului și blochează documentele finalizate pentru editare.",
+      "wordLimitLabel": "Limită cuvinte",
+      "wordLimitHint": "Afișează o limită de cuvinte pe care o poți seta per document.",
+      "charLimitLabel": "Limită caractere",
+      "charLimitHint": "Afișează o limită de caractere pe care o poți seta per document.",
+      "dueDateLabel": "Dată limită",
+      "dueDateHint": "Afișează un termen limită pe care îl poți seta per document.",
+      "highlightLabel": "Evidențiază textul care depășește limita",
+      "highlightHint": "Marchează orice text care depășește limita în editor.",
+      "statusStagesLabel": "Etape status",
+      "statusStagesHint": "Alege care etape apar în selectorul de status.",
+      "on": "Activat",
+      "off": "Dezactivat",
+      "inherit": "Implicit ({{state}})",
+      "inheritTooltip": "Moștenit din setările universale",
+      "stateOn": "activat",
+      "stateOff": "dezactivat"
+    },
+    "accessibility": {
+      "title": "Accesibilitate",
+      "subtitle": "Ajustează interfața pentru confort și tehnologii asistive. Fiecare opțiune pornește de la experiența actuală — nimic nu se schimbă până nu alegi.",
+      "theme": {
+        "label": "Temă și contrast",
+        "hint": "Temele cu contrast ridicat respectă standardul WCAG AAA.",
+        "light": "Deschis",
+        "dark": "Întunecat",
+        "hcLight": "Contrast ridicat (deschis)",
+        "hcDark": "Contrast ridicat (întunecat)"
+      },
+      "motion": {
+        "label": "Mișcare",
+        "hint": "Reduce sau dezactivează animațiile interfeței.",
+        "auto": "Conform sistemului",
+        "reduced": "Redusă",
+        "full": "Completă"
+      },
+      "textSize": {
+        "label": "Dimensiune text",
+        "hint": "Scalează suprafața de citire și scriere.",
+        "sm": "Mic",
+        "base": "Implicit",
+        "lg": "Mare",
+        "xl": "Foarte mare"
+      },
+      "lineSpacing": {
+        "label": "Spațiere rânduri",
+        "hint": "Adaugă spațiu suplimentar între rândurile de text.",
+        "normal": "Normal",
+        "relaxed": "Relaxat",
+        "loose": "Larg"
+      },
+      "linkUnderline": {
+        "label": "Subliniază întotdeauna linkurile",
+        "hint": "Afișează sublinierea pentru ca linkurile să nu se bazeze doar pe culoare."
+      },
+      "focus": {
+        "label": "Indicator focus îmbunătățit",
+        "hint": "Folosește un contur mai gros și cu contrast mai mare la focus."
+      },
+      "reset": {
+        "label": "Resetează la valorile implicite",
+        "hint": "Restaurează mișcarea, dimensiunea textului, spațierea rândurilor, linkurile și focusul la valorile implicite. Tema rămâne neschimbată.",
+        "action": "Resetează"
+      }
+    },
+    "general": {
+      "title": "General",
+      "subtitle": "Cum apare LIpsum Writer implicit. Nimic din acestea nu este distructiv.",
+      "comingSoonBody": "Densitate compactă, reducere mișcare, vizibilitate indicii tastatură și vederea care se deschide la pornire.",
+      "compactDensityLabel": "Densitate compactă",
+      "compactDensityHint": "Rânduri mai strânse în liste, padding mai mic peste tot.",
+      "reduceMotionLabel": "Reduce mișcarea",
+      "reduceMotionHint": "Omite tranzițiile animate între vederi.",
+      "keyboardHintsLabel": "Afișează indicii tastatură",
+      "keyboardHintsHint": "Afișează scurtăturile ⌘ în tooltipuri și în colțul butoanelor.",
+      "startupLabel": "Deschide la pornire",
+      "startupHint": "Ce vezi când lansezi aplicația.",
+      "startupOptions": {
+        "lastView": "Ultima vedere",
+        "home": "Acasă",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Aspect",
+      "subtitle": "Culoare, font, densitate. Atmosfera pe care vrei să o creeze.",
+      "comingSoonBody": "Palete de teme selectate, culoare accent și densitate. Schimbătorul de temă actual se află în setările rapide ale șinei world.",
+      "themeLabel": "Temă",
+      "themeHint": "Trei palete selectate. Ajustează totul — culorile blocurilor, liniile, chiar și graunțul.",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "implicit",
+        "studio": "Studio",
+        "studioSub": "neutru",
+        "midnight": "Midnight",
+        "midnightSub": "întunecat"
+      },
+      "accentLabel": "Accent",
+      "accentHint": "Folosit pentru hover, focus, inelul de editare activă.",
+      "densityLabel": "Densitate",
+      "densityOptions": {
+        "cozy": "Confortabil",
+        "default": "Implicit",
+        "compact": "Compact"
+      }
+    },
+    "templates": {
+      "title": "Șabloane",
+      "subtitle": "Structuri reutilizabile pentru spații și documente noi.",
+      "comingSoonBody": "Creează propriile șabloane cu secțiuni, nume implicite pentru documente și schițe de text.",
+      "items": {
+        "fiction": "Ficțiune",
+        "fictionSub": "Manuscris · Lume · Atelier",
+        "research": "Cercetare",
+        "researchSub": "Surse · Note · Schițe",
+        "journal": "Jurnal",
+        "journalSub": "Zilnic · Săptămânal · Reflecții",
+        "essay": "Eseu",
+        "essaySub": "Schiță · Drafturi · Final"
+      }
+    },
+    "palettes": {
+      "title": "Palete de evidențiere",
+      "subtitle": "Palete cu cinci sloturi per spațiu — denumește și ajustează fiecare culoare.",
+      "comingSoonBody": "Editează, salvează și comută palete de evidențiere denumite (Dovadă, De revizuit, Referință…) între spații.",
+      "items": {
+        "evidence": "Dovadă",
+        "revise": "De revizuit",
+        "reference": "Referință",
+        "quote": "Citat",
+        "loose": "Fir nerezolvat"
+      },
+      "rename": "redenumește",
+      "tune": "ajustează"
+    },
+    "citations": {
+      "title": "Stil citate",
+      "subtitle": "Stilul implicit de citare în toate spațiile.",
+      "comingSoonBody": "Alege un stil universal (Chicago, APA, MLA…) cu suprascrieri per spațiu.",
+      "styleLabel": "Stil implicit",
+      "styleHint": "Folosit la inserarea unui citat nou. Suprascrierile per spațiu vin mai târziu.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Adnotări",
+      "subtitle": "Note marginale și adnotări inline.",
+      "comingSoonBody": "Tipuri de adnotări, vizibilitate implicită și comportament la export.",
+      "showMarginLabel": "Afișează note marginale",
+      "showMarginHint": "Adnotările plutesc în marginea dreaptă când există spațiu.",
+      "showInlineLabel": "Afișează evidențieri inline",
+      "showInlineHint": "Culoarea adnotării se aplică textului de dedesubt.",
+      "exportLabel": "Include în exporturi",
+      "exportHint": "Adnotările sunt scrise alături de conținutul documentului."
+    },
+    "export": {
+      "title": "Export / import",
+      "subtitle": "Mută datele în și din LIpsum Writer.",
+      "comingSoonBody": "Export în bloc ca .zip, import dintr-un pachet LIpsum sau director Markdown.",
+      "formatLabel": "Format export",
+      "formatHint": "Exporturile per document și per spațiu folosesc același implicit.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Importă din",
+      "importHint": "Adaugă un alt pachet LIpsum sau un director de fișiere Markdown.",
+      "importOptions": {
+        "bundle": "Pachet LIpsum (.zip)",
+        "markdown": "Folder Markdown",
+        "obsidian": "Vault Obsidian"
+      },
+      "importSpaceLabel": "Importă un spațiu",
+      "importSpaceHint": "Adaugă un spațiu în acest browser dintr-o arhivă Writer (.zip) — un snapshot descărcat sau un export de sincronizare folder de pe alt dispozitiv.",
+      "importChooseFile": "Alege arhiva…",
+      "importing": "se importă…",
+      "importFailed": "Import eșuat: {{message}}",
+      "comingSoonLabel": "Mai multe formate",
+      "comingSoonHint": "Export și import în bloc din foldere Markdown sau vault-uri Obsidian.",
+      "comingSoonTooltip": "Planificat — nu este disponibil încă."
+    },
+    "data": {
+      "title": "Datele tale",
+      "subtitle": "Unde se află munca ta și cât spațiu ocupă.",
+      "comingSoonBody": "Utilizare IndexedDB, estimare stocare și ștergere completă dintr-un singur clic.",
+      "storageLabel": "Spațiu folosit",
+      "storageValue": "≈ 12,4 MB · 4 spații, 38 documente",
+      "engineLabel": "Motor stocare",
+      "engineValue": "IndexedDB (browser local)",
+      "wipeLabel": "Șterge totul",
+      "wipeHint": "Elimină fiecare spațiu, document și snapshot din acest browser. Nu există anulare.",
+      "wipeButton": "Șterge datele locale…"
+    },
+    "about": {
+      "title": "Despre",
+      "subtitle": "Informații despre versiune și linkuri.",
+      "comingSoonBody": "Consultă pagina /about pentru poveste; această filă va găzdui informații despre versiune, licență și jurnal de modificări.",
+      "versionLabel": "Versiune",
+      "versionValue": "{{version}}",
+      "buildLabel": "Build",
+      "buildValue": "local",
+      "licenseLabel": "Licență",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Linkuri",
+      "links": {
+        "source": "Sursă",
+        "changelog": "Jurnal modificări",
+        "feedback": "Trimite feedback"
+      }
+    },
+    "account": {
+      "title": "Cont",
+      "subtitle": "Autentificare, sincronizare între dispozitive și spații de lucru partajate.",
+      "comingSoonBody": "Sincronizarea în cloud nu este disponibilă momentan — Lotem funcționează doar local. Contul, autentificarea și spațiile de lucru partajate vor fi disponibile când va fi lansată sincronizarea.",
+      "signedOutLabel": "Autentifică-te",
+      "signedOutHint": "Sincronizarea în cloud nu este disponibilă încă. Aceasta este afișată pentru a prezenta design-ul.",
+      "signInButton": "Autentifică-te cu e-mail",
+      "syncLabel": "Sincronizează acest dispozitiv",
+      "syncHint": "Odată ce te autentifici, spațiile tale se vor replica pe alte dispozitive."
+    },
+    "typography": {
+      "title": "Tipografie",
+      "subtitle": "Valori implicite pentru toate lumile. Lumile individuale le pot suprascrie.",
+      "comingSoonBody": "Alege fontul pentru proză, fontul UI, dimensiunea implicită de citire, înălțimea rândului și măsura pentru lumile noi.",
+      "proseFontLabel": "Font proză",
+      "uiFontLabel": "Font UI",
+      "proseSizeLabel": "Dimensiune proză",
+      "proseSizeHint": "Implicit pentru lumile noi.",
+      "lineHeightLabel": "Înălțime rând",
+      "measureLabel": "Măsură",
+      "measureHint": "Lățimea maximă a rândului.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Scurtături",
+      "subtitle": "Comenzi rapide de tastatură pentru navigare, formatare și moduri.",
+      "comingSoonBody": "Scurtături reatribuibile pentru scriere/citire/împărțit, modul focus și bara de formatare.",
+      "navHeader": "Navigare",
+      "formatHeader": "Formatare",
+      "modeHeader": "Moduri",
+      "items": {
+        "openSettings": "Deschide setările",
+        "quickSettings": "Setări rapide",
+        "findInDoc": "Găsește în document",
+        "toggleFocus": "Comută focusul",
+        "toggleInspector": "Comută inspectorul",
+        "bold": "Aldin",
+        "italic": "Cursiv",
+        "underline": "Subliniat",
+        "heading1": "Titlu 1",
+        "heading2": "Titlu 2",
+        "write": "Mod scriere",
+        "read": "Mod citire",
+        "split": "Mod împărțit"
+      }
+    },
+    "backups": {
+      "title": "Copii de rezervă",
+      "subtitle": "Exportă, restaurează și creează snapshot-uri ale datelor locale.",
+      "comingSoonBody": "Snapshot-uri locale programate, export manual ca .zip și restaurare dintr-o copie de rezervă anterioară.",
+      "intervalLabel": "Interval snapshot automat",
+      "intervalOptions": {
+        "5min": "5 min",
+        "10min": "10 min",
+        "30min": "30 min",
+        "off": "Dezactivat"
+      },
+      "keepLabel": "Păstrează",
+      "keepHint": "Snapshot-urile mai vechi sunt eliminate automat.",
+      "keepOptions": {
+        "last50": "Ultimele 50",
+        "days7": "7 zile",
+        "days30": "30 zile"
+      },
+      "latestLabel": "Cel mai recent",
+      "latestValue": "acum 12 min · 1.190 cuvinte"
+    },
+    "sync": {
+      "title": "Sincronizare",
+      "subtitle": "Trimite spațiile tale într-un folder ales. Indică un folder Google Drive, Dropbox sau iCloud pentru a sincroniza între dispozitive.",
+      "unsupportedTitle": "Indisponibil în acest browser",
+      "unsupportedBody": "Sincronizarea folderelor necesită API-ul File System Access, disponibil în Chrome, Edge și alte browsere Chromium pe desktop. Treci la un browser acceptat pentru a-l folosi.",
+      "folderLabel": "Folder sincronizat",
+      "folderHint": "Fiecare sincronizare scrie un .zip Markdown per spațiu aici, păstrând ultimele 5 plus un latest.zip. Sincronizarea este separată de Copii de rezervă.",
+      "noFolder": "Niciun folder conectat",
+      "chooseFolder": "Alege folder…",
+      "changeFolder": "Schimbă…",
+      "disconnect": "Deconectează",
+      "intervalLabel": "Sincronizare automată",
+      "intervalHint": "Cât de des se sincronizează spațiile automat cât timp aplicația este deschisă și folderul este conectat. Fiecare spațiu poate suprascrie această valoare implicită.",
+      "intervalOff": "Dezactivată",
+      "intervalMinutes": "{{count}} min",
+      "intervalDefault": "Implicit ({{label}})",
+      "syncLabel": "Sincronizare manuală",
+      "pushOnlyHint": "Deocamdată doar trimitere — scrie datele locale în folder. Preluarea modificărilor vine mai târziu.",
+      "syncNow": "Sincronizează acum",
+      "syncNowAll": "Sincronizează toate spațiile",
+      "reconnectHint": "Sincronizarea este în pauză — browserul are nevoie din nou de permisiunea pentru folder în această sesiune. Reconectează pentru a relua sincronizarea manuală și automată.",
+      "reconnectButton": "Reconectează",
+      "reconnecting": "Se reconectează…",
+      "syncing": "Se sincronizează…",
+      "syncFailed": "Sincronizare eșuată: {{message}}",
+      "lastSynced": "Ultima sincronizare {{when}}",
+      "neverSynced": "Niciodată sincronizat",
+      "justNow": "chiar acum",
+      "resultsTitle": "Ultima rulare",
+      "spaceOk": "sincronizat",
+      "spaceFailed": "eșuat",
+      "historyTitle": "Sincronizări recente",
+      "historyEmpty": "Nicio sincronizare încă.",
+      "columns": {
+        "when": "CÂND",
+        "space": "SPAȚIU",
+        "kind": "TIP",
+        "size": "DIMENSIUNE",
+        "status": "STATUS"
+      },
+      "kind": {
+        "auto": "auto",
+        "manual": "manual"
+      },
+      "status": {
+        "ok": "ok",
+        "error": "eroare"
+      }
+    },
+    "space": {
+      "breadcrumb": "SPAȚIU · SETĂRI",
+      "shellSubtitle": "SETĂRI SPAȚIU",
+      "loading": "Se încarcă spațiul…",
+      "groups": {
+        "thisSpace": "Acest spațiu",
+        "sharingMembers": "Partajare și membri",
+        "data": "Date",
+        "dangerZone": "Zonă periculoasă"
+      },
+      "tabs": {
+        "general": "General",
+        "docInspector": "Inspector document",
+        "template": "Șablon",
+        "palette": "Paletă de evidențiere",
+        "sharing": "Partajare",
+        "members": "Membri",
+        "backups": "Copii de rezervă",
+        "sync": "Sincronizare",
+        "export": "Export",
+        "danger": "Zonă periculoasă"
+      },
+      "docInspector": {
+        "title": "Inspector document",
+        "subtitle": "Suprascrie setările universale ale inspectorului pentru acest spațiu."
+      },
+      "palette": {
+        "title": "Paletă de evidențiere",
+        "subtitle": "Cinci culori de evidențiere denumite și ajustabile pentru acest spațiu.",
+        "comingSoonBody": "Redenumește, recolorează și reordonează sloturile de evidențiere ale acestui spațiu.",
+        "items": {
+          "evidence": "Dovadă",
+          "revise": "De revizuit",
+          "reference": "Referință",
+          "quote": "Citat",
+          "loose": "Fir nerezolvat"
+        },
+        "rename": "redenumește",
+        "tune": "ajustează"
+      },
+      "export": {
+        "title": "Export",
+        "subtitle": "Mută conținutul acestui spațiu în alt instrument.",
+        "comingSoonBody": "Export în Markdown .zip (astăzi prin Copii de rezervă), LaTeX, HTML sau PDF — totul într-un singur loc.",
+        "formatLabel": "Format",
+        "formatHint": "Markdown vine primul; restul urmează.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Ultimul export",
+        "lastValue": "niciodată"
+      },
+      "general": {
+        "title": "General",
+        "subtitle": "Detalii de identificare pentru acest spațiu. Modificările se aplică imediat și se sincronizează între vederi.",
+        "nameLabel": "Nume spațiu",
+        "nameHint": "Afișat în antetul barei laterale și în tooltipul plăcii din șina spațiului.",
+        "tagLabel": "Etichetă",
+        "tagHint": "Un cod scurt (2–4 caractere) afișat pe placa din șina spațiului."
+      },
+      "sharing": {
+        "title": "Partajare",
+        "subtitle": "Controlează modul în care este partajat acest spațiu.",
+        "comingSoonBody": "Vizibilitate per spațiu și linkuri partajabile. Va fi disponibil când sincronizarea cloud va fi lansată.",
+        "visibilityLabel": "Vizibilitate",
+        "visibilityOptions": {
+          "private": "Privat",
+          "link": "Oricine cu link",
+          "members": "Doar membri"
+        },
+        "linkLabel": "Link partajabil",
+        "linkHint": "Doar citire implicit. Privilegiile de editare urmează setările Membrilor.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "copiază"
+      },
+      "template": {
+        "title": "Șablon",
+        "subtitle": "Șablonul structural cu care a fost creat acest spațiu.",
+        "comingSoonBody": "Schimbarea șablonului unui spațiu după creare nu este suportată încă. Va fi disponibil odată ce vom putea migra secțiunile și documentele în siguranță.",
+        "currentLabel": "Șablon curent",
+        "currentValue": "Ficțiune",
+        "currentSub": "Manuscris · Lume · Atelier",
+        "changeLabel": "Schimbă șablonul",
+        "changeHint": "Reorganizează secțiunile și documentele existente conform noului șablon.",
+        "changeButton": "Schimbă șablonul…"
+      },
+      "members": {
+        "title": "Membri",
+        "subtitle": "Co-autori și recenzori cu acces la acest spațiu.",
+        "comingSoonBody": "Invită colaboratori, gestionează roluri și revizuiește modificările. Va fi disponibil cu sincronizarea cloud.",
+        "inviteLabel": "Invită prin e-mail",
+        "inviteHint": "Le vom trimite un link pentru a se alătura acestui spațiu.",
+        "invitePlaceholder": "nume@exemplu.com",
+        "inviteButton": "trimite invitație",
+        "membersLabel": "Membri",
+        "roles": {
+          "owner": "proprietar",
+          "editor": "editor",
+          "viewer": "vizitator"
+        },
+        "you": "tu"
+      },
+      "backups": {
+        "title": "Copii de rezervă",
+        "subtitle": "Creează un snapshot al acestui spațiu ca .zip pe care îl poți descărca, păstra și restaura.",
+        "retentionHint": "Se păstrează cele mai recente {{count}} snapshot-uri — cele mai vechi sunt eliminate automat.",
+        "snapshotNow": "+ snapshot acum",
+        "snapshotting": "se creează snapshot…",
+        "snapshotFailed": "Snapshot eșuat: {{message}}",
+        "historyTitle": "Istoric",
+        "empty": "Niciun snapshot încă — creează unul cu + snapshot acum.",
+        "columns": {
+          "when": "CÂND",
+          "kind": "TIP",
+          "size": "DIMENSIUNE",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "manual",
+          "auto": "auto",
+          "snapshot": "snapshot"
+        },
+        "download": "↓ descarcă",
+        "delete": "șterge",
+        "deleteConfirm": "Ștergi acest snapshot? Această acțiune nu poate fi anulată.",
+        "deleted": "Snapshot șters.",
+        "justNow": "chiar acum",
+        "restore": "↺ restaurează",
+        "restoreUnavailable": "Acest snapshot este anterior suportului de restaurare — poate fi doar descărcat.",
+        "restoreDialogTitle": "Restaurezi acest snapshot?",
+        "restoreDialogBody": "Conținutul curent al acestui spațiu va fi înlocuit cu snapshot-ul. Un snapshot al stării actuale este salvat mai întâi, astfel poți anula această restaurare.",
+        "restoreConfirm": "Restaurează",
+        "restoreCancel": "Anulează",
+        "restoring": "se restaurează…",
+        "restored": "Snapshot restaurat.",
+        "restoreFailed": "Restaurare eșuată: {{message}}",
+        "fileRestoreTitle": "Restaurezi dintr-un .zip descărcat?",
+        "fileRestoreBody": "Importă-l prin Setări universale → Export / import — revine ca un spațiu nou, lăsând acest spațiu neatins."
+      },
+      "sync": {
+        "title": "Sincronizare",
+        "subtitle": "Trimite acest spațiu în folderul conectat, manual sau conform unui program. Sincronizarea este separată de Copii de rezervă.",
+        "folderHint": "Conectează un folder în Setări universale → Sincronizare. Același folder este folosit pentru fiecare spațiu.",
+        "intervalHint": "Cât de des se sincronizează automat acest spațiu. Alege Implicit pentru a urma setarea universală de sincronizare automată.",
+        "syncNow": "Sincronizează acest spațiu"
+      },
+      "danger": {
+        "title": "Zonă periculoasă",
+        "subtitle": "Acțiuni ireversibile. Citește cu atenție înainte de a continua.",
+        "deleteCardTitle": "Șterge acest spațiu",
+        "deleteCardBody": "Elimină permanent acest spațiu împreună cu fiecare document, secțiune, notă brain-space, adnotare, citat și conexiune. Această acțiune nu poate fi anulată.",
+        "deleteButton": "Șterge acest spațiu",
+        "dialogTitle": "Ștergi „{{name}}"?",
+        "dialogBody": "Aceasta elimină permanent spațiul și tot conținutul său. Această acțiune nu poate fi anulată.",
+        "typeToConfirm": "Scrie {{name}} pentru a confirma",
+        "cancel": "Anulează",
+        "confirm": "Șterge spațiul"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Pierdut în margini",
+    "body": "Această pagină nu există (încă).",
+    "goHome": "Mergi acasă"
+  },
+  "templates": {
+    "crumb": "01 — UN FEL DE SPAȚIU",
+    "headingMain": "Ce fel de spațiu",
+    "headingAccent": "începi?",
+    "chooseLegend": "Alege un șablon",
+    "stage": {
+      "pre-alpha": "experimental",
+      "alpha": "timpuriu",
+      "beta": "beta"
+    },
+    "nameLabel": "Nume",
+    "tagLabel": "Etichetă",
+    "syncLabel": "sincronizare cloud —",
+    "syncValue": "dezactivat, local",
+    "syncTooltip": "Sincronizarea cloud este indisponibilă — aplicația este deocamdată doar locală.",
+    "creating": "se creează…",
+    "submitLabel": "intră în {{name}} →",
+    "newSpace": "spațiu nou",
+    "back": "înapoi"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} nesortate",
+    "title": "Brain space",
+    "mobileWarning": "Brain space funcționează cel mai bine pe un ecran mai mare.",
+    "mobileNote": "Pânza necesită un mouse sau trackpad.",
+    "openInWrite": "Deschide în Scriere →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "începe să arunci idei",
+      "emptyHint": "alege un tip de card mai jos",
+      "pendingHint": "shift-clic pe altă notă pentru a conecta · esc pentru a anula"
+    },
+    "note": {
+      "deleteNote": "Șterge nota",
+      "addPicture": "Adaugă imagine",
+      "addPictureCta": "adaugă o imagine",
+      "openLinkedDoc": "Deschide documentul legat",
+      "fetchedContent": "Conținut preluat",
+      "openDetailsLabel": "Deschide detalii",
+      "openDetailsTitle": "Deschide panoul de detalii",
+      "titlePlaceholder": "titlu",
+      "addTitleCta": "+ titlu",
+      "bodyEmpty": "(clic pentru a scrie)",
+      "viewImage": "Vezi {{name}}",
+      "removeImage": "Elimină {{name}}",
+      "resize": "Redimensionează nota",
+      "days": {
+        "sun": "dum",
+        "mon": "lun",
+        "tue": "mar",
+        "wed": "mie",
+        "thu": "joi",
+        "fri": "vin",
+        "sat": "sâm"
+      }
+    },
+    "drawer": {
+      "title": "Detalii notă",
+      "description": "Editează nota selectată și gestionează conexiunile sale.",
+      "untitledPlaceholder": "Fără titlu",
+      "titleAriaLabel": "Titlu notă",
+      "closeAriaLabel": "Închide panoul",
+      "bodyLabel": "Conținut",
+      "bodyPlaceholder": "Scrie ceva…",
+      "picturesLabel": "Imagini",
+      "addPicture": "Adaugă imagine",
+      "pictureLimitHint": "limita de {{count}} atinsă — elimină una pentru a adăuga alta.",
+      "linkedDocLabel": "Document legat",
+      "noLinkedDoc": "— Niciun document legat —",
+      "untitledDoc": "Fără titlu",
+      "openDoc": "Deschide",
+      "connectionsHeading": "Conexiuni ({{count}})",
+      "connectionsEmpty": "shift-clic pe altă notă de pe pânză pentru a conecta.",
+      "untitledNote": "(fără titlu)",
+      "removeConnection": "Elimină conexiunea",
+      "deleteNote": "Șterge nota"
+    }
+  },
+  "split": {
+    "title": "Vedere împărțită",
+    "mobileWarning": "Vederea împărțită necesită un ecran mai mare.",
+    "mobileNote": "Deschide acest document în modul Scriere.",
+    "openInWrite": "Deschide în Scriere →",
+    "leftPrefix": "STÂNGA —",
+    "rightPrefix": "DREAPTA —",
+    "rightPaneAria": "Document din panoul drept",
+    "noOtherDocs": "(niciun alt document)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Citate",
+    "pickDoc": "Alege un document din lista derulantă de mai sus.",
+    "dividerAria": "Redimensionează panourile împărțite"
+  },
+  "citationsDrawer": {
+    "title": "Citate",
+    "description": "Caută, importă și exportă citate pentru acest spațiu.",
+    "close": "Închide citațiile",
+    "expand": "Deschide citațiile în vedere completă"
+  },
+  "citations": {
+    "title": "Citate",
+    "breadcrumb": "Surse / ",
+    "entries": "{{count}} ÎNREGISTRĂRI",
+    "searchPlaceholder": "autori, etichete, an…",
+    "upload": "↑ încarcă .bib / .ris",
+    "add": "+ adaugă",
+    "cancel": "× anulează",
+    "columns": {
+      "tag": "ETICHETĂ",
+      "authors": "AUTORI",
+      "title": "TITLU",
+      "year": "AN",
+      "type": "TIP",
+      "used": "FOLOSIT"
+    },
+    "style": "STIL — CHICAGO (AUTOR-DATĂ)",
+    "exportBib": "EXPORTĂ CA .BIB",
+    "summary": "{{filtered}} AFIȘATE · {{shown}} PE ACEASTĂ PAGINĂ",
+    "prevPage": "Pagina anterioară",
+    "nextPage": "Pagina următoare",
+    "empty": "nicio citație încă",
+    "noMatch": "niciun rând nu corespunde căutării.",
+    "importHint": "importă un fișier .bib sau adaugă unul manual.",
+    "pasteHeader": "Lipește BibTeX sau un titlu",
+    "addCitation": "adaugă citație",
+    "manualCancel": "anulează",
+    "adding": "se adaugă…",
+    "parsing": "Se procesează {{name}}…",
+    "imported": "S-au importat {{added}} citație{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", s-au omis {{skipped}} duplicat{{skippedPlural}}",
+    "skippedSuffixShort": ", s-au omis {{skipped}}",
+    "failed": "Procesare eșuată: {{message}}",
+    "failedManual": "Eșuat: {{message}}",
+    "addedOne": "S-a adăugat 1 citație.",
+    "unknownAuthor": "(necunoscut)",
+    "unknownError": "eroare necunoscută",
+    "edit": {
+      "save": "salvează",
+      "saving": "se salvează…",
+      "cancel": "anulează",
+      "delete": "șterge",
+      "edit": "editează",
+      "tagLabel": "Etichetă",
+      "authorsLabel": "Autori",
+      "titleLabel": "Titlu",
+      "yearLabel": "An",
+      "typeLabel": "Tip",
+      "duplicateKey": "Eticheta „{{key}}" este deja folosită în acest spațiu.",
+      "updated": "S-a actualizat 1 citație.",
+      "deleteOne": "S-a șters 1 citație.",
+      "confirmDeleteUsed": "Această citație este folosită de {{count}}× în documentele tale. Ștergi oricum?",
+      "confirmDeleteSingle": "Ștergi citația „{{key}}"? Această acțiune nu poate fi anulată.",
+      "untitled": "(fără titlu)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} selectate",
+      "deleteSelected": "șterge",
+      "setTypePrompt": "setează tipul",
+      "setTypeAria": "Setează tipul pentru citațiile selectate",
+      "chooseOption": "alege…",
+      "ariaLabel": "Acțiuni în bloc",
+      "clearSelection": "golește",
+      "deleted": "S-au șters {{count}} citații.",
+      "typeApplied": "S-a setat tipul {{type}} pentru {{count}} citații.",
+      "confirmDelete": "Ștergi {{count}} citație(i)? Această acțiune nu poate fi anulată."
+    },
+    "row": {
+      "selectAllAria": "Selectează toate citațiile de pe această pagină",
+      "viewCitationAria": "Vezi citația {{key}}",
+      "selectCitationAria": "Selectează citația {{key}}",
+      "collapseCitationAria": "Restrânge citația {{key}}",
+      "usedCount": "folosit de {{count}}×",
+      "unused": "nefolosit",
+      "copyTag": "Copiază eticheta",
+      "copyTagAria": "Copiază eticheta {{value}}",
+      "copiedTitle": "Copiat",
+      "copiedTagAria": "Etichetă copiată {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}
