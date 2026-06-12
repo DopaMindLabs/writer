@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Fritt skrivande multiversum",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Ditt första utrymme är tomt. Välj en mall för att komma igång, eller börja från ingenting.",
+    "tagline": "Ett lugnt utrymme för långformat skrivande — fiktion, forskning, essäer, dagböcker.",
+    "continueWriting": "Fortsätt skriva",
+    "startNewSpace": "Starta ett nytt utrymme",
+    "syncOffChip": "synkronisering/säkerhetskopior inte aktiverat · data kan gå förlorad",
+    "syncOnChip": "mappsynkronisering på",
+    "syncOnTitle": "Mappsynkronisering aktiverad",
+    "syncOnBody": "Ditt arbete synkroniseras till mappen "{{folder}}" på den här enheten.",
+    "warningTitle": "Förhandsversion",
+    "warningBody": "Ingen datasynkronisering. Allt finns i din webbläsare och rensar du dess cache förlorar du ditt arbete. Du kan aktivera synkronisering till en lokal mapp i Universella inställningar → Synkronisering.",
+    "versionLine": "Version {{version}}"
+  },
+  "about": {
+    "back": "tillbaka",
+    "title": "om",
+    "greeting": "Hej,",
+    "paragraph1": "Det här är för skribenten som hela tiden börjar om. Den som öppnar ett nytt dokument, skriver tre meningar (eller inga) och sedan spenderar 40 minuter på att justera teckensnittet. Den vars bästa idéer dyker upp klockan 2 på natten och genast tappas bort. Den med fjorton flikar, sex anteckningsböcker och ett utkast som inte rört sig på en månad.",
+    "paragraph2Before": "Jag vet det, för det är jag ",
+    "paragraph2After": ". Jag har ADHD, autism och förmodligen andra -ismer som ännu inte diagnostiserats. Jag behöver något som förstår min kaotiska men underbara hjärna. Någonstans att dumpa allt innan det försvinner (eller börja skriva). Fragmenten, halvtankarna, kopplingarna klockan 3 på natten. Allt, på ett ställe.",
+    "paragraph3": "Så jag byggde det här utrymmet för oss. Jag hoppas att det ger dig samma dopaminkick som det ger mig att bygga det.",
+    "paragraph4Before": "En sak till... Jag tror på teknik för det goda och hatar reklam. Så det här kommer alltid vara reklamfritt och GRATIS för icke-kommersiellt bruk. Du kan forka det och ändra det som du vill under ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Status",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — det finns ingen datasynkronisering. All data sparas i IndexedDB i din lokala webbläsare. Om du rensar webbläsarens cache går ditt arbete förlorat.",
+    "feedbackBefore": "Jag bygger fortfarande det här och har massor av idéer ",
+    "feedbackAfter": ". Jag vill gärna höra vad som fungerar, vad som inte gör det, och vad du önskar fanns. Feedback är välkommen.",
+    "sourceLabel": "Källkod"
+  },
+  "settings": {
+    "back": "tillbaka",
+    "windowTitle": "lotem · inställningar",
+    "breadcrumb": "UNIVERSELLA INSTÄLLNINGAR",
+    "shellSubtitle": "UNIVERSELLA INSTÄLLNINGAR",
+    "comingSoonBadge": "kommer snart",
+    "helpAria": "Vad är det här?",
+    "groups": {
+      "preferences": "Inställningar",
+      "writing": "Skrivande",
+      "data": "Data",
+      "account": "Konto"
+    },
+    "tabs": {
+      "general": "Allmänt",
+      "appearance": "Utseende",
+      "editor": "Redigerare",
+      "docInspector": "Dokumentinspektor",
+      "accessibility": "Tillgänglighet",
+      "typography": "Typografi",
+      "shortcuts": "Tangentbord",
+      "templates": "Mallar",
+      "palettes": "Markeringspaletter",
+      "citations": "Citationsstil",
+      "annotation": "Kommentarer",
+      "backups": "Säkerhetskopior",
+      "sync": "Synkronisering",
+      "export": "Exportera / importera",
+      "data": "Dina data",
+      "account": "Konto",
+      "about": "Om",
+      "language": "Språk"
+    },
+    "language": {
+      "title": "Språk",
+      "subtitle": "Välj språk för gränssnittet och Hjälpcenter-artiklar. Saknade översättningar faller tillbaka på engelska.",
+      "label": "Gränssnittsspråk",
+      "hint": "Ändringar träder i kraft omedelbart och sparas i den här webbläsaren.",
+      "machineTranslationNotice": "Översättningar utöver engelska produceras automatiskt. Vi ber om ursäkt för eventuella fel — skicka gärna feedback så vi kan rätta till dem.",
+      "feedbackLinkLabel": "skicka feedback"
+    },
+    "editor": {
+      "title": "Redigerare",
+      "subtitle": "Verktygsfält och skrivhjälpmedel. Markdown-genvägar (#, >, -, **) fungerar oavsett dessa inställningar.",
+      "floatingToolbarLabel": "Flytande verktygsfält",
+      "floatingToolbarHint": "Visas vid markering eller högerklick i skrivläge.",
+      "floatingToolbarOff": "Av",
+      "floatingToolbarOn": "På",
+      "rightClickLabel": "Högerklicksmeny",
+      "rightClickHint": "Växla mellan det flytande verktygsfältet och webbläsarens inbyggda snabbmeny.",
+      "rightClickTooltip": "Använd den inbyggda snabbmenyn vid högerklick istället för det flytande verktygsfältet. Verktygsfältet visas fortfarande vid textmarkering.",
+      "inlineTogglesLabel": "Inline-knappar",
+      "inlineTogglesHint": "Fet och kursiv-knappar i det flytande verktygsfältet.",
+      "inlineTogglesTooltip": "Dölj F- och K-knapparna från det flytande verktygsfältet. Markdown-genvägar (**, _) fungerar fortfarande.",
+      "listDepthLabel": "Listindragningsdjup",
+      "listDepthHint": "Hur djupt punkt- och numrerade listor kan dras in.",
+      "listDepthTooltip": "Höj eller sänk taket för listindragning. För tillfället fast på 2 nivåer.",
+      "templateDefaultsLabel": "Standardinställningar per mall",
+      "templateDefaultsHint": "Olika formateringsunderuppsättningar per mall.",
+      "templateDefaultsTooltip": "Låt varje mall (fiktion, dagbok, teknisk…) välja sin egen formateringsunderuppsättning."
+    },
+    "docInspector": {
+      "title": "Dokumentinspektor",
+      "subtitle": "Välj vilka fält som visas i dokumentinspektorn. Varje fält kan inaktiveras universellt och åsidosättas per utrymme.",
+      "statusLabel": "Status",
+      "statusHint": "Visa dokumentstatus och lås färdiga dokument från redigering.",
+      "wordLimitLabel": "Ordgräns",
+      "wordLimitHint": "Visa en ordräkningsgräns som du kan ange per dokument.",
+      "charLimitLabel": "Teckengräns",
+      "charLimitHint": "Visa en teckenräkningsgräns som du kan ange per dokument.",
+      "dueDateLabel": "Förfallodatum",
+      "dueDateHint": "Visa en deadline som du kan ange per dokument.",
+      "highlightLabel": "Markera text som överskrider gränsen",
+      "highlightHint": "Markera all text bortom gränsen i redigeraren.",
+      "statusStagesLabel": "Statusfaser",
+      "statusStagesHint": "Välj vilka faser som visas i statusväljaren.",
+      "on": "På",
+      "off": "Av",
+      "inherit": "Standard ({{state}})",
+      "inheritTooltip": "Ärvt från universella inställningar",
+      "stateOn": "på",
+      "stateOff": "av"
+    },
+    "accessibility": {
+      "title": "Tillgänglighet",
+      "subtitle": "Anpassa gränssnittet för komfort och hjälpmedel. Varje alternativ börjar vid den nuvarande upplevelsen — inget förändras förrän du väljer det.",
+      "theme": {
+        "label": "Tema och kontrast",
+        "hint": "Teman med hög kontrast uppfyller WCAG AAA-kontraststandarden.",
+        "light": "Ljust",
+        "dark": "Mörkt",
+        "hcLight": "Hög kontrast (ljust)",
+        "hcDark": "Hög kontrast (mörkt)"
+      },
+      "motion": {
+        "label": "Rörelse",
+        "hint": "Minska eller inaktivera gränssnittsanimationer.",
+        "auto": "Följ system",
+        "reduced": "Reducerad",
+        "full": "Full"
+      },
+      "textSize": {
+        "label": "Textstorlek",
+        "hint": "Skala läs- och skrivytan.",
+        "sm": "Liten",
+        "base": "Standard",
+        "lg": "Stor",
+        "xl": "Extra stor"
+      },
+      "lineSpacing": {
+        "label": "Radavstånd",
+        "hint": "Lägg till andrum mellan textrader.",
+        "normal": "Normal",
+        "relaxed": "Avslappnat",
+        "loose": "Löst"
+      },
+      "linkUnderline": {
+        "label": "Understryk alltid länkar",
+        "hint": "Visa understrykningar så att länkar inte bara förlitar sig på färg."
+      },
+      "focus": {
+        "label": "Förbättrad fokusindikator",
+        "hint": "Använd en tjockare, mer kontrastrik kontur vid fokus."
+      },
+      "reset": {
+        "label": "Återställ till standardvärden",
+        "hint": "Återställ rörelse, textstorlek, radavstånd, länkar och fokus till standardvärden. Ditt tema ändras inte.",
+        "action": "Återställ"
+      }
+    },
+    "general": {
+      "title": "Allmänt",
+      "subtitle": "Hur LIpsum Writer visas som standard. Inget av detta är destruktivt.",
+      "comingSoonBody": "Kompakt densitet, minska rörelse, synlighet för tangentbordstips och vilken vy som öppnas vid start.",
+      "compactDensityLabel": "Kompakt densitet",
+      "compactDensityHint": "Tätare rader i listor, tätare utfyllnad överallt.",
+      "reduceMotionLabel": "Minska rörelse",
+      "reduceMotionHint": "Hoppa över animerade övergångar mellan vyer.",
+      "keyboardHintsLabel": "Visa tangentbordstips",
+      "keyboardHintsHint": "Visa ⌘-tangentbordsgenvägar i verktygstips och i hörnen av knappar.",
+      "startupLabel": "Öppna vid start",
+      "startupHint": "Vad du ser när du startar appen.",
+      "startupOptions": {
+        "lastView": "Senaste vy",
+        "home": "Hem",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Utseende",
+      "subtitle": "Färg, typsnitt, densitet. Den stämning du vill skapa.",
+      "comingSoonBody": "Kurerade temapaletter, accentfärg och densitet. Nutidens temaknapp finns i världsrailens snabbinställningar.",
+      "themeLabel": "Tema",
+      "themeHint": "Tre kurerade paletter. De ställer in allt — blockfärger, hårlinjer, till och med kornet.",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "standard",
+        "studio": "Studio",
+        "studioSub": "neutral",
+        "midnight": "Midnight",
+        "midnightSub": "mörkt"
+      },
+      "accentLabel": "Accent",
+      "accentHint": "Används för hover, fokus, aktiv redigeringsring.",
+      "densityLabel": "Densitet",
+      "densityOptions": {
+        "cozy": "Mysigt",
+        "default": "Standard",
+        "compact": "Kompakt"
+      }
+    },
+    "templates": {
+      "title": "Mallar",
+      "subtitle": "Återanvändbara strukturer för nya utrymmen och dokument.",
+      "comingSoonBody": "Skapa egna mallar med sektioner, standarddokumentnamn och textexempel.",
+      "items": {
+        "fiction": "Fiktion",
+        "fictionSub": "Manuskript · Värld · Verkstad",
+        "research": "Forskning",
+        "researchSub": "Källor · Anteckningar · Utkast",
+        "journal": "Dagbok",
+        "journalSub": "Daglig · Veckovis · Reflektioner",
+        "essay": "Essä",
+        "essaySub": "Disposition · Utkast · Slutversion"
+      }
+    },
+    "palettes": {
+      "title": "Markeringspaletter",
+      "subtitle": "Paletter med fem platser per utrymme — ge namn åt och justera varje färg.",
+      "comingSoonBody": "Redigera, spara och byt namngivna markeringspaletter (Bevis, Att revidera, Referens…) mellan utrymmen.",
+      "items": {
+        "evidence": "Bevis",
+        "revise": "Att revidera",
+        "reference": "Referens",
+        "quote": "Citat",
+        "loose": "Lös tråd"
+      },
+      "rename": "byt namn",
+      "tune": "justera"
+    },
+    "citations": {
+      "title": "Citationsstil",
+      "subtitle": "Standard citationsstil för alla utrymmen.",
+      "comingSoonBody": "Välj en universell stil (Chicago, APA, MLA…) med åsidosättning per utrymme.",
+      "styleLabel": "Standardstil",
+      "styleHint": "Används vid infogning av en ny citation. Åsidosättningar per utrymme kommer senare.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Kommentarer",
+      "subtitle": "Marginalanteckningar och inline-kommentarer.",
+      "comingSoonBody": "Kommentarstyper, standardsynlighet och exportbeteende.",
+      "showMarginLabel": "Visa marginalanteckningar",
+      "showMarginHint": "Kommentarer flödar i höger marginal när det finns utrymme.",
+      "showInlineLabel": "Visa inline-markeringar",
+      "showInlineHint": "Kommentarsfärgen flödar in i den underliggande texten.",
+      "exportLabel": "Inkludera i exporter",
+      "exportHint": "Kommentarer skrivs ut bredvid dokumenttexten."
+    },
+    "export": {
+      "title": "Exportera / importera",
+      "subtitle": "Flytta data in och ut ur LIpsum Writer.",
+      "comingSoonBody": "Massexport till .zip, import från ett annat LIpsum-paket eller Markdown-katalog.",
+      "formatLabel": "Exportformat",
+      "formatHint": "Exporter per dokument och per utrymme använder samma standard.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Importera från",
+      "importHint": "Hämta in ett annat LIpsum-paket eller en katalog med Markdown-filer.",
+      "importOptions": {
+        "bundle": "LIpsum-paket (.zip)",
+        "markdown": "Markdown-mapp",
+        "obsidian": "Obsidian-vault"
+      },
+      "importSpaceLabel": "Importera ett utrymme",
+      "importSpaceHint": "Hämta ett utrymme till den här webbläsaren från ett Writer-arkiv (.zip) — ett nedladdat ögonblicksbild eller en mappsynkroniseringsexport från en annan enhet.",
+      "importChooseFile": "Välj arkiv…",
+      "importing": "importerar…",
+      "importFailed": "Importen misslyckades: {{message}}",
+      "comingSoonLabel": "Fler format",
+      "comingSoonHint": "Massexport och -import från Markdown-mappar eller Obsidian-vaults.",
+      "comingSoonTooltip": "Planerat — inte tillgängligt ännu."
+    },
+    "data": {
+      "title": "Dina data",
+      "subtitle": "Var ditt arbete bor och hur mycket utrymme det tar.",
+      "comingSoonBody": "IndexedDB-användning, lagringsuppskattning och ett-klicks fullständig rensning.",
+      "storageLabel": "Lagring använt",
+      "storageValue": "≈ 12,4 MB · 4 utrymmen, 38 dokument",
+      "engineLabel": "Lagringsmotor",
+      "engineValue": "IndexedDB (lokal webbläsare)",
+      "wipeLabel": "Radera allt",
+      "wipeHint": "Tar bort varje utrymme, dokument och ögonblicksbild från den här webbläsaren. Det kan inte ångras.",
+      "wipeButton": "Radera lokal data…"
+    },
+    "about": {
+      "title": "Om",
+      "subtitle": "Bygginformation och länkar.",
+      "comingSoonBody": "Se /about-sidan för historien; den här fliken kommer att innehålla bygginformation, licens och ändringslogg.",
+      "versionLabel": "Version",
+      "versionValue": "{{version}}",
+      "buildLabel": "Bygg",
+      "buildValue": "lokal",
+      "licenseLabel": "Licens",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Länkar",
+      "links": {
+        "source": "Källkod",
+        "changelog": "Ändringslogg",
+        "feedback": "Skicka feedback"
+      }
+    },
+    "account": {
+      "title": "Konto",
+      "subtitle": "Inloggning, synkronisering mellan enheter och delade arbetsytor.",
+      "comingSoonBody": "Molnsynkronisering är inte tillgängligt idag — Lotem är bara lokal. Konto, inloggning och delade arbetsytor kommer när synkronisering lanseras.",
+      "signedOutLabel": "Logga in",
+      "signedOutHint": "Molnsynkronisering är inte tillgängligt ännu. Det här är för att visa designen.",
+      "signInButton": "Logga in med e-post",
+      "syncLabel": "Synkronisera den här enheten",
+      "syncHint": "När du loggar in replikeras dina utrymmen till andra enheter."
+    },
+    "typography": {
+      "title": "Typografi",
+      "subtitle": "Standardvärden för alla världar. Enskilda världar kan åsidosätta.",
+      "comingSoonBody": "Välj prosatypsnittet, UI-typsnittet, standard lässtorlek, radhöjd och mått för nya världar.",
+      "proseFontLabel": "Prosatypsnittet",
+      "uiFontLabel": "UI-typsnitt",
+      "proseSizeLabel": "Prosastorlek",
+      "proseSizeHint": "Standard för nya världar.",
+      "lineHeightLabel": "Radhöjd",
+      "measureLabel": "Mått",
+      "measureHint": "Maximal radbredd.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Genvägar",
+      "subtitle": "Tangentbordsbindningar för navigering, formatering och lägen.",
+      "comingSoonBody": "Omkonfigurerbara genvägar för skriva/läsa/delad, fokusläge och formateringsverktygsfältet.",
+      "navHeader": "Navigering",
+      "formatHeader": "Formatering",
+      "modeHeader": "Lägen",
+      "items": {
+        "openSettings": "Öppna inställningar",
+        "quickSettings": "Snabbinställningar",
+        "findInDoc": "Hitta i dokument",
+        "toggleFocus": "Växla fokus",
+        "toggleInspector": "Växla inspektor",
+        "bold": "Fet",
+        "italic": "Kursiv",
+        "underline": "Understrykning",
+        "heading1": "Rubrik 1",
+        "heading2": "Rubrik 2",
+        "write": "Skrivläge",
+        "read": "Läsläge",
+        "split": "Delat läge"
+      }
+    },
+    "backups": {
+      "title": "Säkerhetskopior",
+      "subtitle": "Exportera, återställ och ta ögonblicksbilder av dina lokala data.",
+      "comingSoonBody": "Schemalagda lokala ögonblicksbilder, manuell export till .zip och återställning från en tidigare säkerhetskopia.",
+      "intervalLabel": "Intervall för automatisk ögonblicksbild",
+      "intervalOptions": {
+        "5min": "5 min",
+        "10min": "10 min",
+        "30min": "30 min",
+        "off": "Av"
+      },
+      "keepLabel": "Behåll",
+      "keepHint": "Äldre ögonblicksbilder rullar bort automatiskt.",
+      "keepOptions": {
+        "last50": "Senaste 50",
+        "days7": "7 dagar",
+        "days30": "30 dagar"
+      },
+      "latestLabel": "Senaste",
+      "latestValue": "för 12 min sedan · 1 190 ord"
+    },
+    "sync": {
+      "title": "Synkronisering",
+      "subtitle": "Skicka dina utrymmen till en mapp du väljer. Peka den mot en Google Drive-, Dropbox- eller iCloud-mapp för att synkronisera mellan enheter.",
+      "unsupportedTitle": "Inte tillgängligt i den här webbläsaren",
+      "unsupportedBody": "Mappsynkronisering kräver File System Access API, tillgängligt i Chrome, Edge och andra Chromium-webbläsare på skrivbordet. Byt till en webbläsare som stöds för att använda det.",
+      "folderLabel": "Synkroniserad mapp",
+      "folderHint": "Varje synkronisering skriver en Markdown .zip per utrymme här och behåller de senaste 5 plus en latest.zip. Synkronisering är separat från säkerhetskopior.",
+      "noFolder": "Ingen mapp ansluten",
+      "chooseFolder": "Välj mapp…",
+      "changeFolder": "Ändra…",
+      "disconnect": "Koppla från",
+      "intervalLabel": "Automatisk synkronisering",
+      "intervalHint": "Hur ofta utrymmen synkroniseras automatiskt medan appen är öppen och mappen är ansluten. Varje utrymme kan åsidosätta denna standard.",
+      "intervalOff": "Av",
+      "intervalMinutes": "{{count}} min",
+      "intervalDefault": "Standard ({{label}})",
+      "syncLabel": "Manuell synkronisering",
+      "pushOnlyHint": "Bara push för nu — detta skriver dina lokala data till mappen. Hämtning av ändringar kommer senare.",
+      "syncNow": "Synkronisera nu",
+      "syncNowAll": "Synkronisera alla utrymmen",
+      "reconnectHint": "Synkroniseringen är pausad — webbläsaren behöver mappbehörighet igen för den här sessionen. Återanslut för att återuppta manuell och automatisk synkronisering.",
+      "reconnectButton": "Återanslut",
+      "reconnecting": "Återansluter…",
+      "syncing": "Synkroniserar…",
+      "syncFailed": "Synkroniseringen misslyckades: {{message}}",
+      "lastSynced": "Senast synkroniserat {{when}}",
+      "neverSynced": "Aldrig synkroniserat",
+      "justNow": "precis nu",
+      "resultsTitle": "Senaste körning",
+      "spaceOk": "synkroniserat",
+      "spaceFailed": "misslyckades",
+      "historyTitle": "Nyliga synkroniseringar",
+      "historyEmpty": "Inga synkroniseringar ännu.",
+      "columns": {
+        "when": "NÄR",
+        "space": "UTRYMME",
+        "kind": "TYP",
+        "size": "STORLEK",
+        "status": "STATUS"
+      },
+      "kind": {
+        "auto": "auto",
+        "manual": "manuell"
+      },
+      "status": {
+        "ok": "ok",
+        "error": "fel"
+      }
+    },
+    "space": {
+      "breadcrumb": "UTRYMME · INSTÄLLNINGAR",
+      "shellSubtitle": "UTRYMMEINSTÄLLNINGAR",
+      "loading": "Laddar utrymme…",
+      "groups": {
+        "thisSpace": "Det här utrymmet",
+        "sharingMembers": "Delning och medlemmar",
+        "data": "Data",
+        "dangerZone": "Fara"
+      },
+      "tabs": {
+        "general": "Allmänt",
+        "docInspector": "Dokumentinspektor",
+        "template": "Mall",
+        "palette": "Markeringspalett",
+        "sharing": "Delning",
+        "members": "Medlemmar",
+        "backups": "Säkerhetskopior",
+        "sync": "Synkronisering",
+        "export": "Exportera",
+        "danger": "Farozon"
+      },
+      "docInspector": {
+        "title": "Dokumentinspektor",
+        "subtitle": "Åsidosätt de universella inspektorinställningarna för det här utrymmet."
+      },
+      "palette": {
+        "title": "Markeringspalett",
+        "subtitle": "Fem namngivna, justerbara markeringsfärger för det här utrymmet.",
+        "comingSoonBody": "Byt namn på, ändra nyans på och ordna om det här utrymmets markeringsplatser.",
+        "items": {
+          "evidence": "Bevis",
+          "revise": "Att revidera",
+          "reference": "Referens",
+          "quote": "Citat",
+          "loose": "Lös tråd"
+        },
+        "rename": "byt namn",
+        "tune": "justera"
+      },
+      "export": {
+        "title": "Exportera",
+        "subtitle": "Flytta det här utrymmets innehåll till ett annat verktyg.",
+        "comingSoonBody": "Exportera till Markdown .zip (idag via Säkerhetskopior), LaTeX, HTML eller PDF — allt på ett ställe.",
+        "formatLabel": "Format",
+        "formatHint": "Markdown kommer först; resten följer.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Senaste export",
+        "lastValue": "aldrig"
+      },
+      "general": {
+        "title": "Allmänt",
+        "subtitle": "Identifieringsuppgifter för det här utrymmet. Ändringar träder i kraft omedelbart och synkroniseras mellan vyer.",
+        "nameLabel": "Utrymmesnamn",
+        "nameHint": "Visas i sidofältets rubrik och i utrymmets rail-verktygstips.",
+        "tagLabel": "Kod",
+        "tagHint": "En kort kod (2–4 tecken) visad på utrymmets rail-bricka."
+      },
+      "sharing": {
+        "title": "Delning",
+        "subtitle": "Kontrollera hur det här utrymmet delas.",
+        "comingSoonBody": "Synlighet per utrymme och delbara länkar. Kommer när molnsynkronisering lanseras.",
+        "visibilityLabel": "Synlighet",
+        "visibilityOptions": {
+          "private": "Privat",
+          "link": "Alla med länk",
+          "members": "Bara medlemmar"
+        },
+        "linkLabel": "Delbar länk",
+        "linkHint": "Skrivskyddad som standard. Redigeringsbehörighet följer Medlemmar.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "kopiera"
+      },
+      "template": {
+        "title": "Mall",
+        "subtitle": "Den strukturella mallen som det här utrymmet skapades med.",
+        "comingSoonBody": "Att byta ett utrymmets mall efter skapande stöds inte ännu. Kommer när vi kan migrera sektioner och dokument på ett säkert sätt.",
+        "currentLabel": "Nuvarande mall",
+        "currentValue": "Fiktion",
+        "currentSub": "Manuskript · Värld · Verkstad",
+        "changeLabel": "Byt mall",
+        "changeHint": "Omstrukturerar befintliga sektioner och dokument till den nya mallen.",
+        "changeButton": "Byt mall…"
+      },
+      "members": {
+        "title": "Medlemmar",
+        "subtitle": "Medförfattare och granskare med åtkomst till det här utrymmet.",
+        "comingSoonBody": "Bjud in samarbetspartners, hantera roller och granska ändringar. Kommer med molnsynkronisering.",
+        "inviteLabel": "Bjud in via e-post",
+        "inviteHint": "Vi skickar dem en länk för att gå med i det här utrymmet.",
+        "invitePlaceholder": "namn@exempel.se",
+        "inviteButton": "skicka inbjudan",
+        "membersLabel": "Medlemmar",
+        "roles": {
+          "owner": "ägare",
+          "editor": "redaktör",
+          "viewer": "läsare"
+        },
+        "you": "dig"
+      },
+      "backups": {
+        "title": "Säkerhetskopior",
+        "subtitle": "Ta en ögonblicksbild av det här utrymmet som en .zip du kan ladda ned, behålla och återställa från.",
+        "retentionHint": "Behåller de {{count}} senaste ögonblicksbilderna — äldre tas bort automatiskt.",
+        "snapshotNow": "+ ögonblicksbild nu",
+        "snapshotting": "tar ögonblicksbild…",
+        "snapshotFailed": "Ögonblicksbilden misslyckades: {{message}}",
+        "historyTitle": "Historik",
+        "empty": "Inga ögonblicksbilder ännu — skapa en med + ögonblicksbild nu.",
+        "columns": {
+          "when": "NÄR",
+          "kind": "TYP",
+          "size": "STORLEK",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "manuell",
+          "auto": "auto",
+          "snapshot": "ögonblicksbild"
+        },
+        "download": "↓ ladda ned",
+        "delete": "ta bort",
+        "deleteConfirm": "Ta bort den här ögonblicksbilden? Det kan inte ångras.",
+        "deleted": "Ögonblicksbild borttagen.",
+        "justNow": "precis nu",
+        "restore": "↺ återställ",
+        "restoreUnavailable": "Den här ögonblicksbilden är från innan återställningsstöd — den kan bara laddas ned.",
+        "restoreDialogTitle": "Återställa den här ögonblicksbilden?",
+        "restoreDialogBody": "Det aktuella innehållet i det här utrymmet ersätts med ögonblicksbilden. En ögonblicksbild av det aktuella tillståndet sparas först så att du kan ångra den här återställningen.",
+        "restoreConfirm": "Återställ",
+        "restoreCancel": "Avbryt",
+        "restoring": "återställer…",
+        "restored": "Ögonblicksbild återställd.",
+        "restoreFailed": "Återställningen misslyckades: {{message}}",
+        "fileRestoreTitle": "Återställer från en nedladdad .zip?",
+        "fileRestoreBody": "Importera den via Universella inställningar → Exportera / importera — den kommer tillbaka som ett nytt utrymme och lämnar det här orört."
+      },
+      "sync": {
+        "title": "Synkronisering",
+        "subtitle": "Skicka det här utrymmet till den anslutna mappen, manuellt eller enligt ett schema. Synkronisering är separat från säkerhetskopior.",
+        "folderHint": "Anslut en mapp i Universella inställningar → Synkronisering. Samma mapp används för varje utrymme.",
+        "intervalHint": "Hur ofta det här utrymmet synkroniseras automatiskt. Välj Standard för att följa den universella inställningen för automatisk synkronisering.",
+        "syncNow": "Synkronisera det här utrymmet"
+      },
+      "danger": {
+        "title": "Farozon",
+        "subtitle": "Oåterkalleliga åtgärder. Läs noggrant innan du fortsätter.",
+        "deleteCardTitle": "Ta bort det här utrymmet",
+        "deleteCardBody": "Tar permanent bort det här utrymmet tillsammans med varje dokument, sektion, Brain space-anteckning, kommentar, citation och anslutning. Det kan inte ångras.",
+        "deleteButton": "Ta bort det här utrymmet",
+        "dialogTitle": "Ta bort \"{{name}}\"?",
+        "dialogBody": "Detta tar permanent bort utrymmet och allt dess innehåll. Det kan inte ångras.",
+        "typeToConfirm": "Skriv {{name}} för att bekräfta",
+        "cancel": "Avbryt",
+        "confirm": "Ta bort utrymme"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Vilsen i marginalen",
+    "body": "Den sidan finns inte (ännu).",
+    "goHome": "Gå hem"
+  },
+  "templates": {
+    "crumb": "01 — EN SLAGS RUM",
+    "headingMain": "Vad för slags utrymme",
+    "headingAccent": "startar du?",
+    "chooseLegend": "Välj en mall",
+    "stage": {
+      "pre-alpha": "experimentell",
+      "alpha": "tidig",
+      "beta": "beta"
+    },
+    "nameLabel": "Namn",
+    "tagLabel": "Kod",
+    "syncLabel": "molnsynkronisering —",
+    "syncValue": "av, lokal",
+    "syncTooltip": "Molnsynkronisering är inte tillgängligt — den här appen är bara lokal för nu.",
+    "creating": "skapar…",
+    "submitLabel": "gå in i {{name}} →",
+    "newSpace": "nytt utrymme",
+    "back": "tillbaka"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} osorterade",
+    "title": "Brain space",
+    "mobileWarning": "Brain space fungerar bäst på en större skärm.",
+    "mobileNote": "Arbetsytan kräver en mus eller styrplatta.",
+    "openInWrite": "Öppna i Skrivläge →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "börja dumpa",
+      "emptyHint": "välj en korttyp nedan",
+      "pendingHint": "shift-klicka en annan anteckning för att ansluta · esc för att avbryta"
+    },
+    "note": {
+      "deleteNote": "Ta bort anteckning",
+      "addPicture": "Lägg till bild",
+      "addPictureCta": "lägg till en bild",
+      "openLinkedDoc": "Öppna länkat dokument",
+      "fetchedContent": "Hämtat innehåll",
+      "openDetailsLabel": "Öppna detaljer",
+      "openDetailsTitle": "Öppna detaljpanel",
+      "titlePlaceholder": "titel",
+      "addTitleCta": "+ titel",
+      "bodyEmpty": "(klicka för att skriva)",
+      "viewImage": "Visa {{name}}",
+      "removeImage": "Ta bort {{name}}",
+      "resize": "Ändra storlek på anteckning",
+      "days": {
+        "sun": "sön",
+        "mon": "mån",
+        "tue": "tis",
+        "wed": "ons",
+        "thu": "tor",
+        "fri": "fre",
+        "sat": "lör"
+      }
+    },
+    "drawer": {
+      "title": "Anteckningsdetaljer",
+      "description": "Redigera den valda anteckningen och hantera dess anslutningar.",
+      "untitledPlaceholder": "Utan titel",
+      "titleAriaLabel": "Anteckningstitel",
+      "closeAriaLabel": "Stäng panel",
+      "bodyLabel": "Brödtext",
+      "bodyPlaceholder": "Skriv något…",
+      "picturesLabel": "Bilder",
+      "addPicture": "Lägg till bild",
+      "pictureLimitHint": "gränsen på {{count}} nådd — ta bort en för att lägga till en annan.",
+      "linkedDocLabel": "Länkat dokument",
+      "noLinkedDoc": "— Inget länkat dokument —",
+      "untitledDoc": "Utan titel",
+      "openDoc": "Öppna",
+      "connectionsHeading": "Anslutningar ({{count}})",
+      "connectionsEmpty": "shift-klicka en annan anteckning på arbetsytan för att ansluta.",
+      "untitledNote": "(utan titel)",
+      "removeConnection": "Ta bort anslutning",
+      "deleteNote": "Ta bort anteckning"
+    }
+  },
+  "split": {
+    "title": "Delad vy",
+    "mobileWarning": "Delad vy kräver en större skärm.",
+    "mobileNote": "Öppna det här dokumentet i Skrivläge istället.",
+    "openInWrite": "Öppna i Skrivläge →",
+    "leftPrefix": "VÄNSTER —",
+    "rightPrefix": "HÖGER —",
+    "rightPaneAria": "Dokument i höger ruta",
+    "noOtherDocs": "(inga andra dokument)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Citat",
+    "pickDoc": "Välj ett dokument från rullgardinsmenyn ovan.",
+    "dividerAria": "Ändra storlek på delade rutor"
+  },
+  "citationsDrawer": {
+    "title": "Citat",
+    "description": "Sök, importera och exportera citat för det här utrymmet.",
+    "close": "Stäng citat",
+    "expand": "Öppna citat i helskärmsvy"
+  },
+  "citations": {
+    "title": "Citat",
+    "breadcrumb": "Källor / ",
+    "entries": "{{count}} POSTER",
+    "searchPlaceholder": "författare, koder, år…",
+    "upload": "↑ ladda upp .bib / .ris",
+    "add": "+ lägg till",
+    "cancel": "× avbryt",
+    "columns": {
+      "tag": "KOD",
+      "authors": "FÖRFATTARE",
+      "title": "TITEL",
+      "year": "ÅR",
+      "type": "TYP",
+      "used": "ANVÄND"
+    },
+    "style": "STIL — CHICAGO (FÖRFATTARE-DATUM)",
+    "exportBib": "EXPORTERA SOM .BIB",
+    "summary": "{{filtered}} VISADE · {{shown}} PÅ DEN HÄR SIDAN",
+    "prevPage": "Föregående sida",
+    "nextPage": "Nästa sida",
+    "empty": "inga citat ännu",
+    "noMatch": "inga rader matchar din sökning.",
+    "importHint": "importera en .bib eller lägg till en manuellt.",
+    "pasteHeader": "Klistra in BibTeX eller en titel",
+    "addCitation": "lägg till citat",
+    "manualCancel": "avbryt",
+    "adding": "lägger till…",
+    "parsing": "Analyserar {{name}}…",
+    "imported": "Importerade {{added}} citat{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", hoppade över {{skipped}} duplikat{{skippedPlural}}",
+    "skippedSuffixShort": ", hoppade över {{skipped}}",
+    "failed": "Parsning misslyckades: {{message}}",
+    "failedManual": "Misslyckades: {{message}}",
+    "addedOne": "Lade till 1 citat.",
+    "unknownAuthor": "(okänd)",
+    "unknownError": "okänt fel",
+    "edit": {
+      "save": "spara",
+      "saving": "sparar…",
+      "cancel": "avbryt",
+      "delete": "ta bort",
+      "edit": "redigera",
+      "tagLabel": "Kod",
+      "authorsLabel": "Författare",
+      "titleLabel": "Titel",
+      "yearLabel": "År",
+      "typeLabel": "Typ",
+      "duplicateKey": "Koden \"{{key}}\" används redan i det här utrymmet.",
+      "updated": "Uppdaterade 1 citat.",
+      "deleteOne": "Tog bort 1 citat.",
+      "confirmDeleteUsed": "Det här citatet används {{count}}× i dina dokument. Ta bort ändå?",
+      "confirmDeleteSingle": "Ta bort citatet \"{{key}}\"? Det kan inte ångras.",
+      "untitled": "(utan titel)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} valda",
+      "deleteSelected": "ta bort",
+      "setTypePrompt": "ange typ",
+      "setTypeAria": "Ange typ för valda citat",
+      "chooseOption": "välj…",
+      "ariaLabel": "Massåtgärder",
+      "clearSelection": "rensa",
+      "deleted": "Tog bort {{count}} citat.",
+      "typeApplied": "Angav typ som {{type}} för {{count}} citat.",
+      "confirmDelete": "Ta bort {{count}} citat? Det kan inte ångras."
+    },
+    "row": {
+      "selectAllAria": "Välj alla citat på den här sidan",
+      "viewCitationAria": "Visa citat {{key}}",
+      "selectCitationAria": "Välj citat {{key}}",
+      "collapseCitationAria": "Dölj citat {{key}}",
+      "usedCount": "{{count}}× använt",
+      "unused": "oanvänt",
+      "copyTag": "Kopiera kod",
+      "copyTagAria": "Kopiera kod {{value}}",
+      "copiedTitle": "Kopierat",
+      "copiedTagAria": "Kopierade kod {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}
