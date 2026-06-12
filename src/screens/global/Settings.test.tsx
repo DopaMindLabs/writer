@@ -85,6 +85,18 @@ describe('SettingsScreen', () => {
     expect(getByRole('heading', { name: /backups/i })).toBeInTheDocument();
   });
 
+  it('renders the real export/import tab with a working import control', () => {
+    const { getByTestId } = renderWithProviders(<SettingsScreen />, {
+      initialEntries: ['/settings?tab=export'],
+    });
+    expect(getByTestId('settings-export-import')).toBeInTheDocument();
+    expect(getByTestId('settings-import-button')).toBeEnabled();
+    expect(getByTestId('settings-import-file-input')).toHaveAttribute(
+      'type',
+      'file',
+    );
+  });
+
   it('stacks every sibling section of the active group on one page', () => {
     const { getByRole } = renderWithProviders(<SettingsScreen />, {
       initialEntries: ['/settings'],

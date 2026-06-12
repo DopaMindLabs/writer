@@ -44,6 +44,13 @@ System" design spec. When adding or changing any component or feature, verify it
   grayscale palette with status as the only colour exception, three type families (Geist /
   Source Serif 4 / Geist Mono), square corners, borderless icons. **Never hard-code a hex or
   px colour** — there is a token for it.
+- **Survey the whole catalogue before choosing a primitive.** When planning *any* UI
+  addition or change — even a single line of copy — read the full component inventory first
+  (`docs/design-system.md` component tables and `src/components/ui/`, mirrored in Storybook)
+  and pick the primitive whose **documented use** matches the intent: a persistent notice is
+  `InlineBanner`, inline status is `StatusGlyph`, row state is `StatusBadge`, meta/blurb voice
+  is the `caption` typography, and so on. Never choose by copying whatever the neighbouring
+  code happens to use.
 - **Compose, don't reinvent.** Build from the existing primitives in `src/components/ui/`
   (Button, TextField, Select, Checkbox, RadioRow, FormRow, Fieldset, Chip/ChipGroup, dialog,
   popover, tooltip, tabs, …). Style variants with `cva` (`@/components/libs/variants`) + `cn`
@@ -102,6 +109,21 @@ E2E coverage is gated by a ratchet (`scripts/coverage-ratchet.mjs`, run via
 - Run `npm run test:e2e:coverage` before committing coverage-affecting changes; it gates CI.
 - `src/editor/**` and `src/tours/**` are excluded from e2e coverage (covered by unit tests); the
   90% bar applies to the rest of the app.
+
+### Running e2e (agents: headless, locally — don't defer to CI)
+
+- **Always run Playwright headless** (its default — never `--headed` or `--ui` in an agent
+  or CI environment) and run the suite yourself before pushing e2e-affecting changes rather
+  than waiting for CI to find failures.
+- If the browser is missing, install it with `npx playwright install chromium`. In sandboxed
+  environments where `cdn.playwright.dev` is blocked, the identical Chrome for Testing build
+  is on `storage.googleapis.com` (allowed): check the expected version, paths, and layout
+  with `npx playwright install chromium --dry-run`, then download
+  `https://storage.googleapis.com/chrome-for-testing-public/<version>/linux64/chrome-linux64.zip`
+  and `…/chrome-headless-shell-linux64.zip`, unzip each into its install location under
+  `$PLAYWRIGHT_BROWSERS_PATH` (zip roots match the expected layout), and `touch` the
+  `INSTALLATION_COMPLETE` and `DEPENDENCIES_VALIDATED` markers in both directories.
+
 ## Testing philosophy (read before changing tests)
 
 Unit tests (Vitest) and e2e tests (Playwright) exist to **prevent regressions** — to

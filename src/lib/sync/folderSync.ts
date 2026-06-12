@@ -2,10 +2,8 @@ import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { errorMessage } from '@/lib/errorMessage';
 import type { Space, SyncEntry } from '@/db/schema';
-import {
-  buildSpaceMarkdownZipFor,
-  slugify,
-} from '@/lib/backup/buildSpaceMarkdownZip';
+import { slugify } from '@/lib/backup/buildSpaceMarkdownZip';
+import { buildSpaceArchiveFor } from '@/lib/format/buildSpaceArchive';
 
 const HANDLE_KEY = 'syncFolderHandle';
 const GLOBAL_CONFIG_ID = 'global';
@@ -205,7 +203,7 @@ export const syncSpaceToFolder = async (
     if (!granted) {
       throw new Error('Write permission to the folder was not granted.');
     }
-    const { blob } = await buildSpaceMarkdownZipFor(space.id, when);
+    const { blob } = await buildSpaceArchiveFor(space.id, when);
     const dir = await handle.getDirectoryHandle(spaceDirName(space), {
       create: true,
     });

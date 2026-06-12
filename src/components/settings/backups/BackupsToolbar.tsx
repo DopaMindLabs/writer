@@ -1,8 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { TypographyP } from '@/components/ui/typography';
-import { ComingSoonBadge } from '@/components/settings/ComingSoonBadge';
 import { MAX_BACKUPS_PER_SPACE } from '@/lib/backup/createSpaceBackup';
 
 interface BackupsToolbarProps {
@@ -20,15 +18,6 @@ export const BackupsToolbar = ({ busy, onSnapshot }: BackupsToolbarProps) => {
         })}
       </TypographyP>
       <div className="flex items-center gap-4 text-[12px]">
-        <Eyebrow asChild size={10} tone="ink4">
-          <span
-            aria-disabled="true"
-            className="inline-flex cursor-not-allowed items-center gap-2"
-          >
-            {t('settings.space.backups.restoreLabel')}
-            <ComingSoonBadge />
-          </span>
-        </Eyebrow>
         <Button
           data-testid="space-settings-backups-snapshot"
           size="sm"

@@ -136,7 +136,7 @@ export interface Revision {
   meta?: Record<string, unknown>;
 }
 
-export type BackupFormat = 'md-zip';
+export type BackupFormat = 'md-zip' | 'archive-v2';
 
 export interface Backup {
   id: string;
