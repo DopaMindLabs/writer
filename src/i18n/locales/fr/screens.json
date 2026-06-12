@@ -7,6 +7,10 @@
     "tagline": "Un espace sans distraction pour l'écriture longue — fiction, recherche, essais, journaux.",
     "continueWriting": "Continuer à écrire",
     "startNewSpace": "Commencer un nouvel espace",
+    "syncOffChip": "sync/sauvegardes désactivées · données susceptibles d'être perdues",
+    "syncOnChip": "synchronisation de dossier activée",
+    "syncOnTitle": "Synchronisation de dossier activée",
+    "syncOnBody": "Ton travail se synchronise vers le dossier « {{folder}} » sur cet appareil.",
     "warningTitle": "Build préliminaire",
     "warningBody": "Pas de synchronisation des données. Tout vit dans ton navigateur et vider le cache fait perdre ton travail. Tu peux activer la synchronisation vers un dossier local dans Réglages → Sync.",
     "versionLine": "Version {{version}}"
@@ -271,7 +275,15 @@
         "bundle": "Bundle LIpsum (.zip)",
         "markdown": "Dossier Markdown",
         "obsidian": "Coffre Obsidian"
-      }
+      },
+      "importSpaceLabel": "Importer un espace",
+      "importSpaceHint": "Importe un espace dans ce navigateur depuis une archive Writer (.zip) — un snapshot téléchargé ou un export de synchronisation de dossier depuis un autre appareil.",
+      "importChooseFile": "Choisir l'archive…",
+      "importing": "importation…",
+      "importFailed": "Échec de l'import : {{message}}",
+      "comingSoonLabel": "Plus de formats",
+      "comingSoonHint": "Export et import en masse depuis des dossiers Markdown ou des coffres Obsidian.",
+      "comingSoonTooltip": "Prévu — pas encore disponible."
     },
     "data": {
       "title": "Tes données",
@@ -419,7 +431,8 @@
       "groups": {
         "thisSpace": "Cet espace",
         "sharingMembers": "Partage et membres",
-        "data": "Données"
+        "data": "Données",
+        "dangerZone": "Danger"
       },
       "tabs": {
         "general": "Général",
@@ -542,7 +555,18 @@
         "delete": "supprimer",
         "deleteConfirm": "Supprimer ce snapshot ? Pas d'annulation.",
         "deleted": "Snapshot supprimé.",
-        "justNow": "à l'instant"
+        "justNow": "à l'instant",
+        "restore": "↺ restaurer",
+        "restoreUnavailable": "Ce snapshot est antérieur à la prise en charge de la restauration — il ne peut être que téléchargé.",
+        "restoreDialogTitle": "Restaurer ce snapshot ?",
+        "restoreDialogBody": "Le contenu actuel de cet espace sera remplacé par le snapshot. Un snapshot de l'état actuel est sauvegardé en premier, afin que tu puisses annuler cette restauration.",
+        "restoreConfirm": "Restaurer",
+        "restoreCancel": "Annuler",
+        "restoring": "restauration…",
+        "restored": "Snapshot restauré.",
+        "restoreFailed": "Échec de la restauration : {{message}}",
+        "fileRestoreTitle": "Restaurer depuis un .zip téléchargé ?",
+        "fileRestoreBody": "Importe-le via Paramètres globaux → Exporter / importer — il revient comme un nouvel espace, sans toucher à celui-ci."
       },
       "sync": {
         "title": "Synchronisation",
@@ -576,6 +600,11 @@
     "headingMain": "Quel type d'espace",
     "headingAccent": "commences-tu ?",
     "chooseLegend": "Choisis un modèle",
+    "stage": {
+      "pre-alpha": "expérimental",
+      "alpha": "précoce",
+      "beta": "bêta"
+    },
     "nameLabel": "Nom",
     "tagLabel": "Étiquette",
     "syncLabel": "sync cloud —",
@@ -592,6 +621,58 @@
     "mobileWarning": "Brain space fonctionne mieux sur un écran plus grand.",
     "mobileNote": "La toile a besoin d'une souris ou d'un trackpad.",
     "openInWrite": "Ouvrir en Écrire →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "commence à déverser",
+      "emptyHint": "choisis un type de carte ci-dessous",
+      "pendingHint": "shift-clic sur une autre note pour connecter · échap pour annuler"
+    },
+    "note": {
+      "deleteNote": "Supprimer la note",
+      "addPicture": "Ajouter une image",
+      "addPictureCta": "ajouter une image",
+      "openLinkedDoc": "Ouvrir le document lié",
+      "fetchedContent": "Contenu récupéré",
+      "openDetailsLabel": "Ouvrir les détails",
+      "openDetailsTitle": "Ouvrir le panneau des détails",
+      "titlePlaceholder": "titre",
+      "addTitleCta": "+ titre",
+      "bodyEmpty": "(cliquer pour écrire)",
+      "viewImage": "Voir {{name}}",
+      "removeImage": "Supprimer {{name}}",
+      "resize": "Redimensionner la note",
+      "days": {
+        "sun": "dim",
+        "mon": "lun",
+        "tue": "mar",
+        "wed": "mer",
+        "thu": "jeu",
+        "fri": "ven",
+        "sat": "sam"
+      }
+    },
+    "drawer": {
+      "title": "Détails de la note",
+      "description": "Modifie la note sélectionnée et gère ses connexions.",
+      "untitledPlaceholder": "Sans titre",
+      "titleAriaLabel": "Titre de la note",
+      "closeAriaLabel": "Fermer le panneau",
+      "bodyLabel": "Corps",
+      "bodyPlaceholder": "Écris quelque chose…",
+      "picturesLabel": "Images",
+      "addPicture": "Ajouter une image",
+      "pictureLimitHint": "limite de {{count}} atteinte — supprime-en une pour en ajouter une autre.",
+      "linkedDocLabel": "Document lié",
+      "noLinkedDoc": "— Aucun document lié —",
+      "untitledDoc": "Sans titre",
+      "openDoc": "Ouvrir",
+      "connectionsHeading": "Connexions ({{count}})",
+      "connectionsEmpty": "shift-clic sur une autre note sur la toile pour connecter.",
+      "untitledNote": "(sans titre)",
+      "removeConnection": "Supprimer la connexion",
+      "deleteNote": "Supprimer la note"
+    }
   },
   "split": {
     "title": "Vue fractionnée",
@@ -610,7 +691,8 @@
   "citationsDrawer": {
     "title": "Citations",
     "description": "Cherche, importe et exporte des citations pour cet espace.",
-    "close": "Fermer les citations"
+    "close": "Fermer les citations",
+    "expand": "Ouvrir les citations en pleine vue"
   },
   "citations": {
     "title": "Citations",
@@ -651,8 +733,10 @@
     "unknownError": "erreur inconnue",
     "edit": {
       "save": "enregistrer",
+      "saving": "enregistrement…",
       "cancel": "annuler",
       "delete": "supprimer",
+      "edit": "modifier",
       "tagLabel": "Étiquette",
       "authorsLabel": "Auteurs",
       "titleLabel": "Titre",
@@ -661,16 +745,36 @@
       "duplicateKey": "L'étiquette « {{key}} » est déjà utilisée dans cet espace.",
       "updated": "1 citation mise à jour.",
       "deleteOne": "1 citation supprimée.",
-      "confirmDeleteUsed": "Cette citation est utilisée {{count}}× dans tes documents. Supprimer quand même ?"
+      "confirmDeleteUsed": "Cette citation est utilisée {{count}}× dans tes documents. Supprimer quand même ?",
+      "confirmDeleteSingle": "Supprimer la citation « {{key}} » ? Cette action est irréversible.",
+      "untitled": "(sans titre)"
     },
     "bulk": {
       "selectedSummary": "{{count}} sélectionnées",
       "deleteSelected": "supprimer",
       "setTypePrompt": "définir le type",
+      "setTypeAria": "Définir le type des citations sélectionnées",
+      "chooseOption": "choisir…",
+      "ariaLabel": "Actions groupées",
       "clearSelection": "effacer",
       "deleted": "Supprimées {{count}} citations.",
       "typeApplied": "Type {{type}} appliqué à {{count}} citations.",
       "confirmDelete": "Supprimer {{count}} citation(s) ? Pas d'annulation."
+    },
+    "row": {
+      "selectAllAria": "Sélectionner toutes les citations de cette page",
+      "viewCitationAria": "Voir la citation {{key}}",
+      "selectCitationAria": "Sélectionner la citation {{key}}",
+      "collapseCitationAria": "Réduire la citation {{key}}",
+      "usedCount": "utilisée {{count}}×",
+      "unused": "inutilisée",
+      "copyTag": "Copier l'étiquette",
+      "copyTagAria": "Copier l'étiquette {{value}}",
+      "copiedTitle": "Copié",
+      "copiedTagAria": "Étiquette {{value}} copiée"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
     }
   }
 }

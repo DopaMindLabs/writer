@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Ulimwengu wa uandishi wa bure",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Nafasi yako ya kwanza ni tupu. Chagua kiolezo kuanza, au anza kutoka mwanzo.",
+    "tagline": "Nafasi isiyo na msongamano kwa uandishi mrefu — hadithi, utafiti, insha, jarida.",
+    "continueWriting": "Endelea kuandika",
+    "startNewSpace": "Anza nafasi mpya",
+    "syncOffChip": "ulandanishi/nakala rudufu hazijawezeshwa · data inaweza kupotea",
+    "syncOnChip": "ulandanishi wa folda umewezeshwa",
+    "syncOnTitle": "Ulandanishi wa Folda Umewezeshwa",
+    "syncOnBody": "Kazi yako inalandanishwa kwenye folda «{{folder}}» kwenye kifaa hiki.",
+    "warningTitle": "Toleo kabla ya kutolewa",
+    "warningBody": "Hakuna ulandanishi wa data. Kila kitu kiko kwenye kivinjari chako na kufuta akiba yake kutapoteza kazi yako. Unaweza kuwezesha ulandanishi kwenye folda ya ndani katika Mipangilio ya Ulimwengu → Ulandanishi.",
+    "versionLine": "Toleo {{version}}"
+  },
+  "about": {
+    "back": "rudi",
+    "title": "kuhusu",
+    "greeting": "Habari,",
+    "paragraph1": "Hii ni kwa mwandishi anayeanza upya kila wakati. Yule anayefungua hati mpya, kuandika sentensi tatu (au hakuna), kisha kutumia dakika 40 akibadilisha fonti. Yule ambaye mawazo yake bora yanakuja usiku wa manane na kupotea baadaye. Yule mwenye tabs kumi na nne, daftari sita, na rasimu ambayo haijasogea kwa mwezi.",
+    "paragraph2Before": "Najua, kwa sababu hiyo ni mimi ",
+    "paragraph2After": ". Nina ADHD, Autism, labda matatizo mengine ambayo bado hayajagundulika. Ninahitaji kitu kinachoelewana na ubongo wangu wenye msongamano lakini mzuri. Mahali pa kutupa kila kitu kabla hakijapotea (au kuanza kuandika). Vipande, mawazo nusu, miunganiko ya usiku wa manane. Vyote, mahali pamoja.",
+    "paragraph3": "Kwa hivyo nilijenga nafasi hii kwa ajili yetu. Natumai itakupa furaha ya dopamine kama inavyonipa mimi wakati wa kuijenga.",
+    "paragraph4Before": "Jambo moja zaidi... Ninamini katika teknolojia kwa manufaa na ninachukia matangazo. Kwa hivyo, hii itakuwa daima bila matangazo na BURE kwa matumizi yasiyo ya kibiashara. Unaweza kuibadilisha unavyotaka chini ya ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Hali",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — hakuna ulandanishi wa data. Data yote imehifadhiwa katika IndexedDB kwenye kivinjari chako cha ndani. Ukifuta akiba ya kivinjari chako, kazi yako itapotea.",
+    "feedbackBefore": "Bado ninajenga hii na nina mawazo mengi ",
+    "feedbackAfter": ". Ningependa kusikia kinachofanya kazi, kisichofanya kazi, na unachotamani kiwepo. Maoni yanakaribishwa.",
+    "sourceLabel": "Chanzo"
+  },
+  "settings": {
+    "back": "rudi",
+    "windowTitle": "lotem · mipangilio",
+    "breadcrumb": "MIPANGILIO YA ULIMWENGU",
+    "shellSubtitle": "MIPANGILIO YA ULIMWENGU",
+    "comingSoonBadge": "inakuja hivi karibuni",
+    "helpAria": "Hii ni nini?",
+    "groups": {
+      "preferences": "Mapendeleo",
+      "writing": "Uandishi",
+      "data": "Data",
+      "account": "Akaunti"
+    },
+    "tabs": {
+      "general": "Jumla",
+      "appearance": "Mwonekano",
+      "editor": "Mhariri",
+      "docInspector": "Mkaguzi wa hati",
+      "accessibility": "Ufikiaji",
+      "typography": "Uchapaji",
+      "shortcuts": "Njia za mkato",
+      "templates": "Violezo",
+      "palettes": "Rangi za kuonyesha",
+      "citations": "Mtindo wa tanbihi",
+      "annotation": "Maelezo",
+      "backups": "Nakala rudufu",
+      "sync": "Ulandanishi",
+      "export": "Hamisha / Ingiza",
+      "data": "Data yako",
+      "account": "Akaunti",
+      "about": "Kuhusu",
+      "language": "Lugha"
+    },
+    "language": {
+      "title": "Lugha",
+      "subtitle": "Chagua lugha ya kiolesura na makala ya Help Center. Tafsiri zinazokosekana zinarudishwa kwa Kiingereza.",
+      "label": "Lugha ya kiolesura",
+      "hint": "Mabadiliko yanatekelezwa mara moja na kuhifadhiwa kwenye kivinjari hiki.",
+      "machineTranslationNotice": "Tafsiri zaidi ya Kiingereza zinazalishwa kiotomatiki. Tunaomba msamaha kwa makosa yoyote — tuma maoni ili tuweze kuyarekebisha.",
+      "feedbackLinkLabel": "tuma maoni"
+    },
+    "editor": {
+      "title": "Mhariri",
+      "subtitle": "Mwambaa zana na vifaa vya uandishi. Njia za mkato za Markdown (#, >, -, **) zinaendelea kufanya kazi bila kujali mipangilio hii.",
+      "floatingToolbarLabel": "Mwambaa zana unaoelea",
+      "floatingToolbarHint": "Inaonekana unapotia rangi au kubonyeza kulia katika hali ya uandishi.",
+      "floatingToolbarOff": "Imezimwa",
+      "floatingToolbarOn": "Imewezeshwa",
+      "rightClickLabel": "Menyu ya kubonyeza kulia",
+      "rightClickHint": "Badilisha kati ya mwambaa zana unaoelea na menyu ya kawaida ya kivinjari.",
+      "rightClickTooltip": "Tumia menyu ya kawaida ya kubonyeza kulia badala ya mwambaa zana unaoelea. Mwambaa zana bado utaonekana unapochagua kwa kuandika rangi.",
+      "inlineTogglesLabel": "Vifungo vya kubadilisha",
+      "inlineTogglesHint": "Vifungo vya Nzito na Italiki ndani ya mwambaa zana unaoelea.",
+      "inlineTogglesTooltip": "Ficha vifungo B na I kutoka kwenye mwambaa zana unaoelea. Njia za mkato za Markdown (**, _) zinaendelea kufanya kazi.",
+      "listDepthLabel": "Kina cha orodha",
+      "listDepthHint": "Kina ambacho orodha za nukta na nambari zinaweza kufika.",
+      "listDepthTooltip": "Ongeza au punguza kikomo cha kina cha orodha. Sasa kimewekwa kwa viwango 2.",
+      "templateDefaultsLabel": "Mipangilio chaguo-msingi ya kiolezo",
+      "templateDefaultsHint": "Seti tofauti za muundo kwa kila kiolezo.",
+      "templateDefaultsTooltip": "Ruhusu kila kiolezo (hadithi, jarida, kiufundi…) kuchagua seti yake ya muundo."
+    },
+    "docInspector": {
+      "title": "Mkaguzi wa hati",
+      "subtitle": "Chagua ni sehemu zipi zinaonekana katika mkaguzi wa hati. Kila moja inaweza kuzimwa kwa ujumla na kubatilishwa kwa kila nafasi.",
+      "statusLabel": "Hali",
+      "statusHint": "Onyesha hali ya hati na kufunga hati zilizokamilika kutoka kwa uhariri.",
+      "wordLimitLabel": "Kikomo cha maneno",
+      "wordLimitHint": "Onyesha kikomo cha kuhesabu maneno unachoweza kuweka kwa kila hati.",
+      "charLimitLabel": "Kikomo cha herufi",
+      "charLimitHint": "Onyesha kikomo cha kuhesabu herufi unachoweza kuweka kwa kila hati.",
+      "dueDateLabel": "Tarehe ya mwisho",
+      "dueDateHint": "Onyesha tarehe ya mwisho unachoweza kuweka kwa kila hati.",
+      "highlightLabel": "Angazia maandishi yanayopita kikomo",
+      "highlightHint": "Weka alama maandishi yoyote yanayopita kikomo katika mhariri.",
+      "statusStagesLabel": "Hatua za hali",
+      "statusStagesHint": "Chagua ni hatua zipi zinaonekana katika kichaguzi cha hali.",
+      "on": "Imewezeshwa",
+      "off": "Imezimwa",
+      "inherit": "Chaguo-msingi ({{state}})",
+      "inheritTooltip": "Imerithi kutoka kwa mipangilio ya ulimwengu",
+      "stateOn": "imewezeshwa",
+      "stateOff": "imezimwa"
+    },
+    "accessibility": {
+      "title": "Ufikiaji",
+      "subtitle": "Rekebisha kiolesura kwa starehe na teknolojia ya msaada. Kila chaguo linaanza na uzoefu wa sasa — hakuna kinachobadilika mpaka uchague.",
+      "theme": {
+        "label": "Mandhari na utofauti",
+        "hint": "Mandhari yenye utofauti mkubwa hukidhi kiwango cha utofauti cha WCAG AAA.",
+        "light": "Mwanga",
+        "dark": "Giza",
+        "hcLight": "Utofauti mkubwa (mwanga)",
+        "hcDark": "Utofauti mkubwa (giza)"
+      },
+      "motion": {
+        "label": "Mwendo",
+        "hint": "Punguza au zima mwendo wa kiolesura.",
+        "auto": "Lingana na mfumo",
+        "reduced": "Imepunguzwa",
+        "full": "Kamili"
+      },
+      "textSize": {
+        "label": "Ukubwa wa maandishi",
+        "hint": "Pima uso wa kusoma na kuandika.",
+        "sm": "Ndogo",
+        "base": "Chaguo-msingi",
+        "lg": "Kubwa",
+        "xl": "Kubwa sana"
+      },
+      "lineSpacing": {
+        "label": "Nafasi ya mstari",
+        "hint": "Ongeza nafasi ya kupumua kati ya mistari ya nathari.",
+        "normal": "Kawaida",
+        "relaxed": "Pumziko",
+        "loose": "Wazi"
+      },
+      "linkUnderline": {
+        "label": "Daima pigia mistari viungo",
+        "hint": "Onyesha mistari ili viungo visitegemee rangi peke yake."
+      },
+      "focus": {
+        "label": "Kionyeshi cha kuzingatia kilichoimarishwa",
+        "hint": "Tumia muhtasari mzito na wenye utofauti zaidi unapozingatia."
+      },
+      "reset": {
+        "label": "Rudisha chaguo-msingi",
+        "hint": "Rudisha mwendo, ukubwa wa maandishi, nafasi ya mstari, viungo, na kuzingatia kwenye chaguo-msingi zao. Mandhari yako haibadiliki.",
+        "action": "Weka upya"
+      }
+    },
+    "general": {
+      "title": "Jumla",
+      "subtitle": "Jinsi LIpsum Writer inavyoonekana kwa chaguo-msingi. Hakuna kitu kinachoharibu.",
+      "comingSoonBody": "Msongamano wa karibu, kupunguza mwendo, mwonekano wa vidokezo vya kibodi, na nini kinachofunguliwa wakati wa kuanza.",
+      "compactDensityLabel": "Msongamano wa karibu",
+      "compactDensityHint": "Safu zilizoshikamana zaidi katika orodha, upakiaji ulioshikamana zaidi kila mahali.",
+      "reduceMotionLabel": "Punguza mwendo",
+      "reduceMotionHint": "Ruka mabadiliko ya mwendo kati ya maoni.",
+      "keyboardHintsLabel": "Onyesha vidokezo vya kibodi",
+      "keyboardHintsHint": "Onyesha njia za mkato za ⌘-key katika tooltips na kona ya vifungo.",
+      "startupLabel": "Fungua wakati wa kuanza",
+      "startupHint": "Unachokiona unapozindua programu.",
+      "startupOptions": {
+        "lastView": "Mtazamo wa mwisho",
+        "home": "Nyumbani",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Mwonekano",
+      "subtitle": "Rangi, fonti, msongamano. Hisia unayotaka kitu hiki kiweke.",
+      "comingSoonBody": "Paleti za mandhari zilizopangwa, rangi ya msisitizo, na msongamano. Kubadilisha mandhari kwa leo kuko katika mipangilio ya haraka ya reli ya ulimwengu.",
+      "themeLabel": "Mandhari",
+      "themeHint": "Paleti tatu zilizopangwa. Zinarekebisha kila kitu — rangi za vizuizi, mistari myembamba, hata nafaka.",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "chaguo-msingi",
+        "studio": "Studio",
+        "studioSub": "neutral",
+        "midnight": "Midnight",
+        "midnightSub": "giza"
+      },
+      "accentLabel": "Msisitizo",
+      "accentHint": "Hutumiwa kwa hover, kuzingatia, pete ya uhariri inayotumika.",
+      "densityLabel": "Msongamano",
+      "densityOptions": {
+        "cozy": "Starehe",
+        "default": "Chaguo-msingi",
+        "compact": "Karibu"
+      }
+    },
+    "templates": {
+      "title": "Violezo",
+      "subtitle": "Miundo inayoweza kutumika tena kwa nafasi na hati mpya.",
+      "comingSoonBody": "Tunga violezo vyako mwenyewe na sehemu, majina ya hati chaguo-msingi, na vipande vya nathari.",
+      "items": {
+        "fiction": "Hadithi",
+        "fictionSub": "Nakala · Ulimwengu · Warsha",
+        "research": "Utafiti",
+        "researchSub": "Vyanzo · Maelezo · Rasimu",
+        "journal": "Jarida",
+        "journalSub": "Kila siku · Kila wiki · Tafakari",
+        "essay": "Insha",
+        "essaySub": "Muhtasari · Rasimu · Ya mwisho"
+      }
+    },
+    "palettes": {
+      "title": "Rangi za kuonyesha",
+      "subtitle": "Paleti za nafasi tano kwa kila nafasi — wape majina na urekebishe kila rangi.",
+      "comingSoonBody": "Hariri, hifadhi, na ubadilishe paleti za kuonyesha zenye majina (Ushahidi, Kurekebisha, Marejeleo…) katika nafasi.",
+      "items": {
+        "evidence": "Ushahidi",
+        "revise": "Kurekebisha",
+        "reference": "Marejeleo",
+        "quote": "Nukuu",
+        "loose": "Mwisho usio wazi"
+      },
+      "rename": "piga jina upya",
+      "tune": "rekebisha"
+    },
+    "citations": {
+      "title": "Mtindo wa tanbihi",
+      "subtitle": "Mtindo wa tanbihi chaguo-msingi katika nafasi.",
+      "comingSoonBody": "Chagua mtindo wa ulimwengu (Chicago, APA, MLA…) na marekebisho ya kila nafasi.",
+      "styleLabel": "Mtindo chaguo-msingi",
+      "styleHint": "Hutumiwa unapoingiza tanbihi mpya. Marekebisho ya kila nafasi yanakuja baadaye.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Maelezo",
+      "subtitle": "Maelezo ya ukingo na maelezo ya ndani ya maandishi.",
+      "comingSoonBody": "Aina za maelezo, mipangilio chaguo-msingi ya mwonekano, na tabia ya kuhamisha.",
+      "showMarginLabel": "Onyesha maelezo ya ukingo",
+      "showMarginHint": "Maelezo yanaelea kwenye mfereji wa kulia inapokuwa na nafasi.",
+      "showInlineLabel": "Onyesha kuonyesha ndani ya maandishi",
+      "showInlineHint": "Rangi ya maelezo inaingia kwenye nathari iliyo chini.",
+      "exportLabel": "Jumuisha katika uhamishaji",
+      "exportHint": "Maelezo yanaandikwa pamoja na mwili wa hati."
+    },
+    "export": {
+      "title": "Hamisha / Ingiza",
+      "subtitle": "Hamisha data ndani na nje ya LIpsum Writer.",
+      "comingSoonBody": "Hamisha kwa wingi kwenye .zip, ingiza kutoka kwa kifurushi kingine cha LIpsum au saraka ya Markdown.",
+      "formatLabel": "Muundo wa uhamishaji",
+      "formatHint": "Kuhamisha kwa kila hati na kila nafasi kunatumia chaguo-msingi sawa.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Ingiza kutoka",
+      "importHint": "Leta kifurushi kingine cha LIpsum au saraka ya faili za Markdown.",
+      "importOptions": {
+        "bundle": "Kifurushi cha LIpsum (.zip)",
+        "markdown": "Folda ya Markdown",
+        "obsidian": "Obsidian vault"
+      },
+      "importSpaceLabel": "Ingiza nafasi",
+      "importSpaceHint": "Leta nafasi kwenye kivinjari hiki kutoka kwa akiba ya Writer (.zip) — upakuaji wa picha ya hali au uhamishaji wa ulandanishi wa folda kutoka kwa kifaa kingine.",
+      "importChooseFile": "Chagua akiba…",
+      "importing": "inaingia…",
+      "importFailed": "Uingizaji umeshindwa: {{message}}",
+      "comingSoonLabel": "Miundo zaidi",
+      "comingSoonHint": "Hamisha kwa wingi na kuingiza kutoka kwa folda za Markdown au vault za Obsidian.",
+      "comingSoonTooltip": "Imepangwa — haipatikani bado."
+    },
+    "data": {
+      "title": "Data yako",
+      "subtitle": "Mahali ambapo kazi yako iko na kiasi gani kinachohitajika.",
+      "comingSoonBody": "Matumizi ya IndexedDB, makadirio ya hifadhi, na kufuta kwa kubonyeza mara moja.",
+      "storageLabel": "Hifadhi iliyotumiwa",
+      "storageValue": "≈ 12.4 MB · nafasi 4, hati 38",
+      "engineLabel": "Injini ya hifadhi",
+      "engineValue": "IndexedDB (kivinjari cha ndani)",
+      "wipeLabel": "Futa kila kitu",
+      "wipeHint": "Inaondoa kila nafasi, hati, na picha ya hali kutoka kwa kivinjari hiki. Haiwezekani kurudisha.",
+      "wipeButton": "Futa data ya ndani…"
+    },
+    "about": {
+      "title": "Kuhusu",
+      "subtitle": "Maelezo ya ujenzi na viungo.",
+      "comingSoonBody": "Angalia ukurasa /about kwa hadithi; kichupo hiki kitakuwa na maelezo ya ujenzi, leseni, na orodha ya mabadiliko.",
+      "versionLabel": "Toleo",
+      "versionValue": "{{version}}",
+      "buildLabel": "Ujenzi",
+      "buildValue": "wa ndani",
+      "licenseLabel": "Leseni",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Viungo",
+      "links": {
+        "source": "Chanzo",
+        "changelog": "Orodha ya mabadiliko",
+        "feedback": "Tuma maoni"
+      }
+    },
+    "account": {
+      "title": "Akaunti",
+      "subtitle": "Kuingia, ulandanishi kati ya vifaa, na maeneo ya kazi ya pamoja.",
+      "comingSoonBody": "Ulandanishi wa wingu haupatikani leo — Lotem ni wa ndani tu. Akaunti, kuingia, na maeneo ya kazi ya pamoja yanakuja ulandanishi ukifika.",
+      "signedOutLabel": "Ingia",
+      "signedOutHint": "Ulandanishi wa wingu haupatikani bado. Hii iko hapa kuonyesha muundo.",
+      "signInButton": "Ingia kwa barua pepe",
+      "syncLabel": "Landanisha kifaa hiki",
+      "syncHint": "Ukisha kuingia, nafasi zako zitanakiliwa kwenye vifaa vingine."
+    },
+    "typography": {
+      "title": "Uchapaji",
+      "subtitle": "Chaguo-msingi katika ulimwengu wote. Ulimwengu mmoja mmoja unaweza kubatilisha.",
+      "comingSoonBody": "Chagua fonti ya nathari, fonti ya UI, ukubwa wa kusoma chaguo-msingi, urefu wa mstari, na kipimo kwa ulimwengu mpya.",
+      "proseFontLabel": "Fonti ya nathari",
+      "uiFontLabel": "Fonti ya UI",
+      "proseSizeLabel": "Ukubwa wa nathari",
+      "proseSizeHint": "Chaguo-msingi kwa ulimwengu mpya.",
+      "lineHeightLabel": "Urefu wa mstari",
+      "measureLabel": "Kipimo",
+      "measureHint": "Upana wa mstari uliokithiri.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Njia za mkato",
+      "subtitle": "Vifungo vya kibodi kwa urambazaji, muundo, na hali.",
+      "comingSoonBody": "Njia za mkato zinazoweza kufungwa tena kwa kuandika/kusoma/kugawanya, hali ya kuzingatia, na mwambaa zana wa muundo.",
+      "navHeader": "Urambazaji",
+      "formatHeader": "Muundo",
+      "modeHeader": "Hali",
+      "items": {
+        "openSettings": "Fungua mipangilio",
+        "quickSettings": "Mipangilio ya haraka",
+        "findInDoc": "Tafuta katika hati",
+        "toggleFocus": "Badilisha kuzingatia",
+        "toggleInspector": "Badilisha mkaguzi",
+        "bold": "Nzito",
+        "italic": "Italiki",
+        "underline": "Pigia mstari",
+        "heading1": "Kichwa 1",
+        "heading2": "Kichwa 2",
+        "write": "Hali ya uandishi",
+        "read": "Hali ya kusoma",
+        "split": "Hali ya kugawanya"
+      }
+    },
+    "backups": {
+      "title": "Nakala rudufu",
+      "subtitle": "Hamisha, rejesha, na piga picha ya data yako ya ndani.",
+      "comingSoonBody": "Picha za ndani zilizopangwa, uhamishaji wa mkono kwenye .zip, na kurejesha kutoka kwa nakala rudufu ya awali.",
+      "intervalLabel": "Muda wa picha ya hali otomatiki",
+      "intervalOptions": {
+        "5min": "dakika 5",
+        "10min": "dakika 10",
+        "30min": "dakika 30",
+        "off": "Imezimwa"
+      },
+      "keepLabel": "Hifadhi",
+      "keepHint": "Picha za zamani zinaondolewa kiotomatiki.",
+      "keepOptions": {
+        "last50": "Za mwisho 50",
+        "days7": "Siku 7",
+        "days30": "Siku 30"
+      },
+      "latestLabel": "Ya mwisho",
+      "latestValue": "dakika 12 zilizopita · maneno 1,190"
+    },
+    "sync": {
+      "title": "Ulandanishi",
+      "subtitle": "Sukuma nafasi zako kwenye folda unayochagua. Uelekeze kwenye folda ya Google Drive, Dropbox, au iCloud kulandanisha kati ya vifaa.",
+      "unsupportedTitle": "Haipatikani katika kivinjari hiki",
+      "unsupportedBody": "Ulandanishi wa folda unahitaji File System Access API, inayopatikana katika Chrome, Edge, na vivinjari vingine vya Chromium kwenye desktop. Badilisha kwenye kivinjari kinachotiwa moyo kuitumia.",
+      "folderLabel": "Folda iliyolandanishwa",
+      "folderHint": "Kila ulandanishi unaandika Markdown .zip kwa kila nafasi hapa, ukihifadhi 5 za mwisho pamoja na latest.zip. Ulandanishi umegawanyika na Nakala rudufu.",
+      "noFolder": "Hakuna folda iliyounganishwa",
+      "chooseFolder": "Chagua folda…",
+      "changeFolder": "Badilisha…",
+      "disconnect": "Kata muunganisho",
+      "intervalLabel": "Ulandanishi otomatiki",
+      "intervalHint": "Mara ngapi nafasi zinalandanishwa kiotomatiki programu ikiwa wazi na folda ikiwa imeunganishwa. Kila nafasi inaweza kubatilisha chaguo-msingi hii.",
+      "intervalOff": "Imezimwa",
+      "intervalMinutes": "dakika {{count}}",
+      "intervalDefault": "Chaguo-msingi ({{label}})",
+      "syncLabel": "Ulandanishi wa mkono",
+      "pushOnlyHint": "Kusukuma tu kwa sasa — hii inaandika data yako ya ndani kwenye folda. Kuvuta mabadiliko kurudi kunakuja baadaye.",
+      "syncNow": "Landanisha sasa",
+      "syncNowAll": "Landanisha nafasi zote",
+      "reconnectHint": "Ulandanishi umesimama — kivinjari kinahitaji ruhusa ya folda tena kwa kipindi hiki. Unganisha tena kuendelea na ulandanishi wa mkono na otomatiki.",
+      "reconnectButton": "Unganisha tena",
+      "reconnecting": "Inaunganisha tena…",
+      "syncing": "Inaandanisha…",
+      "syncFailed": "Ulandanishi umeshindwa: {{message}}",
+      "lastSynced": "Ililandanishwa mara ya mwisho {{when}}",
+      "neverSynced": "Haikuwahi kulandanishwa",
+      "justNow": "sasa hivi",
+      "resultsTitle": "Kukimbia kwa mwisho",
+      "spaceOk": "imeandanishwa",
+      "spaceFailed": "imeshindwa",
+      "historyTitle": "Ulandanishi wa hivi karibuni",
+      "historyEmpty": "Hakuna ulandanishi bado.",
+      "columns": {
+        "when": "LINI",
+        "space": "NAFASI",
+        "kind": "AINA",
+        "size": "UKUBWA",
+        "status": "HALI"
+      },
+      "kind": {
+        "auto": "otomatiki",
+        "manual": "mkono"
+      },
+      "status": {
+        "ok": "sawa",
+        "error": "hitilafu"
+      }
+    },
+    "space": {
+      "breadcrumb": "NAFASI · MIPANGILIO",
+      "shellSubtitle": "MIPANGILIO YA NAFASI",
+      "loading": "Inapakia nafasi…",
+      "groups": {
+        "thisSpace": "Nafasi hii",
+        "sharingMembers": "Kushiriki & Wanachama",
+        "data": "Data",
+        "dangerZone": "Hatari"
+      },
+      "tabs": {
+        "general": "Jumla",
+        "docInspector": "Mkaguzi wa hati",
+        "template": "Kiolezo",
+        "palette": "Rangi ya kuonyesha",
+        "sharing": "Kushiriki",
+        "members": "Wanachama",
+        "backups": "Nakala rudufu",
+        "sync": "Ulandanishi",
+        "export": "Hamisha",
+        "danger": "Eneo la hatari"
+      },
+      "docInspector": {
+        "title": "Mkaguzi wa hati",
+        "subtitle": "Batilisha mipangilio ya mkaguzi wa ulimwengu kwa nafasi hii."
+      },
+      "palette": {
+        "title": "Rangi ya kuonyesha",
+        "subtitle": "Rangi tano za kuonyesha zenye majina zinazoweza kurekebishwa kwa nafasi hii.",
+        "comingSoonBody": "Piga jina upya, bozea tena, na upanga tena nafasi za kuonyesha za nafasi hii.",
+        "items": {
+          "evidence": "Ushahidi",
+          "revise": "Kurekebisha",
+          "reference": "Marejeleo",
+          "quote": "Nukuu",
+          "loose": "Mwisho usio wazi"
+        },
+        "rename": "piga jina upya",
+        "tune": "rekebisha"
+      },
+      "export": {
+        "title": "Hamisha",
+        "subtitle": "Hamisha maudhui ya nafasi hii kwenye zana nyingine.",
+        "comingSoonBody": "Hamisha kwenye Markdown .zip (leo kupitia Nakala rudufu), LaTeX, HTML, au PDF — vyote mahali pamoja.",
+        "formatLabel": "Muundo",
+        "formatHint": "Markdown inakuja kwanza; zilizobaki zinafuata.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Uhamishaji wa mwisho",
+        "lastValue": "haukuwahi"
+      },
+      "general": {
+        "title": "Jumla",
+        "subtitle": "Maelezo ya utambulisho wa nafasi hii. Mabadiliko yanatekelezwa mara moja na kulandanishwa kati ya maoni.",
+        "nameLabel": "Jina la nafasi",
+        "nameHint": "Inaonyeshwa katika kichwa cha upau wa pembeni na kidokezo cha kiungo cha nafasi.",
+        "tagLabel": "Lebo",
+        "tagHint": "Nambari fupi (herufi 2–4) inayoonyeshwa kwenye kiungo cha nafasi."
+      },
+      "sharing": {
+        "title": "Kushiriki",
+        "subtitle": "Dhibiti jinsi nafasi hii inavyoshirikiwa.",
+        "comingSoonBody": "Mwonekano wa kila nafasi na viungo vya kushiriki. Vinakuja ulandanishi wa wingu ukifika.",
+        "visibilityLabel": "Mwonekano",
+        "visibilityOptions": {
+          "private": "Binafsi",
+          "link": "Yeyote mwenye kiungo",
+          "members": "Wanachama tu"
+        },
+        "linkLabel": "Kiungo kinachoweza kushirikiwa",
+        "linkHint": "Kusoma tu kwa chaguo-msingi. Haki za uhariri zinafuata Wanachama.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "nakili"
+      },
+      "template": {
+        "title": "Kiolezo",
+        "subtitle": "Kiolezo cha muundo ambacho nafasi hii iliundwa nacho.",
+        "comingSoonBody": "Kubadilisha kiolezo cha nafasi baada ya uundaji hakutiiwi moyo bado. Kinakuja mara tunaweza kuhamisha sehemu na hati kwa usalama.",
+        "currentLabel": "Kiolezo cha sasa",
+        "currentValue": "Hadithi",
+        "currentSub": "Nakala · Ulimwengu · Warsha",
+        "changeLabel": "Badilisha kiolezo",
+        "changeHint": "Inaupanga upya sehemu na hati zilizopo kwenye kiolezo kipya.",
+        "changeButton": "Badilisha kiolezo…"
+      },
+      "members": {
+        "title": "Wanachama",
+        "subtitle": "Waandishi wenzako na wakaguzi wenye ufikiaji wa nafasi hii.",
+        "comingSoonBody": "Alika washirika, dhibiti majukumu, na kagua mabadiliko. Vinakuja na ulandanishi wa wingu.",
+        "inviteLabel": "Alika kwa barua pepe",
+        "inviteHint": "Tutawatumia kiungo cha kujiunga na nafasi hii.",
+        "invitePlaceholder": "jina@mfano.com",
+        "inviteButton": "tuma mwaliko",
+        "membersLabel": "Wanachama",
+        "roles": {
+          "owner": "mmiliki",
+          "editor": "mhariri",
+          "viewer": "mtazamaji"
+        },
+        "you": "wewe"
+      },
+      "backups": {
+        "title": "Nakala rudufu",
+        "subtitle": "Piga picha ya hali ya nafasi hii kama .zip unayoweza kupakua, kuhifadhi, na kurejesha.",
+        "retentionHint": "Kuhifadhi picha za hali {{count}} za hivi karibuni — za zamani zinaondolewa kiotomatiki.",
+        "snapshotNow": "+ piga picha ya hali sasa",
+        "snapshotting": "inapiga picha ya hali…",
+        "snapshotFailed": "Kupiga picha ya hali kumeshindwa: {{message}}",
+        "historyTitle": "Historia",
+        "empty": "Hakuna picha za hali bado — unda moja kwa + piga picha ya hali sasa.",
+        "columns": {
+          "when": "LINI",
+          "kind": "AINA",
+          "size": "UKUBWA",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "mkono",
+          "auto": "otomatiki",
+          "snapshot": "picha ya hali"
+        },
+        "download": "↓ pakua",
+        "delete": "futa",
+        "deleteConfirm": "Futa picha hii ya hali? Haiwezekani kurudisha.",
+        "deleted": "Picha ya hali imefutwa.",
+        "justNow": "sasa hivi",
+        "restore": "↺ rejesha",
+        "restoreUnavailable": "Picha hii ya hali inatangulia msaada wa kurejesha — inaweza tu kupakuliwa.",
+        "restoreDialogTitle": "Rejesha picha hii ya hali?",
+        "restoreDialogBody": "Maudhui ya sasa ya nafasi hii yatabadilishwa na picha ya hali. Picha ya hali ya hali ya sasa imehifadhiwa kwanza, ili uweze kutofautiana na kurejesha huku.",
+        "restoreConfirm": "Rejesha",
+        "restoreCancel": "Ghairi",
+        "restoring": "inarejesha…",
+        "restored": "Picha ya hali imerejeshwa.",
+        "restoreFailed": "Kurejesha kumeshindwa: {{message}}",
+        "fileRestoreTitle": "Kurejesha kutoka kwa .zip iliyopakuliwa?",
+        "fileRestoreBody": "Iingize kupitia Mipangilio ya Ulimwengu → Hamisha / Ingiza — inarudi kama nafasi mpya, ikiacha hii bila mabadiliko."
+      },
+      "sync": {
+        "title": "Ulandanishi",
+        "subtitle": "Sukuma nafasi hii kwenye folda iliyounganishwa, kwa mkono au kwa ratiba. Ulandanishi umegawanyika na Nakala rudufu.",
+        "folderHint": "Unganisha folda katika Mipangilio ya Ulimwengu → Ulandanishi. Folda moja inatumika kwa kila nafasi.",
+        "intervalHint": "Mara ngapi nafasi hii inalandanishwa kiotomatiki. Chagua Chaguo-msingi kufuata mipangilio ya ulandanishi otomatiki wa ulimwengu.",
+        "syncNow": "Landanisha nafasi hii"
+      },
+      "danger": {
+        "title": "Eneo la hatari",
+        "subtitle": "Vitendo visivyoweza kurudishwa. Soma kwa makini kabla ya kuendelea.",
+        "deleteCardTitle": "Futa nafasi hii",
+        "deleteCardBody": "Inaondoa kabisa nafasi hii pamoja na kila hati, sehemu, kumbukumbu ya nafasi ya ubongo, maelezo, tanbihi, na muunganiko. Haiwezekani kurudisha.",
+        "deleteButton": "Futa nafasi hii",
+        "dialogTitle": "Futa «{{name}}»?",
+        "dialogBody": "Hii inaondoa kabisa nafasi na maudhui yake yote. Haiwezekani kurudisha.",
+        "typeToConfirm": "Andika {{name}} kuthibitisha",
+        "cancel": "Ghairi",
+        "confirm": "Futa nafasi"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Umepotea katika ukingo",
+    "body": "Ukurasa huo haupo (bado).",
+    "goHome": "Nenda nyumbani"
+  },
+  "templates": {
+    "crumb": "01 — AINA YA CHUMBA",
+    "headingMain": "Ni nafasi ya aina gani",
+    "headingAccent": "unayoanza?",
+    "chooseLegend": "Chagua kiolezo",
+    "stage": {
+      "pre-alpha": "majaribio",
+      "alpha": "mapema",
+      "beta": "beta"
+    },
+    "nameLabel": "Jina",
+    "tagLabel": "Lebo",
+    "syncLabel": "ulandanishi wa wingu —",
+    "syncValue": "imezimwa, ya ndani",
+    "syncTooltip": "Ulandanishi wa wingu haupatikani — programu hii ni ya ndani tu kwa sasa.",
+    "creating": "inaunda…",
+    "submitLabel": "ingia {{name}} →",
+    "newSpace": "nafasi mpya",
+    "back": "rudi"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} ambazo hazijapangwa",
+    "title": "Brain space",
+    "mobileWarning": "Brain space inafanya kazi vyema zaidi kwenye skrini kubwa zaidi.",
+    "mobileNote": "Turubai inahitaji kipanya au trackpad.",
+    "openInWrite": "Fungua katika Write →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "anza kutupa mawazo",
+      "emptyHint": "chagua aina ya kadi hapa chini",
+      "pendingHint": "shift-bonyeza kumbukumbu nyingine kuunganisha · esc kughairi"
+    },
+    "note": {
+      "deleteNote": "Futa kumbukumbu",
+      "addPicture": "Ongeza picha",
+      "addPictureCta": "ongeza picha",
+      "openLinkedDoc": "Fungua hati iliyounganishwa",
+      "fetchedContent": "Maudhui yaliyopatikana",
+      "openDetailsLabel": "Fungua maelezo",
+      "openDetailsTitle": "Fungua paneli ya maelezo",
+      "titlePlaceholder": "kichwa",
+      "addTitleCta": "+ kichwa",
+      "bodyEmpty": "(bonyeza kuandika)",
+      "viewImage": "Tazama {{name}}",
+      "removeImage": "Ondoa {{name}}",
+      "resize": "Badilisha ukubwa wa kumbukumbu",
+      "days": {
+        "sun": "Jum",
+        "mon": "Jpi",
+        "tue": "Jmb",
+        "wed": "Jtn",
+        "thu": "Alh",
+        "fri": "Iju",
+        "sat": "Jmst"
+      }
+    },
+    "drawer": {
+      "title": "Maelezo ya kumbukumbu",
+      "description": "Hariri kumbukumbu iliyochaguliwa na usimamie muunganiko wake.",
+      "untitledPlaceholder": "Bila kichwa",
+      "titleAriaLabel": "Kichwa cha kumbukumbu",
+      "closeAriaLabel": "Funga kisanduku",
+      "bodyLabel": "Mwili",
+      "bodyPlaceholder": "Andika kitu…",
+      "picturesLabel": "Picha",
+      "addPicture": "Ongeza picha",
+      "pictureLimitHint": "kikomo cha {{count}} kimefikiwa — ondoa moja kuongeza kingine.",
+      "linkedDocLabel": "Hati Iliyounganishwa",
+      "noLinkedDoc": "— Hakuna hati iliyounganishwa —",
+      "untitledDoc": "Bila kichwa",
+      "openDoc": "Fungua",
+      "connectionsHeading": "Miunganiko ({{count}})",
+      "connectionsEmpty": "shift-bonyeza kumbukumbu nyingine kwenye turubai kuunganisha.",
+      "untitledNote": "(bila kichwa)",
+      "removeConnection": "Ondoa muunganiko",
+      "deleteNote": "Futa kumbukumbu"
+    }
+  },
+  "split": {
+    "title": "Mtazamo wa kugawanya",
+    "mobileWarning": "Mtazamo wa kugawanya unahitaji skrini kubwa zaidi.",
+    "mobileNote": "Fungua hati hii katika hali ya Write badala yake.",
+    "openInWrite": "Fungua katika Write →",
+    "leftPrefix": "KUSHOTO —",
+    "rightPrefix": "KULIA —",
+    "rightPaneAria": "Hati ya sehemu ya kulia",
+    "noOtherDocs": "(hakuna hati nyingine)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Tanbihi",
+    "pickDoc": "Chagua hati kutoka kwenye orodha ya kushuka hapo juu.",
+    "dividerAria": "Badilisha ukubwa wa sehemu za kugawanya"
+  },
+  "citationsDrawer": {
+    "title": "Tanbihi",
+    "description": "Tafuta, ingiza, na hamisha tanbihi kwa nafasi hii.",
+    "close": "Funga tanbihi",
+    "expand": "Fungua tanbihi katika mtazamo kamili"
+  },
+  "citations": {
+    "title": "Tanbihi",
+    "breadcrumb": "Vyanzo / ",
+    "entries": "{{count}} INGIZO",
+    "searchPlaceholder": "waandishi, lebo, mwaka…",
+    "upload": "↑ pakia .bib / .ris",
+    "add": "+ ongeza",
+    "cancel": "× ghairi",
+    "columns": {
+      "tag": "LEBO",
+      "authors": "WAANDISHI",
+      "title": "KICHWA",
+      "year": "MWAKA",
+      "type": "AINA",
+      "used": "ILIYOTUMIWA"
+    },
+    "style": "MTINDO — CHICAGO (MWANDISHI-TAREHE)",
+    "exportBib": "HAMISHA KAMA .BIB",
+    "summary": "{{filtered}} ZINAONYESHWA · {{shown}} KWENYE UKURASA HUU",
+    "prevPage": "Ukurasa uliotangulia",
+    "nextPage": "Ukurasa unaofuata",
+    "empty": "hakuna tanbihi bado",
+    "noMatch": "hakuna safu zinazolingana na utafutaji wako.",
+    "importHint": "ingiza .bib au ongeza moja kwa mkono.",
+    "pasteHeader": "Bandika BibTeX au kichwa",
+    "addCitation": "ongeza tanbihi",
+    "manualCancel": "ghairi",
+    "adding": "inaongeza…",
+    "parsing": "Inachambua {{name}}…",
+    "imported": "Iliingizwa tanbihi {{added}}{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", ilirukwa nakala {{skipped}}{{skippedPlural}}",
+    "skippedSuffixShort": ", ilirukwa {{skipped}}",
+    "failed": "Kuchambua kumeshindwa: {{message}}",
+    "failedManual": "Imeshindwa: {{message}}",
+    "addedOne": "Iliongezwa tanbihi 1.",
+    "unknownAuthor": "(haijulikani)",
+    "unknownError": "hitilafu isiyojulikana",
+    "edit": {
+      "save": "hifadhi",
+      "saving": "inahifadhi…",
+      "cancel": "ghairi",
+      "delete": "futa",
+      "edit": "hariri",
+      "tagLabel": "Lebo",
+      "authorsLabel": "Waandishi",
+      "titleLabel": "Kichwa",
+      "yearLabel": "Mwaka",
+      "typeLabel": "Aina",
+      "duplicateKey": "Lebo «{{key}}» tayari inatumika katika nafasi hii.",
+      "updated": "Ilisasishwa tanbihi 1.",
+      "deleteOne": "Ilifutwa tanbihi 1.",
+      "confirmDeleteUsed": "Tanbihi hii inatumika {{count}}× katika hati zako. Futa hata hivyo?",
+      "confirmDeleteSingle": "Futa tanbihi «{{key}}»? Haiwezekani kurudisha.",
+      "untitled": "(bila kichwa)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} zilizochaguliwa",
+      "deleteSelected": "futa",
+      "setTypePrompt": "weka aina",
+      "setTypeAria": "Weka aina kwa tanbihi zilizochaguliwa",
+      "chooseOption": "chagua…",
+      "ariaLabel": "Vitendo vya pamoja",
+      "clearSelection": "futa uchaguzi",
+      "deleted": "Zlifutwa tanbihi {{count}}.",
+      "typeApplied": "Imewekwa aina kwa {{type}} kwenye tanbihi {{count}}.",
+      "confirmDelete": "Futa tanbihi {{count}}? Haiwezekani kurudisha."
+    },
+    "row": {
+      "selectAllAria": "Chagua tanbihi zote kwenye ukurasa huu",
+      "viewCitationAria": "Tazama tanbihi {{key}}",
+      "selectCitationAria": "Chagua tanbihi {{key}}",
+      "collapseCitationAria": "Funga tanbihi {{key}}",
+      "usedCount": "ilitumika {{count}}×",
+      "unused": "haikutumiwa",
+      "copyTag": "Nakili lebo",
+      "copyTagAria": "Nakili lebo {{value}}",
+      "copiedTitle": "Imenakiliwa",
+      "copiedTagAria": "Imenakiliwa lebo {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

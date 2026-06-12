@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Laisvos rašytojo visata",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Jūsų pirmoji erdvė yra tuščia. Pasirinkite šabloną, kad pradėtumėte, arba pradėkite nuo nieko.",
+    "tagline": "Tvarkinga erdvė ilgų kūrinių rašymui — grožinė literatūra, tyrimai, esė, dienoraščiai.",
+    "continueWriting": "Tęsti rašymą",
+    "startNewSpace": "Pradėti naują erdvę",
+    "syncOffChip": "sinchronizavimas/atsarginės kopijos neįjungtos · duomenys gali būti prarasti",
+    "syncOnChip": "aplanko sinchronizavimas įjungtas",
+    "syncOnTitle": "Aplanko sinchronizavimas įjungtas",
+    "syncOnBody": "Jūsų darbas sinchronizuojamas su „{{folder}}” aplanku šiame įrenginyje.",
+    "warningTitle": "Išankstinė versija",
+    "warningBody": "Duomenų sinchronizavimo nėra. Viskas saugoma jūsų naršyklėje ir išvalius jos talpyklą prarasite savo darbą. Galite įjungti sinchronizavimą su vietiniu aplanku Visuotiniuose nustatymuose → Sinchronizavimas.",
+    "versionLine": "Versija {{version}}"
+  },
+  "about": {
+    "back": "atgal",
+    "title": "apie",
+    "greeting": "Sveiki,",
+    "paragraph1": "Tai skirta rašytojui, kuris vis pradeda iš naujo. Tam, kuris atidaro naują dokumentą, parašo tris sakinius (arba nė vieno), ir tada praleidžia 40 minučių derindamas šriftą. Tam, kurio geriausioms idėjoms ateiname 2 val. nakties ir išsiblaškyti. Tam su keturiolika kortelių, šešiais sąsiuviniais ir juodraščiu, nejudėjusiu mėnesį.",
+    "paragraph2Before": "Aš žinau, nes tai esu aš ",
+    "paragraph2After": ". Turiu ADHD, autizmą, tikriausiai ir kitus -izmus, dar nediagnozuotus. Man reikia kažko, kas suprastų mano chaotišką, bet nuostabų protą. Vietos, kur viską išlieti prieš tai, kol dingsta (ar pradėti rašyti). Fragmentus, pusiau mintis, 3 val. nakties jungtis. Viską, vienoje vietoje.",
+    "paragraph3": "Todėl aš sukūriau šią erdvę mums. Tikiuosi, ji suteiks jums dopamino antplūdį kaip man teikia ją kurti.",
+    "paragraph4Before": "Dar vienas dalykas... Tikiu technologijomis gėriui ir nekenčiu reklamų. Todėl tai visada bus be reklamų ir NEMOKAMA nekomerciniam naudojimui. Galite jį sukopijuoti ir keisti kaip norite pagal ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Būklė",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — duomenų sinchronizavimo nėra. Visi duomenys saugomi IndexedDB jūsų vietinėje naršyklėje. Jei išvalysite naršyklės talpyklą, jūsų darbas bus prarastas.",
+    "feedbackBefore": "Vis dar kuriu tai ir turiu daug idėjų ",
+    "feedbackAfter": ". Norėčiau išgirsti, kas veikia, kas ne, ir ko norėtumėte. Atsiliepimų laukiama.",
+    "sourceLabel": "Šaltinis"
+  },
+  "settings": {
+    "back": "atgal",
+    "windowTitle": "lotem · nustatymai",
+    "breadcrumb": "VISUOTINIAI NUSTATYMAI",
+    "shellSubtitle": "VISUOTINIAI NUSTATYMAI",
+    "comingSoonBadge": "greitai",
+    "helpAria": "Kas tai?",
+    "groups": {
+      "preferences": "Nuostatos",
+      "writing": "Rašymas",
+      "data": "Duomenys",
+      "account": "Paskyra"
+    },
+    "tabs": {
+      "general": "Bendra",
+      "appearance": "Išvaizda",
+      "editor": "Redaktorius",
+      "docInspector": "Dok. tikrintuvas",
+      "accessibility": "Prieinamumas",
+      "typography": "Tipografija",
+      "shortcuts": "Klaviatūra",
+      "templates": "Šablonai",
+      "palettes": "Paryškinimų paletės",
+      "citations": "Citavimo stilius",
+      "annotation": "Anotacijos",
+      "backups": "Atsarginės kopijos",
+      "sync": "Sinchronizavimas",
+      "export": "Eksportas / importas",
+      "data": "Jūsų duomenys",
+      "account": "Paskyra",
+      "about": "Apie",
+      "language": "Kalba"
+    },
+    "language": {
+      "title": "Kalba",
+      "subtitle": "Pasirinkite sąsajos ir Pagalbos centro straipsnių kalbą. Trūkstami vertimai grįžta į anglų kalbą.",
+      "label": "Sąsajos kalba",
+      "hint": "Pakeitimai taikomi iš karto ir išsaugomi šioje naršyklėje.",
+      "machineTranslationNotice": "Vertimai, išskyrus anglų kalbą, sukuriami automatiškai. Atsiprašome už galimas klaidas — prašome siųsti atsiliepimus, kad galėtume jas ištaisyti.",
+      "feedbackLinkLabel": "siųsti atsiliepimą"
+    },
+    "editor": {
+      "title": "Redaktorius",
+      "subtitle": "Įrankių juosta ir rašymo funkcijos. Markdown spartieji klavišai (#, >, -, **) veikia nepriklausomai nuo šių nustatymų.",
+      "floatingToolbarLabel": "Slankioji įrankių juosta",
+      "floatingToolbarHint": "Rodoma pažymėjus arba paspaudus dešinįjį pelės klavišą rašymo režimu.",
+      "floatingToolbarOff": "Išjungta",
+      "floatingToolbarOn": "Įjungta",
+      "rightClickLabel": "Dešinio paspaudimo meniu",
+      "rightClickHint": "Pasirinkite tarp slankiosios įrankių juostos ir naršyklės kontekstinio meniu.",
+      "rightClickTooltip": "Naudoti naršyklės kontekstinį meniu dešiniu paspaudimu vietoj slankiosios įrankių juostos. Juosta vis tiek atsiras paryškinant.",
+      "inlineTogglesLabel": "Eilutiniai perjungikliai",
+      "inlineTogglesHint": "Paryškinimo ir kursyvo mygtukai slankiojoje įrankių juostoje.",
+      "inlineTogglesTooltip": "Paslėpti B ir I mygtukus iš slankiosios įrankių juostos. Markdown spartieji klavišai (**, _) veikia toliau.",
+      "listDepthLabel": "Sąrašo lizdinimo gylis",
+      "listDepthHint": "Kiek giliai gali lizdintuotis punktų ir sunumeruoti sąrašai.",
+      "listDepthTooltip": "Padidinti arba sumažinti sąrašo lizdinimo ribą. Šiuo metu fiksuota 2 lygiais.",
+      "templateDefaultsLabel": "Numatytosios nuostatos pagal šabloną",
+      "templateDefaultsHint": "Skirtingi formatavimo rinkiniai kiekvienam šablonui.",
+      "templateDefaultsTooltip": "Leisti kiekvienam šablonui (grožinė lit., dienoraštis, techninis…) pasirinkti savo formatavimo rinkinį."
+    },
+    "docInspector": {
+      "title": "Dok. tikrintuvas",
+      "subtitle": "Pasirinkite, kurie laukai rodomi dokumento tikrintuve. Kiekvieną galima išjungti visuotinai ir nepaisyti kiekvienai erdvei.",
+      "statusLabel": "Būklė",
+      "statusHint": "Rodyti dokumento būklę ir užrakinti užbaigtus dokumentus nuo redagavimo.",
+      "wordLimitLabel": "Žodžių limitas",
+      "wordLimitHint": "Rodyti žodžių skaičiaus limitą, kurį galima nustatyti kiekvienam dokumentui.",
+      "charLimitLabel": "Simbolių limitas",
+      "charLimitHint": "Rodyti simbolių skaičiaus limitą, kurį galima nustatyti kiekvienam dokumentui.",
+      "dueDateLabel": "Terminas",
+      "dueDateHint": "Rodyti terminą, kurį galima nustatyti kiekvienam dokumentui.",
+      "highlightLabel": "Paryškinti viršijantį limitą tekstą",
+      "highlightHint": "Pažymėti bet kokį tekstą, viršijantį limitą, redaktoriuje.",
+      "statusStagesLabel": "Būklės etapai",
+      "statusStagesHint": "Pasirinkite, kurie etapai rodomi būklės parinkiklyje.",
+      "on": "Įjungta",
+      "off": "Išjungta",
+      "inherit": "Numatytasis ({{state}})",
+      "inheritTooltip": "Paveldėta iš visuotinių nustatymų",
+      "stateOn": "įjungta",
+      "stateOff": "išjungta"
+    },
+    "accessibility": {
+      "title": "Prieinamumas",
+      "subtitle": "Pritaikykite sąsają patogumui ir pagalbinėms technologijoms. Kiekviena parinktis pradedama nuo esamos patirties — niekas nesikeičia, kol jūs nepasirenkate.",
+      "theme": {
+        "label": "Tema ir kontrastas",
+        "hint": "Didelio kontrasto temos atitinka WCAG AAA kontrasto standartą.",
+        "light": "Šviesi",
+        "dark": "Tamsi",
+        "hcLight": "Didelis kontrastas (šviesi)",
+        "hcDark": "Didelis kontrastas (tamsi)"
+      },
+      "motion": {
+        "label": "Animacija",
+        "hint": "Sumažinti arba išjungti sąsajos animacijas.",
+        "auto": "Pagal sistemą",
+        "reduced": "Sumažinta",
+        "full": "Pilna"
+      },
+      "textSize": {
+        "label": "Teksto dydis",
+        "hint": "Keisti skaitymo ir rašymo paviršiaus mastelį.",
+        "sm": "Mažas",
+        "base": "Numatytasis",
+        "lg": "Didelis",
+        "xl": "Labai didelis"
+      },
+      "lineSpacing": {
+        "label": "Eilučių tarpas",
+        "hint": "Pridėti daugiau erdvės tarp prozos eilučių.",
+        "normal": "Normalus",
+        "relaxed": "Erdvesnis",
+        "loose": "Laisvas"
+      },
+      "linkUnderline": {
+        "label": "Visada pabraukti nuorodas",
+        "hint": "Rodyti pabraukimus, kad nuorodos nesikliotų tik spalva."
+      },
+      "focus": {
+        "label": "Sustiprintas fokuso indikatorius",
+        "hint": "Naudoti storesnį, didesnio kontrasto kontūrą fokusui."
+      },
+      "reset": {
+        "label": "Grąžinti numatytuosius",
+        "hint": "Atkurti animaciją, teksto dydį, eilučių tarpą, nuorodas ir fokusą į numatytuosius. Jūsų tema nesikeičia.",
+        "action": "Grąžinti"
+      }
+    },
+    "general": {
+      "title": "Bendra",
+      "subtitle": "Kaip LIpsum Writer atrodo pagal nutylėjimą. Niekas čia nėra destruktyvu.",
+      "comingSoonBody": "Kompaktiška tankis, sumažinta animacija, klaviatūros užuominų matomumas ir koks rodinys atidaromas paleidimo metu.",
+      "compactDensityLabel": "Kompaktiška tankis",
+      "compactDensityHint": "Siauresni sąrašų eilutės, siauresni užpildai visur.",
+      "reduceMotionLabel": "Sumažinti animaciją",
+      "reduceMotionHint": "Praleisti animuotus perėjimus tarp rodinių.",
+      "keyboardHintsLabel": "Rodyti klaviatūros užuominas",
+      "keyboardHintsHint": "Rodyti ⌘-klavišo sparčiuosius klavišus patarime ir mygtukų kampe.",
+      "startupLabel": "Atidaryti paleidžiant",
+      "startupHint": "Ką matote paleidę programą.",
+      "startupOptions": {
+        "lastView": "Paskutinis rodinys",
+        "home": "Pradžia",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Išvaizda",
+      "subtitle": "Spalva, tipas, tankis. Nuotaika, kurią norite sukurti.",
+      "comingSoonBody": "Kuruotos temų paletės, akcento spalva ir tankis. Šiandieninis temos keitimas yra pasaulinio bėgelio greituosiuose nustatymuose.",
+      "themeLabel": "Tema",
+      "themeHint": "Trys kuruotos paletės. Jos visko derini — blokų spalvos, ploni spygliukai, net grūdai.",
+      "themes": {
+        "linen": "Drobė",
+        "linenSub": "numatytoji",
+        "studio": "Studija",
+        "studioSub": "neutrali",
+        "midnight": "Vidurnaktis",
+        "midnightSub": "tamsi"
+      },
+      "accentLabel": "Akcentas",
+      "accentHint": "Naudojamas užvedimui, fokusui, aktyviam redagavimo žiedui.",
+      "densityLabel": "Tankis",
+      "densityOptions": {
+        "cozy": "Jaukus",
+        "default": "Numatytasis",
+        "compact": "Kompaktiškas"
+      }
+    },
+    "templates": {
+      "title": "Šablonai",
+      "subtitle": "Daugkartiniai karkasai naujoms erdvėms ir dokumentams.",
+      "comingSoonBody": "Kurkite savo šablonus su sekcijomis, numatytaisiais dokumentų pavadinimais ir prozos eskizais.",
+      "items": {
+        "fiction": "Grožinė literatūra",
+        "fictionSub": "Rankraštis · Pasaulis · Dirbtuvės",
+        "research": "Tyrimai",
+        "researchSub": "Šaltiniai · Užrašai · Juodraščiai",
+        "journal": "Dienoraštis",
+        "journalSub": "Dienos · Savaitės · Apmąstymai",
+        "essay": "Esė",
+        "essaySub": "Kontūras · Juodraščiai · Galutinis"
+      }
+    },
+    "palettes": {
+      "title": "Paryškinimų paletės",
+      "subtitle": "Penkių angų paletės kiekvienai erdvei — pavadinkite ir sureguliuokite kiekvieną spalvą.",
+      "comingSoonBody": "Redaguokite, išsaugokite ir keiskite pavadintas paryškinimų paletes (Įrodymai, Peržiūrėti, Nuoroda…) erdvėse.",
+      "items": {
+        "evidence": "Įrodymai",
+        "revise": "Peržiūrėti",
+        "reference": "Nuoroda",
+        "quote": "Citata",
+        "loose": "Nebaigta mintis"
+      },
+      "rename": "pervadinti",
+      "tune": "derinti"
+    },
+    "citations": {
+      "title": "Citavimo stilius",
+      "subtitle": "Numatytasis citavimo stilius visose erdvėse.",
+      "comingSoonBody": "Pasirinkite visuotinį stilių (Chicago, APA, MLA…) su perrašymais kiekvienai erdvei.",
+      "styleLabel": "Numatytasis stilius",
+      "styleHint": "Naudojamas įterpiant naują citatą. Perrašymai kiekvienai erdvei ateis vėliau.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Anotacijos",
+      "subtitle": "Paraštės pastabos ir eilutinės anotacijos.",
+      "comingSoonBody": "Anotacijų rūšys, matomumo numatytosios ir eksporto elgsena.",
+      "showMarginLabel": "Rodyti paraštės pastabas",
+      "showMarginHint": "Anotacijos plaukia dešinėje paraštėje, kai yra vietos.",
+      "showInlineLabel": "Rodyti eilutinius paryškinimus",
+      "showInlineHint": "Anotacijos spalva persidengia su apatiniu tekstu.",
+      "exportLabel": "Įtraukti į eksportus",
+      "exportHint": "Anotacijos rašomos kartu su dokumento turiniu."
+    },
+    "export": {
+      "title": "Eksportas / importas",
+      "subtitle": "Perkelti duomenis į ir iš LIpsum Writer.",
+      "comingSoonBody": "Masinis eksportas į .zip, importas iš kito LIpsum paketo arba Markdown katalogo.",
+      "formatLabel": "Eksporto formatas",
+      "formatHint": "Dokumento ir erdvės eksportai naudoja tą patį numatytąjį.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Importuoti iš",
+      "importHint": "Atsinešti kitą LIpsum paketą arba Markdown failų katalogą.",
+      "importOptions": {
+        "bundle": "LIpsum paketas (.zip)",
+        "markdown": "Markdown aplankas",
+        "obsidian": "Obsidian vault"
+      },
+      "importSpaceLabel": "Importuoti erdvę",
+      "importSpaceHint": "Atsinešti erdvę į šią naršyklę iš Writer archyvo (.zip) — momentinės kopijos atsisiuntimas arba aplanko sinchronizavimo eksportas iš kito įrenginio.",
+      "importChooseFile": "Pasirinkti archyvą…",
+      "importing": "importuojama…",
+      "importFailed": "Importas nepavyko: {{message}}",
+      "comingSoonLabel": "Daugiau formatų",
+      "comingSoonHint": "Masinis eksportas ir importas iš Markdown aplankų arba Obsidian vault.",
+      "comingSoonTooltip": "Planuojama — kol kas nepasiekiama."
+    },
+    "data": {
+      "title": "Jūsų duomenys",
+      "subtitle": "Kur gyvena jūsų darbas ir kiek vietos jis užima.",
+      "comingSoonBody": "IndexedDB naudojimas, saugyklos įvertinimas ir vieno paspaudimo visiškas ištrynimas.",
+      "storageLabel": "Naudojama saugykla",
+      "storageValue": "≈ 12.4 MB · 4 erdvės, 38 dok.",
+      "engineLabel": "Saugyklos variklis",
+      "engineValue": "IndexedDB (vietinė naršyklė)",
+      "wipeLabel": "Ištrinti viską",
+      "wipeHint": "Pašalina visas erdves, dokumentus ir momentines kopijas iš šios naršyklės. Tai negali būti atšaukta.",
+      "wipeButton": "Ištrinti vietinius duomenis…"
+    },
+    "about": {
+      "title": "Apie",
+      "subtitle": "Kūrimo informacija ir nuorodos.",
+      "comingSoonBody": "Žr. /about puslapį istorijai; šiame skirtuke bus kūrimo informacija, licencija ir pakeitimų žurnalas.",
+      "versionLabel": "Versija",
+      "versionValue": "{{version}}",
+      "buildLabel": "Kūrinys",
+      "buildValue": "vietinis",
+      "licenseLabel": "Licencija",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Nuorodos",
+      "links": {
+        "source": "Šaltinis",
+        "changelog": "Pakeitimų žurnalas",
+        "feedback": "Siųsti atsiliepimą"
+      }
+    },
+    "account": {
+      "title": "Paskyra",
+      "subtitle": "Prisijungimas, sinchronizavimas tarp įrenginių ir bendros darbo erdvės.",
+      "comingSoonBody": "Debesies sinchronizavimas šiandien nepasiekiamas — Lotem veikia tik vietiškai. Paskyra, prisijungimas ir bendros darbo erdvės atsiras, kai bus išsiųstas sinchronizavimas.",
+      "signedOutLabel": "Prisijungti",
+      "signedOutHint": "Debesies sinchronizavimas dar nepasiekiamas. Tai čia norint parodyti dizainą.",
+      "signInButton": "Prisijungti el. paštu",
+      "syncLabel": "Sinchronizuoti šį įrenginį",
+      "syncHint": "Prisijungus jūsų erdvės bus dubliuojamos kituose įrenginiuose."
+    },
+    "typography": {
+      "title": "Tipografija",
+      "subtitle": "Numatytosios visuose pasauliuose. Atskiri pasauliai gali perrašyti.",
+      "comingSoonBody": "Pasirinkite prozos šriftą, UI šriftą, numatytąjį skaitymo dydį, eilučių aukštį ir matą naujiems pasauliams.",
+      "proseFontLabel": "Prozos šriftas",
+      "uiFontLabel": "UI šriftas",
+      "proseSizeLabel": "Prozos dydis",
+      "proseSizeHint": "Numatytasis naujiems pasauliams.",
+      "lineHeightLabel": "Eilučių aukštis",
+      "measureLabel": "Matas",
+      "measureHint": "Maksimalus eilutės plotis.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Spartieji klavišai",
+      "subtitle": "Klaviatūros susieti klavišai naršymui, formatavimui ir režimams.",
+      "comingSoonBody": "Perkonfigūruojami spartieji klavišai rašymo/skaitymo/skaidyto, fokuso režimo ir formatavimo įrankių juostai.",
+      "navHeader": "Naršymas",
+      "formatHeader": "Formatavimas",
+      "modeHeader": "Režimai",
+      "items": {
+        "openSettings": "Atidaryti nustatymus",
+        "quickSettings": "Greiti nustatymai",
+        "findInDoc": "Rasti dokumente",
+        "toggleFocus": "Perjungti fokusą",
+        "toggleInspector": "Perjungti tikrintuvą",
+        "bold": "Paryškintas",
+        "italic": "Kursyvas",
+        "underline": "Pabrauktas",
+        "heading1": "Antraštė 1",
+        "heading2": "Antraštė 2",
+        "write": "Rašymo režimas",
+        "read": "Skaitymo režimas",
+        "split": "Skaidyto režimas"
+      }
+    },
+    "backups": {
+      "title": "Atsarginės kopijos",
+      "subtitle": "Eksportuoti, atkurti ir kurti momentines kopijas vietinių duomenų.",
+      "comingSoonBody": "Suplanuotos vietinės momentinės kopijos, rankinis eksportas į .zip ir atkūrimas iš ankstesnės atsarginės kopijos.",
+      "intervalLabel": "Automatinių momentinių kopijų intervalas",
+      "intervalOptions": {
+        "5min": "5 min",
+        "10min": "10 min",
+        "30min": "30 min",
+        "off": "Išjungta"
+      },
+      "keepLabel": "Laikyti",
+      "keepHint": "Senesnės momentinės kopijos automatiškai išmetamos.",
+      "keepOptions": {
+        "last50": "Paskutinės 50",
+        "days7": "7 dienos",
+        "days30": "30 dienų"
+      },
+      "latestLabel": "Naujausia",
+      "latestValue": "prieš 12 min · 1 190 žodžių"
+    },
+    "sync": {
+      "title": "Sinchronizavimas",
+      "subtitle": "Persiųskite erdves į pasirinktą aplanką. Nukreipkite į Google Drive, Dropbox arba iCloud aplanką, kad sinchronizuotumėte tarp įrenginių.",
+      "unsupportedTitle": "Nepasiekiama šioje naršyklėje",
+      "unsupportedBody": "Aplanko sinchronizavimui reikalinga File System Access API, prieinama Chrome, Edge ir kituose Chromium naršyklėse staliniams kompiuteriams. Pereikite prie palaikomos naršyklės, kad ją naudotumėte.",
+      "folderLabel": "Sinchronizuotas aplankas",
+      "folderHint": "Kiekvienas sinchronizavimas čia įrašo Markdown .zip kiekvienai erdvei, saugant paskutines 5 ir latest.zip. Sinchronizavimas atskiras nuo Atsarginių kopijų.",
+      "noFolder": "Aplankas neprijungtas",
+      "chooseFolder": "Pasirinkti aplanką…",
+      "changeFolder": "Keisti…",
+      "disconnect": "Atjungti",
+      "intervalLabel": "Automatinis sinchronizavimas",
+      "intervalHint": "Kaip dažnai erdvės sinchronizuojamos automatiškai, kol programa atidaryta ir aplankas prijungtas. Kiekviena erdvė gali nepaisyti šio numatytojo.",
+      "intervalOff": "Išjungta",
+      "intervalMinutes": "{{count}} min",
+      "intervalDefault": "Numatytasis ({{label}})",
+      "syncLabel": "Rankinis sinchronizavimas",
+      "pushOnlyHint": "Kol kas tik siuntimas — tai įrašo vietinius duomenis į aplanką. Pokyčių traukimas atgal ateis vėliau.",
+      "syncNow": "Sinchronizuoti dabar",
+      "syncNowAll": "Sinchronizuoti visas erdves",
+      "reconnectHint": "Sinchronizavimas pristabdytas — naršyklei vėl reikia aplanko leidimo šiai sesijai. Prisijunkite iš naujo, kad atnaujintumėte rankinį ir automatinį sinchronizavimą.",
+      "reconnectButton": "Prisijungti iš naujo",
+      "reconnecting": "Jungiamasi iš naujo…",
+      "syncing": "Sinchronizuojama…",
+      "syncFailed": "Sinchronizavimas nepavyko: {{message}}",
+      "lastSynced": "Paskutinis sinchronizavimas {{when}}",
+      "neverSynced": "Niekada nesinchronizuota",
+      "justNow": "ką tik",
+      "resultsTitle": "Paskutinis paleidimas",
+      "spaceOk": "sinchronizuota",
+      "spaceFailed": "nepavyko",
+      "historyTitle": "Nesenūs sinchronizavimai",
+      "historyEmpty": "Sinchronizavimų dar nėra.",
+      "columns": {
+        "when": "KADA",
+        "space": "ERDVĖ",
+        "kind": "RŪŠIS",
+        "size": "DYDIS",
+        "status": "BŪKLĖ"
+      },
+      "kind": {
+        "auto": "automatinis",
+        "manual": "rankinis"
+      },
+      "status": {
+        "ok": "gerai",
+        "error": "klaida"
+      }
+    },
+    "space": {
+      "breadcrumb": "ERDVĖ · NUSTATYMAI",
+      "shellSubtitle": "ERDVĖS NUSTATYMAI",
+      "loading": "Įkeliama erdvė…",
+      "groups": {
+        "thisSpace": "Ši erdvė",
+        "sharingMembers": "Dalijimasis ir nariai",
+        "data": "Duomenys",
+        "dangerZone": "Pavojus"
+      },
+      "tabs": {
+        "general": "Bendra",
+        "docInspector": "Dok. tikrintuvas",
+        "template": "Šablonas",
+        "palette": "Paryškinimų paletė",
+        "sharing": "Dalijimasis",
+        "members": "Nariai",
+        "backups": "Atsarginės kopijos",
+        "sync": "Sinchronizavimas",
+        "export": "Eksportas",
+        "danger": "Pavojingoji zona"
+      },
+      "docInspector": {
+        "title": "Dok. tikrintuvas",
+        "subtitle": "Perrašyti visuotinius tikrintuvo nustatymus šiai erdvei."
+      },
+      "palette": {
+        "title": "Paryškinimų paletė",
+        "subtitle": "Penkios pavadintos, derinamos paryškinimų spalvos šiai erdvei.",
+        "comingSoonBody": "Pervadinti, perkrašyti ir pertvarkyti šios erdvės paryškinimų angas.",
+        "items": {
+          "evidence": "Įrodymai",
+          "revise": "Peržiūrėti",
+          "reference": "Nuoroda",
+          "quote": "Citata",
+          "loose": "Nebaigta mintis"
+        },
+        "rename": "pervadinti",
+        "tune": "derinti"
+      },
+      "export": {
+        "title": "Eksportas",
+        "subtitle": "Perkelti šios erdvės turinį į kitą įrankį.",
+        "comingSoonBody": "Eksportas į Markdown .zip (šiandien per Atsargines kopijas), LaTeX, HTML arba PDF — viskas vienoje vietoje.",
+        "formatLabel": "Formatas",
+        "formatHint": "Markdown pirmas; kiti seka.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Paskutinis eksportas",
+        "lastValue": "niekada"
+      },
+      "general": {
+        "title": "Bendra",
+        "subtitle": "Identifikuojantys šios erdvės duomenys. Pakeitimai taikomi iš karto ir sinchronizuojami tarp rodinių.",
+        "nameLabel": "Erdvės pavadinimas",
+        "nameHint": "Rodoma šoninės juostos antraštėje ir erdvės bėgelio žymeklio užraše.",
+        "tagLabel": "Žyma",
+        "tagHint": "Trumpas kodas (2–4 simboliai) rodomas ant erdvės bėgelio plytelės."
+      },
+      "sharing": {
+        "title": "Dalijimasis",
+        "subtitle": "Valdykite, kaip dalijamasi šia erdve.",
+        "comingSoonBody": "Erdvės matomumas ir bendros nuorodos. Ateis su debesies sinchronizavimu.",
+        "visibilityLabel": "Matomumas",
+        "visibilityOptions": {
+          "private": "Privatus",
+          "link": "Visiems su nuoroda",
+          "members": "Tik nariams"
+        },
+        "linkLabel": "Bendrinama nuoroda",
+        "linkHint": "Tik skaitymui pagal numatytuosius. Redagavimo teisės priklauso Nariams.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "kopijuoti"
+      },
+      "template": {
+        "title": "Šablonas",
+        "subtitle": "Struktūrinis šablonas, su kuriuo buvo sukurta ši erdvė.",
+        "comingSoonBody": "Erdvės šablono keitimas po sukūrimo dar nepalaikomas. Ateis, kai galėsime saugiai perkelti sekcijas ir dokumentus.",
+        "currentLabel": "Dabartinis šablonas",
+        "currentValue": "Grožinė literatūra",
+        "currentSub": "Rankraštis · Pasaulis · Dirbtuvės",
+        "changeLabel": "Keisti šabloną",
+        "changeHint": "Pertvarko esamas sekcijas ir dokumentus pagal naują šabloną.",
+        "changeButton": "Keisti šabloną…"
+      },
+      "members": {
+        "title": "Nariai",
+        "subtitle": "Bendraautoriai ir recenzentai, turintys prieigą prie šios erdvės.",
+        "comingSoonBody": "Kviesti bendradarbius, valdyti vaidmenis ir peržiūrėti pokyčius. Ateis su debesies sinchronizavimu.",
+        "inviteLabel": "Pakviesti el. paštu",
+        "inviteHint": "Atsiųsime jiems nuorodą prisijungti prie šios erdvės.",
+        "invitePlaceholder": "vardas@pavyzdys.lt",
+        "inviteButton": "siųsti pakvietimą",
+        "membersLabel": "Nariai",
+        "roles": {
+          "owner": "savininkas",
+          "editor": "redaktorius",
+          "viewer": "žiūrovas"
+        },
+        "you": "jūs"
+      },
+      "backups": {
+        "title": "Atsarginės kopijos",
+        "subtitle": "Sukurti šios erdvės momentinę kopiją kaip .zip, kurį galite atsisiųsti, išsaugoti ir atkurti.",
+        "retentionHint": "Saugoma {{count}} naujausių momentinių kopijų — senesnės automatiškai pašalinamos.",
+        "snapshotNow": "+ momentinė kopija dabar",
+        "snapshotting": "kuriama momentinė kopija…",
+        "snapshotFailed": "Momentinė kopija nepavyko: {{message}}",
+        "historyTitle": "Istorija",
+        "empty": "Momentinių kopijų dar nėra — sukurkite vieną su + momentinė kopija dabar.",
+        "columns": {
+          "when": "KADA",
+          "kind": "RŪŠIS",
+          "size": "DYDIS",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "rankinis",
+          "auto": "automatinis",
+          "snapshot": "momentinė kopija"
+        },
+        "download": "↓ atsisiųsti",
+        "delete": "ištrinti",
+        "deleteConfirm": "Ištrinti šią momentinę kopiją? Tai negali būti atšaukta.",
+        "deleted": "Momentinė kopija ištrinta.",
+        "justNow": "ką tik",
+        "restore": "↺ atkurti",
+        "restoreUnavailable": "Ši momentinė kopija sukurta anksčiau nei buvo įdiegtas atkūrimo palaikymas — ją galima tik atsisiųsti.",
+        "restoreDialogTitle": "Atkurti šią momentinę kopiją?",
+        "restoreDialogBody": "Dabartinis šios erdvės turinys bus pakeistas momentine kopija. Pirmiausia išsaugoma dabartinės būsenos momentinė kopija, kad galėtumėte atšaukti šį atkūrimą.",
+        "restoreConfirm": "Atkurti",
+        "restoreCancel": "Atšaukti",
+        "restoring": "atkuriama…",
+        "restored": "Momentinė kopija atkurta.",
+        "restoreFailed": "Atkūrimas nepavyko: {{message}}",
+        "fileRestoreTitle": "Atkuriate iš atsisiųsto .zip?",
+        "fileRestoreBody": "Importuokite per Visuotinius nustatymus → Eksportas / importas — ji grįžta kaip nauja erdvė, palikdama šią nepaliestą."
+      },
+      "sync": {
+        "title": "Sinchronizavimas",
+        "subtitle": "Persiųskite šią erdvę į prijungtą aplanką, rankiniu būdu arba pagal grafiką. Sinchronizavimas atskiras nuo Atsarginių kopijų.",
+        "folderHint": "Prijunkite aplanką Visuotiniuose nustatymuose → Sinchronizavimas. Tas pats aplankas naudojamas kiekvienai erdvei.",
+        "intervalHint": "Kaip dažnai ši erdvė sinchronizuojama automatiškai. Pasirinkite Numatytąjį, kad laikytumėtės visuotinio automatinio sinchronizavimo nustatymo.",
+        "syncNow": "Sinchronizuoti šią erdvę"
+      },
+      "danger": {
+        "title": "Pavojingoji zona",
+        "subtitle": "Neatšaukiami veiksmai. Skaitykite atidžiai prieš tęsdami.",
+        "deleteCardTitle": "Ištrinti šią erdvę",
+        "deleteCardBody": "Visam laikui pašalina šią erdvę kartu su kiekvienu dokumentu, sekcija, Brain space pastaba, anotacija, citata ir ryšiu. Tai negali būti atšaukta.",
+        "deleteButton": "Ištrinti šią erdvę",
+        "dialogTitle": "Ištrinti „{{name}}”?",
+        "dialogBody": "Tai visam laikui pašalina erdvę ir visą jos turinį. Tai negali būti atšaukta.",
+        "typeToConfirm": "Įveskite {{name}} patvirtinimui",
+        "cancel": "Atšaukti",
+        "confirm": "Ištrinti erdvę"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Pasiklydęs paraštėse",
+    "body": "Tokio puslapio (dar) nėra.",
+    "goHome": "Eiti namo"
+  },
+  "templates": {
+    "crumb": "01 — KAMBARIO RŪŠIS",
+    "headingMain": "Kokią erdvę",
+    "headingAccent": "pradedate?",
+    "chooseLegend": "Pasirinkite šabloną",
+    "stage": {
+      "pre-alpha": "eksperimentinis",
+      "alpha": "ankstyvasis",
+      "beta": "beta"
+    },
+    "nameLabel": "Pavadinimas",
+    "tagLabel": "Žyma",
+    "syncLabel": "debesies sinchronizavimas —",
+    "syncValue": "išjungta, vietinis",
+    "syncTooltip": "Debesies sinchronizavimas nepasiekiamas — ši programa kol kas veikia tik vietiškai.",
+    "creating": "kuriama…",
+    "submitLabel": "įeiti į {{name}} →",
+    "newSpace": "nauja erdvė",
+    "back": "atgal"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} nerūšiuota",
+    "title": "Brain space",
+    "mobileWarning": "Brain space geriausiai veikia didesniame ekrane.",
+    "mobileNote": "Drobei reikia pelės arba jutiklinės planšetės.",
+    "openInWrite": "Atidaryti rašyme →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "pradėkite versti",
+      "emptyHint": "pasirinkite kortelės tipą žemiau",
+      "pendingHint": "shift-spustelėkite kitą pastabą, kad sujungtumėte · esc atšaukimui"
+    },
+    "note": {
+      "deleteNote": "Ištrinti pastabą",
+      "addPicture": "Pridėti paveikslėlį",
+      "addPictureCta": "pridėti paveikslėlį",
+      "openLinkedDoc": "Atidaryti susietą dokumentą",
+      "fetchedContent": "Gautas turinys",
+      "openDetailsLabel": "Atidaryti detales",
+      "openDetailsTitle": "Atidaryti detalių skydą",
+      "titlePlaceholder": "pavadinimas",
+      "addTitleCta": "+ pavadinimas",
+      "bodyEmpty": "(spustelėkite, kad rašytumėte)",
+      "viewImage": "Peržiūrėti {{name}}",
+      "removeImage": "Pašalinti {{name}}",
+      "resize": "Keisti pastabos dydį",
+      "days": {
+        "sun": "sek",
+        "mon": "pir",
+        "tue": "ant",
+        "wed": "tre",
+        "thu": "ket",
+        "fri": "pen",
+        "sat": "šeš"
+      }
+    },
+    "drawer": {
+      "title": "Pastabos detalės",
+      "description": "Redaguokite pasirinktą pastabą ir valdykite jos ryšius.",
+      "untitledPlaceholder": "Be pavadinimo",
+      "titleAriaLabel": "Pastabos pavadinimas",
+      "closeAriaLabel": "Uždaryti skyrių",
+      "bodyLabel": "Turinys",
+      "bodyPlaceholder": "Rašykite ką nors…",
+      "picturesLabel": "Paveikslėliai",
+      "addPicture": "Pridėti paveikslėlį",
+      "pictureLimitHint": "pasiektas {{count}} limitas — pašalinkite vieną, kad pridėtumėte kitą.",
+      "linkedDocLabel": "Susietas dokumentas",
+      "noLinkedDoc": "— Nėra susieto dok. —",
+      "untitledDoc": "Be pavadinimo",
+      "openDoc": "Atidaryti",
+      "connectionsHeading": "Ryšiai ({{count}})",
+      "connectionsEmpty": "shift-spustelėkite kitą pastabą drobėje, kad sujungtumėte.",
+      "untitledNote": "(be pavadinimo)",
+      "removeConnection": "Pašalinti ryšį",
+      "deleteNote": "Ištrinti pastabą"
+    }
+  },
+  "split": {
+    "title": "Padalytas rodinys",
+    "mobileWarning": "Padalytam rodiniui reikia didesnio ekrano.",
+    "mobileNote": "Atidarykite šį dokumentą rašymo režimu.",
+    "openInWrite": "Atidaryti rašyme →",
+    "leftPrefix": "KAIRĖ —",
+    "rightPrefix": "DEŠINĖ —",
+    "rightPaneAria": "Dešiniosios srities dokumentas",
+    "noOtherDocs": "(nėra kitų dok.)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Citatos",
+    "pickDoc": "Pasirinkite dokumentą iš išskleidžiamojo sąrašo aukščiau.",
+    "dividerAria": "Keisti padalytų sričių dydį"
+  },
+  "citationsDrawer": {
+    "title": "Citatos",
+    "description": "Ieškoti, importuoti ir eksportuoti citatas šiai erdvei.",
+    "close": "Uždaryti citatas",
+    "expand": "Atidaryti citatas pilnu rodiniu"
+  },
+  "citations": {
+    "title": "Citatos",
+    "breadcrumb": "Šaltiniai / ",
+    "entries": "{{count}} ĮRAŠAI",
+    "searchPlaceholder": "autoriai, žymos, metai…",
+    "upload": "↑ įkelti .bib / .ris",
+    "add": "+ pridėti",
+    "cancel": "× atšaukti",
+    "columns": {
+      "tag": "ŽYMA",
+      "authors": "AUTORIAI",
+      "title": "PAVADINIMAS",
+      "year": "METAI",
+      "type": "TIPAS",
+      "used": "NAUDOTA"
+    },
+    "style": "STILIUS — CHICAGO (AUTORIUS-DATA)",
+    "exportBib": "EKSPORTUOTI KAIP .BIB",
+    "summary": "{{filtered}} RODOMA · {{shown}} ŠIAME PUSLAPYJE",
+    "prevPage": "Ankstesnis puslapis",
+    "nextPage": "Kitas puslapis",
+    "empty": "citatų dar nėra",
+    "noMatch": "jokios eilutės neatitinka jūsų paieškos.",
+    "importHint": "importuokite .bib arba pridėkite rankiniu būdu.",
+    "pasteHeader": "Įklijuokite BibTeX arba pavadinimą",
+    "addCitation": "pridėti citatą",
+    "manualCancel": "atšaukti",
+    "adding": "pridedama…",
+    "parsing": "Analizuojamas {{name}}…",
+    "imported": "Importuota {{added}} citata(-os){{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", praleista {{skipped}} dublikatų{{skippedPlural}}",
+    "skippedSuffixShort": ", praleista {{skipped}}",
+    "failed": "Nepavyko analizuoti: {{message}}",
+    "failedManual": "Nepavyko: {{message}}",
+    "addedOne": "Pridėta 1 citata.",
+    "unknownAuthor": "(nežinomas)",
+    "unknownError": "nežinoma klaida",
+    "edit": {
+      "save": "išsaugoti",
+      "saving": "saugoma…",
+      "cancel": "atšaukti",
+      "delete": "ištrinti",
+      "edit": "redaguoti",
+      "tagLabel": "Žyma",
+      "authorsLabel": "Autoriai",
+      "titleLabel": "Pavadinimas",
+      "yearLabel": "Metai",
+      "typeLabel": "Tipas",
+      "duplicateKey": "Žyma „{{key}}” jau naudojama šioje erdvėje.",
+      "updated": "Atnaujinta 1 citata.",
+      "deleteOne": "Ištrinta 1 citata.",
+      "confirmDeleteUsed": "Ši citata naudojama {{count}}× jūsų dokumentuose. Ištrinti vis tiek?",
+      "confirmDeleteSingle": "Ištrinti citatą „{{key}}”? Tai negali būti atšaukta.",
+      "untitled": "(be pavadinimo)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} pasirinkta",
+      "deleteSelected": "ištrinti",
+      "setTypePrompt": "nustatyti tipą",
+      "setTypeAria": "Nustatyti tipą pasirinktoms citatoms",
+      "chooseOption": "pasirinkti…",
+      "ariaLabel": "Masiniai veiksmai",
+      "clearSelection": "išvalyti",
+      "deleted": "Ištrinta {{count}} citatų.",
+      "typeApplied": "Nustatytas tipas {{type}} {{count}} citatoms.",
+      "confirmDelete": "Ištrinti {{count}} citata(-as)? Tai negali būti atšaukta."
+    },
+    "row": {
+      "selectAllAria": "Pasirinkti visas citatas šiame puslapyje",
+      "viewCitationAria": "Peržiūrėti citatą {{key}}",
+      "selectCitationAria": "Pasirinkti citatą {{key}}",
+      "collapseCitationAria": "Sutraukti citatą {{key}}",
+      "usedCount": "{{count}}× naudota",
+      "unused": "nenaudota",
+      "copyTag": "Kopijuoti žymą",
+      "copyTagAria": "Kopijuoti žymą {{value}}",
+      "copiedTitle": "Nukopijuota",
+      "copiedTagAria": "Nukopijuota žyma {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

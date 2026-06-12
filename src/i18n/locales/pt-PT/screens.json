@@ -7,6 +7,10 @@
     "tagline": "Um espaço sem distracções para escrita longa — ficção, investigação, ensaios, diários.",
     "continueWriting": "Continuar a escrever",
     "startNewSpace": "Começar um novo espaço",
+    "syncOffChip": "sync/cópias de segurança não activados · os dados podem ser perdidos",
+    "syncOnChip": "sincronização de pasta activa",
+    "syncOnTitle": "Sincronização de pasta activada",
+    "syncOnBody": "O teu trabalho sincroniza com a pasta “{{folder}}” neste dispositivo.",
     "warningTitle": "Build de pré-lançamento",
     "warningBody": "Sem sincronização de dados. Tudo vive no teu navegador e limpar a cache perde o teu trabalho. Podes ativar a sincronização com uma pasta local em Definições → Sync.",
     "versionLine": "Versão {{version}}"
@@ -243,7 +247,15 @@
       "formats": { "markdown": "Markdown", "html": "HTML", "pdf": "PDF", "docx": ".docx", "latex": "LaTeX" },
       "importLabel": "Importar de",
       "importHint": "Traz outro pacote LIpsum ou um diretório de ficheiros Markdown.",
-      "importOptions": { "bundle": "Pacote LIpsum (.zip)", "markdown": "Pasta Markdown", "obsidian": "Vault do Obsidian" }
+      "importOptions": { "bundle": "Pacote LIpsum (.zip)", "markdown": "Pasta Markdown", "obsidian": "Vault do Obsidian" },
+      "importSpaceLabel": "Importar um espaço",
+      "importSpaceHint": "Traz um espaço para este navegador a partir de um arquivo Writer (.zip) — um snapshot descarregado ou exportação de sincronização de pasta de outro dispositivo.",
+      "importChooseFile": "Escolher arquivo…",
+      "importing": "a importar…",
+      "importFailed": "Importação falhada: {{message}}",
+      "comingSoonLabel": "Mais formatos",
+      "comingSoonHint": "Exportação e importação em massa de pastas Markdown ou vaults do Obsidian.",
+      "comingSoonTooltip": "Planeado — ainda não disponível."
     },
     "data": {
       "title": "Os teus dados",
@@ -369,7 +381,12 @@
       "breadcrumb": "ESPAÇO · DEFINIÇÕES",
       "shellSubtitle": "DEFINIÇÕES DO ESPAÇO",
       "loading": "A carregar o espaço…",
-      "groups": { "thisSpace": "Este espaço", "sharingMembers": "Partilha e membros", "data": "Dados" },
+      "groups": {
+        "thisSpace": "Este espaço",
+        "sharingMembers": "Partilha e membros",
+        "data": "Dados",
+        "dangerZone": "Perigo"
+      },
       "tabs": {
         "general": "Geral",
         "docInspector": "Inspetor de documento",
@@ -469,7 +486,18 @@
         "delete": "eliminar",
         "deleteConfirm": "Eliminar este snapshot? Sem anular.",
         "deleted": "Snapshot eliminado.",
-        "justNow": "agora mesmo"
+        "justNow": "agora mesmo",
+        "restore": "↺ restaurar",
+        "restoreUnavailable": "Este snapshot é anterior ao suporte de restauro — só pode ser descarregado.",
+        "restoreDialogTitle": "Restaurar este snapshot?",
+        "restoreDialogBody": "O conteúdo actual deste espaço será substituído pelo snapshot. É guardado primeiro um snapshot do estado actual, para que possas desfazer este restauro.",
+        "restoreConfirm": "Restaurar",
+        "restoreCancel": "Cancelar",
+        "restoring": "a restaurar…",
+        "restored": "Snapshot restaurado.",
+        "restoreFailed": "Restauro falhado: {{message}}",
+        "fileRestoreTitle": "A restaurar a partir de um .zip descarregado?",
+        "fileRestoreBody": "Importa-o via Definições globais → Exportar / importar — regressa como um novo espaço, deixando este intacto."
       },
       "sync": {
         "title": "Sincronização",
@@ -506,7 +534,12 @@
     "creating": "a criar…",
     "submitLabel": "entrar em {{name}} →",
     "newSpace": "novo espaço",
-    "back": "voltar"
+    "back": "voltar",
+    "stage": {
+      "pre-alpha": "experimental",
+      "alpha": "inicial",
+      "beta": "beta"
+    }
   },
   "dump": {
     "headerCount": "Brain space · {{count}} por classificar",
@@ -514,6 +547,58 @@
     "mobileWarning": "O Brain space funciona melhor num ecrã maior.",
     "mobileNote": "O canvas precisa de rato ou trackpad.",
     "openInWrite": "Abrir em Escrever →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "começa a despejar",
+      "emptyHint": "escolhe um tipo de cartão abaixo",
+      "pendingHint": "shift-clica noutra nota para ligar · esc para cancelar"
+    },
+    "note": {
+      "deleteNote": "Eliminar nota",
+      "addPicture": "Adicionar imagem",
+      "addPictureCta": "adicionar imagem",
+      "openLinkedDoc": "Abrir documento ligado",
+      "fetchedContent": "Conteúdo obtido",
+      "openDetailsLabel": "Abrir detalhes",
+      "openDetailsTitle": "Abrir painel de detalhes",
+      "titlePlaceholder": "título",
+      "addTitleCta": "+ título",
+      "bodyEmpty": "(clica para escrever)",
+      "viewImage": "Ver {{name}}",
+      "removeImage": "Remover {{name}}",
+      "resize": "Redimensionar nota",
+      "days": {
+        "sun": "dom",
+        "mon": "seg",
+        "tue": "ter",
+        "wed": "qua",
+        "thu": "qui",
+        "fri": "sex",
+        "sat": "sáb"
+      }
+    },
+    "drawer": {
+      "title": "Detalhes da nota",
+      "description": "Edita a nota seleccionada e gere as suas ligações.",
+      "untitledPlaceholder": "Sem título",
+      "titleAriaLabel": "Título da nota",
+      "closeAriaLabel": "Fechar painel",
+      "bodyLabel": "Corpo",
+      "bodyPlaceholder": "Escreve algo…",
+      "picturesLabel": "Imagens",
+      "addPicture": "Adicionar imagem",
+      "pictureLimitHint": "limite de {{count}} atingido — remove uma para adicionar outra.",
+      "linkedDocLabel": "Documento ligado",
+      "noLinkedDoc": "— Sem documento ligado —",
+      "untitledDoc": "Sem título",
+      "openDoc": "Abrir",
+      "connectionsHeading": "Ligações ({{count}})",
+      "connectionsEmpty": "shift-clica noutra nota no canvas para ligar.",
+      "untitledNote": "(sem título)",
+      "removeConnection": "Remover ligação",
+      "deleteNote": "Eliminar nota"
+    }
   },
   "split": {
     "title": "Vista dividida",
@@ -532,7 +617,8 @@
   "citationsDrawer": {
     "title": "Citações",
     "description": "Pesquisa, importa e exporta citações para este espaço.",
-    "close": "Fechar citações"
+    "close": "Fechar citações",
+    "expand": "Abrir citações em vista completa"
   },
   "citations": {
     "title": "Citações",
@@ -566,8 +652,10 @@
     "unknownError": "erro desconhecido",
     "edit": {
       "save": "guardar",
+      "saving": "a guardar…",
       "cancel": "cancelar",
       "delete": "eliminar",
+      "edit": "editar",
       "tagLabel": "Etiqueta",
       "authorsLabel": "Autores",
       "titleLabel": "Título",
@@ -576,16 +664,36 @@
       "duplicateKey": "A etiqueta «{{key}}» já está em uso neste espaço.",
       "updated": "1 citação atualizada.",
       "deleteOne": "1 citação eliminada.",
-      "confirmDeleteUsed": "Esta citação é usada {{count}}× nos teus documentos. Eliminar mesmo assim?"
+      "confirmDeleteUsed": "Esta citação é usada {{count}}× nos teus documentos. Eliminar mesmo assim?",
+      "confirmDeleteSingle": "Eliminar citação «{{key}}»? Sem anular.",
+      "untitled": "(sem título)"
     },
     "bulk": {
       "selectedSummary": "{{count}} selecionadas",
       "deleteSelected": "eliminar",
       "setTypePrompt": "definir tipo",
+      "setTypeAria": "Definir tipo para citações seleccionadas",
+      "chooseOption": "escolher…",
+      "ariaLabel": "Acções em massa",
       "clearSelection": "limpar",
       "deleted": "Eliminadas {{count}} citações.",
       "typeApplied": "Tipo {{type}} aplicado a {{count}} citações.",
       "confirmDelete": "Eliminar {{count}} citação(ões)? Sem anular."
+    },
+    "row": {
+      "selectAllAria": "Seleccionar todas as citações desta página",
+      "viewCitationAria": "Ver citação {{key}}",
+      "selectCitationAria": "Seleccionar citação {{key}}",
+      "collapseCitationAria": "Recolher citação {{key}}",
+      "usedCount": "{{count}}× usada",
+      "unused": "não usada",
+      "copyTag": "Copiar etiqueta",
+      "copyTagAria": "Copiar etiqueta {{value}}",
+      "copiedTitle": "Copiado",
+      "copiedTagAria": "Etiqueta {{value}} copiada"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
     }
   }
 }
