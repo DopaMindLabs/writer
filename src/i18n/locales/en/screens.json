@@ -568,7 +568,8 @@
         "restoring": "restoring…",
         "restored": "Snapshot restored.",
         "restoreFailed": "Restore failed: {{message}}",
-        "fileRestoreHint": "Have a downloaded .zip instead? Import it via Universal settings → Export / import — it comes back as a new space, leaving this one untouched."
+        "fileRestoreTitle": "Restoring from a downloaded .zip?",
+        "fileRestoreBody": "Import it via Universal settings → Export / import — it comes back as a new space, leaving this one untouched."
       },
       "sync": {
         "title": "Sync",

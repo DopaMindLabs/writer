@@ -4,11 +4,13 @@ import { renderWithProviders } from '@/test/test-utils';
 import { FileRestoreHint } from './FileRestoreHint';
 
 describe('FileRestoreHint', () => {
-  it('points file-based restore at import and names the consequence', () => {
+  it('renders as an info notice pointing file-based restore at import', () => {
     renderWithProviders(<FileRestoreHint />);
-    const hint = screen.getByTestId('space-settings-backups-file-restore-hint');
-    expect(hint).toHaveTextContent(/export \/ import/i);
-    expect(hint).toHaveTextContent(/comes back as a new space/i);
-    expect(hint).toHaveTextContent(/leaving this one untouched/i);
+    const banner = screen.getByTestId('space-settings-backups-file-restore-hint');
+    expect(banner).toHaveAttribute('role', 'status');
+    expect(banner).toHaveTextContent(/restoring from a downloaded \.zip\?/i);
+    expect(banner).toHaveTextContent(/export \/ import/i);
+    expect(banner).toHaveTextContent(/comes back as a new space/i);
+    expect(banner).toHaveTextContent(/leaving this one untouched/i);
   });
 });
