@@ -31,15 +31,33 @@ const enrichSpace = async (page: Page, spaceId: string): Promise<void> => {
 
   await page.goto(`/#/s/${spaceId}/dump`);
   await expect(page.getByTestId('brain-canvas')).toBeVisible();
-  await page.getByTestId('brain-canvas-tool-question').click();
-  const note = page
+  const noteCards = page
     .getByTestId('brain-canvas-content')
-    .locator(':scope > [data-testid^="brain-note-"]')
-    .first();
+    .locator(':scope > [data-testid^="brain-note-"]');
+  await page.getByTestId('brain-canvas-tool-question').click();
+  await expect(noteCards).toHaveCount(1);
+  await page.getByTestId('brain-canvas-tool-question').click();
+  await expect(noteCards).toHaveCount(2);
+
+  // Shift-pick the connection endpoints, linking the two notes. Dispatched
+  // directly because freshly added cards can overlap, which makes a real
+  // click fail Playwright's hit-testing.
+  await noteCards
+    .first()
+    .dispatchEvent('pointerdown', { shiftKey: true, button: 0 });
+  await noteCards
+    .last()
+    .dispatchEvent('pointerdown', { shiftKey: true, button: 0 });
+
+  // The last-added card sits on top of the stack, so it is hoverable.
+  const note = noteCards.last();
   await note.hover();
   await note.locator('[data-testid$="-open-details"]').click();
   const drawer = page.getByTestId('brain-detail-drawer');
   await expect(drawer).toBeVisible();
+  await expect(
+    drawer.getByTestId('brain-detail-drawer-connections-empty'),
+  ).toHaveCount(0);
   await drawer
     .getByTestId('brain-detail-drawer-attachments-input')
     .setInputFiles(pngPayload('cover.png'));

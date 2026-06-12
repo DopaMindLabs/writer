@@ -64,7 +64,7 @@ export const restoreSpaceArchive = async (
     'This archive belongs to a different space — use Import to bring it in as a new space',
   );
   const space = await db.spaces.get(spaceId);
-  invariant(space, () => `Space not found: ${spaceId}`);
+  invariant(space, `Space not found: ${spaceId}`);
 
   await createSpaceBackup(spaceId, { kind: 'snapshot', label: 'pre-restore' });
 

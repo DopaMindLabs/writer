@@ -56,7 +56,7 @@ const readCount = (raw: Record<string, unknown>, field: string): number => {
   const value = raw[field];
   invariant(
     typeof value === 'number' && Number.isInteger(value) && value >= 0,
-    () => `manifest.counts.${field}: expected a non-negative integer`,
+    `manifest.counts.${field}: expected a non-negative integer`,
   );
   return value;
 };
@@ -95,8 +95,7 @@ export const parseManifest = (value: unknown): ArchiveManifest => {
   );
   invariant(
     formatVersion === ARCHIVE_FORMAT_VERSION,
-    () =>
-      `Unsupported archive format version ${String(formatVersion)} — ` +
+    `Unsupported archive format version ${String(formatVersion)} — ` +
       `this app reads version ${String(ARCHIVE_FORMAT_VERSION)}`,
   );
   invariant(

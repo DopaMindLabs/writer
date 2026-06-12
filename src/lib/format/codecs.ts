@@ -55,7 +55,7 @@ const isRaw = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
 const asRaw = (value: unknown, label: string): Record<string, unknown> => {
-  invariant(isRaw(value), () => `${label}: expected an object`);
+  invariant(isRaw(value), `${label}: expected an object`);
   return value;
 };
 
@@ -65,7 +65,7 @@ const readString = (
   label: string,
 ): string => {
   const value = raw[field];
-  invariant(typeof value === 'string', () => `${label}.${field}: expected a string`);
+  invariant(typeof value === 'string', `${label}.${field}: expected a string`);
   return value;
 };
 
@@ -77,7 +77,7 @@ const readNumber = (
   const value = raw[field];
   invariant(
     typeof value === 'number' && Number.isFinite(value),
-    () => `${label}.${field}: expected a finite number`,
+    `${label}.${field}: expected a finite number`,
   );
   return value;
 };
@@ -88,7 +88,7 @@ const readBoolean = (
   label: string,
 ): boolean => {
   const value = raw[field];
-  invariant(typeof value === 'boolean', () => `${label}.${field}: expected a boolean`);
+  invariant(typeof value === 'boolean', `${label}.${field}: expected a boolean`);
   return value;
 };
 
@@ -133,7 +133,7 @@ const readEnum = <T extends string>(
   const value = raw[field];
   invariant(
     isOneOf(value, values),
-    () => `${label}.${field}: expected one of ${values.join(', ')}`,
+    `${label}.${field}: expected one of ${values.join(', ')}`,
   );
   return value;
 };
@@ -348,11 +348,11 @@ const parseStatusStages = (
   for (const [key, enabled] of Object.entries(raw)) {
     invariant(
       isDocStatus(key),
-      () => `docInspectorConfig.statusStages: unknown stage "${key}"`,
+      `docInspectorConfig.statusStages: unknown stage "${key}"`,
     );
     invariant(
       typeof enabled === 'boolean',
-      () => `docInspectorConfig.statusStages.${key}: expected a boolean`,
+      `docInspectorConfig.statusStages.${key}: expected a boolean`,
     );
     stages[key] = enabled;
   }

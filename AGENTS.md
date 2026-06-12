@@ -102,6 +102,21 @@ E2E coverage is gated by a ratchet (`scripts/coverage-ratchet.mjs`, run via
 - Run `npm run test:e2e:coverage` before committing coverage-affecting changes; it gates CI.
 - `src/editor/**` and `src/tours/**` are excluded from e2e coverage (covered by unit tests); the
   90% bar applies to the rest of the app.
+
+### Running e2e (agents: headless, locally — don't defer to CI)
+
+- **Always run Playwright headless** (its default — never `--headed` or `--ui` in an agent
+  or CI environment) and run the suite yourself before pushing e2e-affecting changes rather
+  than waiting for CI to find failures.
+- If the browser is missing, install it with `npx playwright install chromium`. In sandboxed
+  environments where `cdn.playwright.dev` is blocked, the identical Chrome for Testing build
+  is on `storage.googleapis.com` (allowed): check the expected version, paths, and layout
+  with `npx playwright install chromium --dry-run`, then download
+  `https://storage.googleapis.com/chrome-for-testing-public/<version>/linux64/chrome-linux64.zip`
+  and `…/chrome-headless-shell-linux64.zip`, unzip each into its install location under
+  `$PLAYWRIGHT_BROWSERS_PATH` (zip roots match the expected layout), and `touch` the
+  `INSTALLATION_COMPLETE` and `DEPENDENCIES_VALIDATED` markers in both directories.
+
 ## Testing philosophy (read before changing tests)
 
 Unit tests (Vitest) and e2e tests (Playwright) exist to **prevent regressions** — to

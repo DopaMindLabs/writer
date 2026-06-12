@@ -47,7 +47,7 @@ export interface ParsedSpaceArchive {
 
 const readJsonEntry = async (zip: JSZip, path: string): Promise<unknown> => {
   const entry = zip.file(path);
-  invariant(entry, () => `Archive is missing ${path}`);
+  invariant(entry, `Archive is missing ${path}`);
   const text = await entry.async('string');
   try {
     return JSON.parse(text) as unknown;
@@ -77,7 +77,7 @@ const bindAttachmentBlobs = async (
   const out: NoteAttachment[] = [];
   for (const { assetPath, ...record } of records) {
     const asset = zip.file(assetPath);
-    invariant(asset, () => `Archive is missing attachment asset ${assetPath}`);
+    invariant(asset, `Archive is missing attachment asset ${assetPath}`);
     const data = Uint8Array.from(await asset.async('uint8array'));
     out.push({ ...record, blob: new Blob([data], { type: record.mime }) });
   }
@@ -129,8 +129,7 @@ const checkCounts = (
   for (const table of COUNTED_TABLES) {
     invariant(
       found[table] === expected[table],
-      () =>
-        `Archive record counts do not match its manifest: expected ` +
+      `Archive record counts do not match its manifest: expected ` +
         `${String(expected[table])} ${table} record(s), found ${String(found[table])}`,
     );
   }
@@ -152,25 +151,25 @@ const checkReferences = (archive: ParsedSpaceArchive): void => {
   for (const record of scoped) {
     invariant(
       record.spaceId === spaceId,
-      () => `Archive record ${record.id} belongs to a different space`,
+      `Archive record ${record.id} belongs to a different space`,
     );
   }
   for (const a of archive.annotations) {
-    invariant(docIds.has(a.docId), () => `Annotation ${a.id} references a missing doc`);
+    invariant(docIds.has(a.docId), `Annotation ${a.id} references a missing doc`);
   }
   for (const r of archive.revisions) {
-    invariant(docIds.has(r.docId), () => `Revision ${r.id} references a missing doc`);
+    invariant(docIds.has(r.docId), `Revision ${r.id} references a missing doc`);
   }
   for (const att of archive.attachments) {
     invariant(
       noteIds.has(att.noteId),
-      () => `Attachment ${att.id} references a missing note`,
+      `Attachment ${att.id} references a missing note`,
     );
   }
   for (const c of archive.connections) {
     invariant(
       noteIds.has(c.fromNoteId) && noteIds.has(c.toNoteId),
-      () => `Connection ${c.id} references a missing note`,
+      `Connection ${c.id} references a missing note`,
     );
   }
 };
