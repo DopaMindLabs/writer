@@ -5,11 +5,22 @@ import { seedBasicSpace } from '@/test/fixtures';
 import { useUI } from '@/store/ui';
 
 vi.mock('@/editor/EditorFacade', () => ({
-  Editor: (p: { initialValue: string; mode: string; placeholder?: string }) => (
+  Editor: (p: { initialSerialized: string; mode: string; placeholder?: string }) => (
     <div data-testid="editor-stub" data-mode={p.mode}>
-      {p.initialValue || '(empty)'}
+      {p.initialSerialized || '(empty)'}
     </div>
   ),
+}));
+
+vi.mock('@/editor/collab/useDocSyncSession', () => ({
+  useDocSyncSession: (docId: string) => ({
+    key: 'test-session',
+    docId,
+    epoch: 0,
+    handle: {} as unknown,
+    hasStoredState: false,
+    close: () => undefined,
+  }),
 }));
 
 const { WriteScreen } = await import('./Write');

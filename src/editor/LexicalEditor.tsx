@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
@@ -16,12 +15,15 @@ import { AutosavePlugin } from './plugins/AutosavePlugin';
 import { EditablePlugin } from './plugins/EditablePlugin';
 import { FloatingToolbarPlugin } from './plugins/FloatingToolbarPlugin';
 import { LimitHighlightPlugin } from './plugins/LimitHighlightPlugin';
+import { CollabBindingPlugin } from './collab/CollabBindingPlugin';
 import { useUI } from '@/store/ui';
 import { cn } from '@/lib/utils';
+import type { DocSyncSession } from '@/lib/docsync/ports';
 import type { EditorMode } from './EditorFacade';
 
 interface LexicalEditorProps {
-  initialValue: string;
+  session: DocSyncSession;
+  initialSerialized: string;
   onChange: (serialized: string) => void;
   mode: EditorMode;
   placeholder?: string;
@@ -56,7 +58,8 @@ const editorTheme = {
 };
 
 export const LexicalEditor = ({
-  initialValue,
+  session,
+  initialSerialized,
   onChange,
   mode,
   placeholder = 'Start writing…',
@@ -86,9 +89,10 @@ export const LexicalEditor = ({
         CodeNode,
         CodeHighlightNode,
       ],
-      editorState: makeInitialState(initialValue),
+      // CollaborationPlugin owns the initial editor state via the binding.
+      editorState: null,
     }),
-    [initialValue, baseEditable],
+    [baseEditable],
   );
 
   const surfaceClasses = cn(
@@ -125,11 +129,19 @@ export const LexicalEditor = ({
           }
           ErrorBoundary={LexicalErrorBoundary}
         />
-        <HistoryPlugin />
+        <CollabBindingPlugin
+          session={session}
+          initialSerialized={initialSerialized}
+        />
         <ListPlugin />
         <LinkPlugin />
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-        {editable && <AutosavePlugin onChange={onChange} />}
+        {editable && (
+          <AutosavePlugin
+            onChange={onChange}
+            initialSerialized={initialSerialized}
+          />
+        )}
         {editable && (Boolean(wordLimit) || Boolean(charLimit)) && (
           <LimitHighlightPlugin wordLimit={wordLimit} charLimit={charLimit} />
         )}
@@ -138,22 +150,4 @@ export const LexicalEditor = ({
       </div>
     </LexicalComposer>
   );
-};
-
-const makeInitialState = (value: string): string | undefined => {
-  if (!value) return undefined;
-  try {
-    const parsed: unknown = JSON.parse(value);
-    if (
-      typeof parsed === 'object' &&
-      parsed !== null &&
-      'root' in parsed &&
-      (parsed as { root?: unknown }).root
-    ) {
-      return value;
-    }
-  } catch {
-    /* fall through */
-  }
-  return undefined;
 };

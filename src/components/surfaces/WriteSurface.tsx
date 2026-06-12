@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor, type EditorMode } from '@/editor/EditorFacade';
+import { useDocSyncSession } from '@/editor/collab/useDocSyncSession';
 import { countWords } from '@/editor/wordCount';
 import { InlineBanner } from '@/components/ui/InlineBanner';
 import { db } from '@/db/db';
@@ -79,6 +80,8 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
     );
   }, [doc.id]);
 
+  const session = useDocSyncSession(doc.id, restoreNonce);
+
   return (
     <div
       data-tour="tour-editor-main"
@@ -87,16 +90,19 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
     >
       <div className={cn('mx-auto w-full', READING_WIDTH_MAX[readingWidth])}>
         {locked && <LockBanner doc={doc} />}
-        <Editor
-          key={`${doc.id}-${mode}-${String(restoreNonce)}`}
-          initialValue={doc.body}
-          onChange={handleChange}
-          mode={mode}
-          locked={locked}
-          wordLimit={wordLimit}
-          charLimit={charLimit}
-          placeholder="Start writing…"
-        />
+        {session && (
+          <Editor
+            key={`${doc.id}-${mode}-${String(restoreNonce)}-${session.key}`}
+            session={session}
+            initialSerialized={doc.body}
+            onChange={handleChange}
+            mode={mode}
+            locked={locked}
+            wordLimit={wordLimit}
+            charLimit={charLimit}
+            placeholder="Start writing…"
+          />
+        )}
       </div>
     </div>
   );

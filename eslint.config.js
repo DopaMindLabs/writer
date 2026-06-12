@@ -172,4 +172,43 @@ export default tseslint.config(
       ],
     },
   },
+
+  // Vendor lock-in fence: CRDT and collab-binding vendors only inside their
+  // adapter directories. Everywhere else in the app talks to ports.
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: [
+      'src/lib/docsync/adapters/yjs/**',
+      'src/editor/collab/yjs/**',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^\\.\\./',
+              message:
+                'Use the "@/" path alias instead of a relative parent import (e.g. "@/test/test-utils").',
+            },
+            {
+              regex: '^yjs($|/)',
+              message:
+                'Import yjs only inside src/lib/docsync/adapters/yjs/** or src/editor/collab/yjs/**.',
+            },
+            {
+              regex: '^@lexical/yjs($|/)',
+              message:
+                'Import @lexical/yjs only inside src/lib/docsync/adapters/yjs/** or src/editor/collab/yjs/**.',
+            },
+            {
+              regex: '^@lexical/react/LexicalCollaborationPlugin$',
+              message:
+                'Import @lexical/react/LexicalCollaborationPlugin only inside src/editor/collab/yjs/**.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 );
