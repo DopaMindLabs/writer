@@ -219,8 +219,11 @@ branch. Branch names must be prefixed with a Conventional Commit type, enforced 
   `chore/bump-deps`. Underscores are allowed for suffixes (`feat/user-login_v2`).
 - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`,
   `revert`.
-- Exempt: `main`, `develop`, and automation branches (`claude/*`, `dependabot/*`,
-  `release-please*`).
+- Exempt **from the branch-name format check only**: `main`, `develop`, and automation branches
+  (`claude/*`, `dependabot/*`, `release-please*`). This is a naming-convention waiver and nothing
+  more — it does **not** exempt these branches from any other rule in this document. In
+  particular, `claude/*` is **never** exempt from the confirm-before-git-write rule, the
+  careful-action rules, or any coding/testing standard.
 
 ### Protected branches (read before any git write)
 
@@ -234,6 +237,11 @@ production releases and is changed only through the project's release process, n
   **especially** before anything touching `main` or rewriting shared history (`develop`, release
   branches). State the exact branch, the exact operation, and the blast radius, and wait for
   explicit approval. When in doubt, ask — a wrong guess about the target branch is hard to undo.
+- **Automation branches are not a free pass.** Working on a `claude/*` (or any automation) branch
+  does **not** waive this rule. `commit`, `amend`, `rebase`, `push`, and `force-push` on a
+  `claude/*` branch are all branch-level git writes — confirm before each, state the operation and
+  blast radius, and wait for approval. The naming-convention waiver above is the *only* thing
+  `claude/*` is ever exempt from.
 
 ## Specification (read before changing behaviour)
 
