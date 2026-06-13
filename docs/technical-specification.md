@@ -152,7 +152,9 @@ The divider percentage persists in the UI store.
 
 **Mobile.** On viewports below the breakpoint, Split shows a "Split view needs a larger screen" notice and an **Open in Write** link.
 
-*Covered by:* `split-and-sidebar.spec.ts`, `split-sidebar.spec.ts`, `Split.test.tsx`.
+**Image viewer scope.** When an image inside the right pane is opened, the lightbox is **contained within the right pane** (it portals into the pane container with `data-mode="contained"`) so the left pane stays visible and interactive. The viewer's header offers an **expand** control (`Maximize2`) that promotes it to a full-viewport modal (`data-mode="expanded"`); a **restore** control (`Minimize2`) brings it back. Closing the viewer resets the next open to the contained mode. Outside Split view (e.g. the standalone Brain Space screen), the lightbox opens as a full-viewport modal directly (`data-mode="fullscreen"`).
+
+*Covered by:* `split-and-sidebar.spec.ts`, `split-sidebar.spec.ts`, `split-lightbox.spec.ts`, `Split.test.tsx`, `ImageLightbox.test.tsx`.
 
 ---
 

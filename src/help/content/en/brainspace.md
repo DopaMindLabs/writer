@@ -37,9 +37,14 @@ persist locally across reloads and can be removed any time.
 ### View a picture full size
 
 Click any picture — a thumbnail on a note, in the detail drawer, or the large
-image on an image card — to open it full size. When a note holds more than one
-picture, page between them with the on-screen arrows or your keyboard's Left and
-Right arrow keys. Press **Escape** or click outside the image to close it.
+image on an image card — to open it. When a note holds more than one picture,
+page between them with the on-screen arrows or your keyboard's Left and Right
+arrow keys. Press **Escape** or click outside the image to close it.
+
+In [Split view](views-and-modes#split), pictures open **contained within the
+BrainSpace pane** so your draft on the other side stays visible and usable.
+Use the **expand** button in the viewer's header to take it full screen, and
+the **restore** button to put it back inside the pane.
 
 ### Image cards
 
