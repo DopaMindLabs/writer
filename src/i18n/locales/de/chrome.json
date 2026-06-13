@@ -63,6 +63,7 @@
   "mobileTabs": {
     "write": "schreiben",
     "read": "lesen",
+    "split": "teilen",
     "brain": "brain",
     "cite": "zitat",
     "more": "mehr"
@@ -70,6 +71,9 @@
   "mobileMore": {
     "title": "Mehr",
     "close": "Mehr schließen",
+    "groupDoc": "Dieses Dokument",
+    "groupSpace": "Dieser Bereich",
+    "groupApp": "App",
     "modeLabel": "Modus",
     "menuLabel": "Menü",
     "settings": "Einstellungen",
@@ -77,7 +81,8 @@
     "about": "Über",
     "help": "Hilfe und Tastenkürzel",
     "whatsNew": "Neuheiten",
-    "feedback": "Feedback senden…"
+    "feedback": "Feedback senden…",
+    "contact": "Kontakt"
   },
   "quickSettings": {
     "trigger": "LIpsum Writer",
@@ -138,7 +143,8 @@
     },
     "outline": {
       "title": "GLIEDERUNG",
-      "sectionSummary": "{{count}} ABSCHNITTE"
+      "sectionSummary": "{{count}} ABSCHNITTE",
+      "empty": "Noch keine Überschriften. Füge Überschriften zum Dokument hinzu, um die Gliederung zu erstellen."
     },
     "info": {
       "title": "INFO",

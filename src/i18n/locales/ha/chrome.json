@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "rubuta", "read": "karanta", "split": "raba", "space": "wuri" },
   "mobileNav": { "title": "Kewayawa", "close": "Rufe kewayawa" },
-  "mobileTabs": { "write": "rubuta", "read": "karanta", "brain": "brain", "cite": "ambato", "more": "ƙari" },
+  "mobileTabs": { "write": "rubuta", "read": "karanta", "split": "raba", "brain": "brain", "cite": "ambato", "more": "ƙari" },
   "mobileMore": {
     "title": "Ƙari",
     "close": "Rufe ƙari",
+    "groupDoc": "Wannan takardar",
+    "groupSpace": "Wannan sararin",
+    "groupApp": "App",
     "modeLabel": "Yanayi",
     "menuLabel": "Menu",
     "settings": "Saituna",
@@ -56,7 +59,8 @@
     "about": "Game da",
     "help": "Taimako da gajerun hanyoyi",
     "whatsNew": "Sabbin abubuwa",
-    "feedback": "Aiko ra'ayi…"
+    "feedback": "Aiko ra'ayi…",
+    "contact": "Tuntuɓi"
   },
   "quickSettings": {
     "trigger": "LIpsum Writer",
@@ -101,7 +105,7 @@
     "expand": "Faɗaɗa mai duba",
     "collapse": "Murƙushe mai duba",
     "tabs": { "outline": "TSARI", "info": "BAYANI", "history": "TARIHI", "actions": "AYYUKA" },
-    "outline": { "title": "TSARI", "sectionSummary": "{{count}} SASHE" },
+    "outline": { "title": "TSARI", "sectionSummary": "{{count}} SASHE", "empty": "Babu taken labarai har yanzu. Ƙara taken labarai zuwa takardar don gina taƙaitaccen bayani." },
     "info": {
       "title": "BAYANI",
       "words": "Kalmomi",

@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "लिखें", "read": "पढ़ें", "split": "बाँटें", "space": "स्पेस" },
   "mobileNav": { "title": "नेविगेशन", "close": "नेविगेशन बंद करें" },
-  "mobileTabs": { "write": "लिखें", "read": "पढ़ें", "brain": "brain", "cite": "उद्धरण", "more": "अधिक" },
+  "mobileTabs": { "write": "लिखें", "read": "पढ़ें", "split": "विभाजन", "brain": "brain", "cite": "उद्धरण", "more": "अधिक" },
   "mobileMore": {
     "title": "अधिक",
     "close": "अधिक बंद करें",
+    "groupDoc": "यह दस्तावेज़",
+    "groupSpace": "यह स्थान",
+    "groupApp": "ऐप",
     "modeLabel": "मोड",
     "menuLabel": "मेनू",
     "settings": "सेटिंग्स",
@@ -56,7 +59,8 @@
     "about": "के बारे में",
     "help": "सहायता और शॉर्टकट",
     "whatsNew": "नया क्या है",
-    "feedback": "फीडबैक भेजें…"
+    "feedback": "फीडबैक भेजें…",
+    "contact": "संपर्क"
   },
   "quickSettings": {
     "trigger": "LIpsum Writer",
@@ -101,7 +105,7 @@
     "expand": "निरीक्षक का विस्तार करें",
     "collapse": "निरीक्षक को संक्षिप्त करें",
     "tabs": { "outline": "रूपरेखा", "info": "जानकारी", "history": "इतिहास", "actions": "क्रियाएँ" },
-    "outline": { "title": "रूपरेखा", "sectionSummary": "{{count}} खंड" },
+    "outline": { "title": "रूपरेखा", "sectionSummary": "{{count}} खंड", "empty": "अभी तक कोई शीर्षक नहीं। दस्तावेज़ की रूपरेखा बनाने के लिए शीर्षक जोड़ें।" },
     "info": {
       "title": "जानकारी",
       "words": "शब्द",

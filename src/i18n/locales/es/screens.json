@@ -7,6 +7,10 @@
     "tagline": "Un espacio sin distracciones para escritura larga — ficción, investigación, ensayos, diarios.",
     "continueWriting": "Continuar escribiendo",
     "startNewSpace": "Empezar un nuevo espacio",
+    "syncOffChip": "sync/copias no activadas · se pueden perder datos",
+    "syncOnChip": "sincronización de carpeta activada",
+    "syncOnTitle": "Sincronización de carpeta activada",
+    "syncOnBody": "Tu trabajo se sincroniza con la carpeta “{{folder}}” en este dispositivo.",
     "warningTitle": "Build preliminar",
     "warningBody": "Sin sincronización de datos. Todo vive en tu navegador y, si borras la caché, perderás tu trabajo. Puedes activar la sincronización con una carpeta local en Configuración → Sync.",
     "versionLine": "Versión {{version}}"
@@ -271,7 +275,15 @@
         "bundle": "Paquete LIpsum (.zip)",
         "markdown": "Carpeta Markdown",
         "obsidian": "Vault de Obsidian"
-      }
+      },
+      "importSpaceLabel": "Importar un espacio",
+      "importSpaceHint": "Importa un espacio en este navegador desde un archivo Writer (.zip) — una descarga de instantánea o una exportación de sincronización de carpeta de otro dispositivo.",
+      "importChooseFile": "Elegir archivo…",
+      "importing": "importando…",
+      "importFailed": "Importación fallida: {{message}}",
+      "comingSoonLabel": "Más formatos",
+      "comingSoonHint": "Exportación masiva e importación desde carpetas Markdown o vaults de Obsidian.",
+      "comingSoonTooltip": "Planificado — aún no disponible."
     },
     "data": {
       "title": "Tus datos",
@@ -425,7 +437,8 @@
       "groups": {
         "thisSpace": "Este espacio",
         "sharingMembers": "Uso compartido y miembros",
-        "data": "Datos"
+        "data": "Datos",
+        "dangerZone": "Peligro"
       },
       "tabs": {
         "general": "General",
@@ -548,7 +561,18 @@
         "delete": "eliminar",
         "deleteConfirm": "¿Eliminar esta instantánea? Esto no se puede deshacer.",
         "deleted": "Instantánea eliminada.",
-        "justNow": "ahora mismo"
+        "justNow": "ahora mismo",
+        "restore": "↺ restaurar",
+        "restoreUnavailable": "Esta instantánea es anterior a la compatibilidad con restauración — solo se puede descargar.",
+        "restoreDialogTitle": "¿Restaurar esta instantánea?",
+        "restoreDialogBody": "El contenido actual de este espacio será reemplazado por la instantánea. Primero se guarda una instantánea del estado actual, para que puedas deshacer esta restauración.",
+        "restoreConfirm": "Restaurar",
+        "restoreCancel": "Cancelar",
+        "restoring": "restaurando…",
+        "restored": "Instantánea restaurada.",
+        "restoreFailed": "Restauración fallida: {{message}}",
+        "fileRestoreTitle": "¿Restaurar desde un .zip descargado?",
+        "fileRestoreBody": "Impórtalo a través de Configuración global → Exportar / importar — vuelve como un nuevo espacio, sin alterar éste."
       },
       "sync": {
         "title": "Sincronización",
@@ -582,6 +606,11 @@
     "headingMain": "Qué tipo de espacio",
     "headingAccent": "estás empezando?",
     "chooseLegend": "Elige una plantilla",
+    "stage": {
+      "pre-alpha": "experimental",
+      "alpha": "inicial",
+      "beta": "beta"
+    },
     "nameLabel": "Nombre",
     "tagLabel": "Etiqueta",
     "syncLabel": "sincronización en la nube —",

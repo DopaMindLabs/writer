@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "bhala", "read": "funda", "split": "hlukanisa", "space": "isikhala" },
   "mobileNav": { "title": "Ukuzulazula", "close": "Vala ukuzulazula" },
-  "mobileTabs": { "write": "bhala", "read": "funda", "brain": "brain", "cite": "caphuna", "more": "okuningi" },
+  "mobileTabs": { "write": "bhala", "read": "funda", "split": "hlukanisa", "brain": "brain", "cite": "caphuna", "more": "okuningi" },
   "mobileMore": {
     "title": "Okuningi",
     "close": "Vala okuningi",
+    "groupDoc": "Leli qephu",
+    "groupSpace": "Lo mkhakha",
+    "groupApp": "Uhlelo",
     "modeLabel": "Imodi",
     "menuLabel": "Imenyu",
     "settings": "Izilungiselelo",
@@ -56,7 +59,8 @@
     "about": "Mayelana",
     "help": "Usizo nezinqamuleli",
     "whatsNew": "Yini okusha",
-    "feedback": "Thumela impendulo…"
+    "feedback": "Thumela impendulo…",
+    "contact": "Xhumana"
   },
   "quickSettings": {
     "trigger": "LIpsum Writer",
@@ -101,7 +105,7 @@
     "expand": "Nweba umhloli",
     "collapse": "Phinda umhloli",
     "tabs": { "outline": "ISIQEPHU", "info": "INFO", "history": "UMLANDO", "actions": "IZENZO" },
-    "outline": { "title": "ISIQEPHU", "sectionSummary": "{{count}} IZIGABA" },
+    "outline": { "title": "ISIQEPHU", "sectionSummary": "{{count}} IZIGABA", "empty": "Awekho amakhanda okwamanje. Engeza amakhanda esibhalweni ukwakha uhlaka laso." },
     "info": {
       "title": "INFO",
       "words": "Amagama",
