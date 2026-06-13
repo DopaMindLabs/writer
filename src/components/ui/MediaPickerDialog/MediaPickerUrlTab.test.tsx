@@ -19,6 +19,15 @@ describe('MediaPickerUrlTab', () => {
     expect(onSelect).not.toHaveBeenCalled();
   });
 
+  it('rejects an unparseable url (the URL-parse failure branch)', () => {
+    const onSelect = vi.fn();
+    renderWithProviders(<MediaPickerUrlTab onSelect={onSelect} />);
+    typeUrl('not a url');
+    fireEvent.click(screen.getByTestId('media-picker-url-submit'));
+    expect(screen.getByRole('alert')).toHaveTextContent('https://');
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
   it('selects immediately when the domain is already trusted', async () => {
     await addTrustedDomain('arxiv.org');
     const onSelect = vi.fn();

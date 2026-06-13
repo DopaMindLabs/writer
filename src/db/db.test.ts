@@ -24,12 +24,17 @@ describe('LoremDB migrations', () => {
       meta: 'key',
     });
     await v1.open();
-    await v1.table('sections').add({
-      id: 'sec-legacy',
-      spaceId: 's1',
-      label: 'Legacy',
-      order: 0,
-    });
+    await v1.table('sections').bulkAdd([
+      { id: 'sec-legacy', spaceId: 's1', label: 'Legacy', order: 0 },
+      // Already-set value must be preserved (the guard's false branch).
+      {
+        id: 'sec-nested',
+        spaceId: 's1',
+        label: 'Nested',
+        order: 1,
+        parentSectionId: 'sec-legacy',
+      },
+    ]);
     await v1.close();
 
     const upgraded = new LoremDB(dbName);
@@ -37,6 +42,9 @@ describe('LoremDB migrations', () => {
     const sec = await upgraded.sections.get('sec-legacy');
     expect(sec).toBeDefined();
     expect(sec?.parentSectionId).toBeNull();
+    expect((await upgraded.sections.get('sec-nested'))?.parentSectionId).toBe(
+      'sec-legacy',
+    );
     await upgraded.close();
   });
 
@@ -64,17 +72,32 @@ describe('LoremDB migrations', () => {
         'id, spaceId, fromNoteId, toNoteId, [spaceId+fromNoteId], [spaceId+toNoteId]',
     });
     await v3.open();
-    await v3.table('notes').add({
-      id: 'n-legacy',
-      spaceId: 's1',
-      l: 0,
-      t: 0,
-      w: 100,
-      h: 60,
-      kind: 'note',
-      body: 'orig',
-      createdAt: 0,
-    });
+    await v3.table('notes').bulkAdd([
+      {
+        id: 'n-legacy',
+        spaceId: 's1',
+        l: 0,
+        t: 0,
+        w: 100,
+        h: 60,
+        kind: 'note',
+        body: 'orig',
+        createdAt: 0,
+      },
+      // Already-set state must be preserved (the ??= short-circuit branch).
+      {
+        id: 'n-fetched',
+        spaceId: 's1',
+        l: 0,
+        t: 0,
+        w: 100,
+        h: 60,
+        kind: 'note',
+        state: 'seed-fetched',
+        body: 'keep',
+        createdAt: 0,
+      },
+    ]);
     await v3.close();
 
     const upgraded = new LoremDB(dbName);
@@ -82,6 +105,7 @@ describe('LoremDB migrations', () => {
     const note = await upgraded.notes.get('n-legacy');
     expect(note).toBeDefined();
     expect(note?.state).toBe('user');
+    expect((await upgraded.notes.get('n-fetched'))?.state).toBe('seed-fetched');
     await upgraded.close();
   });
 
