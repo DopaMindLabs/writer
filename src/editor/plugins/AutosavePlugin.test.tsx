@@ -98,6 +98,31 @@ describe('AutosavePlugin', () => {
     expect(onChange.mock.calls[0][0]).toContain('three');
   });
 
+  it('treats initialSerialized as the last-saved baseline so a matching state does not refire onChange', () => {
+    const onChange = vi.fn();
+    let editor!: LexicalEditor;
+    render(
+      withComposer(
+        <>
+          <CaptureEditor onReady={(e) => (editor = e)} />
+          <AutosavePlugin
+            onChange={onChange}
+            debounceMs={600}
+            initialSerialized="seeded-body"
+          />
+        </>,
+      ),
+    );
+
+    typeInto(editor, 'fresh edit');
+    act(() => {
+      vi.advanceTimersByTime(600);
+    });
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange.mock.calls[0][0]).not.toBe('seeded-body');
+  });
+
   it('does not save the same serialized state twice on unmount', () => {
     const onChange = vi.fn();
     let editor!: LexicalEditor;

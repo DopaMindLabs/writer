@@ -11,7 +11,7 @@ const editorMocks = vi.hoisted(() => ({
 
 vi.mock('@/editor/EditorFacade', () => ({
   Editor: (props: {
-    initialValue: string;
+    initialSerialized: string;
     mode: string;
     placeholder?: string;
     locked?: boolean;
@@ -27,10 +27,21 @@ vi.mock('@/editor/EditorFacade', () => ({
       data-placeholder={props.placeholder}
         onClick={() => props.onChange?.(NEW_BODY)}
       >
-        {props.initialValue || '(empty)'}
+        {props.initialSerialized || '(empty)'}
       </button>
     );
   },
+}));
+
+vi.mock('@/editor/collab/useDocSyncSession', () => ({
+  useDocSyncSession: (docId: string) => ({
+    key: 'test-session',
+    docId,
+    epoch: 0,
+    handle: {} as unknown,
+    hasStoredState: false,
+    close: () => undefined,
+  }),
 }));
 
 const { WriteSurface } = await import('./WriteSurface');

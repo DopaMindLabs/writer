@@ -16,6 +16,8 @@ const RESTORE_TABLES = [
   db.revisions,
   db.palettes,
   db.docInspectorConfigs,
+  db.docSyncUpdates,
+  db.docSyncMeta,
 ];
 
 const deleteSpaceContent = async (spaceId: string): Promise<void> => {
@@ -23,6 +25,8 @@ const deleteSpaceContent = async (spaceId: string): Promise<void> => {
   if (docIds.length > 0) {
     await db.annotations.where('docId').anyOf(docIds).delete();
     await db.revisions.where('docId').anyOf(docIds).delete();
+    await db.docSyncUpdates.where('docId').anyOf(docIds).delete();
+    await db.docSyncMeta.bulkDelete(docIds);
   }
   await db.docs.where({ spaceId }).delete();
   await db.sections.where({ spaceId }).delete();

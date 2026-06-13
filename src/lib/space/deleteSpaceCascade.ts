@@ -17,12 +17,16 @@ export const deleteSpaceCascade = async (spaceId: string): Promise<void> => {
       db.backups,
       db.syncs,
       db.syncConfigs,
+      db.docSyncUpdates,
+      db.docSyncMeta,
     ],
     async () => {
       const docIds = await db.docs.where({ spaceId }).primaryKeys();
       if (docIds.length > 0) {
         await db.annotations.where('docId').anyOf(docIds).delete();
         await db.revisions.where('docId').anyOf(docIds).delete();
+        await db.docSyncUpdates.where('docId').anyOf(docIds).delete();
+        await db.docSyncMeta.bulkDelete(docIds);
       }
       await db.docs.where({ spaceId }).delete();
       await db.sections.where({ spaceId }).delete();
