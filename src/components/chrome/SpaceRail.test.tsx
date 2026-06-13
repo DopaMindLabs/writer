@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, screen } from '@/test/test-utils';
+import { act, renderWithProviders, screen } from '@/test/test-utils';
 import { seedMultipleSpaces } from '@/test/fixtures';
 import { APP_VERSION_LABEL } from '@/lib/version';
 import { SpaceRail } from './SpaceRail';
@@ -36,7 +36,7 @@ describe('SpaceRail', () => {
   it('shows the version label in the alpha chip and its tooltip on focus', async () => {
     renderWithProviders(<SpaceRail activeSpaceId="s1" />);
     const chip = await screen.findByText(APP_VERSION_LABEL);
-    chip.focus();
+    act(() => { chip.focus(); });
     const tooltip = await screen.findByRole('tooltip');
     expect(tooltip).toHaveTextContent(/pre-release build/i);
     expect(tooltip).toHaveTextContent(`Version ${APP_VERSION_LABEL}`);

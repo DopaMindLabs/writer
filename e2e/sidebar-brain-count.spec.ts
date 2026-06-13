@@ -10,7 +10,7 @@ test('sidebar reflects the brain-space note count and cancels add-doc on Escape'
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
 
-  await page.goto(`/#/s/${spaceId}/dump`);
+  await page.goto(`/#/s/${spaceId}/brain-space`);
   await page.getByTestId('brain-canvas-tool-question').click();
   await expect(
     page.getByTestId('brain-canvas-content').locator(':scope > [data-testid^="brain-note-"]'),

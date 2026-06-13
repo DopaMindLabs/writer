@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
 
 const gotoDump = async (page: Page) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
-  await page.goto(`/#/s/${spaceId}/dump`);
+  await page.goto(`/#/s/${spaceId}/brain-space`);
   await expect(page.getByTestId('brain-canvas')).toBeVisible();
 };
 

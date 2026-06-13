@@ -1,11 +1,13 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { LanguagePicker } from './LanguagePicker';
 import i18n from '@/i18n';
 
 describe('LanguagePicker', () => {
   afterEach(async () => {
     if (i18n.language !== 'en') {
-      await i18n.changeLanguage('en');
+      await act(async () => {
+        await i18n.changeLanguage('en');
+      });
     }
   });
 
@@ -25,7 +27,9 @@ describe('LanguagePicker', () => {
       (screen.getByLabelText('Language') as HTMLSelectElement).options,
     ).map((o) => o.text);
 
-    await i18n.changeLanguage('ja');
+    await act(async () => {
+      await i18n.changeLanguage('ja');
+    });
     const after = Array.from(
       (screen.getByLabelText('Language') as HTMLSelectElement).options,
     ).map((o) => o.text);

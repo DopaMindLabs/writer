@@ -1,7 +1,6 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { readFileSync } from 'node:fs';
 
 const { version: appVersion } = JSON.parse(
@@ -16,7 +15,10 @@ export default defineConfig(({ command, mode }) => ({
     command === 'build'
       ? process.env.VITE_BASE ?? '/writer/'
       : process.env.VITE_BASE ?? '/',
-  plugins: [react(), tsconfigPaths()],
+  plugins: [react()],
+  resolve: {
+    tsconfigPaths: true,
+  },
   server: {
     port: 5173,
   },

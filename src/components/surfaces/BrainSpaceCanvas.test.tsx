@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { fireEvent } from '@testing-library/react';
-import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
+import { act, renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import {
   seedBrainSpaceCanvas,
@@ -9,6 +9,22 @@ import {
 } from '@/test/fixtures';
 import { useUI } from '@/store/ui';
 import { BrainSpaceCanvas } from './BrainSpaceCanvas';
+
+// addNote() is fire-and-forget: it writes to Dexie, calls focusNote(), and the
+// live query then renders the note. Waiting for a rendered note guarantees those
+// state updates commit inside act() rather than after the test body returns.
+const waitForNoteRendered = async (): Promise<void> => {
+  // Wrap waitFor inside an async act() so the boundary stays open continuously
+  // across polls: the trailing focusNote()/live-query renders then commit inside
+  // act() instead of in an inter-poll gap or after the test body returns.
+  await act(async () => {
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-testid^="brain-note-"]'),
+      ).not.toBeNull();
+    });
+  });
+};
 
 describe('BrainSpaceCanvas', () => {
   describe('rendering', () => {
@@ -80,11 +96,14 @@ describe('BrainSpaceCanvas', () => {
       renderWithProviders(<BrainSpaceCanvas spaceId="s1" />);
       const button = await screen.findByTestId('brain-canvas-tool-blank');
       expect(button).toHaveTextContent(/\+ blank/i);
-      expect(await db.notes.count()).toBe(0);
-      await user.click(button);
-      await waitFor(async () => {
-        expect(await db.notes.count()).toBe(1);
+      // The Dexie read spans several ticks during which the mount-time notes
+      // live query resolves and re-renders the canvas; wrap it in act().
+      await act(async () => {
+        expect(await db.notes.count()).toBe(0);
       });
+      await user.click(button);
+      await waitForNoteRendered();
+      expect(await db.notes.count()).toBe(1);
     });
 
     it('places the new note at the canvas origin when not scrolled', async () => {
@@ -93,9 +112,7 @@ describe('BrainSpaceCanvas', () => {
       renderWithProviders(<BrainSpaceCanvas spaceId="s1" />);
       const button = await screen.findByTestId('brain-canvas-tool-blank');
       await user.click(button);
-      await waitFor(async () => {
-        expect(await db.notes.count()).toBe(1);
-      });
+      await waitForNoteRendered();
       const [note] = await db.notes.toArray();
       expect(note.l).toBe(24);
       expect(note.t).toBe(24);
@@ -110,9 +127,7 @@ describe('BrainSpaceCanvas', () => {
       scroll.scrollTop = 1300;
       const button = await screen.findByTestId('brain-canvas-tool-blank');
       await user.click(button);
-      await waitFor(async () => {
-        expect(await db.notes.count()).toBe(1);
-      });
+      await waitForNoteRendered();
       const [note] = await db.notes.toArray();
       expect(note.l).toBe(1824);
       expect(note.t).toBe(1324);

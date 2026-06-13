@@ -17,7 +17,7 @@ test('exports a space populated with citations and notes', async ({ page }) => {
   await page.getByTestId('citations-manual-add-submit').click();
   await expect(page.getByTestId('citations-status')).toContainText(/imported/i);
 
-  await page.goto(`/#/s/${spaceId}/dump`);
+  await page.goto(`/#/s/${spaceId}/brain-space`);
   const notes = page
     .getByTestId('brain-canvas-content')
     .locator(':scope > [data-testid^="brain-note-"]');

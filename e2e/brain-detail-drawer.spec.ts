@@ -9,7 +9,7 @@ test('brain space detail drawer edits a note and links a doc', async ({
   page,
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
-  await page.goto(`/#/s/${spaceId}/dump`);
+  await page.goto(`/#/s/${spaceId}/brain-space`);
 
   const noteCards = page
     .getByTestId('brain-canvas-content')

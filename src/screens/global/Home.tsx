@@ -97,6 +97,7 @@ const HomeActions = ({
       )}
       <Link
         to={routes.templates()}
+        data-testid="home-start-new-space"
         data-tour="tour-start-space"
         className="flex items-baseline justify-between px-2 py-5 transition-colors hover:bg-paper-2"
       >

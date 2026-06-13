@@ -25,12 +25,12 @@ test('renders the bottom-tabs nav on small viewports', async ({ page }) => {
   await expect(page.getByTestId('mobile-tabs')).toBeVisible();
 });
 
-test('brain tab navigates to /dump', async ({ page }) => {
+test('brain tab navigates to /brain-space', async ({ page }) => {
   const { spaceId, docId } = await gotoFirstDoc(page);
   await page.goto(`/#/s/${spaceId}/d/${docId}`);
   const tabs = page.getByTestId('mobile-tabs');
   await tabs.getByRole('link', { name: /brain/i }).click();
-  await expect(page).toHaveURL(/\/dump(\?|$)/);
+  await expect(page).toHaveURL(/\/brain-space(\?|$)/);
   // The canvas renders on phones (mobile notice temporarily disabled).
   await expect(page.getByTestId('brain-canvas')).toBeVisible();
 });

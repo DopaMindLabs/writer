@@ -211,8 +211,12 @@ describe('DocInspector', () => {
       });
       renderWithProviders(<DocInspector docName="X" docId="d1" />);
       await screen.findByTestId('inspector-status');
-      expect(screen.queryByTestId('inspector-due-date')).toBeNull();
-      expect(screen.queryByTestId('inspector-row-dueDate')).toBeNull();
+      // The effective-config live query resolves after the first render (which
+      // falls back to defaults, all features on); wait for the disabled row to drop.
+      await waitFor(() => {
+        expect(screen.queryByTestId('inspector-due-date')).toBeNull();
+        expect(screen.queryByTestId('inspector-row-dueDate')).toBeNull();
+      });
     });
 
     it('always shows the word count but hides the limit suffix and input when wordLimit is off', async () => {
@@ -232,7 +236,11 @@ describe('DocInspector', () => {
       const row = await screen.findByTestId('inspector-row-words');
       expect(row).toHaveTextContent(/Words\s*2$/);
       expect(row).not.toHaveTextContent('/');
-      expect(screen.queryByTestId('inspector-row-wordLimit')).toBeNull();
+      // The effective-config live query resolves after the first render (which
+      // falls back to defaults, all features on); wait for the disabled limit to drop.
+      await waitFor(() => {
+        expect(screen.queryByTestId('inspector-row-wordLimit')).toBeNull();
+      });
       expect(screen.queryByTestId('inspector-wordLimit')).toBeNull();
     });
 
@@ -253,7 +261,11 @@ describe('DocInspector', () => {
       const row = await screen.findByTestId('inspector-row-characters');
       expect(row).toHaveTextContent(/Characters\s*11$/);
       expect(row).not.toHaveTextContent('/');
-      expect(screen.queryByTestId('inspector-row-charLimit')).toBeNull();
+      // The effective-config live query resolves after the first render (which
+      // falls back to defaults, all features on); wait for the disabled limit to drop.
+      await waitFor(() => {
+        expect(screen.queryByTestId('inspector-row-charLimit')).toBeNull();
+      });
       expect(screen.queryByTestId('inspector-charLimit')).toBeNull();
     });
 
@@ -288,7 +300,11 @@ describe('DocInspector', () => {
       const row = await screen.findByTestId('inspector-row-words');
       expect(row).toHaveTextContent(/Words\s*2$/);
       expect(row).not.toHaveTextContent('/');
-      expect(screen.queryByTestId('inspector-wordLimit')).toBeNull();
+      // The effective-config live query resolves after the first render (which
+      // falls back to defaults, all features on); wait for the disabled limit to drop.
+      await waitFor(() => {
+        expect(screen.queryByTestId('inspector-wordLimit')).toBeNull();
+      });
     });
 
     it('always shows Updated, Section and the live counts regardless of toggles', async () => {
@@ -313,10 +329,14 @@ describe('DocInspector', () => {
       );
       expect(screen.getByTestId('inspector-row-updated')).toBeInTheDocument();
       expect(screen.getByTestId('inspector-row-section')).toBeInTheDocument();
-      expect(screen.queryByTestId('inspector-row-wordLimit')).toBeNull();
-      expect(screen.queryByTestId('inspector-row-charLimit')).toBeNull();
-      expect(screen.queryByTestId('inspector-row-status')).toBeNull();
-      expect(screen.queryByTestId('inspector-row-dueDate')).toBeNull();
+      // The effective-config live query resolves after the first render (which
+      // falls back to defaults, all features on); wait for the disabled rows to drop.
+      await waitFor(() => {
+        expect(screen.queryByTestId('inspector-row-wordLimit')).toBeNull();
+        expect(screen.queryByTestId('inspector-row-charLimit')).toBeNull();
+        expect(screen.queryByTestId('inspector-row-status')).toBeNull();
+        expect(screen.queryByTestId('inspector-row-dueDate')).toBeNull();
+      });
     });
 
     it('renders a "no due date" placeholder in read-only mode when the doc has none', async () => {

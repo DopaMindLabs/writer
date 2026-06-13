@@ -1,11 +1,13 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
 import { LanguageTab } from './LanguageTab';
 import i18n from '@/i18n';
 
 describe('LanguageTab', () => {
   afterEach(async () => {
     if (i18n.language !== 'en') {
-      await i18n.changeLanguage('en');
+      await act(async () => {
+        await i18n.changeLanguage('en');
+      });
     }
   });
 
@@ -28,7 +30,11 @@ describe('LanguageTab', () => {
   it('changes the active i18n language when a new option is selected', async () => {
     render(<LanguageTab />);
     const select = screen.getByLabelText(/interface language/i) as HTMLSelectElement;
-    fireEvent.change(select, { target: { value: 'es' } });
+    // changeLanguage() fires an async languageChanged event that re-renders
+    // i18n-subscribed components; flush it inside act().
+    await act(async () => {
+      fireEvent.change(select, { target: { value: 'es' } });
+    });
     expect(i18n.language).toBe('es');
   });
 });

@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { fireEvent } from '@testing-library/react';
-import { renderAtRoute, screen, waitFor, within } from '@/test/test-utils';
+import { act, renderAtRoute, screen, waitFor, within } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 import { sampleDoc, sampleNote, sampleSpace } from '@/test/fixtures';
@@ -47,9 +47,19 @@ const renderCanvas = () => {
   });
 };
 
+// Store mutations drive Radix drawer transitions; wrap them in act() so the
+// resulting state updates are flushed inside the test.
+const openDetailNote = (noteId: string): void => {
+  act(() => {
+    useUI.getState().openDetail(noteId);
+  });
+};
+
 afterEach(() => {
-  useUI.getState().closeDetail();
-  useUI.getState().focusNote(null);
+  act(() => {
+    useUI.getState().closeDetail();
+    useUI.getState().focusNote(null);
+  });
   navigateSpy.mockClear();
 });
 
@@ -59,7 +69,7 @@ describe('BrainSpaceDetailDrawer', () => {
       await seedTwoConnectedNotes();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const drawer = await screen.findByTestId('brain-detail-drawer');
       expect(drawer).toBeInTheDocument();
       const title = screen.getByTestId(
@@ -75,7 +85,7 @@ describe('BrainSpaceDetailDrawer', () => {
       await seedTwoConnectedNotes();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const heading = await screen.findByTestId(
         'brain-detail-drawer-connections-heading',
       );
@@ -87,7 +97,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const lonely: Note = { ...sampleNote, id: 'n-lonely', title: 'Lonely' };
       await db.notes.put(lonely);
       renderCanvas();
-      useUI.getState().openDetail(lonely.id);
+      openDetailNote(lonely.id);
       const empty = await screen.findByTestId(
         'brain-detail-drawer-connections-empty',
       );
@@ -103,7 +113,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const user = userEvent.setup();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const body = (await screen.findByTestId(
         'brain-detail-drawer-body',
       )) as HTMLTextAreaElement;
@@ -121,7 +131,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const updateSpy = vi.spyOn(db.notes, 'update');
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const body = (await screen.findByTestId(
         'brain-detail-drawer-body',
       )) as HTMLTextAreaElement;
@@ -137,7 +147,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const user = userEvent.setup();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const title = (await screen.findByTestId(
         'brain-detail-drawer-title',
       )) as HTMLInputElement;
@@ -154,7 +164,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const user = userEvent.setup();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const title = (await screen.findByTestId(
         'brain-detail-drawer-title',
       )) as HTMLInputElement;
@@ -171,7 +181,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const updateSpy = vi.spyOn(db.notes, 'update');
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const title = (await screen.findByTestId(
         'brain-detail-drawer-title',
       )) as HTMLInputElement;
@@ -188,7 +198,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const user = userEvent.setup();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const select = (await screen.findByTestId(
         'brain-detail-drawer-linked-doc',
       )) as HTMLSelectElement;
@@ -210,7 +220,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const user = userEvent.setup();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const select = (await screen.findByTestId(
         'brain-detail-drawer-linked-doc',
       )) as HTMLSelectElement;
@@ -236,7 +246,7 @@ describe('BrainSpaceDetailDrawer', () => {
       await db.docs.put({ ...sampleDoc, name: '' });
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const select = (await screen.findByTestId(
         'brain-detail-drawer-linked-doc',
       )) as HTMLSelectElement;
@@ -258,7 +268,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const user = userEvent.setup();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const open = await screen.findByTestId('brain-detail-drawer-open');
       expect(open).toHaveTextContent(/open/i);
       await user.click(open);
@@ -275,7 +285,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const user = userEvent.setup();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const openBtn = await screen.findByTestId(
         'brain-detail-drawer-open',
         {},
@@ -296,7 +306,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const user = userEvent.setup();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const removeBtn = await screen.findByTestId(
         `brain-detail-drawer-connection-${CONNECTION.id}-remove`,
       );
@@ -311,7 +321,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const user = userEvent.setup();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(sampleNote.id);
+      openDetailNote(sampleNote.id);
       const removeBtn = await screen.findByTestId(
         `brain-detail-drawer-connection-${CONNECTION.id}-remove`,
       );
@@ -326,7 +336,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const user = userEvent.setup();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(sampleNote.id);
+      openDetailNote(sampleNote.id);
       const row = await screen.findByTestId(
         `brain-detail-drawer-connection-${CONNECTION.id}-focus`,
       );
@@ -351,7 +361,7 @@ describe('BrainSpaceDetailDrawer', () => {
       };
       await db.connections.put(orphan);
       renderCanvas();
-      useUI.getState().openDetail(sampleNote.id);
+      openDetailNote(sampleNote.id);
       const row = await screen.findByTestId(
         `brain-detail-drawer-connection-${orphan.id}-focus`,
       );
@@ -366,7 +376,7 @@ describe('BrainSpaceDetailDrawer', () => {
       const user = userEvent.setup();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const del = await screen.findByTestId('brain-detail-drawer-delete');
       expect(del).toHaveTextContent(/delete note/i);
       await user.click(del);
@@ -382,7 +392,7 @@ describe('BrainSpaceDetailDrawer', () => {
       await seedTwoConnectedNotes();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const title = await screen.findByTestId('brain-detail-drawer-title');
       title.focus();
       fireEvent.keyDown(title, { key: 'Escape' });
@@ -395,7 +405,7 @@ describe('BrainSpaceDetailDrawer', () => {
       await seedTwoConnectedNotes();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       const drawer = await screen.findByTestId('brain-detail-drawer');
       await screen.findByTestId('brain-detail-drawer-connections-heading');
       await waitFor(() => {
@@ -412,7 +422,7 @@ describe('BrainSpaceDetailDrawer', () => {
       await seedTwoConnectedNotes();
       renderCanvas();
       await screen.findByTestId('brain-note-n2');
-      useUI.getState().openDetail(SECOND_NOTE.id);
+      openDetailNote(SECOND_NOTE.id);
       await screen.findByTestId('brain-detail-drawer-attachments');
     };
 

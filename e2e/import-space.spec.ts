@@ -29,7 +29,7 @@ const enrichSpace = async (page: Page, spaceId: string): Promise<void> => {
     .getByTestId('inspector-toggle-off')
     .click();
 
-  await page.goto(`/#/s/${spaceId}/dump`);
+  await page.goto(`/#/s/${spaceId}/brain-space`);
   await expect(page.getByTestId('brain-canvas')).toBeVisible();
   const noteCards = page
     .getByTestId('brain-canvas-content')
@@ -98,7 +98,7 @@ test('a downloaded space archive can be imported as a new space', async ({
   // canvas, which proves the noteAttachments codec + binding + id-remap path.
   const newSpaceMatch = page.url().match(/#\/s\/([^/?]+)/);
   if (newSpaceMatch) {
-    await page.goto(`/#/s/${newSpaceMatch[1]}/dump`);
+    await page.goto(`/#/s/${newSpaceMatch[1]}/brain-space`);
     await expect(page.getByRole('img', { name: 'cover.png' })).toBeVisible();
   }
 });

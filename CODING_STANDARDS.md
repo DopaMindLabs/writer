@@ -30,11 +30,19 @@ checked in review.
 
 ### Scope and exceptions
 
+These are pre-existing, config-level scope settings — **not** licence to add new exemptions:
+
 - `src/tours/` (driver.js guided tours) is exempt and not linted.
 - `src/editor/` (Lexical) keeps all correctness rules but relaxes the size limits, because
-  the editor API forces large or recursive node walks. For a one-off correctness exception,
-  add `// nasa-exception: <rule> (<reason>)` above an `// eslint-disable-next-line <rule>`.
+  the editor API forces large or recursive node walks.
 - Tests, stories, and e2e specs relax size limits and allow `!` and floating promises.
+
+**Do not relax limits or silence the linter to make code pass.** Never raise/loosen the size
+limits, weaken or disable an ESLint rule, or add `// eslint-disable*`, `// nasa-exception`,
+`@ts-ignore`/`@ts-expect-error`, or any other suppression. Refactor instead — split the
+function or file, extract a module, correct the type. If you are convinced a limit genuinely
+cannot be met by refactoring, **stop and ask the user clearly and explicitly what to do** before
+changing any config or adding a suppression; do not decide unilaterally.
 
 ---
 
@@ -128,9 +136,10 @@ const data = JSON.parse(raw) as Settings;
 const data = parseSettings(JSON.parse(raw)); // returns Settings or throws
 ```
 
-No `any`. No `@ts-ignore` or `@ts-nocheck`; use `@ts-expect-error` with a description when a
-suppression is unavoidable. Keep `as` casts and non-null `!` assertions at validated
-boundaries, not as a convenience.
+No `any`. No `@ts-ignore`, `@ts-nocheck`, or `@ts-expect-error` to make an error go away — fix
+the types instead. If you believe a suppression is genuinely unavoidable, **stop and ask the
+user explicitly first**; do not add one unilaterally. Keep `as` casts and non-null `!`
+assertions at validated boundaries, not as a convenience.
 
 ### 9. Immutability
 Treat data as immutable. Mark never-reassigned fields `readonly`. Do not mutate function

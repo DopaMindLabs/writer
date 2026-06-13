@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import { render, waitFor } from '@/test/test-utils';
+import { act, render, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { FIXED_TIME, serializedBody } from '@/test/fixtures';
 import type { Doc } from '@/db/schema';
@@ -80,9 +80,14 @@ describe('WriteSurface', () => {
     await db.docs.put(stale);
     const { getByTestId } = render(<WriteSurface doc={stale} mode="write" />);
 
-    await db.docs.update(doc.id, {
-      'meta.status': 'complete',
-      'meta.wordLimit': 500,
+    // Wrap the Dexie write in act(): it spans several async ticks, during which
+    // the mount-time Inspector-config live query resolves and re-renders
+    // WriteSurface. Keeping act() open ensures that re-render is wrapped.
+    await act(async () => {
+      await db.docs.update(doc.id, {
+        'meta.status': 'complete',
+        'meta.wordLimit': 500,
+      });
     });
 
     await userEvent.click(getByTestId('editor-stub'));

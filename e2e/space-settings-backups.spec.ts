@@ -31,7 +31,7 @@ const enrichSpace = async (page: Page, spaceId: string): Promise<void> => {
     .getByTestId('inspector-toggle-off')
     .click();
 
-  await page.goto(`/#/s/${spaceId}/dump`);
+  await page.goto(`/#/s/${spaceId}/brain-space`);
   await expect(page.getByTestId('brain-canvas')).toBeVisible();
   const noteCards = page
     .getByTestId('brain-canvas-content')
@@ -134,6 +134,6 @@ test('backups tab: restoring a snapshot rolls the space back and keeps a pre-res
 
   // Attachment from before the snapshot must survive the restore — proves
   // bindAttachmentBlobs round-tripped the image bytes.
-  await page.goto(`/#/s/${spaceId}/dump`);
+  await page.goto(`/#/s/${spaceId}/brain-space`);
   await expect(page.getByRole('img', { name: 'cover.png' })).toBeVisible();
 });

@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 const addNote = async (page: Page) => {
-  await page.goto(`/#/s/${await getFirstSpaceIdFromHome(page)}/dump`);
+  await page.goto(`/#/s/${await getFirstSpaceIdFromHome(page)}/brain-space`);
   const notes = page
     .getByTestId('brain-canvas-content')
     .locator(':scope > [data-testid^="brain-note-"]');

@@ -42,7 +42,7 @@ const useTabItems = ({ spaceId, docId }: MobileTabsProps): TabItem[] => {
       match: (p) =>
         !p.endsWith('/read') &&
         !p.endsWith('/split') &&
-        !p.endsWith('/dump') &&
+        !p.endsWith('/brain-space') &&
         !p.endsWith('/citations'),
     },
     {
@@ -55,7 +55,7 @@ const useTabItems = ({ spaceId, docId }: MobileTabsProps): TabItem[] => {
       key: 'brain',
       Icon: Brain,
       href: brainHref ?? undefined,
-      match: (p) => p.endsWith('/dump'),
+      match: (p) => p.endsWith('/brain-space'),
     },
     // Split view is desktop-only for now: the divider isn't reliably
     // touch-draggable on phones, so the tab is withheld until the mobile

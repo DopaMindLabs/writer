@@ -501,7 +501,7 @@ export const Sidebar = ({ spaceId, activeDocId, className }: SidebarProps) => {
   const notes = useNotes(spaceId);
   const location = useLocation();
   const modeSuffix = inferModeSuffix(location.pathname);
-  const onBrainSpace = location.pathname.endsWith('/dump');
+  const onBrainSpace = location.pathname.endsWith('/brain-space');
 
   const { topSections, subsectionsByParent, docsBySection } =
     useSidebarSections(sections, docs);
