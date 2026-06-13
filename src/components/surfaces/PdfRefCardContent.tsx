@@ -12,6 +12,7 @@ import {
   type FetchFailureReason,
 } from '@/lib/pdf-url-cache';
 import { IconButton } from '@/components/ui/icon';
+import { InlineBanner } from '@/components/ui/InlineBanner';
 import { TextField } from '@/components/ui/TextField';
 import { TextArea } from '@/components/ui/TextArea';
 import { PdfViewer } from '@/components/ui/PdfViewer';
@@ -326,13 +327,13 @@ interface ErrorViewProps {
 
 const ErrorView = ({ note, url, message, busy, onResubmit }: ErrorViewProps) => (
   <>
-    <div
-      role="status"
+    <InlineBanner
+      kind="error"
+      title="Couldn't fetch this PDF"
       data-testid={`brain-note-${note.id}-pdf-error`}
-      className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--danger)]"
     >
       {message}
-    </div>
+    </InlineBanner>
     <UrlInput
       initialValue={url}
       busy={busy}
