@@ -45,4 +45,5 @@ export interface Template {
   seedDocs: TemplateSeedDoc[];
   seedNotes?: TemplateSeedNote[];
   noteKinds: NoteKind[];
+  allowExtraSections?: boolean;
 }

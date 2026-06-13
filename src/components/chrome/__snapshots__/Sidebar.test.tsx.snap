@@ -223,6 +223,41 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
         </div>
       </div>
       <div
+        class="mt-1 px-5 py-1"
+        data-testid="sidebar-add-section-row"
+      >
+        <button
+          aria-label="Add section to this space"
+          class="flex w-full items-center gap-1 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 hover:text-ink focus-visible:text-ink focus-visible:outline-none"
+          data-testid="sidebar-add-section-trigger"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-plus h-3 w-3"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="M12 5v14"
+            />
+          </svg>
+          <span>
+            Add section
+          </span>
+        </button>
+      </div>
+      <div
         class="mt-4 border-t border-rule pt-2"
         data-testid="sidebar-workshop-fallback"
       >
