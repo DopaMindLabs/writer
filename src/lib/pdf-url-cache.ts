@@ -41,11 +41,23 @@ interface PdfDocLike {
 }
 
 interface PdfjsLike {
+  GlobalWorkerOptions: { workerSrc: string };
   getDocument: (args: { data: ArrayBuffer }) => { promise: Promise<PdfDocLike> };
 }
 
-const countPages = async (blob: Blob): Promise<number> => {
+const loadPdfjs = async (): Promise<PdfjsLike> => {
   const mod = (await import('pdfjs-dist')) as unknown as PdfjsLike;
+  if (!mod.GlobalWorkerOptions.workerSrc) {
+    mod.GlobalWorkerOptions.workerSrc = new URL(
+      'pdfjs-dist/build/pdf.worker.min.mjs',
+      import.meta.url,
+    ).toString();
+  }
+  return mod;
+};
+
+const countPages = async (blob: Blob): Promise<number> => {
+  const mod = await loadPdfjs();
   const doc = await mod.getDocument({ data: await blob.arrayBuffer() }).promise;
   try {
     return doc.numPages;

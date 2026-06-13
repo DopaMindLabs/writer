@@ -25,6 +25,7 @@ const mockFetchOnce = (response: Response | (() => Response | Promise<Response>)
 };
 
 vi.mock('pdfjs-dist', () => ({
+  GlobalWorkerOptions: { workerSrc: '' },
   getDocument: vi.fn(() => ({
     promise: Promise.resolve({ numPages: 8, destroy: () => Promise.resolve() }),
   })),
