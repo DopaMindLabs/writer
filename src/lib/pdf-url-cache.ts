@@ -1,8 +1,10 @@
 import { invariant } from '@/lib/invariant';
 import { db } from '@/db/db';
+import { isDomainAllowed } from '@/lib/trusted-domains';
 
 export type FetchFailureReason =
   | 'invalid-url'
+  | 'untrusted-domain'
   | 'cors'
   | 'http'
   | 'network'
@@ -98,6 +100,8 @@ export const fetchAndCachePdf = async (
 ): Promise<FetchResult> => {
   invariant(noteId.length > 0, 'fetchAndCachePdf: noteId required');
   if (!isHttpsUrl(url)) return fail('invalid-url', 'Enter an https:// URL.');
+  if (!(await isDomainAllowed(url)))
+    return fail('untrusted-domain', 'This domain is not in your trusted list.');
 
   const fetched = await doFetch(url);
   if (!fetched.ok) return fetched.result;

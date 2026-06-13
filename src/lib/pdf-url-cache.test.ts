@@ -1,5 +1,6 @@
-import { vi } from 'vitest';
+import { beforeEach, vi } from 'vitest';
 import { db } from '@/db/db';
+import { addTrustedDomain } from './trusted-domains';
 import {
   fetchAndCachePdf,
   filenameFromUrl,
@@ -30,6 +31,11 @@ vi.mock('pdfjs-dist', () => ({
   })),
 }));
 
+// Trust the hosts the fetch tests use; the subdomain rule covers a./b.example.com.
+beforeEach(async () => {
+  await addTrustedDomain('example.com');
+});
+
 describe('fetchAndCachePdf', () => {
   it('rejects non-https urls without hitting the network', async () => {
     const fetchSpy = mockFetchOnce(respondWith(''));
@@ -40,6 +46,18 @@ describe('fetchAndCachePdf', () => {
       message: 'Enter an https:// URL.',
     });
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('rejects an untrusted domain without hitting the network', async () => {
+    const fetchSpy = mockFetchOnce(respondWith(pdfBlob()));
+    const result = await fetchAndCachePdf('n1', 'https://untrusted.test/x.pdf');
+    expect(result).toEqual({
+      ok: false,
+      reason: 'untrusted-domain',
+      message: 'This domain is not in your trusted list.',
+    });
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(await db.noteUrlCache.get('n1')).toBeUndefined();
   });
 
   it('caches a successful PDF fetch with page count and metadata', async () => {

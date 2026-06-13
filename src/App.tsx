@@ -16,6 +16,7 @@ import { ThemeProvider } from '@/theme/ThemeProvider';
 import { A11yPreferenceProvider } from '@/theme/A11yPreferenceProvider';
 import { SyncScheduler } from '@/lib/sync/SyncScheduler';
 import { resetAndReseed } from '@/db/seed';
+import { initializeTrustedDomains } from '@/lib/trusted-domains';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
 import { HomeScreen } from '@/screens/global/Home';
 import { AboutScreen } from '@/screens/global/About';
@@ -96,6 +97,7 @@ const useAppBoot = (): {
         url.searchParams.delete('reseed');
         window.history.replaceState({}, '', url.pathname + url.search);
       }
+      await initializeTrustedDomains();
     };
     run()
       .then(() => {
