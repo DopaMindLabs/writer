@@ -19,8 +19,9 @@ vi.mock('pdfjs-dist', () => ({
     const isPdf = head[0] === 0x25 && head[1] === 0x50;
     return {
       promise: isPdf
-        ? Promise.resolve({ numPages: 5, destroy: () => Promise.resolve() })
+        ? Promise.resolve({ numPages: 5 })
         : Promise.reject(new Error('not a pdf')),
+      destroy: () => Promise.resolve(),
     };
   }),
 }));

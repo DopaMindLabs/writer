@@ -11,13 +11,14 @@ export const sniffPdfMagic = async (blob: Blob): Promise<boolean> => {
   return true;
 };
 
-interface PdfDocLike {
-  numPages: number;
-  destroy: () => Promise<void>;
+interface PdfLoadingTaskLike {
+  promise: Promise<{ numPages: number }>;
+  // Cleanup lives on the loading task in pdfjs, not on the resolved document.
+  destroy?: () => Promise<void>;
 }
 
 interface PdfjsLike {
-  getDocument: (args: { data: ArrayBuffer }) => { promise: Promise<PdfDocLike> };
+  getDocument: (args: { data: ArrayBuffer }) => PdfLoadingTaskLike;
   GlobalWorkerOptions?: { workerSrc?: string };
 }
 
@@ -47,13 +48,23 @@ const ensurePdfWorker = (mod: PdfjsLike): void => {
   ).toString();
 };
 
+const destroyQuietly = async (task: PdfLoadingTaskLike): Promise<void> => {
+  // Cleanup is best-effort: a quirk here must never fail page counting.
+  try {
+    if (typeof task.destroy === 'function') await task.destroy();
+  } catch {
+    /* ignore */
+  }
+};
+
 export const countPages = async (blob: Blob): Promise<number> => {
   const mod = (await import('pdfjs-dist')) as unknown as PdfjsLike;
   ensurePdfWorker(mod);
-  const doc = await mod.getDocument({ data: await blob.arrayBuffer() }).promise;
+  const task = mod.getDocument({ data: await blob.arrayBuffer() });
   try {
+    const doc = await task.promise;
     return doc.numPages;
   } finally {
-    await doc.destroy();
+    await destroyQuietly(task);
   }
 };

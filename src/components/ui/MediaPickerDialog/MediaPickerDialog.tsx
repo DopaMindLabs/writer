@@ -30,7 +30,15 @@ export const MediaPickerDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent data-testid="media-picker-dialog">
+      <DialogContent
+        data-testid="media-picker-dialog"
+        // The dialog is portalled but still part of the PDF card's React tree,
+        // so its events bubble (via the portal) to the card's drag handlers and
+        // through to the canvas. Stop them at the dialog boundary.
+        onPointerDown={(e) => { e.stopPropagation(); }}
+        onPointerUp={(e) => { e.stopPropagation(); }}
+        onClick={(e) => { e.stopPropagation(); }}
+      >
         <DialogHeader>
           <DialogTitle>Add a PDF</DialogTitle>
           <DialogDescription>

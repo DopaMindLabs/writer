@@ -8,7 +8,8 @@ const workerOptions = { workerSrc: '' };
 vi.mock('pdfjs-dist', () => ({
   GlobalWorkerOptions: workerOptions,
   getDocument: vi.fn(() => ({
-    promise: Promise.resolve({ numPages: 7, destroy: () => Promise.resolve() }),
+    promise: Promise.resolve({ numPages: 7 }),
+    destroy: () => Promise.resolve(),
   })),
 }));
 

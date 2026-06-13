@@ -37,6 +37,23 @@ describe('MediaPickerDialog', () => {
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
+  it('does not let pointer events bubble to the surrounding canvas', async () => {
+    const onParentPointerDown = vi.fn();
+    renderWithProviders(
+      <div onPointerDown={onParentPointerDown}>
+        <MediaPickerDialog
+          open
+          onOpenChange={vi.fn()}
+          spaceId="s1"
+          onSelect={vi.fn()}
+        />
+      </div>,
+    );
+    const dialog = await screen.findByTestId('media-picker-dialog');
+    fireEvent.pointerDown(dialog);
+    expect(onParentPointerDown).not.toHaveBeenCalled();
+  });
+
   it('switches to the URL tab', async () => {
     const user = userEvent.setup();
     renderWithProviders(

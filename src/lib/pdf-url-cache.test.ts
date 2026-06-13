@@ -28,7 +28,8 @@ const mockFetchOnce = (response: Response | (() => Response | Promise<Response>)
 
 vi.mock('pdfjs-dist', () => ({
   getDocument: vi.fn(() => ({
-    promise: Promise.resolve({ numPages: 8, destroy: () => Promise.resolve() }),
+    promise: Promise.resolve({ numPages: 8 }),
+    destroy: () => Promise.resolve(),
   })),
 }));
 

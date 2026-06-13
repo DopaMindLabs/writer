@@ -10,7 +10,8 @@ const PDF_HEADER = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31]);
 
 vi.mock('pdfjs-dist', () => ({
   getDocument: vi.fn(() => ({
-    promise: Promise.resolve({ numPages: 8, destroy: () => Promise.resolve() }),
+    promise: Promise.resolve({ numPages: 8 }),
+    destroy: () => Promise.resolve(),
   })),
 }));
 

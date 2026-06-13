@@ -1,5 +1,6 @@
 import { useMediaBySpace } from '@/hooks/useMedia';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { MediaUploadButton } from '@/components/surfaces/MediaLibrary/MediaUploadButton';
 import { MediaPickerLibraryRow } from './MediaPickerLibraryRow';
 
 interface MediaPickerLibraryTabProps {
@@ -12,23 +13,29 @@ export const MediaPickerLibraryTab = ({
   onSelect,
 }: MediaPickerLibraryTabProps) => {
   const items = useMediaBySpace(spaceId);
-  if (items.length === 0) {
-    return (
-      <EmptyState
-        title="No PDFs yet"
-        caption="Upload PDFs in the media library, then pick them here."
-        data-testid="media-picker-library-empty"
-      />
-    );
-  }
   return (
-    <div
-      className="flex max-h-72 flex-col gap-1 overflow-y-auto"
-      data-testid="media-picker-library-list"
-    >
-      {items.map((item) => (
-        <MediaPickerLibraryRow key={item.id} item={item} onSelect={onSelect} />
-      ))}
+    <div className="flex flex-col gap-2">
+      <MediaUploadButton spaceId={spaceId} onUploaded={onSelect} />
+      {items.length === 0 ? (
+        <EmptyState
+          title="No PDFs in this space yet"
+          caption="Upload a PDF above to add it to this note and your library."
+          data-testid="media-picker-library-empty"
+        />
+      ) : (
+        <div
+          className="flex max-h-72 flex-col gap-1 overflow-y-auto"
+          data-testid="media-picker-library-list"
+        >
+          {items.map((item) => (
+            <MediaPickerLibraryRow
+              key={item.id}
+              item={item}
+              onSelect={onSelect}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
