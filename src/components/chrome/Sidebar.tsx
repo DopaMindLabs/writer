@@ -428,6 +428,82 @@ const createDoc = async (
   return id;
 };
 
+const createSection = async (
+  spaceId: string,
+  label: string,
+  order: number,
+): Promise<string> => {
+  const id = newId();
+  await db.sections.add({
+    id,
+    spaceId,
+    parentSectionId: null,
+    label,
+    order,
+  });
+  return id;
+};
+
+interface AddSectionController {
+  adding: boolean;
+  value: string;
+  inputRef: RefObject<HTMLInputElement | null>;
+  onStart: () => void;
+  onChange: (value: string) => void;
+  onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
+  onClear: () => void;
+}
+
+const useAddSection = (
+  spaceId: string,
+  sections: Section[],
+): AddSectionController => {
+  const [adding, setAdding] = useState(false);
+  const [value, setValue] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (adding && inputRef.current) inputRef.current.focus();
+  }, [adding]);
+
+  const commit = async () => {
+    const label = value.trim();
+    if (!label) {
+      setAdding(false);
+      setValue('');
+      return;
+    }
+    const topOrders = sections
+      .filter((s) => s.parentSectionId === null)
+      .map((s) => s.order);
+    const nextOrder = topOrders.length === 0 ? 0 : Math.max(...topOrders) + 1;
+    await createSection(spaceId, label, nextOrder);
+    setAdding(false);
+    setValue('');
+  };
+
+  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      void commit();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setAdding(false);
+      setValue('');
+    }
+  };
+
+  return {
+    adding,
+    value,
+    inputRef,
+    onStart: () => { setAdding(true); },
+    onChange: setValue,
+    onKeyDown,
+    onClear: () => { setAdding(false); setValue(''); },
+  };
+};
+
 const useAddDoc = (spaceId: string, space: Space | undefined) => {
   const { t } = useTranslation(['chrome', 'common']);
   const navigate = useNavigate();
@@ -493,63 +569,140 @@ const useAddDoc = (spaceId: string, space: Space | undefined) => {
   return { add, startAdd };
 };
 
+interface SidebarNavProps {
+  spaceId: string;
+  activeDocId: string | null;
+  sections: Section[];
+  notesCount: number;
+  onBrainSpace: boolean;
+  modeSuffix: string;
+  space: Space | undefined;
+}
+
+const SidebarNav = ({
+  spaceId,
+  activeDocId,
+  sections,
+  notesCount,
+  onBrainSpace,
+  modeSuffix,
+  space,
+}: SidebarNavProps) => {
+  const { t } = useTranslation('chrome');
+  const docs = useDocuments(spaceId) ?? [];
+  const { topSections, subsectionsByParent, docsBySection } =
+    useSidebarSections(sections, docs);
+  const { add, startAdd } = useAddDoc(spaceId, space);
+  const addSection = useAddSection(spaceId, sections);
+  const templateDef = space ? getTemplate(space.template) : undefined;
+  const allowExtraSections = templateDef?.allowExtraSections === true;
+
+  const docHref = (docId: string): string =>
+    `${routes.docWrite(spaceId, docId)}${modeSuffix}`;
+
+  return (
+    <nav
+      aria-label={t('sidebar.navLabel')}
+      className="flex-1 overflow-auto py-2"
+      data-tour="tour-sidebar-sections"
+    >
+      {topSections.map((sec) => (
+        <SidebarSection
+          key={sec.id}
+          sec={sec}
+          subs={subsectionsByParent.get(sec.id) ?? []}
+          ownDocs={docsBySection.get(sec.id) ?? []}
+          spaceId={spaceId}
+          activeDocId={activeDocId}
+          onBrainSpace={onBrainSpace}
+          notesCount={notesCount}
+          docsBySection={docsBySection}
+          docHref={docHref}
+          startAdd={startAdd}
+          add={add}
+        />
+      ))}
+      {allowExtraSections && <AddSectionRow add={addSection} />}
+      {!topSections.some((s) => s.label === 'Workshop') && (
+        <WorkshopFallback
+          spaceId={spaceId}
+          onBrainSpace={onBrainSpace}
+          notesCount={notesCount}
+        />
+      )}
+    </nav>
+  );
+};
+
 export const Sidebar = ({ spaceId, activeDocId, className }: SidebarProps) => {
-  const { t } = useTranslation(['chrome', 'common']);
+  const { t } = useTranslation('chrome');
   const space = useSpace(spaceId);
   const sections = useSections(spaceId) ?? [];
-  const docs = useDocuments(spaceId) ?? [];
   const notes = useNotes(spaceId);
   const location = useLocation();
   const modeSuffix = inferModeSuffix(location.pathname);
   const onBrainSpace = location.pathname.endsWith('/brain-space');
 
-  const { topSections, subsectionsByParent, docsBySection } =
-    useSidebarSections(sections, docs);
-  const { add, startAdd } = useAddDoc(spaceId, space);
-
-  const docHref = (docId: string): string => {
-    return `${routes.docWrite(spaceId, docId)}${modeSuffix}`;
-  };
-
   return (
     <aside
-      aria-label={t('chrome:sidebar.landmarkLabel')}
+      aria-label={t('sidebar.landmarkLabel')}
       className={cn(
         'flex w-56 shrink-0 flex-col border-r border-rule bg-paper-2',
         className,
       )}
     >
       <SpaceHeader spaceId={spaceId} space={space} />
-      <nav
-        aria-label={t('chrome:sidebar.navLabel')}
-        className="flex-1 overflow-auto py-2"
-        data-tour="tour-sidebar-sections"
-      >
-        {topSections.map((sec) => (
-          <SidebarSection
-            key={sec.id}
-            sec={sec}
-            subs={subsectionsByParent.get(sec.id) ?? []}
-            ownDocs={docsBySection.get(sec.id) ?? []}
-            spaceId={spaceId}
-            activeDocId={activeDocId}
-            onBrainSpace={onBrainSpace}
-            notesCount={notes.length}
-            docsBySection={docsBySection}
-            docHref={docHref}
-            startAdd={startAdd}
-            add={add}
-          />
-        ))}
-        {!topSections.some((s) => s.label === 'Workshop') && (
-          <WorkshopFallback
-            spaceId={spaceId}
-            onBrainSpace={onBrainSpace}
-            notesCount={notes.length}
-          />
-        )}
-      </nav>
+      <SidebarNav
+        spaceId={spaceId}
+        activeDocId={activeDocId}
+        sections={sections}
+        notesCount={notes.length}
+        onBrainSpace={onBrainSpace}
+        modeSuffix={modeSuffix}
+        space={space}
+      />
     </aside>
+  );
+};
+
+const AddSectionRow = ({ add }: { add: AddSectionController }) => {
+  const { t } = useTranslation('chrome');
+  if (add.adding) {
+    return (
+      <div
+        data-testid="sidebar-add-section-row"
+        className="-ml-px flex items-center gap-2 border-l-2 border-ink px-5 py-1"
+      >
+        <TextField
+          ref={add.inputRef}
+          variant="bare"
+          value={add.value}
+          onChange={(e) => { add.onChange(e.target.value); }}
+          onKeyDown={add.onKeyDown}
+          onBlur={add.onClear}
+          placeholder={t('sidebar.sectionNamePlaceholder')}
+          data-testid="sidebar-add-section-input"
+          className="flex-1 text-[13px]"
+        />
+      </div>
+    );
+  }
+  return (
+    <div
+      data-testid="sidebar-add-section-row"
+      className="mt-1 px-5 py-1"
+    >
+      <button
+        type="button"
+        onClick={add.onStart}
+        data-testid="sidebar-add-section-trigger"
+        aria-label={t('sidebar.addSectionAria')}
+        className="flex w-full items-center gap-1 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 hover:text-ink focus-visible:text-ink focus-visible:outline-none"
+      >
+        <Plus className="h-3 w-3" />
+        <span>{t('sidebar.addSection')}</span>
+      </button>
+    </div>
   );
 };
 

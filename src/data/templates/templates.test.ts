@@ -76,3 +76,16 @@ describe('getTemplate', () => {
     expect(getTemplate('does-not-exist')).toBeUndefined();
   });
 });
+
+describe('allowExtraSections', () => {
+  it('is true for the Blank template', () => {
+    expect(getTemplate('blank')?.allowExtraSections).toBe(true);
+  });
+
+  it('is unset (falsy) on structured templates that should keep their seeded shape', () => {
+    expect(getTemplate('fiction')?.allowExtraSections).toBeFalsy();
+    expect(getTemplate('humanities')?.allowExtraSections).toBeFalsy();
+    expect(getTemplate('technical')?.allowExtraSections).toBeFalsy();
+    expect(getTemplate('bioinformatics')?.allowExtraSections).toBeFalsy();
+  });
+});

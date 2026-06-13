@@ -1,5 +1,9 @@
 import { test, expect } from './_helpers';
-import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
+import {
+  reseedAndGoHome,
+  getFirstSpaceIdFromHome,
+  createSpaceFromTemplate,
+} from './_helpers';
 
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
@@ -138,4 +142,42 @@ test('adding a doc via section input and submitting creates a new doc', async ({
   await expect(sidebar.locator('a[href*="/d/"]')).toHaveCount(
     initialDocCount + 1,
   );
+});
+
+test('blank template surfaces an Add section affordance that creates a new top-level section', async ({
+  page,
+}) => {
+  await createSpaceFromTemplate(page, 'blank');
+
+  const sidebar = page.locator('aside').last();
+  const trigger = sidebar.getByTestId('sidebar-add-section-trigger');
+  await expect(trigger).toBeVisible();
+
+  const initialHeaderCount = await sidebar
+    .locator('[data-testid$="-header"]')
+    .count();
+
+  await trigger.click();
+  const input = sidebar.getByTestId('sidebar-add-section-input');
+  await expect(input).toBeVisible();
+  await input.fill('Research');
+  await input.press('Enter');
+
+  await expect(sidebar.locator('[data-testid$="-header"]')).toHaveCount(
+    initialHeaderCount + 1,
+  );
+  await expect(
+    sidebar.locator('[data-testid$="-label"]', { hasText: 'Research' }),
+  ).toBeVisible();
+});
+
+test('structured templates do not surface the Add section affordance', async ({
+  page,
+}) => {
+  await createSpaceFromTemplate(page, 'fiction');
+
+  const sidebar = page.locator('aside').last();
+  await expect(
+    sidebar.getByTestId('sidebar-add-section-trigger'),
+  ).toHaveCount(0);
 });

@@ -552,6 +552,150 @@ describe('Sidebar', () => {
     });
   });
 
+  describe('add section', () => {
+    it('should render the add-section trigger when the template allows extra sections', async () => {
+      await db.spaces.put({ ...sampleSpace, template: 'blank' });
+      await db.sections.put({
+        id: 'sec-notes',
+        spaceId: 's1',
+        parentSectionId: null,
+        label: 'Notes',
+        order: 0,
+      });
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      expect(
+        await screen.findByTestId('sidebar-add-section-trigger'),
+      ).toBeInTheDocument();
+    });
+
+    it('should hide the add-section trigger when the template does not allow extra sections', async () => {
+      await db.spaces.put({ ...sampleSpace, template: 'fiction' });
+      await db.sections.put({
+        id: 'sec-ms',
+        spaceId: 's1',
+        parentSectionId: null,
+        label: 'Manuscript',
+        order: 0,
+      });
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      await screen.findByTestId('sidebar-section-sec-ms');
+      expect(
+        screen.queryByTestId('sidebar-add-section-trigger'),
+      ).not.toBeInTheDocument();
+    });
+
+    it('should open an input when the add-section trigger is clicked', async () => {
+      await db.spaces.put({ ...sampleSpace, template: 'blank' });
+      await db.sections.put({
+        id: 'sec-notes',
+        spaceId: 's1',
+        parentSectionId: null,
+        label: 'Notes',
+        order: 0,
+      });
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      await user.click(
+        await screen.findByTestId('sidebar-add-section-trigger'),
+      );
+      const input = await screen.findByTestId('sidebar-add-section-input');
+      expect(input).toHaveAttribute(
+        'placeholder',
+        'Section name (Enter to create)',
+      );
+    });
+
+    it('should commit a new section to Dexie on Enter at the next order', async () => {
+      await db.spaces.put({ ...sampleSpace, template: 'blank' });
+      await db.sections.put({
+        id: 'sec-notes',
+        spaceId: 's1',
+        parentSectionId: null,
+        label: 'Notes',
+        order: 0,
+      });
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      await user.click(
+        await screen.findByTestId('sidebar-add-section-trigger'),
+      );
+      const input = await screen.findByTestId('sidebar-add-section-input');
+      await user.type(input, 'Inbox{enter}');
+      await waitFor(async () => {
+        const sections = await db.sections
+          .where('spaceId')
+          .equals('s1')
+          .toArray();
+        const inbox = sections.find((s) => s.label === 'Inbox');
+        expect(inbox).toBeDefined();
+        expect(inbox?.parentSectionId).toBeNull();
+        expect(inbox?.order).toBe(1);
+      });
+    });
+
+    it('should cancel on Escape without writing to Dexie', async () => {
+      await db.spaces.put({ ...sampleSpace, template: 'blank' });
+      await db.sections.put({
+        id: 'sec-notes',
+        spaceId: 's1',
+        parentSectionId: null,
+        label: 'Notes',
+        order: 0,
+      });
+      const beforeCount = await db.sections.count();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      await user.click(
+        await screen.findByTestId('sidebar-add-section-trigger'),
+      );
+      const input = await screen.findByTestId('sidebar-add-section-input');
+      await user.type(input, 'Throwaway{escape}');
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId('sidebar-add-section-input'),
+        ).not.toBeInTheDocument();
+      });
+      expect(await db.sections.count()).toBe(beforeCount);
+    });
+
+    it('should not commit an empty section name on Enter', async () => {
+      await db.spaces.put({ ...sampleSpace, template: 'blank' });
+      await db.sections.put({
+        id: 'sec-notes',
+        spaceId: 's1',
+        parentSectionId: null,
+        label: 'Notes',
+        order: 0,
+      });
+      const beforeCount = await db.sections.count();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      await user.click(
+        await screen.findByTestId('sidebar-add-section-trigger'),
+      );
+      const input = await screen.findByTestId('sidebar-add-section-input');
+      await user.type(input, '   {enter}');
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId('sidebar-add-section-input'),
+        ).not.toBeInTheDocument();
+      });
+      expect(await db.sections.count()).toBe(beforeCount);
+    });
+  });
+
   describe('snapshot', () => {
     it('should match the snapshot across all variants', async () => {
       await seedBasicSpace();

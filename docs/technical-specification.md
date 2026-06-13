@@ -38,7 +38,7 @@
 | 4 | **Split view** | Two-pane layout with a keyboard-and-mouse resizable divider. Right pane can show another doc, the Brain Space, or Citations. |
 | 5 | **Brain Space** | A freeform visual canvas for unsorted notes. Multiple note kinds (Note, Char, Place, Lore, Question, Source, Claim, Figure, Todo, Loose End, Blank). Notes can be connected and linked to documents. |
 | 6 | **Citations** | Manual + BibTeX import (paste or `.bib` upload), tag-based search, bulk edit / bulk delete, `.bib` export. Available as a screen, a split-view pane, and a drawer. |
-| 7 | **Sidebar** | Per-space navigation: section list, doc list, add doc, inline rename, Brain Space link with unsorted-note count, settings cog. |
+| 7 | **Sidebar** | Per-space navigation: section list, doc list, add doc, add section (when the template's `allowExtraSections` is on), inline rename, Brain Space link with unsorted-note count, settings cog. |
 | 8 | **Mobile nav** | Hamburger drawer on small viewports; settings tabs reflow without horizontal overflow. |
 | 9 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), placeholder tabs for Account, Typography, Shortcuts, Backups. |
 | 10 | **Per-space settings** | General (name, tag), Sharing (coming soon), Template (coming soon), Members, Backups (manual `.md` snapshots + history + download), Danger Zone (delete with typed confirmation). |
@@ -104,6 +104,8 @@ A **space** is an independent writing project with its own sections, documents, 
 A space is structured as **sections** containing **documents**. The default sections vary by template (e.g., Fiction has *Manuscript* and *Characters*; Research has *Manuscript* and *Data*).
 
 **Add a doc.** In the sidebar, each section has an **+ Add doc to *<Section>*** button. Clicking it reveals an inline input. Type a name and press **Enter** to create the doc and navigate to it; **Escape** cancels.
+
+**Add a section.** When a space's template sets `allowExtraSections: true` (currently the **Blank** template), an **Add section** affordance appears at the bottom of the sidebar's section list. Clicking it reveals an inline input. **Enter** appends a new top-level section at the next order; **Escape** cancels. Templates that encode a specific workflow (Fiction, Thesis, Technical, Bioinformatics) keep `allowExtraSections` unset so their seeded shape is preserved.
 
 **Rename a doc.** Double-click the doc name in the topbar breadcrumb. Rename input appears. **Enter** commits; **Escape** reverts.
 
