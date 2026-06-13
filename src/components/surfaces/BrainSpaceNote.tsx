@@ -45,6 +45,7 @@ import { ImageThumb } from '@/components/ui/ImageThumb';
 import { ImageLightbox, type LightboxImage } from '@/components/ui/ImageLightbox';
 import { TextField } from '@/components/ui/TextField';
 import { TextArea } from '@/components/ui/TextArea';
+import { PdfRefCardContent } from './PdfRefCardContent';
 import { cn } from '@/lib/utils';
 
 const MIN_W = 120;
@@ -1046,6 +1047,8 @@ const NoteCardContent = (props: NoteCardContentProps) => {
       return <TextCardContent {...props} />;
     case NoteLayout.Image:
       return <ImageCardContent {...props} />;
+    case NoteLayout.PdfRef:
+      return <PdfRefCardContent note={props.note} />;
     default:
       return assertNever(layout);
   }

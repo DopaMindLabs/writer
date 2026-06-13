@@ -7,6 +7,7 @@ import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
 import { WriteSurface } from '@/components/surfaces/WriteSurface';
 import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
+import { MediaReadingPane } from '@/components/surfaces/MediaReadingPane';
 import { DocInspector } from '@/components/chrome/DocInspector';
 import { DocInspectorIcons } from '@/components/chrome/DocInspectorIcons';
 import { VersionHistoryModal } from '@/components/chrome/VersionHistoryModal';
@@ -69,6 +70,7 @@ export const WriteScreen = () => {
             editorMode={editorMode}
             loading={contentLoading}
           />
+          <MediaReadingPane />
           <CitationsSidePanel spaceId={spaceId} />
           <WriteInspector
             doc={doc}
