@@ -31,12 +31,9 @@ interface PdfViewerProps {
   className?: string;
 }
 
-interface PdfFile {
-  data: Blob;
-}
+type PdfFile = Blob;
 
-const usePdfFile = (blob: Blob): PdfFile =>
-  useMemo(() => ({ data: blob }), [blob]);
+const usePdfFile = (blob: Blob): PdfFile => useMemo(() => blob, [blob]);
 
 interface ThumbnailProps {
   file: PdfFile;
