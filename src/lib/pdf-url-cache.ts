@@ -60,11 +60,28 @@ const fail = (reason: FetchFailureReason, message: string): FetchResult => ({
   message,
 });
 
-const doFetch = async (url: string): Promise<Response | FetchResult> => {
+interface ResponseLike {
+  ok: boolean;
+  status: number;
+  blob: () => Promise<Blob>;
+}
+
+type FetchOutcome =
+  | { ok: true; response: ResponseLike }
+  | { ok: false; result: FetchResult };
+
+const doFetch = async (url: string): Promise<FetchOutcome> => {
   try {
-    return await fetch(url, { mode: 'cors', credentials: 'omit' });
+    const response = (await fetch(url, {
+      mode: 'cors',
+      credentials: 'omit',
+    })) as ResponseLike;
+    return { ok: true, response };
   } catch {
-    return fail('cors', 'The PDF host blocks cross-origin requests.');
+    return {
+      ok: false,
+      result: fail('cors', 'The PDF host blocks cross-origin requests.'),
+    };
   }
 };
 
@@ -82,8 +99,9 @@ export const fetchAndCachePdf = async (
   invariant(noteId.length > 0, 'fetchAndCachePdf: noteId required');
   if (!isHttpsUrl(url)) return fail('invalid-url', 'Enter an https:// URL.');
 
-  const response = await doFetch(url);
-  if (!(response instanceof Response)) return response;
+  const fetched = await doFetch(url);
+  if (!fetched.ok) return fetched.result;
+  const { response } = fetched;
   if (!response.ok)
     return fail('http', `Server returned ${String(response.status)}.`);
 
