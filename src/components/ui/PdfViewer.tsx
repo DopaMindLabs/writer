@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from '@/components/libs/icons';
@@ -31,32 +31,55 @@ interface PdfViewerProps {
   className?: string;
 }
 
-type PdfFile = Blob;
+interface PdfFile {
+  data: Uint8Array;
+}
 
-const usePdfFile = (blob: Blob): PdfFile => useMemo(() => blob, [blob]);
+// Read the blob into in-memory bytes and hand react-pdf the data directly.
+// Passing a Blob makes react-pdf load it through a blob: URL, which the
+// production CSP (connect-src 'self' https:) blocks — so the render fails even
+// though page counting, which reads the bytes in-memory, succeeds.
+const usePdfFile = (blob: Blob): PdfFile | null => {
+  const [file, setFile] = useState<PdfFile | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    setFile(null);
+    void blob.arrayBuffer().then((buffer) => {
+      if (!cancelled) setFile({ data: new Uint8Array(buffer) });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [blob]);
+  return file;
+};
 
 interface ThumbnailProps {
-  file: PdfFile;
+  file: PdfFile | null;
   onLoadSuccess: (doc: { numPages: number }) => void;
   className?: string;
 }
 
-const ThumbnailView = ({ file, onLoadSuccess, className }: ThumbnailProps) => (
-  <Document
-    file={file}
-    onLoadSuccess={onLoadSuccess}
-    loading={null}
-    className={cn('flex w-full items-center justify-center', className)}
-    aria-hidden
-  >
-    <Page
-      pageNumber={1}
-      width={160}
-      renderTextLayer={false}
-      renderAnnotationLayer={false}
-    />
-  </Document>
-);
+const ThumbnailView = ({ file, onLoadSuccess, className }: ThumbnailProps) => {
+  const wrapperClass = cn('flex w-full items-center justify-center', className);
+  if (!file) return <div className={wrapperClass} aria-hidden />;
+  return (
+    <Document
+      file={file}
+      onLoadSuccess={onLoadSuccess}
+      loading={null}
+      className={wrapperClass}
+      aria-hidden
+    >
+      <Page
+        pageNumber={1}
+        width={160}
+        renderTextLayer={false}
+        renderAnnotationLayer={false}
+      />
+    </Document>
+  );
+};
 
 interface PaneToolbarProps {
   summary: string;
@@ -122,7 +145,7 @@ const PaneToolbar = ({
 );
 
 interface PaneViewProps {
-  file: PdfFile;
+  file: PdfFile | null;
   name: string;
   onLoadSuccess: (doc: { numPages: number }) => void;
   pageNumber: number;
@@ -167,26 +190,35 @@ const PaneBody = ({
   totalPages,
   scale,
 }: {
-  file: PdfFile;
+  file: PdfFile | null;
   onLoadSuccess: (doc: { numPages: number }) => void;
   pageNumber: number;
   totalPages: number;
   scale: number;
 }) => (
   <div className="flex-1 overflow-auto bg-paper-2 p-3">
-    <Document
-      file={file}
-      onLoadSuccess={onLoadSuccess}
-      loading={null}
-      className="flex justify-center"
-    >
-      <Page
-        pageNumber={clampPage(pageNumber, totalPages > 0 ? totalPages : 1)}
-        scale={scale}
-        renderTextLayer={false}
-        renderAnnotationLayer={false}
-      />
-    </Document>
+    {file ? (
+      <Document
+        file={file}
+        onLoadSuccess={onLoadSuccess}
+        loading={null}
+        className="flex justify-center"
+      >
+        <Page
+          pageNumber={clampPage(pageNumber, totalPages > 0 ? totalPages : 1)}
+          scale={scale}
+          renderTextLayer={false}
+          renderAnnotationLayer={false}
+        />
+      </Document>
+    ) : (
+      <div
+        role="status"
+        className="flex justify-center font-mono text-[10px] uppercase tracking-wider text-ink-3"
+      >
+        loading…
+      </div>
+    )}
   </div>
 );
 

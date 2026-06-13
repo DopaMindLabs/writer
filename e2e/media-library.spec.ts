@@ -43,10 +43,16 @@ test('uploads, previews, searches and deletes a PDF in the media library', async
   await expect(row).toBeVisible();
   await expect(row).toContainText('attention.pdf');
 
-  // Selecting a row shows the preview pane.
+  // Selecting a row shows the preview pane and actually renders the PDF.
   await page.locator('[data-testid$="-select"]').first().click();
   await expect(page.getByTestId('media-viewer')).toBeVisible();
-  await expect(page.getByTestId('media-viewer-meta')).toContainText('1 pages');
+  await expect(page.getByTestId('pdf-viewer-summary')).toContainText(
+    'attention.pdf',
+  );
+  await expect(
+    page.getByTestId('media-viewer').locator('canvas'),
+  ).toBeVisible();
+  await expect(page.getByText('Failed to load PDF file')).toHaveCount(0);
 
   // Search filters the list.
   await page.getByTestId('media-search').fill('no-such-file');
@@ -57,6 +63,45 @@ test('uploads, previews, searches and deletes a PDF in the media library', async
   // Delete returns the library to its empty state.
   await page.locator('[data-testid$="-delete"]').first().click();
   await expect(page.getByTestId('media-empty')).toBeVisible();
+});
+
+// Mirrors vercel.json so the e2e enforces what production enforces.
+const PRODUCTION_CSP =
+  "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; " +
+  "img-src 'self' blob: data:; font-src 'self'; connect-src 'self' https:; " +
+  "object-src 'none'; base-uri 'self'; form-action 'self'; " +
+  "frame-ancestors 'none'; worker-src 'self'";
+
+test('renders an uploaded PDF under the production CSP', async ({ page }) => {
+  // The preview server sends no CSP; apply the production one to the document
+  // so a blob:-URL PDF load (which the CSP blocks) would fail this test.
+  await page.route('**/*', async (route) => {
+    if (route.request().resourceType() !== 'document') {
+      await route.continue();
+      return;
+    }
+    const response = await route.fetch();
+    await route.fulfill({
+      response,
+      headers: {
+        ...response.headers(),
+        'content-security-policy': PRODUCTION_CSP,
+      },
+    });
+  });
+
+  await reseedAndGoHome(page);
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}/media`);
+  await page
+    .getByTestId('media-upload-input')
+    .setInputFiles(pdfPayload('under-csp.pdf'));
+  await page.locator('[data-testid$="-select"]').first().click();
+
+  await expect(
+    page.getByTestId('media-viewer').locator('canvas'),
+  ).toBeVisible();
+  await expect(page.getByText('Failed to load PDF file')).toHaveCount(0);
 });
 
 test('persists uploaded PDFs across a reload', async ({ page }) => {

@@ -43,7 +43,7 @@ const makeBlob = () => new Blob([new Uint8Array([0x25, 0x50, 0x44, 0x46])], {
 });
 
 describe('PdfViewer thumbnail mode', () => {
-  it('renders the first page as a decorative thumbnail', () => {
+  it('renders the first page as a decorative thumbnail', async () => {
     render(
       <PdfViewer
         blob={makeBlob()}
@@ -52,9 +52,9 @@ describe('PdfViewer thumbnail mode', () => {
         pageCount={8}
       />,
     );
-    const doc = screen.getByTestId('mock-pdf-doc');
+    const doc = await screen.findByTestId('mock-pdf-doc');
     expect(doc.getAttribute('aria-hidden')).toBe('true');
-    expect(screen.getByTestId('mock-pdf-page').dataset.page).toBe('1');
+    expect((await screen.findByTestId('mock-pdf-page')).dataset.page).toBe('1');
   });
 });
 
@@ -132,7 +132,7 @@ describe('PdfViewer pane mode', () => {
     expect(next).toBeDisabled();
   });
 
-  it('zooms with the toolbar and +/- keys', () => {
+  it('zooms with the toolbar and +/- keys', async () => {
     render(
       <PdfViewer
         blob={makeBlob()}
@@ -141,6 +141,7 @@ describe('PdfViewer pane mode', () => {
         pageCount={8}
       />,
     );
+    await screen.findByTestId('mock-pdf-page');
     fireEvent.click(screen.getByTestId('pdf-viewer-zoom-in'));
     const page = screen.getByTestId('mock-pdf-page');
     expect(page.dataset.scale).toBe('1.25');

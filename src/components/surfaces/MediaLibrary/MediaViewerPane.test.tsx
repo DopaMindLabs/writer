@@ -21,11 +21,13 @@ describe('MediaViewerPane', () => {
     expect(screen.getByTestId('media-viewer-empty')).toBeInTheDocument();
   });
 
-  it('renders the selected item meta and viewer', () => {
+  it('renders the viewer with its own toolbar (no duplicate title)', () => {
     renderWithProviders(<MediaViewerPane item={item} />);
-    const meta = screen.getByTestId('media-viewer-meta');
-    expect(meta).toHaveTextContent('paper.pdf');
-    expect(meta).toHaveTextContent('8 pages');
     expect(screen.getByTestId('media-viewer')).toBeInTheDocument();
+    // The single title comes from the PdfViewer toolbar, not a separate meta.
+    expect(screen.queryByTestId('media-viewer-meta')).not.toBeInTheDocument();
+    expect(screen.getByTestId('pdf-viewer-summary')).toHaveTextContent(
+      'paper.pdf',
+    );
   });
 });

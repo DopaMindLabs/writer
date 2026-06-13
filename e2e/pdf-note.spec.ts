@@ -54,9 +54,14 @@ test('creates a PDF note by uploading in the picker and opens it beside the edit
   await expect(card.locator('[data-testid$="-pdf-meta"]')).toContainText(
     'paper.pdf',
   );
+  // The thumbnail must actually render (catches PDF load/worker failures).
+  await expect(card.locator('[data-testid$="-pdf-thumb"] canvas')).toBeVisible();
 
   await card.locator('[data-testid$="-open-beside"]').click();
   await expect(page.getByTestId('media-reading-pane')).toBeVisible();
+  await expect(
+    page.getByTestId('media-reading-pane').locator('canvas'),
+  ).toBeVisible();
 
   // The library-sourced note persists across a reload (no re-fetch needed).
   await page.reload();
