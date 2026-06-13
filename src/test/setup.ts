@@ -3,6 +3,7 @@ import '@testing-library/jest-dom/vitest';
 import 'fake-indexeddb/auto';
 import '@/i18n';
 import { afterEach, beforeEach, expect, vi } from 'vitest';
+import type { ReactNode } from 'react';
 import { cleanup } from '@testing-library/react';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
@@ -15,7 +16,7 @@ vi.mock('react-pdf', async () => {
     className,
     'aria-hidden': ariaHidden,
   }: {
-    children?: unknown;
+    children?: ReactNode;
     onLoadSuccess?: (doc: { numPages: number }) => void;
     className?: string;
     'aria-hidden'?: boolean;

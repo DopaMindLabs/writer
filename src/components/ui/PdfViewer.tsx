@@ -31,15 +31,10 @@ interface PdfViewerProps {
   className?: string;
 }
 
-interface PdfFile {
-  data: Blob;
-}
-
-const usePdfFile = (blob: Blob): PdfFile =>
-  useMemo(() => ({ data: blob }), [blob]);
+const usePdfFile = (blob: Blob): Blob => useMemo(() => blob, [blob]);
 
 interface ThumbnailProps {
-  file: PdfFile;
+  file: Blob;
   onLoadSuccess: (doc: { numPages: number }) => void;
   className?: string;
 }
@@ -125,7 +120,7 @@ const PaneToolbar = ({
 );
 
 interface PaneViewProps {
-  file: PdfFile;
+  file: Blob;
   name: string;
   onLoadSuccess: (doc: { numPages: number }) => void;
   pageNumber: number;
@@ -170,7 +165,7 @@ const PaneBody = ({
   totalPages,
   scale,
 }: {
-  file: PdfFile;
+  file: Blob;
   onLoadSuccess: (doc: { numPages: number }) => void;
   pageNumber: number;
   totalPages: number;
