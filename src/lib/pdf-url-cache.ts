@@ -124,8 +124,11 @@ export const fetchAndCachePdf = async (
   let pageCount: number;
   try {
     pageCount = await countPages(blob);
-  } catch {
-    return fail('corrupt', 'PDF could not be opened.');
+  } catch (error) {
+    console.error('[pdf-url-cache] countPages failed', error);
+    const detail =
+      error instanceof Error ? error.message : String(error);
+    return fail('corrupt', `PDF could not be opened: ${detail}`);
   }
 
   await db.noteUrlCache.put({
