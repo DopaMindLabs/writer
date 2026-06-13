@@ -53,13 +53,13 @@ describe('note-types registry', () => {
     });
   });
 
-  it('treats the pdf-ref kind as a pdf-first layout with commentary text', () => {
-    expect(getNoteType(NoteKind.PdfRef).layout).toBe(NoteLayout.PdfRef);
-    expect(NOTE_LAYOUT_CONFIG[NoteLayout.PdfRef]).toEqual({
+  it('treats the pdf kind as a pdf-first layout with commentary text', () => {
+    expect(getNoteType(NoteKind.Pdf).layout).toBe(NoteLayout.Pdf);
+    expect(NOTE_LAYOUT_CONFIG[NoteLayout.Pdf]).toEqual({
       allowsText: true,
       allowsImages: false,
       imageFirst: false,
-      pdfRefFirst: true,
+      pdfFirst: true,
     });
   });
 });

@@ -154,12 +154,12 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     related: [
       'citations-and-bibliography',
       'annotations-and-highlights',
-      'pdf-reference-notes',
+      'pdf-notes',
     ],
     tourId: 'brainspace',
   },
   {
-    slug: 'pdf-reference-notes',
+    slug: 'pdf-notes',
     category: 'brainspace',
     featureArea: 'brainspace',
     keywords: [

@@ -41,8 +41,8 @@ const DEFAULT_W = 184;
 const DEFAULT_H = 80;
 const IMAGE_DEFAULT_W = 240;
 const IMAGE_DEFAULT_H = 200;
-const PDF_REF_DEFAULT_W = 240;
-const PDF_REF_DEFAULT_H = 220;
+const PDF_DEFAULT_W = 240;
+const PDF_DEFAULT_H = 220;
 const CONTENT_MARGIN = 200;
 
 interface ContentExtent {
@@ -161,8 +161,8 @@ const sizeForLayout = (layout: NoteLayout): { w: number; h: number } => {
   switch (layout) {
     case NoteLayout.Image:
       return { w: IMAGE_DEFAULT_W, h: IMAGE_DEFAULT_H };
-    case NoteLayout.PdfRef:
-      return { w: PDF_REF_DEFAULT_W, h: PDF_REF_DEFAULT_H };
+    case NoteLayout.Pdf:
+      return { w: PDF_DEFAULT_W, h: PDF_DEFAULT_H };
     case NoteLayout.Text:
     default:
       return { w: DEFAULT_W, h: DEFAULT_H };

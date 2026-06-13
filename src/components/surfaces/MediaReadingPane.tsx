@@ -5,12 +5,12 @@ import { filenameFromUrl } from '@/lib/pdf-url-cache';
 import { IconButton } from '@/components/ui/icon';
 import { PdfViewer } from '@/components/ui/PdfViewer';
 
-interface NotePdfRefPaneProps {
+interface NotePdfPaneProps {
   noteId: string;
   onClose: () => void;
 }
 
-const NotePdfRefPane = ({ noteId, onClose }: NotePdfRefPaneProps) => {
+const NotePdfPane = ({ noteId, onClose }: NotePdfPaneProps) => {
   const cache = useNoteUrlCache(noteId);
   const name = cache ? filenameFromUrl(cache.url) : 'PDF';
   return (
@@ -61,5 +61,5 @@ export const MediaReadingPane = () => {
   const source = useUI((s) => s.mediaReadingPane);
   const close = useUI((s) => s.closeMediaReadingPane);
   if (!source) return null;
-  return <NotePdfRefPane noteId={source.noteId} onClose={close} />;
+  return <NotePdfPane noteId={source.noteId} onClose={close} />;
 };

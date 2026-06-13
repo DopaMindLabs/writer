@@ -6,7 +6,7 @@ export type InspectorSection = 'outline' | 'info' | 'history' | 'actions';
 export type ReadingWidth = 's' | 'm' | 'l';
 export type DiffMode = 'inline' | 'side-by-side';
 export interface MediaReadingPaneSource {
-  source: 'note-pdf-ref';
+  source: 'note-pdf';
   noteId: string;
 }
 
@@ -240,7 +240,7 @@ const createToggleActions = (set: SetState, get: GetState) => ({
     compare: string | null;
   }) => { set({ compareRevisionIds }); },
   openMediaReadingPaneForNote: (noteId: string) => {
-    set({ mediaReadingPane: { source: 'note-pdf-ref', noteId } });
+    set({ mediaReadingPane: { source: 'note-pdf', noteId } });
   },
   closeMediaReadingPane: () => { set({ mediaReadingPane: null }); },
 });

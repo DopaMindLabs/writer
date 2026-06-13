@@ -48,13 +48,13 @@ export enum NoteKind {
   LooseEnd = 'loose-end',
   Blank = 'blank',
   Image = 'image',
-  PdfRef = 'pdf-ref',
+  Pdf = 'pdf',
 }
 
 export enum NoteLayout {
   Text = 'text',
   Image = 'image',
-  PdfRef = 'pdf-ref',
+  Pdf = 'pdf',
 }
 
 export enum NoteState {

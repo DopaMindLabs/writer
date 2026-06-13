@@ -18,7 +18,7 @@ import { TextArea } from '@/components/ui/TextArea';
 import { PdfViewer } from '@/components/ui/PdfViewer';
 import { cn } from '@/lib/utils';
 
-interface PdfRefCardContentProps {
+interface PdfCardContentProps {
   note: Note;
 }
 
@@ -416,7 +416,7 @@ const useCardController = (note: Note): CardController => {
   };
 };
 
-export const PdfRefCardContent = ({ note }: PdfRefCardContentProps) => {
+export const PdfCardContent = ({ note }: PdfCardContentProps) => {
   const cache = useNoteUrlCache(note.id);
   const ctrl = useCardController(note);
   useAutoFetchOnUrlChange(note, cache, ctrl.fetcher);
