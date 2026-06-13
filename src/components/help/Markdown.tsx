@@ -52,21 +52,53 @@ const toText = (children: ReactNode): string => {
   return '';
 };
 
+const SLUG_SUFFIX_RE = /\s+\{#([^}\s]+)\}\s*$/;
+
+const stripSlugSuffix = (children: ReactNode): ReactNode => {
+  if (typeof children === 'string') return children.replace(SLUG_SUFFIX_RE, '');
+  if (Array.isArray(children)) {
+    const nodes = children as ReactNode[];
+    if (nodes.length === 0) return nodes;
+    const head = nodes.slice(0, -1);
+    const last: ReactNode = nodes[nodes.length - 1];
+    return [...head, stripSlugSuffix(last)];
+  }
+  return children;
+};
+
+interface ParsedHeading {
+  readonly id: string;
+  readonly content: ReactNode;
+}
+
+const parseHeading = (children: ReactNode): ParsedHeading => {
+  const text = toText(children);
+  const match = SLUG_SUFFIX_RE.exec(text);
+  if (!match) return { id: slugify(text), content: children };
+  return { id: match[1], content: stripSlugSuffix(children) };
+};
+
 const components: Components = {
   h1: ({ children }) => <TypographyH1 className="mt-10 first:mt-0">{children}</TypographyH1>,
-  h2: ({ children }) => (
-    <TypographyH2 id={slugify(toText(children))} className="mt-10 scroll-mt-24">
-      {children}
-    </TypographyH2>
-  ),
-  h3: ({ children }) => (
-    <h3
-      id={slugify(toText(children))}
-      className="mt-6 scroll-mt-24 font-serif text-[15px] font-medium text-ink"
-    >
-      {children}
-    </h3>
-  ),
+  h2: ({ children }) => {
+    const { id, content } = parseHeading(children);
+    return (
+      <TypographyH2 id={id} className="mt-10 scroll-mt-24">
+        {content}
+      </TypographyH2>
+    );
+  },
+  h3: ({ children }) => {
+    const { id, content } = parseHeading(children);
+    return (
+      <h3
+        id={id}
+        className="mt-6 scroll-mt-24 font-serif text-[15px] font-medium text-ink"
+      >
+        {content}
+      </h3>
+    );
+  },
   p: ({ children }) => <TypographyP className="mt-4">{children}</TypographyP>,
   ul: ({ children }) => (
     <ul className="mt-4 list-disc space-y-1.5 pl-6 font-serif text-ink-2 md:text-[17px]">

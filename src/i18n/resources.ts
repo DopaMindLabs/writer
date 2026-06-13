@@ -297,6 +297,16 @@ export const supportedLngs = [
   'to',
 ] as const;
 
+export const translationNamespaces = [
+  'common',
+  'chrome',
+  'screens',
+  'app',
+  'templates',
+  'tours',
+  'help',
+] as const;
+
 type NSResource = Record<string, unknown>;
 const partial = (r: {
   common: NSResource;
