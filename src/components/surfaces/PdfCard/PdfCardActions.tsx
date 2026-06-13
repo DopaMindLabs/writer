@@ -5,15 +5,15 @@ interface PdfCardActionsProps {
   noteId: string;
   busy: boolean;
   onOpenBeside: () => void;
-  onEditUrl: () => void;
-  onRefresh: () => void;
+  onEditSource: () => void;
+  onRefresh?: () => void;
 }
 
 export const PdfCardActions = ({
   noteId,
   busy,
   onOpenBeside,
-  onEditUrl,
+  onEditSource,
   onRefresh,
 }: PdfCardActionsProps) => (
   <div
@@ -33,17 +33,19 @@ export const PdfCardActions = ({
     <IconButton
       icon={Pencil}
       iconSize="xs"
-      label="Edit URL"
-      onClick={onEditUrl}
-      data-testid={`brain-note-${noteId}-edit-url`}
+      label="Edit source"
+      onClick={onEditSource}
+      data-testid={`brain-note-${noteId}-edit-source`}
     />
-    <IconButton
-      icon={RefreshCw}
-      iconSize="xs"
-      label="Refresh PDF"
-      onClick={onRefresh}
-      disabled={busy}
-      data-testid={`brain-note-${noteId}-refresh`}
-    />
+    {onRefresh ? (
+      <IconButton
+        icon={RefreshCw}
+        iconSize="xs"
+        label="Refresh PDF"
+        onClick={onRefresh}
+        disabled={busy}
+        data-testid={`brain-note-${noteId}-refresh`}
+      />
+    ) : null}
   </div>
 );

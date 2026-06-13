@@ -1,7 +1,10 @@
+import { useLiveQuery } from 'dexie-react-hooks';
 import { X } from '@/components/libs/icons';
 import { useUI } from '@/store/ui';
+import { db } from '@/db/db';
 import { useNoteUrlCache } from '@/hooks/useNoteUrlCache';
-import { filenameFromUrl } from '@/lib/pdf-url-cache';
+import { useMediaItem } from '@/hooks/useMedia';
+import { resolvePdfSource } from '@/components/surfaces/PdfCard/resolvePdfSource';
 import { IconButton } from '@/components/ui/icon';
 import { PdfViewer } from '@/components/ui/PdfViewer';
 
@@ -11,8 +14,11 @@ interface NotePdfPaneProps {
 }
 
 const NotePdfPane = ({ noteId, onClose }: NotePdfPaneProps) => {
+  const note = useLiveQuery(() => db.notes.get(noteId), [noteId], undefined);
   const cache = useNoteUrlCache(noteId);
-  const name = cache ? filenameFromUrl(cache.url) : 'PDF';
+  const mediaItem = useMediaItem(note?.mediaItemId);
+  const resolved = note ? resolvePdfSource(note, cache, mediaItem) : null;
+  const name = resolved?.name ?? 'PDF';
   return (
     <aside
       aria-label={`PDF reading pane, ${name}`}
@@ -35,12 +41,12 @@ const NotePdfPane = ({ noteId, onClose }: NotePdfPaneProps) => {
         />
       </div>
       <div className="flex min-h-0 flex-1 flex-col">
-        {cache ? (
+        {resolved ? (
           <PdfViewer
-            blob={cache.blob}
+            blob={resolved.blob}
             name={name}
             mode="pane"
-            pageCount={cache.pageCount}
+            pageCount={resolved.pageCount}
           />
         ) : (
           <div

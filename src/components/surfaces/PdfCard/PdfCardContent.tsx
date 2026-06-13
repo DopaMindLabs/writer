@@ -1,12 +1,12 @@
 import type { Note } from '@/db/schema';
 import { useNoteUrlCache } from '@/hooks/useNoteUrlCache';
-import { filenameFromUrl } from '@/lib/pdf-url-cache';
-import { PdfCardUrlInput } from './PdfCardUrlInput';
+import { useMediaItem } from '@/hooks/useMedia';
+import { MediaPickerDialog } from '@/components/ui/MediaPickerDialog/MediaPickerDialog';
+import { PdfCardEmpty } from './PdfCardEmpty';
 import { PdfCardFetching } from './PdfCardFetching';
 import { PdfCardError } from './PdfCardError';
-import { PdfCardThumbnail } from './PdfCardThumbnail';
-import { PdfCardCommentary } from './PdfCardCommentary';
-import { PdfCardActions } from './PdfCardActions';
+import { PdfCardReady } from './PdfCardReady';
+import { resolvePdfSource } from './resolvePdfSource';
 import {
   useAutoFetchOnUrlChange,
   useCardController,
@@ -18,54 +18,60 @@ interface PdfCardContentProps {
 
 export const PdfCardContent = ({ note }: PdfCardContentProps) => {
   const cache = useNoteUrlCache(note.id);
+  const mediaItem = useMediaItem(note.mediaItemId);
   const ctrl = useCardController(note);
   useAutoFetchOnUrlChange(note, cache, ctrl.fetcher);
 
-  if (!note.pdfUrl || ctrl.editingUrl) {
-    return (
-      <PdfCardUrlInput
-        initialValue={note.pdfUrl ?? ''}
-        busy={ctrl.fetcher.status.kind === 'fetching'}
-        onSubmit={(next) => { void ctrl.submitUrl(next); }}
-        onCancel={ctrl.editingUrl ? () => { ctrl.setEditingUrl(false); } : undefined}
-        testIdPrefix={`brain-note-${note.id}-pdf-url`}
-      />
-    );
-  }
-  if (ctrl.fetcher.status.kind === 'fetching') {
-    return <PdfCardFetching noteId={note.id} />;
-  }
-  if (ctrl.fetcher.status.kind === 'error') {
-    return (
-      <PdfCardError
-        noteId={note.id}
-        url={note.pdfUrl}
-        message={ctrl.fetcher.status.message}
-        busy={false}
-        onResubmit={(next) => { void ctrl.submitUrl(next); }}
-      />
-    );
-  }
-  if (cache) {
-    const name = filenameFromUrl(cache.url);
+  const openPicker = () => { ctrl.setPickerOpen(true); };
+  const picker = (
+    <MediaPickerDialog
+      open={ctrl.pickerOpen}
+      onOpenChange={ctrl.setPickerOpen}
+      spaceId={note.spaceId}
+      onSelect={(selection) => { void ctrl.applySelection(selection); }}
+    />
+  );
+
+  if (!note.pdfUrl && !note.mediaItemId) {
     return (
       <>
-        <PdfCardThumbnail
-          noteId={note.id}
-          name={name}
-          blob={cache.blob}
-          pageCount={cache.pageCount}
-        />
-        <PdfCardCommentary note={note} />
-        <PdfCardActions
-          noteId={note.id}
-          busy={false}
-          onOpenBeside={ctrl.openBeside}
-          onEditUrl={() => { ctrl.setEditingUrl(true); }}
-          onRefresh={() => { void ctrl.refresh(); }}
-        />
+        <PdfCardEmpty noteId={note.id} onPick={openPicker} />
+        {picker}
       </>
     );
   }
-  return <PdfCardFetching noteId={note.id} />;
+  if (note.pdfUrl && ctrl.fetcher.status.kind === 'fetching') {
+    return (<><PdfCardFetching noteId={note.id} />{picker}</>);
+  }
+  if (note.pdfUrl && ctrl.fetcher.status.kind === 'error') {
+    return (
+      <>
+        <PdfCardError
+          noteId={note.id}
+          message={ctrl.fetcher.status.message}
+          onEdit={openPicker}
+        />
+        {picker}
+      </>
+    );
+  }
+
+  const resolved = resolvePdfSource(note, cache, mediaItem);
+  if (resolved) {
+    return (
+      <>
+        <PdfCardReady
+          note={note}
+          name={resolved.name}
+          blob={resolved.blob}
+          pageCount={resolved.pageCount}
+          onOpenBeside={ctrl.openBeside}
+          onEditSource={openPicker}
+          onRefresh={note.pdfUrl ? () => { void ctrl.refresh(); } : undefined}
+        />
+        {picker}
+      </>
+    );
+  }
+  return (<><PdfCardFetching noteId={note.id} />{picker}</>);
 };

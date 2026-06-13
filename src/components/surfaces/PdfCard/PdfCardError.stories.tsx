@@ -6,10 +6,8 @@ const meta = {
   component: PdfCardError,
   args: {
     noteId: 'n1',
-    url: 'https://arxiv.org/pdf/1706.03762.pdf',
     message: 'The PDF host blocks cross-origin requests.',
-    busy: false,
-    onResubmit: () => {},
+    onEdit: () => {},
   },
 } satisfies Meta<typeof PdfCardError>;
 
@@ -17,4 +15,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Cors: Story = {};
-export const NotFound: Story = { args: { message: 'Server returned 404.' } };
+export const Untrusted: Story = {
+  args: { message: 'This domain is not in your trusted list.' },
+};

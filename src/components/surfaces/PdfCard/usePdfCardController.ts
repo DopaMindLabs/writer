@@ -8,6 +8,7 @@ import {
   invalidateUrlCache,
   type FetchFailureReason,
 } from '@/lib/pdf-url-cache';
+import type { MediaSelection } from '@/components/ui/MediaPickerDialog/mediaSelection';
 
 export type FetchStatus =
   | { kind: 'idle' }
@@ -35,20 +36,20 @@ export const useAutoFetchOnUrlChange = (
 ) => {
   const lastTriedRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!note.pdfUrl) return;
+    if (!note.pdfUrl || note.mediaItemId) return;
     if (cache?.url === note.pdfUrl) return;
     if (fetcher.status.kind !== 'idle') return;
     if (lastTriedRef.current === note.pdfUrl) return;
     lastTriedRef.current = note.pdfUrl;
     void fetcher.run(note.pdfUrl);
-  }, [note.pdfUrl, cache, fetcher]);
+  }, [note.pdfUrl, note.mediaItemId, cache, fetcher]);
 };
 
 export interface CardController {
   fetcher: ReturnType<typeof useFetchPdf>;
-  editingUrl: boolean;
-  setEditingUrl: (v: boolean) => void;
-  submitUrl: (url: string) => Promise<void>;
+  pickerOpen: boolean;
+  setPickerOpen: (v: boolean) => void;
+  applySelection: (selection: MediaSelection) => Promise<void>;
   refresh: () => Promise<void>;
   openBeside: () => void;
 }
@@ -56,16 +57,23 @@ export interface CardController {
 export const useCardController = (note: Note): CardController => {
   const openPane = useUI((s) => s.openMediaReadingPaneForNote);
   const fetcher = useFetchPdf(note.id);
-  const [editingUrl, setEditingUrl] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
-  const submitUrl = async (url: string) => {
-    if (url.length === 0) return;
+  const applySelection = async (selection: MediaSelection) => {
     await invalidateUrlCache(note.id);
-    if (note.pdfUrl !== url) {
-      await db.notes.update(note.id, { pdfUrl: url });
+    if (selection.kind === 'url') {
+      await db.notes.update(note.id, {
+        pdfUrl: selection.url,
+        mediaItemId: undefined,
+      });
+      await fetcher.run(selection.url);
+    } else {
+      await db.notes.update(note.id, {
+        mediaItemId: selection.mediaItemId,
+        pdfUrl: undefined,
+      });
+      fetcher.reset();
     }
-    setEditingUrl(false);
-    await fetcher.run(url);
   };
 
   const refresh = async () => {
@@ -76,5 +84,5 @@ export const useCardController = (note: Note): CardController => {
 
   const openBeside = () => { openPane(note.id); };
 
-  return { fetcher, editingUrl, setEditingUrl, submitUrl, refresh, openBeside };
+  return { fetcher, pickerOpen, setPickerOpen, applySelection, refresh, openBeside };
 };

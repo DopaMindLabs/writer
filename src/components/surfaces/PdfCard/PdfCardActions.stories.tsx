@@ -8,7 +8,7 @@ const meta = {
     noteId: 'n1',
     busy: false,
     onOpenBeside: () => {},
-    onEditUrl: () => {},
+    onEditSource: () => {},
     onRefresh: () => {},
   },
   argTypes: { busy: { control: 'boolean' } },
@@ -19,3 +19,4 @@ type Story = StoryObj<typeof meta>;
 
 export const Rest: Story = {};
 export const Busy: Story = { args: { busy: true } };
+export const LibrarySource: Story = { args: { onRefresh: undefined } };

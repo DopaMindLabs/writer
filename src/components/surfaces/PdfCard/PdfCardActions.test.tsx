@@ -7,7 +7,7 @@ const setup = (overrides: Partial<Parameters<typeof PdfCardActions>[0]> = {}) =>
     noteId: 'n1',
     busy: false,
     onOpenBeside: vi.fn(),
-    onEditUrl: vi.fn(),
+    onEditSource: vi.fn(),
     onRefresh: vi.fn(),
     ...overrides,
   };
@@ -22,16 +22,21 @@ describe('PdfCardActions', () => {
     expect(props.onOpenBeside).toHaveBeenCalledTimes(1);
   });
 
-  it('fires edit and refresh callbacks', () => {
+  it('fires edit-source and refresh callbacks', () => {
     const props = setup();
-    fireEvent.click(screen.getByTestId('brain-note-n1-edit-url'));
+    fireEvent.click(screen.getByTestId('brain-note-n1-edit-source'));
     fireEvent.click(screen.getByTestId('brain-note-n1-refresh'));
-    expect(props.onEditUrl).toHaveBeenCalledTimes(1);
+    expect(props.onEditSource).toHaveBeenCalledTimes(1);
     expect(props.onRefresh).toHaveBeenCalledTimes(1);
   });
 
   it('disables refresh while busy', () => {
     setup({ busy: true });
     expect(screen.getByTestId('brain-note-n1-refresh')).toBeDisabled();
+  });
+
+  it('hides refresh for a library source (no onRefresh)', () => {
+    setup({ onRefresh: undefined });
+    expect(screen.queryByTestId('brain-note-n1-refresh')).not.toBeInTheDocument();
   });
 });

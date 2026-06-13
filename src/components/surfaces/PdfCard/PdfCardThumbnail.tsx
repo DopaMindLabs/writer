@@ -1,4 +1,5 @@
 import { PdfViewer } from '@/components/ui/PdfViewer';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 interface PdfCardThumbnailProps {
   noteId: string;
@@ -14,14 +15,18 @@ export const PdfCardThumbnail = ({
   pageCount,
 }: PdfCardThumbnailProps) => (
   <>
-    <div
-      className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+    <Eyebrow
+      size={10}
+      tone="ink3"
+      className="flex items-center gap-1.5"
       data-testid={`brain-note-${noteId}-pdf-meta`}
     >
-      <span className="truncate" title={name}>{name}</span>
+      <span>PDF</span>
       <span aria-hidden>·</span>
-      <span>{`${String(pageCount)} pages`}</span>
-    </div>
+      <span className="min-w-0 truncate normal-case" title={name}>{name}</span>
+      <span aria-hidden>·</span>
+      <span className="shrink-0">{`${String(pageCount)} pages`}</span>
+    </Eyebrow>
     <div
       data-no-drag
       onPointerDown={(e) => { e.stopPropagation(); }}

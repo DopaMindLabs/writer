@@ -13,6 +13,7 @@ describe('PdfCardThumbnail', () => {
       />,
     );
     const meta = screen.getByTestId('brain-note-n1-pdf-meta');
+    expect(meta).toHaveTextContent('PDF');
     expect(meta).toHaveTextContent('1706.03762.pdf');
     expect(meta).toHaveTextContent('8 pages');
     expect(screen.getByTestId('brain-note-n1-pdf-thumb')).toBeInTheDocument();
