@@ -35,14 +35,18 @@ const sniffPdfMagic = async (blob: Blob): Promise<boolean> => {
   return true;
 };
 
-interface PdfDocLike {
+interface PdfDocProxyLike {
   numPages: number;
+}
+
+interface PdfLoadingTaskLike {
+  promise: Promise<PdfDocProxyLike>;
   destroy: () => Promise<void>;
 }
 
 interface PdfjsLike {
   GlobalWorkerOptions: { workerSrc: string };
-  getDocument: (args: { data: ArrayBuffer }) => { promise: Promise<PdfDocLike> };
+  getDocument: (args: { data: ArrayBuffer }) => PdfLoadingTaskLike;
 }
 
 const loadPdfjs = async (): Promise<PdfjsLike> => {
@@ -58,11 +62,12 @@ const loadPdfjs = async (): Promise<PdfjsLike> => {
 
 const countPages = async (blob: Blob): Promise<number> => {
   const mod = await loadPdfjs();
-  const doc = await mod.getDocument({ data: await blob.arrayBuffer() }).promise;
+  const loadingTask = mod.getDocument({ data: await blob.arrayBuffer() });
   try {
+    const doc = await loadingTask.promise;
     return doc.numPages;
   } finally {
-    await doc.destroy();
+    await loadingTask.destroy();
   }
 };
 
@@ -126,9 +131,7 @@ export const fetchAndCachePdf = async (
     pageCount = await countPages(blob);
   } catch (error) {
     console.error('[pdf-url-cache] countPages failed', error);
-    const detail =
-      error instanceof Error ? error.message : String(error);
-    return fail('corrupt', `PDF could not be opened: ${detail}`);
+    return fail('corrupt', 'PDF could not be opened.');
   }
 
   await db.noteUrlCache.put({
