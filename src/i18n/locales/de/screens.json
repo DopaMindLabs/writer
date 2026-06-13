@@ -10,7 +10,7 @@
     "syncOffChip": "Sync/Sicherungen nicht aktiviert · Daten können verloren gehen",
     "syncOnChip": "Ordner-Sync aktiv",
     "syncOnTitle": "Ordner-Sync aktiviert",
-    "syncOnBody": "Deine Arbeit wird mit dem Ordner „{{folder}}" auf diesem Gerät synchronisiert.",
+    "syncOnBody": "Deine Arbeit wird mit dem Ordner „{{folder}}” auf diesem Gerät synchronisiert.",
     "warningTitle": "Vorab-Build",
     "warningBody": "Keine Datensynchronisation. Alles lebt in deinem Browser; beim Löschen des Caches geht deine Arbeit verloren. Du kannst die Synchronisation mit einem lokalen Ordner unter Einstellungen → Sync aktivieren.",
     "versionLine": "Version {{version}}"

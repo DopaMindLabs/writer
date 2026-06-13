@@ -10,7 +10,7 @@
     "syncOffChip": "synkronisering/sikkerhedskopier ikke aktiveret · data kan gå tabt",
     "syncOnChip": "mappesynkronisering slået til",
     "syncOnTitle": "Mappesynkronisering aktiveret",
-    "syncOnBody": "Dit arbejde synkroniseres til mappen "{{folder}}" på denne enhed.",
+    "syncOnBody": "Dit arbejde synkroniseres til mappen “{{folder}}” på denne enhed.",
     "warningTitle": "Forhåndsudgivelsesversion",
     "warningBody": "Ingen datasynkronisering. Alt ligger i din browser, og hvis du rydder browserens cache, mister du dit arbejde. Du kan aktivere synkronisering til en lokal mappe i Universelle indstillinger → Synkronisering.",
     "versionLine": "Version {{version}}"

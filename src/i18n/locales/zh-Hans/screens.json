@@ -10,7 +10,7 @@
     "syncOffChip": "同步/备份未启用 · 数据可能丢失",
     "syncOnChip": "文件夹同步已开启",
     "syncOnTitle": "文件夹同步已启用",
-    "syncOnBody": "你的工作将同步到此设备上的"{{folder}}"文件夹。",
+    "syncOnBody": "你的工作将同步到此设备上的“{{folder}}”文件夹。",
     "warningTitle": "预发布版本",
     "warningBody": "暂无数据同步。所有内容保存在浏览器中，清除缓存将丢失数据。可在通用设置 → 同步中启用本地文件夹同步。",
     "versionLine": "版本 {{version}}"
@@ -585,7 +585,7 @@
         "deleteCardTitle": "删除此空间",
         "deleteCardBody": "永久删除此空间及其所有文档、章节、Brain space 笔记、批注、引用和连接。此操作无法撤销。",
         "deleteButton": "删除此空间",
-        "dialogTitle": "删除"{{name}}"？",
+        "dialogTitle": "删除“{{name}}”？",
         "dialogBody": "这将永久删除该空间及其所有内容。此操作无法撤销。",
         "typeToConfirm": "输入 {{name}} 以确认",
         "cancel": "取消",
@@ -746,11 +746,11 @@
       "titleLabel": "标题",
       "yearLabel": "年份",
       "typeLabel": "类型",
-      "duplicateKey": "标签"{{key}}"在此空间中已被使用。",
+      "duplicateKey": "标签“{{key}}”在此空间中已被使用。",
       "updated": "已更新 1 条引用。",
       "deleteOne": "已删除 1 条引用。",
       "confirmDeleteUsed": "此引用在文档中被使用了 {{count}} 次。仍然删除？",
-      "confirmDeleteSingle": "删除引用"{{key}}"？此操作无法撤销。",
+      "confirmDeleteSingle": "删除引用“{{key}}”？此操作无法撤销。",
       "untitled": "（无标题）"
     },
     "bulk": {

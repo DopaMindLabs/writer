@@ -10,7 +10,7 @@
     "syncOffChip": "sinchronizavimas/atsarginės kopijos neįjungtos · duomenys gali būti prarasti",
     "syncOnChip": "aplanko sinchronizavimas įjungtas",
     "syncOnTitle": "Aplanko sinchronizavimas įjungtas",
-    "syncOnBody": "Jūsų darbas sinchronizuojamas su „{{folder}}" aplanku šiame įrenginyje.",
+    "syncOnBody": "Jūsų darbas sinchronizuojamas su „{{folder}}” aplanku šiame įrenginyje.",
     "warningTitle": "Išankstinė versija",
     "warningBody": "Duomenų sinchronizavimo nėra. Viskas saugoma jūsų naršyklėje ir išvalius jos talpyklą prarasite savo darbą. Galite įjungti sinchronizavimą su vietiniu aplanku Visuotiniuose nustatymuose → Sinchronizavimas.",
     "versionLine": "Versija {{version}}"
@@ -585,7 +585,7 @@
         "deleteCardTitle": "Ištrinti šią erdvę",
         "deleteCardBody": "Visam laikui pašalina šią erdvę kartu su kiekvienu dokumentu, sekcija, Brain space pastaba, anotacija, citata ir ryšiu. Tai negali būti atšaukta.",
         "deleteButton": "Ištrinti šią erdvę",
-        "dialogTitle": "Ištrinti „{{name}}"?",
+        "dialogTitle": "Ištrinti „{{name}}”?",
         "dialogBody": "Tai visam laikui pašalina erdvę ir visą jos turinį. Tai negali būti atšaukta.",
         "typeToConfirm": "Įveskite {{name}} patvirtinimui",
         "cancel": "Atšaukti",
@@ -746,11 +746,11 @@
       "titleLabel": "Pavadinimas",
       "yearLabel": "Metai",
       "typeLabel": "Tipas",
-      "duplicateKey": "Žyma „{{key}}" jau naudojama šioje erdvėje.",
+      "duplicateKey": "Žyma „{{key}}” jau naudojama šioje erdvėje.",
       "updated": "Atnaujinta 1 citata.",
       "deleteOne": "Ištrinta 1 citata.",
       "confirmDeleteUsed": "Ši citata naudojama {{count}}× jūsų dokumentuose. Ištrinti vis tiek?",
-      "confirmDeleteSingle": "Ištrinti citatą „{{key}}"? Tai negali būti atšaukta.",
+      "confirmDeleteSingle": "Ištrinti citatą „{{key}}”? Tai negali būti atšaukta.",
       "untitled": "(be pavadinimo)"
     },
     "bulk": {

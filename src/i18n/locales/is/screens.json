@@ -10,7 +10,7 @@
     "syncOffChip": "samstilling/öryggisafrit ekki virkt · gögn geta glatast",
     "syncOnChip": "möppusamstilling virk",
     "syncOnTitle": "Möppusamstilling virk",
-    "syncOnBody": "Verk þitt samstillist við „{{folder}}" möppuna í þessum tæki.",
+    "syncOnBody": "Verk þitt samstillist við „{{folder}}” möppuna í þessum tæki.",
     "warningTitle": "Forskráning útgáfa",
     "warningBody": "Engin gagnsamstilling. Allt er geymt í vafranum þínum og ef þú hreinsaðir skyndiminni hans tapar þú vinnu þinni. Þú getur virkjað samstillingu við staðbundna möppu í Altækum stillingum → Samstilling.",
     "versionLine": "Útgáfa {{version}}"
@@ -585,7 +585,7 @@
         "deleteCardTitle": "Eyða þessu rými",
         "deleteCardBody": "Fjarlægir þetta rými varanlega ásamt hverju skjali, kafla, Brain space glósu, athugasemd, heimild og tengingu. Þetta er ekki hægt að afturkalla.",
         "deleteButton": "Eyða þessu rými",
-        "dialogTitle": "Eyða „{{name}}"?",
+        "dialogTitle": "Eyða „{{name}}”?",
         "dialogBody": "Þetta fjarlægir rýmið og allt efni þess varanlega. Þetta er ekki hægt að afturkalla.",
         "typeToConfirm": "Sláðu inn {{name}} til að staðfesta",
         "cancel": "Hætta við",
@@ -746,11 +746,11 @@
       "titleLabel": "Titill",
       "yearLabel": "Ár",
       "typeLabel": "Tegund",
-      "duplicateKey": "Merki „{{key}}" er þegar í notkun í þessu rými.",
+      "duplicateKey": "Merki „{{key}}” er þegar í notkun í þessu rými.",
       "updated": "Uppfærði 1 heimild.",
       "deleteOne": "Eyddi 1 heimild.",
       "confirmDeleteUsed": "Þessi heimild er notuð {{count}}× í skjölum þínum. Eyða engu að síður?",
-      "confirmDeleteSingle": "Eyða heimild „{{key}}"? Þetta er ekki hægt að afturkalla.",
+      "confirmDeleteSingle": "Eyða heimild „{{key}}”? Þetta er ekki hægt að afturkalla.",
       "untitled": "(án titils)"
     },
     "bulk": {

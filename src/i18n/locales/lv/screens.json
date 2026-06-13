@@ -10,7 +10,7 @@
     "syncOffChip": "sinhronizācija/dublējumi nav iespējoti · dati var tikt pazaudēti",
     "syncOnChip": "mapes sinhronizācija ieslēgta",
     "syncOnTitle": "Mapes sinhronizācija iespējota",
-    "syncOnBody": "Jūsu darbs tiek sinhronizēts ar mapi „{{folder}}" šajā ierīcē.",
+    "syncOnBody": "Jūsu darbs tiek sinhronizēts ar mapi „{{folder}}” šajā ierīcē.",
     "warningTitle": "Pirmspublicējuma versija",
     "warningBody": "Nav datu sinhronizācijas. Viss tiek glabāts jūsu pārlūkprogrammā, un, notīrot tās kešatmiņu, jūsu darbs tiks pazaudēts. Varat iespējot sinhronizāciju ar vietējo mapi Universālajos iestatījumos → Sinhronizācija.",
     "versionLine": "Versija {{version}}"
@@ -585,7 +585,7 @@
         "deleteCardTitle": "Dzēst šo telpu",
         "deleteCardBody": "Neatgriezeniski noņem šo telpu kopā ar katru dokumentu, sadaļu, Brain space piezīmi, anotāciju, citātu un savienojumu. To nevar atsaukt.",
         "deleteButton": "Dzēst šo telpu",
-        "dialogTitle": "Dzēst „{{name}}"?",
+        "dialogTitle": "Dzēst „{{name}}”?",
         "dialogBody": "Tas neatgriezeniski noņem telpu un visu tās saturu. To nevar atsaukt.",
         "typeToConfirm": "Ierakstiet {{name}}, lai apstiprinātu",
         "cancel": "Atcelt",
@@ -746,11 +746,11 @@
       "titleLabel": "Virsraksts",
       "yearLabel": "Gads",
       "typeLabel": "Veids",
-      "duplicateKey": "Birka „{{key}}" jau tiek izmantota šajā telpā.",
+      "duplicateKey": "Birka „{{key}}” jau tiek izmantota šajā telpā.",
       "updated": "Atjaunināts 1 citāts.",
       "deleteOne": "Izdzēsts 1 citāts.",
       "confirmDeleteUsed": "Šis citāts tiek izmantots {{count}}× jūsu dokumentos. Tomēr dzēst?",
-      "confirmDeleteSingle": "Dzēst citātu „{{key}}"? To nevar atsaukt.",
+      "confirmDeleteSingle": "Dzēst citātu „{{key}}”? To nevar atsaukt.",
       "untitled": "(bez virsraksta)"
     },
     "bulk": {

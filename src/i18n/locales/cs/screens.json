@@ -10,7 +10,7 @@
     "syncOffChip": "synchronizace/zálohy nejsou aktivovány · data mohou být ztracena",
     "syncOnChip": "synchronizace složky zapnuta",
     "syncOnTitle": "Synchronizace složky aktivována",
-    "syncOnBody": "Tvoje práce se synchronizuje do složky „{{folder}}" na tomto zařízení.",
+    "syncOnBody": "Tvoje práce se synchronizuje do složky „{{folder}}” na tomto zařízení.",
     "warningTitle": "Předprodejní sestavení",
     "warningBody": "Žádná synchronizace dat. Vše je uloženo v prohlížeči a vymazáním mezipaměti přijdeš o svoji práci. Synchronizaci do místní složky můžeš zapnout v Univerzálním nastavení → Synchronizace.",
     "versionLine": "Verze {{version}}"
@@ -585,7 +585,7 @@
         "deleteCardTitle": "Smazat tento prostor",
         "deleteCardBody": "Trvale odstraní tento prostor spolu s každým dokumentem, oddílem, poznámkou Brain space, anotací, citací a propojením. Tuto akci nelze vrátit.",
         "deleteButton": "Smazat tento prostor",
-        "dialogTitle": "Smazat „{{name}}"?",
+        "dialogTitle": "Smazat „{{name}}”?",
         "dialogBody": "Tato akce trvale odstraní prostor a veškerý jeho obsah. Tuto akci nelze vrátit.",
         "typeToConfirm": "Pro potvrzení zadej {{name}}",
         "cancel": "Zrušit",
@@ -746,11 +746,11 @@
       "titleLabel": "Název",
       "yearLabel": "Rok",
       "typeLabel": "Typ",
-      "duplicateKey": "Zkratka „{{key}}" je v tomto prostoru již použita.",
+      "duplicateKey": "Zkratka „{{key}}” je v tomto prostoru již použita.",
       "updated": "Aktualizována 1 citace.",
       "deleteOne": "Smazána 1 citace.",
       "confirmDeleteUsed": "Tato citace se v dokumentech používá {{count}}×. Přesto smazat?",
-      "confirmDeleteSingle": "Smazat citaci „{{key}}"? Tuto akci nelze vrátit.",
+      "confirmDeleteSingle": "Smazat citaci „{{key}}”? Tuto akci nelze vrátit.",
       "untitled": "(bez názvu)"
     },
     "bulk": {
