@@ -1,0 +1,162 @@
+import { invariant } from '@/lib/invariant';
+import { db } from '@/db/db';
+
+export type FetchFailureReason =
+  | 'invalid-url'
+  | 'cors'
+  | 'http'
+  | 'network'
+  | 'not-pdf'
+  | 'too-large'
+  | 'corrupt';
+
+export type FetchResult =
+  | { ok: true }
+  | { ok: false; reason: FetchFailureReason; message: string };
+
+export const MAX_PDF_BYTES = 50 * 1024 * 1024;
+
+const PDF_MAGIC = [0x25, 0x50, 0x44, 0x46] as const;
+
+const isHttpsUrl = (url: string): boolean => {
+  try {
+    return new URL(url).protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
+const sniffPdfMagic = async (blob: Blob): Promise<boolean> => {
+  const head = new Uint8Array(await blob.slice(0, 4).arrayBuffer());
+  if (head.length < 4) return false;
+  for (let i = 0; i < PDF_MAGIC.length; i += 1) {
+    if (head[i] !== PDF_MAGIC[i]) return false;
+  }
+  return true;
+};
+
+interface PdfDocProxyLike {
+  numPages: number;
+}
+
+interface PdfLoadingTaskLike {
+  promise: Promise<PdfDocProxyLike>;
+  destroy: () => Promise<void>;
+}
+
+interface PdfjsLike {
+  GlobalWorkerOptions: { workerSrc: string };
+  getDocument: (args: { data: ArrayBuffer }) => PdfLoadingTaskLike;
+}
+
+const loadPdfjs = async (): Promise<PdfjsLike> => {
+  const mod = (await import('pdfjs-dist')) as unknown as PdfjsLike;
+  if (!mod.GlobalWorkerOptions.workerSrc) {
+    mod.GlobalWorkerOptions.workerSrc = new URL(
+      'pdfjs-dist/build/pdf.worker.min.mjs',
+      import.meta.url,
+    ).toString();
+  }
+  return mod;
+};
+
+const countPages = async (blob: Blob): Promise<number> => {
+  const mod = await loadPdfjs();
+  const loadingTask = mod.getDocument({ data: await blob.arrayBuffer() });
+  try {
+    const doc = await loadingTask.promise;
+    return doc.numPages;
+  } finally {
+    await loadingTask.destroy();
+  }
+};
+
+const fail = (reason: FetchFailureReason, message: string): FetchResult => ({
+  ok: false,
+  reason,
+  message,
+});
+
+interface ResponseLike {
+  ok: boolean;
+  status: number;
+  blob: () => Promise<Blob>;
+}
+
+type FetchOutcome =
+  | { ok: true; response: ResponseLike }
+  | { ok: false; result: FetchResult };
+
+const doFetch = async (url: string): Promise<FetchOutcome> => {
+  try {
+    const response = (await fetch(url, {
+      mode: 'cors',
+      credentials: 'omit',
+    })) as ResponseLike;
+    return { ok: true, response };
+  } catch {
+    return {
+      ok: false,
+      result: fail('cors', 'The PDF host blocks cross-origin requests.'),
+    };
+  }
+};
+
+const validateBlob = async (blob: Blob): Promise<FetchResult | null> => {
+  if (blob.size > MAX_PDF_BYTES) return fail('too-large', 'PDF exceeds 50 MB.');
+  if (!(await sniffPdfMagic(blob)))
+    return fail('not-pdf', 'URL did not return a PDF.');
+  return null;
+};
+
+export const fetchAndCachePdf = async (
+  noteId: string,
+  url: string,
+): Promise<FetchResult> => {
+  invariant(noteId.length > 0, 'fetchAndCachePdf: noteId required');
+  if (!isHttpsUrl(url)) return fail('invalid-url', 'Enter an https:// URL.');
+
+  const fetched = await doFetch(url);
+  if (!fetched.ok) return fetched.result;
+  const { response } = fetched;
+  if (!response.ok)
+    return fail('http', `Server returned ${String(response.status)}.`);
+
+  const blob = await response.blob();
+  const invalid = await validateBlob(blob);
+  if (invalid) return invalid;
+
+  let pageCount: number;
+  try {
+    pageCount = await countPages(blob);
+  } catch (error) {
+    console.error('[pdf-url-cache] countPages failed', error);
+    return fail('corrupt', 'PDF could not be opened.');
+  }
+
+  await db.noteUrlCache.put({
+    noteId,
+    url,
+    mime: 'application/pdf',
+    size: blob.size,
+    blob,
+    pageCount,
+    fetchedAt: Date.now(),
+  });
+
+  return { ok: true };
+};
+
+export const invalidateUrlCache = (noteId: string): Promise<void> =>
+  db.noteUrlCache.delete(noteId);
+
+export const filenameFromUrl = (url: string): string => {
+  try {
+    const parsed = new URL(url);
+    const last = parsed.pathname.split('/').filter(Boolean).pop();
+    if (last && last.length > 0) return decodeURIComponent(last);
+    return parsed.hostname;
+  } catch {
+    return url;
+  }
+};

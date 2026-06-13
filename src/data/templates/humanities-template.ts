@@ -35,6 +35,7 @@ const template: Template = {
     NoteKind.Todo,
     NoteKind.LooseEnd,
     NoteKind.Image,
+    NoteKind.PdfRef,
   ],
 };
 

@@ -2,10 +2,56 @@ import './blob-polyfill';
 import '@testing-library/jest-dom/vitest';
 import 'fake-indexeddb/auto';
 import '@/i18n';
-import { afterEach, beforeEach, expect } from 'vitest';
+import { afterEach, beforeEach, expect, vi } from 'vitest';
+import type { ReactNode } from 'react';
 import { cleanup } from '@testing-library/react';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
+
+vi.mock('react-pdf', async () => {
+  const { createElement, useEffect } = await import('react');
+  const Document = ({
+    children,
+    onLoadSuccess,
+    className,
+    'aria-hidden': ariaHidden,
+  }: {
+    children?: ReactNode;
+    onLoadSuccess?: (doc: { numPages: number }) => void;
+    className?: string;
+    'aria-hidden'?: boolean;
+  }) => {
+    useEffect(() => {
+      onLoadSuccess?.({ numPages: 8 });
+    }, [onLoadSuccess]);
+    return createElement(
+      'div',
+      {
+        'data-testid': 'mock-pdf-doc',
+        className,
+        'aria-hidden': ariaHidden ? true : undefined,
+      },
+      children,
+    );
+  };
+  const Page = ({
+    pageNumber,
+    scale,
+  }: {
+    pageNumber: number;
+    scale?: number;
+  }) =>
+    createElement('div', {
+      'data-testid': 'mock-pdf-page',
+      'data-page': String(pageNumber),
+      'data-scale': String(scale ?? 1),
+    });
+  return {
+    pdfjs: { GlobalWorkerOptions: { workerSrc: '' } },
+    Document,
+    Page,
+  };
+});
 
 const initialUIState = useUI.getState();
 

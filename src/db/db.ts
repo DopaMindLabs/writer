@@ -5,6 +5,7 @@ import type {
   Doc,
   Note,
   NoteAttachment,
+  NoteUrlCache,
   Annotation,
   Citation,
   Connection,
@@ -24,6 +25,7 @@ export class LoremDB extends Dexie {
   docs!: Table<Doc, string>;
   notes!: Table<Note, string>;
   noteAttachments!: Table<NoteAttachment, string>;
+  noteUrlCache!: Table<NoteUrlCache, string>;
   annotations!: Table<Annotation, string>;
   citations!: Table<Citation, string>;
   connections!: Table<Connection, string>;
@@ -38,6 +40,11 @@ export class LoremDB extends Dexie {
 
   constructor(name = 'lipsum') {
     super(name);
+    this.defineBaselineVersions();
+    this.defineLaterVersions();
+  }
+
+  private defineBaselineVersions() {
     this.version(1).stores({
       spaces: 'id, updatedAt',
       sections: 'id, spaceId, order, [spaceId+order]',
@@ -82,7 +89,9 @@ export class LoremDB extends Dexie {
     this.version(5).stores({
       spaces: 'id, createdAt, updatedAt',
     });
+  }
 
+  private defineLaterVersions() {
     this.version(6).stores({
       syncs: 'id, spaceId, when, [spaceId+when]',
       syncConfigs: 'spaceId',
@@ -102,6 +111,11 @@ export class LoremDB extends Dexie {
 
     this.version(10).stores({
       citations: 'id, spaceId, year, [spaceId+key], [spaceId+year]',
+    });
+
+    this.version(11).stores({
+      notes: 'id, spaceId, kind, pdfUrl, createdAt',
+      noteUrlCache: 'noteId, fetchedAt',
     });
   }
 }
