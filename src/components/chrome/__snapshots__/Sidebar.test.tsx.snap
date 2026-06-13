@@ -251,6 +251,19 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
             1◦
           </span>
         </a>
+        <a
+          class="-ml-px flex items-center gap-2 border-l-2 px-5 py-1.5 transition-colors border-transparent text-ink-2 hover:bg-paper"
+          data-discover="true"
+          data-testid="sidebar-media-link"
+          href="/s/s1/media"
+        >
+          <span
+            class="flex-1 text-[13px]"
+            data-testid="sidebar-media-link-label"
+          >
+            Media library
+          </span>
+        </a>
       </div>
     </nav>
   </aside>

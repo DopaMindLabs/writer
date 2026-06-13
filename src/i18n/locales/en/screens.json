@@ -698,6 +698,9 @@
     "close": "Close citations",
     "expand": "Open citations in full view"
   },
+  "media": {
+    "title": "Media library"
+  },
   "citations": {
     "title": "Citations",
     "breadcrumb": "Sources / ",
