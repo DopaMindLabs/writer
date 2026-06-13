@@ -14,6 +14,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { LightboxContainerContext } from '@/components/ui/LightboxContainerContext';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { FocusRail } from '@/components/chrome/FocusRail';
@@ -512,6 +513,7 @@ const SplitPanes = ({
 }: SplitPanesProps) => {
   const controls = useDividerControls();
   const { pct, stacked, containerRef } = controls;
+  const [rightPaneEl, setRightPaneEl] = useState<HTMLElement | null>(null);
 
   return (
     <main
@@ -539,7 +541,15 @@ const SplitPanes = ({
         <div className="flex items-center justify-between gap-2 border-b border-rule px-6 py-1.5">
           {rightHeader}
         </div>
-        <div className="flex-1 overflow-hidden">{rightContent}</div>
+        <LightboxContainerContext.Provider value={rightPaneEl}>
+          <div
+            ref={setRightPaneEl}
+            data-testid="split-right-pane"
+            className="relative flex-1 overflow-hidden"
+          >
+            {rightContent}
+          </div>
+        </LightboxContainerContext.Provider>
       </section>
       {aside}
     </main>
