@@ -206,14 +206,19 @@ not a checkbox.
 
 ## Commits & branches
 
-**Commit messages, branch names, and PR titles must all strictly follow
-[Conventional Commits](https://www.conventionalcommits.org/)** — no exceptions. Commits are
-linted by commitlint (the `commit-msg` hook); run `npm run commit` for a guided Commitizen
-prompt. The **PR title** must itself be a valid Conventional Commit subject
-(`<type>(<scope>): <description>`, e.g. `feat(citations): import BibTeX`) — the squash-merge
-commit is derived from it, so a non-conforming title breaks the convention on the default
-branch. Branch names must be prefixed with a Conventional Commit type, enforced by the
-`pre-push` hook and the **Branch name** CI check (`scripts/validate-branch-name.mjs`):
+**Conventional Commits are mandatory everywhere — no exceptions.** Every commit message, branch
+name, pull-request title, pull-request description/body, GitHub issue/PR comment that proposes a
+change, and any other git or GitHub description an agent authors MUST follow
+[Conventional Commits](https://www.conventionalcommits.org/) (`<type>(<scope>): <description>`,
+with a properly typed body/footer where applicable). There is no surface where an agent may
+deviate — when in doubt, format it as a Conventional Commit, and use one of the allowed types
+below; never invent a type. Commits are linted by commitlint (the `commit-msg` hook); run
+`npm run commit` for a guided Commitizen prompt. The **PR title** must itself be a valid
+Conventional Commit subject (`<type>(<scope>): <description>`, e.g. `feat(citations): import
+BibTeX`) — the squash-merge commit is derived from it, so a non-conforming title breaks the
+convention on the default branch. Branch names must be prefixed with a Conventional Commit type,
+enforced by the `pre-push` hook and the **Branch name** CI check
+(`scripts/validate-branch-name.mjs`):
 
 - Form: `<type>/<kebab-description>` — e.g. `feat/user-login`, `fix/date-parse`,
   `chore/bump-deps`. Underscores are allowed for suffixes (`feat/user-login_v2`).
