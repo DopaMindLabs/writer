@@ -87,7 +87,8 @@ export const fetchAndCachePdf = async (
   let pageCount: number;
   try {
     pageCount = await countPages(blob);
-  } catch {
+  } catch (error) {
+    console.error('fetchAndCachePdf: failed to open PDF', error);
     return fail('corrupt', 'PDF could not be opened.');
   }
 

@@ -18,10 +18,38 @@ interface PdfDocLike {
 
 interface PdfjsLike {
   getDocument: (args: { data: ArrayBuffer }) => { promise: Promise<PdfDocLike> };
+  GlobalWorkerOptions?: { workerSrc?: string };
 }
+
+// pdfjs needs a worker configured before getDocument is ever called. The viewer
+// sets it on mount, but counting pages can run first (e.g. on upload), so make
+// the worker self-configuring here too. Same-origin bundle, allowed by CSP
+// worker-src 'self'. Guarded so the mocked module used in unit tests is a no-op.
+const readWorkerOptions = (
+  mod: PdfjsLike,
+): { workerSrc?: string } | undefined => {
+  // Unit tests mock pdfjs-dist without this export; accessing a missing named
+  // export on a Vitest module mock throws, so read it defensively.
+  try {
+    return mod.GlobalWorkerOptions;
+  } catch {
+    return undefined;
+  }
+};
+
+const ensurePdfWorker = (mod: PdfjsLike): void => {
+  if (typeof window === 'undefined') return;
+  const options = readWorkerOptions(mod);
+  if (!options || options.workerSrc) return;
+  options.workerSrc = new URL(
+    'pdfjs-dist/build/pdf.worker.min.mjs',
+    import.meta.url,
+  ).toString();
+};
 
 export const countPages = async (blob: Blob): Promise<number> => {
   const mod = (await import('pdfjs-dist')) as unknown as PdfjsLike;
+  ensurePdfWorker(mod);
   const doc = await mod.getDocument({ data: await blob.arrayBuffer() }).promise;
   try {
     return doc.numPages;

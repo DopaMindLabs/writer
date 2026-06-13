@@ -25,7 +25,8 @@ export const validatePdfFile = async (file: File): Promise<ValidationResult> => 
   }
   try {
     await countPages(blob);
-  } catch {
+  } catch (error) {
+    console.error('validatePdfFile: failed to open PDF', error);
     return { ok: false, reason: 'corrupt', message: 'PDF could not be opened.' };
   }
   return { ok: true };

@@ -1,4 +1,5 @@
 export {
+  AlertCircle,
   AlertTriangle,
   AlignLeft,
   ArrowLeft,

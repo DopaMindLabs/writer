@@ -1,3 +1,4 @@
+import { AlertCircle } from '@/components/libs/icons';
 import { InlineBanner } from '@/components/ui/InlineBanner';
 
 interface PdfCardErrorProps {
@@ -7,13 +8,19 @@ interface PdfCardErrorProps {
 }
 
 export const PdfCardError = ({ noteId, message, onEdit }: PdfCardErrorProps) => (
-  <InlineBanner
-    kind="error"
-    title="Couldn't fetch this PDF"
-    action="Edit source"
-    onAction={onEdit}
-    data-testid={`brain-note-${noteId}-pdf-error`}
+  <div
+    data-no-drag
+    onPointerDown={(e) => { e.stopPropagation(); }}
   >
-    {message}
-  </InlineBanner>
+    <InlineBanner
+      kind="error"
+      icon={AlertCircle}
+      title="Couldn't fetch this PDF"
+      action="Edit source"
+      onAction={onEdit}
+      data-testid={`brain-note-${noteId}-pdf-error`}
+    >
+      {message}
+    </InlineBanner>
+  </div>
 );

@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { AlertCircle } from '@/components/libs/icons';
 import { FileInputTrigger } from '@/components/ui/FileInputTrigger';
 import { Button } from '@/components/ui/Button';
 import { InlineBanner } from '@/components/ui/InlineBanner';
-import { addMediaItem, validatePdfFile } from '@/lib/media';
+import { useUploadPdf } from './useUploadPdf';
 
 interface MediaUploadButtonProps {
   spaceId: string;
@@ -13,34 +13,13 @@ export const MediaUploadButton = ({
   spaceId,
   onUploaded,
 }: MediaUploadButtonProps) => {
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-
-  const handlePick = async (files: File[]) => {
-    if (files.length === 0) return;
-    const [file] = files;
-    setBusy(true);
-    setError(null);
-    const result = await validatePdfFile(file);
-    if (!result.ok) {
-      setError(result.message);
-      setBusy(false);
-      return;
-    }
-    const blob = new Blob([await file.arrayBuffer()], {
-      type: 'application/pdf',
-    });
-    const item = await addMediaItem(spaceId, file.name, blob);
-    setBusy(false);
-    onUploaded?.(item.id);
-  };
-
+  const { error, busy, upload } = useUploadPdf(spaceId, onUploaded);
   return (
     <div className="flex flex-col gap-2">
       <FileInputTrigger
         accept="application/pdf"
         disabled={busy}
-        onPick={(files) => { void handlePick(files); }}
+        onPick={(files) => { void upload(files); }}
         data-testid="media-upload-input"
       >
         {(open) => (
@@ -56,7 +35,12 @@ export const MediaUploadButton = ({
         )}
       </FileInputTrigger>
       {error !== null ? (
-        <InlineBanner kind="error" title="Upload failed" data-testid="media-upload-error">
+        <InlineBanner
+          kind="error"
+          icon={AlertCircle}
+          title="Upload failed"
+          data-testid="media-upload-error"
+        >
           {error}
         </InlineBanner>
       ) : null}
