@@ -111,6 +111,14 @@ is the source of truth for the accessibility layer; align with it when building 
   visible focus indicator and an accessible name, use correct semantics (roles, labels,
   landmarks, `aria-live`, `aria-describedby`, `aria-current`), and respect
   `prefers-reduced-motion` / `data-motion`.
+- **Keyboard shortcuts must be cross-platform — in logic *and* in display.** The modifier key
+  is Cmd on macOS (`event.metaKey`) and Ctrl on Linux/Windows (`event.ctrlKey`); a handler that
+  checks only one is broken on the other platform. Always accept the chord with
+  `event.metaKey || event.ctrlKey` (the established pattern across the app), and never hard-code
+  a single platform's glyph or word (`⌘`, `Cmd`, `Ctrl`) in a shortcut hint — derive the label
+  from the running platform so each user sees the key they actually press. This applies to app
+  functionality the same way the [E2E section](#e2e-test-coverage-ratcheted)'s `ControlOrMeta+A`
+  rule applies to specs.
 - **Additive by default.** New behaviour is opt-in and must not change the default experience
   for existing users. Defaults equal today's behaviour; persisted preferences stay
   back-compatible (`?? default`, no destructive migration).
@@ -154,6 +162,15 @@ is checked in review.
 - **Always run Playwright headless** (its default — never `--headed` or `--ui` in an agent
   or CI environment) and run the suite yourself before pushing e2e-affecting changes rather
   than waiting for CI to find failures.
+- **Write specs that pass cross-platform — agents run on macOS, CI runs on Linux.** Never
+  assume the local OS. The trap is keyboard modifiers: `Meta` is Cmd on macOS (so `Meta+a`
+  selects all locally) but the Super/Windows key on Linux/Windows, where the same chord is a
+  no-op — leaving only a caret. Use Playwright's platform-aware `ControlOrMeta+A` (or select
+  text explicitly) for select-all, copy, paste, and similar shortcuts. This bites twice: a
+  positive assertion (toolbar *appears* on selection) flakes/times out on CI, while a negative
+  one (toolbar *absent*) passes vacuously without ever exercising the behaviour. Prefer asserting
+  both the present and absent states with the same helper so a broken selection can't green a
+  test. The same goes for any OS-specific path, line-ending, or timing assumption.
 - If the browser is missing, install it with `npx playwright install chromium`. In sandboxed
   environments where `cdn.playwright.dev` is blocked, the identical Chrome for Testing build
   is on `storage.googleapis.com` (allowed): check the expected version, paths, and layout

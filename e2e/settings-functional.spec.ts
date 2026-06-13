@@ -17,7 +17,9 @@ const selectTextInEditor = async (page: Page): Promise<void> => {
   const body = page.locator('[aria-label="Document body"]');
   await body.click();
   await page.keyboard.type('Hello world this is a test sentence');
-  await page.keyboard.press('Meta+a');
+  // ControlOrMeta maps to Control off-mac and Meta on mac; a bare `Meta+a`
+  // does not trigger select-all on Linux/Windows CI, leaving only a caret.
+  await page.keyboard.press('ControlOrMeta+A');
 };
 
 /* ─── Floating Toolbar Setting ──────────────────────────────────────────── */

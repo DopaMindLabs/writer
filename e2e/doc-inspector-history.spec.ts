@@ -197,7 +197,10 @@ test('restore a version from the modal', async ({ page }) => {
 
   // Edit content again
   await editor.click();
-  await page.keyboard.press('Meta+a');
+  // ControlOrMeta maps to Control off-mac and Meta on mac; a bare `Meta+a`
+  // does not select-all on Linux/Windows CI, so the type below would append
+  // rather than replace.
+  await page.keyboard.press('ControlOrMeta+A');
   await page.keyboard.type('New content after version save');
 
   const openModal = page.getByTestId('open-version-modal');
