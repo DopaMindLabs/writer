@@ -1,4 +1,5 @@
 import { vi } from 'vitest';
+import { getDocument } from 'pdfjs-dist';
 import { db } from '@/db/db';
 import type { Note } from '@/db/schema';
 import { NoteKind, NoteState } from '@/db/schema';
@@ -58,6 +59,23 @@ describe('validatePdfFile', () => {
 
   it('accepts a valid PDF', async () => {
     expect(await validatePdfFile(pdfFile())).toEqual({ ok: true });
+  });
+
+  it('reports corrupt and logs when the PDF cannot be opened', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.mocked(getDocument).mockImplementationOnce(
+      () =>
+        ({ promise: Promise.reject(new Error('broken')) }) as ReturnType<
+          typeof getDocument
+        >,
+    );
+    expect(await validatePdfFile(pdfFile())).toEqual({
+      ok: false,
+      reason: 'corrupt',
+      message: 'PDF could not be opened.',
+    });
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
   });
 });
 

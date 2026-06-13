@@ -1,4 +1,5 @@
 import { beforeEach, vi } from 'vitest';
+import { getDocument } from 'pdfjs-dist';
 import { db } from '@/db/db';
 import { addTrustedDomain } from './trusted-domains';
 import {
@@ -120,6 +121,26 @@ describe('fetchAndCachePdf', () => {
       reason: 'too-large',
       message: 'PDF exceeds 50 MB.',
     });
+  });
+
+  it('returns corrupt and logs when the PDF cannot be opened', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.mocked(getDocument).mockImplementationOnce(
+      () =>
+        ({ promise: Promise.reject(new Error('broken')) }) as ReturnType<
+          typeof getDocument
+        >,
+    );
+    mockFetchOnce(respondWith(pdfBlob()));
+    const result = await fetchAndCachePdf('n1', 'https://example.com/x.pdf');
+    expect(result).toEqual({
+      ok: false,
+      reason: 'corrupt',
+      message: 'PDF could not be opened.',
+    });
+    expect(spy).toHaveBeenCalled();
+    expect(await db.noteUrlCache.get('n1')).toBeUndefined();
+    spy.mockRestore();
   });
 
   it('replaces a previous cache row on a re-fetch for the same note', async () => {
