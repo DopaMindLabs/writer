@@ -45,7 +45,7 @@ import { ImageThumb } from '@/components/ui/ImageThumb';
 import { ImageLightbox, type LightboxImage } from '@/components/ui/ImageLightbox';
 import { TextField } from '@/components/ui/TextField';
 import { TextArea } from '@/components/ui/TextArea';
-import { PdfCardContent } from './PdfCardContent';
+import { PdfCardContent } from './PdfCard/PdfCardContent';
 import { cn } from '@/lib/utils';
 
 const MIN_W = 120;
