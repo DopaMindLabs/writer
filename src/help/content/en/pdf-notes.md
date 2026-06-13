@@ -1,47 +1,74 @@
-# Reference a PDF in a note
+# Work with PDF notes
 
-The **PDF reference** note kind lets you link a published PDF — a paper, a
-brief, a chapter — into a BrainSpace card, write your commentary beneath it,
-and open the PDF in a reading pane beside the editor.
+A **PDF** note links a PDF document — a paper, a brief, a chapter — into a
+BrainSpace card, where you can write commentary beneath it and open the PDF in
+a reading pane beside your editor. You can attach a PDF from your space's media
+library or by pasting a link to one.
 
-## Add a PDF reference
+## Add a PDF to a note
 
-1. In a space that has PDF references enabled (the Thesis · research template
-   does by default), open **BrainSpace** and click the **+ PDF reference**
-   button on the canvas toolbar.
-2. A card appears with an empty URL field. Paste an **https://** link to a PDF
-   — for example, `https://arxiv.org/pdf/1706.03762.pdf` — and press
-   **fetch**.
-3. The card downloads the file, shows the first-page thumbnail and the page
-   count, and caches the PDF so it loads instantly next time.
+1. In a space that has PDF notes enabled (the Thesis · research template does
+   by default), open **BrainSpace** and add a **PDF** card from the canvas
+   toolbar.
+2. The empty card shows a **Select PDF** button. Click it to open the picker.
+3. Choose how to add the PDF:
+   - **From library** — pick a PDF you have already uploaded to this space.
+   - **Paste URL** — enter an `https://` link to a PDF, for example
+     `https://arxiv.org/pdf/1706.03762.pdf`, and click **Select**.
 
-You can then click the body of the card to add your own **commentary** —
-e.g. _"methods section, ε-greedy is the bit we want to cite"_ — exactly the
-same as any other note's body.
+The card shows the first-page thumbnail and the page count once the PDF is
+ready, and caches it so it loads instantly next time.
+
+## Trust a domain
+
+The app only fetches PDFs from hosts you have approved. The first time you
+paste a link from an unfamiliar domain (such as `arxiv.org`), a dialog asks
+**Trust PDFs from {domain}?**. Click **Trust & fetch** to add the domain to
+your trusted list and download the PDF; you will not be asked for that domain
+again. You can review and remove trusted domains later from the media library.
+
+Common paper hosts are trusted out of the box, so most links work without a
+prompt.
+
+## Upload PDFs to your library
+
+Build a reusable library of PDFs for a space so you can attach the same
+document to several notes:
+
+1. Open the **Media library** from the sidebar.
+2. Click **Upload PDF** and choose a PDF from your computer.
+3. The PDF is validated and added to the library, where you can search it,
+   preview it, and delete it.
+
+Each PDF can be up to 50 MB. The library is local to your browser, just like
+your notes.
+
+## Add commentary
+
+Click the body of the card to add your own **commentary** — for example,
+_"methods section, ε-greedy is the bit we want to cite"_ — exactly as you would
+with any other note. Your commentary stays with the note even if you change the
+PDF source.
 
 ## Open it beside the editor
 
-Click **↗ open beside editor** on the card. A reading pane slides in next to
-your draft. Use the **←/→** arrow keys (or the toolbar) to flip pages, and
-**+/−** to zoom. The reading pane stays open as you move between documents in
-the same space, and closes when you switch spaces.
+Click **open beside editor** on the card. A reading pane slides in next to your
+draft. Use the **←/→** arrow keys (or the toolbar) to turn pages, and **+/−**
+to zoom. The pane stays open as you move between documents in the same space,
+and closes when you switch spaces.
 
-## When the PDF won't load
+## Change or refresh the PDF
 
-Some hosts don't allow other websites to download their files (a browser-level
-restriction called **CORS**). When that happens you'll see a banner reading
-**"Couldn't fetch this PDF"** with the reason — _CORS blocked_, _404 not
-found_, _not a PDF_, _too large_. Use the **edit URL** field on the banner to
-try a different link, or fetch the same file from a different host.
+- **Edit source** — open the picker again to choose a different library item or
+  paste a new URL.
+- **Refresh PDF** — re-download a URL-sourced PDF from the same link (useful if
+  the source has been updated). Library-sourced notes have no refresh, since
+  the file is stored with your space.
 
-(In a future update we'll let you upload PDFs from your computer, which avoids
-CORS entirely.)
+## When a URL won't load
 
-## Replace or refresh the linked PDF
-
-- **Edit URL** — change the link to point at a different file.
-- **Refresh PDF** — re-download from the same URL (useful if the source has
-  been updated).
-
-PDF references are local: they live in this browser's storage, just like your
-notes. Clearing your browser data removes them.
+Some hosts don't allow other websites to download their files, and a link may
+fail with a short message — _the host blocks cross-origin requests_, _not
+found_, _not a PDF_, _too large_, or _the domain is not in your trusted list_.
+Choose **Edit source** to try a different link, trust the domain, or upload the
+file to your library instead, which avoids cross-origin restrictions entirely.

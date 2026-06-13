@@ -66,14 +66,15 @@
 | `/s/:spaceId/d/:docId/split` | Split | Two-pane view with right-pane picker. |
 | `/s/:spaceId/brain-space` | Brain Space | Visual note canvas. |
 | `/s/:spaceId/citations` | Citations | Full-page citations table. |
+| `/s/:spaceId/media` | Media library | Per-space PDF library: upload, search, preview, delete. |
 | `/s/:spaceId/settings` | Space settings | Per-space configuration. |
 | `*` | Not Found | 404. |
 
 ### 3.2 Data model (Dexie tables)
 
-`Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `Note` (state machine: `seed-prompt → seed-fetched → user`), `Connection`, `Annotation`, `Citation`, `Backup` (binary `payload: Blob`, discriminated by `format` — currently only `md-zip`), `Settings`, `HighlightPalette`, `Meta`.
+`Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `Note` (state machine: `seed-prompt → seed-fetched → user`; PDF notes carry exactly one of `pdfUrl` or `mediaItemId`), `Connection`, `Annotation`, `Citation`, `Backup` (binary `payload: Blob`, discriminated by `format` — currently only `md-zip`), `Settings`, `HighlightPalette`, `Meta`, `NoteUrlCache` (cached URL-sourced PDF blobs), `MediaItem` (per-space uploaded PDFs), `TrustedDomain` (URL-fetch allow-list).
 
-Schema is on **version 5**; migrations backfill `Section.parentSectionId` and `Note.state` from prior versions.
+Later migrations add `NoteUrlCache` and, at **version 12**, the `media` and `trustedDomains` tables plus the `notes.mediaItemId` index; existing rows are preserved.
 
 ---
 
@@ -179,6 +180,35 @@ A freeform canvas where notes are placed, connected, and optionally linked to do
 
 *Covered by:* `brain-space.spec.ts`, `BrainSpaceCanvas.test.tsx`, `BrainSpaceNote.test.tsx`, `BrainSpaceDetailDrawer.test.tsx`, `BrainSpaceConnection.test.tsx`.
 
+#### 4.5.1 PDF notes & media library
+
+A **PDF** note kind (`NoteKind.Pdf`, `NoteLayout.Pdf`) attaches a PDF to a card, with
+commentary beneath it and a side-by-side reading pane.
+
+**Source.** A note's PDF comes from exactly one source: a **library** item (`mediaItemId`) or a
+pasted **URL** (`pdfUrl`). An empty card shows a **Select PDF** affordance that opens the
+**media picker** dialog (two tabs: *From library* lists the space's uploads; *Paste URL* takes an
+`https://` link). Selecting sets the source and clears the other; URL sources are fetched,
+validated (magic-byte sniff, 50 MB cap), and cached in `NoteUrlCache`.
+
+**Trusted domains.** URL fetches are gated by a per-user allow-list. A first-use prompt
+(**Trust PDFs from {host}?**) adds the host before any network call; common paper hosts are
+seeded by default. `fetchAndCachePdf` returns `untrusted-domain` if the host is not allowed.
+
+**Card.** When ready, the card shows an eyebrow meta strip (`PDF · name · N pages`), the
+first-page thumbnail, the serif commentary editor, and an action row: **open beside editor**,
+**edit source** (re-opens the picker), and — for URL sources only — **refresh**. Fetch failures
+show an inline banner with an **edit source** action.
+
+**Media library** (`/s/:spaceId/media`). Upload PDFs from disk into the space library, then
+search, preview (viewer pane), and delete them. Deleting an item clears `mediaItemId` on any
+linked notes in the same transaction. Library items are reusable across notes and across the
+picker.
+
+*Covered by:* `db.test.ts` (v12 migration), `trusted-domains.test.ts`, `media.test.ts`,
+`PdfCard/*.test.tsx`, `MediaPickerDialog/*.test.tsx`, `MediaLibrary/*.test.tsx`,
+`MediaReadingPane.test.tsx`.
+
 ---
 
 ### 4.6 Citations
@@ -219,6 +249,7 @@ The per-space navigation column.
 - **Header:** editable space title + settings cog (links to per-space settings).
 - **Sections:** grouped doc lists, with an **+ Add doc to *<Section>*** button under each.
 - **Brain space link:** routes to `/s/:spaceId/brain-space`; shows the unsorted-note count and highlights when active.
+- **Media library link:** routes to `/s/:spaceId/media`; highlights when active.
 - **Footer:** Home, About, GitHub links.
 - **Mobile:** replaced by a hamburger button in the topbar that opens the same content in a dialog drawer. The drawer closes when the user taps a destination.
 
