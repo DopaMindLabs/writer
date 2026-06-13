@@ -6,6 +6,8 @@ import type {
   Note,
   NoteAttachment,
   NoteUrlCache,
+  MediaItem,
+  TrustedDomain,
   Annotation,
   Citation,
   Connection,
@@ -26,6 +28,8 @@ export class LoremDB extends Dexie {
   notes!: Table<Note, string>;
   noteAttachments!: Table<NoteAttachment, string>;
   noteUrlCache!: Table<NoteUrlCache, string>;
+  media!: Table<MediaItem, string>;
+  trustedDomains!: Table<TrustedDomain, string>;
   annotations!: Table<Annotation, string>;
   citations!: Table<Citation, string>;
   connections!: Table<Connection, string>;
@@ -116,6 +120,12 @@ export class LoremDB extends Dexie {
     this.version(11).stores({
       notes: 'id, spaceId, kind, pdfUrl, createdAt',
       noteUrlCache: 'noteId, fetchedAt',
+    });
+
+    this.version(12).stores({
+      notes: 'id, spaceId, kind, pdfUrl, mediaItemId, createdAt',
+      media: 'id, spaceId, createdAt, [spaceId+createdAt]',
+      trustedDomains: 'domain',
     });
   }
 }

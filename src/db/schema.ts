@@ -79,6 +79,7 @@ export interface Note {
   layout?: NoteLayout;
   typeVersion?: string;
   pdfUrl?: string;
+  mediaItemId?: string;
 }
 
 export interface NoteUrlCache {
@@ -89,6 +90,23 @@ export interface NoteUrlCache {
   blob: Blob;
   pageCount: number;
   fetchedAt: number;
+}
+
+export interface MediaItem {
+  id: string;
+  spaceId: string;
+  name: string;
+  mime: string;
+  size: number;
+  blob: Blob;
+  pageCount: number;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface TrustedDomain {
+  domain: string;
+  addedAt: number;
 }
 
 export interface NoteAttachment {

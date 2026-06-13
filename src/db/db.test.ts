@@ -166,6 +166,60 @@ describe('LoremDB migrations', () => {
     await upgraded.close();
   });
 
+  it('version(12) adds media and trustedDomains tables and mediaItemId index without disturbing notes', async () => {
+    dbName = `lipsum-migration-${crypto.randomUUID()}`;
+    const v11 = new Dexie(dbName);
+    v11.version(11).stores({
+      notes: 'id, spaceId, kind, pdfUrl, createdAt',
+      noteUrlCache: 'noteId, fetchedAt',
+      meta: 'key',
+    });
+    await v11.open();
+    await v11.table('notes').add({
+      id: 'n-keep',
+      spaceId: 's1',
+      l: 0,
+      t: 0,
+      w: 100,
+      h: 60,
+      kind: 'pdf',
+      state: 'user',
+      body: 'keep me',
+      createdAt: 0,
+    });
+    await v11.close();
+
+    const upgraded = new LoremDB(dbName);
+    await upgraded.open();
+    expect((await upgraded.notes.get('n-keep'))?.body).toBe('keep me');
+
+    await upgraded.media.add({
+      id: 'm1',
+      spaceId: 's1',
+      name: 'paper.pdf',
+      mime: 'application/pdf',
+      size: 1,
+      blob: new Blob(['%PDF']),
+      pageCount: 3,
+      createdAt: 1,
+      updatedAt: 1,
+    });
+    expect(
+      await upgraded.media.where('spaceId').equals('s1').count(),
+    ).toBe(1);
+
+    await upgraded.trustedDomains.add({ domain: 'arxiv.org', addedAt: 2 });
+    expect((await upgraded.trustedDomains.get('arxiv.org'))?.addedAt).toBe(2);
+
+    await upgraded.notes.update('n-keep', { mediaItemId: 'm1' });
+    const linked = await upgraded.notes
+      .where('mediaItemId')
+      .equals('m1')
+      .toArray();
+    expect(linked.map((n) => n.id)).toEqual(['n-keep']);
+    await upgraded.close();
+  });
+
   it('version(10) adds the [spaceId+year] citation index without disturbing rows', async () => {
     dbName = `lipsum-migration-${crypto.randomUUID()}`;
     const v9 = new Dexie(dbName);
