@@ -25,4 +25,18 @@ describe('Markdown', () => {
     expect(container.querySelector('b')).toBeNull();
     expect(container.textContent).toContain('bold');
   });
+
+  it('honours explicit {#slug} ids on headings and strips them from text', () => {
+    render(<Markdown>{'## アクセシビリティ {#overview}\n\nBody.'}</Markdown>);
+    const heading = screen.getByRole('heading', { level: 2 });
+    expect(heading.id).toBe('overview');
+    expect(heading.textContent).toBe('アクセシビリティ');
+  });
+
+  it('applies explicit ids to level-3 headings too', () => {
+    render(<Markdown>{'### 概要 {#summary}\n\nBody.'}</Markdown>);
+    const heading = screen.getByRole('heading', { level: 3 });
+    expect(heading.id).toBe('summary');
+    expect(heading.textContent).toBe('概要');
+  });
 });

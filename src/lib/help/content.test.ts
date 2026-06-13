@@ -45,4 +45,24 @@ describe('help content loader', () => {
     expect(slugify('On this page')).toBe('on-this-page');
     expect(slugify('Citations & bibliography!')).toBe('citations-bibliography');
   });
+
+  it('reuses English heading slugs for translated headings (non-Latin script)', () => {
+    const en = getHelpDoc('accessibility', 'en');
+    const ja = getHelpDoc('accessibility', 'ja');
+    expect(en).toBeDefined();
+    expect(ja).toBeDefined();
+    expect(ja!.headings.length).toBe(en!.headings.length);
+    expect(ja!.headings.map((h) => h.id)).toEqual(en!.headings.map((h) => h.id));
+    expect(ja!.headings.every((h) => h.id.length > 0)).toBe(true);
+    expect(ja!.headings.some((h) => h.text !== en!.headings.find((eh) => eh.id === h.id)?.text)).toBe(true);
+  });
+
+  it('reuses English heading slugs for translated headings (Latin script)', () => {
+    const en = getHelpDoc('features', 'en');
+    const it = getHelpDoc('features', 'it');
+    expect(en).toBeDefined();
+    expect(it).toBeDefined();
+    expect(it!.headings.length).toBe(en!.headings.length);
+    expect(it!.headings.map((h) => h.id)).toEqual(en!.headings.map((h) => h.id));
+  });
 });

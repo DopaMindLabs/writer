@@ -43,20 +43,53 @@ export const slugify = (text: string): string =>
     .replace(/-+/g, '-');
 
 const TITLE_RE = /^#\s+(.+?)\s*$/m;
+const HEADING_RE =
+  /^(?<hashes>#{2,3})\s+(?<text>.+?)(?:\s+\{#(?<id>[^}\s]+)\})?\s*$/;
+
+interface HeadingMatch {
+  readonly hashes: string;
+  readonly text: string;
+  readonly id: string | undefined;
+}
+
+const matchHeading = (line: string): HeadingMatch | undefined => {
+  const match = HEADING_RE.exec(line);
+  if (!match?.groups) return undefined;
+  const groups = match.groups as { hashes: string; text: string; id?: string };
+  return { hashes: groups.hashes, text: groups.text, id: groups.id };
+};
 
 const extractHeadings = (body: string): HelpHeading[] => {
-  const lines = body.split('\n');
   const headings: HelpHeading[] = [];
-  for (const line of lines) {
-    const match = /^(#{2,3})\s+(.+?)\s*$/.exec(line);
-    if (!match) continue;
-    const text = match[2];
-    headings.push({ id: slugify(text), depth: match[1].length as 2 | 3, text });
+  for (const line of body.split('\n')) {
+    const heading = matchHeading(line);
+    if (!heading) continue;
+    const depth = heading.hashes.length as 2 | 3;
+    headings.push({ id: heading.id ?? slugify(heading.text), depth, text: heading.text });
   }
   return headings;
 };
 
-const parse = (slug: string, raw: string): HelpDoc => {
+const alignBodyToEnglishSlugs = (
+  body: string,
+  englishSlugs: readonly string[],
+): string => {
+  let i = 0;
+  return body
+    .split('\n')
+    .map((line) => {
+      const heading = matchHeading(line);
+      if (!heading) return line;
+      const index = i;
+      i += 1;
+      if (heading.id !== undefined || index >= englishSlugs.length) return line;
+      const englishSlug = englishSlugs[index];
+      return `${heading.hashes} ${heading.text} {#${englishSlug}}`;
+    })
+    .join('\n');
+};
+
+const parseInternal = (slug: string, raw: string): HelpDoc => {
   const titleMatch = TITLE_RE.exec(raw);
   invariant(titleMatch, () => `help article ${slug} is missing an h1 title`);
   const title = titleMatch[1];
@@ -64,16 +97,48 @@ const parse = (slug: string, raw: string): HelpDoc => {
   return { slug, title, body, headings: extractHeadings(body) };
 };
 
-const resolveRaw = (slug: string, locale: string): string | undefined =>
-  byLocale.get(locale)?.get(slug) ?? byLocale.get(FALLBACK_LOCALE)?.get(slug);
+const englishDocs = ((): Map<string, HelpDoc> => {
+  const out = new Map<string, HelpDoc>();
+  const englishLocale = byLocale.get(FALLBACK_LOCALE);
+  if (!englishLocale) return out;
+  for (const [slug, raw] of englishLocale) {
+    out.set(slug, parseInternal(slug, raw));
+  }
+  return out;
+})();
+
+const parse = (slug: string, raw: string, locale: string): HelpDoc => {
+  if (locale === FALLBACK_LOCALE) return parseInternal(slug, raw);
+  const englishDoc = englishDocs.get(slug);
+  if (!englishDoc) return parseInternal(slug, raw);
+  const titleMatch = TITLE_RE.exec(raw);
+  invariant(titleMatch, () => `help article ${slug} is missing an h1 title`);
+  const title = titleMatch[1];
+  const rawBody = raw.replace(TITLE_RE, '').trim();
+  const englishSlugs = englishDoc.headings.map((h) => h.id);
+  const body = alignBodyToEnglishSlugs(rawBody, englishSlugs);
+  return { slug, title, body, headings: extractHeadings(body) };
+};
+
+const resolveRaw = (
+  slug: string,
+  locale: string,
+): { raw: string; effectiveLocale: string } | undefined => {
+  const localeRaw = byLocale.get(locale)?.get(slug);
+  if (localeRaw !== undefined) return { raw: localeRaw, effectiveLocale: locale };
+  const fallbackRaw = byLocale.get(FALLBACK_LOCALE)?.get(slug);
+  if (fallbackRaw !== undefined)
+    return { raw: fallbackRaw, effectiveLocale: FALLBACK_LOCALE };
+  return undefined;
+};
 
 export const getHelpDoc = (
   slug: string,
   locale: string = FALLBACK_LOCALE,
 ): HelpDoc | undefined => {
-  const raw = resolveRaw(slug, locale);
-  if (raw === undefined) return undefined;
-  return parse(slug, raw);
+  const resolved = resolveRaw(slug, locale);
+  if (!resolved) return undefined;
+  return parse(slug, resolved.raw, resolved.effectiveLocale);
 };
 
 export const hasHelpDoc = (slug: string): boolean =>
