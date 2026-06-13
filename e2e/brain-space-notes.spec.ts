@@ -9,7 +9,7 @@ test('brain space adds a note from the toolbar and deletes it via the detail dra
   page,
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
-  await page.goto(`/#/s/${spaceId}/dump`);
+  await page.goto(`/#/s/${spaceId}/brain-space`);
 
   const canvas = page.getByTestId('brain-canvas');
   await expect(canvas).toBeVisible();
@@ -35,7 +35,7 @@ test('brain space note opens a context menu on right-click and dismisses on Esca
   page,
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
-  await page.goto(`/#/s/${spaceId}/dump`);
+  await page.goto(`/#/s/${spaceId}/brain-space`);
 
   const noteCards = page
     .getByTestId('brain-canvas-content')

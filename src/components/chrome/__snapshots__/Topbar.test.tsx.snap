@@ -256,7 +256,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > foc
           class="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors text-ink-4 hover:bg-paper-2 hover:text-ink-2"
           data-discover="true"
           data-state="closed"
-          href="/s/s1/dump?focus=1"
+          href="/s/s1/brain-space?focus=1"
         >
           <svg
             aria-hidden="true"
@@ -459,7 +459,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > wri
         <a
           class="pb-0.5 transition-colors text-ink-4 hover:text-ink-2"
           data-discover="true"
-          href="/s/s1/dump"
+          href="/s/s1/brain-space"
         >
           space
         </a>

@@ -236,7 +236,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
           class="-ml-px flex items-center gap-2 border-l-2 px-5 py-1.5 transition-colors border-transparent text-ink-2 hover:bg-paper"
           data-discover="true"
           data-testid="sidebar-brain-space-link"
-          href="/s/s1/dump"
+          href="/s/s1/brain-space"
         >
           <span
             class="flex-1 text-[13px]"

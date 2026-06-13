@@ -111,6 +111,7 @@ export const LexicalEditor = ({
                 'min-h-[60vh] outline-none',
                 mode === 'read' && 'caret-transparent',
               )}
+              data-testid="document-body"
               aria-label="Document body"
               autoFocus={autoFocus && editable}
               readOnly={!editable}

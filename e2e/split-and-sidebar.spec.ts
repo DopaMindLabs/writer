@@ -133,7 +133,7 @@ test('sidebar add-doc input cancels via Escape without creating a doc', async ({
   ).toHaveCount(0);
 });
 
-test('sidebar Brain space link navigates to /dump and marks itself active', async ({
+test('sidebar Brain space link navigates to /brain-space and marks itself active', async ({
   page,
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
@@ -146,7 +146,7 @@ test('sidebar Brain space link navigates to /dump and marks itself active', asyn
   await expect(brainLink).toBeVisible();
 
   await brainLink.click();
-  await page.waitForURL(new RegExp(`/s/${spaceId}/dump$`));
+  await page.waitForURL(new RegExp(`/s/${spaceId}/brain-space$`));
   await expect(brainLink).toHaveClass(/border-ink/);
 });
 

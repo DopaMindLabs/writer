@@ -32,7 +32,7 @@ describe('MobileTabs', () => {
       expect(read).toHaveAttribute('href', '/s/s1/d/d1/read');
       const brain = screen.getByTestId('mobile-tabs-brain');
       expect(brain.tagName).toBe('A');
-      expect(brain).toHaveAttribute('href', '/s/s1/dump');
+      expect(brain).toHaveAttribute('href', '/s/s1/brain-space');
     });
 
     it('should not render a split tab (mobile split is deferred to its own PR)', () => {
@@ -53,7 +53,7 @@ describe('MobileTabs', () => {
       expect(screen.getByTestId('mobile-tabs-read').tagName).toBe('BUTTON');
       expect(screen.getByTestId('mobile-tabs-brain')).toHaveAttribute(
         'href',
-        '/s/s1/dump',
+        '/s/s1/brain-space',
       );
     });
 
@@ -114,9 +114,9 @@ describe('MobileTabs', () => {
       );
     });
 
-    it('should mark brain as aria-current on a /dump route', () => {
+    it('should mark brain as aria-current on a /brain-space route', () => {
       renderWithProviders(<MobileTabs spaceId="s1" docId={null} />, {
-        initialEntries: ['/s/s1/dump'],
+        initialEntries: ['/s/s1/brain-space'],
       });
       expect(screen.getByTestId('mobile-tabs-brain')).toHaveAttribute(
         'aria-current',

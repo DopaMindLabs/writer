@@ -1,4 +1,3 @@
-import { useId } from 'react';
 import {
   Dialog,
   DialogClose,
@@ -30,7 +29,6 @@ export const ConfirmDialog = ({
   confirmKind = 'primary',
   onConfirm,
 }: ConfirmDialogProps) => {
-  const descId = useId();
   const handleConfirm = (): void => {
     onConfirm();
     onOpenChange(false);
@@ -40,13 +38,11 @@ export const ConfirmDialog = ({
       <DialogContent
         data-testid="confirm-dialog"
         className="max-w-sm"
-        aria-describedby={description ? descId : undefined}
+        {...(description ? {} : { 'aria-describedby': undefined })}
       >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          {description && (
-            <DialogDescription id={descId}>{description}</DialogDescription>
-          )}
+          {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         <div className="mt-2 flex justify-end gap-2">
           <DialogClose asChild>

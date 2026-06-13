@@ -26,7 +26,7 @@ export const ROUTE_PATHS: Record<RouteName, string> = {
   [RouteName.DocFocus]: '/s/:spaceId/d/:docId/focus',
   [RouteName.DocRead]: '/s/:spaceId/d/:docId/read',
   [RouteName.DocSplit]: '/s/:spaceId/d/:docId/split',
-  [RouteName.BrainSpace]: '/s/:spaceId/dump',
+  [RouteName.BrainSpace]: '/s/:spaceId/brain-space',
   [RouteName.Citations]: '/s/:spaceId/citations',
   [RouteName.Help]: '/help',
   [RouteName.HelpArticle]: '/help/:slug',
@@ -45,7 +45,7 @@ export const routes = {
   docRead: (spaceId: string, docId: string) => `/s/${spaceId}/d/${docId}/read`,
   docSplit: (spaceId: string, docId: string) =>
     `/s/${spaceId}/d/${docId}/split`,
-  brainSpace: (spaceId: string) => `/s/${spaceId}/dump`,
+  brainSpace: (spaceId: string) => `/s/${spaceId}/brain-space`,
   citations: (spaceId: string) => `/s/${spaceId}/citations`,
   help: () => '/help',
   helpArticle: (slug: string, anchor?: string) =>

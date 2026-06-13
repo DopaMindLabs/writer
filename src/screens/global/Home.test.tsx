@@ -1,4 +1,4 @@
-import { renderWithProviders } from '@/test/test-utils';
+import { renderWithProviders, waitFor } from '@/test/test-utils';
 import { seedMultipleSpaces } from '@/test/fixtures';
 import { db } from '@/db/db';
 import { APP_VERSION_LABEL } from '@/lib/version';
@@ -31,8 +31,10 @@ describe('HomeScreen', () => {
     await db.meta.put({ key: 'syncFolderHandle', value: { name: 'Writing' } });
     const { findByTestId } = renderWithProviders(<HomeScreen />);
     const chip = await findByTestId('home-sync-chip');
-    await expect
-      .poll(() => chip.textContent)
-      .toMatch(/folder sync on/i);
+    // waitFor wraps its polls in act() so the db.meta live-query re-render of the
+    // sync chip commits inside act(); expect.poll does not.
+    await waitFor(() => {
+      expect(chip).toHaveTextContent(/folder sync on/i);
+    });
   });
 });

@@ -37,7 +37,7 @@ test('uploads a picture via the drawer, persists across reload, and removes it',
   page,
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
-  await page.goto(`/#/s/${spaceId}/dump`);
+  await page.goto(`/#/s/${spaceId}/brain-space`);
 
   const drawer = await openDrawer(page);
   await drawer
@@ -73,7 +73,7 @@ test('uploads a picture via the drawer, persists across reload, and removes it',
 
 test('enforces the two-image limit per note', async ({ page }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
-  await page.goto(`/#/s/${spaceId}/dump`);
+  await page.goto(`/#/s/${spaceId}/brain-space`);
 
   const drawer = await openDrawer(page);
   await drawer

@@ -10,10 +10,38 @@ This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
 - Run `npm run lint` and `npm run typecheck` before committing; both gate CI.
 - Use `invariant()` and `assertNever()` from `@/lib/invariant` to validate untrusted input.
 - Write all functions as arrow functions (`const f = () => …`), including utilities.
+- **Honour established design principles, not just the linters.** Code must reflect sound
+  design — **single responsibility**, **modularity** (high cohesion, low coupling), depending
+  on **abstractions** rather than concretions (**SOLID**), and a **facade layer** in front of
+  complex subsystems so callers work against a clean interface. Functional programming (arrow
+  functions, immutability, composition, pure functions) is the default style and is encouraged
+  — but it is *how* we express these principles, never a reason to abandon them. A change that
+  passes lint/types but muddies responsibilities, leaks implementation detail, or couples
+  modules together is not done. When a unit grows more than one reason to change, split it.
 - A test file's extension mirrors the file under test: `foo.ts` → `foo.test.ts`,
   `foo.tsx` → `foo.test.tsx`.
-- `src/tours/` is exempt; `src/editor/` relaxes size limits only. For a one-off exception,
-  add `// nasa-exception: <rule> (<reason>)` above an `// eslint-disable-next-line`.
+- **One component per file (going forward).** Each React component lives in its own file,
+  named in PascalCase to match its export (e.g. `TypographyH1.tsx`), with its `.test.tsx` and
+  `.stories.tsx` alongside. Don't co-locate multiple components in one file — extract each into
+  its own module and compose them. When a split produces several related components, group them
+  under a shared folder (e.g. `DocInspector/` containing `DocInspector.tsx` and its
+  sub-components), keeping one component per file within it. Several existing files still bundle
+  private sub-components; treat those as a backlog (like the lint backlog) — don't add new
+  co-located components, and split them out when you next touch the file.
+- **Never relax limits or silence the linter to make code pass.** Do not raise or loosen the
+  size limits (function/file length, etc.), weaken or disable an ESLint rule, or add
+  `// eslint-disable*`, `// nasa-exception`, `@ts-ignore`/`@ts-expect-error`, or any other
+  suppression. Fix the code instead — split the function or file, extract a module, correct the
+  type. If you are convinced a limit genuinely cannot be met by refactoring, **stop and ask the
+  user clearly and explicitly what to do** before changing any config or adding a suppression;
+  do not decide unilaterally. (`src/tours/` and `src/editor/` carry pre-existing scope
+  exemptions in the lint config — that is the existing status quo, not licence to add more.)
+- **Refactor non-compliant files in a separate commit first.** When you need to edit a file
+  that already violates these standards (co-located components, oversized functions, leaked
+  abstractions, etc.), first bring it into compliance and commit that on its own (a
+  `refactor: …` commit with no behaviour change), then apply your actual change in a following
+  commit. Keep the refactor and the behavioural change in distinct commits so each stays small,
+  reviewable, and revertible on its own — never bundle a clean-up into the feature/fix diff.
 - **Legacy support requires explicit permission.** Do not add new code paths, fallbacks,
   fixtures, or migrations whose purpose is to support legacy formats or behaviour (e.g.
   pre-Lexical plain-text bodies) without asking the user first and getting an explicit yes.
@@ -97,18 +125,29 @@ is the source of truth for the accessibility layer; align with it when building 
 ## E2E test coverage (ratcheted)
 
 E2E coverage is gated by a ratchet (`scripts/coverage-ratchet.mjs`, run via
-`npm run test:e2e:coverage`) that compares the live run against the floors in
-`coverage-baseline.json` and only ever raises them toward a 95% cap.
+`npm run test:e2e:coverage`) that compares the live run against the **global** floors in
+`coverage-baseline.json` and only ever raises them toward the cap. The ratchet enforces the
+whole-suite aggregate; **local** (per-feature) coverage is your responsibility to verify and
+is checked in review.
 
-- **New user-facing features must land with ≥ 90% e2e coverage of their own code paths.**
-  Add Playwright specs under `e2e/` alongside the feature; don't rely on unit tests to cover
-  flows a user can click through.
+- **Target ≥ 95% coverage across the board — both global and local.** Every new or changed
+  user-facing feature must reach **≥ 95%** e2e coverage of its own code paths (local) and must
+  not pull any global metric below 95%. Add Playwright specs under `e2e/` alongside the
+  feature; don't rely on unit tests to cover flows a user can click through.
+- **85% local is a hard floor — never below it.** If 95% is *genuinely* unreachable for a
+  feature (e.g. browser APIs that can't be driven headlessly, error paths that need
+  unsimulatable failures), **stop and report back to the user before proceeding, and ask for
+  next steps** — do not silently settle for less or carry on. State which files fall short, the
+  exact percentages, and *why* 95% could not be met, then wait for the user's direction. Even
+  with a justified exception, local coverage for the feature **must not drop below 85%** — if it
+  would, the work is not done; add tests or refactor for testability instead of lowering the
+  bar.
 - **Coverage may only increase.** Never lower a value in `coverage-baseline.json` or relax the
   ratchet to make CI pass — fix the tests instead. When a run raises the floors, commit the
   updated `coverage-baseline.json`.
 - Run `npm run test:e2e:coverage` before committing coverage-affecting changes; it gates CI.
 - `src/editor/**` and `src/tours/**` are excluded from e2e coverage (covered by unit tests); the
-  90% bar applies to the rest of the app.
+  95% target / 85% floor applies to the rest of the app.
 
 ### Running e2e (agents: headless, locally — don't defer to CI)
 
@@ -135,21 +174,29 @@ not a checkbox.
   would fail without it.
 - **A green run is not the objective.** Stability and the absence of unintended changes
   are. Passing tests are a means of confirming that, not the goal itself.
-- **When a test fails, find the root cause and fix the regression.** Do not delete, skip,
-  `.only`/`.skip`, weaken assertions, or rewrite a test just to make it pass. A failing
-  test is signalling that behavior changed — diagnose why.
+- **Tests must never be skipped — this rule is not to be violated.** When a test fails, find
+  the root cause and fix the regression. Do not skip (`.skip`, `it.skip`/`describe.skip`,
+  `xit`/`xdescribe`, `test.skip`, `.fixme`), focus (`.only`), comment out, delete, mark
+  expected-to-fail, weaken assertions on, or rewrite a test just to get a green run — and do
+  not add lint/type suppressions to a test for the same purpose. A failing test is signalling
+  that behaviour changed; diagnose why.
 - The **only** exception is when the user has explicitly agreed that the feature under
   test is being removed or is redundant. In that case, remove the test as part of that
-  agreed change.
+  agreed change. Anything short of that — including a "temporary" skip — requires asking the
+  user first.
 - Run `npm run test:run` (and `npm run test:e2e` for UI-facing changes) before committing,
   alongside `npm run lint` and `npm run typecheck`.
 
 ## Commits & branches
 
-Commits follow [Conventional Commits](https://www.conventionalcommits.org/) and are linted by
-commitlint (the `commit-msg` hook); run `npm run commit` for a guided Commitizen prompt. Branch
-names must be prefixed with a Conventional Commit type, enforced by the `pre-push` hook and the
-**Branch name** CI check (`scripts/validate-branch-name.mjs`):
+**Commit messages, branch names, and PR titles must all strictly follow
+[Conventional Commits](https://www.conventionalcommits.org/)** — no exceptions. Commits are
+linted by commitlint (the `commit-msg` hook); run `npm run commit` for a guided Commitizen
+prompt. The **PR title** must itself be a valid Conventional Commit subject
+(`<type>(<scope>): <description>`, e.g. `feat(citations): import BibTeX`) — the squash-merge
+commit is derived from it, so a non-conforming title breaks the convention on the default
+branch. Branch names must be prefixed with a Conventional Commit type, enforced by the
+`pre-push` hook and the **Branch name** CI check (`scripts/validate-branch-name.mjs`):
 
 - Form: `<type>/<kebab-description>` — e.g. `feat/user-login`, `fix/date-parse`,
   `chore/bump-deps`. Underscores are allowed for suffixes (`feat/user-login_v2`).
@@ -170,6 +217,21 @@ production releases and is changed only through the project's release process, n
   **especially** before anything touching `main` or rewriting shared history (`develop`, release
   branches). State the exact branch, the exact operation, and the blast radius, and wait for
   explicit approval. When in doubt, ask — a wrong guess about the target branch is hard to undo.
+
+## Specification (read before changing behaviour)
+
+[`docs/technical-specification.md`](./docs/technical-specification.md) is the source-of-truth
+feature spec, derived from the test suite. Any change that adds, removes, or alters
+user-facing behaviour must update the relevant spec section **in the same PR** — the same way
+it ships with a test and a help update.
+
+- **Keep it in sync with the tests.** The spec describes flows the e2e/unit suites assert;
+  when you change what the tests assert, change the matching spec section so the two never
+  disagree. Treat a spec that no longer matches the tests as a bug, not stale prose.
+- **Keep the metadata current.** Update the version, feature list, and described flows so they
+  reflect reality (e.g. the spec's version string should track `package.json`, not lag it).
+- **Scope.** Update the sections your change touches; don't rewrite unrelated areas. If a
+  change has no user-facing behaviour, no spec update is needed — say so in the PR.
 
 ## Help content (read before adding or changing features)
 

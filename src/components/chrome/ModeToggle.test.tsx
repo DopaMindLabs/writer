@@ -14,7 +14,7 @@ describe('ModeTabs', () => {
   it('hides per-doc tabs when docId is null', () => {
     const { container } = renderWithProviders(
       <ModeTabs mode="dump" spaceId="s1" docId={null} />,
-      { initialEntries: ['/s/s1/dump'] },
+      { initialEntries: ['/s/s1/brain-space'] },
     );
     expect(container).toMatchSnapshot();
   });
@@ -75,10 +75,10 @@ describe('FocusToggle', () => {
   it('renders the dump mode link with the right href', () => {
     renderWithProviders(
       <FocusToggle mode="dump" spaceId="s1" docId={null} />,
-      { initialEntries: ['/s/s1/dump'] },
+      { initialEntries: ['/s/s1/brain-space'] },
     );
     expect(
       screen.getByRole('link', { name: /enter focus|focus/i }),
-    ).toHaveAttribute('href', expect.stringContaining('/s/s1/dump'));
+    ).toHaveAttribute('href', expect.stringContaining('/s/s1/brain-space'));
   });
 });

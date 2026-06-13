@@ -275,7 +275,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
       class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
       data-discover="true"
       data-testid="mobile-tabs-brain"
-      href="/s/s1/dump"
+      href="/s/s1/brain-space"
     >
       <svg
         aria-hidden="true"
@@ -474,7 +474,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
       class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
       data-discover="true"
       data-testid="mobile-tabs-brain"
-      href="/s/s1/dump"
+      href="/s/s1/brain-space"
     >
       <svg
         aria-hidden="true"

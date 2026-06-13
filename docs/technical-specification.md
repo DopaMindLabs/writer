@@ -64,7 +64,7 @@
 | `/s/:spaceId/d/:docId/focus` | Focus | Minimal-chrome editor. |
 | `/s/:spaceId/d/:docId/read` | Read | Read-only rendering. |
 | `/s/:spaceId/d/:docId/split` | Split | Two-pane view with right-pane picker. |
-| `/s/:spaceId/dump` | Brain Space | Visual note canvas. |
+| `/s/:spaceId/brain-space` | Brain Space | Visual note canvas. |
 | `/s/:spaceId/citations` | Citations | Full-page citations table. |
 | `/s/:spaceId/settings` | Space settings | Per-space configuration. |
 | `*` | Not Found | 404. |
@@ -218,7 +218,7 @@ The per-space navigation column.
 
 - **Header:** editable space title + settings cog (links to per-space settings).
 - **Sections:** grouped doc lists, with an **+ Add doc to *<Section>*** button under each.
-- **Brain space link:** routes to `/s/:spaceId/dump`; shows the unsorted-note count and highlights when active.
+- **Brain space link:** routes to `/s/:spaceId/brain-space`; shows the unsorted-note count and highlights when active.
 - **Footer:** Home, About, GitHub links.
 - **Mobile:** replaced by a hamburger button in the topbar that opens the same content in a dialog drawer. The drawer closes when the user taps a destination.
 

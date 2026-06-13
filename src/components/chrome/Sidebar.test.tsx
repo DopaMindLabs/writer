@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
+import { act, renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { sampleSpace, seedBasicSpace } from '@/test/fixtures';
 import { Sidebar } from './Sidebar';
@@ -167,7 +167,7 @@ describe('Sidebar', () => {
       await user.click(await screen.findByTestId('sidebar-space-title'));
       const input = await screen.findByTestId('sidebar-space-title-input');
       await user.clear(input);
-      input.blur();
+      act(() => { input.blur(); });
       await waitFor(() => {
         expect(screen.getByTestId('sidebar-space-title')).toHaveTextContent(
           'Test Space',
@@ -247,7 +247,7 @@ describe('Sidebar', () => {
         'sidebar-section-sec1-add-input',
       );
       await user.type(input, 'partial');
-      input.blur();
+      act(() => { input.blur(); });
       await waitFor(() =>
         expect(
           screen.queryByTestId('sidebar-section-sec1-add-input'),
@@ -312,7 +312,7 @@ describe('Sidebar', () => {
       const input = await screen.findByTestId(
         'sidebar-section-sec1a-add-input',
       );
-      input.blur();
+      act(() => { input.blur(); });
       await waitFor(() =>
         expect(
           screen.queryByTestId('sidebar-section-sec1a-add-input'),
@@ -372,7 +372,7 @@ describe('Sidebar', () => {
         initialEntries: ['/s/s1/d/d1'],
       });
       const bs = await screen.findByTestId('sidebar-brain-space-link');
-      expect(bs).toHaveAttribute('href', '/s/s1/dump');
+      expect(bs).toHaveAttribute('href', '/s/s1/brain-space');
       await waitFor(() => {
         expect(
           screen.getByTestId('sidebar-brain-space-link-count'),
@@ -380,10 +380,10 @@ describe('Sidebar', () => {
       });
     });
 
-    it('should mark the brain-space link active when the URL ends with /dump', async () => {
+    it('should mark the brain-space link active when the URL ends with /brain-space', async () => {
       await seedBasicSpace();
       renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
-        initialEntries: ['/s/s1/dump'],
+        initialEntries: ['/s/s1/brain-space'],
       });
       const bs = await screen.findByTestId('sidebar-brain-space-link');
       expect(bs.className).toMatch(/font-medium/);

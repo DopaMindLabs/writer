@@ -81,7 +81,7 @@ describe('SpaceSettingsScreen', () => {
       renderAtSpaceSettings();
       const nameInput = await screen.findByTestId('space-settings-name-input');
       await user.clear(nameInput);
-      nameInput.blur();
+      act(() => { nameInput.blur(); });
       await waitFor(() =>
         expect(nameInput).toHaveValue('Test Space'),
       );
@@ -132,7 +132,7 @@ describe('SpaceSettingsScreen', () => {
       renderAtSpaceSettings();
       const tagInput = await screen.findByTestId('space-settings-tag-input');
       await user.clear(tagInput);
-      tagInput.blur();
+      act(() => { tagInput.blur(); });
       await waitFor(() => expect(tagInput).toHaveValue('TST'));
       expect(updateSpy).not.toHaveBeenCalled();
       updateSpy.mockRestore();

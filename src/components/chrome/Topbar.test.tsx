@@ -284,7 +284,7 @@ describe('Topbar', () => {
     it('should show the FocusToggle when mode is dump even without a docId', () => {
       renderWithProviders(
         <Topbar spaceId="s1" docId={null} spaceName="Test" mode="dump" />,
-        { initialEntries: ['/s/s1/dump'] },
+        { initialEntries: ['/s/s1/brain-space'] },
       );
       expect(screen.getByTestId('focus-toggle')).toBeInTheDocument();
     });

@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { fireEvent } from '@testing-library/react';
 import { renderAtRoute, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
-import { FIXED_TIME, sampleSpace } from '@/test/fixtures';
+import { FIXED_TIME, sampleSpace, serializedBody } from '@/test/fixtures';
 import type { Doc } from '@/db/schema';
 import { useUI } from '@/store/ui';
 
@@ -22,7 +22,7 @@ const docA: Doc = {
   spaceId: 's1',
   sectionId: 'sec1',
   name: 'Left Doc',
-  body: 'left body',
+  body: serializedBody('left body'),
   meta: { wordCount: 0 },
   updatedAt: FIXED_TIME,
 };
@@ -30,13 +30,13 @@ const docB: Doc = {
   ...docA,
   id: 'd2',
   name: 'Right Doc',
-  body: 'right body',
+  body: serializedBody('right body'),
 };
 const docC: Doc = {
   ...docA,
   id: 'd3',
   name: 'Third Doc',
-  body: 'third',
+  body: serializedBody('third'),
 };
 
 const seed = async () => {
