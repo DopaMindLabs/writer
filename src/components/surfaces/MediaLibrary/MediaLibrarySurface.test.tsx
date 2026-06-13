@@ -36,7 +36,7 @@ describe('MediaLibrarySurface', () => {
     });
 
     fireEvent.click(screen.getByTestId('media-row-a-select'));
-    expect(screen.getByTestId('media-viewer-meta')).toHaveTextContent(
+    expect(screen.getByTestId('pdf-viewer-summary')).toHaveTextContent(
       'attention.pdf',
     );
 
