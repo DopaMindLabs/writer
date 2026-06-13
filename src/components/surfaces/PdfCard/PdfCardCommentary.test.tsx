@@ -21,9 +21,24 @@ const note = (overrides: Partial<Note> = {}): Note => ({
 describe('PdfCardCommentary', () => {
   it('renders the note body', () => {
     renderWithProviders(<PdfCardCommentary note={note()} />);
-    expect(screen.getByTestId('brain-note-n1-body')).toHaveTextContent(
-      'methods section',
-    );
+    const body = screen.getByTestId('brain-note-n1-body');
+    fireEvent.pointerDown(body);
+    expect(body).toHaveTextContent('methods section');
+  });
+
+  it('cancels an edit on Escape without persisting', async () => {
+    await db.notes.add(note());
+    renderWithProviders(<PdfCardCommentary note={note()} />);
+    fireEvent.click(screen.getByTestId('brain-note-n1-body'));
+    const input = screen.getByTestId('brain-note-n1-body-input');
+    fireEvent.change(input, { target: { value: 'discarded' } });
+    fireEvent.keyDown(input, { key: 'Escape' });
+    await waitFor(() => {
+      expect(screen.getByTestId('brain-note-n1-body')).toHaveTextContent(
+        'methods section',
+      );
+    });
+    expect((await db.notes.get('n1'))?.body).toBe('methods section');
   });
 
   it('edits and persists the commentary on blur, promoting state to user', async () => {

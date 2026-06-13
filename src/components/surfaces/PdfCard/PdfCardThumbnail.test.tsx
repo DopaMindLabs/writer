@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { renderWithProviders } from '@/test/test-utils';
 import { PdfCardThumbnail } from './PdfCardThumbnail';
 
@@ -16,6 +16,8 @@ describe('PdfCardThumbnail', () => {
     expect(meta).toHaveTextContent('PDF');
     expect(meta).toHaveTextContent('1706.03762.pdf');
     expect(meta).toHaveTextContent('8 pages');
-    expect(screen.getByTestId('brain-note-n1-pdf-thumb')).toBeInTheDocument();
+    const thumb = screen.getByTestId('brain-note-n1-pdf-thumb');
+    fireEvent.pointerDown(thumb);
+    expect(thumb).toBeInTheDocument();
   });
 });

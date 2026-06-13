@@ -27,6 +27,19 @@ describe('PdfCardContent', () => {
     });
   });
 
+  it('auto-fetches a URL source, shows an error for an untrusted host, and reopens the picker', async () => {
+    renderWithProviders(
+      <PdfCardContent note={note({ pdfUrl: 'https://untrusted.test/x.pdf' })} />,
+    );
+    await waitFor(() => {
+      expect(screen.getByTestId('brain-note-n1-pdf-error')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Edit source' }));
+    await waitFor(() => {
+      expect(screen.getByTestId('media-picker-dialog')).toBeInTheDocument();
+    });
+  });
+
   it('renders a library-sourced PDF as a thumbnail with its name', async () => {
     await db.media.put({
       id: 'm1',

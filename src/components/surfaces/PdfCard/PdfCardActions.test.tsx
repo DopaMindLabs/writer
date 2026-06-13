@@ -18,6 +18,7 @@ const setup = (overrides: Partial<Parameters<typeof PdfCardActions>[0]> = {}) =>
 describe('PdfCardActions', () => {
   it('fires the open-beside callback', () => {
     const props = setup();
+    fireEvent.pointerDown(screen.getByTestId('brain-note-n1-open-beside'));
     fireEvent.click(screen.getByTestId('brain-note-n1-open-beside'));
     expect(props.onOpenBeside).toHaveBeenCalledTimes(1);
   });

@@ -8,6 +8,7 @@ describe('PdfCardEmpty', () => {
     renderWithProviders(<PdfCardEmpty noteId="n1" onPick={onPick} />);
     const button = screen.getByTestId('brain-note-n1-pdf-empty');
     expect(button).toHaveTextContent('Select PDF');
+    fireEvent.pointerDown(button);
     fireEvent.click(button);
     expect(onPick).toHaveBeenCalledTimes(1);
   });
