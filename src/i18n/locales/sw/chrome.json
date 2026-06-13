@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "andika", "read": "soma", "split": "gawanya", "space": "nafasi" },
   "mobileNav": { "title": "Urambazaji", "close": "Funga urambazaji" },
-  "mobileTabs": { "write": "andika", "read": "soma", "brain": "brain", "cite": "nukuu", "more": "zaidi" },
+  "mobileTabs": { "write": "andika", "read": "soma", "split": "gawanya", "brain": "brain", "cite": "nukuu", "more": "zaidi" },
   "mobileMore": {
     "title": "Zaidi",
     "close": "Funga zaidi",
+    "groupDoc": "Hati hii",
+    "groupSpace": "Nafasi hii",
+    "groupApp": "App",
     "modeLabel": "Hali",
     "menuLabel": "Menyu",
     "settings": "Mipangilio",
@@ -56,7 +59,8 @@
     "about": "Kuhusu",
     "help": "Msaada na njia za mkato",
     "whatsNew": "Habari mpya",
-    "feedback": "Tuma maoni…"
+    "feedback": "Tuma maoni…",
+    "contact": "Wasiliana"
   },
   "quickSettings": {
     "trigger": "LIpsum Writer",
@@ -101,7 +105,7 @@
     "expand": "Panua mkaguzi",
     "collapse": "Kunja mkaguzi",
     "tabs": { "outline": "MUHTASARI", "info": "INFO", "history": "HISTORIA", "actions": "VITENDO" },
-    "outline": { "title": "MUHTASARI", "sectionSummary": "{{count}} SEHEMU" },
+    "outline": { "title": "MUHTASARI", "sectionSummary": "{{count}} SEHEMU", "empty": "Bado hakuna vichwa vya habari. Ongeza vichwa vya habari kwenye hati ili kuunda muhtasari wake." },
     "info": {
       "title": "INFO",
       "words": "Maneno",

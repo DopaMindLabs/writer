@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "쓰기", "read": "읽기", "split": "분할", "space": "스페이스" },
   "mobileNav": { "title": "탐색", "close": "탐색 닫기" },
-  "mobileTabs": { "write": "쓰기", "read": "읽기", "brain": "brain", "cite": "인용", "more": "더보기" },
+  "mobileTabs": { "write": "쓰기", "read": "읽기", "split": "분할", "brain": "brain", "cite": "인용", "more": "더보기" },
   "mobileMore": {
     "title": "더보기",
     "close": "더보기 닫기",
+    "groupDoc": "이 문서",
+    "groupSpace": "이 스페이스",
+    "groupApp": "앱",
     "modeLabel": "모드",
     "menuLabel": "메뉴",
     "settings": "설정",
@@ -56,7 +59,8 @@
     "about": "정보",
     "help": "도움말 및 단축키",
     "whatsNew": "새 소식",
-    "feedback": "피드백 보내기…"
+    "feedback": "피드백 보내기…",
+    "contact": "연락처"
   },
   "quickSettings": {
     "trigger": "LIpsum Writer",
@@ -101,7 +105,7 @@
     "expand": "검사기 확장",
     "collapse": "검사기 축소",
     "tabs": { "outline": "개요", "info": "정보", "history": "기록", "actions": "작업" },
-    "outline": { "title": "개요", "sectionSummary": "{{count}}개 섹션" },
+    "outline": { "title": "개요", "sectionSummary": "{{count}}개 섹션", "empty": "아직 제목이 없습니다. 문서에 제목을 추가하여 개요를 만드세요." },
     "info": {
       "title": "정보",
       "words": "단어",

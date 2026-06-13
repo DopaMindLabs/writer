@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "scrivi", "read": "leggi", "split": "diviso", "space": "spazio" },
   "mobileNav": { "title": "Navigazione", "close": "Chiudi navigazione" },
-  "mobileTabs": { "write": "scrivi", "read": "leggi", "brain": "brain", "cite": "cita", "more": "altro" },
+  "mobileTabs": { "write": "scrivi", "read": "leggi", "split": "dividi", "brain": "brain", "cite": "cita", "more": "altro" },
   "mobileMore": {
     "title": "Altro",
     "close": "Chiudi altro",
+    "groupDoc": "Questo documento",
+    "groupSpace": "Questo spazio",
+    "groupApp": "App",
     "modeLabel": "Modo",
     "menuLabel": "Menu",
     "settings": "Impostazioni",
@@ -56,7 +59,8 @@
     "about": "Informazioni",
     "help": "Aiuto e scorciatoie",
     "whatsNew": "Novità",
-    "feedback": "Invia feedback…"
+    "feedback": "Invia feedback…",
+    "contact": "Contatto"
   },
   "quickSettings": {
     "trigger": "LIpsum Writer",
@@ -101,7 +105,7 @@
     "expand": "Espandi ispettore",
     "collapse": "Comprimi ispettore",
     "tabs": { "outline": "INDICE", "info": "INFO", "history": "CRONOLOGIA", "actions": "AZIONI" },
-    "outline": { "title": "INDICE", "sectionSummary": "{{count}} SEZIONI" },
+    "outline": { "title": "INDICE", "sectionSummary": "{{count}} SEZIONI", "empty": "Nessun titolo ancora. Aggiungi titoli al documento per costruirne la struttura." },
     "info": {
       "title": "INFO",
       "words": "Parole",

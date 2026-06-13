@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "rašyti", "read": "skaityti", "split": "padalinti", "space": "erdvė" },
   "mobileNav": { "title": "Navigacija", "close": "Uždaryti navigaciją" },
-  "mobileTabs": { "write": "rašyti", "read": "skaityti", "brain": "brain", "cite": "cituoti", "more": "daugiau" },
+  "mobileTabs": { "write": "rašyti", "read": "skaityti", "split": "padalyti", "brain": "brain", "cite": "cituoti", "more": "daugiau" },
   "mobileMore": {
     "title": "Daugiau",
     "close": "Uždaryti daugiau",
+    "groupDoc": "Šis dokumentas",
+    "groupSpace": "Ši erdvė",
+    "groupApp": "Programa",
     "modeLabel": "Režimas",
     "menuLabel": "Meniu",
     "settings": "Nustatymai",
@@ -56,7 +59,8 @@
     "about": "Apie",
     "help": "Pagalba ir nuorodos",
     "whatsNew": "Kas naujo",
-    "feedback": "Siųsti atsiliepimą…"
+    "feedback": "Siųsti atsiliepimą…",
+    "contact": "Kontaktas"
   },
   "quickSettings": {
     "trigger": "LIpsum Writer",
@@ -101,7 +105,7 @@
     "expand": "Išplėsti inspektorių",
     "collapse": "Suskleisti inspektorių",
     "tabs": { "outline": "STRUKTŪRA", "info": "INFO", "history": "ISTORIJA", "actions": "VEIKSMAI" },
-    "outline": { "title": "STRUKTŪRA", "sectionSummary": "{{count}} SKYRIAI" },
+    "outline": { "title": "STRUKTŪRA", "sectionSummary": "{{count}} SKYRIAI", "empty": "Dar nėra antraščių. Pridėkite antraštes į dokumentą, kad sukurtumėte jo struktūrą." },
     "info": {
       "title": "INFO",
       "words": "Žodžiai",

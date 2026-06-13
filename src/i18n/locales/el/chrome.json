@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "γράψε", "read": "διάβασε", "split": "διαίρεση", "space": "χώρος" },
   "mobileNav": { "title": "Πλοήγηση", "close": "Κλείσιμο πλοήγησης" },
-  "mobileTabs": { "write": "γράψε", "read": "διάβασε", "brain": "brain", "cite": "παραπομπή", "more": "περισσότερα" },
+  "mobileTabs": { "write": "γράψε", "read": "διάβασε", "split": "διαχωρισμός", "brain": "brain", "cite": "παραπομπή", "more": "περισσότερα" },
   "mobileMore": {
     "title": "Περισσότερα",
     "close": "Κλείσιμο περισσότερων",
+    "groupDoc": "Αυτό το έγγραφο",
+    "groupSpace": "Αυτός ο χώρος",
+    "groupApp": "Εφαρμογή",
     "modeLabel": "Λειτουργία",
     "menuLabel": "Μενού",
     "settings": "Ρυθμίσεις",
@@ -56,7 +59,8 @@
     "about": "Σχετικά",
     "help": "Βοήθεια και συντομεύσεις",
     "whatsNew": "Τι νέο υπάρχει",
-    "feedback": "Αποστολή σχολίων…"
+    "feedback": "Αποστολή σχολίων…",
+    "contact": "Επικοινωνία"
   },
   "quickSettings": {
     "trigger": "LIpsum Writer",
@@ -101,7 +105,7 @@
     "expand": "Επέκταση επιθεωρητή",
     "collapse": "Σύμπτυξη επιθεωρητή",
     "tabs": { "outline": "ΠΕΡΙΓΡΑΜΜΑ", "info": "ΠΛΗΡ", "history": "ΙΣΤΟΡΙΚΟ", "actions": "ΕΝΕΡΓΕΙΕΣ" },
-    "outline": { "title": "ΠΕΡΙΓΡΑΜΜΑ", "sectionSummary": "{{count}} ΕΝΟΤΗΤΕΣ" },
+    "outline": { "title": "ΠΕΡΙΓΡΑΜΜΑ", "sectionSummary": "{{count}} ΕΝΟΤΗΤΕΣ", "empty": "Δεν υπάρχουν ακόμη επικεφαλίδες. Προσθέστε επικεφαλίδες στο έγγραφο για να δημιουργήσετε τη διάρθρωσή του." },
     "info": {
       "title": "ΠΛΗΡ",
       "words": "Λέξεις",

@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "skriv", "read": "læs", "split": "del", "space": "rum" },
   "mobileNav": { "title": "Navigation", "close": "Luk navigation" },
-  "mobileTabs": { "write": "skriv", "read": "læs", "brain": "brain", "cite": "citér", "more": "mere" },
+  "mobileTabs": { "write": "skriv", "read": "læs", "split": "del", "brain": "brain", "cite": "citér", "more": "mere" },
   "mobileMore": {
     "title": "Mere",
     "close": "Luk mere",
+    "groupDoc": "Dette dokument",
+    "groupSpace": "Dette rum",
+    "groupApp": "App",
     "modeLabel": "Tilstand",
     "menuLabel": "Menu",
     "settings": "Indstillinger",
@@ -56,7 +59,8 @@
     "about": "Om",
     "help": "Hjælp og genveje",
     "whatsNew": "Nyheder",
-    "feedback": "Send feedback…"
+    "feedback": "Send feedback…",
+    "contact": "Kontakt"
   },
   "quickSettings": {
     "trigger": "LIpsum Writer",
@@ -101,7 +105,7 @@
     "expand": "Udvid inspektør",
     "collapse": "Skjul inspektør",
     "tabs": { "outline": "OVERSIGT", "info": "INFO", "history": "HISTORIK", "actions": "HANDLINGER" },
-    "outline": { "title": "OVERSIGT", "sectionSummary": "{{count}} SEKTIONER" },
+    "outline": { "title": "OVERSIGT", "sectionSummary": "{{count}} SEKTIONER", "empty": "Ingen overskrifter endnu. Tilføj overskrifter til dokumentet for at opbygge dets disposition." },
     "info": {
       "title": "INFO",
       "words": "Ord",

@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "skrifa", "read": "lesa", "split": "skipta", "space": "svæði" },
   "mobileNav": { "title": "Leiðsögn", "close": "Loka leiðsögn" },
-  "mobileTabs": { "write": "skrifa", "read": "lesa", "brain": "brain", "cite": "vitna", "more": "meira" },
+  "mobileTabs": { "write": "skrifa", "read": "lesa", "split": "skipta", "brain": "brain", "cite": "vitna", "more": "meira" },
   "mobileMore": {
     "title": "Meira",
     "close": "Loka meira",
+    "groupDoc": "Þetta skjal",
+    "groupSpace": "Þetta rými",
+    "groupApp": "App",
     "modeLabel": "Hamur",
     "menuLabel": "Valmynd",
     "settings": "Stillingar",
@@ -56,7 +59,8 @@
     "about": "Um",
     "help": "Hjálp og flýtileiðir",
     "whatsNew": "Hvað er nýtt",
-    "feedback": "Senda ábendingu…"
+    "feedback": "Senda ábendingu…",
+    "contact": "Samband"
   },
   "quickSettings": {
     "trigger": "LIpsum Writer",
@@ -101,7 +105,7 @@
     "expand": "Stækka skoðara",
     "collapse": "Minnka skoðara",
     "tabs": { "outline": "YFIRLIT", "info": "UPPL", "history": "SAGA", "actions": "AÐGERÐIR" },
-    "outline": { "title": "YFIRLIT", "sectionSummary": "{{count}} KAFLAR" },
+    "outline": { "title": "YFIRLIT", "sectionSummary": "{{count}} KAFLAR", "empty": "Engar fyrirsagnir enn. Bættu fyrirsögnum við skjalið til að búa til yfirlit þess." },
     "info": {
       "title": "UPPL",
       "words": "Orð",

@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "scrie", "read": "citește", "split": "divizat", "space": "spațiu" },
   "mobileNav": { "title": "Navigație", "close": "Închide navigația" },
-  "mobileTabs": { "write": "scrie", "read": "citește", "brain": "brain", "cite": "citează", "more": "mai mult" },
+  "mobileTabs": { "write": "scrie", "read": "citește", "split": "divizat", "brain": "brain", "cite": "citează", "more": "mai mult" },
   "mobileMore": {
     "title": "Mai mult",
     "close": "Închide mai mult",
+    "groupDoc": "Acest document",
+    "groupSpace": "Acest spațiu",
+    "groupApp": "Aplicație",
     "modeLabel": "Mod",
     "menuLabel": "Meniu",
     "settings": "Setări",
@@ -56,7 +59,8 @@
     "about": "Despre",
     "help": "Ajutor și scurtături",
     "whatsNew": "Noutăți",
-    "feedback": "Trimite feedback…"
+    "feedback": "Trimite feedback…",
+    "contact": "Contact"
   },
   "quickSettings": {
     "trigger": "LIpsum Writer",
@@ -101,7 +105,7 @@
     "expand": "Extinde inspectorul",
     "collapse": "Restrânge inspectorul",
     "tabs": { "outline": "STRUCTURĂ", "info": "INFO", "history": "ISTORIC", "actions": "ACȚIUNI" },
-    "outline": { "title": "STRUCTURĂ", "sectionSummary": "{{count}} SECȚIUNI" },
+    "outline": { "title": "STRUCTURĂ", "sectionSummary": "{{count}} SECȚIUNI", "empty": "Fără titluri deocamdată. Adăugați titluri în document pentru a construi structura acestuia." },
     "info": {
       "title": "INFO",
       "words": "Cuvinte",

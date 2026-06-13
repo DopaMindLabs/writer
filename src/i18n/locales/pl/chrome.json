@@ -45,10 +45,13 @@
   },
   "modeToggle": { "write": "pisz", "read": "czytaj", "split": "podziel", "space": "przestrzeń" },
   "mobileNav": { "title": "Nawigacja", "close": "Zamknij nawigację" },
-  "mobileTabs": { "write": "pisz", "read": "czytaj", "brain": "brain", "cite": "cytuj", "more": "więcej" },
+  "mobileTabs": { "write": "pisz", "read": "czytaj", "split": "podziel", "brain": "brain", "cite": "cytuj", "more": "więcej" },
   "mobileMore": {
     "title": "Więcej",
     "close": "Zamknij więcej",
+    "groupDoc": "Ten dokument",
+    "groupSpace": "Ta przestrzeń",
+    "groupApp": "Aplikacja",
     "modeLabel": "Tryb",
     "menuLabel": "Menu",
     "settings": "Ustawienia",
@@ -56,7 +59,8 @@
     "about": "O aplikacji",
     "help": "Pomoc i skróty",
     "whatsNew": "Co nowego",
-    "feedback": "Wyślij opinię…"
+    "feedback": "Wyślij opinię…",
+    "contact": "Kontakt"
   },
   "quickSettings": {
     "trigger": "LIpsum Writer",
@@ -101,7 +105,7 @@
     "expand": "Rozwiń inspektora",
     "collapse": "Zwiń inspektora",
     "tabs": { "outline": "ZARYS", "info": "INFO", "history": "HISTORIA", "actions": "AKCJE" },
-    "outline": { "title": "ZARYS", "sectionSummary": "{{count}} SEKCJI" },
+    "outline": { "title": "ZARYS", "sectionSummary": "{{count}} SEKCJI", "empty": "Nie ma jeszcze nagłówków. Dodaj nagłówki do dokumentu, aby zbudować jego zarys." },
     "info": {
       "title": "INFO",
       "words": "Słowa",
