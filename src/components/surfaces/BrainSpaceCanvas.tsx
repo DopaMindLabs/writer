@@ -41,6 +41,8 @@ const DEFAULT_W = 184;
 const DEFAULT_H = 80;
 const IMAGE_DEFAULT_W = 240;
 const IMAGE_DEFAULT_H = 200;
+const PDF_REF_DEFAULT_W = 240;
+const PDF_REF_DEFAULT_H = 220;
 const CONTENT_MARGIN = 200;
 
 interface ContentExtent {
@@ -155,6 +157,18 @@ const viewportOrigin = (scroller: HTMLDivElement | null) => ({
   t: scroller ? Math.round(scroller.scrollTop) : 0,
 });
 
+const sizeForLayout = (layout: NoteLayout): { w: number; h: number } => {
+  switch (layout) {
+    case NoteLayout.Image:
+      return { w: IMAGE_DEFAULT_W, h: IMAGE_DEFAULT_H };
+    case NoteLayout.PdfRef:
+      return { w: PDF_REF_DEFAULT_W, h: PDF_REF_DEFAULT_H };
+    case NoteLayout.Text:
+    default:
+      return { w: DEFAULT_W, h: DEFAULT_H };
+  }
+};
+
 const buildNote = (
   spaceId: string,
   kind: NoteKind,
@@ -163,14 +177,14 @@ const buildNote = (
 ): Note => {
   const jitter = (noteCount * 24) % 240;
   const type = getNoteType(kind);
-  const isImage = type.layout === NoteLayout.Image;
+  const { w, h } = sizeForLayout(type.layout);
   return {
     id: newId(),
     spaceId,
     l: origin.l + 24 + jitter,
     t: origin.t + 24 + jitter,
-    w: isImage ? IMAGE_DEFAULT_W : DEFAULT_W,
-    h: isImage ? IMAGE_DEFAULT_H : DEFAULT_H,
+    w,
+    h,
     kind,
     state: NoteState.User,
     body: '',

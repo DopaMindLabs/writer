@@ -48,11 +48,13 @@ export enum NoteKind {
   LooseEnd = 'loose-end',
   Blank = 'blank',
   Image = 'image',
+  PdfRef = 'pdf-ref',
 }
 
 export enum NoteLayout {
   Text = 'text',
   Image = 'image',
+  PdfRef = 'pdf-ref',
 }
 
 export enum NoteState {
@@ -76,6 +78,17 @@ export interface Note {
   createdAt: number;
   layout?: NoteLayout;
   typeVersion?: string;
+  pdfUrl?: string;
+}
+
+export interface NoteUrlCache {
+  noteId: string;
+  url: string;
+  mime: string;
+  size: number;
+  blob: Blob;
+  pageCount: number;
+  fetchedAt: number;
 }
 
 export interface NoteAttachment {
