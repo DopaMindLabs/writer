@@ -1,5 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@/test/test-utils';
+import type { LucideIcon } from '@/components/libs/icons';
 import { InlineBanner } from './InlineBanner';
 
 describe('InlineBanner', () => {
@@ -50,6 +51,25 @@ describe('InlineBanner', () => {
     render(<InlineBanner kind="success" title="Imported" />);
     expect(screen.getByText('Imported')).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveClass('text-success');
+  });
+
+  it('renders no leading icon when icon is null', () => {
+    const { container } = render(
+      <InlineBanner kind="error" icon={null} title="No glyph" />,
+    );
+    expect(container.querySelector('svg')).not.toBeInTheDocument();
+  });
+
+  it('renders an overridden icon in place of the default glyph', () => {
+    const Custom = ((props: { className?: string }) => (
+      <svg data-testid="custom-icon" {...props} />
+    )) as unknown as LucideIcon;
+    render(
+      <InlineBanner kind="error" icon={Custom} title="Custom glyph">
+        body
+      </InlineBanner>,
+    );
+    expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
   });
 
   describe('snapshot', () => {

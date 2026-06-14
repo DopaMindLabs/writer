@@ -5,6 +5,10 @@ export type InspectorMode = 'none' | 'icons' | 'expanded';
 export type InspectorSection = 'outline' | 'info' | 'history' | 'actions';
 export type ReadingWidth = 's' | 'm' | 'l';
 export type DiffMode = 'inline' | 'side-by-side';
+export interface MediaReadingPaneSource {
+  source: 'note-pdf';
+  noteId: string;
+}
 
 interface UIState {
   currentSpaceId: string | null;
@@ -27,6 +31,7 @@ interface UIState {
   saveVersionOpen: boolean;
   diffMode: DiffMode;
   compareRevisionIds: { base: string | null; compare: string | null };
+  mediaReadingPane: MediaReadingPaneSource | null;
   setCurrentSpaceId: (id: string | null) => void;
   setCurrentDocId: (id: string | null) => void;
   setTheme: (theme: Theme) => void;
@@ -53,6 +58,8 @@ interface UIState {
     base: string | null;
     compare: string | null;
   }) => void;
+  openMediaReadingPaneForNote: (noteId: string) => void;
+  closeMediaReadingPane: () => void;
 }
 
 const PERSIST_KEY = 'lorem-ui';
@@ -172,6 +179,7 @@ const initialState = () => ({
   saveVersionOpen: false,
   diffMode: sanitizeDiffMode(persisted.diffMode),
   compareRevisionIds: { base: null, compare: null },
+  mediaReadingPane: null,
 });
 
 const createActions = (
@@ -186,7 +194,7 @@ const createActions = (
 
 const createDocActions = (set: SetState, snapshot: Snapshot) => ({
   setCurrentSpaceId: (id: string | null) => {
-    set({ currentSpaceId: id });
+    set({ currentSpaceId: id, mediaReadingPane: null });
     persist(snapshot({ currentSpaceId: id }));
   },
   setCurrentDocId: (id: string | null) => { set({ currentDocId: id }); },
@@ -231,6 +239,10 @@ const createToggleActions = (set: SetState, get: GetState) => ({
     base: string | null;
     compare: string | null;
   }) => { set({ compareRevisionIds }); },
+  openMediaReadingPaneForNote: (noteId: string) => {
+    set({ mediaReadingPane: { source: 'note-pdf', noteId } });
+  },
+  closeMediaReadingPane: () => { set({ mediaReadingPane: null }); },
 });
 
 const createInspectorActions = (

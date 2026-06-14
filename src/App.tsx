@@ -16,6 +16,7 @@ import { ThemeProvider } from '@/theme/ThemeProvider';
 import { A11yPreferenceProvider } from '@/theme/A11yPreferenceProvider';
 import { SyncScheduler } from '@/lib/sync/SyncScheduler';
 import { resetAndReseed } from '@/db/seed';
+import { initializeTrustedDomains } from '@/lib/trusted-domains';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
 import { HomeScreen } from '@/screens/global/Home';
 import { AboutScreen } from '@/screens/global/About';
@@ -27,6 +28,7 @@ import { ReadScreen } from '@/screens/space/Read';
 import { SplitScreen } from '@/screens/space/Split';
 import { BrainSpaceScreen } from '@/screens/space/BrainSpace';
 import { CitationsScreen } from '@/screens/space/Citations';
+import { MediaLibraryScreen } from '@/screens/space/MediaLibrary';
 import { TemplatesScreen } from '@/screens/global/Templates';
 import { HelpScreen } from '@/screens/global/Help';
 import { NotFoundScreen } from '@/screens/global/NotFound';
@@ -68,6 +70,7 @@ const router = createAppRouter([
       { path: ROUTE_PATHS[RouteName.DocSplit], element: <SplitScreen /> },
       { path: ROUTE_PATHS[RouteName.BrainSpace], element: <BrainSpaceScreen /> },
       { path: ROUTE_PATHS[RouteName.Citations], element: <CitationsScreen /> },
+      { path: ROUTE_PATHS[RouteName.Media], element: <MediaLibraryScreen /> },
       { path: '*', element: <NotFoundScreen /> },
     ],
   },
@@ -96,6 +99,7 @@ const useAppBoot = (): {
         url.searchParams.delete('reseed');
         window.history.replaceState({}, '', url.pathname + url.search);
       }
+      await initializeTrustedDomains();
     };
     run()
       .then(() => {

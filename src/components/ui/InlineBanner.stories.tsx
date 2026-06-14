@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { AlertCircle } from '@/components/libs/icons';
 import { InlineBanner } from './InlineBanner';
 
 const meta = {
@@ -34,4 +35,23 @@ export const Reconnect: Story = {
 
 export const Dismissible: Story = {
   args: { kind: 'success', title: 'Imported', children: '12 files imported.', dismissible: true },
+};
+
+export const ErrorWithOverriddenIcon: Story = {
+  args: {
+    kind: 'error',
+    icon: AlertCircle,
+    title: "Couldn't fetch this PDF",
+    children: 'This domain is not in your trusted list.',
+    action: 'Edit source',
+  },
+};
+
+export const NoIcon: Story = {
+  args: {
+    kind: 'error',
+    icon: null,
+    title: 'Upload failed',
+    children: 'Please try again.',
+  },
 };

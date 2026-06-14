@@ -24,12 +24,17 @@ describe('LoremDB migrations', () => {
       meta: 'key',
     });
     await v1.open();
-    await v1.table('sections').add({
-      id: 'sec-legacy',
-      spaceId: 's1',
-      label: 'Legacy',
-      order: 0,
-    });
+    await v1.table('sections').bulkAdd([
+      { id: 'sec-legacy', spaceId: 's1', label: 'Legacy', order: 0 },
+      // Already-set value must be preserved (the guard's false branch).
+      {
+        id: 'sec-nested',
+        spaceId: 's1',
+        label: 'Nested',
+        order: 1,
+        parentSectionId: 'sec-legacy',
+      },
+    ]);
     await v1.close();
 
     const upgraded = new LoremDB(dbName);
@@ -37,6 +42,9 @@ describe('LoremDB migrations', () => {
     const sec = await upgraded.sections.get('sec-legacy');
     expect(sec).toBeDefined();
     expect(sec?.parentSectionId).toBeNull();
+    expect((await upgraded.sections.get('sec-nested'))?.parentSectionId).toBe(
+      'sec-legacy',
+    );
     await upgraded.close();
   });
 
@@ -64,17 +72,32 @@ describe('LoremDB migrations', () => {
         'id, spaceId, fromNoteId, toNoteId, [spaceId+fromNoteId], [spaceId+toNoteId]',
     });
     await v3.open();
-    await v3.table('notes').add({
-      id: 'n-legacy',
-      spaceId: 's1',
-      l: 0,
-      t: 0,
-      w: 100,
-      h: 60,
-      kind: 'note',
-      body: 'orig',
-      createdAt: 0,
-    });
+    await v3.table('notes').bulkAdd([
+      {
+        id: 'n-legacy',
+        spaceId: 's1',
+        l: 0,
+        t: 0,
+        w: 100,
+        h: 60,
+        kind: 'note',
+        body: 'orig',
+        createdAt: 0,
+      },
+      // Already-set state must be preserved (the ??= short-circuit branch).
+      {
+        id: 'n-fetched',
+        spaceId: 's1',
+        l: 0,
+        t: 0,
+        w: 100,
+        h: 60,
+        kind: 'note',
+        state: 'seed-fetched',
+        body: 'keep',
+        createdAt: 0,
+      },
+    ]);
     await v3.close();
 
     const upgraded = new LoremDB(dbName);
@@ -82,6 +105,7 @@ describe('LoremDB migrations', () => {
     const note = await upgraded.notes.get('n-legacy');
     expect(note).toBeDefined();
     expect(note?.state).toBe('user');
+    expect((await upgraded.notes.get('n-fetched'))?.state).toBe('seed-fetched');
     await upgraded.close();
   });
 
@@ -163,6 +187,60 @@ describe('LoremDB migrations', () => {
     expect((await upgraded.docInspectorConfigs.get('global'))?.status).toBe(
       'on',
     );
+    await upgraded.close();
+  });
+
+  it('version(12) adds media and trustedDomains tables and mediaItemId index without disturbing notes', async () => {
+    dbName = `lipsum-migration-${crypto.randomUUID()}`;
+    const v11 = new Dexie(dbName);
+    v11.version(11).stores({
+      notes: 'id, spaceId, kind, pdfUrl, createdAt',
+      noteUrlCache: 'noteId, fetchedAt',
+      meta: 'key',
+    });
+    await v11.open();
+    await v11.table('notes').add({
+      id: 'n-keep',
+      spaceId: 's1',
+      l: 0,
+      t: 0,
+      w: 100,
+      h: 60,
+      kind: 'pdf',
+      state: 'user',
+      body: 'keep me',
+      createdAt: 0,
+    });
+    await v11.close();
+
+    const upgraded = new LoremDB(dbName);
+    await upgraded.open();
+    expect((await upgraded.notes.get('n-keep'))?.body).toBe('keep me');
+
+    await upgraded.media.add({
+      id: 'm1',
+      spaceId: 's1',
+      name: 'paper.pdf',
+      mime: 'application/pdf',
+      size: 1,
+      blob: new Blob(['%PDF']),
+      pageCount: 3,
+      createdAt: 1,
+      updatedAt: 1,
+    });
+    expect(
+      await upgraded.media.where('spaceId').equals('s1').count(),
+    ).toBe(1);
+
+    await upgraded.trustedDomains.add({ domain: 'arxiv.org', addedAt: 2 });
+    expect((await upgraded.trustedDomains.get('arxiv.org'))?.addedAt).toBe(2);
+
+    await upgraded.notes.update('n-keep', { mediaItemId: 'm1' });
+    const linked = await upgraded.notes
+      .where('mediaItemId')
+      .equals('m1')
+      .toArray();
+    expect(linked.map((n) => n.id)).toEqual(['n-keep']);
     await upgraded.close();
   });
 

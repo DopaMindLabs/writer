@@ -389,6 +389,25 @@ describe('Sidebar', () => {
       expect(bs.className).toMatch(/font-medium/);
     });
 
+    it('should render the media library link pointing at the space media route', async () => {
+      await seedBasicSpace();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      const link = await screen.findByTestId('sidebar-media-link');
+      expect(link).toHaveAttribute('href', '/s/s1/media');
+      expect(link.className).not.toMatch(/font-medium/);
+    });
+
+    it('should mark the media library link active when the URL ends with /media', async () => {
+      await seedBasicSpace();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1/media'],
+      });
+      const link = await screen.findByTestId('sidebar-media-link');
+      expect(link.className).toMatch(/font-medium/);
+    });
+
     it('should render the Workshop fallback section when the template lacks Workshop', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'blank' });
       await db.sections.put({

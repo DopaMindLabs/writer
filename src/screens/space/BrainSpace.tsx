@@ -7,6 +7,7 @@ import { FocusRail } from '@/components/chrome/FocusRail';
 import { Topbar } from '@/components/chrome/Topbar';
 import { BrainSpaceCanvas } from '@/components/surfaces/BrainSpaceCanvas';
 import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
+import { MediaReadingPane } from '@/components/surfaces/MediaReadingPane';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
 import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
 import { useSpace } from '@/hooks/useSpaces';
@@ -65,7 +66,6 @@ export const BrainSpaceScreen = () => {
           mode="dump"
           fallbackDocId={fallbackDocId}
         />
-        {/* Temporarily disabled: <BrainSpaceMobileNotice spaceId={spaceId} /> */}
         <main
           id="main-content"
           tabIndex={-1}
@@ -73,6 +73,7 @@ export const BrainSpaceScreen = () => {
         >
           <BrainSpaceCanvas spaceId={spaceId} />
           <CitationsSidePanel spaceId={spaceId} />
+          <MediaReadingPane />
         </main>
         {!focus && (
           <>

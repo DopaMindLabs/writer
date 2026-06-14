@@ -48,11 +48,13 @@ export enum NoteKind {
   LooseEnd = 'loose-end',
   Blank = 'blank',
   Image = 'image',
+  Pdf = 'pdf',
 }
 
 export enum NoteLayout {
   Text = 'text',
   Image = 'image',
+  Pdf = 'pdf',
 }
 
 export enum NoteState {
@@ -76,6 +78,35 @@ export interface Note {
   createdAt: number;
   layout?: NoteLayout;
   typeVersion?: string;
+  pdfUrl?: string;
+  mediaItemId?: string;
+}
+
+export interface NoteUrlCache {
+  noteId: string;
+  url: string;
+  mime: string;
+  size: number;
+  blob: Blob;
+  pageCount: number;
+  fetchedAt: number;
+}
+
+export interface MediaItem {
+  id: string;
+  spaceId: string;
+  name: string;
+  mime: string;
+  size: number;
+  blob: Blob;
+  pageCount: number;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface TrustedDomain {
+  domain: string;
+  addedAt: number;
 }
 
 export interface NoteAttachment {

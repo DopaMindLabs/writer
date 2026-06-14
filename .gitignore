@@ -40,3 +40,5 @@ e2e-coverage
 
 # Storybook
 storybook-static
+# TypeScript incremental build cache
+*.tsbuildinfo

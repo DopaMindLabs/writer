@@ -5,11 +5,18 @@ export interface NoteLayoutConfig {
   allowsText: boolean;
   allowsImages: boolean;
   imageFirst: boolean;
+  pdfFirst?: boolean;
 }
 
 export const NOTE_LAYOUT_CONFIG: Record<NoteLayout, NoteLayoutConfig> = {
   [NoteLayout.Text]: { allowsText: true, allowsImages: true, imageFirst: false },
   [NoteLayout.Image]: { allowsText: false, allowsImages: true, imageFirst: true },
+  [NoteLayout.Pdf]: {
+    allowsText: true,
+    allowsImages: false,
+    imageFirst: false,
+    pdfFirst: true,
+  },
 };
 
 export interface NoteTypeDescriptor {

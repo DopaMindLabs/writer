@@ -52,6 +52,16 @@ describe('note-types registry', () => {
       imageFirst: false,
     });
   });
+
+  it('treats the pdf kind as a pdf-first layout with commentary text', () => {
+    expect(getNoteType(NoteKind.Pdf).layout).toBe(NoteLayout.Pdf);
+    expect(NOTE_LAYOUT_CONFIG[NoteLayout.Pdf]).toEqual({
+      allowsText: true,
+      allowsImages: false,
+      imageFirst: false,
+      pdfFirst: true,
+    });
+  });
 });
 
 describe('resolveNoteLayout', () => {

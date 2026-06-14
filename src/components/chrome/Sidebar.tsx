@@ -328,11 +328,14 @@ const SidebarSection = ({
         onAdd={() => { startAdd(sec.id, sec.label, null); }}
       />
       {isWorkshop && (
-        <BrainSpaceLink
-          spaceId={spaceId}
-          active={onBrainSpace}
-          count={notesCount}
-        />
+        <>
+          <BrainSpaceLink
+            spaceId={spaceId}
+            active={onBrainSpace}
+            count={notesCount}
+          />
+          <MediaLibraryLink spaceId={spaceId} />
+        </>
       )}
       {ownDocs.map((d) => (
         <DocLink
@@ -575,6 +578,7 @@ const WorkshopFallback = ({
         {t('sidebar.workshop')}
       </div>
       <BrainSpaceLink spaceId={spaceId} active={onBrainSpace} count={notesCount} />
+      <MediaLibraryLink spaceId={spaceId} />
     </div>
   );
 };
@@ -685,6 +689,31 @@ const BrainSpaceLink = ({
         className="font-mono text-[10px] text-ink-4"
       >
         {count > 0 ? `${String(count)}◦` : '◌'}
+      </span>
+    </Link>
+  );
+};
+
+const MediaLibraryLink = ({ spaceId }: { spaceId: string }) => {
+  const { t } = useTranslation('common');
+  const location = useLocation();
+  const active = location.pathname.endsWith('/media');
+  return (
+    <Link
+      to={routes.media(spaceId)}
+      data-testid="sidebar-media-link"
+      className={cn(
+        '-ml-px flex items-center gap-2 border-l-2 px-5 py-1.5 transition-colors',
+        active
+          ? 'border-ink bg-paper font-medium text-ink'
+          : 'border-transparent text-ink-2 hover:bg-paper',
+      )}
+    >
+      <span
+        data-testid="sidebar-media-link-label"
+        className="flex-1 text-[13px]"
+      >
+        {t('mediaLibrary')}
       </span>
     </Link>
   );

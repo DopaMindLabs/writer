@@ -1,7 +1,7 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
 import { cva, type VariantProps } from '@/components/libs/variants';
 import { cn } from '@/lib/utils';
-import { X } from '@/components/libs/icons';
+import { X, type LucideIcon } from '@/components/libs/icons';
 import { Icon } from './icon';
 import { STATUS_ICON, type StatusKind } from './statusRole';
 
@@ -25,6 +25,11 @@ export interface InlineBannerProps
     VariantProps<typeof inlineBannerRecipe> {
   kind?: StatusKind;
   title?: ReactNode;
+  /**
+   * Override the leading status glyph. Defaults to the icon for `kind`; pass a
+   * different `LucideIcon`, or `null` to render no icon.
+   */
+  icon?: LucideIcon | null;
   action?: string;
   onAction?: () => void;
   dismissible?: boolean;
@@ -36,6 +41,7 @@ export const InlineBanner = forwardRef<HTMLDivElement, InlineBannerProps>(
     {
       kind = 'info',
       title,
+      icon,
       action,
       onAction,
       dismissible = false,
@@ -45,14 +51,18 @@ export const InlineBanner = forwardRef<HTMLDivElement, InlineBannerProps>(
       ...props
     },
     ref,
-  ) => (
+  ) => {
+    const LeadingIcon = icon === undefined ? STATUS_ICON[kind] : icon;
+    return (
     <div
       ref={ref}
       role="status"
       className={cn(inlineBannerRecipe({ kind }), className)}
       {...props}
     >
-      <Icon icon={STATUS_ICON[kind]} size="sm" className="mt-0.5 shrink-0" />
+      {LeadingIcon ? (
+        <Icon icon={LeadingIcon} size="sm" className="mt-0.5 shrink-0" />
+      ) : null}
       <div className="flex-1">
         {title ? (
           <p className="font-sans text-[13px] font-semibold text-ink">{title}</p>
@@ -83,6 +93,7 @@ export const InlineBanner = forwardRef<HTMLDivElement, InlineBannerProps>(
         </button>
       ) : null}
     </div>
-  ),
+    );
+  },
 );
 InlineBanner.displayName = 'InlineBanner';
