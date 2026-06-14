@@ -104,6 +104,52 @@ test('renders an uploaded PDF under the production CSP', async ({ page }) => {
   await expect(page.getByText('Failed to load PDF file')).toHaveCount(0);
 });
 
+test('renders a multi-page PDF and survives page navigation under the production CSP', async ({
+  page,
+}) => {
+  // pdfjs transfers (and detaches) any TypedArray passed as `file.data`, so a
+  // second render that re-uses the same Uint8Array would fail with "Failed to
+  // load PDF file". This guards against that regression.
+  await page.route('**/*', async (route) => {
+    if (route.request().resourceType() !== 'document') {
+      await route.continue();
+      return;
+    }
+    const response = await route.fetch();
+    await route.fulfill({
+      response,
+      headers: {
+        ...response.headers(),
+        'content-security-policy': PRODUCTION_CSP,
+      },
+    });
+  });
+
+  await reseedAndGoHome(page);
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}/media`);
+  await page
+    .getByTestId('media-upload-input')
+    .setInputFiles(pdfPayload('multi.pdf'));
+  await page.locator('[data-testid$="-select"]').first().click();
+
+  // First render renders a canvas.
+  await expect(
+    page.getByTestId('media-viewer').locator('canvas'),
+  ).toBeVisible();
+
+  // Navigate via the toolbar; if the buffer were detached, the next page would
+  // render "Failed to load PDF file" instead of a fresh canvas.
+  const next = page.getByTestId('pdf-viewer-next');
+  if (await next.isEnabled()) {
+    await next.click();
+    await expect(
+      page.getByTestId('media-viewer').locator('canvas'),
+    ).toBeVisible();
+  }
+  await expect(page.getByText('Failed to load PDF file')).toHaveCount(0);
+});
+
 test('persists uploaded PDFs across a reload', async ({ page }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}/media`);

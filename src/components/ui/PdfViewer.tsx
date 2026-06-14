@@ -35,37 +35,58 @@ interface PdfFile {
   data: Uint8Array;
 }
 
-// Read the blob into in-memory bytes and hand react-pdf the data directly.
-// Passing a Blob makes react-pdf load it through a blob: URL, which the
-// production CSP (connect-src 'self' https:) blocks — so the render fails even
-// though page counting, which reads the bytes in-memory, succeeds.
-const usePdfFile = (blob: Blob): PdfFile | null => {
-  const [file, setFile] = useState<PdfFile | null>(null);
+interface PdfSource {
+  buffer: ArrayBuffer;
+  // A stable id per source so react-pdf can be keyed and recreate the Document
+  // when the underlying blob changes.
+  id: number;
+}
+
+let pdfSourceCounter = 0;
+
+// Read the blob into in-memory bytes once and serve a fresh Uint8Array each
+// time we hand react-pdf a `file` prop. The Blob path goes via a blob: URL
+// that the production CSP (connect-src 'self' https:) blocks, so we read the
+// bytes ourselves. pdfjs *transfers* and takes ownership of any TypedArray
+// passed in, which detaches our buffer — so we must serve a fresh copy on
+// every render that creates a Document, never the same instance twice.
+const usePdfSource = (blob: Blob): PdfSource | null => {
+  const [source, setSource] = useState<PdfSource | null>(null);
   useEffect(() => {
     let cancelled = false;
-    setFile(null);
+    setSource(null);
     void blob.arrayBuffer().then((buffer) => {
-      if (!cancelled) setFile({ data: new Uint8Array(buffer) });
+      if (!cancelled) {
+        pdfSourceCounter += 1;
+        setSource({ buffer, id: pdfSourceCounter });
+      }
     });
     return () => {
       cancelled = true;
     };
   }, [blob]);
-  return file;
+  return source;
 };
 
+const fileFromSource = (source: PdfSource): PdfFile => ({
+  // Fresh Uint8Array view over a copy of the buffer — pdfjs transfers (and
+  // therefore detaches) whatever it receives, so we must not share the master.
+  data: new Uint8Array(source.buffer.slice(0)),
+});
+
 interface ThumbnailProps {
-  file: PdfFile | null;
+  source: PdfSource | null;
   onLoadSuccess: (doc: { numPages: number }) => void;
   className?: string;
 }
 
-const ThumbnailView = ({ file, onLoadSuccess, className }: ThumbnailProps) => {
+const ThumbnailView = ({ source, onLoadSuccess, className }: ThumbnailProps) => {
   const wrapperClass = cn('flex w-full items-center justify-center', className);
-  if (!file) return <div className={wrapperClass} aria-hidden />;
+  if (!source) return <div className={wrapperClass} aria-hidden />;
   return (
     <Document
-      file={file}
+      key={source.id}
+      file={fileFromSource(source)}
       onLoadSuccess={onLoadSuccess}
       loading={null}
       className={wrapperClass}
@@ -145,7 +166,7 @@ const PaneToolbar = ({
 );
 
 interface PaneViewProps {
-  file: PdfFile | null;
+  source: PdfSource | null;
   name: string;
   onLoadSuccess: (doc: { numPages: number }) => void;
   pageNumber: number;
@@ -184,22 +205,23 @@ const makePaneKeyHandler =
   };
 
 const PaneBody = ({
-  file,
+  source,
   onLoadSuccess,
   pageNumber,
   totalPages,
   scale,
 }: {
-  file: PdfFile | null;
+  source: PdfSource | null;
   onLoadSuccess: (doc: { numPages: number }) => void;
   pageNumber: number;
   totalPages: number;
   scale: number;
 }) => (
   <div className="flex-1 overflow-auto bg-paper-2 p-3">
-    {file ? (
+    {source ? (
       <Document
-        file={file}
+        key={source.id}
+        file={fileFromSource(source)}
         onLoadSuccess={onLoadSuccess}
         loading={null}
         className="flex justify-center"
@@ -223,7 +245,7 @@ const PaneBody = ({
 );
 
 const PaneView = ({
-  file,
+  source,
   name,
   onLoadSuccess,
   pageNumber,
@@ -261,7 +283,7 @@ const PaneView = ({
         onZoomOut={ctrl.zoomOut}
       />
       <PaneBody
-        file={file}
+        source={source}
         onLoadSuccess={onLoadSuccess}
         pageNumber={pageNumber}
         totalPages={totalPages}
@@ -278,7 +300,7 @@ export const PdfViewer = ({
   pageCount: hintedCount,
   className,
 }: PdfViewerProps) => {
-  const file = usePdfFile(blob);
+  const source = usePdfSource(blob);
   const [pageNumber, setPageNumber] = useState(1);
   const [totalPages, setTotalPages] = useState(hintedCount ?? 0);
   const [scale, setScale] = useState(1);
@@ -296,7 +318,7 @@ export const PdfViewer = ({
   if (mode === 'thumbnail') {
     return (
       <ThumbnailView
-        file={file}
+        source={source}
         onLoadSuccess={onLoadSuccess}
         className={className}
       />
@@ -304,7 +326,7 @@ export const PdfViewer = ({
   }
   return (
     <PaneView
-      file={file}
+      source={source}
       name={name}
       onLoadSuccess={onLoadSuccess}
       pageNumber={pageNumber}
