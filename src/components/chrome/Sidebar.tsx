@@ -37,6 +37,8 @@ import { useNotes } from '@/hooks/useNotes';
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { formatDocName } from '@/lib/doc-naming';
+import { renameDoc } from '@/lib/doc-actions';
+import { renameSection } from '@/lib/section-actions';
 import { routes } from '@/lib/routes';
 import {
   getTemplate,
@@ -428,6 +430,54 @@ const createDoc = async (
   return id;
 };
 
+interface InlineRename {
+  editing: boolean;
+  draft: string;
+  setDraft: (next: string) => void;
+  beginEdit: () => void;
+  commit: () => Promise<void>;
+  onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
+}
+
+const useInlineRename = (
+  current: string,
+  save: (next: string) => Promise<void>,
+): InlineRename => {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(current);
+
+  useEffect(() => {
+    if (!editing) setDraft(current);
+  }, [current, editing]);
+
+  const commit = async () => {
+    setEditing(false);
+    const next = draft.trim();
+    if (!next || next === current) return;
+    await save(next);
+  };
+
+  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      (e.target as HTMLInputElement).blur();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setDraft(current);
+      setEditing(false);
+    }
+  };
+
+  return {
+    editing,
+    draft,
+    setDraft,
+    beginEdit: () => { setEditing(true); },
+    commit,
+    onKeyDown,
+  };
+};
+
 const createSection = async (
   spaceId: string,
   label: string,
@@ -690,14 +740,14 @@ const AddSectionRow = ({ add }: { add: AddSectionController }) => {
   return (
     <div
       data-testid="sidebar-add-section-row"
-      className="mt-1 px-5 py-1"
+      className="group mt-1 px-5 py-1"
     >
       <button
         type="button"
         onClick={add.onStart}
         data-testid="sidebar-add-section-trigger"
         aria-label={t('sidebar.addSectionAria')}
-        className="flex w-full items-center gap-1 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 hover:text-ink focus-visible:text-ink focus-visible:outline-none"
+        className="flex w-full items-center gap-1 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:text-ink focus-visible:opacity-100 focus-visible:outline-none group-hover:opacity-100"
       >
         <Plus className="h-3 w-3" />
         <span>{t('sidebar.addSection')}</span>
@@ -744,6 +794,9 @@ const SectionHeader = ({
   onAdd: () => void;
 }) => {
   const { t } = useTranslation('chrome');
+  const rename = useInlineRename(label, (next) =>
+    renameSection(sectionId, next),
+  );
   return (
     <div
       data-testid={`sidebar-section-${sectionId}-header`}
@@ -752,12 +805,30 @@ const SectionHeader = ({
         indented ? 'pl-7 pr-3' : 'px-5',
       )}
     >
-      <span
-        data-testid={`sidebar-section-${sectionId}-label`}
-        className="flex-1 truncate"
-      >
-        {label}
-      </span>
+      {rename.editing ? (
+        <TextField
+          variant="bare"
+          autoFocus
+          value={rename.draft}
+          onChange={(e) => { rename.setDraft(e.target.value); }}
+          onBlur={() => { void rename.commit(); }}
+          onFocus={(e) => { e.currentTarget.select(); }}
+          onKeyDown={rename.onKeyDown}
+          aria-label={t('sidebar.renameSectionAria', { label })}
+          data-testid={`sidebar-section-${sectionId}-rename-input`}
+          className="flex-1 font-mono text-[9px] uppercase tracking-[0.08em]"
+        />
+      ) : (
+        <button
+          type="button"
+          onDoubleClick={rename.beginEdit}
+          title={t('sidebar.renameSection')}
+          data-testid={`sidebar-section-${sectionId}-label`}
+          className="flex-1 cursor-text truncate text-left"
+        >
+          {label}
+        </button>
+      )}
       <IconButton
         icon={Plus}
         label={t('sidebar.addDocAria', { label })}
@@ -883,6 +954,59 @@ const DocRowMenu = ({ doc }: { doc: Doc }) => {
   );
 };
 
+interface DocLinkBodyProps {
+  doc: Doc;
+  href: string;
+  active: boolean;
+  wordCount: number;
+  rename: InlineRename;
+}
+
+const DocLinkBody = ({ doc, href, active, wordCount, rename }: DocLinkBodyProps) => {
+  const { t } = useTranslation('chrome');
+  if (rename.editing) {
+    return (
+      <TextField
+        variant="bare"
+        autoFocus
+        value={rename.draft}
+        onChange={(e) => { rename.setDraft(e.target.value); }}
+        onBlur={() => { void rename.commit(); }}
+        onFocus={(e) => { e.currentTarget.select(); }}
+        onKeyDown={rename.onKeyDown}
+        aria-label={t('sidebar.renameDocAria', { name: doc.name })}
+        data-testid={`sidebar-doc-${doc.id}-rename-input`}
+        className="flex-1 py-1.5 text-[13px]"
+      />
+    );
+  }
+  return (
+    <Link
+      to={href}
+      onDoubleClick={rename.beginEdit}
+      title={t('sidebar.renameDocHint')}
+      data-testid={`sidebar-doc-${doc.id}`}
+      className="flex min-w-0 flex-1 items-center gap-2 py-1.5"
+    >
+      <span
+        data-testid={`sidebar-doc-${doc.id}-name`}
+        className={cn(
+          'flex-1 truncate text-[13px]',
+          active ? 'font-medium text-ink' : 'text-ink-2',
+        )}
+      >
+        {doc.name}
+      </span>
+      <span
+        data-testid={`sidebar-doc-${doc.id}-count`}
+        className="font-mono text-[10px] text-ink-4"
+      >
+        {wordCount > 0 ? wordCount.toLocaleString() : '◌'}
+      </span>
+    </Link>
+  );
+};
+
 const DocLink = ({
   doc,
   href,
@@ -895,6 +1019,7 @@ const DocLink = ({
   indented?: boolean;
 }) => {
   const wordCount = doc.meta.wordCount;
+  const rename = useInlineRename(doc.name, (next) => renameDoc(doc.id, next));
   return (
     <div
       className={cn(
@@ -905,27 +1030,13 @@ const DocLink = ({
           : 'border-transparent hover:bg-paper',
       )}
     >
-      <Link
-        to={href}
-        data-testid={`sidebar-doc-${doc.id}`}
-        className="flex min-w-0 flex-1 items-center gap-2 py-1.5"
-      >
-        <span
-          data-testid={`sidebar-doc-${doc.id}-name`}
-          className={cn(
-            'flex-1 truncate text-[13px]',
-            active ? 'font-medium text-ink' : 'text-ink-2',
-          )}
-        >
-          {doc.name}
-        </span>
-        <span
-          data-testid={`sidebar-doc-${doc.id}-count`}
-          className="font-mono text-[10px] text-ink-4"
-        >
-          {wordCount > 0 ? wordCount.toLocaleString() : '◌'}
-        </span>
-      </Link>
+      <DocLinkBody
+        doc={doc}
+        href={href}
+        active={active}
+        wordCount={wordCount}
+        rename={rename}
+      />
       <DocRowMenu doc={doc} />
     </div>
   );

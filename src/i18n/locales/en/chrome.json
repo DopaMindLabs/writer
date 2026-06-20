@@ -24,6 +24,10 @@
     "openSpaceMenu": "Open space menu",
     "docMenuAria": "Options for {{name}}",
     "renameDoc": "Rename",
+    "renameDocHint": "Rename (double-click)",
+    "renameDocAria": "Rename document {{name}}",
+    "renameSection": "Rename (double-click)",
+    "renameSectionAria": "Rename section {{label}}",
     "renameDialog": {
       "title": "Rename document",
       "description": "Choose a new name for this document.",

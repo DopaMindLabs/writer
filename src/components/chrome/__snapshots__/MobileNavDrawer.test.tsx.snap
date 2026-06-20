@@ -191,12 +191,14 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
           class="group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 px-5"
           data-testid="sidebar-section-sec1-header"
         >
-          <span
-            class="flex-1 truncate"
+          <button
+            class="flex-1 cursor-text truncate text-left"
             data-testid="sidebar-section-sec1-label"
+            title="Rename (double-click)"
+            type="button"
           >
             Drafts
-          </span>
+          </button>
           <button
             aria-label="Add doc to Drafts"
             class="inline-flex items-center justify-center transition-colors text-ink-3 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-4 w-4 rounded-sm opacity-0 hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
@@ -233,6 +235,7 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
             data-discover="true"
             data-testid="sidebar-doc-d1"
             href="/s/s1/d/d1"
+            title="Rename (double-click)"
           >
             <span
               class="flex-1 truncate text-[13px] font-medium text-ink"
@@ -296,12 +299,14 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
             class="group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 pl-7 pr-3"
             data-testid="sidebar-section-sec1a-header"
           >
-            <span
-              class="flex-1 truncate"
+            <button
+              class="flex-1 cursor-text truncate text-left"
               data-testid="sidebar-section-sec1a-label"
+              title="Rename (double-click)"
+              type="button"
             >
               ↳ Ideas
-            </span>
+            </button>
             <button
               aria-label="Add doc to ↳ Ideas"
               class="inline-flex items-center justify-center transition-colors text-ink-3 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-4 w-4 rounded-sm opacity-0 hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
@@ -339,12 +344,12 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
         </div>
       </div>
       <div
-        class="mt-1 px-5 py-1"
+        class="group mt-1 px-5 py-1"
         data-testid="sidebar-add-section-row"
       >
         <button
           aria-label="Add section to this space"
-          class="flex w-full items-center gap-1 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 hover:text-ink focus-visible:text-ink focus-visible:outline-none"
+          class="flex w-full items-center gap-1 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:text-ink focus-visible:opacity-100 focus-visible:outline-none group-hover:opacity-100"
           data-testid="sidebar-add-section-trigger"
           type="button"
         >

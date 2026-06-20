@@ -552,6 +552,129 @@ describe('Sidebar', () => {
     });
   });
 
+  describe('rename section via double-click', () => {
+    it('should open an inline rename input on double-click of the section label', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
+        initialEntries: ['/s/s1/d/d1'],
+      });
+      const label = await screen.findByTestId('sidebar-section-sec1-label');
+      await user.dblClick(label);
+      const input = await screen.findByTestId(
+        'sidebar-section-sec1-rename-input',
+      );
+      expect(input).toHaveValue('Drafts');
+    });
+
+    it('should commit the rename to Dexie on Enter', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
+        initialEntries: ['/s/s1/d/d1'],
+      });
+      await user.dblClick(
+        await screen.findByTestId('sidebar-section-sec1-label'),
+      );
+      const input = await screen.findByTestId(
+        'sidebar-section-sec1-rename-input',
+      );
+      await user.clear(input);
+      await user.type(input, 'Renamed{enter}');
+      await waitFor(async () => {
+        expect((await db.sections.get('sec1'))?.label).toBe('Renamed');
+      });
+    });
+
+    it('should commit the rename on blur when the value changed', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
+        initialEntries: ['/s/s1/d/d1'],
+      });
+      await user.dblClick(
+        await screen.findByTestId('sidebar-section-sec1-label'),
+      );
+      const input = await screen.findByTestId(
+        'sidebar-section-sec1-rename-input',
+      );
+      await user.clear(input);
+      await user.type(input, 'Saved on blur');
+      act(() => { input.blur(); });
+      await waitFor(async () => {
+        expect((await db.sections.get('sec1'))?.label).toBe('Saved on blur');
+      });
+    });
+
+    it('should revert and not write on Escape', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
+        initialEntries: ['/s/s1/d/d1'],
+      });
+      await user.dblClick(
+        await screen.findByTestId('sidebar-section-sec1-label'),
+      );
+      const input = await screen.findByTestId(
+        'sidebar-section-sec1-rename-input',
+      );
+      await user.clear(input);
+      await user.type(input, 'Discarded{escape}');
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId('sidebar-section-sec1-rename-input'),
+        ).not.toBeInTheDocument();
+      });
+      expect((await db.sections.get('sec1'))?.label).toBe('Drafts');
+    });
+  });
+
+  describe('rename doc via double-click', () => {
+    it('should open an inline rename input on double-click of the doc link', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
+        initialEntries: ['/s/s1/d/d1'],
+      });
+      await user.dblClick(await screen.findByTestId('sidebar-doc-d1'));
+      const input = await screen.findByTestId('sidebar-doc-d1-rename-input');
+      expect(input).toHaveValue('Sample Doc');
+    });
+
+    it('should commit the rename to Dexie on Enter', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
+        initialEntries: ['/s/s1/d/d1'],
+      });
+      await user.dblClick(await screen.findByTestId('sidebar-doc-d1'));
+      const input = await screen.findByTestId('sidebar-doc-d1-rename-input');
+      await user.clear(input);
+      await user.type(input, 'Inline rename{enter}');
+      await waitFor(async () => {
+        expect((await db.docs.get('d1'))?.name).toBe('Inline rename');
+      });
+    });
+
+    it('should revert and not write on Escape', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
+        initialEntries: ['/s/s1/d/d1'],
+      });
+      await user.dblClick(await screen.findByTestId('sidebar-doc-d1'));
+      const input = await screen.findByTestId('sidebar-doc-d1-rename-input');
+      await user.clear(input);
+      await user.type(input, 'Discarded{escape}');
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId('sidebar-doc-d1-rename-input'),
+        ).not.toBeInTheDocument();
+      });
+      expect((await db.docs.get('d1'))?.name).toBe('Sample Doc');
+    });
+  });
+
   describe('add section', () => {
     it('should render the add-section trigger when the template allows extra sections', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'blank' });
@@ -568,6 +691,25 @@ describe('Sidebar', () => {
       expect(
         await screen.findByTestId('sidebar-add-section-trigger'),
       ).toBeInTheDocument();
+    });
+
+    it('should hide the add-section trigger by default and reveal it on hover of the row', async () => {
+      await db.spaces.put({ ...sampleSpace, template: 'blank' });
+      await db.sections.put({
+        id: 'sec-notes',
+        spaceId: 's1',
+        parentSectionId: null,
+        label: 'Notes',
+        order: 0,
+      });
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      const trigger = await screen.findByTestId('sidebar-add-section-trigger');
+      expect(trigger.className).toMatch(/opacity-0/);
+      expect(trigger.className).toMatch(/group-hover:opacity-100/);
+      const row = screen.getByTestId('sidebar-add-section-row');
+      expect(row.className).toMatch(/\bgroup\b/);
     });
 
     it('should hide the add-section trigger when the template does not allow extra sections', async () => {
