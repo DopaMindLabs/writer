@@ -668,6 +668,61 @@ describe('Sidebar', () => {
       expect(await db.sections.count()).toBe(beforeCount);
     });
 
+    it('should commit a new section on blur when the input has a value', async () => {
+      await db.spaces.put({ ...sampleSpace, template: 'blank' });
+      await db.sections.put({
+        id: 'sec-notes',
+        spaceId: 's1',
+        parentSectionId: null,
+        label: 'Notes',
+        order: 0,
+      });
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      await user.click(
+        await screen.findByTestId('sidebar-add-section-trigger'),
+      );
+      const input = await screen.findByTestId('sidebar-add-section-input');
+      await user.type(input, 'Saved on blur');
+      act(() => { input.blur(); });
+      await waitFor(async () => {
+        const sections = await db.sections
+          .where('spaceId')
+          .equals('s1')
+          .toArray();
+        expect(sections.find((s) => s.label === 'Saved on blur')).toBeDefined();
+      });
+    });
+
+    it('should clear on blur without writing when the input is empty', async () => {
+      await db.spaces.put({ ...sampleSpace, template: 'blank' });
+      await db.sections.put({
+        id: 'sec-notes',
+        spaceId: 's1',
+        parentSectionId: null,
+        label: 'Notes',
+        order: 0,
+      });
+      const beforeCount = await db.sections.count();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      await user.click(
+        await screen.findByTestId('sidebar-add-section-trigger'),
+      );
+      const input = await screen.findByTestId('sidebar-add-section-input');
+      act(() => { input.blur(); });
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId('sidebar-add-section-input'),
+        ).not.toBeInTheDocument();
+      });
+      expect(await db.sections.count()).toBe(beforeCount);
+    });
+
     it('should not commit an empty section name on Enter', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'blank' });
       await db.sections.put({

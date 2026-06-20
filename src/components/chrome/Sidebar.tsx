@@ -451,7 +451,7 @@ interface AddSectionController {
   onStart: () => void;
   onChange: (value: string) => void;
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
-  onClear: () => void;
+  onBlur: () => void;
 }
 
 const useAddSection = (
@@ -500,7 +500,7 @@ const useAddSection = (
     onStart: () => { setAdding(true); },
     onChange: setValue,
     onKeyDown,
-    onClear: () => { setAdding(false); setValue(''); },
+    onBlur: () => { void commit(); },
   };
 };
 
@@ -679,7 +679,7 @@ const AddSectionRow = ({ add }: { add: AddSectionController }) => {
           value={add.value}
           onChange={(e) => { add.onChange(e.target.value); }}
           onKeyDown={add.onKeyDown}
-          onBlur={add.onClear}
+          onBlur={add.onBlur}
           placeholder={t('sidebar.sectionNamePlaceholder')}
           data-testid="sidebar-add-section-input"
           className="flex-1 text-[13px]"

@@ -105,7 +105,7 @@ A space is structured as **sections** containing **documents**. The default sect
 
 **Add a doc.** In the sidebar, each section has an **+ Add doc to *<Section>*** button. Clicking it reveals an inline input. Type a name and press **Enter** to create the doc and navigate to it; **Escape** cancels.
 
-**Add a section.** When a space's template sets `allowExtraSections: true` (currently the **Blank** template), an **Add section** affordance appears at the bottom of the sidebar's section list. Clicking it reveals an inline input. **Enter** appends a new top-level section at the next order; **Escape** cancels. Templates that encode a specific workflow (Fiction, Thesis, Technical, Bioinformatics) keep `allowExtraSections` unset so their seeded shape is preserved.
+**Add a section.** When a space's template sets `allowExtraSections: true` (currently the **Blank** template), an **Add section** affordance appears at the bottom of the sidebar's section list. Clicking it reveals an inline input. **Enter** — or **blur** (clicking away) — appends a new top-level section at the next order; **Escape** cancels. Templates that encode a specific workflow (Fiction, Thesis, Technical, Bioinformatics) keep `allowExtraSections` unset so their seeded shape is preserved.
 
 **Rename a doc.** Double-click the doc name in the topbar breadcrumb. Rename input appears. **Enter** commits; **Escape** reverts.
 

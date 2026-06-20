@@ -27,9 +27,10 @@ without saving.
 Some templates — such as **Blank** — let you add new sections to organise the
 space your way. When the template allows it, an **Add section** button appears
 at the bottom of the sidebar's section list. Click it, type a section name, and
-press **Enter** to create. **Escape** cancels. Structured templates (Fiction,
-Thesis, Technical, Bioinformatics) keep their seeded sections fixed so the
-shape stays consistent with the workflow they encode.
+press **Enter** — or simply click away — to create. **Escape** cancels.
+Structured templates (Fiction, Thesis, Technical, Bioinformatics) keep their
+seeded sections fixed so the shape stays consistent with the workflow they
+encode.
 
 ## Templates
 
