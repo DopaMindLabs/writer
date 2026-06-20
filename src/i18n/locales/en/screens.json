@@ -358,7 +358,9 @@
       "perDocFontLabel": "Typeface",
       "perDocSizeLabel": "Body size",
       "perDocUseDefault": "Use default",
-      "perDocInheritedSuffix": "(default)"
+      "perDocInheritedSuffix": "(default)",
+      "followA11yLabel": "Follow Accessibility text size",
+      "followA11yHint": "When on, the editor body also scales with the Accessibility tab's Text size preference. Turn this off to make the editor body size independent of accessibility scaling."
     },
     "shortcuts": {
       "title": "Shortcuts",

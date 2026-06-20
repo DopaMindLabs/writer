@@ -3,18 +3,38 @@ import { fireEvent, screen } from '@testing-library/react';
 import { renderWithProviders } from '@/test/test-utils';
 import { TypographyTab } from './TypographyTab';
 import { useUI } from '@/store/ui';
+import { useA11y } from '@/store/a11y';
+import { DEFAULT_A11Y_PREFS } from '@/theme/a11y-prefs';
 
 beforeEach(() => {
   localStorage.clear();
-  useUI.setState({ editorFont: 'serif', editorSize: 'base' });
+  useUI.setState({
+    editorFont: 'serif',
+    editorSize: 'base',
+    editorSizeFollowsA11y: true,
+  });
+  useA11y.setState({ ...DEFAULT_A11Y_PREFS });
 });
 
 describe('TypographyTab', () => {
-  it('renders both editor typography controls and a preview', () => {
+  it('renders both editor typography controls, the a11y follow toggle, and a preview', () => {
     renderWithProviders(<TypographyTab />);
     expect(screen.getByTestId('setting-editor-font')).toBeInTheDocument();
     expect(screen.getByTestId('setting-editor-size')).toBeInTheDocument();
+    expect(screen.getByTestId('setting-editor-follows-a11y')).toBeInTheDocument();
     expect(screen.getByTestId('typography-preview')).toBeInTheDocument();
+  });
+
+  it('toggling "Follow Accessibility text size" persists the preference', () => {
+    renderWithProviders(<TypographyTab />);
+    const toggle = screen.getByRole('switch', {
+      name: 'Follow Accessibility text size',
+    });
+    fireEvent.click(toggle);
+    expect(useUI.getState().editorSizeFollowsA11y).toBe(false);
+    expect(
+      JSON.parse(localStorage.getItem('lorem-ui') ?? '{}').editorSizeFollowsA11y,
+    ).toBe(false);
   });
 
   it('selecting a typeface updates and persists the universal default', () => {

@@ -36,6 +36,17 @@ When at least one override is set, a **Use default** button appears. Click it
 to clear the override and let the document inherit the universal default
 again.
 
+## Follow Accessibility text size
+
+By default, the editor body size also scales with the **Text size** preference
+on the Accessibility tab — so a reader who needs larger text everywhere only
+needs to set it once, in Accessibility. The combined size is the editor body
+size multiplied by the accessibility scale.
+
+If you'd rather the editor body size be independent of accessibility scaling,
+turn off **Follow Accessibility text size** in *Universal settings →
+Typography*. The editor will then use the editor body size on its own.
+
 ## What changes — and what doesn't
 
 The editor typography controls govern the **editor body only**. They do not

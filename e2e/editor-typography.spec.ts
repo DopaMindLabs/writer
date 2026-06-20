@@ -138,4 +138,64 @@ test('default editor body renders in serif at base size without any user changes
   const editorSurface = page.locator('[data-editor-font]').first();
   await expect(editorSurface).toHaveAttribute('data-editor-font', 'serif');
   await expect(editorSurface).toHaveAttribute('data-editor-size', 'base');
+  await expect(editorSurface).toHaveAttribute(
+    'data-editor-follows-a11y',
+    'true',
+  );
+});
+
+test('a11y text-size composes with editor body size by default', async ({
+  page,
+}) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+
+  await page.goto('/#/settings?tab=accessibility');
+  await page.waitForLoadState('networkidle');
+  await page
+    .getByRole('group', { name: 'Text size' })
+    .getByRole('button', { name: 'Large', exact: true })
+    .click();
+  await expect(page.locator('html')).toHaveAttribute('data-text-scale', 'lg');
+
+  await gotoDoc(page, spaceId);
+  const editorSurface = page.locator('[data-editor-font]').first();
+  await expect(editorSurface).toHaveAttribute(
+    'data-editor-follows-a11y',
+    'true',
+  );
+  // Default editor size (base = 1) × a11y lg (1.12) = 1.12
+  const computed = await editorSurface.evaluate(
+    (el) => window.getComputedStyle(el).getPropertyValue('--editor-size-scale').trim(),
+  );
+  expect(parseFloat(computed)).toBeCloseTo(1.12, 2);
+});
+
+test('turning off "Follow Accessibility text size" decouples the editor from a11y scale', async ({
+  page,
+}) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+
+  // Raise a11y text size to xl
+  await page.goto('/#/settings?tab=accessibility');
+  await page.waitForLoadState('networkidle');
+  await page
+    .getByRole('group', { name: 'Text size' })
+    .getByRole('button', { name: 'Extra large' })
+    .click();
+
+  // Toggle compose off in typography settings
+  await openTypographyTab(page);
+  await page.getByRole('switch', { name: 'Follow Accessibility text size' }).click();
+
+  await gotoDoc(page, spaceId);
+  const editorSurface = page.locator('[data-editor-font]').first();
+  await expect(editorSurface).toHaveAttribute(
+    'data-editor-follows-a11y',
+    'false',
+  );
+  // Decoupled: editor body size base = 1, ignoring a11y xl
+  const computed = await editorSurface.evaluate(
+    (el) => window.getComputedStyle(el).getPropertyValue('--editor-size-scale').trim(),
+  );
+  expect(parseFloat(computed)).toBeCloseTo(1, 2);
 });

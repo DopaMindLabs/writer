@@ -1,12 +1,12 @@
 import { TabHeader } from '@/components/settings/TabHeader';
-import { useUI } from '@/store/ui';
+import { useEffectiveEditorTypography } from '@/hooks/useEffectiveEditorTypography';
 import { FontRow } from './typography/FontRow';
 import { SizeRow } from './typography/SizeRow';
+import { FollowA11yRow } from './typography/FollowA11yRow';
 import { PreviewBlock } from './typography/PreviewBlock';
 
 export const TypographyTab = () => {
-  const editorFont = useUI((s) => s.editorFont);
-  const editorSize = useUI((s) => s.editorSize);
+  const typography = useEffectiveEditorTypography();
   return (
     <section>
       <TabHeader
@@ -15,7 +15,12 @@ export const TypographyTab = () => {
       />
       <FontRow />
       <SizeRow />
-      <PreviewBlock font={editorFont} size={editorSize} />
+      <FollowA11yRow />
+      <PreviewBlock
+        font={typography.font}
+        size={typography.size}
+        sizeScale={typography.sizeScale}
+      />
     </section>
   );
 };

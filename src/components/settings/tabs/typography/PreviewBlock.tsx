@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import type { CSSProperties } from 'react';
 import {
   editorFontStack,
-  editorSizeScale,
   type EditorFont,
   type EditorSize,
 } from '@/lib/editorTypography';
@@ -10,13 +9,14 @@ import {
 interface PreviewBlockProps {
   font: EditorFont;
   size: EditorSize;
+  sizeScale: number;
 }
 
-export const PreviewBlock = ({ font, size }: PreviewBlockProps) => {
+export const PreviewBlock = ({ font, size, sizeScale }: PreviewBlockProps) => {
   const { t } = useTranslation('screens');
   const style: CSSProperties = {
     fontFamily: editorFontStack(font),
-    fontSize: `calc(17px * ${String(editorSizeScale(size))})`,
+    fontSize: `calc(17px * ${String(sizeScale)})`,
     lineHeight: 1.6,
   };
   return (
