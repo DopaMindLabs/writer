@@ -1,7 +1,7 @@
 import userEvent from '@testing-library/user-event';
 import { act, renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
-import { sampleSpace, seedBasicSpace } from '@/test/fixtures';
+import { FIXED_TIME, sampleSpace, seedBasicSpace } from '@/test/fixtures';
 import { Sidebar } from './Sidebar';
 
 describe('Sidebar', () => {
@@ -967,14 +967,27 @@ describe('Sidebar', () => {
   });
 
   describe('snapshot', () => {
+    beforeEach(() => {
+      vi.useFakeTimers({
+        toFake: ['Date', 'setTimeout', 'clearTimeout'],
+        shouldAdvanceTime: true,
+      });
+      vi.setSystemTime(FIXED_TIME);
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
     it('should match the snapshot across all variants', async () => {
       await seedBasicSpace();
       const { container } = renderWithProviders(
         <Sidebar spaceId="s1" activeDocId="d1" />,
         { initialEntries: ['/s/s1/d/d1'] },
       );
-      await screen.findByTestId('sidebar-space-title');
-      await screen.findByTestId('sidebar-doc-d1');
+      // Wait for the loaded space + doc rather than just the testids so the
+      // snapshot deterministically captures the populated state.
+      await screen.findByText('Test Space');
+      await screen.findByText('Sample Doc');
       expect(container).toMatchSnapshot();
     });
   });

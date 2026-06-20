@@ -753,6 +753,7 @@ const AddSectionRow = ({ add }: { add: AddSectionController }) => {
           onKeyDown={add.onKeyDown}
           onBlur={add.onBlur}
           placeholder={t('sidebar.sectionNamePlaceholder')}
+          aria-label={t('sidebar.addSectionAria')}
           data-testid="sidebar-add-section-input"
           className="flex-1 text-[13px]"
         />
@@ -891,6 +892,7 @@ const AddDocInput = forwardRef<HTMLInputElement, AddDocInputProps>(
           onKeyDown={onKeyDown}
           onBlur={onBlur}
           placeholder={t('sidebar.docNamePlaceholder')}
+          aria-label={t('sidebar.addDocInputAria')}
           data-testid={`sidebar-section-${sectionId}-add-input`}
           className="flex-1 text-[13px]"
         />

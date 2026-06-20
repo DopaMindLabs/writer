@@ -15,6 +15,7 @@
     "workshop": "Workshop",
     "empty": "(empty)",
     "addDocAria": "Add doc to {{label}}",
+    "addDocInputAria": "New document name",
     "docNamePlaceholder": "Doc name (Enter to create)",
     "addSection": "Add section",
     "addSectionAria": "Add section to this space",

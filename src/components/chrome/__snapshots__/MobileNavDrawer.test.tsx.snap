@@ -175,7 +175,7 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
         class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
         data-testid="sidebar-space-subtitle"
       >
-        PRIVATE · LOCAL · 2y
+        PRIVATE · LOCAL · new
       </div>
     </div>
     <nav

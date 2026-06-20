@@ -5,7 +5,7 @@ import {
   waitFor,
   fireEvent,
 } from '@/test/test-utils';
-import { sampleSpace, seedBasicSpace } from '@/test/fixtures';
+import { FIXED_TIME, sampleSpace, seedBasicSpace } from '@/test/fixtures';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 import { MobileNavDrawer } from './MobileNavDrawer';
@@ -50,6 +50,17 @@ describe('MobileNavDrawer', () => {
 });
 
 describe('snapshot', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({
+      toFake: ['Date', 'setTimeout', 'clearTimeout'],
+      shouldAdvanceTime: true,
+    });
+    vi.setSystemTime(FIXED_TIME);
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('matches the open drawer with the seeded space contents', async () => {
     await seedBasicSpace();
     renderWithProviders(<MobileNavDrawer spaceId="s1" activeDocId="d1" />, {
