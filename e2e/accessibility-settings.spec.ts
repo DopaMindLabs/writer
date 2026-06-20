@@ -48,7 +48,10 @@ test.describe('Accessibility settings panel', () => {
   }) => {
     await gotoAccessibilityTab(page);
 
-    await page.getByRole('button', { name: 'Large', exact: true }).click();
+    await page
+      .getByRole('group', { name: 'Text size' })
+      .getByRole('button', { name: 'Large', exact: true })
+      .click();
     await expect(page.locator('html')).toHaveAttribute('data-text-scale', 'lg');
 
     await page.getByText('Reduced', { exact: true }).click();
@@ -72,7 +75,10 @@ test.describe('Accessibility settings panel', () => {
 
   test('a preference survives a reload', async ({ page }) => {
     await gotoAccessibilityTab(page);
-    await page.getByRole('button', { name: 'Extra large' }).click();
+    await page
+      .getByRole('group', { name: 'Text size' })
+      .getByRole('button', { name: 'Extra large' })
+      .click();
     await expect(page.locator('html')).toHaveAttribute('data-text-scale', 'xl');
     await page.reload();
     await page.waitForFunction(
@@ -84,7 +90,10 @@ test.describe('Accessibility settings panel', () => {
   test('reset restores preferences to their defaults', async ({ page }) => {
     await gotoAccessibilityTab(page);
 
-    await page.getByRole('button', { name: 'Large', exact: true }).click();
+    await page
+      .getByRole('group', { name: 'Text size' })
+      .getByRole('button', { name: 'Large', exact: true })
+      .click();
     await page
       .getByRole('switch', { name: 'Enhanced focus indicator' })
       .click();

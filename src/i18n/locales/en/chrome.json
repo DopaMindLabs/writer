@@ -198,6 +198,23 @@
       "print": "Print…",
       "wordCount": "Word count statistics",
       "trash": "Move to Trash"
+    },
+    "typography": {
+      "title": "Editor typography",
+      "fontLabel": "Typeface",
+      "sizeLabel": "Body size",
+      "useDefault": "Use default",
+      "fontOptions": {
+        "serif": "Serif",
+        "sans": "Sans",
+        "mono": "Mono"
+      },
+      "sizeOptions": {
+        "sm": "Small",
+        "base": "Default",
+        "lg": "Large",
+        "xl": "Extra large"
+      }
     }
   },
   "versionModal": {

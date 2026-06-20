@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, type CSSProperties } from 'react';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -18,6 +18,12 @@ import { FloatingToolbarPlugin } from './plugins/FloatingToolbarPlugin';
 import { LimitHighlightPlugin } from './plugins/LimitHighlightPlugin';
 import { useUI } from '@/store/ui';
 import { cn } from '@/lib/utils';
+import {
+  editorFontStack,
+  editorSizeScale,
+  type EditorFont,
+  type EditorSize,
+} from '@/lib/editorTypography';
 import type { EditorMode } from './EditorFacade';
 
 interface LexicalEditorProps {
@@ -29,6 +35,8 @@ interface LexicalEditorProps {
   locked?: boolean;
   wordLimit?: number;
   charLimit?: number;
+  font: EditorFont;
+  size: EditorSize;
 }
 
 const editorTheme = {
@@ -64,10 +72,20 @@ export const LexicalEditor = ({
   locked = false,
   wordLimit,
   charLimit,
+  font,
+  size,
 }: LexicalEditorProps) => {
   const baseEditable = mode !== 'read';
   const editable = baseEditable && !locked;
   const floatingToolbarEnabled = useUI((s) => s.floatingToolbarEnabled);
+
+  const surfaceStyle = useMemo<CSSProperties>(
+    () => ({
+      ['--editor-font-family' as string]: editorFontStack(font),
+      ['--editor-size-scale' as string]: String(editorSizeScale(size)),
+    }),
+    [font, size],
+  );
 
   const initialConfig = useMemo(
     () => ({
@@ -92,18 +110,23 @@ export const LexicalEditor = ({
   );
 
   const surfaceClasses = cn(
-    'relative mx-auto w-full font-serif text-ink',
+    'relative mx-auto w-full font-[family-name:var(--editor-font-family)] text-ink',
     mode === 'focus' &&
-      'max-w-[68ch] text-[length:calc(1.125rem*var(--reading-scale))] leading-[calc(1.7*var(--reading-leading-scale))]',
+      'max-w-[68ch] text-[length:calc(1.125rem*var(--editor-size-scale))] leading-[calc(1.7*var(--reading-leading-scale))]',
     mode === 'read' &&
-      'max-w-[68ch] text-[length:calc(18px*var(--reading-scale))] leading-[calc(1.75*var(--reading-leading-scale))]',
+      'max-w-[68ch] text-[length:calc(18px*var(--editor-size-scale))] leading-[calc(1.75*var(--reading-leading-scale))]',
     mode === 'write' &&
-      'max-w-[68ch] text-[length:calc(17px*var(--reading-scale))] leading-[calc(1.6*var(--reading-leading-scale))]',
+      'max-w-[68ch] text-[length:calc(17px*var(--editor-size-scale))] leading-[calc(1.6*var(--reading-leading-scale))]',
   );
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className={surfaceClasses}>
+      <div
+        className={surfaceClasses}
+        data-editor-font={font}
+        data-editor-size={size}
+        style={surfaceStyle}
+      >
         <RichTextPlugin
           contentEditable={
             <ContentEditable

@@ -17,10 +17,10 @@ import { AccessibilityTab } from '@/components/settings/tabs/AccessibilityTab';
 import { DocInspectorTab } from '@/components/settings/tabs/DocInspectorTab';
 import { ExportImportTab } from '@/components/settings/tabs/ExportImportTab';
 import { LanguageTab } from '@/components/settings/tabs/LanguageTab';
+import { TypographyTab } from '@/components/settings/tabs/TypographyTab';
 import {
   GeneralPlaceholder,
   AppearancePlaceholder,
-  TypographyPlaceholder,
   ShortcutsPlaceholder,
   PalettesPlaceholder,
   CitationsPlaceholder,
@@ -53,7 +53,13 @@ const TAB_IDS = [
 type TabId = (typeof TAB_IDS)[number];
 type PlaceholderTabId = Exclude<
   TabId,
-  'editor' | 'docInspector' | 'sync' | 'accessibility' | 'language' | 'export'
+  | 'editor'
+  | 'docInspector'
+  | 'sync'
+  | 'accessibility'
+  | 'language'
+  | 'export'
+  | 'typography'
 >;
 
 const isTabId = (value: string | null): value is TabId =>
@@ -62,7 +68,6 @@ const isTabId = (value: string | null): value is TabId =>
 const PLACEHOLDERS: Record<PlaceholderTabId, () => ReactElement> = {
   general: GeneralPlaceholder,
   appearance: AppearancePlaceholder,
-  typography: TypographyPlaceholder,
   shortcuts: ShortcutsPlaceholder,
   palettes: PalettesPlaceholder,
   citations: CitationsPlaceholder,
@@ -105,6 +110,7 @@ const renderSection = (id: TabId): ReactElement => {
   if (id === 'sync') return <SyncTab />;
   if (id === 'language') return <LanguageTab />;
   if (id === 'export') return <ExportImportTab />;
+  if (id === 'typography') return <TypographyTab />;
   return <PlaceholderTab id={id} />;
 };
 
