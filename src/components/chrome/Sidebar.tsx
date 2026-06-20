@@ -851,14 +851,15 @@ const SectionHeader = ({
           {label}
         </button>
       )}
-      <IconButton
-        icon={Plus}
-        label={t('sidebar.addDocAria', { label })}
+      <button
+        type="button"
         onClick={onAdd}
-        iconSize="xs"
+        aria-label={t('sidebar.addDocAria', { label })}
         data-testid={`sidebar-section-${sectionId}-add`}
-        className="h-4 w-4 rounded-sm opacity-0 hover:bg-paper hover:text-ink group-hover:opacity-100 focus:opacity-100"
-      />
+        className="rounded-sm text-ink-4 opacity-0 transition-opacity hover:text-ink focus:opacity-100 focus-visible:outline-none group-hover:opacity-100"
+      >
+        <Plus className="h-3 w-3" />
+      </button>
     </div>
   );
 };
