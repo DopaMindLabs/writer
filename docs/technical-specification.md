@@ -252,7 +252,7 @@ Tabbed user-wide preferences.
 |-----|--------|----------|
 | **Editor** | Active | Floating-toolbar toggle (On / Off chips), persisted to `localStorage`. |
 | **Theme** | Active | Light · Dark · HC Light · HC Dark. Sets `data-theme` on `<html>`. |
-| **Typography** | Active | Editor body **typeface** (Serif / Sans / Monospace) and **body size** (Small / Default / Large / Extra large), with a live preview. Persisted to `localStorage`; defaults to Serif at Default. Per-document override available in the Document inspector → Info, with a *Use default* reset. Applies to the editor body only — not the UI, headings, or other reading surfaces. |
+| **Typography** | Active | Editor body **typeface** (Serif / Sans / Monospace) and **body size** (Small / Default / Large / Extra large), with a live preview. **Follow Accessibility text size** toggle (default on) composes the editor body size with the Accessibility tab's text-scale preference; turning it off decouples the editor body from a11y. Persisted to `localStorage`; defaults to Serif at Default. Per-document override available in the Document inspector → Info, with a *Use default* reset. Applies to the editor body only — not the UI, headings, or other reading surfaces. |
 | **Shortcuts** | Active | Keyboard reference. |
 | **Backups** | Active | Backup management. |
 | **Account** | Coming soon | Placeholder: *"Cloud sync is unavailable"*. |

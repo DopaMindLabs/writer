@@ -14,6 +14,8 @@ export interface EditorProps {
   charLimit?: number;
   font: EditorFont;
   size: EditorSize;
+  sizeScale: number;
+  followA11y: boolean;
 }
 
 export const Editor = (props: EditorProps) => {

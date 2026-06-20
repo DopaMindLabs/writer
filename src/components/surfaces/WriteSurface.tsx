@@ -99,6 +99,8 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
           charLimit={charLimit}
           font={typography.font}
           size={typography.size}
+          sizeScale={typography.sizeScale}
+          followA11y={typography.followA11y}
           placeholder="Start writing…"
         />
       </div>

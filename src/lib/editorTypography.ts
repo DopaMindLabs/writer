@@ -20,9 +20,19 @@ const SIZE_SCALES: Record<EditorSize, number> = {
   xl: 1.24,
 };
 
+const A11Y_TEXT_SCALES: Record<string, number> = {
+  sm: 0.9,
+  base: 1,
+  lg: 1.12,
+  xl: 1.24,
+};
+
 export const editorFontStack = (font: EditorFont): string => FONT_STACKS[font];
 
 export const editorSizeScale = (size: EditorSize): number => SIZE_SCALES[size];
+
+export const a11yTextScaleMultiplier = (textScale: string): number =>
+  A11Y_TEXT_SCALES[textScale] ?? 1;
 
 export const sanitizeEditorFont = (v: unknown): EditorFont =>
   typeof v === 'string' && (EDITOR_FONTS as readonly string[]).includes(v)

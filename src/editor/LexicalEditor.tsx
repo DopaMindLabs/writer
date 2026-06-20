@@ -20,7 +20,6 @@ import { useUI } from '@/store/ui';
 import { cn } from '@/lib/utils';
 import {
   editorFontStack,
-  editorSizeScale,
   type EditorFont,
   type EditorSize,
 } from '@/lib/editorTypography';
@@ -37,6 +36,8 @@ interface LexicalEditorProps {
   charLimit?: number;
   font: EditorFont;
   size: EditorSize;
+  sizeScale: number;
+  followA11y: boolean;
 }
 
 const editorTheme = {
@@ -74,6 +75,8 @@ export const LexicalEditor = ({
   charLimit,
   font,
   size,
+  sizeScale,
+  followA11y,
 }: LexicalEditorProps) => {
   const baseEditable = mode !== 'read';
   const editable = baseEditable && !locked;
@@ -82,9 +85,9 @@ export const LexicalEditor = ({
   const surfaceStyle = useMemo<CSSProperties>(
     () => ({
       ['--editor-font-family' as string]: editorFontStack(font),
-      ['--editor-size-scale' as string]: String(editorSizeScale(size)),
+      ['--editor-size-scale' as string]: String(sizeScale),
     }),
-    [font, size],
+    [font, sizeScale],
   );
 
   const initialConfig = useMemo(
@@ -125,6 +128,7 @@ export const LexicalEditor = ({
         className={surfaceClasses}
         data-editor-font={font}
         data-editor-size={size}
+        data-editor-follows-a11y={followA11y ? 'true' : 'false'}
         style={surfaceStyle}
       >
         <RichTextPlugin
