@@ -22,6 +22,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const InheritDefault: Story = {
+  args: { doc: baseDoc },
   render: () => (
     <div className="mx-auto w-72 border border-rule bg-paper-2 p-4">
       <EditorTypographyControl doc={baseDoc} />
@@ -30,6 +31,7 @@ export const InheritDefault: Story = {
 };
 
 export const SansOverride: Story = {
+  args: { doc: baseDoc },
   render: () => (
     <div className="mx-auto w-72 border border-rule bg-paper-2 p-4">
       <EditorTypographyControl
@@ -40,6 +42,7 @@ export const SansOverride: Story = {
 };
 
 export const ReadOnly: Story = {
+  args: { doc: baseDoc },
   render: () => (
     <div className="mx-auto w-72 border border-rule bg-paper-2 p-4">
       <EditorTypographyControl
