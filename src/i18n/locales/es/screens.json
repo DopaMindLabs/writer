@@ -537,13 +537,11 @@
       },
       "backups": {
         "title": "Copias de seguridad",
-        "subtitle": "Haz una instantánea de este espacio como .zip de Markdown que puedes descargar y guardar.",
-        "comingSoonHint": "Los formatos LaTeX, HTML y PDF están en camino. Restaurar desde archivo llega con la importación.",
+        "subtitle": "Haz una instantánea de este espacio como .zip que puedes descargar, guardar y restaurar.",
         "retentionHint": "Se conservan las {{count}} instantáneas más recientes — las antiguas se eliminan automáticamente.",
         "snapshotNow": "+ instantánea ahora",
         "snapshotting": "haciendo instantánea…",
         "snapshotFailed": "Instantánea fallida: {{message}}",
-        "restoreLabel": "↑ restaurar desde archivo",
         "historyTitle": "Historial",
         "empty": "Aún no hay instantáneas — crea una con + instantánea ahora.",
         "columns": {
