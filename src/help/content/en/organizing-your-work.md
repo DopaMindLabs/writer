@@ -18,9 +18,10 @@ screen.
 
 ## Sections and documents
 
-Within a space, group related documents into sections. **Add**, **rename**, and
-reorder documents from the sidebar. Press **Escape** to cancel an add or rename
-without saving.
+Within a space, group related documents into sections. From each section
+header, click the **+** button to add a new doc. Type a name and press
+**Enter** — or simply click away — to save and open the new doc; **Escape**
+cancels. Empty inputs clear silently when you click away.
 
 ### Adding your own sections
 

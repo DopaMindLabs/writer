@@ -234,8 +234,9 @@ describe('Sidebar', () => {
       });
     });
 
-    it('should cancel the in-progress addition on blur', async () => {
+    it('should commit the in-progress add-doc to Dexie on blur when value is present', async () => {
       await seedBasicSpace();
+      const beforeCount = await db.docs.count();
       const user = userEvent.setup();
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
         initialEntries: ['/s/s1/d/d1'],
@@ -246,13 +247,40 @@ describe('Sidebar', () => {
       const input = await screen.findByTestId(
         'sidebar-section-sec1-add-input',
       );
-      await user.type(input, 'partial');
+      await user.clear(input);
+      await user.type(input, 'Blur saves');
       act(() => { input.blur(); });
       await waitFor(() =>
         expect(
           screen.queryByTestId('sidebar-section-sec1-add-input'),
         ).not.toBeInTheDocument(),
       );
+      expect(await db.docs.count()).toBe(beforeCount + 1);
+      const docs = await db.docs.toArray();
+      expect(docs.find((d) => d.name === 'Blur saves')).toBeDefined();
+    });
+
+    it('should clear the add-doc input on blur without writing when the value is empty', async () => {
+      await seedBasicSpace();
+      const beforeCount = await db.docs.count();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
+        initialEntries: ['/s/s1/d/d1'],
+      });
+      await user.click(
+        await screen.findByTestId('sidebar-section-sec1-add'),
+      );
+      const input = await screen.findByTestId(
+        'sidebar-section-sec1-add-input',
+      );
+      await user.clear(input);
+      act(() => { input.blur(); });
+      await waitFor(() =>
+        expect(
+          screen.queryByTestId('sidebar-section-sec1-add-input'),
+        ).not.toBeInTheDocument(),
+      );
+      expect(await db.docs.count()).toBe(beforeCount);
     });
 
     it('should fall back to "Untitled" when committing an empty add-doc name', async () => {
@@ -300,7 +328,7 @@ describe('Sidebar', () => {
       });
     });
 
-    it('should cancel the subsection add-doc input on blur', async () => {
+    it('should commit a subsection add-doc on blur when value is present', async () => {
       await seedBasicSpace();
       const user = userEvent.setup();
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
@@ -312,12 +340,14 @@ describe('Sidebar', () => {
       const input = await screen.findByTestId(
         'sidebar-section-sec1a-add-input',
       );
+      await user.clear(input);
+      await user.type(input, 'Sub blur');
       act(() => { input.blur(); });
-      await waitFor(() =>
-        expect(
-          screen.queryByTestId('sidebar-section-sec1a-add-input'),
-        ).not.toBeInTheDocument(),
-      );
+      await waitFor(async () => {
+        const docs = await db.docs.toArray();
+        expect(docs.find((d) => d.sectionId === 'sec1a' && d.name === 'Sub blur'))
+          .toBeDefined();
+      });
     });
 
     it('should pre-fill the add-doc input with the template defaultDocName when the section matches', async () => {
@@ -672,6 +702,49 @@ describe('Sidebar', () => {
         ).not.toBeInTheDocument();
       });
       expect((await db.docs.get('d1'))?.name).toBe('Sample Doc');
+    });
+
+    it('should commit the rename on blur when the value changed', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
+        initialEntries: ['/s/s1/d/d1'],
+      });
+      await user.dblClick(await screen.findByTestId('sidebar-doc-d1'));
+      const input = await screen.findByTestId('sidebar-doc-d1-rename-input');
+      await user.clear(input);
+      await user.type(input, 'Saved on blur');
+      act(() => { input.blur(); });
+      await waitFor(async () => {
+        expect((await db.docs.get('d1'))?.name).toBe('Saved on blur');
+      });
+    });
+
+    it('should support double-click rename on a doc inside a subsection', async () => {
+      await seedBasicSpace();
+      await db.docs.put({
+        id: 'd-sub',
+        spaceId: 's1',
+        sectionId: 'sec1a',
+        name: 'Sub doc',
+        body: '',
+        meta: { wordCount: 0 },
+        updatedAt: 0,
+      });
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
+        initialEntries: ['/s/s1/d/d1'],
+      });
+      await user.dblClick(await screen.findByTestId('sidebar-doc-d-sub'));
+      const input = await screen.findByTestId(
+        'sidebar-doc-d-sub-rename-input',
+      );
+      await user.clear(input);
+      await user.type(input, 'Renamed sub');
+      act(() => { input.blur(); });
+      await waitFor(async () => {
+        expect((await db.docs.get('d-sub'))?.name).toBe('Renamed sub');
+      });
     });
   });
 

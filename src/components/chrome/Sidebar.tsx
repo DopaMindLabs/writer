@@ -198,7 +198,7 @@ interface AddController {
   inputRef: RefObject<HTMLInputElement | null>;
   onChange: (value: string) => void;
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
-  onClear: () => void;
+  onBlur: () => void;
 }
 
 interface SidebarSectionProps {
@@ -233,7 +233,7 @@ const MaybeAddInput = ({
       indented={indented}
       onChange={add.onChange}
       onKeyDown={add.onKeyDown}
-      onBlur={add.onClear}
+      onBlur={add.onBlur}
     />
   );
 };
@@ -554,26 +554,37 @@ const useAddSection = (
   };
 };
 
+const useFocusOnMount = (
+  active: boolean,
+  ref: RefObject<HTMLInputElement | null>,
+): void => {
+  useEffect(() => {
+    if (active && ref.current) {
+      const input = ref.current;
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+    }
+  }, [active, ref]);
+};
+
+const useTopTemplateMap = (
+  space: Space | undefined,
+): Map<string, TemplateSectionDef> => {
+  const templateDef = space ? getTemplate(space.template) : undefined;
+  return useMemo(() => {
+    const m = new Map<string, TemplateSectionDef>();
+    for (const s of templateDef?.sections ?? []) m.set(s.label, s);
+    return m;
+  }, [templateDef]);
+};
+
 const useAddDoc = (spaceId: string, space: Space | undefined) => {
   const { t } = useTranslation(['chrome', 'common']);
   const navigate = useNavigate();
   const [adding, setAdding] = useState<AddingState | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (adding && inputRef.current) {
-      const input = inputRef.current;
-      input.focus();
-      input.setSelectionRange(input.value.length, input.value.length);
-    }
-  }, [adding]);
-
-  const templateDef = space ? getTemplate(space.template) : undefined;
-  const topTemplateDefByLabel = useMemo(() => {
-    const m = new Map<string, TemplateSectionDef>();
-    for (const s of templateDef?.sections ?? []) m.set(s.label, s);
-    return m;
-  }, [templateDef]);
+  useFocusOnMount(adding !== null, inputRef);
+  const topTemplateDefByLabel = useTopTemplateMap(space);
 
   const startAdd = (
     sectionId: string,
@@ -598,6 +609,17 @@ const useAddDoc = (spaceId: string, space: Space | undefined) => {
     void navigate(routes.docWrite(spaceId, id));
   };
 
+  const commitOnBlur = async () => {
+    if (!adding) return;
+    const trimmed = adding.value.trim();
+    if (!trimmed) {
+      setAdding(null);
+      return;
+    }
+    await createDoc(spaceId, adding.sectionId, trimmed);
+    setAdding(null);
+  };
+
   const onAddKey = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -613,7 +635,7 @@ const useAddDoc = (spaceId: string, space: Space | undefined) => {
     inputRef,
     onChange: (v) => { setAdding((prev) => (prev ? { ...prev, value: v } : prev)); },
     onKeyDown: onAddKey,
-    onClear: () => { setAdding(null); },
+    onBlur: () => { void commitOnBlur(); },
   };
 
   return { add, startAdd };

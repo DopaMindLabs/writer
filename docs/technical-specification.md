@@ -103,7 +103,7 @@ A **space** is an independent writing project with its own sections, documents, 
 
 A space is structured as **sections** containing **documents**. The default sections vary by template (e.g., Fiction has *Manuscript* and *Characters*; Research has *Manuscript* and *Data*).
 
-**Add a doc.** In the sidebar, each section has an **+ Add doc to *<Section>*** button. Clicking it reveals an inline input. Type a name and press **Enter** to create the doc and navigate to it; **Escape** cancels.
+**Add a doc.** In the sidebar, each section has an **+ Add doc to *<Section>*** button. Clicking it reveals an inline input. **Enter** creates the doc and navigates to it; **blur** (clicking away) saves the doc in place without navigating, or silently clears the input when empty; **Escape** cancels.
 
 **Add a section.** When a space's template sets `allowExtraSections: true` (currently the **Blank** template), an **Add section** affordance appears below the sidebar's section list, hover-revealed on the row. Clicking it reveals an inline input. **Enter** — or **blur** (clicking away) — appends a new top-level section at the next order; **Escape** cancels. Templates that encode a specific workflow (Fiction, Thesis, Technical, Bioinformatics) keep `allowExtraSections` unset so their seeded shape is preserved.
 

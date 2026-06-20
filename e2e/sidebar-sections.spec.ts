@@ -144,6 +144,31 @@ test('adding a doc via section input and submitting creates a new doc', async ({
   );
 });
 
+test('adding a doc commits on blur without navigating away from the current doc', async ({
+  page,
+}) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}`);
+  await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
+  const urlBefore = page.url();
+
+  const sidebar = page.locator('aside').last();
+  const addBtns = sidebar.locator('[data-testid$="-add"]');
+  const initialDocCount = await sidebar.locator('a[href*="/d/"]').count();
+
+  await addBtns.first().click();
+  const input = sidebar.locator('[data-testid$="-add-input"]');
+  await input.fill('Saved on blur');
+  // Blur by clicking the sidebar background (a known stable target)
+  await sidebar.getByTestId('sidebar-space-subtitle').click();
+
+  await expect(sidebar.locator('a[href*="/d/"]')).toHaveCount(
+    initialDocCount + 1,
+  );
+  // We should NOT have navigated to the new doc
+  expect(page.url()).toBe(urlBefore);
+});
+
 test('blank template surfaces an Add section affordance that creates a new top-level section', async ({
   page,
 }) => {
