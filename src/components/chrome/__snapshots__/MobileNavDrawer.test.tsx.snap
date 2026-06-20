@@ -244,7 +244,7 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
               Sample Doc
             </span>
             <span
-              class="font-mono text-[10px] text-ink-4"
+              class="inline-flex h-3 min-w-3 items-center justify-center font-mono text-[10px] text-ink-4"
               data-testid="sidebar-doc-d1-count"
             >
               ◌

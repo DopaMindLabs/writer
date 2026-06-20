@@ -1022,7 +1022,7 @@ const DocLinkBody = ({ doc, href, active, wordCount, rename }: DocLinkBodyProps)
       </span>
       <span
         data-testid={`sidebar-doc-${doc.id}-count`}
-        className="font-mono text-[10px] text-ink-4"
+        className="inline-flex h-3 min-w-3 items-center justify-center font-mono text-[10px] text-ink-4"
       >
         {wordCount > 0 ? wordCount.toLocaleString() : '◌'}
       </span>
