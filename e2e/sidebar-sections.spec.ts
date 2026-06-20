@@ -1,5 +1,9 @@
 import { test, expect } from './_helpers';
-import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
+import {
+  reseedAndGoHome,
+  getFirstSpaceIdFromHome,
+  createSpaceFromTemplate,
+} from './_helpers';
 
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
@@ -138,4 +142,67 @@ test('adding a doc via section input and submitting creates a new doc', async ({
   await expect(sidebar.locator('a[href*="/d/"]')).toHaveCount(
     initialDocCount + 1,
   );
+});
+
+test('adding a doc commits on blur without navigating away from the current doc', async ({
+  page,
+}) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}`);
+  await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
+  const urlBefore = page.url();
+
+  const sidebar = page.locator('aside').last();
+  const addBtns = sidebar.locator('[data-testid$="-add"]');
+  const initialDocCount = await sidebar.locator('a[href*="/d/"]').count();
+
+  await addBtns.first().click();
+  const input = sidebar.locator('[data-testid$="-add-input"]');
+  await input.fill('Saved on blur');
+  // Blur by clicking the sidebar background (a known stable target)
+  await sidebar.getByTestId('sidebar-space-subtitle').click();
+
+  await expect(sidebar.locator('a[href*="/d/"]')).toHaveCount(
+    initialDocCount + 1,
+  );
+  // We should NOT have navigated to the new doc
+  expect(page.url()).toBe(urlBefore);
+});
+
+test('blank template surfaces an Add section affordance that creates a new top-level section', async ({
+  page,
+}) => {
+  await createSpaceFromTemplate(page, 'blank');
+
+  const sidebar = page.locator('aside').last();
+  const trigger = sidebar.getByTestId('sidebar-add-section-trigger');
+  await expect(trigger).toBeVisible();
+
+  const initialHeaderCount = await sidebar
+    .locator('[data-testid$="-header"]')
+    .count();
+
+  await trigger.click();
+  const input = sidebar.getByTestId('sidebar-add-section-input');
+  await expect(input).toBeVisible();
+  await input.fill('Research');
+  await input.press('Enter');
+
+  await expect(sidebar.locator('[data-testid$="-header"]')).toHaveCount(
+    initialHeaderCount + 1,
+  );
+  await expect(
+    sidebar.locator('[data-testid$="-label"]', { hasText: 'Research' }),
+  ).toBeVisible();
+});
+
+test('structured templates do not surface the Add section affordance', async ({
+  page,
+}) => {
+  await createSpaceFromTemplate(page, 'fiction');
+
+  const sidebar = page.locator('aside').last();
+  await expect(
+    sidebar.getByTestId('sidebar-add-section-trigger'),
+  ).toHaveCount(0);
 });

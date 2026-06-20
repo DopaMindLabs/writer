@@ -18,9 +18,20 @@ screen.
 
 ## Sections and documents
 
-Within a space, group related documents into sections. **Add**, **rename**, and
-reorder documents from the sidebar. Press **Escape** to cancel an add or rename
-without saving.
+Within a space, group related documents into sections. From each section
+header, click the **+** button to add a new doc. Type a name and press
+**Enter** — or simply click away — to save and open the new doc; **Escape**
+cancels. Empty inputs clear silently when you click away.
+
+### Adding your own sections
+
+Some templates — such as **Blank** — let you add new sections to organise the
+space your way. When the template allows it, an **Add section** button appears
+below the sections list when you hover that area. Click it, type a section
+name, and press **Enter** — or simply click away — to create. **Escape**
+cancels. Structured templates (Fiction, Thesis, Technical, Bioinformatics)
+keep their seeded sections fixed so the shape stays consistent with the
+workflow they encode.
 
 ## Templates
 
@@ -30,7 +41,10 @@ begin with momentum.
 
 ## Renaming and tidying
 
-- Click any name in the sidebar to rename it; **Enter** commits, **Escape** reverts.
+- **Double-click** a section name or a document name in the sidebar to rename
+  it inline. **Enter** — or simply click away — commits the change; **Escape**
+  reverts.
+- The space title in the sidebar uses a single click to enter rename mode.
 - Keep documents short and focused; lean on sections for structure.
 - Use clear titles so search and the sidebar stay scannable.
 

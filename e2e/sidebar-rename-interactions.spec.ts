@@ -70,6 +70,53 @@ test('sidebar space menu rename flow', async ({ page }) => {
   await expect(titleEl).toHaveText(originalName);
 });
 
+test('double-click on a section label opens an inline rename input and commits on Enter', async ({
+  page,
+}) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}`);
+  await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
+
+  const sidebar = page.locator('aside').last();
+  const label = sidebar.locator('[data-testid$="-label"]').first();
+  await expect(label).toBeVisible();
+  const sectionLabel = (await label.textContent())?.trim() ?? '';
+  expect(sectionLabel.length).toBeGreaterThan(0);
+
+  await label.dblclick();
+  const input = sidebar.locator('[data-testid$="-rename-input"]').first();
+  await expect(input).toBeVisible();
+  await input.fill('Renamed section');
+  await input.press('Enter');
+
+  await expect(sidebar.locator('[data-testid$="-label"]').first()).toHaveText(
+    'Renamed section',
+  );
+});
+
+test('double-click on a doc link opens an inline rename input and commits on Enter', async ({
+  page,
+}) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}`);
+  await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
+
+  const sidebar = page.locator('aside').last();
+  const docLink = sidebar.locator('a[data-testid^="sidebar-doc-"]').first();
+  const docTestId = await docLink.getAttribute('data-testid');
+  expect(docTestId).toBeTruthy();
+
+  await docLink.dblclick();
+  const input = sidebar.getByTestId(`${docTestId ?? ''}-rename-input`);
+  await expect(input).toBeVisible();
+  await input.fill('Inline renamed doc');
+  await input.press('Enter');
+
+  await expect(
+    sidebar.getByTestId(`${docTestId ?? ''}-name`),
+  ).toHaveText('Inline renamed doc');
+});
+
 test('sidebar shows citations count badge', async ({ page }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
 
