@@ -1,5 +1,6 @@
 import type { HighlightColor } from '@/theme/tokens';
 import type { DocStatus } from '@/lib/docInspector/status';
+import type { EditorFont, EditorSize } from '@/lib/editorTypography';
 
 export interface Space {
   id: string;
@@ -32,6 +33,8 @@ export interface Doc {
     charLimit?: number;
     dueDate?: number;
   };
+  editorFont?: EditorFont;
+  editorSize?: EditorSize;
   updatedAt: number;
 }
 

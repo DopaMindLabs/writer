@@ -376,7 +376,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
       <p
         class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
       >
-        Defaults across all worlds. Individual worlds may override.
+        Defaults for the editor body across all documents. Individual documents can override these from the document inspector.
       </p>
       <div
         class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"

@@ -1,4 +1,5 @@
 import { LexicalEditor } from './LexicalEditor';
+import type { EditorFont, EditorSize } from '@/lib/editorTypography';
 
 export type EditorMode = 'write' | 'focus' | 'read';
 
@@ -11,6 +12,8 @@ export interface EditorProps {
   locked?: boolean;
   wordLimit?: number;
   charLimit?: number;
+  font: EditorFont;
+  size: EditorSize;
 }
 
 export const Editor = (props: EditorProps) => {
