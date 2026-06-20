@@ -1,16 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
-import { Chip } from '@/components/ui/Chip';
 import { Button } from '@/components/ui/Button';
-import {
-  EDITOR_FONTS,
-  EDITOR_SIZES,
-  editorFontStack,
-  type EditorFont,
-  type EditorSize,
-} from '@/lib/editorTypography';
+import type { EditorFont, EditorSize } from '@/lib/editorTypography';
 import { useUI } from '@/store/ui';
+import { FontRow } from './EditorTypographyControl/FontRow';
+import { SizeRow } from './EditorTypographyControl/SizeRow';
 
 const setOverride = (
   docId: string,
@@ -27,76 +22,15 @@ const clearOverrides = (docId: string): void => {
   });
 };
 
-interface InspectorTypographyProps {
+interface EditorTypographyControlProps {
   doc: Doc;
   readOnly?: boolean;
 }
 
-const FontRow = ({
-  doc,
-  globalFont,
-}: {
-  doc: Doc;
-  globalFont: EditorFont;
-}) => {
-  const { t } = useTranslation('chrome');
-  const active = doc.editorFont ?? globalFont;
-  return (
-    <div className="border-b border-rule/60 py-2">
-      <div className="mb-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-        {t('inspector.typography.fontLabel')}
-      </div>
-      <div role="group" aria-label={t('inspector.typography.fontLabel')} className="flex flex-wrap gap-1.5">
-        {EDITOR_FONTS.map((font) => (
-          <Chip
-            key={font}
-            active={font === active}
-            onClick={() => { setOverride(doc.id, { editorFont: font }); }}
-            data-testid={`inspector-editor-font-${font}`}
-            style={{ fontFamily: editorFontStack(font) }}
-          >
-            {t(`inspector.typography.fontOptions.${font}`)}
-          </Chip>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const SizeRow = ({
-  doc,
-  globalSize,
-}: {
-  doc: Doc;
-  globalSize: EditorSize;
-}) => {
-  const { t } = useTranslation('chrome');
-  const active = doc.editorSize ?? globalSize;
-  return (
-    <div className="border-b border-rule/60 py-2">
-      <div className="mb-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-        {t('inspector.typography.sizeLabel')}
-      </div>
-      <div role="group" aria-label={t('inspector.typography.sizeLabel')} className="flex flex-wrap gap-1.5">
-        {EDITOR_SIZES.map((size) => (
-          <Chip
-            key={size}
-            active={size === active}
-            onClick={() => { setOverride(doc.id, { editorSize: size }); }}
-            data-testid={`inspector-editor-size-${size}`}
-          >
-            {t(`inspector.typography.sizeOptions.${size}`)}
-          </Chip>
-        ))}
-      </div>
-    </div>
-  );
-};
-
 export const EditorTypographyControl = ({
   doc,
   readOnly = false,
-}: InspectorTypographyProps) => {
+}: EditorTypographyControlProps) => {
   const { t } = useTranslation('chrome');
   const globalFont = useUI((s) => s.editorFont);
   const globalSize = useUI((s) => s.editorSize);
@@ -104,6 +38,13 @@ export const EditorTypographyControl = ({
     doc.editorFont !== undefined || doc.editorSize !== undefined;
 
   if (readOnly) return null;
+
+  const handleFont = (font: EditorFont): void => {
+    setOverride(doc.id, { editorFont: font });
+  };
+  const handleSize = (size: EditorSize): void => {
+    setOverride(doc.id, { editorSize: size });
+  };
 
   return (
     <div data-testid="inspector-typography" className="mt-4">
@@ -122,8 +63,8 @@ export const EditorTypographyControl = ({
           </Button>
         )}
       </div>
-      <FontRow doc={doc} globalFont={globalFont} />
-      <SizeRow doc={doc} globalSize={globalSize} />
+      <FontRow doc={doc} globalFont={globalFont} onSelect={handleFont} />
+      <SizeRow doc={doc} globalSize={globalSize} onSelect={handleSize} />
     </div>
   );
 };
