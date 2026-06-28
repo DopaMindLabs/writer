@@ -49,7 +49,16 @@ const doc: Doc = {
 
 describe('WriteSurface', () => {
   it('renders editor stub with doc body and mode', () => {
-    const { container } = render(<WriteSurface doc={doc} mode="write" />);
+    const { container, getByTestId } = render(
+      <WriteSurface doc={doc} mode="write" />,
+    );
+    const stub = getByTestId('editor-stub');
+    // Explicitly pin the wiring the snapshot would otherwise silently absorb:
+    // the editor receives the doc body verbatim, the active mode, and is not
+    // locked.
+    expect(stub).toHaveAttribute('data-mode', 'write');
+    expect(stub.textContent).toBe(doc.body);
+    expect(stub).not.toHaveAttribute('data-locked');
     expect(container).toMatchSnapshot();
   });
 

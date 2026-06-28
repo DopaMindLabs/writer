@@ -61,15 +61,53 @@ describe('FocusToggle', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('toggles focus via Cmd+\\ keyboard shortcut', () => {
+  it('navigates into focus mode via the Cmd+\\ shortcut (macOS)', () => {
     renderWithProviders(
       <FocusToggle mode="write" spaceId="s1" docId="d1" />,
       { initialEntries: ['/s/s1/d/d1'] },
     );
+    // Before the shortcut the toggle links *into* focus mode (focus=1 set).
+    expect(screen.getByTestId('focus-toggle')).toHaveAttribute(
+      'href',
+      expect.stringContaining('focus=1'),
+    );
+
     fireEvent.keyDown(window, { key: '\\', metaKey: true });
-    expect(
-      screen.getByRole('link', { name: /enter focus|focus/i }),
-    ).toBeInTheDocument();
+
+    // After navigating, the URL carries focus=1, so the toggle now links back
+    // *out* of focus mode. Asserting the href flipped proves navigation ran —
+    // a no-op handler would leave focus=1 in place.
+    const toggle = screen.getByTestId('focus-toggle');
+    expect(toggle).toHaveAttribute(
+      'href',
+      expect.not.stringContaining('focus=1'),
+    );
+    expect(toggle).toHaveAttribute('href', '/s/s1/d/d1');
+  });
+
+  it('navigates into focus mode via the Ctrl+\\ shortcut (Linux/Windows)', () => {
+    renderWithProviders(
+      <FocusToggle mode="write" spaceId="s1" docId="d1" />,
+      { initialEntries: ['/s/s1/d/d1'] },
+    );
+    fireEvent.keyDown(window, { key: '\\', ctrlKey: true });
+    expect(screen.getByTestId('focus-toggle')).toHaveAttribute(
+      'href',
+      '/s/s1/d/d1',
+    );
+  });
+
+  it('ignores the backslash key without a modifier', () => {
+    renderWithProviders(
+      <FocusToggle mode="write" spaceId="s1" docId="d1" />,
+      { initialEntries: ['/s/s1/d/d1'] },
+    );
+    fireEvent.keyDown(window, { key: '\\' });
+    // No modifier means no navigation: the toggle still links into focus mode.
+    expect(screen.getByTestId('focus-toggle')).toHaveAttribute(
+      'href',
+      expect.stringContaining('focus=1'),
+    );
   });
 
   it('renders the dump mode link with the right href', () => {
