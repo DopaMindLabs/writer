@@ -218,10 +218,15 @@ describe('BrainSpaceCanvas', () => {
       );
       await screen.findByTestId('brain-note-n1');
       await screen.findByTestId('brain-note-n2');
-      const g = container.querySelector('svg g');
-      expect(g).not.toBeNull();
-      // The valid connection renders one root <g>; the orphan is skipped.
-      expect(g?.children.length).toBe(1);
+      // Connections come from a separate live query that starts empty, so the
+      // notes resolving above does not imply c-valid has rendered yet. Wait for
+      // the rendered connection before counting, or this races on slow runners.
+      await waitFor(() => {
+        const g = container.querySelector('svg g');
+        expect(g).not.toBeNull();
+        // The valid connection renders one root <g>; the orphan is skipped.
+        expect(g?.children.length).toBe(1);
+      });
     });
   });
 
