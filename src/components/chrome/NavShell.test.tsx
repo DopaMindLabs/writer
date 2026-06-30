@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, screen } from '@/test/test-utils';
+import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { seedMultipleSpaces, sampleSpace } from '@/test/fixtures';
 import { NavShell } from './NavShell';
 import type { NavTabGroup } from './NavTabs';
@@ -95,7 +95,13 @@ describe('NavShell', () => {
           </NavShell>
         </div>,
       );
-      await screen.findAllByText('LIpsum Writer');
+      // Wait for the async useSpaces live query to populate the space tiles in
+      // BOTH rails before snapshotting. Awaiting only the static 'LIpsum Writer'
+      // trigger raced the Dexie query on slower runners (CI), intermittently
+      // capturing the snapshot before the tiles rendered.
+      await waitFor(() => {
+        expect(screen.getAllByTestId('space-rail-space-s3')).toHaveLength(2);
+      });
       expect(container).toMatchSnapshot();
     });
   });
