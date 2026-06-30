@@ -36,15 +36,21 @@ describe('BrainSpaceScreen', () => {
     expect(container.querySelector('aside')).toBeInTheDocument();
   });
 
-  it('uses the previously-current doc as the fallback when it still exists', async () => {
+  it('prefers the persisted lastDocId over docs[0] when it still exists', async () => {
     await db.spaces.put(sampleSpace);
     await db.docs.put(sampleDoc);
-    useUI.getState().setCurrentDocId(sampleDoc.id);
-    const { container } = renderAtRoute(<BrainSpaceScreen />, {
+    // A second doc so the fallback can meaningfully differ from docs[0]: the
+    // persisted lastDocId points at d2, which must win over the first doc.
+    await db.docs.put({ ...sampleDoc, id: 'd2', name: 'Second' });
+    useUI.getState().setCurrentDocId('d2');
+    const { findByTestId } = renderAtRoute(<BrainSpaceScreen />, {
       path: '/s/:spaceId/brain-space',
       initialEntries: ['/s/s1/brain-space'],
     });
-    await waitFor(() => { expect(container.querySelector('main')).not.toBeNull(); });
+    await waitFor(async () => {
+      const readTab = await findByTestId('mobile-tabs-read');
+      expect(readTab).toHaveAttribute('href', '/s/s1/d/d2/read');
+    });
     act(() => { useUI.getState().setCurrentDocId(null); });
   });
 
@@ -65,11 +71,15 @@ describe('BrainSpaceScreen', () => {
     await db.spaces.put(sampleSpace);
     await db.docs.put(sampleDoc);
     useUI.getState().setCurrentDocId('ghost-doc');
-    const { container } = renderAtRoute(<BrainSpaceScreen />, {
+    const { findByTestId } = renderAtRoute(<BrainSpaceScreen />, {
       path: '/s/:spaceId/brain-space',
       initialEntries: ['/s/s1/brain-space'],
     });
-    await waitFor(() => { expect(container.querySelector('main')).not.toBeNull(); });
+    // The stale id must resolve to docs[0] (d1), never to /s/s1/d/ghost-doc/read.
+    await waitFor(async () => {
+      const readTab = await findByTestId('mobile-tabs-read');
+      expect(readTab).toHaveAttribute('href', '/s/s1/d/d1/read');
+    });
     act(() => { useUI.getState().setCurrentDocId(null); });
   });
 });

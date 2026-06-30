@@ -191,9 +191,21 @@ describe('BrainSpaceCanvas', () => {
       expect(await db.connections.count()).toBe(0);
     });
 
-    it('should skip rendering orphaned connections whose endpoints do not exist', async () => {
+    it('should skip orphaned connections while still rendering valid ones', async () => {
       await db.spaces.put(sampleSpace);
       await db.notes.put({ ...sampleNote, id: 'n1', body: 'present' });
+      await db.notes.put({ ...sampleNote, id: 'n2', body: 'also present' });
+      // One valid connection (both endpoints exist) and one orphan (endpoint
+      // missing). Seeding the valid one is the positive baseline: asserting an
+      // empty <g> alone would also pass if connection rendering were broken
+      // entirely, so we assert exactly the valid connection survives.
+      await db.connections.put({
+        id: 'c-valid',
+        spaceId: 's1',
+        fromNoteId: 'n1',
+        toNoteId: 'n2',
+        createdAt: 0,
+      });
       await db.connections.put({
         id: 'c-orphan',
         spaceId: 's1',
@@ -205,9 +217,16 @@ describe('BrainSpaceCanvas', () => {
         <BrainSpaceCanvas spaceId="s1" />,
       );
       await screen.findByTestId('brain-note-n1');
-      const g = container.querySelector('svg g');
-      expect(g).not.toBeNull();
-      expect(g?.children.length).toBe(0);
+      await screen.findByTestId('brain-note-n2');
+      // Connections come from a separate live query that starts empty, so the
+      // notes resolving above does not imply c-valid has rendered yet. Wait for
+      // the rendered connection before counting, or this races on slow runners.
+      await waitFor(() => {
+        const g = container.querySelector('svg g');
+        expect(g).not.toBeNull();
+        // The valid connection renders one root <g>; the orphan is skipped.
+        expect(g?.children.length).toBe(1);
+      });
     });
   });
 

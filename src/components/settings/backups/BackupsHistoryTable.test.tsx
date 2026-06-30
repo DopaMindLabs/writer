@@ -37,6 +37,30 @@ describe('BackupsHistoryTable', () => {
     expect(onDelete).toHaveBeenCalledOnce();
   });
 
+  it('formats sizes and relative times across every bucket', () => {
+    const now = Date.now();
+    const rows = [
+      // 90s ago → "1 min ago"; 512 bytes → "512 B"
+      { id: 'bytes', spaceId: 's1', when: now - 90_000, kind: 'manual', size: 512 },
+      // 5.5min ago → "5 min ago"; 2048 bytes → "2.0 kB"
+      { id: 'kb', spaceId: 's1', when: now - 330_000, kind: 'manual', size: 2048 },
+      // 3h+1min ago → "3 h ago"; 5 MiB → "5.0 MB"
+      { id: 'mb', spaceId: 's1', when: now - 10_860_000, kind: 'manual', size: 5 * 1024 * 1024 },
+    ] as unknown as Backup[];
+    renderWithProviders(
+      <BackupsHistoryTable backups={rows} onDownload={vi.fn()} onDelete={vi.fn()} />,
+    );
+    const bytes = screen.getByTestId('backup-row-bytes');
+    expect(bytes).toHaveTextContent('512 B');
+    expect(bytes).toHaveTextContent('1 min ago');
+    const kb = screen.getByTestId('backup-row-kb');
+    expect(kb).toHaveTextContent('2.0 kB');
+    expect(kb).toHaveTextContent('5 min ago');
+    const mb = screen.getByTestId('backup-row-mb');
+    expect(mb).toHaveTextContent('5.0 MB');
+    expect(mb).toHaveTextContent('3 h ago');
+  });
+
   it('omits the restore action when no handler is provided', () => {
     renderWithProviders(
       <BackupsHistoryTable
