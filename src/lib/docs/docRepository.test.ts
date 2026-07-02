@@ -1,0 +1,158 @@
+import { db } from '@/db/db';
+import type { Doc } from '@/db/schema';
+import { InvariantError } from '@/lib/invariant';
+import { sampleDoc, seedBasicSpace, serializedBody } from '@/test/fixtures';
+import {
+  createDoc,
+  createDocs,
+  renameDoc,
+  restoreDocs,
+  setDocStatus,
+  updateDocBody,
+  updateDocMeta,
+} from './docRepository';
+
+describe('docRepository', () => {
+  beforeEach(async () => {
+    await db.delete();
+    await db.open();
+    await seedBasicSpace();
+  });
+
+  describe('createDoc', () => {
+    it('creates a doc with word count 0 for an empty body and a fresh id', async () => {
+      const doc = await createDoc({
+        spaceId: 's1',
+        sectionId: 'sec1',
+        name: 'New doc',
+      });
+      expect(doc.id).toBeTruthy();
+      expect(doc.body).toBe('');
+      expect(doc.meta.wordCount).toBe(0);
+      expect(doc.updatedAt).toBeGreaterThan(0);
+      const stored = await db.docs.get(doc.id);
+      expect(stored).toEqual(doc);
+    });
+
+    it('computes the word count from a non-empty body', async () => {
+      const doc = await createDoc({
+        spaceId: 's1',
+        sectionId: 'sec1',
+        name: 'Seeded',
+        body: serializedBody('one two three'),
+      });
+      expect(doc.meta.wordCount).toBe(3);
+    });
+
+    it('throws when the space id is missing', async () => {
+      await expect(
+        createDoc({ spaceId: '', sectionId: 'sec1', name: 'x' }),
+      ).rejects.toThrow(InvariantError);
+    });
+
+    it('throws when the section id is missing', async () => {
+      await expect(
+        createDoc({ spaceId: 's1', sectionId: '', name: 'x' }),
+      ).rejects.toThrow(InvariantError);
+    });
+  });
+
+  describe('createDocs', () => {
+    it('bulk writes fully-formed rows verbatim', async () => {
+      const rows: Doc[] = [
+        { ...sampleDoc, id: 'a', name: 'A' },
+        { ...sampleDoc, id: 'b', name: 'B', meta: { wordCount: 42 } },
+      ];
+      await createDocs(rows);
+      expect(await db.docs.get('a')).toEqual(rows[0]);
+      expect((await db.docs.get('b'))?.meta.wordCount).toBe(42);
+    });
+
+    it('is a no-op for an empty array', async () => {
+      const before = await db.docs.count();
+      await createDocs([]);
+      expect(await db.docs.count()).toBe(before);
+    });
+  });
+
+  describe('restoreDocs', () => {
+    it('overwrites existing rows by id', async () => {
+      await restoreDocs([{ ...sampleDoc, name: 'Restored' }]);
+      expect((await db.docs.get(sampleDoc.id))?.name).toBe('Restored');
+    });
+  });
+
+  describe('renameDoc', () => {
+    it('trims the name and advances the timestamp', async () => {
+      await renameDoc(sampleDoc.id, '  Trimmed  ');
+      const doc = await db.docs.get(sampleDoc.id);
+      expect(doc?.name).toBe('Trimmed');
+      expect(doc?.updatedAt).toBeGreaterThan(sampleDoc.updatedAt);
+    });
+
+    it('is a no-op for a whitespace-only name', async () => {
+      await renameDoc(sampleDoc.id, '   ');
+      const doc = await db.docs.get(sampleDoc.id);
+      expect(doc?.name).toBe(sampleDoc.name);
+      expect(doc?.updatedAt).toBe(sampleDoc.updatedAt);
+    });
+
+    it('throws on an empty doc id', async () => {
+      await expect(renameDoc('', 'Name')).rejects.toThrow(InvariantError);
+    });
+  });
+
+  describe('updateDocBody', () => {
+    it('writes the body, recomputes the word count and advances the timestamp', async () => {
+      await updateDocBody(sampleDoc.id, serializedBody('alpha beta gamma delta'));
+      const doc = await db.docs.get(sampleDoc.id);
+      expect(doc?.body).toBe(serializedBody('alpha beta gamma delta'));
+      expect(doc?.meta.wordCount).toBe(4);
+      expect(doc?.updatedAt).toBeGreaterThan(sampleDoc.updatedAt);
+    });
+
+    it('throws on an empty doc id', async () => {
+      await expect(updateDocBody('', serializedBody('x'))).rejects.toThrow(
+        InvariantError,
+      );
+    });
+  });
+
+  describe('updateDocMeta', () => {
+    it('sets meta fields via dotted paths and preserves the rest', async () => {
+      await db.docs.update(sampleDoc.id, { meta: { wordCount: 5, status: 'draft' } });
+      await updateDocMeta(sampleDoc.id, { wordLimit: 500 });
+      const doc = await db.docs.get(sampleDoc.id);
+      expect(doc?.meta.wordLimit).toBe(500);
+      expect(doc?.meta.wordCount).toBe(5);
+      expect(doc?.meta.status).toBe('draft');
+      expect(doc?.updatedAt).toBeGreaterThan(sampleDoc.updatedAt);
+    });
+
+    it('clears a meta field when the value is undefined', async () => {
+      await db.docs.update(sampleDoc.id, {
+        meta: { wordCount: 5, wordLimit: 500 },
+      });
+      await updateDocMeta(sampleDoc.id, { wordLimit: undefined });
+      const doc = await db.docs.get(sampleDoc.id);
+      expect(doc?.meta.wordLimit).toBeUndefined();
+      expect(doc?.meta.wordCount).toBe(5);
+    });
+
+    it('throws on an empty doc id', async () => {
+      await expect(updateDocMeta('', { status: 'draft' })).rejects.toThrow(
+        InvariantError,
+      );
+    });
+  });
+
+  describe('setDocStatus', () => {
+    it('writes meta.status without disturbing other meta', async () => {
+      await db.docs.update(sampleDoc.id, { meta: { wordCount: 9 } });
+      await setDocStatus(sampleDoc.id, 'complete');
+      const doc = await db.docs.get(sampleDoc.id);
+      expect(doc?.meta.status).toBe('complete');
+      expect(doc?.meta.wordCount).toBe(9);
+    });
+  });
+});
