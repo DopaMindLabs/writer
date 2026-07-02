@@ -11,6 +11,7 @@ import {
   updateDocBody,
   updateDocMeta,
 } from './docRepository';
+import { EMPTY_LEXICAL_JSON } from './emptyBody';
 
 describe('docRepository', () => {
   beforeEach(async () => {
@@ -20,14 +21,14 @@ describe('docRepository', () => {
   });
 
   describe('createDoc', () => {
-    it('creates a doc with word count 0 for an empty body and a fresh id', async () => {
+    it('creates a doc with an empty Lexical body, word count 0 and a fresh id', async () => {
       const doc = await createDoc({
         spaceId: 's1',
         sectionId: 'sec1',
         name: 'New doc',
       });
       expect(doc.id).toBeTruthy();
-      expect(doc.body).toBe('');
+      expect(doc.body).toBe(EMPTY_LEXICAL_JSON);
       expect(doc.meta.wordCount).toBe(0);
       expect(doc.updatedAt).toBeGreaterThan(0);
       const stored = await db.docs.get(doc.id);
