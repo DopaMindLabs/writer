@@ -42,7 +42,7 @@
 | 8 | **Mobile nav** | Hamburger drawer on small viewports; settings tabs reflow without horizontal overflow. On the settings shells the wordmark / tag badge is the "back to root" affordance (the SpaceRail's own home link is hidden on mobile). |
 | 9 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), placeholder tabs for Account, Typography, Shortcuts, Backups. |
 | 10 | **Per-space settings** | General (name, tag), Sharing (coming soon), Template (coming soon), Members, Backups (manual `.md` snapshots + history + download), Danger Zone (delete with typed confirmation). |
-| 11 | **Persistence** | IndexedDB autosave (~600 ms debounce). Survives reload, route changes, browser restart. Versioned Dexie migrations. |
+| 11 | **Persistence** | IndexedDB autosave (~600 ms debounce). Survives reload, route changes, browser restart. |
 | 12 | **Theming** | Four themes: light, dark, high-contrast light, high-contrast dark. Choice persists in `localStorage`. |
 | 13 | **Tours / onboarding** | Driver.js guided tours; auto-trigger on first visit; replay from help menu; per-tour completion tracked in `localStorage`. |
 | 14 | **i18n** | i18next scaffolding (currently English-only; namespaces: `common`, `chrome`, `screens`, `app`, `templates`). |
@@ -71,9 +71,9 @@
 
 ### 3.2 Data model (Dexie tables)
 
-`Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `Note` (state machine: `seed-prompt → seed-fetched → user`), `Connection`, `Annotation`, `Citation`, `Backup` (binary `payload: Blob`, discriminated by `format` — currently only `md-zip`), `Settings`, `HighlightPalette`, `Meta`.
+`Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `DocUpdate` (append-only CRDT payloads for collaborative editing; `Doc.body` stays the serialized read model), `Note` (state machine: `seed-prompt → seed-fetched → user`), `Connection`, `Annotation`, `Citation`, `Backup` (binary `payload: Blob`, discriminated by `format` — currently only `md-zip`), `Settings`, `HighlightPalette`, `Meta`.
 
-Schema is on **version 5**; migrations backfill `Section.parentSectionId` and `Note.state` from prior versions.
+The schema is declared in a single Dexie version.
 
 ---
 
@@ -289,7 +289,6 @@ Reached via the cog in the sidebar header. The **back** link returns to the acti
 - **Storage:** IndexedDB via Dexie. No network calls for user content.
 - **Autosave:** ~600 ms debounce from the last keystroke.
 - **Survival:** Hard reload, route navigation, browser restart.
-- **Migrations:** Versioned schema; v1→v5 upgrade path tested. Backfills are non-destructive.
 - **Continue writing:** Home shows a *Continue writing* link to the most-recently-touched space if any exists.
 
 *Covered by:* `persistence.spec.ts`, `db.test.ts`, `seed.test.ts`.
@@ -442,7 +441,7 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 - **UI base (snapshots):** button, card, dialog, input, scroll-area, separator, tabs, tooltip, block-quote, dropdown-menu.
 - **Hooks:** `useCitations`, `useConnections`, `useDocuments`, `useNotes`, `useSpaces`, `useBackups`.
 - **Store:** `ui` (Zustand).
-- **DB:** `db` (Dexie migrations), `seed`.
+- **DB:** `db` (Dexie schema), `seed`.
 - **Utilities:** `bibtex`, `formatting`, `doc-naming`, `ids`, `utils`, `templates`, `i18n`.
 - **Backup pipeline:** `lexicalToMarkdown`, `buildSpaceMarkdownZip`, `createSpaceBackup` (snapshot read, zip layout, frontmatter, headless Lexical → Markdown).
 - **Theme / tours:** `ThemeProvider`, `tokens`, `HelpMenu`, `storage`, `useTour`, `useAutoTour`.
