@@ -1,4 +1,5 @@
 import { db } from '@/db/db';
+import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
 import { deleteSpaceCascade } from './deleteSpaceCascade';
 import { FIXED_TIME } from '@/test/fixtures';
 
@@ -17,7 +18,7 @@ const seedSpace = async (spaceId: string) => {
     spaceId,
     sectionId: `sec-${spaceId}`,
     name: 'Doc',
-    body: '',
+    body: EMPTY_LEXICAL_JSON,
     meta: { wordCount: 0 },
     updatedAt: FIXED_TIME,
   });
