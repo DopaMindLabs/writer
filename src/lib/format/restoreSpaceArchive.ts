@@ -1,5 +1,6 @@
 import { db } from '@/db/db';
 import { invariant } from '@/lib/invariant';
+import { restoreDocs } from '@/lib/docs';
 import { createSpaceBackup } from '@/lib/backup/createSpaceBackup';
 import { useUI } from '@/store/ui';
 import type { ParsedSpaceArchive } from './parseSpaceArchive';
@@ -37,7 +38,7 @@ const deleteSpaceContent = async (spaceId: string): Promise<void> => {
 const putArchiveContent = async (archive: ParsedSpaceArchive): Promise<void> => {
   await db.spaces.put(archive.space);
   await db.sections.bulkPut(archive.sections);
-  await db.docs.bulkPut(archive.docs);
+  await restoreDocs(archive.docs);
   await db.notes.bulkPut(archive.notes);
   await db.noteAttachments.bulkPut(archive.attachments);
   await db.annotations.bulkPut(archive.annotations);

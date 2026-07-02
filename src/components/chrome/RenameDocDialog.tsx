@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { TextField } from '@/components/ui/TextField';
 import { Button } from '@/components/ui/Button';
-import { renameDoc } from '@/lib/doc-actions';
+import { renameDoc } from '@/lib/docs';
 
 interface RenameDocDialogProps {
   docId: string;

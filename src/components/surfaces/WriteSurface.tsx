@@ -1,9 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor, type EditorMode } from '@/editor/EditorFacade';
-import { countWords } from '@/editor/wordCount';
 import { InlineBanner } from '@/components/ui/InlineBanner';
-import { db } from '@/db/db';
+import { setDocStatus, updateDocBody } from '@/lib/docs';
 import type { Doc } from '@/db/schema';
 import { useUI, type ReadingWidth } from '@/store/ui';
 import { useEffectiveInspectorConfig } from '@/hooks/useDocInspectorConfig';
@@ -34,10 +33,7 @@ const LockBanner = ({ doc }: { doc: Doc }) => {
       title={t('inspector.lock.title')}
       action={t('inspector.lock.unlock')}
       onAction={() => {
-        void db.docs.update(doc.id, {
-          'meta.status': 'draft',
-          updatedAt: Date.now(),
-        });
+        void setDocStatus(doc.id, 'draft');
       }}
       className="mb-6"
       data-testid="doc-lock-banner"
@@ -67,11 +63,7 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
   }, [doc.id]);
 
   const handleChange = useCallback((serialized: string) => {
-    void db.docs.update(doc.id, {
-      body: serialized,
-      updatedAt: Date.now(),
-      'meta.wordCount': countWords(serialized),
-    });
+    void updateDocBody(doc.id, serialized);
     void captureAutoRevision(doc.id, serialized).catch(
       (err: unknown) => {
         console.error('Failed to capture revision', err);
