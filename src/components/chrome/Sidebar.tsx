@@ -37,7 +37,7 @@ import { useNotes } from '@/hooks/useNotes';
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { formatDocName } from '@/lib/doc-naming';
-import { renameDoc } from '@/lib/doc-actions';
+import { createDoc as createDocInRepo, renameDoc } from '@/lib/docs';
 import { renameSection } from '@/lib/section-actions';
 import { routes } from '@/lib/routes';
 import {
@@ -417,17 +417,8 @@ const createDoc = async (
   sectionId: string,
   name: string,
 ): Promise<string> => {
-  const id = newId();
-  await db.docs.add({
-    id,
-    spaceId,
-    sectionId,
-    name,
-    body: '',
-    meta: { wordCount: 0 },
-    updatedAt: Date.now(),
-  });
-  return id;
+  const doc = await createDocInRepo({ spaceId, sectionId, name });
+  return doc.id;
 };
 
 interface InlineRename {
