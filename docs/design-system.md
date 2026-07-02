@@ -29,10 +29,11 @@ them.
 1. **Hairline grammar, no ornament.** Two rule weights (1 px `#e5e5e5` and 1 px `#f0f0f0`);
    nothing thicker. No shadows except on the desktop window chrome. No gradients. No rounded
    corners except the 8 px on the desktop window itself and 16 px on mobile bottom-sheet tops.
-2. **Pure grayscale palette; status is the one exception.** The ink scale is strict
-   black-to-white. The single typed exception is the **status palette** (error · warning ·
-   success · info), defined in §5 — used only in toasts, banners, field errors, badges, and
-   inline glyphs. Never in branding, layout, or hierarchy.
+2. **Pure grayscale palette; a few typed colour exceptions.** The ink scale is strict
+   black-to-white. The only typed colour exceptions are the **status palette** (error · warning ·
+   success · info, §5), the **annotation highlight palette** (§7.4), and the **presence hues**
+   (§7.6) — each confined to one purpose (feedback, annotation, collaboration presence). Never in
+   branding, layout, or hierarchy.
 3. **Three families, no more.** Source Serif 4 is editorial (titles, prose, captions). Geist
    is UI (buttons, nav labels). Geist Mono is meta (eyebrows, dates, counts, shortcuts).
 4. **Borderless icons.** Glyphs sit in 28 px hit zones with transparent backgrounds at rest;
@@ -53,14 +54,16 @@ them.
 - **Drop shadows on cards.** The system uses hairlines, never elevation. Only the desktop
   window has a shadow.
 - **A brand accent colour for hierarchy.** If a primary CTA needs emphasis, flip it to a solid
-  ink fill. Never introduce a brand accent. The status palette (§5) is the single exception,
-  and only for feedback.
+  ink fill. Never introduce a brand accent. The status palette (§5), annotation highlights
+  (§7.4), and presence hues (§7.6) are the only typed colour exceptions, each for its stated
+  purpose.
 - **Decorative emoji or stroked icons.** Icons are typographic glyphs (`⌕ ⤢ ⋯ ⋮ ◐ §`) on
   transparent grounds.
 - **More than two type sizes per block.** Eyebrow + title + body — that's the upper bound. If
   you need a third size, you're building a new block.
-- **Soft tints for status.** Status is text + glyph, not a coloured pill. The single exception
-  is the highlight-colour palette inside annotations.
+- **Soft tints for status.** Status is text + glyph, not a coloured pill. The tinted-colour
+  exceptions are the highlight-colour palette inside annotations (§7.4) and the presence hues
+  (§7.6).
 
 ### 1.3 When to use which ink
 
@@ -806,6 +809,34 @@ SettingRows for choice fields.
 >
 > **In this repo:** `src/components/settings/SettingsTabs.tsx`, `SettingRow.tsx`, and the
 > `Chip` / `ChipGroup` primitives under `src/components/ui/`.
+
+---
+
+### 7.6 Presence hues (`--presence-1 … --presence-5`)
+
+A small muted palette reserved exclusively for **collaboration presence** — remote carets,
+selections, and name flags. Not semantic, and never used for hierarchy, branding, or status.
+
+| Token | Light hue |
+|---|---|
+| `--presence-1` | terracotta |
+| `--presence-2` | slate blue |
+| `--presence-3` | moss |
+| `--presence-4` | plum |
+| `--presence-5` | ochre |
+
+- **Assignment.** Each participant is given one hue (their `presenceHue` in their local identity
+  profile); it labels their caret, selection tint, and name flag.
+- **Contrast.** Presence marks are non-text graphical objects. Each hue follows the same
+  per-theme floor as the status palette against `--paper` — **≥ 3:1** in light/dark (WCAG SC
+  1.4.11) and **≥ 7:1** in the high-contrast themes — with values running deeper or lighter to
+  suit the ground. Enforced by `src/theme/contrast.test.ts`.
+- **Motion.** Caret and name-flag transitions are gated by `data-motion` /
+  `prefers-reduced-motion`.
+
+> **In this repo:** defined in [`src/index.css`](../src/index.css) as `--presence-1 …
+> --presence-5` across `:root`, `[data-theme='dark']`, and both `hc-*` blocks, mapped to the
+> `presence-1 … presence-5` Tailwind colours in `tailwind.config.ts`.
 
 ---
 
