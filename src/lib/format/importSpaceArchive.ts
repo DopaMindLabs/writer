@@ -1,5 +1,6 @@
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
+import { createDocs } from '@/lib/docs';
 import type { ParsedSpaceArchive } from './parseSpaceArchive';
 
 const IMPORT_TABLES = [
@@ -111,7 +112,7 @@ const remapArchive = (archive: ParsedSpaceArchive): ParsedSpaceArchive => {
 const putRemapped = async (archive: ParsedSpaceArchive): Promise<void> => {
   await db.spaces.put(archive.space);
   await db.sections.bulkPut(archive.sections);
-  await db.docs.bulkPut(archive.docs);
+  await createDocs(archive.docs);
   await db.notes.bulkPut(archive.notes);
   await db.noteAttachments.bulkPut(archive.attachments);
   await db.annotations.bulkPut(archive.annotations);
