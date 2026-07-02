@@ -59,4 +59,28 @@ describe('captureAutoRevision', () => {
     await captureAutoRevision(DOC, serializedBody('v2'), () => 1);
     expect(await countFor(DOC)).toBe(2);
   });
+
+  // A second tab has its own empty in-memory throttle, so the Map alone cannot
+  // stop it re-capturing content the first tab already stored. The store-backed
+  // guard dedupes against the doc's most recent revision regardless of tab.
+  it('does not duplicate a revision another tab already captured (same text)', async () => {
+    await captureAutoRevision(DOC, serializedBody('shared draft'), () => 0);
+    resetAutoThrottle(DOC); // simulate a different tab with fresh throttle state
+    await captureAutoRevision(DOC, serializedBody('shared draft'), () => 60_000);
+    expect(await countFor(DOC)).toBe(1);
+  });
+
+  it('still captures from another tab when the text has diverged', async () => {
+    await captureAutoRevision(DOC, serializedBody('shared draft'), () => 0);
+    resetAutoThrottle(DOC);
+    await captureAutoRevision(DOC, serializedBody('shared draft, revised'), () => 60_000);
+    expect(await countFor(DOC)).toBe(2);
+  });
+
+  it('dedupes against a baseline captured by another tab', async () => {
+    await captureBaselineRevision(DOC, serializedBody('opening'), () => 0);
+    resetAutoThrottle(DOC);
+    await captureAutoRevision(DOC, serializedBody('opening'), () => 60_000);
+    expect(await countFor(DOC)).toBe(1);
+  });
 });
