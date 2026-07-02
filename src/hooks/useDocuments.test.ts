@@ -71,7 +71,7 @@ describe('useDocuments — cross-space staleness guard', () => {
     });
   });
 
-  it('keeps array reference identity when no new emission occurs', async () => {
+  it('keeps the same array reference when no new emission occurs', async () => {
     await db.docs.put({ ...sampleDoc, id: 'd1', spaceId: 's1' });
     const { result, rerender } = renderHook(() => useDocuments('s1'));
     await waitFor(() => { expect(result.current).toBeDefined(); });
