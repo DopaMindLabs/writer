@@ -380,32 +380,6 @@ export const DataPlaceholder = () => {
   );
 };
 
-export const AccountPlaceholder = () => {
-  const { t } = useTranslation('screens');
-  return (
-    <section>
-      <TabHeader
-        titleKey="settings.account.title"
-        subtitleKey="settings.account.subtitle"
-      />
-      <SettingRow
-        label={t('settings.account.signedOutLabel')}
-        hint={t('settings.account.signedOutHint')}
-      >
-        <span className="inline-block border border-ink px-3 py-1.5 text-[12px] font-medium text-ink">
-          {t('settings.account.signInButton')}
-        </span>
-      </SettingRow>
-      <SettingRow
-        label={t('settings.account.syncLabel')}
-        hint={t('settings.account.syncHint')}
-      >
-        <PlaceholderToggle />
-      </SettingRow>
-    </section>
-  );
-};
-
 export const AboutPlaceholder = () => {
   const { t } = useTranslation('screens');
   return (

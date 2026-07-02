@@ -20,10 +20,11 @@ test('switching to the Appearance tab renders its placeholder heading', async ({
   ).toBeVisible();
 });
 
-test('Account tab shows the coming-soon placeholder', async ({ page }) => {
+test('Account tab renders the Account panel', async ({ page }) => {
   await page.goto('/#/settings?tab=account');
-  await expect(page.getByRole('heading', { name: /Account/i })).toBeVisible();
-  await expect(page.getByText(/Cloud sync is not available/i)).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Account$/ })).toBeVisible();
+  await expect(page.getByTestId('setting-display-name')).toBeVisible();
+  await expect(page.getByTestId('account-privacy-notice')).toBeVisible();
 });
 
 test('stacks a group on one page and scrolls to the selected section', async ({

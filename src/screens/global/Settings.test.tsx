@@ -52,16 +52,15 @@ describe('SettingsScreen', () => {
     }
   });
 
-  it('renders coming-soon placeholder content on the Account tab', () => {
-    const { getByRole, getByText, container } = renderWithProviders(
-      <SettingsScreen />,
-      { initialEntries: ['/settings?tab=account'] },
-    );
-    expect(getByRole('heading', { name: 'Account' })).toBeInTheDocument();
-    expect(getByText(/Cloud sync is not available yet/i)).toBeInTheDocument();
+  it('renders the Account panel on the account tab', async () => {
+    const { findByRole, getByTestId } = renderWithProviders(<SettingsScreen />, {
+      initialEntries: ['/settings?tab=account'],
+    });
     expect(
-      container.querySelector('[data-coming-soon-overlay="true"]'),
-    ).not.toBeNull();
+      await findByRole('heading', { name: 'Account' }),
+    ).toBeInTheDocument();
+    expect(getByTestId('account-privacy-notice')).toBeInTheDocument();
+    expect(getByTestId('setting-display-name')).toBeInTheDocument();
   });
 
   it('renders the typography tab when activated', () => {
