@@ -1,6 +1,7 @@
 import userEvent from '@testing-library/user-event';
 import { act, renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
+import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
 import { FIXED_TIME, sampleSpace, seedBasicSpace } from '@/test/fixtures';
 import { Sidebar } from './Sidebar';
 
@@ -727,7 +728,7 @@ describe('Sidebar', () => {
         spaceId: 's1',
         sectionId: 'sec1a',
         name: 'Sub doc',
-        body: '',
+        body: EMPTY_LEXICAL_JSON,
         meta: { wordCount: 0 },
         updatedAt: 0,
       });

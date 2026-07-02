@@ -3,6 +3,7 @@ import type { Doc } from '@/db/schema';
 import { invariant } from '@/lib/invariant';
 import { countWords } from '@/editor/wordCount';
 import { newId } from '@/lib/ids';
+import { EMPTY_LEXICAL_JSON } from './emptyBody';
 
 /**
  * The single write path for the `docs` table. Every mutation of a document —
@@ -15,14 +16,14 @@ export interface CreateDocInput {
   spaceId: string;
   sectionId: string;
   name: string;
-  /** Serialized Lexical JSON; defaults to an empty body. */
+  /** Serialized Lexical JSON; defaults to {@link EMPTY_LEXICAL_JSON}. */
   body?: string;
 }
 
 export const createDoc = async (input: CreateDocInput): Promise<Doc> => {
   invariant(input.spaceId, 'createDoc: spaceId is required');
   invariant(input.sectionId, 'createDoc: sectionId is required');
-  const body = input.body ?? '';
+  const body = input.body ?? EMPTY_LEXICAL_JSON;
   const doc: Doc = {
     id: newId(),
     spaceId: input.spaceId,

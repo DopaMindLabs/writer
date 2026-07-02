@@ -18,6 +18,8 @@ import { FloatingToolbarPlugin } from './plugins/FloatingToolbarPlugin';
 import { LimitHighlightPlugin } from './plugins/LimitHighlightPlugin';
 import { useUI } from '@/store/ui';
 import { cn } from '@/lib/utils';
+import { invariant } from '@/lib/invariant';
+import { isSerialized } from './serialize';
 import type { EditorMode } from './EditorFacade';
 
 interface LexicalEditorProps {
@@ -141,20 +143,7 @@ export const LexicalEditor = ({
   );
 };
 
-const makeInitialState = (value: string): string | undefined => {
-  if (!value) return undefined;
-  try {
-    const parsed: unknown = JSON.parse(value);
-    if (
-      typeof parsed === 'object' &&
-      parsed !== null &&
-      'root' in parsed &&
-      (parsed as { root?: unknown }).root
-    ) {
-      return value;
-    }
-  } catch {
-    /* fall through */
-  }
-  return undefined;
+const makeInitialState = (value: string): string => {
+  invariant(isSerialized(value), 'Doc.body must be serialized Lexical JSON');
+  return value;
 };
