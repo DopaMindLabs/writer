@@ -316,13 +316,20 @@
     },
     "account": {
       "title": "Account",
-      "subtitle": "Sign-in, sync across devices, and shared workspaces.",
-      "comingSoonBody": "Cloud sync is unavailable today — Lotem is local-only. Account, sign-in, and shared workspaces land when sync ships.",
-      "signedOutLabel": "Sign in",
-      "signedOutHint": "Cloud sync is not available yet. This is here to show the design.",
-      "signInButton": "Sign in with email",
-      "syncLabel": "Sync this device",
-      "syncHint": "Once you sign in, your spaces will replicate to other devices."
+      "subtitle": "How you appear when collaborating. Stored only on this device.",
+      "nameLabel": "Display name",
+      "nameHint": "Shown beside your cursor when you collaborate. Optional.",
+      "namePlaceholder": "Anonymous",
+      "hueLabel": "Presence colour",
+      "hueHint": "The colour that marks your cursor and selection to others.",
+      "hues": {
+        "presence-1": "Terracotta",
+        "presence-2": "Slate blue",
+        "presence-3": "Moss",
+        "presence-4": "Plum",
+        "presence-5": "Ochre"
+      },
+      "privacyNotice": "Your account never leaves this device. It's saved locally and shared only with collaborators you invite."
     },
     "typography": {
       "title": "Typography",
