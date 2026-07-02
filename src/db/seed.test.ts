@@ -7,6 +7,7 @@ import {
 import { NoteKind, NoteState } from './schema';
 import type { Template } from '@/data/templates';
 import { FIXED_TIME } from '@/test/fixtures';
+import { isParseableBody } from '@/lib/revisions';
 
 const TEST_TEMPLATE: Template = {
   id: 'test-tpl',
@@ -87,6 +88,15 @@ describe('seedIfEmpty', () => {
 
     await seedIfEmpty();
     expect(await db.spaces.count()).toBe(spaceCount);
+  });
+
+  it('gives every seeded doc a valid Lexical body', async () => {
+    await seedIfEmpty();
+    const docs = await db.docs.toArray();
+    expect(docs.length).toBeGreaterThan(0);
+    for (const doc of docs) {
+      expect(isParseableBody(doc.body)).toBe(true);
+    }
   });
 });
 
