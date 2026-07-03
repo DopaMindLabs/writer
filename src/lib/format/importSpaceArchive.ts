@@ -1,6 +1,6 @@
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
-import { createDocs } from '@/lib/docs';
+import { createDocs, seedDocsCrdt } from '@/lib/docs';
 import type { ParsedSpaceArchive } from './parseSpaceArchive';
 
 const IMPORT_TABLES = [
@@ -137,5 +137,8 @@ export const importSpaceArchive = async (
   await db.transaction('rw', IMPORT_TABLES, async () => {
     await putRemapped(remapped);
   });
+  // Seed CRDT state after the write commits — seeding runs a headless editor and
+  // cannot execute inside the Dexie transaction.
+  await seedDocsCrdt(remapped.docs);
   return { spaceId: remapped.space.id };
 };
