@@ -9,7 +9,7 @@ import {
   type RefObject,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MoreVertical, Plus, Settings } from '@/components/libs/icons';
+import { Plus, Settings } from '@/components/libs/icons';
 import {
   Tooltip,
   TooltipContent,
@@ -22,15 +22,8 @@ import {
 } from '@/components/ui/popover';
 import { Link } from '@/components/ui/Link';
 import { TextField } from '@/components/ui/TextField';
-import { IconButton } from '@/components/ui/icon';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { SpaceMenuPopover } from './SpaceMenuPopover';
-import { RenameDocDialog } from './RenameDocDialog';
+import { DocRowMenu } from './DocRowMenu';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
@@ -927,46 +920,6 @@ const BrainSpaceLink = ({
         {count > 0 ? `${String(count)}◦` : '◌'}
       </span>
     </Link>
-  );
-};
-
-const DocRowMenu = ({ doc }: { doc: Doc }) => {
-  const { t } = useTranslation('chrome');
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [renameOpen, setRenameOpen] = useState(false);
-  return (
-    <>
-      <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-        <DropdownMenuTrigger asChild>
-          <IconButton
-            data-testid={`sidebar-doc-${doc.id}-menu`}
-            icon={MoreVertical}
-            iconSize="xs"
-            strokeWidth={1.25}
-            label={t('sidebar.docMenuAria', { name: doc.name })}
-            className="text-ink-4 md:hidden"
-          />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            data-testid={`sidebar-doc-${doc.id}-rename`}
-            onSelect={(e) => {
-              e.preventDefault();
-              setMenuOpen(false);
-              setRenameOpen(true);
-            }}
-          >
-            {t('sidebar.renameDoc')}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <RenameDocDialog
-        docId={doc.id}
-        docName={doc.name}
-        open={renameOpen}
-        onOpenChange={setRenameOpen}
-      />
-    </>
   );
 };
 
