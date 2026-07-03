@@ -9,9 +9,17 @@ const editorMocks = vi.hoisted(() => ({
   capturedOnChange: undefined as ((s: string) => void) | undefined,
 }));
 
+vi.mock('@/hooks/useCollab', () => ({
+  useCollab: () => ({
+    providerFactory: () => ({}),
+    username: 'Ada',
+    cursorColor: 'var(--presence-1)',
+  }),
+}));
+
 vi.mock('@/editor/EditorFacade', () => ({
   Editor: (props: {
-    initialValue: string;
+    docId: string;
     mode: string;
     placeholder?: string;
     locked?: boolean;
@@ -23,11 +31,12 @@ vi.mock('@/editor/EditorFacade', () => ({
       type="button"
       data-testid="editor-stub"
       data-mode={props.mode}
+      data-doc-id={props.docId}
       data-locked={props.locked ? 'true' : undefined}
       data-placeholder={props.placeholder}
         onClick={() => props.onChange?.(NEW_BODY)}
       >
-        {props.initialValue || '(empty)'}
+        editor
       </button>
     );
   },
@@ -54,10 +63,10 @@ describe('WriteSurface', () => {
     );
     const stub = getByTestId('editor-stub');
     // Explicitly pin the wiring the snapshot would otherwise silently absorb:
-    // the editor receives the doc body verbatim, the active mode, and is not
-    // locked.
+    // the editor receives the doc id (content now flows through the CRDT, not a
+    // body prop), the active mode, and is not locked.
     expect(stub).toHaveAttribute('data-mode', 'write');
-    expect(stub.textContent).toBe(doc.body);
+    expect(stub).toHaveAttribute('data-doc-id', doc.id);
     expect(stub).not.toHaveAttribute('data-locked');
     expect(container).toMatchSnapshot();
   });

@@ -5,6 +5,12 @@ import type { CollabStore, PresenceState } from '@/lib/collab/types';
 import { createBroadcastChannelTransport } from '@/lib/collab/transport/BroadcastChannelTransport';
 import { createYjsProvider } from './YjsProvider';
 
+/** The factory shape the Lexical `CollaborationPlugin` calls per document. */
+export type ProviderFactory = (
+  id: string,
+  yjsDocMap: Map<string, Y.Doc>,
+) => Provider;
+
 const toPresence = (profile: Profile, tabId: string): PresenceState => ({
   authorId: profile.authorId,
   name: profile.displayName,
@@ -18,8 +24,8 @@ const toPresence = (profile: Profile, tabId: string): PresenceState => ({
  * backed by the shared collab store and this device's identity.
  */
 export const makeProviderFactory =
-  (store: CollabStore, profile: Profile, tabId: string) =>
-  (id: string, yjsDocMap: Map<string, Y.Doc>): Provider => {
+  (store: CollabStore, profile: Profile, tabId: string): ProviderFactory =>
+  (id, yjsDocMap): Provider => {
     let ydoc = yjsDocMap.get(id);
     if (!ydoc) {
       ydoc = new Y.Doc();

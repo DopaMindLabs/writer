@@ -1,10 +1,11 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Editor, type EditorMode } from '@/editor/EditorFacade';
 import { InlineBanner } from '@/components/ui/InlineBanner';
 import { setDocStatus, updateDocBody } from '@/lib/docs';
 import type { Doc } from '@/db/schema';
 import { useUI, type ReadingWidth } from '@/store/ui';
+import { useCollab } from '@/hooks/useCollab';
 import { useEffectiveInspectorConfig } from '@/hooks/useDocInspectorConfig';
 import {
   captureAutoRevision,
@@ -45,7 +46,8 @@ const LockBanner = ({ doc }: { doc: Doc }) => {
 
 export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) => {
   const readingWidth = useUI((s) => s.readingWidth);
-  const restoreNonce = useUI((s) => s.restoreNonces[doc.id] ?? 0);
+  const collab = useCollab();
+  const cursorsContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { effective } = useEffectiveInspectorConfig(doc.spaceId);
   const highlightOn = effective.highlightOverLimit;
@@ -77,18 +79,27 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
       data-reading-width={readingWidth}
       className="h-full min-w-0 flex-1 overflow-auto bg-paper px-6 py-12 md:px-12"
     >
-      <div className={cn('mx-auto w-full', READING_WIDTH_MAX[readingWidth])}>
+      <div
+        ref={cursorsContainerRef}
+        className={cn('relative mx-auto w-full', READING_WIDTH_MAX[readingWidth])}
+      >
         {locked && <LockBanner doc={doc} />}
-        <Editor
-          key={`${doc.id}-${mode}-${String(restoreNonce)}`}
-          initialValue={doc.body}
-          onChange={handleChange}
-          mode={mode}
-          locked={locked}
-          wordLimit={wordLimit}
-          charLimit={charLimit}
-          placeholder="Start writing…"
-        />
+        {collab && (
+          <Editor
+            key={`${doc.id}-${mode}`}
+            docId={doc.id}
+            providerFactory={collab.providerFactory}
+            username={collab.username}
+            cursorColor={collab.cursorColor}
+            cursorsContainerRef={cursorsContainerRef}
+            onChange={handleChange}
+            mode={mode}
+            locked={locked}
+            wordLimit={wordLimit}
+            charLimit={charLimit}
+            placeholder="Start writing…"
+          />
+        )}
       </div>
     </div>
   );

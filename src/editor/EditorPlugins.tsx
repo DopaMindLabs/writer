@@ -1,4 +1,3 @@
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
@@ -25,7 +24,6 @@ export const EditorPlugins = ({
   charLimit,
 }: EditorPluginsProps) => (
   <>
-    <HistoryPlugin />
     <ListPlugin />
     <LinkPlugin />
     <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
