@@ -6,6 +6,7 @@ import { setDocStatus, updateDocBody } from '@/lib/docs';
 import type { Doc } from '@/db/schema';
 import { useUI, type ReadingWidth } from '@/store/ui';
 import { useCollab } from '@/hooks/useCollab';
+import { useDocReloadNonce } from '@/hooks/useDocReloadNonce';
 import { useEffectiveInspectorConfig } from '@/hooks/useDocInspectorConfig';
 import {
   captureAutoRevision,
@@ -48,6 +49,9 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
   const readingWidth = useUI((s) => s.readingWidth);
   const collab = useCollab();
   const cursorsContainerRef = useRef<HTMLDivElement | null>(null);
+  // Bumped when another tab resets this doc's CRDT state (e.g. backup restore),
+  // remounting the editor so it reloads the fresh seed instead of a stale Y.Doc.
+  const reloadNonce = useDocReloadNonce(doc.id);
 
   const { effective } = useEffectiveInspectorConfig(doc.spaceId);
   const highlightOn = effective.highlightOverLimit;
@@ -87,7 +91,7 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
         {locked && <LockBanner doc={doc} />}
         {collab && (
           <Editor
-            key={`${doc.id}-${mode}`}
+            key={`${doc.id}-${mode}-${String(reloadNonce)}`}
             docId={doc.id}
             providerFactory={collab.providerFactory}
             username={collab.username}

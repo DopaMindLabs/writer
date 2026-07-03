@@ -7,6 +7,7 @@ import type { Doc } from '@/db/schema';
 
 const editorMocks = vi.hoisted(() => ({
   capturedOnChange: undefined as ((s: string) => void) | undefined,
+  mountCount: 0,
 }));
 
 vi.mock('@/hooks/useCollab', () => ({
@@ -17,16 +18,21 @@ vi.mock('@/hooks/useCollab', () => ({
   }),
 }));
 
-vi.mock('@/editor/EditorFacade', () => ({
-  Editor: (props: {
-    docId: string;
-    mode: string;
-    placeholder?: string;
-    locked?: boolean;
-    onChange?: (s: string) => void;
-  }) => {
-    editorMocks.capturedOnChange = props.onChange;
-    return (
+vi.mock('@/editor/EditorFacade', async () => {
+  const { useEffect } = await import('react');
+  return {
+    Editor: (props: {
+      docId: string;
+      mode: string;
+      placeholder?: string;
+      locked?: boolean;
+      onChange?: (s: string) => void;
+    }) => {
+      editorMocks.capturedOnChange = props.onChange;
+      useEffect(() => {
+        editorMocks.mountCount += 1;
+      }, []);
+      return (
       <button
       type="button"
       data-testid="editor-stub"
@@ -38,9 +44,10 @@ vi.mock('@/editor/EditorFacade', () => ({
       >
         editor
       </button>
-    );
-  },
-}));
+      );
+    },
+  };
+});
 
 const { WriteSurface } = await import('./WriteSurface');
 
@@ -57,6 +64,32 @@ const doc: Doc = {
 };
 
 describe('WriteSurface', () => {
+  it('remounts the editor when another tab signals a reload for this doc', async () => {
+    const { broadcastDocReload } = await import('@/lib/collab/docReloadChannel');
+    editorMocks.mountCount = 0;
+    render(<WriteSurface doc={doc} mode="write" />);
+    expect(editorMocks.mountCount).toBe(1);
+
+    await act(async () => {
+      broadcastDocReload([doc.id]);
+      await new Promise((resolve) => setTimeout(resolve, 40));
+    });
+    expect(editorMocks.mountCount).toBe(2);
+  });
+
+  it('does not remount when the reload is for a different doc', async () => {
+    const { broadcastDocReload } = await import('@/lib/collab/docReloadChannel');
+    editorMocks.mountCount = 0;
+    render(<WriteSurface doc={doc} mode="write" />);
+    expect(editorMocks.mountCount).toBe(1);
+
+    await act(async () => {
+      broadcastDocReload(['some-other-doc']);
+      await new Promise((resolve) => setTimeout(resolve, 40));
+    });
+    expect(editorMocks.mountCount).toBe(1);
+  });
+
   it('renders editor stub with doc body and mode', () => {
     const { container, getByTestId } = render(
       <WriteSurface doc={doc} mode="write" />,

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as Y from 'yjs';
 import { db } from '@/db/db';
-import { registerEditorHandle } from '@/lib/collab/editorRegistry';
+import { onDocReload } from '@/lib/collab/docReloadChannel';
 import { collabSeedKey } from '@/lib/collab/seedKey';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
 import {
@@ -87,18 +87,17 @@ describe('restoreSpaceArchive', () => {
     expect(preRestore.space.name).toBe('Renamed');
   });
 
-  it('pushes the restored body into a live editor for an open doc', async () => {
+  it('broadcasts a reload for each restored doc so other tabs drop stale state', async () => {
     const blob = await buildSpaceArchive(await readSpaceSnapshot('s1'), WHEN);
-    const restoreBody = vi.fn();
-    const unregister = registerEditorHandle('d1', { restoreBody });
+    const onReload = vi.fn();
+    const off = onDocReload('d1', onReload);
     await mutateSpace();
 
     await restoreSpaceArchive('s1', await parseSpaceArchive(blob));
-    unregister();
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    off();
 
-    const restored = await db.docs.get('d1');
-    expect(restoreBody).toHaveBeenCalledTimes(1);
-    expect(restoreBody).toHaveBeenCalledWith(restored?.body);
+    expect(onReload).toHaveBeenCalledTimes(1);
   });
 
   it('clears stale CRDT state and re-seeds restored docs from their bodies', async () => {

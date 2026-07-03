@@ -123,9 +123,12 @@ A space is structured as **sections** containing **documents**. The default sect
 
 *Covered by:* `editor.spec.ts`, `multi-tab-sync.spec.ts`, `sidebar-doc-delete.spec.ts`, `persistence.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `DeleteDocDialog.test.tsx`, `deleteDocCascade.test.ts`, `WriteSurface.test.tsx`, `Topbar.test.tsx`.
 
-#### 4.2.1 Restoring through the live editor
+#### 4.2.1 Restore semantics
 
-Restoring a revision or a space backup updates the mounted editor in place rather than remounting it. A process-local editor registry maps each open document to a `restoreBody` handle; restore writes the pre-restore snapshot and the new body to Dexie, then replays the restored body through that handle. Because the replay is an ordinary (untagged) editor update, it flows into the shared CRDT and reaches every other open tab, which converge on the restored text. Revision restore requires the document's editor to be mounted (it always is when restoring from that document's history).
+There are two restore paths, and they reach open editors differently.
+
+- **Revision restore** (from a document's own history) updates the mounted editor **in place**. A process-local editor registry maps the open document to a `restoreBody` handle; restore writes the pre-restore snapshot and the new body to Dexie, then replays the restored body through that handle. The replay is an ordinary (untagged) editor update, so it flows into the shared CRDT and every other open tab converges on the restored text. The document's editor must be mounted (it always is when restoring from its history).
+- **Space backup restore** (from `/settings`, where no editor is mounted) resets the document's CRDT: it clears the old update log and re-seeds a **fresh** lineage from the restored body. A same-origin BroadcastChannel then signals every tab with one of those documents open to **reload** — the editor remounts and loads the fresh seed, rather than keeping its now-stale in-memory `Y.Doc` and clobbering the restored body on its next autosave.
 
 ---
 

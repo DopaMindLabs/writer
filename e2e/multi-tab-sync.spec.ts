@@ -195,3 +195,47 @@ test('compacts the update log on reconnect without losing content', async ({
   await page.reload();
   await expect(body(page)).toContainText(marker);
 });
+
+test('a backup restore from settings reloads the doc in another tab', async ({
+  page,
+  context,
+  browserName,
+}) => {
+  const { docId, spaceId } = await gotoFirstDoc(page);
+  await expect(body(page)).toBeVisible();
+
+  // Snapshot the current (pre-marker) state.
+  await page.goto(`/#/s/${spaceId}/settings?tab=backups`);
+  await page.getByTestId('space-settings-backups-snapshot').click();
+  await expect(page.getByTestId('backups-history')).toBeVisible();
+
+  // Back to the doc; add a marker the restore must remove, and let it persist.
+  await page.goto(`/#/s/${spaceId}/d/${docId}`);
+  await expect(body(page)).toBeVisible();
+  const marker = `stale-${Date.now()}`;
+  await body(page).click();
+  await page.keyboard.type(` ${marker}`);
+  await expect(body(page)).toContainText(marker);
+  await page.waitForTimeout(800); // autosave + CRDT append settle
+
+  // Tab B opens the same doc and sees the marker via the shared CRDT log.
+  const pageB = await openCoveredPage(context, browserName);
+  await pageB.goto(`/#/s/${spaceId}/d/${docId}`);
+  await expect(body(pageB)).toContainText(marker);
+
+  // Restore the snapshot from Tab A's settings surface — no editor mounted here.
+  await page.goto(`/#/s/${spaceId}/settings?tab=backups`);
+  await page
+    .getByTestId('backups-history')
+    .locator('[data-testid$="-restore"]')
+    .first()
+    .click();
+  await page.getByTestId('restore-backup-dialog-confirm').click();
+  await expect(page.getByText(/snapshot restored/i)).toBeVisible();
+
+  // Tab B must reload the fresh seed and drop the stale marker rather than
+  // clobbering the restored body from its now-stale Y.Doc.
+  await expect(body(pageB)).not.toContainText(marker);
+
+  await pageB.close();
+});
