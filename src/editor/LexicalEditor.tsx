@@ -2,17 +2,10 @@ import { useMemo } from 'react';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
-import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
-import { ListPlugin } from '@lexical/react/LexicalListPlugin';
-import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { EDITOR_NODES } from './nodes';
-import { TRANSFORMERS } from '@lexical/markdown';
-import { AutosavePlugin } from './plugins/AutosavePlugin';
-import { EditablePlugin } from './plugins/EditablePlugin';
-import { FloatingToolbarPlugin } from './plugins/FloatingToolbarPlugin';
-import { LimitHighlightPlugin } from './plugins/LimitHighlightPlugin';
+import { editorTheme } from './editorTheme';
+import { EditorPlugins } from './EditorPlugins';
 import { useUI } from '@/store/ui';
 import { cn } from '@/lib/utils';
 import { invariant } from '@/lib/invariant';
@@ -29,30 +22,6 @@ interface LexicalEditorProps {
   wordLimit?: number;
   charLimit?: number;
 }
-
-const editorTheme = {
-  paragraph: 'mb-4 leading-relaxed',
-  heading: {
-    h1: 'mb-4 mt-6 font-serif text-3xl font-semibold tracking-tight',
-    h2: 'mb-3 mt-6 font-serif text-2xl font-semibold tracking-tight',
-    h3: 'mb-2 mt-4 font-serif text-xl font-semibold tracking-tight',
-    h4: 'mb-2 mt-3 font-serif text-lg font-semibold tracking-tight',
-  },
-  list: {
-    ul: 'mb-4 list-disc pl-6',
-    ol: 'mb-4 list-decimal pl-6',
-    listitem: 'mb-1',
-  },
-  quote: 'mb-4 border-l-2 border-rule pl-4 italic text-ink-2',
-  text: {
-    bold: 'font-semibold',
-    italic: 'italic',
-    underline: 'underline',
-    strikethrough: 'line-through',
-    code: 'rounded bg-paper-2 px-1 py-0.5 font-mono text-sm',
-  },
-  link: 'text-ink underline underline-offset-2',
-};
 
 export const LexicalEditor = ({
   initialValue,
@@ -117,16 +86,13 @@ export const LexicalEditor = ({
           }
           ErrorBoundary={LexicalErrorBoundary}
         />
-        <HistoryPlugin />
-        <ListPlugin />
-        <LinkPlugin />
-        <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-        {editable && <AutosavePlugin onChange={onChange} />}
-        {editable && (Boolean(wordLimit) || Boolean(charLimit)) && (
-          <LimitHighlightPlugin wordLimit={wordLimit} charLimit={charLimit} />
-        )}
-        {editable && floatingToolbarEnabled && <FloatingToolbarPlugin />}
-        <EditablePlugin editable={editable} />
+        <EditorPlugins
+          onChange={onChange}
+          editable={editable}
+          floatingToolbarEnabled={floatingToolbarEnabled}
+          wordLimit={wordLimit}
+          charLimit={charLimit}
+        />
       </div>
     </LexicalComposer>
   );
