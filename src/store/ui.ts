@@ -22,7 +22,6 @@ interface UIState {
   inspectorMode: InspectorMode;
   inspectorSection: InspectorSection;
   readingWidth: ReadingWidth;
-  restoreNonces: Record<string, number>;
   versionModalOpen: boolean;
   saveVersionOpen: boolean;
   diffMode: DiffMode;
@@ -45,7 +44,6 @@ interface UIState {
   toggleInspector: () => void;
   setInspectorSection: (section: InspectorSection) => void;
   setReadingWidth: (width: ReadingWidth) => void;
-  bumpRestoreNonce: (docId: string) => void;
   setVersionModalOpen: (open: boolean) => void;
   setSaveVersionOpen: (open: boolean) => void;
   setDiffMode: (mode: DiffMode) => void;
@@ -167,7 +165,6 @@ const initialState = () => ({
   inspectorMode: sanitizeInspectorMode(persisted.inspectorMode),
   inspectorSection: sanitizeInspectorSection(persisted.inspectorSection),
   readingWidth: sanitizeReadingWidth(persisted.readingWidth),
-  restoreNonces: {},
   versionModalOpen: false,
   saveVersionOpen: false,
   diffMode: sanitizeDiffMode(persisted.diffMode),
@@ -180,7 +177,7 @@ const createActions = (
   snapshot: Snapshot,
 ) => ({
   ...createDocActions(set, snapshot),
-  ...createToggleActions(set, get),
+  ...createToggleActions(set),
   ...createInspectorActions(set, get, snapshot),
 });
 
@@ -205,7 +202,7 @@ const createDocActions = (set: SetState, snapshot: Snapshot) => ({
   },
 });
 
-const createToggleActions = (set: SetState, get: GetState) => ({
+const createToggleActions = (set: SetState) => ({
   setExportOpen: (exportOpen: boolean) => { set({ exportOpen }); },
   setMobileNavOpen: (mobileNavOpen: boolean) => { set({ mobileNavOpen }); },
   setMobileMoreOpen: (mobileMoreOpen: boolean) => { set({ mobileMoreOpen }); },
@@ -217,10 +214,6 @@ const createToggleActions = (set: SetState, get: GetState) => ({
   focusNote: (id: string | null) => { set({ focusedNoteId: id }); },
   openCitationsDrawer: () => { set({ citationsDrawerOpen: true }); },
   closeCitationsDrawer: () => { set({ citationsDrawerOpen: false }); },
-  bumpRestoreNonce: (docId: string) => {
-    const nonces = get().restoreNonces;
-    set({ restoreNonces: { ...nonces, [docId]: (nonces[docId] ?? 0) + 1 } });
-  },
   setVersionModalOpen: (versionModalOpen: boolean) => {
     set({ versionModalOpen });
   },

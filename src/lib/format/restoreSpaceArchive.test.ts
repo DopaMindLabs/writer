@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as Y from 'yjs';
 import { db } from '@/db/db';
-import { useUI } from '@/store/ui';
+import { onDocReload } from '@/lib/collab/docReloadChannel';
 import { collabSeedKey } from '@/lib/collab/seedKey';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
 import {
@@ -87,11 +87,17 @@ describe('restoreSpaceArchive', () => {
     expect(preRestore.space.name).toBe('Renamed');
   });
 
-  it('bumps the restore nonce for every restored doc', async () => {
+  it('broadcasts a reload for each restored doc so other tabs drop stale state', async () => {
     const blob = await buildSpaceArchive(await readSpaceSnapshot('s1'), WHEN);
-    expect(useUI.getState().restoreNonces.d1).toBeUndefined();
+    const onReload = vi.fn();
+    const off = onDocReload('d1', onReload);
+    await mutateSpace();
+
     await restoreSpaceArchive('s1', await parseSpaceArchive(blob));
-    expect(useUI.getState().restoreNonces.d1).toBe(1);
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    off();
+
+    expect(onReload).toHaveBeenCalledTimes(1);
   });
 
   it('clears stale CRDT state and re-seeds restored docs from their bodies', async () => {

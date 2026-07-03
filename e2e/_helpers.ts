@@ -1,7 +1,24 @@
 import { test as base, expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import type { BrowserContext, Page } from '@playwright/test';
 import { addCoverageReport } from 'monocart-reporter';
 import axe from 'axe-core';
+
+// Extra pages (e.g. a second collaborating tab) opened during a test. They are
+// instrumented for coverage here and flushed in the autoCoverage teardown so
+// their line hits reach the ratchet — the default fixture only tracks `page`.
+const coveredPages: Page[] = [];
+
+export const openCoveredPage = async (
+  context: BrowserContext,
+  browserName: string,
+): Promise<Page> => {
+  const extra = await context.newPage();
+  if (browserName === 'chromium') {
+    await extra.coverage.startJSCoverage({ resetOnNavigation: false });
+    coveredPages.push(extra);
+  }
+  return extra;
+};
 
 export const reseedAndGoHome = async (page: Page): Promise<void> => {
   await page.goto('/?reseed=1#/');
@@ -85,6 +102,12 @@ export const test = base.extend<{ autoCoverage: void }>({
       if (enabled) {
         const jsCoverage = await page.coverage.stopJSCoverage();
         await addCoverageReport(jsCoverage, test.info());
+      }
+      for (const extra of coveredPages.splice(0)) {
+        if (!extra.isClosed()) {
+          const cov = await extra.coverage.stopJSCoverage();
+          await addCoverageReport(cov, test.info());
+        }
       }
     },
     { scope: 'test', auto: true },
