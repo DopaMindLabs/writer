@@ -86,6 +86,23 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     tourId: 'writer',
   },
   {
+    slug: 'working-in-multiple-tabs',
+    category: 'writing',
+    featureArea: 'writing',
+    keywords: [
+      'tabs',
+      'multiple',
+      'collaboration',
+      'collaborate',
+      'sync',
+      'live',
+      'real-time',
+      'presence',
+      'cursor',
+    ],
+    related: ['writing-and-editing', 'version-history', 'your-account'],
+  },
+  {
     slug: 'doc-inspector',
     category: 'writing',
     featureArea: 'writing',

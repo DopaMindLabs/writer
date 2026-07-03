@@ -11,3 +11,4 @@ export {
   type CreateDocInput,
 } from './docRepository';
 export { EMPTY_LEXICAL_JSON } from './emptyBody';
+export { deleteDocCascade } from './deleteDocCascade';

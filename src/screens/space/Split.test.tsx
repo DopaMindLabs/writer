@@ -8,9 +8,9 @@ import type { Doc } from '@/db/schema';
 import { useUI } from '@/store/ui';
 
 vi.mock('@/editor/EditorFacade', () => ({
-  Editor: (p: { initialValue: string; mode: string }) => (
-    <div data-testid="editor-stub" data-mode={p.mode}>
-      {p.initialValue || '(empty)'}
+  Editor: (p: { docId: string; mode: string }) => (
+    <div data-testid="editor-stub" data-mode={p.mode} data-doc-id={p.docId}>
+      editor
     </div>
   ),
 }));
