@@ -1,37 +1,36 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import { renderWithProviders } from '@/test/test-utils';
-import { InvariantError } from '@/lib/invariant';
-import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
+import { describe, it, expect } from 'vitest';
+import { createRef } from 'react';
+import { renderWithProviders, screen } from '@/test/test-utils';
+import type { Profile } from '@/lib/account/profile';
+import { collabStore } from '@/lib/collab/collabStore';
+import { makeProviderFactory } from '@/lib/collab/yjs/providerFactory';
 import { LexicalEditor } from './LexicalEditor';
 
-describe('LexicalEditor initial state', () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
+const PROFILE: Profile = {
+  authorId: 'a1',
+  displayName: 'Ada',
+  presenceHue: 'presence-1',
+};
 
-  it('renders a serialized Lexical body without error', () => {
-    expect(() =>
-      renderWithProviders(
-        <LexicalEditor
-          initialValue={EMPTY_LEXICAL_JSON}
-          onChange={() => {}}
-          mode="write"
-        />,
-      ),
-    ).not.toThrow();
-  });
+describe('LexicalEditor collaborative mount', () => {
+  it('mounts the collaborative editor and renders the document body', async () => {
+    const providerFactory = makeProviderFactory(collabStore, PROFILE, 'tab-1');
+    const ref = createRef<HTMLDivElement>();
 
-  it('rejects a body that is not serialized Lexical JSON', () => {
-    // React logs the render error; silence it so the run stays readable.
-    vi.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() =>
-      renderWithProviders(
+    renderWithProviders(
+      <div ref={ref}>
         <LexicalEditor
-          initialValue="just plain text"
-          onChange={() => {}}
+          docId="doc-1"
+          providerFactory={providerFactory}
+          username={PROFILE.displayName}
+          cursorColor={`var(--${PROFILE.presenceHue})`}
+          cursorsContainerRef={ref}
+          onChange={() => undefined}
           mode="write"
-        />,
-      ),
-    ).toThrow(InvariantError);
+        />
+      </div>,
+    );
+
+    expect(await screen.findByTestId('document-body')).toBeInTheDocument();
   });
 });
