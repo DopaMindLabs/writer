@@ -7,7 +7,7 @@
 ## 1. Product Overview
 
 **Product name:** LIpsum Writer
-**Package name:** `lorem-ipsum-writer` (v0.5.0)
+**Package name:** `lorem-ipsum-writer` (0.6.0-alpha)
 **Tagline:** *A clutter-free space for long-form writing — fiction, research, essays, journals.*
 
 **What it is.** A local-first, browser-based writing app for long-form prose. It combines:
@@ -40,7 +40,7 @@
 | 6 | **Citations** | Manual + BibTeX import (paste or `.bib` upload), tag-based search, bulk edit / bulk delete, `.bib` export. Available as a screen, a split-view pane, and a drawer. |
 | 7 | **Sidebar** | Per-space navigation: section list, doc list, add doc, add section (when the template's `allowExtraSections` is on), inline rename, Brain Space link with unsorted-note count, settings cog. |
 | 8 | **Mobile nav** | Hamburger drawer on small viewports; settings tabs reflow without horizontal overflow. On the settings shells the wordmark / tag badge is the "back to root" affordance (the SpaceRail's own home link is hidden on mobile). |
-| 9 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), placeholder tabs for Account, Typography, Shortcuts, Backups. |
+| 9 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), a local **Account** (display name + presence colour), plus Typography, Shortcuts, and Backups tabs. |
 | 10 | **Per-space settings** | General (name, tag), Sharing (coming soon), Template (coming soon), Members, Backups (manual `.md` snapshots + history + download), Danger Zone (delete with typed confirmation). |
 | 11 | **Persistence** | IndexedDB autosave (~600 ms debounce). Survives reload, route changes, browser restart. |
 | 12 | **Theming** | Four themes: light, dark, high-contrast light, high-contrast dark. Choice persists in `localStorage`. |
@@ -74,6 +74,8 @@
 `Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `DocUpdate` (append-only CRDT payloads for collaborative editing; `Doc.body` stays the serialized read model), `Note` (state machine: `seed-prompt → seed-fetched → user`), `Connection`, `Annotation`, `Citation`, `Backup` (binary `payload: Blob`, discriminated by `format` — currently only `md-zip`), `Settings`, `HighlightPalette`, `Meta`.
 
 The schema is declared in a single Dexie version.
+
+**Local account.** The `Meta` table holds singleton app state keyed by string. Among its keys is the on-device **account profile** (`profile`): a stable `authorId` (the attribution key that edits and presence attach to) plus the user-editable `displayName` and `presenceHue`. It is created with sensible defaults on first read and repaired in place if a stored value is invalid; it never leaves the browser (§4.9). A per-tab id lives separately in `sessionStorage`, not in Dexie.
 
 ---
 
@@ -259,11 +261,11 @@ Tabbed user-wide preferences. The shell-header wordmark badge (`L`) links back t
 | **Typography** | Active | Prose / UI font settings (component present, see `Settings.test.tsx`). |
 | **Shortcuts** | Active | Keyboard reference. |
 | **Backups** | Active | Backup management. |
-| **Account** | Coming soon | Placeholder: *"Cloud sync is unavailable"*. |
+| **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). This is the groundwork for collaborative editing — the name and colour will mark your cursor to others once collaboration ships; today they are stored locally only, and there is no sign-in or cloud sync. |
 
 Mobile: all tabs reflow without horizontal overflow at 390×800.
 
-*Covered by:* `settings.spec.ts`, `settings-mobile.spec.ts`, `Settings.test.tsx`.
+*Covered by:* `settings.spec.ts`, `settings-mobile.spec.ts`, `Settings.test.tsx`, `AccountTab.test.tsx`, `PresenceHuePicker.test.tsx`, `profile.test.ts`.
 
 ---
 
@@ -452,7 +454,8 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 
 These exist as scaffolding only — they are visible in the UI but not yet functional:
 
-- **Global Settings → Account** (cloud sync).
+- **Global Settings → Account → sign-in & cloud sync** — the Account tab now manages a local, on-device profile (display name + presence colour); sign-in and cross-device sync are still not built.
+- **Collaborative editing & presence** — the data model is in place (the `DocUpdate` CRDT log and the account's presence identity), but no live collaboration is wired to the editor yet: presence cursors and multi-writer editing are forthcoming, so a chosen presence colour has no visible effect today.
 - **Space settings → Sharing** (per-space visibility, shared links).
 - **Space settings → Template** (change template after creation).
 - **Space settings → Members** (no implementation behind the tab).
