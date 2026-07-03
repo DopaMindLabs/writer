@@ -2,6 +2,7 @@ import Dexie from 'dexie';
 import * as Y from 'yjs';
 import { db } from '@/db/db';
 import type { CollabStore } from '@/lib/collab/types';
+import { collabSeedKey } from '@/lib/collab/seedKey';
 
 /**
  * Dexie-backed {@link CollabStore}: a document's CRDT history is an append-only
@@ -13,8 +14,6 @@ import type { CollabStore } from '@/lib/collab/types';
  */
 
 const COMPACT_THRESHOLD = 200;
-
-const seedKey = (docId: string): string => `collab-seed:${docId}`;
 
 const isConstraintError = (err: unknown): boolean =>
   err instanceof Dexie.ConstraintError ||
@@ -41,7 +40,7 @@ export const createDexieCollabStore = (): CollabStore => ({
       try {
         // add() rejects with ConstraintError if the seed key already exists,
         // so exactly one concurrent caller wins the seed.
-        await db.meta.add({ key: seedKey(docId), value: { seededAt: Date.now() } });
+        await db.meta.add({ key: collabSeedKey(docId), value: { seededAt: Date.now() } });
       } catch (err) {
         if (isConstraintError(err)) return 'already-seeded' as const;
         throw err;
@@ -80,7 +79,7 @@ export const createDexieCollabStore = (): CollabStore => ({
   deleteDoc: async (docId) => {
     await db.transaction('rw', db.docUpdates, db.meta, async () => {
       await db.docUpdates.where('docId').equals(docId).delete();
-      await db.meta.delete(seedKey(docId));
+      await db.meta.delete(collabSeedKey(docId));
     });
   },
 });
