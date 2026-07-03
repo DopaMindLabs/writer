@@ -9,7 +9,7 @@ import {
   type RefObject,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MoreVertical, Plus, Settings } from '@/components/libs/icons';
+import { Plus, Settings } from '@/components/libs/icons';
 import {
   Tooltip,
   TooltipContent,
@@ -22,15 +22,8 @@ import {
 } from '@/components/ui/popover';
 import { Link } from '@/components/ui/Link';
 import { TextField } from '@/components/ui/TextField';
-import { IconButton } from '@/components/ui/icon';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { SpaceMenuPopover } from './SpaceMenuPopover';
-import { RenameDocDialog } from './RenameDocDialog';
+import { DocRowMenu } from './DocRowMenu';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
@@ -816,7 +809,7 @@ const SectionHeader = ({
       data-testid={`sidebar-section-${sectionId}-header`}
       className={cn(
         'group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4',
-        indented ? 'pl-7 pr-3' : 'px-5',
+        indented ? 'pl-7' : 'pl-5',
       )}
     >
       {rename.editing ? (
@@ -930,46 +923,6 @@ const BrainSpaceLink = ({
   );
 };
 
-const DocRowMenu = ({ doc }: { doc: Doc }) => {
-  const { t } = useTranslation('chrome');
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [renameOpen, setRenameOpen] = useState(false);
-  return (
-    <>
-      <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-        <DropdownMenuTrigger asChild>
-          <IconButton
-            data-testid={`sidebar-doc-${doc.id}-menu`}
-            icon={MoreVertical}
-            iconSize="xs"
-            strokeWidth={1.25}
-            label={t('sidebar.docMenuAria', { name: doc.name })}
-            className="text-ink-4 md:hidden"
-          />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            data-testid={`sidebar-doc-${doc.id}-rename`}
-            onSelect={(e) => {
-              e.preventDefault();
-              setMenuOpen(false);
-              setRenameOpen(true);
-            }}
-          >
-            {t('sidebar.renameDoc')}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <RenameDocDialog
-        docId={doc.id}
-        docName={doc.name}
-        open={renameOpen}
-        onOpenChange={setRenameOpen}
-      />
-    </>
-  );
-};
-
 interface DocLinkBodyProps {
   doc: Doc;
   href: string;
@@ -1039,8 +992,8 @@ const DocLink = ({
   return (
     <div
       className={cn(
-        '-ml-px flex items-center gap-2 border-l-2 transition-colors',
-        indented ? 'pl-7 pr-1 md:pr-5' : 'pl-5 pr-1 md:pr-5',
+        'group -ml-px flex items-center gap-2 border-l-2 transition-colors',
+        indented ? 'pl-7' : 'pl-5',
         active
           ? 'border-ink bg-paper'
           : 'border-transparent hover:bg-paper',
@@ -1053,7 +1006,7 @@ const DocLink = ({
         wordCount={wordCount}
         rename={rename}
       />
-      <DocRowMenu doc={doc} />
+      <DocRowMenu doc={doc} active={active} />
     </div>
   );
 };

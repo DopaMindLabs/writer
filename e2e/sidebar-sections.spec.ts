@@ -86,15 +86,12 @@ test('sidebar doc items show context menu with rename', async ({ page }) => {
   await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
 
   const sidebar = page.locator('aside').last();
-  // Find a doc menu trigger
+  // The trigger is revealed on row hover on desktop; open the first doc's menu.
   const docMenu = sidebar.locator('[data-testid$="-menu"]').first();
-  if (await docMenu.isVisible()) {
-    await docMenu.click();
+  await docMenu.click();
 
-    // Rename option should be visible
-    const renameBtn = sidebar.locator('[data-testid$="-rename"]').first();
-    await expect(renameBtn).toBeVisible();
-  }
+  // The dropdown content is portaled to the document body, not inside the aside.
+  await expect(page.locator('[data-testid$="-rename"]').first()).toBeVisible();
 });
 
 test('sidebar space menu trigger opens the space menu popover', async ({
