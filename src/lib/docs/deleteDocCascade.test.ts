@@ -4,6 +4,7 @@ import {
   FIXED_TIME,
   sampleAnnotation,
   sampleDoc,
+  sampleNote,
   sampleRevision,
 } from '@/test/fixtures';
 import { deleteDocCascade } from './deleteDocCascade';
@@ -12,6 +13,12 @@ const seedDocGraph = async (docId: string): Promise<void> => {
   await db.docs.put({ ...sampleDoc, id: docId });
   await db.annotations.put({ ...sampleAnnotation, id: `ann-${docId}`, docId });
   await db.revisions.put({ ...sampleRevision, id: `rev-${docId}`, docId });
+  // A Brain Space note that links to this doc.
+  await db.notes.put({
+    ...sampleNote,
+    id: `note-${docId}`,
+    linkedDocId: docId,
+  });
   await db.docUpdates.add({
     docId,
     engine: 'yjs',
@@ -52,6 +59,18 @@ describe('deleteDocCascade', () => {
     expect(await db.revisions.where('docId').equals('d2').count()).toBe(1);
     expect(await db.docUpdates.where('docId').equals('d2').count()).toBe(1);
     expect(await db.meta.get(collabSeedKey('d2'))).toBeDefined();
+  });
+
+  it('unlinks Brain Space notes that pointed at the deleted doc, keeping the note', async () => {
+    await deleteDocCascade('d1');
+
+    // The note survives — only its dead link is cleared.
+    const note = await db.notes.get('note-d1');
+    expect(note).toBeDefined();
+    expect(note?.linkedDocId).toBeUndefined();
+
+    // A note linking to a different doc is untouched.
+    expect((await db.notes.get('note-d2'))?.linkedDocId).toBe('d2');
   });
 
   it('rejects an empty docId', async () => {
