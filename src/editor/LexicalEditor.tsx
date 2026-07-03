@@ -7,10 +7,7 @@ import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
-import { HeadingNode, QuoteNode } from '@lexical/rich-text';
-import { ListItemNode, ListNode } from '@lexical/list';
-import { LinkNode } from '@lexical/link';
-import { CodeHighlightNode, CodeNode } from '@lexical/code';
+import { EDITOR_NODES } from './nodes';
 import { TRANSFORMERS } from '@lexical/markdown';
 import { AutosavePlugin } from './plugins/AutosavePlugin';
 import { EditablePlugin } from './plugins/EditablePlugin';
@@ -79,15 +76,7 @@ export const LexicalEditor = ({
       onError(error: Error) {
         console.error('Lexical error:', error);
       },
-      nodes: [
-        HeadingNode,
-        QuoteNode,
-        ListNode,
-        ListItemNode,
-        LinkNode,
-        CodeNode,
-        CodeHighlightNode,
-      ],
+      nodes: EDITOR_NODES,
       editorState: makeInitialState(initialValue),
     }),
     [initialValue, baseEditable],
