@@ -9,6 +9,33 @@ import type { Page } from '@playwright/test';
 
 const body = (page: Page) => page.getByTestId('document-body');
 
+/** Count this device's persisted CRDT update rows for a document, read straight
+ *  from IndexedDB so the test can observe compaction collapsing the log. */
+const countUpdateRows = (page: Page, docId: string): Promise<number> =>
+  page.evaluate(
+    (id) =>
+      new Promise<number>((resolve, reject) => {
+        const open = indexedDB.open('lipsum');
+        open.onerror = () => reject(new Error('could not open lipsum db'));
+        open.onsuccess = () => {
+          const db = open.result;
+          const store = db
+            .transaction('docUpdates', 'readonly')
+            .objectStore('docUpdates');
+          const req = store.index('docId').count(IDBKeyRange.only(id));
+          req.onsuccess = () => {
+            resolve(req.result);
+            db.close();
+          };
+          req.onerror = () => {
+            db.close();
+            reject(new Error('could not count docUpdates'));
+          };
+        };
+      }),
+    docId,
+  );
+
 /** Open the doc inspector's history pane, expanding the inspector if collapsed. */
 const openHistory = async (page: Page): Promise<void> => {
   const inspector = page.getByTestId('doc-inspector');
@@ -140,4 +167,31 @@ test("shows a collaborator's presence cursor in the other tab", async ({
   await expect(pageB.getByTestId('collab-cursors')).toContainText(name);
 
   await pageB.close();
+});
+
+test('compacts the update log on reconnect without losing content', async ({
+  page,
+}) => {
+  const { docId } = await gotoFirstDoc(page);
+  await expect(body(page)).toBeVisible();
+
+  // Each keystroke appends one CRDT row; type enough to pass the compaction
+  // threshold (the e2e build lowers it so this stays a short test).
+  const marker = `compact-${Date.now()}`;
+  await body(page).click();
+  await page.keyboard.type(marker);
+  await expect(async () => {
+    expect(await countUpdateRows(page, docId)).toBeGreaterThan(5);
+  }).toPass();
+
+  // Reconnecting (reload) loads the full log and compacts it into one merged row.
+  await page.reload();
+  await expect(body(page)).toContainText(marker);
+  await expect(async () => {
+    expect(await countUpdateRows(page, docId)).toBe(1);
+  }).toPass();
+
+  // A second reload proves the single merged update reconstructs the document.
+  await page.reload();
+  await expect(body(page)).toContainText(marker);
 });
