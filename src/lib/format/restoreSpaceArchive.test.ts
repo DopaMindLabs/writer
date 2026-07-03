@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as Y from 'yjs';
 import { db } from '@/db/db';
-import { useUI } from '@/store/ui';
+import { registerEditorHandle } from '@/lib/collab/editorRegistry';
 import { collabSeedKey } from '@/lib/collab/seedKey';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
 import {
@@ -87,11 +87,18 @@ describe('restoreSpaceArchive', () => {
     expect(preRestore.space.name).toBe('Renamed');
   });
 
-  it('bumps the restore nonce for every restored doc', async () => {
+  it('pushes the restored body into a live editor for an open doc', async () => {
     const blob = await buildSpaceArchive(await readSpaceSnapshot('s1'), WHEN);
-    expect(useUI.getState().restoreNonces.d1).toBeUndefined();
+    const restoreBody = vi.fn();
+    const unregister = registerEditorHandle('d1', { restoreBody });
+    await mutateSpace();
+
     await restoreSpaceArchive('s1', await parseSpaceArchive(blob));
-    expect(useUI.getState().restoreNonces.d1).toBe(1);
+    unregister();
+
+    const restored = await db.docs.get('d1');
+    expect(restoreBody).toHaveBeenCalledTimes(1);
+    expect(restoreBody).toHaveBeenCalledWith(restored?.body);
   });
 
   it('clears stale CRDT state and re-seeds restored docs from their bodies', async () => {
