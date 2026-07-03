@@ -81,6 +81,7 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
     >
       <div
         ref={cursorsContainerRef}
+        data-testid="collab-cursors"
         className={cn('relative mx-auto w-full', READING_WIDTH_MAX[readingWidth])}
       >
         {locked && <LockBanner doc={doc} />}
