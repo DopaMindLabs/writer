@@ -1,6 +1,7 @@
 import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
 import { InvariantError } from '@/lib/invariant';
+import { collabSeedKey } from '@/lib/collab/seedKey';
 import { sampleDoc, seedBasicSpace, serializedBody } from '@/test/fixtures';
 import {
   createDoc,
@@ -43,6 +44,16 @@ describe('docRepository', () => {
         body: serializedBody('one two three'),
       });
       expect(doc.meta.wordCount).toBe(3);
+    });
+
+    it('leaves exactly one CRDT seed row and a seed marker', async () => {
+      const doc = await createDoc({
+        spaceId: 's1',
+        sectionId: 'sec1',
+        name: 'Seeded',
+      });
+      expect(await db.docUpdates.where('docId').equals(doc.id).count()).toBe(1);
+      expect(await db.meta.get(collabSeedKey(doc.id))).toBeDefined();
     });
 
     it('throws when the space id is missing', async () => {
