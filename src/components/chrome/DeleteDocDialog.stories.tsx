@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { Doc } from '@/db/schema';
-import { DocRowMenu } from './DocRowMenu';
+import { DeleteDocDialog } from './DeleteDocDialog';
 
 const sampleDoc: Doc = {
   id: 'd1',
@@ -14,13 +14,18 @@ const sampleDoc: Doc = {
 
 const meta = {
   tags: ['!autodocs'],
-  title: 'Navigation/DocRowMenu',
-  component: DocRowMenu,
+  title: 'Overlays/DeleteDocDialog',
+  component: DeleteDocDialog,
   parameters: { layout: 'fullscreen', seed: 'basicSpace' },
-  args: { doc: sampleDoc, active: false },
-} satisfies Meta<typeof DocRowMenu>;
+  args: {
+    doc: sampleDoc,
+    isActiveDoc: false,
+    open: true,
+    onOpenChange: () => {},
+  },
+} satisfies Meta<typeof DeleteDocDialog>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Open: Story = {};

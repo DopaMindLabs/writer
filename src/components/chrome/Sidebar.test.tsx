@@ -506,14 +506,17 @@ describe('Sidebar', () => {
   });
 
   describe('doc row menu', () => {
-    it('should render a menu trigger with an accessible name, hidden on desktop', async () => {
+    it('should render a menu trigger with an accessible name, hover-revealed on desktop', async () => {
       await seedBasicSpace();
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
         initialEntries: ['/s/s1/d/d1'],
       });
       const trigger = await screen.findByTestId('sidebar-doc-d1-menu');
       expect(trigger).toHaveAccessibleName('Options for Sample Doc');
-      expect(trigger).toHaveClass('md:hidden');
+      // No longer hidden on desktop — revealed on row hover / focus instead.
+      expect(trigger).not.toHaveClass('md:hidden');
+      expect(trigger).toHaveClass('md:opacity-0');
+      expect(trigger).toHaveClass('md:group-hover:opacity-100');
     });
 
     it('should keep the doc row link navigable alongside the menu trigger', async () => {
@@ -580,6 +583,39 @@ describe('Sidebar', () => {
         ).not.toBeInTheDocument();
       });
       expect((await db.docs.get('d1'))?.name).toBe('Sample Doc');
+    });
+
+    it('should delete the doc and remove its row when confirmed', async () => {
+      const user = userEvent.setup();
+      await seedBasicSpace();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      await user.click(await screen.findByTestId('sidebar-doc-d1-menu'));
+      await user.click(await screen.findByTestId('sidebar-doc-d1-delete'));
+      await user.click(await screen.findByTestId('confirm-dialog-confirm'));
+      await waitFor(async () => {
+        expect(await db.docs.get('d1')).toBeUndefined();
+      });
+      await waitFor(() => {
+        expect(screen.queryByTestId('sidebar-doc-d1')).not.toBeInTheDocument();
+      });
+    });
+
+    it('should not delete the doc when the confirmation is cancelled', async () => {
+      const user = userEvent.setup();
+      await seedBasicSpace();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      await user.click(await screen.findByTestId('sidebar-doc-d1-menu'));
+      await user.click(await screen.findByTestId('sidebar-doc-d1-delete'));
+      await user.click(await screen.findByTestId('confirm-dialog-cancel'));
+      await waitFor(() => {
+        expect(screen.queryByTestId('confirm-dialog')).not.toBeInTheDocument();
+      });
+      expect(await db.docs.get('d1')).toBeDefined();
+      expect(screen.getByTestId('sidebar-doc-d1')).toBeInTheDocument();
     });
   });
 

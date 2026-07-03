@@ -809,7 +809,7 @@ const SectionHeader = ({
       data-testid={`sidebar-section-${sectionId}-header`}
       className={cn(
         'group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4',
-        indented ? 'pl-7 pr-3' : 'px-5',
+        indented ? 'pl-7' : 'pl-5',
       )}
     >
       {rename.editing ? (
@@ -992,8 +992,8 @@ const DocLink = ({
   return (
     <div
       className={cn(
-        '-ml-px flex items-center gap-2 border-l-2 transition-colors',
-        indented ? 'pl-7 pr-1 md:pr-5' : 'pl-5 pr-1 md:pr-5',
+        'group -ml-px flex items-center gap-2 border-l-2 transition-colors',
+        indented ? 'pl-7' : 'pl-5',
         active
           ? 'border-ink bg-paper'
           : 'border-transparent hover:bg-paper',
@@ -1006,7 +1006,7 @@ const DocLink = ({
         wordCount={wordCount}
         rename={rename}
       />
-      <DocRowMenu doc={doc} />
+      <DocRowMenu doc={doc} active={active} />
     </div>
   );
 };

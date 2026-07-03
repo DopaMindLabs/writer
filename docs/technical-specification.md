@@ -113,13 +113,15 @@ A space is structured as **sections** containing **documents**. The default sect
 
 **Rename a section.** **Double-click** a section label in the sidebar to switch it to an inline rename input. **Enter** or blur commits; **Escape** reverts. The same `useInlineRename` state machine drives both section and doc inline renames.
 
+**Delete a doc.** Each document row carries a **⋯ menu** (revealed on hover on desktop, always shown on mobile) with a **Delete…** action that opens a destructive confirmation dialogue. Confirming cascades the delete — the document, its annotations, its revision history, and its collaborative CRDT state (`docUpdates` log + `collab-seed` marker) are all removed. If the deleted document is the one currently open, the app navigates back to the space so the first remaining document loads.
+
 **Autosave.** Edits flush to IndexedDB ~600 ms after the last keystroke. Content survives navigation and hard reload. Autosave is collaboration-aware: it persists local and undo/redo (`historic`) edits on that debounce, but skips remote (`collaboration`) reconciliations — with a bounded-staleness backstop (twice the debounce) so a local edit coalesced into a remote reconciliation is never lost.
 
 **Collaborative editing.** The editor is collaborative by default. Content lives in a per-document CRDT (a Yjs update log in the `DocUpdate` table), seeded from the document body when the document is created and loaded into the editor through the Lexical `CollaborationPlugin` — the editor no longer loads a body string. Every tab on this device that opens the same document shares one live history over a same-origin BroadcastChannel: an edit in one tab appears in the others as you type, and concurrent edits in two tabs merge without overwriting. Undo/redo is **per writer** — undoing in one tab steps back only through that tab's own edits. See § 4.2.1 for restore semantics.
 
 **Empty space.** Visiting `/s/:spaceId` without a docId redirects to the first doc; if none exists, the user sees an empty state.
 
-*Covered by:* `editor.spec.ts`, `multi-tab-sync.spec.ts`, `persistence.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `WriteSurface.test.tsx`, `Topbar.test.tsx`.
+*Covered by:* `editor.spec.ts`, `multi-tab-sync.spec.ts`, `sidebar-doc-delete.spec.ts`, `persistence.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `DeleteDocDialog.test.tsx`, `deleteDocCascade.test.ts`, `WriteSurface.test.tsx`, `Topbar.test.tsx`.
 
 #### 4.2.1 Restoring through the live editor
 
@@ -230,6 +232,7 @@ The per-space navigation column.
 
 - **Header:** editable space title + settings cog (links to per-space settings).
 - **Sections:** grouped doc lists, with an **+ Add doc to *<Section>*** button under each.
+- **Doc row menu:** each document row has a **⋯ menu** (Rename, Delete…) — revealed on row hover/focus on desktop, always visible on mobile.
 - **Brain space link:** routes to `/s/:spaceId/brain-space`; shows the unsorted-note count and highlights when active.
 - **Footer:** Home, About, GitHub links.
 - **Mobile:** replaced by a hamburger button in the topbar that opens the same content in a dialog drawer. The drawer closes when the user taps a destination.
