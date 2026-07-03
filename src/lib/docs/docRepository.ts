@@ -3,6 +3,8 @@ import type { Doc } from '@/db/schema';
 import { invariant } from '@/lib/invariant';
 import { countWords } from '@/editor/wordCount';
 import { newId } from '@/lib/ids';
+import { collabStore } from '@/lib/collab/collabStore';
+import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
 import { EMPTY_LEXICAL_JSON } from './emptyBody';
 
 /**
@@ -11,6 +13,22 @@ import { EMPTY_LEXICAL_JSON } from './emptyBody';
  * here so later stages can intercept it (CRDT seeding, cross-tab sync) in one
  * place rather than at the scattered call sites. Reads stay on `db.docs`.
  */
+
+/**
+ * Plant a document's CRDT seed so its update log is never empty at editor-open
+ * time. Runs a headless editor, so it must **not** be called inside a Dexie
+ * transaction — seed after the row write commits. Idempotent via `trySeed`.
+ */
+export const seedDocCrdt = async (docId: string, body: string): Promise<void> => {
+  await collabStore.trySeed(docId, seedFromLexicalJson(docId, body));
+};
+
+/** Seed a batch of freshly-written docs (bulk create/import). Transaction-free. */
+export const seedDocsCrdt = async (
+  docs: readonly Pick<Doc, 'id' | 'body'>[],
+): Promise<void> => {
+  for (const doc of docs) await seedDocCrdt(doc.id, doc.body);
+};
 
 export interface CreateDocInput {
   spaceId: string;
@@ -34,6 +52,7 @@ export const createDoc = async (input: CreateDocInput): Promise<Doc> => {
     updatedAt: Date.now(),
   };
   await db.docs.add(doc);
+  await seedDocCrdt(doc.id, doc.body);
   return doc;
 };
 
