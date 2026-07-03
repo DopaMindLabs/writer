@@ -1,6 +1,6 @@
 # LIpsum Writer — Technical Specification
 
-> Derived from the test suite (15 Playwright e2e specs + 60+ Vitest unit/component specs) and source layout. Each feature below is grounded in tests that verify it, so this doc doubles as the source of truth for user-facing documentation.
+> Derived from the test suite (16 Playwright e2e specs + 60+ Vitest unit/component specs) and source layout. Each feature below is grounded in tests that verify it, so this doc doubles as the source of truth for user-facing documentation.
 
 ---
 
@@ -113,11 +113,17 @@ A space is structured as **sections** containing **documents**. The default sect
 
 **Rename a section.** **Double-click** a section label in the sidebar to switch it to an inline rename input. **Enter** or blur commits; **Escape** reverts. The same `useInlineRename` state machine drives both section and doc inline renames.
 
-**Autosave.** Edits flush to IndexedDB ~600 ms after the last keystroke. Content survives navigation and hard reload.
+**Autosave.** Edits flush to IndexedDB ~600 ms after the last keystroke. Content survives navigation and hard reload. Autosave is collaboration-aware: it persists local and undo/redo (`historic`) edits on that debounce, but skips remote (`collaboration`) reconciliations — with a bounded-staleness backstop (twice the debounce) so a local edit coalesced into a remote reconciliation is never lost.
+
+**Collaborative editing.** The editor is collaborative by default. Content lives in a per-document CRDT (a Yjs update log in the `DocUpdate` table), seeded from the document body when the document is created and loaded into the editor through the Lexical `CollaborationPlugin` — the editor no longer loads a body string. Every tab on this device that opens the same document shares one live history over a same-origin BroadcastChannel: an edit in one tab appears in the others as you type, and concurrent edits in two tabs merge without overwriting. Undo/redo is **per writer** — undoing in one tab steps back only through that tab's own edits. See § 4.2.1 for restore semantics.
 
 **Empty space.** Visiting `/s/:spaceId` without a docId redirects to the first doc; if none exists, the user sees an empty state.
 
-*Covered by:* `editor.spec.ts`, `persistence.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `WriteSurface.test.tsx`, `Topbar.test.tsx`.
+*Covered by:* `editor.spec.ts`, `multi-tab-sync.spec.ts`, `persistence.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `WriteSurface.test.tsx`, `Topbar.test.tsx`.
+
+#### 4.2.1 Restoring through the live editor
+
+Restoring a revision or a space backup updates the mounted editor in place rather than remounting it. A process-local editor registry maps each open document to a `restoreBody` handle; restore writes the pre-restore snapshot and the new body to Dexie, then replays the restored body through that handle. Because the replay is an ordinary (untagged) editor update, it flows into the shared CRDT and reaches every other open tab, which converge on the restored text. Revision restore requires the document's editor to be mounted (it always is when restoring from that document's history).
 
 ---
 
@@ -261,7 +267,7 @@ Tabbed user-wide preferences.
 | **Typography** | Active | Prose / UI font settings (component present, see `Settings.test.tsx`). |
 | **Shortcuts** | Active | Keyboard reference. |
 | **Backups** | Active | Backup management. |
-| **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). This is the groundwork for collaborative editing — the name and colour will mark your cursor to others once collaboration ships; today they are stored locally only, and there is no sign-in or cloud sync. |
+| **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only; there is no sign-in or cloud sync. |
 
 Mobile: all tabs reflow without horizontal overflow at 390×800.
 
@@ -414,12 +420,13 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 
 ## 7. Test coverage matrix
 
-### 7.1 End-to-end (Playwright) — 15 specs
+### 7.1 End-to-end (Playwright) — 16 specs
 
 | Spec file | Feature area |
 |-----------|--------------|
 | `smoke.spec.ts` | Routing, Home, About, 404 |
 | `editor.spec.ts` | Editor autosave, doc rename |
+| `multi-tab-sync.spec.ts` | Multi-tab collaborative editing, presence, restore convergence |
 | `view-modes.spec.ts` | Mode switching chrome |
 | `persistence.spec.ts` | Hard-reload survival |
 | `space-creation.spec.ts` | Templates → space creation |
@@ -455,7 +462,7 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 These exist as scaffolding only — they are visible in the UI but not yet functional:
 
 - **Global Settings → Account → sign-in & cloud sync** — the Account tab now manages a local, on-device profile (display name + presence colour); sign-in and cross-device sync are still not built.
-- **Collaborative editing & presence** — the data model is in place (the `DocUpdate` CRDT log and the account's presence identity), but no live collaboration is wired to the editor yet: presence cursors and multi-writer editing are forthcoming, so a chosen presence colour has no visible effect today.
+- **Cross-device / multi-writer collaboration** — live collaboration and presence cursors work **across tabs on the same device** today (a same-origin BroadcastChannel over the `DocUpdate` CRDT log; see § 4.2). Collaboration between different devices or people needs a network transport and encrypted cloud sync, which are not yet wired.
 - **Space settings → Sharing** (per-space visibility, shared links).
 - **Space settings → Template** (change template after creation).
 - **Space settings → Members** (no implementation behind the tab).
