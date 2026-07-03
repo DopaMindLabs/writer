@@ -4,6 +4,8 @@ import {
   readCloudFlag,
   applyCloudFlagFromUrl,
   isCloudSyncEnabled,
+  markCloudProvisioned,
+  wasCloudProvisioned,
 } from './flag';
 
 const setUrl = (search: string, hash = '#/writer'): void => {
@@ -79,6 +81,34 @@ describe('cloud flag', () => {
     it('is false when the flag is off', () => {
       vi.stubEnv('VITE_DEXIE_CLOUD_URL', 'https://db.dexie.cloud');
       expect(isCloudSyncEnabled()).toBe(false);
+    });
+  });
+
+  describe('provisioned marker', () => {
+    it('defaults to not provisioned', () => {
+      expect(wasCloudProvisioned()).toBe(false);
+    });
+
+    it('records and reads the provisioned marker', () => {
+      markCloudProvisioned();
+      expect(wasCloudProvisioned()).toBe(true);
+    });
+
+    it('is independent of the beta flag', () => {
+      markCloudProvisioned();
+      localStorage.removeItem(CLOUD_FLAG_KEY);
+      expect(readCloudFlag()).toBe(false);
+      expect(wasCloudProvisioned()).toBe(true);
+    });
+
+    it('swallows storage exceptions when reading', () => {
+      const spy = vi
+        .spyOn(Storage.prototype, 'getItem')
+        .mockImplementation(() => {
+          throw new Error('storage blocked');
+        });
+      expect(wasCloudProvisioned()).toBe(false);
+      spy.mockRestore();
     });
   });
 });
