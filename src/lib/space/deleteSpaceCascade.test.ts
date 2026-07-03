@@ -1,5 +1,6 @@
 import { db } from '@/db/db';
 import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
+import { collabSeedKey } from '@/lib/collab/seedKey';
 import { deleteSpaceCascade } from './deleteSpaceCascade';
 import { FIXED_TIME } from '@/test/fixtures';
 
@@ -41,6 +42,17 @@ const seedSpace = async (spaceId: string) => {
     kind: 'manual',
     createdAt: FIXED_TIME,
   });
+  await db.docUpdates.add({
+    docId: `doc-${spaceId}`,
+    engine: 'yjs',
+    formatVersion: 1,
+    payload: new Uint8Array([1, 2, 3]),
+    createdAt: FIXED_TIME,
+  });
+  await db.meta.put({
+    key: collabSeedKey(`doc-${spaceId}`),
+    value: { seededAt: FIXED_TIME },
+  });
 };
 
 describe('deleteSpaceCascade', () => {
@@ -64,6 +76,13 @@ describe('deleteSpaceCascade', () => {
     expect(await db.revisions.get('rev-s1')).toBeUndefined();
   });
 
+  it('clears the deleted space’s CRDT log and seed markers', async () => {
+    await deleteSpaceCascade('s1');
+
+    expect(await db.docUpdates.where('docId').equals('doc-s1').count()).toBe(0);
+    expect(await db.meta.get(collabSeedKey('doc-s1'))).toBeUndefined();
+  });
+
   it('leaves other spaces’ rows untouched', async () => {
     await deleteSpaceCascade('s1');
 
@@ -71,5 +90,7 @@ describe('deleteSpaceCascade', () => {
     expect(await db.docs.get('doc-s2')).toBeDefined();
     expect(await db.noteAttachments.get('att-s2')).toBeDefined();
     expect(await db.revisions.get('rev-s2')).toBeDefined();
+    expect(await db.docUpdates.where('docId').equals('doc-s2').count()).toBe(1);
+    expect(await db.meta.get(collabSeedKey('doc-s2'))).toBeDefined();
   });
 });
