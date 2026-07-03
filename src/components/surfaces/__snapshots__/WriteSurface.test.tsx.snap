@@ -9,6 +9,7 @@ exports[`WriteSurface > renders editor stub with doc body and mode 1`] = `
   >
     <div
       class="relative mx-auto w-full max-w-[680px]"
+      data-testid="collab-cursors"
     >
       <button
         data-doc-id="d1"
