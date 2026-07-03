@@ -1,6 +1,7 @@
 import { db } from '@/db/db';
 import { invariant } from '@/lib/invariant';
-import { restoreDocs } from '@/lib/docs';
+import { restoreDocs, seedDocsCrdt } from '@/lib/docs';
+import { collabSeedKey } from '@/lib/collab/seedKey';
 import { createSpaceBackup } from '@/lib/backup/createSpaceBackup';
 import { useUI } from '@/store/ui';
 import type { ParsedSpaceArchive } from './parseSpaceArchive';
@@ -17,6 +18,8 @@ const RESTORE_TABLES = [
   db.revisions,
   db.palettes,
   db.docInspectorConfigs,
+  db.docUpdates,
+  db.meta,
 ];
 
 const deleteSpaceContent = async (spaceId: string): Promise<void> => {
@@ -24,6 +27,10 @@ const deleteSpaceContent = async (spaceId: string): Promise<void> => {
   if (docIds.length > 0) {
     await db.annotations.where('docId').anyOf(docIds).delete();
     await db.revisions.where('docId').anyOf(docIds).delete();
+    // Clear the pre-restore CRDT log and seed markers so the restored docs
+    // re-seed cleanly from their archived bodies instead of replaying stale state.
+    await db.docUpdates.where('docId').anyOf(docIds).delete();
+    await db.meta.bulkDelete(docIds.map(collabSeedKey));
   }
   await db.docs.where({ spaceId }).delete();
   await db.sections.where({ spaceId }).delete();
@@ -73,6 +80,11 @@ export const restoreSpaceArchive = async (
     await deleteSpaceContent(spaceId);
     await putArchiveContent(archive);
   });
+
+  // Re-seed CRDT state from the restored bodies after the transaction commits —
+  // seeding runs a headless editor and cannot run inside a Dexie transaction. The
+  // stale log and seed markers were cleared above, so trySeed plants a fresh seed.
+  await seedDocsCrdt(archive.docs);
 
   const { bumpRestoreNonce } = useUI.getState();
   for (const doc of archive.docs) {
