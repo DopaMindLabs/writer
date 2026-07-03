@@ -13,7 +13,11 @@ import { collabSeedKey } from '@/lib/collab/seedKey';
  * engine-agnostic {@link CollabStore} interface so callers stay decoupled.
  */
 
-const COMPACT_THRESHOLD = 200;
+// The log is compacted once it grows past this many rows. Overridable at build
+// time (the e2e build lowers it) so the merge path is reachable in tests; the
+// production default is 200.
+const COMPACT_THRESHOLD =
+  Number(import.meta.env.VITE_COMPACT_THRESHOLD) || 200;
 
 const isConstraintError = (err: unknown): boolean =>
   err instanceof Dexie.ConstraintError ||

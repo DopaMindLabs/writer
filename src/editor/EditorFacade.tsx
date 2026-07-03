@@ -1,9 +1,15 @@
+import type { RefObject } from 'react';
+import type { ProviderFactory } from '@/lib/collab/yjs/providerFactory';
 import { LexicalEditor } from './LexicalEditor';
 
 export type EditorMode = 'write' | 'focus' | 'read';
 
 export interface EditorProps {
-  initialValue: string;
+  docId: string;
+  providerFactory: ProviderFactory;
+  username: string;
+  cursorColor: string;
+  cursorsContainerRef: RefObject<HTMLElement | null>;
   onChange: (serialized: string) => void;
   mode: EditorMode;
   placeholder?: string;

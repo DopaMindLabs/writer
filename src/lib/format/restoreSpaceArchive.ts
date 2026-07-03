@@ -2,8 +2,8 @@ import { db } from '@/db/db';
 import { invariant } from '@/lib/invariant';
 import { restoreDocs, seedDocsCrdt } from '@/lib/docs';
 import { collabSeedKey } from '@/lib/collab/seedKey';
+import { broadcastDocReload } from '@/lib/collab/docReloadChannel';
 import { createSpaceBackup } from '@/lib/backup/createSpaceBackup';
-import { useUI } from '@/store/ui';
 import type { ParsedSpaceArchive } from './parseSpaceArchive';
 
 const RESTORE_TABLES = [
@@ -61,7 +61,8 @@ const putArchiveContent = async (archive: ParsedSpaceArchive): Promise<void> => 
 /**
  * Replaces the content of an existing space with an archive of that same
  * space. A snapshot of the current state is stored first, so a restore is
- * itself recoverable. Open editors are remounted via the restore nonce.
+ * itself recoverable. Open editors in other tabs are told to reload the fresh
+ * seed via {@link broadcastDocReload}.
  */
 export const restoreSpaceArchive = async (
   spaceId: string,
@@ -86,8 +87,9 @@ export const restoreSpaceArchive = async (
   // stale log and seed markers were cleared above, so trySeed plants a fresh seed.
   await seedDocsCrdt(archive.docs);
 
-  const { bumpRestoreNonce } = useUI.getState();
-  for (const doc of archive.docs) {
-    bumpRestoreNonce(doc.id);
-  }
+  // Restore runs from a settings surface with no editor mounted, and the re-seed
+  // starts a fresh CRDT lineage. Tell any tab that has one of these docs open to
+  // reload the fresh seed (by remounting) instead of keeping its stale Y.Doc and
+  // clobbering the restored body on its next autosave.
+  broadcastDocReload(archive.docs.map((doc) => doc.id));
 };
