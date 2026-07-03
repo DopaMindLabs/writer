@@ -2,8 +2,8 @@ import { db } from '@/db/db';
 import { invariant } from '@/lib/invariant';
 import { restoreDocs, seedDocsCrdt } from '@/lib/docs';
 import { collabSeedKey } from '@/lib/collab/seedKey';
+import { getEditorHandle } from '@/lib/collab/editorRegistry';
 import { createSpaceBackup } from '@/lib/backup/createSpaceBackup';
-import { useUI } from '@/store/ui';
 import type { ParsedSpaceArchive } from './parseSpaceArchive';
 
 const RESTORE_TABLES = [
@@ -61,7 +61,7 @@ const putArchiveContent = async (archive: ParsedSpaceArchive): Promise<void> => 
 /**
  * Replaces the content of an existing space with an archive of that same
  * space. A snapshot of the current state is stored first, so a restore is
- * itself recoverable. Open editors are remounted via the restore nonce.
+ * itself recoverable. Any open editor is updated in place through its handle.
  */
 export const restoreSpaceArchive = async (
   spaceId: string,
@@ -86,8 +86,9 @@ export const restoreSpaceArchive = async (
   // stale log and seed markers were cleared above, so trySeed plants a fresh seed.
   await seedDocsCrdt(archive.docs);
 
-  const { bumpRestoreNonce } = useUI.getState();
+  // Push the restored body into any live editor so an open document reflects the
+  // restore immediately; unmounted docs simply have no handle.
   for (const doc of archive.docs) {
-    bumpRestoreNonce(doc.id);
+    getEditorHandle(doc.id)?.restoreBody(doc.body);
   }
 };

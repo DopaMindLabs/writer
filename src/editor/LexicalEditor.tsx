@@ -8,6 +8,7 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { EDITOR_NODES } from './nodes';
 import { editorTheme } from './editorTheme';
 import { EditorPlugins } from './EditorPlugins';
+import { RestoreBridgePlugin } from './plugins/RestoreBridgePlugin';
 import { useUI } from '@/store/ui';
 import { cn } from '@/lib/utils';
 import type { ProviderFactory } from '@/lib/collab/yjs/providerFactory';
@@ -105,6 +106,7 @@ export const LexicalEditor = ({
             cursorColor={cursorColor}
             cursorsContainerRef={cursorsContainerRef}
           />
+          <RestoreBridgePlugin docId={docId} />
           <EditorPlugins
             onChange={onChange}
             editable={editable}

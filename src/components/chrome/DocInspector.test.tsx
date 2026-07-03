@@ -6,6 +6,7 @@ import { renderWithProviders, screen, within } from '@/test/test-utils';
 import { useUI, type InspectorSection } from '@/store/ui';
 import { db } from '@/db/db';
 import type { Doc, Revision } from '@/db/schema';
+import { registerEditorHandle } from '@/lib/collab/editorRegistry';
 import { DocInspector } from './DocInspector';
 
 const SECTIONS: InspectorSection[] = ['outline', 'info', 'history', 'actions'];
@@ -427,6 +428,10 @@ describe('DocInspector', () => {
       await db.revisions.put(
         makeRevision({ id: 'rev-old', body: serializedBody('older body'), createdAt: 1 }),
       );
+      // The doc's editor is mounted alongside the inspector in the app; restore
+      // replays the body through its live handle.
+      const restoreBody = vi.fn();
+      const unregister = registerEditorHandle('d1', { restoreBody });
       act(() => {
         useUI.getState().setInspectorSection('history');
       });
@@ -440,6 +445,8 @@ describe('DocInspector', () => {
         const updated = await db.docs.get('d1');
         expect(updated?.body).toBe(serializedBody('older body'));
       });
+      expect(restoreBody).toHaveBeenCalledWith(serializedBody('older body'));
+      unregister();
     });
 
     it('writes the due date to the document when the date field is changed', async () => {

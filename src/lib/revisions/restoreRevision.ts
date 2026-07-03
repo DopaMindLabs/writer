@@ -1,6 +1,6 @@
 import { db } from '@/db/db';
 import { invariant } from '@/lib/invariant';
-import { useUI } from '@/store/ui';
+import { getEditorHandle } from '@/lib/collab/editorRegistry';
 import { createRevision } from './createRevision';
 import { isParseableBody } from './lexicalJsonToPlainText';
 
@@ -15,6 +15,7 @@ export const restoreRevision = async (
   opts: RestoreRevisionOpts = {},
 ): Promise<void> => {
   const now = opts.now ?? Date.now;
+  let restoredBody = '';
 
   await db.transaction('rw', db.revisions, db.docs, async () => {
     const target = await db.revisions.get(revisionId);
@@ -42,7 +43,12 @@ export const restoreRevision = async (
       updatedAt: now(),
       meta: { ...doc.meta, wordCount: target.wordCount },
     });
+    restoredBody = target.body;
   });
 
-  useUI.getState().bumpRestoreNonce(docId);
+  // Replay the restored body through the live editor so the mounted document
+  // reflects the change and it flows into the CRDT (persisted + broadcast).
+  const handle = getEditorHandle(docId);
+  invariant(handle, () => `no live editor is mounted for doc ${docId}`);
+  handle.restoreBody(restoredBody);
 };
