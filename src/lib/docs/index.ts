@@ -3,6 +3,8 @@ export {
   createDocs,
   renameDoc,
   restoreDocs,
+  seedDocCrdt,
+  seedDocsCrdt,
   setDocStatus,
   updateDocBody,
   updateDocMeta,
