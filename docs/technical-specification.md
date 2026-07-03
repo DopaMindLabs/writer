@@ -73,7 +73,10 @@
 
 `Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `DocUpdate` (append-only CRDT payloads for collaborative editing; `Doc.body` stays the serialized read model), `Note` (state machine: `seed-prompt → seed-fetched → user`), `Connection`, `Annotation`, `Citation`, `Backup` (binary `payload: Blob`, discriminated by `format` — currently only `md-zip`), `Settings`, `HighlightPalette`, `Meta`.
 
-The schema is declared in a single Dexie version.
+The schema is declared in a single Dexie version. When the encrypted cloud-sync beta
+(§ 4.9.1) is active, one extra store — `cloudCrypto` (the passphrase-wrapped escrow) — is
+added, and synced content rows carry a `$lipsumCipher` envelope; the device key ring is
+held in a separate, never-synced keystore database rather than a table here.
 
 **Local account.** The `Meta` table holds singleton app state keyed by string. Among its keys is the on-device **account profile** (`profile`): a stable `authorId` (the attribution key that edits and presence attach to) plus the user-editable `displayName` and `presenceHue`. It is created with sensible defaults on first read and repaired in place if a stored value is invalid; it never leaves the browser (§4.9). A per-tab id lives separately in `sessionStorage`, not in Dexie.
 
@@ -273,11 +276,46 @@ Tabbed user-wide preferences.
 | **Typography** | Active | Prose / UI font settings (component present, see `Settings.test.tsx`). |
 | **Shortcuts** | Active | Keyboard reference. |
 | **Backups** | Active | Backup management. |
-| **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only; there is no sign-in or cloud sync. |
+| **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only. A **gated encrypted cloud-sync beta** (§ 4.9.1) can appear at the bottom of this tab, hidden by default. |
 
 Mobile: all tabs reflow without horizontal overflow at 390×800.
 
 *Covered by:* `settings.spec.ts`, `settings-mobile.spec.ts`, `Settings.test.tsx`, `AccountTab.test.tsx`, `PresenceHuePicker.test.tsx`, `profile.test.ts`.
+
+#### 4.9.1 Encrypted cloud sync (invite-only beta, hidden by default)
+
+An opt-in beta that replicates a space's content across a user's devices via
+[Dexie Cloud](https://dexie.org/cloud/), with **all content encrypted on the client
+before upload** — the server stores only ciphertext. It is inert unless **both** gates
+are on: a build gate (`VITE_DEXIE_CLOUD_URL` must be an `https://` URL) and a per-device
+gate (`?cloud-sync=on`, persisted to `localStorage`). With either gate off there are no
+cloud code paths, no cloud UI, and the schema is identical to the base app.
+
+- **Key model.** A 32-byte master secret is minted on setup. An `AES-256-GCM` content
+  key is derived from it (HKDF-SHA-256, non-extractable). The master is wrapped under a
+  passphrase-derived key (PBKDF2-SHA-512, ≥ 800 000 calibrated iterations) into a single
+  synced **escrow** row (`cloudCrypto`); a one-time **recovery code** (Crockford base32
+  of the master) is the fallback if every device forgets the passphrase. The device's
+  derived key ring lives in a **separate, never-synced** keystore database, never a
+  synced table.
+- **Envelope.** Each encrypted row keeps its primary key and indexed fields plaintext and
+  moves every other field into a `$lipsumCipher` envelope (`AES-256-GCM`, fresh IV per
+  seal, AAD binding `table` + `primaryKey` + `epoch`).
+- **Sync scope.** Encrypted: spaces, sections, docs, notes, note attachments,
+  annotations, citations, connections, revisions, palettes. Never synced: settings,
+  backups, sync bookkeeping, the CRDT `docUpdates` log, and the device keystore.
+- **Ordering.** Passphrase-before-sign-in: sync cannot start without a key ring, so a
+  keyless write is never uploaded in the clear. Opting out is **non-destructive** — the
+  cloud schema is sticky so a rebuild never erases local content.
+- **Server sees / does not see.** Cannot: bodies, titles, note text, citation
+  metadata, attachment bytes. Can: record ids and relationships, timestamps, note kinds,
+  citation keys and years, the sign-in email, and sync timing/IP. Sign-in is invite-only.
+
+See [`docs/cloud-sync-beta.md`](cloud-sync-beta.md) for the full design note and the
+manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P6 ciphertext
+spike), `envelope.test.ts`, `keys.test.ts`, `recoveryCode.test.ts`, `setup.test.ts`,
+`buildDb.test.ts`, the `src/components/settings/tabs/cloud/` component tests, and
+`cloud-sync.spec.ts`.
 
 ---
 
@@ -467,8 +505,8 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 
 These exist as scaffolding only — they are visible in the UI but not yet functional:
 
-- **Global Settings → Account → sign-in & cloud sync** — the Account tab now manages a local, on-device profile (display name + presence colour); sign-in and cross-device sync are still not built.
-- **Cross-device / multi-writer collaboration** — live collaboration and presence cursors work **across tabs on the same device** today (a same-origin BroadcastChannel over the `DocUpdate` CRDT log; see § 4.2). Collaboration between different devices or people needs a network transport and encrypted cloud sync, which are not yet wired.
+- **Global Settings → Account → sign-in & cloud sync** — the Account tab manages a local, on-device profile (display name + presence colour). An **encrypted cloud-sync beta** (§ 4.9.1) exists behind two activation gates but is **hidden by default** and invite-only; it is not part of the default experience.
+- **Cross-device / multi-writer collaboration** — live collaboration and presence cursors work **across tabs on the same device** today (a same-origin BroadcastChannel over the `DocUpdate` CRDT log; see § 4.2). Collaboration between different devices or people needs a network transport; the encrypted cloud-sync beta (§ 4.9.1) is the first step, but live cross-device presence is not yet wired.
 - **Space settings → Sharing** (per-space visibility, shared links).
 - **Space settings → Template** (change template after creation).
 - **Space settings → Members** (no implementation behind the tab).
