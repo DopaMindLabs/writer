@@ -134,13 +134,13 @@ rewrite.
 
 ## 5. Cross-device reconciliation (pulled bodies → the CRDT)
 
-Since the Stage 2 collaborative editor, a document's content and history live in its
-per-device CRDT — the Y.Doc rebuilt from the local, **unsynced** `docUpdates` log — and
-`docs.body` is a serialised read model kept in step by the editor's dual-write. Cloud
-sync replicates `docs.body`, **not** `docUpdates` (the auto-increment log cannot sync and
-stays per-device this stage). So a body pulled from another device would sit in
-`docs.body` while a mounted editor kept rendering the stale local Y.Doc, and the next
-local autosave would overwrite the pulled body — the remote edit would silently vanish.
+The collaborative editor renders each document from a per-device CRDT — the Y.Doc rebuilt
+from the local, **unsynced** `docUpdates` log — and `docs.body` is a serialised read model
+kept in step by the editor's dual-write. Cloud sync replicates `docs.body`, **not**
+`docUpdates` (the auto-increment log cannot sync, so CRDT history stays per-device). So a
+body pulled from another device would sit in `docs.body` while a mounted editor kept
+rendering the stale local Y.Doc, and the next local autosave would overwrite the pulled
+body — the remote edit would silently vanish.
 
 `src/lib/cloud/reconcile.ts` closes this. After each transition **out of the `pulling`
 phase** (and once when a fresh device first reaches `in-sync`), `startCloudReconciler`
@@ -157,8 +157,8 @@ runs `reconcilePulledDocs`:
   so mid-typing its CRDT is ahead of the row and the row reads as divergent. Before touching
   a mounted doc the reconciler **flushes the editor's pending autosave** through its handle;
   if that flush wrote unsaved edits, the divergence was lag — not a pull — and the live
-  editor is left untouched (the runbook's "serialise with the autosave debounce" rule). Only
-  a doc whose flush is a no-op is treated as a genuine remote pull.
+  editor is left untouched, so reconciliation never runs while a local edit is mid-flush.
+  Only a doc whose flush is a no-op is treated as a genuine remote pull.
 - **Resolution (whole-document last-writer-wins).** For a genuinely divergent doc it first
   writes a **safety revision** of the local (losing) side, so a cross-device conflict is
   always recoverable. Then, if an editor is **mounted** (an `editorRegistry` handle exists),
@@ -170,7 +170,7 @@ runs `reconcilePulledDocs`:
   revisions, no churn.
 
 Lossless CRDT-level merge across devices (syncing encrypted `docUpdates` instead of body
-snapshots) is the recorded **Option B** open decision for the Stage 3 era; this stage
+snapshots) is a recorded open decision for a future release; today reconciliation
 deliberately resolves at whole-document granularity.
 
 ## 6. Device keystore (deviation from the original plan)
