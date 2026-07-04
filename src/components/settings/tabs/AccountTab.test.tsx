@@ -1,10 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { getProfile } from '@/lib/account/profile';
+import { CLOUD_FLAG_KEY } from '@/lib/cloud/flag';
 import { AccountTab } from './AccountTab';
 
 describe('AccountTab', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    localStorage.clear();
+  });
+
   it('renders the account panel with a privacy notice', async () => {
     renderWithProviders(<AccountTab />);
     expect(await screen.findByTestId('account-privacy-notice')).toHaveTextContent(
@@ -12,6 +18,18 @@ describe('AccountTab', () => {
     );
     expect(screen.getByTestId('setting-display-name')).toBeInTheDocument();
     expect(screen.getByTestId('setting-presence-hue')).toBeInTheDocument();
+  });
+
+  it('shows no cloud-sync section by default (both gates off)', () => {
+    renderWithProviders(<AccountTab />);
+    expect(screen.queryByTestId('cloud-section')).toBeNull();
+  });
+
+  it('shows the cloud-sync section when both gates are on', () => {
+    vi.stubEnv('VITE_DEXIE_CLOUD_URL', 'https://x.dexie.cloud');
+    localStorage.setItem(CLOUD_FLAG_KEY, 'on');
+    renderWithProviders(<AccountTab />);
+    expect(screen.getByTestId('cloud-section')).toBeInTheDocument();
   });
 
   it('persists the display name as it is edited', async () => {

@@ -15,6 +15,7 @@ import { TypographyMuted } from '@/components/ui/typography';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { A11yPreferenceProvider } from '@/theme/A11yPreferenceProvider';
 import { SyncScheduler } from '@/lib/sync/SyncScheduler';
+import { hydrateCloudDevice } from '@/lib/cloud/cloudClient';
 import { resetAndReseed } from '@/db/seed';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
 import { HomeScreen } from '@/screens/global/Home';
@@ -90,6 +91,9 @@ const useAppBoot = (): {
   useEffect(() => {
     let cancelled = false;
     const run = async () => {
+      // Load the persisted device key before anything reads or writes the cloud
+      // database, so encrypted reads decrypt and writes seal from the first tick.
+      await hydrateCloudDevice();
       const url = new URL(window.location.href);
       if (isReseedParamEnabled() && url.searchParams.has('reseed')) {
         await resetAndReseed();
