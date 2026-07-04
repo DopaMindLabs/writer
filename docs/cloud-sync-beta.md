@@ -148,19 +148,26 @@ runs `reconcilePulledDocs`:
 
 - **Detection.** For each doc it rebuilds the local Y.Doc from `docUpdates` and serialises
   it back to a Lexical body (`serializeDocSnapshot` — the inverse of the seed, kept inside
-  the `yjs/` boundary that holds the only `Y.applyUpdate`/`Y.mergeUpdates` call sites). A
-  row body equal to that snapshot — directly, or after canonicalising both through a
-  seed→snapshot round-trip to absorb stale field-default differences (e.g. the
-  pre-`textFormat` empty-body constant) — was produced by the local dual-write and is left
-  untouched.
-- **Resolution (whole-document last-writer-wins).** For a divergent doc it first writes a
-  **safety revision** of the local (losing) side, so a cross-device conflict is always
-  recoverable. Then, if an editor is **mounted** (an `editorRegistry` handle exists), it
-  replays the pulled body through the handle — an untagged local update that flows into the
-  binding, persists, and broadcasts to sibling tabs. If **unmounted**, it clears the doc's
-  `docUpdates` lineage and reseeds from the pulled body.
-- **Idempotency.** Because a reseed's snapshot equals the canonicalised pulled body, a
-  second run detects no divergence and does nothing — no duplicate revisions, no churn.
+  the `yjs/` boundary that holds the only `Y.applyUpdate`/`Y.mergeUpdates` call sites).
+  Every stored body is canonical serialized Lexical JSON — the default empty body
+  (`EMPTY_LEXICAL_JSON`) is the exact form the editor emits, guarded by a test — so a row
+  **equal to that snapshot** was produced by the local dual-write and is left untouched. No
+  format-tolerance layer is needed or kept.
+- **Same-device autosave lag.** A mounted editor persists `docs.body` on a 600 ms debounce,
+  so mid-typing its CRDT is ahead of the row and the row reads as divergent. Before touching
+  a mounted doc the reconciler **flushes the editor's pending autosave** through its handle;
+  if that flush wrote unsaved edits, the divergence was lag — not a pull — and the live
+  editor is left untouched (the runbook's "serialise with the autosave debounce" rule). Only
+  a doc whose flush is a no-op is treated as a genuine remote pull.
+- **Resolution (whole-document last-writer-wins).** For a genuinely divergent doc it first
+  writes a **safety revision** of the local (losing) side, so a cross-device conflict is
+  always recoverable. Then, if an editor is **mounted** (an `editorRegistry` handle exists),
+  it replays the pulled body through the handle — an untagged local update that flows into
+  the binding, persists, and broadcasts to sibling tabs. If **unmounted**, it clears the
+  doc's `docUpdates` lineage and reseeds from the pulled body.
+- **Idempotency.** Because every body is canonical, a reseed's snapshot equals the pulled
+  body exactly, so a second run detects no divergence and does nothing — no duplicate
+  revisions, no churn.
 
 Lossless CRDT-level merge across devices (syncing encrypted `docUpdates` instead of body
 snapshots) is the recorded **Option B** open decision for the Stage 3 era; this stage
