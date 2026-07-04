@@ -9,22 +9,32 @@ name: E2E smoke (Vercel preview)
 # workflow never feeds the e2e coverage ratchet in e2e.yml.
 on:
   deployment_status:
+  # deployment_status only dispatches the workflow file on the default branch,
+  # so allow a manual run against an explicit preview URL for branches (and for
+  # re-running a smoke without redeploying).
+  workflow_dispatch:
+    inputs:
+      preview_url:
+        description: Full URL of the deployed preview to smoke-test
+        required: true
+        type: string
 
 concurrency:
-  group: e2e-preview-${{ github.event.deployment.id }}
+  group: e2e-preview-${{ github.event.deployment.id || github.event.inputs.preview_url }}
   cancel-in-progress: true
 
 jobs:
   smoke:
     if: >
-      github.event.deployment_status.state == 'success' &&
-      github.event.deployment.environment != 'production'
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment.environment != 'production')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          ref: ${{ github.event.deployment.sha }}
+          ref: ${{ github.event.deployment.sha || github.sha }}
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
@@ -43,7 +53,7 @@ jobs:
 
       - name: E2E smoke test against the deployed preview
         env:
-          E2E_BASE_URL: ${{ github.event.deployment_status.environment_url || github.event.deployment_status.target_url }}
+          E2E_BASE_URL: ${{ github.event.inputs.preview_url || github.event.deployment_status.environment_url || github.event.deployment_status.target_url }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: npx playwright test --config=playwright.preview.config.ts
 
