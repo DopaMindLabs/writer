@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, type RefObject } from 'react';
 import type { EditorState } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { serializeState } from '@/editor/serialize';
@@ -6,9 +6,15 @@ import { serializeState } from '@/editor/serialize';
 interface AutosavePluginProps {
   onChange: (serialized: string) => void;
   debounceMs?: number;
+  /** Exposes the pending-save flush so the editor handle can drive it on demand. */
+  flushRef?: RefObject<() => boolean>;
 }
 
-export const AutosavePlugin = ({ onChange, debounceMs = 600 }: AutosavePluginProps) => {
+export const AutosavePlugin = ({
+  onChange,
+  debounceMs = 600,
+  flushRef,
+}: AutosavePluginProps) => {
   const [editor] = useLexicalComposerContext();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const backstopRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -17,7 +23,10 @@ export const AutosavePlugin = ({ onChange, debounceMs = 600 }: AutosavePluginPro
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
-  const flushPendingSave = useCallback(() => {
+  // Flush any pending save synchronously; return whether unsaved edits were
+  // written — the signal cloud reconciliation uses to tell same-device autosave
+  // lag from a genuine remote pull.
+  const flushPendingSave = useCallback((): boolean => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
@@ -27,12 +36,22 @@ export const AutosavePlugin = ({ onChange, debounceMs = 600 }: AutosavePluginPro
       backstopRef.current = null;
     }
     const state = latestStateRef.current;
-    if (!state) return;
+    if (!state) return false;
     const serialized = serializeState(state);
-    if (serialized === lastSavedRef.current) return;
+    if (serialized === lastSavedRef.current) return false;
     lastSavedRef.current = serialized;
     onChangeRef.current(serialized);
+    return true;
   }, []);
+
+  useEffect(() => {
+    const ref = flushRef;
+    if (!ref) return;
+    ref.current = flushPendingSave;
+    return () => {
+      ref.current = () => false;
+    };
+  }, [flushRef, flushPendingSave]);
 
   useEffect(() => {
     return editor.registerUpdateListener(
