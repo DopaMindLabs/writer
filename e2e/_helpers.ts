@@ -103,7 +103,10 @@ export const test = base.extend<{ autoCoverage: void; failOnCspViolation: void }
         { key: TOURS_STORAGE_KEY, ids: ALL_TOUR_IDS },
       );
 
-      const enabled = browserName === 'chromium';
+      // Coverage is collected only for the local suite (monocart reporter,
+      // localhost source URLs). The Vercel-preview run targets a remote build
+      // and reports no coverage, so skip instrumentation there.
+      const enabled = browserName === 'chromium' && !ASSERT_NO_CSP_VIOLATIONS;
       if (enabled) {
         await page.coverage.startJSCoverage({ resetOnNavigation: false });
       }
