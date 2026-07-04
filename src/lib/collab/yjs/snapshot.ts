@@ -2,28 +2,8 @@ import * as Y from 'yjs';
 import type { Text as YText, YEvent } from 'yjs';
 import { createHeadlessEditor } from '@lexical/headless';
 import { createBinding, syncYjsChangesToLexical } from '@lexical/yjs';
-import type { Provider } from '@lexical/yjs';
 import { EDITOR_NODES } from '@/editor/nodes';
-
-/**
- * A no-op {@link Provider} satisfying `@lexical/yjs`'s contract — the snapshot
- * binding runs in isolation, with no awareness and no network, so every method
- * is inert. (Mirrors the seed path; the two headless flows are independent.)
- */
-const createStubProvider = (): Provider => ({
-  awareness: {
-    getLocalState: () => null,
-    getStates: () => new Map(),
-    on: () => undefined,
-    off: () => undefined,
-    setLocalState: () => undefined,
-    setLocalStateField: () => undefined,
-  },
-  connect: () => undefined,
-  disconnect: () => undefined,
-  on: () => undefined,
-  off: () => undefined,
-});
+import { createStubProvider } from './stubProvider';
 
 /**
  * Rebuild a document's local CRDT state from its `docUpdates` log and serialise
