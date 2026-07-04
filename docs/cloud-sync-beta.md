@@ -132,7 +132,41 @@ plaintext rows through the unwrapped cursor and re-writes them with `bulkPut` (w
 middleware seals) rather than `.modify()`, whose change-detection would skip a no-op
 rewrite.
 
-## 5. Device keystore (deviation from the original plan)
+## 5. Cross-device reconciliation (pulled bodies → the CRDT)
+
+Since the Stage 2 collaborative editor, a document's content and history live in its
+per-device CRDT — the Y.Doc rebuilt from the local, **unsynced** `docUpdates` log — and
+`docs.body` is a serialised read model kept in step by the editor's dual-write. Cloud
+sync replicates `docs.body`, **not** `docUpdates` (the auto-increment log cannot sync and
+stays per-device this stage). So a body pulled from another device would sit in
+`docs.body` while a mounted editor kept rendering the stale local Y.Doc, and the next
+local autosave would overwrite the pulled body — the remote edit would silently vanish.
+
+`src/lib/cloud/reconcile.ts` closes this. After each transition **out of the `pulling`
+phase** (and once when a fresh device first reaches `in-sync`), `startCloudReconciler`
+runs `reconcilePulledDocs`:
+
+- **Detection.** For each doc it rebuilds the local Y.Doc from `docUpdates` and serialises
+  it back to a Lexical body (`serializeDocSnapshot` — the inverse of the seed, kept inside
+  the `yjs/` boundary that holds the only `Y.applyUpdate`/`Y.mergeUpdates` call sites). A
+  row body equal to that snapshot — directly, or after canonicalising both through a
+  seed→snapshot round-trip to absorb stale field-default differences (e.g. the
+  pre-`textFormat` empty-body constant) — was produced by the local dual-write and is left
+  untouched.
+- **Resolution (whole-document last-writer-wins).** For a divergent doc it first writes a
+  **safety revision** of the local (losing) side, so a cross-device conflict is always
+  recoverable. Then, if an editor is **mounted** (an `editorRegistry` handle exists), it
+  replays the pulled body through the handle — an untagged local update that flows into the
+  binding, persists, and broadcasts to sibling tabs. If **unmounted**, it clears the doc's
+  `docUpdates` lineage and reseeds from the pulled body.
+- **Idempotency.** Because a reseed's snapshot equals the canonicalised pulled body, a
+  second run detects no divergence and does nothing — no duplicate revisions, no churn.
+
+Lossless CRDT-level merge across devices (syncing encrypted `docUpdates` instead of body
+snapshots) is the recorded **Option B** open decision for the Stage 3 era; this stage
+deliberately resolves at whole-document granularity.
+
+## 6. Device keystore (deviation from the original plan)
 
 The device's derived key ring is persisted in a **dedicated, never-synced Dexie
 database** (`lipsum-cloud-keystore`, `src/lib/cloud/crypto/keyStore.ts`) rather than a
@@ -142,7 +176,7 @@ of the ring being swept into the sync graph. `deviceKeyProvider` exposes a synch
 `current()` view that the middleware polls. `forgetThisDevice()` clears only this
 keystore; the escrow and other devices are untouched.
 
-## 6. What the server can and cannot see
+## 7. What the server can and cannot see
 
 | Server **cannot** see | Server **can** see |
 |---|---|
@@ -155,7 +189,27 @@ keystore; the escrow and other devices are untouched.
 Sign-in is invite-only (server-side allow-list). The at-rest local database is also
 encrypted for synced tables once a key is present.
 
-## 7. Verification
+## 8. Deployment: CSP and security headers
+
+The app deploys to Vercel as a static build; `vercel.json` sets a strict
+Content-Security-Policy — the primary defence against script injection, the one attacker
+class that could read local data or *use* (never extract) the non-extractable device keys.
+Every header is public by design (a CSP's value is browser enforcement, not secrecy) and
+the file holds no secrets.
+
+- `script-src 'self'` — a production build has no inline scripts. `style-src` keeps
+  `'unsafe-inline'` (recorded evidence: Radix, vaul and Lexical inject runtime inline
+  `<style>`/`style=""`; React's `style={}` uses the CSSOM and is not blocked).
+- `connect-src 'self' https://<DB>.dexie.cloud wss://<DB>.dexie.cloud` and
+  `worker-src 'self' blob:` are the only cloud-specific relaxations — the sync fetch and
+  websocket, and the addon's workers.
+- `<DB>` is a **placeholder** until the manual protocol below creates the real database. An
+  unreplaced `<DB>` is an invalid CSP source, so cloud sync fails loudly (a console CSP
+  violation, sync blocked) rather than silently, and only flag-on beta users reach that
+  path. `vercel.json` headers do not apply to the local Playwright preview, so the header
+  set is verified manually on a preview deployment (`curl -sI <preview-url>`), not in CI.
+
+## 9. Verification
 
 - **Automated (CI):** the P1–P6 spike (`src/lib/cloud/crypto/middleware.test.ts`) stands
   up a real offline `dexie-cloud-addon` database and proves: ciphertext at rest (P1),
@@ -171,18 +225,26 @@ encrypted for synced tables once a key is present.
   4. First-activation migration of a large *existing* local database into the cloud
      schema relies on the addon's own reconciliation, which fake-indexeddb does not
      reproduce faithfully; confirm it in a real browser via the manual protocol.
+  5. Cross-device **editor** reconciliation (§5) — a body edited on device A reaching the
+     mounted editor on device B — needs two real synced devices; the unit suite proves the
+     detection/resolution logic against simulated databases, not a live pull.
 
 ### Manual protocol (run once before inviting any tester)
 
 1. `npx dexie-cloud create` → obtain the database URL.
 2. `npx dexie-cloud whitelist <app-origin>`.
-3. Build with the real `VITE_DEXIE_CLOUD_URL`.
-4. In **two different browsers**, activate via `?cloud-sync=on`.
-5. Set up the passphrase in browser A; unlock (same passphrase) in browser B.
-6. Sign in with an invited email (OTP).
-7. Create a doc in A → it appears **decrypted** in B.
-8. Inspect the stored rows via the Dexie Cloud dashboard/REST: every content field must
-   be **absent**, with only `$lipsumCipher` plus ids/indexed fields visible.
+3. Replace the `<DB>` placeholder in `vercel.json`'s `connect-src`/`worker-src` with the
+   database host, and set `VITE_DEXIE_CLOUD_URL` to the same origin; build.
+4. On a preview deployment, `curl -sI <preview-url>` shows every security header, and the
+   app boots and runs this protocol with **zero** CSP violations in the console.
+5. In **two different browsers**, activate via `?cloud-sync=on`.
+6. Set up the passphrase in browser A; unlock (same passphrase) in browser B.
+7. Sign in with an invited email (OTP).
+8. Create a doc in A → it appears **decrypted** in B; edit it in B with A's editor open →
+   the change reconciles into A's editor (§5), and A keeps a safety revision of its prior
+   local state.
+9. Inspect the stored rows via the Dexie Cloud dashboard/REST: every content field must be
+   **absent**, with only `$lipsumCipher` plus ids/indexed fields visible.
 
 If any plaintext content field is visible server-side, **the beta must not be offered to
 anyone** — file the failure and stop.
