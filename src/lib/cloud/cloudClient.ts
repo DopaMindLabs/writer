@@ -1,6 +1,9 @@
 import { db } from '@/db/db';
 import type { DXCUserInteraction, SyncState, UserLogin } from 'dexie-cloud-addon';
 import type { CloudObservable } from './cloudObservable';
+import { hasCloudEnv } from './env';
+import { readCloudFlag, wasCloudProvisioned } from './flag';
+import { loadDeviceKeyRing } from './crypto/keyStore';
 
 /**
  * Facade over `db.cloud` (the Dexie Cloud addon API). It is the *only* module
@@ -59,3 +62,16 @@ export const signInToCloud = (): Promise<void> =>
 
 export const signOutOfCloud = (): Promise<void> =>
   cloudApi()?.logout() ?? Promise.resolve();
+
+/**
+ * Load the persisted device key ring into the middleware's synchronous provider
+ * before the cloud database is used. Without this, a provisioned device that
+ * reloads would read ciphertext back and — if still signed in — take the keyless
+ * pass-through and enqueue plaintext until the user manually unlocked. A no-op
+ * when the database is not cloud-enabled. Call it during app boot.
+ */
+export const hydrateCloudDevice = async (): Promise<void> => {
+  if (hasCloudEnv() && (readCloudFlag() || wasCloudProvisioned())) {
+    await loadDeviceKeyRing();
+  }
+};
