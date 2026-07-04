@@ -191,46 +191,47 @@ describe('createEncryptionMiddleware — transaction lifetime safety', () => {
   const wrap = (overrides: Partial<DBCoreTable>): DBCoreTable => {
     const fake = { name: 'docs', schema: { primaryKey }, ...overrides } as unknown as DBCoreTable;
     const down = { table: () => fake } as unknown as DBCore;
-    return createEncryptionMiddleware(provider).create(down).table('docs');
+    const created = createEncryptionMiddleware(provider).create(down) as DBCore;
+    return created.table('docs');
   };
 
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it('get: invokes Dexie.waitFor synchronously, before the native read settles', () => {
+  // The native read resolves immediately, but a correct wrapper still calls
+  // Dexie.waitFor *synchronously* — before control returns to the event loop.
+  // The bug awaited the native read first and called waitFor only afterwards,
+  // one tick too late, so synchronously the spy would still read zero.
+  it('get: wraps the native read in Dexie.waitFor synchronously', () => {
     const waitForSpy = vi.spyOn(Dexie, 'waitFor');
-    let settle!: (value: unknown) => void;
-    const wrapped = wrap({ get: () => new Promise((resolve) => (settle = resolve)) });
+    const wrapped = wrap({ get: vi.fn().mockResolvedValue({ id: 'd1' }) });
 
     void wrapped.get({ trans: {} as never, key: 'd1' });
 
-    // The native read is still pending here. A `waitFor` called only after
-    // awaiting it (the bug) would not have run yet at this point.
     expect(waitForSpy).toHaveBeenCalledTimes(1);
-    settle({ id: 'd1' });
   });
 
-  it('getMany: invokes Dexie.waitFor synchronously, before the native read settles', () => {
+  it('getMany: wraps the native read in Dexie.waitFor synchronously', () => {
     const waitForSpy = vi.spyOn(Dexie, 'waitFor');
-    let settle!: (value: unknown) => void;
-    const wrapped = wrap({ getMany: () => new Promise((resolve) => (settle = resolve)) });
+    const wrapped = wrap({ getMany: vi.fn().mockResolvedValue([{ id: 'd1' }]) });
 
     void wrapped.getMany({ trans: {} as never, keys: ['d1'] });
 
     expect(waitForSpy).toHaveBeenCalledTimes(1);
-    settle([{ id: 'd1' }]);
   });
 
-  it('query: invokes Dexie.waitFor synchronously, before the native read settles', () => {
+  it('query: wraps the native read in Dexie.waitFor synchronously', () => {
     const waitForSpy = vi.spyOn(Dexie, 'waitFor');
-    let settle!: (value: unknown) => void;
-    const wrapped = wrap({ query: () => new Promise((resolve) => (settle = resolve)) });
+    const wrapped = wrap({ query: vi.fn().mockResolvedValue({ result: [{ id: 'd1' }] }) });
 
-    void wrapped.query({ trans: {} as never, query: {} } as unknown as DBCoreQueryRequest);
+    void wrapped.query({
+      trans: {} as never,
+      values: true,
+      query: {},
+    } as unknown as DBCoreQueryRequest);
 
     expect(waitForSpy).toHaveBeenCalledTimes(1);
-    settle({ result: [{ id: 'd1' }] });
   });
 
   it('query: never calls Dexie.waitFor when the caller only wants keys', () => {
