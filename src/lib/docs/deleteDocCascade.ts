@@ -1,4 +1,5 @@
 import { db } from '@/db/db';
+import type { LoremDB } from '@/db/LoremDB';
 import { invariant } from '@/lib/invariant';
 import { collabStore } from '@/lib/collab/collabStore';
 
@@ -13,20 +14,27 @@ import { collabStore } from '@/lib/collab/collabStore';
  * store. The doc row is gone before the CRDT cleanup, so an interruption leaves
  * only harmless orphan update rows — never a live doc with a dead/empty log.
  */
-export const deleteDocCascade = async (docId: string): Promise<void> => {
+export const deleteDocCascade = async (
+  docId: string,
+  database: LoremDB = db,
+): Promise<void> => {
   invariant(docId, 'deleteDocCascade: docId is required');
-  await db.transaction(
+  await database.transaction(
     'rw',
-    [db.docs, db.annotations, db.revisions, db.notes],
+    [database.docs, database.annotations, database.revisions, database.notes],
     async () => {
-      await db.annotations.where('docId').equals(docId).delete();
-      await db.revisions.where('docId').equals(docId).delete();
-      // linkedDocId is unindexed, so scan-filter and clear it on any note that
-      // pointed at the deleted doc.
-      await db.notes
-        .filter((note) => note.linkedDocId === docId)
-        .modify({ linkedDocId: undefined });
-      await db.docs.delete(docId);
+      await database.annotations.where('docId').equals(docId).delete();
+      await database.revisions.where('docId').equals(docId).delete();
+      // linkedDocId is unindexed — and encrypted under cloud sync, so a cursor
+      // filter would not see it. Read the notes decrypted, then re-put the ones
+      // that pointed at the deleted doc with the link cleared.
+      const linked = (await database.notes.toArray()).filter(
+        (note) => note.linkedDocId === docId,
+      );
+      await Promise.all(
+        linked.map((note) => database.notes.put({ ...note, linkedDocId: undefined })),
+      );
+      await database.docs.delete(docId);
     },
   );
   await collabStore.deleteDoc(docId);
