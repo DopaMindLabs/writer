@@ -34,6 +34,8 @@ const withComposer = (ui: ReactNode) => (
 const readText = (editor: LexicalEditor): string =>
   editor.getEditorState().read(() => $getRoot().getTextContent());
 
+const noFlush = { current: () => false };
+
 describe('RestoreBridgePlugin', () => {
   it('replaces the editor body through the registered handle', () => {
     let editor!: LexicalEditor;
@@ -41,7 +43,7 @@ describe('RestoreBridgePlugin', () => {
       withComposer(
         <>
           <CaptureEditor onReady={(e) => (editor = e)} />
-          <RestoreBridgePlugin docId="bridge-1" />
+          <RestoreBridgePlugin docId="bridge-1" flushRef={noFlush} />
         </>,
       ),
     );
@@ -56,9 +58,18 @@ describe('RestoreBridgePlugin', () => {
     expect(readText(editor)).toContain('restored content');
   });
 
+  it('exposes the autosave flush on its handle', () => {
+    const flushRef = { current: () => true };
+    render(withComposer(<RestoreBridgePlugin docId="bridge-3" flushRef={flushRef} />));
+
+    expect(getEditorHandle('bridge-3')?.flush?.()).toBe(true);
+    flushRef.current = () => false;
+    expect(getEditorHandle('bridge-3')?.flush?.()).toBe(false);
+  });
+
   it('unregisters its handle on unmount', () => {
     const { unmount } = render(
-      withComposer(<RestoreBridgePlugin docId="bridge-2" />),
+      withComposer(<RestoreBridgePlugin docId="bridge-2" flushRef={noFlush} />),
     );
     expect(getEditorHandle('bridge-2')).toBeDefined();
 
