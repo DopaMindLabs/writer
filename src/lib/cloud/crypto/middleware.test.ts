@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import Dexie from 'dexie';
+import Dexie, {
+  type DBCore,
+  type DBCoreTable,
+  type DBCoreQueryRequest,
+} from 'dexie';
 import dexieCloud from 'dexie-cloud-addon';
 import { STORES } from '@/db/stores';
 import { generateMasterSecret, deriveKeyRing, type CloudKeyRing } from './keys';
@@ -166,5 +170,75 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     const raw = await readRaw('docs', 'plain');
     expect(raw?.[CIPHER_FIELD]).toBeUndefined();
     expect(raw?.body).toBe('B');
+  });
+});
+
+/**
+ * Real IndexedDB auto-commits a transaction as soon as its last pending request
+ * settles; fake-indexeddb (used above) is lenient enough not to reproduce that
+ * timing, so the P1–P6 spike cannot catch a `Dexie.waitFor` call that arrives
+ * one tick late. These tests instead assert the contract directly: `waitFor`
+ * must wrap the native read itself, invoked synchronously, not just the decrypt
+ * that follows an `await` of it.
+ */
+describe('createEncryptionMiddleware — transaction lifetime safety', () => {
+  // Never dereferenced: every fake row below carries no cipher envelope, so
+  // openRow's pass-through branch returns it untouched without touching the ring.
+  const fakeRing = {} as CloudKeyRing;
+  const provider: KeyProvider = { current: () => fakeRing };
+  const primaryKey = { extractKey: (v: { id: string }) => v.id };
+
+  const wrap = (overrides: Partial<DBCoreTable>): DBCoreTable => {
+    const fake = { name: 'docs', schema: { primaryKey }, ...overrides } as unknown as DBCoreTable;
+    const down = { table: () => fake } as unknown as DBCore;
+    return createEncryptionMiddleware(provider).create(down).table('docs');
+  };
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('get: invokes Dexie.waitFor synchronously, before the native read settles', () => {
+    const waitForSpy = vi.spyOn(Dexie, 'waitFor');
+    let settle!: (value: unknown) => void;
+    const wrapped = wrap({ get: () => new Promise((resolve) => (settle = resolve)) });
+
+    void wrapped.get({ trans: {} as never, key: 'd1' });
+
+    // The native read is still pending here. A `waitFor` called only after
+    // awaiting it (the bug) would not have run yet at this point.
+    expect(waitForSpy).toHaveBeenCalledTimes(1);
+    settle({ id: 'd1' });
+  });
+
+  it('getMany: invokes Dexie.waitFor synchronously, before the native read settles', () => {
+    const waitForSpy = vi.spyOn(Dexie, 'waitFor');
+    let settle!: (value: unknown) => void;
+    const wrapped = wrap({ getMany: () => new Promise((resolve) => (settle = resolve)) });
+
+    void wrapped.getMany({ trans: {} as never, keys: ['d1'] });
+
+    expect(waitForSpy).toHaveBeenCalledTimes(1);
+    settle([{ id: 'd1' }]);
+  });
+
+  it('query: invokes Dexie.waitFor synchronously, before the native read settles', () => {
+    const waitForSpy = vi.spyOn(Dexie, 'waitFor');
+    let settle!: (value: unknown) => void;
+    const wrapped = wrap({ query: () => new Promise((resolve) => (settle = resolve)) });
+
+    void wrapped.query({ trans: {} as never, query: {} } as unknown as DBCoreQueryRequest);
+
+    expect(waitForSpy).toHaveBeenCalledTimes(1);
+    settle({ result: [{ id: 'd1' }] });
+  });
+
+  it('query: never calls Dexie.waitFor when the caller only wants keys', () => {
+    const waitForSpy = vi.spyOn(Dexie, 'waitFor');
+    const wrapped = wrap({ query: vi.fn().mockResolvedValue({ result: ['d1'] }) });
+
+    void wrapped.query({ values: false } as unknown as DBCoreQueryRequest);
+
+    expect(waitForSpy).not.toHaveBeenCalled();
   });
 });
