@@ -19,10 +19,11 @@ const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
 
 export default defineConfig({
   testDir: './e2e',
-  // Cloud-sync specs assume the local build's offline VITE_DEXIE_CLOUD_URL
-  // stub; against a real deployment the database is live, which changes their
-  // assumptions. Out of scope for this pipeline (see docs/cloud-sync-beta.md).
-  testIgnore: ['**/cloud-sync.spec.ts'],
+  // The deployment build uses the browser router and disables the ?reseed
+  // affordance, so the local suite's hash-route, seed-dependent specs cannot
+  // run against it. Only the purpose-built preview smoke does — it drives
+  // first-run, data-independent surfaces and asserts the deployed CSP.
+  testMatch: ['**/preview-smoke.spec.ts'],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
