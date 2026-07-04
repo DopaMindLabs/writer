@@ -2,7 +2,6 @@ import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
 import type { SyncState } from 'dexie-cloud-addon';
 import { collabStore } from '@/lib/collab/collabStore';
-import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { getEditorHandle } from '@/lib/collab/editorRegistry';
 import { seedDocCrdt } from '@/lib/docs';
@@ -27,28 +26,6 @@ export interface ReconcileResult {
   action: 'restored' | 'reseeded';
 }
 
-/**
- * Canonicalise a body through the CRDT seed → snapshot round-trip. Two bodies
- * with identical content but different (stale) field defaults — e.g. a
- * never-opened doc still carrying the pre-`textFormat` empty-body constant —
- * then compare equal, which is what keeps reconciliation idempotent.
- */
-const canonicaliseBody = (docId: string, body: string): string =>
-  serializeDocSnapshot(docId, [seedFromLexicalJson(docId, body)]);
-
-/**
- * True when the row body was produced by the local dual-write: it matches the
- * serialised snapshot of the local Y.Doc directly (the steady-state fast path),
- * or matches once both are canonicalised (formatting-only differences).
- */
-const isLocallyProduced = (
-  docId: string,
-  localSnapshot: string,
-  body: string,
-): boolean =>
-  localSnapshot === body ||
-  localSnapshot === canonicaliseBody(docId, body);
-
 /** Clear the stale CRDT lineage and reseed from the pulled body (unmounted doc). */
 const reseedFromBody = async (docId: string, body: string): Promise<void> => {
   await collabStore.deleteDoc(docId);
@@ -58,18 +35,24 @@ const reseedFromBody = async (docId: string, body: string): Promise<void> => {
 const reconcileDoc = async (doc: Doc): Promise<ReconcileResult | null> => {
   const updates = await collabStore.loadAll(doc.id);
   const localSnapshot = serializeDocSnapshot(doc.id, updates);
-  if (isLocallyProduced(doc.id, localSnapshot, doc.body)) return null;
+  // Every body is canonical serialized Lexical JSON, so a locally-produced row
+  // equals its CRDT snapshot exactly.
+  if (localSnapshot === doc.body) return null;
 
-  // Preserve the losing local side before the pulled body wins.
+  const handle = getEditorHandle(doc.id);
+  // A mounted editor mid-autosave holds the user's latest keystrokes in the CRDT
+  // while `docs.body` still lags behind the 600 ms debounce — which reads as
+  // divergence. Flushing settles that pending save; if it wrote, this was
+  // same-device lag, never a remote pull, so leave the live editor untouched.
+  if (handle?.flush?.()) return null;
+
+  // Genuine divergence: keep the losing local side recoverable, then bring in the
+  // pulled body — through the live editor if mounted, else by reseeding the log.
   await createRevision(doc.id, localSnapshot, {
     kind: 'manual',
     label: 'pre-sync',
   });
-
-  const handle = getEditorHandle(doc.id);
   if (handle) {
-    // A mounted editor: replay through its live handle so the change flows into
-    // the CRDT binding and is persisted + broadcast (an untagged local update).
     handle.restoreBody(doc.body);
     return { docId: doc.id, action: 'restored' };
   }
