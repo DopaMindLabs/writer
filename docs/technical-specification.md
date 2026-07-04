@@ -309,7 +309,7 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   every row body against the local Y.Doc and, for a body a pull produced rather than the
   local editor, keeps a safety revision of the local side then either replays the pulled
   body through the mounted editor or reseeds the CRDT — **whole-document last-writer-wins**;
-  lossless cross-device merge is a Stage 3 open decision.
+  lossless cross-device merge is a recorded open decision for a future release.
 - **Ordering.** Passphrase-before-sign-in: sync cannot start without a key ring, so a
   keyless write is never uploaded in the clear. Opting out is **non-destructive** — the
   cloud schema is sticky so a rebuild never erases local content.
