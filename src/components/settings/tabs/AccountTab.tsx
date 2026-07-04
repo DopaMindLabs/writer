@@ -6,6 +6,7 @@ import { TextField } from '@/components/ui/TextField';
 import { useProfile } from '@/lib/account/useProfile';
 import { updateProfile } from '@/lib/account/profile';
 import { PresenceHuePicker } from './PresenceHuePicker';
+import { CloudSection } from './cloud/CloudSection';
 
 export const AccountTab = () => {
   const { t } = useTranslation('screens');
@@ -68,6 +69,8 @@ export const AccountTab = () => {
       >
         {t('settings.account.privacyNotice')}
       </div>
+
+      <CloudSection />
     </section>
   );
 };
