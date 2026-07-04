@@ -406,6 +406,20 @@
           "network": "Sync timing and your IP address",
           "invite": "Sign-in is invite-only while this beta is running."
         }
+      },
+      "localNetworkSync": {
+        "title": "Local-network sync (beta)",
+        "subtitle": "Pair another device on the same network by QR or manual code. Nothing starts until you enable it here.",
+        "enableLabel": "Enable local-network sync",
+        "enableHint": "Shows pairing controls for nearby devices. The feature stays local to this browser and remains off by default.",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "pairLabel": "Pair another device",
+        "pairHint": "Use QR pairing or a manual code to connect a nearby phone or computer. Pairing is not implemented yet.",
+        "pairDisabledHint": "Enable local-network sync before pairing controls become available.",
+        "pairAction": "Pair device",
+        "joinAction": "Join device",
+        "notice": "Beta shell only: no listener, QR session, WebRTC connection, or content exchange starts from this panel yet."
       }
     },
     "typography": {

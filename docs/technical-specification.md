@@ -276,7 +276,7 @@ Tabbed user-wide preferences.
 | **Typography** | Active | Prose / UI font settings (component present, see `Settings.test.tsx`). |
 | **Shortcuts** | Active | Keyboard reference. |
 | **Backups** | Active | Backup management. |
-| **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only. A **gated encrypted cloud-sync beta** (§ 4.9.1) can appear at the bottom of this tab, hidden by default. |
+| **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only. A **gated encrypted cloud-sync beta** (§ 4.9.1) and a **gated local-network sync beta** (§ 4.9.2) can appear at the bottom of this tab; both are hidden by default. |
 
 Mobile: all tabs reflow without horizontal overflow at 390×800.
 
@@ -316,6 +316,27 @@ manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P6 ci
 spike), `envelope.test.ts`, `keys.test.ts`, `recoveryCode.test.ts`, `setup.test.ts`,
 `buildDb.test.ts`, the `src/components/settings/tabs/cloud/` component tests, and
 `cloud-sync.spec.ts`.
+
+#### 4.9.2 Local-network sync (hidden beta shell, off by default)
+
+A hidden beta shell for future QR/manual-code pairing between devices on the same local
+network. The shell is inert unless **both** developer gates are on: a build gate
+(`VITE_LOCAL_NETWORK_SYNC=true`) and a per-device gate (`?local-network-sync=on`,
+persisted to `localStorage` under `lipsum-local-network-sync`). With either gate off
+there is no local-network sync UI and no default behaviour change.
+
+When both developer gates are active, **Universal Settings → Account** shows a
+**Local-network sync (beta)** section with an explicit user setting. That setting is
+persisted locally under `lipsum-local-network-sync-setting`; until it is enabled, the
+Pair and Join actions stay disabled. Even after the setting is enabled, this milestone
+starts no listener, QR session, WebRTC connection, local discovery, or content exchange.
+It only establishes the gated Settings surface for later pairing work.
+
+The local-network beta is separate from Dexie Cloud: it does not use sign-in, cloud
+escrow, cloud schema stickiness, or hosted sync transport. Help Center content is omitted
+while the feature remains hidden. *Covered by:* `flag.test.ts`,
+`LocalNetworkSyncSection.test.tsx`, `AccountTab.test.tsx`, and
+`local-network-sync.spec.ts`.
 
 ---
 
