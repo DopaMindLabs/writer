@@ -58,8 +58,15 @@ const openValue = async (
 /**
  * Web Crypto is asynchronous, but Dexie commits a transaction the moment control
  * returns to the event loop on a non-Dexie promise. {@link Dexie.waitFor} keeps
- * the surrounding transaction alive across each seal/open; outside a transaction
- * it degrades to a plain await, so every call site is safe.
+ * the surrounding transaction alive — but only if it is called *before* control
+ * returns to the event loop even once. It must therefore wrap the native
+ * read itself, not just the decrypt that follows an `await` of it: awaiting the
+ * native call first and calling {@link Dexie.waitFor} only afterwards is one
+ * tick too late — real IndexedDB can auto-commit the transaction in that gap
+ * (fake-indexeddb, used in this file's test suite, does not reproduce the
+ * timing tightly enough to catch this; it must be verified in a real browser).
+ * Outside a transaction this degrades to a plain await, so every call site is
+ * safe either way.
  */
 const inTx = <T,>(work: Promise<T>): Promise<T> => Dexie.waitFor(work);
 
@@ -68,7 +75,7 @@ const openMany = (
   ring: CloudKeyRing,
   values: readonly unknown[],
 ): Promise<(Row | undefined)[]> =>
-  inTx(Promise.all(values.map((v) => openValue(table, ring, v as Row | undefined))));
+  Promise.all(values.map((v) => openValue(table, ring, v as Row | undefined)));
 
 /**
  * Wrap the value-returning read/write ops of an encrypted table.
@@ -89,21 +96,27 @@ const wrapTable = (table: DBCoreTable, provider: KeyProvider): DBCoreTable => {
       const ring = provider.current();
       return table.mutate(ring ? await inTx(sealMutate(table, ring, req)) : req);
     },
-    get: async (req: DBCoreGetRequest) => {
+    get: (req: DBCoreGetRequest) => {
       const ring = provider.current();
-      const value = (await table.get(req)) as Row | undefined;
-      return ring ? inTx(openValue(table, ring, value)) : value;
+      if (!ring) return table.get(req);
+      return inTx(
+        (async () => openValue(table, ring, (await table.get(req)) as Row | undefined))(),
+      );
     },
-    getMany: async (req: DBCoreGetManyRequest) => {
+    getMany: (req: DBCoreGetManyRequest) => {
       const ring = provider.current();
-      const values = await table.getMany(req);
-      return ring ? openMany(table, ring, values) : values;
+      if (!ring) return table.getMany(req);
+      return inTx((async () => openMany(table, ring, await table.getMany(req)))());
     },
-    query: async (req: DBCoreQueryRequest) => {
+    query: (req: DBCoreQueryRequest) => {
       const ring = provider.current();
-      const res = await table.query(req);
-      if (!ring || req.values === false) return res;
-      return { ...res, result: await openMany(table, ring, res.result) };
+      if (!ring || req.values === false) return table.query(req);
+      return inTx(
+        (async () => {
+          const res = await table.query(req);
+          return { ...res, result: await openMany(table, ring, res.result) };
+        })(),
+      );
     },
   };
 };
