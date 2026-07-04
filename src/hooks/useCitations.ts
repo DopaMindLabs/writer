@@ -70,9 +70,10 @@ export const usePagedCitations = (
         return { rows, totalCount: totalInSpace, totalInSpace, totalPages, currentPage };
       }
 
-      const matches = await spaceByYear(spaceId)
-        .filter((c) => matchesQuery(c, q))
-        .toArray();
+      // title/authors are unindexed — and encrypted under cloud sync, so a
+      // cursor filter would not see them. Read decrypted, then match in memory.
+      const all = await spaceByYear(spaceId).toArray();
+      const matches = all.filter((c) => matchesQuery(c, q));
       const totalPages = Math.max(1, Math.ceil(matches.length / pageSize));
       const currentPage = Math.min(Math.max(page, 0), totalPages - 1);
       return {

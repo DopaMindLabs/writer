@@ -1,5 +1,15 @@
+import { vi, afterEach } from 'vitest';
+import dexieCloud from 'dexie-cloud-addon';
 import { db } from '@/db/db';
+import { LoremDB } from '@/db/LoremDB';
 import { collabSeedKey } from '@/lib/collab/seedKey';
+import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
+import {
+  deviceKeyProvider,
+  saveDeviceKeyRing,
+  forgetDeviceKeyRing,
+} from '@/lib/cloud/crypto/keyStore';
+import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
 import {
   FIXED_TIME,
   sampleAnnotation,
@@ -8,6 +18,12 @@ import {
   sampleRevision,
 } from '@/test/fixtures';
 import { deleteDocCascade } from './deleteDocCascade';
+
+type Row = Record<string, unknown>;
+const UNSYNCED = [
+  'settings', 'backups', 'syncs', 'syncConfigs',
+  'docInspectorConfigs', 'meta', 'docUpdates',
+];
 
 const seedDocGraph = async (docId: string): Promise<void> => {
   await db.docs.put({ ...sampleDoc, id: docId });
@@ -75,5 +91,53 @@ describe('deleteDocCascade', () => {
 
   it('rejects an empty docId', async () => {
     await expect(deleteDocCascade('')).rejects.toThrow();
+  });
+});
+
+describe('deleteDocCascade under cloud encryption', () => {
+  let cloudDb: LoremDB;
+
+  beforeEach(async () => {
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('offline'));
+    vi.stubGlobal('WebSocket', class {
+      close() {}
+      addEventListener() {}
+      removeEventListener() {}
+      send() {}
+    });
+    await forgetDeviceKeyRing();
+    cloudDb = new LoremDB('delete-cascade-cloud', { addons: [dexieCloud], cloud: true });
+    cloudDb.cloud.configure({
+      databaseUrl: 'https://unset.example.invalid',
+      requireAuth: false,
+      disableWebSocket: true,
+      disableEagerSync: true,
+      unsyncedTables: UNSYNCED,
+    });
+    cloudDb.use(createEncryptionMiddleware(deviceKeyProvider));
+    await cloudDb.open();
+    await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1));
+  });
+
+  afterEach(async () => {
+    await forgetDeviceKeyRing();
+    await cloudDb.delete();
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it('unlinks notes even though linkedDocId is encrypted', async () => {
+    await cloudDb.table<Row>('docs').put({
+      id: 'cd', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'D',
+    });
+    await cloudDb.table<Row>('notes').put({
+      id: 'cn', spaceId: 's', kind: 'text', createdAt: 1, linkedDocId: 'cd',
+    });
+
+    await deleteDocCascade('cd', cloudDb);
+
+    const note = await cloudDb.table<Row>('notes').get('cn');
+    expect(note).toBeDefined();
+    expect(note?.linkedDocId).toBeUndefined();
   });
 });
