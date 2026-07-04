@@ -1,27 +1,8 @@
 import * as Y from 'yjs';
 import { createHeadlessEditor } from '@lexical/headless';
 import { createBinding, syncLexicalUpdateToYjs } from '@lexical/yjs';
-import type { Provider } from '@lexical/yjs';
 import { EDITOR_NODES } from '@/editor/nodes';
-
-/**
- * A no-op {@link Provider} satisfying `@lexical/yjs`'s contract. Seeding runs the
- * binding in isolation — no awareness, no network — so every method is inert.
- */
-const createStubProvider = (): Provider => ({
-  awareness: {
-    getLocalState: () => null,
-    getStates: () => new Map(),
-    on: () => undefined,
-    off: () => undefined,
-    setLocalState: () => undefined,
-    setLocalStateField: () => undefined,
-  },
-  connect: () => undefined,
-  disconnect: () => undefined,
-  on: () => undefined,
-  off: () => undefined,
-});
+import { createStubProvider } from './stubProvider';
 
 /**
  * Encode serialized Lexical JSON as the initial Yjs update for a document — the
