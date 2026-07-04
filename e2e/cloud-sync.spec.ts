@@ -1,5 +1,5 @@
 import { test, expect } from './_helpers';
-import { reseedAndGoHome, expectNoA11yViolations } from './_helpers';
+import { reseedAndGoHome, gotoFirstDoc, expectNoA11yViolations } from './_helpers';
 
 const PASSPHRASE = 'a-strong-passphrase';
 // Colour-contrast is asserted only in the high-contrast themes across the suite.
@@ -66,5 +66,47 @@ test.describe('cloud sync beta gating', () => {
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     await page.goto('/?cloud-sync=off#/settings?tab=account');
     await expect(page.getByTestId('cloud-section')).toHaveCount(0);
+  });
+});
+
+test.describe('cloud sync encrypted reads (real IndexedDB)', () => {
+  test('reads content back after unlock without an IndexedDB transaction crash', async ({
+    page,
+  }) => {
+    // The encryption middleware must keep the IndexedDB transaction alive across
+    // the async decrypt of every read. When it didn't, the first encrypted read
+    // once a key was present threw "InvalidStateError: The transaction has
+    // finished" and the app fell to its error boundary. Real Chromium reproduces
+    // the auto-commit timing that fake-indexeddb (the unit suite) does not, so
+    // this is the regression's home: it exercises the content reads a user hits
+    // on a fresh cloud-enabled load — Home listing spaces, then opening a doc.
+    const uncaught: string[] = [];
+    page.on('pageerror', (error) => uncaught.push(error.message));
+
+    // Seed straight into a cloud-enabled database and set a passphrase, so a
+    // content key seals and opens every synced-table read. (Reseeding into the
+    // plain database first and enabling cloud afterwards does not carry the rows
+    // across the addon's IndexedDB version bump.) setUpEncryption only succeeds
+    // when the cloud section is live, so this also proves the path is active.
+    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=account');
+    await expect(page.getByTestId('cloud-section')).toBeVisible();
+    await setUpEncryption(page);
+
+    // A full reload boots the app cloud-enabled with the key hydrated from the
+    // keystore before anything reads the database.
+    await page.reload();
+
+    // Home queries the encrypted `spaces` table; a divergent transaction would
+    // crash here instead of rendering the seeded space.
+    await page.goto('/#/');
+    await expect(page.getByRole('link', { name: /Continue writing/i })).toBeVisible();
+
+    // Opening a document reads the encrypted `docs` row and lists its siblings —
+    // the exact `query`/`get` paths that threw before the fix.
+    const { docId } = await gotoFirstDoc(page);
+    expect(docId).toBeTruthy();
+
+    await expect(page.getByText(/Unexpected Application Error/i)).toHaveCount(0);
+    expect(uncaught, `uncaught page errors:\n${uncaught.join('\n')}`).toEqual([]);
   });
 });
