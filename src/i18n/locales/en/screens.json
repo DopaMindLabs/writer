@@ -329,7 +329,84 @@
         "presence-4": "Plum",
         "presence-5": "Ochre"
       },
-      "privacyNotice": "Your account never leaves this device. It's saved locally and shared only with collaborators you invite."
+      "privacyNotice": "Your account never leaves this device. It's saved locally and shared only with collaborators you invite.",
+      "cloud": {
+        "title": "Cloud sync (beta)",
+        "subtitle": "Sync this space across your devices. Your writing is encrypted on this device before it's uploaded — we can never read it.",
+        "signIn": "Sign in",
+        "signOut": "Sign out",
+        "signInHint": "Set up your passphrase first — sync can't start until your writing can be encrypted.",
+        "forgetDevice": "Forget encryption on this device",
+        "forgetDeviceHint": "Removes the key from this browser. Your synced data and other devices are unaffected.",
+        "setUp": "Set up encryption",
+        "unlock": "Unlock on this device",
+        "email": {
+          "label": "Email",
+          "placeholder": "you@example.com",
+          "submit": "Continue",
+          "cancel": "Cancel"
+        },
+        "otp": {
+          "label": "One-time code",
+          "submit": "Verify",
+          "cancel": "Cancel"
+        },
+        "passphrase": {
+          "title": "Create your passphrase",
+          "description": "Your passphrase encrypts your writing before it's uploaded. Choose something long you'll remember — at least 12 characters.",
+          "label": "Passphrase",
+          "confirmLabel": "Confirm passphrase",
+          "placeholder": "At least 12 characters",
+          "tooShort": "Use at least 12 characters.",
+          "mismatch": "The passphrases don't match.",
+          "strength": "Strength",
+          "hintWeak": "Weak",
+          "hintFair": "Fair",
+          "hintStrong": "Strong",
+          "submit": "Create",
+          "cancel": "Cancel"
+        },
+        "unlockDialog": {
+          "title": "Unlock this device",
+          "description": "Enter your passphrase to decrypt your writing on this device.",
+          "label": "Passphrase",
+          "submit": "Unlock",
+          "cancel": "Cancel",
+          "wrong": "That passphrase doesn't match. Try again, or use your recovery code.",
+          "useRecovery": "Use a recovery code instead",
+          "recoveryLabel": "Recovery code",
+          "recoverySubmit": "Recover",
+          "recoveryWrong": "That recovery code doesn't match this account."
+        },
+        "recovery": {
+          "title": "Save your recovery code",
+          "description": "This is the only way back into your encrypted writing if every device forgets the passphrase. Store it somewhere safe — we can't show it again.",
+          "passphraseNote": "Remembering your passphrase on this device is convenient and protects the copy stored on our servers — but it won't help if this device is lost or stolen.",
+          "codeNote": "The recovery code is the only way back if every device forgets the passphrase. Lose both the passphrase and this code and your writing can't be recovered.",
+          "confirmStored": "I've stored my recovery code somewhere safe",
+          "done": "Done"
+        },
+        "status": {
+          "label": "Sync",
+          "initial": "Starting up",
+          "notInSync": "Waiting to sync",
+          "pushing": "Uploading changes",
+          "pulling": "Downloading changes",
+          "inSync": "Up to date",
+          "offline": "Offline",
+          "error": "Sync problem"
+        },
+        "disclosure": {
+          "title": "What the server can and can't see",
+          "encrypted": "Your writing — document and note bodies, titles, annotations and citation details — is encrypted on this device before upload. The server only ever stores ciphertext.",
+          "ids": "Record identifiers and how they relate to each other",
+          "timestamps": "When records were created and changed",
+          "kinds": "Note kinds, and citation keys and years",
+          "email": "The email address you sign in with",
+          "network": "Sync timing and your IP address",
+          "invite": "Sign-in is invite-only while this beta is running."
+        }
+      }
     },
     "typography": {
       "title": "Typography",

@@ -1,0 +1,145 @@
+/**
+ * Cloud-sync key management. The master secret is 32 bytes of CSPRNG output; a
+ * non-extractable AES-256-GCM content key is derived from it via HKDF, and the
+ * master itself is wrapped for escrow under a PBKDF2 key-encryption key derived
+ * from the user's passphrase. Raw key bytes never leave this module except as
+ * the ciphertext fields of an {@link EscrowRecord}.
+ */
+
+const CONTENT_INFO = 'lipsum-content-v1';
+const PBKDF2_HASH = 'SHA-512';
+/** Never derive a KEK with fewer iterations than this, however fast the device. */
+const ITERATIONS_FLOOR = 800_000;
+
+export interface EscrowRecord {
+  id: 'v1';
+  epoch: number;
+  kdf: 'PBKDF2';
+  hash: 'SHA-512';
+  iterations: number;
+  salt: Uint8Array;
+  iv: Uint8Array;
+  wrapped: Uint8Array;
+}
+
+/** A derived, non-extractable AES-GCM content key plus its rotation epoch. */
+export interface CloudKeyRing {
+  epoch: number;
+  contentKey: CryptoKey;
+}
+
+export class WrongPassphraseError extends Error {
+  constructor() {
+    super('Incorrect passphrase');
+    this.name = 'WrongPassphraseError';
+  }
+}
+
+const utf8 = (value: string): Uint8Array => new TextEncoder().encode(value);
+
+/** WebCrypto wants an ArrayBuffer-backed BufferSource; TS 6's generic Uint8Array
+ *  is not assignable, so copy the exact view into a standalone ArrayBuffer. */
+const asBuffer = (bytes: Uint8Array): ArrayBuffer =>
+  bytes.buffer.slice(
+    bytes.byteOffset,
+    bytes.byteOffset + bytes.byteLength,
+  ) as ArrayBuffer;
+
+/** 32 bytes of cryptographically-random master secret. */
+export const generateMasterSecret = (): Uint8Array =>
+  crypto.getRandomValues(new Uint8Array(32));
+
+/** HKDF-SHA-256 a non-extractable AES-256-GCM content key from the master. */
+export const deriveKeyRing = async (
+  master: Uint8Array,
+  epoch: number,
+): Promise<CloudKeyRing> => {
+  const base = await crypto.subtle.importKey('raw', asBuffer(master), 'HKDF', false, [
+    'deriveKey',
+  ]);
+  const contentKey = await crypto.subtle.deriveKey(
+    {
+      name: 'HKDF',
+      hash: 'SHA-256',
+      salt: new ArrayBuffer(0),
+      info: asBuffer(utf8(CONTENT_INFO)),
+    },
+    base,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt'],
+  );
+  return { epoch, contentKey };
+};
+
+/** Time PBKDF2 on this device; return the iteration count for ~1s, floored. */
+export const calibrateIterations = async (): Promise<number> => {
+  const base = await crypto.subtle.importKey(
+    'raw',
+    asBuffer(utf8('calibration')),
+    'PBKDF2',
+    false,
+    ['deriveBits'],
+  );
+  const BATCH = 50_000;
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const start = performance.now();
+  await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', hash: PBKDF2_HASH, salt: asBuffer(salt), iterations: BATCH },
+    base,
+    256,
+  );
+  const perIteration = (performance.now() - start) / BATCH;
+  const forOneSecond = perIteration > 0 ? Math.round(1000 / perIteration) : ITERATIONS_FLOOR;
+  return Math.max(forOneSecond, ITERATIONS_FLOOR);
+};
+
+const deriveKek = async (
+  passphrase: string,
+  salt: Uint8Array,
+  iterations: number,
+): Promise<CryptoKey> => {
+  const base = await crypto.subtle.importKey('raw', asBuffer(utf8(passphrase)), 'PBKDF2', false, [
+    'deriveKey',
+  ]);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', hash: PBKDF2_HASH, salt: asBuffer(salt), iterations },
+    base,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt'],
+  );
+};
+
+/** AES-GCM-wrap the master secret under a passphrase-derived KEK for escrow. */
+export const wrapMasterSecret = async (
+  master: Uint8Array,
+  passphrase: string,
+  iterations: number,
+): Promise<EscrowRecord> => {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const kek = await deriveKek(passphrase, salt, iterations);
+  const wrapped = new Uint8Array(
+    await crypto.subtle.encrypt({ name: 'AES-GCM', iv: asBuffer(iv) }, kek, asBuffer(master)),
+  );
+  return { id: 'v1', epoch: 1, kdf: 'PBKDF2', hash: PBKDF2_HASH, iterations, salt, iv, wrapped };
+};
+
+/** Unwrap the escrowed master; throws {@link WrongPassphraseError} on auth failure. */
+export const unwrapMasterSecret = async (
+  escrow: EscrowRecord,
+  passphrase: string,
+): Promise<Uint8Array> => {
+  const kek = await deriveKek(passphrase, escrow.salt, escrow.iterations);
+  try {
+    const master = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: asBuffer(escrow.iv) },
+      kek,
+      asBuffer(escrow.wrapped),
+    );
+    return new Uint8Array(master);
+  } catch {
+    throw new WrongPassphraseError();
+  }
+};
