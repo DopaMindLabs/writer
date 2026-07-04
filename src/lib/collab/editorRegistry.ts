@@ -6,6 +6,14 @@
  */
 export interface EditorHandle {
   restoreBody: (serialized: string) => void;
+  /**
+   * Flush any pending autosave synchronously, returning `true` if there were
+   * unsaved local edits to write. Cloud reconciliation uses this to tell a
+   * genuine remote pull from same-device autosave lag before restoring: if a
+   * flush wrote, the row was merely stale, not pulled. Optional — a handle
+   * without it reports no pending edits.
+   */
+  flush?: () => boolean;
 }
 
 const handles = new Map<string, EditorHandle>();

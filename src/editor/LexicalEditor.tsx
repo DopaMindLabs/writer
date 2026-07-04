@@ -1,4 +1,4 @@
-import { useMemo, type RefObject } from 'react';
+import { useMemo, useRef, type RefObject } from 'react';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -46,6 +46,9 @@ export const LexicalEditor = ({
   const baseEditable = mode !== 'read';
   const editable = baseEditable && !locked;
   const floatingToolbarEnabled = useUI((s) => s.floatingToolbarEnabled);
+  // Bridges the autosave's pending-save flush to the editor handle. Defaults to a
+  // no-op so read-only mounts (no AutosavePlugin) simply report no pending edits.
+  const flushRef = useRef<() => boolean>(() => false);
 
   const initialConfig = useMemo(
     () => ({
@@ -106,11 +109,12 @@ export const LexicalEditor = ({
             cursorColor={cursorColor}
             cursorsContainerRef={cursorsContainerRef}
           />
-          <RestoreBridgePlugin docId={docId} />
+          <RestoreBridgePlugin docId={docId} flushRef={flushRef} />
           <EditorPlugins
             onChange={onChange}
             editable={editable}
             floatingToolbarEnabled={floatingToolbarEnabled}
+            flushRef={flushRef}
             wordLimit={wordLimit}
             charLimit={charLimit}
           />
