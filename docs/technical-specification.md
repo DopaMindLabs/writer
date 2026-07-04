@@ -304,6 +304,12 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
 - **Sync scope.** Encrypted: spaces, sections, docs, notes, note attachments,
   annotations, citations, connections, revisions, palettes. Never synced: settings,
   backups, sync bookkeeping, the CRDT `docUpdates` log, and the device keystore.
+- **Reconciliation.** Because the CRDT `docUpdates` log is per-device, cross-device
+  changes travel as `Doc.body` snapshots. After each sync settles, a reconciler compares
+  every row body against the local Y.Doc and, for a body a pull produced rather than the
+  local editor, keeps a safety revision of the local side then either replays the pulled
+  body through the mounted editor or reseeds the CRDT — **whole-document last-writer-wins**;
+  lossless cross-device merge is a Stage 3 open decision.
 - **Ordering.** Passphrase-before-sign-in: sync cannot start without a key ring, so a
   keyless write is never uploaded in the clear. Opting out is **non-destructive** — the
   cloud schema is sticky so a rebuild never erases local content.
@@ -314,8 +320,9 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
 See [`docs/cloud-sync-beta.md`](cloud-sync-beta.md) for the full design note and the
 manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P6 ciphertext
 spike), `envelope.test.ts`, `keys.test.ts`, `recoveryCode.test.ts`, `setup.test.ts`,
-`buildDb.test.ts`, the `src/components/settings/tabs/cloud/` component tests, and
-`cloud-sync.spec.ts`.
+`buildDb.test.ts`, `reconcile.test.ts` (cross-device reconciliation),
+`snapshot.test.ts` (the CRDT ⇄ body round-trip), the
+`src/components/settings/tabs/cloud/` component tests, and `cloud-sync.spec.ts`.
 
 ---
 
@@ -506,7 +513,7 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 These exist as scaffolding only — they are visible in the UI but not yet functional:
 
 - **Global Settings → Account → sign-in & cloud sync** — the Account tab manages a local, on-device profile (display name + presence colour). An **encrypted cloud-sync beta** (§ 4.9.1) exists behind two activation gates but is **hidden by default** and invite-only; it is not part of the default experience.
-- **Cross-device / multi-writer collaboration** — live collaboration and presence cursors work **across tabs on the same device** today (a same-origin BroadcastChannel over the `DocUpdate` CRDT log; see § 4.2). Collaboration between different devices or people needs a network transport; the encrypted cloud-sync beta (§ 4.9.1) is the first step, but live cross-device presence is not yet wired.
+- **Cross-device / multi-writer collaboration** — live collaboration and presence cursors work **across tabs on the same device** today (a same-origin BroadcastChannel over the `DocUpdate` CRDT log; see § 4.2). The encrypted cloud-sync beta (§ 4.9.1) now replicates a user's own documents **across their devices**, reconciling pulled bodies into the editor at **whole-document last-writer-wins**. What is still not wired: **real-time** cross-device editing and **live cross-device presence** (a network CRDT transport), and multi-*writer* collaboration between different people.
 - **Space settings → Sharing** (per-space visibility, shared links).
 - **Space settings → Template** (change template after creation).
 - **Space settings → Members** (no implementation behind the tab).
