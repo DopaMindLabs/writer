@@ -171,6 +171,28 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     expect(raw?.[CIPHER_FIELD]).toBeUndefined();
     expect(raw?.body).toBe('B');
   });
+
+  it('P7: re-putting an already-sealed row preserves its ciphertext (no double-seal)', async () => {
+    await table('docs').put({
+      id: 'd1', spaceId: 's1', sectionId: 'x', updatedAt: 1,
+      name: 'My Doc', body: 'secret body', meta: { wordCount: 3 },
+    });
+    // The at-rest row keeps only its plaintext/indexed fields plus the envelope;
+    // name/body/meta live *inside* $lipsumCipher, not at the top level.
+    const raw = await readRaw('docs', 'd1');
+    expect(raw?.name).toBeUndefined();
+    expect(raw?.[CIPHER_FIELD]).toBeDefined();
+
+    // The sync layer assigns a realm by writing the already-sealed row straight
+    // back (a raw re-put). Re-sealing must not clobber the envelope with a seal
+    // of the now-absent secret fields.
+    await table('docs').put({ ...raw, realmId: 'rlm-user', owner: 'user@x' });
+
+    const back = await table('docs').get('d1');
+    expect(back?.name).toBe('My Doc');
+    expect(back?.body).toBe('secret body');
+    expect(back?.meta).toEqual({ wordCount: 3 });
+  });
 });
 
 /**

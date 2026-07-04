@@ -92,6 +92,13 @@ export const sealRow = async (
     if (rules.has(key)) plaintext[key] = value;
     else secret[key] = value;
   }
+  // An already-sealed row written straight back — no secret fields at the top
+  // level, but an existing envelope present — is a re-put of sealed data (e.g.
+  // the sync layer stamping realmId/owner onto the row). Its secret fields live
+  // inside that envelope, not in `row`, so re-sealing would encrypt the empty
+  // secret set and overwrite the real envelope, destroying name/body/meta.
+  // Preserve it untouched instead.
+  if (Object.keys(secret).length === 0 && CIPHER_FIELD in row) return row;
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const data = new Uint8Array(
     await crypto.subtle.encrypt(
