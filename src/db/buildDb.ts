@@ -49,6 +49,7 @@ export const buildDb = (name = 'lipsum'): LoremDB => {
     databaseUrl,
     requireAuth: false,
     customLoginGui: true,
+    socialAuth: false,
     tryUseServiceWorker: false,
     unsyncedTables: [...UNSYNCED],
   });
