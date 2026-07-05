@@ -40,6 +40,20 @@
   --reading-leading-scale: 1;
   --focus-ring-width: 1px;
   --motion-duration: 150ms;
+
+  /* Overlay envelope — a gentle diffuse shadow scaled by elevation, so a
+     floating surface lifts off the page rather than being outlined in ink.
+     Static surfaces (cards, inputs, page chrome) never carry these. */
+  --shadow-overlay-tooltip: 0 4px 14px rgb(17 17 17 / 0.1), 0 1px 2px rgb(17 17 17 / 0.05);
+  --shadow-overlay-popover: 0 8px 28px rgb(17 17 17 / 0.09), 0 1px 3px rgb(17 17 17 / 0.05);
+  --shadow-overlay-dialog: 0 18px 50px rgb(17 17 17 / 0.14), 0 2px 8px rgb(17 17 17 / 0.06);
+  --shadow-overlay-drawer: -18px 0 50px rgb(17 17 17 / 0.12);
+  --shadow-overlay-sheet: 0 -14px 40px rgb(17 17 17 / 0.12);
+
+  /* Scrim — a flat ink veil behind modal overlays; never a blur. Kept dark
+     across every theme so it always dims the page beneath. */
+  --scrim: rgb(17 17 17 / 0.4);
+  --scrim-drawer: rgb(17 17 17 / 0.3);
 }
 
 [data-theme='dark'] {
@@ -70,6 +84,13 @@
   --presence-3: #9fb283;
   --presence-4: #c294b0;
   --presence-5: #c6a874;
+
+  /* Deeper alpha on the dark ground; the hairline still carries the edge. */
+  --shadow-overlay-tooltip: 0 4px 14px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-overlay-popover: 0 8px 28px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
+  --shadow-overlay-dialog: 0 18px 50px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35);
+  --shadow-overlay-drawer: -18px 0 50px rgb(0 0 0 / 0.5);
+  --shadow-overlay-sheet: 0 -14px 40px rgb(0 0 0 / 0.5);
 }
 
 [data-theme='hc-light'] {
