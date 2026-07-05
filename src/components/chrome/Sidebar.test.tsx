@@ -1,5 +1,11 @@
 import userEvent from '@testing-library/user-event';
-import { act, renderWithProviders, screen, waitFor } from '@/test/test-utils';
+import {
+  act,
+  renderWithProviders,
+  screen,
+  waitFor,
+  within,
+} from '@/test/test-utils';
 import { db } from '@/db/db';
 import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
 import { FIXED_TIME, sampleSpace, seedBasicSpace } from '@/test/fixtures';
@@ -21,7 +27,7 @@ describe('Sidebar', () => {
       expect(docLink).toHaveTextContent('Sample Doc');
     });
 
-    it('should render section headers for top-level and subsection', async () => {
+    it('should render the top-level section header but not the subsection header', async () => {
       await seedBasicSpace();
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
         initialEntries: ['/s/s1/d/d1'],
@@ -29,18 +35,39 @@ describe('Sidebar', () => {
       expect(
         await screen.findByTestId('sidebar-section-sec1-label'),
       ).toHaveTextContent('Drafts');
+      // Subsections are flattened into their parent section — no header row is
+      // rendered for them, and the `↳` glyph never appears in the nav.
       expect(
-        await screen.findByTestId('sidebar-section-sec1a-label'),
-      ).toHaveTextContent(/Ideas/);
+        screen.queryByTestId('sidebar-section-sec1a-header'),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('sidebar-section-sec1a-label'),
+      ).not.toBeInTheDocument();
+      expect(screen.queryByText(/↳/)).not.toBeInTheDocument();
     });
 
-    it('should render the empty placeholder for a subsection with no docs', async () => {
+    it('should render a subsection doc flattened under its parent section, not indented', async () => {
       await seedBasicSpace();
+      await db.docs.put({
+        id: 'd-sub',
+        spaceId: 's1',
+        sectionId: 'sec1a',
+        name: 'Sub doc',
+        body: EMPTY_LEXICAL_JSON,
+        meta: { wordCount: 0 },
+        updatedAt: 0,
+      });
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
         initialEntries: ['/s/s1/d/d1'],
       });
-      const empty = await screen.findByTestId('sidebar-section-sec1a-empty');
-      expect(empty).toHaveTextContent(/empty/i);
+      const section = await screen.findByTestId('sidebar-section-sec1');
+      const link = await within(section).findByTestId('sidebar-doc-d-sub');
+      expect(link).toHaveTextContent('Sub doc');
+      // Flattened rows sit at section level (pl-5), never at the subsection
+      // indent (pl-7).
+      const row = link.parentElement;
+      expect(row?.className).toMatch(/pl-5/);
+      expect(row?.className).not.toMatch(/pl-7/);
     });
 
     it('should render the "shared" subtitle when the space is marked shared', async () => {
@@ -304,50 +331,6 @@ describe('Sidebar', () => {
           (d) => d.name === 'Untitled' && d.id !== 'd1',
         );
         expect(untitledDoc).toBeDefined();
-      });
-    });
-
-    it('should add an indented doc input when + on a subsection is clicked', async () => {
-      await seedBasicSpace();
-      const user = userEvent.setup();
-      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
-        initialEntries: ['/s/s1/d/d1'],
-      });
-      await user.click(
-        await screen.findByTestId('sidebar-section-sec1a-add'),
-      );
-      const input = await screen.findByTestId(
-        'sidebar-section-sec1a-add-input',
-      );
-      await user.clear(input);
-      await user.type(input, 'Subsection chapter{enter}');
-      await waitFor(async () => {
-        const docs = await db.docs.toArray();
-        expect(docs.find((d) => d.sectionId === 'sec1a')?.name).toBe(
-          'Subsection chapter',
-        );
-      });
-    });
-
-    it('should commit a subsection add-doc on blur when value is present', async () => {
-      await seedBasicSpace();
-      const user = userEvent.setup();
-      renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
-        initialEntries: ['/s/s1/d/d1'],
-      });
-      await user.click(
-        await screen.findByTestId('sidebar-section-sec1a-add'),
-      );
-      const input = await screen.findByTestId(
-        'sidebar-section-sec1a-add-input',
-      );
-      await user.clear(input);
-      await user.type(input, 'Sub blur');
-      act(() => { input.blur(); });
-      await waitFor(async () => {
-        const docs = await db.docs.toArray();
-        expect(docs.find((d) => d.sectionId === 'sec1a' && d.name === 'Sub blur'))
-          .toBeDefined();
       });
     });
 
