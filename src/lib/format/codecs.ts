@@ -15,6 +15,9 @@ import {
   type MediaItem,
   type Note,
   type NoteAttachment,
+  type PdfAnnotation,
+  type PdfAnnotationKind,
+  type PdfRect,
   type Revision,
   type RevisionKind,
   type Section,
@@ -295,6 +298,56 @@ export const parseMediaItemRecord = (value: unknown): MediaItemRecord => {
     createdAt: readNumber(raw, 'createdAt', 'media'),
     updatedAt: readNumber(raw, 'updatedAt', 'media'),
     assetPath: readString(raw, 'assetPath', 'media'),
+  };
+};
+
+const PDF_ANNOTATION_KINDS: readonly PdfAnnotationKind[] = ['highlight'];
+
+const readFraction = (
+  raw: Record<string, unknown>,
+  field: string,
+  label: string,
+): number => {
+  const value = readNumber(raw, field, label);
+  invariant(
+    value >= 0 && value <= 1,
+    `${label}.${field}: expected a fraction in [0, 1]`,
+  );
+  return value;
+};
+
+const parsePdfRect = (value: unknown): PdfRect => {
+  const raw = asRaw(value, 'pdfAnnotation.rect');
+  return {
+    x: readFraction(raw, 'x', 'pdfAnnotation.rect'),
+    y: readFraction(raw, 'y', 'pdfAnnotation.rect'),
+    w: readFraction(raw, 'w', 'pdfAnnotation.rect'),
+    h: readFraction(raw, 'h', 'pdfAnnotation.rect'),
+  };
+};
+
+export const parsePdfAnnotationRecord = (value: unknown): PdfAnnotation => {
+  const raw = asRaw(value, 'pdfAnnotation');
+  const rects = raw.rects;
+  invariant(
+    Array.isArray(rects) && rects.length > 0,
+    'pdfAnnotation.rects: expected a non-empty array',
+  );
+  const page = readNumber(raw, 'page', 'pdfAnnotation');
+  invariant(page >= 1, 'pdfAnnotation.page: expected a page number >= 1');
+  return {
+    id: readString(raw, 'id', 'pdfAnnotation'),
+    mediaId: readString(raw, 'mediaId', 'pdfAnnotation'),
+    spaceId: readString(raw, 'spaceId', 'pdfAnnotation'),
+    kind: readEnum(raw, 'kind', PDF_ANNOTATION_KINDS, 'pdfAnnotation'),
+    page,
+    rects: rects.map(parsePdfRect),
+    quote: readString(raw, 'quote', 'pdfAnnotation'),
+    color: readEnum(raw, 'color', HIGHLIGHT_COLORS, 'pdfAnnotation'),
+    note: readOptionalString(raw, 'note', 'pdfAnnotation'),
+    author: readString(raw, 'author', 'pdfAnnotation'),
+    createdAt: readNumber(raw, 'createdAt', 'pdfAnnotation'),
+    updatedAt: readNumber(raw, 'updatedAt', 'pdfAnnotation'),
   };
 };
 

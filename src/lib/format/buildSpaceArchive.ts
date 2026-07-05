@@ -69,6 +69,7 @@ const writeRecords = (
   writeTable(zip, 'notes', snapshot.notes);
   writeAttachmentRecords(zip, snapshot, assets);
   writeMediaRecords(zip, snapshot);
+  writeTable(zip, 'pdfAnnotations', snapshot.pdfAnnotations);
   writeTable(zip, 'annotations', snapshot.annotations);
   writeTable(zip, 'citations', snapshot.citations);
   writeTable(zip, 'connections', snapshot.connections);

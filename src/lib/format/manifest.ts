@@ -17,6 +17,7 @@ export interface ArchiveManifest {
     notes: number;
     noteAttachments: number;
     media: number;
+    pdfAnnotations: number;
     annotations: number;
     citations: number;
     connections: number;
@@ -44,6 +45,7 @@ export const buildManifest = (
     notes: snapshot.notes.length,
     noteAttachments: snapshot.attachments.length,
     media: snapshot.media.length,
+    pdfAnnotations: snapshot.pdfAnnotations.length,
     annotations: snapshot.annotations.length,
     citations: snapshot.citations.length,
     connections: snapshot.connections.length,
@@ -65,8 +67,9 @@ const readCount = (raw: Record<string, unknown>, field: string): number => {
   return value;
 };
 
-// media arrived in format v3; a v2 archive has no such records, so its absence
-// reads as zero. checkCounts still cross-checks it against the actual records.
+// media and pdfAnnotations arrived in format v3; a v2 archive has no such
+// records, so their absence reads as zero. checkCounts still cross-checks them
+// against the actual records.
 const readOptionalCount = (
   raw: Record<string, unknown>,
   field: string,
@@ -80,6 +83,7 @@ const parseCounts = (value: unknown): ArchiveManifest['counts'] => {
     notes: readCount(value, 'notes'),
     noteAttachments: readCount(value, 'noteAttachments'),
     media: readOptionalCount(value, 'media'),
+    pdfAnnotations: readOptionalCount(value, 'pdfAnnotations'),
     annotations: readCount(value, 'annotations'),
     citations: readCount(value, 'citations'),
     connections: readCount(value, 'connections'),

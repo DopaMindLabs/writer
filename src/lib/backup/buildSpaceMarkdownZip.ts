@@ -11,6 +11,7 @@ import type {
   MediaItem,
   Note,
   NoteAttachment,
+  PdfAnnotation,
   Revision,
   Section,
   Space,
@@ -24,6 +25,7 @@ export interface SpaceSnapshot {
   notes: Note[];
   attachments: NoteAttachment[];
   media: MediaItem[];
+  pdfAnnotations: PdfAnnotation[];
   annotations: Annotation[];
   citations: Citation[];
   connections: Connection[];
@@ -39,6 +41,7 @@ const SNAPSHOT_TABLES = [
   db.notes,
   db.noteAttachments,
   db.media,
+  db.pdfAnnotations,
   db.annotations,
   db.citations,
   db.connections,
@@ -62,6 +65,10 @@ export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot>
         .equals(spaceId)
         .toArray();
       const media = await db.media.where('spaceId').equals(spaceId).toArray();
+      const pdfAnnotations = await db.pdfAnnotations
+        .where('spaceId')
+        .equals(spaceId)
+        .toArray();
       const docIds = docs.map((d) => d.id);
       const annotations = docIds.length
         ? await db.annotations.where('docId').anyOf(docIds).toArray()
@@ -90,6 +97,7 @@ export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot>
         notes,
         attachments,
         media,
+        pdfAnnotations,
         annotations,
         citations,
         connections,
