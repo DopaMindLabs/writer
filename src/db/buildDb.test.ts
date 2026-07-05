@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import Dexie from 'dexie';
 import { buildDb } from './buildDb';
-import { STORES } from './stores';
+import { LoremDB } from './LoremDB';
+import { STORES, BASE_STORES } from './stores';
 import { CLOUD_FLAG_KEY } from '@/lib/cloud/flag';
 import { generateMasterSecret, deriveKeyRing } from '@/lib/cloud/crypto/keys';
 import {
@@ -14,7 +16,7 @@ const CLOUD_URL = 'https://spike.dexie.cloud';
 /** Mirrors buildDb's local-only list; the escrow table (`cloudCrypto`) syncs. */
 const UNSYNCED = [
   'settings', 'backups', 'syncs', 'syncConfigs',
-  'docInspectorConfigs', 'meta', 'docUpdates',
+  'docInspectorConfigs', 'meta', 'docUpdates', 'media',
 ];
 
 /** Primary-key path a STORES spec declares, stripped of Dexie modifiers. */
@@ -39,17 +41,39 @@ describe('buildDb', () => {
     db.close();
   });
 
-  it('applies the STORES schema table-for-table at version 1', async () => {
+  it('applies the STORES schema table-for-table at the current version', async () => {
     const db = buildDb('build-db-schema-test');
     await db.open();
 
-    expect(db.verno).toBe(1);
+    expect(db.verno).toBe(2);
     expect(db.tables.map((t) => t.name).sort()).toEqual(
       Object.keys(STORES).sort(),
     );
     for (const table of db.tables) {
       expect(table.schema.primKey.keyPath).toBe(primKeyPath(STORES[table.name]));
     }
+
+    await db.delete();
+  });
+
+  it('upgrades a version-1 install to version 2, keeping data and adding media', async () => {
+    const name = 'build-db-migration-test';
+    // Simulate an install that only ever ran the shipped version(1) schema.
+    const legacy = new Dexie(name);
+    legacy.version(1).stores(BASE_STORES);
+    await legacy.open();
+    await legacy.table('spaces').put({
+      id: 'keep', tag: 't', name: 'N', shared: false,
+      template: 'x', createdAt: 1, updatedAt: 1,
+    });
+    legacy.close();
+
+    // Reopening through LoremDB (version 1 + 2) must migrate in place.
+    const db = new LoremDB(name);
+    await db.open();
+    expect(db.verno).toBe(2);
+    expect(db.tables.map((t) => t.name)).toContain('media');
+    expect((await db.table<{ id: string }>('spaces').get('keep'))?.id).toBe('keep');
 
     await db.delete();
   });

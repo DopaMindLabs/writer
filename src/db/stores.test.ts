@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { STORES } from './stores';
+import { STORES, BASE_STORES, PDF_STORES } from './stores';
 import { LoremDB } from './LoremDB';
 
 describe('STORES', () => {
@@ -17,5 +17,14 @@ describe('STORES', () => {
       .filter(([, spec]) => spec.trimStart().startsWith('++'))
       .map(([name]) => name);
     expect(autoIncrement).toEqual(['docUpdates']);
+  });
+
+  it('keeps the base version(1) schema free of the PDF tables', () => {
+    expect('media' in BASE_STORES).toBe(false);
+    expect('media' in PDF_STORES).toBe(true);
+  });
+
+  it('merges base and PDF specs into the full STORES map', () => {
+    expect(STORES).toEqual({ ...BASE_STORES, ...PDF_STORES });
   });
 });

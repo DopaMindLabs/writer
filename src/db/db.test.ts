@@ -5,11 +5,11 @@ import type { DocUpdate } from './schema';
 import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
 
 describe('LoremDB schema', () => {
-  it('declares exactly version 1', () => {
-    expect(db.verno).toBe(1);
+  it('declares the current schema version', () => {
+    expect(db.verno).toBe(2);
   });
 
-  it('exposes every table, including docUpdates', async () => {
+  it('exposes every table, including docUpdates and media', async () => {
     await db.open();
     const names = db.tables.map((t) => t.name).sort();
     expect(names).toEqual(
@@ -21,6 +21,7 @@ describe('LoremDB schema', () => {
         'docInspectorConfigs',
         'docUpdates',
         'docs',
+        'media',
         'meta',
         'noteAttachments',
         'notes',
