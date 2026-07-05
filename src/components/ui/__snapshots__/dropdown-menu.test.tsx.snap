@@ -37,7 +37,7 @@ exports[`DropdownMenu primitives > snapshot > should match the snapshot of the o
     <div
       aria-labelledby="radix-_r_*_"
       aria-orientation="vertical"
-      class="z-50 min-w-[10rem] overflow-hidden rounded-md border border-rule bg-paper p-1 text-ink shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+      class="z-50 min-w-[10rem] overflow-hidden border border-rule bg-paper p-1 text-ink shadow-overlay-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
       data-align="center"
       data-orientation="vertical"
       data-radix-menu-content=""
@@ -60,7 +60,7 @@ exports[`DropdownMenu primitives > snapshot > should match the snapshot of the o
         role="separator"
       />
       <div
-        class="relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-paper-2 focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+        class="relative flex cursor-pointer select-none items-center gap-2 px-2 py-1.5 text-sm outline-none transition-colors focus:bg-paper-2 focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -70,7 +70,7 @@ exports[`DropdownMenu primitives > snapshot > should match the snapshot of the o
       </div>
       <div
         aria-disabled="true"
-        class="relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-paper-2 focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+        class="relative flex cursor-pointer select-none items-center gap-2 px-2 py-1.5 text-sm outline-none transition-colors focus:bg-paper-2 focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
         data-disabled=""
         data-orientation="vertical"
         data-radix-collection-item=""
