@@ -237,7 +237,7 @@ A full citation manager scoped to each space. Available in three surfaces:
 The per-space navigation column.
 
 - **Header:** editable space title + settings cog (links to per-space settings).
-- **Sections:** grouped doc lists, with an **+ Add doc to *<Section>*** button under each.
+- **Sections:** grouped doc lists, with an **+ Add doc to *<Section>*** button under each. A section's list also includes the docs of its subsections, flattened in — subsections render no header row of their own in the nav (the data model keeps the nesting; only the rendering is flat, so new docs are added at section level).
 - **Doc row menu:** each document row has a **⋯ menu** (Rename, Delete…) — revealed on row hover/focus on desktop, always visible on mobile.
 - **Brain space link:** routes to `/s/:spaceId/brain-space`; shows the unsorted-note count and highlights when active.
 - **Footer:** Home, About, GitHub links.
