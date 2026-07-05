@@ -5,6 +5,7 @@ import {
   calibrateIterations,
   wrapMasterSecret,
   unwrapMasterSecret,
+  fingerprintsEqual,
   WrongPassphraseError,
 } from './keys';
 
@@ -47,5 +48,46 @@ describe('cloud keys', () => {
     expect(Array.from(a.salt)).not.toEqual(Array.from(b.salt));
     expect(Array.from(a.iv)).not.toEqual(Array.from(b.iv));
     expect(Array.from(a.wrapped)).not.toEqual(Array.from(b.wrapped));
+  });
+});
+
+describe('cloud key fingerprints', () => {
+  it('derives a fixed-length fingerprint deterministically from the master', async () => {
+    const master = generateMasterSecret();
+    const a = await deriveKeyRing(master, 1);
+    const b = await deriveKeyRing(master, 1);
+    expect(a.fingerprint).toHaveLength(16);
+    expect(Array.from(a.fingerprint)).toEqual(Array.from(b.fingerprint));
+  });
+
+  it('gives different masters different fingerprints', async () => {
+    const a = await deriveKeyRing(generateMasterSecret(), 1);
+    const b = await deriveKeyRing(generateMasterSecret(), 1);
+    expect(Array.from(a.fingerprint)).not.toEqual(Array.from(b.fingerprint));
+  });
+
+  it('is one-way: the fingerprint is not the master secret', async () => {
+    const master = generateMasterSecret();
+    const { fingerprint } = await deriveKeyRing(master, 1);
+    expect(Array.from(fingerprint)).not.toEqual(Array.from(master));
+  });
+
+  it('stamps the escrow with the same fingerprint the ring carries', async () => {
+    const master = generateMasterSecret();
+    const ring = await deriveKeyRing(master, 1);
+    const escrow = await wrapMasterSecret(master, 'pw', FAST);
+    expect(Array.from(escrow.fingerprint)).toEqual(Array.from(ring.fingerprint));
+    // Round-trip: an escrow unwrapped elsewhere re-derives the same fingerprint.
+    const recovered = await unwrapMasterSecret(escrow, 'pw');
+    const recoveredRing = await deriveKeyRing(recovered, 1);
+    expect(fingerprintsEqual(escrow.fingerprint, recoveredRing.fingerprint)).toBe(
+      true,
+    );
+  });
+
+  it('fingerprintsEqual compares by value', () => {
+    expect(fingerprintsEqual(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 3]))).toBe(true);
+    expect(fingerprintsEqual(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 4]))).toBe(false);
+    expect(fingerprintsEqual(new Uint8Array([1, 2]), new Uint8Array([1, 2, 3]))).toBe(false);
   });
 });
