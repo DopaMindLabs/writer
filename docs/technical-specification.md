@@ -377,10 +377,10 @@ Four themes: `light`, `dark`, `hc-light`, `hc-dark`. Applied via `data-theme` on
 
 - **Framework:** Driver.js, wrapped by the local `useTour` and `useAutoTour` hooks.
 - **Auto-trigger:** First visit to a screen launches that screen's tour once.
-- **Replay:** From the help menu.
+- **Replay:** From the help menu, and from the **Quick settings** popover's guided-tour list. That tour list is **desktop-only** — below the `767 px` mobile breakpoint it is hidden so the popover's core controls (theme, reading width, focus) stay above the fold; the help menu remains the tour entry point on mobile.
 - **Persistence:** Completed tour IDs are stored in `localStorage` under `lipsum-tours`. A `resetAll` utility clears them.
 
-*Covered by:* `tours/HelpMenu.test.tsx`, `tours/storage.test.ts`, `tours/useTour.test.ts`, `tours/useAutoTour.test.ts`.
+*Covered by:* `tours/HelpMenu.test.tsx`, `tours/storage.test.ts`, `tours/useTour.test.ts`, `tours/useAutoTour.test.ts`, `chrome/QuickSettingsPopover.test.tsx`.
 
 ---
 
