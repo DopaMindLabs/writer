@@ -11,10 +11,12 @@ import {
   cloudCurrentUser,
   type SyncState,
 } from '@/lib/cloud/cloudClient';
+import { useKeyMismatch } from '@/hooks/useKeyMismatch';
 import { CloudSyncStatusRow } from './CloudSyncStatusRow';
 import { CloudPrivacyDisclosure } from './CloudPrivacyDisclosure';
 import { CloudEncryptionControls } from './CloudEncryptionControls';
 import { CloudSectionDialogs, type CloudDialogName } from './CloudSectionDialogs';
+import { CloudKeyConflictSection } from './CloudKeyConflictSection';
 
 const INITIAL_STATE: SyncState = { status: 'not-started', phase: 'initial' };
 
@@ -33,24 +35,25 @@ export const CloudSectionPanel = () => {
   const [dialog, setDialog] = useState<CloudDialogName>('none');
   const [recoveryCode, setRecoveryCode] = useState<string | null>(null);
   const [hasKey, setHasKey] = useState(() => deviceKeyProvider.current() !== null);
-
+  const mismatch = useKeyMismatch();
+  const refreshKey = () => {
+    setHasKey(deviceKeyProvider.current() !== null);
+  };
   const onForget = () => {
     void forgetThisDevice().then(() => {
       setHasKey(false);
     });
   };
-
   return (
     <section data-testid="cloud-section" className="mt-8 border-t border-rule pt-6">
       <h2 className="text-[15px] font-semibold text-ink">{k('title')}</h2>
       <p className="mb-4 mt-1 max-w-[540px] font-serif text-[13px] text-ink-2">
         {k('subtitle')}
       </p>
-
       {hasKey ? (
         <CloudSyncStatusRow phase={sync.phase} message={sync.error?.message} />
       ) : null}
-
+      {mismatch ? <CloudKeyConflictSection onResolved={refreshKey} /> : null}
       <CloudEncryptionControls
         hasKey={hasKey}
         signedIn={user?.isLoggedIn ?? false}
@@ -68,9 +71,7 @@ export const CloudSectionPanel = () => {
         }}
         onForget={onForget}
       />
-
       <CloudPrivacyDisclosure />
-
       <CloudSectionDialogs
         dialog={dialog}
         setDialog={setDialog}
