@@ -7,6 +7,9 @@
  */
 
 const CONTENT_INFO = 'lipsum-content-v1';
+/** HKDF info for the public, one-way key-verification tag (the fingerprint). */
+const KEYCHECK_INFO = 'lipsum-keycheck-v1';
+const FINGERPRINT_BYTES = 16;
 const PBKDF2_HASH = 'SHA-512';
 /** Never derive a KEK with fewer iterations than this, however fast the device. */
 const ITERATIONS_FLOOR = 800_000;
@@ -20,12 +23,18 @@ export interface EscrowRecord {
   salt: Uint8Array;
   iv: Uint8Array;
   wrapped: Uint8Array;
+  /** Public one-way tag of the master; lets a device tell whether the escrow it
+   *  pulled is protecting the same key it already holds — without decrypting. */
+  fingerprint: Uint8Array;
 }
 
 /** A derived, non-extractable AES-GCM content key plus its rotation epoch. */
 export interface CloudKeyRing {
   epoch: number;
   contentKey: CryptoKey;
+  /** Public one-way tag of the master this ring was derived from (see
+   *  {@link EscrowRecord.fingerprint}); safe to store and compare in the clear. */
+  fingerprint: Uint8Array;
 }
 
 export class WrongPassphraseError extends Error {
@@ -49,6 +58,35 @@ const asBuffer = (bytes: Uint8Array): ArrayBuffer =>
 export const generateMasterSecret = (): Uint8Array =>
   crypto.getRandomValues(new Uint8Array(32));
 
+/**
+ * A public, one-way tag of the master via HKDF (a separate `info` from the
+ * content key, so it reveals nothing about that key). Two devices derive the
+ * same fingerprint iff they hold the same master; it never travels backwards to
+ * the secret, so it is safe to store in the escrow and compare in the clear.
+ */
+export const deriveKeyFingerprint = async (
+  master: Uint8Array,
+): Promise<Uint8Array> => {
+  const base = await crypto.subtle.importKey('raw', asBuffer(master), 'HKDF', false, [
+    'deriveBits',
+  ]);
+  const bits = await crypto.subtle.deriveBits(
+    {
+      name: 'HKDF',
+      hash: 'SHA-256',
+      salt: new ArrayBuffer(0),
+      info: asBuffer(utf8(KEYCHECK_INFO)),
+    },
+    base,
+    FINGERPRINT_BYTES * 8,
+  );
+  return new Uint8Array(bits);
+};
+
+/** Whether two fingerprints are byte-for-byte equal. */
+export const fingerprintsEqual = (a: Uint8Array, b: Uint8Array): boolean =>
+  a.length === b.length && a.every((byte, i) => byte === b[i]);
+
 /** HKDF-SHA-256 a non-extractable AES-256-GCM content key from the master. */
 export const deriveKeyRing = async (
   master: Uint8Array,
@@ -69,7 +107,8 @@ export const deriveKeyRing = async (
     false,
     ['encrypt', 'decrypt'],
   );
-  return { epoch, contentKey };
+  const fingerprint = await deriveKeyFingerprint(master);
+  return { epoch, contentKey, fingerprint };
 };
 
 /** Time PBKDF2 on this device; return the iteration count for ~1s, floored. */
@@ -123,7 +162,18 @@ export const wrapMasterSecret = async (
   const wrapped = new Uint8Array(
     await crypto.subtle.encrypt({ name: 'AES-GCM', iv: asBuffer(iv) }, kek, asBuffer(master)),
   );
-  return { id: 'v1', epoch: 1, kdf: 'PBKDF2', hash: PBKDF2_HASH, iterations, salt, iv, wrapped };
+  const fingerprint = await deriveKeyFingerprint(master);
+  return {
+    id: 'v1',
+    epoch: 1,
+    kdf: 'PBKDF2',
+    hash: PBKDF2_HASH,
+    iterations,
+    salt,
+    iv,
+    wrapped,
+    fingerprint,
+  };
 };
 
 /** Unwrap the escrowed master; throws {@link WrongPassphraseError} on auth failure. */
