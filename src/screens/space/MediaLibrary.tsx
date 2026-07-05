@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/chrome/Sidebar';
 import { Topbar } from '@/components/chrome/Topbar';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
 import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
+import { MediaLibrarySurface } from '@/components/surfaces/MediaLibrarySurface';
 import { useSpace } from '@/hooks/useSpaces';
 import { useUI } from '@/store/ui';
 import { routes } from '@/lib/routes';
@@ -44,7 +45,7 @@ export const MediaLibraryScreen = () => {
           data-testid="media-library-screen"
           className="flex flex-1 flex-col overflow-auto bg-paper"
         >
-          {/* Stage PB.4 mounts the media library surface here. */}
+          <MediaLibrarySurface spaceId={spaceId} />
         </main>
         <MobileTabs spaceId={spaceId} docId={lastDocId} />
         <MobileMoreSheet spaceId={spaceId} docId={lastDocId} />

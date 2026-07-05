@@ -885,6 +885,8 @@
   },
   "mediaLibrary": {
     "title": "Library",
+    "heading": "Library",
+    "emptyCaption": "Upload a PDF to read and highlight it alongside your writing.",
     "upload": {
       "action": "Add PDF",
       "busy": "Adding PDF…",
