@@ -292,12 +292,13 @@ gate (`?cloud-sync=on`, persisted to `localStorage`). With either gate off there
 cloud code paths, no cloud UI, and the schema is identical to the base app.
 
 - **Key model.** A 32-byte master secret is minted on setup. An `AES-256-GCM` content
-  key is derived from it (HKDF-SHA-256, non-extractable). The master is wrapped under a
-  passphrase-derived key (PBKDF2-SHA-512, ≥ 800 000 calibrated iterations) into a single
-  synced **escrow** row (`cloudCrypto`); a one-time **recovery code** (Crockford base32
-  of the master) is the fallback if every device forgets the passphrase. The device's
-  derived key ring lives in a **separate, never-synced** keystore database, never a
-  synced table.
+  key is derived from it (HKDF-SHA-256, non-extractable), plus a public one-way
+  **fingerprint** (a second HKDF info string) that identifies the key without revealing it.
+  The master is wrapped under a passphrase-derived key (PBKDF2-SHA-512, ≥ 800 000 calibrated
+  iterations) into an **escrow** record; a one-time **recovery code** (Crockford base32 of
+  the master) is the fallback if every device forgets the passphrase. The device's derived
+  key ring lives in a **separate, never-synced** keystore database, which also holds the
+  escrow until it is published (see Key reconciliation).
 - **Envelope.** Each encrypted row keeps its primary key and indexed fields plaintext and
   moves every other field into a `$lipsumCipher` envelope (`AES-256-GCM`, fresh IV per
   seal, AAD binding `table` + `primaryKey` + `epoch`).
@@ -310,6 +311,14 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   local editor, keeps a safety revision of the local side then either replays the pulled
   body through the mounted editor or reseeds the CRDT — **whole-document last-writer-wins**;
   lossless cross-device merge is a recorded open decision for a future release.
+- **Key reconciliation.** Setup holds the escrow on the device, not in `cloudCrypto`. Once
+  the first sync settles, reconciliation compares the account escrow's fingerprint with the
+  device ring's: absent → publish this device's escrow (add-only, so it can never race and
+  clobber the account's key); match → nothing to do; differ → flag a **key mismatch**. Under
+  a mismatch the write middleware refuses content writes and reads surface the route-level
+  recovery screen; the user resolves it from settings by **adopting** the account key (enter
+  the account passphrase; the device re-seals its own rows under it) or **erasing** the
+  account's unreadable copy (kept: this device's notes). Never clobbers, never silently loses.
 - **Ordering.** Passphrase-before-sign-in: sync cannot start without a key ring, so a
   keyless write is never uploaded in the clear. Opting out is **non-destructive** — the
   cloud schema is sticky so a rebuild never erases local content.
@@ -318,11 +327,13 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   citation keys and years, the sign-in email, and sync timing/IP. Sign-in is invite-only.
 
 See [`docs/cloud-sync-beta.md`](cloud-sync-beta.md) for the full design note and the
-manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P6 ciphertext
-spike), `envelope.test.ts`, `keys.test.ts`, `recoveryCode.test.ts`, `setup.test.ts`,
-`buildDb.test.ts`, `reconcile.test.ts` (cross-device reconciliation),
-`snapshot.test.ts` (the CRDT ⇄ body round-trip), the
-`src/components/settings/tabs/cloud/` component tests, and `cloud-sync.spec.ts`.
+manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P8 ciphertext and
+mismatch-lock spike), `envelope.test.ts`, `keys.test.ts` (incl. fingerprints),
+`errors.test.ts`, `keyMismatch.test.ts`, `recoveryCode.test.ts`, `setup.test.ts` (incl.
+adopt/erase), `escrowReconcile.test.ts`, `buildDb.test.ts`, `reconcile.test.ts`
+(cross-device reconciliation), `snapshot.test.ts` (the CRDT ⇄ body round-trip), the
+`src/components/errors/` and `src/components/settings/tabs/cloud/` component tests, and
+`cloud-sync.spec.ts`.
 
 ---
 
