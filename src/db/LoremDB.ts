@@ -17,9 +17,10 @@ import type {
   SyncEntry,
   SyncConfig,
   DocInspectorConfig,
+  MediaItem,
 } from './schema';
 import type { EscrowRecord } from '@/lib/cloud/crypto/keys';
-import { STORES } from './stores';
+import { BASE_STORES, PDF_STORES } from './stores';
 
 /**
  * Construction options for {@link LoremDB}. `cloud` opts the instance into the
@@ -51,12 +52,16 @@ export class LoremDB extends Dexie {
   syncs!: Table<SyncEntry, string>;
   syncConfigs!: Table<SyncConfig, string>;
   docInspectorConfigs!: Table<DocInspectorConfig, string>;
+  media!: Table<MediaItem, string>;
   /** Present only on cloud-enabled instances (`options.cloud`). */
   cloudCrypto!: Table<EscrowRecord, string>;
 
   constructor(name = 'lipsum', options: LoremDBOptions = {}) {
     super(name, options.addons ? { addons: options.addons } : undefined);
-    const stores = options.cloud ? { ...STORES, cloudCrypto: 'id' } : STORES;
-    this.version(1).stores(stores);
+    // version(1) is the shipped base schema; later versions only declare new or
+    // changed tables so existing installs upgrade without touching their data.
+    const base = options.cloud ? { ...BASE_STORES, cloudCrypto: 'id' } : BASE_STORES;
+    this.version(1).stores(base);
+    this.version(2).stores(PDF_STORES);
   }
 }

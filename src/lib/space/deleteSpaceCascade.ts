@@ -20,6 +20,7 @@ export const deleteSpaceCascade = async (spaceId: string): Promise<void> => {
       db.syncConfigs,
       db.docUpdates,
       db.meta,
+      db.media,
     ],
     async () => {
       const docIds = await db.docs.where({ spaceId }).primaryKeys();
@@ -33,6 +34,7 @@ export const deleteSpaceCascade = async (spaceId: string): Promise<void> => {
         await db.meta.bulkDelete(docIds.map(collabSeedKey));
       }
       await db.docs.where({ spaceId }).delete();
+      await db.media.where({ spaceId }).delete();
       await db.sections.where({ spaceId }).delete();
       await db.noteAttachments.where({ spaceId }).delete();
       await db.notes.where({ spaceId }).delete();

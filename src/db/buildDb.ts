@@ -13,9 +13,10 @@ import { LoremDB } from './LoremDB';
 
 /**
  * Local-only tables that must never leave the device: preferences, backups, sync
- * bookkeeping and the per-doc CRDT update log. Everything else is content that
- * syncs (field-encrypted) plus `cloudCrypto` (the passphrase-wrapped escrow,
- * which must sync so a second device can recover the key).
+ * bookkeeping, the per-doc CRDT update log, and the PDF media library (large
+ * blobs kept device-local). Everything else is content that syncs
+ * (field-encrypted) plus `cloudCrypto` (the passphrase-wrapped escrow, which
+ * must sync so a second device can recover the key).
  */
 const UNSYNCED = [
   'settings',
@@ -25,6 +26,7 @@ const UNSYNCED = [
   'docInspectorConfigs',
   'meta',
   'docUpdates',
+  'media',
 ] as const;
 
 /**

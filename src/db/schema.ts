@@ -213,6 +213,23 @@ export interface DocInspectorConfig {
   statusStages?: Partial<Record<DocStatus, boolean>>;
 }
 
+/**
+ * An uploaded PDF held in the per-space media library. The bytes live in
+ * IndexedDB as a Blob (the noteAttachments precedent); the library and viewer
+ * read them locally. Never synced (see cloud `UNSYNCED`).
+ */
+export interface MediaItem {
+  id: string;
+  spaceId: string;
+  name: string;
+  mime: 'application/pdf';
+  size: number;
+  pageCount: number;
+  blob: Blob;
+  createdAt: number;
+  updatedAt: number;
+}
+
 /** A rectangle on a PDF page, normalised to the page box as fractions in [0, 1]. */
 export interface PdfRect {
   x: number;

@@ -53,6 +53,17 @@ const seedSpace = async (spaceId: string) => {
     key: collabSeedKey(`doc-${spaceId}`),
     value: { seededAt: FIXED_TIME },
   });
+  await db.media.put({
+    id: `media-${spaceId}`,
+    spaceId,
+    name: 'f.pdf',
+    mime: 'application/pdf',
+    size: 3,
+    pageCount: 1,
+    blob: new Blob(['x']),
+    createdAt: FIXED_TIME,
+    updatedAt: FIXED_TIME,
+  });
 };
 
 describe('deleteSpaceCascade', () => {
@@ -83,6 +94,12 @@ describe('deleteSpaceCascade', () => {
     expect(await db.meta.get(collabSeedKey('doc-s1'))).toBeUndefined();
   });
 
+  it('deletes the space’s media items', async () => {
+    await deleteSpaceCascade('s1');
+
+    expect(await db.media.get('media-s1')).toBeUndefined();
+  });
+
   it('leaves other spaces’ rows untouched', async () => {
     await deleteSpaceCascade('s1');
 
@@ -92,5 +109,6 @@ describe('deleteSpaceCascade', () => {
     expect(await db.revisions.get('rev-s2')).toBeDefined();
     expect(await db.docUpdates.where('docId').equals('doc-s2').count()).toBe(1);
     expect(await db.meta.get(collabSeedKey('doc-s2'))).toBeDefined();
+    expect(await db.media.get('media-s2')).toBeDefined();
   });
 });
