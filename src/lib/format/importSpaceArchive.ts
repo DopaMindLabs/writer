@@ -10,6 +10,7 @@ const IMPORT_TABLES = [
   db.notes,
   db.noteAttachments,
   db.media,
+  db.pdfAnnotations,
   db.annotations,
   db.citations,
   db.connections,
@@ -63,6 +64,7 @@ const remapAnnex = (
   ParsedSpaceArchive,
   | 'attachments'
   | 'media'
+  | 'pdfAnnotations'
   | 'annotations'
   | 'citations'
   | 'connections'
@@ -77,6 +79,12 @@ const remapAnnex = (
     noteId: mapId(ids, a.noteId),
   })),
   media: archive.media.map((m) => ({ ...m, id: mapId(ids, m.id), spaceId })),
+  pdfAnnotations: archive.pdfAnnotations.map((p) => ({
+    ...p,
+    id: mapId(ids, p.id),
+    spaceId,
+    mediaId: mapId(ids, p.mediaId),
+  })),
   annotations: archive.annotations.map((a) => ({
     ...a,
     id: mapId(ids, a.id),
@@ -119,6 +127,7 @@ const putRemapped = async (archive: ParsedSpaceArchive): Promise<void> => {
   await db.notes.bulkPut(archive.notes);
   await db.noteAttachments.bulkPut(archive.attachments);
   await db.media.bulkPut(archive.media);
+  await db.pdfAnnotations.bulkPut(archive.pdfAnnotations);
   await db.annotations.bulkPut(archive.annotations);
   await db.citations.bulkPut(archive.citations);
   await db.connections.bulkPut(archive.connections);
