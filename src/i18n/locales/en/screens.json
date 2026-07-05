@@ -894,6 +894,17 @@
         "not-pdf": "{{name}} is not a valid PDF.",
         "corrupt": "{{name}} could not be read — it may be damaged."
       }
+    },
+    "card": {
+      "meta": "{{pages}} · {{size}}",
+      "pages_one": "{{count}} page",
+      "pages_other": "{{count}} pages",
+      "openAria": "Open {{name}}",
+      "deleteAria": "Delete {{name}}",
+      "deleteTitle": "Delete this PDF?",
+      "deleteDescription": "Its highlights will be deleted, and any notes will keep their text but lose the source.",
+      "deleteConfirm": "Delete",
+      "deleteCancel": "Cancel"
     }
   }
 }
