@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FileText, Trash2 } from '@/components/libs/icons';
 import { Icon, IconButton } from '@/components/ui/icon';
+import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { TypographyP } from '@/components/ui/typography';
@@ -44,14 +45,14 @@ export const MediaCard = ({ item, onOpen }: MediaCardProps) => {
       {/* Stretched overlay: the whole card opens the document, while the delete
           button below sits above it (z-index) so its own clicks are not
           captured. Stage PC wires the destination route; until then onOpen. */}
-      <button
-        type="button"
+      <Button
+        kind="ghost"
         onClick={() => {
           onOpen(item);
         }}
         aria-label={t('mediaLibrary.card.openAria', { name: item.name })}
         data-testid={`media-card-${item.id}-open`}
-        className="absolute inset-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+        className="absolute inset-0 h-auto border-0 p-0"
       />
       <IconButton
         icon={Trash2}
