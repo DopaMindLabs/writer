@@ -277,10 +277,11 @@ Tabbed user-wide preferences.
 | **Shortcuts** | Active | Keyboard reference. |
 | **Backups** | Active | Backup management. |
 | **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only. A **gated encrypted cloud-sync beta** (§ 4.9.1) can appear at the bottom of this tab, hidden by default. |
+| **About** | Active | Build information and links: app **version**, the **commit** SHA and **build time** embedded at build time (`vite.config.ts` defines → `lib/version`), the licence, and Source / Changelog / Send-feedback links to the repository. |
 
 Mobile: all tabs reflow without horizontal overflow at 390×800.
 
-*Covered by:* `settings.spec.ts`, `settings-mobile.spec.ts`, `Settings.test.tsx`, `AccountTab.test.tsx`, `PresenceHuePicker.test.tsx`, `profile.test.ts`.
+*Covered by:* `settings.spec.ts`, `settings-mobile.spec.ts`, `Settings.test.tsx`, `AccountTab.test.tsx`, `AboutTab.test.tsx`, `PresenceHuePicker.test.tsx`, `profile.test.ts`.
 
 #### 4.9.1 Encrypted cloud sync (invite-only beta, hidden by default)
 

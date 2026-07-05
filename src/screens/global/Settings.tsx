@@ -18,6 +18,7 @@ import { DocInspectorTab } from '@/components/settings/tabs/DocInspectorTab';
 import { ExportImportTab } from '@/components/settings/tabs/ExportImportTab';
 import { LanguageTab } from '@/components/settings/tabs/LanguageTab';
 import { AccountTab } from '@/components/settings/tabs/AccountTab';
+import { AboutTab } from '@/components/settings/tabs/AboutTab';
 import {
   GeneralPlaceholder,
   AppearancePlaceholder,
@@ -27,7 +28,6 @@ import {
   CitationsPlaceholder,
   AnnotationPlaceholder,
   DataPlaceholder,
-  AboutPlaceholder,
   BackupsPlaceholder,
 } from '@/components/settings/placeholders/GlobalSettingsPlaceholders';
 
@@ -60,6 +60,7 @@ type PlaceholderTabId = Exclude<
   | 'language'
   | 'export'
   | 'account'
+  | 'about'
 >;
 
 const isTabId = (value: string | null): value is TabId =>
@@ -74,7 +75,6 @@ const PLACEHOLDERS: Record<PlaceholderTabId, () => ReactElement> = {
   citations: CitationsPlaceholder,
   annotation: AnnotationPlaceholder,
   data: DataPlaceholder,
-  about: AboutPlaceholder,
   backups: BackupsPlaceholder,
 };
 
@@ -111,6 +111,7 @@ const renderSection = (id: TabId): ReactElement => {
   if (id === 'language') return <LanguageTab />;
   if (id === 'export') return <ExportImportTab />;
   if (id === 'account') return <AccountTab />;
+  if (id === 'about') return <AboutTab />;
   return <PlaceholderTab id={id} />;
 };
 
