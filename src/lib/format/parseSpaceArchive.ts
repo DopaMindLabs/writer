@@ -7,6 +7,7 @@ import type {
   Doc,
   DocInspectorConfig,
   HighlightPalette,
+  MediaItem,
   Note,
   NoteAttachment,
   Revision,
@@ -21,12 +22,14 @@ import {
   parseConnectionRecord,
   parseDocInspectorConfigRecord,
   parseDocRecord,
+  parseMediaItemRecord,
   parseNoteAttachmentRecord,
   parseNoteRecord,
   parsePaletteRecord,
   parseRevisionRecord,
   parseSectionRecord,
   parseSpaceRecord,
+  type MediaItemRecord,
   type NoteAttachmentRecord,
 } from './codecs';
 
@@ -37,6 +40,7 @@ export interface ParsedSpaceArchive {
   docs: Doc[];
   notes: Note[];
   attachments: NoteAttachment[];
+  media: MediaItem[];
   annotations: Annotation[];
   citations: Citation[];
   connections: Connection[];
@@ -87,11 +91,29 @@ const bindAttachmentBlobs = async (
 const parseAttachmentRecords = (zip: JSZip): Promise<NoteAttachmentRecord[]> =>
   parseTable(zip, 'noteAttachments', parseNoteAttachmentRecord);
 
+const bindMediaBlobs = async (
+  zip: JSZip,
+  records: readonly MediaItemRecord[],
+): Promise<MediaItem[]> => {
+  const out: MediaItem[] = [];
+  for (const { assetPath, ...record } of records) {
+    const asset = zip.file(assetPath);
+    invariant(asset, `Archive is missing media asset ${assetPath}`);
+    const data = Uint8Array.from(await asset.async('uint8array'));
+    out.push({ ...record, blob: new Blob([data], { type: record.mime }) });
+  }
+  return out;
+};
+
+const parseMediaRecords = (zip: JSZip): Promise<MediaItemRecord[]> =>
+  parseTable(zip, 'media', parseMediaItemRecord);
+
 const COUNTED_TABLES: readonly (keyof ArchiveManifest['counts'])[] = [
   'sections',
   'docs',
   'notes',
   'noteAttachments',
+  'media',
   'annotations',
   'citations',
   'connections',
@@ -108,6 +130,7 @@ const actualCounts = (
   docs: archive.docs.length,
   notes: archive.notes.length,
   noteAttachments: archive.attachments.length,
+  media: archive.media.length,
   annotations: archive.annotations.length,
   citations: archive.citations.length,
   connections: archive.connections.length,
@@ -144,6 +167,7 @@ const checkReferences = (archive: ParsedSpaceArchive): void => {
     ...archive.docs,
     ...archive.notes,
     ...archive.attachments,
+    ...archive.media,
     ...archive.citations,
     ...archive.connections,
     ...archive.palettes,
@@ -223,6 +247,7 @@ export const parseSpaceArchive = async (
     docs: await parseTable(zip, 'docs', parseDocRecord),
     notes: await parseTable(zip, 'notes', parseNoteRecord),
     attachments: await bindAttachmentBlobs(zip, await parseAttachmentRecords(zip)),
+    media: await bindMediaBlobs(zip, await parseMediaRecords(zip)),
     annotations: await parseTable(zip, 'annotations', parseAnnotationRecord),
     citations: await parseTable(zip, 'citations', parseCitationRecord),
     connections: await parseTable(zip, 'connections', parseConnectionRecord),

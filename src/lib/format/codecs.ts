@@ -12,6 +12,7 @@ import {
   type DocInspectorConfig,
   type HighlightPalette,
   type InspectorToggle,
+  type MediaItem,
   type Note,
   type NoteAttachment,
   type Revision,
@@ -19,6 +20,7 @@ import {
   type Section,
   type Space,
 } from '@/db/schema';
+import { PDF_MIME } from '@/data/media';
 
 /**
  * Record codecs for the space archive format (v2). Parsers treat their input
@@ -249,6 +251,50 @@ export const parseNoteAttachmentRecord = (
     size: readNumber(raw, 'size', 'noteAttachment'),
     createdAt: readNumber(raw, 'createdAt', 'noteAttachment'),
     assetPath: readString(raw, 'assetPath', 'noteAttachment'),
+  };
+};
+
+export interface MediaItemRecord {
+  id: string;
+  spaceId: string;
+  name: string;
+  mime: 'application/pdf';
+  size: number;
+  pageCount: number;
+  createdAt: number;
+  updatedAt: number;
+  assetPath: string;
+}
+
+const MEDIA_MIMES: readonly MediaItem['mime'][] = [PDF_MIME];
+
+export const serializeMediaItem = (
+  media: MediaItem,
+  assetPath: string,
+): MediaItemRecord => ({
+  id: media.id,
+  spaceId: media.spaceId,
+  name: media.name,
+  mime: media.mime,
+  size: media.size,
+  pageCount: media.pageCount,
+  createdAt: media.createdAt,
+  updatedAt: media.updatedAt,
+  assetPath,
+});
+
+export const parseMediaItemRecord = (value: unknown): MediaItemRecord => {
+  const raw = asRaw(value, 'media');
+  return {
+    id: readString(raw, 'id', 'media'),
+    spaceId: readString(raw, 'spaceId', 'media'),
+    name: readString(raw, 'name', 'media'),
+    mime: readEnum(raw, 'mime', MEDIA_MIMES, 'media'),
+    size: readNumber(raw, 'size', 'media'),
+    pageCount: readNumber(raw, 'pageCount', 'media'),
+    createdAt: readNumber(raw, 'createdAt', 'media'),
+    updatedAt: readNumber(raw, 'updatedAt', 'media'),
+    assetPath: readString(raw, 'assetPath', 'media'),
   };
 };
 
