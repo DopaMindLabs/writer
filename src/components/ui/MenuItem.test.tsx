@@ -101,5 +101,24 @@ describe('MenuItem', () => {
       const link = screen.getByRole('link', { name: 'Settings' });
       expect(link).toHaveAttribute('href', '/settings');
     });
+
+    it('takes a disabled asChild link out of the tab order and blocks activation', () => {
+      render(
+        <MenuItem asChild disabled>
+          <a href="/settings">Settings</a>
+        </MenuItem>,
+      );
+      const link = screen.getByRole('link', { name: 'Settings' });
+      expect(link).toHaveAttribute('aria-disabled', 'true');
+      expect(link).toHaveAttribute('tabindex', '-1');
+      // The guard prevents the default navigation on click (and Enter, which
+      // dispatches a click on a link), so a router Link sees defaultPrevented.
+      const clickEvent = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+      });
+      link.dispatchEvent(clickEvent);
+      expect(clickEvent.defaultPrevented).toBe(true);
+    });
   });
 });

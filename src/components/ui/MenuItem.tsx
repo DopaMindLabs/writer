@@ -1,6 +1,7 @@
 import {
   forwardRef,
   type ButtonHTMLAttributes,
+  type MouseEvent as ReactMouseEvent,
   type ReactNode,
 } from 'react';
 import { Check, X, type LucideIcon } from '@/components/libs/icons';
@@ -77,6 +78,54 @@ const structuredContent = ({
   );
 };
 
+/**
+ * A native `<button disabled>` blocks focus and activation for free, but the
+ * `asChild` path (a router `Link` / anchor) keeps neither. Guarding the click
+ * means a disabled row cannot navigate on click — or on Enter, which dispatches
+ * a click on a link — so a router `Link` sees `defaultPrevented` and stays put.
+ * Focus is removed separately via `tabIndex={-1}`.
+ */
+const guardedClick =
+  (disabled: boolean, onClick: MenuItemProps['onClick']) =>
+  (event: ReactMouseEvent<HTMLButtonElement>) => {
+    if (disabled) {
+      event.preventDefault();
+      return;
+    }
+    onClick?.(event);
+  };
+
+interface InteractiveArgs {
+  asChild: boolean;
+  disabled: boolean;
+  danger: boolean;
+  type: MenuItemProps['type'];
+  tabIndex: MenuItemProps['tabIndex'];
+  onClick: MenuItemProps['onClick'];
+}
+
+/**
+ * The row's interaction + a11y DOM props. The default button path gets native
+ * `disabled` (which blocks focus and activation for free); the `asChild` path
+ * (a link) can't take it, so it leans on `aria-disabled`, `tabIndex={-1}` and
+ * the click guard instead.
+ */
+const interactiveProps = ({
+  asChild,
+  disabled,
+  danger,
+  type,
+  tabIndex,
+  onClick,
+}: InteractiveArgs) => ({
+  type: asChild ? undefined : (type ?? 'button'),
+  disabled: asChild ? undefined : disabled,
+  'aria-disabled': disabled || undefined,
+  'data-danger': danger || undefined,
+  tabIndex: disabled ? -1 : tabIndex,
+  onClick: guardedClick(disabled, onClick),
+});
+
 export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(
   (
     {
@@ -90,7 +139,9 @@ export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(
       className,
       children,
       type,
-      ...props
+      onClick,
+      tabIndex,
+      ...rest
     },
     ref,
   ) => {
@@ -98,12 +149,9 @@ export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(
     return (
       <Comp
         ref={ref}
-        type={asChild ? undefined : (type ?? 'button')}
-        disabled={asChild ? undefined : disabled}
-        aria-disabled={disabled || undefined}
-        data-danger={danger || undefined}
+        {...rest}
+        {...interactiveProps({ asChild, disabled, danger, type, tabIndex, onClick })}
         className={cn(menuItemRecipe({ disabled }), className)}
-        {...props}
       >
         {asChild
           ? children
