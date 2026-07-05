@@ -303,6 +303,36 @@ the hover-revealed `IconButton`).
 
 ---
 
+### 3.8 `MenuItem`
+
+A single row inside a menu (a `DropdownMenu`, or a `Popover` acting as an action list). A
+menu is a **list, not a card**: the row has no background at rest; hover and keyboard
+highlight paint the faint `paper-2` wash and darken the label from `ink-2` to `ink` (and the
+leading glyph from `ink-3` to `ink`). Square corners, sans 13 px label, an optional 14-px
+leading glyph slot, and an optional trailing slot — a mono `Kbd` shortcut, or a `Check` when
+`checked`. The destructive row shows the `X` icon (never Unicode, never a coloured row) and is
+placed under a `MenuDivider` by the caller; the ink-fill `dangerous` Button stays reserved for
+the `ConfirmDialog` footer alone (§4.5, §5a).
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `label` | `ReactNode` | — | Row label (omitted in `asChild` mode). |
+| `icon` | `LucideIcon` | — | Leading glyph; ignored when `danger` is set. |
+| `shortcut` | `ReactNode` | — | Trailing hint (compose a `Kbd`); hidden when `checked`. |
+| `danger` | boolean | `false` | Destructive row: shows the `X` icon. |
+| `checked` | boolean | `false` | Shows a trailing `Check`. |
+| `disabled` | boolean | `false` | Non-interactive; sets `aria-disabled`. |
+| `asChild` | boolean | `false` | Render the row as the provided child (e.g. a router `Link`). |
+
+Renders a `<button>` by default. Compose it via the parent's `asChild` to inherit menu
+semantics — `<DropdownMenuItem asChild>` gives it `role="menuitem"` and arrow-key navigation,
+`<PopoverClose asChild>` makes it dismiss the panel — so every menu shares one row grammar
+instead of hand-rolling its own.
+
+> **In this repo:** `src/components/ui/MenuItem.tsx` (+ `MenuItem.recipe.ts`).
+
+---
+
 ## 4. Forms
 
 Every form primitive follows the same rule set: hairline borders, ink fill on active focus,
