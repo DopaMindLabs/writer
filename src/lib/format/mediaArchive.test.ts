@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/db/db';
+import { NoteKind, NoteState } from '@/db/schema';
 import { readSpaceSnapshot } from '@/lib/backup/buildSpaceMarkdownZip';
 import { FIXED_TIME, seedRichSpace } from '@/test/fixtures';
 import { buildSpaceArchive } from './buildSpaceArchive';
@@ -35,6 +36,19 @@ const seedMedia = async (): Promise<void> => {
     author: 'me',
     createdAt: FIXED_TIME,
     updatedAt: FIXED_TIME,
+  });
+  await db.notes.put({
+    id: 'n3',
+    spaceId: 's1',
+    l: 40,
+    t: 40,
+    w: 184,
+    h: 80,
+    kind: NoteKind.Note,
+    state: NoteState.User,
+    body: 'Sourced from the PDF',
+    mediaId: 'm1',
+    createdAt: FIXED_TIME,
   });
 };
 
@@ -98,6 +112,26 @@ describe('media in the space archive', () => {
     expect(highlights[0].id).not.toBe('hl1');
     expect(highlights[0].mediaId).toBe(imported[0].id);
     expect(highlights[0].quote).toBe('a highlighted sentence');
+  });
+
+  it('preserves a note media link through export and parse', async () => {
+    const parsed = await parseSpaceArchive(await archiveBlob());
+    const sourced = parsed.notes.find((n) => n.id === 'n3');
+    expect(sourced).toBeDefined();
+    expect(sourced?.mediaId).toBe('m1');
+  });
+
+  it('remaps a note media link to the imported media item on import', async () => {
+    const { spaceId } = await importSpaceArchive(
+      await parseSpaceArchive(await archiveBlob()),
+    );
+    const media = await db.media.where('spaceId').equals(spaceId).toArray();
+    const notes = await db.notes.where('spaceId').equals(spaceId).toArray();
+    const sourced = notes.find((n) => n.mediaId !== undefined);
+    expect(sourced).toBeDefined();
+    // The link must point at the imported media item's fresh id, not the old one.
+    expect(sourced?.mediaId).not.toBe('m1');
+    expect(sourced?.mediaId).toBe(media[0].id);
   });
 
   it('rejects a media record with a non-pdf mime', () => {

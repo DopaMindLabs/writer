@@ -53,6 +53,7 @@ const remapManuscript = (
     spaceId,
     linkedDocId:
       n.linkedDocId === undefined ? undefined : mapId(ids, n.linkedDocId),
+    mediaId: n.mediaId === undefined ? undefined : mapId(ids, n.mediaId),
   })),
 });
 
