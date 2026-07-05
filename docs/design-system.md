@@ -333,6 +333,30 @@ instead of hand-rolling its own.
 
 ---
 
+### 3.9 `Kbd`
+
+A keyboard-shortcut hint in the mono meta voice (10 px, `ink-4`, letter-spaced). The
+modifier is **derived from the running platform at render** — ⌘ on macOS, Ctrl on
+Linux/Windows — so each user sees the key they actually press. Write chords
+platform-neutrally and never hard-code a glyph: `mod` resolves to the platform modifier,
+alongside `shift` / `alt` / `enter`, joined with `+` (e.g. `mod+,`, `mod+shift+m`, or a bare
+`?`). On Apple the glyphs sit adjacent (`⌘⇧M`); elsewhere the words join with `+`
+(`Ctrl+Shift+M`). Locale strings hold only the bare key — the modifier is never translated
+or stored.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `keys` | string | — | A platform-neutral chord (`mod`/`shift`/`alt`/`enter` + keys, `+`-joined). |
+
+Renders a semantic `<kbd>`. The handler side stays on `event.metaKey || event.ctrlKey`
+(§11); `Kbd` is its display companion.
+
+> **In this repo:** `src/components/ui/Kbd.tsx`, backed by
+> `src/lib/shortcuts/platform.ts` (`isApplePlatform` / `getModifierLabel`, injectable for
+> tests).
+
+---
+
 ## 4. Forms
 
 Every form primitive follows the same rule set: hairline borders, ink fill on active focus,
