@@ -420,6 +420,10 @@
           "eraseBody": "Your other devices will lose their synced copy. The notes on this device are kept.",
           "eraseConfirm": "Erase the account's copy",
           "eraseBack": "Back"
+        },
+        "backupNudge": {
+          "title": "These notes are only on this device",
+          "body": "Sign in to back them up. Until you do, clearing this browser loses them."
         }
       }
     },
