@@ -3,7 +3,7 @@
 exports[`Card > renders full card composition 1`] = `
 <div>
   <div
-    class="rounded-lg border border-rule bg-paper text-ink shadow-sm"
+    class="border border-rule bg-paper text-ink"
   >
     <div
       class="flex flex-col gap-1.5 p-4"
