@@ -882,5 +882,8 @@
     "manualAdd": {
       "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
     }
+  },
+  "mediaLibrary": {
+    "title": "Library"
   }
 }

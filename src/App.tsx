@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useState,
+  type ReactNode,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   createBrowserRouter,
@@ -35,6 +42,27 @@ import { TemplatesScreen } from '@/screens/global/Templates';
 import { HelpScreen } from '@/screens/global/Help';
 import { NotFoundScreen } from '@/screens/global/NotFound';
 import { RouteErrorScreen } from '@/components/errors/RouteErrorScreen';
+
+// Lazily loaded so the pdf.js engine chunk (wired into this screen in Stage PC)
+// stays out of the entry bundle — this route is its only entry point.
+const MediaLibraryScreen = lazy(() =>
+  import('@/screens/space/MediaLibrary').then((m) => ({
+    default: m.MediaLibraryScreen,
+  })),
+);
+
+const RouteSuspenseFallback = () => {
+  const { t } = useTranslation('app');
+  return (
+    <div className="flex h-full items-center justify-center font-sans text-ink-3">
+      <TypographyMuted>{t('booting')}</TypographyMuted>
+    </div>
+  );
+};
+
+const LazyRoute = ({ children }: { children: ReactNode }) => (
+  <Suspense fallback={<RouteSuspenseFallback />}>{children}</Suspense>
+);
 
 const RootLayout = () => {
   useGlobalShortcuts();
@@ -73,6 +101,14 @@ const router = createAppRouter([
       { path: ROUTE_PATHS[RouteName.DocRead], element: <ReadScreen /> },
       { path: ROUTE_PATHS[RouteName.DocSplit], element: <SplitScreen /> },
       { path: ROUTE_PATHS[RouteName.BrainSpace], element: <BrainSpaceScreen /> },
+      {
+        path: ROUTE_PATHS[RouteName.MediaLibrary],
+        element: (
+          <LazyRoute>
+            <MediaLibraryScreen />
+          </LazyRoute>
+        ),
+      },
       { path: ROUTE_PATHS[RouteName.Citations], element: <CitationsScreen /> },
       { path: '*', element: <NotFoundScreen /> },
     ],

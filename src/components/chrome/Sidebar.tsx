@@ -24,7 +24,7 @@ import { Link } from '@/components/ui/Link';
 import { TextField } from '@/components/ui/TextField';
 import { SpaceMenuPopover } from './SpaceMenuPopover';
 import { DocRowMenu } from './DocRowMenu';
-import { BrainSpaceLink } from './BrainSpaceLink';
+import { WorkshopLinks } from './WorkshopLinks';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
@@ -201,6 +201,7 @@ interface SidebarSectionProps {
   spaceId: string;
   activeDocId: string | null;
   onBrainSpace: boolean;
+  onMediaLibrary: boolean;
   notesCount: number;
   docHref: (docId: string) => string;
   startAdd: (sectionId: string, parentLabel: string, subLabel: string | null) => void;
@@ -258,6 +259,7 @@ const SidebarSection = ({
   spaceId,
   activeDocId,
   onBrainSpace,
+  onMediaLibrary,
   notesCount,
   docHref,
   startAdd,
@@ -273,10 +275,11 @@ const SidebarSection = ({
         onAdd={() => { startAdd(sec.id, sec.label, null); }}
       />
       {isWorkshop && (
-        <BrainSpaceLink
+        <WorkshopLinks
           spaceId={spaceId}
-          active={onBrainSpace}
-          count={notesCount}
+          onBrainSpace={onBrainSpace}
+          onMediaLibrary={onMediaLibrary}
+          notesCount={notesCount}
         />
       )}
       {docs.map((d) => (
@@ -595,6 +598,7 @@ interface SidebarNavProps {
   sections: Section[];
   notesCount: number;
   onBrainSpace: boolean;
+  onMediaLibrary: boolean;
   modeSuffix: string;
   space: Space | undefined;
 }
@@ -605,6 +609,7 @@ const SidebarNav = ({
   sections,
   notesCount,
   onBrainSpace,
+  onMediaLibrary,
   modeSuffix,
   space,
 }: SidebarNavProps) => {
@@ -633,6 +638,7 @@ const SidebarNav = ({
           spaceId={spaceId}
           activeDocId={activeDocId}
           onBrainSpace={onBrainSpace}
+          onMediaLibrary={onMediaLibrary}
           notesCount={notesCount}
           docHref={docHref}
           startAdd={startAdd}
@@ -644,6 +650,7 @@ const SidebarNav = ({
         <WorkshopFallback
           spaceId={spaceId}
           onBrainSpace={onBrainSpace}
+          onMediaLibrary={onMediaLibrary}
           notesCount={notesCount}
         />
       )}
@@ -659,6 +666,7 @@ export const Sidebar = ({ spaceId, activeDocId, className }: SidebarProps) => {
   const location = useLocation();
   const modeSuffix = inferModeSuffix(location.pathname);
   const onBrainSpace = location.pathname.endsWith('/brain-space');
+  const onMediaLibrary = location.pathname.endsWith('/library');
 
   return (
     <aside
@@ -675,6 +683,7 @@ export const Sidebar = ({ spaceId, activeDocId, className }: SidebarProps) => {
         sections={sections}
         notesCount={notes.length}
         onBrainSpace={onBrainSpace}
+        onMediaLibrary={onMediaLibrary}
         modeSuffix={modeSuffix}
         space={space}
       />
@@ -727,10 +736,12 @@ const AddSectionRow = ({ add }: { add: AddSectionController }) => {
 const WorkshopFallback = ({
   spaceId,
   onBrainSpace,
+  onMediaLibrary,
   notesCount,
 }: {
   spaceId: string;
   onBrainSpace: boolean;
+  onMediaLibrary: boolean;
   notesCount: number;
 }) => {
   const { t } = useTranslation('chrome');
@@ -745,7 +756,12 @@ const WorkshopFallback = ({
       >
         {t('sidebar.workshop')}
       </div>
-      <BrainSpaceLink spaceId={spaceId} active={onBrainSpace} count={notesCount} />
+      <WorkshopLinks
+        spaceId={spaceId}
+        onBrainSpace={onBrainSpace}
+        onMediaLibrary={onMediaLibrary}
+        notesCount={notesCount}
+      />
     </div>
   );
 };
