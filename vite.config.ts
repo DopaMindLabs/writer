@@ -2,6 +2,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { readFileSync } from 'node:fs';
+import { vercelHeaders } from './scripts/vite-plugin-vercel-headers';
 
 const { version: appVersion } = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8')
@@ -15,7 +16,7 @@ export default defineConfig(({ command, mode }) => ({
     command === 'build'
       ? process.env.VITE_BASE ?? '/writer/'
       : process.env.VITE_BASE ?? '/',
-  plugins: [react()],
+  plugins: [react(), vercelHeaders()],
   resolve: {
     tsconfigPaths: true,
   },
