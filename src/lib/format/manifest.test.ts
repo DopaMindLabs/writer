@@ -25,6 +25,7 @@ describe('archive manifest', () => {
       docs: 1,
       notes: 2,
       noteAttachments: 1,
+      media: 0,
       annotations: 1,
       citations: 1,
       connections: 1,
@@ -40,10 +41,24 @@ describe('archive manifest', () => {
     expect(parseManifest(JSON.parse(JSON.stringify(manifest)))).toEqual(manifest);
   });
 
-  it('rejects other format versions with a clear message', async () => {
+  it('rejects unsupported format versions with a clear message', async () => {
     const snapshot = await readSpaceSnapshot('s1');
-    const manifest = { ...buildManifest(snapshot, WHEN), formatVersion: 3 };
+    const manifest = { ...buildManifest(snapshot, WHEN), formatVersion: 99 };
     expect(() => parseManifest(manifest)).toThrow(/Unsupported archive format/);
+  });
+
+  it('reads a legacy v2 manifest (no media count) as zero media', async () => {
+    const snapshot = await readSpaceSnapshot('s1');
+    const built = buildManifest(snapshot, WHEN);
+    const v2 = JSON.parse(JSON.stringify(built)) as {
+      formatVersion: number;
+      counts: Record<string, number>;
+    };
+    v2.formatVersion = 2;
+    delete v2.counts.media;
+    const parsed = parseManifest(v2);
+    expect(parsed.formatVersion).toBe(2);
+    expect(parsed.counts.media).toBe(0);
   });
 
   it('rejects manifests with missing or malformed parts', () => {
