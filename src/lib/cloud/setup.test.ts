@@ -6,12 +6,18 @@ import {
   deviceKeyProvider,
   saveDeviceKeyRing,
   forgetDeviceKeyRing,
+  loadPendingEscrow,
+  clearPendingEscrow,
 } from './crypto/keyStore';
 import { CIPHER_FIELD } from './crypto/tableRules';
 import {
   generateMasterSecret,
+  deriveKeyRing,
+  wrapMasterSecret,
+  unwrapMasterSecret,
   WrongPassphraseError,
 } from './crypto/keys';
+import { keyMismatchState } from './crypto/keyMismatch';
 import { encodeRecoveryCode } from './crypto/recoveryCode';
 import { EnvelopeIntegrityError } from './crypto/envelope';
 import {
@@ -20,6 +26,9 @@ import {
   recoverCloudEncryption,
   sealExistingRows,
   forgetThisDevice,
+  publishPendingEscrow,
+  adoptAccountKey,
+  eraseSyncedContent,
 } from './setup';
 
 // Correctness is independent of the iteration count; use a small one so the
@@ -75,19 +84,28 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+  keyMismatchState.set(false);
   await forgetDeviceKeyRing();
+  await clearPendingEscrow();
   await db.delete();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
 
 describe('cloud setup', () => {
-  it('escrows exactly one row and returns a decodable recovery code', async () => {
+  it('holds the escrow on the device until published, and the code recovers the key', async () => {
     const code = await createCloudEncryption('correct horse battery', db);
+    // Deferred publication: the escrow waits on the device, not in the synced table.
+    expect(await db.cloudCrypto.toArray()).toHaveLength(0);
+    expect(await loadPendingEscrow()).not.toBeNull();
+    expect(code).toMatch(/^[0-9A-Z-]+$/);
+
+    await publishPendingEscrow(db);
     const escrows = await db.cloudCrypto.toArray();
     expect(escrows).toHaveLength(1);
     expect(escrows[0].id).toBe('v1');
-    expect(code).toMatch(/^[0-9A-Z-]+$/);
+    expect(await loadPendingEscrow()).toBeNull();
+
     // Round-trips: recovering from the code on a fresh device yields a usable key.
     await forgetThisDevice();
     await recoverCloudEncryption(code, db);
@@ -96,6 +114,7 @@ describe('cloud setup', () => {
 
   it('unlock with the right passphrase loads a usable ring', async () => {
     await createCloudEncryption('pw', db);
+    await publishPendingEscrow(db);
     await forgetThisDevice();
     expect(deviceKeyProvider.current()).toBeNull();
 
@@ -110,6 +129,7 @@ describe('cloud setup', () => {
 
   it('wrong passphrase leaves the device keyless', async () => {
     await createCloudEncryption('right', db);
+    await publishPendingEscrow(db);
     await forgetThisDevice();
     await expect(unlockCloudEncryption('wrong', db)).rejects.toBeInstanceOf(
       WrongPassphraseError,
@@ -139,6 +159,7 @@ describe('cloud setup', () => {
 
   it('rows created keyless become ciphertext after unlock+seal', async () => {
     await createCloudEncryption('pw', db);
+    await publishPendingEscrow(db);
     await forgetThisDevice();
     // Keyless write: the middleware passes it through as plaintext.
     await db.table<Row>('notes').put({
@@ -152,8 +173,9 @@ describe('cloud setup', () => {
     expect(raw?.title).toBeUndefined();
   });
 
-  it('forgetThisDevice removes the ring but not the escrow', async () => {
+  it('forgetThisDevice removes the ring but not the published escrow', async () => {
     await createCloudEncryption('pw', db);
+    await publishPendingEscrow(db);
     expect(deviceKeyProvider.current()).not.toBeNull();
 
     await forgetThisDevice();
@@ -173,5 +195,63 @@ describe('cloud setup', () => {
       EnvelopeIntegrityError,
     );
     expect(deviceKeyProvider.current()).toBeNull();
+  });
+});
+
+describe('cloud key conflict resolution', () => {
+  const FAST = 1000;
+
+  /** Seed an account whose data (`acc`) and escrow are protected by their own
+   *  master, then have this device set up its *own* key and write its own note
+   *  (`mine`) — the exact mismatch a wiped device hits when it re-signs-in. */
+  const seedMismatch = async (): Promise<Uint8Array> => {
+    const accountMaster = generateMasterSecret();
+    await saveDeviceKeyRing(await deriveKeyRing(accountMaster, 1));
+    await db.table<Row>('docs').put({
+      id: 'acc', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'account note',
+    });
+    await db.cloudCrypto.put(await wrapMasterSecret(accountMaster, 'old-pass', FAST));
+    await createCloudEncryption('new-pass', db);
+    await db.table<Row>('docs').put({
+      id: 'mine', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'my note',
+    });
+    keyMismatchState.set(true);
+    return accountMaster;
+  };
+
+  it('adoptAccountKey unlocks the account data and keeps this device under one passphrase', async () => {
+    const accountMaster = await seedMismatch();
+
+    await adoptAccountKey('old-pass', 'new-pass', db);
+
+    expect(keyMismatchState.current()).toBe(false);
+    expect((await db.table<Row>('docs').get('acc'))?.name).toBe('account note');
+    expect((await db.table<Row>('docs').get('mine'))?.name).toBe('my note');
+    const escrow = await db.cloudCrypto.get('v1');
+    if (!escrow) throw new Error('expected an escrow after adoption');
+    const recovered = await unwrapMasterSecret(escrow, 'new-pass');
+    expect(Array.from(recovered)).toEqual(Array.from(accountMaster));
+  });
+
+  it('adoptAccountKey rejects the wrong account passphrase and stays mismatched', async () => {
+    await seedMismatch();
+    await expect(adoptAccountKey('nope', 'new-pass', db)).rejects.toBeInstanceOf(
+      WrongPassphraseError,
+    );
+    expect(keyMismatchState.current()).toBe(true);
+  });
+
+  it('eraseSyncedContent drops unreadable account rows, keeps this device, publishes its escrow', async () => {
+    const accountMaster = await seedMismatch();
+
+    await eraseSyncedContent(db);
+
+    expect(keyMismatchState.current()).toBe(false);
+    expect(await db.table<Row>('docs').get('acc')).toBeUndefined();
+    expect((await db.table<Row>('docs').get('mine'))?.name).toBe('my note');
+    const escrow = await db.cloudCrypto.get('v1');
+    if (!escrow) throw new Error('expected the device escrow to be published');
+    const recovered = await unwrapMasterSecret(escrow, 'new-pass');
+    expect(Array.from(recovered)).not.toEqual(Array.from(accountMaster));
   });
 });
