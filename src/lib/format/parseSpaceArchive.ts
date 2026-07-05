@@ -10,6 +10,7 @@ import type {
   MediaItem,
   Note,
   NoteAttachment,
+  PdfAnnotation,
   Revision,
   Section,
   Space,
@@ -25,6 +26,7 @@ import {
   parseMediaItemRecord,
   parseNoteAttachmentRecord,
   parseNoteRecord,
+  parsePdfAnnotationRecord,
   parsePaletteRecord,
   parseRevisionRecord,
   parseSectionRecord,
@@ -41,6 +43,7 @@ export interface ParsedSpaceArchive {
   notes: Note[];
   attachments: NoteAttachment[];
   media: MediaItem[];
+  pdfAnnotations: PdfAnnotation[];
   annotations: Annotation[];
   citations: Citation[];
   connections: Connection[];
@@ -114,6 +117,7 @@ const COUNTED_TABLES: readonly (keyof ArchiveManifest['counts'])[] = [
   'notes',
   'noteAttachments',
   'media',
+  'pdfAnnotations',
   'annotations',
   'citations',
   'connections',
@@ -131,6 +135,7 @@ const actualCounts = (
   notes: archive.notes.length,
   noteAttachments: archive.attachments.length,
   media: archive.media.length,
+  pdfAnnotations: archive.pdfAnnotations.length,
   annotations: archive.annotations.length,
   citations: archive.citations.length,
   connections: archive.connections.length,
@@ -162,12 +167,14 @@ const checkReferences = (archive: ParsedSpaceArchive): void => {
   const spaceId = archive.space.id;
   const docIds = new Set(archive.docs.map((d) => d.id));
   const noteIds = new Set(archive.notes.map((n) => n.id));
+  const mediaIds = new Set(archive.media.map((m) => m.id));
   const scoped = [
     ...archive.sections,
     ...archive.docs,
     ...archive.notes,
     ...archive.attachments,
     ...archive.media,
+    ...archive.pdfAnnotations,
     ...archive.citations,
     ...archive.connections,
     ...archive.palettes,
@@ -188,6 +195,12 @@ const checkReferences = (archive: ParsedSpaceArchive): void => {
     invariant(
       noteIds.has(att.noteId),
       `Attachment ${att.id} references a missing note`,
+    );
+  }
+  for (const pa of archive.pdfAnnotations) {
+    invariant(
+      mediaIds.has(pa.mediaId),
+      `Pdf highlight ${pa.id} references a missing media item`,
     );
   }
   for (const c of archive.connections) {
@@ -248,6 +261,7 @@ export const parseSpaceArchive = async (
     notes: await parseTable(zip, 'notes', parseNoteRecord),
     attachments: await bindAttachmentBlobs(zip, await parseAttachmentRecords(zip)),
     media: await bindMediaBlobs(zip, await parseMediaRecords(zip)),
+    pdfAnnotations: await parseTable(zip, 'pdfAnnotations', parsePdfAnnotationRecord),
     annotations: await parseTable(zip, 'annotations', parseAnnotationRecord),
     citations: await parseTable(zip, 'citations', parseCitationRecord),
     connections: await parseTable(zip, 'connections', parseConnectionRecord),
