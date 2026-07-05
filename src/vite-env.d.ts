@@ -1,6 +1,10 @@
 /// <reference types="vite/client" />
 
 declare const __APP_VERSION__: string;
+/** Short commit SHA the app was built from (`unknown` if git was unavailable). */
+declare const __APP_COMMIT__: string;
+/** ISO-8601 timestamp of the build. */
+declare const __APP_BUILD_TIME__: string;
 
 interface ImportMetaEnv {
   readonly VITE_ROUTER?: string;
