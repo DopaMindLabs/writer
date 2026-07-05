@@ -405,6 +405,21 @@
           "email": "The email address you sign in with",
           "network": "Sync timing and your IP address",
           "invite": "Sign-in is invite-only while this beta is running."
+        },
+        "conflict": {
+          "bannerTitle": "These notes were locked on another device",
+          "bannerBody": "Enter the passphrase you created there to unlock them.",
+          "bannerAction": "Unlock now",
+          "unlockTitle": "Unlock your notes",
+          "unlockDescription": "Enter the passphrase you created on your other device. You'll use that one from now on.",
+          "unlockLabel": "Passphrase",
+          "unlockSubmit": "Unlock",
+          "unlockWrong": "That passphrase doesn't match. Try again.",
+          "noPassphrase": "I don't have that passphrase",
+          "eraseTitle": "Erase the account's copy?",
+          "eraseBody": "Your other devices will lose their synced copy. The notes on this device are kept.",
+          "eraseConfirm": "Erase the account's copy",
+          "eraseBack": "Back"
         }
       }
     },
