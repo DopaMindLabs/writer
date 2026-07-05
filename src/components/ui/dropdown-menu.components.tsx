@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
+import { eyebrowRecipe } from './Eyebrow.recipe';
 import {
   DropdownMenuPrimitiveContent,
   DropdownMenuPrimitiveItem,
@@ -48,7 +49,8 @@ export const DropdownMenuLabel = forwardRef<
   <DropdownMenuPrimitiveLabel
     ref={ref}
     className={cn(
-      'px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3',
+      eyebrowRecipe({ size: 10, tone: 'ink3' }),
+      'px-2 py-1',
       className,
     )}
     {...props}

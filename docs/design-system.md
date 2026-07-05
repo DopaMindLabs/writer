@@ -357,6 +357,26 @@ Renders a semantic `<kbd>`. The handler side stays on `event.metaKey || event.ct
 
 ---
 
+### 3.10 `SectionLabel`
+
+The one uppercase-mono heading for a group of rows — the "APPEARANCE" / "WRITING" labels in
+Quick Settings, the group eyebrows inside menus, the settings-nav group headings. It is a
+named specialisation of `Eyebrow` (§3.1) that shares the same recipe
+(`Eyebrow.recipe.ts`), narrowed to the group-label sizes and tones — so every section label
+reads identically instead of being hand-rolled per surface. `DropdownMenuLabel` is rebased
+onto the same recipe.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `size` | `9 \| 10` | `10` | `9` for the tightest group eyebrow, `10` for a standard section label. |
+| `tone` | `"ink3" \| "ink4"` | `"ink3"` | Label colour. |
+| `asChild` | boolean | `false` | Render as the provided element (e.g. an `<h2>` for a labelled landmark). |
+
+> **In this repo:** `src/components/ui/SectionLabel.tsx` (over `Eyebrow` /
+> `Eyebrow.recipe.ts`).
+
+---
+
 ## 4. Forms
 
 Every form primitive follows the same rule set: hairline borders, ink fill on active focus,
