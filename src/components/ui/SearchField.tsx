@@ -28,7 +28,7 @@ const ClearButton = ({ onClear, clearLabel, clearTestId }: ClearButtonProps) => 
     onClick={onClear}
     aria-label={clearLabel}
     data-testid={clearTestId}
-    className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm text-ink-3 transition-colors hover:bg-paper-2 hover:text-ink"
+    className="inline-flex h-5 w-5 shrink-0 items-center justify-center text-ink-3 transition-colors hover:bg-paper-2 hover:text-ink"
   >
     <X className="h-3 w-3" aria-hidden />
   </button>
