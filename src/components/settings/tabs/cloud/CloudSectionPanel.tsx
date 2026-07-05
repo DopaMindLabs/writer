@@ -17,6 +17,7 @@ import { CloudPrivacyDisclosure } from './CloudPrivacyDisclosure';
 import { CloudEncryptionControls } from './CloudEncryptionControls';
 import { CloudSectionDialogs, type CloudDialogName } from './CloudSectionDialogs';
 import { CloudKeyConflictSection } from './CloudKeyConflictSection';
+import { CloudBackupNudge } from './CloudBackupNudge';
 
 const INITIAL_STATE: SyncState = { status: 'not-started', phase: 'initial' };
 
@@ -54,6 +55,7 @@ export const CloudSectionPanel = () => {
         <CloudSyncStatusRow phase={sync.phase} message={sync.error?.message} />
       ) : null}
       {mismatch ? <CloudKeyConflictSection onResolved={refreshKey} /> : null}
+      <CloudBackupNudge hasKey={hasKey} />
       <CloudEncryptionControls
         hasKey={hasKey}
         signedIn={user?.isLoggedIn ?? false}
