@@ -212,3 +212,11 @@ export interface DocInspectorConfig {
   highlightOverLimit: InspectorToggle;
   statusStages?: Partial<Record<DocStatus, boolean>>;
 }
+
+/** A rectangle on a PDF page, normalised to the page box as fractions in [0, 1]. */
+export interface PdfRect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
