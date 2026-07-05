@@ -91,6 +91,8 @@ export interface Note {
   createdAt: number;
   layout?: NoteLayout;
   typeVersion?: string;
+  /** Set on PDF source notes; points at a {@link MediaItem}. Unindexed. */
+  mediaId?: string;
 }
 
 export interface NoteAttachment {
