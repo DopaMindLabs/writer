@@ -27,6 +27,7 @@ const UNSYNCED = [
   'meta',
   'docUpdates',
   'media',
+  'pdfAnnotations',
 ] as const;
 
 /**

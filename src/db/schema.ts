@@ -237,3 +237,28 @@ export interface PdfRect {
   w: number;
   h: number;
 }
+
+/** `underline`/`strikethrough` are reserved for later; only `highlight` ships now. */
+export type PdfAnnotationKind = 'highlight';
+
+/**
+ * A highlight on an uploaded PDF, anchored to the media item (not a note) so it
+ * survives note deletion and has a single cascade path. `spaceId` is denormalised
+ * for space-scoped cascade and archive. Reuses the editor's {@link HighlightColor}
+ * palette so theming (including the AAA high-contrast themes) comes for free.
+ * Never synced (see cloud `UNSYNCED`).
+ */
+export interface PdfAnnotation {
+  id: string;
+  mediaId: string;
+  spaceId: string;
+  kind: PdfAnnotationKind;
+  page: number;
+  rects: PdfRect[];
+  quote: string;
+  color: HighlightColor;
+  note?: string;
+  author: string;
+  createdAt: number;
+  updatedAt: number;
+}
