@@ -12,7 +12,14 @@ import {
 import { openRow, type RowRef } from './crypto/envelope';
 import type { CloudKeyRing } from './crypto/keys';
 import { encodeRecoveryCode, decodeRecoveryCode } from './crypto/recoveryCode';
-import { saveDeviceKeyRing, forgetDeviceKeyRing } from './crypto/keyStore';
+import {
+  saveDeviceKeyRing,
+  forgetDeviceKeyRing,
+  savePendingEscrow,
+  loadPendingEscrow,
+  clearPendingEscrow,
+} from './crypto/keyStore';
+import { keyMismatchState } from './crypto/keyMismatch';
 
 /** The single escrow row id and the initial key epoch. */
 const ESCROW_ID = 'v1';
@@ -42,6 +49,11 @@ export const sealExistingRows = async (db: LoremDB = appDb): Promise<void> => {
  * Provision cloud encryption: mint a master secret, wrap it under the passphrase
  * for escrow, derive and store the device key ring, seal existing rows, and
  * return the one-time recovery code for the UI to show once.
+ *
+ * The escrow is held on the device ({@link savePendingEscrow}), **not** written
+ * to the synced `cloudCrypto` table. Reconciliation publishes it only once
+ * sign-in proves the account has no escrow yet — so two devices can never race
+ * their escrows over one row and clobber the account's key.
  */
 export const createCloudEncryption = async (
   passphrase: string,
@@ -50,10 +62,25 @@ export const createCloudEncryption = async (
   const master = generateMasterSecret();
   const iterations = await calibrateIterations();
   const escrow = await wrapMasterSecret(master, passphrase, iterations);
-  await db.cloudCrypto.put(escrow);
+  await savePendingEscrow(escrow);
   await saveDeviceKeyRing(await deriveKeyRing(master, escrow.epoch));
   await sealExistingRows(db);
   return encodeRecoveryCode(master);
+};
+
+/**
+ * Publish the device's held-back escrow to the synced `cloudCrypto` table, then
+ * drop the local copy. Called by reconciliation once sign-in has confirmed the
+ * account has no escrow of its own — this device's key becomes the account key.
+ * A no-op if nothing is pending.
+ */
+export const publishPendingEscrow = async (
+  db: LoremDB = appDb,
+): Promise<void> => {
+  const escrow = await loadPendingEscrow();
+  if (!escrow) return;
+  await db.cloudCrypto.put(escrow);
+  await clearPendingEscrow();
 };
 
 /**
@@ -104,7 +131,95 @@ export const recoverCloudEncryption = async (
   await sealExistingRows(db);
 };
 
-/** Forget the device's key ring only; the escrow and other devices are untouched. */
+/** Forget the device's key ring and any escrow it was holding; the published
+ *  escrow and other devices are untouched. */
 export const forgetThisDevice = async (): Promise<void> => {
   await forgetDeviceKeyRing();
+  await clearPendingEscrow();
+};
+
+/**
+ * Collect every synced-table row that decrypts under the *current* ring, one row
+ * at a time so a single undecryptable row (sealed under a different key) is
+ * skipped rather than failing the whole read. These are the rows this device
+ * wrote under its own key; the ones it skips are already under the account key.
+ */
+const collectDecryptableRows = async (
+  db: LoremDB,
+): Promise<Map<string, Row[]>> => {
+  const collected = new Map<string, Row[]>();
+  for (const table of SYNCED_TABLES) {
+    const store = db.table<Row>(table);
+    const keys = await store.toCollection().primaryKeys();
+    const rows: Row[] = [];
+    for (const key of keys) {
+      try {
+        const row = await store.get(key);
+        if (row) rows.push(row);
+      } catch {
+        // Sealed under the account's key — leave it; it is already correct once
+        // this device adopts that key below.
+      }
+    }
+    collected.set(table, rows);
+  }
+  return collected;
+};
+
+/**
+ * Resolve a key mismatch by adopting the account's existing key. Unwrap the
+ * account escrow with the passphrase it was created under (a wrong one throws
+ * {@link WrongPassphraseError} before anything changes), swap the device to that
+ * key, and re-seal the rows this device had written under its own key so they
+ * survive. The account master is then re-wrapped under the passphrase chosen at
+ * this device's setup, so the user keeps a single passphrase from here on.
+ */
+export const adoptAccountKey = async (
+  accountPassphrase: string,
+  keepPassphrase: string,
+  db: LoremDB = appDb,
+): Promise<void> => {
+  const serverEscrow = await db.cloudCrypto.get(ESCROW_ID);
+  invariant(serverEscrow, 'no account escrow to adopt');
+  const master = await unwrapMasterSecret(serverEscrow, accountPassphrase);
+  // Collect the device's own rows (readable under its current key) before the
+  // swap; reads are never blocked, so this runs even while mismatched.
+  const own = await collectDecryptableRows(db);
+  await saveDeviceKeyRing(await deriveKeyRing(master, serverEscrow.epoch));
+  // The device now holds the account key — the mismatch is resolved, so clear it
+  // before re-sealing (the write lock would otherwise refuse the bulkPut).
+  keyMismatchState.set(false);
+  for (const [table, rows] of own) {
+    if (rows.length > 0) await db.table<Row>(table).bulkPut(rows);
+  }
+  const iterations = await calibrateIterations();
+  await db.cloudCrypto.put(
+    await wrapMasterSecret(master, keepPassphrase, iterations),
+  );
+  await clearPendingEscrow();
+};
+
+/**
+ * The mismatch escape hatch: drop the account's rows this device cannot read
+ * (they were sealed under the key it lacks) so the deletions sync away, while
+ * keeping the notes this device wrote itself, then publish its held-back escrow
+ * so its key becomes the account's. Used when the account passphrase is lost.
+ */
+export const eraseSyncedContent = async (
+  db: LoremDB = appDb,
+): Promise<void> => {
+  for (const table of SYNCED_TABLES) {
+    const store = db.table<Row>(table);
+    const keys = await store.toCollection().primaryKeys();
+    for (const key of keys) {
+      try {
+        await store.get(key);
+      } catch {
+        // Sealed under the account's key this device does not hold: drop it.
+        await store.delete(key);
+      }
+    }
+  }
+  await publishPendingEscrow(db);
+  keyMismatchState.set(false);
 };

@@ -9,6 +9,8 @@ import { STORES } from '@/db/stores';
 import { generateMasterSecret, deriveKeyRing, type CloudKeyRing } from './keys';
 import { CIPHER_FIELD, SYNCED_TABLES } from './tableRules';
 import { createEncryptionMiddleware, type KeyProvider } from './middleware';
+import { CloudKeyMismatchError } from './errors';
+import { keyMismatchState } from './keyMismatch';
 
 /** Everything the app persists that must never leave the device (Task 6 excludes
  *  these from sync); listed here so the spike mirrors the real cloud config. */
@@ -84,6 +86,7 @@ beforeEach(async () => {
 
 afterEach(async () => {
   ring = null;
+  keyMismatchState.set(false);
   await db.delete();
   vi.restoreAllMocks();
 });
@@ -170,6 +173,23 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     const raw = await readRaw('docs', 'plain');
     expect(raw?.[CIPHER_FIELD]).toBeUndefined();
     expect(raw?.body).toBe('B');
+  });
+
+  it('P8: refuses content mutations under a key mismatch (no plaintext reaches the queue)', async () => {
+    signIn();
+    keyMismatchState.set(true);
+    await expect(
+      table('notes').put({
+        id: 'n8', spaceId: 's1', kind: 'text', createdAt: 1, title: 'TOPSECRET',
+      }),
+    ).rejects.toBeInstanceOf(CloudKeyMismatchError);
+    // Nothing was written, so nothing is queued for the server.
+    const mutations = await table('$notes_mutations').toArray();
+    expect(mutations).toHaveLength(0);
+    // A local-only (unsynced) table is unaffected by the content lock.
+    keyMismatchState.set(false);
+    await table('settings').put({ key: 'theme', value: 'ok' });
+    expect((await table('settings').get('theme'))?.value).toBe('ok');
   });
 
   it('P7: re-putting an already-sealed row preserves its ciphertext (no double-seal)', async () => {
