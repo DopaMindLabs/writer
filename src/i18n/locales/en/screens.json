@@ -884,6 +884,16 @@
     }
   },
   "mediaLibrary": {
-    "title": "Library"
+    "title": "Library",
+    "upload": {
+      "action": "Add PDF",
+      "busy": "Adding PDF…",
+      "reason": {
+        "mime": "{{name}} is not a PDF.",
+        "size": "{{name}} is larger than the 50 MB limit.",
+        "not-pdf": "{{name}} is not a valid PDF.",
+        "corrupt": "{{name}} could not be read — it may be damaged."
+      }
+    }
   }
 }
