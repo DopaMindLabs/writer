@@ -43,7 +43,7 @@ export const ScrollBar = forwardRef<
     )}
     {...props}
   >
-    <ScrollAreaPrimitiveThumb className="relative flex-1 rounded-full bg-ink-4" />
+    <ScrollAreaPrimitiveThumb className="relative flex-1 bg-ink-4" />
   </ScrollAreaPrimitiveScrollbar>
 ));
 ScrollBar.displayName = ScrollAreaPrimitiveScrollbar.displayName;

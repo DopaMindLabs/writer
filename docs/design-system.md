@@ -303,6 +303,80 @@ the hover-revealed `IconButton`).
 
 ---
 
+### 3.8 `MenuItem`
+
+A single row inside a menu (a `DropdownMenu`, or a `Popover` acting as an action list). A
+menu is a **list, not a card**: the row has no background at rest; hover and keyboard
+highlight paint the faint `paper-2` wash and darken the label from `ink-2` to `ink` (and the
+leading glyph from `ink-3` to `ink`). Square corners, sans 13 px label, an optional 14-px
+leading glyph slot, and an optional trailing slot — a mono `Kbd` shortcut, or a `Check` when
+`checked`. The destructive row shows the `X` icon (never Unicode, never a coloured row) and is
+placed under a `MenuDivider` by the caller; the ink-fill `dangerous` Button stays reserved for
+the `ConfirmDialog` footer alone (§4.5, §5a).
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `label` | `ReactNode` | — | Row label (omitted in `asChild` mode). |
+| `icon` | `LucideIcon` | — | Leading glyph; ignored when `danger` is set. |
+| `shortcut` | `ReactNode` | — | Trailing hint (compose a `Kbd`); hidden when `checked`. |
+| `danger` | boolean | `false` | Destructive row: shows the `X` icon. |
+| `checked` | boolean | `false` | Shows a trailing `Check`. |
+| `disabled` | boolean | `false` | Non-interactive; sets `aria-disabled`. |
+| `asChild` | boolean | `false` | Render the row as the provided child (e.g. a router `Link`). |
+
+Renders a `<button>` by default. Compose it via the parent's `asChild` to inherit menu
+semantics — `<DropdownMenuItem asChild>` gives it `role="menuitem"` and arrow-key navigation,
+`<PopoverClose asChild>` makes it dismiss the panel — so every menu shares one row grammar
+instead of hand-rolling its own.
+
+> **In this repo:** `src/components/ui/MenuItem.tsx` (+ `MenuItem.recipe.ts`).
+
+---
+
+### 3.9 `Kbd`
+
+A keyboard-shortcut hint in the mono meta voice (10 px, `ink-4`, letter-spaced). The
+modifier is **derived from the running platform at render** — ⌘ on macOS, Ctrl on
+Linux/Windows — so each user sees the key they actually press. Write chords
+platform-neutrally and never hard-code a glyph: `mod` resolves to the platform modifier,
+alongside `shift` / `alt` / `enter`, joined with `+` (e.g. `mod+,`, `mod+shift+m`, or a bare
+`?`). On Apple the glyphs sit adjacent (`⌘⇧M`); elsewhere the words join with `+`
+(`Ctrl+Shift+M`). Locale strings hold only the bare key — the modifier is never translated
+or stored.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `keys` | string | — | A platform-neutral chord (`mod`/`shift`/`alt`/`enter` + keys, `+`-joined). |
+
+Renders a semantic `<kbd>`. The handler side stays on `event.metaKey || event.ctrlKey`
+(§11); `Kbd` is its display companion.
+
+> **In this repo:** `src/components/ui/Kbd.tsx`, backed by
+> `src/lib/shortcuts/platform.ts` (`isApplePlatform` / `getModifierLabel`, injectable for
+> tests).
+
+---
+
+### 3.10 `SectionLabel`
+
+The one uppercase-mono heading for a group of rows — the "APPEARANCE" / "WRITING" labels in
+Quick Settings, the group eyebrows inside menus, the settings-nav group headings. It is a
+named specialisation of `Eyebrow` (§3.1) that shares the same recipe
+(`Eyebrow.recipe.ts`), narrowed to the group-label sizes and tones — so every section label
+reads identically instead of being hand-rolled per surface. `DropdownMenuLabel` is rebased
+onto the same recipe.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `size` | `9 \| 10` | `10` | `9` for the tightest group eyebrow, `10` for a standard section label. |
+| `tone` | `"ink3" \| "ink4"` | `"ink3"` | Label colour. |
+| `asChild` | boolean | `false` | Render as the provided element (e.g. an `<h2>` for a labelled landmark). |
+
+> **In this repo:** `src/components/ui/SectionLabel.tsx` (over `Eyebrow` /
+> `Eyebrow.recipe.ts`).
+
+---
+
 ## 4. Forms
 
 Every form primitive follows the same rule set: hairline borders, ink fill on active focus,

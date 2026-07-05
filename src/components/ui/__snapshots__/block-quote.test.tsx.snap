@@ -4,12 +4,12 @@ exports[`BlockQuote > snapshot > should match the snapshot with and without a ci
 <div>
   <div>
     <blockquote
-      class="my-6 border-l-2 border-ink px-5 py-1 font-serif text-[18px] italic leading-[1.5] text-ink [&>p+p]:mt-2"
+      class="my-6 border-l border-ink px-5 py-1 font-serif text-[18px] italic leading-[1.5] text-ink [&>p+p]:mt-2"
     >
       The unexamined life is not worth living.
     </blockquote>
     <blockquote
-      class="my-6 border-l-2 border-ink px-5 py-1 font-serif text-[18px] italic leading-[1.5] text-ink [&>p+p]:mt-2"
+      class="my-6 border-l border-ink px-5 py-1 font-serif text-[18px] italic leading-[1.5] text-ink [&>p+p]:mt-2"
     >
       To be, or not to be.
       <div
