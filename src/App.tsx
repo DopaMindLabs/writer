@@ -17,6 +17,7 @@ import { A11yPreferenceProvider } from '@/theme/A11yPreferenceProvider';
 import { SyncScheduler } from '@/lib/sync/SyncScheduler';
 import { hydrateCloudDevice } from '@/lib/cloud/cloudClient';
 import { startCloudReconciler } from '@/lib/cloud/reconcile';
+import { startEscrowReconciler } from '@/lib/cloud/escrowReconcile';
 import { resetAndReseed } from '@/db/seed';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
 import { HomeScreen } from '@/screens/global/Home';
@@ -94,6 +95,7 @@ const useAppBoot = (): {
   useEffect(() => {
     let cancelled = false;
     let stopReconciler: (() => void) | null = null;
+    let stopEscrowReconciler: (() => void) | null = null;
     const run = async () => {
       // Load the persisted device key before anything reads or writes the cloud
       // database, so encrypted reads decrypt and writes seal from the first tick.
@@ -101,6 +103,9 @@ const useAppBoot = (): {
       // Reconcile documents pulled from other devices into the live editor/CRDT.
       // A no-op on a plain local database.
       stopReconciler = startCloudReconciler();
+      // Reconcile the device's escrow against the account's after sign-in:
+      // publish it if the account has none, or flag a key mismatch to resolve.
+      stopEscrowReconciler = startEscrowReconciler();
       const url = new URL(window.location.href);
       if (isReseedParamEnabled() && url.searchParams.has('reseed')) {
         await resetAndReseed();
@@ -118,6 +123,7 @@ const useAppBoot = (): {
     return () => {
       cancelled = true;
       stopReconciler?.();
+      stopEscrowReconciler?.();
     };
   }, []);
 

@@ -10,6 +10,8 @@ import Dexie, {
 import type { CloudKeyRing } from './keys';
 import { isEncryptedTable, plaintextFieldsFor } from './tableRules';
 import { sealRow, openRow } from './envelope';
+import { CloudKeyMismatchError } from './errors';
+import { keyMismatchState } from './keyMismatch';
 
 /**
  * A synchronous view of the active key ring for the encryption middleware.
@@ -88,11 +90,22 @@ const openMany = (
  * key/query paths instead (read via `get`/`toArray`, then write explicitly);
  * callers are adapted where the encrypted database is constructed.
  */
-const wrapTable = (table: DBCoreTable, provider: KeyProvider): DBCoreTable => {
+const wrapTable = (
+  table: DBCoreTable,
+  provider: KeyProvider,
+  isLocked: () => boolean,
+): DBCoreTable => {
   if (!isEncryptedTable(table.name)) return table;
   return {
     ...table,
     mutate: async (req: DBCoreMutateRequest) => {
+      // Under a detected key mismatch the account is protected by a key this
+      // device does not hold. Refuse to seal and queue new content — a push
+      // would pollute the account with rows under the wrong key. Deletes still
+      // pass, so the mismatch escape hatch can drop unreadable rows.
+      if (isLocked() && (req.type === 'add' || req.type === 'put')) {
+        throw new CloudKeyMismatchError();
+      }
       const ring = provider.current();
       return table.mutate(ring ? await inTx(sealMutate(table, ring, req)) : req);
     },
@@ -128,12 +141,13 @@ const wrapTable = (table: DBCoreTable, provider: KeyProvider): DBCoreTable => {
  */
 export const createEncryptionMiddleware = (
   provider: KeyProvider,
+  isLocked: () => boolean = () => keyMismatchState.current(),
 ): Middleware<DBCore> => ({
   stack: 'dbcore',
   name: 'lipsumEncryption',
   level: 10,
   create: (down: DBCore) => ({
     ...down,
-    table: (name: string) => wrapTable(down.table(name), provider),
+    table: (name: string) => wrapTable(down.table(name), provider, isLocked),
   }),
 });
