@@ -247,4 +247,54 @@ describe('QuickSettingsPopover', () => {
       );
     });
   });
+
+  describe('mobile', () => {
+    const realMatchMedia = window.matchMedia;
+    afterEach(() => {
+      window.matchMedia = realMatchMedia;
+    });
+
+    const setViewport = (mobile: boolean) => {
+      window.matchMedia = ((query: string) => ({
+        matches: mobile && query.includes('max-width: 767px'),
+        media: query,
+        onchange: null,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        addListener: () => {},
+        removeListener: () => {},
+        dispatchEvent: () => false,
+      })) as unknown as typeof window.matchMedia;
+    };
+
+    it('hides the help tour section on mobile, keeping the real controls', () => {
+      setViewport(true);
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      // The controls that matter on a phone stay.
+      expect(
+        screen.getByTestId('quick-settings-section-appearance'),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId('quick-settings-section-writing'),
+      ).toBeInTheDocument();
+      // The guided-tour list is dropped.
+      expect(
+        screen.queryByTestId('quick-settings-section-help-tours'),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('quick-settings-tour-welcome'),
+      ).not.toBeInTheDocument();
+    });
+
+    it('keeps the help tour section on desktop widths', () => {
+      setViewport(false);
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      expect(
+        screen.getByTestId('quick-settings-section-help-tours'),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId('quick-settings-tour-welcome'),
+      ).toBeInTheDocument();
+    });
+  });
 });
