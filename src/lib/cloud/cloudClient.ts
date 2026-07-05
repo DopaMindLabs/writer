@@ -22,6 +22,8 @@ export {
   unlockCloudEncryption,
   recoverCloudEncryption,
   forgetThisDevice,
+  adoptAccountKey,
+  eraseSyncedContent,
 } from './setup';
 
 interface CloudApi {
