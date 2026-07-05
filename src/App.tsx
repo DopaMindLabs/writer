@@ -18,6 +18,7 @@ import { SyncScheduler } from '@/lib/sync/SyncScheduler';
 import { hydrateCloudDevice } from '@/lib/cloud/cloudClient';
 import { startCloudReconciler } from '@/lib/cloud/reconcile';
 import { startEscrowReconciler } from '@/lib/cloud/escrowReconcile';
+import { keyMismatchState } from '@/lib/cloud/crypto/keyMismatch';
 import { resetAndReseed } from '@/db/seed';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
 import { HomeScreen } from '@/screens/global/Home';
@@ -110,6 +111,14 @@ const useAppBoot = (): {
       if (isReseedParamEnabled() && url.searchParams.has('reseed')) {
         await resetAndReseed();
         url.searchParams.delete('reseed');
+        window.history.replaceState({}, '', url.pathname + url.search);
+      }
+      // E2E/dev affordance: force the key-mismatch signal so the conflict UI can
+      // be driven headlessly (the real trigger needs a live two-device sign-in).
+      // Applied after any reseed so the reseed's own writes are not blocked.
+      if (isReseedParamEnabled() && url.searchParams.has('cloud-mismatch')) {
+        keyMismatchState.set(true);
+        url.searchParams.delete('cloud-mismatch');
         window.history.replaceState({}, '', url.pathname + url.search);
       }
     };

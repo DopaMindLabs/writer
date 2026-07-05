@@ -69,6 +69,33 @@ test.describe('cloud sync beta gating', () => {
   });
 });
 
+test.describe('cloud sync key conflict', () => {
+  test('surfaces the conflict banner and resolves it via the erase step', async ({
+    page,
+  }) => {
+    // The real trigger (a fingerprint mismatch) needs a live two-device sign-in;
+    // the ?cloud-mismatch affordance forces the signal so the conflict surface is
+    // drivable headlessly. It is gated to the e2e/dev build only.
+    await page.goto('/?cloud-sync=on&reseed=1&cloud-mismatch=1#/settings?tab=account');
+    await expect(page.getByTestId('cloud-section')).toBeVisible();
+    await expect(page.getByText(/locked on another device/i)).toBeVisible();
+
+    // Open the resolution dialog and reach both steps.
+    await page.getByRole('button', { name: /unlock now/i }).click();
+    await expect(page.getByTestId('cloud-conflict-dialog')).toBeVisible();
+    await expect(page.getByTestId('cloud-conflict-passphrase')).toBeVisible();
+    await page
+      .getByRole('button', { name: /don't have that passphrase/i })
+      .click();
+    await expect(page.getByTestId('cloud-conflict-erase')).toBeVisible();
+
+    // Erasing resolves the mismatch: the banner and dialog fall away.
+    await page.getByTestId('cloud-conflict-erase').click();
+    await expect(page.getByText(/locked on another device/i)).toHaveCount(0);
+    await expect(page.getByTestId('cloud-conflict-dialog')).toHaveCount(0);
+  });
+});
+
 test.describe('cloud sync encrypted reads (real IndexedDB)', () => {
   test('reads content back after unlock without an IndexedDB transaction crash', async ({
     page,
