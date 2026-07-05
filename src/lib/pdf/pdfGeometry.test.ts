@@ -29,6 +29,22 @@ describe('pdfGeometry', () => {
     expect(rectToNormalized(box(150, 10, 20, 20), PAGE)).toBeNull();
   });
 
+  it('rejects a rect wholly above the page', () => {
+    // Regression: the old Math.max(0, …) clamp turned a negative top offset
+    // into 0 while keeping the full height, recording a phantom highlight at
+    // the top of the page instead of rejecting a rect that never overlaps it.
+    expect(rectToNormalized(box(10, -50, 30, 40), PAGE)).toBeNull();
+  });
+
+  it('rejects a rect wholly left of the page', () => {
+    expect(rectToNormalized(box(-50, 10, 30, 40), PAGE)).toBeNull();
+  });
+
+  it('clips a rect that partially overlaps the top-left corner', () => {
+    const norm = rectToNormalized(box(-10, -10, 30, 30), PAGE);
+    expect(norm).toEqual({ x: 0, y: 0, w: 0.2, h: 0.1 });
+  });
+
   it('returns null for a degenerate page box', () => {
     expect(rectToNormalized(box(0, 0, 10, 10), box(0, 0, 0, 0))).toBeNull();
   });

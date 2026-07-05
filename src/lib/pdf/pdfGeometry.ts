@@ -13,9 +13,11 @@ export interface PdfSelectionCapture {
 }
 
 /**
- * Normalises a client rectangle to fractions of the page box, clamped to the
- * page. Returns null for a degenerate page box or a rectangle that starts beyond
- * the page bounds.
+ * Normalises a client rectangle to fractions of the page box. Clips to the
+ * intersection of the two rectangles first, so a rect that never overlaps the
+ * page (e.g. on an adjacent page, or above/left of it) is rejected outright
+ * rather than clamped into a false highlight at the page's edge. Returns null
+ * for a degenerate page box or when the rects do not overlap.
  */
 export const rectToNormalized = (
   clientRect: DOMRect,
@@ -23,18 +25,17 @@ export const rectToNormalized = (
 ): PdfRect | null => {
   if (pageBox.width === 0 || pageBox.height === 0) return null;
 
-  const x = Math.max(0, clientRect.left - pageBox.left) / pageBox.width;
-  const y = Math.max(0, clientRect.top - pageBox.top) / pageBox.height;
-  const w = clientRect.width / pageBox.width;
-  const h = clientRect.height / pageBox.height;
-
-  if (x > 1 || y > 1) return null;
+  const left = Math.max(clientRect.left, pageBox.left);
+  const top = Math.max(clientRect.top, pageBox.top);
+  const right = Math.min(clientRect.right, pageBox.right);
+  const bottom = Math.min(clientRect.bottom, pageBox.bottom);
+  if (right <= left || bottom <= top) return null;
 
   return {
-    x: Math.min(1, x),
-    y: Math.min(1, y),
-    w: Math.min(1 - Math.min(1, x), w),
-    h: Math.min(1 - Math.min(1, y), h),
+    x: (left - pageBox.left) / pageBox.width,
+    y: (top - pageBox.top) / pageBox.height,
+    w: (right - left) / pageBox.width,
+    h: (bottom - top) / pageBox.height,
   };
 };
 
