@@ -25,7 +25,7 @@ exports[`Popover primitives > snapshot > should match the snapshot of the open p
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 6px); min-width: max-content; z-index: auto; --radix-popper-available-width: -16px; --radix-popper-available-height: -16px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      class="z-50 border border-ink bg-paper text-ink shadow-[0_18px_36px_-14px_rgba(0,0,0,0.22)] outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+      class="z-50 border border-rule bg-paper text-ink shadow-overlay-popover outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
       data-align="start"
       data-side="bottom"
       data-state="open"

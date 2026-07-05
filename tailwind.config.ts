@@ -35,6 +35,15 @@ const config: Config = {
         'success-bg': 'var(--success-bg)',
         info: 'var(--info)',
         'info-bg': 'var(--info-bg)',
+        scrim: 'var(--scrim)',
+        'scrim-drawer': 'var(--scrim-drawer)',
+      },
+      boxShadow: {
+        'overlay-tooltip': 'var(--shadow-overlay-tooltip)',
+        'overlay-popover': 'var(--shadow-overlay-popover)',
+        'overlay-dialog': 'var(--shadow-overlay-dialog)',
+        'overlay-drawer': 'var(--shadow-overlay-drawer)',
+        'overlay-sheet': 'var(--shadow-overlay-sheet)',
       },
       fontFamily: {
         sans: ['Geist', 'system-ui', '-apple-system', 'sans-serif'],
