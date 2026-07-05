@@ -16,7 +16,7 @@ const CLOUD_URL = 'https://spike.dexie.cloud';
 /** Mirrors buildDb's local-only list; the escrow table (`cloudCrypto`) syncs. */
 const UNSYNCED = [
   'settings', 'backups', 'syncs', 'syncConfigs',
-  'docInspectorConfigs', 'meta', 'docUpdates', 'media',
+  'docInspectorConfigs', 'meta', 'docUpdates', 'media', 'pdfAnnotations',
 ];
 
 /** Primary-key path a STORES spec declares, stripped of Dexie modifiers. */

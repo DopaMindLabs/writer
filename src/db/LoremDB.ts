@@ -18,6 +18,7 @@ import type {
   SyncConfig,
   DocInspectorConfig,
   MediaItem,
+  PdfAnnotation,
 } from './schema';
 import type { EscrowRecord } from '@/lib/cloud/crypto/keys';
 import { BASE_STORES, PDF_STORES } from './stores';
@@ -53,6 +54,7 @@ export class LoremDB extends Dexie {
   syncConfigs!: Table<SyncConfig, string>;
   docInspectorConfigs!: Table<DocInspectorConfig, string>;
   media!: Table<MediaItem, string>;
+  pdfAnnotations!: Table<PdfAnnotation, string>;
   /** Present only on cloud-enabled instances (`options.cloud`). */
   cloudCrypto!: Table<EscrowRecord, string>;
 

@@ -9,7 +9,7 @@ describe('LoremDB schema', () => {
     expect(db.verno).toBe(2);
   });
 
-  it('exposes every table, including docUpdates and media', async () => {
+  it('exposes every table, including docUpdates, media and pdfAnnotations', async () => {
     await db.open();
     const names = db.tables.map((t) => t.name).sort();
     expect(names).toEqual(
@@ -26,6 +26,7 @@ describe('LoremDB schema', () => {
         'noteAttachments',
         'notes',
         'palettes',
+        'pdfAnnotations',
         'revisions',
         'sections',
         'settings',
