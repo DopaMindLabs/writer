@@ -38,7 +38,7 @@ exports[`FocusRail > renders space dots with active highlight 1`] = `
       aria-expanded="false"
       aria-haspopup="dialog"
       aria-label="LIpsum Writer"
-      class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink"
+      class="inline-flex items-center justify-center transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink"
       data-state="closed"
       type="button"
     >
