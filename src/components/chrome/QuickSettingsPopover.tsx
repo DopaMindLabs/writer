@@ -13,6 +13,7 @@ import { TOUR_IDS, TOURS, type TourId } from '@/tours/tours';
 import { useTour } from '@/tours/useTour';
 import { getCompleted } from '@/tours/storage';
 import { routes } from '@/lib/routes';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
 const THEMES: { id: Theme; labelKey: string; titleKey: string }[] = [
@@ -337,6 +338,10 @@ export const QuickSettingsPopover = () => {
   const setFloatingToolbar = useUI((s) => s.setFloatingToolbarEnabled);
   const [params, setParams] = useSearchParams();
   const focused = params.get('focus') === '1';
+  // The guided-tour list is desk-work: it belongs on the roomy desktop popover,
+  // not on the thumb-height mobile sheet where it pushes the real controls
+  // (theme, width, focus) below the fold.
+  const isMobile = useMediaQuery('(max-width: 767px)');
 
   const handleFocus = () => {
     const next = new URLSearchParams(params);
@@ -389,7 +394,7 @@ export const QuickSettingsPopover = () => {
         />
       </Row>
 
-      <HelpToursSection />
+      {!isMobile && <HelpToursSection />}
 
       <MoreSection />
     </div>
