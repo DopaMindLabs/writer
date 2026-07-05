@@ -32,6 +32,7 @@ import { CitationsScreen } from '@/screens/space/Citations';
 import { TemplatesScreen } from '@/screens/global/Templates';
 import { HelpScreen } from '@/screens/global/Help';
 import { NotFoundScreen } from '@/screens/global/NotFound';
+import { RouteErrorScreen } from '@/components/errors/RouteErrorScreen';
 
 const RootLayout = () => {
   useGlobalShortcuts();
@@ -52,6 +53,7 @@ const createAppRouter =
 const router = createAppRouter([
   {
     element: <RootLayout />,
+    errorElement: <RouteErrorScreen />,
     children: [
       { path: ROUTE_PATHS[RouteName.Home], element: <HomeScreen /> },
       { path: ROUTE_PATHS[RouteName.About], element: <AboutScreen /> },
