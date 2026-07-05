@@ -21,7 +21,9 @@ describe('STORES', () => {
 
   it('keeps the base version(1) schema free of the PDF tables', () => {
     expect('media' in BASE_STORES).toBe(false);
+    expect('pdfAnnotations' in BASE_STORES).toBe(false);
     expect('media' in PDF_STORES).toBe(true);
+    expect('pdfAnnotations' in PDF_STORES).toBe(true);
   });
 
   it('merges base and PDF specs into the full STORES map', () => {

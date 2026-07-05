@@ -34,6 +34,7 @@ export const BASE_STORES: Record<string, string> = {
  */
 export const PDF_STORES: Record<string, string> = {
   media: 'id, spaceId, createdAt, [spaceId+createdAt]',
+  pdfAnnotations: 'id, mediaId, spaceId, page, createdAt, [mediaId+page]',
 };
 
 /** The full schema across all versions — the single source of truth for table names. */
