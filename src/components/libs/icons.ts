@@ -44,5 +44,7 @@ export {
   Sparkles,
   Trash2,
   X,
+  ZoomIn,
+  ZoomOut,
   type LucideIcon,
 } from 'lucide-react';

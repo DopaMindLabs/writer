@@ -907,6 +907,23 @@
       "deleteDescription": "Its highlights will be deleted, and any notes will keep their text but lose the source.",
       "deleteConfirm": "Delete",
       "deleteCancel": "Cancel"
+    },
+    "viewer": {
+      "prevPage": "Previous page",
+      "nextPage": "Next page",
+      "zoomOut": "Zoom out",
+      "zoomIn": "Zoom in",
+      "pageReadout": "Page {{page}} / {{total}}",
+      "pageLabel": "Page {{page}} of {{total}}",
+      "loading": "Rendering page…",
+      "errorTitle": "This PDF could not be displayed.",
+      "errorBody": "The file may be damaged, or the reader could not start.",
+      "retry": "Try again"
     }
+  },
+  "mediaViewer": {
+    "back": "Back to library",
+    "missingTitle": "PDF not found",
+    "missingCaption": "This PDF is no longer in the library."
   }
 }
