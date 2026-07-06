@@ -94,4 +94,24 @@ describe('usePdfDocument', () => {
     const { result } = renderHook(() => usePdfDocument(null));
     expect(result.current.state.status).toBe('loading');
   });
+
+  it('surfaces an error when the bytes cannot be read', async () => {
+    const failing = {
+      arrayBuffer: () => Promise.reject(new Error('unreadable')),
+    } as unknown as Blob;
+    const { result } = renderHook(() => usePdfDocument(failing));
+    await waitFor(() => expect(result.current.state.status).toBe('error'));
+  });
+
+  it('ignores a reload before the bytes are ready', async () => {
+    const blob = pdfBlob();
+    const { result } = renderHook(() => usePdfDocument(blob));
+    expect(result.current.state.status).toBe('loading');
+    act(() => {
+      result.current.reload(); // master not yet read — a no-op, stays loading
+    });
+    expect(result.current.state.status).toBe('loading');
+    // Let the pending read settle so its state update is wrapped in act().
+    await waitFor(() => expect(result.current.state.status).toBe('ready'));
+  });
 });

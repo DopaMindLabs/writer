@@ -45,9 +45,11 @@ beforeEach(() => {
 });
 
 describe('PdfViewer', () => {
-  it('shows the skeleton while loading', () => {
+  it('shows the skeleton while loading', async () => {
     renderWithProviders(<PdfViewer blob={blob()} title="Paper.pdf" />);
     expect(screen.getByTestId('pdf-status-loading')).toBeInTheDocument();
+    // Let the async byte read settle so the state update is wrapped in act().
+    await screen.findByTestId('fake-page');
   });
 
   it('renders the page and toolbar once loaded', async () => {
