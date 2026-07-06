@@ -15,6 +15,7 @@
  * asymmetry we need: exportable public, sealed private.
  */
 import { invariant } from '@/lib/invariant';
+import { asBuffer } from './bytes';
 
 export type SignAlg = 'Ed25519' | 'ECDSA-P256';
 export type AgreeAlg = 'X25519' | 'ECDH-P256';
@@ -39,13 +40,6 @@ export interface MemberPublic {
   agreeAlg: AgreeAlg;
   agreePubRaw: Uint8Array;
 }
-
-/** WebCrypto wants an ArrayBuffer-backed BufferSource; copy the exact view. */
-const asBuffer = (bytes: Uint8Array): ArrayBuffer =>
-  bytes.buffer.slice(
-    bytes.byteOffset,
-    bytes.byteOffset + bytes.byteLength,
-  ) as ArrayBuffer;
 
 const signKeyParams = (alg: SignAlg): EcKeyGenParams | Algorithm =>
   alg === 'Ed25519' ? { name: 'Ed25519' } : { name: 'ECDSA', namedCurve: 'P-256' };

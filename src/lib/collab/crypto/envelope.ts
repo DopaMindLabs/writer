@@ -16,6 +16,7 @@
  * authenticated decryption failed — e.g. the wrong content epoch's key).
  */
 import { signBytes, verifyBytes, type MemberKeys, type MemberPublic } from './memberKeys';
+import { asBuffer, utf8, concatLengthPrefixed } from './bytes';
 
 export type FrameType = 'update' | 'snapshot' | 'roster' | 'wrappedKey' | 'join' | 'awareness';
 export type Role = 'owner' | 'writer' | 'reader';
@@ -63,34 +64,6 @@ export class FrameIntegrityError extends Error {
 
 /** Only content-bearing frames are gated on write authority. */
 const CONTENT_TYPES: ReadonlySet<FrameType> = new Set(['update', 'snapshot']);
-
-const utf8 = (value: string): Uint8Array => new TextEncoder().encode(value);
-
-const asBuffer = (bytes: Uint8Array): ArrayBuffer =>
-  bytes.buffer.slice(
-    bytes.byteOffset,
-    bytes.byteOffset + bytes.byteLength,
-  ) as ArrayBuffer;
-
-const u32 = (n: number): Uint8Array => {
-  const out = new Uint8Array(4);
-  new DataView(out.buffer).setUint32(0, n, false);
-  return out;
-};
-
-/** Unambiguous length-prefixed concatenation, so field boundaries are fixed. */
-const concatLengthPrefixed = (parts: Uint8Array[]): Uint8Array => {
-  const total = parts.reduce((sum, part) => sum + 4 + part.byteLength, 0);
-  const out = new Uint8Array(total);
-  let offset = 0;
-  for (const part of parts) {
-    out.set(u32(part.byteLength), offset);
-    offset += 4;
-    out.set(part, offset);
-    offset += part.byteLength;
-  }
-  return out;
-};
 
 const frameAad = (roomId: string, type: FrameType, epoch: number): Uint8Array =>
   utf8(`lipsum-collab:1:${roomId}:${type}:${String(epoch)}`);

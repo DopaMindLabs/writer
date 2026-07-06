@@ -7,13 +7,7 @@
  * authorise writes — not on the key being non-extractable in memory, since every
  * member holds it by design.
  */
-
-/** WebCrypto wants an ArrayBuffer-backed BufferSource; copy the exact view. */
-const asBuffer = (bytes: Uint8Array): ArrayBuffer =>
-  bytes.buffer.slice(
-    bytes.byteOffset,
-    bytes.byteOffset + bytes.byteLength,
-  ) as ArrayBuffer;
+import { asBuffer } from './bytes';
 
 export const CONTENT_KEY_BITS = 256;
 
