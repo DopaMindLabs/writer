@@ -53,6 +53,17 @@ const seedSpace = async (spaceId: string) => {
     key: collabSeedKey(`doc-${spaceId}`),
     value: { seededAt: FIXED_TIME },
   });
+  await db.shares.put({
+    docId: `doc-${spaceId}`,
+    roomId: `room-${spaceId}`,
+    relayUrl: 'wss://relay.example',
+    role: 'owner',
+    contentEpoch: 1,
+    seededBy: 'author-1',
+    seededAt: FIXED_TIME,
+    rosterVersion: 1,
+    createdAt: FIXED_TIME,
+  });
 };
 
 describe('deleteSpaceCascade', () => {
@@ -81,6 +92,7 @@ describe('deleteSpaceCascade', () => {
 
     expect(await db.docUpdates.where('docId').equals('doc-s1').count()).toBe(0);
     expect(await db.meta.get(collabSeedKey('doc-s1'))).toBeUndefined();
+    expect(await db.shares.get('doc-s1')).toBeUndefined();
   });
 
   it('leaves other spaces’ rows untouched', async () => {
@@ -92,5 +104,6 @@ describe('deleteSpaceCascade', () => {
     expect(await db.revisions.get('rev-s2')).toBeDefined();
     expect(await db.docUpdates.where('docId').equals('doc-s2').count()).toBe(1);
     expect(await db.meta.get(collabSeedKey('doc-s2'))).toBeDefined();
+    expect(await db.shares.get('doc-s2')).toBeDefined();
   });
 });

@@ -17,6 +17,7 @@ import type {
   SyncEntry,
   SyncConfig,
   DocInspectorConfig,
+  Share,
 } from './schema';
 import type { EscrowRecord } from '@/lib/cloud/crypto/keys';
 import { STORES } from './stores';
@@ -51,6 +52,7 @@ export class LoremDB extends Dexie {
   syncs!: Table<SyncEntry, string>;
   syncConfigs!: Table<SyncConfig, string>;
   docInspectorConfigs!: Table<DocInspectorConfig, string>;
+  shares!: Table<Share, string>;
   /** Present only on cloud-enabled instances (`options.cloud`). */
   cloudCrypto!: Table<EscrowRecord, string>;
 

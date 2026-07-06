@@ -111,6 +111,17 @@ describe('restoreSpaceArchive', () => {
       createdAt: 1,
     });
     await db.meta.put({ key: collabSeedKey('d1'), value: { seededAt: 1 } });
+    await db.shares.put({
+      docId: 'd1',
+      roomId: 'room-d1',
+      relayUrl: 'wss://relay.example',
+      role: 'owner',
+      contentEpoch: 1,
+      seededBy: 'author-1',
+      seededAt: 1,
+      rosterVersion: 1,
+      createdAt: 1,
+    });
     await mutateSpace();
 
     await restoreSpaceArchive('s1', await parseSpaceArchive(blob));
@@ -118,6 +129,8 @@ describe('restoreSpaceArchive', () => {
     const rows = await db.docUpdates.where('docId').equals('d1').toArray();
     expect(rows).toHaveLength(1); // stale log cleared, exactly one fresh seed
     expect(await db.meta.get(collabSeedKey('d1'))).toBeDefined();
+    // A restored doc is unshared — its stale room membership is cleared.
+    expect(await db.shares.get('d1')).toBeUndefined();
 
     const restored = await db.docs.get('d1');
     expect(restored).toBeDefined();

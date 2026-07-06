@@ -28,6 +28,7 @@ describe('LoremDB schema', () => {
         'revisions',
         'sections',
         'settings',
+        'shares',
         'spaces',
         'syncs',
         'syncConfigs',

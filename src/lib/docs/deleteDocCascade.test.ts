@@ -22,7 +22,7 @@ import { deleteDocCascade } from './deleteDocCascade';
 type Row = Record<string, unknown>;
 const UNSYNCED = [
   'settings', 'backups', 'syncs', 'syncConfigs',
-  'docInspectorConfigs', 'meta', 'docUpdates',
+  'docInspectorConfigs', 'meta', 'docUpdates', 'shares',
 ];
 
 const seedDocGraph = async (docId: string): Promise<void> => {
@@ -43,6 +43,17 @@ const seedDocGraph = async (docId: string): Promise<void> => {
     createdAt: FIXED_TIME,
   });
   await db.meta.put({ key: collabSeedKey(docId), value: { seededAt: FIXED_TIME } });
+  await db.shares.put({
+    docId,
+    roomId: `room-${docId}`,
+    relayUrl: 'wss://relay.example',
+    role: 'owner',
+    contentEpoch: 1,
+    seededBy: 'author-1',
+    seededAt: FIXED_TIME,
+    rosterVersion: 1,
+    createdAt: FIXED_TIME,
+  });
 };
 
 describe('deleteDocCascade', () => {
@@ -67,6 +78,12 @@ describe('deleteDocCascade', () => {
     expect(await db.meta.get(collabSeedKey('d1'))).toBeUndefined();
   });
 
+  it('clears the collaboration-room membership for the deleted doc', async () => {
+    await deleteDocCascade('d1');
+
+    expect(await db.shares.get('d1')).toBeUndefined();
+  });
+
   it('leaves other documents untouched', async () => {
     await deleteDocCascade('d1');
 
@@ -75,6 +92,7 @@ describe('deleteDocCascade', () => {
     expect(await db.revisions.where('docId').equals('d2').count()).toBe(1);
     expect(await db.docUpdates.where('docId').equals('d2').count()).toBe(1);
     expect(await db.meta.get(collabSeedKey('d2'))).toBeDefined();
+    expect(await db.shares.get('d2')).toBeDefined();
   });
 
   it('unlinks Brain Space notes that pointed at the deleted doc, keeping the note', async () => {

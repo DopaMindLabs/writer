@@ -19,6 +19,7 @@ export const deleteSpaceCascade = async (spaceId: string): Promise<void> => {
       db.syncs,
       db.syncConfigs,
       db.docUpdates,
+      db.shares,
       db.meta,
     ],
     async () => {
@@ -27,10 +28,12 @@ export const deleteSpaceCascade = async (spaceId: string): Promise<void> => {
         await db.annotations.where('docId').anyOf(docIds).delete();
         await db.revisions.where('docId').anyOf(docIds).delete();
         // Collaboration state is keyed by docId and lives outside the doc row:
-        // clear the CRDT update log and the seed markers so a later restore or
-        // import of the same id starts from a clean, correctly-seeded state.
+        // clear the CRDT update log, the seed markers and the room membership so
+        // a later restore or import of the same id starts from a clean,
+        // correctly-seeded, unshared state.
         await db.docUpdates.where('docId').anyOf(docIds).delete();
         await db.meta.bulkDelete(docIds.map(collabSeedKey));
+        await db.shares.bulkDelete(docIds);
       }
       await db.docs.where({ spaceId }).delete();
       await db.sections.where({ spaceId }).delete();

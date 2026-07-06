@@ -23,4 +23,5 @@ export const STORES: Record<string, string> = {
   syncs: 'id, spaceId, when, [spaceId+when]',
   syncConfigs: 'spaceId',
   docInspectorConfigs: 'spaceId',
+  shares: 'docId, roomId',
 };

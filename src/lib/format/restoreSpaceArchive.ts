@@ -19,6 +19,7 @@ const RESTORE_TABLES = [
   db.palettes,
   db.docInspectorConfigs,
   db.docUpdates,
+  db.shares,
   db.meta,
 ];
 
@@ -27,10 +28,12 @@ const deleteSpaceContent = async (spaceId: string): Promise<void> => {
   if (docIds.length > 0) {
     await db.annotations.where('docId').anyOf(docIds).delete();
     await db.revisions.where('docId').anyOf(docIds).delete();
-    // Clear the pre-restore CRDT log and seed markers so the restored docs
-    // re-seed cleanly from their archived bodies instead of replaying stale state.
+    // Clear the pre-restore CRDT log, seed markers and room membership so the
+    // restored docs re-seed cleanly from their archived bodies — as unshared,
+    // local docs — instead of replaying stale state.
     await db.docUpdates.where('docId').anyOf(docIds).delete();
     await db.meta.bulkDelete(docIds.map(collabSeedKey));
+    await db.shares.bulkDelete(docIds);
   }
   await db.docs.where({ spaceId }).delete();
   await db.sections.where({ spaceId }).delete();

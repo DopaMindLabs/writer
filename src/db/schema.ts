@@ -50,6 +50,26 @@ export interface DocUpdate {
   createdAt: number;
 }
 
+/**
+ * A document's collaboration-room membership, held only on this device and never
+ * synced. Present only for a shared doc; its absence means the doc is local. The
+ * room's private key material lives in the separate device keystore, not here —
+ * this row carries only what names the room and this device's place in it, so a
+ * pulled or backed-up copy could never reconstruct access. Keyed by `docId` (one
+ * room per doc); `roomId` is indexed so a room can be found without its doc.
+ */
+export interface Share {
+  docId: string;
+  roomId: string;
+  relayUrl: string;
+  role: 'owner' | 'writer' | 'reader';
+  contentEpoch: number;
+  seededBy: string;
+  seededAt: number;
+  rosterVersion: number;
+  createdAt: number;
+}
+
 export enum NoteKind {
   Note = 'note',
   Char = 'char',

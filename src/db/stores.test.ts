@@ -18,4 +18,13 @@ describe('STORES', () => {
       .map(([name]) => name);
     expect(autoIncrement).toEqual(['docUpdates']);
   });
+
+  it('declares shares keyed by docId and indexed by roomId', async () => {
+    const db = new LoremDB('stores-shares-test');
+    await db.open();
+    const shares = db.table('shares');
+    expect(shares.schema.primKey.keyPath).toBe('docId');
+    expect(shares.schema.indexes.map((index) => index.keyPath)).toContain('roomId');
+    await db.delete();
+  });
 });
