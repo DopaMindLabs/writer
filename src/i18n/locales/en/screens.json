@@ -931,5 +931,15 @@
     "description": "Attach a PDF from your library, or upload a new one.",
     "empty": "No PDFs yet — upload one to attach it.",
     "choose": "Choose"
+  },
+  "pdfHighlight": {
+    "colors": {
+      "yellow": "Yellow",
+      "pink": "Pink",
+      "blue": "Blue",
+      "green": "Green",
+      "ash": "Ash"
+    },
+    "markAria": "Highlight, {{color}}: {{quote}}"
   }
 }

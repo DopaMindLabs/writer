@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { HL_COLORS, type HighlightColor } from '@/theme/tokens';
 
 export type Theme = 'light' | 'dark' | 'hc-light' | 'hc-dark';
 export type InspectorMode = 'none' | 'icons' | 'expanded';
@@ -26,6 +27,7 @@ interface UIState {
   saveVersionOpen: boolean;
   diffMode: DiffMode;
   compareRevisionIds: { base: string | null; compare: string | null };
+  pdfHighlightColor: HighlightColor;
   setCurrentSpaceId: (id: string | null) => void;
   setCurrentDocId: (id: string | null) => void;
   setTheme: (theme: Theme) => void;
@@ -51,6 +53,7 @@ interface UIState {
     base: string | null;
     compare: string | null;
   }) => void;
+  setPdfHighlightColor: (color: HighlightColor) => void;
 }
 
 const PERSIST_KEY = 'lorem-ui';
@@ -76,6 +79,7 @@ type PersistedShape = Pick<
   | 'inspectorSection'
   | 'readingWidth'
   | 'diffMode'
+  | 'pdfHighlightColor'
 >;
 
 const READING_WIDTHS: ReadingWidth[] = ['s', 'm', 'l'];
@@ -109,6 +113,11 @@ const sanitizeDiffMode = (v: unknown): DiffMode =>
     ? (v as DiffMode)
     : 'side-by-side';
 
+const sanitizePdfHighlightColor = (v: unknown): HighlightColor =>
+  typeof v === 'string' && Object.prototype.hasOwnProperty.call(HL_COLORS, v)
+    ? (v as HighlightColor)
+    : 'yellow';
+
 const DEFAULT_SPLIT_DIVIDER_PCT = 50;
 const MIN_SPLIT_DIVIDER_PCT = 25;
 const MAX_SPLIT_DIVIDER_PCT = 75;
@@ -140,6 +149,7 @@ const buildSnapshot = (
   inspectorSection: s.inspectorSection,
   readingWidth: s.readingWidth,
   diffMode: s.diffMode,
+  pdfHighlightColor: s.pdfHighlightColor,
   ...overrides,
 });
 
@@ -169,6 +179,7 @@ const initialState = () => ({
   saveVersionOpen: false,
   diffMode: sanitizeDiffMode(persisted.diffMode),
   compareRevisionIds: { base: null, compare: null },
+  pdfHighlightColor: sanitizePdfHighlightColor(persisted.pdfHighlightColor),
 });
 
 const createActions = (
@@ -199,6 +210,10 @@ const createDocActions = (set: SetState, snapshot: Snapshot) => ({
     const clamped = clampDividerPct(pct);
     set({ splitDividerPct: clamped });
     persist(snapshot({ splitDividerPct: clamped }));
+  },
+  setPdfHighlightColor: (pdfHighlightColor: HighlightColor) => {
+    set({ pdfHighlightColor });
+    persist(snapshot({ pdfHighlightColor }));
   },
 });
 

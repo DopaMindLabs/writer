@@ -12,6 +12,7 @@ describe('useUI store', () => {
         exportOpen: false,
         floatingToolbarEnabled: false,
         splitDividerPct: 50,
+        pdfHighlightColor: 'yellow',
       });
     });
   });
@@ -29,6 +30,7 @@ describe('useUI store', () => {
         inspectorSection: 'outline',
         readingWidth: 'm',
         diffMode: 'side-by-side',
+        pdfHighlightColor: 'yellow',
       },
     );
   });
@@ -71,6 +73,7 @@ describe('useUI store', () => {
         inspectorSection: 'outline',
         readingWidth: 'm',
         diffMode: 'side-by-side',
+        pdfHighlightColor: 'yellow',
       },
     );
     act(() => { useUI.getState().setFloatingToolbarEnabled(false); });
@@ -123,6 +126,7 @@ describe('useUI store', () => {
         readingWidth: 'XL',
         splitDividerPct: Number.POSITIVE_INFINITY,
         diffMode: 'nonsense',
+        pdfHighlightColor: 'chartreuse',
       }),
     );
     vi.resetModules();
@@ -133,6 +137,15 @@ describe('useUI store', () => {
     expect(s.readingWidth).toBe('m');
     expect(s.splitDividerPct).toBe(50);
     expect(s.diffMode).toBe('side-by-side');
+    expect(s.pdfHighlightColor).toBe('yellow');
+  });
+
+  it('setPdfHighlightColor updates state and persists', () => {
+    act(() => { useUI.getState().setPdfHighlightColor('blue'); });
+    expect(useUI.getState().pdfHighlightColor).toBe('blue');
+    expect(
+      JSON.parse(window.localStorage.getItem('lorem-ui') ?? '{}').pdfHighlightColor,
+    ).toBe('blue');
   });
 
   it('setDiffMode updates state and persists', () => {
