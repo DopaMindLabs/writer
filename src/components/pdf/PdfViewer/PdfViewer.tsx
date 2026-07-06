@@ -56,7 +56,9 @@ export const PdfViewer = ({
         onZoomIn={view.zoomIn}
         extras={toolbarExtras}
       />
-      <div className="relative flex-1 overflow-auto p-4">
+      {/* Focusable so keyboard users can scroll the page (a11y:
+          scrollable-region-focusable); the region is named by the parent. */}
+      <div tabIndex={0} className="relative flex-1 overflow-auto p-4">
         {load.status === 'error' ? (
           <PdfViewerStatus status="error" onRetry={load.retry} />
         ) : null}
