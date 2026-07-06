@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { addMediaItem, validatePdfFile } from '@/lib/media';
+import type { MediaItem } from '@/db/schema';
 
 export interface MediaUpload {
   busy: boolean;
@@ -13,8 +14,14 @@ export interface MediaUpload {
  * Owns the upload side-effect for the media library: validates each picked
  * file through the media facade, adds the accepted ones, and collects
  * per-file rejection messages. Keeps `MediaUploadButton` purely presentational.
+ *
+ * @param onUploaded called with each accepted item — lets the picker dialog
+ * select a freshly uploaded PDF without re-querying.
  */
-export const useMediaUpload = (spaceId: string): MediaUpload => {
+export const useMediaUpload = (
+  spaceId: string,
+  onUploaded?: (item: MediaItem) => void,
+): MediaUpload => {
   const { t } = useTranslation('screens');
   const [busy, setBusy] = useState(false);
   const [rejected, setRejected] = useState<string[]>([]);
@@ -28,7 +35,8 @@ export const useMediaUpload = (spaceId: string): MediaUpload => {
         for (const file of files) {
           const result = await validatePdfFile(file);
           if (result.ok) {
-            await addMediaItem({ spaceId, name: file.name, blob: file });
+            const item = await addMediaItem({ spaceId, name: file.name, blob: file });
+            onUploaded?.(item);
           } else {
             failures.push(
               t(`mediaLibrary.upload.reason.${result.reason}`, {
@@ -42,7 +50,7 @@ export const useMediaUpload = (spaceId: string): MediaUpload => {
       };
       void run();
     },
-    [spaceId, t],
+    [spaceId, t, onUploaded],
   );
 
   const dismissRejected = useCallback(() => {

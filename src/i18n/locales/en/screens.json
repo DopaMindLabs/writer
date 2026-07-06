@@ -925,5 +925,11 @@
     "back": "Back to library",
     "missingTitle": "PDF not found",
     "missingCaption": "This PDF is no longer in the library."
+  },
+  "mediaPicker": {
+    "title": "Choose a PDF",
+    "description": "Attach a PDF from your library, or upload a new one.",
+    "empty": "No PDFs yet — upload one to attach it.",
+    "choose": "Choose"
   }
 }

@@ -7,15 +7,17 @@ import { InlineBanner } from '@/components/ui/InlineBanner';
 import { TypographyP } from '@/components/ui/typography';
 import { PDF_ACCEPT_ATTR } from '@/data/media';
 import { useMediaUpload } from '@/hooks/useMediaUpload';
+import type { MediaItem } from '@/db/schema';
 
 interface MediaUploadButtonProps {
   spaceId: string;
+  onUploaded?: (item: MediaItem) => void;
 }
 
-export const MediaUploadButton = ({ spaceId }: MediaUploadButtonProps) => {
+export const MediaUploadButton = ({ spaceId, onUploaded }: MediaUploadButtonProps) => {
   const { t } = useTranslation('screens');
   const { busy, rejected, uploadFiles, dismissRejected } =
-    useMediaUpload(spaceId);
+    useMediaUpload(spaceId, onUploaded);
 
   return (
     <div className="flex flex-col items-start gap-1.5">
