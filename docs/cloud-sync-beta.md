@@ -254,7 +254,7 @@ the file holds no secrets.
   `<style>`/`style=""`; React's `style={}` uses the CSSOM and is not blocked).
 - `connect-src 'self' https://<db>.dexie.cloud wss://<db>.dexie.cloud` and
   `worker-src 'self' blob:` are the only cloud-specific relaxations — the sync fetch and
-  websocket, and the addon's workers. `<db>` names the beta database host (`zzi4bxfpc`).
+  websocket, and the addon's workers. `<db>` names the beta database host (`z1jm6a9cd`).
 - The CSP host and the build's `VITE_DEXIE_CLOUD_URL` **must name the same database**. If
   they diverge, the addon connects to an origin the CSP does not allow and cloud sync fails
   loudly (a console CSP violation, sync blocked) rather than silently — and only flag-on
@@ -288,7 +288,7 @@ the file holds no secrets.
 
 ### Manual protocol (run once before inviting any tester)
 
-1. `npx dexie-cloud create` → obtain the database URL (the beta database is `zzi4bxfpc`).
+1. `npx dexie-cloud create` → obtain the database URL (the beta database is `z1jm6a9cd`).
 2. `npx dexie-cloud whitelist <app-origin>`.
 3. `vercel.json`'s `connect-src`/`worker-src` name the database host, and `VITE_DEXIE_CLOUD_URL`
    is set to the same origin (they must match, or the CSP blocks sync loudly); build.
