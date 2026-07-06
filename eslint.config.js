@@ -18,6 +18,7 @@ export default tseslint.config(
       '*.config.{ts,js,cjs,mjs}',
       'eslint.config.js',
       'src/tours/**',
+      'relay/**',
     ],
   },
 

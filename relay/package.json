@@ -1,0 +1,22 @@
+{
+  "name": "@lipsum/collab-relay",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Blind store-and-forward relay for LIpsum Writer collaboration (reference implementation).",
+  "bin": {
+    "lipsum-collab-relay": "src/bin.ts"
+  },
+  "scripts": {
+    "start": "node --experimental-strip-types src/bin.ts",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.12"
+  }
+}
