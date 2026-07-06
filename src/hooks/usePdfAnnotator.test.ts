@@ -2,7 +2,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, it, expect } from 'vitest';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
-import { usePdfHighlighter } from './usePdfHighlighter';
+import { usePdfAnnotator } from './usePdfAnnotator';
 import type { PdfSelectionCapture } from '@/pdf-annotator/core/types';
 
 const capture = (page = 1): PdfSelectionCapture => ({
@@ -18,9 +18,9 @@ beforeEach(() => {
   });
 });
 
-describe('usePdfHighlighter', () => {
+describe('usePdfAnnotator', () => {
   it('armed capture persists a highlight and keeps arming', async () => {
-    const { result } = renderHook(() => usePdfHighlighter({ mediaId: 'm1', spaceId: 's1' }));
+    const { result } = renderHook(() => usePdfAnnotator({ mediaId: 'm1', spaceId: 's1' }));
     act(() => {
       result.current.toggleArmed();
     });
@@ -40,7 +40,7 @@ describe('usePdfHighlighter', () => {
   });
 
   it('unarmed capture only stashes', async () => {
-    const { result } = renderHook(() => usePdfHighlighter({ mediaId: 'm1', spaceId: 's1' }));
+    const { result } = renderHook(() => usePdfAnnotator({ mediaId: 'm1', spaceId: 's1' }));
     act(() => {
       result.current.handleCapture(capture());
     });
@@ -49,7 +49,7 @@ describe('usePdfHighlighter', () => {
   });
 
   it('applyToLastCapture persists once and clears the stash', async () => {
-    const { result } = renderHook(() => usePdfHighlighter({ mediaId: 'm1', spaceId: 's1' }));
+    const { result } = renderHook(() => usePdfAnnotator({ mediaId: 'm1', spaceId: 's1' }));
     act(() => {
       result.current.handleCapture(capture());
     });
@@ -62,7 +62,7 @@ describe('usePdfHighlighter', () => {
   });
 
   it('applyToLastCapture with no stash is a no-op', async () => {
-    const { result } = renderHook(() => usePdfHighlighter({ mediaId: 'm1', spaceId: 's1' }));
+    const { result } = renderHook(() => usePdfAnnotator({ mediaId: 'm1', spaceId: 's1' }));
     await act(async () => {
       await result.current.applyToLastCapture('blue');
     });
@@ -70,7 +70,7 @@ describe('usePdfHighlighter', () => {
   });
 
   it('remove, recolour and set-note drive the facade', async () => {
-    const { result } = renderHook(() => usePdfHighlighter({ mediaId: 'm1', spaceId: 's1' }));
+    const { result } = renderHook(() => usePdfAnnotator({ mediaId: 'm1', spaceId: 's1' }));
     act(() => {
       result.current.handleCapture(capture());
     });
@@ -97,7 +97,7 @@ describe('usePdfHighlighter', () => {
   });
 
   it('exposes the colour preference and updates it', () => {
-    const { result } = renderHook(() => usePdfHighlighter({ mediaId: 'm1', spaceId: 's1' }));
+    const { result } = renderHook(() => usePdfAnnotator({ mediaId: 'm1', spaceId: 's1' }));
     expect(result.current.color).toBe('yellow');
     act(() => {
       result.current.setColor('blue');

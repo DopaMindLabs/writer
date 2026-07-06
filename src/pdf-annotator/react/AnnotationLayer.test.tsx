@@ -1,35 +1,34 @@
 import { describe, it, expect } from 'vitest';
-import { renderWithProviders, screen } from '@/test/test-utils';
-import type { PdfAnnotation } from '@/db/schema';
-import { PdfHighlightLayer } from './PdfHighlightLayer';
+import { render, screen } from '@testing-library/react';
+import { AnnotationLayer } from './AnnotationLayer';
+import type { AnnotatorAnnotation } from '../core/types';
 
-const mark = (id: string, page: number): PdfAnnotation => ({
+const mark = (id: string, page: number): AnnotatorAnnotation => ({
   id,
-  mediaId: 'm1',
-  spaceId: 's1',
   kind: 'highlight',
   page,
   rects: [{ x: 0.1, y: 0.1, w: 0.2, h: 0.05 }],
   quote: id,
   color: 'yellow',
-  author: 'me',
   createdAt: 1,
-  updatedAt: 1,
 });
 
-describe('PdfHighlightLayer', () => {
+const label = (a: AnnotatorAnnotation): string => `mark:${a.id}`;
+
+describe('AnnotationLayer', () => {
   it('renders only the marks on the current page', () => {
-    renderWithProviders(
-      <PdfHighlightLayer
+    render(
+      <AnnotationLayer
         page={1}
         annotations={[mark('a', 1), mark('b', 2), mark('c', 1)]}
+        getMarkLabel={label}
       />,
     );
     expect(screen.getAllByTestId('pdf-highlight-mark')).toHaveLength(2);
   });
 
   it('renders an empty layer when no highlights are on the page', () => {
-    renderWithProviders(<PdfHighlightLayer page={3} annotations={[mark('a', 1)]} />);
+    render(<AnnotationLayer page={3} annotations={[mark('a', 1)]} getMarkLabel={label} />);
     expect(screen.getByTestId('pdf-highlight-layer')).toBeInTheDocument();
     expect(screen.queryByTestId('pdf-highlight-mark')).not.toBeInTheDocument();
   });

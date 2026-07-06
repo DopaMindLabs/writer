@@ -6,12 +6,13 @@ import {
   setPdfAnnotationColor,
   setPdfAnnotationNote,
 } from '@/lib/pdf-annotations';
+import { useAnnotator } from '@/pdf-annotator/react/useAnnotator';
 import { usePdfAnnotations } from './usePdfAnnotations';
 import type { PdfAnnotation } from '@/db/schema';
 import type { HighlightColor } from '@/theme/tokens';
 import type { PdfSelectionCapture } from '@/pdf-annotator/core/types';
 
-export interface PdfHighlighter {
+export interface PdfAnnotator {
   armed: boolean;
   toggleArmed: () => void;
   color: HighlightColor;
@@ -28,18 +29,16 @@ export interface PdfHighlighter {
 }
 
 /**
- * The highlighter controller consumed by the viewer's toolbar and overlay
- * slots. Armed mode highlights any selection instantly in the current colour
- * (the macOS Preview model); with the mode off, a selection is stashed so
- * choosing a colour applies it once. Armed state is deliberately not persisted —
- * it defaults off on every open.
+ * Binds the module's `useAnnotator` to the app: the Dexie annotation facades,
+ * the ui-store colour preference, and the live `usePdfAnnotations` query. The
+ * armed-mode surface is carried over verbatim from the landed highlighter and is
+ * removed in PE.4 when the selection strip lands.
  */
-export const usePdfHighlighter = ({
+export const usePdfAnnotator = ({
   mediaId,
   spaceId,
-}: { mediaId: string; spaceId: string }): PdfHighlighter => {
+}: { mediaId: string; spaceId: string }): PdfAnnotator => {
   const [armed, setArmed] = useState(false);
-  const [lastCapture, setLastCapture] = useState<PdfSelectionCapture | null>(null);
   const color = useUI((s) => s.pdfHighlightColor);
   const setColor = useUI((s) => s.setPdfHighlightColor);
   const annotations = usePdfAnnotations(mediaId);
@@ -50,26 +49,36 @@ export const usePdfHighlighter = ({
     [mediaId, spaceId],
   );
 
+  const annotator = useAnnotator({
+    apply: async ({ capture, color: col }) => {
+      await persist(capture, col as HighlightColor);
+    },
+    remove: deletePdfAnnotation,
+    recolor: (id, col) => setPdfAnnotationColor(id, col as HighlightColor),
+    setNote: setPdfAnnotationNote,
+  });
+
   const handleCapture = useCallback(
     (capture: PdfSelectionCapture) => {
       if (armed) {
         void persist(capture, color);
         window.getSelection()?.removeAllRanges();
-        setLastCapture(null);
+        annotator.clearCapture();
       } else {
-        setLastCapture(capture);
+        annotator.handleCapture(capture);
       }
     },
-    [armed, color, persist],
+    [armed, color, persist, annotator],
   );
 
   const applyToLastCapture = useCallback(
     async (col: HighlightColor) => {
-      if (!lastCapture) return;
-      await persist(lastCapture, col);
-      setLastCapture(null);
+      const { capture } = annotator;
+      if (!capture) return;
+      await persist(capture, col);
+      annotator.clearCapture();
     },
-    [lastCapture, persist],
+    [annotator, persist],
   );
 
   const toggleArmed = useCallback(() => {
@@ -82,10 +91,9 @@ export const usePdfHighlighter = ({
     color,
     setColor,
     annotations,
-    lastCapture,
+    lastCapture: annotator.capture,
     handleCapture,
     applyToLastCapture,
-    // The facade functions already match the interface — no wrappers needed.
     remove: deletePdfAnnotation,
     recolor: setPdfAnnotationColor,
     setNote: setPdfAnnotationNote,

@@ -1,10 +1,10 @@
 import { useEffect, type RefObject } from 'react';
-import { captureFromRects, resolveSelectionPage } from '@/pdf-annotator/core/selection';
-import type { PdfSelectionCapture } from '@/pdf-annotator/core/types';
+import { captureFromRects, resolveSelectionPage } from '../core/selection';
+import type { SelectionCapture } from '../core/types';
 
-interface UsePdfTextSelectionOptions {
+interface UseTextSelectionOptions {
   containerRef: RefObject<HTMLElement | null>;
-  onCapture: (capture: PdfSelectionCapture) => void;
+  onCapture: (capture: SelectionCapture) => void;
 }
 
 /**
@@ -15,10 +15,10 @@ interface UsePdfTextSelectionOptions {
  * drag and a programmatically built Range drive the identical path. Listeners
  * are cleaned up on unmount.
  */
-export const usePdfTextSelection = ({
+export const useTextSelection = ({
   containerRef,
   onCapture,
-}: UsePdfTextSelectionOptions): void => {
+}: UseTextSelectionOptions): void => {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;

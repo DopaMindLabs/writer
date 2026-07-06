@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { usePdfTextSelection } from './usePdfTextSelection';
+import { useTextSelection } from './useTextSelection';
 
 const buildPage = (): { container: HTMLElement; span: HTMLElement; pageEl: HTMLElement } => {
   const container = document.createElement('div');
@@ -44,11 +44,11 @@ afterEach(() => {
   dom.container.remove();
 });
 
-describe('usePdfTextSelection', () => {
+describe('useTextSelection', () => {
   it('captures on pointerup', () => {
     stubSelection(dom.span);
     const onCapture = vi.fn();
-    renderHook(() => usePdfTextSelection({ containerRef: { current: dom.container }, onCapture }));
+    renderHook(() => useTextSelection({ containerRef: { current: dom.container }, onCapture }));
 
     dom.container.dispatchEvent(new Event('pointerup'));
 
@@ -62,7 +62,7 @@ describe('usePdfTextSelection', () => {
   it('captures on keyboard selection', () => {
     stubSelection(dom.span);
     const onCapture = vi.fn();
-    renderHook(() => usePdfTextSelection({ containerRef: { current: dom.container }, onCapture }));
+    renderHook(() => useTextSelection({ containerRef: { current: dom.container }, onCapture }));
 
     dom.container.dispatchEvent(new Event('keyup'));
 
@@ -72,7 +72,7 @@ describe('usePdfTextSelection', () => {
   it('ignores an absent selection', () => {
     vi.spyOn(window, 'getSelection').mockReturnValue(null);
     const onCapture = vi.fn();
-    renderHook(() => usePdfTextSelection({ containerRef: { current: dom.container }, onCapture }));
+    renderHook(() => useTextSelection({ containerRef: { current: dom.container }, onCapture }));
     dom.container.dispatchEvent(new Event('pointerup'));
     expect(onCapture).not.toHaveBeenCalled();
   });
@@ -90,7 +90,7 @@ describe('usePdfTextSelection', () => {
       toString: () => 'Lorem',
     } as unknown as Selection);
     const onCapture = vi.fn();
-    renderHook(() => usePdfTextSelection({ containerRef: { current: dom.container }, onCapture }));
+    renderHook(() => useTextSelection({ containerRef: { current: dom.container }, onCapture }));
     dom.container.dispatchEvent(new Event('pointerup'));
     expect(onCapture).not.toHaveBeenCalled();
   });
@@ -101,7 +101,7 @@ describe('usePdfTextSelection', () => {
       rangeCount: 0,
     } as unknown as Selection);
     const onCapture = vi.fn();
-    renderHook(() => usePdfTextSelection({ containerRef: { current: dom.container }, onCapture }));
+    renderHook(() => useTextSelection({ containerRef: { current: dom.container }, onCapture }));
     dom.container.dispatchEvent(new Event('pointerup'));
     expect(onCapture).not.toHaveBeenCalled();
   });
@@ -109,7 +109,7 @@ describe('usePdfTextSelection', () => {
   it('does nothing without a container', () => {
     stubSelection(dom.span);
     const onCapture = vi.fn();
-    renderHook(() => usePdfTextSelection({ containerRef: { current: null }, onCapture }));
+    renderHook(() => useTextSelection({ containerRef: { current: null }, onCapture }));
     dom.container.dispatchEvent(new Event('pointerup'));
     expect(onCapture).not.toHaveBeenCalled();
   });
@@ -118,7 +118,7 @@ describe('usePdfTextSelection', () => {
     stubSelection(dom.span);
     const onCapture = vi.fn();
     const { unmount } = renderHook(() =>
-      usePdfTextSelection({ containerRef: { current: dom.container }, onCapture }),
+      useTextSelection({ containerRef: { current: dom.container }, onCapture }),
     );
     unmount();
     dom.container.dispatchEvent(new Event('pointerup'));

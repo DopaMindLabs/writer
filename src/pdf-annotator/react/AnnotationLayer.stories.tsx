@@ -1,25 +1,24 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { PdfAnnotation } from '@/db/schema';
-import { PdfHighlightLayer } from './PdfHighlightLayer';
+import { AnnotationLayer } from './AnnotationLayer';
+import type { AnnotatorAnnotation } from '../core/types';
 
-const mark = (id: string, y: number, color: PdfAnnotation['color']): PdfAnnotation => ({
+const mark = (id: string, y: number, color: string): AnnotatorAnnotation => ({
   id,
-  mediaId: 'm1',
-  spaceId: 's1',
   kind: 'highlight',
   page: 1,
   rects: [{ x: 0.08, y, w: 0.6, h: 0.05 }],
   quote: id,
   color,
-  author: 'me',
   createdAt: 1,
-  updatedAt: 1,
 });
+
+const getMarkLabel = (a: AnnotatorAnnotation): string => `Highlight: ${a.quote}`;
 
 const meta = {
   tags: ['!autodocs'],
-  title: 'Pdf/PdfHighlightLayer',
-  component: PdfHighlightLayer,
+  title: 'Pdf/AnnotationLayer',
+  component: AnnotationLayer,
+  args: { getMarkLabel },
   parameters: { layout: 'padded' },
   decorators: [
     (Story) => (
@@ -28,7 +27,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof PdfHighlightLayer>;
+} satisfies Meta<typeof AnnotationLayer>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
