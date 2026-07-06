@@ -1,5 +1,6 @@
 import type { HighlightColor } from '@/theme/tokens';
 import type { DocStatus } from '@/lib/docInspector/status';
+import type { PdfRect } from '@/pdf-annotator/core/types';
 
 export interface Space {
   id: string;
@@ -233,13 +234,8 @@ export interface MediaItem {
   updatedAt: number;
 }
 
-/** A rectangle on a PDF page, normalised to the page box as fractions in [0, 1]. */
-export interface PdfRect {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
+/** The annotator module owns the page-rect type; the schema re-exports it. */
+export type { PdfRect };
 
 /** `underline`/`strikethrough` are reserved for later; only `highlight` ships now. */
 export type PdfAnnotationKind = 'highlight';

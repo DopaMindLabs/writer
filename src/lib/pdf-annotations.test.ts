@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { db } from '@/db/db';
-import type { PdfSelectionCapture } from '@/lib/pdf/pdfGeometry';
+import type { PdfSelectionCapture } from '@/pdf-annotator/core/types';
 import {
   addPdfHighlight,
   listPdfAnnotations,

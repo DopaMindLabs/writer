@@ -3,7 +3,7 @@ import { newId } from '@/lib/ids';
 import { invariant } from '@/lib/invariant';
 import type { PdfAnnotation } from '@/db/schema';
 import type { HighlightColor } from '@/theme/tokens';
-import type { PdfSelectionCapture } from '@/lib/pdf/pdfGeometry';
+import type { PdfSelectionCapture } from '@/pdf-annotator/core/types';
 import { getProfile } from '@/lib/account/profile';
 
 export const addPdfHighlight = async (input: {

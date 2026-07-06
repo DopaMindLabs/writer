@@ -4,7 +4,7 @@ import {
   normalizedToPixels,
   clientRectsToNormalized,
   buildSelectionCapture,
-} from './pdfGeometry';
+} from './geometry';
 
 const box = (x: number, y: number, w: number, h: number): DOMRect =>
   new DOMRect(x, y, w, h);

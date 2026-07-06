@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { resolveSelectionPage } from './pdfSelection';
+import { resolveSelectionPage } from './selection';
 
 // Builds a container with two pages, each with a text layer, plus a non-text
 // node inside page 1 — enough to exercise every rejection branch.

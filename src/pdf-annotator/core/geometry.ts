@@ -1,16 +1,4 @@
-import type { PdfRect } from '@/db/schema';
-
-/**
- * A text selection captured from a rendered PDF page: the 1-based page number
- * (matching react-pdf's `pageNumber`), the selection rectangles normalised to
- * the page box, and the selected text. Coordinates are resolution-independent so
- * a highlight re-projects correctly at any zoom.
- */
-export interface PdfSelectionCapture {
-  page: number;
-  rects: PdfRect[];
-  quote: string;
-}
+import type { PdfRect, SelectionCapture } from './types';
 
 /**
  * Normalises a client rectangle to fractions of the page box. Clips to the
@@ -71,7 +59,7 @@ export const buildSelectionCapture = (
   pageBox: DOMRect,
   quote: string,
   page: number,
-): PdfSelectionCapture | null => {
+): SelectionCapture | null => {
   if (!quote.trim()) return null;
   const normalized = clientRectsToNormalized(rects, pageBox);
   if (normalized.length === 0) return null;

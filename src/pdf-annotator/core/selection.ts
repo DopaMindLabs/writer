@@ -1,4 +1,4 @@
-import { buildSelectionCapture } from './pdfGeometry';
+import { buildSelectionCapture } from './geometry';
 
 /**
  * Builds a highlight capture from raw client rectangles. A thin re-export of the

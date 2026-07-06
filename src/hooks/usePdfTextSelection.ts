@@ -1,6 +1,6 @@
 import { useEffect, type RefObject } from 'react';
-import { captureFromRects, resolveSelectionPage } from '@/lib/pdf/pdfSelection';
-import type { PdfSelectionCapture } from '@/lib/pdf/pdfGeometry';
+import { captureFromRects, resolveSelectionPage } from '@/pdf-annotator/core/selection';
+import type { PdfSelectionCapture } from '@/pdf-annotator/core/types';
 
 interface UsePdfTextSelectionOptions {
   containerRef: RefObject<HTMLElement | null>;

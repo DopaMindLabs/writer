@@ -3,7 +3,7 @@ import { beforeEach, describe, it, expect } from 'vitest';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 import { usePdfHighlighter } from './usePdfHighlighter';
-import type { PdfSelectionCapture } from '@/lib/pdf/pdfGeometry';
+import type { PdfSelectionCapture } from '@/pdf-annotator/core/types';
 
 const capture = (page = 1): PdfSelectionCapture => ({
   page,

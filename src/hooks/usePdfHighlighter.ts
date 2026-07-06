@@ -9,7 +9,7 @@ import {
 import { usePdfAnnotations } from './usePdfAnnotations';
 import type { PdfAnnotation } from '@/db/schema';
 import type { HighlightColor } from '@/theme/tokens';
-import type { PdfSelectionCapture } from '@/lib/pdf/pdfGeometry';
+import type { PdfSelectionCapture } from '@/pdf-annotator/core/types';
 
 export interface PdfHighlighter {
   armed: boolean;
