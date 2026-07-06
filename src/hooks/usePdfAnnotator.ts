@@ -6,11 +6,10 @@ import {
   setPdfAnnotationColor,
   setPdfAnnotationNote,
 } from '@/lib/pdf-annotations';
-import { useAnnotator } from '@/pdf-annotator/react/useAnnotator';
+import { useAnnotator, type PdfSelectionCapture } from '@/pdf-annotator';
 import { usePdfAnnotations } from './usePdfAnnotations';
 import type { PdfAnnotation } from '@/db/schema';
 import type { HighlightColor } from '@/theme/tokens';
-import type { PdfSelectionCapture } from '@/pdf-annotator/core/types';
 
 export interface PdfAnnotator {
   armed: boolean;
