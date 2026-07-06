@@ -63,6 +63,7 @@ export enum NoteKind {
   LooseEnd = 'loose-end',
   Blank = 'blank',
   Image = 'image',
+  Pdf = 'pdf',
 }
 
 export enum NoteLayout {

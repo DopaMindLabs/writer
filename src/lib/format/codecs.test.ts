@@ -71,6 +71,20 @@ describe('record codecs', () => {
     expect(parseNoteRecord(viaJson(full))).toEqual(full);
   });
 
+  it('round-trips a pdf note record carrying a media link', () => {
+    const pdfNote = {
+      ...sampleNote,
+      id: 'n-pdf',
+      kind: NoteKind.Pdf,
+      mediaId: 'm1',
+    };
+    expect(parseNoteRecord(viaJson(pdfNote))).toEqual(pdfNote);
+  });
+
+  it('parses a note without a media link, leaving mediaId undefined (additive)', () => {
+    expect(parseNoteRecord(viaJson(sampleNote)).mediaId).toBeUndefined();
+  });
+
   it('round-trips attachment records via serializeNoteAttachment', () => {
     const record = serializeNoteAttachment(
       sampleAttachment,
