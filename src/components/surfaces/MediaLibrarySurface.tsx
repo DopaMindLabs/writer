@@ -1,9 +1,12 @@
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { TypographyH1 } from '@/components/ui/typography';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { MediaUploadButton } from '@/components/media/MediaUploadButton';
 import { MediaCard } from '@/components/media/MediaCard';
 import { useMediaItems } from '@/hooks/useMediaItems';
+import { routes } from '@/lib/routes';
+import type { MediaItem } from '@/db/schema';
 
 interface MediaLibrarySurfaceProps {
   spaceId: string;
@@ -11,10 +14,12 @@ interface MediaLibrarySurfaceProps {
 
 export const MediaLibrarySurface = ({ spaceId }: MediaLibrarySurfaceProps) => {
   const { t } = useTranslation('screens');
+  const navigate = useNavigate();
   const items = useMediaItems(spaceId);
 
-  // Stage PC wires this to navigate to the PDF viewer route.
-  const openMedia = (): void => undefined;
+  const openMedia = (item: MediaItem): void => {
+    void navigate(routes.mediaView(spaceId, item.id));
+  };
 
   return (
     <section

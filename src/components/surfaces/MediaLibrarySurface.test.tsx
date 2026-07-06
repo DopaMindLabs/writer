@@ -5,6 +5,12 @@ vi.mock('@/lib/pdf/pdfAdapter', () => ({
   pdfjs: { getDocument, GlobalWorkerOptions: { workerSrc: '' } },
 }));
 
+const { navigateSpy } = vi.hoisted(() => ({ navigateSpy: vi.fn() }));
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return { ...actual, useNavigate: () => navigateSpy };
+});
+
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
@@ -50,5 +56,14 @@ describe('MediaLibrarySurface', () => {
     await screen.findByTestId('media-library-empty');
     await user.tab();
     expect(screen.getByTestId('media-upload-button')).toHaveFocus();
+  });
+
+  it('opens a media item by navigating to its viewer route', async () => {
+    navigateSpy.mockClear();
+    await db.media.put(makeMedia({ id: 'm1', name: 'x.pdf' }));
+    renderWithProviders(<MediaLibrarySurface spaceId="s1" />);
+    const open = await screen.findByTestId('media-card-m1-open');
+    await userEvent.click(open);
+    expect(navigateSpy).toHaveBeenCalledWith('/s/s1/library/m1');
   });
 });

@@ -43,11 +43,17 @@ import { HelpScreen } from '@/screens/global/Help';
 import { NotFoundScreen } from '@/screens/global/NotFound';
 import { RouteErrorScreen } from '@/components/errors/RouteErrorScreen';
 
-// Lazily loaded so the pdf.js engine chunk (wired into this screen in Stage PC)
-// stays out of the entry bundle — this route is its only entry point.
+// Lazily loaded so the pdf.js engine chunk stays out of the entry bundle — the
+// library and viewer are its only entry points and share the pdf engine chunk.
 const MediaLibraryScreen = lazy(() =>
   import('@/screens/space/MediaLibrary').then((m) => ({
     default: m.MediaLibraryScreen,
+  })),
+);
+
+const MediaViewerScreen = lazy(() =>
+  import('@/screens/space/MediaViewer').then((m) => ({
+    default: m.MediaViewerScreen,
   })),
 );
 
@@ -106,6 +112,14 @@ const router = createAppRouter([
         element: (
           <LazyRoute>
             <MediaLibraryScreen />
+          </LazyRoute>
+        ),
+      },
+      {
+        path: ROUTE_PATHS[RouteName.MediaView],
+        element: (
+          <LazyRoute>
+            <MediaViewerScreen />
           </LazyRoute>
         ),
       },
