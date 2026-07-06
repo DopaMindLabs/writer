@@ -19,52 +19,46 @@ beforeEach(() => {
 });
 
 describe('usePdfAnnotator', () => {
-  it('armed capture persists a highlight and keeps arming', async () => {
-    const { result } = renderHook(() => usePdfAnnotator({ mediaId: 'm1', spaceId: 's1' }));
-    act(() => {
-      result.current.toggleArmed();
-    });
-    expect(result.current.armed).toBe(true);
-
-    act(() => {
-      result.current.handleCapture(capture());
-    });
-
-    // Await the live query settling so its flush is wrapped in act.
-    await waitFor(() => expect(result.current.annotations).toHaveLength(1));
-    expect(result.current.armed).toBe(true); // stays armed
-    expect(result.current.lastCapture).toBeNull();
-    const [saved] = result.current.annotations;
-    expect(saved.color).toBe('yellow');
-    expect(saved.quote).toBe('a highlighted sentence');
-  });
-
-  it('unarmed capture only stashes', async () => {
+  it('a capture only stashes; nothing is persisted yet', async () => {
     const { result } = renderHook(() => usePdfAnnotator({ mediaId: 'm1', spaceId: 's1' }));
     act(() => {
       result.current.handleCapture(capture());
     });
-    expect(result.current.lastCapture).not.toBeNull();
+    expect(result.current.capture).not.toBeNull();
     expect(await db.pdfAnnotations.count()).toBe(0);
   });
 
-  it('applyToLastCapture persists once and clears the stash', async () => {
+  it('apply persists the chosen kind and colour and clears the stash', async () => {
     const { result } = renderHook(() => usePdfAnnotator({ mediaId: 'm1', spaceId: 's1' }));
     act(() => {
       result.current.handleCapture(capture());
     });
     await act(async () => {
-      await result.current.applyToLastCapture('pink');
+      await result.current.apply({ kind: 'underline', color: 'pink' });
     });
     await waitFor(() => expect(result.current.annotations).toHaveLength(1));
-    expect(result.current.annotations[0].color).toBe('pink');
-    expect(result.current.lastCapture).toBeNull();
+    const [saved] = result.current.annotations;
+    expect(saved.kind).toBe('underline');
+    expect(saved.color).toBe('pink');
+    expect(result.current.capture).toBeNull();
   });
 
-  it('applyToLastCapture with no stash is a no-op', async () => {
+  it('apply persists a note when given', async () => {
+    const { result } = renderHook(() => usePdfAnnotator({ mediaId: 'm1', spaceId: 's1' }));
+    act(() => {
+      result.current.handleCapture(capture());
+    });
+    await act(async () => {
+      await result.current.apply({ kind: 'highlight', color: 'yellow', note: 'remember' });
+    });
+    await waitFor(() => expect(result.current.annotations).toHaveLength(1));
+    expect(result.current.annotations[0].note).toBe('remember');
+  });
+
+  it('apply with no stash is a no-op', async () => {
     const { result } = renderHook(() => usePdfAnnotator({ mediaId: 'm1', spaceId: 's1' }));
     await act(async () => {
-      await result.current.applyToLastCapture('blue');
+      await result.current.apply({ kind: 'highlight', color: 'blue' });
     });
     expect(await db.pdfAnnotations.count()).toBe(0);
   });
@@ -75,7 +69,7 @@ describe('usePdfAnnotator', () => {
       result.current.handleCapture(capture());
     });
     await act(async () => {
-      await result.current.applyToLastCapture('yellow');
+      await result.current.apply({ kind: 'highlight', color: 'yellow' });
     });
     await waitFor(() => expect(result.current.annotations).toHaveLength(1));
     const saved = result.current.annotations[0];

@@ -938,8 +938,19 @@
       "pink": "Pink",
       "blue": "Blue",
       "green": "Green",
-      "ash": "Ash"
+      "ash": "Lavender"
     },
     "markAria": "Highlight, {{color}}: {{quote}}"
+  },
+  "pdfStrip": {
+    "toolbar": "Annotate selection",
+    "underline": "Underline",
+    "strikethrough": "Strikethrough",
+    "note": "note",
+    "cite": "cite",
+    "noteEyebrow": "P.{{page}} · HIGHLIGHT + NOTE",
+    "noteCancelHint": "ESC CANCELS",
+    "noteSaveHint": "↵ SAVE",
+    "notePlaceholder": "Add a note…"
   }
 }

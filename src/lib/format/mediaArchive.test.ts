@@ -184,4 +184,19 @@ describe('media in the space archive', () => {
       parsePdfAnnotationRecord({ ...validHighlight, rects: [] }),
     ).toThrow(/pdfAnnotation\.rects/);
   });
+
+  it('accepts underline and strikethrough kinds', () => {
+    expect(parsePdfAnnotationRecord({ ...validHighlight, kind: 'underline' }).kind).toBe(
+      'underline',
+    );
+    expect(parsePdfAnnotationRecord({ ...validHighlight, kind: 'strikethrough' }).kind).toBe(
+      'strikethrough',
+    );
+  });
+
+  it('rejects an unknown kind', () => {
+    expect(() =>
+      parsePdfAnnotationRecord({ ...validHighlight, kind: 'scribble' }),
+    ).toThrow(/pdfAnnotation\.kind/);
+  });
 });

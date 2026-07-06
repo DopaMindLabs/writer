@@ -302,7 +302,11 @@ export const parseMediaItemRecord = (value: unknown): MediaItemRecord => {
   };
 };
 
-const PDF_ANNOTATION_KINDS: readonly PdfAnnotationKind[] = ['highlight'];
+const PDF_ANNOTATION_KINDS: readonly PdfAnnotationKind[] = [
+  'highlight',
+  'underline',
+  'strikethrough',
+];
 
 const readFraction = (
   raw: Record<string, unknown>,

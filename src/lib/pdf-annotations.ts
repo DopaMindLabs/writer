@@ -1,7 +1,7 @@
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { invariant } from '@/lib/invariant';
-import type { PdfAnnotation } from '@/db/schema';
+import type { PdfAnnotation, PdfAnnotationKind } from '@/db/schema';
 import type { HighlightColor } from '@/theme/tokens';
 import type { PdfSelectionCapture } from '@/pdf-annotator/core/types';
 import { getProfile } from '@/lib/account/profile';
@@ -11,21 +11,26 @@ export const addPdfHighlight = async (input: {
   spaceId: string;
   capture: PdfSelectionCapture;
   color: HighlightColor;
+  /** Defaults to `highlight`; the selection strip also writes underline/strikethrough. */
+  kind?: PdfAnnotationKind;
+  note?: string;
 }): Promise<PdfAnnotation> => {
   invariant(input.mediaId.length > 0, 'addPdfHighlight: mediaId required');
   invariant(input.spaceId.length > 0, 'addPdfHighlight: spaceId required');
   invariant(input.capture.rects.length > 0, 'addPdfHighlight: rects required');
   const { authorId } = await getProfile();
   const now = Date.now();
+  const note = input.note?.trim();
   const annotation: PdfAnnotation = {
     id: newId(),
     mediaId: input.mediaId,
     spaceId: input.spaceId,
-    kind: 'highlight',
+    kind: input.kind ?? 'highlight',
     page: input.capture.page,
     rects: input.capture.rects,
     quote: input.capture.quote,
     color: input.color,
+    ...(note ? { note } : {}),
     author: authorId,
     createdAt: now,
     updatedAt: now,

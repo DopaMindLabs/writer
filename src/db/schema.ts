@@ -237,8 +237,8 @@ export interface MediaItem {
 /** The annotator module owns the page-rect type; the schema re-exports it. */
 export type { PdfRect };
 
-/** `underline`/`strikethrough` are reserved for later; only `highlight` ships now. */
-export type PdfAnnotationKind = 'highlight';
+/** The mark kinds the selection strip can write; all reuse the `hl-*` palette. */
+export type PdfAnnotationKind = 'highlight' | 'underline' | 'strikethrough';
 
 /**
  * A highlight on an uploaded PDF, anchored to the media item (not a note) so it

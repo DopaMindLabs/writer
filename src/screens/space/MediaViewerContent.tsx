@@ -3,7 +3,7 @@ import { Link } from '@/components/ui/Link';
 import { Icon } from '@/components/ui/icon';
 import { ArrowLeft } from '@/components/libs/icons';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { PdfViewer } from '@/components/pdf/PdfViewer/PdfViewer';
+import { MediaViewerPdf } from './MediaViewerPdf';
 import { routes } from '@/lib/routes';
 import type { MediaItem } from '@/db/schema';
 
@@ -45,7 +45,12 @@ export const MediaViewerContent = ({ spaceId, item }: MediaViewerContentProps) =
         </div>
       ) : item ? (
         <div className="min-h-0 flex-1">
-          <PdfViewer blob={item.blob} title={item.name} />
+          <MediaViewerPdf
+            mediaId={item.id}
+            spaceId={spaceId}
+            blob={item.blob}
+            title={item.name}
+          />
         </div>
       ) : null}
     </>
