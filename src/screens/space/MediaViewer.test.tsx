@@ -59,6 +59,16 @@ describe('MediaViewerScreen', () => {
     expect(screen.getByTestId('pdf-viewer')).toHaveAttribute('aria-label', 'thesis.pdf');
   });
 
+  it('collapses the space sidebar so the page owns the room', async () => {
+    await db.spaces.put(sampleSpace);
+    await db.media.put(sampleMedia);
+    renderViewer('m1');
+    await screen.findByTestId('fake-page');
+    // The space sidebar is gone (design Frame C); only the SpaceRail remains.
+    expect(screen.queryByTestId('sidebar-space-menu-trigger')).not.toBeInTheDocument();
+    expect(screen.getByRole('complementary', { name: 'Spaces' })).toBeInTheDocument();
+  });
+
   it('offers a back link to the library', async () => {
     await db.spaces.put(sampleSpace);
     await db.media.put(sampleMedia);

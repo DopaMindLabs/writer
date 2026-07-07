@@ -1,10 +1,32 @@
-import { type ReactNode } from 'react';
+import { type KeyboardEvent, type ReactNode } from 'react';
 import { PdfViewerToolbar } from './PdfViewerToolbar';
 import { PdfViewerStatus } from './PdfViewerStatus';
 import { PdfDocumentView } from './PdfDocumentView';
 import { PdfPageView } from './PdfPageView';
 import { usePdfViewport, MIN_SCALE, MAX_SCALE } from './usePdfViewport';
 import { usePdfLoad } from './usePdfLoad';
+
+// Left/Right turn the page when focus is in the reading region and not in an
+// input or the selection strip (so typing a note is never hijacked).
+const handlePageKey = (
+  event: KeyboardEvent<HTMLDivElement>,
+  prev: () => void,
+  next: () => void,
+): void => {
+  const target = event.target as HTMLElement;
+  if (
+    target.closest('input, textarea, [contenteditable="true"], [data-testid="pdf-selection-strip"]')
+  ) {
+    return;
+  }
+  if (event.key === 'ArrowLeft') {
+    event.preventDefault();
+    prev();
+  } else if (event.key === 'ArrowRight') {
+    event.preventDefault();
+    next();
+  }
+};
 
 export interface PdfViewerProps {
   blob: Blob;
@@ -32,6 +54,9 @@ export const PdfViewer = ({
 }: PdfViewerProps) => {
   const view = usePdfViewport();
   const load = usePdfLoad(blob, view.setNumPages);
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+    handlePageKey(event, view.prev, view.next);
+  };
 
   const isReady = load.status === 'ready';
   const showSkeleton = load.status === 'loading' || (isReady && view.numPages === 0);
@@ -58,7 +83,7 @@ export const PdfViewer = ({
       />
       {/* Focusable so keyboard users can scroll the page (a11y:
           scrollable-region-focusable); the region is named by the parent. */}
-      <div tabIndex={0} className="relative flex-1 overflow-auto p-4">
+      <div tabIndex={0} onKeyDown={onKeyDown} className="relative flex-1 overflow-auto p-4">
         {load.status === 'error' ? (
           <PdfViewerStatus status="error" onRetry={load.retry} />
         ) : null}

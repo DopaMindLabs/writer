@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
-import { Sidebar } from '@/components/chrome/Sidebar';
 import { Topbar } from '@/components/chrome/Topbar';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
 import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
@@ -33,9 +32,10 @@ export const MediaViewerScreen = () => {
 
   return (
     <div className="flex h-full w-full">
+      {/* Reader owns the room: the space sidebar collapses (design Frame C), only
+          the SpaceRail stays. Mobile chrome is untouched. */}
       <div className="hidden md:contents">
         <SpaceRail activeSpaceId={spaceId} />
-        <Sidebar spaceId={spaceId} activeDocId={lastDocId} />
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
@@ -43,7 +43,7 @@ export const MediaViewerScreen = () => {
           docId={null}
           docName={item?.name ?? t('mediaLibrary.title')}
           spaceName={space?.name}
-          mode="write"
+          mode="read"
           fallbackDocId={lastDocId}
         />
         <main

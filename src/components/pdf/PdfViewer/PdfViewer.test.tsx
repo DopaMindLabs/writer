@@ -34,7 +34,7 @@ vi.mock('@/lib/pdf/pdfAdapter', async () => {
   };
 });
 
-import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
+import { renderWithProviders, screen, waitFor, fireEvent } from '@/test/test-utils';
 import { PdfViewer } from './PdfViewer';
 
 const blob = (): Blob => new Blob(['%PDF-1.4 bytes'], { type: 'application/pdf' });
@@ -85,6 +85,21 @@ describe('PdfViewer', () => {
     await userEvent.click(next);
     expect(readout).toHaveTextContent('Page 3 / 3');
     expect(next).toBeDisabled(); // at the last page
+  });
+
+  it('arrow keys turn the page within the reading region', async () => {
+    renderWithProviders(<PdfViewer blob={blob()} title="Paper.pdf" />);
+    const page = await screen.findByTestId('fake-page');
+    const readout = screen.getByTestId('pdf-page-readout');
+
+    fireEvent.keyDown(page, { key: 'ArrowRight' });
+    expect(readout).toHaveTextContent('Page 2 / 3');
+    fireEvent.keyDown(page, { key: 'ArrowRight' });
+    expect(readout).toHaveTextContent('Page 3 / 3');
+    fireEvent.keyDown(page, { key: 'ArrowRight' }); // clamped at the last page
+    expect(readout).toHaveTextContent('Page 3 / 3');
+    fireEvent.keyDown(page, { key: 'ArrowLeft' });
+    expect(readout).toHaveTextContent('Page 2 / 3');
   });
 
   it('zoom stays within bounds', async () => {
