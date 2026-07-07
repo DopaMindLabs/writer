@@ -952,5 +952,15 @@
     "noteCancelHint": "ESC CANCELS",
     "noteSaveHint": "↵ SAVE",
     "notePlaceholder": "Add a note…"
+  },
+  "pdfMarkMenu": {
+    "addNote": "Add note…",
+    "editNote": "Edit note…",
+    "remove": "Remove {{kind}}",
+    "kinds": {
+      "highlight": "highlight",
+      "underline": "underline",
+      "strikethrough": "strikethrough"
+    }
   }
 }

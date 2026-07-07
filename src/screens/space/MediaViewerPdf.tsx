@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { PdfViewer } from '@/components/pdf/PdfViewer/PdfViewer';
 import { AnnotationLayer, useTextSelection, type AnnotatorAnnotation } from '@/pdf-annotator';
 import { PdfSelectionStrip } from '@/components/pdf/highlights/PdfSelectionStrip';
+import { PdfMarkContextMenu } from '@/components/pdf/highlights/PdfMarkContextMenu';
 import { usePdfAnnotator } from '@/hooks/usePdfAnnotator';
 import { getPdfMarkLabel } from '@/lib/pdf/pdfMarkLabel';
 
@@ -51,11 +52,13 @@ export const MediaViewerPdf = ({ mediaId, spaceId, blob, title }: MediaViewerPdf
           const stripPageEl = capture ? pageEls.current.get(capture.page) : undefined;
           return (
             <>
-              <AnnotationLayer
-                annotations={annotator.annotations}
-                page={page}
-                getMarkLabel={getMarkLabel}
-              />
+              <PdfMarkContextMenu annotations={annotator.annotations} annotator={annotator}>
+                <AnnotationLayer
+                  annotations={annotator.annotations}
+                  page={page}
+                  getMarkLabel={getMarkLabel}
+                />
+              </PdfMarkContextMenu>
               {capture?.page === page && stripPageEl ? (
                 <PdfSelectionStrip capture={capture} pageEl={stripPageEl} annotator={annotator} />
               ) : null}
