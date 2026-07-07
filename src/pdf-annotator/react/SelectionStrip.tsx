@@ -8,7 +8,9 @@ import type { SelectionCapture } from '../core/types';
 // Chassis copied from src/editor/plugins/FloatingToolbar.tsx (hard ban on
 // importing from src/editor/**). Keep this class string in sync with that file —
 // the design requires the reader strip to be the same chassis.
-const CHASSIS = 'absolute z-50 rounded-sm border border-rule bg-paper shadow-md';
+// pointer-events-auto: the strip is mounted inside a pointer-transparent page
+// overlay, so it must opt back into pointer events to be clickable.
+const CHASSIS = 'pointer-events-auto absolute z-50 rounded-sm border border-rule bg-paper shadow-md';
 
 export interface SelectionStripProps {
   capture: SelectionCapture;

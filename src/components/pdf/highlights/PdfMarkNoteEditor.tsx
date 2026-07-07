@@ -2,7 +2,8 @@ import { useTranslation } from 'react-i18next';
 import { SelectionStripNoteEditor, swatchRecipe } from '@/pdf-annotator';
 import type { PdfAnnotation } from '@/db/schema';
 
-const CHASSIS = 'absolute z-50 rounded-sm border border-rule bg-paper shadow-md';
+const CHASSIS =
+  'pointer-events-auto absolute z-50 rounded-sm border border-rule bg-paper shadow-md';
 
 const pct = (n: number): string => `${(n * 100).toString()}%`;
 
