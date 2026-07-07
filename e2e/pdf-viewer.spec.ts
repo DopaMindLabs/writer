@@ -48,6 +48,34 @@ test('renders the tiny fixture to a canvas with a text layer', async ({ page }) 
   await expect(pdfPage(page)).toContainText('Lorem ipsum highlights beautifully.');
 });
 
+test('text layer overlays the canvas as an invisible, selectable layer', async ({ page }) => {
+  await gotoLibrary(page);
+  await uploadAndOpen(page, TINY_PDF);
+  await expect(pdfPage(page).locator('canvas')).toBeVisible();
+
+  const textSpan = page.locator('.textLayer span').first();
+  await expect(textSpan).toHaveText('Lorem ipsum highlights beautifully.');
+
+  // react-pdf's layer stylesheet must load: without it the text-layer spans have
+  // no positioning and render as opaque glyphs stacked below the canvas — nothing
+  // is overlaid on the page to drag-select. A real headless drag over pdf.js
+  // glyphs is unreliable (see pdf-annotation-strip's select helper), so guard the
+  // geometry instead: the layer must sit exactly over the canvas and be
+  // transparent, both of which fail when the CSS is missing.
+  const canvasBox = await pdfPage(page).locator('canvas').boundingBox();
+  const layerBox = await page.locator('.textLayer').boundingBox();
+  if (!canvasBox || !layerBox) throw new Error('expected canvas and text layer to be laid out');
+
+  const TOLERANCE = 2;
+  expect(layerBox.y).toBeGreaterThanOrEqual(canvasBox.y - TOLERANCE);
+  expect(layerBox.y + layerBox.height).toBeLessThanOrEqual(canvasBox.y + canvasBox.height + TOLERANCE);
+  expect(layerBox.x).toBeGreaterThanOrEqual(canvasBox.x - TOLERANCE);
+  expect(layerBox.x + layerBox.width).toBeLessThanOrEqual(canvasBox.x + canvasBox.width + TOLERANCE);
+
+  const spanColor = await textSpan.evaluate((el) => getComputedStyle(el).color);
+  expect(spanColor).toBe('rgba(0, 0, 0, 0)');
+});
+
 test('navigates between pages of the two-page fixture', async ({ page }) => {
   await gotoLibrary(page);
   await uploadAndOpen(page, TWO_PAGE_PDF);

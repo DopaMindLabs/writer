@@ -13,7 +13,9 @@ interface PdfPagerProps {
 /**
  * The quiet page pager: a mono `n / m` readout flanked by prev/next, centred at
  * the bottom of the (relatively positioned) viewer container. Replaces the
- * standing toolbar's page controls — no zoom, no chrome; navigation only.
+ * standing toolbar's page controls — no zoom, no chrome; navigation only. `z-10`
+ * keeps it above pdf.js's text layer (`z-index: 2`), which spans the whole page
+ * and would otherwise swallow the pager's clicks where they overlap.
  */
 export const PdfPager = ({ pageNumber, numPages, onPrev, onNext }: PdfPagerProps) => {
   const { t } = useTranslation('screens');
@@ -21,7 +23,7 @@ export const PdfPager = ({ pageNumber, numPages, onPrev, onNext }: PdfPagerProps
   return (
     <div
       data-testid="pdf-pager"
-      className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-sm border border-rule bg-paper px-1 py-0.5 shadow-sm"
+      className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1 rounded-sm border border-rule bg-paper px-1 py-0.5 shadow-sm"
     >
       <IconButton
         icon={ChevronLeft}
