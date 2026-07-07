@@ -13,8 +13,12 @@ export interface PdfViewport {
   setNumPages: (pages: number) => void;
   prev: () => void;
   next: () => void;
+  /** Jump to a page, clamped into [1, numPages]. */
+  goToPage: (page: number) => void;
   zoomOut: () => void;
   zoomIn: () => void;
+  /** Return zoom to the default scale. */
+  resetZoom: () => void;
 }
 
 /**
@@ -40,6 +44,10 @@ export const usePdfViewport = (): PdfViewport => {
     setPageNumber((p) => Math.min(numPages, p + 1));
   }, [numPages]);
 
+  const goToPage = useCallback((page: number) => {
+    setPageNumber(Math.min(Math.max(1, page), Math.max(numPages, 1)));
+  }, [numPages]);
+
   const zoomOut = useCallback(() => {
     setScale((s) => Math.max(MIN_SCALE, s - SCALE_STEP));
   }, []);
@@ -48,5 +56,20 @@ export const usePdfViewport = (): PdfViewport => {
     setScale((s) => Math.min(MAX_SCALE, s + SCALE_STEP));
   }, []);
 
-  return { pageNumber, numPages, scale, setNumPages: applyNumPages, prev, next, zoomOut, zoomIn };
+  const resetZoom = useCallback(() => {
+    setScale(DEFAULT_SCALE);
+  }, []);
+
+  return {
+    pageNumber,
+    numPages,
+    scale,
+    setNumPages: applyNumPages,
+    prev,
+    next,
+    goToPage,
+    zoomOut,
+    zoomIn,
+    resetZoom,
+  };
 };

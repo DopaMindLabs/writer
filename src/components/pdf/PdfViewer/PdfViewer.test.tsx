@@ -34,7 +34,7 @@ vi.mock('@/lib/pdf/pdfAdapter', async () => {
   };
 });
 
-import { renderWithProviders, screen, waitFor, fireEvent } from '@/test/test-utils';
+import { renderWithProviders, screen, fireEvent } from '@/test/test-utils';
 import { PdfViewer } from './PdfViewer';
 
 const blob = (): Blob => new Blob(['%PDF-1.4 bytes'], { type: 'application/pdf' });
@@ -52,12 +52,21 @@ describe('PdfViewer', () => {
     await screen.findByTestId('fake-page');
   });
 
-  it('renders the page and toolbar once loaded', async () => {
+  it('renders the page once loaded, with no standing toolbar', async () => {
     renderWithProviders(<PdfViewer blob={blob()} title="Paper.pdf" />);
     expect(await screen.findByTestId('fake-page')).toBeInTheDocument();
-    expect(screen.getByTestId('pdf-toolbar')).toBeInTheDocument();
-    expect(screen.getByTestId('pdf-page-readout')).toHaveTextContent('Page 1 / 3');
+    // The D1 repair: the toolbar is gone — page controls live in the reader chrome.
+    expect(screen.queryByTestId('pdf-toolbar')).not.toBeInTheDocument();
     expect(screen.queryByTestId('pdf-status-loading')).not.toBeInTheDocument();
+  });
+
+  it('reports the parsed page count to onNumPagesChange', async () => {
+    const onNumPagesChange = vi.fn();
+    renderWithProviders(
+      <PdfViewer blob={blob()} title="Paper.pdf" onNumPagesChange={onNumPagesChange} />,
+    );
+    await screen.findByTestId('fake-page');
+    expect(onNumPagesChange).toHaveBeenCalledWith(3);
   });
 
   it('error state offers a retry', async () => {
@@ -72,47 +81,39 @@ describe('PdfViewer', () => {
     expect(await screen.findByTestId('fake-page')).toBeInTheDocument();
   });
 
-  it('page navigation respects bounds and announces the page', async () => {
-    renderWithProviders(<PdfViewer blob={blob()} title="Paper.pdf" />);
-    await screen.findByTestId('fake-page');
-    const readout = screen.getByTestId('pdf-page-readout');
-    const prev = screen.getByRole('button', { name: /previous page/i });
-    const next = screen.getByRole('button', { name: /next page/i });
-
-    expect(prev).toBeDisabled(); // at the first page
-    await userEvent.click(next);
-    expect(readout).toHaveTextContent('Page 2 / 3');
-    await userEvent.click(next);
-    expect(readout).toHaveTextContent('Page 3 / 3');
-    expect(next).toBeDisabled(); // at the last page
-  });
-
-  it('arrow keys turn the page within the reading region', async () => {
+  it('arrow keys turn the page within the reading region (uncontrolled)', async () => {
     renderWithProviders(<PdfViewer blob={blob()} title="Paper.pdf" />);
     const page = await screen.findByTestId('fake-page');
-    const readout = screen.getByTestId('pdf-page-readout');
 
     fireEvent.keyDown(page, { key: 'ArrowRight' });
-    expect(readout).toHaveTextContent('Page 2 / 3');
-    fireEvent.keyDown(page, { key: 'ArrowRight' });
-    expect(readout).toHaveTextContent('Page 3 / 3');
-    fireEvent.keyDown(page, { key: 'ArrowRight' }); // clamped at the last page
-    expect(readout).toHaveTextContent('Page 3 / 3');
-    fireEvent.keyDown(page, { key: 'ArrowLeft' });
-    expect(readout).toHaveTextContent('Page 2 / 3');
+    expect(screen.getByTestId('fake-page')).toHaveAttribute('data-page', '2');
+    fireEvent.keyDown(screen.getByTestId('fake-page'), { key: 'ArrowRight' });
+    expect(screen.getByTestId('fake-page')).toHaveAttribute('data-page', '3');
+    fireEvent.keyDown(screen.getByTestId('fake-page'), { key: 'ArrowRight' }); // clamped
+    expect(screen.getByTestId('fake-page')).toHaveAttribute('data-page', '3');
+    fireEvent.keyDown(screen.getByTestId('fake-page'), { key: 'ArrowLeft' });
+    expect(screen.getByTestId('fake-page')).toHaveAttribute('data-page', '2');
   });
 
-  it('zoom stays within bounds', async () => {
-    renderWithProviders(<PdfViewer blob={blob()} title="Paper.pdf" />);
+  it('renders the controlled page and scale when provided', async () => {
+    renderWithProviders(<PdfViewer blob={blob()} title="Paper.pdf" page={2} scale={1.5} />);
     const page = await screen.findByTestId('fake-page');
-    expect(page).toHaveAttribute('data-scale', '1');
+    expect(page).toHaveAttribute('data-page', '2');
+    expect(page).toHaveAttribute('data-scale', '1.5');
+  });
 
-    const zoomIn = screen.getByRole('button', { name: /zoom in/i });
-    for (let i = 0; i < 6; i += 1) await userEvent.click(zoomIn);
-    await waitFor(() =>
-      expect(screen.getByTestId('fake-page')).toHaveAttribute('data-scale', '2'),
+  it('arrow keys emit onPageChange when the page is controlled', async () => {
+    const onPageChange = vi.fn();
+    renderWithProviders(
+      <PdfViewer blob={blob()} title="Paper.pdf" page={2} onPageChange={onPageChange} />,
     );
-    expect(zoomIn).toBeDisabled(); // clamped at MAX_SCALE
+    const page = await screen.findByTestId('fake-page');
+    fireEvent.keyDown(page, { key: 'ArrowRight' });
+    expect(onPageChange).toHaveBeenCalledWith(3);
+    fireEvent.keyDown(page, { key: 'ArrowLeft' });
+    expect(onPageChange).toHaveBeenCalledWith(1);
+    // Controlled: the viewer does not move itself; the page stays where the prop says.
+    expect(screen.getByTestId('fake-page')).toHaveAttribute('data-page', '2');
   });
 
   it('overlay slot renders inside the page wrapper', async () => {

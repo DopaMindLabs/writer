@@ -12,6 +12,11 @@ interface MediaViewerPdfProps {
   spaceId: string;
   blob: Blob;
   title: string;
+  /** Controlled viewport, lifted to the reader so the pager and crumb can share it. */
+  page?: number;
+  scale?: number;
+  onPageChange?: (page: number) => void;
+  onNumPagesChange?: (numPages: number) => void;
 }
 
 /**
@@ -21,7 +26,16 @@ interface MediaViewerPdfProps {
  * until an action or a dismissal clears it. Kept apart from `MediaViewerContent`
  * (which owns the back link and the empty states) so each changes for one reason.
  */
-export const MediaViewerPdf = ({ mediaId, spaceId, blob, title }: MediaViewerPdfProps) => {
+export const MediaViewerPdf = ({
+  mediaId,
+  spaceId,
+  blob,
+  title,
+  page,
+  scale,
+  onPageChange,
+  onNumPagesChange,
+}: MediaViewerPdfProps) => {
   const { t } = useTranslation('screens');
   const containerRef = useRef<HTMLDivElement>(null);
   const pageEls = useRef(new Map<number, HTMLElement>());
@@ -47,19 +61,23 @@ export const MediaViewerPdf = ({ mediaId, spaceId, blob, title }: MediaViewerPdf
       <PdfViewer
         blob={blob}
         title={title}
+        page={page}
+        scale={scale}
+        onPageChange={onPageChange}
+        onNumPagesChange={onNumPagesChange}
         onPageElement={onPageElement}
-        pageOverlay={(page) => {
+        pageOverlay={(pageNumber) => {
           const stripPageEl = capture ? pageEls.current.get(capture.page) : undefined;
           return (
             <>
               <PdfMarkContextMenu annotations={annotator.annotations} annotator={annotator}>
                 <AnnotationLayer
                   annotations={annotator.annotations}
-                  page={page}
+                  page={pageNumber}
                   getMarkLabel={getMarkLabel}
                 />
               </PdfMarkContextMenu>
-              {capture?.page === page && stripPageEl ? (
+              {capture?.page === pageNumber && stripPageEl ? (
                 <PdfSelectionStrip capture={capture} pageEl={stripPageEl} annotator={annotator} />
               ) : null}
             </>

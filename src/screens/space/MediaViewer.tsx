@@ -1,28 +1,29 @@
 import { useEffect } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
-import { Topbar } from '@/components/chrome/Topbar';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
 import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
 import { MediaViewerContent } from './MediaViewerContent';
+import { MediaReaderTopbar } from './MediaReaderTopbar';
+import { usePdfViewport } from '@/components/pdf/PdfViewer/usePdfViewport';
 import { useMediaItem } from '@/hooks/useMediaItem';
 import { useSpace } from '@/hooks/useSpaces';
 import { useUI } from '@/store/ui';
 import { routes } from '@/lib/routes';
 
 /**
- * Deep-linkable PDF viewer for one library item. Loads the item live, shows a
- * "source removed" empty state if it is gone, and otherwise renders the viewer
- * with a back link to the library.
+ * Deep-linkable PDF reader for one library item. Owns the lifted page/zoom state
+ * (so the crumb, pager and chrome memory share one source), collapses the space
+ * sidebar so the page owns the room, and shows a "source removed" empty state if
+ * the item is gone.
  */
 export const MediaViewerScreen = () => {
-  const { t } = useTranslation('screens');
   const { spaceId, mediaId } = useParams<{ spaceId: string; mediaId: string }>();
   const space = useSpace(spaceId);
   const item = useMediaItem(mediaId);
   const lastDocId = useUI((s) => s.currentDocId);
   const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
+  const view = usePdfViewport();
 
   useEffect(() => {
     if (spaceId) setCurrentSpaceId(spaceId);
@@ -38,13 +39,13 @@ export const MediaViewerScreen = () => {
         <SpaceRail activeSpaceId={spaceId} />
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar
+        <MediaReaderTopbar
           spaceId={spaceId}
-          docId={null}
-          docName={item?.name ?? t('mediaLibrary.title')}
+          mediaId={mediaId}
+          item={item}
           spaceName={space?.name}
-          mode="read"
           fallbackDocId={lastDocId}
+          view={view}
         />
         <main
           id="main-content"
@@ -52,7 +53,7 @@ export const MediaViewerScreen = () => {
           data-testid="media-viewer-screen"
           className="flex min-h-0 flex-1 flex-col bg-paper"
         >
-          <MediaViewerContent spaceId={spaceId} item={item} />
+          <MediaViewerContent spaceId={spaceId} item={item} view={view} />
         </main>
         <MobileTabs spaceId={spaceId} docId={lastDocId} />
         <MobileMoreSheet spaceId={spaceId} docId={lastDocId} />

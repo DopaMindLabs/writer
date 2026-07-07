@@ -1,10 +1,8 @@
 import { type KeyboardEvent, type ReactNode } from 'react';
-import { PdfViewerToolbar } from './PdfViewerToolbar';
 import { PdfViewerStatus } from './PdfViewerStatus';
 import { PdfDocumentView } from './PdfDocumentView';
 import { PdfPageView } from './PdfPageView';
-import { usePdfViewport, MIN_SCALE, MAX_SCALE } from './usePdfViewport';
-import { usePdfLoad } from './usePdfLoad';
+import { usePdfViewerController } from './usePdfViewerController';
 
 // Left/Right turn the page when focus is in the reading region and not in an
 // input or the selection strip (so typing a note is never hijacked).
@@ -34,32 +32,44 @@ export interface PdfViewerProps {
   title: string;
   /** Stage PE mounts the highlight layer here, over each page's canvas. */
   pageOverlay?: (page: number) => ReactNode;
-  /** Stage PE mounts the highlighter controls into the toolbar here. */
-  toolbarExtras?: ReactNode;
   /** Stage PE reads the page element for highlight geometry. */
   onPageElement?: (page: number, el: HTMLElement | null) => void;
+  /**
+   * Controlled viewport. Stage PG lifts page/zoom to the reader so the pager,
+   * crumb and overflow share one source; when omitted the viewer owns its own
+   * page/zoom (the uncontrolled default used by tests and stories).
+   */
+  page?: number;
+  onPageChange?: (page: number) => void;
+  scale?: number;
+  /** Reserved: the viewer has no in-view zoom gesture yet — the reader owns zoom
+   * via the overflow — so a controlled `scale` is display-only for now. */
+  onScaleChange?: (scale: number) => void;
+  /** Reports the parsed page count so the reader can drive the pager and crumb. */
+  onNumPagesChange?: (numPages: number) => void;
 }
 
 /**
- * Composes the decomposed viewer from two hooks — page/zoom state
- * (`usePdfViewport`) and the load lifecycle (`usePdfLoad`) — and the toolbar /
- * status / document / page pieces. Each unit owns one concern.
+ * Composes the decomposed viewer from the controller (page/zoom state + load
+ * lifecycle) and the status / document / page pieces. Zoom and the page readout
+ * live in the reader chrome now (the standing toolbar is gone); only arrow-key
+ * paging stays here.
  */
 export const PdfViewer = ({
   blob,
   title,
   pageOverlay,
-  toolbarExtras,
   onPageElement,
+  page,
+  onPageChange,
+  scale,
+  onNumPagesChange,
 }: PdfViewerProps) => {
-  const view = usePdfViewport();
-  const load = usePdfLoad(blob, view.setNumPages);
-  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
-    handlePageKey(event, view.prev, view.next);
-  };
+  const ctl = usePdfViewerController({ blob, page, onPageChange, scale, onNumPagesChange });
 
-  const isReady = load.status === 'ready';
-  const showSkeleton = load.status === 'loading' || (isReady && view.numPages === 0);
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+    handlePageKey(event, ctl.prev, ctl.next);
+  };
 
   return (
     <div
@@ -68,36 +78,23 @@ export const PdfViewer = ({
       data-testid="pdf-viewer"
       className="flex h-full flex-col bg-paper-2"
     >
-      <PdfViewerToolbar
-        pageNumber={view.pageNumber}
-        numPages={view.numPages}
-        canPrev={isReady && view.pageNumber > 1}
-        canNext={isReady && view.pageNumber < view.numPages}
-        canZoomOut={isReady && view.scale > MIN_SCALE}
-        canZoomIn={isReady && view.scale < MAX_SCALE}
-        onPrev={view.prev}
-        onNext={view.next}
-        onZoomOut={view.zoomOut}
-        onZoomIn={view.zoomIn}
-        extras={toolbarExtras}
-      />
       {/* Focusable so keyboard users can scroll the page (a11y:
           scrollable-region-focusable); the region is named by the parent. */}
       <div tabIndex={0} onKeyDown={onKeyDown} className="relative flex-1 overflow-auto p-4">
-        {load.status === 'error' ? (
-          <PdfViewerStatus status="error" onRetry={load.retry} />
+        {ctl.load.status === 'error' ? (
+          <PdfViewerStatus status="error" onRetry={ctl.load.retry} />
         ) : null}
-        {showSkeleton ? <PdfViewerStatus status="loading" /> : null}
-        {isReady && load.file ? (
+        {ctl.showSkeleton ? <PdfViewerStatus status="loading" /> : null}
+        {ctl.isReady && ctl.load.file ? (
           <PdfDocumentView
-            file={load.file}
-            onLoadSuccess={load.onLoadSuccess}
-            onLoadError={load.onLoadError}
+            file={ctl.load.file}
+            onLoadSuccess={ctl.load.onLoadSuccess}
+            onLoadError={ctl.load.onLoadError}
           >
             <PdfPageView
-              page={view.pageNumber}
-              numPages={view.numPages}
-              scale={view.scale}
+              page={ctl.pageNumber}
+              numPages={ctl.numPages}
+              scale={ctl.scale}
               pageOverlay={pageOverlay}
               onPageElement={onPageElement}
             />

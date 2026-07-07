@@ -911,8 +911,6 @@
     "viewer": {
       "prevPage": "Previous page",
       "nextPage": "Next page",
-      "zoomOut": "Zoom out",
-      "zoomIn": "Zoom in",
       "pageReadout": "Page {{page}} / {{total}}",
       "pageLabel": "Page {{page}} of {{total}}",
       "loading": "Rendering page…",
@@ -964,7 +962,29 @@
     }
   },
   "pdfHighlights": {
+    "title": "Highlights & notes",
     "pageLabel": "P. {{page}}",
     "emptyCaption": "Select text in the PDF to highlight it."
+  },
+  "pdfReader": {
+    "thumbsToggle": "Page thumbnails",
+    "railToggle": "Reader panels",
+    "info": "Document info",
+    "overflow": "More",
+    "tick": "Highlight on page {{page}}",
+    "crumbSuffix": " · page {{page}} of {{total}}",
+    "rows": {
+      "name": "Name",
+      "pages": "Pages",
+      "size": "Size",
+      "added": "Added",
+      "highlights": "Highlights"
+    },
+    "menu": {
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "resetZoom": "Reset zoom",
+      "openLibrary": "Open library"
+    }
   }
 }

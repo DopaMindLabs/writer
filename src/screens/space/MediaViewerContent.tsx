@@ -3,22 +3,25 @@ import { Link } from '@/components/ui/Link';
 import { Icon } from '@/components/ui/icon';
 import { ArrowLeft } from '@/components/libs/icons';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { MediaViewerPdf } from './MediaViewerPdf';
+import { PdfReaderSurface } from './PdfReaderSurface';
 import { routes } from '@/lib/routes';
+import type { PdfViewport } from '@/components/pdf/PdfViewer/usePdfViewport';
 import type { MediaItem } from '@/db/schema';
 
 interface MediaViewerContentProps {
   spaceId: string;
   /** `undefined` while loading, `null` when the item is gone, else the item. */
   item: MediaItem | null | undefined;
+  /** The reader's lifted page/zoom state (owned by the screen so the crumb can read it). */
+  view: PdfViewport;
 }
 
 /**
- * The viewer body: a back link plus the PDF, or a "source removed" empty state
- * when the item is gone. Kept apart from the screen shell (rail/sidebar/topbar)
- * so each changes for one reason.
+ * The viewer body: a back link plus the reader surface, or a "source removed"
+ * empty state when the item is gone. Kept apart from the screen shell
+ * (rail/sidebar/topbar) so each changes for one reason.
  */
-export const MediaViewerContent = ({ spaceId, item }: MediaViewerContentProps) => {
+export const MediaViewerContent = ({ spaceId, item, view }: MediaViewerContentProps) => {
   const { t } = useTranslation('screens');
 
   return (
@@ -44,14 +47,7 @@ export const MediaViewerContent = ({ spaceId, item }: MediaViewerContentProps) =
           />
         </div>
       ) : item ? (
-        <div className="min-h-0 flex-1">
-          <MediaViewerPdf
-            mediaId={item.id}
-            spaceId={spaceId}
-            blob={item.blob}
-            title={item.name}
-          />
-        </div>
+        <PdfReaderSurface spaceId={spaceId} item={item} view={view} />
       ) : null}
     </>
   );

@@ -13,6 +13,7 @@ describe('useUI store', () => {
         floatingToolbarEnabled: false,
         splitDividerPct: 50,
         pdfHighlightColor: 'yellow',
+        pdfReaderPrefs: {},
       });
     });
   });
@@ -31,6 +32,7 @@ describe('useUI store', () => {
         readingWidth: 'm',
         diffMode: 'side-by-side',
         pdfHighlightColor: 'yellow',
+        pdfReaderPrefs: {},
       },
     );
   });
@@ -74,6 +76,7 @@ describe('useUI store', () => {
         readingWidth: 'm',
         diffMode: 'side-by-side',
         pdfHighlightColor: 'yellow',
+        pdfReaderPrefs: {},
       },
     );
     act(() => { useUI.getState().setFloatingToolbarEnabled(false); });
@@ -221,5 +224,70 @@ describe('useUI store', () => {
   it('setSplitDividerPct falls back to default when value is non-finite', () => {
     act(() => { useUI.getState().setSplitDividerPct(Number.NaN); });
     expect(useUI.getState().splitDividerPct).toBe(50);
+  });
+
+  it('pdfReaderPrefs defaults to an empty record', () => {
+    expect(useUI.getState().pdfReaderPrefs).toEqual({});
+  });
+
+  it('setPdfReaderPref keys by media id and merges patches over the default', () => {
+    act(() => { useUI.getState().setPdfReaderPref('m1', { panel: 'highlights' }); });
+    expect(useUI.getState().pdfReaderPrefs.m1).toEqual({
+      railHidden: false,
+      panel: 'highlights',
+      thumbs: false,
+    });
+    act(() => { useUI.getState().setPdfReaderPref('m1', { thumbs: true }); });
+    expect(useUI.getState().pdfReaderPrefs.m1).toEqual({
+      railHidden: false,
+      panel: 'highlights',
+      thumbs: true,
+    });
+    // A second document keeps its own memory.
+    act(() => { useUI.getState().setPdfReaderPref('m2', { railHidden: true }); });
+    expect(useUI.getState().pdfReaderPrefs.m2.railHidden).toBe(true);
+    expect(useUI.getState().pdfReaderPrefs.m1.panel).toBe('highlights');
+  });
+
+  it('setPdfReaderPref persists the record alongside theme', () => {
+    act(() => { useUI.getState().setPdfReaderPref('m1', { thumbs: true }); });
+    expect(
+      JSON.parse(window.localStorage.getItem('lorem-ui') ?? '{}').pdfReaderPrefs,
+    ).toEqual({ m1: { railHidden: false, panel: null, thumbs: true } });
+  });
+
+  it('setPdfReaderPref caps the record at 50 entries, evicting the oldest', () => {
+    act(() => {
+      for (let i = 0; i < 55; i += 1) {
+        useUI.getState().setPdfReaderPref(`m${String(i)}`, { thumbs: true });
+      }
+    });
+    const prefs = useUI.getState().pdfReaderPrefs;
+    expect(Object.keys(prefs)).toHaveLength(50);
+    // The five oldest (m0–m4) were evicted; the newest survives.
+    expect(prefs.m0).toBeUndefined();
+    expect(prefs.m4).toBeUndefined();
+    expect(prefs.m5).toBeDefined();
+    expect(prefs.m54).toBeDefined();
+  });
+
+  it('sanitises persisted pdfReaderPrefs, dropping malformed entries', async () => {
+    window.localStorage.setItem(
+      'lorem-ui',
+      JSON.stringify({
+        pdfReaderPrefs: {
+          ok: { railHidden: true, panel: 'info', thumbs: false },
+          badPanel: { railHidden: false, panel: 'nope', thumbs: false },
+          missingKey: { railHidden: false, panel: null },
+          extraKey: { railHidden: false, panel: null, thumbs: false, x: 1 },
+          notObject: 5,
+        },
+      }),
+    );
+    vi.resetModules();
+    const { useUI: fresh } = await import('./ui');
+    expect(fresh.getState().pdfReaderPrefs).toEqual({
+      ok: { railHidden: true, panel: 'info', thumbs: false },
+    });
   });
 });

@@ -52,12 +52,12 @@ test('navigates between pages of the two-page fixture', async ({ page }) => {
   await gotoLibrary(page);
   await uploadAndOpen(page, TWO_PAGE_PDF);
 
-  await expect(page.getByTestId('pdf-page-readout')).toContainText('Page 1 / 2');
+  await expect(page.getByTestId('pdf-pager')).toContainText('1 / 2');
   await expect(pdfPage(page)).toContainText('Page one of the fixture.');
 
-  await page.getByRole('button', { name: 'Next page' }).click();
+  await page.getByTestId('pdf-pager-next').click();
 
-  await expect(page.getByTestId('pdf-page-readout')).toContainText('Page 2 / 2');
+  await expect(page.getByTestId('pdf-pager')).toContainText('2 / 2');
   await expect(pdfPage(page)).toContainText('Page two of the fixture.');
 });
 

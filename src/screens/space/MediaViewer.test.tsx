@@ -25,10 +25,13 @@ vi.mock('@/lib/pdf/pdfAdapter', async () => {
   };
 });
 
+import { act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderAtRoute, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { PDF_MIME } from '@/data/media';
 import { sampleSpace } from '@/test/fixtures';
+import { useUI } from '@/store/ui';
 import type { MediaItem } from '@/db/schema';
 import { MediaViewerScreen } from './MediaViewer';
 
@@ -51,6 +54,12 @@ const renderViewer = (mediaId: string) =>
   });
 
 describe('MediaViewerScreen', () => {
+  beforeEach(() => {
+    act(() => {
+      useUI.setState({ pdfReaderPrefs: {} });
+    });
+  });
+
   it('renders the viewer for a library item', async () => {
     await db.spaces.put(sampleSpace);
     await db.media.put(sampleMedia);
@@ -92,5 +101,36 @@ describe('MediaViewerScreen', () => {
       initialEntries: ['/library'],
     });
     expect(queryByTestId('catch-all')).toBeInTheDocument();
+  });
+
+  it('mounts the quiet pager and the reader rail once the document loads', async () => {
+    await db.spaces.put(sampleSpace);
+    await db.media.put(sampleMedia);
+    renderViewer('m1');
+    await screen.findByTestId('fake-page');
+    expect(screen.getByTestId('pdf-pager')).toBeInTheDocument();
+    expect(screen.getByTestId('pdf-reader-rail')).toBeInTheDocument();
+    // The lifted page state also feeds the crumb.
+    expect(screen.getByTestId('topbar-crumb-suffix')).toHaveTextContent('· page 1 of 1');
+  });
+
+  it('opens a side panel from a rail glyph', async () => {
+    await db.spaces.put(sampleSpace);
+    await db.media.put(sampleMedia);
+    renderViewer('m1');
+    await screen.findByTestId('fake-page');
+    await userEvent.click(screen.getByTestId('pdf-rail-highlights'));
+    expect(screen.getByTestId('pdf-reader-panel')).toHaveTextContent('Highlights & notes');
+    expect(screen.getByTestId('pdf-rail-highlights')).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('hides the rail from the topbar toggle and remembers it per document', async () => {
+    await db.spaces.put(sampleSpace);
+    await db.media.put(sampleMedia);
+    renderViewer('m1');
+    await screen.findByTestId('fake-page');
+    await userEvent.click(screen.getByTestId('pdf-rail-toggle'));
+    expect(screen.queryByTestId('pdf-reader-rail')).not.toBeInTheDocument();
+    expect(useUI.getState().pdfReaderPrefs.m1.railHidden).toBe(true);
   });
 });
