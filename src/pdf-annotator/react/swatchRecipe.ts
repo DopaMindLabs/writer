@@ -19,3 +19,20 @@ export const swatchRecipe = cva('', {
 });
 
 export type SwatchVariants = VariantProps<typeof swatchRecipe>;
+
+/**
+ * Maps a highlight colour to its `border-l-hl-*` token class, for the 3px colour
+ * edge on annotation-list rows. Enumerated so Tailwind sees every class.
+ */
+export const borderRecipe = cva('', {
+  variants: {
+    color: {
+      yellow: 'border-l-hl-yellow',
+      pink: 'border-l-hl-pink',
+      blue: 'border-l-hl-blue',
+      green: 'border-l-hl-green',
+      ash: 'border-l-hl-ash',
+    },
+  },
+  defaultVariants: { color: 'yellow' },
+});

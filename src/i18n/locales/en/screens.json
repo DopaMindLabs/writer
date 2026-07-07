@@ -962,5 +962,9 @@
       "underline": "underline",
       "strikethrough": "strikethrough"
     }
+  },
+  "pdfHighlights": {
+    "pageLabel": "P. {{page}}",
+    "emptyCaption": "Select text in the PDF to highlight it."
   }
 }

@@ -36,14 +36,15 @@ The module emits only utility and token class **strings**; the host's Tailwind
 theme must define the token-backed ones. Classes emitted today:
 
 - Colour tokens (host must provide): `bg-hl-yellow`, `bg-hl-pink`,
-  `bg-hl-blue`, `bg-hl-green`, `bg-hl-ash`.
-- Layout utilities (standard Tailwind): `absolute`, `inset-0`,
-  `mix-blend-multiply`, `pointer-events-auto`, `h-auto`, `min-h-0`, `border-0`,
-  `bg-transparent`, `p-0`.
-
-PE.4/PE.6 add the selection strip and list, extending this contract with
-`border-l-hl-*`, `ring-ink`, `bg-paper`/`bg-paper-2` and the rule-border
-tokens; this section is updated in the same tasks.
+  `bg-hl-blue`, `bg-hl-green`, `bg-hl-ash`; the list's 3px colour edges
+  `border-l-hl-yellow`/`-pink`/`-blue`/`-green`/`-ash`.
+- Ground and rule tokens (host must provide): `bg-paper`, `bg-paper-2`,
+  `border-rule`, `bg-rule`, `text-ink`, `text-ink-2`, `ring-ink`,
+  `ring-offset-paper`.
+- Layout / type utilities (standard Tailwind): `absolute`, `inset-0`,
+  `mix-blend-multiply`, `pointer-events-auto`, `rounded-sm`, `rounded-full`,
+  `shadow-md`, `font-mono`, `font-serif`, `line-clamp-2`, and the spacing/size
+  utilities the strip, note editor and list rows compose.
 
 ## Extraction checklist
 

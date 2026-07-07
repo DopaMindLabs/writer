@@ -17,7 +17,9 @@ export { useAnnotator } from './react/useAnnotator';
 export type { Annotator, AnnotatorCallbacks } from './react/useAnnotator';
 export { AnnotationLayer } from './react/AnnotationLayer';
 export { AnnotationMark } from './react/AnnotationMark';
-export { swatchRecipe } from './react/swatchRecipe';
+export { swatchRecipe, borderRecipe } from './react/swatchRecipe';
+export { AnnotationList } from './react/AnnotationList';
+export type { AnnotationListProps } from './react/AnnotationList';
 export { SelectionStrip } from './react/SelectionStrip';
 export type { SelectionStripProps } from './react/SelectionStrip';
 export { computeStripPosition } from './react/stripPosition';
@@ -25,4 +27,3 @@ export type { StripPosition } from './react/stripPosition';
 export type { StripColor, SelectionStripLabels } from './react/stripLabels';
 export { SelectionStripNoteEditor } from './react/SelectionStripNoteEditor';
 export type { SelectionStripNoteEditorProps } from './react/SelectionStripNoteEditor';
-// PE.6 append: AnnotationList
