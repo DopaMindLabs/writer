@@ -60,4 +60,49 @@ describe('pdf-annotations facade', () => {
     await deletePdfAnnotation(hl.id);
     expect(await db.pdfAnnotations.get(hl.id)).toBeUndefined();
   });
+
+  const at = (
+    rects: PdfSelectionCapture['rects'],
+    quote = 'q',
+  ): PdfSelectionCapture => ({ page: 1, rects, quote });
+  const SPAN = [{ x: 0.1, y: 0.1, w: 0.2, h: 0.05 }];
+  const ELSEWHERE = [{ x: 0.1, y: 0.8, w: 0.2, h: 0.05 }];
+
+  it('a new highlight overrides an overlapping same-kind highlight', async () => {
+    const first = await addPdfHighlight({ mediaId: 'm1', spaceId: 's1', capture: at(SPAN), color: 'yellow' });
+    const second = await addPdfHighlight({ mediaId: 'm1', spaceId: 's1', capture: at(SPAN), color: 'green' });
+    const all = await listPdfAnnotations('m1');
+    expect(all).toHaveLength(1);
+    expect(all[0].id).toBe(second.id);
+    expect(all[0].color).toBe('green');
+    expect(await db.pdfAnnotations.get(first.id)).toBeUndefined();
+  });
+
+  it('the overriding highlight inherits the superseded note', async () => {
+    await addPdfHighlight({ mediaId: 'm1', spaceId: 's1', capture: at(SPAN), color: 'yellow', note: 'keep me' });
+    await addPdfHighlight({ mediaId: 'm1', spaceId: 's1', capture: at(SPAN), color: 'green' });
+    const all = await listPdfAnnotations('m1');
+    expect(all).toHaveLength(1);
+    expect(all[0].note).toBe('keep me');
+  });
+
+  it('keeps an explicit note over the inherited one', async () => {
+    await addPdfHighlight({ mediaId: 'm1', spaceId: 's1', capture: at(SPAN), color: 'yellow', note: 'old' });
+    await addPdfHighlight({ mediaId: 'm1', spaceId: 's1', capture: at(SPAN), color: 'green', note: 'new' });
+    expect((await listPdfAnnotations('m1'))[0].note).toBe('new');
+  });
+
+  it('leaves a non-overlapping highlight intact', async () => {
+    await addPdfHighlight({ mediaId: 'm1', spaceId: 's1', capture: at(SPAN, 'a'), color: 'yellow' });
+    await addPdfHighlight({ mediaId: 'm1', spaceId: 's1', capture: at(ELSEWHERE, 'b'), color: 'green' });
+    expect(await listPdfAnnotations('m1')).toHaveLength(2);
+  });
+
+  it('lets a different-kind mark over a highlight coexist', async () => {
+    await addPdfHighlight({ mediaId: 'm1', spaceId: 's1', capture: at(SPAN), color: 'yellow' });
+    await addPdfHighlight({ mediaId: 'm1', spaceId: 's1', capture: at(SPAN), color: 'green', kind: 'underline' });
+    const all = await listPdfAnnotations('m1');
+    expect(all).toHaveLength(2);
+    expect(all.map((a) => a.kind).sort()).toEqual(['highlight', 'underline']);
+  });
 });

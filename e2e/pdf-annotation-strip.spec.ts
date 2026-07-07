@@ -92,6 +92,24 @@ test('the note action grows the strip and saves a note', async ({ page }) => {
   await expect(page.getByTestId('mark-edit-note')).toHaveText('Edit note…');
 });
 
+test('re-highlighting the same text overrides the colour and keeps the note', async ({ page }) => {
+  await select(page);
+  await page.getByTestId('strip-note').click();
+  await page.getByTestId('strip-note-input').fill('keep me');
+  await page.getByTestId('strip-note-input').press('Enter');
+  await expect(mark(page)).toBeVisible();
+  await expect(strip(page)).toHaveCount(0);
+
+  await select(page);
+  await page.getByTestId('strip-color-pink').click();
+  // The earlier mark is replaced, not stacked, and recoloured.
+  await expect(page.locator('[data-testid="pdf-highlight-mark"]')).toHaveCount(1);
+  await expect(mark(page)).toHaveAttribute('data-color', 'pink');
+  // The note survived the override.
+  await mark(page).click({ button: 'right' });
+  await expect(page.getByTestId('mark-edit-note')).toHaveText('Edit note…');
+});
+
 test('escape dismisses the strip without applying', async ({ page }) => {
   await select(page);
   await expect(strip(page)).toBeVisible();
