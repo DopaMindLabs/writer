@@ -312,14 +312,18 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   local editor, keeps a safety revision of the local side then either replays the pulled
   body through the mounted editor or reseeds the CRDT — **whole-document last-writer-wins**;
   lossless cross-device merge is a recorded open decision for a future release.
-- **Key reconciliation.** Setup holds the escrow on the device, not in `cloudCrypto`. Once
-  the first sync settles, reconciliation compares the account escrow's fingerprint with the
-  device ring's: absent → publish this device's escrow (add-only, so it can never race and
-  clobber the account's key); match → nothing to do; differ → flag a **key mismatch**. Under
-  a mismatch the write middleware refuses content writes and reads surface the route-level
-  recovery screen; the user resolves it from settings by **adopting** the account key (enter
-  the account passphrase; the device re-seals its own rows under it) or **erasing** the
-  account's unreadable copy (kept: this device's notes). Never clobbers, never silently loses.
+- **Key reconciliation.** Setup holds the escrow on the device, not in `cloudCrypto`, and —
+  while signed out — drops any escrow already in the local database (residue from an earlier
+  local session) so a fresh key can never trip a spurious mismatch. Once the first sync
+  settles, reconciliation compares the account escrow's fingerprint with the device ring's
+  (or, as a fallback, the pending escrow's): absent → publish this device's escrow (add-only,
+  so it can never race and clobber the account's key); match → nothing to do; differ → flag a
+  **key mismatch**. Under a mismatch the write middleware refuses content writes and reads
+  surface the route-level recovery screen, whose **Unlock in settings** action navigates to
+  the Account tab and its mismatch banner; the user resolves it from settings by **adopting**
+  the account key (enter the account passphrase; the device re-seals its own rows under it) or
+  **erasing** the account's unreadable copy (kept: this device's notes). Never clobbers, never
+  silently loses.
 - **Ordering.** Passphrase-before-sign-in: sync cannot start without a key ring, so a
   keyless write is never uploaded in the clear. Opting out is **non-destructive** — the
   cloud schema is sticky so a rebuild never erases local content.

@@ -31,6 +31,32 @@ const pkOf = (db: LoremDB, table: string, row: Row): string =>
   String(row[db.table(table).schema.primKey.keyPath as string]);
 
 /**
+ * Best-effort synchronous read of whether the cloud user is signed into an
+ * account. Reads the addon's `currentUser` snapshot; `false` on a plain database
+ * or before the addon has resolved a user. Kept local to avoid importing the
+ * cloud-client facade (which re-exports this module).
+ */
+const isCloudUserSignedIn = (db: LoremDB): boolean => {
+  const cloud = (
+    db as { cloud?: { currentUser?: { value?: { isLoggedIn?: boolean } } } }
+  ).cloud;
+  return cloud?.currentUser?.value?.isLoggedIn ?? false;
+};
+
+/**
+ * Drop a residual escrow row from the local database, tolerating a plain
+ * (non-cloud) database that has no `cloudCrypto` store. Only ever called while
+ * the device is signed out, where such a row can only be stale local residue.
+ */
+const dropResidualEscrow = async (db: LoremDB): Promise<void> => {
+  try {
+    await db.cloudCrypto.delete(ESCROW_ID);
+  } catch {
+    /* non-cloud database: no cloudCrypto store to clear */
+  }
+};
+
+/**
  * One-shot, idempotent re-seal of any content written while the device was
  * keyless. The middleware leaves `openCursor` unwrapped, so `filter` sees rows
  * exactly as stored: those without {@link CIPHER_FIELD} are still plaintext.
@@ -58,7 +84,16 @@ export const sealExistingRows = async (db: LoremDB = appDb): Promise<void> => {
 export const createCloudEncryption = async (
   passphrase: string,
   db: LoremDB = appDb,
+  isSignedIn: (db: LoremDB) => boolean = isCloudUserSignedIn,
 ): Promise<string> => {
+  // Fresh setup mints a brand-new master, so any escrow already in the local
+  // database is protected by a *different* key. While signed out, that row can
+  // only be residue from an earlier local session (a live account's escrow is
+  // pulled only while signed in) — drop it, so the escrow reconciler cannot
+  // later read its stale fingerprint and lock this device out with a spurious
+  // mismatch. Signed in, the row is the account's real escrow: leave it for the
+  // mismatch/adopt flow, never delete it here.
+  if (!isSignedIn(db)) await dropResidualEscrow(db);
   const master = generateMasterSecret();
   const iterations = await calibrateIterations();
   const escrow = await wrapMasterSecret(master, passphrase, iterations);
