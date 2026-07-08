@@ -43,4 +43,30 @@ describe('Kbd', () => {
     render(<Kbd keys="mod+s" />);
     expect(screen.getByText('⌘S').tagName).toBe('KBD');
   });
+
+  it('resolves the alt token per platform', () => {
+    mockApple(true);
+    const { unmount } = render(<Kbd keys="alt+s" />);
+    expect(screen.getByText('⌥S')).toBeInTheDocument();
+    unmount();
+    mockApple(false);
+    render(<Kbd keys="alt+s" />);
+    expect(screen.getByText('Alt+S')).toBeInTheDocument();
+  });
+
+  it('resolves the enter token per platform', () => {
+    mockApple(true);
+    const { unmount } = render(<Kbd keys="mod+enter" />);
+    expect(screen.getByText('⌘⏎')).toBeInTheDocument();
+    unmount();
+    mockApple(false);
+    render(<Kbd keys="mod+enter" />);
+    expect(screen.getByText('Ctrl+Enter')).toBeInTheDocument();
+  });
+
+  it('passes a multi-character non-modifier token through unchanged', () => {
+    mockApple(false);
+    render(<Kbd keys="Esc" />);
+    expect(screen.getByText('Esc')).toBeInTheDocument();
+  });
 });
