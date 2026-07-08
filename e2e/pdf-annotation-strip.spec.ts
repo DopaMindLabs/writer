@@ -184,6 +184,37 @@ test('a selection drag passes through an existing mark', async ({ page }) => {
   expect(pe).toEqual({ idle: 'auto', selecting: 'none', restored: 'auto' });
 });
 
+test('recolouring the middle of a highlight splits it and keeps the ends', async ({ page }) => {
+  // Yellow over the whole line.
+  await select(page);
+  await page.getByTestId('strip-color-yellow').click();
+  await expect(mark(page)).toHaveCount(1);
+  await expect(strip(page)).toHaveCount(0);
+
+  // Green over just the middle word "ipsum" (chars 6..11 of the line).
+  await page.evaluate(() => {
+    const span = document.querySelector('.textLayer span');
+    const node = span?.firstChild;
+    if (!node) throw new Error('no text node to sub-select');
+    const range = document.createRange();
+    range.setStart(node, 6);
+    range.setEnd(node, 11);
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    span?.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }));
+  });
+  await page.getByTestId('strip-color-green').click();
+
+  // Preview-style: the middle becomes green, the surrounding text stays yellow —
+  // the yellow highlight is not wiped, it is split into a left and right strip.
+  await expect(mark(page)).toHaveCount(2);
+  await expect(page.locator('[data-testid="pdf-highlight-mark"][data-color="green"]')).toHaveCount(1);
+  await expect(page.locator('[data-testid="pdf-highlight-mark"][data-color="yellow"]')).toHaveCount(1);
+  await expect(page.locator('[data-testid="pdf-highlight-layer"] span.bg-hl-yellow')).toHaveCount(2);
+  await expect(page.locator('[data-testid="pdf-highlight-layer"] span.bg-hl-green')).toHaveCount(1);
+});
+
 test('strip and marks have no detectable a11y violations', async ({ page }) => {
   await select(page);
   await page.getByTestId('strip-color-green').click();

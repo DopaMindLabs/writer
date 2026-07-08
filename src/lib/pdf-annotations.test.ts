@@ -98,6 +98,44 @@ describe('pdf-annotations facade', () => {
     expect(await listPdfAnnotations('m1')).toHaveLength(2);
   });
 
+  it('recolours only the overlap and keeps the rest of the highlight', async () => {
+    // Yellow spans x 0.1..0.5; green recolours the middle 0.2..0.3 (Preview-style).
+    const yellow = await addPdfHighlight({
+      mediaId: 'm1', spaceId: 's1', color: 'yellow',
+      capture: at([{ x: 0.1, y: 0.1, w: 0.4, h: 0.05 }]),
+    });
+    await addPdfHighlight({
+      mediaId: 'm1', spaceId: 's1', color: 'green',
+      capture: at([{ x: 0.2, y: 0.1, w: 0.1, h: 0.05 }]),
+    });
+    const all = await listPdfAnnotations('m1');
+    expect(all).toHaveLength(2);
+    const kept = all.find((a) => a.color === 'yellow');
+    const middle = all.find((a) => a.color === 'green');
+    // The yellow mark is trimmed in place (same id), split into a left and right strip.
+    expect(kept?.id).toBe(yellow.id);
+    expect(kept?.rects).toHaveLength(2);
+    expect(middle?.rects).toHaveLength(1);
+  });
+
+  it('trims the old mark at the seam when a new highlight extends past it', async () => {
+    // Old covers x 0.1..0.3; new covers 0.2..0.5 — overlaps the right half and runs on.
+    await addPdfHighlight({
+      mediaId: 'm1', spaceId: 's1', color: 'yellow',
+      capture: at([{ x: 0.1, y: 0.1, w: 0.2, h: 0.05 }]),
+    });
+    await addPdfHighlight({
+      mediaId: 'm1', spaceId: 's1', color: 'green',
+      capture: at([{ x: 0.2, y: 0.1, w: 0.3, h: 0.05 }]),
+    });
+    const all = await listPdfAnnotations('m1');
+    expect(all).toHaveLength(2);
+    const kept = all.find((a) => a.color === 'yellow');
+    expect(kept?.rects).toHaveLength(1);
+    // Yellow keeps only its left strip, 0.1..0.2.
+    expect(Number(kept?.rects[0].w.toFixed(5))).toBe(0.1);
+  });
+
   it('lets a different-kind mark over a highlight coexist', async () => {
     await addPdfHighlight({ mediaId: 'm1', spaceId: 's1', capture: at(SPAN), color: 'yellow' });
     await addPdfHighlight({ mediaId: 'm1', spaceId: 's1', capture: at(SPAN), color: 'green', kind: 'underline' });
