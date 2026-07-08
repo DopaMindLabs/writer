@@ -7,11 +7,14 @@ import {
   deviceKeyProvider,
   forgetDeviceKeyRing,
   clearPendingEscrow,
+  savePendingEscrow,
+  saveDeviceKeyRing,
 } from './crypto/keyStore';
 import { keyMismatchState } from './crypto/keyMismatch';
 import {
   generateMasterSecret,
   wrapMasterSecret,
+  deriveKeyRing,
 } from './crypto/keys';
 import {
   createCloudEncryption,
@@ -59,6 +62,9 @@ beforeEach(async () => {
     send() {}
   });
   keyMismatchState.set(false);
+  // The reconciler emits a gated diagnostic on a genuine mismatch; silence it so
+  // the suite output stays clean, while still letting tests assert it fired.
+  vi.spyOn(console, 'warn').mockImplementation(() => {});
   await forgetDeviceKeyRing();
   await clearPendingEscrow();
   db = build('escrow-reconcile-test');
@@ -103,13 +109,42 @@ describe('reconcileEscrow', () => {
   });
 
   it('flags a mismatch when the account escrow is a different key', async () => {
+    // A real foreign escrow is only present locally while signed into that
+    // account, so set up as a signed-in device (skipping the residue clear).
     await db.cloudCrypto.put(
       await wrapMasterSecret(generateMasterSecret(), 'x', 1000),
     );
-    await createCloudEncryption('pw', db);
+    await createCloudEncryption('pw', db, () => true);
 
     expect(await reconcileEscrow(db)).toBe('mismatch');
     expect(keyMismatchState.current()).toBe(true);
+  });
+
+  it('warns with both fingerprints on a genuine mismatch (dev/e2e diagnostic)', async () => {
+    await db.cloudCrypto.put(
+      await wrapMasterSecret(generateMasterSecret(), 'x', 1000),
+    );
+    await createCloudEncryption('pw', db, () => true);
+
+    await reconcileEscrow(db);
+
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('escrow fingerprint mismatch'),
+    );
+  });
+
+  it('matches when the account escrow shares the pending escrow fingerprint', async () => {
+    // A device that published its escrow (server holds master M) but whose ring
+    // was later re-derived from a different master N, with the original escrow
+    // still pending locally. The server row is still ours — no mismatch.
+    const masterM = generateMasterSecret();
+    const escrowM = await wrapMasterSecret(masterM, 'pw', 1000);
+    await db.cloudCrypto.put(escrowM); // server holds M
+    await savePendingEscrow(escrowM); // pending still M
+    await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1)); // ring N
+
+    expect(await reconcileEscrow(db)).toBe('matched');
+    expect(keyMismatchState.current()).toBe(false);
   });
 
   it('is idle when the device holds no key', async () => {

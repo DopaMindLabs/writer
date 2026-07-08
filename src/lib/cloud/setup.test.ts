@@ -112,6 +112,23 @@ describe('cloud setup', () => {
     expect(deviceKeyProvider.current()).not.toBeNull();
   });
 
+  it('clears a residual local escrow when setting up while signed out', async () => {
+    // Residue from an earlier local session: a foreign escrow left in the local
+    // database. A signed-out fresh setup must drop it, so the reconciler cannot
+    // later read its stale fingerprint and lock the device out.
+    await db.cloudCrypto.put(await wrapMasterSecret(generateMasterSecret(), 'x', 1000));
+    await createCloudEncryption('pw', db); // default: signed out
+    expect(await db.cloudCrypto.toArray()).toHaveLength(0);
+  });
+
+  it('keeps the account escrow when setting up while signed in', async () => {
+    // Signed in, the local escrow is the account's real key — it must survive so
+    // the mismatch/adopt flow can resolve against it.
+    await db.cloudCrypto.put(await wrapMasterSecret(generateMasterSecret(), 'x', 1000));
+    await createCloudEncryption('pw', db, () => true);
+    expect(await db.cloudCrypto.toArray()).toHaveLength(1);
+  });
+
   it('unlock with the right passphrase loads a usable ring', async () => {
     await createCloudEncryption('pw', db);
     await publishPendingEscrow(db);
@@ -211,7 +228,8 @@ describe('cloud key conflict resolution', () => {
       id: 'acc', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'account note',
     });
     await db.cloudCrypto.put(await wrapMasterSecret(accountMaster, 'old-pass', FAST));
-    await createCloudEncryption('new-pass', db);
+    // Re-signing-in: signed into the account, so the account escrow is kept.
+    await createCloudEncryption('new-pass', db, () => true);
     await db.table<Row>('docs').put({
       id: 'mine', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'my note',
     });

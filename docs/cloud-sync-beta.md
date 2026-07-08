@@ -196,16 +196,29 @@ pulled, and compares fingerprints (§2):
 
 - **Account has no escrow** → publish this device's. Its key becomes the account key. There
   was nothing to overwrite, so publication is add-only.
-- **Fingerprints match** → the account already holds this device's key; nothing to do.
+- **Fingerprints match** → the account already holds this device's key; nothing to do. The
+  server escrow is treated as ours when it carries **either** the device ring's fingerprint
+  **or** the pending escrow's (they share a master, so normally identical — the pending copy
+  is checked too, to cover a device that published its escrow and later re-derived its ring).
 - **Fingerprints differ** → the account is protected by a **different** key. Flag a key
-  mismatch and never publish over the account's escrow.
+  mismatch and never publish over the account's escrow. On a `DEV`/E2E build the reconciler
+  also logs both fingerprints, to tell a real other-device key from stale residue.
+
+To keep a fresh device from tripping that mismatch on residue, setup is add-only in the
+other direction too: `createCloudEncryption` mints a new master, so any escrow already in
+the local database is a **different** key. While the device is signed out — the enforced
+"passphrase before sign-in" state — that row can only be residue from an earlier local
+session, so setup drops it before deriving the fresh key. Signed in, the row is the
+account's real escrow and is left for the mismatch/adopt flow.
 
 While a mismatch is unresolved the write middleware refuses content `add`/`put` with
 `CloudKeyMismatchError`, so no row sealed under the wrong key can reach the sync queue
 (deletes still pass, for the escape hatch below); any read of an account row throws
 `EnvelopeIntegrityError`, caught by the route-level recovery screen
-(`src/components/errors/`). The user resolves it from the cloud settings section in one of
-two ways:
+(`src/components/errors/`). Its **Unlock in settings** action is a full navigation to the
+Account tab (a render-time error boundary is not reset by a same-location `navigate`), which
+re-runs boot and lands on the mismatch banner. The user resolves it from the cloud settings
+section in one of two ways:
 
 - **Adopt** — enter the passphrase the account was created under. The account escrow is
   unwrapped, the device adopts that key, its own rows are re-sealed under it, and the master

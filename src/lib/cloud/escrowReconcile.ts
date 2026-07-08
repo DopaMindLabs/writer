@@ -3,7 +3,11 @@ import type { LoremDB } from '@/db/LoremDB';
 import type { SyncState } from 'dexie-cloud-addon';
 import { SYNCED_TABLES } from './crypto/tableRules';
 import { fingerprintsEqual } from './crypto/keys';
-import { deviceKeyProvider, clearPendingEscrow } from './crypto/keyStore';
+import {
+  deviceKeyProvider,
+  clearPendingEscrow,
+  loadPendingEscrow,
+} from './crypto/keyStore';
 import { keyMismatchState } from './crypto/keyMismatch';
 import { publishPendingEscrow } from './setup';
 import { cloudSyncState } from './cloudClient';
@@ -16,6 +20,27 @@ export type EscrowReconcileResult =
   | 'published'
   | 'matched'
   | 'mismatch';
+
+const toHex = (bytes: Uint8Array): string =>
+  Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+
+/**
+ * A gated breadcrumb for the one case a user cannot self-diagnose: a genuine
+ * fingerprint mismatch. Prints both fingerprints so a reproduction on a preview
+ * build reports whether the account escrow is a real other-device key or stale
+ * residue. Dev/E2E only — never noise in a production console.
+ */
+const warnMismatch = (
+  serverFingerprint: Uint8Array,
+  ringFingerprint: Uint8Array,
+  hasPendingEscrow: boolean,
+): void => {
+  if (!(import.meta.env.DEV || import.meta.env.VITE_E2E === '1')) return;
+  console.warn(
+    `[cloud] escrow fingerprint mismatch — server=${toHex(serverFingerprint)} ` +
+      `ring=${toHex(ringFingerprint)} hasPendingEscrow=${String(hasPendingEscrow)}`,
+  );
+};
 
 /** Whether any synced table holds at least one row on this device. */
 export const hasLocalSyncedData = async (
@@ -50,11 +75,23 @@ export const reconcileEscrow = async (
     keyMismatchState.set(false);
     return 'published';
   }
-  if (fingerprintsEqual(serverEscrow.fingerprint, ring.fingerprint)) {
+  // The account escrow is ours if it carries the ring's fingerprint — or the
+  // pending escrow's. The two share a master, so they normally match, but the
+  // pending copy is checked explicitly to cover a device that published its
+  // escrow, then re-derived its ring from the keystore on a later boot: without
+  // this the surviving server row would read as a foreign key and spuriously
+  // lock the device out. Either way there is nothing to resolve.
+  const pending = await loadPendingEscrow();
+  const isOurs =
+    fingerprintsEqual(serverEscrow.fingerprint, ring.fingerprint) ||
+    (pending !== null &&
+      fingerprintsEqual(serverEscrow.fingerprint, pending.fingerprint));
+  if (isOurs) {
     await clearPendingEscrow();
     keyMismatchState.set(false);
     return 'matched';
   }
+  warnMismatch(serverEscrow.fingerprint, ring.fingerprint, pending !== null);
   keyMismatchState.set(true);
   return 'mismatch';
 };
