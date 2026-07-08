@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useA11y } from './a11y';
 import { DEFAULT_A11Y_PREFS } from '@/theme/a11y-prefs';
 
@@ -38,5 +38,34 @@ describe('useA11y store', () => {
     useA11y.getState().reset();
     expect(useA11y.getState().focusRing).toBe('standard');
     expect(useA11y.getState().lineSpacing).toBe('normal');
+  });
+
+  it('persists changes for every individual setter', () => {
+    useA11y.getState().setMotion('reduced');
+    useA11y.getState().setLineSpacing('loose');
+    useA11y.getState().setLinkUnderline('always');
+    useA11y.getState().setFocusRing('enhanced');
+    const raw = JSON.parse(localStorage.getItem('lorem-a11y') ?? '{}') as Record<
+      string,
+      string
+    >;
+    expect(raw.motion).toBe('reduced');
+    expect(raw.lineSpacing).toBe('loose');
+    expect(raw.linkUnderline).toBe('always');
+    expect(raw.focusRing).toBe('enhanced');
+  });
+
+  it('swallows persist failures so a quota error does not crash the setter', () => {
+    const spy = vi
+      .spyOn(Storage.prototype, 'setItem')
+      .mockImplementation(() => {
+        throw new Error('quota');
+      });
+    try {
+      expect(() => useA11y.getState().setMotion('reduced')).not.toThrow();
+      expect(useA11y.getState().motion).toBe('reduced');
+    } finally {
+      spy.mockRestore();
+    }
   });
 });
