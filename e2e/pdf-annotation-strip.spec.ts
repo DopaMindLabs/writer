@@ -158,13 +158,14 @@ test('highlight tints blend with the page instead of painting solid', async ({ p
   await page.getByTestId('strip-color-yellow').click();
   await expect(mark(page)).toBeVisible();
 
-  // The tint multiplies against the canvas glyphs, so the highlighted text stays
-  // legible. That only holds while the overlay is *not* an isolated stacking
-  // context — a `z-index` on it would confine the blend and paint the tint
-  // solid. Guard both halves: the tint keeps its blend mode and the overlay
-  // keeps `z-index: auto`.
-  const tint = page.locator('[data-testid="pdf-highlight-layer"] span').first();
-  await expect(tint).toHaveCSS('mix-blend-mode', 'multiply');
+  // The layer multiplies against the canvas glyphs as one isolated group, so the
+  // highlighted text stays legible and overlapping tints never compound. That
+  // only reaches the canvas while the overlay is *not* an isolated stacking
+  // context — a `z-index` on it would confine the blend and paint the tint solid.
+  // Guard: the layer carries the group blend, and the overlay keeps `z-index: auto`.
+  const layer = page.getByTestId('pdf-highlight-layer');
+  await expect(layer).toHaveCSS('mix-blend-mode', 'multiply');
+  await expect(layer).toHaveCSS('isolation', 'isolate');
   const overlayZ = await page
     .getByTestId('pdf-page-overlay')
     .evaluate((el) => getComputedStyle(el).zIndex);

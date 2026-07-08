@@ -38,21 +38,22 @@ describe('AnnotationMark', () => {
     expect(mark).toHaveAccessibleName('mark:h1:pink');
   });
 
-  it('draws a highlight as a full-rect blended span', () => {
+  it('draws a highlight as a full-rect span (blend lives on the layer)', () => {
     const { container } = render(
       <AnnotationMark annotation={annotation()} getMarkLabel={label} />,
     );
     const span = container.querySelector<HTMLElement>('span[aria-hidden="true"]');
-    expect(span).toHaveClass('mix-blend-multiply');
+    // The multiply blend is grouped on AnnotationLayer, not per span, so
+    // overlapping marks never compound.
+    expect(span).not.toHaveClass('mix-blend-multiply');
     expect(span?.style.height).toBe('5%');
   });
 
-  it('draws underline and strikethrough as unblended 2px bars', () => {
+  it('draws underline and strikethrough as 2px bars', () => {
     const { container: u } = render(
       <AnnotationMark annotation={annotation({ kind: 'underline' })} getMarkLabel={label} />,
     );
     const uSpan = u.querySelector<HTMLElement>('span[aria-hidden="true"]');
-    expect(uSpan).not.toHaveClass('mix-blend-multiply');
     expect(uSpan?.style.height).toBe('2px');
     expect(uSpan?.style.top).toContain('- 2px');
 

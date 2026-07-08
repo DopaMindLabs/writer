@@ -32,4 +32,11 @@ describe('AnnotationLayer', () => {
     expect(screen.getByTestId('pdf-highlight-layer')).toBeInTheDocument();
     expect(screen.queryByTestId('pdf-highlight-mark')).not.toBeInTheDocument();
   });
+
+  it('blends as one isolated group so overlapping tints never compound', () => {
+    render(<AnnotationLayer page={1} annotations={[mark('a', 1)]} getMarkLabel={label} />);
+    const layer = screen.getByTestId('pdf-highlight-layer');
+    expect(layer).toHaveClass('mix-blend-multiply');
+    expect(layer).toHaveClass('isolate');
+  });
 });

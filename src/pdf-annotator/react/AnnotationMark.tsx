@@ -39,11 +39,12 @@ interface AnnotationMarkProps {
  * fractions of the page box, so it re-projects at any zoom), plus a single
  * invisible, pointer-interactive button over the union box carrying the id,
  * kind, colour and an accessible name for the context menu and the panel to
- * target. A highlight fills each rect (`mix-blend-multiply`); underline and
- * strikethrough draw a solid 2px bar.
+ * target. A highlight fills each rect; underline and strikethrough draw a solid
+ * 2px bar. The multiply blend that keeps text legible lives on the layer, not
+ * here (see `AnnotationLayer`), so overlapping marks never compound.
  *
- * The whole mark is pointer-transparent (`pointer-events-none`): the tints blend
- * against the canvas glyphs, and the button never sits between the text and the
+ * The whole mark is pointer-transparent (`pointer-events-none`): the tints sit
+ * over the canvas glyphs, and the button never sits between the text and the
  * pointer — so text selection starts and drags freely over a highlight. The
  * button stays in the DOM as the focusable, labelled handle for keyboard users
  * (the menu key still emits a `contextmenu` on it); mouse right-clicks resolve to
@@ -52,7 +53,6 @@ interface AnnotationMarkProps {
 export const AnnotationMark = ({ annotation, getMarkLabel }: AnnotationMarkProps) => {
   const box = unionBox(annotation.rects);
   const swatch = swatchRecipe({ color: annotation.color as SwatchVariants['color'] });
-  const blend = annotation.kind === 'highlight' ? 'mix-blend-multiply' : undefined;
 
   return (
     <>
@@ -60,7 +60,7 @@ export const AnnotationMark = ({ annotation, getMarkLabel }: AnnotationMarkProps
         <span
           key={`${annotation.id}-${i.toString()}`}
           aria-hidden="true"
-          className={clsx('absolute', blend, swatch)}
+          className={clsx('absolute', swatch)}
           style={rectStyle(annotation.kind, rect)}
         />
       ))}
