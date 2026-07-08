@@ -213,12 +213,17 @@ account's real escrow and is left for the mismatch/adopt flow.
 
 While a mismatch is unresolved the write middleware refuses content `add`/`put` with
 `CloudKeyMismatchError`, so no row sealed under the wrong key can reach the sync queue
-(deletes still pass, for the escape hatch below); any read of an account row throws
-`EnvelopeIntegrityError`, caught by the route-level recovery screen
-(`src/components/errors/`). Its **Unlock in settings** action is a full navigation to the
-Account tab (a render-time error boundary is not reset by a same-location `navigate`), which
-re-runs boot and lands on the mismatch banner. The user resolves it from the cloud settings
-section in one of two ways:
+(deletes still pass, for the escape hatch below). Reads of an account row **do not** crash:
+the middleware drops the undecryptable row from the result (a single `get` returns
+`undefined`, a list read omits it) and flags the mismatch on the spot — engaging the write
+lock and the conflict banner — rather than throwing `EnvelopeIntegrityError` up to the
+route-level recovery screen. That keeps the app reachable so the user can get to settings and
+resolve the conflict; a read that crashed to the recovery screen would trap them there,
+because the settings surface itself reads content. (The recovery screen
+(`src/components/errors/`) still catches a genuine `EnvelopeIntegrityError` — e.g. a
+wrong-key write path — and its **Unlock in settings** action is a full navigation to the
+Account tab, since a render-time error boundary is not reset by a same-location `navigate`.)
+The user resolves it from the cloud settings section in one of two ways:
 
 - **Adopt** — enter the passphrase the account was created under. The account escrow is
   unwrapped, the device adopts that key, its own rows are re-sealed under it, and the master
