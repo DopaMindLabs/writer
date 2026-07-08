@@ -3,6 +3,11 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './e2e',
+  // preview-smoke.spec.ts runs ONLY under playwright.preview.config.ts against a
+  // live Vercel deployment: it drives browser-router paths (`/settings`) and
+  // asserts the deployed CSP. The local suite uses the hash router and applies
+  // no CSP header, so those flows cannot pass here.
+  testIgnore: ['**/preview-smoke.spec.ts'],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
