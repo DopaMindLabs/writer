@@ -192,6 +192,38 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     expect((await table('settings').get('theme'))?.value).toBe('ok');
   });
 
+  it('drops a row sealed under another key on read and flags the mismatch (never throws)', async () => {
+    // Seal a row under the current ring, then swap to a *different* key — the
+    // exact state a device is in after re-signing-in to an account whose rows a
+    // prior key sealed. Reads must degrade, not crash the app to the recovery
+    // screen (which would trap the user, unable to reach settings to resolve it).
+    await table('docs').put({
+      id: 'foreign', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'sealed',
+    });
+    ring = await deriveKeyRing(generateMasterSecret(), 1);
+
+    // A single get returns undefined rather than throwing EnvelopeIntegrityError.
+    expect(await table('docs').get('foreign')).toBeUndefined();
+    // A list read omits the unreadable row instead of failing wholesale.
+    expect(await table('docs').toArray()).toEqual([]);
+    // The unreadable read flagged the mismatch, engaging the conflict UI + lock.
+    expect(keyMismatchState.current()).toBe(true);
+  });
+
+  it('still reads rows sealed under the current key while another is unreadable', async () => {
+    await table('docs').put({
+      id: 'old', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'old-key',
+    });
+    ring = await deriveKeyRing(generateMasterSecret(), 1);
+    await table('docs').put({
+      id: 'new', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'new-key',
+    });
+
+    const rows = await table('docs').toArray();
+    expect(rows).toHaveLength(1);
+    expect(rows[0]?.name).toBe('new-key');
+  });
+
   it('P7: re-putting an already-sealed row preserves its ciphertext (no double-seal)', async () => {
     await table('docs').put({
       id: 'd1', spaceId: 's1', sectionId: 'x', updatedAt: 1,
