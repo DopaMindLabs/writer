@@ -20,11 +20,9 @@ interface PdfPageViewProps {
  *
  * The slot itself carries no `z-index`: highlight tints must stay in the page's
  * own stacking context so their `mix-blend-multiply` blends against the canvas
- * glyphs (a `z-index` here would isolate them and paint the tints solid). Only
- * the invisible interactive pieces lift above pdf.js's text layer (`z-index: 2`)
- * — the mark buttons do so themselves. `group/pdfpage` lets those buttons go
- * pointer-transparent while pdf.js is mid-selection (`.textLayer.selecting`) so a
- * drag crosses an existing highlight instead of being swallowed by it.
+ * glyphs (a `z-index` here would isolate them and paint the tints solid). The
+ * marks stay pointer-transparent, so text selection reaches the text layer over
+ * a highlight as freely as over bare text.
  */
 export const PdfPageView = ({
   page,
@@ -49,7 +47,7 @@ export const PdfPageView = ({
       data-page-number={page}
       role="group"
       aria-label={t('mediaLibrary.viewer.pageLabel', { page, total: numPages })}
-      className="group/pdfpage relative mx-auto w-fit"
+      className="relative mx-auto w-fit"
     >
       <Page
         pageNumber={page}

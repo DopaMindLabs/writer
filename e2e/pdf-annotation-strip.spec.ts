@@ -44,6 +44,16 @@ const select = async (page: Page): Promise<void> => {
 const strip = (page: Page) => page.getByTestId('pdf-selection-strip');
 const mark = (page: Page) => page.getByTestId('pdf-highlight-mark');
 
+// Marks are pointer-transparent so they never block text selection; a real
+// right-click therefore lands on the text layer and is resolved to a mark by
+// geometry. Drive it by coordinates over the mark rather than clicking the
+// (pointer-events: none) button, which Playwright could not action.
+const rightClickMark = async (page: Page): Promise<void> => {
+  const box = await mark(page).first().boundingBox();
+  if (!box) throw new Error('no mark to right-click');
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2, { button: 'right' });
+};
+
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
   await gotoLibrary(page);
@@ -83,12 +93,12 @@ test('the note action grows the strip and saves a note', async ({ page }) => {
   await page.getByTestId('strip-note-input').press('Enter');
   await expect(mark(page)).toBeVisible();
 
-  await mark(page).click({ button: 'right' });
+  await rightClickMark(page);
   await expect(page.getByTestId('mark-edit-note')).toHaveText('Edit note…');
   await page.keyboard.press('Escape');
 
   await page.reload();
-  await mark(page).click({ button: 'right' });
+  await rightClickMark(page);
   await expect(page.getByTestId('mark-edit-note')).toHaveText('Edit note…');
 });
 
@@ -106,7 +116,7 @@ test('re-highlighting the same text overrides the colour and keeps the note', as
   await expect(page.locator('[data-testid="pdf-highlight-mark"]')).toHaveCount(1);
   await expect(mark(page)).toHaveAttribute('data-color', 'pink');
   // The note survived the override.
-  await mark(page).click({ button: 'right' });
+  await rightClickMark(page);
   await expect(page.getByTestId('mark-edit-note')).toHaveText('Edit note…');
 });
 
@@ -123,11 +133,11 @@ test('context menu recolours and removes a mark', async ({ page }) => {
   await page.getByTestId('strip-color-yellow').click();
   await expect(mark(page)).toBeVisible();
 
-  await mark(page).click({ button: 'right' });
+  await rightClickMark(page);
   await page.getByTestId('mark-color-pink').click();
   await expect(mark(page)).toHaveAttribute('data-color', 'pink');
 
-  await mark(page).click({ button: 'right' });
+  await rightClickMark(page);
   await page.getByTestId('mark-remove').click();
   await expect(mark(page)).toHaveCount(0);
 });
@@ -161,27 +171,24 @@ test('highlight tints blend with the page instead of painting solid', async ({ p
   expect(overlayZ).toBe('auto');
 });
 
-test('a selection drag passes through an existing mark', async ({ page }) => {
+test('an existing mark never blocks text selection', async ({ page }) => {
   await select(page);
   await page.getByTestId('strip-color-yellow').click();
   await expect(mark(page)).toBeVisible();
 
-  // A mark's hit target sits above the text layer so a right-click lands on it,
-  // but it must go pointer-transparent while pdf.js is mid-selection
-  // (`.textLayer.selecting`) — otherwise dragging a new selection across the
-  // highlight is swallowed by the mark and runs away. Drive pdf.js's own
-  // selection flag and assert the button yields, then restores.
-  const pe = await page.evaluate(() => {
-    const tl = document.querySelector('.textLayer');
-    const btn = document.querySelector('[data-testid="pdf-highlight-mark"]');
-    const idle = getComputedStyle(btn).pointerEvents;
-    tl?.classList.add('selecting');
-    const selecting = getComputedStyle(btn).pointerEvents;
-    tl?.classList.remove('selecting');
-    const restored = getComputedStyle(btn).pointerEvents;
-    return { idle, selecting, restored };
-  });
-  expect(pe).toEqual({ idle: 'auto', selecting: 'none', restored: 'auto' });
+  // The mark's hit target is pointer-transparent, so a pointer over a highlight
+  // reaches the text layer beneath and selection starts and drags over a
+  // highlight exactly as over bare text. (Right-clicks still reach the mark —
+  // resolved by geometry — as 'context menu recolours and removes a mark' proves
+  // via a real coordinate right-click.)
+  const pe = await mark(page).evaluate((el) => getComputedStyle(el).pointerEvents);
+  expect(pe).toBe('none');
+
+  // Re-selecting the highlighted text still summons the strip, so it can be
+  // recoloured in place.
+  await select(page);
+  await expect(strip(page)).toBeVisible();
+  await page.keyboard.press('Escape');
 });
 
 test('recolouring the middle of a highlight splits it and keeps the ends', async ({ page }) => {

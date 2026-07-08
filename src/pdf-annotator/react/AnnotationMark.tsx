@@ -42,12 +42,12 @@ interface AnnotationMarkProps {
  * target. A highlight fills each rect (`mix-blend-multiply`); underline and
  * strikethrough draw a solid 2px bar.
  *
- * The tint spans carry no `z-index` so the multiply blends against the canvas
- * glyphs beneath. Only the button lifts above pdf.js's text layer (`z-index: 2`)
- * so a right-click lands on the mark — but it turns pointer-transparent while a
- * selection drag is in flight (`group-has-[.textLayer.selecting]`) so dragging a
- * new selection across an existing highlight extends it instead of being
- * swallowed by the button.
+ * The whole mark is pointer-transparent (`pointer-events-none`): the tints blend
+ * against the canvas glyphs, and the button never sits between the text and the
+ * pointer — so text selection starts and drags freely over a highlight. The
+ * button stays in the DOM as the focusable, labelled handle for keyboard users
+ * (the menu key still emits a `contextmenu` on it); mouse right-clicks resolve to
+ * a mark by geometry instead (see `PdfMarkContextMenu`).
  */
 export const AnnotationMark = ({ annotation, getMarkLabel }: AnnotationMarkProps) => {
   const box = unionBox(annotation.rects);
@@ -71,7 +71,7 @@ export const AnnotationMark = ({ annotation, getMarkLabel }: AnnotationMarkProps
         data-highlight-id={annotation.id}
         data-kind={annotation.kind}
         data-color={annotation.color}
-        className="pointer-events-auto absolute z-10 h-auto min-h-0 border-0 bg-transparent p-0 group-has-[.textLayer.selecting]/pdfpage:pointer-events-none"
+        className="pointer-events-none absolute h-auto min-h-0 border-0 bg-transparent p-0"
         style={{ left: pct(box.x), top: pct(box.y), width: pct(box.w), height: pct(box.h) }}
       />
     </>

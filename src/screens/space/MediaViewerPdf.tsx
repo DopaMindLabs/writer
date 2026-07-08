@@ -56,34 +56,37 @@ export const MediaViewerPdf = ({
 
   const { capture } = annotator;
 
+  // The mark context menu wraps the whole viewer, not just the overlay, so a
+  // right-click on the text layer (the marks themselves are pointer-transparent,
+  // to never block selection) still reaches it and resolves to a mark by geometry.
   return (
-    <div ref={containerRef} className="h-full">
-      <PdfViewer
-        blob={blob}
-        title={title}
-        page={page}
-        scale={scale}
-        onPageChange={onPageChange}
-        onNumPagesChange={onNumPagesChange}
-        onPageElement={onPageElement}
-        pageOverlay={(pageNumber) => {
-          const stripPageEl = capture ? pageEls.current.get(capture.page) : undefined;
-          return (
-            <>
-              <PdfMarkContextMenu annotations={annotator.annotations} annotator={annotator}>
+    <PdfMarkContextMenu annotations={annotator.annotations} annotator={annotator}>
+      <div ref={containerRef} className="h-full">
+        <PdfViewer
+          blob={blob}
+          title={title}
+          page={page}
+          scale={scale}
+          onPageChange={onPageChange}
+          onNumPagesChange={onNumPagesChange}
+          onPageElement={onPageElement}
+          pageOverlay={(pageNumber) => {
+            const stripPageEl = capture ? pageEls.current.get(capture.page) : undefined;
+            return (
+              <>
                 <AnnotationLayer
                   annotations={annotator.annotations}
                   page={pageNumber}
                   getMarkLabel={getMarkLabel}
                 />
-              </PdfMarkContextMenu>
-              {capture?.page === pageNumber && stripPageEl ? (
-                <PdfSelectionStrip capture={capture} pageEl={stripPageEl} annotator={annotator} />
-              ) : null}
-            </>
-          );
-        }}
-      />
-    </div>
+                {capture?.page === pageNumber && stripPageEl ? (
+                  <PdfSelectionStrip capture={capture} pageEl={stripPageEl} annotator={annotator} />
+                ) : null}
+              </>
+            );
+          }}
+        />
+      </div>
+    </PdfMarkContextMenu>
   );
 };
