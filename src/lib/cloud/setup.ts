@@ -188,13 +188,10 @@ const collectDecryptableRows = async (
     const keys = await store.toCollection().primaryKeys();
     const rows: Row[] = [];
     for (const key of keys) {
-      try {
-        const row = await store.get(key);
-        if (row) rows.push(row);
-      } catch {
-        // Sealed under the account's key — leave it; it is already correct once
-        // this device adopts that key below.
-      }
+      // A row sealed under the account's key reads back undefined and is skipped
+      // — it is already correct once this device adopts that key below.
+      const row = await store.get(key);
+      if (row) rows.push(row);
     }
     collected.set(table, rows);
   }
@@ -247,12 +244,11 @@ export const eraseSyncedContent = async (
     const store = db.table<Row>(table);
     const keys = await store.toCollection().primaryKeys();
     for (const key of keys) {
-      try {
-        await store.get(key);
-      } catch {
-        // Sealed under the account's key this device does not hold: drop it.
-        await store.delete(key);
-      }
+      // A key from primaryKeys() always names a row that exists, so a read that
+      // comes back empty is an unreadable row (sealed under the account key this
+      // device lacks) — drop it so the deletion syncs away. Reads no longer throw
+      // on such a row; they return undefined.
+      if (!(await store.get(key))) await store.delete(key);
     }
   }
   await publishPendingEscrow(db);

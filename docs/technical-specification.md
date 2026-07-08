@@ -318,12 +318,14 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   settles, reconciliation compares the account escrow's fingerprint with the device ring's
   (or, as a fallback, the pending escrow's): absent → publish this device's escrow (add-only,
   so it can never race and clobber the account's key); match → nothing to do; differ → flag a
-  **key mismatch**. Under a mismatch the write middleware refuses content writes and reads
-  surface the route-level recovery screen, whose **Unlock in settings** action navigates to
-  the Account tab and its mismatch banner; the user resolves it from settings by **adopting**
-  the account key (enter the account passphrase; the device re-seals its own rows under it) or
-  **erasing** the account's unreadable copy (kept: this device's notes). Never clobbers, never
-  silently loses.
+  **key mismatch**. Under a mismatch the write middleware refuses content writes; reads do not
+  crash — the middleware drops any undecryptable row from the result and flags the mismatch,
+  so the app stays reachable and the conflict banner appears in settings. The user resolves it
+  by **adopting** the account key (enter the account passphrase; the device re-seals its own
+  rows under it) or **erasing** the account's unreadable copy (kept: this device's notes). The
+  route-level recovery screen still catches a genuine read failure, and its **Unlock in
+  settings** action is a full navigation to the Account tab. Never clobbers, never silently
+  loses.
 - **Ordering.** Passphrase-before-sign-in: sync cannot start without a key ring, so a
   keyless write is never uploaded in the clear. Opting out is **non-destructive** — the
   cloud schema is sticky so a rebuild never erases local content.

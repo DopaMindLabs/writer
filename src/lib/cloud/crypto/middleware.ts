@@ -9,7 +9,7 @@ import Dexie, {
 } from 'dexie';
 import type { CloudKeyRing } from './keys';
 import { isEncryptedTable, plaintextFieldsFor } from './tableRules';
-import { sealRow, openRow } from './envelope';
+import { sealRow, openRow, EnvelopeIntegrityError } from './envelope';
 import { CloudKeyMismatchError } from './errors';
 import { keyMismatchState } from './keyMismatch';
 
@@ -48,14 +48,36 @@ const sealMutate = async (
   return { ...req, values };
 };
 
-const openValue = async (
+/**
+ * Open a row, or drop it (returning `undefined`) when it cannot be decrypted
+ * with the current key. A decrypt failure means the row was sealed under a key
+ * this device does not hold — a key mismatch — so flag it, engaging the conflict
+ * banner and the write lock. Crucially it never throws: a read that crashed the
+ * whole route to the recovery screen would trap the user there, unable to reach
+ * the settings surface that resolves the conflict. Non-integrity errors still
+ * propagate.
+ */
+const openOrDrop = async (
   table: DBCoreTable,
   ring: CloudKeyRing,
   value: Row | undefined,
-): Promise<Row | undefined> =>
-  value
-    ? openRow(ring, { table: table.name, primaryKey: pkString(table, value) }, value)
-    : value;
+  onUnreadable: () => void,
+): Promise<Row | undefined> => {
+  if (!value) return value;
+  try {
+    return await openRow(
+      ring,
+      { table: table.name, primaryKey: pkString(table, value) },
+      value,
+    );
+  } catch (error) {
+    if (error instanceof EnvelopeIntegrityError) {
+      onUnreadable();
+      return undefined;
+    }
+    throw error;
+  }
+};
 
 /**
  * Web Crypto is asynchronous, but Dexie commits a transaction the moment control
@@ -76,8 +98,11 @@ const openMany = (
   table: DBCoreTable,
   ring: CloudKeyRing,
   values: readonly unknown[],
+  onUnreadable: () => void,
 ): Promise<(Row | undefined)[]> =>
-  Promise.all(values.map((v) => openValue(table, ring, v as Row | undefined)));
+  Promise.all(
+    values.map((v) => openOrDrop(table, ring, v as Row | undefined, onUnreadable)),
+  );
 
 /**
  * Wrap the value-returning read/write ops of an encrypted table.
@@ -94,6 +119,7 @@ const wrapTable = (
   table: DBCoreTable,
   provider: KeyProvider,
   isLocked: () => boolean,
+  flagMismatch: () => void,
 ): DBCoreTable => {
   if (!isEncryptedTable(table.name)) return table;
   return {
@@ -113,13 +139,16 @@ const wrapTable = (
       const ring = provider.current();
       if (!ring) return table.get(req);
       return inTx(
-        (async () => openValue(table, ring, (await table.get(req)) as Row | undefined))(),
+        (async () =>
+          openOrDrop(table, ring, (await table.get(req)) as Row | undefined, flagMismatch))(),
       );
     },
     getMany: (req: DBCoreGetManyRequest) => {
       const ring = provider.current();
       if (!ring) return table.getMany(req);
-      return inTx((async () => openMany(table, ring, await table.getMany(req)))());
+      return inTx(
+        (async () => openMany(table, ring, await table.getMany(req), flagMismatch))(),
+      );
     },
     query: (req: DBCoreQueryRequest) => {
       const ring = provider.current();
@@ -127,7 +156,10 @@ const wrapTable = (
       return inTx(
         (async () => {
           const res = await table.query(req);
-          return { ...res, result: await openMany(table, ring, res.result) };
+          const opened = await openMany(table, ring, res.result, flagMismatch);
+          // Unreadable rows are dropped rather than crashing the read; the list
+          // just omits them until the mismatch is resolved.
+          return { ...res, result: opened.filter((row): row is Row => row !== undefined) };
         })(),
       );
     },
@@ -142,12 +174,15 @@ const wrapTable = (
 export const createEncryptionMiddleware = (
   provider: KeyProvider,
   isLocked: () => boolean = () => keyMismatchState.current(),
+  flagMismatch: () => void = () => {
+    keyMismatchState.set(true);
+  },
 ): Middleware<DBCore> => ({
   stack: 'dbcore',
   name: 'lipsumEncryption',
   level: 10,
   create: (down: DBCore) => ({
     ...down,
-    table: (name: string) => wrapTable(down.table(name), provider, isLocked),
+    table: (name: string) => wrapTable(down.table(name), provider, isLocked, flagMismatch),
   }),
 });
