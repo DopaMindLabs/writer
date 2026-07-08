@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   applyA11yPrefs,
   DEFAULT_A11Y_PREFS,
+  motionReduced,
   prefersReducedMotion,
   sanitizeA11yPrefs,
 } from './a11y-prefs';
@@ -104,5 +105,46 @@ describe('prefersReducedMotion', () => {
       dispatchEvent: vi.fn(),
     }));
     expect(prefersReducedMotion()).toBe(false);
+  });
+});
+
+describe('motionReduced', () => {
+  afterEach(() => {
+    document.documentElement.removeAttribute('data-motion');
+    vi.unstubAllGlobals();
+  });
+
+  it('returns true when the user pinned motion to reduced', () => {
+    document.documentElement.setAttribute('data-motion', 'reduced');
+    expect(motionReduced()).toBe(true);
+  });
+
+  it('returns false when the user pinned motion to full, overriding the OS', () => {
+    document.documentElement.setAttribute('data-motion', 'full');
+    vi.stubGlobal('matchMedia', () => ({
+      matches: true,
+      media: '',
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+    expect(motionReduced()).toBe(false);
+  });
+
+  it('falls through to the OS query when the preference is auto', () => {
+    vi.stubGlobal('matchMedia', (q: string) => ({
+      matches: q === '(prefers-reduced-motion: reduce)',
+      media: q,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+    expect(motionReduced()).toBe(true);
   });
 });

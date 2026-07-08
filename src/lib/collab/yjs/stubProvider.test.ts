@@ -12,5 +12,10 @@ describe('createStubProvider', () => {
     expect(provider.awareness.setLocalStateField('k', 1)).toBeUndefined();
     expect(provider.connect()).toBeUndefined();
     expect(provider.disconnect()).toBeUndefined();
+    const noop = () => undefined;
+    expect(provider.awareness.on('update', noop)).toBeUndefined();
+    expect(provider.awareness.off('update', noop)).toBeUndefined();
+    expect(provider.on('status', noop)).toBeUndefined();
+    expect(provider.off('status', noop)).toBeUndefined();
   });
 });
