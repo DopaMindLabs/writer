@@ -76,6 +76,35 @@ test('text layer overlays the canvas as an invisible, selectable layer', async (
   expect(spanColor).toBe('rgba(0, 0, 0, 0)');
 });
 
+test('zoom controls scale the page and reset', async ({ page }) => {
+  await gotoLibrary(page);
+  await uploadAndOpen(page, TINY_PDF);
+  await expect(pdfPage(page).locator('canvas')).toBeVisible();
+
+  const zoom = page.getByTestId('pdf-zoom');
+  await expect(zoom).toBeVisible();
+  await expect(page.getByTestId('pdf-zoom-reset')).toHaveText('100%');
+
+  const widthNow = async (): Promise<number> =>
+    (await pdfPage(page).locator('canvas').boundingBox())?.width ?? 0;
+  const base = await widthNow();
+
+  // Zoom in bumps the readout and grows the rendered canvas.
+  await page.getByTestId('pdf-zoom-in').click();
+  await expect(page.getByTestId('pdf-zoom-reset')).toHaveText('125%');
+  await expect.poll(widthNow).toBeGreaterThan(base);
+
+  // The readout resets zoom back to 100% and the base size.
+  await page.getByTestId('pdf-zoom-reset').click();
+  await expect(page.getByTestId('pdf-zoom-reset')).toHaveText('100%');
+  await expect.poll(widthNow).toBe(base);
+
+  // Zoom out drops below 100%.
+  await page.getByTestId('pdf-zoom-out').click();
+  await expect(page.getByTestId('pdf-zoom-reset')).toHaveText('75%');
+  await expect.poll(widthNow).toBeLessThan(base);
+});
+
 test('navigates between pages of the two-page fixture', async ({ page }) => {
   await gotoLibrary(page);
   await uploadAndOpen(page, TWO_PAGE_PDF);

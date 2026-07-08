@@ -1,11 +1,10 @@
 import { useUI, DEFAULT_PDF_READER_PREF, type PdfReaderPanel } from '@/store/ui';
 import { usePdfAnnotations } from '@/hooks/usePdfAnnotations';
 import { MIN_SCALE, MAX_SCALE, type PdfViewport } from '@/components/pdf/PdfViewer/usePdfViewport';
-import { PdfPager } from '@/components/pdf/reader/PdfPager';
 import { PdfReaderRail } from '@/components/pdf/reader/PdfReaderRail';
 import { PdfReaderPanelHost } from '@/components/pdf/reader/PdfReaderPanelHost';
 import { PdfReaderOverflowMenu } from '@/components/pdf/reader/PdfReaderOverflowMenu';
-import { MediaViewerPdf } from './MediaViewerPdf';
+import { PdfReaderPageArea } from './PdfReaderPageArea';
 import type { MediaItem } from '@/db/schema';
 
 interface PdfReaderSurfaceProps {
@@ -27,26 +26,7 @@ export const PdfReaderSurface = ({ spaceId, item, view }: PdfReaderSurfaceProps)
   return (
     <div className="flex min-h-0 flex-1 bg-paper">
       {/* [thumbnail column — PG.3] */}
-      <div className="relative min-w-0 flex-1">
-        <MediaViewerPdf
-          mediaId={item.id}
-          spaceId={spaceId}
-          blob={item.blob}
-          title={item.name}
-          page={view.pageNumber}
-          scale={view.scale}
-          onPageChange={view.goToPage}
-          onNumPagesChange={view.setNumPages}
-        />
-        {view.numPages > 0 && (
-          <PdfPager
-            pageNumber={view.pageNumber}
-            numPages={view.numPages}
-            onPrev={view.prev}
-            onNext={view.next}
-          />
-        )}
-      </div>
+      <PdfReaderPageArea spaceId={spaceId} item={item} view={view} />
       {!pref.railHidden && (
         <PdfReaderPanelHost
           panel={pref.panel}

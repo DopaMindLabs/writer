@@ -985,6 +985,11 @@
       "zoomOut": "Zoom out",
       "resetZoom": "Reset zoom",
       "openLibrary": "Open library"
+    },
+    "zoom": {
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "reset": "Reset zoom, currently {{pct}}%"
     }
   }
 }
