@@ -143,6 +143,47 @@ test('annotations persist across reload', async ({ page }) => {
   await expect(mark(page)).toHaveAttribute('data-kind', 'highlight');
 });
 
+test('highlight tints blend with the page instead of painting solid', async ({ page }) => {
+  await select(page);
+  await page.getByTestId('strip-color-yellow').click();
+  await expect(mark(page)).toBeVisible();
+
+  // The tint multiplies against the canvas glyphs, so the highlighted text stays
+  // legible. That only holds while the overlay is *not* an isolated stacking
+  // context — a `z-index` on it would confine the blend and paint the tint
+  // solid. Guard both halves: the tint keeps its blend mode and the overlay
+  // keeps `z-index: auto`.
+  const tint = page.locator('[data-testid="pdf-highlight-layer"] span').first();
+  await expect(tint).toHaveCSS('mix-blend-mode', 'multiply');
+  const overlayZ = await page
+    .getByTestId('pdf-page-overlay')
+    .evaluate((el) => getComputedStyle(el).zIndex);
+  expect(overlayZ).toBe('auto');
+});
+
+test('a selection drag passes through an existing mark', async ({ page }) => {
+  await select(page);
+  await page.getByTestId('strip-color-yellow').click();
+  await expect(mark(page)).toBeVisible();
+
+  // A mark's hit target sits above the text layer so a right-click lands on it,
+  // but it must go pointer-transparent while pdf.js is mid-selection
+  // (`.textLayer.selecting`) — otherwise dragging a new selection across the
+  // highlight is swallowed by the mark and runs away. Drive pdf.js's own
+  // selection flag and assert the button yields, then restores.
+  const pe = await page.evaluate(() => {
+    const tl = document.querySelector('.textLayer');
+    const btn = document.querySelector('[data-testid="pdf-highlight-mark"]');
+    const idle = getComputedStyle(btn).pointerEvents;
+    tl?.classList.add('selecting');
+    const selecting = getComputedStyle(btn).pointerEvents;
+    tl?.classList.remove('selecting');
+    const restored = getComputedStyle(btn).pointerEvents;
+    return { idle, selecting, restored };
+  });
+  expect(pe).toEqual({ idle: 'auto', selecting: 'none', restored: 'auto' });
+});
+
 test('strip and marks have no detectable a11y violations', async ({ page }) => {
   await select(page);
   await page.getByTestId('strip-color-green').click();
