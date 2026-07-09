@@ -10,6 +10,7 @@ import {
   unwrapMasterSecret,
 } from './crypto/keys';
 import { openRow, type RowRef } from './crypto/envelope';
+import { EscrowMissingError } from './crypto/errors';
 import type { CloudKeyRing } from './crypto/keys';
 import { encodeRecoveryCode, decodeRecoveryCode } from './crypto/recoveryCode';
 import {
@@ -128,7 +129,10 @@ export const unlockCloudEncryption = async (
   db: LoremDB = appDb,
 ): Promise<void> => {
   const escrow = await db.cloudCrypto.get(ESCROW_ID);
-  invariant(escrow, 'no cloud escrow to unlock on this database');
+  // A missing escrow is a flow condition, not a bad passphrase: on a fresh device
+  // the account's escrow only arrives after sign-in. Raise a distinct error so
+  // the UI can say "sign in first" rather than "wrong passphrase".
+  if (!escrow) throw new EscrowMissingError();
   const master = await unwrapMasterSecret(escrow, passphrase);
   await saveDeviceKeyRing(await deriveKeyRing(master, escrow.epoch));
   await sealExistingRows(db);

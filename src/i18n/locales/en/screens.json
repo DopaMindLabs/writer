@@ -375,7 +375,9 @@
           "useRecovery": "Use a recovery code instead",
           "recoveryLabel": "Recovery code",
           "recoverySubmit": "Recover",
-          "recoveryWrong": "That recovery code doesn't match this account."
+          "recoveryWrong": "That recovery code doesn't match this account.",
+          "noEscrow": "There's no key to unlock on this device yet. Sign in first — your encrypted key arrives with your account's data.",
+          "failed": "Something went wrong while unlocking. Please try again."
         },
         "recovery": {
           "title": "Save your recovery code",
