@@ -22,6 +22,9 @@ const EXEMPT = [
   /^develop$/,
   /^dependabot\//,
   /^release-please/,
+  /^release\//,
+  /^rc\//,
+  /^pre-release\//,
 ];
 
 const resolveBranch = () => {
@@ -43,8 +46,8 @@ const fail = (branch) => {
     'Use the form  <type>/<kebab-description>  (underscores allowed for suffixes)',
     '  e.g.  feat/user-login   fix/date-parse   chore/bump-deps   feat/user-login_v2',
     '',
-    'Exempt: main, develop, and automation branches',
-    '  (dependabot/*, release-please*).',
+    'Exempt: main, develop, and automation / release branches',
+    '  (dependabot/*, release-please*, release/*, rc/*, pre-release/*).',
     '',
   ];
   console.error(lines.join('\n'));

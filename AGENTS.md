@@ -219,7 +219,8 @@ branch. Branch names must be prefixed with a Conventional Commit type, enforced 
   `chore/bump-deps`. Underscores are allowed for suffixes (`feat/user-login_v2`).
 - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`,
   `revert`.
-- Exempt: `main`, `develop`, and automation branches (`dependabot/*`, `release-please*`).
+- Exempt: `main`, `develop`, and automation / release branches (`dependabot/*`,
+  `release-please*`, `release/*`, `rc/*`, `pre-release/*`).
 
 ### Protected branches (read before any git write)
 
