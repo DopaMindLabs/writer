@@ -10,10 +10,24 @@ import {
 import {
   unlockCloudEncryption,
   recoverCloudEncryption,
+  EscrowMissingError,
+  WrongPassphraseError,
 } from '@/lib/cloud/cloudClient';
 import { PassphraseUnlockFields } from './PassphraseUnlockFields';
 
 type Mode = 'passphrase' | 'recovery';
+
+/**
+ * The i18n suffix for an unlock failure. A missing escrow (no key has arrived on
+ * this device yet) is told apart from a genuinely wrong passphrase, and anything
+ * unexpected gets a neutral message rather than implying the passphrase is wrong.
+ */
+const unlockErrorKey = (error: unknown, isRecovery: boolean): string => {
+  if (error instanceof EscrowMissingError) return 'noEscrow';
+  if (isRecovery) return 'recoveryWrong';
+  if (error instanceof WrongPassphraseError) return 'wrong';
+  return 'failed';
+};
 
 export interface PassphraseUnlockDialogProps {
   open: boolean;
@@ -52,8 +66,8 @@ export const PassphraseUnlockDialog = ({
       await (isRecovery ? onRecover(value) : onUnlock(value));
       onUnlocked();
       onOpenChange(false);
-    } catch {
-      setError(isRecovery ? k('recoveryWrong') : k('wrong'));
+    } catch (err) {
+      setError(k(unlockErrorKey(err, isRecovery)));
     } finally {
       setBusy(false);
     }
