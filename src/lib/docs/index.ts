@@ -1,6 +1,7 @@
 export {
   createDoc,
   createDocs,
+  ensureDocCrdtSeeded,
   renameDoc,
   restoreDocs,
   seedDocCrdt,
