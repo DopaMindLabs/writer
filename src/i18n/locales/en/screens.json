@@ -908,6 +908,14 @@
       "deleteConfirm": "Delete",
       "deleteCancel": "Cancel"
     },
+    "row": {
+      "highlights_one": "{{count}} highlight",
+      "highlights_other": "{{count}} highlights",
+      "noHighlights": "—",
+      "menuAria": "Actions for {{name}}",
+      "menuOpen": "Open",
+      "menuDelete": "Delete…"
+    },
     "viewer": {
       "prevPage": "Previous page",
       "nextPage": "Next page",

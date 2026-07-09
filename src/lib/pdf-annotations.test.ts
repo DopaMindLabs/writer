@@ -4,6 +4,7 @@ import type { PdfSelectionCapture } from '@/pdf-annotator/core/types';
 import {
   addPdfHighlight,
   listPdfAnnotations,
+  countPdfAnnotationsBySpace,
   setPdfAnnotationColor,
   setPdfAnnotationNote,
   deletePdfAnnotation,
@@ -59,6 +60,21 @@ describe('pdf-annotations facade', () => {
     const hl = await add();
     await deletePdfAnnotation(hl.id);
     expect(await db.pdfAnnotations.get(hl.id)).toBeUndefined();
+  });
+
+  it('countPdfAnnotationsBySpace tallies per media, scoped to the space', async () => {
+    await db.pdfAnnotations.bulkAdd([
+      { id: '1', mediaId: 'm1', spaceId: 's1', kind: 'highlight', page: 1, rects: SPAN, quote: '', color: 'yellow', author: 'me', createdAt: 1, updatedAt: 1 },
+      { id: '2', mediaId: 'm1', spaceId: 's1', kind: 'highlight', page: 2, rects: SPAN, quote: '', color: 'yellow', author: 'me', createdAt: 2, updatedAt: 2 },
+      { id: '3', mediaId: 'm2', spaceId: 's1', kind: 'highlight', page: 1, rects: SPAN, quote: '', color: 'yellow', author: 'me', createdAt: 3, updatedAt: 3 },
+      { id: '4', mediaId: 'm3', spaceId: 's2', kind: 'highlight', page: 1, rects: SPAN, quote: '', color: 'yellow', author: 'me', createdAt: 4, updatedAt: 4 },
+    ]);
+    const counts = await countPdfAnnotationsBySpace('s1');
+    expect(counts.get('m1')).toBe(2);
+    expect(counts.get('m2')).toBe(1);
+    // A different space's marks are excluded; an unannotated media is absent.
+    expect(counts.has('m3')).toBe(false);
+    expect([...counts.keys()].sort()).toEqual(['m1', 'm2']);
   });
 
   const at = (

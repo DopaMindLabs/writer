@@ -98,6 +98,23 @@ export const listPdfAnnotations = async (
   return items.sort((a, b) => a.page - b.page || a.createdAt - b.createdAt);
 };
 
+/**
+ * Highlight counts for every annotated media item in a space, from a single
+ * indexed `spaceId` query reduced in memory — never one query per row, so the
+ * library list scales with the space, not the row count. Media items with no
+ * highlights are simply absent from the map (the row reads them as zero).
+ */
+export const countPdfAnnotationsBySpace = async (
+  spaceId: string,
+): Promise<Map<string, number>> => {
+  const rows = await db.pdfAnnotations.where('spaceId').equals(spaceId).toArray();
+  const counts = new Map<string, number>();
+  for (const row of rows) {
+    counts.set(row.mediaId, (counts.get(row.mediaId) ?? 0) + 1);
+  }
+  return counts;
+};
+
 export const setPdfAnnotationColor = async (
   id: string,
   color: HighlightColor,
