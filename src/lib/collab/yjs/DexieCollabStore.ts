@@ -27,7 +27,7 @@ const isConstraintError = (err: unknown): boolean =>
 const updateRow = (docId: string, payload: Uint8Array) => ({
   docId,
   engine: 'yjs' as const,
-  formatVersion: 1,
+  formatVersion: 1 as const,
   payload,
   createdAt: Date.now(),
 });
