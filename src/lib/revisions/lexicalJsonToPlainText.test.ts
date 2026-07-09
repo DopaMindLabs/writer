@@ -70,6 +70,15 @@ describe('lexicalJsonToPlainText', () => {
     expect(text).toContain('The rain fell sideways.');
   });
 
+  it('reads a childless-root body as empty text without throwing (no #38)', () => {
+    // A snapshot of an empty CRDT log serialises to a root with no children.
+    // Reading it must not call setEditorState (which throws on an empty state).
+    const childlessRoot =
+      '{"root":{"children":[],"direction":null,"format":"","indent":0,"type":"root","version":1}}';
+    expect(() => lexicalJsonToPlainText(childlessRoot)).not.toThrow();
+    expect(lexicalJsonToPlainText(childlessRoot)).toBe('');
+  });
+
   it('throws when the body is serialized-shaped but not parseable Lexical', () => {
     expect(() =>
       lexicalJsonToPlainText('{"root":{"type":"not-a-real-node"}}'),
