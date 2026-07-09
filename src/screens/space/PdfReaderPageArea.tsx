@@ -8,6 +8,8 @@ interface PdfReaderPageAreaProps {
   spaceId: string;
   item: MediaItem;
   view: PdfViewport;
+  /** The floating centre pager hides while the thumbnail column owns navigation. */
+  showPager?: boolean;
 }
 
 /**
@@ -16,7 +18,12 @@ interface PdfReaderPageAreaProps {
  * apart from `PdfReaderSurface` so the surface owns the page/panel/rail layout
  * and this owns the viewport and its overlays.
  */
-export const PdfReaderPageArea = ({ spaceId, item, view }: PdfReaderPageAreaProps) => (
+export const PdfReaderPageArea = ({
+  spaceId,
+  item,
+  view,
+  showPager = true,
+}: PdfReaderPageAreaProps) => (
   <div className="relative min-w-0 flex-1">
     <MediaViewerPdf
       mediaId={item.id}
@@ -28,7 +35,7 @@ export const PdfReaderPageArea = ({ spaceId, item, view }: PdfReaderPageAreaProp
       onPageChange={view.goToPage}
       onNumPagesChange={view.setNumPages}
     />
-    {view.numPages > 0 && (
+    {showPager && view.numPages > 0 && (
       <PdfPager
         pageNumber={view.pageNumber}
         numPages={view.numPages}

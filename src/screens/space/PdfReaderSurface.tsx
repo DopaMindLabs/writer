@@ -4,6 +4,7 @@ import { MIN_SCALE, MAX_SCALE, type PdfViewport } from '@/components/pdf/PdfView
 import { PdfReaderRail } from '@/components/pdf/reader/PdfReaderRail';
 import { PdfReaderPanelHost } from '@/components/pdf/reader/PdfReaderPanelHost';
 import { PdfReaderOverflowMenu } from '@/components/pdf/reader/PdfReaderOverflowMenu';
+import { PdfThumbRail } from '@/components/pdf/reader/PdfThumbRail';
 import { PdfReaderPageArea } from './PdfReaderPageArea';
 import type { MediaItem } from '@/db/schema';
 
@@ -25,8 +26,18 @@ export const PdfReaderSurface = ({ spaceId, item, view }: PdfReaderSurfaceProps)
 
   return (
     <div className="flex min-h-0 flex-1 bg-paper">
-      {/* [thumbnail column — PG.3] */}
-      <PdfReaderPageArea spaceId={spaceId} item={item} view={view} />
+      {pref.thumbs && (
+        <PdfThumbRail
+          blob={item.blob}
+          numPages={view.numPages}
+          activePage={view.pageNumber}
+          annotations={annotations}
+          onPageChange={view.goToPage}
+          onPrev={view.prev}
+          onNext={view.next}
+        />
+      )}
+      <PdfReaderPageArea spaceId={spaceId} item={item} view={view} showPager={!pref.thumbs} />
       {!pref.railHidden && (
         <PdfReaderPanelHost
           panel={pref.panel}

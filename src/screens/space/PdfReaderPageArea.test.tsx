@@ -81,4 +81,14 @@ describe('PdfReaderPageArea', () => {
     expect(screen.queryByTestId('pdf-pager')).not.toBeInTheDocument();
     expect(screen.queryByTestId('pdf-zoom')).not.toBeInTheDocument();
   });
+
+  it('hides the centre pager when the thumbnail column owns navigation', async () => {
+    renderWithProviders(
+      <PdfReaderPageArea spaceId="s1" item={item} view={viewWith(2)} showPager={false} />,
+    );
+    await screen.findByTestId('fake-page');
+    expect(screen.queryByTestId('pdf-pager')).not.toBeInTheDocument();
+    // Zoom stays available even while the thumbnails drive paging.
+    expect(screen.getByTestId('pdf-zoom')).toBeInTheDocument();
+  });
 });

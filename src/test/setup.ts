@@ -57,6 +57,25 @@ if (typeof URL !== 'undefined') {
   u.revokeObjectURL = () => {};
 }
 
+if (typeof globalThis !== 'undefined' && !('IntersectionObserver' in globalThis)) {
+  // jsdom ships no IntersectionObserver; a no-op keeps components that lazily
+  // observe (e.g. the thumbnail rail) from throwing. Tests that need to drive
+  // visibility stub their own via vi.stubGlobal, which overrides this default.
+  class NoopIntersectionObserver {
+    readonly root = null;
+    readonly rootMargin = '';
+    readonly thresholds: readonly number[] = [];
+    observe(): void {}
+    unobserve(): void {}
+    disconnect(): void {}
+    takeRecords(): IntersectionObserverEntry[] {
+      return [];
+    }
+  }
+  (globalThis as unknown as { IntersectionObserver: unknown }).IntersectionObserver =
+    NoopIntersectionObserver;
+}
+
 if (typeof window !== 'undefined') {
   const w = window as unknown as {
     localStorage?: Storage;

@@ -973,6 +973,10 @@
     "overflow": "More",
     "tick": "Highlight on page {{page}}",
     "crumbSuffix": " · page {{page}} of {{total}}",
+    "thumbs": {
+      "region": "Page thumbnails",
+      "page": "Page {{page}}"
+    },
     "rows": {
       "name": "Name",
       "pages": "Pages",

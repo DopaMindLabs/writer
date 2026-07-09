@@ -103,4 +103,20 @@ describe('PdfReaderSurface', () => {
     expect(screen.queryByTestId('pdf-reader-rail')).not.toBeInTheDocument();
     expect(screen.queryByTestId('pdf-reader-panel')).not.toBeInTheDocument();
   });
+
+  it('keeps the thumbnail column hidden by default', async () => {
+    renderWithProviders(<PdfReaderSurface spaceId="s1" item={item} view={viewWith(2)} />);
+    await screen.findByTestId('fake-page');
+    expect(screen.queryByTestId('pdf-thumb-rail')).not.toBeInTheDocument();
+  });
+
+  it('shows the thumbnail column and hides the centre pager when thumbs are open', async () => {
+    setPref({ thumbs: true });
+    renderWithProviders(<PdfReaderSurface spaceId="s1" item={item} view={viewWith(2)} />);
+    await screen.findByTestId('fake-page');
+    expect(screen.getByTestId('pdf-thumb-rail')).toBeInTheDocument();
+    expect(screen.queryByTestId('pdf-pager')).not.toBeInTheDocument();
+    // The column keeps its own docked foot pager.
+    expect(screen.getByTestId('pdf-thumb-pager')).toBeInTheDocument();
+  });
 });
