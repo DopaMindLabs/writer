@@ -5,6 +5,7 @@ import {
   loadDeviceKeyRing,
   forgetDeviceKeyRing,
   deviceKeyProvider,
+  onDeviceKeyRingChange,
 } from './keyStore';
 
 /** Prove a loaded ring's content key is usable without ever exporting it. */
@@ -44,5 +45,19 @@ describe('device keyStore', () => {
     await forgetDeviceKeyRing();
     expect(await loadDeviceKeyRing()).toBeNull();
     expect(deviceKeyProvider.current()).toBeNull();
+  });
+
+  it('notifies ring-change subscribers on save, load and forget', async () => {
+    let calls = 0;
+    const stop = onDeviceKeyRingChange(() => {
+      calls += 1;
+    });
+    await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1));
+    await loadDeviceKeyRing();
+    await forgetDeviceKeyRing();
+    expect(calls).toBe(3);
+    stop();
+    await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1));
+    expect(calls).toBe(3); // unsubscribed
   });
 });
