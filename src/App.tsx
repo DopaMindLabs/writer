@@ -18,7 +18,9 @@ import { SyncScheduler } from '@/lib/sync/SyncScheduler';
 import { hydrateCloudDevice } from '@/lib/cloud/cloudClient';
 import { startCloudReconciler } from '@/lib/cloud/reconcile';
 import { startEscrowReconciler } from '@/lib/cloud/escrowReconcile';
+import { startKeylessLockMonitor } from '@/lib/cloud/keylessGuard';
 import { keyMismatchState } from '@/lib/cloud/crypto/keyMismatch';
+import { keylessLockState } from '@/lib/cloud/crypto/keylessLock';
 import { resetAndReseed } from '@/db/seed';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
 import { HomeScreen } from '@/screens/global/Home';
@@ -82,6 +84,35 @@ const router = createAppRouter([
 const isReseedParamEnabled = (): boolean =>
   import.meta.env.DEV || import.meta.env.VITE_E2E === '1';
 
+const stripParam = (url: URL, name: string): void => {
+  url.searchParams.delete(name);
+  window.history.replaceState({}, '', url.pathname + url.search);
+};
+
+/**
+ * Dev/E2E-only URL affordances, applied after boot wiring: `?reseed` reseeds the
+ * local database, and `?cloud-mismatch` / `?cloud-keyless` force the respective
+ * cloud lock signals so their surfaces can be driven headlessly (the real
+ * triggers need a live signed-in state). Applied after any reseed so the
+ * reseed's own writes are never blocked by a forced lock.
+ */
+const applyDevBootParams = async (): Promise<void> => {
+  if (!isReseedParamEnabled()) return;
+  const url = new URL(window.location.href);
+  if (url.searchParams.has('reseed')) {
+    await resetAndReseed();
+    stripParam(url, 'reseed');
+  }
+  if (url.searchParams.has('cloud-mismatch')) {
+    keyMismatchState.set(true);
+    stripParam(url, 'cloud-mismatch');
+  }
+  if (url.searchParams.has('cloud-keyless')) {
+    keylessLockState.set(true);
+    stripParam(url, 'cloud-keyless');
+  }
+};
+
 const toError = (e: unknown): Error =>
   e instanceof Error ? e : new Error(String(e));
 
@@ -97,6 +128,7 @@ const useAppBoot = (): {
     let cancelled = false;
     let stopReconciler: (() => void) | null = null;
     let stopEscrowReconciler: (() => void) | null = null;
+    let stopKeylessMonitor: (() => void) | null = null;
     const run = async () => {
       // Load the persisted device key before anything reads or writes the cloud
       // database, so encrypted reads decrypt and writes seal from the first tick.
@@ -107,20 +139,10 @@ const useAppBoot = (): {
       // Reconcile the device's escrow against the account's after sign-in:
       // publish it if the account has none, or flag a key mismatch to resolve.
       stopEscrowReconciler = startEscrowReconciler();
-      const url = new URL(window.location.href);
-      if (isReseedParamEnabled() && url.searchParams.has('reseed')) {
-        await resetAndReseed();
-        url.searchParams.delete('reseed');
-        window.history.replaceState({}, '', url.pathname + url.search);
-      }
-      // E2E/dev affordance: force the key-mismatch signal so the conflict UI can
-      // be driven headlessly (the real trigger needs a live two-device sign-in).
-      // Applied after any reseed so the reseed's own writes are not blocked.
-      if (isReseedParamEnabled() && url.searchParams.has('cloud-mismatch')) {
-        keyMismatchState.set(true);
-        url.searchParams.delete('cloud-mismatch');
-        window.history.replaceState({}, '', url.pathname + url.search);
-      }
+      // Lock content writes whenever the device is signed in without a key ring,
+      // so plaintext can never reach the sync queue before setup/unlock.
+      stopKeylessMonitor = startKeylessLockMonitor();
+      await applyDevBootParams();
     };
     run()
       .then(() => {
@@ -133,6 +155,7 @@ const useAppBoot = (): {
       cancelled = true;
       stopReconciler?.();
       stopEscrowReconciler?.();
+      stopKeylessMonitor?.();
     };
   }, []);
 

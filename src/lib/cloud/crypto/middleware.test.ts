@@ -9,8 +9,9 @@ import { STORES } from '@/db/stores';
 import { generateMasterSecret, deriveKeyRing, type CloudKeyRing } from './keys';
 import { CIPHER_FIELD, SYNCED_TABLES } from './tableRules';
 import { createEncryptionMiddleware, type KeyProvider } from './middleware';
-import { CloudKeyMismatchError } from './errors';
+import { CloudKeyMismatchError, CloudKeylessWriteError } from './errors';
 import { keyMismatchState } from './keyMismatch';
+import { keylessLockState } from './keylessLock';
 
 /** Everything the app persists that must never leave the device (Task 6 excludes
  *  these from sync); listed here so the spike mirrors the real cloud config. */
@@ -87,6 +88,7 @@ beforeEach(async () => {
 afterEach(async () => {
   ring = null;
   keyMismatchState.set(false);
+  keylessLockState.set(false);
   await db.delete();
   vi.restoreAllMocks();
 });
@@ -222,6 +224,42 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     const rows = await table('docs').toArray();
     expect(rows).toHaveLength(1);
     expect(rows[0]?.name).toBe('new-key');
+  });
+
+  it('refuses content add/put while signed-in-keyless, but lets deletes pass', async () => {
+    // Seal a row while a key exists, then drop the ring and engage the keyless
+    // lock (signed in, no key): new writes must not leak plaintext into the queue.
+    await table('docs').put({ id: 'd1', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'seed' });
+    ring = null;
+    keylessLockState.set(true);
+
+    await expect(
+      table('docs').put({ id: 'd2', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'plain' }),
+    ).rejects.toBeInstanceOf(CloudKeylessWriteError);
+    expect(await table('$docs_mutations').toArray()).toHaveLength(0);
+    // Deletes still pass (needed by the erase escape hatch).
+    await expect(table('docs').delete('d1')).resolves.toBeUndefined();
+  });
+
+  it('hides sealed rows from keyless reads, but passes plaintext rows through', async () => {
+    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'secret' });
+    ring = null;
+    // A plaintext row written while keyless (pre-setup, lock off).
+    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'clear' });
+
+    keylessLockState.set(true);
+    // The sealed row is hidden (unreadable without a key); the plaintext one shows.
+    expect(await table('docs').get('sealed')).toBeUndefined();
+    const rows = await table('docs').toArray();
+    expect(rows.map((r) => r.id)).toEqual(['plain']);
+  });
+
+  it('leaves keyless reads untouched when the keyless lock is off (pre-setup use)', async () => {
+    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'secret' });
+    ring = null;
+    // Lock off: a signed-out keyless device still sees rows verbatim (raw at rest).
+    const raw = await table('docs').get('sealed');
+    expect(raw?.[CIPHER_FIELD]).toBeDefined();
   });
 
   it('P7: re-putting an already-sealed row preserves its ciphertext (no double-seal)', async () => {

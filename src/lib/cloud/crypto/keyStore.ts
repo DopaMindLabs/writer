@@ -40,20 +40,39 @@ let cached: CloudKeyRing | null = null;
 
 const db = (): KeystoreDb => (keystore ??= new KeystoreDb());
 
+const ringListeners = new Set<() => void>();
+const notifyRingChange = (): void => {
+  for (const listener of ringListeners) listener();
+};
+
+/**
+ * Subscribe to changes of the cached device key ring (acquired or forgotten).
+ * Lets the keyless-lock monitor recompute without polling. Returns an unsubscribe.
+ */
+export const onDeviceKeyRingChange = (listener: () => void): (() => void) => {
+  ringListeners.add(listener);
+  return () => {
+    ringListeners.delete(listener);
+  };
+};
+
 export const saveDeviceKeyRing = async (ring: CloudKeyRing): Promise<void> => {
   await db().rings.put({ id: DEVICE, ring });
   cached = ring;
+  notifyRingChange();
 };
 
 export const loadDeviceKeyRing = async (): Promise<CloudKeyRing | null> => {
   const row = await db().rings.get(DEVICE);
   cached = row?.ring ?? null;
+  notifyRingChange();
   return cached;
 };
 
 export const forgetDeviceKeyRing = async (): Promise<void> => {
   await db().rings.delete(DEVICE);
   cached = null;
+  notifyRingChange();
 };
 
 /** Hold an escrow on the device until reconciliation decides whether to publish it. */
