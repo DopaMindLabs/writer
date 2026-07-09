@@ -12,6 +12,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
 });
 
 import userEvent from '@testing-library/user-event';
+import { fireEvent } from '@testing-library/react';
 import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { PDF_MIME } from '@/data/media';
@@ -182,5 +183,42 @@ describe('MediaLibrarySurface', () => {
     await screen.findByTestId('media-library-empty');
     await userEvent.tab();
     expect(screen.getByTestId('media-upload-button')).toHaveFocus();
+  });
+
+  it('shows the drop overlay on a file dragenter and clears it on dragleave', async () => {
+    renderWithProviders(<MediaLibrarySurface spaceId="s1" />);
+    const surface = await screen.findByTestId('media-library-surface');
+    const fileDrag = { dataTransfer: { types: ['Files'], files: [] } };
+
+    fireEvent.dragEnter(surface, fileDrag);
+    expect(screen.getByTestId('media-library-drop-overlay')).toBeInTheDocument();
+    fireEvent.dragLeave(surface, fileDrag);
+    expect(screen.queryByTestId('media-library-drop-overlay')).not.toBeInTheDocument();
+  });
+
+  it('adds dropped pdfs through the shared upload pipeline', async () => {
+    getDocument.mockReturnValue({
+      promise: Promise.resolve({ numPages: 2 }),
+      destroy: vi.fn().mockResolvedValue(undefined),
+    });
+    renderWithProviders(<MediaLibrarySurface spaceId="s1" />);
+    const surface = await screen.findByTestId('media-library-surface');
+    const pdf = new File([new Uint8Array([0x25, 0x50, 0x44, 0x46, 1, 2])], 'dropped.pdf', {
+      type: PDF_MIME,
+    });
+    fireEvent.drop(surface, { dataTransfer: { types: ['Files'], files: [pdf] } });
+    expect(await screen.findByText('dropped.pdf')).toBeInTheDocument();
+  });
+
+  it('surfaces the warning banner when a non-pdf is dropped', async () => {
+    renderWithProviders(<MediaLibrarySurface spaceId="s1" />);
+    const surface = await screen.findByTestId('media-library-surface');
+    const txt = new File([new Uint8Array([1, 2, 3])], 'notes.txt', {
+      type: 'text/plain',
+    });
+    fireEvent.drop(surface, { dataTransfer: { types: ['Files'], files: [txt] } });
+    expect(await screen.findByTestId('media-upload-reject-banner')).toHaveTextContent(
+      'notes.txt',
+    );
   });
 });

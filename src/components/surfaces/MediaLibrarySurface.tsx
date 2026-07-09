@@ -3,11 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { MediaLibraryHeader } from '@/components/media/MediaLibraryHeader';
+import { MediaLibraryDropOverlay } from '@/components/media/MediaLibraryDropOverlay';
 import { MediaLibraryControls } from '@/components/media/MediaLibraryControls';
 import { MediaLibraryList, type MediaSection } from '@/components/media/MediaLibraryList';
 import { MediaLibraryFooter } from '@/components/media/MediaLibraryFooter';
 import { useMediaItems } from '@/hooks/useMediaItems';
 import { usePdfAnnotationCounts } from '@/hooks/usePdfAnnotationCounts';
+import { useMediaUpload } from '@/hooks/useMediaUpload';
+import { useFileDrop } from '@/hooks/useFileDrop';
 import {
   filterMedia,
   sortMedia,
@@ -54,6 +57,8 @@ export const MediaLibrarySurface = ({ spaceId }: MediaLibrarySurfaceProps) => {
   const navigate = useNavigate();
   const items = useMediaItems(spaceId);
   const counts = usePdfAnnotationCounts(spaceId);
+  const upload = useMediaUpload(spaceId);
+  const drop = useFileDrop(upload.uploadFiles);
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<MediaFilter>('all');
   const [sort, setSort] = useState<MediaSort>('recent');
@@ -71,13 +76,17 @@ export const MediaLibrarySurface = ({ spaceId }: MediaLibrarySurfaceProps) => {
 
   return (
     <section
+      {...drop.handlers}
+      data-testid="media-library-surface"
       aria-labelledby="media-library-heading"
-      className="mx-auto w-full max-w-5xl p-6"
+      className="relative mx-auto min-h-full w-full max-w-5xl p-6"
     >
+      {drop.dragging && <MediaLibraryDropOverlay />}
       <MediaLibraryHeader
         spaceId={spaceId}
         pdfCount={items.length}
         annotationCount={annotationTotal}
+        upload={upload}
       />
       <MediaLibraryControls
         query={query}

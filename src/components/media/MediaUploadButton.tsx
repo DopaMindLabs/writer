@@ -6,18 +6,26 @@ import { FileInputTrigger } from '@/components/ui/FileInputTrigger';
 import { InlineBanner } from '@/components/ui/InlineBanner';
 import { TypographyP } from '@/components/ui/typography';
 import { PDF_ACCEPT_ATTR } from '@/data/media';
-import { useMediaUpload } from '@/hooks/useMediaUpload';
+import { useMediaUpload, type MediaUpload } from '@/hooks/useMediaUpload';
 import type { MediaItem } from '@/db/schema';
 
 interface MediaUploadButtonProps {
   spaceId: string;
   onUploaded?: (item: MediaItem) => void;
+  /** When provided, share this upload controller (e.g. with the library's
+   * page-wide drop) instead of owning one, so both paths report through the
+   * same rejection banner. */
+  upload?: MediaUpload;
 }
 
-export const MediaUploadButton = ({ spaceId, onUploaded }: MediaUploadButtonProps) => {
+export const MediaUploadButton = ({
+  spaceId,
+  onUploaded,
+  upload,
+}: MediaUploadButtonProps) => {
   const { t } = useTranslation('screens');
-  const { busy, rejected, uploadFiles, dismissRejected } =
-    useMediaUpload(spaceId, onUploaded);
+  const owned = useMediaUpload(spaceId, onUploaded);
+  const { busy, rejected, uploadFiles, dismissRejected } = upload ?? owned;
 
   return (
     <div className="flex flex-col items-start gap-1.5">
