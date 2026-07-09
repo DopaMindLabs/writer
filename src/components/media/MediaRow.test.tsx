@@ -6,6 +6,7 @@ vi.mock('@/lib/pdf/pdfAdapter', () => ({
 }));
 
 import userEvent from '@testing-library/user-event';
+import { fireEvent } from '@testing-library/react';
 import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { PDF_MIME } from '@/data/media';
@@ -56,6 +57,15 @@ describe('MediaRow', () => {
     renderWithProviders(<MediaRow item={item} highlightCount={0} onOpen={onOpen} />);
     await userEvent.click(screen.getByTestId('media-row-m1-open'));
     expect(onOpen).toHaveBeenCalledWith(item);
+  });
+
+  it('carries the media id as a drag payload for the canvas', () => {
+    renderWithProviders(<MediaRow item={makeItem()} highlightCount={0} onOpen={vi.fn()} />);
+    const setData = vi.fn();
+    const dataTransfer = { setData, effectAllowed: '' };
+    fireEvent.dragStart(screen.getByTestId('media-row-m1'), { dataTransfer });
+    expect(setData).toHaveBeenCalledWith('application/x-lipsum-media-id', 'm1');
+    expect(dataTransfer.effectAllowed).toBe('copy');
   });
 
   it('deletes via the cascade after confirmation from the row menu', async () => {

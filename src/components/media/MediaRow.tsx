@@ -4,6 +4,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { TypographyP } from '@/components/ui/typography';
 import { formatBytes } from '@/components/settings/sync/syncFormat';
 import { cn } from '@/lib/utils';
+import { MEDIA_DND_TYPE } from '@/data/dnd';
 import { MediaRowMenu } from './MediaRowMenu';
 import type { MediaItem } from '@/db/schema';
 
@@ -35,6 +36,11 @@ export const MediaRow = ({ item, highlightCount, onOpen }: MediaRowProps) => {
   return (
     <div
       data-testid={`media-row-${item.id}`}
+      draggable
+      onDragStart={(event) => {
+        event.dataTransfer.setData(MEDIA_DND_TYPE, item.id);
+        event.dataTransfer.effectAllowed = 'copy';
+      }}
       className="group relative flex items-center gap-4 border-b border-rule px-2 py-2.5 hover:bg-paper-2"
     >
       <span
