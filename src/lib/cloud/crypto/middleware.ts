@@ -8,10 +8,11 @@ import Dexie, {
   type Middleware,
 } from 'dexie';
 import type { CloudKeyRing } from './keys';
-import { isEncryptedTable, plaintextFieldsFor } from './tableRules';
+import { isEncryptedTable, plaintextFieldsFor, CIPHER_FIELD } from './tableRules';
 import { sealRow, openRow, EnvelopeIntegrityError } from './envelope';
-import { CloudKeyMismatchError } from './errors';
+import { CloudKeyMismatchError, CloudKeylessWriteError } from './errors';
 import { keyMismatchState } from './keyMismatch';
+import { keylessLockState } from './keylessLock';
 
 /**
  * A synchronous view of the active key ring for the encryption middleware.
@@ -23,7 +24,17 @@ export interface KeyProvider {
   current(): CloudKeyRing | null;
 }
 
+/** Why content writes are refused, if they are. */
+export type LockReason = 'none' | 'mismatch' | 'keyless';
+
 type Row = Record<string, unknown>;
+
+/** The default write-lock policy: a detected mismatch wins, else signed-in-keyless. */
+const defaultLockReason = (): LockReason => {
+  if (keyMismatchState.current()) return 'mismatch';
+  if (keylessLockState.current()) return 'keyless';
+  return 'none';
+};
 
 /** The stored primary key of a row, as a string for the envelope's row binding. */
 const pkString = (table: DBCoreTable, value: Row, fallback?: unknown): string => {
@@ -115,29 +126,69 @@ const openMany = (
  * key/query paths instead (read via `get`/`toArray`, then write explicitly);
  * callers are adapted where the encrypted database is constructed.
  */
+/** Whether a stored row carries a ciphertext envelope (was sealed under a key). */
+const isSealed = (value: Row | undefined): boolean =>
+  value?.[CIPHER_FIELD] !== undefined;
+
+/** Keyless single read: drop a sealed row (unreadable) when hiding, else pass through. */
+const keylessGet = async (
+  read: Promise<unknown>,
+  hide: boolean,
+): Promise<unknown> => {
+  const row = (await read) as Row | undefined;
+  return hide && isSealed(row) ? undefined : row;
+};
+
+/** Keyless batch read: replace sealed rows with undefined when hiding. */
+const keylessGetMany = async (
+  read: Promise<unknown[]>,
+  hide: boolean,
+): Promise<unknown[]> => {
+  const rows = await read;
+  if (!hide) return rows;
+  return rows.map((row) => (isSealed(row as Row | undefined) ? undefined : row));
+};
+
+/** Keyless list read: omit sealed rows when hiding. */
+const keylessQuery = async (
+  read: Promise<{ result: unknown[] }>,
+  hide: boolean,
+): Promise<{ result: unknown[] }> => {
+  const res = await read;
+  if (!hide) return res;
+  return { ...res, result: res.result.filter((row) => !isSealed(row as Row | undefined)) };
+};
+
 const wrapTable = (
   table: DBCoreTable,
   provider: KeyProvider,
-  isLocked: () => boolean,
+  lockReason: () => LockReason,
   flagMismatch: () => void,
 ): DBCoreTable => {
   if (!isEncryptedTable(table.name)) return table;
+  // A signed-in-but-keyless device hides sealed rows on read (it cannot open
+  // them yet) so the UI never renders undefined fields; a plain keyless device
+  // (pre-setup, signed out) still passes rows through untouched.
+  const hideSealed = () => lockReason() === 'keyless';
   return {
     ...table,
     mutate: async (req: DBCoreMutateRequest) => {
-      // Under a detected key mismatch the account is protected by a key this
-      // device does not hold. Refuse to seal and queue new content — a push
-      // would pollute the account with rows under the wrong key. Deletes still
-      // pass, so the mismatch escape hatch can drop unreadable rows.
-      if (isLocked() && (req.type === 'add' || req.type === 'put')) {
-        throw new CloudKeyMismatchError();
+      // Refuse content add/put while locked: under a mismatch the account holds a
+      // different key (a push would pollute it); while signed-in-keyless there is
+      // no key to seal with (a push would leak plaintext). Deletes still pass, so
+      // the mismatch escape hatch can drop unreadable rows.
+      const reason = lockReason();
+      if (reason !== 'none' && (req.type === 'add' || req.type === 'put')) {
+        throw reason === 'mismatch'
+          ? new CloudKeyMismatchError()
+          : new CloudKeylessWriteError();
       }
       const ring = provider.current();
       return table.mutate(ring ? await inTx(sealMutate(table, ring, req)) : req);
     },
     get: (req: DBCoreGetRequest) => {
       const ring = provider.current();
-      if (!ring) return table.get(req);
+      if (!ring) return keylessGet(table.get(req), hideSealed());
       return inTx(
         (async () =>
           openOrDrop(table, ring, (await table.get(req)) as Row | undefined, flagMismatch))(),
@@ -145,14 +196,15 @@ const wrapTable = (
     },
     getMany: (req: DBCoreGetManyRequest) => {
       const ring = provider.current();
-      if (!ring) return table.getMany(req);
+      if (!ring) return keylessGetMany(table.getMany(req), hideSealed());
       return inTx(
         (async () => openMany(table, ring, await table.getMany(req), flagMismatch))(),
       );
     },
     query: (req: DBCoreQueryRequest) => {
       const ring = provider.current();
-      if (!ring || req.values === false) return table.query(req);
+      if (req.values === false) return table.query(req);
+      if (!ring) return keylessQuery(table.query(req), hideSealed());
       return inTx(
         (async () => {
           const res = await table.query(req);
@@ -173,7 +225,7 @@ const wrapTable = (
  */
 export const createEncryptionMiddleware = (
   provider: KeyProvider,
-  isLocked: () => boolean = () => keyMismatchState.current(),
+  lockReason: () => LockReason = defaultLockReason,
   flagMismatch: () => void = () => {
     keyMismatchState.set(true);
   },
@@ -183,6 +235,6 @@ export const createEncryptionMiddleware = (
   level: 10,
   create: (down: DBCore) => ({
     ...down,
-    table: (name: string) => wrapTable(down.table(name), provider, isLocked, flagMismatch),
+    table: (name: string) => wrapTable(down.table(name), provider, lockReason, flagMismatch),
   }),
 });
