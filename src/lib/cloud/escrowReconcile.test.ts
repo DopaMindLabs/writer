@@ -250,7 +250,7 @@ describe('startEscrowReconciler', () => {
   it('serialises overlapping runs and reruns once for triggers during a run', async () => {
     const sync = syncStub();
     const user = userStub();
-    let resolveRun: (() => void) | null = null;
+    let resolveRun: () => void = () => undefined;
     const run = vi.fn(
       () =>
         new Promise<void>((resolve) => {
@@ -263,7 +263,7 @@ describe('startEscrowReconciler', () => {
     emitPhase(sync, 'pulling');
     emitPhase(sync, 'in-sync'); // queued while #1 runs
     expect(run).toHaveBeenCalledTimes(1);
-    resolveRun?.();
+    resolveRun();
     await Promise.resolve();
     await Promise.resolve();
     expect(run).toHaveBeenCalledTimes(2); // exactly one rerun, no pile-up
