@@ -27,6 +27,11 @@ const EXEMPT = [
   /^pre-release\//,
 ];
 
+// Branch names may never reference an AI assistant, even inside an otherwise
+// valid or exempt name (e.g. `feat/claude-x`). This takes precedence over both
+// EXEMPT and PATTERN.
+const DENY = /claude|codex/i;
+
 const resolveBranch = () => {
   const fromArg = process.argv[2];
   if (typeof fromArg === 'string' && fromArg.trim().length > 0) {
@@ -54,9 +59,18 @@ const fail = (branch) => {
   process.exitCode = 1;
 };
 
+const failAssistant = (branch) => {
+  console.error(`\n✖ Branch name references an AI assistant: "${branch}"\n`);
+  process.exitCode = 1;
+};
+
 const main = () => {
   const branch = resolveBranch();
   if (branch.length === 0 || branch === 'HEAD') {
+    return;
+  }
+  if (DENY.test(branch)) {
+    failAssistant(branch);
     return;
   }
   const isAllowed = EXEMPT.some((re) => re.test(branch)) || PATTERN.test(branch);

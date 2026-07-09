@@ -1,33 +1,46 @@
 import { readFileSync } from 'node:fs';
 
-// AI attribution / branding trailers that must never land in a commit message.
-// Scoped to attribution only — legitimate prose and paths such as
-// `.claude/settings.json`, `claude/*`, or "Claude Code" stay allowed.
-const FORBIDDEN = [
-  /co-authored-by:.*(?:claude|codex)/i,
-  /claude\.ai\/code/i,
-  /claude-session/i,
-  /chatgpt\.com\/codex/i,
-  /generated with .*(?:claude|codex)/i,
-  /noreply@anthropic\.com/i,
-];
+// Commit messages may not carry AI assistant names or attribution
+// (Co-Authored-By trailers, "Claude Code", codex/*, session links, ...).
+// The ONLY permitted occurrence is the literal `.claude` config folder, so a
+// commit that edits e.g. `.claude/settings.json` can still name the file it
+// touched. Everything else matching `claude` / `codex` is rejected.
+const DENY = /\b(?:claude|codex)\b/i;
+
+// The commit-msg file also contains git's `#` help lines and, under
+// `git commit -v`, the full diff below a scissors marker. Strip both so code
+// under review (which may legitimately contain these words) can't trip the
+// guard — only the human-authored message is scanned.
+const SCISSORS = /^#\s*-+\s*>8\s*-+/;
 
 const resolveMessage = () => {
   const file = process.argv[2];
   if (typeof file !== 'string' || file.trim().length === 0) {
     return '';
   }
-  return readFileSync(file.trim(), 'utf8');
+  const raw = readFileSync(file.trim(), 'utf8');
+  const kept = [];
+  for (const line of raw.split('\n')) {
+    if (SCISSORS.test(line)) {
+      break;
+    }
+    if (line.startsWith('#')) {
+      continue;
+    }
+    kept.push(line);
+  }
+  // Drop the one allowed token before scanning.
+  return kept.join('\n').replace(/\.claude\b/gi, '');
 };
 
-const fail = (matched) => {
+const fail = () => {
   const lines = [
     '',
-    '✖ Commit message contains AI attribution:',
-    `  matched: ${matched.source}`,
+    '✖ Commit message references an AI assistant (claude/codex).',
     '',
-    'Remove Co-Authored-By: Claude/Codex, claude.ai/code, Claude-Session,',
-    'chatgpt.com/codex trailers and anthropic noreply addresses.',
+    'Remove assistant names and attribution — Co-Authored-By bot trailers,',
+    '"Claude Code", codex/*, session links, anthropic noreply addresses.',
+    'The only allowed occurrence is the literal `.claude` config folder path.',
     '',
   ];
   console.error(lines.join('\n'));
@@ -39,9 +52,8 @@ const main = () => {
   if (message.length === 0) {
     return;
   }
-  const hit = FORBIDDEN.find((re) => re.test(message));
-  if (hit) {
-    fail(hit);
+  if (DENY.test(message)) {
+    fail();
   }
 };
 
