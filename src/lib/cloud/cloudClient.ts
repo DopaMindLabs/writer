@@ -61,6 +61,34 @@ export const cloudSyncState = (): CloudObservable<SyncState> =>
 export const cloudCurrentUser = (): CloudObservable<UserLogin | undefined> =>
   cloudApi()?.currentUser ?? constant(undefined);
 
+/**
+ * Whether the signed-in user's initial account pull has fully completed — the
+ * addon's own websocket gate: `initiallySynced` is set and the user's private
+ * realm (whose id equals the userId) is among the pulled realms. Escrow
+ * publication is held until this is true, so a not-yet-pulled account escrow can
+ * never be clobbered by this device's. `false` on a plain database.
+ */
+export const isAccountPullComplete = (): boolean => {
+  const cloud = (
+    db as {
+      cloud?: {
+        currentUser?: { value?: { isLoggedIn?: boolean; userId?: string } };
+        persistedSyncState?: {
+          value?: { initiallySynced?: boolean; realms?: string[] };
+        };
+      };
+    }
+  ).cloud;
+  const user = cloud?.currentUser?.value;
+  const synced = cloud?.persistedSyncState?.value;
+  return (
+    user?.isLoggedIn === true &&
+    typeof user.userId === 'string' &&
+    synced?.initiallySynced === true &&
+    (synced.realms ?? []).includes(user.userId)
+  );
+};
+
 export const signInToCloud = (): Promise<void> =>
   cloudApi()?.login() ?? Promise.resolve();
 
