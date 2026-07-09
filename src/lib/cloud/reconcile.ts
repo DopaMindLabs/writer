@@ -32,12 +32,29 @@ const reseedFromBody = async (docId: string, body: string): Promise<void> => {
   await seedDocCrdt(docId, body);
 };
 
+/** Bring the pulled body in, through the live editor if mounted, else the log. */
+const applyPulledBody = async (doc: Doc): Promise<ReconcileResult> => {
+  const handle = getEditorHandle(doc.id);
+  if (handle) {
+    handle.restoreBody(doc.body);
+    return { docId: doc.id, action: 'restored' };
+  }
+  await reseedFromBody(doc.id, doc.body);
+  return { docId: doc.id, action: 'reseeded' };
+};
+
 const reconcileDoc = async (doc: Doc): Promise<ReconcileResult | null> => {
   const updates = await collabStore.loadAll(doc.id);
   const localSnapshot = serializeDocSnapshot(doc.id, updates);
   // Every body is canonical serialized Lexical JSON, so a locally-produced row
   // equals its CRDT snapshot exactly.
   if (localSnapshot === doc.body) return null;
+
+  // The CRDT lineage is gone (e.g. the cloud addon's logout cleared the
+  // local-only docUpdates log) while the pulled row still has a body. There is
+  // no local edit to preserve — the empty-log snapshot is an artefact — so heal
+  // straight from the body, without a spurious "pre-sync" revision.
+  if (updates.length === 0) return applyPulledBody(doc);
 
   const handle = getEditorHandle(doc.id);
   // A mounted editor mid-autosave holds the user's latest keystrokes in the CRDT
@@ -46,18 +63,13 @@ const reconcileDoc = async (doc: Doc): Promise<ReconcileResult | null> => {
   // same-device lag, never a remote pull, so leave the live editor untouched.
   if (handle?.flush?.()) return null;
 
-  // Genuine divergence: keep the losing local side recoverable, then bring in the
-  // pulled body — through the live editor if mounted, else by reseeding the log.
+  // Genuine divergence with real local edits: keep the losing local side
+  // recoverable, then bring in the pulled body.
   await createRevision(doc.id, localSnapshot, {
     kind: 'manual',
     label: 'pre-sync',
   });
-  if (handle) {
-    handle.restoreBody(doc.body);
-    return { docId: doc.id, action: 'restored' };
-  }
-  await reseedFromBody(doc.id, doc.body);
-  return { docId: doc.id, action: 'reseeded' };
+  return applyPulledBody(doc);
 };
 
 /**
@@ -68,8 +80,14 @@ export const reconcilePulledDocs = async (): Promise<ReconcileResult[]> => {
   const docs = await db.docs.toArray();
   const results: ReconcileResult[] = [];
   for (const doc of docs) {
-    const result = await reconcileDoc(doc);
-    if (result) results.push(result);
+    // Isolate per-doc failures: one unreconcilable row must never abort the
+    // sweep and leave the rest of the library unhealed.
+    try {
+      const result = await reconcileDoc(doc);
+      if (result) results.push(result);
+    } catch (error) {
+      console.error('cloud reconcile failed for doc', doc.id, error);
+    }
   }
   return results;
 };
