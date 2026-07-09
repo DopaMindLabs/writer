@@ -34,6 +34,11 @@ const seedLocalDoc = async (id: string, localBody: string): Promise<void> => {
   await seedDocCrdt(id, localBody);
 };
 
+/** Add a doc row with a body but no CRDT log — the state after a logout wipe. */
+const addDocWithoutCrdt = async (id: string, body: string): Promise<void> => {
+  await db.docs.add(makeDoc(id, body));
+};
+
 /** Simulate a cloud pull overwriting the row body (as the addon would). */
 const simulatePull = async (id: string, pulledBody: string): Promise<void> => {
   await db.docs.update(id, { body: pulledBody });
@@ -135,6 +140,58 @@ describe('reconcilePulledDocs', () => {
     expect(restoreBody).not.toHaveBeenCalled(); // live text is never clobbered
     expect(await updateRows('d1')).toHaveLength(before.length);
     expect(await db.revisions.where('docId').equals('d1').count()).toBe(0);
+  });
+
+  it('heals an empty CRDT log from the pulled body without a spurious revision', async () => {
+    // A logout wipe leaves the docs row (with body) but no docUpdates log.
+    const pulled = canon('recovered after sign-out');
+    await addDocWithoutCrdt('d1', pulled);
+
+    const results = await reconcilePulledDocs();
+
+    expect(results).toEqual([{ docId: 'd1', action: 'reseeded' }]);
+    // The empty local side is an artefact, not a losing edit — no revision kept.
+    expect(await db.revisions.where('docId').equals('d1').count()).toBe(0);
+    // The log is healed from the body, and a second run is a no-op.
+    expect(await crdtSnapshot('d1')).toBe(pulled);
+    expect(await reconcilePulledDocs()).toEqual([]);
+  });
+
+  it('heals an empty log through a mounted editor handle (no revision)', async () => {
+    const pulled = canon('recovered live');
+    await addDocWithoutCrdt('d1', pulled);
+    const restoreBody = vi.fn();
+    const flush = vi.fn(() => false);
+    const unregister = registerEditorHandle('d1', { restoreBody, flush });
+
+    const results = await reconcilePulledDocs();
+    unregister();
+
+    expect(results).toEqual([{ docId: 'd1', action: 'restored' }]);
+    // The empty-log path heals before the flush/revision logic.
+    expect(flush).not.toHaveBeenCalled();
+    expect(restoreBody).toHaveBeenCalledWith(pulled);
+    expect(await db.revisions.where('docId').equals('d1').count()).toBe(0);
+  });
+
+  it('isolates a per-doc failure so the rest of the sweep still reconciles', async () => {
+    // A doc whose handle throws must not abort reconciliation of the others.
+    await addDocWithoutCrdt('d1', canon('first'));
+    await addDocWithoutCrdt('d2', canon('second'));
+    const unregister = registerEditorHandle('d1', {
+      restoreBody: () => {
+        throw new Error('boom');
+      },
+      flush: () => false,
+    });
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const results = await reconcilePulledDocs();
+    unregister();
+    errorSpy.mockRestore();
+
+    expect(results).toEqual([{ docId: 'd2', action: 'reseeded' }]);
+    expect(await crdtSnapshot('d2')).toBe(canon('second'));
   });
 
   it('is idempotent — a second run reseeds nothing and adds no revision', async () => {
