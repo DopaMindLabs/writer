@@ -9,6 +9,7 @@ import {
   clearPendingEscrow,
   savePendingEscrow,
   saveDeviceKeyRing,
+  loadPendingEscrow,
 } from './crypto/keyStore';
 import { keyMismatchState } from './crypto/keyMismatch';
 import {
@@ -91,12 +92,23 @@ describe('hasLocalSyncedData', () => {
 });
 
 describe('reconcileEscrow', () => {
-  it('publishes the device escrow when the account has none', async () => {
+  it('publishes the device escrow when the account has none and the pull is complete', async () => {
     await createCloudEncryption('pw', db);
     expect(await db.cloudCrypto.toArray()).toHaveLength(0);
 
-    expect(await reconcileEscrow(db)).toBe('published');
+    expect(await reconcileEscrow(db, () => true)).toBe('published');
     expect(await db.cloudCrypto.toArray()).toHaveLength(1);
+    expect(keyMismatchState.current()).toBe(false);
+  });
+
+  it('defers publication until the initial account pull is confirmed complete', async () => {
+    await createCloudEncryption('pw', db);
+
+    // Pull not yet complete: an absent server row may just mean "not pulled".
+    expect(await reconcileEscrow(db, () => false)).toBe('deferred');
+    // Nothing published, pending escrow retained for the next settle.
+    expect(await db.cloudCrypto.toArray()).toHaveLength(0);
+    expect(await loadPendingEscrow()).not.toBeNull();
     expect(keyMismatchState.current()).toBe(false);
   });
 
