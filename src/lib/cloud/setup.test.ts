@@ -17,6 +17,7 @@ import {
   unwrapMasterSecret,
   WrongPassphraseError,
 } from './crypto/keys';
+import { EscrowMissingError } from './crypto/errors';
 import { keyMismatchState } from './crypto/keyMismatch';
 import { encodeRecoveryCode } from './crypto/recoveryCode';
 import { EnvelopeIntegrityError } from './crypto/envelope';
@@ -152,6 +153,15 @@ describe('cloud setup', () => {
       WrongPassphraseError,
     );
     expect(deviceKeyProvider.current()).toBeNull();
+  });
+
+  it('unlocking before an escrow has arrived throws EscrowMissingError, not a wrong-passphrase', async () => {
+    // A fresh device with no published/pulled escrow — the catch-22 the second
+    // device hits when it tries the account passphrase before signing in.
+    expect(await db.cloudCrypto.get('v1')).toBeUndefined();
+    await expect(unlockCloudEncryption('anything', db)).rejects.toBeInstanceOf(
+      EscrowMissingError,
+    );
   });
 
   it('seals every synced row and is idempotent', async () => {

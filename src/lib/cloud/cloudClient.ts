@@ -17,6 +17,8 @@ export type CloudSyncPhase = SyncState['phase'];
 
 export { isCloudSyncEnabled } from './flag';
 export { deviceKeyProvider } from './crypto/keyStore';
+export { EscrowMissingError } from './crypto/errors';
+export { WrongPassphraseError } from './crypto/keys';
 export {
   createCloudEncryption,
   unlockCloudEncryption,
