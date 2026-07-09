@@ -20,7 +20,6 @@ const EXEMPT = [
   /^main$/,
   /^master$/,
   /^develop$/,
-  /^claude\//,
   /^dependabot\//,
   /^release-please/,
 ];
@@ -45,7 +44,7 @@ const fail = (branch) => {
     '  e.g.  feat/user-login   fix/date-parse   chore/bump-deps   feat/user-login_v2',
     '',
     'Exempt: main, develop, and automation branches',
-    '  (claude/*, dependabot/*, release-please*).',
+    '  (dependabot/*, release-please*).',
     '',
   ];
   console.error(lines.join('\n'));
