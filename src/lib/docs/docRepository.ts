@@ -30,6 +30,19 @@ export const seedDocsCrdt = async (
   for (const doc of docs) await seedDocCrdt(doc.id, doc.body);
 };
 
+/**
+ * Repair a document whose CRDT log was lost (e.g. the cloud addon cleared the
+ * local-only tables on sign-out): reseed from the row body, but only if the log
+ * is genuinely empty. The seed is computed by a headless editor **before** the
+ * store's transaction opens, so no editor runs inside it. Returns whether it
+ * planted a seed or found the log already populated.
+ */
+export const ensureDocCrdtSeeded = async (
+  docId: string,
+  body: string,
+): Promise<'seeded' | 'occupied'> =>
+  collabStore.reseedIfEmpty(docId, seedFromLexicalJson(docId, body));
+
 export interface CreateDocInput {
   spaceId: string;
   sectionId: string;

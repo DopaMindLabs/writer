@@ -6,8 +6,10 @@ import { sampleDoc, seedBasicSpace, serializedBody } from '@/test/fixtures';
 import {
   createDoc,
   createDocs,
+  ensureDocCrdtSeeded,
   renameDoc,
   restoreDocs,
+  seedDocCrdt,
   setDocStatus,
   updateDocBody,
   updateDocMeta,
@@ -66,6 +68,34 @@ describe('docRepository', () => {
       await expect(
         createDoc({ spaceId: 's1', sectionId: '', name: 'x' }),
       ).rejects.toThrow(InvariantError);
+    });
+  });
+
+  describe('ensureDocCrdtSeeded', () => {
+    it('reseeds a wiped log from the body and is idempotent', async () => {
+      const body = serializedBody('healed body');
+      // Simulate the logout wipe: a body but no CRDT log / marker.
+      expect(await db.docUpdates.where('docId').equals('d1').count()).toBe(0);
+
+      expect(await ensureDocCrdtSeeded('d1', body)).toBe('seeded');
+      expect(await db.docUpdates.where('docId').equals('d1').count()).toBe(1);
+      expect(await db.meta.get(collabSeedKey('d1'))).toBeDefined();
+
+      // A second call finds the log populated and does nothing.
+      expect(await ensureDocCrdtSeeded('d1', body)).toBe('occupied');
+      expect(await db.docUpdates.where('docId').equals('d1').count()).toBe(1);
+    });
+
+    it('leaves an already-seeded log untouched', async () => {
+      await seedDocCrdt('d1', serializedBody('original'));
+      const before = await db.docUpdates.where('docId').equals('d1').count();
+
+      expect(await ensureDocCrdtSeeded('d1', serializedBody('other'))).toBe(
+        'occupied',
+      );
+      expect(await db.docUpdates.where('docId').equals('d1').count()).toBe(
+        before,
+      );
     });
   });
 
