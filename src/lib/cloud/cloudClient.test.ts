@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
+import { db } from '@/db/db';
 import {
   cloudSyncState,
   cloudUserInteraction,
@@ -6,6 +7,7 @@ import {
   signInToCloud,
   signOutOfCloud,
   hydrateCloudDevice,
+  isAccountPullComplete,
 } from './cloudClient';
 import { CLOUD_FLAG_KEY } from './flag';
 import {
@@ -42,6 +44,49 @@ describe('cloudClient without a cloud database', () => {
   it('sign in and out resolve as no-ops', async () => {
     await expect(signInToCloud()).resolves.toBeUndefined();
     await expect(signOutOfCloud()).resolves.toBeUndefined();
+  });
+});
+
+interface FakeCloud {
+  currentUser: { value: { isLoggedIn: boolean; userId: string } };
+  persistedSyncState: { value: { initiallySynced: boolean; realms: string[] } };
+}
+
+describe('isAccountPullComplete', () => {
+  const withCloud = (cloud: FakeCloud): void => {
+    (db as { cloud?: FakeCloud }).cloud = cloud;
+  };
+
+  afterEach(() => {
+    delete (db as { cloud?: FakeCloud }).cloud;
+  });
+
+  it('is false on a plain (non-cloud) database', () => {
+    expect(isAccountPullComplete()).toBe(false);
+  });
+
+  it('is true once signed in, initially synced, and the user realm is pulled', () => {
+    withCloud({
+      currentUser: { value: { isLoggedIn: true, userId: 'u1' } },
+      persistedSyncState: { value: { initiallySynced: true, realms: ['u1'] } },
+    });
+    expect(isAccountPullComplete()).toBe(true);
+  });
+
+  it('is false until the user realm has been pulled', () => {
+    withCloud({
+      currentUser: { value: { isLoggedIn: true, userId: 'u1' } },
+      persistedSyncState: { value: { initiallySynced: true, realms: [] } },
+    });
+    expect(isAccountPullComplete()).toBe(false);
+  });
+
+  it('is false before the initial sync completes', () => {
+    withCloud({
+      currentUser: { value: { isLoggedIn: true, userId: 'u1' } },
+      persistedSyncState: { value: { initiallySynced: false, realms: ['u1'] } },
+    });
+    expect(isAccountPullComplete()).toBe(false);
   });
 });
 

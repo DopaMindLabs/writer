@@ -113,6 +113,35 @@ describe('cloud setup', () => {
     expect(deviceKeyProvider.current()).not.toBeNull();
   });
 
+  it('publishPendingEscrow keeps a foreign account escrow and retains the pending one', async () => {
+    // A different device's account key already occupies the row. Add-only publish
+    // must never overwrite it, and must keep our escrow pending for adoption.
+    const foreign = await wrapMasterSecret(generateMasterSecret(), 'other', 1000);
+    await db.cloudCrypto.put(foreign);
+    await createCloudEncryption('mine', db, () => true); // signed in: keep the row
+
+    expect(await publishPendingEscrow(db)).toBe('kept-server');
+    const stored = await db.cloudCrypto.get('v1');
+    expect(Array.from(stored?.fingerprint ?? [])).toEqual(
+      Array.from(foreign.fingerprint),
+    );
+    expect(await loadPendingEscrow()).not.toBeNull();
+  });
+
+  it('publishPendingEscrow publishes over a row with an identical fingerprint', async () => {
+    await createCloudEncryption('mine', db, () => true);
+    const ours = await loadPendingEscrow();
+    if (!ours) throw new Error('expected a pending escrow');
+    await db.cloudCrypto.put(ours); // server already holds our fingerprint
+
+    expect(await publishPendingEscrow(db)).toBe('published');
+    expect(await loadPendingEscrow()).toBeNull();
+  });
+
+  it('publishPendingEscrow is a no-op when nothing is pending', async () => {
+    expect(await publishPendingEscrow(db)).toBe('none');
+  });
+
   it('clears a residual local escrow when setting up while signed out', async () => {
     // Residue from an earlier local session: a foreign escrow left in the local
     // database. A signed-out fresh setup must drop it, so the reconciler cannot

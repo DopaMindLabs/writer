@@ -10,7 +10,7 @@ import {
 } from './crypto/keyStore';
 import { keyMismatchState } from './crypto/keyMismatch';
 import { publishPendingEscrow } from './setup';
-import { cloudSyncState } from './cloudClient';
+import { cloudSyncState, isAccountPullComplete } from './cloudClient';
 import type { CloudObservable } from './cloudObservable';
 
 const ESCROW_ID = 'v1';
@@ -18,6 +18,7 @@ const ESCROW_ID = 'v1';
 export type EscrowReconcileResult =
   | 'idle'
   | 'published'
+  | 'deferred'
   | 'matched'
   | 'mismatch';
 
@@ -56,8 +57,11 @@ export const hasLocalSyncedData = async (
  * Reconcile the device's held-back escrow against the account's, once sign-in
  * has pulled the account escrow (if any):
  *
- * - **no account escrow** → publish this device's, so its key becomes the
- *   account key (add-only: there was nothing to overwrite);
+ * - **no account escrow (pull confirmed complete)** → publish this device's, so
+ *   its key becomes the account key (add-only: there was nothing to overwrite);
+ * - **no account escrow (pull not yet confirmed)** → **defer**: an absent row may
+ *   just mean the account's escrow has not been pulled yet, and publishing now
+ *   would clobber it. Reconciliation re-runs on the next sync settle;
  * - **fingerprints match** → the account already holds this device's key, so
  *   there is nothing to do;
  * - **fingerprints differ** → the account is protected by a different key; flag
@@ -66,14 +70,27 @@ export const hasLocalSyncedData = async (
  */
 export const reconcileEscrow = async (
   db: LoremDB = appDb,
+  isPullComplete: () => boolean = isAccountPullComplete,
 ): Promise<EscrowReconcileResult> => {
   const ring = deviceKeyProvider.current();
   if (!ring) return 'idle';
-  const serverEscrow = await db.cloudCrypto.get(ESCROW_ID);
+  let serverEscrow = await db.cloudCrypto.get(ESCROW_ID);
   if (!serverEscrow) {
-    await publishPendingEscrow(db);
-    keyMismatchState.set(false);
-    return 'published';
+    // Only publish once the initial pull is confirmed complete; otherwise a
+    // not-yet-pulled account escrow would be overwritten by ours.
+    if (!isPullComplete()) return 'deferred';
+    const result = await publishPendingEscrow(db);
+    if (result !== 'kept-server') {
+      keyMismatchState.set(false);
+      return 'published';
+    }
+    // A foreign escrow raced into the slot between our read and the publish;
+    // re-read it and fall through to the mismatch handling below.
+    serverEscrow = await db.cloudCrypto.get(ESCROW_ID);
+    if (!serverEscrow) {
+      keyMismatchState.set(false);
+      return 'published';
+    }
   }
   // The account escrow is ours if it carries the ring's fingerprint — or the
   // pending escrow's. The two share a master, so they normally match, but the
