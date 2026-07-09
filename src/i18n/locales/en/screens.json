@@ -337,6 +337,16 @@
         "signInHint": "Set up your passphrase first — sync can't start until your writing can be encrypted.",
         "signInBlocked": "There's unencrypted writing on this device. Set up your passphrase first so it's encrypted before it syncs.",
         "signInFailed": "Couldn't sign in. Please try again.",
+        "keyless": {
+          "checkingTitle": "Fetching your account…",
+          "checkingBody": "Checking whether your account already has an encryption key. This only takes a moment.",
+          "lockedTitle": "Your writing is locked on this device",
+          "lockedBody": "This account already has an encryption key. Enter the passphrase you created on another device to unlock it here.",
+          "lockedAction": "Unlock now",
+          "noKeyTitle": "This account has no encryption key yet",
+          "noKeyBody": "Set up a passphrase to encrypt your writing before it syncs. You'll use it to unlock your other devices.",
+          "noKeyAction": "Set up encryption"
+        },
         "forgetDevice": "Forget encryption on this device",
         "forgetDeviceHint": "Removes the key from this browser. Your synced data and other devices are unaffected.",
         "setUp": "Set up encryption",

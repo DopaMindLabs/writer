@@ -1,3 +1,4 @@
+import { liveQuery } from 'dexie';
 import { db } from '@/db/db';
 import type { DXCUserInteraction, SyncState, UserLogin } from 'dexie-cloud-addon';
 import type { CloudObservable } from './cloudObservable';
@@ -54,6 +55,9 @@ const constant = <T,>(value: T): CloudObservable<T> => ({
 
 const INITIAL_STATE: SyncState = { status: 'not-started', phase: 'initial' };
 
+/** The single escrow row id in the synced `cloudCrypto` table. */
+const ESCROW_ID = 'v1';
+
 export const cloudUserInteraction = (): CloudObservable<DXCUserInteraction | undefined> =>
   cloudApi()?.userInteraction ?? constant(undefined);
 
@@ -89,6 +93,47 @@ export const isAccountPullComplete = (): boolean => {
     synced?.initiallySynced === true &&
     (synced.realms ?? []).includes(user.userId)
   );
+};
+
+/** Whether the account holds an escrow, once its pull is confirmed complete. */
+export type EscrowPresence = 'unknown' | 'none' | 'present';
+
+/**
+ * The account's escrow presence for a signed-in-keyless device: `'unknown'`
+ * until the initial pull completes (so Set-up can't mint a divergent key before
+ * we know), then `'present'` (offer Unlock/adopt) or `'none'` (offer Set-up). It
+ * re-evaluates on both `cloudCrypto` changes and sync-state settles, since the
+ * escrow row and the pull-complete signal can arrive independently. Constant
+ * `'none'` on a plain database.
+ */
+export const cloudEscrowPresence = (): CloudObservable<EscrowPresence> => {
+  const api = cloudApi();
+  if (!api) return constant('none');
+  return {
+    subscribe: (next) => {
+      let hasRow = false;
+      const emit = (): void => {
+        if (!isAccountPullComplete()) {
+          next('unknown');
+          return;
+        }
+        next(hasRow ? 'present' : 'none');
+      };
+      const rowSub = liveQuery(() => db.cloudCrypto.get(ESCROW_ID)).subscribe((row) => {
+        hasRow = row !== undefined;
+        emit();
+      });
+      const syncSub = api.syncState.subscribe(() => {
+        emit();
+      });
+      return {
+        unsubscribe: () => {
+          rowSub.unsubscribe();
+          syncSub.unsubscribe();
+        },
+      };
+    },
+  };
 };
 
 export const signInToCloud = async (): Promise<void> => {
