@@ -8,6 +8,7 @@ import {
   calibrateIterations,
   wrapMasterSecret,
   unwrapMasterSecret,
+  fingerprintsEqual,
 } from './crypto/keys';
 import { openRow, type RowRef } from './crypto/envelope';
 import { EscrowMissingError } from './crypto/errors';
@@ -104,19 +105,33 @@ export const createCloudEncryption = async (
   return encodeRecoveryCode(master);
 };
 
+/** What {@link publishPendingEscrow} did with this device's held-back escrow. */
+export type EscrowPublishResult = 'published' | 'kept-server' | 'none';
+
 /**
- * Publish the device's held-back escrow to the synced `cloudCrypto` table, then
- * drop the local copy. Called by reconciliation once sign-in has confirmed the
- * account has no escrow of its own — this device's key becomes the account key.
- * A no-op if nothing is pending.
+ * Publish the device's held-back escrow to the synced `cloudCrypto` table —
+ * **add-only**. Inside one transaction it refuses to overwrite an existing `v1`
+ * row whose fingerprint differs (that is another device's account key: report
+ * `'kept-server'` and leave the pending escrow in place); it publishes only into
+ * an empty slot or over an identical row, then drops the local copy. `'none'`
+ * when nothing is pending. This is the last line of defence against a
+ * last-writer-wins clobber of the account key on the single escrow row.
  */
 export const publishPendingEscrow = async (
   db: LoremDB = appDb,
-): Promise<void> => {
+): Promise<EscrowPublishResult> => {
   const escrow = await loadPendingEscrow();
-  if (!escrow) return;
-  await db.cloudCrypto.put(escrow);
-  await clearPendingEscrow();
+  if (!escrow) return 'none';
+  const result = await db.transaction('rw', db.cloudCrypto, async () => {
+    const existing = await db.cloudCrypto.get(ESCROW_ID);
+    if (existing && !fingerprintsEqual(existing.fingerprint, escrow.fingerprint)) {
+      return 'kept-server' as const;
+    }
+    await db.cloudCrypto.put(escrow);
+    return 'published' as const;
+  });
+  if (result === 'published') await clearPendingEscrow();
+  return result;
 };
 
 /**
@@ -244,6 +259,8 @@ export const adoptAccountKey = async (
 export const eraseSyncedContent = async (
   db: LoremDB = appDb,
 ): Promise<void> => {
+  const pending = await loadPendingEscrow();
+  invariant(pending, 'eraseSyncedContent: no device escrow to publish');
   for (const table of SYNCED_TABLES) {
     const store = db.table<Row>(table);
     const keys = await store.toCollection().primaryKeys();
@@ -255,6 +272,10 @@ export const eraseSyncedContent = async (
       if (!(await store.get(key))) await store.delete(key);
     }
   }
+  // The escape hatch intends replacement: drop the foreign account escrow (the
+  // deletion syncs away like the content deletes) so the add-only publish below
+  // installs this device's key as the account's.
+  await db.cloudCrypto.delete(ESCROW_ID);
   await publishPendingEscrow(db);
   keyMismatchState.set(false);
 };
