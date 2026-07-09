@@ -6,6 +6,7 @@ import { setDocStatus, updateDocBody } from '@/lib/docs';
 import type { Doc } from '@/db/schema';
 import { useUI, type ReadingWidth } from '@/store/ui';
 import { useCollab } from '@/hooks/useCollab';
+import { useDocCrdtReady } from '@/hooks/useDocCrdtReady';
 import { useDocReloadNonce } from '@/hooks/useDocReloadNonce';
 import { useEffectiveInspectorConfig } from '@/hooks/useDocInspectorConfig';
 import {
@@ -52,6 +53,9 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
   // Bumped when another tab resets this doc's CRDT state (e.g. backup restore),
   // remounting the editor so it reloads the fresh seed instead of a stale Y.Doc.
   const reloadNonce = useDocReloadNonce(doc.id);
+  // Hold the editor back until the CRDT log is seeded — a doc whose log was wiped
+  // (cloud sign-out) must not mount blank and autosave empty over its real body.
+  const crdtReady = useDocCrdtReady(doc.id, doc.body);
 
   const { effective } = useEffectiveInspectorConfig(doc.spaceId);
   const highlightOn = effective.highlightOverLimit;
@@ -89,7 +93,7 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
         className={cn('relative mx-auto w-full', READING_WIDTH_MAX[readingWidth])}
       >
         {locked && <LockBanner doc={doc} />}
-        {collab && (
+        {collab && crdtReady && (
           <Editor
             key={`${doc.id}-${mode}-${String(reloadNonce)}`}
             docId={doc.id}

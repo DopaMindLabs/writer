@@ -8,6 +8,7 @@ import type { Doc } from '@/db/schema';
 const editorMocks = vi.hoisted(() => ({
   capturedOnChange: undefined as ((s: string) => void) | undefined,
   mountCount: 0,
+  crdtReady: true,
 }));
 
 vi.mock('@/hooks/useCollab', () => ({
@@ -16,6 +17,13 @@ vi.mock('@/hooks/useCollab', () => ({
     username: 'Ada',
     cursorColor: 'var(--presence-1)',
   }),
+}));
+
+// The CRDT-seed gate is exercised in its own hook test + e2e; here it is forced
+// ready by default so the editor-wiring assertions stay synchronous, and toggled
+// off in the dedicated gate test below.
+vi.mock('@/hooks/useDocCrdtReady', () => ({
+  useDocCrdtReady: () => editorMocks.crdtReady,
 }));
 
 vi.mock('@/editor/EditorFacade', async () => {
@@ -64,6 +72,16 @@ const doc: Doc = {
 };
 
 describe('WriteSurface', () => {
+  afterEach(() => {
+    editorMocks.crdtReady = true;
+  });
+
+  it('holds the editor back until the CRDT log is ready (no blank mount over a wiped log)', () => {
+    editorMocks.crdtReady = false;
+    const { queryByTestId } = render(<WriteSurface doc={doc} mode="write" />);
+    expect(queryByTestId('editor-stub')).toBeNull();
+  });
+
   it('remounts the editor when another tab signals a reload for this doc', async () => {
     const { broadcastDocReload } = await import('@/lib/collab/docReloadChannel');
     editorMocks.mountCount = 0;

@@ -72,6 +72,39 @@ describe('DexieCollabStore', () => {
     expect(await store.loadAll('d1')).toHaveLength(1);
   });
 
+  it('reseedIfEmpty plants a seed when the log is empty (marker absent)', async () => {
+    expect(await store.reseedIfEmpty('d1', new Uint8Array([7]))).toBe('seeded');
+    expect(Array.from((await store.loadAll('d1'))[0])).toEqual([7]);
+    expect(await db.meta.get(seedKey('d1'))).toBeDefined();
+  });
+
+  it('reseedIfEmpty plants a seed when the log is empty but a stale marker remains', async () => {
+    // trySeed marks then the log is wiped, leaving a marker beside an empty log —
+    // trySeed would refuse, but reseedIfEmpty keys off the log and repairs it.
+    await store.trySeed('d1', new Uint8Array([1]));
+    await db.docUpdates.where('docId').equals('d1').delete();
+
+    expect(await store.reseedIfEmpty('d1', new Uint8Array([7]))).toBe('seeded');
+    expect(Array.from((await store.loadAll('d1'))[0])).toEqual([7]);
+  });
+
+  it('reseedIfEmpty is a no-op when the log already holds updates', async () => {
+    await store.append('d1', new Uint8Array([1]));
+    expect(await store.reseedIfEmpty('d1', new Uint8Array([7]))).toBe('occupied');
+    expect(await store.loadAll('d1')).toHaveLength(1);
+    expect(Array.from((await store.loadAll('d1'))[0])).toEqual([1]);
+  });
+
+  it('reseedIfEmpty lets exactly one caller win a concurrent repair', async () => {
+    const results = await Promise.all([
+      store.reseedIfEmpty('d1', new Uint8Array([1])),
+      store.reseedIfEmpty('d1', new Uint8Array([2])),
+    ]);
+    expect(results.filter((r) => r === 'seeded')).toHaveLength(1);
+    expect(results.filter((r) => r === 'occupied')).toHaveLength(1);
+    expect(await store.loadAll('d1')).toHaveLength(1);
+  });
+
   it('is a no-op when the log is at or below the threshold', async () => {
     for (let i = 0; i < 5; i += 1) await store.append('d1', new Uint8Array([i]));
     await store.compact('d1');
