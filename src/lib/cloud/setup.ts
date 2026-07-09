@@ -280,8 +280,6 @@ export const adoptAccountKey = async (
 export const eraseSyncedContent = async (
   db: LoremDB = appDb,
 ): Promise<void> => {
-  const pending = await loadPendingEscrow();
-  invariant(pending, 'eraseSyncedContent: no device escrow to publish');
   for (const table of SYNCED_TABLES) {
     const store = db.table<Row>(table);
     const keys = await store.toCollection().primaryKeys();
