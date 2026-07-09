@@ -12,9 +12,10 @@ export interface CloudEncryptionControlsProps {
 }
 
 /**
- * The action buttons for the cloud section. Before a key ring exists only
- * set-up/unlock are offered and sign-in is disabled (passphrase before sign-in);
- * once keyed, sign-in/out and forget-this-device are shown.
+ * The action buttons for the cloud section. Before a key ring exists, set-up and
+ * unlock are offered alongside sign-in — a clean device may sign in first, while
+ * a device with unencrypted writing is turned back by the sign-in guard with a
+ * "set up first" message. Once keyed, sign-in/out and forget-this-device show.
  */
 export const CloudEncryptionControls = ({
   hasKey,
@@ -57,15 +58,15 @@ export const CloudEncryptionControls = ({
           <Button kind="secondary" size="sm" onClick={onUnlock} data-testid="cloud-unlock">
             {k('unlock')}
           </Button>
-          <Button
-            kind="ghost"
-            size="sm"
-            disabled
-            title={k('signInHint')}
-            data-testid="cloud-sign-in"
-          >
-            {k('signIn')}
-          </Button>
+          {signedIn ? (
+            <Button kind="ghost" size="sm" onClick={onSignOut} data-testid="cloud-sign-out">
+              {k('signOut')}
+            </Button>
+          ) : (
+            <Button kind="ghost" size="sm" onClick={onSignIn} data-testid="cloud-sign-in">
+              {k('signIn')}
+            </Button>
+          )}
         </>
       )}
     </div>
