@@ -232,6 +232,9 @@ export interface MediaItem {
   blob: Blob;
   createdAt: number;
   updatedAt: number;
+  /** When the reader last opened this item; unset until first opened. Drives the
+   * library's "unread" filter. Not indexed — filtered in memory over the space. */
+  openedAt?: number;
 }
 
 /** The annotator module owns the page-rect type; the schema re-exports it. */

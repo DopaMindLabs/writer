@@ -58,6 +58,16 @@ export const getMediaItem = async (
   id: string,
 ): Promise<MediaItem | undefined> => db.media.get(id);
 
+/**
+ * Stamps the item as opened now, so the library's "unread" filter clears it. A
+ * no-op-safe update: a missing id simply matches nothing. Keeps `updatedAt` out
+ * of it — opening is not an edit and must not reorder the list.
+ */
+export const markMediaOpened = async (id: string): Promise<void> => {
+  invariant(id.length > 0, 'markMediaOpened: id required');
+  await db.media.update(id, { openedAt: Date.now() });
+};
+
 export const listMediaBySpace = async (
   spaceId: string,
 ): Promise<MediaItem[]> => {

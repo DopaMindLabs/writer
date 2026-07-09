@@ -26,7 +26,7 @@ const gotoLibrary = async (page: Page): Promise<string> => {
 const openViewer = async (page: Page, file: string): Promise<void> => {
   await page.getByTestId('media-upload-input').setInputFiles(file);
   await page
-    .locator('[data-testid^="media-card-"][data-testid$="-open"]')
+    .locator('[data-testid^="media-row-"][data-testid$="-open"]')
     .first()
     .click();
   await expect(page.getByTestId('pdf-viewer')).toBeVisible();
@@ -147,14 +147,14 @@ test('side panel icon hides the rail and is remembered per document', async ({
   await page.getByTestId('media-upload-input').setInputFiles(TINY_PDF);
   await page.getByTestId('media-upload-input').setInputFiles(TWO_PAGE_PDF);
   const openButtons = page.locator(
-    '[data-testid^="media-card-"][data-testid$="-open"]',
+    '[data-testid^="media-row-"][data-testid$="-open"]',
   );
   await expect(openButtons).toHaveCount(2);
   const ids = (
     await openButtons.evaluateAll((els) =>
       els.map((el) => el.getAttribute('data-testid') ?? ''),
     )
-  ).map((testId) => testId.replace('media-card-', '').replace('-open', ''));
+  ).map((testId) => testId.replace('media-row-', '').replace('-open', ''));
   const [docA, docB] = ids;
 
   const openDoc = async (id: string): Promise<void> => {

@@ -22,6 +22,7 @@ const seedMedia = async (): Promise<void> => {
     blob: new Blob([MEDIA_BYTES], { type: 'application/pdf' }),
     createdAt: FIXED_TIME,
     updatedAt: FIXED_TIME,
+    openedAt: FIXED_TIME + 60_000,
   });
   await db.pdfAnnotations.put({
     id: 'hl1',
@@ -70,6 +71,8 @@ describe('media in the space archive', () => {
     expect(media.name).toBe('Paper.pdf');
     expect(media.pageCount).toBe(3);
     expect(media.mime).toBe('application/pdf');
+    // The optional opened-at stamp round-trips when present.
+    expect(media.openedAt).toBe(FIXED_TIME + 60_000);
     const bytes = new Uint8Array(await media.blob.arrayBuffer());
     expect(Array.from(bytes)).toEqual(Array.from(MEDIA_BYTES));
   });

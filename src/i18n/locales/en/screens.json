@@ -916,6 +916,28 @@
       "menuOpen": "Open",
       "menuDelete": "Delete…"
     },
+    "list": {
+      "counts": "{{pdfs}} PDFs · {{annotations}} annotations",
+      "searchPlaceholder": "Search title, author, tag…",
+      "searchLabel": "Search the library",
+      "filtersLabel": "Filter the library",
+      "filterAll": "All",
+      "filterUnread": "Unread",
+      "filterAnnotated": "Annotated",
+      "filterCited": "Cited",
+      "citedUnavailable": "Needs citation links — not available yet.",
+      "sortLabel": "Sort the library",
+      "sortValue": "Sort: {{value}}",
+      "sortRecent": "Recent",
+      "sortName": "Name",
+      "sortPages": "Pages",
+      "groupToday": "Added today",
+      "groupThisWeek": "Earlier this week",
+      "empty": "No PDFs match.",
+      "footerShowing": "Showing {{shown}} of {{total}} · Drop files anywhere on this page",
+      "footerBrainSpace": "Adding to <strong>brain space</strong> is optional — from the reader, or drag a row onto the canvas",
+      "dropHint": "Drop PDFs to add them"
+    },
     "viewer": {
       "prevPage": "Previous page",
       "nextPage": "Next page",

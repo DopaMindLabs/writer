@@ -267,6 +267,7 @@ export interface MediaItemRecord {
   pageCount: number;
   createdAt: number;
   updatedAt: number;
+  openedAt?: number;
   assetPath: string;
 }
 
@@ -284,6 +285,7 @@ export const serializeMediaItem = (
   pageCount: media.pageCount,
   createdAt: media.createdAt,
   updatedAt: media.updatedAt,
+  openedAt: media.openedAt,
   assetPath,
 });
 
@@ -298,6 +300,7 @@ export const parseMediaItemRecord = (value: unknown): MediaItemRecord => {
     pageCount: readNumber(raw, 'pageCount', 'media'),
     createdAt: readNumber(raw, 'createdAt', 'media'),
     updatedAt: readNumber(raw, 'updatedAt', 'media'),
+    openedAt: readOptionalNumber(raw, 'openedAt', 'media'),
     assetPath: readString(raw, 'assetPath', 'media'),
   };
 };

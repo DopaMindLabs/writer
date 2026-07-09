@@ -24,7 +24,7 @@ const gotoLibrary = async (page: Page): Promise<string> => {
 const uploadAndOpen = async (page: Page, file: string): Promise<void> => {
   await page.getByTestId('media-upload-input').setInputFiles(file);
   await page
-    .locator('[data-testid^="media-card-"][data-testid$="-open"]')
+    .locator('[data-testid^="media-row-"][data-testid$="-open"]')
     .first()
     .click();
   await expect(page.getByTestId('pdf-viewer')).toBeVisible();

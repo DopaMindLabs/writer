@@ -9,6 +9,7 @@ import { usePdfViewport } from '@/components/pdf/PdfViewer/usePdfViewport';
 import { useMediaItem } from '@/hooks/useMediaItem';
 import { useSpace } from '@/hooks/useSpaces';
 import { useUI } from '@/store/ui';
+import { markMediaOpened } from '@/lib/media';
 import { routes } from '@/lib/routes';
 
 /**
@@ -24,10 +25,18 @@ export const MediaViewerScreen = () => {
   const lastDocId = useUI((s) => s.currentDocId);
   const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
   const view = usePdfViewport();
+  // A primitive id (not the item object) keys the mark-opened effect: the item
+  // re-emits on every live-query change, but its id is stable, so opening stamps
+  // `openedAt` exactly once — the stamp's own write never re-triggers it.
+  const loadedMediaId = item?.id;
 
   useEffect(() => {
     if (spaceId) setCurrentSpaceId(spaceId);
   }, [spaceId, setCurrentSpaceId]);
+
+  useEffect(() => {
+    if (loadedMediaId) void markMediaOpened(loadedMediaId);
+  }, [loadedMediaId]);
 
   if (!spaceId || !mediaId) return <Navigate to={routes.home()} replace />;
 

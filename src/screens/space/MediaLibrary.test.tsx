@@ -38,14 +38,12 @@ describe('MediaLibraryScreen', () => {
     expect(await findByTestId('media-library-empty')).toBeInTheDocument();
   });
 
-  it('renders a card for a seeded media item', async () => {
+  it('renders a row for a seeded media item', async () => {
     await db.spaces.put(sampleSpace);
     await db.media.put(sampleMedia);
     const { findByTestId } = renderScreen();
     await waitFor(async () => {
-      expect(await findByTestId('media-card-m1-name')).toHaveTextContent(
-        'seeded.pdf',
-      );
+      expect(await findByTestId('media-row-m1')).toHaveTextContent('seeded.pdf');
     });
   });
 

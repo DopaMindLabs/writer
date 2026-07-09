@@ -16,6 +16,7 @@ import {
   getMediaItem,
   listMediaBySpace,
   deleteMediaCascade,
+  markMediaOpened,
 } from './media';
 
 const PDF_HEAD = [0x25, 0x50, 0x44, 0x46, 1, 2, 3];
@@ -114,5 +115,23 @@ describe('media facade', () => {
     expect(await getMediaItem(item.id)).toBeUndefined();
     expect(await db.pdfAnnotations.get('h1')).toBeUndefined();
     expect((await db.notes.get('n1'))?.mediaId).toBeUndefined();
+  });
+});
+
+describe('markMediaOpened', () => {
+  it('stamps openedAt without touching updatedAt', async () => {
+    mockPages(2);
+    const item = await addMediaItem({ spaceId: 's1', name: 'a.pdf', blob: pdfBlob() });
+    expect(item.openedAt).toBeUndefined();
+
+    await markMediaOpened(item.id);
+    const opened = await getMediaItem(item.id);
+    expect(opened?.openedAt).toBeGreaterThan(0);
+    // Opening is not an edit; the ordering timestamp is left alone.
+    expect(opened?.updatedAt).toBe(item.updatedAt);
+  });
+
+  it('is a no-op for an unknown id', async () => {
+    await expect(markMediaOpened('missing')).resolves.toBeUndefined();
   });
 });

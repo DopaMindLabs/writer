@@ -14,14 +14,8 @@ const CORRUPT_PDF = 'e2e/fixtures/corrupt.pdf';
 // the hc-* themes. This scan checks structure and semantics for the surface.
 const STRUCTURE_ONLY = { disableRules: ['color-contrast'] };
 
-const cardName = (page: Page) =>
-  page.locator('[data-testid^="media-card-"][data-testid$="-name"]');
-
-const cardMeta = (page: Page) =>
-  page.locator('[data-testid^="media-card-"][data-testid$="-meta"]');
-
-const cards = (page: Page) =>
-  page.locator('[data-testid^="media-card-"][data-testid$="-open"]');
+const rows = (page: Page) =>
+  page.locator('[data-testid^="media-row-"][data-testid$="-open"]');
 
 const gotoLibrary = async (page: Page): Promise<void> => {
   const spaceId = await getFirstSpaceIdFromHome(page);
@@ -37,14 +31,14 @@ test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
 });
 
-test('uploads a pdf and shows its card', async ({ page }) => {
+test('uploads a pdf and shows its row', async ({ page }) => {
   await gotoLibrary(page);
   await expect(page.getByTestId('media-library-empty')).toBeVisible();
 
   await uploadPdf(page, TINY_PDF);
 
-  await expect(cardName(page)).toHaveText('tiny.pdf');
-  await expect(cardMeta(page)).toContainText('1 page');
+  await expect(page.getByText('tiny.pdf')).toBeVisible();
+  await expect(rows(page)).toHaveCount(1);
   await expect(page.getByTestId('media-library-empty')).toBeHidden();
 });
 
@@ -56,30 +50,29 @@ test('rejects a corrupt pdf with a warning', async ({ page }) => {
   const banner = page.getByTestId('media-upload-reject-banner');
   await expect(banner).toBeVisible();
   await expect(banner).toContainText('corrupt.pdf');
-  await expect(cards(page)).toHaveCount(0);
+  await expect(rows(page)).toHaveCount(0);
 });
 
 test('persists media across reload', async ({ page }) => {
   await gotoLibrary(page);
   await uploadPdf(page, TINY_PDF);
-  await expect(cardName(page)).toHaveText('tiny.pdf');
+  await expect(page.getByText('tiny.pdf')).toBeVisible();
 
   await page.reload();
 
-  await expect(cardName(page)).toHaveText('tiny.pdf');
+  await expect(page.getByText('tiny.pdf')).toBeVisible();
 });
 
 test('deletes a pdf after confirmation', async ({ page }) => {
   await gotoLibrary(page);
   await uploadPdf(page, TINY_PDF);
-  await expect(cardName(page)).toHaveText('tiny.pdf');
+  await expect(page.getByText('tiny.pdf')).toBeVisible();
 
-  const card = page.getByTestId('media-library-grid').locator('li').first();
-  await card.hover();
-  await card.locator('[data-testid$="-delete"]').click();
+  await page.locator('[data-testid^="media-row-"][data-testid$="-menu"]').first().click();
+  await page.locator('[data-testid$="-menu-delete"]').click();
   await page.getByTestId('confirm-dialog-confirm').click();
 
-  await expect(cards(page)).toHaveCount(0);
+  await expect(rows(page)).toHaveCount(0);
   await expect(page.getByTestId('media-library-empty')).toBeVisible();
 });
 
