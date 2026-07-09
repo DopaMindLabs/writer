@@ -13,6 +13,7 @@ import { TOUR_IDS, TOURS, type TourId } from '@/tours/tours';
 import { useTour } from '@/tours/useTour';
 import { getCompleted } from '@/tours/storage';
 import { routes } from '@/lib/routes';
+import { isCloudSyncEnabled } from '@/lib/cloud/cloudClient';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
@@ -260,6 +261,16 @@ const MoreSection = () => {
           </span>
         </span>
       </ComingSoon>
+
+      {isCloudSyncEnabled() ? (
+        <MenuItem
+          asChild
+          href={routes.settings('account')}
+          testId="quick-settings-account"
+        >
+          {t('chrome:quickSettings.account')}
+        </MenuItem>
+      ) : null}
 
       <MenuItem
         asChild
