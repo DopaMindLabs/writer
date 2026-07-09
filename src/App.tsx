@@ -20,7 +20,6 @@ import { startCloudReconciler } from '@/lib/cloud/reconcile';
 import { startEscrowReconciler } from '@/lib/cloud/escrowReconcile';
 import { startKeylessLockMonitor } from '@/lib/cloud/keylessGuard';
 import { keyMismatchState } from '@/lib/cloud/crypto/keyMismatch';
-import { keylessLockState } from '@/lib/cloud/crypto/keylessLock';
 import { resetAndReseed } from '@/db/seed';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
 import { HomeScreen } from '@/screens/global/Home';
@@ -91,10 +90,10 @@ const stripParam = (url: URL, name: string): void => {
 
 /**
  * Dev/E2E-only URL affordances, applied after boot wiring: `?reseed` reseeds the
- * local database, and `?cloud-mismatch` / `?cloud-keyless` force the respective
- * cloud lock signals so their surfaces can be driven headlessly (the real
- * triggers need a live signed-in state). Applied after any reseed so the
- * reseed's own writes are never blocked by a forced lock.
+ * local database, and `?cloud-mismatch` forces the key-mismatch signal so the
+ * conflict surface can be driven headlessly (the real trigger needs a live
+ * two-device sign-in). Applied after any reseed so the reseed's own writes are
+ * never blocked by a forced lock.
  */
 const applyDevBootParams = async (): Promise<void> => {
   if (!isReseedParamEnabled()) return;
@@ -106,10 +105,6 @@ const applyDevBootParams = async (): Promise<void> => {
   if (url.searchParams.has('cloud-mismatch')) {
     keyMismatchState.set(true);
     stripParam(url, 'cloud-mismatch');
-  }
-  if (url.searchParams.has('cloud-keyless')) {
-    keylessLockState.set(true);
-    stripParam(url, 'cloud-keyless');
   }
 };
 
