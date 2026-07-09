@@ -191,11 +191,19 @@ A device sets its passphrase *before* it signs in, so at that moment it cannot k
 the account already has a key. Rather than publish its escrow eagerly (two devices could
 then race their escrows over the one `cloudCrypto` row and overwrite the account's key —
 losing all of it), setup holds the escrow on the device. `src/lib/cloud/escrowReconcile.ts`
-runs once the first sync reaches `in-sync`, when the account's escrow (if any) has been
-pulled, and compares fingerprints (§2):
+**re-runs on every transition into `in-sync` and on every change of sign-in identity** (not
+once per boot — a device that signs in after boot still reconciles), with runs serialised
+and idempotent. It compares fingerprints (§2):
 
-- **Account has no escrow** → publish this device's. Its key becomes the account key. There
-  was nothing to overwrite, so publication is add-only.
+- **Account has no escrow (pull confirmed complete)** → publish this device's. Its key
+  becomes the account key. Publication is **add-only**: `publishPendingEscrow` refuses to
+  overwrite a `v1` row whose fingerprint differs (it reports `kept-server` and keeps the
+  pending escrow), so a last-writer-wins clobber of the account key is impossible.
+- **Account has no escrow (pull not yet confirmed)** → **defer**. An absent row may just mean
+  the account's escrow has not been pulled yet; publishing now would clobber it. Publication
+  waits until `isAccountPullComplete()` — the addon's own gate (`persistedSyncState`'s
+  `initiallySynced` plus the user's realm pulled) — is true, and reconciliation re-runs on the
+  next settle.
 - **Fingerprints match** → the account already holds this device's key; nothing to do. The
   server escrow is treated as ours when it carries **either** the device ring's fingerprint
   **or** the pending escrow's (they share a master, so normally identical — the pending copy
@@ -206,10 +214,9 @@ pulled, and compares fingerprints (§2):
 
 To keep a fresh device from tripping that mismatch on residue, setup is add-only in the
 other direction too: `createCloudEncryption` mints a new master, so any escrow already in
-the local database is a **different** key. While the device is signed out — the enforced
-"passphrase before sign-in" state — that row can only be residue from an earlier local
-session, so setup drops it before deriving the fresh key. Signed in, the row is the
-account's real escrow and is left for the mismatch/adopt flow.
+the local database is a **different** key. While the device is signed out that row can only
+be residue from an earlier local session, so setup drops it before deriving the fresh key.
+Signed in, the row is the account's real escrow and is left for the mismatch/adopt flow.
 
 While a mismatch is unresolved the write middleware refuses content `add`/`put` with
 `CloudKeyMismatchError`, so no row sealed under the wrong key can reach the sync queue
@@ -235,6 +242,50 @@ The user resolves it from the cloud settings section in one of two ways:
 
 The three-way loss — account passphrase forgotten **and** recovery code lost — ends only in
 the erase path. There is no fourth option by design: the server never holds a readable key.
+
+### 5.2 Signing in before a passphrase (the clean-device flow)
+
+The **first** device keeps passphrase-before-sign-in: it has unencrypted writing that must be
+sealed before it can sync, so `signInToCloud` turns it back with `KeylessSignInBlockedError`
+(surfaced as a "set up first" banner) whenever `hasPlaintextSyncedRows()` is true. A **clean**
+device (no plaintext synced rows — a fresh second device) may instead **sign in first**, then
+adopt the account key. This removes the second-device catch-22 (sign-in was previously
+disabled until a key existed, but the account key only arrives after sign-in) without
+weakening the guarantee that plaintext never leaves the device:
+
+- **Keyless write lock.** While a device is signed in without a key ring
+  (`keylessLockState`, kept in step by `startKeylessLockMonitor`), the middleware refuses
+  content `add`/`put` with `CloudKeylessWriteError` (deletes still pass), so no plaintext can
+  reach the sync queue before a key exists.
+- **Sealed-row hiding.** A keyless signed-in device drops sealed rows it cannot open from
+  reads (rather than returning raw ciphertext), so the UI never renders undefined fields.
+- **Adopt or set up.** Once the account pull is confirmed, `cloudEscrowPresence`
+  (`'unknown'` → `'present'`/`'none'`) drives `CloudKeylessAccountSection`: **present** →
+  unlock with the passphrase from another device (this is the adopt step for a keyless
+  device); **none** → set one up, which then publishes under the gated add-only path above.
+  No key-minting action is offered while presence is `'unknown'`, so a set-up can never race
+  ahead of the pull and diverge from the account key. Acquiring a key does not re-run mounted
+  live queries, so the panel reloads afterwards to re-read everything decrypted.
+
+Sign-in is also surfaced up front: with the beta flag on and the device signed out, the Home
+page shows a "Sign in to sync your writing" row and Quick settings an "Account & sync" item
+(both gated on `isCloudSyncEnabled()`), so the option is visible before a space is created.
+
+### 5.3 Sign-out wipes the device; sign-in heals
+
+The cloud addon's `logout` clears **every** table — including the app's local-only `docUpdates`
+(CRDT log) and `meta` (seed markers). The device key ring survives (a separate keystore
+database), and the synced `docs` rows re-pull on sign-in, but the local-only CRDT log is not
+restored. We deliberately do **not** snapshot/restore those tables around logout: sign-out on
+a shared machine must clear the device, and content heals from the row body anyway. Recovery:
+
+- `reconcile.ts` detects an **empty CRDT log** for a doc whose row still has a body and heals
+  straight from that body (reseed, or replay through a mounted editor) — with no spurious
+  pre-sync revision, and never crashing on the empty snapshot (see §5 and the revision reader,
+  which reads a parsed Lexical state without `setEditorState`).
+- The editor mount is gated on `useDocCrdtReady` (`reseedIfEmpty` / `ensureDocCrdtSeeded`), so
+  a doc whose log was wiped never mounts a blank editor that could autosave empty over its real
+  body. The only true loss is per-device undo lineage — acceptable, and recorded here.
 
 ## 6. Device keystore (deviation from the original plan)
 
@@ -327,6 +378,14 @@ the file holds no secrets.
     adopt: A's notes decrypt and B's own notes survive. Repeat once more entering a **wrong**
     passphrase first — it must show an inline error and stay on the conflict surface, never
     the app's error boundary.
+11. **Sign-in-first on a clean device (§5.2).** In a **third**, clean browser C, activate via
+    `?cloud-sync=on` and **sign in before** setting a passphrase. Content stays locked until
+    you unlock: the account section offers **Unlock now** — enter A's passphrase to adopt the
+    account key, and A's notes decrypt after the reload. (Attempting the same on a browser that
+    already has unencrypted writing must be turned back with a "set up first" notice.)
+12. **Sign out and back in (§5.3).** In browser A, sign out then sign back in. Every document's
+    content must still render and remain editable — no blank editor and no Lexical error in the
+    console — because the wiped CRDT log heals from the re-pulled body.
 
 If any plaintext content field is visible server-side, **the beta must not be offered to
 anyone** — file the failure and stop.
