@@ -49,12 +49,23 @@ const makeDoc = (): FakeDoc => {
   };
 };
 
+// Stub the canvas 2d path jsdom does not implement. `Object.defineProperty`'s
+// `value` is untyped, so it sidesteps getContext's overloaded DOM signature
+// without a cast.
+const stubCanvas = (context: unknown): void => {
+  Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+    configurable: true,
+    value: vi.fn(() => context),
+  });
+  Object.defineProperty(HTMLCanvasElement.prototype, 'toDataURL', {
+    configurable: true,
+    value: vi.fn(() => 'data:image/png;base64,AAA'),
+  });
+};
+
 beforeEach(() => {
   getDocument.mockReset();
-  HTMLCanvasElement.prototype.getContext = vi.fn(
-    () => ({}) as unknown as CanvasRenderingContext2D,
-  );
-  HTMLCanvasElement.prototype.toDataURL = vi.fn(() => 'data:image/png;base64,AAA');
+  stubCanvas({});
 });
 
 describe('usePdfThumbnails', () => {
@@ -109,7 +120,7 @@ describe('usePdfThumbnails', () => {
   it('skips a page when the canvas has no 2d context', async () => {
     const doc = makeDoc();
     getDocument.mockReturnValue({ promise: Promise.resolve(doc) });
-    HTMLCanvasElement.prototype.getContext = vi.fn(() => null);
+    stubCanvas(null);
 
     const { result } = renderHook(() => usePdfThumbnails(blob, { width: 64 }));
     act(() => { result.current.requestPage(1); });
