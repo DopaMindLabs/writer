@@ -19,9 +19,10 @@ describe('CloudSection', () => {
     localStorage.setItem(CLOUD_FLAG_KEY, 'on');
     renderWithProviders(<CloudSection />);
     expect(screen.getByTestId('cloud-section')).toBeInTheDocument();
-    // Privacy disclosure always shown; sign-in gated behind a passphrase.
+    // Privacy disclosure always shown; a clean device may sign in before a key
+    // exists (the guard turns back only a device with unencrypted writing).
     expect(screen.getByTestId('cloud-privacy-disclosure')).toBeInTheDocument();
     expect(screen.getByTestId('cloud-setup')).toBeInTheDocument();
-    expect(screen.getByTestId('cloud-sign-in')).toBeDisabled();
+    expect(screen.getByTestId('cloud-sign-in')).toBeEnabled();
   });
 });

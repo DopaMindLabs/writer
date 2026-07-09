@@ -22,5 +22,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Keyless: Story = {};
+export const KeylessSignedIn: Story = { args: { signedIn: true } };
 export const KeyedSignedOut: Story = { args: { hasKey: true } };
 export const SignedIn: Story = { args: { hasKey: true, signedIn: true } };

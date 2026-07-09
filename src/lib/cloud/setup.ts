@@ -74,6 +74,27 @@ export const sealExistingRows = async (db: LoremDB = appDb): Promise<void> => {
 };
 
 /**
+ * Whether any synced table holds a **plaintext** (unsealed) row — writing done on
+ * this device before encryption was set up. Keeps the first device on
+ * passphrase-before-sign-in: it must seal that writing before it can sync, so
+ * plaintext never leaves it. A clean device (no such rows) may sign in first and
+ * unlock after. Reads through a cursor filter (unwrapped by the middleware) so it
+ * sees rows exactly as stored at rest.
+ */
+export const hasPlaintextSyncedRows = async (
+  db: LoremDB = appDb,
+): Promise<boolean> => {
+  for (const table of SYNCED_TABLES) {
+    const plaintext = await db
+      .table<Row>(table)
+      .filter((row) => !(CIPHER_FIELD in row))
+      .first();
+    if (plaintext) return true;
+  }
+  return false;
+};
+
+/**
  * Provision cloud encryption: mint a master secret, wrap it under the passphrase
  * for escrow, derive and store the device key ring, seal existing rows, and
  * return the one-time recovery code for the UI to show once.

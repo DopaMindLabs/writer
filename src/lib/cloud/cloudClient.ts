@@ -3,7 +3,9 @@ import type { DXCUserInteraction, SyncState, UserLogin } from 'dexie-cloud-addon
 import type { CloudObservable } from './cloudObservable';
 import { hasCloudEnv } from './env';
 import { readCloudFlag, wasCloudProvisioned } from './flag';
-import { loadDeviceKeyRing } from './crypto/keyStore';
+import { loadDeviceKeyRing, deviceKeyProvider } from './crypto/keyStore';
+import { hasPlaintextSyncedRows } from './setup';
+import { KeylessSignInBlockedError } from './crypto/errors';
 
 /**
  * Facade over `db.cloud` (the Dexie Cloud addon API). It is the *only* module
@@ -17,7 +19,7 @@ export type CloudSyncPhase = SyncState['phase'];
 
 export { isCloudSyncEnabled } from './flag';
 export { deviceKeyProvider } from './crypto/keyStore';
-export { EscrowMissingError } from './crypto/errors';
+export { EscrowMissingError, KeylessSignInBlockedError } from './crypto/errors';
 export { WrongPassphraseError } from './crypto/keys';
 export {
   createCloudEncryption,
@@ -89,8 +91,18 @@ export const isAccountPullComplete = (): boolean => {
   );
 };
 
-export const signInToCloud = (): Promise<void> =>
-  cloudApi()?.login() ?? Promise.resolve();
+export const signInToCloud = async (): Promise<void> => {
+  const api = cloudApi();
+  if (!api) return;
+  // First device: it has unencrypted writing but no key. Keep it on
+  // passphrase-before-sign-in so that writing is sealed before it can sync —
+  // signing in now would let the addon push it in the clear. A clean device
+  // (no plaintext synced rows) may sign in first and unlock afterwards.
+  if (deviceKeyProvider.current() === null && (await hasPlaintextSyncedRows())) {
+    throw new KeylessSignInBlockedError();
+  }
+  await api.login();
+};
 
 export const signOutOfCloud = (): Promise<void> =>
   cloudApi()?.logout() ?? Promise.resolve();

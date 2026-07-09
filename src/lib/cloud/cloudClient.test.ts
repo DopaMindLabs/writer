@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { db } from '@/db/db';
 import {
   cloudSyncState,
@@ -8,6 +8,7 @@ import {
   signOutOfCloud,
   hydrateCloudDevice,
   isAccountPullComplete,
+  KeylessSignInBlockedError,
 } from './cloudClient';
 import { CLOUD_FLAG_KEY } from './flag';
 import {
@@ -44,6 +45,42 @@ describe('cloudClient without a cloud database', () => {
   it('sign in and out resolve as no-ops', async () => {
     await expect(signInToCloud()).resolves.toBeUndefined();
     await expect(signOutOfCloud()).resolves.toBeUndefined();
+  });
+});
+
+describe('signInToCloud guard (clean vs dirty keyless device)', () => {
+  const login = vi.fn().mockResolvedValue(undefined);
+  const withCloudLogin = (): void => {
+    (db as { cloud?: { login: () => Promise<void> } }).cloud = { login };
+  };
+
+  beforeEach(async () => {
+    login.mockClear();
+    await forgetDeviceKeyRing();
+    await db.delete();
+    await db.open();
+  });
+
+  afterEach(async () => {
+    delete (db as { cloud?: unknown }).cloud;
+    await db.delete();
+    await db.open();
+  });
+
+  it('blocks sign-in while keyless with unencrypted writing on the device', async () => {
+    withCloudLogin();
+    await db.docs.add({
+      id: 'd', spaceId: 's', sectionId: 'x', name: 'n', body: 'plain',
+      meta: { wordCount: 1 }, updatedAt: 1,
+    });
+    await expect(signInToCloud()).rejects.toBeInstanceOf(KeylessSignInBlockedError);
+    expect(login).not.toHaveBeenCalled();
+  });
+
+  it('allows sign-in on a clean keyless device (no plaintext synced rows)', async () => {
+    withCloudLogin();
+    await expect(signInToCloud()).resolves.toBeUndefined();
+    expect(login).toHaveBeenCalledTimes(1);
   });
 });
 

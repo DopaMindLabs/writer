@@ -43,6 +43,20 @@ export class EscrowMissingError extends Error {
 }
 
 /**
+ * Raised when sign-in is attempted on a device that holds no key ring but does
+ * hold plaintext synced content — the first device, which must seal its writing
+ * (passphrase before sign-in) before it can sync, so plaintext never leaves it.
+ * A clean device (no plaintext synced rows) may sign in first and unlock after.
+ * A flow guard, not a data-integrity failure, so not a {@link isCloudKeyError}.
+ */
+export class KeylessSignInBlockedError extends Error {
+  constructor() {
+    super('Set up encryption before signing in: this device has unencrypted writing');
+    this.name = 'KeylessSignInBlockedError';
+  }
+}
+
+/**
  * Whether an unknown thrown value is a cloud-encryption key failure the recovery
  * UI knows how to handle — a ciphertext that failed authentication, or a detected
  * key mismatch. Anything else is an ordinary error and gets the generic screen.
