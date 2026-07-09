@@ -311,24 +311,32 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   every row body against the local Y.Doc and, for a body a pull produced rather than the
   local editor, keeps a safety revision of the local side then either replays the pulled
   body through the mounted editor or reseeds the CRDT — **whole-document last-writer-wins**;
-  lossless cross-device merge is a recorded open decision for a future release.
+  lossless cross-device merge is a recorded open decision for a future release. Sign-out
+  clears the per-device CRDT log; a re-pulled doc with an empty log **heals from its body**
+  (no spurious revision, and the editor mount waits until the log is reseeded), so content and
+  the editor recover after signing back in.
 - **Key reconciliation.** Setup holds the escrow on the device, not in `cloudCrypto`, and —
   while signed out — drops any escrow already in the local database (residue from an earlier
-  local session) so a fresh key can never trip a spurious mismatch. Once the first sync
-  settles, reconciliation compares the account escrow's fingerprint with the device ring's
-  (or, as a fallback, the pending escrow's): absent → publish this device's escrow (add-only,
-  so it can never race and clobber the account's key); match → nothing to do; differ → flag a
-  **key mismatch**. Under a mismatch the write middleware refuses content writes; reads do not
-  crash — the middleware drops any undecryptable row from the result and flags the mismatch,
-  so the app stays reachable and the conflict banner appears in settings. The user resolves it
-  by **adopting** the account key (enter the account passphrase; the device re-seals its own
-  rows under it) or **erasing** the account's unreadable copy (kept: this device's notes). The
-  route-level recovery screen still catches a genuine read failure, and its **Unlock in
-  settings** action is a full navigation to the Account tab. Never clobbers, never silently
-  loses.
-- **Ordering.** Passphrase-before-sign-in: sync cannot start without a key ring, so a
-  keyless write is never uploaded in the clear. Opting out is **non-destructive** — the
-  cloud schema is sticky so a rebuild never erases local content.
+  local session) so a fresh key can never trip a spurious mismatch. Reconciliation **re-runs on
+  every sync settle and sign-in change** (not once per boot); it compares the account escrow's
+  fingerprint with the device ring's (or, as a fallback, the pending escrow's): absent →
+  publish this device's escrow, but **only once the initial account pull is confirmed** (else
+  defer, so a not-yet-pulled escrow is never clobbered), and **add-only** (never overwrite a
+  differing `v1` row); match → nothing to do; differ → flag a **key mismatch**. Under a
+  mismatch the write middleware refuses content writes; reads do not crash — the middleware
+  drops any undecryptable row from the result and flags the mismatch, so the app stays
+  reachable and the conflict banner appears in settings. The user resolves it by **adopting**
+  the account key (enter the account passphrase; the device re-seals its own rows under it) or
+  **erasing** the account's unreadable copy (kept: this device's notes). The route-level
+  recovery screen still catches a genuine read failure, and its **Unlock in settings** action
+  is a full navigation to the Account tab. Never clobbers, never silently loses.
+- **Ordering.** The first device (with unencrypted writing) stays on passphrase-before-sign-in
+  — sign-in is turned back until its writing is sealed. A **clean** device (no plaintext synced
+  rows) may sign in first and then unlock/adopt the account key; while it is signed-in-keyless
+  the middleware refuses content writes and hides sealed rows, so a keyless write is never
+  uploaded in the clear either way. Sign-in is surfaced on the Home page and in Quick settings
+  (flag-gated) so it is discoverable before a space exists. Opting out is **non-destructive** —
+  the cloud schema is sticky so a rebuild never erases local content.
 - **Server sees / does not see.** Cannot: bodies, titles, note text, citation
   metadata, attachment bytes. Can: record ids and relationships, timestamps, note kinds,
   citation keys and years, the sign-in email, and sync timing/IP. Sign-in is invite-only.
@@ -336,11 +344,14 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
 See [`docs/cloud-sync-beta.md`](cloud-sync-beta.md) for the full design note and the
 manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P8 ciphertext and
 mismatch-lock spike), `envelope.test.ts`, `keys.test.ts` (incl. fingerprints),
-`errors.test.ts`, `keyMismatch.test.ts`, `recoveryCode.test.ts`, `setup.test.ts` (incl.
-adopt/erase), `escrowReconcile.test.ts`, `buildDb.test.ts`, `reconcile.test.ts`
-(cross-device reconciliation), `snapshot.test.ts` (the CRDT ⇄ body round-trip), the
-`src/components/errors/` and `src/components/settings/tabs/cloud/` component tests, and
-`cloud-sync.spec.ts`.
+`errors.test.ts`, `keyMismatch.test.ts`, `keylessLock.test.ts`, `keylessGuard.test.ts`,
+`recoveryCode.test.ts`, `setup.test.ts` (incl. adopt/erase, add-only publish, sign-in guard),
+`escrowReconcile.test.ts` (incl. re-arm and the deferred pull-gate), `cloudClient.test.ts`
+(pull-complete + sign-in guard), `buildDb.test.ts`, `reconcile.test.ts` (cross-device
+reconciliation and empty-log healing), `useDocCrdtReady.test.tsx`, `snapshot.test.ts` (the
+CRDT ⇄ body round-trip), the `src/components/errors/` and
+`src/components/settings/tabs/cloud/` component tests, and `cloud-sync.spec.ts` /
+`cloud-crdt-recovery.spec.ts`.
 
 ---
 
