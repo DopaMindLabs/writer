@@ -1,6 +1,6 @@
 import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
-import type { SyncState } from 'dexie-cloud-addon';
+import type { SyncState, UserLogin } from 'dexie-cloud-addon';
 import { SYNCED_TABLES } from './crypto/tableRules';
 import { fingerprintsEqual } from './crypto/keys';
 import {
@@ -10,7 +10,11 @@ import {
 } from './crypto/keyStore';
 import { keyMismatchState } from './crypto/keyMismatch';
 import { publishPendingEscrow } from './setup';
-import { cloudSyncState, isAccountPullComplete } from './cloudClient';
+import {
+  cloudSyncState,
+  cloudCurrentUser,
+  isAccountPullComplete,
+} from './cloudClient';
 import type { CloudObservable } from './cloudObservable';
 
 const ESCROW_ID = 'v1';
@@ -113,24 +117,68 @@ export const reconcileEscrow = async (
   return 'mismatch';
 };
 
+/** Serialise reconcile runs: never overlap, but always run once more if asked
+ *  while one was in flight, so the latest sync/login state is reflected. */
+const createRunner = (run: () => Promise<unknown>): (() => void) => {
+  let running = false;
+  let rerun = false;
+  const schedule = (): void => {
+    if (running) {
+      rerun = true;
+      return;
+    }
+    running = true;
+    void Promise.resolve(run())
+      .catch(() => undefined)
+      .finally(() => {
+        running = false;
+        if (rerun) {
+          rerun = false;
+          schedule();
+        }
+      });
+  };
+  return schedule;
+};
+
 /**
- * Subscribe to the cloud sync engine and reconcile escrows once the first sync
- * settles (`in-sync`) — the point at which the account's escrow, if it has one,
- * has been pulled. Returns an unsubscribe. A no-op on a plain (non-cloud)
- * database whose sync state never leaves `initial`.
+ * Keep escrow reconciliation armed for the whole session. It re-runs on **every**
+ * transition into `in-sync` (each settled pull) and on **every** change of
+ * sign-in identity — so an account signed into after boot still publishes its
+ * escrow, and a second device signed into an account that has one reliably sees
+ * the mismatch. Runs are serialised and `reconcileEscrow` is idempotent, so
+ * repeated triggers are safe. Returns an unsubscribe for both subscriptions. A
+ * no-op on a plain (non-cloud) database whose observables never emit a signed-in
+ * user or leave `initial`.
  */
 export const startEscrowReconciler = (
-  observable: CloudObservable<SyncState> = cloudSyncState(),
+  syncObservable: CloudObservable<SyncState> = cloudSyncState(),
+  userObservable: CloudObservable<UserLogin | undefined> = cloudCurrentUser(),
   run: () => Promise<unknown> = reconcileEscrow,
 ): (() => void) => {
-  let ran = false;
-  const subscription = observable.subscribe((state) => {
-    if (!ran && state.phase === 'in-sync') {
-      ran = true;
-      void run();
+  const schedule = createRunner(run);
+
+  let prevPhase: SyncState['phase'] | undefined;
+  const syncSub = syncObservable.subscribe((state) => {
+    const enteredInSync = prevPhase !== 'in-sync' && state.phase === 'in-sync';
+    prevPhase = state.phase;
+    if (enteredInSync) schedule();
+  });
+
+  let prevUserId: string | undefined;
+  let prevLoggedIn: boolean | undefined;
+  const userSub = userObservable.subscribe((user) => {
+    const userId = user?.userId;
+    const loggedIn = user?.isLoggedIn ?? false;
+    if (userId !== prevUserId || loggedIn !== prevLoggedIn) {
+      prevUserId = userId;
+      prevLoggedIn = loggedIn;
+      schedule();
     }
   });
+
   return () => {
-    subscription.unsubscribe();
+    syncSub.unsubscribe();
+    userSub.unsubscribe();
   };
 };

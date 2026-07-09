@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import dexieCloud from 'dexie-cloud-addon';
-import type { SyncState } from 'dexie-cloud-addon';
+import type { SyncState, UserLogin } from 'dexie-cloud-addon';
 import { LoremDB } from '@/db/LoremDB';
+import type { CloudObservable } from './cloudObservable';
 import { createEncryptionMiddleware } from './crypto/middleware';
 import {
   deviceKeyProvider,
@@ -165,16 +166,16 @@ describe('reconcileEscrow', () => {
   });
 });
 
-interface StubObservable {
+interface StubObservable<T> {
   observable: {
-    subscribe: (next: (s: SyncState) => void) => { unsubscribe: () => void };
+    subscribe: (next: (value: T) => void) => { unsubscribe: () => void };
   };
-  emit: (phase: SyncState['phase']) => void;
+  emit: (value: T) => void;
   hasListener: () => boolean;
 }
 
-const stubObservable = (): StubObservable => {
-  let listener: ((s: SyncState) => void) | null = null;
+const stubObservable = <T,>(): StubObservable<T> => {
+  let listener: ((value: T) => void) | null = null;
   return {
     observable: {
       subscribe: (next) => {
@@ -186,34 +187,99 @@ const stubObservable = (): StubObservable => {
         };
       },
     },
-    emit: (phase) => listener?.({ status: 'connected', phase }),
+    emit: (value) => listener?.(value),
     hasListener: () => listener !== null,
   };
 };
 
-describe('startEscrowReconciler', () => {
-  it('runs once when the first sync reaches in-sync', () => {
-    const stub = stubObservable();
-    const run = vi.fn().mockResolvedValue(undefined);
-    startEscrowReconciler(stub.observable, run);
+const syncStub = () => stubObservable<SyncState>();
+const emitPhase = (
+  stub: StubObservable<SyncState>,
+  phase: SyncState['phase'],
+): void => stub.emit({ status: 'connected', phase });
 
-    stub.emit('initial');
-    stub.emit('pulling');
+type User = { userId: string; isLoggedIn: boolean } | undefined;
+const userStub = () => stubObservable<User>();
+// The reconciler only reads userId/isLoggedIn off the user login, so a minimal
+// stub stands in for the full UserLogin shape.
+const asUserObservable = (
+  stub: StubObservable<User>,
+): CloudObservable<UserLogin | undefined> =>
+  stub.observable as unknown as CloudObservable<UserLogin | undefined>;
+
+/** Let the serialised runner's finally-microtasks settle between assertions. */
+const flush = async (): Promise<void> => {
+  await Promise.resolve();
+  await Promise.resolve();
+};
+
+describe('startEscrowReconciler', () => {
+  it('runs on every transition into in-sync, not just the first', async () => {
+    const sync = syncStub();
+    const user = userStub();
+    const run = vi.fn().mockResolvedValue(undefined);
+    startEscrowReconciler(sync.observable, asUserObservable(user), run);
+
+    emitPhase(sync, 'initial');
+    emitPhase(sync, 'pulling');
     expect(run).not.toHaveBeenCalled();
-    stub.emit('in-sync');
+    emitPhase(sync, 'in-sync');
+    await flush();
     expect(run).toHaveBeenCalledTimes(1);
-    stub.emit('in-sync');
+    // A later pull that settles again re-runs (the one-shot bug is gone).
+    emitPhase(sync, 'pulling');
+    emitPhase(sync, 'in-sync');
+    await flush();
+    expect(run).toHaveBeenCalledTimes(2);
+  });
+
+  it('runs when the signed-in identity changes (e.g. a late sign-in)', async () => {
+    const sync = syncStub();
+    const user = userStub();
+    const run = vi.fn().mockResolvedValue(undefined);
+    startEscrowReconciler(sync.observable, asUserObservable(user), run);
+
+    user.emit({ userId: 'u1', isLoggedIn: true }); // signs in after boot
+    await flush();
+    expect(run).toHaveBeenCalledTimes(1);
+    user.emit({ userId: 'u1', isLoggedIn: true }); // same identity, no re-run
+    await flush();
     expect(run).toHaveBeenCalledTimes(1);
   });
 
+  it('serialises overlapping runs and reruns once for triggers during a run', async () => {
+    const sync = syncStub();
+    const user = userStub();
+    let resolveRun: (() => void) | null = null;
+    const run = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveRun = resolve;
+        }),
+    );
+    startEscrowReconciler(sync.observable, asUserObservable(user), run);
+
+    emitPhase(sync, 'in-sync'); // starts run #1 (in flight)
+    emitPhase(sync, 'pulling');
+    emitPhase(sync, 'in-sync'); // queued while #1 runs
+    expect(run).toHaveBeenCalledTimes(1);
+    resolveRun?.();
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(run).toHaveBeenCalledTimes(2); // exactly one rerun, no pile-up
+  });
+
   it('does not run after unsubscribe', () => {
-    const stub = stubObservable();
+    const sync = syncStub();
+    const user = userStub();
     const run = vi.fn().mockResolvedValue(undefined);
-    const stop = startEscrowReconciler(stub.observable, run);
+    const stop = startEscrowReconciler(sync.observable, asUserObservable(user), run);
 
     stop();
-    expect(stub.hasListener()).toBe(false);
-    stub.emit('in-sync');
+    expect(sync.hasListener()).toBe(false);
+    expect(user.hasListener()).toBe(false);
+    emitPhase(sync, 'in-sync');
+    user.emit({ userId: 'u1', isLoggedIn: true });
     expect(run).not.toHaveBeenCalled();
   });
 });
