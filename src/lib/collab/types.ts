@@ -46,4 +46,16 @@ export interface CollabStore {
     docId: string,
     seed: Uint8Array,
   ) => Promise<'seeded' | 'already-seeded'>;
+  /**
+   * Repair a document whose update log was lost (e.g. the cloud addon's logout
+   * cleared the local-only tables): plant `seed` **only if** the log is empty,
+   * atomically with the emptiness check. Returns `'seeded'` when it planted one
+   * and `'occupied'` when the log already held updates. Unlike {@link trySeed}
+   * it keys off the log's contents, not a seed marker, so a stale marker left
+   * beside an empty log cannot block the repair.
+   */
+  readonly reseedIfEmpty: (
+    docId: string,
+    seed: Uint8Array,
+  ) => Promise<'seeded' | 'occupied'>;
 }
