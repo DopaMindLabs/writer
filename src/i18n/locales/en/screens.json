@@ -335,6 +335,8 @@
         "signIn": "Sign in",
         "signOut": "Sign out",
         "signInHint": "Set up your passphrase first — sync can't start until your writing can be encrypted.",
+        "signInBlocked": "There's unencrypted writing on this device. Set up your passphrase first so it's encrypted before it syncs.",
+        "signInFailed": "Couldn't sign in. Please try again.",
         "forgetDevice": "Forget encryption on this device",
         "forgetDeviceHint": "Removes the key from this browser. Your synced data and other devices are unaffected.",
         "setUp": "Set up encryption",

@@ -26,6 +26,7 @@ import {
   unlockCloudEncryption,
   recoverCloudEncryption,
   sealExistingRows,
+  hasPlaintextSyncedRows,
   forgetThisDevice,
   publishPendingEscrow,
   adoptAccountKey,
@@ -140,6 +141,21 @@ describe('cloud setup', () => {
 
   it('publishPendingEscrow is a no-op when nothing is pending', async () => {
     expect(await publishPendingEscrow(db)).toBe('none');
+  });
+
+  it('hasPlaintextSyncedRows sees unsealed rows and ignores sealed ones', async () => {
+    expect(await hasPlaintextSyncedRows(db)).toBe(false);
+
+    // Written while keyless — plaintext at rest.
+    await forgetThisDevice();
+    await db.table<Row>('docs').put({
+      id: 'p', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'plain',
+    });
+    expect(await hasPlaintextSyncedRows(db)).toBe(true);
+
+    // Setting up encryption seals it, so no plaintext synced rows remain.
+    await createCloudEncryption('pw', db);
+    expect(await hasPlaintextSyncedRows(db)).toBe(false);
   });
 
   it('clears a residual local escrow when setting up while signed out', async () => {
