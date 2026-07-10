@@ -1,0 +1,234 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`RadioRow > snapshot > should match the snapshot across all variants 1`] = `
+<div>
+  <div>
+    <div
+      class="inline-flex items-center gap-4 font-sans"
+      data-testid="rr-snap-rest"
+      role="radiogroup"
+    >
+      <label
+        class="inline-flex cursor-pointer items-center gap-2 text-[13px] text-ink-2"
+        data-testid="rr-snap-rest-light-label"
+        for="_r_6_-light"
+      >
+        <input
+          checked=""
+          class="peer sr-only"
+          data-testid="rr-snap-rest-light"
+          id="_r_6_-light"
+          name="theme1"
+          type="radio"
+          value="light"
+        />
+        <span
+          aria-hidden="true"
+          class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-ink peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+        >
+          <span
+            class="h-[6px] w-[6px] rounded-full bg-ink"
+          />
+        </span>
+        <span>
+          Light
+        </span>
+      </label>
+      <label
+        class="inline-flex cursor-pointer items-center gap-2 text-[13px] text-ink-2"
+        data-testid="rr-snap-rest-dark-label"
+        for="_r_6_-dark"
+      >
+        <input
+          class="peer sr-only"
+          data-testid="rr-snap-rest-dark"
+          id="_r_6_-dark"
+          name="theme1"
+          type="radio"
+          value="dark"
+        />
+        <span
+          aria-hidden="true"
+          class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-rule peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+        />
+        <span>
+          Dark
+        </span>
+      </label>
+      <label
+        class="inline-flex cursor-pointer items-center gap-2 text-[13px] text-ink-2"
+        data-testid="rr-snap-rest-system-label"
+        for="_r_6_-system"
+      >
+        <input
+          class="peer sr-only"
+          data-testid="rr-snap-rest-system"
+          id="_r_6_-system"
+          name="theme1"
+          type="radio"
+          value="system"
+        />
+        <span
+          aria-hidden="true"
+          class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-rule peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+        />
+        <span>
+          Match system
+        </span>
+      </label>
+    </div>
+    <div
+      class="inline-flex items-center gap-4 font-sans"
+      data-testid="rr-snap-active-dark"
+      role="radiogroup"
+    >
+      <label
+        class="inline-flex cursor-pointer items-center gap-2 text-[13px] text-ink-2"
+        data-testid="rr-snap-active-dark-light-label"
+        for="_r_7_-light"
+      >
+        <input
+          class="peer sr-only"
+          data-testid="rr-snap-active-dark-light"
+          id="_r_7_-light"
+          name="theme2"
+          type="radio"
+          value="light"
+        />
+        <span
+          aria-hidden="true"
+          class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-rule peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+        />
+        <span>
+          Light
+        </span>
+      </label>
+      <label
+        class="inline-flex cursor-pointer items-center gap-2 text-[13px] text-ink-2"
+        data-testid="rr-snap-active-dark-dark-label"
+        for="_r_7_-dark"
+      >
+        <input
+          checked=""
+          class="peer sr-only"
+          data-testid="rr-snap-active-dark-dark"
+          id="_r_7_-dark"
+          name="theme2"
+          type="radio"
+          value="dark"
+        />
+        <span
+          aria-hidden="true"
+          class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-ink peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+        >
+          <span
+            class="h-[6px] w-[6px] rounded-full bg-ink"
+          />
+        </span>
+        <span>
+          Dark
+        </span>
+      </label>
+      <label
+        class="inline-flex cursor-pointer items-center gap-2 text-[13px] text-ink-2"
+        data-testid="rr-snap-active-dark-system-label"
+        for="_r_7_-system"
+      >
+        <input
+          class="peer sr-only"
+          data-testid="rr-snap-active-dark-system"
+          id="_r_7_-system"
+          name="theme2"
+          type="radio"
+          value="system"
+        />
+        <span
+          aria-hidden="true"
+          class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-rule peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+        />
+        <span>
+          Match system
+        </span>
+      </label>
+    </div>
+    <div
+      aria-disabled="true"
+      class="inline-flex items-center gap-4 font-sans opacity-50"
+      data-testid="rr-snap-disabled"
+      role="radiogroup"
+    >
+      <label
+        class="inline-flex items-center gap-2 text-[13px] text-ink-2 cursor-not-allowed"
+        data-testid="rr-snap-disabled-light-label"
+        for="_r_8_-light"
+      >
+        <input
+          checked=""
+          class="peer sr-only"
+          data-testid="rr-snap-disabled-light"
+          disabled=""
+          id="_r_8_-light"
+          name="theme3"
+          type="radio"
+          value="light"
+        />
+        <span
+          aria-hidden="true"
+          class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-ink peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+        >
+          <span
+            class="h-[6px] w-[6px] rounded-full bg-ink"
+          />
+        </span>
+        <span>
+          Light
+        </span>
+      </label>
+      <label
+        class="inline-flex items-center gap-2 text-[13px] text-ink-2 cursor-not-allowed"
+        data-testid="rr-snap-disabled-dark-label"
+        for="_r_8_-dark"
+      >
+        <input
+          class="peer sr-only"
+          data-testid="rr-snap-disabled-dark"
+          disabled=""
+          id="_r_8_-dark"
+          name="theme3"
+          type="radio"
+          value="dark"
+        />
+        <span
+          aria-hidden="true"
+          class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-rule peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+        />
+        <span>
+          Dark
+        </span>
+      </label>
+      <label
+        class="inline-flex items-center gap-2 text-[13px] text-ink-2 cursor-not-allowed"
+        data-testid="rr-snap-disabled-system-label"
+        for="_r_8_-system"
+      >
+        <input
+          class="peer sr-only"
+          data-testid="rr-snap-disabled-system"
+          disabled=""
+          id="_r_8_-system"
+          name="theme3"
+          type="radio"
+          value="system"
+        />
+        <span
+          aria-hidden="true"
+          class="relative inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full border transition-colors border-rule peer-focus-visible:ring-1 peer-focus-visible:ring-ink"
+        />
+        <span>
+          Match system
+        </span>
+      </label>
+    </div>
+  </div>
+</div>
+`;

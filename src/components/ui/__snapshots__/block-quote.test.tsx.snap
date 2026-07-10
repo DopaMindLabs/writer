@@ -1,0 +1,23 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BlockQuote > snapshot > should match the snapshot with and without a cite footer 1`] = `
+<div>
+  <div>
+    <blockquote
+      class="my-6 border-l-2 border-ink px-5 py-1 font-serif text-[18px] italic leading-[1.5] text-ink [&>p+p]:mt-2"
+    >
+      The unexamined life is not worth living.
+    </blockquote>
+    <blockquote
+      class="my-6 border-l-2 border-ink px-5 py-1 font-serif text-[18px] italic leading-[1.5] text-ink [&>p+p]:mt-2"
+    >
+      To be, or not to be.
+      <div
+        class="mt-2.5 font-mono text-[10px] not-italic tracking-[0.04em] text-ink-4"
+      >
+        — Hamlet
+      </div>
+    </blockquote>
+  </div>
+</div>
+`;

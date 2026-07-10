@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Nápověda a prohlídky", "tours": "Provázené prohlídky", "resetAll": "Resetovat všechny prohlídky" },
+  "controls": { "next": "Další", "prev": "Zpět", "done": "Hotovo", "progress": "{{current}} z {{total}}" },
+  "welcome": {
+    "title": "Vítejte v LIpsum Writeru",
+    "description": "Rychlá orientace v prostorech a domovské obrazovce.",
+    "intro": { "title": "Vítejte", "body": "LIpsum Writer je pracovní prostor pro psaní postavený kolem <i>prostorů</i> — jeden prostor na projekt, článek nebo knihu. Rychle se rozhlédneme." },
+    "continue": { "title": "Pokračujte tam, kde jste skončili", "body": "Váš naposledy upravený prostor je zde. Jedno kliknutí jej znovu otevře." },
+    "startSpace": { "title": "Začněte něco nového", "body": "Vytvořte nový prostor ze šablony — diplomka, román, esej — a začněte psát během sekund." }
+  },
+  "writer": {
+    "title": "Pracovní prostor spisovatele",
+    "description": "Prohlídka editoru, postranního a horního panelu.",
+    "intro": { "title": "Psací plocha", "body": "Zde děláte práci. Pojďme se podívat na navigaci, režimy a nástroje, které budete používat nejčastěji." },
+    "spaceTitle": { "title": "Název prostoru", "body": "Klikněte na název pro přejmenování prostoru. Ikona vedle otevře jeho nastavení." },
+    "sections": { "title": "Sekce a dokumenty", "body": "Uspořádejte prostor do sekcí a sekce do dokumentů. Najeďte myší na sekci pro přidání dokumentu." },
+    "settings": { "title": "Nastavení prostoru", "body": "Spravujte šablonu, sekce, sdílení a mazání tohoto prostoru." },
+    "modes": { "title": "Čtěte · Pište · Rozdělte", "body": "Přepínejte mezi editací, čtením nebo zobrazením vedle sebe. Každý dokument si pamatuje poslední režim." },
+    "citations": { "title": "Citace", "body": "Otevřete panel citací pro vkládání odkazů během psaní." },
+    "theme": { "title": "Téma", "body": "Světlé, tmavé a vysoce kontrastní varianty — vyberte si tu, která vám sedí." },
+    "editor": { "title": "Editor", "body": "Rich-text editor s Markdown zkratkami, bloky kódu a citacemi. Začněte psát — vaše práce se ukládá lokálně automaticky." }
+  },
+  "citations": {
+    "title": "Citace",
+    "description": "Správa odkazů a bibliografií.",
+    "intro": { "title": "Vaše bibliografie", "body": "Všechny odkazy prostoru žijí zde. Importujte soubor BibTeX nebo přidejte záznamy ručně." },
+    "add": { "title": "Přidat nebo importovat", "body": "Pusťte soubor .bib nebo vložte text BibTeX. Duplikáty jsou automaticky přeskočeny." },
+    "list": { "title": "Seznam", "body": "Hledejte, filtrujte a editujte citace inline. Odsud můžete také exportovat celou bibliografii." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Volné plátno pro poznámky.",
+    "intro": { "title": "Přemýšlejte nahlas", "body": "BrainSpace je volné plátno pro nápady — pouštějte poznámky, propojujte je a tvarujte své myšlení, než se posunete k próze." },
+    "addNote": { "title": "Přidat poznámku", "body": "Pusťte poznámku jakéhokoli druhu na plátno. Tahejte pro přesun, měňte velikost z rohů." },
+    "canvas": { "title": "Plátno", "body": "Shift+klik na dvě poznámky pro jejich propojení. Klikněte na pozadí pro zrušení výběru." }
+  }
+}

@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TypographyLead > snapshot > should match the snapshot of the lead paragraph 1`] = `
+<div>
+  <div>
+    <p
+      class="font-serif text-ink-2 text-[17px] leading-relaxed"
+    >
+      A lead paragraph introduces the body copy that follows.
+    </p>
+  </div>
+</div>
+`;

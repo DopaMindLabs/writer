@@ -1,0 +1,14 @@
+{
+  "untitled": "Senza titolo",
+  "brainSpace": "Brain Space",
+  "github": "GitHub",
+  "home": "Home",
+  "about": "Informazioni",
+  "settings": "Impostazioni",
+  "help": "Aiuto",
+  "back": "indietro",
+  "comingSoon": {
+    "tooltip": "Prossimamente",
+    "defaultHint": "Non ancora disponibile — prossimamente."
+  }
+}

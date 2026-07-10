@@ -1,0 +1,48 @@
+{
+  "title": "Hjálp",
+  "subtitle": "Leiðbeiningar og svör til að nýta skrifin sem best.",
+  "shellSubtitle": "Hjálp / Skjölun",
+  "navGroup": "Hjálp",
+  "navOverview": "Yfirlit",
+  "navAria": "Hjálparefni",
+  "searchPlaceholder": "Leita í hjálp…",
+  "searchLabel": "Leita í hjálpargreinum",
+  "noResults": "Engar greinar samsvara „{{query}}“.",
+  "resultsCount_one": "{{count}} niðurstaða",
+  "resultsCount_other": "{{count}} niðurstöður",
+  "browseAll": "Skoða öll efni",
+  "languagePickerLabel": "Hjálpartungumál",
+  "allFeatures": {
+    "title": "Sjá alla eiginleika",
+    "subtitle": "Heildarlisti yfir allt sem þú getur gert — hver færsla leiðir í leiðbeiningar sínar."
+  },
+  "onThisPage": "Á þessari síðu",
+  "related": "Tengt",
+  "backToHelp": "Öll hjálp",
+  "openCenter": "Opna hjálparmiðstöð",
+  "articleNotFound": "Þessi hjálpargrein er ekki til.",
+  "machineTranslationBanner": {
+    "label": "Sjálfvirk þýðing",
+    "body": "Þessi grein var þýdd sjálfvirkt. Afsakaðu villur — sendu ábendingu svo við getum leiðrétt þær.",
+    "feedbackLinkLabel": "senda ábendingu"
+  },
+  "palette": {
+    "title": "Hjálp",
+    "description": "Leita í hjálparmiðstöðinni eða hoppa í flýtileið.",
+    "shortcutsHeading": "Flýtileiðir á lyklaborði",
+    "hint": "Ýttu á Esc til að loka"
+  },
+  "shortcuts": { "help": "Opna hjálp", "focus": "Skipta um athyglisstillingu" },
+  "categories": {
+    "getting-started": "Að byrja",
+    "writing": "Skrif og breyting",
+    "organizing": "Skipulag",
+    "views": "Sýnir og stillingar",
+    "research": "Rannsóknir og tilvitnanir",
+    "brainspace": "BrainSpace",
+    "annotations": "Athugasemdir og merkingar",
+    "customization": "Sérstillingar",
+    "data": "Gögnin þín",
+    "mobile": "Farsími"
+  }
+}

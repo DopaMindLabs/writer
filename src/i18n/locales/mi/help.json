@@ -1,0 +1,48 @@
+{
+  "title": "Āwhina",
+  "subtitle": "Aratohu me ngā whakautu kia whiwhi ai i te nuinga o tō tuhinga.",
+  "shellSubtitle": "Āwhina / Tuhinga",
+  "navGroup": "Āwhina",
+  "navOverview": "Tirohanga whānui",
+  "navAria": "Ngā kaupapa āwhina",
+  "searchPlaceholder": "Rapua i te āwhina…",
+  "searchLabel": "Rapua ngā tuhinga āwhina",
+  "noResults": "Kāore he tuhinga e ōrite ana ki \"{{query}}\".",
+  "resultsCount_one": "{{count}} hua",
+  "resultsCount_other": "{{count}} ngā hua",
+  "browseAll": "Tirotiro ngā kaupapa katoa",
+  "languagePickerLabel": "Reo āwhina",
+  "allFeatures": {
+    "title": "Tirohia ngā āhuatanga katoa",
+    "subtitle": "He rārangi katoa o ngā mea ka taea e koe — ka hono ia mea ki tāna aratohu."
+  },
+  "onThisPage": "Kei runga i tēnei whārangi",
+  "related": "Tūhonohono",
+  "backToHelp": "Te āwhina katoa",
+  "openCenter": "Whakatuwhera te Pokapū Āwhina",
+  "articleNotFound": "Kāore taua tuhinga āwhina e noho ana.",
+  "machineTranslationBanner": {
+    "label": "Whakamāori aunoa",
+    "body": "I whakamāoritia tēnei tuhinga aunoa. Aroha mai mō ngā hapa — tukuna mai he urupare kia taea ai e mātou te whakatika.",
+    "feedbackLinkLabel": "tuku urupare"
+  },
+  "palette": {
+    "title": "Āwhina",
+    "description": "Rapua i te Pokapū Āwhina, peke rānei ki tētahi pātuhi tere.",
+    "shortcutsHeading": "Ngā pātuhi tere papapātuhi",
+    "hint": "Pēhia Esc ki te kati"
+  },
+  "shortcuts": { "help": "Whakatuwhera āwhina", "focus": "Huri i te aronga arotahi" },
+  "categories": {
+    "getting-started": "Tīmata",
+    "writing": "Tuhituhi me te whakatika",
+    "organizing": "Whakarite",
+    "views": "Tirohanga me ngā aratau",
+    "research": "Rangahau me ngā tohutoro",
+    "brainspace": "BrainSpace",
+    "annotations": "Tūtohi me ngā tāmiro",
+    "customization": "Whakaritea me ngā tautuhinga",
+    "data": "Tō raraunga",
+    "mobile": "Pūkoro"
+  }
+}

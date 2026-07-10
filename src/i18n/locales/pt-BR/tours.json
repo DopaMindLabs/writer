@@ -1,0 +1,97 @@
+{
+  "menu": {
+    "help": "Ajuda e tours",
+    "tours": "Tours guiados",
+    "resetAll": "Redefinir todos os tours"
+  },
+  "controls": {
+    "next": "Próximo",
+    "prev": "Voltar",
+    "done": "Concluído",
+    "progress": "{{current}} de {{total}}"
+  },
+  "welcome": {
+    "title": "Boas-vindas ao LIpsum Writer",
+    "description": "Uma orientação rápida sobre os espaços e a tela inicial.",
+    "intro": {
+      "title": "Bem-vindo",
+      "body": "O LIpsum Writer é um espaço de trabalho de escrita organizado em torno de <i>espaços</i> — um por projeto, artigo ou livro. Vamos dar uma olhada rápida."
+    },
+    "continue": {
+      "title": "Retome de onde parou",
+      "body": "Seu espaço editado mais recentemente está aqui. Um clique para reabri-lo."
+    },
+    "startSpace": {
+      "title": "Comece algo novo",
+      "body": "Crie um espaço novo a partir de um modelo — tese, romance, ensaio — e comece a escrever em segundos."
+    }
+  },
+  "writer": {
+    "title": "O espaço de trabalho",
+    "description": "Um tour pelo editor, barra lateral e barra superior.",
+    "intro": {
+      "title": "A superfície de escrita",
+      "body": "É aqui que você trabalha. Vamos ver a navegação, os modos e as ferramentas que mais usará."
+    },
+    "spaceTitle": {
+      "title": "Título do espaço",
+      "body": "Clique no título para renomear o espaço. O ícone ao passar o mouse abre as configurações."
+    },
+    "sections": {
+      "title": "Seções e documentos",
+      "body": "Organize um espaço em seções e as seções em documentos. Passe o mouse sobre uma seção para adicionar um documento."
+    },
+    "settings": {
+      "title": "Configurações do espaço",
+      "body": "Gerencie o modelo, as seções, o compartilhamento e a exclusão deste espaço."
+    },
+    "modes": {
+      "title": "Ler · Escrever · Dividir",
+      "body": "Alterne entre edição, leitura ou visão lado a lado. Cada documento lembra seu último modo."
+    },
+    "citations": {
+      "title": "Citações",
+      "body": "Abra o painel de citações para inserir referências enquanto escreve."
+    },
+    "theme": {
+      "title": "Tema",
+      "body": "Variantes clara, escura e de alto contraste — escolha a que combina com seus olhos."
+    },
+    "editor": {
+      "title": "O editor",
+      "body": "Um editor rich text com atalhos Markdown, blocos de código e citações. Comece a digitar — seu trabalho é salvo localmente de forma automática."
+    }
+  },
+  "citations": {
+    "title": "Citações",
+    "description": "Gerenciamento de referências e bibliografias.",
+    "intro": {
+      "title": "Sua bibliografia",
+      "body": "Todas as referências de um espaço ficam aqui. Importe um arquivo BibTeX ou adicione entradas manualmente."
+    },
+    "add": {
+      "title": "Adicionar ou importar",
+      "body": "Solte um arquivo .bib ou cole texto BibTeX. Duplicatas são puladas automaticamente."
+    },
+    "list": {
+      "title": "A lista",
+      "body": "Busque, filtre e edite citações inline. Daqui você também pode exportar a bibliografia completa."
+    }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "O canvas livre para notas.",
+    "intro": {
+      "title": "Pense em voz alta",
+      "body": "O BrainSpace é um canvas livre para ideias — solte notas, conecte-as e dê forma ao pensamento antes de partir para a prosa."
+    },
+    "addNote": {
+      "title": "Adicionar uma nota",
+      "body": "Solte uma nota de qualquer tipo no canvas. Arraste para mover, redimensione pelos cantos."
+    },
+    "canvas": {
+      "title": "O canvas",
+      "body": "Shift+clique em duas notas para conectá-las. Clique no fundo para desmarcar."
+    }
+  }
+}

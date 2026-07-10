@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Le lalolagi tele o tusitusiga",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "O lau avanoa muamua e leai se mea i ai. Filifili se fa'ata'ita'i e amata ai, pe amata mai le amataga.",
+    "tagline": "O se avanoa mama mo tusitusiga umi — tala, su'esu'ega, pepa, tusi faasolosolo.",
+    "continueWriting": "Fa'aauau tusitusiga",
+    "startNewSpace": "Amata se avanoa fou",
+    "syncOffChip": "e le'i fa'aola le fa'aogatusa/taofi — e mafai ona leiloa fa'amaumauga",
+    "syncOnChip": "o lo'o fa'aogatusa faitoto'a",
+    "syncOnTitle": "Ua fa'aola le fa'aogatusa faitoto'a",
+    "syncOnBody": "O lo'o fa'aogatusa au galuega i le faitoto'a \"{{folder}}\" i luga o lenei masini.",
+    "warningTitle": "Fa'atulagaga a'o le'i tatalaina",
+    "warningBody": "E leai se fa'aogatusa fa'amaumauga. O mea uma o lo'o i totonu o lau su'esu'e, ma afai e tapeese lona mauaina e leiloa au galuega. E mafai ona e fa'aola le fa'aogatusa i se faitoto'a fa'alotoifale i Fa'atulagaga Aofa'i → Fa'aogatusa.",
+    "versionLine": "Lomiga {{version}}"
+  },
+  "about": {
+    "back": "toe fo'i",
+    "title": "fa'atatau",
+    "greeting": "Talofa,",
+    "paragraph1": "Mo le tusitusi e fa'atoa amata fo'i. O le tagata e tatala se pepa fou, tusitusi ni fuaitau se tolu (pe leai), ona fa'aalu lea o le 40 minute e fa'aleleia ai le momotuhi. O le tagata o ona manatu lelei e o'o mai i le po ae sela. O le tagata o iai ni tab e sefululima, ni tusi e ono, ma se ta'iala e le'i gaoioi mo se masina.",
+    "paragraph2Before": "Ou te iloa, aua o aʼu lea ",
+    "paragraph2After": ". O iai lo'u ADHD, Otismo, atonu o iai ni isi uiga e le'i su'esu'e mai. E mana'omia se mea e malamalama i lo'u fai'ai fefinaua'i ae matagofie. Se nofoaga e lafo atu ai mea uma a'o le'i mou atu (pe amata tusitusi). O vaega itiiti, manatu fe'oa'i, so'otaga o le pogisa o le po. Mea uma, i se nofoaga e tasi.",
+    "paragraph3": "O lea na ou fausia ai lenei avanoa mo i tatou. Ou te fa'amoemoe o le a maua ai lou mata'ala e pei ona maua e aʼu i le fausiaina.",
+    "paragraph4Before": "Se isi mea... Ou te talitonu i tekinolosi mo le lelei, ma ou tiga i fa'asalalauga. O lea, o le a pea leai ni fa'asalalauga ma aveave mo fa'aoga e le fa'atau. E mafai ona e velesi ma suia i lau manao i lalo o le ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Tulaga",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — e leai se fa'aogatusa fa'amaumauga. O fa'amaumauga uma o lo'o fa'asaoina i le IndexedDB o lau su'esu'e fa'alotoifale. Afai e tapeese le cache o lau su'esu'e, o le a leiloa au galuega.",
+    "feedbackBefore": "O lo'o ou fa'aauau ona fausia lenei mea, ma iai la'u manatu tele ",
+    "feedbackAfter": ". Ou te fiafia e fa'alogo po'o a mea e aoga, o a mea e le lelei, ma mea e te mana'o ai e iai. Ua tali fa'amafanafana su'esu'ega.",
+    "sourceLabel": "Puna"
+  },
+  "settings": {
+    "back": "toe fo'i",
+    "windowTitle": "lotem · fa'atulagaga",
+    "breadcrumb": "FA'ATULAGAGA AOFA'I",
+    "shellSubtitle": "FA'ATULAGAGA AOFA'I",
+    "comingSoonBadge": "o lo'o sau",
+    "helpAria": "O le a lenei mea?",
+    "groups": {
+      "preferences": "Filifiliga",
+      "writing": "Tusitusiga",
+      "data": "Fa'amaumauga",
+      "account": "Fa'amaumauga Talaaga"
+    },
+    "tabs": {
+      "general": "Lautele",
+      "appearance": "Va'aiga",
+      "editor": "Faatonu",
+      "docInspector": "Su'esu'e pepa",
+      "accessibility": "Mafai ona fa'aaogaina",
+      "typography": "Momotuhi",
+      "shortcuts": "Fa'apuupuu",
+      "templates": "Fa'ata'ita'i",
+      "palettes": "Lanu fa'ata'atia",
+      "citations": "Sitaili fa'asino",
+      "annotation": "Fa'ailoga",
+      "backups": "Taofi",
+      "sync": "Fa'aogatusa",
+      "export": "Auina atu / Auina mai",
+      "data": "Ou fa'amaumauga",
+      "account": "Fa'amaumauga Talaaga",
+      "about": "Fa'atatau",
+      "language": "Gagana"
+    },
+    "language": {
+      "title": "Gagana",
+      "subtitle": "Filifili le gagana mo le fa'atagata ma tusiga o le Nofoaga Fesoasoani. O fa'aliliu ua leiloa e toe fo'i i le Igilisi.",
+      "label": "Gagana o le fa'atagata",
+      "hint": "O suiga e fa'aopoopo vave ma fa'asaoina i lenei su'esu'e.",
+      "machineTranslationNotice": "O fa'aliliu e ese mai le Igilisi e gaosia otometi. Fa'amagalo mo ni mea sese — fa'amolemole lafo mai ou su'esu'ega ina ia mafai ona tatou teuteu.",
+      "feedbackLinkLabel": "auina su'esu'ega"
+    },
+    "editor": {
+      "title": "Faatonu",
+      "subtitle": "Faaili ma avanoa tusitusiga. O ala Markdown (#, >, -, **) o lo'o pea galue e tusa ai ma nei fa'atulagaga.",
+      "floatingToolbarLabel": "Faaili e amo",
+      "floatingToolbarHint": "E fa'aalia ile fa'ailoga po'o le kiliki-taumatau i le auala tusitusi.",
+      "floatingToolbarOff": "Pi'o",
+      "floatingToolbarOn": "Tatala",
+      "rightClickLabel": "Lisi kiliki-taumatau",
+      "rightClickHint": "Suia le faaili e amo ma le lisi fa'aagaga a le su'esu'e.",
+      "rightClickTooltip": "Fa'aoga le lisi fa'aagaga a le su'esu'e i le kiliki-taumatau nai lo le faaili e amo. O le a pea fa'aalia le faaili i le fa'ailoga-filifili.",
+      "inlineTogglesLabel": "Fa'aliliu i totonu",
+      "inlineTogglesHint": "Fa'amaualuga ma fa'aoi ki i totonu o le faaili e amo.",
+      "inlineTogglesTooltip": "Natia ki T ma I mai le faaili e amo. O lo'o pea galue ala Markdown (**, _).",
+      "listDepthLabel": "Loloto o lisi",
+      "listDepthHint": "Loloto e mafai ai e lisi fa'ailoga ma numera ona nofo.",
+      "listDepthTooltip": "Si'i po'o fa'aitiitia le tapula'a o le nofo lisi. O lo'o tunu i le va o 2 tulaga.",
+      "templateDefaultsLabel": "Fa'ataunuuga fa'ata'ita'i ta'itasi",
+      "templateDefaultsHint": "Vaega fa'aogaina eseese mo fa'ata'ita'i ta'itasi.",
+      "templateDefaultsTooltip": "Fa'atagaina fa'ata'ita'i ta'itasi (tala, tusi faasolosolo, fa'a-tekiniki…) e filifili ai lana vaega fa'aogaina."
+    },
+    "docInspector": {
+      "title": "Su'esu'e pepa",
+      "subtitle": "Filifili o'o a vaega e fa'aalia i le su'esu'e pepa. E mafai ona tapunia tagata lava jua ma fa'asuia mo avanoa ta'itasi.",
+      "statusLabel": "Tulaga",
+      "statusHint": "Fa'aalia le tulaga o le pepa ma tapuni pepa ua maea mai le su'esuega.",
+      "wordLimitLabel": "Tapula'a upu",
+      "wordLimitHint": "Fa'aalia le tapula'a faitau upu e mafai ona tu'uina mo pepa ta'itasi.",
+      "charLimitLabel": "Tapula'a mataitusi",
+      "charLimitHint": "Fa'aalia le tapula'a faitau mataitusi e mafai ona tu'uina mo pepa ta'itasi.",
+      "dueDateLabel": "Aso fa'ai'u",
+      "dueDateHint": "Fa'aalia le aso fa'ai'u e mafai ona tu'uina mo pepa ta'itasi.",
+      "highlightLabel": "Fa'ailoga tusitusiga ua sili atu",
+      "highlightHint": "Fa'alogo tusitusiga e sili atu i le tapula'a i le faatonu.",
+      "statusStagesLabel": "Tulaga o tulaga",
+      "statusStagesHint": "Filifili tulaga e fa'aalia i le filifili tulaga.",
+      "on": "Tatala",
+      "off": "Pi'o",
+      "inherit": "Fa'ataunuuga ({{state}})",
+      "inheritTooltip": "Na maua mai fa'atulagaga aofa'i",
+      "stateOn": "tatala",
+      "stateOff": "pi'o"
+    },
+    "accessibility": {
+      "title": "Mafai ona fa'aaogaina",
+      "subtitle": "Fa'afeagai le fa'atagata mo le filemu ma tekinolosi fesoasoani. E amata filifiliga ta'itasi i le fa'ata'ita'iga o le taimi nei — e leai se suiga se'ia o'o ina e filifilia.",
+      "theme": {
+        "label": "Fa'aaliga ma manino",
+        "hint": "O fa'aaliga manino maualuga e ausia le tulaga WCAG AAA.",
+        "light": "Mama",
+        "dark": "Pogisa",
+        "hcLight": "Manino maualuga (mama)",
+        "hcDark": "Manino maualuga (pogisa)"
+      },
+      "motion": {
+        "label": "Gaoioi",
+        "hint": "Fa'aitiitia po'o tapeese fa'aliliuina o le fa'atagata.",
+        "auto": "Fetaui ma le faiga",
+        "reduced": "Fa'aitiitia",
+        "full": "Atoa"
+      },
+      "textSize": {
+        "label": "Lapoa tusitusiga",
+        "hint": "Fa'aleleia le mata faitau ma tusitusiga.",
+        "sm": "La'itiiti",
+        "base": "Fa'ataunuuga",
+        "lg": "Lapoa",
+        "xl": "Lapoa tele"
+      },
+      "lineSpacing": {
+        "label": "Va'a le laina",
+        "hint": "Fa'aopoopoina se manava i le va o laina tusi.",
+        "normal": "Masani",
+        "relaxed": "Malie",
+        "loose": "Fa'ava'ava'a"
+      },
+      "linkUnderline": {
+        "label": "Fa'alaina pea so'otaga",
+        "hint": "Fa'aalia laina ina ia le fa'alagolago so'otaga i lanu na'o."
+      },
+      "focus": {
+        "label": "Fa'ailoga taulai fa'aleleia",
+        "hint": "Fa'aogaina se fa'aputu mafiafia, manino sili atu i le taulai."
+      },
+      "reset": {
+        "label": "Toe fa'afo'i i fa'ataunuuga",
+        "hint": "Fa'afo'i gaoioi, lapoa tusitusiga, va'a laina, so'otaga, ma taulai i o latou fa'ataunuuga. O lau fa'aaliga e le suia.",
+        "action": "Toe fa'afo'i"
+      }
+    },
+    "general": {
+      "title": "Lautele",
+      "subtitle": "Le auala e fa'aalia ai LIpsum Writer e pei o fa'ataunuuga. E leai se mea e fa'aleaga ai.",
+      "comingSoonBody": "Maualuga mau, fa'aitiitia gaoioi, va'aiga fa'apuupuu papapātuhi, ma le va'aiga e tatala i le amataga.",
+      "compactDensityLabel": "Maualuga mau",
+      "compactDensityHint": "Laina pipii i lisi, fa'aputu pipii i mea uma.",
+      "reduceMotionLabel": "Fa'aitiitia gaoioi",
+      "reduceMotionHint": "Lavea fa'aliliuina fa'aola i le va o va'aiga.",
+      "keyboardHintsLabel": "Fa'aalia fa'asinomaga ki",
+      "keyboardHintsHint": "Fa'aalia ala ⌘-ki i totonu fa'asilasila ma tulafono o ki.",
+      "startupLabel": "Tatala i le amataga",
+      "startupHint": "Mea e te va'aia pe a amata le polokalame.",
+      "startupOptions": {
+        "lastView": "Va'aiga mulimuli",
+        "home": "Aiga",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Va'aiga",
+      "subtitle": "Lanu, momotuhi, maualuga. Le tu'itu'i e e mana'o i ai.",
+      "comingSoonBody": "Fa'aaliga lanu fa'ataoto, lanu fa'a'ese, ma maualuga. O le suiga fa'aaliga o le taimi nei o lo'o i le faaili saosaoa o le nofoaga ao.",
+      "themeLabel": "Fa'aaliga",
+      "themeHint": "Fa'aaliga e tolu ua fa'ataoto. E fa'aleleia mea uma — lanu poloka, laina manifinifi, ae o'o lava i le pa'epa'e.",
+      "themes": {
+        "linen": "Lafu",
+        "linenSub": "fa'ataunuuga",
+        "studio": "Loki",
+        "studioSub": "eseese",
+        "midnight": "Ogatotonu o le po",
+        "midnightSub": "pogisa"
+      },
+      "accentLabel": "Fa'ailogaina",
+      "accentHint": "Fa'aaogaina mo le iu'iui, taulai, fusi su'esu'ega galue.",
+      "densityLabel": "Maualuga",
+      "densityOptions": {
+        "cozy": "Malie",
+        "default": "Fa'ataunuuga",
+        "compact": "Maualuga mau"
+      }
+    },
+    "templates": {
+      "title": "Fa'ata'ita'i",
+      "subtitle": "Ata fa'aleleia e mafai ona toe fa'aaogaina mo avanoa fou ma pepa.",
+      "comingSoonBody": "Fai au fa'ata'ita'i lava ia ma vaega, igoa pepa fa'ataunuuga, ma upu amata.",
+      "items": {
+        "fiction": "Tala Fa'asino",
+        "fictionSub": "Tuhiga · Lalolagi · Fale Tautau",
+        "research": "Su'esu'ega",
+        "researchSub": "Puna · Manatua · Teuga",
+        "journal": "Tusi Faasolosolo",
+        "journalSub": "Aso · Vaiaso · Mafaufauga",
+        "essay": "Pepa",
+        "essaySub": "Faasologa · Teuga · Fa'ai'u"
+      }
+    },
+    "palettes": {
+      "title": "Lanu fa'ata'atia",
+      "subtitle": "Lanu fa'ata'atia e lima i avanoa ta'itasi — fa'aigoaina ma fa'aleleia lanu ta'itasi.",
+      "comingSoonBody": "Fa'asuia, fa'asaoina, ma suia lanu fa'ata'atia (Fa'amaonia, Toe su'esu'e, Fa'asino…) i avanoa.",
+      "items": {
+        "evidence": "Fa'amaonia",
+        "revise": "Toe su'esu'e",
+        "reference": "Fa'asino",
+        "quote": "Fa'aupuga",
+        "loose": "Pito mou"
+      },
+      "rename": "toe igoa",
+      "tune": "fa'aleleia"
+    },
+    "citations": {
+      "title": "Sitaili fa'asino",
+      "subtitle": "Sitaili fa'asino fa'ataunuuga i avanoa uma.",
+      "comingSoonBody": "Filifili sitaili aofa'i (Chicago, APA, MLA…) ma fa'asino ta'itasi mo avanoa.",
+      "styleLabel": "Sitaili fa'ataunuuga",
+      "styleHint": "Fa'aaogaina pe a fa'aopoopo se fa'asino fou. O fa'asuiga ta'itasi mo avanoa o lo'o i luma.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Fa'ailoga",
+      "subtitle": "Manatua i itu tafatafa ma fa'ailoga i totonu.",
+      "comingSoonBody": "Ituaiga fa'ailoga, fa'ataunuuga va'aiga, ma amio auina atu.",
+      "showMarginLabel": "Fa'aalia manatua itu",
+      "showMarginHint": "O fa'ailoga e amo i le itu taumatau pe iai le avanoa.",
+      "showInlineLabel": "Fa'aalia fa'ailoga i totonu",
+      "showInlineHint": "O le lanu fa'ailoga e afu i luga o tusi i lalo.",
+      "exportLabel": "Aofia i auina atu",
+      "exportHint": "O fa'ailoga e tusia fa'atasi ma le tino o le pepa."
+    },
+    "export": {
+      "title": "Auina atu / Auina mai",
+      "subtitle": "Fa'agaioiina fa'amaumauga mai ma i LIpsum Writer.",
+      "comingSoonBody": "Auina atu tele i .zip, auina mai mai so'o se fa'aputuga LIpsum po'o se faitoto'a Markdown.",
+      "formatLabel": "Fa'atulagaina auina atu",
+      "formatHint": "O auina atu ta'itasi mo pepa ma avanoa e fa'aaogaina le fa'ataunuuga e tasi.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Auina mai mai",
+      "importHint": "Auina mai so'o se fa'aputuga LIpsum po'o se faitoto'a konefu Markdown.",
+      "importOptions": {
+        "bundle": "Fa'aputuga LIpsum (.zip)",
+        "markdown": "Faitoto'a Markdown",
+        "obsidian": "Fale Obsidian"
+      },
+      "importSpaceLabel": "Auina mai se avanoa",
+      "importSpaceHint": "Auina mai se avanoa i lenei su'esu'e mai se faletupe Writer (.zip) — se taiala fa'asaoina po'o se auina atu fa'aogatusa-faitoto'a mai se isi masini.",
+      "importChooseFile": "Filifili faletupe…",
+      "importing": "o lo'o auina mai…",
+      "importFailed": "Na toilalo le auina mai: {{message}}",
+      "comingSoonLabel": "Fa'atulagaina sili atu",
+      "comingSoonHint": "Auina atu tele ma auina mai mai faitoto'a Markdown po'o fale Obsidian.",
+      "comingSoonTooltip": "Fuafuaina — e le'i maua nei."
+    },
+    "data": {
+      "title": "Ou fa'amaumauga",
+      "subtitle": "Le mea e nofo ai au galuega ma le aofaiga o le avanoa.",
+      "comingSoonBody": "Fa'aaogaina IndexedDB, iloiloga teuina, ma le tapeese atoa e tasi kiliki.",
+      "storageLabel": "Teuina ua fa'aaogaina",
+      "storageValue": "≈ 12.4 MB · 4 avanoa, 38 pepa",
+      "engineLabel": "Afi teuina",
+      "engineValue": "IndexedDB (su'esu'e fa'alotoifale)",
+      "wipeLabel": "Tapeese mea uma",
+      "wipeHint": "Aveese avanoa, pepa, ma va'aiga uma mai lenei su'esu'e. E leai se toe fa'afo'i.",
+      "wipeButton": "Tapeese fa'amaumauga fa'alotoifale…"
+    },
+    "about": {
+      "title": "Fa'atatau",
+      "subtitle": "Fa'amatalaga fausiaina ma so'otaga.",
+      "comingSoonBody": "Va'ai i le itulau /about mo le tala; o lenei laaau o le a iai ai fa'amatalaga fausiaina, laisene, ma suiga.",
+      "versionLabel": "Lomiga",
+      "versionValue": "{{version}}",
+      "buildLabel": "Fausiaina",
+      "buildValue": "fa'alotoifale",
+      "licenseLabel": "Laisene",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "So'otaga",
+      "links": {
+        "source": "Puna",
+        "changelog": "Lisi suiga",
+        "feedback": "Auina su'esu'ega"
+      }
+    },
+    "account": {
+      "title": "Fa'amaumauga Talaaga",
+      "subtitle": "Ulufale, fa'aogatusa i masini, ma avanoa faigaluega fa'atasi.",
+      "comingSoonBody": "E le'i maua le fa'aogatusa ao nei — o Lotem e fa'alotoifale na'o. O le fa'amaumauga talaaga, ulufale, ma avanoa faigaluega fa'atasi o le a o'o mai pe a auina le fa'aogatusa.",
+      "signedOutLabel": "Ulufale",
+      "signedOutHint": "E le'i maua le fa'aogatusa ao. O lo'o i ai lenei e fa'aalia le mamanu.",
+      "signInButton": "Ulufale ma le imeli",
+      "syncLabel": "Fa'aogatusa lenei masini",
+      "syncHint": "Pe a uma ona e ulufale, o le a fa'asoa ou avanoa i isi masini."
+    },
+    "typography": {
+      "title": "Momotuhi",
+      "subtitle": "Fa'ataunuuga i lalolagi uma. E mafai e lalolagi ta'itasi ona fa'asuia.",
+      "comingSoonBody": "Filifili momotuhi tusi, momotuhi fa'atagata, lapoa faitau fa'ataunuuga, maualuga laina, ma fua mo lalolagi fou.",
+      "proseFontLabel": "Momotuhi tusi",
+      "uiFontLabel": "Momotuhi fa'atagata",
+      "proseSizeLabel": "Lapoa tusi",
+      "proseSizeHint": "Fa'ataunuuga mo lalolagi fou.",
+      "lineHeightLabel": "Maualuga laina",
+      "measureLabel": "Fua",
+      "measureHint": "Lautele o le laina maualuga.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Ala Puupuu",
+      "subtitle": "Fusi ki mo fefolasia'i, fa'atulagaina, ma tulaga.",
+      "comingSoonBody": "Ala puupuu e mafai ona suia mo tusitusi/faitau/vaeluaina, tulaga taulai, ma le faaili fa'atulagaina.",
+      "navHeader": "Fefolasia'i",
+      "formatHeader": "Fa'atulagaina",
+      "modeHeader": "Tulaga",
+      "items": {
+        "openSettings": "Tatala fa'atulagaga",
+        "quickSettings": "Fa'atulagaga saosaoa",
+        "findInDoc": "Su'e i pepa",
+        "toggleFocus": "Suia taulai",
+        "toggleInspector": "Suia su'esu'ega",
+        "bold": "Māfiafia",
+        "italic": "Fa'aoi",
+        "underline": "Laina i lalo",
+        "heading1": "Ulutala 1",
+        "heading2": "Ulutala 2",
+        "write": "Tulaga tusitusi",
+        "read": "Tulaga faitau",
+        "split": "Tulaga vaeluaina"
+      }
+    },
+    "backups": {
+      "title": "Taofi",
+      "subtitle": "Auina atu, fa'afo'i, ma va'aiga ou fa'amaumauga fa'alotoifale.",
+      "comingSoonBody": "Va'aiga fa'alotoifale fa'apitoa, auina atu ma le lima i .zip, ma toe fa'afo'i mai se taofi muamua.",
+      "intervalLabel": "Va'aiga aunoa va'aiga",
+      "intervalOptions": {
+        "5min": "5 minute",
+        "10min": "10 minute",
+        "30min": "30 minute",
+        "off": "Pi'o"
+      },
+      "keepLabel": "Taofi",
+      "keepHint": "O va'aiga tuai o le a aveese aunoa.",
+      "keepOptions": {
+        "last50": "50 mulimuli",
+        "days7": "7 aso",
+        "days30": "30 aso"
+      },
+      "latestLabel": "Fou rawa",
+      "latestValue": "12 minute talu ai · 1,190 upu"
+    },
+    "sync": {
+      "title": "Fa'aogatusa",
+      "subtitle": "Auina ou avanoa i se faitoto'a e e filifilia. Fa'asino i se faitoto'a Google Drive, Dropbox, po'o iCloud e fa'aogatusa ai i masini.",
+      "unsupportedTitle": "E le maua i lenei su'esu'e",
+      "unsupportedBody": "E mana'omia e le fa'aogatusa faitoto'a le API Fa'aaogaina Fa'aagaga Faila, e maua i Chrome, Edge, ma isi su'esu'e Chromium i luga o le laulau. Suia i se su'esu'e e lagolagoina e fa'aaoga.",
+      "folderLabel": "Faitoto'a fa'aogatusa",
+      "folderHint": "O fa'aogatusa ta'itasi e tusia ai se Markdown .zip mo avanoa ta'itasi iinei, o lo'o taofia ai le 5 mulimuli ma se latest.zip. O le Fa'aogatusa e ese mai le Taofi.",
+      "noFolder": "E leai se faitoto'a ua so'o",
+      "chooseFolder": "Filifili faitoto'a…",
+      "changeFolder": "Suia…",
+      "disconnect": "Vavae",
+      "intervalLabel": "Fa'aogatusa aunoa",
+      "intervalHint": "Le auautia o le fa'aogatusa aunoa o avanoa ae tatala le polokalame ma so'o le faitoto'a. E mafai e avanoa ta'itasi ona suia lenei fa'ataunuuga.",
+      "intervalOff": "Pi'o",
+      "intervalMinutes": "{{count}} minute",
+      "intervalDefault": "Fa'ataunuuga ({{label}})",
+      "syncLabel": "Fa'aogatusa ma le lima",
+      "pushOnlyHint": "Auina atu na'o nei — e tusia ai ou fa'amaumauga fa'alotoifale i le faitoto'a. O le aumai fo'i suiga o lo'o i luma.",
+      "syncNow": "Fa'aogatusa nei",
+      "syncNowAll": "Fa'aogatusa avanoa uma",
+      "reconnectHint": "Ua taofi le fa'aogatusa — e mana'omia e le su'esu'e le fa'atagaga faitoto'a mo lenei taimi. Toe so'o e fa'aauau ai le fa'aogatusa ma le lima ma aunoa.",
+      "reconnectButton": "Toe so'o",
+      "reconnecting": "O lo'o toe so'o…",
+      "syncing": "O lo'o fa'aogatusa…",
+      "syncFailed": "Na toilalo le fa'aogatusa: {{message}}",
+      "lastSynced": "Na fa'aogatusaina mulimuli {{when}}",
+      "neverSynced": "E le'i fa'aogatusaina",
+      "justNow": "nei lava",
+      "resultsTitle": "Fa'agasolosolo mulimuli",
+      "spaceOk": "ua fa'aogatusaina",
+      "spaceFailed": "na toilalo",
+      "historyTitle": "Fa'aogatusa tata",
+      "historyEmpty": "E leai ni fa'aogatusa.",
+      "columns": {
+        "when": "AFE",
+        "space": "AVANOA",
+        "kind": "ITUAIGA",
+        "size": "LAPOA",
+        "status": "TULAGA"
+      },
+      "kind": {
+        "auto": "aunoa",
+        "manual": "ma le lima"
+      },
+      "status": {
+        "ok": "lelei",
+        "error": "sese"
+      }
+    },
+    "space": {
+      "breadcrumb": "AVANOA · FA'ATULAGAGA",
+      "shellSubtitle": "FA'ATULAGAGA AVANOA",
+      "loading": "O lo'o utaina avanoa…",
+      "groups": {
+        "thisSpace": "Lenei avanoa",
+        "sharingMembers": "Fa'asoa & sui",
+        "data": "Fa'amaumauga",
+        "dangerZone": "Nofoaga lamatia"
+      },
+      "tabs": {
+        "general": "Lautele",
+        "docInspector": "Su'esu'e pepa",
+        "template": "Fa'ata'ita'i",
+        "palette": "Lanu fa'ata'atia",
+        "sharing": "Fa'asoa",
+        "members": "Sui",
+        "backups": "Taofi",
+        "sync": "Fa'aogatusa",
+        "export": "Auina atu",
+        "danger": "Nofoaga lamatia"
+      },
+      "docInspector": {
+        "title": "Su'esu'e pepa",
+        "subtitle": "Fa'asuia fa'atulagaga su'esu'e aofa'i mo lenei avanoa."
+      },
+      "palette": {
+        "title": "Lanu fa'ata'atia",
+        "subtitle": "Lanu fa'ata'atia e lima, ua igoa, e mafai ona fa'aleleia mo lenei avanoa.",
+        "comingSoonBody": "Toe igoa, suia lanu, ma fa'asoloa igoa fa'atia o lenei avanoa.",
+        "items": {
+          "evidence": "Fa'amaonia",
+          "revise": "Toe su'esu'e",
+          "reference": "Fa'asino",
+          "quote": "Fa'aupuga",
+          "loose": "Pito mou"
+        },
+        "rename": "toe igoa",
+        "tune": "fa'aleleia"
+      },
+      "export": {
+        "title": "Auina atu",
+        "subtitle": "Fa'agaioiina mea o lenei avanoa i se isi mea.",
+        "comingSoonBody": "Auina atu i Markdown .zip (o le taimi nei e ala i Taofi), LaTeX, HTML, po'o PDF — mea uma i se nofoaga e tasi.",
+        "formatLabel": "Fa'atulagaina",
+        "formatHint": "O Markdown e auina atu muamua; o isi o lo'o mulimuli mai.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Auina atu mulimuli",
+        "lastValue": "e lé o'o lava"
+      },
+      "general": {
+        "title": "Lautele",
+        "subtitle": "Fa'amatalaga fa'ailoaina mo lenei avanoa. O suiga e fa'aopoopo vave ma fa'aogatusaina i va'aiga.",
+        "nameLabel": "Igoa avanoa",
+        "nameHint": "Fa'aalia i le ulutala itu ma le fa'asilasila ara avanoa.",
+        "tagLabel": "Fa'ailoga",
+        "tagHint": "Se numera puupuu (mataitusi 2–4) fa'aalia i luga o le poloka ara avanoa."
+      },
+      "sharing": {
+        "title": "Fa'asoa",
+        "subtitle": "Pulea le auala e fa'asoa ai lenei avanoa.",
+        "comingSoonBody": "Va'aiga ta'itasi mo avanoa ma so'otaga fa'asoa. O lo'o i luma pe a auina le fa'aogatusa ao.",
+        "visibilityLabel": "Va'aiga",
+        "visibilityOptions": {
+          "private": "Fa'alilolilo",
+          "link": "So'o se tagata ua iai le so'otaga",
+          "members": "Sui na'o"
+        },
+        "linkLabel": "So'otaga fa'asoa",
+        "linkHint": "Faitau na'o e pei o fa'ataunuuga. O aia tatau su'esu'ega e mulimuli i Sui.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "kopi"
+      },
+      "template": {
+        "title": "Fa'ata'ita'i",
+        "subtitle": "Le fa'ata'ita'i fa'atulagaga na faia ai lenei avanoa.",
+        "comingSoonBody": "E le lagolagoina le suia o le fa'ata'ita'i o le avanoa pe a uma ona faia. O lo'o i luma pe a mafai ona fa'agaioiia vaega ma pepa saogalemu.",
+        "currentLabel": "Fa'ata'ita'i nei",
+        "currentValue": "Tala Fa'asino",
+        "currentSub": "Tuhiga · Lalolagi · Fale Tautau",
+        "changeLabel": "Suia fa'ata'ita'i",
+        "changeHint": "Toe fa'atulagaina vaega ma pepa i le fa'ata'ita'i fou.",
+        "changeButton": "Suia fa'ata'ita'i…"
+      },
+      "members": {
+        "title": "Sui",
+        "subtitle": "Tusitusi fa'atasi ma su'esu'e ua iai le avanoa i lenei nofoaga.",
+        "comingSoonBody": "Vala'au galulue fa'atasi, pulea tulaga, ma su'esu'e suiga. O lo'o i luma ma le fa'aogatusa ao.",
+        "inviteLabel": "Vala'au e ala i imeli",
+        "inviteHint": "O le a matou auina atu se so'otaga e auai ai i lenei avanoa.",
+        "invitePlaceholder": "igoa@fa'ata'ita'i.com",
+        "inviteButton": "auina vala'au",
+        "membersLabel": "Sui",
+        "roles": {
+          "owner": "ona",
+          "editor": "faatonu",
+          "viewer": "tagata va'ai"
+        },
+        "you": "oe"
+      },
+      "backups": {
+        "title": "Taofi",
+        "subtitle": "Va'aiga lenei avanoa e pei o se .zip e mafai ona tikiake, taofi, ma toe fa'afo'i.",
+        "retentionHint": "O lo'o taofia ai va'aiga {{count}} fou rawa — o mea tuai o le a aveese aunoa.",
+        "snapshotNow": "+ va'aiga nei",
+        "snapshotting": "o lo'o va'aiga…",
+        "snapshotFailed": "Na toilalo le va'aiga: {{message}}",
+        "historyTitle": "Tala'aga",
+        "empty": "E leai ni va'aiga — fai se tasi ma le + va'aiga nei.",
+        "columns": {
+          "when": "AFE",
+          "kind": "ITUAIGA",
+          "size": "LAPOA",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "ma le lima",
+          "auto": "aunoa",
+          "snapshot": "va'aiga"
+        },
+        "download": "↓ tikiake",
+        "delete": "tapeese",
+        "deleteConfirm": "Tapeese lenei va'aiga? E le mafai ona toe fa'afo'i.",
+        "deleted": "Ua tapeese le va'aiga.",
+        "justNow": "nei lava",
+        "restore": "↺ toe fa'afo'i",
+        "restoreUnavailable": "Na faia lenei va'aiga a'o le'i lagolagoina le toe fa'afo'i — e mafai na'o le tikiake.",
+        "restoreDialogTitle": "Toe fa'afo'i lenei va'aiga?",
+        "restoreDialogBody": "O le a sui mea uma o lenei avanoa i le va'aiga. O se va'aiga o le tulaga nei o le a fa'asaoina muamua, ina ia mafai ona e fa'aleaogaina lenei toe fa'afo'i.",
+        "restoreConfirm": "Toe fa'afo'i",
+        "restoreCancel": "Fa'aleaogaina",
+        "restoring": "o lo'o toe fa'afo'i…",
+        "restored": "Ua toe fa'afo'i le va'aiga.",
+        "restoreFailed": "Na toilalo le toe fa'afo'i: {{message}}",
+        "fileRestoreTitle": "O lo'o toe fa'afo'i mai se .zip ua tikiake?",
+        "fileRestoreBody": "Auina mai e ala i Fa'atulagaga Aofa'i → Auina atu / Auina mai — o le a foi mai o se avanoa fou, ma lenei avanoa e le suia."
+      },
+      "sync": {
+        "title": "Fa'aogatusa",
+        "subtitle": "Auina lenei avanoa i le faitoto'a ua so'o, ma le lima po'o se fa'apitoa. O le Fa'aogatusa e ese mai le Taofi.",
+        "folderHint": "So'o se faitoto'a i Fa'atulagaga Aofa'i → Fa'aogatusa. O le faitoto'a e tasi e fa'aaogaina mo avanoa uma.",
+        "intervalHint": "Le auautia o le fa'aogatusa aunoa o lenei avanoa. Filifili Fa'ataunuuga e mulimuli ai i le fa'atulagaga fa'aogatusa aunoa aofa'i.",
+        "syncNow": "Fa'aogatusa lenei avanoa"
+      },
+      "danger": {
+        "title": "Nofoaga lamatia",
+        "subtitle": "Gaoioiga e le mafai ona toe fo'i. Faitau ma le mamalosi a'o le'i fa'aauau.",
+        "deleteCardTitle": "Tapeese lenei avanoa",
+        "deleteCardBody": "Aveese tumau lenei avanoa fa'atasi ma pepa, vaega, manatua Brain space, fa'ailoga, fa'asino, ma so'otaga uma. E le mafai ona toe fa'afo'i.",
+        "deleteButton": "Tapeese lenei avanoa",
+        "dialogTitle": "Tapeese \"{{name}}\"?",
+        "dialogBody": "O lenei e aveese tumau le avanoa ma mea uma o lo'o i ai. E le mafai ona toe fa'afo'i.",
+        "typeToConfirm": "Taina {{name}} e fa'amaonia",
+        "cancel": "Fa'aleaogaina",
+        "confirm": "Tapeese avanoa"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Ua leiloa i itu tafatafa",
+    "body": "E le iai lena itulau (i le taimi nei).",
+    "goHome": "Fo'i i le aiga"
+  },
+  "templates": {
+    "crumb": "01 — SE ITUAIGA POTU",
+    "headingMain": "O le a le ituaiga avanoa",
+    "headingAccent": "o lo'o e amata?",
+    "chooseLegend": "Filifili se fa'ata'ita'i",
+    "stage": {
+      "pre-alpha": "fa'ataoto",
+      "alpha": "amata",
+      "beta": "beta"
+    },
+    "nameLabel": "Igoa",
+    "tagLabel": "Fa'ailoga",
+    "syncLabel": "fa'aogatusa ao —",
+    "syncValue": "pi'o, fa'alotoifale",
+    "syncTooltip": "E le maua le fa'aogatusa ao — o lenei polokalame e fa'alotoifale na'o nei.",
+    "creating": "o lo'o faia…",
+    "submitLabel": "ulufale {{name}} →",
+    "newSpace": "avanoa fou",
+    "back": "toe fo'i"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} e le'i fa'asoloa",
+    "title": "Brain space",
+    "mobileWarning": "O le Brain space e sili atu ona lelei i luga o se laulau tetele.",
+    "mobileNote": "O le vaaiga e mana'omia se isumu po'o se pa'u.",
+    "openInWrite": "Tatala i le Tusitusi →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "amata lafo",
+      "emptyHint": "filifili se ituaiga kaate i lalo",
+      "pendingHint": "kiliki-shift i se isi manatua e so'o · esc e fa'aleaogaina"
+    },
+    "note": {
+      "deleteNote": "Tapeese manatua",
+      "addPicture": "Fa'aopoopoina ata",
+      "addPictureCta": "fa'aopoopoina se ata",
+      "openLinkedDoc": "Tatala pepa ua so'o",
+      "fetchedContent": "Mea ua maua",
+      "openDetailsLabel": "Tatala fa'amatalaga",
+      "openDetailsTitle": "Tatala pane fa'amatalaga",
+      "titlePlaceholder": "ulutala",
+      "addTitleCta": "+ ulutala",
+      "bodyEmpty": "(kiliki e tusitusi)",
+      "viewImage": "Va'ai {{name}}",
+      "removeImage": "Aveese {{name}}",
+      "resize": "Suia lapoa o manatua",
+      "days": {
+        "sun": "sap",
+        "mon": "mon",
+        "tue": "tue",
+        "wed": "wen",
+        "thu": "fia",
+        "fri": "fal",
+        "sat": "sas"
+      }
+    },
+    "drawer": {
+      "title": "Fa'amatalaga manatua",
+      "description": "Fa'asuia le manatua ua filifilia ma fa'atautaia ona so'otaga.",
+      "untitledPlaceholder": "E leai se ulutala",
+      "titleAriaLabel": "Ulutala manatua",
+      "closeAriaLabel": "Tapuni le aveave",
+      "bodyLabel": "Tino",
+      "bodyPlaceholder": "Tusia se mea…",
+      "picturesLabel": "Ata",
+      "addPicture": "Fa'aopoopoina ata",
+      "pictureLimitHint": "ua o'o i le tapula'a {{count}} — aveese se tasi e fa'aopoopoina se isi.",
+      "linkedDocLabel": "Pepa ua So'o",
+      "noLinkedDoc": "— E leai se pepa ua so'o —",
+      "untitledDoc": "E leai se ulutala",
+      "openDoc": "Tatala",
+      "connectionsHeading": "So'otaga ({{count}})",
+      "connectionsEmpty": "kiliki-shift i se isi manatua i le vaaiga e so'o.",
+      "untitledNote": "(e leai se ulutala)",
+      "removeConnection": "Aveese so'otaga",
+      "deleteNote": "Tapeese manatua"
+    }
+  },
+  "split": {
+    "title": "Va'aiga vaeluaina",
+    "mobileWarning": "E mana'omia e le va'aiga vaeluaina se laulau tetele.",
+    "mobileNote": "Tatala lenei pepa i le Tulaga Tusitusi.",
+    "openInWrite": "Tatala i le Tusitusi →",
+    "leftPrefix": "AGAVALE —",
+    "rightPrefix": "TAUMATAU —",
+    "rightPaneAria": "Pepa pane taumatau",
+    "noOtherDocs": "(e leai isi pepa)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Fa'asino",
+    "pickDoc": "Filifili se pepa mai le lisi i luga.",
+    "dividerAria": "Suia lapoa o pane vaeluaina"
+  },
+  "citationsDrawer": {
+    "title": "Fa'asino",
+    "description": "Su'e, auina mai, ma auina atu fa'asino mo lenei avanoa.",
+    "close": "Tapuni fa'asino",
+    "expand": "Tatala fa'asino i le va'aiga atoa"
+  },
+  "citations": {
+    "title": "Fa'asino",
+    "breadcrumb": "Puna / ",
+    "entries": "{{count}} ULUFALE",
+    "searchPlaceholder": "tusitala, fa'ailoga, tausaga…",
+    "upload": "↑ tukiake .bib / .ris",
+    "add": "+ fa'aopoopo",
+    "cancel": "× fa'aleaogaina",
+    "columns": {
+      "tag": "FA'AILOGA",
+      "authors": "TUSITALA",
+      "title": "ULUTALA",
+      "year": "TAUSAGA",
+      "type": "ITUAIGA",
+      "used": "FA'AAOGAINA"
+    },
+    "style": "SITAILI — CHICAGO (TUSITALA-ASO)",
+    "exportBib": "AUINA ATU E PEIA .BIB",
+    "summary": "{{filtered}} FA'AALIA · {{shown}} I LENEI ITULAU",
+    "prevPage": "Itulau muamua",
+    "nextPage": "Itulau o lo'o mulimuli",
+    "empty": "e leai ni fa'asino",
+    "noMatch": "e leai ni laina e fetaui ma lau su'esu'ega.",
+    "importHint": "auina mai se .bib po'o fa'aopoopoina se tasi ma le lima.",
+    "pasteHeader": "Fa'apipi'i BibTeX po'o se ulutala",
+    "addCitation": "fa'aopoopo fa'asino",
+    "manualCancel": "fa'aleaogaina",
+    "adding": "o lo'o fa'aopoopoina…",
+    "parsing": "O lo'o su'esu'e {{name}}…",
+    "imported": "Ua auina mai {{added}} fa'asino{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", prukana {{skipped}} tutusa{{skippedPlural}}",
+    "skippedSuffixShort": ", prukana {{skipped}}",
+    "failed": "Na toilalo le su'esu'e: {{message}}",
+    "failedManual": "Na toilalo: {{message}}",
+    "addedOne": "Ua fa'aopoopoina 1 fa'asino.",
+    "unknownAuthor": "(unknown)",
+    "unknownError": "sese e le iloa",
+    "edit": {
+      "save": "fa'asao",
+      "saving": "o lo'o fa'asao…",
+      "cancel": "fa'aleaogaina",
+      "delete": "tapeese",
+      "edit": "fa'asuia",
+      "tagLabel": "Fa'ailoga",
+      "authorsLabel": "Tusitala",
+      "titleLabel": "Ulutala",
+      "yearLabel": "Tausaga",
+      "typeLabel": "Ituaiga",
+      "duplicateKey": "Ua fa'aaogaina le fa'ailoga \"{{key}}\" i lenei avanoa.",
+      "updated": "Ua fa'ata'oto'o 1 fa'asino.",
+      "deleteOne": "Ua tapeese 1 fa'asino.",
+      "confirmDeleteUsed": "O lo'o fa'aaogaina lenei fa'asino {{count}}× i au pepa. Tapeese pea?",
+      "confirmDeleteSingle": "Tapeese le fa'asino \"{{key}}\"? E le mafai ona toe fa'afo'i.",
+      "untitled": "(e leai se ulutala)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} ua filifilia",
+      "deleteSelected": "tapeese",
+      "setTypePrompt": "tu'u ituaiga",
+      "setTypeAria": "Tu'u ituaiga mo fa'asino ua filifilia",
+      "chooseOption": "filifili…",
+      "ariaLabel": "Gaoioiga tele",
+      "clearSelection": "tape'e",
+      "deleted": "Ua tapeese {{count}} fa'asino.",
+      "typeApplied": "Ua tu'u le ituaiga {{type}} i {{count}} fa'asino.",
+      "confirmDelete": "Tapeese {{count}} fa'asino? E le mafai ona toe fa'afo'i."
+    },
+    "row": {
+      "selectAllAria": "Filifili fa'asino uma i lenei itulau",
+      "viewCitationAria": "Va'ai fa'asino {{key}}",
+      "selectCitationAria": "Filifili fa'asino {{key}}",
+      "collapseCitationAria": "Fa'apuupuu fa'asino {{key}}",
+      "usedCount": "{{count}}× fa'aaogaina",
+      "unused": "e le fa'aaogaina",
+      "copyTag": "Kopi fa'ailoga",
+      "copyTagAria": "Kopi fa'ailoga {{value}}",
+      "copiedTitle": "Ua kopia",
+      "copiedTagAria": "Ua kopia fa'ailoga {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

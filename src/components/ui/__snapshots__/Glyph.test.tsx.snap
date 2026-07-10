@@ -1,0 +1,45 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Glyph > snapshot > should match the snapshot across all variants 1`] = `
+<div>
+  <div>
+    <button
+      aria-label="more"
+      class="inline-flex items-center justify-center bg-transparent transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 font-normal text-ink-3 hover:bg-paper-2 hover:text-ink font-sans"
+      data-testid="g-snap-off"
+      style="width: 28px; height: 28px; font-size: 14px; line-height: 1;"
+      type="button"
+    >
+      ⋯
+    </button>
+    <button
+      aria-label="more on"
+      aria-pressed="true"
+      class="inline-flex items-center justify-center bg-transparent transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 font-semibold text-ink font-sans"
+      data-testid="g-snap-on"
+      style="width: 28px; height: 28px; font-size: 14px; line-height: 1;"
+      type="button"
+    >
+      ⋯
+    </button>
+    <button
+      aria-label="help"
+      class="inline-flex items-center justify-center bg-transparent transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 font-normal text-ink-3 hover:bg-paper-2 hover:text-ink font-serif italic"
+      data-testid="g-snap-italic"
+      style="width: 28px; height: 28px; font-size: 14px; line-height: 1;"
+      type="button"
+    >
+      ?
+    </button>
+    <button
+      aria-label="big"
+      class="inline-flex items-center justify-center bg-transparent transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 font-normal text-ink-3 hover:bg-paper-2 hover:text-ink font-sans"
+      data-testid="g-snap-size"
+      style="width: 22px; height: 22px; font-size: 11px; line-height: 1;"
+      type="button"
+    >
+      ⋯
+    </button>
+  </div>
+</div>
+`;

@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Tooltip > renders closed trigger inside provider 1`] = `
+<div>
+  <button
+    data-state="closed"
+    type="button"
+  >
+    hover me
+  </button>
+</div>
+`;

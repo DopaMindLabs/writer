@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Súgó és túrák", "tours": "Vezetett túrák", "resetAll": "Összes túra visszaállítása" },
+  "controls": { "next": "Tovább", "prev": "Vissza", "done": "Kész", "progress": "{{current}} / {{total}}" },
+  "welcome": {
+    "title": "Üdvözlünk a LIpsum Writerben",
+    "description": "Gyors eligazítás a terekről és a kezdőképernyőről.",
+    "intro": { "title": "Üdvözlet", "body": "A LIpsum Writer egy <i>terek</i> köré épült írói munkaterület — egy tér projektenként, cikkenként vagy könyvenként. Nézzünk körül gyorsan." },
+    "continue": { "title": "Folytasd ott, ahol abbahagytad", "body": "A legutóbb szerkesztett tered itt van. Egy kattintással újra megnyithatod." },
+    "startSpace": { "title": "Kezdj valami újat", "body": "Hozz létre új teret egy sablonból — szakdolgozat, regény, esszé — és kezdj el írni másodperceken belül." }
+  },
+  "writer": {
+    "title": "Az író munkaterülete",
+    "description": "Túra a szerkesztőn, oldalsávon és felső sávon.",
+    "intro": { "title": "Az írási felület", "body": "Itt végzed a munkát. Nézzük meg a navigációt, módokat és eszközöket, amelyeket a leggyakrabban fogsz használni." },
+    "spaceTitle": { "title": "Tér címe", "body": "Kattints a címre a tér átnevezéséhez. A mellette lévő ikon megnyitja a beállításokat." },
+    "sections": { "title": "Szekciók és dokumentumok", "body": "Szervezd a teret szekciókba, a szekciókat dokumentumokba. Vidd az egeret egy szekció fölé dokumentum hozzáadásához." },
+    "settings": { "title": "Tér beállításai", "body": "Kezeld a tér sablonját, szekcióit, megosztását és törlését." },
+    "modes": { "title": "Olvas · Ír · Megoszt", "body": "Válts szerkesztés, olvasás vagy egymás melletti nézet között. Minden dokumentum emlékszik a legutóbbi módra." },
+    "citations": { "title": "Hivatkozások", "body": "Nyisd meg a hivatkozások panelt, hogy hivatkozásokat illessz be írás közben." },
+    "theme": { "title": "Téma", "body": "Világos, sötét és nagy kontrasztú változatok — válaszd ki azt, amelyik kényelmes a szemednek." },
+    "editor": { "title": "A szerkesztő", "body": "Gazdag szövegszerkesztő Markdown gyorsbillentyűkkel, kódblokkokkal és idézetekkel. Kezdj el írni — a munkád helyben mentődik automatikusan." }
+  },
+  "citations": {
+    "title": "Hivatkozások",
+    "description": "Hivatkozások és bibliográfiák kezelése.",
+    "intro": { "title": "A bibliográfiád", "body": "A tér összes hivatkozása itt él. Importálj BibTeX fájlt vagy adj hozzá bejegyzéseket kézzel." },
+    "add": { "title": "Hozzáadás vagy importálás", "body": "Húzz be egy .bib fájlt vagy illessz be BibTeX szöveget. A duplikátumok automatikusan kimaradnak." },
+    "list": { "title": "A lista", "body": "Keress, szűrj és szerkessz hivatkozásokat inline. Innen az egész bibliográfiát is exportálhatod." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "A szabad jegyzetvászon.",
+    "intro": { "title": "Gondolkodj hangosan", "body": "A BrainSpace egy szabad vászon ötleteknek — dobj jegyzeteket, kapcsold össze őket és formáld gondolataidat, mielőtt prózára térnél át." },
+    "addNote": { "title": "Jegyzet hozzáadása", "body": "Dobj bármilyen típusú jegyzetet a vászonra. Húzd a mozgatáshoz, méretezd a sarkokból." },
+    "canvas": { "title": "A vászon", "body": "Shift+kattints két jegyzeten az összekapcsolásukhoz. Kattints a háttérre a kijelölés megszüntetéséhez." }
+  }
+}

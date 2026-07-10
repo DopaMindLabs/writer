@@ -1,0 +1,39 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`snapshot > matches the rendered fallback 1`] = `
+<div>
+  <div
+    class="flex h-full w-full flex-col items-center justify-center px-6 text-center md:hidden"
+    data-testid="mobile-split-fallback"
+  >
+    <div
+      aria-hidden="true"
+      class="mb-6 flex h-[90px] w-[60px] flex-col items-stretch border border-rule"
+    >
+      <div
+        class="flex-1 border-b border-rule"
+      />
+      <div
+        class="flex-1"
+      />
+    </div>
+    <h1
+      class="font-serif tracking-tight text-ink text-[22px] font-medium mb-3"
+    >
+      Needs a larger screen
+    </h1>
+    <p
+      class="font-serif italic text-ink-3 mb-6 max-w-[280px] text-[14px]"
+    >
+      Split view sits two documents side-by-side. Open this doc in Write mode for a phone-sized layout.
+    </p>
+    <a
+      class="inline-block border border-ink px-4 py-2 text-[12px] font-medium uppercase tracking-wider text-ink"
+      data-discover="true"
+      href="/s/s1/d/d1"
+    >
+      Open in Write →
+    </a>
+  </div>
+</div>
+`;

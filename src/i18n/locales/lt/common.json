@@ -1,0 +1,14 @@
+{
+  "untitled": "Be pavadinimo",
+  "brainSpace": "Brain Space",
+  "github": "GitHub",
+  "home": "Pradžia",
+  "about": "Apie",
+  "settings": "Nustatymai",
+  "help": "Pagalba",
+  "back": "atgal",
+  "comingSoon": {
+    "tooltip": "Netrukus",
+    "defaultHint": "Dar neprieinama — netrukus."
+  }
+}

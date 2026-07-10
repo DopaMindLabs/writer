@@ -1,0 +1,267 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PlaceholderPrimitives > snapshot > should match the snapshot across every placeholder primitive 1`] = `
+<div>
+  <div>
+    <span
+      aria-hidden="true"
+      class="relative inline-block h-4 w-7 rounded-full border border-rule bg-paper-2"
+    >
+      <span
+        class="absolute top-[1px] h-3 w-3 rounded-full bg-paper transition-transform left-[1px] translate-x-0"
+      />
+    </span>
+    <span
+      aria-hidden="true"
+      class="relative inline-block h-4 w-7 rounded-full border border-ink bg-ink"
+    >
+      <span
+        class="absolute top-[1px] h-3 w-3 rounded-full bg-paper transition-transform left-[1px] translate-x-3"
+      />
+    </span>
+    <div
+      class="flex flex-wrap gap-1.5"
+    >
+      <span
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+      >
+        A
+      </span>
+      <span
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-ink bg-ink font-medium text-paper"
+      >
+        B
+      </span>
+      <span
+        class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+      >
+        C
+      </span>
+    </div>
+    <div
+      class="flex items-center gap-3"
+    >
+      <span
+        class="font-serif text-[12px] text-ink-3"
+      >
+        S
+      </span>
+      <div
+        class="relative h-[2px] w-[200px] bg-rule"
+      >
+        <div
+          class="absolute left-0 top-0 h-full bg-ink"
+          style="width: 40%;"
+        />
+        <div
+          class="absolute -top-[5px] h-3 w-3 -translate-x-1/2 rounded-full bg-ink"
+          style="left: 40%;"
+        />
+      </div>
+      <span
+        class="font-serif text-[16px] text-ink"
+      >
+        L
+      </span>
+      <span
+        class="ml-1 font-mono text-[11px] text-ink-3"
+      >
+        40%
+      </span>
+    </div>
+    <span
+      aria-hidden="true"
+      class="inline-block border border-rule bg-paper px-2.5 py-1.5 text-[14px] text-ink"
+      style="width: 220px;"
+    >
+      hello
+    </span>
+    <span
+      aria-hidden="true"
+      class="inline-block border border-rule bg-paper px-2.5 py-1.5 text-ink font-mono text-[12px] uppercase tracking-wider"
+      style="width: 220px;"
+    >
+      HELLO
+    </span>
+    <div
+      class="flex items-center gap-2"
+    >
+      <span
+        aria-hidden="true"
+        class="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full text-paper"
+        style="background: rgb(17, 17, 17);"
+      >
+        ✓
+      </span>
+      <span
+        aria-hidden="true"
+        class="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full text-paper"
+        style="background: rgb(122, 106, 85);"
+      />
+      <span
+        aria-hidden="true"
+        class="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full text-paper"
+        style="background: rgb(90, 111, 85);"
+      />
+      <span
+        aria-hidden="true"
+        class="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full text-paper"
+        style="background: rgb(106, 90, 122);"
+      />
+      <span
+        aria-hidden="true"
+        class="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full text-paper"
+        style="background: rgb(122, 90, 90);"
+      />
+    </div>
+    <div
+      class="grid grid-cols-1 gap-3 sm:grid-cols-3"
+    >
+      <div
+        class="relative border border-rule p-3.5"
+        style="background: rgb(250, 250, 246); color: rgb(17, 17, 17);"
+      >
+        <div
+          class="mb-3 h-9"
+        >
+          <div
+            class="mb-1.5 h-[2px] w-[40%] bg-current opacity-50"
+          />
+          <div
+            class="mb-1 h-[2px] w-[70%] bg-current opacity-25"
+          />
+          <div
+            class="h-[2px] w-[60%] bg-current opacity-25"
+          />
+        </div>
+        <div
+          class="flex items-baseline gap-2"
+        >
+          <span
+            class="font-serif text-[15px] font-medium tracking-tight"
+          >
+            Linen
+          </span>
+          <span
+            class="flex-1"
+          />
+          <span
+            class="font-mono text-[9px] uppercase tracking-wider opacity-60"
+          >
+            default
+          </span>
+        </div>
+        <span
+          class="absolute right-2.5 top-2.5 px-1.5 font-mono text-[9px] tracking-wider"
+          style="background: rgb(17, 17, 17); color: rgb(255, 255, 255);"
+        >
+          ON
+        </span>
+      </div>
+      <div
+        class="relative border border-rule p-3.5"
+        style="background: rgb(243, 243, 240); color: rgb(17, 17, 17);"
+      >
+        <div
+          class="mb-3 h-9"
+        >
+          <div
+            class="mb-1.5 h-[2px] w-[40%] bg-current opacity-50"
+          />
+          <div
+            class="mb-1 h-[2px] w-[70%] bg-current opacity-25"
+          />
+          <div
+            class="h-[2px] w-[60%] bg-current opacity-25"
+          />
+        </div>
+        <div
+          class="flex items-baseline gap-2"
+        >
+          <span
+            class="font-serif text-[15px] font-medium tracking-tight"
+          >
+            Studio
+          </span>
+          <span
+            class="flex-1"
+          />
+          <span
+            class="font-mono text-[9px] uppercase tracking-wider opacity-60"
+          >
+            neutral
+          </span>
+        </div>
+      </div>
+      <div
+        class="relative border border-rule p-3.5"
+        style="background: rgb(17, 17, 17); color: rgb(255, 255, 255);"
+      >
+        <div
+          class="mb-3 h-9"
+        >
+          <div
+            class="mb-1.5 h-[2px] w-[40%] bg-current opacity-50"
+          />
+          <div
+            class="mb-1 h-[2px] w-[70%] bg-current opacity-25"
+          />
+          <div
+            class="h-[2px] w-[60%] bg-current opacity-25"
+          />
+        </div>
+        <div
+          class="flex items-baseline gap-2"
+        >
+          <span
+            class="font-serif text-[15px] font-medium tracking-tight"
+          >
+            Midnight
+          </span>
+          <span
+            class="flex-1"
+          />
+          <span
+            class="font-mono text-[9px] uppercase tracking-wider opacity-60"
+          >
+            dark
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex items-center gap-3.5 border border-rule p-3"
+    >
+      <div
+        aria-hidden="true"
+        class="h-7 w-7 border border-rule"
+        style="background: rgb(250, 250, 246);"
+      />
+      <div
+        class="min-w-0 flex-1"
+      >
+        <div
+          class="font-serif text-[14px] font-medium text-ink"
+        >
+          Bone
+        </div>
+        <div
+          class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+        >
+          #FAFAF6
+        </div>
+      </div>
+      <span
+        class="font-sans text-[11px] text-ink-3"
+      >
+        rename
+      </span>
+      <span
+        class="font-sans text-[11px] text-ink-3"
+      >
+        tune
+      </span>
+    </div>
+  </div>
+</div>
+`;

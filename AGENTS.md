@@ -1,0 +1,289 @@
+# AGENTS.md
+
+## Coding standards (read first)
+
+This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
+[CODING_STANDARDS.md](./CODING_STANDARDS.md). When writing or editing code:
+
+- New or edited code must pass `npx eslint <files> --max-warnings=0` (the pre-commit hook
+  enforces this on staged files). Existing warnings are a tracked backlog; do not add to it.
+- Run `npm run lint` and `npm run typecheck` before committing; both gate CI.
+- Use `invariant()` and `assertNever()` from `@/lib/invariant` to validate untrusted input.
+- Write all functions as arrow functions (`const f = () => …`), including utilities.
+- **Honour established design principles, not just the linters.** Code must reflect sound
+  design — **single responsibility**, **modularity** (high cohesion, low coupling), depending
+  on **abstractions** rather than concretions (**SOLID**), and a **facade layer** in front of
+  complex subsystems so callers work against a clean interface. Functional programming (arrow
+  functions, immutability, composition, pure functions) is the default style and is encouraged
+  — but it is *how* we express these principles, never a reason to abandon them. A change that
+  passes lint/types but muddies responsibilities, leaks implementation detail, or couples
+  modules together is not done. When a unit grows more than one reason to change, split it.
+- A test file's extension mirrors the file under test: `foo.ts` → `foo.test.ts`,
+  `foo.tsx` → `foo.test.tsx`.
+- **One component per file (going forward).** Each React component lives in its own file,
+  named in PascalCase to match its export (e.g. `TypographyH1.tsx`), with its `.test.tsx` and
+  `.stories.tsx` alongside. Don't co-locate multiple components in one file — extract each into
+  its own module and compose them. When a split produces several related components, group them
+  under a shared folder (e.g. `DocInspector/` containing `DocInspector.tsx` and its
+  sub-components), keeping one component per file within it. Several existing files still bundle
+  private sub-components; treat those as a backlog (like the lint backlog) — don't add new
+  co-located components, and split them out when you next touch the file.
+- **Never relax limits or silence the linter to make code pass.** Do not raise or loosen the
+  size limits (function/file length, etc.), weaken or disable an ESLint rule, or add
+  `// eslint-disable*`, `// nasa-exception`, `@ts-ignore`/`@ts-expect-error`, or any other
+  suppression. Fix the code instead — split the function or file, extract a module, correct the
+  type. If you are convinced a limit genuinely cannot be met by refactoring, **stop and ask the
+  user clearly and explicitly what to do** before changing any config or adding a suppression;
+  do not decide unilaterally. (`src/tours/` and `src/editor/` carry pre-existing scope
+  exemptions in the lint config — that is the existing status quo, not licence to add more.)
+- **Refactor non-compliant files in a separate commit first.** When you need to edit a file
+  that already violates these standards (co-located components, oversized functions, leaked
+  abstractions, etc.), first bring it into compliance and commit that on its own (a
+  `refactor: …` commit with no behaviour change), then apply your actual change in a following
+  commit. Keep the refactor and the behavioural change in distinct commits so each stays small,
+  reviewable, and revertible on its own — never bundle a clean-up into the feature/fix diff.
+- **Legacy support requires explicit permission.** Do not add new code paths, fallbacks,
+  fixtures, or migrations whose purpose is to support legacy formats or behaviour (e.g.
+  pre-Lexical plain-text bodies) without asking the user first and getting an explicit yes.
+  Existing legacy handling stays as-is until its removal is explicitly agreed — don't extend
+  it, and don't silently remove it either.
+
+## Language (read before writing copy)
+
+All user-facing copy and documentation use **British English** — e.g. _colour_, _organise_,
+_customise_, _behaviour_, _centre_, _-ise_ not _-ize_. This applies to UI strings
+(`src/i18n/locales/en/*.json`), Help Center articles (`src/help/content/en/*.md`), comments,
+and docs.
+
+- **Exceptions:** code identifiers, URL slugs, and CSS/token names stay as written (they are
+  identifiers, not prose), as do established product/proper names already used across the app
+  (e.g. **Help Center**). Don't rename a slug just to spell it the British way.
+- When adding or editing copy, match the British spellings already in surrounding text.
+
+## Design system (read before building UI)
+
+[`docs/design-system.md`](./docs/design-system.md) is the **single source of truth** for
+design tokens, principles, and UI primitives, adapted from the canonical "Lorem Ipsum — Design
+System" design spec. When adding or changing any component or feature, verify it aligns:
+
+- **Verify alignment.** Use the design tokens (the token-backed Tailwind classes
+  `ink`/`paper`/`rule`/`accent`/`hl-*`/`warning`/`danger`/`success`/`info` from
+  `tailwind.config.ts`, backed by `src/index.css`) and follow the principles: hairline grammar,
+  grayscale palette with status as the only colour exception, three type families (Geist /
+  Source Serif 4 / Geist Mono), square corners, borderless icons. **Never hard-code a hex or
+  px colour** — there is a token for it.
+- **Survey the whole catalogue before choosing a primitive.** When planning *any* UI
+  addition or change — even a single line of copy — read the full component inventory first
+  (`docs/design-system.md` component tables and `src/components/ui/`, mirrored in Storybook)
+  and pick the primitive whose **documented use** matches the intent: a persistent notice is
+  `InlineBanner`, inline status is `StatusGlyph`, row state is `StatusBadge`, meta/blurb voice
+  is the `caption` typography, and so on. Never choose by copying whatever the neighbouring
+  code happens to use.
+- **Compose, don't reinvent.** Build from the existing primitives in `src/components/ui/`
+  (Button, TextField, Select, Checkbox, RadioRow, FormRow, Fieldset, Chip/ChipGroup, dialog,
+  popover, tooltip, tabs, …). Style variants with `cva` (`@/components/libs/variants`) + `cn`
+  (`@/lib/utils`); use Radix wrappers from `@/components/libs/primitives` and icons from
+  `@/components/libs/icons`. Don't duplicate a primitive or reach for a raw `lucide-react`
+  import.
+- **Raise gaps, don't work around them.** If no suitable primitive or token exists, **do not**
+  hard-code a one-off. Give feedback that the design system must be extended — add the
+  primitive under `src/components/ui/` and update `docs/design-system.md` to match — so the DS
+  stays the source of truth and the gap is addressed, not buried.
+- **HOCs must be composed from and consistent with the DS** — its primitives and tokens, not
+  bespoke markup or colours.
+- **Scope.** Reading-and-publishing surfaces are out of scope for this repo and are omitted
+  from `docs/design-system.md`; build the **writer** surface only.
+- Add a `.test.tsx` and a `.stories.tsx` mirroring the file under test (see
+  [CODING_STANDARDS.md](./CODING_STANDARDS.md)).
+
+## Accessibility (read before building UI)
+
+Accessibility is a first-class, **additive** property of every feature — not an afterthought
+and never a regression for existing users. [`docs/design-system.md` §11](./docs/design-system.md)
+is the source of truth for the accessibility layer; align with it when building or changing UI.
+
+- **Compose, honour the preference layer.** Build from the accessible primitives in
+  `src/components/ui/` (including `SkipLink` and `VisuallyHidden`). Consume the `data-*`
+  preference layer and its tokens (`--reading-scale`, `--reading-leading-scale`,
+  `--focus-ring-width`, motion gating) — **never hard-code** a font size, line-height, focus
+  ring, transition duration, or colour that a preference or theme should govern.
+- **Operable & perceivable.** Every interactive element must be keyboard-operable with a
+  visible focus indicator and an accessible name, use correct semantics (roles, labels,
+  landmarks, `aria-live`, `aria-describedby`, `aria-current`), and respect
+  `prefers-reduced-motion` / `data-motion`.
+- **Keyboard shortcuts must be cross-platform — in logic *and* in display.** The modifier key
+  is Cmd on macOS (`event.metaKey`) and Ctrl on Linux/Windows (`event.ctrlKey`); a handler that
+  checks only one is broken on the other platform. Always accept the chord with
+  `event.metaKey || event.ctrlKey` (the established pattern across the app), and never hard-code
+  a single platform's glyph or word (`⌘`, `Cmd`, `Ctrl`) in a shortcut hint — derive the label
+  from the running platform so each user sees the key they actually press. This applies to app
+  functionality the same way the [E2E section](#e2e-test-coverage-ratcheted)'s `ControlOrMeta+A`
+  rule applies to specs.
+- **Additive by default.** New behaviour is opt-in and must not change the default experience
+  for existing users. Defaults equal today's behaviour; persisted preferences stay
+  back-compatible (`?? default`, no destructive migration).
+- **Contrast.** Target **WCAG AA** in `light`/`dark` and **AAA (7:1)** in the `hc-*` themes;
+  keep AAA-strict colour work inside the high-contrast themes.
+- **Ships with a11y tests.** User-facing behaviour lands with accessibility tests the same way
+  it lands with tests and help: assertions in unit/e2e (query by role/label), a `.stories.tsx`
+  the Storybook a11y addon can check, and — for anything that touches the default experience —
+  a non-regression test proving no behaviour-changing `data-*` is applied until the user opts
+  in. Put new opt-in states behind their own story/test rather than editing a default snapshot.
+
+## E2E test coverage (ratcheted)
+
+E2E coverage is gated by a ratchet (`scripts/coverage-ratchet.mjs`, run via
+`npm run test:e2e:coverage`) that compares the live run against the **global** floors in
+`coverage-baseline.json` and only ever raises them toward the cap. The ratchet enforces the
+whole-suite aggregate; **local** (per-feature) coverage is your responsibility to verify and
+is checked in review.
+
+- **Target ≥ 95% coverage across the board — both global and local.** Every new or changed
+  user-facing feature must reach **≥ 95%** e2e coverage of its own code paths (local) and must
+  not pull any global metric below 95%. Add Playwright specs under `e2e/` alongside the
+  feature; don't rely on unit tests to cover flows a user can click through.
+- **85% local is a hard floor — never below it.** If 95% is *genuinely* unreachable for a
+  feature (e.g. browser APIs that can't be driven headlessly, error paths that need
+  unsimulatable failures), **stop and report back to the user before proceeding, and ask for
+  next steps** — do not silently settle for less or carry on. State which files fall short, the
+  exact percentages, and *why* 95% could not be met, then wait for the user's direction. Even
+  with a justified exception, local coverage for the feature **must not drop below 85%** — if it
+  would, the work is not done; add tests or refactor for testability instead of lowering the
+  bar.
+- **Coverage may only increase.** Never lower a value in `coverage-baseline.json` or relax the
+  ratchet to make CI pass — fix the tests instead. When a run raises the floors, commit the
+  updated `coverage-baseline.json`.
+- Run `npm run test:e2e:coverage` before committing coverage-affecting changes; it gates CI.
+- `src/editor/**` and `src/tours/**` are excluded from e2e coverage (covered by unit tests); the
+  95% target / 85% floor applies to the rest of the app.
+
+### Running e2e (agents: headless, locally — don't defer to CI)
+
+- **Always run Playwright headless** (its default — never `--headed` or `--ui` in an agent
+  or CI environment) and run the suite yourself before pushing e2e-affecting changes rather
+  than waiting for CI to find failures.
+- **Write specs that pass cross-platform — agents run on macOS, CI runs on Linux.** Never
+  assume the local OS. The trap is keyboard modifiers: `Meta` is Cmd on macOS (so `Meta+a`
+  selects all locally) but the Super/Windows key on Linux/Windows, where the same chord is a
+  no-op — leaving only a caret. Use Playwright's platform-aware `ControlOrMeta+A` (or select
+  text explicitly) for select-all, copy, paste, and similar shortcuts. This bites twice: a
+  positive assertion (toolbar *appears* on selection) flakes/times out on CI, while a negative
+  one (toolbar *absent*) passes vacuously without ever exercising the behaviour. Prefer asserting
+  both the present and absent states with the same helper so a broken selection can't green a
+  test. The same goes for any OS-specific path, line-ending, or timing assumption.
+- If the browser is missing, install it with `npx playwright install chromium`. In sandboxed
+  environments where `cdn.playwright.dev` is blocked, the identical Chrome for Testing build
+  is on `storage.googleapis.com` (allowed): check the expected version, paths, and layout
+  with `npx playwright install chromium --dry-run`, then download
+  `https://storage.googleapis.com/chrome-for-testing-public/<version>/linux64/chrome-linux64.zip`
+  and `…/chrome-headless-shell-linux64.zip`, unzip each into its install location under
+  `$PLAYWRIGHT_BROWSERS_PATH` (zip roots match the expected layout), and `touch` the
+  `INSTALLATION_COMPLETE` and `DEPENDENCIES_VALIDATED` markers in both directories.
+
+## Testing philosophy (read before changing tests)
+
+Unit tests (Vitest) and e2e tests (Playwright) exist to **prevent regressions** — to
+protect existing, working behavior from unintended change. Treat them as a safety net,
+not a checkbox.
+
+- **Take a TDD/BDD approach.** Before implementing a change, write or extend a test that
+  describes the intended behavior, then make it pass. New behavior ships with a test that
+  would fail without it.
+- **A green run is not the objective.** Stability and the absence of unintended changes
+  are. Passing tests are a means of confirming that, not the goal itself.
+- **Tests must never be skipped — this rule is not to be violated.** When a test fails, find
+  the root cause and fix the regression. Do not skip (`.skip`, `it.skip`/`describe.skip`,
+  `xit`/`xdescribe`, `test.skip`, `.fixme`), focus (`.only`), comment out, delete, mark
+  expected-to-fail, weaken assertions on, or rewrite a test just to get a green run — and do
+  not add lint/type suppressions to a test for the same purpose. A failing test is signalling
+  that behaviour changed; diagnose why.
+- The **only** exception is when the user has explicitly agreed that the feature under
+  test is being removed or is redundant. In that case, remove the test as part of that
+  agreed change. Anything short of that — including a "temporary" skip — requires asking the
+  user first.
+- Run `npm run test:run` (and `npm run test:e2e` for UI-facing changes) before committing,
+  alongside `npm run lint` and `npm run typecheck`.
+
+## Commits & branches
+
+**Commit messages, branch names, and PR titles must all strictly follow
+[Conventional Commits](https://www.conventionalcommits.org/)** — no exceptions. Commits are
+linted by commitlint (the `commit-msg` hook); run `npm run commit` for a guided Commitizen
+prompt. The **PR title** must itself be a valid Conventional Commit subject
+(`<type>(<scope>): <description>`, e.g. `feat(citations): import BibTeX`) — the squash-merge
+commit is derived from it, so a non-conforming title breaks the convention on the default
+branch. Branch names must be prefixed with a Conventional Commit type. This is enforced at
+every stage by `scripts/validate-branch-name.mjs`: the `pre-commit` hook blocks the first
+commit on a misnamed branch (fail fast), the `pre-push` hook blocks the push, the **Branch
+name** CI check gates the PR, and the `post-checkout` hook prints a non-blocking warning
+the moment a misnamed branch is checked out (`--warn` mode):
+
+- Form: `<type>/<kebab-description>` — e.g. `feat/user-login`, `fix/date-parse`,
+  `chore/bump-deps`. Underscores are allowed for suffixes (`feat/user-login_v2`).
+- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`,
+  `revert`.
+- Exempt: `main`, `develop`, and automation / release branches (`dependabot/*`,
+  `release-please*`, `release/*`, `rc/*`, `pre-release/*`).
+- **No AI assistant names.** Branch names must never contain `claude` or `codex`
+  (enforced by `validate-branch-name.mjs`), and commit messages must not reference
+  an assistant — no `Co-Authored-By` bot trailers, product names, or session links
+  (enforced by `scripts/check-commit-attribution.mjs` on the `commit-msg` hook).
+  The **author identity** on the commit itself is checked by the same script:
+  `claude` / `codex` / `anthropic` / `openai` in the name or email are rejected,
+  so a valid message under a vendor-noreply mailbox no longer slips through.
+  The sole allowed occurrence in a message is the literal `.claude` config
+  folder path, so a commit editing `.claude/settings.json` can still name the file.
+
+### Protected branches (read before any git write)
+
+**`main` is protected. Never write to it.** Do not commit, amend, rebase, force-push, or
+otherwise rewrite `main` — including its history or any commit reachable from it. `main` holds
+production releases and is changed only through the project's release process, never by an agent.
+
+- **`main` means `main`.** If a request says "main" but the context points at the integration
+  branch, do not assume — `develop` is the integration branch where day-to-day work lands.
+- **Always confirm before any branch-level git write**, regardless of which branch is named, and
+  **especially** before anything touching `main` or rewriting shared history (`develop`, release
+  branches). State the exact branch, the exact operation, and the blast radius, and wait for
+  explicit approval. When in doubt, ask — a wrong guess about the target branch is hard to undo.
+
+## Specification (read before changing behaviour)
+
+[`docs/technical-specification.md`](./docs/technical-specification.md) is the source-of-truth
+feature spec, derived from the test suite. Any change that adds, removes, or alters
+user-facing behaviour must update the relevant spec section **in the same PR** — the same way
+it ships with a test and a help update.
+
+- **Keep it in sync with the tests.** The spec describes flows the e2e/unit suites assert;
+  when you change what the tests assert, change the matching spec section so the two never
+  disagree. Treat a spec that no longer matches the tests as a bug, not stale prose.
+- **Keep the metadata current.** Update the version, feature list, and described flows so they
+  reflect reality (e.g. the spec's version string should track `package.json`, not lag it).
+- **Scope.** Update the sections your change touches; don't rewrite unrelated areas. If a
+  change has no user-facing behaviour, no spec update is needed — say so in the PR.
+
+## Help content (read before adding or changing features)
+
+The in-app **Help Center** (`/help`) is end-user documentation that lives beside the
+code. User-facing behavior changes ship with a help update, the same way they ship with
+a test. When planning a feature, identify which help article(s) it adds or changes; when
+implementing, update them in the same PR.
+
+- **Author/edit** prose in `src/help/content/en/<slug>.md` (plain markdown; the first
+  `#` line is the article title). Add translations later as
+  `src/help/content/<locale>/<slug>.md`; missing locales fall back to English.
+- **Register** metadata in `src/lib/help/registry.ts`: `category`, `keywords`,
+  `featureArea`, and an optional `tourId`.
+- **Enforcement:** `src/lib/help/registry.test.ts` fails if any `featureArea` or guided
+  tour lacks an article, or a registered slug has no English body. Treat a red coverage
+  test as a missing doc, not a test to weaken.
+- **Reviewers** should check that feature PRs include the corresponding help change.
+- Write for end users (task-oriented "how do I…"), not implementation detail.
+
+## Key commands
+
+- `npm run dev`: Vite dev server
+- `npm run lint` and `npm run lint:fix`: ESLint
+- `npm run typecheck`: `tsc --noEmit`
+- `npm run test:run`: unit tests (Vitest, once)
+- `npm run test:e2e`: Playwright e2e

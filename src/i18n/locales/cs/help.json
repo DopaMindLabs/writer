@@ -1,0 +1,48 @@
+{
+  "title": "Nápověda",
+  "subtitle": "Průvodci a odpovědi, jak ze svého psaní vytěžit maximum.",
+  "shellSubtitle": "Nápověda / Dokumentace",
+  "navGroup": "Nápověda",
+  "navOverview": "Přehled",
+  "navAria": "Témata nápovědy",
+  "searchPlaceholder": "Hledat v nápovědě…",
+  "searchLabel": "Hledat články nápovědy",
+  "noResults": "Žádný článek neodpovídá „{{query}}“.",
+  "resultsCount_one": "{{count}} výsledek",
+  "resultsCount_other": "{{count}} výsledků",
+  "browseAll": "Procházet všechna témata",
+  "languagePickerLabel": "Jazyk nápovědy",
+  "allFeatures": {
+    "title": "Zobrazit všechny funkce",
+    "subtitle": "Úplný seznam všeho, co můžeš dělat — každá položka odkazuje na svého průvodce."
+  },
+  "onThisPage": "Na této stránce",
+  "related": "Související",
+  "backToHelp": "Veškerá nápověda",
+  "openCenter": "Otevřít kompletní centrum nápovědy",
+  "articleNotFound": "Tento článek nápovědy neexistuje.",
+  "machineTranslationBanner": {
+    "label": "Strojový překlad",
+    "body": "Tento článek byl přeložen automaticky. Omlouváme se za chyby — pošli zpětnou vazbu, ať je můžeme opravit.",
+    "feedbackLinkLabel": "poslat zpětnou vazbu"
+  },
+  "palette": {
+    "title": "Nápověda",
+    "description": "Prohledej centrum nápovědy nebo přejdi na zkratku.",
+    "shortcutsHeading": "Klávesové zkratky",
+    "hint": "Stiskni Esc pro zavření"
+  },
+  "shortcuts": { "help": "Otevřít nápovědu", "focus": "Přepnout režim soustředění" },
+  "categories": {
+    "getting-started": "Začátek",
+    "writing": "Psaní a editace",
+    "organizing": "Organizace",
+    "views": "Pohledy a režimy",
+    "research": "Výzkum a citace",
+    "brainspace": "BrainSpace",
+    "annotations": "Poznámky a zvýraznění",
+    "customization": "Přizpůsobení a nastavení",
+    "data": "Tvá data",
+    "mobile": "Mobil"
+  }
+}

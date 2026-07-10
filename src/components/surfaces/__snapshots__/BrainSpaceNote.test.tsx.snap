@@ -1,0 +1,132 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BrainSpaceNote > snapshot > should match the snapshot across all variants 1`] = `
+<div>
+  <div
+    class="group absolute flex flex-col gap-1 border bg-paper p-2.5 border-ink outline-dashed cursor-grab outline-2 outline-ink outline-offset-2"
+    data-testid="brain-note-n1"
+    style="left: 24px; top: 24px; width: 184px; min-height: 80px;"
+  >
+    <div
+      class="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4"
+    >
+      <span
+        data-testid="brain-note-n1-kind"
+      >
+        thought
+      </span>
+      <span
+        class="flex-1"
+      />
+      <input
+        accept="image/png,image/jpeg,image/gif,image/webp"
+        aria-hidden="true"
+        class="hidden"
+        data-testid="brain-note-n1-image-input"
+        multiple=""
+        tabindex="-1"
+        type="file"
+      />
+      <button
+        aria-label="Add picture"
+        class="inline-flex items-center justify-center transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-4 w-4 rounded-sm text-ink-4 opacity-0 hover:bg-paper-2 group-hover:opacity-100"
+        data-no-drag="true"
+        data-testid="brain-note-n1-add-image"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-image-plus h-3 w-3"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M16 5h6"
+          />
+          <path
+            d="M19 2v6"
+          />
+          <path
+            d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"
+          />
+          <path
+            d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"
+          />
+          <circle
+            cx="9"
+            cy="9"
+            r="2"
+          />
+        </svg>
+      </button>
+      <span
+        data-testid="brain-note-n1-day-chip"
+      >
+        mon
+      </span>
+      <button
+        aria-label="Open details"
+        class="inline-flex items-center justify-center transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink ml-1 h-4 w-4 rounded-sm text-ink-4 opacity-0 hover:bg-paper-2 group-hover:opacity-100"
+        data-no-drag="true"
+        data-testid="brain-note-n1-open-details"
+        title="Open details panel"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-maximize2 lucide-maximize-2 h-3 w-3"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M15 3h6v6"
+          />
+          <path
+            d="m21 3-7 7"
+          />
+          <path
+            d="m3 21 7-7"
+          />
+          <path
+            d="M9 21H3v-6"
+          />
+        </svg>
+      </button>
+    </div>
+    <div
+      class="cursor-text font-serif text-[13px] font-medium text-ink"
+      data-no-drag="true"
+      data-testid="brain-note-n1-title"
+    >
+      A title
+    </div>
+    <div
+      class="flex-1 cursor-text whitespace-pre-wrap font-serif text-[12px] leading-snug text-ink-2"
+      data-no-drag="true"
+      data-testid="brain-note-n1-body"
+    >
+      Hello
+    </div>
+    <div
+      aria-label="Resize note"
+      class="absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize"
+      data-resize-handle="true"
+      data-testid="brain-note-n1-resize-handle"
+    />
+  </div>
+</div>
+`;

@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Duniyar rubutu ta kyauta",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Farkon sararin ku babu komai. Zaɓi samfuri don farawa, ko fara daga komai.",
+    "tagline": "Wuri mai tsabta don rubutu mai tsawo — labari, bincike, rubutu, mujallar yau da kullum.",
+    "continueWriting": "Ci gaba da rubutu",
+    "startNewSpace": "Fara sabon sarari",
+    "syncOffChip": "aiko/adana bayanan aiki ba a kunna ba · bayanan na iya ɓacewa",
+    "syncOnChip": "aiko zuwa babban fayil an kunna",
+    "syncOnTitle": "An kunna aiko zuwa fayil",
+    "syncOnBody": "Aikinku yana aiko zuwa fayil «{{folder}}» a wannan na'urar.",
+    "warningTitle": "Ginin kafin saki",
+    "warningBody": "Babu aiko bayanan. Komai yana cikin burauzar ku kuma share ɓoye-bayananta zai ɓata aikinku. Kuna iya kunna aiko zuwa fayil na gida a cikin Saitunan Duniya → Aiko.",
+    "versionLine": "Sigar {{version}}"
+  },
+  "about": {
+    "back": "koma baya",
+    "title": "game da",
+    "greeting": "Sannu,",
+    "paragraph1": "Wannan don marubuci wanda ke farawa daga sifili kullum. Wanda ke buɗe sabon takarda, ya rubuta jimloli uku (ko babu), sannan ya ɓata mintuna 40 yana gyara rubutun. Wanda mafi kyawun ra'ayoyinsa suna zuwa da dare a ƙarshen dare sai damuwa ta kama shi. Wanda ke da tabs goma sha huɗu, littattafai masu rubutu shida, da tashar da bai motsa ba tun wata.",
+    "paragraph2Before": "Na san, saboda wannan ni ne ",
+    "paragraph2After": ". Ina da ADHD, Autism, mai yiwuwa akwai wasu cututtukan da ba a gano ba tukuna. Ina buƙatar wani abu da ya fahimci kwakwalwata mai hayaniya amma mai kayatarwa. Wuri don zubar da komai kafin ya ɓace (ko fara rubutu). Gutsutsuren ra'ayi, tunanin da ba a cika ba, dangantakar dare. Komai, a wuri ɗaya.",
+    "paragraph3": "Don haka na gina wannan sarari don mu. Ina fata ya ba ku jin daɗin dopamine kamar yadda ya ba ni lokacin da na gina shi.",
+    "paragraph4Before": "Ƙari ɗaya... Na yi imani da fasaha don alheri kuma ina ƙin talla. Don haka, wannan zai kasance mai 'yanci daga talla kuma na kyauta don amfani da ba na kasuwanci. Kuna iya yin canjin ku yadda kuka ga dama a ƙarƙashin ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Matsayi",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — babu aiko bayanan. Duk bayanan an ajiye su a IndexedDB a cikin burauzar ku na gida. Idan kun share ɓoye-bayananta burauzar ku, aikinku zai ɓace.",
+    "feedbackBefore": "Har yanzu ina gina wannan kuma ina da ra'ayoyi da yawa ",
+    "feedbackAfter": ". Ina son jin abin da ke aiki, abin da bai yi aiki ba, da abin da kuke fatan ya kasance. Maraba da ra'ayi.",
+    "sourceLabel": "Tushe"
+  },
+  "settings": {
+    "back": "koma baya",
+    "windowTitle": "lotem · saitunan",
+    "breadcrumb": "SAITUNAN DUNIYA",
+    "shellSubtitle": "SAITUNAN DUNIYA",
+    "comingSoonBadge": "yana zuwa soon",
+    "helpAria": "Mene ne wannan?",
+    "groups": {
+      "preferences": "Zaɓuɓɓuka",
+      "writing": "Rubutu",
+      "data": "Bayanan",
+      "account": "Asusun"
+    },
+    "tabs": {
+      "general": "Gaba ɗaya",
+      "appearance": "Bayyanar",
+      "editor": "Mai gyara",
+      "docInspector": "Mai duba takarda",
+      "accessibility": "Samun dama",
+      "typography": "Rubutun haruffa",
+      "shortcuts": "Gajeren hanya",
+      "templates": "Samfurori",
+      "palettes": "Launi don haskaka",
+      "citations": "Salon ambato",
+      "annotation": "Bayanan kula",
+      "backups": "Adana bayanan",
+      "sync": "Aiko",
+      "export": "Fitar / Shigar",
+      "data": "Bayananku",
+      "account": "Asusun",
+      "about": "Game da",
+      "language": "Harshe"
+    },
+    "language": {
+      "title": "Harshe",
+      "subtitle": "Zaɓi harshen don fuska da labaran Help Center. Fassarorin da suka ɓace suna komawa Turanci.",
+      "label": "Harshen fuska",
+      "hint": "Canje-canje ana amfani da su nan take ana adana su a wannan burauzar.",
+      "machineTranslationNotice": "Ana samar da fassarorin ban da Turanci ta atomatik. Yi hakuri saboda kowane kuskure — don Allah aika ra'ayi don mu gyara su.",
+      "feedbackLinkLabel": "aika ra'ayi"
+    },
+    "editor": {
+      "title": "Mai gyara",
+      "subtitle": "Toolbar da kayan aiki na rubutu. Gajeren hanyar Markdown (#, >, -, **) suna ci gaba da aiki ba tare da la'akari da waɗannan saitunan ba.",
+      "floatingToolbarLabel": "Toolbar mai iyo",
+      "floatingToolbarHint": "Yana bayyana akan haskakawa ko danna dama a yanayin rubutu.",
+      "floatingToolbarOff": "A kashe",
+      "floatingToolbarOn": "A kunna",
+      "rightClickLabel": "Menu na danna dama",
+      "rightClickHint": "Canja tsakanin toolbar mai iyo da menu na asali na burauzar.",
+      "rightClickTooltip": "Yi amfani da menu na asali akan danna dama maimakon toolbar mai iyo. Toolbar zai ci gaba da bayyana akan haskaka-zaɓi.",
+      "inlineTogglesLabel": "Buttons na canza yanayi",
+      "inlineTogglesHint": "Buttons na Bold da italic a cikin toolbar mai iyo.",
+      "inlineTogglesTooltip": "Ɓoye buttons B da I daga toolbar mai iyo. Gajeren hanyar Markdown (**, _) suna ci gaba da aiki.",
+      "listDepthLabel": "Zurfi na lissafin",
+      "listDepthHint": "Nawa zurfi zazzafai da lissafin da aka lissafta za su iya saukowa.",
+      "listDepthTooltip": "Ƙara ko rage iyakar zurfi na lissafi. Yanzu an gyara shi a matakai 2.",
+      "templateDefaultsLabel": "Ƙayyadaddun samfurin",
+      "templateDefaultsHint": "Ƙayyadaddun ɗaukar hoton da ke bambanta kowane samfuri.",
+      "templateDefaultsTooltip": "Bari kowane samfuri (labari, mujallar yau da kullum, fasaha…) ya zaɓi nasa ɗaukar hoton."
+    },
+    "docInspector": {
+      "title": "Mai duba takarda",
+      "subtitle": "Zaɓi waɗanne filayen ke bayyana a cikin mai duba takardu. Ana iya kashe kowannen su a duniya kuma a sauya ta sarari.",
+      "statusLabel": "Matsayi",
+      "statusHint": "Nuna matsayin takarda da kulle takardu da aka kammala daga gyarawa.",
+      "wordLimitLabel": "Iyakar kalmar",
+      "wordLimitHint": "Nuna iyakar ƙidayar kalmomi da za ku iya saita kowane takarda.",
+      "charLimitLabel": "Iyakar harafi",
+      "charLimitHint": "Nuna iyakar ƙidayar harafi da za ku iya saita kowane takarda.",
+      "dueDateLabel": "Kwanan ƙarshe",
+      "dueDateHint": "Nuna ranar ƙarshe da za ku iya saita kowane takarda.",
+      "highlightLabel": "Haskaka rubutu da ya wuce iyaka",
+      "highlightHint": "Alamar duk rubutu da ya wuce iyaka a cikin mai gyara.",
+      "statusStagesLabel": "Matakai na matsayi",
+      "statusStagesHint": "Zaɓi waɗanne matakai ke bayyana a cikin zaɓin matsayi.",
+      "on": "A kunna",
+      "off": "A kashe",
+      "inherit": "Ƙayyadaddun ({{state}})",
+      "inheritTooltip": "An gada daga saitunan duniya",
+      "stateOn": "a kunna",
+      "stateOff": "a kashe"
+    },
+    "accessibility": {
+      "title": "Samun dama",
+      "subtitle": "Daidaita fuska don jin daɗi da fasahar taimako. Kowace zaɓi tana farawa daga abin da ake yi yanzu — babu abin da zai canza har sai kun zaɓe shi.",
+      "theme": {
+        "label": "Jigo da bambancin launin",
+        "hint": "Jigogi masu bambancin launi mai ƙarfi suna cika ƙa'idar bambancin WCAG AAA.",
+        "light": "Haske",
+        "dark": "Duhu",
+        "hcLight": "Bambancin launi mai ƙarfi (haske)",
+        "hcDark": "Bambancin launi mai ƙarfi (duhu)"
+      },
+      "motion": {
+        "label": "Motsi",
+        "hint": "Rage ko kashe animations na fuska.",
+        "auto": "Daidai da tsarin",
+        "reduced": "Ƙananan",
+        "full": "Cikakke"
+      },
+      "textSize": {
+        "label": "Girman rubutu",
+        "hint": "Ma'aunin farfajiyar karatu da rubutu.",
+        "sm": "Ƙarami",
+        "base": "Ƙayyadaddun",
+        "lg": "Babba",
+        "xl": "Babba ƙwarai"
+      },
+      "lineSpacing": {
+        "label": "Tazarar layi",
+        "hint": "Ƙara sarari tsakanin layuka na rubutu.",
+        "normal": "Na yau da kullum",
+        "relaxed": "Mai sassauƙa",
+        "loose": "Mai yawa"
+      },
+      "linkUnderline": {
+        "label": "Koyaushe yi wa hanyoyin haɗi layi ƙasa",
+        "hint": "Nuna layukan ƙasa don hanyoyin haɗi ba su dogara ga launi kaɗai ba."
+      },
+      "focus": {
+        "label": "Ƙarin mai nuna sanya hankali",
+        "hint": "Yi amfani da abin zane mai kauri da ƙarfi mafi girma akan sanya hankali."
+      },
+      "reset": {
+        "label": "Dawo zuwa ƙayyadaddun",
+        "hint": "Dawo da motsi, girman rubutu, tazarar layi, hanyoyin haɗi, da sanya hankali zuwa ƙayyadaddun su. Jigunka bai canza ba.",
+        "action": "Sake saita"
+      }
+    },
+    "general": {
+      "title": "Gaba ɗaya",
+      "subtitle": "Yadda LIpsum Writer ke bayyana a ƙayyadaddun. Babu abin da ke lalata bayanan.",
+      "comingSoonBody": "Yawan ɗaukar ɗimbin kaya, rage motsi, ganin alamomin maɓallin, da abin da ke buɗewa a farawa.",
+      "compactDensityLabel": "Yawan ɗaukar ɗimbin kaya",
+      "compactDensityHint": "Layuka masu kuncin a cikin jerin, ɗaukar kaya na kuncin ko'ina.",
+      "reduceMotionLabel": "Rage motsi",
+      "reduceMotionHint": "Tsallake animations na canjin tsakanin ra'ayoyi.",
+      "keyboardHintsLabel": "Nuna alamu na maɓallin",
+      "keyboardHintsHint": "Nuna gajeren hanyar ⌘-key a cikin tooltips da kusurwa na buttons.",
+      "startupLabel": "Buɗewa a farawa",
+      "startupHint": "Abin da kake gani yayin da ka kaddamar da app.",
+      "startupOptions": {
+        "lastView": "Ra'ayi na ƙarshe",
+        "home": "Gida",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Bayyanar",
+      "subtitle": "Launi, nau'in haruffa, yawan ɗaukar kaya. Yanayin da kake so wannan abin ya saita.",
+      "comingSoonBody": "Tarin jigogi masu kyau, launi na ƙawa, da yawan ɗaukar kaya. Canjin jigo na yau yana a cikin saitunan sauri na karkace duniya.",
+      "themeLabel": "Jigo",
+      "themeHint": "Tarukan jigogi uku masu kyau. Suna daidaita komai — launin tubalan, layukan gashi, ko da ƙira.",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "ƙayyadaddun",
+        "studio": "Studio",
+        "studioSub": "tsaka-tsaki",
+        "midnight": "Midnight",
+        "midnightSub": "duhu"
+      },
+      "accentLabel": "Ƙawa",
+      "accentHint": "Ana amfani da shi don hover, sanya hankali, zoben gyarawa mai aiki.",
+      "densityLabel": "Yawan ɗaukar kaya",
+      "densityOptions": {
+        "cozy": "Mai jin daɗi",
+        "default": "Ƙayyadaddun",
+        "compact": "Mai kunci"
+      }
+    },
+    "templates": {
+      "title": "Samfurori",
+      "subtitle": "Tsararrakin da za a iya sake amfani da su don sababbin sarari da takardu.",
+      "comingSoonBody": "Rubuta naku samfurori tare da sassa, sunayen takardu na ƙayyadaddun, da stubs na rubutu.",
+      "items": {
+        "fiction": "Labari",
+        "fictionSub": "Rubutun · Duniya · Workshop",
+        "research": "Bincike",
+        "researchSub": "Tushe · Bayanan kula · Daftarori",
+        "journal": "Mujallar yau da kullum",
+        "journalSub": "Na yau da kullum · Na mako · Tunani",
+        "essay": "Rubutu",
+        "essaySub": "Bayani · Daftarori · Ƙarshe"
+      }
+    },
+    "palettes": {
+      "title": "Launi don haskaka",
+      "subtitle": "Tarukan slotoci biyar a kowane sarari — ba su suna kuma daidaita kowane launi.",
+      "comingSoonBody": "Gyara, adana, kuma canza tarin launi na haskaka masu suna (Shaida, Don sake gyarawa, Ambato…) a duk sarari.",
+      "items": {
+        "evidence": "Shaida",
+        "revise": "Don sake gyarawa",
+        "reference": "Ambato",
+        "quote": "Yabo",
+        "loose": "Ƙarshen da ba a cika ba"
+      },
+      "rename": "sake suna",
+      "tune": "daidaita"
+    },
+    "citations": {
+      "title": "Salon ambato",
+      "subtitle": "Ƙayyadaddun salon ambato a duk sarari.",
+      "comingSoonBody": "Zaɓi salon duniya (Chicago, APA, MLA…) tare da canje-canje na sarari.",
+      "styleLabel": "Ƙayyadaddun salo",
+      "styleHint": "Ana amfani da shi yayin shigar da sabon ambato. Canje-canje na sarari za su zo daga baya.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Bayanan kula",
+      "subtitle": "Bayanan kula na gefen shafi da na cikin rubutu.",
+      "comingSoonBody": "Nau'ukan bayanan kula, ƙayyadaddun ganin su, da ɗabi'ar fitar.",
+      "showMarginLabel": "Nuna bayanan kula na gefen shafi",
+      "showMarginHint": "Bayanan kula suna iyo a gefen dama idan akwai sarari.",
+      "showInlineLabel": "Nuna haskakan rubutu na cikin layi",
+      "showInlineHint": "Launin bayanan kula yana zubo kan rubutu da ke ƙasa.",
+      "exportLabel": "Haɗa a cikin fitar",
+      "exportHint": "Ana rubuta bayanan kula tare da jikin takardu."
+    },
+    "export": {
+      "title": "Fitar / Shigar",
+      "subtitle": "Motsa bayanan cikin da wajen LIpsum Writer.",
+      "comingSoonBody": "Fitar tare da .zip, shigar daga wani kunshin LIpsum ko jakar Markdown.",
+      "formatLabel": "Tsarin fitar",
+      "formatHint": "Fitar kowane-takarda da kowane-sarari suna amfani da ƙayyadaddun ɗaya.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Shigar daga",
+      "importHint": "Kawo wani kunshin LIpsum ko jakar fayilolin Markdown.",
+      "importOptions": {
+        "bundle": "Kunshin LIpsum (.zip)",
+        "markdown": "Jakar Markdown",
+        "obsidian": "Obsidian vault"
+      },
+      "importSpaceLabel": "Shigar sarari",
+      "importSpaceHint": "Kawo sarari cikin wannan burauzar daga taskar Writer (.zip) — zazzagewar snapshot ko fitar aiko-zuwa-fayil daga wata na'ura.",
+      "importChooseFile": "Zaɓi taskar…",
+      "importing": "yana shigarwa…",
+      "importFailed": "Shigarwa ta kasa: {{message}}",
+      "comingSoonLabel": "Ƙarin tsarori",
+      "comingSoonHint": "Fitar tare da kuma shigar daga jakunan Markdown ko vaults na Obsidian.",
+      "comingSoonTooltip": "An tsara — ba a samu tukuna."
+    },
+    "data": {
+      "title": "Bayananku",
+      "subtitle": "Inda aikinku ke zaune da kuma nawa sarari take.",
+      "comingSoonBody": "Amfani da IndexedDB, ƙiyasin ajiya, da share komai da danna ɗaya.",
+      "storageLabel": "Ajiya da aka yi amfani da ita",
+      "storageValue": "≈ 12.4 MB · sarari 4, takardu 38",
+      "engineLabel": "Injin ajiya",
+      "engineValue": "IndexedDB (burauzar gida)",
+      "wipeLabel": "Share komai",
+      "wipeHint": "Yana cire kowane sarari, takarda, da snapshot daga wannan burauzar. Babu dawo da shi.",
+      "wipeButton": "Share bayanan gida…"
+    },
+    "about": {
+      "title": "Game da",
+      "subtitle": "Bayanan ginin da hanyoyin haɗi.",
+      "comingSoonBody": "Duba shafin /about don tarihi; wannan tab zai ɗauki bayanan ginin, lasisin, da canje-canje.",
+      "versionLabel": "Sigar",
+      "versionValue": "{{version}}",
+      "buildLabel": "Gini",
+      "buildValue": "na gida",
+      "licenseLabel": "Lasisi",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Hanyoyin haɗi",
+      "links": {
+        "source": "Tushe",
+        "changelog": "Jerin canje-canje",
+        "feedback": "Aika ra'ayi"
+      }
+    },
+    "account": {
+      "title": "Asusun",
+      "subtitle": "Shiga, aiko tsakanin na'urori, da wuraren aiki na gama-gari.",
+      "comingSoonBody": "Aiko zuwa girgije ba a samu yau ba — Lotem na gida kawai. Asusun, shiga, da wuraren aiki na gama-gari za su zo lokacin da aiko ya zo.",
+      "signedOutLabel": "Shiga",
+      "signedOutHint": "Aiko zuwa girgije ba a samu tukuna. Wannan yana nan don nuna ƙirar.",
+      "signInButton": "Shiga da imel",
+      "syncLabel": "Aiko wannan na'urar",
+      "syncHint": "Da zarar kun shiga, sararin ku zai kwafi zuwa sauran na'urori."
+    },
+    "typography": {
+      "title": "Rubutun haruffa",
+      "subtitle": "Ƙayyadaddun a duk duniyoyi. Duniyoyin da ke su ɗaya na iya sauya.",
+      "comingSoonBody": "Zaɓi rubutun rubutu, rubutun UI, ƙayyadaddun girman karatu, tsayin layi, da ma'aunin duniyoyi sababbi.",
+      "proseFontLabel": "Rubutun rubutu",
+      "uiFontLabel": "Rubutun UI",
+      "proseSizeLabel": "Girman rubutu",
+      "proseSizeHint": "Ƙayyadaddun don duniyoyi sababbi.",
+      "lineHeightLabel": "Tsayin layi",
+      "measureLabel": "Ma'auni",
+      "measureHint": "Mafi tsayin layin.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Gajeren hanya",
+      "subtitle": "Ɗaurawa na maɓallin don tafiya, tsari, da yanayi.",
+      "comingSoonBody": "Gajeren hanyar da za a iya sake ɗaurawa don rubutu/karatu/rarrabuwa, yanayin mai da hankali, da toolbar na tsari.",
+      "navHeader": "Tafiya",
+      "formatHeader": "Tsari",
+      "modeHeader": "Yanayi",
+      "items": {
+        "openSettings": "Buɗe saitunan",
+        "quickSettings": "Saitunan sauri",
+        "findInDoc": "Nema a cikin takarda",
+        "toggleFocus": "Canza yanayin mai da hankali",
+        "toggleInspector": "Canza mai duba",
+        "bold": "Maci",
+        "italic": "Mai karkata",
+        "underline": "Layi ƙasa",
+        "heading1": "Taken 1",
+        "heading2": "Taken 2",
+        "write": "Yanayin rubutu",
+        "read": "Yanayin karatu",
+        "split": "Yanayin rarrabuwa"
+      }
+    },
+    "backups": {
+      "title": "Adana bayanan",
+      "subtitle": "Fitar, dawo da, da kama hotuna na bayanan gida.",
+      "comingSoonBody": "Hotuna na gida masu jadawal, fitar ta hannu zuwa .zip, da dawo daga ajiyar da ta gabata.",
+      "intervalLabel": "Tsawon lokaci na auto-snapshot",
+      "intervalOptions": {
+        "5min": "minti 5",
+        "10min": "minti 10",
+        "30min": "minti 30",
+        "off": "A kashe"
+      },
+      "keepLabel": "Kiyaye",
+      "keepHint": "Hotuna na tsufa suna fita ta atomatik.",
+      "keepOptions": {
+        "last50": "Ƙarshe 50",
+        "days7": "Kwanaki 7",
+        "days30": "Kwanaki 30"
+      },
+      "latestLabel": "Ƙarshe",
+      "latestValue": "minti 12 da suka wuce · kalmomi 1,190"
+    },
+    "sync": {
+      "title": "Aiko",
+      "subtitle": "Tura sararin ku zuwa fayil da kuka zaɓa. Nuna shi a fayil ɗin Google Drive, Dropbox, ko iCloud don aiko tsakanin na'urori.",
+      "unsupportedTitle": "Ba a samu a wannan burauzar ba",
+      "unsupportedBody": "Aiko zuwa fayil na buƙatar File System Access API, wanda ake samu a Chrome, Edge, da sauran burauzar Chromium a kwamfuta. Canza zuwa burauzar da ake tallafawa don amfani da shi.",
+      "folderLabel": "Fayil da aka haɗa don aiko",
+      "folderHint": "Kowane aiko yana rubuta Markdown .zip kowanne sarari a nan, yana kiyaye ƙarshe 5 tare da latest.zip. Aiko yana rabe daga Adana bayanan.",
+      "noFolder": "Babu fayil da aka haɗa",
+      "chooseFolder": "Zaɓi fayil…",
+      "changeFolder": "Canza…",
+      "disconnect": "Yanke haɗi",
+      "intervalLabel": "Auto-aiko",
+      "intervalHint": "Nawa sau sarari suna aiko ta atomatik yayin da app yana buɗe kuma fayil yana haɗe. Kowane sarari na iya canza wannan ƙayyadaddun.",
+      "intervalOff": "A kashe",
+      "intervalMinutes": "minti {{count}}",
+      "intervalDefault": "Ƙayyadaddun ({{label}})",
+      "syncLabel": "Aiko ta hannu",
+      "pushOnlyHint": "Tura kawai a yanzu — wannan yana rubuta bayananku na gida zuwa fayil. Ja canje-canje ya dawo za su zo daga baya.",
+      "syncNow": "Aiko yanzu",
+      "syncNowAll": "Aiko duk sarari",
+      "reconnectHint": "Aiko ya tsaya — burauzar na buƙatar izinin fayil sake don wannan zaman. Haɗa sake don ci gaba da aiko ta hannu da ta atomatik.",
+      "reconnectButton": "Haɗa sake",
+      "reconnecting": "Ana haɗawa sake…",
+      "syncing": "Ana aikawa…",
+      "syncFailed": "Aiko ya kasa: {{message}}",
+      "lastSynced": "An aika ƙarshe {{when}}",
+      "neverSynced": "Ba a taɓa aika ba",
+      "justNow": "yanzu yanzu",
+      "resultsTitle": "Gudu na ƙarshe",
+      "spaceOk": "an aika",
+      "spaceFailed": "ya kasa",
+      "historyTitle": "Aiko na kwanan nan",
+      "historyEmpty": "Babu aiko tukuna.",
+      "columns": {
+        "when": "LOKACI",
+        "space": "SARARI",
+        "kind": "NOMA",
+        "size": "GIRMA",
+        "status": "MATSAYI"
+      },
+      "kind": {
+        "auto": "ta atomatik",
+        "manual": "ta hannu"
+      },
+      "status": {
+        "ok": "yayi",
+        "error": "kuskure"
+      }
+    },
+    "space": {
+      "breadcrumb": "SARARI · SAITUNAN",
+      "shellSubtitle": "SAITUNAN SARARI",
+      "loading": "Ana ɗaukar sarari…",
+      "groups": {
+        "thisSpace": "Wannan sarari",
+        "sharingMembers": "Raba & Membobi",
+        "data": "Bayanan",
+        "dangerZone": "Haɗari"
+      },
+      "tabs": {
+        "general": "Gaba ɗaya",
+        "docInspector": "Mai duba takarda",
+        "template": "Samfuri",
+        "palette": "Launi don haskaka",
+        "sharing": "Rabawa",
+        "members": "Membobi",
+        "backups": "Adana bayanan",
+        "sync": "Aiko",
+        "export": "Fitar",
+        "danger": "Yankin haɗari"
+      },
+      "docInspector": {
+        "title": "Mai duba takarda",
+        "subtitle": "Sauya saitunan mai duba na duniya don wannan sarari."
+      },
+      "palette": {
+        "title": "Launi don haskaka",
+        "subtitle": "Launi biyar masu suna waɗanda za a iya daidaita don wannan sarari.",
+        "comingSoonBody": "Sake suna, sake launi, da sake tsarawa slotocin haskaka wannan sarari.",
+        "items": {
+          "evidence": "Shaida",
+          "revise": "Don sake gyarawa",
+          "reference": "Ambato",
+          "quote": "Yabo",
+          "loose": "Ƙarshen da ba a cika ba"
+        },
+        "rename": "sake suna",
+        "tune": "daidaita"
+      },
+      "export": {
+        "title": "Fitar",
+        "subtitle": "Motsa abun cikin wannan sarari zuwa wani kayan aiki.",
+        "comingSoonBody": "Fitar zuwa Markdown .zip (yau ta Adana bayanan), LaTeX, HTML, ko PDF — komai a wuri ɗaya.",
+        "formatLabel": "Tsari",
+        "formatHint": "Markdown yana fara farko; sauran za su biyo baya.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Fitar na ƙarshe",
+        "lastValue": "ba a taɓa yi ba"
+      },
+      "general": {
+        "title": "Gaba ɗaya",
+        "subtitle": "Cikakkun bayanai masu bambantawa don wannan sarari. Canje-canje suna aiki nan take kuma suna aiko a duk ra'ayoyi.",
+        "nameLabel": "Sunan sarari",
+        "nameHint": "Ana nuna shi a cikin taken gefe da tooltip na tile na sarari.",
+        "tagLabel": "Tag",
+        "tagHint": "Lambar gajere (haruffa 2–4) da aka nuna a kan tile na sarari."
+      },
+      "sharing": {
+        "title": "Rabawa",
+        "subtitle": "Sarrafa yadda ake raba wannan sarari.",
+        "comingSoonBody": "Ganin sarari da hanyoyin haɗi na raba. Za su zo lokacin da aiko zuwa girgije ya zo.",
+        "visibilityLabel": "Ganin",
+        "visibilityOptions": {
+          "private": "Na sirri",
+          "link": "Kowa da hanyar haɗi",
+          "members": "Membobi kawai"
+        },
+        "linkLabel": "Hanyar haɗi da za a iya raba",
+        "linkHint": "Karatu kawai a ƙayyadaddun. Izinin gyarawa yana bin Membobi.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "kwafi"
+      },
+      "template": {
+        "title": "Samfuri",
+        "subtitle": "Samfurin tsari da aka ƙirƙiri wannan sarari da shi.",
+        "comingSoonBody": "Canza samfurin sarari bayan ƙirƙira ba a tallafawa tukuna. Za ya zo da zarar za mu iya cire sassa da takardu lafiya.",
+        "currentLabel": "Samfurin yanzu",
+        "currentValue": "Labari",
+        "currentSub": "Rubutun · Duniya · Workshop",
+        "changeLabel": "Canza samfuri",
+        "changeHint": "Yana sake tsara sassa da takardu masu wanzuwa zuwa sabon samfuri.",
+        "changeButton": "Canza samfuri…"
+      },
+      "members": {
+        "title": "Membobi",
+        "subtitle": "Mawallafa masu haɗin gwiwa da masu duba tare da damar shiga wannan sarari.",
+        "comingSoonBody": "Gayyata masu haɗin gwiwa, sarrafa matsayi, da duba canje-canje. Za su zo tare da aiko zuwa girgije.",
+        "inviteLabel": "Gayyata ta imel",
+        "inviteHint": "Za mu aiko musu hanyar haɗi don shiga wannan sarari.",
+        "invitePlaceholder": "suna@misali.com",
+        "inviteButton": "aika gayyata",
+        "membersLabel": "Membobi",
+        "roles": {
+          "owner": "mai sarari",
+          "editor": "mai gyara",
+          "viewer": "mai kallo"
+        },
+        "you": "kai"
+      },
+      "backups": {
+        "title": "Adana bayanan",
+        "subtitle": "Kama hoton wannan sarari a matsayin .zip da za ku iya zazzage, kiyaye, da dawo daga gare shi.",
+        "retentionHint": "Ana kiyaye hotuna {{count}} mafi kwanan nan — tsofaffi ana cire su ta atomatik.",
+        "snapshotNow": "+ kama hoto yanzu",
+        "snapshotting": "ana kama hoto…",
+        "snapshotFailed": "Kama hoto ya kasa: {{message}}",
+        "historyTitle": "Tarihi",
+        "empty": "Babu hotuna tukuna — ƙirƙira ɗaya da + kama hoto yanzu.",
+        "columns": {
+          "when": "LOKACI",
+          "kind": "NOMA",
+          "size": "GIRMA",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "ta hannu",
+          "auto": "ta atomatik",
+          "snapshot": "hoto"
+        },
+        "download": "↓ zazzage",
+        "delete": "share",
+        "deleteConfirm": "Share wannan hoto? Ba za a iya dawo da shi ba.",
+        "deleted": "An share hoto.",
+        "justNow": "yanzu yanzu",
+        "restore": "↺ dawo da",
+        "restoreUnavailable": "Wannan hoto ya riga ya fara tallafin dawo da — ana iya zazzage shi kawai.",
+        "restoreDialogTitle": "Dawo da wannan hoto?",
+        "restoreDialogBody": "Abun cikin wannan sarari na yanzu zai maye gurbin hoto. An fara ajiye hoton yanayin yanzu, don haka kana iya yin watsi da wannan dawo da.",
+        "restoreConfirm": "Dawo da",
+        "restoreCancel": "Soke",
+        "restoring": "ana dawo da…",
+        "restored": "An dawo da hoto.",
+        "restoreFailed": "Dawo da ya kasa: {{message}}",
+        "fileRestoreTitle": "Dawo da daga zazzagewar .zip?",
+        "fileRestoreBody": "Shiga ta Saitunan Duniya → Fitar / Shigar — yana dawo a matsayin sabon sarari, barin wannan ba tare da shafawa ba."
+      },
+      "sync": {
+        "title": "Aiko",
+        "subtitle": "Tura wannan sarari zuwa fayil da aka haɗa, ta hannu ko akan jadawal. Aiko yana rabe daga Adana bayanan.",
+        "folderHint": "Haɗa fayil a Saitunan Duniya → Aiko. Ana amfani da fayil ɗaya don kowane sarari.",
+        "intervalHint": "Nawa sau wannan sarari yana aiko ta atomatik. Zaɓi Ƙayyadaddun don bi saitunan auto-aiko na duniya.",
+        "syncNow": "Aiko wannan sarari"
+      },
+      "danger": {
+        "title": "Yankin haɗari",
+        "subtitle": "Ayyuka marasa juyawa. Karanta a hankali kafin ci gaba.",
+        "deleteCardTitle": "Share wannan sarari",
+        "deleteCardBody": "Yana cire wannan sarari tare da kowanne takarda, sashi, bayanan kula na brain-space, bayanan kula, ambato, da haɗin gwiwa har abada. Ba za a iya dawo da shi ba.",
+        "deleteButton": "Share wannan sarari",
+        "dialogTitle": "Share «{{name}}»?",
+        "dialogBody": "Wannan yana cire sarari da duk abun ciki har abada. Ba za a iya dawo da shi ba.",
+        "typeToConfirm": "Rubuta {{name}} don tabbatarwa",
+        "cancel": "Soke",
+        "confirm": "Share sarari"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "An ɓace a gefen rubutu",
+    "body": "Wannan shafi ba ya wanzuwa (tukuna).",
+    "goHome": "Koma gida"
+  },
+  "templates": {
+    "crumb": "01 — WANI NOMA NA DAKI",
+    "headingMain": "Wane irin sarari",
+    "headingAccent": "kana farawa?",
+    "chooseLegend": "Zaɓi samfuri",
+    "stage": {
+      "pre-alpha": "gwaji",
+      "alpha": "farko",
+      "beta": "beta"
+    },
+    "nameLabel": "Suna",
+    "tagLabel": "Tag",
+    "syncLabel": "aiko zuwa girgije —",
+    "syncValue": "a kashe, na gida",
+    "syncTooltip": "Aiko zuwa girgije ba a samu — wannan app na gida kawai a yanzu.",
+    "creating": "ana ƙirƙira…",
+    "submitLabel": "shiga {{name}} →",
+    "newSpace": "sabon sarari",
+    "back": "koma baya"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} da ba a tsara ba",
+    "title": "Brain space",
+    "mobileWarning": "Brain space yana aiki mafi kyau a allon mafi girma.",
+    "mobileNote": "Canvas na buƙatar linzamin kwamfuta ko trackpad.",
+    "openInWrite": "Buɗe a Write →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "fara zubar da ra'ayoyi",
+      "emptyHint": "zaɓi noma katin a ƙasa",
+      "pendingHint": "shift-danna wata bayanin kula don haɗawa · esc don soke"
+    },
+    "note": {
+      "deleteNote": "Share bayanin kula",
+      "addPicture": "Ƙara hoto",
+      "addPictureCta": "ƙara hoto",
+      "openLinkedDoc": "Buɗe takarda da aka haɗa",
+      "fetchedContent": "Abun cikin da aka samu",
+      "openDetailsLabel": "Buɗe cikakkun bayanai",
+      "openDetailsTitle": "Buɗe falon cikakkun bayanai",
+      "titlePlaceholder": "taken",
+      "addTitleCta": "+ taken",
+      "bodyEmpty": "(danna don rubutu)",
+      "viewImage": "Duba {{name}}",
+      "removeImage": "Cire {{name}}",
+      "resize": "Canza girman bayanin kula",
+      "days": {
+        "sun": "Lah",
+        "mon": "Lin",
+        "tue": "Tal",
+        "wed": "Lar",
+        "thu": "Alh",
+        "fri": "Jum",
+        "sat": "Asa"
+      }
+    },
+    "drawer": {
+      "title": "Cikakkun bayanai na bayanin kula",
+      "description": "Gyara bayanin kula da aka zaɓa kuma sarrafa haɗin gwiwar sa.",
+      "untitledPlaceholder": "Ba tare da taken ba",
+      "titleAriaLabel": "Taken bayanin kula",
+      "closeAriaLabel": "Rufe jirgin ruwa",
+      "bodyLabel": "Jiki",
+      "bodyPlaceholder": "Rubuta wani abu…",
+      "picturesLabel": "Hotuna",
+      "addPicture": "Ƙara hoto",
+      "pictureLimitHint": "an kai iyakar {{count}} — cire ɗaya don ƙara wani.",
+      "linkedDocLabel": "Takarda da aka haɗa",
+      "noLinkedDoc": "— Babu takarda da aka haɗa —",
+      "untitledDoc": "Ba tare da taken ba",
+      "openDoc": "Buɗe",
+      "connectionsHeading": "Haɗin gwiwa ({{count}})",
+      "connectionsEmpty": "shift-danna wata bayanin kula a kan canvas don haɗawa.",
+      "untitledNote": "(ba tare da taken ba)",
+      "removeConnection": "Cire haɗin gwiwa",
+      "deleteNote": "Share bayanin kula"
+    }
+  },
+  "split": {
+    "title": "Ra'ayin rarrabuwa",
+    "mobileWarning": "Ra'ayin rarrabuwa yana buƙatar allon mafi girma.",
+    "mobileNote": "Buɗe wannan takarda a yanayin Write maimakon.",
+    "openInWrite": "Buɗe a Write →",
+    "leftPrefix": "HAGU —",
+    "rightPrefix": "DAMA —",
+    "rightPaneAria": "Takarda na falo na dama",
+    "noOtherDocs": "(babu wasu takardu)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Ambato",
+    "pickDoc": "Zaɓi takarda daga dropdown da ke sama.",
+    "dividerAria": "Canza girman falolin rarrabuwa"
+  },
+  "citationsDrawer": {
+    "title": "Ambato",
+    "description": "Nema, shigar, da fitar ambato don wannan sarari.",
+    "close": "Rufe ambato",
+    "expand": "Buɗe ambato a cikakken ra'ayi"
+  },
+  "citations": {
+    "title": "Ambato",
+    "breadcrumb": "Tushe / ",
+    "entries": "{{count}} BAYANAN",
+    "searchPlaceholder": "marubuta, tags, shekara…",
+    "upload": "↑ ɗora .bib / .ris",
+    "add": "+ ƙara",
+    "cancel": "× soke",
+    "columns": {
+      "tag": "TAG",
+      "authors": "MARUBUTA",
+      "title": "TAKEN",
+      "year": "SHEKARA",
+      "type": "NOMA",
+      "used": "AMFANI"
+    },
+    "style": "SALO — CHICAGO (MARUBUTA-KWANAN WATA)",
+    "exportBib": "FITAR A MATSAYIN .BIB",
+    "summary": "{{filtered}} ANA NUNA · {{shown}} A WANNAN SHAFI",
+    "prevPage": "Shafi na baya",
+    "nextPage": "Shafi na gaba",
+    "empty": "babu ambato tukuna",
+    "noMatch": "babu layuka da suka dace da binciken ku.",
+    "importHint": "shigar .bib ko ƙara ɗaya ta hannu.",
+    "pasteHeader": "Liƙa BibTeX ko taken",
+    "addCitation": "ƙara ambato",
+    "manualCancel": "soke",
+    "adding": "ana ƙarawa…",
+    "parsing": "Ana bincike {{name}}…",
+    "imported": "An shigar ambato {{added}}{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", an tsallake {{skipped}} kwafi{{skippedPlural}}",
+    "skippedSuffixShort": ", an tsallake {{skipped}}",
+    "failed": "Bincike ya kasa: {{message}}",
+    "failedManual": "Ya kasa: {{message}}",
+    "addedOne": "An ƙara ambato 1.",
+    "unknownAuthor": "(ba a sani ba)",
+    "unknownError": "kuskure da ba a sani ba",
+    "edit": {
+      "save": "adana",
+      "saving": "ana adanawa…",
+      "cancel": "soke",
+      "delete": "share",
+      "edit": "gyara",
+      "tagLabel": "Tag",
+      "authorsLabel": "Marubuta",
+      "titleLabel": "Taken",
+      "yearLabel": "Shekara",
+      "typeLabel": "Noma",
+      "duplicateKey": "Tag «{{key}}» an riga an yi amfani da shi a wannan sarari.",
+      "updated": "An sabunta ambato 1.",
+      "deleteOne": "An share ambato 1.",
+      "confirmDeleteUsed": "Ana amfani da wannan ambato {{count}}× a cikin takardu. Share duk da haka?",
+      "confirmDeleteSingle": "Share ambato «{{key}}»? Ba za a iya dawo da shi ba.",
+      "untitled": "(ba tare da taken ba)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} da aka zaɓa",
+      "deleteSelected": "share",
+      "setTypePrompt": "saita noma",
+      "setTypeAria": "Saita noma don ambato da aka zaɓa",
+      "chooseOption": "zaɓi…",
+      "ariaLabel": "Ayyukan taro",
+      "clearSelection": "share zaɓi",
+      "deleted": "An share ambato {{count}}.",
+      "typeApplied": "An saita noma zuwa {{type}} a kan ambato {{count}}.",
+      "confirmDelete": "Share ambato {{count}}? Ba za a iya dawo da su ba."
+    },
+    "row": {
+      "selectAllAria": "Zaɓi duk ambato a wannan shafi",
+      "viewCitationAria": "Duba ambato {{key}}",
+      "selectCitationAria": "Zaɓi ambato {{key}}",
+      "collapseCitationAria": "Rufe ambato {{key}}",
+      "usedCount": "an yi amfani {{count}}×",
+      "unused": "ba a yi amfani ba",
+      "copyTag": "Kwafi tag",
+      "copyTagAria": "Kwafi tag {{value}}",
+      "copiedTitle": "An kwafi",
+      "copiedTagAria": "An kwafi tag {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

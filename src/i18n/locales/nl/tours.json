@@ -1,0 +1,97 @@
+{
+  "menu": {
+    "help": "Help en rondleidingen",
+    "tours": "Rondleidingen",
+    "resetAll": "Alle rondleidingen resetten"
+  },
+  "controls": {
+    "next": "Volgende",
+    "prev": "Terug",
+    "done": "Klaar",
+    "progress": "{{current}} van {{total}}"
+  },
+  "welcome": {
+    "title": "Welkom bij LIpsum Writer",
+    "description": "Een snelle introductie tot spaces en het startscherm.",
+    "intro": {
+      "title": "Welkom",
+      "body": "LIpsum Writer is een schrijfwerkplek opgebouwd rond <i>spaces</i> — één space per project, artikel of boek. Laten we even rondkijken."
+    },
+    "continue": {
+      "title": "Ga verder waar je gebleven bent",
+      "body": "Je meest recente space staat hier. Eén klik opent hem opnieuw."
+    },
+    "startSpace": {
+      "title": "Start iets nieuws",
+      "body": "Maak een nieuwe space vanuit een sjabloon — scriptie, roman, essay — en begin in seconden te schrijven."
+    }
+  },
+  "writer": {
+    "title": "De schrijfwerkplek",
+    "description": "Een rondleiding door de editor, zijbalk en topbalk.",
+    "intro": {
+      "title": "Het schrijfoppervlak",
+      "body": "Hier doe je het werk. Laten we kijken naar navigatie, modi en gereedschappen die je het meest zult gebruiken."
+    },
+    "spaceTitle": {
+      "title": "Space-titel",
+      "body": "Klik op de titel om de space te hernoemen. Het zwevende icoon ernaast opent de instellingen."
+    },
+    "sections": {
+      "title": "Secties en documenten",
+      "body": "Verdeel een space in secties, en secties in documenten. Hover over een sectie om een nieuw document toe te voegen."
+    },
+    "settings": {
+      "title": "Space-instellingen",
+      "body": "Beheer het sjabloon, de secties, het delen en het verwijderen van deze space."
+    },
+    "modes": {
+      "title": "Lezen · Schrijven · Gesplitst",
+      "body": "Wissel tussen bewerken, lezen of een naast-elkaar weergave. Elk document onthoudt je laatste modus."
+    },
+    "citations": {
+      "title": "Citaten",
+      "body": "Open het citatenpaneel om referenties in te voegen terwijl je schrijft."
+    },
+    "theme": {
+      "title": "Thema",
+      "body": "Lichte, donkere en hoog-contrast varianten — kies wat goed voelt voor je ogen."
+    },
+    "editor": {
+      "title": "De editor",
+      "body": "Een rich-text editor met Markdown-sneltoetsen, codeblokken en citaten. Begin met typen — je werk wordt lokaal automatisch opgeslagen."
+    }
+  },
+  "citations": {
+    "title": "Citaten",
+    "description": "Beheer referenties en bibliografieën.",
+    "intro": {
+      "title": "Je bibliografie",
+      "body": "Alle referenties van een space wonen hier. Importeer een BibTeX-bestand of voeg vermeldingen handmatig toe."
+    },
+    "add": {
+      "title": "Toevoegen of importeren",
+      "body": "Drop een .bib-bestand of plak BibTeX-tekst. Duplicaten worden automatisch overgeslagen."
+    },
+    "list": {
+      "title": "De lijst",
+      "body": "Zoek, filter en bewerk citaten inline. Vanaf hier kun je ook de volledige bibliografie exporteren."
+    }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Het vrije notitiecanvas.",
+    "intro": {
+      "title": "Denk hardop",
+      "body": "BrainSpace is een vrij canvas voor ideeën — plaats notities, verbind ze en vorm je denken voordat je je vastlegt op proza."
+    },
+    "addNote": {
+      "title": "Een notitie toevoegen",
+      "body": "Drop een notitie van elk type op het canvas. Sleep om te verplaatsen, schaal vanaf de hoeken."
+    },
+    "canvas": {
+      "title": "Het canvas",
+      "body": "Shift-klik op twee notities om ze te verbinden. Klik op de achtergrond om te deselecteren."
+    }
+  }
+}

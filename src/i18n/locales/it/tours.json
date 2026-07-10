@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Aiuto e tour", "tours": "Tour guidati", "resetAll": "Reimposta tutti i tour" },
+  "controls": { "next": "Avanti", "prev": "Indietro", "done": "Fatto", "progress": "{{current}} di {{total}}" },
+  "welcome": {
+    "title": "Benvenuto in LIpsum Writer",
+    "description": "Un orientamento rapido su spazi e schermata iniziale.",
+    "intro": { "title": "Benvenuto", "body": "LIpsum Writer è uno spazio di lavoro di scrittura costruito attorno agli <i>spazi</i> — uno per progetto, articolo o libro. Diamo un'occhiata rapida." },
+    "continue": { "title": "Riprendi da dove avevi lasciato", "body": "Qui c'è il tuo spazio modificato più di recente. Un clic per riaprirlo." },
+    "startSpace": { "title": "Inizia qualcosa di nuovo", "body": "Crea uno spazio nuovo da un modello — tesi, romanzo, saggio — e inizia a scrivere in pochi secondi." }
+  },
+  "writer": {
+    "title": "Lo spazio di lavoro dello scrittore",
+    "description": "Un tour dell'editor, della barra laterale e di quella superiore.",
+    "intro": { "title": "La superficie di scrittura", "body": "Qui fai il lavoro. Guardiamo navigazione, modalità e strumenti che userai di più." },
+    "spaceTitle": { "title": "Titolo dello spazio", "body": "Clicca sul titolo per rinominare lo spazio. L'icona accanto apre le impostazioni." },
+    "sections": { "title": "Sezioni e documenti", "body": "Organizza uno spazio in sezioni e le sezioni in documenti. Passa sopra una sezione per aggiungere un documento." },
+    "settings": { "title": "Impostazioni dello spazio", "body": "Gestisci modello, sezioni, condivisione ed eliminazione di questo spazio." },
+    "modes": { "title": "Leggere · Scrivere · Diviso", "body": "Passa tra modifica, lettura o visualizzazione affiancata. Ogni documento ricorda l'ultima modalità." },
+    "citations": { "title": "Citazioni", "body": "Apri il pannello citazioni per inserire riferimenti mentre scrivi." },
+    "theme": { "title": "Tema", "body": "Varianti chiara, scura e ad alto contrasto — scegli quella che ti si addice." },
+    "editor": { "title": "L'editor", "body": "Un editor rich-text con scorciatoie Markdown, blocchi di codice e citazioni. Inizia a scrivere — tutto si salva localmente in automatico." }
+  },
+  "citations": {
+    "title": "Citazioni",
+    "description": "Gestione di riferimenti e bibliografie.",
+    "intro": { "title": "La tua bibliografia", "body": "Tutti i riferimenti di uno spazio vivono qui. Importa un file BibTeX o aggiungi voci a mano." },
+    "add": { "title": "Aggiungi o importa", "body": "Trascina un file .bib o incolla testo BibTeX. I duplicati vengono saltati automaticamente." },
+    "list": { "title": "L'elenco", "body": "Cerca, filtra e modifica le citazioni inline. Da qui puoi anche esportare l'intera bibliografia." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "La tela libera per gli appunti.",
+    "intro": { "title": "Pensa ad alta voce", "body": "BrainSpace è una tela libera per le idee — lascia note, collegale e dai forma al tuo pensiero prima di passare alla prosa." },
+    "addNote": { "title": "Aggiungi una nota", "body": "Trascina una nota di qualsiasi tipo sulla tela. Trascina per spostare, ridimensiona dagli angoli." },
+    "canvas": { "title": "La tela", "body": "Maiusc+clic su due note per collegarle. Clicca sullo sfondo per deselezionare." }
+  }
+}

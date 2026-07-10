@@ -1,0 +1,51 @@
+{
+  "title": "Ajuda",
+  "subtitle": "Guias e respostas para tirar o máximo da sua escrita.",
+  "shellSubtitle": "Ajuda / Documentação",
+  "navGroup": "Ajuda",
+  "navOverview": "Visão geral",
+  "navAria": "Tópicos de ajuda",
+  "searchPlaceholder": "Buscar na ajuda…",
+  "searchLabel": "Buscar artigos de ajuda",
+  "noResults": "Nenhum artigo corresponde a “{{query}}”.",
+  "resultsCount_one": "{{count}} resultado",
+  "resultsCount_other": "{{count}} resultados",
+  "browseAll": "Ver todos os tópicos",
+  "languagePickerLabel": "Idioma da ajuda",
+  "allFeatures": {
+    "title": "Ver todos os recursos",
+    "subtitle": "Uma lista completa do que você pode fazer — cada item leva ao seu guia."
+  },
+  "onThisPage": "Nesta página",
+  "related": "Relacionado",
+  "backToHelp": "Toda a ajuda",
+  "openCenter": "Abrir Centro de ajuda completo",
+  "articleNotFound": "Esse artigo de ajuda não existe.",
+  "machineTranslationBanner": {
+    "label": "Tradução automática",
+    "body": "Este artigo foi traduzido automaticamente. Desculpe os erros — envie feedback para que possamos corrigi-los.",
+    "feedbackLinkLabel": "enviar feedback"
+  },
+  "palette": {
+    "title": "Ajuda",
+    "description": "Busque no Centro de ajuda ou pule para um atalho.",
+    "shortcutsHeading": "Atalhos de teclado",
+    "hint": "Pressione Esc para fechar"
+  },
+  "shortcuts": {
+    "help": "Abrir ajuda",
+    "focus": "Alternar modo foco"
+  },
+  "categories": {
+    "getting-started": "Começando",
+    "writing": "Escrita e edição",
+    "organizing": "Organização",
+    "views": "Visualizações e modos",
+    "research": "Pesquisa e citações",
+    "brainspace": "BrainSpace",
+    "annotations": "Anotações e marcações",
+    "customization": "Personalização e configurações",
+    "data": "Seus dados",
+    "mobile": "Móvel"
+  }
+}

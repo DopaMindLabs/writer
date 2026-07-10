@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Label > snapshot > should match the snapshot across all variants 1`] = `
+<div>
+  <div>
+    <label
+      class="font-sans text-[13px] leading-tight text-ink font-medium"
+      data-testid="lbl-snap-ink"
+    >
+      ink medium
+    </label>
+    <label
+      class="font-sans text-[13px] leading-tight text-ink-2 font-normal"
+      data-testid="lbl-snap-ink2"
+    >
+      ink2 regular
+    </label>
+    <label
+      class="font-sans text-[13px] leading-tight text-ink-3 font-medium"
+      data-testid="lbl-snap-ink3"
+    >
+      ink3 medium
+    </label>
+  </div>
+</div>
+`;

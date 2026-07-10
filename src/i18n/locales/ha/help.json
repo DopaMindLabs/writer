@@ -1,0 +1,48 @@
+{
+  "title": "Taimako",
+  "subtitle": "Jagora da amsoshi don samun mafi yawa daga rubutunka.",
+  "shellSubtitle": "Taimako / Takardar",
+  "navGroup": "Taimako",
+  "navOverview": "Bayyani",
+  "navAria": "Batutuwan taimako",
+  "searchPlaceholder": "Bincike a cikin taimako…",
+  "searchLabel": "Bincike labaran taimako",
+  "noResults": "Babu labarin da yayi daidai da \"{{query}}\".",
+  "resultsCount_one": "Sakamako {{count}}",
+  "resultsCount_other": "Sakamako {{count}}",
+  "browseAll": "Bincika dukan batutuwa",
+  "languagePickerLabel": "Harshen taimako",
+  "allFeatures": {
+    "title": "Duba dukan abubuwan da ke ciki",
+    "subtitle": "Cikakken jerin abubuwan da kake iya yi — kowanne yana kai zuwa jagoransa."
+  },
+  "onThisPage": "A wannan shafin",
+  "related": "Mai dangantaka",
+  "backToHelp": "Duk taimako",
+  "openCenter": "Bude Cibiyar taimako gaba ɗaya",
+  "articleNotFound": "Wancan labarin taimako bai wanzu ba.",
+  "machineTranslationBanner": {
+    "label": "Fassarar kai tsaye",
+    "body": "An fassara wannan labarin ta atomatik. Mu kuke neman gafara don kuskure — aiko da ra'ayi mu gyara.",
+    "feedbackLinkLabel": "aika ra'ayi"
+  },
+  "palette": {
+    "title": "Taimako",
+    "description": "Bincika a Cibiyar taimako ko tafi zuwa gajeren hanya.",
+    "shortcutsHeading": "Gajerun hanyoyin keyboard",
+    "hint": "Danna Esc don rufewa"
+  },
+  "shortcuts": { "help": "Bude taimako", "focus": "Sauya yanayin mai da hankali" },
+  "categories": {
+    "getting-started": "Farawa",
+    "writing": "Rubutu da gyara",
+    "organizing": "Tsarawa",
+    "views": "Ra'ayoyi da yanayi",
+    "research": "Bincike da ambato",
+    "brainspace": "BrainSpace",
+    "annotations": "Bayanai da haskakawa",
+    "customization": "Daidaitawa da saituna",
+    "data": "Bayananka",
+    "mobile": "Wayar hannu"
+  }
+}

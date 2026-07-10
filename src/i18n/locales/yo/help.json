@@ -1,0 +1,48 @@
+{
+  "title": "Ìrànlọ́wọ́",
+  "subtitle": "Àwọn ìtọ́nisọ́nà àti ìdáhùn láti gba ohun gbogbo láti inú ìkọwé rẹ.",
+  "shellSubtitle": "Ìrànlọ́wọ́ / Ìwé",
+  "navGroup": "Ìrànlọ́wọ́",
+  "navOverview": "Àkópọ̀",
+  "navAria": "Àwọn ọ̀rọ̀ ìrànlọ́wọ́",
+  "searchPlaceholder": "Wá nínú ìrànlọ́wọ́…",
+  "searchLabel": "Wá àwọn àpilẹ̀kọ ìrànlọ́wọ́",
+  "noResults": "Ko si àpilẹ̀kọ tó bá \"{{query}}\" mu.",
+  "resultsCount_one": "{{count}} àbájáde",
+  "resultsCount_other": "{{count}} àwọn àbájáde",
+  "browseAll": "Wo gbogbo ọ̀rọ̀",
+  "languagePickerLabel": "Èdè ìrànlọ́wọ́",
+  "allFeatures": {
+    "title": "Wo gbogbo àwọn ohun tó wà",
+    "subtitle": "Àkójọ tó péye ti gbogbo nǹkan tí o lè ṣe — ọ̀kọ̀ọ̀kan ń tọ́ka sí ìtọ́nisọ́nà rẹ̀."
+  },
+  "onThisPage": "Lórí ojú-òpó yìí",
+  "related": "Ìbátan",
+  "backToHelp": "Gbogbo ìrànlọ́wọ́",
+  "openCenter": "Ṣílẹ̀kùn Ilé-ìṣẹ́ ìrànlọ́wọ́ kíkún",
+  "articleNotFound": "Àpilẹ̀kọ ìrànlọ́wọ́ yẹn kò sí.",
+  "machineTranslationBanner": {
+    "label": "Ìtumọ̀ aládàáṣiṣẹ́",
+    "body": "A ti túmọ̀ àpilẹ̀kọ yìí ládàáṣiṣẹ́. Àdúrà fún àwọn àṣìṣe — fi èrò ránṣẹ́ kí á lè tún wọn ṣe.",
+    "feedbackLinkLabel": "fi èrò ránṣẹ́"
+  },
+  "palette": {
+    "title": "Ìrànlọ́wọ́",
+    "description": "Wá nínú Ilé-ìṣẹ́ ìrànlọ́wọ́ tàbí lọ sí ọ̀nà àbúyọ.",
+    "shortcutsHeading": "Àwọn ọ̀nà àbúyọ ìtẹ-bọ́tìnnì",
+    "hint": "Tẹ Esc láti pa"
+  },
+  "shortcuts": { "help": "Ṣílẹ̀kùn ìrànlọ́wọ́", "focus": "Yí ipo ìfọkànsí" },
+  "categories": {
+    "getting-started": "Bíbẹ̀rẹ̀",
+    "writing": "Ìkọ̀wé àti ìṣàtúnṣe",
+    "organizing": "Ìṣètò",
+    "views": "Àwọn ìwò àti ọ̀nà",
+    "research": "Ìwádìí àti àyọkà",
+    "brainspace": "BrainSpace",
+    "annotations": "Àwọn àkíyèsí àti àpilẹ̀kọ",
+    "customization": "Ìmọ̀ ara ẹni àti àwọn ètò",
+    "data": "Dátà rẹ",
+    "mobile": "Alágbèéká"
+  }
+}

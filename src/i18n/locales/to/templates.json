@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Tāʻataʻa", "tag": "TA", "description": "kamata mei he ʻikai" },
+  "fiction": { "label": "Tohi fakaʻofa", "tag": "FI", "description": "tohi · talanoa nounou · sikulipi" },
+  "humanities": { "label": "Tisikate · fekumi", "tag": "TH", "description": "ngāue fakaʻakatemia loloa" },
+  "journal": { "label": "Tohi fakaʻaho", "tag": "JO", "description": "fakaʻaho, ʻikai ha tahaʻi" },
+  "serial": { "label": "Hokohoko", "tag": "SE", "description": "ngaahi fokotuʻutuʻu · tohi ongoongo" },
+  "six": { "label": "Matapā ʻe Ono · ngāue fakataha", "tag": "SD", "description": "māmani fakatahataha · tokolahi e kau tohi" },
+  "technical": { "label": "Tekinikale · Līpooti fakasaienisi", "tag": "TX", "description": "Fakasaienisi · founga · ʻekueisini" },
+  "bioinformatics": { "label": "Bioinformatics", "tag": "BX", "description": "paipa · founga · tohi faleʻakeʻake" }
+}

@@ -1,0 +1,48 @@
+{
+  "title": "Súgó",
+  "subtitle": "Útmutatók és válaszok, hogy a legtöbbet hozhasd ki az írásodból.",
+  "shellSubtitle": "Súgó / Dokumentáció",
+  "navGroup": "Súgó",
+  "navOverview": "Áttekintés",
+  "navAria": "Súgótémák",
+  "searchPlaceholder": "Keresés a súgóban…",
+  "searchLabel": "Súgócikkek keresése",
+  "noResults": "Egyetlen cikk sem felel meg a(z) „{{query}}” keresésnek.",
+  "resultsCount_one": "{{count}} találat",
+  "resultsCount_other": "{{count}} találat",
+  "browseAll": "Az összes téma böngészése",
+  "languagePickerLabel": "Súgó nyelve",
+  "allFeatures": {
+    "title": "Összes funkció",
+    "subtitle": "Mindennek a teljes listája, amit megtehetsz — minden elem az útmutatójához vezet."
+  },
+  "onThisPage": "Ezen az oldalon",
+  "related": "Kapcsolódó",
+  "backToHelp": "Teljes súgó",
+  "openCenter": "Teljes súgóközpont megnyitása",
+  "articleNotFound": "Ez a súgócikk nem létezik.",
+  "machineTranslationBanner": {
+    "label": "Gépi fordítás",
+    "body": "Ez a cikk automatikusan készült. Elnézést a hibákért — küldj visszajelzést, hogy javíthassuk őket.",
+    "feedbackLinkLabel": "visszajelzés küldése"
+  },
+  "palette": {
+    "title": "Súgó",
+    "description": "Keress a súgóközpontban, vagy ugorj egy gyorsbillentyűre.",
+    "shortcutsHeading": "Billentyűparancsok",
+    "hint": "Nyomd meg az Esc-et a bezáráshoz"
+  },
+  "shortcuts": { "help": "Súgó megnyitása", "focus": "Fókuszmód váltás" },
+  "categories": {
+    "getting-started": "Kezdés",
+    "writing": "Írás és szerkesztés",
+    "organizing": "Rendszerezés",
+    "views": "Nézetek és módok",
+    "research": "Kutatás és hivatkozások",
+    "brainspace": "BrainSpace",
+    "annotations": "Jegyzetek és kiemelések",
+    "customization": "Testreszabás és beállítások",
+    "data": "Az adataid",
+    "mobile": "Mobil"
+  }
+}

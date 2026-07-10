@@ -1,0 +1,97 @@
+{
+  "menu": {
+    "help": "Aide et visites",
+    "tours": "Visites guidées",
+    "resetAll": "Réinitialiser toutes les visites"
+  },
+  "controls": {
+    "next": "Suivant",
+    "prev": "Retour",
+    "done": "Terminé",
+    "progress": "{{current}} sur {{total}}"
+  },
+  "welcome": {
+    "title": "Bienvenue dans LIpsum Writer",
+    "description": "Un tour rapide des espaces et de l'écran d'accueil.",
+    "intro": {
+      "title": "Bienvenue",
+      "body": "LIpsum Writer est un espace de travail d'écriture organisé autour des <i>espaces</i> — un par projet, article ou livre. Jetons un coup d'œil rapide."
+    },
+    "continue": {
+      "title": "Reprends là où tu t'es arrêté",
+      "body": "Ton espace modifié le plus récemment est ici. Un clic pour le rouvrir."
+    },
+    "startSpace": {
+      "title": "Commence quelque chose de neuf",
+      "body": "Crée un espace neuf à partir d'un modèle — thèse, roman, essai — et commence à écrire en quelques secondes."
+    }
+  },
+  "writer": {
+    "title": "L'espace de travail",
+    "description": "Visite de l'éditeur, de la barre latérale et de la barre supérieure.",
+    "intro": {
+      "title": "La surface d'écriture",
+      "body": "C'est ici que tu travailles. Regardons la navigation, les modes et les outils que tu utiliseras le plus."
+    },
+    "spaceTitle": {
+      "title": "Titre de l'espace",
+      "body": "Clique sur le titre pour renommer l'espace. L'icône au survol ouvre ses paramètres."
+    },
+    "sections": {
+      "title": "Sections et documents",
+      "body": "Organise un espace en sections, et les sections en documents. Survole une section pour ajouter un document."
+    },
+    "settings": {
+      "title": "Paramètres de l'espace",
+      "body": "Gère le modèle, les sections, le partage et la suppression de cet espace."
+    },
+    "modes": {
+      "title": "Lecture · Écriture · Fractionné",
+      "body": "Bascule entre édition, lecture ou vue côte à côte. Chaque document garde son dernier mode."
+    },
+    "citations": {
+      "title": "Citations",
+      "body": "Ouvre le panneau des citations pour insérer des références pendant que tu écris."
+    },
+    "theme": {
+      "title": "Thème",
+      "body": "Variantes claire, sombre et contraste élevé — choisis celle qui te convient."
+    },
+    "editor": {
+      "title": "L'éditeur",
+      "body": "Un éditeur de texte enrichi avec raccourcis Markdown, blocs de code et citations. Commence à taper — tout est sauvegardé en local automatiquement."
+    }
+  },
+  "citations": {
+    "title": "Citations",
+    "description": "Gère les références et les bibliographies.",
+    "intro": {
+      "title": "Ta bibliographie",
+      "body": "Toutes les références d'un espace vivent ici. Importe un fichier BibTeX ou ajoute des entrées à la main."
+    },
+    "add": {
+      "title": "Ajouter ou importer",
+      "body": "Dépose un fichier .bib ou colle du texte BibTeX. Les doublons sont ignorés automatiquement."
+    },
+    "list": {
+      "title": "La liste",
+      "body": "Recherche, filtre et modifie les citations en ligne. D'ici tu peux aussi exporter la bibliographie complète."
+    }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "La toile libre pour les notes.",
+    "intro": {
+      "title": "Pense à voix haute",
+      "body": "BrainSpace est une toile libre pour les idées — dépose des notes, connecte-les et façonne ta pensée avant de passer à la prose."
+    },
+    "addNote": {
+      "title": "Ajouter une note",
+      "body": "Dépose une note de n'importe quel type sur la toile. Glisse pour la déplacer, redimensionne aux coins."
+    },
+    "canvas": {
+      "title": "La toile",
+      "body": "Maj+clic sur deux notes pour les connecter. Clique le fond pour désélectionner."
+    }
+  }
+}

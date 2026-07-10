@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Multivesmír volného psaní",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Tvůj první prostor je prázdný. Vyber šablonu pro začátek, nebo začni od nuly.",
+    "tagline": "Přehledný prostor pro dlouhá díla — beletrie, výzkum, eseje, deníky.",
+    "continueWriting": "Pokračovat v psaní",
+    "startNewSpace": "Začít nový prostor",
+    "syncOffChip": "synchronizace/zálohy nejsou aktivovány · data mohou být ztracena",
+    "syncOnChip": "synchronizace složky zapnuta",
+    "syncOnTitle": "Synchronizace složky aktivována",
+    "syncOnBody": "Tvoje práce se synchronizuje do složky „{{folder}}” na tomto zařízení.",
+    "warningTitle": "Předprodejní sestavení",
+    "warningBody": "Žádná synchronizace dat. Vše je uloženo v prohlížeči a vymazáním mezipaměti přijdeš o svoji práci. Synchronizaci do místní složky můžeš zapnout v Univerzálním nastavení → Synchronizace.",
+    "versionLine": "Verze {{version}}"
+  },
+  "about": {
+    "back": "zpět",
+    "title": "o aplikaci",
+    "greeting": "Ahoj,",
+    "paragraph1": "Tohle je pro spisovatele, který pořád začíná znovu. Pro toho, kdo otevře nový dokument, napíše tři věty (nebo žádnou) a pak stráví 40 minut úpravou písma. Pro toho, jehož nejlepší nápady přicházejí ve 2 ráno a hned se ztratí. Pro toho, kdo má čtrnáct záložek, šest zápisníků a rozepsaný text, který se od měsíce nepohnul.",
+    "paragraph2Before": "Vím to, protože to jsem já ",
+    "paragraph2After": ". Mám ADHD, autismus a pravděpodobně další -ismy, které ještě nebyly diagnostikovány. Potřebuji něco, co rozumí mému chaotickému, ale úžasnému mozku. Místo, kam mohu hodit všechno, než to zmizí (nebo začít psát). Fragmenty, nedokončené myšlenky, noční spojitosti. Všechno na jednom místě.",
+    "paragraph3": "Takže jsem vytvořil(a) tento prostor pro nás. Doufám, že ti přinese stejný příval dopaminu jako mně jeho tvorba.",
+    "paragraph4Before": "Ještě jedna věc... Věřím v technologie pro dobro a reklamu nesnáším. Proto to bude vždy bez reklam a ZDARMA pro nekomerční použití. Můžeš to forkovat a upravovat, jak chceš, pod licencí ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Stav",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — synchronizace dat není k dispozici. Všechna data jsou uložena v IndexedDB v místním prohlížeči. Pokud vyčistíš mezipaměť prohlížeče, tvoje práce bude ztracena.",
+    "feedbackBefore": "Stále to stavím a mám spoustu nápadů ",
+    "feedbackAfter": ". Rád(a) bych slyšel(a), co funguje, co ne a co ti chybí. Zpětná vazba je vítána.",
+    "sourceLabel": "Zdrojový kód"
+  },
+  "settings": {
+    "back": "zpět",
+    "windowTitle": "lotem · nastavení",
+    "breadcrumb": "UNIVERZÁLNÍ NASTAVENÍ",
+    "shellSubtitle": "UNIVERZÁLNÍ NASTAVENÍ",
+    "comingSoonBadge": "připravujeme",
+    "helpAria": "Co je toto?",
+    "groups": {
+      "preferences": "Předvolby",
+      "writing": "Psaní",
+      "data": "Data",
+      "account": "Účet"
+    },
+    "tabs": {
+      "general": "Obecné",
+      "appearance": "Vzhled",
+      "editor": "Editor",
+      "docInspector": "Inspektor dok.",
+      "accessibility": "Přístupnost",
+      "typography": "Typografie",
+      "shortcuts": "Klávesnice",
+      "templates": "Šablony",
+      "palettes": "Palety zvýraznění",
+      "citations": "Styl citací",
+      "annotation": "Poznámky",
+      "backups": "Zálohy",
+      "sync": "Synchronizace",
+      "export": "Export / import",
+      "data": "Tvoje data",
+      "account": "Účet",
+      "about": "O aplikaci",
+      "language": "Jazyk"
+    },
+    "language": {
+      "title": "Jazyk",
+      "subtitle": "Vyber jazyk pro rozhraní a články v Centru nápovědy. Chybějící překlady se zobrazí v angličtině.",
+      "label": "Jazyk rozhraní",
+      "hint": "Změny se projeví okamžitě a jsou uloženy v tomto prohlížeči.",
+      "machineTranslationNotice": "Překlady jiné než do angličtiny jsou vytvářeny automaticky. Omlouváme se za případné chyby — prosím pošli nám zpětnou vazbu, abychom je mohli opravit.",
+      "feedbackLinkLabel": "odeslat zpětnou vazbu"
+    },
+    "editor": {
+      "title": "Editor",
+      "subtitle": "Panel nástrojů a funkce psaní. Zkratky Markdown (#, >, -, **) fungují bez ohledu na tato nastavení.",
+      "floatingToolbarLabel": "Plovoucí panel nástrojů",
+      "floatingToolbarHint": "Zobrazí se při výběru textu nebo kliknutí pravým tlačítkem v režimu psaní.",
+      "floatingToolbarOff": "Vypnuto",
+      "floatingToolbarOn": "Zapnuto",
+      "rightClickLabel": "Nabídka pravého tlačítka",
+      "rightClickHint": "Přepíná mezi plovoucím panelem nástrojů a nativní kontextovou nabídkou prohlížeče.",
+      "rightClickTooltip": "Při kliknutí pravým tlačítkem použít nativní kontextovou nabídku místo plovoucího panelu nástrojů. Panel nástrojů se stále zobrazí při výběru textu.",
+      "inlineTogglesLabel": "Inline přepínače",
+      "inlineTogglesHint": "Tlačítka Tučně a Kurzívou v plovoucím panelu nástrojů.",
+      "inlineTogglesTooltip": "Skryj tlačítka T a K z plovoucího panelu nástrojů. Zkratky Markdown (**, _) fungují dál.",
+      "listDepthLabel": "Hloubka vnoření seznamů",
+      "listDepthHint": "Jak hluboko mohou být vnořeny odrážkové a číslované seznamy.",
+      "listDepthTooltip": "Zvyš nebo sniž limit vnoření seznamů. Aktuálně je pevně nastaveno na 2 úrovně.",
+      "templateDefaultsLabel": "Výchozí nastavení podle šablony",
+      "templateDefaultsHint": "Různé podmnožiny formátování pro každou šablonu.",
+      "templateDefaultsTooltip": "Umožní každé šabloně (beletrie, deník, technická…) zvolit vlastní podmnožinu formátování."
+    },
+    "docInspector": {
+      "title": "Inspektor dokumentu",
+      "subtitle": "Vyber, která pole se zobrazí v inspektoru dokumentu. Každé lze univerzálně vypnout a přepsat pro každý prostor.",
+      "statusLabel": "Stav",
+      "statusHint": "Zobrazí stav dokumentu a uzamkne dokončené dokumenty před úpravami.",
+      "wordLimitLabel": "Limit slov",
+      "wordLimitHint": "Zobrazí limit počtu slov, který lze nastavit pro každý dokument.",
+      "charLimitLabel": "Limit znaků",
+      "charLimitHint": "Zobrazí limit počtu znaků, který lze nastavit pro každý dokument.",
+      "dueDateLabel": "Termín odevzdání",
+      "dueDateHint": "Zobrazí termín, který lze nastavit pro každý dokument.",
+      "highlightLabel": "Zvýrazni text přes limit",
+      "highlightHint": "Označí v editoru veškerý text přesahující limit.",
+      "statusStagesLabel": "Fáze stavu",
+      "statusStagesHint": "Vyber, které fáze se zobrazí ve výběru stavu.",
+      "on": "Zapnuto",
+      "off": "Vypnuto",
+      "inherit": "Výchozí ({{state}})",
+      "inheritTooltip": "Zděděno z univerzálního nastavení",
+      "stateOn": "zapnuto",
+      "stateOff": "vypnuto"
+    },
+    "accessibility": {
+      "title": "Přístupnost",
+      "subtitle": "Přizpůsob rozhraní pro pohodlí a asistenční technologie. Každá volba začíná aktuálním stavem — nic se nezmění, dokud si to sám nezvolíš.",
+      "theme": {
+        "label": "Motiv a kontrast",
+        "hint": "Vysokofontrastní motivy splňují standard kontrastu WCAG AAA.",
+        "light": "Světlý",
+        "dark": "Tmavý",
+        "hcLight": "Vysoký kontrast (světlý)",
+        "hcDark": "Vysoký kontrast (tmavý)"
+      },
+      "motion": {
+        "label": "Pohyb",
+        "hint": "Sniž nebo zakáž animace rozhraní.",
+        "auto": "Sledovat systém",
+        "reduced": "Snížený",
+        "full": "Plný"
+      },
+      "textSize": {
+        "label": "Velikost textu",
+        "hint": "Změň velikost čtecí a písecké plochy.",
+        "sm": "Malá",
+        "base": "Výchozí",
+        "lg": "Velká",
+        "xl": "Extra velká"
+      },
+      "lineSpacing": {
+        "label": "Řádkování",
+        "hint": "Přidej prostor mezi řádky textu.",
+        "normal": "Normální",
+        "relaxed": "Uvolněné",
+        "loose": "Volné"
+      },
+      "linkUnderline": {
+        "label": "Vždy podtrhávat odkazy",
+        "hint": "Zobrazí podtržení, aby se odkazy nerozlišovaly pouze barvou."
+      },
+      "focus": {
+        "label": "Vylepšený indikátor fokusu",
+        "hint": "Použij silnější obrys s vyšším kontrastem při fokusu."
+      },
+      "reset": {
+        "label": "Obnovit výchozí nastavení",
+        "hint": "Obnoví pohyb, velikost textu, řádkování, odkazy a fokus na výchozí hodnoty. Motiv se nezmění.",
+        "action": "Obnovit"
+      }
+    },
+    "general": {
+      "title": "Obecné",
+      "subtitle": "Jak LIpsum Writer vypadá ve výchozím stavu. Nic z toho není destruktivní.",
+      "comingSoonBody": "Kompaktní hustota, omezení pohybu, viditelnost klávesových nápověd a zobrazení při spuštění.",
+      "compactDensityLabel": "Kompaktní hustota",
+      "compactDensityHint": "Užší řádky v seznamech, menší odsazení všude.",
+      "reduceMotionLabel": "Omezit pohyb",
+      "reduceMotionHint": "Přeskočit animované přechody mezi pohledy.",
+      "keyboardHintsLabel": "Zobrazit klávesové nápovědy",
+      "keyboardHintsHint": "Zobrazí zkratky s klávesou ⌘ v nápovědách a v rozích tlačítek.",
+      "startupLabel": "Otevřít při spuštění",
+      "startupHint": "Co se zobrazí při spuštění aplikace.",
+      "startupOptions": {
+        "lastView": "Poslední zobrazení",
+        "home": "Domovská stránka",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Vzhled",
+      "subtitle": "Barva, písmo, hustota. Nálada, kterou chceš navodit.",
+      "comingSoonBody": "Kurátorské palety motivů, barva zvýraznění a hustota. Aktuální přepínač motivu se nachází v rychlém nastavení na postranním panelu.",
+      "themeLabel": "Motiv",
+      "themeHint": "Tři kurátorské palety. Ladí vše — barvy bloků, tenké linky i strukturu.",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "výchozí",
+        "studio": "Studio",
+        "studioSub": "neutrální",
+        "midnight": "Midnight",
+        "midnightSub": "tmavý"
+      },
+      "accentLabel": "Akcent",
+      "accentHint": "Používá se pro najetí, fokus a kroužek aktivní úpravy.",
+      "densityLabel": "Hustota",
+      "densityOptions": {
+        "cozy": "Útulná",
+        "default": "Výchozí",
+        "compact": "Kompaktní"
+      }
+    },
+    "templates": {
+      "title": "Šablony",
+      "subtitle": "Opakovaně použitelné struktury pro nové prostory a dokumenty.",
+      "comingSoonBody": "Vytvářej vlastní šablony s oddíly, výchozími názvy dokumentů a ukázkovými texty.",
+      "items": {
+        "fiction": "Beletrie",
+        "fictionSub": "Rukopis · Svět · Dílna",
+        "research": "Výzkum",
+        "researchSub": "Zdroje · Poznámky · Koncepty",
+        "journal": "Deník",
+        "journalSub": "Denní · Týdenní · Reflexe",
+        "essay": "Esej",
+        "essaySub": "Osnova · Koncepty · Finální"
+      }
+    },
+    "palettes": {
+      "title": "Palety zvýraznění",
+      "subtitle": "Palety s pěti místy pro každý prostor — pojmenuj a nastav každou barvu.",
+      "comingSoonBody": "Upravuj, ukládej a přepínej pojmenované palety zvýraznění (Důkazy, K revizi, Reference…) napříč prostory.",
+      "items": {
+        "evidence": "Důkazy",
+        "revise": "K revizi",
+        "reference": "Reference",
+        "quote": "Citát",
+        "loose": "Volný konec"
+      },
+      "rename": "přejmenovat",
+      "tune": "upravit"
+    },
+    "citations": {
+      "title": "Styl citací",
+      "subtitle": "Výchozí styl citací pro všechny prostory.",
+      "comingSoonBody": "Vyber univerzální styl (Chicago, APA, MLA…) s přepsáním pro každý prostor.",
+      "styleLabel": "Výchozí styl",
+      "styleHint": "Použije se při vkládání nové citace. Přepsání pro jednotlivé prostory přijde později.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Poznámky",
+      "subtitle": "Marginální poznámky a inline anotace.",
+      "comingSoonBody": "Typy anotací, výchozí viditelnost a chování při exportu.",
+      "showMarginLabel": "Zobrazit marginální poznámky",
+      "showMarginHint": "Anotace se zobrazí v pravém okraji, pokud je dostatek místa.",
+      "showInlineLabel": "Zobrazit inline zvýraznění",
+      "showInlineHint": "Barva anotace se přelije na základní text.",
+      "exportLabel": "Zahrnout do exportů",
+      "exportHint": "Anotace se zapíší vedle těla dokumentu."
+    },
+    "export": {
+      "title": "Export / import",
+      "subtitle": "Přesuň data do a z LIpsum Writer.",
+      "comingSoonBody": "Hromadný export do .zip, import z jiného balíčku LIpsum nebo adresáře Markdown.",
+      "formatLabel": "Formát exportu",
+      "formatHint": "Export pro jednotlivé dokumenty a prostory používá stejné výchozí nastavení.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Importovat z",
+      "importHint": "Přenés jiný balíček LIpsum nebo adresář souborů Markdown.",
+      "importOptions": {
+        "bundle": "Balíček LIpsum (.zip)",
+        "markdown": "Složka Markdown",
+        "obsidian": "Trezor Obsidian"
+      },
+      "importSpaceLabel": "Importovat prostor",
+      "importSpaceHint": "Přenes prostor do tohoto prohlížeče z archivu Writer (.zip) — stažený snímek nebo export ze synchronizace složky z jiného zařízení.",
+      "importChooseFile": "Vybrat archiv…",
+      "importing": "importování…",
+      "importFailed": "Import selhal: {{message}}",
+      "comingSoonLabel": "Další formáty",
+      "comingSoonHint": "Hromadný export a import ze složek Markdown nebo trezorů Obsidian.",
+      "comingSoonTooltip": "Plánováno — zatím není k dispozici."
+    },
+    "data": {
+      "title": "Tvoje data",
+      "subtitle": "Kde tvoje práce žije a kolik místa zabírá.",
+      "comingSoonBody": "Využití IndexedDB, odhad úložiště a jednorázové úplné vymazání.",
+      "storageLabel": "Použité úložiště",
+      "storageValue": "≈ 12,4 MB · 4 prostory, 38 dokumentů",
+      "engineLabel": "Úložný systém",
+      "engineValue": "IndexedDB (místní prohlížeč)",
+      "wipeLabel": "Vymazat vše",
+      "wipeHint": "Odstraní každý prostor, dokument a snímek z tohoto prohlížeče. Tuto akci nelze vrátit.",
+      "wipeButton": "Vymazat místní data…"
+    },
+    "about": {
+      "title": "O aplikaci",
+      "subtitle": "Informace o sestavení a odkazy.",
+      "comingSoonBody": "Příběh najdeš na stránce /about; tato záložka bude obsahovat informace o sestavení, licenci a changelog.",
+      "versionLabel": "Verze",
+      "versionValue": "{{version}}",
+      "buildLabel": "Sestavení",
+      "buildValue": "místní",
+      "licenseLabel": "Licence",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Odkazy",
+      "links": {
+        "source": "Zdrojový kód",
+        "changelog": "Changelog",
+        "feedback": "Odeslat zpětnou vazbu"
+      }
+    },
+    "account": {
+      "title": "Účet",
+      "subtitle": "Přihlášení, synchronizace napříč zařízeními a sdílené pracovní prostory.",
+      "comingSoonBody": "Cloudová synchronizace není momentálně dostupná — Lotem je pouze místní. Účet, přihlášení a sdílené pracovní prostory přijdou, až bude synchronizace k dispozici.",
+      "signedOutLabel": "Přihlásit se",
+      "signedOutHint": "Cloudová synchronizace zatím není k dispozici. Toto je zde pro ukázku designu.",
+      "signInButton": "Přihlásit se e-mailem",
+      "syncLabel": "Synchronizovat toto zařízení",
+      "syncHint": "Po přihlášení se tvoje prostory replikují na ostatní zařízení."
+    },
+    "typography": {
+      "title": "Typografie",
+      "subtitle": "Výchozí hodnoty pro všechny světy. Jednotlivé světy je mohou přepsat.",
+      "comingSoonBody": "Vyber písmo textu, písmo rozhraní, výchozí velikost čtení, výšku řádku a míru pro nové světy.",
+      "proseFontLabel": "Písmo textu",
+      "uiFontLabel": "Písmo rozhraní",
+      "proseSizeLabel": "Velikost textu",
+      "proseSizeHint": "Výchozí pro nové světy.",
+      "lineHeightLabel": "Výška řádku",
+      "measureLabel": "Míra",
+      "measureHint": "Maximální šířka řádku.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Zkratky",
+      "subtitle": "Klávesové zkratky pro navigaci, formátování a režimy.",
+      "comingSoonBody": "Přenastavitelné zkratky pro psaní/čtení/rozdělení, režim soustředění a panel formátování.",
+      "navHeader": "Navigace",
+      "formatHeader": "Formátování",
+      "modeHeader": "Režimy",
+      "items": {
+        "openSettings": "Otevřít nastavení",
+        "quickSettings": "Rychlé nastavení",
+        "findInDoc": "Najít v dokumentu",
+        "toggleFocus": "Přepnout fokus",
+        "toggleInspector": "Přepnout inspektor",
+        "bold": "Tučné",
+        "italic": "Kurzíva",
+        "underline": "Podtržení",
+        "heading1": "Nadpis 1",
+        "heading2": "Nadpis 2",
+        "write": "Režim psaní",
+        "read": "Režim čtení",
+        "split": "Dělený režim"
+      }
+    },
+    "backups": {
+      "title": "Zálohy",
+      "subtitle": "Exportuj, obnoviš a pořídíš snímky svých místních dat.",
+      "comingSoonBody": "Naplánované místní snímky, ruční export do .zip a obnovení z předchozí zálohy.",
+      "intervalLabel": "Interval automatického snímkování",
+      "intervalOptions": {
+        "5min": "5 min",
+        "10min": "10 min",
+        "30min": "30 min",
+        "off": "Vypnuto"
+      },
+      "keepLabel": "Uchovávat",
+      "keepHint": "Starší snímky se odstraňují automaticky.",
+      "keepOptions": {
+        "last50": "Posledních 50",
+        "days7": "7 dní",
+        "days30": "30 dní"
+      },
+      "latestLabel": "Nejnovější",
+      "latestValue": "před 12 min · 1 190 slov"
+    },
+    "sync": {
+      "title": "Synchronizace",
+      "subtitle": "Odesílej prostory do vámi zvolené složky. Nasměruj ji na složku Google Drive, Dropbox nebo iCloud pro synchronizaci napříč zařízeními.",
+      "unsupportedTitle": "Není k dispozici v tomto prohlížeči",
+      "unsupportedBody": "Synchronizace složky vyžaduje rozhraní File System Access API, které je dostupné v prohlížečích Chrome, Edge a jiných Chromium na ploše. Pro použití přejdi na podporovaný prohlížeč.",
+      "folderLabel": "Synchronizovaná složka",
+      "folderHint": "Každá synchronizace zde zapíše Markdown .zip pro každý prostor a uchová posledních 5 plus latest.zip. Synchronizace je oddělena od záloh.",
+      "noFolder": "Žádná složka nepřipojena",
+      "chooseFolder": "Vybrat složku…",
+      "changeFolder": "Změnit…",
+      "disconnect": "Odpojit",
+      "intervalLabel": "Automatická synchronizace",
+      "intervalHint": "Jak často se prostory synchronizují automaticky, když je aplikace otevřená a složka připojena. Každý prostor může toto výchozí nastavení přepsat.",
+      "intervalOff": "Vypnuto",
+      "intervalMinutes": "{{count}} min",
+      "intervalDefault": "Výchozí ({{label}})",
+      "syncLabel": "Ruční synchronizace",
+      "pushOnlyHint": "Zatím pouze odesílání — zapisuje místní data do složky. Přijímání změn přijde později.",
+      "syncNow": "Synchronizovat nyní",
+      "syncNowAll": "Synchronizovat všechny prostory",
+      "reconnectHint": "Synchronizace je pozastavena — prohlížeč pro tuto relaci znovu potřebuje povolení ke složce. Znovu se připoj, aby se obnovila ruční a automatická synchronizace.",
+      "reconnectButton": "Znovu připojit",
+      "reconnecting": "Opětovné připojování…",
+      "syncing": "Synchronizování…",
+      "syncFailed": "Synchronizace selhala: {{message}}",
+      "lastSynced": "Naposledy synchronizováno {{when}}",
+      "neverSynced": "Nikdy nesynchronizováno",
+      "justNow": "právě teď",
+      "resultsTitle": "Poslední spuštění",
+      "spaceOk": "synchronizováno",
+      "spaceFailed": "selhalo",
+      "historyTitle": "Nedávné synchronizace",
+      "historyEmpty": "Zatím žádné synchronizace.",
+      "columns": {
+        "when": "KDY",
+        "space": "PROSTOR",
+        "kind": "TYP",
+        "size": "VELIKOST",
+        "status": "STAV"
+      },
+      "kind": {
+        "auto": "auto",
+        "manual": "ruční"
+      },
+      "status": {
+        "ok": "ok",
+        "error": "chyba"
+      }
+    },
+    "space": {
+      "breadcrumb": "PROSTOR · NASTAVENÍ",
+      "shellSubtitle": "NASTAVENÍ PROSTORU",
+      "loading": "Načítání prostoru…",
+      "groups": {
+        "thisSpace": "Tento prostor",
+        "sharingMembers": "Sdílení a členové",
+        "data": "Data",
+        "dangerZone": "Nebezpečí"
+      },
+      "tabs": {
+        "general": "Obecné",
+        "docInspector": "Inspektor dok.",
+        "template": "Šablona",
+        "palette": "Paleta zvýraznění",
+        "sharing": "Sdílení",
+        "members": "Členové",
+        "backups": "Zálohy",
+        "sync": "Synchronizace",
+        "export": "Export",
+        "danger": "Nebezpečná zóna"
+      },
+      "docInspector": {
+        "title": "Inspektor dokumentu",
+        "subtitle": "Přepiš univerzální nastavení inspektoru pro tento prostor."
+      },
+      "palette": {
+        "title": "Paleta zvýraznění",
+        "subtitle": "Pět pojmenovaných a nastavitelných barev zvýraznění pro tento prostor.",
+        "comingSoonBody": "Přejmenuj, změň odstín a přeuspořádej sloty zvýraznění tohoto prostoru.",
+        "items": {
+          "evidence": "Důkazy",
+          "revise": "K revizi",
+          "reference": "Reference",
+          "quote": "Citát",
+          "loose": "Volný konec"
+        },
+        "rename": "přejmenovat",
+        "tune": "upravit"
+      },
+      "export": {
+        "title": "Export",
+        "subtitle": "Přesuň obsah tohoto prostoru do jiného nástroje.",
+        "comingSoonBody": "Export do Markdown .zip (dnes přes Zálohy), LaTeX, HTML nebo PDF — vše na jednom místě.",
+        "formatLabel": "Formát",
+        "formatHint": "Jako první přichází Markdown; ostatní budou následovat.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Poslední export",
+        "lastValue": "nikdy"
+      },
+      "general": {
+        "title": "Obecné",
+        "subtitle": "Identifikační údaje pro tento prostor. Změny se projeví okamžitě a synchronizují se napříč zobrazeními.",
+        "nameLabel": "Název prostoru",
+        "nameHint": "Zobrazuje se v záhlaví postranního panelu a v nápovědě dlaždice prostoru.",
+        "tagLabel": "Zkratka",
+        "tagHint": "Krátký kód (2–4 znaky) zobrazený na dlaždici prostoru."
+      },
+      "sharing": {
+        "title": "Sdílení",
+        "subtitle": "Nastavení sdílení tohoto prostoru.",
+        "comingSoonBody": "Viditelnost pro každý prostor a sdílené odkazy. Přijde, až bude cloudová synchronizace k dispozici.",
+        "visibilityLabel": "Viditelnost",
+        "visibilityOptions": {
+          "private": "Soukromý",
+          "link": "Kdokoliv s odkazem",
+          "members": "Pouze členové"
+        },
+        "linkLabel": "Sdílený odkaz",
+        "linkHint": "Výchozí nastavení je pouze pro čtení. Oprávnění k úpravám se řídí podle Členů.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "kopírovat"
+      },
+      "template": {
+        "title": "Šablona",
+        "subtitle": "Strukturální šablona, se kterou byl tento prostor vytvořen.",
+        "comingSoonBody": "Změna šablony prostoru po vytvoření zatím není podporována. Přijde, až budeme schopni bezpečně migrovat oddíly a dokumenty.",
+        "currentLabel": "Aktuální šablona",
+        "currentValue": "Beletrie",
+        "currentSub": "Rukopis · Svět · Dílna",
+        "changeLabel": "Změnit šablonu",
+        "changeHint": "Přeskládá stávající oddíly a dokumenty do nové šablony.",
+        "changeButton": "Změnit šablonu…"
+      },
+      "members": {
+        "title": "Členové",
+        "subtitle": "Spoluautoři a recenzenti s přístupem k tomuto prostoru.",
+        "comingSoonBody": "Zvi spolupracovníky, spravuj role a kontroluj změny. Přijde s cloudovou synchronizací.",
+        "inviteLabel": "Pozvat e-mailem",
+        "inviteHint": "Zašleme jim odkaz k připojení do tohoto prostoru.",
+        "invitePlaceholder": "jmeno@priklad.cz",
+        "inviteButton": "odeslat pozvánku",
+        "membersLabel": "Členové",
+        "roles": {
+          "owner": "vlastník",
+          "editor": "editor",
+          "viewer": "čtenář"
+        },
+        "you": "ty"
+      },
+      "backups": {
+        "title": "Zálohy",
+        "subtitle": "Pořiď snímek tohoto prostoru jako .zip, který si můžeš stáhnout, uchovat a z něj obnovit.",
+        "retentionHint": "Uchovává se {{count}} nejnovějších snímků — starší jsou automaticky odstraňovány.",
+        "snapshotNow": "+ snímek nyní",
+        "snapshotting": "pořizování snímku…",
+        "snapshotFailed": "Snímek selhal: {{message}}",
+        "historyTitle": "Historie",
+        "empty": "Zatím žádné snímky — vytvoř jeden pomocí + snímek nyní.",
+        "columns": {
+          "when": "KDY",
+          "kind": "TYP",
+          "size": "VELIKOST",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "ruční",
+          "auto": "auto",
+          "snapshot": "snímek"
+        },
+        "download": "↓ stáhnout",
+        "delete": "smazat",
+        "deleteConfirm": "Smazat tento snímek? Tuto akci nelze vrátit.",
+        "deleted": "Snímek smazán.",
+        "justNow": "právě teď",
+        "restore": "↺ obnovit",
+        "restoreUnavailable": "Tento snímek pochází z doby před podporou obnovy — lze jej pouze stáhnout.",
+        "restoreDialogTitle": "Obnovit tento snímek?",
+        "restoreDialogBody": "Aktuální obsah tohoto prostoru bude nahrazen snímkem. Nejdříve se uloží snímek aktuálního stavu, takže tuto obnovu lze vrátit.",
+        "restoreConfirm": "Obnovit",
+        "restoreCancel": "Zrušit",
+        "restoring": "obnovování…",
+        "restored": "Snímek obnoven.",
+        "restoreFailed": "Obnova selhala: {{message}}",
+        "fileRestoreTitle": "Chceš obnovit ze staženého .zip?",
+        "fileRestoreBody": "Importuj jej přes Univerzální nastavení → Export / import — vrátí se jako nový prostor a tento zůstane nedotčen."
+      },
+      "sync": {
+        "title": "Synchronizace",
+        "subtitle": "Odesílej tento prostor do připojené složky, ručně nebo podle plánu. Synchronizace je oddělena od záloh.",
+        "folderHint": "Připoj složku v Univerzálním nastavení → Synchronizace. Stejná složka se používá pro každý prostor.",
+        "intervalHint": "Jak často se tento prostor synchronizuje automaticky. Zvol Výchozí, chceš-li sledovat univerzální nastavení automatické synchronizace.",
+        "syncNow": "Synchronizovat tento prostor"
+      },
+      "danger": {
+        "title": "Nebezpečná zóna",
+        "subtitle": "Nevratné akce. Před pokračováním si vše důkladně přečti.",
+        "deleteCardTitle": "Smazat tento prostor",
+        "deleteCardBody": "Trvale odstraní tento prostor spolu s každým dokumentem, oddílem, poznámkou Brain space, anotací, citací a propojením. Tuto akci nelze vrátit.",
+        "deleteButton": "Smazat tento prostor",
+        "dialogTitle": "Smazat „{{name}}”?",
+        "dialogBody": "Tato akce trvale odstraní prostor a veškerý jeho obsah. Tuto akci nelze vrátit.",
+        "typeToConfirm": "Pro potvrzení zadej {{name}}",
+        "cancel": "Zrušit",
+        "confirm": "Smazat prostor"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Ztracen v okrajích",
+    "body": "Tato stránka (zatím) neexistuje.",
+    "goHome": "Přejít domů"
+  },
+  "templates": {
+    "crumb": "01 — DRUH MÍSTNOSTI",
+    "headingMain": "Jaký prostor",
+    "headingAccent": "začínáš?",
+    "chooseLegend": "Vyber šablonu",
+    "stage": {
+      "pre-alpha": "experimentální",
+      "alpha": "rané",
+      "beta": "beta"
+    },
+    "nameLabel": "Název",
+    "tagLabel": "Zkratka",
+    "syncLabel": "cloudová synchronizace —",
+    "syncValue": "vypnuta, místní",
+    "syncTooltip": "Cloudová synchronizace není k dispozici — tato aplikace je zatím pouze místní.",
+    "creating": "vytváření…",
+    "submitLabel": "vstoupit do {{name}} →",
+    "newSpace": "nový prostor",
+    "back": "zpět"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} nesetříděných",
+    "title": "Brain space",
+    "mobileWarning": "Brain space funguje nejlépe na větší obrazovce.",
+    "mobileNote": "Plátno potřebuje myš nebo touchpad.",
+    "openInWrite": "Otevřít v režimu Psaní →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "začni zapisovat",
+      "emptyHint": "vyber typ karty níže",
+      "pendingHint": "shift-klik na jinou poznámku pro propojení · esc pro zrušení"
+    },
+    "note": {
+      "deleteNote": "Smazat poznámku",
+      "addPicture": "Přidat obrázek",
+      "addPictureCta": "přidat obrázek",
+      "openLinkedDoc": "Otevřít propojený dokument",
+      "fetchedContent": "Načtený obsah",
+      "openDetailsLabel": "Otevřít podrobnosti",
+      "openDetailsTitle": "Otevřít panel podrobností",
+      "titlePlaceholder": "název",
+      "addTitleCta": "+ název",
+      "bodyEmpty": "(klikni pro psaní)",
+      "viewImage": "Zobrazit {{name}}",
+      "removeImage": "Odebrat {{name}}",
+      "resize": "Změnit velikost poznámky",
+      "days": {
+        "sun": "ne",
+        "mon": "po",
+        "tue": "út",
+        "wed": "st",
+        "thu": "čt",
+        "fri": "pá",
+        "sat": "so"
+      }
+    },
+    "drawer": {
+      "title": "Podrobnosti poznámky",
+      "description": "Upravuj vybranou poznámku a spravuj její propojení.",
+      "untitledPlaceholder": "Bez názvu",
+      "titleAriaLabel": "Název poznámky",
+      "closeAriaLabel": "Zavřít panel",
+      "bodyLabel": "Tělo",
+      "bodyPlaceholder": "Napiš něco…",
+      "picturesLabel": "Obrázky",
+      "addPicture": "Přidat obrázek",
+      "pictureLimitHint": "dosažen limit {{count}} — odeber jeden pro přidání dalšího.",
+      "linkedDocLabel": "Propojený dokument",
+      "noLinkedDoc": "— Žádný propojený dokument —",
+      "untitledDoc": "Bez názvu",
+      "openDoc": "Otevřít",
+      "connectionsHeading": "Propojení ({{count}})",
+      "connectionsEmpty": "shift-klik na jinou poznámku na plátně pro propojení.",
+      "untitledNote": "(bez názvu)",
+      "removeConnection": "Odebrat propojení",
+      "deleteNote": "Smazat poznámku"
+    }
+  },
+  "split": {
+    "title": "Dělené zobrazení",
+    "mobileWarning": "Dělené zobrazení vyžaduje větší obrazovku.",
+    "mobileNote": "Otevři tento dokument v režimu Psaní.",
+    "openInWrite": "Otevřít v režimu Psaní →",
+    "leftPrefix": "VLEVO —",
+    "rightPrefix": "VPRAVO —",
+    "rightPaneAria": "Dokument v pravém panelu",
+    "noOtherDocs": "(žádné jiné dokumenty)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Citace",
+    "pickDoc": "Vyber dokument z rozbalovacího menu výše.",
+    "dividerAria": "Změnit velikost dělených panelů"
+  },
+  "citationsDrawer": {
+    "title": "Citace",
+    "description": "Hledej, importuj a exportuj citace pro tento prostor.",
+    "close": "Zavřít citace",
+    "expand": "Otevřít citace v celém zobrazení"
+  },
+  "citations": {
+    "title": "Citace",
+    "breadcrumb": "Zdroje / ",
+    "entries": "{{count}} ZÁZNAMŮ",
+    "searchPlaceholder": "autoři, zkratky, rok…",
+    "upload": "↑ nahrát .bib / .ris",
+    "add": "+ přidat",
+    "cancel": "× zrušit",
+    "columns": {
+      "tag": "ZKRATKA",
+      "authors": "AUTOŘI",
+      "title": "NÁZEV",
+      "year": "ROK",
+      "type": "TYP",
+      "used": "POUŽITA"
+    },
+    "style": "STYL — CHICAGO (AUTOR-DATUM)",
+    "exportBib": "EXPORTOVAT JAKO .BIB",
+    "summary": "{{filtered}} ZOBRAZENO · {{shown}} NA TÉTO STRÁNCE",
+    "prevPage": "Předchozí stránka",
+    "nextPage": "Další stránka",
+    "empty": "zatím žádné citace",
+    "noMatch": "žádné záznamy neodpovídají vyhledávání.",
+    "importHint": "importuj .bib nebo přidej ručně.",
+    "pasteHeader": "Vložit BibTeX nebo název",
+    "addCitation": "přidat citaci",
+    "manualCancel": "zrušit",
+    "adding": "přidávání…",
+    "parsing": "Analyzování {{name}}…",
+    "imported": "Importováno {{added}} citací{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", přeskočeno {{skipped}} duplikátů{{skippedPlural}}",
+    "skippedSuffixShort": ", přeskočeno {{skipped}}",
+    "failed": "Analýza selhala: {{message}}",
+    "failedManual": "Selhalo: {{message}}",
+    "addedOne": "Přidána 1 citace.",
+    "unknownAuthor": "(neznámý)",
+    "unknownError": "neznámá chyba",
+    "edit": {
+      "save": "uložit",
+      "saving": "ukládání…",
+      "cancel": "zrušit",
+      "delete": "smazat",
+      "edit": "upravit",
+      "tagLabel": "Zkratka",
+      "authorsLabel": "Autoři",
+      "titleLabel": "Název",
+      "yearLabel": "Rok",
+      "typeLabel": "Typ",
+      "duplicateKey": "Zkratka „{{key}}” je v tomto prostoru již použita.",
+      "updated": "Aktualizována 1 citace.",
+      "deleteOne": "Smazána 1 citace.",
+      "confirmDeleteUsed": "Tato citace se v dokumentech používá {{count}}×. Přesto smazat?",
+      "confirmDeleteSingle": "Smazat citaci „{{key}}”? Tuto akci nelze vrátit.",
+      "untitled": "(bez názvu)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} vybráno",
+      "deleteSelected": "smazat",
+      "setTypePrompt": "nastavit typ",
+      "setTypeAria": "Nastavit typ vybraných citací",
+      "chooseOption": "vybrat…",
+      "ariaLabel": "Hromadné akce",
+      "clearSelection": "zrušit výběr",
+      "deleted": "Smazáno {{count}} citací.",
+      "typeApplied": "Typ nastaven na {{type}} pro {{count}} citací.",
+      "confirmDelete": "Smazat {{count}} citaci/í? Tuto akci nelze vrátit."
+    },
+    "row": {
+      "selectAllAria": "Vybrat všechny citace na této stránce",
+      "viewCitationAria": "Zobrazit citaci {{key}}",
+      "selectCitationAria": "Vybrat citaci {{key}}",
+      "collapseCitationAria": "Sbalit citaci {{key}}",
+      "usedCount": "použita {{count}}×",
+      "unused": "nepoužitá",
+      "copyTag": "Kopírovat zkratku",
+      "copyTagAria": "Kopírovat zkratku {{value}}",
+      "copiedTitle": "Zkopírováno",
+      "copiedTagAria": "Zkopírována zkratka {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

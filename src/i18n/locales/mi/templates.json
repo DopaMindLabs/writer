@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Wātea", "tag": "WA", "description": "tīmata mai i te kore" },
+  "fiction": { "label": "Tuhi pakiwaitara", "tag": "FI", "description": "pukapuka · pakiwaitara poto · tuhinga whakaari" },
+  "humanities": { "label": "Tuhinga roa · rangahau", "tag": "TH", "description": "mahi mātauranga roa" },
+  "journal": { "label": "Rātaka", "tag": "RA", "description": "ia rā, kāore he taumahatanga" },
+  "serial": { "label": "Raupapa", "tag": "SE", "description": "tuhinga hokirua · pānui" },
+  "six": { "label": "Ono Tatau · mahi tahi", "tag": "SD", "description": "ao tirinaha · ngā kaituhi maha" },
+  "technical": { "label": "Hangarau · Pūrongo pūtaiao", "tag": "TX", "description": "Pūtaiao · tikanga · whārite" },
+  "bioinformatics": { "label": "Bioinformatics", "tag": "BX", "description": "ngā paipa · tikanga · pukapuka taiwhanga" }
+}

@@ -1,0 +1,46 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TextField > snapshot > should match the snapshot across all variants 1`] = `
+<div>
+  <div>
+    <input
+      class="block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 py-1.5 border-rule focus:border-ink"
+      data-testid="tf-snap-rest"
+      placeholder="rest"
+      type="text"
+    />
+    <input
+      class="block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 py-1.5 border-rule focus:border-ink"
+      data-testid="tf-snap-filled"
+      type="text"
+      value="filled"
+    />
+    <input
+      class="block w-full font-sans text-[14px] leading-tight outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 py-1.5 bg-paper-2 text-ink-4 border-rule"
+      data-testid="tf-snap-disabled"
+      disabled=""
+      placeholder="off"
+      type="text"
+    />
+    <input
+      aria-invalid="true"
+      class="block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 border-b px-0 py-1.5 border-ink"
+      data-testid="tf-snap-error"
+      type="text"
+      value="bad"
+    />
+    <input
+      class="block w-full bg-transparent font-sans text-[14px] leading-tight text-ink outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 p-0"
+      data-testid="tf-snap-bare"
+      type="text"
+      value="bare"
+    />
+    <input
+      class="block w-full font-sans text-[14px] leading-tight outline-none transition-colors placeholder:text-ink-4 disabled:cursor-not-allowed border-0 p-0 bg-paper-2 text-ink-4"
+      data-testid="tf-snap-bare-disabled"
+      disabled=""
+      type="text"
+    />
+  </div>
+</div>
+`;

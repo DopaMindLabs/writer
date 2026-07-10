@@ -1,0 +1,28 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TypographyLabel > snapshot > should match the snapshot across all variants and asChild 1`] = `
+<div>
+  <div>
+    <p
+      class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em]"
+    >
+      Default
+    </p>
+    <p
+      class="font-mono uppercase text-ink-3 text-[10px] tracking-wider"
+    >
+      Wide
+    </p>
+    <p
+      class="font-mono uppercase text-ink-3 text-xs tracking-wider"
+    >
+      Xs
+    </p>
+    <h3
+      class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em]"
+    >
+      As child
+    </h3>
+  </div>
+</div>
+`;

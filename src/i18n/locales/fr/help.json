@@ -1,0 +1,51 @@
+{
+  "title": "Aide",
+  "subtitle": "Guides et réponses pour tirer le meilleur de ton écriture.",
+  "shellSubtitle": "Aide / Documentation",
+  "navGroup": "Aide",
+  "navOverview": "Aperçu",
+  "navAria": "Sujets d'aide",
+  "searchPlaceholder": "Rechercher dans l'aide…",
+  "searchLabel": "Rechercher des articles d'aide",
+  "noResults": "Aucun article ne correspond à « {{query}} ».",
+  "resultsCount_one": "{{count}} résultat",
+  "resultsCount_other": "{{count}} résultats",
+  "browseAll": "Parcourir tous les sujets",
+  "languagePickerLabel": "Langue de l'aide",
+  "allFeatures": {
+    "title": "Voir toutes les fonctionnalités",
+    "subtitle": "Une liste complète de tout ce que tu peux faire — chaque entrée mène à son guide."
+  },
+  "onThisPage": "Sur cette page",
+  "related": "Voir aussi",
+  "backToHelp": "Toute l'aide",
+  "openCenter": "Ouvrir le centre d'aide complet",
+  "articleNotFound": "Cet article d'aide n'existe pas.",
+  "machineTranslationBanner": {
+    "label": "Traduction automatique",
+    "body": "Cet article a été traduit automatiquement. Désolé pour les erreurs — envoie un retour pour qu'on les corrige.",
+    "feedbackLinkLabel": "envoyer un retour"
+  },
+  "palette": {
+    "title": "Aide",
+    "description": "Recherche dans le centre d'aide ou saute à un raccourci.",
+    "shortcutsHeading": "Raccourcis clavier",
+    "hint": "Appuie sur Échap pour fermer"
+  },
+  "shortcuts": {
+    "help": "Ouvrir l'aide",
+    "focus": "Basculer le mode focus"
+  },
+  "categories": {
+    "getting-started": "Démarrage",
+    "writing": "Écriture et édition",
+    "organizing": "Organisation",
+    "views": "Vues et modes",
+    "research": "Recherche et citations",
+    "brainspace": "BrainSpace",
+    "annotations": "Annotations et surlignages",
+    "customization": "Personnalisation et paramètres",
+    "data": "Tes données",
+    "mobile": "Mobile"
+  }
+}

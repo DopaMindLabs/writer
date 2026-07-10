@@ -1,0 +1,48 @@
+{
+  "title": "Hjälp",
+  "subtitle": "Guider och svar för att få ut det mesta av ditt skrivande.",
+  "shellSubtitle": "Hjälp / Dokumentation",
+  "navGroup": "Hjälp",
+  "navOverview": "Översikt",
+  "navAria": "Hjälpämnen",
+  "searchPlaceholder": "Sök i hjälpen…",
+  "searchLabel": "Sök hjälpartiklar",
+  "noResults": "Inga artiklar matchar ”{{query}}”.",
+  "resultsCount_one": "{{count}} resultat",
+  "resultsCount_other": "{{count}} resultat",
+  "browseAll": "Bläddra bland alla ämnen",
+  "languagePickerLabel": "Hjälpspråk",
+  "allFeatures": {
+    "title": "Visa alla funktioner",
+    "subtitle": "En komplett lista över allt du kan göra — varje post länkar till sin guide."
+  },
+  "onThisPage": "På den här sidan",
+  "related": "Relaterat",
+  "backToHelp": "All hjälp",
+  "openCenter": "Öppna fullständigt hjälpcenter",
+  "articleNotFound": "Den hjälpartikeln finns inte.",
+  "machineTranslationBanner": {
+    "label": "Automatisk översättning",
+    "body": "Den här artikeln har översatts automatiskt. Ursäkta eventuella fel — skicka feedback så att vi kan rätta dem.",
+    "feedbackLinkLabel": "skicka feedback"
+  },
+  "palette": {
+    "title": "Hjälp",
+    "description": "Sök i hjälpcentret eller hoppa till en genväg.",
+    "shortcutsHeading": "Tangentbordsgenvägar",
+    "hint": "Tryck på Esc för att stänga"
+  },
+  "shortcuts": { "help": "Öppna hjälp", "focus": "Växla fokusläge" },
+  "categories": {
+    "getting-started": "Kom igång",
+    "writing": "Skrivande och redigering",
+    "organizing": "Organisation",
+    "views": "Vyer och lägen",
+    "research": "Forskning och citat",
+    "brainspace": "BrainSpace",
+    "annotations": "Anteckningar och markeringar",
+    "customization": "Anpassning och inställningar",
+    "data": "Dina data",
+    "mobile": "Mobil"
+  }
+}

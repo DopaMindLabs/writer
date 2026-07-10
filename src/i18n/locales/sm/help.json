@@ -1,0 +1,48 @@
+{
+  "title": "Fesoasoani",
+  "subtitle": "Taʻiala ma tali e maua ai le aoga sili mai lau tusitusiga.",
+  "shellSubtitle": "Fesoasoani / Faamaumauga",
+  "navGroup": "Fesoasoani",
+  "navOverview": "Vaaiga aoao",
+  "navAria": "Autu o fesoasoani",
+  "searchPlaceholder": "Sailia i le fesoasoani…",
+  "searchLabel": "Sailia tusiga fesoasoani",
+  "noResults": "Leai ni tusiga e fetaui ma le \"{{query}}\".",
+  "resultsCount_one": "{{count}} fuaiupu",
+  "resultsCount_other": "{{count}} fuaiupu",
+  "browseAll": "Tilotilo i autu uma",
+  "languagePickerLabel": "Gagana o fesoasoani",
+  "allFeatures": {
+    "title": "Vaai uma mea e mafai",
+    "subtitle": "O se lisi atoa o mea uma e mafai ona e faia — e fesootai uma ma a latou taʻiala."
+  },
+  "onThisPage": "I lenei itulau",
+  "related": "Vaifeagai",
+  "backToHelp": "Fesoasoani uma",
+  "openCenter": "Tatala le Nofoaga Tutotonu o Fesoasoani atoa",
+  "articleNotFound": "E le o iai lena tusiga fesoasoani.",
+  "machineTranslationBanner": {
+    "label": "Faaliliuga otometi",
+    "body": "Sa faaliliuina lenei tusiga e otometi. Faamalulu atu mo soo se mea sese — auina mai se faamatalaga ina ia mafai ona matou faasaʻo.",
+    "feedbackLinkLabel": "auina mai faamatalaga"
+  },
+  "palette": {
+    "title": "Fesoasoani",
+    "description": "Sailia i le Nofoaga Tutotonu o Fesoasoani pe alu i se vavalo.",
+    "shortcutsHeading": "Vavalo o le piano",
+    "hint": "Oomi Esc e tapuni"
+  },
+  "shortcuts": { "help": "Tatala fesoasoani", "focus": "Suia le tulaga taulai" },
+  "categories": {
+    "getting-started": "Amataga",
+    "writing": "Tusitusi ma faasaʻo",
+    "organizing": "Faatulagaga",
+    "views": "Vaaiga ma faiga",
+    "research": "Suʻesuʻega ma upu sii",
+    "brainspace": "BrainSpace",
+    "annotations": "Faamatalaga ma faamamafa",
+    "customization": "Faapitoa ma faatulagaga",
+    "data": "Ou faamaumauga",
+    "mobile": "Telefoni feaveai"
+  }
+}

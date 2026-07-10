@@ -1,0 +1,555 @@
+import JSZip from 'jszip';
+import { db } from '@/db/db';
+import { invariant } from '@/lib/invariant';
+import type {
+  Annotation,
+  Citation,
+  Connection,
+  Doc,
+  DocInspectorConfig,
+  HighlightPalette,
+  Note,
+  NoteAttachment,
+  Revision,
+  Section,
+  Space,
+} from '@/db/schema';
+import { lexicalJsonToMarkdown } from './lexicalToMarkdown';
+
+export interface SpaceSnapshot {
+  space: Space;
+  sections: Section[];
+  docs: Doc[];
+  notes: Note[];
+  attachments: NoteAttachment[];
+  annotations: Annotation[];
+  citations: Citation[];
+  connections: Connection[];
+  palettes: HighlightPalette[];
+  revisions: Revision[];
+  docInspectorConfig: DocInspectorConfig | null;
+}
+
+const SNAPSHOT_TABLES = [
+  db.spaces,
+  db.sections,
+  db.docs,
+  db.notes,
+  db.noteAttachments,
+  db.annotations,
+  db.citations,
+  db.connections,
+  db.palettes,
+  db.revisions,
+  db.docInspectorConfigs,
+];
+
+export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot> => {
+  return db.transaction('r', SNAPSHOT_TABLES, async () => {
+      const space = await db.spaces.get(spaceId);
+      if (!space) throw new Error(`Space not found: ${spaceId}`);
+      const sections = await db.sections
+        .where('spaceId')
+        .equals(spaceId)
+        .sortBy('order');
+      const docs = await db.docs.where('spaceId').equals(spaceId).toArray();
+      const notes = await db.notes.where('spaceId').equals(spaceId).toArray();
+      const attachments = await db.noteAttachments
+        .where('spaceId')
+        .equals(spaceId)
+        .toArray();
+      const docIds = docs.map((d) => d.id);
+      const annotations = docIds.length
+        ? await db.annotations.where('docId').anyOf(docIds).toArray()
+        : [];
+      const citations = await db.citations
+        .where('spaceId')
+        .equals(spaceId)
+        .toArray();
+      const connections = await db.connections
+        .where('spaceId')
+        .equals(spaceId)
+        .toArray();
+      const palettes = await db.palettes
+        .where('spaceId')
+        .equals(spaceId)
+        .toArray();
+      const revisions = docIds.length
+        ? await db.revisions.where('docId').anyOf(docIds).toArray()
+        : [];
+      const docInspectorConfig =
+        (await db.docInspectorConfigs.get(spaceId)) ?? null;
+      return {
+        space,
+        sections,
+        docs,
+        notes,
+        attachments,
+        annotations,
+        citations,
+        connections,
+        palettes,
+        revisions,
+        docInspectorConfig,
+      };
+    },
+  );
+};
+
+export const slugify = (input: string, fallback = 'untitled'): string => {
+  const cleaned = input
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return cleaned || fallback;
+};
+
+const pad2 = (n: number): string => {
+  return String(n).padStart(2, '0');
+};
+
+export const backupFilename = (spaceName: string, when: number): string => {
+  const d = new Date(when);
+  const stamp = `${String(d.getUTCFullYear())}-${pad2(d.getUTCMonth() + 1)}-${pad2(
+    d.getUTCDate(),
+  )}-${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}`;
+  return `${slugify(spaceName, 'space')}-${stamp}.zip`;
+};
+
+const YAML_INDICATOR_START = /^[\s\-?:,[\]{}#&*!|>'"%@`]/;
+const YAML_AMBIGUOUS = /:(\s|$)|\s#|\n/;
+const YAML_BARE_KEYWORD = /^(?:null|~|true|false|yes|no|on|off|-?\d+(?:\.\d+)?)$/i;
+
+const yamlValue = (
+  value: string | number | boolean | null | undefined,
+): string => {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+  const str = value;
+  if (str === '') return "''";
+  if (
+    YAML_INDICATOR_START.test(str) ||
+    YAML_AMBIGUOUS.test(str) ||
+    YAML_BARE_KEYWORD.test(str) ||
+    /\s$/.test(str)
+  ) {
+    return `"${str.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+  }
+  return str;
+};
+
+export const yamlFrontmatter = (
+  fields: Record<string, string | number | boolean | null | undefined>,
+): string => {
+  const lines = ['---'];
+  for (const [key, value] of Object.entries(fields)) {
+    if (value === undefined) continue;
+    lines.push(`${key}: ${yamlValue(value)}`);
+  }
+  lines.push('---', '');
+  return lines.join('\n');
+};
+
+const isoFromMs = (ms: number): string => {
+  return new Date(ms).toISOString();
+};
+
+const docBodyToMarkdown = (body: string): string => {
+  return lexicalJsonToMarkdown(body).trimEnd();
+};
+
+const renderSpaceMd = (snapshot: SpaceSnapshot, when: number): string => {
+  const { space } = snapshot;
+  return (
+    yamlFrontmatter({
+      name: space.name,
+      tag: space.tag,
+      template: space.template,
+      shared: space.shared,
+      createdAt: isoFromMs(space.createdAt),
+      updatedAt: isoFromMs(space.updatedAt),
+      exportedAt: isoFromMs(when),
+      format: 'md-zip',
+      schemaVersion: 1,
+    }) +
+    `# ${space.name}\n\n` +
+    `Backup of space \`${space.tag}\` generated by Lorem Ipsum Writer.\n`
+  );
+};
+
+interface SectionPathInfo {
+  folder: string;
+  label: string;
+}
+
+const buildSectionPaths = (
+  sections: Section[],
+): Map<string, SectionPathInfo> => {
+  const byId = new Map(sections.map((s) => [s.id, s]));
+  const slugBySection = new Map<string, string>();
+  const usedAtParent = new Map<string, Set<string>>();
+
+  const uniqueSlug = (
+    parentKey: string,
+    label: string,
+    fallback: string,
+  ): string => {
+    const base = slugify(label, fallback);
+    let used = usedAtParent.get(parentKey);
+    if (!used) {
+      used = new Set();
+      usedAtParent.set(parentKey, used);
+    }
+    let slug = base;
+    let n = 2;
+    while (used.has(slug)) {
+      slug = `${base}-${String(n)}`;
+      n++;
+    }
+    used.add(slug);
+    return slug;
+  };
+
+  for (const s of sections) {
+    if (s.parentSectionId) continue;
+    const slug = uniqueSlug('__root__', s.label, s.id);
+    slugBySection.set(s.id, slug);
+  }
+  for (const s of sections) {
+    if (!s.parentSectionId) continue;
+    const parentSlug = slugBySection.get(s.parentSectionId);
+    const slug = uniqueSlug(s.parentSectionId, s.label, s.id);
+    slugBySection.set(s.id, parentSlug ? `${parentSlug}/${slug}` : slug);
+  }
+
+  const result = new Map<string, SectionPathInfo>();
+  for (const s of sections) {
+    const folder = slugBySection.get(s.id);
+    invariant(folder, `section ${s.id} has no slug`);
+    const parent = s.parentSectionId ? byId.get(s.parentSectionId) : null;
+    const label = parent ? `${parent.label} / ${s.label}` : s.label;
+    result.set(s.id, { folder, label });
+  }
+  return result;
+};
+
+const renderDocMd = (
+  doc: Doc,
+  sectionLabel: string | undefined,
+): string => {
+  const body = docBodyToMarkdown(doc.body);
+  return (
+    yamlFrontmatter({
+      id: doc.id,
+      name: doc.name,
+      section: sectionLabel,
+      status: doc.meta.status,
+      wordCount: doc.meta.wordCount,
+      updatedAt: isoFromMs(doc.updatedAt),
+    }) + (body ? `${body}\n` : '')
+  );
+};
+
+const firstNonEmpty = (
+  candidates: (string | undefined)[],
+  fallback: string,
+): string => {
+  for (const candidate of candidates) {
+    const trimmed = candidate?.trim();
+    if (trimmed) return trimmed;
+  }
+  return fallback;
+};
+
+const noteHeading = (n: Note, fallback: string): string => {
+  return firstNonEmpty([n.title, n.body.split('\n')[0]], fallback);
+};
+
+export interface AttachmentPath {
+  path: string;
+  filename: string;
+}
+
+const MIME_EXT: Record<string, string> = {
+  'image/png': 'png',
+  'image/jpeg': 'jpg',
+  'image/gif': 'gif',
+  'image/webp': 'webp',
+};
+
+const assetExtension = (att: NoteAttachment): string => {
+  const dot = att.name.lastIndexOf('.');
+  if (dot > 0 && dot < att.name.length - 1) {
+    const ext = att.name.slice(dot + 1).toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (ext) return ext;
+  }
+  return MIME_EXT[att.mime] ?? 'img';
+};
+
+const uniqueAssetName = (att: NoteAttachment, used: Set<string>): string => {
+  const dot = att.name.lastIndexOf('.');
+  const base = slugify(dot > 0 ? att.name.slice(0, dot) : att.name, att.id);
+  const ext = assetExtension(att);
+  let name = `${base}.${ext}`;
+  let n = 2;
+  while (used.has(name)) {
+    name = `${base}-${String(n)}.${ext}`;
+    n++;
+  }
+  return name;
+};
+
+const buildAttachmentPaths = (
+  attachments: NoteAttachment[],
+): Map<string, AttachmentPath> => {
+  const result = new Map<string, AttachmentPath>();
+  const usedByNote = new Map<string, Set<string>>();
+  for (const att of attachments) {
+    let used = usedByNote.get(att.noteId);
+    if (!used) {
+      used = new Set();
+      usedByNote.set(att.noteId, used);
+    }
+    const filename = uniqueAssetName(att, used);
+    used.add(filename);
+    result.set(att.id, {
+      path: `assets/notes/${att.noteId}/${filename}`,
+      filename,
+    });
+  }
+  return result;
+};
+
+const groupAttachmentsByNote = (
+  attachments: NoteAttachment[],
+): Map<string, NoteAttachment[]> => {
+  const byNote = new Map<string, NoteAttachment[]>();
+  for (const att of attachments) {
+    const list = byNote.get(att.noteId) ?? [];
+    list.push(att);
+    byNote.set(att.noteId, list);
+  }
+  return byNote;
+};
+
+export interface NoteAssets {
+  byNote: Map<string, NoteAttachment[]>;
+  pathById: Map<string, AttachmentPath>;
+}
+
+const renderNoteLines = (n: Note, assets: NoteAssets): string[] => {
+  const out = [`- **${noteHeading(n, '_(empty)_')}**  \`${n.id}\``];
+  const rest = (n.title ? n.body : n.body.split('\n').slice(1).join('\n')).trim();
+  if (rest) {
+    for (const line of rest.split('\n')) out.push(`  ${line}`);
+  }
+  for (const att of assets.byNote.get(n.id) ?? []) {
+    const info = assets.pathById.get(att.id);
+    invariant(info, `attachment ${att.id} has no asset path`);
+    out.push(`  ![${att.name}](${info.path})`);
+  }
+  return out;
+};
+
+const writeAttachments = (
+  zip: JSZip,
+  attachments: NoteAttachment[],
+): NoteAssets => {
+  const pathById = buildAttachmentPaths(attachments);
+  for (const att of attachments) {
+    const info = pathById.get(att.id);
+    invariant(info, `attachment ${att.id} has no asset path`);
+    // Bytes rather than the Blob itself: JSZip accepts promised byte arrays
+    // everywhere, while Blob inputs require a same-realm FileReader. The
+    // Uint8Array wrapper keeps the bytes recognisable across realms.
+    zip.file(
+      info.path,
+      att.blob.arrayBuffer().then((buf) => new Uint8Array(buf)),
+    );
+  }
+  return { byNote: groupAttachmentsByNote(attachments), pathById };
+};
+
+const renderNotesMd = (notes: Note[], assets: NoteAssets): string => {
+  if (notes.length === 0) {
+    return '# Notes\n\n_No notes._\n';
+  }
+  const byKind = new Map<string, Note[]>();
+  for (const n of notes) {
+    const list = byKind.get(n.kind) ?? [];
+    list.push(n);
+    byKind.set(n.kind, list);
+  }
+  const lines = ['# Notes', ''];
+  for (const [kind, list] of [...byKind.entries()].sort()) {
+    lines.push(`## ${kind}`, '');
+    for (const n of list) {
+      lines.push(...renderNoteLines(n, assets));
+    }
+    lines.push('');
+  }
+  return lines.join('\n');
+};
+
+const renderCitationsMd = (citations: Citation[]): string => {
+  if (citations.length === 0) return '# Citations\n\n_No citations._\n';
+  const sorted = [...citations].sort((a, b) =>
+    (a.authors || '').localeCompare(b.authors || ''),
+  );
+  const lines = ['# Citations', ''];
+  for (const c of sorted) {
+    const year = c.year ? String(c.year) : 'n.d.';
+    lines.push(
+      `- \`${c.key}\` — ${c.authors || '(unknown)'} (${year}). *${c.title || '(untitled)'}*. [${c.type}]`,
+    );
+  }
+  lines.push('');
+  return lines.join('\n');
+};
+
+const renderConnectionsMd = (
+  connections: Connection[],
+  notes: Note[],
+): string => {
+  if (connections.length === 0) return '# Connections\n\n_No connections._\n';
+  const labelFor = new Map<string, string>();
+  for (const n of notes) {
+    labelFor.set(n.id, noteHeading(n, n.id));
+  }
+  const lines = ['# Connections', ''];
+  for (const c of connections) {
+    const from = labelFor.get(c.fromNoteId) ?? c.fromNoteId;
+    const to = labelFor.get(c.toNoteId) ?? c.toNoteId;
+    lines.push(`- ${from} → ${to}  \`${c.fromNoteId}\` → \`${c.toNoteId}\``);
+  }
+  lines.push('');
+  return lines.join('\n');
+};
+
+const renderAnnotationsMd = (
+  annotations: Annotation[],
+  docs: Doc[],
+): string => {
+  if (annotations.length === 0) return '# Annotations\n\n_No annotations._\n';
+  const docName = new Map(docs.map((d) => [d.id, d.name]));
+  const byDoc = new Map<string, Annotation[]>();
+  for (const a of annotations) {
+    const list = byDoc.get(a.docId) ?? [];
+    list.push(a);
+    byDoc.set(a.docId, list);
+  }
+  const lines = ['# Annotations', ''];
+  for (const [docId, list] of byDoc) {
+    lines.push(`## ${docName.get(docId) ?? docId}`, '');
+    for (const a of list) {
+      const range = `${String(a.rangeStart)}–${String(a.rangeEnd)}`;
+      const color = a.color ? ` · ${a.color}` : '';
+      lines.push(`- **${a.kind}** \`${range}\`${color} — ${a.author}`);
+      if (a.body) lines.push(`  > ${a.body.replace(/\n/g, ' ')}`);
+    }
+    lines.push('');
+  }
+  return lines.join('\n');
+};
+
+const renderPaletteMd = (palettes: HighlightPalette[]): string => {
+  if (palettes.length === 0) return '# Palette\n\n_No palette configured._\n';
+  const lines = ['# Palette', ''];
+  for (const p of palettes) {
+    lines.push(`## \`${p.id}\``, '');
+    p.slots.forEach((slot, i) => {
+      lines.push(`${String(i + 1)}. ${slot.name} — \`${slot.color}\``);
+    });
+    lines.push('');
+  }
+  return lines.join('\n');
+};
+
+export const writeMarkdownProjection = (
+  zip: JSZip,
+  snapshot: SpaceSnapshot,
+  when: number,
+): NoteAssets => {
+  const {
+    sections,
+    docs,
+    notes,
+    attachments,
+    annotations,
+    citations,
+    connections,
+    palettes,
+  } = snapshot;
+
+  zip.file('space.md', renderSpaceMd(snapshot, when));
+
+  const pathInfo = buildSectionPaths(sections);
+  const docsBySection = new Map<string, Doc[]>();
+  const orphanDocs: Doc[] = [];
+  for (const d of docs) {
+    if (pathInfo.has(d.sectionId)) {
+      const list = docsBySection.get(d.sectionId) ?? [];
+      list.push(d);
+      docsBySection.set(d.sectionId, list);
+    } else {
+      orphanDocs.push(d);
+    }
+  }
+  for (const [sectionId, list] of docsBySection) {
+    list.sort((a, b) => a.name.localeCompare(b.name));
+    const info = pathInfo.get(sectionId);
+    invariant(info, `section ${sectionId} has no path info`);
+    list.forEach((doc, i) => {
+      const file = `${pad2(i + 1)}-${slugify(doc.name, doc.id)}.md`;
+      zip.file(`manuscript/${info.folder}/${file}`, renderDocMd(doc, info.label));
+    });
+  }
+  if (orphanDocs.length > 0) {
+    orphanDocs.sort((a, b) => a.name.localeCompare(b.name));
+    orphanDocs.forEach((doc, i) => {
+      const file = `${pad2(i + 1)}-${slugify(doc.name, doc.id)}.md`;
+      zip.file(`manuscript/_unsorted/${file}`, renderDocMd(doc, undefined));
+    });
+  }
+
+  const noteAssets = writeAttachments(zip, attachments);
+
+  zip.file('notes.md', renderNotesMd(notes, noteAssets));
+  zip.file('citations.md', renderCitationsMd(citations));
+  zip.file('connections.md', renderConnectionsMd(connections, notes));
+  zip.file('annotations.md', renderAnnotationsMd(annotations, docs));
+  zip.file('palette.md', renderPaletteMd(palettes));
+
+  return noteAssets;
+};
+
+export const generateZipBlob = (zip: JSZip): Promise<Blob> =>
+  zip.generateAsync({
+    type: 'blob',
+    mimeType: 'application/zip',
+    compression: 'DEFLATE',
+    compressionOptions: { level: 6 },
+  });
+
+export const buildSpaceMarkdownZip = async (
+  snapshot: SpaceSnapshot,
+  when: number = Date.now(),
+): Promise<Blob> => {
+  const zip = new JSZip();
+  writeMarkdownProjection(zip, snapshot, when);
+  return generateZipBlob(zip);
+};
+
+export const buildSpaceMarkdownZipFor = async (
+  spaceId: string,
+  when: number = Date.now(),
+): Promise<{ blob: Blob; filename: string; snapshot: SpaceSnapshot }> => {
+  const snapshot = await readSpaceSnapshot(spaceId);
+  const blob = await buildSpaceMarkdownZip(snapshot, when);
+  const filename = backupFilename(snapshot.space.name, when);
+  return { blob, filename, snapshot };
+};

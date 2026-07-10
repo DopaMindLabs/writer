@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Tukšs", "tag": "TU", "description": "sākt no nulles" },
+  "fiction": { "label": "Daiļliteratūra", "tag": "FI", "description": "romāns · stāsts · scenārijs" },
+  "humanities": { "label": "Disertācija · pētniecība", "tag": "TH", "description": "garš akadēmisks darbs" },
+  "journal": { "label": "Dienasgrāmata", "tag": "DI", "description": "ikdienas, bez spiediena" },
+  "serial": { "label": "Sērija", "tag": "SE", "description": "atkārtoti esejas · biļetens" },
+  "six": { "label": "Sešas Durvis · sadarbība", "tag": "SD", "description": "kopīga pasaule · vairāki autori" },
+  "technical": { "label": "Tehnisks · Zinātnisks ziņojums", "tag": "TX", "description": "Zinātnisks · metodes · vienādojumi" },
+  "bioinformatics": { "label": "Bioinformātika", "tag": "BX", "description": "cauruļvadi · metodes · laboratorijas žurnāls" }
+}

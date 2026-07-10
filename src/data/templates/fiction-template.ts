@@ -1,0 +1,98 @@
+import { NoteKind } from '@/db/schema';
+import { TemplateStage, type Template } from './types';
+
+const template: Template = {
+  id: 'fiction',
+  label: 'Fictional writing',
+  tag: 'FI',
+  version: '0.1.0',
+  stage: TemplateStage.Alpha,
+  enabled: true,
+  description: 'novel · short story · script',
+  pickerOrder: 4,
+  sections: [
+    { label: 'Manuscript', order: 0, defaultDocName: 'Untitled chapter' },
+    { label: 'World', order: 1 },
+    { label: 'Workshop', order: 2 },
+  ],
+  seedDocs: [
+    { sectionLabel: 'Manuscript', name: 'Chapter 01' },
+    { sectionLabel: 'Manuscript', name: 'Chapter 02' },
+    { sectionLabel: 'Manuscript', name: 'Chapter 03' },
+    { sectionLabel: 'World', name: 'Characters' },
+    { sectionLabel: 'World', name: 'Places' },
+    { sectionLabel: 'World', name: 'Lore & rules' },
+    { sectionLabel: 'Workshop', name: 'Sessions' },
+  ],
+  seedNotes: [
+    {
+      l: 32,
+      t: 32,
+      w: 196,
+      h: 76,
+      kind: NoteKind.Note,
+      body: 'a loose plot thread — a detail that does not add up yet. where does it lead?',
+    },
+    {
+      l: 248,
+      t: 36,
+      w: 168,
+      h: 76,
+      kind: NoteKind.Char,
+      title: 'Character — Name',
+      body: 'who they are, what they want, and what stands in their way.',
+    },
+    {
+      l: 32,
+      t: 122,
+      w: 184,
+      h: 64,
+      kind: NoteKind.Note,
+      body: 'a sensory detail worth keeping — a smell, a sound, a texture that brings a scene to life.',
+    },
+    {
+      l: 236,
+      t: 130,
+      w: 180,
+      h: 82,
+      kind: NoteKind.Place,
+      title: 'Place — Name',
+      body: 'where it is, what it feels like, and who passes through it.',
+    },
+    {
+      l: 436,
+      t: 56,
+      w: 152,
+      h: 56,
+      kind: NoteKind.Note,
+      body: '"an opening line you do not want to lose" — opener?',
+    },
+    {
+      l: 32,
+      t: 200,
+      w: 260,
+      h: 60,
+      kind: NoteKind.Lore,
+      title: 'Lore — A rule of the world',
+      body: 'a rule your world follows, and what it costs to break it.',
+    },
+    {
+      l: 312,
+      t: 226,
+      w: 152,
+      h: 64,
+      kind: NoteKind.Char,
+      title: 'Character — Another name',
+      body: 'a supporting character. what do they notice that the others miss?',
+    },
+  ],
+  noteKinds: [
+    NoteKind.Note,
+    NoteKind.Char,
+    NoteKind.Place,
+    NoteKind.Lore,
+    NoteKind.Image,
+  ],
+};
+
+export default template;

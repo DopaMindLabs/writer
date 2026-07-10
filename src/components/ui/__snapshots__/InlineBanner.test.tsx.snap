@@ -1,0 +1,230 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`InlineBanner > snapshot > should match the snapshot across kinds, action, and dismiss states 1`] = `
+<div>
+  <div>
+    <div
+      class="flex items-start gap-3 border-l-[3px] px-4 py-3 border-danger bg-danger-bg text-danger"
+      role="status"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-x h-3.5 w-3.5 mt-0.5 shrink-0"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 6 6 18"
+        />
+        <path
+          d="m6 6 12 12"
+        />
+      </svg>
+      <div
+        class="flex-1"
+      >
+        <p
+          class="font-sans text-[13px] font-semibold text-ink"
+        >
+          Sync failed
+        </p>
+        <div
+          class="font-serif text-[13px] leading-relaxed text-ink-2"
+        >
+          The remote rejected the last push.
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex items-start gap-3 border-l-[3px] px-4 py-3 border-warning bg-warning-bg text-warning"
+      role="status"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-triangle-alert h-3.5 w-3.5 mt-0.5 shrink-0"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"
+        />
+        <path
+          d="M12 9v4"
+        />
+        <path
+          d="M12 17h.01"
+        />
+      </svg>
+      <div
+        class="flex-1"
+      >
+        <p
+          class="font-sans text-[13px] font-semibold text-ink"
+        >
+          Permission lapsed
+        </p>
+        <div
+          class="font-serif text-[13px] leading-relaxed text-ink-2"
+        >
+          Reconnect to resume syncing.
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex items-start gap-3 border-l-[3px] px-4 py-3 border-success bg-success-bg text-success"
+      role="status"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-check h-3.5 w-3.5 mt-0.5 shrink-0"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20 6 9 17l-5-5"
+        />
+      </svg>
+      <div
+        class="flex-1"
+      >
+        <p
+          class="font-sans text-[13px] font-semibold text-ink"
+        >
+          Imported
+        </p>
+      </div>
+    </div>
+    <div
+      class="flex items-start gap-3 border-l-[3px] px-4 py-3 border-info bg-info-bg text-info"
+      role="status"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-info h-3.5 w-3.5 mt-0.5 shrink-0"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+        />
+        <path
+          d="M12 16v-4"
+        />
+        <path
+          d="M12 8h.01"
+        />
+      </svg>
+      <div
+        class="flex-1"
+      >
+        <div
+          class="font-serif text-[13px] leading-relaxed text-ink-2"
+        >
+          Body copy.
+        </div>
+        <button
+          class="mt-1 font-sans text-[12px] font-medium text-ink underline underline-offset-2"
+          type="button"
+        >
+          Reconnect
+        </button>
+      </div>
+    </div>
+    <div
+      class="flex items-start gap-3 border-l-[3px] px-4 py-3 border-info bg-info-bg text-info"
+      role="status"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-info h-3.5 w-3.5 mt-0.5 shrink-0"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+        />
+        <path
+          d="M12 16v-4"
+        />
+        <path
+          d="M12 8h.01"
+        />
+      </svg>
+      <div
+        class="flex-1"
+      >
+        <div
+          class="font-serif text-[13px] leading-relaxed text-ink-2"
+        >
+          Dismissible body.
+        </div>
+      </div>
+      <button
+        aria-label="Dismiss"
+        class="shrink-0 text-ink-3 hover:text-ink"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-x h-3 w-3"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M18 6 6 18"
+          />
+          <path
+            d="m6 6 12 12"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+`;

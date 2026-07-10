@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Autt", "tag": "AU", "description": "byrja frá grunni" },
+  "fiction": { "label": "Skáldskapur", "tag": "FI", "description": "skáldsaga · smásaga · handrit" },
+  "humanities": { "label": "Ritgerð · rannsóknir", "tag": "TH", "description": "ítarlegt fræðilegt verk" },
+  "journal": { "label": "Dagbók", "tag": "DA", "description": "daglegt, ekkert álag" },
+  "serial": { "label": "Röð", "tag": "SE", "description": "endurteknar greinar · fréttabréf" },
+  "six": { "label": "Sex Dyr · samvinna", "tag": "SD", "description": "deildur heimur · margir höfundar" },
+  "technical": { "label": "Tæknilegt · Vísindaleg skýrsla", "tag": "TX", "description": "Vísindalegt · aðferðir · jöfnur" },
+  "bioinformatics": { "label": "Lífupplýsingafræði", "tag": "BX", "description": "pípulínur · aðferðir · rannsóknarbók" }
+}

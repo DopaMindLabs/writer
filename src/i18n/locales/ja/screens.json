@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "自由な執筆のマルチバース",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "最初のスペースは白紙です。テンプレートを選ぶか、何もない状態から始めましょう。",
+    "tagline": "長文執筆のためのすっきりしたスペース — 小説、研究、エッセイ、日記。",
+    "continueWriting": "執筆を続ける",
+    "startNewSpace": "新しいスペースを始める",
+    "syncOffChip": "同期/バックアップ無効 · データが失われる可能性があります",
+    "syncOnChip": "フォルダ同期オン",
+    "syncOnTitle": "フォルダ同期が有効です",
+    "syncOnBody": "このデバイスの「{{folder}}」フォルダに作業内容が同期されます。",
+    "warningTitle": "プレリリースビルド",
+    "warningBody": "データ同期はありません。すべてブラウザ内に保存されており、キャッシュを消去すると作業内容が失われます。ユニバーサル設定 → 同期 でローカルフォルダへの同期を有効にできます。",
+    "versionLine": "バージョン {{version}}"
+  },
+  "about": {
+    "back": "戻る",
+    "title": "について",
+    "greeting": "こんにちは、",
+    "paragraph1": "これは、何度も書き直してしまうライターのために作りました。新しいドキュメントを開いて、3文（あるいは1文も）書いたあと、40分もフォント調整に費やしてしまう人。最高のアイデアが午前2時に浮かんで、気が散ってしまう人。14個のタブ、6冊のノート、1ヶ月動いていない下書きを抱えている人。",
+    "paragraph2Before": "私がそうだから、よくわかります",
+    "paragraph2After": "。私はADHDと自閉症を持ち、おそらく他にも未診断の特性があります。私の混沌としているけれど素晴らしい頭を理解してくれる何かが必要でした。消えてしまう前にすべてを書き留められる場所（または書き始められる場所）。断片、半分まとまった考え、深夜3時のひらめき。すべてを一か所に。",
+    "paragraph3": "だから私たちのためにこのスペースを作りました。このアプリを作るときと同じくらい、ドーパミンの喜びを感じていただければ嬉しいです。",
+    "paragraph4Before": "もう一つ… 私はテクノロジーは善のためにあると信じており、広告が嫌いです。だから、これは常に広告なしで、非商業利用は無料です。",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "ステータス",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — データ同期はありません。すべてのデータはローカルブラウザの IndexedDB に保存されます。ブラウザのキャッシュを消去すると、作業内容が失われます。",
+    "feedbackBefore": "まだ構築中で、アイデアがたくさんあります",
+    "feedbackAfter": "。何が良くて、何が悪くて、何があったらいいかをぜひ聞かせてください。フィードバックは大歓迎です。",
+    "sourceLabel": "ソース"
+  },
+  "settings": {
+    "back": "戻る",
+    "windowTitle": "lotem · 設定",
+    "breadcrumb": "ユニバーサル設定",
+    "shellSubtitle": "ユニバーサル設定",
+    "comingSoonBadge": "近日公開",
+    "helpAria": "これは何ですか？",
+    "groups": {
+      "preferences": "環境設定",
+      "writing": "執筆",
+      "data": "データ",
+      "account": "アカウント"
+    },
+    "tabs": {
+      "general": "一般",
+      "appearance": "外観",
+      "editor": "エディター",
+      "docInspector": "ドキュメント検査",
+      "accessibility": "アクセシビリティ",
+      "typography": "タイポグラフィ",
+      "shortcuts": "キーボード",
+      "templates": "テンプレート",
+      "palettes": "ハイライトパレット",
+      "citations": "引用スタイル",
+      "annotation": "注釈",
+      "backups": "バックアップ",
+      "sync": "同期",
+      "export": "エクスポート / インポート",
+      "data": "データ",
+      "account": "アカウント",
+      "about": "アプリについて",
+      "language": "言語"
+    },
+    "language": {
+      "title": "言語",
+      "subtitle": "インターフェースとヘルプセンター記事の言語を選択します。翻訳がない場合は英語にフォールバックされます。",
+      "label": "インターフェース言語",
+      "hint": "変更はすぐに適用され、このブラウザに保存されます。",
+      "machineTranslationNotice": "英語以外の翻訳は自動生成です。誤りがあればお詫び申し上げます — フィードバックをお寄せいただければ修正いたします。",
+      "feedbackLinkLabel": "フィードバックを送る"
+    },
+    "editor": {
+      "title": "エディター",
+      "subtitle": "ツールバーと執筆機能。Markdown ショートカット（#、>、-、**）はこれらの設定に関わらず機能します。",
+      "floatingToolbarLabel": "フローティングツールバー",
+      "floatingToolbarHint": "書き込みモードでハイライトまたは右クリック時に表示されます。",
+      "floatingToolbarOff": "オフ",
+      "floatingToolbarOn": "オン",
+      "rightClickLabel": "右クリックメニュー",
+      "rightClickHint": "フローティングツールバーとブラウザのネイティブコンテキストメニューを切り替えます。",
+      "rightClickTooltip": "右クリック時にフローティングツールバーの代わりにネイティブコンテキストメニューを使用します。ツールバーはハイライト選択時には引き続き表示されます。",
+      "inlineTogglesLabel": "インライントグル",
+      "inlineTogglesHint": "フローティングツールバー内の太字と斜体ボタン。",
+      "inlineTogglesTooltip": "フローティングツールバーから B と I ボタンを非表示にします。Markdown ショートカット（**、_）は引き続き機能します。",
+      "listDepthLabel": "リストのネスト深さ",
+      "listDepthHint": "箇条書きと番号付きリストのネスト可能な深さ。",
+      "listDepthTooltip": "リストのネスト上限を上げ下げします。現在は2階層固定です。",
+      "templateDefaultsLabel": "テンプレートごとのデフォルト",
+      "templateDefaultsHint": "テンプレートごとに異なる書式サブセット。",
+      "templateDefaultsTooltip": "各テンプレート（小説、日記、技術系など）が独自の書式サブセットを選択できるようにします。"
+    },
+    "docInspector": {
+      "title": "ドキュメント検査",
+      "subtitle": "ドキュメント検査パネルに表示するフィールドを選択します。各フィールドはユニバーサルでオフにでき、スペースごとに上書きできます。",
+      "statusLabel": "ステータス",
+      "statusHint": "ドキュメントのステータスを表示し、完了したドキュメントを編集からロックします。",
+      "wordLimitLabel": "単語数制限",
+      "wordLimitHint": "ドキュメントごとに設定できる単語数の上限を表示します。",
+      "charLimitLabel": "文字数制限",
+      "charLimitHint": "ドキュメントごとに設定できる文字数の上限を表示します。",
+      "dueDateLabel": "締め切り日",
+      "dueDateHint": "ドキュメントごとに設定できる期限を表示します。",
+      "highlightLabel": "制限超過テキストをハイライト",
+      "highlightHint": "エディターで制限を超えたテキストをマークします。",
+      "statusStagesLabel": "ステータスの段階",
+      "statusStagesHint": "ステータスピッカーに表示する段階を選択します。",
+      "on": "オン",
+      "off": "オフ",
+      "inherit": "デフォルト（{{state}}）",
+      "inheritTooltip": "ユニバーサル設定から継承",
+      "stateOn": "オン",
+      "stateOff": "オフ"
+    },
+    "accessibility": {
+      "title": "アクセシビリティ",
+      "subtitle": "快適さと支援技術のためにインターフェースを調整します。すべてのオプションは現在の体験から始まります — 選択するまで何も変わりません。",
+      "theme": {
+        "label": "テーマとコントラスト",
+        "hint": "ハイコントラストテーマは WCAG AAA コントラスト基準を満たします。",
+        "light": "ライト",
+        "dark": "ダーク",
+        "hcLight": "ハイコントラスト（ライト）",
+        "hcDark": "ハイコントラスト（ダーク）"
+      },
+      "motion": {
+        "label": "モーション",
+        "hint": "インターフェースアニメーションを減らすか無効にします。",
+        "auto": "システムに合わせる",
+        "reduced": "低減",
+        "full": "フル"
+      },
+      "textSize": {
+        "label": "テキストサイズ",
+        "hint": "読み書き画面を拡大縮小します。",
+        "sm": "小",
+        "base": "デフォルト",
+        "lg": "大",
+        "xl": "特大"
+      },
+      "lineSpacing": {
+        "label": "行間",
+        "hint": "文章の行間に余白を追加します。",
+        "normal": "標準",
+        "relaxed": "ゆったり",
+        "loose": "広め"
+      },
+      "linkUnderline": {
+        "label": "リンクを常に下線表示",
+        "hint": "リンクが色だけに頼らないよう下線を表示します。"
+      },
+      "focus": {
+        "label": "フォーカスインジケーターを強調",
+        "hint": "フォーカス時により太く、ハイコントラストなアウトラインを使用します。"
+      },
+      "reset": {
+        "label": "デフォルトにリセット",
+        "hint": "モーション、テキストサイズ、行間、リンク、フォーカスをデフォルトに戻します。テーマは変更されません。",
+        "action": "リセット"
+      }
+    },
+    "general": {
+      "title": "一般",
+      "subtitle": "LIpsum Writer のデフォルト表示設定。破壊的な変更はありません。",
+      "comingSoonBody": "コンパクト密度、モーション低減、キーボードヒントの表示、起動時に開くビュー。",
+      "compactDensityLabel": "コンパクト密度",
+      "compactDensityHint": "リストの行間を詰め、全体のパディングを狭くします。",
+      "reduceMotionLabel": "モーションを低減",
+      "reduceMotionHint": "ビュー間のアニメーション遷移をスキップします。",
+      "keyboardHintsLabel": "キーボードヒントを表示",
+      "keyboardHintsHint": "ツールチップとボタン隅に ⌘ キーのショートカットを表示します。",
+      "startupLabel": "起動時に開く",
+      "startupHint": "アプリを起動したときに表示される画面。",
+      "startupOptions": {
+        "lastView": "最後のビュー",
+        "home": "ホーム",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "外観",
+      "subtitle": "色、フォント、密度。このツールに設定したい雰囲気。",
+      "comingSoonBody": "厳選されたテーマパレット、アクセントカラー、密度。現在のテーマ切り替えはワールドレールのクイック設定にあります。",
+      "themeLabel": "テーマ",
+      "themeHint": "3つの厳選パレット。ブロックカラー、ヘアライン、グレインまですべてを調整します。",
+      "themes": {
+        "linen": "リネン",
+        "linenSub": "デフォルト",
+        "studio": "スタジオ",
+        "studioSub": "ニュートラル",
+        "midnight": "ミッドナイト",
+        "midnightSub": "ダーク"
+      },
+      "accentLabel": "アクセント",
+      "accentHint": "ホバー、フォーカス、アクティブ編集リングに使用されます。",
+      "densityLabel": "密度",
+      "densityOptions": {
+        "cozy": "ゆったり",
+        "default": "デフォルト",
+        "compact": "コンパクト"
+      }
+    },
+    "templates": {
+      "title": "テンプレート",
+      "subtitle": "新しいスペースとドキュメントの再利用可能な雛形。",
+      "comingSoonBody": "セクション、デフォルトのドキュメント名、文章スタブを含む独自テンプレートを作成します。",
+      "items": {
+        "fiction": "フィクション",
+        "fictionSub": "原稿 · 世界観 · ワークショップ",
+        "research": "リサーチ",
+        "researchSub": "資料 · ノート · 草稿",
+        "journal": "日記",
+        "journalSub": "日次 · 週次 · 振り返り",
+        "essay": "エッセイ",
+        "essaySub": "アウトライン · 草稿 · 最終版"
+      }
+    },
+    "palettes": {
+      "title": "ハイライトパレット",
+      "subtitle": "スペースごとの5スロットパレット — 各色に名前を付けて調整します。",
+      "comingSoonBody": "スペース間でハイライトパレット（証拠、修正箇所、参照など）を編集、保存、切り替えます。",
+      "items": {
+        "evidence": "証拠",
+        "revise": "修正箇所",
+        "reference": "参照",
+        "quote": "引用",
+        "loose": "未解決"
+      },
+      "rename": "名前変更",
+      "tune": "調整"
+    },
+    "citations": {
+      "title": "引用スタイル",
+      "subtitle": "スペース全体のデフォルト引用スタイル。",
+      "comingSoonBody": "ユニバーサルスタイル（Chicago、APA、MLA など）をスペースごとの上書きと組み合わせて選択します。",
+      "styleLabel": "デフォルトスタイル",
+      "styleHint": "新しい引用を挿入するときに使用されます。スペースごとの上書きは後で追加されます。",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "注釈",
+      "subtitle": "余白メモとインライン注釈。",
+      "comingSoonBody": "注釈の種類、表示デフォルト、エクスポート動作。",
+      "showMarginLabel": "余白メモを表示",
+      "showMarginHint": "スペースがあるときに注釈が右余白に浮かびます。",
+      "showInlineLabel": "インラインハイライトを表示",
+      "showInlineHint": "注釈の色が下の文章に反映されます。",
+      "exportLabel": "エクスポートに含める",
+      "exportHint": "注釈はドキュメント本文と一緒に出力されます。"
+    },
+    "export": {
+      "title": "エクスポート / インポート",
+      "subtitle": "LIpsum Writer との間でデータを移動します。",
+      "comingSoonBody": ".zip への一括エクスポート、別の LIpsum バンドルまたは Markdown ディレクトリからのインポート。",
+      "formatLabel": "エクスポート形式",
+      "formatHint": "ドキュメントごとおよびスペースごとのエクスポートは同じデフォルトを使用します。",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "インポート元",
+      "importHint": "別の LIpsum バンドルまたは Markdown ファイルのディレクトリを取り込みます。",
+      "importOptions": {
+        "bundle": "LIpsum バンドル（.zip）",
+        "markdown": "Markdown フォルダ",
+        "obsidian": "Obsidian vault"
+      },
+      "importSpaceLabel": "スペースをインポート",
+      "importSpaceHint": "Writer アーカイブ（.zip）からこのブラウザにスペースを取り込みます — スナップショットのダウンロードや別デバイスからのフォルダ同期エクスポートです。",
+      "importChooseFile": "アーカイブを選択…",
+      "importing": "インポート中…",
+      "importFailed": "インポート失敗：{{message}}",
+      "comingSoonLabel": "その他の形式",
+      "comingSoonHint": "Markdown フォルダまたは Obsidian vault からの一括エクスポートとインポート。",
+      "comingSoonTooltip": "予定中 — まだ利用できません。"
+    },
+    "data": {
+      "title": "データ",
+      "subtitle": "作業内容の保存場所と使用容量。",
+      "comingSoonBody": "IndexedDB の使用量、ストレージ見積もり、ワンクリック完全削除。",
+      "storageLabel": "使用ストレージ",
+      "storageValue": "≈ 12.4 MB · 4スペース、38ドキュメント",
+      "engineLabel": "ストレージエンジン",
+      "engineValue": "IndexedDB（ローカルブラウザ）",
+      "wipeLabel": "すべてを削除",
+      "wipeHint": "このブラウザからすべてのスペース、ドキュメント、スナップショットを削除します。元に戻すことはできません。",
+      "wipeButton": "ローカルデータを削除…"
+    },
+    "about": {
+      "title": "アプリについて",
+      "subtitle": "ビルド情報とリンク。",
+      "comingSoonBody": "ストーリーは /about ページをご覧ください。このタブにはビルド情報、ライセンス、変更履歴が表示されます。",
+      "versionLabel": "バージョン",
+      "versionValue": "{{version}}",
+      "buildLabel": "ビルド",
+      "buildValue": "ローカル",
+      "licenseLabel": "ライセンス",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "リンク",
+      "links": {
+        "source": "ソース",
+        "changelog": "変更履歴",
+        "feedback": "フィードバックを送る"
+      }
+    },
+    "account": {
+      "title": "アカウント",
+      "subtitle": "サインイン、デバイス間同期、共有ワークスペース。",
+      "comingSoonBody": "クラウド同期は現在利用できません — Lotem はローカル専用です。アカウント、サインイン、共有ワークスペースは同期リリース時に追加されます。",
+      "signedOutLabel": "サインイン",
+      "signedOutHint": "クラウド同期はまだ利用できません。デザイン表示のために配置されています。",
+      "signInButton": "メールでサインイン",
+      "syncLabel": "このデバイスを同期",
+      "syncHint": "サインイン後、スペースが他のデバイスに複製されます。"
+    },
+    "typography": {
+      "title": "タイポグラフィ",
+      "subtitle": "すべてのワールドのデフォルト設定。個別のワールドで上書きできます。",
+      "comingSoonBody": "新しいワールドの文章フォント、UIフォント、デフォルト閲覧サイズ、行の高さ、文字数を選択します。",
+      "proseFontLabel": "文章フォント",
+      "uiFontLabel": "UI フォント",
+      "proseSizeLabel": "文章サイズ",
+      "proseSizeHint": "新しいワールドのデフォルト。",
+      "lineHeightLabel": "行の高さ",
+      "measureLabel": "文字数",
+      "measureHint": "最大行幅。",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "ショートカット",
+      "subtitle": "ナビゲーション、書式設定、モードのキーボードバインディング。",
+      "comingSoonBody": "書き込み/読み取り/分割、フォーカスモード、書式ツールバーの再割り当て可能なショートカット。",
+      "navHeader": "ナビゲーション",
+      "formatHeader": "書式設定",
+      "modeHeader": "モード",
+      "items": {
+        "openSettings": "設定を開く",
+        "quickSettings": "クイック設定",
+        "findInDoc": "ドキュメント内検索",
+        "toggleFocus": "フォーカス切り替え",
+        "toggleInspector": "インスペクター切り替え",
+        "bold": "太字",
+        "italic": "斜体",
+        "underline": "下線",
+        "heading1": "見出し1",
+        "heading2": "見出し2",
+        "write": "書き込みモード",
+        "read": "読み取りモード",
+        "split": "分割モード"
+      }
+    },
+    "backups": {
+      "title": "バックアップ",
+      "subtitle": "ローカルデータのエクスポート、復元、スナップショット。",
+      "comingSoonBody": "スケジュール済みローカルスナップショット、.zip への手動エクスポート、以前のバックアップからの復元。",
+      "intervalLabel": "自動スナップショット間隔",
+      "intervalOptions": {
+        "5min": "5分",
+        "10min": "10分",
+        "30min": "30分",
+        "off": "オフ"
+      },
+      "keepLabel": "保持",
+      "keepHint": "古いスナップショットは自動的に削除されます。",
+      "keepOptions": {
+        "last50": "最新50件",
+        "days7": "7日間",
+        "days30": "30日間"
+      },
+      "latestLabel": "最新",
+      "latestValue": "12分前 · 1,190語"
+    },
+    "sync": {
+      "title": "同期",
+      "subtitle": "選択したフォルダにスペースをプッシュします。Google Drive、Dropbox、または iCloud フォルダを指定してデバイス間で同期します。",
+      "unsupportedTitle": "このブラウザでは利用できません",
+      "unsupportedBody": "フォルダ同期には File System Access API が必要です。デスクトップの Chrome、Edge、その他の Chromium ブラウザで利用可能です。対応ブラウザに切り替えてください。",
+      "folderLabel": "同期フォルダ",
+      "folderHint": "各同期でスペースごとに Markdown .zip がここに書き込まれます。最新5件と latest.zip を保持します。同期はバックアップとは別です。",
+      "noFolder": "フォルダが接続されていません",
+      "chooseFolder": "フォルダを選択…",
+      "changeFolder": "変更…",
+      "disconnect": "切断",
+      "intervalLabel": "自動同期",
+      "intervalHint": "アプリが開いてフォルダが接続されているときにスペースが自動同期される頻度。各スペースでこのデフォルトを上書きできます。",
+      "intervalOff": "オフ",
+      "intervalMinutes": "{{count}}分",
+      "intervalDefault": "デフォルト（{{label}}）",
+      "syncLabel": "手動同期",
+      "pushOnlyHint": "現在はプッシュのみ — ローカルデータをフォルダに書き込みます。変更の取り込みは後で追加されます。",
+      "syncNow": "今すぐ同期",
+      "syncNowAll": "すべてのスペースを同期",
+      "reconnectHint": "同期が一時停止しています — このセッションのブラウザにフォルダへのアクセス権限が再度必要です。再接続して手動および自動同期を再開します。",
+      "reconnectButton": "再接続",
+      "reconnecting": "再接続中…",
+      "syncing": "同期中…",
+      "syncFailed": "同期失敗：{{message}}",
+      "lastSynced": "最終同期：{{when}}",
+      "neverSynced": "未同期",
+      "justNow": "たった今",
+      "resultsTitle": "最終実行",
+      "spaceOk": "同期済み",
+      "spaceFailed": "失敗",
+      "historyTitle": "最近の同期",
+      "historyEmpty": "同期履歴がありません。",
+      "columns": {
+        "when": "日時",
+        "space": "スペース",
+        "kind": "種類",
+        "size": "サイズ",
+        "status": "ステータス"
+      },
+      "kind": {
+        "auto": "自動",
+        "manual": "手動"
+      },
+      "status": {
+        "ok": "OK",
+        "error": "エラー"
+      }
+    },
+    "space": {
+      "breadcrumb": "スペース · 設定",
+      "shellSubtitle": "スペース設定",
+      "loading": "スペースを読み込み中…",
+      "groups": {
+        "thisSpace": "このスペース",
+        "sharingMembers": "共有とメンバー",
+        "data": "データ",
+        "dangerZone": "危険"
+      },
+      "tabs": {
+        "general": "一般",
+        "docInspector": "ドキュメント検査",
+        "template": "テンプレート",
+        "palette": "ハイライトパレット",
+        "sharing": "共有",
+        "members": "メンバー",
+        "backups": "バックアップ",
+        "sync": "同期",
+        "export": "エクスポート",
+        "danger": "危険ゾーン"
+      },
+      "docInspector": {
+        "title": "ドキュメント検査",
+        "subtitle": "このスペースのユニバーサルインスペクター設定を上書きします。"
+      },
+      "palette": {
+        "title": "ハイライトパレット",
+        "subtitle": "このスペース用の5つの名前付き調整可能ハイライトカラー。",
+        "comingSoonBody": "このスペースのハイライトスロットの名前変更、色の再調整、並び替え。",
+        "items": {
+          "evidence": "証拠",
+          "revise": "修正箇所",
+          "reference": "参照",
+          "quote": "引用",
+          "loose": "未解決"
+        },
+        "rename": "名前変更",
+        "tune": "調整"
+      },
+      "export": {
+        "title": "エクスポート",
+        "subtitle": "このスペースのコンテンツを別のツールに移動します。",
+        "comingSoonBody": "Markdown .zip（現在はバックアップ経由）、LaTeX、HTML、PDF へのエクスポートをすべて一か所で。",
+        "formatLabel": "形式",
+        "formatHint": "Markdown が最初にリリースされ、残りは後続します。",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "最終エクスポート",
+        "lastValue": "なし"
+      },
+      "general": {
+        "title": "一般",
+        "subtitle": "このスペースの識別情報。変更はすぐに適用され、ビュー間で同期されます。",
+        "nameLabel": "スペース名",
+        "nameHint": "サイドバーヘッダーとスペースレールのツールチップに表示されます。",
+        "tagLabel": "タグ",
+        "tagHint": "スペースレールタイルに表示される短いコード（2〜4文字）。"
+      },
+      "sharing": {
+        "title": "共有",
+        "subtitle": "このスペースの共有方法を管理します。",
+        "comingSoonBody": "スペースごとの公開設定と共有リンク。クラウド同期リリース時に追加されます。",
+        "visibilityLabel": "公開範囲",
+        "visibilityOptions": {
+          "private": "非公開",
+          "link": "リンクを知っている人全員",
+          "members": "メンバーのみ"
+        },
+        "linkLabel": "共有リンク",
+        "linkHint": "デフォルトは読み取り専用。編集権限はメンバーに従います。",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "コピー"
+      },
+      "template": {
+        "title": "テンプレート",
+        "subtitle": "このスペースの作成に使用された構造テンプレート。",
+        "comingSoonBody": "作成後にスペースのテンプレートを変更することはまだサポートされていません。セクションとドキュメントを安全に移行できるようになったら追加されます。",
+        "currentLabel": "現在のテンプレート",
+        "currentValue": "フィクション",
+        "currentSub": "原稿 · 世界観 · ワークショップ",
+        "changeLabel": "テンプレートを変更",
+        "changeHint": "既存のセクションとドキュメントを新しいテンプレートに再配置します。",
+        "changeButton": "テンプレートを変更…"
+      },
+      "members": {
+        "title": "メンバー",
+        "subtitle": "このスペースにアクセスできる共同執筆者とレビュアー。",
+        "comingSoonBody": "コラボレーターを招待し、役割を管理し、変更をレビューします。クラウド同期と共にリリースされます。",
+        "inviteLabel": "メールで招待",
+        "inviteHint": "このスペースに参加するためのリンクを送信します。",
+        "invitePlaceholder": "name@example.com",
+        "inviteButton": "招待を送る",
+        "membersLabel": "メンバー",
+        "roles": {
+          "owner": "オーナー",
+          "editor": "編集者",
+          "viewer": "閲覧者"
+        },
+        "you": "あなた"
+      },
+      "backups": {
+        "title": "バックアップ",
+        "subtitle": "このスペースをダウンロード、保持、復元できる .zip としてスナップショットします。",
+        "retentionHint": "最新 {{count}} 件のスナップショットを保持 — 古いものは自動的に削除されます。",
+        "snapshotNow": "+ 今すぐスナップショット",
+        "snapshotting": "スナップショット中…",
+        "snapshotFailed": "スナップショット失敗：{{message}}",
+        "historyTitle": "履歴",
+        "empty": "スナップショットがありません — 「+ 今すぐスナップショット」で作成してください。",
+        "columns": {
+          "when": "日時",
+          "kind": "種類",
+          "size": "サイズ",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "手動",
+          "auto": "自動",
+          "snapshot": "スナップショット"
+        },
+        "download": "↓ ダウンロード",
+        "delete": "削除",
+        "deleteConfirm": "このスナップショットを削除しますか？この操作は元に戻せません。",
+        "deleted": "スナップショットを削除しました。",
+        "justNow": "たった今",
+        "restore": "↺ 復元",
+        "restoreUnavailable": "このスナップショットは復元サポート以前のものです — ダウンロードのみ可能です。",
+        "restoreDialogTitle": "このスナップショットを復元しますか？",
+        "restoreDialogBody": "このスペースの現在のコンテンツがスナップショットで置き換えられます。現在の状態のスナップショットが先に保存されるため、この復元を元に戻すことができます。",
+        "restoreConfirm": "復元",
+        "restoreCancel": "キャンセル",
+        "restoring": "復元中…",
+        "restored": "スナップショットを復元しました。",
+        "restoreFailed": "復元失敗：{{message}}",
+        "fileRestoreTitle": "ダウンロードした .zip から復元しますか？",
+        "fileRestoreBody": "ユニバーサル設定 → エクスポート / インポート からインポートしてください — 新しいスペースとして取り込まれ、このスペースはそのまま残ります。"
+      },
+      "sync": {
+        "title": "同期",
+        "subtitle": "このスペースを接続フォルダに手動またはスケジュールでプッシュします。同期はバックアップとは別です。",
+        "folderHint": "ユニバーサル設定 → 同期 でフォルダを接続してください。すべてのスペースで同じフォルダが使用されます。",
+        "intervalHint": "このスペースが自動同期される頻度。ユニバーサル自動同期設定に従うには「デフォルト」を選択してください。",
+        "syncNow": "このスペースを同期"
+      },
+      "danger": {
+        "title": "危険ゾーン",
+        "subtitle": "元に戻せない操作。続行する前によく読んでください。",
+        "deleteCardTitle": "このスペースを削除",
+        "deleteCardBody": "このスペースと、すべてのドキュメント、セクション、Brain space ノート、注釈、引用、接続を完全に削除します。この操作は元に戻せません。",
+        "deleteButton": "このスペースを削除",
+        "dialogTitle": "「{{name}}」を削除しますか？",
+        "dialogBody": "スペースとすべてのコンテンツを完全に削除します。この操作は元に戻せません。",
+        "typeToConfirm": "確認のため {{name}} と入力してください",
+        "cancel": "キャンセル",
+        "confirm": "スペースを削除"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "余白で迷子",
+    "body": "そのページはまだ存在しません。",
+    "goHome": "ホームへ"
+  },
+  "templates": {
+    "crumb": "01 — ある種の部屋",
+    "headingMain": "どんなスペースを",
+    "headingAccent": "始めますか？",
+    "chooseLegend": "テンプレートを選択",
+    "stage": {
+      "pre-alpha": "実験的",
+      "alpha": "早期",
+      "beta": "ベータ"
+    },
+    "nameLabel": "名前",
+    "tagLabel": "タグ",
+    "syncLabel": "クラウド同期 —",
+    "syncValue": "オフ、ローカル",
+    "syncTooltip": "クラウド同期は利用できません — このアプリは現在ローカル専用です。",
+    "creating": "作成中…",
+    "submitLabel": "{{name}} へ進む →",
+    "newSpace": "新しいスペース",
+    "back": "戻る"
+  },
+  "dump": {
+    "headerCount": "Brain space · 未整理 {{count}} 件",
+    "title": "Brain space",
+    "mobileWarning": "Brain space は大きな画面で最適に機能します。",
+    "mobileNote": "キャンバスにはマウスまたはトラックパッドが必要です。",
+    "openInWrite": "書き込みモードで開く →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "ダンプを始める",
+      "emptyHint": "下からカードタイプを選んでください",
+      "pendingHint": "別のノートを Shift+クリックして接続 · Esc でキャンセル"
+    },
+    "note": {
+      "deleteNote": "ノートを削除",
+      "addPicture": "画像を追加",
+      "addPictureCta": "画像を追加",
+      "openLinkedDoc": "リンクされたドキュメントを開く",
+      "fetchedContent": "取得済みコンテンツ",
+      "openDetailsLabel": "詳細を開く",
+      "openDetailsTitle": "詳細パネルを開く",
+      "titlePlaceholder": "タイトル",
+      "addTitleCta": "+ タイトル",
+      "bodyEmpty": "（クリックして書く）",
+      "viewImage": "{{name}} を表示",
+      "removeImage": "{{name}} を削除",
+      "resize": "ノートをリサイズ",
+      "days": {
+        "sun": "日",
+        "mon": "月",
+        "tue": "火",
+        "wed": "水",
+        "thu": "木",
+        "fri": "金",
+        "sat": "土"
+      }
+    },
+    "drawer": {
+      "title": "ノートの詳細",
+      "description": "選択したノートを編集し、接続を管理します。",
+      "untitledPlaceholder": "無題",
+      "titleAriaLabel": "ノートのタイトル",
+      "closeAriaLabel": "ドロワーを閉じる",
+      "bodyLabel": "本文",
+      "bodyPlaceholder": "何か書いてみましょう…",
+      "picturesLabel": "画像",
+      "addPicture": "画像を追加",
+      "pictureLimitHint": "{{count}} 件の上限に達しました — 追加するには1つ削除してください。",
+      "linkedDocLabel": "リンクされたドキュメント",
+      "noLinkedDoc": "— リンクなし —",
+      "untitledDoc": "無題",
+      "openDoc": "開く",
+      "connectionsHeading": "接続（{{count}}）",
+      "connectionsEmpty": "キャンバスで別のノートを Shift+クリックして接続します。",
+      "untitledNote": "（無題）",
+      "removeConnection": "接続を削除",
+      "deleteNote": "ノートを削除"
+    }
+  },
+  "split": {
+    "title": "分割ビュー",
+    "mobileWarning": "分割ビューには大きな画面が必要です。",
+    "mobileNote": "このドキュメントを書き込みモードで開いてください。",
+    "openInWrite": "書き込みモードで開く →",
+    "leftPrefix": "左 —",
+    "rightPrefix": "右 —",
+    "rightPaneAria": "右ペインのドキュメント",
+    "noOtherDocs": "（他のドキュメントなし）",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Citations",
+    "pickDoc": "上のドロップダウンからドキュメントを選択してください。",
+    "dividerAria": "分割ペインをリサイズ"
+  },
+  "citationsDrawer": {
+    "title": "Citations",
+    "description": "このスペースの引用を検索、インポート、エクスポートします。",
+    "close": "引用を閉じる",
+    "expand": "引用をフルビューで開く"
+  },
+  "citations": {
+    "title": "Citations",
+    "breadcrumb": "資料 / ",
+    "entries": "{{count}} 件",
+    "searchPlaceholder": "著者、タグ、年…",
+    "upload": "↑ .bib / .ris をアップロード",
+    "add": "+ 追加",
+    "cancel": "× キャンセル",
+    "columns": {
+      "tag": "タグ",
+      "authors": "著者",
+      "title": "タイトル",
+      "year": "年",
+      "type": "種類",
+      "used": "使用"
+    },
+    "style": "スタイル — CHICAGO（著者-日付）",
+    "exportBib": ".BIB としてエクスポート",
+    "summary": "{{filtered}} 件表示中 · このページに {{shown}} 件",
+    "prevPage": "前のページ",
+    "nextPage": "次のページ",
+    "empty": "引用がまだありません",
+    "noMatch": "検索に一致する行がありません。",
+    "importHint": ".bib をインポートするか、手動で追加してください。",
+    "pasteHeader": "BibTeX またはタイトルを貼り付け",
+    "addCitation": "引用を追加",
+    "manualCancel": "キャンセル",
+    "adding": "追加中…",
+    "parsing": "{{name}} を解析中…",
+    "imported": "{{added}} 件の引用{{addedPlural}}をインポートしました{{skippedSuffix}}。",
+    "skippedSuffix": "、{{skipped}} 件の重複{{skippedPlural}}をスキップ",
+    "skippedSuffixShort": "、{{skipped}} 件をスキップ",
+    "failed": "解析失敗：{{message}}",
+    "failedManual": "失敗：{{message}}",
+    "addedOne": "1件の引用を追加しました。",
+    "unknownAuthor": "（不明）",
+    "unknownError": "不明なエラー",
+    "edit": {
+      "save": "保存",
+      "saving": "保存中…",
+      "cancel": "キャンセル",
+      "delete": "削除",
+      "edit": "編集",
+      "tagLabel": "タグ",
+      "authorsLabel": "著者",
+      "titleLabel": "タイトル",
+      "yearLabel": "年",
+      "typeLabel": "種類",
+      "duplicateKey": "タグ「{{key}}」はこのスペースで既に使用されています。",
+      "updated": "1件の引用を更新しました。",
+      "deleteOne": "1件の引用を削除しました。",
+      "confirmDeleteUsed": "この引用はドキュメントで {{count}} 回使用されています。それでも削除しますか？",
+      "confirmDeleteSingle": "引用「{{key}}」を削除しますか？この操作は元に戻せません。",
+      "untitled": "（無題）"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} 件選択中",
+      "deleteSelected": "削除",
+      "setTypePrompt": "種類を設定",
+      "setTypeAria": "選択した引用の種類を設定",
+      "chooseOption": "選択…",
+      "ariaLabel": "一括操作",
+      "clearSelection": "選択解除",
+      "deleted": "{{count}} 件の引用を削除しました。",
+      "typeApplied": "{{count}} 件の引用の種類を {{type}} に設定しました。",
+      "confirmDelete": "{{count}} 件の引用を削除しますか？この操作は元に戻せません。"
+    },
+    "row": {
+      "selectAllAria": "このページのすべての引用を選択",
+      "viewCitationAria": "引用 {{key}} を表示",
+      "selectCitationAria": "引用 {{key}} を選択",
+      "collapseCitationAria": "引用 {{key}} を折りたたむ",
+      "usedCount": "{{count}} 回使用",
+      "unused": "未使用",
+      "copyTag": "タグをコピー",
+      "copyTagAria": "タグ {{value}} をコピー",
+      "copiedTitle": "コピーしました",
+      "copiedTagAria": "タグ {{value}} をコピーしました"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "හිස්", "tag": "BL", "description": "ශුන්‍යයෙන් අරඹන්න" },
+  "fiction": { "label": "ප්‍රබන්ධ රචනය", "tag": "FI", "description": "නවකතාව · කෙටිකතාව · තිර රචනය" },
+  "humanities": { "label": "නිබන්ධනය · පර්යේෂණ", "tag": "TH", "description": "දීර්ඝ ශාස්ත්‍රීය කෘතිය" },
+  "journal": { "label": "දිනපොත", "tag": "JO", "description": "දෛනික, පීඩනයක් නැත" },
+  "serial": { "label": "මාලාව", "tag": "SE", "description": "පුනරාවර්ථන රචනා · පුවත් පත්‍රිකාව" },
+  "six": { "label": "හය දොරවල් · සහයෝගී", "tag": "SD", "description": "හවුල් ලෝකය · කතුවරුන් කිහිපදෙනෙක්" },
+  "technical": { "label": "තාක්ෂණික · විද්‍යාත්මක වාර්තාව", "tag": "TX", "description": "විද්‍යාත්මක · ක්‍රම · සමීකරණ" },
+  "bioinformatics": { "label": "ජෛව තොරතුරු විද්‍යාව", "tag": "BX", "description": "නල මාර්ග · ක්‍රම · රසායනාගාර සටහන් පොත" }
+}

@@ -1,0 +1,14 @@
+{
+  "untitled": "Χωρίς τίτλο",
+  "brainSpace": "Brain Space",
+  "github": "GitHub",
+  "home": "Αρχική",
+  "about": "Σχετικά",
+  "settings": "Ρυθμίσεις",
+  "help": "Βοήθεια",
+  "back": "πίσω",
+  "comingSoon": {
+    "tooltip": "Σύντομα",
+    "defaultHint": "Δεν είναι ακόμη διαθέσιμο — σύντομα."
+  }
+}

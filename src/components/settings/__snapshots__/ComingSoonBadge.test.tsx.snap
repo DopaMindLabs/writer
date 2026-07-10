@@ -1,0 +1,20 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ComingSoonBadge > snapshot > should match the snapshot for default and custom-class variants 1`] = `
+<div>
+  <div>
+    <span
+      class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
+      data-testid="coming-soon-badge"
+    >
+      coming soon
+    </span>
+    <span
+      class="inline-block rounded-sm bg-paper-2 font-mono uppercase tracking-wider text-ink-3 px-2 py-1 text-[10px]"
+      data-testid="coming-soon-badge"
+    >
+      coming soon
+    </span>
+  </div>
+</div>
+`;

@@ -1,0 +1,51 @@
+{
+  "title": "Help",
+  "subtitle": "Guides and answers for getting the most out of your writing.",
+  "shellSubtitle": "Help / Documentation",
+  "navGroup": "Help",
+  "navOverview": "Overview",
+  "navAria": "Help topics",
+  "searchPlaceholder": "Search help…",
+  "searchLabel": "Search help articles",
+  "noResults": "No articles matched “{{query}}”.",
+  "resultsCount_one": "{{count}} result",
+  "resultsCount_other": "{{count}} results",
+  "browseAll": "Browse all topics",
+  "languagePickerLabel": "Help language",
+  "allFeatures": {
+    "title": "See all features",
+    "subtitle": "A complete, scannable list of everything you can do — each links to its guide."
+  },
+  "onThisPage": "On this page",
+  "related": "Related",
+  "backToHelp": "All help",
+  "openCenter": "Open full Help Center",
+  "articleNotFound": "That help article doesn’t exist.",
+  "machineTranslationBanner": {
+    "label": "Automatic translation",
+    "body": "This article was translated automatically. Apologies for any errors — please send feedback so we can correct them.",
+    "feedbackLinkLabel": "send feedback"
+  },
+  "palette": {
+    "title": "Help",
+    "description": "Search the Help Center or jump to a shortcut.",
+    "shortcutsHeading": "Keyboard shortcuts",
+    "hint": "Press Esc to close"
+  },
+  "shortcuts": {
+    "help": "Open help",
+    "focus": "Toggle focus mode"
+  },
+  "categories": {
+    "getting-started": "Getting Started",
+    "writing": "Writing & Editing",
+    "organizing": "Organising",
+    "views": "Views & Modes",
+    "research": "Research & Citations",
+    "brainspace": "BrainSpace",
+    "annotations": "Annotations & Highlights",
+    "customization": "Customisation & Settings",
+    "data": "Your Data",
+    "mobile": "Mobile"
+  }
+}

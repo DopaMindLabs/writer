@@ -1,0 +1,14 @@
+{
+  "untitled": "제목 없음",
+  "brainSpace": "Brain Space",
+  "github": "GitHub",
+  "home": "홈",
+  "about": "정보",
+  "settings": "설정",
+  "help": "도움말",
+  "back": "뒤로",
+  "comingSoon": {
+    "tooltip": "곧 출시",
+    "defaultHint": "아직 사용할 수 없음 — 곧 출시."
+  }
+}

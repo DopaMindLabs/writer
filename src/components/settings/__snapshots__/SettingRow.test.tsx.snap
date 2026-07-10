@@ -1,0 +1,66 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingRow > snapshot > should match the snapshot across hint, no-hint, and disabled variants 1`] = `
+<div>
+  <div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          With hint
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          Helpful detail
+        </div>
+      </div>
+      <div>
+        <span>
+          child
+        </span>
+      </div>
+    </div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          No hint
+        </div>
+      </div>
+      <div>
+        <span>
+          child
+        </span>
+      </div>
+    </div>
+    <div
+      class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8 cursor-not-allowed opacity-60"
+    >
+      <div>
+        <div
+          class="text-[14px] font-medium text-ink"
+        >
+          Disabled
+        </div>
+        <div
+          class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+        >
+          Coming soon
+        </div>
+      </div>
+      <div>
+        <span>
+          child
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

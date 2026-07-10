@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Àgbáálá ìkọ̀wé ọ̀fẹ́",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Àyè rẹ àkọ́kọ́ ṣofo. Yan àpẹẹrẹ láti bẹ̀rẹ̀, tàbí bẹ̀rẹ̀ láti òfìfo.",
+    "tagline": "Àyè àìdíwọ̀n fún ìkọ̀wé gígùn — ìtàn, ìwádìí, ìdásọ̀, àkọọ́lẹ̀ ojoojúmọ́.",
+    "continueWriting": "Tẹ̀síwájú ìkọ̀wé",
+    "startNewSpace": "Bẹ̀rẹ̀ àyè tuntun",
+    "syncOffChip": "ìmújúpọ̀/ìfipamọ́ kò jẹ́ mímú ṣiṣẹ́ · àwọn dátà lè sọnù",
+    "syncOnChip": "ìmújúpọ̀ fódà jẹ́ mímú ṣiṣẹ́",
+    "syncOnTitle": "Ìmújúpọ̀ Fódà Ti Ṣiṣẹ́",
+    "syncOnBody": "Iṣẹ́ rẹ ń ṣiṣẹ́ pọ̀ sí fódà «{{folder}}» lórí ẹrọ yìí.",
+    "warningTitle": "Ìkọ́ ṣáájú ìfilọ́lẹ̀",
+    "warningBody": "Kò sí ìmújúpọ̀ dátà. Ohun gbogbo wà nínú aṣàwákiri rẹ; fífiṣapá àkọọ́lẹ̀ rẹ jẹ́ yíọ iṣẹ́ rẹ. O lè mú ìmújúpọ̀ sí fódà agbègbè ṣiṣẹ́ nínú Ètò Àgbáyé → Ìmújúpọ̀.",
+    "versionLine": "Ẹ̀dà {{version}}"
+  },
+  "about": {
+    "back": "padà",
+    "title": "nípa",
+    "greeting": "Ẹ káàbọ̀,",
+    "paragraph1": "Èyí jẹ́ fún olùkọ̀wé tó ń bẹ̀rẹ̀ ìkọ̀wé ní ìgbà gbogbo. Ẹni tó ń ṣí ìwé tuntun, kọ ọ̀pọ̀lọpọ̀ gbolohun mẹ́ta (tàbí kò sí), lẹ́yìn náà ó lo ìṣẹ́jú 40 ní ṣíṣe ìtúnṣe irú àkọ̀wé. Ẹni tó jẹ́ pé àwọn èrò tó dára jù lọ wá sí òru ọjọ́ mẹ́ta kan tó sì dà ní àdàrọ. Ẹni tó ní ìdamẹ́rin àwọn tabs mẹ́rìnlá, àwọn ìwé àkọọ́lẹ̀ mẹ́fà, àti ìkọ̀wé àkọ́ kan tí kò sí ìyípadà fún oṣù kan.",
+    "paragraph2Before": "Mo mọ̀, nítorí pé èmi nìyẹn ",
+    "paragraph2After": ". Mo ní ADHD, Autism, bóyá àwọn ìṣòro mìíràn tí a kò tíì ṣàwárí rẹ̀. Mo nílò ohun kan tó lóye ọpọlọ mi tó ní àárọ̀ ṣùgbọ́n ó dára. Ibùdó láti ta ohun gbogbo jẹ́ ṣáájú kí ó tó sọnù (tàbí bẹ̀rẹ̀ ìkọ̀wé). Àwọn ìdámọ̀ kékeré, àwọn ìrọ̀yìn àárọ̀, àwọn ìsopọ̀ òru. Gbogbo rẹ̀, ní ibùdó kan.",
+    "paragraph3": "Nítorí náà, mo kọ́ àyè yìí fún wa. Mo ń retí pé ó fún ọ ní àyọ̀ dopamine gẹ́gẹ́ bí ó ṣe fún mi nígbà tí mo ń kọ́ rẹ̀.",
+    "paragraph4Before": "Ohun kan mìíràn... Mo gbàgbọ́ nínú ìmọ̀ ẹ̀rọ fún rere àti mo korí àwọn ìpolówó ọjà. Nítorí náà, èyí máa ń jẹ́ aláìní ìpolówó ọjà àti ỌFẸ́ fún lílò tó kò ní èrèé. O lè ṣe àtúnṣe rẹ̀ gẹ́gẹ́ bí o bá fẹ́ lábẹ́ ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Ipò",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — kò sí ìmújúpọ̀ dátà. Gbogbo dátà ni a tọ́jú sínú IndexedDB nínú aṣàwákiri agbègbè rẹ. Tí o bá fiṣapá àkọọ́lẹ̀ rẹ, a ó sọnù iṣẹ́ rẹ.",
+    "feedbackBefore": "Mo ń tún kọ́ èyí síbẹ̀ àti mo ní ọ̀pọ̀lọpọ̀ èrò ",
+    "feedbackAfter": ". Mo fẹ́ gbọ́ ohun tó ń ṣiṣẹ́, ohun tó kò ṣiṣẹ́, àti ohun tí o fẹ́ kí ó wà. Ẹ̀sọ jẹ́ mímọ̀ sí.",
+    "sourceLabel": "Orísun"
+  },
+  "settings": {
+    "back": "padà",
+    "windowTitle": "lotem · ètò",
+    "breadcrumb": "ÈTÒ ÀGBÁYÉ",
+    "shellSubtitle": "ÈTÒ ÀGBÁYÉ",
+    "comingSoonBadge": "ó ń bọ̀ ní kíákíá",
+    "helpAria": "Kíní èyí?",
+    "groups": {
+      "preferences": "Àṣàyàn",
+      "writing": "Ìkọ̀wé",
+      "data": "Dátà",
+      "account": "Àkọọ́lẹ̀"
+    },
+    "tabs": {
+      "general": "Gbogbogbò",
+      "appearance": "Ìwòyí",
+      "editor": "Olùṣàtúnṣe",
+      "docInspector": "Olùṣàyẹ̀wò ìwé",
+      "accessibility": "Wíwọlé",
+      "typography": "Àkọwé",
+      "shortcuts": "Àwọn ọ̀nà àpéèṣe",
+      "templates": "Àwọn àpẹẹrẹ",
+      "palettes": "Àwọn àwo ìfojúsọ́nà",
+      "citations": "Ọ̀nà ìtọ́ka",
+      "annotation": "Àwọn àlàyé",
+      "backups": "Ìfipamọ́",
+      "sync": "Ìmújúpọ̀",
+      "export": "Gbóná / Gbèrú",
+      "data": "Dátà rẹ",
+      "account": "Àkọọ́lẹ̀",
+      "about": "Nípa",
+      "language": "Èdè"
+    },
+    "language": {
+      "title": "Èdè",
+      "subtitle": "Yan èdè fún ìpèlépèlé àti àwọn àpilẹ̀kọ Help Center. Àwọn ìtúmọ̀ tó kùnà padà sí Gẹ̀ẹ́sì.",
+      "label": "Èdè ìpèlépèlé",
+      "hint": "Àwọn ìyípadà ń bẹrẹ ní kíákíá tí a sì fipamọ́ nínú aṣàwákiri yìí.",
+      "machineTranslationNotice": "Àwọn ìtúmọ̀ yàtọ̀ sí Gẹ̀ẹ́sì jẹ́ ṣíṣe láìfọwọ́kan. A rọlẹ̀ fún àwọn àṣìṣe — jọ̀wọ́ fi ẹ̀sọ ránṣẹ́ kí a lè ṣe ìtúnṣe.",
+      "feedbackLinkLabel": "fi ẹ̀sọ ránṣẹ́"
+    },
+    "editor": {
+      "title": "Olùṣàtúnṣe",
+      "subtitle": "Ìgbàfẹ́ àti àwọn ohun elo ìkọ̀wé. Àwọn ọ̀nà àpéèṣe Markdown (#, >, -, **) ń ṣiṣẹ́ títí ayé.",
+      "floatingToolbarLabel": "Ìgbàfẹ́ tó ń léfòó",
+      "floatingToolbarHint": "Ó ń farahàn nígbà tí o ṣe àmìsí tàbí tẹ ọ̀tún ní ìpò ìkọ̀wé.",
+      "floatingToolbarOff": "Pa dà",
+      "floatingToolbarOn": "Ṣí",
+      "rightClickLabel": "Àkojọ tẹ ọ̀tún",
+      "rightClickHint": "Ṣe ìyípadà láàárín ìgbàfẹ́ tó ń léfòó àti àkojọ ìṣe àdáni aṣàwákiri.",
+      "rightClickTooltip": "Lò àkojọ ìṣe àdáni nígbà tẹ ọ̀tún dípò ìgbàfẹ́ tó ń léfòó. Ìgbàfẹ́ máa ń farahàn nígbà àmìsí.",
+      "inlineTogglesLabel": "Àwọn bọ́tìnnì ìyípadà",
+      "inlineTogglesHint": "Àwọn bọ́tìnnì Gígọ́ àti ìdáralù nínú ìgbàfẹ́ tó ń léfòó.",
+      "inlineTogglesTooltip": "Fipamọ́ àwọn bọ́tìnnì B àti I kúrò nínú ìgbàfẹ́ tó ń léfòó. Àwọn ọ̀nà àpéèṣe Markdown (**, _) ń ṣiṣẹ́ títí.",
+      "listDepthLabel": "Ìjìnnà àkọjọ",
+      "listDepthHint": "Iye ìjìnnà tí àwọn àkọjọ ìdàsí àti tí a ṣàkàwé lè wọ̀.",
+      "listDepthTooltip": "Gbé sókè tàbí dín ìjìnnà àkọjọ kù. Ó ti di mú ní ìpele 2.",
+      "templateDefaultsLabel": "Àwọn ìpìlẹ̀ àpẹẹrẹ",
+      "templateDefaultsHint": "Àwọn ṣètò ìṣe ìkọ̀wé tó yàtọ̀ fún ọ̀kọ̀ọ̀kan àpẹẹrẹ.",
+      "templateDefaultsTooltip": "Jẹ́ kí ọ̀kọ̀ọ̀kan àpẹẹrẹ (ìtàn, àkọọ́lẹ̀, ìmọ̀ ẹ̀rọ…) yan ìṣe ìkọ̀wé tirẹ̀."
+    },
+    "docInspector": {
+      "title": "Olùṣàyẹ̀wò ìwé",
+      "subtitle": "Yan àwọn pápá tó ń farahàn nínú olùṣàyẹ̀wò ìwé. Ọ̀kọ̀ọ̀kan lè jẹ́ pípa dà ní àgbáyé àti ìtúnṣe fún ọ̀kọ̀ọ̀kan àyè.",
+      "statusLabel": "Ipò",
+      "statusHint": "Ṣe àfihàn ipò ìwé àti títì àwọn ìwé tí a ti pari kúrò nínú ṣíṣe àtúnṣe.",
+      "wordLimitLabel": "Ìdiwọ̀n ọ̀rọ̀",
+      "wordLimitHint": "Ṣe àfihàn ìdiwọ̀n ìkà ọ̀rọ̀ tí o lè ṣèdíwọ̀ fún ọ̀kọ̀ọ̀kan ìwé.",
+      "charLimitLabel": "Ìdiwọ̀n ìlà",
+      "charLimitHint": "Ṣe àfihàn ìdiwọ̀n ìkà ìlà tí o lè ṣèdíwọ̀ fún ọ̀kọ̀ọ̀kan ìwé.",
+      "dueDateLabel": "Ọjọ́ ìparí",
+      "dueDateHint": "Ṣe àfihàn àpèjẹ tí o lè ṣèdíwọ̀ fún ọ̀kọ̀ọ̀kan ìwé.",
+      "highlightLabel": "Fojúsọ́nà ọ̀rọ̀ tó já ìdiwọ̀n",
+      "highlightHint": "Àmìsí ọ̀rọ̀ gbogbo tó wà lẹ́yìn ìdiwọ̀n nínú olùṣàtúnṣe.",
+      "statusStagesLabel": "Àwọn ìpele ipò",
+      "statusStagesHint": "Yan àwọn ìpele tó ń farahàn nínú ẹ̀rọ yíyan ipò.",
+      "on": "Ṣí",
+      "off": "Pa dà",
+      "inherit": "Ìpìlẹ̀ ({{state}})",
+      "inheritTooltip": "Jogún láti ètò àgbáyé",
+      "stateOn": "ṣí",
+      "stateOff": "pa dà"
+    },
+    "accessibility": {
+      "title": "Wíwọlé",
+      "subtitle": "Ṣe ìdíwọ̀n ìpèlépèlé fún ìmùnilára àti ìmọ̀ ẹ̀rọ ìrànlọ́wọ́. Ìyípadà gbogbo bẹ̀rẹ̀ láti irú ìrírí lónìí — kò sí ohun tó ń yípadà títí o fi yan àṣàyàn.",
+      "theme": {
+        "label": "Àwọ̀ àti ìyàtọ̀",
+        "hint": "Àwọn àwọ̀ tó ní ìyàtọ̀ gíga ń pàdé ìpele ìyàtọ̀ WCAG AAA.",
+        "light": "Ìmọ́lẹ̀",
+        "dark": "Òkùnkùn",
+        "hcLight": "Ìyàtọ̀ gíga (ìmọ́lẹ̀)",
+        "hcDark": "Ìyàtọ̀ gíga (òkùnkùn)"
+      },
+      "motion": {
+        "label": "Ìgbéradà",
+        "hint": "Dín tàbí pa dà àwọn animation ìpèlépèlé.",
+        "auto": "Tẹ́ ẹ̀ pẹ̀lú ètò",
+        "reduced": "Dínkù",
+        "full": "Kún"
+      },
+      "textSize": {
+        "label": "Ìwọ̀n ọ̀rọ̀",
+        "hint": "Ìwọ̀n ojúlé kíkà àti ìkọ̀wé.",
+        "sm": "Kékeré",
+        "base": "Ìpìlẹ̀",
+        "lg": "Nlá",
+        "xl": "Tóbi gan-an"
+      },
+      "lineSpacing": {
+        "label": "Ìhà ìlà",
+        "hint": "Fi afikún àyè ìmísí láàárín àwọn ìlà ìkọ̀wé.",
+        "normal": "Ìpilẹ̀ṣẹ̀",
+        "relaxed": "Ìsinmi",
+        "loose": "Àlàáfíà"
+      },
+      "linkUnderline": {
+        "label": "Fún àwọn àjọ ọ̀nà ìsopọ̀ ìlà ní gbogbo ìgbà",
+        "hint": "Ṣe àfihàn àwọn ìlà bí a tó ṣe é kí àwọn ọ̀nà ìsopọ̀ má ṣe gbáralé àwọ̀ nìkan."
+      },
+      "focus": {
+        "label": "Olùtọ́ka ìfọ̀kànsí tó lágbára",
+        "hint": "Lo àlà tó ní ísokùso àti ìyàtọ̀ gíga lórí ìfọ̀kànsí."
+      },
+      "reset": {
+        "label": "Padà sí àwọn ìpìlẹ̀",
+        "hint": "Mú ìgbéradà, ìwọ̀n ọ̀rọ̀, ìhà ìlà, àwọn ọ̀nà ìsopọ̀, àti ìfọ̀kànsí padà sí àwọn ìpìlẹ̀. Àwọ̀ rẹ kò yípadà.",
+        "action": "Tún ṣèdíwọ̀"
+      }
+    },
+    "general": {
+      "title": "Gbogbogbò",
+      "subtitle": "Ọ̀nà tí LIpsum Writer ṣe farahàn ní ìpìlẹ̀. Kò sí ohun tó lè bà jẹ́.",
+      "comingSoonBody": "Ìdìdí fẹsẹ̀mùlẹ̀, dínkù ìgbéradà, ìfihàn àmì ìbọ̀n, àti ohun tó ń ṣí ní ibẹ̀rẹ̀.",
+      "compactDensityLabel": "Ìdìdí fẹsẹ̀mùlẹ̀",
+      "compactDensityHint": "Àwọn ìlà tó kún nínú àwọn àkọjọ, ìmọ́ tó kún níbikíbi.",
+      "reduceMotionLabel": "Dín ìgbéradà kù",
+      "reduceMotionHint": "Fo àwọn animation ìyípadà láàárín àwọn ìwòran.",
+      "keyboardHintsLabel": "Ṣe àfihàn àwọn ìmọ̀ràn bọ́tìnnì",
+      "keyboardHintsHint": "Ṣe àfihàn àwọn ọ̀nà àpéèṣe ⌘-key nínú àwọn tooltip àti igun àwọn bọ́tìnnì.",
+      "startupLabel": "Ṣí nígbà ìbẹ̀rẹ̀",
+      "startupHint": "Ohun tó ń farahàn nígbà tí o ṣí ètò.",
+      "startupOptions": {
+        "lastView": "Ìwòran tó kẹ̀yìn",
+        "home": "Ilé",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Ìwòyí",
+      "subtitle": "Àwọ̀, àkọwé, ìdìdí. Ìmọ̀lára tí o fẹ́ kí ohun yìí ṣe.",
+      "comingSoonBody": "Àwọn àwọ̀ àwọ̀ tó ti mú ṣe, àwọ̀ ìfojúsọ́nà, àti ìdìdí. Ìyípadà àwọ̀ lónìí wà nínú ètò ìyára ti kẹ̀lẹ̀ àgbáyé.",
+      "themeLabel": "Àwọ̀",
+      "themeHint": "Àwọn àwọ̀ mẹ́ta tó ti mú ṣe. Wọ́n ṣe ìdíwọ̀n ohun gbogbo — àwọ̀ àwọn àkọsílẹ̀, àwọn ìlà dára, àti àpẹrẹ pàápàá.",
+      "themes": {
+        "linen": "Linen",
+        "linenSub": "ìpìlẹ̀",
+        "studio": "Studio",
+        "studioSub": "aláìdojúkọ",
+        "midnight": "Midnight",
+        "midnightSub": "òkùnkùn"
+      },
+      "accentLabel": "Àmì ìtọpinpin",
+      "accentHint": "A ń lò fún hover, ìfọ̀kànsí, oruka tó ń ṣatúnṣe ní ìgbà.",
+      "densityLabel": "Ìdìdí",
+      "densityOptions": {
+        "cozy": "Àmùlò",
+        "default": "Ìpìlẹ̀",
+        "compact": "Fẹsẹ̀mùlẹ̀"
+      }
+    },
+    "templates": {
+      "title": "Àwọn àpẹẹrẹ",
+      "subtitle": "Àwọn àpẹẹrẹ tí a lè tún lò fún àwọn àyè àti ìwé tuntun.",
+      "comingSoonBody": "Kọ àwọn àpẹẹrẹ tirẹ̀ pẹ̀lú àwọn ìpín, àwọn orúkọ ìwé ìpìlẹ̀, àti àwọn stub ìkọ̀wé.",
+      "items": {
+        "fiction": "Ìtàn",
+        "fictionSub": "Ìkọwé · Àgbáyé · Workshop",
+        "research": "Ìwádìí",
+        "researchSub": "Àwọn orísun · Àwọn àkọsílẹ̀ · Àwọn ìkọ̀wé àkọ́",
+        "journal": "Àkọọ́lẹ̀",
+        "journalSub": "Ojoojúmọ́ · Ọ̀sọ̀ọ̀sẹ̀ · Àwọn ìrónú",
+        "essay": "Àpilẹ̀kọ",
+        "essaySub": "Àkópọ̀ · Àwọn ìkọ̀wé àkọ́ · Ìkẹyìn"
+      }
+    },
+    "palettes": {
+      "title": "Àwọn àwo ìfojúsọ́nà",
+      "subtitle": "Àwọn àwo ọ̀nà àbọ fún ọ̀kọ̀ọ̀kan àyè — fún wọn lorukọ àti ṣe ìdíwọ̀n ọ̀kọ̀ọ̀kan àwọ̀.",
+      "comingSoonBody": "Ṣe ìtúnṣe, tọ́jú, àti pàṣípààrọ̀ àwọn àwo ìfojúsọ́nà tó ní orúkọ (Ẹ̀rí, Fún àtúnṣe, Ìtọ́ka…) kọjá àwọn àyè.",
+      "items": {
+        "evidence": "Ẹ̀rí",
+        "revise": "Fún àtúnṣe",
+        "reference": "Ìtọ́ka",
+        "quote": "Àwòkọ́",
+        "loose": "Ìparí tí a kò pé"
+      },
+      "rename": "tún ń pe",
+      "tune": "ṣe ìdíwọ̀n"
+    },
+    "citations": {
+      "title": "Ọ̀nà ìtọ́ka",
+      "subtitle": "Ọ̀nà ìtọ́ka ìpìlẹ̀ kọjá àwọn àyè.",
+      "comingSoonBody": "Yan ọ̀nà àgbáyé (Chicago, APA, MLA…) pẹ̀lú àwọn àtúnṣe fún ọ̀kọ̀ọ̀kan àyè.",
+      "styleLabel": "Ọ̀nà ìpìlẹ̀",
+      "styleHint": "A ń lò nígbà tí a bá fi ìtọ́ka tuntun sí. Àwọn àtúnṣe fún ọ̀kọ̀ọ̀kan àyè ń bọ̀ lẹ́yìn náà.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Àwọn àlàyé",
+      "subtitle": "Àwọn àlàyé ẹ̀bà àti tó wà nínú ọ̀rọ̀.",
+      "comingSoonBody": "Àwọn irú àlàyé, àwọn ìpìlẹ̀ ìṣísílẹ̀, àti ìhùwàsí ìgbóná.",
+      "showMarginLabel": "Ṣe àfihàn àwọn àlàyé ẹ̀bà",
+      "showMarginHint": "Àwọn àlàyé ń léfòó ní ẹ̀bà ọ̀tún nígbà tó bá yẹ.",
+      "showInlineLabel": "Ṣe àfihàn àwọn ìfojúsọ́nà nínú ọ̀rọ̀",
+      "showInlineHint": "Àwọ̀ àlàyé ń rọ̀ sínú ọ̀rọ̀ tó wà ní ìsàlẹ̀.",
+      "exportLabel": "Pẹ̀lú nínú ìgbóná",
+      "exportHint": "Àwọn àlàyé ni a kọ sínú ara ìwé náà."
+    },
+    "export": {
+      "title": "Gbóná / Gbèrú",
+      "subtitle": "Gbé dátà wọ̀ àti jáde lọ́dọ̀ LIpsum Writer.",
+      "comingSoonBody": "Gbóná tó pọ̀ sí .zip, gbèrú láti àkójọpọ̀ LIpsum mìíràn tàbí fódà Markdown.",
+      "formatLabel": "Ọ̀nà ìgbóná",
+      "formatHint": "Àwọn ìgbóná fún ọ̀kọ̀ọ̀kan ìwé àti ọ̀kọ̀ọ̀kan àyè ń lò ìpìlẹ̀ kan náà.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Gbèrú láti",
+      "importHint": "Mú àkójọpọ̀ LIpsum mìíràn tàbí fódà àwọn fáìlì Markdown wọlé.",
+      "importOptions": {
+        "bundle": "Àkójọpọ̀ LIpsum (.zip)",
+        "markdown": "Fódà Markdown",
+        "obsidian": "Obsidian vault"
+      },
+      "importSpaceLabel": "Gbèrú àyè",
+      "importSpaceHint": "Mú àyè wọlé sínú aṣàwákiri yìí láti ìkọlé Writer (.zip) — ìgbóná snapshot tàbí ìgbóná ìmújúpọ̀ fódà láti ẹrọ mìíràn.",
+      "importChooseFile": "Yan ìkọlé…",
+      "importing": "ń gbèrú…",
+      "importFailed": "Gbèrú kùnà: {{message}}",
+      "comingSoonLabel": "Àwọn ọ̀nà mìíràn",
+      "comingSoonHint": "Gbóná tó pọ̀ àti gbèrú láti àwọn fódà Markdown tàbí àwọn vault Obsidian.",
+      "comingSoonTooltip": "Tí a gbèrò — kò sí síbẹ̀ tíì."
+    },
+    "data": {
+      "title": "Dátà rẹ",
+      "subtitle": "Ibí iṣẹ́ rẹ ti gbé àti iye àyè tó gba.",
+      "comingSoonBody": "Àmúlò IndexedDB, ìdámọ̀ ìtọ́jú, àti ípápa gígbọnná pẹ̀lú tẹ ẹyọkan.",
+      "storageLabel": "Ìtọ́jú tí a ti lò",
+      "storageValue": "≈ 12.4 MB · àyè 4, ìwé 38",
+      "engineLabel": "Ẹ̀rọ ìtọ́jú",
+      "engineValue": "IndexedDB (aṣàwákiri agbègbè)",
+      "wipeLabel": "Pa gbogbo rẹ̀",
+      "wipeHint": "Yọ ọ̀kọ̀ọ̀kan àyè, ìwé, àti snapshot kúrò nínú aṣàwákiri yìí. Kò sí padà.",
+      "wipeButton": "Pa dátà agbègbè…"
+    },
+    "about": {
+      "title": "Nípa",
+      "subtitle": "Àlàyé ìkọ́ àti àwọn ọ̀nà ìsopọ̀.",
+      "comingSoonBody": "Wo ojú-ìwé /about fún ìtàn; tab yìí máa ń gbé àlàyé ìkọ́, àṣẹ, àti àkọsílẹ̀ àtúnṣe.",
+      "versionLabel": "Ẹ̀dà",
+      "versionValue": "{{version}}",
+      "buildLabel": "Ìkọ́",
+      "buildValue": "agbègbè",
+      "licenseLabel": "Àṣẹ",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Àwọn ọ̀nà ìsopọ̀",
+      "links": {
+        "source": "Orísun",
+        "changelog": "Àkọsílẹ̀ àtúnṣe",
+        "feedback": "Fi ẹ̀sọ ránṣẹ́"
+      }
+    },
+    "account": {
+      "title": "Àkọọ́lẹ̀",
+      "subtitle": "Wíwọlé, ìmújúpọ̀ kọjá àwọn ẹrọ, àti àwọn àyè iṣẹ́ àjọ.",
+      "comingSoonBody": "Ìmújúpọ̀ ìgbàgbò kò sí lónìí — Lotem jẹ́ agbègbè nìkan. Àkọọ́lẹ̀, wíwọlé, àti àwọn àyè iṣẹ́ àjọ máa ń wá nígbà tí ìmújúpọ̀ bá dé.",
+      "signedOutLabel": "Wọlé",
+      "signedOutHint": "Ìmújúpọ̀ ìgbàgbò kò sí síbẹ̀ tíì. Eléyìí wà níbí láti ṣe àfihàn ìpèlépèlé.",
+      "signInButton": "Wọlé pẹ̀lú íméèlì",
+      "syncLabel": "Ṣe ìmújúpọ̀ ẹrọ yìí",
+      "syncHint": "Lẹ́yìn tí o wọlé, àwọn àyè rẹ máa ń dàakọ sí àwọn ẹrọ mìíràn."
+    },
+    "typography": {
+      "title": "Àkọwé",
+      "subtitle": "Àwọn ìpìlẹ̀ kọjá àwọn àgbáyé gbogbo. Ọ̀kọ̀ọ̀kan àgbáyé lè ṣe àtúnṣe.",
+      "comingSoonBody": "Yan ìkọ̀wé ìtàn, ìkọ̀wé UI, ìwọ̀n ìkaàwé ìpìlẹ̀, gígùn ìlà, àti ìwọ̀n fún àwọn àgbáyé tuntun.",
+      "proseFontLabel": "Ìkọ̀wé ìtàn",
+      "uiFontLabel": "Ìkọ̀wé UI",
+      "proseSizeLabel": "Ìwọ̀n ìtàn",
+      "proseSizeHint": "Ìpìlẹ̀ fún àwọn àgbáyé tuntun.",
+      "lineHeightLabel": "Gígùn ìlà",
+      "measureLabel": "Ìwọ̀n",
+      "measureHint": "Gígùn ìlà tó pọ̀ jù.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Àwọn ọ̀nà àpéèṣe",
+      "subtitle": "Àwọn ìdìgbọ̀n bọ́tìnnì fún ìtọ́nisọ́nà, ìṣe ìpilẹ̀ṣẹ̀, àti àwọn ipò.",
+      "comingSoonBody": "Àwọn ọ̀nà àpéèṣe tí a lè tún so fún kíkọ/kíkà/pipin, ipò ìfọ̀kànsí, àti ìgbàfẹ́ ìṣe ìpilẹ̀ṣẹ̀.",
+      "navHeader": "Ìtọ́nisọ́nà",
+      "formatHeader": "Ìṣe ìpilẹ̀ṣẹ̀",
+      "modeHeader": "Àwọn ipò",
+      "items": {
+        "openSettings": "Ṣí ètò",
+        "quickSettings": "Ètò ìyára",
+        "findInDoc": "Wá nínú ìwé",
+        "toggleFocus": "Yí ipò ìfọ̀kànsí padà",
+        "toggleInspector": "Yí olùṣàyẹ̀wò padà",
+        "bold": "Gígọ́",
+        "italic": "Ìdáralù",
+        "underline": "Ìlà ní ìsàlẹ̀",
+        "heading1": "Àkọlé 1",
+        "heading2": "Àkọlé 2",
+        "write": "Ipò ìkọ̀wé",
+        "read": "Ipò ìkàwé",
+        "split": "Ipò ìpínyà"
+      }
+    },
+    "backups": {
+      "title": "Ìfipamọ́",
+      "subtitle": "Gbóná, tún ṣe, àti ya àwòrán dátà agbègbè rẹ.",
+      "comingSoonBody": "Àwọn àwòrán agbègbè tí a ṣètò, ìgbóná àfọwọ́ṣe sí .zip, àti ìpadà sí ìfipamọ́ tẹ́lẹ̀.",
+      "intervalLabel": "Ìyà àkókò auto-snapshot",
+      "intervalOptions": {
+        "5min": "ìṣẹ́jú 5",
+        "10min": "ìṣẹ́jú 10",
+        "30min": "ìṣẹ́jú 30",
+        "off": "Pa dà"
+      },
+      "keepLabel": "Tọ́jú",
+      "keepHint": "Àwọn àwòrán àtijọ́ ń yọ jáde láìfọwọ́kan.",
+      "keepOptions": {
+        "last50": "Ìkẹyìn 50",
+        "days7": "Ọjọ́ 7",
+        "days30": "Ọjọ́ 30"
+      },
+      "latestLabel": "Ìkẹyìn",
+      "latestValue": "ìṣẹ́jú 12 sẹ́yìn · ọ̀rọ̀ 1,190"
+    },
+    "sync": {
+      "title": "Ìmújúpọ̀",
+      "subtitle": "Gbé àwọn àyè rẹ lọ sí fódà tí o yàn. Tọ́ka rẹ̀ sí fódà Google Drive, Dropbox, tàbí iCloud láti ṣe ìmújúpọ̀ kọjá àwọn ẹrọ.",
+      "unsupportedTitle": "Kò sí nínú aṣàwákiri yìí",
+      "unsupportedBody": "Ìmújúpọ̀ fódà nílò File System Access API, tó wà nínú Chrome, Edge, àti àwọn aṣàwákiri Chromium mìíràn lórí desktop. Yí padà sí aṣàwákiri tó jẹ́ mímú ṣiṣẹ́ láti lò rẹ̀.",
+      "folderLabel": "Fódà ìmújúpọ̀",
+      "folderHint": "Ìmújúpọ̀ kọ̀ọ̀kan kọ Markdown .zip fún ọ̀kọ̀ọ̀kan àyè níbí, tó ń tọ́jú ìkẹyìn 5 àti latest.zip. Ìmújúpọ̀ yàtọ̀ sí Ìfipamọ́.",
+      "noFolder": "Kò sí fódà tó sopọ̀",
+      "chooseFolder": "Yan fódà…",
+      "changeFolder": "Yí padà…",
+      "disconnect": "Yọ ìsopọ̀",
+      "intervalLabel": "Auto-ìmújúpọ̀",
+      "intervalHint": "Iye ìgbà tí àwọn àyè ń ṣe ìmújúpọ̀ láìfọwọ́kan nígbà tí ètò ṣí àti fódà sopọ̀. Ọ̀kọ̀ọ̀kan àyè lè yí ìpìlẹ̀ yìí padà.",
+      "intervalOff": "Pa dà",
+      "intervalMinutes": "ìṣẹ́jú {{count}}",
+      "intervalDefault": "Ìpìlẹ̀ ({{label}})",
+      "syncLabel": "Ìmújúpọ̀ àfọwọ́ṣe",
+      "pushOnlyHint": "Fífún ẹ̀yìn nìkan fún ìsinsinyìí — èyí kọ dátà agbègbè rẹ sí fódà náà. Fífa àwọn ìyípadà padà ń bọ̀ lẹ́yìn náà.",
+      "syncNow": "Ṣe ìmújúpọ̀ báyìí",
+      "syncNowAll": "Ṣe ìmújúpọ̀ àwọn àyè gbogbo",
+      "reconnectHint": "Ìmújúpọ̀ dúró — aṣàwákiri nílò àṣẹ fódà mọ̀ fún igba yìí. Tún sopọ̀ láti tún bẹ̀rẹ̀ ìmújúpọ̀ àfọwọ́ṣe àti àìfọwọ́kan.",
+      "reconnectButton": "Tún sopọ̀",
+      "reconnecting": "Ń tún sopọ̀…",
+      "syncing": "Ń ṣe ìmújúpọ̀…",
+      "syncFailed": "Ìmújúpọ̀ kùnà: {{message}}",
+      "lastSynced": "Ìmújúpọ̀ ìkẹyìn {{when}}",
+      "neverSynced": "A kò tíì ṣe ìmújúpọ̀ rí",
+      "justNow": "ní báyìí",
+      "resultsTitle": "Ìṣe ìkẹyìn",
+      "spaceOk": "ti ṣe ìmújúpọ̀",
+      "spaceFailed": "kùnà",
+      "historyTitle": "Àwọn ìmújúpọ̀ aládìgbò",
+      "historyEmpty": "Kò sí ìmújúpọ̀ síbẹ̀.",
+      "columns": {
+        "when": "ÌGBÀ",
+        "space": "ÀYÈ",
+        "kind": "IRÚFẸ́",
+        "size": "ÌWỌ̀N",
+        "status": "IPÒ"
+      },
+      "kind": {
+        "auto": "àìfọwọ́kan",
+        "manual": "àfọwọ́ṣe"
+      },
+      "status": {
+        "ok": "dára",
+        "error": "àṣìṣe"
+      }
+    },
+    "space": {
+      "breadcrumb": "ÀYÈ · ÈTÒ",
+      "shellSubtitle": "ÈTÒ ÀYÈ",
+      "loading": "Ń gbé àyè wọlé…",
+      "groups": {
+        "thisSpace": "Àyè yìí",
+        "sharingMembers": "Pínpín & Àwọn ọmọ ẹgbẹ́",
+        "data": "Dátà",
+        "dangerZone": "Ewu"
+      },
+      "tabs": {
+        "general": "Gbogbogbò",
+        "docInspector": "Olùṣàyẹ̀wò ìwé",
+        "template": "Àpẹẹrẹ",
+        "palette": "Àwo ìfojúsọ́nà",
+        "sharing": "Pínpín",
+        "members": "Àwọn ọmọ ẹgbẹ́",
+        "backups": "Ìfipamọ́",
+        "sync": "Ìmújúpọ̀",
+        "export": "Gbóná",
+        "danger": "Ẹ̀kúnrẹ́rẹ́ ewu"
+      },
+      "docInspector": {
+        "title": "Olùṣàyẹ̀wò ìwé",
+        "subtitle": "Yí àwọn ètò olùṣàyẹ̀wò àgbáyé padà fún àyè yìí."
+      },
+      "palette": {
+        "title": "Àwo ìfojúsọ́nà",
+        "subtitle": "Àwọn àwọ̀ ìfojúsọ́nà tó ní orúkọ àti tó lè ṣe ìdíwọ̀n fún àyè yìí.",
+        "comingSoonBody": "Tún pe, tún yí àwọ̀ padà, àti tún ṣètò àwọn slot ìfojúsọ́nà fún àyè yìí.",
+        "items": {
+          "evidence": "Ẹ̀rí",
+          "revise": "Fún àtúnṣe",
+          "reference": "Ìtọ́ka",
+          "quote": "Àwòkọ́",
+          "loose": "Ìparí tí a kò pé"
+        },
+        "rename": "tún ń pe",
+        "tune": "ṣe ìdíwọ̀n"
+      },
+      "export": {
+        "title": "Gbóná",
+        "subtitle": "Gbé àkóónú àyè yìí lọ sí ohun elo mìíràn.",
+        "comingSoonBody": "Gbóná sí Markdown .zip (lónìí nípasẹ̀ Ìfipamọ́), LaTeX, HTML, tàbí PDF — gbogbo rẹ̀ ní ibùdó kan.",
+        "formatLabel": "Ọ̀nà",
+        "formatHint": "Markdown bẹ̀rẹ̀ àkọ́kọ́; àwọn mìíràn máa ń bọ̀ lẹ́yìn.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Ìgbóná ìkẹyìn",
+        "lastValue": "kò tíì ṣe rí"
+      },
+      "general": {
+        "title": "Gbogbogbò",
+        "subtitle": "Àwọn àlàyé tó ṣe ìdámọ̀ fún àyè yìí. Àwọn ìyípadà ń bẹ̀rẹ̀ ní kíákíá tí wọ́n sì ń ṣiṣẹ́ pọ̀ kọjá àwọn ìwòran.",
+        "nameLabel": "Orúkọ àyè",
+        "nameHint": "A ń ṣe àfihàn nínú àkọlé ẹ̀bà àti tooltip ìṣọ àyè.",
+        "tagLabel": "Àmì",
+        "tagHint": "Kóòdù kékeré (ìlà 2–4) tó ń farahàn lórí ìṣọ àyè."
+      },
+      "sharing": {
+        "title": "Pínpín",
+        "subtitle": "Ṣe ìdarí bí a ṣe pín àyè yìí.",
+        "comingSoonBody": "Ìṣísílẹ̀ fún ọ̀kọ̀ọ̀kan àyè àti àwọn ọ̀nà ìsopọ̀ pínpín. Ó ń bọ̀ nígbà tí ìmújúpọ̀ ìgbàgbò bá dé.",
+        "visibilityLabel": "Ìṣísílẹ̀",
+        "visibilityOptions": {
+          "private": "Àdáni",
+          "link": "Ẹnikẹ́ni tó ní ọ̀nà ìsopọ̀",
+          "members": "Àwọn ọmọ ẹgbẹ́ nìkan"
+        },
+        "linkLabel": "Ọ̀nà ìsopọ̀ tí a lè pín",
+        "linkHint": "Kíkà nìkan ní ìpìlẹ̀. Àṣẹ ṣíṣe àtúnṣe ń tẹ̀ lẹ́yìn Àwọn ọmọ ẹgbẹ́.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "dàkọ"
+      },
+      "template": {
+        "title": "Àpẹẹrẹ",
+        "subtitle": "Àpẹẹrẹ ìmọ́ tí a ṣe ìda àyè yìí pẹ̀lú rẹ̀.",
+        "comingSoonBody": "Ìyípadà àpẹẹrẹ àyè lẹ́yìn ìdásílẹ̀ kò jẹ́ mímú ṣiṣẹ́ síbẹ̀ tíì. O ń bọ̀ nígbà tí a lè yí àwọn ìpín àti àwọn ìwé ní àbójútó.",
+        "currentLabel": "Àpẹẹrẹ lónìí",
+        "currentValue": "Ìtàn",
+        "currentSub": "Ìkọwé · Àgbáyé · Workshop",
+        "changeLabel": "Yí àpẹẹrẹ padà",
+        "changeHint": "Ṣe ìtúnjẹ àwọn ìpín àti àwọn ìwé tó wà sí àpẹẹrẹ tuntun.",
+        "changeButton": "Yí àpẹẹrẹ padà…"
+      },
+      "members": {
+        "title": "Àwọn ọmọ ẹgbẹ́",
+        "subtitle": "Àwọn olùkọ̀wé àti àwọn olùtúnyẹ̀wò tó ní ìwọlé sí àyè yìí.",
+        "comingSoonBody": "Pè àwọn alábàáṣiṣẹ́pọ̀, ṣe ìdarí àwọn ipa, àti ṣe àtúnyẹ̀wò àwọn ìyípadà. O ń bọ̀ pẹ̀lú ìmújúpọ̀ ìgbàgbò.",
+        "inviteLabel": "Pè nípasẹ̀ íméèlì",
+        "inviteHint": "A ó fi ọ̀nà ìsopọ̀ ránṣẹ́ sí wọn láti darapọ̀ mọ̀ àyè yìí.",
+        "invitePlaceholder": "orukọ@àpẹẹrẹ.com",
+        "inviteButton": "fi ìpè ránṣẹ́",
+        "membersLabel": "Àwọn ọmọ ẹgbẹ́",
+        "roles": {
+          "owner": "olóni",
+          "editor": "olùṣàtúnṣe",
+          "viewer": "olùjẹ̀rìí"
+        },
+        "you": "ìwọ"
+      },
+      "backups": {
+        "title": "Ìfipamọ́",
+        "subtitle": "Ya àwòrán àyè yìí gẹ́gẹ́ bí .zip tí o lè gba gbà, tọ́jú, àti padà síi.",
+        "retentionHint": "Ń tọ́jú àwọn àwòrán {{count}} tó tún wà — àwọn àtijọ́ ń yọ láìfọwọ́kan.",
+        "snapshotNow": "+ ya àwòrán báyìí",
+        "snapshotting": "ń ya àwòrán…",
+        "snapshotFailed": "Ìyáwòrán kùnà: {{message}}",
+        "historyTitle": "Ìtàn",
+        "empty": "Kò sí àwòrán síbẹ̀ — ṣẹ̀dá ọ̀kan pẹ̀lú + ya àwòrán báyìí.",
+        "columns": {
+          "when": "ÌGBÀ",
+          "kind": "IRÚFẸ́",
+          "size": "ÌWỌ̀N",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "àfọwọ́ṣe",
+          "auto": "àìfọwọ́kan",
+          "snapshot": "àwòrán"
+        },
+        "download": "↓ gba gbà",
+        "delete": "pa",
+        "deleteConfirm": "Pa àwòrán yìí? Kò lè padà.",
+        "deleted": "À ti pa àwòrán.",
+        "justNow": "ní báyìí",
+        "restore": "↺ tún ṣe",
+        "restoreUnavailable": "Àwòrán yìí ti ṣáájú ìtọ́ tún ṣe — a lè gba gbà nìkan.",
+        "restoreDialogTitle": "Tún àwòrán yìí ṣe?",
+        "restoreDialogBody": "Àkóónú lónìí fún àyè yìí máa ń rọ́pò àwòrán náà. A tọ́jú àwòrán ìpò lónìí àkọ́kọ́, nítorí náà o lè ṣe àtúmọ̀ ìtún ṣe yìí.",
+        "restoreConfirm": "Tún ṣe",
+        "restoreCancel": "Fagilé",
+        "restoring": "ń tún ṣe…",
+        "restored": "À ti tún ṣe àwòrán.",
+        "restoreFailed": "Ìtún ṣe kùnà: {{message}}",
+        "fileRestoreTitle": "Tún ṣe láti .zip tí a gba gbà?",
+        "fileRestoreBody": "Gbèrú rẹ̀ nípasẹ̀ Ètò Àgbáyé → Gbóná / Gbèrú — ó padà gẹ́gẹ́ bí àyè tuntun, tó fi àyè yìí sílẹ̀ láìbà jẹ́."
+      },
+      "sync": {
+        "title": "Ìmújúpọ̀",
+        "subtitle": "Gbé àyè yìí lọ sí fódà tó sopọ̀, àfọwọ́ṣe tàbí lórí ètò àkókò. Ìmújúpọ̀ yàtọ̀ sí Ìfipamọ́.",
+        "folderHint": "So fódà pọ̀ nínú Ètò Àgbáyé → Ìmújúpọ̀. Fódà kan náà ni a ń lò fún gbogbo àyè.",
+        "intervalHint": "Iye ìgbà tí àyè yìí ń ṣe ìmújúpọ̀ láìfọwọ́kan. Yan Ìpìlẹ̀ láti tẹ̀lé ètò auto-ìmújúpọ̀ àgbáyé.",
+        "syncNow": "Ṣe ìmújúpọ̀ àyè yìí"
+      },
+      "danger": {
+        "title": "Ẹ̀kúnrẹ́rẹ́ ewu",
+        "subtitle": "Àwọn ìṣe tí kò lè padà. Ka pẹ̀lú ìfọ̀kànsí ṣáájú ìtẹ̀síwájú.",
+        "deleteCardTitle": "Pa àyè yìí",
+        "deleteCardBody": "Ń yọ àyè yìí pẹ̀lú ọ̀kọ̀ọ̀kan ìwé, ìpín, àkọsílẹ̀ brain-space, àlàyé, ìtọ́ka, àti ìsopọ̀ rẹ̀ títí láéláé. Kò lè padà.",
+        "deleteButton": "Pa àyè yìí",
+        "dialogTitle": "Pa «{{name}}»?",
+        "dialogBody": "Èyí ń yọ àyè àti gbogbo àkóónú rẹ̀ títí láéláé. Kò lè padà.",
+        "typeToConfirm": "Tẹ̀wọlé {{name}} láti jẹ́rìísí",
+        "cancel": "Fagilé",
+        "confirm": "Pa àyè"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Sọnù ní àlàfo",
+    "body": "Ojú-ìwé yẹn kò sí (síbẹ̀).",
+    "goHome": "Padà sílé"
+  },
+  "templates": {
+    "crumb": "01 — IRÚ ILÉ KAN",
+    "headingMain": "Irú àyè wo",
+    "headingAccent": "ni o ń bẹ̀rẹ̀?",
+    "chooseLegend": "Yan àpẹẹrẹ",
+    "stage": {
+      "pre-alpha": "ìdánwò",
+      "alpha": "ìbẹ̀rẹ̀",
+      "beta": "beta"
+    },
+    "nameLabel": "Orúkọ",
+    "tagLabel": "Àmì",
+    "syncLabel": "ìmújúpọ̀ ìgbàgbò —",
+    "syncValue": "pa dà, agbègbè",
+    "syncTooltip": "Ìmújúpọ̀ ìgbàgbò kò sí — ètò yìí jẹ́ agbègbè nìkan fún ìsinsinyìí.",
+    "creating": "ń ṣẹ̀dá…",
+    "submitLabel": "wọ́ {{name}} →",
+    "newSpace": "àyè tuntun",
+    "back": "padà"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} tí a kò ṣètò",
+    "title": "Brain space",
+    "mobileWarning": "Brain space ń ṣiṣẹ́ dára jù lórí ibójú tó tóbi jù.",
+    "mobileNote": "Ìgbàrọ nílò eku tàbí trackpad.",
+    "openInWrite": "Ṣí nínú Write →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "bẹ̀rẹ̀ ìsọnù",
+      "emptyHint": "yan irú káàdì ní ìsàlẹ̀",
+      "pendingHint": "shift-tẹ àkọsílẹ̀ mìíràn láti sopọ̀ · esc láti fagilé"
+    },
+    "note": {
+      "deleteNote": "Pa àkọsílẹ̀",
+      "addPicture": "Fikún àwòrán",
+      "addPictureCta": "fikún àwòrán",
+      "openLinkedDoc": "Ṣí ìwé tó sopọ̀",
+      "fetchedContent": "Àkóónú tí a gba",
+      "openDetailsLabel": "Ṣí àwọn àlàyé",
+      "openDetailsTitle": "Ṣí fèrèsé àwọn àlàyé",
+      "titlePlaceholder": "àkọlé",
+      "addTitleCta": "+ àkọlé",
+      "bodyEmpty": "(tẹ láti kọ̀wé)",
+      "viewImage": "Wo {{name}}",
+      "removeImage": "Yọ {{name}}",
+      "resize": "Yí ìwọ̀n àkọsílẹ̀ padà",
+      "days": {
+        "sun": "Àìk",
+        "mon": "Aje",
+        "tue": "Ìṣẹ",
+        "wed": "Ọjọ́r",
+        "thu": "Ọjọ́b",
+        "fri": "Ẹt",
+        "sat": "Àbám"
+      }
+    },
+    "drawer": {
+      "title": "Àwọn àlàyé àkọsílẹ̀",
+      "description": "Ṣe àtúnṣe àkọsílẹ̀ tí a yàn àti ṣe ìdarí àwọn ìsopọ̀ rẹ̀.",
+      "untitledPlaceholder": "Aláìní àkọlé",
+      "titleAriaLabel": "Àkọlé àkọsílẹ̀",
+      "closeAriaLabel": "Pa afẹ́ wòrán dà",
+      "bodyLabel": "Ara",
+      "bodyPlaceholder": "Kọ ohun kan…",
+      "picturesLabel": "Àwọn àwòrán",
+      "addPicture": "Fikún àwòrán",
+      "pictureLimitHint": "ìdiwọ̀n {{count}} ti dé — yọ ọ̀kan láti fikún mìíràn.",
+      "linkedDocLabel": "Ìwé tó sopọ̀",
+      "noLinkedDoc": "— Kò sí ìwé tó sopọ̀ —",
+      "untitledDoc": "Aláìní àkọlé",
+      "openDoc": "Ṣí",
+      "connectionsHeading": "Àwọn ìsopọ̀ ({{count}})",
+      "connectionsEmpty": "shift-tẹ àkọsílẹ̀ mìíràn lórí ìgbàrọ láti sopọ̀.",
+      "untitledNote": "(aláìní àkọlé)",
+      "removeConnection": "Yọ ìsopọ̀",
+      "deleteNote": "Pa àkọsílẹ̀"
+    }
+  },
+  "split": {
+    "title": "Ìwòran ìpínyà",
+    "mobileWarning": "Ìwòran ìpínyà nílò ibójú tó tóbi jù.",
+    "mobileNote": "Ṣí ìwé yìí ní ipò Write dípò.",
+    "openInWrite": "Ṣí nínú Write →",
+    "leftPrefix": "APÁ ÒSÌ —",
+    "rightPrefix": "APÁ ỌTÚ̀N —",
+    "rightPaneAria": "Ìwé fẹ̀rẹ̀sẹ́ apá ọ̀tún",
+    "noOtherDocs": "(kò sí àwọn ìwé mìíràn)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Àwọn ìtọ́ka",
+    "pickDoc": "Yan ìwé láti àtẹjáde tó wà ní òkè.",
+    "dividerAria": "Yí ìwọ̀n àwọn fẹ̀rẹ̀sẹ́ ìpínyà padà"
+  },
+  "citationsDrawer": {
+    "title": "Àwọn ìtọ́ka",
+    "description": "Wá, gbèrú, àti gbóná àwọn ìtọ́ka fún àyè yìí.",
+    "close": "Pa àwọn ìtọ́ka dà",
+    "expand": "Ṣí àwọn ìtọ́ka ní ìwòran kún"
+  },
+  "citations": {
+    "title": "Àwọn ìtọ́ka",
+    "breadcrumb": "Àwọn orísun / ",
+    "entries": "{{count}} ÀWỌN ÌWÒ",
+    "searchPlaceholder": "àwọn òǹkọ̀wé, àmì, ọdún…",
+    "upload": "↑ gbe .bib / .ris sókè",
+    "add": "+ fikún",
+    "cancel": "× fagilé",
+    "columns": {
+      "tag": "ÀMÌ",
+      "authors": "ÀWỌN ÒǸK̀ỌẀÉ",
+      "title": "ÀKỌLÉ",
+      "year": "ỌDÚ́N",
+      "type": "IRÚFẸ́",
+      "used": "LÒ"
+    },
+    "style": "ỌNÀ — CHICAGO (ÒǸKỌ̀WÉ-ỌJỌ́)",
+    "exportBib": "GBÓNÁ GẸ́GẸ́ BÍ .BIB",
+    "summary": "{{filtered}} TÍ A ṢÍ · {{shown}} LÓRí ÌWÉ YÌÍ",
+    "prevPage": "Ojú-ìwé tó ṣáájú",
+    "nextPage": "Ojú-ìwé tó tẹ̀le",
+    "empty": "kò sí ìtọ́ka síbẹ̀",
+    "noMatch": "kò sí ìlà tó bá ìwádìí rẹ mu.",
+    "importHint": "gbèrú .bib tàbí fikún ọ̀kan pẹ̀lú ọwọ́.",
+    "pasteHeader": "Lẹ BibTeX tàbí àkọlé",
+    "addCitation": "fikún ìtọ́ka",
+    "manualCancel": "fagilé",
+    "adding": "ń fikún…",
+    "parsing": "Ń ṣe ìwádìí {{name}}…",
+    "imported": "Gbèrú ìtọ́ka {{added}}{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", fo {{skipped}} ẹ̀dà{{skippedPlural}}",
+    "skippedSuffixShort": ", fo {{skipped}}",
+    "failed": "Kùnà láti ṣe ìwádìí: {{message}}",
+    "failedManual": "Kùnà: {{message}}",
+    "addedOne": "À ti fikún ìtọ́ka 1.",
+    "unknownAuthor": "(aláìmọ̀)",
+    "unknownError": "àṣìṣe aláìmọ̀",
+    "edit": {
+      "save": "tọ́jú",
+      "saving": "ń tọ́jú…",
+      "cancel": "fagilé",
+      "delete": "pa",
+      "edit": "ṣàtúnṣe",
+      "tagLabel": "Àmì",
+      "authorsLabel": "Àwọn òǹkọ̀wé",
+      "titleLabel": "Àkọlé",
+      "yearLabel": "Ọdún",
+      "typeLabel": "Irúfẹ́",
+      "duplicateKey": "Àmì «{{key}}» ti ń lò nínú àyè yìí.",
+      "updated": "À ti ṣe àtúnṣe ìtọ́ka 1.",
+      "deleteOne": "À ti pa ìtọ́ka 1.",
+      "confirmDeleteUsed": "A ń lò ìtọ́ka yìí {{count}}× nínú àwọn ìwé rẹ. Pa bó tilẹ̀ jẹ́?",
+      "confirmDeleteSingle": "Pa ìtọ́ka «{{key}}»? Kò lè padà.",
+      "untitled": "(aláìní àkọlé)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} tí a yàn",
+      "deleteSelected": "pa",
+      "setTypePrompt": "ṣèdíwọ̀n irúfẹ́",
+      "setTypeAria": "Ṣèdíwọ̀n irúfẹ́ fún àwọn ìtọ́ka tí a yàn",
+      "chooseOption": "yàn…",
+      "ariaLabel": "Àwọn ìṣe ọ̀pọ̀lọpọ̀",
+      "clearSelection": "pa yíyan dà",
+      "deleted": "À ti pa àwọn ìtọ́ka {{count}}.",
+      "typeApplied": "Ṣèdíwọ̀n irúfẹ́ sí {{type}} lórí àwọn ìtọ́ka {{count}}.",
+      "confirmDelete": "Pa àwọn ìtọ́ka {{count}}? Kò lè padà."
+    },
+    "row": {
+      "selectAllAria": "Yan gbogbo àwọn ìtọ́ka lórí ojú-ìwé yìí",
+      "viewCitationAria": "Wo ìtọ́ka {{key}}",
+      "selectCitationAria": "Yan ìtọ́ka {{key}}",
+      "collapseCitationAria": "Dín ìtọ́ka {{key}} kù",
+      "usedCount": "ló {{count}}×",
+      "unused": "a kò tíì lò",
+      "copyTag": "Dàkọ àmì",
+      "copyTagAria": "Dàkọ àmì {{value}}",
+      "copiedTitle": "À ti dàkọ",
+      "copiedTagAria": "À ti dàkọ àmì {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

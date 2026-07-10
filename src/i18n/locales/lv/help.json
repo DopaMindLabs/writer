@@ -1,0 +1,48 @@
+{
+  "title": "Palīdzība",
+  "subtitle": "Ceļveži un atbildes, lai iegūtu maksimumu no rakstīšanas.",
+  "shellSubtitle": "Palīdzība / Dokumentācija",
+  "navGroup": "Palīdzība",
+  "navOverview": "Pārskats",
+  "navAria": "Palīdzības tēmas",
+  "searchPlaceholder": "Meklēt palīdzībā…",
+  "searchLabel": "Meklēt palīdzības rakstus",
+  "noResults": "Neviens raksts neatbilst „{{query}}“.",
+  "resultsCount_one": "{{count}} rezultāts",
+  "resultsCount_other": "{{count}} rezultāti",
+  "browseAll": "Pārlūkot visas tēmas",
+  "languagePickerLabel": "Palīdzības valoda",
+  "allFeatures": {
+    "title": "Skatīt visas funkcijas",
+    "subtitle": "Pilns saraksts ar visu, ko vari darīt — katrs ieraksts saistīts ar tā ceļvedi."
+  },
+  "onThisPage": "Šajā lapā",
+  "related": "Saistīts",
+  "backToHelp": "Visa palīdzība",
+  "openCenter": "Atvērt pilnu palīdzības centru",
+  "articleNotFound": "Šis palīdzības raksts neeksistē.",
+  "machineTranslationBanner": {
+    "label": "Automātiskais tulkojums",
+    "body": "Šis raksts ir tulkots automātiski. Atvainojamies par kļūdām — sūti atsauksmes, lai mēs varētu tās izlabot.",
+    "feedbackLinkLabel": "sūtīt atsauksmes"
+  },
+  "palette": {
+    "title": "Palīdzība",
+    "description": "Meklē palīdzības centrā vai pārej uz saīsni.",
+    "shortcutsHeading": "Tastatūras saīsnes",
+    "hint": "Nospied Esc, lai aizvērtu"
+  },
+  "shortcuts": { "help": "Atvērt palīdzību", "focus": "Pārslēgt fokusa režīmu" },
+  "categories": {
+    "getting-started": "Sākums",
+    "writing": "Rakstīšana un rediģēšana",
+    "organizing": "Organizēšana",
+    "views": "Skati un režīmi",
+    "research": "Pētniecība un citāti",
+    "brainspace": "BrainSpace",
+    "annotations": "Anotācijas un izcēlumi",
+    "customization": "Pielāgošana un iestatījumi",
+    "data": "Tavi dati",
+    "mobile": "Mobilais"
+  }
+}

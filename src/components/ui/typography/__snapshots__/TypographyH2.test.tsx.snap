@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TypographyH2 > snapshot > should match the snapshot of the default variant 1`] = `
+<div>
+  <div>
+    <h2
+      class="font-serif tracking-tight text-ink text-[18px] font-medium"
+    >
+      Default
+    </h2>
+  </div>
+</div>
+`;

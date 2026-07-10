@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Tomt", "tag": "TM", "description": "börja från noll" },
+  "fiction": { "label": "Skönlitterärt skrivande", "tag": "FI", "description": "roman · novell · manus" },
+  "humanities": { "label": "Avhandling · forskning", "tag": "TH", "description": "långt akademiskt arbete" },
+  "journal": { "label": "Dagbok", "tag": "DA", "description": "dagligt, utan press" },
+  "serial": { "label": "Serie", "tag": "SE", "description": "återkommande essäer · nyhetsbrev" },
+  "six": { "label": "Sex Dörrar · samarbete", "tag": "SD", "description": "delad värld · flera författare" },
+  "technical": { "label": "Tekniskt · Vetenskaplig rapport", "tag": "TX", "description": "Vetenskapligt · metoder · ekvationer" },
+  "bioinformatics": { "label": "Bioinformatik", "tag": "BX", "description": "pipelines · metoder · labbjournal" }
+}

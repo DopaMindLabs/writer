@@ -1,0 +1,48 @@
+{
+  "title": "सहायता",
+  "subtitle": "अपने लेखन का अधिकतम लाभ उठाने के लिए मार्गदर्शिकाएँ और उत्तर।",
+  "shellSubtitle": "सहायता / दस्तावेज़ीकरण",
+  "navGroup": "सहायता",
+  "navOverview": "अवलोकन",
+  "navAria": "सहायता विषय",
+  "searchPlaceholder": "सहायता में खोजें…",
+  "searchLabel": "सहायता लेख खोजें",
+  "noResults": "\"{{query}}\" से कोई लेख मेल नहीं खाता।",
+  "resultsCount_one": "{{count}} परिणाम",
+  "resultsCount_other": "{{count}} परिणाम",
+  "browseAll": "सभी विषय देखें",
+  "languagePickerLabel": "सहायता भाषा",
+  "allFeatures": {
+    "title": "सभी सुविधाएँ देखें",
+    "subtitle": "आप जो कुछ भी कर सकते हैं उसकी पूरी सूची — हर आइटम अपनी मार्गदर्शिका से जुड़ता है।"
+  },
+  "onThisPage": "इस पृष्ठ पर",
+  "related": "संबंधित",
+  "backToHelp": "सारी सहायता",
+  "openCenter": "पूरा सहायता केंद्र खोलें",
+  "articleNotFound": "यह सहायता लेख मौजूद नहीं है।",
+  "machineTranslationBanner": {
+    "label": "स्वचालित अनुवाद",
+    "body": "यह लेख स्वचालित रूप से अनुवादित है। किसी त्रुटि के लिए क्षमा करें — ठीक करने के लिए कृपया फीडबैक भेजें।",
+    "feedbackLinkLabel": "फीडबैक भेजें"
+  },
+  "palette": {
+    "title": "सहायता",
+    "description": "सहायता केंद्र खोजें या किसी शॉर्टकट पर जाएँ।",
+    "shortcutsHeading": "कीबोर्ड शॉर्टकट",
+    "hint": "बंद करने के लिए Esc दबाएँ"
+  },
+  "shortcuts": { "help": "सहायता खोलें", "focus": "फोकस मोड टॉगल करें" },
+  "categories": {
+    "getting-started": "शुरुआत",
+    "writing": "लेखन और संपादन",
+    "organizing": "व्यवस्थापन",
+    "views": "दृश्य और मोड",
+    "research": "अनुसंधान और उद्धरण",
+    "brainspace": "BrainSpace",
+    "annotations": "टिप्पणियाँ और हाइलाइट",
+    "customization": "अनुकूलन और सेटिंग्स",
+    "data": "आपका डेटा",
+    "mobile": "मोबाइल"
+  }
+}

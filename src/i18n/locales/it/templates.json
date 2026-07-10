@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Vuoto", "tag": "VU", "description": "partire da zero" },
+  "fiction": { "label": "Scrittura di narrativa", "tag": "FI", "description": "romanzo · racconto · sceneggiatura" },
+  "humanities": { "label": "Tesi · ricerca", "tag": "TH", "description": "lavoro accademico esteso" },
+  "journal": { "label": "Diario", "tag": "DI", "description": "quotidiano, senza pressione" },
+  "serial": { "label": "Serie", "tag": "SE", "description": "saggi ricorrenti · newsletter" },
+  "six": { "label": "Sei Porte · collaborativo", "tag": "SD", "description": "mondo condiviso · più autori" },
+  "technical": { "label": "Tecnico · Rapporto scientifico", "tag": "TX", "description": "Scientifico · metodi · equazioni" },
+  "bioinformatics": { "label": "Bioinformatica", "tag": "BX", "description": "pipeline · metodi · quaderno di laboratorio" }
+}

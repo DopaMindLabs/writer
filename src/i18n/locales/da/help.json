@@ -1,0 +1,48 @@
+{
+  "title": "Hjælp",
+  "subtitle": "Vejledninger og svar til at få mest ud af din skrivning.",
+  "shellSubtitle": "Hjælp / Dokumentation",
+  "navGroup": "Hjælp",
+  "navOverview": "Oversigt",
+  "navAria": "Hjælpeemner",
+  "searchPlaceholder": "Søg i hjælpen…",
+  "searchLabel": "Søg hjælpeartikler",
+  "noResults": "Ingen artikler matcher »{{query}}«.",
+  "resultsCount_one": "{{count}} resultat",
+  "resultsCount_other": "{{count}} resultater",
+  "browseAll": "Gennemse alle emner",
+  "languagePickerLabel": "Hjælpesprog",
+  "allFeatures": {
+    "title": "Se alle funktioner",
+    "subtitle": "En komplet liste over alt, du kan gøre — hver post linker til sin guide."
+  },
+  "onThisPage": "På denne side",
+  "related": "Relateret",
+  "backToHelp": "Al hjælp",
+  "openCenter": "Åbn fuldt hjælpecenter",
+  "articleNotFound": "Den hjælpeartikel findes ikke.",
+  "machineTranslationBanner": {
+    "label": "Automatisk oversættelse",
+    "body": "Denne artikel er oversat automatisk. Undskyld eventuelle fejl — send feedback, så vi kan rette dem.",
+    "feedbackLinkLabel": "send feedback"
+  },
+  "palette": {
+    "title": "Hjælp",
+    "description": "Søg i hjælpecentret eller spring til en genvej.",
+    "shortcutsHeading": "Tastaturgenveje",
+    "hint": "Tryk Esc for at lukke"
+  },
+  "shortcuts": { "help": "Åbn hjælp", "focus": "Skift fokustilstand" },
+  "categories": {
+    "getting-started": "Kom i gang",
+    "writing": "Skrivning og redigering",
+    "organizing": "Organisering",
+    "views": "Visninger og tilstande",
+    "research": "Forskning og citater",
+    "brainspace": "BrainSpace",
+    "annotations": "Annotationer og fremhævninger",
+    "customization": "Tilpasning og indstillinger",
+    "data": "Dine data",
+    "mobile": "Mobil"
+  }
+}

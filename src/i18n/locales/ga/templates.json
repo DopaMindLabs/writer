@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Bán", "tag": "BA", "description": "tús a chur ó thosach" },
+  "fiction": { "label": "Scríbhneoireacht fhicseanúil", "tag": "FI", "description": "úrscéal · gearrscéal · script" },
+  "humanities": { "label": "Tráchtas · taighde", "tag": "TH", "description": "saothar fada acadúil" },
+  "journal": { "label": "Dialann", "tag": "DI", "description": "laethúil, gan brú" },
+  "serial": { "label": "Sraith", "tag": "SE", "description": "aistí leanúnacha · nuachtlitir" },
+  "six": { "label": "Sé Doirse · comhoibríoch", "tag": "SD", "description": "domhan roinnte · scríbhneoirí iolracha" },
+  "technical": { "label": "Teicniúil · Tuarascáil eolaíoch", "tag": "TX", "description": "Eolaíoch · modhanna · cothromóidí" },
+  "bioinformatics": { "label": "Bithfhaisnéisíocht", "tag": "BX", "description": "píblínte · modhanna · leabhar saotharlainne" }
+}

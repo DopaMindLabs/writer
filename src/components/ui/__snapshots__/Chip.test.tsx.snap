@@ -1,0 +1,38 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Chip > snapshot > should match the snapshot across active and disabled states 1`] = `
+<div>
+  <div>
+    <button
+      aria-pressed="false"
+      class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+      type="button"
+    >
+      rest
+    </button>
+    <button
+      aria-pressed="true"
+      class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper"
+      type="button"
+    >
+      active
+    </button>
+    <button
+      aria-pressed="false"
+      class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink"
+      disabled=""
+      type="button"
+    >
+      disabled
+    </button>
+    <button
+      aria-pressed="true"
+      class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper"
+      disabled=""
+      type="button"
+    >
+      active disabled
+    </button>
+  </div>
+</div>
+`;

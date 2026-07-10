@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Babu kome", "tag": "BA", "description": "fara daga karaya" },
+  "fiction": { "label": "Rubutun almara", "tag": "FI", "description": "littafin labari · gajeren labari · rubutun ɓallon hoto" },
+  "humanities": { "label": "Bincike · binciken jami'a", "tag": "TH", "description": "doguwar aikin ilimi" },
+  "journal": { "label": "Diary", "tag": "DI", "description": "na kullum, ba damuwa" },
+  "serial": { "label": "Jerin", "tag": "SE", "description": "rubutuna masu maimaitawa · wasiƙar labarai" },
+  "six": { "label": "Ƙofofi Shida · haɗin gwiwa", "tag": "SD", "description": "duniya mai rabawa · marubuta da yawa" },
+  "technical": { "label": "Fasaha · Rahoton kimiyya", "tag": "TX", "description": "Kimiyya · hanyoyi · ƙididdiga" },
+  "bioinformatics": { "label": "Bioinformatics", "tag": "BX", "description": "bututu · hanyoyi · litattafan dakin gwaje-gwaje" }
+}

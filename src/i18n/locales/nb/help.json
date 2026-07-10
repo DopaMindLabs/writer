@@ -1,0 +1,48 @@
+{
+  "title": "Hjelp",
+  "subtitle": "Veiledninger og svar for å få mest mulig ut av skrivingen.",
+  "shellSubtitle": "Hjelp / Dokumentasjon",
+  "navGroup": "Hjelp",
+  "navOverview": "Oversikt",
+  "navAria": "Hjelpemner",
+  "searchPlaceholder": "Søk i hjelpen…",
+  "searchLabel": "Søk hjelpeartikler",
+  "noResults": "Ingen artikler samsvarer med «{{query}}».",
+  "resultsCount_one": "{{count}} resultat",
+  "resultsCount_other": "{{count}} resultater",
+  "browseAll": "Bla gjennom alle emner",
+  "languagePickerLabel": "Hjelpespråk",
+  "allFeatures": {
+    "title": "Se alle funksjoner",
+    "subtitle": "En komplett liste over alt du kan gjøre — hvert element lenker til guiden sin."
+  },
+  "onThisPage": "På denne siden",
+  "related": "Relatert",
+  "backToHelp": "All hjelp",
+  "openCenter": "Åpne fullt hjelpsenter",
+  "articleNotFound": "Den hjelpeartikkelen finnes ikke.",
+  "machineTranslationBanner": {
+    "label": "Automatisk oversettelse",
+    "body": "Denne artikkelen er oversatt automatisk. Beklager eventuelle feil — send tilbakemelding så vi kan rette dem.",
+    "feedbackLinkLabel": "send tilbakemelding"
+  },
+  "palette": {
+    "title": "Hjelp",
+    "description": "Søk i hjelpsenteret eller hopp til en snarvei.",
+    "shortcutsHeading": "Hurtigtaster",
+    "hint": "Trykk Esc for å lukke"
+  },
+  "shortcuts": { "help": "Åpne hjelp", "focus": "Veksle fokusmodus" },
+  "categories": {
+    "getting-started": "Kom i gang",
+    "writing": "Skriving og redigering",
+    "organizing": "Organisering",
+    "views": "Visninger og moduser",
+    "research": "Forskning og sitater",
+    "brainspace": "BrainSpace",
+    "annotations": "Merknader og uthevinger",
+    "customization": "Tilpasning og innstillinger",
+    "data": "Dataene dine",
+    "mobile": "Mobil"
+  }
+}

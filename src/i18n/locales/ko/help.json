@@ -1,0 +1,48 @@
+{
+  "title": "도움말",
+  "subtitle": "글쓰기를 최대한 활용하기 위한 가이드와 답변.",
+  "shellSubtitle": "도움말 / 문서",
+  "navGroup": "도움말",
+  "navOverview": "개요",
+  "navAria": "도움말 주제",
+  "searchPlaceholder": "도움말 검색…",
+  "searchLabel": "도움말 글 검색",
+  "noResults": "\"{{query}}\"와 일치하는 글이 없습니다.",
+  "resultsCount_one": "{{count}}개 결과",
+  "resultsCount_other": "{{count}}개 결과",
+  "browseAll": "모든 주제 보기",
+  "languagePickerLabel": "도움말 언어",
+  "allFeatures": {
+    "title": "모든 기능 보기",
+    "subtitle": "할 수 있는 모든 것의 완전한 목록 — 각 항목은 해당 가이드로 연결됩니다."
+  },
+  "onThisPage": "이 페이지에서",
+  "related": "관련 항목",
+  "backToHelp": "모든 도움말",
+  "openCenter": "전체 도움말 센터 열기",
+  "articleNotFound": "해당 도움말 글이 존재하지 않습니다.",
+  "machineTranslationBanner": {
+    "label": "자동 번역",
+    "body": "이 글은 자동으로 번역되었습니다. 오류가 있다면 죄송합니다 — 수정할 수 있도록 피드백을 보내주세요.",
+    "feedbackLinkLabel": "피드백 보내기"
+  },
+  "palette": {
+    "title": "도움말",
+    "description": "도움말 센터를 검색하거나 단축키로 이동.",
+    "shortcutsHeading": "키보드 단축키",
+    "hint": "Esc로 닫기"
+  },
+  "shortcuts": { "help": "도움말 열기", "focus": "포커스 모드 전환" },
+  "categories": {
+    "getting-started": "시작하기",
+    "writing": "쓰기 및 편집",
+    "organizing": "정리",
+    "views": "보기 및 모드",
+    "research": "연구 및 인용",
+    "brainspace": "BrainSpace",
+    "annotations": "주석 및 강조",
+    "customization": "사용자 설정",
+    "data": "당신의 데이터",
+    "mobile": "모바일"
+  }
+}

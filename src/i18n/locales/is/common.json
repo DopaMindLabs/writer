@@ -1,0 +1,14 @@
+{
+  "untitled": "Án titils",
+  "brainSpace": "Brain Space",
+  "github": "GitHub",
+  "home": "Heim",
+  "about": "Um",
+  "settings": "Stillingar",
+  "help": "Hjálp",
+  "back": "til baka",
+  "comingSoon": {
+    "tooltip": "Væntanlegt",
+    "defaultHint": "Ekki tiltækt enn — væntanlegt."
+  }
+}

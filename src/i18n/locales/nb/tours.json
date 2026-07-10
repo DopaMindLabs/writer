@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Hjelp og omvisninger", "tours": "Guidede omvisninger", "resetAll": "Tilbakestill alle omvisninger" },
+  "controls": { "next": "Neste", "prev": "Tilbake", "done": "Ferdig", "progress": "{{current}} av {{total}}" },
+  "welcome": {
+    "title": "Velkommen til LIpsum Writer",
+    "description": "En rask orientering om spaces og startskjermen.",
+    "intro": { "title": "Velkommen", "body": "LIpsum Writer er et skriveområde bygget rundt <i>spaces</i> — én space per prosjekt, artikkel eller bok. La oss se oss raskt rundt." },
+    "continue": { "title": "Fortsett der du slapp", "body": "Din sist redigerte space er her. Ett klikk åpner den igjen." },
+    "startSpace": { "title": "Start noe nytt", "body": "Lag en ny space fra en mal — avhandling, roman, essay — og begynn å skrive på sekunder." }
+  },
+  "writer": {
+    "title": "Forfatterens arbeidsområde",
+    "description": "En omvisning i editoren, sidepanelet og toppanelet.",
+    "intro": { "title": "Skriveflaten", "body": "Det er her arbeidet skjer. La oss se på navigasjon, moduser og verktøy du vil bruke mest." },
+    "spaceTitle": { "title": "Space-tittel", "body": "Klikk på tittelen for å gi spacen nytt navn. Hover-ikonet ved siden av åpner innstillingene." },
+    "sections": { "title": "Seksjoner og dokumenter", "body": "Organiser en space i seksjoner og seksjoner i dokumenter. Hold over en seksjon for å legge til et dokument." },
+    "settings": { "title": "Space-innstillinger", "body": "Administrer mal, seksjoner, deling og sletting av denne spacen." },
+    "modes": { "title": "Les · Skriv · Del", "body": "Veksle mellom redigering, lesing eller side-ved-side-visning. Hvert dokument husker forrige modus." },
+    "citations": { "title": "Sitater", "body": "Åpne sitatpanelet for å sette inn referanser mens du skriver." },
+    "theme": { "title": "Tema", "body": "Lys, mørk og høykontrast — velg den som passer for øynene dine." },
+    "editor": { "title": "Editoren", "body": "En rich-text-editor med Markdown-snarveier, kodeblokker og sitater. Begynn å skrive — arbeidet ditt lagres lokalt automatisk." }
+  },
+  "citations": {
+    "title": "Sitater",
+    "description": "Administrering av referanser og bibliografier.",
+    "intro": { "title": "Bibliografien din", "body": "Alle referansene til en space bor her. Importer en BibTeX-fil eller legg til oppføringer for hånd." },
+    "add": { "title": "Legg til eller importer", "body": "Slipp en .bib-fil eller lim inn BibTeX-tekst. Duplikater hoppes over automatisk." },
+    "list": { "title": "Listen", "body": "Søk, filtrer og rediger sitater inline. Herfra kan du også eksportere hele bibliografien." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Det frie notatlerretet.",
+    "intro": { "title": "Tenk høyt", "body": "BrainSpace er et fritt lerret for ideer — slipp notater, koble dem og form tankene før du går over til prosa." },
+    "addNote": { "title": "Legg til et notat", "body": "Slipp et notat av hvilket som helst slag på lerretet. Dra for å flytte, juster størrelsen fra hjørnene." },
+    "canvas": { "title": "Lerretet", "body": "Shift+klikk på to notater for å koble dem. Klikk på bakgrunnen for å fjerne markeringen." }
+  }
+}

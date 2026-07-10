@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Hjælp og rundvisninger", "tours": "Guidede rundvisninger", "resetAll": "Nulstil alle rundvisninger" },
+  "controls": { "next": "Næste", "prev": "Tilbage", "done": "Færdig", "progress": "{{current}} af {{total}}" },
+  "welcome": {
+    "title": "Velkommen til LIpsum Writer",
+    "description": "En hurtig introduktion til spaces og startskærmen.",
+    "intro": { "title": "Velkommen", "body": "LIpsum Writer er et skriveområde bygget op om <i>spaces</i> — én space pr. projekt, artikel eller bog. Lad os se os hurtigt omkring." },
+    "continue": { "title": "Fortsæt hvor du slap", "body": "Din senest redigerede space er her. Ét klik åbner den igen." },
+    "startSpace": { "title": "Start noget nyt", "body": "Opret en ny space fra en skabelon — speciale, roman, essay — og begynd at skrive på sekunder." }
+  },
+  "writer": {
+    "title": "Forfatterens arbejdsområde",
+    "description": "En rundtur i editoren, sidepanel og toppanel.",
+    "intro": { "title": "Skriveoverfladen", "body": "Det er her, arbejdet sker. Lad os se på navigation, tilstande og værktøjer, du vil bruge mest." },
+    "spaceTitle": { "title": "Space-titel", "body": "Klik på titlen for at omdøbe spacen. Hover-ikonet ved siden af åbner dens indstillinger." },
+    "sections": { "title": "Sektioner og dokumenter", "body": "Organisér en space i sektioner og sektioner i dokumenter. Hover over en sektion for at tilføje et dokument." },
+    "settings": { "title": "Space-indstillinger", "body": "Administrer skabelon, sektioner, deling og sletning af denne space." },
+    "modes": { "title": "Læs · Skriv · Del", "body": "Skift mellem redigering, læsning eller side-om-side-visning. Hvert dokument husker sin sidste tilstand." },
+    "citations": { "title": "Citater", "body": "Åbn citatpanelet for at indsætte referencer mens du skriver." },
+    "theme": { "title": "Tema", "body": "Lyse, mørke og højkontrast-varianter — vælg det, der passer dine øjne." },
+    "editor": { "title": "Editoren", "body": "En rich-text-editor med Markdown-genveje, kodeblokke og citater. Begynd at skrive — dit arbejde gemmes lokalt automatisk." }
+  },
+  "citations": {
+    "title": "Citater",
+    "description": "Håndtering af referencer og bibliografier.",
+    "intro": { "title": "Din bibliografi", "body": "Alle en spaces referencer bor her. Importer en BibTeX-fil eller tilføj poster i hånden." },
+    "add": { "title": "Tilføj eller importer", "body": "Slip en .bib-fil eller indsæt BibTeX-tekst. Dubletter springes automatisk over." },
+    "list": { "title": "Listen", "body": "Søg, filtrer og rediger citater inline. Herfra kan du også eksportere hele bibliografien." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Det frie notatlærred.",
+    "intro": { "title": "Tænk højt", "body": "BrainSpace er et frit lærred til idéer — slip noter, forbind dem og form din tænkning, før du går videre til prosa." },
+    "addNote": { "title": "Tilføj en note", "body": "Slip en note af enhver slags på lærredet. Træk for at flytte, ændr størrelse fra hjørnerne." },
+    "canvas": { "title": "Lærredet", "body": "Skift+klik på to noter for at forbinde dem. Klik på baggrunden for at fravælge." }
+  }
+}

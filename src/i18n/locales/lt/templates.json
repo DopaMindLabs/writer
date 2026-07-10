@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Tuščias", "tag": "TU", "description": "pradėk nuo nulio" },
+  "fiction": { "label": "Grožinė kūryba", "tag": "FI", "description": "romanas · apsakymas · scenarijus" },
+  "humanities": { "label": "Tezė · tyrimai", "tag": "TH", "description": "ilgas akademinis darbas" },
+  "journal": { "label": "Dienoraštis", "tag": "DI", "description": "kasdienis, be spaudimo" },
+  "serial": { "label": "Serija", "tag": "SE", "description": "pasikartojantys esė · naujienlaiškis" },
+  "six": { "label": "Šešios Durys · bendradarbiavimas", "tag": "SD", "description": "bendras pasaulis · keli autoriai" },
+  "technical": { "label": "Techninis · Mokslinis pranešimas", "tag": "TX", "description": "Mokslinis · metodai · lygtys" },
+  "bioinformatics": { "label": "Bioinformatika", "tag": "BX", "description": "konvejeriai · metodai · laboratorijos žurnalas" }
+}

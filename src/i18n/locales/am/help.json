@@ -1,0 +1,48 @@
+{
+  "title": "እገዛ",
+  "subtitle": "ከጽሁፍዎ ምርጡን ለማግኘት የመመሪያ መጽሐፍት እና መልሶች።",
+  "shellSubtitle": "እገዛ / ሰነድ",
+  "navGroup": "እገዛ",
+  "navOverview": "አጠቃላይ እይታ",
+  "navAria": "የእገዛ ርዕሶች",
+  "searchPlaceholder": "በእገዛ ውስጥ ይፈልጉ…",
+  "searchLabel": "የእገዛ ጽሁፎችን ይፈልጉ",
+  "noResults": "ከ\"{{query}}\" ጋር የሚስማማ ጽሁፍ የለም።",
+  "resultsCount_one": "{{count}} ውጤት",
+  "resultsCount_other": "{{count}} ውጤቶች",
+  "browseAll": "ሁሉንም ርዕሶች ይመልከቱ",
+  "languagePickerLabel": "የእገዛ ቋንቋ",
+  "allFeatures": {
+    "title": "ሁሉንም ባህሪያት ይመልከቱ",
+    "subtitle": "ሊያደርጉት የሚችሉትን ሁሉ የተሟላ ዝርዝር — እያንዳንዱ ግቤት ወደ መመሪያው ይመራል።"
+  },
+  "onThisPage": "በዚህ ገጽ",
+  "related": "ተዛማጅ",
+  "backToHelp": "ሁሉም እገዛ",
+  "openCenter": "ሙሉ የእገዛ ማዕከል ይክፈቱ",
+  "articleNotFound": "ያ የእገዛ ጽሁፍ የለም።",
+  "machineTranslationBanner": {
+    "label": "ራስ-ሰር ትርጉም",
+    "body": "ይህ ጽሁፍ ራስ-ሰር ተተርጉሟል። ለማንኛውም ስህተት ይቅርታ — እንድንስተካክል አስተያየት ይላኩ።",
+    "feedbackLinkLabel": "አስተያየት ይላኩ"
+  },
+  "palette": {
+    "title": "እገዛ",
+    "description": "የእገዛ ማዕከልን ይፈልጉ ወይም ወደ አቋራጭ ይዝለሉ።",
+    "shortcutsHeading": "የቁልፍ ሰሌዳ አቋራጮች",
+    "hint": "ለመዝጋት Esc ይጫኑ"
+  },
+  "shortcuts": { "help": "እገዛን ይክፈቱ", "focus": "ትኩረት ሁነታን ይቀይሩ" },
+  "categories": {
+    "getting-started": "መጀመር",
+    "writing": "ጽሁፍ እና ማስተካከያ",
+    "organizing": "አደረጃጀት",
+    "views": "እይታዎች እና ሁነታዎች",
+    "research": "ምርምር እና ጥቅሶች",
+    "brainspace": "BrainSpace",
+    "annotations": "ማስታወሻዎች እና አጉሊዎች",
+    "customization": "ግላዊነት እና ቅንብሮች",
+    "data": "የእርስዎ ውሂብ",
+    "mobile": "ሞባይል"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Āwhina me ngā haerenga", "tours": "Ngā haerenga ārahi", "resetAll": "Tautuhi anō ngā haerenga katoa" },
+  "controls": { "next": "Panuku", "prev": "Hoki", "done": "Kua oti", "progress": "{{current}} o {{total}}" },
+  "welcome": {
+    "title": "Nau mai ki LIpsum Writer",
+    "description": "He tirohanga tere ki ngā wāhi me te mata kāinga.",
+    "intro": { "title": "Nau mai", "body": "Ko LIpsum Writer he wāhi mahi tuhituhi i hangaia mō ngā <i>wāhi</i> — kotahi te wāhi ki ia kaupapa, tuhinga, pukapuka rānei. Me tirotiro tere tātou." },
+    "continue": { "title": "Haere tonu mai i te wāhi i mutu ai koe", "body": "Kei konei tō wāhi tata nei e whakatikatikahia ana. Pātuhi kotahi, ka tuwhera anō." },
+    "startSpace": { "title": "Tīmata he mea hou", "body": "Waihangahia he wāhi hou mai i te tauira — tuhinga roa, pukapuka, tuhinga rerekē — ka tīmata te tuhituhi i roto i ngā hēkona." }
+  },
+  "writer": {
+    "title": "Te wāhi mahi a te kaituhi",
+    "description": "He haerenga i te ētita, te pae taha me te pae runga.",
+    "intro": { "title": "Te mata tuhituhi", "body": "Ko konei te wāhi e mahi ai koe. Me titiro tātou ki ngā waka, ngā aratau me ngā taputapu ka nui te whakamahi e koe." },
+    "spaceTitle": { "title": "Taitara wāhi", "body": "Pātuhia te taitara hei whakaingoa anō i te wāhi. Ka tuwhera te tohu i te taha ki ōna tautuhinga." },
+    "sections": { "title": "Ngā wāhanga me ngā tuhinga", "body": "Whakaritea he wāhi ki ngā wāhanga, me ngā wāhanga ki ngā tuhinga. Tāhia tētahi wāhanga hei tāpiri tuhinga." },
+    "settings": { "title": "Tautuhinga wāhi", "body": "Whakahaerehia te tauira, ngā wāhanga, te tiri me te whakakore i tēnei wāhi." },
+    "modes": { "title": "Pānui · Tuhi · Wehe", "body": "Hurihia i waenga i te whakatika, te pānui rānei i te tirohanga taha-tahi. Ka mau ki ia tuhinga tana aratau whakamutunga." },
+    "citations": { "title": "Ngā tohutoro", "body": "Whakatuwhera te paewhiri tohutoro hei kuhu i ngā tohu i te wā e tuhi ana koe." },
+    "theme": { "title": "Tāhuhu", "body": "Mārama, pōuri, me ngā momo paratau teitei — tīpakohia tētahi e tika ana mō ō karu." },
+    "editor": { "title": "Te ētita", "body": "He ētita kupu hua-rua ki ngā pātuhi tere Markdown, ngā poraka waehere me ngā tohutoro. Tīmata te patopato — kua tiakina aunoa tō mahi i te rohe." }
+  },
+  "citations": {
+    "title": "Ngā tohutoro",
+    "description": "Te whakahaere o ngā tohu me ngā rārangi pukapuka.",
+    "intro": { "title": "Tō rārangi pukapuka", "body": "Kei konei e noho ana ngā tohu katoa o tētahi wāhi. Kawemai he kōnae BibTeX, tāpirihia rānei ngā urunga ā-ringa." },
+    "add": { "title": "Tāpiri, kawemai rānei", "body": "Whakaheke he kōnae .bib, whakapiri rānei he kupu BibTeX. Ka peke aunoa ngā tāruatanga." },
+    "list": { "title": "Te rārangi", "body": "Rapua, tātarihia, whakatikatika ngā tohutoro inline. Mai i konei ka taea hoki te kawe atu i te rārangi pukapuka katoa." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Te papa kanapa whakaaro koreutu.",
+    "intro": { "title": "Whakaaro nui", "body": "Ko BrainSpace he papa kanapa koreutu mō ngā whakaaro — tukua ngā tuhipoka, hononga rātou, ka hangaia tō whakaaro i mua i te neke ki te kōrero." },
+    "addNote": { "title": "Tāpiri tuhipoka", "body": "Whakaheke he tuhipoka o tētahi momo ki te papa kanapa. Tōhia ki te neke, panonihia te rahi mai i ngā kokonga." },
+    "canvas": { "title": "Te papa kanapa", "body": "Shift+pātuhi i ngā tuhipoka e rua hei hono. Pātuhia te papamuri hei whakakore i te whiringa." }
+  }
+}

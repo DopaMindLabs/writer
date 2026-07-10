@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Hjálp og skoðunarferðir", "tours": "Leiðsögnir", "resetAll": "Endurstilla allar skoðunarferðir" },
+  "controls": { "next": "Næsta", "prev": "Til baka", "done": "Lokið", "progress": "{{current}} af {{total}}" },
+  "welcome": {
+    "title": "Velkomin í LIpsum Writer",
+    "description": "Snöggleg kynning á svæðum og upphafsskjá.",
+    "intro": { "title": "Velkomin", "body": "LIpsum Writer er skriftarvinnusvæði byggt í kringum <i>svæði</i> — eitt svæði fyrir hvert verkefni, grein eða bók. Skoðum okkur snöggt um." },
+    "continue": { "title": "Haltu áfram þar sem þú varst", "body": "Síðasta breytta svæðið þitt er hér. Einn smellur opnar það aftur." },
+    "startSpace": { "title": "Byrjaðu eitthvað nýtt", "body": "Búðu til nýtt svæði úr sniðmáti — ritgerð, skáldsögu, ritgerð — og byrjaðu að skrifa á sekúndum." }
+  },
+  "writer": {
+    "title": "Vinnusvæði rithöfundarins",
+    "description": "Skoðunarferð um ritstjórann, hliðarstiku og toppstiku.",
+    "intro": { "title": "Skriftaryfirborðið", "body": "Hér gerirðu vinnuna. Skoðum siglingu, stillingar og verkfæri sem þú munt nota mest." },
+    "spaceTitle": { "title": "Titill svæðis", "body": "Smelltu á titilinn til að endurnefna svæðið. Táknið við hliðina opnar stillingar þess." },
+    "sections": { "title": "Kaflar og skjöl", "body": "Skipulagðu svæði í kafla og kafla í skjöl. Sveima yfir kafla til að bæta við skjali." },
+    "settings": { "title": "Stillingar svæðis", "body": "Stjórnaðu sniðmáti, köflum, deilingu og eyðingu þessa svæðis." },
+    "modes": { "title": "Lesa · Skrifa · Skipta", "body": "Skiptu á milli breytinga, lesturs eða hlið-við-hlið skoðunar. Hvert skjal man síðustu stillingu." },
+    "citations": { "title": "Tilvitnanir", "body": "Opnaðu tilvitnanaspjaldið til að setja inn tilvísanir á meðan þú skrifar." },
+    "theme": { "title": "Þema", "body": "Ljós, dökk og há-andstæða útgáfur — veldu þá sem hentar augum þínum." },
+    "editor": { "title": "Ritstjórinn", "body": "Ríkur textaritstjóri með Markdown-flýtileiðum, kóðablokkum og tilvitnunum. Byrjaðu að slá inn — vinnan þín vistast staðbundið sjálfkrafa." }
+  },
+  "citations": {
+    "title": "Tilvitnanir",
+    "description": "Stjórnun tilvísana og heimildaskráa.",
+    "intro": { "title": "Heimildaskráin þín", "body": "Allar tilvísanir svæðis búa hér. Flyttu inn BibTeX-skrá eða bættu við færslum með höndum." },
+    "add": { "title": "Bæta við eða flytja inn", "body": "Slepptu .bib-skrá eða límdu inn BibTeX-texta. Tvítök eru sjálfkrafa hopað yfir." },
+    "list": { "title": "Listinn", "body": "Leitaðu, síaðu og breyttu tilvitnunum inline. Héðan getur þú líka flutt út alla heimildaskrána." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Frjálsi minnispunktastrigirnir.",
+    "intro": { "title": "Hugsaðu upphátt", "body": "BrainSpace er frjáls strigi fyrir hugmyndir — slepptu minnispunktum, tengdu þá og mótaðu hugsun þína áður en þú ferð yfir í prósa." },
+    "addNote": { "title": "Bæta við minnispunkti", "body": "Slepptu minnispunkti af hvers konar gerð á striga. Dragðu til að færa, breyttu stærð frá hornunum." },
+    "canvas": { "title": "Striginn", "body": "Shift+smelltu á tvo minnispunkta til að tengja þá. Smelltu á bakgrunninn til að afvelja." }
+  }
+}

@@ -1,0 +1,32 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PillToggle > renders off and on states 1`] = `
+<div>
+  <div>
+    <button
+      aria-checked="false"
+      aria-label="Focus mode"
+      class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-rule bg-paper-2"
+      role="switch"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="absolute top-[1px] left-[1px] h-3 w-3 rounded-full bg-paper transition-transform translate-x-0"
+      />
+    </button>
+    <button
+      aria-checked="true"
+      aria-label="Floating toolbar"
+      class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-ink bg-ink"
+      role="switch"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="absolute top-[1px] left-[1px] h-3 w-3 rounded-full bg-paper transition-transform translate-x-3"
+      />
+    </button>
+  </div>
+</div>
+`;

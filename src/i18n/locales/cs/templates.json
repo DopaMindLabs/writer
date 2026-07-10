@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Prázdné", "tag": "PR", "description": "začít od nuly" },
+  "fiction": { "label": "Beletristické psaní", "tag": "FI", "description": "román · povídka · scénář" },
+  "humanities": { "label": "Práce · výzkum", "tag": "TH", "description": "dlouhá akademická práce" },
+  "journal": { "label": "Deník", "tag": "DE", "description": "denní, bez tlaku" },
+  "serial": { "label": "Série", "tag": "SE", "description": "opakující se eseje · newsletter" },
+  "six": { "label": "Šest Dveří · společné", "tag": "SD", "description": "sdílený svět · více autorů" },
+  "technical": { "label": "Technické · Vědecká zpráva", "tag": "TX", "description": "Vědecké · metody · rovnice" },
+  "bioinformatics": { "label": "Bioinformatika", "tag": "BX", "description": "pipeliny · metody · laboratorní deník" }
+}

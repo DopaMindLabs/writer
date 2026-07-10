@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "Tupu", "tag": "TU", "description": "anza kutoka mwanzo" },
+  "fiction": { "label": "Uandishi wa kubuni", "tag": "FI", "description": "riwaya · hadithi fupi · skripti" },
+  "humanities": { "label": "Tasnifu · utafiti", "tag": "TH", "description": "kazi ndefu ya kitaaluma" },
+  "journal": { "label": "Shajara", "tag": "SH", "description": "kila siku, bila shinikizo" },
+  "serial": { "label": "Mfululizo", "tag": "MF", "description": "insha za kurudiwa · jarida" },
+  "six": { "label": "Milango Sita · shirikishi", "tag": "SD", "description": "ulimwengu wa pamoja · waandishi wengi" },
+  "technical": { "label": "Kiufundi · Ripoti ya kisayansi", "tag": "TX", "description": "Kisayansi · mbinu · milinganyo" },
+  "bioinformatics": { "label": "Bioinformatiki", "tag": "BX", "description": "mtiririko · mbinu · daftari la maabara" }
+}

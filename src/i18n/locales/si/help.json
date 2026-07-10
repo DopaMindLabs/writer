@@ -1,0 +1,48 @@
+{
+  "title": "උපකාර",
+  "subtitle": "ඔබේ ලිවීමෙන් උපරිමය ලබා ගැනීමට මාර්ගෝපදේශ සහ පිළිතුරු.",
+  "shellSubtitle": "උපකාර / ලේඛනකරණය",
+  "navGroup": "උපකාර",
+  "navOverview": "දළ විශ්ලේෂණය",
+  "navAria": "උපකාර මාතෘකා",
+  "searchPlaceholder": "උපකාරයේ සොයන්න…",
+  "searchLabel": "උපකාර ලිපි සොයන්න",
+  "noResults": "\"{{query}}\" සමඟ ගැලපෙන ලිපි නැත.",
+  "resultsCount_one": "{{count}} ප්‍රතිඵලය",
+  "resultsCount_other": "{{count}} ප්‍රතිඵල",
+  "browseAll": "සියලුම මාතෘකා පිරික්සන්න",
+  "languagePickerLabel": "උපකාර භාෂාව",
+  "allFeatures": {
+    "title": "සියලුම විශේෂාංග බලන්න",
+    "subtitle": "ඔබට කළ හැකි දේ සියල්ලෙහි සම්පූර්ණ ලැයිස්තුව — සෑම අයිතමයක්ම එහි මාර්ගෝපදේශයට සම්බන්ධ වේ."
+  },
+  "onThisPage": "මෙම පිටුවේ",
+  "related": "සම්බන්ධ",
+  "backToHelp": "සියලු උපකාර",
+  "openCenter": "සම්පූර්ණ උපකාර මධ්‍යස්ථානය විවෘත කරන්න",
+  "articleNotFound": "එම උපකාර ලිපිය නොපවතී.",
+  "machineTranslationBanner": {
+    "label": "ස්වයංක්‍රීය පරිවර්තනය",
+    "body": "මෙම ලිපිය ස්වයංක්‍රීයව පරිවර්තනය කර ඇත. දෝෂ සඳහා කණගාටුයි — අපට ඒවා නිවැරදි කළ හැකි ලෙස ප්‍රතිපෝෂණය එවන්න.",
+    "feedbackLinkLabel": "ප්‍රතිපෝෂණය යවන්න"
+  },
+  "palette": {
+    "title": "උපකාර",
+    "description": "උපකාර මධ්‍යස්ථානයේ සොයන්න හෝ කෙටිමඟකට යන්න.",
+    "shortcutsHeading": "යතුරුපුවරු කෙටිමං",
+    "hint": "වැසීමට Esc ඔබන්න"
+  },
+  "shortcuts": { "help": "උපකාර විවෘත කරන්න", "focus": "අවධාන මාදිලිය මාරු කරන්න" },
+  "categories": {
+    "getting-started": "ආරම්භ කිරීම",
+    "writing": "ලිවීම සහ සංස්කරණය",
+    "organizing": "සංවිධානය",
+    "views": "දසුන් සහ මාදිලි",
+    "research": "පර්යේෂණ සහ උද්ධෘත",
+    "brainspace": "BrainSpace",
+    "annotations": "හැඳුනුම් සහ ඉස්මතු කිරීම්",
+    "customization": "අභිරුචිකරණය සහ සැකසුම්",
+    "data": "ඔබේ දත්ත",
+    "mobile": "ජංගම"
+  }
+}

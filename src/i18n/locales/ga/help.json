@@ -1,0 +1,48 @@
+{
+  "title": "Cabhair",
+  "subtitle": "Treoirleabhair agus freagraí chun an méid is mó a bhaint as do scríbhneoireacht.",
+  "shellSubtitle": "Cabhair / Doiciméadú",
+  "navGroup": "Cabhair",
+  "navOverview": "Forbhreathnú",
+  "navAria": "Ábhair chabhrach",
+  "searchPlaceholder": "Cuardaigh sa chabhair…",
+  "searchLabel": "Cuardaigh alt cabhrach",
+  "noResults": "Níl aon alt a fhreagraíonn do «{{query}}».",
+  "resultsCount_one": "{{count}} toradh",
+  "resultsCount_other": "{{count}} thoradh",
+  "browseAll": "Brabhsáil gach ábhar",
+  "languagePickerLabel": "Teanga na cabhrach",
+  "allFeatures": {
+    "title": "Féach ar gach gné",
+    "subtitle": "Liosta iomlán de gach rud is féidir leat a dhéanamh — nascann gach ceann lena threoirleabhar."
+  },
+  "onThisPage": "Ar an leathanach seo",
+  "related": "Gaolmhar",
+  "backToHelp": "Gach cabhair",
+  "openCenter": "Oscail an Lárionad Cabhrach iomlán",
+  "articleNotFound": "Níl an t-alt cabhrach sin ann.",
+  "machineTranslationBanner": {
+    "label": "Aistriúchán uathoibríoch",
+    "body": "Aistríodh an t-alt seo go huathoibríoch. Tá brón orainn faoi aon earráidí — seol aiseolas chun iad a cheartú.",
+    "feedbackLinkLabel": "seol aiseolas"
+  },
+  "palette": {
+    "title": "Cabhair",
+    "description": "Cuardaigh sa Lárionad Cabhrach nó téigh chuig aicearra.",
+    "shortcutsHeading": "Aicearraí méarchláir",
+    "hint": "Brúigh Esc chun dúnadh"
+  },
+  "shortcuts": { "help": "Oscail an chabhair", "focus": "Scoránaigh mód fócais" },
+  "categories": {
+    "getting-started": "Tús",
+    "writing": "Scríbhneoireacht agus eagarthóireacht",
+    "organizing": "Eagrú",
+    "views": "Amharcanna agus móid",
+    "research": "Taighde agus luanna",
+    "brainspace": "BrainSpace",
+    "annotations": "Nótaí agus aibhsithe",
+    "customization": "Saincheaptha agus socruithe",
+    "data": "Do shonraí",
+    "mobile": "Soghluaiste"
+  }
+}

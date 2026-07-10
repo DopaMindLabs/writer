@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "खाली", "tag": "BL", "description": "शून्य से शुरू करें" },
+  "fiction": { "label": "कथा लेखन", "tag": "FI", "description": "उपन्यास · कहानी · पटकथा" },
+  "humanities": { "label": "शोध-प्रबंध · अनुसंधान", "tag": "TH", "description": "लंबा शैक्षणिक कार्य" },
+  "journal": { "label": "डायरी", "tag": "JO", "description": "रोज़ाना, बिना दबाव" },
+  "serial": { "label": "श्रृंखला", "tag": "SE", "description": "आवर्ती निबंध · न्यूज़लेटर" },
+  "six": { "label": "छह दरवाज़े · सहयोगी", "tag": "SD", "description": "साझा दुनिया · कई लेखक" },
+  "technical": { "label": "तकनीकी · वैज्ञानिक रिपोर्ट", "tag": "TX", "description": "वैज्ञानिक · विधियाँ · समीकरण" },
+  "bioinformatics": { "label": "जैव सूचना विज्ञान", "tag": "BX", "description": "पाइपलाइन · विधियाँ · प्रयोगशाला नोटबुक" }
+}

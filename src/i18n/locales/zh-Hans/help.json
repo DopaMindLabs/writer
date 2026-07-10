@@ -1,0 +1,48 @@
+{
+  "title": "帮助",
+  "subtitle": "为充分发挥您的写作而准备的指南和答案。",
+  "shellSubtitle": "帮助 / 文档",
+  "navGroup": "帮助",
+  "navOverview": "概览",
+  "navAria": "帮助主题",
+  "searchPlaceholder": "搜索帮助…",
+  "searchLabel": "搜索帮助文章",
+  "noResults": "没有与“{{query}}”匹配的文章。",
+  "resultsCount_one": "{{count}} 个结果",
+  "resultsCount_other": "{{count}} 个结果",
+  "browseAll": "浏览所有主题",
+  "languagePickerLabel": "帮助语言",
+  "allFeatures": {
+    "title": "查看所有功能",
+    "subtitle": "您可以做的所有事情的完整列表 — 每项均链接到其指南。"
+  },
+  "onThisPage": "本页内容",
+  "related": "相关",
+  "backToHelp": "所有帮助",
+  "openCenter": "打开完整帮助中心",
+  "articleNotFound": "该帮助文章不存在。",
+  "machineTranslationBanner": {
+    "label": "自动翻译",
+    "body": "本文章为自动翻译。如有错误请见谅 — 请发送反馈以便我们更正。",
+    "feedbackLinkLabel": "发送反馈"
+  },
+  "palette": {
+    "title": "帮助",
+    "description": "搜索帮助中心或跳转到快捷键。",
+    "shortcutsHeading": "键盘快捷键",
+    "hint": "按 Esc 关闭"
+  },
+  "shortcuts": { "help": "打开帮助", "focus": "切换专注模式" },
+  "categories": {
+    "getting-started": "入门",
+    "writing": "写作和编辑",
+    "organizing": "组织",
+    "views": "视图和模式",
+    "research": "研究和引用",
+    "brainspace": "BrainSpace",
+    "annotations": "注释和高亮",
+    "customization": "自定义和设置",
+    "data": "您的数据",
+    "mobile": "移动端"
+  }
+}

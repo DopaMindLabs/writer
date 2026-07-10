@@ -1,0 +1,784 @@
+{
+  "home": {
+    "subtitle": "Ko e mālohi 'o e tohi kotoa",
+    "titleMain": "LIpsum",
+    "titleAccent": "Writer",
+    "emptyTagline": "Ko ho'o feitu'u ʻuluaki ko e feitu'u taʻeʻi ai ha meʻa. Fili ha potuʻi ke kamata, pe kamata mei he taʻeʻi.",
+    "tagline": "Ko e feitu'u mama'o mei ha ngaahi meʻa kehe ki he tohi lōloa — ngaahi talanoa, ngaahi fekumi, ngaahi eseʻa, ngaahi lēsisitaa.",
+    "continueWriting": "Hokohoko atu 'a e tohi",
+    "startNewSpace": "Kamata 'a e feitu'u foʻou",
+    "syncOffChip": "ʻoku ʻikai fakaʻaongaʻi e fakahoko/fakatonuʻi · ʻe ngata ʻa e ngaahi fakamatala",
+    "syncOnChip": "ʻoku ʻi ai e fakahoko foloda",
+    "syncOnTitle": "Kuo fakaʻaongaʻi ʻa e fakahoko foloda",
+    "syncOnBody": "ʻOku fakahoko ho'o ngāue ki he foloda \"{{folder}}\" ʻi he misini ko ʻeni.",
+    "warningTitle": "Ngaue ki muʻa ʻi he tukuange",
+    "warningBody": "ʻOku ʻikai ha fakahoko fakamatala. ʻOku nonofo ʻa e ngaahi meʻa kotoa ʻi ho'o palāoua, pea kapau te ke fakaʻauha hono cache ʻe mole ho'o ngāue. ʻE lava ke ke fakaʻaongaʻi ʻa e fakahoko ki ha foloda fakaʻapi ʻi Ngaahi Sētingi Kotoa → Fakahoko.",
+    "versionLine": "Vēsoni {{version}}"
+  },
+  "about": {
+    "back": "foki",
+    "title": "fekauʻaki",
+    "greeting": "Mālō ʻa hoku hoa,",
+    "paragraph1": "Ko ʻeni maʻá e tohi faleʻi ʻoku kamata maʻu pē. Ko ia ʻoku toho ʻa e tohi foʻou, tohi ʻa e ngaahi fuʻu kupu ʻe tolu (pe ʻikai ha taha), pea pau ʻe nau maʻu ʻa e miniti ʻe 40 ʻi he fakafoki ʻo e fonema. Ko ia ʻoku haʻu hono ngaahi ʻilo lahi ʻi he ʻaho ʻe 2 ʻi he pongipongi pea faʻoa ʻi ha meʻa. Ko ia ʻoku ʻi aí ʻa e ngaahi peesi ʻe taha teau mā fā, ngaahi langa ʻe ono, pea ʻoku kei nofo ʻa e kupu tohi ko ia ʻi he māhina ʻe taha.",
+    "paragraph2Before": "ʻOku ou ʻilo, he ko au pē ia ",
+    "paragraph2After": ". ʻOku ou maʻu ʻa e ADHD, Otisimi, ʻo mahalo ʻoku ʻi ai foki ʻa e ngaahi meʻa kehe ʻoku ʻikai kei fakatotolo. ʻOku ou fie maʻu ha meʻa ʻoku ne mahino ʻeku ʻatamai fakapokapokaʻi kae manavahē fakaʻofoʻofa. Ko e feitu'u ki hono liloʻi ʻo ʻeku ngaahi meʻa kotoa kimuʻa pea ʻosi (pe kamata tohi). Ko e ngaahi vaʻaʻi nounou, ko e ngaahi fakakaukau hafu, ko e ngaahi fehokotaki 'aho 3 ʻi he pongipongi. Kotoa, ʻi ha feitu'u ʻe taha.",
+    "paragraph3": "Ko ia au na'a ku langa ai ʻa e feitu'u ko ʻeni maʻá kitautolu. ʻOku ou ʻamanaki ʻe ʻomai kiate koe ʻa e fiefia tatau mo ia na'a ne ʻomai kiate au ʻi heʻeku langa.",
+    "paragraph4Before": "Ko e taha foki... ʻOku ou tui ki he tekinolosia maʻá e lelei, pea ʻoku ou fehiʻa ki he ngaahi ʻapitanga. Ko ia, ʻe pehē maʻu pē ko e taʻe-ʻapitanga pea TAʻETOTONGI maʻá e ngāue taʻe-fakatau. ʻE lava ke ke kopikopi mo liliu ʻo hangē ko ho'o loto ʻi lalo ʻo e ",
+    "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
+    "statusLabel": "Tuʻunga",
+    "statusValueStrong": "{{version}}",
+    "statusValueRest": " — ʻoku ʻikai ha fakahoko fakamatala. ʻOku fakaʻehi ʻa e ngaahi fakamatala kotoa ʻi he IndexedDB ʻi ho'o palāoua fakaʻapi. Kapau te ke fakaʻauha ho'o palāoua cache, ʻe ngata ho'o ngāue.",
+    "feedbackBefore": "ʻOku ou kei langa pē ʻa e meʻa ko ʻeni, pea ʻoku ou maʻu ha ngaahi fakakaukau lahi ",
+    "feedbackAfter": ". ʻOku ou fiefia ke ongoʻi ko e hā ʻa e ngaahi meʻa lelei, ko e hā ʻa e ngaahi meʻa kovi, pea ko e hā ʻa e ngaahi meʻa ʻoku ke fie maʻu. ʻOku talitali lelei ʻa e ngaahi ʻiloʻi.",
+    "sourceLabel": "Hoko"
+  },
+  "settings": {
+    "back": "foki",
+    "windowTitle": "lotem · ngaahi sētingi",
+    "breadcrumb": "NGAAHI SĒTINGI KOTOA",
+    "shellSubtitle": "NGAAHI SĒTINGI KOTOA",
+    "comingSoonBadge": "ʻoku haʻu",
+    "helpAria": "Ko e hā ʻa e meʻa ko ʻeni?",
+    "groups": {
+      "preferences": "Ngaahi Fili",
+      "writing": "Tohi",
+      "data": "Fakamatala",
+      "account": "Toʻoʻanga"
+    },
+    "tabs": {
+      "general": "Laulahi",
+      "appearance": "Hanga",
+      "editor": "Fakatohi",
+      "docInspector": "Sivisivi tohi",
+      "accessibility": "Fakaʻaongaʻi",
+      "typography": "Momotuhi",
+      "shortcuts": "Fakapotoʻi",
+      "templates": "Ngaahi potuʻi",
+      "palettes": "Ngaahi kulaa",
+      "citations": "Faʻahinga tohi",
+      "annotation": "Ngaahi fakamatala",
+      "backups": "Tauhi",
+      "sync": "Fakahoko",
+      "export": "Tukuange / Maʻu mai",
+      "data": "Ho'o fakamatala",
+      "account": "Toʻoʻanga",
+      "about": "Fekauʻaki",
+      "language": "Lea"
+    },
+    "language": {
+      "title": "Lea",
+      "subtitle": "Fili ʻa e lea maʻá e feituʻu fakaʻatamai mo ngaahi tohi ʻo e Ngaahi Lēsoni Tokoniʻanga. Ko e ngaahi fakalea kuo ngata ʻe foki ki he Pēlangi.",
+      "label": "Lea feituʻu fakaʻatamai",
+      "hint": "Ko e ngaahi liliu ʻoku fakaʻaongaʻi fakaokioki pea fakaʻehi ʻi he palāoua ko ʻeni.",
+      "machineTranslationNotice": "Ko e ngaahi fakalea ʻoku kehekehe mei he Pēlangi ʻoku ngaohi fakaʻotomētiki. ʻOku ou kole fakamolemole ki he ngaahi hala — kataki ʻo tuku atu ho'o ngaahi ʻiloʻi koeʻuhi te tau lava ʻo fakatonutonu.",
+      "feedbackLinkLabel": "tuku atu ngaahi ʻiloʻi"
+    },
+    "editor": {
+      "title": "Fakatohi",
+      "subtitle": "Ngaahi meʻangāue mo e ngaahi avanoa tohi. ʻOku kei ngāue maʻu pē ʻa e ngaahi hala Markdown (#, >, -, **) tatau ai pē mo ʻeni ngaahi sētingi.",
+      "floatingToolbarLabel": "Meʻangāue ʻoku ʻamo",
+      "floatingToolbarHint": "ʻOku ʻasi ʻi he fakaʻilonga pe kiliki-toʻomataʻu ʻi he founga tohi.",
+      "floatingToolbarOff": "Taʻeʻai",
+      "floatingToolbarOn": "ʻAi",
+      "rightClickLabel": "Lisi kiliki-toʻomataʻu",
+      "rightClickHint": "Fetongi ʻi he vaʻa ʻi he meʻangāue ʻoku ʻamo mo e lisi tuʻunga totonu ʻo e palāoua.",
+      "rightClickTooltip": "Ngāueʻaki ʻa e lisi tuʻunga totonu ʻo e palāoua ʻi he kiliki-toʻomataʻu kae ʻikai ko e meʻangāue ʻoku ʻamo. ʻE kei ʻasi pē ʻa e meʻangāue ʻi he fakaʻilonga-fili.",
+      "inlineTogglesLabel": "Ngaahi fetongi fakaʻapi",
+      "inlineTogglesHint": "Ngaahi pihi Lahi mo Ataʻata ʻi loto ʻo e meʻangāue ʻoku ʻamo.",
+      "inlineTogglesTooltip": "Fufū ʻa e ngaahi pihi L mo A mei he meʻangāue ʻoku ʻamo. ʻOku kei ngāue maʻu pē ʻa e ngaahi hala Markdown (**, _).",
+      "listDepthLabel": "Hili ʻo e lisi",
+      "listDepthHint": "Ko e hili ʻe lava ai ʻo nonofo ʻa e ngaahi lisi fakatohu mo e ngaahi fika.",
+      "listDepthTooltip": "Hikiʻi pe fakasiʻisiʻi ʻa e tapuhā ʻo e nonofo lisi. ʻOku tūtohu ʻi he ngaahi hili ʻe 2 he taimi ni.",
+      "templateDefaultsLabel": "Ngaahi tuʻunga fakapōtōpōtō ʻo e potuʻi",
+      "templateDefaultsHint": "Ko e ngaahi faʻahinga fakafotunga kehekehe ki he potuʻi kotoa.",
+      "templateDefaultsTooltip": "Tuku ʻa e potuʻi kotoa (talanoa, lēsisitaa, tekinikale…) ke fili hono ʻene faʻahinga fakafotunga."
+    },
+    "docInspector": {
+      "title": "Sivisivi tohi",
+      "subtitle": "Fili ko e hā ʻa e ngaahi vaʻa ʻoku ʻasi ʻi he sivisivi tohi. ʻE lava ke fakaʻauha fakakoloā pea fakatonutonuʻi ki he feituʻu kotoa.",
+      "statusLabel": "Tuʻunga",
+      "statusHint": "Fakahā ʻa e tuʻunga ʻo e tohi mo e tāpuni ʻo e ngaahi tohi kuo ʻosi mei he fakatohi.",
+      "wordLimitLabel": "Tapuhā lea",
+      "wordLimitHint": "Fakahā ʻa e tapuhā lau lea ʻe lava ke fokotuʻu ki he tohi kotoa.",
+      "charLimitLabel": "Tapuhā fakamataitusi",
+      "charLimitHint": "Fakahā ʻa e tapuhā lau fakamataitusi ʻe lava ke fokotuʻu ki he tohi kotoa.",
+      "dueDateLabel": "ʻAho ngataʻanga",
+      "dueDateHint": "Fakahā ʻa e ʻaho ngataʻanga ʻe lava ke fokotuʻu ki he tohi kotoa.",
+      "highlightLabel": "Fakaʻilonga tohi ʻoku makatuʻunga",
+      "highlightHint": "Fakatohu ʻa e tohi ʻoku makatuʻunga ʻi he tapuhā ʻi he fakatohi.",
+      "statusStagesLabel": "Ngaahi hihifo tuʻunga",
+      "statusStagesHint": "Fili ʻa e ngaahi hihifo ʻoku ʻasi ʻi he fili tuʻunga.",
+      "on": "ʻAi",
+      "off": "Taʻeʻai",
+      "inherit": "Tuʻunga totonu ({{state}})",
+      "inheritTooltip": "Maʻu mai mei ngaahi sētingi kotoa",
+      "stateOn": "ʻai",
+      "stateOff": "taʻeʻai"
+    },
+    "accessibility": {
+      "title": "Fakaʻaongaʻi",
+      "subtitle": "Fakaʻaongaʻi ʻa e feituʻu fakaʻatamai ki he ngofua mo e tekinolosia tokoniʻanga. Ko e fili kotoa ʻoku kamata ʻi he ʻilo ʻo e taimi ni — ʻoku ʻikai liliu ha meʻa kaeʻoua ke ke fili.",
+      "theme": {
+        "label": "ʻUluaki mo e maʻu faka",
+        "hint": "Ko e ngaahi ʻuluaki maʻufaka lahi ʻoku aʻusia ʻa e tuʻunga WCAG AAA.",
+        "light": "Hinehina",
+        "dark": "ʻUliʻuli",
+        "hcLight": "Maʻufaka lahi (hinehina)",
+        "hcDark": "Maʻufaka lahi (ʻuliʻuli)"
+      },
+      "motion": {
+        "label": "Ngāue",
+        "hint": "Fakasiʻisiʻi pe taʻofi ʻa e ngaahi liliu fakaʻatamai.",
+        "auto": "Fetaʻi mo e fakaʻilonga",
+        "reduced": "Fakasiʻisiʻi",
+        "full": "Katoa"
+      },
+      "textSize": {
+        "label": "Siʻi ʻo e tohi",
+        "hint": "Fakataʻengata ʻa e feituʻu lau mo tohi.",
+        "sm": "Siʻisiʻi",
+        "base": "Tuʻunga totonu",
+        "lg": "Lahi",
+        "xl": "Lahi taha"
+      },
+      "lineSpacing": {
+        "label": "Mālohi ʻo e lāini",
+        "hint": "Fakaʻaongaʻi ha manava ʻi he vaʻa ʻo e ngaahi lāini tohi.",
+        "normal": "Mālohi",
+        "relaxed": "Fakafiemālie",
+        "loose": "Talaʻa"
+      },
+      "linkUnderline": {
+        "label": "Fakaʻohiʻohi maʻu pē ʻa e ngaahi hono",
+        "hint": "Fakahā ngaahi ʻohiʻohi koeʻuhi ke ʻoua naʻa fakaʻaupito ngaahi hono ki he kulaa pē."
+      },
+      "focus": {
+        "label": "Fakatohu fakaʻatamamali fakalakalaka",
+        "hint": "Ngāueʻaki ha takahi lahi ange, maʻufaka lahi ange ʻi he fakaʻatamamali."
+      },
+      "reset": {
+        "label": "Toe fokotuʻu ki ngaahi tuʻunga totonu",
+        "hint": "Fakafoʻou ʻa e ngāue, siʻi tohi, mālohi lāini, ngaahi hono, mo e fakaʻatamamali ki honau ngaahi tuʻunga totonu. ʻOku ʻikai liliu ho'o ʻuluaki.",
+        "action": "Toe fokotuʻu"
+      }
+    },
+    "general": {
+      "title": "Laulahi",
+      "subtitle": "Ko e founga ʻoku ʻasi ai ʻa e LIpsum Writer ʻi he tuʻunga totonu. ʻOku ʻikai ha meʻa ʻe fakaʻauha.",
+      "comingSoonBody": "Maʻumalo mālohi, fakasiʻisiʻi ngāue, ʻilo fakapotoʻi ki, mo e vaʻa ʻoku ʻata ʻi he kamata.",
+      "compactDensityLabel": "Maʻumalo mālohi",
+      "compactDensityHint": "Ko e ngaahi lāini ʻoku vā siʻi ange ʻi he ngaahi lisi, vā siʻi ange ʻi he ngaahi feituʻu.",
+      "reduceMotionLabel": "Fakasiʻisiʻi ngāue",
+      "reduceMotionHint": "Fakamālohisisi ʻa e ngaahi liliu fakaangaʻi ʻi he vaʻa ʻo e ngaahi vaʻa.",
+      "keyboardHintsLabel": "Fakahā ngaahi fakatohu ki",
+      "keyboardHintsHint": "Fakahā ngaahi hala ⌘-ki ʻi loto ʻo e ngaahi toliaki mo e ngaahi tuliki ʻo e ngaahi pihi.",
+      "startupLabel": "Keli ʻi he kamata",
+      "startupHint": "Ko e hā ʻoku ke mamata ai ʻi ho'o tukuange ʻo e lekōtia.",
+      "startupOptions": {
+        "lastView": "Vaʻa kimui",
+        "home": "Fale",
+        "brainSpace": "Brain space"
+      }
+    },
+    "appearance": {
+      "title": "Hanga",
+      "subtitle": "Kulaa, momotuhi, maʻumalo. Ko e ʻaho ʻoku ke fie fokotuʻu.",
+      "comingSoonBody": "Ko e ngaahi ʻuluaki kulaa ʻoku fakaʻaongaʻi, kulaa fakaʻuluaki, mo e maʻumalo. Ko e fetongi ʻuluaki ʻo e ʻaho ni ʻoku ʻi he ngaahi sētingi vave ʻo e lāini ʻao.",
+      "themeLabel": "ʻUluaki",
+      "themeHint": "Ko e ngaahi ʻuluaki ʻe tolu ʻoku fakaʻaongaʻi. ʻOku nau fakatonutonu ʻa e meʻa kotoa — ngaahi kulaa poloka, ngaahi lāini nounou, ʻio pē ko e hoʻata.",
+      "themes": {
+        "linen": "Fanifo",
+        "linenSub": "tuʻunga totonu",
+        "studio": "Fale ngāue",
+        "studioSub": "fakangāue",
+        "midnight": "Hoʻata ʻo e pō",
+        "midnightSub": "ʻuliʻuli"
+      },
+      "accentLabel": "Fakaʻuluaki",
+      "accentHint": "Ngāueʻaki maʻá e ʻamo ʻi, fakaʻatamamali, sēnolo fakatohi ngāue.",
+      "densityLabel": "Mālohi",
+      "densityOptions": {
+        "cozy": "Fiefia",
+        "default": "Tuʻunga totonu",
+        "compact": "Mālohi"
+      }
+    },
+    "templates": {
+      "title": "Ngaahi potuʻi",
+      "subtitle": "Ko e ngaahi faʻu ʻoku toe ngāueʻaki maʻá e ngaahi feituʻu mo ngaahi tohi foʻou.",
+      "comingSoonBody": "Ngaohi ho'o ngaahi potuʻi ʻeiki mo e ngaahi vaʻa, ngaahi hingoa tohi tuʻunga totonu, mo e ngaahi kupu kamata.",
+      "items": {
+        "fiction": "Talanoa",
+        "fictionSub": "Tohi · Māmani · Fale Ngāue",
+        "research": "Fekumi",
+        "researchSub": "Hoko · Maʻu atu · Ngaahi ipu",
+        "journal": "Lēsisitaa",
+        "journalSub": "ʻAho · Uike · Ngaahi fakakaukau",
+        "essay": "Eseʻa",
+        "essaySub": "ʻUluaki · Ngaahi ipu · Ngataʻanga"
+      }
+    },
+    "palettes": {
+      "title": "Ngaahi kulaa",
+      "subtitle": "Ko e ngaahi kulaa ʻe nima ki he feituʻu kotoa — fakahingoa mo fakatonutonu ʻa e kulaa kotoa.",
+      "comingSoonBody": "Liliu, tauhi, mo e fetongi ngaahi kulaa ʻoku hingoa (Fakamo'oni, Toe liliu, Faʻahinga tohi…) ʻi he ngaahi feituʻu.",
+      "items": {
+        "evidence": "Fakamo'oni",
+        "revise": "Toe liliu",
+        "reference": "Faʻahinga tohi",
+        "quote": "Lea tohi",
+        "loose": "Ngataʻanga mole"
+      },
+      "rename": "hingoa foʻou",
+      "tune": "fakatonutonu"
+    },
+    "citations": {
+      "title": "Faʻahinga tohi",
+      "subtitle": "Faʻahinga tohi tuʻunga totonu ʻi he ngaahi feituʻu kotoa.",
+      "comingSoonBody": "Fili ha faʻahinga laulahi (Chicago, APA, MLA…) mo e ngaahi fakatonutonu ki he feituʻu kotoa.",
+      "styleLabel": "Faʻahinga tuʻunga totonu",
+      "styleHint": "Ngāueʻaki ʻi he fakaʻaongaʻi ʻo e fakamo'oni foʻou. Ko e ngaahi fakatonutonu ki he feituʻu ʻoku haʻu.",
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
+    },
+    "annotation": {
+      "title": "Ngaahi fakamatala",
+      "subtitle": "Ko e ngaahi manatua ki he ʻaʻahi mo e ngaahi fakamatala fakaʻapi.",
+      "comingSoonBody": "Ko e ngaahi faʻahinga fakamatala, ngaahi tuʻunga totonu ʻo e hā, mo e founga tukuange.",
+      "showMarginLabel": "Fakahā ngaahi manatua ʻaʻahi",
+      "showMarginHint": "Ko e ngaahi fakamatala ʻoku ʻamo ʻi he tafa'aki toʻomataʻu ʻo ʻi ai ha feituʻu.",
+      "showInlineLabel": "Fakahā ngaahi fakaʻilonga fakaʻapi",
+      "showInlineHint": "Ko e kulaa fakamatala ʻoku lōmaki ki runga ʻi he tohi.",
+      "exportLabel": "Fakaʻaongaʻi ʻi he ngaahi tukuange",
+      "exportHint": "Ko e ngaahi fakamatala ʻoku tohi ʻoku fakahā fakakatoa mo e sino ʻo e tohi."
+    },
+    "export": {
+      "title": "Tukuange / Maʻu mai",
+      "subtitle": "Ngāueʻaki fakamatala ki loto mo ki tuʻa ʻo LIpsum Writer.",
+      "comingSoonBody": "Tukuange lahi ki .zip, maʻu mai mei ha fānau LIpsum pe foloda Markdown.",
+      "formatLabel": "Fakafotunga tukuange",
+      "formatHint": "Ko e ngaahi tukuange ki he tohi kotoa mo e feituʻu kotoa ʻoku ngāueʻaki ʻa e tuʻunga totonu tatau.",
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
+      "importLabel": "Maʻu mai mei",
+      "importHint": "Maʻu mai ha fānau LIpsum pe ha foloda ʻo e ngaahi faile Markdown.",
+      "importOptions": {
+        "bundle": "Fānau LIpsum (.zip)",
+        "markdown": "Foloda Markdown",
+        "obsidian": "Fale Obsidian"
+      },
+      "importSpaceLabel": "Maʻu mai ha feituʻu",
+      "importSpaceHint": "Faka'ave ha feituʻu ki he palāoua ko ʻeni mei ha meʻangāue Writer (.zip) — ko ha tikiake fakaʻasi pe ko ha tukuange fakahoko-foloda mei ha misini kehe.",
+      "importChooseFile": "Fili meʻangāue…",
+      "importing": "ʻoku maʻu mai…",
+      "importFailed": "Hāʻele ʻa e maʻu mai: {{message}}",
+      "comingSoonLabel": "Ngaahi fakafotunga ange",
+      "comingSoonHint": "Tukuange lahi mo maʻu mai mei ngaahi foloda Markdown pe ngaahi fale Obsidian.",
+      "comingSoonTooltip": "Fuofuaʻi — ʻoku ʻikai kei maʻu."
+    },
+    "data": {
+      "title": "Ho'o fakamatala",
+      "subtitle": "Ko e feituʻu ʻoku ʻi ai ho'o ngāue mo e lahi ʻo e feituʻu.",
+      "comingSoonBody": "Ngāueʻaki IndexedDB, fakaʻalinaki tauhi, mo e fakaʻauha katoa ʻi ha kiliki ʻe taha.",
+      "storageLabel": "Tauhi ʻoku ngāueʻaki",
+      "storageValue": "≈ 12.4 MB · 4 feituʻu, 38 tohi",
+      "engineLabel": "Afi tauhi",
+      "engineValue": "IndexedDB (palāoua fakaʻapi)",
+      "wipeLabel": "Fakaʻauha ʻa e meʻa kotoa",
+      "wipeHint": "ʻOku toʻo ʻa e ngaahi feituʻu, tohi, mo e ngaahi fakaʻasi kotoa mei he palāoua ko ʻeni. ʻOku ʻikai ha toe fakafoʻou.",
+      "wipeButton": "Fakaʻauha fakamatala fakaʻapi…"
+    },
+    "about": {
+      "title": "Fekauʻaki",
+      "subtitle": "Fakamatala fakalanga mo ngaahi hono.",
+      "comingSoonBody": "Sio ki he peesi /about maʻá e talanoa; ko e laaau ko ʻeni ʻe ʻi ai ai fakamatala fakalanga, laiseni, mo e ngaahi liliu.",
+      "versionLabel": "Vēsoni",
+      "versionValue": "{{version}}",
+      "buildLabel": "Fakalanga",
+      "buildValue": "fakaʻapi",
+      "licenseLabel": "Laiseni",
+      "licenseValue": "PolyForm Noncommercial 1.0.0",
+      "linksLabel": "Ngaahi hono",
+      "links": {
+        "source": "Hoko",
+        "changelog": "Lisi liliu",
+        "feedback": "Tuku atu ngaahi ʻiloʻi"
+      }
+    },
+    "account": {
+      "title": "Toʻoʻanga",
+      "subtitle": "Hū ki loto, fakahoko ʻi he ngaahi misini, mo e ngaahi feituʻu ngāue fakataha.",
+      "comingSoonBody": "ʻOku ʻikai maʻu ʻa e fakahoko ʻao he ʻaho ni — ko e Lotem ko e fakaʻapi pē. Ko e toʻoʻanga, hū ki loto, mo e ngaahi feituʻu ngāue fakataha ʻe haʻu ʻi he tukuange ʻo e fakahoko.",
+      "signedOutLabel": "Hū ki loto",
+      "signedOutHint": "ʻOku ʻikai kei maʻu ʻa e fakahoko ʻao. ʻOku ʻi heni ʻeni ke fakahā ʻa e tā.",
+      "signInButton": "Hū ki loto ʻaki ha ʻīmeli",
+      "syncLabel": "Fakahoko ʻa e misini ko ʻeni",
+      "syncHint": "Hili ho'o hū ki loto, ʻe fakafakaʻaho ho'o ngaahi feituʻu ki he ngaahi misini kehe."
+    },
+    "typography": {
+      "title": "Momotuhi",
+      "subtitle": "Ko e ngaahi tuʻunga totonu ʻi he ngaahi māmani kotoa. ʻE lava ke liliu ʻa e ngaahi māmani takitaha.",
+      "comingSoonBody": "Fili ʻa e momotuhi tohi, momotuhi fakaʻatamai, siʻi lau tuʻunga totonu, mālohi lāini, mo e fua maʻá e ngaahi māmani foʻou.",
+      "proseFontLabel": "Momotuhi tohi",
+      "uiFontLabel": "Momotuhi fakaʻatamai",
+      "proseSizeLabel": "Siʻi tohi",
+      "proseSizeHint": "Tuʻunga totonu maʻá e ngaahi māmani foʻou.",
+      "lineHeightLabel": "Mālohi lāini",
+      "measureLabel": "Fua",
+      "measureHint": "Lahi lāini lahi taha.",
+      "measureValue": "64 ch · ~620 px"
+    },
+    "shortcuts": {
+      "title": "Ngaahi hala vave",
+      "subtitle": "Ko e ngaahi fehokotaki ki ki he feʻauvaki, fakafotunga, mo e ngaahi founga.",
+      "comingSoonBody": "Ko e ngaahi hala vave ʻoku lava ke liliu maʻá e tohi/lau/vaeua, founga fakaʻatamamali, mo e meʻangāue fakafotunga.",
+      "navHeader": "Feʻauvaki",
+      "formatHeader": "Fakafotunga",
+      "modeHeader": "Ngaahi founga",
+      "items": {
+        "openSettings": "Keli ngaahi sētingi",
+        "quickSettings": "Ngaahi sētingi vave",
+        "findInDoc": "Kumi ʻi he tohi",
+        "toggleFocus": "Fetongi fakaʻatamamali",
+        "toggleInspector": "Fetongi sivisivi",
+        "bold": "Mālohi",
+        "italic": "Fakafata",
+        "underline": "ʻOhiʻohi",
+        "heading1": "ʻUluaki 1",
+        "heading2": "ʻUluaki 2",
+        "write": "Founga tohi",
+        "read": "Founga lau",
+        "split": "Founga vaeua"
+      }
+    },
+    "backups": {
+      "title": "Tauhi",
+      "subtitle": "Tukuange, toe fokotuʻu, mo e fakaʻasi ho'o fakamatala fakaʻapi.",
+      "comingSoonBody": "Ko e ngaahi fakaʻasi fakaʻapi ʻoku ʻokosi, tukuange ʻaki e nima ki .zip, mo e toe fokotuʻu mei ha tauhi kimuʻa.",
+      "intervalLabel": "Vaʻa fakaʻasi ʻotomētiki",
+      "intervalOptions": {
+        "5min": "5 miniti",
+        "10min": "10 miniti",
+        "30min": "30 miniti",
+        "off": "Taʻeʻai"
+      },
+      "keepLabel": "Tauhi",
+      "keepHint": "Ko e ngaahi fakaʻasi motuʻa ʻoku toʻo ʻotomētiki.",
+      "keepOptions": {
+        "last50": "50 kimui",
+        "days7": "7 ʻaho",
+        "days30": "30 ʻaho"
+      },
+      "latestLabel": "Foʻou taha",
+      "latestValue": "12 miniti kimuʻa · 1,190 lea"
+    },
+    "sync": {
+      "title": "Fakahoko",
+      "subtitle": "Push ho'o ngaahi feituʻu ki ha foloda ʻoku ke fili. Toʻo ki ha foloda Google Drive, Dropbox, pe iCloud ke fakahoko ʻi he ngaahi misini.",
+      "unsupportedTitle": "ʻOku ʻikai maʻu ʻi he palāoua ko ʻeni",
+      "unsupportedBody": "ʻOku fie maʻu ʻe he fakahoko foloda ʻa e API Maʻu Fakaʻilonga Faile, ʻoku maʻu ʻi Chrome, Edge, mo e ngaahi palāoua kehe Chromium ʻi he laulau. Fetongi ki ha palāoua ʻoku lagolagoʻi ke ngāueʻaki.",
+      "folderLabel": "Foloda fakahoko",
+      "folderHint": "Ko e fakahoko kotoa ʻoku tohi ai ha Markdown .zip ki he feituʻu kotoa ʻi heni, ʻoku tauhi ʻa e 5 kimui mo ha latest.zip. Ko e Fakahoko ko ha meʻa kehekehe mei he Tauhi.",
+      "noFolder": "ʻOku ʻikai ha foloda kuo hono",
+      "chooseFolder": "Fili foloda…",
+      "changeFolder": "Fetongi…",
+      "disconnect": "Māvaeua",
+      "intervalLabel": "Fakahoko ʻotomētiki",
+      "intervalHint": "Ko e tuʻo ngata e fakahoko ʻotomētiki ʻo e ngaahi feituʻu ʻi he taimi ʻoku tuke ai ʻa e lekōtia pea kuo hono ʻa e foloda. ʻE lava ʻe he feituʻu kotoa ke liliu ʻa e tuʻunga totonu ko ʻeni.",
+      "intervalOff": "Taʻeʻai",
+      "intervalMinutes": "{{count}} miniti",
+      "intervalDefault": "Tuʻunga totonu ({{label}})",
+      "syncLabel": "Fakahoko ʻaki e nima",
+      "pushOnlyHint": "Push pē he taimi ni — ʻoku tohi ai ho'o fakamatala fakaʻapi ki he foloda. Ko e pull ngaahi liliu ʻoku haʻu.",
+      "syncNow": "Fakahoko ʻi he taimi ni",
+      "syncNowAll": "Fakahoko ngaahi feituʻu kotoa",
+      "reconnectHint": "Kuo taʻofi ʻa e fakahoko — ʻoku fie maʻu ʻe he palāoua ʻa e fakangofua foloda maʻá e taimi ko ʻeni. Hono foʻou ke hokohoko ʻa e fakahoko ʻaki e nima mo ʻotomētiki.",
+      "reconnectButton": "Hono foʻou",
+      "reconnecting": "ʻOku hono foʻou…",
+      "syncing": "ʻOku fakahoko…",
+      "syncFailed": "Hāʻele ʻa e fakahoko: {{message}}",
+      "lastSynced": "Fakahoko kimui {{when}}",
+      "neverSynced": "ʻOku ʻikai kei fakahoko",
+      "justNow": "he taimi ni pē",
+      "resultsTitle": "Holo kimui",
+      "spaceOk": "kuo fakahoko",
+      "spaceFailed": "hāʻele",
+      "historyTitle": "Ko e ngaahi fakahoko tata",
+      "historyEmpty": "ʻOku ʻikai ha ngaahi fakahoko.",
+      "columns": {
+        "when": "ʻAFEI",
+        "space": "FEITU'U",
+        "kind": "FAʻAHINGA",
+        "size": "LAHIʻANGA",
+        "status": "TUʻUNGA"
+      },
+      "kind": {
+        "auto": "ʻotomētiki",
+        "manual": "ʻaki e nima"
+      },
+      "status": {
+        "ok": "lelei",
+        "error": "hala"
+      }
+    },
+    "space": {
+      "breadcrumb": "FEITU'U · NGAAHI SĒTINGI",
+      "shellSubtitle": "NGAAHI SĒTINGI FEITU'U",
+      "loading": "ʻOku utaʻi ʻa e feituʻu…",
+      "groups": {
+        "thisSpace": "Ko e feituʻu ko ʻeni",
+        "sharingMembers": "Fakatufa & ngaahi mēmipa",
+        "data": "Fakamatala",
+        "dangerZone": "Feituʻu fakatu'utāmaki"
+      },
+      "tabs": {
+        "general": "Laulahi",
+        "docInspector": "Sivisivi tohi",
+        "template": "Potuʻi",
+        "palette": "Kulaa fakaʻilonga",
+        "sharing": "Fakatufa",
+        "members": "Ngaahi mēmipa",
+        "backups": "Tauhi",
+        "sync": "Fakahoko",
+        "export": "Tukuange",
+        "danger": "Feituʻu fakatu'utāmaki"
+      },
+      "docInspector": {
+        "title": "Sivisivi tohi",
+        "subtitle": "Fakatonutonu ngaahi sētingi sivisivi laulahi maʻá e feituʻu ko ʻeni."
+      },
+      "palette": {
+        "title": "Kulaa fakaʻilonga",
+        "subtitle": "Ko e ngaahi kulaa fakaʻilonga ʻe nima, ʻoku hingoa, ʻe lava ke fakatonutonu maʻá e feituʻu ko ʻeni.",
+        "comingSoonBody": "Liliu hingoa, kulaa, mo e ʻotaha ʻo e ngaahi fakaʻilonga ʻo e feituʻu ko ʻeni.",
+        "items": {
+          "evidence": "Fakamo'oni",
+          "revise": "Toe liliu",
+          "reference": "Faʻahinga tohi",
+          "quote": "Lea tohi",
+          "loose": "Ngataʻanga mole"
+        },
+        "rename": "hingoa foʻou",
+        "tune": "fakatonutonu"
+      },
+      "export": {
+        "title": "Tukuange",
+        "subtitle": "Faka'ave ʻa e ngaahi meʻa ʻo e feituʻu ko ʻeni ki ha meʻa kehe.",
+        "comingSoonBody": "Tukuange ki Markdown .zip (he ʻaho ni ʻo e Tauhi), LaTeX, HTML, pe PDF — kotoa ʻi ha feituʻu ʻe taha.",
+        "formatLabel": "Fakafotunga",
+        "formatHint": "Ko Markdown ʻoku tukuange muʻa; ko e isi ʻoku mulimui.",
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
+        "lastLabel": "Tukuange kimui",
+        "lastValue": "ʻikai kei hoko"
+      },
+      "general": {
+        "title": "Laulahi",
+        "subtitle": "Ko e ngaahi fakamatala fakaʻilonga maʻá e feituʻu ko ʻeni. Ko e ngaahi liliu ʻoku fakaʻaongaʻi fakaokioki pea fakahoko ʻi he ngaahi vaʻa.",
+        "nameLabel": "Hingoa feituʻu",
+        "nameHint": "Fakahā ʻi he ʻuluaki tafaʻaki mo e toliaki feituʻu.",
+        "tagLabel": "Fakatohu",
+        "tagHint": "Ko ha lahi fakapotopoto (fakamataitusi 2–4) ʻoku fakahā ʻi he poloka feituʻu."
+      },
+      "sharing": {
+        "title": "Fakatufa",
+        "subtitle": "Puleʻi ʻa e founga ʻoku fakatufa ai ʻa e feituʻu ko ʻeni.",
+        "comingSoonBody": "Ko e hā ʻo e feituʻu mo ngaahi hono fakatufa. ʻOku haʻu ʻi he tukuange ʻo e fakahoko ʻao.",
+        "visibilityLabel": "Hā",
+        "visibilityOptions": {
+          "private": "Fakalilolilo",
+          "link": "Kinautolu kotoa ʻoku maʻu hono",
+          "members": "Ko e ngaahi mēmipa pē"
+        },
+        "linkLabel": "Hono fakatufa",
+        "linkHint": "Ko e lau pē ʻi he tuʻunga totonu. Ko e ngaahi fakatokaʻi ʻo e fakatohi ʻoku muimui ʻi he Ngaahi mēmipa.",
+        "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
+        "copy": "kopi"
+      },
+      "template": {
+        "title": "Potuʻi",
+        "subtitle": "Ko e potuʻi fakavaha ʻa ia na'e fakatupu ai ʻa e feituʻu ko ʻeni.",
+        "comingSoonBody": "ʻOku ʻikai lagolagoʻi ʻa e liliu ʻo e potuʻi ʻo e feituʻu hili hono fakatupu. ʻOku haʻu ʻi he taimi te tau lava ai ʻo feʻauvaki ngaahi vaʻa mo ngaahi tohi ʻi he malu.",
+        "currentLabel": "Potuʻi he taimi ni",
+        "currentValue": "Talanoa",
+        "currentSub": "Tohi · Māmani · Fale Ngāue",
+        "changeLabel": "Fetongi potuʻi",
+        "changeHint": "Fakafoʻou ngaahi vaʻa mo ngaahi tohi ki he potuʻi foʻou.",
+        "changeButton": "Fetongi potuʻi…"
+      },
+      "members": {
+        "title": "Ngaahi mēmipa",
+        "subtitle": "Ko e ngaahi tohi fakataha mo sivisivi ʻoku maʻu ke hū ki he feituʻu ko ʻeni.",
+        "comingSoonBody": "Fakaʻeke ngāue fakataha, puleʻi ngaahi lakanga, mo e sivisivi ngaahi liliu. ʻOku haʻu mo e fakahoko ʻao.",
+        "inviteLabel": "Fakaʻeke ʻaki ha ʻīmeli",
+        "inviteHint": "Te mau tuku atu ha hono ke nau hū ki he feituʻu ko ʻeni.",
+        "invitePlaceholder": "hingoa@fakaʻasi.com",
+        "inviteButton": "tuku atu fakaʻeke",
+        "membersLabel": "Ngaahi mēmipa",
+        "roles": {
+          "owner": "ʻeiki",
+          "editor": "fakatohi",
+          "viewer": "sivisivi"
+        },
+        "you": "koe"
+      },
+      "backups": {
+        "title": "Tauhi",
+        "subtitle": "Fakaʻasi ʻa e feituʻu ko ʻeni ko ha .zip ʻe lava ke tikiake, tauhi, mo toe fokotuʻu.",
+        "retentionHint": "ʻOku tauhi ʻa e ngaahi fakaʻasi {{count}} foʻou — ko e ngaahi motuʻa ʻoku toʻo ʻotomētiki.",
+        "snapshotNow": "+ fakaʻasi he taimi ni",
+        "snapshotting": "ʻoku fakaʻasi…",
+        "snapshotFailed": "Hāʻele ʻa e fakaʻasi: {{message}}",
+        "historyTitle": "Hisitolia",
+        "empty": "ʻOku ʻikai ha ngaahi fakaʻasi — fakatupu ha taha ʻaki e + fakaʻasi he taimi ni.",
+        "columns": {
+          "when": "ʻAFEI",
+          "kind": "FAʻAHINGA",
+          "size": "LAHIʻANGA",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "ʻaki e nima",
+          "auto": "ʻotomētiki",
+          "snapshot": "fakaʻasi"
+        },
+        "download": "↓ tikiake",
+        "delete": "fakaʻauha",
+        "deleteConfirm": "Fakaʻauha ʻa e fakaʻasi ko ʻeni? ʻOku ʻikai lava ke toe fokotuʻu.",
+        "deleted": "Kuo fakaʻauha ʻa e fakaʻasi.",
+        "justNow": "he taimi ni pē",
+        "restore": "↺ toe fokotuʻu",
+        "restoreUnavailable": "Na'e ngaohi ʻa e fakaʻasi ko ʻeni kimuʻa ʻi he lagolagoʻi ʻo e toe fokotuʻu — ʻe lava pē ke tikiake.",
+        "restoreDialogTitle": "Toe fokotuʻu ʻa e fakaʻasi ko ʻeni?",
+        "restoreDialogBody": "Ko e ngaahi meʻa he taimi ni ʻo e feituʻu ko ʻeni ʻe fakafoki ki he fakaʻasi. Ko ha fakaʻasi ʻo e tuʻunga he taimi ni ʻe fakaʻehi muʻa, ko ia ʻe lava ke ke toe fakaʻauha ʻa e toe fokotuʻu ko ʻeni.",
+        "restoreConfirm": "Toe fokotuʻu",
+        "restoreCancel": "Fakaʻauha",
+        "restoring": "ʻoku toe fokotuʻu…",
+        "restored": "Kuo toe fokotuʻu ʻa e fakaʻasi.",
+        "restoreFailed": "Hāʻele ʻa e toe fokotuʻu: {{message}}",
+        "fileRestoreTitle": "ʻOku toe fokotuʻu mei ha .zip kuo tikiake?",
+        "fileRestoreBody": "Maʻu mai ʻo e ala ʻi Ngaahi Sētingi Kotoa → Tukuange / Maʻu mai — ʻe toe haʻu ko e feituʻu foʻou, mo e feituʻu ko ʻeni ʻoku ʻikai suia."
+      },
+      "sync": {
+        "title": "Fakahoko",
+        "subtitle": "Push ʻa e feituʻu ko ʻeni ki he foloda kuo hono, ʻaki e nima pe ʻi ha ʻokosi. Ko e Fakahoko ko ha meʻa kehekehe mei he Tauhi.",
+        "folderHint": "Hono ha foloda ʻi Ngaahi Sētingi Kotoa → Fakahoko. Ko e foloda tatau ʻoku ngāueʻaki maʻá e ngaahi feituʻu kotoa.",
+        "intervalHint": "Ko e tuʻo ngata e fakahoko ʻotomētiki ʻo e feituʻu ko ʻeni. Fili Tuʻunga totonu ke muimui ki he sētingi fakahoko ʻotomētiki laulahi.",
+        "syncNow": "Fakahoko ʻa e feituʻu ko ʻeni"
+      },
+      "danger": {
+        "title": "Feituʻu fakatu'utāmaki",
+        "subtitle": "Ko e ngaahi ngāue ʻoku ʻikai toe fokotuʻuʻi. Lau ʻo taau ʻo ke hokohoko.",
+        "deleteCardTitle": "Fakaʻauha ʻa e feituʻu ko ʻeni",
+        "deleteCardBody": "ʻOku toʻo maʻu pē ʻa e feituʻu ko ʻeni fakaʻatoa mo e ngaahi tohi, vaʻa, ngaahi manatua Brain space, ngaahi fakamatala, fakamo'oni, mo e ngaahi hono. ʻOku ʻikai lava ke toe fokotuʻu.",
+        "deleteButton": "Fakaʻauha ʻa e feituʻu ko ʻeni",
+        "dialogTitle": "Fakaʻauha \"{{name}}\"?",
+        "dialogBody": "ʻOku toʻo maʻu pē ʻa e feituʻu mo e ngaahi meʻa ʻi ai kotoa. ʻOku ʻikai lava ke toe fokotuʻu.",
+        "typeToConfirm": "Hū ki {{name}} ke fakaʻilo",
+        "cancel": "Fakaʻauha",
+        "confirm": "Fakaʻauha feituʻu"
+      }
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Kuo ngalo ʻi he ngaahi ʻaʻahi",
+    "body": "ʻOku ʻikai ʻi ai ʻa e peesi ko ia (ʻi he taimi ni).",
+    "goHome": "Foki ki fale"
+  },
+  "templates": {
+    "crumb": "01 — HA FAʻAHINGA TUMU",
+    "headingMain": "Ko e hā ʻa e faʻahinga feituʻu",
+    "headingAccent": "ʻoku ke kamata?",
+    "chooseLegend": "Fili ha potuʻi",
+    "stage": {
+      "pre-alpha": "fakaʻalingaki",
+      "alpha": "tīmata",
+      "beta": "beta"
+    },
+    "nameLabel": "Hingoa",
+    "tagLabel": "Fakatohu",
+    "syncLabel": "fakahoko ʻao —",
+    "syncValue": "taʻeʻai, fakaʻapi",
+    "syncTooltip": "ʻOku ʻikai maʻu ʻa e fakahoko ʻao — ko e lekōtia ko ʻeni ko e fakaʻapi pē he taimi ni.",
+    "creating": "ʻoku ngaohi…",
+    "submitLabel": "hū ki {{name}} →",
+    "newSpace": "feituʻu foʻou",
+    "back": "foki"
+  },
+  "dump": {
+    "headerCount": "Brain space · {{count}} taʻefakahoko",
+    "title": "Brain space",
+    "mobileWarning": "ʻOku lelei ange ʻa e Brain space ʻi he laulau lahi ange.",
+    "mobileNote": "ʻOku fie maʻu ʻe he kānava ha isimū pe tāmipelo.",
+    "openInWrite": "Keli ʻi he Tohi →"
+  },
+  "brainSpace": {
+    "canvas": {
+      "emptyTitle": "kamata fakavuvunga",
+      "emptyHint": "fili ha faʻahinga kaati ʻi lalo",
+      "pendingHint": "kiliki-shift ki ha manatua kehe ke hono · esc ke fakaʻauha"
+    },
+    "note": {
+      "deleteNote": "Fakaʻauha manatua",
+      "addPicture": "Fakaʻaongaʻi fakaʻasi",
+      "addPictureCta": "fakaʻaongaʻi ha fakaʻasi",
+      "openLinkedDoc": "Keli tohi kuo hono",
+      "fetchedContent": "Ngaahi meʻa kuo maʻu",
+      "openDetailsLabel": "Keli ngaahi fakamatala",
+      "openDetailsTitle": "Keli pane ngaahi fakamatala",
+      "titlePlaceholder": "ʻuluaki",
+      "addTitleCta": "+ ʻuluaki",
+      "bodyEmpty": "(kiliki ke tohi)",
+      "viewImage": "Sio ki {{name}}",
+      "removeImage": "Toʻo {{name}}",
+      "resize": "Fetongi lahiʻanga ʻo e manatua",
+      "days": {
+        "sun": "sāp",
+        "mon": "mōn",
+        "tue": "tūs",
+        "wed": "ʻapl",
+        "thu": "tuʻa",
+        "fri": "fal",
+        "sat": "tok"
+      }
+    },
+    "drawer": {
+      "title": "Ngaahi fakamatala manatua",
+      "description": "Liliu ʻa e manatua kuo fili mo puleʻi hono ngaahi hono.",
+      "untitledPlaceholder": "Taʻehingoa",
+      "titleAriaLabel": "ʻUluaki manatua",
+      "closeAriaLabel": "Tāpuni ʻa e pane",
+      "bodyLabel": "Sino",
+      "bodyPlaceholder": "Tohi ha meʻa…",
+      "picturesLabel": "Ko e ngaahi fakaʻasi",
+      "addPicture": "Fakaʻaongaʻi fakaʻasi",
+      "pictureLimitHint": "kuo aʻusia ʻa e tapuhā {{count}} — toʻo ha taha ke fakaʻaongaʻi ha taha kehe.",
+      "linkedDocLabel": "Tohi kuo Hono",
+      "noLinkedDoc": "— ʻOku ʻikai ha tohi kuo hono —",
+      "untitledDoc": "Taʻehingoa",
+      "openDoc": "Keli",
+      "connectionsHeading": "Ko e ngaahi hono ({{count}})",
+      "connectionsEmpty": "kiliki-shift ki ha manatua kehe ʻi he kānava ke hono.",
+      "untitledNote": "(taʻehingoa)",
+      "removeConnection": "Toʻo hono",
+      "deleteNote": "Fakaʻauha manatua"
+    }
+  },
+  "split": {
+    "title": "Vaʻa vaeua",
+    "mobileWarning": "ʻOku fie maʻu ʻe he vaʻa vaeua ha laulau lahi ange.",
+    "mobileNote": "Keli ʻa e tohi ko ʻeni ʻi he Founga Tohi.",
+    "openInWrite": "Keli ʻi he Tohi →",
+    "leftPrefix": "TOʻOHEMA —",
+    "rightPrefix": "TOʻOMATAʻU —",
+    "rightPaneAria": "Tohi pane toʻomataʻu",
+    "noOtherDocs": "(ʻoku ʻikai ha ngaahi tohi kehe)",
+    "brainSpaceOption": "Brain space",
+    "citationsOption": "Ngaahi fakamo'oni",
+    "pickDoc": "Fili ha tohi mei he lisi ʻi ʻolunga.",
+    "dividerAria": "Fetongi lahiʻanga ʻo e ngaahi pane vaeua"
+  },
+  "citationsDrawer": {
+    "title": "Ngaahi fakamo'oni",
+    "description": "Kumi, maʻu mai, mo tukuange ngaahi fakamo'oni maʻá e feituʻu ko ʻeni.",
+    "close": "Tāpuni ngaahi fakamo'oni",
+    "expand": "Keli ngaahi fakamo'oni ki he vaʻa katoa"
+  },
+  "citations": {
+    "title": "Ngaahi fakamo'oni",
+    "breadcrumb": "Ngaahi Hoko / ",
+    "entries": "{{count}} NGAAHI ULUFALE",
+    "searchPlaceholder": "kau tohi, ngaahi fakatohu, taʻu…",
+    "upload": "↑ hikiange .bib / .ris",
+    "add": "+ fakaʻaongaʻi",
+    "cancel": "× fakaʻauha",
+    "columns": {
+      "tag": "FAKATOHU",
+      "authors": "KAU TOHI",
+      "title": "ʻULUAKI",
+      "year": "TAʻU",
+      "type": "FAʻAHINGA",
+      "used": "KUO NGĀUEʻAKI"
+    },
+    "style": "FAʻAHINGA — CHICAGO (KAU TOHI-ʻAHO)",
+    "exportBib": "TUKUANGE KO HA .BIB",
+    "summary": "{{filtered}} KUO HAʻA · {{shown}} ʻI HE PEESI KO ʻENI",
+    "prevPage": "Peesi kimuʻa",
+    "nextPage": "Peesi ʻoku hoko",
+    "empty": "ʻoku ʻikai ha ngaahi fakamo'oni",
+    "noMatch": "ʻoku ʻikai ha ngaahi lāini ʻoku fetaʻi mo ho'o kumi.",
+    "importHint": "maʻu mai ha .bib pe fakaʻaongaʻi ha taha ʻaki e nima.",
+    "pasteHeader": "Peiti BibTeX pe ko e ʻuluaki",
+    "addCitation": "fakaʻaongaʻi fakamo'oni",
+    "manualCancel": "fakaʻauha",
+    "adding": "ʻoku fakaʻaongaʻi…",
+    "parsing": "ʻOku ʻaʻahi {{name}}…",
+    "imported": "Kuo maʻu mai {{added}} fakamo'oni{{addedPlural}}{{skippedSuffix}}.",
+    "skippedSuffix": ", malolo {{skipped}} tatau{{skippedPlural}}",
+    "skippedSuffixShort": ", malolo {{skipped}}",
+    "failed": "Hāʻele ʻa e ʻaʻahi: {{message}}",
+    "failedManual": "Hāʻele: {{message}}",
+    "addedOne": "Kuo fakaʻaongaʻi ʻa e fakamo'oni ʻe 1.",
+    "unknownAuthor": "(unknown)",
+    "unknownError": "hala taʻeʻilo",
+    "edit": {
+      "save": "fakaʻehi",
+      "saving": "ʻoku fakaʻehi…",
+      "cancel": "fakaʻauha",
+      "delete": "fakaʻauha meʻa",
+      "edit": "liliu",
+      "tagLabel": "Fakatohu",
+      "authorsLabel": "Kau Tohi",
+      "titleLabel": "ʻUluaki",
+      "yearLabel": "Taʻu",
+      "typeLabel": "Faʻahinga",
+      "duplicateKey": "Kuo ngāueʻaki ʻa e fakatohu \"{{key}}\" ʻi he feituʻu ko ʻeni.",
+      "updated": "Kuo liliu ʻa e fakamo'oni ʻe 1.",
+      "deleteOne": "Kuo fakaʻauha ʻa e fakamo'oni ʻe 1.",
+      "confirmDeleteUsed": "ʻOku ngāueʻaki ʻa e fakamo'oni ko ʻeni {{count}}× ʻi ho'o ngaahi tohi. Fakaʻauha pē?",
+      "confirmDeleteSingle": "Fakaʻauha ʻa e fakamo'oni \"{{key}}\"? ʻOku ʻikai lava ke toe fokotuʻu.",
+      "untitled": "(taʻehingoa)"
+    },
+    "bulk": {
+      "selectedSummary": "{{count}} kuo fili",
+      "deleteSelected": "fakaʻauha",
+      "setTypePrompt": "fokotuʻu faʻahinga",
+      "setTypeAria": "Fokotuʻu faʻahinga maʻá e ngaahi fakamo'oni kuo fili",
+      "chooseOption": "fili…",
+      "ariaLabel": "Ko e ngaahi ngāue lahi",
+      "clearSelection": "fakamaʻa",
+      "deleted": "Kuo fakaʻauha ʻa e ngaahi fakamo'oni {{count}}.",
+      "typeApplied": "Kuo fokotuʻu ʻa e faʻahinga {{type}} ki he ngaahi fakamo'oni {{count}}.",
+      "confirmDelete": "Fakaʻauha {{count}} fakamo'oni? ʻOku ʻikai lava ke toe fokotuʻu."
+    },
+    "row": {
+      "selectAllAria": "Fili ngaahi fakamo'oni kotoa ʻi he peesi ko ʻeni",
+      "viewCitationAria": "Sio ki fakamo'oni {{key}}",
+      "selectCitationAria": "Fili fakamo'oni {{key}}",
+      "collapseCitationAria": "Fakafofou fakamo'oni {{key}}",
+      "usedCount": "{{count}}× kuo ngāueʻaki",
+      "unused": "ʻoku taʻengāueʻaki",
+      "copyTag": "Kopi fakatohu",
+      "copyTagAria": "Kopi fakatohu {{value}}",
+      "copiedTitle": "Kuo kopi",
+      "copiedTagAria": "Kuo kopi fakatohu {{value}}"
+    },
+    "manualAdd": {
+      "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
+    }
+  }
+}

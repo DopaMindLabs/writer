@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Hjälp och rundturer", "tours": "Guidade rundturer", "resetAll": "Återställ alla rundturer" },
+  "controls": { "next": "Nästa", "prev": "Tillbaka", "done": "Klart", "progress": "{{current}} av {{total}}" },
+  "welcome": {
+    "title": "Välkommen till LIpsum Writer",
+    "description": "En snabb orientering om spaces och startskärmen.",
+    "intro": { "title": "Välkommen", "body": "LIpsum Writer är ett skrivutrymme uppbyggt kring <i>spaces</i> — en space per projekt, artikel eller bok. Vi tittar oss snabbt omkring." },
+    "continue": { "title": "Fortsätt där du slutade", "body": "Din senast redigerade space är här. Ett klick öppnar den igen." },
+    "startSpace": { "title": "Börja något nytt", "body": "Skapa en ny space från en mall — uppsats, roman, essä — och börja skriva på några sekunder." }
+  },
+  "writer": {
+    "title": "Författarens arbetsyta",
+    "description": "En rundtur i editorn, sidofältet och toppfältet.",
+    "intro": { "title": "Skrivytan", "body": "Det är här du jobbar. Vi tittar på navigation, lägen och verktyg du kommer använda mest." },
+    "spaceTitle": { "title": "Space-titel", "body": "Klicka på titeln för att byta namn på spacen. Hover-ikonen bredvid öppnar inställningarna." },
+    "sections": { "title": "Sektioner och dokument", "body": "Organisera en space i sektioner och sektioner i dokument. Hovra över en sektion för att lägga till ett dokument." },
+    "settings": { "title": "Space-inställningar", "body": "Hantera mall, sektioner, delning och borttagning av denna space." },
+    "modes": { "title": "Läs · Skriv · Dela", "body": "Växla mellan redigering, läsning eller sida-vid-sida-vy. Varje dokument minns ditt senaste läge." },
+    "citations": { "title": "Citat", "body": "Öppna citatpanelen för att infoga referenser medan du skriver." },
+    "theme": { "title": "Tema", "body": "Ljust, mörkt och hög-kontrast — välj det som passar dina ögon." },
+    "editor": { "title": "Editorn", "body": "En rich-text-editor med Markdown-genvägar, kodblock och citat. Börja skriva — ditt arbete sparas lokalt automatiskt." }
+  },
+  "citations": {
+    "title": "Citat",
+    "description": "Hantering av referenser och bibliografier.",
+    "intro": { "title": "Din bibliografi", "body": "Alla referenser för en space bor här. Importera en BibTeX-fil eller lägg till poster för hand." },
+    "add": { "title": "Lägg till eller importera", "body": "Släpp en .bib-fil eller klistra in BibTeX-text. Dubbletter hoppas över automatiskt." },
+    "list": { "title": "Listan", "body": "Sök, filtrera och redigera citat inline. Härifrån kan du också exportera hela bibliografin." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Den fria anteckningsduken.",
+    "intro": { "title": "Tänk högt", "body": "BrainSpace är en fri duk för idéer — släpp anteckningar, koppla dem och forma ditt tänkande innan du går till prosa." },
+    "addNote": { "title": "Lägg till en anteckning", "body": "Släpp en anteckning av valfri typ på duken. Dra för att flytta, ändra storlek från hörnen." },
+    "canvas": { "title": "Duken", "body": "Skift-klicka på två anteckningar för att koppla dem. Klicka på bakgrunden för att avmarkera." }
+  }
+}

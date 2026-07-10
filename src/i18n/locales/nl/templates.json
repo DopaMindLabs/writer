@@ -1,0 +1,42 @@
+{
+  "blank": {
+    "label": "Leeg",
+    "tag": "LE",
+    "description": "vanaf nul beginnen"
+  },
+  "fiction": {
+    "label": "Fictie schrijven",
+    "tag": "FI",
+    "description": "roman · kort verhaal · scenario"
+  },
+  "humanities": {
+    "label": "Scriptie · onderzoek",
+    "tag": "TH",
+    "description": "academisch lange tekst"
+  },
+  "journal": {
+    "label": "Dagboek",
+    "tag": "JO",
+    "description": "dagelijks, zonder druk"
+  },
+  "serial": {
+    "label": "Serie",
+    "tag": "SE",
+    "description": "terugkerende essays · nieuwsbrief"
+  },
+  "six": {
+    "label": "Zes Deuren · samenwerking",
+    "tag": "SD",
+    "description": "gedeelde wereld · meerdere schrijvers"
+  },
+  "technical": {
+    "label": "Technisch · Wetenschappelijk rapport",
+    "tag": "TX",
+    "description": "Wetenschappelijk · methoden · vergelijkingen"
+  },
+  "bioinformatics": {
+    "label": "Bio-informatica",
+    "tag": "BX",
+    "description": "pipelines · methoden · labjournaal"
+  }
+}

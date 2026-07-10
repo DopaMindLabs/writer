@@ -1,0 +1,567 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of every per-space placeholder panel 1`] = `
+<div>
+  <div>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SPACE · SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Template
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        The structural template this space was created with.
+      </p>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Current template
+          </div>
+        </div>
+        <div>
+          <div>
+            <div
+              class="font-serif text-[15px] font-medium text-ink"
+            >
+              Fiction
+            </div>
+            <div
+              class="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              Manuscript · World · Workshop
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Change template
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Reflows existing sections and docs to the new template.
+          </div>
+        </div>
+        <div>
+          <span
+            class="inline-block border border-ink px-3 py-1.5 text-[12px] font-medium text-ink"
+          >
+            Change template…
+          </span>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SPACE · SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Highlight palette
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Five named, tunable highlight colours for this space.
+      </p>
+      <div
+        class="flex flex-col gap-2"
+      >
+        <div
+          class="flex items-center gap-3.5 border border-rule p-3"
+        >
+          <div
+            aria-hidden="true"
+            class="h-7 w-7 border border-rule"
+            style="background: rgb(255, 243, 168);"
+          />
+          <div
+            class="min-w-0 flex-1"
+          >
+            <div
+              class="font-serif text-[14px] font-medium text-ink"
+            >
+              Evidence
+            </div>
+            <div
+              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              #FFF3A8
+            </div>
+          </div>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            rename
+          </span>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            tune
+          </span>
+        </div>
+        <div
+          class="flex items-center gap-3.5 border border-rule p-3"
+        >
+          <div
+            aria-hidden="true"
+            class="h-7 w-7 border border-rule"
+            style="background: rgb(255, 214, 224);"
+          />
+          <div
+            class="min-w-0 flex-1"
+          >
+            <div
+              class="font-serif text-[14px] font-medium text-ink"
+            >
+              To revise
+            </div>
+            <div
+              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              #FFD6E0
+            </div>
+          </div>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            rename
+          </span>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            tune
+          </span>
+        </div>
+        <div
+          class="flex items-center gap-3.5 border border-rule p-3"
+        >
+          <div
+            aria-hidden="true"
+            class="h-7 w-7 border border-rule"
+            style="background: rgb(207, 227, 250);"
+          />
+          <div
+            class="min-w-0 flex-1"
+          >
+            <div
+              class="font-serif text-[14px] font-medium text-ink"
+            >
+              Reference
+            </div>
+            <div
+              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              #CFE3FA
+            </div>
+          </div>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            rename
+          </span>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            tune
+          </span>
+        </div>
+        <div
+          class="flex items-center gap-3.5 border border-rule p-3"
+        >
+          <div
+            aria-hidden="true"
+            class="h-7 w-7 border border-rule"
+            style="background: rgb(214, 235, 207);"
+          />
+          <div
+            class="min-w-0 flex-1"
+          >
+            <div
+              class="font-serif text-[14px] font-medium text-ink"
+            >
+              Quote
+            </div>
+            <div
+              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              #D6EBCF
+            </div>
+          </div>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            rename
+          </span>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            tune
+          </span>
+        </div>
+        <div
+          class="flex items-center gap-3.5 border border-rule p-3"
+        >
+          <div
+            aria-hidden="true"
+            class="h-7 w-7 border border-rule"
+            style="background: rgb(232, 232, 232);"
+          />
+          <div
+            class="min-w-0 flex-1"
+          >
+            <div
+              class="font-serif text-[14px] font-medium text-ink"
+            >
+              Loose end
+            </div>
+            <div
+              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              #E8E8E8
+            </div>
+          </div>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            rename
+          </span>
+          <span
+            class="font-sans text-[11px] text-ink-3"
+          >
+            tune
+          </span>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SPACE · SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Sharing
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Control how this space is shared.
+      </p>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Visibility
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-wrap gap-1.5"
+          >
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-ink bg-ink font-medium text-paper"
+            >
+              Private
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              Anyone with link
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              Members only
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Shareable link
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Read-only by default. Editing privileges follow Members.
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex items-center gap-2"
+          >
+            <span
+              aria-hidden="true"
+              class="inline-block border border-rule bg-paper px-2.5 py-1.5 text-[14px] text-ink"
+              style="width: 320px;"
+            >
+              https://lipsum.app/s/hollowmere/share/…
+            </span>
+            <span
+              class="font-sans text-[11px] text-ink-3"
+            >
+              copy
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SPACE · SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Members
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Co-writers and reviewers with access to this space.
+      </p>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Invite by email
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            We'll send them a link to join this space.
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex items-center gap-2"
+          >
+            <span
+              aria-hidden="true"
+              class="inline-block border border-rule bg-paper px-2.5 py-1.5 text-[14px] text-ink"
+              style="width: 260px;"
+            >
+              name@example.com
+            </span>
+            <span
+              class="inline-block border border-ink px-3 py-1.5 text-[12px] font-medium text-ink"
+            >
+              send invite
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="border-b border-rule/60 py-[18px]"
+      >
+        <div
+          class="mb-2 text-[13px] font-medium text-ink"
+        >
+          Members
+        </div>
+        <div
+          class="flex flex-col gap-1"
+        >
+          <div
+            class="flex items-center gap-3 border-b border-rule/40 py-2"
+          >
+            <div
+              class="flex h-7 w-7 items-center justify-center rounded-full bg-paper-2 font-mono text-[11px] uppercase text-ink-2"
+            >
+              Y
+            </div>
+            <div
+              class="min-w-0 flex-1"
+            >
+              <div
+                class="font-serif text-[13px] text-ink"
+              >
+                You
+              </div>
+              <div
+                class="font-mono text-[10px] text-ink-3"
+              >
+                you@example.com
+              </div>
+            </div>
+            <span
+              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              owner
+            </span>
+          </div>
+          <div
+            class="flex items-center gap-3 border-b border-rule/40 py-2"
+          >
+            <div
+              class="flex h-7 w-7 items-center justify-center rounded-full bg-paper-2 font-mono text-[11px] uppercase text-ink-2"
+            >
+              M
+            </div>
+            <div
+              class="min-w-0 flex-1"
+            >
+              <div
+                class="font-serif text-[13px] text-ink"
+              >
+                Mira K.
+              </div>
+              <div
+                class="font-mono text-[10px] text-ink-3"
+              >
+                mira@example.com
+              </div>
+            </div>
+            <span
+              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              editor
+            </span>
+          </div>
+          <div
+            class="flex items-center gap-3 border-b border-rule/40 py-2"
+          >
+            <div
+              class="flex h-7 w-7 items-center justify-center rounded-full bg-paper-2 font-mono text-[11px] uppercase text-ink-2"
+            >
+              S
+            </div>
+            <div
+              class="min-w-0 flex-1"
+            >
+              <div
+                class="font-serif text-[13px] text-ink"
+              >
+                Sam J.
+              </div>
+              <div
+                class="font-mono text-[10px] text-ink-3"
+              >
+                sam@example.com
+              </div>
+            </div>
+            <span
+              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            >
+              viewer
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <p
+        class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      >
+        SPACE · SETTINGS
+      </p>
+      <h1
+        class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
+      >
+        Export
+      </h1>
+      <p
+        class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
+      >
+        Move this space's content into another tool.
+      </p>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Format
+          </div>
+          <div
+            class="mt-1 max-w-[520px] font-serif text-[13px] italic text-ink-3"
+          >
+            Markdown ships first; the rest follow.
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-wrap gap-1.5"
+          >
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-ink bg-ink font-medium text-paper"
+            >
+              Markdown
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              HTML
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              PDF
+            </span>
+            <span
+              class="inline-flex items-center justify-center border px-3.5 py-1.5 text-[12px] tracking-[0.01em] border-rule bg-paper text-ink"
+            >
+              LaTeX
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-2 border-b border-rule/60 py-4 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8"
+      >
+        <div>
+          <div
+            class="text-[14px] font-medium text-ink"
+          >
+            Last export
+          </div>
+        </div>
+        <div>
+          <span
+            class="font-serif text-[14px] italic text-ink-3"
+          >
+            never
+          </span>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+`;

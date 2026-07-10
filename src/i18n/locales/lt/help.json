@@ -1,0 +1,48 @@
+{
+  "title": "Pagalba",
+  "subtitle": "Vadovai ir atsakymai, kad išgautum daugiausia iš savo rašymo.",
+  "shellSubtitle": "Pagalba / Dokumentacija",
+  "navGroup": "Pagalba",
+  "navOverview": "Apžvalga",
+  "navAria": "Pagalbos temos",
+  "searchPlaceholder": "Ieškoti pagalboje…",
+  "searchLabel": "Ieškoti pagalbos straipsnių",
+  "noResults": "Joks straipsnis neatitinka „{{query}}“.",
+  "resultsCount_one": "{{count}} rezultatas",
+  "resultsCount_other": "{{count}} rezultatų",
+  "browseAll": "Naršyti visas temas",
+  "languagePickerLabel": "Pagalbos kalba",
+  "allFeatures": {
+    "title": "Visos funkcijos",
+    "subtitle": "Pilnas sąrašas viso, ką gali daryti — kiekvienas elementas veda į savo vadovą."
+  },
+  "onThisPage": "Šiame puslapyje",
+  "related": "Susiję",
+  "backToHelp": "Visa pagalba",
+  "openCenter": "Atidaryti visą pagalbos centrą",
+  "articleNotFound": "Šio pagalbos straipsnio nėra.",
+  "machineTranslationBanner": {
+    "label": "Automatinis vertimas",
+    "body": "Šis straipsnis išverstas automatiškai. Atsiprašome už klaidas — atsiųsk atsiliepimą, kad galėtume jas ištaisyti.",
+    "feedbackLinkLabel": "siųsti atsiliepimą"
+  },
+  "palette": {
+    "title": "Pagalba",
+    "description": "Ieškok pagalbos centre arba pereik prie spartos.",
+    "shortcutsHeading": "Klaviatūros spartos",
+    "hint": "Paspausk Esc, kad uždarytum"
+  },
+  "shortcuts": { "help": "Atidaryti pagalbą", "focus": "Perjungti fokuso režimą" },
+  "categories": {
+    "getting-started": "Pradžia",
+    "writing": "Rašymas ir redagavimas",
+    "organizing": "Organizavimas",
+    "views": "Vaizdai ir režimai",
+    "research": "Tyrimai ir citatos",
+    "brainspace": "BrainSpace",
+    "annotations": "Anotacijos ir paryškinimai",
+    "customization": "Pritaikymas ir nustatymai",
+    "data": "Tavo duomenys",
+    "mobile": "Mobilus"
+  }
+}

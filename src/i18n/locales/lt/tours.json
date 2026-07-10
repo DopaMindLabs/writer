@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Pagalba ir ekskursijos", "tours": "Vadovaujamos ekskursijos", "resetAll": "Iš naujo nustatyti visas ekskursijas" },
+  "controls": { "next": "Toliau", "prev": "Atgal", "done": "Atlikta", "progress": "{{current}} iš {{total}}" },
+  "welcome": {
+    "title": "Sveiki atvykę į LIpsum Writer",
+    "description": "Greitas susipažinimas su erdvėmis ir pradiniu ekranu.",
+    "intro": { "title": "Sveiki", "body": "LIpsum Writer yra rašymo darbo erdvė, sukurta aplink <i>erdves</i> — viena erdvė vienam projektui, straipsniui ar knygai. Greitai apsidairykime." },
+    "continue": { "title": "Tęsk ten, kur sustojai", "body": "Tavo paskutinė redaguota erdvė yra čia. Vienas paspaudimas ją vėl atveria." },
+    "startSpace": { "title": "Pradėk ką nors naujo", "body": "Sukurk naują erdvę iš šablono — tezę, romaną, esė — ir pradėk rašyti per kelias sekundes." }
+  },
+  "writer": {
+    "title": "Rašytojo darbo erdvė",
+    "description": "Ekskursija po redaktorių, šoninę juostą ir viršutinę juostą.",
+    "intro": { "title": "Rašymo paviršius", "body": "Čia atlieki darbą. Pažiūrėkime į navigaciją, režimus ir įrankius, kuriuos naudosi dažniausiai." },
+    "spaceTitle": { "title": "Erdvės pavadinimas", "body": "Spustelėk pavadinimą, kad pervadintumei erdvę. Šalia esanti piktograma atveria jos nustatymus." },
+    "sections": { "title": "Skyriai ir dokumentai", "body": "Organizuok erdvę į skyrius, o skyrius į dokumentus. Užvesk ant skyriaus, kad pridėtum dokumentą." },
+    "settings": { "title": "Erdvės nustatymai", "body": "Tvarkyk šios erdvės šabloną, skyrius, dalijimąsi ir ištrynimą." },
+    "modes": { "title": "Skaityk · Rašyk · Padalink", "body": "Perjunk tarp redagavimo, skaitymo ar šalia esančio vaizdo. Kiekvienas dokumentas atsimena paskutinį režimą." },
+    "citations": { "title": "Citatos", "body": "Atverk citatų skydelį, kad įterptum nuorodas rašydamas." },
+    "theme": { "title": "Tema", "body": "Šviesi, tamsi ir aukšto kontrasto versijos — pasirink tą, kuri tinka akims." },
+    "editor": { "title": "Redaktorius", "body": "Turtingo teksto redaktorius su Markdown nuorodomis, kodo blokais ir citatomis. Pradėk rašyti — tavo darbas vietoje saugomas automatiškai." }
+  },
+  "citations": {
+    "title": "Citatos",
+    "description": "Nuorodų ir bibliografijų tvarkymas.",
+    "intro": { "title": "Tavo bibliografija", "body": "Visos erdvės nuorodos gyvena čia. Importuok BibTeX failą arba pridėk įrašus rankiniu būdu." },
+    "add": { "title": "Pridėk arba importuok", "body": "Numesk .bib failą arba įklijuok BibTeX tekstą. Dublikatai automatiškai praleidžiami." },
+    "list": { "title": "Sąrašas", "body": "Ieškok, filtruok ir redaguok citatas inline. Iš čia taip pat gali eksportuoti visą bibliografiją." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Laisva užrašų drobė.",
+    "intro": { "title": "Mąstyk garsiai", "body": "BrainSpace yra laisva drobė idėjoms — mesti pastabas, sujunk jas ir suformuok savo mąstymą prieš pereinant į prozą." },
+    "addNote": { "title": "Pridėk pastabą", "body": "Numesk bet kokios rūšies pastabą ant drobės. Vilk, kad perkeltum, keisk dydį iš kampų." },
+    "canvas": { "title": "Drobė", "body": "Shift+spustelėk ant dviejų pastabų, kad jas sujungtum. Spustelėk foną, kad panaikintum pasirinkimą." }
+  }
+}

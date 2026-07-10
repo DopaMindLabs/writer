@@ -1,0 +1,10 @@
+{
+  "bootErrorLabel": "Hala ʻi he kamataʻanga",
+  "bootErrorResetHint": "Kapau ʻe hokohoko atu ʻeni, te ke lava ʻo tamateʻi ʻa e fakamatala fakalotofonua ʻo e polokalamá pea toe kamata foʻou.",
+  "bootErrorResetAction": "Toe fokotuʻutuʻu ʻa e fakamatala fakalotofonuá…",
+  "bootErrorResetTitle": "Tamateʻi ʻa e fakamatala fakalotofonua kotoa?",
+  "bootErrorResetBody": "ʻE tamateʻi taʻengata ʻe heni ʻa e meʻa kotoa kuo tauhi ʻe he polokalamá ʻi he palausa ko ʻení — ngaahi tohi, nouti, lau mo e ngaahi tatau maluʻi. He ʻikai lava ke fakafoki.",
+  "bootErrorResetConfirm": "Tamateʻi kotoa",
+  "bootErrorResetCancel": "Fakaʻikai",
+  "booting": "ʻOku kamata…"
+}

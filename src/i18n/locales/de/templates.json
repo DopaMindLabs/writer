@@ -1,0 +1,42 @@
+{
+  "blank": {
+    "label": "Leer",
+    "tag": "LE",
+    "description": "von Grund auf beginnen"
+  },
+  "fiction": {
+    "label": "Belletristik",
+    "tag": "FI",
+    "description": "Roman · Kurzgeschichte · Drehbuch"
+  },
+  "humanities": {
+    "label": "These · Forschung",
+    "tag": "TH",
+    "description": "lange akademische Arbeit"
+  },
+  "journal": {
+    "label": "Tagebuch",
+    "tag": "JO",
+    "description": "täglich, ohne Druck"
+  },
+  "serial": {
+    "label": "Serie",
+    "tag": "SE",
+    "description": "wiederkehrende Essays · Newsletter"
+  },
+  "six": {
+    "label": "Sechs Türen · kollaborativ",
+    "tag": "SD",
+    "description": "geteilte Welt · mehrere Autoren"
+  },
+  "technical": {
+    "label": "Technisch · Wissenschaftlicher Bericht",
+    "tag": "TX",
+    "description": "Wissenschaftlich · Methoden · Gleichungen"
+  },
+  "bioinformatics": {
+    "label": "Bioinformatik",
+    "tag": "BX",
+    "description": "Pipelines · Methoden · Laborbuch"
+  }
+}

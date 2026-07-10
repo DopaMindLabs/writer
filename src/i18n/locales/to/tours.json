@@ -1,0 +1,37 @@
+{
+  "menu": { "help": "Tokoni mo e ngaahi ʻaʻahi", "tours": "Ngaahi ʻaʻahi tataki", "resetAll": "Toe fokotuʻutuʻu kotoa ʻa e ngaahi ʻaʻahi" },
+  "controls": { "next": "Hokoʻi", "prev": "Foki", "done": "Kuo lava", "progress": "{{current}} mei he {{total}}" },
+  "welcome": {
+    "title": "Mālō e lelei ki LIpsum Writer",
+    "description": "Ko ha fakafeʻiloaki vave ʻo e ngaahi vāhā mo e mata ʻapi.",
+    "intro": { "title": "Mālō e lelei", "body": "Ko LIpsum Writer ko ha feituʻu ngāue tohi kuo langaʻi takatakai he <i>ngaahi vāhā</i> — vāhā ʻe taha ki he poloseki, tohinui, tohi. Tau vakai vave." },
+    "continue": { "title": "Hokohoko mei he feituʻu naʻa ke tuku ai", "body": "Ko hoʻo vāhā fakamuimuitaha kuo fakatonutonu ʻoku ʻi heni. Lomiʻi taha ke toe tauʻave." },
+    "startSpace": { "title": "Kamata ha meʻa foʻou", "body": "Ngaohi ha vāhā foʻou mei ha sēpani — vakaiʻi, tohi, fakatonutonu — pea kamata tohi ʻi ha ki he sekoni." }
+  },
+  "writer": {
+    "title": "Feituʻu ngāue ʻo e tohi",
+    "description": "ʻAʻahi ʻo e fakatonutonu, peniti tafaʻaki mo e peniti ʻi ʻolunga.",
+    "intro": { "title": "Funga tohi", "body": "Ko ʻeni ʻoku ke fai ai ho ngāue. Tau vakai ki he folaki, ngaahi founga mo ngaahi meʻangāue te ke fakaʻaongaʻi lahi taha." },
+    "spaceTitle": { "title": "Fakaʻilonga ʻo e vāhā", "body": "Lomiʻi ʻa e fakaʻilonga ke toe fakahingoa ʻa e vāhā. ʻOku fakaʻata ʻe he fakatātā ofiofi ki ai hono ngaahi fokotuʻutuʻu." },
+    "sections": { "title": "Konga mo e ngaahi tohi", "body": "Fokotuʻutuʻu ha vāhā ki he ngaahi konga, mo e ngaahi konga ki he ngaahi tohi. Tāʻakai ki ha konga ke tānaki ha tohi." },
+    "settings": { "title": "Fokotuʻutuʻu ʻo e vāhā", "body": "Pule ʻa e sēpani, konga, fevahevahei mo e tāmateʻi ʻo e vāhā ko ʻeni." },
+    "modes": { "title": "Lau · Tohi · Vaeua", "body": "Fetongi ʻi he vahaʻa ʻo e fakatonutonu, lau pe sio fakatataha. ʻOku manatuʻi ʻe he tohi taki taha ʻene founga fakamuimui." },
+    "citations": { "title": "Ngaahi lave", "body": "Fakaʻata ʻa e panele lave ke huʻi ai ʻa e ngaahi lave lolotonga ʻoku ke tohi." },
+    "theme": { "title": "Kaveinga", "body": "Maama, fakapoʻuli mo ʻulungaaki maʻolunga — fili ʻa e mea ʻoku fenāpasi mo ho mata." },
+    "editor": { "title": "Ko e fakatonutonu", "body": "Ko ha fakatonutonu lea koloaʻia mo e ngaahi hala fakanounou Markdown, ngaahi poloka kouti mo e ngaahi lave. Kamata tohi — ʻoku fokotuʻu fakaʻate hoʻo ngāue ʻi he feituʻu." }
+  },
+  "citations": {
+    "title": "Ngaahi lave",
+    "description": "Puleʻi ʻo e ngaahi lave mo e tohi fakamatala.",
+    "intro": { "title": "Ko hoʻo tohi fakamatala", "body": "ʻOku nofo ʻi heni ʻa e ngaahi lave kotoa ʻo ha vāhā. Hū mai ha faile BibTeX pe tānaki mai ha ngaahi ʻīsiu ʻi he nima." },
+    "add": { "title": "Tānaki pe hū mai", "body": "Tukuange ha faile .bib pe maʻu ʻa e tohi BibTeX. ʻOku puna fakaʻate ʻa e ngaahi tatau." },
+    "list": { "title": "Ko e fakahokohoko", "body": "Kumi, faʻo mo fakatonutonu ʻa e ngaahi lave ʻi he laine. Mei heni ʻe lava ke ke ʻave atu foki ʻa e tohi fakamatala kotoa." }
+  },
+  "brainspace": {
+    "title": "BrainSpace",
+    "description": "Ko e fakaʻata tauʻatāina ki he ngaahi fakaʻilonga.",
+    "intro": { "title": "Fakakaukau leʻo lahi", "body": "Ko BrainSpace ko ha fakaʻata tauʻatāina ki he ngaahi fakakaukau — tuku ʻa e ngaahi fakaʻilonga, fakahoko kinautolu pea ngaohi hoʻo fakakaukau ʻi muʻa ʻi hoʻo aʻu ki he tohi." },
+    "addNote": { "title": "Tānaki ha fakaʻilonga", "body": "Tukuange ha fakaʻilonga ʻo ha faʻahinga ʻi he fakaʻata. Tohoaki ke hiki, fakalahi mei he ngaahi tuliki." },
+    "canvas": { "title": "Ko e fakaʻata", "body": "Shift+lomiʻi ha fakaʻilonga ʻe ua ke fakahoko. Lomiʻi ʻi he tuʻa ke toʻo ʻa e fili." }
+  }
+}

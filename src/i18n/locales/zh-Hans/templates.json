@@ -1,0 +1,10 @@
+{
+  "blank": { "label": "空白", "tag": "BL", "description": "从零开始" },
+  "fiction": { "label": "虚构写作", "tag": "FI", "description": "小说 · 短篇 · 剧本" },
+  "humanities": { "label": "论文 · 研究", "tag": "TH", "description": "长篇学术作品" },
+  "journal": { "label": "日记", "tag": "JO", "description": "每日、轻松" },
+  "serial": { "label": "连载", "tag": "SE", "description": "定期文章 · 通讯" },
+  "six": { "label": "六门 · 协作", "tag": "SD", "description": "共享世界 · 多位作者" },
+  "technical": { "label": "技术 · 科学报告", "tag": "TX", "description": "科学 · 方法 · 方程" },
+  "bioinformatics": { "label": "生物信息学", "tag": "BX", "description": "流水线 · 方法 · 实验笔记" }
+}
