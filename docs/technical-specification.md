@@ -39,7 +39,7 @@
 | 5 | **Brain Space** | A freeform visual canvas for unsorted notes. Multiple note kinds (Note, Char, Place, Lore, Question, Source, Claim, Figure, Todo, Loose End, Blank). Notes can be connected and linked to documents. |
 | 6 | **Citations** | Manual + BibTeX import (paste or `.bib` upload), tag-based search, bulk edit / bulk delete, `.bib` export. Available as a screen, a split-view pane, and a drawer. |
 | 7 | **Sidebar** | Per-space navigation: section list, doc list, add doc, add section (when the template's `allowExtraSections` is on), inline rename, Brain Space link with unsorted-note count, settings cog. |
-| 8 | **Mobile nav** | Hamburger drawer on small viewports; settings tabs reflow without horizontal overflow. |
+| 8 | **Mobile nav** | Hamburger drawer on small viewports; settings tabs reflow without horizontal overflow. On the settings shells the wordmark / tag badge is the "back to root" affordance (the SpaceRail's own home link is hidden on mobile). |
 | 9 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), placeholder tabs for Account, Typography, Shortcuts, Backups. |
 | 10 | **Per-space settings** | General (name, tag), Sharing (coming soon), Template (coming soon), Members, Backups (manual `.md` snapshots + history + download), Danger Zone (delete with typed confirmation). |
 | 11 | **Persistence** | IndexedDB autosave (~600 ms debounce). Survives reload, route changes, browser restart. Versioned Dexie migrations. |
@@ -250,7 +250,7 @@ Adapts to screen size and mode.
 
 ### 4.9 Global settings (`/settings`)
 
-Tabbed user-wide preferences.
+Tabbed user-wide preferences. The shell-header wordmark badge (`L`) links back to Home — the primary way out of settings on mobile, where the SpaceRail's home link is hidden.
 
 | Tab | Status | Contents |
 |-----|--------|----------|
@@ -269,7 +269,7 @@ Mobile: all tabs reflow without horizontal overflow at 390×800.
 
 ### 4.10 Per-space settings (`/s/:spaceId/settings`)
 
-Reached via the cog in the sidebar header. The **back** link returns to the active space (not Home).
+Reached via the cog in the sidebar header. The **back** link returns to the active space (not Home). The shell-header tag badge is likewise a link back to the space's Write view — the way out of settings on mobile.
 
 | Tab | Status | Contents |
 |-----|--------|----------|

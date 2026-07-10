@@ -1,4 +1,8 @@
 {
+  "navShell": {
+    "home": "Home",
+    "openSpace": "Open {{name}}"
+  },
   "spaceRail": {
     "landmarkLabel": "Spaces"
   },
