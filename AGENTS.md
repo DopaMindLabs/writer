@@ -212,8 +212,11 @@ linted by commitlint (the `commit-msg` hook); run `npm run commit` for a guided 
 prompt. The **PR title** must itself be a valid Conventional Commit subject
 (`<type>(<scope>): <description>`, e.g. `feat(citations): import BibTeX`) — the squash-merge
 commit is derived from it, so a non-conforming title breaks the convention on the default
-branch. Branch names must be prefixed with a Conventional Commit type, enforced by the
-`pre-push` hook and the **Branch name** CI check (`scripts/validate-branch-name.mjs`):
+branch. Branch names must be prefixed with a Conventional Commit type. This is enforced at
+every stage by `scripts/validate-branch-name.mjs`: the `pre-commit` hook blocks the first
+commit on a misnamed branch (fail fast), the `pre-push` hook blocks the push, the **Branch
+name** CI check gates the PR, and the `post-checkout` hook prints a non-blocking warning
+the moment a misnamed branch is checked out (`--warn` mode):
 
 - Form: `<type>/<kebab-description>` — e.g. `feat/user-login`, `fix/date-parse`,
   `chore/bump-deps`. Underscores are allowed for suffixes (`feat/user-login_v2`).
@@ -224,9 +227,12 @@ branch. Branch names must be prefixed with a Conventional Commit type, enforced 
 - **No AI assistant names.** Branch names must never contain `claude` or `codex`
   (enforced by `validate-branch-name.mjs`), and commit messages must not reference
   an assistant — no `Co-Authored-By` bot trailers, product names, or session links
-  (enforced by `scripts/check-commit-attribution.mjs` on the `commit-msg` hook). The
-  sole allowed occurrence in a message is the literal `.claude` config folder path,
-  so a commit editing `.claude/settings.json` can still name the file.
+  (enforced by `scripts/check-commit-attribution.mjs` on the `commit-msg` hook).
+  The **author identity** on the commit itself is checked by the same script:
+  `claude` / `codex` / `anthropic` / `openai` in the name or email are rejected,
+  so a valid message under a vendor-noreply mailbox no longer slips through.
+  The sole allowed occurrence in a message is the literal `.claude` config
+  folder path, so a commit editing `.claude/settings.json` can still name the file.
 
 ### Protected branches (read before any git write)
 
