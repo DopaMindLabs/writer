@@ -349,7 +349,9 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   its own — the presence-gated keyless section is the single source of key actions, so a set-up
   can never mint a key that diverges from a not-yet-pulled account escrow, and space creation is
   blocked with the same inline notice while the lock holds. Sign-in is surfaced on
-  the Home page and in Quick settings (flag-gated) so it is discoverable before a space exists. Opting out is **non-destructive** —
+  the Home page (flag-gated) so it is discoverable before a space exists; the **Quick settings**
+  popover always offers a direct **Account** link to the account settings tab (where sign-in and
+  encryption live), regardless of the flag. Opting out is **non-destructive** —
   the cloud schema is sticky so a rebuild never erases local content.
 - **Server sees / does not see.** Cannot: bodies, titles, note text, citation
   metadata, attachment bytes. Can: record ids and relationships, timestamps, note kinds,
