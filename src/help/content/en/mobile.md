@@ -15,6 +15,10 @@ On narrow screens the sidebar collapses behind a menu and a **bottom-tabs** nav
 appears. Tap a tab to switch modes, open the **nav drawer** to reach spaces and
 documents, and open **more** for settings, **Help**, and about.
 
+In **settings**, tap the badge in the top-left of the settings panel to leave:
+the **L** wordmark in universal settings takes you back to Home, and a space's
+tag badge takes you back to that space.
+
 ## What works well on mobile
 
 - Reading and reviewing drafts in **read** mode.
