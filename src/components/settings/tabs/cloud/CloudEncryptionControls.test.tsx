@@ -26,14 +26,16 @@ describe('CloudEncryptionControls', () => {
     expect(screen.queryByTestId('cloud-forget')).toBeNull();
   });
 
-  it('shows sign-out (not sign-in) while signed in without a key', async () => {
+  it('offers only sign-out while signed in without a key (the keyless section owns set-up and unlock)', async () => {
     const h = handlers();
     renderWithProviders(<CloudEncryptionControls hasKey={false} signedIn {...h} />);
+    // Set-up/unlock/sign-in are withheld here so they cannot mint a divergent key
+    // or throw a misleading pre-pull error — CloudKeylessAccountSection owns them.
+    expect(screen.queryByTestId('cloud-setup')).toBeNull();
+    expect(screen.queryByTestId('cloud-unlock')).toBeNull();
     expect(screen.queryByTestId('cloud-sign-in')).toBeNull();
     await userEvent.click(screen.getByTestId('cloud-sign-out'));
     expect(h.onSignOut).toHaveBeenCalledTimes(1);
-    // Set-up/unlock stay available so the user can acquire a key.
-    expect(screen.getByTestId('cloud-setup')).toBeInTheDocument();
   });
 
   it('enables sign-in once keyed and signed out', async () => {
