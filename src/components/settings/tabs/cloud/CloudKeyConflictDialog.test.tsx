@@ -47,15 +47,35 @@ describe('CloudKeyConflictDialog', () => {
   });
 
   it('keeps erase off the unlock surface, behind its own step', async () => {
-    const onErase = vi.fn().mockResolvedValue(undefined);
-    render({ onErase });
-
+    render({ onErase: vi.fn().mockResolvedValue(undefined) });
     expect(screen.queryByTestId('cloud-conflict-erase')).not.toBeInTheDocument();
     await userEvent.click(
       screen.getByRole('button', { name: /don't have that passphrase/i }),
     );
-    await userEvent.click(screen.getByTestId('cloud-conflict-erase'));
+    expect(screen.getByTestId('cloud-conflict-erase')).toBeInTheDocument();
+  });
 
+  it('arms the irreversible erase only after the confirmation word is typed', async () => {
+    const onErase = vi.fn().mockResolvedValue(undefined);
+    render({ onErase });
+    await userEvent.click(
+      screen.getByRole('button', { name: /don't have that passphrase/i }),
+    );
+
+    // The warning makes the irreversibility explicit and the button is disabled.
+    expect(screen.getByTestId('cloud-conflict-erase-warning')).toHaveTextContent(
+      /can't be undone/i,
+    );
+    const eraseBtn = screen.getByTestId('cloud-conflict-erase');
+    expect(eraseBtn).toBeDisabled();
+
+    // A near miss stays disabled; the exact word (case-insensitive) arms it.
+    await userEvent.type(screen.getByTestId('cloud-conflict-erase-input'), 'ERAS');
+    expect(eraseBtn).toBeDisabled();
+    await userEvent.type(screen.getByTestId('cloud-conflict-erase-input'), 'E');
+    expect(eraseBtn).toBeEnabled();
+
+    await userEvent.click(eraseBtn);
     expect(onErase).toHaveBeenCalledTimes(1);
   });
 });

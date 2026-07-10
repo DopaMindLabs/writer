@@ -21,14 +21,22 @@ export const useKeyConflictResolution = ({
   const { t } = useTranslation('screens');
   const [step, setStep] = useState<Step>('unlock');
   const [value, setValue] = useState('');
+  const [eraseConfirm, setEraseConfirm] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // Typing this word arms the destructive erase (mirrors typing a space's name to
+  // delete it), so it can never fire on a single accidental click.
+  const eraseWord = t('settings.account.cloud.conflict.eraseWord');
+  const canErase =
+    eraseConfirm.trim().toUpperCase() === eraseWord.toUpperCase() && !busy;
 
   const finish = (): void => {
     onResolved();
     onClose();
     setStep('unlock');
     setValue('');
+    setEraseConfirm('');
     setError(null);
   };
   const submitUnlock = (event: SyntheticEvent): void => {
@@ -46,7 +54,7 @@ export const useKeyConflictResolution = ({
       });
   };
   const confirmErase = (): void => {
-    if (busy) return;
+    if (!canErase) return;
     setBusy(true);
     void onErase()
       .then(finish)
@@ -56,7 +64,11 @@ export const useKeyConflictResolution = ({
   };
   const showStep = (next: Step): void => {
     setStep(next);
+    setEraseConfirm('');
     setError(null);
   };
-  return { step, value, error, busy, setValue, submitUnlock, confirmErase, showStep };
+  return {
+    step, value, eraseConfirm, eraseWord, canErase, error, busy,
+    setValue, setEraseConfirm, submitUnlock, confirmErase, showStep,
+  };
 };
