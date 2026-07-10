@@ -100,6 +100,9 @@ describe('SplitScreen', () => {
         'split-right-pane-select',
       )) as HTMLSelectElement;
       expect(select).toHaveAttribute('aria-label', 'Right pane document');
+      // The candidate docs load asynchronously; wait for the option to appear
+      // before selecting it, or selectOptions can race an empty list.
+      await screen.findByRole('option', { name: 'Third Doc' });
       await userEvent.selectOptions(select, 'd3');
       await waitFor(() => { expect(select.value).toBe('d3'); });
     });
