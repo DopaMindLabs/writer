@@ -7,6 +7,11 @@ import { readFileSync } from 'node:fs';
 // touched. Everything else matching `claude` / `codex` is rejected.
 const DENY = /\b(?:claude|codex)\b/i;
 
+// Author identity is separately banned from carrying assistant names or
+// vendor-noreply mailboxes, so a valid message under a Claude/anthropic
+// author no longer slips through.
+const AUTHOR_DENY = /\b(?:claude|codex|anthropic|openai)\b/i;
+
 // The commit-msg file also contains git's `#` help lines and, under
 // `git commit -v`, the full diff below a scissors marker. Strip both so code
 // under review (which may legitimately contain these words) can't trip the
@@ -33,7 +38,15 @@ const resolveMessage = () => {
   return kept.join('\n').replace(/\.claude\b/gi, '');
 };
 
-const fail = () => {
+// During the commit-msg hook git exports GIT_AUTHOR_NAME / GIT_AUTHOR_EMAIL
+// for the pending commit — the reliable read for the identity being applied
+// to this specific commit (rather than the ambient config).
+const resolveAuthor = () => ({
+  name: process.env.GIT_AUTHOR_NAME ?? '',
+  email: process.env.GIT_AUTHOR_EMAIL ?? '',
+});
+
+const failMessage = () => {
   const lines = [
     '',
     '✖ Commit message references an AI assistant (claude/codex).',
@@ -47,13 +60,31 @@ const fail = () => {
   process.exitCode = 1;
 };
 
+const failAuthor = (name, email) => {
+  const lines = [
+    '',
+    `✖ Commit author references an AI assistant / vendor: "${name} <${email}>"`,
+    '',
+    'Set a personal git identity (name + email) before committing.',
+    'Example (repo-local):',
+    '  git config user.name  "Your Name"',
+    '  git config user.email "you@users.noreply.github.com"',
+    '',
+  ];
+  console.error(lines.join('\n'));
+  process.exitCode = 1;
+};
+
 const main = () => {
   const message = resolveMessage();
-  if (message.length === 0) {
-    return;
+  if (message.length > 0 && DENY.test(message)) {
+    failMessage();
   }
-  if (DENY.test(message)) {
-    fail();
+  const { name, email } = resolveAuthor();
+  // Only enforce when git has populated the author env vars (commit-msg does;
+  // ad-hoc `node scripts/…` invocations do not — those stay lint-only).
+  if ((name || email) && AUTHOR_DENY.test(`${name} ${email}`)) {
+    failAuthor(name, email);
   }
 };
 
