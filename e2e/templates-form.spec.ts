@@ -24,11 +24,37 @@ test('create a space with custom name and tag', async ({ page }) => {
   const tagInput = page.getByTestId('templates-tag-input');
   await tagInput.fill('MCS');
 
+  // With no cloud write lock engaged, no lock notice is shown.
+  await expect(page.getByTestId('templates-lock-banner')).toHaveCount(0);
+
   // Submit the form
   await page.getByTestId('templates-submit').click();
 
   // Should navigate to the new space
   await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
+});
+
+test.describe('cloud write lock', () => {
+  test('blocks creating a space while the key-mismatch lock is engaged', async ({ page }) => {
+    await page.goto('/?reseed=1&cloud-mismatch=1#/new');
+
+    const banner = page.getByTestId('templates-lock-banner');
+    await expect(banner).toBeVisible();
+    await expect(banner).toContainText(/encryption key has changed/i);
+    await expect(page.getByTestId('templates-submit')).toBeDisabled();
+
+    await page.getByRole('button', { name: /open account settings/i }).click();
+    await page.waitForURL(/#\/settings\?tab=account/);
+  });
+
+  test('blocks creating a space while the keyless lock is engaged', async ({ page }) => {
+    await page.goto('/?reseed=1&cloud-keyless=1#/new');
+
+    const banner = page.getByTestId('templates-lock-banner');
+    await expect(banner).toBeVisible();
+    await expect(banner).toContainText(/signed in without an encryption key/i);
+    await expect(page.getByTestId('templates-submit')).toBeDisabled();
+  });
 });
 
 test('template form uses default name if custom name is cleared', async ({

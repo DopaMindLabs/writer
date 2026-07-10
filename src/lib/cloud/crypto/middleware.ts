@@ -12,7 +12,7 @@ import { isEncryptedTable, plaintextFieldsFor, CIPHER_FIELD } from './tableRules
 import { sealRow, openRow, EnvelopeIntegrityError } from './envelope';
 import { CloudKeyMismatchError, CloudKeylessWriteError } from './errors';
 import { keyMismatchState } from './keyMismatch';
-import { keylessLockState } from './keylessLock';
+import { currentLockReason, type LockReason } from './lockReason';
 
 /**
  * A synchronous view of the active key ring for the encryption middleware.
@@ -24,17 +24,7 @@ export interface KeyProvider {
   current(): CloudKeyRing | null;
 }
 
-/** Why content writes are refused, if they are. */
-export type LockReason = 'none' | 'mismatch' | 'keyless';
-
 type Row = Record<string, unknown>;
-
-/** The default write-lock policy: a detected mismatch wins, else signed-in-keyless. */
-const defaultLockReason = (): LockReason => {
-  if (keyMismatchState.current()) return 'mismatch';
-  if (keylessLockState.current()) return 'keyless';
-  return 'none';
-};
 
 /** The stored primary key of a row, as a string for the envelope's row binding. */
 const pkString = (table: DBCoreTable, value: Row, fallback?: unknown): string => {
@@ -225,7 +215,7 @@ const wrapTable = (
  */
 export const createEncryptionMiddleware = (
   provider: KeyProvider,
-  lockReason: () => LockReason = defaultLockReason,
+  lockReason: () => LockReason = currentLockReason,
   flagMismatch: () => void = () => {
     keyMismatchState.set(true);
   },

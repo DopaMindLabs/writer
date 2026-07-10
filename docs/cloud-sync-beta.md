@@ -235,6 +235,16 @@ because the settings surface itself reads content. (The recovery screen
 (`src/components/errors/`) still catches a genuine `EnvelopeIntegrityError` — e.g. a
 wrong-key write path — and its **Unlock in settings** action is a full navigation to the
 Account tab, since a render-time error boundary is not reset by a same-location `navigate`.)
+
+The lock is also surfaced **where it bites**. The `useCloudLockReason` hook
+(`src/hooks/useCloudLockReason.ts`) exposes the write-lock reason reactively — sharing the
+middleware's `mismatch > keyless > none` precedence via `src/lib/cloud/crypto/lockReason.ts` —
+so the New-space (Templates) screen can show an inline notice naming the reason, link to the
+Account tab, and disable space creation before a doomed write is attempted. The submit path also
+catches defensively: a refused `createSpaceFromTemplate` maps `isCloudKeyError` to the same
+"locked" notice (anything else to a generic failure), so a lock that races the render is a notice
+rather than an unhandled promise rejection.
+
 The user resolves it from the cloud settings section in one of two ways:
 
 - **Adopt** — enter the passphrase the account was created under. The account escrow is
@@ -261,7 +271,9 @@ weakening the guarantee that plaintext never leaves the device:
 - **Keyless write lock.** While a device is signed in without a key ring
   (`keylessLockState`, kept in step by `startKeylessLockMonitor`), the middleware refuses
   content `add`/`put` with `CloudKeylessWriteError` (deletes still pass), so no plaintext can
-  reach the sync queue before a key exists.
+  reach the sync queue before a key exists. Like the mismatch lock, this reason surfaces through
+  `useCloudLockReason` on the New-space screen — a notice explains that the device is signed in
+  without a key and space creation is disabled until one is set up or adopted.
 - **Sealed-row hiding.** A keyless signed-in device drops sealed rows it cannot open from
   reads (rather than returning raw ciphertext), so the UI never renders undefined fields.
 - **Adopt or set up.** Once the account pull is confirmed, `cloudEscrowPresence`
@@ -346,6 +358,10 @@ the file holds no secrets.
   **ciphertext in the `$<table>_mutations` sync queue — the go/no-go (P2)**, plaintext
   through the app (P3), IV uniqueness (P4), Blob round-trips (P5), and untouched
   local-only tables (P6). Envelope, key, recovery-code and setup suites cover the rest.
+  The write-lock **surfaces** (the settings conflict banner and the New-space notice) are driven
+  headlessly by the dev/e2e boot params `?cloud-mismatch=1` and `?cloud-keyless=1`
+  (`applyDevBootParams` in `src/App.tsx`), which force the respective signal so the UI can be
+  asserted without a live two-device sign-in (`templates-form.spec.ts`, `cloud-sync.spec.ts`).
 
 - **Not verifiable in CI** (do not paper over these in any PR/summary):
   1. A real sync round-trip — needs a live Dexie Cloud database and an email OTP.

@@ -4,6 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { listTemplates, type Template } from '@/data/templates';
 import { createSpaceFromTemplate } from '@/db/seed';
 import { routes } from '@/lib/routes';
+import { isCloudKeyError } from '@/lib/cloud/crypto/errors';
+import { useCloudLockReason } from '@/hooks/useCloudLockReason';
+import type { TemplatesSubmitError } from '@/components/templates/TemplatesNotice';
 
 /** The i18n-aware label, tag and description resolvers for a template. */
 const useTemplateLabels = () => {
@@ -36,17 +39,21 @@ const useTemplateSubmit = ({
   templateTag,
 }: TemplateSubmitParams) => {
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<TemplatesSubmitError>(null);
   const navigate = useNavigate();
 
   const submitTemplate = async () => {
     if (!selected || submitting) return;
     setSubmitting(true);
+    setSubmitError(null);
     try {
       const cleanTag =
         tag.trim().slice(0, 3).toUpperCase() || templateTag(selected);
       const cleanName = name.trim() || templateLabel(selected);
       const newId = await createSpaceFromTemplate(selected, cleanName, cleanTag);
       void navigate(routes.spaceWrite(newId));
+    } catch (error) {
+      setSubmitError(isCloudKeyError(error) ? 'locked' : 'failed');
     } finally {
       setSubmitting(false);
     }
@@ -57,7 +64,7 @@ const useTemplateSubmit = ({
     void submitTemplate();
   };
 
-  return { submitting, onSubmit };
+  return { submitting, submitError, onSubmit };
 };
 
 /** State and handlers backing the New-space (Templates) screen. */
@@ -77,13 +84,14 @@ export const useTemplatesForm = () => {
     setTag(templateTag(tpl));
   };
 
-  const { submitting, onSubmit } = useTemplateSubmit({
+  const { submitting, submitError, onSubmit } = useTemplateSubmit({
     selected,
     name,
     tag,
     templateLabel,
     templateTag,
   });
+  const lockReason = useCloudLockReason();
 
   const submitLabel = t('templates.submitLabel', {
     name: name.trim() || (selected ? templateLabel(selected) : '…'),
@@ -96,6 +104,8 @@ export const useTemplatesForm = () => {
     name,
     tag,
     submitting,
+    submitError,
+    lockReason,
     submitLabel,
     templateLabel,
     templateDescription,

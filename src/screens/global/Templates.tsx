@@ -2,6 +2,7 @@ import { useTemplatesForm } from '@/hooks/useTemplatesForm';
 import { TemplatesHeader } from '@/components/templates/TemplatesHeader';
 import { TemplatesBody } from '@/components/templates/TemplatesBody';
 import { TemplatesFooter } from '@/components/templates/TemplatesFooter';
+import { TemplatesNotice } from '@/components/templates/TemplatesNotice';
 
 export const TemplatesScreen = () => {
   const {
@@ -11,6 +12,8 @@ export const TemplatesScreen = () => {
     name,
     tag,
     submitting,
+    submitError,
+    lockReason,
     submitLabel,
     templateLabel,
     templateDescription,
@@ -41,11 +44,13 @@ export const TemplatesScreen = () => {
           onSelect={onSelect}
         />
 
+        <TemplatesNotice lockReason={lockReason} submitError={submitError} />
+
         <TemplatesFooter
           name={name}
           tag={tag}
           submitting={submitting}
-          canSubmit={Boolean(selected)}
+          canSubmit={Boolean(selected) && lockReason === 'none'}
           submitLabel={submitLabel}
           onNameChange={setName}
           onTagChange={setTag}
