@@ -253,10 +253,22 @@ The user resolves it from the cloud settings section in one of two ways:
   passphrase remains.
 - **Erase** (escape hatch, when that passphrase is lost) — drop the account rows this device
   cannot read (their deletions sync away), keep the notes it wrote itself, and publish this
-  device's escrow as the account's.
+  device's escrow as the account's. Because this is **irreversible**, it is a deliberate
+  two-step gesture: the erase step carries an explicit "this can't be undone" warning and its
+  destructive button is armed only once the user types a confirmation word (`ERASE`), mirroring
+  the type-the-name gesture that guards deleting a space. It is safe against a stolen device or
+  a hostile client — a delete only replicates for a realm the authenticated identity is already
+  authorised to write, so the hatch can only erase content the signed-in user already owns; it
+  is lost-passphrase recovery for your own account, not a way to overwrite someone else's.
 
 The three-way loss — account passphrase forgotten **and** recovery code lost — ends only in
 the erase path. There is no fourth option by design: the server never holds a readable key.
+
+> **Follow-up (shared realms).** Today the escape hatch assumes a single-writer account. If
+> content is ever shared into a realm with **multiple writers**, one co-writer running erase
+> would re-key the shared realm and lock the others out. Before shared realms ship, erase must
+> be gated to realm-owners server-side (client-side confirmation is not an authorisation
+> boundary — the server is). Tracked as a design follow-up.
 
 ### 5.2 Signing in before a passphrase (the clean-device flow)
 

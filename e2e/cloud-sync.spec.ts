@@ -116,10 +116,15 @@ test.describe('cloud sync key conflict', () => {
     await page
       .getByRole('button', { name: /don't have that passphrase/i })
       .click();
-    await expect(page.getByTestId('cloud-conflict-erase')).toBeVisible();
+    // The irreversible erase is armed only by typing the confirmation word.
+    const eraseButton = page.getByTestId('cloud-conflict-erase');
+    await expect(eraseButton).toBeVisible();
+    await expect(eraseButton).toBeDisabled();
+    await page.getByTestId('cloud-conflict-erase-input').fill('ERASE');
+    await expect(eraseButton).toBeEnabled();
 
     // Erasing resolves the mismatch: the banner and dialog fall away.
-    await page.getByTestId('cloud-conflict-erase').click();
+    await eraseButton.click();
     await expect(page.getByText(/locked on another device/i)).toHaveCount(0);
     await expect(page.getByTestId('cloud-conflict-dialog')).toHaveCount(0);
   });
