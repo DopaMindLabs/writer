@@ -4,17 +4,15 @@ import { sampleSpace } from '@/test/fixtures';
 import { NavShellHeader } from './NavShellHeader';
 
 describe('NavShellHeader', () => {
-  it('renders the wordmark and default subtitle in the global variant', () => {
+  it('renders the wordmark, default subtitle and home link in the global variant', () => {
     renderWithProviders(<NavShellHeader variant="global" space={null} />);
     expect(screen.getByText('LIpsum Writer')).toBeInTheDocument();
     expect(screen.getByText('UNIVERSAL SETTINGS')).toBeInTheDocument();
-    expect(screen.getByText('L')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
   });
 
   it('renders the space name, tag and subtitle in the space variant', () => {
-    renderWithProviders(
-      <NavShellHeader variant="space" space={sampleSpace} />,
-    );
+    renderWithProviders(<NavShellHeader variant="space" space={sampleSpace} />);
     expect(screen.getByText(sampleSpace.name)).toBeInTheDocument();
     expect(screen.getByText(sampleSpace.tag)).toBeInTheDocument();
     expect(screen.getByText('SPACE SETTINGS')).toBeInTheDocument();
