@@ -27,6 +27,25 @@ Attach a note to a passage when a highlight alone isn't enough. Annotations keep
 your editorial thinking next to the text it refers to, without cluttering the
 prose itself.
 
+## Highlighting PDFs
+
+Open a PDF from your [library](media-library) and mark it up the same way you
+mark up your writing.
+
+- **Select text on the page** to summon the selection strip. Pick a colour to
+  highlight, or choose **underline** or **strikethrough** for a lighter mark.
+- **Add a note** from the strip to attach your thinking to the passage.
+- **Right-click an existing mark** to recolour it, edit its note, or remove it.
+  Re-highlighting the same text recolours the mark in place and keeps its note.
+- Open the **Highlights & notes** panel from the reader's rail to see every mark
+  in the document; select a row to jump to that page and focus the mark.
+- Open the **thumbnail column** to scan the whole document; each page's
+  thumbnail shows a coloured tick for the highlights on it, and clicking a
+  thumbnail jumps to that page.
+
+Highlights are saved with the PDF and stay on your device; they travel with the
+space when you export or import it.
+
 ## Tips
 
 - Decide what each colour means before you start, and keep it consistent.
