@@ -432,6 +432,10 @@
           "noPassphrase": "I don't have that passphrase",
           "eraseTitle": "Erase the account's copy?",
           "eraseBody": "Your other devices will lose their synced copy. The notes on this device are kept.",
+          "eraseWarningTitle": "This can't be undone",
+          "eraseWarningBody": "The account's encrypted notes are erased permanently — they can't be recovered afterwards, from any device or by support.",
+          "eraseWord": "ERASE",
+          "eraseConfirmLabel": "Type {{word}} to confirm",
           "eraseConfirm": "Erase the account's copy",
           "eraseBack": "Back"
         },
