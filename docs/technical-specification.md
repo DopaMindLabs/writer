@@ -301,7 +301,9 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   iterations) into an **escrow** record; a one-time **recovery code** (Crockford base32 of
   the master) is the fallback if every device forgets the passphrase. The device's derived
   key ring lives in a **separate, never-synced** keystore database, which also holds the
-  escrow until it is published (see Key reconciliation).
+  escrow until it is published (see Key reconciliation). The published escrow row's id is
+  `#v1` — Dexie Cloud's private-singleton key form, scoped per account on the server — so
+  every account gets its own escrow and one account's row can never shadow another's.
 - **Envelope.** Each encrypted row keeps its primary key and indexed fields plaintext and
   moves every other field into a `$lipsumCipher` envelope (`AES-256-GCM`, fresh IV per
   seal, AAD binding `table` + `primaryKey` + `epoch`).

@@ -16,6 +16,7 @@ import {
   wrapMasterSecret,
   unwrapMasterSecret,
   WrongPassphraseError,
+  ESCROW_ID,
 } from './crypto/keys';
 import { EscrowMissingError } from './crypto/errors';
 import { keyMismatchState } from './crypto/keyMismatch';
@@ -105,7 +106,7 @@ describe('cloud setup', () => {
     await publishPendingEscrow(db);
     const escrows = await db.cloudCrypto.toArray();
     expect(escrows).toHaveLength(1);
-    expect(escrows[0].id).toBe('v1');
+    expect(escrows[0].id).toBe(ESCROW_ID);
     expect(await loadPendingEscrow()).toBeNull();
 
     // Round-trips: recovering from the code on a fresh device yields a usable key.
@@ -122,7 +123,7 @@ describe('cloud setup', () => {
     await createCloudEncryption('mine', db, () => true); // signed in: keep the row
 
     expect(await publishPendingEscrow(db)).toBe('kept-server');
-    const stored = await db.cloudCrypto.get('v1');
+    const stored = await db.cloudCrypto.get(ESCROW_ID);
     expect(Array.from(stored?.fingerprint ?? [])).toEqual(
       Array.from(foreign.fingerprint),
     );
@@ -203,7 +204,7 @@ describe('cloud setup', () => {
   it('unlocking before an escrow has arrived throws EscrowMissingError, not a wrong-passphrase', async () => {
     // A fresh device with no published/pulled escrow — the catch-22 the second
     // device hits when it tries the account passphrase before signing in.
-    expect(await db.cloudCrypto.get('v1')).toBeUndefined();
+    expect(await db.cloudCrypto.get(ESCROW_ID)).toBeUndefined();
     await expect(unlockCloudEncryption('anything', db)).rejects.toBeInstanceOf(
       EscrowMissingError,
     );
@@ -252,7 +253,7 @@ describe('cloud setup', () => {
 
     await forgetThisDevice();
     expect(deviceKeyProvider.current()).toBeNull();
-    expect(await db.cloudCrypto.get('v1')).toBeDefined();
+    expect(await db.cloudCrypto.get(ESCROW_ID)).toBeDefined();
   });
 
   it('rejects a wrong recovery code and stays keyless', async () => {
@@ -300,7 +301,7 @@ describe('cloud key conflict resolution', () => {
     expect(keyMismatchState.current()).toBe(false);
     expect((await db.table<Row>('docs').get('acc'))?.name).toBe('account note');
     expect((await db.table<Row>('docs').get('mine'))?.name).toBe('my note');
-    const escrow = await db.cloudCrypto.get('v1');
+    const escrow = await db.cloudCrypto.get(ESCROW_ID);
     if (!escrow) throw new Error('expected an escrow after adoption');
     const recovered = await unwrapMasterSecret(escrow, 'new-pass');
     expect(Array.from(recovered)).toEqual(Array.from(accountMaster));
@@ -322,7 +323,7 @@ describe('cloud key conflict resolution', () => {
     expect(keyMismatchState.current()).toBe(false);
     expect(await db.table<Row>('docs').get('acc')).toBeUndefined();
     expect((await db.table<Row>('docs').get('mine'))?.name).toBe('my note');
-    const escrow = await db.cloudCrypto.get('v1');
+    const escrow = await db.cloudCrypto.get(ESCROW_ID);
     if (!escrow) throw new Error('expected the device escrow to be published');
     const recovered = await unwrapMasterSecret(escrow, 'new-pass');
     expect(Array.from(recovered)).not.toEqual(Array.from(accountMaster));

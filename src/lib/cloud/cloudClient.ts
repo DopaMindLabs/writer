@@ -5,6 +5,7 @@ import type { CloudObservable } from './cloudObservable';
 import { hasCloudEnv } from './env';
 import { readCloudFlag, wasCloudProvisioned } from './flag';
 import { loadDeviceKeyRing, deviceKeyProvider } from './crypto/keyStore';
+import { ESCROW_ID } from './crypto/keys';
 import { hasPlaintextSyncedRows } from './setup';
 import { KeylessSignInBlockedError } from './crypto/errors';
 
@@ -54,9 +55,6 @@ const constant = <T,>(value: T): CloudObservable<T> => ({
 });
 
 const INITIAL_STATE: SyncState = { status: 'not-started', phase: 'initial' };
-
-/** The single escrow row id in the synced `cloudCrypto` table. */
-const ESCROW_ID = 'v1';
 
 export const cloudUserInteraction = (): CloudObservable<DXCUserInteraction | undefined> =>
   cloudApi()?.userInteraction ?? constant(undefined);

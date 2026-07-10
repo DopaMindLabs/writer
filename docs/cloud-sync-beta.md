@@ -68,7 +68,12 @@ but never erases local content. (Verified empirically — see the toggle test in
   (§5.1). Holding it back is what makes publication add-only — the sync queue can never
   race a local escrow over the account's and clobber the key. Once published it **syncs**,
   so a second device recovers by re-entering the passphrase; safe to sync because it is
-  already ciphertext gated by the passphrase.
+  already ciphertext gated by the passphrase. The row id is `#v1` — Dexie Cloud's
+  **private-singleton** form (rewritten to `#v1:<userId>` on the wire), so each account
+  owns its own escrow row in its private realm. A bare id would be one global object
+  shared across every account in the database: the first account would claim it and every
+  other account's escrow would be silently rejected server-side, never reaching that
+  account's other devices.
 - **Recovery code** (`src/lib/cloud/crypto/recoveryCode.ts`) — the raw master secret plus
   a checksum byte, rendered in Crockford base32, grouped into 8-character blocks. Shown
   **exactly once** at setup and never stored. It is the only way back if every device
