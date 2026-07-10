@@ -89,6 +89,8 @@ export interface Note {
   body: string;
   linkedDocId?: string;
   createdAt: number;
+  /** When the note was last opened, if ever (epoch ms). */
+  openedAt?: number;
   layout?: NoteLayout;
   typeVersion?: string;
 }
