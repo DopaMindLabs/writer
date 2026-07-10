@@ -212,8 +212,11 @@ linted by commitlint (the `commit-msg` hook); run `npm run commit` for a guided 
 prompt. The **PR title** must itself be a valid Conventional Commit subject
 (`<type>(<scope>): <description>`, e.g. `feat(citations): import BibTeX`) — the squash-merge
 commit is derived from it, so a non-conforming title breaks the convention on the default
-branch. Branch names must be prefixed with a Conventional Commit type, enforced by the
-`pre-push` hook and the **Branch name** CI check (`scripts/validate-branch-name.mjs`):
+branch. Branch names must be prefixed with a Conventional Commit type. This is enforced at
+every stage by `scripts/validate-branch-name.mjs`: the `pre-commit` hook blocks the first
+commit on a misnamed branch (fail fast), the `pre-push` hook blocks the push, the **Branch
+name** CI check gates the PR, and the `post-checkout` hook prints a non-blocking warning
+the moment a misnamed branch is checked out (`--warn` mode):
 
 - Form: `<type>/<kebab-description>` — e.g. `feat/user-login`, `fix/date-parse`,
   `chore/bump-deps`. Underscores are allowed for suffixes (`feat/user-login_v2`).

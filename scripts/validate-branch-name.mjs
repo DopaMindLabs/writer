@@ -32,50 +32,72 @@ const EXEMPT = [
 // EXEMPT and PATTERN.
 const DENY = /claude|codex/i;
 
-const resolveBranch = () => {
-  const fromArg = process.argv[2];
-  if (typeof fromArg === 'string' && fromArg.trim().length > 0) {
-    return fromArg.trim();
+// Flags are separated from an optional positional branch override so callers
+// like pre-push (no args) and post-checkout (`--warn`) both work.
+const parseArgs = () => {
+  const rest = process.argv.slice(2);
+  const warn = rest.includes('--warn');
+  const branchArg = rest.find((arg) => !arg.startsWith('--'));
+  return { warn, branchArg };
+};
+
+const resolveBranch = (branchArg) => {
+  if (typeof branchArg === 'string' && branchArg.trim().length > 0) {
+    return branchArg.trim();
   }
   return execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();
 };
 
-const fail = (branch) => {
-  const lines = [
-    '',
-    `✖ Invalid branch name: "${branch}"`,
-    '',
-    'Branches must be prefixed with a Conventional Commit type:',
-    `  ${TYPES.join(', ')}`,
-    '',
-    'Use the form  <type>/<kebab-description>  (underscores allowed for suffixes)',
-    '  e.g.  feat/user-login   fix/date-parse   chore/bump-deps   feat/user-login_v2',
-    '',
-    'Exempt: main, develop, and automation / release branches',
-    '  (dependabot/*, release-please*, release/*, rc/*, pre-release/*).',
-    '',
-  ];
+// In warn mode (post-checkout) we surface the problem but never block: git
+// ignores the hook's exit code there, and a freshly-created branch shouldn't
+// look like a hard failure. Everywhere else an invalid name is fatal.
+const report = (lines, warn) => {
   console.error(lines.join('\n'));
-  process.exitCode = 1;
+  if (!warn) process.exitCode = 1;
 };
 
-const failAssistant = (branch) => {
-  console.error(`\n✖ Branch name references an AI assistant: "${branch}"\n`);
-  process.exitCode = 1;
+const glyph = (warn) => (warn ? '⚠ Warning' : '✖');
+
+const failFormat = (branch, warn) => {
+  report(
+    [
+      '',
+      `${glyph(warn)}: invalid branch name "${branch}"`,
+      '',
+      'Branches must be prefixed with a Conventional Commit type:',
+      `  ${TYPES.join(', ')}`,
+      '',
+      'Use the form  <type>/<kebab-description>  (underscores allowed for suffixes)',
+      '  e.g.  feat/user-login   fix/date-parse   chore/bump-deps   feat/user-login_v2',
+      '',
+      'Exempt: main, develop, and automation / release branches',
+      '  (dependabot/*, release-please*, release/*, rc/*, pre-release/*).',
+      '',
+    ],
+    warn,
+  );
+};
+
+const failAssistant = (branch, warn) => {
+  report(
+    ['', `${glyph(warn)}: branch name references an AI assistant: "${branch}"`, ''],
+    warn,
+  );
 };
 
 const main = () => {
-  const branch = resolveBranch();
+  const { warn, branchArg } = parseArgs();
+  const branch = resolveBranch(branchArg);
   if (branch.length === 0 || branch === 'HEAD') {
     return;
   }
   if (DENY.test(branch)) {
-    failAssistant(branch);
+    failAssistant(branch, warn);
     return;
   }
   const isAllowed = EXEMPT.some((re) => re.test(branch)) || PATTERN.test(branch);
   if (!isAllowed) {
-    fail(branch);
+    failFormat(branch, warn);
   }
 };
 
