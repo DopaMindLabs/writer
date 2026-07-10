@@ -1,0 +1,29 @@
+name: PR title
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Enforce Conventional Commit PR title
+        # Read the PR title from an env var (never inline the expression into
+        # the shell): a title crafted with backticks / $(…) would otherwise be
+        # a script-injection surface. commitlint reads from stdin and reuses
+        # `commitlint.config.js`, so this check stays byte-for-byte aligned
+        # with the local `commit-msg` hook and the squash-merge subject.
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: printf '%s' "$PR_TITLE" | npx --no-install commitlint
