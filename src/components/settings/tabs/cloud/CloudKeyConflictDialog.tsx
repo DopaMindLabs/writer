@@ -26,15 +26,27 @@ export const CloudKeyConflictDialog = ({
   onAdopt = (passphrase) => adoptAccountKey(passphrase, passphrase),
   onErase = eraseSyncedContent,
 }: CloudKeyConflictDialogProps) => {
-  const { step, value, error, busy, setValue, submitUnlock, confirmErase, showStep } =
-    useKeyConflictResolution({
-      onAdopt,
-      onErase,
-      onResolved,
-      onClose: () => {
-        onOpenChange(false);
-      },
-    });
+  const {
+    step,
+    value,
+    eraseConfirm,
+    eraseWord,
+    canErase,
+    error,
+    busy,
+    setValue,
+    setEraseConfirm,
+    submitUnlock,
+    confirmErase,
+    showStep,
+  } = useKeyConflictResolution({
+    onAdopt,
+    onErase,
+    onResolved,
+    onClose: () => {
+      onOpenChange(false);
+    },
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -53,6 +65,10 @@ export const CloudKeyConflictDialog = ({
         ) : (
           <CloudKeyConflictEraseStep
             busy={busy}
+            eraseWord={eraseWord}
+            confirmValue={eraseConfirm}
+            canErase={canErase}
+            onConfirmValue={setEraseConfirm}
             onBack={() => {
               showStep('unlock');
             }}
