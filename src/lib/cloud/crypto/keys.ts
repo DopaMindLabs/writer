@@ -146,14 +146,28 @@ export const calibrateIterations = async (): Promise<number> => {
   return Math.max(forOneSecond, ITERATIONS_FLOOR);
 };
 
+/**
+ * Canonicalise a passphrase before key derivation. Platforms emit different
+ * Unicode byte sequences for the same visible text (iOS keyboards favour
+ * decomposed accents, desktop keyboards composed), so without a fixed normal
+ * form the same passphrase typed on two devices derives two different KEKs and
+ * the correct passphrase reads as wrong. NFKC is the identity on ASCII.
+ */
+const canonicalPassphrase = (passphrase: string): string =>
+  passphrase.normalize('NFKC');
+
 const deriveKek = async (
   passphrase: string,
   salt: Uint8Array,
   iterations: number,
 ): Promise<CryptoKey> => {
-  const base = await crypto.subtle.importKey('raw', asBuffer(utf8(passphrase)), 'PBKDF2', false, [
-    'deriveKey',
-  ]);
+  const base = await crypto.subtle.importKey(
+    'raw',
+    asBuffer(utf8(canonicalPassphrase(passphrase))),
+    'PBKDF2',
+    false,
+    ['deriveKey'],
+  );
   return crypto.subtle.deriveKey(
     { name: 'PBKDF2', hash: PBKDF2_HASH, salt: asBuffer(salt), iterations },
     base,

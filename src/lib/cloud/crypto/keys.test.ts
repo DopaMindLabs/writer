@@ -34,6 +34,16 @@ describe('cloud keys', () => {
     expect(Array.from(recovered)).toEqual(Array.from(master));
   });
 
+  it('unwraps across Unicode normal forms of the same passphrase', async () => {
+    // "café" composed (NFC, as a desktop keyboard emits it) versus decomposed
+    // (NFD, as an iOS keyboard emits it): same visible passphrase, different
+    // byte sequences. Canonicalisation must make them derive the same KEK.
+    const master = generateMasterSecret();
+    const escrow = await wrapMasterSecret(master, 'caf\u00e9', FAST);
+    const recovered = await unwrapMasterSecret(escrow, 'cafe\u0301');
+    expect(Array.from(recovered)).toEqual(Array.from(master));
+  });
+
   it('throws WrongPassphraseError on a bad passphrase (GCM auth failure)', async () => {
     const escrow = await wrapMasterSecret(generateMasterSecret(), 'right', FAST);
     await expect(unwrapMasterSecret(escrow, 'wrong')).rejects.toBeInstanceOf(

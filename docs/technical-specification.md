@@ -298,7 +298,8 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   key is derived from it (HKDF-SHA-256, non-extractable), plus a public one-way
   **fingerprint** (a second HKDF info string) that identifies the key without revealing it.
   The master is wrapped under a passphrase-derived key (PBKDF2-SHA-512, ≥ 800 000 calibrated
-  iterations) into an **escrow** record; a one-time **recovery code** (Crockford base32 of
+  iterations; the passphrase is NFKC-normalised first, so composed and decomposed keyboard
+  input derive the same key) into an **escrow** record; a one-time **recovery code** (Crockford base32 of
   the master) is the fallback if every device forgets the passphrase. The device's derived
   key ring lives in a **separate, never-synced** keystore database, which also holds the
   escrow until it is published (see Key reconciliation). The published escrow row's id is
