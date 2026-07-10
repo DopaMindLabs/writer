@@ -262,6 +262,37 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     expect(raw?.[CIPHER_FIELD]).toBeDefined();
   });
 
+  it('decrypts a keyed bulkGet, returning plaintext for every requested row', async () => {
+    await table('docs').put({ id: 'a', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'Alpha' });
+    await table('docs').put({ id: 'b', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'Beta' });
+
+    // bulkGet drives the middleware's getMany path.
+    const rows = await table('docs').bulkGet(['a', 'b']);
+    expect(rows.map((r) => (r as AnyRow | undefined)?.name)).toEqual(['Alpha', 'Beta']);
+    expect(rows.every((r) => (r as AnyRow | undefined)?.[CIPHER_FIELD] === undefined)).toBe(true);
+  });
+
+  it('hides sealed rows from a keyless bulkGet, keeping plaintext ones', async () => {
+    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'secret' });
+    ring = null;
+    // A plaintext row written while keyless (pre-setup, lock off).
+    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'clear' });
+
+    keylessLockState.set(true);
+    const rows = await table('docs').bulkGet(['sealed', 'plain']);
+    // The sealed row becomes undefined; the plaintext one passes through.
+    expect(rows[0]).toBeUndefined();
+    expect((rows[1] as AnyRow | undefined)?.id).toBe('plain');
+  });
+
+  it('leaves a keyless bulkGet untouched when the keyless lock is off', async () => {
+    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'secret' });
+    ring = null;
+    // Lock off: the sealed row comes back raw (ciphertext at rest), not hidden.
+    const rows = await table('docs').bulkGet(['sealed']);
+    expect((rows[0] as AnyRow | undefined)?.[CIPHER_FIELD]).toBeDefined();
+  });
+
   it('P7: re-putting an already-sealed row preserves its ciphertext (no double-seal)', async () => {
     await table('docs').put({
       id: 'd1', spaceId: 's1', sectionId: 'x', updatedAt: 1,

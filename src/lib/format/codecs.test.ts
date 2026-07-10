@@ -65,6 +65,7 @@ describe('record codecs', () => {
       state: NoteState.SeedFetched,
       title: 'T',
       linkedDocId: 'd1',
+      openedAt: 1_700_000_000_000,
       layout: 'image',
       typeVersion: '1',
     };

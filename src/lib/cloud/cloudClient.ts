@@ -68,30 +68,31 @@ export const cloudCurrentUser = (): CloudObservable<UserLogin | undefined> =>
   cloudApi()?.currentUser ?? constant(undefined);
 
 /**
- * Whether the signed-in user's initial account pull has fully completed — the
- * addon's own websocket gate: `initiallySynced` is set and the user's private
- * realm (whose id equals the userId) is among the pulled realms. Escrow
- * publication is held until this is true, so a not-yet-pulled account escrow can
- * never be clobbered by this device's. `false` on a plain database.
+ * Whether the signed-in user's initial account pull has completed. The addon sets
+ * `initiallySynced` in the very same sync round that records the pulled realms and
+ * applies their rows (dexie-cloud-addon 4.4.13, `_sync`), so once it is `true` any
+ * escrow the account holds — in a realm the user belongs to — is already in
+ * `cloudCrypto`. Escrow publication is held until this is `true`, so a not-yet
+ * -pulled account escrow can never be clobbered by this device's.
+ *
+ * It deliberately does **not** also require the user's private realm to appear in
+ * the pulled-realm set. That realm is only enumerated once it holds a row, so a
+ * brand-new account (which never wrote an escrow) would never satisfy it — leaving
+ * a keyless device that signed in first stuck on "fetching your account…" forever,
+ * unable to set up or publish. `false` on a plain database.
  */
 export const isAccountPullComplete = (): boolean => {
   const cloud = (
     db as {
       cloud?: {
-        currentUser?: { value?: { isLoggedIn?: boolean; userId?: string } };
-        persistedSyncState?: {
-          value?: { initiallySynced?: boolean; realms?: string[] };
-        };
+        currentUser?: { value?: { isLoggedIn?: boolean } };
+        persistedSyncState?: { value?: { initiallySynced?: boolean } };
       };
     }
   ).cloud;
-  const user = cloud?.currentUser?.value;
-  const synced = cloud?.persistedSyncState?.value;
   return (
-    user?.isLoggedIn === true &&
-    typeof user.userId === 'string' &&
-    synced?.initiallySynced === true &&
-    (synced.realms ?? []).includes(user.userId)
+    cloud?.currentUser?.value?.isLoggedIn === true &&
+    cloud.persistedSyncState?.value?.initiallySynced === true
   );
 };
 
