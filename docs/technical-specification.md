@@ -92,7 +92,9 @@ A **space** is an independent writing project with its own sections, documents, 
 1. From Home, click **Start a new space** → navigates to `/new` (Templates).
 2. Pick a template (Fiction, Research, Essay, Journal). Each seeds its own initial sections and doc set.
 3. Enter a **name** and a **tag** (short label).
-4. Submit. The space is created in IndexedDB and the user lands on its first doc.
+4. Submit. The space is created in IndexedDB and the user lands on its first doc. While the cloud
+   write lock is engaged (a key mismatch, or signed in without a key), an inline notice explains
+   the reason and links to the Account tab, and submission is disabled until it is resolved.
 
 **Switch spaces.** The SpaceRail on the left lists existing spaces in Write mode. In Focus mode it collapses to a compact FocusRail.
 
@@ -100,7 +102,7 @@ A **space** is an independent writing project with its own sections, documents, 
 
 **Delete a space.** Space settings → **Danger zone** tab. The Delete button stays disabled until the user types the space name into the confirmation input. Deletion redirects to Home.
 
-*Covered by:* `space-creation.spec.ts`, `space-settings.spec.ts`, `split-and-sidebar.spec.ts`, `Templates.test.tsx`, `SpaceSettings.test.tsx`.
+*Covered by:* `space-creation.spec.ts`, `space-settings.spec.ts`, `split-and-sidebar.spec.ts`, `templates-form.spec.ts`, `Templates.test.tsx`, `TemplatesNotice.test.tsx`, `SpaceSettings.test.tsx`.
 
 ---
 
@@ -333,14 +335,20 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   the account key (enter the account passphrase; the device re-seals its own rows under it) or
   **erasing** the account's unreadable copy (kept: this device's notes). The route-level
   recovery screen still catches a genuine read failure, and its **Unlock in settings** action
-  is a full navigation to the Account tab. Never clobbers, never silently loses.
+  is a full navigation to the Account tab. Never clobbers, never silently loses. The New-space
+  (Templates) screen also surfaces the lock **proactively**: `useCloudLockReason` (mismatch >
+  keyless > none) drives an inline notice that names the reason and links to the Account tab, and
+  space creation is disabled while a lock holds; a submit that still races the lock is caught and
+  mapped to the same notice (`CloudKeyError` → locked, anything else → a generic failure), so a
+  refused write is never an unhandled rejection.
 - **Ordering.** The first device (with unencrypted writing) stays on passphrase-before-sign-in
   — sign-in is turned back until its writing is sealed. A **clean** device (no plaintext synced
   rows) may sign in first and then unlock/adopt the account key; while it is signed-in-keyless
   the middleware refuses content writes and hides sealed rows, so a keyless write is never
   uploaded in the clear either way, and the settings action row offers **no** set-up or unlock of
   its own — the presence-gated keyless section is the single source of key actions, so a set-up
-  can never mint a key that diverges from a not-yet-pulled account escrow. Sign-in is surfaced on
+  can never mint a key that diverges from a not-yet-pulled account escrow, and space creation is
+  blocked with the same inline notice while the lock holds. Sign-in is surfaced on
   the Home page and in Quick settings (flag-gated) so it is discoverable before a space exists. Opting out is **non-destructive** —
   the cloud schema is sticky so a rebuild never erases local content.
 - **Server sees / does not see.** Cannot: bodies, titles, note text, citation
@@ -350,14 +358,15 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
 See [`docs/cloud-sync-beta.md`](cloud-sync-beta.md) for the full design note and the
 manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P8 ciphertext and
 mismatch-lock spike), `envelope.test.ts`, `keys.test.ts` (incl. fingerprints),
-`errors.test.ts`, `keyMismatch.test.ts`, `keylessLock.test.ts`, `keylessGuard.test.ts`,
+`errors.test.ts`, `keyMismatch.test.ts`, `keylessLock.test.ts`, `lockReason.test.ts`,
+`keylessGuard.test.ts`, `useCloudLockReason.test.tsx`,
 `recoveryCode.test.ts`, `setup.test.ts` (incl. adopt/erase, add-only publish, sign-in guard),
 `escrowReconcile.test.ts` (incl. re-arm and the deferred pull-gate), `cloudClient.test.ts`
 (pull-complete + sign-in guard), `buildDb.test.ts`, `reconcile.test.ts` (cross-device
 reconciliation and empty-log healing), `useDocCrdtReady.test.tsx`, `snapshot.test.ts` (the
-CRDT ⇄ body round-trip), the `src/components/errors/` and
-`src/components/settings/tabs/cloud/` component tests, and `cloud-sync.spec.ts` /
-`cloud-crdt-recovery.spec.ts`.
+CRDT ⇄ body round-trip), the `src/components/errors/`, `src/components/templates/` (the
+write-lock notice) and `src/components/settings/tabs/cloud/` component tests, and
+`cloud-sync.spec.ts` / `cloud-crdt-recovery.spec.ts` / `templates-form.spec.ts`.
 
 ---
 
