@@ -338,8 +338,10 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   — sign-in is turned back until its writing is sealed. A **clean** device (no plaintext synced
   rows) may sign in first and then unlock/adopt the account key; while it is signed-in-keyless
   the middleware refuses content writes and hides sealed rows, so a keyless write is never
-  uploaded in the clear either way. Sign-in is surfaced on the Home page and in Quick settings
-  (flag-gated) so it is discoverable before a space exists. Opting out is **non-destructive** —
+  uploaded in the clear either way, and the settings action row offers **no** set-up or unlock of
+  its own — the presence-gated keyless section is the single source of key actions, so a set-up
+  can never mint a key that diverges from a not-yet-pulled account escrow. Sign-in is surfaced on
+  the Home page and in Quick settings (flag-gated) so it is discoverable before a space exists. Opting out is **non-destructive** —
   the cloud schema is sticky so a rebuild never erases local content.
 - **Server sees / does not see.** Cannot: bodies, titles, note text, citation
   metadata, attachment bytes. Can: record ids and relationships, timestamps, note kinds,
