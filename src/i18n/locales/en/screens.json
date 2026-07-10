@@ -734,7 +734,18 @@
     "creating": "creating…",
     "submitLabel": "enter {{name}} →",
     "newSpace": "new space",
-    "back": "back"
+    "back": "back",
+    "lock": {
+      "mismatchTitle": "Your account's encryption key has changed",
+      "mismatchBody": "This device holds a different key, so creating a space is paused. Resolve the key conflict in your account settings.",
+      "keylessTitle": "Your writing is locked on this device",
+      "keylessBody": "You're signed in without an encryption key, so creating a space is paused. Unlock or set up encryption in your account settings.",
+      "lockedTitle": "Your writing is locked",
+      "lockedBody": "The space couldn't be created because encryption is locked on this device. Sort this out in your account settings, then try again.",
+      "failedTitle": "Something went wrong",
+      "failedBody": "The space couldn't be created. Please try again.",
+      "action": "Open account settings"
+    }
   },
   "dump": {
     "headerCount": "Brain space · {{count}} unsorted",
