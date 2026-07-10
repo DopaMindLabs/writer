@@ -269,8 +269,11 @@ weakening the guarantee that plaintext never leaves the device:
   unlock with the passphrase from another device (this is the adopt step for a keyless
   device); **none** → set one up, which then publishes under the gated add-only path above.
   No key-minting action is offered while presence is `'unknown'`, so a set-up can never race
-  ahead of the pull and diverge from the account key. Acquiring a key does not re-run mounted
-  live queries, so the panel reloads afterwards to re-read everything decrypted.
+  ahead of the pull and diverge from the account key. This section is the **single** source of
+  key actions while signed-in-keyless: `CloudEncryptionControls` then shows only sign-out (its
+  set-up/unlock/sign-in appear only while signed out), so the presence gate cannot be bypassed
+  by an always-visible Set-up button. Acquiring a key does not re-run mounted live queries, so
+  the panel reloads afterwards to re-read everything decrypted.
 
 Sign-in is also surfaced up front: with the beta flag on and the device signed out, the Home
 page shows a "Sign in to sync your writing" row and Quick settings an "Account & sync" item
