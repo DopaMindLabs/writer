@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { useUI, type Theme, type ReadingWidth } from '@/store/ui';
-import { CLOUD_FLAG_KEY } from '@/lib/cloud/flag';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { QuickSettingsPopover } from './QuickSettingsPopover';
 
@@ -81,19 +80,11 @@ describe('QuickSettingsPopover', () => {
       expect(about).toHaveAttribute('href', '/about');
     });
 
-    it('hides the account & sync item when the cloud-sync beta is off', () => {
-      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-      expect(screen.queryByTestId('quick-settings-account')).toBeNull();
-    });
-
-    it('links account & sync to the account tab when the beta is on', () => {
-      vi.stubEnv('VITE_DEXIE_CLOUD_URL', 'https://x.dexie.cloud');
-      localStorage.setItem(CLOUD_FLAG_KEY, 'on');
+    it('offers a direct Account link to the account settings tab, regardless of the cloud-sync flag', () => {
       renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
       const item = screen.getByTestId('quick-settings-account');
+      expect(item).toHaveTextContent(/account/i);
       expect(item).toHaveAttribute('href', expect.stringContaining('tab=account'));
-      vi.unstubAllEnvs();
-      localStorage.clear();
     });
   });
 

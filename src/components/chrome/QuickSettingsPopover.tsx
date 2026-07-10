@@ -13,7 +13,6 @@ import { TOUR_IDS, TOURS, type TourId } from '@/tours/tours';
 import { useTour } from '@/tours/useTour';
 import { getCompleted } from '@/tours/storage';
 import { routes } from '@/lib/routes';
-import { isCloudSyncEnabled } from '@/lib/cloud/cloudClient';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
@@ -262,16 +261,6 @@ const MoreSection = () => {
         </span>
       </ComingSoon>
 
-      {isCloudSyncEnabled() ? (
-        <MenuItem
-          asChild
-          href={routes.settings('account')}
-          testId="quick-settings-account"
-        >
-          {t('chrome:quickSettings.account')}
-        </MenuItem>
-      ) : null}
-
       <MenuItem
         asChild
         href={routes.settings('accessibility')}
@@ -296,7 +285,7 @@ const MoreSection = () => {
 interface FooterLinkProps {
   to: string;
   label: string;
-  kbd: string;
+  kbd?: string;
   testId: string;
   divider?: boolean;
 }
@@ -318,7 +307,7 @@ const FooterLink = ({ to, label, kbd, testId, divider }: FooterLinkProps) => (
       </Link>
     </PopoverClose>
     <span className="flex-1" />
-    <span className="font-mono text-[10px] text-ink-4">{kbd}</span>
+    {kbd ? <span className="font-mono text-[10px] text-ink-4">{kbd}</span> : null}
   </div>
 );
 
@@ -333,11 +322,16 @@ const QuickLinksFooter = () => {
         testId="quick-settings-help"
       />
       <FooterLink
+        to={routes.settings('account')}
+        label={t('quickSettings.account')}
+        testId="quick-settings-account"
+        divider
+      />
+      <FooterLink
         to={routes.settings()}
         label={t('quickSettings.fullSettings')}
         kbd={t('quickSettings.fullSettingsKbd')}
         testId="quick-settings-full-settings"
-        divider
       />
     </div>
   );
