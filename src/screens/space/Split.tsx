@@ -24,6 +24,7 @@ import { WriteSurface } from '@/components/surfaces/WriteSurface';
 import { BrainSpaceCanvas } from '@/components/surfaces/BrainSpaceCanvas';
 import { CitationsPane } from '@/components/surfaces/CitationsPane';
 import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
+import { MediaLibrarySurface } from '@/components/surfaces/MediaLibrarySurface';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocuments, useDocument } from '@/hooks/useDocuments';
 import type { Doc } from '@/db/schema';
@@ -36,7 +37,12 @@ import { Select, type SelectOption } from '@/components/ui/Select';
 
 const BRAIN_SPACE_PANE = 'dump';
 const CITATIONS_PANE = 'citations';
-const SPECIAL_PANES = new Set<string>([BRAIN_SPACE_PANE, CITATIONS_PANE]);
+const LIBRARY_PANE = 'library';
+const SPECIAL_PANES = new Set<string>([
+  BRAIN_SPACE_PANE,
+  CITATIONS_PANE,
+  LIBRARY_PANE,
+]);
 
 const MIN_PCT = 25;
 const MAX_PCT = 75;
@@ -101,6 +107,13 @@ export const SplitScreen = () => {
   );
 };
 
+const resolveRightPane = (withParam: string | null) => ({
+  rightIsBrainSpace: withParam === BRAIN_SPACE_PANE,
+  rightIsCitations: withParam === CITATIONS_PANE,
+  rightIsLibrary: withParam === LIBRARY_PANE,
+  rightIsSpecial: withParam !== null && SPECIAL_PANES.has(withParam),
+});
+
 const SplitMain = ({
   spaceId,
   docId,
@@ -116,10 +129,8 @@ const SplitMain = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const space = useSpace(spaceId);
   const leftDoc = useDocument(docId);
-  const rightIsBrainSpace = withParam === BRAIN_SPACE_PANE;
-  const rightIsCitations = withParam === CITATIONS_PANE;
-  const rightIsSpecial = rightIsBrainSpace || rightIsCitations;
-  const rightDoc = useDocument(rightIsSpecial ? null : withParam);
+  const pane = resolveRightPane(withParam);
+  const rightDoc = useDocument(pane.rightIsSpecial ? null : withParam);
 
   const onPickRight = (e: ChangeEvent<HTMLSelectElement>) => {
     const next = new URLSearchParams(searchParams);
@@ -151,8 +162,9 @@ const SplitMain = ({
           <SplitRightContent
             spaceId={spaceId}
             spaceName={space?.name}
-            rightIsBrainSpace={rightIsBrainSpace}
-            rightIsCitations={rightIsCitations}
+            rightIsBrainSpace={pane.rightIsBrainSpace}
+            rightIsCitations={pane.rightIsCitations}
+            rightIsLibrary={pane.rightIsLibrary}
             rightDoc={rightDoc}
           />
         }
@@ -236,6 +248,7 @@ const SplitRightHeader = ({
         })),
         { value: BRAIN_SPACE_PANE, label: 'Brain space' },
         { value: CITATIONS_PANE, label: 'Citations' },
+        { value: LIBRARY_PANE, label: 'Library' },
       ]}
     />
   </>
@@ -246,15 +259,18 @@ const SplitRightContent = ({
   spaceName,
   rightIsBrainSpace,
   rightIsCitations,
+  rightIsLibrary,
   rightDoc,
 }: {
   spaceId: string;
   spaceName: string | undefined;
   rightIsBrainSpace: boolean;
   rightIsCitations: boolean;
+  rightIsLibrary: boolean;
   rightDoc: Doc | undefined;
 }) => {
   if (rightIsBrainSpace) return <BrainSpaceCanvas spaceId={spaceId} />;
+  if (rightIsLibrary) return <MediaLibrarySurface spaceId={spaceId} />;
   if (rightIsCitations) {
     return (
       <CitationsPane spaceId={spaceId} spaceName={spaceName} density="compact" />

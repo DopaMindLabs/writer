@@ -37,6 +37,20 @@ test('split view can pick citations pane', async ({ page }) => {
   await expect(page.getByTestId('citations-pane')).toBeVisible();
 });
 
+test('split view can pick the library pane', async ({ page }) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}`);
+  await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
+
+  await page.locator('a[href*="/split"]').first().click();
+  await page.waitForURL(/\/split/);
+
+  const select = page.getByTestId('split-right-pane-select');
+  await select.selectOption('library');
+  await expect(page.getByTestId('media-library-surface')).toBeVisible();
+  await expect(page.getByTestId('media-library-search')).toBeVisible();
+});
+
 test('split divider responds to keyboard ArrowLeft and ArrowRight', async ({
   page,
 }) => {

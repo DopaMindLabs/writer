@@ -15,6 +15,13 @@ vi.mock('@/editor/EditorFacade', () => ({
   ),
 }));
 
+// The library pane pulls the media facade (pdfjs) transitively; mock the seam so
+// jsdom does not load real pdfjs.
+const { getDocument } = vi.hoisted(() => ({ getDocument: vi.fn() }));
+vi.mock('@/lib/pdf/pdfAdapter', () => ({
+  pdfjs: { getDocument, GlobalWorkerOptions: { workerSrc: '' } },
+}));
+
 const { SplitScreen } = await import('./Split');
 
 const docA: Doc = {
@@ -76,6 +83,13 @@ describe('SplitScreen', () => {
     it('should render CitationsPane on the right when with=citations', async () => {
       renderAt('/s/s1/d/d1/split?with=citations');
       expect(await screen.findByTestId('citations-pane')).toBeInTheDocument();
+    });
+
+    it('should render the library on the right when with=library', async () => {
+      renderAt('/s/s1/d/d1/split?with=library');
+      expect(
+        await screen.findByTestId('media-library-surface'),
+      ).toBeInTheDocument();
     });
   });
 
