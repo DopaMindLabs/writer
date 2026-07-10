@@ -522,7 +522,65 @@ Check:
 
 Execute in order. Keep each package reviewable and independently revertible.
 
+### Mandatory TODO ledger
+
+This six-item ledger is the execution queue. A lower-capability agent must work on
+only one unchecked item at a time. The work packages below are mandatory steps
+inside these six TODOs, not additional TODOs. Mark an item complete only after all
+of its work packages, `Done` conditions, and acceptance criteria pass.
+
+- [ ] `TODO-01` Capture baseline evidence and add failing regression tests.
+- [ ] `TODO-02` Unify passphrase semantics and make keys reactive across tabs.
+- [ ] `TODO-03` Build reliable, queued reconciliation triggers.
+- [ ] `TODO-04` Preserve conflict bodies, reduce latency, and surface failures.
+- [ ] `TODO-05` Validate Phase A and write ADHD-friendly user help.
+- [ ] `TODO-06` Write the separate Phase B encrypted CRDT ADR and test plan.
+
+Status rules:
+
+1. Change `[ ]` to `[~]` when work starts.
+2. Change `[~]` to `[x]` only after tests and evidence exist.
+3. Leave `[ ]` and record a blocker if required evidence, API, or environment is
+   unavailable.
+4. Never mark dependent work complete when an earlier TODO failed.
+5. Append the traceability record from section 1.1 after each completed TODO.
+
+### TODO-01 — baseline evidence and regression proof
+
+Depends on: nothing.
+
+Debug procedure:
+
+1. Run the preflight commands from section 6.
+2. Execute Reproduction A exactly once on a clean Device B profile.
+3. Execute Reproduction B three times on a small library.
+4. Repeat Reproduction B with at least 100 documents if test data generation exists.
+5. Record every timestamp listed in sections 7 and 8.
+6. Confirm whether reload fixes missing names.
+7. Confirm whether a new sync-state phase transition eventually fixes stale content.
+8. Save redacted console and network evidence. Never capture passphrases, recovery
+   codes, raw keys, bodies, or ciphertext.
+
+Expected diagnosis:
+
+- Reload fixing names confirms stale keyless live queries.
+- Decrypted row present before editor update confirms reconciliation/restore delay.
+- Source `docs.body` missing marker confirms autosave/write delay.
+- Pulled body being replaced by local body confirms unsafe flush ordering.
+
+Done:
+
+- Baseline test commands recorded.
+- Both failures reproduced or a precise environment blocker recorded.
+- Timings establish which stage consumes latency.
+
+Do not change code in this TODO.
+
 ### WP1 — regression tests
+
+Ledger item: `TODO-01`.
+
+Depends on: baseline evidence in `TODO-01`.
 
 Goal: reproduce bugs before implementation.
 
@@ -548,14 +606,37 @@ Required failures:
 - Active document waits behind unrelated docs.
 - Pending local flush can replace pulled body without preserving it.
 
+Debug and test procedure:
+
+1. Read the production symbol and its nearest existing test before adding a case.
+2. Add one failing test per behaviour; do not combine unrelated defects.
+3. For key hydration, run a query while `deviceKeyProvider.current()` is `null`,
+   save/load a key ring, then assert the same mounted consumer rerenders.
+4. For cross-tab behaviour, fake the channel boundary rather than mocking the
+   component tree.
+5. For trigger reliability, emit `in-sync`, `syncComplete`, and rapid repeated
+   triggers independently.
+6. For overlap, hold the first reconcile promise unresolved, trigger again, and
+   assert the second run begins only after the first settles.
+7. For conflict safety, model pulled body `REMOTE` and pending editor body `LOCAL`;
+   assert both remain recoverable after reconcile.
+8. Run each new test alone. Confirm failure text points to the intended missing
+   behaviour, not broken test setup.
+
 Done:
 
 - Every test fails for expected reason before code changes.
 - No test uses hardcoded waits or forced clicks.
+- Test names state behaviour and expected outcome.
+- Test fixtures contain no real cloud credentials or user data.
 
 Rollback boundary: tests only.
 
 ### WP2 — canonical passphrase contract
+
+Ledger item: `TODO-02`.
+
+Depends on: `TODO-01`.
 
 Files:
 
@@ -570,6 +651,31 @@ Contract:
 - ASCII behaviour unchanged.
 - NFC/NFD and compatibility-equivalent strings behave consistently.
 
+Debug procedure:
+
+1. In `keys.ts`, confirm `canonicalPassphrase` is private and `deriveKek` calls it.
+2. In `PassphraseSetupDialog.tsx`, confirm `tooShort`, `mismatch`, `valid`, and
+   `strengthOf` currently use raw strings.
+3. Add test vectors for:
+   - ASCII-equivalent passphrases.
+   - Composed versus decomposed accents.
+   - Full-width versus ASCII compatibility characters.
+   - Canonical value below/above the minimum length boundary.
+4. Confirm existing crypto test proves NFKC-equivalent values unwrap the same escrow.
+
+Solution procedure:
+
+1. Export one pure `canonicalisePassphrase(passphrase: string): string` from
+   `keys.ts`, or a dedicated crypto utility if imports would create a cycle.
+2. Keep NFKC as the only transformation. Do not trim, lowercase, or alter whitespace.
+3. Derive `canonicalPassphrase` and `canonicalConfirm` once in the dialog render.
+4. Use canonical values for length validation and equality.
+5. Pass the canonical passphrase to `onCreate`, so UI and crypto receive identical
+   input.
+6. Decide strength display from the canonical value and lock that behaviour in a
+   test.
+7. Run dialog and crypto tests before moving on.
+
 Done:
 
 - Dialog and crypto tests pass.
@@ -578,6 +684,10 @@ Done:
 Rollback boundary: passphrase follow-up only.
 
 ### WP3 — reactive key revision
+
+Ledger item: `TODO-02`.
+
+Depends on: WP2 and `TODO-01` key hydration/query tests.
 
 Files:
 
@@ -605,6 +715,34 @@ Migrate encrypted reads:
 - Citations
 - Revisions
 
+Debug procedure:
+
+1. Mount `useSpaces`, `useSections`, and `useDocument` with no cached key.
+2. Let middleware return keyless-hidden results.
+3. Call `saveDeviceKeyRing` without changing any app DB row.
+4. Confirm `onDeviceKeyRingChange` fires but `useLiveQuery` does not rerun.
+5. List every hook that reads a table covered by encrypted row middleware.
+6. Separate encrypted content queries from local-only and plaintext-special tables.
+
+Solution procedure:
+
+1. Add module-local monotonic `deviceKeyRevision`, initial value `0`.
+2. Export a synchronous getter returning only that number.
+3. Increment it after a successful key-ring cache transition:
+   - Save.
+   - Load.
+   - Forget.
+   - Adopt/recover paths that call save.
+4. Notify listeners after the revision changes.
+5. Implement `useDeviceKeyRevision` with `useSyncExternalStore`; use the same getter
+   for client and server snapshots.
+6. Add a cloud-aware live-query wrapper that includes key revision in the dependency
+   array. The query need not read the number; the dependency forces reevaluation.
+7. Preserve `useKeyedLiveQuery` stale-key protection when adding revision.
+8. Migrate encrypted table hooks one file at a time.
+9. Do not migrate `docUpdates`, keystore tables, or `cloudCrypto`.
+10. Run the hook's focused tests after each migration.
+
 Done:
 
 - Device B navigation updates without reload.
@@ -614,6 +752,10 @@ Done:
 Rollback boundary: same-tab query reactivity.
 
 ### WP4 — cross-tab key-ring synchronisation
+
+Ledger item: `TODO-02`.
+
+Depends on: WP3.
 
 Files:
 
@@ -629,6 +771,31 @@ Contract:
 - Message handling does not rebroadcast indefinitely.
 - Channel closes during cleanup.
 
+Debug procedure:
+
+1. Open two tabs against the same browser profile.
+2. Unlock Tab A.
+3. Confirm Tab A's in-memory cache changes and Tab B's cache remains unchanged.
+4. Reload Tab B and confirm the persisted keystore lets content appear.
+5. This proves persistence is correct and process-local invalidation is missing.
+
+Solution procedure:
+
+1. Add one small synchroniser under `src/lib/cloud/crypto/`.
+2. Use a dedicated `BroadcastChannel` name scoped to the device key-ring concern.
+3. Broadcast only an invalidation message after `saveDeviceKeyRing` or
+   `forgetDeviceKeyRing` successfully commits. Never send key material.
+4. Include a per-tab source ID and operation (`changed` or `forgotten`) for
+   diagnostics.
+5. On a foreign message, call `loadDeviceKeyRing` to read the authoritative
+   IndexedDB value.
+6. Do not broadcast from the receive path; otherwise tabs can form a message loop.
+7. Start the synchroniser after `hydrateCloudDevice()` and before cloud content
+   consumers mount.
+8. Return cleanup that removes the listener and closes the channel.
+9. Treat unavailable `BroadcastChannel` as a documented degraded mode if supported
+   browsers require it; do not fall back to key material in `localStorage`.
+
 Done:
 
 - Unlocking Tab A refreshes Tab B without reload.
@@ -637,6 +804,10 @@ Done:
 Rollback boundary: cross-tab only; same-tab revision remains.
 
 ### WP5 — reconciliation trigger runner
+
+Ledger item: `TODO-03`.
+
+Depends on: `TODO-02`.
 
 Files:
 
@@ -660,6 +831,33 @@ Runner contract:
 - Errors update status and do not kill subscriptions.
 - Stop function unsubscribes every source.
 
+Debug procedure:
+
+1. In `startCloudReconciler`, hold `run()` unresolved.
+2. Emit two qualifying sync states.
+3. Confirm two promises start concurrently.
+4. Emit `syncComplete` without a `pulling` transition and confirm no run starts.
+5. Acquire a key after a keyless pull and confirm no run starts.
+6. Verify the Dexie Cloud version's exact `syncComplete` subscription and cleanup
+   API before writing the adapter.
+
+Solution procedure:
+
+1. Expose a minimal sync-complete subscription through `cloudClient.ts`. Keep addon
+   details out of React UI.
+2. Route initial in-sync, left-pulling, sync-complete, and key-change events into one
+   `requestReconcile(trigger)` function.
+3. Track `stopped`, `activePromise`, and one `queued` flag in the runner closure.
+4. If stopped, ignore the request.
+5. If a run is active, set `queued = true` and return.
+6. If idle, start one run and catch its rejection into reconcile status.
+7. In `finally`, clear the active promise. If queued and not stopped, clear queued
+   and schedule exactly one follow-up request.
+8. Do not use an unbounded loop or uncaught floating promise.
+9. On cleanup, mark stopped and unsubscribe sync state, sync complete, and key
+   listeners. Let an already-running promise settle without starting its queued run.
+10. Keep per-document failure isolation, but aggregate failures for status.
+
 Done:
 
 - Rapid trigger test proves no overlap.
@@ -669,6 +867,10 @@ Done:
 Rollback boundary: trigger orchestration; reconciliation algorithm unchanged.
 
 ### WP6 — conflict-safe awaitable flush
+
+Ledger item: `TODO-04`.
+
+Depends on: `TODO-03`.
 
 Files:
 
@@ -689,6 +891,47 @@ Contract:
 - Pending local editor remains visible, then follow-up sync/reconcile is queued.
 - Neither side disappears silently.
 
+Debug procedure:
+
+1. Confirm `AutosavePlugin.flushPendingSave` sets `lastSavedRef` before calling the
+   non-awaitable `onChange`.
+2. Confirm `WriteSurface.handleChange` starts `updateDocBody` with `void`.
+3. Confirm `reconcileDoc` returns immediately when `handle.flush()` returns `true`.
+4. In a test, delay `updateDocBody`; set DB body to `REMOTE`; make editor flush
+   `LOCAL`; release the delayed write.
+5. Confirm final DB body becomes `LOCAL` and `REMOTE` was not first preserved.
+
+Solution procedure:
+
+1. Define a dedicated flush result type in a `*.types.ts` file:
+   - No pending body.
+   - Persisted body with the exact serialised value.
+2. Change the complete callback chain to return `Promise<void>`:
+   - `EditorFacade`
+   - `LexicalEditor`
+   - `EditorPlugins`
+   - `AutosavePlugin`
+   - `WriteSurface.handleChange`
+3. Change `flushRef` and `EditorHandle.flush` to return a promise of the typed result.
+4. In `WriteSurface.handleChange`, await `updateDocBody`; handle revision capture
+   separately without hiding body-write failure.
+5. In autosave, await `onChange`. Update `lastSavedRef` only after persistence
+   succeeds; on failure retain pending state so retry remains possible.
+6. Timer callbacks must catch and report rejected flushes. No unhandled promise.
+7. In reconciliation, capture `pulledBody = doc.body` before invoking flush.
+8. If a pending local body exists:
+   - Create a safety revision containing `pulledBody`.
+   - Await the local flush.
+   - Leave the live local editor visible.
+   - Request a follow-up cloud sync/reconcile.
+9. If no pending local body:
+   - Preserve the differing local CRDT snapshot as `pre-sync`.
+   - Apply the pulled body through mounted restore or unmounted reseed.
+10. If safety revision creation or body persistence fails, stop that document's
+    reconcile and surface the error. Never continue destructively.
+11. Update `RestoreBridgePlugin`, autosave, editor registry, write surface, and
+    reconcile tests for the async contract.
+
 Done:
 
 - Tests prove both local and remote bodies recoverable.
@@ -698,6 +941,10 @@ Done:
 Rollback boundary: flush/conflict contract.
 
 ### WP7 — active-document priority and bounded work
+
+Ledger item: `TODO-04`.
+
+Depends on: WP6.
 
 Files:
 
@@ -714,6 +961,33 @@ Contract:
 - Unchanged docs skip expensive snapshot.
 - Background work yields between bounded batches.
 
+Debug procedure:
+
+1. Seed many documents with the mounted document last in creation/order order.
+2. Instrument reconcile start per document.
+3. Confirm `db.docs.toArray()` order controls processing and mounted doc waits.
+4. Trigger a second run with unchanged row bodies.
+5. Confirm every document still loads all CRDT updates and serialises a snapshot.
+6. Record active-document and total sweep durations.
+
+Solution procedure:
+
+1. Add a read-only registry function returning a copied list of mounted document IDs.
+   Never expose the mutable `Map`.
+2. Partition fetched docs into mounted and unmounted arrays while preserving stable
+   order inside each group.
+3. Process mounted docs first.
+4. Keep a bounded map from document ID to the last successfully examined `docs.body`
+   value or safe fingerprint.
+5. Skip a document when its body is unchanged since successful reconciliation.
+6. Update last-seen state only after that document completes successfully.
+7. Remove entries for IDs absent from the current DB result.
+8. Process unmounted docs in a fixed batch size and yield through a scheduler helper
+   between batches. Do not add an unbounded loop.
+9. Keep correctness independent of the cache: clearing it may cost work but must not
+   change results.
+10. Re-run the large-library baseline and compare active-document latency.
+
 Done:
 
 - Active-doc test proves first processing order.
@@ -723,6 +997,10 @@ Done:
 Rollback boundary: performance optimisation; correctness runner remains.
 
 ### WP8 — observability and user-visible failure
+
+Ledger item: `TODO-04`.
+
+Depends on: WP5–WP7.
 
 Files:
 
@@ -748,6 +1026,25 @@ Do not log:
 - Raw key material.
 - Ciphertext payload.
 
+Debug procedure:
+
+1. Force one document's `collabStore.loadAll`, revision write, or restore to reject.
+2. Confirm current behaviour only writes `console.error`.
+3. Confirm cloud settings still implies healthy sync.
+4. Record which metadata is sufficient to locate the failed stage without content.
+
+Solution procedure:
+
+1. Add a small immutable reconcile-status store/facade.
+2. Use a discriminated status such as idle/running/succeeded/failed.
+3. Record trigger, run ID, timestamps, counters, active-doc latency, queued flag, and
+   sanitised error code/message.
+4. Never store or log content, passphrases, recovery codes, keys, or payloads.
+5. Update status at runner boundaries; aggregate per-document failures.
+6. Surface failed status and retry action in `CloudSyncStatusRow`.
+7. Ensure retry calls the same single-flight request path.
+8. Add tests for success, partial failure, retry, and sensitive-field absence.
+
 Done:
 
 - Reconcile failure visible in cloud settings.
@@ -755,6 +1052,137 @@ Done:
 - No sensitive data reaches logs.
 
 Rollback boundary: observability UI only.
+
+### TODO-05 — Phase A validation and user help
+
+Depends on: `TODO-01`–`TODO-04`.
+
+Procedure:
+
+1. Run every focused command in section 11.
+2. Run full type, lint, unit/component, E2E, and coverage gates.
+3. Execute Reproduction A twice:
+   - Clean Device B first sign-in.
+   - Two already-open tabs, unlocking only one.
+4. Execute Reproduction B at least three times on small and large libraries.
+5. Exercise local/remote conflict in both arrival orders.
+6. Force a reconcile failure and confirm visible, retryable status.
+7. Confirm sign-out, forget-key, remount, and app cleanup remove listeners/channels.
+8. Compare measured timings against section 12.
+9. Mark every section 12 criterion `PASS`, `FAIL`, or `NOT TESTED`.
+10. Do not approve Phase A with a mandatory `FAIL` or `NOT TESTED`.
+
+Done:
+
+- All mandatory gates pass.
+- Coverage baseline is unchanged or higher.
+- Evidence confirms names appear without reload.
+- Evidence confirms normal idle convergence within 1–2 seconds.
+- Both conflicting bodies remain recoverable.
+
+#### ADHD-friendly help documentation
+
+Depends on: successful Phase A validation above.
+
+Procedure:
+
+1. Use only behaviour proven by `TODO-05` validation.
+2. Write separate short procedures for:
+   - First-device setup.
+   - Second-device unlock.
+   - Confirming sync health.
+   - Retrying a failed reconcile.
+   - Recovery and forgetting a device.
+3. Put one user action in each numbered step.
+4. Lead each section with the expected result.
+5. Quote exact UI labels and verified error messages.
+6. State the expected 1–2 second idle delay once; do not promise real-time sync.
+7. Put destructive warnings immediately before destructive actions.
+8. Move engineering diagnostics to a collapsed or separate troubleshooting section.
+9. Ask a test reader unfamiliar with the implementation to follow each procedure.
+10. Correct this runbook if verified user behaviour differs from its claims.
+
+Done:
+
+- User can set up, unlock, verify, retry, and recover without engineering context.
+- No paragraph contains multiple required actions.
+- Help does not expose sensitive implementation details.
+
+### TODO-06 — Phase B encrypted cross-device CRDT ADR
+
+Depends on: successful `TODO-05`.
+
+Scope:
+
+- Planning and test design only.
+- Do not change sync behaviour.
+- Do not sync `docUpdates` during this TODO.
+- Keep `docs.body` as the Phase A projection until the ADR is approved and Phase B
+  is separately authorised.
+
+Research procedure:
+
+1. Read section 15, current Yjs/BroadcastChannel code, Dexie Cloud integration, row
+   encryption middleware, key rotation/recovery, revisions, deletion, and backup
+   paths.
+2. Draw the current same-tab and cross-device data flows.
+3. Record every place that assumes `docUpdates` is local-only.
+4. Compare exactly two transport candidates:
+   - Encrypted Yjs update rows replicated through Dexie Cloud.
+   - Dedicated authenticated WebSocket transport carrying encrypted Yjs updates.
+5. For each candidate, determine:
+   - Offline replay behaviour.
+   - Update ID generation and deduplication.
+   - Ordering independence.
+   - Compaction/checkpoint ownership.
+   - Key lookup and rotation.
+   - Device recovery.
+   - Deletion/tombstone propagation.
+   - Presence privacy and expiry.
+   - Server trust and plaintext exposure.
+   - Operational cost and failure recovery.
+6. Do not select a transport without evidence for all ten criteria.
+
+Solution procedure:
+
+1. Create `docs/adr/0001-encrypted-cross-device-crdt.md`.
+2. Use ADR sections: Status, Context, Decision Drivers, Options, Decision, Data Model,
+   Encryption Model, Failure Handling, Migration, Test Matrix, Rollback, Open
+   Questions, and Consequences.
+3. Define immutable update identity using document ID, client/device identity, and a
+   collision-safe update ID. Do not depend on arrival order.
+4. Define idempotent replay and duplicate handling before defining transport.
+5. Define an encrypted checkpoint/compaction protocol with a bounded retained-update
+   policy.
+6. Define how a recovered or newly unlocked device obtains keys before replay.
+7. Define deletion/tombstone semantics that cannot resurrect deleted documents.
+8. Define `docs.body` as a derived projection and name the single owner responsible
+   for updating it.
+9. State when Phase A snapshot reconciliation can be disabled.
+10. Design tests before implementation:
+    - Simultaneous two-device edits.
+    - Offline edits on both devices, then reconnect.
+    - Duplicate and reordered update delivery.
+    - Interrupted compaction.
+    - Key rotation during pending updates.
+    - Device recovery with historical updates.
+    - Delete versus offline edit.
+    - Multi-tab plus multi-device convergence.
+    - Projection rebuild from checkpoint plus updates.
+    - No plaintext in synced storage or transport.
+11. Use a clean schema reset rather than legacy migration because there are no users,
+    but document the exact reset boundary and data-loss warning.
+12. Submit the ADR for explicit approval. Do not begin Phase B implementation from
+    an unapproved ADR.
+
+Done:
+
+- ADR chooses one transport with evidence.
+- Data, encryption, compaction, deletion, recovery, and projection contracts are
+  explicit.
+- Test matrix covers convergence, failure, offline, security, and cleanup paths.
+- Phase A and Phase B responsibilities remain separate.
+- No application, schema, or test code changed in this TODO.
 
 ## 11. Test matrix
 
