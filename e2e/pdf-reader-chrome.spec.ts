@@ -199,6 +199,15 @@ test('thumbnails show ticks and navigate', async ({ page }) => {
   await expect(page.getByTestId('pdf-thumb-pager')).toContainText('2 / 2');
 });
 
+test('the overflow menu opens the library', async ({ page }) => {
+  await gotoLibrary(page);
+  await openViewer(page, TINY_PDF);
+
+  await page.getByTestId('pdf-rail-overflow').click();
+  await page.getByRole('menuitem', { name: 'Open library' }).click();
+  await expect(page.getByTestId('media-library-screen')).toBeVisible();
+});
+
 test('reader chrome has no detectable a11y violations', async ({ page }) => {
   await gotoLibrary(page);
   await openViewer(page, TINY_PDF);

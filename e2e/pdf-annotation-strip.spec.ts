@@ -142,6 +142,23 @@ test('context menu recolours and removes a mark', async ({ page }) => {
   await expect(mark(page)).toHaveCount(0);
 });
 
+test('editing a note from the context menu saves it', async ({ page }) => {
+  await select(page);
+  await page.getByTestId('strip-color-yellow').click();
+  await expect(mark(page)).toBeVisible();
+
+  await rightClickMark(page);
+  await page.getByTestId('mark-edit-note').click();
+  await expect(page.getByTestId('pdf-mark-note-editor')).toBeVisible();
+  await page.getByTestId('strip-note-input').fill('a considered note');
+  await page.getByTestId('strip-note-input').press('Enter');
+  await expect(page.getByTestId('pdf-mark-note-editor')).toHaveCount(0);
+
+  // The note persisted onto the mark, so the menu still offers to edit it.
+  await rightClickMark(page);
+  await expect(page.getByTestId('mark-edit-note')).toHaveText('Edit note…');
+});
+
 test('annotations persist across reload', async ({ page }) => {
   await select(page);
   await page.getByTestId('strip-color-blue').click();

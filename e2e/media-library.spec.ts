@@ -76,6 +76,16 @@ test('deletes a pdf after confirmation', async ({ page }) => {
   await expect(page.getByTestId('media-library-empty')).toBeVisible();
 });
 
+test('the row menu opens the reader', async ({ page }) => {
+  await gotoLibrary(page);
+  await uploadPdf(page, TINY_PDF);
+  await expect(page.getByText('tiny.pdf')).toBeVisible();
+
+  await page.locator('[data-testid^="media-row-"][data-testid$="-menu"]').first().click();
+  await page.locator('[data-testid$="-menu-open"]').click();
+  await expect(page.getByTestId('pdf-viewer')).toBeVisible();
+});
+
 test('media library has no detectable a11y violations', async ({ page }) => {
   await gotoLibrary(page);
   await expect(page.getByTestId('media-library-empty')).toBeVisible();

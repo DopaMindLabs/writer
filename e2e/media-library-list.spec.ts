@@ -109,6 +109,10 @@ test('search narrows the list', async ({ page }) => {
   await page.getByTestId('media-library-search').fill('two-page');
   await expect(page.getByText('two-page.pdf')).toBeVisible();
   await expect(page.getByText('tiny.pdf')).toBeHidden();
+
+  // Clearing the search restores the full list.
+  await page.getByTestId('media-library-search-clear').click();
+  await expect(page.getByText('tiny.pdf')).toBeVisible();
 });
 
 test('opening a pdf clears it from unread', async ({ page }) => {
@@ -171,6 +175,31 @@ test('date group labels render', async ({ page }) => {
 
   await expect(page.getByText('Earlier this week')).toBeVisible();
   await expect(page.getByText('OCTOBER 2023')).toBeVisible();
+});
+
+const fireDrag = (page: Page, type: string): Promise<void> =>
+  page.evaluate(({ type }) => {
+    const surface = document.querySelector('[data-testid="media-library-surface"]');
+    if (!surface) throw new Error('no library surface');
+    const transfer = new DataTransfer();
+    transfer.items.add(
+      new File([new Uint8Array([0x25, 0x50, 0x44, 0x46])], 'x.pdf', {
+        type: 'application/pdf',
+      }),
+    );
+    surface.dispatchEvent(new DragEvent(type, { bubbles: true, dataTransfer: transfer }));
+  }, { type });
+
+test('a file drag shows the drop overlay and clears it on leave', async ({ page }) => {
+  await gotoLibrary(page);
+  await expect(page.getByTestId('media-library-empty')).toBeVisible();
+
+  await fireDrag(page, 'dragenter');
+  await fireDrag(page, 'dragover');
+  await expect(page.getByTestId('media-library-drop-overlay')).toBeVisible();
+
+  await fireDrag(page, 'dragleave');
+  await expect(page.getByTestId('media-library-drop-overlay')).toHaveCount(0);
 });
 
 test('dropping a pdf on the page adds it', async ({ page }) => {
