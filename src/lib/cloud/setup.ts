@@ -9,6 +9,7 @@ import {
   wrapMasterSecret,
   unwrapMasterSecret,
   fingerprintsEqual,
+  ESCROW_ID,
 } from './crypto/keys';
 import { openRow, type RowRef } from './crypto/envelope';
 import { EscrowMissingError } from './crypto/errors';
@@ -23,8 +24,7 @@ import {
 } from './crypto/keyStore';
 import { keyMismatchState } from './crypto/keyMismatch';
 
-/** The single escrow row id and the initial key epoch. */
-const ESCROW_ID = 'v1';
+/** The initial key epoch (the escrow row id comes from `./crypto/keys`). */
 const EPOCH = 1;
 
 type Row = Record<string, unknown>;

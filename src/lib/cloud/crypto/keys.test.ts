@@ -7,6 +7,7 @@ import {
   unwrapMasterSecret,
   fingerprintsEqual,
   WrongPassphraseError,
+  ESCROW_ID,
 } from './keys';
 
 // Correctness is independent of the iteration count; use a small one so the
@@ -14,6 +15,17 @@ import {
 const FAST = 1000;
 
 describe('cloud keys', () => {
+  it('keeps the escrow id in Dexie Cloud private-singleton form', async () => {
+    // The literal `#` prefix is the contract with Dexie Cloud: without it the
+    // escrow row is one GLOBAL object shared by every account in the database —
+    // the first account claims it and every other account's escrow silently
+    // never syncs, so a second device can never be joined with the passphrase.
+    // Regression guard: assert the literal, not the constant against itself.
+    expect(ESCROW_ID).toBe('#v1');
+    const escrow = await wrapMasterSecret(generateMasterSecret(), 'pw', FAST);
+    expect(escrow.id).toBe('#v1');
+  });
+
   it('wrap then unwrap round-trips the master secret', async () => {
     const master = generateMasterSecret();
     expect(master).toHaveLength(32);

@@ -9,13 +9,26 @@
 const CONTENT_INFO = 'lipsum-content-v1';
 /** HKDF info for the public, one-way key-verification tag (the fingerprint). */
 const KEYCHECK_INFO = 'lipsum-keycheck-v1';
+
+/**
+ * The escrow row's primary key. The leading `#` is load-bearing: Dexie Cloud
+ * treats a bare string key as **one global object across every account** in the
+ * database — the first account to publish would claim it, every other account's
+ * escrow would be silently rejected server-side (never an error the client
+ * sees), and that account's other devices would never receive an escrow at all,
+ * so the same passphrase could not join them. A `#`-prefixed key is the addon's
+ * *private singleton* form: it is rewritten per user on the wire
+ * (`#v1:<userId>`), giving each account its own escrow row in its private
+ * realm, synced to all of that account's devices and nobody else's.
+ */
+export const ESCROW_ID = '#v1';
 const FINGERPRINT_BYTES = 16;
 const PBKDF2_HASH = 'SHA-512';
 /** Never derive a KEK with fewer iterations than this, however fast the device. */
 const ITERATIONS_FLOOR = 800_000;
 
 export interface EscrowRecord {
-  id: 'v1';
+  id: typeof ESCROW_ID;
   epoch: number;
   kdf: 'PBKDF2';
   hash: 'SHA-512';
@@ -164,7 +177,7 @@ export const wrapMasterSecret = async (
   );
   const fingerprint = await deriveKeyFingerprint(master);
   return {
-    id: 'v1',
+    id: ESCROW_ID,
     epoch: 1,
     kdf: 'PBKDF2',
     hash: PBKDF2_HASH,

@@ -2,7 +2,7 @@ import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
 import type { SyncState, UserLogin } from 'dexie-cloud-addon';
 import { SYNCED_TABLES } from './crypto/tableRules';
-import { fingerprintsEqual } from './crypto/keys';
+import { fingerprintsEqual, ESCROW_ID } from './crypto/keys';
 import {
   deviceKeyProvider,
   clearPendingEscrow,
@@ -16,8 +16,6 @@ import {
   isAccountPullComplete,
 } from './cloudClient';
 import type { CloudObservable } from './cloudObservable';
-
-const ESCROW_ID = 'v1';
 
 export type EscrowReconcileResult =
   | 'idle'
