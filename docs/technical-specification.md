@@ -320,9 +320,13 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   local session) so a fresh key can never trip a spurious mismatch. Reconciliation **re-runs on
   every sync settle and sign-in change** (not once per boot); it compares the account escrow's
   fingerprint with the device ring's (or, as a fallback, the pending escrow's): absent →
-  publish this device's escrow, but **only once the initial account pull is confirmed** (else
-  defer, so a not-yet-pulled escrow is never clobbered), and **add-only** (never overwrite a
-  differing `v1` row); match → nothing to do; differ → flag a **key mismatch**. Under a
+  publish this device's escrow, but **only once the initial account pull is confirmed**
+  (`persistedSyncState.initiallySynced` — set in the same sync round that applies the pulled
+  realms' rows, so any escrow the account holds is already local; **not** gated on the private
+  realm being enumerated, which never happens for a fresh empty account and would otherwise hang
+  a keyless-first device on “fetching your account…”) — else defer, so a not-yet-pulled escrow
+  is never clobbered, and **add-only** (never overwrite a differing `v1` row); match → nothing to
+  do; differ → flag a **key mismatch**. Under a
   mismatch the write middleware refuses content writes; reads do not crash — the middleware
   drops any undecryptable row from the result and flags the mismatch, so the app stays
   reachable and the conflict banner appears in settings. The user resolves it by **adopting**

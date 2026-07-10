@@ -201,9 +201,14 @@ and idempotent. It compares fingerprints (§2):
   pending escrow), so a last-writer-wins clobber of the account key is impossible.
 - **Account has no escrow (pull not yet confirmed)** → **defer**. An absent row may just mean
   the account's escrow has not been pulled yet; publishing now would clobber it. Publication
-  waits until `isAccountPullComplete()` — the addon's own gate (`persistedSyncState`'s
-  `initiallySynced` plus the user's realm pulled) — is true, and reconciliation re-runs on the
-  next settle.
+  waits until `isAccountPullComplete()` is true, and reconciliation re-runs on the next settle.
+  That gate is `persistedSyncState.initiallySynced` — the addon sets it in the same sync round
+  that records the pulled realms and applies their rows, so once it is true any escrow the
+  account holds (in a realm the user belongs to) is already local. It intentionally does **not**
+  also require the user's private realm to appear in the pulled-realm set: the addon only
+  enumerates a realm once it holds a row, so a brand-new account that never wrote an escrow
+  would never satisfy that — leaving a keyless device that signed in first stuck on “fetching
+  your account…” forever, unable to set up or publish.
 - **Fingerprints match** → the account already holds this device's key; nothing to do. The
   server escrow is treated as ours when it carries **either** the device ring's fingerprint
   **or** the pending escrow's (they share a master, so normally identical — the pending copy

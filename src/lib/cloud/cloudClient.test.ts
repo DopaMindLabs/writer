@@ -85,8 +85,8 @@ describe('signInToCloud guard (clean vs dirty keyless device)', () => {
 });
 
 interface FakeCloud {
-  currentUser: { value: { isLoggedIn: boolean; userId: string } };
-  persistedSyncState: { value: { initiallySynced: boolean; realms: string[] } };
+  currentUser: { value: { isLoggedIn: boolean; userId?: string } };
+  persistedSyncState: { value: { initiallySynced: boolean; realms?: string[] } };
 }
 
 describe('isAccountPullComplete', () => {
@@ -102,7 +102,7 @@ describe('isAccountPullComplete', () => {
     expect(isAccountPullComplete()).toBe(false);
   });
 
-  it('is true once signed in, initially synced, and the user realm is pulled', () => {
+  it('is true once signed in and the initial sync has completed', () => {
     withCloud({
       currentUser: { value: { isLoggedIn: true, userId: 'u1' } },
       persistedSyncState: { value: { initiallySynced: true, realms: ['u1'] } },
@@ -110,18 +110,29 @@ describe('isAccountPullComplete', () => {
     expect(isAccountPullComplete()).toBe(true);
   });
 
-  it('is false until the user realm has been pulled', () => {
+  it('resolves for a fresh account whose empty private realm is not enumerated', () => {
+    // The addon only lists a realm once it holds a row, so a brand-new account
+    // reports realms without its own id (here only the public realm). The pull is
+    // still complete — waiting for the private realm would hang forever.
     withCloud({
       currentUser: { value: { isLoggedIn: true, userId: 'u1' } },
-      persistedSyncState: { value: { initiallySynced: true, realms: [] } },
+      persistedSyncState: { value: { initiallySynced: true, realms: ['rlm-public'] } },
     });
-    expect(isAccountPullComplete()).toBe(false);
+    expect(isAccountPullComplete()).toBe(true);
   });
 
   it('is false before the initial sync completes', () => {
     withCloud({
       currentUser: { value: { isLoggedIn: true, userId: 'u1' } },
       persistedSyncState: { value: { initiallySynced: false, realms: ['u1'] } },
+    });
+    expect(isAccountPullComplete()).toBe(false);
+  });
+
+  it('is false when signed out even after an initial sync', () => {
+    withCloud({
+      currentUser: { value: { isLoggedIn: false } },
+      persistedSyncState: { value: { initiallySynced: true } },
     });
     expect(isAccountPullComplete()).toBe(false);
   });

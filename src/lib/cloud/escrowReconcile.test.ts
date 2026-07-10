@@ -269,6 +269,22 @@ describe('startEscrowReconciler', () => {
     expect(run).toHaveBeenCalledTimes(2); // exactly one rerun, no pile-up
   });
 
+  it('survives a rejected run and keeps reconciling on later settles', async () => {
+    const sync = syncStub();
+    const user = userStub();
+    const run = vi.fn().mockRejectedValue(new Error('transient (test)'));
+    startEscrowReconciler(sync.observable, asUserObservable(user), run);
+
+    emitPhase(sync, 'in-sync'); // first run rejects — must not throw out of the runner
+    await flush();
+    expect(run).toHaveBeenCalledTimes(1);
+    // A later settle still schedules despite the earlier rejection.
+    emitPhase(sync, 'pulling');
+    emitPhase(sync, 'in-sync');
+    await flush();
+    expect(run).toHaveBeenCalledTimes(2);
+  });
+
   it('does not run after unsubscribe', () => {
     const sync = syncStub();
     const user = userStub();

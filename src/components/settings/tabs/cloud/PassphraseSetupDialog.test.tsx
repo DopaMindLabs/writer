@@ -27,6 +27,22 @@ describe('PassphraseSetupDialog', () => {
     expect(onCreate).not.toHaveBeenCalled();
   });
 
+  it('rates a long, varied passphrase as strong and a plain one as weak', async () => {
+    renderWithProviders(
+      <PassphraseSetupDialog open onOpenChange={noop} onRecoveryCode={noop} onCreate={vi.fn()} />,
+    );
+    const input = await screen.findByTestId('passphrase-input');
+
+    // 16+ chars with mixed case and a digit → all three strength points.
+    await userEvent.type(input, 'Abcdefgh1jklmnop');
+    expect(screen.getByTestId('passphrase-feedback')).toHaveTextContent(/Strength: Strong/i);
+
+    // 12 chars, single case, no variety → one point only.
+    await userEvent.clear(input);
+    await userEvent.type(input, 'aaaaaaaaaaaa');
+    expect(screen.getByTestId('passphrase-feedback')).toHaveTextContent(/Strength: Weak/i);
+  });
+
   it('creates encryption and hands up the recovery code when valid', async () => {
     const onCreate = vi.fn().mockResolvedValue('CODE-1234');
     const onRecoveryCode = vi.fn();
