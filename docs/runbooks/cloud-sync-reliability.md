@@ -1053,6 +1053,76 @@ Done:
 
 Rollback boundary: observability UI only.
 
+### WP9 — sync-applied writes bypass the write lock
+
+Ledger item: `TODO-02`.
+
+Depends on: WP2–WP4 (the keyless/mismatch write lock they establish).
+
+Discovered during execution, not in the original WP1–WP8 plan: the write lock
+those packages add to refuse keyless/mismatch **app** writes also blocked the
+cloud addon's own **pulled-row** writes. The addon applies rows it just pulled
+through the same table API, so the initial pull's `bulkAdd`/`bulkPut` threw, the
+sync transaction aborted, `initiallySynced` was never set, escrow presence stayed
+`unknown`, and a *content-bearing* account deadlocked on “fetching your account…”
+(an empty account pulls nothing, so tests stayed green). Formalised here
+retrospectively under `TODO-02`, the ledger item that owns the keyless middleware.
+
+Files:
+
+- `src/lib/cloud/crypto/middleware.ts`
+- `src/lib/cloud/cloudClient.ts`
+- `src/components/settings/tabs/cloud/CloudSectionPanel.tsx`
+- `src/components/settings/tabs/cloud/CloudKeylessAccountSection.tsx`
+- `src/components/settings/tabs/cloud/CloudKeylessPendingBanner.tsx`
+- Tests, i18n, help, and specification.
+
+Debug procedure:
+
+1. Sign a clean device into a content-bearing account before it holds a key.
+2. Confirm the initial pull's `bulkAdd`/`bulkPut` is refused by the write lock.
+3. Confirm `initiallySynced` is never set and escrow presence stays `unknown`.
+4. Confirm the keyless section stays on “fetching your account…” indefinitely.
+
+Solution procedure:
+
+1. Detect an addon-applied write via `req.trans.disableChangeTracking` and exempt
+   it from the lock; keep refusing ordinary app add/put. Do not alter sealing —
+   a pulled envelope is preserved untouched.
+2. Show the sync and reconcile status rows whenever the device is signed in, not
+   only once it holds a key, so a keyless device is never left without diagnostics.
+3. Drive the keyless pending banner from the sync phase: a retryable failure on
+   `error`, an offline notice on `offline`, the neutral checking notice otherwise —
+   none offering a key-minting action, so the divergence guard holds.
+4. Cover the pulled-row write path and the escrow-presence resolution with tests.
+
+Done:
+
+- The initial pull applies pulled ciphertext through the lock; app writes are
+  still refused while keyless or mismatched.
+- A content-bearing account no longer deadlocks on “fetching your account…”.
+- A signed-in keyless device sees sync/reconcile status, and a stalled fetch is
+  retryable or explained rather than a dead end.
+
+Rollback boundary: the encryption-middleware lock predicate and the keyless
+account UI; no schema or sync-protocol change.
+
+Traceability record — WP9:
+
+```text
+Work package: WP9 — sync-applied writes bypass the write lock
+Executor: Shavindra
+Changed files: src/lib/cloud/crypto/middleware.ts; src/lib/cloud/crypto/middleware.test.ts; src/lib/cloud/cloudClient.ts; src/lib/cloud/cloudClient.test.ts; src/lib/cloud/reconcile.ts; src/lib/cloud/reconcileStatus.ts; src/components/settings/tabs/cloud/CloudSectionPanel.tsx (+ test); src/components/settings/tabs/cloud/CloudKeylessAccountSection.tsx (+ test, stories); src/components/settings/tabs/cloud/CloudKeylessPendingBanner.tsx (+ test, stories); src/components/settings/tabs/cloud/CloudReconcileStatusRow.stories.tsx; src/components/settings/tabs/cloud/useCloudPanelState.ts (+ test); src/i18n/locales/en/screens.json; src/help/content/en/cloud-sync.md; docs/technical-specification.md
+Contracts implemented: pulled (disableChangeTracking) writes bypass the keyless/mismatch write lock while app add/put stay refused; sync + reconcile status visible to a signed-in keyless device; a stalled account fetch is retryable (error phase) or explained (offline phase) rather than hanging on "fetching your account…"; the reconcile skip-cache is cleared on sign-out; the kept-local follow-up carries its own trigger
+Tests added/updated: middleware.test.ts — a real disableChangeTracking transaction lands a pulled row through the lock, an app write is still refused; cloudClient.test.ts — first cloudEscrowPresence coverage (unknown until the pull completes, then present/none) and requestCloudSync; CloudSectionPanel.test.tsx — status rows gated on signed-in; CloudKeylessPendingBanner.test.tsx — error/offline/checking; CloudKeylessAccountSection.test.tsx — retry routing; reconcile.test.ts — sign-out clears the skip cache, kept-local trigger
+Commands run: npm run typecheck; npm run lint; npm run test:run (1946 passed); npm run test:e2e (318 passed; one unrelated split-views flake that passes in isolation and is covered by CI retries); node scripts/coverage-ratchet.mjs e2e (holds above all floors: lines 92.21, statements 84.85, functions 88.18, branches 76.61)
+Acceptance criteria: PASS
+Manual evidence: The pulled-row write path is proven at unit level — a real Dexie disableChangeTracking transaction lands the row through the lock, and escrow presence leaves 'unknown' exactly when initiallySynced flips. A full browser reproduction of the deadlock needs a real Dexie Cloud backend (the e2e harness never completes a login, so the signed-in pull is unreachable headlessly), so the chain is verified by unit/integration tests rather than an e2e spec.
+Runbook deviations: WP9 was not in the WP1–WP8 plan; the deadlock was found during execution and is formalised here under TODO-02. The middleware exemption shipped first (commit dbb5215); the observability/UI, tests, spec, and help followed in later commits on the same branch. The TODO ledger checkboxes are left unchanged (the pre-existing WP1–WP8 drift is not retro-ticked).
+Documentation impact: docs/technical-specification.md §4.9.1 — the lock exemption for pulled rows, status visibility whenever signed in, and the stalled-fetch retry/offline escape. src/help/content/en/cloud-sync.md — a new troubleshooting entry, "Fetching your account…" never finishes.
+Blockers: none
+```
+
 ### TODO-05 — Phase A validation and user help
 
 Depends on: `TODO-01`–`TODO-04`.
