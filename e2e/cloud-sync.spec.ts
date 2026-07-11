@@ -146,6 +146,10 @@ test.describe('cloud sync two-device beta limit', () => {
     await expect(page.getByTestId('cloud-keyless-locked')).toHaveCount(0);
     await expect(page.getByTestId('cloud-keyless-nokey')).toHaveCount(0);
     await expect(page.getByTestId('cloud-keyless-checking')).toHaveCount(0);
+
+    // Leaving settings tears the panel down cleanly (unsubscribes its stores).
+    await page.goto('/#/');
+    await expect(page.getByTestId('cloud-section')).toHaveCount(0);
   });
 
   test('the beta notice names the two-device limit', async ({ page }) => {

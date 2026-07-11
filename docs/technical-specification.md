@@ -393,9 +393,23 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   popover always offers a direct **Account** link to the account settings tab (where sign-in and
   encryption live), regardless of the flag. Opting out is **non-destructive** —
   the cloud schema is sticky so a rebuild never erases local content.
+- **Two-device beta limit.** An account holds at most **two devices** while the beta runs,
+  tracked in a synced, deliberately unencrypted `cloudDevices` registry — one row per joined
+  device carrying only the addon's random per-device client identity (which the server already
+  receives on every sync) and joined/last-seen timestamps; never a device name, user agent, or
+  content. Ids and counts are readable while keyless by design, so a signed-in third device is
+  **hard-blocked** before it can act: the keyless section is replaced by a banner naming the
+  limit, no unlock or set-up is offered, and only signing out on another device (which deletes
+  that device's row and flushes the deletion with an explicit push before logout — the addon's
+  own logout never pushes) frees the slot. A device registers itself once it is signed in and
+  holds a key; forgetting the key keeps the slot (the device is still signed in and expected to
+  unlock again). The gate is a client-side beta courtesy, not a security boundary; the section
+  heading carries a persistent beta notice naming the limit and advising local backups.
 - **Server sees / does not see.** Cannot: bodies, titles, note text, citation
   metadata, attachment bytes. Can: record ids and relationships, timestamps, note kinds,
-  citation keys and years, the sign-in email, and sync timing/IP. Sign-in is invite-only.
+  citation keys and years, the sign-in email, sync timing/IP, and the device-registry rows
+  (random per-device client identity plus joined/last-seen timestamps — identifiers and timing
+  the sync protocol already exposes). Sign-in is invite-only.
 
 See [`docs/cloud-sync-beta.md`](cloud-sync-beta.md) for the full design note and the
 manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P8 ciphertext and

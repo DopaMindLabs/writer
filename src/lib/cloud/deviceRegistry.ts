@@ -58,10 +58,10 @@ const isPullComplete = (db: LoremDB): boolean => {
  * itself past the limit.
  */
 export const registerThisDevice = async (db: LoremDB = appDb): Promise<void> => {
-  if (deviceKeyProvider.current() === null) return;
-  if (!isPullComplete(db)) return;
   const id = clientIdentityOf(db);
   if (id === null) return;
+  if (deviceKeyProvider.current() === null) return;
+  if (!isPullComplete(db)) return;
   const now = Date.now();
   const existing = await db.cloudDevices.get(id);
   await db.cloudDevices.put({

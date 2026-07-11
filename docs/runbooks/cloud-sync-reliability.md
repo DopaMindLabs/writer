@@ -1123,6 +1123,71 @@ Documentation impact: docs/technical-specification.md §4.9.1 — the lock exemp
 Blockers: none
 ```
 
+### WP10 — two-device beta limit
+
+Ledger item: `TODO-05` (Phase A validation and user help — the limit is the beta's
+field-tested operating envelope, added after WP9's fixes).
+
+Depends on: WP9 (the write-lock exemption and the keyless surfaces it gates).
+
+A real three-device test corrupted an account: a phone carrying stale plaintext
+data was forced through first-device setup by the sign-in guard, minted a fresh
+key, and the addon's login seeding pushed its stale rows over the account's
+last-writer-wins. Until multi-device is properly supported (push quarantine is
+scoped follow-up work), the beta is capped at **two devices per account**, hard.
+
+Files:
+
+- `src/db/LoremDB.ts` (`cloudDevices` table on cloud builds)
+- `src/lib/cloud/deviceRegistry.ts` (+ registrar wiring in `src/App.tsx`)
+- `src/lib/cloud/deviceLimit.ts` (dev/e2e forced-state affordance)
+- `src/lib/cloud/cloudClient.ts` (sign-out releases the slot)
+- `src/components/settings/tabs/cloud/` — `useDeviceSlots.ts`, `useCloudPanelFlags.ts`,
+  `CloudDeviceLimitBanner.tsx`, `CloudSectionHeader.tsx`, panel gating
+- i18n, help, specification, e2e.
+
+Solution procedure:
+
+1. Add a synced, deliberately **unencrypted** `cloudDevices` registry (outside
+   `SYNCED_TABLES`, so counts/ids stay readable to a keyless device and the table
+   stays out of the plaintext sign-in guard and erase): one row per joined device —
+   the addon's random client identity plus joined/last-seen timestamps, nothing else.
+2. Register idempotently once signed in + key held + identity minted (a session
+   runner mirroring the escrow reconciler); existing devices self-register on load.
+3. Hard-block: a signed-in keyless device with a full registry and no row of its
+   own gets the limit banner in place of the keyless section — no unlock, no
+   set-up. Sign-out stays available.
+4. Free the slot on sign-out: delete the row and flush with an explicit
+   `sync({purpose:'push'})` before `logout()` (the addon's logout never pushes).
+   Forgetting the key keeps the slot. An offline sign-out leaks it (lastSeenAt
+   recorded for a later reclaim) — beta-accepted.
+5. `?cloud-devices=full` forces the blocked state for Playwright.
+
+Done:
+
+- A third device is turned away with the two-device notice and no key action.
+- Sign-out on a registered device frees the slot.
+- The section heading names the beta limit and advises local backups.
+
+Rollback boundary: the registry table, registrar, and blocked-state UI; no
+change to encryption, escrow, or sync protocol.
+
+Traceability record — WP10:
+
+```text
+Work package: WP10 — two-device beta limit
+Executor: Shavindra
+Changed files: src/db/LoremDB.ts; src/db/buildDb.test.ts; src/lib/cloud/deviceRegistry.ts (+ test); src/lib/cloud/deviceLimit.ts (+ test); src/lib/cloud/cloudClient.ts (+ test); src/App.tsx (+ test); src/components/settings/tabs/cloud/useDeviceSlots.ts (+ test); useCloudPanelFlags.ts (+ test); CloudDeviceLimitBanner.tsx (+ test, stories); CloudSectionHeader.tsx (+ test, stories); CloudSectionPanel.tsx (+ test); src/i18n/locales/en/screens.json; e2e/cloud-sync.spec.ts; src/help/content/en/cloud-sync.md; docs/technical-specification.md
+Contracts implemented: at most two registered devices per account during the beta; a signed-in keyless third device is hard-blocked (no unlock/set-up) while the registry is full and it holds no row; registration requires signed-in + key + client identity; sign-out deletes the row and flushes the deletion before logout; forget-device keeps the slot; registry rows carry only the client identity and timestamps, unencrypted by design
+Tests added/updated: deviceRegistry.test.ts (gating, idempotence, release, registrar triggers); deviceLimit.test.ts (forced atom); useDeviceSlots.test.ts (blocked computation incl. own-id and free-slot cases); useCloudPanelFlags.test.ts; CloudDeviceLimitBanner.test.tsx; CloudSectionHeader.test.tsx; CloudSectionPanel.test.tsx (block replaces keyless section, non-regression); App.test.tsx (?cloud-devices=full); cloudClient.test.ts (release + push-before-logout order, offline tolerance); buildDb.test.ts (table on cloud builds, absent on plain); e2e/cloud-sync.spec.ts (blocked banner + beta notice + teardown)
+Commands run: npx tsc -b; npm run lint; npm run test:run (1977 passed); npm run test:e2e:coverage (321 passed; ratchet holds — lines 92.04, statements 84.47, functions 88.06, branches 76.30)
+Acceptance criteria: PASS
+Manual evidence: The real registry path (three physical devices against a live Dexie Cloud backend, including the server accepting the new synced table) is verified on the preview deployment per the runbook's manual protocol — headless e2e drives the blocked surface via the ?cloud-devices=full affordance because a live sign-in is unreachable in Playwright.
+Runbook deviations: none — scoped and executed as designed after the three-device field failure.
+Documentation impact: docs/technical-specification.md §4.9.1 — two-device beta limit paragraph and the device-registry entry in "Server sees / does not see". src/help/content/en/cloud-sync.md — "How many devices can I use?".
+Blockers: none
+```
+
 ### TODO-05 — Phase A validation and user help
 
 Depends on: `TODO-01`–`TODO-04`.

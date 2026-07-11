@@ -42,6 +42,22 @@ Your writing arrives locked on a new device until you unlock it.
 Your spaces, sections, and document names now appear. You do **not** need to
 reload the page, and any other tabs you have open update on their own.
 
+## How many devices can I use?
+
+**Two devices per account** while cloud sync is in beta. More will be supported
+later.
+
+A third device that signs in sees **This account already has two devices** and
+cannot unlock or set up until you free a slot:
+
+1. On one of your other devices, open **Settings → Cloud sync (beta)**.
+2. Select **Sign out**.
+3. Back on the new device, wait a moment, then continue with
+   **Unlock on this device**.
+
+While the beta runs, keep local backups of important writing on at least one
+device (**Settings → Backups**).
+
 ## Check that sync is healthy
 
 The **Sync** row at the top of the cloud panel reports the current state.
