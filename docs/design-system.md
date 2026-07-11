@@ -201,11 +201,14 @@ Borderless icon in a 28 px hit-zone.
 
 ### 3.3 `PillToggle` (source: `final.jsx · Toggle`)
 
-The familiar 28×16 pill switch. Rail is hairline at rest, ink at on.
+The familiar 28×16 pill switch. Rail is hairline at rest, ink at on. The `md` size
+(44×24) is for a touch row — a full-height mobile control where the compact `sm`
+default would be an undersized tap target.
 
 | Prop | Type | Default |
 |---|---|---|
 | `on` | boolean | `false` |
+| `size` | `'sm' \| 'md'` | `'sm'` |
 
 > **In this repo:** `src/components/ui/PillToggle.tsx`.
 
