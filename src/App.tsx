@@ -138,7 +138,9 @@ const useAppBoot = (): {
       await hydrateCloudDevice();
       // Refresh this tab's key ring when a sibling tab unlocks or forgets it, so
       // navigation names appear (or lock) everywhere without a reload.
-      stopKeyRingChannel = startKeyRingChannel(() => loadDeviceKeyRing());
+      stopKeyRingChannel = startKeyRingChannel(() => {
+        void loadDeviceKeyRing();
+      });
       // Reconcile documents pulled from other devices into the live editor/CRDT.
       // A no-op on a plain local database.
       stopReconciler = startCloudReconciler();
