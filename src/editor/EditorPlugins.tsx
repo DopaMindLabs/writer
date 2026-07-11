@@ -7,12 +7,13 @@ import { AutosavePlugin } from './plugins/AutosavePlugin';
 import { EditablePlugin } from './plugins/EditablePlugin';
 import { FloatingToolbarPlugin } from './plugins/FloatingToolbarPlugin';
 import { LimitHighlightPlugin } from './plugins/LimitHighlightPlugin';
+import type { FlushResult } from '@/lib/collab/flush.types';
 
 interface EditorPluginsProps {
-  onChange: (serialized: string) => void;
+  onChange: (serialized: string) => Promise<void>;
   editable: boolean;
   floatingToolbarEnabled: boolean;
-  flushRef?: RefObject<() => boolean>;
+  flushRef?: RefObject<() => Promise<FlushResult>>;
   wordLimit?: number;
   charLimit?: number;
 }

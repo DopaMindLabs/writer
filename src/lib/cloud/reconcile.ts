@@ -6,6 +6,7 @@ import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { getEditorHandle } from '@/lib/collab/editorRegistry';
 import { seedDocCrdt } from '@/lib/docs';
 import { createRevision } from '@/lib/revisions';
+import { NO_FLUSH, type FlushResult } from '@/lib/collab/flush.types';
 import { cloudSyncState, cloudSyncComplete } from './cloudClient';
 import { onDeviceKeyRingChange } from './crypto/keyStore';
 import type { CloudObservable } from './cloudObservable';
@@ -24,7 +25,9 @@ import type { CloudObservable } from './cloudObservable';
 
 export interface ReconcileResult {
   docId: string;
-  action: 'restored' | 'reseeded';
+  /** `restored`/`reseeded`: pulled body applied. `kept-local`: unsaved local edits
+   *  won, and the pulled body was preserved as a recoverable safety revision. */
+  action: 'restored' | 'reseeded' | 'kept-local';
 }
 
 /** Clear the stale CRDT lineage and reseed from the pulled body (unmounted doc). */
@@ -57,15 +60,27 @@ const reconcileDoc = async (doc: Doc): Promise<ReconcileResult | null> => {
   // straight from the body, without a spurious "pre-sync" revision.
   if (updates.length === 0) return applyPulledBody(doc);
 
+  // Capture the freshly pulled remote body before any flush can overwrite it in
+  // the row — we keep it in memory so it survives even if the flush persists local.
+  const pulledBody = doc.body;
   const handle = getEditorHandle(doc.id);
   // A mounted editor mid-autosave holds the user's latest keystrokes in the CRDT
   // while `docs.body` still lags behind the 600 ms debounce — which reads as
-  // divergence. Flushing settles that pending save; if it wrote, this was
-  // same-device lag, never a remote pull, so leave the live editor untouched.
-  if (handle?.flush?.()) return null;
+  // divergence. Await the flush so its write lands before we decide the winner.
+  const flushed = await (handle?.flush?.() ?? Promise.resolve<FlushResult>(NO_FLUSH));
 
-  // Genuine divergence with real local edits: keep the losing local side
-  // recoverable, then bring in the pulled body.
+  if (flushed.persisted) {
+    // The flush wrote unsaved local keystrokes to the row: this was same-device
+    // lag, not a remote pull. Keep the live local editor, but do not discard the
+    // remote body it just replaced — preserve it as a recoverable safety revision
+    // and queue a follow-up round so both sides converge by whole-document LWW.
+    await createRevision(doc.id, pulledBody, { kind: 'manual', label: 'pre-sync' });
+    requestReconcile('manual');
+    return { docId: doc.id, action: 'kept-local' };
+  }
+
+  // No unsaved local edits: genuine divergence, and the pulled remote body wins.
+  // Keep the losing local snapshot recoverable, then bring in the pulled body.
   await createRevision(doc.id, localSnapshot, {
     kind: 'manual',
     label: 'pre-sync',
