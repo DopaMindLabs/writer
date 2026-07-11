@@ -117,11 +117,14 @@ export type EscrowPresence = 'unknown' | 'none' | 'present';
 
 /**
  * The account's escrow presence for a signed-in-keyless device: `'unknown'`
- * until the initial pull completes (so Set-up can't mint a divergent key before
- * we know), then `'present'` (offer Unlock/adopt) or `'none'` (offer Set-up). It
- * re-evaluates on both `cloudCrypto` changes and sync-state settles, since the
- * escrow row and the pull-complete signal can arrive independently. Constant
- * `'none'` on a plain database.
+ * until the initial pull completes **and** the escrow-row query has resolved at
+ * least once (so Set-up can't mint a divergent key before we know — on a
+ * reloading device the pull-complete flag is persisted `true` while the row read
+ * is still in flight, and reporting `'none'` in that gap would offer Set-up over
+ * an account that has a key), then `'present'` (offer Unlock/adopt) or `'none'`
+ * (offer Set-up). It re-evaluates on both `cloudCrypto` changes and sync-state
+ * settles, since the escrow row and the pull-complete signal can arrive
+ * independently. Constant `'none'` on a plain database.
  */
 export const cloudEscrowPresence = (): CloudObservable<EscrowPresence> => {
   const api = cloudApi();
@@ -129,8 +132,9 @@ export const cloudEscrowPresence = (): CloudObservable<EscrowPresence> => {
   return {
     subscribe: (next) => {
       let hasRow = false;
+      let rowResolved = false;
       const emit = (): void => {
-        if (!isAccountPullComplete()) {
+        if (!rowResolved || !isAccountPullComplete()) {
           next('unknown');
           return;
         }
@@ -138,6 +142,7 @@ export const cloudEscrowPresence = (): CloudObservable<EscrowPresence> => {
       };
       const rowSub = liveQuery(() => db.cloudCrypto.get(ESCROW_ID)).subscribe((row) => {
         hasRow = row !== undefined;
+        rowResolved = true;
         emit();
       });
       const syncSub = api.syncState.subscribe(() => {

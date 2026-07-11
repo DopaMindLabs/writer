@@ -376,7 +376,11 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   on “fetching your account…”. Should that pull genuinely fail to settle, the keyless section
   does not sit on “fetching your account…” indefinitely: a sync **error** phase turns it into a
   retryable notice (a **Try again** that forces a fresh pull), and an **offline** phase says so
-  and resumes on its own — neither offers a key-minting action, so the divergence guard holds. The settings action row offers **no** set-up or unlock of
+  and resumes on its own — neither offers a key-minting action, so the divergence guard holds.
+  Presence itself resolves only once **both** the pull is confirmed complete **and** the local
+  escrow-row query has settled at least once: on a reloading device the persisted pull flag is
+  already `true` while the row read is still in flight, and reporting “no key” in that gap
+  would offer Set-up over an account that has one. The settings action row offers **no** set-up or unlock of
   its own — the presence-gated keyless section is the single source of key actions, so a set-up
   can never mint a key that diverges from a not-yet-pulled account escrow, and space creation is
   blocked with the same inline notice while the lock holds. Sign-in is surfaced on

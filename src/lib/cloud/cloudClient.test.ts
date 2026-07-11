@@ -290,6 +290,23 @@ describe('cloudEscrowPresence', () => {
     await waitFor(() => expect(seen.at(-1)).toBe('none'));
     sub.unsubscribe();
   });
+
+  it("never flashes 'none' on a device whose pull is already complete (escrow present)", async () => {
+    // The reload path: initiallySynced was persisted true and the account HAS an
+    // escrow, but the row liveQuery has not resolved yet at subscribe time. A
+    // premature 'none' here offers Set-up and can mint a key that diverges from
+    // the account's — presence must stay 'unknown' until the row query settles.
+    await escrowTable().put(dummyEscrow());
+    withCloud(signedInPull(true));
+
+    const seen: EscrowPresence[] = [];
+    const sub = cloudEscrowPresence().subscribe((p) => seen.push(p));
+
+    expect(seen[0]).toBe('unknown');
+    await waitFor(() => expect(seen.at(-1)).toBe('present'));
+    expect(seen).not.toContain('none');
+    sub.unsubscribe();
+  });
 });
 
 describe('hydrateCloudDevice', () => {
