@@ -314,14 +314,29 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   annotations, citations, connections, revisions, palettes. Never synced: settings,
   backups, sync bookkeeping, the CRDT `docUpdates` log, and the device keystore.
 - **Reconciliation.** Because the CRDT `docUpdates` log is per-device, cross-device
-  changes travel as `Doc.body` snapshots. After each sync settles, a reconciler compares
-  every row body against the local Y.Doc and, for a body a pull produced rather than the
-  local editor, keeps a safety revision of the local side then either replays the pulled
-  body through the mounted editor or reseeds the CRDT — **whole-document last-writer-wins**;
-  lossless cross-device merge is a recorded open decision for a future release. Sign-out
-  clears the per-device CRDT log; a re-pulled doc with an empty log **heals from its body**
-  (no spurious revision, and the editor mount waits until the log is reseeded), so content and
-  the editor recover after signing back in.
+  changes travel as `Doc.body` snapshots. Reconciliation is **single-flight** — one run at a
+  time, with a trigger during a run coalescing into exactly one follow-up — and armed on four
+  signals: the first `in-sync`, every transition out of `pulling`, every settled `syncComplete`,
+  and every device-key acquisition (so rows hidden while keyless reconcile the instant the key
+  arrives). Each run processes the **mounted (active) document first**, then the rest in bounded
+  batches that yield the event loop, skipping any document whose body is unchanged since its last
+  reconcile. It compares every row body against the local Y.Doc and, for a body a pull produced
+  rather than the local editor, keeps a safety revision of the losing side then either replays the
+  pulled body through the mounted editor or reseeds the CRDT — **whole-document last-writer-wins**;
+  lossless cross-device merge is a recorded open decision for a future release. The mounted-editor
+  flush is **awaitable and reports which body it persisted**: if the editor holds unsaved local
+  edits the pulled remote body is preserved as a recoverable safety revision and the live local
+  text is kept, so neither side is ever silently overwritten. On a healthy network an idle device
+  typically converges in about **1–2 seconds**; a failed reconcile surfaces a visible, retryable
+  status in cloud settings (never live in silence). Sign-out clears the per-device CRDT log; a
+  re-pulled doc with an empty log **heals from its body** (no spurious revision, and the editor
+  mount waits until the log is reseeded), so content and the editor recover after signing back in.
+- **Reactive key acquisition.** Acquiring the device key (unlock, adopt, recover, or setup)
+  changes no content row, so encrypted live queries would not otherwise re-run. A monotonic
+  device-key revision — bumped on every key acquire/reload/forget and folded into every encrypted
+  query's dependencies — makes space, section, and document names appear the instant the key lands,
+  **without a page reload**. An invalidation-only `BroadcastChannel` propagates the change to other
+  tabs (never any key material), so unlocking one tab refreshes them all.
 - **Key reconciliation.** Setup holds the escrow on the device, not in `cloudCrypto`, and —
   while signed out — drops any escrow already in the local database (residue from an earlier
   local session) so a fresh key can never trip a spurious mismatch. Reconciliation **re-runs on
