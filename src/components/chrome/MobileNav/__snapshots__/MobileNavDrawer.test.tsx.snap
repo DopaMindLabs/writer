@@ -3,7 +3,7 @@
 exports[`snapshot > matches the open drawer with the seeded space contents 1`] = `
 <div
   aria-labelledby="radix-_r_*_"
-  class="fixed inset-y-0 left-0 z-50 flex w-[min(320px,85vw)] bg-paper-2 shadow-lg md:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left duration-200"
+  class="fixed inset-y-0 left-0 z-50 flex w-[min(320px,85vw)] flex-col bg-paper-2 shadow-lg md:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left duration-200"
   data-state="open"
   id="radix-_r_*_"
   role="dialog"
@@ -16,111 +16,112 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
   >
     Navigation
   </h2>
-  <aside
-    aria-label="Spaces"
-    class="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-rule bg-paper-2 py-3.5"
+  <div
+    class="flex shrink-0 items-center gap-3 border-b border-rule px-3 py-3"
   >
     <a
       aria-label="Home"
-      class="mb-1 flex h-7 w-7 items-center justify-center rounded-md font-serif text-lg leading-none tracking-tight text-ink hover:bg-paper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+      class="flex h-11 w-11 items-center justify-center rounded-md font-serif text-2xl leading-none tracking-tight text-ink hover:bg-paper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
       data-discover="true"
       href="/"
     >
       L
     </a>
-    <span
-      aria-describedby="radix-_r_*_"
-      class="mb-2.5 max-w-full cursor-help truncate rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
-      data-radix-popper-align="center"
-      data-radix-popper-side="right"
-      data-state="instant-open"
-      tabindex="0"
+    <div
+      class="min-w-0"
     >
-      0.0.0-test
-    </span>
-    <a
-      class="relative flex h-9 w-9 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider transition-colors bg-ink text-paper"
-      data-discover="true"
-      data-state="closed"
-      data-testid="space-rail-space-s1"
-      href="/s/s1"
+      <div
+        class="flex items-center gap-1.5"
+      >
+        <span
+          class="rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
+        >
+          0.0.0-test
+        </span>
+        <span
+          class="truncate text-[12px] font-medium text-ink"
+        >
+          Pre-release build
+        </span>
+      </div>
+      <div
+        class="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+      >
+        Version 0.0.0-test
+      </div>
+    </div>
+  </div>
+  <div
+    class="shrink-0 border-b border-rule py-1.5"
+  >
+    <div
+      class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-3 pb-1 pt-1"
     >
-      TST
-    </a>
+      Spaces
+    </div>
+    <div
+      class="max-h-56 overflow-y-auto overscroll-contain"
+    >
+      <a
+        aria-current="page"
+        class="flex min-h-11 items-center gap-3 px-3 py-2 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ink bg-paper text-ink"
+        data-discover="true"
+        data-testid="mobile-nav-space-s1"
+        href="/s/s1"
+      >
+        <span
+          aria-hidden="true"
+          class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md font-mono text-[10px] font-medium tracking-wider bg-ink text-paper"
+        >
+          TST
+        </span>
+        <span
+          class="min-w-0 flex-1 truncate text-[13px] font-medium"
+        >
+          Test Space
+        </span>
+      </a>
+    </div>
     <a
-      aria-label="Create new space"
-      class="flex h-9 w-9 items-center justify-center rounded-md text-ink-4 hover:bg-paper hover:text-ink-2"
+      class="flex min-h-11 items-center gap-3 px-3 py-2 text-ink-4 transition-colors hover:bg-paper hover:text-ink-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ink"
       data-discover="true"
-      data-state="closed"
+      data-testid="mobile-nav-create-space"
       href="/new"
     >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-plus h-4 w-4"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
+      <span
+        class="flex h-7 w-7 shrink-0 items-center justify-center"
       >
-        <path
-          d="M5 12h14"
-        />
-        <path
-          d="M12 5v14"
-        />
-      </svg>
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-plus h-4 w-4"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M5 12h14"
+          />
+          <path
+            d="M12 5v14"
+          />
+        </svg>
+      </span>
+      <span
+        class="min-w-0 flex-1 truncate text-[13px] font-medium"
+      >
+        Create a new space
+      </span>
     </a>
-    <div
-      class="flex-1"
-    />
-    <button
-      aria-expanded="false"
-      aria-haspopup="dialog"
-      aria-label="LIpsum Writer"
-      class="group inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper hover:text-ink data-[state=open]:bg-paper data-[state=open]:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
-      data-state="closed"
-      data-tour="tour-topbar-theme"
-      type="button"
-    >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-ellipsis-vertical h-4 w-4"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle
-          cx="12"
-          cy="12"
-          r="1"
-        />
-        <circle
-          cx="12"
-          cy="5"
-          r="1"
-        />
-        <circle
-          cx="12"
-          cy="19"
-          r="1"
-        />
-      </svg>
-    </button>
-  </aside>
+  </div>
   <aside
     aria-label="Space"
-    class="flex flex-col border-rule bg-paper-2 w-auto flex-1 border-r-0"
+    class="flex flex-col border-rule bg-paper-2 min-h-0 w-auto flex-1 border-r-0"
   >
     <div
       class="group border-b border-rule px-5 pb-4 pt-5"
@@ -359,5 +360,49 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
       </div>
     </nav>
   </aside>
+  <button
+    class="group relative flex w-full cursor-pointer select-none items-center gap-2.5 px-3.5 py-1.5 text-left font-sans text-[13px] font-normal text-ink-2 outline-none transition-colors hover:bg-paper-2 hover:text-ink focus-visible:bg-paper-2 focus-visible:text-ink data-[highlighted]:bg-paper-2 data-[highlighted]:text-ink min-h-11 shrink-0 border-t border-rule"
+    data-testid="mobile-nav-quick-settings"
+    type="button"
+  >
+    <span
+      class="flex w-3.5 shrink-0 items-center justify-center text-ink-3 group-hover:text-ink group-data-[highlighted]:text-ink"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-ellipsis-vertical h-3 w-3"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="1"
+        />
+        <circle
+          cx="12"
+          cy="5"
+          r="1"
+        />
+        <circle
+          cx="12"
+          cy="19"
+          r="1"
+        />
+      </svg>
+    </span>
+    <span
+      class="flex-1 truncate"
+    >
+      Quick settings
+    </span>
+  </button>
 </div>
 `;

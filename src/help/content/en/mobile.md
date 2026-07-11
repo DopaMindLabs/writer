@@ -13,8 +13,11 @@ The app adapts to small screens so you can read and write on a phone or tablet.
 ## Navigation on small screens
 
 On narrow screens the sidebar collapses behind a menu and a **bottom-tabs** nav
-appears. Tap a tab to switch modes, open the **nav drawer** to reach spaces and
-documents, and open **more** for settings, **Help**, and about.
+appears. Tap a tab to switch modes, or open the **nav drawer** from the top-left
+menu button. The drawer lists your **spaces** as full-width rows showing each
+space's name (the active one is highlighted), a row to **create a new space**,
+the documents in the current space, and a **Quick settings** row at the foot that
+opens the more sheet. The **more** tab opens that same sheet directly.
 
 In **settings**, tap the badge in the top-left of the settings panel to leave:
 the **L** wordmark in universal settings takes you back to Home, and a space's

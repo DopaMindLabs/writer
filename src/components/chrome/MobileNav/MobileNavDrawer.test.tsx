@@ -5,7 +5,13 @@ import {
   waitFor,
   fireEvent,
 } from '@/test/test-utils';
-import { FIXED_TIME, sampleSpace, seedBasicSpace } from '@/test/fixtures';
+import userEvent from '@testing-library/user-event';
+import {
+  FIXED_TIME,
+  sampleSpace,
+  seedBasicSpace,
+  seedMultipleSpaces,
+} from '@/test/fixtures';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
 import { MobileNavDrawer } from './MobileNavDrawer';
@@ -34,14 +40,39 @@ describe('MobileNavDrawer', () => {
     expect(await screen.findByText('Sample Doc')).toBeInTheDocument();
   });
 
+  it('lists spaces by name with the active space marked current', async () => {
+    await seedMultipleSpaces();
+    renderWithProviders(<MobileNavDrawer spaceId="s2" activeDocId={null} />, {
+      initialEntries: ['/s/s2'],
+    });
+    await openAfterMount();
+    // Names are shown, not just the two-letter tag as on the desktop rail.
+    const beta = await screen.findByTestId('mobile-nav-space-s2');
+    expect(beta).toHaveTextContent('Beta');
+    expect(beta).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByTestId('mobile-nav-space-s1')).not.toHaveAttribute(
+      'aria-current',
+    );
+    // The shared space announces its state to assistive tech.
+    expect(beta).toHaveTextContent(/shared/i);
+  });
+
+  it('hands off to the more sheet from the Quick settings row', async () => {
+    await seedBasicSpace();
+    renderWithProviders(<MobileNavDrawer spaceId="s1" activeDocId={null} />, {
+      initialEntries: ['/s/s1'],
+    });
+    await openAfterMount();
+    await userEvent.click(await screen.findByTestId('mobile-nav-quick-settings'));
+    expect(useUI.getState().mobileNavOpen).toBe(false);
+    expect(useUI.getState().mobileMoreOpen).toBe(true);
+  });
+
   it('closes on Escape', async () => {
     await db.spaces.put(sampleSpace);
     renderWithProviders(<MobileNavDrawer spaceId="s1" activeDocId={null} />);
     await openAfterMount();
     await screen.findByRole('dialog');
-    // Opening the drawer autofocuses the SpaceRail alpha chip, whose tooltip
-    // becomes the topmost dismissable layer; blur it so Escape hits the drawer.
-    act(() => { (document.activeElement as HTMLElement | null)?.blur(); });
     fireEvent.keyDown(document, { key: 'Escape' });
     await waitFor(() =>
       { expect(useUI.getState().mobileNavOpen).toBe(false); },

@@ -70,3 +70,61 @@ test('scrolls the sheet so the app links below the controls stay reachable', asy
   await contact.scrollIntoViewIfNeeded();
   await expect(contact).toBeVisible();
 });
+
+test('the nav drawer lists spaces by name and closes when one is chosen', async ({
+  page,
+}) => {
+  const { spaceId, docId } = await gotoFirstDoc(page);
+  await page.goto(`/#/s/${spaceId}/d/${docId}`);
+  await page.getByRole('button', { name: /open nav/i }).click();
+
+  const drawer = page.locator('[role="dialog"]');
+  await expect(drawer).toBeVisible();
+  const spaceRow = drawer.getByTestId(`mobile-nav-space-${spaceId}`);
+  await expect(spaceRow).toBeVisible();
+  // The row carries the space name, not just the two-letter tag.
+  await expect(spaceRow).toHaveText(/\w{3,}/);
+
+  await spaceRow.click();
+  await expect(drawer).toBeHidden();
+});
+
+test('hands off from the nav drawer to the more sheet and changes the theme', async ({
+  page,
+}) => {
+  const { spaceId, docId } = await gotoFirstDoc(page);
+  await page.goto(`/#/s/${spaceId}/d/${docId}`);
+  await page.getByRole('button', { name: /open nav/i }).click();
+
+  const drawer = page.getByRole('dialog', { name: 'Navigation' });
+  await expect(drawer).toBeVisible();
+  await drawer.getByTestId('mobile-nav-quick-settings').click();
+
+  await expect(drawer).toBeHidden();
+  await expect(page.getByTestId('mobile-more-sheet')).toBeVisible();
+  await page.getByTestId('quick-settings-theme-dark').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+});
+
+test('leaves focus mode via the nav drawer on mobile', async ({ page }) => {
+  const { spaceId, docId } = await gotoFirstDoc(page);
+  await page.goto(`/#/s/${spaceId}/d/${docId}`);
+  await openMoreSheet(page);
+  await page.getByTestId('quick-settings-focus-toggle').click();
+  await expect(page).toHaveURL(/focus=1/);
+
+  // Dismiss the sheet; focus mode stays on and the bottom tabs are now gone.
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('mobile-more-sheet')).toBeHidden();
+
+  // The nav drawer's Quick settings row reopens the sheet so focus can be
+  // switched back off.
+  await page.getByRole('button', { name: /open nav/i }).click();
+  await page
+    .getByRole('dialog', { name: 'Navigation' })
+    .getByTestId('mobile-nav-quick-settings')
+    .click();
+  await expect(page.getByTestId('mobile-more-sheet')).toBeVisible();
+  await page.getByTestId('quick-settings-focus-toggle').click();
+  await expect(page).not.toHaveURL(/focus=1/);
+});

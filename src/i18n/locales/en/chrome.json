@@ -77,7 +77,11 @@
   },
   "mobileNav": {
     "title": "Navigation",
-    "close": "Close navigation"
+    "close": "Close navigation",
+    "spaces": "Spaces",
+    "createSpace": "Create a new space",
+    "quickSettings": "Quick settings",
+    "shared": "Shared"
   },
   "mobileTabs": {
     "write": "write",

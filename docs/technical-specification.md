@@ -243,9 +243,9 @@ The per-space navigation column.
 - **Doc row menu:** each document row has a **⋯ menu** (Rename, Delete…) — revealed on row hover/focus on desktop, always visible on mobile.
 - **Brain space link:** routes to `/s/:spaceId/brain-space`; shows the unsorted-note count and highlights when active.
 - **Footer:** Home, About, GitHub links.
-- **Mobile:** replaced by a hamburger button in the topbar that opens the same content in a dialog drawer. The drawer closes when the user taps a destination.
+- **Mobile:** replaced by a hamburger button in the topbar that opens a dialog drawer. The drawer is a column: a header (wordmark home link plus the pre-release build note shown inline, since touch has no hover tooltip), a labelled, scrollable **Spaces** list of full-width named rows (active row marked `aria-current="page"`, shared spaces carry a dot with a visually-hidden "Shared") plus a create-space row, the current space's document sidebar, and a **Quick settings** row at the foot that closes the drawer and opens the more sheet. The drawer closes when the user taps a destination.
 
-*Covered by:* `mobile-nav.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `MobileNavDrawer.test.tsx`.
+*Covered by:* `mobile-nav.spec.ts`, `quick-settings-mobile.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `MobileNavDrawer.test.tsx`.
 
 ---
 

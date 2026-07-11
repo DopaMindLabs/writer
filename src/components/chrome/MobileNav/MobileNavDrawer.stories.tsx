@@ -22,7 +22,7 @@ const meta = {
   tags: ['!autodocs'],
   title: 'Navigation/MobileNavDrawer',
   component: MobileNavDrawer,
-  parameters: { layout: 'fullscreen', seed: 'basicSpace' },
+  parameters: { layout: 'fullscreen', seed: 'multipleSpaces' },
   args: { spaceId: 's1', activeDocId: null },
 } satisfies Meta<typeof MobileNavDrawer>;
 

@@ -9,9 +9,11 @@ import {
   DialogPrimitiveTitle,
 } from '@/components/ui/dialog.primitives';
 import { useUI } from '@/store/ui';
-import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { cn } from '@/lib/utils';
+import { MobileNavHeader } from './MobileNavHeader';
+import { MobileNavSpaces } from './MobileNavSpaces';
+import { MobileNavQuickSettingsRow } from './MobileNavQuickSettingsRow';
 
 interface MobileNavDrawerProps {
   spaceId: string;
@@ -40,19 +42,21 @@ export const MobileNavDrawer = ({ spaceId, activeDocId }: MobileNavDrawerProps) 
         <DialogPrimitiveContent
           aria-describedby={undefined}
           className={cn(
-            'fixed inset-y-0 left-0 z-50 flex w-[min(320px,85vw)] bg-paper-2 shadow-lg md:hidden',
+            'fixed inset-y-0 left-0 z-50 flex w-[min(320px,85vw)] flex-col bg-paper-2 shadow-lg md:hidden',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left',
             'duration-200',
           )}
         >
           <DialogPrimitiveTitle className="sr-only">{t('mobileNav.title')}</DialogPrimitiveTitle>
-          <SpaceRail activeSpaceId={spaceId} />
+          <MobileNavHeader />
+          <MobileNavSpaces activeSpaceId={spaceId} />
           <Sidebar
             spaceId={spaceId}
             activeDocId={activeDocId}
-            className="w-auto flex-1 border-r-0"
+            className="min-h-0 w-auto flex-1 border-r-0"
           />
+          <MobileNavQuickSettingsRow />
         </DialogPrimitiveContent>
       </DialogPrimitivePortal>
     </DialogPrimitiveRoot>

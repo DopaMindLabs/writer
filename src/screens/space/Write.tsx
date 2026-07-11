@@ -94,10 +94,13 @@ const WriteMobileChrome = ({
   docId: string | undefined;
   focus: boolean;
 }) => {
-  if (focus) return null;
+  // Focus mode hides the bottom tab bar for a distraction-free view, but the
+  // More sheet stays mounted: the nav drawer's Quick settings row opens it, and
+  // its focus toggle is how a phone leaves focus mode (the desktop rail that
+  // owns that toggle is hidden on mobile).
   return (
     <>
-      <MobileTabs spaceId={spaceId} docId={docId ?? null} />
+      {!focus && <MobileTabs spaceId={spaceId} docId={docId ?? null} />}
       <MobileMoreSheet spaceId={spaceId} docId={docId ?? null} />
     </>
   );
