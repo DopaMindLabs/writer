@@ -204,13 +204,16 @@ describe('QuickSettingsPopover', () => {
       expect(kbd).toHaveTextContent('⌘?');
     });
 
-    it('should mark completed tours with an opaque check and others with a hidden check', () => {
+    it('marks a completed tour row as checked and leaves an unrun tour unchecked', () => {
       getCompletedMock.mockReturnValue(['welcome']);
       renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-      const welcomeCheck = screen.getByTestId(
-        'quick-settings-tour-welcome-check',
+      expect(screen.getByTestId('quick-settings-tour-welcome')).toHaveAttribute(
+        'data-checked',
+        'true',
       );
-      expect(welcomeCheck.getAttribute('class')).toContain('opacity-100');
+      expect(screen.getByTestId('quick-settings-tour-writer')).not.toHaveAttribute(
+        'data-checked',
+      );
     });
   });
 

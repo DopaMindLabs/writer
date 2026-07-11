@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { TOUR_IDS, TOURS, type TourId } from '@/tours/tours';
 import { useTour } from '@/tours/useTour';
 import { getCompleted } from '@/tours/storage';
+import { MenuItem } from '@/components/ui/MenuItem';
+import { PopoverClose } from '@/components/ui/popover';
 import { SectionLabel } from './QuickSettingsSectionLabel';
-import { MenuItem } from './QuickSettingsMenuItem';
 
 export const HelpToursSection = () => {
   const { t } = useTranslation(['chrome', 'tours']);
@@ -30,16 +31,23 @@ export const HelpToursSection = () => {
 
       {TOUR_IDS.map((id) => {
         const done = completedSnapshot.includes(id);
+        const shortcut =
+          id === 'welcome' ? (
+            <span data-testid={`quick-settings-tour-${id}-kbd`}>
+              {t('chrome:quickSettings.helpKbd')}
+            </span>
+          ) : undefined;
         return (
-          <MenuItem
-            key={id}
-            onClick={() => { handleTour(id); }}
-            done={done}
-            kbd={id === 'welcome' ? t('chrome:quickSettings.helpKbd') : undefined}
-            testId={`quick-settings-tour-${id}`}
-          >
-            {t(`tours:${TOURS[id].titleKey}`)}
-          </MenuItem>
+          <PopoverClose asChild key={id}>
+            <MenuItem
+              checkPosition="leading"
+              checked={done}
+              shortcut={shortcut}
+              label={t(`tours:${TOURS[id].titleKey}`)}
+              onClick={() => { handleTour(id); }}
+              data-testid={`quick-settings-tour-${id}`}
+            />
+          </PopoverClose>
         );
       })}
     </>
