@@ -367,7 +367,11 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   — sign-in is turned back until its writing is sealed. A **clean** device (no plaintext synced
   rows) may sign in first and then unlock/adopt the account key; while it is signed-in-keyless
   the middleware refuses content writes and hides sealed rows, so a keyless write is never
-  uploaded in the clear either way, and the settings action row offers **no** set-up or unlock of
+  uploaded in the clear either way. The refusal is scoped to **app** writes: the addon applies
+  rows it just pulled (already ciphertext) through the same table API but inside a
+  change-tracking-disabled transaction, and the lock exempts those — otherwise the initial pull
+  would abort, `initiallySynced` would never be set, and a content-bearing account would deadlock
+  on “fetching your account…”. The settings action row offers **no** set-up or unlock of
   its own — the presence-gated keyless section is the single source of key actions, so a set-up
   can never mint a key that diverges from a not-yet-pulled account escrow, and space creation is
   blocked with the same inline notice while the lock holds. Sign-in is surfaced on

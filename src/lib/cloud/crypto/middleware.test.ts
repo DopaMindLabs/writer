@@ -3,6 +3,7 @@ import Dexie, {
   type DBCore,
   type DBCoreTable,
   type DBCoreQueryRequest,
+  type DBCoreMutateRequest,
 } from 'dexie';
 import dexieCloud from 'dexie-cloud-addon';
 import { STORES } from '@/db/stores';
@@ -313,6 +314,87 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     expect(back?.name).toBe('My Doc');
     expect(back?.body).toBe('secret body');
     expect(back?.meta).toEqual({ wordCount: 3 });
+  });
+});
+
+/**
+ * The write lock refuses *app* content writes while the device is keyless or
+ * mismatched, but the cloud addon applies pulled server rows (already ciphertext)
+ * through this same table API — inside a transaction it marks `disableChangeTracking`
+ * (the flag it also reads back to skip its own change queue). Blocking those would
+ * abort the initial pull and strand the account on "fetching your account…" forever.
+ * A sync-applied write must therefore pass the lock; an app write must still be
+ * refused.
+ */
+describe('createEncryptionMiddleware — sync-applied writes bypass the write lock', () => {
+  const primaryKey = { extractKey: (v: { id: string }) => v.id };
+
+  const makeWrapped = (
+    ring: CloudKeyRing | null,
+  ): { wrapped: DBCoreTable; mutate: ReturnType<typeof vi.fn> } => {
+    const provider: KeyProvider = { current: () => ring };
+    const mutate = vi.fn().mockResolvedValue({
+      numFailures: 0,
+      failures: [],
+      results: [],
+      lastResult: undefined,
+    });
+    const fake = { name: 'docs', schema: { primaryKey }, mutate } as unknown as DBCoreTable;
+    const down = { table: () => fake } as unknown as DBCore;
+    const created = createEncryptionMiddleware(provider).create(down) as DBCore;
+    return { wrapped: created.table('docs'), mutate };
+  };
+
+  /** A put request, optionally on a change-tracking-disabled (sync-applied) tx. */
+  const putReq = (syncApplied: boolean): DBCoreMutateRequest =>
+    ({
+      type: 'put',
+      trans: { disableChangeTracking: syncApplied } as never,
+      values: [{ id: 'r1', spaceId: 's', sectionId: 'x', updatedAt: 1 }],
+    }) as unknown as DBCoreMutateRequest;
+
+  afterEach(() => {
+    keyMismatchState.set(false);
+    keylessLockState.set(false);
+    vi.restoreAllMocks();
+  });
+
+  it('lets the addon apply a pulled row while signed-in-keyless (no ring)', async () => {
+    keylessLockState.set(true);
+    const { wrapped, mutate } = makeWrapped(null);
+
+    await expect(wrapped.mutate(putReq(true))).resolves.toBeDefined();
+    expect(mutate).toHaveBeenCalledTimes(1);
+  });
+
+  it('lets the addon apply a pulled row under a key mismatch (foreign ring held)', async () => {
+    keyMismatchState.set(true);
+    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const { wrapped, mutate } = makeWrapped(ring);
+
+    await expect(wrapped.mutate(putReq(true))).resolves.toBeDefined();
+    expect(mutate).toHaveBeenCalledTimes(1);
+  });
+
+  it('still refuses an ordinary app write while keyless (change tracking on)', async () => {
+    keylessLockState.set(true);
+    const { wrapped, mutate } = makeWrapped(null);
+
+    await expect(wrapped.mutate(putReq(false))).rejects.toBeInstanceOf(
+      CloudKeylessWriteError,
+    );
+    expect(mutate).not.toHaveBeenCalled();
+  });
+
+  it('still refuses an ordinary app write under a mismatch (change tracking on)', async () => {
+    keyMismatchState.set(true);
+    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const { wrapped, mutate } = makeWrapped(ring);
+
+    await expect(wrapped.mutate(putReq(false))).rejects.toBeInstanceOf(
+      CloudKeyMismatchError,
+    );
+    expect(mutate).not.toHaveBeenCalled();
   });
 });
 

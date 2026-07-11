@@ -26,6 +26,19 @@ export interface KeyProvider {
 
 type Row = Record<string, unknown>;
 
+/**
+ * Whether a mutation is the cloud addon applying rows it just pulled from the
+ * server, rather than an app write. The addon runs `applyServerChanges` (and its
+ * WebSocket equivalent) inside a transaction it marks `disableChangeTracking` —
+ * the same flag it reads back off `req.trans` to skip its own change queue. Those
+ * rows are ciphertext the addon pulled, so they must pass the write lock even
+ * while the device is keyless or mismatched: blocking them aborts the initial
+ * pull, so `initiallySynced` is never set and setup deadlocks on "fetching your
+ * account…". A safe read of an addon-set flag, not a validation bypass.
+ */
+const isSyncApplied = (trans: DBCoreMutateRequest['trans']): boolean =>
+  (trans as { disableChangeTracking?: boolean }).disableChangeTracking === true;
+
 /** The stored primary key of a row, as a string for the envelope's row binding. */
 const pkString = (table: DBCoreTable, value: Row, fallback?: unknown): string => {
   const extract = table.schema.primaryKey.extractKey;
@@ -166,9 +179,13 @@ const wrapTable = (
       // Refuse content add/put while locked: under a mismatch the account holds a
       // different key (a push would pollute it); while signed-in-keyless there is
       // no key to seal with (a push would leak plaintext). Deletes still pass, so
-      // the mismatch escape hatch can drop unreadable rows.
+      // the mismatch escape hatch can drop unreadable rows. A sync-applied write is
+      // exempt: it is ciphertext the addon just pulled, and blocking it would abort
+      // the initial pull and deadlock setup — reads already hide sealed rows while
+      // keyless, and the seal path below preserves an existing envelope untouched.
       const reason = lockReason();
-      if (reason !== 'none' && (req.type === 'add' || req.type === 'put')) {
+      const appWrite = req.type === 'add' || req.type === 'put';
+      if (reason !== 'none' && appWrite && !isSyncApplied(req.trans)) {
         throw reason === 'mismatch'
           ? new CloudKeyMismatchError()
           : new CloudKeylessWriteError();
