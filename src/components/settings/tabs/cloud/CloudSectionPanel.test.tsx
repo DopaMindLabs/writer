@@ -19,6 +19,7 @@ const state = {
   hasKey: false,
   presence: 'unknown' as EscrowPresence,
   phase: 'in-sync' as SyncState['phase'],
+  deviceLimitBlocked: false,
 };
 
 vi.mock('@/lib/cloud/cloudClient', async (importOriginal) => {
@@ -33,6 +34,10 @@ vi.mock('@/lib/cloud/cloudClient', async (importOriginal) => {
 });
 
 vi.mock('@/hooks/useKeyMismatch', () => ({ useKeyMismatch: () => false }));
+
+vi.mock('./useDeviceSlots', () => ({
+  useDeviceLimitBlocked: () => state.deviceLimitBlocked,
+}));
 
 vi.mock('./useCloudPanelState', () => ({
   useCloudPanelState: (): CloudPanelState => ({
@@ -75,6 +80,7 @@ describe('CloudSectionPanel status visibility', () => {
     state.hasKey = false;
     state.presence = 'unknown';
     state.phase = 'in-sync';
+    state.deviceLimitBlocked = false;
   });
 
   afterEach(() => {
@@ -110,5 +116,31 @@ describe('CloudSectionPanel status visibility', () => {
     renderWithProviders(<CloudSectionPanel />);
 
     expect(screen.getByTestId('cloud-sync-status')).toBeInTheDocument();
+  });
+
+  it('replaces the keyless section with the hard block when the device limit is hit', () => {
+    state.signedIn = true;
+    state.hasKey = false;
+    state.presence = 'present';
+    state.deviceLimitBlocked = true;
+
+    renderWithProviders(<CloudSectionPanel />);
+
+    expect(screen.getByTestId('cloud-device-limit')).toBeInTheDocument();
+    // No key action reachable: the unlock/set-up banners never render.
+    expect(screen.queryByTestId('cloud-keyless-locked')).toBeNull();
+    expect(screen.queryByTestId('cloud-keyless-nokey')).toBeNull();
+    expect(screen.queryByTestId('cloud-keyless-checking')).toBeNull();
+  });
+
+  it('leaves the keyless section untouched while a slot is free (non-regression)', () => {
+    state.signedIn = true;
+    state.hasKey = false;
+    state.presence = 'present';
+
+    renderWithProviders(<CloudSectionPanel />);
+
+    expect(screen.queryByTestId('cloud-device-limit')).toBeNull();
+    expect(screen.getByTestId('cloud-keyless-locked')).toBeInTheDocument();
   });
 });

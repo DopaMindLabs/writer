@@ -449,6 +449,11 @@
           "eraseConfirm": "Erase the account's copy",
           "eraseBack": "Back"
         },
+        "deviceLimit": {
+          "title": "This account already has two devices",
+          "body": "Cloud sync is in beta and supports two devices for now. Sign out on one of your other devices, then try again here.",
+          "betaNotice": "Cloud sync is in beta: two devices per account for now, with more to come. Keep local backups of important writing on at least one device."
+        },
         "backupNudge": {
           "title": "These notes are only on this device",
           "body": "Sign in to back them up. Until you do, clearing this browser loses them."

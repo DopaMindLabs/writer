@@ -112,6 +112,20 @@ export const isAccountPullComplete = (): boolean => {
   );
 };
 
+/**
+ * This device's stable, random per-device client identity, minted by the first
+ * post-login sync (the addon sends it to the server on every sync). `null` on a
+ * plain database or before that first sync settles.
+ */
+export const cloudClientIdentity = (): string | null => {
+  const cloud = (
+    db as {
+      cloud?: { persistedSyncState?: { value?: { clientIdentity?: string } } };
+    }
+  ).cloud;
+  return cloud?.persistedSyncState?.value?.clientIdentity ?? null;
+};
+
 /** Whether the account holds an escrow, once its pull is confirmed complete. */
 export type EscrowPresence = 'unknown' | 'none' | 'present';
 
