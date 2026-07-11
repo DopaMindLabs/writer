@@ -65,7 +65,7 @@ describe('requestCloudSync forces a pull', () => {
 
   it('calls the addon sync with a pull purpose', async () => {
     const sync = vi.fn().mockResolvedValue(undefined);
-    (db as { cloud?: { sync: typeof sync } }).cloud = { sync };
+    (db as unknown as { cloud?: { sync: typeof sync } }).cloud = { sync };
     await requestCloudSync();
     expect(sync).toHaveBeenCalledWith({ purpose: 'pull', wait: true });
   });
@@ -275,7 +275,7 @@ describe('cloudEscrowPresence', () => {
     expect(seen[0]).toBe('unknown');
 
     cloud.persistedSyncState.value.initiallySynced = true;
-    cloud.syncState.next({ status: 'in-sync', phase: 'in-sync' });
+    cloud.syncState.next({ status: 'connected', phase: 'in-sync' });
 
     await waitFor(() => expect(seen.at(-1)).toBe('present'));
     sub.unsubscribe();
