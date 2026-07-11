@@ -9,8 +9,8 @@ import {
   DialogPrimitiveTitle,
 } from '@/components/ui/dialog.primitives';
 import { useUI } from '@/store/ui';
-import { SpaceRail } from './SpaceRail';
-import { Sidebar } from './Sidebar';
+import { SpaceRail } from '@/components/chrome/SpaceRail';
+import { Sidebar } from '@/components/chrome/Sidebar';
 import { cn } from '@/lib/utils';
 
 interface MobileNavDrawerProps {
