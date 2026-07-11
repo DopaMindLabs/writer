@@ -13,6 +13,7 @@ import { InlineBanner } from '@/components/ui/InlineBanner';
 import { useKeyMismatch } from '@/hooks/useKeyMismatch';
 import { useCloudPanelState } from './useCloudPanelState';
 import { CloudSyncStatusRow } from './CloudSyncStatusRow';
+import { CloudReconcileStatusRow } from './CloudReconcileStatusRow';
 import { CloudPrivacyDisclosure } from './CloudPrivacyDisclosure';
 import { CloudEncryptionControls } from './CloudEncryptionControls';
 import { CloudKeylessAccountSection } from './CloudKeylessAccountSection';
@@ -22,12 +23,6 @@ import { CloudBackupNudge } from './CloudBackupNudge';
 
 const INITIAL_STATE: SyncState = { status: 'not-started', phase: 'initial' };
 const INITIAL_PRESENCE: EscrowPresence = 'unknown';
-
-/** Acquiring a key does not re-run mounted live queries (they still hold dropped
- *  rows), so a full reload re-hydrates the key and re-reads everything decrypted. */
-const reloadPage = () => {
-  window.location.reload();
-};
 
 /**
  * The active cloud-sync panel (rendered only behind both gates). A clean device
@@ -56,6 +51,7 @@ export const CloudSectionPanel = () => {
       {panel.hasKey ? (
         <CloudSyncStatusRow phase={sync.phase} message={sync.error?.message} />
       ) : null}
+      {panel.hasKey ? <CloudReconcileStatusRow /> : null}
       {mismatch ? <CloudKeyConflictSection onResolved={panel.refreshKey} /> : null}
       {keylessSignedIn ? (
         <CloudKeylessAccountSection
@@ -85,7 +81,7 @@ export const CloudSectionPanel = () => {
         setDialog={panel.setDialog}
         recoveryCode={panel.recoveryCode}
         setRecoveryCode={panel.setRecoveryCode}
-        onKeyAcquired={keylessSignedIn ? reloadPage : panel.onKeyAcquired}
+        onKeyAcquired={panel.onKeyAcquired}
         interaction={interaction ?? null}
       />
     </section>

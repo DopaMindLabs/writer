@@ -410,6 +410,11 @@
           "offline": "Offline",
           "error": "Sync problem"
         },
+        "reconcile": {
+          "failedTitle": "Sync couldn't finish",
+          "failedBody": "Some changes from your other devices haven't been applied yet. Your writing is safe — nothing has been lost.",
+          "retry": "Try again"
+        },
         "disclosure": {
           "title": "What the server can and can't see",
           "encrypted": "Your writing — document and note bodies, titles, annotations and citation details — is encrypted on this device before upload. The server only ever stores ciphertext.",
