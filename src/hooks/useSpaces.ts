@@ -1,8 +1,8 @@
-import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db/db';
+import { useEncryptedLiveQuery } from './useEncryptedLiveQuery';
 
 export const useSpaces = () => {
-  return useLiveQuery(
+  return useEncryptedLiveQuery(
     () => db.spaces.orderBy('createdAt').reverse().toArray(),
     [],
     [],
@@ -10,5 +10,9 @@ export const useSpaces = () => {
 };
 
 export const useSpace = (id: string | null | undefined) => {
-  return useLiveQuery(() => (id ? db.spaces.get(id) : undefined), [id], undefined);
+  return useEncryptedLiveQuery(
+    () => (id ? db.spaces.get(id) : undefined),
+    [id],
+    undefined,
+  );
 };
