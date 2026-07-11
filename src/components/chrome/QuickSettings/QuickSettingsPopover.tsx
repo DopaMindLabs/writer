@@ -18,7 +18,7 @@ export const QuickSettingsPopover = () => {
   return (
     <div
       data-testid="quick-settings-popover"
-      className="w-72 bg-paper font-sans"
+      className="w-72 max-h-[var(--radix-popover-content-available-height)] overflow-y-auto overscroll-contain bg-paper font-sans"
     >
       <div className="border-b border-rule px-4 pb-3 pt-3.5">
         <div className="font-serif text-[16px] font-medium tracking-tight text-ink">
