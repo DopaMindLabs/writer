@@ -1,17 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
-import type { Space } from '@/db/schema';
+import { sampleSpace } from '@/test/fixtures';
 import { SpaceMenuPopover } from './SpaceMenuPopover';
 
-const space: Space = {
-  id: 's1',
-  tag: 'TST',
-  name: 'Test Space',
-  shared: false,
-  template: 'blank',
-  createdAt: 0,
-  updatedAt: 0,
-};
+const space = sampleSpace;
 
 const meta = {
   title: 'Navigation/SpaceMenuPopover',

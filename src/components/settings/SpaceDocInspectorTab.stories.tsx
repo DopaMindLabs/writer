@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { sampleSpace } from '@/test/fixtures';
 import { SpaceDocInspectorTab } from './SpaceDocInspectorTab';
 
 const meta = {
@@ -6,13 +7,10 @@ const meta = {
   component: SpaceDocInspectorTab,
   args: {
     space: {
-      id: 's1',
+      ...sampleSpace,
       tag: 'SP',
       name: 'Space',
-      shared: false,
       template: 'fiction',
-      createdAt: 0,
-      updatedAt: 0,
     },
   },
 } satisfies Meta<typeof SpaceDocInspectorTab>;
