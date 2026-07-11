@@ -6,6 +6,7 @@ import {
   forgetDeviceKeyRing,
   deviceKeyProvider,
   onDeviceKeyRingChange,
+  getDeviceKeyRevision,
 } from './keyStore';
 
 /** Prove a loaded ring's content key is usable without ever exporting it. */
@@ -59,5 +60,21 @@ describe('device keyStore', () => {
     stop();
     await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1));
     expect(calls).toBe(3); // unsubscribed
+  });
+
+  it('bumps the device-key revision on each cache transition', async () => {
+    // Acquiring a key changes no IndexedDB content row, so encrypted live queries
+    // need this monotonic bump to re-run. It must move on save, load, and forget.
+    const before = getDeviceKeyRevision();
+    await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1));
+    const afterSave = getDeviceKeyRevision();
+    expect(afterSave).toBeGreaterThan(before);
+
+    await loadDeviceKeyRing();
+    const afterLoad = getDeviceKeyRevision();
+    expect(afterLoad).toBeGreaterThan(afterSave);
+
+    await forgetDeviceKeyRing();
+    expect(getDeviceKeyRevision()).toBeGreaterThan(afterLoad);
   });
 });
