@@ -2,7 +2,7 @@
 
 exports[`QuickSettingsPopover > rendering > should render the popover surface 1`] = `
 <div
-  class="w-72 bg-paper font-sans"
+  class="w-72 max-h-[var(--radix-popover-content-available-height)] overflow-y-auto overscroll-contain bg-paper font-sans"
   data-testid="quick-settings-popover"
 >
   <div
