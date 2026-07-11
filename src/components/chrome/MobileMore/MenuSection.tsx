@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { EXTERNAL_LINKS, routes } from '@/lib/routes';
+import { routes } from '@/lib/routes';
+import { sheetAppMenuLinks } from '@/components/chrome/QuickSettings/appMenuLinks';
 import { MenuGroup } from './MenuGroup';
 import { InspectorItem } from './InspectorItem';
 import { MoreItem } from './MoreItem';
@@ -29,17 +30,17 @@ export const MenuSection = ({
         </MenuGroup>
       )}
       <MenuGroup label={t('mobileMore.groupApp')}>
-        <MoreItem to={routes.settings()} label={t('mobileMore.settings')} />
-        <MoreItem to={routes.about()} label={t('mobileMore.about')} />
-        <MoreItem to={routes.help()} label={t('mobileMore.help')} />
-        <MoreItem
-          to={routes.helpArticle('whats-new')}
-          label={t('mobileMore.whatsNew')}
-        />
-        <ExternalMoreItem
-          href={EXTERNAL_LINKS.githubNewIssue}
-          label={t('mobileMore.contact')}
-        />
+        {sheetAppMenuLinks().map((link) =>
+          link.external ? (
+            <ExternalMoreItem
+              key={link.id}
+              href={link.href}
+              label={t(link.labelKey)}
+            />
+          ) : (
+            <MoreItem key={link.id} to={link.href} label={t(link.labelKey)} />
+          ),
+        )}
       </MenuGroup>
     </div>
   );

@@ -1,28 +1,31 @@
 import { useTranslation } from 'react-i18next';
-import { routes } from '@/lib/routes';
 import { FooterLink } from './FooterLink';
+import { popoverAppMenuLink } from './appMenuLinks';
 
 export const QuickLinksFooter = () => {
   const { t } = useTranslation('chrome');
+  const help = popoverAppMenuLink('help');
+  const account = popoverAppMenuLink('account');
+  const fullSettings = popoverAppMenuLink('universal-settings');
   return (
     <div className="mt-1 border-t border-rule bg-paper-2">
       <FooterLink
-        to={routes.help()}
-        label={t('quickSettings.helpLink')}
+        to={help.href}
+        label={t(help.labelKey)}
         kbd={t('quickSettings.helpKbd')}
-        testId="quick-settings-help"
+        testId={help.testId}
       />
       <FooterLink
-        to={routes.settings('account')}
-        label={t('quickSettings.account')}
-        testId="quick-settings-account"
+        to={account.href}
+        label={t(account.labelKey)}
+        testId={account.testId}
         divider
       />
       <FooterLink
-        to={routes.settings()}
-        label={t('quickSettings.fullSettings')}
+        to={fullSettings.href}
+        label={t(fullSettings.labelKey)}
         kbd={t('quickSettings.fullSettingsKbd')}
-        testId="quick-settings-full-settings"
+        testId={fullSettings.testId}
       />
     </div>
   );
