@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   deviceKeyProvider,
@@ -7,6 +7,7 @@ import {
   forgetThisDevice,
   KeylessSignInBlockedError,
 } from '@/lib/cloud/cloudClient';
+import { useDeviceKeyRevision } from '@/hooks/useDeviceKeyRevision';
 import type { CloudDialogName } from './CloudSectionDialogs';
 
 export interface CloudPanelState {
@@ -38,6 +39,15 @@ export const useCloudPanelState = (): CloudPanelState => {
   const [recoveryCode, setRecoveryCode] = useState<string | null>(null);
   const [hasKey, setHasKey] = useState(() => deviceKeyProvider.current() !== null);
   const [signInError, setSignInError] = useState<string | null>(null);
+
+  // Recompute whenever the device key ring changes — including a cross-tab unlock
+  // or forget, which reloads the provider and bumps the revision but never touches
+  // this panel's own handlers. Without this the open panel keeps showing keyless
+  // setup/unlock controls after another tab has already unlocked.
+  const keyRevision = useDeviceKeyRevision();
+  useEffect(() => {
+    setHasKey(deviceKeyProvider.current() !== null);
+  }, [keyRevision]);
 
   const refreshKey = () => {
     setHasKey(deviceKeyProvider.current() !== null);

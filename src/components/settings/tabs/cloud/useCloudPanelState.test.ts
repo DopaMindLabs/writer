@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { act, renderHook, waitFor } from '@testing-library/react';
 
-const { current, signInToCloud, signOutOfCloud, forgetThisDevice } = vi.hoisted(
-  () => ({
+const { current, signInToCloud, signOutOfCloud, forgetThisDevice, revision } =
+  vi.hoisted(() => ({
     current: vi.fn<() => unknown>(() => null),
     signInToCloud: vi.fn<() => Promise<void>>(() => Promise.resolve()),
     signOutOfCloud: vi.fn<() => Promise<void>>(() => Promise.resolve()),
     forgetThisDevice: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-  }),
-);
+    revision: { value: 0 },
+  }));
 
 vi.mock('@/lib/cloud/cloudClient', () => {
   class KeylessSignInBlockedError extends Error {}
@@ -21,12 +21,17 @@ vi.mock('@/lib/cloud/cloudClient', () => {
   };
 });
 
+vi.mock('@/hooks/useDeviceKeyRevision', () => ({
+  useDeviceKeyRevision: () => revision.value,
+}));
+
 import { KeylessSignInBlockedError } from '@/lib/cloud/cloudClient';
 import { useCloudPanelState } from './useCloudPanelState';
 
 describe('useCloudPanelState', () => {
   beforeEach(() => {
     current.mockReturnValue(null);
+    revision.value = 0;
     signInToCloud.mockResolvedValue(undefined);
     signOutOfCloud.mockResolvedValue(undefined);
     forgetThisDevice.mockResolvedValue(undefined);
@@ -40,6 +45,29 @@ describe('useCloudPanelState', () => {
     current.mockReturnValue(null);
     const keyless = renderHook(() => useCloudPanelState());
     expect(keyless.result.current.hasKey).toBe(false);
+  });
+
+  it('recomputes hasKey when the device key ring changes in another tab', () => {
+    current.mockReturnValue(null);
+    const { result, rerender } = renderHook(() => useCloudPanelState());
+    expect(result.current.hasKey).toBe(false);
+
+    // Another tab unlocks: the shared provider now holds a key and the device-key
+    // revision bumps — the open panel must flip to the keyed state on its own.
+    current.mockReturnValue({ id: 'k' });
+    act(() => {
+      revision.value = 1;
+    });
+    rerender();
+    expect(result.current.hasKey).toBe(true);
+
+    // And back to keyless when a tab forgets the key.
+    current.mockReturnValue(null);
+    act(() => {
+      revision.value = 2;
+    });
+    rerender();
+    expect(result.current.hasKey).toBe(false);
   });
 
   it('opens the setup and unlock dialogs and lets the dialog be set directly', () => {
