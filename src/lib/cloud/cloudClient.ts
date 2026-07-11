@@ -22,7 +22,7 @@ export type CloudSyncPhase = SyncState['phase'];
 export { isCloudSyncEnabled } from './flag';
 export { deviceKeyProvider } from './crypto/keyStore';
 export { EscrowMissingError, KeylessSignInBlockedError } from './crypto/errors';
-export { WrongPassphraseError } from './crypto/keys';
+export { WrongPassphraseError, canonicalisePassphrase } from './crypto/keys';
 export {
   createCloudEncryption,
   unlockCloudEncryption,

@@ -6,6 +6,7 @@ import {
   wrapMasterSecret,
   unwrapMasterSecret,
   fingerprintsEqual,
+  canonicalisePassphrase,
   WrongPassphraseError,
   ESCROW_ID,
 } from './keys';
@@ -70,6 +71,27 @@ describe('cloud keys', () => {
     expect(Array.from(a.salt)).not.toEqual(Array.from(b.salt));
     expect(Array.from(a.iv)).not.toEqual(Array.from(b.iv));
     expect(Array.from(a.wrapped)).not.toEqual(Array.from(b.wrapped));
+  });
+});
+
+describe('canonicalisePassphrase', () => {
+  it('is the identity on ASCII', () => {
+    expect(canonicalisePassphrase('longenoughphrase')).toBe('longenoughphrase');
+  });
+
+  it('collapses NFC and NFD forms of the same text to one value', () => {
+    // é composed (U+00E9) versus decomposed (e + U+0301): equal after NFKC, so a
+    // dialog validating the canonical value cannot reject them as a mismatch.
+    expect(canonicalisePassphrase('café')).toBe(canonicalisePassphrase('café'));
+  });
+
+  it('folds compatibility characters (full-width to ASCII)', () => {
+    // Full-width digits/letters normalise to ASCII under NFKC.
+    expect(canonicalisePassphrase('ＡＢＣ')).toBe('ABC');
+  });
+
+  it('does not trim, lowercase, or alter whitespace', () => {
+    expect(canonicalisePassphrase('  Pass Phrase  ')).toBe('  Pass Phrase  ');
   });
 });
 
