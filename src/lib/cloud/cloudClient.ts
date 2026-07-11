@@ -41,6 +41,7 @@ interface CloudApi {
   events?: { syncComplete: CloudObservable<void> };
   login: () => Promise<void>;
   logout: () => Promise<void>;
+  sync?: (options?: { purpose: 'push' | 'pull'; wait: boolean }) => Promise<void>;
 }
 
 /** The live addon API, or `null` on a plain (non-cloud) database. */
@@ -167,6 +168,16 @@ export const signInToCloud = async (): Promise<void> => {
 
 export const signOutOfCloud = (): Promise<void> =>
   cloudApi()?.logout() ?? Promise.resolve();
+
+/**
+ * Force a fresh pull from the server — the retry behind a stalled account fetch.
+ * A signed-in keyless device whose initial pull failed (or never settled) is
+ * otherwise stuck on "fetching your account…"; this re-runs the pull so escrow
+ * presence can resolve. A no-op (resolved) on a plain database, or an addon build
+ * without `sync`. Rejections propagate to the caller so the UI can surface them.
+ */
+export const requestCloudSync = (): Promise<void> =>
+  cloudApi()?.sync?.({ purpose: 'pull', wait: true }) ?? Promise.resolve();
 
 /**
  * Load the persisted device key ring into the middleware's synchronous provider

@@ -1,14 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { act, renderHook, waitFor } from '@testing-library/react';
 
-const { current, signInToCloud, signOutOfCloud, forgetThisDevice, revision } =
-  vi.hoisted(() => ({
-    current: vi.fn<() => unknown>(() => null),
-    signInToCloud: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    signOutOfCloud: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    forgetThisDevice: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    revision: { value: 0 },
-  }));
+const {
+  current,
+  signInToCloud,
+  signOutOfCloud,
+  forgetThisDevice,
+  requestCloudSync,
+  revision,
+} = vi.hoisted(() => ({
+  current: vi.fn<() => unknown>(() => null),
+  signInToCloud: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+  signOutOfCloud: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+  forgetThisDevice: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+  requestCloudSync: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+  revision: { value: 0 },
+}));
 
 vi.mock('@/lib/cloud/cloudClient', () => {
   class KeylessSignInBlockedError extends Error {}
@@ -17,6 +24,7 @@ vi.mock('@/lib/cloud/cloudClient', () => {
     signInToCloud,
     signOutOfCloud,
     forgetThisDevice,
+    requestCloudSync,
     KeylessSignInBlockedError,
   };
 });
@@ -135,6 +143,14 @@ describe('useCloudPanelState', () => {
       result.current.onSignOut();
     });
     expect(signOutOfCloud).toHaveBeenCalledTimes(1);
+  });
+
+  it('retries a stalled fetch through the facade', () => {
+    const { result } = renderHook(() => useCloudPanelState());
+    act(() => {
+      result.current.onRetry();
+    });
+    expect(requestCloudSync).toHaveBeenCalledTimes(1);
   });
 
   it('signs in without an error when the facade resolves', async () => {

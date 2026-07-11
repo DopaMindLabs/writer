@@ -373,7 +373,10 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   rows it just pulled (already ciphertext) through the same table API but inside a
   change-tracking-disabled transaction, and the lock exempts those — otherwise the initial pull
   would abort, `initiallySynced` would never be set, and a content-bearing account would deadlock
-  on “fetching your account…”. The settings action row offers **no** set-up or unlock of
+  on “fetching your account…”. Should that pull genuinely fail to settle, the keyless section
+  does not sit on “fetching your account…” indefinitely: a sync **error** phase turns it into a
+  retryable notice (a **Try again** that forces a fresh pull), and an **offline** phase says so
+  and resumes on its own — neither offers a key-minting action, so the divergence guard holds. The settings action row offers **no** set-up or unlock of
   its own — the presence-gated keyless section is the single source of key actions, so a set-up
   can never mint a key that diverges from a not-yet-pulled account escrow, and space creation is
   blocked with the same inline notice while the lock holds. Sign-in is surfaced on

@@ -64,6 +64,19 @@ safe and nothing has been lost.
 
 If it keeps failing, check your connection, then reload the page and try once more.
 
+### "Fetching your account…" never finishes
+
+A new device checks your account before it can unlock. If that check fails, it
+says **We couldn't fetch your account** instead of staying stuck. Your writing on
+this device is safe.
+
+1. Select **Try again**.
+2. Wait a moment for the check to finish.
+
+If it says **You're offline**, the check pauses on its own and finishes once you
+reconnect — nothing to do. If **Try again** keeps failing, check your connection,
+then reload the page and try once more.
+
 ## Recover an account
 
 Use this when you no longer have the passphrase but still have the recovery code.

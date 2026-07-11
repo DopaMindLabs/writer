@@ -7,6 +7,7 @@ import {
   cloudUserInteraction,
   cloudCurrentUser,
   cloudEscrowPresence,
+  requestCloudSync,
   signInToCloud,
   signOutOfCloud,
   hydrateCloudDevice,
@@ -50,6 +51,23 @@ describe('cloudClient without a cloud database', () => {
   it('sign in and out resolve as no-ops', async () => {
     await expect(signInToCloud()).resolves.toBeUndefined();
     await expect(signOutOfCloud()).resolves.toBeUndefined();
+  });
+
+  it('a sync request resolves as a no-op', async () => {
+    await expect(requestCloudSync()).resolves.toBeUndefined();
+  });
+});
+
+describe('requestCloudSync forces a pull', () => {
+  afterEach(() => {
+    delete (db as { cloud?: unknown }).cloud;
+  });
+
+  it('calls the addon sync with a pull purpose', async () => {
+    const sync = vi.fn().mockResolvedValue(undefined);
+    (db as { cloud?: { sync: typeof sync } }).cloud = { sync };
+    await requestCloudSync();
+    expect(sync).toHaveBeenCalledWith({ purpose: 'pull', wait: true });
   });
 });
 

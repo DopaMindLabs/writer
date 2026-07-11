@@ -5,6 +5,7 @@ import {
   signInToCloud,
   signOutOfCloud,
   forgetThisDevice,
+  requestCloudSync,
   KeylessSignInBlockedError,
 } from '@/lib/cloud/cloudClient';
 import { useDeviceKeyRevision } from '@/hooks/useDeviceKeyRevision';
@@ -24,6 +25,7 @@ export interface CloudPanelState {
   onSignIn: () => void;
   onSignOut: () => void;
   onForget: () => void;
+  onRetry: () => void;
 }
 
 /**
@@ -69,6 +71,9 @@ export const useCloudPanelState = (): CloudPanelState => {
   const onSignOut = () => {
     void signOutOfCloud();
   };
+  const onRetry = () => {
+    void requestCloudSync();
+  };
   const onSignIn = () => {
     setSignInError(null);
     void signInToCloud().catch((error: unknown) => {
@@ -92,5 +97,6 @@ export const useCloudPanelState = (): CloudPanelState => {
     onSignIn,
     onSignOut,
     onForget,
+    onRetry,
   };
 };

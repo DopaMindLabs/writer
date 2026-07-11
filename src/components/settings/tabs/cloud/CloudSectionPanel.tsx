@@ -60,8 +60,10 @@ export const CloudSectionPanel = () => {
       {keylessSignedIn ? (
         <CloudKeylessAccountSection
           presence={presence}
+          syncPhase={sync.phase}
           onUnlock={panel.openUnlock}
           onSetUp={panel.openSetup}
+          onRetry={panel.onRetry}
         />
       ) : null}
       <CloudBackupNudge hasKey={panel.hasKey} />

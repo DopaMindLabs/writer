@@ -49,6 +49,7 @@ vi.mock('./useCloudPanelState', () => ({
     onSignIn: vi.fn(),
     onSignOut: vi.fn(),
     onForget: vi.fn(),
+    onRetry: vi.fn(),
   }),
 }));
 

@@ -341,6 +341,11 @@
         "keyless": {
           "checkingTitle": "Fetching your account…",
           "checkingBody": "Checking whether your account already has an encryption key. This only takes a moment.",
+          "fetchFailedTitle": "We couldn't fetch your account",
+          "fetchFailedBody": "We couldn't reach the sync service to check your account. Your writing on this device is safe.",
+          "fetchRetry": "Try again",
+          "offlineTitle": "You're offline",
+          "offlineBody": "We'll finish fetching your account as soon as you're back online.",
           "lockedTitle": "Your writing is locked on this device",
           "lockedBody": "This account already has an encryption key. Enter the passphrase you created on another device to unlock it here.",
           "lockedAction": "Unlock now",
