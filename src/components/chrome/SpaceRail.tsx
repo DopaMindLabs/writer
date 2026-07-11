@@ -11,7 +11,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Link } from '@/components/ui/Link';
-import { QuickSettingsPopover } from './QuickSettingsPopover';
+import { QuickSettingsPopover } from './QuickSettings';
 
 interface SpaceRailProps {
   activeSpaceId: string | null;
