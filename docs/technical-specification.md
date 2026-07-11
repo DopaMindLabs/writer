@@ -243,7 +243,7 @@ The per-space navigation column.
 - **Doc row menu:** each document row has a **⋯ menu** (Rename, Delete…) — revealed on row hover/focus on desktop, always visible on mobile.
 - **Brain space link:** routes to `/s/:spaceId/brain-space`; shows the unsorted-note count and highlights when active.
 - **Footer:** Home, About, GitHub links.
-- **Mobile:** replaced by a hamburger button in the topbar that opens the same content in a dialog drawer. The drawer closes when the user taps a destination.
+- **Mobile:** replaced by a hamburger button in the topbar that opens the same content (the SpaceRail plus the sidebar) in a dialog drawer. The drawer closes when the user taps a destination.
 
 *Covered by:* `mobile-nav.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `MobileNavDrawer.test.tsx`.
 
@@ -520,6 +520,7 @@ Four themes: `light`, `dark`, `hc-light`, `hc-dark`. Applied via `data-theme` on
 - **Framework:** Driver.js, wrapped by the local `useTour` and `useAutoTour` hooks.
 - **Auto-trigger:** First visit to a screen launches that screen's tour once.
 - **Replay:** From the help menu, and from the **Quick settings** popover's guided-tour list. That tour list is **desktop-only** — below the `767 px` mobile breakpoint it is hidden so the popover's core controls (theme, reading width, focus) stay above the fold; the help menu remains the tour entry point on mobile.
+- **Quick settings surface:** The theme / reading-width / focus / floating-toolbar controls live in the rail's Quick Settings popover, reached from the rail's **⋮** button — on mobile the rail travels inside the nav drawer, so the popover opens from there. Keyboard-shortcut hints (focus `mod+\`, help `mod+?`, universal settings `mod+,`) are rendered via `Kbd` so the modifier matches the running platform (⌘ on Apple, Ctrl elsewhere), and are hidden on any coarse pointer.
 - **Persistence:** Completed tour IDs are stored in `localStorage` under `lipsum-tours`. A `resetAll` utility clears them.
 
 *Covered by:* `tours/HelpMenu.test.tsx`, `tours/storage.test.ts`, `tours/useTour.test.ts`, `tours/useAutoTour.test.ts`, `chrome/QuickSettingsPopover.test.tsx`.

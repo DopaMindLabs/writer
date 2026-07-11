@@ -198,10 +198,11 @@ describe('QuickSettingsPopover', () => {
       expect(replayMock).toHaveBeenCalledWith('welcome');
     });
 
-    it('should render the ⌘? keyboard shortcut on the welcome tour row only', () => {
+    it('should render the platform shortcut on the welcome tour row only', () => {
       renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
       const kbd = screen.getByTestId('quick-settings-tour-welcome-kbd');
-      expect(kbd).toHaveTextContent('⌘?');
+      // ⌘? on Apple, Ctrl+? elsewhere — derived from the running platform.
+      expect(kbd.textContent).toMatch(/⌘\?|Ctrl\+\?/);
     });
 
     it('marks a completed tour row as checked and leaves an unrun tour unchecked', () => {
@@ -305,6 +306,45 @@ describe('QuickSettingsPopover', () => {
       expect(
         screen.getByTestId('quick-settings-tour-welcome'),
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('keyboard hints on touch', () => {
+    const realMatchMedia = window.matchMedia;
+    afterEach(() => {
+      window.matchMedia = realMatchMedia;
+    });
+
+    const setCoarsePointer = () => {
+      window.matchMedia = ((query: string) => ({
+        matches: query.includes('pointer: coarse'),
+        media: query,
+        onchange: null,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        addListener: () => {},
+        removeListener: () => {},
+        dispatchEvent: () => false,
+      })) as unknown as typeof window.matchMedia;
+    };
+
+    it('hides shortcut hints on a coarse pointer while keeping the controls', () => {
+      setCoarsePointer();
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      // The tour row stays but its keyboard hint is dropped.
+      expect(
+        screen.getByTestId('quick-settings-tour-welcome'),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('quick-settings-tour-welcome-kbd'),
+      ).not.toBeInTheDocument();
+      // The controls and links remain reachable.
+      expect(
+        screen.getByTestId('quick-settings-focus-toggle'),
+      ).toBeInTheDocument();
+      expect(screen.getByTestId('quick-settings-help')).toBeInTheDocument();
+      // No stray keyboard glyphs anywhere.
+      expect(screen.queryByText(/⌘|Ctrl\+/)).not.toBeInTheDocument();
     });
   });
 });

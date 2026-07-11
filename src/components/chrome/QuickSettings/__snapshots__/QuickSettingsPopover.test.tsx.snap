@@ -154,7 +154,11 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
       <div
         class="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
       >
-        ⌘\\
+        <kbd
+          class="font-mono text-[10px] tracking-wide text-ink-4"
+        >
+          Ctrl+\\
+        </kbd>
       </div>
     </div>
     <div
@@ -249,7 +253,11 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
       <span
         data-testid="quick-settings-tour-welcome-kbd"
       >
-        ⌘?
+        <kbd
+          class="font-mono text-[10px] tracking-wide text-ink-4"
+        >
+          Ctrl+?
+        </kbd>
       </span>
     </span>
   </button>
@@ -415,11 +423,11 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
       <span
         class="flex-1"
       />
-      <span
-        class="font-mono text-[10px] text-ink-4"
+      <kbd
+        class="font-mono text-[10px] tracking-wide text-ink-4"
       >
-        ⌘?
-      </span>
+        Ctrl+?
+      </kbd>
     </div>
     <div
       class="flex items-center gap-3 px-4 py-2.5 border-t border-rule/60"
@@ -452,11 +460,11 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
       <span
         class="flex-1"
       />
-      <span
-        class="font-mono text-[10px] text-ink-4"
+      <kbd
+        class="font-mono text-[10px] tracking-wide text-ink-4"
       >
-        ⌘,
-      </span>
+        Ctrl+,
+      </kbd>
     </div>
   </div>
 </div>
