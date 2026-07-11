@@ -21,6 +21,7 @@ import { startKeyRingChannel } from '@/lib/cloud/crypto/keyRingChannel';
 import { startCloudReconciler } from '@/lib/cloud/reconcile';
 import { startEscrowReconciler } from '@/lib/cloud/escrowReconcile';
 import { startKeylessLockMonitor } from '@/lib/cloud/keylessGuard';
+import { startDeviceRegistrar } from '@/lib/cloud/deviceRegistry';
 import { keyMismatchState } from '@/lib/cloud/crypto/keyMismatch';
 import { keylessLockState } from '@/lib/cloud/crypto/keylessLock';
 import { resetAndReseed } from '@/db/seed';
@@ -132,6 +133,7 @@ const useAppBoot = (): {
     let stopEscrowReconciler: (() => void) | null = null;
     let stopKeylessMonitor: (() => void) | null = null;
     let stopKeyRingChannel: (() => void) | null = null;
+    let stopDeviceRegistrar: (() => void) | null = null;
     const run = async () => {
       // Load the persisted device key before anything reads or writes the cloud
       // database, so encrypted reads decrypt and writes seal from the first tick.
@@ -150,6 +152,9 @@ const useAppBoot = (): {
       // Lock content writes whenever the device is signed in without a key ring,
       // so plaintext can never reach the sync queue before setup/unlock.
       stopKeylessMonitor = startKeylessLockMonitor();
+      // Keep this device's row in the account's device registry current, so the
+      // two-device beta limit can count and recognise it.
+      stopDeviceRegistrar = startDeviceRegistrar();
       await applyDevBootParams();
     };
     run()
@@ -165,6 +170,7 @@ const useAppBoot = (): {
       stopEscrowReconciler?.();
       stopKeylessMonitor?.();
       stopKeyRingChannel?.();
+      stopDeviceRegistrar?.();
     };
   }, []);
 

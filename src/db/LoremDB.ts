@@ -19,6 +19,7 @@ import type {
   DocInspectorConfig,
 } from './schema';
 import type { EscrowRecord } from '@/lib/cloud/crypto/keys';
+import type { DeviceRecord } from '@/lib/cloud/deviceRegistry';
 import { STORES } from './stores';
 
 /**
@@ -53,10 +54,14 @@ export class LoremDB extends Dexie {
   docInspectorConfigs!: Table<DocInspectorConfig, string>;
   /** Present only on cloud-enabled instances (`options.cloud`). */
   cloudCrypto!: Table<EscrowRecord, string>;
+  /** Present only on cloud-enabled instances (`options.cloud`). */
+  cloudDevices!: Table<DeviceRecord, string>;
 
   constructor(name = 'lipsum', options: LoremDBOptions = {}) {
     super(name, options.addons ? { addons: options.addons } : undefined);
-    const stores = options.cloud ? { ...STORES, cloudCrypto: 'id' } : STORES;
+    const stores = options.cloud
+      ? { ...STORES, cloudCrypto: 'id', cloudDevices: 'id' }
+      : STORES;
     this.version(1).stores(stores);
   }
 }
