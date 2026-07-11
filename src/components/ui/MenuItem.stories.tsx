@@ -38,6 +38,16 @@ export const Checked: Story = {
   args: { label: 'Medium', checked: true },
 };
 
+export const LeadingCheck: Story = {
+  render: () => (
+    <>
+      <MenuItem label="Welcome tour" checked checkPosition="leading" shortcut="?" />
+      <MenuItem label="Writing tour" checkPosition="leading" />
+      <MenuItem label="Citations tour" checkPosition="leading" />
+    </>
+  ),
+};
+
 export const Disabled: Story = {
   args: { label: 'Two-column', disabled: true },
 };

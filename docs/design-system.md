@@ -310,7 +310,10 @@ menu is a **list, not a card**: the row has no background at rest; hover and key
 highlight paint the faint `paper-2` wash and darken the label from `ink-2` to `ink` (and the
 leading glyph from `ink-3` to `ink`). Square corners, sans 13 px label, an optional 14-px
 leading glyph slot, and an optional trailing slot — a mono `Kbd` shortcut, or a `Check` when
-`checked`. The destructive row shows the `X` icon (never Unicode, never a coloured row) and is
+`checked`. A `checked` row exposes `data-checked` for callers that style or query row state.
+Set `checkPosition="leading"` for a menu of peers where each row can be ticked (a guided-tour
+replay list): the tick moves to a reserved leading gutter so ticked and unticked rows align,
+and the trailing shortcut stays visible. The destructive row shows the `X` icon (never Unicode, never a coloured row) and is
 placed under a `MenuDivider` by the caller; the ink-fill `dangerous` Button stays reserved for
 the `ConfirmDialog` footer alone (§4.5, §5a).
 
@@ -318,9 +321,10 @@ the `ConfirmDialog` footer alone (§4.5, §5a).
 |---|---|---|---|
 | `label` | `ReactNode` | — | Row label (omitted in `asChild` mode). |
 | `icon` | `LucideIcon` | — | Leading glyph; ignored when `danger` is set. |
-| `shortcut` | `ReactNode` | — | Trailing hint (compose a `Kbd`); hidden when `checked`. |
+| `shortcut` | `ReactNode` | — | Trailing hint (compose a `Kbd`); hidden when `checked` under the default trailing tick. |
 | `danger` | boolean | `false` | Destructive row: shows the `X` icon. |
-| `checked` | boolean | `false` | Shows a trailing `Check`. |
+| `checked` | boolean | `false` | Shows a `Check` and reflects on the row as `data-checked`. |
+| `checkPosition` | `'leading' \| 'trailing'` | `'trailing'` | `trailing` swaps the shortcut for a tick (on/off idiom); `leading` reserves a fixed leading gutter so rows align ticked or not and keeps the shortcut visible (e.g. a replayed tour list). |
 | `disabled` | boolean | `false` | Non-interactive; sets `aria-disabled`. |
 | `asChild` | boolean | `false` | Render the row as the provided child (e.g. a router `Link`). |
 
