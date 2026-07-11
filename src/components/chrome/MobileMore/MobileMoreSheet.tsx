@@ -45,7 +45,9 @@ export const MobileMoreSheet = ({ spaceId, docId }: MobileMoreSheetProps) => {
           </DialogPrimitiveTitle>
           <div className="mx-auto mt-2 h-1 w-9 rounded-full bg-rule" aria-hidden />
 
-          <MenuSection spaceId={spaceId} docId={docId ?? null} />
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+            <MenuSection spaceId={spaceId} docId={docId ?? null} />
+          </div>
         </DialogPrimitiveContent>
       </DialogPrimitivePortal>
       </DialogPrimitiveRoot>

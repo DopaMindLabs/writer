@@ -28,6 +28,15 @@ describe('MobileMoreSheet', () => {
       initialEntries: ['/s/s1/d/d1'],
     });
     expect(screen.getByTestId('mobile-more-sheet')).toBeInTheDocument();
+    // Quick settings (theme, reading width, focus, floating toolbar) are
+    // reachable from the sheet on mobile, where the desktop rail is hidden.
+    expect(
+      screen.getByTestId('mobile-more-quick-settings'),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('quick-settings-theme-dark')).toBeInTheDocument();
+    expect(
+      screen.getByTestId('quick-settings-focus-toggle'),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: /space settings/i }),
     ).toHaveAttribute('href', '/s/s1/settings');

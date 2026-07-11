@@ -5,7 +5,8 @@ The app adapts to small screens so you can read and write on a phone or tablet.
 ## At a glance
 
 - A **bottom tab bar** replaces the sidebar on small screens.
-- The **more** tab opens a drawer with settings, accessibility, your account, help, and about.
+- The **more** tab opens a sheet with **quick settings** (theme, reading width, focus
+  mode, floating toolbar) plus settings, accessibility, your account, help, and about.
 - **Read** mode and [BrainSpace](brainspace) are usable on a phone.
 - **Split view** is available on larger screens.
 
