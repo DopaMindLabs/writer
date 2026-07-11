@@ -1,5 +1,46 @@
 # AGENTS.md
 
+> Bootstrap for every agent. Read this file first, then select and read the
+> relevant `.agents/skills/*/SKILL.md` files before touching any code.
+> Skills may be combined. When in doubt, read more skills, not fewer.
+>
+> This file is the **single, complete source of the non-negotiable rules**. Skills,
+> playbooks, and reference docs carry workflows, examples, and rationale; where any of
+> them appears to disagree with this file, this file wins — treat the disagreement as a
+> bug and fix it.
+
+---
+
+## Skill routing table
+
+| Trigger | Skill |
+|---|---|
+| "find", "locate", "where is", "who calls", "trace", "callers of" | [`navigate-writer-codebase`](.agents/skills/navigate-writer-codebase/SKILL.md) |
+| "plan", "design", "what files", "scope", "impact", "before I code" | [`plan-writer-change`](.agents/skills/plan-writer-change/SKILL.md) |
+| "implement", "code it", "make the change", "write the code" | [`implement-writer-change`](.agents/skills/implement-writer-change/SKILL.md) |
+| "audit", "review", "check", "risks in", "is this safe" | [`audit-writer-change`](.agents/skills/audit-writer-change/SKILL.md) |
+| "test", "TDD", "vitest", "playwright", "coverage", "spec" | [`test-writer-changes`](.agents/skills/test-writer-changes/SKILL.md) |
+| "component", "UI", "design system", "a11y", "i18n", "copy", "storybook" | [`build-writer-ui`](.agents/skills/build-writer-ui/SKILL.md) |
+| "schema", "migration", "dexie", "table", "stores.ts", "LoremDB" | [`change-writer-persistence`](.agents/skills/change-writer-persistence/SKILL.md) |
+| "collab", "yjs", "crdt", "multi-tab", "BroadcastChannel", "presence" | [`work-on-editor-collaboration`](.agents/skills/work-on-editor-collaboration/SKILL.md) |
+| "cloud", "dexie cloud", "sync", "encryption", "escrow", "passphrase" | [`work-on-cloud-sync`](.agents/skills/work-on-cloud-sync/SKILL.md) |
+
+---
+
+## Reference documents
+
+| Document | When to read |
+|---|---|
+| [`docs/architecture.md`](./docs/architecture.md) | Before any change — layers, boundaries, call chains |
+| [`docs/technical-specification.md`](./docs/technical-specification.md) | Before any user-facing behaviour change |
+| [`docs/design-system.md`](./docs/design-system.md) | Before any UI work |
+| [`docs/cloud-sync-beta.md`](./docs/cloud-sync-beta.md) | Before any cloud/encryption work |
+| [`docs/agent-playbooks.md`](./docs/agent-playbooks.md) | Step-by-step workflows (Locate / Plan / Audit / Change) |
+| [`docs/agent-navigation-benchmarks.md`](./docs/agent-navigation-benchmarks.md) | Navigation benchmark cases |
+| [`CODING_STANDARDS.md`](./CODING_STANDARDS.md) | Power-of-Ten coding rules |
+
+---
+
 ## Coding standards (read first)
 
 This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
@@ -8,6 +49,10 @@ This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
 - New or edited code must pass `npx eslint <files> --max-warnings=0` (the pre-commit hook
   enforces this on staged files). Existing warnings are a tracked backlog; do not add to it.
 - Run `npm run lint` and `npm run typecheck` before committing; both gate CI.
+- **Limits:** cyclomatic complexity ≤ 12; nesting ≤ 4; functions ≤ 60 lines and ≤ 3
+  parameters (use an options object beyond three — ESLint's `max-params` still allows 4
+  for the pre-existing backlog; do not add to it). No floating promises; handle every
+  nullable return; no module-level mutable state.
 - Use `invariant()` and `assertNever()` from `@/lib/invariant` to validate untrusted input.
 - Write all functions as arrow functions (`const f = () => …`), including utilities.
 - **Honour established design principles, not just the linters.** Code must reflect sound
@@ -20,6 +65,8 @@ This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
   modules together is not done. When a unit grows more than one reason to change, split it.
 - A test file's extension mirrors the file under test: `foo.ts` → `foo.test.ts`,
   `foo.tsx` → `foo.test.tsx`.
+- Types live in a dedicated `*.types.ts` file, or co-located with the module they
+  describe.
 - **One component per file (going forward).** Each React component lives in its own file,
   named in PascalCase to match its export (e.g. `TypographyH1.tsx`), with its `.test.tsx` and
   `.stories.tsx` alongside. Don't co-locate multiple components in one file — extract each into
@@ -27,7 +74,8 @@ This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
   under a shared folder (e.g. `DocInspector/` containing `DocInspector.tsx` and its
   sub-components), keeping one component per file within it. Several existing files still bundle
   private sub-components; treat those as a backlog (like the lint backlog) — don't add new
-  co-located components, and split them out when you next touch the file.
+  co-located components, and split them out when you next touch the file. The same applies to
+  services: **one service per file**.
 - **Never relax limits or silence the linter to make code pass.** Do not raise or loosen the
   size limits (function/file length, etc.), weaken or disable an ESLint rule, or add
   `// eslint-disable*`, `// nasa-exception`, `@ts-ignore`/`@ts-expect-error`, or any other
@@ -51,7 +99,7 @@ This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
 ## Language (read before writing copy)
 
 All user-facing copy and documentation use **British English** — e.g. _colour_, _organise_,
-_customise_, _behaviour_, _centre_, _-ise_ not _-ize_. This applies to UI strings
+_customise_, _behaviour_, _centre_, _licence_ (`-ce` for nouns), _-ise_ not _-ize_. This applies to UI strings
 (`src/i18n/locales/en/*.json`), Help Center articles (`src/help/content/en/*.md`), comments,
 and docs.
 
@@ -204,6 +252,24 @@ not a checkbox.
 - Run `npm run test:run` (and `npm run test:e2e` for UI-facing changes) before committing,
   alongside `npm run lint` and `npm run typecheck`.
 
+### Test-suite guardrails
+
+- **No hardcoded waits.** Never `page.waitForTimeout(...)` or a hand-rolled
+  `setTimeout` wait in a spec — use Playwright's auto-waiting assertions
+  (`await expect(locator).toBeVisible()`, …) so the test waits for the condition, not
+  a guess at the clock.
+- **No `{ force: true }`** on clicks or fills. A forced interaction papers over a broken
+  locator or an unusable component — fix the locator or the component instead.
+- **Stable locators only.** Prefer `getByRole` / `getByText` / `getByTestId`;
+  `data-testid` is the primary selector for elements without a meaningful accessible
+  role. Never select on CSS classes or DOM structure that a refactor may change.
+- **No `any` in tests.** Use Vitest's typed mocks or typed shape objects — tests follow
+  the same type discipline as production code.
+- **No `console.warn` / `console.error` output** from new tests — resolve the root cause
+  rather than tolerating noisy output.
+- **Test the public API only.** Assert observable behaviour; no direct calls to private
+  methods or internal state.
+
 ## Commits & branches
 
 **Commit messages, branch names, and PR titles must all strictly follow
@@ -282,8 +348,14 @@ implementing, update them in the same PR.
 
 ## Key commands
 
-- `npm run dev`: Vite dev server
-- `npm run lint` and `npm run lint:fix`: ESLint
-- `npm run typecheck`: `tsc --noEmit`
-- `npm run test:run`: unit tests (Vitest, once)
-- `npm run test:e2e`: Playwright e2e
+```bash
+npm run dev              # Vite dev server
+npm run typecheck        # tsc --noEmit
+npm run lint             # ESLint
+npm run lint:fix         # ESLint with auto-fix
+npx eslint <file> --max-warnings=0  # targeted lint check
+npm run test:run         # Vitest (once)
+npm run test:e2e         # Playwright e2e
+npm run test:e2e:coverage  # e2e + ratchet check
+npm run commit           # Commitizen prompt
+```
