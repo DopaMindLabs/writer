@@ -328,7 +328,9 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   edits the pulled remote body is preserved as a recoverable safety revision and the live local
   text is kept, so neither side is ever silently overwritten. On a healthy network an idle device
   typically converges in about **1–2 seconds**; a failed reconcile surfaces a visible, retryable
-  status in cloud settings (never live in silence). Sign-out clears the per-device CRDT log; a
+  status in cloud settings (never live in silence). The sync-status and reconcile-status rows are
+  shown whenever the device is **signed in**, not only once it holds a key, so a signed-in keyless
+  device is never left without sync diagnostics while it waits to unlock. Sign-out clears the per-device CRDT log; a
   re-pulled doc with an empty log **heals from its body** (no spurious revision, and the editor
   mount waits until the log is reseeded), so content and the editor recover after signing back in.
 - **Reactive key acquisition.** Acquiring the device key (unlock, adopt, recover, or setup)

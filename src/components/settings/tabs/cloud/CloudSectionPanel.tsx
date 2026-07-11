@@ -42,16 +42,20 @@ export const CloudSectionPanel = () => {
   const mismatch = useKeyMismatch();
   const signedIn = user?.isLoggedIn ?? false;
   const keylessSignedIn = signedIn && !panel.hasKey;
+  // Sync and reconcile status are shown to any signed-in device — a keyless one is
+  // still syncing ciphertext and its reconcile can still fail, so it must not be
+  // left without diagnostics while it waits to unlock.
+  const showStatus = signedIn || panel.hasKey;
   return (
     <section data-testid="cloud-section" className="mt-8 border-t border-rule pt-6">
       <h2 className="text-[15px] font-semibold text-ink">{k('title')}</h2>
       <p className="mb-4 mt-1 max-w-[540px] font-serif text-[13px] text-ink-2">
         {k('subtitle')}
       </p>
-      {panel.hasKey ? (
+      {showStatus ? (
         <CloudSyncStatusRow phase={sync.phase} message={sync.error?.message} />
       ) : null}
-      {panel.hasKey ? <CloudReconcileStatusRow /> : null}
+      {showStatus ? <CloudReconcileStatusRow /> : null}
       {mismatch ? <CloudKeyConflictSection onResolved={panel.refreshKey} /> : null}
       {keylessSignedIn ? (
         <CloudKeylessAccountSection
