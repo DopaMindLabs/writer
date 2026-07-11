@@ -399,6 +399,81 @@ describe('createEncryptionMiddleware — sync-applied writes bypass the write lo
 });
 
 /**
+ * The unit tests above fake `req.trans`; this one drives a real Dexie transaction
+ * through IndexedDB. It marks the transaction `disableChangeTracking` on its
+ * `idbtrans` — exactly as the addon's `applyServerChanges` marks the transaction
+ * it writes pulled server rows in — and proves the write lock reads that off the
+ * DBCore `req.trans` and lets the write reach storage verbatim, while an ordinary
+ * app write on a plain transaction is still refused. This is the end of the
+ * deadlock chain: without the exemption the initial pull would abort here. It uses
+ * a plain Dexie db (no cloud addon) so no background sync engine runs — the flag
+ * propagation is the addon's only relevant behaviour and it is reproduced directly.
+ */
+describe('createEncryptionMiddleware — a real disableChangeTracking transaction lands through the lock', () => {
+  const DOCS_SCHEMA = { docs: 'id, spaceId, sectionId, updatedAt, [spaceId+sectionId]' };
+  let realDb: Dexie;
+  const pulledRow = (id: string): AnyRow => ({
+    id, spaceId: 's1', sectionId: 'x1', updatedAt: 1, [CIPHER_FIELD]: { v: 1 },
+  });
+
+  /** Read a row back without the keyless read-path hiding sealed rows. */
+  const readStored = async (id: string): Promise<AnyRow | undefined> => {
+    const wasKeyless = keylessLockState.current();
+    keylessLockState.set(false);
+    try {
+      return (await realDb.table<AnyRow>('docs').get(id)) ?? undefined;
+    } finally {
+      keylessLockState.set(wasKeyless);
+    }
+  };
+
+  /** Apply a row the way the addon does: inside a change-tracking-disabled tx. */
+  const applyPulled = (id: string): Promise<unknown> =>
+    realDb.transaction('rw', realDb.table('docs'), async () => {
+      const tx = Dexie.currentTransaction as unknown as {
+        idbtrans?: { disableChangeTracking?: boolean };
+      };
+      if (tx.idbtrans) tx.idbtrans.disableChangeTracking = true;
+      return realDb.table('docs').bulkPut([pulledRow(id)]);
+    });
+
+  beforeEach(async () => {
+    ring = null;
+    realDb = new Dexie('mw-real-tx');
+    realDb.version(1).stores(DOCS_SCHEMA);
+    realDb.use(createEncryptionMiddleware(provider));
+    await realDb.open();
+  });
+
+  afterEach(async () => {
+    keyMismatchState.set(false);
+    keylessLockState.set(false);
+    await realDb.delete();
+  });
+
+  it('applies a sync-marked bulkPut while signed-in-keyless and stores it verbatim', async () => {
+    keylessLockState.set(true);
+
+    await expect(applyPulled('pulled-1')).resolves.toBe('pulled-1');
+
+    // Passed through unsealed (no key held), preserving the ciphertext the addon pulled.
+    const raw = await readStored('pulled-1');
+    expect(raw?.id).toBe('pulled-1');
+    expect(raw?.[CIPHER_FIELD]).toEqual({ v: 1 });
+  });
+
+  it('still refuses an ordinary app bulkPut on a plain transaction while keyless', async () => {
+    keylessLockState.set(true);
+
+    // A real high-level write (no disableChangeTracking) is stopped by the lock
+    // before it reaches storage; Dexie surfaces the middleware rejection.
+    await expect(realDb.table('docs').bulkPut([pulledRow('app-1')])).rejects.toThrow();
+
+    expect(await readStored('app-1')).toBeUndefined();
+  });
+});
+
+/**
  * Real IndexedDB auto-commits a transaction as soon as its last pending request
  * settles; fake-indexeddb (used above) is lenient enough not to reproduce that
  * timing, so the P1–P6 spike cannot catch a `Dexie.waitFor` call that arrives
