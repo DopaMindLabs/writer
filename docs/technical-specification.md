@@ -357,7 +357,12 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   the account key (enter the account passphrase; the device re-seals its own rows under it) or
   **erasing** the account's unreadable copy (kept: this device's notes). Erase is irreversible,
   so — like deleting a space — it is a two-step gesture: an explicit "can't be undone" warning
-  plus a typed confirmation word (`ERASE`) that arms the destructive button. The route-level
+  plus a typed confirmation word (`ERASE`) that arms the destructive button. The escrow swap
+  inside erase runs only when the device holds a **pending escrow** to install; a mismatched
+  device without one erases the unreadable rows but leaves the account key (and the mismatch)
+  in place — it never deletes the account escrow with nothing to replace it, which would leave
+  the whole account keyless. If no account escrow exists either, the flag protects nothing and
+  erase clears it. The route-level
   recovery screen still catches a genuine read failure, and its **Unlock in settings** action
   is a full navigation to the Account tab. Never clobbers, never silently loses. The New-space
   (Templates) screen also surfaces the lock **proactively**: `useCloudLockReason` (mismatch >

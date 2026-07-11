@@ -276,6 +276,14 @@ export const adoptAccountKey = async (
  * (they were sealed under the key it lacks) so the deletions sync away, while
  * keeping the notes this device wrote itself, then publish its held-back escrow
  * so its key becomes the account's. Used when the account passphrase is lost.
+ *
+ * The escrow swap runs **only when this device holds a pending escrow** to
+ * install. A mismatched device without one (its pending copy was cleared, or its
+ * ring came from an earlier unlock) has no key to publish: deleting the account
+ * escrow would leave the whole account keyless and orphan every other device —
+ * so the account key, and the mismatch, stay in place and only the unreadable
+ * rows are erased. If no account escrow exists either, there is nothing the
+ * mismatch flag can protect, so it clears.
  */
 export const eraseSyncedContent = async (
   db: LoremDB = appDb,
@@ -290,6 +298,16 @@ export const eraseSyncedContent = async (
       // on such a row; they return undefined.
       if (!(await store.get(key))) await store.delete(key);
     }
+  }
+  if ((await loadPendingEscrow()) === null) {
+    // No key to install. A foreign account escrow must survive (deleting it
+    // with nothing to publish would leave the whole account keyless), so the
+    // mismatch stays until the user adopts or unlocks. With no account escrow
+    // at all there is nothing the flag can protect — clear it.
+    if ((await db.cloudCrypto.get(ESCROW_ID)) === undefined) {
+      keyMismatchState.set(false);
+    }
+    return;
   }
   // The escape hatch intends replacement: drop the foreign account escrow (the
   // deletion syncs away like the content deletes) so the add-only publish below
