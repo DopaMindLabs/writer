@@ -11,9 +11,11 @@ import { NO_FLUSH } from '@/lib/collab/flush.types';
 import { serializedBody } from '@/test/fixtures';
 import {
   reconcilePulledDocs,
+  reconcileWithStatus,
   resetReconcileState,
   startCloudReconciler,
 } from './reconcile';
+import { reconcileStatus } from './reconcileStatus';
 
 const FIXED_TIME = 1_700_000_000_000;
 
@@ -266,6 +268,53 @@ describe('reconcilePulledDocs', () => {
     expect(await reconcilePulledDocs()).toEqual([]);
     expect(loadAll).toHaveBeenCalled();
     loadAll.mockRestore();
+  });
+});
+
+describe('reconcileWithStatus', () => {
+  beforeEach(async () => {
+    await db.delete();
+    await db.open();
+    resetReconcileState();
+    reconcileStatus.set({ state: 'idle' });
+  });
+
+  it('records a succeeded run with counts and no document content', async () => {
+    await addDocWithoutCrdt('d1', canon('confidential body text'));
+
+    await reconcileWithStatus('sync-complete');
+
+    const status = reconcileStatus.current();
+    expect(status.state).toBe('succeeded');
+    if (status.state !== 'succeeded') throw new Error('unreachable');
+    expect(status.trigger).toBe('sync-complete');
+    expect(status.scanned).toBe(1);
+    expect(status.reconciled).toBe(1);
+    expect(status.failed).toBe(0);
+    // Diagnostics must never carry the decrypted body.
+    expect(JSON.stringify(status)).not.toContain('confidential body text');
+  });
+
+  it('records a failed run when a document reconcile throws, without leaking content', async () => {
+    await addDocWithoutCrdt('d1', canon('confidential body text'));
+    const unregister = registerEditorHandle('d1', {
+      restoreBody: () => {
+        throw new Error('restore boom');
+      },
+      flush: async () => NO_FLUSH,
+    });
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await reconcileWithStatus('key-acquired');
+    unregister();
+    errorSpy.mockRestore();
+
+    const status = reconcileStatus.current();
+    expect(status.state).toBe('failed');
+    if (status.state !== 'failed') throw new Error('unreachable');
+    expect(status.failed).toBeGreaterThan(0);
+    expect(status.error).toContain('restore boom'); // sanitised message surfaced
+    expect(JSON.stringify(status)).not.toContain('confidential body text');
   });
 });
 

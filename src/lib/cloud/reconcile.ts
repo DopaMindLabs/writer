@@ -9,7 +9,14 @@ import { createRevision } from '@/lib/revisions';
 import { NO_FLUSH, type FlushResult } from '@/lib/collab/flush.types';
 import { cloudSyncState, cloudSyncComplete } from './cloudClient';
 import { onDeviceKeyRingChange } from './crypto/keyStore';
+import {
+  reconcileStatus,
+  sanitiseReconcileError,
+  type ReconcileTrigger,
+} from './reconcileStatus';
 import type { CloudObservable } from './cloudObservable';
+
+export type { ReconcileTrigger } from './reconcileStatus';
 
 /**
  * The cloud-pull → editor reconciliation bridge.
@@ -109,31 +116,51 @@ export const resetReconcileState = (): void => {
 const yieldToScheduler = (): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, 0));
 
+/** The outcome of reconciling one document within a sweep. */
+type OneOutcome =
+  | { kind: 'skipped' }
+  | { kind: 'done'; result: ReconcileResult | null }
+  | { kind: 'failed'; message: string };
+
 /** Reconcile one doc, skipping unchanged bodies and isolating per-doc failures. */
-const reconcileOne = async (doc: Doc): Promise<ReconcileResult | null> => {
+const reconcileOne = async (doc: Doc): Promise<OneOutcome> => {
   // Unchanged since it last reconciled cleanly: nothing new was pulled, so the
   // expensive CRDT load + snapshot would only reconfirm convergence.
-  if (lastReconciledBody.get(doc.id) === doc.body) return null;
+  if (lastReconciledBody.get(doc.id) === doc.body) return { kind: 'skipped' };
   try {
     const result = await reconcileDoc(doc);
     // Record only on success; a thrown doc retries on the next sweep.
     lastReconciledBody.set(doc.id, doc.body);
-    return result;
+    return { kind: 'done', result };
   } catch (error) {
     console.error('cloud reconcile failed for doc', doc.id, error);
-    return null;
+    return { kind: 'failed', message: sanitiseReconcileError(error) };
   }
 };
 
+/** A reconcile sweep's results plus diagnostic counters for the status store. */
+export interface ReconcileSummary extends ReconcileCounts {
+  results: ReconcileResult[];
+  /** Sanitised message of the last per-doc failure, if any. */
+  lastError: string | null;
+}
+
+interface ReconcileCounts {
+  scanned: number;
+  skipped: number;
+  reconciled: number;
+  failed: number;
+  activeDocLatencyMs: number | null;
+}
+
 /**
  * Reconcile every document whose row body was pulled rather than locally
- * authored. Mounted (active) documents are processed first, so the doc the user
- * is looking at converges before the background sweep of the rest; unmounted docs
- * then run in bounded batches that yield the event loop between them, and docs
- * unchanged since their last reconcile are skipped. Idempotent: a second run over
- * already-reconciled docs is a no-op.
+ * authored, returning a summary. Mounted (active) documents are processed first,
+ * so the doc the user is looking at converges before the background sweep of the
+ * rest; unmounted docs then run in bounded batches that yield the event loop
+ * between them, and docs unchanged since their last reconcile are skipped.
  */
-export const reconcilePulledDocs = async (): Promise<ReconcileResult[]> => {
+const reconcileLibrary = async (): Promise<ReconcileSummary> => {
   const docs = await db.docs.toArray();
   const present = new Set(docs.map((doc) => doc.id));
   // Keep the skip-cache bounded: drop entries for docs no longer in the library.
@@ -143,20 +170,30 @@ export const reconcilePulledDocs = async (): Promise<ReconcileResult[]> => {
 
   const mounted = new Set(mountedDocIds());
   const results: ReconcileResult[] = [];
+  let skipped = 0;
+  let failed = 0;
+  let lastError: string | null = null;
+  const tally = (outcome: OneOutcome): void => {
+    if (outcome.kind === 'skipped') skipped += 1;
+    else if (outcome.kind === 'failed') {
+      failed += 1;
+      lastError = outcome.message;
+    } else if (outcome.result) results.push(outcome.result);
+  };
 
   // Active documents first, preserving stable order within the group.
+  const startedAt = Date.now();
+  const hasMounted = docs.some((doc) => mounted.has(doc.id));
   for (const doc of docs) {
-    if (!mounted.has(doc.id)) continue;
-    const result = await reconcileOne(doc);
-    if (result) results.push(result);
+    if (mounted.has(doc.id)) tally(await reconcileOne(doc));
   }
+  const activeDocLatencyMs = hasMounted ? Date.now() - startedAt : null;
 
   // Then the rest, in bounded batches yielding to the event loop between them.
   let sinceYield = 0;
   for (const doc of docs) {
     if (mounted.has(doc.id)) continue;
-    const result = await reconcileOne(doc);
-    if (result) results.push(result);
+    tally(await reconcileOne(doc));
     sinceYield += 1;
     if (sinceYield >= RECONCILE_BATCH) {
       sinceYield = 0;
@@ -164,16 +201,79 @@ export const reconcilePulledDocs = async (): Promise<ReconcileResult[]> => {
     }
   }
 
-  return results;
+  return {
+    results,
+    scanned: docs.length,
+    skipped,
+    reconciled: results.length,
+    failed,
+    activeDocLatencyMs,
+    lastError,
+  };
 };
 
-/** What prompted a reconcile run — recorded for diagnostics and rerun tracking. */
-export type ReconcileTrigger =
-  | 'initial'
-  | 'pull'
-  | 'sync-complete'
-  | 'key-acquired'
-  | 'manual';
+/**
+ * Reconcile every pulled document. Idempotent: a second run over already
+ * -reconciled docs is a no-op. This is the algorithm without status recording —
+ * {@link reconcileWithStatus} wraps it for the automatic/retry run path.
+ */
+export const reconcilePulledDocs = async (): Promise<ReconcileResult[]> =>
+  (await reconcileLibrary()).results;
+
+let runCounter = 0;
+
+/**
+ * Run a reconcile sweep and record its outcome in {@link reconcileStatus} for the
+ * cloud settings UI: `running` on start, then `succeeded`, or `failed` when the
+ * sweep threw or any document failed. Only content-free diagnostics are stored.
+ */
+export const reconcileWithStatus = async (
+  trigger: ReconcileTrigger,
+): Promise<void> => {
+  const runId = ++runCounter;
+  const startedAt = Date.now();
+  reconcileStatus.set({ state: 'running', trigger, runId, startedAt, queued: false });
+  try {
+    const summary = await reconcileLibrary();
+    const endedAt = Date.now();
+    const finished = {
+      trigger,
+      runId,
+      startedAt,
+      queued: false,
+      endedAt,
+      durationMs: endedAt - startedAt,
+      scanned: summary.scanned,
+      skipped: summary.skipped,
+      reconciled: summary.reconciled,
+      failed: summary.failed,
+      activeDocLatencyMs: summary.activeDocLatencyMs,
+    };
+    reconcileStatus.set(
+      summary.failed > 0 && summary.lastError
+        ? { state: 'failed', error: summary.lastError, ...finished }
+        : { state: 'succeeded', ...finished },
+    );
+  } catch (error) {
+    const endedAt = Date.now();
+    reconcileStatus.set({
+      state: 'failed',
+      error: sanitiseReconcileError(error),
+      trigger,
+      runId,
+      startedAt,
+      queued: false,
+      endedAt,
+      durationMs: endedAt - startedAt,
+      scanned: 0,
+      skipped: 0,
+      reconciled: 0,
+      failed: 1,
+      activeDocLatencyMs: null,
+    });
+    throw error;
+  }
+};
 
 /**
  * The active reconciler's single-flight request function, or `null` when no
@@ -193,7 +293,7 @@ export interface CloudReconcilerDeps {
   syncState?: CloudObservable<SyncState>;
   syncComplete?: CloudObservable<void>;
   onKeyChange?: (listener: () => void) => () => void;
-  run?: () => Promise<unknown>;
+  run?: (trigger: ReconcileTrigger) => Promise<unknown>;
 }
 
 /**
@@ -215,7 +315,7 @@ export const startCloudReconciler = (
     syncState = cloudSyncState(),
     syncComplete = cloudSyncComplete(),
     onKeyChange = onDeviceKeyRingChange,
-    run = reconcilePulledDocs,
+    run = reconcileWithStatus,
   } = deps;
 
   let stopped = false;
@@ -227,10 +327,15 @@ export const startCloudReconciler = (
     if (running) {
       // Coalesce: at most one follow-up run, remembering the latest trigger.
       queuedTrigger = trigger;
+      // Reflect the queued rerun in the status if a run is being recorded.
+      const current = reconcileStatus.current();
+      if (current.state === 'running') {
+        reconcileStatus.set({ ...current, queued: true });
+      }
       return;
     }
     running = true;
-    void Promise.resolve(run())
+    void Promise.resolve(run(trigger))
       .catch(() => undefined)
       .finally(() => {
         running = false;
