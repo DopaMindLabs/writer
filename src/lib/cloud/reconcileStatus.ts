@@ -15,6 +15,7 @@ export type ReconcileTrigger =
   | 'pull'
   | 'sync-complete'
   | 'key-acquired'
+  | 'kept-local'
   | 'manual';
 
 interface ReconcileCounts {

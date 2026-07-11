@@ -147,11 +147,21 @@ describe('reconcilePulledDocs', () => {
     });
     const unregister = registerEditorHandle('d1', { restoreBody, flush });
     const before = await updateRows('d1');
+    // A running reconciler captures the follow-up trigger the kept-local path queues.
+    const run = vi.fn().mockResolvedValue(undefined);
+    const stopReconciler = startCloudReconciler({
+      syncState: stubObservable().observable,
+      run,
+    });
 
     const results = await reconcilePulledDocs();
 
     expect(results).toEqual([{ docId: 'd1', action: 'kept-local' }]);
     expect(flush).toHaveBeenCalled();
+    // The same-device-lag follow-up is reported under its own trigger, not 'manual'.
+    await settle();
+    expect(run).toHaveBeenCalledWith('kept-local');
+    stopReconciler();
     expect(restoreBody).not.toHaveBeenCalled(); // live local text is never clobbered
     expect(await updateRows('d1')).toHaveLength(before.length);
     // Local won in the row, and the remote body is not lost — it is recoverable.

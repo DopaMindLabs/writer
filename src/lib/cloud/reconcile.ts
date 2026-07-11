@@ -82,7 +82,7 @@ const reconcileDoc = async (doc: Doc): Promise<ReconcileResult | null> => {
     // remote body it just replaced — preserve it as a recoverable safety revision
     // and queue a follow-up round so both sides converge by whole-document LWW.
     await createRevision(doc.id, pulledBody, { kind: 'manual', label: 'pre-sync' });
-    requestReconcile('manual');
+    requestReconcile('kept-local');
     return { docId: doc.id, action: 'kept-local' };
   }
 
