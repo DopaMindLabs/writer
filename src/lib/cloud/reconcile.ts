@@ -3,7 +3,7 @@ import type { Doc } from '@/db/schema';
 import type { SyncState } from 'dexie-cloud-addon';
 import { collabStore } from '@/lib/collab/collabStore';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
-import { getEditorHandle } from '@/lib/collab/editorRegistry';
+import { getEditorHandle, mountedDocIds } from '@/lib/collab/editorRegistry';
 import { seedDocCrdt } from '@/lib/docs';
 import { createRevision } from '@/lib/revisions';
 import { NO_FLUSH, type FlushResult } from '@/lib/collab/flush.types';
@@ -88,23 +88,82 @@ const reconcileDoc = async (doc: Doc): Promise<ReconcileResult | null> => {
   return applyPulledBody(doc);
 };
 
+/** How many unmounted docs to process before yielding the event loop. */
+const RECONCILE_BATCH = 8;
+
+/**
+ * The last row body each doc was seen with at a *successful* reconcile. A doc
+ * whose body is unchanged since then needs no CRDT load or headless snapshot, so
+ * a repeat sweep of a large, idle library is cheap. Correctness never depends on
+ * it: clearing it only costs recomputation and yields identical results. Bounded
+ * by the live document count — pruned each sweep.
+ */
+const lastReconciledBody = new Map<string, string>();
+
+/** Reset the unchanged-skip cache (e.g. on sign-out, or between tests). */
+export const resetReconcileState = (): void => {
+  lastReconciledBody.clear();
+};
+
+/** Yield to the event loop so a long background sweep never blocks the UI. */
+const yieldToScheduler = (): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, 0));
+
+/** Reconcile one doc, skipping unchanged bodies and isolating per-doc failures. */
+const reconcileOne = async (doc: Doc): Promise<ReconcileResult | null> => {
+  // Unchanged since it last reconciled cleanly: nothing new was pulled, so the
+  // expensive CRDT load + snapshot would only reconfirm convergence.
+  if (lastReconciledBody.get(doc.id) === doc.body) return null;
+  try {
+    const result = await reconcileDoc(doc);
+    // Record only on success; a thrown doc retries on the next sweep.
+    lastReconciledBody.set(doc.id, doc.body);
+    return result;
+  } catch (error) {
+    console.error('cloud reconcile failed for doc', doc.id, error);
+    return null;
+  }
+};
+
 /**
  * Reconcile every document whose row body was pulled rather than locally
- * authored. Idempotent: a second run over already-reconciled docs is a no-op.
+ * authored. Mounted (active) documents are processed first, so the doc the user
+ * is looking at converges before the background sweep of the rest; unmounted docs
+ * then run in bounded batches that yield the event loop between them, and docs
+ * unchanged since their last reconcile are skipped. Idempotent: a second run over
+ * already-reconciled docs is a no-op.
  */
 export const reconcilePulledDocs = async (): Promise<ReconcileResult[]> => {
   const docs = await db.docs.toArray();
+  const present = new Set(docs.map((doc) => doc.id));
+  // Keep the skip-cache bounded: drop entries for docs no longer in the library.
+  for (const id of lastReconciledBody.keys()) {
+    if (!present.has(id)) lastReconciledBody.delete(id);
+  }
+
+  const mounted = new Set(mountedDocIds());
   const results: ReconcileResult[] = [];
+
+  // Active documents first, preserving stable order within the group.
   for (const doc of docs) {
-    // Isolate per-doc failures: one unreconcilable row must never abort the
-    // sweep and leave the rest of the library unhealed.
-    try {
-      const result = await reconcileDoc(doc);
-      if (result) results.push(result);
-    } catch (error) {
-      console.error('cloud reconcile failed for doc', doc.id, error);
+    if (!mounted.has(doc.id)) continue;
+    const result = await reconcileOne(doc);
+    if (result) results.push(result);
+  }
+
+  // Then the rest, in bounded batches yielding to the event loop between them.
+  let sinceYield = 0;
+  for (const doc of docs) {
+    if (mounted.has(doc.id)) continue;
+    const result = await reconcileOne(doc);
+    if (result) results.push(result);
+    sinceYield += 1;
+    if (sinceYield >= RECONCILE_BATCH) {
+      sinceYield = 0;
+      await yieldToScheduler();
     }
   }
+
   return results;
 };
 

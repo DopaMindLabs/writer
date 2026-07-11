@@ -1,5 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
-import { registerEditorHandle, getEditorHandle } from './editorRegistry';
+import {
+  registerEditorHandle,
+  getEditorHandle,
+  mountedDocIds,
+} from './editorRegistry';
 
 describe('editorRegistry', () => {
   it('registers a handle and retrieves it by doc id', () => {
@@ -12,6 +16,17 @@ describe('editorRegistry', () => {
 
   it('returns undefined for an unregistered doc', () => {
     expect(getEditorHandle('reg-missing')).toBeUndefined();
+  });
+
+  it('lists mounted doc ids as a copy, not the live map', () => {
+    const off = registerEditorHandle('reg-mounted', { restoreBody: vi.fn() });
+    const ids = mountedDocIds();
+    expect(ids).toContain('reg-mounted');
+    // Mutating the returned array must not affect the registry.
+    ids.length = 0;
+    expect(mountedDocIds()).toContain('reg-mounted');
+    off();
+    expect(mountedDocIds()).not.toContain('reg-mounted');
   });
 
   it('a stale cleanup does not drop a handle a remount replaced', () => {
