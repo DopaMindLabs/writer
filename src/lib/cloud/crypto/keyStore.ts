@@ -1,5 +1,6 @@
 import Dexie, { type Table } from 'dexie';
 import type { CloudKeyRing, EscrowRecord } from './keys';
+import { broadcastKeyRingChange } from './keyRingChannel';
 
 /**
  * Device persistence of the derived, non-extractable key ring. Kept in its own
@@ -75,6 +76,8 @@ export const saveDeviceKeyRing = async (ring: CloudKeyRing): Promise<void> => {
   await db().rings.put({ id: DEVICE, ring });
   cached = ring;
   notifyRingChange();
+  // Tell sibling tabs to reload from the shared keystore now the commit landed.
+  broadcastKeyRingChange('changed');
 };
 
 export const loadDeviceKeyRing = async (): Promise<CloudKeyRing | null> => {
@@ -88,6 +91,7 @@ export const forgetDeviceKeyRing = async (): Promise<void> => {
   await db().rings.delete(DEVICE);
   cached = null;
   notifyRingChange();
+  broadcastKeyRingChange('forgotten');
 };
 
 /** Hold an escrow on the device until reconciliation decides whether to publish it. */

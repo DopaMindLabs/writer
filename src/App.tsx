@@ -16,6 +16,8 @@ import { ThemeProvider } from '@/theme/ThemeProvider';
 import { A11yPreferenceProvider } from '@/theme/A11yPreferenceProvider';
 import { SyncScheduler } from '@/lib/sync/SyncScheduler';
 import { hydrateCloudDevice } from '@/lib/cloud/cloudClient';
+import { loadDeviceKeyRing } from '@/lib/cloud/crypto/keyStore';
+import { startKeyRingChannel } from '@/lib/cloud/crypto/keyRingChannel';
 import { startCloudReconciler } from '@/lib/cloud/reconcile';
 import { startEscrowReconciler } from '@/lib/cloud/escrowReconcile';
 import { startKeylessLockMonitor } from '@/lib/cloud/keylessGuard';
@@ -129,10 +131,14 @@ const useAppBoot = (): {
     let stopReconciler: (() => void) | null = null;
     let stopEscrowReconciler: (() => void) | null = null;
     let stopKeylessMonitor: (() => void) | null = null;
+    let stopKeyRingChannel: (() => void) | null = null;
     const run = async () => {
       // Load the persisted device key before anything reads or writes the cloud
       // database, so encrypted reads decrypt and writes seal from the first tick.
       await hydrateCloudDevice();
+      // Refresh this tab's key ring when a sibling tab unlocks or forgets it, so
+      // navigation names appear (or lock) everywhere without a reload.
+      stopKeyRingChannel = startKeyRingChannel(() => loadDeviceKeyRing());
       // Reconcile documents pulled from other devices into the live editor/CRDT.
       // A no-op on a plain local database.
       stopReconciler = startCloudReconciler();
@@ -156,6 +162,7 @@ const useAppBoot = (): {
       stopReconciler?.();
       stopEscrowReconciler?.();
       stopKeylessMonitor?.();
+      stopKeyRingChannel?.();
     };
   }, []);
 
