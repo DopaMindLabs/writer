@@ -233,6 +233,23 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     related: ['getting-started', 'customization-and-settings'],
   },
   {
+    slug: 'cloud-sync',
+    category: 'data',
+    featureArea: 'data',
+    keywords: [
+      'cloud',
+      'sync',
+      'encryption',
+      'passphrase',
+      'unlock',
+      'recovery',
+      'cross-device',
+      'devices',
+      'escrow',
+    ],
+    related: ['your-data', 'your-account', 'working-in-multiple-tabs'],
+  },
+  {
     slug: 'version-history',
     category: 'data',
     featureArea: 'versioning',
