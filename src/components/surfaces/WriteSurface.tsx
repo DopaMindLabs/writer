@@ -72,8 +72,11 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doc.id]);
 
-  const handleChange = useCallback((serialized: string) => {
-    void updateDocBody(doc.id, serialized);
+  const handleChange = useCallback(async (serialized: string) => {
+    // Await the body write so the autosave flush only records the save once it
+    // has landed; a failure propagates and leaves the edit pending for retry.
+    await updateDocBody(doc.id, serialized);
+    // Revision capture is best-effort and must never mask a body-write failure.
     void captureAutoRevision(doc.id, serialized).catch(
       (err: unknown) => {
         console.error('Failed to capture revision', err);

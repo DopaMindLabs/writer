@@ -1,3 +1,5 @@
+import type { FlushResult } from './flush.types';
+
 /**
  * A process-local registry of mounted collaborative editors, keyed by document
  * id. Restore flows use it to push a new body through the *live* editor (so the
@@ -7,13 +9,14 @@
 export interface EditorHandle {
   restoreBody: (serialized: string) => void;
   /**
-   * Flush any pending autosave synchronously, returning `true` if there were
-   * unsaved local edits to write. Cloud reconciliation uses this to tell a
-   * genuine remote pull from same-device autosave lag before restoring: if a
-   * flush wrote, the row was merely stale, not pulled. Optional — a handle
-   * without it reports no pending edits.
+   * Flush any pending autosave, resolving once the write has landed with a
+   * {@link FlushResult} describing whether anything was persisted and which body.
+   * Cloud reconciliation awaits this: a flush that wrote reports the exact local
+   * body, so the reconciler can preserve the just-pulled remote body as a safety
+   * revision before the local body replaces it, rather than losing either side.
+   * Optional — a handle without it reports no pending edits.
    */
-  flush?: () => boolean;
+  flush?: () => Promise<FlushResult>;
 }
 
 const handles = new Map<string, EditorHandle>();

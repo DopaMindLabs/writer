@@ -6,6 +6,7 @@ import { seedDocCrdt, EMPTY_LEXICAL_JSON } from '@/lib/docs';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
 import { registerEditorHandle } from '@/lib/collab/editorRegistry';
+import { NO_FLUSH } from '@/lib/collab/flush.types';
 import { serializedBody } from '@/test/fixtures';
 import { reconcilePulledDocs, startCloudReconciler } from './reconcile';
 
@@ -108,7 +109,7 @@ describe('reconcilePulledDocs', () => {
     const pulled = canon('remote content');
     await simulatePull('d1', pulled);
     const restoreBody = vi.fn();
-    const flush = vi.fn(() => false);
+    const flush = vi.fn(async () => NO_FLUSH);
     const unregister = registerEditorHandle('d1', { restoreBody, flush });
     const before = await updateRows('d1');
 
@@ -123,23 +124,39 @@ describe('reconcilePulledDocs', () => {
     expect(await db.revisions.where('docId').equals('d1').count()).toBe(1);
   });
 
-  it('leaves a mounted editor untouched when its autosave flush reports pending edits (same-device lag, not a pull)', async () => {
-    await seedLocalDoc('d1', canon('local content'));
-    // docs.body lags the CRDT during the debounce, so it reads as divergent…
-    await simulatePull('d1', canon('newer local content'));
+  it('keeps live local edits but preserves the pulled remote body as a recoverable revision', async () => {
+    // The conflict: local unsaved keystrokes (already in the CRDT) vs a body
+    // pulled from another device that overwrote the row.
+    const localBody = canon('LOCAL unsaved edits');
+    const remoteBody = canon('REMOTE pulled body');
+    await seedLocalDoc('d1', localBody);
+    await simulatePull('d1', remoteBody); // the pulled row body
     const restoreBody = vi.fn();
-    const flush = vi.fn(() => true); // …but the flush reports unsaved edits.
+    // A real flush serialises the editor's CRDT state (localBody) back to the row.
+    const flush = vi.fn(async () => {
+      await db.docs.update('d1', { body: localBody });
+      return { persisted: true as const, body: localBody };
+    });
     const unregister = registerEditorHandle('d1', { restoreBody, flush });
     const before = await updateRows('d1');
 
     const results = await reconcilePulledDocs();
-    unregister();
 
-    expect(results).toEqual([]);
+    expect(results).toEqual([{ docId: 'd1', action: 'kept-local' }]);
     expect(flush).toHaveBeenCalled();
-    expect(restoreBody).not.toHaveBeenCalled(); // live text is never clobbered
+    expect(restoreBody).not.toHaveBeenCalled(); // live local text is never clobbered
     expect(await updateRows('d1')).toHaveLength(before.length);
-    expect(await db.revisions.where('docId').equals('d1').count()).toBe(0);
+    // Local won in the row, and the remote body is not lost — it is recoverable.
+    expect((await db.docs.get('d1'))?.body).toBe(localBody);
+    const revisions = await db.revisions.where('docId').equals('d1').toArray();
+    expect(revisions).toHaveLength(1);
+    expect(revisions[0]?.body).toBe(remoteBody);
+
+    // Idempotent: with the row now matching the CRDT, a second run is a no-op and
+    // adds no further revision.
+    expect(await reconcilePulledDocs()).toEqual([]);
+    unregister();
+    expect(await db.revisions.where('docId').equals('d1').count()).toBe(1);
   });
 
   it('heals an empty CRDT log from the pulled body without a spurious revision', async () => {
@@ -161,7 +178,7 @@ describe('reconcilePulledDocs', () => {
     const pulled = canon('recovered live');
     await addDocWithoutCrdt('d1', pulled);
     const restoreBody = vi.fn();
-    const flush = vi.fn(() => false);
+    const flush = vi.fn(async () => NO_FLUSH);
     const unregister = registerEditorHandle('d1', { restoreBody, flush });
 
     const results = await reconcilePulledDocs();
@@ -182,7 +199,7 @@ describe('reconcilePulledDocs', () => {
       restoreBody: () => {
         throw new Error('boom');
       },
-      flush: () => false,
+      flush: async () => NO_FLUSH,
     });
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
