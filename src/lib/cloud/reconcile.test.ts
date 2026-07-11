@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { SyncState } from 'dexie-cloud-addon';
+import type { SyncState, UserLogin } from 'dexie-cloud-addon';
 import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
 import { seedDocCrdt, EMPTY_LEXICAL_JSON } from '@/lib/docs';
@@ -382,6 +382,28 @@ const keyChangeStub = (): KeyChangeStub => {
   };
 };
 
+interface UserStub {
+  observable: {
+    subscribe: (next: (u: UserLogin | undefined) => void) => { unsubscribe: () => void };
+  };
+  emit: (signedIn: boolean) => void;
+}
+
+/** A `CloudObservable<UserLogin | undefined>` stub for the current-user signal. */
+const userStub = (): UserStub => {
+  let listener: ((u: UserLogin | undefined) => void) | null = null;
+  return {
+    observable: {
+      subscribe: (next) => {
+        listener = next;
+        return { unsubscribe: () => { listener = null; } };
+      },
+    },
+    emit: (signedIn) =>
+      listener?.(signedIn ? ({ isLoggedIn: true } as unknown as UserLogin) : undefined),
+  };
+};
+
 const settle = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0));
 
 describe('startCloudReconciler', () => {
@@ -399,6 +421,32 @@ describe('startCloudReconciler', () => {
     stub.emit('pushing'); // leftPulling → run #2 (previous run has settled)
     await settle();
     expect(run).toHaveBeenCalledTimes(2);
+    stop();
+  });
+
+  it('clears the unchanged-skip cache when the user signs out', async () => {
+    const user = userStub();
+    const stop = startCloudReconciler({
+      syncState: stubObservable().observable,
+      currentUser: user.observable,
+      run: vi.fn().mockResolvedValue(undefined),
+    });
+
+    // Populate the skip cache: reconcile a doc, then a repeat sweep skips its load.
+    await addDocWithoutCrdt('d1', canon('stable'));
+    expect(await reconcilePulledDocs()).toEqual([{ docId: 'd1', action: 'reseeded' }]);
+    const loadAll = vi.spyOn(collabStore, 'loadAll');
+    expect(await reconcilePulledDocs()).toEqual([]);
+    expect(loadAll).not.toHaveBeenCalled();
+
+    // A logout wipes the CRDT log but keeps the body; without clearing the cache
+    // the unchanged body would be skipped and never reseeded. Sign-out must clear it.
+    user.emit(true);
+    user.emit(false);
+    expect(await reconcilePulledDocs()).toEqual([]);
+    expect(loadAll).toHaveBeenCalled();
+
+    loadAll.mockRestore();
     stop();
   });
 

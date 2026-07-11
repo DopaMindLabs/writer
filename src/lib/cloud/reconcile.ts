@@ -1,13 +1,13 @@
 import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
-import type { SyncState } from 'dexie-cloud-addon';
+import type { SyncState, UserLogin } from 'dexie-cloud-addon';
 import { collabStore } from '@/lib/collab/collabStore';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { getEditorHandle, mountedDocIds } from '@/lib/collab/editorRegistry';
 import { seedDocCrdt } from '@/lib/docs';
 import { createRevision } from '@/lib/revisions';
 import { NO_FLUSH, type FlushResult } from '@/lib/collab/flush.types';
-import { cloudSyncState, cloudSyncComplete } from './cloudClient';
+import { cloudSyncState, cloudSyncComplete, cloudCurrentUser } from './cloudClient';
 import { onDeviceKeyRingChange } from './crypto/keyStore';
 import {
   reconcileStatus,
@@ -293,8 +293,55 @@ export interface CloudReconcilerDeps {
   syncState?: CloudObservable<SyncState>;
   syncComplete?: CloudObservable<void>;
   onKeyChange?: (listener: () => void) => () => void;
+  currentUser?: CloudObservable<UserLogin | undefined>;
   run?: (trigger: ReconcileTrigger) => Promise<unknown>;
 }
+
+/**
+ * Clear the unchanged-skip cache when the user signs out. The addon's logout
+ * wipes the local `docUpdates` CRDT log but leaves the `docs` rows, so after
+ * signing back in an unchanged body would otherwise be *skipped* and its CRDT
+ * never reseeded. Dropping the cache on sign-out makes the next pull re-seed
+ * every doc. Returns an unsubscribe.
+ */
+const armSignOutReset = (
+  currentUser: CloudObservable<UserLogin | undefined>,
+): (() => void) => {
+  let wasSignedIn = false;
+  const sub = currentUser.subscribe((user) => {
+    const signedIn = user?.isLoggedIn === true;
+    if (wasSignedIn && !signedIn) resetReconcileState();
+    wasSignedIn = signedIn;
+  });
+  return () => {
+    sub.unsubscribe();
+  };
+};
+
+/**
+ * Arm the sync-phase reconcile triggers: the first `in-sync` (initial pull) and
+ * every transition *out of* `pulling` (a later pull settling). Returns an
+ * unsubscribe.
+ */
+const armPhaseTriggers = (
+  syncState: CloudObservable<SyncState>,
+  request: (trigger: ReconcileTrigger) => void,
+): (() => void) => {
+  let prevPhase: SyncState['phase'] | undefined;
+  let ranInitial = false;
+  const sub = syncState.subscribe((state) => {
+    const leftPulling = prevPhase === 'pulling' && state.phase !== 'pulling';
+    const initialComplete = !ranInitial && state.phase === 'in-sync';
+    prevPhase = state.phase;
+    if (leftPulling || initialComplete) {
+      ranInitial = true;
+      request(leftPulling ? 'pull' : 'initial');
+    }
+  });
+  return () => {
+    sub.unsubscribe();
+  };
+};
 
 /**
  * Keep document reconciliation armed for the whole session. It runs on four
@@ -315,6 +362,7 @@ export const startCloudReconciler = (
     syncState = cloudSyncState(),
     syncComplete = cloudSyncComplete(),
     onKeyChange = onDeviceKeyRingChange,
+    currentUser = cloudCurrentUser(),
     run = reconcileWithStatus,
   } = deps;
 
@@ -348,29 +396,21 @@ export const startCloudReconciler = (
   };
   requestActive = request;
 
-  let prevPhase: SyncState['phase'] | undefined;
-  let ranInitial = false;
-  const syncSub = syncState.subscribe((state) => {
-    const leftPulling = prevPhase === 'pulling' && state.phase !== 'pulling';
-    const initialComplete = !ranInitial && state.phase === 'in-sync';
-    prevPhase = state.phase;
-    if (leftPulling || initialComplete) {
-      ranInitial = true;
-      request(leftPulling ? 'pull' : 'initial');
-    }
-  });
+  const stopPhaseTriggers = armPhaseTriggers(syncState, request);
   const syncCompleteSub = syncComplete.subscribe(() => {
     request('sync-complete');
   });
   const stopKeyChange = onKeyChange(() => {
     request('key-acquired');
   });
+  const stopSignOutReset = armSignOutReset(currentUser);
 
   return () => {
     stopped = true;
-    syncSub.unsubscribe();
+    stopPhaseTriggers();
     syncCompleteSub.unsubscribe();
     stopKeyChange();
+    stopSignOutReset();
     if (requestActive === request) requestActive = null;
   };
 };
