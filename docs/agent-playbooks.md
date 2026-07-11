@@ -99,8 +99,8 @@ clarification.
 
 ### Steps
 
-1. **Read the relevant policy sections** from `docs/agent-policies.md` before reading
-   the code.
+1. **Read the relevant sections of `AGENTS.md`** (Coding standards, Testing philosophy,
+   Accessibility) before reading the code.
 2. **Locate** every symbol under review.
 3. **Check coding standards** (`CODING_STANDARDS.md`):
    - Function length ≤ 60 lines, ≤ 3 params (else options object).
@@ -118,16 +118,25 @@ clarification.
 6. **Check for regressions:** does the change alter `docs.body` semantics, CRDT seeding,
    or the reconciliation path without updating `reconcile.ts`, `snapshot.ts`, or
    `seed.ts`?
-7. **Output:** one finding per line — `path:line: severity: problem. fix.`
+7. **Output:** one finding per line, in the format defined by
+   [`audit-writer-change`](../.agents/skills/audit-writer-change/SKILL.md)
+   ("Evidence-only severity findings"):
+
+```
+SEVERITY  FILE:LINE  SYMBOL         FINDING
+critical  src/…:42   updateDocBody  Floating promise — missing await
+```
 
 ### Severity levels
 
 | Label | Meaning |
 |---|---|
-| `blocker` | Must fix before merge (invariant broken, data loss risk, security issue) |
-| `major` | Standards violation; reviewer will flag |
-| `minor` | Style or clarity issue; fix encouraged |
-| `note` | Informational; no action required |
+| `critical` | Data loss, security, crash — must fix before merge |
+| `major` | Behaviour regression, a11y failure, standards violation |
+| `minor` | Style, stale comment, naming; fix encouraged |
+
+Return only evidenced findings from the code under review; do not list
+observations that are not findings.
 
 ---
 

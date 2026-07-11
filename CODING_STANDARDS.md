@@ -10,11 +10,11 @@ checked in review.
 1. **[Simple control flow](#1-simple-control-flow).** Keep cyclomatic complexity low (≤ 12); no unbounded recursion.
 2. **[Bounded loops](#2-bounded-loops).** Every loop has an obvious upper bound; no `while (true)` without a guaranteed exit.
 3. **[No unbounded growth, no leaks](#3-no-unbounded-growth-no-leaks).** Clean up every effect, listener, timer, and live query; no growing module-level caches.
-4. **[Small functions](#4-small-functions).** ≤ 60 lines, ≤ 4 parameters (use an options object beyond that).
+4. **[Small functions](#4-small-functions).** ≤ 60 lines, ≤ 3 parameters (use an options object beyond that).
 5. **[Assert at boundaries](#5-assert-at-boundaries).** Validate all untrusted input (IndexedDB, localStorage, import, URL) with `invariant()`.
 6. **[Smallest data scope](#6-smallest-data-scope).** `const` by default; no module-level mutable state; narrowest types.
 7. **[Check every return value](#7-check-every-return-value).** No floating promises; handle nullable returns; never silently swallow errors.
-8. **[No type escape hatches](#8-no-type-escape-hatches).** No `any`, no `@ts-ignore` (use `@ts-expect-error` with a reason); keep `as` and `!` at validated boundaries.
+8. **[No type escape hatches](#8-no-type-escape-hatches).** No `any`, no `@ts-ignore`, no `@ts-expect-error`; keep `as` and `!` at validated boundaries.
 9. **[Immutability](#9-immutability).** `readonly` where possible; never mutate parameters or shared state; Zustand updates stay immutable.
 10. **[Zero lint/type errors in CI](#10-zero-linttype-errors-in-ci).** ESLint and `tsc` run clean on every push.
 
@@ -78,8 +78,11 @@ The same applies to `setInterval`/`setTimeout`, Dexie `liveQuery`/`useLiveQuery`
 subscriptions, and any event emitter. Do not accumulate state in module-level caches.
 
 ### 4. Small functions
-A function should fit on a screen: 60 lines or fewer, 4 parameters or fewer. Past four
+A function should fit on a screen: 60 lines or fewer, 3 parameters or fewer. Past three
 arguments, pass an options object. Split large React components into smaller pieces.
+(ESLint's `max-params` is still set to 4 as the hard floor for the pre-existing backlog —
+that is not licence to write new 4-parameter functions; new code targets 3, checked in
+review.)
 
 Write functions as arrow functions (`const f = () => …`), including utilities; `func-style`
 and `prefer-arrow-callback` enforce this. A test file's extension mirrors the file under
@@ -169,8 +172,10 @@ established practice rather than local preference:
 - **typescript-eslint `strict-type-checked`**: used directly as the ESLint preset. It
   supplies rules 1, 4, and 6 to 9, and adds `no-unnecessary-condition`,
   `restrict-template-expressions`, and `no-unnecessary-type-assertion`.
-- **Google TypeScript Style Guide**: backs rule 8 (prefer runtime checks over `as` and `!`;
-  `@ts-expect-error` over `@ts-ignore`) and rule 9 (`readonly`, CONSTANT_CASE).
+- **Google TypeScript Style Guide**: backs rule 8 (prefer runtime checks over `as` and `!`)
+  and rule 9 (`readonly`, CONSTANT_CASE). This repo is stricter than Google on suppressions:
+  Google permits `@ts-expect-error` over `@ts-ignore`; here both are forbidden (see
+  [Scope and exceptions](#scope-and-exceptions)).
 - **MISRA C and the JPL Institutional C Standard**: the Power of Ten sits on top of MISRA
   within the JPL standard and was written to be statically checkable, which is why every
   rule here maps to a lint check. The C-only rules were adapted rather than dropped: "no

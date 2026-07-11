@@ -166,7 +166,7 @@ e2e/accessibility-settings.spec.ts     — e2e: preference persists and applies
 | `A11yState` | `store/a11y.ts` | Add `setFontWeight` action |
 | `A11yPreferenceProvider` | `theme/A11yPreferenceProvider.tsx` | Apply `data-font-weight` |
 
-### Policy constraints (from `docs/agent-policies.md`)
+### Policy constraints (from `AGENTS.md`)
 
 - Default must equal today's behaviour (`?? default` — no destructive migration).
 - New opt-in must not change the default experience.
