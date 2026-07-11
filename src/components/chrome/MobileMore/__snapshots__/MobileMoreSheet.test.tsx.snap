@@ -3,7 +3,7 @@
 exports[`snapshot > matches the open sheet with an active doc 1`] = `
 <div
   aria-labelledby="radix-_r_*_"
-  class="fixed inset-x-0 bottom-0 z-50 flex max-h-[80vh] flex-col rounded-t-2xl bg-paper pb-[env(safe-area-inset-bottom)] shadow-xl md:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom duration-200"
+  class="fixed inset-x-0 bottom-0 z-50 flex max-h-[80vh] flex-col rounded-t-2xl bg-paper pb-[env(safe-area-inset-bottom)] shadow-overlay-sheet md:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom duration-200"
   data-state="open"
   data-testid="mobile-more-sheet"
   id="radix-_r_*_"
@@ -160,7 +160,7 @@ exports[`snapshot > matches the open sheet with an active doc 1`] = `
 exports[`snapshot > matches the space-level sheet with no active doc 1`] = `
 <div
   aria-labelledby="radix-_r_*_"
-  class="fixed inset-x-0 bottom-0 z-50 flex max-h-[80vh] flex-col rounded-t-2xl bg-paper pb-[env(safe-area-inset-bottom)] shadow-xl md:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom duration-200"
+  class="fixed inset-x-0 bottom-0 z-50 flex max-h-[80vh] flex-col rounded-t-2xl bg-paper pb-[env(safe-area-inset-bottom)] shadow-overlay-sheet md:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom duration-200"
   data-state="open"
   data-testid="mobile-more-sheet"
   id="radix-_r_*_"

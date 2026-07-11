@@ -43,6 +43,7 @@ const config: Config = {
         'overlay-popover': 'var(--shadow-overlay-popover)',
         'overlay-dialog': 'var(--shadow-overlay-dialog)',
         'overlay-drawer': 'var(--shadow-overlay-drawer)',
+        'overlay-drawer-start': 'var(--shadow-overlay-drawer-start)',
         'overlay-sheet': 'var(--shadow-overlay-sheet)',
       },
       fontFamily: {
