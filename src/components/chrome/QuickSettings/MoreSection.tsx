@@ -1,11 +1,23 @@
 import { useTranslation } from 'react-i18next';
-import { routes } from '@/lib/routes';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { MenuItem } from '@/components/ui/MenuItem';
 import { PopoverClose } from '@/components/ui/popover';
 import { Link } from '@/components/ui/Link';
 import { SectionLabel } from './QuickSettingsSectionLabel';
 import { QuickLinksFooter } from './QuickLinksFooter';
+import { popoverAppMenuLink } from './appMenuLinks';
+
+const PopoverMoreLink = ({ id }: { id: string }) => {
+  const { t } = useTranslation('chrome');
+  const link = popoverAppMenuLink(id);
+  return (
+    <PopoverClose asChild>
+      <MenuItem asChild data-testid={link.testId}>
+        <Link to={link.href}>{t(link.labelKey)}</Link>
+      </MenuItem>
+    </PopoverClose>
+  );
+};
 
 export const MoreSection = () => {
   const { t } = useTranslation('chrome');
@@ -15,13 +27,7 @@ export const MoreSection = () => {
         {t('quickSettings.moreLabel')}
       </SectionLabel>
 
-      <PopoverClose asChild>
-        <MenuItem asChild data-testid="quick-settings-whats-new">
-          <Link to={routes.helpArticle('whats-new')}>
-            {t('quickSettings.whatsNew')}
-          </Link>
-        </MenuItem>
-      </PopoverClose>
+      <PopoverMoreLink id="whats-new" />
 
       <ComingSoon hint={t('quickSettings.feedback')} side="left" className="w-full">
         <span className="flex w-full items-center px-3.5 py-1.5 text-[13px] text-ink-2">
@@ -29,19 +35,9 @@ export const MoreSection = () => {
         </span>
       </ComingSoon>
 
-      <PopoverClose asChild>
-        <MenuItem asChild data-testid="quick-settings-accessibility">
-          <Link to={routes.settings('accessibility')}>
-            {t('quickSettings.accessibility')}
-          </Link>
-        </MenuItem>
-      </PopoverClose>
+      <PopoverMoreLink id="accessibility" />
 
-      <PopoverClose asChild>
-        <MenuItem asChild data-testid="quick-settings-about">
-          <Link to={routes.about()}>{t('quickSettings.about')}</Link>
-        </MenuItem>
-      </PopoverClose>
+      <PopoverMoreLink id="about" />
 
       <QuickLinksFooter />
     </>
