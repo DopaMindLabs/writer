@@ -7,6 +7,7 @@ import { readCloudFlag, wasCloudProvisioned } from './flag';
 import { loadDeviceKeyRing, deviceKeyProvider } from './crypto/keyStore';
 import { ESCROW_ID } from './crypto/keys';
 import { hasPlaintextSyncedRows } from './setup';
+import { releaseThisDevice } from './deviceRegistry';
 import { KeylessSignInBlockedError } from './crypto/errors';
 
 /**
@@ -185,8 +186,24 @@ export const signInToCloud = async (): Promise<void> => {
   await api.login();
 };
 
-export const signOutOfCloud = (): Promise<void> =>
-  cloudApi()?.logout() ?? Promise.resolve();
+/**
+ * Sign out, freeing this device's slot in the two-device beta registry first.
+ * The addon's `logout()` never pushes pending mutations (it clears or prompts),
+ * so the row deletion is flushed with an explicit push before logging out —
+ * best-effort: an offline sign-out still signs out, leaking the slot until a
+ * registered device frees it (the row's `lastSeenAt` supports a later reclaim).
+ */
+export const signOutOfCloud = async (): Promise<void> => {
+  const api = cloudApi();
+  if (!api) return;
+  try {
+    await releaseThisDevice();
+    await api.sync?.({ purpose: 'push', wait: true });
+  } catch {
+    // Offline or mid-sync failure: the slot leaks, sign-out still proceeds.
+  }
+  await api.logout();
+};
 
 /**
  * Force a fresh pull from the server — the retry behind a stalled account fetch.

@@ -71,6 +71,70 @@ describe('requestCloudSync forces a pull', () => {
   });
 });
 
+describe('signOutOfCloud frees the device slot', () => {
+  let registryDb: Dexie;
+
+  const registry = (): Table<{ id: string }, string> =>
+    registryDb.table<{ id: string }, string>('cloudDevices');
+
+  interface SignOutCloud {
+    logout: ReturnType<typeof vi.fn>;
+    sync: ReturnType<typeof vi.fn>;
+    persistedSyncState: { value: { clientIdentity: string } };
+  }
+
+  const withSignOutCloud = (): SignOutCloud => {
+    const cloud: SignOutCloud = {
+      logout: vi.fn().mockResolvedValue(undefined),
+      sync: vi.fn().mockResolvedValue(undefined),
+      persistedSyncState: { value: { clientIdentity: 'me' } },
+    };
+    (db as unknown as { cloud?: SignOutCloud }).cloud = cloud;
+    return cloud;
+  };
+
+  beforeEach(async () => {
+    registryDb = new Dexie('signout-registry');
+    registryDb.version(1).stores({ cloudDevices: 'id' });
+    await registryDb.open();
+    (db as { cloudDevices?: Table<{ id: string }, string> }).cloudDevices = registry();
+  });
+
+  afterEach(async () => {
+    delete (db as { cloud?: unknown }).cloud;
+    delete (db as { cloudDevices?: unknown }).cloudDevices;
+    await registryDb.delete();
+  });
+
+  it('releases the device row and pushes the deletion before logging out', async () => {
+    const cloud = withSignOutCloud();
+    await registry().put({ id: 'me' });
+    await registry().put({ id: 'other' });
+
+    await signOutOfCloud();
+
+    // dexie-cloud's logout never pushes pending mutations, so the deletion must
+    // be flushed explicitly first or the slot stays occupied on the server.
+    expect(await registry().get('me')).toBeUndefined();
+    expect(await registry().get('other')).toBeDefined();
+    expect(cloud.sync).toHaveBeenCalledWith({ purpose: 'push', wait: true });
+    const pushOrder = cloud.sync.mock.invocationCallOrder[0];
+    const logoutOrder = cloud.logout.mock.invocationCallOrder[0];
+    expect(pushOrder).toBeDefined();
+    expect(logoutOrder).toBeDefined();
+    expect(pushOrder).toBeLessThan(logoutOrder ?? 0);
+  });
+
+  it('still logs out when the push flush fails (offline sign-out)', async () => {
+    const cloud = withSignOutCloud();
+    cloud.sync.mockRejectedValue(new Error('offline'));
+    await registry().put({ id: 'me' });
+
+    await expect(signOutOfCloud()).resolves.toBeUndefined();
+    expect(cloud.logout).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe('signInToCloud guard (clean vs dirty keyless device)', () => {
   const login = vi.fn().mockResolvedValue(undefined);
   const withCloudLogin = (): void => {
