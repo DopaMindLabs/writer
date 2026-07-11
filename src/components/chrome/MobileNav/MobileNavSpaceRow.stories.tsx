@@ -9,6 +9,7 @@ const space: Space = {
   shared: false,
   template: 'blank',
   createdAt: 0,
+  updatedAt: 0,
 };
 
 const meta = {
