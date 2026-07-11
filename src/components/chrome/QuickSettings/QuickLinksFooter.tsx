@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Kbd } from '@/components/ui/Kbd';
 import { FooterLink } from './FooterLink';
 import { popoverAppMenuLink } from './appMenuLinks';
 
@@ -12,7 +13,7 @@ export const QuickLinksFooter = () => {
       <FooterLink
         to={help.href}
         label={t(help.labelKey)}
-        kbd={t('quickSettings.helpKbd')}
+        kbd={<Kbd keys="mod+?" />}
         testId={help.testId}
       />
       <FooterLink
@@ -24,7 +25,7 @@ export const QuickLinksFooter = () => {
       <FooterLink
         to={fullSettings.href}
         label={t(fullSettings.labelKey)}
-        kbd={t('quickSettings.fullSettingsKbd')}
+        kbd={<Kbd keys="mod+," />}
         testId={fullSettings.testId}
       />
     </div>

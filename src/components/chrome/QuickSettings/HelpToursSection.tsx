@@ -4,12 +4,15 @@ import { TOUR_IDS, TOURS, type TourId } from '@/tours/tours';
 import { useTour } from '@/tours/useTour';
 import { getCompleted } from '@/tours/storage';
 import { MenuItem } from '@/components/ui/MenuItem';
+import { Kbd } from '@/components/ui/Kbd';
 import { PopoverClose } from '@/components/ui/popover';
+import { useCoarsePointer } from '@/hooks/useCoarsePointer';
 import { SectionLabel } from './QuickSettingsSectionLabel';
 
 export const HelpToursSection = () => {
   const { t } = useTranslation(['chrome', 'tours']);
   const { replay } = useTour();
+  const coarsePointer = useCoarsePointer();
   const [completedSnapshot, setCompletedSnapshot] = useState<string[]>(() =>
     getCompleted(),
   );
@@ -32,9 +35,9 @@ export const HelpToursSection = () => {
       {TOUR_IDS.map((id) => {
         const done = completedSnapshot.includes(id);
         const shortcut =
-          id === 'welcome' ? (
+          id === 'welcome' && !coarsePointer ? (
             <span data-testid={`quick-settings-tour-${id}-kbd`}>
-              {t('chrome:quickSettings.helpKbd')}
+              <Kbd keys="mod+?" />
             </span>
           ) : undefined;
         return (

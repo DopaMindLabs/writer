@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { PillToggle } from '@/components/ui/PillToggle';
+import { Kbd } from '@/components/ui/Kbd';
 import { QuickSettingRow, type QuickSettingSize } from './QuickSettingRow';
 
 export const FocusModeRow = ({ size = 'compact' }: { size?: QuickSettingSize }) => {
@@ -18,7 +19,7 @@ export const FocusModeRow = ({ size = 'compact' }: { size?: QuickSettingSize }) 
   return (
     <QuickSettingRow
       label={t('quickSettings.focusLabel')}
-      hint={t('quickSettings.focusHint')}
+      hint={<Kbd keys="mod+\" />}
       size={size}
     >
       <PillToggle
