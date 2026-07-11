@@ -651,7 +651,7 @@ corners (no radius), a 1 px `rule` border, `paper` ground, and a dimmed scrim. T
 | **Dialog** | `src/components/ui/dialog.tsx` | A centred modal task (compose `DialogContent` + `DialogHeader`/`DialogTitle`/`DialogDescription`). Default `max-w-lg`; override the `className` width as needed (e.g. `HelpPalette`, `VersionHistoryModal`). |
 | **ConfirmDialog** | `src/components/ui/ConfirmDialog.tsx` | A yes/no confirm for an irreversible or destructive action. Two `Button`s: `secondary` cancel + a confirm whose `confirmKind` is `dangerous` for destructive verbs. Autofocuses confirm; wires `aria-describedby`. |
 | **Popover** | `src/components/ui/popover.tsx` | A small panel anchored to a trigger (Quick Settings, Space menu). Not modal. |
-| **Bottom sheet** | `src/components/chrome/MobileMoreSheet.tsx` | The mobile-only slide-up menu. The one place radius is allowed (16 px scrim corners, per §1/§2.3). |
+| **Bottom sheet** | `src/components/chrome/MobileMore/MobileMoreSheet.tsx` | The mobile-only slide-up menu. The one place radius is allowed (16 px scrim corners, per §1/§2.3). |
 
 **Rules**
 - **Never** use `window.alert` / `window.confirm` / `window.prompt`. For a confirm, use
@@ -775,7 +775,7 @@ Mobile chrome for the writer. Compact, 60-px tall.
 | `docName` | string | `"The bell-keeper"` |
 | `menuOpen` | boolean | `false` |
 
-> **In this repo:** `src/components/chrome/MobileNavDrawer.tsx` + `MobileMoreSheet.tsx`.
+> **In this repo:** `src/components/chrome/MobileNavDrawer.tsx` + `MobileMore/MobileMoreSheet.tsx`.
 
 ---
 
