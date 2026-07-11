@@ -36,6 +36,9 @@ interface CloudApi {
   userInteraction: CloudObservable<DXCUserInteraction | undefined>;
   syncState: CloudObservable<SyncState>;
   currentUser: CloudObservable<UserLogin | undefined>;
+  /** Fires after every settled sync round (each HTTP/WS sync), regardless of
+   *  phase — a superset of the `pulling→other` edge the reconciler also watches. */
+  events?: { syncComplete: CloudObservable<void> };
   login: () => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -54,6 +57,7 @@ const constant = <T,>(value: T): CloudObservable<T> => ({
   },
 });
 
+
 const INITIAL_STATE: SyncState = { status: 'not-started', phase: 'initial' };
 
 export const cloudUserInteraction = (): CloudObservable<DXCUserInteraction | undefined> =>
@@ -64,6 +68,19 @@ export const cloudSyncState = (): CloudObservable<SyncState> =>
 
 export const cloudCurrentUser = (): CloudObservable<UserLogin | undefined> =>
   cloudApi()?.currentUser ?? constant(undefined);
+
+/**
+ * Fires once after each settled sync round. The reconciler subscribes to it so a
+ * successful pull that did not cross a `pulling→other` phase edge still triggers
+ * reconciliation. Never emits on a plain (non-cloud) database.
+ */
+export const cloudSyncComplete = (): CloudObservable<void> => {
+  const events = cloudApi()?.events;
+  if (events) return events.syncComplete;
+  // A never-emitting fallback: an event stream (unlike state) must not fire a
+  // spurious value on subscribe. Typed void by the return annotation.
+  return { subscribe: () => ({ unsubscribe: () => undefined }) };
+};
 
 /**
  * Whether the signed-in user's initial account pull has completed. The addon sets

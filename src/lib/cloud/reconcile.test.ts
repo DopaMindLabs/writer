@@ -236,35 +236,143 @@ const stubObservable = (): StubObservable => {
   };
 };
 
+interface VoidEmitter {
+  observable: { subscribe: (next: () => void) => { unsubscribe: () => void } };
+  emit: () => void;
+  hasListener: () => boolean;
+}
+
+/** A `CloudObservable<void>` stub for syncComplete. */
+const voidEmitter = (): VoidEmitter => {
+  let listener: (() => void) | null = null;
+  return {
+    observable: {
+      subscribe: (next) => {
+        listener = next;
+        return { unsubscribe: () => { listener = null; } };
+      },
+    },
+    emit: () => listener?.(),
+    hasListener: () => listener !== null,
+  };
+};
+
+interface KeyChangeStub {
+  onKeyChange: (listener: () => void) => () => void;
+  emit: () => void;
+  hasListener: () => boolean;
+}
+
+/** A stub for `onDeviceKeyRingChange`. */
+const keyChangeStub = (): KeyChangeStub => {
+  let listener: (() => void) | null = null;
+  return {
+    onKeyChange: (l) => {
+      listener = l;
+      return () => { listener = null; };
+    },
+    emit: () => listener?.(),
+    hasListener: () => listener !== null,
+  };
+};
+
+const settle = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0));
+
 describe('startCloudReconciler', () => {
-  it('runs reconcile on every transition out of the pulling phase', () => {
+  it('runs reconcile on every transition out of the pulling phase', async () => {
     const stub = stubObservable();
     const run = vi.fn().mockResolvedValue(undefined);
-    startCloudReconciler(stub.observable, run);
+    const stop = startCloudReconciler({ syncState: stub.observable, run });
 
     stub.emit('pulling');
     expect(run).not.toHaveBeenCalled();
-    stub.emit('in-sync');
+    stub.emit('in-sync'); // leftPulling → run #1
+    await settle();
     expect(run).toHaveBeenCalledTimes(1);
     stub.emit('pulling');
-    stub.emit('pushing');
+    stub.emit('pushing'); // leftPulling → run #2 (previous run has settled)
+    await settle();
     expect(run).toHaveBeenCalledTimes(2);
+    stop();
   });
 
   it('runs once when initial sync first reaches in-sync without a prior pull', () => {
     const stub = stubObservable();
     const run = vi.fn().mockResolvedValue(undefined);
-    startCloudReconciler(stub.observable, run);
+    const stop = startCloudReconciler({ syncState: stub.observable, run });
 
     stub.emit('in-sync');
     stub.emit('in-sync');
     expect(run).toHaveBeenCalledTimes(1);
+    stop();
   });
 
-  it('does not run on unrelated phases and stops after unsubscribe', () => {
-    const stub = stubObservable();
+  it('reconciles on a settled syncComplete even without a phase transition', async () => {
+    const sc = voidEmitter();
     const run = vi.fn().mockResolvedValue(undefined);
-    const stop = startCloudReconciler(stub.observable, run);
+    const stop = startCloudReconciler({
+      syncState: stubObservable().observable,
+      syncComplete: sc.observable,
+      run,
+    });
+
+    sc.emit();
+    await settle();
+    expect(run).toHaveBeenCalledTimes(1);
+    stop();
+  });
+
+  it('reconciles when a device key is acquired', () => {
+    const kc = keyChangeStub();
+    const run = vi.fn().mockResolvedValue(undefined);
+    const stop = startCloudReconciler({
+      syncState: stubObservable().observable,
+      onKeyChange: kc.onKeyChange,
+      run,
+    });
+
+    kc.emit();
+    expect(run).toHaveBeenCalledTimes(1);
+    stop();
+  });
+
+  it('never overlaps runs; triggers during a run coalesce into one rerun', async () => {
+    const stub = stubObservable();
+    let resolveFirst: (() => void) | undefined;
+    const run = vi
+      .fn()
+      .mockImplementationOnce(
+        () => new Promise<void>((resolve) => { resolveFirst = () => resolve(); }),
+      )
+      .mockResolvedValue(undefined);
+    const stop = startCloudReconciler({ syncState: stub.observable, run });
+
+    stub.emit('in-sync'); // starts run #1, held unresolved
+    expect(run).toHaveBeenCalledTimes(1);
+    // Three more qualifying triggers while run #1 is in flight.
+    stub.emit('pulling');
+    stub.emit('in-sync');
+    stub.emit('pulling');
+    stub.emit('pushing');
+    expect(run).toHaveBeenCalledTimes(1); // no overlap
+
+    resolveFirst?.();
+    await settle();
+    expect(run).toHaveBeenCalledTimes(2); // exactly one coalesced rerun
+    stop();
+  });
+
+  it('does not run on unrelated phases and unsubscribes every source on stop', () => {
+    const stub = stubObservable();
+    const sc = voidEmitter();
+    const kc = keyChangeStub();
+    const run = vi.fn().mockResolvedValue(undefined);
+    const stop = startCloudReconciler({
+      syncState: stub.observable,
+      syncComplete: sc.observable,
+      onKeyChange: kc.onKeyChange,
+      run,
+    });
 
     stub.emit('initial');
     stub.emit('offline');
@@ -272,7 +380,11 @@ describe('startCloudReconciler', () => {
 
     stop();
     expect(stub.hasListener()).toBe(false);
+    expect(sc.hasListener()).toBe(false);
+    expect(kc.hasListener()).toBe(false);
     stub.emit('in-sync');
+    sc.emit();
+    kc.emit();
     expect(run).not.toHaveBeenCalled();
   });
 });

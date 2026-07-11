@@ -6,7 +6,8 @@ import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { getEditorHandle } from '@/lib/collab/editorRegistry';
 import { seedDocCrdt } from '@/lib/docs';
 import { createRevision } from '@/lib/revisions';
-import { cloudSyncState } from './cloudClient';
+import { cloudSyncState, cloudSyncComplete } from './cloudClient';
+import { onDeviceKeyRingChange } from './crypto/keyStore';
 import type { CloudObservable } from './cloudObservable';
 
 /**
@@ -92,28 +93,105 @@ export const reconcilePulledDocs = async (): Promise<ReconcileResult[]> => {
   return results;
 };
 
+/** What prompted a reconcile run — recorded for diagnostics and rerun tracking. */
+export type ReconcileTrigger =
+  | 'initial'
+  | 'pull'
+  | 'sync-complete'
+  | 'key-acquired'
+  | 'manual';
+
 /**
- * Subscribe to the cloud sync engine and reconcile after each transition out of
- * the `pulling` phase, plus once when a fresh device first reaches `in-sync`.
- * Returns an unsubscribe. A no-op on a plain (non-cloud) database, whose sync
- * state never leaves `initial`, so ordinary users run no cloud code path.
+ * The active reconciler's single-flight request function, or `null` when no
+ * reconciler is running. Lets the UI (e.g. a retry button) drive the *same*
+ * serialised run path as the automatic triggers.
+ */
+let requestActive: ((trigger: ReconcileTrigger) => void) | null = null;
+
+/** Ask the running reconciler to reconcile once (serialised). No-op if none is
+ *  running — e.g. a plain database, where nothing was ever started. */
+export const requestReconcile = (trigger: ReconcileTrigger = 'manual'): void => {
+  requestActive?.(trigger);
+};
+
+/** Dependencies of {@link startCloudReconciler}; all injectable for tests. */
+export interface CloudReconcilerDeps {
+  syncState?: CloudObservable<SyncState>;
+  syncComplete?: CloudObservable<void>;
+  onKeyChange?: (listener: () => void) => () => void;
+  run?: () => Promise<unknown>;
+}
+
+/**
+ * Keep document reconciliation armed for the whole session. It runs on four
+ * signals: the first `in-sync`, every transition out of `pulling`, every settled
+ * `syncComplete`, and every device-key change (so rows hidden while keyless
+ * reconcile the instant the key arrives). Runs are **single-flight**: a trigger
+ * during an active run schedules exactly one follow-up that starts after the
+ * current run settles, so overlapping sweeps can never race. Rejections are
+ * swallowed here (per-document isolation lives in `reconcilePulledDocs`, and the
+ * status facade records failures) so a bad run never tears down the
+ * subscriptions. Returns an unsubscribe for every source. A no-op on a plain
+ * (non-cloud) database, whose observables never emit.
  */
 export const startCloudReconciler = (
-  observable: CloudObservable<SyncState> = cloudSyncState(),
-  run: () => Promise<unknown> = reconcilePulledDocs,
+  deps: CloudReconcilerDeps = {},
 ): (() => void) => {
+  const {
+    syncState = cloudSyncState(),
+    syncComplete = cloudSyncComplete(),
+    onKeyChange = onDeviceKeyRingChange,
+    run = reconcilePulledDocs,
+  } = deps;
+
+  let stopped = false;
+  let running = false;
+  let queuedTrigger: ReconcileTrigger | null = null;
+
+  const request = (trigger: ReconcileTrigger): void => {
+    if (stopped) return;
+    if (running) {
+      // Coalesce: at most one follow-up run, remembering the latest trigger.
+      queuedTrigger = trigger;
+      return;
+    }
+    running = true;
+    void Promise.resolve(run())
+      .catch(() => undefined)
+      .finally(() => {
+        running = false;
+        if (queuedTrigger !== null && !stopped) {
+          const next = queuedTrigger;
+          queuedTrigger = null;
+          request(next);
+        }
+      });
+  };
+  requestActive = request;
+
   let prevPhase: SyncState['phase'] | undefined;
   let ranInitial = false;
-  const subscription = observable.subscribe((state) => {
+  const syncSub = syncState.subscribe((state) => {
     const leftPulling = prevPhase === 'pulling' && state.phase !== 'pulling';
     const initialComplete = !ranInitial && state.phase === 'in-sync';
     prevPhase = state.phase;
     if (leftPulling || initialComplete) {
       ranInitial = true;
-      void run();
+      request(leftPulling ? 'pull' : 'initial');
     }
   });
+  const syncCompleteSub = syncComplete.subscribe(() => {
+    request('sync-complete');
+  });
+  const stopKeyChange = onKeyChange(() => {
+    request('key-acquired');
+  });
+
   return () => {
-    subscription.unsubscribe();
+    stopped = true;
+    syncSub.unsubscribe();
+    syncCompleteSub.unsubscribe();
+    stopKeyChange();
+    if (requestActive === request) requestActive = null;
   };
 };
