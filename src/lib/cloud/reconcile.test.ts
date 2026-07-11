@@ -6,9 +6,14 @@ import { seedDocCrdt, EMPTY_LEXICAL_JSON } from '@/lib/docs';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
 import { registerEditorHandle } from '@/lib/collab/editorRegistry';
+import { collabStore } from '@/lib/collab/collabStore';
 import { NO_FLUSH } from '@/lib/collab/flush.types';
 import { serializedBody } from '@/test/fixtures';
-import { reconcilePulledDocs, startCloudReconciler } from './reconcile';
+import {
+  reconcilePulledDocs,
+  resetReconcileState,
+  startCloudReconciler,
+} from './reconcile';
 
 const FIXED_TIME = 1_700_000_000_000;
 
@@ -55,6 +60,7 @@ describe('reconcilePulledDocs', () => {
   beforeEach(async () => {
     await db.delete();
     await db.open();
+    resetReconcileState();
   });
 
   it('leaves a non-divergent doc untouched (no revision, no reseed)', async () => {
@@ -226,6 +232,40 @@ describe('reconcilePulledDocs', () => {
     expect(await db.revisions.where('docId').equals('d1').count()).toBe(
       revsAfterFirst,
     );
+  });
+
+  it('reconciles the mounted (active) document before unmounted ones', async () => {
+    // d3 is added last (so it sorts last in the DB scan) but is the mounted doc.
+    await addDocWithoutCrdt('d1', canon('one'));
+    await addDocWithoutCrdt('d2', canon('two'));
+    await addDocWithoutCrdt('d3', canon('three'));
+    const unregister = registerEditorHandle('d3', {
+      restoreBody: vi.fn(),
+      flush: async () => NO_FLUSH,
+    });
+
+    const results = await reconcilePulledDocs();
+    unregister();
+
+    expect(results[0]?.docId).toBe('d3'); // active doc processed first
+    expect(results.map((r) => r.docId).sort()).toEqual(['d1', 'd2', 'd3']);
+  });
+
+  it('skips the CRDT load for a doc unchanged since its last reconcile', async () => {
+    await addDocWithoutCrdt('d1', canon('stable'));
+    expect(await reconcilePulledDocs()).toEqual([{ docId: 'd1', action: 'reseeded' }]);
+
+    // Second sweep: body unchanged → skip the expensive load + snapshot entirely.
+    const loadAll = vi.spyOn(collabStore, 'loadAll');
+    expect(await reconcilePulledDocs()).toEqual([]);
+    expect(loadAll).not.toHaveBeenCalled();
+
+    // Correctness is independent of the cache: clearing it costs the work again
+    // but yields the same (already-converged) result.
+    resetReconcileState();
+    expect(await reconcilePulledDocs()).toEqual([]);
+    expect(loadAll).toHaveBeenCalled();
+    loadAll.mockRestore();
   });
 });
 

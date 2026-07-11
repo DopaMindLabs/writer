@@ -35,3 +35,10 @@ export const registerEditorHandle = (
 
 export const getEditorHandle = (docId: string): EditorHandle | undefined =>
   handles.get(docId);
+
+/**
+ * The ids of currently-mounted documents, as a copied snapshot (never the live
+ * map). Cloud reconciliation processes these first so the document the user is
+ * looking at converges before any background sweep of the rest of the library.
+ */
+export const mountedDocIds = (): string[] => Array.from(handles.keys());
