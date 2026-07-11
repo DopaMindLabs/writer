@@ -10,7 +10,13 @@ export const useSections = (
 ): Section[] | undefined =>
   useKeyedEncryptedLiveQuery(
     spaceId,
-    (id) => db.sections.where('spaceId').equals(id).sortBy('order'),
+    // Read through the wrapped query path and sort in memory: a cursor read
+    // (`sortBy`) bypasses the encryption middleware and would leak rows sealed
+    // under a key this device does not hold, raw, into the section tree.
+    async (id) =>
+      (await db.sections.where('spaceId').equals(id).toArray()).sort(
+        (a, b) => a.order - b.order,
+      ),
     [],
   );
 

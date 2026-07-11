@@ -1,4 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { readdirSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 import Dexie, {
   type DBCore,
   type DBCoreTable,
@@ -470,6 +472,38 @@ describe('createEncryptionMiddleware — a real disableChangeTracking transactio
     await expect(realDb.table('docs').bulkPut([pulledRow('app-1')])).rejects.toThrow();
 
     expect(await readStored('app-1')).toBeUndefined();
+  });
+});
+
+/**
+ * The middleware deliberately leaves `openCursor` unwrapped (see the note above
+ * `wrapTable`), so cursor-driven reads — `.sortBy()`, `.each()` — and `.modify()`
+ * see rows exactly as stored: a row sealed under a key this device does not hold
+ * comes back RAW, with its encrypted fields missing, and crashes any consumer
+ * that trusts the row type (e.g. reading `doc.meta.wordCount`). Every caller
+ * must therefore read through the wrapped key/query paths (`get`/`toArray`) and
+ * sort in memory. This scan enforces that contract across the app source.
+ */
+describe('encrypted tables are never read through unwrapped cursor paths', () => {
+  const SRC_ROOT = path.resolve(__dirname, '../../../');
+  const CURSOR_CALL = /\.(sortBy|each|modify)\(/;
+
+  const walk = (dir: string): string[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) return walk(full);
+      return [full];
+    });
+
+  it('no production source calls .sortBy/.each/.modify (cursors bypass this middleware)', () => {
+    const offenders = walk(SRC_ROOT)
+      .filter((file) => /\.(ts|tsx)$/.test(file))
+      .filter((file) => !/\.(test|stories)\.(ts|tsx)$/.test(file))
+      // The middleware itself names the forbidden calls in its doc comments.
+      .filter((file) => !file.endsWith(`crypto${path.sep}middleware.ts`))
+      .filter((file) => CURSOR_CALL.test(readFileSync(file, 'utf8')))
+      .map((file) => path.relative(SRC_ROOT, file));
+    expect(offenders, `cursor reads bypass the encryption middleware: ${offenders.join(', ')}`).toEqual([]);
   });
 });
 

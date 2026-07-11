@@ -9,7 +9,10 @@ export const useCitations = (
   return useEncryptedLiveQuery(
     async () => {
       if (!spaceId) return [];
-      return db.citations.where('spaceId').equals(spaceId).sortBy('year');
+      // Wrapped query path + in-memory sort — a `sortBy` cursor read would
+      // bypass the encryption middleware and leak sealed rows raw.
+      const rows = await db.citations.where('spaceId').equals(spaceId).toArray();
+      return rows.sort((a, b) => a.year - b.year);
     },
     [spaceId],
     [],
