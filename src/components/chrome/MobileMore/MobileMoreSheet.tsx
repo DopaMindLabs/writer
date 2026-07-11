@@ -27,14 +27,14 @@ export const MobileMoreSheet = ({ spaceId, docId }: MobileMoreSheetProps) => {
       <DialogPrimitivePortal>
         <DialogPrimitiveOverlay
           className={cn(
-            'fixed inset-0 z-50 bg-black/40 md:hidden',
+            'fixed inset-0 z-50 bg-scrim md:hidden',
             'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
           )}
         />
         <DialogPrimitiveContent
           aria-describedby={undefined}
           className={cn(
-            'fixed inset-x-0 bottom-0 z-50 flex max-h-[80vh] flex-col rounded-t-2xl bg-paper pb-[env(safe-area-inset-bottom)] shadow-xl md:hidden',
+            'fixed inset-x-0 bottom-0 z-50 flex max-h-[80vh] flex-col rounded-t-2xl bg-paper pb-[env(safe-area-inset-bottom)] shadow-overlay-sheet md:hidden',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom duration-200',
           )}

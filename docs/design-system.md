@@ -661,6 +661,15 @@ corners (no radius), a 1 px `rule` border, `paper` ground, and a dimmed scrim. T
   consequence is stated. Keep the confirm button's verb specific ("Restore", "Delete"), not
   "OK".
 - Buttons live bottom-right, cancel before confirm, built from the `Button` primitive (§4).
+- **Scrim + shadow are token-driven, and the scrim never blurs.** Overlays veil the page with
+  the `scrim` tokens — `bg-scrim` for the bottom sheet, the lighter `bg-scrim-drawer` for the
+  side drawers (mobile nav, mobile inspector) — and cast a direction-matched shadow: the sheet
+  uses `shadow-overlay-sheet` (upward), the right-anchored inspector uses `shadow-overlay-drawer`
+  (leftward), and the left-anchored nav drawer uses `shadow-overlay-drawer-start` (rightward, the
+  mirror added so a left drawer's shadow falls onto the page, not off-screen). Never hard-code a
+  `bg-black/NN` scrim, a `shadow-lg/xl`, or a `backdrop-blur` on these surfaces.
+- Side drawers and the bottom sheet pad for the device safe-area insets
+  (`env(safe-area-inset-*)`) so content clears notches and home indicators.
 
 > **Gap → DS update.** `ConfirmDialog` was added to close the "destructive confirm" gap that
 > previously fell back to `window.confirm`. The native `Toast` notification remains a future

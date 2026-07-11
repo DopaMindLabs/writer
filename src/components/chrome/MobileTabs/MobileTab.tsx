@@ -6,7 +6,7 @@ import type { TabItem } from './useTabItems';
 export const MobileTab = ({ item, active }: { item: TabItem; active: boolean }) => {
   const { t } = useTranslation('chrome');
   const className = cn(
-    'flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors',
+    'flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink',
     active ? 'text-ink' : 'text-ink-3 hover:text-ink',
   );
   const inner = (
