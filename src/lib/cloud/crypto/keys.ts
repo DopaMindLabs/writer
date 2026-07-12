@@ -152,8 +152,13 @@ export const calibrateIterations = async (): Promise<number> => {
  * decomposed accents, desktop keyboards composed), so without a fixed normal
  * form the same passphrase typed on two devices derives two different KEKs and
  * the correct passphrase reads as wrong. NFKC is the identity on ASCII.
+ *
+ * Exported so the setup UI can validate and compare the *same* value the crypto
+ * derives from — otherwise the dialog can reject two visually identical
+ * passphrases that would unwrap the same escrow. NFKC is the only
+ * transformation: it must not trim, lowercase, or otherwise alter whitespace.
  */
-const canonicalPassphrase = (passphrase: string): string =>
+export const canonicalisePassphrase = (passphrase: string): string =>
   passphrase.normalize('NFKC');
 
 const deriveKek = async (
@@ -163,7 +168,7 @@ const deriveKek = async (
 ): Promise<CryptoKey> => {
   const base = await crypto.subtle.importKey(
     'raw',
-    asBuffer(utf8(canonicalPassphrase(passphrase))),
+    asBuffer(utf8(canonicalisePassphrase(passphrase))),
     'PBKDF2',
     false,
     ['deriveKey'],

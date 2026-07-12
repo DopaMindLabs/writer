@@ -1,14 +1,20 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
+import { waitFor } from '@testing-library/react';
+import Dexie, { type Table } from 'dexie';
 import { db } from '@/db/db';
 import {
   cloudSyncState,
   cloudUserInteraction,
   cloudCurrentUser,
+  cloudEscrowPresence,
+  requestCloudSync,
   signInToCloud,
   signOutOfCloud,
   hydrateCloudDevice,
   isAccountPullComplete,
   KeylessSignInBlockedError,
+  type SyncState,
+  type EscrowPresence,
 } from './cloudClient';
 import { CLOUD_FLAG_KEY } from './flag';
 import {
@@ -16,7 +22,7 @@ import {
   saveDeviceKeyRing,
   forgetDeviceKeyRing,
 } from './crypto/keyStore';
-import { deriveKeyRing, generateMasterSecret } from './crypto/keys';
+import { deriveKeyRing, generateMasterSecret, ESCROW_ID, type EscrowRecord } from './crypto/keys';
 
 // In the test environment the app database is plain (both gates off), so
 // `db.cloud` is absent and every getter must fall back safely.
@@ -45,6 +51,87 @@ describe('cloudClient without a cloud database', () => {
   it('sign in and out resolve as no-ops', async () => {
     await expect(signInToCloud()).resolves.toBeUndefined();
     await expect(signOutOfCloud()).resolves.toBeUndefined();
+  });
+
+  it('a sync request resolves as a no-op', async () => {
+    await expect(requestCloudSync()).resolves.toBeUndefined();
+  });
+});
+
+describe('requestCloudSync forces a pull', () => {
+  afterEach(() => {
+    delete (db as { cloud?: unknown }).cloud;
+  });
+
+  it('calls the addon sync with a pull purpose', async () => {
+    const sync = vi.fn().mockResolvedValue(undefined);
+    (db as unknown as { cloud?: { sync: typeof sync } }).cloud = { sync };
+    await requestCloudSync();
+    expect(sync).toHaveBeenCalledWith({ purpose: 'pull', wait: true });
+  });
+});
+
+describe('signOutOfCloud frees the device slot', () => {
+  let registryDb: Dexie;
+
+  const registry = (): Table<{ id: string }, string> =>
+    registryDb.table<{ id: string }, string>('cloudDevices');
+
+  interface SignOutCloud {
+    logout: ReturnType<typeof vi.fn>;
+    sync: ReturnType<typeof vi.fn>;
+    persistedSyncState: { value: { clientIdentity: string } };
+  }
+
+  const withSignOutCloud = (): SignOutCloud => {
+    const cloud: SignOutCloud = {
+      logout: vi.fn().mockResolvedValue(undefined),
+      sync: vi.fn().mockResolvedValue(undefined),
+      persistedSyncState: { value: { clientIdentity: 'me' } },
+    };
+    (db as unknown as { cloud?: SignOutCloud }).cloud = cloud;
+    return cloud;
+  };
+
+  beforeEach(async () => {
+    registryDb = new Dexie('signout-registry');
+    registryDb.version(1).stores({ cloudDevices: 'id' });
+    await registryDb.open();
+    (db as { cloudDevices?: Table<{ id: string }, string> }).cloudDevices = registry();
+  });
+
+  afterEach(async () => {
+    delete (db as { cloud?: unknown }).cloud;
+    delete (db as { cloudDevices?: unknown }).cloudDevices;
+    await registryDb.delete();
+  });
+
+  it('releases the device row and pushes the deletion before logging out', async () => {
+    const cloud = withSignOutCloud();
+    await registry().put({ id: 'me' });
+    await registry().put({ id: 'other' });
+
+    await signOutOfCloud();
+
+    // dexie-cloud's logout never pushes pending mutations, so the deletion must
+    // be flushed explicitly first or the slot stays occupied on the server.
+    expect(await registry().get('me')).toBeUndefined();
+    expect(await registry().get('other')).toBeDefined();
+    expect(cloud.sync).toHaveBeenCalledWith({ purpose: 'push', wait: true });
+    const pushOrder = cloud.sync.mock.invocationCallOrder[0];
+    const logoutOrder = cloud.logout.mock.invocationCallOrder[0];
+    expect(pushOrder).toBeDefined();
+    expect(logoutOrder).toBeDefined();
+    expect(pushOrder).toBeLessThan(logoutOrder ?? 0);
+  });
+
+  it('still logs out when the push flush fails (offline sign-out)', async () => {
+    const cloud = withSignOutCloud();
+    cloud.sync.mockRejectedValue(new Error('offline'));
+    await registry().put({ id: 'me' });
+
+    await expect(signOutOfCloud()).resolves.toBeUndefined();
+    expect(cloud.logout).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -135,6 +222,154 @@ describe('isAccountPullComplete', () => {
       persistedSyncState: { value: { initiallySynced: true } },
     });
     expect(isAccountPullComplete()).toBe(false);
+  });
+});
+
+/** A minimal behaviour subject: emits its current value synchronously on
+ *  subscribe and on every `next`, mirroring the addon's `syncState` observable. */
+interface Subject<T> {
+  readonly value: T;
+  subscribe: (next: (value: T) => void) => { unsubscribe: () => void };
+  next: (value: T) => void;
+}
+const makeSubject = <T,>(initial: T): Subject<T> => {
+  let current = initial;
+  const listeners = new Set<(value: T) => void>();
+  return {
+    get value() {
+      return current;
+    },
+    subscribe: (next) => {
+      next(current);
+      listeners.add(next);
+      return {
+        unsubscribe: () => {
+          listeners.delete(next);
+        },
+      };
+    },
+    next: (value) => {
+      current = value;
+      for (const listener of listeners) listener(value);
+    },
+  };
+};
+
+/** The slice of `db.cloud` the escrow-presence path reads. */
+interface PresenceCloud {
+  syncState: Subject<SyncState>;
+  currentUser: { value: { isLoggedIn: boolean } };
+  persistedSyncState: { value: { initiallySynced: boolean } };
+}
+
+describe('cloudEscrowPresence', () => {
+  const INITIAL: SyncState = { status: 'not-started', phase: 'initial' };
+  let escrowDb: Dexie;
+
+  const dummyEscrow = (): EscrowRecord => ({
+    id: ESCROW_ID,
+    epoch: 1,
+    kdf: 'PBKDF2',
+    hash: 'SHA-512',
+    iterations: 1,
+    salt: new Uint8Array([1]),
+    iv: new Uint8Array([2]),
+    wrapped: new Uint8Array([3]),
+    fingerprint: new Uint8Array([4]),
+  });
+
+  const escrowTable = (): Table<EscrowRecord, string> =>
+    escrowDb.table<EscrowRecord, string>('cloudCrypto');
+
+  const withCloud = (cloud: PresenceCloud): void => {
+    (db as { cloud?: PresenceCloud }).cloud = cloud;
+  };
+
+  const signedInPull = (complete: boolean): PresenceCloud => ({
+    syncState: makeSubject<SyncState>(INITIAL),
+    currentUser: { value: { isLoggedIn: true } },
+    persistedSyncState: { value: { initiallySynced: complete } },
+  });
+
+  beforeEach(async () => {
+    // A real Dexie `cloudCrypto` table so the presence liveQuery observes actual
+    // rows (the app db is plain in tests and has no such store).
+    escrowDb = new Dexie('presence-escrow');
+    escrowDb.version(1).stores({ cloudCrypto: 'id' });
+    await escrowDb.open();
+    (db as { cloudCrypto?: Table<EscrowRecord, string> }).cloudCrypto = escrowTable();
+  });
+
+  afterEach(async () => {
+    delete (db as { cloud?: PresenceCloud }).cloud;
+    delete (db as { cloudCrypto?: Table<EscrowRecord, string> }).cloudCrypto;
+    await escrowDb.delete();
+  });
+
+  it("is a constant 'none' on a plain (non-cloud) database", () => {
+    delete (db as { cloud?: PresenceCloud }).cloud;
+    const seen: EscrowPresence[] = [];
+    const sub = cloudEscrowPresence().subscribe((p) => seen.push(p));
+    expect(seen).toEqual(['none']);
+    sub.unsubscribe();
+  });
+
+  it("stays 'unknown' until the initial pull completes, even with an escrow present", async () => {
+    await escrowTable().put(dummyEscrow());
+    withCloud(signedInPull(false));
+
+    const seen: EscrowPresence[] = [];
+    const sub = cloudEscrowPresence().subscribe((p) => seen.push(p));
+
+    expect(seen[0]).toBe('unknown');
+    // Let the row liveQuery settle; the pull is still incomplete, so it must not
+    // reveal the escrow yet (a Set-up now could mint a divergent key).
+    await waitFor(() => expect(seen.length).toBeGreaterThan(1));
+    expect(seen.every((p) => p === 'unknown')).toBe(true);
+    sub.unsubscribe();
+  });
+
+  it("emits 'present' once the pull completes and the account holds an escrow", async () => {
+    await escrowTable().put(dummyEscrow());
+    const cloud = signedInPull(false);
+    withCloud(cloud);
+
+    const seen: EscrowPresence[] = [];
+    const sub = cloudEscrowPresence().subscribe((p) => seen.push(p));
+    expect(seen[0]).toBe('unknown');
+
+    cloud.persistedSyncState.value.initiallySynced = true;
+    cloud.syncState.next({ status: 'connected', phase: 'in-sync' });
+
+    await waitFor(() => expect(seen.at(-1)).toBe('present'));
+    sub.unsubscribe();
+  });
+
+  it("emits 'none' once the pull completes with no escrow on the account", async () => {
+    withCloud(signedInPull(true));
+
+    const seen: EscrowPresence[] = [];
+    const sub = cloudEscrowPresence().subscribe((p) => seen.push(p));
+
+    await waitFor(() => expect(seen.at(-1)).toBe('none'));
+    sub.unsubscribe();
+  });
+
+  it("never flashes 'none' on a device whose pull is already complete (escrow present)", async () => {
+    // The reload path: initiallySynced was persisted true and the account HAS an
+    // escrow, but the row liveQuery has not resolved yet at subscribe time. A
+    // premature 'none' here offers Set-up and can mint a key that diverges from
+    // the account's — presence must stay 'unknown' until the row query settles.
+    await escrowTable().put(dummyEscrow());
+    withCloud(signedInPull(true));
+
+    const seen: EscrowPresence[] = [];
+    const sub = cloudEscrowPresence().subscribe((p) => seen.push(p));
+
+    expect(seen[0]).toBe('unknown');
+    await waitFor(() => expect(seen.at(-1)).toBe('present'));
+    expect(seen).not.toContain('none');
+    sub.unsubscribe();
   });
 });
 

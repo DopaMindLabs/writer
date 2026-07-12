@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -23,6 +22,7 @@ import { useUI } from '@/store/ui';
 import { useDocuments } from '@/hooks/useDocuments';
 import { useConnectionsForNote } from '@/hooks/useConnections';
 import { useNoteAttachments } from '@/hooks/useNoteAttachments';
+import { useEncryptedLiveQuery } from '@/hooks/useEncryptedLiveQuery';
 import { NOTE_KIND_LABEL } from '@/data/note-kinds';
 import { getNoteLayoutConfig } from '@/data/note-types';
 import { IMAGE_ACCEPT_ATTR, MAX_NOTE_IMAGES } from '@/data/note-attachments';
@@ -484,7 +484,7 @@ const useRelatedNotesById = (
     return Array.from(ids);
   }, [incoming, outgoing]);
 
-  const relatedNotes = useLiveQuery(
+  const relatedNotes = useEncryptedLiveQuery(
     async () => {
       if (otherNoteIds.length === 0) return [];
       return db.notes.where('id').anyOf(otherNoteIds).toArray();
@@ -591,7 +591,7 @@ export const BrainSpaceDetailDrawer = ({ spaceId }: BrainSpaceDetailDrawerProps)
   const focusNote = useUI((s) => s.focusNote);
   const openDetail = useUI((s) => s.openDetail);
 
-  const note = useLiveQuery(
+  const note = useEncryptedLiveQuery(
     () => (detailNoteId ? db.notes.get(detailNoteId) : undefined),
     [detailNoteId],
     undefined,

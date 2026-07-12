@@ -1,8 +1,11 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { readdirSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 import Dexie, {
   type DBCore,
   type DBCoreTable,
   type DBCoreQueryRequest,
+  type DBCoreMutateRequest,
 } from 'dexie';
 import dexieCloud from 'dexie-cloud-addon';
 import { STORES } from '@/db/stores';
@@ -313,6 +316,194 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     expect(back?.name).toBe('My Doc');
     expect(back?.body).toBe('secret body');
     expect(back?.meta).toEqual({ wordCount: 3 });
+  });
+});
+
+/**
+ * The write lock refuses *app* content writes while the device is keyless or
+ * mismatched, but the cloud addon applies pulled server rows (already ciphertext)
+ * through this same table API — inside a transaction it marks `disableChangeTracking`
+ * (the flag it also reads back to skip its own change queue). Blocking those would
+ * abort the initial pull and strand the account on "fetching your account…" forever.
+ * A sync-applied write must therefore pass the lock; an app write must still be
+ * refused.
+ */
+describe('createEncryptionMiddleware — sync-applied writes bypass the write lock', () => {
+  const primaryKey = { extractKey: (v: { id: string }) => v.id };
+
+  const makeWrapped = (
+    ring: CloudKeyRing | null,
+  ): { wrapped: DBCoreTable; mutate: ReturnType<typeof vi.fn> } => {
+    const provider: KeyProvider = { current: () => ring };
+    const mutate = vi.fn().mockResolvedValue({
+      numFailures: 0,
+      failures: [],
+      results: [],
+      lastResult: undefined,
+    });
+    const fake = { name: 'docs', schema: { primaryKey }, mutate } as unknown as DBCoreTable;
+    const down = { table: () => fake } as unknown as DBCore;
+    const created = createEncryptionMiddleware(provider).create(down) as DBCore;
+    return { wrapped: created.table('docs'), mutate };
+  };
+
+  /** A put request, optionally on a change-tracking-disabled (sync-applied) tx. */
+  const putReq = (syncApplied: boolean): DBCoreMutateRequest =>
+    ({
+      type: 'put',
+      trans: { disableChangeTracking: syncApplied } as never,
+      values: [{ id: 'r1', spaceId: 's', sectionId: 'x', updatedAt: 1 }],
+    }) as unknown as DBCoreMutateRequest;
+
+  afterEach(() => {
+    keyMismatchState.set(false);
+    keylessLockState.set(false);
+    vi.restoreAllMocks();
+  });
+
+  it('lets the addon apply a pulled row while signed-in-keyless (no ring)', async () => {
+    keylessLockState.set(true);
+    const { wrapped, mutate } = makeWrapped(null);
+
+    await expect(wrapped.mutate(putReq(true))).resolves.toBeDefined();
+    expect(mutate).toHaveBeenCalledTimes(1);
+  });
+
+  it('lets the addon apply a pulled row under a key mismatch (foreign ring held)', async () => {
+    keyMismatchState.set(true);
+    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const { wrapped, mutate } = makeWrapped(ring);
+
+    await expect(wrapped.mutate(putReq(true))).resolves.toBeDefined();
+    expect(mutate).toHaveBeenCalledTimes(1);
+  });
+
+  it('still refuses an ordinary app write while keyless (change tracking on)', async () => {
+    keylessLockState.set(true);
+    const { wrapped, mutate } = makeWrapped(null);
+
+    await expect(wrapped.mutate(putReq(false))).rejects.toBeInstanceOf(
+      CloudKeylessWriteError,
+    );
+    expect(mutate).not.toHaveBeenCalled();
+  });
+
+  it('still refuses an ordinary app write under a mismatch (change tracking on)', async () => {
+    keyMismatchState.set(true);
+    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const { wrapped, mutate } = makeWrapped(ring);
+
+    await expect(wrapped.mutate(putReq(false))).rejects.toBeInstanceOf(
+      CloudKeyMismatchError,
+    );
+    expect(mutate).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * The unit tests above fake `req.trans`; this one drives a real Dexie transaction
+ * through IndexedDB. It marks the transaction `disableChangeTracking` on its
+ * `idbtrans` — exactly as the addon's `applyServerChanges` marks the transaction
+ * it writes pulled server rows in — and proves the write lock reads that off the
+ * DBCore `req.trans` and lets the write reach storage verbatim, while an ordinary
+ * app write on a plain transaction is still refused. This is the end of the
+ * deadlock chain: without the exemption the initial pull would abort here. It uses
+ * a plain Dexie db (no cloud addon) so no background sync engine runs — the flag
+ * propagation is the addon's only relevant behaviour and it is reproduced directly.
+ */
+describe('createEncryptionMiddleware — a real disableChangeTracking transaction lands through the lock', () => {
+  const DOCS_SCHEMA = { docs: 'id, spaceId, sectionId, updatedAt, [spaceId+sectionId]' };
+  let realDb: Dexie;
+  const pulledRow = (id: string): AnyRow => ({
+    id, spaceId: 's1', sectionId: 'x1', updatedAt: 1, [CIPHER_FIELD]: { v: 1 },
+  });
+
+  /** Read a row back without the keyless read-path hiding sealed rows. */
+  const readStored = async (id: string): Promise<AnyRow | undefined> => {
+    const wasKeyless = keylessLockState.current();
+    keylessLockState.set(false);
+    try {
+      return (await realDb.table<AnyRow>('docs').get(id)) ?? undefined;
+    } finally {
+      keylessLockState.set(wasKeyless);
+    }
+  };
+
+  /** Apply a row the way the addon does: inside a change-tracking-disabled tx. */
+  const applyPulled = (id: string): Promise<unknown> =>
+    realDb.transaction('rw', realDb.table('docs'), async () => {
+      const tx = Dexie.currentTransaction as unknown as {
+        idbtrans?: { disableChangeTracking?: boolean };
+      };
+      if (tx.idbtrans) tx.idbtrans.disableChangeTracking = true;
+      return realDb.table('docs').bulkPut([pulledRow(id)]);
+    });
+
+  beforeEach(async () => {
+    ring = null;
+    realDb = new Dexie('mw-real-tx');
+    realDb.version(1).stores(DOCS_SCHEMA);
+    realDb.use(createEncryptionMiddleware(provider));
+    await realDb.open();
+  });
+
+  afterEach(async () => {
+    keyMismatchState.set(false);
+    keylessLockState.set(false);
+    await realDb.delete();
+  });
+
+  it('applies a sync-marked bulkPut while signed-in-keyless and stores it verbatim', async () => {
+    keylessLockState.set(true);
+
+    await expect(applyPulled('pulled-1')).resolves.toBe('pulled-1');
+
+    // Passed through unsealed (no key held), preserving the ciphertext the addon pulled.
+    const raw = await readStored('pulled-1');
+    expect(raw?.id).toBe('pulled-1');
+    expect(raw?.[CIPHER_FIELD]).toEqual({ v: 1 });
+  });
+
+  it('still refuses an ordinary app bulkPut on a plain transaction while keyless', async () => {
+    keylessLockState.set(true);
+
+    // A real high-level write (no disableChangeTracking) is stopped by the lock
+    // before it reaches storage; Dexie surfaces the middleware rejection.
+    await expect(realDb.table('docs').bulkPut([pulledRow('app-1')])).rejects.toThrow();
+
+    expect(await readStored('app-1')).toBeUndefined();
+  });
+});
+
+/**
+ * The middleware deliberately leaves `openCursor` unwrapped (see the note above
+ * `wrapTable`), so cursor-driven reads — `.sortBy()`, `.each()` — and `.modify()`
+ * see rows exactly as stored: a row sealed under a key this device does not hold
+ * comes back RAW, with its encrypted fields missing, and crashes any consumer
+ * that trusts the row type (e.g. reading `doc.meta.wordCount`). Every caller
+ * must therefore read through the wrapped key/query paths (`get`/`toArray`) and
+ * sort in memory. This scan enforces that contract across the app source.
+ */
+describe('encrypted tables are never read through unwrapped cursor paths', () => {
+  const SRC_ROOT = path.resolve(__dirname, '../../../');
+  const CURSOR_CALL = /\.(sortBy|each|modify)\(/;
+
+  const walk = (dir: string): string[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) return walk(full);
+      return [full];
+    });
+
+  it('no production source calls .sortBy/.each/.modify (cursors bypass this middleware)', () => {
+    const offenders = walk(SRC_ROOT)
+      .filter((file) => /\.(ts|tsx)$/.test(file))
+      .filter((file) => !/\.(test|stories)\.(ts|tsx)$/.test(file))
+      // The middleware itself names the forbidden calls in its doc comments.
+      .filter((file) => !file.endsWith(`crypto${path.sep}middleware.ts`))
+      .filter((file) => CURSOR_CALL.test(readFileSync(file, 'utf8')))
+      .map((file) => path.relative(SRC_ROOT, file));
+    expect(offenders, `cursor reads bypass the encryption middleware: ${offenders.join(', ')}`).toEqual([]);
   });
 });
 

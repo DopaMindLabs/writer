@@ -127,7 +127,7 @@ describe('AutosavePlugin', () => {
     expect(onChange).toHaveBeenCalledTimes(1);
   });
 
-  const renderPlugin = (onChange: (serialized: string) => void) => {
+  const renderPlugin = (onChange: (serialized: string) => Promise<void>) => {
     let editor!: LexicalEditor;
     render(
       withComposer(

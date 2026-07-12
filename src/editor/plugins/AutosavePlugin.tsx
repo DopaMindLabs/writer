@@ -2,12 +2,13 @@ import { useCallback, useEffect, useRef, type RefObject } from 'react';
 import type { EditorState } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { serializeState } from '@/editor/serialize';
+import { NO_FLUSH, type FlushResult } from '@/lib/collab/flush.types';
 
 interface AutosavePluginProps {
-  onChange: (serialized: string) => void;
+  onChange: (serialized: string) => Promise<void>;
   debounceMs?: number;
   /** Exposes the pending-save flush so the editor handle can drive it on demand. */
-  flushRef?: RefObject<() => boolean>;
+  flushRef?: RefObject<() => Promise<FlushResult>>;
 }
 
 export const AutosavePlugin = ({
@@ -23,10 +24,10 @@ export const AutosavePlugin = ({
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
-  // Flush any pending save synchronously; return whether unsaved edits were
-  // written — the signal cloud reconciliation uses to tell same-device autosave
-  // lag from a genuine remote pull.
-  const flushPendingSave = useCallback((): boolean => {
+  // Flush any pending save, resolving once the write lands with which body (if
+  // any) was persisted — the signal cloud reconciliation awaits to tell
+  // same-device autosave lag from a genuine remote pull without losing content.
+  const flushPendingSave = useCallback(async (): Promise<FlushResult> => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
@@ -36,20 +37,37 @@ export const AutosavePlugin = ({
       backstopRef.current = null;
     }
     const state = latestStateRef.current;
-    if (!state) return false;
+    if (!state) return NO_FLUSH;
     const serialized = serializeState(state);
-    if (serialized === lastSavedRef.current) return false;
+    if (serialized === lastSavedRef.current) return NO_FLUSH;
+    // Record the save optimistically so a concurrent flush of the same content
+    // dedupes, but roll back on a rejected write so the edit stays pending (its
+    // serialized form again differs from lastSavedRef) and a later flush retries
+    // it rather than silently dropping it.
+    const previous = lastSavedRef.current;
     lastSavedRef.current = serialized;
-    onChangeRef.current(serialized);
-    return true;
+    try {
+      await onChangeRef.current(serialized);
+    } catch (error) {
+      lastSavedRef.current = previous;
+      throw error;
+    }
+    return { persisted: true, body: serialized };
   }, []);
+
+  // Fire the flush from a timer/unmount without leaving an unhandled rejection.
+  const flushInBackground = useCallback((): void => {
+    void flushPendingSave().catch((error: unknown) => {
+      console.error('autosave flush failed', error);
+    });
+  }, [flushPendingSave]);
 
   useEffect(() => {
     const ref = flushRef;
     if (!ref) return;
     ref.current = flushPendingSave;
     return () => {
-      ref.current = () => false;
+      ref.current = () => Promise.resolve(NO_FLUSH);
     };
   }, [flushRef, flushPendingSave]);
 
@@ -65,21 +83,21 @@ export const AutosavePlugin = ({
           // the debounce) catches it without resetting a pending local save. The
           // lastSavedRef dedupe below means a purely-remote flush costs nothing.
           if (!timerRef.current) {
-            backstopRef.current ??= setTimeout(flushPendingSave, debounceMs * 2);
+            backstopRef.current ??= setTimeout(flushInBackground, debounceMs * 2);
           }
           return;
         }
         if (timerRef.current) clearTimeout(timerRef.current);
-        timerRef.current = setTimeout(flushPendingSave, debounceMs);
+        timerRef.current = setTimeout(flushInBackground, debounceMs);
       },
     );
-  }, [editor, debounceMs, flushPendingSave]);
+  }, [editor, debounceMs, flushInBackground]);
 
   useEffect(() => {
     return () => {
-      flushPendingSave();
+      flushInBackground();
     };
-  }, [flushPendingSave]);
+  }, [flushInBackground]);
 
   return null;
 };

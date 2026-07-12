@@ -81,6 +81,7 @@ describe('buildDb — cloud activation gates', () => {
     await db.open();
     const names = db.tables.map((t) => t.name);
     expect(names).not.toContain('cloudCrypto');
+    expect(names).not.toContain('cloudDevices');
     expect(names).not.toContain('$docs_mutations');
     expect((db as { cloud?: unknown }).cloud).toBeUndefined();
     await db.delete();
@@ -103,6 +104,8 @@ describe('buildDb — cloud activation gates', () => {
 
     const names = db.tables.map((t) => t.name);
     expect(names).toContain('cloudCrypto');
+    // The device registry for the two-device beta limit syncs alongside it.
+    expect(names).toContain('cloudDevices');
     // The addon is active: it created the per-table mutation queues.
     expect(names).toContain('$docs_mutations');
     expect((db as { cloud: { options: { unsyncedTables: string[] } } }).cloud.options

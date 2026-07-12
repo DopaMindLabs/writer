@@ -328,4 +328,37 @@ describe('cloud key conflict resolution', () => {
     const recovered = await unwrapMasterSecret(escrow, 'new-pass');
     expect(Array.from(recovered)).not.toEqual(Array.from(accountMaster));
   });
+
+  it('eraseSyncedContent keeps the account escrow when the device has none to replace it', async () => {
+    // A mismatched device without a pending escrow (it was cleared, or the ring
+    // came from an earlier unlock) has no key to install: deleting the account
+    // escrow would leave the whole account keyless and orphan every other
+    // device. Erase must drop only the unreadable rows and leave the account
+    // key — and the mismatch — in place.
+    const accountMaster = await seedMismatch();
+    await clearPendingEscrow();
+
+    await eraseSyncedContent(db);
+
+    expect(await db.table<Row>('docs').get('acc')).toBeUndefined();
+    expect((await db.table<Row>('docs').get('mine'))?.name).toBe('my note');
+    const escrow = await db.cloudCrypto.get(ESCROW_ID);
+    if (!escrow) throw new Error('expected the account escrow to survive');
+    const recovered = await unwrapMasterSecret(escrow, 'old-pass');
+    expect(Array.from(recovered)).toEqual(Array.from(accountMaster));
+    expect(keyMismatchState.current()).toBe(true);
+  });
+
+  it('eraseSyncedContent clears a mismatch with neither a pending nor an account escrow', async () => {
+    // A forced or stale mismatch signal with no escrow anywhere (e.g. the e2e
+    // affordance, or residue after an account wipe) protects nothing: erase
+    // still resolves it rather than stranding the device on the banner.
+    await seedMismatch();
+    await clearPendingEscrow();
+    await db.cloudCrypto.delete(ESCROW_ID);
+
+    await eraseSyncedContent(db);
+
+    expect(keyMismatchState.current()).toBe(false);
+  });
 });
