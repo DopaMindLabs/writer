@@ -5,7 +5,7 @@ description: >
   Use when adding or changing any component, screen, or user-facing copy. Trigger
   terms: "component", "UI", "design system", "accessibility", "a11y", "i18n",
   "copy", "help article", "story", "storybook", "style".
-version: 1.0.0
+version: 1.1.0
 tags: [ui, design-system, accessibility, i18n, storybook]
 ---
 
@@ -83,3 +83,13 @@ User-facing behaviour changes ship with a help update in the same PR:
 
 Any behaviour change must update the relevant section of `docs/technical-specification.md`
 in the same PR. See `plan-writer-change` for the full requirement.
+
+## Track this work as a todo list
+
+Before you start, seed a todo list from this skill's requirements and the Required-artefacts
+list — one item per artefact (`.tsx`, `.test.tsx`, `.stories.tsx`, help article, spec
+section) and per checklist you have to satisfy — and work it top to bottom (see
+[AGENTS.md § "Todo tracking"](../../../AGENTS.md)). Mark exactly one item in-progress as you
+begin it and completed the moment it is verified done, and append any newly discovered work
+as new items. Keep the list current: it is the source of truth for what remains and the
+backbone of any [handover](../handover-writer-work/SKILL.md).

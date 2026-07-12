@@ -54,7 +54,7 @@ body:
       label: Operating system
       placeholder: e.g. macOS 14, Windows 11, Ubuntu 24.04, iOS 17
     validations:
-      required: true
+      required: false
   - type: input
     id: device
     attributes:

@@ -5,7 +5,7 @@ description: >
   branch diff, or changed file set for correctness, security, accessibility, and
   persistence safety. Trigger terms: "audit", "review", "check", "risks in", "is
   this safe", "what did this change".
-version: 1.1.0
+version: 1.2.0
 tags: [review, audit, security, accessibility]
 ---
 
@@ -82,3 +82,13 @@ regression, a11y failure), `minor` (style, stale comment, naming).
 
 Return only evidenced findings from the changed code. Do not list observations
 that are not findings, and do not flag pre-existing issues outside the diff.
+
+## Track this work as a todo list
+
+Before you start, seed a todo list from the Audit sequence above — one item per step, plus
+one per checklist you still have to clear — and work it top to bottom (see
+[AGENTS.md § "Todo tracking"](../../../AGENTS.md)). Mark exactly one item in-progress as you
+begin it and completed the moment it is verified done, and append any newly discovered work
+(for example a finding that needs a deeper trace) as new items. Keep the list current: it is
+the source of truth for what remains and the backbone of any
+[handover](../handover-writer-work/SKILL.md).

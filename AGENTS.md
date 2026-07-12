@@ -24,6 +24,7 @@
 | "schema", "migration", "dexie", "table", "stores.ts", "LoremDB" | [`change-writer-persistence`](.agents/skills/change-writer-persistence/SKILL.md) |
 | "collab", "yjs", "crdt", "multi-tab", "BroadcastChannel", "presence" | [`work-on-editor-collaboration`](.agents/skills/work-on-editor-collaboration/SKILL.md) |
 | "cloud", "dexie cloud", "sync", "encryption", "escrow", "passphrase" | [`work-on-cloud-sync`](.agents/skills/work-on-cloud-sync/SKILL.md) |
+| "handover", "hand off", "handoff", "pause", "resume later", "context running out", "pick up where" | [`handover-writer-work`](.agents/skills/handover-writer-work/SKILL.md) |
 
 ---
 
@@ -35,7 +36,7 @@
 | [`docs/technical-specification.md`](./docs/technical-specification.md) | Before any user-facing behaviour change |
 | [`docs/design-system.md`](./docs/design-system.md) | Before any UI work |
 | [`docs/cloud-sync-beta.md`](./docs/cloud-sync-beta.md) | Before any cloud/encryption work |
-| [`docs/agent-playbooks.md`](./docs/agent-playbooks.md) | Step-by-step workflows (Locate / Plan / Audit / Change) |
+| [`docs/agent-playbooks.md`](./docs/agent-playbooks.md) | Step-by-step runbooks (Locate / Plan / Audit / Change / Handover) — seed your todo list from them |
 | [`docs/agent-navigation-benchmarks.md`](./docs/agent-navigation-benchmarks.md) | Navigation benchmark cases |
 | [`CODING_STANDARDS.md`](./CODING_STANDARDS.md) | Power-of-Ten coding rules |
 
@@ -125,6 +126,31 @@ The canonical sequence for any change, reconciling the rules that each demand to
 stop that thread of work, finish what does not depend on the answer, and surface the
 question prominently in your report or PR description. Never guess your way past a
 stop-and-ask rule.
+
+## Todo tracking (read before starting multi-step work)
+
+Every task with more than one step is tracked against a **live todo list** — the single
+source of truth for what is done, what is in progress, and what is still outstanding. This
+is not optional bookkeeping: it is how work stays resumable, auditable, and safe to hand
+over. Every skill in [`.agents/skills/`](.agents/skills/) restates this discipline for its
+own workflow; this section is canonical.
+
+- **Maintain one list per task.** Use your agent's todo/task tool where it has one;
+  otherwise keep an explicit checklist in your working notes. Each item is a single,
+  verifiable outcome, phrased in the imperative.
+- **Runbooks seed the list.** Any ordered procedure is a runbook: a skill's numbered steps
+  or checklist, the Task order above, or a playbook workflow in
+  [`docs/agent-playbooks.md`](./docs/agent-playbooks.md). Turn the runbook into the todo
+  list — one item per step, in order, **before** you start — then extend the list with work
+  you discover as you go.
+- **Keep exactly one item in progress.** Mark an item in-progress when you begin it and
+  completed the moment it is verified done. Never batch the updates at the end, and never
+  mark an item done that is not actually done — a failing test, a skipped gate, and an
+  unanswered stop-and-ask each keep their item open.
+- **The list is the source of truth for remaining work** and the backbone of every
+  handover: a handover is the current todo list plus where you stopped (see
+  [`handover-writer-work`](.agents/skills/handover-writer-work/SKILL.md)). Reconcile the
+  list with reality before you hand over, pause, or report a task complete.
 
 ## Language (read before writing copy)
 
@@ -375,6 +401,17 @@ production releases and is changed only through the project's release process, n
 - **The PR checklist item "I as a human confirm all changes were reviewed prior to opening
   this PR" is a human-only attestation. Agents must NEVER tick it** — it exists precisely to
   record an explicit human intervention. Leave it unticked; only the human author checks it.
+- **Agent reviewers must verify PR conformance before approving, commenting, or ticking.**
+  Re-read the current `.github/PULL_REQUEST_TEMPLATE.md` on the branch (the source of truth,
+  not memory), confirm the PR **title** is a valid Conventional Commit subject, and confirm
+  the PR **body** matches the template exactly — every section present and in order, none
+  added, removed, or reordered, hidden comments intact. If the title or body deviates, **flag
+  the specific deviation as a PR comment** and leave the agent-reviewer box unticked.
+- **The PR checklist item "Agent reviewer: I re-read `.github/PULL_REQUEST_TEMPLATE.md` and
+  confirm this PR's title and description conform to it exactly" is the one attestation agents
+  DO tick** — but only after actually performing that verification, and only when nothing was
+  flagged. It is the reviewer counterpart to the human-only item and must never be conflated
+  with it.
 - Always open PRs as **Draft**; a maintainer marks them ready for review.
 
 ## Specification (read before changing behaviour)

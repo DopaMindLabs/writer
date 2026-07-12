@@ -5,7 +5,7 @@ description: >
   migrations, doc repository, archives, backups, or revisions. Use when modifying
   src/db/ or src/lib/docs/. Trigger terms: "schema", "migration", "dexie", "table",
   "stores.ts", "LoremDB", "docRepository", "backup", "revision", "archive".
-version: 1.1.0
+version: 1.2.0
 tags: [persistence, database, dexie, schema, migration]
 ---
 
@@ -87,3 +87,14 @@ First classify the change.
   on each device from the shared `docs.body` seed.
 - `updateDocBody` in `src/lib/docs/docRepository.ts` is the **single write path** for
   document body changes. Do not write `db.docs` directly outside this module.
+
+## Track this work as a todo list
+
+Before you start, first classify the change, then seed a todo list from the matching
+Schema-change checklist above — one item per step, plus the replication and encryption
+decisions and their tests — and work it top to bottom (see
+[AGENTS.md § "Todo tracking"](../../../AGENTS.md)). Mark exactly one item in-progress as you
+begin it and completed the moment it is verified done, and append any newly discovered work
+(a caller whose assumptions must be checked, a cascade to update) as new items. Keep the
+list current: it is the source of truth for what remains and the backbone of any
+[handover](../handover-writer-work/SKILL.md).

@@ -5,7 +5,7 @@ description: >
   layer (Yjs / Lexical / BroadcastChannel). Use when touching collab state, the Yjs
   provider, CRDT seed/snapshot, or multi-tab sync. Trigger terms: "collab", "yjs",
   "crdt", "multi-tab", "collaboration", "provider", "BroadcastChannel", "presence".
-version: 1.0.0
+version: 1.1.0
 tags: [collaboration, yjs, crdt, lexical]
 ---
 
@@ -95,3 +95,14 @@ loads `docUpdates` via `DexieCollabStore.loadAll` → applies to fresh `Y.Doc`.
 | Snapshot | `src/lib/collab/yjs/snapshot.test.ts` |
 | docReloadChannel | `src/lib/collab/docReloadChannel.test.ts` |
 | useDocCrdtReady | `src/hooks/useDocCrdtReady.test.tsx` |
+
+## Track this work as a todo list
+
+Before you start, seed a todo list from the CRDT seed rules and hard rules for the collab
+path you touch — one item per rule you must uphold (seed after commit, `docUpdates` stays
+local-only, callers use the `CollabStore` interface, real Dexie in tests) — plus one per
+test in the table above that your change affects (see
+[AGENTS.md § "Todo tracking"](../../../AGENTS.md)). Mark exactly one item in-progress as you
+begin it and completed the moment it is verified done, and append any newly discovered work
+as new items. Keep the list current: it is the source of truth for what remains and the
+backbone of any [handover](../handover-writer-work/SKILL.md).
