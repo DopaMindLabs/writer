@@ -12,6 +12,10 @@ AGENTS / AI ASSISTANTS — instructions (humans welcome to follow too):
   e.g. `feat(citations): import BibTeX` — the squash-merge commit is derived from it.
 - Branch name follows `<type>/<kebab-description>` and must not contain AI
   assistant names (enforced by scripts/validate-branch-name.mjs and CI).
+- Do NOT reference the AI/agent session anywhere in this PR — no assistant names,
+  session links or IDs, "Generated with…" footers, or Co-Authored-By bot trailers
+  in the title, body, commits, or screenshots. Strip any such reference before
+  opening; this extends the no-AI-names rule in AGENTS.md to the PR itself.
 - User-facing changes ship in the same PR with: tests (TDD), the matching
   section of docs/technical-specification.md, Help Center article(s), and
   accessibility coverage. Keep refactor-only commits separate from
@@ -50,7 +54,9 @@ Fixes #
 
 ## Testing Steps
 
-<!-- Numbered manual steps a reviewer can follow to verify the change. -->
+<!-- Manual steps a reviewer can follow to verify the change. Number (1., 2., …) or
+     bullet them, and keep each step as concise as possible — one action per step, no
+     prose paragraphs. -->
 
 1.
 

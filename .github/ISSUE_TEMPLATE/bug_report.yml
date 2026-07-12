@@ -9,7 +9,7 @@ body:
         submissions against the actual template exactly — a non-conforming issue will be
         rejected. Do not delete or alter any hidden comments or the maintainer block.
 
-        <!-- AGENTS / AI ASSISTANTS: read AGENTS.md before working on this issue. Fill in only the reporter fields; the maintainer block below is managed by maintainers — never edit it. Any fix follows the TDD task order in AGENTS.md and is opened as a Draft PR. Write acceptance criteria in Gherkin language (Given / When / Then). -->
+        <!-- AGENTS / AI ASSISTANTS: read AGENTS.md before working on this issue. Fill in only the reporter fields; the maintainer block below is managed by maintainers — never edit it. Any fix follows the TDD task order in AGENTS.md and is opened as a Draft PR. Write acceptance criteria in Gherkin language (Given / When / Then). Do NOT reference the AI/agent session anywhere in this issue — no assistant names, session links or IDs, or "Generated with…" footers; strip any such reference before submitting. -->
   - type: textarea
     id: bug-description
     attributes:
