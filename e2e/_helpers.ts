@@ -1,7 +1,24 @@
 import { test as base, expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import type { BrowserContext, ConsoleMessage, Page } from '@playwright/test';
 import { addCoverageReport } from 'monocart-reporter';
 import axe from 'axe-core';
+
+// Extra pages (e.g. a second collaborating tab) opened during a test. They are
+// instrumented for coverage here and flushed in the autoCoverage teardown so
+// their line hits reach the ratchet — the default fixture only tracks `page`.
+const coveredPages: Page[] = [];
+
+export const openCoveredPage = async (
+  context: BrowserContext,
+  browserName: string,
+): Promise<Page> => {
+  const extra = await context.newPage();
+  if (browserName === 'chromium') {
+    await extra.coverage.startJSCoverage({ resetOnNavigation: false });
+    coveredPages.push(extra);
+  }
+  return extra;
+};
 
 export const reseedAndGoHome = async (page: Page): Promise<void> => {
   await page.goto('/?reseed=1#/');
@@ -61,9 +78,18 @@ export const stubDirectoryPicker = async (page: Page): Promise<void> => {
 const TOURS_STORAGE_KEY = 'lipsum-tours';
 const ALL_TOUR_IDS = ['welcome', 'writer', 'citations', 'brainspace'];
 
+/**
+ * `vercel.json`'s CSP only applies to a real Vercel deployment, never to the
+ * local Playwright preview (Vite's preview server sets no such header), so a
+ * misconfigured directive can't surface here — only the Vercel-preview e2e
+ * pipeline (`playwright.preview.config.ts`) sets this flag, opting every spec
+ * it runs into failing loudly on any CSP violation instead of silently passing.
+ */
+const ASSERT_NO_CSP_VIOLATIONS = process.env.E2E_ASSERT_NO_CSP_VIOLATIONS === '1';
+
 // nasa-exception: no-invalid-void-type (a Playwright fixture with no value is typed `void`)
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-export const test = base.extend<{ autoCoverage: void }>({
+export const test = base.extend<{ autoCoverage: void; failOnCspViolation: void }>({
   autoCoverage: [
     async ({ page, browserName }, use) => {
       await page.addInitScript(
@@ -77,7 +103,10 @@ export const test = base.extend<{ autoCoverage: void }>({
         { key: TOURS_STORAGE_KEY, ids: ALL_TOUR_IDS },
       );
 
-      const enabled = browserName === 'chromium';
+      // Coverage is collected only for the local suite (monocart reporter,
+      // localhost source URLs). The Vercel-preview run targets a remote build
+      // and reports no coverage, so skip instrumentation there.
+      const enabled = browserName === 'chromium' && !ASSERT_NO_CSP_VIOLATIONS;
       if (enabled) {
         await page.coverage.startJSCoverage({ resetOnNavigation: false });
       }
@@ -86,6 +115,31 @@ export const test = base.extend<{ autoCoverage: void }>({
         const jsCoverage = await page.coverage.stopJSCoverage();
         await addCoverageReport(jsCoverage, test.info());
       }
+      for (const extra of coveredPages.splice(0)) {
+        if (!extra.isClosed()) {
+          const cov = await extra.coverage.stopJSCoverage();
+          await addCoverageReport(cov, test.info());
+        }
+      }
+    },
+    { scope: 'test', auto: true },
+  ],
+  failOnCspViolation: [
+    async ({ page }, use) => {
+      if (!ASSERT_NO_CSP_VIOLATIONS) {
+        await use();
+        return;
+      }
+      const violations: string[] = [];
+      const onConsole = (msg: ConsoleMessage): void => {
+        if (msg.type() === 'error' && /Content Security Policy/i.test(msg.text())) {
+          violations.push(msg.text());
+        }
+      };
+      page.on('console', onConsole);
+      await use();
+      page.off('console', onConsole);
+      expect(violations, `CSP violation(s) reported by the browser:\n${violations.join('\n')}`).toEqual([]);
     },
     { scope: 'test', auto: true },
   ],

@@ -1,4 +1,5 @@
 import { db } from '@/db/db';
+import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
 import {
   NoteKind,
   NoteState,
@@ -87,7 +88,7 @@ export const sampleDoc: Doc = {
   spaceId: 's1',
   sectionId: 'sec1',
   name: 'Sample Doc',
-  body: '',
+  body: EMPTY_LEXICAL_JSON,
   meta: { wordCount: 0 },
   updatedAt: FIXED_TIME,
 };
