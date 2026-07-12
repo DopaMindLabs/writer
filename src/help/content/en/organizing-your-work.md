@@ -48,6 +48,16 @@ begin with momentum.
 - Keep documents short and focused; lean on sections for structure.
 - Use clear titles so search and the sidebar stay scannable.
 
+## Deleting documents
+
+To remove a document, open its **⋯ menu** on the document's row in the sidebar
+(it appears when you hover the row) and choose **Delete…**. A confirmation
+dialogue explains what happens; confirm to delete.
+
+Deletion is **permanent and cannot be undone** — the document's **version
+history** is removed along with it. If you delete the document you're currently
+editing, you're taken to the next document in the space.
+
 ## Related
 
 - [Views & modes](views-and-modes) — different ways to read what you organise.
