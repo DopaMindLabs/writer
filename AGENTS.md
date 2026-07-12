@@ -363,6 +363,20 @@ production releases and is changed only through the project's release process, n
   State the exact branch, the exact operation, and the blast radius, and wait for explicit
   approval. When in doubt, ask — a wrong guess about the target branch is hard to undo.
 
+### Issue and PR templates (hard rules)
+
+- Use `.github/PULL_REQUEST_TEMPLATE.md` and the issue forms in `.github/ISSUE_TEMPLATE/`
+  exactly as provided: do not add, remove, or reorder sections; do not delete or alter
+  hidden HTML comments or the maintainer-only blocks. **Automated checks and flows validate
+  submissions against the actual templates exactly** — a non-conforming issue or PR will be
+  rejected.
+- Write acceptance criteria in Gherkin language (Given / When / Then), one scenario per
+  bullet.
+- **The PR checklist item "I as a human confirm all changes were reviewed prior to opening
+  this PR" is a human-only attestation. Agents must NEVER tick it** — it exists precisely to
+  record an explicit human intervention. Leave it unticked; only the human author checks it.
+- Always open PRs as **Draft**; a maintainer marks them ready for review.
+
 ## Specification (read before changing behaviour)
 
 [`docs/technical-specification.md`](./docs/technical-specification.md) is the source-of-truth

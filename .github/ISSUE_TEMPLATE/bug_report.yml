@@ -1,0 +1,111 @@
+name: Bug report
+description: Create a report to help us improve
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not modify the structure of this form.** Automated checks and flows validate
+        submissions against the actual template exactly — a non-conforming issue will be
+        rejected. Do not delete or alter any hidden comments or the maintainer block.
+
+        <!-- AGENTS / AI ASSISTANTS: read AGENTS.md before working on this issue. Fill in only the reporter fields; the maintainer block below is managed by maintainers — never edit it. Any fix follows the TDD task order in AGENTS.md and is opened as a Draft PR. Write acceptance criteria in Gherkin language (Given / When / Then). -->
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug Description
+      description: Describe clearly and concisely what the bug is — what happened, and what you expected to happen instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Provide detailed steps on how to reproduce the bug.
+      value: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Type / select '...'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots or a screen recording to help explain the problem.
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      placeholder: e.g. 0.6.0-alpha — shown in Settings
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: e.g. Chrome 126, Firefox 127, Safari 17
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: e.g. macOS 14, Windows 11, Ubuntu 24.04, iOS 17
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      placeholder: e.g. MacBook Pro, iPhone 15
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: The app stores documents locally (IndexedDB) — mention anything relevant about your data (number of documents, very large documents, recent import/export, cleared browser storage) and any errors in the browser console (F12 → Console).
+  - type: textarea
+    id: additional-comments
+    attributes:
+      label: Additional Comments
+      description: Optional — any other context or notes for maintainers.
+  - type: markdown
+    attributes:
+      value: |
+        _The following sections will be managed by maintainers only._
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: One or more scenarios written in Gherkin language (Given / When / Then), one scenario per bullet.
+      value: |
+        * Given [context], When [action], Then [outcome]
+  - type: textarea
+    id: implementation-brief
+    attributes:
+      label: Implementation Brief
+      description: One or more bullet points for how to technically resolve the issue. Follow the TDD task order in AGENTS.md; include changes to Storybook stories, the technical specification (docs/technical-specification.md), and Help Center article(s) where relevant.
+      value: |
+        * [ ] TBD
+  - type: textarea
+    id: test-coverage
+    attributes:
+      label: Test Coverage
+      description: One or more bullet points for automated tests (Vitest unit and/or Playwright e2e under e2e/) verifying the issue is resolved. Mind the e2e coverage ratchet and accessibility assertions where relevant.
+      value: |
+        * TBD
+  - type: textarea
+    id: qa-brief
+    attributes:
+      label: QA Brief
+      description: One or more bullet points for how to test that the issue has been resolved.
+      value: |
+        * TBD
+  - type: textarea
+    id: changelog-entry
+    attributes:
+      label: Changelog Entry
+      description: One sentence summarising the PR, to be used in the changelog.
+      value: |
+        * TBD
