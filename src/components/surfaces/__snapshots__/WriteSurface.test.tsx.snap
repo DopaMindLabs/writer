@@ -8,15 +8,17 @@ exports[`WriteSurface > renders editor stub with doc body and mode 1`] = `
     data-tour="tour-editor-main"
   >
     <div
-      class="mx-auto w-full max-w-[680px]"
+      class="relative mx-auto w-full max-w-[680px]"
+      data-testid="collab-cursors"
     >
       <button
+        data-doc-id="d1"
         data-mode="write"
         data-placeholder="Start writing…"
         data-testid="editor-stub"
         type="button"
       >
-        {"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"hello world","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}
+        editor
       </button>
     </div>
   </div>

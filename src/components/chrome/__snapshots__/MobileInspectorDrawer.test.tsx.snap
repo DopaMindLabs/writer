@@ -32,7 +32,7 @@ exports[`snapshot > matches the open inspector drawer 1`] = `
       </span>
       <button
         aria-label="Collapse inspector"
-        class="items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink hidden h-5 w-5 md:inline-flex"
+        class="items-center justify-center transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink hidden h-5 w-5 md:inline-flex"
         data-testid="doc-inspector-collapse"
         type="button"
       >

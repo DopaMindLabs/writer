@@ -8,9 +8,9 @@ import {
   useEffectiveInspectorConfig,
   useGlobalInspectorConfig,
 } from '@/hooks/useDocInspectorConfig';
-import type { UpdateSpec } from 'dexie';
 import { db } from '@/db/db';
 import type { Doc, Revision } from '@/db/schema';
+import { updateDocMeta } from '@/lib/docs';
 import {
   countCharacters,
   countWords,
@@ -197,11 +197,7 @@ const OutlinePane = ({ docId }: { docId: string }) => {
 };
 
 const writeMeta = (doc: Doc, patch: Partial<Doc['meta']>): void => {
-  const changes: UpdateSpec<Doc> = { updatedAt: Date.now() };
-  for (const [key, value] of Object.entries(patch)) {
-    (changes as Record<string, unknown>)[`meta.${key}`] = value;
-  }
-  void db.docs.update(doc.id, changes);
+  void updateDocMeta(doc.id, patch);
 };
 
 const parseLimit = (raw: string): number | undefined => {

@@ -8,7 +8,7 @@ exports[`Tabs > renders tab list and content 1`] = `
   >
     <div
       aria-orientation="horizontal"
-      class="inline-flex h-9 items-center justify-center rounded-lg bg-paper-2 p-1 text-ink-3"
+      class="inline-flex h-9 items-center justify-center bg-paper-2 p-1 text-ink-3"
       data-orientation="horizontal"
       role="tablist"
       style="outline: none;"
@@ -17,7 +17,7 @@ exports[`Tabs > renders tab list and content 1`] = `
       <button
         aria-controls="radix-_r_0_-content-a"
         aria-selected="true"
-        class="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-paper data-[state=active]:text-ink data-[state=active]:shadow"
+        class="inline-flex items-center justify-center whitespace-nowrap px-3 py-1 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-paper data-[state=active]:text-ink"
         data-orientation="horizontal"
         data-radix-collection-item=""
         data-state="active"
@@ -31,7 +31,7 @@ exports[`Tabs > renders tab list and content 1`] = `
       <button
         aria-controls="radix-_r_0_-content-b"
         aria-selected="false"
-        class="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-paper data-[state=active]:text-ink data-[state=active]:shadow"
+        class="inline-flex items-center justify-center whitespace-nowrap px-3 py-1 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-paper data-[state=active]:text-ink"
         data-orientation="horizontal"
         data-radix-collection-item=""
         data-state="inactive"
