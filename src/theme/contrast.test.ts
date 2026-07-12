@@ -71,3 +71,29 @@ describe('status palette contrast policy', () => {
     }
   }
 });
+
+// Presence hues mark remote carets/selections — non-text graphical objects.
+// They follow the same per-theme floor as the status palette (3:1 in
+// light/dark, 7:1 in the high-contrast themes), so high-contrast collaboration
+// marks can't regress below the AAA policy.
+const PRESENCE_ROLES = [
+  'presence-1',
+  'presence-2',
+  'presence-3',
+  'presence-4',
+  'presence-5',
+] as const;
+
+describe('presence palette contrast policy', () => {
+  for (const theme of THEMES) {
+    const vars = readBlock(theme.selector);
+    const paper = paperFor(vars);
+    for (const role of PRESENCE_ROLES) {
+      it(`${theme.selector} ${role} meets ${theme.min}:1 on paper`, () => {
+        expect(contrast(vars[`--${role}`], paper)).toBeGreaterThanOrEqual(
+          theme.min,
+        );
+      });
+    }
+  }
+});

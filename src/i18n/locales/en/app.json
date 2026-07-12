@@ -6,5 +6,17 @@
   "bootErrorResetBody": "This permanently deletes everything stored in this browser — documents, notes, citations and backups. It cannot be undone.",
   "bootErrorResetConfirm": "Erase everything",
   "bootErrorResetCancel": "Cancel",
+  "cloudKeyErrorLabel": "Can't open your notes",
+  "cloudKeyErrorTitle": "These notes were locked on another device",
+  "cloudKeyErrorBody": "Enter the passphrase you created there to unlock them. This device is signed in but can't read them yet.",
+  "cloudKeyErrorUnlockAction": "Unlock in settings",
+  "cloudKeyErrorResetAction": "Reset this device instead",
+  "cloudKeyErrorResetTitle": "Reset this device?",
+  "cloudKeyErrorResetBody": "This erases the notes stored in this browser and starts fresh. Notes saved on your other devices are kept.",
+  "cloudKeyErrorResetConfirm": "Reset this device",
+  "cloudKeyErrorResetCancel": "Cancel",
+  "routeErrorLabel": "Something went wrong",
+  "routeErrorHint": "Reloading usually fixes it.",
+  "routeErrorReload": "Reload",
   "booting": "Booting…"
 }

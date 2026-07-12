@@ -440,9 +440,12 @@ describe('SpaceSettingsScreen', () => {
       await waitFor(async () => {
         expect((await db.docs.get('d1'))?.name).toBe('Sample Doc');
       });
-      expect(await screen.findByRole('status')).toHaveTextContent(
-        /snapshot restored/i,
-      );
+      // The polite live region is always mounted; wait for the restore to
+      // finish filling it (re-seeding the CRDT runs after the DB transaction).
+      const status = await screen.findByRole('status');
+      await waitFor(() => {
+        expect(status).toHaveTextContent(/snapshot restored/i);
+      });
       const kinds = (
         await db.backups.where('scope').equals('s1').toArray()
       ).map((b) => b.kind);

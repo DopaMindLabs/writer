@@ -9,7 +9,7 @@ import {
   type RefObject,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MoreVertical, Plus, Settings } from '@/components/libs/icons';
+import { Plus, Settings } from '@/components/libs/icons';
 import {
   Tooltip,
   TooltipContent,
@@ -22,22 +22,15 @@ import {
 } from '@/components/ui/popover';
 import { Link } from '@/components/ui/Link';
 import { TextField } from '@/components/ui/TextField';
-import { IconButton } from '@/components/ui/icon';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { SpaceMenuPopover } from './SpaceMenuPopover';
-import { RenameDocDialog } from './RenameDocDialog';
+import { DocRowMenu } from './DocRowMenu';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { formatDocName } from '@/lib/doc-naming';
-import { renameDoc } from '@/lib/doc-actions';
+import { createDoc as createDocInRepo, renameDoc } from '@/lib/docs';
 import { renameSection } from '@/lib/section-actions';
 import { routes } from '@/lib/routes';
 import {
@@ -203,13 +196,11 @@ interface AddController {
 
 interface SidebarSectionProps {
   sec: Section;
-  subs: Section[];
-  ownDocs: Doc[];
+  docs: Doc[];
   spaceId: string;
   activeDocId: string | null;
   onBrainSpace: boolean;
   notesCount: number;
-  docsBySection: Map<string, Doc[]>;
   docHref: (docId: string) => string;
   startAdd: (sectionId: string, parentLabel: string, subLabel: string | null) => void;
   add: AddController;
@@ -260,68 +251,19 @@ const SectionEmpty = ({
   );
 };
 
-interface SidebarSubsectionProps {
-  sub: Section;
-  parentLabel: string;
-  subDocs: Doc[];
-  activeDocId: string | null;
-  docHref: (docId: string) => string;
-  startAdd: (sectionId: string, parentLabel: string, subLabel: string | null) => void;
-  add: AddController;
-}
-
-const SidebarSubsection = ({
-  sub,
-  parentLabel,
-  subDocs,
-  activeDocId,
-  docHref,
-  startAdd,
-  add,
-}: SidebarSubsectionProps) => {
-  return (
-    <div data-testid={`sidebar-section-${sub.id}`} className="mt-1">
-      <SectionHeader
-        sectionId={sub.id}
-        label={`↳ ${sub.label}`}
-        indented
-        onAdd={() => { startAdd(sub.id, parentLabel, sub.label); }}
-      />
-      {subDocs.length === 0 && add.adding?.sectionId !== sub.id && (
-        <SectionEmpty sectionId={sub.id} indented />
-      )}
-      {subDocs.map((d) => (
-        <DocLink
-          key={d.id}
-          doc={d}
-          href={docHref(d.id)}
-          active={d.id === activeDocId}
-          indented
-        />
-      ))}
-      <MaybeAddInput sectionId={sub.id} indented add={add} />
-    </div>
-  );
-};
-
 const SidebarSection = ({
   sec,
-  subs,
-  ownDocs,
+  docs,
   spaceId,
   activeDocId,
   onBrainSpace,
   notesCount,
-  docsBySection,
   docHref,
   startAdd,
   add,
 }: SidebarSectionProps) => {
   const isWorkshop = sec.label === 'Workshop';
-  const showEmpty =
-    ownDocs.length === 0 &&
-    subs.length === 0 &&
-    add.adding?.sectionId !== sec.id;
+  const showEmpty = docs.length === 0 && add.adding?.sectionId !== sec.id;
   return (
     <div data-testid={`sidebar-section-${sec.id}`} className="mb-2">
       <SectionHeader
@@ -336,7 +278,7 @@ const SidebarSection = ({
           count={notesCount}
         />
       )}
-      {ownDocs.map((d) => (
+      {docs.map((d) => (
         <DocLink
           key={d.id}
           doc={d}
@@ -345,21 +287,30 @@ const SidebarSection = ({
         />
       ))}
       <MaybeAddInput sectionId={sec.id} add={add} />
-      {subs.map((sub) => (
-        <SidebarSubsection
-          key={sub.id}
-          sub={sub}
-          parentLabel={sec.label}
-          subDocs={docsBySection.get(sub.id) ?? []}
-          activeDocId={activeDocId}
-          docHref={docHref}
-          startAdd={startAdd}
-          add={add}
-        />
-      ))}
       {showEmpty && <SectionEmpty sectionId={sec.id} />}
     </div>
   );
+};
+
+/**
+ * Flattens each top section's own documents together with those of its
+ * subsections (in subsection order) into a single list, so the nav renders a
+ * subsection's docs directly under its parent section with no header row.
+ */
+const buildDocsForSection = (
+  topSections: Section[],
+  subsectionsByParent: Map<string, Section[]>,
+  docsBySection: Map<string, Doc[]>,
+): Map<string, Doc[]> => {
+  const map = new Map<string, Doc[]>();
+  for (const top of topSections) {
+    const combined = [...(docsBySection.get(top.id) ?? [])];
+    for (const sub of subsectionsByParent.get(top.id) ?? []) {
+      combined.push(...(docsBySection.get(sub.id) ?? []));
+    }
+    map.set(top.id, combined);
+  }
+  return map;
 };
 
 const useSidebarSections = (sections: Section[], docs: Doc[]) => {
@@ -390,7 +341,12 @@ const useSidebarSections = (sections: Section[], docs: Doc[]) => {
     return map;
   }, [docs]);
 
-  return { topSections, subsectionsByParent, docsBySection };
+  const docsForSection = useMemo(
+    () => buildDocsForSection(topSections, subsectionsByParent, docsBySection),
+    [topSections, subsectionsByParent, docsBySection],
+  );
+
+  return { topSections, docsForSection };
 };
 
 const resolveDefaultName = (
@@ -417,17 +373,8 @@ const createDoc = async (
   sectionId: string,
   name: string,
 ): Promise<string> => {
-  const id = newId();
-  await db.docs.add({
-    id,
-    spaceId,
-    sectionId,
-    name,
-    body: '',
-    meta: { wordCount: 0 },
-    updatedAt: Date.now(),
-  });
-  return id;
+  const doc = await createDocInRepo({ spaceId, sectionId, name });
+  return doc.id;
 };
 
 interface InlineRename {
@@ -662,8 +609,7 @@ const SidebarNav = ({
 }: SidebarNavProps) => {
   const { t } = useTranslation('chrome');
   const docs = useDocuments(spaceId) ?? [];
-  const { topSections, subsectionsByParent, docsBySection } =
-    useSidebarSections(sections, docs);
+  const { topSections, docsForSection } = useSidebarSections(sections, docs);
   const { add, startAdd } = useAddDoc(spaceId, space);
   const addSection = useAddSection(spaceId, sections);
   const templateDef = space ? getTemplate(space.template) : undefined;
@@ -682,13 +628,11 @@ const SidebarNav = ({
         <SidebarSection
           key={sec.id}
           sec={sec}
-          subs={subsectionsByParent.get(sec.id) ?? []}
-          ownDocs={docsBySection.get(sec.id) ?? []}
+          docs={docsForSection.get(sec.id) ?? []}
           spaceId={spaceId}
           activeDocId={activeDocId}
           onBrainSpace={onBrainSpace}
           notesCount={notesCount}
-          docsBySection={docsBySection}
           docHref={docHref}
           startAdd={startAdd}
           add={add}
@@ -825,7 +769,7 @@ const SectionHeader = ({
       data-testid={`sidebar-section-${sectionId}-header`}
       className={cn(
         'group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4',
-        indented ? 'pl-7 pr-3' : 'px-5',
+        indented ? 'pl-7' : 'pl-5',
       )}
     >
       {rename.editing ? (
@@ -939,46 +883,6 @@ const BrainSpaceLink = ({
   );
 };
 
-const DocRowMenu = ({ doc }: { doc: Doc }) => {
-  const { t } = useTranslation('chrome');
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [renameOpen, setRenameOpen] = useState(false);
-  return (
-    <>
-      <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-        <DropdownMenuTrigger asChild>
-          <IconButton
-            data-testid={`sidebar-doc-${doc.id}-menu`}
-            icon={MoreVertical}
-            iconSize="xs"
-            strokeWidth={1.25}
-            label={t('sidebar.docMenuAria', { name: doc.name })}
-            className="text-ink-4 md:hidden"
-          />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            data-testid={`sidebar-doc-${doc.id}-rename`}
-            onSelect={(e) => {
-              e.preventDefault();
-              setMenuOpen(false);
-              setRenameOpen(true);
-            }}
-          >
-            {t('sidebar.renameDoc')}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <RenameDocDialog
-        docId={doc.id}
-        docName={doc.name}
-        open={renameOpen}
-        onOpenChange={setRenameOpen}
-      />
-    </>
-  );
-};
-
 interface DocLinkBodyProps {
   doc: Doc;
   href: string;
@@ -1048,8 +952,8 @@ const DocLink = ({
   return (
     <div
       className={cn(
-        '-ml-px flex items-center gap-2 border-l-2 transition-colors',
-        indented ? 'pl-7 pr-1 md:pr-5' : 'pl-5 pr-1 md:pr-5',
+        'group -ml-px flex items-center gap-2 border-l-2 transition-colors',
+        indented ? 'pl-7' : 'pl-5',
         active
           ? 'border-ink bg-paper'
           : 'border-transparent hover:bg-paper',
@@ -1062,7 +966,7 @@ const DocLink = ({
         wordCount={wordCount}
         rename={rename}
       />
-      <DocRowMenu doc={doc} />
+      <DocRowMenu doc={doc} active={active} />
     </div>
   );
 };

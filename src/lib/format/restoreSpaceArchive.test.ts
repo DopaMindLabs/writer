@@ -1,6 +1,9 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import * as Y from 'yjs';
 import { db } from '@/db/db';
-import { useUI } from '@/store/ui';
+import { onDocReload } from '@/lib/collab/docReloadChannel';
+import { collabSeedKey } from '@/lib/collab/seedKey';
+import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
 import {
   readSpaceSnapshot,
   type SpaceSnapshot,
@@ -21,6 +24,18 @@ const comparable = (snapshot: SpaceSnapshot): unknown => ({
   ...snapshot,
   attachments: snapshot.attachments.map((a) => ({ ...a, blob: undefined })),
 });
+
+const rootXml = (doc: Y.Doc): string =>
+  (doc.get('root', Y.XmlText) as Y.XmlText).toString();
+
+/** Plain text of a CRDT seed payload's root shared type. */
+const seedText = (payload: Uint8Array): string => {
+  const doc = new Y.Doc();
+  Y.applyUpdate(doc, payload, 'test');
+  const xml = rootXml(doc);
+  doc.destroy();
+  return xml.replace(/<[^>]*>/g, '');
+};
 
 const mutateSpace = async (): Promise<void> => {
   await db.docs.update('d1', { body: serializedBody('Vandalised.'), updatedAt: 1 });
@@ -72,11 +87,42 @@ describe('restoreSpaceArchive', () => {
     expect(preRestore.space.name).toBe('Renamed');
   });
 
-  it('bumps the restore nonce for every restored doc', async () => {
+  it('broadcasts a reload for each restored doc so other tabs drop stale state', async () => {
     const blob = await buildSpaceArchive(await readSpaceSnapshot('s1'), WHEN);
-    expect(useUI.getState().restoreNonces.d1).toBeUndefined();
+    const onReload = vi.fn();
+    const off = onDocReload('d1', onReload);
+    await mutateSpace();
+
     await restoreSpaceArchive('s1', await parseSpaceArchive(blob));
-    expect(useUI.getState().restoreNonces.d1).toBe(1);
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    off();
+
+    expect(onReload).toHaveBeenCalledTimes(1);
+  });
+
+  it('clears stale CRDT state and re-seeds restored docs from their bodies', async () => {
+    const blob = await buildSpaceArchive(await readSpaceSnapshot('s1'), WHEN);
+    // Pretend collaboration wrote stale CRDT state for d1 before the restore.
+    await db.docUpdates.add({
+      docId: 'd1',
+      engine: 'yjs',
+      formatVersion: 1,
+      payload: new Uint8Array([9, 9, 9]),
+      createdAt: 1,
+    });
+    await db.meta.put({ key: collabSeedKey('d1'), value: { seededAt: 1 } });
+    await mutateSpace();
+
+    await restoreSpaceArchive('s1', await parseSpaceArchive(blob));
+
+    const rows = await db.docUpdates.where('docId').equals('d1').toArray();
+    expect(rows).toHaveLength(1); // stale log cleared, exactly one fresh seed
+    expect(await db.meta.get(collabSeedKey('d1'))).toBeDefined();
+
+    const restored = await db.docs.get('d1');
+    expect(restored).toBeDefined();
+    const seed = rows[0]?.payload ?? new Uint8Array();
+    expect(seedText(seed)).toBe(seedText(seedFromLexicalJson('d1', restored?.body ?? '')));
   });
 
   it('restores a space that has no docs and no inspector config', async () => {

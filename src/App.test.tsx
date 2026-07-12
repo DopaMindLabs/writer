@@ -16,6 +16,9 @@ vi.mock('@/editor/EditorFacade', () => ({
 
 const { App } = await import('./App');
 const { resetAndReseed } = await import('@/db/seed');
+const { keyMismatchState } = await import('@/lib/cloud/crypto/keyMismatch');
+const { keylessLockState } = await import('@/lib/cloud/crypto/keylessLock');
+const { deviceLimitState } = await import('@/lib/cloud/deviceLimit');
 
 describe('App', () => {
   beforeEach(() => {
@@ -25,6 +28,9 @@ describe('App', () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    keyMismatchState.set(false);
+    keylessLockState.set(false);
+    deviceLimitState.set(false);
   });
 
   it('renders ready state with the router', async () => {
@@ -60,6 +66,27 @@ describe('App', () => {
     window.history.replaceState({}, '', '/?reseed=1');
     render(<App />);
     await waitFor(() => { expect(resetAndReseed).toHaveBeenCalled(); });
+  });
+
+  it('forces the key-mismatch signal via ?cloud-mismatch=1', async () => {
+    window.history.replaceState({}, '', '/?cloud-mismatch=1');
+    render(<App />);
+    await waitFor(() => { expect(keyMismatchState.current()).toBe(true); });
+    expect(window.location.search).not.toContain('cloud-mismatch');
+  });
+
+  it('forces the keyless-lock signal via ?cloud-keyless=1', async () => {
+    window.history.replaceState({}, '', '/?cloud-keyless=1');
+    render(<App />);
+    await waitFor(() => { expect(keylessLockState.current()).toBe(true); });
+    expect(window.location.search).not.toContain('cloud-keyless');
+  });
+
+  it('forces the device-limit block via ?cloud-devices=full', async () => {
+    window.history.replaceState({}, '', '/?cloud-devices=full');
+    render(<App />);
+    await waitFor(() => { expect(deviceLimitState.current()).toBe(true); });
+    expect(window.location.search).not.toContain('cloud-devices');
   });
 
   it('renders boot error when reseed throws', async () => {

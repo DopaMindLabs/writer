@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { Doc } from '@/db/schema';
+import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
 import { WriteSurface } from './WriteSurface';
 
 const FIXED_TIME = 1704067200000;
@@ -9,7 +10,7 @@ const sampleDoc: Doc = {
   spaceId: 's1',
   sectionId: 'sec1',
   name: 'Sample Doc',
-  body: '',
+  body: EMPTY_LEXICAL_JSON,
   meta: { wordCount: 0 },
   updatedAt: FIXED_TIME,
 };
