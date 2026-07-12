@@ -1,4 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, render } from '@testing-library/react';
+import {
+  $createParagraphNode,
+  $createTextNode,
+  $getRoot,
+  type LexicalEditor,
+} from 'lexical';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { createElement as h, createRef, type RefObject } from 'react';
 import type { SyncState, UserLogin } from 'dexie-cloud-addon';
 import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
@@ -7,9 +17,13 @@ import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
 import { registerEditorHandle } from '@/lib/collab/editorRegistry';
 import { collabStore } from '@/lib/collab/collabStore';
-import { NO_FLUSH } from '@/lib/collab/flush.types';
+import { NO_FLUSH, type FlushResult } from '@/lib/collab/flush.types';
 import { serializedBody } from '@/test/fixtures';
+import { AutosavePlugin } from '@/editor/plugins/AutosavePlugin';
+import { EDITOR_NODES } from '@/editor/nodes';
+import { serializeState } from '@/editor/serialize';
 import {
+  reconcileDocForMount,
   reconcilePulledDocs,
   reconcileWithStatus,
   resetReconcileState,
@@ -209,6 +223,33 @@ describe('reconcilePulledDocs', () => {
     expect(await db.revisions.where('docId').equals('d1').count()).toBe(0);
   });
 
+  it('does not cache a doc whose restore rejected — it retries on the next sweep', async () => {
+    // A mounted restore whose CRDT write fails must leave the doc unreconciled,
+    // not stamp a false success that skips it forever.
+    await addDocWithoutCrdt('d1', canon('pulled body'));
+    const restoreBody = vi
+      .fn<(serialized: string) => Promise<void>>()
+      .mockRejectedValueOnce(new Error('append failed'))
+      .mockResolvedValue(undefined);
+    const unregister = registerEditorHandle('d1', {
+      restoreBody,
+      flush: async () => NO_FLUSH,
+    });
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    // First sweep: the restore rejects, so the doc is a failure, not a result.
+    expect(await reconcilePulledDocs()).toEqual([]);
+    expect(restoreBody).toHaveBeenCalledTimes(1);
+
+    // Not cached as success: the next sweep retries the same doc and succeeds.
+    expect(await reconcilePulledDocs()).toEqual([
+      { docId: 'd1', action: 'restored' },
+    ]);
+    expect(restoreBody).toHaveBeenCalledTimes(2);
+    unregister();
+    errorSpy.mockRestore();
+  });
+
   it('isolates a per-doc failure so the rest of the sweep still reconciles', async () => {
     // A doc whose handle throws must not abort reconciliation of the others.
     await addDocWithoutCrdt('d1', canon('first'));
@@ -278,6 +319,219 @@ describe('reconcilePulledDocs', () => {
     expect(await reconcilePulledDocs()).toEqual([]);
     expect(loadAll).toHaveBeenCalled();
     loadAll.mockRestore();
+  });
+
+  it('skips a doc after a metadata-only change — a rename is not a body reconcile', async () => {
+    // Reconciliation only ever reconciles the body (the CRDT). A rename bumps
+    // name and updatedAt but leaves the body untouched, so it must be skipped
+    // rather than forcing a spurious CRDT load and snapshot.
+    await seedLocalDoc('d1', canon('stable body'));
+    expect(await reconcilePulledDocs()).toEqual([]); // clean; stamps the cache
+    const loadAll = vi.spyOn(collabStore, 'loadAll');
+
+    await db.docs.update('d1', { name: 'Renamed', updatedAt: FIXED_TIME + 1000 });
+
+    expect(await reconcilePulledDocs()).toEqual([]);
+    expect(loadAll).not.toHaveBeenCalled();
+    loadAll.mockRestore();
+  });
+});
+
+/**
+ * These drive reconciliation against the *real* {@link AutosavePlugin} flush
+ * rather than a hand-written `() => NO_FLUSH`. That distinction is the whole
+ * point: the reported regression was a clean mounted editor reporting a
+ * persisted flush (its save baseline started at `null`), which reconciliation
+ * read as unsaved local work and used to keep the stale local body over the
+ * pulled remote one. A fake NO_FLUSH can never reproduce that; the live plugin
+ * can, so this suite would fail if the baseline regressed.
+ */
+describe('reconcilePulledDocs — with the real autosave flush', () => {
+  const EditorProbe = ({ onReady }: { onReady: (e: LexicalEditor) => void }) => {
+    const [editor] = useLexicalComposerContext();
+    onReady(editor);
+    return null;
+  };
+
+  const writeText = (text: string): void => {
+    const root = $getRoot();
+    root.clear();
+    const p = $createParagraphNode();
+    p.append($createTextNode(text));
+    root.append(p);
+  };
+
+  /** The body the mounted editor emits for `text` — used as both the seed and
+   *  the persisted baseline, so the two match by construction. */
+  const composerConfig = {
+    namespace: 'lorem-editor',
+    nodes: [...EDITOR_NODES],
+    onError: (error: Error) => {
+      throw error;
+    },
+  };
+
+  const editorBodyFor = (text: string): string => {
+    let editor!: LexicalEditor;
+    const { unmount } = render(
+      h(
+        LexicalComposer,
+        { initialConfig: composerConfig },
+        h(EditorProbe, { onReady: (e: LexicalEditor) => (editor = e) }),
+      ),
+    );
+    act(() => {
+      editor.update(() => writeText(text), { discrete: true });
+    });
+    const out = serializeState(editor.getEditorState());
+    act(() => {
+      unmount();
+    });
+    return out;
+  };
+
+  interface MountedEditor {
+    editor: LexicalEditor;
+    restoreBody: ReturnType<typeof vi.fn>;
+    unmount: () => void;
+  }
+
+  /** Mount a real AutosavePlugin editor seeded to `body`, registering it as the
+   *  handle the reconciler drives — so `flush` is the plugin's true flush. */
+  const mountEditor = (body: string, bootstrapText: string): MountedEditor => {
+    const flushRef = createRef<() => Promise<FlushResult>>() as RefObject<
+      () => Promise<FlushResult>
+    >;
+    let editor!: LexicalEditor;
+    const { unmount } = render(
+      h(
+        LexicalComposer,
+        { initialConfig: composerConfig },
+        h(EditorProbe, { onReady: (e: LexicalEditor) => (editor = e) }),
+        h(AutosavePlugin, {
+          onChange: async () => {},
+          debounceMs: 600,
+          flushRef,
+          persistedBody: body,
+        }),
+      ),
+    );
+    // The collaboration bootstrap loads the seed into the live editor.
+    act(() => {
+      editor.update(() => writeText(bootstrapText), {
+        discrete: true,
+        tag: 'collaboration',
+      });
+    });
+    const restoreBody = vi.fn();
+    const unregister = registerEditorHandle('d1', {
+      restoreBody,
+      flush: () => flushRef.current(),
+    });
+    return {
+      editor,
+      restoreBody,
+      unmount: () => {
+        unregister();
+        act(() => {
+          unmount();
+        });
+      },
+    };
+  };
+
+  beforeEach(async () => {
+    await db.delete();
+    await db.open();
+    resetReconcileState();
+  });
+
+  it('applies the pulled body to a clean mounted editor (does not keep the stale local body)', async () => {
+    const localBody = editorBodyFor('device B local content');
+    const remoteBody = editorBodyFor('device A pulled content');
+    await seedLocalDoc('d1', localBody);
+    await simulatePull('d1', remoteBody);
+    const mounted = mountEditor(localBody, 'device B local content');
+
+    const results = await reconcilePulledDocs();
+    mounted.unmount();
+
+    // The clean editor's real flush reports NO_FLUSH, so the remote body wins.
+    expect(results).toEqual([{ docId: 'd1', action: 'restored' }]);
+    expect(mounted.restoreBody).toHaveBeenCalledWith(remoteBody);
+    // The losing local side is kept recoverable, never silently dropped.
+    expect(await db.revisions.where('docId').equals('d1').count()).toBe(1);
+  });
+
+  it('keeps genuine unsaved local edits and preserves the pulled body as a revision', async () => {
+    const localBody = editorBodyFor('device B local content');
+    const remoteBody = editorBodyFor('device A pulled content');
+    await seedLocalDoc('d1', localBody);
+    await simulatePull('d1', remoteBody);
+    const mounted = mountEditor(localBody, 'device B local content');
+    // The user types past the baseline — a genuine pending local edit, untagged.
+    act(() => {
+      mounted.editor.update(() => writeText('device B unsaved keystrokes'), {
+        discrete: true,
+      });
+    });
+    // The stale-local-vs-newer-pull follow-up the kept-local path queues needs a
+    // running reconciler to absorb it.
+    const stopReconciler = startCloudReconciler({
+      syncState: stubObservable().observable,
+      run: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const results = await reconcilePulledDocs();
+    await settle();
+    stopReconciler();
+    mounted.unmount();
+
+    expect(results).toEqual([{ docId: 'd1', action: 'kept-local' }]);
+    expect(mounted.restoreBody).not.toHaveBeenCalled();
+    const revisions = await db.revisions.where('docId').equals('d1').toArray();
+    expect(revisions).toHaveLength(1);
+    expect(revisions[0]?.body).toBe(remoteBody);
+  });
+});
+
+describe('reconcileDocForMount', () => {
+  beforeEach(async () => {
+    await db.delete();
+    await db.open();
+    resetReconcileState();
+  });
+
+  it('seeds an empty log from the body without a spurious revision', async () => {
+    const body = canon('pulled while the doc was closed');
+    await addDocWithoutCrdt('d1', body);
+
+    await reconcileDocForMount('d1', body);
+
+    expect(await crdtSnapshot('d1')).toBe(body);
+    expect(await db.revisions.where('docId').equals('d1').count()).toBe(0);
+  });
+
+  it('reseeds a populated log that diverged from the pulled body, keeping the local side', async () => {
+    // The CRDT holds stale local content; the body was pulled while closed.
+    await seedLocalDoc('d1', canon('stale local content'));
+
+    await reconcileDocForMount('d1', canon('newer pulled content'));
+
+    expect(await crdtSnapshot('d1')).toBe(canon('newer pulled content'));
+    const revisions = await db.revisions.where('docId').equals('d1').toArray();
+    expect(revisions).toHaveLength(1);
+    expect(revisions[0]?.text).toContain('stale local content');
+  });
+
+  it('leaves a log that already matches the body untouched', async () => {
+    await seedLocalDoc('d1', canon('already in sync'));
+    const before = await updateRows('d1');
+
+    await reconcileDocForMount('d1', canon('already in sync'));
+
+    expect(await updateRows('d1')).toHaveLength(before.length);
+    expect(await db.revisions.where('docId').equals('d1').count()).toBe(0);
   });
 });
 

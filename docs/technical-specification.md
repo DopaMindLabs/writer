@@ -323,10 +323,16 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   reconcile. It compares every row body against the local Y.Doc and, for a body a pull produced
   rather than the local editor, keeps a safety revision of the losing side then either replays the
   pulled body through the mounted editor or reseeds the CRDT — **whole-document last-writer-wins**;
-  lossless cross-device merge is a recorded open decision for a future release. The mounted-editor
-  flush is **awaitable and reports which body it persisted**: if the editor holds unsaved local
-  edits the pulled remote body is preserved as a recoverable safety revision and the live local
-  text is kept, so neither side is ever silently overwritten. On a healthy network an idle device
+  lossless cross-device merge is a recorded open decision for a future release. A doc is also
+  reconciled **before its editor mounts**, so the editor always opens over a CRDT that matches the
+  current row body — closing the window where a body pulled while the doc was closed would show
+  stale content. The mounted-editor flush is **awaitable and reports which body it persisted**: if
+  the editor holds unsaved local edits the pulled remote body is preserved as a recoverable safety
+  revision and the live local text is kept, so neither side is ever silently overwritten. A
+  freshly-mounted, never-edited editor is correctly seen as clean — the autosave seeds its baseline
+  from the body persisted at mount — and the replay through the editor **resolves only once the new
+  content has persisted to the CRDT log**, so a restore that failed to land is retried rather than
+  recorded as a success. On a healthy network an idle device
   typically converges in about **1–2 seconds**; a failed reconcile surfaces a visible, retryable
   status in cloud settings (never live in silence). The sync-status and reconcile-status rows are
   shown whenever the device is **signed in**, not only once it holds a key, so a signed-in keyless
@@ -393,11 +399,11 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   popover always offers a direct **Account** link to the account settings tab (where sign-in and
   encryption live), regardless of the flag. Opting out is **non-destructive** —
   the cloud schema is sticky so a rebuild never erases local content.
-- **Two-device beta limit.** An account holds at most **two devices** while the beta runs,
+- **Four-device beta limit.** An account holds at most **four devices** while the beta runs,
   tracked in a synced, deliberately unencrypted `cloudDevices` registry — one row per joined
   device carrying only the addon's random per-device client identity (which the server already
   receives on every sync) and joined/last-seen timestamps; never a device name, user agent, or
-  content. Ids and counts are readable while keyless by design, so a signed-in third device is
+  content. Ids and counts are readable while keyless by design, so a signed-in further device is
   **hard-blocked** before it can act: the keyless section is replaced by a banner naming the
   limit, no unlock or set-up is offered, and only signing out on another device (which deletes
   that device's row and flushes the deletion with an explicit push before logout — the addon's

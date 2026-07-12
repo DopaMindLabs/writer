@@ -9,3 +9,13 @@ export const cloudDatabaseUrl = (): string | null => {
 };
 
 export const hasCloudEnv = (): boolean => cloudDatabaseUrl() !== null;
+
+/**
+ * Build-time opt-in for the cloud-sync beta, mirroring the runtime
+ * `?cloud-sync=on` flag. Set `VITE_CLOUD_SYNC_FLAG=on` in a non-production
+ * environment (local `.env.local`, Vercel preview) to surface the beta without
+ * the URL dance. Absent (or any value but `'on'`) leaves the runtime flag in
+ * sole control, so ordinary production builds stay opted out.
+ */
+export const cloudFlagFromEnv = (): boolean =>
+  import.meta.env.VITE_CLOUD_SYNC_FLAG === 'on';

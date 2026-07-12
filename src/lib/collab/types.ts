@@ -38,6 +38,17 @@ export interface CollabStore {
   readonly compact: (docId: string) => Promise<void>;
   readonly deleteDoc: (docId: string) => Promise<void>;
   /**
+   * Resolve once every {@link append} for `docId` that was in flight at the call
+   * has reached the durable log. A restore drives content through the live
+   * editor, which persists asynchronously via the provider; this is the barrier
+   * that lets the caller await that write landing before treating the restore as
+   * complete — so cloud reconciliation never records success for a CRDT update
+   * that has not persisted. Rejects if one of those appends failed, surfacing a
+   * persistence failure rather than hiding it behind a false success. A no-op
+   * when nothing is in flight.
+   */
+  readonly whenPersisted: (docId: string) => Promise<void>;
+  /**
    * Atomically plant the initial state for a document exactly once. Returns
    * `'seeded'` for the caller that won the race and `'already-seeded'` for any
    * later caller.

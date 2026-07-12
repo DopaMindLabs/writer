@@ -48,7 +48,8 @@ export const restoreRevision = async (
 
   // Replay the restored body through the live editor so the mounted document
   // reflects the change and it flows into the CRDT (persisted + broadcast).
+  // Await it so the call resolves only once that write has actually landed.
   const handle = getEditorHandle(docId);
   invariant(handle, () => `no live editor is mounted for doc ${docId}`);
-  handle.restoreBody(restoredBody);
+  await handle.restoreBody(restoredBody);
 };

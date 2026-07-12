@@ -4,6 +4,7 @@ import path from 'node:path';
 import Dexie, {
   type DBCore,
   type DBCoreTable,
+  type DBCoreGetRequest,
   type DBCoreQueryRequest,
   type DBCoreMutateRequest,
 } from 'dexie';
@@ -123,6 +124,45 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     expect(serialised).toContain(CIPHER_FIELD);
     expect(serialised).not.toContain('TOPSECRET');
     expect(serialised).not.toContain('hidden-body');
+  });
+
+  it('P2b (GO/NO-GO): Table.update() never leaks a plaintext changeSpec into the sync queue', async () => {
+    signIn();
+    await table('docs').put({
+      id: 'd-upd', spaceId: 's1', sectionId: 'x', updatedAt: 1,
+      name: 'Original', body: 'hidden-body',
+    });
+    // Dexie's Table.update() routes through Collection.modify, which attaches the
+    // raw changes as `changeSpec` on the DBCore put request. The addon's change
+    // tracker (below this middleware) turns that into an update operation — so an
+    // unstripped changeSpec ships the plaintext field values to the server even
+    // though the row's values are sealed.
+    await table('docs').update('d-upd', { name: 'RENAMED-SECRET', updatedAt: 2 });
+
+    const mutations = await table('$docs_mutations').toArray();
+    expect(mutations.length).toBeGreaterThan(0);
+    const serialised = JSON.stringify(mutations);
+    expect(serialised).not.toContain('RENAMED-SECRET');
+    expect(serialised).not.toContain('hidden-body');
+    // No mutation may carry a changeSpec at all: the leak is structural, not
+    // value-specific — a modify/update op replays plaintext onto server rows.
+    expect(mutations.every((mut) => !('changeSpec' in mut) && !('changeSpecs' in mut))).toBe(true);
+  });
+
+  it('P2c: Table.update() keeps every sealed field intact locally', async () => {
+    await table('docs').put({
+      id: 'd-keep', spaceId: 's1', sectionId: 'x', updatedAt: 1,
+      name: 'Original', body: 'secret body', meta: { wordCount: 2, status: 'draft' },
+    });
+    await table('docs').update('d-keep', { name: 'Renamed', updatedAt: 2 });
+
+    const back = await table('docs').get('d-keep');
+    expect(back?.name).toBe('Renamed');
+    expect(back?.body).toBe('secret body');
+    expect(back?.meta).toEqual({ wordCount: 2, status: 'draft' });
+    const raw = await readRaw('docs', 'd-keep');
+    expect(raw?.name).toBeUndefined();
+    expect(raw?.body).toBeUndefined();
   });
 
   it('P3: the app reads its own writes back as plaintext', async () => {
@@ -317,6 +357,28 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     expect(back?.body).toBe('secret body');
     expect(back?.meta).toEqual({ wordCount: 3 });
   });
+
+  it('P7b: preserves the envelope when a pulled row carries stray plaintext secret fields', async () => {
+    await table('docs').put({
+      id: 'd7b', spaceId: 's1', sectionId: 'x', updatedAt: 1,
+      name: 'My Doc', body: 'secret body', meta: { wordCount: 3 },
+    });
+    const raw = await readRaw('docs', 'd7b');
+
+    // A server row that a legacy plaintext update op polluted: a secret-class
+    // field sits at the top level, in the clear, beside the (complete) envelope.
+    // Re-ingesting it must never reseal just the stray field — that would
+    // replace the envelope and destroy the document's body and metadata.
+    await table('docs').put({ ...raw, name: 'stray-plaintext', updatedAt: 2 });
+
+    const back = await table('docs').get('d7b');
+    expect(back?.name).toBe('My Doc');
+    expect(back?.body).toBe('secret body');
+    expect(back?.meta).toEqual({ wordCount: 3 });
+    // The stray plaintext must not survive at rest either.
+    const healed = await readRaw('docs', 'd7b');
+    expect(healed?.name).toBeUndefined();
+  });
 });
 
 /**
@@ -397,6 +459,79 @@ describe('createEncryptionMiddleware — sync-applied writes bypass the write lo
       CloudKeyMismatchError,
     );
     expect(mutate).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * The cloud addon downloads an offloaded blob and patches it back into the row
+ * inside a transaction it marks `disableBlobResolve`. That read-modify-write is
+ * pure ciphertext plumbing: the middleware must stay inert (decrypting the
+ * still-unresolved row would fail and return `undefined`, corrupting the
+ * write-back and looping the download). These prove the middleware passes such
+ * internal reads/writes through raw, while a normal read of the same row drops it.
+ */
+describe('createEncryptionMiddleware — internal blob-plumbing transactions pass through raw', () => {
+  const primaryKey = { extractKey: (v: { id: string }) => v.id };
+  // A sealed row whose ciphertext is still an unresolved blob ref (as it lands
+  // on the receiver before the addon downloads and patches the bytes).
+  const rowWithBlobRef = {
+    id: 'r1',
+    spaceId: 's',
+    $lipsumCipher: { v: 1, epoch: 1, iv: 'aXY=', data: { _bt: 'Uint8Array', ref: '2:x', size: 5015 } },
+  };
+
+  const makeWrapped = (
+    ring: CloudKeyRing,
+  ): { wrapped: DBCoreTable; get: ReturnType<typeof vi.fn>; mutate: ReturnType<typeof vi.fn> } => {
+    const provider: KeyProvider = { current: () => ring };
+    const get = vi.fn().mockResolvedValue(rowWithBlobRef);
+    const mutate = vi.fn().mockResolvedValue({ numFailures: 0, failures: [], results: [], lastResult: undefined });
+    const fake = { name: 'docs', schema: { primaryKey }, get, mutate } as unknown as DBCoreTable;
+    const down = { table: () => fake } as unknown as DBCore;
+    const created = createEncryptionMiddleware(provider).create(down) as DBCore;
+    return { wrapped: created.table('docs'), get, mutate };
+  };
+
+  const getReq = (blobTx: boolean): DBCoreGetRequest =>
+    ({ trans: { disableBlobResolve: blobTx } as never, key: 'r1' }) as unknown as DBCoreGetRequest;
+
+  afterEach(() => {
+    keyMismatchState.set(false);
+    vi.restoreAllMocks();
+  });
+
+  it('returns the raw unresolved row inside a blob-plumbing read (never decrypts or drops it)', async () => {
+    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const { wrapped } = makeWrapped(ring);
+
+    const row: unknown = await wrapped.get(getReq(true));
+    expect(row).toBe(rowWithBlobRef);
+    // The unreadable row did NOT engage the key-mismatch lock.
+    expect(keyMismatchState.current()).toBe(false);
+  });
+
+  it('drops the same unresolved row (and never crashes) on an ordinary read', async () => {
+    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const { wrapped } = makeWrapped(ring);
+
+    // Outside the blob transaction the row cannot be opened; it is dropped, and
+    // a malformed shape must not be mistaken for a key mismatch.
+    await expect(wrapped.get(getReq(false))).resolves.toBeUndefined();
+    expect(keyMismatchState.current()).toBe(false);
+  });
+
+  it('writes the raw row back inside a blob-plumbing mutate (never reseals)', async () => {
+    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const { wrapped, mutate } = makeWrapped(ring);
+
+    const req = {
+      type: 'put',
+      trans: { disableBlobResolve: true } as never,
+      values: [rowWithBlobRef],
+    } as unknown as DBCoreMutateRequest;
+    await wrapped.mutate(req);
+    // The exact request reaches the core untouched — no reseal pass.
+    expect(mutate).toHaveBeenCalledWith(req);
   });
 });
 

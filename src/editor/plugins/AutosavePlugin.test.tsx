@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { act, render } from '@testing-library/react';
-import type { ReactNode } from 'react';
+import { createRef, type ReactNode, type RefObject } from 'react';
 import type { LexicalEditor } from 'lexical';
 import { $createParagraphNode, $createTextNode, $getRoot } from 'lexical';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { AutosavePlugin } from './AutosavePlugin';
+import { serializeState } from '@/editor/serialize';
+import { NO_FLUSH, type FlushResult } from '@/lib/collab/flush.types';
 
 const CaptureEditor = ({ onReady }: { onReady: (e: LexicalEditor) => void }) => {
   const [editor] = useLexicalComposerContext();
@@ -202,5 +204,73 @@ describe('AutosavePlugin', () => {
       vi.advanceTimersByTime(1200);
     });
     expect(onChange).toHaveBeenCalledTimes(1); // dedupe: identical content
+  });
+
+  /** The canonical serialized form of a single-paragraph body — the exact string
+   *  a mounted editor emits for it, so it can stand in as the persisted baseline. */
+  const serializeText = (text: string): string => {
+    let editor!: LexicalEditor;
+    const { unmount } = render(
+      withComposer(<CaptureEditor onReady={(e) => (editor = e)} />),
+    );
+    typeInto(editor, text);
+    const out = serializeState(editor.getEditorState());
+    act(() => {
+      unmount();
+    });
+    return out;
+  };
+
+  const renderWithBaseline = (
+    onChange: (serialized: string) => Promise<void>,
+    persistedBody: string,
+  ): { editor: LexicalEditor; flushRef: RefObject<() => Promise<FlushResult>> } => {
+    const flushRef = createRef<() => Promise<FlushResult>>() as RefObject<
+      () => Promise<FlushResult>
+    >;
+    let editor!: LexicalEditor;
+    render(
+      withComposer(
+        <>
+          <CaptureEditor onReady={(e) => (editor = e)} />
+          <AutosavePlugin
+            onChange={onChange}
+            debounceMs={600}
+            flushRef={flushRef}
+            persistedBody={persistedBody}
+          />
+        </>,
+      ),
+    );
+    return { editor, flushRef };
+  };
+
+  it('flushes NO_FLUSH for a clean editor seeded to the persisted baseline', async () => {
+    // The collaboration bootstrap loads exactly the persisted body; a flush before
+    // any local edit must report nothing to persist, so cloud reconciliation does
+    // not mistake the seed for unsaved local work.
+    const persisted = serializeText('seed content');
+    const onChange = vi.fn(async () => {});
+    const { editor, flushRef } = renderWithBaseline(onChange, persisted);
+
+    typeIntoTagged(editor, 'seed content', 'collaboration');
+
+    await expect(flushRef.current()).resolves.toEqual(NO_FLUSH);
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('flushes the persisted body for a genuine local edit past the baseline', async () => {
+    const persisted = serializeText('seed content');
+    const onChange = vi.fn(async () => {});
+    const { editor, flushRef } = renderWithBaseline(onChange, persisted);
+
+    typeIntoTagged(editor, 'seed content', 'collaboration'); // bootstrap
+    typeInto(editor, 'genuine local edit'); // the user types
+
+    const result = await flushRef.current();
+    expect(result.persisted).toBe(true);
+    if (!result.persisted) throw new Error('unreachable');
+    expect(result.body).toContain('genuine local edit');
+    expect(onChange).toHaveBeenCalledTimes(1);
   });
 });

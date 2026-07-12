@@ -15,6 +15,7 @@ export interface EditorProps {
   placeholder?: string;
   autoFocus?: boolean;
   locked?: boolean;
+  persistedBody?: string;
   wordLimit?: number;
   charLimit?: number;
 }

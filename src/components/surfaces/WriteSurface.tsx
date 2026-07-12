@@ -107,6 +107,11 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
             onChange={handleChange}
             mode={mode}
             locked={locked}
+            // The body persisted at this mount seeds the autosave baseline, so a
+            // freshly-seeded clean editor is not mistaken for one with unsaved
+            // edits by cloud reconciliation. The editor is keyed above, so this is
+            // captured once per mount and a later pull does not move the baseline.
+            persistedBody={doc.body}
             wordLimit={wordLimit}
             charLimit={charLimit}
             placeholder="Start writing…"

@@ -9,7 +9,7 @@ import Dexie, {
 } from 'dexie';
 import type { CloudKeyRing } from './keys';
 import { isEncryptedTable, plaintextFieldsFor, CIPHER_FIELD } from './tableRules';
-import { sealRow, openRow, EnvelopeIntegrityError } from './envelope';
+import { sealRow, openRow, EnvelopeIntegrityError, MalformedEnvelopeError } from './envelope';
 import { CloudKeyMismatchError, CloudKeylessWriteError } from './errors';
 import { keyMismatchState } from './keyMismatch';
 import { currentLockReason, type LockReason } from './lockReason';
@@ -39,10 +39,44 @@ type Row = Record<string, unknown>;
 const isSyncApplied = (trans: DBCoreMutateRequest['trans']): boolean =>
   (trans as { disableChangeTracking?: boolean }).disableChangeTracking === true;
 
+/**
+ * Whether a request runs inside the addon's internal blob-plumbing transaction,
+ * which it marks `disableBlobResolve` (the same flag the addon's blob-resolve
+ * middleware reads to skip itself). Inside it the addon reads a row back to patch
+ * a downloaded blob into place and writes it out again — pure ciphertext
+ * plumbing. This middleware must stay inert there: decrypting the read would
+ * fail (the row still holds an unresolved ref) and return `undefined`, which
+ * corrupts the addon's write-back and leaves `_hasBlobRefs` set — an infinite
+ * download loop that saturates the main thread. Passing the raw row straight
+ * through keeps the plumbing working on the ciphertext it expects.
+ */
+const isInternalBlobTx = (trans: DBCoreMutateRequest['trans']): boolean =>
+  (trans as { disableBlobResolve?: boolean }).disableBlobResolve === true;
+
 /** The stored primary key of a row, as a string for the envelope's row binding. */
 const pkString = (table: DBCoreTable, value: Row, fallback?: unknown): string => {
   const extract = table.schema.primaryKey.extractKey;
   return String(extract ? extract(value) : fallback);
+};
+
+/**
+ * Strip the plaintext update descriptors off a put request. `Table.update()` /
+ * `Collection.modify()` attach the raw changes as `criteria` + `changeSpec`
+ * (and `Table.upsert()` as `updates`) alongside the full row values. The cloud
+ * addon sits *below* this middleware and prefers those descriptors when logging
+ * the mutation — left in place they ship the changed fields to the server in
+ * plaintext even though the row values are sealed, and the server then stamps
+ * them onto its rows in the clear. Dropping them demotes the operation to a
+ * plain full-row upsert of the sealed values, the only shape that cannot leak.
+ */
+const stripUpdateDescriptors = (req: DBCoreMutateRequest): DBCoreMutateRequest => {
+  if (req.type !== 'put') return req;
+  if (!('criteria' in req) && !('changeSpec' in req) && !('updates' in req)) return req;
+  const stripped = { ...req };
+  delete stripped.criteria;
+  delete stripped.changeSpec;
+  delete stripped.updates;
+  return stripped;
 };
 
 /** Seal every value in an add/put request; other mutations pass through. */
@@ -87,6 +121,15 @@ const openOrDrop = async (
   } catch (error) {
     if (error instanceof EnvelopeIntegrityError) {
       onUnreadable();
+      return undefined;
+    }
+    // A structurally malformed envelope is corruption, not a key mismatch: drop
+    // the row from this read so the list survives, but never flag a mismatch (it
+    // would wrongly lock the device). Post-inline-envelope this should not occur.
+    if (error instanceof MalformedEnvelopeError) {
+      console.error('Dropping a row with a malformed cipher envelope', {
+        table: table.name,
+      });
       return undefined;
     }
     throw error;
@@ -176,6 +219,8 @@ const wrapTable = (
   return {
     ...table,
     mutate: async (req: DBCoreMutateRequest) => {
+      // Addon blob-plumbing writes the raw ciphertext row back — never reseal it.
+      if (isInternalBlobTx(req.trans)) return table.mutate(req);
       // Refuse content add/put while locked: under a mismatch the account holds a
       // different key (a push would pollute it); while signed-in-keyless there is
       // no key to seal with (a push would leak plaintext). Deletes still pass, so
@@ -191,9 +236,12 @@ const wrapTable = (
           : new CloudKeylessWriteError();
       }
       const ring = provider.current();
-      return table.mutate(ring ? await inTx(sealMutate(table, ring, req)) : req);
+      const safeReq = stripUpdateDescriptors(req);
+      return table.mutate(ring ? await inTx(sealMutate(table, ring, safeReq)) : safeReq);
     },
     get: (req: DBCoreGetRequest) => {
+      // Addon blob-plumbing reads the raw ciphertext row — never decrypt here.
+      if (isInternalBlobTx(req.trans)) return table.get(req);
       const ring = provider.current();
       if (!ring) return keylessGet(table.get(req), hideSealed());
       return inTx(
@@ -202,6 +250,7 @@ const wrapTable = (
       );
     },
     getMany: (req: DBCoreGetManyRequest) => {
+      if (isInternalBlobTx(req.trans)) return table.getMany(req);
       const ring = provider.current();
       if (!ring) return keylessGetMany(table.getMany(req), hideSealed());
       return inTx(
@@ -211,6 +260,7 @@ const wrapTable = (
     query: (req: DBCoreQueryRequest) => {
       const ring = provider.current();
       if (req.values === false) return table.query(req);
+      if (isInternalBlobTx(req.trans)) return table.query(req);
       if (!ring) return keylessQuery(table.query(req), hideSealed());
       return inTx(
         (async () => {

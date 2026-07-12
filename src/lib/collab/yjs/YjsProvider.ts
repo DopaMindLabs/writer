@@ -93,7 +93,14 @@ const persistAndRelayUpdate = (
   const fromSharedStorePeer = runtime.transports.some(
     (transport) => origin === transport && transport.sharesStore,
   );
-  if (!fromSharedStorePeer) void runtime.store.append(runtime.docId, update);
+  if (!fromSharedStorePeer) {
+    // The store tracks this write so a restore can await it via `whenPersisted`;
+    // surface a failure here rather than dropping the promise silently, so a
+    // persistence error is at least visible even outside a restore.
+    void runtime.store.append(runtime.docId, update).catch((error: unknown) => {
+      console.error('collab store append failed', error);
+    });
+  }
   const message = encodeSyncUpdate(update);
   runtime.transports.forEach((transport) => {
     if (origin !== transport) transport.send(message);
