@@ -23,6 +23,10 @@ EMAIL="shavindra@users.noreply.github.com"
 SCOPE="--local"
 if [[ "${1:-}" == "--global" ]]; then
   SCOPE="--global"
+elif ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  # Not inside a git repo (e.g. environment setup runs before clone) —
+  # fall back to global so `git config --local` doesn't fail.
+  SCOPE="--global"
 fi
 
 # Author identity (who wrote the change)
