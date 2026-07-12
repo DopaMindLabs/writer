@@ -39,6 +39,20 @@ type Row = Record<string, unknown>;
 const isSyncApplied = (trans: DBCoreMutateRequest['trans']): boolean =>
   (trans as { disableChangeTracking?: boolean }).disableChangeTracking === true;
 
+/**
+ * Whether a request runs inside the addon's internal blob-plumbing transaction,
+ * which it marks `disableBlobResolve` (the same flag the addon's blob-resolve
+ * middleware reads to skip itself). Inside it the addon reads a row back to patch
+ * a downloaded blob into place and writes it out again — pure ciphertext
+ * plumbing. This middleware must stay inert there: decrypting the read would
+ * fail (the row still holds an unresolved ref) and return `undefined`, which
+ * corrupts the addon's write-back and leaves `_hasBlobRefs` set — an infinite
+ * download loop that saturates the main thread. Passing the raw row straight
+ * through keeps the plumbing working on the ciphertext it expects.
+ */
+const isInternalBlobTx = (trans: DBCoreMutateRequest['trans']): boolean =>
+  (trans as { disableBlobResolve?: boolean }).disableBlobResolve === true;
+
 /** The stored primary key of a row, as a string for the envelope's row binding. */
 const pkString = (table: DBCoreTable, value: Row, fallback?: unknown): string => {
   const extract = table.schema.primaryKey.extractKey;
@@ -205,6 +219,8 @@ const wrapTable = (
   return {
     ...table,
     mutate: async (req: DBCoreMutateRequest) => {
+      // Addon blob-plumbing writes the raw ciphertext row back — never reseal it.
+      if (isInternalBlobTx(req.trans)) return table.mutate(req);
       // Refuse content add/put while locked: under a mismatch the account holds a
       // different key (a push would pollute it); while signed-in-keyless there is
       // no key to seal with (a push would leak plaintext). Deletes still pass, so
@@ -224,6 +240,8 @@ const wrapTable = (
       return table.mutate(ring ? await inTx(sealMutate(table, ring, safeReq)) : safeReq);
     },
     get: (req: DBCoreGetRequest) => {
+      // Addon blob-plumbing reads the raw ciphertext row — never decrypt here.
+      if (isInternalBlobTx(req.trans)) return table.get(req);
       const ring = provider.current();
       if (!ring) return keylessGet(table.get(req), hideSealed());
       return inTx(
@@ -232,6 +250,7 @@ const wrapTable = (
       );
     },
     getMany: (req: DBCoreGetManyRequest) => {
+      if (isInternalBlobTx(req.trans)) return table.getMany(req);
       const ring = provider.current();
       if (!ring) return keylessGetMany(table.getMany(req), hideSealed());
       return inTx(
@@ -241,6 +260,7 @@ const wrapTable = (
     query: (req: DBCoreQueryRequest) => {
       const ring = provider.current();
       if (req.values === false) return table.query(req);
+      if (isInternalBlobTx(req.trans)) return table.query(req);
       if (!ring) return keylessQuery(table.query(req), hideSealed());
       return inTx(
         (async () => {

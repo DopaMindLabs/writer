@@ -165,6 +165,14 @@ ciphertext. Writes are sealed before they reach the sync queue; reads are opened
   envelope: it preserves the envelope and drops any stray top-level secret fields, so a
   row an older client polluted with plaintext heals on re-ingestion instead of losing its
   body or name.
+- **Inert inside blob-plumbing transactions.** The addon downloads any offloaded blob and
+  patches it back into the row inside a transaction it marks `disableBlobResolve`. That
+  read-modify-write is pure ciphertext plumbing: decrypting the read would fail (the row
+  still holds an unresolved `{_bt,ref,size}` ref) and return `undefined`, which corrupts
+  the write-back and leaves `_hasBlobRefs` set — an infinite download loop that saturates
+  the main thread. The middleware detects that flag and passes such reads and writes
+  straight through raw. (With the inline-string envelope of §3 no synced value is ever
+  offloaded, so this path is a belt-and-braces guard for any pre-existing offloaded row.)
 
 ### Sealing existing data
 

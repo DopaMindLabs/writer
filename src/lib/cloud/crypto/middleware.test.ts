@@ -4,6 +4,7 @@ import path from 'node:path';
 import Dexie, {
   type DBCore,
   type DBCoreTable,
+  type DBCoreGetRequest,
   type DBCoreQueryRequest,
   type DBCoreMutateRequest,
 } from 'dexie';
@@ -458,6 +459,79 @@ describe('createEncryptionMiddleware — sync-applied writes bypass the write lo
       CloudKeyMismatchError,
     );
     expect(mutate).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * The cloud addon downloads an offloaded blob and patches it back into the row
+ * inside a transaction it marks `disableBlobResolve`. That read-modify-write is
+ * pure ciphertext plumbing: the middleware must stay inert (decrypting the
+ * still-unresolved row would fail and return `undefined`, corrupting the
+ * write-back and looping the download). These prove the middleware passes such
+ * internal reads/writes through raw, while a normal read of the same row drops it.
+ */
+describe('createEncryptionMiddleware — internal blob-plumbing transactions pass through raw', () => {
+  const primaryKey = { extractKey: (v: { id: string }) => v.id };
+  // A sealed row whose ciphertext is still an unresolved blob ref (as it lands
+  // on the receiver before the addon downloads and patches the bytes).
+  const rowWithBlobRef = {
+    id: 'r1',
+    spaceId: 's',
+    $lipsumCipher: { v: 1, epoch: 1, iv: 'aXY=', data: { _bt: 'Uint8Array', ref: '2:x', size: 5015 } },
+  };
+
+  const makeWrapped = (
+    ring: CloudKeyRing,
+  ): { wrapped: DBCoreTable; get: ReturnType<typeof vi.fn>; mutate: ReturnType<typeof vi.fn> } => {
+    const provider: KeyProvider = { current: () => ring };
+    const get = vi.fn().mockResolvedValue(rowWithBlobRef);
+    const mutate = vi.fn().mockResolvedValue({ numFailures: 0, failures: [], results: [], lastResult: undefined });
+    const fake = { name: 'docs', schema: { primaryKey }, get, mutate } as unknown as DBCoreTable;
+    const down = { table: () => fake } as unknown as DBCore;
+    const created = createEncryptionMiddleware(provider).create(down) as DBCore;
+    return { wrapped: created.table('docs'), get, mutate };
+  };
+
+  const getReq = (blobTx: boolean): DBCoreGetRequest =>
+    ({ trans: { disableBlobResolve: blobTx } as never, key: 'r1' }) as unknown as DBCoreGetRequest;
+
+  afterEach(() => {
+    keyMismatchState.set(false);
+    vi.restoreAllMocks();
+  });
+
+  it('returns the raw unresolved row inside a blob-plumbing read (never decrypts or drops it)', async () => {
+    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const { wrapped } = makeWrapped(ring);
+
+    const row: unknown = await wrapped.get(getReq(true));
+    expect(row).toBe(rowWithBlobRef);
+    // The unreadable row did NOT engage the key-mismatch lock.
+    expect(keyMismatchState.current()).toBe(false);
+  });
+
+  it('drops the same unresolved row (and never crashes) on an ordinary read', async () => {
+    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const { wrapped } = makeWrapped(ring);
+
+    // Outside the blob transaction the row cannot be opened; it is dropped, and
+    // a malformed shape must not be mistaken for a key mismatch.
+    await expect(wrapped.get(getReq(false))).resolves.toBeUndefined();
+    expect(keyMismatchState.current()).toBe(false);
+  });
+
+  it('writes the raw row back inside a blob-plumbing mutate (never reseals)', async () => {
+    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const { wrapped, mutate } = makeWrapped(ring);
+
+    const req = {
+      type: 'put',
+      trans: { disableBlobResolve: true } as never,
+      values: [rowWithBlobRef],
+    } as unknown as DBCoreMutateRequest;
+    await wrapped.mutate(req);
+    // The exact request reaches the core untouched — no reseal pass.
+    expect(mutate).toHaveBeenCalledWith(req);
   });
 });
 
