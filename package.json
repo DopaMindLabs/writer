@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -b --noEmit",
     "test": "TZ=UTC vitest",
     "test:run": "TZ=UTC vitest run",
     "test:ui": "TZ=UTC vitest --ui",
