@@ -22,7 +22,7 @@ export interface DeviceRecord {
 }
 
 /** How many devices an account may hold while the sync beta runs. */
-export const DEVICE_LIMIT = 4;
+export const DEVICE_LIMIT = 8;
 
 /** The slice of `db.cloud` the registry reads. Duck-typed locally (like
  *  `setup.ts`) — the cloud-client facade imports this module for sign-out, so
