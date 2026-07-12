@@ -15,11 +15,11 @@ export interface CreateRevisionOpts {
 }
 
 const pruneAutoRevisions = async (docId: string): Promise<void> => {
-  const autos = await db.revisions
-    .where('docId')
-    .equals(docId)
-    .filter((r) => r.kind === 'auto' && !r.pinned)
-    .toArray();
+  // `pinned` is unindexed — and encrypted under cloud sync, so a cursor filter
+  // would not see it. Read the doc's revisions decrypted, then filter in memory.
+  const autos = (await db.revisions.where('docId').equals(docId).toArray()).filter(
+    (r) => r.kind === 'auto' && !r.pinned,
+  );
 
   const staleIds = autos
     .sort((a, b) => b.createdAt - a.createdAt)
