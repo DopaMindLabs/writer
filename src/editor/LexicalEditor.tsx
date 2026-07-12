@@ -26,6 +26,7 @@ interface LexicalEditorProps {
   placeholder?: string;
   autoFocus?: boolean;
   locked?: boolean;
+  persistedBody?: string;
   wordLimit?: number;
   charLimit?: number;
 }
@@ -41,6 +42,7 @@ export const LexicalEditor = ({
   placeholder = 'Start writing…',
   autoFocus = true,
   locked = false,
+  persistedBody,
   wordLimit,
   charLimit,
 }: LexicalEditorProps) => {
@@ -116,6 +118,7 @@ export const LexicalEditor = ({
             editable={editable}
             floatingToolbarEnabled={floatingToolbarEnabled}
             flushRef={flushRef}
+            persistedBody={persistedBody}
             wordLimit={wordLimit}
             charLimit={charLimit}
           />

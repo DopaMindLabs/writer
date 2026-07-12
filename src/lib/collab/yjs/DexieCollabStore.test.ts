@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import * as Y from 'yjs';
 import { db } from '@/db/db';
 import { createDexieCollabStore } from './DexieCollabStore';
@@ -51,6 +51,54 @@ describe('DexieCollabStore', () => {
     await store.append('d2', new Uint8Array([2]));
     expect(await store.loadAll('d1')).toHaveLength(1);
     expect(await store.loadAll('d2')).toHaveLength(1);
+  });
+
+  describe('whenPersisted', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('is a no-op when nothing is in flight for the doc', async () => {
+      await expect(store.whenPersisted('idle-doc')).resolves.toBeUndefined();
+    });
+
+    it('resolves only after an in-flight append has landed', async () => {
+      let release!: () => void;
+      const gate = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      const addSpy = vi
+        .spyOn(db.docUpdates, 'add')
+        .mockImplementation((async () => {
+          await gate;
+          return 1;
+        }) as never);
+
+      const append = store.append('d1', new Uint8Array([1]));
+      let settled = false;
+      const barrier = store.whenPersisted('d1').then(() => {
+        settled = true;
+      });
+      await Promise.resolve();
+      expect(settled).toBe(false); // still in flight
+
+      release();
+      await append;
+      await barrier;
+      expect(settled).toBe(true);
+      addSpy.mockRestore();
+    });
+
+    it('rejects when an in-flight append fails, surfacing the persistence error', async () => {
+      const addSpy = vi
+        .spyOn(db.docUpdates, 'add')
+        .mockRejectedValueOnce(new Error('disk full'));
+
+      const append = store.append('d1', new Uint8Array([1]));
+      await expect(store.whenPersisted('d1')).rejects.toThrow('disk full');
+      await expect(append).rejects.toThrow('disk full');
+      addSpy.mockRestore();
+    });
   });
 
   it('seeds exactly once and reports already-seeded thereafter', async () => {

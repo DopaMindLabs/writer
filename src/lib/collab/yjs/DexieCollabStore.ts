@@ -96,11 +96,48 @@ const deleteDocLog = async (docId: string): Promise<void> => {
   });
 };
 
-export const createDexieCollabStore = (): CollabStore => ({
-  append: appendUpdate,
-  loadAll: loadAllUpdates,
-  trySeed: trySeedDoc,
-  reseedIfEmpty: reseedDocIfEmpty,
-  compact: compactDoc,
-  deleteDoc: deleteDocLog,
-});
+export const createDexieCollabStore = (): CollabStore => {
+  // In-flight append writes per doc, so a restore can await its CRDT update
+  // reaching `docUpdates` before reconciliation records success. Each entry
+  // removes itself once its write settles, so the map is bounded by the number
+  // of concurrent in-flight writes, not the library size.
+  const pendingAppends = new Map<string, Set<Promise<void>>>();
+
+  const append = (docId: string, bytes: Uint8Array): Promise<void> => {
+    const write = appendUpdate(docId, bytes);
+    let inFlight = pendingAppends.get(docId);
+    if (!inFlight) {
+      inFlight = new Set<Promise<void>>();
+      pendingAppends.set(docId, inFlight);
+    }
+    inFlight.add(write);
+    const settle = (): void => {
+      inFlight.delete(write);
+      if (inFlight.size === 0) pendingAppends.delete(docId);
+    };
+    // Attach cleanup that also absorbs the rejection so an untracked append
+    // (e.g. the provider's fire-and-forget dual-write) never becomes an
+    // unhandled rejection; `whenPersisted` still observes the failure below.
+    void write.then(settle, settle);
+    return write;
+  };
+
+  const whenPersisted = async (docId: string): Promise<void> => {
+    const inFlight = pendingAppends.get(docId);
+    if (!inFlight || inFlight.size === 0) return;
+    // Snapshot the writes in flight now and propagate the first rejection, so a
+    // failed CRDT write surfaces as a reconcile failure rather than a false
+    // success. Writes issued after this call are outside the restore's barrier.
+    await Promise.all([...inFlight]);
+  };
+
+  return {
+    append,
+    loadAll: loadAllUpdates,
+    trySeed: trySeedDoc,
+    reseedIfEmpty: reseedDocIfEmpty,
+    compact: compactDoc,
+    deleteDoc: deleteDocLog,
+    whenPersisted,
+  };
+};

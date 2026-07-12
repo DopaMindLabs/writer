@@ -38,7 +38,7 @@ const readText = (editor: LexicalEditor): string =>
 const noFlush = { current: async (): Promise<FlushResult> => NO_FLUSH };
 
 describe('RestoreBridgePlugin', () => {
-  it('replaces the editor body through the registered handle', () => {
+  it('replaces the editor body through the registered handle', async () => {
     let editor!: LexicalEditor;
     render(
       withComposer(
@@ -52,8 +52,10 @@ describe('RestoreBridgePlugin', () => {
     const handle = getEditorHandle('bridge-1');
     expect(handle).toBeDefined();
 
-    act(() => {
-      handle?.restoreBody(serializedBody('restored content'));
+    // restoreBody now resolves only after the CRDT append persists; with no
+    // provider mounted there is nothing in flight, so it settles immediately.
+    await act(async () => {
+      await handle?.restoreBody(serializedBody('restored content'));
     });
 
     expect(readText(editor)).toContain('restored content');

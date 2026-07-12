@@ -45,6 +45,26 @@ const pkString = (table: DBCoreTable, value: Row, fallback?: unknown): string =>
   return String(extract ? extract(value) : fallback);
 };
 
+/**
+ * Strip the plaintext update descriptors off a put request. `Table.update()` /
+ * `Collection.modify()` attach the raw changes as `criteria` + `changeSpec`
+ * (and `Table.upsert()` as `updates`) alongside the full row values. The cloud
+ * addon sits *below* this middleware and prefers those descriptors when logging
+ * the mutation — left in place they ship the changed fields to the server in
+ * plaintext even though the row values are sealed, and the server then stamps
+ * them onto its rows in the clear. Dropping them demotes the operation to a
+ * plain full-row upsert of the sealed values, the only shape that cannot leak.
+ */
+const stripUpdateDescriptors = (req: DBCoreMutateRequest): DBCoreMutateRequest => {
+  if (req.type !== 'put') return req;
+  if (!('criteria' in req) && !('changeSpec' in req) && !('updates' in req)) return req;
+  const stripped = { ...req };
+  delete stripped.criteria;
+  delete stripped.changeSpec;
+  delete stripped.updates;
+  return stripped;
+};
+
 /** Seal every value in an add/put request; other mutations pass through. */
 const sealMutate = async (
   table: DBCoreTable,
@@ -191,7 +211,8 @@ const wrapTable = (
           : new CloudKeylessWriteError();
       }
       const ring = provider.current();
-      return table.mutate(ring ? await inTx(sealMutate(table, ring, req)) : req);
+      const safeReq = stripUpdateDescriptors(req);
+      return table.mutate(ring ? await inTx(sealMutate(table, ring, safeReq)) : safeReq);
     },
     get: (req: DBCoreGetRequest) => {
       const ring = provider.current();

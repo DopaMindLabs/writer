@@ -9,17 +9,30 @@ interface AutosavePluginProps {
   debounceMs?: number;
   /** Exposes the pending-save flush so the editor handle can drive it on demand. */
   flushRef?: RefObject<() => Promise<FlushResult>>;
+  /**
+   * The body already persisted for this document when the editor mounts (the
+   * `docs.body` the CRDT seed was built from, after any pre-mount reconciliation).
+   * It initialises the save baseline so a flush of the freshly-seeded editor —
+   * before the user has typed anything — dedupes to {@link NO_FLUSH} instead of
+   * reporting the seed as unsaved local work. Without it a clean mounted editor
+   * looks dirty to cloud reconciliation, which then keeps the stale local body
+   * and demotes the pulled remote body to a revision. Captured once at mount, so
+   * a later `docs.body` change does not move the baseline out from under a stale
+   * CRDT.
+   */
+  persistedBody?: string;
 }
 
 export const AutosavePlugin = ({
   onChange,
   debounceMs = 600,
   flushRef,
+  persistedBody,
 }: AutosavePluginProps) => {
   const [editor] = useLexicalComposerContext();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const backstopRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastSavedRef = useRef<string | null>(null);
+  const lastSavedRef = useRef<string | null>(persistedBody ?? null);
   const latestStateRef = useRef<EditorState | null>(null);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;

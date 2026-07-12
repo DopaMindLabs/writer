@@ -139,6 +139,20 @@ ciphertext. Writes are sealed before they reach the sync queue; reads are opened
   (`get`/`toArray`) and write explicitly. This is used deliberately by
   `sealExistingRows` (below), which relies on the raw cursor view to find rows still
   lacking `$lipsumCipher`.
+- **Update descriptors are stripped from writes.** `Table.update()` /
+  `Collection.modify()` (and `Table.upsert()`) reach the middleware as a `put` carrying
+  both the full row *and* a plaintext `changeSpec`/`criteria`/`updates` describing the
+  changed fields. The addon below prefers those descriptors when it logs the mutation, so
+  left in place they would push the changed field values — a document rename, a body
+  autosave — to the server **in the clear**, and the server would then stamp them onto its
+  row beside the stale envelope. The middleware therefore strips those descriptors off
+  every encrypted-table `put`, demoting it to a whole-row upsert of the sealed values —
+  the one shape that cannot leak. (A row is sealed as a unit, so this is also why a
+  rename and a body edit are whole-document last-writer-wins rather than independently
+  mergeable.) `sealRow` correspondingly never re-seals a row that already carries an
+  envelope: it preserves the envelope and drops any stray top-level secret fields, so a
+  row an older client polluted with plaintext heals on re-ingestion instead of losing its
+  body or name.
 
 ### Sealing existing data
 
@@ -175,16 +189,30 @@ runs `reconcilePulledDocs`:
   a mounted doc the reconciler **flushes the editor's pending autosave** through its handle;
   if that flush wrote unsaved edits, the divergence was lag — not a pull — and the live
   editor is left untouched, so reconciliation never runs while a local edit is mid-flush.
-  Only a doc whose flush is a no-op is treated as a genuine remote pull.
+  Only a doc whose flush is a no-op is treated as a genuine remote pull. The flush knows a
+  freshly-mounted, never-edited editor is clean because the autosave seeds its save baseline
+  from the body persisted at mount (`persistedBody`), rather than starting empty and reporting
+  its collaboration-seeded content as unsaved work.
+- **Pre-mount reconciliation.** Before an editor mounts, `reconcileDocForMount` (gated by
+  `useDocCrdtReady`) reconciles that one doc's CRDT against its row body: it seeds an empty
+  log, or — for a populated log that diverged from a body pulled while the doc was closed —
+  keeps the local snapshot as a revision and reseeds from the body. The editor therefore
+  always mounts over a CRDT that already equals `docs.body`, so the baseline it captures is
+  consistent and a stale local Y.Doc is never mistaken for unsaved edits.
 - **Resolution (whole-document last-writer-wins).** For a genuinely divergent doc it first
   writes a **safety revision** of the local (losing) side, so a cross-device conflict is
   always recoverable. Then, if an editor is **mounted** (an `editorRegistry` handle exists),
   it replays the pulled body through the handle — an untagged local update that flows into
-  the binding, persists, and broadcasts to sibling tabs. If **unmounted**, it clears the
-  doc's `docUpdates` lineage and reseeds from the pulled body.
+  the binding, persists, and broadcasts to sibling tabs. The handle's `restoreBody` resolves
+  only once that update has committed in Lexical **and** reached the durable `docUpdates` log
+  (the store's per-document `whenPersisted` barrier), so reconciliation records success only
+  after the write has actually landed and treats a failed CRDT write as a per-doc failure
+  that retries. If **unmounted**, it clears the doc's `docUpdates` lineage and reseeds from
+  the pulled body.
 - **Idempotency.** Because every body is canonical, a reseed's snapshot equals the pulled
   body exactly, so a second run detects no divergence and does nothing — no duplicate
-  revisions, no churn.
+  revisions, no churn. A doc whose body is unchanged since its last clean reconcile is
+  skipped entirely, so a metadata-only change such as a rename never forces a body reconcile.
 
 Lossless CRDT-level merge across devices (syncing encrypted `docUpdates` instead of body
 snapshots) is a recorded open decision for a future release; today reconciliation

@@ -323,10 +323,16 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   reconcile. It compares every row body against the local Y.Doc and, for a body a pull produced
   rather than the local editor, keeps a safety revision of the losing side then either replays the
   pulled body through the mounted editor or reseeds the CRDT — **whole-document last-writer-wins**;
-  lossless cross-device merge is a recorded open decision for a future release. The mounted-editor
-  flush is **awaitable and reports which body it persisted**: if the editor holds unsaved local
-  edits the pulled remote body is preserved as a recoverable safety revision and the live local
-  text is kept, so neither side is ever silently overwritten. On a healthy network an idle device
+  lossless cross-device merge is a recorded open decision for a future release. A doc is also
+  reconciled **before its editor mounts**, so the editor always opens over a CRDT that matches the
+  current row body — closing the window where a body pulled while the doc was closed would show
+  stale content. The mounted-editor flush is **awaitable and reports which body it persisted**: if
+  the editor holds unsaved local edits the pulled remote body is preserved as a recoverable safety
+  revision and the live local text is kept, so neither side is ever silently overwritten. A
+  freshly-mounted, never-edited editor is correctly seen as clean — the autosave seeds its baseline
+  from the body persisted at mount — and the replay through the editor **resolves only once the new
+  content has persisted to the CRDT log**, so a restore that failed to land is retried rather than
+  recorded as a success. On a healthy network an idle device
   typically converges in about **1–2 seconds**; a failed reconcile surfaces a visible, retryable
   status in cloud settings (never live in silence). The sync-status and reconcile-status rows are
   shown whenever the device is **signed in**, not only once it holds a key, so a signed-in keyless

@@ -125,6 +125,45 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     expect(serialised).not.toContain('hidden-body');
   });
 
+  it('P2b (GO/NO-GO): Table.update() never leaks a plaintext changeSpec into the sync queue', async () => {
+    signIn();
+    await table('docs').put({
+      id: 'd-upd', spaceId: 's1', sectionId: 'x', updatedAt: 1,
+      name: 'Original', body: 'hidden-body',
+    });
+    // Dexie's Table.update() routes through Collection.modify, which attaches the
+    // raw changes as `changeSpec` on the DBCore put request. The addon's change
+    // tracker (below this middleware) turns that into an update operation — so an
+    // unstripped changeSpec ships the plaintext field values to the server even
+    // though the row's values are sealed.
+    await table('docs').update('d-upd', { name: 'RENAMED-SECRET', updatedAt: 2 });
+
+    const mutations = await table('$docs_mutations').toArray();
+    expect(mutations.length).toBeGreaterThan(0);
+    const serialised = JSON.stringify(mutations);
+    expect(serialised).not.toContain('RENAMED-SECRET');
+    expect(serialised).not.toContain('hidden-body');
+    // No mutation may carry a changeSpec at all: the leak is structural, not
+    // value-specific — a modify/update op replays plaintext onto server rows.
+    expect(mutations.every((mut) => !('changeSpec' in mut) && !('changeSpecs' in mut))).toBe(true);
+  });
+
+  it('P2c: Table.update() keeps every sealed field intact locally', async () => {
+    await table('docs').put({
+      id: 'd-keep', spaceId: 's1', sectionId: 'x', updatedAt: 1,
+      name: 'Original', body: 'secret body', meta: { wordCount: 2, status: 'draft' },
+    });
+    await table('docs').update('d-keep', { name: 'Renamed', updatedAt: 2 });
+
+    const back = await table('docs').get('d-keep');
+    expect(back?.name).toBe('Renamed');
+    expect(back?.body).toBe('secret body');
+    expect(back?.meta).toEqual({ wordCount: 2, status: 'draft' });
+    const raw = await readRaw('docs', 'd-keep');
+    expect(raw?.name).toBeUndefined();
+    expect(raw?.body).toBeUndefined();
+  });
+
   it('P3: the app reads its own writes back as plaintext', async () => {
     await table('docs').put({
       id: 'd1', spaceId: 's1', sectionId: 'sec1', updatedAt: 1,
@@ -316,6 +355,28 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     expect(back?.name).toBe('My Doc');
     expect(back?.body).toBe('secret body');
     expect(back?.meta).toEqual({ wordCount: 3 });
+  });
+
+  it('P7b: preserves the envelope when a pulled row carries stray plaintext secret fields', async () => {
+    await table('docs').put({
+      id: 'd7b', spaceId: 's1', sectionId: 'x', updatedAt: 1,
+      name: 'My Doc', body: 'secret body', meta: { wordCount: 3 },
+    });
+    const raw = await readRaw('docs', 'd7b');
+
+    // A server row that a legacy plaintext update op polluted: a secret-class
+    // field sits at the top level, in the clear, beside the (complete) envelope.
+    // Re-ingesting it must never reseal just the stray field — that would
+    // replace the envelope and destroy the document's body and metadata.
+    await table('docs').put({ ...raw, name: 'stray-plaintext', updatedAt: 2 });
+
+    const back = await table('docs').get('d7b');
+    expect(back?.name).toBe('My Doc');
+    expect(back?.body).toBe('secret body');
+    expect(back?.meta).toEqual({ wordCount: 3 });
+    // The stray plaintext must not survive at rest either.
+    const healed = await readRaw('docs', 'd7b');
+    expect(healed?.name).toBeUndefined();
   });
 });
 

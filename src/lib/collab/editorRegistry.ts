@@ -7,7 +7,14 @@ import type { FlushResult } from './flush.types';
  * remounting the component. Only mounted documents have a handle.
  */
 export interface EditorHandle {
-  restoreBody: (serialized: string) => void;
+  /**
+   * Replace the live editor's content, resolving only once the change has
+   * committed in Lexical **and** its resulting CRDT update has reached the
+   * durable log. Restore/reconcile flows await this so success is recorded only
+   * after the write has actually persisted — never for a restore that failed to
+   * land. Rejects if the CRDT write fails.
+   */
+  restoreBody: (serialized: string) => Promise<void>;
   /**
    * Flush any pending autosave, resolving once the write has landed with a
    * {@link FlushResult} describing whether anything was persisted and which body.

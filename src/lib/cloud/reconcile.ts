@@ -37,6 +37,9 @@ export interface ReconcileResult {
   action: 'restored' | 'reseeded' | 'kept-local';
 }
 
+/** The slice of a document reconciliation needs: its id and current row body. */
+type Reconcilable = Pick<Doc, 'id' | 'body'>;
+
 /** Clear the stale CRDT lineage and reseed from the pulled body (unmounted doc). */
 const reseedFromBody = async (docId: string, body: string): Promise<void> => {
   await collabStore.deleteDoc(docId);
@@ -44,17 +47,19 @@ const reseedFromBody = async (docId: string, body: string): Promise<void> => {
 };
 
 /** Bring the pulled body in, through the live editor if mounted, else the log. */
-const applyPulledBody = async (doc: Doc): Promise<ReconcileResult> => {
+const applyPulledBody = async (doc: Reconcilable): Promise<ReconcileResult> => {
   const handle = getEditorHandle(doc.id);
   if (handle) {
-    handle.restoreBody(doc.body);
+    // Await the restore so a failed CRDT write throws here (and the doc is left
+    // to retry on the next sweep) rather than being recorded as a success.
+    await handle.restoreBody(doc.body);
     return { docId: doc.id, action: 'restored' };
   }
   await reseedFromBody(doc.id, doc.body);
   return { docId: doc.id, action: 'reseeded' };
 };
 
-const reconcileDoc = async (doc: Doc): Promise<ReconcileResult | null> => {
+const reconcileDoc = async (doc: Reconcilable): Promise<ReconcileResult | null> => {
   const updates = await collabStore.loadAll(doc.id);
   const localSnapshot = serializeDocSnapshot(doc.id, updates);
   // Every body is canonical serialized Lexical JSON, so a locally-produced row
@@ -219,6 +224,25 @@ const reconcileLibrary = async (): Promise<ReconcileSummary> => {
  */
 export const reconcilePulledDocs = async (): Promise<ReconcileResult[]> =>
   (await reconcileLibrary()).results;
+
+/**
+ * Reconcile a single document's CRDT against its row body **before its editor
+ * mounts**. The editor is not yet registered, so this always takes the unmounted
+ * path: it seeds an empty log, and for a populated log that diverged from a body
+ * pulled while the doc was closed it keeps the local snapshot as a recoverable
+ * revision and reseeds from the body. The editor therefore mounts over a CRDT
+ * that already equals `docs.body` — and so equals the autosave baseline captured
+ * at mount, closing the window where a stale local CRDT would be mistaken for
+ * unsaved edits. Idempotent: a doc whose CRDT already equals its body is left
+ * untouched. Repairs a wider set of states than a bare empty-log reseed, which
+ * cannot touch a populated-but-stale log.
+ */
+export const reconcileDocForMount = async (
+  docId: string,
+  body: string,
+): Promise<void> => {
+  await reconcileDoc({ id: docId, body });
+};
 
 let runCounter = 0;
 
