@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { db } from '@/db/db';
-import { useUI } from '@/store/ui';
+import { registerEditorHandle } from '@/lib/collab/editorRegistry';
 import { sampleDoc, sampleSpace, sampleSection } from '@/test/fixtures';
 import { createRevision } from './createRevision';
 import { restoreRevision } from './restoreRevision';
@@ -8,11 +8,19 @@ import { InvariantError } from '@/lib/invariant';
 import { serializedBody } from '@/test/fixtures';
 
 describe('restoreRevision', () => {
+  let restoreBody: ReturnType<typeof vi.fn<(serialized: string) => Promise<void>>>;
+  let unregister: () => void;
+
   beforeEach(async () => {
-    useUI.setState({ restoreNonces: {} });
+    restoreBody = vi.fn<(serialized: string) => Promise<void>>(async () => {});
+    unregister = registerEditorHandle(sampleDoc.id, { restoreBody });
     await db.spaces.put(sampleSpace);
     await db.sections.put(sampleSection);
     await db.docs.put({ ...sampleDoc, body: serializedBody('current body'), meta: { wordCount: 2 } });
+  });
+
+  afterEach(() => {
+    unregister();
   });
 
   it('restores the target body and snapshots the current state first', async () => {
@@ -34,16 +42,26 @@ describe('restoreRevision', () => {
     expect(safety?.kind).toBe('manual');
   });
 
-  it('bumps only the restored doc\'s nonce so other open docs do not remount', async () => {
+  it('replays the restored body through the live editor', async () => {
     const target = await createRevision(sampleDoc.id, serializedBody('old body text'), {
       kind: 'manual',
     });
 
-    expect(useUI.getState().restoreNonces[sampleDoc.id] ?? 0).toBe(0);
     await restoreRevision(sampleDoc.id, target.id);
 
-    expect(useUI.getState().restoreNonces[sampleDoc.id]).toBe(1);
-    expect(useUI.getState().restoreNonces['other-doc']).toBeUndefined();
+    expect(restoreBody).toHaveBeenCalledTimes(1);
+    expect(restoreBody).toHaveBeenCalledWith(serializedBody('old body text'));
+  });
+
+  it('rejects when no live editor is mounted for the doc', async () => {
+    unregister();
+    const target = await createRevision(sampleDoc.id, serializedBody('old body text'), {
+      kind: 'manual',
+    });
+
+    await expect(
+      restoreRevision(sampleDoc.id, target.id),
+    ).rejects.toBeInstanceOf(InvariantError);
   });
 
   it('rejects an unknown revision id', async () => {
