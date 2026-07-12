@@ -1,0 +1,85 @@
+---
+name: build-writer-ui
+description: >
+  Design system, accessibility, i18n, and testing requirements for Writer UI work.
+  Use when adding or changing any component, screen, or user-facing copy. Trigger
+  terms: "component", "UI", "design system", "accessibility", "a11y", "i18n",
+  "copy", "help article", "story", "storybook", "style".
+version: 1.0.0
+tags: [ui, design-system, accessibility, i18n, storybook]
+---
+
+# Build Writer UI
+
+## Design system (read first)
+
+`docs/design-system.md` is the single source of truth for tokens, primitives, and
+principles. Read the relevant sections before choosing any component or colour.
+
+### Tokens
+Use the token-backed Tailwind classes from `tailwind.config.ts` / `src/index.css`:
+`ink`, `paper`, `rule`, `accent`, `hl-*`, `warning`, `danger`, `success`, `info`.
+**Never hard-code a hex colour or a raw `px` value** for anything a token covers.
+
+### Primitives
+Build from `src/components/ui/` — Button, TextField, Select, Checkbox, RadioRow,
+FormRow, Fieldset, Chip / ChipGroup, dialog, popover, tooltip, tabs, `InlineBanner`,
+`StatusGlyph`, `StatusBadge`, `SkipLink`, `VisuallyHidden`.
+
+Survey `docs/design-system.md` component tables **and** `src/components/ui/` before
+writing new markup. If no suitable primitive exists, add it under `src/components/ui/`
+and update `docs/design-system.md` — do not work around the gap.
+
+### Composition helpers
+`cva` from `@/components/libs/variants`, `cn` from `@/lib/utils`, Radix wrappers from
+`@/components/libs/primitives`, icons from `@/components/libs/icons` (never raw
+`lucide-react` imports).
+
+## Accessibility requirements (every UI change)
+
+- Keyboard-operable: every interactive element reachable by Tab with a visible focus ring.
+- Accessible name: every control has an `aria-label` or a visible `<label>`.
+- Correct semantics: use HTML roles (`<button>`, `<nav>`, landmarks) before ARIA.
+- `aria-live` / `aria-describedby` for dynamic content changes.
+- Keyboard shortcuts: always `event.metaKey || event.ctrlKey` — never one platform only.
+  Derive the display label from the running platform; never hard-code `⌘` or `Ctrl`.
+- Respect `prefers-reduced-motion` and the `data-motion` token; no hard-coded durations.
+- Contrast: WCAG AA in `light`/`dark`; AAA (7:1) in `hc-*` themes.
+- New opt-in states must be behind their own story and non-regression test (no
+  behaviour-changing `data-*` applied by default).
+
+See `docs/design-system.md §11` and `ACCESSIBILITY.md` for the full layer.
+
+## British English
+
+All user-facing copy uses British English: `-ise`/`-isation`, `-our`, `-re`, `colour`,
+`organise`, `behaviour`, `centre`. Exceptions: code identifiers, URL slugs, CSS tokens,
+and established product names stay as written.
+
+UI strings live in `src/i18n/locales/en/*.json`. Help Center articles are in
+`src/help/content/en/<slug>.md`.
+
+## One component per file
+
+Each React component in its own PascalCase file. Group related sub-components under a
+shared folder; never co-locate multiple components in one file.
+
+## Required artefacts for every new component
+
+1. `ComponentName.tsx` — the component (in `src/components/` or the feature folder)
+2. `ComponentName.test.tsx` — Vitest unit tests; cover all interactive states
+3. `ComponentName.stories.tsx` — Storybook stories; enable the a11y addon check
+
+## Help Center updates
+
+User-facing behaviour changes ship with a help update in the same PR:
+
+1. Write or edit `src/help/content/en/<slug>.md` (task-oriented, end-user prose)
+2. Register the article in `src/lib/help/registry.ts` (`category`, `keywords`, `featureArea`)
+3. `src/lib/help/registry.test.ts` fails if a `featureArea` has no article — treat a
+   red test as a missing doc, not a test to weaken
+
+## Spec update
+
+Any behaviour change must update the relevant section of `docs/technical-specification.md`
+in the same PR. See `plan-writer-change` for the full requirement.

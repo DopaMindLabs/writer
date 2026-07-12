@@ -1,14 +1,62 @@
 # AGENTS.md
 
+> Bootstrap for every agent. Read this file first, then select and read the
+> relevant `.agents/skills/*/SKILL.md` files before touching any code.
+> Skills may be combined. When in doubt, read more skills, not fewer.
+>
+> This file is the **single, complete source of the non-negotiable rules**. Skills,
+> playbooks, and reference docs carry workflows, examples, and rationale; where any of
+> them appears to disagree with this file, this file wins — treat the disagreement as a
+> bug and fix it.
+
+---
+
+## Skill routing table
+
+| Trigger | Skill |
+|---|---|
+| "find", "locate", "where is", "who calls", "trace", "callers of" | [`navigate-writer-codebase`](.agents/skills/navigate-writer-codebase/SKILL.md) |
+| "plan", "design", "what files", "scope", "impact", "before I code" | [`plan-writer-change`](.agents/skills/plan-writer-change/SKILL.md) |
+| "implement", "code it", "make the change", "write the code" | [`implement-writer-change`](.agents/skills/implement-writer-change/SKILL.md) |
+| "audit", "review", "check", "risks in", "is this safe" | [`audit-writer-change`](.agents/skills/audit-writer-change/SKILL.md) |
+| "test", "TDD", "vitest", "playwright", "coverage", "spec" | [`test-writer-changes`](.agents/skills/test-writer-changes/SKILL.md) |
+| "component", "UI", "design system", "a11y", "i18n", "copy", "storybook" | [`build-writer-ui`](.agents/skills/build-writer-ui/SKILL.md) |
+| "schema", "migration", "dexie", "table", "stores.ts", "LoremDB" | [`change-writer-persistence`](.agents/skills/change-writer-persistence/SKILL.md) |
+| "collab", "yjs", "crdt", "multi-tab", "BroadcastChannel", "presence" | [`work-on-editor-collaboration`](.agents/skills/work-on-editor-collaboration/SKILL.md) |
+| "cloud", "dexie cloud", "sync", "encryption", "escrow", "passphrase" | [`work-on-cloud-sync`](.agents/skills/work-on-cloud-sync/SKILL.md) |
+
+---
+
+## Reference documents
+
+| Document | When to read |
+|---|---|
+| [`docs/architecture.md`](./docs/architecture.md) | Before any change — layers, boundaries, call chains |
+| [`docs/technical-specification.md`](./docs/technical-specification.md) | Before any user-facing behaviour change |
+| [`docs/design-system.md`](./docs/design-system.md) | Before any UI work |
+| [`docs/cloud-sync-beta.md`](./docs/cloud-sync-beta.md) | Before any cloud/encryption work |
+| [`docs/agent-playbooks.md`](./docs/agent-playbooks.md) | Step-by-step workflows (Locate / Plan / Audit / Change) |
+| [`docs/agent-navigation-benchmarks.md`](./docs/agent-navigation-benchmarks.md) | Navigation benchmark cases |
+| [`CODING_STANDARDS.md`](./CODING_STANDARDS.md) | Power-of-Ten coding rules |
+
+---
+
 ## Coding standards (read first)
 
 This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
-[CODING_STANDARDS.md](./CODING_STANDARDS.md). When writing or editing code:
+[CODING_STANDARDS.md](./CODING_STANDARDS.md) — it is **canonical** for code rules; this file
+is the operational digest. If the two ever disagree, the standards file wins — raise the
+drift as a docs bug rather than picking silently. When writing or editing code:
 
 - New or edited code must pass `npx eslint <files> --max-warnings=0` (the pre-commit hook
   enforces this on staged files). Existing warnings are a tracked backlog; do not add to it.
 - Run `npm run lint` and `npm run typecheck` before committing; both gate CI.
-- Use `invariant()` and `assertNever()` from `@/lib/invariant` to validate untrusted input.
+- **Limits:** cyclomatic complexity ≤ 12; nesting ≤ 4; functions ≤ 60 lines and ≤ 3
+  parameters (use an options object beyond three — ESLint's `max-params` still allows 4
+  for the pre-existing backlog; do not add to it). No floating promises; handle every
+  nullable return; no module-level mutable state.
+- Use `invariant()` and `assertNever()` from `@/lib/invariant` to validate untrusted input
+  and assert impossible states.
 - Write all functions as arrow functions (`const f = () => …`), including utilities.
 - **Honour established design principles, not just the linters.** Code must reflect sound
   design — **single responsibility**, **modularity** (high cohesion, low coupling), depending
@@ -20,6 +68,8 @@ This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
   modules together is not done. When a unit grows more than one reason to change, split it.
 - A test file's extension mirrors the file under test: `foo.ts` → `foo.test.ts`,
   `foo.tsx` → `foo.test.tsx`.
+- Types live in a dedicated `*.types.ts` file, or co-located with the module they
+  describe.
 - **One component per file (going forward).** Each React component lives in its own file,
   named in PascalCase to match its export (e.g. `TypographyH1.tsx`), with its `.test.tsx` and
   `.stories.tsx` alongside. Don't co-locate multiple components in one file — extract each into
@@ -27,31 +77,59 @@ This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
   under a shared folder (e.g. `DocInspector/` containing `DocInspector.tsx` and its
   sub-components), keeping one component per file within it. Several existing files still bundle
   private sub-components; treat those as a backlog (like the lint backlog) — don't add new
-  co-located components, and split them out when you next touch the file.
+  co-located components, and split them out when you next touch the file. The same applies to
+  services: **one service per file**.
 - **Never relax limits or silence the linter to make code pass.** Do not raise or loosen the
-  size limits (function/file length, etc.), weaken or disable an ESLint rule, or add
-  `// eslint-disable*`, `// nasa-exception`, `@ts-ignore`/`@ts-expect-error`, or any other
-  suppression. Fix the code instead — split the function or file, extract a module, correct the
-  type. If you are convinced a limit genuinely cannot be met by refactoring, **stop and ask the
-  user clearly and explicitly what to do** before changing any config or adding a suppression;
-  do not decide unilaterally. (`src/tours/` and `src/editor/` carry pre-existing scope
-  exemptions in the lint config — that is the existing status quo, not licence to add more.)
+  size limits (function length, complexity, nesting depth, parameter count), weaken or disable
+  an ESLint rule, or add `// eslint-disable*`, `// nasa-exception`,
+  `@ts-ignore`/`@ts-expect-error`, or any other suppression. Fix the code instead — split the
+  function or file, extract a module, correct the type. If you are convinced a limit genuinely
+  cannot be met by refactoring, **stop and ask the user clearly and explicitly what to do**
+  before changing any config or adding a suppression; do not decide unilaterally. (`src/tours/`
+  and `src/editor/` carry pre-existing scope exemptions in the lint config — that is the
+  existing status quo, not licence to add more.)
 - **Refactor non-compliant files in a separate commit first.** When you need to edit a file
   that already violates these standards (co-located components, oversized functions, leaked
   abstractions, etc.), first bring it into compliance and commit that on its own (a
   `refactor: …` commit with no behaviour change), then apply your actual change in a following
   commit. Keep the refactor and the behavioural change in distinct commits so each stays small,
   reviewable, and revertible on its own — never bundle a clean-up into the feature/fix diff.
+  Scope the refactor to the files you actually touch — don't cascade a repo-wide clean-up out
+  of one edit. If bringing a single file into compliance would dwarf the actual change, stop
+  and ask before starting it.
 - **Legacy support requires explicit permission.** Do not add new code paths, fallbacks,
   fixtures, or migrations whose purpose is to support legacy formats or behaviour (e.g.
   pre-Lexical plain-text bodies) without asking the user first and getting an explicit yes.
   Existing legacy handling stays as-is until its removal is explicitly agreed — don't extend
   it, and don't silently remove it either.
 
+## Task order (read before starting work)
+
+The canonical sequence for any change, reconciling the rules that each demand to come
+"first":
+
+1. **Compliance refactor** (only if needed): if the files you must edit already violate the
+   standards, land the `refactor:` commit first, scoped as above.
+2. **Failing test first (TDD).** Write or extend the unit/e2e test that describes the
+   intended behaviour.
+3. **Implement** until green, keeping lint/typecheck clean as you go.
+4. **Same PR:** update the spec section, help article(s), a11y tests, and `.stories.tsx`
+   the change touches.
+5. **Run the gates:** `npm run lint`, `npm run typecheck`, `npm run test:run`;
+   `npm run test:e2e` for UI-facing changes; `npm run test:e2e:coverage` for
+   coverage-affecting changes.
+6. **Conventional Commit** and push; the PR title must itself be a valid Conventional
+   Commit subject.
+
+**When a stop-and-ask rule fires and no user can answer** (headless or autonomous run):
+stop that thread of work, finish what does not depend on the answer, and surface the
+question prominently in your report or PR description. Never guess your way past a
+stop-and-ask rule.
+
 ## Language (read before writing copy)
 
 All user-facing copy and documentation use **British English** — e.g. _colour_, _organise_,
-_customise_, _behaviour_, _centre_, _-ise_ not _-ize_. This applies to UI strings
+_customise_, _behaviour_, _centre_, _licence_ (`-ce` for nouns), _-ise_ not _-ize_. This applies to UI strings
 (`src/i18n/locales/en/*.json`), Help Center articles (`src/help/content/en/*.md`), comments,
 and docs.
 
@@ -86,15 +164,16 @@ System" design spec. When adding or changing any component or feature, verify it
   `@/components/libs/icons`. Don't duplicate a primitive or reach for a raw `lucide-react`
   import.
 - **Raise gaps, don't work around them.** If no suitable primitive or token exists, **do not**
-  hard-code a one-off. Give feedback that the design system must be extended — add the
-  primitive under `src/components/ui/` and update `docs/design-system.md` to match — so the DS
-  stays the source of truth and the gap is addressed, not buried.
-- **HOCs must be composed from and consistent with the DS** — its primitives and tokens, not
-  bespoke markup or colours.
+  hard-code a one-off. Extend the design system instead: add the primitive under
+  `src/components/ui/`, document it in `docs/design-system.md` in the same PR, and call the
+  addition out in the PR description so it is reviewed as a DS change — the DS stays the
+  source of truth and the gap is addressed, not buried.
+- **Wrapper and higher-order components must be composed from and consistent with the DS** —
+  its primitives and tokens, not bespoke markup or colours.
 - **Scope.** Reading-and-publishing surfaces are out of scope for this repo and are omitted
   from `docs/design-system.md`; build the **writer** surface only.
-- Add a `.test.tsx` and a `.stories.tsx` mirroring the file under test (see
-  [CODING_STANDARDS.md](./CODING_STANDARDS.md)).
+- Every new component ships with a `.test.tsx` and a `.stories.tsx` alongside it (see the
+  one-component-per-file rule above).
 
 ## Accessibility (read before building UI)
 
@@ -119,9 +198,9 @@ is the source of truth for the accessibility layer; align with it when building 
   from the running platform so each user sees the key they actually press. This applies to app
   functionality the same way the [E2E section](#e2e-test-coverage-ratcheted)'s `ControlOrMeta+A`
   rule applies to specs.
-- **Additive by default.** New behaviour is opt-in and must not change the default experience
-  for existing users. Defaults equal today's behaviour; persisted preferences stay
-  back-compatible (`?? default`, no destructive migration).
+- **Additive by default.** New accessibility behaviour is opt-in and must not change the
+  default experience for existing users. Defaults equal today's behaviour; persisted
+  preferences stay back-compatible (`?? default`, no destructive migration).
 - **Contrast.** Target **WCAG AA** in `light`/`dark` and **AAA (7:1)** in the `hc-*` themes;
   keep AAA-strict colour work inside the high-contrast themes.
 - **Ships with a11y tests.** User-facing behaviour lands with accessibility tests the same way
@@ -133,15 +212,24 @@ is the source of truth for the accessibility layer; align with it when building 
 ## E2E test coverage (ratcheted)
 
 E2E coverage is gated by a ratchet (`scripts/coverage-ratchet.mjs`, run via
-`npm run test:e2e:coverage`) that compares the live run against the **global** floors in
-`coverage-baseline.json` and only ever raises them toward the cap. The ratchet enforces the
-whole-suite aggregate; **local** (per-feature) coverage is your responsibility to verify and
-is checked in review.
+`npm run test:e2e:coverage`) over the **global** floors in `coverage-baseline.json`. The
+mechanics: a run that meets every floor passes; a metric below its floor fails; a metric
+sufficiently above its floor *raises* the floor (to two points under the achieved figure, in
+steps of five or more, never past the file's `cap`). Floors only ever move up. In CI a run
+that would raise a floor **fails** with instructions — run `npm run test:e2e:coverage`
+locally and commit the updated `coverage-baseline.json` to lock it in. The ratchet enforces
+the whole-suite aggregate; **local** (per-feature) coverage is your responsibility to verify
+and is checked in review.
 
-- **Target ≥ 95% coverage across the board — both global and local.** Every new or changed
-  user-facing feature must reach **≥ 95%** e2e coverage of its own code paths (local) and must
-  not pull any global metric below 95%. Add Playwright specs under `e2e/` alongside the
-  feature; don't rely on unit tests to cover flows a user can click through.
+- **Target ≥ 95% coverage — both global and local.** Every new or changed user-facing
+  feature must reach **≥ 95%** e2e coverage of its own code paths (local) and must not lower
+  any global metric (the floors are below the target today; they ratchet toward it, never
+  away). Add Playwright specs under `e2e/` alongside the feature; don't rely on unit tests
+  to cover flows a user can click through.
+- **Measure local coverage from the same run:** the report at `e2e-coverage/index.html`
+  lists per-file percentages (the four global metrics land in
+  `e2e-coverage/coverage-summary.json`). Check your feature's files there before calling the
+  work done.
 - **85% local is a hard floor — never below it.** If 95% is *genuinely* unreachable for a
   feature (e.g. browser APIs that can't be driven headlessly, error paths that need
   unsimulatable failures), **stop and report back to the user before proceeding, and ask for
@@ -151,26 +239,29 @@ is checked in review.
   would, the work is not done; add tests or refactor for testability instead of lowering the
   bar.
 - **Coverage may only increase.** Never lower a value in `coverage-baseline.json` or relax the
-  ratchet to make CI pass — fix the tests instead. When a run raises the floors, commit the
-  updated `coverage-baseline.json`.
+  ratchet to make CI pass — fix the tests instead. On a merge conflict in
+  `coverage-baseline.json`, keep the higher floor for each metric.
 - Run `npm run test:e2e:coverage` before committing coverage-affecting changes; it gates CI.
-- `src/editor/**` and `src/tours/**` are excluded from e2e coverage (covered by unit tests); the
-  95% target / 85% floor applies to the rest of the app.
+- The coverage report excludes `src/editor/**`, `src/tours/**`, `src/test/**`,
+  `src/db/schema*`, `src/data/templates/types*`, and `src/main.tsx` (see `sourceFilter` in
+  `playwright.config.ts`); the excluded areas are covered by unit tests instead. The 95%
+  target / 85% floor applies to everything else.
 
 ### Running e2e (agents: headless, locally — don't defer to CI)
 
 - **Always run Playwright headless** (its default — never `--headed` or `--ui` in an agent
   or CI environment) and run the suite yourself before pushing e2e-affecting changes rather
   than waiting for CI to find failures.
-- **Write specs that pass cross-platform — agents run on macOS, CI runs on Linux.** Never
-  assume the local OS. The trap is keyboard modifiers: `Meta` is Cmd on macOS (so `Meta+a`
-  selects all locally) but the Super/Windows key on Linux/Windows, where the same chord is a
-  no-op — leaving only a caret. Use Playwright's platform-aware `ControlOrMeta+A` (or select
-  text explicitly) for select-all, copy, paste, and similar shortcuts. This bites twice: a
-  positive assertion (toolbar *appears* on selection) flakes/times out on CI, while a negative
-  one (toolbar *absent*) passes vacuously without ever exercising the behaviour. Prefer asserting
-  both the present and absent states with the same helper so a broken selection can't green a
-  test. The same goes for any OS-specific path, line-ending, or timing assumption.
+- **Write specs that pass cross-platform — agents may run on macOS or Linux, CI runs on
+  Linux.** Never assume the local OS. The trap is keyboard modifiers: `Meta` is Cmd on macOS
+  (so `Meta+a` selects all there) but the Super/Windows key on Linux/Windows, where the same
+  chord is a no-op — leaving only a caret. Use Playwright's platform-aware `ControlOrMeta+A`
+  (or select text explicitly) for select-all, copy, paste, and similar shortcuts. This bites
+  twice: a positive assertion (toolbar *appears* on selection) flakes/times out on the other
+  OS, while a negative one (toolbar *absent*) passes vacuously without ever exercising the
+  behaviour. Prefer asserting both the present and absent states with the same helper so a
+  broken selection can't green a test. The same goes for any OS-specific path, line-ending,
+  or timing assumption.
 - If the browser is missing, install it with `npx playwright install chromium`. In sandboxed
   environments where `cdn.playwright.dev` is blocked, the identical Chrome for Testing build
   is on `storage.googleapis.com` (allowed): check the expected version, paths, and layout
@@ -183,11 +274,11 @@ is checked in review.
 ## Testing philosophy (read before changing tests)
 
 Unit tests (Vitest) and e2e tests (Playwright) exist to **prevent regressions** — to
-protect existing, working behavior from unintended change. Treat them as a safety net,
+protect existing, working behaviour from unintended change. Treat them as a safety net,
 not a checkbox.
 
 - **Take a TDD/BDD approach.** Before implementing a change, write or extend a test that
-  describes the intended behavior, then make it pass. New behavior ships with a test that
+  describes the intended behaviour, then make it pass. New behaviour ships with a test that
   would fail without it.
 - **A green run is not the objective.** Stability and the absence of unintended changes
   are. Passing tests are a means of confirming that, not the goal itself.
@@ -197,19 +288,41 @@ not a checkbox.
   expected-to-fail, weaken assertions on, or rewrite a test just to get a green run — and do
   not add lint/type suppressions to a test for the same purpose. A failing test is signalling
   that behaviour changed; diagnose why.
-- The **only** exception is when the user has explicitly agreed that the feature under
-  test is being removed or is redundant. In that case, remove the test as part of that
-  agreed change. Anything short of that — including a "temporary" skip — requires asking the
-  user first.
+- **An intended behaviour change is not "fixing a test to get green."** When the task itself
+  is to change behaviour, updating the test that asserts the old behaviour is part of the
+  change (TDD's first step), together with the matching spec section. The ban above is on
+  weakening tests to hide an *unintended* regression.
+- **Removing a test outright** requires the user to have explicitly agreed that the feature
+  under test is being removed or is redundant; remove the test as part of that agreed change.
+  Anything short of that — including a "temporary" skip — requires asking the user first.
 - Run `npm run test:run` (and `npm run test:e2e` for UI-facing changes) before committing,
   alongside `npm run lint` and `npm run typecheck`.
+
+### Test-suite guardrails
+
+- **No hardcoded waits.** Never `page.waitForTimeout(...)` or a hand-rolled
+  `setTimeout` wait in a spec — use Playwright's auto-waiting assertions
+  (`await expect(locator).toBeVisible()`, …) so the test waits for the condition, not
+  a guess at the clock.
+- **No `{ force: true }`** on clicks or fills. A forced interaction papers over a broken
+  locator or an unusable component — fix the locator or the component instead.
+- **Stable locators only.** Prefer `getByRole` / `getByText` / `getByTestId`;
+  `data-testid` is the primary selector for elements without a meaningful accessible
+  role. Never select on CSS classes or DOM structure that a refactor may change.
+- **No `any` in tests.** Use Vitest's typed mocks or typed shape objects — tests follow
+  the same type discipline as production code.
+- **No `console.warn` / `console.error` output** from new tests — resolve the root cause
+  rather than tolerating noisy output.
+- **Test the public API only.** Assert observable behaviour; no direct calls to private
+  methods or internal state.
 
 ## Commits & branches
 
 **Commit messages, branch names, and PR titles must all strictly follow
 [Conventional Commits](https://www.conventionalcommits.org/)** — no exceptions. Commits are
-linted by commitlint (the `commit-msg` hook); run `npm run commit` for a guided Commitizen
-prompt. The **PR title** must itself be a valid Conventional Commit subject
+linted by commitlint (the `commit-msg` hook). Humans can run `npm run commit` for a guided
+Commitizen prompt; agents should write the message directly with `git commit -m` (the hook
+still validates it). The **PR title** must itself be a valid Conventional Commit subject
 (`<type>(<scope>): <description>`, e.g. `feat(citations): import BibTeX`) — the squash-merge
 commit is derived from it, so a non-conforming title breaks the convention on the default
 branch. Branch names must be prefixed with a Conventional Commit type. This is enforced at
@@ -219,7 +332,8 @@ name** CI check gates the PR, and the `post-checkout` hook prints a non-blocking
 the moment a misnamed branch is checked out (`--warn` mode):
 
 - Form: `<type>/<kebab-description>` — e.g. `feat/user-login`, `fix/date-parse`,
-  `chore/bump-deps`. Underscores are allowed for suffixes (`feat/user-login_v2`).
+  `chore/bump-deps`. Underscores are accepted as separators alongside hyphens
+  (`feat/user-login_v2`).
 - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`,
   `revert`.
 - Exempt: `main`, `develop`, and automation / release branches (`dependabot/*`,
@@ -242,10 +356,12 @@ production releases and is changed only through the project's release process, n
 
 - **`main` means `main`.** If a request says "main" but the context points at the integration
   branch, do not assume — `develop` is the integration branch where day-to-day work lands.
-- **Always confirm before any branch-level git write**, regardless of which branch is named, and
-  **especially** before anything touching `main` or rewriting shared history (`develop`, release
-  branches). State the exact branch, the exact operation, and the blast radius, and wait for
-  explicit approval. When in doubt, ask — a wrong guess about the target branch is hard to undo.
+- **Routine work on your own feature branch needs no confirmation** — committing, pushing,
+  and rebasing commits that only exist on a branch you created are normal work.
+- **Confirm everything else first**: any write to `main`, `develop`, or a release branch;
+  rewriting history that has been pushed or shared; force-pushes; deleting branches or tags.
+  State the exact branch, the exact operation, and the blast radius, and wait for explicit
+  approval. When in doubt, ask — a wrong guess about the target branch is hard to undo.
 
 ## Specification (read before changing behaviour)
 
@@ -265,7 +381,7 @@ it ships with a test and a help update.
 ## Help content (read before adding or changing features)
 
 The in-app **Help Center** (`/help`) is end-user documentation that lives beside the
-code. User-facing behavior changes ship with a help update, the same way they ship with
+code. User-facing behaviour changes ship with a help update, the same way they ship with
 a test. When planning a feature, identify which help article(s) it adds or changes; when
 implementing, update them in the same PR.
 
@@ -284,6 +400,12 @@ implementing, update them in the same PR.
 
 - `npm run dev`: Vite dev server
 - `npm run lint` and `npm run lint:fix`: ESLint
-- `npm run typecheck`: `tsc --noEmit`
+- `npx eslint <file> --max-warnings=0`: targeted lint check
+- `npm run typecheck`: `tsc -b --noEmit`
 - `npm run test:run`: unit tests (Vitest, once)
+- `npm run test:coverage`: unit tests with coverage
 - `npm run test:e2e`: Playwright e2e
+- `npm run test:e2e:coverage`: e2e plus the coverage ratchet (gates CI)
+- `npm run build`: production build (`tsc -b` + Vite)
+- `npm run storybook`: Storybook dev server
+- `npm run commit`: guided Commitizen prompt (humans; agents use `git commit -m`)
