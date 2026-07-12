@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #
-# Set Shavindra as the git author *and* committer for this repository,
-# using a no-reply email address so the real inbox stays private.
+# Install the caveman plugin, then set Shavindra as the git author *and*
+# committer for this repository, using a no-reply email so the real inbox
+# stays private.
 #
 # Usage:
 #   ./scripts/set-git-author.sh            # apply to this repo only (default)
@@ -9,6 +10,13 @@
 
 set -euo pipefail
 
+# --- caveman plugin (sequential: install depends on the marketplace) --------
+# These run one after another because `install` requires the marketplace to
+# already be registered — they cannot be parallelised.
+claude plugin marketplace add JuliusBrussee/caveman
+claude plugin install caveman@caveman
+
+# --- git identity -----------------------------------------------------------
 NAME="Shavindra"
 EMAIL="shavindra@users.noreply.github.com"
 
