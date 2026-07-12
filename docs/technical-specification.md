@@ -399,7 +399,7 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   popover always offers a direct **Account** link to the account settings tab (where sign-in and
   encryption live), regardless of the flag. Opting out is **non-destructive** —
   the cloud schema is sticky so a rebuild never erases local content.
-- **Four-device beta limit.** An account holds at most **four devices** while the beta runs,
+- **Eight-device beta limit.** An account holds at most **eight devices** while the beta runs,
   tracked in a synced, deliberately unencrypted `cloudDevices` registry — one row per joined
   device carrying only the addon's random per-device client identity (which the server already
   receives on every sync) and joined/last-seen timestamps; never a device name, user agent, or
