@@ -9,7 +9,7 @@ import Dexie, {
 } from 'dexie';
 import type { CloudKeyRing } from './keys';
 import { isEncryptedTable, plaintextFieldsFor, CIPHER_FIELD } from './tableRules';
-import { sealRow, openRow, EnvelopeIntegrityError } from './envelope';
+import { sealRow, openRow, EnvelopeIntegrityError, MalformedEnvelopeError } from './envelope';
 import { CloudKeyMismatchError, CloudKeylessWriteError } from './errors';
 import { keyMismatchState } from './keyMismatch';
 import { currentLockReason, type LockReason } from './lockReason';
@@ -107,6 +107,15 @@ const openOrDrop = async (
   } catch (error) {
     if (error instanceof EnvelopeIntegrityError) {
       onUnreadable();
+      return undefined;
+    }
+    // A structurally malformed envelope is corruption, not a key mismatch: drop
+    // the row from this read so the list survives, but never flag a mismatch (it
+    // would wrongly lock the device). Post-inline-envelope this should not occur.
+    if (error instanceof MalformedEnvelopeError) {
+      console.error('Dropping a row with a malformed cipher envelope', {
+        table: table.name,
+      });
       return undefined;
     }
     throw error;

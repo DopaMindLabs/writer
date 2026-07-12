@@ -5,6 +5,7 @@ import {
   sealRow,
   openRow,
   EnvelopeIntegrityError,
+  MalformedEnvelopeError,
   type CipherEnvelope,
 } from './envelope';
 
@@ -37,14 +38,18 @@ describe('cipher envelope', () => {
     expect(sealed.updatedAt).toBe(1);
     expect(sealed.name).toBeUndefined();
     expect(sealed.body).toBeUndefined();
-    // The envelope carries only opaque bytes.
+    // The envelope carries only opaque base64 ciphertext — never a Uint8Array
+    // (which Dexie Cloud would offload to a blob) and never leaked plaintext.
     const envelope = sealed[CIPHER_FIELD] as CipherEnvelope;
     expect(envelope.v).toBe(1);
     expect(envelope.epoch).toBe(1);
-    expect(envelope.iv).toHaveLength(12);
-    const flat = JSON.stringify(Array.from(envelope.data));
-    expect(flat).not.toContain('Secret');
+    expect(typeof envelope.iv).toBe('string');
+    expect(typeof envelope.data).toBe('string');
+    expect(atob(envelope.iv)).toHaveLength(12);
+    // Plaintext never survives in the sealed row (neither the field value nor
+    // its key). Decoded ciphertext is random bytes, so assert on the row itself.
     expect(JSON.stringify(sealed)).not.toContain('"B"');
+    expect(JSON.stringify(sealed)).not.toContain('"name"');
   });
 
   it('passes through a row that carries no cipher envelope', async () => {
@@ -76,7 +81,11 @@ describe('cipher envelope', () => {
     const row = { id: 'doc-1', spaceId: 's', sectionId: 'x', updatedAt: 1, body: 'B' };
     const sealed = await sealRow(keyRing, { table: 'docs', primaryKey: 'doc-1' }, row, rules);
     const envelope = sealed[CIPHER_FIELD] as CipherEnvelope;
-    envelope.data[0] ^= 0xff;
+    // Flip a ciphertext byte, keeping it valid base64 so the failure is an
+    // authentication (integrity) failure, not a malformed-shape rejection.
+    const bytes = Uint8Array.from(atob(envelope.data), (c) => c.charCodeAt(0));
+    bytes[0] ^= 0xff;
+    envelope.data = btoa(String.fromCharCode(...bytes));
     await expect(openRow(keyRing, { table: 'docs', primaryKey: 'doc-1' }, sealed)).rejects.toBeInstanceOf(
       EnvelopeIntegrityError,
     );
@@ -87,8 +96,8 @@ describe('cipher envelope', () => {
     const row = { id: 'doc-1', spaceId: 's', sectionId: 'x', updatedAt: 1, body: 'B' };
     const a = (await sealRow(keyRing, { table: 'docs', primaryKey: 'doc-1' }, row, rules))[CIPHER_FIELD] as CipherEnvelope;
     const b = (await sealRow(keyRing, { table: 'docs', primaryKey: 'doc-1' }, row, rules))[CIPHER_FIELD] as CipherEnvelope;
-    expect(Array.from(a.iv)).not.toEqual(Array.from(b.iv));
-    expect(Array.from(a.data)).not.toEqual(Array.from(b.data));
+    expect(a.iv).not.toEqual(b.iv);
+    expect(a.data).not.toEqual(b.data);
   });
 
   it('round-trips binary field values (Uint8Array and Blob)', async () => {
@@ -103,6 +112,24 @@ describe('cipher envelope', () => {
     const outBlob = opened.file as Blob;
     expect(outBlob.type).toBe('image/png');
     expect(Array.from(new Uint8Array(await outBlob.arrayBuffer()))).toEqual([9, 8, 7]);
+  });
+
+  it('rejects a non-string data field as malformed, not an integrity failure', async () => {
+    const keyRing = await ring();
+    const row = { id: 'doc-1', spaceId: 's', sectionId: 'x', updatedAt: 1, body: 'B' };
+    const sealed = await sealRow(keyRing, { table: 'docs', primaryKey: 'doc-1' }, row, rules);
+    const envelope = sealed[CIPHER_FIELD] as CipherEnvelope;
+    // Simulate a stray non-string shape reaching the decrypt path (e.g. a Dexie
+    // Cloud blob ref). It must be a malformed-envelope error — never an integrity
+    // error, which would wrongly engage the key-mismatch lock on the device.
+    (envelope as unknown as { data: unknown }).data = {
+      _bt: 'Uint8Array',
+      ref: '2:abc',
+      size: 5015,
+    };
+    const opening = openRow(keyRing, { table: 'docs', primaryKey: 'doc-1' }, sealed);
+    await expect(opening).rejects.toBeInstanceOf(MalformedEnvelopeError);
+    await expect(opening).rejects.not.toBeInstanceOf(EnvelopeIntegrityError);
   });
 
   it('refuses to encrypt a function value', async () => {

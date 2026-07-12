@@ -100,7 +100,7 @@ queryable) and moves **every other top-level field** into one `$lipsumCipher` en
 (`src/lib/cloud/crypto/envelope.ts`):
 
 ```
-CipherEnvelope { v: 1, epoch, iv: Uint8Array(12), data: Uint8Array }
+CipherEnvelope { v: 1, epoch, iv: base64 string, data: base64 string }
 ```
 
 - **Algorithm** — AES-256-GCM, a fresh 12-byte random IV per seal.
@@ -109,6 +109,18 @@ CipherEnvelope { v: 1, epoch, iv: Uint8Array(12), data: Uint8Array }
   fails authentication (`EnvelopeIntegrityError`) instead of silently decrypting.
 - **Payload** — the secret fields are JSON-serialised with a tagged encoding so
   `Uint8Array` and `Blob` values round-trip; function values are rejected.
+- **Inline base64, never binary** — `iv` and `data` are base64 **strings**, not
+  `Uint8Array`. Dexie Cloud auto-offloads any binary value ≥ 4 KB to blob storage,
+  replacing it on the wire with a `{_bt,ref,size}` reference the receiver resolves
+  asynchronously. That blob lifecycle is incompatible with this middleware (which sits
+  above the addon's blob-resolve layer): an unresolved ref cannot be decrypted, and the
+  addon's blob save-back re-enters the middleware and corrupts the write — dropping large
+  docs on the receiving device and looping downloads. Keeping the ciphertext an inline
+  string sidesteps the binary-offload path; the paired `largeStringThreshold: Infinity`
+  cloud config (`src/db/buildDb.ts`) sidesteps the large-string offload path. A stray
+  non-string `iv`/`data` reaching decrypt raises `MalformedEnvelopeError` (distinct from
+  `EnvelopeIntegrityError`), so a malformed row is dropped from the read without wrongly
+  engaging the key-mismatch lock.
 
 Which fields stay plaintext is derived from the single schema source of truth
 (`src/db/stores.ts`) by `src/lib/cloud/crypto/tableRules.ts`: a field is plaintext iff it

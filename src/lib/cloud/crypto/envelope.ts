@@ -1,12 +1,25 @@
 import type { CloudKeyRing } from './keys';
 import { CIPHER_FIELD } from './tableRules';
 
-/** The encrypted payload stored on a sealed row under {@link CIPHER_FIELD}. */
+/**
+ * The encrypted payload stored on a sealed row under {@link CIPHER_FIELD}.
+ *
+ * `iv` and `data` are base64 **strings**, never `Uint8Array`. This is
+ * load-bearing: Dexie Cloud auto-offloads any binary value (`Uint8Array` /
+ * `ArrayBuffer`) ≥ 4 KB to blob storage, replacing it on the wire with a
+ * `{_bt,ref,size}` reference the receiving device must download and re-persist
+ * asynchronously. That blob lifecycle is fundamentally incompatible with this
+ * encryption middleware (which sits above the addon's blob-resolve layer): a
+ * pulled-but-unresolved ref cannot be decrypted, and the addon's blob save-back
+ * re-enters this middleware and corrupts the write. Keeping the ciphertext as an
+ * inline string sidesteps the binary-offload path entirely; the paired
+ * `largeStringThreshold: Infinity` cloud config sidesteps the large-string path.
+ */
 export interface CipherEnvelope {
   v: 1;
   epoch: number;
-  iv: Uint8Array;
-  data: Uint8Array;
+  iv: string;
+  data: string;
 }
 
 /** Thrown when a ciphertext fails AES-GCM authentication (tamper / row swap). */
@@ -16,6 +29,35 @@ export class EnvelopeIntegrityError extends Error {
     this.name = 'EnvelopeIntegrityError';
   }
 }
+
+/**
+ * Thrown when an envelope is structurally invalid — its `iv`/`data` are not the
+ * expected base64 strings (e.g. a stray shape reached the decrypt path). Kept
+ * distinct from {@link EnvelopeIntegrityError} so callers never mistake a
+ * malformed row for a wrong-key/tamper failure and wrongly engage the
+ * key-mismatch lock.
+ */
+export class MalformedEnvelopeError extends Error {
+  constructor() {
+    super('Cipher envelope is structurally invalid');
+    this.name = 'MalformedEnvelopeError';
+  }
+}
+
+/** Encode raw bytes as a base64 string, chunked so large bodies don't blow the
+ *  call stack via argument spread. */
+const toBase64 = (bytes: Uint8Array): string => {
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+};
+
+/** Decode a base64 string back to raw bytes. */
+const fromBase64 = (value: string): Uint8Array =>
+  Uint8Array.from(atob(value), (c) => c.charCodeAt(0));
 
 /** Identifies which row a ciphertext belongs to, for AES-GCM's row binding. */
 export interface RowRef {
@@ -110,7 +152,12 @@ export const sealRow = async (
       asBuffer(await serialize(secret)),
     ),
   );
-  const envelope: CipherEnvelope = { v: 1, epoch: ring.epoch, iv, data };
+  const envelope: CipherEnvelope = {
+    v: 1,
+    epoch: ring.epoch,
+    iv: toBase64(iv),
+    data: toBase64(data),
+  };
   return { ...plaintext, [CIPHER_FIELD]: envelope };
 };
 
@@ -122,12 +169,26 @@ export const openRow = async (
 ): Promise<Record<string, unknown>> => {
   const envelope = row[CIPHER_FIELD] as CipherEnvelope | undefined;
   if (!envelope) return row;
+  // Validate the shape *before* decrypting: a non-string iv/data is a malformed
+  // envelope, not a wrong-key/tamper failure, and must not be caught below and
+  // reported as an integrity error (which would engage the key-mismatch lock).
+  if (typeof envelope.iv !== 'string' || typeof envelope.data !== 'string') {
+    throw new MalformedEnvelopeError();
+  }
+  let iv: Uint8Array;
+  let cipherBytes: Uint8Array;
+  try {
+    iv = fromBase64(envelope.iv);
+    cipherBytes = fromBase64(envelope.data);
+  } catch {
+    throw new MalformedEnvelopeError();
+  }
   let plainBytes: ArrayBuffer;
   try {
     plainBytes = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: asBuffer(envelope.iv), additionalData: aad(envelope.epoch, ref) },
+      { name: 'AES-GCM', iv: asBuffer(iv), additionalData: aad(envelope.epoch, ref) },
       ring.contentKey,
-      asBuffer(envelope.data),
+      asBuffer(cipherBytes),
     );
   } catch {
     throw new EnvelopeIntegrityError();
