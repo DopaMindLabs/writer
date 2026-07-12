@@ -30,6 +30,24 @@ AGENTS / AI ASSISTANTS — instructions (humans welcome to follow too):
   (no added sections), CI runs successfully, and no unintended files were included.
 -->
 
+<!--
+AGENT REVIEWERS — before you approve, comment on, or tick anything on this PR:
+
+- Re-read the CURRENT .github/PULL_REQUEST_TEMPLATE.md from this branch. That file
+  is the source of truth for the expected structure — verify against it, never
+  against memory or a cached copy.
+- Verify the PR TITLE is a valid Conventional Commit subject
+  (<type>(<scope>): <description>, types: feat | fix | docs | style | refactor |
+  perf | test | build | ci | chore | revert).
+- Verify the PR BODY conforms to this template EXACTLY: every section present and
+  in the same order, no sections added, removed, or reordered, and every hidden
+  comment left intact.
+- If the title or body DEVIATES in any way, post a PR comment naming the specific
+  deviation(s) and leave the "Agent reviewer" conformance box below UNTICKED.
+- Only once the title and body conform, tick the "Agent reviewer" checklist item to
+  record that an agent verified conformance. Never tick the HUMAN-ONLY item.
+-->
+
 ## Summary
 
 <!-- What does this PR change, and why? One or two sentences. -->
@@ -68,4 +86,5 @@ Fixes #
 - [ ] Spec (`docs/technical-specification.md`) and Help Center updated for user-facing changes — or no user-facing change (stated in summary)
 - [ ] Accessibility and design-system rules followed (tokens/primitives, keyboard operability, British English)
 - [ ] I understand this contribution is submitted under the project's [LICENSE](../LICENSE) (PolyForm Noncommercial 1.0.0) and I have the right to submit it
+- [ ] Agent reviewer: I re-read `.github/PULL_REQUEST_TEMPLATE.md` and confirm this PR's title and description conform to it exactly — any deviation was flagged as a PR comment <!-- AGENT-REVIEWER attestation: an agent reviewer ticks this only after verifying conformance; leave it unticked if unchecked or if any deviation was flagged. This is separate from the HUMAN-ONLY item below, which an agent must never tick. -->
 - [ ] I as a human confirm all changes were reviewed prior to opening this PR <!-- HUMAN-ONLY: agents must never tick this (hard rule in AGENTS.md) -->

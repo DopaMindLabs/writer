@@ -401,6 +401,17 @@ production releases and is changed only through the project's release process, n
 - **The PR checklist item "I as a human confirm all changes were reviewed prior to opening
   this PR" is a human-only attestation. Agents must NEVER tick it** — it exists precisely to
   record an explicit human intervention. Leave it unticked; only the human author checks it.
+- **Agent reviewers must verify PR conformance before approving, commenting, or ticking.**
+  Re-read the current `.github/PULL_REQUEST_TEMPLATE.md` on the branch (the source of truth,
+  not memory), confirm the PR **title** is a valid Conventional Commit subject, and confirm
+  the PR **body** matches the template exactly — every section present and in order, none
+  added, removed, or reordered, hidden comments intact. If the title or body deviates, **flag
+  the specific deviation as a PR comment** and leave the agent-reviewer box unticked.
+- **The PR checklist item "Agent reviewer: I re-read `.github/PULL_REQUEST_TEMPLATE.md` and
+  confirm this PR's title and description conform to it exactly" is the one attestation agents
+  DO tick** — but only after actually performing that verification, and only when nothing was
+  flagged. It is the reviewer counterpart to the human-only item and must never be conflated
+  with it.
 - Always open PRs as **Draft**; a maintainer marks them ready for review.
 
 ## Specification (read before changing behaviour)
