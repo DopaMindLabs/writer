@@ -60,7 +60,7 @@ exports[`ComingSoonRow > snapshot > should match the snapshot across all variant
         </span>
         <button
           aria-label="What is this?"
-          class="inline-flex items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5"
+          class="inline-flex items-center justify-center transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5"
           data-state="closed"
           data-testid="coming-soon-row-help"
           type="button"
@@ -92,7 +92,7 @@ exports[`ComingSoonRow > snapshot > should match the snapshot across all variant
           </svg>
         </button>
         <span
-          class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
+          class="inline-block bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
           data-testid="coming-soon-badge"
         >
           coming soon
@@ -157,7 +157,7 @@ exports[`ComingSoonRow > snapshot > should match the snapshot across all variant
         </span>
         <button
           aria-label="What is this?"
-          class="inline-flex items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5"
+          class="inline-flex items-center justify-center transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5"
           data-state="closed"
           data-testid="coming-soon-row-help"
           type="button"
@@ -189,7 +189,7 @@ exports[`ComingSoonRow > snapshot > should match the snapshot across all variant
           </svg>
         </button>
         <span
-          class="inline-block rounded-sm bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
+          class="inline-block bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
           data-testid="coming-soon-badge"
         >
           coming soon

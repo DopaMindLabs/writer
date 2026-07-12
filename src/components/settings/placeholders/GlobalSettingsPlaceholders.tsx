@@ -11,7 +11,6 @@ import {
   PlaceholderThemeCards,
   PlaceholderToggle,
 } from './PlaceholderPrimitives';
-import { APP_VERSION_LABEL } from '@/lib/version';
 
 export const GeneralPlaceholder = () => {
   const { t } = useTranslation('screens');
@@ -375,72 +374,6 @@ export const DataPlaceholder = () => {
         <span className="inline-block border border-ink px-3 py-1.5 text-[12px] font-medium text-ink">
           {t('settings.data.wipeButton')}
         </span>
-      </SettingRow>
-    </section>
-  );
-};
-
-export const AccountPlaceholder = () => {
-  const { t } = useTranslation('screens');
-  return (
-    <section>
-      <TabHeader
-        titleKey="settings.account.title"
-        subtitleKey="settings.account.subtitle"
-      />
-      <SettingRow
-        label={t('settings.account.signedOutLabel')}
-        hint={t('settings.account.signedOutHint')}
-      >
-        <span className="inline-block border border-ink px-3 py-1.5 text-[12px] font-medium text-ink">
-          {t('settings.account.signInButton')}
-        </span>
-      </SettingRow>
-      <SettingRow
-        label={t('settings.account.syncLabel')}
-        hint={t('settings.account.syncHint')}
-      >
-        <PlaceholderToggle />
-      </SettingRow>
-    </section>
-  );
-};
-
-export const AboutPlaceholder = () => {
-  const { t } = useTranslation('screens');
-  return (
-    <section>
-      <TabHeader
-        titleKey="settings.about.title"
-        subtitleKey="settings.about.subtitle"
-      />
-      <SettingRow label={t('settings.about.versionLabel')}>
-        <span className="font-serif text-[14px] text-ink">
-          {t('settings.about.versionValue', { version: APP_VERSION_LABEL })}
-        </span>
-      </SettingRow>
-      <SettingRow label={t('settings.about.buildLabel')}>
-        <span className="font-serif text-[14px] text-ink">
-          {t('settings.about.buildValue')}
-        </span>
-      </SettingRow>
-      <SettingRow label={t('settings.about.licenseLabel')}>
-        <span className="font-serif text-[14px] text-ink">
-          {t('settings.about.licenseValue')}
-        </span>
-      </SettingRow>
-      <SettingRow label={t('settings.about.linksLabel')}>
-        <div className="flex flex-wrap items-center gap-4">
-          <span className="border-b border-ink pb-px text-[13px] text-ink">
-            {t('settings.about.links.source')}
-          </span>
-          <span className="border-b border-ink pb-px text-[13px] text-ink">
-            {t('settings.about.links.changelog')}
-          </span>
-          <span className="border-b border-ink pb-px text-[13px] text-ink">
-            {t('settings.about.links.feedback')}
-          </span>
-        </div>
       </SettingRow>
     </section>
   );

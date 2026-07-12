@@ -2,7 +2,7 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import { useEffect, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Quote, Menu, Search, MoreHorizontal } from '@/components/libs/icons';
-import { renameDoc } from '@/lib/doc-actions';
+import { renameDoc } from '@/lib/docs';
 import { useUI } from '@/store/ui';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { IconButton } from '@/components/ui/icon';

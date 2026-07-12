@@ -13,8 +13,6 @@ const COMPONENTS: (keyof typeof Placeholders)[] = [
   'AnnotationPlaceholder',
   'ExportPlaceholder',
   'DataPlaceholder',
-  'AccountPlaceholder',
-  'AboutPlaceholder',
   'BackupsPlaceholder',
 ];
 
