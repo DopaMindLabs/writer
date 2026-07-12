@@ -115,8 +115,8 @@ describe('releaseThisDevice', () => {
 });
 
 describe('DEVICE_LIMIT', () => {
-  it('caps the beta at two devices', () => {
-    expect(DEVICE_LIMIT).toBe(2);
+  it('caps the beta at four devices', () => {
+    expect(DEVICE_LIMIT).toBe(4);
   });
 });
 

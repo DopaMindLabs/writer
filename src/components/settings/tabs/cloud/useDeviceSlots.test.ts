@@ -55,9 +55,9 @@ describe('useDeviceLimitBlocked', () => {
     expect(result.current).toBe(false);
   });
 
-  it('blocks a third device once the registry is full', async () => {
+  it('blocks a further device once the registry is full', async () => {
     withCloud('me');
-    await seedDevices(['a', 'b']);
+    await seedDevices(['a', 'b', 'c', 'd']);
     const { result } = renderHook(() => useDeviceLimitBlocked(true, 'present'));
     await waitFor(() => expect(result.current).toBe(true));
   });
