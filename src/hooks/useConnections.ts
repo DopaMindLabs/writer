@@ -1,11 +1,11 @@
-import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db/db';
 import type { Connection } from '@/db/schema';
+import { useEncryptedLiveQuery } from './useEncryptedLiveQuery';
 
 export const useConnections = (
   spaceId: string | null | undefined,
 ): Connection[] => {
-  return useLiveQuery(
+  return useEncryptedLiveQuery(
     async () => {
       if (!spaceId) return [];
       return db.connections.where('spaceId').equals(spaceId).toArray();
@@ -25,7 +25,7 @@ const EMPTY_CONNECTIONS: NoteConnections = { incoming: [], outgoing: [] };
 export const useConnectionsForNote = (
   noteId: string | null | undefined,
 ): NoteConnections => {
-  return useLiveQuery(
+  return useEncryptedLiveQuery(
     async () => {
       if (!noteId) return EMPTY_CONNECTIONS;
       const [outgoing, incoming] = await Promise.all([
