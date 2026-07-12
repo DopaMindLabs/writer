@@ -10,8 +10,6 @@ import {
   AnnotationPlaceholder,
   ExportPlaceholder,
   DataPlaceholder,
-  AccountPlaceholder,
-  AboutPlaceholder,
   BackupsPlaceholder,
 } from './GlobalSettingsPlaceholders';
 
@@ -41,6 +39,4 @@ export const Citations: Story = { render: () => <CitationsPlaceholder /> };
 export const Annotation: Story = { render: () => <AnnotationPlaceholder /> };
 export const Export: Story = { render: () => <ExportPlaceholder /> };
 export const Data: Story = { render: () => <DataPlaceholder /> };
-export const Account: Story = { render: () => <AccountPlaceholder /> };
-export const About: Story = { render: () => <AboutPlaceholder /> };
 export const Backups: Story = { render: () => <BackupsPlaceholder /> };

@@ -8,7 +8,7 @@ export const BlockQuote = forwardRef<
   <blockquote
     ref={ref}
     className={cn(
-      'my-6 border-l-2 border-ink px-5 py-1 font-serif text-[18px] italic leading-[1.5] text-ink',
+      'my-6 border-l border-ink px-5 py-1 font-serif text-[18px] italic leading-[1.5] text-ink',
       '[&>p+p]:mt-2',
       className,
     )}

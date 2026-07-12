@@ -39,6 +39,13 @@
       "label": "Document name",
       "cancel": "Cancel",
       "save": "Rename"
+    },
+    "deleteDoc": "Delete…",
+    "deleteDialog": {
+      "title": "Delete document",
+      "description": "“{{name}}” and its version history will be permanently deleted. This cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
     }
   },
   "topbar": {
@@ -121,6 +128,7 @@
     "helpKbd": "⌘?",
     "whatsNew": "What's new",
     "feedback": "Send feedback…",
+    "account": "Account",
     "accessibility": "Accessibility",
     "about": "About",
     "helpLink": "help center →",

@@ -112,10 +112,10 @@ const useImportActions = ({
   };
 
   const handleExport = async () => {
-    const all = await db.citations
-      .where('spaceId')
-      .equals(spaceId)
-      .sortBy('year');
+    // Wrapped query path + in-memory sort — a `sortBy` cursor read would bypass
+    // the encryption middleware and export sealed rows raw.
+    const rows = await db.citations.where('spaceId').equals(spaceId).toArray();
+    const all = rows.sort((a, b) => a.year - b.year);
     const bib = serializeCitationsToBibtex(all);
     const blob = new Blob([bib], { type: 'application/x-bibtex' });
     downloadBlob(blob, `${spaceName ?? 'space'}-citations.bib`);

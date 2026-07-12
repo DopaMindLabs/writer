@@ -48,10 +48,11 @@ export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot>
   return db.transaction('r', SNAPSHOT_TABLES, async () => {
       const space = await db.spaces.get(spaceId);
       if (!space) throw new Error(`Space not found: ${spaceId}`);
-      const sections = await db.sections
-        .where('spaceId')
-        .equals(spaceId)
-        .sortBy('order');
+      // Wrapped query path + in-memory sort — a `sortBy` cursor read would
+      // bypass the encryption middleware and put sealed rows raw in the backup.
+      const sections = (
+        await db.sections.where('spaceId').equals(spaceId).toArray()
+      ).sort((a, b) => a.order - b.order);
       const docs = await db.docs.where('spaceId').equals(spaceId).toArray();
       const notes = await db.notes.where('spaceId').equals(spaceId).toArray();
       const attachments = await db.noteAttachments
