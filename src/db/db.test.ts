@@ -1,192 +1,92 @@
 import Dexie from 'dexie';
-import { LoremDB } from './db';
+import { describe, it, expect } from 'vitest';
+import { db } from './db';
+import type { DocUpdate } from './schema';
+import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
 
-describe('LoremDB migrations', () => {
-  let dbName: string;
-
-  afterEach(async () => {
-    await Dexie.delete(dbName);
+describe('LoremDB schema', () => {
+  it('declares exactly version 1', () => {
+    expect(db.verno).toBe(1);
   });
 
-  it('version(2) upgrade backfills sections.parentSectionId = null when missing', async () => {
-    dbName = `lipsum-migration-${crypto.randomUUID()}`;
-    const v1 = new Dexie(dbName);
-    v1.version(1).stores({
-      spaces: 'id, updatedAt',
-      sections: 'id, spaceId, order, [spaceId+order]',
-      docs: 'id, spaceId, sectionId, updatedAt, [spaceId+sectionId]',
-      notes: 'id, spaceId, kind, createdAt',
-      annotations: 'id, docId, kind, createdAt',
-      citations: 'id, spaceId, year, [spaceId+key]',
-      backups: 'id, when, scope, kind',
-      settings: 'key',
-      palettes: 'id, spaceId',
-      meta: 'key',
-    });
-    await v1.open();
-    await v1.table('sections').add({
-      id: 'sec-legacy',
-      spaceId: 's1',
-      label: 'Legacy',
-      order: 0,
-    });
-    await v1.close();
-
-    const upgraded = new LoremDB(dbName);
-    await upgraded.open();
-    const sec = await upgraded.sections.get('sec-legacy');
-    expect(sec).toBeDefined();
-    expect(sec?.parentSectionId).toBeNull();
-    await upgraded.close();
-  });
-
-  it('version(4) upgrade backfills notes.state = "user" when missing', async () => {
-    dbName = `lipsum-migration-${crypto.randomUUID()}`;
-    const v3 = new Dexie(dbName);
-    v3.version(1).stores({
-      spaces: 'id, updatedAt',
-      sections: 'id, spaceId, order, [spaceId+order]',
-      docs: 'id, spaceId, sectionId, updatedAt, [spaceId+sectionId]',
-      notes: 'id, spaceId, kind, createdAt',
-      annotations: 'id, docId, kind, createdAt',
-      citations: 'id, spaceId, year, [spaceId+key]',
-      backups: 'id, when, scope, kind',
-      settings: 'key',
-      palettes: 'id, spaceId',
-      meta: 'key',
-    });
-    v3.version(2).stores({
-      sections:
-        'id, spaceId, parentSectionId, order, [spaceId+order], [spaceId+parentSectionId]',
-    });
-    v3.version(3).stores({
-      connections:
-        'id, spaceId, fromNoteId, toNoteId, [spaceId+fromNoteId], [spaceId+toNoteId]',
-    });
-    await v3.open();
-    await v3.table('notes').add({
-      id: 'n-legacy',
-      spaceId: 's1',
-      l: 0,
-      t: 0,
-      w: 100,
-      h: 60,
-      kind: 'note',
-      body: 'orig',
-      createdAt: 0,
-    });
-    await v3.close();
-
-    const upgraded = new LoremDB(dbName);
-    await upgraded.open();
-    const note = await upgraded.notes.get('n-legacy');
-    expect(note).toBeDefined();
-    expect(note?.state).toBe('user');
-    await upgraded.close();
-  });
-
-  it('version(7) adds the noteAttachments table without disturbing existing data', async () => {
-    dbName = `lipsum-migration-${crypto.randomUUID()}`;
-    const v6 = new Dexie(dbName);
-    v6.version(6).stores({
-      spaces: 'id, createdAt, updatedAt',
-      notes: 'id, spaceId, kind, createdAt',
-      connections:
-        'id, spaceId, fromNoteId, toNoteId, [spaceId+fromNoteId], [spaceId+toNoteId]',
-      meta: 'key',
-    });
-    await v6.open();
-    await v6.table('notes').add({
-      id: 'n-keep',
-      spaceId: 's1',
-      l: 0,
-      t: 0,
-      w: 100,
-      h: 60,
-      kind: 'note',
-      state: 'user',
-      body: 'keep me',
-      createdAt: 0,
-    });
-    await v6.close();
-
-    const upgraded = new LoremDB(dbName);
-    await upgraded.open();
-    expect((await upgraded.notes.get('n-keep'))?.body).toBe('keep me');
-    await upgraded.noteAttachments.add({
-      id: 'att1',
-      noteId: 'n-keep',
-      spaceId: 's1',
-      name: 'a.png',
-      mime: 'image/png',
-      size: 1,
-      blob: new Blob(['x']),
-      createdAt: 1,
-    });
-    expect(
-      await upgraded.noteAttachments.where('noteId').equals('n-keep').count(),
-    ).toBe(1);
-    await upgraded.close();
-  });
-
-  it('version(9) adds the docInspectorConfigs table without disturbing existing data', async () => {
-    dbName = `lipsum-migration-${crypto.randomUUID()}`;
-    const v8 = new Dexie(dbName);
-    v8.version(8).stores({
-      docs: 'id, spaceId, sectionId, updatedAt, [spaceId+sectionId]',
-      revisions: 'id, docId, createdAt, kind, [docId+createdAt]',
-      meta: 'key',
-    });
-    await v8.open();
-    await v8.table('docs').add({
-      id: 'd-keep',
-      spaceId: 's1',
-      sectionId: 'sec1',
-      name: 'Keep',
-      body: 'keep me',
-      meta: { wordCount: 2 },
-      updatedAt: 0,
-    });
-    await v8.close();
-
-    const upgraded = new LoremDB(dbName);
-    await upgraded.open();
-    expect((await upgraded.docs.get('d-keep'))?.body).toBe('keep me');
-    await upgraded.docInspectorConfigs.add({
-      spaceId: 'global',
-      wordLimit: 'on',
-      charLimit: 'on',
-      status: 'on',
-      dueDate: 'on',
-      highlightOverLimit: 'on',
-    });
-    expect((await upgraded.docInspectorConfigs.get('global'))?.status).toBe(
-      'on',
+  it('exposes every table, including docUpdates', async () => {
+    await db.open();
+    const names = db.tables.map((t) => t.name).sort();
+    expect(names).toEqual(
+      [
+        'annotations',
+        'backups',
+        'citations',
+        'connections',
+        'docInspectorConfigs',
+        'docUpdates',
+        'docs',
+        'meta',
+        'noteAttachments',
+        'notes',
+        'palettes',
+        'revisions',
+        'sections',
+        'settings',
+        'spaces',
+        'syncs',
+        'syncConfigs',
+      ].sort(),
     );
-    await upgraded.close();
   });
 
-  it('version(10) adds the [spaceId+year] citation index without disturbing rows', async () => {
-    dbName = `lipsum-migration-${crypto.randomUUID()}`;
-    const v9 = new Dexie(dbName);
-    v9.version(9).stores({
-      citations: 'id, spaceId, year, [spaceId+key]',
-    });
-    await v9.open();
-    await v9.table('citations').bulkAdd([
-      { id: 'c-new', spaceId: 's1', key: 'new', authors: 'A', title: 'T', year: 2020, type: 'misc', useCount: 0 },
-      { id: 'c-old', spaceId: 's1', key: 'old', authors: 'B', title: 'U', year: 1995, type: 'misc', useCount: 0 },
-      { id: 'c-other', spaceId: 's2', key: 'x', authors: 'C', title: 'V', year: 2000, type: 'misc', useCount: 0 },
-    ]);
-    await v9.close();
+  it('round-trips a docUpdates row with an auto-increment id and intact bytes', async () => {
+    const payload = new Uint8Array([0, 1, 2, 253, 254, 255]);
+    const row: DocUpdate = {
+      docId: 'd1',
+      engine: 'yjs',
+      formatVersion: 1,
+      payload,
+      createdAt: 10,
+    };
+    const id = await db.docUpdates.add(row);
+    expect(typeof id).toBe('number');
 
-    const upgraded = new LoremDB(dbName);
-    await upgraded.open();
-    const ordered = await upgraded.citations
+    const stored = await db.docUpdates.get(id);
+    expect(stored?.id).toBe(id);
+    expect(Array.from(stored?.payload ?? [])).toEqual(Array.from(payload));
+
+    const second = await db.docUpdates.add({
+      docId: 'd1',
+      engine: 'yjs',
+      formatVersion: 1,
+      payload: new Uint8Array([9]),
+      createdAt: 20,
+    });
+    expect(second).toBeGreaterThan(id as number);
+  });
+
+  it('queries docUpdates by the docId index', async () => {
+    await db.docUpdates.bulkAdd([
+      { docId: 'a', engine: 'yjs', formatVersion: 1, payload: new Uint8Array([1]), createdAt: 1 },
+      { docId: 'a', engine: 'yjs', formatVersion: 1, payload: new Uint8Array([2]), createdAt: 2 },
+      { docId: 'b', engine: 'yjs', formatVersion: 1, payload: new Uint8Array([3]), createdAt: 3 },
+    ]);
+    expect(await db.docUpdates.where('docId').equals('a').count()).toBe(2);
+  });
+
+  it('supports the compound indexes callers rely on', async () => {
+    await db.docs.bulkPut([
+      { id: 'd1', spaceId: 's1', sectionId: 'sec1', name: 'A', body: EMPTY_LEXICAL_JSON, meta: { wordCount: 0 }, updatedAt: 1 },
+      { id: 'd2', spaceId: 's1', sectionId: 'sec2', name: 'B', body: EMPTY_LEXICAL_JSON, meta: { wordCount: 0 }, updatedAt: 2 },
+    ]);
+    expect(
+      await db.docs.where('[spaceId+sectionId]').equals(['s1', 'sec1']).count(),
+    ).toBe(1);
+
+    await db.citations.bulkPut([
+      { id: 'c-old', spaceId: 's1', key: 'old', authors: 'B', title: 'U', year: 1995, type: 'misc', useCount: 0 },
+      { id: 'c-new', spaceId: 's1', key: 'new', authors: 'A', title: 'T', year: 2020, type: 'misc', useCount: 0 },
+    ]);
+    const ordered = await db.citations
       .where('[spaceId+year]')
       .between(['s1', Dexie.minKey], ['s1', Dexie.maxKey])
       .toArray();
     expect(ordered.map((c) => c.id)).toEqual(['c-old', 'c-new']);
-    await upgraded.close();
   });
 });
