@@ -7,7 +7,7 @@
 
 ## Overview
 
-Four core workflows cover all agent tasks:
+Five core workflows cover all agent tasks:
 
 | Workflow | When to use |
 |---|---|
@@ -15,6 +15,19 @@ Four core workflows cover all agent tasks:
 | **Plan** | Design a change before touching code |
 | **Audit** | Review correctness, safety, or standards compliance |
 | **Change** | Implement a planned, scoped change |
+| **Handover** | Pause or pass in-progress work to another session or agent |
+
+---
+
+## Runbooks and your todo list
+
+Each workflow below is a **runbook**: an ordered list of steps with explicit stopping
+rules. A runbook is the natural basis for a todo list — so before you start a workflow,
+seed your todo list from its **Steps**, one item per step, in order, then extend it with
+the work you discover (see [AGENTS.md § "Todo tracking"](../AGENTS.md)). Work the list top
+to bottom, keep exactly one item in progress, and mark an item done only when it is
+verified. The list is what a **Handover** (Workflow 5) captures, so keeping it current is
+what makes any of these workflows safe to pause and resume.
 
 ---
 
@@ -164,6 +177,34 @@ After implementing each step, verify only the directly affected call sites:
 - Confirm the test file compiles (read it; check imports and types).
 - If the change touches `docs.body` or `docUpdates`, re-read `reconcile.ts` to confirm
   the invariant still holds.
+
+---
+
+## Workflow 5 — Handover
+
+**Goal:** Package in-progress work so another session or agent can resume it without loss.
+
+### Steps
+
+1. **Reconcile the todo list with reality.** Mark finished items done, mark the item you
+   were on in-progress, and add any outstanding runbook steps or discovered work you had
+   not yet captured. Leave anything unverified open — never report a gate green that has
+   not passed.
+2. **Record the branch and working-tree state** exactly: branch name, whether changes are
+   committed / staged / working-tree-only, and the last verification command and its result.
+3. **Capture the context the next agent needs:** key files touched and why, decisions made,
+   and the analogue or runbook being followed.
+4. **Carry every unanswered stop-and-ask question forward** prominently — never drop it or
+   guess past it.
+5. **Write the handover** in the format from
+   [`handover-writer-work`](../.agents/skills/handover-writer-work/SKILL.md).
+
+### Stopping rules
+
+- Do not commit, push, or open a PR merely to produce a handover unless the user asked —
+  the handover is a record of state, not a new change.
+- The handover is complete only when the todo list it contains is accurate; a handover that
+  overstates progress is worse than none.
 
 ---
 

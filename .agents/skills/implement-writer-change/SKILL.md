@@ -4,7 +4,7 @@ description: >
   Execute a reviewed, exact-file plan in Writer. Use after plan-writer-change
   produces an approved plan. Trigger terms: "implement", "code it", "make the
   change", "write the code", "execute the plan".
-version: 1.0.0
+version: 1.1.0
 tags: [implementation, coding]
 ---
 
@@ -64,3 +64,13 @@ Stop and ask before removing or weakening any lint rule, size limit, or coverage
 
 Report each changed file, verification commands run, and tests added or updated.
 Do not commit or push unless the user explicitly requests it.
+
+## Track this work as a todo list
+
+Before you start, seed a todo list from the approved plan's file edits and the verification
+commands — one item per planned edit and per command — and work it top to bottom (see
+[AGENTS.md § "Todo tracking"](../../../AGENTS.md)). Mark exactly one item in-progress as you
+begin it and completed the moment it is verified done. Newly discovered work that would
+materially expand scope does not silently become a todo item — stop for approval first (see
+Scope above), then add it. Keep the list current: it is the source of truth for what remains
+and the backbone of any [handover](../handover-writer-work/SKILL.md).

@@ -4,7 +4,7 @@ description: >
   TDD workflow, test rules, and targeted commands for Writer. Use when writing,
   fixing, or auditing tests. Trigger terms: "test", "TDD", "vitest", "playwright",
   "e2e", "coverage", "spec", "failing test", "skip test".
-version: 1.0.0
+version: 1.1.0
 tags: [testing, tdd, vitest, playwright, coverage]
 ---
 
@@ -80,3 +80,13 @@ npx eslint src/lib/docs/docRepository.ts --max-warnings=0
 ## Playwright browser install
 
 If the browser is missing: `npx playwright install chromium`.
+
+## Track this work as a todo list
+
+Before you start, seed a todo list from the TDD workflow above — one item for the failing
+test, one to implement, one to refactor under green — and add one item per behaviour or
+coverage gap you still owe a test (see [AGENTS.md § "Todo tracking"](../../../AGENTS.md)).
+Mark exactly one item in-progress as you begin it and completed the moment it is verified
+done. A red or skipped test keeps its item open — never mark it done to get to green. Keep
+the list current: it is the source of truth for what remains and the backbone of any
+[handover](../handover-writer-work/SKILL.md).

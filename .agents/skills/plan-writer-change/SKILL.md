@@ -4,7 +4,7 @@ description: >
   Produce an exact-file change plan for any Writer feature or fix before touching
   code. Use when asked to plan, design, or scope a change to Writer. Trigger terms:
   "plan", "design", "how would I", "what files", "scope", "impact", "before I code".
-version: 1.0.0
+version: 1.1.0
 tags: [planning, architecture, impact-analysis]
 ---
 
@@ -90,3 +90,13 @@ Do not begin implementation until this plan is reviewed and approved.
 - Never plan to weaken a lint rule, coverage floor, or type safety boundary.
 - If a schema change is needed, include the migration checklist from
   `change-writer-persistence` in the plan.
+
+## Track this work as a todo list
+
+Before you start, seed a todo list from the Required planning steps above — one item per step
+— and work it top to bottom (see [AGENTS.md § "Todo tracking"](../../../AGENTS.md)). Mark
+exactly one item in-progress as you begin it and completed the moment it is verified done,
+and append each symbol or boundary the blast-radius pass turns up as a new item. The
+exact-file plan you produce doubles as the runbook the implementer seeds *their* todo list
+from, so leave it ordered and complete. Keep the list current: it is the source of truth for
+what remains and the backbone of any [handover](../handover-writer-work/SKILL.md).

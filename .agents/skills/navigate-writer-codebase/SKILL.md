@@ -5,7 +5,7 @@ description: >
   symbol definition, tracing callers or dependants, finding tests, or mapping a
   feature flow. Trigger terms: "find", "locate", "where is", "who calls", "trace",
   "navigate", "callers of", "dependants", "tests for".
-version: 1.1.0
+version: 1.2.0
 tags: [navigation, exploration, code-intelligence]
 ---
 
@@ -89,3 +89,12 @@ Return only evidence; never return guesses or "probably".
 | Routes | `src/lib/routes.ts` |
 | UI store | `src/store/ui.ts` |
 | A11y store | `src/store/a11y.ts` |
+
+## Track this work as a todo list
+
+Before you start, seed a todo list from the Navigation order above — one item per step — and
+work it top to bottom (see [AGENTS.md § "Todo tracking"](../../../AGENTS.md)). Mark exactly
+one item in-progress as you begin it and completed the moment it is verified done, and append
+each fresh symbol or caller you must still trace as a new item so nothing is dropped when the
+graph fans out. Keep the list current: it is the source of truth for what remains and the
+backbone of any [handover](../handover-writer-work/SKILL.md).

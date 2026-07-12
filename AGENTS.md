@@ -24,6 +24,7 @@
 | "schema", "migration", "dexie", "table", "stores.ts", "LoremDB" | [`change-writer-persistence`](.agents/skills/change-writer-persistence/SKILL.md) |
 | "collab", "yjs", "crdt", "multi-tab", "BroadcastChannel", "presence" | [`work-on-editor-collaboration`](.agents/skills/work-on-editor-collaboration/SKILL.md) |
 | "cloud", "dexie cloud", "sync", "encryption", "escrow", "passphrase" | [`work-on-cloud-sync`](.agents/skills/work-on-cloud-sync/SKILL.md) |
+| "handover", "hand off", "handoff", "pause", "resume later", "context running out", "pick up where" | [`handover-writer-work`](.agents/skills/handover-writer-work/SKILL.md) |
 
 ---
 
@@ -35,7 +36,7 @@
 | [`docs/technical-specification.md`](./docs/technical-specification.md) | Before any user-facing behaviour change |
 | [`docs/design-system.md`](./docs/design-system.md) | Before any UI work |
 | [`docs/cloud-sync-beta.md`](./docs/cloud-sync-beta.md) | Before any cloud/encryption work |
-| [`docs/agent-playbooks.md`](./docs/agent-playbooks.md) | Step-by-step workflows (Locate / Plan / Audit / Change) |
+| [`docs/agent-playbooks.md`](./docs/agent-playbooks.md) | Step-by-step runbooks (Locate / Plan / Audit / Change / Handover) — seed your todo list from them |
 | [`docs/agent-navigation-benchmarks.md`](./docs/agent-navigation-benchmarks.md) | Navigation benchmark cases |
 | [`CODING_STANDARDS.md`](./CODING_STANDARDS.md) | Power-of-Ten coding rules |
 
@@ -125,6 +126,31 @@ The canonical sequence for any change, reconciling the rules that each demand to
 stop that thread of work, finish what does not depend on the answer, and surface the
 question prominently in your report or PR description. Never guess your way past a
 stop-and-ask rule.
+
+## Todo tracking (read before starting multi-step work)
+
+Every task with more than one step is tracked against a **live todo list** — the single
+source of truth for what is done, what is in progress, and what is still outstanding. This
+is not optional bookkeeping: it is how work stays resumable, auditable, and safe to hand
+over. Every skill in [`.agents/skills/`](.agents/skills/) restates this discipline for its
+own workflow; this section is canonical.
+
+- **Maintain one list per task.** Use your agent's todo/task tool where it has one;
+  otherwise keep an explicit checklist in your working notes. Each item is a single,
+  verifiable outcome, phrased in the imperative.
+- **Runbooks seed the list.** Any ordered procedure is a runbook: a skill's numbered steps
+  or checklist, the Task order above, or a playbook workflow in
+  [`docs/agent-playbooks.md`](./docs/agent-playbooks.md). Turn the runbook into the todo
+  list — one item per step, in order, **before** you start — then extend the list with work
+  you discover as you go.
+- **Keep exactly one item in progress.** Mark an item in-progress when you begin it and
+  completed the moment it is verified done. Never batch the updates at the end, and never
+  mark an item done that is not actually done — a failing test, a skipped gate, and an
+  unanswered stop-and-ask each keep their item open.
+- **The list is the source of truth for remaining work** and the backbone of every
+  handover: a handover is the current todo list plus where you stopped (see
+  [`handover-writer-work`](.agents/skills/handover-writer-work/SKILL.md)). Reconcile the
+  list with reality before you hand over, pause, or report a task complete.
 
 ## Language (read before writing copy)
 

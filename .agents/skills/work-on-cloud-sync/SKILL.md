@@ -5,7 +5,7 @@ description: >
   when touching cloud setup, encryption, key lifecycle, escrow, sync gating, or
   the cloudClient facade. Trigger terms: "cloud", "dexie cloud", "sync", "encryption",
   "escrow", "keyless", "passphrase", "cross-device", "cloudClient".
-version: 1.0.0
+version: 1.1.0
 tags: [cloud, dexie-cloud, encryption, sync]
 ---
 
@@ -123,3 +123,13 @@ startKeylessLockMonitor (lock editor if signed in keyless)
 
 `docs/cloud-sync-beta.md` — full design note including the key derivation model,
 escrow recovery flow, and the two-gate architecture.
+
+## Track this work as a todo list
+
+Before you start, seed a todo list from the decisions this skill requires — for each table
+or path you touch: replication (`UNSYNCED`), row encryption (`SYNCED_TABLES`), key-lifecycle
+impact, and the matching test from the Tests table — one item each (see
+[AGENTS.md § "Todo tracking"](../../../AGENTS.md)). Mark exactly one item in-progress as you
+begin it and completed the moment it is verified done, and append any key-risk guard you must
+still verify as a new item. Keep the list current: it is the source of truth for what remains
+and the backbone of any [handover](../handover-writer-work/SKILL.md).
