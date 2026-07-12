@@ -450,9 +450,9 @@
           "eraseBack": "Back"
         },
         "deviceLimit": {
-          "title": "This account already has four devices",
-          "body": "Cloud sync is in beta and supports four devices for now. Sign out on one of your other devices, then try again here.",
-          "betaNotice": "Cloud sync is in beta: four devices per account for now, with more to come. Keep local backups of important writing on at least one device."
+          "title": "This account already has eight devices",
+          "body": "Cloud sync is in beta and supports eight devices for now. Sign out on one of your other devices, then try again here.",
+          "betaNotice": "Cloud sync is in beta: eight devices per account for now, with more to come. Keep local backups of important writing on at least one device."
         },
         "backupNudge": {
           "title": "These notes are only on this device",

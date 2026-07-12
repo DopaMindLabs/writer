@@ -44,10 +44,10 @@ reload the page, and any other tabs you have open update on their own.
 
 ## How many devices can I use?
 
-**Four devices per account** while cloud sync is in beta. More will be supported
+**Eight devices per account** while cloud sync is in beta. More will be supported
 later.
 
-A fifth device that signs in sees **This account already has four devices** and
+A ninth device that signs in sees **This account already has eight devices** and
 cannot unlock or set up until you free a slot:
 
 1. On one of your other devices, open **Settings → Cloud sync (beta)**.

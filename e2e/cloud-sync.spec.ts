@@ -141,7 +141,7 @@ test.describe('cloud sync two-device beta limit', () => {
     await expect(page.getByTestId('cloud-section')).toBeVisible();
 
     await expect(page.getByTestId('cloud-device-limit')).toBeVisible();
-    await expect(page.getByText(/supports two devices/i)).toBeVisible();
+    await expect(page.getByText(/supports eight devices/i)).toBeVisible();
     // The blocked banner offers no key-minting action of its own.
     await expect(page.getByTestId('cloud-keyless-locked')).toHaveCount(0);
     await expect(page.getByTestId('cloud-keyless-nokey')).toHaveCount(0);
@@ -152,10 +152,10 @@ test.describe('cloud sync two-device beta limit', () => {
     await expect(page.getByTestId('cloud-section')).toHaveCount(0);
   });
 
-  test('the beta notice names the two-device limit', async ({ page }) => {
+  test('the beta notice names the eight-device limit', async ({ page }) => {
     await page.goto('/?cloud-sync=on#/settings?tab=account');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
-    await expect(page.getByText(/two devices per account/i)).toBeVisible();
+    await expect(page.getByText(/eight devices per account/i)).toBeVisible();
   });
 });
 
