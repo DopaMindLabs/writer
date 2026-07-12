@@ -48,6 +48,12 @@ export default defineConfig(({ command, mode }) => ({
   test: {
     globals: true,
     environment: 'jsdom',
+    // Keep the suite hermetic: a developer's `.env.local` cloud-sync gates must
+    // never leak into tests. Cases that need them stub the values explicitly.
+    env: {
+      VITE_DEXIE_CLOUD_URL: '',
+      VITE_CLOUD_SYNC_FLAG: '',
+    },
     reporter: process.env.CI ? 'verbose' : 'default',
     setupFiles: ['./src/test/setup.ts'],
     css: false,

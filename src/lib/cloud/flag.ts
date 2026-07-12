@@ -1,4 +1,4 @@
-import { hasCloudEnv } from './env';
+import { cloudFlagFromEnv, hasCloudEnv } from './env';
 
 /** localStorage key holding the local beta opt-in (`'on'` = enabled). */
 export const CLOUD_FLAG_KEY = 'lipsum-cloud-sync';
@@ -7,8 +7,13 @@ export const CLOUD_FLAG_PARAM = 'cloud-sync';
 /** localStorage marker recording that this device has built the cloud database. */
 export const CLOUD_PROVISIONED_KEY = 'lipsum-cloud-provisioned';
 
-/** Whether this browser has opted into the cloud-sync beta. */
+/**
+ * Whether this browser has opted into the cloud-sync beta. A build-time
+ * `VITE_CLOUD_SYNC_FLAG=on` (non-production only) opts in unconditionally;
+ * otherwise the persisted localStorage opt-in decides.
+ */
 export const readCloudFlag = (): boolean => {
+  if (cloudFlagFromEnv()) return true;
   try {
     return localStorage.getItem(CLOUD_FLAG_KEY) === 'on';
   } catch {

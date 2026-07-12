@@ -25,6 +25,16 @@ describe('cloud flag', () => {
     expect(readCloudFlag()).toBe(false);
   });
 
+  it('opts in when VITE_CLOUD_SYNC_FLAG is on, without localStorage', () => {
+    vi.stubEnv('VITE_CLOUD_SYNC_FLAG', 'on');
+    expect(readCloudFlag()).toBe(true);
+  });
+
+  it('ignores VITE_CLOUD_SYNC_FLAG values other than on', () => {
+    vi.stubEnv('VITE_CLOUD_SYNC_FLAG', 'true');
+    expect(readCloudFlag()).toBe(false);
+  });
+
   it('persists and strips ?cloud-sync=on', () => {
     setUrl('?cloud-sync=on');
     applyCloudFlagFromUrl();
