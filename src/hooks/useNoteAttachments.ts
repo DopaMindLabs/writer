@@ -1,11 +1,11 @@
-import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db/db';
 import type { NoteAttachment } from '@/db/schema';
+import { useEncryptedLiveQuery } from './useEncryptedLiveQuery';
 
 export const useNoteAttachments = (
   noteId: string | null | undefined,
 ): NoteAttachment[] => {
-  return useLiveQuery(
+  return useEncryptedLiveQuery(
     async () => {
       if (!noteId) return [];
       return db.noteAttachments
@@ -23,7 +23,7 @@ const EMPTY_ATTACHMENTS: NoteAttachment[] = [];
 export const useNoteAttachmentsBySpace = (
   spaceId: string | null | undefined,
 ): Map<string, NoteAttachment[]> => {
-  return useLiveQuery(
+  return useEncryptedLiveQuery(
     async () => {
       const byNote = new Map<string, NoteAttachment[]>();
       if (!spaceId) return byNote;

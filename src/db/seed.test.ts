@@ -6,7 +6,10 @@ import {
 } from './seed';
 import { NoteKind, NoteState } from './schema';
 import type { Template } from '@/data/templates';
-import { FIXED_TIME } from '@/test/fixtures';
+import { FIXED_TIME, serializedBody } from '@/test/fixtures';
+import { isParseableBody } from '@/lib/revisions';
+
+const DOC_B_BODY = serializedBody('b');
 
 const TEST_TEMPLATE: Template = {
   id: 'test-tpl',
@@ -25,7 +28,12 @@ const TEST_TEMPLATE: Template = {
   ],
   seedDocs: [
     { sectionLabel: 'Drafts', name: 'Doc A' },
-    { sectionLabel: 'Drafts', subsectionLabel: 'Ideas', name: 'Doc B', body: 'b' },
+    {
+      sectionLabel: 'Drafts',
+      subsectionLabel: 'Ideas',
+      name: 'Doc B',
+      body: DOC_B_BODY,
+    },
     { sectionLabel: 'Final', name: 'Doc C' },
     { sectionLabel: 'Nonexistent', name: 'Skipped' },
   ],
@@ -59,7 +67,7 @@ describe('createSpaceFromTemplate', () => {
 
     const docs = await db.docs.where('spaceId').equals(id).toArray();
     expect(docs).toHaveLength(3);
-    expect(docs.some((d) => d.body === 'b')).toBe(true);
+    expect(docs.some((d) => d.body === DOC_B_BODY)).toBe(true);
 
     const notes = await db.notes.where('spaceId').equals(id).toArray();
     expect(notes).toHaveLength(1);
@@ -87,6 +95,15 @@ describe('seedIfEmpty', () => {
 
     await seedIfEmpty();
     expect(await db.spaces.count()).toBe(spaceCount);
+  });
+
+  it('gives every seeded doc a valid Lexical body', async () => {
+    await seedIfEmpty();
+    const docs = await db.docs.toArray();
+    expect(docs.length).toBeGreaterThan(0);
+    for (const doc of docs) {
+      expect(isParseableBody(doc.body)).toBe(true);
+    }
   });
 });
 
