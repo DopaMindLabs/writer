@@ -1053,6 +1053,141 @@ Done:
 
 Rollback boundary: observability UI only.
 
+### WP9 — sync-applied writes bypass the write lock
+
+Ledger item: `TODO-02`.
+
+Depends on: WP2–WP4 (the keyless/mismatch write lock they establish).
+
+Discovered during execution, not in the original WP1–WP8 plan: the write lock
+those packages add to refuse keyless/mismatch **app** writes also blocked the
+cloud addon's own **pulled-row** writes. The addon applies rows it just pulled
+through the same table API, so the initial pull's `bulkAdd`/`bulkPut` threw, the
+sync transaction aborted, `initiallySynced` was never set, escrow presence stayed
+`unknown`, and a *content-bearing* account deadlocked on “fetching your account…”
+(an empty account pulls nothing, so tests stayed green). Formalised here
+retrospectively under `TODO-02`, the ledger item that owns the keyless middleware.
+
+Files:
+
+- `src/lib/cloud/crypto/middleware.ts`
+- `src/lib/cloud/cloudClient.ts`
+- `src/components/settings/tabs/cloud/CloudSectionPanel.tsx`
+- `src/components/settings/tabs/cloud/CloudKeylessAccountSection.tsx`
+- `src/components/settings/tabs/cloud/CloudKeylessPendingBanner.tsx`
+- Tests, i18n, help, and specification.
+
+Debug procedure:
+
+1. Sign a clean device into a content-bearing account before it holds a key.
+2. Confirm the initial pull's `bulkAdd`/`bulkPut` is refused by the write lock.
+3. Confirm `initiallySynced` is never set and escrow presence stays `unknown`.
+4. Confirm the keyless section stays on “fetching your account…” indefinitely.
+
+Solution procedure:
+
+1. Detect an addon-applied write via `req.trans.disableChangeTracking` and exempt
+   it from the lock; keep refusing ordinary app add/put. Do not alter sealing —
+   a pulled envelope is preserved untouched.
+2. Show the sync and reconcile status rows whenever the device is signed in, not
+   only once it holds a key, so a keyless device is never left without diagnostics.
+3. Drive the keyless pending banner from the sync phase: a retryable failure on
+   `error`, an offline notice on `offline`, the neutral checking notice otherwise —
+   none offering a key-minting action, so the divergence guard holds.
+4. Cover the pulled-row write path and the escrow-presence resolution with tests.
+
+Done:
+
+- The initial pull applies pulled ciphertext through the lock; app writes are
+  still refused while keyless or mismatched.
+- A content-bearing account no longer deadlocks on “fetching your account…”.
+- A signed-in keyless device sees sync/reconcile status, and a stalled fetch is
+  retryable or explained rather than a dead end.
+
+Rollback boundary: the encryption-middleware lock predicate and the keyless
+account UI; no schema or sync-protocol change.
+
+Traceability record — WP9:
+
+```text
+Work package: WP9 — sync-applied writes bypass the write lock
+Executor: Shavindra
+Changed files: src/lib/cloud/crypto/middleware.ts; src/lib/cloud/crypto/middleware.test.ts; src/lib/cloud/cloudClient.ts; src/lib/cloud/cloudClient.test.ts; src/lib/cloud/reconcile.ts; src/lib/cloud/reconcileStatus.ts; src/components/settings/tabs/cloud/CloudSectionPanel.tsx (+ test); src/components/settings/tabs/cloud/CloudKeylessAccountSection.tsx (+ test, stories); src/components/settings/tabs/cloud/CloudKeylessPendingBanner.tsx (+ test, stories); src/components/settings/tabs/cloud/CloudReconcileStatusRow.stories.tsx; src/components/settings/tabs/cloud/useCloudPanelState.ts (+ test); src/i18n/locales/en/screens.json; src/help/content/en/cloud-sync.md; docs/technical-specification.md
+Contracts implemented: pulled (disableChangeTracking) writes bypass the keyless/mismatch write lock while app add/put stay refused; sync + reconcile status visible to a signed-in keyless device; a stalled account fetch is retryable (error phase) or explained (offline phase) rather than hanging on "fetching your account…"; the reconcile skip-cache is cleared on sign-out; the kept-local follow-up carries its own trigger
+Tests added/updated: middleware.test.ts — a real disableChangeTracking transaction lands a pulled row through the lock, an app write is still refused; cloudClient.test.ts — first cloudEscrowPresence coverage (unknown until the pull completes, then present/none) and requestCloudSync; CloudSectionPanel.test.tsx — status rows gated on signed-in; CloudKeylessPendingBanner.test.tsx — error/offline/checking; CloudKeylessAccountSection.test.tsx — retry routing; reconcile.test.ts — sign-out clears the skip cache, kept-local trigger
+Commands run: npm run typecheck; npm run lint; npm run test:run (1946 passed); npm run test:e2e (318 passed; one unrelated split-views flake that passes in isolation and is covered by CI retries); node scripts/coverage-ratchet.mjs e2e (holds above all floors: lines 92.21, statements 84.85, functions 88.18, branches 76.61)
+Acceptance criteria: PASS
+Manual evidence: The pulled-row write path is proven at unit level — a real Dexie disableChangeTracking transaction lands the row through the lock, and escrow presence leaves 'unknown' exactly when initiallySynced flips. A full browser reproduction of the deadlock needs a real Dexie Cloud backend (the e2e harness never completes a login, so the signed-in pull is unreachable headlessly), so the chain is verified by unit/integration tests rather than an e2e spec.
+Runbook deviations: WP9 was not in the WP1–WP8 plan; the deadlock was found during execution and is formalised here under TODO-02. The middleware exemption shipped first (commit dbb5215); the observability/UI, tests, spec, and help followed in later commits on the same branch. The TODO ledger checkboxes are left unchanged (the pre-existing WP1–WP8 drift is not retro-ticked).
+Documentation impact: docs/technical-specification.md §4.9.1 — the lock exemption for pulled rows, status visibility whenever signed in, and the stalled-fetch retry/offline escape. src/help/content/en/cloud-sync.md — a new troubleshooting entry, "Fetching your account…" never finishes.
+Blockers: none
+```
+
+### WP10 — two-device beta limit
+
+Ledger item: `TODO-05` (Phase A validation and user help — the limit is the beta's
+field-tested operating envelope, added after WP9's fixes).
+
+Depends on: WP9 (the write-lock exemption and the keyless surfaces it gates).
+
+A real three-device test corrupted an account: a phone carrying stale plaintext
+data was forced through first-device setup by the sign-in guard, minted a fresh
+key, and the addon's login seeding pushed its stale rows over the account's
+last-writer-wins. Until multi-device is properly supported (push quarantine is
+scoped follow-up work), the beta is capped at **two devices per account**, hard.
+
+Files:
+
+- `src/db/LoremDB.ts` (`cloudDevices` table on cloud builds)
+- `src/lib/cloud/deviceRegistry.ts` (+ registrar wiring in `src/App.tsx`)
+- `src/lib/cloud/deviceLimit.ts` (dev/e2e forced-state affordance)
+- `src/lib/cloud/cloudClient.ts` (sign-out releases the slot)
+- `src/components/settings/tabs/cloud/` — `useDeviceSlots.ts`, `useCloudPanelFlags.ts`,
+  `CloudDeviceLimitBanner.tsx`, `CloudSectionHeader.tsx`, panel gating
+- i18n, help, specification, e2e.
+
+Solution procedure:
+
+1. Add a synced, deliberately **unencrypted** `cloudDevices` registry (outside
+   `SYNCED_TABLES`, so counts/ids stay readable to a keyless device and the table
+   stays out of the plaintext sign-in guard and erase): one row per joined device —
+   the addon's random client identity plus joined/last-seen timestamps, nothing else.
+2. Register idempotently once signed in + key held + identity minted (a session
+   runner mirroring the escrow reconciler); existing devices self-register on load.
+3. Hard-block: a signed-in keyless device with a full registry and no row of its
+   own gets the limit banner in place of the keyless section — no unlock, no
+   set-up. Sign-out stays available.
+4. Free the slot on sign-out: delete the row and flush with an explicit
+   `sync({purpose:'push'})` before `logout()` (the addon's logout never pushes).
+   Forgetting the key keeps the slot. An offline sign-out leaks it (lastSeenAt
+   recorded for a later reclaim) — beta-accepted.
+5. `?cloud-devices=full` forces the blocked state for Playwright.
+
+Done:
+
+- A third device is turned away with the two-device notice and no key action.
+- Sign-out on a registered device frees the slot.
+- The section heading names the beta limit and advises local backups.
+
+Rollback boundary: the registry table, registrar, and blocked-state UI; no
+change to encryption, escrow, or sync protocol.
+
+Traceability record — WP10:
+
+```text
+Work package: WP10 — two-device beta limit
+Executor: Shavindra
+Changed files: src/db/LoremDB.ts; src/db/buildDb.test.ts; src/lib/cloud/deviceRegistry.ts (+ test); src/lib/cloud/deviceLimit.ts (+ test); src/lib/cloud/cloudClient.ts (+ test); src/App.tsx (+ test); src/components/settings/tabs/cloud/useDeviceSlots.ts (+ test); useCloudPanelFlags.ts (+ test); CloudDeviceLimitBanner.tsx (+ test, stories); CloudSectionHeader.tsx (+ test, stories); CloudSectionPanel.tsx (+ test); src/i18n/locales/en/screens.json; e2e/cloud-sync.spec.ts; src/help/content/en/cloud-sync.md; docs/technical-specification.md
+Contracts implemented: at most two registered devices per account during the beta; a signed-in keyless third device is hard-blocked (no unlock/set-up) while the registry is full and it holds no row; registration requires signed-in + key + client identity; sign-out deletes the row and flushes the deletion before logout; forget-device keeps the slot; registry rows carry only the client identity and timestamps, unencrypted by design
+Tests added/updated: deviceRegistry.test.ts (gating, idempotence, release, registrar triggers); deviceLimit.test.ts (forced atom); useDeviceSlots.test.ts (blocked computation incl. own-id and free-slot cases); useCloudPanelFlags.test.ts; CloudDeviceLimitBanner.test.tsx; CloudSectionHeader.test.tsx; CloudSectionPanel.test.tsx (block replaces keyless section, non-regression); App.test.tsx (?cloud-devices=full); cloudClient.test.ts (release + push-before-logout order, offline tolerance); buildDb.test.ts (table on cloud builds, absent on plain); e2e/cloud-sync.spec.ts (blocked banner + beta notice + teardown)
+Commands run: npx tsc -b; npm run lint; npm run test:run (1977 passed); npm run test:e2e:coverage (321 passed; ratchet holds — lines 92.04, statements 84.47, functions 88.06, branches 76.30)
+Acceptance criteria: PASS
+Manual evidence: The real registry path (three physical devices against a live Dexie Cloud backend, including the server accepting the new synced table) is verified on the preview deployment per the runbook's manual protocol — headless e2e drives the blocked surface via the ?cloud-devices=full affordance because a live sign-in is unreachable in Playwright.
+Runbook deviations: none — scoped and executed as designed after the three-device field failure.
+Documentation impact: docs/technical-specification.md §4.9.1 — two-device beta limit paragraph and the device-registry entry in "Server sees / does not see". src/help/content/en/cloud-sync.md — "How many devices can I use?".
+Blockers: none
+```
+
 ### TODO-05 — Phase A validation and user help
 
 Depends on: `TODO-01`–`TODO-04`.

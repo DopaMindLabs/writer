@@ -18,6 +18,7 @@ const { App } = await import('./App');
 const { resetAndReseed } = await import('@/db/seed');
 const { keyMismatchState } = await import('@/lib/cloud/crypto/keyMismatch');
 const { keylessLockState } = await import('@/lib/cloud/crypto/keylessLock');
+const { deviceLimitState } = await import('@/lib/cloud/deviceLimit');
 
 describe('App', () => {
   beforeEach(() => {
@@ -29,6 +30,7 @@ describe('App', () => {
     vi.unstubAllEnvs();
     keyMismatchState.set(false);
     keylessLockState.set(false);
+    deviceLimitState.set(false);
   });
 
   it('renders ready state with the router', async () => {
@@ -78,6 +80,13 @@ describe('App', () => {
     render(<App />);
     await waitFor(() => { expect(keylessLockState.current()).toBe(true); });
     expect(window.location.search).not.toContain('cloud-keyless');
+  });
+
+  it('forces the device-limit block via ?cloud-devices=full', async () => {
+    window.history.replaceState({}, '', '/?cloud-devices=full');
+    render(<App />);
+    await waitFor(() => { expect(deviceLimitState.current()).toBe(true); });
+    expect(window.location.search).not.toContain('cloud-devices');
   });
 
   it('renders boot error when reseed throws', async () => {

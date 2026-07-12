@@ -43,6 +43,32 @@ describe('PassphraseSetupDialog', () => {
     expect(screen.getByTestId('passphrase-feedback')).toHaveTextContent(/Strength: Weak/i);
   });
 
+  it('accepts a confirmation that is Unicode-equivalent (NFKC) to the passphrase', async () => {
+    // "café…" composed (NFC, é as one code point) in the passphrase versus
+    // decomposed (NFD, e + combining acute) in the confirmation: the same
+    // visible text, different byte sequences. The crypto canonicalises both to
+    // NFKC and would unwrap the same escrow, so the dialog must not reject them
+    // as a mismatch — and must hand the crypto the canonical value.
+    const onCreate = vi.fn().mockResolvedValue('CODE-NFKC');
+    renderWithProviders(
+      <PassphraseSetupDialog open onOpenChange={noop} onRecoveryCode={noop} onCreate={onCreate} />,
+    );
+    const composed = 'cafélongphrase'; // NFC
+    const decomposed = 'cafélongphrase'; // NFD, same glyphs
+    await userEvent.type(await screen.findByTestId('passphrase-input'), composed);
+    await userEvent.type(screen.getByTestId('passphrase-confirm'), decomposed);
+
+    const submit = screen.getByTestId('passphrase-submit');
+    await waitFor(() => expect(submit).toBeEnabled());
+    expect(screen.getByTestId('passphrase-feedback')).not.toHaveTextContent(/don't match/i);
+
+    await userEvent.click(submit);
+    await waitFor(() => {
+      // The canonical (NFKC) passphrase reaches the crypto, not the raw keystrokes.
+      expect(onCreate).toHaveBeenCalledWith(composed.normalize('NFKC'));
+    });
+  });
+
   it('creates encryption and hands up the recovery code when valid', async () => {
     const onCreate = vi.fn().mockResolvedValue('CODE-1234');
     const onRecoveryCode = vi.fn();

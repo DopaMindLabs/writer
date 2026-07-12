@@ -1,11 +1,11 @@
-import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db/db';
 import type { Revision } from '@/db/schema';
+import { useEncryptedLiveQuery } from './useEncryptedLiveQuery';
 
 export const useRevisions = (
   docId: string | null | undefined,
 ): Revision[] => {
-  return useLiveQuery(
+  return useEncryptedLiveQuery(
     async () => {
       if (!docId) return [];
       const rows = await db.revisions.where('docId').equals(docId).toArray();

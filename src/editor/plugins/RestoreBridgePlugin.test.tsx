@@ -6,6 +6,7 @@ import { $getRoot } from 'lexical';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { getEditorHandle } from '@/lib/collab/editorRegistry';
+import { NO_FLUSH, type FlushResult } from '@/lib/collab/flush.types';
 import { serializedBody } from '@/test/fixtures';
 import { EDITOR_NODES } from '@/editor/nodes';
 import { RestoreBridgePlugin } from './RestoreBridgePlugin';
@@ -34,7 +35,7 @@ const withComposer = (ui: ReactNode) => (
 const readText = (editor: LexicalEditor): string =>
   editor.getEditorState().read(() => $getRoot().getTextContent());
 
-const noFlush = { current: () => false };
+const noFlush = { current: async (): Promise<FlushResult> => NO_FLUSH };
 
 describe('RestoreBridgePlugin', () => {
   it('replaces the editor body through the registered handle', () => {
@@ -58,13 +59,14 @@ describe('RestoreBridgePlugin', () => {
     expect(readText(editor)).toContain('restored content');
   });
 
-  it('exposes the autosave flush on its handle', () => {
-    const flushRef = { current: () => true };
+  it('exposes the autosave flush on its handle', async () => {
+    const persisted: FlushResult = { persisted: true, body: 'saved body' };
+    const flushRef = { current: async (): Promise<FlushResult> => persisted };
     render(withComposer(<RestoreBridgePlugin docId="bridge-3" flushRef={flushRef} />));
 
-    expect(getEditorHandle('bridge-3')?.flush?.()).toBe(true);
-    flushRef.current = () => false;
-    expect(getEditorHandle('bridge-3')?.flush?.()).toBe(false);
+    expect(await getEditorHandle('bridge-3')?.flush?.()).toEqual(persisted);
+    flushRef.current = async (): Promise<FlushResult> => NO_FLUSH;
+    expect(await getEditorHandle('bridge-3')?.flush?.()).toEqual(NO_FLUSH);
   });
 
   it('unregisters its handle on unmount', () => {

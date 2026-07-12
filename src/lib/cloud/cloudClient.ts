@@ -7,6 +7,7 @@ import { readCloudFlag, wasCloudProvisioned } from './flag';
 import { loadDeviceKeyRing, deviceKeyProvider } from './crypto/keyStore';
 import { ESCROW_ID } from './crypto/keys';
 import { hasPlaintextSyncedRows } from './setup';
+import { releaseThisDevice } from './deviceRegistry';
 import { KeylessSignInBlockedError } from './crypto/errors';
 
 /**
@@ -22,7 +23,7 @@ export type CloudSyncPhase = SyncState['phase'];
 export { isCloudSyncEnabled } from './flag';
 export { deviceKeyProvider } from './crypto/keyStore';
 export { EscrowMissingError, KeylessSignInBlockedError } from './crypto/errors';
-export { WrongPassphraseError } from './crypto/keys';
+export { WrongPassphraseError, canonicalisePassphrase } from './crypto/keys';
 export {
   createCloudEncryption,
   unlockCloudEncryption,
@@ -36,8 +37,12 @@ interface CloudApi {
   userInteraction: CloudObservable<DXCUserInteraction | undefined>;
   syncState: CloudObservable<SyncState>;
   currentUser: CloudObservable<UserLogin | undefined>;
+  /** Fires after every settled sync round (each HTTP/WS sync), regardless of
+   *  phase — a superset of the `pulling→other` edge the reconciler also watches. */
+  events?: { syncComplete: CloudObservable<void> };
   login: () => Promise<void>;
   logout: () => Promise<void>;
+  sync?: (options?: { purpose: 'push' | 'pull'; wait: boolean }) => Promise<void>;
 }
 
 /** The live addon API, or `null` on a plain (non-cloud) database. */
@@ -54,6 +59,7 @@ const constant = <T,>(value: T): CloudObservable<T> => ({
   },
 });
 
+
 const INITIAL_STATE: SyncState = { status: 'not-started', phase: 'initial' };
 
 export const cloudUserInteraction = (): CloudObservable<DXCUserInteraction | undefined> =>
@@ -64,6 +70,19 @@ export const cloudSyncState = (): CloudObservable<SyncState> =>
 
 export const cloudCurrentUser = (): CloudObservable<UserLogin | undefined> =>
   cloudApi()?.currentUser ?? constant(undefined);
+
+/**
+ * Fires once after each settled sync round. The reconciler subscribes to it so a
+ * successful pull that did not cross a `pulling→other` phase edge still triggers
+ * reconciliation. Never emits on a plain (non-cloud) database.
+ */
+export const cloudSyncComplete = (): CloudObservable<void> => {
+  const events = cloudApi()?.events;
+  if (events) return events.syncComplete;
+  // A never-emitting fallback: an event stream (unlike state) must not fire a
+  // spurious value on subscribe. Typed void by the return annotation.
+  return { subscribe: () => ({ unsubscribe: () => undefined }) };
+};
 
 /**
  * Whether the signed-in user's initial account pull has completed. The addon sets
@@ -94,16 +113,33 @@ export const isAccountPullComplete = (): boolean => {
   );
 };
 
+/**
+ * This device's stable, random per-device client identity, minted by the first
+ * post-login sync (the addon sends it to the server on every sync). `null` on a
+ * plain database or before that first sync settles.
+ */
+export const cloudClientIdentity = (): string | null => {
+  const cloud = (
+    db as {
+      cloud?: { persistedSyncState?: { value?: { clientIdentity?: string } } };
+    }
+  ).cloud;
+  return cloud?.persistedSyncState?.value?.clientIdentity ?? null;
+};
+
 /** Whether the account holds an escrow, once its pull is confirmed complete. */
 export type EscrowPresence = 'unknown' | 'none' | 'present';
 
 /**
  * The account's escrow presence for a signed-in-keyless device: `'unknown'`
- * until the initial pull completes (so Set-up can't mint a divergent key before
- * we know), then `'present'` (offer Unlock/adopt) or `'none'` (offer Set-up). It
- * re-evaluates on both `cloudCrypto` changes and sync-state settles, since the
- * escrow row and the pull-complete signal can arrive independently. Constant
- * `'none'` on a plain database.
+ * until the initial pull completes **and** the escrow-row query has resolved at
+ * least once (so Set-up can't mint a divergent key before we know — on a
+ * reloading device the pull-complete flag is persisted `true` while the row read
+ * is still in flight, and reporting `'none'` in that gap would offer Set-up over
+ * an account that has a key), then `'present'` (offer Unlock/adopt) or `'none'`
+ * (offer Set-up). It re-evaluates on both `cloudCrypto` changes and sync-state
+ * settles, since the escrow row and the pull-complete signal can arrive
+ * independently. Constant `'none'` on a plain database.
  */
 export const cloudEscrowPresence = (): CloudObservable<EscrowPresence> => {
   const api = cloudApi();
@@ -111,8 +147,9 @@ export const cloudEscrowPresence = (): CloudObservable<EscrowPresence> => {
   return {
     subscribe: (next) => {
       let hasRow = false;
+      let rowResolved = false;
       const emit = (): void => {
-        if (!isAccountPullComplete()) {
+        if (!rowResolved || !isAccountPullComplete()) {
           next('unknown');
           return;
         }
@@ -120,6 +157,7 @@ export const cloudEscrowPresence = (): CloudObservable<EscrowPresence> => {
       };
       const rowSub = liveQuery(() => db.cloudCrypto.get(ESCROW_ID)).subscribe((row) => {
         hasRow = row !== undefined;
+        rowResolved = true;
         emit();
       });
       const syncSub = api.syncState.subscribe(() => {
@@ -148,8 +186,34 @@ export const signInToCloud = async (): Promise<void> => {
   await api.login();
 };
 
-export const signOutOfCloud = (): Promise<void> =>
-  cloudApi()?.logout() ?? Promise.resolve();
+/**
+ * Sign out, freeing this device's slot in the two-device beta registry first.
+ * The addon's `logout()` never pushes pending mutations (it clears or prompts),
+ * so the row deletion is flushed with an explicit push before logging out —
+ * best-effort: an offline sign-out still signs out, leaking the slot until a
+ * registered device frees it (the row's `lastSeenAt` supports a later reclaim).
+ */
+export const signOutOfCloud = async (): Promise<void> => {
+  const api = cloudApi();
+  if (!api) return;
+  try {
+    await releaseThisDevice();
+    await api.sync?.({ purpose: 'push', wait: true });
+  } catch {
+    // Offline or mid-sync failure: the slot leaks, sign-out still proceeds.
+  }
+  await api.logout();
+};
+
+/**
+ * Force a fresh pull from the server — the retry behind a stalled account fetch.
+ * A signed-in keyless device whose initial pull failed (or never settled) is
+ * otherwise stuck on "fetching your account…"; this re-runs the pull so escrow
+ * presence can resolve. A no-op (resolved) on a plain database, or an addon build
+ * without `sync`. Rejections propagate to the caller so the UI can surface them.
+ */
+export const requestCloudSync = (): Promise<void> =>
+  cloudApi()?.sync?.({ purpose: 'pull', wait: true }) ?? Promise.resolve();
 
 /**
  * Load the persisted device key ring into the middleware's synchronous provider

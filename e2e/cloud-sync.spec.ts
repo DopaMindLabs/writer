@@ -130,6 +130,35 @@ test.describe('cloud sync key conflict', () => {
   });
 });
 
+test.describe('cloud sync two-device beta limit', () => {
+  test('a blocked device sees the hard-block banner and no key action', async ({
+    page,
+  }) => {
+    // The real trigger (a signed-in third device against a full registry) needs
+    // a live account; the ?cloud-devices affordance forces the blocked signal so
+    // the surface is drivable headlessly. Gated to the e2e/dev build only.
+    await page.goto('/?cloud-sync=on&reseed=1&cloud-devices=full#/settings?tab=account');
+    await expect(page.getByTestId('cloud-section')).toBeVisible();
+
+    await expect(page.getByTestId('cloud-device-limit')).toBeVisible();
+    await expect(page.getByText(/supports two devices/i)).toBeVisible();
+    // The blocked banner offers no key-minting action of its own.
+    await expect(page.getByTestId('cloud-keyless-locked')).toHaveCount(0);
+    await expect(page.getByTestId('cloud-keyless-nokey')).toHaveCount(0);
+    await expect(page.getByTestId('cloud-keyless-checking')).toHaveCount(0);
+
+    // Leaving settings tears the panel down cleanly (unsubscribes its stores).
+    await page.goto('/#/');
+    await expect(page.getByTestId('cloud-section')).toHaveCount(0);
+  });
+
+  test('the beta notice names the two-device limit', async ({ page }) => {
+    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await expect(page.getByTestId('cloud-section')).toBeVisible();
+    await expect(page.getByText(/two devices per account/i)).toBeVisible();
+  });
+});
+
 test.describe('cloud sync encrypted reads (real IndexedDB)', () => {
   test('reads content back after unlock without an IndexedDB transaction crash', async ({
     page,

@@ -1,5 +1,6 @@
 import Dexie, { type Table } from 'dexie';
 import type { CloudKeyRing, EscrowRecord } from './keys';
+import { broadcastKeyRingChange } from './keyRingChannel';
 
 /**
  * Device persistence of the derived, non-extractable key ring. Kept in its own
@@ -41,13 +42,28 @@ let cached: CloudKeyRing | null = null;
 const db = (): KeystoreDb => (keystore ??= new KeystoreDb());
 
 const ringListeners = new Set<() => void>();
+
+/**
+ * A monotonic counter bumped on every cache transition (acquire, reload, forget).
+ * Acquiring a key changes no IndexedDB *content* row, so `useLiveQuery` would not
+ * re-run and a keyless device's hidden rows would stay hidden until reload. Cloud
+ * -aware live queries fold this number into their dependency array, so a bump
+ * forces every encrypted read to re-evaluate the moment the key becomes available.
+ */
+let deviceKeyRevision = 0;
+
+/** The current device-key-ring revision; increments on acquire/reload/forget. */
+export const getDeviceKeyRevision = (): number => deviceKeyRevision;
+
 const notifyRingChange = (): void => {
+  deviceKeyRevision += 1;
   for (const listener of ringListeners) listener();
 };
 
 /**
  * Subscribe to changes of the cached device key ring (acquired or forgotten).
- * Lets the keyless-lock monitor recompute without polling. Returns an unsubscribe.
+ * Lets the keyless-lock monitor recompute without polling, and drives the
+ * key-revision store that re-runs encrypted live queries. Returns an unsubscribe.
  */
 export const onDeviceKeyRingChange = (listener: () => void): (() => void) => {
   ringListeners.add(listener);
@@ -60,6 +76,8 @@ export const saveDeviceKeyRing = async (ring: CloudKeyRing): Promise<void> => {
   await db().rings.put({ id: DEVICE, ring });
   cached = ring;
   notifyRingChange();
+  // Tell sibling tabs to reload from the shared keystore now the commit landed.
+  broadcastKeyRingChange('changed');
 };
 
 export const loadDeviceKeyRing = async (): Promise<CloudKeyRing | null> => {
@@ -73,6 +91,7 @@ export const forgetDeviceKeyRing = async (): Promise<void> => {
   await db().rings.delete(DEVICE);
   cached = null;
   notifyRingChange();
+  broadcastKeyRingChange('forgotten');
 };
 
 /** Hold an escrow on the device until reconciliation decides whether to publish it. */

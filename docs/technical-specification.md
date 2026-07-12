@@ -299,7 +299,9 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   **fingerprint** (a second HKDF info string) that identifies the key without revealing it.
   The master is wrapped under a passphrase-derived key (PBKDF2-SHA-512, ≥ 800 000 calibrated
   iterations; the passphrase is NFKC-normalised first, so composed and decomposed keyboard
-  input derive the same key) into an **escrow** record; a one-time **recovery code** (Crockford base32 of
+  input derive the same key — and the setup dialog validates, compares, and rates that same
+  canonical value, so it can never reject two visually identical passphrases the crypto would
+  treat as equal) into an **escrow** record; a one-time **recovery code** (Crockford base32 of
   the master) is the fallback if every device forgets the passphrase. The device's derived
   key ring lives in a **separate, never-synced** keystore database, which also holds the
   escrow until it is published (see Key reconciliation). The published escrow row's id is
@@ -312,14 +314,31 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   annotations, citations, connections, revisions, palettes. Never synced: settings,
   backups, sync bookkeeping, the CRDT `docUpdates` log, and the device keystore.
 - **Reconciliation.** Because the CRDT `docUpdates` log is per-device, cross-device
-  changes travel as `Doc.body` snapshots. After each sync settles, a reconciler compares
-  every row body against the local Y.Doc and, for a body a pull produced rather than the
-  local editor, keeps a safety revision of the local side then either replays the pulled
-  body through the mounted editor or reseeds the CRDT — **whole-document last-writer-wins**;
-  lossless cross-device merge is a recorded open decision for a future release. Sign-out
-  clears the per-device CRDT log; a re-pulled doc with an empty log **heals from its body**
-  (no spurious revision, and the editor mount waits until the log is reseeded), so content and
-  the editor recover after signing back in.
+  changes travel as `Doc.body` snapshots. Reconciliation is **single-flight** — one run at a
+  time, with a trigger during a run coalescing into exactly one follow-up — and armed on four
+  signals: the first `in-sync`, every transition out of `pulling`, every settled `syncComplete`,
+  and every device-key acquisition (so rows hidden while keyless reconcile the instant the key
+  arrives). Each run processes the **mounted (active) document first**, then the rest in bounded
+  batches that yield the event loop, skipping any document whose body is unchanged since its last
+  reconcile. It compares every row body against the local Y.Doc and, for a body a pull produced
+  rather than the local editor, keeps a safety revision of the losing side then either replays the
+  pulled body through the mounted editor or reseeds the CRDT — **whole-document last-writer-wins**;
+  lossless cross-device merge is a recorded open decision for a future release. The mounted-editor
+  flush is **awaitable and reports which body it persisted**: if the editor holds unsaved local
+  edits the pulled remote body is preserved as a recoverable safety revision and the live local
+  text is kept, so neither side is ever silently overwritten. On a healthy network an idle device
+  typically converges in about **1–2 seconds**; a failed reconcile surfaces a visible, retryable
+  status in cloud settings (never live in silence). The sync-status and reconcile-status rows are
+  shown whenever the device is **signed in**, not only once it holds a key, so a signed-in keyless
+  device is never left without sync diagnostics while it waits to unlock. Sign-out clears the per-device CRDT log; a
+  re-pulled doc with an empty log **heals from its body** (no spurious revision, and the editor
+  mount waits until the log is reseeded), so content and the editor recover after signing back in.
+- **Reactive key acquisition.** Acquiring the device key (unlock, adopt, recover, or setup)
+  changes no content row, so encrypted live queries would not otherwise re-run. A monotonic
+  device-key revision — bumped on every key acquire/reload/forget and folded into every encrypted
+  query's dependencies — makes space, section, and document names appear the instant the key lands,
+  **without a page reload**. An invalidation-only `BroadcastChannel` propagates the change to other
+  tabs (never any key material), so unlocking one tab refreshes them all.
 - **Key reconciliation.** Setup holds the escrow on the device, not in `cloudCrypto`, and —
   while signed out — drops any escrow already in the local database (residue from an earlier
   local session) so a fresh key can never trip a spurious mismatch. Reconciliation **re-runs on
@@ -338,7 +357,12 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   the account key (enter the account passphrase; the device re-seals its own rows under it) or
   **erasing** the account's unreadable copy (kept: this device's notes). Erase is irreversible,
   so — like deleting a space — it is a two-step gesture: an explicit "can't be undone" warning
-  plus a typed confirmation word (`ERASE`) that arms the destructive button. The route-level
+  plus a typed confirmation word (`ERASE`) that arms the destructive button. The escrow swap
+  inside erase runs only when the device holds a **pending escrow** to install; a mismatched
+  device without one erases the unreadable rows but leaves the account key (and the mismatch)
+  in place — it never deletes the account escrow with nothing to replace it, which would leave
+  the whole account keyless. If no account escrow exists either, the flag protects nothing and
+  erase clears it. The route-level
   recovery screen still catches a genuine read failure, and its **Unlock in settings** action
   is a full navigation to the Account tab. Never clobbers, never silently loses. The New-space
   (Templates) screen also surfaces the lock **proactively**: `useCloudLockReason` (mismatch >
@@ -350,7 +374,18 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   — sign-in is turned back until its writing is sealed. A **clean** device (no plaintext synced
   rows) may sign in first and then unlock/adopt the account key; while it is signed-in-keyless
   the middleware refuses content writes and hides sealed rows, so a keyless write is never
-  uploaded in the clear either way, and the settings action row offers **no** set-up or unlock of
+  uploaded in the clear either way. The refusal is scoped to **app** writes: the addon applies
+  rows it just pulled (already ciphertext) through the same table API but inside a
+  change-tracking-disabled transaction, and the lock exempts those — otherwise the initial pull
+  would abort, `initiallySynced` would never be set, and a content-bearing account would deadlock
+  on “fetching your account…”. Should that pull genuinely fail to settle, the keyless section
+  does not sit on “fetching your account…” indefinitely: a sync **error** phase turns it into a
+  retryable notice (a **Try again** that forces a fresh pull), and an **offline** phase says so
+  and resumes on its own — neither offers a key-minting action, so the divergence guard holds.
+  Presence itself resolves only once **both** the pull is confirmed complete **and** the local
+  escrow-row query has settled at least once: on a reloading device the persisted pull flag is
+  already `true` while the row read is still in flight, and reporting “no key” in that gap
+  would offer Set-up over an account that has one. The settings action row offers **no** set-up or unlock of
   its own — the presence-gated keyless section is the single source of key actions, so a set-up
   can never mint a key that diverges from a not-yet-pulled account escrow, and space creation is
   blocked with the same inline notice while the lock holds. Sign-in is surfaced on
@@ -358,9 +393,23 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   popover always offers a direct **Account** link to the account settings tab (where sign-in and
   encryption live), regardless of the flag. Opting out is **non-destructive** —
   the cloud schema is sticky so a rebuild never erases local content.
+- **Two-device beta limit.** An account holds at most **two devices** while the beta runs,
+  tracked in a synced, deliberately unencrypted `cloudDevices` registry — one row per joined
+  device carrying only the addon's random per-device client identity (which the server already
+  receives on every sync) and joined/last-seen timestamps; never a device name, user agent, or
+  content. Ids and counts are readable while keyless by design, so a signed-in third device is
+  **hard-blocked** before it can act: the keyless section is replaced by a banner naming the
+  limit, no unlock or set-up is offered, and only signing out on another device (which deletes
+  that device's row and flushes the deletion with an explicit push before logout — the addon's
+  own logout never pushes) frees the slot. A device registers itself once it is signed in and
+  holds a key; forgetting the key keeps the slot (the device is still signed in and expected to
+  unlock again). The gate is a client-side beta courtesy, not a security boundary; the section
+  heading carries a persistent beta notice naming the limit and advising local backups.
 - **Server sees / does not see.** Cannot: bodies, titles, note text, citation
   metadata, attachment bytes. Can: record ids and relationships, timestamps, note kinds,
-  citation keys and years, the sign-in email, and sync timing/IP. Sign-in is invite-only.
+  citation keys and years, the sign-in email, sync timing/IP, and the device-registry rows
+  (random per-device client identity plus joined/last-seen timestamps — identifiers and timing
+  the sync protocol already exposes). Sign-in is invite-only.
 
 See [`docs/cloud-sync-beta.md`](cloud-sync-beta.md) for the full design note and the
 manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P8 ciphertext and

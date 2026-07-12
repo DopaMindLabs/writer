@@ -1,11 +1,12 @@
 import { useEffect, type RefObject } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { registerEditorHandle } from '@/lib/collab/editorRegistry';
+import type { FlushResult } from '@/lib/collab/flush.types';
 
 interface RestoreBridgePluginProps {
   docId: string;
   /** The live autosave's flush, so the handle can settle pending edits on demand. */
-  flushRef: RefObject<() => boolean>;
+  flushRef: RefObject<() => Promise<FlushResult>>;
 }
 
 /**
