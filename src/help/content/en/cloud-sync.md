@@ -55,6 +55,10 @@ cannot unlock or set up until you free a slot:
 3. Back on the new device, wait a moment, then continue with
    **Unlock on this device**.
 
+A device you have not used for **7 days** stops holding its slot, so a laptop you
+wiped or gave away frees its place on its own — you do not have to dig it out to
+sign out. If you use it again and a slot is free, it simply takes one back.
+
 While the beta runs, keep local backups of important writing on at least one
 device (**Settings → Backups**).
 

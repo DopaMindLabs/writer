@@ -313,6 +313,21 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
 - **Sync scope.** Encrypted: spaces, sections, docs, notes, note attachments,
   annotations, citations, connections, revisions, palettes. Never synced: settings,
   backups, sync bookkeeping, the CRDT `docUpdates` log, and the device keystore.
+- **Device registry.** The beta allows **four devices per account**, tracked in a synced
+  but **unencrypted** `cloudDevices` table so a device that holds no key yet can still count
+  the slots and be told it is past the cap. A row carries only the addon's random per-device
+  client identity and timestamps (`joinedAt`, `lastSeenAt`, and `revokedAt` once revoked) —
+  never a device name, user agent, or content. A registered device refreshes `lastSeenAt` at
+  most **once an hour**: the table is synced, so an unconditional refresh would push, settle
+  the sync round, re-trigger the registrar and push again — an unbounded sync loop. A slot
+  goes **stale after 7 days** of silence and is then reclaimable, which is what stops a
+  discarded browser profile holding a slot for ever; only live slots count against the limit,
+  so stale and revoked rows never lock a new device out. Users see their devices in Cloud
+  settings and can **sign out** of the current one or **revoke** any other, which frees its
+  slot at once and leaves a tombstone so the revoked device can tell it was removed. The limit
+  is a **client-side beta courtesy, not a security boundary**: the server does not enforce it,
+  a revoked device keeps its Dexie Cloud session, and two devices racing for the last slot can
+  transiently both take it.
 - **Reconciliation.** Because the CRDT `docUpdates` log is per-device, cross-device
   changes travel as `Doc.body` snapshots. Reconciliation is **single-flight** — one run at a
   time, with a trigger during a run coalescing into exactly one follow-up — and armed on four

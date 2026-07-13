@@ -1,9 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import Dexie, { type Table } from 'dexie';
 import { db } from '@/db/db';
 import { deviceLimitState } from '@/lib/cloud/deviceLimit';
-import type { DeviceRecord } from '@/lib/cloud/devicePolicy';
+import {
+  DEVICE_STALE_AFTER_MS,
+  type DeviceRecord,
+} from '@/lib/cloud/devicePolicy';
 import { useDeviceLimitBlocked } from './useDeviceSlots';
 
 /** The slice of `db.cloud` the blocked computation reads. */
@@ -27,9 +30,36 @@ const withCloud = (clientIdentity?: string): void => {
   (db as unknown as { cloud?: FakeCloud }).cloud = cloud;
 };
 
+/** Rows seen just now — the ordinary case: every one of them occupies a slot. */
 const seedDevices = async (ids: string[]): Promise<void> => {
-  await registry().bulkPut(ids.map((id) => ({ id, joinedAt: 1, lastSeenAt: 1 })));
+  const now = Date.now();
+  await registry().bulkPut(ids.map((id) => ({ id, joinedAt: now, lastSeenAt: now })));
 };
+
+/**
+ * Write rows while the hook is mounted. The write is wrapped in `act` because the
+ * live query re-emits into React state as a result of it; leaving that emission
+ * outside `act` makes React warn and, worse, makes the assertion racy.
+ */
+const writeRows = async (rows: DeviceRecord[]): Promise<void> => {
+  await act(async () => {
+    await registry().bulkPut(rows);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+};
+
+/** A row quiet for longer than the idle window: its slot is reclaimable. */
+const staleRow = (id: string): DeviceRecord => ({
+  id,
+  joinedAt: Date.now() - DEVICE_STALE_AFTER_MS - 2,
+  lastSeenAt: Date.now() - DEVICE_STALE_AFTER_MS - 1,
+});
+
+const liveRow = (id: string): DeviceRecord => ({
+  id,
+  joinedAt: Date.now(),
+  lastSeenAt: Date.now(),
+});
 
 beforeEach(async () => {
   // A real cloudDevices table so the hook's liveQuery observes actual rows (the
@@ -81,5 +111,30 @@ describe('useDeviceLimitBlocked', () => {
     deviceLimitState.set(true);
     const { result } = renderHook(() => useDeviceLimitBlocked(false, 'unknown'));
     expect(result.current).toBe(true);
+  });
+
+  it('frees a slot the moment a peer goes stale', async () => {
+    // The escape hatch. A keyless device cannot write, so it can neither prune a
+    // dead row nor revoke one — if they still counted, four discarded browser
+    // profiles would lock every future device out of the account for good.
+    withCloud('me');
+    await seedDevices(['a', 'b', 'c', 'd']);
+    const { result } = renderHook(() => useDeviceLimitBlocked(true, 'present'));
+    await waitFor(() => expect(result.current).toBe(true));
+
+    await writeRows([staleRow('d')]);
+
+    await waitFor(() => expect(result.current).toBe(false));
+  });
+
+  it('frees a slot the moment a peer is revoked', async () => {
+    withCloud('me');
+    await seedDevices(['a', 'b', 'c', 'd']);
+    const { result } = renderHook(() => useDeviceLimitBlocked(true, 'present'));
+    await waitFor(() => expect(result.current).toBe(true));
+
+    await writeRows([{ ...liveRow('d'), revokedAt: Date.now() }]);
+
+    await waitFor(() => expect(result.current).toBe(false));
   });
 });
