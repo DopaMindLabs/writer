@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react';
 import type { UserLogin } from 'dexie-cloud-addon';
 import type { EscrowPresence } from '@/lib/cloud/cloudClient';
 import { deviceRevokedState } from '@/lib/cloud/deviceRevoked';
+import { devicePreviewState } from '@/lib/cloud/devicePreview';
 import { useDeviceLimitBlocked } from './useDeviceSlots';
 
 export interface CloudPanelFlags {
@@ -38,12 +39,17 @@ export const useCloudPanelFlags = (
     deviceRevokedState.current,
     deviceRevokedState.current,
   );
+  const devicePreview = useSyncExternalStore(
+    devicePreviewState.subscribe,
+    devicePreviewState.current,
+    devicePreviewState.current,
+  );
   return {
     signedIn,
     keylessSignedIn,
     showStatus: signedIn || hasKey,
     deviceLimitBlocked,
     deviceRevoked,
-    showDeviceList: signedIn,
+    showDeviceList: signedIn || devicePreview !== null,
   };
 };

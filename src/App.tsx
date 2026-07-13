@@ -25,6 +25,8 @@ import { startDeviceRegistrar } from '@/lib/cloud/deviceRegistrar';
 import { keyMismatchState } from '@/lib/cloud/crypto/keyMismatch';
 import { keylessLockState } from '@/lib/cloud/crypto/keylessLock';
 import { deviceLimitState } from '@/lib/cloud/deviceLimit';
+import { devicePreviewState, PREVIEW_OWN_ID } from '@/lib/cloud/devicePreview';
+import { seedDevicePreview } from '@/lib/cloud/devicePreviewSeed';
 import { resetAndReseed } from '@/db/seed';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
 import { HomeScreen } from '@/screens/global/Home';
@@ -94,12 +96,27 @@ const stripParam = (url: URL, name: string): void => {
 };
 
 /**
+ * `?cloud-devices=list` seeds a registry and forces the device list open;
+ * any other value forces the device-limit block. Both surfaces otherwise need a
+ * completed sign-in — an account, a minted client identity, a settled pull — which
+ * a headless run can never reach.
+ */
+const applyCloudDeviceParam = async (value: string): Promise<void> => {
+  if (value !== 'list') {
+    deviceLimitState.set(true);
+    return;
+  }
+  await seedDevicePreview();
+  devicePreviewState.set({ ownId: PREVIEW_OWN_ID });
+};
+
+/**
  * Dev/E2E-only URL affordances, applied after boot wiring: `?reseed` reseeds the
  * local database, `?cloud-mismatch` forces the key-mismatch signal,
- * `?cloud-keyless` forces the signed-in-keyless lock and `?cloud-devices` forces
- * the device-limit block, so each of these surfaces can be driven headlessly
- * (the real triggers need a live sign-in). Applied after any reseed so the
- * reseed's own writes are never blocked by a forced lock.
+ * `?cloud-keyless` forces the signed-in-keyless lock and `?cloud-devices` drives
+ * the device surfaces, so each of these can be exercised headlessly (the real
+ * triggers need a live sign-in). Applied after any reseed so the reseed's own
+ * writes are never blocked by a forced lock.
  */
 const applyDevBootParams = async (): Promise<void> => {
   if (!isReseedParamEnabled()) return;
@@ -116,8 +133,9 @@ const applyDevBootParams = async (): Promise<void> => {
     keylessLockState.set(true);
     stripParam(url, 'cloud-keyless');
   }
-  if (url.searchParams.has('cloud-devices')) {
-    deviceLimitState.set(true);
+  const devices = url.searchParams.get('cloud-devices');
+  if (devices !== null) {
+    await applyCloudDeviceParam(devices);
     stripParam(url, 'cloud-devices');
   }
 };

@@ -1,6 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db/db';
 import { cloudClientIdentity } from '@/lib/cloud/cloudClient';
+import { devicePreviewState } from '@/lib/cloud/devicePreview';
 import {
   DEVICE_LIMIT,
   isRevokedDevice,
@@ -54,7 +55,9 @@ export const useDeviceList = (): DeviceList | undefined =>
   useLiveQuery<DeviceList | undefined>(async () => {
     const rows = await db.cloudDevices.toArray();
     const now = Date.now();
-    const ownId = cloudClientIdentity();
+    // A real client identity is minted by the first post-login sync, which a
+    // headless run never reaches; the dev/e2e preview stands one in.
+    const ownId = devicePreviewState.current()?.ownId ?? cloudClientIdentity();
     const visible = rows.filter((row) => !isRevokedDevice(row));
     return {
       entries: visible
