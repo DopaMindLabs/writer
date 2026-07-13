@@ -11,6 +11,7 @@
  * the rows, this device's id, and an injected `now`. {@link ./deviceRegistry}
  * owns the IO; {@link ./deviceRegistrar} owns the subscriptions.
  */
+import { deviceRefreshIntervalMs, deviceStaleAfterMs } from './env';
 
 export interface DeviceRecord {
   /** The addon's stable per-device client identity. */
@@ -26,6 +27,12 @@ export interface DeviceRecord {
 /** How many devices an account may hold while the sync beta runs. */
 export const DEVICE_LIMIT = 4;
 
+/** The shipped refresh interval: hourly. See {@link DEVICE_REFRESH_INTERVAL_MS}. */
+export const DEFAULT_DEVICE_REFRESH_INTERVAL_MS = 60 * 60 * 1000;
+
+/** The shipped idle window: a week. See {@link DEVICE_STALE_AFTER_MS}. */
+export const DEFAULT_DEVICE_STALE_AFTER_MS = 7 * 24 * 60 * 60 * 1000;
+
 /**
  * The minimum age of `lastSeenAt` before a refresh write is allowed.
  *
@@ -35,17 +42,28 @@ export const DEVICE_LIMIT = 4;
  * again — an unbounded sync loop that saturates the main thread and reads to the
  * user as a UI that flashes and hangs. Gating the write behind this interval is
  * what makes a registrar run genuinely idempotent.
+ *
+ * Overridable with `VITE_DEVICE_REFRESH_SECONDS`, because a week-long idle window
+ * is untestable otherwise.
  */
-export const DEVICE_REFRESH_INTERVAL_MS = 60 * 60 * 1000;
+export const DEVICE_REFRESH_INTERVAL_MS = deviceRefreshIntervalMs(
+  DEFAULT_DEVICE_REFRESH_INTERVAL_MS,
+);
 
 /**
  * How long a slot may sit idle before another device may reclaim it. A live
- * device refreshes hourly, so it must miss ~168 consecutive refreshes to look
- * dead. Without a reclaim, a discarded browser profile holds its slot for ever —
- * sign-out is the only release — and four dead slots lock every future device out
- * of the account.
+ * device refreshes hourly, so by default it must miss ~168 consecutive refreshes
+ * to look dead. Without a reclaim, a discarded browser profile holds its slot for
+ * ever — sign-out is the only release — and four dead slots lock every future
+ * device out of the account.
+ *
+ * Overridable with `VITE_DEVICE_STALE_SECONDS`. Keep it far above the refresh
+ * interval: a live device that misses a couple of refreshes (a closed laptop, a
+ * flaky network) must never have its slot taken.
  */
-export const DEVICE_STALE_AFTER_MS = 7 * 24 * 60 * 60 * 1000;
+export const DEVICE_STALE_AFTER_MS = deviceStaleAfterMs(
+  DEFAULT_DEVICE_STALE_AFTER_MS,
+);
 
 /** Whether a slot has gone quiet long enough for another device to reclaim it. */
 export const isStaleDevice = (device: DeviceRecord, now: number): boolean =>

@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
+  DEFAULT_DEVICE_REFRESH_INTERVAL_MS,
+  DEFAULT_DEVICE_STALE_AFTER_MS,
   DEVICE_LIMIT,
   DEVICE_REFRESH_INTERVAL_MS,
   DEVICE_STALE_AFTER_MS,
@@ -30,12 +32,24 @@ describe('device policy constants', () => {
     expect(DEVICE_LIMIT).toBe(4);
   });
 
-  it('leaves a live device two orders of magnitude of slack before it looks dead', () => {
+  it('ships defaults that leave a live device two orders of magnitude of slack', () => {
     // The refresh interval and the idle window must never fight: a device that
     // refreshes on schedule has to miss a great many refreshes in a row before a
     // peer may reclaim its slot. Without this margin a healthy device could lose
     // its slot to a clock skew or a long sleep.
-    expect(DEVICE_REFRESH_INTERVAL_MS * 100).toBeLessThanOrEqual(DEVICE_STALE_AFTER_MS);
+    //
+    // The guard is on the shipped defaults, not the live values: a deployment may
+    // deliberately shorten both (VITE_DEVICE_REFRESH_SECONDS /
+    // VITE_DEVICE_STALE_SECONDS) to exercise the reclaim in seconds, where losing
+    // a slot costs nothing.
+    expect(DEFAULT_DEVICE_REFRESH_INTERVAL_MS * 100).toBeLessThanOrEqual(
+      DEFAULT_DEVICE_STALE_AFTER_MS,
+    );
+  });
+
+  it('falls back to the shipped defaults when no override is set', () => {
+    expect(DEVICE_REFRESH_INTERVAL_MS).toBe(DEFAULT_DEVICE_REFRESH_INTERVAL_MS);
+    expect(DEVICE_STALE_AFTER_MS).toBe(DEFAULT_DEVICE_STALE_AFTER_MS);
   });
 });
 

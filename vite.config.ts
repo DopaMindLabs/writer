@@ -50,9 +50,14 @@ export default defineConfig(({ command, mode }) => ({
     environment: 'jsdom',
     // Keep the suite hermetic: a developer's `.env.local` cloud-sync gates must
     // never leak into tests. Cases that need them stub the values explicitly.
+    // The device-registry windows are shortened to seconds in a local .env.local
+    // so the reclaim can be exercised by hand; the suite must still see the
+    // shipped defaults.
     env: {
       VITE_DEXIE_CLOUD_URL: '',
       VITE_CLOUD_SYNC_FLAG: '',
+      VITE_DEVICE_REFRESH_SECONDS: '',
+      VITE_DEVICE_STALE_SECONDS: '',
     },
     reporter: process.env.CI ? 'verbose' : 'default',
     setupFiles: ['./src/test/setup.ts'],
