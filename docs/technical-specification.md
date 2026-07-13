@@ -327,7 +327,20 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   slot at once and leaves a tombstone so the revoked device can tell it was removed. The limit
   is a **client-side beta courtesy, not a security boundary**: the server does not enforce it,
   a revoked device keeps its Dexie Cloud session, and two devices racing for the last slot can
-  transiently both take it.
+  transiently both take it. Both windows are overridable per deployment, in seconds, via
+  `VITE_DEVICE_REFRESH_SECONDS` and `VITE_DEVICE_STALE_SECONDS`, so the reclaim can be
+  exercised in minutes rather than days; a malformed or non-positive value falls back to the
+  default.
+- **Device list.** Signed-in devices see **Your devices** in the cloud panel: every slot, oldest
+  first, with the count in use, each row showing only when it joined and when it was last seen —
+  a device has no name to show, by design. The current device is badged **This device** and a
+  reclaimable one **Inactive**. Every row can free its own slot by the means that fits it: the
+  current device **signs out** (revoking itself would be pointless — it holds the session and
+  would rejoin), any other is **removed** behind a confirmation. The list is shown to a
+  *blocked* device too: that is the device that most needs to free a slot, and until now the
+  only way to free one was to sign out on the machine holding it — useless for a laptop that
+  was wiped or given away. A removed device sees **This device was removed from your account**
+  and is asked to sign out; nothing of its writing is deleted.
 - **Reconciliation.** Because the CRDT `docUpdates` log is per-device, cross-device
   changes travel as `Doc.body` snapshots. Reconciliation is **single-flight** — one run at a
   time, with a trigger during a run coalescing into exactly one follow-up — and armed on four

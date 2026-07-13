@@ -206,6 +206,33 @@ export const signOutOfCloud = async (): Promise<void> => {
 };
 
 /**
+ * Revoke another device's slot, freeing it at once.
+ *
+ * The row is **tombstoned, not deleted**: `revokedAt` is how the revoked device
+ * learns it was removed rather than silently losing its slot, and the registrar
+ * sweeps the tombstone once that device has had time to see it. The slot itself is
+ * free immediately — a revoked row never counts as live.
+ *
+ * Refuses this device's own id: revoking yourself is meaningless while you hold
+ * the session, since the registrar would simply rejoin on the next sync. Sign out
+ * instead, which releases the slot outright.
+ *
+ * The deletion is flushed with an explicit push, best-effort: an offline revoke
+ * still applies locally and travels on the next sync.
+ */
+export const removeCloudDevice = async (id: string): Promise<void> => {
+  const api = cloudApi();
+  if (!api) return;
+  if (id === cloudClientIdentity()) return;
+  await db.cloudDevices.update(id, { revokedAt: Date.now() });
+  try {
+    await api.sync?.({ purpose: 'push', wait: true });
+  } catch {
+    // Offline: the tombstone is written locally and pushes on the next sync.
+  }
+};
+
+/**
  * Force a fresh pull from the server — the retry behind a stalled account fetch.
  * A signed-in keyless device whose initial pull failed (or never settled) is
  * otherwise stuck on "fetching your account…"; this re-runs the pull so escrow
