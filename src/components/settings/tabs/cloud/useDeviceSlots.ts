@@ -6,7 +6,7 @@ import {
   cloudClientIdentity,
   type EscrowPresence,
 } from '@/lib/cloud/cloudClient';
-import { DEVICE_LIMIT } from '@/lib/cloud/deviceRegistry';
+import { DEVICE_LIMIT } from '@/lib/cloud/devicePolicy';
 import { deviceLimitState } from '@/lib/cloud/deviceLimit';
 
 /** What the registry read needs to decide the blocked state. */
@@ -16,7 +16,7 @@ interface DeviceSlots {
 }
 
 /**
- * Whether this device is turned away by the two-device beta limit: signed in,
+ * Whether this device is turned away by the beta device limit: signed in,
  * keyless, the pull confirmed, the registry full, and this device not among the
  * registered ids. Registry ids and counts are readable while keyless by design
  * (the table is unencrypted), so a third device can be told before it can act.

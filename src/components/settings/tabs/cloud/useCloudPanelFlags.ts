@@ -9,8 +9,8 @@ export interface CloudPanelFlags {
    *  one is still syncing ciphertext and its reconcile can still fail, so it
    *  must not be left without diagnostics while it waits to unlock. */
   showStatus: boolean;
-  /** The two-device beta limit: a blocked third device gets the hard-block
-   *  banner in place of the keyless section, so no key action is offered. */
+  /** The beta device limit: a device past the cap gets the hard-block banner in
+   *  place of the keyless section, so no key action is offered. */
   deviceLimitBlocked: boolean;
 }
 

@@ -3,7 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import Dexie, { type Table } from 'dexie';
 import { db } from '@/db/db';
 import { deviceLimitState } from '@/lib/cloud/deviceLimit';
-import type { DeviceRecord } from '@/lib/cloud/deviceRegistry';
+import type { DeviceRecord } from '@/lib/cloud/devicePolicy';
 import { useDeviceLimitBlocked } from './useDeviceSlots';
 
 /** The slice of `db.cloud` the blocked computation reads. */

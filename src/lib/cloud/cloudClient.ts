@@ -187,7 +187,7 @@ export const signInToCloud = async (): Promise<void> => {
 };
 
 /**
- * Sign out, freeing this device's slot in the two-device beta registry first.
+ * Sign out, freeing this device's slot in the beta device registry first.
  * The addon's `logout()` never pushes pending mutations (it clears or prompts),
  * so the row deletion is flushed with an explicit push before logging out —
  * best-effort: an offline sign-out still signs out, leaking the slot until a

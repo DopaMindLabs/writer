@@ -21,7 +21,7 @@ import { startKeyRingChannel } from '@/lib/cloud/crypto/keyRingChannel';
 import { startCloudReconciler } from '@/lib/cloud/reconcile';
 import { startEscrowReconciler } from '@/lib/cloud/escrowReconcile';
 import { startKeylessLockMonitor } from '@/lib/cloud/keylessGuard';
-import { startDeviceRegistrar } from '@/lib/cloud/deviceRegistry';
+import { startDeviceRegistrar } from '@/lib/cloud/deviceRegistrar';
 import { keyMismatchState } from '@/lib/cloud/crypto/keyMismatch';
 import { keylessLockState } from '@/lib/cloud/crypto/keylessLock';
 import { deviceLimitState } from '@/lib/cloud/deviceLimit';
