@@ -27,6 +27,8 @@ import { keylessLockState } from '@/lib/cloud/crypto/keylessLock';
 import { deviceLimitState } from '@/lib/cloud/deviceLimit';
 import { devicePreviewState, PREVIEW_OWN_ID } from '@/lib/cloud/devicePreview';
 import { seedDevicePreview } from '@/lib/cloud/devicePreviewSeed';
+import { installRegistrarPreview } from '@/lib/cloud/devicePreviewCloud';
+import { deviceRevokedState } from '@/lib/cloud/deviceRevoked';
 import { resetAndReseed } from '@/db/seed';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
 import { HomeScreen } from '@/screens/global/Home';
@@ -96,18 +98,28 @@ const stripParam = (url: URL, name: string): void => {
 };
 
 /**
- * `?cloud-devices=list` seeds a registry and forces the device list open;
- * any other value forces the device-limit block. Both surfaces otherwise need a
- * completed sign-in — an account, a minted client identity, a settled pull — which
- * a headless run can never reach.
+ * Drive the device surfaces, which otherwise all need a completed sign-in — an
+ * account, a minted client identity, a settled pull — that a headless run can
+ * never reach.
+ *
+ * - `list` seeds a registry covering every row state and forces the list open.
+ * - `registrar` additionally stands in for the account state the registrar gates
+ *   on, so its real write path runs once this device acquires a key.
+ * - `revoked` reports this device's slot as revoked from elsewhere.
+ * - anything else forces the device-limit block.
  */
 const applyCloudDeviceParam = async (value: string): Promise<void> => {
-  if (value !== 'list') {
+  if (value === 'revoked') {
+    deviceRevokedState.set(true);
+    return;
+  }
+  if (value !== 'list' && value !== 'registrar') {
     deviceLimitState.set(true);
     return;
   }
   await seedDevicePreview();
   devicePreviewState.set({ ownId: PREVIEW_OWN_ID });
+  if (value === 'registrar') installRegistrarPreview();
 };
 
 /**

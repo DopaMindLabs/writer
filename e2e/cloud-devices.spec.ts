@@ -4,6 +4,36 @@ import { expectNoA11yViolations } from './_helpers';
 // Colour-contrast is asserted only in the high-contrast themes across the suite.
 const STRUCTURE_ONLY = { disableRules: ['color-contrast'] };
 
+const PASSPHRASE = 'a-strong-passphrase';
+
+/** One registry row, as read back from the page's own database. */
+interface RegistryRow {
+  id: string;
+  lastSeenAt: number;
+}
+
+declare global {
+  interface Window {
+    db: {
+      cloudDevices: { toArray: () => Promise<RegistryRow[]> };
+    };
+  }
+}
+
+/**
+ * Mint a device key through the ordinary setup flow. A signed-in device with no key
+ * yet is offered setup from the keyless banner rather than the controls row.
+ */
+const setUpEncryption = async (page: import('@playwright/test').Page) => {
+  await page.getByTestId('cloud-keyless-nokey').getByRole('button').click();
+  await page.getByTestId('passphrase-input').fill(PASSPHRASE);
+  await page.getByTestId('passphrase-confirm').fill(PASSPHRASE);
+  await page.getByTestId('passphrase-submit').click();
+  await expect(page.getByTestId('recovery-code-dialog')).toBeVisible();
+  await page.getByTestId('recovery-confirm').click();
+  await page.getByTestId('recovery-done').click();
+};
+
 /**
  * The device list needs a completed sign-in — an account, a minted client identity,
  * a settled pull — none of which a headless run can reach, since no OTP ever
@@ -101,4 +131,59 @@ test.describe('cloud sync device list', () => {
       ...STRUCTURE_ONLY,
     });
   });
+});
+
+test.describe('cloud sync device revoked', () => {
+  test('a device removed elsewhere is told, rather than silently losing its slot', async ({
+    page,
+  }) => {
+    await page.goto('/?cloud-sync=on&reseed=1&cloud-devices=revoked#/settings?tab=account');
+    const banner = page.getByTestId('cloud-device-revoked');
+    await expect(banner).toBeVisible();
+    await expect(banner).toContainText(/removed from your account/i);
+  });
+});
+
+/**
+ * The registrar's write path is what the sync loop lived in, so it is worth driving
+ * against the real Dexie rather than only a fake. `?cloud-devices=registrar` stands
+ * in for the account state it gates on (a signed-in user, a settled pull, a client
+ * identity); acquiring a key through the ordinary setup flow then triggers a real
+ * run, because the registrar re-runs on every device-key change.
+ */
+const REGISTRAR =
+  '/?cloud-sync=on&reseed=1&cloud-devices=registrar#/settings?tab=account';
+
+/** The registry, read straight from IndexedDB — the source of truth the UI renders. */
+const readRegistry = (page: import('@playwright/test').Page) =>
+  page.evaluate(async () =>
+    (await window.db.cloudDevices.toArray()).map((row) => ({
+      id: String(row.id),
+      lastSeenAt: row.lastSeenAt,
+    })),
+  );
+
+test.describe('cloud sync device registrar', () => {
+  test('registers this device and reclaims a dead slot', async ({ page }) => {
+    await page.goto(REGISTRAR);
+    await expect(page.getByTestId('cloud-section')).toBeVisible();
+
+    // Acquiring a key is what lets the registrar run at all.
+    await setUpEncryption(page);
+
+    await expect(async () => {
+      const ids = (await readRegistry(page)).map((row) => row.id);
+      // This device takes a slot…
+      expect(ids).toContain('preview-this-device');
+      // …and the dead one gives its slot back. A wiped browser profile must not
+      // hold a slot for ever: four of those locked the beta account out entirely.
+      expect(ids).not.toContain('preview-stale-peer');
+    }).toPass();
+  });
+
+  // The loop itself is deliberately NOT asserted here. Against
+  // cloud.example.invalid no sync round ever settles, so nothing re-triggers the
+  // registrar and a "did it write again?" check would pass without ever exercising
+  // the behaviour. It is held by the put-call-count unit test, and end to end only
+  // by the real-account harness (`npm run cloud:harness`).
 });
