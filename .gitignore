@@ -37,6 +37,9 @@ plans
 /playwright-report/
 /playwright/.cache/
 
+# Multi-device cloud harness: browser profiles and per-device traffic logs.
+/.cloud-harness/
+
 coverage
 e2e-coverage
 .claude/*

@@ -19,7 +19,7 @@ import type {
   DocInspectorConfig,
 } from './schema';
 import type { EscrowRecord } from '@/lib/cloud/crypto/keys';
-import type { DeviceRecord } from '@/lib/cloud/deviceRegistry';
+import type { DeviceRecord } from '@/lib/cloud/devicePolicy';
 import { STORES } from './stores';
 
 /**

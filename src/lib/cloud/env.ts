@@ -19,3 +19,30 @@ export const hasCloudEnv = (): boolean => cloudDatabaseUrl() !== null;
  */
 export const cloudFlagFromEnv = (): boolean =>
   import.meta.env.VITE_CLOUD_SYNC_FLAG === 'on';
+
+/**
+ * Read a build-time duration given in **seconds**, in milliseconds. Anything not
+ * a positive finite number — unset, blank, or malformed — falls back to the
+ * default rather than throwing: a mistyped deployment variable must not brick the
+ * app, and the defaults are always safe.
+ */
+const durationFromEnv = (raw: unknown, fallbackMs: number): number => {
+  const seconds = typeof raw === 'string' ? Number(raw) : Number.NaN;
+  return Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : fallbackMs;
+};
+
+/**
+ * How often a registered device may refresh its registry slot, and how long a
+ * slot may sit idle before another device reclaims it — both overridable per
+ * deployment so the reclaim can be exercised in seconds rather than days.
+ *
+ * Keep refresh **far** below stale. A live device must be able to miss several
+ * refreshes (a closed laptop, a flaky network) without a peer declaring it dead;
+ * the defaults leave a 168× margin. Shortening them is for testing, where losing
+ * a slot costs nothing.
+ */
+export const deviceRefreshIntervalMs = (fallbackMs: number): number =>
+  durationFromEnv(import.meta.env.VITE_DEVICE_REFRESH_SECONDS, fallbackMs);
+
+export const deviceStaleAfterMs = (fallbackMs: number): number =>
+  durationFromEnv(import.meta.env.VITE_DEVICE_STALE_SECONDS, fallbackMs);

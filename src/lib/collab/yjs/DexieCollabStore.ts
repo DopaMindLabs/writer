@@ -41,6 +41,12 @@ const loadAllUpdates = async (docId: string): Promise<Uint8Array[]> =>
     (row) => row.payload,
   );
 
+const lastUpdateAt = async (docId: string): Promise<number | null> => {
+  const rows = await db.docUpdates.where('docId').equals(docId).toArray();
+  if (rows.length === 0) return null;
+  return rows.reduce((latest, row) => Math.max(latest, row.createdAt), 0);
+};
+
 const trySeedDoc = (
   docId: string,
   seed: Uint8Array,
@@ -134,6 +140,7 @@ export const createDexieCollabStore = (): CollabStore => {
   return {
     append,
     loadAll: loadAllUpdates,
+    lastUpdateAt,
     trySeed: trySeedDoc,
     reseedIfEmpty: reseedDocIfEmpty,
     compact: compactDoc,
