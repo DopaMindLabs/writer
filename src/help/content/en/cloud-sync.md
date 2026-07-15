@@ -44,19 +44,39 @@ reload the page, and any other tabs you have open update on their own.
 
 ## How many devices can I use?
 
-**Eight devices per account** while cloud sync is in beta. More will be supported
+**Four devices per account** while cloud sync is in beta. More will be supported
 later.
 
-A ninth device that signs in sees **This account already has eight devices** and
-cannot unlock or set up until you free a slot:
+A fifth device that signs in sees **This account already has four devices** and
+cannot unlock or set up until you free a slot. You can free one without leaving
+the device you are on — see **Manage your devices** below.
 
-1. On one of your other devices, open **Settings → Cloud sync (beta)**.
-2. Select **Sign out**.
-3. Back on the new device, wait a moment, then continue with
-   **Unlock on this device**.
+A device you have not used for **7 days** stops holding its slot, so a laptop you
+wiped or gave away frees its place on its own — you do not have to dig it out to
+sign out. If you use it again and a slot is free, it simply takes one back.
 
 While the beta runs, keep local backups of important writing on at least one
 device (**Settings → Backups**).
+
+## Manage your devices
+
+**Settings → Cloud sync (beta) → Your devices** lists every device on your
+account, oldest first, and how many of your four slots are in use.
+
+Devices have no names. Nothing identifying is stored about them — no device name,
+no browser, no location — so each row shows only when it joined and when it last
+synced. The device you are using is marked **This device**. One marked
+**Inactive** has been quiet long enough that its slot is already free.
+
+To free a slot:
+
+- **On the device you are using**, select **Sign out**.
+- **On any other device**, select **Remove**, then confirm.
+
+**Remove** frees the slot straight away, so a new device can take it. If the
+device you removed is still signed in somewhere, it stops holding a slot and is
+asked to sign out — it will not quietly take another. Its writing stays on it, and
+nothing is deleted from your account.
 
 ## Check that sync is healthy
 

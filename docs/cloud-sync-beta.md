@@ -382,6 +382,82 @@ of the ring being swept into the sync graph. `deviceKeyProvider` exposes a synch
 `current()` view that the middleware polls. `forgetThisDevice()` clears only this
 keystore; the escrow and other devices are untouched.
 
+## 6.5. Device registry (the four-device beta limit)
+
+The beta allows **four devices per account**, tracked in `cloudDevices` — a table that
+**syncs but is not encrypted** (it sits outside `SYNCED_TABLES`). That is deliberate: a
+device that has signed in but holds no key yet must still be able to count the slots and
+learn it is past the cap, and it cannot read a sealed row. A row carries only the addon's
+random per-device client identity — which the server already receives on every sync — and
+timestamps: `joinedAt`, `lastSeenAt`, and `revokedAt` once revoked. **Never** a device
+name, user agent, or content. `src/lib/cloud/devicePolicy.ts` holds the rules (pure, no
+Dexie, no clock), `deviceRegistry.ts` the IO, `deviceRegistrar.ts` the subscriptions.
+
+### The refresh interval is load-bearing
+
+`cloudDevices` is synced, so **a `put` is a mutation even when the row is unchanged**. The
+registrar runs on every settle into `in-sync`; an unconditional `lastSeenAt` refresh
+therefore pushed, the push settled the sync round, the settle re-ran the registrar, and it
+wrote again — an unbounded loop. It was measured at **1064 `/sync` requests** on one device
+in minutes, saturating the main thread; users saw a UI that flashed "downloading" and hung.
+
+So a run writes **only when something actually changed**: `lastSeenAt` refreshes at most
+once per `DEVICE_REFRESH_INTERVAL_MS`, and never at all for a revoked row. A run that finds
+nothing to do performs no write. Any future change here must preserve that property — and
+must be tested by asserting that **no write was attempted**, never by comparing the stored
+value, because a `put` of an identical row still enqueues a mutation and would sail through
+a value comparison while the loop ran.
+
+### Reclaiming a dead slot
+
+`releaseThisDevice()` only runs on an explicit sign-out, so a wiped or discarded browser
+profile used to hold its slot for ever — four of them locked an account out of cloud sync
+completely, which is exactly what happened on the beta account. A slot now goes **stale**
+after `DEVICE_STALE_AFTER_MS` of silence and may be reclaimed.
+
+Authority is split, and both halves are needed:
+
+- **Write side** — the registrar, on a signed-in *keyed* device, deletes rows it observed
+  dead **in that run**. Deleting only observed-dead rows keeps it convergent: once they are
+  gone, the next run finds nothing to delete and emits no further mutations.
+- **Read side** — the blocked computation (`useDeviceSlots.ts`) counts only **live** rows.
+  This is the escape hatch. A keyless device may read the registry but never writes to it,
+  so it cannot prune anything; if dead rows still counted it would be trapped for ever.
+  Filtering on read lets it unlock, gain a key, and only then prune.
+
+### Revoking
+
+Removing a device stamps `revokedAt` rather than deleting the row: the tombstone is how the
+revoked device *learns* it was removed (the registrar surfaces it via `deviceRevokedState`).
+It frees its slot immediately — `liveDevices` excludes it — and is swept once it is older
+than the stale window. It is swept on `revokedAt`, never `lastSeenAt`: a revoked device
+stops refreshing, so its `lastSeenAt` freezes at revocation and the two clocks would race.
+
+### Tuning the windows
+
+Both durations are overridable per deployment, in **seconds**, because a seven-day window is
+otherwise untestable:
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `VITE_DEVICE_REFRESH_SECONDS` | `3600` (1 hour) | Minimum age of `lastSeenAt` before a refresh write |
+| `VITE_DEVICE_STALE_SECONDS` | `604800` (7 days) | Idle time before a slot may be reclaimed |
+
+A malformed or non-positive value falls back to the default rather than throwing — a
+mistyped deployment variable must not brick the app, and zero would mean "refresh on every
+sync", reviving the loop. **Keep refresh far below stale**: a live device must survive
+missing several refreshes (a closed laptop, a flaky network) without a peer declaring it
+dead. The defaults leave a 168× margin; the unit test guards that ratio on the *defaults*,
+since an override deliberately tightens it for testing.
+
+### It is a courtesy, not a boundary
+
+The server does not enforce the limit — Dexie Cloud knows nothing about this table. A
+revoked device keeps its session and its key and can still sync content; what revoking
+guarantees is that it will not silently retake a slot, and that its user is told. Two
+devices racing for the last free slot can transiently both take it. Treat the limit as a
+beta courtesy, and never as a security control.
+
 ## 7. What the server can and cannot see
 
 | Server **cannot** see | Server **can** see |
