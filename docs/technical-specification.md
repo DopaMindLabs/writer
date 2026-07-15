@@ -313,6 +313,34 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
 - **Sync scope.** Encrypted: spaces, sections, docs, notes, note attachments,
   annotations, citations, connections, revisions, palettes. Never synced: settings,
   backups, sync bookkeeping, the CRDT `docUpdates` log, and the device keystore.
+- **Device registry.** The beta allows **four devices per account**, tracked in a synced
+  but **unencrypted** `cloudDevices` table so a device that holds no key yet can still count
+  the slots and be told it is past the cap. A row carries only the addon's random per-device
+  client identity and timestamps (`joinedAt`, `lastSeenAt`, and `revokedAt` once revoked) —
+  never a device name, user agent, or content. A registered device refreshes `lastSeenAt` at
+  most **once an hour**: the table is synced, so an unconditional refresh would push, settle
+  the sync round, re-trigger the registrar and push again — an unbounded sync loop. A slot
+  goes **stale after 7 days** of silence and is then reclaimable, which is what stops a
+  discarded browser profile holding a slot for ever; only live slots count against the limit,
+  so stale and revoked rows never lock a new device out. Users see their devices in Cloud
+  settings and can **sign out** of the current one or **revoke** any other, which frees its
+  slot at once and leaves a tombstone so the revoked device can tell it was removed. The limit
+  is a **client-side beta courtesy, not a security boundary**: the server does not enforce it,
+  a revoked device keeps its Dexie Cloud session, and two devices racing for the last slot can
+  transiently both take it. Both windows are overridable per deployment, in seconds, via
+  `VITE_DEVICE_REFRESH_SECONDS` and `VITE_DEVICE_STALE_SECONDS`, so the reclaim can be
+  exercised in minutes rather than days; a malformed or non-positive value falls back to the
+  default.
+- **Device list.** Signed-in devices see **Your devices** in the cloud panel: every slot, oldest
+  first, with the count in use, each row showing only when it joined and when it was last seen —
+  a device has no name to show, by design. The current device is badged **This device** and a
+  reclaimable one **Inactive**. Every row can free its own slot by the means that fits it: the
+  current device **signs out** (revoking itself would be pointless — it holds the session and
+  would rejoin), any other is **removed** behind a confirmation. The list is shown to a
+  *blocked* device too: that is the device that most needs to free a slot, and until now the
+  only way to free one was to sign out on the machine holding it — useless for a laptop that
+  was wiped or given away. A removed device sees **This device was removed from your account**
+  and is asked to sign out; nothing of its writing is deleted.
 - **Reconciliation.** Because the CRDT `docUpdates` log is per-device, cross-device
   changes travel as `Doc.body` snapshots. Reconciliation is **single-flight** — one run at a
   time, with a trigger during a run coalescing into exactly one follow-up — and armed on four
@@ -399,18 +427,23 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   popover always offers a direct **Account** link to the account settings tab (where sign-in and
   encryption live), regardless of the flag. Opting out is **non-destructive** —
   the cloud schema is sticky so a rebuild never erases local content.
-- **Eight-device beta limit.** An account holds at most **eight devices** while the beta runs,
+- **Four-device beta limit.** An account holds at most **four devices** while the beta runs,
   tracked in a synced, deliberately unencrypted `cloudDevices` registry — one row per joined
   device carrying only the addon's random per-device client identity (which the server already
-  receives on every sync) and joined/last-seen timestamps; never a device name, user agent, or
-  content. Ids and counts are readable while keyless by design, so a signed-in further device is
-  **hard-blocked** before it can act: the keyless section is replaced by a banner naming the
-  limit, no unlock or set-up is offered, and only signing out on another device (which deletes
-  that device's row and flushes the deletion with an explicit push before logout — the addon's
-  own logout never pushes) frees the slot. A device registers itself once it is signed in and
-  holds a key; forgetting the key keeps the slot (the device is still signed in and expected to
-  unlock again). The gate is a client-side beta courtesy, not a security boundary; the section
-  heading carries a persistent beta notice naming the limit and advising local backups.
+  receives on every sync) and joined/last-seen/revoked timestamps; never a device name, user
+  agent, or content. Ids and counts are readable while keyless by design, so a signed-in further
+  device is **hard-blocked** before it can act: the keyless section is replaced by a banner
+  naming the limit, and no unlock or set-up is offered. A device registers itself once it is
+  signed in and holds a key, and refreshes its slot at most hourly — the registry is a synced
+  table, so an unconditional refresh would push, settle the sync, re-trigger the registrar and
+  push again, an unbounded loop (§ 4.9.1). Forgetting the key keeps the slot (the device is
+  still signed in and expected to unlock again). A slot is freed in three ways: **signing out**
+  on the device holding it, **removing** it from any other device (which stamps a tombstone the
+  removed device can see, and frees the slot at once), or by the device going quiet for seven
+  days, after which its slot is **reclaimed** — so a wiped or discarded browser profile cannot
+  hold a slot for ever. Only live slots count against the limit. The gate is a client-side beta
+  courtesy, not a security boundary; the section heading carries a persistent beta notice naming
+  the limit and advising local backups.
 - **Server sees / does not see.** Cannot: bodies, titles, note text, citation
   metadata, attachment bytes. Can: record ids and relationships, timestamps, note kinds,
   citation keys and years, the sign-in email, sync timing/IP, and the device-registry rows

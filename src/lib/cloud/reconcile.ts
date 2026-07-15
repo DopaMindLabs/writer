@@ -4,7 +4,7 @@ import type { SyncState, UserLogin } from 'dexie-cloud-addon';
 import { collabStore } from '@/lib/collab/collabStore';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { getEditorHandle, mountedDocIds } from '@/lib/collab/editorRegistry';
-import { seedDocCrdt } from '@/lib/docs';
+import { seedDocCrdt, updateDocBody } from '@/lib/docs';
 import { createRevision } from '@/lib/revisions';
 import { NO_FLUSH, type FlushResult } from '@/lib/collab/flush.types';
 import { cloudSyncState, cloudSyncComplete, cloudCurrentUser } from './cloudClient';
@@ -227,21 +227,54 @@ export const reconcilePulledDocs = async (): Promise<ReconcileResult[]> =>
 
 /**
  * Reconcile a single document's CRDT against its row body **before its editor
- * mounts**. The editor is not yet registered, so this always takes the unmounted
- * path: it seeds an empty log, and for a populated log that diverged from a body
- * pulled while the doc was closed it keeps the local snapshot as a recoverable
- * revision and reseeds from the body. The editor therefore mounts over a CRDT
- * that already equals `docs.body` — and so equals the autosave baseline captured
- * at mount, closing the window where a stale local CRDT would be mistaken for
- * unsaved edits. Idempotent: a doc whose CRDT already equals its body is left
- * untouched. Repairs a wider set of states than a bare empty-log reseed, which
- * cannot touch a populated-but-stale log.
+ * mounts**, so the editor opens over a CRDT that already equals `docs.body` — and
+ * therefore equals the autosave baseline captured at mount, closing the window
+ * where a stale CRDT is mistaken for unsaved edits.
+ *
+ * It cannot reuse {@link reconcileDoc}'s rule for deciding a winner. That rule asks
+ * the *mounted* editor to flush its pending keystrokes, and at mount there is by
+ * definition no editor yet — this gate is what mounts it. The flush therefore
+ * always reports "nothing unsaved", every divergence reads as a remote pull, and
+ * the body silently overwrites the CRDT. For a body merely lagging its CRDT (the
+ * autosave debounce had not fired when the page was closed) that destroys the
+ * user's most recent keystrokes on the next reload.
+ *
+ * Before the editor mounts, the honest question is which side was written last, and
+ * the timestamps to answer it already exist:
+ *
+ * - **CRDT newer than the row** — unsaved local keystrokes. The CRDT wins; the body
+ *   is brought up to date so the two agree.
+ * - **Row newer** — a body written elsewhere and pulled in while the doc was closed.
+ *   The body wins; the losing CRDT is kept as a recoverable revision first.
+ *
+ * Idempotent: a doc whose CRDT already equals its body is left untouched.
  */
 export const reconcileDocForMount = async (
   docId: string,
   body: string,
+  updatedAt = 0,
 ): Promise<void> => {
-  await reconcileDoc({ id: docId, body });
+  const updates = await collabStore.loadAll(docId);
+  const localSnapshot = serializeDocSnapshot(docId, updates);
+  if (localSnapshot === body) return;
+
+  // No CRDT lineage (a cloud sign-out clears the local-only log) but the row still
+  // has a body: there is nothing local to preserve, so heal straight from it.
+  if (updates.length === 0) {
+    await applyPulledBody({ id: docId, body });
+    return;
+  }
+
+  const crdtWrittenAt = (await collabStore.lastUpdateAt(docId)) ?? 0;
+  if (crdtWrittenAt > updatedAt) {
+    // Unsaved keystrokes. Persist them rather than discarding them; the row was
+    // simply behind the debounce when the page went away.
+    await updateDocBody(docId, localSnapshot);
+    return;
+  }
+
+  await createRevision(docId, localSnapshot, { kind: 'manual', label: 'pre-sync' });
+  await applyPulledBody({ id: docId, body });
 };
 
 let runCounter = 0;

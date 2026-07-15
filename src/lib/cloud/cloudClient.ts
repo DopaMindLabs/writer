@@ -187,7 +187,7 @@ export const signInToCloud = async (): Promise<void> => {
 };
 
 /**
- * Sign out, freeing this device's slot in the two-device beta registry first.
+ * Sign out, freeing this device's slot in the beta device registry first.
  * The addon's `logout()` never pushes pending mutations (it clears or prompts),
  * so the row deletion is flushed with an explicit push before logging out —
  * best-effort: an offline sign-out still signs out, leaking the slot until a
@@ -203,6 +203,33 @@ export const signOutOfCloud = async (): Promise<void> => {
     // Offline or mid-sync failure: the slot leaks, sign-out still proceeds.
   }
   await api.logout();
+};
+
+/**
+ * Revoke another device's slot, freeing it at once.
+ *
+ * The row is **tombstoned, not deleted**: `revokedAt` is how the revoked device
+ * learns it was removed rather than silently losing its slot, and the registrar
+ * sweeps the tombstone once that device has had time to see it. The slot itself is
+ * free immediately — a revoked row never counts as live.
+ *
+ * Refuses this device's own id: revoking yourself is meaningless while you hold
+ * the session, since the registrar would simply rejoin on the next sync. Sign out
+ * instead, which releases the slot outright.
+ *
+ * The deletion is flushed with an explicit push, best-effort: an offline revoke
+ * still applies locally and travels on the next sync.
+ */
+export const removeCloudDevice = async (id: string): Promise<void> => {
+  const api = cloudApi();
+  if (!api) return;
+  if (id === cloudClientIdentity()) return;
+  await db.cloudDevices.update(id, { revokedAt: Date.now() });
+  try {
+    await api.sync?.({ purpose: 'push', wait: true });
+  } catch {
+    // Offline: the tombstone is written locally and pushes on the next sync.
+  }
 };
 
 /**

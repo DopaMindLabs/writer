@@ -512,11 +512,13 @@ describe('reconcileDocForMount', () => {
     expect(await db.revisions.where('docId').equals('d1').count()).toBe(0);
   });
 
-  it('reseeds a populated log that diverged from the pulled body, keeping the local side', async () => {
-    // The CRDT holds stale local content; the body was pulled while closed.
+  it('reseeds a populated log that diverged from a newer pulled body, keeping the local side', async () => {
+    // The CRDT holds stale local content; the body was written on another device
+    // *after* it, and pulled in while this doc was closed. The body wins.
     await seedLocalDoc('d1', canon('stale local content'));
+    const pulledAt = Date.now() + 60_000;
 
-    await reconcileDocForMount('d1', canon('newer pulled content'));
+    await reconcileDocForMount('d1', canon('newer pulled content'), pulledAt);
 
     expect(await crdtSnapshot('d1')).toBe(canon('newer pulled content'));
     const revisions = await db.revisions.where('docId').equals('d1').toArray();
@@ -524,11 +526,28 @@ describe('reconcileDocForMount', () => {
     expect(revisions[0]?.text).toContain('stale local content');
   });
 
+  it('keeps unsaved keystrokes when the row body merely lags the CRDT', async () => {
+    // The regression: closing the page inside the autosave debounce leaves the row
+    // behind its CRDT. Before the editor mounts there is no handle to flush, so the
+    // old rule read this as a remote pull and overwrote the CRDT with the stale
+    // body — silently destroying the user's last keystrokes on the next reload.
+    await seedLocalDoc('d1', canon('typed but not yet autosaved'));
+    const staleRowWrittenAt = Date.now() - 60_000;
+
+    await reconcileDocForMount('d1', canon('stale body'), staleRowWrittenAt);
+
+    expect(await crdtSnapshot('d1')).toBe(canon('typed but not yet autosaved'));
+    // And the row is brought up to date, so the two now agree.
+    const doc = await db.docs.get('d1');
+    expect(doc?.body).toBe(canon('typed but not yet autosaved'));
+    expect(await db.revisions.where('docId').equals('d1').count()).toBe(0);
+  });
+
   it('leaves a log that already matches the body untouched', async () => {
     await seedLocalDoc('d1', canon('already in sync'));
     const before = await updateRows('d1');
 
-    await reconcileDocForMount('d1', canon('already in sync'));
+    await reconcileDocForMount('d1', canon('already in sync'), Date.now());
 
     expect(await updateRows('d1')).toHaveLength(before.length);
     expect(await db.revisions.where('docId').equals('d1').count()).toBe(0);

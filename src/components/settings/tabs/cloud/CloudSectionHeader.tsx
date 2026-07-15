@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 /**
  * The cloud section's heading: title, subtitle, and the beta notice naming the
- * two-device limit and advising local backups while the beta runs.
+ * device limit and advising local backups while the beta runs.
  */
 export const CloudSectionHeader = () => {
   const { t } = useTranslation('screens');
