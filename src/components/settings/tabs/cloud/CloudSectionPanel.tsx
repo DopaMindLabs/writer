@@ -14,6 +14,8 @@ import { useCloudPanelState } from './useCloudPanelState';
 import { useCloudPanelFlags } from './useCloudPanelFlags';
 import { CloudSectionHeader } from './CloudSectionHeader';
 import { CloudDeviceLimitBanner } from './CloudDeviceLimitBanner';
+import { CloudDeviceRevokedBanner } from './CloudDeviceRevokedBanner';
+import { CloudDeviceList } from './CloudDeviceList';
 import { CloudSyncStatusRow } from './CloudSyncStatusRow';
 import { CloudReconcileStatusRow } from './CloudReconcileStatusRow';
 import { CloudPrivacyDisclosure } from './CloudPrivacyDisclosure';
@@ -49,6 +51,7 @@ export const CloudSectionPanel = () => {
       ) : null}
       {flags.showStatus ? <CloudReconcileStatusRow /> : null}
       {mismatch ? <CloudKeyConflictSection onResolved={panel.refreshKey} /> : null}
+      {flags.deviceRevoked ? <CloudDeviceRevokedBanner /> : null}
       {flags.deviceLimitBlocked ? (
         <CloudDeviceLimitBanner />
       ) : flags.keylessSignedIn ? (
@@ -60,6 +63,7 @@ export const CloudSectionPanel = () => {
           onRetry={panel.onRetry}
         />
       ) : null}
+      {flags.showDeviceList ? <CloudDeviceList onSignOut={panel.onSignOut} /> : null}
       <CloudBackupNudge hasKey={panel.hasKey} />
       <CloudEncryptionControls
         hasKey={panel.hasKey}

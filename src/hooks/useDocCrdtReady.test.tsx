@@ -54,18 +54,38 @@ describe('useDocCrdtReady', () => {
   });
 
   it('reseeds a populated log that diverged from a body pulled while closed', async () => {
-    // The local CRDT holds stale content; the row body was pulled from another
-    // device. The editor must mount over the pulled body, not the stale CRDT.
+    // The local CRDT holds stale content; the row body was written on another
+    // device *after* it. The editor must mount over the pulled body.
     const stale = serializedBody('stale local');
     const pulled = serializedBody('newer pulled');
     await seedDocCrdt(DOC, stale);
+    const pulledAt = Date.now() + 60_000;
 
-    const { result } = renderHook(() => useDocCrdtReady(DOC, pulled));
+    const { result } = renderHook(() => useDocCrdtReady(DOC, pulled, pulledAt));
 
     await waitFor(() => {
       expect(result.current).toBe(true);
     });
     expect(await logSnapshot(DOC)).toBe(canonicalSeed(DOC, pulled));
+  });
+
+  it('keeps unsaved keystrokes when the row body merely lags the CRDT', async () => {
+    // Closing the page inside the autosave debounce leaves the row behind its
+    // CRDT. Mounting must not treat that as a remote pull and overwrite the
+    // user's last keystrokes with the stale body.
+    const typed = serializedBody('typed but not yet autosaved');
+    const staleRow = serializedBody('stale body');
+    await seedDocCrdt(DOC, typed);
+    const staleRowWrittenAt = Date.now() - 60_000;
+
+    const { result } = renderHook(() =>
+      useDocCrdtReady(DOC, staleRow, staleRowWrittenAt),
+    );
+
+    await waitFor(() => {
+      expect(result.current).toBe(true);
+    });
+    expect(await logSnapshot(DOC)).toBe(canonicalSeed(DOC, typed));
   });
 
   it('does not re-run reconciliation (or remount) when only the body changes', async () => {

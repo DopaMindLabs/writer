@@ -1,5 +1,5 @@
 /**
- * A tiny synchronous signal that forces the two-device-limit blocked state, so
+ * A tiny synchronous signal that forces the device-limit blocked state, so
  * the blocked surface can be driven headlessly in dev/e2e (`?cloud-devices=full`)
  * — the real trigger needs a live signed-in account with a full registry.
  * Mirrors {@link import('./crypto/keylessLock').keylessLockState} in shape and is

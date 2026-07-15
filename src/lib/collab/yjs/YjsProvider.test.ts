@@ -43,6 +43,7 @@ const emptyStore: CollabStore = {
     /* noop */
   },
   loadAll: async () => [],
+  lastUpdateAt: async () => null,
   compact: async () => {
     /* noop */
   },

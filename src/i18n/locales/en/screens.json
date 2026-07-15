@@ -450,9 +450,32 @@
           "eraseBack": "Back"
         },
         "deviceLimit": {
-          "title": "This account already has eight devices",
-          "body": "Cloud sync is in beta and supports eight devices for now. Sign out on one of your other devices, then try again here.",
-          "betaNotice": "Cloud sync is in beta: eight devices per account for now, with more to come. Keep local backups of important writing on at least one device."
+          "title": "This account already has four devices",
+          "body": "Cloud sync is in beta and supports four devices for now. Remove a device you no longer use, or sign out on one of them, then try again here.",
+          "betaNotice": "Cloud sync is in beta: four devices per account for now, with more to come. Keep local backups of important writing on at least one device."
+        },
+        "devices": {
+          "title": "Your devices",
+          "count": "{{used}} of {{limit}} devices in use",
+          "thisDevice": "This device",
+          "deviceLabel": "Device {{number}}",
+          "thisDeviceBadge": "This device",
+          "inactiveBadge": "Inactive",
+          "joined": "Joined {{date}}",
+          "lastSeen": "last seen {{when}}",
+          "empty": "No devices yet. This one joins the list once your writing is encrypted.",
+          "signOut": "Sign out",
+          "signOutAria": "Sign out of this device",
+          "revoke": "Remove",
+          "revokeAria": "Remove {{name}} from this account",
+          "revokeTitle": "Remove this device?",
+          "revokeBody": "It frees the slot straight away, so another device can take it. If that device is still signed in, it stops syncing and is asked to sign out.",
+          "revokeConfirm": "Remove device",
+          "revokeCancel": "Cancel"
+        },
+        "revoked": {
+          "title": "This device was removed from your account",
+          "body": "Someone removed it from another device, so it no longer holds a slot. Sign out to finish — your writing stays on this device."
         },
         "backupNudge": {
           "title": "These notes are only on this device",

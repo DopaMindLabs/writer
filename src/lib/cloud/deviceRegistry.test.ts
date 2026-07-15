@@ -3,11 +3,10 @@ import { LoremDB } from '@/db/LoremDB';
 import { saveDeviceKeyRing, forgetDeviceKeyRing } from './crypto/keyStore';
 import { deriveKeyRing, generateMasterSecret } from './crypto/keys';
 import {
-  DEVICE_LIMIT,
-  registerThisDevice,
-  releaseThisDevice,
-  startDeviceRegistrar,
-} from './deviceRegistry';
+  DEVICE_REFRESH_INTERVAL_MS,
+  DEVICE_STALE_AFTER_MS,
+} from './devicePolicy';
+import { registerThisDevice, releaseThisDevice } from './deviceRegistry';
 
 const FIXED_TIME = 1_700_000_000_000;
 
@@ -82,17 +81,97 @@ describe('registerThisDevice', () => {
     });
   });
 
-  it('re-registering preserves joinedAt and bumps lastSeenAt', async () => {
+  it('does not write again while the row is still fresh', async () => {
+    // The sync-loop regression. cloudDevices is a synced table, so a put is a
+    // real mutation even when the row is byte-identical: it pushes, the push
+    // settles the sync round, the settle re-runs the registrar, and it writes
+    // again — for ever. This must therefore assert that no write happened, not
+    // that the stored value is unchanged; a value comparison passes happily
+    // while the loop is running.
     await acquireKey();
     withCloud(joinedCloud('device-1'));
     await registerThisDevice(db);
 
+    const put = vi.spyOn(db.cloudDevices, 'put');
     nowSpy.mockReturnValue(FIXED_TIME + 60_000);
+    await registerThisDevice(db);
+
+    expect(put).not.toHaveBeenCalled();
+    const row = await db.cloudDevices.get('device-1');
+    expect(row?.lastSeenAt).toBe(FIXED_TIME);
+    put.mockRestore();
+  });
+
+  it('refreshes lastSeenAt once the refresh interval has elapsed', async () => {
+    await acquireKey();
+    withCloud(joinedCloud('device-1'));
+    await registerThisDevice(db);
+
+    nowSpy.mockReturnValue(FIXED_TIME + DEVICE_REFRESH_INTERVAL_MS);
     await registerThisDevice(db);
 
     const row = await db.cloudDevices.get('device-1');
     expect(row?.joinedAt).toBe(FIXED_TIME);
-    expect(row?.lastSeenAt).toBe(FIXED_TIME + 60_000);
+    expect(row?.lastSeenAt).toBe(FIXED_TIME + DEVICE_REFRESH_INTERVAL_MS);
+  });
+
+  it('reclaims a stale peer’s slot, and deletes it only once', async () => {
+    await acquireKey();
+    withCloud(joinedCloud('device-1'));
+    const stale = FIXED_TIME - DEVICE_STALE_AFTER_MS - 1;
+    await db.cloudDevices.bulkPut([
+      { id: 'a', joinedAt: stale, lastSeenAt: FIXED_TIME },
+      { id: 'b', joinedAt: stale, lastSeenAt: FIXED_TIME },
+      { id: 'c', joinedAt: stale, lastSeenAt: FIXED_TIME },
+      { id: 'dead', joinedAt: stale, lastSeenAt: stale },
+    ]);
+
+    await registerThisDevice(db);
+
+    expect(await db.cloudDevices.get('dead')).toBeUndefined();
+    expect(await db.cloudDevices.get('device-1')).toBeDefined();
+
+    const remove = vi.spyOn(db.cloudDevices, 'bulkDelete');
+    await registerThisDevice(db);
+    expect(remove).not.toHaveBeenCalled();
+    remove.mockRestore();
+  });
+
+  it('does not rejoin past the limit when its row was removed', async () => {
+    // A keyed device whose slot was revoked or reclaimed must not silently walk
+    // back in over a full registry.
+    await acquireKey();
+    withCloud(joinedCloud('device-1'));
+    await db.cloudDevices.bulkPut(
+      ['a', 'b', 'c', 'd'].map((id) => ({
+        id,
+        joinedAt: FIXED_TIME,
+        lastSeenAt: FIXED_TIME,
+      })),
+    );
+
+    await registerThisDevice(db);
+
+    expect(await db.cloudDevices.get('device-1')).toBeUndefined();
+    expect(await db.cloudDevices.count()).toBe(4);
+  });
+
+  it('never rewrites a revoked row', async () => {
+    await acquireKey();
+    withCloud(joinedCloud('device-1'));
+    await db.cloudDevices.put({
+      id: 'device-1',
+      joinedAt: FIXED_TIME,
+      lastSeenAt: FIXED_TIME,
+      revokedAt: FIXED_TIME,
+    });
+
+    nowSpy.mockReturnValue(FIXED_TIME + DEVICE_REFRESH_INTERVAL_MS);
+    await registerThisDevice(db);
+
+    const row = await db.cloudDevices.get('device-1');
+    expect(row?.revokedAt).toBe(FIXED_TIME);
+    expect(row?.lastSeenAt).toBe(FIXED_TIME);
   });
 });
 
@@ -111,112 +190,5 @@ describe('releaseThisDevice', () => {
 
   it('is a no-op when no client identity exists yet', async () => {
     await expect(releaseThisDevice(db)).resolves.toBeUndefined();
-  });
-});
-
-describe('DEVICE_LIMIT', () => {
-  it('caps the beta at eight devices', () => {
-    expect(DEVICE_LIMIT).toBe(8);
-  });
-});
-
-interface SyncStub {
-  observable: {
-    subscribe: (next: (s: { phase: string }) => void) => { unsubscribe: () => void };
-  };
-  emit: (phase: string) => void;
-}
-
-const syncStub = (): SyncStub => {
-  let listener: ((s: { phase: string }) => void) | null = null;
-  return {
-    observable: {
-      subscribe: (next) => {
-        listener = next;
-        return { unsubscribe: () => { listener = null; } };
-      },
-    },
-    emit: (phase) => listener?.({ phase }),
-  };
-};
-
-interface UserStub {
-  observable: {
-    subscribe: (
-      next: (u: { isLoggedIn: boolean } | undefined) => void,
-    ) => { unsubscribe: () => void };
-  };
-  emit: (user: { isLoggedIn: boolean } | undefined) => void;
-}
-
-const userStub = (): UserStub => {
-  let listener: ((u: { isLoggedIn: boolean } | undefined) => void) | null = null;
-  return {
-    observable: {
-      subscribe: (next) => {
-        listener = next;
-        return { unsubscribe: () => { listener = null; } };
-      },
-    },
-    emit: (user) => listener?.(user),
-  };
-};
-
-const keyChangeStub = () => {
-  let listener: (() => void) | null = null;
-  return {
-    onKeyChange: (l: () => void) => {
-      listener = l;
-      return () => { listener = null; };
-    },
-    emit: () => listener?.(),
-  };
-};
-
-const settle = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0));
-
-describe('startDeviceRegistrar', () => {
-  it('runs when sync settles into in-sync', async () => {
-    const sync = syncStub();
-    const run = vi.fn().mockResolvedValue(undefined);
-    const stop = startDeviceRegistrar({ syncState: sync.observable, run });
-
-    sync.emit('pulling');
-    expect(run).not.toHaveBeenCalled();
-    sync.emit('in-sync');
-    await settle();
-    expect(run).toHaveBeenCalledTimes(1);
-    stop();
-  });
-
-  it('runs on a sign-in identity change and on key acquisition', async () => {
-    const user = userStub();
-    const keys = keyChangeStub();
-    const run = vi.fn().mockResolvedValue(undefined);
-    const stop = startDeviceRegistrar({
-      currentUser: user.observable,
-      onKeyChange: keys.onKeyChange,
-      run,
-    });
-
-    user.emit({ isLoggedIn: true });
-    await settle();
-    expect(run).toHaveBeenCalledTimes(1);
-
-    keys.emit();
-    await settle();
-    expect(run).toHaveBeenCalledTimes(2);
-    stop();
-  });
-
-  it('stops re-running after unsubscribe', async () => {
-    const sync = syncStub();
-    const run = vi.fn().mockResolvedValue(undefined);
-    const stop = startDeviceRegistrar({ syncState: sync.observable, run });
-    stop();
-
-    sync.emit('in-sync');
-    await settle();
-    expect(run).not.toHaveBeenCalled();
   });
 });
