@@ -6,14 +6,17 @@ import { hasCloudEnv } from './env';
 import { readCloudFlag, wasCloudProvisioned } from './flag';
 import { loadDeviceKeyRing, deviceKeyProvider } from './crypto/keyStore';
 import { ESCROW_ID } from './crypto/keys';
-import { hasPlaintextSyncedRows } from './setup';
+import { hasPlaintextSyncedRows, forgetThisDevice } from './setup';
 import { releaseThisDevice } from './deviceRegistry';
 import { KeylessSignInBlockedError } from './crypto/errors';
+import { keyMismatchState } from './crypto/keyMismatch';
+import { keylessLockState } from './crypto/keylessLock';
 import { startKeyRingChannel } from './crypto/keyRingChannel';
 import { startCloudReconciler } from './reconcile';
 import { startEscrowReconciler } from './escrowReconcile';
 import { startKeylessLockMonitor } from './keylessGuard';
 import { startDeviceRegistrar } from './deviceRegistrar';
+import { resetAndReseed } from '@/db/seed';
 
 /**
  * Facade over `db.cloud` (the Dexie Cloud addon API). It is the *only* module
@@ -27,6 +30,7 @@ export type CloudSyncPhase = SyncState['phase'];
 
 export { isCloudSyncEnabled } from './flag';
 export { deviceKeyProvider } from './crypto/keyStore';
+export { isCloudKeyError } from './crypto/errors';
 export { EscrowMissingError, KeylessSignInBlockedError } from './crypto/errors';
 export { WrongPassphraseError, canonicalisePassphrase } from './crypto/keys';
 export {
@@ -291,4 +295,18 @@ export const startCloudSession = async (): Promise<() => void> => {
   return () => {
     for (const stop of stops) stop();
   };
+};
+
+/**
+ * Destructive recovery escape hatch: sign out, forget the device key/escrow,
+ * clear both write locks, then reseed. Clearing the locks before the reseed is
+ * what lets the first reseeded row through; errors propagate so the caller can
+ * offer a retry instead of reloading over a half-reset database.
+ */
+export const resetCloudDevice = async (): Promise<void> => {
+  await signOutOfCloud();
+  await forgetThisDevice();
+  keyMismatchState.set(false);
+  keylessLockState.set(false);
+  await resetAndReseed();
 };

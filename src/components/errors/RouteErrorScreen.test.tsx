@@ -1,13 +1,28 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { EnvelopeIntegrityError } from '@/lib/cloud/crypto/envelope';
 import { CloudKeyMismatchError } from '@/lib/cloud/crypto/errors';
-import { RouteErrorScreen } from './RouteErrorScreen';
+
+vi.mock('@/lib/cloud/cloudClient', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/cloud/cloudClient')>();
+  return { ...actual, resetCloudDevice: vi.fn(async () => {}) };
+});
+
+const { RouteErrorScreen } = await import('./RouteErrorScreen');
+const { resetCloudDevice } = await import('@/lib/cloud/cloudClient');
 
 const Thrower = ({ error }: { error: unknown }): never => {
   throw error;
+};
+
+const clickReset = async (): Promise<void> => {
+  await userEvent.click(
+    screen.getByRole('button', { name: /reset this device instead/i }),
+  );
+  await userEvent.click(screen.getByTestId('confirm-dialog-confirm'));
 };
 
 const renderWithError = (error: unknown) => {
@@ -52,5 +67,61 @@ describe('RouteErrorScreen', () => {
     expect(
       screen.queryByRole('button', { name: /unlock in settings/i }),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe('RouteErrorScreen reset flow', () => {
+  let reload: ReturnType<typeof vi.fn>;
+  let originalLocation: PropertyDescriptor | undefined;
+
+  beforeEach(() => {
+    vi.mocked(resetCloudDevice).mockReset();
+    reload = vi.fn();
+    originalLocation = Object.getOwnPropertyDescriptor(window, 'location');
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: {
+        reload,
+        assign: vi.fn(),
+        href: 'http://localhost/',
+        pathname: '/',
+        search: '',
+        hash: '',
+      },
+    });
+  });
+
+  afterEach(() => {
+    vi.mocked(resetCloudDevice).mockReset();
+    if (originalLocation) {
+      Object.defineProperty(window, 'location', originalLocation);
+    }
+  });
+
+  it('reloads only after the reset resolves', async () => {
+    vi.mocked(resetCloudDevice).mockResolvedValue(undefined);
+    renderWithError(new EnvelopeIntegrityError());
+
+    await clickReset();
+
+    expect(resetCloudDevice).toHaveBeenCalledTimes(1);
+    await vi.waitFor(() => {
+      expect(reload).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('keeps the recovery screen with an alert and does not reload when the reset fails', async () => {
+    vi.mocked(resetCloudDevice).mockRejectedValue(new Error('reset failed'));
+    renderWithError(new EnvelopeIntegrityError());
+
+    await clickReset();
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      /couldn't reset this device/i,
+    );
+    expect(reload).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole('button', { name: /unlock in settings/i }),
+    ).toBeInTheDocument();
   });
 });

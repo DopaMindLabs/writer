@@ -291,6 +291,28 @@ describe('cloud setup', () => {
     );
     expect(deviceKeyProvider.current()).toBeNull();
   });
+
+  it('rejects a foreign recovery code on an account with an escrow but no sealed rows', async () => {
+    await createCloudEncryption('pw', db);
+    await publishPendingEscrow(db); // escrow on the server, our fingerprint
+    await forgetThisDevice();
+    expect(await db.cloudCrypto.get(ESCROW_ID)).toBeDefined();
+
+    const foreign = encodeRecoveryCode(generateMasterSecret());
+    await expect(recoverCloudEncryption(foreign, db)).rejects.toBeInstanceOf(
+      EnvelopeIntegrityError,
+    );
+    expect(deviceKeyProvider.current()).toBeNull();
+  });
+
+  it('recovers with the matching code on an account with an escrow but no sealed rows', async () => {
+    const code = await createCloudEncryption('pw', db);
+    await publishPendingEscrow(db);
+    await forgetThisDevice();
+
+    await recoverCloudEncryption(code, db);
+    expect(deviceKeyProvider.current()).not.toBeNull();
+  });
 });
 
 describe('cloud key conflict resolution', () => {

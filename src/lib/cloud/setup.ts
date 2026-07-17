@@ -11,7 +11,7 @@ import {
   fingerprintsEqual,
   ESCROW_ID,
 } from './crypto/keys';
-import { openRow, type RowRef } from './crypto/envelope';
+import { openRow, EnvelopeIntegrityError, type RowRef } from './crypto/envelope';
 import { EscrowMissingError } from './crypto/errors';
 import type { CloudKeyRing } from './crypto/keys';
 import { encodeRecoveryCode, decodeRecoveryCode } from './crypto/recoveryCode';
@@ -216,8 +216,11 @@ export const recoverCloudEncryption = async (
   const master = decodeRecoveryCode(recoveryCode);
   const escrow = await db.cloudCrypto.get(ESCROW_ID);
   const ring: CloudKeyRing = await deriveKeyRing(master, escrow?.epoch ?? EPOCH);
-  // A wrong code derives a wrong ring; opening a known ciphertext row throws
-  // EnvelopeIntegrityError, so we reject before saving it as the device key.
+  // Reject a foreign code by fingerprint — this catches it even on an account with
+  // no sealed rows to test-decrypt against.
+  if (escrow && !fingerprintsEqual(ring.fingerprint, escrow.fingerprint)) {
+    throw new EnvelopeIntegrityError();
+  }
   const sealed = await findSealedRow(db);
   if (sealed) await openRow(ring, sealed.ref, sealed.row);
   await saveDeviceKeyRing({ accountId: resolveAccountId(db), ring });
