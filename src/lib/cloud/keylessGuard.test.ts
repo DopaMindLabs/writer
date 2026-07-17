@@ -44,7 +44,7 @@ describe('startKeylessLockMonitor', () => {
     user.emit({ userId: 'u1', isLoggedIn: true }); // signed in, no ring yet
     expect(keylessLockState.current()).toBe(true);
 
-    await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1));
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
     expect(deviceKeyProvider.current()).not.toBeNull();
     expect(keylessLockState.current()).toBe(false); // ring acquired → unlocked
 
@@ -63,7 +63,7 @@ describe('startKeylessLockMonitor', () => {
 
   it('re-locks if the ring is forgotten while still signed in', async () => {
     const user = userStub();
-    await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1));
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
     const stop = startKeylessLockMonitor(user.observable);
 
     user.emit({ userId: 'u1', isLoggedIn: true }); // signed in with a ring

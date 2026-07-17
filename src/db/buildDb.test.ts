@@ -116,7 +116,7 @@ describe('buildDb — cloud activation gates', () => {
 
   it('registers the encryption middleware (content is ciphertext at rest)', async () => {
     enableCloud();
-    await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1));
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
     const db = buildDb('gate-middleware');
     await db.open();
 

@@ -11,8 +11,11 @@ import {
   savePendingEscrow,
   saveDeviceKeyRing,
   loadPendingEscrow,
+  onDeviceKeyRingChange,
 } from './crypto/keyStore';
 import { keyMismatchState } from './crypto/keyMismatch';
+import { keylessLockState } from './crypto/keylessLock';
+import { startKeylessLockMonitor } from './keylessGuard';
 import {
   generateMasterSecret,
   wrapMasterSecret,
@@ -75,6 +78,7 @@ beforeEach(async () => {
 
 afterEach(async () => {
   keyMismatchState.set(false);
+  keylessLockState.set(false);
   await forgetDeviceKeyRing();
   await clearPendingEscrow();
   await db.delete();
@@ -127,7 +131,7 @@ describe('reconcileEscrow', () => {
     await db.cloudCrypto.put(
       await wrapMasterSecret(generateMasterSecret(), 'x', 1000),
     );
-    await createCloudEncryption('pw', db, () => true);
+    await createCloudEncryption('pw', db, () => 'acct-a');
 
     expect(await reconcileEscrow(db)).toBe('mismatch');
     expect(keyMismatchState.current()).toBe(true);
@@ -137,7 +141,7 @@ describe('reconcileEscrow', () => {
     await db.cloudCrypto.put(
       await wrapMasterSecret(generateMasterSecret(), 'x', 1000),
     );
-    await createCloudEncryption('pw', db, () => true);
+    await createCloudEncryption('pw', db, () => 'acct-a');
 
     await reconcileEscrow(db);
 
@@ -153,8 +157,8 @@ describe('reconcileEscrow', () => {
     const masterM = generateMasterSecret();
     const escrowM = await wrapMasterSecret(masterM, 'pw', 1000);
     await db.cloudCrypto.put(escrowM); // server holds M
-    await savePendingEscrow(escrowM); // pending still M
-    await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1)); // ring N
+    await savePendingEscrow({ accountId: null, escrow: escrowM }); // pending still M
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) }); // ring N
 
     expect(await reconcileEscrow(db)).toBe('matched');
     expect(keyMismatchState.current()).toBe(false);
@@ -163,6 +167,38 @@ describe('reconcileEscrow', () => {
   it('is idle when the device holds no key', async () => {
     await forgetThisDevice();
     expect(await reconcileEscrow(db)).toBe('idle');
+  });
+
+  it('binds an unbound ring to the account when it publishes the escrow', async () => {
+    // Set up while signed out, so the ring and pending escrow are unbound.
+    await createCloudEncryption('pw', db);
+    expect(deviceKeyProvider.accountId()).toBeNull();
+
+    expect(await reconcileEscrow(db, () => true, 'acct-a')).toBe('published');
+    // Publication claims the ring for the account it first signed into.
+    expect(deviceKeyProvider.accountId()).toBe('acct-a');
+  });
+
+  it('binds an unbound ring to the account when the server fingerprint matches', async () => {
+    await createCloudEncryption('pw', db); // unbound
+    await publishPendingEscrow(db); // server now holds our escrow
+    expect(deviceKeyProvider.accountId()).toBeNull();
+
+    expect(await reconcileEscrow(db, () => true, 'acct-a')).toBe('matched');
+    expect(deviceKeyProvider.accountId()).toBe('acct-a');
+  });
+
+  it('becomes keyless (not published) with a ring but no server or pending escrow', async () => {
+    // A ring with nothing to publish and no account escrow is unusable here.
+    await saveDeviceKeyRing({
+      accountId: null,
+      ring: await deriveKeyRing(generateMasterSecret(), 1),
+    });
+    expect(await loadPendingEscrow()).toBeNull();
+
+    expect(await reconcileEscrow(db, () => true, 'acct-a')).toBe('keyless');
+    expect(deviceKeyProvider.current()).toBeNull();
+    expect(keylessLockState.current()).toBe(true);
   });
 });
 
@@ -175,20 +211,24 @@ interface StubObservable<T> {
 }
 
 const stubObservable = <T,>(): StubObservable<T> => {
-  let listener: ((value: T) => void) | null = null;
+  // Multicast so one stub can feed several monitors (e.g. the escrow reconciler
+  // and the keyless-lock monitor) the same identity stream, as in production.
+  const listeners = new Set<(value: T) => void>();
   return {
     observable: {
       subscribe: (next) => {
-        listener = next;
+        listeners.add(next);
         return {
           unsubscribe: () => {
-            listener = null;
+            listeners.delete(next);
           },
         };
       },
     },
-    emit: (value) => listener?.(value),
-    hasListener: () => listener !== null,
+    emit: (value) => {
+      for (const listener of listeners) listener(value);
+    },
+    hasListener: () => listeners.size > 0,
   };
 };
 
@@ -297,5 +337,49 @@ describe('startEscrowReconciler', () => {
     emitPhase(sync, 'in-sync');
     user.emit({ userId: 'u1', isLoggedIn: true });
     expect(run).not.toHaveBeenCalled();
+  });
+
+  it('discards account A material and locks writes when signing into empty account B', async () => {
+    // Account A: set up and publish, so the ring is bound to A and on the server.
+    await createCloudEncryption('pw', db, () => 'acct-a');
+    await publishPendingEscrow(db, 'acct-a');
+    expect(deviceKeyProvider.accountId()).toBe('acct-a');
+
+    const sync = syncStub();
+    const user = userStub();
+    const run = vi.fn().mockResolvedValue(undefined);
+    // Both monitors share the identity stream, as in a real session.
+    const stopKeyless = startKeylessLockMonitor(
+      asUserObservable(user),
+      onDeviceKeyRingChange,
+    );
+    const stopEscrow = startEscrowReconciler(
+      sync.observable,
+      asUserObservable(user),
+      run,
+    );
+
+    user.emit({ userId: 'acct-a', isLoggedIn: true }); // establish A
+
+    // Sign into a different, empty account B.
+    user.emit({ userId: 'acct-b', isLoggedIn: true });
+    // The cached ring is dropped synchronously so the write lock engages at once.
+    expect(deviceKeyProvider.current()).toBeNull();
+    expect(keylessLockState.current()).toBe(true);
+
+    // A content write on B is refused while the device is keyless.
+    await expect(
+      db.table<Row>('docs').put({
+        id: 'b-write', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'B',
+      }),
+    ).rejects.toThrow();
+
+    // A's material is forgotten from the keystore, not just the cache.
+    await flush();
+    expect(await loadPendingEscrow()).toBeNull();
+    expect(deviceKeyProvider.accountId()).toBeNull();
+
+    stopKeyless();
+    stopEscrow();
   });
 });
