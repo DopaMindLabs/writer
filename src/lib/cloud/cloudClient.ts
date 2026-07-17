@@ -9,6 +9,11 @@ import { ESCROW_ID } from './crypto/keys';
 import { hasPlaintextSyncedRows } from './setup';
 import { releaseThisDevice } from './deviceRegistry';
 import { KeylessSignInBlockedError } from './crypto/errors';
+import { startKeyRingChannel } from './crypto/keyRingChannel';
+import { startCloudReconciler } from './reconcile';
+import { startEscrowReconciler } from './escrowReconcile';
+import { startKeylessLockMonitor } from './keylessGuard';
+import { startDeviceRegistrar } from './deviceRegistrar';
 
 /**
  * Facade over `db.cloud` (the Dexie Cloud addon API). It is the *only* module
@@ -253,4 +258,37 @@ export const hydrateCloudDevice = async (): Promise<void> => {
   if (hasCloudEnv() && (readCloudFlag() || wasCloudProvisioned())) {
     await loadDeviceKeyRing();
   }
+};
+
+/**
+ * Boot the cloud session behind the facade: hydrate the persisted device key,
+ * then start every background reconciler and monitor that keeps this device
+ * consistent with its account — the sibling-tab key channel, the document
+ * reconciler, the escrow/account reconciler, the keyless write lock, and the
+ * device registrar. Returns a single stop function that tears them all down.
+ *
+ * The key must be hydrated before any reconciler starts so encrypted reads
+ * decrypt and writes seal from the first tick; the keyless lock must be armed
+ * before content writes can enter the sync queue. The boot layer owns this
+ * lifecycle and never imports the individual cloud subsystems.
+ */
+export const startCloudSession = async (): Promise<() => void> => {
+  await hydrateCloudDevice();
+  const stops = [
+    // Refresh this tab's key ring when a sibling tab unlocks or forgets it.
+    startKeyRingChannel(() => {
+      void loadDeviceKeyRing();
+    }),
+    // Reconcile documents pulled from other devices into the live editor/CRDT.
+    startCloudReconciler(),
+    // Publish or reconcile this device's escrow against the account's.
+    startEscrowReconciler(),
+    // Lock content writes whenever the device is signed in without a key ring.
+    startKeylessLockMonitor(),
+    // Keep this device's row in the account's device registry current.
+    startDeviceRegistrar(),
+  ];
+  return () => {
+    for (const stop of stops) stop();
+  };
 };
