@@ -1,21 +1,17 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useCallback, useRef } from 'react';
 import { Editor, type EditorMode } from '@/editor/EditorFacade';
-import { InlineBanner } from '@/components/ui/InlineBanner';
-import { setDocStatus, updateDocBody } from '@/lib/docs';
+import { updateDocBody } from '@/lib/docs';
 import type { Doc } from '@/db/schema';
 import { useUI, type ReadingWidth } from '@/store/ui';
 import { useCollab } from '@/hooks/useCollab';
 import { useDocCrdtReady } from '@/hooks/useDocCrdtReady';
 import { useDocReloadNonce } from '@/hooks/useDocReloadNonce';
 import { useEffectiveInspectorConfig } from '@/hooks/useDocInspectorConfig';
-import {
-  captureAutoRevision,
-  captureBaselineRevision,
-  resetAutoThrottle,
-} from '@/lib/revisions';
+import { useMountBaselineRevision } from '@/hooks/useMountBaselineRevision';
+import { captureAutoRevision } from '@/lib/revisions';
 import { cn } from '@/lib/utils';
 import { appLogger } from '@/lib/appLogger';
+import { LockBanner } from './LockBanner';
 
 interface WriteSurfaceProps {
   doc: Doc;
@@ -27,24 +23,6 @@ const READING_WIDTH_MAX: Record<ReadingWidth, string> = {
   s: 'max-w-[560px]',
   m: 'max-w-[680px]',
   l: 'max-w-[860px]',
-};
-
-const LockBanner = ({ doc }: { doc: Doc }) => {
-  const { t } = useTranslation('chrome');
-  return (
-    <InlineBanner
-      kind="warning"
-      title={t('inspector.lock.title')}
-      action={t('inspector.lock.unlock')}
-      onAction={() => {
-        void setDocStatus(doc.id, 'draft');
-      }}
-      className="mb-6"
-      data-testid="doc-lock-banner"
-    >
-      {t('inspector.lock.body')}
-    </InlineBanner>
-  );
 };
 
 export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) => {
@@ -65,13 +43,7 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
   const charLimit =
     highlightOn && effective.charLimit ? doc.meta.charLimit : undefined;
 
-  useEffect(() => {
-    void captureBaselineRevision(doc.id, doc.body).catch((err: unknown) => {
-      appLogger.error('Failed to capture baseline revision', err);
-    });
-    return () => { resetAutoThrottle(doc.id); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [doc.id]);
+  useMountBaselineRevision(doc.id, doc.body);
 
   const handleChange = useCallback(async (serialized: string) => {
     // Await the body write so the autosave flush only records the save once it
