@@ -11,6 +11,7 @@ import {
   signInToCloud,
   signOutOfCloud,
   hydrateCloudDevice,
+  startCloudSession,
   isAccountPullComplete,
   KeylessSignInBlockedError,
   type SyncState,
@@ -393,5 +394,13 @@ describe('hydrateCloudDevice', () => {
     await forgetDeviceKeyRing();
     await hydrateCloudDevice();
     expect(deviceKeyProvider.current()).toBeNull();
+  });
+});
+
+describe('startCloudSession', () => {
+  it('resolves to a stop function that tears the session down without throwing', async () => {
+    const stop = await startCloudSession();
+    expect(typeof stop).toBe('function');
+    expect(() => stop()).not.toThrow();
   });
 });
