@@ -1,4 +1,5 @@
 import Dexie, { type Table } from 'dexie';
+import { invariant } from '@/lib/invariant';
 import type { CloudKeyRing, EscrowRecord } from './keys';
 import { broadcastKeyRingChange } from './keyRingChannel';
 
@@ -14,15 +15,32 @@ import { broadcastKeyRingChange } from './keyRingChannel';
  * the account has none and publishes it. Holding it back is what makes escrow
  * publication add-only — the sync queue can never race a local escrow over the
  * server's.
+ *
+ * Both records carry an explicit `accountId` binding. `null` means the material
+ * was created before sign-in and has not been claimed; a string means it is
+ * usable only while signed into that `UserLogin.userId`. Key material minted for
+ * account A must never seal or publish account B's content — the binding is how
+ * reconciliation and the identity-change guard tell the two apart.
  */
-interface KeyRingRow {
-  id: string;
+
+/** A device key ring together with the account it is bound to. */
+export interface DeviceKeyRingRecord {
+  accountId: string | null;
   ring: CloudKeyRing;
 }
 
-interface EscrowRow {
-  id: string;
+/** A held-back escrow together with the account it is bound to. */
+export interface PendingEscrowRecord {
+  accountId: string | null;
   escrow: EscrowRecord;
+}
+
+interface KeyRingRow extends DeviceKeyRingRecord {
+  id: string;
+}
+
+interface EscrowRow extends PendingEscrowRecord {
+  id: string;
 }
 
 class KeystoreDb extends Dexie {
@@ -37,35 +55,61 @@ class KeystoreDb extends Dexie {
 
 const DEVICE = 'device';
 
+/**
+ * Validate the `accountId` binding read back from a stored row. A missing or
+ * malformed binding is invalid greenfield data — reject it rather than silently
+ * repairing it to a value that might let account A's material act for account B.
+ */
+const requireAccountId = (value: unknown, kind: string): string | null => {
+  invariant(
+    value === null || typeof value === 'string',
+    `keystore ${kind} row has a missing or malformed accountId`,
+  );
+  return value;
+};
+
+/** Map a stored ring row to a validated in-memory record (or `null` if absent). */
+const toRingRecord = (row: KeyRingRow | undefined): DeviceKeyRingRecord | null =>
+  row ? { accountId: requireAccountId(row.accountId, 'ring'), ring: row.ring } : null;
+
+/** Map a stored escrow row to a validated record (or `null` if absent). */
+const toEscrowRecord = (row: EscrowRow | undefined): PendingEscrowRecord | null =>
+  row
+    ? { accountId: requireAccountId(row.accountId, 'pending escrow'), escrow: row.escrow }
+    : null;
+
 interface KeystoreService {
   getDeviceKeyRevision: () => number;
   onDeviceKeyRingChange: (listener: () => void) => () => void;
-  saveDeviceKeyRing: (ring: CloudKeyRing) => Promise<void>;
+  saveDeviceKeyRing: (record: DeviceKeyRingRecord) => Promise<void>;
   loadDeviceKeyRing: () => Promise<CloudKeyRing | null>;
+  bindDeviceKeyRing: (accountId: string) => Promise<void>;
   forgetDeviceKeyRing: () => Promise<void>;
-  savePendingEscrow: (escrow: EscrowRecord) => Promise<void>;
-  loadPendingEscrow: () => Promise<EscrowRecord | null>;
+  invalidateCachedRing: () => void;
+  savePendingEscrow: (record: PendingEscrowRecord) => Promise<void>;
+  loadPendingEscrow: () => Promise<PendingEscrowRecord | null>;
   clearPendingEscrow: () => Promise<void>;
   currentRing: () => CloudKeyRing | null;
+  currentAccountId: () => string | null;
 }
 
 /**
  * Own all mutable keystore state in one service instance instead of module-level
- * `let`s: the lazily-opened database, the cached ring, the change listeners, and
- * the revision counter live in this closure. A single `const` service is created
- * below, so the module exposes only stable functions and never module-level
- * mutable bindings.
+ * `let`s: the lazily-opened database, the cached record, the change listeners,
+ * and the revision counter live in this closure. A single `const` service is
+ * created below, so the module exposes only stable functions and never
+ * module-level mutable bindings.
  *
  * The revision counter is bumped on every cache transition (acquire, reload,
- * forget). Acquiring a key changes no IndexedDB *content* row, so `useLiveQuery`
- * would not re-run and a keyless device's hidden rows would stay hidden until
- * reload. Cloud-aware live queries fold this number into their dependency array,
- * so a bump forces every encrypted read to re-evaluate the moment the key
- * becomes available.
+ * forget, invalidate). Acquiring a key changes no IndexedDB *content* row, so
+ * `useLiveQuery` would not re-run and a keyless device's hidden rows would stay
+ * hidden until reload. Cloud-aware live queries fold this number into their
+ * dependency array, so a bump forces every encrypted read to re-evaluate the
+ * moment the key becomes available.
  */
 const createKeystoreService = (): KeystoreService => {
   let keystore: KeystoreDb | null = null;
-  let cached: CloudKeyRing | null = null;
+  let cached: DeviceKeyRingRecord | null = null;
   let deviceKeyRevision = 0;
   const ringListeners = new Set<() => void>();
 
@@ -84,18 +128,21 @@ const createKeystoreService = (): KeystoreService => {
         ringListeners.delete(listener);
       };
     },
-    saveDeviceKeyRing: async (ring) => {
-      await db().rings.put({ id: DEVICE, ring });
-      cached = ring;
+    saveDeviceKeyRing: async ({ accountId, ring }) => {
+      await db().rings.put({ id: DEVICE, accountId, ring });
+      cached = { accountId, ring };
       notifyRingChange();
-      // Tell sibling tabs to reload from the shared keystore now the commit landed.
       broadcastKeyRingChange('changed');
     },
     loadDeviceKeyRing: async () => {
-      const row = await db().rings.get(DEVICE);
-      cached = row?.ring ?? null;
+      cached = toRingRecord(await db().rings.get(DEVICE));
       notifyRingChange();
-      return cached;
+      return cached?.ring ?? null;
+    },
+    bindDeviceKeyRing: async (accountId) => {
+      if (cached?.accountId !== null) return;
+      await db().rings.update(DEVICE, { accountId });
+      cached = { accountId, ring: cached.ring };
     },
     forgetDeviceKeyRing: async () => {
       await db().rings.delete(DEVICE);
@@ -103,17 +150,21 @@ const createKeystoreService = (): KeystoreService => {
       notifyRingChange();
       broadcastKeyRingChange('forgotten');
     },
-    savePendingEscrow: async (escrow) => {
-      await db().pendingEscrows.put({ id: DEVICE, escrow });
+    invalidateCachedRing: () => {
+      if (cached === null) return;
+      cached = null;
+      notifyRingChange();
     },
-    loadPendingEscrow: async () => {
-      const row = await db().pendingEscrows.get(DEVICE);
-      return row?.escrow ?? null;
+    savePendingEscrow: async ({ accountId, escrow }) => {
+      await db().pendingEscrows.put({ id: DEVICE, accountId, escrow });
     },
+    loadPendingEscrow: async () =>
+      toEscrowRecord(await db().pendingEscrows.get(DEVICE)),
     clearPendingEscrow: async () => {
       await db().pendingEscrows.delete(DEVICE);
     },
-    currentRing: () => cached,
+    currentRing: () => cached?.ring ?? null,
+    currentAccountId: () => cached?.accountId ?? null,
   };
 };
 
@@ -131,21 +182,43 @@ export const getDeviceKeyRevision = (): number =>
 export const onDeviceKeyRingChange = (listener: () => void): (() => void) =>
   keystoreService.onDeviceKeyRingChange(listener);
 
-export const saveDeviceKeyRing = (ring: CloudKeyRing): Promise<void> =>
-  keystoreService.saveDeviceKeyRing(ring);
+/** Persist and cache the device key ring bound to an account (`null` = pre-sign-in). */
+export const saveDeviceKeyRing = (record: DeviceKeyRingRecord): Promise<void> =>
+  keystoreService.saveDeviceKeyRing(record);
 
 export const loadDeviceKeyRing = (): Promise<CloudKeyRing | null> =>
   keystoreService.loadDeviceKeyRing();
 
+/**
+ * Claim an as-yet-unbound cached ring for the given account, persisting the
+ * binding. Only ever moves the binding from `null` to a concrete account — a ring
+ * already bound to a different account is never rebound here, since the
+ * identity-change guard forgets such material before it can reach this path.
+ *
+ * @param accountId - the `UserLogin.userId` to bind the current ring to.
+ */
+export const bindDeviceKeyRing = (accountId: string): Promise<void> =>
+  keystoreService.bindDeviceKeyRing(accountId);
+
 export const forgetDeviceKeyRing = (): Promise<void> =>
   keystoreService.forgetDeviceKeyRing();
 
-/** Hold an escrow on the device until reconciliation decides whether to publish it. */
-export const savePendingEscrow = (escrow: EscrowRecord): Promise<void> =>
-  keystoreService.savePendingEscrow(escrow);
+/**
+ * Synchronously drop the cached ring so the keyless-lock monitor engages the
+ * write lock at once — before the async persistent forget lands. Does not delete
+ * the stored row or broadcast to siblings; the persistent forget that follows is
+ * what they react to.
+ */
+export const invalidateCachedRing = (): void => {
+  keystoreService.invalidateCachedRing();
+};
 
-/** The escrow awaiting publication, if any. */
-export const loadPendingEscrow = (): Promise<EscrowRecord | null> =>
+/** Hold an escrow on the device until reconciliation decides whether to publish it. */
+export const savePendingEscrow = (record: PendingEscrowRecord): Promise<void> =>
+  keystoreService.savePendingEscrow(record);
+
+/** The escrow awaiting publication with its account binding, if any. */
+export const loadPendingEscrow = (): Promise<PendingEscrowRecord | null> =>
   keystoreService.loadPendingEscrow();
 
 /** Drop the pending escrow (once published, or superseded by adoption). */
@@ -155,8 +228,10 @@ export const clearPendingEscrow = (): Promise<void> =>
 /**
  * A synchronous view of the current key ring for the DBCore middleware: `null`
  * until a ring is loaded or unlocked (the middleware's keyless pass-through
- * covers that gap).
+ * covers that gap). `accountId` exposes the cached ring's binding synchronously,
+ * so the identity-change guard can compare it the instant sign-in changes.
  */
 export const deviceKeyProvider = {
   current: (): CloudKeyRing | null => keystoreService.currentRing(),
+  accountId: (): string | null => keystoreService.currentAccountId(),
 };

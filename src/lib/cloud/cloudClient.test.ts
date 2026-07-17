@@ -384,7 +384,7 @@ describe('hydrateCloudDevice', () => {
   it('loads the persisted device ring when the database is cloud-enabled', async () => {
     vi.stubEnv('VITE_DEXIE_CLOUD_URL', 'https://x.dexie.cloud');
     localStorage.setItem(CLOUD_FLAG_KEY, 'on');
-    await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1));
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
 
     await hydrateCloudDevice();
     expect(deviceKeyProvider.current()).not.toBeNull();

@@ -33,16 +33,19 @@ const pkOf = (db: LoremDB, table: string, row: Row): string =>
   String(row[db.table(table).schema.primKey.keyPath as string]);
 
 /**
- * Best-effort synchronous read of whether the cloud user is signed into an
- * account. Reads the addon's `currentUser` snapshot; `false` on a plain database
- * or before the addon has resolved a user. Kept local to avoid importing the
- * cloud-client facade (which re-exports this module).
+ * Best-effort synchronous read of the signed-in account's id. Reads the addon's
+ * `currentUser` snapshot: the `UserLogin.userId` when logged in, else `null` (a
+ * plain database, or before the addon has resolved a user). Kept local to avoid
+ * importing the cloud-client facade (which re-exports this module). Key material
+ * is bound to this id at creation so it can never later act for another account.
  */
-const isCloudUserSignedIn = (db: LoremDB): boolean => {
-  const cloud = (
-    db as { cloud?: { currentUser?: { value?: { isLoggedIn?: boolean } } } }
-  ).cloud;
-  return cloud?.currentUser?.value?.isLoggedIn ?? false;
+const readCurrentAccountId = (db: LoremDB): string | null => {
+  const user = (
+    db as {
+      cloud?: { currentUser?: { value?: { userId?: string; isLoggedIn?: boolean } } };
+    }
+  ).cloud?.currentUser?.value;
+  return user?.isLoggedIn ? (user.userId ?? null) : null;
 };
 
 /**
@@ -107,21 +110,23 @@ export const hasPlaintextSyncedRows = async (
 export const createCloudEncryption = async (
   passphrase: string,
   db: LoremDB = appDb,
-  isSignedIn: (db: LoremDB) => boolean = isCloudUserSignedIn,
+  resolveAccountId: (db: LoremDB) => string | null = readCurrentAccountId,
 ): Promise<string> => {
-  // Fresh setup mints a brand-new master, so any escrow already in the local
-  // database is protected by a *different* key. While signed out, that row can
-  // only be residue from an earlier local session (a live account's escrow is
-  // pulled only while signed in) — drop it, so the escrow reconciler cannot
+  // Bind the new material to the signed-in account (`null` before sign-in). Fresh
+  // setup mints a brand-new master, so any escrow already in the local database is
+  // protected by a *different* key. While signed out (`accountId === null`), that
+  // row can only be residue from an earlier local session (a live account's escrow
+  // is pulled only while signed in) — drop it, so the escrow reconciler cannot
   // later read its stale fingerprint and lock this device out with a spurious
   // mismatch. Signed in, the row is the account's real escrow: leave it for the
   // mismatch/adopt flow, never delete it here.
-  if (!isSignedIn(db)) await dropResidualEscrow(db);
+  const accountId = resolveAccountId(db);
+  if (accountId === null) await dropResidualEscrow(db);
   const master = generateMasterSecret();
   const iterations = await calibrateIterations();
   const escrow = await wrapMasterSecret(master, passphrase, iterations);
-  await savePendingEscrow(escrow);
-  await saveDeviceKeyRing(await deriveKeyRing(master, escrow.epoch));
+  await savePendingEscrow({ accountId, escrow });
+  await saveDeviceKeyRing({ accountId, ring: await deriveKeyRing(master, escrow.epoch) });
   await sealExistingRows(db);
   return encodeRecoveryCode(master);
 };
@@ -140,9 +145,15 @@ export type EscrowPublishResult = 'published' | 'kept-server' | 'none';
  */
 export const publishPendingEscrow = async (
   db: LoremDB = appDb,
+  accountId: string | null = null,
 ): Promise<EscrowPublishResult> => {
-  const escrow = await loadPendingEscrow();
-  if (!escrow) return 'none';
+  const pending = await loadPendingEscrow();
+  if (!pending) return 'none';
+  // Never publish escrow bound to a *different* account into the current one: a
+  // pending copy minted for account A must not become account B's key. An unbound
+  // (pre-sign-in) escrow may publish to whichever account it first signs into.
+  if (pending.accountId !== null && pending.accountId !== accountId) return 'none';
+  const escrow = pending.escrow;
   const result = await db.transaction('rw', db.cloudCrypto, async () => {
     const existing = await db.cloudCrypto.get(ESCROW_ID);
     if (existing && !fingerprintsEqual(existing.fingerprint, escrow.fingerprint)) {
@@ -163,6 +174,7 @@ export const publishPendingEscrow = async (
 export const unlockCloudEncryption = async (
   passphrase: string,
   db: LoremDB = appDb,
+  resolveAccountId: (db: LoremDB) => string | null = readCurrentAccountId,
 ): Promise<void> => {
   const escrow = await db.cloudCrypto.get(ESCROW_ID);
   // A missing escrow is a flow condition, not a bad passphrase: on a fresh device
@@ -170,7 +182,12 @@ export const unlockCloudEncryption = async (
   // the UI can say "sign in first" rather than "wrong passphrase".
   if (!escrow) throw new EscrowMissingError();
   const master = await unwrapMasterSecret(escrow, passphrase);
-  await saveDeviceKeyRing(await deriveKeyRing(master, escrow.epoch));
+  // Unlock always runs against a signed-in account (the escrow was pulled by that
+  // sign-in), so the ring is bound to it.
+  await saveDeviceKeyRing({
+    accountId: resolveAccountId(db),
+    ring: await deriveKeyRing(master, escrow.epoch),
+  });
   await sealExistingRows(db);
 };
 
@@ -194,6 +211,7 @@ const findSealedRow = async (
 export const recoverCloudEncryption = async (
   recoveryCode: string,
   db: LoremDB = appDb,
+  resolveAccountId: (db: LoremDB) => string | null = readCurrentAccountId,
 ): Promise<void> => {
   const master = decodeRecoveryCode(recoveryCode);
   const escrow = await db.cloudCrypto.get(ESCROW_ID);
@@ -202,7 +220,7 @@ export const recoverCloudEncryption = async (
   // EnvelopeIntegrityError, so we reject before saving it as the device key.
   const sealed = await findSealedRow(db);
   if (sealed) await openRow(ring, sealed.ref, sealed.row);
-  await saveDeviceKeyRing(ring);
+  await saveDeviceKeyRing({ accountId: resolveAccountId(db), ring });
   await sealExistingRows(db);
 };
 
@@ -257,7 +275,12 @@ export const adoptAccountKey = async (
   // Collect the device's own rows (readable under its current key) before the
   // swap; reads are never blocked, so this runs even while mismatched.
   const own = await collectDecryptableRows(db);
-  await saveDeviceKeyRing(await deriveKeyRing(master, serverEscrow.epoch));
+  // Adopting the account key happens while signed into that account, so the ring
+  // is bound to it.
+  await saveDeviceKeyRing({
+    accountId: readCurrentAccountId(db),
+    ring: await deriveKeyRing(master, serverEscrow.epoch),
+  });
   // The device now holds the account key — the mismatch is resolved, so clear it
   // before re-sealing (the write lock would otherwise refuse the bulkPut).
   keyMismatchState.set(false);
@@ -313,6 +336,6 @@ export const eraseSyncedContent = async (
   // deletion syncs away like the content deletes) so the add-only publish below
   // installs this device's key as the account's.
   await db.cloudCrypto.delete(ESCROW_ID);
-  await publishPendingEscrow(db);
+  await publishPendingEscrow(db, readCurrentAccountId(db));
   keyMismatchState.set(false);
 };

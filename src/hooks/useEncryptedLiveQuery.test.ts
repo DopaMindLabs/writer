@@ -10,7 +10,7 @@ import {
 } from './useEncryptedLiveQuery';
 
 const acquireKey = async () =>
-  saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1));
+  saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
 
 describe('useEncryptedLiveQuery', () => {
   beforeEach(async () => {
