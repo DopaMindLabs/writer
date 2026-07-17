@@ -7,9 +7,12 @@ import {
   deviceKeyProvider,
   clearPendingEscrow,
   loadPendingEscrow,
+  bindDeviceKeyRing,
+  invalidateCachedRing,
 } from './crypto/keyStore';
 import { keyMismatchState } from './crypto/keyMismatch';
-import { publishPendingEscrow } from './setup';
+import { keylessLockState } from './crypto/keylessLock';
+import { publishPendingEscrow, forgetThisDevice } from './setup';
 import {
   cloudSyncState,
   cloudCurrentUser,
@@ -22,7 +25,8 @@ export type EscrowReconcileResult =
   | 'published'
   | 'deferred'
   | 'matched'
-  | 'mismatch';
+  | 'mismatch'
+  | 'keyless';
 
 const toHex = (bytes: Uint8Array): string =>
   Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
@@ -60,19 +64,62 @@ export const hasLocalSyncedData = async (
  * has pulled the account escrow (if any):
  *
  * - **no account escrow (pull confirmed complete)** → publish this device's, so
- *   its key becomes the account key (add-only: there was nothing to overwrite);
+ *   its key becomes the account key (add-only: there was nothing to overwrite),
+ *   then bind the ring to the account;
+ * - **no account escrow, nothing to publish** → the ring is unusable for this
+ *   account: forget it and hold the keyless lock (`keyless`) rather than reporting
+ *   a spurious `published`;
  * - **no account escrow (pull not yet confirmed)** → **defer**: an absent row may
  *   just mean the account's escrow has not been pulled yet, and publishing now
  *   would clobber it. Reconciliation re-runs on the next sync settle;
- * - **fingerprints match** → the account already holds this device's key, so
- *   there is nothing to do;
+ * - **fingerprints match** → the account already holds this device's key; bind the
+ *   ring to the account and there is nothing else to do;
  * - **fingerprints differ** → the account is protected by a different key; flag
  *   a mismatch for the UI and the write lock, and never publish over the
  *   account's escrow.
+ *
+ * `accountId` is the signed-in `UserLogin.userId` (or `null`); a published or
+ * matched ring is claimed for it so later account switches can tell it apart.
  */
+/** Claim a freshly-published or matched ring for the account and clear any
+ *  mismatch — the shared tail of the `published`/`matched` outcomes. */
+const claimForAccount = async (accountId: string | null): Promise<void> => {
+  if (accountId !== null) await bindDeviceKeyRing(accountId);
+  keyMismatchState.set(false);
+};
+
+/**
+ * Resolve the case where the account holds no escrow yet: publish this device's
+ * (claiming the ring), or — with nothing publishable for this account — forget
+ * the unusable ring and hold the keyless lock. Returns `'compare'` when a foreign
+ * escrow raced into the slot and the caller should re-read and compare instead.
+ *
+ * @param accountId - the signed-in account, or `null` when not signed in.
+ */
+const reconcileAbsentServerEscrow = async (
+  db: LoremDB,
+  accountId: string | null,
+): Promise<EscrowReconcileResult | 'compare'> => {
+  const result = await publishPendingEscrow(db, accountId);
+  if (result === 'published') {
+    await claimForAccount(accountId);
+    return 'published';
+  }
+  if (result === 'none') {
+    // Nothing publishable for this account: the ring is unusable here. Forget it
+    // and hold the keyless lock so writes cannot proceed until the device is set
+    // up or unlocked on this account — never report a spurious publication.
+    await forgetThisDevice();
+    keylessLockState.set(true);
+    return 'keyless';
+  }
+  return 'compare';
+};
+
 export const reconcileEscrow = async (
   db: LoremDB = appDb,
   isPullComplete: () => boolean = isAccountPullComplete,
+  accountId: string | null = null,
 ): Promise<EscrowReconcileResult> => {
   const ring = deviceKeyProvider.current();
   if (!ring) return 'idle';
@@ -81,16 +128,13 @@ export const reconcileEscrow = async (
     // Only publish once the initial pull is confirmed complete; otherwise a
     // not-yet-pulled account escrow would be overwritten by ours.
     if (!isPullComplete()) return 'deferred';
-    const result = await publishPendingEscrow(db);
-    if (result !== 'kept-server') {
-      keyMismatchState.set(false);
-      return 'published';
-    }
+    const outcome = await reconcileAbsentServerEscrow(db, accountId);
+    if (outcome !== 'compare') return outcome;
     // A foreign escrow raced into the slot between our read and the publish;
     // re-read it and fall through to the mismatch handling below.
     serverEscrow = await db.cloudCrypto.get(ESCROW_ID);
     if (!serverEscrow) {
-      keyMismatchState.set(false);
+      await claimForAccount(accountId);
       return 'published';
     }
   }
@@ -104,10 +148,10 @@ export const reconcileEscrow = async (
   const isOurs =
     fingerprintsEqual(serverEscrow.fingerprint, ring.fingerprint) ||
     (pending !== null &&
-      fingerprintsEqual(serverEscrow.fingerprint, pending.fingerprint));
+      fingerprintsEqual(serverEscrow.fingerprint, pending.escrow.fingerprint));
   if (isOurs) {
     await clearPendingEscrow();
-    keyMismatchState.set(false);
+    await claimForAccount(accountId);
     return 'matched';
   }
   warnMismatch(serverEscrow.fingerprint, ring.fingerprint, pending !== null);
@@ -149,12 +193,31 @@ const createRunner = (run: () => Promise<unknown>): (() => void) => {
  * no-op on a plain (non-cloud) database whose observables never emit a signed-in
  * user or leave `initial`.
  */
+/**
+ * Guard against key material outliving a sign-out or account switch. When the
+ * signed-in account differs from the one the cached ring is bound to (and the
+ * binding is a concrete account, not the unclaimed `null`), drop the cached ring
+ * **synchronously** so the keyless-lock monitor blocks writes at once — before
+ * any content can be sealed with the old account's key — then forget the ring and
+ * its pending escrow from the keystore.
+ */
+const guardIdentityChange = (accountId: string | null): void => {
+  const bound = deviceKeyProvider.accountId();
+  const ring = deviceKeyProvider.current();
+  if (ring !== null && bound !== null && bound !== accountId) {
+    invalidateCachedRing();
+    void forgetThisDevice().catch(() => undefined);
+  }
+};
+
 export const startEscrowReconciler = (
   syncObservable: CloudObservable<SyncState> = cloudSyncState(),
   userObservable: CloudObservable<UserLogin | undefined> = cloudCurrentUser(),
-  run: () => Promise<unknown> = reconcileEscrow,
+  run: (accountId: string | null) => Promise<unknown> = (accountId) =>
+    reconcileEscrow(appDb, isAccountPullComplete, accountId),
 ): (() => void) => {
-  const schedule = createRunner(run);
+  let currentAccountId: string | null = null;
+  const schedule = createRunner(() => run(currentAccountId));
 
   let prevPhase: SyncState['phase'] | undefined;
   const syncSub = syncObservable.subscribe((state) => {
@@ -171,6 +234,10 @@ export const startEscrowReconciler = (
     if (userId !== prevUserId || loggedIn !== prevLoggedIn) {
       prevUserId = userId;
       prevLoggedIn = loggedIn;
+      currentAccountId = loggedIn ? (userId ?? null) : null;
+      // Discard foreign key material before scheduling a reconcile, so the sweep
+      // sees a keyless device rather than one still holding the old account's key.
+      guardIdentityChange(currentAccountId);
       schedule();
     }
   });
