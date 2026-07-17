@@ -15,7 +15,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     </div>
   </div>
   <div
-    class="px-4 pb-1.5 pt-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+    class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
     data-testid="quick-settings-section-appearance"
   >
     Appearance
@@ -135,7 +135,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     </div>
   </div>
   <div
-    class="px-4 pb-1.5 pt-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+    class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
     data-testid="quick-settings-section-writing"
   >
     Writing
@@ -206,23 +206,23 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     </div>
   </div>
   <div
-    class="px-4 pb-1.5 pt-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+    class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
     data-testid="quick-settings-section-help-tours"
   >
     Help tour
   </div>
   <button
-    class="block w-full text-left"
+    class="group relative flex w-full cursor-pointer select-none items-center gap-2.5 px-3.5 py-1.5 text-left font-sans text-[13px] font-normal text-ink-2 outline-none transition-colors hover:bg-paper-2 hover:text-ink focus-visible:bg-paper-2 focus-visible:text-ink data-[highlighted]:bg-paper-2 data-[highlighted]:text-ink"
+    data-checked="true"
     data-testid="quick-settings-tour-welcome"
     type="button"
   >
     <span
-      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
+      class="flex w-3.5 shrink-0 items-center justify-center"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-check h-3 w-3 shrink-0 text-ink opacity-100"
-        data-testid="quick-settings-tour-welcome-check"
+        class="lucide lucide-check h-3 w-3 text-ink opacity-100"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -237,13 +237,16 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
           d="M20 6 9 17l-5-5"
         />
       </svg>
+    </span>
+    <span
+      class="flex-1 truncate"
+    >
+      Welcome to LIpsum Writer
+    </span>
+    <span
+      class="shrink-0 font-mono text-[10px] tracking-wide text-ink-4"
+    >
       <span
-        class="flex-1 text-left"
-      >
-        Welcome to LIpsum Writer
-      </span>
-      <span
-        class="font-mono text-[10px] text-ink-4"
         data-testid="quick-settings-tour-welcome-kbd"
       >
         ⌘?
@@ -251,17 +254,16 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     </span>
   </button>
   <button
-    class="block w-full text-left"
+    class="group relative flex w-full cursor-pointer select-none items-center gap-2.5 px-3.5 py-1.5 text-left font-sans text-[13px] font-normal text-ink-2 outline-none transition-colors hover:bg-paper-2 hover:text-ink focus-visible:bg-paper-2 focus-visible:text-ink data-[highlighted]:bg-paper-2 data-[highlighted]:text-ink"
     data-testid="quick-settings-tour-writer"
     type="button"
   >
     <span
-      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
+      class="flex w-3.5 shrink-0 items-center justify-center"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-check h-3 w-3 shrink-0 opacity-0"
-        data-testid="quick-settings-tour-writer-check"
+        class="lucide lucide-check h-3 w-3 text-ink opacity-0"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -276,25 +278,24 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
           d="M20 6 9 17l-5-5"
         />
       </svg>
-      <span
-        class="flex-1 text-left"
-      >
-        The writer's workspace
-      </span>
+    </span>
+    <span
+      class="flex-1 truncate"
+    >
+      The writer's workspace
     </span>
   </button>
   <button
-    class="block w-full text-left"
+    class="group relative flex w-full cursor-pointer select-none items-center gap-2.5 px-3.5 py-1.5 text-left font-sans text-[13px] font-normal text-ink-2 outline-none transition-colors hover:bg-paper-2 hover:text-ink focus-visible:bg-paper-2 focus-visible:text-ink data-[highlighted]:bg-paper-2 data-[highlighted]:text-ink"
     data-testid="quick-settings-tour-citations"
     type="button"
   >
     <span
-      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
+      class="flex w-3.5 shrink-0 items-center justify-center"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-check h-3 w-3 shrink-0 opacity-0"
-        data-testid="quick-settings-tour-citations-check"
+        class="lucide lucide-check h-3 w-3 text-ink opacity-0"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -309,25 +310,24 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
           d="M20 6 9 17l-5-5"
         />
       </svg>
-      <span
-        class="flex-1 text-left"
-      >
-        Citations
-      </span>
+    </span>
+    <span
+      class="flex-1 truncate"
+    >
+      Citations
     </span>
   </button>
   <button
-    class="block w-full text-left"
+    class="group relative flex w-full cursor-pointer select-none items-center gap-2.5 px-3.5 py-1.5 text-left font-sans text-[13px] font-normal text-ink-2 outline-none transition-colors hover:bg-paper-2 hover:text-ink focus-visible:bg-paper-2 focus-visible:text-ink data-[highlighted]:bg-paper-2 data-[highlighted]:text-ink"
     data-testid="quick-settings-tour-brainspace"
     type="button"
   >
     <span
-      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
+      class="flex w-3.5 shrink-0 items-center justify-center"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-check h-3 w-3 shrink-0 opacity-0"
-        data-testid="quick-settings-tour-brainspace-check"
+        class="lucide lucide-check h-3 w-3 text-ink opacity-0"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -342,35 +342,26 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
           d="M20 6 9 17l-5-5"
         />
       </svg>
-      <span
-        class="flex-1 text-left"
-      >
-        BrainSpace
-      </span>
+    </span>
+    <span
+      class="flex-1 truncate"
+    >
+      BrainSpace
     </span>
   </button>
   <div
-    class="px-4 pb-1.5 pt-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+    class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
     data-testid="quick-settings-section-more"
   >
     More
   </div>
   <a
-    class="block w-full text-left"
+    class="group relative flex w-full cursor-pointer select-none items-center gap-2.5 px-3.5 py-1.5 text-left font-sans text-[13px] font-normal text-ink-2 outline-none transition-colors hover:bg-paper-2 hover:text-ink focus-visible:bg-paper-2 focus-visible:text-ink data-[highlighted]:bg-paper-2 data-[highlighted]:text-ink"
     data-discover="true"
     data-testid="quick-settings-whats-new"
     href="/help/whats-new"
-    type="button"
   >
-    <span
-      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
-    >
-      <span
-        class="flex-1 text-left"
-      >
-        What's new
-      </span>
-    </span>
+    What's new
   </a>
   <span
     aria-disabled="true"
@@ -384,52 +375,27 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
       class="pointer-events-none inline-flex max-w-full items-center opacity-60"
     >
       <span
-        class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2"
+        class="flex w-full items-center px-3.5 py-1.5 text-[13px] text-ink-2"
       >
-        <span
-          class="h-3 w-3 shrink-0 opacity-0"
-        />
-        <span
-          class="flex-1 text-left"
-        >
-          Send feedback…
-        </span>
+        Send feedback…
       </span>
     </span>
   </span>
   <a
-    class="block w-full text-left"
+    class="group relative flex w-full cursor-pointer select-none items-center gap-2.5 px-3.5 py-1.5 text-left font-sans text-[13px] font-normal text-ink-2 outline-none transition-colors hover:bg-paper-2 hover:text-ink focus-visible:bg-paper-2 focus-visible:text-ink data-[highlighted]:bg-paper-2 data-[highlighted]:text-ink"
     data-discover="true"
     data-testid="quick-settings-accessibility"
     href="/settings?tab=accessibility"
-    type="button"
   >
-    <span
-      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
-    >
-      <span
-        class="flex-1 text-left"
-      >
-        Accessibility
-      </span>
-    </span>
+    Accessibility
   </a>
   <a
-    class="block w-full text-left"
+    class="group relative flex w-full cursor-pointer select-none items-center gap-2.5 px-3.5 py-1.5 text-left font-sans text-[13px] font-normal text-ink-2 outline-none transition-colors hover:bg-paper-2 hover:text-ink focus-visible:bg-paper-2 focus-visible:text-ink data-[highlighted]:bg-paper-2 data-[highlighted]:text-ink"
     data-discover="true"
     data-testid="quick-settings-about"
     href="/about"
-    type="button"
   >
-    <span
-      class="flex w-full items-center gap-2 px-4 py-1.5 text-[13px] text-ink-2 hover:bg-paper-2"
-    >
-      <span
-        class="flex-1 text-left"
-      >
-        About
-      </span>
-    </span>
+    About
   </a>
   <div
     class="mt-1 border-t border-rule bg-paper-2"
