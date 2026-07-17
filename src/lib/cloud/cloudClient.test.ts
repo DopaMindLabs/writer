@@ -12,6 +12,7 @@ import {
   signOutOfCloud,
   hydrateCloudDevice,
   startCloudSession,
+  resetCloudDevice,
   isAccountPullComplete,
   KeylessSignInBlockedError,
   type SyncState,
@@ -23,7 +24,12 @@ import {
   saveDeviceKeyRing,
   forgetDeviceKeyRing,
 } from './crypto/keyStore';
+import { keyMismatchState } from './crypto/keyMismatch';
+import { keylessLockState } from './crypto/keylessLock';
 import { deriveKeyRing, generateMasterSecret, ESCROW_ID, type EscrowRecord } from './crypto/keys';
+import { resetAndReseed } from '@/db/seed';
+
+vi.mock('@/db/seed', () => ({ resetAndReseed: vi.fn(async () => {}) }));
 
 // In the test environment the app database is plain (both gates off), so
 // `db.cloud` is absent and every getter must fall back safely.
@@ -402,5 +408,39 @@ describe('startCloudSession', () => {
     const stop = await startCloudSession();
     expect(typeof stop).toBe('function');
     expect(() => stop()).not.toThrow();
+  });
+});
+
+describe('resetCloudDevice', () => {
+  beforeEach(() => {
+    vi.mocked(resetAndReseed).mockClear();
+    vi.mocked(resetAndReseed).mockResolvedValue(undefined);
+  });
+
+  afterEach(async () => {
+    keyMismatchState.set(false);
+    keylessLockState.set(false);
+    await forgetDeviceKeyRing();
+  });
+
+  it('forgets the device key, clears both write locks, and reseeds', async () => {
+    await saveDeviceKeyRing({
+      accountId: 'acct-a',
+      ring: await deriveKeyRing(generateMasterSecret(), 1),
+    });
+    keyMismatchState.set(true);
+    keylessLockState.set(true);
+
+    await resetCloudDevice();
+
+    expect(deviceKeyProvider.current()).toBeNull();
+    expect(keyMismatchState.current()).toBe(false);
+    expect(keylessLockState.current()).toBe(false);
+    expect(resetAndReseed).toHaveBeenCalledTimes(1);
+  });
+
+  it('propagates a reseed failure instead of leaving an empty database silently', async () => {
+    vi.mocked(resetAndReseed).mockRejectedValueOnce(new Error('reseed boom'));
+    await expect(resetCloudDevice()).rejects.toThrow('reseed boom');
   });
 });

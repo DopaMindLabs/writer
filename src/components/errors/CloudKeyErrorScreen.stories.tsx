@@ -6,7 +6,7 @@ const meta = {
   component: CloudKeyErrorScreen,
   args: {
     onUnlock: () => undefined,
-    onReset: () => undefined,
+    onReset: () => Promise.resolve(),
   },
 } satisfies Meta<typeof CloudKeyErrorScreen>;
 
@@ -14,3 +14,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const ResetFailed: Story = {
+  args: {
+    onReset: () => Promise.reject(new Error('reset failed')),
+  },
+};
