@@ -65,11 +65,12 @@ const build = (name: string): LoremDB => {
 /** Read a row past the middleware without decrypting, then restore the key. */
 const readRaw = async (table: string, key: string): Promise<Row | undefined> => {
   const ring = deviceKeyProvider.current();
+  const accountId = deviceKeyProvider.accountId();
   await forgetDeviceKeyRing();
   try {
     return await db.table<Row>(table).get(key);
   } finally {
-    if (ring) await saveDeviceKeyRing(ring);
+    if (ring) await saveDeviceKeyRing({ accountId, ring });
   }
 };
 
@@ -120,9 +121,9 @@ describe('cloud setup', () => {
     // must never overwrite it, and must keep our escrow pending for adoption.
     const foreign = await wrapMasterSecret(generateMasterSecret(), 'other', 1000);
     await db.cloudCrypto.put(foreign);
-    await createCloudEncryption('mine', db, () => true); // signed in: keep the row
+    await createCloudEncryption('mine', db, () => 'acct-a'); // signed in: keep the row
 
-    expect(await publishPendingEscrow(db)).toBe('kept-server');
+    expect(await publishPendingEscrow(db, 'acct-a')).toBe('kept-server');
     const stored = await db.cloudCrypto.get(ESCROW_ID);
     expect(Array.from(stored?.fingerprint ?? [])).toEqual(
       Array.from(foreign.fingerprint),
@@ -131,13 +132,22 @@ describe('cloud setup', () => {
   });
 
   it('publishPendingEscrow publishes over a row with an identical fingerprint', async () => {
-    await createCloudEncryption('mine', db, () => true);
+    await createCloudEncryption('mine', db, () => 'acct-a');
     const ours = await loadPendingEscrow();
     if (!ours) throw new Error('expected a pending escrow');
-    await db.cloudCrypto.put(ours); // server already holds our fingerprint
+    await db.cloudCrypto.put(ours.escrow); // server already holds our fingerprint
 
-    expect(await publishPendingEscrow(db)).toBe('published');
+    expect(await publishPendingEscrow(db, 'acct-a')).toBe('published');
     expect(await loadPendingEscrow()).toBeNull();
+  });
+
+  it('refuses to publish an escrow bound to a different account', async () => {
+    // Pending minted for account A must never become account B's key.
+    await createCloudEncryption('mine', db, () => 'acct-a');
+    expect(await publishPendingEscrow(db, 'acct-b')).toBe('none');
+    // Nothing was written to the account, and the pending copy is retained.
+    expect(await db.cloudCrypto.get(ESCROW_ID)).toBeUndefined();
+    expect(await loadPendingEscrow()).not.toBeNull();
   });
 
   it('publishPendingEscrow is a no-op when nothing is pending', async () => {
@@ -172,8 +182,20 @@ describe('cloud setup', () => {
     // Signed in, the local escrow is the account's real key — it must survive so
     // the mismatch/adopt flow can resolve against it.
     await db.cloudCrypto.put(await wrapMasterSecret(generateMasterSecret(), 'x', 1000));
-    await createCloudEncryption('pw', db, () => true);
+    await createCloudEncryption('pw', db, () => 'acct-a');
     expect(await db.cloudCrypto.toArray()).toHaveLength(1);
+  });
+
+  it('binds the ring and pending escrow to null when set up while signed out', async () => {
+    await createCloudEncryption('pw', db); // default: signed out
+    expect(deviceKeyProvider.accountId()).toBeNull();
+    expect((await loadPendingEscrow())?.accountId).toBeNull();
+  });
+
+  it('binds the ring and pending escrow to the account when set up while signed in', async () => {
+    await createCloudEncryption('pw', db, () => 'acct-a');
+    expect(deviceKeyProvider.accountId()).toBe('acct-a');
+    expect((await loadPendingEscrow())?.accountId).toBe('acct-a');
   });
 
   it('unlock with the right passphrase loads a usable ring', async () => {
@@ -278,14 +300,21 @@ describe('cloud key conflict resolution', () => {
    *  master, then have this device set up its *own* key and write its own note
    *  (`mine`) — the exact mismatch a wiped device hits when it re-signs-in. */
   const seedMismatch = async (): Promise<Uint8Array> => {
+    // Signed into account 'acct-a', so setup binds to it and the erase/adopt flows
+    // read the same account back when they publish the device's escrow.
+    (
+      db as unknown as {
+        cloud: { currentUser: { value: { isLoggedIn: boolean; userId: string } } };
+      }
+    ).cloud.currentUser = { value: { isLoggedIn: true, userId: 'acct-a' } };
     const accountMaster = generateMasterSecret();
-    await saveDeviceKeyRing(await deriveKeyRing(accountMaster, 1));
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(accountMaster, 1) });
     await db.table<Row>('docs').put({
       id: 'acc', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'account note',
     });
     await db.cloudCrypto.put(await wrapMasterSecret(accountMaster, 'old-pass', FAST));
     // Re-signing-in: signed into the account, so the account escrow is kept.
-    await createCloudEncryption('new-pass', db, () => true);
+    await createCloudEncryption('new-pass', db, () => 'acct-a');
     await db.table<Row>('docs').put({
       id: 'mine', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'my note',
     });

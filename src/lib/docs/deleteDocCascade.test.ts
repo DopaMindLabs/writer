@@ -116,7 +116,7 @@ describe('deleteDocCascade under cloud encryption', () => {
     });
     cloudDb.use(createEncryptionMiddleware(deviceKeyProvider));
     await cloudDb.open();
-    await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1));
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
   });
 
   afterEach(async () => {
