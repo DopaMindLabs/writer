@@ -103,18 +103,67 @@ const reconcileDoc = async (doc: Reconcilable): Promise<ReconcileResult | null> 
 /** How many unmounted docs to process before yielding the event loop. */
 const RECONCILE_BATCH = 8;
 
+interface ReconcilerRuntime {
+  isUnchanged: (docId: string, body: string) => boolean;
+  markReconciled: (docId: string, body: string) => void;
+  pruneSkipCache: (present: Set<string>) => void;
+  clearSkipCache: () => void;
+  nextRunId: () => number;
+  request: (trigger: ReconcileTrigger) => void;
+  setRequestHandler: (handler: (trigger: ReconcileTrigger) => void) => void;
+  clearRequestHandler: (handler: (trigger: ReconcileTrigger) => void) => void;
+}
+
 /**
- * The last row body each doc was seen with at a *successful* reconcile. A doc
- * whose body is unchanged since then needs no CRDT load or headless snapshot, so
- * a repeat sweep of a large, idle library is cheap. Correctness never depends on
- * it: clearing it only costs recomputation and yields identical results. Bounded
- * by the live document count — pruned each sweep.
+ * Own the reconciler's mutable session state in one runtime instead of
+ * module-level bindings: the unchanged-skip cache, the run counter, and the
+ * active single-flight request handler. A single `const` runtime is created
+ * below, so the module holds no mutable top-level state.
+ *
+ * The skip cache records the last row body each doc was seen with at a
+ * *successful* reconcile. A doc whose body is unchanged since then needs no CRDT
+ * load or headless snapshot, so a repeat sweep of a large, idle library is cheap.
+ * Correctness never depends on it: clearing it only costs recomputation and
+ * yields identical results. Bounded by the live document count — pruned each
+ * sweep. The request handler is set while a reconciler is running and lets the UI
+ * (retry) and internal callers drive the *same* serialised run path.
  */
-const lastReconciledBody = new Map<string, string>();
+const createReconcilerRuntime = (): ReconcilerRuntime => {
+  const lastReconciledBody = new Map<string, string>();
+  let runCounter = 0;
+  let requestActive: ((trigger: ReconcileTrigger) => void) | null = null;
+
+  return {
+    isUnchanged: (docId, body) => lastReconciledBody.get(docId) === body,
+    markReconciled: (docId, body) => {
+      lastReconciledBody.set(docId, body);
+    },
+    pruneSkipCache: (present) => {
+      for (const id of lastReconciledBody.keys()) {
+        if (!present.has(id)) lastReconciledBody.delete(id);
+      }
+    },
+    clearSkipCache: () => {
+      lastReconciledBody.clear();
+    },
+    nextRunId: () => (runCounter += 1),
+    request: (trigger) => {
+      requestActive?.(trigger);
+    },
+    setRequestHandler: (handler) => {
+      requestActive = handler;
+    },
+    clearRequestHandler: (handler) => {
+      if (requestActive === handler) requestActive = null;
+    },
+  };
+};
+
+const reconcilerRuntime = createReconcilerRuntime();
 
 /** Reset the unchanged-skip cache (e.g. on sign-out, or between tests). */
 export const resetReconcileState = (): void => {
-  lastReconciledBody.clear();
+  reconcilerRuntime.clearSkipCache();
 };
 
 /** Yield to the event loop so a long background sweep never blocks the UI. */
@@ -131,11 +180,11 @@ type OneOutcome =
 const reconcileOne = async (doc: Doc): Promise<OneOutcome> => {
   // Unchanged since it last reconciled cleanly: nothing new was pulled, so the
   // expensive CRDT load + snapshot would only reconfirm convergence.
-  if (lastReconciledBody.get(doc.id) === doc.body) return { kind: 'skipped' };
+  if (reconcilerRuntime.isUnchanged(doc.id, doc.body)) return { kind: 'skipped' };
   try {
     const result = await reconcileDoc(doc);
     // Record only on success; a thrown doc retries on the next sweep.
-    lastReconciledBody.set(doc.id, doc.body);
+    reconcilerRuntime.markReconciled(doc.id, doc.body);
     return { kind: 'done', result };
   } catch (error) {
     console.error('cloud reconcile failed for doc', doc.id, error);
@@ -169,9 +218,7 @@ const reconcileLibrary = async (): Promise<ReconcileSummary> => {
   const docs = await db.docs.toArray();
   const present = new Set(docs.map((doc) => doc.id));
   // Keep the skip-cache bounded: drop entries for docs no longer in the library.
-  for (const id of lastReconciledBody.keys()) {
-    if (!present.has(id)) lastReconciledBody.delete(id);
-  }
+  reconcilerRuntime.pruneSkipCache(present);
 
   const mounted = new Set(mountedDocIds());
   const results: ReconcileResult[] = [];
@@ -277,8 +324,6 @@ export const reconcileDocForMount = async (
   await applyPulledBody({ id: docId, body });
 };
 
-let runCounter = 0;
-
 /**
  * Run a reconcile sweep and record its outcome in {@link reconcileStatus} for the
  * cloud settings UI: `running` on start, then `succeeded`, or `failed` when the
@@ -287,7 +332,7 @@ let runCounter = 0;
 export const reconcileWithStatus = async (
   trigger: ReconcileTrigger,
 ): Promise<void> => {
-  const runId = ++runCounter;
+  const runId = reconcilerRuntime.nextRunId();
   const startedAt = Date.now();
   reconcileStatus.set({ state: 'running', trigger, runId, startedAt, queued: false });
   try {
@@ -332,17 +377,11 @@ export const reconcileWithStatus = async (
   }
 };
 
-/**
- * The active reconciler's single-flight request function, or `null` when no
- * reconciler is running. Lets the UI (e.g. a retry button) drive the *same*
- * serialised run path as the automatic triggers.
- */
-let requestActive: ((trigger: ReconcileTrigger) => void) | null = null;
-
 /** Ask the running reconciler to reconcile once (serialised). No-op if none is
- *  running — e.g. a plain database, where nothing was ever started. */
+ *  running — e.g. a plain database, where nothing was ever started. The active
+ *  single-flight handler is owned by {@link reconcilerRuntime}. */
 export const requestReconcile = (trigger: ReconcileTrigger = 'manual'): void => {
-  requestActive?.(trigger);
+  reconcilerRuntime.request(trigger);
 };
 
 /** Dependencies of {@link startCloudReconciler}; all injectable for tests. */
@@ -451,7 +490,7 @@ export const startCloudReconciler = (
         }
       });
   };
-  requestActive = request;
+  reconcilerRuntime.setRequestHandler(request);
 
   const stopPhaseTriggers = armPhaseTriggers(syncState, request);
   const syncCompleteSub = syncComplete.subscribe(() => {
@@ -468,6 +507,6 @@ export const startCloudReconciler = (
     syncCompleteSub.unsubscribe();
     stopKeyChange();
     stopSignOutReset();
-    if (requestActive === request) requestActive = null;
+    reconcilerRuntime.clearRequestHandler(request);
   };
 };
