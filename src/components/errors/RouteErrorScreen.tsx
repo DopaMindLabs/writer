@@ -6,9 +6,7 @@ import {
   TypographyMuted,
   TypographyP,
 } from '@/components/ui/typography';
-import { isCloudKeyError } from '@/lib/cloud/crypto/errors';
-import { forgetThisDevice } from '@/lib/cloud/cloudClient';
-import { resetAndReseed } from '@/db/seed';
+import { isCloudKeyError, resetCloudDevice } from '@/lib/cloud/cloudClient';
 import { routes } from '@/lib/routes';
 import { CloudKeyErrorScreen } from './CloudKeyErrorScreen';
 
@@ -43,12 +41,9 @@ export const RouteErrorScreen = () => {
         onUnlock={() => {
           window.location.assign(accountSettingsHref());
         }}
-        onReset={() => {
-          void (async () => {
-            await forgetThisDevice();
-            await resetAndReseed();
-            window.location.reload();
-          })();
+        onReset={async () => {
+          await resetCloudDevice();
+          window.location.reload();
         }}
       />
     );
