@@ -426,9 +426,16 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   its own — the presence-gated keyless section is the single source of key actions, so a set-up
   can never mint a key that diverges from a not-yet-pulled account escrow, and space creation is
   blocked with the same inline notice while the lock holds. Sign-in is surfaced on
-  the Home page (flag-gated) so it is discoverable before a space exists; the **Quick settings**
+  the Home page (flag-gated) as a button at the top right of the header so it is discoverable
+  before a space exists; the **Quick settings**
   popover always offers a direct **Account** link to the account settings tab (where sign-in and
-  encryption live), regardless of the flag. Opting out is **non-destructive** —
+  encryption live), regardless of the flag. Every sign-in attempt first opens an
+  **evaluation-account acknowledgement** dialog: it states that cloud sync is a demonstration
+  only, the app has no server of its own (local-first, client-side), and that signing in
+  automatically creates a Dexie Cloud evaluation account valid for 3 days after which synced
+  data may be lost. The continue action stays disabled until the acknowledgement checkbox is
+  ticked, the tick is forgotten between openings (every attempt re-acknowledges), and cancel
+  backs out without contacting the network. Opting out is **non-destructive** —
   the cloud schema is sticky so a rebuild never erases local content.
 - **Four-device beta limit.** An account holds at most **four devices** while the beta runs,
   tracked in a synced, deliberately unencrypted `cloudDevices` registry — one row per joined
