@@ -155,4 +155,48 @@ describe('buildDb — cloud activation gates', () => {
 
     await rebuilt.delete();
   });
+
+  /**
+   * The addon injects its own access-control schema (`realms`, `members`,
+   * `roles`) when it merges DEXIE_CLOUD_SCHEMA into the declared stores, so the
+   * app must not declare them itself — redeclaring one with a different primary
+   * key makes the addon throw. These pin that they arrive, unencrypted, and only
+   * on a cloud-enabled instance.
+   */
+  it('gains the addon-managed access-control tables on a cloud instance', async () => {
+    enableCloud();
+    const cloudDb = buildDb('gate-realms');
+    await cloudDb.open();
+
+    const names = cloudDb.tables.map((t) => t.name);
+    expect(names).toEqual(expect.arrayContaining(['realms', 'members', 'roles']));
+    // Injected, not declared: the app's own schema stays at version 1.
+    expect(cloudDb.verno).toBe(1);
+
+    await cloudDb.delete();
+  });
+
+  it('has no access-control tables on a plain instance', async () => {
+    const plainDb = buildDb('gate-realms-plain');
+    await plainDb.open();
+
+    const names = plainDb.tables.map((t) => t.name);
+    expect(names).not.toContain('realms');
+    expect(names).not.toContain('members');
+    expect(names).not.toContain('roles');
+
+    await plainDb.delete();
+  });
+
+  it('leaves realm rows in the clear — the server reads them for access control', async () => {
+    enableCloud();
+    const cloudDb = buildDb('gate-realms-plaintext');
+    await cloudDb.table('realms').put({ realmId: 'rlm-1', name: 'Shared space' });
+
+    const row = await cloudDb.table<Record<string, unknown>>('realms').get('rlm-1');
+    expect(row?.name).toBe('Shared space');
+    expect(row).not.toHaveProperty(CIPHER_FIELD);
+
+    await cloudDb.delete();
+  });
 });

@@ -4,10 +4,10 @@ import {
   cloudUserInteraction,
   cloudSyncState,
   cloudCurrentUser,
-  cloudEscrowPresence,
   type SyncState,
-  type EscrowPresence,
 } from '@/lib/cloud/cloudClient';
+import { KeyEscrowPresence } from '@/lib/syncProviders/types';
+import { useSyncCapability } from '@/lib/writerSync/syncCoordinatorContext';
 import { InlineBanner } from '@/components/ui/InlineBanner';
 import { useKeyMismatch } from '@/hooks/useKeyMismatch';
 import { useCloudPanelState } from './useCloudPanelState';
@@ -26,7 +26,9 @@ import { CloudKeyConflictSection } from './CloudKeyConflictSection';
 import { CloudBackupNudge } from './CloudBackupNudge';
 
 const INITIAL_STATE: SyncState = { status: 'not-started', phase: 'initial' };
-const INITIAL_PRESENCE: EscrowPresence = 'unknown';
+const INITIAL_PRESENCE: KeyEscrowPresence = KeyEscrowPresence.Unknown;
+/** Never emits, for when no configured provider delivers keys. */
+const NO_PRESENCE = { subscribe: () => ({ unsubscribe: () => undefined }) };
 
 /**
  * The active cloud-sync panel (rendered only behind both gates). A clean device
@@ -39,7 +41,11 @@ export const CloudSectionPanel = () => {
   const sync = useCloudObservable(useMemo(cloudSyncState, []), INITIAL_STATE);
   const user = useCloudObservable(useMemo(cloudCurrentUser, []), undefined);
 
-  const presence = useCloudObservable(useMemo(cloudEscrowPresence, []), INITIAL_PRESENCE);
+  const keyDelivery = useSyncCapability('keyDelivery');
+  const presence = useCloudObservable(
+    useMemo(() => keyDelivery?.escrowPresence ?? NO_PRESENCE, [keyDelivery]),
+    INITIAL_PRESENCE,
+  );
   const panel = useCloudPanelState();
   const mismatch = useKeyMismatch();
   const flags = useCloudPanelFlags(user, panel.hasKey, presence);
