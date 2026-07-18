@@ -8,29 +8,42 @@ on:
   workflow_dispatch:
     inputs:
       url:
-        description: 'Origin URL to whitelist (e.g. https://example.vercel.app)'
+        description: 'Origin URL to whitelist (e.g. https://lipsumwriter-git-branch-shavindra.vercel.app)'
         required: true
 
 jobs:
   whitelist:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v4
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v4
+        with:
+          node-version: 24
 
-      - name: Setup Dexie Cloud credentials
+      - name: Validate and whitelist origin
+        env:
+          # Event data reaches the shell through env, never interpolated into the
+          # script body — a quote or newline in the value cannot become shell.
+          DISPATCH_URL: ${{ github.event.client_payload.url }}
+          INPUT_URL: ${{ github.event.inputs.url }}
+          DEXIE_CLOUD_JSON: ${{ secrets.DEXIE_CLOUD_JSON }}
+          DEXIE_CLOUD_KEY: ${{ secrets.DEXIE_CLOUD_KEY }}
         run: |
-          printf '%s' '${{ secrets.DEXIE_CLOUD_JSON }}' > dexie-cloud.json
-          printf '%s' '${{ secrets.DEXIE_CLOUD_KEY }}' > dexie-cloud.key
+          set -euo pipefail
 
-      - name: Whitelist origin
-        run: |
-          if [ -n "${{ github.event.client_payload.url }}" ]; then
-            URL="${{ github.event.client_payload.url }}"
-          else
-            URL="${{ github.event.inputs.url }}"
-          fi
-          if [[ ! "$URL" =~ ^https?:// ]]; then
-            URL="https://$URL"
-          fi
-          echo "Whitelisting origin: $URL"
-          npx dexie-cloud whitelist "$URL"
+          # Validate against the Writer allow-list before anything touches the
+          # credentials. A disallowed or malformed URL exits non-zero here; the
+          # scheme is never silently prepended.
+          RAW="${DISPATCH_URL:-$INPUT_URL}"
+          ORIGIN="$(node scripts/preview-origin.mjs "$RAW")"
+          echo "Whitelisting validated origin: $ORIGIN"
+
+          umask 077
+          WORKDIR="$(mktemp -d)"
+          cleanup() { rm -rf "$WORKDIR"; }
+          trap cleanup EXIT INT TERM
+
+          printf '%s' "$DEXIE_CLOUD_JSON" > "$WORKDIR/dexie-cloud.json"
+          printf '%s' "$DEXIE_CLOUD_KEY" > "$WORKDIR/dexie-cloud.key"
+
+          ( cd "$WORKDIR" && npx --yes dexie-cloud whitelist "$ORIGIN" )
