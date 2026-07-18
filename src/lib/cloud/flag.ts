@@ -29,6 +29,9 @@ export const applyCloudFlagFromUrl = (): void => {
     if (value === 'on') localStorage.setItem(CLOUD_FLAG_KEY, 'on');
     else if (value === 'off') localStorage.removeItem(CLOUD_FLAG_KEY);
     else return;
+    // @TODO: the `?cloud-sync=on` activation URL shouldn't be there for now —
+    // the beta is invite-only. Keep the param consumed-and-stripped here until
+    // it is removed (or replaced by a proper invite flow).
     url.searchParams.delete(CLOUD_FLAG_PARAM);
     window.history.replaceState(null, '', url.toString());
   } catch {
