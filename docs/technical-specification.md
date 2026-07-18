@@ -55,7 +55,7 @@
 
 | Path | Screen | Purpose |
 |------|--------|---------|
-| `/` | Home | Landing page. Shows "Continue writing" (most recent space) and "Start a new space", a pre-release notice banner counting down to the next release (3 August, 22:00 CEST) that urges setting up a local sync folder or backup, and — flag-gated — a "Sign in to sync" button at the top right of the header linking to the account settings tab. |
+| `/` | Home | Landing page. Shows "Continue writing" (most recent space) and "Start a new space", a pre-release notification (info banner) counting down to the next release (3 August, 22:00 CEST) that urges setting up a local sync folder or backup, and — flag-gated — a "Sign in to sync" button at the top right of the header linking to the account settings tab. |
 | `/about` | About | Creator note, license, source links. |
 | `/settings` | Settings | Global user preferences. |
 | `/new` | Templates | Pick a template and create a new space. |
@@ -430,7 +430,8 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   before a space exists; the **Quick settings**
   popover always offers a direct **Account** link to the account settings tab (where sign-in and
   encryption live), regardless of the flag. Every sign-in attempt first opens an
-  **evaluation-account acknowledgement** dialog: it states that cloud sync is a demonstration
+  **evaluation-account acknowledgement** dialog: a red (danger) warning banner states that
+  cloud sync is a demonstration
   only, the app has no server of its own (local-first, client-side), and that signing in
   automatically creates a Dexie Cloud evaluation account valid for 3 days after which synced
   data may be lost. The continue action stays disabled until the acknowledgement checkbox is

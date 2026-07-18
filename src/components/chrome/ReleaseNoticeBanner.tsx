@@ -12,10 +12,10 @@ export interface ReleaseNoticeBannerProps {
 }
 
 /**
- * Warns that the next release lands on a fixed date and urges setting up a
- * local sync folder or backup before then, with a days-remaining countdown.
- * Renders nothing once the release moment has passed — a stale countdown would
- * be worse than none.
+ * Notification that the next release is on a fixed date, urging a local sync
+ * folder or backup before then, with a days-remaining countdown. Renders
+ * nothing once the release moment has passed — a stale countdown would be
+ * worse than none.
  */
 export const ReleaseNoticeBanner = ({ now = Date.now() }: ReleaseNoticeBannerProps) => {
   const { t } = useTranslation('screens');
@@ -23,7 +23,7 @@ export const ReleaseNoticeBanner = ({ now = Date.now() }: ReleaseNoticeBannerPro
   const days = daysUntilNextRelease(now);
   return (
     <InlineBanner
-      kind="warning"
+      kind="info"
       className="mb-8"
       data-testid="release-notice-banner"
       title={t('home.releaseTitle', { date: NEXT_RELEASE_LABEL })}

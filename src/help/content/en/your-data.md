@@ -57,8 +57,8 @@ browser data, switching devices, or trying something new.
 
 ## Before the next release
 
-The next release lands on **3 August at 22:00 CEST**. Until then, the home
-screen shows a banner counting down the days remaining. A release can change
+The next release is on **3 August at 22:00 CEST**. Until then, the home
+screen shows a notification counting down the days remaining. A release can change
 how data is stored, so make sure a **local sync folder** is connected or a
 recent **backup** is exported before that date — data that lives only in this
 browser may otherwise be lost.

@@ -14,7 +14,7 @@
     "startNewSpace": "Start a new space",
     "signInToSync": "Sign in to sync",
     "releaseTitle": "Next release: {{date}}",
-    "releaseBody": "Before the release lands, make sure a local sync folder or backup is set up — data stored only in this browser may be lost.",
+    "releaseBody": "Before the release, make sure a local sync folder or backup is set up — data stored only in this browser may be lost.",
     "releaseCountdown_one": "{{count}} day remaining",
     "releaseCountdown_other": "{{count}} days remaining",
     "syncOffChip": "sync/backups not enabled · data can be lost",
