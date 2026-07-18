@@ -68,7 +68,9 @@ describe('useAppBoot', () => {
     await waitFor(() => {
       expect(resetAndReseed).toHaveBeenCalledTimes(1);
     });
-    expect(result.current.ready).toBe(true);
+    await waitFor(() => {
+      expect(result.current.ready).toBe(true);
+    });
     expect(result.current.error).toBeNull();
   });
 
