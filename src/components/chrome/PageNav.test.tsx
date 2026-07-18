@@ -47,6 +47,23 @@ describe('PageNav', () => {
     });
   });
 
+  describe('actions slot', () => {
+    it('renders screen-specific actions at the top right, after the nav', () => {
+      renderWithProviders(
+        <PageNav actions={<button data-testid="page-nav-action">Act</button>} />,
+      );
+      const action = screen.getByTestId('page-nav-action');
+      expect(action).toBeInTheDocument();
+      const nav = screen.getByTestId('page-nav');
+      expect(nav.compareDocumentPosition(action) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    });
+
+    it('renders no actions container content by default', () => {
+      renderWithProviders(<PageNav />);
+      expect(screen.queryByTestId('page-nav-action')).toBeNull();
+    });
+  });
+
   describe('custom backTo', () => {
     it('should use a custom backTo when provided', () => {
       renderWithProviders(<PageNav backTo="/settings" />);
