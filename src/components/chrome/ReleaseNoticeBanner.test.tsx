@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import { act } from '@testing-library/react';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { NEXT_RELEASE_AT } from '@/lib/releaseSchedule';
 import { ReleaseNoticeBanner } from './ReleaseNoticeBanner';
@@ -30,5 +31,20 @@ describe('ReleaseNoticeBanner', () => {
   it('renders nothing once the release moment has passed', () => {
     renderWithProviders(<ReleaseNoticeBanner now={NEXT_RELEASE_AT} />);
     expect(screen.queryByTestId('release-notice-banner')).toBeNull();
+  });
+
+  it('follows the ticking clock while mounted, disappearing when the release passes', () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(NEXT_RELEASE_AT - 30_000);
+      renderWithProviders(<ReleaseNoticeBanner />);
+      expect(screen.getByTestId('release-notice-banner')).toBeInTheDocument();
+      act(() => {
+        vi.advanceTimersByTime(61_000);
+      });
+      expect(screen.queryByTestId('release-notice-banner')).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
