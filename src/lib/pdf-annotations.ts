@@ -128,15 +128,15 @@ export const setPdfAnnotationNote = async (
 ): Promise<void> => {
   const trimmed = note.trim();
   const updatedAt = Date.now();
-  // Dexie's object-form update ignores undefined, so clear via a modify callback.
-  await db.pdfAnnotations
-    .where('id')
-    .equals(id)
-    .modify((annotation) => {
-      annotation.updatedAt = updatedAt;
-      if (trimmed === '') delete annotation.note;
-      else annotation.note = trimmed;
-    });
+  // Read-then-put (not a cursor `modify`, which bypasses the encryption
+  // middleware): Dexie's object-form update ignores `undefined`, so an empty
+  // note is cleared by omitting the key on the row that is written back.
+  const existing = await db.pdfAnnotations.get(id);
+  if (!existing) return;
+  const next = { ...existing, updatedAt };
+  if (trimmed === '') delete next.note;
+  else next.note = trimmed;
+  await db.pdfAnnotations.put(next);
 };
 
 export const deletePdfAnnotation = async (id: string): Promise<void> => {

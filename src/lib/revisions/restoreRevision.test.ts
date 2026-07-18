@@ -8,11 +8,11 @@ import { InvariantError } from '@/lib/invariant';
 import { serializedBody } from '@/test/fixtures';
 
 describe('restoreRevision', () => {
-  let restoreBody: ReturnType<typeof vi.fn<(serialized: string) => void>>;
+  let restoreBody: ReturnType<typeof vi.fn<(serialized: string) => Promise<void>>>;
   let unregister: () => void;
 
   beforeEach(async () => {
-    restoreBody = vi.fn<(serialized: string) => void>();
+    restoreBody = vi.fn<(serialized: string) => Promise<void>>(async () => {});
     unregister = registerEditorHandle(sampleDoc.id, { restoreBody });
     await db.spaces.put(sampleSpace);
     await db.sections.put(sampleSection);

@@ -8,10 +8,11 @@ import Dexie, {
   type Middleware,
 } from 'dexie';
 import type { CloudKeyRing } from './keys';
-import { isEncryptedTable, plaintextFieldsFor } from './tableRules';
-import { sealRow, openRow } from './envelope';
-import { CloudKeyMismatchError } from './errors';
+import { isEncryptedTable, plaintextFieldsFor, CIPHER_FIELD } from './tableRules';
+import { sealRow, openRow, EnvelopeIntegrityError, MalformedEnvelopeError } from './envelope';
+import { CloudKeyMismatchError, CloudKeylessWriteError } from './errors';
 import { keyMismatchState } from './keyMismatch';
+import { currentLockReason, type LockReason } from './lockReason';
 
 /**
  * A synchronous view of the active key ring for the encryption middleware.
@@ -25,10 +26,57 @@ export interface KeyProvider {
 
 type Row = Record<string, unknown>;
 
+/**
+ * Whether a mutation is the cloud addon applying rows it just pulled from the
+ * server, rather than an app write. The addon runs `applyServerChanges` (and its
+ * WebSocket equivalent) inside a transaction it marks `disableChangeTracking` —
+ * the same flag it reads back off `req.trans` to skip its own change queue. Those
+ * rows are ciphertext the addon pulled, so they must pass the write lock even
+ * while the device is keyless or mismatched: blocking them aborts the initial
+ * pull, so `initiallySynced` is never set and setup deadlocks on "fetching your
+ * account…". A safe read of an addon-set flag, not a validation bypass.
+ */
+const isSyncApplied = (trans: DBCoreMutateRequest['trans']): boolean =>
+  (trans as { disableChangeTracking?: boolean }).disableChangeTracking === true;
+
+/**
+ * Whether a request runs inside the addon's internal blob-plumbing transaction,
+ * which it marks `disableBlobResolve` (the same flag the addon's blob-resolve
+ * middleware reads to skip itself). Inside it the addon reads a row back to patch
+ * a downloaded blob into place and writes it out again — pure ciphertext
+ * plumbing. This middleware must stay inert there: decrypting the read would
+ * fail (the row still holds an unresolved ref) and return `undefined`, which
+ * corrupts the addon's write-back and leaves `_hasBlobRefs` set — an infinite
+ * download loop that saturates the main thread. Passing the raw row straight
+ * through keeps the plumbing working on the ciphertext it expects.
+ */
+const isInternalBlobTx = (trans: DBCoreMutateRequest['trans']): boolean =>
+  (trans as { disableBlobResolve?: boolean }).disableBlobResolve === true;
+
 /** The stored primary key of a row, as a string for the envelope's row binding. */
 const pkString = (table: DBCoreTable, value: Row, fallback?: unknown): string => {
   const extract = table.schema.primaryKey.extractKey;
   return String(extract ? extract(value) : fallback);
+};
+
+/**
+ * Strip the plaintext update descriptors off a put request. `Table.update()` /
+ * `Collection.modify()` attach the raw changes as `criteria` + `changeSpec`
+ * (and `Table.upsert()` as `updates`) alongside the full row values. The cloud
+ * addon sits *below* this middleware and prefers those descriptors when logging
+ * the mutation — left in place they ship the changed fields to the server in
+ * plaintext even though the row values are sealed, and the server then stamps
+ * them onto its rows in the clear. Dropping them demotes the operation to a
+ * plain full-row upsert of the sealed values, the only shape that cannot leak.
+ */
+const stripUpdateDescriptors = (req: DBCoreMutateRequest): DBCoreMutateRequest => {
+  if (req.type !== 'put') return req;
+  if (!('criteria' in req) && !('changeSpec' in req) && !('updates' in req)) return req;
+  const stripped = { ...req };
+  delete stripped.criteria;
+  delete stripped.changeSpec;
+  delete stripped.updates;
+  return stripped;
 };
 
 /** Seal every value in an add/put request; other mutations pass through. */
@@ -48,14 +96,45 @@ const sealMutate = async (
   return { ...req, values };
 };
 
-const openValue = async (
+/**
+ * Open a row, or drop it (returning `undefined`) when it cannot be decrypted
+ * with the current key. A decrypt failure means the row was sealed under a key
+ * this device does not hold — a key mismatch — so flag it, engaging the conflict
+ * banner and the write lock. Crucially it never throws: a read that crashed the
+ * whole route to the recovery screen would trap the user there, unable to reach
+ * the settings surface that resolves the conflict. Non-integrity errors still
+ * propagate.
+ */
+const openOrDrop = async (
   table: DBCoreTable,
   ring: CloudKeyRing,
   value: Row | undefined,
-): Promise<Row | undefined> =>
-  value
-    ? openRow(ring, { table: table.name, primaryKey: pkString(table, value) }, value)
-    : value;
+  onUnreadable: () => void,
+): Promise<Row | undefined> => {
+  if (!value) return value;
+  try {
+    return await openRow(
+      ring,
+      { table: table.name, primaryKey: pkString(table, value) },
+      value,
+    );
+  } catch (error) {
+    if (error instanceof EnvelopeIntegrityError) {
+      onUnreadable();
+      return undefined;
+    }
+    // A structurally malformed envelope is corruption, not a key mismatch: drop
+    // the row from this read so the list survives, but never flag a mismatch (it
+    // would wrongly lock the device). Post-inline-envelope this should not occur.
+    if (error instanceof MalformedEnvelopeError) {
+      console.error('Dropping a row with a malformed cipher envelope', {
+        table: table.name,
+      });
+      return undefined;
+    }
+    throw error;
+  }
+};
 
 /**
  * Web Crypto is asynchronous, but Dexie commits a transaction the moment control
@@ -76,8 +155,11 @@ const openMany = (
   table: DBCoreTable,
   ring: CloudKeyRing,
   values: readonly unknown[],
+  onUnreadable: () => void,
 ): Promise<(Row | undefined)[]> =>
-  Promise.all(values.map((v) => openValue(table, ring, v as Row | undefined)));
+  Promise.all(
+    values.map((v) => openOrDrop(table, ring, v as Row | undefined, onUnreadable)),
+  );
 
 /**
  * Wrap the value-returning read/write ops of an encrypted table.
@@ -90,44 +172,96 @@ const openMany = (
  * key/query paths instead (read via `get`/`toArray`, then write explicitly);
  * callers are adapted where the encrypted database is constructed.
  */
+/** Whether a stored row carries a ciphertext envelope (was sealed under a key). */
+const isSealed = (value: Row | undefined): boolean =>
+  value?.[CIPHER_FIELD] !== undefined;
+
+/** Keyless single read: drop a sealed row (no key can open it), pass plaintext. */
+const keylessGet = async (read: Promise<unknown>): Promise<unknown> => {
+  const row = (await read) as Row | undefined;
+  return isSealed(row) ? undefined : row;
+};
+
+/** Keyless batch read: replace sealed rows with undefined, preserving positions. */
+const keylessGetMany = async (read: Promise<unknown[]>): Promise<unknown[]> => {
+  const rows = await read;
+  return rows.map((row) => (isSealed(row as Row | undefined) ? undefined : row));
+};
+
+/** Keyless list read: omit sealed rows. */
+const keylessQuery = async (
+  read: Promise<{ result: unknown[] }>,
+): Promise<{ result: unknown[] }> => {
+  const res = await read;
+  return { ...res, result: res.result.filter((row) => !isSealed(row as Row | undefined)) };
+};
+
 const wrapTable = (
   table: DBCoreTable,
   provider: KeyProvider,
-  isLocked: () => boolean,
+  lockReason: () => LockReason,
+  flagMismatch: () => void,
 ): DBCoreTable => {
   if (!isEncryptedTable(table.name)) return table;
+  // Whenever no key is loaded, sealed rows are hidden from application reads
+  // regardless of sign-in state — a device that forgot its key (or never had one)
+  // must never hand a raw `$lipsumCipher` row to a typed consumer, which would
+  // read undefined fields and can crash the route. Plaintext pre-setup rows still
+  // pass (they carry no envelope); the internal blob-transaction bypass still
+  // receives raw sealed rows.
   return {
     ...table,
     mutate: async (req: DBCoreMutateRequest) => {
-      // Under a detected key mismatch the account is protected by a key this
-      // device does not hold. Refuse to seal and queue new content — a push
-      // would pollute the account with rows under the wrong key. Deletes still
-      // pass, so the mismatch escape hatch can drop unreadable rows.
-      if (isLocked() && (req.type === 'add' || req.type === 'put')) {
-        throw new CloudKeyMismatchError();
+      // Addon blob-plumbing writes the raw ciphertext row back — never reseal it.
+      if (isInternalBlobTx(req.trans)) return table.mutate(req);
+      // Refuse content add/put while locked: under a mismatch the account holds a
+      // different key (a push would pollute it); while signed-in-keyless there is
+      // no key to seal with (a push would leak plaintext). Deletes still pass, so
+      // the mismatch escape hatch can drop unreadable rows. A sync-applied write is
+      // exempt: it is ciphertext the addon just pulled, and blocking it would abort
+      // the initial pull and deadlock setup — reads already hide sealed rows while
+      // keyless, and the seal path below preserves an existing envelope untouched.
+      const reason = lockReason();
+      const appWrite = req.type === 'add' || req.type === 'put';
+      if (reason !== 'none' && appWrite && !isSyncApplied(req.trans)) {
+        throw reason === 'mismatch'
+          ? new CloudKeyMismatchError()
+          : new CloudKeylessWriteError();
       }
       const ring = provider.current();
-      return table.mutate(ring ? await inTx(sealMutate(table, ring, req)) : req);
+      const safeReq = stripUpdateDescriptors(req);
+      return table.mutate(ring ? await inTx(sealMutate(table, ring, safeReq)) : safeReq);
     },
     get: (req: DBCoreGetRequest) => {
+      // Addon blob-plumbing reads the raw ciphertext row — never decrypt here.
+      if (isInternalBlobTx(req.trans)) return table.get(req);
       const ring = provider.current();
-      if (!ring) return table.get(req);
+      if (!ring) return keylessGet(table.get(req));
       return inTx(
-        (async () => openValue(table, ring, (await table.get(req)) as Row | undefined))(),
+        (async () =>
+          openOrDrop(table, ring, (await table.get(req)) as Row | undefined, flagMismatch))(),
       );
     },
     getMany: (req: DBCoreGetManyRequest) => {
+      if (isInternalBlobTx(req.trans)) return table.getMany(req);
       const ring = provider.current();
-      if (!ring) return table.getMany(req);
-      return inTx((async () => openMany(table, ring, await table.getMany(req)))());
+      if (!ring) return keylessGetMany(table.getMany(req));
+      return inTx(
+        (async () => openMany(table, ring, await table.getMany(req), flagMismatch))(),
+      );
     },
     query: (req: DBCoreQueryRequest) => {
       const ring = provider.current();
-      if (!ring || req.values === false) return table.query(req);
+      if (req.values === false) return table.query(req);
+      if (isInternalBlobTx(req.trans)) return table.query(req);
+      if (!ring) return keylessQuery(table.query(req));
       return inTx(
         (async () => {
           const res = await table.query(req);
-          return { ...res, result: await openMany(table, ring, res.result) };
+          const opened = await openMany(table, ring, res.result, flagMismatch);
+          // Unreadable rows are dropped rather than crashing the read; the list
+          // just omits them until the mismatch is resolved.
+          return { ...res, result: opened.filter((row): row is Row => row !== undefined) };
         })(),
       );
     },
@@ -141,13 +275,16 @@ const wrapTable = (
  */
 export const createEncryptionMiddleware = (
   provider: KeyProvider,
-  isLocked: () => boolean = () => keyMismatchState.current(),
+  lockReason: () => LockReason = currentLockReason,
+  flagMismatch: () => void = () => {
+    keyMismatchState.set(true);
+  },
 ): Middleware<DBCore> => ({
   stack: 'dbcore',
   name: 'lipsumEncryption',
   level: 10,
   create: (down: DBCore) => ({
     ...down,
-    table: (name: string) => wrapTable(down.table(name), provider, isLocked),
+    table: (name: string) => wrapTable(down.table(name), provider, lockReason, flagMismatch),
   }),
 });

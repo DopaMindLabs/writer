@@ -12,6 +12,7 @@ import { RestoreBridgePlugin } from './plugins/RestoreBridgePlugin';
 import { useUI } from '@/store/ui';
 import { cn } from '@/lib/utils';
 import type { ProviderFactory } from '@/lib/collab/yjs/providerFactory';
+import { NO_FLUSH, type FlushResult } from '@/lib/collab/flush.types';
 import type { EditorMode } from './EditorFacade';
 
 interface LexicalEditorProps {
@@ -20,11 +21,12 @@ interface LexicalEditorProps {
   username: string;
   cursorColor: string;
   cursorsContainerRef: RefObject<HTMLElement | null>;
-  onChange: (serialized: string) => void;
+  onChange: (serialized: string) => Promise<void>;
   mode: EditorMode;
   placeholder?: string;
   autoFocus?: boolean;
   locked?: boolean;
+  persistedBody?: string;
   wordLimit?: number;
   charLimit?: number;
 }
@@ -40,6 +42,7 @@ export const LexicalEditor = ({
   placeholder = 'Start writing…',
   autoFocus = true,
   locked = false,
+  persistedBody,
   wordLimit,
   charLimit,
 }: LexicalEditorProps) => {
@@ -48,7 +51,7 @@ export const LexicalEditor = ({
   const floatingToolbarEnabled = useUI((s) => s.floatingToolbarEnabled);
   // Bridges the autosave's pending-save flush to the editor handle. Defaults to a
   // no-op so read-only mounts (no AutosavePlugin) simply report no pending edits.
-  const flushRef = useRef<() => boolean>(() => false);
+  const flushRef = useRef<() => Promise<FlushResult>>(() => Promise.resolve(NO_FLUSH));
 
   const initialConfig = useMemo(
     () => ({
@@ -115,6 +118,7 @@ export const LexicalEditor = ({
             editable={editable}
             floatingToolbarEnabled={floatingToolbarEnabled}
             flushRef={flushRef}
+            persistedBody={persistedBody}
             wordLimit={wordLimit}
             charLimit={charLimit}
           />

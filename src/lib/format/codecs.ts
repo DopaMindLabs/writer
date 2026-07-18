@@ -236,6 +236,7 @@ export const parseNoteRecord = (value: unknown): Note => {
     body: readString(raw, 'body', 'note'),
     linkedDocId: readOptionalString(raw, 'linkedDocId', 'note'),
     createdAt: readNumber(raw, 'createdAt', 'note'),
+    openedAt: readOptionalNumber(raw, 'openedAt', 'note'),
     layout: layout === undefined ? undefined : readEnum(raw, 'layout', NOTE_LAYOUTS, 'note'),
     typeVersion: readOptionalString(raw, 'typeVersion', 'note'),
     mediaId: readOptionalString(raw, 'mediaId', 'note'),

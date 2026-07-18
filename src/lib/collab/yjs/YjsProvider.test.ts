@@ -50,6 +50,10 @@ const emptyStore: CollabStore = {
     /* noop */
   },
   trySeed: async () => 'seeded',
+  reseedIfEmpty: async () => 'occupied',
+  whenPersisted: async () => {
+    /* noop */
+  },
 };
 
 const text = (ydoc: Y.Doc): string => ydoc.getText('t').toString();

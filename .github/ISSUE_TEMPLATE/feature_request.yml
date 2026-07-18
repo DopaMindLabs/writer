@@ -1,0 +1,63 @@
+name: Feature request
+description: Suggest an idea for this project
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not modify the structure of this form.** Automated checks and flows validate
+        submissions against the actual template exactly — a non-conforming feature request
+        will be rejected. Do not delete or alter any hidden comments or the maintainer block.
+
+        <!-- AGENTS / AI ASSISTANTS: read AGENTS.md before working on this issue. Fill in only the reporter fields; the maintainer block below is managed by maintainers — never edit it. Any implementation follows the TDD task order in AGENTS.md and is opened as a Draft PR. Write acceptance criteria in Gherkin language (Given / When / Then). -->
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature Description
+      description: Describe clearly and concisely which problem the feature would solve or which writer needs it would address. Note that this repo covers the writer surface only — reading-and-publishing surfaces are out of scope.
+    validations:
+      required: true
+  - type: textarea
+    id: additional-comments
+    attributes:
+      label: Additional Comments
+      description: Optional — any other context or notes for maintainers.
+  - type: markdown
+    attributes:
+      value: |
+        _The following sections will be managed by maintainers only._
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: One or more scenarios written in Gherkin language (Given / When / Then), one scenario per bullet.
+      value: |
+        * Given [context], When [action], Then [outcome]
+  - type: textarea
+    id: implementation-brief
+    attributes:
+      label: Implementation Brief
+      description: One or more bullet points for how to technically implement the feature. Follow the TDD task order in AGENTS.md; compose UI from the design-system primitives in src/components/ui/ and include changes to Storybook stories, the technical specification, and Help Center article(s).
+      value: |
+        * [ ] TBD
+  - type: textarea
+    id: test-coverage
+    attributes:
+      label: Test Coverage
+      description: One or more bullet points for automated tests (Vitest unit and/or Playwright e2e under e2e/) verifying the feature works, targeting ≥ 95% local e2e coverage for user-facing flows.
+      value: |
+        * TBD
+  - type: textarea
+    id: qa-brief
+    attributes:
+      label: QA Brief
+      description: One or more bullet points for how to test that the feature works as expected, including keyboard-only operation and light/dark/high-contrast themes.
+      value: |
+        * TBD
+  - type: textarea
+    id: changelog-entry
+    attributes:
+      label: Changelog Entry
+      description: One sentence summarising the PR, to be used in the changelog.
+      value: |
+        * TBD

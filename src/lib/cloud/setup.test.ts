@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import Dexie from 'dexie';
 import dexieCloud from 'dexie-cloud-addon';
 import { LoremDB } from '@/db/LoremDB';
 import { createEncryptionMiddleware } from './crypto/middleware';
@@ -16,7 +17,9 @@ import {
   wrapMasterSecret,
   unwrapMasterSecret,
   WrongPassphraseError,
+  ESCROW_ID,
 } from './crypto/keys';
+import { EscrowMissingError } from './crypto/errors';
 import { keyMismatchState } from './crypto/keyMismatch';
 import { encodeRecoveryCode } from './crypto/recoveryCode';
 import { EnvelopeIntegrityError } from './crypto/envelope';
@@ -25,6 +28,7 @@ import {
   unlockCloudEncryption,
   recoverCloudEncryption,
   sealExistingRows,
+  hasPlaintextSyncedRows,
   forgetThisDevice,
   publishPendingEscrow,
   adoptAccountKey,
@@ -59,16 +63,18 @@ const build = (name: string): LoremDB => {
   return d;
 };
 
-/** Read a row past the middleware without decrypting, then restore the key. */
-const readRaw = async (table: string, key: string): Promise<Row | undefined> => {
-  const ring = deviceKeyProvider.current();
-  await forgetDeviceKeyRing();
-  try {
-    return await db.table<Row>(table).get(key);
-  } finally {
-    if (ring) await saveDeviceKeyRing(ring);
-  }
-};
+/**
+ * Read a row as stored, past the middleware, via its `disableBlobResolve` bypass.
+ * Nulling the provider would now be hidden by the keyless read protection.
+ */
+const readRaw = (table: string, key: string): Promise<Row | undefined> =>
+  db.transaction('r', db.table(table), async () => {
+    const tx = Dexie.currentTransaction as unknown as {
+      idbtrans?: { disableBlobResolve?: boolean };
+    };
+    if (tx.idbtrans) tx.idbtrans.disableBlobResolve = true;
+    return (await db.table<Row>(table).get(key)) ?? undefined;
+  });
 
 beforeEach(async () => {
   vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('offline (test)'));
@@ -103,13 +109,95 @@ describe('cloud setup', () => {
     await publishPendingEscrow(db);
     const escrows = await db.cloudCrypto.toArray();
     expect(escrows).toHaveLength(1);
-    expect(escrows[0].id).toBe('v1');
+    expect(escrows[0].id).toBe(ESCROW_ID);
     expect(await loadPendingEscrow()).toBeNull();
 
     // Round-trips: recovering from the code on a fresh device yields a usable key.
     await forgetThisDevice();
     await recoverCloudEncryption(code, db);
     expect(deviceKeyProvider.current()).not.toBeNull();
+  });
+
+  it('publishPendingEscrow keeps a foreign account escrow and retains the pending one', async () => {
+    // A different device's account key already occupies the row. Add-only publish
+    // must never overwrite it, and must keep our escrow pending for adoption.
+    const foreign = await wrapMasterSecret(generateMasterSecret(), 'other', 1000);
+    await db.cloudCrypto.put(foreign);
+    await createCloudEncryption('mine', db, () => 'acct-a'); // signed in: keep the row
+
+    expect(await publishPendingEscrow(db, 'acct-a')).toBe('kept-server');
+    const stored = await db.cloudCrypto.get(ESCROW_ID);
+    expect(Array.from(stored?.fingerprint ?? [])).toEqual(
+      Array.from(foreign.fingerprint),
+    );
+    expect(await loadPendingEscrow()).not.toBeNull();
+  });
+
+  it('publishPendingEscrow publishes over a row with an identical fingerprint', async () => {
+    await createCloudEncryption('mine', db, () => 'acct-a');
+    const ours = await loadPendingEscrow();
+    if (!ours) throw new Error('expected a pending escrow');
+    await db.cloudCrypto.put(ours.escrow); // server already holds our fingerprint
+
+    expect(await publishPendingEscrow(db, 'acct-a')).toBe('published');
+    expect(await loadPendingEscrow()).toBeNull();
+  });
+
+  it('refuses to publish an escrow bound to a different account', async () => {
+    // Pending minted for account A must never become account B's key.
+    await createCloudEncryption('mine', db, () => 'acct-a');
+    expect(await publishPendingEscrow(db, 'acct-b')).toBe('none');
+    // Nothing was written to the account, and the pending copy is retained.
+    expect(await db.cloudCrypto.get(ESCROW_ID)).toBeUndefined();
+    expect(await loadPendingEscrow()).not.toBeNull();
+  });
+
+  it('publishPendingEscrow is a no-op when nothing is pending', async () => {
+    expect(await publishPendingEscrow(db)).toBe('none');
+  });
+
+  it('hasPlaintextSyncedRows sees unsealed rows and ignores sealed ones', async () => {
+    expect(await hasPlaintextSyncedRows(db)).toBe(false);
+
+    // Written while keyless — plaintext at rest.
+    await forgetThisDevice();
+    await db.table<Row>('docs').put({
+      id: 'p', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'plain',
+    });
+    expect(await hasPlaintextSyncedRows(db)).toBe(true);
+
+    // Setting up encryption seals it, so no plaintext synced rows remain.
+    await createCloudEncryption('pw', db);
+    expect(await hasPlaintextSyncedRows(db)).toBe(false);
+  });
+
+  it('clears a residual local escrow when setting up while signed out', async () => {
+    // Residue from an earlier local session: a foreign escrow left in the local
+    // database. A signed-out fresh setup must drop it, so the reconciler cannot
+    // later read its stale fingerprint and lock the device out.
+    await db.cloudCrypto.put(await wrapMasterSecret(generateMasterSecret(), 'x', 1000));
+    await createCloudEncryption('pw', db); // default: signed out
+    expect(await db.cloudCrypto.toArray()).toHaveLength(0);
+  });
+
+  it('keeps the account escrow when setting up while signed in', async () => {
+    // Signed in, the local escrow is the account's real key — it must survive so
+    // the mismatch/adopt flow can resolve against it.
+    await db.cloudCrypto.put(await wrapMasterSecret(generateMasterSecret(), 'x', 1000));
+    await createCloudEncryption('pw', db, () => 'acct-a');
+    expect(await db.cloudCrypto.toArray()).toHaveLength(1);
+  });
+
+  it('binds the ring and pending escrow to null when set up while signed out', async () => {
+    await createCloudEncryption('pw', db); // default: signed out
+    expect(deviceKeyProvider.accountId()).toBeNull();
+    expect((await loadPendingEscrow())?.accountId).toBeNull();
+  });
+
+  it('binds the ring and pending escrow to the account when set up while signed in', async () => {
+    await createCloudEncryption('pw', db, () => 'acct-a');
+    expect(deviceKeyProvider.accountId()).toBe('acct-a');
+    expect((await loadPendingEscrow())?.accountId).toBe('acct-a');
   });
 
   it('unlock with the right passphrase loads a usable ring', async () => {
@@ -135,6 +223,15 @@ describe('cloud setup', () => {
       WrongPassphraseError,
     );
     expect(deviceKeyProvider.current()).toBeNull();
+  });
+
+  it('unlocking before an escrow has arrived throws EscrowMissingError, not a wrong-passphrase', async () => {
+    // A fresh device with no published/pulled escrow — the catch-22 the second
+    // device hits when it tries the account passphrase before signing in.
+    expect(await db.cloudCrypto.get(ESCROW_ID)).toBeUndefined();
+    await expect(unlockCloudEncryption('anything', db)).rejects.toBeInstanceOf(
+      EscrowMissingError,
+    );
   });
 
   it('seals every synced row and is idempotent', async () => {
@@ -180,7 +277,7 @@ describe('cloud setup', () => {
 
     await forgetThisDevice();
     expect(deviceKeyProvider.current()).toBeNull();
-    expect(await db.cloudCrypto.get('v1')).toBeDefined();
+    expect(await db.cloudCrypto.get(ESCROW_ID)).toBeDefined();
   });
 
   it('rejects a wrong recovery code and stays keyless', async () => {
@@ -196,6 +293,28 @@ describe('cloud setup', () => {
     );
     expect(deviceKeyProvider.current()).toBeNull();
   });
+
+  it('rejects a foreign recovery code on an account with an escrow but no sealed rows', async () => {
+    await createCloudEncryption('pw', db);
+    await publishPendingEscrow(db); // escrow on the server, our fingerprint
+    await forgetThisDevice();
+    expect(await db.cloudCrypto.get(ESCROW_ID)).toBeDefined();
+
+    const foreign = encodeRecoveryCode(generateMasterSecret());
+    await expect(recoverCloudEncryption(foreign, db)).rejects.toBeInstanceOf(
+      EnvelopeIntegrityError,
+    );
+    expect(deviceKeyProvider.current()).toBeNull();
+  });
+
+  it('recovers with the matching code on an account with an escrow but no sealed rows', async () => {
+    const code = await createCloudEncryption('pw', db);
+    await publishPendingEscrow(db);
+    await forgetThisDevice();
+
+    await recoverCloudEncryption(code, db);
+    expect(deviceKeyProvider.current()).not.toBeNull();
+  });
 });
 
 describe('cloud key conflict resolution', () => {
@@ -205,13 +324,21 @@ describe('cloud key conflict resolution', () => {
    *  master, then have this device set up its *own* key and write its own note
    *  (`mine`) — the exact mismatch a wiped device hits when it re-signs-in. */
   const seedMismatch = async (): Promise<Uint8Array> => {
+    // Signed into account 'acct-a', so setup binds to it and the erase/adopt flows
+    // read the same account back when they publish the device's escrow.
+    (
+      db as unknown as {
+        cloud: { currentUser: { value: { isLoggedIn: boolean; userId: string } } };
+      }
+    ).cloud.currentUser = { value: { isLoggedIn: true, userId: 'acct-a' } };
     const accountMaster = generateMasterSecret();
-    await saveDeviceKeyRing(await deriveKeyRing(accountMaster, 1));
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(accountMaster, 1) });
     await db.table<Row>('docs').put({
       id: 'acc', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'account note',
     });
     await db.cloudCrypto.put(await wrapMasterSecret(accountMaster, 'old-pass', FAST));
-    await createCloudEncryption('new-pass', db);
+    // Re-signing-in: signed into the account, so the account escrow is kept.
+    await createCloudEncryption('new-pass', db, () => 'acct-a');
     await db.table<Row>('docs').put({
       id: 'mine', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'my note',
     });
@@ -227,7 +354,7 @@ describe('cloud key conflict resolution', () => {
     expect(keyMismatchState.current()).toBe(false);
     expect((await db.table<Row>('docs').get('acc'))?.name).toBe('account note');
     expect((await db.table<Row>('docs').get('mine'))?.name).toBe('my note');
-    const escrow = await db.cloudCrypto.get('v1');
+    const escrow = await db.cloudCrypto.get(ESCROW_ID);
     if (!escrow) throw new Error('expected an escrow after adoption');
     const recovered = await unwrapMasterSecret(escrow, 'new-pass');
     expect(Array.from(recovered)).toEqual(Array.from(accountMaster));
@@ -249,9 +376,42 @@ describe('cloud key conflict resolution', () => {
     expect(keyMismatchState.current()).toBe(false);
     expect(await db.table<Row>('docs').get('acc')).toBeUndefined();
     expect((await db.table<Row>('docs').get('mine'))?.name).toBe('my note');
-    const escrow = await db.cloudCrypto.get('v1');
+    const escrow = await db.cloudCrypto.get(ESCROW_ID);
     if (!escrow) throw new Error('expected the device escrow to be published');
     const recovered = await unwrapMasterSecret(escrow, 'new-pass');
     expect(Array.from(recovered)).not.toEqual(Array.from(accountMaster));
+  });
+
+  it('eraseSyncedContent keeps the account escrow when the device has none to replace it', async () => {
+    // A mismatched device without a pending escrow (it was cleared, or the ring
+    // came from an earlier unlock) has no key to install: deleting the account
+    // escrow would leave the whole account keyless and orphan every other
+    // device. Erase must drop only the unreadable rows and leave the account
+    // key — and the mismatch — in place.
+    const accountMaster = await seedMismatch();
+    await clearPendingEscrow();
+
+    await eraseSyncedContent(db);
+
+    expect(await db.table<Row>('docs').get('acc')).toBeUndefined();
+    expect((await db.table<Row>('docs').get('mine'))?.name).toBe('my note');
+    const escrow = await db.cloudCrypto.get(ESCROW_ID);
+    if (!escrow) throw new Error('expected the account escrow to survive');
+    const recovered = await unwrapMasterSecret(escrow, 'old-pass');
+    expect(Array.from(recovered)).toEqual(Array.from(accountMaster));
+    expect(keyMismatchState.current()).toBe(true);
+  });
+
+  it('eraseSyncedContent clears a mismatch with neither a pending nor an account escrow', async () => {
+    // A forced or stale mismatch signal with no escrow anywhere (e.g. the e2e
+    // affordance, or residue after an account wipe) protects nothing: erase
+    // still resolves it rather than stranding the device on the banner.
+    await seedMismatch();
+    await clearPendingEscrow();
+    await db.cloudCrypto.delete(ESCROW_ID);
+
+    await eraseSyncedContent(db);
+
+    expect(keyMismatchState.current()).toBe(false);
   });
 });

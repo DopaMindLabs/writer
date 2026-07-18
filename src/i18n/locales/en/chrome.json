@@ -1,4 +1,8 @@
 {
+  "navShell": {
+    "home": "Home",
+    "openSpace": "Open {{name}}"
+  },
   "spaceRail": {
     "landmarkLabel": "Spaces"
   },
@@ -126,6 +130,7 @@
     "helpKbd": "⌘?",
     "whatsNew": "What's new",
     "feedback": "Send feedback…",
+    "account": "Account",
     "accessibility": "Accessibility",
     "about": "About",
     "helpLink": "help center →",

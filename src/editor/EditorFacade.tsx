@@ -10,11 +10,12 @@ export interface EditorProps {
   username: string;
   cursorColor: string;
   cursorsContainerRef: RefObject<HTMLElement | null>;
-  onChange: (serialized: string) => void;
+  onChange: (serialized: string) => Promise<void>;
   mode: EditorMode;
   placeholder?: string;
   autoFocus?: boolean;
   locked?: boolean;
+  persistedBody?: string;
   wordLimit?: number;
   charLimit?: number;
 }

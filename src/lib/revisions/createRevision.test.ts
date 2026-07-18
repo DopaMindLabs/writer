@@ -28,6 +28,17 @@ describe('createRevision', () => {
     expect(stored).toBeDefined();
   });
 
+  it('creates a revision from a childless-root body without crashing (empty CRDT log)', async () => {
+    // A snapshot of a wiped CRDT log serialises to a root with no children.
+    // Creating a revision from it must read as empty text, not throw Lexical #38.
+    const childlessRoot =
+      '{"root":{"children":[],"direction":null,"format":"","indent":0,"type":"root","version":1}}';
+    const rev = await createRevision(DOC, childlessRoot, { kind: 'manual' });
+    expect(rev.text).toBe('');
+    expect(rev.wordCount).toBe(0);
+    expect(await db.revisions.get(rev.id)).toBeDefined();
+  });
+
   it('prunes the oldest automatic revisions beyond the cap', async () => {
     const base = Date.UTC(2026, 4, 16, 12, 0);
     const ids: string[] = [];

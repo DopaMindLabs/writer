@@ -5,6 +5,7 @@ import { BlockQuote } from '@/components/ui/block-quote';
 import { Link } from '@/components/ui/Link';
 import { TypographyH1, TypographyP } from '@/components/ui/typography';
 import { PageNav } from '@/components/chrome/PageNav';
+import { HomeCloudRow } from '@/components/chrome/HomeCloudRow';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { routes } from '@/lib/routes';
 import { APP_VERSION_LABEL } from '@/lib/version';
@@ -95,6 +96,7 @@ const HomeActions = ({
           </span>
         </Link>
       )}
+      <HomeCloudRow />
       <Link
         to={routes.templates()}
         data-testid="home-start-new-space"

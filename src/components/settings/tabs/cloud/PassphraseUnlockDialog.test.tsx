@@ -3,6 +3,7 @@ import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { WrongPassphraseError } from '@/lib/cloud/crypto/keys';
+import { EscrowMissingError } from '@/lib/cloud/crypto/errors';
 import { PassphraseUnlockDialog } from './PassphraseUnlockDialog';
 
 const noop = () => {};
@@ -22,8 +23,24 @@ describe('PassphraseUnlockDialog', () => {
     );
     await userEvent.type(await screen.findByTestId('unlock-input'), 'wrong-passphrase');
     await userEvent.click(screen.getByTestId('unlock-submit'));
-    expect(await screen.findByTestId('unlock-error')).toBeInTheDocument();
+    expect(await screen.findByTestId('unlock-error')).toHaveTextContent(/doesn't match/i);
     expect(onUnlocked).not.toHaveBeenCalled();
+  });
+
+  it('tells a missing escrow apart from a wrong passphrase (sign in first)', async () => {
+    const onUnlock = vi.fn().mockRejectedValue(new EscrowMissingError());
+    renderWithProviders(
+      <PassphraseUnlockDialog
+        open
+        onOpenChange={noop}
+        onUnlocked={vi.fn()}
+        onUnlock={onUnlock}
+        onRecover={vi.fn()}
+      />,
+    );
+    await userEvent.type(await screen.findByTestId('unlock-input'), 'account-passphrase');
+    await userEvent.click(screen.getByTestId('unlock-submit'));
+    expect(await screen.findByTestId('unlock-error')).toHaveTextContent(/sign in first/i);
   });
 
   it('unlocks with the right passphrase', async () => {
@@ -43,6 +60,44 @@ describe('PassphraseUnlockDialog', () => {
     await waitFor(() => {
       expect(onUnlocked).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('reports a wrong recovery code distinctly in recovery mode', async () => {
+    const onRecover = vi.fn().mockRejectedValue(new WrongPassphraseError());
+    renderWithProviders(
+      <PassphraseUnlockDialog
+        open
+        onOpenChange={noop}
+        onUnlocked={vi.fn()}
+        onUnlock={vi.fn()}
+        onRecover={onRecover}
+      />,
+    );
+    await userEvent.click(await screen.findByTestId('unlock-use-recovery'));
+    await userEvent.type(screen.getByTestId('unlock-input'), 'BAD-CODE');
+    await userEvent.click(screen.getByTestId('unlock-submit'));
+    expect(await screen.findByTestId('unlock-error')).toHaveTextContent(
+      /recovery code doesn't match/i,
+    );
+    expect(onRecover).toHaveBeenCalledWith('BAD-CODE');
+  });
+
+  it('shows a neutral message for an unexpected unlock failure', async () => {
+    const onUnlock = vi.fn().mockRejectedValue(new Error('disk on fire'));
+    renderWithProviders(
+      <PassphraseUnlockDialog
+        open
+        onOpenChange={noop}
+        onUnlocked={vi.fn()}
+        onUnlock={onUnlock}
+        onRecover={vi.fn()}
+      />,
+    );
+    await userEvent.type(await screen.findByTestId('unlock-input'), 'some-passphrase');
+    await userEvent.click(screen.getByTestId('unlock-submit'));
+    expect(await screen.findByTestId('unlock-error')).toHaveTextContent(
+      /Something went wrong while unlocking/i,
+    );
   });
 
   it('switches to recovery-code entry', async () => {

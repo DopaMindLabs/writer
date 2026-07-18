@@ -28,12 +28,15 @@ const getSharedEditor = (): ReturnType<typeof createHeadlessEditor> => {
   return sharedEditor;
 };
 
-export const readLexicalBody = <T>(body: string, read: () => T): T => {
-  const editor = getSharedEditor();
-  const state = editor.parseEditorState(body);
-  editor.setEditorState(state);
-  return editor.getEditorState().read(read);
-};
+/**
+ * Read a serialized Lexical body without mounting it. `parseEditorState(...).read`
+ * evaluates the callback against the parsed state directly — it never calls
+ * `setEditorState`, which throws (Lexical error #38) on an empty-root body and
+ * would also mutate the shared headless editor. A childless root therefore reads
+ * as empty text rather than crashing.
+ */
+export const readLexicalBody = <T>(body: string, read: () => T): T =>
+  getSharedEditor().parseEditorState(body).read(read);
 
 export const lexicalJsonToPlainText = (body: string): string => {
   if (!body) return '';

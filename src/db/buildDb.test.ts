@@ -8,7 +8,6 @@ import { generateMasterSecret, deriveKeyRing } from '@/lib/cloud/crypto/keys';
 import {
   saveDeviceKeyRing,
   forgetDeviceKeyRing,
-  deviceKeyProvider,
 } from '@/lib/cloud/crypto/keyStore';
 import { CIPHER_FIELD } from '@/lib/cloud/crypto/tableRules';
 
@@ -105,6 +104,7 @@ describe('buildDb — cloud activation gates', () => {
     await db.open();
     const names = db.tables.map((t) => t.name);
     expect(names).not.toContain('cloudCrypto');
+    expect(names).not.toContain('cloudDevices');
     expect(names).not.toContain('$docs_mutations');
     expect((db as { cloud?: unknown }).cloud).toBeUndefined();
     await db.delete();
@@ -127,6 +127,8 @@ describe('buildDb — cloud activation gates', () => {
 
     const names = db.tables.map((t) => t.name);
     expect(names).toContain('cloudCrypto');
+    // The device registry for the two-device beta limit syncs alongside it.
+    expect(names).toContain('cloudDevices');
     // The addon is active: it created the per-table mutation queues.
     expect(names).toContain('$docs_mutations');
     expect((db as { cloud: { options: { unsyncedTables: string[] } } }).cloud.options
@@ -137,17 +139,22 @@ describe('buildDb — cloud activation gates', () => {
 
   it('registers the encryption middleware (content is ciphertext at rest)', async () => {
     enableCloud();
-    await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1));
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
     const db = buildDb('gate-middleware');
     await db.open();
 
     await db.table('notes').put({
       id: 'n1', spaceId: 's1', kind: 'text', createdAt: 1, title: 'SECRET',
     });
-    // Drop the key so the middleware returns the stored bytes without decrypting.
-    await forgetDeviceKeyRing();
-    expect(deviceKeyProvider.current()).toBeNull();
-    const raw = await db.table<Record<string, unknown>>('notes').get('n1');
+    // Read the stored bytes past the middleware via its blob-resolve bypass;
+    // nulling the key would now be hidden by the keyless read protection.
+    const raw = await db.transaction('r', db.table('notes'), async () => {
+      const tx = Dexie.currentTransaction as unknown as {
+        idbtrans?: { disableBlobResolve?: boolean };
+      };
+      if (tx.idbtrans) tx.idbtrans.disableBlobResolve = true;
+      return db.table<Record<string, unknown>>('notes').get('n1');
+    });
     expect(raw?.[CIPHER_FIELD]).toBeDefined();
     expect(raw?.title).toBeUndefined();
 

@@ -17,6 +17,9 @@ const IMPORT_TABLES = [
   db.revisions,
   db.palettes,
   db.docInspectorConfigs,
+  // createDocs writes the per-doc body-provenance baseline into `meta` in a
+  // nested transaction, so `meta` must be part of this outer import transaction.
+  db.meta,
 ];
 
 type IdMap = Map<string, string>;

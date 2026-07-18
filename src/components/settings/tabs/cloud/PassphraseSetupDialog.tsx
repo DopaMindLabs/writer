@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { createCloudEncryption } from '@/lib/cloud/cloudClient';
+import { canonicalisePassphrase, createCloudEncryption } from '@/lib/cloud/cloudClient';
 import { PassphraseSetupFields } from './PassphraseSetupFields';
 
 const MIN_LENGTH = 12;
@@ -47,20 +47,27 @@ export const PassphraseSetupDialog = ({
   const [confirm, setConfirm] = useState('');
   const [busy, setBusy] = useState(false);
 
-  const tooShort = passphrase.length > 0 && passphrase.length < MIN_LENGTH;
-  const mismatch = confirm.length > 0 && confirm !== passphrase;
-  const valid = passphrase.length >= MIN_LENGTH && passphrase === confirm;
+  // Validate and compare the exact value the crypto derives from (NFKC), so the
+  // dialog never rejects two visually identical passphrases — composed vs
+  // decomposed accents, full-width vs ASCII — that would unwrap the same escrow.
+  const canonicalPassphrase = canonicalisePassphrase(passphrase);
+  const canonicalConfirm = canonicalisePassphrase(confirm);
+
+  const tooShort = passphrase.length > 0 && canonicalPassphrase.length < MIN_LENGTH;
+  const mismatch = confirm.length > 0 && canonicalConfirm !== canonicalPassphrase;
+  const valid =
+    canonicalPassphrase.length >= MIN_LENGTH && canonicalConfirm === canonicalPassphrase;
   const feedback = tooShort
     ? k('tooShort')
     : mismatch
       ? k('mismatch')
-      : `${k('strength')}: ${passphrase ? k(`hint${strengthOf(passphrase)}`) : ''}`;
+      : `${k('strength')}: ${passphrase ? k(`hint${strengthOf(canonicalPassphrase)}`) : ''}`;
 
   const runCreate = async () => {
     if (!valid || busy) return;
     setBusy(true);
     try {
-      onRecoveryCode(await onCreate(passphrase));
+      onRecoveryCode(await onCreate(canonicalPassphrase));
       onOpenChange(false);
     } finally {
       setBusy(false);

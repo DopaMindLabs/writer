@@ -68,7 +68,12 @@ but never erases local content. (Verified empirically — see the toggle test in
   (§5.1). Holding it back is what makes publication add-only — the sync queue can never
   race a local escrow over the account's and clobber the key. Once published it **syncs**,
   so a second device recovers by re-entering the passphrase; safe to sync because it is
-  already ciphertext gated by the passphrase.
+  already ciphertext gated by the passphrase. The row id is `#v1` — Dexie Cloud's
+  **private-singleton** form (rewritten to `#v1:<userId>` on the wire), so each account
+  owns its own escrow row in its private realm. A bare id would be one global object
+  shared across every account in the database: the first account would claim it and every
+  other account's escrow would be silently rejected server-side, never reaching that
+  account's other devices.
 - **Recovery code** (`src/lib/cloud/crypto/recoveryCode.ts`) — the raw master secret plus
   a checksum byte, rendered in Crockford base32, grouped into 8-character blocks. Shown
   **exactly once** at setup and never stored. It is the only way back if every device
@@ -95,7 +100,7 @@ queryable) and moves **every other top-level field** into one `$lipsumCipher` en
 (`src/lib/cloud/crypto/envelope.ts`):
 
 ```
-CipherEnvelope { v: 1, epoch, iv: Uint8Array(12), data: Uint8Array }
+CipherEnvelope { v: 1, epoch, iv: base64 string, data: base64 string }
 ```
 
 - **Algorithm** — AES-256-GCM, a fresh 12-byte random IV per seal.
@@ -104,6 +109,18 @@ CipherEnvelope { v: 1, epoch, iv: Uint8Array(12), data: Uint8Array }
   fails authentication (`EnvelopeIntegrityError`) instead of silently decrypting.
 - **Payload** — the secret fields are JSON-serialised with a tagged encoding so
   `Uint8Array` and `Blob` values round-trip; function values are rejected.
+- **Inline base64, never binary** — `iv` and `data` are base64 **strings**, not
+  `Uint8Array`. Dexie Cloud auto-offloads any binary value ≥ 4 KB to blob storage,
+  replacing it on the wire with a `{_bt,ref,size}` reference the receiver resolves
+  asynchronously. That blob lifecycle is incompatible with this middleware (which sits
+  above the addon's blob-resolve layer): an unresolved ref cannot be decrypted, and the
+  addon's blob save-back re-enters the middleware and corrupts the write — dropping large
+  docs on the receiving device and looping downloads. Keeping the ciphertext an inline
+  string sidesteps the binary-offload path; the paired `largeStringThreshold: Infinity`
+  cloud config (`src/db/buildDb.ts`) sidesteps the large-string offload path. A stray
+  non-string `iv`/`data` reaching decrypt raises `MalformedEnvelopeError` (distinct from
+  `EnvelopeIntegrityError`), so a malformed row is dropped from the read without wrongly
+  engaging the key-mismatch lock.
 
 Which fields stay plaintext is derived from the single schema source of truth
 (`src/db/stores.ts`) by `src/lib/cloud/crypto/tableRules.ts`: a field is plaintext iff it
@@ -134,6 +151,28 @@ ciphertext. Writes are sealed before they reach the sync queue; reads are opened
   (`get`/`toArray`) and write explicitly. This is used deliberately by
   `sealExistingRows` (below), which relies on the raw cursor view to find rows still
   lacking `$lipsumCipher`.
+- **Update descriptors are stripped from writes.** `Table.update()` /
+  `Collection.modify()` (and `Table.upsert()`) reach the middleware as a `put` carrying
+  both the full row *and* a plaintext `changeSpec`/`criteria`/`updates` describing the
+  changed fields. The addon below prefers those descriptors when it logs the mutation, so
+  left in place they would push the changed field values — a document rename, a body
+  autosave — to the server **in the clear**, and the server would then stamp them onto its
+  row beside the stale envelope. The middleware therefore strips those descriptors off
+  every encrypted-table `put`, demoting it to a whole-row upsert of the sealed values —
+  the one shape that cannot leak. (A row is sealed as a unit, so this is also why a
+  rename and a body edit are whole-document last-writer-wins rather than independently
+  mergeable.) `sealRow` correspondingly never re-seals a row that already carries an
+  envelope: it preserves the envelope and drops any stray top-level secret fields, so a
+  row an older client polluted with plaintext heals on re-ingestion instead of losing its
+  body or name.
+- **Inert inside blob-plumbing transactions.** The addon downloads any offloaded blob and
+  patches it back into the row inside a transaction it marks `disableBlobResolve`. That
+  read-modify-write is pure ciphertext plumbing: decrypting the read would fail (the row
+  still holds an unresolved `{_bt,ref,size}` ref) and return `undefined`, which corrupts
+  the write-back and leaves `_hasBlobRefs` set — an infinite download loop that saturates
+  the main thread. The middleware detects that flag and passes such reads and writes
+  straight through raw. (With the inline-string envelope of §3 no synced value is ever
+  offloaded, so this path is a belt-and-braces guard for any pre-existing offloaded row.)
 
 ### Sealing existing data
 
@@ -170,16 +209,30 @@ runs `reconcilePulledDocs`:
   a mounted doc the reconciler **flushes the editor's pending autosave** through its handle;
   if that flush wrote unsaved edits, the divergence was lag — not a pull — and the live
   editor is left untouched, so reconciliation never runs while a local edit is mid-flush.
-  Only a doc whose flush is a no-op is treated as a genuine remote pull.
+  Only a doc whose flush is a no-op is treated as a genuine remote pull. The flush knows a
+  freshly-mounted, never-edited editor is clean because the autosave seeds its save baseline
+  from the body persisted at mount (`persistedBody`), rather than starting empty and reporting
+  its collaboration-seeded content as unsaved work.
+- **Pre-mount reconciliation.** Before an editor mounts, `reconcileDocForMount` (gated by
+  `useDocCrdtReady`) reconciles that one doc's CRDT against its row body: it seeds an empty
+  log, or — for a populated log that diverged from a body pulled while the doc was closed —
+  keeps the local snapshot as a revision and reseeds from the body. The editor therefore
+  always mounts over a CRDT that already equals `docs.body`, so the baseline it captures is
+  consistent and a stale local Y.Doc is never mistaken for unsaved edits.
 - **Resolution (whole-document last-writer-wins).** For a genuinely divergent doc it first
   writes a **safety revision** of the local (losing) side, so a cross-device conflict is
   always recoverable. Then, if an editor is **mounted** (an `editorRegistry` handle exists),
   it replays the pulled body through the handle — an untagged local update that flows into
-  the binding, persists, and broadcasts to sibling tabs. If **unmounted**, it clears the
-  doc's `docUpdates` lineage and reseeds from the pulled body.
+  the binding, persists, and broadcasts to sibling tabs. The handle's `restoreBody` resolves
+  only once that update has committed in Lexical **and** reached the durable `docUpdates` log
+  (the store's per-document `whenPersisted` barrier), so reconciliation records success only
+  after the write has actually landed and treats a failed CRDT write as a per-doc failure
+  that retries. If **unmounted**, it clears the doc's `docUpdates` lineage and reseeds from
+  the pulled body.
 - **Idempotency.** Because every body is canonical, a reseed's snapshot equals the pulled
   body exactly, so a second run detects no divergence and does nothing — no duplicate
-  revisions, no churn.
+  revisions, no churn. A doc whose body is unchanged since its last clean reconcile is
+  skipped entirely, so a metadata-only change such as a rename never forces a body reconcile.
 
 Lossless CRDT-level merge across devices (syncing encrypted `docUpdates` instead of body
 snapshots) is a recorded open decision for a future release; today reconciliation
@@ -191,21 +244,61 @@ A device sets its passphrase *before* it signs in, so at that moment it cannot k
 the account already has a key. Rather than publish its escrow eagerly (two devices could
 then race their escrows over the one `cloudCrypto` row and overwrite the account's key —
 losing all of it), setup holds the escrow on the device. `src/lib/cloud/escrowReconcile.ts`
-runs once the first sync reaches `in-sync`, when the account's escrow (if any) has been
-pulled, and compares fingerprints (§2):
+**re-runs on every transition into `in-sync` and on every change of sign-in identity** (not
+once per boot — a device that signs in after boot still reconciles), with runs serialised
+and idempotent. It compares fingerprints (§2):
 
-- **Account has no escrow** → publish this device's. Its key becomes the account key. There
-  was nothing to overwrite, so publication is add-only.
-- **Fingerprints match** → the account already holds this device's key; nothing to do.
+- **Account has no escrow (pull confirmed complete)** → publish this device's. Its key
+  becomes the account key. Publication is **add-only**: `publishPendingEscrow` refuses to
+  overwrite a `v1` row whose fingerprint differs (it reports `kept-server` and keeps the
+  pending escrow), so a last-writer-wins clobber of the account key is impossible.
+- **Account has no escrow (pull not yet confirmed)** → **defer**. An absent row may just mean
+  the account's escrow has not been pulled yet; publishing now would clobber it. Publication
+  waits until `isAccountPullComplete()` is true, and reconciliation re-runs on the next settle.
+  That gate is `persistedSyncState.initiallySynced` — the addon sets it in the same sync round
+  that records the pulled realms and applies their rows, so once it is true any escrow the
+  account holds (in a realm the user belongs to) is already local. It intentionally does **not**
+  also require the user's private realm to appear in the pulled-realm set: the addon only
+  enumerates a realm once it holds a row, so a brand-new account that never wrote an escrow
+  would never satisfy that — leaving a keyless device that signed in first stuck on “fetching
+  your account…” forever, unable to set up or publish.
+- **Fingerprints match** → the account already holds this device's key; nothing to do. The
+  server escrow is treated as ours when it carries **either** the device ring's fingerprint
+  **or** the pending escrow's (they share a master, so normally identical — the pending copy
+  is checked too, to cover a device that published its escrow and later re-derived its ring).
 - **Fingerprints differ** → the account is protected by a **different** key. Flag a key
-  mismatch and never publish over the account's escrow.
+  mismatch and never publish over the account's escrow. On a `DEV`/E2E build the reconciler
+  also logs both fingerprints, to tell a real other-device key from stale residue.
+
+To keep a fresh device from tripping that mismatch on residue, setup is add-only in the
+other direction too: `createCloudEncryption` mints a new master, so any escrow already in
+the local database is a **different** key. While the device is signed out that row can only
+be residue from an earlier local session, so setup drops it before deriving the fresh key.
+Signed in, the row is the account's real escrow and is left for the mismatch/adopt flow.
 
 While a mismatch is unresolved the write middleware refuses content `add`/`put` with
 `CloudKeyMismatchError`, so no row sealed under the wrong key can reach the sync queue
-(deletes still pass, for the escape hatch below); any read of an account row throws
-`EnvelopeIntegrityError`, caught by the route-level recovery screen
-(`src/components/errors/`). The user resolves it from the cloud settings section in one of
-two ways:
+(deletes still pass, for the escape hatch below). Reads of an account row **do not** crash:
+the middleware drops the undecryptable row from the result (a single `get` returns
+`undefined`, a list read omits it) and flags the mismatch on the spot — engaging the write
+lock and the conflict banner — rather than throwing `EnvelopeIntegrityError` up to the
+route-level recovery screen. That keeps the app reachable so the user can get to settings and
+resolve the conflict; a read that crashed to the recovery screen would trap them there,
+because the settings surface itself reads content. (The recovery screen
+(`src/components/errors/`) still catches a genuine `EnvelopeIntegrityError` — e.g. a
+wrong-key write path — and its **Unlock in settings** action is a full navigation to the
+Account tab, since a render-time error boundary is not reset by a same-location `navigate`.)
+
+The lock is also surfaced **where it bites**. The `useCloudLockReason` hook
+(`src/hooks/useCloudLockReason.ts`) exposes the write-lock reason reactively — sharing the
+middleware's `mismatch > keyless > none` precedence via `src/lib/cloud/crypto/lockReason.ts` —
+so the New-space (Templates) screen can show an inline notice naming the reason, link to the
+Account tab, and disable space creation before a doomed write is attempted. The submit path also
+catches defensively: a refused `createSpaceFromTemplate` maps `isCloudKeyError` to the same
+"locked" notice (anything else to a generic failure), so a lock that races the render is a notice
+rather than an unhandled promise rejection.
+
+The user resolves it from the cloud settings section in one of two ways:
 
 - **Adopt** — enter the passphrase the account was created under. The account escrow is
   unwrapped, the device adopts that key, its own rows are re-sealed under it, and the master
@@ -213,10 +306,71 @@ two ways:
   passphrase remains.
 - **Erase** (escape hatch, when that passphrase is lost) — drop the account rows this device
   cannot read (their deletions sync away), keep the notes it wrote itself, and publish this
-  device's escrow as the account's.
+  device's escrow as the account's. Because this is **irreversible**, it is a deliberate
+  two-step gesture: the erase step carries an explicit "this can't be undone" warning and its
+  destructive button is armed only once the user types a confirmation word (`ERASE`), mirroring
+  the type-the-name gesture that guards deleting a space. It is safe against a stolen device or
+  a hostile client — a delete only replicates for a realm the authenticated identity is already
+  authorised to write, so the hatch can only erase content the signed-in user already owns; it
+  is lost-passphrase recovery for your own account, not a way to overwrite someone else's.
 
 The three-way loss — account passphrase forgotten **and** recovery code lost — ends only in
 the erase path. There is no fourth option by design: the server never holds a readable key.
+
+> **Follow-up (shared realms).** Today the escape hatch assumes a single-writer account. If
+> content is ever shared into a realm with **multiple writers**, one co-writer running erase
+> would re-key the shared realm and lock the others out. Before shared realms ship, erase must
+> be gated to realm-owners server-side (client-side confirmation is not an authorisation
+> boundary — the server is). Tracked as a design follow-up.
+
+### 5.2 Signing in before a passphrase (the clean-device flow)
+
+The **first** device keeps passphrase-before-sign-in: it has unencrypted writing that must be
+sealed before it can sync, so `signInToCloud` turns it back with `KeylessSignInBlockedError`
+(surfaced as a "set up first" banner) whenever `hasPlaintextSyncedRows()` is true. A **clean**
+device (no plaintext synced rows — a fresh second device) may instead **sign in first**, then
+adopt the account key. This removes the second-device catch-22 (sign-in was previously
+disabled until a key existed, but the account key only arrives after sign-in) without
+weakening the guarantee that plaintext never leaves the device:
+
+- **Keyless write lock.** While a device is signed in without a key ring
+  (`keylessLockState`, kept in step by `startKeylessLockMonitor`), the middleware refuses
+  content `add`/`put` with `CloudKeylessWriteError` (deletes still pass), so no plaintext can
+  reach the sync queue before a key exists. Like the mismatch lock, this reason surfaces through
+  `useCloudLockReason` on the New-space screen — a notice explains that the device is signed in
+  without a key and space creation is disabled until one is set up or adopted.
+- **Sealed-row hiding.** A keyless signed-in device drops sealed rows it cannot open from
+  reads (rather than returning raw ciphertext), so the UI never renders undefined fields.
+- **Adopt or set up.** Once the account pull is confirmed, `cloudEscrowPresence`
+  (`'unknown'` → `'present'`/`'none'`) drives `CloudKeylessAccountSection`: **present** →
+  unlock with the passphrase from another device (this is the adopt step for a keyless
+  device); **none** → set one up, which then publishes under the gated add-only path above.
+  No key-minting action is offered while presence is `'unknown'`, so a set-up can never race
+  ahead of the pull and diverge from the account key. This section is the **single** source of
+  key actions while signed-in-keyless: `CloudEncryptionControls` then shows only sign-out (its
+  set-up/unlock/sign-in appear only while signed out), so the presence gate cannot be bypassed
+  by an always-visible Set-up button. Acquiring a key does not re-run mounted live queries, so
+  the panel reloads afterwards to re-read everything decrypted.
+
+Sign-in is also surfaced up front: with the beta flag on and the device signed out, the Home
+page shows a "Sign in to sync your writing" row and Quick settings an "Account & sync" item
+(both gated on `isCloudSyncEnabled()`), so the option is visible before a space is created.
+
+### 5.3 Sign-out wipes the device; sign-in heals
+
+The cloud addon's `logout` clears **every** table — including the app's local-only `docUpdates`
+(CRDT log) and `meta` (seed markers). The device key ring survives (a separate keystore
+database), and the synced `docs` rows re-pull on sign-in, but the local-only CRDT log is not
+restored. We deliberately do **not** snapshot/restore those tables around logout: sign-out on
+a shared machine must clear the device, and content heals from the row body anyway. Recovery:
+
+- `reconcile.ts` detects an **empty CRDT log** for a doc whose row still has a body and heals
+  straight from that body (reseed, or replay through a mounted editor) — with no spurious
+  pre-sync revision, and never crashing on the empty snapshot (see §5 and the revision reader,
+  which reads a parsed Lexical state without `setEditorState`).
+- The editor mount is gated on `useDocCrdtReady` (`reseedIfEmpty` / `ensureDocCrdtSeeded`), so
+  a doc whose log was wiped never mounts a blank editor that could autosave empty over its real
+  body. The only true loss is per-device undo lineage — acceptable, and recorded here.
 
 ## 6. Device keystore (deviation from the original plan)
 
@@ -227,6 +381,82 @@ ride IndexedDB's structured clone and never exist as raw/JWK bytes, and there is
 of the ring being swept into the sync graph. `deviceKeyProvider` exposes a synchronous
 `current()` view that the middleware polls. `forgetThisDevice()` clears only this
 keystore; the escrow and other devices are untouched.
+
+## 6.5. Device registry (the four-device beta limit)
+
+The beta allows **four devices per account**, tracked in `cloudDevices` — a table that
+**syncs but is not encrypted** (it sits outside `SYNCED_TABLES`). That is deliberate: a
+device that has signed in but holds no key yet must still be able to count the slots and
+learn it is past the cap, and it cannot read a sealed row. A row carries only the addon's
+random per-device client identity — which the server already receives on every sync — and
+timestamps: `joinedAt`, `lastSeenAt`, and `revokedAt` once revoked. **Never** a device
+name, user agent, or content. `src/lib/cloud/devicePolicy.ts` holds the rules (pure, no
+Dexie, no clock), `deviceRegistry.ts` the IO, `deviceRegistrar.ts` the subscriptions.
+
+### The refresh interval is load-bearing
+
+`cloudDevices` is synced, so **a `put` is a mutation even when the row is unchanged**. The
+registrar runs on every settle into `in-sync`; an unconditional `lastSeenAt` refresh
+therefore pushed, the push settled the sync round, the settle re-ran the registrar, and it
+wrote again — an unbounded loop. It was measured at **1064 `/sync` requests** on one device
+in minutes, saturating the main thread; users saw a UI that flashed "downloading" and hung.
+
+So a run writes **only when something actually changed**: `lastSeenAt` refreshes at most
+once per `DEVICE_REFRESH_INTERVAL_MS`, and never at all for a revoked row. A run that finds
+nothing to do performs no write. Any future change here must preserve that property — and
+must be tested by asserting that **no write was attempted**, never by comparing the stored
+value, because a `put` of an identical row still enqueues a mutation and would sail through
+a value comparison while the loop ran.
+
+### Reclaiming a dead slot
+
+`releaseThisDevice()` only runs on an explicit sign-out, so a wiped or discarded browser
+profile used to hold its slot for ever — four of them locked an account out of cloud sync
+completely, which is exactly what happened on the beta account. A slot now goes **stale**
+after `DEVICE_STALE_AFTER_MS` of silence and may be reclaimed.
+
+Authority is split, and both halves are needed:
+
+- **Write side** — the registrar, on a signed-in *keyed* device, deletes rows it observed
+  dead **in that run**. Deleting only observed-dead rows keeps it convergent: once they are
+  gone, the next run finds nothing to delete and emits no further mutations.
+- **Read side** — the blocked computation (`useDeviceSlots.ts`) counts only **live** rows.
+  This is the escape hatch. A keyless device may read the registry but never writes to it,
+  so it cannot prune anything; if dead rows still counted it would be trapped for ever.
+  Filtering on read lets it unlock, gain a key, and only then prune.
+
+### Revoking
+
+Removing a device stamps `revokedAt` rather than deleting the row: the tombstone is how the
+revoked device *learns* it was removed (the registrar surfaces it via `deviceRevokedState`).
+It frees its slot immediately — `liveDevices` excludes it — and is swept once it is older
+than the stale window. It is swept on `revokedAt`, never `lastSeenAt`: a revoked device
+stops refreshing, so its `lastSeenAt` freezes at revocation and the two clocks would race.
+
+### Tuning the windows
+
+Both durations are overridable per deployment, in **seconds**, because a seven-day window is
+otherwise untestable:
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `VITE_DEVICE_REFRESH_SECONDS` | `3600` (1 hour) | Minimum age of `lastSeenAt` before a refresh write |
+| `VITE_DEVICE_STALE_SECONDS` | `604800` (7 days) | Idle time before a slot may be reclaimed |
+
+A malformed or non-positive value falls back to the default rather than throwing — a
+mistyped deployment variable must not brick the app, and zero would mean "refresh on every
+sync", reviving the loop. **Keep refresh far below stale**: a live device must survive
+missing several refreshes (a closed laptop, a flaky network) without a peer declaring it
+dead. The defaults leave a 168× margin; the unit test guards that ratio on the *defaults*,
+since an override deliberately tightens it for testing.
+
+### It is a courtesy, not a boundary
+
+The server does not enforce the limit — Dexie Cloud knows nothing about this table. A
+revoked device keeps its session and its key and can still sync content; what revoking
+guarantees is that it will not silently retake a slot, and that its user is told. Two
+devices racing for the last free slot can transiently both take it. Treat the limit as a
+beta courtesy, and never as a security control.
 
 ## 7. What the server can and cannot see
 
@@ -269,6 +499,10 @@ the file holds no secrets.
   **ciphertext in the `$<table>_mutations` sync queue — the go/no-go (P2)**, plaintext
   through the app (P3), IV uniqueness (P4), Blob round-trips (P5), and untouched
   local-only tables (P6). Envelope, key, recovery-code and setup suites cover the rest.
+  The write-lock **surfaces** (the settings conflict banner and the New-space notice) are driven
+  headlessly by the dev/e2e boot params `?cloud-mismatch=1` and `?cloud-keyless=1`
+  (`applyDevBootParams` in `src/App.tsx`), which force the respective signal so the UI can be
+  asserted without a live two-device sign-in (`templates-form.spec.ts`, `cloud-sync.spec.ts`).
 
 - **Not verifiable in CI** (do not paper over these in any PR/summary):
   1. A real sync round-trip — needs a live Dexie Cloud database and an email OTP.
@@ -309,6 +543,14 @@ the file holds no secrets.
     adopt: A's notes decrypt and B's own notes survive. Repeat once more entering a **wrong**
     passphrase first — it must show an inline error and stay on the conflict surface, never
     the app's error boundary.
+11. **Sign-in-first on a clean device (§5.2).** In a **third**, clean browser C, activate via
+    `?cloud-sync=on` and **sign in before** setting a passphrase. Content stays locked until
+    you unlock: the account section offers **Unlock now** — enter A's passphrase to adopt the
+    account key, and A's notes decrypt after the reload. (Attempting the same on a browser that
+    already has unencrypted writing must be turned back with a "set up first" notice.)
+12. **Sign out and back in (§5.3).** In browser A, sign out then sign back in. Every document's
+    content must still render and remain editable — no blank editor and no Lexical error in the
+    console — because the wiped CRDT log heals from the re-pulled body.
 
 If any plaintext content field is visible server-side, **the beta must not be offered to
 anyone** — file the failure and stop.

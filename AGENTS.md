@@ -1,5 +1,48 @@
 # AGENTS.md
 
+> Bootstrap for every agent. Read this file first, then select and read the
+> relevant `.agents/skills/*/SKILL.md` files before touching any code.
+> Skills may be combined. When in doubt, read more skills, not fewer.
+>
+> This file is the **single, complete source of the non-negotiable rules**. Skills,
+> playbooks, and reference docs carry workflows, examples, and rationale; where any of
+> them appears to disagree with this file, this file wins — treat the disagreement as a
+> bug and fix it.
+
+---
+
+## Skill routing table
+
+| Trigger | Skill |
+|---|---|
+| "find", "locate", "where is", "who calls", "trace", "callers of" | [`navigate-writer-codebase`](.agents/skills/navigate-writer-codebase/SKILL.md) |
+| "plan", "design", "what files", "scope", "impact", "before I code" | [`plan-writer-change`](.agents/skills/plan-writer-change/SKILL.md) |
+| "implement", "code it", "make the change", "write the code" | [`implement-writer-change`](.agents/skills/implement-writer-change/SKILL.md) |
+| "audit", "review", "check", "risks in", "is this safe" | [`audit-writer-change`](.agents/skills/audit-writer-change/SKILL.md) |
+| "test", "TDD", "vitest", "playwright", "coverage", "spec" | [`test-writer-changes`](.agents/skills/test-writer-changes/SKILL.md) |
+| "component", "UI", "design system", "a11y", "i18n", "copy", "storybook" | [`build-writer-ui`](.agents/skills/build-writer-ui/SKILL.md) |
+| "schema", "migration", "dexie", "table", "stores.ts", "LoremDB" | [`change-writer-persistence`](.agents/skills/change-writer-persistence/SKILL.md) |
+| "collab", "yjs", "crdt", "multi-tab", "BroadcastChannel", "presence" | [`work-on-editor-collaboration`](.agents/skills/work-on-editor-collaboration/SKILL.md) |
+| "cloud", "dexie cloud", "sync", "encryption", "escrow", "passphrase" | [`work-on-cloud-sync`](.agents/skills/work-on-cloud-sync/SKILL.md) |
+| "sync hangs", "sync loop", "flashing", "downloading forever", "won't sync", "device limit", "reproduce sync bug" | [`debug-cloud-sync`](.agents/skills/debug-cloud-sync/SKILL.md) |
+| "handover", "hand off", "handoff", "pause", "resume later", "context running out", "pick up where" | [`handover-writer-work`](.agents/skills/handover-writer-work/SKILL.md) |
+
+---
+
+## Reference documents
+
+| Document | When to read |
+|---|---|
+| [`docs/architecture.md`](./docs/architecture.md) | Before any change — layers, boundaries, call chains |
+| [`docs/technical-specification.md`](./docs/technical-specification.md) | Before any user-facing behaviour change |
+| [`docs/design-system.md`](./docs/design-system.md) | Before any UI work |
+| [`docs/cloud-sync-beta.md`](./docs/cloud-sync-beta.md) | Before any cloud/encryption work |
+| [`docs/agent-playbooks.md`](./docs/agent-playbooks.md) | Step-by-step runbooks (Locate / Plan / Audit / Change / Handover) — seed your todo list from them |
+| [`docs/agent-navigation-benchmarks.md`](./docs/agent-navigation-benchmarks.md) | Navigation benchmark cases |
+| [`CODING_STANDARDS.md`](./CODING_STANDARDS.md) | Power-of-Ten coding rules |
+
+---
+
 ## Coding standards (read first)
 
 This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
@@ -8,6 +51,10 @@ This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
 - New or edited code must pass `npx eslint <files> --max-warnings=0` (the pre-commit hook
   enforces this on staged files). Existing warnings are a tracked backlog; do not add to it.
 - Run `npm run lint` and `npm run typecheck` before committing; both gate CI.
+- **Limits:** cyclomatic complexity ≤ 12; nesting ≤ 4; functions ≤ 60 lines and ≤ 3
+  parameters (use an options object beyond three — ESLint's `max-params` still allows 4
+  for the pre-existing backlog; do not add to it). No floating promises; handle every
+  nullable return; no module-level mutable state.
 - Use `invariant()` and `assertNever()` from `@/lib/invariant` to validate untrusted input.
 - Write all functions as arrow functions (`const f = () => …`), including utilities.
 - **Honour established design principles, not just the linters.** Code must reflect sound
@@ -20,6 +67,8 @@ This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
   modules together is not done. When a unit grows more than one reason to change, split it.
 - A test file's extension mirrors the file under test: `foo.ts` → `foo.test.ts`,
   `foo.tsx` → `foo.test.tsx`.
+- Types live in a dedicated `*.types.ts` file, or co-located with the module they
+  describe.
 - **One component per file (going forward).** Each React component lives in its own file,
   named in PascalCase to match its export (e.g. `TypographyH1.tsx`), with its `.test.tsx` and
   `.stories.tsx` alongside. Don't co-locate multiple components in one file — extract each into
@@ -27,7 +76,8 @@ This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
   under a shared folder (e.g. `DocInspector/` containing `DocInspector.tsx` and its
   sub-components), keeping one component per file within it. Several existing files still bundle
   private sub-components; treat those as a backlog (like the lint backlog) — don't add new
-  co-located components, and split them out when you next touch the file.
+  co-located components, and split them out when you next touch the file. The same applies to
+  services: **one service per file**.
 - **Never relax limits or silence the linter to make code pass.** Do not raise or loosen the
   size limits (function/file length, etc.), weaken or disable an ESLint rule, or add
   `// eslint-disable*`, `// nasa-exception`, `@ts-ignore`/`@ts-expect-error`, or any other
@@ -48,10 +98,58 @@ This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
   Existing legacy handling stays as-is until its removal is explicitly agreed — don't extend
   it, and don't silently remove it either.
 
+## Task order (read before starting work)
+
+The canonical sequence for any change, reconciling the rules that each demand to come
+"first":
+
+1. **Compliance refactor** (only if needed): if the files you must edit already violate the
+   standards, land the `refactor:` commit first, scoped as above.
+2. **Failing test first (TDD).** Write or extend the unit/e2e test that describes the
+   intended behaviour.
+3. **Implement** until green, keeping lint/typecheck clean as you go.
+4. **Same PR:** update the spec section, help article(s), a11y tests, and `.stories.tsx`
+   the change touches.
+5. **Run the gates:** `npm run lint`, `npm run typecheck`, `npm run test:run`;
+   `npm run test:e2e` for UI-facing changes; `npm run test:e2e:coverage` for
+   coverage-affecting changes.
+6. **Conventional Commit** and push; the PR title must itself be a valid Conventional
+   Commit subject.
+
+**When a stop-and-ask rule fires and no user can answer** (headless or autonomous run):
+stop that thread of work, finish what does not depend on the answer, and surface the
+question prominently in your report or PR description. Never guess your way past a
+stop-and-ask rule.
+
+## Todo tracking (read before starting multi-step work)
+
+Every task with more than one step is tracked against a **live todo list** — the single
+source of truth for what is done, what is in progress, and what is still outstanding. This
+is not optional bookkeeping: it is how work stays resumable, auditable, and safe to hand
+over. Every skill in [`.agents/skills/`](.agents/skills/) restates this discipline for its
+own workflow; this section is canonical.
+
+- **Maintain one list per task.** Use your agent's todo/task tool where it has one;
+  otherwise keep an explicit checklist in your working notes. Each item is a single,
+  verifiable outcome, phrased in the imperative.
+- **Runbooks seed the list.** Any ordered procedure is a runbook: a skill's numbered steps
+  or checklist, the Task order above, or a playbook workflow in
+  [`docs/agent-playbooks.md`](./docs/agent-playbooks.md). Turn the runbook into the todo
+  list — one item per step, in order, **before** you start — then extend the list with work
+  you discover as you go.
+- **Keep exactly one item in progress.** Mark an item in-progress when you begin it and
+  completed the moment it is verified done. Never batch the updates at the end, and never
+  mark an item done that is not actually done — a failing test, a skipped gate, and an
+  unanswered stop-and-ask each keep their item open.
+- **The list is the source of truth for remaining work** and the backbone of every
+  handover: a handover is the current todo list plus where you stopped (see
+  [`handover-writer-work`](.agents/skills/handover-writer-work/SKILL.md)). Reconcile the
+  list with reality before you hand over, pause, or report a task complete.
+
 ## Language (read before writing copy)
 
 All user-facing copy and documentation use **British English** — e.g. _colour_, _organise_,
-_customise_, _behaviour_, _centre_, _-ise_ not _-ize_. This applies to UI strings
+_customise_, _behaviour_, _centre_, _licence_ (`-ce` for nouns), _-ise_ not _-ize_. This applies to UI strings
 (`src/i18n/locales/en/*.json`), Help Center articles (`src/help/content/en/*.md`), comments,
 and docs.
 
@@ -204,6 +302,24 @@ not a checkbox.
 - Run `npm run test:run` (and `npm run test:e2e` for UI-facing changes) before committing,
   alongside `npm run lint` and `npm run typecheck`.
 
+### Test-suite guardrails
+
+- **No hardcoded waits.** Never `page.waitForTimeout(...)` or a hand-rolled
+  `setTimeout` wait in a spec — use Playwright's auto-waiting assertions
+  (`await expect(locator).toBeVisible()`, …) so the test waits for the condition, not
+  a guess at the clock.
+- **No `{ force: true }`** on clicks or fills. A forced interaction papers over a broken
+  locator or an unusable component — fix the locator or the component instead.
+- **Stable locators only.** Prefer `getByRole` / `getByText` / `getByTestId`;
+  `data-testid` is the primary selector for elements without a meaningful accessible
+  role. Never select on CSS classes or DOM structure that a refactor may change.
+- **No `any` in tests.** Use Vitest's typed mocks or typed shape objects — tests follow
+  the same type discipline as production code.
+- **No `console.warn` / `console.error` output** from new tests — resolve the root cause
+  rather than tolerating noisy output.
+- **Test the public API only.** Assert observable behaviour; no direct calls to private
+  methods or internal state.
+
 ## Commits & branches
 
 **Commit messages, branch names, and PR titles must all strictly follow
@@ -212,15 +328,27 @@ linted by commitlint (the `commit-msg` hook); run `npm run commit` for a guided 
 prompt. The **PR title** must itself be a valid Conventional Commit subject
 (`<type>(<scope>): <description>`, e.g. `feat(citations): import BibTeX`) — the squash-merge
 commit is derived from it, so a non-conforming title breaks the convention on the default
-branch. Branch names must be prefixed with a Conventional Commit type, enforced by the
-`pre-push` hook and the **Branch name** CI check (`scripts/validate-branch-name.mjs`):
+branch. Branch names must be prefixed with a Conventional Commit type. This is enforced at
+every stage by `scripts/validate-branch-name.mjs`: the `pre-commit` hook blocks the first
+commit on a misnamed branch (fail fast), the `pre-push` hook blocks the push, the **Branch
+name** CI check gates the PR, and the `post-checkout` hook prints a non-blocking warning
+the moment a misnamed branch is checked out (`--warn` mode):
 
 - Form: `<type>/<kebab-description>` — e.g. `feat/user-login`, `fix/date-parse`,
   `chore/bump-deps`. Underscores are allowed for suffixes (`feat/user-login_v2`).
 - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`,
   `revert`.
-- Exempt: `main`, `develop`, and automation branches (`claude/*`, `dependabot/*`,
-  `release-please*`).
+- Exempt: `main`, `develop`, and automation / release branches (`dependabot/*`,
+  `release-please*`, `release/*`, `rc/*`, `pre-release/*`).
+- **No AI assistant names.** Branch names must never contain `claude` or `codex`
+  (enforced by `validate-branch-name.mjs`), and commit messages must not reference
+  an assistant — no `Co-Authored-By` bot trailers, product names, or session links
+  (enforced by `scripts/check-commit-attribution.mjs` on the `commit-msg` hook).
+  The **author identity** on the commit itself is checked by the same script:
+  `claude` / `codex` / `anthropic` / `openai` in the name or email are rejected,
+  so a valid message under a vendor-noreply mailbox no longer slips through.
+  The sole allowed occurrence in a message is the literal `.claude` config
+  folder path, so a commit editing `.claude/settings.json` can still name the file.
 
 ### Protected branches (read before any git write)
 
@@ -234,6 +362,31 @@ production releases and is changed only through the project's release process, n
   **especially** before anything touching `main` or rewriting shared history (`develop`, release
   branches). State the exact branch, the exact operation, and the blast radius, and wait for
   explicit approval. When in doubt, ask — a wrong guess about the target branch is hard to undo.
+
+### Issue and PR templates (hard rules)
+
+- Use `.github/PULL_REQUEST_TEMPLATE.md` and the issue forms in `.github/ISSUE_TEMPLATE/`
+  exactly as provided: do not add, remove, or reorder sections; do not delete or alter
+  hidden HTML comments or the maintainer-only blocks. **Automated checks and flows validate
+  submissions against the actual templates exactly** — a non-conforming issue or PR will be
+  rejected.
+- Write acceptance criteria in Gherkin language (Given / When / Then), one scenario per
+  bullet.
+- **The PR checklist item "I as a human confirm all changes were reviewed prior to opening
+  this PR" is a human-only attestation. Agents must NEVER tick it** — it exists precisely to
+  record an explicit human intervention. Leave it unticked; only the human author checks it.
+- **Agent reviewers must verify PR conformance before approving, commenting, or ticking.**
+  Re-read the current `.github/PULL_REQUEST_TEMPLATE.md` on the branch (the source of truth,
+  not memory), confirm the PR **title** is a valid Conventional Commit subject, and confirm
+  the PR **body** matches the template exactly — every section present and in order, none
+  added, removed, or reordered, hidden comments intact. If the title or body deviates, **flag
+  the specific deviation as a PR comment** and leave the agent-reviewer box unticked.
+- **The PR checklist item "Agent reviewer: I re-read `.github/PULL_REQUEST_TEMPLATE.md` and
+  confirm this PR's title and description conform to it exactly" is the one attestation agents
+  DO tick** — but only after actually performing that verification, and only when nothing was
+  flagged. It is the reviewer counterpart to the human-only item and must never be conflated
+  with it.
+- Always open PRs as **Draft**; a maintainer marks them ready for review.
 
 ## Specification (read before changing behaviour)
 
@@ -270,8 +423,14 @@ implementing, update them in the same PR.
 
 ## Key commands
 
-- `npm run dev`: Vite dev server
-- `npm run lint` and `npm run lint:fix`: ESLint
-- `npm run typecheck`: `tsc --noEmit`
-- `npm run test:run`: unit tests (Vitest, once)
-- `npm run test:e2e`: Playwright e2e
+```bash
+npm run dev              # Vite dev server
+npm run typecheck        # tsc --noEmit
+npm run lint             # ESLint
+npm run lint:fix         # ESLint with auto-fix
+npx eslint <file> --max-warnings=0  # targeted lint check
+npm run test:run         # Vitest (once)
+npm run test:e2e         # Playwright e2e
+npm run test:e2e:coverage  # e2e + ratchet check
+npm run commit           # Commitizen prompt
+```

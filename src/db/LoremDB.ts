@@ -21,6 +21,7 @@ import type {
   PdfAnnotation,
 } from './schema';
 import type { EscrowRecord } from '@/lib/cloud/crypto/keys';
+import type { DeviceRecord } from '@/lib/cloud/devicePolicy';
 import { BASE_STORES, PDF_STORES } from './stores';
 
 /**
@@ -57,12 +58,16 @@ export class LoremDB extends Dexie {
   pdfAnnotations!: Table<PdfAnnotation, string>;
   /** Present only on cloud-enabled instances (`options.cloud`). */
   cloudCrypto!: Table<EscrowRecord, string>;
+  /** Present only on cloud-enabled instances (`options.cloud`). */
+  cloudDevices!: Table<DeviceRecord, string>;
 
   constructor(name = 'lipsum', options: LoremDBOptions = {}) {
     super(name, options.addons ? { addons: options.addons } : undefined);
     // version(1) is the shipped base schema; later versions only declare new or
     // changed tables so existing installs upgrade without touching their data.
-    const base = options.cloud ? { ...BASE_STORES, cloudCrypto: 'id' } : BASE_STORES;
+    const base = options.cloud
+      ? { ...BASE_STORES, cloudCrypto: 'id', cloudDevices: 'id' }
+      : BASE_STORES;
     this.version(1).stores(base);
     this.version(2).stores(PDF_STORES);
   }

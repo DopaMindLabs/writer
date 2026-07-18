@@ -55,6 +55,11 @@ export const buildDb = (name = 'lipsum'): LoremDB => {
     socialAuth: false,
     tryUseServiceWorker: false,
     unsyncedTables: [...UNSYNCED],
+    // Never offload a synced value to blob storage. Content is sealed into an
+    // inline base64 string envelope (see envelope.ts); keeping it inline avoids
+    // the addon's blob-ref lifecycle, which is incompatible with the encryption
+    // middleware and otherwise drops large docs on the receiving device.
+    largeStringThreshold: Infinity,
   });
   db.use(createEncryptionMiddleware(deviceKeyProvider));
   return db;

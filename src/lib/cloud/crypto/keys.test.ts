@@ -6,7 +6,9 @@ import {
   wrapMasterSecret,
   unwrapMasterSecret,
   fingerprintsEqual,
+  canonicalisePassphrase,
   WrongPassphraseError,
+  ESCROW_ID,
 } from './keys';
 
 // Correctness is independent of the iteration count; use a small one so the
@@ -14,11 +16,32 @@ import {
 const FAST = 1000;
 
 describe('cloud keys', () => {
+  it('keeps the escrow id in Dexie Cloud private-singleton form', async () => {
+    // The literal `#` prefix is the contract with Dexie Cloud: without it the
+    // escrow row is one GLOBAL object shared by every account in the database —
+    // the first account claims it and every other account's escrow silently
+    // never syncs, so a second device can never be joined with the passphrase.
+    // Regression guard: assert the literal, not the constant against itself.
+    expect(ESCROW_ID).toBe('#v1');
+    const escrow = await wrapMasterSecret(generateMasterSecret(), 'pw', FAST);
+    expect(escrow.id).toBe('#v1');
+  });
+
   it('wrap then unwrap round-trips the master secret', async () => {
     const master = generateMasterSecret();
     expect(master).toHaveLength(32);
     const escrow = await wrapMasterSecret(master, 'correct horse battery', FAST);
     const recovered = await unwrapMasterSecret(escrow, 'correct horse battery');
+    expect(Array.from(recovered)).toEqual(Array.from(master));
+  });
+
+  it('unwraps across Unicode normal forms of the same passphrase', async () => {
+    // "café" composed (NFC, as a desktop keyboard emits it) versus decomposed
+    // (NFD, as an iOS keyboard emits it): same visible passphrase, different
+    // byte sequences. Canonicalisation must make them derive the same KEK.
+    const master = generateMasterSecret();
+    const escrow = await wrapMasterSecret(master, 'caf\u00e9', FAST);
+    const recovered = await unwrapMasterSecret(escrow, 'cafe\u0301');
     expect(Array.from(recovered)).toEqual(Array.from(master));
   });
 
@@ -48,6 +71,27 @@ describe('cloud keys', () => {
     expect(Array.from(a.salt)).not.toEqual(Array.from(b.salt));
     expect(Array.from(a.iv)).not.toEqual(Array.from(b.iv));
     expect(Array.from(a.wrapped)).not.toEqual(Array.from(b.wrapped));
+  });
+});
+
+describe('canonicalisePassphrase', () => {
+  it('is the identity on ASCII', () => {
+    expect(canonicalisePassphrase('longenoughphrase')).toBe('longenoughphrase');
+  });
+
+  it('collapses NFC and NFD forms of the same text to one value', () => {
+    // é composed (U+00E9) versus decomposed (e + U+0301): equal after NFKC, so a
+    // dialog validating the canonical value cannot reject them as a mismatch.
+    expect(canonicalisePassphrase('café')).toBe(canonicalisePassphrase('café'));
+  });
+
+  it('folds compatibility characters (full-width to ASCII)', () => {
+    // Full-width digits/letters normalise to ASCII under NFKC.
+    expect(canonicalisePassphrase('ＡＢＣ')).toBe('ABC');
+  });
+
+  it('does not trim, lowercase, or alter whitespace', () => {
+    expect(canonicalisePassphrase('  Pass Phrase  ')).toBe('  Pass Phrase  ');
   });
 });
 

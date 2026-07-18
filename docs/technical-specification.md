@@ -39,7 +39,7 @@
 | 5 | **Brain Space** | A freeform visual canvas for unsorted notes. Multiple note kinds (Note, Char, Place, Lore, Question, Source, Claim, Figure, Todo, Loose End, Blank). Notes can be connected and linked to documents. |
 | 6 | **Citations** | Manual + BibTeX import (paste or `.bib` upload), tag-based search, bulk edit / bulk delete, `.bib` export. Available as a screen, a split-view pane, and a drawer. |
 | 7 | **Sidebar** | Per-space navigation: section list, doc list, add doc, add section (when the template's `allowExtraSections` is on), inline rename, Brain Space link with unsorted-note count, settings cog. |
-| 8 | **Mobile nav** | Hamburger drawer on small viewports; settings tabs reflow without horizontal overflow. |
+| 8 | **Mobile nav** | Hamburger drawer on small viewports; settings tabs reflow without horizontal overflow. On the settings shells the wordmark / tag badge is the "back to root" affordance (the SpaceRail's own home link is hidden on mobile). |
 | 9 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), a local **Account** (display name + presence colour), plus Typography, Shortcuts, and Backups tabs. |
 | 10 | **Per-space settings** | General (name, tag), Sharing (coming soon), Template (coming soon), Members, Backups (manual `.md` snapshots + history + download), Danger Zone (delete with typed confirmation). |
 | 11 | **Persistence** | IndexedDB autosave (~600 ms debounce). Survives reload, route changes, browser restart. |
@@ -95,7 +95,9 @@ A **space** is an independent writing project with its own sections, documents, 
 1. From Home, click **Start a new space** → navigates to `/new` (Templates).
 2. Pick a template (Fiction, Research, Essay, Journal). Each seeds its own initial sections and doc set.
 3. Enter a **name** and a **tag** (short label).
-4. Submit. The space is created in IndexedDB and the user lands on its first doc.
+4. Submit. The space is created in IndexedDB and the user lands on its first doc. While the cloud
+   write lock is engaged (a key mismatch, or signed in without a key), an inline notice explains
+   the reason and links to the Account tab, and submission is disabled until it is resolved.
 
 **Switch spaces.** The SpaceRail on the left lists existing spaces in Write mode. In Focus mode it collapses to a compact FocusRail.
 
@@ -103,7 +105,7 @@ A **space** is an independent writing project with its own sections, documents, 
 
 **Delete a space.** Space settings → **Danger zone** tab. The Delete button stays disabled until the user types the space name into the confirmation input. Deletion redirects to Home.
 
-*Covered by:* `space-creation.spec.ts`, `space-settings.spec.ts`, `split-and-sidebar.spec.ts`, `Templates.test.tsx`, `SpaceSettings.test.tsx`.
+*Covered by:* `space-creation.spec.ts`, `space-settings.spec.ts`, `split-and-sidebar.spec.ts`, `templates-form.spec.ts`, `Templates.test.tsx`, `TemplatesNotice.test.tsx`, `SpaceSettings.test.tsx`.
 
 ---
 
@@ -270,7 +272,7 @@ Adapts to screen size and mode.
 
 ### 4.9 Global settings (`/settings`)
 
-Tabbed user-wide preferences.
+Tabbed user-wide preferences. The shell-header wordmark badge (`L`) links back to Home — the primary way out of settings on mobile, where the SpaceRail's home link is hidden.
 
 | Tab | Status | Contents |
 |-----|--------|----------|
@@ -299,51 +301,176 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   key is derived from it (HKDF-SHA-256, non-extractable), plus a public one-way
   **fingerprint** (a second HKDF info string) that identifies the key without revealing it.
   The master is wrapped under a passphrase-derived key (PBKDF2-SHA-512, ≥ 800 000 calibrated
-  iterations) into an **escrow** record; a one-time **recovery code** (Crockford base32 of
+  iterations; the passphrase is NFKC-normalised first, so composed and decomposed keyboard
+  input derive the same key — and the setup dialog validates, compares, and rates that same
+  canonical value, so it can never reject two visually identical passphrases the crypto would
+  treat as equal) into an **escrow** record; a one-time **recovery code** (Crockford base32 of
   the master) is the fallback if every device forgets the passphrase. The device's derived
   key ring lives in a **separate, never-synced** keystore database, which also holds the
-  escrow until it is published (see Key reconciliation).
+  escrow until it is published (see Key reconciliation). The published escrow row's id is
+  `#v1` — Dexie Cloud's private-singleton key form, scoped per account on the server — so
+  every account gets its own escrow and one account's row can never shadow another's.
 - **Envelope.** Each encrypted row keeps its primary key and indexed fields plaintext and
   moves every other field into a `$lipsumCipher` envelope (`AES-256-GCM`, fresh IV per
   seal, AAD binding `table` + `primaryKey` + `epoch`).
 - **Sync scope.** Encrypted: spaces, sections, docs, notes, note attachments,
   annotations, citations, connections, revisions, palettes. Never synced: settings,
   backups, sync bookkeeping, the CRDT `docUpdates` log, and the device keystore.
+- **Device registry.** The beta allows **four devices per account**, tracked in a synced
+  but **unencrypted** `cloudDevices` table so a device that holds no key yet can still count
+  the slots and be told it is past the cap. A row carries only the addon's random per-device
+  client identity and timestamps (`joinedAt`, `lastSeenAt`, and `revokedAt` once revoked) —
+  never a device name, user agent, or content. A registered device refreshes `lastSeenAt` at
+  most **once an hour**: the table is synced, so an unconditional refresh would push, settle
+  the sync round, re-trigger the registrar and push again — an unbounded sync loop. A slot
+  goes **stale after 7 days** of silence and is then reclaimable, which is what stops a
+  discarded browser profile holding a slot for ever; only live slots count against the limit,
+  so stale and revoked rows never lock a new device out. Users see their devices in Cloud
+  settings and can **sign out** of the current one or **revoke** any other, which frees its
+  slot at once and leaves a tombstone so the revoked device can tell it was removed. The limit
+  is a **client-side beta courtesy, not a security boundary**: the server does not enforce it,
+  a revoked device keeps its Dexie Cloud session, and two devices racing for the last slot can
+  transiently both take it. Both windows are overridable per deployment, in seconds, via
+  `VITE_DEVICE_REFRESH_SECONDS` and `VITE_DEVICE_STALE_SECONDS`, so the reclaim can be
+  exercised in minutes rather than days; a malformed or non-positive value falls back to the
+  default.
+- **Device list.** Signed-in devices see **Your devices** in the cloud panel: every slot, oldest
+  first, with the count in use, each row showing only when it joined and when it was last seen —
+  a device has no name to show, by design. The current device is badged **This device** and a
+  reclaimable one **Inactive**. Every row can free its own slot by the means that fits it: the
+  current device **signs out** (revoking itself would be pointless — it holds the session and
+  would rejoin), any other is **removed** behind a confirmation. The list is shown to a
+  *blocked* device too: that is the device that most needs to free a slot, and until now the
+  only way to free one was to sign out on the machine holding it — useless for a laptop that
+  was wiped or given away. A removed device sees **This device was removed from your account**
+  and is asked to sign out; nothing of its writing is deleted.
 - **Reconciliation.** Because the CRDT `docUpdates` log is per-device, cross-device
-  changes travel as `Doc.body` snapshots. After each sync settles, a reconciler compares
-  every row body against the local Y.Doc and, for a body a pull produced rather than the
-  local editor, keeps a safety revision of the local side then either replays the pulled
-  body through the mounted editor or reseeds the CRDT — **whole-document last-writer-wins**;
-  lossless cross-device merge is a recorded open decision for a future release.
-- **Key reconciliation.** Setup holds the escrow on the device, not in `cloudCrypto`. Once
-  the first sync settles, reconciliation compares the account escrow's fingerprint with the
-  device ring's: absent → publish this device's escrow (add-only, so it can never race and
-  clobber the account's key); match → nothing to do; differ → flag a **key mismatch**. Under
-  a mismatch the write middleware refuses content writes and reads surface the route-level
-  recovery screen; the user resolves it from settings by **adopting** the account key (enter
-  the account passphrase; the device re-seals its own rows under it) or **erasing** the
-  account's unreadable copy (kept: this device's notes). Never clobbers, never silently loses.
-- **Ordering.** Passphrase-before-sign-in: sync cannot start without a key ring, so a
-  keyless write is never uploaded in the clear. Opting out is **non-destructive** — the
-  cloud schema is sticky so a rebuild never erases local content.
+  changes travel as `Doc.body` snapshots. Reconciliation is **single-flight** — one run at a
+  time, with a trigger during a run coalescing into exactly one follow-up — and armed on four
+  signals: the first `in-sync`, every transition out of `pulling`, every settled `syncComplete`,
+  and every device-key acquisition (so rows hidden while keyless reconcile the instant the key
+  arrives). Each run processes the **mounted (active) document first**, then the rest in bounded
+  batches that yield the event loop, skipping any document whose body is unchanged since its last
+  reconcile. It compares every row body against the local Y.Doc and, for a body a pull produced
+  rather than the local editor, keeps a safety revision of the losing side then either replays the
+  pulled body through the mounted editor or reseeds the CRDT — **whole-document last-writer-wins**;
+  lossless cross-device merge is a recorded open decision for a future release. A doc is also
+  reconciled **before its editor mounts**, so the editor always opens over a CRDT that matches the
+  current row body — closing the window where a body pulled while the doc was closed would show
+  stale content. The mounted-editor flush is **awaitable and reports which body it persisted**: if
+  the editor holds unsaved local edits the pulled remote body is preserved as a recoverable safety
+  revision and the live local text is kept, so neither side is ever silently overwritten. A
+  freshly-mounted, never-edited editor is correctly seen as clean — the autosave seeds its baseline
+  from the body persisted at mount — and the replay through the editor **resolves only once the new
+  content has persisted to the CRDT log**, so a restore that failed to land is retried rather than
+  recorded as a success. On a healthy network an idle device
+  typically converges in about **1–2 seconds**; a failed reconcile surfaces a visible, retryable
+  status in cloud settings (never live in silence). The sync-status and reconcile-status rows are
+  shown whenever the device is **signed in**, not only once it holds a key, so a signed-in keyless
+  device is never left without sync diagnostics while it waits to unlock. Sign-out clears the per-device CRDT log; a
+  re-pulled doc with an empty log **heals from its body** (no spurious revision, and the editor
+  mount waits until the log is reseeded), so content and the editor recover after signing back in.
+- **Reactive key acquisition.** Acquiring the device key (unlock, adopt, recover, or setup)
+  changes no content row, so encrypted live queries would not otherwise re-run. A monotonic
+  device-key revision — bumped on every key acquire/reload/forget and folded into every encrypted
+  query's dependencies — makes space, section, and document names appear the instant the key lands,
+  **without a page reload**. An invalidation-only `BroadcastChannel` propagates the change to other
+  tabs (never any key material), so unlocking one tab refreshes them all.
+- **Key reconciliation.** Setup holds the escrow on the device, not in `cloudCrypto`, and —
+  while signed out — drops any escrow already in the local database (residue from an earlier
+  local session) so a fresh key can never trip a spurious mismatch. Reconciliation **re-runs on
+  every sync settle and sign-in change** (not once per boot); it compares the account escrow's
+  fingerprint with the device ring's (or, as a fallback, the pending escrow's): absent →
+  publish this device's escrow, but **only once the initial account pull is confirmed**
+  (`persistedSyncState.initiallySynced` — set in the same sync round that applies the pulled
+  realms' rows, so any escrow the account holds is already local; **not** gated on the private
+  realm being enumerated, which never happens for a fresh empty account and would otherwise hang
+  a keyless-first device on “fetching your account…”) — else defer, so a not-yet-pulled escrow
+  is never clobbered, and **add-only** (never overwrite a differing `v1` row); match → nothing to
+  do; differ → flag a **key mismatch**. Under a
+  mismatch the write middleware refuses content writes; reads do not crash — the middleware
+  drops any undecryptable row from the result and flags the mismatch, so the app stays
+  reachable and the conflict banner appears in settings. The user resolves it by **adopting**
+  the account key (enter the account passphrase; the device re-seals its own rows under it) or
+  **erasing** the account's unreadable copy (kept: this device's notes). Erase is irreversible,
+  so — like deleting a space — it is a two-step gesture: an explicit "can't be undone" warning
+  plus a typed confirmation word (`ERASE`) that arms the destructive button. The escrow swap
+  inside erase runs only when the device holds a **pending escrow** to install; a mismatched
+  device without one erases the unreadable rows but leaves the account key (and the mismatch)
+  in place — it never deletes the account escrow with nothing to replace it, which would leave
+  the whole account keyless. If no account escrow exists either, the flag protects nothing and
+  erase clears it. The route-level
+  recovery screen still catches a genuine read failure, and its **Unlock in settings** action
+  is a full navigation to the Account tab. Never clobbers, never silently loses. The New-space
+  (Templates) screen also surfaces the lock **proactively**: `useCloudLockReason` (mismatch >
+  keyless > none) drives an inline notice that names the reason and links to the Account tab, and
+  space creation is disabled while a lock holds; a submit that still races the lock is caught and
+  mapped to the same notice (`CloudKeyError` → locked, anything else → a generic failure), so a
+  refused write is never an unhandled rejection.
+- **Ordering.** The first device (with unencrypted writing) stays on passphrase-before-sign-in
+  — sign-in is turned back until its writing is sealed. A **clean** device (no plaintext synced
+  rows) may sign in first and then unlock/adopt the account key; while it is signed-in-keyless
+  the middleware refuses content writes and hides sealed rows, so a keyless write is never
+  uploaded in the clear either way. The refusal is scoped to **app** writes: the addon applies
+  rows it just pulled (already ciphertext) through the same table API but inside a
+  change-tracking-disabled transaction, and the lock exempts those — otherwise the initial pull
+  would abort, `initiallySynced` would never be set, and a content-bearing account would deadlock
+  on “fetching your account…”. Should that pull genuinely fail to settle, the keyless section
+  does not sit on “fetching your account…” indefinitely: a sync **error** phase turns it into a
+  retryable notice (a **Try again** that forces a fresh pull), and an **offline** phase says so
+  and resumes on its own — neither offers a key-minting action, so the divergence guard holds.
+  Presence itself resolves only once **both** the pull is confirmed complete **and** the local
+  escrow-row query has settled at least once: on a reloading device the persisted pull flag is
+  already `true` while the row read is still in flight, and reporting “no key” in that gap
+  would offer Set-up over an account that has one. The settings action row offers **no** set-up or unlock of
+  its own — the presence-gated keyless section is the single source of key actions, so a set-up
+  can never mint a key that diverges from a not-yet-pulled account escrow, and space creation is
+  blocked with the same inline notice while the lock holds. Sign-in is surfaced on
+  the Home page (flag-gated) so it is discoverable before a space exists; the **Quick settings**
+  popover always offers a direct **Account** link to the account settings tab (where sign-in and
+  encryption live), regardless of the flag. Opting out is **non-destructive** —
+  the cloud schema is sticky so a rebuild never erases local content.
+- **Four-device beta limit.** An account holds at most **four devices** while the beta runs,
+  tracked in a synced, deliberately unencrypted `cloudDevices` registry — one row per joined
+  device carrying only the addon's random per-device client identity (which the server already
+  receives on every sync) and joined/last-seen/revoked timestamps; never a device name, user
+  agent, or content. Ids and counts are readable while keyless by design, so a signed-in further
+  device is **hard-blocked** before it can act: the keyless section is replaced by a banner
+  naming the limit, and no unlock or set-up is offered. A device registers itself once it is
+  signed in and holds a key, and refreshes its slot at most hourly — the registry is a synced
+  table, so an unconditional refresh would push, settle the sync, re-trigger the registrar and
+  push again, an unbounded loop (§ 4.9.1). Forgetting the key keeps the slot (the device is
+  still signed in and expected to unlock again). A slot is freed in three ways: **signing out**
+  on the device holding it, **removing** it from any other device (which stamps a tombstone the
+  removed device can see, and frees the slot at once), or by the device going quiet for seven
+  days, after which its slot is **reclaimed** — so a wiped or discarded browser profile cannot
+  hold a slot for ever. Only live slots count against the limit. The gate is a client-side beta
+  courtesy, not a security boundary; the section heading carries a persistent beta notice naming
+  the limit and advising local backups.
 - **Server sees / does not see.** Cannot: bodies, titles, note text, citation
   metadata, attachment bytes. Can: record ids and relationships, timestamps, note kinds,
-  citation keys and years, the sign-in email, and sync timing/IP. Sign-in is invite-only.
+  citation keys and years, the sign-in email, sync timing/IP, and the device-registry rows
+  (random per-device client identity plus joined/last-seen timestamps — identifiers and timing
+  the sync protocol already exposes). Sign-in is invite-only.
 
 See [`docs/cloud-sync-beta.md`](cloud-sync-beta.md) for the full design note and the
 manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P8 ciphertext and
 mismatch-lock spike), `envelope.test.ts`, `keys.test.ts` (incl. fingerprints),
-`errors.test.ts`, `keyMismatch.test.ts`, `recoveryCode.test.ts`, `setup.test.ts` (incl.
-adopt/erase), `escrowReconcile.test.ts`, `buildDb.test.ts`, `reconcile.test.ts`
-(cross-device reconciliation), `snapshot.test.ts` (the CRDT ⇄ body round-trip), the
-`src/components/errors/` and `src/components/settings/tabs/cloud/` component tests, and
-`cloud-sync.spec.ts`.
+`errors.test.ts`, `keyMismatch.test.ts`, `keylessLock.test.ts`, `lockReason.test.ts`,
+`keylessGuard.test.ts`, `useCloudLockReason.test.tsx`,
+`recoveryCode.test.ts`, `setup.test.ts` (incl. adopt/erase, add-only publish, sign-in guard),
+`escrowReconcile.test.ts` (incl. re-arm and the deferred pull-gate), `cloudClient.test.ts`
+(pull-complete + sign-in guard), `buildDb.test.ts`, `reconcile.test.ts` (cross-device
+reconciliation and empty-log healing), `useDocCrdtReady.test.tsx`, `snapshot.test.ts` (the
+CRDT ⇄ body round-trip), the `src/components/errors/`, `src/components/templates/` (the
+write-lock notice) and `src/components/settings/tabs/cloud/` component tests, and
+`cloud-sync.spec.ts` / `cloud-crdt-recovery.spec.ts` / `templates-form.spec.ts`.
 
 ---
 
 ### 4.10 Per-space settings (`/s/:spaceId/settings`)
 
-Reached via the cog in the sidebar header. The **back** link returns to the active space (not Home).
+Reached via the cog in the sidebar header. The **back** link returns to the active space (not Home). The shell-header tag badge is likewise a link back to the space's Write view — the way out of settings on mobile.
 
 | Tab | Status | Contents |
 |-----|--------|----------|
@@ -585,7 +712,7 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 
 ## 7. Test coverage matrix
 
-### 7.1 End-to-end (Playwright) — key specs (excerpt of the suite)
+### 7.1 End-to-end (Playwright) — 16 specs
 
 | Spec file | Feature area |
 |-----------|--------------|

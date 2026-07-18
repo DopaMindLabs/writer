@@ -71,7 +71,10 @@ export const markMediaOpened = async (id: string): Promise<void> => {
 export const listMediaBySpace = async (
   spaceId: string,
 ): Promise<MediaItem[]> => {
-  const items = await db.media.where('spaceId').equals(spaceId).sortBy('createdAt');
+  // Read through `toArray` (not the cursor-based `sortBy`) and order in memory,
+  // per the encryption middleware's cursor-bypass contract.
+  const items = await db.media.where('spaceId').equals(spaceId).toArray();
+  items.sort((a, b) => a.createdAt - b.createdAt);
   return items.reverse();
 };
 
@@ -87,13 +90,14 @@ export const deleteMediaCascade = async (mediaId: string): Promise<void> => {
     await db.media.delete(mediaId);
     await db.pdfAnnotations.where('mediaId').equals(mediaId).delete();
     if (item) {
-      await db.notes
-        .where('spaceId')
-        .equals(item.spaceId)
-        .filter((note) => note.mediaId === mediaId)
-        .modify((note) => {
-          delete note.mediaId;
-        });
+      // `notes` is an encrypted table: a cursor `modify` would bypass the
+      // decryption middleware and rewrite raw ciphertext rows. Read through the
+      // wrapped `toArray`, clear the link, and write back via `bulkPut` so each
+      // note is decrypted on read and re-sealed on write.
+      const notes = await db.notes.where('spaceId').equals(item.spaceId).toArray();
+      const detached = notes.filter((note) => note.mediaId === mediaId);
+      for (const note of detached) delete note.mediaId;
+      if (detached.length > 0) await db.notes.bulkPut(detached);
     }
   });
 };

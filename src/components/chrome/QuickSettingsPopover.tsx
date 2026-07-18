@@ -285,7 +285,7 @@ const MoreSection = () => {
 interface FooterLinkProps {
   to: string;
   label: string;
-  kbd: string;
+  kbd?: string;
   testId: string;
   divider?: boolean;
 }
@@ -307,7 +307,7 @@ const FooterLink = ({ to, label, kbd, testId, divider }: FooterLinkProps) => (
       </Link>
     </PopoverClose>
     <span className="flex-1" />
-    <span className="font-mono text-[10px] text-ink-4">{kbd}</span>
+    {kbd ? <span className="font-mono text-[10px] text-ink-4">{kbd}</span> : null}
   </div>
 );
 
@@ -322,11 +322,16 @@ const QuickLinksFooter = () => {
         testId="quick-settings-help"
       />
       <FooterLink
+        to={routes.settings('account')}
+        label={t('quickSettings.account')}
+        testId="quick-settings-account"
+        divider
+      />
+      <FooterLink
         to={routes.settings()}
         label={t('quickSettings.fullSettings')}
         kbd={t('quickSettings.fullSettingsKbd')}
         testId="quick-settings-full-settings"
-        divider
       />
     </div>
   );

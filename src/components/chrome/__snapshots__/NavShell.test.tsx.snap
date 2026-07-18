@@ -139,12 +139,15 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
           <div
             class="flex items-center gap-3 border-b border-rule px-6 pb-4 pt-5"
           >
-            <div
-              aria-hidden="true"
-              class="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-md border border-rule font-serif text-[16px] text-ink"
+            <a
+              aria-label="Home"
+              class="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-md border border-rule font-serif text-[16px] text-ink transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink hover:bg-paper"
+              data-discover="true"
+              data-testid="nav-shell-home"
+              href="/"
             >
               L
-            </div>
+            </a>
             <div
               class="min-w-0 flex-1"
             >
@@ -414,12 +417,15 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
           <div
             class="flex items-center gap-3 border-b border-rule px-6 pb-4 pt-5"
           >
-            <div
-              aria-hidden="true"
-              class="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-md bg-ink font-mono text-[10px] font-medium uppercase tracking-[0.04em] text-paper"
+            <a
+              aria-label="Open Test Space"
+              class="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-md bg-ink font-mono text-[10px] font-medium uppercase tracking-[0.04em] text-paper transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink hover:bg-ink-2"
+              data-discover="true"
+              data-testid="nav-shell-home"
+              href="/s/s1"
             >
               TST
-            </div>
+            </a>
             <div
               class="min-w-0 flex-1"
             >

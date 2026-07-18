@@ -67,4 +67,35 @@ describe('CloudLoginDialog', () => {
     await userEvent.click(screen.getByTestId('cloud-login-cancel'));
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
+
+  it('substitutes an alert message template with its params', async () => {
+    const interaction = emailPrompt(vi.fn(), vi.fn(), [
+      {
+        type: 'info',
+        messageCode: 'OTP_SENT',
+        message: 'A One-Time password has been sent to {email}',
+        messageParams: { email: 'me@example.com' },
+      },
+    ]);
+    renderWithProviders(<CloudLoginDialog interaction={interaction} />);
+    expect(
+      await screen.findByText('A One-Time password has been sent to me@example.com'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/\{email\}/)).toBeNull();
+  });
+
+  it('leaves an unknown token verbatim rather than blanking it', async () => {
+    const interaction = emailPrompt(vi.fn(), vi.fn(), [
+      {
+        type: 'warning',
+        messageCode: 'GENERIC_WARNING',
+        message: '{numUnsyncedChanges} unsynced changes will get lost!',
+        messageParams: {},
+      },
+    ]);
+    renderWithProviders(<CloudLoginDialog interaction={interaction} />);
+    expect(
+      await screen.findByText(/\{numUnsyncedChanges\} unsynced changes will get lost!/),
+    ).toBeInTheDocument();
+  });
 });

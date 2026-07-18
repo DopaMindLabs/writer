@@ -25,7 +25,7 @@ describe('LexicalEditor collaborative mount', () => {
           username={PROFILE.displayName}
           cursorColor={`var(--${PROFILE.presenceHue})`}
           cursorsContainerRef={ref}
-          onChange={() => undefined}
+          onChange={() => Promise.resolve()}
           mode="write"
         />
       </div>,

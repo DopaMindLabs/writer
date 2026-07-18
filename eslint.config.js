@@ -16,6 +16,10 @@ export default tseslint.config(
       '.husky/**',
       'assets/**',
       '*.config.{ts,js,cjs,mjs}',
+      // Playwright preview global setup/teardown: loaded by Playwright's own
+      // transpiler, outside the app tsconfig projects (like the configs above).
+      'playwright.preview.setup.ts',
+      'playwright.preview.teardown.ts',
       'eslint.config.js',
       'src/tours/**',
     ],

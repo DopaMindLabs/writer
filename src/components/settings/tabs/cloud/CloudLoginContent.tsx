@@ -16,6 +16,19 @@ interface Field {
   type: string;
 }
 
+/**
+ * Substitute an alert's `{token}` placeholders with its `messageParams`. The
+ * cloud addon ships alert copy as a template (`A One-Time password has been sent
+ * to {email}`) with the values held separately in `messageParams`; rendering the
+ * raw message would show the literal `{email}` / `{numUnsyncedChanges}` tokens.
+ * An unknown token is left verbatim rather than blanked, so a missing value is
+ * visible instead of silently dropped.
+ */
+const interpolateAlert = (
+  message: string,
+  params: Record<string, string> | undefined,
+): string => message.replace(/\{(\w+)\}/g, (whole, key: string) => params?.[key] ?? whole);
+
 /** The single text field an email/OTP prompt needs, or none for other prompts. */
 const inputField = (
   interaction: DXCUserInteraction,
@@ -54,7 +67,7 @@ export const CloudLoginContent = ({
       </DialogHeader>
       {interaction.alerts.map((alert, i) => (
         <InlineBanner key={i} kind={alert.type}>
-          {alert.message}
+          {interpolateAlert(alert.message, alert.messageParams)}
         </InlineBanner>
       ))}
       <form onSubmit={onSubmit} className="mt-1 flex flex-col gap-4">

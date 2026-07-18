@@ -8,6 +8,8 @@ import type { Doc } from '@/db/schema';
 const editorMocks = vi.hoisted(() => ({
   capturedOnChange: undefined as ((s: string) => void) | undefined,
   mountCount: 0,
+  crdtState: 'ready' as 'pending' | 'ready' | 'failed',
+  retry: (): void => undefined,
 }));
 
 vi.mock('@/hooks/useCollab', () => ({
@@ -16,6 +18,16 @@ vi.mock('@/hooks/useCollab', () => ({
     username: 'Ada',
     cursorColor: 'var(--presence-1)',
   }),
+}));
+
+// The CRDT-seed gate is exercised in its own hook test + e2e; here it is forced
+// ready by default so the editor-wiring assertions stay synchronous, and toggled
+// to pending/failed in the dedicated gate tests below.
+vi.mock('@/hooks/useDocCrdtReady', () => ({
+  useDocCrdtReady: () =>
+    editorMocks.crdtState === 'failed'
+      ? { state: 'failed', error: new Error('gate failed'), retry: editorMocks.retry }
+      : { state: editorMocks.crdtState },
 }));
 
 vi.mock('@/editor/EditorFacade', async () => {
@@ -64,6 +76,31 @@ const doc: Doc = {
 };
 
 describe('WriteSurface', () => {
+  afterEach(() => {
+    editorMocks.crdtState = 'ready';
+  });
+
+  it('holds the editor back until the CRDT log is ready (no blank mount over a wiped log)', () => {
+    editorMocks.crdtState = 'pending';
+    const { queryByTestId } = render(<WriteSurface doc={doc} mode="write" />);
+    expect(queryByTestId('editor-stub')).toBeNull();
+  });
+
+  it('keeps the editor closed and shows a retryable error when the gate fails', async () => {
+    const retry = vi.fn();
+    editorMocks.crdtState = 'failed';
+    editorMocks.retry = retry;
+    const { queryByTestId, getByRole } = render(
+      <WriteSurface doc={doc} mode="write" />,
+    );
+
+    expect(queryByTestId('editor-stub')).toBeNull();
+    expect(getByRole('alert')).toHaveTextContent(/couldn't open this document/i);
+
+    await userEvent.click(getByRole('button', { name: /try again/i }));
+    expect(retry).toHaveBeenCalledTimes(1);
+  });
+
   it('remounts the editor when another tab signals a reload for this doc', async () => {
     const { broadcastDocReload } = await import('@/lib/collab/docReloadChannel');
     editorMocks.mountCount = 0;

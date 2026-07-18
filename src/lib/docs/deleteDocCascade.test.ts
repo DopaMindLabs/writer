@@ -3,6 +3,7 @@ import dexieCloud from 'dexie-cloud-addon';
 import { db } from '@/db/db';
 import { LoremDB } from '@/db/LoremDB';
 import { collabSeedKey } from '@/lib/collab/seedKey';
+import { docBodyBaselineKey } from './docBodyBaseline';
 import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
 import {
   deviceKeyProvider,
@@ -43,6 +44,7 @@ const seedDocGraph = async (docId: string): Promise<void> => {
     createdAt: FIXED_TIME,
   });
   await db.meta.put({ key: collabSeedKey(docId), value: { seededAt: FIXED_TIME } });
+  await db.meta.put({ key: docBodyBaselineKey(docId), value: sampleDoc.body });
 };
 
 describe('deleteDocCascade', () => {
@@ -65,6 +67,7 @@ describe('deleteDocCascade', () => {
 
     expect(await db.docUpdates.where('docId').equals('d1').count()).toBe(0);
     expect(await db.meta.get(collabSeedKey('d1'))).toBeUndefined();
+    expect(await db.meta.get(docBodyBaselineKey('d1'))).toBeUndefined();
   });
 
   it('leaves other documents untouched', async () => {
@@ -75,6 +78,7 @@ describe('deleteDocCascade', () => {
     expect(await db.revisions.where('docId').equals('d2').count()).toBe(1);
     expect(await db.docUpdates.where('docId').equals('d2').count()).toBe(1);
     expect(await db.meta.get(collabSeedKey('d2'))).toBeDefined();
+    expect(await db.meta.get(docBodyBaselineKey('d2'))).toBeDefined();
   });
 
   it('unlinks Brain Space notes that pointed at the deleted doc, keeping the note', async () => {
@@ -116,7 +120,7 @@ describe('deleteDocCascade under cloud encryption', () => {
     });
     cloudDb.use(createEncryptionMiddleware(deviceKeyProvider));
     await cloudDb.open();
-    await saveDeviceKeyRing(await deriveKeyRing(generateMasterSecret(), 1));
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
   });
 
   afterEach(async () => {

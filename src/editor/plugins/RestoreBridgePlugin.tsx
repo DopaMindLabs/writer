@@ -1,11 +1,13 @@
 import { useEffect, type RefObject } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { registerEditorHandle } from '@/lib/collab/editorRegistry';
+import { collabStore } from '@/lib/collab/collabStore';
+import type { FlushResult } from '@/lib/collab/flush.types';
 
 interface RestoreBridgePluginProps {
   docId: string;
   /** The live autosave's flush, so the handle can settle pending edits on demand. */
-  flushRef: RefObject<() => boolean>;
+  flushRef: RefObject<() => Promise<FlushResult>>;
 }
 
 /**
@@ -23,8 +25,15 @@ export const RestoreBridgePlugin = ({
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     return registerEditorHandle(docId, {
-      restoreBody: (serialized) => {
+      restoreBody: async (serialized) => {
         editor.setEditorState(editor.parseEditorState(serialized));
+        // Flush the swapped state into the Yjs binding synchronously (the same
+        // pattern the CRDT seed uses), so the resulting docUpdates append is
+        // issued before we await it — no timeout, a real acknowledgement.
+        editor.update(() => undefined, { discrete: true });
+        // Resolve only once that append has reached the durable log, so a caller
+        // (cloud reconciliation) records success for a write that truly landed.
+        await collabStore.whenPersisted(docId);
       },
       flush: () => flushRef.current(),
     });

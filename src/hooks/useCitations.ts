@@ -1,15 +1,18 @@
 import Dexie from 'dexie';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/db/db';
 import type { Citation } from '@/db/schema';
+import { useEncryptedLiveQuery } from './useEncryptedLiveQuery';
 
 export const useCitations = (
   spaceId: string | null | undefined,
 ): Citation[] => {
-  return useLiveQuery(
+  return useEncryptedLiveQuery(
     async () => {
       if (!spaceId) return [];
-      return db.citations.where('spaceId').equals(spaceId).sortBy('year');
+      // Wrapped query path + in-memory sort — a `sortBy` cursor read would
+      // bypass the encryption middleware and leak sealed rows raw.
+      const rows = await db.citations.where('spaceId').equals(spaceId).toArray();
+      return rows.sort((a, b) => a.year - b.year);
     },
     [spaceId],
     [],
@@ -53,7 +56,7 @@ export const usePagedCitations = (
   spaceId: string | null | undefined,
   { page, pageSize, query }: PagedCitationsOpts,
 ): PagedCitations => {
-  return useLiveQuery(
+  return useEncryptedLiveQuery(
     async (): Promise<PagedCitations> => {
       if (!spaceId) return EMPTY_PAGE;
 

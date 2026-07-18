@@ -4,6 +4,8 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import {
+  lazy,
+  Suspense,
   useCallback,
   useEffect,
   useMemo,
@@ -24,7 +26,6 @@ import { WriteSurface } from '@/components/surfaces/WriteSurface';
 import { BrainSpaceCanvas } from '@/components/surfaces/BrainSpaceCanvas';
 import { CitationsPane } from '@/components/surfaces/CitationsPane';
 import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
-import { MediaLibrarySurface } from '@/components/surfaces/MediaLibrarySurface';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocuments, useDocument } from '@/hooks/useDocuments';
 import type { Doc } from '@/db/schema';
@@ -34,6 +35,14 @@ import { cn } from '@/lib/utils';
 import { isLockedStatus } from '@/lib/docInspector/status';
 import { routes } from '@/lib/routes';
 import { Select, type SelectOption } from '@/components/ui/Select';
+
+// Lazily loaded so the pdf.js engine chunk the media surface pulls in stays out
+// of the Split chunk — matching how App.tsx code-splits the library/viewer routes.
+const MediaLibrarySurface = lazy(() =>
+  import('@/components/surfaces/MediaLibrarySurface').then((m) => ({
+    default: m.MediaLibrarySurface,
+  })),
+);
 
 const BRAIN_SPACE_PANE = 'dump';
 const CITATIONS_PANE = 'citations';
@@ -270,7 +279,12 @@ const SplitRightContent = ({
   rightDoc: Doc | undefined;
 }) => {
   if (rightIsBrainSpace) return <BrainSpaceCanvas spaceId={spaceId} />;
-  if (rightIsLibrary) return <MediaLibrarySurface spaceId={spaceId} />;
+  if (rightIsLibrary)
+    return (
+      <Suspense fallback={null}>
+        <MediaLibrarySurface spaceId={spaceId} />
+      </Suspense>
+    );
   if (rightIsCitations) {
     return (
       <CitationsPane spaceId={spaceId} spaceName={spaceName} density="compact" />

@@ -9,13 +9,26 @@
 const CONTENT_INFO = 'lipsum-content-v1';
 /** HKDF info for the public, one-way key-verification tag (the fingerprint). */
 const KEYCHECK_INFO = 'lipsum-keycheck-v1';
+
+/**
+ * The escrow row's primary key. The leading `#` is load-bearing: Dexie Cloud
+ * treats a bare string key as **one global object across every account** in the
+ * database — the first account to publish would claim it, every other account's
+ * escrow would be silently rejected server-side (never an error the client
+ * sees), and that account's other devices would never receive an escrow at all,
+ * so the same passphrase could not join them. A `#`-prefixed key is the addon's
+ * *private singleton* form: it is rewritten per user on the wire
+ * (`#v1:<userId>`), giving each account its own escrow row in its private
+ * realm, synced to all of that account's devices and nobody else's.
+ */
+export const ESCROW_ID = '#v1';
 const FINGERPRINT_BYTES = 16;
 const PBKDF2_HASH = 'SHA-512';
 /** Never derive a KEK with fewer iterations than this, however fast the device. */
 const ITERATIONS_FLOOR = 800_000;
 
 export interface EscrowRecord {
-  id: 'v1';
+  id: typeof ESCROW_ID;
   epoch: number;
   kdf: 'PBKDF2';
   hash: 'SHA-512';
@@ -133,14 +146,33 @@ export const calibrateIterations = async (): Promise<number> => {
   return Math.max(forOneSecond, ITERATIONS_FLOOR);
 };
 
+/**
+ * Canonicalise a passphrase before key derivation. Platforms emit different
+ * Unicode byte sequences for the same visible text (iOS keyboards favour
+ * decomposed accents, desktop keyboards composed), so without a fixed normal
+ * form the same passphrase typed on two devices derives two different KEKs and
+ * the correct passphrase reads as wrong. NFKC is the identity on ASCII.
+ *
+ * Exported so the setup UI can validate and compare the *same* value the crypto
+ * derives from — otherwise the dialog can reject two visually identical
+ * passphrases that would unwrap the same escrow. NFKC is the only
+ * transformation: it must not trim, lowercase, or otherwise alter whitespace.
+ */
+export const canonicalisePassphrase = (passphrase: string): string =>
+  passphrase.normalize('NFKC');
+
 const deriveKek = async (
   passphrase: string,
   salt: Uint8Array,
   iterations: number,
 ): Promise<CryptoKey> => {
-  const base = await crypto.subtle.importKey('raw', asBuffer(utf8(passphrase)), 'PBKDF2', false, [
-    'deriveKey',
-  ]);
+  const base = await crypto.subtle.importKey(
+    'raw',
+    asBuffer(utf8(canonicalisePassphrase(passphrase))),
+    'PBKDF2',
+    false,
+    ['deriveKey'],
+  );
   return crypto.subtle.deriveKey(
     { name: 'PBKDF2', hash: PBKDF2_HASH, salt: asBuffer(salt), iterations },
     base,
@@ -164,7 +196,7 @@ export const wrapMasterSecret = async (
   );
   const fingerprint = await deriveKeyFingerprint(master);
   return {
-    id: 'v1',
+    id: ESCROW_ID,
     epoch: 1,
     kdf: 'PBKDF2',
     hash: PBKDF2_HASH,

@@ -15,10 +15,10 @@ export const useMediaItems = (spaceId: string | undefined): MediaItem[] =>
   useLiveQuery(
     async () => {
       if (!spaceId) return EMPTY;
-      const items = await db.media
-        .where('spaceId')
-        .equals(spaceId)
-        .sortBy('createdAt');
+      // Read through `toArray` (not the cursor-based `sortBy`) and order in
+      // memory, per the encryption middleware's cursor-bypass contract.
+      const items = await db.media.where('spaceId').equals(spaceId).toArray();
+      items.sort((a, b) => a.createdAt - b.createdAt);
       return items.reverse();
     },
     [spaceId],

@@ -6,12 +6,15 @@ import { sampleDoc, seedBasicSpace, serializedBody } from '@/test/fixtures';
 import {
   createDoc,
   createDocs,
+  ensureDocCrdtSeeded,
   renameDoc,
   restoreDocs,
+  seedDocCrdt,
   setDocStatus,
   updateDocBody,
   updateDocMeta,
 } from './docRepository';
+import { readDocBodyBaseline } from './docBodyBaseline';
 import { EMPTY_LEXICAL_JSON } from './emptyBody';
 
 describe('docRepository', () => {
@@ -66,6 +69,34 @@ describe('docRepository', () => {
       await expect(
         createDoc({ spaceId: 's1', sectionId: '', name: 'x' }),
       ).rejects.toThrow(InvariantError);
+    });
+  });
+
+  describe('ensureDocCrdtSeeded', () => {
+    it('reseeds a wiped log from the body and is idempotent', async () => {
+      const body = serializedBody('healed body');
+      // Simulate the logout wipe: a body but no CRDT log / marker.
+      expect(await db.docUpdates.where('docId').equals('d1').count()).toBe(0);
+
+      expect(await ensureDocCrdtSeeded('d1', body)).toBe('seeded');
+      expect(await db.docUpdates.where('docId').equals('d1').count()).toBe(1);
+      expect(await db.meta.get(collabSeedKey('d1'))).toBeDefined();
+
+      // A second call finds the log populated and does nothing.
+      expect(await ensureDocCrdtSeeded('d1', body)).toBe('occupied');
+      expect(await db.docUpdates.where('docId').equals('d1').count()).toBe(1);
+    });
+
+    it('leaves an already-seeded log untouched', async () => {
+      await seedDocCrdt('d1', serializedBody('original'));
+      const before = await db.docUpdates.where('docId').equals('d1').count();
+
+      expect(await ensureDocCrdtSeeded('d1', serializedBody('other'))).toBe(
+        'occupied',
+      );
+      expect(await db.docUpdates.where('docId').equals('d1').count()).toBe(
+        before,
+      );
     });
   });
 
@@ -165,6 +196,48 @@ describe('docRepository', () => {
       const doc = await db.docs.get(sampleDoc.id);
       expect(doc?.meta.status).toBe('complete');
       expect(doc?.meta.wordCount).toBe(9);
+    });
+  });
+
+  describe('body-provenance baseline', () => {
+    it('createDoc records the body as the baseline', async () => {
+      const doc = await createDoc({ spaceId: 's1', sectionId: 'sec1', name: 'x' });
+      expect(await readDocBodyBaseline(doc.id)).toBe(doc.body);
+    });
+
+    it('updateDocBody advances the baseline to the new body', async () => {
+      const doc = await createDoc({ spaceId: 's1', sectionId: 'sec1', name: 'x' });
+      const next = serializedBody('updated content');
+      await updateDocBody(doc.id, next);
+      expect(await readDocBodyBaseline(doc.id)).toBe(next);
+    });
+
+    it('createDocs and restoreDocs record a baseline per row', async () => {
+      const a: Doc = { ...sampleDoc, id: 'bulk-a', body: serializedBody('a') };
+      const b: Doc = { ...sampleDoc, id: 'bulk-b', body: serializedBody('b') };
+      await createDocs([a, b]);
+      expect(await readDocBodyBaseline('bulk-a')).toBe(a.body);
+      expect(await readDocBodyBaseline('bulk-b')).toBe(b.body);
+
+      const restored: Doc = { ...a, body: serializedBody('a-restored') };
+      await restoreDocs([restored]);
+      expect(await readDocBodyBaseline('bulk-a')).toBe(restored.body);
+    });
+
+    it('rolls the body back when the baseline write fails, so neither advances', async () => {
+      const doc = await createDoc({ spaceId: 's1', sectionId: 'sec1', name: 'x' });
+      const originalBody = doc.body;
+      const putSpy = vi
+        .spyOn(db.meta, 'put')
+        .mockRejectedValueOnce(new Error('meta write failed'));
+
+      await expect(
+        updateDocBody(doc.id, serializedBody('would-be new content')),
+      ).rejects.toThrow();
+      putSpy.mockRestore();
+
+      expect((await db.docs.get(doc.id))?.body).toBe(originalBody);
+      expect(await readDocBodyBaseline(doc.id)).toBe(originalBody);
     });
   });
 });

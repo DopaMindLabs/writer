@@ -5,6 +5,7 @@ import { countWords } from '@/editor/wordCount';
 import { newId } from '@/lib/ids';
 import { collabStore } from '@/lib/collab/collabStore';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
+import { writeDocBodyBaseline } from './docBodyBaseline';
 import { EMPTY_LEXICAL_JSON } from './emptyBody';
 
 /**
@@ -30,6 +31,19 @@ export const seedDocsCrdt = async (
   for (const doc of docs) await seedDocCrdt(doc.id, doc.body);
 };
 
+/**
+ * Repair a document whose CRDT log was lost (e.g. the cloud addon cleared the
+ * local-only tables on sign-out): reseed from the row body, but only if the log
+ * is genuinely empty. The seed is computed by a headless editor **before** the
+ * store's transaction opens, so no editor runs inside it. Returns whether it
+ * planted a seed or found the log already populated.
+ */
+export const ensureDocCrdtSeeded = async (
+  docId: string,
+  body: string,
+): Promise<'seeded' | 'occupied'> =>
+  collabStore.reseedIfEmpty(docId, seedFromLexicalJson(docId, body));
+
 export interface CreateDocInput {
   spaceId: string;
   sectionId: string;
@@ -51,7 +65,10 @@ export const createDoc = async (input: CreateDocInput): Promise<Doc> => {
     meta: { wordCount: countWords(body) },
     updatedAt: Date.now(),
   };
-  await db.docs.add(doc);
+  await db.transaction('rw', db.docs, db.meta, async () => {
+    await db.docs.add(doc);
+    await writeDocBodyBaseline(doc.id, doc.body);
+  });
   await seedDocCrdt(doc.id, doc.body);
   return doc;
 };
@@ -59,13 +76,19 @@ export const createDoc = async (input: CreateDocInput): Promise<Doc> => {
 /** Bulk-write fully-formed rows (import/seed): each row is stored verbatim. */
 export const createDocs = async (docs: Doc[]): Promise<void> => {
   if (docs.length === 0) return;
-  await db.docs.bulkPut(docs);
+  await db.transaction('rw', db.docs, db.meta, async () => {
+    await db.docs.bulkPut(docs);
+    for (const doc of docs) await writeDocBodyBaseline(doc.id, doc.body);
+  });
 };
 
 /** Replace existing rows by id (space archive restore). */
 export const restoreDocs = async (docs: Doc[]): Promise<void> => {
   if (docs.length === 0) return;
-  await db.docs.bulkPut(docs);
+  await db.transaction('rw', db.docs, db.meta, async () => {
+    await db.docs.bulkPut(docs);
+    for (const doc of docs) await writeDocBodyBaseline(doc.id, doc.body);
+  });
 };
 
 export const renameDoc = async (docId: string, name: string): Promise<void> => {
@@ -80,11 +103,27 @@ export const updateDocBody = async (
   serialized: string,
 ): Promise<void> => {
   invariant(docId, 'updateDocBody: docId is required');
-  await db.docs.update(docId, {
-    body: serialized,
-    updatedAt: Date.now(),
-    'meta.wordCount': countWords(serialized),
+  await db.transaction('rw', db.docs, db.meta, async () => {
+    await db.docs.update(docId, {
+      body: serialized,
+      updatedAt: Date.now(),
+      'meta.wordCount': countWords(serialized),
+    });
+    await writeDocBodyBaseline(docId, serialized);
   });
+};
+
+/**
+ * Record that a pulled `docs.body` was accepted into the local CRDT, updating the
+ * body-provenance baseline **without** pretending it was a local mutation (no
+ * `updatedAt` bump). Call only after the CRDT restore/reseed has succeeded.
+ */
+export const acceptPulledDocBody = async (
+  docId: string,
+  body: string,
+): Promise<void> => {
+  invariant(docId, 'acceptPulledDocBody: docId is required');
+  await writeDocBodyBaseline(docId, body);
 };
 
 export const updateDocMeta = async (

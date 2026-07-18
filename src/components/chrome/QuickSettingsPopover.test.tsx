@@ -79,6 +79,13 @@ describe('QuickSettingsPopover', () => {
       expect(about).toHaveTextContent(/about/i);
       expect(about).toHaveAttribute('href', '/about');
     });
+
+    it('offers a direct Account link to the account settings tab, regardless of the cloud-sync flag', () => {
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      const item = screen.getByTestId('quick-settings-account');
+      expect(item).toHaveTextContent(/account/i);
+      expect(item).toHaveAttribute('href', expect.stringContaining('tab=account'));
+    });
   });
 
   describe('grouping', () => {

@@ -15,4 +15,8 @@ interface ImportMetaEnv {
   /** Dexie Cloud database URL. One of the two gates for the hidden cloud-sync
    *  beta; absent in ordinary builds, so the app stays local-only. */
   readonly VITE_DEXIE_CLOUD_URL?: string;
+  /** Build-time opt-in mirroring the runtime `?cloud-sync=on` flag. Set to
+   *  `'on'` in non-production environments to surface the beta without the URL
+   *  param; absent in production builds. */
+  readonly VITE_CLOUD_SYNC_FLAG?: string;
 }

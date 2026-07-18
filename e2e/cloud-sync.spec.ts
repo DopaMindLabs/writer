@@ -33,20 +33,49 @@ test.describe('cloud sync beta gating', () => {
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     // The activation param is stripped from the URL once consumed.
     expect(page.url()).not.toContain('cloud-sync');
-    // Signed out, sign-in stays disabled until a passphrase exists.
-    await expect(page.getByTestId('cloud-sign-in')).toBeDisabled();
+    // Sign-in is available before a passphrase exists (a clean device signs in first).
+    await expect(page.getByTestId('cloud-sign-in')).toBeEnabled();
     await expectNoA11yViolations(page, { context: 'account tab with cloud sync', ...STRUCTURE_ONLY });
     // The opt-in persists across a reload.
     await page.reload();
     await expect(page.getByTestId('cloud-section')).toBeVisible();
   });
 
-  test('setting up a passphrase enables sign-in', async ({ page }) => {
+  test('sign-in is available before a passphrase exists', async ({ page }) => {
     await reseedAndGoHome(page);
     await page.goto('/?cloud-sync=on#/settings?tab=account');
-    await expect(page.getByTestId('cloud-sign-in')).toBeDisabled();
-    await setUpEncryption(page);
+    // A clean device may sign in first; the button is no longer disabled.
     await expect(page.getByTestId('cloud-sign-in')).toBeEnabled();
+  });
+
+  test('a device with unencrypted writing is turned back until it sets up a passphrase', async ({
+    page,
+  }) => {
+    // Reseed in cloud mode so the seeded rows are plaintext at rest on this
+    // keyless device — the exact "unencrypted writing" the guard turns back.
+    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=account');
+    await expect(page.getByTestId('cloud-section')).toBeVisible();
+    // The device is turned back with a "set up first" notice.
+    await page.getByTestId('cloud-sign-in').click();
+    await expect(page.getByTestId('cloud-sign-in-error')).toContainText(
+      /unencrypted writing/i,
+    );
+    // Once a passphrase seals that writing, sign-in proceeds to the login step.
+    await setUpEncryption(page);
+    await page.getByTestId('cloud-sign-in').click();
+    await expect(page.getByTestId('cloud-login-dialog')).toBeVisible();
+  });
+
+  test('unlocking before an escrow has arrived tells the user to sign in first', async ({
+    page,
+  }) => {
+    await reseedAndGoHome(page);
+    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await page.getByTestId('cloud-unlock').click();
+    await page.getByTestId('unlock-input').fill('some-passphrase');
+    await page.getByTestId('unlock-submit').click();
+    // Not "wrong passphrase" — there is simply no key on this device yet.
+    await expect(page.getByTestId('unlock-error')).toContainText(/sign in first/i);
   });
 
   test('sign-in opens the email step and cancel dismisses it', async ({ page }) => {
@@ -87,12 +116,46 @@ test.describe('cloud sync key conflict', () => {
     await page
       .getByRole('button', { name: /don't have that passphrase/i })
       .click();
-    await expect(page.getByTestId('cloud-conflict-erase')).toBeVisible();
+    // The irreversible erase is armed only by typing the confirmation word.
+    const eraseButton = page.getByTestId('cloud-conflict-erase');
+    await expect(eraseButton).toBeVisible();
+    await expect(eraseButton).toBeDisabled();
+    await page.getByTestId('cloud-conflict-erase-input').fill('ERASE');
+    await expect(eraseButton).toBeEnabled();
 
     // Erasing resolves the mismatch: the banner and dialog fall away.
-    await page.getByTestId('cloud-conflict-erase').click();
+    await eraseButton.click();
     await expect(page.getByText(/locked on another device/i)).toHaveCount(0);
     await expect(page.getByTestId('cloud-conflict-dialog')).toHaveCount(0);
+  });
+});
+
+test.describe('cloud sync four-device beta limit', () => {
+  test('a blocked device sees the hard-block banner and no key action', async ({
+    page,
+  }) => {
+    // The real trigger (a signed-in fifth device against a full registry) needs
+    // a live account; the ?cloud-devices affordance forces the blocked signal so
+    // the surface is drivable headlessly. Gated to the e2e/dev build only.
+    await page.goto('/?cloud-sync=on&reseed=1&cloud-devices=full#/settings?tab=account');
+    await expect(page.getByTestId('cloud-section')).toBeVisible();
+
+    await expect(page.getByTestId('cloud-device-limit')).toBeVisible();
+    await expect(page.getByText(/supports four devices/i)).toBeVisible();
+    // The blocked banner offers no key-minting action of its own.
+    await expect(page.getByTestId('cloud-keyless-locked')).toHaveCount(0);
+    await expect(page.getByTestId('cloud-keyless-nokey')).toHaveCount(0);
+    await expect(page.getByTestId('cloud-keyless-checking')).toHaveCount(0);
+
+    // Leaving settings tears the panel down cleanly (unsubscribes its stores).
+    await page.goto('/#/');
+    await expect(page.getByTestId('cloud-section')).toHaveCount(0);
+  });
+
+  test('the beta notice names the four-device limit', async ({ page }) => {
+    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await expect(page.getByTestId('cloud-section')).toBeVisible();
+    await expect(page.getByText(/four devices per account/i)).toBeVisible();
   });
 });
 

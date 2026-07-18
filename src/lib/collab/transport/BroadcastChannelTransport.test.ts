@@ -45,6 +45,17 @@ describe('createBroadcastChannelTransport', () => {
     b.close();
   });
 
+  it('drops a send after close instead of throwing on the closed channel', () => {
+    const a = createBroadcastChannelTransport('d-late');
+    a.close();
+    // A Yjs update can flush just after the provider closes the transport
+    // (editor unmount races an in-flight edit). Posting to a closed
+    // BroadcastChannel throws `InvalidStateError`; the transport must swallow it.
+    expect(() => {
+      a.send(new Uint8Array([1, 2, 3]));
+    }).not.toThrow();
+  });
+
   it('stops delivering after the returned unsubscribe is called', async () => {
     const a = createBroadcastChannelTransport('d2');
     const b = createBroadcastChannelTransport('d2');

@@ -1,3 +1,5 @@
+import type { FlushResult } from './flush.types';
+
 /**
  * A process-local registry of mounted collaborative editors, keyed by document
  * id. Restore flows use it to push a new body through the *live* editor (so the
@@ -5,15 +7,23 @@
  * remounting the component. Only mounted documents have a handle.
  */
 export interface EditorHandle {
-  restoreBody: (serialized: string) => void;
   /**
-   * Flush any pending autosave synchronously, returning `true` if there were
-   * unsaved local edits to write. Cloud reconciliation uses this to tell a
-   * genuine remote pull from same-device autosave lag before restoring: if a
-   * flush wrote, the row was merely stale, not pulled. Optional — a handle
-   * without it reports no pending edits.
+   * Replace the live editor's content, resolving only once the change has
+   * committed in Lexical **and** its resulting CRDT update has reached the
+   * durable log. Restore/reconcile flows await this so success is recorded only
+   * after the write has actually persisted — never for a restore that failed to
+   * land. Rejects if the CRDT write fails.
    */
-  flush?: () => boolean;
+  restoreBody: (serialized: string) => Promise<void>;
+  /**
+   * Flush any pending autosave, resolving once the write has landed with a
+   * {@link FlushResult} describing whether anything was persisted and which body.
+   * Cloud reconciliation awaits this: a flush that wrote reports the exact local
+   * body, so the reconciler can preserve the just-pulled remote body as a safety
+   * revision before the local body replaces it, rather than losing either side.
+   * Optional — a handle without it reports no pending edits.
+   */
+  flush?: () => Promise<FlushResult>;
 }
 
 const handles = new Map<string, EditorHandle>();
@@ -32,3 +42,10 @@ export const registerEditorHandle = (
 
 export const getEditorHandle = (docId: string): EditorHandle | undefined =>
   handles.get(docId);
+
+/**
+ * The ids of currently-mounted documents, as a copied snapshot (never the live
+ * map). Cloud reconciliation processes these first so the document the user is
+ * looking at converges before any background sweep of the rest of the library.
+ */
+export const mountedDocIds = (): string[] => Array.from(handles.keys());

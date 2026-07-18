@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import * as Y from 'yjs';
 import { db } from '@/db/db';
 import { createDexieCollabStore } from './DexieCollabStore';
@@ -53,6 +53,54 @@ describe('DexieCollabStore', () => {
     expect(await store.loadAll('d2')).toHaveLength(1);
   });
 
+  describe('whenPersisted', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('is a no-op when nothing is in flight for the doc', async () => {
+      await expect(store.whenPersisted('idle-doc')).resolves.toBeUndefined();
+    });
+
+    it('resolves only after an in-flight append has landed', async () => {
+      let release!: () => void;
+      const gate = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      const addSpy = vi
+        .spyOn(db.docUpdates, 'add')
+        .mockImplementation((async () => {
+          await gate;
+          return 1;
+        }) as never);
+
+      const append = store.append('d1', new Uint8Array([1]));
+      let settled = false;
+      const barrier = store.whenPersisted('d1').then(() => {
+        settled = true;
+      });
+      await Promise.resolve();
+      expect(settled).toBe(false); // still in flight
+
+      release();
+      await append;
+      await barrier;
+      expect(settled).toBe(true);
+      addSpy.mockRestore();
+    });
+
+    it('rejects when an in-flight append fails, surfacing the persistence error', async () => {
+      const addSpy = vi
+        .spyOn(db.docUpdates, 'add')
+        .mockRejectedValueOnce(new Error('disk full'));
+
+      const append = store.append('d1', new Uint8Array([1]));
+      await expect(store.whenPersisted('d1')).rejects.toThrow('disk full');
+      await expect(append).rejects.toThrow('disk full');
+      addSpy.mockRestore();
+    });
+  });
+
   it('seeds exactly once and reports already-seeded thereafter', async () => {
     expect(await store.trySeed('d1', new Uint8Array([9]))).toBe('seeded');
     expect(await store.trySeed('d1', new Uint8Array([8]))).toBe('already-seeded');
@@ -69,6 +117,39 @@ describe('DexieCollabStore', () => {
     ]);
     expect(results.filter((r) => r === 'seeded')).toHaveLength(1);
     expect(results.filter((r) => r === 'already-seeded')).toHaveLength(1);
+    expect(await store.loadAll('d1')).toHaveLength(1);
+  });
+
+  it('reseedIfEmpty plants a seed when the log is empty (marker absent)', async () => {
+    expect(await store.reseedIfEmpty('d1', new Uint8Array([7]))).toBe('seeded');
+    expect(Array.from((await store.loadAll('d1'))[0])).toEqual([7]);
+    expect(await db.meta.get(seedKey('d1'))).toBeDefined();
+  });
+
+  it('reseedIfEmpty plants a seed when the log is empty but a stale marker remains', async () => {
+    // trySeed marks then the log is wiped, leaving a marker beside an empty log —
+    // trySeed would refuse, but reseedIfEmpty keys off the log and repairs it.
+    await store.trySeed('d1', new Uint8Array([1]));
+    await db.docUpdates.where('docId').equals('d1').delete();
+
+    expect(await store.reseedIfEmpty('d1', new Uint8Array([7]))).toBe('seeded');
+    expect(Array.from((await store.loadAll('d1'))[0])).toEqual([7]);
+  });
+
+  it('reseedIfEmpty is a no-op when the log already holds updates', async () => {
+    await store.append('d1', new Uint8Array([1]));
+    expect(await store.reseedIfEmpty('d1', new Uint8Array([7]))).toBe('occupied');
+    expect(await store.loadAll('d1')).toHaveLength(1);
+    expect(Array.from((await store.loadAll('d1'))[0])).toEqual([1]);
+  });
+
+  it('reseedIfEmpty lets exactly one caller win a concurrent repair', async () => {
+    const results = await Promise.all([
+      store.reseedIfEmpty('d1', new Uint8Array([1])),
+      store.reseedIfEmpty('d1', new Uint8Array([2])),
+    ]);
+    expect(results.filter((r) => r === 'seeded')).toHaveLength(1);
+    expect(results.filter((r) => r === 'occupied')).toHaveLength(1);
     expect(await store.loadAll('d1')).toHaveLength(1);
   });
 
