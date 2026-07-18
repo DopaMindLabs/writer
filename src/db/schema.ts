@@ -9,6 +9,14 @@ export interface Space {
   template: string;
   createdAt: number;
   updatedAt: number;
+  /**
+   * The access-control realm this row belongs to, when its space has been
+   * shared. Absent means the creator's private realm — the default, and the
+   * only state until a space is shared. Stamped by the sync layer and kept
+   * plaintext on the wire (it is in `CLOUD_RESERVED`) so the server can enforce
+   * access; the row's content is sealed around it.
+   */
+  realmId?: string;
 }
 
 export interface Section {
@@ -17,6 +25,8 @@ export interface Section {
   parentSectionId: string | null;
   label: string;
   order: number;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export interface Doc {
@@ -33,6 +43,8 @@ export interface Doc {
     dueDate?: number;
   };
   updatedAt: number;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 /**
@@ -93,6 +105,8 @@ export interface Note {
   openedAt?: number;
   layout?: NoteLayout;
   typeVersion?: string;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export interface NoteAttachment {
@@ -104,6 +118,8 @@ export interface NoteAttachment {
   size: number;
   blob: Blob;
   createdAt: number;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export interface Annotation {
@@ -116,6 +132,8 @@ export interface Annotation {
   body?: string;
   author: string;
   createdAt: number;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export interface Connection {
@@ -124,6 +142,8 @@ export interface Connection {
   fromNoteId: string;
   toNoteId: string;
   createdAt: number;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export interface Citation {
@@ -136,6 +156,8 @@ export interface Citation {
   type: 'book' | 'article' | 'chapter' | 'misc';
   useCount: number;
   raw?: string;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export type RevisionKind = 'auto' | 'manual' | 'baseline';
@@ -151,6 +173,8 @@ export interface Revision {
   pinned?: boolean;
   createdAt: number;
   meta?: Record<string, unknown>;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export type BackupFormat = 'md-zip' | 'archive-v2';
@@ -180,6 +204,8 @@ export interface HighlightPalette {
   id: string;
   spaceId: string;
   slots: { name: string; color: string }[];
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export interface Meta {
