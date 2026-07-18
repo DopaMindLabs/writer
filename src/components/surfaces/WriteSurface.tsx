@@ -11,6 +11,8 @@ import { useMountBaselineRevision } from '@/hooks/useMountBaselineRevision';
 import { captureAutoRevision } from '@/lib/revisions';
 import { cn } from '@/lib/utils';
 import { appLogger } from '@/lib/appLogger';
+import { CloudKeyMismatchError } from '@/lib/cloud/crypto/errors';
+import { keyErrorDocId } from '@/lib/boot/e2eFaults';
 import { LockBanner } from './LockBanner';
 import { CrdtMountErrorBanner } from './CrdtMountErrorBanner';
 
@@ -58,6 +60,9 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
       },
     );
   }, [doc.id]);
+
+  // E2E-only: force the cloud key-error recovery screen for a designated doc.
+  if (doc.id === keyErrorDocId()) throw new CloudKeyMismatchError();
 
   return (
     <div
