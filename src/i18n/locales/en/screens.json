@@ -7,13 +7,17 @@
     "tagline": "A clutter-free space for long-form writing — fiction, research, essays, journals.",
     "continueWriting": "Continue writing",
     "startNewSpace": "Start a new space",
-    "signInToSync": "Sign in to sync your writing",
+    "signInToSync": "Sign in to sync",
+    "releaseTitle": "Next release: {{date}}",
+    "releaseBody": "Before the release, make sure a local sync folder or backup is set up — data stored only in this browser may be lost.",
+    "releaseCountdown_one": "{{count}} day remaining",
+    "releaseCountdown_other": "{{count}} days remaining",
     "syncOffChip": "sync/backups not enabled · data can be lost",
     "syncOnChip": "folder sync on",
     "syncOnTitle": "Folder sync enabled",
     "syncOnBody": "Your work syncs to the “{{folder}}” folder on this device.",
     "warningTitle": "Pre-release build",
-    "warningBody": "No data sync. Everything lives in your browser and clearing its cache loses your work. You can enable sync to a local folder in Universal settings → Sync.",
+    "warningBody": "No data sync. Everything lives in your browser and clearing its cache loses your work. You can enable sync to a local folder in Universal settings → Local Sync.",
     "versionLine": "Version {{version}}"
   },
   "about": {
@@ -59,7 +63,7 @@
       "citations": "Citation style",
       "annotation": "Annotations",
       "backups": "Backups",
-      "sync": "Sync",
+      "sync": "Local Sync",
       "export": "Export / import",
       "data": "Your data",
       "account": "Account",
@@ -338,6 +342,16 @@
         "signInHint": "Set up your passphrase first — sync can't start until your writing can be encrypted.",
         "signInBlocked": "There's unencrypted writing on this device. Set up your passphrase first so it's encrypted before it syncs.",
         "signInFailed": "Couldn't sign in. Please try again.",
+        "ack": {
+          "title": "Before you sign in",
+          "description": "Cloud sync here demonstrates sync functionality only.",
+          "noServer": "This app has no server of its own — it is a local-first, client-side app and your writing lives on this device. Sync is provided for evaluation through Dexie Cloud.",
+          "evaluation": "Signing in automatically creates an evaluation account if you don't already have one. Evaluation accounts are valid for 3 days only — after that, the account and any synced data may be lost.",
+          "confirmLabel": "I understand this is a temporary evaluation account and synced data may be lost after 3 days",
+          "backupLabel": "I have enabled local device sync and/or backup (optional)",
+          "continue": "Continue",
+          "cancel": "Cancel"
+        },
         "keyless": {
           "checkingTitle": "Fetching your account…",
           "checkingBody": "Checking whether your account already has an encryption key. This only takes a moment.",
@@ -503,7 +517,7 @@
       "latestValue": "12 min ago · 1,190 words"
     },
     "sync": {
-      "title": "Sync",
+      "title": "Local Sync",
       "subtitle": "Push your spaces to a folder you choose. Point it at a Google Drive, Dropbox, or iCloud folder to sync across devices.",
       "unsupportedTitle": "Not available in this browser",
       "unsupportedBody": "Folder sync needs the File System Access API, available in Chrome, Edge, and other Chromium browsers on desktop. Switch to a supported browser to use it.",
@@ -696,7 +710,7 @@
       "sync": {
         "title": "Sync",
         "subtitle": "Push this space to the connected folder, manually or on a schedule. Sync is separate from Backups.",
-        "folderHint": "Connect a folder in Universal settings → Sync. The same folder is used for every space.",
+        "folderHint": "Connect a folder in Universal settings → Local Sync. The same folder is used for every space.",
         "intervalHint": "How often this space syncs automatically. Choose Default to follow the universal auto-sync setting.",
         "syncNow": "Sync this space"
       },

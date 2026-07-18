@@ -109,11 +109,24 @@ describe('useCloudPanelState', () => {
     expect(signOutOfCloud).toHaveBeenCalledTimes(1);
   });
 
-  it('signs in without an error when the facade resolves', async () => {
+  it('opens the acknowledgement dialog on sign-in instead of calling the facade', () => {
     const { result } = renderHook(() => useCloudPanelState());
     act(() => {
       result.current.onSignIn();
     });
+    expect(result.current.dialog).toBe('signInAck');
+    expect(signInToCloud).not.toHaveBeenCalled();
+  });
+
+  it('signs in through the facade once the acknowledgement is confirmed', async () => {
+    const { result } = renderHook(() => useCloudPanelState());
+    act(() => {
+      result.current.onSignIn();
+    });
+    act(() => {
+      result.current.onSignInConfirmed();
+    });
+    expect(result.current.dialog).toBe('none');
     await waitFor(() => {
       expect(signInToCloud).toHaveBeenCalledTimes(1);
     });
@@ -124,7 +137,7 @@ describe('useCloudPanelState', () => {
     signInToCloud.mockRejectedValue(new KeylessSignInBlockedError());
     const { result } = renderHook(() => useCloudPanelState());
     act(() => {
-      result.current.onSignIn();
+      result.current.onSignInConfirmed();
     });
     await waitFor(() => {
       expect(result.current.signInError).toMatch(/unencrypted writing/i);
@@ -135,7 +148,7 @@ describe('useCloudPanelState', () => {
     signInToCloud.mockRejectedValue(new Error('network'));
     const { result } = renderHook(() => useCloudPanelState());
     act(() => {
-      result.current.onSignIn();
+      result.current.onSignInConfirmed();
     });
     await waitFor(() => {
       expect(result.current.signInError).toMatch(/Couldn't sign in/i);
@@ -146,18 +159,16 @@ describe('useCloudPanelState', () => {
     signInToCloud.mockRejectedValueOnce(new Error('network'));
     const { result } = renderHook(() => useCloudPanelState());
     act(() => {
-      result.current.onSignIn();
+      result.current.onSignInConfirmed();
     });
     await waitFor(() => {
       expect(result.current.signInError).not.toBeNull();
     });
 
-    signInToCloud.mockResolvedValue(undefined);
     act(() => {
       result.current.onSignIn();
     });
-    await waitFor(() => {
-      expect(result.current.signInError).toBeNull();
-    });
+    expect(result.current.signInError).toBeNull();
+    expect(result.current.dialog).toBe('signInAck');
   });
 });
