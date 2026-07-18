@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import type { SyncCoordinator } from '@/lib/syncProviders/coordinator';
 import { startWriterSync } from '@/lib/writerSync/startWriterSync';
 import { applyDevBootParams } from '@/lib/boot/devBootParams';
 import { resetAndReseed } from '@/db/seed';
@@ -18,7 +19,7 @@ const toError = (e: unknown): Error =>
  * `resetLocalData` escape hatch for the boot error screen. The sync session is
  * torn down on unmount.
  */
-export const useAppBoot = (): AppBootState => {
+export const useAppBoot = (coordinator?: SyncCoordinator): AppBootState => {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -26,7 +27,7 @@ export const useAppBoot = (): AppBootState => {
     let cancelled = false;
     let stopSession: (() => void) | null = null;
     const run = async () => {
-      stopSession = await startWriterSync();
+      stopSession = await startWriterSync(coordinator);
       await applyDevBootParams();
     };
     run()
@@ -40,7 +41,8 @@ export const useAppBoot = (): AppBootState => {
       cancelled = true;
       stopSession?.();
     };
-  }, []);
+    // Boot runs once: the caller holds the coordinator identity stable.
+  }, [coordinator]);
 
   const resetLocalData = useCallback(() => {
     setReady(false);

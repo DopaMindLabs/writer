@@ -1,9 +1,13 @@
 import { vi, afterEach, beforeEach } from 'vitest';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import type { CloudObservable } from '@/lib/cloud/cloudObservable';
-import type { EscrowPresence, SyncState } from '@/lib/cloud/cloudClient';
+import type { SyncState } from '@/lib/cloud/cloudClient';
 import { reconcileStatus, type ReconcileStatus } from '@/lib/cloud/reconcileStatus';
 import type { CloudPanelState } from './useCloudPanelState';
+import { createSyncCoordinator } from '@/lib/syncProviders/coordinator';
+import type { SyncProvider } from '@/lib/syncProviders/types';
+import { KeyEscrowPresence } from '@/lib/syncProviders/types';
+import { WriterSyncProvider } from '@/lib/writerSync/WriterSyncProvider';
 import { CloudSectionPanel } from './CloudSectionPanel';
 
 const constant = <T,>(value: T): CloudObservable<T> => ({
@@ -17,7 +21,7 @@ const constant = <T,>(value: T): CloudObservable<T> => ({
 const state = {
   signedIn: false,
   hasKey: false,
-  presence: 'unknown' as EscrowPresence,
+  presence: KeyEscrowPresence.Unknown,
   phase: 'in-sync' as SyncState['phase'],
   deviceLimitBlocked: false,
 };
@@ -29,7 +33,6 @@ vi.mock('@/lib/cloud/cloudClient', async (importOriginal) => {
     cloudUserInteraction: () => constant(undefined),
     cloudSyncState: () => constant({ status: 'in-sync', phase: state.phase }),
     cloudCurrentUser: () => constant(state.signedIn ? { isLoggedIn: true } : undefined),
-    cloudEscrowPresence: () => constant(state.presence),
   };
 });
 
@@ -58,6 +61,24 @@ vi.mock('./useCloudPanelState', () => ({
   }),
 }));
 
+/** Escrow presence reaches the panel through the provider, not the facade. */
+const keyDeliveryProvider = (): SyncProvider => ({
+  id: 'test-cloud',
+  keyDelivery: {
+    setUp: () => Promise.resolve('code'),
+    unlock: () => Promise.resolve(),
+    recover: () => Promise.resolve(),
+    escrowPresence: constant(state.presence),
+  },
+});
+
+const renderPanel = () =>
+  renderWithProviders(
+    <WriterSyncProvider coordinator={createSyncCoordinator({ providers: [keyDeliveryProvider()] })}>
+      <CloudSectionPanel />
+    </WriterSyncProvider>,
+  );
+
 const failed: ReconcileStatus = {
   state: 'failed',
   error: 'boom',
@@ -78,7 +99,7 @@ describe('CloudSectionPanel status visibility', () => {
   beforeEach(() => {
     state.signedIn = false;
     state.hasKey = false;
-    state.presence = 'unknown';
+    state.presence = KeyEscrowPresence.Unknown;
     state.phase = 'in-sync';
     state.deviceLimitBlocked = false;
   });
@@ -92,7 +113,7 @@ describe('CloudSectionPanel status visibility', () => {
     state.hasKey = false;
     reconcileStatus.set(failed);
 
-    renderWithProviders(<CloudSectionPanel />);
+    renderPanel();
 
     expect(screen.getByTestId('cloud-sync-status')).toBeInTheDocument();
     expect(screen.getByTestId('cloud-reconcile-error')).toBeInTheDocument();
@@ -103,7 +124,7 @@ describe('CloudSectionPanel status visibility', () => {
     state.hasKey = false;
     reconcileStatus.set(failed);
 
-    renderWithProviders(<CloudSectionPanel />);
+    renderPanel();
 
     expect(screen.queryByTestId('cloud-sync-status')).toBeNull();
     expect(screen.queryByTestId('cloud-reconcile-error')).toBeNull();
@@ -113,7 +134,7 @@ describe('CloudSectionPanel status visibility', () => {
     state.signedIn = false;
     state.hasKey = true;
 
-    renderWithProviders(<CloudSectionPanel />);
+    renderPanel();
 
     expect(screen.getByTestId('cloud-sync-status')).toBeInTheDocument();
   });
@@ -121,10 +142,10 @@ describe('CloudSectionPanel status visibility', () => {
   it('replaces the keyless section with the hard block when the device limit is hit', () => {
     state.signedIn = true;
     state.hasKey = false;
-    state.presence = 'present';
+    state.presence = KeyEscrowPresence.Present;
     state.deviceLimitBlocked = true;
 
-    renderWithProviders(<CloudSectionPanel />);
+    renderPanel();
 
     expect(screen.getByTestId('cloud-device-limit')).toBeInTheDocument();
     // No key action reachable: the unlock/set-up banners never render.
@@ -136,9 +157,9 @@ describe('CloudSectionPanel status visibility', () => {
   it('leaves the keyless section untouched while a slot is free (non-regression)', () => {
     state.signedIn = true;
     state.hasKey = false;
-    state.presence = 'present';
+    state.presence = KeyEscrowPresence.Present;
 
-    renderWithProviders(<CloudSectionPanel />);
+    renderPanel();
 
     expect(screen.queryByTestId('cloud-device-limit')).toBeNull();
     expect(screen.getByTestId('cloud-keyless-locked')).toBeInTheDocument();

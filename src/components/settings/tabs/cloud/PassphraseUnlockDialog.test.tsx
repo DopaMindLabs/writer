@@ -4,6 +4,10 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { WrongPassphraseError } from '@/lib/cloud/crypto/keys';
 import { EscrowMissingError } from '@/lib/cloud/crypto/errors';
+import { createSyncCoordinator } from '@/lib/syncProviders/coordinator';
+import type { SyncProvider } from '@/lib/syncProviders/types';
+import { KeyEscrowPresence } from '@/lib/syncProviders/types';
+import { WriterSyncProvider } from '@/lib/writerSync/WriterSyncProvider';
 import { PassphraseUnlockDialog } from './PassphraseUnlockDialog';
 
 const noop = () => {};
@@ -113,5 +117,37 @@ describe('PassphraseUnlockDialog', () => {
     await userEvent.click(await screen.findByTestId('unlock-use-recovery'));
     expect(screen.getByTestId('unlock-submit')).toHaveTextContent(/Recover/i);
     expect(screen.getByTestId('unlock-input')).toHaveAccessibleName(/Recovery code/i);
+  });
+
+  it('unlocks through the provider when nothing is injected', async () => {
+    const unlock = vi.fn().mockResolvedValue(undefined);
+    const provider: SyncProvider = {
+      id: 'test-cloud',
+      keyDelivery: {
+        setUp: () => Promise.resolve('code'),
+        unlock,
+        recover: () => Promise.resolve(),
+        escrowPresence: {
+          subscribe: (next) => {
+            next(KeyEscrowPresence.Present);
+            return { unsubscribe: () => undefined };
+          },
+        },
+      },
+    };
+    const onUnlocked = vi.fn();
+    renderWithProviders(
+      <WriterSyncProvider coordinator={createSyncCoordinator({ providers: [provider] })}>
+        <PassphraseUnlockDialog open onOpenChange={noop} onUnlocked={onUnlocked} />
+      </WriterSyncProvider>,
+    );
+
+    await userEvent.type(await screen.findByTestId('unlock-input'), 'correct horse');
+    await userEvent.click(screen.getByTestId('unlock-submit'));
+
+    await waitFor(() => {
+      expect(unlock).toHaveBeenCalledWith('correct horse');
+    });
+    expect(onUnlocked).toHaveBeenCalled();
   });
 });

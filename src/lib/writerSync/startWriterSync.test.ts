@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { createSyncCoordinator } from '@/lib/syncProviders/coordinator';
 import type { SyncProvider } from '@/lib/syncProviders/types';
 import { startWriterSync } from './startWriterSync';
 
@@ -35,21 +36,23 @@ const realtimeOnlyProvider = (id: string): SyncProvider => ({
   },
 });
 
+const coordinatorOf = (...providers: SyncProvider[]) => createSyncCoordinator({ providers });
+
 describe('startWriterSync', () => {
-  it('starts Dexie Cloud by default', async () => {
+  it('starts Dexie Cloud when no coordinator is supplied', async () => {
     const stop = await startWriterSync();
 
     expect(startCloudSession).toHaveBeenCalledOnce();
     stop();
   });
 
-  it('starts every configured provider that offers durable sync', async () => {
+  it('starts every provider that offers durable sync', async () => {
     const first = vi.fn().mockResolvedValue(() => undefined);
     const second = vi.fn().mockResolvedValue(() => undefined);
 
-    await startWriterSync({
-      providers: [frameSyncProvider('a', first), frameSyncProvider('b', second)],
-    });
+    await startWriterSync(
+      coordinatorOf(frameSyncProvider('a', first), frameSyncProvider('b', second)),
+    );
 
     expect(first).toHaveBeenCalledOnce();
     expect(second).toHaveBeenCalledOnce();
@@ -58,9 +61,9 @@ describe('startWriterSync', () => {
   it('leaves a realtime-only provider alone — it is per-document, not per-session', async () => {
     const start = vi.fn().mockResolvedValue(() => undefined);
 
-    const stop = await startWriterSync({
-      providers: [realtimeOnlyProvider('webrtc'), frameSyncProvider('cloud', start)],
-    });
+    const stop = await startWriterSync(
+      coordinatorOf(realtimeOnlyProvider('webrtc'), frameSyncProvider('cloud', start)),
+    );
     stop();
 
     expect(start).toHaveBeenCalledOnce();
@@ -70,12 +73,12 @@ describe('startWriterSync', () => {
     const stopFirst = vi.fn();
     const stopSecond = vi.fn();
 
-    const stop = await startWriterSync({
-      providers: [
+    const stop = await startWriterSync(
+      coordinatorOf(
         frameSyncProvider('a', () => Promise.resolve(stopFirst)),
         frameSyncProvider('b', () => Promise.resolve(stopSecond)),
-      ],
-    });
+      ),
+    );
     stop();
 
     expect(stopFirst).toHaveBeenCalledOnce();
@@ -86,12 +89,12 @@ describe('startWriterSync', () => {
     const failure = new Error('cloud unreachable');
 
     await expect(
-      startWriterSync({ providers: [frameSyncProvider('a', () => Promise.reject(failure))] }),
+      startWriterSync(coordinatorOf(frameSyncProvider('a', () => Promise.reject(failure)))),
     ).rejects.toThrow(failure);
   });
 
   it('starts nothing when no provider offers durable sync', async () => {
-    const stop = await startWriterSync({ providers: [realtimeOnlyProvider('webrtc')] });
+    const stop = await startWriterSync(coordinatorOf(realtimeOnlyProvider('webrtc')));
 
     expect(() => stop()).not.toThrow();
   });

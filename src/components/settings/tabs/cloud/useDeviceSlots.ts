@@ -4,13 +4,13 @@ import { db } from '@/db/db';
 import {
   isAccountPullComplete,
   cloudClientIdentity,
-  type EscrowPresence,
 } from '@/lib/cloud/cloudClient';
 import {
   DEVICE_LIMIT,
   liveDevices,
   type DeviceRecord,
 } from '@/lib/cloud/devicePolicy';
+import type { KeyEscrowPresence } from '@/lib/syncProviders/types';
 import { deviceLimitState } from '@/lib/cloud/deviceLimit';
 
 /** What the registry read needs to decide the blocked state. */
@@ -36,7 +36,7 @@ interface DeviceSlots {
  */
 export const useDeviceLimitBlocked = (
   keylessSignedIn: boolean,
-  presence: EscrowPresence,
+  presence: KeyEscrowPresence,
 ): boolean => {
   const forced = useSyncExternalStore(
     deviceLimitState.subscribe,
