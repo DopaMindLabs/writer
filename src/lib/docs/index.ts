@@ -1,4 +1,5 @@
 export {
+  acceptPulledDocBody,
   createDoc,
   createDocs,
   ensureDocCrdtSeeded,
@@ -11,5 +12,11 @@ export {
   updateDocMeta,
   type CreateDocInput,
 } from './docRepository';
+export {
+  docBodyBaselineKey,
+  readDocBodyBaseline,
+  writeDocBodyBaseline,
+  deleteDocBodyBaseline,
+} from './docBodyBaseline';
 export { EMPTY_LEXICAL_JSON } from './emptyBody';
 export { deleteDocCascade } from './deleteDocCascade';

@@ -4,7 +4,13 @@ import type { SyncState, UserLogin } from 'dexie-cloud-addon';
 import { collabStore } from '@/lib/collab/collabStore';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { getEditorHandle, mountedDocIds } from '@/lib/collab/editorRegistry';
-import { seedDocCrdt, updateDocBody } from '@/lib/docs';
+import {
+  seedDocCrdt,
+  updateDocBody,
+  acceptPulledDocBody,
+  readDocBodyBaseline,
+} from '@/lib/docs';
+import { invariant } from '@/lib/invariant';
 import { createRevision } from '@/lib/revisions';
 import { NO_FLUSH, type FlushResult } from '@/lib/collab/flush.types';
 import { cloudSyncState, cloudSyncComplete, cloudCurrentUser } from './cloudClient';
@@ -46,16 +52,22 @@ const reseedFromBody = async (docId: string, body: string): Promise<void> => {
   await seedDocCrdt(docId, body);
 };
 
-/** Bring the pulled body in, through the live editor if mounted, else the log. */
+/**
+ * Bring the pulled body in, through the live editor if mounted, else the log,
+ * then record it as the local body baseline — only after the CRDT write succeeds,
+ * so a failed restore leaves the doc to retry rather than recording a false accept.
+ */
 const applyPulledBody = async (doc: Reconcilable): Promise<ReconcileResult> => {
   const handle = getEditorHandle(doc.id);
   if (handle) {
     // Await the restore so a failed CRDT write throws here (and the doc is left
     // to retry on the next sweep) rather than being recorded as a success.
     await handle.restoreBody(doc.body);
+    await acceptPulledDocBody(doc.id, doc.body);
     return { docId: doc.id, action: 'restored' };
   }
   await reseedFromBody(doc.id, doc.body);
+  await acceptPulledDocBody(doc.id, doc.body);
   return { docId: doc.id, action: 'reseeded' };
 };
 
@@ -278,32 +290,29 @@ export const reconcilePulledDocs = async (): Promise<ReconcileResult[]> =>
  * therefore equals the autosave baseline captured at mount, closing the window
  * where a stale CRDT is mistaken for unsaved edits.
  *
- * It cannot reuse {@link reconcileDoc}'s rule for deciding a winner. That rule asks
- * the *mounted* editor to flush its pending keystrokes, and at mount there is by
- * definition no editor yet — this gate is what mounts it. The flush therefore
- * always reports "nothing unsaved", every divergence reads as a remote pull, and
- * the body silently overwrites the CRDT. For a body merely lagging its CRDT (the
- * autosave debounce had not fired when the page was closed) that destroys the
- * user's most recent keystrokes on the next reload.
+ * The winner is decided by local body provenance, not wall clocks (which clock
+ * skew between devices could invert). {@link readDocBodyBaseline} holds the exact
+ * `docs.body` this device last wrote; Dexie Cloud changes `docs.body` directly and
+ * never touches it:
  *
- * Before the editor mounts, the honest question is which side was written last, and
- * the timestamps to answer it already exist:
- *
- * - **CRDT newer than the row** — unsaved local keystrokes. The CRDT wins; the body
- *   is brought up to date so the two agree.
- * - **Row newer** — a body written elsewhere and pulled in while the doc was closed.
- *   The body wins; the losing CRDT is kept as a recoverable revision first.
+ * - **row equals the baseline** — the row is unchanged since our last local write,
+ *   so the divergent CRDT holds unsaved keystrokes. The CRDT wins; the body is
+ *   brought up to date.
+ * - **row differs from the baseline** — the body was written elsewhere and pulled
+ *   in. The body wins; the losing CRDT is kept as a recoverable revision first.
  *
  * Idempotent: a doc whose CRDT already equals its body is left untouched.
  */
 export const reconcileDocForMount = async (
   docId: string,
   body: string,
-  updatedAt = 0,
 ): Promise<void> => {
   const updates = await collabStore.loadAll(docId);
   const localSnapshot = serializeDocSnapshot(docId, updates);
-  if (localSnapshot === body) return;
+  if (localSnapshot === body) {
+    await acceptPulledDocBody(docId, body);
+    return;
+  }
 
   // No CRDT lineage (a cloud sign-out clears the local-only log) but the row still
   // has a body: there is nothing local to preserve, so heal straight from it.
@@ -312,10 +321,14 @@ export const reconcileDocForMount = async (
     return;
   }
 
-  const crdtWrittenAt = (await collabStore.lastUpdateAt(docId)) ?? 0;
-  if (crdtWrittenAt > updatedAt) {
-    // Unsaved keystrokes. Persist them rather than discarding them; the row was
-    // simply behind the debounce when the page went away.
+  const baseline = await readDocBodyBaseline(docId);
+  invariant(
+    baseline !== null,
+    `reconcileDocForMount: no body baseline for divergent doc ${docId}`,
+  );
+  if (baseline === body) {
+    // Unsaved keystrokes: the row still equals what we last wrote, so persist the
+    // CRDT snapshot rather than discarding it.
     await updateDocBody(docId, localSnapshot);
     return;
   }
