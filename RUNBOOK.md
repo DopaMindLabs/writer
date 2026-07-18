@@ -27,6 +27,11 @@ code in-repo: core contracts under `src/lib/syncProviders/`, the Dexie Cloud ada
 cloud subsystem. Package extraction is a later, separate piece of work (see Questions).
 
 Guardrails:
+- **Pre-release: no users, no backward compatibility** (user, 2026-07-18). Never write a
+  migration, backfill, dual-read fallback, or legacy branch to preserve existing data or
+  older formats — there is none to preserve. `realmId` is optional because an unshared space
+  genuinely has no realm, not for compatibility. This does not relax the two server-side
+  blockers, which are about what a second member can do, not about old data.
 - Do not touch `src/lib/sync/` — that is the folder-export feature (File System Access API),
   unrelated to cloud sync or collaboration. Do not conflate the new abstraction with it or
   with `src/lib/collab/` (same-browser multi-tab CRDT).
