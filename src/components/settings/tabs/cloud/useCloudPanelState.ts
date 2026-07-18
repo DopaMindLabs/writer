@@ -21,6 +21,7 @@ export interface CloudPanelState {
   onKeyAcquired: () => void;
   signInError: string | null;
   onSignIn: () => void;
+  onSignInConfirmed: () => void;
   onSignOut: () => void;
   onForget: () => void;
 }
@@ -28,6 +29,7 @@ export interface CloudPanelState {
 /**
  * Local state and action handlers for {@link CloudSectionPanel}: the open dialog,
  * the recovery code being shown, whether a device key exists, and sign-in — which
+ * first opens the evaluation-account acknowledgement and, once confirmed,
  * surfaces the "set up first" guard (a device with unencrypted writing may not
  * sign in) as a resolved error string. Keeps the panel component a thin render.
  */
@@ -61,6 +63,10 @@ export const useCloudPanelState = (): CloudPanelState => {
   };
   const onSignIn = () => {
     setSignInError(null);
+    setDialog('signInAck');
+  };
+  const onSignInConfirmed = () => {
+    setDialog('none');
     void signInToCloud().catch((error: unknown) => {
       setSignInError(
         k(error instanceof KeylessSignInBlockedError ? 'signInBlocked' : 'signInFailed'),
@@ -80,6 +86,7 @@ export const useCloudPanelState = (): CloudPanelState => {
     onKeyAcquired,
     signInError,
     onSignIn,
+    onSignInConfirmed,
     onSignOut,
     onForget,
   };

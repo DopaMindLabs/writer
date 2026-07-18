@@ -5,6 +5,13 @@ const PASSPHRASE = 'a-strong-passphrase';
 // Colour-contrast is asserted only in the high-contrast themes across the suite.
 const STRUCTURE_ONLY = { disableRules: ['color-contrast'] };
 
+/** Tick the evaluation-account acknowledgement so sign-in can proceed. */
+const acknowledgeSignIn = async (page: import('@playwright/test').Page) => {
+  await expect(page.getByTestId('cloud-signin-ack-dialog')).toBeVisible();
+  await page.getByTestId('cloud-signin-ack-checkbox').click();
+  await page.getByTestId('cloud-signin-ack-continue').click();
+};
+
 /** Set up encryption so sign-in becomes available (passphrase before sign-in). */
 const setUpEncryption = async (page: import('@playwright/test').Page) => {
   await page.getByTestId('cloud-setup').click();
@@ -55,14 +62,17 @@ test.describe('cloud sync beta gating', () => {
     // keyless device — the exact "unencrypted writing" the guard turns back.
     await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=account');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
-    // The device is turned back with a "set up first" notice.
+    // The device is turned back with a "set up first" notice (after the
+    // evaluation acknowledgement, which always precedes sign-in).
     await page.getByTestId('cloud-sign-in').click();
+    await acknowledgeSignIn(page);
     await expect(page.getByTestId('cloud-sign-in-error')).toContainText(
       /unencrypted writing/i,
     );
     // Once a passphrase seals that writing, sign-in proceeds to the login step.
     await setUpEncryption(page);
     await page.getByTestId('cloud-sign-in').click();
+    await acknowledgeSignIn(page);
     await expect(page.getByTestId('cloud-login-dialog')).toBeVisible();
   });
 
@@ -78,11 +88,35 @@ test.describe('cloud sync beta gating', () => {
     await expect(page.getByTestId('unlock-error')).toContainText(/sign in first/i);
   });
 
+  test('sign-in requires the evaluation acknowledgement to be ticked', async ({
+    page,
+  }) => {
+    await reseedAndGoHome(page);
+    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await page.getByTestId('cloud-sign-in').click();
+    const dialog = page.getByTestId('cloud-signin-ack-dialog');
+    await expect(dialog).toBeVisible();
+    // The demo/evaluation terms are stated and must be acknowledged.
+    await expect(dialog).toContainText(/no server of its own/i);
+    await expect(dialog).toContainText(/valid for 3 days/i);
+    await expect(page.getByTestId('cloud-signin-ack-continue')).toBeDisabled();
+    await page.getByTestId('cloud-signin-ack-checkbox').click();
+    await expect(page.getByTestId('cloud-signin-ack-continue')).toBeEnabled();
+    // Cancel backs out without signing in — no login step appears.
+    await page.getByTestId('cloud-signin-ack-cancel').click();
+    await expect(dialog).toHaveCount(0);
+    await expect(page.getByTestId('cloud-login-dialog')).toHaveCount(0);
+    // Reopening starts unticked: every sign-in re-acknowledges.
+    await page.getByTestId('cloud-sign-in').click();
+    await expect(page.getByTestId('cloud-signin-ack-continue')).toBeDisabled();
+  });
+
   test('sign-in opens the email step and cancel dismisses it', async ({ page }) => {
     await reseedAndGoHome(page);
     await page.goto('/?cloud-sync=on#/settings?tab=account');
     await setUpEncryption(page);
     await page.getByTestId('cloud-sign-in').click();
+    await acknowledgeSignIn(page);
     await expect(page.getByTestId('cloud-login-dialog')).toBeVisible();
     await expect(page.getByTestId('cloud-login-input')).toBeVisible();
     await page.getByTestId('cloud-login-cancel').click();

@@ -12,6 +12,7 @@ const baseProps = (
   recoveryCode: null,
   setRecoveryCode: vi.fn(),
   onKeyAcquired: vi.fn(),
+  onSignInConfirmed: vi.fn(),
   interaction: null,
   ...overrides,
 });
@@ -46,6 +47,25 @@ describe('CloudSectionDialogs', () => {
     const setDialog = vi.fn();
     renderWithProviders(<CloudSectionDialogs {...baseProps({ dialog: 'unlock', setDialog })} />);
     await screen.findByTestId('passphrase-unlock-dialog');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => {
+      expect(setDialog).toHaveBeenCalledWith('none');
+    });
+  });
+
+  it('opens the sign-in acknowledgement when dialog is "signInAck"', async () => {
+    renderWithProviders(
+      <CloudSectionDialogs {...baseProps({ dialog: 'signInAck' })} />,
+    );
+    expect(await screen.findByTestId('cloud-signin-ack-dialog')).toBeInTheDocument();
+  });
+
+  it('routes an acknowledgement close back through setDialog as "none"', async () => {
+    const setDialog = vi.fn();
+    renderWithProviders(
+      <CloudSectionDialogs {...baseProps({ dialog: 'signInAck', setDialog })} />,
+    );
+    await screen.findByTestId('cloud-signin-ack-dialog');
     await userEvent.keyboard('{Escape}');
     await waitFor(() => {
       expect(setDialog).toHaveBeenCalledWith('none');

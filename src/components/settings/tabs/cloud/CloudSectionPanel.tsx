@@ -86,6 +86,7 @@ export const CloudSectionPanel = () => {
         recoveryCode={panel.recoveryCode}
         setRecoveryCode={panel.setRecoveryCode}
         onKeyAcquired={keylessSignedIn ? reloadPage : panel.onKeyAcquired}
+        onSignInConfirmed={panel.onSignInConfirmed}
         interaction={interaction ?? null}
       />
     </section>
