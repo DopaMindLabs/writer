@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from '@/components/libs/icons';
 import { Link } from '@/components/ui/Link';
 import { PRIMARY_NAV, routes } from '@/lib/routes';
+import { cn } from '@/lib/utils';
 
 interface PageNavProps {
   showBack?: boolean;
@@ -17,8 +18,10 @@ const activeLinkClasses = 'text-ink';
 export const PageNav = ({ showBack = true, backTo, actions }: PageNavProps) => {
   const { t } = useTranslation('common');
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-rule px-4 py-4 md:px-12 md:py-5">
-      <div className="flex min-w-[60px] items-center">
+    <header className="flex flex-wrap items-center justify-between gap-4 border-b border-rule px-4 py-4 md:px-12 md:py-5">
+      {/* The spacer keeps the nav right-aligned; it reserves width only when a
+          back link can occupy it, so narrow viewports keep the full width. */}
+      <div className={cn('flex items-center', showBack && 'min-w-[60px]')}>
         {showBack ? (
           <Link
             data-testid="page-nav-back"
@@ -30,7 +33,7 @@ export const PageNav = ({ showBack = true, backTo, actions }: PageNavProps) => {
           </Link>
         ) : null}
       </div>
-      <div className="flex items-center gap-3 md:gap-5">
+      <div className="flex flex-wrap items-center justify-end gap-3 md:gap-5">
         <nav
           data-testid="page-nav"
           aria-label="Primary"

@@ -32,6 +32,21 @@ test('the home header offers sign-in (flag-gated) and leads to the account tab',
   await expect(page.getByTestId('cloud-section')).toBeVisible();
 });
 
+test('the header sign-in action stays within a narrow mobile viewport', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await reseedAndGoHome(page);
+  await page.goto('/?cloud-sync=on#/');
+  await expect(page.getByTestId('home-cloud-sign-in')).toBeVisible();
+  const overflow = await page.evaluate(
+    () =>
+      document.documentElement.scrollWidth -
+      document.documentElement.clientWidth,
+  );
+  expect(overflow).toBe(0);
+});
+
 test.describe('release notice banner', () => {
   // 3 August 2026, 22:00 CEST — mirrored from src/lib/releaseSchedule.ts.
   const RELEASE_AT = Date.UTC(2026, 7, 3, 20, 0, 0);
