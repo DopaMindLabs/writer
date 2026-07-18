@@ -1,119 +1,152 @@
-import { describe, it, expect } from 'vitest';
-import type { SyncProvider, AccessScopeId, SyncProviderId } from './types';
+import { describe, expect, it, vi } from 'vitest';
+import { InvariantError } from '@/lib/invariant';
+import type {
+  AccessControlAdapter,
+  SyncProvider,
+  SyncProviderBinding,
+} from './types';
 import { createSyncCoordinator } from './coordinator';
 
-const toAccessScopeId = (s: string): AccessScopeId => s as AccessScopeId;
+const accessControl = (
+  resolveBinding: AccessControlAdapter['resolveBinding'],
+): AccessControlAdapter => ({
+  createScope: () => Promise.resolve(),
+  dropScope: () => Promise.resolve(),
+  listMembers: () => Promise.resolve([]),
+  addMember: () => Promise.resolve(),
+  removeMember: () => Promise.resolve(),
+  setMemberRole: () => Promise.resolve(),
+  resolveBinding,
+});
 
-describe('SyncCoordinator', () => {
-  it('lists registered providers', () => {
-    const provider1: SyncProvider = { id: 'test-1' as SyncProviderId };
-    const provider2: SyncProvider = { id: 'test-2' as SyncProviderId };
-    const coordinator = createSyncCoordinator({ providers: [provider1, provider2] });
+const binding = (providerId: string): SyncProviderBinding => ({
+  scopeId: 'space-1',
+  providerId,
+  externalScopeId: `${providerId}-realm`,
+  enabled: true,
+});
 
-    expect(coordinator.listProviders()).toHaveLength(2);
-    expect(coordinator.listProviders().map((p) => p.id)).toContain('test-1');
-  });
+const frameSyncOnly = (id: string): SyncProvider => ({
+  id,
+  frameSync: {
+    start: () => Promise.resolve(() => undefined),
+    requestSync: () => Promise.resolve(),
+    status: { subscribe: () => ({ unsubscribe: () => undefined }) },
+    syncComplete: { subscribe: () => ({ unsubscribe: () => undefined }) },
+  },
+});
 
-  it('resolves provider by id', () => {
-    const provider: SyncProvider = { id: 'test-provider' as SyncProviderId };
-    const coordinator = createSyncCoordinator({ providers: [provider] });
-
-    const resolved = coordinator.resolveProvider('test-provider' as SyncProviderId);
-    expect(resolved).toBe(provider);
-  });
-
-  it('returns undefined for unknown provider id', () => {
-    const coordinator = createSyncCoordinator({ providers: [] });
-    const resolved = coordinator.resolveProvider('unknown' as SyncProviderId);
-    expect(resolved).toBeUndefined();
-  });
-
-  it('finds first provider with capability', () => {
-    const noFrameSync: SyncProvider = { id: 'no-frame' as SyncProviderId };
-    const withFrameSync: SyncProvider = {
-      id: 'with-frame' as SyncProviderId,
-      frameSync: {
-        start: () => Promise.resolve(() => {}),
-        stop: () => Promise.resolve(),
-        requestSync: () => Promise.resolve(),
-        syncState: () => ({ phase: 'synced' }),
-        onSyncComplete: () => () => {},
-      },
-    };
-    const coordinator = createSyncCoordinator({ providers: [noFrameSync, withFrameSync] });
-
-    const found = coordinator.findProviderWithCapability('frameSync');
-    expect(found?.id).toBe('with-frame');
-  });
-
-  it('returns undefined when no provider has capability', () => {
-    const provider: SyncProvider = { id: 'test' as SyncProviderId };
-    const coordinator = createSyncCoordinator({ providers: [provider] });
-
-    const found = coordinator.findProviderWithCapability('frameSync');
-    expect(found).toBeUndefined();
-  });
-
-  it('rejects duplicate provider ids via invariant', () => {
-    const provider1: SyncProvider = { id: 'duplicate' as SyncProviderId };
-    const provider2: SyncProvider = { id: 'duplicate' as SyncProviderId };
-
-    expect(() => {
-      createSyncCoordinator({ providers: [provider1, provider2] });
-    }).toThrow();
-  });
-
-  it('resolves binding from first provider with accessControl', async () => {
-    const noAccessControl: SyncProvider = { id: 'no-ac' as SyncProviderId };
-    const withAccessControl: SyncProvider = {
-      id: 'with-ac' as SyncProviderId,
-      accessControl: {
-        createScope: () => Promise.resolve(),
-        dropScope: () => Promise.resolve(),
-        addMember: () => Promise.resolve(),
-        removeMember: () => Promise.resolve(),
-        setMemberRole: () => Promise.resolve(),
-        listMembers: () => Promise.resolve([]),
-        resolveBinding: () =>
-          Promise.resolve({
-            scopeId: toAccessScopeId('space-1'),
-            providerId: 'with-ac' as SyncProviderId,
-            enabled: true,
-          }),
-      },
-    };
+describe('createSyncCoordinator', () => {
+  it('registers providers in order', () => {
     const coordinator = createSyncCoordinator({
-      providers: [noAccessControl, withAccessControl],
+      providers: [frameSyncOnly('a'), frameSyncOnly('b')],
     });
 
-    const binding = await coordinator.resolveBinding(toAccessScopeId('space-1'));
-    expect(binding?.providerId).toBe('with-ac');
+    expect(coordinator.providers().map((provider) => provider.id)).toEqual(['a', 'b']);
   });
 
-  it('returns undefined for scope with no binding', async () => {
-    const provider: SyncProvider = {
-      id: 'test' as SyncProviderId,
-      accessControl: {
-        createScope: () => Promise.resolve(),
-        dropScope: () => Promise.resolve(),
-        addMember: () => Promise.resolve(),
-        removeMember: () => Promise.resolve(),
-        setMemberRole: () => Promise.resolve(),
-        listMembers: () => Promise.resolve([]),
-        resolveBinding: () => Promise.resolve(undefined),
-      },
-    };
-    const coordinator = createSyncCoordinator({ providers: [provider] });
+  it('resolves a provider by id, and nothing for an unknown id', () => {
+    const dexie = frameSyncOnly('dexie-cloud');
+    const coordinator = createSyncCoordinator({ providers: [dexie] });
 
-    const binding = await coordinator.resolveBinding(toAccessScopeId('space-1'));
-    expect(binding).toBeUndefined();
+    expect(coordinator.provider('dexie-cloud')).toBe(dexie);
+    expect(coordinator.provider('webrtc')).toBeUndefined();
   });
 
-  it('handles empty provider list', () => {
+  it('rejects duplicate provider ids', () => {
+    expect(() =>
+      createSyncCoordinator({ providers: [frameSyncOnly('dupe'), frameSyncOnly('dupe')] }),
+    ).toThrow(InvariantError);
+  });
+
+  it('ignores later mutation of the caller’s provider array', () => {
+    const providers = [frameSyncOnly('a')];
+    const coordinator = createSyncCoordinator({ providers });
+
+    providers.push(frameSyncOnly('b'));
+
+    expect(coordinator.providers().map((provider) => provider.id)).toEqual(['a']);
+    expect(coordinator.provider('b')).toBeUndefined();
+  });
+
+  it('does not expose its registry for mutation', () => {
+    const coordinator = createSyncCoordinator({ providers: [frameSyncOnly('a')] });
+
+    coordinator.providers().push(frameSyncOnly('b'));
+
+    expect(coordinator.providers()).toHaveLength(1);
+  });
+
+  it('lists every provider offering a capability', () => {
+    const coordinator = createSyncCoordinator({
+      providers: [
+        frameSyncOnly('a'),
+        { id: 'b', accessControl: accessControl(() => Promise.resolve(undefined)) },
+        frameSyncOnly('c'),
+      ],
+    });
+
+    expect(coordinator.providersWith('frameSync').map((provider) => provider.id)).toEqual([
+      'a',
+      'c',
+    ]);
+    expect(coordinator.providersWith('accessControl').map((provider) => provider.id)).toEqual([
+      'b',
+    ]);
+    expect(coordinator.providersWith('realtime')).toEqual([]);
+  });
+
+  it('resolves a binding from the first access-control provider that claims the scope', async () => {
+    const first = vi.fn(() => Promise.resolve(undefined));
+    const second = vi.fn(() => Promise.resolve(binding('second')));
+    const coordinator = createSyncCoordinator({
+      providers: [
+        frameSyncOnly('no-access-control'),
+        { id: 'first', accessControl: accessControl(first) },
+        { id: 'second', accessControl: accessControl(second) },
+      ],
+    });
+
+    const resolved = await coordinator.resolveBinding('space-1');
+
+    expect(resolved?.providerId).toBe('second');
+    expect(first).toHaveBeenCalledWith('space-1');
+  });
+
+  it('stops at the first claiming provider', async () => {
+    const later = vi.fn(() => Promise.resolve(binding('later')));
+    const coordinator = createSyncCoordinator({
+      providers: [
+        { id: 'first', accessControl: accessControl(() => Promise.resolve(binding('first'))) },
+        { id: 'later', accessControl: accessControl(later) },
+      ],
+    });
+
+    const resolved = await coordinator.resolveBinding('space-1');
+
+    expect(resolved?.providerId).toBe('first');
+    expect(later).not.toHaveBeenCalled();
+  });
+
+  it('resolves nothing for a scope no provider claims', async () => {
+    const coordinator = createSyncCoordinator({
+      providers: [{ id: 'a', accessControl: accessControl(() => Promise.resolve(undefined)) }],
+    });
+
+    await expect(coordinator.resolveBinding('space-1')).resolves.toBeUndefined();
+  });
+
+  it('resolves nothing when no provider does access control at all', async () => {
+    const coordinator = createSyncCoordinator({ providers: [frameSyncOnly('a')] });
+
+    await expect(coordinator.resolveBinding('space-1')).resolves.toBeUndefined();
+  });
+
+  it('supports an empty provider list', () => {
     const coordinator = createSyncCoordinator({ providers: [] });
 
-    expect(coordinator.listProviders()).toHaveLength(0);
-    expect(coordinator.resolveProvider('any' as SyncProviderId)).toBeUndefined();
-    expect(coordinator.findProviderWithCapability('frameSync')).toBeUndefined();
+    expect(coordinator.providers()).toEqual([]);
+    expect(coordinator.provider('anything')).toBeUndefined();
+    expect(coordinator.providersWith('frameSync')).toEqual([]);
   });
 });

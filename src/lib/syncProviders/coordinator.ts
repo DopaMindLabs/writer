@@ -1,54 +1,64 @@
 import { invariant } from '@/lib/invariant';
 import type {
-  SyncProvider,
-  SyncProviderId,
-  SyncProviderBinding,
-  WriterSyncOptions,
   AccessScopeId,
+  SyncCapability,
+  SyncProvider,
+  SyncProviderBinding,
+  SyncProviderId,
+  WriterSyncOptions,
 } from './types';
 import { hasCapability } from './types';
 
-type CapabilityName = 'frameSync' | 'realtime' | 'discovery' | 'accessControl' | 'keyDelivery';
-
+/**
+ * The single place the app composes its sync providers. It owns no transport of
+ * its own: it registers providers, answers "who can do X", and resolves which
+ * provider backs a given access scope.
+ */
 export interface SyncCoordinator {
-  listProviders: () => SyncProvider[];
-  resolveProvider: (id: SyncProviderId) => SyncProvider | undefined;
-  findProviderWithCapability: (cap: CapabilityName) => SyncProvider | undefined;
+  /** Every registered provider, in registration order. */
+  providers: () => SyncProvider[];
+  provider: (id: SyncProviderId) => SyncProvider | undefined;
+  /** Every provider offering `capability`, in registration order. */
+  providersWith: <C extends SyncCapability>(
+    capability: C,
+  ) => (SyncProvider & Required<Pick<SyncProvider, C>>)[];
+  /**
+   * The binding for `scopeId`, from the first access-control provider that
+   * claims it. `undefined` when no provider does — an unshared, private scope.
+   */
   resolveBinding: (scopeId: AccessScopeId) => Promise<SyncProviderBinding | undefined>;
 }
 
-export const createSyncCoordinator = (options: WriterSyncOptions): SyncCoordinator => {
-  const { providers } = options;
-
-  // Validate no duplicate ids
-  const ids = new Set<string>();
-  for (const provider of providers) {
-    invariant(
-      !ids.has(provider.id),
-      `Duplicate provider id: ${provider.id}`,
-    );
-    ids.add(provider.id);
+const assertUniqueIds = (providers: SyncProvider[]): void => {
+  const seen = new Set<SyncProviderId>();
+  for (const { id } of providers) {
+    invariant(!seen.has(id), `Duplicate sync provider id: ${id}`);
+    seen.add(id);
   }
+};
+
+export const createSyncCoordinator = (options: WriterSyncOptions): SyncCoordinator => {
+  // Copied once at construction: later mutation of the caller's array must not
+  // change what this coordinator resolves.
+  const registered = [...options.providers];
+  assertUniqueIds(registered);
+
+  const resolveBinding = async (
+    scopeId: AccessScopeId,
+  ): Promise<SyncProviderBinding | undefined> => {
+    for (const provider of registered) {
+      if (!hasCapability(provider, 'accessControl')) continue;
+      const binding = await provider.accessControl.resolveBinding(scopeId);
+      if (binding) return binding;
+    }
+    return undefined;
+  };
 
   return {
-    listProviders: () => providers,
-
-    resolveProvider: (id: SyncProviderId) =>
-      providers.find((p) => p.id === id),
-
-    findProviderWithCapability: (cap: CapabilityName) =>
-      providers.find((p) => hasCapability(p, cap)),
-
-    resolveBinding: async (scopeId: AccessScopeId) => {
-      for (const provider of providers) {
-        if (hasCapability(provider, 'accessControl') && provider.accessControl) {
-          const binding = await provider.accessControl.resolveBinding(scopeId);
-          if (binding) {
-            return binding;
-          }
-        }
-      }
-      return undefined;
-    },
+    providers: () => [...registered],
+    provider: (id) => registered.find((candidate) => candidate.id === id),
+    providersWith: (capability) =>
+      registered.filter((candidate) => hasCapability(candidate, capability)),
+    resolveBinding,
   };
 };
