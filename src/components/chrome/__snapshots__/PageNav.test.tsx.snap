@@ -37,54 +37,58 @@ exports[`PageNav > snapshot > should match the snapshot across all variants > de
         back
       </a>
     </div>
-    <nav
-      aria-label="Primary"
-      class="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wider md:gap-5"
-      data-testid="page-nav"
+    <div
+      class="flex items-center gap-3 md:gap-5"
     >
-      <a
-        aria-current="page"
-        class="hover:text-ink text-ink"
-        data-discover="true"
-        data-testid="page-nav-nav-home"
-        href="/"
+      <nav
+        aria-label="Primary"
+        class="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wider md:gap-5"
+        data-testid="page-nav"
       >
-        Home
-      </a>
-      <a
-        class="hover:text-ink text-ink-3"
-        data-discover="true"
-        data-testid="page-nav-nav-about"
-        href="/about"
-      >
-        About
-      </a>
-      <a
-        class="hover:text-ink text-ink-3"
-        data-discover="true"
-        data-testid="page-nav-nav-help"
-        href="/help"
-      >
-        Help
-      </a>
-      <a
-        class="hover:text-ink text-ink-3"
-        data-discover="true"
-        data-testid="page-nav-nav-settings"
-        href="/settings"
-      >
-        Settings
-      </a>
-      <a
-        class="hidden text-ink-3 hover:text-ink md:inline"
-        data-testid="page-nav-nav-github"
-        href="https://github.com/DopaMindLabs/Writer"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        GitHub
-      </a>
-    </nav>
+        <a
+          aria-current="page"
+          class="hover:text-ink text-ink"
+          data-discover="true"
+          data-testid="page-nav-nav-home"
+          href="/"
+        >
+          Home
+        </a>
+        <a
+          class="hover:text-ink text-ink-3"
+          data-discover="true"
+          data-testid="page-nav-nav-about"
+          href="/about"
+        >
+          About
+        </a>
+        <a
+          class="hover:text-ink text-ink-3"
+          data-discover="true"
+          data-testid="page-nav-nav-help"
+          href="/help"
+        >
+          Help
+        </a>
+        <a
+          class="hover:text-ink text-ink-3"
+          data-discover="true"
+          data-testid="page-nav-nav-settings"
+          href="/settings"
+        >
+          Settings
+        </a>
+        <a
+          class="hidden text-ink-3 hover:text-ink md:inline"
+          data-testid="page-nav-nav-github"
+          href="https://github.com/DopaMindLabs/Writer"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          GitHub
+        </a>
+      </nav>
+    </div>
   </header>
 </div>
 `;
@@ -97,54 +101,58 @@ exports[`PageNav > snapshot > should match the snapshot across all variants > no
     <div
       class="flex min-w-[60px] items-center"
     />
-    <nav
-      aria-label="Primary"
-      class="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wider md:gap-5"
-      data-testid="page-nav"
+    <div
+      class="flex items-center gap-3 md:gap-5"
     >
-      <a
-        class="hover:text-ink text-ink-3"
-        data-discover="true"
-        data-testid="page-nav-nav-home"
-        href="/"
+      <nav
+        aria-label="Primary"
+        class="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wider md:gap-5"
+        data-testid="page-nav"
       >
-        Home
-      </a>
-      <a
-        aria-current="page"
-        class="hover:text-ink text-ink"
-        data-discover="true"
-        data-testid="page-nav-nav-about"
-        href="/about"
-      >
-        About
-      </a>
-      <a
-        class="hover:text-ink text-ink-3"
-        data-discover="true"
-        data-testid="page-nav-nav-help"
-        href="/help"
-      >
-        Help
-      </a>
-      <a
-        class="hover:text-ink text-ink-3"
-        data-discover="true"
-        data-testid="page-nav-nav-settings"
-        href="/settings"
-      >
-        Settings
-      </a>
-      <a
-        class="hidden text-ink-3 hover:text-ink md:inline"
-        data-testid="page-nav-nav-github"
-        href="https://github.com/DopaMindLabs/Writer"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        GitHub
-      </a>
-    </nav>
+        <a
+          class="hover:text-ink text-ink-3"
+          data-discover="true"
+          data-testid="page-nav-nav-home"
+          href="/"
+        >
+          Home
+        </a>
+        <a
+          aria-current="page"
+          class="hover:text-ink text-ink"
+          data-discover="true"
+          data-testid="page-nav-nav-about"
+          href="/about"
+        >
+          About
+        </a>
+        <a
+          class="hover:text-ink text-ink-3"
+          data-discover="true"
+          data-testid="page-nav-nav-help"
+          href="/help"
+        >
+          Help
+        </a>
+        <a
+          class="hover:text-ink text-ink-3"
+          data-discover="true"
+          data-testid="page-nav-nav-settings"
+          href="/settings"
+        >
+          Settings
+        </a>
+        <a
+          class="hidden text-ink-3 hover:text-ink md:inline"
+          data-testid="page-nav-nav-github"
+          href="https://github.com/DopaMindLabs/Writer"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          GitHub
+        </a>
+      </nav>
+    </div>
   </header>
 </div>
 `;

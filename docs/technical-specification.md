@@ -55,7 +55,7 @@
 
 | Path | Screen | Purpose |
 |------|--------|---------|
-| `/` | Home | Landing page. Shows "Continue writing" (most recent space) and "Start a new space". |
+| `/` | Home | Landing page. Shows "Continue writing" (most recent space) and "Start a new space", a pre-release notice banner counting down to the next release (3 August, 22:00 CEST) that urges setting up a local sync folder or backup, and — flag-gated — a "Sign in to sync" button at the top right of the header linking to the account settings tab. |
 | `/about` | About | Creator note, license, source links. |
 | `/settings` | Settings | Global user preferences. |
 | `/new` | Templates | Pick a template and create a new space. |
