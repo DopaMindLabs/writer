@@ -197,7 +197,11 @@
       "accentLabel": "Akzent",
       "accentHint": "Verwendet für Hover, Fokus, aktiven Bearbeitungsring.",
       "densityLabel": "Dichte",
-      "densityOptions": { "cozy": "Gemütlich", "default": "Standard", "compact": "Kompakt" }
+      "densityOptions": {
+        "cozy": "Gemütlich",
+        "default": "Standard",
+        "compact": "Kompakt"
+      }
     },
     "templates": {
       "title": "Vorlagen",
@@ -234,7 +238,12 @@
       "comingSoonBody": "Wähle einen globalen Stil (Chicago, APA, MLA…) mit Überschreibungen pro Space.",
       "styleLabel": "Standard-Stil",
       "styleHint": "Verwendet beim Einfügen einer neuen Zitation. Überschreibungen pro Space kommen später.",
-      "options": { "chicago": "Chicago", "apa": "APA", "mla": "MLA", "ieee": "IEEE" }
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
     },
     "annotation": {
       "title": "Anmerkungen",
@@ -253,7 +262,13 @@
       "comingSoonBody": "Massenexport in .zip, Import aus einem anderen LIpsum-Bundle oder Markdown-Verzeichnis.",
       "formatLabel": "Exportformat",
       "formatHint": "Exporte pro Dokument und pro Space verwenden denselben Standard.",
-      "formats": { "markdown": "Markdown", "html": "HTML", "pdf": "PDF", "docx": ".docx", "latex": "LaTeX" },
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
       "importLabel": "Importieren aus",
       "importHint": "Bringe ein anderes LIpsum-Bundle oder ein Verzeichnis mit Markdown-Dateien.",
       "importOptions": {
@@ -293,7 +308,11 @@
       "licenseLabel": "Lizenz",
       "licenseValue": "PolyForm Noncommercial 1.0.0",
       "linksLabel": "Links",
-      "links": { "source": "Quelle", "changelog": "Changelog", "feedback": "Feedback senden" }
+      "links": {
+        "source": "Quelle",
+        "changelog": "Changelog",
+        "feedback": "Feedback senden"
+      }
     },
     "account": {
       "title": "Konto",
@@ -346,10 +365,19 @@
       "subtitle": "Exportiere, stelle wieder her und mache Snapshots deiner lokalen Daten.",
       "comingSoonBody": "Geplante lokale Snapshots, manueller Export in .zip und Wiederherstellung aus einer vorherigen Sicherung.",
       "intervalLabel": "Auto-Snapshot-Intervall",
-      "intervalOptions": { "5min": "5 Min", "10min": "10 Min", "30min": "30 Min", "off": "Aus" },
+      "intervalOptions": {
+        "5min": "5 Min",
+        "10min": "10 Min",
+        "30min": "30 Min",
+        "off": "Aus"
+      },
       "keepLabel": "Aufbewahren",
       "keepHint": "Ältere Snapshots werden automatisch entfernt.",
-      "keepOptions": { "last50": "Letzte 50", "days7": "7 Tage", "days30": "30 Tage" },
+      "keepOptions": {
+        "last50": "Letzte 50",
+        "days7": "7 Tage",
+        "days30": "30 Tage"
+      },
       "latestLabel": "Letzter",
       "latestValue": "vor 12 Min · 1.190 Wörter"
     },
@@ -386,9 +414,21 @@
       "spaceFailed": "fehlgeschlagen",
       "historyTitle": "Letzte Syncs",
       "historyEmpty": "Noch keine Syncs.",
-      "columns": { "when": "WANN", "space": "SPACE", "kind": "TYP", "size": "GRÖSSE", "status": "STATUS" },
-      "kind": { "auto": "auto", "manual": "manuell" },
-      "status": { "ok": "ok", "error": "Fehler" }
+      "columns": {
+        "when": "WANN",
+        "space": "SPACE",
+        "kind": "TYP",
+        "size": "GRÖSSE",
+        "status": "STATUS"
+      },
+      "kind": {
+        "auto": "auto",
+        "manual": "manuell"
+      },
+      "status": {
+        "ok": "ok",
+        "error": "Fehler"
+      }
     },
     "space": {
       "breadcrumb": "SPACE · EINSTELLUNGEN",
@@ -436,7 +476,12 @@
         "comingSoonBody": "Exportiere zu Markdown-.zip (heute über Sicherungen), LaTeX, HTML oder PDF — alles an einem Ort.",
         "formatLabel": "Format",
         "formatHint": "Markdown zuerst; der Rest folgt.",
-        "formats": { "markdown": "Markdown", "html": "HTML", "pdf": "PDF", "latex": "LaTeX" },
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
         "lastLabel": "Letzter Export",
         "lastValue": "nie"
       },
@@ -453,7 +498,11 @@
         "subtitle": "Steuere, wie dieser Space geteilt wird.",
         "comingSoonBody": "Sichtbarkeit pro Space und geteilte Links. Kommt mit dem Cloud-Sync.",
         "visibilityLabel": "Sichtbarkeit",
-        "visibilityOptions": { "private": "Privat", "link": "Jeder mit Link", "members": "Nur Mitglieder" },
+        "visibilityOptions": {
+          "private": "Privat",
+          "link": "Jeder mit Link",
+          "members": "Nur Mitglieder"
+        },
         "linkLabel": "Teilbarer Link",
         "linkHint": "Standardmäßig nur lesen. Bearbeitungsrechte folgen den Mitgliedern.",
         "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
@@ -479,22 +528,33 @@
         "invitePlaceholder": "name@beispiel.com",
         "inviteButton": "Einladung senden",
         "membersLabel": "Mitglieder",
-        "roles": { "owner": "Besitzerin", "editor": "Bearbeiterin", "viewer": "Betrachterin" },
+        "roles": {
+          "owner": "Besitzerin",
+          "editor": "Bearbeiterin",
+          "viewer": "Betrachterin"
+        },
         "you": "du"
       },
       "backups": {
         "title": "Sicherungen",
         "subtitle": "Mache einen Snapshot dieses Space als Markdown-.zip, das du herunterladen und behalten kannst.",
-        "comingSoonHint": "Formate LaTeX, HTML und PDF kommen. Aus Datei wiederherstellen kommt mit dem Import.",
         "retentionHint": "Wir behalten die {{count}} neuesten Snapshots — ältere werden automatisch entfernt.",
         "snapshotNow": "+ Snapshot jetzt",
         "snapshotting": "snapshotte…",
         "snapshotFailed": "Snapshot fehlgeschlagen: {{message}}",
-        "restoreLabel": "↑ aus Datei wiederherstellen",
         "historyTitle": "Verlauf",
         "empty": "Noch keine Snapshots — erstelle einen mit + Snapshot jetzt.",
-        "columns": { "when": "WANN", "kind": "TYP", "size": "GRÖSSE", "actions": "" },
-        "kind": { "manual": "manuell", "auto": "auto", "snapshot": "Snapshot" },
+        "columns": {
+          "when": "WANN",
+          "kind": "TYP",
+          "size": "GRÖSSE",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "manuell",
+          "auto": "auto",
+          "snapshot": "Snapshot"
+        },
         "download": "↓ herunterladen",
         "delete": "löschen",
         "deleteConfirm": "Diesen Snapshot löschen? Kein Zurück.",
@@ -646,7 +706,14 @@
     "upload": "↑ .bib / .ris hochladen",
     "add": "+ hinzufügen",
     "cancel": "× abbrechen",
-    "columns": { "tag": "TAG", "authors": "AUTOREN", "title": "TITEL", "year": "JAHR", "type": "TYP", "used": "VERWENDET" },
+    "columns": {
+      "tag": "TAG",
+      "authors": "AUTOREN",
+      "title": "TITEL",
+      "year": "JAHR",
+      "type": "TYP",
+      "used": "VERWENDET"
+    },
     "style": "STIL — CHICAGO (AUTOR-DATUM)",
     "exportBib": "ALS .BIB EXPORTIEREN",
     "summary": "{{filtered}} GEZEIGT · {{shown}} AUF DIESER SEITE",

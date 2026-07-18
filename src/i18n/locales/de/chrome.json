@@ -27,7 +27,15 @@
       "label": "Dokumentname",
       "cancel": "Abbrechen",
       "save": "Umbenennen"
-    }
+    },
+    "addDocInputAria": "Name des neuen Dokuments",
+    "addSection": "Abschnitt hinzufügen",
+    "addSectionAria": "Abschnitt zu diesem Space hinzufügen",
+    "renameDocAria": "Dokument {{name}} umbenennen",
+    "renameDocHint": "Umbenennen (Doppelklick)",
+    "renameSection": "Umbenennen (Doppelklick)",
+    "renameSectionAria": "Abschnitt {{label}} umbenennen",
+    "sectionNamePlaceholder": "Abschnittsname (Eingabe zum Erstellen)"
   },
   "topbar": {
     "openNav": "Navigation öffnen",
@@ -74,14 +82,11 @@
     "groupDoc": "Dieses Dokument",
     "groupSpace": "Dieser Bereich",
     "groupApp": "App",
-    "modeLabel": "Modus",
-    "menuLabel": "Menü",
     "settings": "Einstellungen",
     "spaceSettings": "Space-Einstellungen",
     "about": "Über",
     "help": "Hilfe und Tastenkürzel",
     "whatsNew": "Neuheiten",
-    "feedback": "Feedback senden…",
     "contact": "Kontakt"
   },
   "quickSettings": {
@@ -232,5 +237,9 @@
     "placeholder": "Diese Version benennen (optional)",
     "save": "Version speichern",
     "cancel": "Abbrechen"
+  },
+  "navShell": {
+    "home": "Start",
+    "openSpace": "{{name}} öffnen"
   }
 }

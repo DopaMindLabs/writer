@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Spazi" },
+  "spaceRail": {
+    "landmarkLabel": "Spazi"
+  },
   "sidebar": {
     "landmarkLabel": "Spazio",
     "navLabel": "Documenti",
@@ -25,7 +27,15 @@
       "label": "Nome del documento",
       "cancel": "Annulla",
       "save": "Rinomina"
-    }
+    },
+    "addDocInputAria": "Nome del nuovo documento",
+    "addSection": "Aggiungi sezione",
+    "addSectionAria": "Aggiungi sezione a questo spazio",
+    "renameDocAria": "Rinomina documento {{name}}",
+    "renameDocHint": "Rinomina (doppio clic)",
+    "renameSection": "Rinomina (doppio clic)",
+    "renameSectionAria": "Rinomina sezione {{label}}",
+    "sectionNamePlaceholder": "Nome sezione (Invio per creare)"
   },
   "topbar": {
     "openNav": "Apri navigazione",
@@ -41,25 +51,42 @@
     "focusTitleFocus": "Focus (⌘\\)",
     "findInDoc": "Cerca nel documento",
     "inspector": "Ispettore documento",
-    "themes": { "light": "Chiaro", "dark": "Scuro", "hcLight": "Alto contrasto (chiaro)", "hcDark": "Alto contrasto (scuro)" }
+    "themes": {
+      "light": "Chiaro",
+      "dark": "Scuro",
+      "hcLight": "Alto contrasto (chiaro)",
+      "hcDark": "Alto contrasto (scuro)"
+    }
   },
-  "modeToggle": { "write": "scrivi", "read": "leggi", "split": "diviso", "space": "spazio" },
-  "mobileNav": { "title": "Navigazione", "close": "Chiudi navigazione" },
-  "mobileTabs": { "write": "scrivi", "read": "leggi", "split": "dividi", "brain": "brain", "cite": "cita", "more": "altro" },
+  "modeToggle": {
+    "write": "scrivi",
+    "read": "leggi",
+    "split": "diviso",
+    "space": "spazio"
+  },
+  "mobileNav": {
+    "title": "Navigazione",
+    "close": "Chiudi navigazione"
+  },
+  "mobileTabs": {
+    "write": "scrivi",
+    "read": "leggi",
+    "split": "dividi",
+    "brain": "brain",
+    "cite": "cita",
+    "more": "altro"
+  },
   "mobileMore": {
     "title": "Altro",
     "close": "Chiudi altro",
     "groupDoc": "Questo documento",
     "groupSpace": "Questo spazio",
     "groupApp": "App",
-    "modeLabel": "Modo",
-    "menuLabel": "Menu",
     "settings": "Impostazioni",
     "spaceSettings": "Impostazioni dello spazio",
     "about": "Informazioni",
     "help": "Aiuto e scorciatoie",
     "whatsNew": "Novità",
-    "feedback": "Invia feedback…",
     "contact": "Contatto"
   },
   "quickSettings": {
@@ -73,11 +100,20 @@
     "floatingToolbarLabel": "Barra flottante",
     "readingWidthLabel": "Larghezza di lettura",
     "readingWidthHint": "Misura per documento",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Altro",
     "helpToursLabel": "Tour di aiuto",
     "helpItem": "Aiuto e scorciatoie",
-    "themes": { "light": "Chiaro", "dark": "Scuro", "hcLight": "AC chiaro", "hcDark": "AC scuro" },
+    "themes": {
+      "light": "Chiaro",
+      "dark": "Scuro",
+      "hcLight": "AC chiaro",
+      "hcDark": "AC scuro"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Novità",
     "feedback": "Invia feedback…",
@@ -104,8 +140,17 @@
   "inspector": {
     "expand": "Espandi ispettore",
     "collapse": "Comprimi ispettore",
-    "tabs": { "outline": "INDICE", "info": "INFO", "history": "CRONOLOGIA", "actions": "AZIONI" },
-    "outline": { "title": "INDICE", "sectionSummary": "{{count}} SEZIONI", "empty": "Nessun titolo ancora. Aggiungi titoli al documento per costruirne la struttura." },
+    "tabs": {
+      "outline": "INDICE",
+      "info": "INFO",
+      "history": "CRONOLOGIA",
+      "actions": "AZIONI"
+    },
+    "outline": {
+      "title": "INDICE",
+      "sectionSummary": "{{count}} SEZIONI",
+      "empty": "Nessun titolo ancora. Aggiungi titoli al documento per costruirne la struttura."
+    },
     "info": {
       "title": "INFO",
       "words": "Parole",
@@ -119,8 +164,18 @@
       "noLimit": "Nessun limite",
       "noDueDate": "Nessuna scadenza"
     },
-    "status": { "draft": "Bozza", "in-progress": "In corso", "in-review": "In revisione", "complete": "Completato", "published": "Pubblicato" },
-    "lock": { "title": "Bloccato per modifica", "body": "Lo stato di questo documento lo blocca per preservarlo. Sbloccalo per modificarlo.", "unlock": "Sblocca per modificare" },
+    "status": {
+      "draft": "Bozza",
+      "in-progress": "In corso",
+      "in-review": "In revisione",
+      "complete": "Completato",
+      "published": "Pubblicato"
+    },
+    "lock": {
+      "title": "Bloccato per modifica",
+      "body": "Lo stato di questo documento lo blocca per preservarlo. Sbloccalo per modificarlo.",
+      "unlock": "Sblocca per modificare"
+    },
     "history": {
       "title": "VERSIONI",
       "now": "ORA",
@@ -132,7 +187,11 @@
       "pin": "Fissa versione",
       "unpin": "Annulla fissaggio",
       "restore": "Ripristina",
-      "kind": { "auto": "auto", "manual": "manuale", "baseline": "iniziale" },
+      "kind": {
+        "auto": "auto",
+        "manual": "manuale",
+        "baseline": "iniziale"
+      },
       "ageNow": "ora",
       "ageMinutes": "{{count}}m fa",
       "ageHours": "{{count}}h fa",
@@ -178,5 +237,9 @@
     "placeholder": "Nomina questa versione (opzionale)",
     "save": "Salva versione",
     "cancel": "Annulla"
+  },
+  "navShell": {
+    "home": "Home",
+    "openSpace": "Apri {{name}}"
   }
 }

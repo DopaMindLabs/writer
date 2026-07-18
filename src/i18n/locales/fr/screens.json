@@ -421,8 +421,14 @@
         "size": "TAILLE",
         "status": "STATUT"
       },
-      "kind": { "auto": "auto", "manual": "manuel" },
-      "status": { "ok": "ok", "error": "erreur" }
+      "kind": {
+        "auto": "auto",
+        "manual": "manuel"
+      },
+      "status": {
+        "ok": "ok",
+        "error": "erreur"
+      }
     },
     "space": {
       "breadcrumb": "ESPACE · PARAMÈTRES",
@@ -532,12 +538,10 @@
       "backups": {
         "title": "Sauvegardes",
         "subtitle": "Fais un snapshot de cet espace en .zip de Markdown que tu peux télécharger et garder.",
-        "comingSoonHint": "Les formats LaTeX, HTML et PDF arrivent. Restaurer depuis un fichier arrive avec l'import.",
         "retentionHint": "On garde les {{count}} snapshots les plus récents — les anciens sont supprimés automatiquement.",
         "snapshotNow": "+ snapshot maintenant",
         "snapshotting": "snapshot en cours…",
         "snapshotFailed": "Échec du snapshot : {{message}}",
-        "restoreLabel": "↑ restaurer depuis un fichier",
         "historyTitle": "Historique",
         "empty": "Pas encore de snapshots — crée-en un avec + snapshot maintenant.",
         "columns": {

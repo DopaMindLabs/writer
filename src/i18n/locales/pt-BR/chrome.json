@@ -27,7 +27,15 @@
       "label": "Nome do documento",
       "cancel": "Cancelar",
       "save": "Renomear"
-    }
+    },
+    "addDocInputAria": "Nome do novo documento",
+    "addSection": "Adicionar seção",
+    "addSectionAria": "Adicionar seção a este espaço",
+    "renameDocAria": "Renomear documento {{name}}",
+    "renameDocHint": "Renomear (clique duplo)",
+    "renameSection": "Renomear (clique duplo)",
+    "renameSectionAria": "Renomear seção {{label}}",
+    "sectionNamePlaceholder": "Nome da seção (Enter para criar)"
   },
   "topbar": {
     "openNav": "Abrir navegação",
@@ -74,14 +82,11 @@
     "groupDoc": "Este doc",
     "groupSpace": "Este espaço",
     "groupApp": "App",
-    "modeLabel": "Modo",
-    "menuLabel": "Menu",
     "settings": "Configurações",
     "spaceSettings": "Configurações do espaço",
     "about": "Sobre",
     "help": "Ajuda e atalhos",
     "whatsNew": "Novidades",
-    "feedback": "Enviar feedback…",
     "contact": "Contato"
   },
   "quickSettings": {
@@ -232,5 +237,9 @@
     "placeholder": "Nome para esta versão (opcional)",
     "save": "Salvar versão",
     "cancel": "Cancelar"
+  },
+  "navShell": {
+    "home": "Início",
+    "openSpace": "Abrir {{name}}"
   }
 }

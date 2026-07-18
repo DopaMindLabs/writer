@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "අවකාශ" },
+  "spaceRail": {
+    "landmarkLabel": "අවකාශ"
+  },
   "sidebar": {
     "landmarkLabel": "අවකාශය",
     "navLabel": "ලේඛන",
@@ -25,7 +27,15 @@
       "label": "ලේඛනයේ නම",
       "cancel": "අවලංගු",
       "save": "නැවත නම් කරන්න"
-    }
+    },
+    "addDocInputAria": "නව ලේඛන නාමය",
+    "addSection": "කොටස එක් කරන්න",
+    "addSectionAria": "මෙම අවකාශයට කොටස එක් කරන්න",
+    "renameDocAria": "{{name}} ලේඛනය නැවත නම් කරන්න",
+    "renameDocHint": "නැවත නම් කරන්න (දෙවරක් ක්ලික්)",
+    "renameSection": "නැවත නම් කරන්න (දෙවරක් ක්ලික්)",
+    "renameSectionAria": "{{label}} කොටස නැවත නම් කරන්න",
+    "sectionNamePlaceholder": "කොටසේ නාමය (නිර්මාණයට Enter)"
   },
   "topbar": {
     "openNav": "සංචාලනය විවෘත කරන්න",
@@ -41,25 +51,42 @@
     "focusTitleFocus": "අවධානය (⌘\\)",
     "findInDoc": "ලේඛනයේ සොයන්න",
     "inspector": "ලේඛන පරීක්ෂකය",
-    "themes": { "light": "ආලෝක", "dark": "අන්ධකාර", "hcLight": "ඉහළ පරස්පර (ආලෝක)", "hcDark": "ඉහළ පරස්පර (අන්ධකාර)" }
+    "themes": {
+      "light": "ආලෝක",
+      "dark": "අන්ධකාර",
+      "hcLight": "ඉහළ පරස්පර (ආලෝක)",
+      "hcDark": "ඉහළ පරස්පර (අන්ධකාර)"
+    }
   },
-  "modeToggle": { "write": "ලියන්න", "read": "කියවන්න", "split": "බෙදන්න", "space": "අවකාශය" },
-  "mobileNav": { "title": "සංචාලනය", "close": "සංචාලනය වසන්න" },
-  "mobileTabs": { "write": "ලියන්න", "read": "කියවන්න", "split": "බෙදන්න", "brain": "brain", "cite": "උද්ධෘතය", "more": "තවත්" },
+  "modeToggle": {
+    "write": "ලියන්න",
+    "read": "කියවන්න",
+    "split": "බෙදන්න",
+    "space": "අවකාශය"
+  },
+  "mobileNav": {
+    "title": "සංචාලනය",
+    "close": "සංචාලනය වසන්න"
+  },
+  "mobileTabs": {
+    "write": "ලියන්න",
+    "read": "කියවන්න",
+    "split": "බෙදන්න",
+    "brain": "brain",
+    "cite": "උද්ධෘතය",
+    "more": "තවත්"
+  },
   "mobileMore": {
     "title": "තවත්",
     "close": "තවත් වසන්න",
     "groupDoc": "මෙම ලේඛනය",
     "groupSpace": "මෙම අවකාශය",
     "groupApp": "යෙදුම",
-    "modeLabel": "මාදිලිය",
-    "menuLabel": "මෙනුව",
     "settings": "සැකසුම්",
     "spaceSettings": "අවකාශ සැකසුම්",
     "about": "ගැන",
     "help": "උපකාර සහ කෙටිමං",
     "whatsNew": "අලුත් කුමක්ද",
-    "feedback": "ප්‍රතිපෝෂණය යවන්න…",
     "contact": "සම්බන්ධ කරන්න"
   },
   "quickSettings": {
@@ -73,11 +100,20 @@
     "floatingToolbarLabel": "පාවෙන මෙවලම් තීරුව",
     "readingWidthLabel": "කියවීමේ පළල",
     "readingWidthHint": "ලේඛනයකට මැනීම",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "තවත්",
     "helpToursLabel": "උපකාර සංචාරය",
     "helpItem": "උපකාර සහ කෙටිමං",
-    "themes": { "light": "ආලෝක", "dark": "අන්ධකාර", "hcLight": "HC ආලෝක", "hcDark": "HC අන්ධකාර" },
+    "themes": {
+      "light": "ආලෝක",
+      "dark": "අන්ධකාර",
+      "hcLight": "HC ආලෝක",
+      "hcDark": "HC අන්ධකාර"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "අලුත් කුමක්ද",
     "feedback": "ප්‍රතිපෝෂණය යවන්න…",
@@ -104,8 +140,17 @@
   "inspector": {
     "expand": "පරීක්ෂකය විකසවන්න",
     "collapse": "පරීක්ෂකය හකුළන්න",
-    "tabs": { "outline": "සටහන", "info": "තොරතුරු", "history": "ඉතිහාසය", "actions": "ක්‍රියා" },
-    "outline": { "title": "සටහන", "sectionSummary": "{{count}} කොටස්", "empty": "තවම මාතෘකා නැත. ලේඛනයේ ගොඩනැගිල්ල සෑදීමට මාතෘකා එකතු කරන්න." },
+    "tabs": {
+      "outline": "සටහන",
+      "info": "තොරතුරු",
+      "history": "ඉතිහාසය",
+      "actions": "ක්‍රියා"
+    },
+    "outline": {
+      "title": "සටහන",
+      "sectionSummary": "{{count}} කොටස්",
+      "empty": "තවම මාතෘකා නැත. ලේඛනයේ ගොඩනැගිල්ල සෑදීමට මාතෘකා එකතු කරන්න."
+    },
     "info": {
       "title": "තොරතුරු",
       "words": "වචන",
@@ -119,8 +164,18 @@
       "noLimit": "සීමාවක් නැත",
       "noDueDate": "අවසන් දිනයක් නැත"
     },
-    "status": { "draft": "කෙටුම්පත", "in-progress": "ක්‍රියාත්මක", "in-review": "සමාලෝචනයේ", "complete": "අවසන්", "published": "ප්‍රකාශිත" },
-    "lock": { "title": "සංස්කරණයට අගුළු දැම්මා", "body": "මෙම ලේඛනයේ තත්ත්වය එය සංරක්ෂණයට අගුළු දමයි. වෙනස්කම් කිරීමට අගුළු හරින්න.", "unlock": "සංස්කරණයට අගුළු හරින්න" },
+    "status": {
+      "draft": "කෙටුම්පත",
+      "in-progress": "ක්‍රියාත්මක",
+      "in-review": "සමාලෝචනයේ",
+      "complete": "අවසන්",
+      "published": "ප්‍රකාශිත"
+    },
+    "lock": {
+      "title": "සංස්කරණයට අගුළු දැම්මා",
+      "body": "මෙම ලේඛනයේ තත්ත්වය එය සංරක්ෂණයට අගුළු දමයි. වෙනස්කම් කිරීමට අගුළු හරින්න.",
+      "unlock": "සංස්කරණයට අගුළු හරින්න"
+    },
     "history": {
       "title": "අනුවාද",
       "now": "දැන්",
@@ -132,7 +187,11 @@
       "pin": "අනුවාදය අල්ලන්න",
       "unpin": "අල්ලන් ඉවත් කරන්න",
       "restore": "ප්‍රතිස්ථාපනය",
-      "kind": { "auto": "ස්වයං", "manual": "අතින්", "baseline": "මූලික" },
+      "kind": {
+        "auto": "ස්වයං",
+        "manual": "අතින්",
+        "baseline": "මූලික"
+      },
       "ageNow": "දැන්",
       "ageMinutes": "{{count}}ම පෙර",
       "ageHours": "{{count}}පැ පෙර",
@@ -178,5 +237,9 @@
     "placeholder": "මෙම අනුවාදයට නම් දෙන්න (විකල්ප)",
     "save": "අනුවාදය සුරකින්න",
     "cancel": "අවලංගු"
+  },
+  "navShell": {
+    "home": "මුල් පිටුව",
+    "openSpace": "{{name}} විවෘත කරන්න"
   }
 }

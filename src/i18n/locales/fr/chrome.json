@@ -27,7 +27,15 @@
       "label": "Nom du document",
       "cancel": "Annuler",
       "save": "Renommer"
-    }
+    },
+    "addDocInputAria": "Nom du nouveau document",
+    "addSection": "Ajouter une section",
+    "addSectionAria": "Ajouter une section à cet espace",
+    "renameDocAria": "Renommer le document {{name}}",
+    "renameDocHint": "Renommer (double-clic)",
+    "renameSection": "Renommer (double-clic)",
+    "renameSectionAria": "Renommer la section {{label}}",
+    "sectionNamePlaceholder": "Nom de la section (Entrée pour créer)"
   },
   "topbar": {
     "openNav": "Ouvrir la navigation",
@@ -74,14 +82,11 @@
     "groupDoc": "Ce document",
     "groupSpace": "Cet espace",
     "groupApp": "App",
-    "modeLabel": "Mode",
-    "menuLabel": "Menu",
     "settings": "Paramètres",
     "spaceSettings": "Paramètres de l'espace",
     "about": "À propos",
     "help": "Aide et raccourcis",
     "whatsNew": "Nouveautés",
-    "feedback": "Envoyer un retour…",
     "contact": "Contact"
   },
   "quickSettings": {
@@ -232,5 +237,9 @@
     "placeholder": "Nomme cette version (optionnel)",
     "save": "Enregistrer la version",
     "cancel": "Annuler"
+  },
+  "navShell": {
+    "home": "Accueil",
+    "openSpace": "Ouvrir {{name}}"
   }
 }

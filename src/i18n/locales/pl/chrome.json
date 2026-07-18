@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Przestrzenie" },
+  "spaceRail": {
+    "landmarkLabel": "Przestrzenie"
+  },
   "sidebar": {
     "landmarkLabel": "Przestrzeń",
     "navLabel": "Dokumenty",
@@ -25,7 +27,15 @@
       "label": "Nazwa dokumentu",
       "cancel": "Anuluj",
       "save": "Zmień nazwę"
-    }
+    },
+    "addDocInputAria": "Nazwa nowego dokumentu",
+    "addSection": "Dodaj sekcję",
+    "addSectionAria": "Dodaj sekcję do tej przestrzeni",
+    "renameDocAria": "Zmień nazwę dokumentu {{name}}",
+    "renameDocHint": "Zmień nazwę (dwukliknięcie)",
+    "renameSection": "Zmień nazwę (dwukliknięcie)",
+    "renameSectionAria": "Zmień nazwę sekcji {{label}}",
+    "sectionNamePlaceholder": "Nazwa sekcji (Enter, aby utworzyć)"
   },
   "topbar": {
     "openNav": "Otwórz nawigację",
@@ -41,25 +51,42 @@
     "focusTitleFocus": "Skupienie (⌘\\)",
     "findInDoc": "Znajdź w dokumencie",
     "inspector": "Inspektor dokumentu",
-    "themes": { "light": "Jasny", "dark": "Ciemny", "hcLight": "Wysoki kontrast (jasny)", "hcDark": "Wysoki kontrast (ciemny)" }
+    "themes": {
+      "light": "Jasny",
+      "dark": "Ciemny",
+      "hcLight": "Wysoki kontrast (jasny)",
+      "hcDark": "Wysoki kontrast (ciemny)"
+    }
   },
-  "modeToggle": { "write": "pisz", "read": "czytaj", "split": "podziel", "space": "przestrzeń" },
-  "mobileNav": { "title": "Nawigacja", "close": "Zamknij nawigację" },
-  "mobileTabs": { "write": "pisz", "read": "czytaj", "split": "podziel", "brain": "brain", "cite": "cytuj", "more": "więcej" },
+  "modeToggle": {
+    "write": "pisz",
+    "read": "czytaj",
+    "split": "podziel",
+    "space": "przestrzeń"
+  },
+  "mobileNav": {
+    "title": "Nawigacja",
+    "close": "Zamknij nawigację"
+  },
+  "mobileTabs": {
+    "write": "pisz",
+    "read": "czytaj",
+    "split": "podziel",
+    "brain": "brain",
+    "cite": "cytuj",
+    "more": "więcej"
+  },
   "mobileMore": {
     "title": "Więcej",
     "close": "Zamknij więcej",
     "groupDoc": "Ten dokument",
     "groupSpace": "Ta przestrzeń",
     "groupApp": "Aplikacja",
-    "modeLabel": "Tryb",
-    "menuLabel": "Menu",
     "settings": "Ustawienia",
     "spaceSettings": "Ustawienia przestrzeni",
     "about": "O aplikacji",
     "help": "Pomoc i skróty",
     "whatsNew": "Co nowego",
-    "feedback": "Wyślij opinię…",
     "contact": "Kontakt"
   },
   "quickSettings": {
@@ -73,11 +100,20 @@
     "floatingToolbarLabel": "Pływający pasek",
     "readingWidthLabel": "Szerokość czytania",
     "readingWidthHint": "Miara na dokument",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Więcej",
     "helpToursLabel": "Przewodnik pomocy",
     "helpItem": "Pomoc i skróty",
-    "themes": { "light": "Jasny", "dark": "Ciemny", "hcLight": "WK jasny", "hcDark": "WK ciemny" },
+    "themes": {
+      "light": "Jasny",
+      "dark": "Ciemny",
+      "hcLight": "WK jasny",
+      "hcDark": "WK ciemny"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Co nowego",
     "feedback": "Wyślij opinię…",
@@ -104,8 +140,17 @@
   "inspector": {
     "expand": "Rozwiń inspektora",
     "collapse": "Zwiń inspektora",
-    "tabs": { "outline": "ZARYS", "info": "INFO", "history": "HISTORIA", "actions": "AKCJE" },
-    "outline": { "title": "ZARYS", "sectionSummary": "{{count}} SEKCJI", "empty": "Nie ma jeszcze nagłówków. Dodaj nagłówki do dokumentu, aby zbudować jego zarys." },
+    "tabs": {
+      "outline": "ZARYS",
+      "info": "INFO",
+      "history": "HISTORIA",
+      "actions": "AKCJE"
+    },
+    "outline": {
+      "title": "ZARYS",
+      "sectionSummary": "{{count}} SEKCJI",
+      "empty": "Nie ma jeszcze nagłówków. Dodaj nagłówki do dokumentu, aby zbudować jego zarys."
+    },
     "info": {
       "title": "INFO",
       "words": "Słowa",
@@ -119,8 +164,18 @@
       "noLimit": "Bez limitu",
       "noDueDate": "Bez terminu"
     },
-    "status": { "draft": "Szkic", "in-progress": "W toku", "in-review": "W recenzji", "complete": "Ukończono", "published": "Opublikowano" },
-    "lock": { "title": "Zablokowany do edycji", "body": "Status tego dokumentu blokuje go w celu zachowania. Odblokuj, aby wprowadzić zmiany.", "unlock": "Odblokuj do edycji" },
+    "status": {
+      "draft": "Szkic",
+      "in-progress": "W toku",
+      "in-review": "W recenzji",
+      "complete": "Ukończono",
+      "published": "Opublikowano"
+    },
+    "lock": {
+      "title": "Zablokowany do edycji",
+      "body": "Status tego dokumentu blokuje go w celu zachowania. Odblokuj, aby wprowadzić zmiany.",
+      "unlock": "Odblokuj do edycji"
+    },
     "history": {
       "title": "WERSJE",
       "now": "TERAZ",
@@ -132,7 +187,11 @@
       "pin": "Przypnij wersję",
       "unpin": "Odepnij wersję",
       "restore": "Przywróć",
-      "kind": { "auto": "auto", "manual": "ręczna", "baseline": "wyjściowa" },
+      "kind": {
+        "auto": "auto",
+        "manual": "ręczna",
+        "baseline": "wyjściowa"
+      },
       "ageNow": "teraz",
       "ageMinutes": "{{count}}m temu",
       "ageHours": "{{count}}h temu",
@@ -178,5 +237,9 @@
     "placeholder": "Nazwij tę wersję (opcjonalnie)",
     "save": "Zapisz wersję",
     "cancel": "Anuluj"
+  },
+  "navShell": {
+    "home": "Główna",
+    "openSpace": "Otwórz {{name}}"
   }
 }

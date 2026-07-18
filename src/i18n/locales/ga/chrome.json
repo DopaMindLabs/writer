@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Spásanna" },
+  "spaceRail": {
+    "landmarkLabel": "Spásanna"
+  },
   "sidebar": {
     "landmarkLabel": "Spás",
     "navLabel": "Doiciméid",
@@ -25,7 +27,15 @@
       "label": "Ainm an doiciméid",
       "cancel": "Cealaigh",
       "save": "Athainmnigh"
-    }
+    },
+    "addDocInputAria": "Ainm doiciméid nua",
+    "addSection": "Cuir rannóg leis",
+    "addSectionAria": "Cuir rannóg leis an spás seo",
+    "renameDocAria": "Athainmnigh doiciméad {{name}}",
+    "renameDocHint": "Athainmnigh (cliceáil faoi dhó)",
+    "renameSection": "Athainmnigh (cliceáil faoi dhó)",
+    "renameSectionAria": "Athainmnigh rannóg {{label}}",
+    "sectionNamePlaceholder": "Ainm rannóige (Enter chun a chruthú)"
   },
   "topbar": {
     "openNav": "Oscail nascleanúint",
@@ -41,25 +51,42 @@
     "focusTitleFocus": "Fócas (⌘\\)",
     "findInDoc": "Aimsigh sa doiciméad",
     "inspector": "Cigire doiciméad",
-    "themes": { "light": "Geal", "dark": "Dorcha", "hcLight": "Ard-chodarsnacht (geal)", "hcDark": "Ard-chodarsnacht (dorcha)" }
+    "themes": {
+      "light": "Geal",
+      "dark": "Dorcha",
+      "hcLight": "Ard-chodarsnacht (geal)",
+      "hcDark": "Ard-chodarsnacht (dorcha)"
+    }
   },
-  "modeToggle": { "write": "scríobh", "read": "léigh", "split": "roinn", "space": "spás" },
-  "mobileNav": { "title": "Nascleanúint", "close": "Dún nascleanúint" },
-  "mobileTabs": { "write": "scríobh", "read": "léigh", "split": "roinn", "brain": "brain", "cite": "luaigh", "more": "tuilleadh" },
+  "modeToggle": {
+    "write": "scríobh",
+    "read": "léigh",
+    "split": "roinn",
+    "space": "spás"
+  },
+  "mobileNav": {
+    "title": "Nascleanúint",
+    "close": "Dún nascleanúint"
+  },
+  "mobileTabs": {
+    "write": "scríobh",
+    "read": "léigh",
+    "split": "roinn",
+    "brain": "brain",
+    "cite": "luaigh",
+    "more": "tuilleadh"
+  },
   "mobileMore": {
     "title": "Tuilleadh",
     "close": "Dún tuilleadh",
     "groupDoc": "An cháipéis seo",
     "groupSpace": "An spás seo",
     "groupApp": "Aip",
-    "modeLabel": "Mód",
-    "menuLabel": "Roghchlár",
     "settings": "Socruithe",
     "spaceSettings": "Socruithe an spáis",
     "about": "Maidir le",
     "help": "Cabhair agus aicearraí",
     "whatsNew": "Cad atá nua",
-    "feedback": "Seol aiseolas…",
     "contact": "Teagmháil"
   },
   "quickSettings": {
@@ -73,11 +100,20 @@
     "floatingToolbarLabel": "Barra uirlisí ar snámh",
     "readingWidthLabel": "Leithead léitheoireachta",
     "readingWidthHint": "Tomhas in aghaidh doiciméid",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Tuilleadh",
     "helpToursLabel": "Turas cabhrach",
     "helpItem": "Cabhair agus aicearraí",
-    "themes": { "light": "Geal", "dark": "Dorcha", "hcLight": "AC geal", "hcDark": "AC dorcha" },
+    "themes": {
+      "light": "Geal",
+      "dark": "Dorcha",
+      "hcLight": "AC geal",
+      "hcDark": "AC dorcha"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Cad atá nua",
     "feedback": "Seol aiseolas…",
@@ -104,8 +140,17 @@
   "inspector": {
     "expand": "Leathnaigh cigire",
     "collapse": "Cuir cigire i leataobh",
-    "tabs": { "outline": "IMLÍNE", "info": "EOL", "history": "STAIR", "actions": "GNÍOMHAÍOCHTAÍ" },
-    "outline": { "title": "IMLÍNE", "sectionSummary": "{{count}} RANNA", "empty": "Níl ceannteidil ann fós. Cuir ceannteidil leis an gcáipéis chun a léarscáil a thógáil." },
+    "tabs": {
+      "outline": "IMLÍNE",
+      "info": "EOL",
+      "history": "STAIR",
+      "actions": "GNÍOMHAÍOCHTAÍ"
+    },
+    "outline": {
+      "title": "IMLÍNE",
+      "sectionSummary": "{{count}} RANNA",
+      "empty": "Níl ceannteidil ann fós. Cuir ceannteidil leis an gcáipéis chun a léarscáil a thógáil."
+    },
     "info": {
       "title": "EOL",
       "words": "Focail",
@@ -119,8 +164,18 @@
       "noLimit": "Gan teorainn",
       "noDueDate": "Gan spriocdháta"
     },
-    "status": { "draft": "Dréacht", "in-progress": "Ar siúl", "in-review": "I léirmheas", "complete": "Críochnaithe", "published": "Foilsithe" },
-    "lock": { "title": "Faoi ghlas le haghaidh eagarthóireachta", "body": "Cuireann stádas an doiciméid faoi ghlas é chun é a chaomhnú. Díghlasáil chun athruithe a dhéanamh.", "unlock": "Díghlasáil chun eagarthóireachta" },
+    "status": {
+      "draft": "Dréacht",
+      "in-progress": "Ar siúl",
+      "in-review": "I léirmheas",
+      "complete": "Críochnaithe",
+      "published": "Foilsithe"
+    },
+    "lock": {
+      "title": "Faoi ghlas le haghaidh eagarthóireachta",
+      "body": "Cuireann stádas an doiciméid faoi ghlas é chun é a chaomhnú. Díghlasáil chun athruithe a dhéanamh.",
+      "unlock": "Díghlasáil chun eagarthóireachta"
+    },
     "history": {
       "title": "LEAGAIN",
       "now": "ANOIS",
@@ -132,7 +187,11 @@
       "pin": "Pionnáil leagan",
       "unpin": "Bain pionna",
       "restore": "Athchóirigh",
-      "kind": { "auto": "uath", "manual": "láimhe", "baseline": "tús" },
+      "kind": {
+        "auto": "uath",
+        "manual": "láimhe",
+        "baseline": "tús"
+      },
       "ageNow": "anois",
       "ageMinutes": "{{count}}n ó shin",
       "ageHours": "{{count}}u ó shin",
@@ -178,5 +237,9 @@
     "placeholder": "Ainmnigh an leagan seo (roghnach)",
     "save": "Sábháil leagan",
     "cancel": "Cealaigh"
+  },
+  "navShell": {
+    "home": "Baile",
+    "openSpace": "Oscail {{name}}"
   }
 }

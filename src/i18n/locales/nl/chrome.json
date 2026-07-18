@@ -27,7 +27,15 @@
       "label": "Documentnaam",
       "cancel": "Annuleren",
       "save": "Hernoemen"
-    }
+    },
+    "addDocInputAria": "Naam nieuw document",
+    "addSection": "Sectie toevoegen",
+    "addSectionAria": "Sectie toevoegen aan deze space",
+    "renameDocAria": "Document {{name}} hernoemen",
+    "renameDocHint": "Hernoemen (dubbelklik)",
+    "renameSection": "Hernoemen (dubbelklik)",
+    "renameSectionAria": "Sectie {{label}} hernoemen",
+    "sectionNamePlaceholder": "Sectienaam (Enter om te maken)"
   },
   "topbar": {
     "openNav": "Navigatie openen",
@@ -74,14 +82,11 @@
     "groupDoc": "Dit document",
     "groupSpace": "Deze ruimte",
     "groupApp": "App",
-    "modeLabel": "Modus",
-    "menuLabel": "Menu",
     "settings": "Instellingen",
     "spaceSettings": "Space-instellingen",
     "about": "Over",
     "help": "Help en sneltoetsen",
     "whatsNew": "Wat is er nieuw",
-    "feedback": "Feedback sturen…",
     "contact": "Contact"
   },
   "quickSettings": {
@@ -232,5 +237,9 @@
     "placeholder": "Geef deze versie een naam (optioneel)",
     "save": "Versie opslaan",
     "cancel": "Annuleren"
+  },
+  "navShell": {
+    "home": "Home",
+    "openSpace": "{{name}} openen"
   }
 }

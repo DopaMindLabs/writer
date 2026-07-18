@@ -39,7 +39,12 @@
     "shellSubtitle": "GLOBALE INSTELLINGEN",
     "comingSoonBadge": "binnenkort",
     "helpAria": "Wat is dit?",
-    "groups": { "preferences": "Voorkeuren", "writing": "Schrijven", "data": "Gegevens", "account": "Account" },
+    "groups": {
+      "preferences": "Voorkeuren",
+      "writing": "Schrijven",
+      "data": "Gegevens",
+      "account": "Account"
+    },
     "tabs": {
       "general": "Algemeen",
       "appearance": "Uiterlijk",
@@ -169,7 +174,11 @@
       "keyboardHintsHint": "Toon ⌘-sneltoetsen in tooltips en bij hoeken van knoppen.",
       "startupLabel": "Openen bij opstarten",
       "startupHint": "Wat je ziet als je de app start.",
-      "startupOptions": { "lastView": "Laatste weergave", "home": "Start", "brainSpace": "Brain Space" }
+      "startupOptions": {
+        "lastView": "Laatste weergave",
+        "home": "Start",
+        "brainSpace": "Brain Space"
+      }
     },
     "appearance": {
       "title": "Uiterlijk",
@@ -188,7 +197,11 @@
       "accentLabel": "Accent",
       "accentHint": "Gebruikt voor hover, focus, actieve bewerkring.",
       "densityLabel": "Dichtheid",
-      "densityOptions": { "cozy": "Gezellig", "default": "Standaard", "compact": "Compact" }
+      "densityOptions": {
+        "cozy": "Gezellig",
+        "default": "Standaard",
+        "compact": "Compact"
+      }
     },
     "templates": {
       "title": "Sjablonen",
@@ -225,7 +238,12 @@
       "comingSoonBody": "Kies een globale stijl (Chicago, APA, MLA…) met overschrijvingen per space.",
       "styleLabel": "Standaardstijl",
       "styleHint": "Gebruikt bij het invoegen van een nieuw citaat. Overschrijvingen per space komen later.",
-      "options": { "chicago": "Chicago", "apa": "APA", "mla": "MLA", "ieee": "IEEE" }
+      "options": {
+        "chicago": "Chicago",
+        "apa": "APA",
+        "mla": "MLA",
+        "ieee": "IEEE"
+      }
     },
     "annotation": {
       "title": "Annotaties",
@@ -244,10 +262,20 @@
       "comingSoonBody": "Bulk-export naar .zip, import vanuit een andere LIpsum-bundel of Markdown-directory.",
       "formatLabel": "Exportformaat",
       "formatHint": "Exports per document en per space gebruiken dezelfde standaard.",
-      "formats": { "markdown": "Markdown", "html": "HTML", "pdf": "PDF", "docx": ".docx", "latex": "LaTeX" },
+      "formats": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "pdf": "PDF",
+        "docx": ".docx",
+        "latex": "LaTeX"
+      },
       "importLabel": "Importeren uit",
       "importHint": "Breng een andere LIpsum-bundel of een directory met Markdown-bestanden binnen.",
-      "importOptions": { "bundle": "LIpsum-bundel (.zip)", "markdown": "Markdown-map", "obsidian": "Obsidian-vault" },
+      "importOptions": {
+        "bundle": "LIpsum-bundel (.zip)",
+        "markdown": "Markdown-map",
+        "obsidian": "Obsidian-vault"
+      },
       "importSpaceLabel": "Een space importeren",
       "importSpaceHint": "Breng een space in deze browser vanuit een Writer-archief (.zip) — een snapshot-download of een mapsync-export van een ander apparaat.",
       "importChooseFile": "Archief kiezen…",
@@ -280,7 +308,11 @@
       "licenseLabel": "Licentie",
       "licenseValue": "PolyForm Noncommercial 1.0.0",
       "linksLabel": "Links",
-      "links": { "source": "Bron", "changelog": "Changelog", "feedback": "Feedback sturen" }
+      "links": {
+        "source": "Bron",
+        "changelog": "Changelog",
+        "feedback": "Feedback sturen"
+      }
     },
     "account": {
       "title": "Account",
@@ -333,10 +365,19 @@
       "subtitle": "Exporteer, herstel en maak snapshots van je lokale gegevens.",
       "comingSoonBody": "Geplande lokale snapshots, handmatige export naar .zip en herstel vanuit een eerdere back-up.",
       "intervalLabel": "Interval auto-snapshot",
-      "intervalOptions": { "5min": "5 min", "10min": "10 min", "30min": "30 min", "off": "Uit" },
+      "intervalOptions": {
+        "5min": "5 min",
+        "10min": "10 min",
+        "30min": "30 min",
+        "off": "Uit"
+      },
       "keepLabel": "Bewaren",
       "keepHint": "Oudere snapshots worden automatisch verwijderd.",
-      "keepOptions": { "last50": "Laatste 50", "days7": "7 dagen", "days30": "30 dagen" },
+      "keepOptions": {
+        "last50": "Laatste 50",
+        "days7": "7 dagen",
+        "days30": "30 dagen"
+      },
       "latestLabel": "Laatste",
       "latestValue": "12 min geleden · 1.190 woorden"
     },
@@ -373,9 +414,21 @@
       "spaceFailed": "mislukt",
       "historyTitle": "Recente syncs",
       "historyEmpty": "Nog geen syncs.",
-      "columns": { "when": "WANNEER", "space": "SPACE", "kind": "TYPE", "size": "GROOTTE", "status": "STATUS" },
-      "kind": { "auto": "auto", "manual": "handmatig" },
-      "status": { "ok": "ok", "error": "fout" }
+      "columns": {
+        "when": "WANNEER",
+        "space": "SPACE",
+        "kind": "TYPE",
+        "size": "GROOTTE",
+        "status": "STATUS"
+      },
+      "kind": {
+        "auto": "auto",
+        "manual": "handmatig"
+      },
+      "status": {
+        "ok": "ok",
+        "error": "fout"
+      }
     },
     "space": {
       "breadcrumb": "SPACE · INSTELLINGEN",
@@ -423,7 +476,12 @@
         "comingSoonBody": "Exporteer naar Markdown-.zip (vandaag via back-ups), LaTeX, HTML of PDF — alles op één plek.",
         "formatLabel": "Formaat",
         "formatHint": "Markdown verschijnt eerst; de rest volgt.",
-        "formats": { "markdown": "Markdown", "html": "HTML", "pdf": "PDF", "latex": "LaTeX" },
+        "formats": {
+          "markdown": "Markdown",
+          "html": "HTML",
+          "pdf": "PDF",
+          "latex": "LaTeX"
+        },
         "lastLabel": "Laatste export",
         "lastValue": "nooit"
       },
@@ -440,7 +498,11 @@
         "subtitle": "Bepaal hoe deze space wordt gedeeld.",
         "comingSoonBody": "Zichtbaarheid per space en gedeelde links. Komt met cloud-sync.",
         "visibilityLabel": "Zichtbaarheid",
-        "visibilityOptions": { "private": "Privé", "link": "Iedereen met link", "members": "Alleen leden" },
+        "visibilityOptions": {
+          "private": "Privé",
+          "link": "Iedereen met link",
+          "members": "Alleen leden"
+        },
         "linkLabel": "Deelbare link",
         "linkHint": "Standaard alleen-lezen. Bewerkingsrechten volgen Leden.",
         "linkPlaceholder": "https://lipsum.app/s/hollowmere/share/…",
@@ -466,22 +528,33 @@
         "invitePlaceholder": "naam@voorbeeld.com",
         "inviteButton": "uitnodiging sturen",
         "membersLabel": "Leden",
-        "roles": { "owner": "eigenaar", "editor": "redacteur", "viewer": "lezer" },
+        "roles": {
+          "owner": "eigenaar",
+          "editor": "redacteur",
+          "viewer": "lezer"
+        },
         "you": "jij"
       },
       "backups": {
         "title": "Back-ups",
         "subtitle": "Maak een snapshot van deze space als Markdown-.zip die je kunt downloaden en bewaren.",
-        "comingSoonHint": "Formaten LaTeX, HTML en PDF komen eraan. Herstellen vanuit bestand komt met de import.",
         "retentionHint": "We bewaren de {{count}} meest recente snapshots — oudere worden automatisch verwijderd.",
         "snapshotNow": "+ nu snapshot",
         "snapshotting": "snapshotten…",
         "snapshotFailed": "Snapshot mislukt: {{message}}",
-        "restoreLabel": "↑ herstellen vanuit bestand",
         "historyTitle": "Geschiedenis",
         "empty": "Nog geen snapshots — maak er een met + nu snapshot.",
-        "columns": { "when": "WANNEER", "kind": "TYPE", "size": "GROOTTE", "actions": "" },
-        "kind": { "manual": "handmatig", "auto": "auto", "snapshot": "snapshot" },
+        "columns": {
+          "when": "WANNEER",
+          "kind": "TYPE",
+          "size": "GROOTTE",
+          "actions": ""
+        },
+        "kind": {
+          "manual": "handmatig",
+          "auto": "auto",
+          "snapshot": "snapshot"
+        },
         "download": "↓ downloaden",
         "delete": "verwijderen",
         "deleteConfirm": "Deze snapshot verwijderen? Geen ongedaan maken.",
@@ -633,7 +706,14 @@
     "upload": "↑ .bib / .ris uploaden",
     "add": "+ toevoegen",
     "cancel": "× annuleren",
-    "columns": { "tag": "TAG", "authors": "AUTEURS", "title": "TITEL", "year": "JAAR", "type": "TYPE", "used": "GEBRUIKT" },
+    "columns": {
+      "tag": "TAG",
+      "authors": "AUTEURS",
+      "title": "TITEL",
+      "year": "JAAR",
+      "type": "TYPE",
+      "used": "GEBRUIKT"
+    },
     "style": "STIJL — CHICAGO (AUTEUR-DATUM)",
     "exportBib": "EXPORTEREN ALS .BIB",
     "summary": "{{filtered}} GETOOND · {{shown}} OP DEZE PAGINA",

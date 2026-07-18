@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Spațiile" },
+  "spaceRail": {
+    "landmarkLabel": "Spațiile"
+  },
   "sidebar": {
     "landmarkLabel": "Spațiu",
     "navLabel": "Documente",
@@ -25,7 +27,15 @@
       "label": "Numele documentului",
       "cancel": "Anulează",
       "save": "Redenumește"
-    }
+    },
+    "addDocInputAria": "Numele documentului nou",
+    "addSection": "Adaugă secțiune",
+    "addSectionAria": "Adaugă secțiune la acest spațiu",
+    "renameDocAria": "Redenumește documentul {{name}}",
+    "renameDocHint": "Redenumește (dublu clic)",
+    "renameSection": "Redenumește (dublu clic)",
+    "renameSectionAria": "Redenumește secțiunea {{label}}",
+    "sectionNamePlaceholder": "Nume secțiune (Enter pentru a crea)"
   },
   "topbar": {
     "openNav": "Deschide navigația",
@@ -41,25 +51,42 @@
     "focusTitleFocus": "Focus (⌘\\)",
     "findInDoc": "Caută în document",
     "inspector": "Inspector document",
-    "themes": { "light": "Luminos", "dark": "Întunecat", "hcLight": "Contrast ridicat (luminos)", "hcDark": "Contrast ridicat (întunecat)" }
+    "themes": {
+      "light": "Luminos",
+      "dark": "Întunecat",
+      "hcLight": "Contrast ridicat (luminos)",
+      "hcDark": "Contrast ridicat (întunecat)"
+    }
   },
-  "modeToggle": { "write": "scrie", "read": "citește", "split": "divizat", "space": "spațiu" },
-  "mobileNav": { "title": "Navigație", "close": "Închide navigația" },
-  "mobileTabs": { "write": "scrie", "read": "citește", "split": "divizat", "brain": "brain", "cite": "citează", "more": "mai mult" },
+  "modeToggle": {
+    "write": "scrie",
+    "read": "citește",
+    "split": "divizat",
+    "space": "spațiu"
+  },
+  "mobileNav": {
+    "title": "Navigație",
+    "close": "Închide navigația"
+  },
+  "mobileTabs": {
+    "write": "scrie",
+    "read": "citește",
+    "split": "divizat",
+    "brain": "brain",
+    "cite": "citează",
+    "more": "mai mult"
+  },
   "mobileMore": {
     "title": "Mai mult",
     "close": "Închide mai mult",
     "groupDoc": "Acest document",
     "groupSpace": "Acest spațiu",
     "groupApp": "Aplicație",
-    "modeLabel": "Mod",
-    "menuLabel": "Meniu",
     "settings": "Setări",
     "spaceSettings": "Setări spațiu",
     "about": "Despre",
     "help": "Ajutor și scurtături",
     "whatsNew": "Noutăți",
-    "feedback": "Trimite feedback…",
     "contact": "Contact"
   },
   "quickSettings": {
@@ -73,11 +100,20 @@
     "floatingToolbarLabel": "Bară plutitoare",
     "readingWidthLabel": "Lățime citire",
     "readingWidthHint": "Măsură per document",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Mai mult",
     "helpToursLabel": "Tur de ajutor",
     "helpItem": "Ajutor și scurtături",
-    "themes": { "light": "Luminos", "dark": "Întunecat", "hcLight": "CR luminos", "hcDark": "CR întunecat" },
+    "themes": {
+      "light": "Luminos",
+      "dark": "Întunecat",
+      "hcLight": "CR luminos",
+      "hcDark": "CR întunecat"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Noutăți",
     "feedback": "Trimite feedback…",
@@ -104,8 +140,17 @@
   "inspector": {
     "expand": "Extinde inspectorul",
     "collapse": "Restrânge inspectorul",
-    "tabs": { "outline": "STRUCTURĂ", "info": "INFO", "history": "ISTORIC", "actions": "ACȚIUNI" },
-    "outline": { "title": "STRUCTURĂ", "sectionSummary": "{{count}} SECȚIUNI", "empty": "Fără titluri deocamdată. Adăugați titluri în document pentru a construi structura acestuia." },
+    "tabs": {
+      "outline": "STRUCTURĂ",
+      "info": "INFO",
+      "history": "ISTORIC",
+      "actions": "ACȚIUNI"
+    },
+    "outline": {
+      "title": "STRUCTURĂ",
+      "sectionSummary": "{{count}} SECȚIUNI",
+      "empty": "Fără titluri deocamdată. Adăugați titluri în document pentru a construi structura acestuia."
+    },
     "info": {
       "title": "INFO",
       "words": "Cuvinte",
@@ -119,8 +164,18 @@
       "noLimit": "Fără limită",
       "noDueDate": "Fără termen"
     },
-    "status": { "draft": "Schiță", "in-progress": "În curs", "in-review": "În revizie", "complete": "Complet", "published": "Publicat" },
-    "lock": { "title": "Blocat pentru editare", "body": "Starea acestui document îl blochează pentru a-l păstra. Deblochează-l pentru a face modificări.", "unlock": "Deblochează pentru a edita" },
+    "status": {
+      "draft": "Schiță",
+      "in-progress": "În curs",
+      "in-review": "În revizie",
+      "complete": "Complet",
+      "published": "Publicat"
+    },
+    "lock": {
+      "title": "Blocat pentru editare",
+      "body": "Starea acestui document îl blochează pentru a-l păstra. Deblochează-l pentru a face modificări.",
+      "unlock": "Deblochează pentru a edita"
+    },
     "history": {
       "title": "VERSIUNI",
       "now": "ACUM",
@@ -132,7 +187,11 @@
       "pin": "Fixează versiunea",
       "unpin": "Anulează fixarea",
       "restore": "Restaurează",
-      "kind": { "auto": "auto", "manual": "manual", "baseline": "inițial" },
+      "kind": {
+        "auto": "auto",
+        "manual": "manual",
+        "baseline": "inițial"
+      },
       "ageNow": "acum",
       "ageMinutes": "acum {{count}}m",
       "ageHours": "acum {{count}}h",
@@ -178,5 +237,9 @@
     "placeholder": "Numește această versiune (opțional)",
     "save": "Salvează versiune",
     "cancel": "Anulează"
+  },
+  "navShell": {
+    "home": "Acasă",
+    "openSpace": "Deschide {{name}}"
   }
 }

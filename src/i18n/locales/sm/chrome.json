@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Avanoa" },
+  "spaceRail": {
+    "landmarkLabel": "Avanoa"
+  },
   "sidebar": {
     "landmarkLabel": "Avanoa",
     "navLabel": "Faamaumauga",
@@ -25,7 +27,15 @@
       "label": "Igoa o le faamaumauga",
       "cancel": "Faaleaogaina",
       "save": "Toe faaigoa"
-    }
+    },
+    "addDocInputAria": "Igoa o le faamaumauga fou",
+    "addSection": "Faaopoopo vaega",
+    "addSectionAria": "Faaopoopo vaega i lenei avanoa",
+    "renameDocAria": "Toe faaigoa le faamaumauga {{name}}",
+    "renameDocHint": "Toe faaigoa (kiliki faalua)",
+    "renameSection": "Toe faaigoa (kiliki faalua)",
+    "renameSectionAria": "Toe faaigoa le vaega {{label}}",
+    "sectionNamePlaceholder": "Igoa o le vaega (Enter e faia)"
   },
   "topbar": {
     "openNav": "Tatala folauga",
@@ -41,25 +51,42 @@
     "focusTitleFocus": "Taulai (⌘\\)",
     "findInDoc": "Sailia i le faamaumauga",
     "inspector": "Faatonu o faamaumauga",
-    "themes": { "light": "Malamalama", "dark": "Pogisa", "hcLight": "Faaeseesega maualuga (malamalama)", "hcDark": "Faaeseesega maualuga (pogisa)" }
+    "themes": {
+      "light": "Malamalama",
+      "dark": "Pogisa",
+      "hcLight": "Faaeseesega maualuga (malamalama)",
+      "hcDark": "Faaeseesega maualuga (pogisa)"
+    }
   },
-  "modeToggle": { "write": "tusi", "read": "faitau", "split": "vaeluaga", "space": "avanoa" },
-  "mobileNav": { "title": "Folauga", "close": "Tapuni folauga" },
-  "mobileTabs": { "write": "tusi", "read": "faitau", "split": "vaeluaina", "brain": "brain", "cite": "upu sii", "more": "atili" },
+  "modeToggle": {
+    "write": "tusi",
+    "read": "faitau",
+    "split": "vaeluaga",
+    "space": "avanoa"
+  },
+  "mobileNav": {
+    "title": "Folauga",
+    "close": "Tapuni folauga"
+  },
+  "mobileTabs": {
+    "write": "tusi",
+    "read": "faitau",
+    "split": "vaeluaina",
+    "brain": "brain",
+    "cite": "upu sii",
+    "more": "atili"
+  },
   "mobileMore": {
     "title": "Atili",
     "close": "Tapuni atili",
     "groupDoc": "Lenei pepa",
     "groupSpace": "Lenei avanoa",
     "groupApp": "App",
-    "modeLabel": "Tulaga",
-    "menuLabel": "Lisi",
     "settings": "Faatulagaga",
     "spaceSettings": "Faatulagaga o le avanoa",
     "about": "E uiga",
     "help": "Fesoasoani ma vavalo",
     "whatsNew": "O le a le mea fou",
-    "feedback": "Auina mai faamatalaga…",
     "contact": "Fesootai"
   },
   "quickSettings": {
@@ -73,11 +100,20 @@
     "floatingToolbarLabel": "Pa o meafaigaluega e opeopea",
     "readingWidthLabel": "Lautele o le faitau",
     "readingWidthHint": "Fua i faamaumauga taitasi",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Atili",
     "helpToursLabel": "Asiasiga o le fesoasoani",
     "helpItem": "Fesoasoani ma vavalo",
-    "themes": { "light": "Malamalama", "dark": "Pogisa", "hcLight": "HC malamalama", "hcDark": "HC pogisa" },
+    "themes": {
+      "light": "Malamalama",
+      "dark": "Pogisa",
+      "hcLight": "HC malamalama",
+      "hcDark": "HC pogisa"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "O le a le mea fou",
     "feedback": "Auina mai faamatalaga…",
@@ -104,8 +140,17 @@
   "inspector": {
     "expand": "Faalautele faatonu",
     "collapse": "Faaitiitia faatonu",
-    "tabs": { "outline": "FAAVASEGA", "info": "INFO", "history": "TALAFAASOLOPITO", "actions": "GAOIOIGA" },
-    "outline": { "title": "FAAVASEGA", "sectionSummary": "{{count}} VAEGA", "empty": "E leai ni ulutala. Faaopoopo ulutala i le pepa e fausia ai lona faamatalaga." },
+    "tabs": {
+      "outline": "FAAVASEGA",
+      "info": "INFO",
+      "history": "TALAFAASOLOPITO",
+      "actions": "GAOIOIGA"
+    },
+    "outline": {
+      "title": "FAAVASEGA",
+      "sectionSummary": "{{count}} VAEGA",
+      "empty": "E leai ni ulutala. Faaopoopo ulutala i le pepa e fausia ai lona faamatalaga."
+    },
     "info": {
       "title": "INFO",
       "words": "Upu",
@@ -119,8 +164,18 @@
       "noLimit": "Leai se tapulaa",
       "noDueDate": "Leai se aso"
     },
-    "status": { "draft": "Tusiga muamua", "in-progress": "O loo faagasolo", "in-review": "I le iloiloga", "complete": "Maeʻa", "published": "Lomia" },
-    "lock": { "title": "Loka mo le fesuiaiga", "body": "O le tulaga o lenei faamaumauga e loka ai e teu ai. Tatala e fai ai suiga.", "unlock": "Tatala e fesuiai" },
+    "status": {
+      "draft": "Tusiga muamua",
+      "in-progress": "O loo faagasolo",
+      "in-review": "I le iloiloga",
+      "complete": "Maeʻa",
+      "published": "Lomia"
+    },
+    "lock": {
+      "title": "Loka mo le fesuiaiga",
+      "body": "O le tulaga o lenei faamaumauga e loka ai e teu ai. Tatala e fai ai suiga.",
+      "unlock": "Tatala e fesuiai"
+    },
     "history": {
       "title": "AGA O LE LOMI",
       "now": "NEI",
@@ -132,7 +187,11 @@
       "pin": "Faamau le aga",
       "unpin": "Aveese le faamau",
       "restore": "Toe faafoi",
-      "kind": { "auto": "auto", "manual": "lima", "baseline": "amataga" },
+      "kind": {
+        "auto": "auto",
+        "manual": "lima",
+        "baseline": "amataga"
+      },
       "ageNow": "nei",
       "ageMinutes": "{{count}}m ua mavae",
       "ageHours": "{{count}}i ua mavae",
@@ -178,5 +237,9 @@
     "placeholder": "Faaigoa lenei aga (filifili)",
     "save": "Teu le aga",
     "cancel": "Faaleaogaina"
+  },
+  "navShell": {
+    "home": "Fale",
+    "openSpace": "Tatala {{name}}"
   }
 }

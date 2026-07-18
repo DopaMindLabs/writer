@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Ngā wāhi" },
+  "spaceRail": {
+    "landmarkLabel": "Ngā wāhi"
+  },
   "sidebar": {
     "landmarkLabel": "Wāhi",
     "navLabel": "Ngā tuhinga",
@@ -25,7 +27,15 @@
       "label": "Ingoa tuhinga",
       "cancel": "Whakakore",
       "save": "Whakaingoa anō"
-    }
+    },
+    "addDocInputAria": "Ingoa tuhinga hou",
+    "addSection": "Tāpiri wāhanga",
+    "addSectionAria": "Tāpiri wāhanga ki tēnei wāhi",
+    "renameDocAria": "Whakaingoa anō te tuhinga {{name}}",
+    "renameDocHint": "Whakaingoa anō (pāwhiri-rua)",
+    "renameSection": "Whakaingoa anō (pāwhiri-rua)",
+    "renameSectionAria": "Whakaingoa anō te wāhanga {{label}}",
+    "sectionNamePlaceholder": "Ingoa wāhanga (Whakauru hei hanga)"
   },
   "topbar": {
     "openNav": "Whakatuwhera te whakatere",
@@ -41,25 +51,42 @@
     "focusTitleFocus": "Arotahi (⌘\\)",
     "findInDoc": "Kimi i te tuhinga",
     "inspector": "Kaitirotiro tuhinga",
-    "themes": { "light": "Mārama", "dark": "Pōuri", "hcLight": "Paratau teitei (mārama)", "hcDark": "Paratau teitei (pōuri)" }
+    "themes": {
+      "light": "Mārama",
+      "dark": "Pōuri",
+      "hcLight": "Paratau teitei (mārama)",
+      "hcDark": "Paratau teitei (pōuri)"
+    }
   },
-  "modeToggle": { "write": "tuhi", "read": "pānui", "split": "wehe", "space": "wāhi" },
-  "mobileNav": { "title": "Whakatere", "close": "Kati te whakatere" },
-  "mobileTabs": { "write": "tuhi", "read": "pānui", "split": "wehe", "brain": "brain", "cite": "tohutoro", "more": "atu" },
+  "modeToggle": {
+    "write": "tuhi",
+    "read": "pānui",
+    "split": "wehe",
+    "space": "wāhi"
+  },
+  "mobileNav": {
+    "title": "Whakatere",
+    "close": "Kati te whakatere"
+  },
+  "mobileTabs": {
+    "write": "tuhi",
+    "read": "pānui",
+    "split": "wehe",
+    "brain": "brain",
+    "cite": "tohutoro",
+    "more": "atu"
+  },
   "mobileMore": {
     "title": "Atu",
     "close": "Kati atu",
     "groupDoc": "Tēnei tuhinga",
     "groupSpace": "Tēnei wāhi",
     "groupApp": "Tono",
-    "modeLabel": "Aratau",
-    "menuLabel": "Tahua",
     "settings": "Tautuhinga",
     "spaceSettings": "Tautuhinga wāhi",
     "about": "Mō",
     "help": "Āwhina me ngā pātuhi tere",
     "whatsNew": "Hou",
-    "feedback": "Tuku urupare…",
     "contact": "Whakapā"
   },
   "quickSettings": {
@@ -73,11 +100,20 @@
     "floatingToolbarLabel": "Pae taputapu mānu",
     "readingWidthLabel": "Whānui pānui",
     "readingWidthHint": "Inenga ia tuhinga",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Atu",
     "helpToursLabel": "Haerenga āwhina",
     "helpItem": "Āwhina me ngā pātuhi tere",
-    "themes": { "light": "Mārama", "dark": "Pōuri", "hcLight": "HC mārama", "hcDark": "HC pōuri" },
+    "themes": {
+      "light": "Mārama",
+      "dark": "Pōuri",
+      "hcLight": "HC mārama",
+      "hcDark": "HC pōuri"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Hou",
     "feedback": "Tuku urupare…",
@@ -104,8 +140,17 @@
   "inspector": {
     "expand": "Whākī kaitirotiro",
     "collapse": "Whakaiti kaitirotiro",
-    "tabs": { "outline": "WHAKARĀPOPOTO", "info": "MŌHIO", "history": "HĪTORI", "actions": "MAHI" },
-    "outline": { "title": "WHAKARĀPOPOTO", "sectionSummary": "{{count}} WĀHANGA", "empty": "Kāore anō he taitara. Tāpiria ngā taitara ki te tuhinga hei hanga i tōna āhua." },
+    "tabs": {
+      "outline": "WHAKARĀPOPOTO",
+      "info": "MŌHIO",
+      "history": "HĪTORI",
+      "actions": "MAHI"
+    },
+    "outline": {
+      "title": "WHAKARĀPOPOTO",
+      "sectionSummary": "{{count}} WĀHANGA",
+      "empty": "Kāore anō he taitara. Tāpiria ngā taitara ki te tuhinga hei hanga i tōna āhua."
+    },
     "info": {
       "title": "MŌHIO",
       "words": "Ngā kupu",
@@ -119,8 +164,18 @@
       "noLimit": "Kāore he tepe",
       "noDueDate": "Kāore he rā"
     },
-    "status": { "draft": "Tauira", "in-progress": "Kei te haere", "in-review": "Kei te arotake", "complete": "Kua oti", "published": "Kua whakaputaina" },
-    "lock": { "title": "Kua rakaina mō te whakatika", "body": "Ka rakaina tēnei tuhinga e tōna mana hei pupuri. Whakawātea kia āhei te whakatika.", "unlock": "Whakawātea hei whakatika" },
+    "status": {
+      "draft": "Tauira",
+      "in-progress": "Kei te haere",
+      "in-review": "Kei te arotake",
+      "complete": "Kua oti",
+      "published": "Kua whakaputaina"
+    },
+    "lock": {
+      "title": "Kua rakaina mō te whakatika",
+      "body": "Ka rakaina tēnei tuhinga e tōna mana hei pupuri. Whakawātea kia āhei te whakatika.",
+      "unlock": "Whakawātea hei whakatika"
+    },
     "history": {
       "title": "NGĀ PUKAPUKA",
       "now": "INĀIANEI",
@@ -132,7 +187,11 @@
       "pin": "Tāpoki pukapuka",
       "unpin": "Whakawātea tāpoki",
       "restore": "Whakahokia",
-      "kind": { "auto": "aunoa", "manual": "ringa", "baseline": "tūāpapa" },
+      "kind": {
+        "auto": "aunoa",
+        "manual": "ringa",
+        "baseline": "tūāpapa"
+      },
       "ageNow": "ināianei",
       "ageMinutes": "{{count}}m i mua",
       "ageHours": "{{count}}h i mua",
@@ -178,5 +237,9 @@
     "placeholder": "Whakaingoatia tēnei pukapuka (kōwhiringa)",
     "save": "Tiaki pukapuka",
     "cancel": "Whakakore"
+  },
+  "navShell": {
+    "home": "Kāinga",
+    "openSpace": "Whakatuwhera {{name}}"
   }
 }

@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Prostory" },
+  "spaceRail": {
+    "landmarkLabel": "Prostory"
+  },
   "sidebar": {
     "landmarkLabel": "Prostor",
     "navLabel": "Dokumenty",
@@ -25,7 +27,15 @@
       "label": "Název dokumentu",
       "cancel": "Zrušit",
       "save": "Přejmenovat"
-    }
+    },
+    "addDocInputAria": "Název nového dokumentu",
+    "addSection": "Přidat sekci",
+    "addSectionAria": "Přidat sekci do tohoto prostoru",
+    "renameDocAria": "Přejmenovat dokument {{name}}",
+    "renameDocHint": "Přejmenovat (dvojklik)",
+    "renameSection": "Přejmenovat (dvojklik)",
+    "renameSectionAria": "Přejmenovat sekci {{label}}",
+    "sectionNamePlaceholder": "Název sekce (Enter pro vytvoření)"
   },
   "topbar": {
     "openNav": "Otevřít navigaci",
@@ -41,25 +51,42 @@
     "focusTitleFocus": "Soustředění (⌘\\)",
     "findInDoc": "Najít v dokumentu",
     "inspector": "Inspektor dokumentu",
-    "themes": { "light": "Světlý", "dark": "Tmavý", "hcLight": "Vysoký kontrast (světlý)", "hcDark": "Vysoký kontrast (tmavý)" }
+    "themes": {
+      "light": "Světlý",
+      "dark": "Tmavý",
+      "hcLight": "Vysoký kontrast (světlý)",
+      "hcDark": "Vysoký kontrast (tmavý)"
+    }
   },
-  "modeToggle": { "write": "psát", "read": "číst", "split": "rozdělit", "space": "prostor" },
-  "mobileNav": { "title": "Navigace", "close": "Zavřít navigaci" },
-  "mobileTabs": { "write": "psát", "read": "číst", "split": "rozdělit", "brain": "brain", "cite": "citovat", "more": "víc" },
+  "modeToggle": {
+    "write": "psát",
+    "read": "číst",
+    "split": "rozdělit",
+    "space": "prostor"
+  },
+  "mobileNav": {
+    "title": "Navigace",
+    "close": "Zavřít navigaci"
+  },
+  "mobileTabs": {
+    "write": "psát",
+    "read": "číst",
+    "split": "rozdělit",
+    "brain": "brain",
+    "cite": "citovat",
+    "more": "víc"
+  },
   "mobileMore": {
     "title": "Víc",
     "close": "Zavřít víc",
     "groupDoc": "Tento dokument",
     "groupSpace": "Tento prostor",
     "groupApp": "Aplikace",
-    "modeLabel": "Režim",
-    "menuLabel": "Menu",
     "settings": "Nastavení",
     "spaceSettings": "Nastavení prostoru",
     "about": "O aplikaci",
     "help": "Nápověda a zkratky",
     "whatsNew": "Co je nového",
-    "feedback": "Poslat zpětnou vazbu…",
     "contact": "Kontakt"
   },
   "quickSettings": {
@@ -73,11 +100,20 @@
     "floatingToolbarLabel": "Plovoucí panel nástrojů",
     "readingWidthLabel": "Šířka čtení",
     "readingWidthHint": "Míra na dokument",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Víc",
     "helpToursLabel": "Prohlídka nápovědy",
     "helpItem": "Nápověda a zkratky",
-    "themes": { "light": "Světlý", "dark": "Tmavý", "hcLight": "VK světlý", "hcDark": "VK tmavý" },
+    "themes": {
+      "light": "Světlý",
+      "dark": "Tmavý",
+      "hcLight": "VK světlý",
+      "hcDark": "VK tmavý"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Co je nového",
     "feedback": "Poslat zpětnou vazbu…",
@@ -104,8 +140,17 @@
   "inspector": {
     "expand": "Rozbalit inspektor",
     "collapse": "Sbalit inspektor",
-    "tabs": { "outline": "OSNOVA", "info": "INFO", "history": "HISTORIE", "actions": "AKCE" },
-    "outline": { "title": "OSNOVA", "sectionSummary": "{{count}} SEKCÍ", "empty": "Zatím žádné nadpisy. Přidejte do dokumentu nadpisy a vytvořte jeho osnovu." },
+    "tabs": {
+      "outline": "OSNOVA",
+      "info": "INFO",
+      "history": "HISTORIE",
+      "actions": "AKCE"
+    },
+    "outline": {
+      "title": "OSNOVA",
+      "sectionSummary": "{{count}} SEKCÍ",
+      "empty": "Zatím žádné nadpisy. Přidejte do dokumentu nadpisy a vytvořte jeho osnovu."
+    },
     "info": {
       "title": "INFO",
       "words": "Slova",
@@ -119,8 +164,18 @@
       "noLimit": "Bez limitu",
       "noDueDate": "Bez termínu"
     },
-    "status": { "draft": "Koncept", "in-progress": "Probíhá", "in-review": "V revizi", "complete": "Hotovo", "published": "Publikováno" },
-    "lock": { "title": "Uzamčeno pro úpravy", "body": "Stav tohoto dokumentu jej zamyká pro zachování. Odemkněte pro provedení změn.", "unlock": "Odemknout pro úpravy" },
+    "status": {
+      "draft": "Koncept",
+      "in-progress": "Probíhá",
+      "in-review": "V revizi",
+      "complete": "Hotovo",
+      "published": "Publikováno"
+    },
+    "lock": {
+      "title": "Uzamčeno pro úpravy",
+      "body": "Stav tohoto dokumentu jej zamyká pro zachování. Odemkněte pro provedení změn.",
+      "unlock": "Odemknout pro úpravy"
+    },
     "history": {
       "title": "VERZE",
       "now": "TEĎ",
@@ -132,7 +187,11 @@
       "pin": "Připnout verzi",
       "unpin": "Odepnout verzi",
       "restore": "Obnovit",
-      "kind": { "auto": "auto", "manual": "ruční", "baseline": "výchozí" },
+      "kind": {
+        "auto": "auto",
+        "manual": "ruční",
+        "baseline": "výchozí"
+      },
       "ageNow": "teď",
       "ageMinutes": "před {{count}}m",
       "ageHours": "před {{count}}h",
@@ -178,5 +237,9 @@
     "placeholder": "Pojmenujte tuto verzi (volitelné)",
     "save": "Uložit verzi",
     "cancel": "Zrušit"
+  },
+  "navShell": {
+    "home": "Domů",
+    "openSpace": "Otevřít {{name}}"
   }
 }
