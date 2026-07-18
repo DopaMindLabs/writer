@@ -1,3 +1,5 @@
+import type { Table } from 'dexie';
+
 import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
 import { invariant } from '@/lib/invariant';
@@ -62,6 +64,22 @@ const isShared = (realmId: string | undefined, privateRealm: string): boolean =>
   realmId !== undefined && realmId !== privateRealm;
 
 /**
+ * Stamp already-fetched rows and write them back through the wrapped
+ * `bulkPut` path. Dexie's cursor-driven writes (`modify`) bypass the
+ * encryption middleware, so rows are read via `toArray`, stamped in memory,
+ * and re-written so the middleware re-seals each one.
+ */
+const stampRows = async (
+  table: Table<{ realmId?: string }>,
+  rows: { realmId?: string }[],
+  stamp: (row: { realmId?: string }) => void,
+): Promise<void> => {
+  if (rows.length === 0) return;
+  for (const row of rows) stamp(row);
+  await table.bulkPut(rows);
+};
+
+/**
  * Apply `stamp` to the space and every synced row beneath it.
  *
  * Must be called inside a transaction covering {@link REALM_TABLE_NAMES}: a
@@ -76,14 +94,20 @@ export const restampSpace = async (options: {
   stamp: (row: { realmId?: string }) => void;
 }): Promise<void> => {
   const { db, spaceId, stamp } = options;
-  await db.spaces.where({ id: spaceId }).modify(stamp);
+  const space = await db.spaces.get(spaceId);
+  if (space !== undefined) {
+    stamp(space);
+    await db.spaces.put(space);
+  }
   for (const name of SPACE_SCOPED) {
-    await db.table(name).where({ spaceId }).modify(stamp);
+    const table: Table<{ realmId?: string }> = db.table(name);
+    await stampRows(table, await table.where({ spaceId }).toArray(), stamp);
   }
   const docIds = await db.docs.where({ spaceId }).primaryKeys();
   if (docIds.length === 0) return;
   for (const name of DOC_SCOPED) {
-    await db.table(name).where('docId').anyOf(docIds).modify(stamp);
+    const table: Table<{ realmId?: string }> = db.table(name);
+    await stampRows(table, await table.where('docId').anyOf(docIds).toArray(), stamp);
   }
 };
 
