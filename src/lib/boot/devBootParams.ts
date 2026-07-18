@@ -20,7 +20,11 @@ const isReseedParamEnabled = (): boolean =>
 
 const stripParam = (url: URL, name: string): void => {
   url.searchParams.delete(name);
-  window.history.replaceState({}, '', url.pathname + url.search);
+  // Preserve the hash route: a dev/E2E URL can combine a boot param with a hash
+  // route (e.g. `/?reseed=1#/settings?tab=account`); dropping `url.hash` here would
+  // land the app on `/` instead of the requested route, since the router mounts
+  // only after boot.
+  window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
 };
 
 /**
