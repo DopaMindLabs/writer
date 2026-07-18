@@ -6,3 +6,5 @@ approved, rework.
 
 | Task  | Status | Commit | Date | Notes |
 |-------|--------|--------|------|-------|
+| S1.T1 | done   | 153bd14 | 2026-07-18 | capability contracts + hasCapability guard |
+| S1.T2 | done   | aaa801a | 2026-07-18 | SyncCoordinator registry |
