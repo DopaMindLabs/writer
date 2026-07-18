@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import dexieCloud from 'dexie-cloud-addon';
 import { buildDb } from '@/db/buildDb';
-import type { LoremDB } from '@/db/LoremDB';
+import { LoremDB } from '@/db/LoremDB';
 import { NoteKind, NoteLayout, NoteState } from '@/db/schema';
 import { InvariantError } from '@/lib/invariant';
 import {
@@ -171,5 +172,64 @@ describe('dropSpaceRealm', () => {
 
   it('refuses an unknown space', async () => {
     await expect(dropSpaceRealm('nope', db)).rejects.toThrow(InvariantError);
+  });
+});
+
+/**
+ * The share/unshare flows need the addon's access-control tables (`realms`,
+ * `members`), which a plain database lacks, so these run on a cloud-schema
+ * instance. It is never `configure()`d — no endpoint, no sync — and the addon
+ * reports `'unauthorized'` until a user signs in, which the sign-in-dependent
+ * case fakes through the addon's public `currentUserId`.
+ */
+describe('share and unshare against the cloud schema', () => {
+  beforeEach(async () => {
+    await db.delete();
+    db = new LoremDB(`realm-cloud-${String(Math.random()).slice(2)}`, {
+      addons: [dexieCloud],
+      cloud: true,
+    });
+    await db.open();
+    await seedSpace();
+  });
+
+  /**
+   * Sign the database in as `user-a`: the addon's default-realm middleware has
+   * stamped every seeded row `'unauthorized'`, so move them into the signed-in
+   * user's private realm (what syncification does on a real login) and report
+   * that user from the addon's public `currentUserId`.
+   */
+  const signIn = async (): Promise<void> => {
+    await restamp('user-a');
+    vi.spyOn(db.cloud, 'currentUserId', 'get').mockReturnValue('user-a');
+  };
+
+  it('createSpaceRealm mints a realm and files every synced row into it', async () => {
+    await signIn();
+
+    const realmId = await createSpaceRealm('s1', db);
+
+    expect(await stampedRealms()).toEqual(Array<string>(8).fill(realmId));
+    expect(await db.realms.get(realmId)).toMatchObject({ name: 'Space' });
+  });
+
+  it('createSpaceRealm refuses a space that is already shared', async () => {
+    await signIn();
+    await createSpaceRealm('s1', db);
+
+    await expect(createSpaceRealm('s1', db)).rejects.toThrow(InvariantError);
+  });
+
+  it('dropSpaceRealm returns the rows to the private realm and deletes the realm', async () => {
+    await db.realms.put({ realmId: 'rlm-shared', name: 'Space' });
+    await db.members.add({ realmId: 'rlm-shared', email: 'a@b.c' });
+    await restamp('rlm-shared');
+
+    await dropSpaceRealm('s1', db);
+
+    // Signed out, the private realm is the addon's 'unauthorized' placeholder.
+    expect(await stampedRealms()).toEqual(Array<string>(8).fill('unauthorized'));
+    expect(await db.realms.get('rlm-shared')).toBeUndefined();
+    expect(await db.members.where({ realmId: 'rlm-shared' }).count()).toBe(0);
   });
 });
