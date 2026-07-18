@@ -258,14 +258,16 @@ and absent from `UNSYNCED` (so they replicate).
 - Verify: `npx vitest run src/db src/lib/cloud/crypto && npm run typecheck && npm run lint`
 - Commit: `test(db): pin the addon-managed realm tables`
 
-### S3.T2 - Typed realm accessors (deferred to Stage 4)
-- Goal: `db.realms` / `db.members` / `db.roles` typed rather than reached via `db.table(...)`.
-- **Blocked, and deliberately deferred:** the row types (`DBRealm`, `DBRealmMember`,
-  `DBRealmRole`) live in `dexie-cloud-common`, which is a transitive dependency — the addon
-  imports them but does not re-export them. Typing the accessors therefore means either
-  adding a new direct dependency (a stop-and-ask under the Plan workflow) or restating the
-  third-party shapes locally, which can drift. There is no consumer until Stage 4, so the
-  decision belongs there rather than here. See Questions.
+### S3.T2 - Typed realm accessors — nothing to do
+- **Resolved 2026-07-18: no work, no dependency.** `dexie-cloud-addon` ships
+  `extend-dexie-interface.d.ts`, which does `declare module 'dexie'` and adds `realms`,
+  `members` and `roles` to the `Dexie` interface — with correct insert types and `roles`
+  keyed on the compound `[string, string]`. The augmentation reaches every `Dexie` subclass
+  as soon as the addon's types are in the program, which they are via `buildDb.ts`.
+- `db.realms` / `db.members` / `db.roles` are therefore already typed on `LoremDB`; declaring
+  them again is redundant and gets the `roles` key type wrong. Verified by probe.
+- The earlier claim that this needed `dexie-cloud-common` as a direct dependency was wrong —
+  it came from checking the package's exports without checking for a module augmentation.
 
 ## Stage 4 - realmId plumbing + access-control operations
 Goal: rows can live in a custom realm; a space can be moved into (and back out of) its own
@@ -409,13 +411,7 @@ Goal: docs/spec tell the truth about the new layer in the same PR (AGENTS.md req
    erase gate lands? (Ships with help article, a11y tests, stories, i18n.)
 3. **Package extraction** to `@dopamind/writer-sync/*`: direction only for now; extraction
    would need a workspace/monorepo decision. Confirm deferral.
-4. **`dexie-cloud-common` as a direct dependency?** Typing `db.realms`/`members`/`roles`
-   needs `DBRealm`/`DBRealmMember`/`DBRealmRole`, which live in `dexie-cloud-common` — a
-   transitive dependency the addon does not re-export. Options: add it as a direct dependency
-   (new dependency, needs approval), restate the shapes locally in `schema.ts` (no new
-   dependency, may drift from the addon), or keep using `db.table('realms')` untyped. Needed
-   before S4.T2 writes realm rows.
-5. **frameSync implementation** (encrypted `docUpdates` replication) would supersede the
+4. **frameSync implementation** (encrypted `docUpdates` replication) would supersede the
    whole-doc LWW reconciler — a recorded open decision. This runbook ships the interface
    only. Confirm the implementation stays out of scope.
 
