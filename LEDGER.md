@@ -12,3 +12,4 @@ approved, rework.
 | S1.T2 | rework | aaa801a | 2026-07-18 | registry array handed out by reference; redundant capability re-check |
 | S1.T1 | done   | 78dd9b6 | 2026-07-18 | reworked: contracts derived from cloudClient/cloudObservable; SyncObservable structurally matches CloudObservable so adapters map without casts; behavioural tests |
 | S1.T2 | done   | 78dd9b6 | 2026-07-18 | reworked in the same commit (types and coordinator are interdependent — a split would leave the first commit uncompilable) |
+| S2.T1 | done   | 87291dc | 2026-07-18 | Dexie Cloud adapter: frameSync + keyDelivery, exhaustive phase/presence mapping. Deviation: phases, escrow presence and roles converted to enums (user direction, matches RouteName/NoteKind); SyncCapability stays a key union as string-enum members cannot index SyncProvider |
