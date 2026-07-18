@@ -229,48 +229,43 @@ module is an open question — see Questions.
 - Commit: `feat(sync-provider): add mount reconciliation`
 
 ## Stage 3 - Realm access-control schema
-Goal: declare Dexie Cloud's addon-managed `realms`/`members`/`roles` tables on cloud-enabled
-instances. THIS IS A DB SCHEMA CHANGE — it was approved by the user as the point of this
-runbook; the executor must not extend it beyond what S3.T1 states.
+Goal: the access-control tables are present, correctly classified, and pinned by tests.
 
-### S3.T1 - Declare realms/members/roles on cloud instances
-- Goal: cloud-enabled `LoremDB` instances gain the three addon-managed tables via a
-  `version(2)` chain; plain (non-cloud) instances remain `verno === 1` with the unchanged
-  17-table `STORES`. Sticky-schema behaviour (`wasCloudProvisioned`) preserved. The new
-  tables are neither encrypted nor unsynced.
-- Design (executor follows exactly):
-  - `src/db/stores.ts` `STORES` is NOT touched (it stays the plain-instance source of truth).
-  - In `src/db/LoremDB.ts`, when `options.cloud` is true, keep the existing version(1) spec
-    (STORES + `cloudCrypto: 'id'` + `cloudDevices: 'id'`) and add
-    `this.version(2).stores({ realms: '@realmId', members: '@id,[realmId+email]', roles: '[realmId+name]' })`
-    — the canonical Dexie Cloud access-control declarations. Before implementing, confirm
-    exact index strings and row types against the installed addon's typings
-    (`node_modules/dexie-cloud-addon` — `DBRealm`, `DBRealmMember`, `DBRealmRole`) and use
-    those names; if the typings disagree with the strings above, the typings win — note the
-    deviation in the ledger. Version-chain precedent: `src/lib/cloud/crypto/keyStore.ts`
-    (version(1) then version(2); never reuse a version).
-  - Typed `Table` properties for the three tables on `LoremDB` (types from the addon,
-    type-only import — allowed).
-  - Replication/encryption classification: do NOT add the tables to `UNSYNCED` in
-    `src/db/buildDb.ts`; do NOT add them to `SYNCED_TABLES` in
-    `src/lib/cloud/crypto/tableRules.ts` (server-readable by design).
-- Code refs: `src/db/LoremDB.ts`, `src/db/buildDb.ts::buildDb`, `src/db/db.test.ts` (pins
-  `verno === 1` + exact table list — assert these now hold for the PLAIN instance and add
-  cloud-instance pins for verno 2 + 20 tables), `src/db/stores.test.ts`,
-  `src/db/buildDb.test.ts` (sticky schema), `src/lib/cloud/crypto/tableRules.test.ts` (pins
-  `SYNCED_TABLES` length 10 — must stay 10), `src/lib/cloud/crypto/middleware.test.ts`
-  (assert realm-table writes pass through the middleware without an envelope).
+**Corrected 2026-07-18 after reading the addon.** The original plan — declare
+`realms`/`members`/`roles` via a `version(2)` chain — was wrong, and would have broken the
+build. `overrideParseStoresSpec` in dexie-cloud-addon merges its own `DEXIE_CLOUD_SCHEMA`
+(`realms: '@realmId'`, `members: '@id, [userId+realmId], [email+realmId], realmId'`,
+`roles: '[realmId+name]'`, plus `$jobs`, `$syncState`, `$baseRevs`, `$logins`) into whatever
+stores are declared, and **throws** if the app redeclares one with a different primary key —
+which the runbook's guessed `members: '@id,[realmId+email]'` would have done. Verified by
+probe: a cloud-enabled instance already reports `realms`, `members`, `roles` at `verno === 1`.
+
+So there is **no schema change to make**: no `version(2)`, no `STORES` edit, no migration.
+The tables are also already correctly classified — absent from `SYNCED_TABLES` (so the
+encryption middleware leaves them in the clear, which the server needs for access control)
+and absent from `UNSYNCED` (so they replicate).
+
+### S3.T1 - Pin the addon-managed access-control tables
+- Goal: regression tests proving the tables arrive on cloud instances, stay off plain ones,
+  and are never enveloped. No production change.
+- Code refs: `src/db/buildDb.test.ts`, `src/lib/cloud/crypto/tableRules.ts` (`SYNCED_TABLES`
+  stays 10), `node_modules/dexie-cloud-addon/dist/modern/dexie-cloud-addon.js`
+  (`DEXIE_CLOUD_SCHEMA`, `overrideParseStoresSpec`).
 - Steps:
-  1. Write the failing tests first: extend `db.test.ts`/`buildDb.test.ts` with cloud-instance
-     assertions (verno 2; `realms`/`members`/`roles` present; plain instance unchanged at
-     verno 1/17 tables), and `middleware.test.ts` with a realm-row plaintext pass-through
-     assertion. A focused migration test: open a simulated existing cloud DB at version 1,
-     rebuild with the new code, assert upgrade to 2 succeeds with data intact.
-  2. Implement the version(2) chain + typed tables in `LoremDB.ts`.
-  3. Verify classification lists unchanged (`UNSYNCED`, `SYNCED_TABLES`) and run the crypto
-     suites.
-- Verify: `npx vitest run src/db src/lib/cloud/crypto && npm run typecheck` — then `npm run lint && npm run test:run`
-- Commit: `feat(cloud): declare realm access-control tables`
+  1. Add tests to `buildDb.test.ts`: a cloud instance contains `realms`/`members`/`roles` and
+     stays at `verno === 1`; a plain instance contains none of them; a realm row round-trips
+     without `CIPHER_FIELD`.
+- Verify: `npx vitest run src/db src/lib/cloud/crypto && npm run typecheck && npm run lint`
+- Commit: `test(db): pin the addon-managed realm tables`
+
+### S3.T2 - Typed realm accessors (deferred to Stage 4)
+- Goal: `db.realms` / `db.members` / `db.roles` typed rather than reached via `db.table(...)`.
+- **Blocked, and deliberately deferred:** the row types (`DBRealm`, `DBRealmMember`,
+  `DBRealmRole`) live in `dexie-cloud-common`, which is a transitive dependency — the addon
+  imports them but does not re-export them. Typing the accessors therefore means either
+  adding a new direct dependency (a stop-and-ask under the Plan workflow) or restating the
+  third-party shapes locally, which can drift. There is no consumer until Stage 4, so the
+  decision belongs there rather than here. See Questions.
 
 ## Stage 4 - realmId plumbing + access-control operations
 Goal: rows can live in a custom realm; a space can be moved into (and back out of) its own
@@ -414,7 +409,13 @@ Goal: docs/spec tell the truth about the new layer in the same PR (AGENTS.md req
    erase gate lands? (Ships with help article, a11y tests, stories, i18n.)
 3. **Package extraction** to `@dopamind/writer-sync/*`: direction only for now; extraction
    would need a workspace/monorepo decision. Confirm deferral.
-4. **frameSync implementation** (encrypted `docUpdates` replication) would supersede the
+4. **`dexie-cloud-common` as a direct dependency?** Typing `db.realms`/`members`/`roles`
+   needs `DBRealm`/`DBRealmMember`/`DBRealmRole`, which live in `dexie-cloud-common` — a
+   transitive dependency the addon does not re-export. Options: add it as a direct dependency
+   (new dependency, needs approval), restate the shapes locally in `schema.ts` (no new
+   dependency, may drift from the addon), or keep using `db.table('realms')` untyped. Needed
+   before S4.T2 writes realm rows.
+5. **frameSync implementation** (encrypted `docUpdates` replication) would supersede the
    whole-doc LWW reconciler — a recorded open decision. This runbook ships the interface
    only. Confirm the implementation stays out of scope.
 
