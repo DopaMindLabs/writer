@@ -97,9 +97,24 @@ const createFictionSpace = async (page) => {
   return spaceId;
 };
 
-const draft = async (page, spaceId) => {
+/**
+ * The fiction template lays out sections but no documents, so the tour creates
+ * its first chapter from the sidebar and lands on it.
+ */
+const createChapter = async (page, spaceId) => {
   await page.goto(`${BASE}/#/s/${spaceId}`);
-  await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
+  const sidebar = page.locator('aside').last();
+  await sidebar.getByRole('button', { name: 'Add doc to Manuscript' }).click();
+  const name = sidebar.getByPlaceholder(/Doc name \(Enter to create\)/i);
+  await name.waitFor();
+  await name.fill('Chapter One');
+  await settle(page, 400);
+  await name.press('Enter');
+  await page.waitForURL(new RegExp(`/s/${spaceId}/d/[^/?#]+$`));
+  await settle(page);
+};
+
+const draft = async (page) => {
   const editor = page.locator('[aria-label="Document body"]');
   await editor.waitFor();
   await editor.click();
@@ -141,7 +156,9 @@ const main = async () => {
     await resetApp(page);
     const spaceId = await createFictionSpace(page);
     console.log(`  created fiction space ${spaceId}`);
-    await draft(page, spaceId);
+    await createChapter(page, spaceId);
+    console.log('  added the first chapter');
+    await draft(page);
     console.log('  drafted the opening scenes');
     await tourBrainSpace(page, spaceId);
     await settle(page, 1000);
