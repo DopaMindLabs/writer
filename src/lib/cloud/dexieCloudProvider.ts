@@ -1,22 +1,12 @@
 import type { SyncState } from 'dexie-cloud-addon';
 import { assertNever } from '@/lib/invariant';
-import type {
-  EncryptedFrameSync,
-  KeyDeliveryAdapter,
-  SyncProvider,
-  SyncStatus,
-} from '@/lib/syncProviders/types';
-import { KeyEscrowPresence, SyncPhase } from '@/lib/syncProviders/types';
-import type { EscrowPresence } from './cloudClient';
+import type { EncryptedFrameSync, SyncProvider, SyncStatus } from '@/lib/syncProviders/types';
+import { SyncPhase } from '@/lib/syncProviders/types';
 import {
-  cloudEscrowPresence,
   cloudSyncComplete,
   cloudSyncState,
-  createCloudEncryption,
-  recoverCloudEncryption,
   requestCloudSync,
   startCloudSession,
-  unlockCloudEncryption,
 } from './cloudClient';
 
 /**
@@ -27,8 +17,12 @@ import {
  * vocabulary: mapping the addon's seven-phase sync state onto the neutral
  * phases, and passing observables through where the shapes already agree.
  *
- * `accessControl` is absent until the realm tables exist; the addon offers no
- * realtime transport or peer discovery of its own, so those stay absent too.
+ * Only `frameSync` is declared. `keyDelivery` is deliberately absent until
+ * something consumes it: the key UI drives `setup.ts` through the facade
+ * directly, so an adapter method would be unreachable code that no test could
+ * honestly cover. It lands in the change that gives it a caller, as does
+ * `accessControl` with the realm tables. The addon has no realtime transport or
+ * peer discovery of its own, so neither is declared at all.
  */
 export const DEXIE_CLOUD_PROVIDER_ID = 'dexie-cloud';
 
@@ -58,20 +52,6 @@ const toSyncStatus = (state: SyncState): SyncStatus => ({
   error: state.error,
 });
 
-/** The facade's presence union onto the neutral enum. Total by construction. */
-const toEscrowPresence = (presence: EscrowPresence): KeyEscrowPresence => {
-  switch (presence) {
-    case 'unknown':
-      return KeyEscrowPresence.Unknown;
-    case 'none':
-      return KeyEscrowPresence.None;
-    case 'present':
-      return KeyEscrowPresence.Present;
-    default:
-      return assertNever(presence, `Unhandled escrow presence: ${String(presence)}`);
-  }
-};
-
 const frameSync = (): EncryptedFrameSync => ({
   start: () => startCloudSession(),
   requestSync: () => requestCloudSync(),
@@ -89,20 +69,7 @@ const frameSync = (): EncryptedFrameSync => ({
   },
 });
 
-const keyDelivery = (): KeyDeliveryAdapter => ({
-  setUp: (passphrase) => createCloudEncryption(passphrase),
-  unlock: (passphrase) => unlockCloudEncryption(passphrase),
-  recover: (recoveryCode) => recoverCloudEncryption(recoveryCode),
-  escrowPresence: {
-    subscribe: (next) =>
-      cloudEscrowPresence().subscribe((presence) => {
-        next(toEscrowPresence(presence));
-      }),
-  },
-});
-
 export const createDexieCloudProvider = (): SyncProvider => ({
   id: DEXIE_CLOUD_PROVIDER_ID,
   frameSync: frameSync(),
-  keyDelivery: keyDelivery(),
 });
