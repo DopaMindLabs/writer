@@ -60,16 +60,29 @@ let ring: CloudKeyRing | null = null;
 const provider: KeyProvider = { current: () => ring };
 
 const table = (name: string) => db.table<AnyRow>(name);
-/** Read a row past the middleware without decrypting, to inspect what is stored. */
-const readRaw = async (name: string, key: string): Promise<AnyRow | undefined> => {
-  const saved = ring;
-  ring = null;
-  try {
-    return await table(name).get(key);
-  } finally {
-    ring = saved;
-  }
-};
+
+/**
+ * Read a row as stored, past the encryption middleware, to inspect the ciphertext
+ * at rest. Nulling the provider would now be *hidden* by the very security
+ * behaviour these tests verify, so read inside a transaction flagged
+ * `disableBlobResolve` — the same internal-blob bypass the middleware honours,
+ * which returns the raw row untouched.
+ */
+const readRawBypass = (
+  handle: Dexie,
+  store: string,
+  key: string,
+): Promise<AnyRow | undefined> =>
+  handle.transaction('r', handle.table(store), async () => {
+    const tx = Dexie.currentTransaction as unknown as {
+      idbtrans?: { disableBlobResolve?: boolean };
+    };
+    if (tx.idbtrans) tx.idbtrans.disableBlobResolve = true;
+    return (await handle.table<AnyRow>(store).get(key)) ?? undefined;
+  });
+
+const readRaw = (name: string, key: string): Promise<AnyRow | undefined> =>
+  readRawBypass(db, name, key);
 
 beforeEach(async () => {
   // Keep the spike hermetic: a logged-in user makes the addon try to sync, so
@@ -297,12 +310,24 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     expect(rows.map((r) => r.id)).toEqual(['plain']);
   });
 
-  it('leaves keyless reads untouched when the keyless lock is off (pre-setup use)', async () => {
+  it('hides sealed rows from a no-ring read even when the keyless lock is off', async () => {
     await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'secret' });
     ring = null;
-    // Lock off: a signed-out keyless device still sees rows verbatim (raw at rest).
-    const raw = await table('docs').get('sealed');
-    expect(raw?.[CIPHER_FIELD]).toBeDefined();
+    keylessLockState.set(false); // signed-out, key forgotten — not "keyless-locked"
+    // The sealed row must not reach a typed consumer, whatever the lock state.
+    expect(await table('docs').get('sealed')).toBeUndefined();
+    // It is still stored as ciphertext at rest.
+    expect((await readRaw('docs', 'sealed'))?.[CIPHER_FIELD]).toBeDefined();
+  });
+
+  it('omits sealed rows from a no-ring list query when the lock is off', async () => {
+    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'secret' });
+    ring = null;
+    keylessLockState.set(false);
+    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'clear' });
+
+    const rows = await table('docs').toArray();
+    expect(rows.map((r) => r.id)).toEqual(['plain']);
   });
 
   it('decrypts a keyed bulkGet, returning plaintext for every requested row', async () => {
@@ -328,12 +353,17 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     expect((rows[1] as AnyRow | undefined)?.id).toBe('plain');
   });
 
-  it('leaves a keyless bulkGet untouched when the keyless lock is off', async () => {
+  it('hides sealed rows from a no-ring bulkGet when the lock is off, preserving positions', async () => {
     await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'secret' });
     ring = null;
-    // Lock off: the sealed row comes back raw (ciphertext at rest), not hidden.
-    const rows = await table('docs').bulkGet(['sealed']);
-    expect((rows[0] as AnyRow | undefined)?.[CIPHER_FIELD]).toBeDefined();
+    keylessLockState.set(false);
+    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'clear' });
+
+    const rows = await table('docs').bulkGet(['sealed', 'missing', 'plain']);
+    // The sealed row is hidden; positions of missing/plaintext rows are preserved.
+    expect(rows[0]).toBeUndefined();
+    expect(rows[1]).toBeUndefined();
+    expect((rows[2] as AnyRow | undefined)?.id).toBe('plain');
   });
 
   it('P7: re-putting an already-sealed row preserves its ciphertext (no double-seal)', async () => {
@@ -553,16 +583,9 @@ describe('createEncryptionMiddleware — a real disableChangeTracking transactio
     id, spaceId: 's1', sectionId: 'x1', updatedAt: 1, [CIPHER_FIELD]: { v: 1 },
   });
 
-  /** Read a row back without the keyless read-path hiding sealed rows. */
-  const readStored = async (id: string): Promise<AnyRow | undefined> => {
-    const wasKeyless = keylessLockState.current();
-    keylessLockState.set(false);
-    try {
-      return (await realDb.table<AnyRow>('docs').get(id)) ?? undefined;
-    } finally {
-      keylessLockState.set(wasKeyless);
-    }
-  };
+  /** Read a row as stored, past the middleware (via the blob-resolve bypass). */
+  const readStored = (id: string): Promise<AnyRow | undefined> =>
+    readRawBypass(realDb, 'docs', id);
 
   /** Apply a row the way the addon does: inside a change-tracking-disabled tx. */
   const applyPulled = (id: string): Promise<unknown> =>

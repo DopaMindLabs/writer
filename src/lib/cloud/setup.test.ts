@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import Dexie from 'dexie';
 import dexieCloud from 'dexie-cloud-addon';
 import { LoremDB } from '@/db/LoremDB';
 import { createEncryptionMiddleware } from './crypto/middleware';
@@ -62,17 +63,18 @@ const build = (name: string): LoremDB => {
   return d;
 };
 
-/** Read a row past the middleware without decrypting, then restore the key. */
-const readRaw = async (table: string, key: string): Promise<Row | undefined> => {
-  const ring = deviceKeyProvider.current();
-  const accountId = deviceKeyProvider.accountId();
-  await forgetDeviceKeyRing();
-  try {
-    return await db.table<Row>(table).get(key);
-  } finally {
-    if (ring) await saveDeviceKeyRing({ accountId, ring });
-  }
-};
+/**
+ * Read a row as stored, past the middleware, via its `disableBlobResolve` bypass.
+ * Nulling the provider would now be hidden by the keyless read protection.
+ */
+const readRaw = (table: string, key: string): Promise<Row | undefined> =>
+  db.transaction('r', db.table(table), async () => {
+    const tx = Dexie.currentTransaction as unknown as {
+      idbtrans?: { disableBlobResolve?: boolean };
+    };
+    if (tx.idbtrans) tx.idbtrans.disableBlobResolve = true;
+    return (await db.table<Row>(table).get(key)) ?? undefined;
+  });
 
 beforeEach(async () => {
   vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('offline (test)'));
