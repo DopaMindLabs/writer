@@ -1,13 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { CloudObservable } from '@/lib/cloud/cloudObservable';
 import type {
-  KeyEscrowPresence,
   SyncObservable,
   SyncProvider,
   SyncProviderBinding,
   WriterSyncOptions,
 } from './types';
-import { hasCapability } from './types';
+import { KeyEscrowPresence, hasCapability } from './types';
 
 /** A provider offering only what Dexie Cloud can do today. */
 const frameSyncProvider = (): SyncProvider => ({
@@ -103,17 +102,19 @@ describe('SyncObservable', () => {
     // assignable to the sync layer's without either module importing the other.
     const cloudEscrow: CloudObservable<KeyEscrowPresence> = {
       subscribe: (next) => {
-        next('present');
+        next(KeyEscrowPresence.Present);
         return { unsubscribe: () => undefined };
       },
     };
     const asSyncObservable: SyncObservable<KeyEscrowPresence> = cloudEscrow;
 
     const seen: KeyEscrowPresence[] = [];
-    const subscription = asSyncObservable.subscribe((value) => seen.push(value));
+    const subscription = asSyncObservable.subscribe((value) => {
+      seen.push(value);
+    });
     subscription.unsubscribe();
 
-    expect(seen).toEqual(['present']);
+    expect(seen).toEqual([KeyEscrowPresence.Present]);
   });
 
   it('unsubscribes through the returned handle', () => {

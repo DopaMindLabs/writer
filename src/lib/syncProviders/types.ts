@@ -38,11 +38,23 @@ export interface SyncObservable<T> {
 }
 
 /**
- * Provider-neutral sync phase. Backend-specific phases (Dexie Cloud has seven)
- * are mapped onto these four by the adapter, so callers never branch on a
- * vocabulary only one provider uses.
+ * Provider-neutral sync phase. A backend's own vocabulary is mapped onto these
+ * by its adapter, so callers never branch on terms only one provider uses.
  */
-export type SyncPhase = 'initial' | 'syncing' | 'in-sync' | 'error';
+export enum SyncPhase {
+  /** Nothing has run yet. */
+  Initial = 'initial',
+  /** Work is outstanding, but no round is in flight. */
+  Pending = 'pending',
+  /** A round is in flight, in either direction. */
+  Syncing = 'syncing',
+  /** Settled, nothing outstanding. */
+  InSync = 'in-sync',
+  /** The backend is unreachable. */
+  Offline = 'offline',
+  /** The last round failed; see {@link SyncStatus.error}. */
+  Error = 'error',
+}
 
 export interface SyncStatus {
   phase: SyncPhase;
@@ -82,7 +94,11 @@ export interface PeerDiscoveryAdapter {
   peers: SyncObservable<DiscoveredPeer[]>;
 }
 
-export type ScopeRole = 'owner' | 'editor' | 'viewer';
+export enum ScopeRole {
+  Owner = 'owner',
+  Editor = 'editor',
+  Viewer = 'viewer',
+}
 
 export interface ScopeMember {
   id: string;
@@ -112,11 +128,15 @@ export interface AccessControlAdapter {
   resolveBinding: (scopeId: AccessScopeId) => Promise<SyncProviderBinding | undefined>;
 }
 
-/**
- * Whether the account holds key material this device can adopt: `'unknown'`
- * until the provider can answer, then `'present'` or `'none'`.
- */
-export type KeyEscrowPresence = 'unknown' | 'none' | 'present';
+/** Whether the account holds key material this device can adopt. */
+export enum KeyEscrowPresence {
+  /** The provider cannot answer yet — never offer set-up on this. */
+  Unknown = 'unknown',
+  /** The account holds no key material: offer set-up. */
+  None = 'none',
+  /** The account holds key material: offer unlock or adopt. */
+  Present = 'present',
+}
 
 /**
  * Getting the content key onto a device. Shaped after the existing escrow flow:
