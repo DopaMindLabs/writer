@@ -86,6 +86,9 @@ test.describe('cloud sync beta gating', () => {
     await page.getByTestId('unlock-submit').click();
     // Not "wrong passphrase" — there is simply no key on this device yet.
     await expect(page.getByTestId('unlock-error')).toContainText(/sign in first/i);
+    // The dialog dismisses cleanly, leaving the device keyless.
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('passphrase-unlock-dialog')).toHaveCount(0);
   });
 
   test('sign-in requires the evaluation acknowledgement to be ticked', async ({
@@ -109,6 +112,31 @@ test.describe('cloud sync beta gating', () => {
     // Reopening starts unticked: every sign-in re-acknowledges.
     await page.getByTestId('cloud-sign-in').click();
     await expect(page.getByTestId('cloud-signin-ack-continue')).toBeDisabled();
+  });
+
+  test('the acknowledgement also dismisses with Escape, without signing in', async ({
+    page,
+  }) => {
+    await reseedAndGoHome(page);
+    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await page.getByTestId('cloud-sign-in').click();
+    await expect(page.getByTestId('cloud-signin-ack-dialog')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('cloud-signin-ack-dialog')).toHaveCount(0);
+    await expect(page.getByTestId('cloud-login-dialog')).toHaveCount(0);
+  });
+
+  test('forget encryption on this device returns it to the keyless state', async ({
+    page,
+  }) => {
+    await reseedAndGoHome(page);
+    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await setUpEncryption(page);
+    // With a key present the row offers sign-in/forget; forgetting drops the
+    // key and the keyless actions (set-up, unlock) return.
+    await page.getByTestId('cloud-forget').click();
+    await expect(page.getByTestId('cloud-setup')).toBeVisible();
+    await expect(page.getByTestId('cloud-unlock')).toBeVisible();
   });
 
   test('sign-in opens the email step and cancel dismisses it', async ({ page }) => {
