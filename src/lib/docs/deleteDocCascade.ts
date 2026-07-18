@@ -2,6 +2,7 @@ import { db } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
 import { invariant } from '@/lib/invariant';
 import { collabStore } from '@/lib/collab/collabStore';
+import { docBodyBaselineKey } from './docBodyBaseline';
 
 /**
  * Permanently delete a single document and everything keyed to it: its
@@ -21,10 +22,17 @@ export const deleteDocCascade = async (
   invariant(docId, 'deleteDocCascade: docId is required');
   await database.transaction(
     'rw',
-    [database.docs, database.annotations, database.revisions, database.notes],
+    [
+      database.docs,
+      database.annotations,
+      database.revisions,
+      database.notes,
+      database.meta,
+    ],
     async () => {
       await database.annotations.where('docId').equals(docId).delete();
       await database.revisions.where('docId').equals(docId).delete();
+      await database.meta.delete(docBodyBaselineKey(docId));
       // linkedDocId is unindexed — and encrypted under cloud sync, so a cursor
       // filter would not see it. Read the notes decrypted, then re-put the ones
       // that pointed at the deleted doc with the link cleared.

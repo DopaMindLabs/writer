@@ -33,7 +33,7 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
   const reloadNonce = useDocReloadNonce(doc.id);
   // Hold the editor back until the CRDT log is seeded — a doc whose log was wiped
   // (cloud sign-out) must not mount blank and autosave empty over its real body.
-  const crdtReady = useDocCrdtReady(doc.id, doc.body, doc.updatedAt);
+  const crdtReady = useDocCrdtReady(doc.id, doc.body);
 
   const { effective } = useEffectiveInspectorConfig(doc.spaceId);
   const highlightOn = effective.highlightOverLimit;

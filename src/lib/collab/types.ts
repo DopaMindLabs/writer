@@ -38,14 +38,6 @@ export interface CollabStore {
   readonly compact: (docId: string) => Promise<void>;
   readonly deleteDoc: (docId: string) => Promise<void>;
   /**
-   * When the newest update in this document's log was written, or `null` for an
-   * empty log. Reconciliation compares it against the row's `updatedAt` to tell a
-   * body that simply lags its CRDT (unsaved keystrokes, autosave not yet fired)
-   * from a body genuinely written later on another device — a distinction it
-   * cannot otherwise make before the editor has mounted.
-   */
-  readonly lastUpdateAt: (docId: string) => Promise<number | null>;
-  /**
    * Resolve once every {@link append} for `docId` that was in flight at the call
    * has reached the durable log. A restore drives content through the live
    * editor, which persists asynchronously via the provider; this is the barrier
