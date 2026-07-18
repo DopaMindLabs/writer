@@ -40,9 +40,18 @@ Guardrails:
 - The encryption middleware stays installed above the cloud addon; any provider may only ever
   see ciphertext for content tables. Keep `largeStringThreshold: Infinity` and inline base64
   envelopes.
-- `src/lib/cloud/cloudClient.ts` remains the only module UI/hooks import for cloud
-  observables/actions. `dexie-cloud-addon` is imported only in `src/db/buildDb.ts`
-  (plus type-only imports elsewhere). New realm actions are exposed through the facade.
+- **UI consumes capabilities through the `SyncProvider` adapter, never the cloud facade**
+  (user direction, 2026-07-18: the backend "could be dexie or someone else"). Components and
+  hooks must not import `@/lib/cloud/cloudClient`: it is a facade that hides the subsystem's
+  complexity but not its identity, and it leaks Dexie-Cloud-shaped types. `cloudClient` stays
+  the only module that touches `db.cloud`, and becomes an implementation detail of the
+  adapter. `dexie-cloud-addon` is imported only in `src/db/buildDb.ts` (plus type-only
+  imports). Existing direct importers are a tracked backlog — see Stage 2b — not licence to
+  add more.
+- **Never add an adapter method without its first caller.** An unconsumed capability is
+  unreachable code that no honest test covers, and the e2e ratchet rejects it (it already did
+  once, at S2.T1). Capability *contracts* may be declared ahead of use; *implementations* land
+  with their consumer.
 - `src/lib/collab/types.ts` imports nothing from yjs; no `Y.applyUpdate`/`Y.mergeUpdates`
   outside `src/lib/collab/yjs/`. The new core contracts in `src/lib/syncProviders/` import
   nothing from `src/lib/cloud/**`, `dexie-cloud-addon`, or yjs (abstractions must not depend
@@ -168,6 +177,56 @@ cloud tests must pass unmodified except where noted. Stage gate: full unit suite
      contract identical.
 - Verify: `npx vitest run src/lib/cloud && npm run typecheck` — then stage gate: `npm run lint && npm run test:run && npm run test:e2e`
 - Commit: `refactor(cloud): boot session through coordinator`
+
+## Stage 2b - UI through the provider
+Goal: no component or hook imports the cloud facade; every cloud-facing surface consumes a
+capability from the coordinator instead. Added 2026-07-18 on user direction. 20 files import
+`cloudClient` today. Each task migrates one capability *together with* its consumers, so no
+adapter method ever lands uncovered. Behaviour must not change: these are live cloud-beta
+surfaces with e2e specs, and every existing cloud spec must stay green unmodified.
+
+Two capabilities do not exist yet and must be designed as part of their task, not bolted on:
+sign-in/out (no `account` capability) and mount reconciliation (`reconcileDocForMount`).
+Whether `isCloudSyncEnabled` and `isCloudKeyError` become capabilities or move to a neutral
+module is an open question — see Questions.
+
+### S2b.T1 - Coordinator context and key delivery
+- Goal: React reaches the coordinator without importing a concrete provider, and the three
+  key-delivery surfaces migrate onto it. Restores the `keyDelivery` capability removed in
+  b9972a3, this time with callers.
+- Code refs: `src/lib/writerSync/startWriterSync.ts` (splits: build the coordinator, then
+  start it), `src/lib/cloud/dexieCloudProvider.ts`, `src/components/settings/tabs/cloud/`
+  — `PassphraseSetupDialog.tsx` L42 (`onCreate`), `PassphraseUnlockDialog.tsx` L50-51
+  (`onUnlock`/`onRecover`), `CloudSectionPanel.tsx` L42 (`cloudEscrowPresence`). All three
+  already inject their dependencies, so migration swaps the defaults.
+- Steps:
+  1. Failing tests: a context/hook test proving a component resolves `keyDelivery` from the
+     coordinator without importing the facade; extend the three component tests to inject a
+     fake provider rather than fake facade functions.
+  2. Add the coordinator context and capability hook; wire it at boot beside `startWriterSync`.
+  3. Restore `keyDelivery` on the Dexie Cloud adapter and point the three components' default
+     props at it.
+- Verify: `npx vitest run src/components/settings/tabs/cloud src/lib/writerSync && npm run test:e2e -- cloud` green, then `npm run test:e2e:coverage` — the ratchet must hold with the restored capability now covered.
+- Commit: `refactor(cloud): consume key delivery through the provider`
+
+### S2b.T2 - Sync status
+- Goal: `CloudSyncStatusRow`, `useCloudPanelState`, `HomeCloudRow` read status from
+  `frameSync` instead of `cloudSyncState`/`cloudSyncComplete`.
+- Commit: `refactor(cloud): read sync status through the provider`
+
+### S2b.T3 - Device registry
+- Goal: `useDeviceList`, `useDeviceSlots`, `useDeviceRemoval` consume a `discovery`
+  implementation (declared but unimplemented) rather than `deviceRegistry` and friends.
+- Commit: `refactor(cloud): manage devices through the provider`
+
+### S2b.T4 - Account capability
+- Goal: design an `account` capability (sign in, sign out, current user, account-pull state)
+  and migrate `CloudLoginContent`, `CloudLoginDialog`, `CloudSection`, the keyless sections.
+- Commit: `feat(sync-provider): add the account capability`
+
+### S2b.T5 - Mount reconciliation
+- Goal: model `reconcileDocForMount` as a capability and migrate `useDocCrdtReady`.
+- Commit: `feat(sync-provider): add mount reconciliation`
 
 ## Stage 3 - Realm access-control schema
 Goal: declare Dexie Cloud's addon-managed `realms`/`members`/`roles` tables on cloud-enabled
