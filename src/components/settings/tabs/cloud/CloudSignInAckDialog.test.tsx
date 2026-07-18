@@ -44,6 +44,19 @@ describe('CloudSignInAckDialog', () => {
     expect(onConfirm).toHaveBeenCalledTimes(1);
   });
 
+  it('offers an optional backup tick that does not gate continue', async () => {
+    renderDialog();
+    const backup = screen.getByRole('checkbox', { name: /local device sync/i });
+    expect(backup).not.toBeChecked();
+    await userEvent.click(backup);
+    // The backup tick alone does not enable continue — only the acknowledgement does.
+    expect(screen.getByTestId('cloud-signin-ack-continue')).toBeDisabled();
+    await userEvent.click(
+      screen.getByRole('checkbox', { name: /temporary evaluation account/i }),
+    );
+    expect(screen.getByTestId('cloud-signin-ack-continue')).toBeEnabled();
+  });
+
   it('cancel closes without confirming', async () => {
     const onConfirm = vi.fn();
     const onOpenChange = vi.fn();

@@ -31,12 +31,17 @@ export const CloudSignInAckDialog = ({
   const { t } = useTranslation('screens');
   const k = (name: string) => t(`settings.account.cloud.ack.${name}`);
   const [acknowledged, setAcknowledged] = useState(false);
-  const close = () => {
+  const [backupConfirmed, setBackupConfirmed] = useState(false);
+  const reset = () => {
     setAcknowledged(false);
+    setBackupConfirmed(false);
+  };
+  const close = () => {
+    reset();
     onOpenChange(false);
   };
   const confirm = () => {
-    setAcknowledged(false);
+    reset();
     onConfirm();
   };
   return (
@@ -54,6 +59,8 @@ export const CloudSignInAckDialog = ({
         <CloudSignInAckFields
           acknowledged={acknowledged}
           onAcknowledged={setAcknowledged}
+          backupConfirmed={backupConfirmed}
+          onBackupConfirmed={setBackupConfirmed}
           onCancel={close}
           onConfirm={confirm}
         />

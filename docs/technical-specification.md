@@ -436,7 +436,9 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   automatically creates a Dexie Cloud evaluation account valid for 3 days after which synced
   data may be lost. The continue action stays disabled until the acknowledgement checkbox is
   ticked, the tick is forgotten between openings (every attempt re-acknowledges), and cancel
-  backs out without contacting the network. Opting out is **non-destructive** —
+  backs out without contacting the network. A second, **optional** checkbox ("I have enabled
+  local device sync and/or backup") invites confirming a local safety net but never gates
+  continue. Opting out is **non-destructive** —
   the cloud schema is sticky so a rebuild never erases local content.
 - **Four-device beta limit.** An account holds at most **four devices** while the beta runs,
   tracked in a synced, deliberately unencrypted `cloudDevices` registry — one row per joined
