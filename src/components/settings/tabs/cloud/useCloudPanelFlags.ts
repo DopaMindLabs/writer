@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import type { UserLogin } from 'dexie-cloud-addon';
-import type { EscrowPresence } from '@/lib/cloud/cloudClient';
+import type { KeyEscrowPresence } from '@/lib/syncProviders/types';
 import { deviceRevokedState } from '@/lib/cloud/deviceRevoked';
 import { devicePreviewState } from '@/lib/cloud/devicePreview';
 import { useDeviceLimitBlocked } from './useDeviceSlots';
@@ -29,7 +29,7 @@ export interface CloudPanelFlags {
 export const useCloudPanelFlags = (
   user: UserLogin | undefined,
   hasKey: boolean,
-  presence: EscrowPresence,
+  presence: KeyEscrowPresence,
 ): CloudPanelFlags => {
   const signedIn = user?.isLoggedIn ?? false;
   const keylessSignedIn = signedIn && !hasKey;

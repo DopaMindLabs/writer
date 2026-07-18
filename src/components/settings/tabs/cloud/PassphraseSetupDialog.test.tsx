@@ -2,6 +2,10 @@ import { vi } from 'vitest';
 import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/test-utils';
+import { createSyncCoordinator } from '@/lib/syncProviders/coordinator';
+import type { SyncProvider } from '@/lib/syncProviders/types';
+import { KeyEscrowPresence } from '@/lib/syncProviders/types';
+import { WriterSyncProvider } from '@/lib/writerSync/WriterSyncProvider';
 import { PassphraseSetupDialog } from './PassphraseSetupDialog';
 
 const noop = () => {};
@@ -90,5 +94,38 @@ describe('PassphraseSetupDialog', () => {
     await waitFor(() => {
       expect(onRecoveryCode).toHaveBeenCalledWith('CODE-1234');
     });
+  });
+
+  it('sets up through the provider when nothing is injected', async () => {
+    const setUp = vi.fn().mockResolvedValue('PROVIDER-CODE');
+    const provider: SyncProvider = {
+      id: 'test-cloud',
+      keyDelivery: {
+        setUp,
+        unlock: () => Promise.resolve(),
+        recover: () => Promise.resolve(),
+        escrowPresence: {
+          subscribe: (next) => {
+            next(KeyEscrowPresence.Present);
+            return { unsubscribe: () => undefined };
+          },
+        },
+      },
+    };
+    const onRecoveryCode = vi.fn();
+    renderWithProviders(
+      <WriterSyncProvider coordinator={createSyncCoordinator({ providers: [provider] })}>
+        <PassphraseSetupDialog open onOpenChange={noop} onRecoveryCode={onRecoveryCode} />
+      </WriterSyncProvider>,
+    );
+
+    await userEvent.type(screen.getByTestId('passphrase-input'), 'longenoughphrase');
+    await userEvent.type(screen.getByTestId('passphrase-confirm'), 'longenoughphrase');
+    await userEvent.click(await screen.findByTestId('passphrase-submit'));
+
+    await waitFor(() => {
+      expect(setUp).toHaveBeenCalledWith('longenoughphrase');
+    });
+    expect(onRecoveryCode).toHaveBeenCalledWith('PROVIDER-CODE');
   });
 });
