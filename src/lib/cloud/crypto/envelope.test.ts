@@ -70,6 +70,30 @@ describe('cipher envelope', () => {
     expect(JSON.stringify(sealed)).not.toContain('"name"');
   });
 
+  it('keeps realmId plaintext on a realm-stamped row, sealing the content around it', async () => {
+    const keyRing = await ring();
+    // A doc moved into a shared realm: the server must be able to read realmId
+    // to enforce access control, while the writing stays sealed.
+    const row = {
+      id: 'doc-1',
+      spaceId: 's',
+      sectionId: 'x',
+      updatedAt: 1,
+      realmId: 'rlm-shared',
+      name: 'Chapter One',
+      body: 'the writing',
+    };
+
+    const sealed = await sealRow(keyRing, { table: 'docs', primaryKey: 'doc-1' }, row, rules);
+
+    expect(sealed.realmId).toBe('rlm-shared');
+    expect(sealed.name).toBeUndefined();
+    expect(JSON.stringify(sealed)).not.toContain('the writing');
+
+    const opened = await openRow(keyRing, { table: 'docs', primaryKey: 'doc-1' }, sealed);
+    expect(opened).toEqual(row);
+  });
+
   it('passes through a row that carries no cipher envelope', async () => {
     const keyRing = await ring();
     const plain = { id: 'doc-1', spaceId: 's', name: 'nope' };

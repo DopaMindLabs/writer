@@ -1,4 +1,4 @@
-import { lazy, Suspense, type ReactNode } from 'react';
+import { lazy, Suspense, useMemo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   createBrowserRouter,
@@ -12,6 +12,8 @@ import { TypographyMuted } from '@/components/ui/typography';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { A11yPreferenceProvider } from '@/theme/A11yPreferenceProvider';
 import { SyncScheduler } from '@/lib/sync/SyncScheduler';
+import { WriterSyncProvider } from '@/lib/writerSync/WriterSyncProvider';
+import { createWriterSyncCoordinator } from '@/lib/writerSync/createWriterSyncCoordinator';
 import { useAppBoot } from '@/hooks/useAppBoot';
 import { ROUTE_PATHS, RouteName } from '@/lib/routes';
 import { HomeScreen } from '@/screens/global/Home';
@@ -106,7 +108,10 @@ const router = createAppRouter([
 
 export const App = () => {
   const { t } = useTranslation('app');
-  const { ready, error, resetLocalData } = useAppBoot();
+  // One coordinator for the whole app: boot starts its providers, and the tree
+  // reads capabilities from the same set.
+  const coordinator = useMemo(() => createWriterSyncCoordinator(), []);
+  const { ready, error, resetLocalData } = useAppBoot(coordinator);
 
   if (error) {
     return (
@@ -129,10 +134,12 @@ export const App = () => {
   return (
     <ThemeProvider>
       <A11yPreferenceProvider>
-        <TooltipProvider delayDuration={300}>
-          <SyncScheduler />
-          <RouterProvider router={router} />
-        </TooltipProvider>
+        <WriterSyncProvider coordinator={coordinator}>
+          <TooltipProvider delayDuration={300}>
+            <SyncScheduler />
+            <RouterProvider router={router} />
+          </TooltipProvider>
+        </WriterSyncProvider>
       </A11yPreferenceProvider>
     </ThemeProvider>
   );

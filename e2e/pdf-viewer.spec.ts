@@ -30,7 +30,10 @@ const uploadAndOpen = async (page: Page, file: string): Promise<void> => {
   await expect(page.getByTestId('pdf-viewer')).toBeVisible();
 };
 
-const pdfPage = (page: Page) => page.getByTestId('pdf-page');
+// Continuous scroll mounts every page in one column; scope to the first page
+// (single-page fixtures have exactly one, and multi-page assertions use the
+// per-page group role instead).
+const pdfPage = (page: Page) => page.getByTestId('pdf-page').first();
 
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
@@ -109,13 +112,20 @@ test('navigates between pages of the two-page fixture', async ({ page }) => {
   await gotoLibrary(page);
   await uploadAndOpen(page, TWO_PAGE_PDF);
 
+  // Continuous scroll: both pages are mounted; the pager tracks the scroll
+  // position and next scrolls the second page in.
   await expect(page.getByTestId('pdf-pager')).toContainText('1 / 2');
-  await expect(pdfPage(page)).toContainText('Page one of the fixture.');
+  await expect(page.getByRole('group', { name: 'Page 1 of 2' })).toContainText(
+    'Page one of the fixture.',
+  );
+  await expect(page.getByRole('group', { name: 'Page 2 of 2' })).toContainText(
+    'Page two of the fixture.',
+  );
 
   await page.getByTestId('pdf-pager-next').click();
 
   await expect(page.getByTestId('pdf-pager')).toContainText('2 / 2');
-  await expect(pdfPage(page)).toContainText('Page two of the fixture.');
+  await expect(page.getByRole('group', { name: 'Page 2 of 2' })).toBeInViewport();
 });
 
 test('recovers from a corrupt pdf with a retry', async ({ page }) => {

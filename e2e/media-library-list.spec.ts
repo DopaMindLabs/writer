@@ -27,7 +27,8 @@ const upload = async (page: Page, file: string): Promise<void> => {
 const openFirstRow = async (page: Page): Promise<void> => {
   await page.locator('[data-testid^="media-row-"][data-testid$="-open"]').first().click();
   await expect(page.getByTestId('pdf-viewer')).toBeVisible();
-  await expect(page.getByTestId('pdf-page').locator('canvas')).toBeVisible();
+  // Continuous scroll mounts every page; the first canvas proves the render.
+  await expect(page.getByTestId('pdf-page').first().locator('canvas')).toBeVisible();
 };
 
 // Build a Range over the current page's first text-layer span and dispatch

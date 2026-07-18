@@ -1,11 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { InlineBanner } from '@/components/ui/InlineBanner';
-import type { EscrowPresence, CloudSyncPhase } from '@/lib/cloud/cloudClient';
+import type { CloudSyncPhase } from '@/lib/cloud/cloudClient';
+import { KeyEscrowPresence } from '@/lib/syncProviders/types';
 import { CloudKeylessPendingBanner } from './CloudKeylessPendingBanner';
 
 export interface CloudKeylessAccountSectionProps {
   /** The account's escrow presence, once its pull is confirmed. */
-  presence: EscrowPresence;
+  presence: KeyEscrowPresence;
   /** The sync phase, so a stalled pull can be told from one still in progress. */
   syncPhase: CloudSyncPhase;
   /** Open the passphrase-unlock dialog (adopt the account key). */
@@ -34,10 +35,10 @@ export const CloudKeylessAccountSection = ({
   const { t } = useTranslation('screens');
   const k = (name: string) => t(`settings.account.cloud.keyless.${name}`);
 
-  if (presence === 'unknown') {
+  if (presence === KeyEscrowPresence.Unknown) {
     return <CloudKeylessPendingBanner syncPhase={syncPhase} onRetry={onRetry} />;
   }
-  if (presence === 'present') {
+  if (presence === KeyEscrowPresence.Present) {
     return (
       <InlineBanner
         kind="warning"
