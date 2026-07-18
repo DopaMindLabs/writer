@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { reconcileDocForMount } from '@/lib/cloud/cloudClient';
+import { crdtMountFailDocId } from '@/lib/boot/e2eFaults';
 
 /**
  * The mount-gate state for a document's editor:
@@ -36,7 +37,11 @@ export const useDocCrdtReady = (docId: string, body: string): DocCrdtReadiness =
   useEffect(() => {
     let active = true;
     setReadiness({ state: 'pending' });
-    reconcileDocForMount(docId, bodyRef.current)
+    const run =
+      docId === crdtMountFailDocId()
+        ? Promise.reject(new Error('forced CRDT mount failure (E2E)'))
+        : reconcileDocForMount(docId, bodyRef.current);
+    run
       .then(() => {
         if (active) setReadiness({ state: 'ready' });
       })
