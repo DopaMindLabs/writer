@@ -30,6 +30,7 @@ export type CloudSyncPhase = SyncState['phase'];
 
 export { isCloudSyncEnabled } from './flag';
 export { deviceKeyProvider } from './crypto/keyStore';
+export { reconcileDocForMount } from './reconcile';
 export { isCloudKeyError } from './crypto/errors';
 export { EscrowMissingError, KeylessSignInBlockedError } from './crypto/errors';
 export { WrongPassphraseError, canonicalisePassphrase } from './crypto/keys';
