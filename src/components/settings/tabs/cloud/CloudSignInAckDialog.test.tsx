@@ -24,6 +24,14 @@ describe('CloudSignInAckDialog', () => {
     expect(screen.getByTestId('cloud-signin-ack-continue')).toBeDisabled();
   });
 
+  it('carries the terms in a red warning banner', async () => {
+    renderDialog();
+    const banner = await screen.findByTestId('cloud-signin-ack-warning');
+    expect(banner).toHaveClass('border-danger');
+    expect(screen.getByText(/no server of its own/i)).toHaveClass('text-danger');
+    expect(screen.getByText(/valid for 3 days/i)).toHaveClass('text-danger');
+  });
+
   it('enables continue once the acknowledgement is ticked and confirms', async () => {
     const onConfirm = vi.fn();
     renderDialog({ onConfirm });

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Checkbox } from '@/components/ui/Checkbox';
+import { InlineBanner } from '@/components/ui/InlineBanner';
 
 export interface CloudSignInAckFieldsProps {
   acknowledged: boolean;
@@ -20,8 +21,10 @@ export const CloudSignInAckFields = ({
   const k = (name: string) => t(`settings.account.cloud.ack.${name}`);
   return (
     <>
-      <p className="font-serif text-[13px] text-ink-2">{k('noServer')}</p>
-      <p className="font-serif text-[13px] text-ink-2">{k('evaluation')}</p>
+      <InlineBanner kind="error" data-testid="cloud-signin-ack-warning">
+        <p className="text-danger">{k('noServer')}</p>
+        <p className="mt-2 text-danger">{k('evaluation')}</p>
+      </InlineBanner>
       <Checkbox
         data-testid="cloud-signin-ack-checkbox"
         label={k('confirmLabel')}
