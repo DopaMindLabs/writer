@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import Dexie from 'dexie';
 import { buildDb } from './buildDb';
 import { STORES } from './stores';
 import { CLOUD_FLAG_KEY } from '@/lib/cloud/flag';
@@ -6,7 +7,6 @@ import { generateMasterSecret, deriveKeyRing } from '@/lib/cloud/crypto/keys';
 import {
   saveDeviceKeyRing,
   forgetDeviceKeyRing,
-  deviceKeyProvider,
 } from '@/lib/cloud/crypto/keyStore';
 import { CIPHER_FIELD } from '@/lib/cloud/crypto/tableRules';
 
@@ -123,10 +123,15 @@ describe('buildDb — cloud activation gates', () => {
     await db.table('notes').put({
       id: 'n1', spaceId: 's1', kind: 'text', createdAt: 1, title: 'SECRET',
     });
-    // Drop the key so the middleware returns the stored bytes without decrypting.
-    await forgetDeviceKeyRing();
-    expect(deviceKeyProvider.current()).toBeNull();
-    const raw = await db.table<Record<string, unknown>>('notes').get('n1');
+    // Read the stored bytes past the middleware via its blob-resolve bypass;
+    // nulling the key would now be hidden by the keyless read protection.
+    const raw = await db.transaction('r', db.table('notes'), async () => {
+      const tx = Dexie.currentTransaction as unknown as {
+        idbtrans?: { disableBlobResolve?: boolean };
+      };
+      if (tx.idbtrans) tx.idbtrans.disableBlobResolve = true;
+      return db.table<Record<string, unknown>>('notes').get('n1');
+    });
     expect(raw?.[CIPHER_FIELD]).toBeDefined();
     expect(raw?.title).toBeUndefined();
 
