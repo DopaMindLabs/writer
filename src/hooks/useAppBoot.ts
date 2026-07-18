@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { startCloudSession } from '@/lib/cloud/cloudClient';
+import { startWriterSync } from '@/lib/writerSync/startWriterSync';
 import { applyDevBootParams } from '@/lib/boot/devBootParams';
 import { resetAndReseed } from '@/db/seed';
 
@@ -13,10 +13,10 @@ const toError = (e: unknown): Error =>
   e instanceof Error ? e : new Error(String(e));
 
 /**
- * Drive application boot: start the cloud session behind `cloudClient`, then
- * apply any development/E2E URL parameters. Exposes a ready flag, a boot error,
- * and a `resetLocalData` escape hatch for the boot error screen. The cloud
- * session is torn down on unmount.
+ * Drive application boot: start sync for every configured provider, then apply
+ * any development/E2E URL parameters. Exposes a ready flag, a boot error, and a
+ * `resetLocalData` escape hatch for the boot error screen. The sync session is
+ * torn down on unmount.
  */
 export const useAppBoot = (): AppBootState => {
   const [ready, setReady] = useState(false);
@@ -26,7 +26,7 @@ export const useAppBoot = (): AppBootState => {
     let cancelled = false;
     let stopSession: (() => void) | null = null;
     const run = async () => {
-      stopSession = await startCloudSession();
+      stopSession = await startWriterSync();
       await applyDevBootParams();
     };
     run()

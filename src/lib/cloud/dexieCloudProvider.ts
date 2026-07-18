@@ -81,8 +81,12 @@ const frameSync = (): EncryptedFrameSync => ({
         next(toSyncStatus(state));
       }),
   },
-  // Emits `void` either side, so the facade's observable passes straight through.
-  syncComplete: cloudSyncComplete(),
+  // Emits `void` either side, so the facade's observable passes straight
+  // through. Resolved on subscribe, not at construction: building a provider
+  // must not reach into the cloud facade before anything asks it to.
+  syncComplete: {
+    subscribe: (next) => cloudSyncComplete().subscribe(next),
+  },
 });
 
 const keyDelivery = (): KeyDeliveryAdapter => ({
