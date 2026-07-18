@@ -85,6 +85,29 @@ describe('importSpaceArchive', () => {
     expect(await s.attachments[0].blob.text()).toBe(ATTACHMENT_BYTES);
   });
 
+  it('files an archive of a shared space into the importer\'s private realm', async () => {
+    // Stamp the source rows as a shared space, the way sharing would.
+    await db.spaces.update('s1', { realmId: 'rlm-someone-else' });
+    await db.docs.update('d1', { realmId: 'rlm-someone-else' });
+    await db.notes.update('n1', { realmId: 'rlm-someone-else' });
+
+    const { spaceId } = await importSpaceArchive(
+      await parseSpaceArchive(await buildArchiveBlob()),
+    );
+
+    // The import belongs to whoever ran it: no realm travels with the archive,
+    // or the rows would land in a realm the importer may not belong to.
+    const space = await db.spaces.get(spaceId);
+    expect(space?.realmId).toBeUndefined();
+    const docs = await db.docs.where('spaceId').equals(spaceId).toArray();
+    expect(docs.every((doc) => doc.realmId === undefined)).toBe(true);
+    const notes = await db.notes.where('spaceId').equals(spaceId).toArray();
+    expect(notes.every((note) => note.realmId === undefined)).toBe(true);
+
+    // The source keeps its realm — importing is a copy, not a move.
+    expect((await db.spaces.get('s1'))?.realmId).toBe('rlm-someone-else');
+  });
+
   it('leaves the original space untouched', async () => {
     const before = await readSpaceSnapshot('s1');
     await importSpaceArchive(await parseSpaceArchive(await buildArchiveBlob()));

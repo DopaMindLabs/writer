@@ -9,13 +9,14 @@ vi.mock('./useDeviceSlots', () => ({
 
 import { deviceRevokedState } from '@/lib/cloud/deviceRevoked';
 import { useCloudPanelFlags } from './useCloudPanelFlags';
+import { KeyEscrowPresence } from '@/lib/syncProviders/types';
 
 const signedInUser = { isLoggedIn: true } as unknown as UserLogin;
 
 describe('useCloudPanelFlags', () => {
   it('derives the signed-in-keyless and status flags', () => {
     const { result } = renderHook(() =>
-      useCloudPanelFlags(signedInUser, false, 'present'),
+      useCloudPanelFlags(signedInUser, false, KeyEscrowPresence.Present),
     );
     expect(result.current).toEqual({
       signedIn: true,
@@ -28,7 +29,7 @@ describe('useCloudPanelFlags', () => {
   });
 
   it('shows status for a keyed signed-out device and never marks it keyless', () => {
-    const { result } = renderHook(() => useCloudPanelFlags(undefined, true, 'none'));
+    const { result } = renderHook(() => useCloudPanelFlags(undefined, true, KeyEscrowPresence.None));
     expect(result.current).toEqual({
       signedIn: false,
       keylessSignedIn: false,
@@ -43,7 +44,7 @@ describe('useCloudPanelFlags', () => {
   it('passes the device-limit block through', () => {
     blocked.value = true;
     const { result } = renderHook(() =>
-      useCloudPanelFlags(signedInUser, false, 'present'),
+      useCloudPanelFlags(signedInUser, false, KeyEscrowPresence.Present),
     );
     expect(result.current.deviceLimitBlocked).toBe(true);
     blocked.value = false;
@@ -55,7 +56,7 @@ describe('useCloudPanelFlags', () => {
     // the very screen that is meant to unstick them.
     blocked.value = true;
     const { result } = renderHook(() =>
-      useCloudPanelFlags(signedInUser, false, 'present'),
+      useCloudPanelFlags(signedInUser, false, KeyEscrowPresence.Present),
     );
     expect(result.current.showDeviceList).toBe(true);
     blocked.value = false;
@@ -64,7 +65,7 @@ describe('useCloudPanelFlags', () => {
   it('reports a revoked device once the registrar has seen the tombstone', () => {
     deviceRevokedState.set(true);
     const { result } = renderHook(() =>
-      useCloudPanelFlags(signedInUser, true, 'present'),
+      useCloudPanelFlags(signedInUser, true, KeyEscrowPresence.Present),
     );
     expect(result.current.deviceRevoked).toBe(true);
     deviceRevokedState.set(false);

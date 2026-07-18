@@ -112,17 +112,30 @@ const remapArchive = (archive: ParsedSpaceArchive): ParsedSpaceArchive => {
   };
 };
 
+/**
+ * An imported space is a *new* space belonging to whoever imported it, so it
+ * starts in their private realm. An archive taken from a shared space still
+ * carries the exporter's `realmId` on every row; writing that through would
+ * file the import into a realm the importer may not even belong to. Stripping
+ * it here — at the single write step — means no per-table remap can forget it.
+ */
+const intoPrivateRealm = <T extends { realmId?: string }>(row: T): T => {
+  const copy = { ...row };
+  delete copy.realmId;
+  return copy;
+};
+
 const putRemapped = async (archive: ParsedSpaceArchive): Promise<void> => {
-  await db.spaces.put(archive.space);
-  await db.sections.bulkPut(archive.sections);
-  await createDocs(archive.docs);
-  await db.notes.bulkPut(archive.notes);
-  await db.noteAttachments.bulkPut(archive.attachments);
-  await db.annotations.bulkPut(archive.annotations);
-  await db.citations.bulkPut(archive.citations);
-  await db.connections.bulkPut(archive.connections);
-  await db.revisions.bulkPut(archive.revisions);
-  await db.palettes.bulkPut(archive.palettes);
+  await db.spaces.put(intoPrivateRealm(archive.space));
+  await db.sections.bulkPut(archive.sections.map(intoPrivateRealm));
+  await createDocs(archive.docs.map(intoPrivateRealm));
+  await db.notes.bulkPut(archive.notes.map(intoPrivateRealm));
+  await db.noteAttachments.bulkPut(archive.attachments.map(intoPrivateRealm));
+  await db.annotations.bulkPut(archive.annotations.map(intoPrivateRealm));
+  await db.citations.bulkPut(archive.citations.map(intoPrivateRealm));
+  await db.connections.bulkPut(archive.connections.map(intoPrivateRealm));
+  await db.revisions.bulkPut(archive.revisions.map(intoPrivateRealm));
+  await db.palettes.bulkPut(archive.palettes.map(intoPrivateRealm));
   if (archive.docInspectorConfig) {
     await db.docInspectorConfigs.put(archive.docInspectorConfig);
   }

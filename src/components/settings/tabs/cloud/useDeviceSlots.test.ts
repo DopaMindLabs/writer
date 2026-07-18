@@ -8,6 +8,7 @@ import {
   type DeviceRecord,
 } from '@/lib/cloud/devicePolicy';
 import { useDeviceLimitBlocked } from './useDeviceSlots';
+import { KeyEscrowPresence } from '@/lib/syncProviders/types';
 
 /** The slice of `db.cloud` the blocked computation reads. */
 interface FakeCloud {
@@ -81,21 +82,21 @@ describe('useDeviceLimitBlocked', () => {
   it('is false while the device is not signed-in-keyless', async () => {
     withCloud('me');
     await seedDevices(['a', 'b']);
-    const { result } = renderHook(() => useDeviceLimitBlocked(false, 'unknown'));
+    const { result } = renderHook(() => useDeviceLimitBlocked(false, KeyEscrowPresence.Unknown));
     expect(result.current).toBe(false);
   });
 
   it('blocks a further device once the registry is full', async () => {
     withCloud('me');
     await seedDevices(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']);
-    const { result } = renderHook(() => useDeviceLimitBlocked(true, 'present'));
+    const { result } = renderHook(() => useDeviceLimitBlocked(true, KeyEscrowPresence.Present));
     await waitFor(() => expect(result.current).toBe(true));
   });
 
   it('never blocks a device that is already registered', async () => {
     withCloud('me');
     await seedDevices(['me', 'b']);
-    const { result } = renderHook(() => useDeviceLimitBlocked(true, 'present'));
+    const { result } = renderHook(() => useDeviceLimitBlocked(true, KeyEscrowPresence.Present));
     // Give the liveQuery a tick to resolve; the value must stay false.
     await waitFor(() => expect(result.current).toBe(false));
   });
@@ -103,13 +104,13 @@ describe('useDeviceLimitBlocked', () => {
   it('leaves a free slot open', async () => {
     withCloud('me');
     await seedDevices(['a']);
-    const { result } = renderHook(() => useDeviceLimitBlocked(true, 'present'));
+    const { result } = renderHook(() => useDeviceLimitBlocked(true, KeyEscrowPresence.Present));
     await waitFor(() => expect(result.current).toBe(false));
   });
 
   it('is forced on by the dev/e2e affordance', () => {
     deviceLimitState.set(true);
-    const { result } = renderHook(() => useDeviceLimitBlocked(false, 'unknown'));
+    const { result } = renderHook(() => useDeviceLimitBlocked(false, KeyEscrowPresence.Unknown));
     expect(result.current).toBe(true);
   });
 
@@ -119,7 +120,7 @@ describe('useDeviceLimitBlocked', () => {
     // profiles would lock every future device out of the account for good.
     withCloud('me');
     await seedDevices(['a', 'b', 'c', 'd']);
-    const { result } = renderHook(() => useDeviceLimitBlocked(true, 'present'));
+    const { result } = renderHook(() => useDeviceLimitBlocked(true, KeyEscrowPresence.Present));
     await waitFor(() => expect(result.current).toBe(true));
 
     await writeRows([staleRow('d')]);
@@ -130,7 +131,7 @@ describe('useDeviceLimitBlocked', () => {
   it('frees a slot the moment a peer is revoked', async () => {
     withCloud('me');
     await seedDevices(['a', 'b', 'c', 'd']);
-    const { result } = renderHook(() => useDeviceLimitBlocked(true, 'present'));
+    const { result } = renderHook(() => useDeviceLimitBlocked(true, KeyEscrowPresence.Present));
     await waitFor(() => expect(result.current).toBe(true));
 
     await writeRows([{ ...liveRow('d'), revokedAt: Date.now() }]);

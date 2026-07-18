@@ -7,7 +7,10 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { canonicalisePassphrase, createCloudEncryption } from '@/lib/cloud/cloudClient';
+// A pure NFKC normaliser, not backend behaviour — imported from its own module
+// rather than routed through a capability.
+import { canonicalisePassphrase } from '@/lib/cloud/crypto/keys';
+import { useSyncCapability } from '@/lib/writerSync/syncCoordinatorContext';
 import { PassphraseSetupFields } from './PassphraseSetupFields';
 
 const MIN_LENGTH = 12;
@@ -16,9 +19,33 @@ export interface PassphraseSetupDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onRecoveryCode: (code: string) => void;
-  /** Injectable for tests/stories; defaults to the real setup action. */
+  /** Injectable for tests/stories; defaults to the provider's key delivery. */
   onCreate?: (passphrase: string) => Promise<string>;
 }
+
+interface PassphraseValidation {
+  /** The exact value the crypto derives from, which is what gets submitted. */
+  canonical: string;
+  tooShort: boolean;
+  mismatch: boolean;
+  valid: boolean;
+}
+
+/**
+ * Validate and compare the canonical (NFKC) values, so the dialog never rejects
+ * two visually identical passphrases — composed vs decomposed accents,
+ * full-width vs ASCII — that would unwrap the same escrow.
+ */
+const validate = (passphrase: string, confirm: string): PassphraseValidation => {
+  const canonical = canonicalisePassphrase(passphrase);
+  const canonicalConfirm = canonicalisePassphrase(confirm);
+  return {
+    canonical,
+    tooShort: passphrase.length > 0 && canonical.length < MIN_LENGTH,
+    mismatch: confirm.length > 0 && canonicalConfirm !== canonical,
+    valid: canonical.length >= MIN_LENGTH && canonicalConfirm === canonical,
+  };
+};
 
 /** Rough strength band from length and character variety. */
 const strengthOf = (pw: string): 'Weak' | 'Fair' | 'Strong' => {
@@ -39,35 +66,28 @@ export const PassphraseSetupDialog = ({
   open,
   onOpenChange,
   onRecoveryCode,
-  onCreate = createCloudEncryption,
+  onCreate,
 }: PassphraseSetupDialogProps) => {
+  const keyDelivery = useSyncCapability('keyDelivery');
+  const create = onCreate ?? keyDelivery?.setUp;
   const { t } = useTranslation('screens');
   const k = (name: string) => t(`settings.account.cloud.passphrase.${name}`);
   const [passphrase, setPassphrase] = useState('');
   const [confirm, setConfirm] = useState('');
   const [busy, setBusy] = useState(false);
 
-  // Validate and compare the exact value the crypto derives from (NFKC), so the
-  // dialog never rejects two visually identical passphrases — composed vs
-  // decomposed accents, full-width vs ASCII — that would unwrap the same escrow.
-  const canonicalPassphrase = canonicalisePassphrase(passphrase);
-  const canonicalConfirm = canonicalisePassphrase(confirm);
-
-  const tooShort = passphrase.length > 0 && canonicalPassphrase.length < MIN_LENGTH;
-  const mismatch = confirm.length > 0 && canonicalConfirm !== canonicalPassphrase;
-  const valid =
-    canonicalPassphrase.length >= MIN_LENGTH && canonicalConfirm === canonicalPassphrase;
+  const { canonical, tooShort, mismatch, valid } = validate(passphrase, confirm);
   const feedback = tooShort
     ? k('tooShort')
     : mismatch
       ? k('mismatch')
-      : `${k('strength')}: ${passphrase ? k(`hint${strengthOf(canonicalPassphrase)}`) : ''}`;
+      : `${k('strength')}: ${passphrase ? k(`hint${strengthOf(canonical)}`) : ''}`;
 
   const runCreate = async () => {
-    if (!valid || busy) return;
+    if (!valid || busy || !create) return;
     setBusy(true);
     try {
-      onRecoveryCode(await onCreate(canonicalPassphrase));
+      onRecoveryCode(await create(canonical));
       onOpenChange(false);
     } finally {
       setBusy(false);
