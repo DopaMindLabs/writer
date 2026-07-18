@@ -25,6 +25,11 @@ import { stdin, stdout } from 'node:process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  classifyKeyState,
+  isErrorKeyState,
+  KEY_STATE_TESTIDS,
+} from './cloudDeviceKeyState.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, '.cloud-harness');
@@ -148,15 +153,140 @@ const signIn = async (device, email) => {
   await device.page.getByTestId('cloud-login-dialog').waitFor({ state: 'detached' });
 };
 
-/** Unlock a device with the account passphrase, if it is offered. */
-const unlock = async (device, passphrase) => {
-  const unlockNow = device.page.getByTestId('cloud-unlock');
-  if ((await unlockNow.count()) === 0) return false;
-  await unlockNow.first().click();
-  await device.page.getByTestId('unlock-input').fill(passphrase);
-  await device.page.getByTestId('unlock-submit').click();
-  await device.page.getByTestId('unlock-input').waitFor({ state: 'detached' });
-  return true;
+/** Poll `predicate` on a bounded interval until it is truthy, or throw on timeout. */
+const sampleUntil = async (predicate, { label, timeoutMs = 30_000, intervalMs = 500 }) => {
+  const deadline = Date.now() + timeoutMs;
+  for (;;) {
+    const value = await predicate();
+    if (value) return value;
+    if (Date.now() >= deadline) {
+      throw new Error(`Timed out after ${timeoutMs}ms waiting for: ${label}`);
+    }
+    await sleep(intervalMs);
+  }
+};
+
+/** The cloud key-state testids currently visible on a device's page. */
+const presentKeyTestIds = async (page) => {
+  const present = [];
+  for (const id of KEY_STATE_TESTIDS) {
+    if ((await page.getByTestId(id).count()) > 0) present.push(id);
+  }
+  return present;
+};
+
+/** Drive the signed-in-keyless setup flow to completion, ending on `cloud-forget`. */
+const completeSetup = async (page, passphrase) => {
+  await page.getByTestId('cloud-keyless-nokey').getByRole('button').first().click();
+  await page.getByTestId('passphrase-setup-dialog').waitFor();
+  await page.getByTestId('passphrase-input').fill(passphrase);
+  await page.getByTestId('passphrase-confirm').fill(passphrase);
+  await page.getByTestId('passphrase-submit').click();
+  // Acknowledge the one-time recovery code the setup shows.
+  await page.getByTestId('recovery-code-dialog').waitFor();
+  await page.getByTestId('recovery-confirm').click();
+  await page.getByTestId('recovery-done').click();
+};
+
+/** Unlock a signed-in-keyless device through its keyless banner, ending on `cloud-forget`. */
+const completeUnlock = async (page, passphrase) => {
+  await page.getByTestId('cloud-keyless-locked').getByRole('button').first().click();
+  await page.getByTestId('unlock-input').fill(passphrase);
+  await page.getByTestId('unlock-submit').click();
+  await page.getByTestId('unlock-input').waitFor({ state: 'detached' });
+};
+
+/**
+ * Acquire this device's key on the *signed-in* surface, driving the real registrar
+ * path rather than the removed signed-out `cloud-unlock` lookup. Classify the key
+ * state, act on it (already keyed, unlock via the keyless banner, or complete
+ * setup), and fail — never silently skip — if the device does not end up keyed.
+ */
+const acquireKey = async (device, passphrase) => {
+  const state = await sampleUntil(
+    async () => {
+      const s = classifyKeyState(await presentKeyTestIds(device.page));
+      return s === 'pending' ? null : s;
+    },
+    { label: `${device.name} key state`, timeoutMs: 45_000 },
+  );
+
+  if (isErrorKeyState(state)) {
+    throw new Error(`[${device.name}] key acquisition blocked: ${state}`);
+  }
+  if (state === 'keyed') return 'already-keyed';
+  if (state === 'unlock') await completeUnlock(device.page, passphrase);
+  else await completeSetup(device.page, passphrase);
+
+  await device.page.getByTestId('cloud-forget').waitFor({ timeout: 30_000 });
+  return state === 'unlock' ? 'unlocked' : 'set-up';
+};
+
+/** Poll the device's own database until its `cloudDevices` registry row appears. */
+const waitForOwnDeviceRow = (device) =>
+  sampleUntil(
+    () =>
+      device.page.evaluate(async () => {
+        const db = globalThis.db;
+        const own = db.cloud?.persistedSyncState?.value?.clientIdentity;
+        if (!own) return false;
+        return (await db.cloudDevices.get(own)) ? own : false;
+      }),
+    { label: `${device.name} own cloudDevices row`, timeoutMs: 45_000 },
+  );
+
+const PROBE_SIZE = 5 * 1024 * 1024;
+
+/**
+ * Round-trip a maximum-size encrypted attachment from `source` to `target` to
+ * exercise the binary (base64) codec end to end: write a 5 MiB blob with a known
+ * byte pattern, push, wait for it on the target, and compare MIME, byte length,
+ * and a SHA-256 of the content — then delete the probe rows on both sides.
+ */
+const attachmentProbe = async (source, target, size) => {
+  const id = `probe-${source.name}-${size}`;
+  const expected = await source.page.evaluate(async ({ probeId, probeSize }) => {
+    const db = globalThis.db;
+    const bytes = new Uint8Array(probeSize);
+    for (let i = 0; i < probeSize; i += 1) bytes[i] = i % 256;
+    await db.noteAttachments.add({
+      id: probeId, noteId: probeId, spaceId: 'probe', name: 'probe.bin',
+      mime: 'application/octet-stream', size: probeSize,
+      blob: new Blob([bytes], { type: 'application/octet-stream' }),
+      createdAt: Date.now(),
+    });
+    await db.cloud.sync({ purpose: 'push', wait: true });
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    return { size: probeSize, mime: 'application/octet-stream', hash: [...new Uint8Array(digest)] };
+  }, { probeId: id, probeSize: size });
+
+  const got = await sampleUntil(
+    () =>
+      target.page.evaluate(async (probeId) => {
+        const db = globalThis.db;
+        await db.cloud.sync({ purpose: 'pull', wait: true });
+        const row = await db.noteAttachments.get(probeId);
+        if (!row?.blob) return null;
+        const bytes = new Uint8Array(await row.blob.arrayBuffer());
+        const digest = await crypto.subtle.digest('SHA-256', bytes);
+        return { size: bytes.length, mime: row.mime, hash: [...new Uint8Array(digest)] };
+      }, id),
+    { label: `${target.name} receives the probe attachment`, timeoutMs: 90_000, intervalMs: 3_000 },
+  );
+
+  const ok =
+    got.size === expected.size &&
+    got.mime === expected.mime &&
+    got.hash.join(',') === expected.hash.join(',');
+
+  for (const device of [source, target]) {
+    await device.page.evaluate(async (probeId) => {
+      const db = globalThis.db;
+      await db.noteAttachments.delete(probeId);
+      await db.cloud.sync({ purpose: 'push', wait: true });
+    }, id);
+  }
+  return ok;
 };
 
 /** Everything the account holds, read straight from the device's own database. */
@@ -237,6 +367,7 @@ const main = async () => {
   const email = arg('email', '') || (await ask('Account email: '));
   const passphrase = wantPurge ? '' : arg('passphrase', '') || (await ask('Account passphrase: '));
 
+  let probeOk = true;
   const devices = [];
   for (let i = 0; i < count; i += 1) {
     const name = String.fromCharCode(65 + i);
@@ -248,21 +379,53 @@ const main = async () => {
   }
 
   if (wantPurge) {
+    // Destructive: require an explicit confirmation immediately before wiping.
+    const confirm = arg('confirm-purge', '') || (await ask('Type PURGE to wipe the account rows: '));
+    if (confirm !== 'PURGE') {
+      console.error('Purge not confirmed — aborting without touching the account.');
+      for (const device of devices) await device.context.close();
+      process.exit(1);
+    }
     const removed = await purge(devices[0].page);
     console.log('\nPurged and pushed:', removed);
   } else {
+    // Acquire each device's key through the signed-in surface, failing rather
+    // than skipping if it never becomes keyed — the registrar only runs once the
+    // device holds a key, and skipping it hid that path.
     for (const device of devices) {
-      const unlocked = await unlock(device, passphrase);
-      console.log(`  [${device.name}] ${unlocked ? 'unlocked' : 'no key to unlock'}`);
+      const outcome = await acquireKey(device, passphrase);
+      console.log(`  [${device.name}] key: ${outcome}`);
     }
-    console.log('\nIdling 60s to let any sync loop show itself…');
-    await devices[0].page.waitForTimeout(60_000);
+    // Every device must have registered its own registry row before we measure.
+    for (const device of devices) {
+      const own = await waitForOwnDeviceRow(device);
+      console.log(`  [${device.name}] registered ${own.slice(0, 10)}`);
+    }
+    // Bounded sampling instead of a fixed 60s sleep: sample across a window and
+    // bail out the moment a device's sync rate crosses the loop ceiling; a window
+    // that ends without one is a settled sync.
+    console.log('\nSampling sync traffic until it settles (or a loop shows)…');
+    const settleDeadline = Date.now() + 60_000;
+    let loopSeen = false;
+    while (Date.now() < settleDeadline && !loopSeen) {
+      loopSeen = devices.some((d) => d.stats.syncPosts > SYNC_CEILING);
+      if (!loopSeen) await sleep(2_000);
+    }
+    console.log(loopSeen ? 'Sync loop detected.' : 'Sync settled within the window.');
     for (const device of devices) {
       console.log(`\n[${device.name}]`, await readAccount(device.page));
     }
+
+    // Maximum-size attachment round-trip across two devices exercises the binary
+    // (base64) codec end to end.
+    if (devices.length >= 2) {
+      console.log('\nProbing a maximum-size attachment A → B…');
+      probeOk = await attachmentProbe(devices[0], devices[1], PROBE_SIZE);
+      console.log(`  attachment round-trip: ${probeOk ? 'ok' : 'MISMATCH'}`);
+    }
   }
 
-  const failed = report(devices);
+  const failed = report(devices) || !probeOk;
   for (const device of devices) await device.context.close();
   process.exit(failed ? 1 : 0);
 };
