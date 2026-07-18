@@ -176,32 +176,23 @@ const openMany = (
 const isSealed = (value: Row | undefined): boolean =>
   value?.[CIPHER_FIELD] !== undefined;
 
-/** Keyless single read: drop a sealed row (unreadable) when hiding, else pass through. */
-const keylessGet = async (
-  read: Promise<unknown>,
-  hide: boolean,
-): Promise<unknown> => {
+/** Keyless single read: drop a sealed row (no key can open it), pass plaintext. */
+const keylessGet = async (read: Promise<unknown>): Promise<unknown> => {
   const row = (await read) as Row | undefined;
-  return hide && isSealed(row) ? undefined : row;
+  return isSealed(row) ? undefined : row;
 };
 
-/** Keyless batch read: replace sealed rows with undefined when hiding. */
-const keylessGetMany = async (
-  read: Promise<unknown[]>,
-  hide: boolean,
-): Promise<unknown[]> => {
+/** Keyless batch read: replace sealed rows with undefined, preserving positions. */
+const keylessGetMany = async (read: Promise<unknown[]>): Promise<unknown[]> => {
   const rows = await read;
-  if (!hide) return rows;
   return rows.map((row) => (isSealed(row as Row | undefined) ? undefined : row));
 };
 
-/** Keyless list read: omit sealed rows when hiding. */
+/** Keyless list read: omit sealed rows. */
 const keylessQuery = async (
   read: Promise<{ result: unknown[] }>,
-  hide: boolean,
 ): Promise<{ result: unknown[] }> => {
   const res = await read;
-  if (!hide) return res;
   return { ...res, result: res.result.filter((row) => !isSealed(row as Row | undefined)) };
 };
 
@@ -212,10 +203,12 @@ const wrapTable = (
   flagMismatch: () => void,
 ): DBCoreTable => {
   if (!isEncryptedTable(table.name)) return table;
-  // A signed-in-but-keyless device hides sealed rows on read (it cannot open
-  // them yet) so the UI never renders undefined fields; a plain keyless device
-  // (pre-setup, signed out) still passes rows through untouched.
-  const hideSealed = () => lockReason() === 'keyless';
+  // Whenever no key is loaded, sealed rows are hidden from application reads
+  // regardless of sign-in state — a device that forgot its key (or never had one)
+  // must never hand a raw `$lipsumCipher` row to a typed consumer, which would
+  // read undefined fields and can crash the route. Plaintext pre-setup rows still
+  // pass (they carry no envelope); the internal blob-transaction bypass still
+  // receives raw sealed rows.
   return {
     ...table,
     mutate: async (req: DBCoreMutateRequest) => {
@@ -243,7 +236,7 @@ const wrapTable = (
       // Addon blob-plumbing reads the raw ciphertext row — never decrypt here.
       if (isInternalBlobTx(req.trans)) return table.get(req);
       const ring = provider.current();
-      if (!ring) return keylessGet(table.get(req), hideSealed());
+      if (!ring) return keylessGet(table.get(req));
       return inTx(
         (async () =>
           openOrDrop(table, ring, (await table.get(req)) as Row | undefined, flagMismatch))(),
@@ -252,7 +245,7 @@ const wrapTable = (
     getMany: (req: DBCoreGetManyRequest) => {
       if (isInternalBlobTx(req.trans)) return table.getMany(req);
       const ring = provider.current();
-      if (!ring) return keylessGetMany(table.getMany(req), hideSealed());
+      if (!ring) return keylessGetMany(table.getMany(req));
       return inTx(
         (async () => openMany(table, ring, await table.getMany(req), flagMismatch))(),
       );
@@ -261,7 +254,7 @@ const wrapTable = (
       const ring = provider.current();
       if (req.values === false) return table.query(req);
       if (isInternalBlobTx(req.trans)) return table.query(req);
-      if (!ring) return keylessQuery(table.query(req), hideSealed());
+      if (!ring) return keylessQuery(table.query(req));
       return inTx(
         (async () => {
           const res = await table.query(req);
