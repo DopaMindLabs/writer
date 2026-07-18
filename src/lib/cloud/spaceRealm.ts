@@ -1,3 +1,4 @@
+import type { Collection, Table } from 'dexie';
 import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
 import { invariant } from '@/lib/invariant';
@@ -62,6 +63,24 @@ const isShared = (realmId: string | undefined, privateRealm: string): boolean =>
   realmId !== undefined && realmId !== privateRealm;
 
 /**
+ * Read the matching rows through the wrapped query path, stamp them in memory,
+ * and write them back through the wrapped mutation path. A cursor-driven update
+ * would see and store rows underneath the encryption middleware — raw
+ * ciphertext on a locked device — so rows must round-trip through
+ * `toArray`/`bulkPut` instead (see crypto/middleware.ts).
+ */
+const restampRows = async <T extends { realmId?: string }, K>(options: {
+  matches: Collection<T, K>;
+  table: Table<T, K>;
+  stamp: (row: { realmId?: string }) => void;
+}): Promise<void> => {
+  const rows = await options.matches.toArray();
+  if (rows.length === 0) return;
+  rows.forEach(options.stamp);
+  await options.table.bulkPut(rows);
+};
+
+/**
  * Apply `stamp` to the space and every synced row beneath it.
  *
  * Must be called inside a transaction covering {@link REALM_TABLE_NAMES}: a
@@ -76,14 +95,16 @@ export const restampSpace = async (options: {
   stamp: (row: { realmId?: string }) => void;
 }): Promise<void> => {
   const { db, spaceId, stamp } = options;
-  await db.spaces.where({ id: spaceId }).modify(stamp);
+  await restampRows({ matches: db.spaces.where({ id: spaceId }), table: db.spaces, stamp });
   for (const name of SPACE_SCOPED) {
-    await db.table(name).where({ spaceId }).modify(stamp);
+    const table = db.table<{ realmId?: string }, string>(name);
+    await restampRows({ matches: table.where({ spaceId }), table, stamp });
   }
   const docIds = await db.docs.where({ spaceId }).primaryKeys();
   if (docIds.length === 0) return;
   for (const name of DOC_SCOPED) {
-    await db.table(name).where('docId').anyOf(docIds).modify(stamp);
+    const table = db.table<{ realmId?: string }, string>(name);
+    await restampRows({ matches: table.where('docId').anyOf(docIds), table, stamp });
   }
 };
 
