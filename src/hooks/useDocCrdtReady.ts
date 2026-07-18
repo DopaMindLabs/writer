@@ -22,21 +22,15 @@ import { reconcileDocForMount } from '@/lib/cloud/reconcile';
  * so ordinary autosaves do not re-run the check or remount. Resets to not-ready
  * only when the document changes.
  */
-export const useDocCrdtReady = (
-  docId: string,
-  body: string,
-  updatedAt = 0,
-): boolean => {
+export const useDocCrdtReady = (docId: string, body: string): boolean => {
   const [ready, setReady] = useState(false);
   const bodyRef = useRef(body);
   bodyRef.current = body;
-  const updatedAtRef = useRef(updatedAt);
-  updatedAtRef.current = updatedAt;
 
   useEffect(() => {
     let active = true;
     setReady(false);
-    void reconcileDocForMount(docId, bodyRef.current, updatedAtRef.current)
+    void reconcileDocForMount(docId, bodyRef.current)
       .catch((error: unknown) => {
         // Surface the failure but do not trap the user on a blank surface: a
         // best-effort mount is better than an editor that never appears.

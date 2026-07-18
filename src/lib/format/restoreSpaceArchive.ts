@@ -1,6 +1,6 @@
 import { db } from '@/db/db';
 import { invariant } from '@/lib/invariant';
-import { restoreDocs, seedDocsCrdt } from '@/lib/docs';
+import { restoreDocs, seedDocsCrdt, docBodyBaselineKey } from '@/lib/docs';
 import { collabSeedKey } from '@/lib/collab/seedKey';
 import { broadcastDocReload } from '@/lib/collab/docReloadChannel';
 import { createSpaceBackup } from '@/lib/backup/createSpaceBackup';
@@ -31,6 +31,7 @@ const deleteSpaceContent = async (spaceId: string): Promise<void> => {
     // re-seed cleanly from their archived bodies instead of replaying stale state.
     await db.docUpdates.where('docId').anyOf(docIds).delete();
     await db.meta.bulkDelete(docIds.map(collabSeedKey));
+    await db.meta.bulkDelete(docIds.map(docBodyBaselineKey));
   }
   await db.docs.where({ spaceId }).delete();
   await db.sections.where({ spaceId }).delete();

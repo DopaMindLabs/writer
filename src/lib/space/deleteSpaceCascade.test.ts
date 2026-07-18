@@ -1,5 +1,6 @@
 import { db } from '@/db/db';
 import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
+import { docBodyBaselineKey } from '@/lib/docs';
 import { collabSeedKey } from '@/lib/collab/seedKey';
 import { deleteSpaceCascade } from './deleteSpaceCascade';
 import { FIXED_TIME } from '@/test/fixtures';
@@ -53,6 +54,10 @@ const seedSpace = async (spaceId: string) => {
     key: collabSeedKey(`doc-${spaceId}`),
     value: { seededAt: FIXED_TIME },
   });
+  await db.meta.put({
+    key: docBodyBaselineKey(`doc-${spaceId}`),
+    value: EMPTY_LEXICAL_JSON,
+  });
 };
 
 describe('deleteSpaceCascade', () => {
@@ -81,6 +86,7 @@ describe('deleteSpaceCascade', () => {
 
     expect(await db.docUpdates.where('docId').equals('doc-s1').count()).toBe(0);
     expect(await db.meta.get(collabSeedKey('doc-s1'))).toBeUndefined();
+    expect(await db.meta.get(docBodyBaselineKey('doc-s1'))).toBeUndefined();
   });
 
   it('leaves other spaces’ rows untouched', async () => {
@@ -92,5 +98,6 @@ describe('deleteSpaceCascade', () => {
     expect(await db.revisions.get('rev-s2')).toBeDefined();
     expect(await db.docUpdates.where('docId').equals('doc-s2').count()).toBe(1);
     expect(await db.meta.get(collabSeedKey('doc-s2'))).toBeDefined();
+    expect(await db.meta.get(docBodyBaselineKey('doc-s2'))).toBeDefined();
   });
 });
