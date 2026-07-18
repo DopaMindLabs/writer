@@ -30,18 +30,21 @@ const openViewer = async (page: Page, file: string): Promise<void> => {
     .first()
     .click();
   await expect(page.getByTestId('pdf-viewer')).toBeVisible();
-  await expect(pdfPage(page).locator('canvas')).toBeVisible();
+  // Continuous scroll: every page mounts in one column, so scope to the first.
+  await expect(pdfPage(page).first().locator('canvas')).toBeVisible();
 };
 
 /**
  * Selection helper (shared with pdf-annotation-strip): a real headless drag over
  * pdf.js's transparent text-layer glyphs does not select, so build a Range over
- * the current page's first span and dispatch `pointerup` — the identical
- * Selection-API path the drag would drive.
+ * a page's first span and dispatch `pointerup` — the identical Selection-API path
+ * the drag would drive. `pageNumber` picks which mounted page's text layer to
+ * select, since the continuous reader keeps every page's text layer in the DOM.
  */
-const select = async (page: Page): Promise<void> => {
-  await page.evaluate(() => {
-    const span = document.querySelector('.textLayer span');
+const select = async (page: Page, pageNumber = 1): Promise<void> => {
+  await page.evaluate((n) => {
+    const layer = document.querySelectorAll('.textLayer')[n - 1];
+    const span = layer?.querySelector('span');
     if (!span?.firstChild) throw new Error('no text-layer span to select');
     const range = document.createRange();
     range.selectNodeContents(span);
@@ -49,11 +52,11 @@ const select = async (page: Page): Promise<void> => {
     selection?.removeAllRanges();
     selection?.addRange(range);
     span.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }));
-  });
+  }, pageNumber);
 };
 
-const makeHighlight = async (page: Page, color = 'yellow'): Promise<void> => {
-  await select(page);
+const makeHighlight = async (page: Page, color = 'yellow', pageNumber = 1): Promise<void> => {
+  await select(page, pageNumber);
   await expect(page.getByTestId('pdf-selection-strip')).toBeVisible();
   await page.getByTestId(`strip-color-${color}`).click();
   await expect(page.getByTestId('pdf-highlight-mark')).toBeVisible();
@@ -111,13 +114,15 @@ test('panel row jumps to the page and focuses the mark', async ({ page }) => {
   await gotoLibrary(page);
   await openViewer(page, TWO_PAGE_PDF);
 
-  // Highlight a word on page 2, then step back to page 1.
-  await page.getByTestId('pdf-pager-next').click();
-  await expect(page.getByTestId('pdf-pager')).toContainText('2 / 2');
-  await makeHighlight(page, 'blue');
-  await page.getByTestId('pdf-pager-prev').click();
+  // Continuous scroll keeps every page selectable in place, so highlight a word on
+  // page 2 without leaving the top, then scroll back to page 1. The mark stays
+  // mounted (every page is in the column) — the reader is scrolled away from it.
+  await makeHighlight(page, 'blue', 2);
+  await page
+    .getByTestId('pdf-scroll')
+    .evaluate((el) => { el.scrollTop = 0; el.dispatchEvent(new Event('scroll')); });
   await expect(page.getByTestId('pdf-pager')).toContainText('1 / 2');
-  await expect(page.getByTestId('pdf-highlight-mark')).toHaveCount(0);
+  await expect(page.getByTestId('pdf-highlight-mark')).not.toBeFocused();
 
   // Activating the row returns the reader to page 2 and focuses the mark.
   await page.getByTestId('pdf-rail-highlights').click();

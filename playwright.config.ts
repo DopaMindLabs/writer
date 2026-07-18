@@ -77,6 +77,9 @@ export default defineConfig({
     baseURL: 'http://localhost:4173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    // Instant (non-animated) scrolling keeps the continuous reader's page jumps
+    // deterministic, and matches the app's own honouring of the motion setting.
+    reducedMotion: 'reduce',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {

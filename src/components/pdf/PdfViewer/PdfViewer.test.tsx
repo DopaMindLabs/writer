@@ -49,12 +49,15 @@ describe('PdfViewer', () => {
     renderWithProviders(<PdfViewer blob={blob()} title="Paper.pdf" />);
     expect(screen.getByTestId('pdf-status-loading')).toBeInTheDocument();
     // Let the async byte read settle so the state update is wrapped in act().
-    await screen.findByTestId('fake-page');
+    await screen.findAllByTestId('fake-page');
   });
 
-  it('renders the page once loaded, with no standing toolbar', async () => {
+  it('renders every page in one scroll column, with no standing toolbar', async () => {
     renderWithProviders(<PdfViewer blob={blob()} title="Paper.pdf" />);
-    expect(await screen.findByTestId('fake-page')).toBeInTheDocument();
+    // Continuous scroll: all pages mount top-to-bottom, not one at a time.
+    const pages = await screen.findAllByTestId('fake-page');
+    expect(pages).toHaveLength(3);
+    expect(pages.map((p) => p.getAttribute('data-page'))).toEqual(['1', '2', '3']);
     // The D1 repair: the toolbar is gone — page controls live in the reader chrome.
     expect(screen.queryByTestId('pdf-toolbar')).not.toBeInTheDocument();
     expect(screen.queryByTestId('pdf-status-loading')).not.toBeInTheDocument();
@@ -65,7 +68,7 @@ describe('PdfViewer', () => {
     renderWithProviders(
       <PdfViewer blob={blob()} title="Paper.pdf" onNumPagesChange={onNumPagesChange} />,
     );
-    await screen.findByTestId('fake-page');
+    await screen.findAllByTestId('fake-page');
     expect(onNumPagesChange).toHaveBeenCalledWith(3);
   });
 
@@ -78,28 +81,27 @@ describe('PdfViewer', () => {
     // Recover: the retry re-copies the bytes and the next parse succeeds.
     control.fail = false;
     await userEvent.click(screen.getByRole('button', { name: /try again/i }));
-    expect(await screen.findByTestId('fake-page')).toBeInTheDocument();
+    expect((await screen.findAllByTestId('fake-page')).length).toBe(3);
   });
 
-  it('arrow keys turn the page within the reading region (uncontrolled)', async () => {
+  it('arrow keys scroll the next/previous page into view (uncontrolled)', async () => {
     renderWithProviders(<PdfViewer blob={blob()} title="Paper.pdf" />);
-    const page = await screen.findByTestId('fake-page');
+    await screen.findAllByTestId('fake-page');
+    const pageTwo = screen.getByRole('group', { name: /page 2/i });
+    const scrollSpy = vi.spyOn(pageTwo, 'scrollIntoView');
 
-    fireEvent.keyDown(page, { key: 'ArrowRight' });
-    expect(screen.getByTestId('fake-page')).toHaveAttribute('data-page', '2');
-    fireEvent.keyDown(screen.getByTestId('fake-page'), { key: 'ArrowRight' });
-    expect(screen.getByTestId('fake-page')).toHaveAttribute('data-page', '3');
-    fireEvent.keyDown(screen.getByTestId('fake-page'), { key: 'ArrowRight' }); // clamped
-    expect(screen.getByTestId('fake-page')).toHaveAttribute('data-page', '3');
-    fireEvent.keyDown(screen.getByTestId('fake-page'), { key: 'ArrowLeft' });
-    expect(screen.getByTestId('fake-page')).toHaveAttribute('data-page', '2');
+    // From page 1, ArrowRight makes page 2 the active page → it is scrolled in.
+    fireEvent.keyDown(screen.getAllByTestId('fake-page')[0], { key: 'ArrowRight' });
+    expect(scrollSpy).toHaveBeenCalled();
+    // All pages stay mounted — paging is a scroll, not a swap.
+    expect(screen.getAllByTestId('fake-page')).toHaveLength(3);
   });
 
-  it('renders the controlled page and scale when provided', async () => {
+  it('renders every page at the controlled scale and scrolls the controlled page in', async () => {
     renderWithProviders(<PdfViewer blob={blob()} title="Paper.pdf" page={2} scale={1.5} />);
-    const page = await screen.findByTestId('fake-page');
-    expect(page).toHaveAttribute('data-page', '2');
-    expect(page).toHaveAttribute('data-scale', '1.5');
+    const pages = await screen.findAllByTestId('fake-page');
+    expect(pages).toHaveLength(3);
+    expect(pages.every((p) => p.getAttribute('data-scale') === '1.5')).toBe(true);
   });
 
   it('arrow keys emit onPageChange when the page is controlled', async () => {
@@ -107,25 +109,27 @@ describe('PdfViewer', () => {
     renderWithProviders(
       <PdfViewer blob={blob()} title="Paper.pdf" page={2} onPageChange={onPageChange} />,
     );
-    const page = await screen.findByTestId('fake-page');
-    fireEvent.keyDown(page, { key: 'ArrowRight' });
+    const pages = await screen.findAllByTestId('fake-page');
+    fireEvent.keyDown(pages[0], { key: 'ArrowRight' });
     expect(onPageChange).toHaveBeenCalledWith(3);
-    fireEvent.keyDown(page, { key: 'ArrowLeft' });
+    fireEvent.keyDown(pages[0], { key: 'ArrowLeft' });
     expect(onPageChange).toHaveBeenCalledWith(1);
-    // Controlled: the viewer does not move itself; the page stays where the prop says.
-    expect(screen.getByTestId('fake-page')).toHaveAttribute('data-page', '2');
+    // Controlled: the viewer does not move itself; the reader owns the active page.
+    expect(screen.getAllByTestId('fake-page')).toHaveLength(3);
   });
 
-  it('overlay slot renders inside the page wrapper', async () => {
+  it('overlay slot renders inside each page wrapper', async () => {
     renderWithProviders(
       <PdfViewer
         blob={blob()}
         title="Paper.pdf"
-        pageOverlay={(page) => <span data-testid="overlay">overlay {page}</span>}
+        pageOverlay={(page) => <span data-testid={`overlay-${String(page)}`}>overlay {page}</span>}
       />,
     );
-    const overlay = await screen.findByTestId('overlay');
+    const overlay = await screen.findByTestId('overlay-1');
     expect(overlay).toHaveTextContent('overlay 1');
-    expect(screen.getByTestId('pdf-page')).toContainElement(overlay);
+    expect(screen.getByTestId('overlay-3')).toHaveTextContent('overlay 3');
+    const wrappers = screen.getAllByTestId('pdf-page');
+    expect(wrappers[0]).toContainElement(overlay);
   });
 });

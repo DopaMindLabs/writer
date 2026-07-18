@@ -620,8 +620,15 @@ a card grid:
 (`markMediaOpened` stamps `openedAt`, clearing it from Unread) and shows the
 quiet reader chrome:
 
+0. **Continuous scroll** — every page is mounted top-to-bottom in one scroll
+   column, so reading is a scroll rather than a page-at-a-time flip. The **active
+   page** (what the pager, crumb and thumbnails track) is the page under the
+   viewport midpoint, updated as the reader scrolls; a jump (pager, thumbnail,
+   key, or a highlight row) scrolls that page to the top. Page jumps honour the
+   motion preference — instant under reduced motion, smooth otherwise.
 1. No standing toolbar — navigation and zoom live in the chrome, not a bar.
-2. A floating **pager** (`n / m`, prev/next) centred at the foot of the page.
+2. A floating **pager** (`n / m`, prev/next) centred at the foot of the page,
+   tracking the scroll position; prev/next scroll to the adjacent page.
 3. A floating **zoom cluster** (in/out/reset) — a recorded reversal of the
    runbook's "zoom lives in the overflow only" decision, drawn in-view.
 4. A 44px **glyph rail**: a Highlights (¶) glyph with a live count badge and an

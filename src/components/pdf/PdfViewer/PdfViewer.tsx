@@ -1,8 +1,9 @@
-import { type KeyboardEvent, type ReactNode } from 'react';
+import { useRef, type KeyboardEvent, type ReactNode } from 'react';
 import { PdfViewerStatus } from './PdfViewerStatus';
 import { PdfDocumentView } from './PdfDocumentView';
-import { PdfPageView } from './PdfPageView';
+import { PdfPageColumn } from './PdfPageColumn';
 import { usePdfViewerController } from './usePdfViewerController';
+import { usePdfScrollSync } from './usePdfScrollSync';
 
 // Left/Right turn the page when focus is in the reading region and not in an
 // input or the selection strip (so typing a note is never hijacked).
@@ -66,6 +67,15 @@ export const PdfViewer = ({
   onNumPagesChange,
 }: PdfViewerProps) => {
   const ctl = usePdfViewerController({ blob, page, onPageChange, scale, onNumPagesChange });
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  usePdfScrollSync({
+    scrollRef,
+    numPages: ctl.numPages,
+    page: ctl.pageNumber,
+    onPageChange: ctl.setActivePage,
+    enabled: ctl.isReady,
+  });
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
     handlePageKey(event, ctl.prev, ctl.next);
@@ -78,9 +88,15 @@ export const PdfViewer = ({
       data-testid="pdf-viewer"
       className="flex h-full flex-col bg-paper-2"
     >
-      {/* Focusable so keyboard users can scroll the page (a11y:
+      {/* Focusable so keyboard users can scroll the pages (a11y:
           scrollable-region-focusable); the region is named by the parent. */}
-      <div tabIndex={0} onKeyDown={onKeyDown} className="relative flex-1 overflow-auto p-4">
+      <div
+        ref={scrollRef}
+        data-testid="pdf-scroll"
+        tabIndex={0}
+        onKeyDown={onKeyDown}
+        className="relative flex-1 overflow-auto p-4"
+      >
         {ctl.load.status === 'error' ? (
           <PdfViewerStatus status="error" onRetry={ctl.load.retry} />
         ) : null}
@@ -91,8 +107,7 @@ export const PdfViewer = ({
             onLoadSuccess={ctl.load.onLoadSuccess}
             onLoadError={ctl.load.onLoadError}
           >
-            <PdfPageView
-              page={ctl.pageNumber}
+            <PdfPageColumn
               numPages={ctl.numPages}
               scale={ctl.scale}
               pageOverlay={pageOverlay}

@@ -32,6 +32,10 @@ if (typeof Element !== 'undefined') {
   if (!proto.setPointerCapture) proto.setPointerCapture = () => {};
   if (!proto.hasPointerCapture) proto.hasPointerCapture = () => false;
   if (!proto.releasePointerCapture) proto.releasePointerCapture = () => {};
+  // jsdom does not implement scrollIntoView; the continuous PDF reader scrolls a
+  // page into view on a jump, so provide a no-op it can safely call.
+  const withScroll = Element.prototype as { scrollIntoView?: () => void };
+  if (!withScroll.scrollIntoView) withScroll.scrollIntoView = () => {};
 }
 
 if (typeof File !== 'undefined' && !('text' in File.prototype)) {
