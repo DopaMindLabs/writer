@@ -1,5 +1,6 @@
 import { db } from '@/db/db';
 import { collabSeedKey } from '@/lib/collab/seedKey';
+import { docBodyBaselineKey } from '@/lib/docs';
 
 export const deleteSpaceCascade = async (spaceId: string): Promise<void> => {
   await db.transaction(
@@ -31,6 +32,7 @@ export const deleteSpaceCascade = async (spaceId: string): Promise<void> => {
         // import of the same id starts from a clean, correctly-seeded state.
         await db.docUpdates.where('docId').anyOf(docIds).delete();
         await db.meta.bulkDelete(docIds.map(collabSeedKey));
+        await db.meta.bulkDelete(docIds.map(docBodyBaselineKey));
       }
       await db.docs.where({ spaceId }).delete();
       await db.sections.where({ spaceId }).delete();

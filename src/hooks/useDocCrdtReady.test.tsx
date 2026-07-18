@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { afterEach, vi } from 'vitest';
 import { db } from '@/db/db';
 import { serializedBody } from '@/test/fixtures';
-import { seedDocCrdt } from '@/lib/docs';
+import { seedDocCrdt, writeDocBodyBaseline } from '@/lib/docs';
 import { collabStore } from '@/lib/collab/collabStore';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
@@ -59,9 +59,10 @@ describe('useDocCrdtReady', () => {
     const stale = serializedBody('stale local');
     const pulled = serializedBody('newer pulled');
     await seedDocCrdt(DOC, stale);
-    const pulledAt = Date.now() + 60_000;
+    // Our last local write; the pulled body differs from it, so the pull wins.
+    await writeDocBodyBaseline(DOC, stale);
 
-    const { result } = renderHook(() => useDocCrdtReady(DOC, pulled, pulledAt));
+    const { result } = renderHook(() => useDocCrdtReady(DOC, pulled));
 
     await waitFor(() => {
       expect(result.current).toBe(true);
@@ -76,11 +77,10 @@ describe('useDocCrdtReady', () => {
     const typed = serializedBody('typed but not yet autosaved');
     const staleRow = serializedBody('stale body');
     await seedDocCrdt(DOC, typed);
-    const staleRowWrittenAt = Date.now() - 60_000;
+    // The row still equals the last local write, so the unsaved CRDT wins.
+    await writeDocBodyBaseline(DOC, staleRow);
 
-    const { result } = renderHook(() =>
-      useDocCrdtReady(DOC, staleRow, staleRowWrittenAt),
-    );
+    const { result } = renderHook(() => useDocCrdtReady(DOC, staleRow));
 
     await waitFor(() => {
       expect(result.current).toBe(true);
