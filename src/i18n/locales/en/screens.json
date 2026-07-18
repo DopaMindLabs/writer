@@ -22,7 +22,7 @@
     "syncOnTitle": "Folder sync enabled",
     "syncOnBody": "Your work syncs to the “{{folder}}” folder on this device.",
     "warningTitle": "Pre-release build",
-    "warningBody": "No data sync. Everything lives in your browser and clearing its cache loses your work. You can enable sync to a local folder in Universal settings → Sync.",
+    "warningBody": "No data sync. Everything lives in your browser and clearing its cache loses your work. You can enable sync to a local folder in Universal settings → Local Sync.",
     "versionLine": "Version {{version}}"
   },
   "about": {
@@ -68,7 +68,7 @@
       "citations": "Citation style",
       "annotation": "Annotations",
       "backups": "Backups",
-      "sync": "Sync",
+      "sync": "Local Sync",
       "export": "Export / import",
       "data": "Your data",
       "account": "Account",
@@ -560,7 +560,7 @@
       "latestValue": "12 min ago · 1,190 words"
     },
     "sync": {
-      "title": "Sync",
+      "title": "Local Sync",
       "subtitle": "Push your spaces to a folder you choose. Point it at a Google Drive, Dropbox, or iCloud folder to sync across devices.",
       "unsupportedTitle": "Not available in this browser",
       "unsupportedBody": "Folder sync needs the File System Access API, available in Chrome, Edge, and other Chromium browsers on desktop. Switch to a supported browser to use it.",
@@ -753,7 +753,7 @@
       "sync": {
         "title": "Sync",
         "subtitle": "Push this space to the connected folder, manually or on a schedule. Sync is separate from Backups.",
-        "folderHint": "Connect a folder in Universal settings → Sync. The same folder is used for every space.",
+        "folderHint": "Connect a folder in Universal settings → Local Sync. The same folder is used for every space.",
         "intervalHint": "How often this space syncs automatically. Choose Default to follow the universal auto-sync setting.",
         "syncNow": "Sync this space"
       },
