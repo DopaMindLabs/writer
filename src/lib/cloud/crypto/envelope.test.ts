@@ -28,6 +28,24 @@ describe('cipher envelope', () => {
     expect(opened).toEqual(row);
   });
 
+  it('encodes a 5 MiB binary body below twice its raw size and round-trips it', async () => {
+    const keyRing = await ring();
+    const raw = new Uint8Array(5 * 1024 * 1024);
+    for (let i = 0; i < raw.length; i += 1) raw[i] = i % 256;
+    const blob = new Blob([raw], { type: 'application/octet-stream' });
+    const row = { id: 'att-1', spaceId: 's', sectionId: 'x', updatedAt: 1, body: blob };
+
+    const sealed = await sealRow(keyRing, { table: 'docs', primaryKey: 'att-1' }, row, rules);
+    // Base64 ciphertext, not a ~4× number-array expansion of the raw bytes.
+    const envelope = sealed[CIPHER_FIELD] as CipherEnvelope;
+    expect(envelope.data.length).toBeLessThan(raw.length * 2);
+
+    const opened = await openRow(keyRing, { table: 'docs', primaryKey: 'att-1' }, sealed);
+    const out = opened.body as Blob;
+    expect(out.type).toBe('application/octet-stream');
+    expect(new Uint8Array(await out.arrayBuffer()).length).toBe(raw.length);
+  });
+
   it('keeps index/pk fields plaintext and hides content fields', async () => {
     const keyRing = await ring();
     const row = { id: 'doc-1', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'T', body: 'B' };
