@@ -103,6 +103,9 @@ test.describe('cloud sync beta gating', () => {
     await expect(dialog).toContainText(/no server of its own/i);
     await expect(dialog).toContainText(/valid for 3 days/i);
     await expect(page.getByTestId('cloud-signin-ack-continue')).toBeDisabled();
+    // The optional backup tick alone does not unlock continue.
+    await page.getByTestId('cloud-signin-ack-backup').click();
+    await expect(page.getByTestId('cloud-signin-ack-continue')).toBeDisabled();
     await page.getByTestId('cloud-signin-ack-checkbox').click();
     await expect(page.getByTestId('cloud-signin-ack-continue')).toBeEnabled();
     // Cancel backs out without signing in — no login step appears.

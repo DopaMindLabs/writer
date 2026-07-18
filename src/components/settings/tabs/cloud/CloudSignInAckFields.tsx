@@ -6,14 +6,18 @@ import { InlineBanner } from '@/components/ui/InlineBanner';
 export interface CloudSignInAckFieldsProps {
   acknowledged: boolean;
   onAcknowledged: (acknowledged: boolean) => void;
+  backupConfirmed: boolean;
+  onBackupConfirmed: (confirmed: boolean) => void;
   onCancel: () => void;
   onConfirm: () => void;
 }
 
-/** Body of the sign-in acknowledgement: the terms, the tick, and the actions. */
+/** Body of the sign-in acknowledgement: the terms, the ticks, and the actions. */
 export const CloudSignInAckFields = ({
   acknowledged,
   onAcknowledged,
+  backupConfirmed,
+  onBackupConfirmed,
   onCancel,
   onConfirm,
 }: CloudSignInAckFieldsProps) => {
@@ -31,6 +35,14 @@ export const CloudSignInAckFields = ({
         checked={acknowledged}
         onChange={(e) => {
           onAcknowledged(e.target.checked);
+        }}
+      />
+      <Checkbox
+        data-testid="cloud-signin-ack-backup"
+        label={k('backupLabel')}
+        checked={backupConfirmed}
+        onChange={(e) => {
+          onBackupConfirmed(e.target.checked);
         }}
       />
       <div className="flex justify-end gap-2">
