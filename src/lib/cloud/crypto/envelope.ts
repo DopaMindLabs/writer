@@ -1,5 +1,6 @@
 import type { CloudKeyRing } from './keys';
 import { CIPHER_FIELD } from './tableRules';
+import { tagBinary, untagBinary, toBase64, fromBase64 } from './binaryJsonCodec';
 
 /**
  * The encrypted payload stored on a sealed row under {@link CIPHER_FIELD}.
@@ -44,21 +45,6 @@ export class MalformedEnvelopeError extends Error {
   }
 }
 
-/** Encode raw bytes as a base64 string, chunked so large bodies don't blow the
- *  call stack via argument spread. */
-const toBase64 = (bytes: Uint8Array): string => {
-  let binary = '';
-  const chunk = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunk) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
-  }
-  return btoa(binary);
-};
-
-/** Decode a base64 string back to raw bytes. */
-const fromBase64 = (value: string): Uint8Array =>
-  Uint8Array.from(atob(value), (c) => c.charCodeAt(0));
-
 /** Identifies which row a ciphertext belongs to, for AES-GCM's row binding. */
 export interface RowRef {
   table: string;
@@ -79,44 +65,11 @@ const aad = (epoch: number, ref: RowRef): ArrayBuffer =>
     ),
   );
 
-// Structured-clone-safe JSON: Uint8Array/Blob are tagged; functions are rejected.
-const tagValue = async (value: unknown): Promise<unknown> => {
-  if (value instanceof Uint8Array) return { __u8: Array.from(value) };
-  if (typeof Blob !== 'undefined' && value instanceof Blob) {
-    const bytes = Array.from(new Uint8Array(await value.arrayBuffer()));
-    return { __blob: { type: value.type, bytes } };
-  }
-  if (typeof value === 'function') {
-    throw new Error('cannot encrypt a function value');
-  }
-  if (Array.isArray(value)) return Promise.all(value.map(tagValue));
-  if (value !== null && typeof value === 'object') {
-    const out: Record<string, unknown> = {};
-    for (const [key, val] of Object.entries(value)) out[key] = await tagValue(val);
-    return out;
-  }
-  return value;
-};
-
-const untagValue = (value: unknown): unknown => {
-  if (value === null || typeof value !== 'object') return value;
-  if (Array.isArray(value)) return value.map(untagValue);
-  const obj = value as Record<string, unknown>;
-  if ('__u8' in obj) return new Uint8Array(obj.__u8 as number[]);
-  if ('__blob' in obj) {
-    const blob = obj.__blob as { type: string; bytes: number[] };
-    return new Blob([new Uint8Array(blob.bytes)], { type: blob.type });
-  }
-  const out: Record<string, unknown> = {};
-  for (const [key, val] of Object.entries(obj)) out[key] = untagValue(val);
-  return out;
-};
-
 const serialize = async (fields: Record<string, unknown>): Promise<Uint8Array> =>
-  new TextEncoder().encode(JSON.stringify(await tagValue(fields)));
+  new TextEncoder().encode(JSON.stringify(await tagBinary(fields)));
 
 const deserialize = (bytes: Uint8Array): Record<string, unknown> =>
-  untagValue(JSON.parse(new TextDecoder().decode(bytes))) as Record<
+  untagBinary(JSON.parse(new TextDecoder().decode(bytes))) as Record<
     string,
     unknown
   >;
