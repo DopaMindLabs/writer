@@ -1,48 +1,52 @@
-import { useEffect, useRef, useState } from 'react';
-import { reconcileDocForMount } from '@/lib/cloud/reconcile';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { reconcileDocForMount } from '@/lib/cloud/cloudClient';
 
 /**
- * Gate the editor mount until the document's CRDT log has been reconciled
- * against its current row body.
- *
- * Three states need repairing before the editor mounts. After a cloud sign-out
- * clears the local-only `docUpdates` log, a re-pulled row keeps its body but has
- * no CRDT lineage — mounting over that empty Y.Doc would render blank and let the
- * first autosave overwrite the real body. When a body was pulled from another
- * device while the doc was closed, the local CRDT is populated but stale; mounting
- * over it would show old content and mismatch the autosave baseline captured at
- * mount, so a clean editor would look dirty to cloud reconciliation. And when the
- * page was closed inside the autosave debounce, the row body lags a CRDT that
- * holds the user's last keystrokes — those must be persisted, never discarded.
- *
- * {@link reconcileDocForMount} repairs all three, and this reports ready only once
- * it settles, so the editor mounts over a CRDT that already equals the body.
- *
- * Keyed on `docId` alone; the latest `body` and `updatedAt` are read through refs
- * so ordinary autosaves do not re-run the check or remount. Resets to not-ready
- * only when the document changes.
+ * The mount-gate state for a document's editor:
+ * - `pending` — reconciliation is in flight; the editor stays unmounted;
+ * - `ready` — the CRDT equals the row body; the editor may mount;
+ * - `failed` — reconciliation threw; the editor must **not** mount over
+ *   unverified state. Carries a `retry` to run the gate again.
  */
-export const useDocCrdtReady = (docId: string, body: string): boolean => {
-  const [ready, setReady] = useState(false);
+export type DocCrdtReadiness =
+  | { state: 'pending' }
+  | { state: 'ready' }
+  | { state: 'failed'; error: Error; retry: () => void };
+
+const toError = (value: unknown): Error =>
+  value instanceof Error ? value : new Error(String(value));
+
+/**
+ * Gate the editor mount until the document's CRDT log has been reconciled against
+ * its current row body. A failed reconciliation keeps the editor closed rather
+ * than mounting over an empty or stale Y.Doc (which a later autosave could persist
+ * over the real body); the surface can retry. Keyed on `docId`; the latest `body`
+ * is read through a ref so ordinary autosaves neither re-run the gate nor remount.
+ */
+export const useDocCrdtReady = (docId: string, body: string): DocCrdtReadiness => {
+  const [readiness, setReadiness] = useState<DocCrdtReadiness>({ state: 'pending' });
+  const [attempt, setAttempt] = useState(0);
   const bodyRef = useRef(body);
   bodyRef.current = body;
 
+  const retry = useCallback(() => {
+    setAttempt((n) => n + 1);
+  }, []);
+
   useEffect(() => {
     let active = true;
-    setReady(false);
-    void reconcileDocForMount(docId, bodyRef.current)
-      .catch((error: unknown) => {
-        // Surface the failure but do not trap the user on a blank surface: a
-        // best-effort mount is better than an editor that never appears.
-        console.error('Failed to reconcile the document CRDT before mount', error);
+    setReadiness({ state: 'pending' });
+    reconcileDocForMount(docId, bodyRef.current)
+      .then(() => {
+        if (active) setReadiness({ state: 'ready' });
       })
-      .finally(() => {
-        if (active) setReady(true);
+      .catch((error: unknown) => {
+        if (active) setReadiness({ state: 'failed', error: toError(error), retry });
       });
     return () => {
       active = false;
     };
-  }, [docId]);
+  }, [docId, attempt, retry]);
 
-  return ready;
+  return readiness;
 };

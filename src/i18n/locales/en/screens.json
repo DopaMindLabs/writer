@@ -1,4 +1,9 @@
 {
+  "editor": {
+    "crdtErrorTitle": "Couldn't open this document",
+    "crdtErrorBody": "Something went wrong preparing this document for editing. Your saved work is safe.",
+    "crdtErrorRetry": "Try again"
+  },
   "home": {
     "subtitle": "Free writing multiverse",
     "titleMain": "LIpsum",
