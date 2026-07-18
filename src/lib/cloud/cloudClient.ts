@@ -17,6 +17,7 @@ import { startEscrowReconciler } from './escrowReconcile';
 import { startKeylessLockMonitor } from './keylessGuard';
 import { startDeviceRegistrar } from './deviceRegistrar';
 import { resetAndReseed } from '@/db/seed';
+import { resetShouldFail } from '@/lib/boot/e2eFaults';
 
 /**
  * Facade over `db.cloud` (the Dexie Cloud addon API). It is the *only* module
@@ -305,6 +306,7 @@ export const startCloudSession = async (): Promise<() => void> => {
  * offer a retry instead of reloading over a half-reset database.
  */
 export const resetCloudDevice = async (): Promise<void> => {
+  if (resetShouldFail()) throw new Error('forced device-reset failure (E2E)');
   await signOutOfCloud();
   await forgetThisDevice();
   keyMismatchState.set(false);
