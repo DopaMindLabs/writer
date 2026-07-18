@@ -3,7 +3,7 @@
 exports[`Topbar > snapshot > should match the snapshot across all variants > citations 1`] = `
 <div>
   <header
-    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule px-3 md:gap-3 md:px-4 bg-paper"
+    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
     data-testid="topbar"
   >
     <button
@@ -107,7 +107,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > cit
 exports[`Topbar > snapshot > should match the snapshot across all variants > focus 1`] = `
 <div>
   <header
-    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule px-3 md:gap-3 md:px-4 bg-paper"
+    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
     data-testid="topbar"
   >
     <button
@@ -370,7 +370,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > foc
 exports[`Topbar > snapshot > should match the snapshot across all variants > write 1`] = `
 <div>
   <header
-    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule px-3 md:gap-3 md:px-4 bg-paper"
+    class="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
     data-testid="topbar"
   >
     <button

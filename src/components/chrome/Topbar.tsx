@@ -14,9 +14,6 @@ import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
 import { MobileNavDrawer } from './MobileNavDrawer';
 import { cn } from '@/lib/utils';
 
-const TOPBAR_BASE_CLASS =
-  'flex h-10 shrink-0 items-center gap-2 border-b border-rule px-3 md:gap-3 md:px-4';
-
 interface TopbarProps {
   spaceId: string;
   docId: string | null;
@@ -30,8 +27,6 @@ interface TopbarProps {
   trailing?: ReactNode;
   /** Muted continuation appended after the doc name (e.g. the reader page readout). */
   crumbSuffix?: string;
-  /** Bar surface: the default paper, or a raised grey (`paper-2`) for the reader. */
-  tone?: 'paper' | 'paper-2';
 }
 
 interface DocBreadcrumbProps {
@@ -297,7 +292,6 @@ export const Topbar = ({
   leading,
   trailing,
   crumbSuffix,
-  tone = 'paper',
 }: TopbarProps) => {
   const { t } = useTranslation('chrome');
   const location = useLocation();
@@ -315,7 +309,7 @@ export const Topbar = ({
   return (
     <header
       data-testid="topbar"
-      className={cn(TOPBAR_BASE_CLASS, tone === 'paper-2' ? 'bg-paper-2' : 'bg-paper')}
+      className="flex h-10 shrink-0 items-center gap-2 border-b border-rule bg-paper px-3 md:gap-3 md:px-4"
     >
       <IconButton
         data-testid="topbar-open-nav"

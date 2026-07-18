@@ -40,14 +40,31 @@ beforeEach(() => {
 });
 
 describe('MediaReaderTopbar', () => {
-  it('renders the back link, both reader toggles, the focus toggle and the readout', () => {
+  it('keeps the shared topbar untouched: paper surface, mode tabs, no reader controls inside', () => {
     renderWithProviders(
       <MediaReaderTopbar spaceId="s1" mediaId="m1" item={item} view={viewWith(9, 3)} />,
     );
-    expect(screen.getByTestId('media-viewer-back')).toHaveAttribute('href', '/s/s1/library');
-    expect(screen.getByTestId('pdf-thumbs-toggle')).toBeInTheDocument();
-    expect(screen.getByTestId('pdf-rail-toggle')).toBeInTheDocument();
-    expect(screen.getByTestId('pdf-focus-toggle')).toHaveAccessibleName('Focus mode');
+    const topbar = screen.getByTestId('topbar');
+    // The shared bar renders exactly as on the doc screens — paper, with the
+    // Write/Focus/Read/Split tabs group in place.
+    expect(topbar).toHaveClass('bg-paper');
+    expect(topbar.querySelector('[data-tour="tour-topbar-modes"]')).not.toBeNull();
+    // Every reader control lives on the secondary toolbar, not in the topbar.
+    expect(topbar.contains(screen.getByTestId('media-viewer-back'))).toBe(false);
+    expect(topbar.contains(screen.getByTestId('pdf-thumbs-toggle'))).toBe(false);
+    expect(topbar.contains(screen.getByTestId('pdf-rail-toggle'))).toBe(false);
+    expect(topbar.contains(screen.getByTestId('pdf-focus-toggle'))).toBe(false);
+  });
+
+  it('renders the secondary toolbar with the reader controls under the topbar', () => {
+    renderWithProviders(
+      <MediaReaderTopbar spaceId="s1" mediaId="m1" item={item} view={viewWith(9, 3)} />,
+    );
+    const toolbar = screen.getByTestId('media-reader-toolbar');
+    expect(toolbar.contains(screen.getByTestId('media-viewer-back'))).toBe(true);
+    expect(toolbar.contains(screen.getByTestId('pdf-thumbs-toggle'))).toBe(true);
+    expect(toolbar.contains(screen.getByTestId('pdf-rail-toggle'))).toBe(true);
+    expect(toolbar.contains(screen.getByTestId('pdf-focus-toggle'))).toBe(true);
     expect(screen.getByTestId('topbar-crumb-suffix')).toHaveTextContent('· page 3 of 9');
   });
 

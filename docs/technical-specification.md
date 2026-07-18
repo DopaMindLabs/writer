@@ -646,9 +646,11 @@ quiet reader chrome:
 8. Per-document **chrome memory** (which panel is open, whether the rail or
    thumbnails are shown) is keyed by media id, persisted (sanitised, capped at
    50 documents), and never leaks between documents.
-9. A raised grey **topbar** groups the **back** link and the page-thumbnail
-   toggle on the left, the page readout in the crumb, and the panel toggle plus
-   an always-present **focus toggle** on the right.
+9. The shared **topbar** renders exactly as on every other screen — breadcrumb
+   (with the page readout as the crumb suffix) and the Write/Focus/Read/Split
+   mode tabs. A **secondary grey toolbar** beneath it carries the reader
+   controls: the **back** link and the page-thumbnail toggle on the left, the
+   panel toggle plus an always-present **focus toggle** on the right.
 10. **Focus mode** (`?focus=1`, driven by the focus toggle and held across a
     reload) folds away every piece of side chrome — the space rail, the
     thumbnail column, the side panel and the glyph rail — so the page owns the

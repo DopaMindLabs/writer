@@ -204,6 +204,25 @@ test('thumbnails show ticks and navigate', async ({ page }) => {
   await expect(page.getByTestId('pdf-thumb-pager')).toContainText('2 / 2');
 });
 
+test('the shared topbar stays consistent and the reader controls sit on the secondary toolbar', async ({ page }) => {
+  await gotoLibrary(page);
+  await openViewer(page, TINY_PDF);
+
+  // The shared topbar renders as on every other screen: the mode-tabs group is
+  // in place and no reader control leaks into it.
+  const topbar = page.getByTestId('topbar');
+  await expect(topbar.locator('[data-tour="tour-topbar-modes"]')).toBeVisible();
+  await expect(topbar.getByTestId('media-viewer-back')).toHaveCount(0);
+  await expect(topbar.getByTestId('pdf-thumbs-toggle')).toHaveCount(0);
+
+  // The grey secondary toolbar beneath it carries the reader controls.
+  const toolbar = page.getByTestId('media-reader-toolbar');
+  await expect(toolbar.getByTestId('media-viewer-back')).toBeVisible();
+  await expect(toolbar.getByTestId('pdf-thumbs-toggle')).toBeVisible();
+  await expect(toolbar.getByTestId('pdf-rail-toggle')).toBeVisible();
+  await expect(toolbar.getByTestId('pdf-focus-toggle')).toBeVisible();
+});
+
 test('focus mode folds away the side chrome and is reversible', async ({ page }) => {
   await gotoLibrary(page);
   await openViewer(page, TWO_PAGE_PDF);
