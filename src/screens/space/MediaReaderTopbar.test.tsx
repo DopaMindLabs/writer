@@ -40,21 +40,25 @@ beforeEach(() => {
 });
 
 describe('MediaReaderTopbar', () => {
-  it('renders both reader toggles and the page readout for a present item', () => {
+  it('renders the back link, both reader toggles, the focus toggle and the readout', () => {
     renderWithProviders(
       <MediaReaderTopbar spaceId="s1" mediaId="m1" item={item} view={viewWith(9, 3)} />,
     );
+    expect(screen.getByTestId('media-viewer-back')).toHaveAttribute('href', '/s/s1/library');
     expect(screen.getByTestId('pdf-thumbs-toggle')).toBeInTheDocument();
     expect(screen.getByTestId('pdf-rail-toggle')).toBeInTheDocument();
+    expect(screen.getByTestId('pdf-focus-toggle')).toHaveAccessibleName('Focus mode');
     expect(screen.getByTestId('topbar-crumb-suffix')).toHaveTextContent('· page 3 of 9');
   });
 
-  it('omits the toggles while the item is loading', () => {
+  it('keeps the back link but omits the reader toggles while the item is loading', () => {
     renderWithProviders(
       <MediaReaderTopbar spaceId="s1" mediaId="m1" item={undefined} view={viewWith(0)} />,
     );
+    expect(screen.getByTestId('media-viewer-back')).toBeInTheDocument();
     expect(screen.queryByTestId('pdf-thumbs-toggle')).not.toBeInTheDocument();
     expect(screen.queryByTestId('pdf-rail-toggle')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pdf-focus-toggle')).not.toBeInTheDocument();
     expect(screen.queryByTestId('topbar-crumb-suffix')).not.toBeInTheDocument();
   });
 

@@ -1074,6 +1074,10 @@
     "railToggle": "Reader panels",
     "info": "Document info",
     "overflow": "More",
+    "focus": {
+      "enter": "Focus mode",
+      "exit": "Exit focus mode"
+    },
     "tick": "Highlight on page {{page}}",
     "crumbSuffix": " · page {{page}} of {{total}}",
     "thumbs": {

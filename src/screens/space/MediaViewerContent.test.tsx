@@ -56,14 +56,7 @@ const stubView: PdfViewport = {
 };
 
 describe('MediaViewerContent', () => {
-  it('always offers a back link to the library', () => {
-    renderWithProviders(
-      <MediaViewerContent spaceId="s1" item={undefined} view={stubView} />,
-    );
-    expect(screen.getByTestId('media-viewer-back')).toHaveAttribute('href', '/s/s1/library');
-  });
-
-  it('shows nothing but the back link while loading', () => {
+  it('renders nothing but the surface while the item is loading', () => {
     renderWithProviders(
       <MediaViewerContent spaceId="s1" item={undefined} view={stubView} />,
     );
@@ -87,5 +80,13 @@ describe('MediaViewerContent', () => {
     expect(screen.getByTestId('pdf-viewer')).toHaveAttribute('aria-label', 'thesis.pdf');
     // The rail is shown by default (railHidden=false).
     expect(screen.getByTestId('pdf-reader-rail')).toBeInTheDocument();
+  });
+
+  it('hides the side chrome in focus mode', async () => {
+    renderWithProviders(
+      <MediaViewerContent spaceId="s1" item={item} view={stubView} focused />,
+    );
+    expect(await screen.findByTestId('fake-page')).toBeInTheDocument();
+    expect(screen.queryByTestId('pdf-reader-rail')).not.toBeInTheDocument();
   });
 });

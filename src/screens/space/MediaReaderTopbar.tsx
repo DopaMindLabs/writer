@@ -1,7 +1,10 @@
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Topbar } from '@/components/chrome/Topbar';
 import { Files, PanelRight } from '@/components/libs/icons';
 import { PdfReaderToggle } from '@/components/pdf/reader/PdfReaderToggle';
+import { PdfReaderFocusToggle } from '@/components/pdf/reader/PdfReaderFocusToggle';
+import { ReaderBackLink } from './ReaderBackLink';
 import type { PdfViewport } from '@/components/pdf/PdfViewer/usePdfViewport';
 import type { MediaItem } from '@/db/schema';
 
@@ -15,9 +18,12 @@ interface MediaReaderTopbarProps {
 }
 
 /**
- * The reader's topbar: the shared chrome plus the two reader toggles and the page
- * readout in the crumb. Kept apart from the screen so the screen owns only the
- * layout and the lifted viewport, and this owns the read-mode chrome wiring.
+ * The reader's topbar: the shared chrome on a raised grey surface, with the back
+ * link and page-thumbnail toggle grouped on the left, the page readout in the
+ * crumb, and the panel + always-present focus toggles on the right. Focus mode
+ * collapses the chrome, so the thumbnail and panel toggles fold away there —
+ * only the back link and the (exit) focus toggle remain. Kept apart from the
+ * screen so the screen owns layout and this owns the read-mode chrome wiring.
  */
 export const MediaReaderTopbar = ({
   spaceId,
@@ -28,6 +34,8 @@ export const MediaReaderTopbar = ({
   view,
 }: MediaReaderTopbarProps) => {
   const { t } = useTranslation('screens');
+  const [searchParams] = useSearchParams();
+  const focused = searchParams.get('focus') === '1';
 
   const crumbSuffix =
     item && view.numPages > 0
@@ -43,28 +51,35 @@ export const MediaReaderTopbar = ({
       mode="read"
       fallbackDocId={fallbackDocId}
       crumbSuffix={crumbSuffix}
+      tone="paper-2"
       leading={
-        item ? (
-          <PdfReaderToggle
-            mediaId={mediaId}
-            icon={Files}
-            label={t('pdfReader.thumbsToggle')}
-            testId="pdf-thumbs-toggle"
-            field="thumbs"
-          />
-        ) : undefined
+        <div className="flex items-center gap-1">
+          <ReaderBackLink spaceId={spaceId} />
+          {item && !focused ? (
+            <PdfReaderToggle
+              mediaId={mediaId}
+              icon={Files}
+              label={t('pdfReader.thumbsToggle')}
+              testId="pdf-thumbs-toggle"
+              field="thumbs"
+            />
+          ) : null}
+        </div>
       }
       trailing={
-        item ? (
-          <PdfReaderToggle
-            mediaId={mediaId}
-            icon={PanelRight}
-            label={t('pdfReader.railToggle')}
-            testId="pdf-rail-toggle"
-            field="railHidden"
-            invert
-          />
-        ) : undefined
+        <div className="flex items-center gap-1">
+          {item && !focused ? (
+            <PdfReaderToggle
+              mediaId={mediaId}
+              icon={PanelRight}
+              label={t('pdfReader.railToggle')}
+              testId="pdf-rail-toggle"
+              field="railHidden"
+              invert
+            />
+          ) : null}
+          {item ? <PdfReaderFocusToggle /> : null}
+        </div>
       }
     />
   );

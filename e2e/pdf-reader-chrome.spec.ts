@@ -204,6 +204,29 @@ test('thumbnails show ticks and navigate', async ({ page }) => {
   await expect(page.getByTestId('pdf-thumb-pager')).toContainText('2 / 2');
 });
 
+test('focus mode folds away the side chrome and is reversible', async ({ page }) => {
+  await gotoLibrary(page);
+  await openViewer(page, TWO_PAGE_PDF);
+
+  // Rail and thumbnails are available at rest.
+  await expect(page.getByTestId('pdf-reader-rail')).toBeVisible();
+  await page.getByTestId('pdf-thumbs-toggle').click();
+  await expect(page.getByTestId('pdf-thumb-rail')).toBeVisible();
+
+  // Entering focus hides the reader rail and the thumbnail column; the toggles
+  // that drive them fold away too, but the page keeps rendering.
+  await page.getByTestId('pdf-focus-toggle').click();
+  await expect(page.getByTestId('pdf-reader-rail')).toHaveCount(0);
+  await expect(page.getByTestId('pdf-thumb-rail')).toHaveCount(0);
+  await expect(page.getByTestId('pdf-thumbs-toggle')).toHaveCount(0);
+  await expect(pdfPage(page).first().locator('canvas')).toBeVisible();
+
+  // The focus toggle stays put and reverses back to the full chrome.
+  await page.getByTestId('pdf-focus-toggle').click();
+  await expect(page.getByTestId('pdf-reader-rail')).toBeVisible();
+  await expect(page.getByTestId('pdf-thumbs-toggle')).toBeVisible();
+});
+
 test('the overflow menu opens the library', async ({ page }) => {
   await gotoLibrary(page);
   await openViewer(page, TINY_PDF);

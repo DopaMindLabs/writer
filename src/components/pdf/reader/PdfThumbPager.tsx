@@ -41,7 +41,7 @@ export const PdfThumbPager = ({
           page: pageNumber,
           total: numPages,
         })}
-        className="px-1"
+        className="whitespace-nowrap px-1 tabular-nums"
       >
         {pageNumber} / {numPages}
       </Eyebrow>

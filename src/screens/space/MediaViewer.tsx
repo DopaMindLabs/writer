@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
 import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
@@ -20,6 +20,8 @@ import { routes } from '@/lib/routes';
  */
 export const MediaViewerScreen = () => {
   const { spaceId, mediaId } = useParams<{ spaceId: string; mediaId: string }>();
+  const [searchParams] = useSearchParams();
+  const focused = searchParams.get('focus') === '1';
   const space = useSpace(spaceId);
   const item = useMediaItem(mediaId);
   const lastDocId = useUI((s) => s.currentDocId);
@@ -43,10 +45,13 @@ export const MediaViewerScreen = () => {
   return (
     <div className="flex h-full w-full">
       {/* Reader owns the room: the space sidebar collapses (design Frame C), only
-          the SpaceRail stays. Mobile chrome is untouched. */}
-      <div className="hidden md:contents">
-        <SpaceRail activeSpaceId={spaceId} />
-      </div>
+          the SpaceRail stays — and in focus mode even that folds away so the page
+          owns the whole width. Mobile chrome is untouched. */}
+      {!focused && (
+        <div className="hidden md:contents">
+          <SpaceRail activeSpaceId={spaceId} />
+        </div>
+      )}
       <div className="flex min-w-0 flex-1 flex-col">
         <MediaReaderTopbar
           spaceId={spaceId}
@@ -62,7 +67,7 @@ export const MediaViewerScreen = () => {
           data-testid="media-viewer-screen"
           className="flex min-h-0 flex-1 flex-col bg-paper"
         >
-          <MediaViewerContent spaceId={spaceId} item={item} view={view} />
+          <MediaViewerContent spaceId={spaceId} item={item} view={view} focused={focused} />
         </main>
         <MobileTabs spaceId={spaceId} docId={lastDocId} />
         <MobileMoreSheet spaceId={spaceId} docId={lastDocId} />
