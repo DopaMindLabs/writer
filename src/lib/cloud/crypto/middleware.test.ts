@@ -659,12 +659,6 @@ describe('encrypted tables are never read through unwrapped cursor paths', () =>
       .filter((file) => !/\.(test|stories)\.(ts|tsx)$/.test(file))
       // The middleware itself names the forbidden calls in its doc comments.
       .filter((file) => !file.endsWith(`crypto${path.sep}middleware.ts`))
-      // spaceRealm's realm stamp is the one deliberate raw-row write: it sets
-      // only `realmId` (a CLOUD_RESERVED plaintext field) on rows exactly as
-      // stored — the content cipher is untouched, and it must work without the
-      // device key (unshare can run keyless), so the wrapped read+put path is
-      // exactly what it cannot use.
-      .filter((file) => !file.endsWith(`cloud${path.sep}spaceRealm.ts`))
       .filter((file) => CURSOR_CALL.test(readFileSync(file, 'utf8')))
       .map((file) => path.relative(SRC_ROOT, file));
     expect(offenders, `cursor reads bypass the encryption middleware: ${offenders.join(', ')}`).toEqual([]);
