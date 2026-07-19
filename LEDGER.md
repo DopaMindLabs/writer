@@ -6,6 +6,7 @@ approved, rework.
 
 | Task  | Status | Commit | Date | Notes |
 |-------|--------|--------|------|-------|
+
 | S1.T1 | done   | 153bd14 | 2026-07-18 | capability contracts + hasCapability guard |
 | S1.T2 | done   | aaa801a | 2026-07-18 | SyncCoordinator registry |
 | S1.T1 | rework | 153bd14 | 2026-07-18 | contracts invented, not derived from the cloud surface; branded ids forced casts in every test; hasCapability did not narrow; tests asserted `typeof === 'function'` only |
@@ -25,4 +26,12 @@ approved, rework.
 | S4.T3 | done | 0f4a74c | 2026-07-19 | add/list/remove/setRole member ops, 13 tests, no noise. Fully verifiable unlike S4.T2 because realmId is an ordinary field on `members`, so newId() works signed out; on `realms` it is the primary key, so the addon overwrites it with 'unauthorized'. Landed on new branch feat/realm-members (PR #189) after #186 merged |
 | S4.T4 | blocked | — | 2026-07-19 | cannot land without a consumer. Measured: e2e functions coverage 88.15% vs floor 88 — slack of 3 functions. spaceRealm.ts and realmMembers.ts are currently tree-shaken out of the bundle (nothing imports them), so they cost nothing; wiring accessControl into dexieCloudProvider.ts pulls ~16 of their functions plus ~8 delegations into the bundle uncovered. No honest test closes that: exercising them in e2e needs a sharing UI, which is itself blocked on the owner-gated erase and cross-user key delivery |
 | S4.T5 | blocked | — | 2026-07-19 | e2e for realm flows needs the same UI surface as S4.T4 |
-
+| S1.T1 | done | 153bd14 | 2026-07-18 | reconciled by planner: commit lacks trailer; contracts revised in 78dd9b6; merged via PR #186 |
+| S1.T2 | done | aaa801a | 2026-07-18 | reconciled by planner: commit lacks trailer; revised in 78dd9b6; merged via PR #186 |
+| S2.T1 | done | 87291dc | 2026-07-18 | keyDelivery methods later dropped as unconsumed (b9972a3, coverage ratchet); merged via PR #186 |
+| S2.T2 | done | 7feab49 | 2026-07-18 | boot composed through coordinator via startWriterSync; merged via PR #186 |
+| S2b.T1 | done | c13e5b1 | 2026-07-18 | executor-added unplanned task: key UI consumes keyDelivery through provider context; merged via PR #186 |
+| S3.T1 | done | 71d2887 | 2026-07-18 | deviation: addon injects realms/members/roles itself (overrideParseStoresSpec) — no version(2); task became pin tests; merged via PR #186 |
+| S4.T1 | done | 6677267 | 2026-07-18 | importSpaceArchive strips realmId on import; merged via PR #186 |
+| S4.T2 | done | 3dc36de | 2026-07-18 | addon owns realmId (share = restamp, refuses signed-out); signed-in mint/delete path uncovered — needs e2e against real preview DB; merged via PR #186 |
+| S5.T1 | partial | 4ed13b6 | 2026-07-18 | architecture.md boundary recorded (commit lacks trailer); cloud-sync-beta.md and technical-specification.md updates outstanding |
