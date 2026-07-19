@@ -40,32 +40,40 @@ beforeEach(() => {
 });
 
 describe('MediaReaderTopbar', () => {
-  it('keeps the shared topbar untouched: paper surface, mode tabs, no reader controls inside', () => {
+  it('keeps the shared topbar consistent: paper surface and mode tabs, with the focus and panel toggles in its right cluster', () => {
     renderWithProviders(
       <MediaReaderTopbar spaceId="s1" mediaId="m1" item={item} view={viewWith(9, 3)} />,
     );
     const topbar = screen.getByTestId('topbar');
-    // The shared bar renders exactly as on the doc screens — paper, with the
-    // Write/Focus/Read/Split tabs group in place.
     expect(topbar).toHaveClass('bg-paper');
     expect(topbar.querySelector('[data-tour="tour-topbar-modes"]')).not.toBeNull();
-    // Every reader control lives on the secondary toolbar, not in the topbar.
+    // The focus and side-panel toggles sit in the topbar — the same right
+    // cluster the doc screens use; the panel toggle drives the reader rail.
+    expect(topbar.contains(screen.getByTestId('pdf-focus-toggle'))).toBe(true);
+    expect(topbar.contains(screen.getByTestId('pdf-rail-toggle'))).toBe(true);
+    // The left-hand reader affordances stay on the secondary toolbar.
     expect(topbar.contains(screen.getByTestId('media-viewer-back'))).toBe(false);
     expect(topbar.contains(screen.getByTestId('pdf-thumbs-toggle'))).toBe(false);
-    expect(topbar.contains(screen.getByTestId('pdf-rail-toggle'))).toBe(false);
-    expect(topbar.contains(screen.getByTestId('pdf-focus-toggle'))).toBe(false);
   });
 
-  it('renders the secondary toolbar with the reader controls under the topbar', () => {
+  it('renders the secondary toolbar with the back link and thumbnail toggle under the topbar', () => {
     renderWithProviders(
       <MediaReaderTopbar spaceId="s1" mediaId="m1" item={item} view={viewWith(9, 3)} />,
     );
     const toolbar = screen.getByTestId('media-reader-toolbar');
     expect(toolbar.contains(screen.getByTestId('media-viewer-back'))).toBe(true);
     expect(toolbar.contains(screen.getByTestId('pdf-thumbs-toggle'))).toBe(true);
-    expect(toolbar.contains(screen.getByTestId('pdf-rail-toggle'))).toBe(true);
-    expect(toolbar.contains(screen.getByTestId('pdf-focus-toggle'))).toBe(true);
     expect(screen.getByTestId('topbar-crumb-suffix')).toHaveTextContent('· page 3 of 9');
+  });
+
+  it('keeps the focus toggle in the topbar but folds the panel toggle in focus mode', () => {
+    renderWithProviders(
+      <MediaReaderTopbar spaceId="s1" mediaId="m1" item={item} view={viewWith(9, 3)} />,
+      { initialEntries: ['/?focus=1'] },
+    );
+    const topbar = screen.getByTestId('topbar');
+    expect(topbar.contains(screen.getByTestId('pdf-focus-toggle'))).toBe(true);
+    expect(screen.queryByTestId('pdf-rail-toggle')).not.toBeInTheDocument();
   });
 
   it('keeps the back link but omits the reader toggles while the item is loading', () => {

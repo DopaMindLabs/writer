@@ -1,7 +1,7 @@
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { useEffect, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Quote, Menu, Search, MoreHorizontal } from '@/components/libs/icons';
+import { Quote, Menu, Search, PanelRight } from '@/components/libs/icons';
 import { renameDoc } from '@/lib/docs';
 import { useUI } from '@/store/ui';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -199,7 +199,7 @@ const InspectorToggle = () => {
       <TooltipTrigger asChild>
         <IconButton
           data-testid="topbar-inspector-toggle"
-          icon={MoreHorizontal}
+          icon={PanelRight}
           label={t('topbar.inspector')}
           active={inspectorOpen}
           strokeWidth={inspectorOpen ? 2.6 : 2}

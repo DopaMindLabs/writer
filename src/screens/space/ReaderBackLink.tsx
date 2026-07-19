@@ -18,11 +18,9 @@ export const ReaderBackLink = ({ spaceId }: ReaderBackLinkProps) => {
   return (
     <Link
       to={routes.mediaLibrary(spaceId)}
-      kind="ghost"
-      size="sm"
       data-testid="media-viewer-back"
       aria-label={t('mediaViewer.back')}
-      className="inline-flex h-7 w-7 items-center justify-center"
+      className="inline-flex h-7 w-7 items-center justify-center text-ink-3 transition-colors hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
     >
       <Icon icon={ArrowLeft} size="xs" />
     </Link>

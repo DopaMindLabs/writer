@@ -648,9 +648,12 @@ quiet reader chrome:
    50 documents), and never leaks between documents.
 9. The shared **topbar** renders exactly as on every other screen — breadcrumb
    (with the page readout as the crumb suffix) and the Write/Focus/Read/Split
-   mode tabs. A **secondary grey toolbar** beneath it carries the reader
-   controls: the **back** link and the page-thumbnail toggle on the left, the
-   panel toggle plus an always-present **focus toggle** on the right.
+   mode tabs — with the reader's always-present **focus toggle** and the
+   **side-panel toggle** in its right cluster, the same slots the doc screens
+   use (the side-panel affordance carries one icon everywhere; on the reader it
+   drives the vertical glyph rail). A **secondary grey toolbar** beneath it
+   carries the **back** link (un-underlined icon) and the page-thumbnail
+   toggle.
 10. **Focus mode** (`?focus=1`, driven by the focus toggle and held across a
     reload) folds away every piece of side chrome — the space rail, the
     thumbnail column, the side panel and the glyph rail — so the page owns the

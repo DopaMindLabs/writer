@@ -204,23 +204,31 @@ test('thumbnails show ticks and navigate', async ({ page }) => {
   await expect(page.getByTestId('pdf-thumb-pager')).toContainText('2 / 2');
 });
 
-test('the shared topbar stays consistent and the reader controls sit on the secondary toolbar', async ({ page }) => {
+test('the shared topbar stays consistent; focus and panel toggles in it, back and thumbs on the toolbar', async ({ page }) => {
   await gotoLibrary(page);
   await openViewer(page, TINY_PDF);
 
-  // The shared topbar renders as on every other screen: the mode-tabs group is
-  // in place and no reader control leaks into it.
+  // The shared topbar renders as on every other screen — mode tabs in place —
+  // with the reader's focus and side-panel toggles in its right cluster (the
+  // same slots the doc screens use). The panel toggle drives the reader rail.
   const topbar = page.getByTestId('topbar');
   await expect(topbar.locator('[data-tour="tour-topbar-modes"]')).toBeVisible();
+  await expect(topbar.getByTestId('pdf-focus-toggle')).toBeVisible();
+  await expect(topbar.getByTestId('pdf-rail-toggle')).toBeVisible();
   await expect(topbar.getByTestId('media-viewer-back')).toHaveCount(0);
   await expect(topbar.getByTestId('pdf-thumbs-toggle')).toHaveCount(0);
 
-  // The grey secondary toolbar beneath it carries the reader controls.
+  // The panel toggle in the topbar folds the vertical glyph rail.
+  await expect(page.getByTestId('pdf-reader-rail')).toBeVisible();
+  await topbar.getByTestId('pdf-rail-toggle').click();
+  await expect(page.getByTestId('pdf-reader-rail')).toHaveCount(0);
+  await topbar.getByTestId('pdf-rail-toggle').click();
+  await expect(page.getByTestId('pdf-reader-rail')).toBeVisible();
+
+  // The grey secondary toolbar beneath carries the back link and thumbnails.
   const toolbar = page.getByTestId('media-reader-toolbar');
   await expect(toolbar.getByTestId('media-viewer-back')).toBeVisible();
   await expect(toolbar.getByTestId('pdf-thumbs-toggle')).toBeVisible();
-  await expect(toolbar.getByTestId('pdf-rail-toggle')).toBeVisible();
-  await expect(toolbar.getByTestId('pdf-focus-toggle')).toBeVisible();
 });
 
 test('focus mode folds away the side chrome and is reversible', async ({ page }) => {

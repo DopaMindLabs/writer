@@ -566,7 +566,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > wri
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-ellipsis h-3.5 w-3.5"
+        class="lucide lucide-panel-right h-3.5 w-3.5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -577,20 +577,15 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > wri
         width="24"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <circle
-          cx="12"
-          cy="12"
-          r="1"
+        <rect
+          height="18"
+          rx="2"
+          width="18"
+          x="3"
+          y="3"
         />
-        <circle
-          cx="19"
-          cy="12"
-          r="1"
-        />
-        <circle
-          cx="5"
-          cy="12"
-          r="1"
+        <path
+          d="M15 3v18"
         />
       </svg>
     </button>

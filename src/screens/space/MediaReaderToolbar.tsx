@@ -1,8 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Files, PanelRight } from '@/components/libs/icons';
+import { Files } from '@/components/libs/icons';
 import { PdfReaderToggle } from '@/components/pdf/reader/PdfReaderToggle';
-import { PdfReaderFocusToggle } from '@/components/pdf/reader/PdfReaderFocusToggle';
 import { ReaderBackLink } from './ReaderBackLink';
 
 interface MediaReaderToolbarProps {
@@ -13,13 +12,11 @@ interface MediaReaderToolbarProps {
 }
 
 /**
- * The reader's secondary toolbar: a slim grey bar under the shared topbar
- * carrying the read-mode chrome — the back link and page-thumbnail toggle on
- * the left, the panel and focus toggles on the right. The shared topbar above
- * it stays exactly as on every other screen; this bar owns everything
- * reader-specific. Focus mode folds the thumbnail and panel toggles away —
- * only the back link and the (exit) focus toggle remain, so it is always
- * reversible.
+ * The reader's secondary toolbar: a slim grey bar under the shared topbar with
+ * the back link and the page-thumbnail toggle. The panel and focus toggles
+ * live in the shared topbar's right cluster (the same slots the doc screens
+ * use), so this bar owns only the left-hand reader affordances. Focus mode
+ * folds the thumbnail toggle away — the back link remains.
  */
 export const MediaReaderToolbar = ({
   spaceId,
@@ -45,18 +42,6 @@ export const MediaReaderToolbar = ({
           field="thumbs"
         />
       ) : null}
-      <div className="flex-1" />
-      {hasItem && !focused ? (
-        <PdfReaderToggle
-          mediaId={mediaId}
-          icon={PanelRight}
-          label={t('pdfReader.railToggle')}
-          testId="pdf-rail-toggle"
-          field="railHidden"
-          invert
-        />
-      ) : null}
-      {hasItem ? <PdfReaderFocusToggle /> : null}
     </div>
   );
 };
