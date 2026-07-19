@@ -51,6 +51,31 @@ test('split view can pick the library pane', async ({ page }) => {
   await expect(page.getByTestId('media-library-search')).toBeVisible();
 });
 
+test('opening a pdf from the library pane keeps the split and reads in-pane', async ({ page }) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}`);
+  await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
+
+  await page.locator('a[href*="/split"]').first().click();
+  await page.waitForURL(/\/split/);
+  await page.getByTestId('split-right-pane-select').selectOption('library');
+  await expect(page.getByTestId('media-library-surface')).toBeVisible();
+
+  // Upload into the pane, then open the row: the reader renders inside the
+  // right pane — the split (and the left editor) survives.
+  await page.getByTestId('media-upload-input').setInputFiles('e2e/fixtures/tiny.pdf');
+  await page.locator('[data-testid^="media-row-"][data-testid$="-open"]').first().click();
+  await expect(page.getByTestId('split-media-pane')).toBeVisible();
+  await expect(page.getByTestId('pdf-viewer')).toBeVisible();
+  await expect(page.getByTestId('split-divider')).toBeVisible();
+  await expect(page).toHaveURL(/with=media%3A|with=media:/);
+
+  // Back returns the pane to the library list, still inside the split.
+  await page.getByTestId('split-media-back').click();
+  await expect(page.getByTestId('media-library-surface')).toBeVisible();
+  await expect(page.getByTestId('split-divider')).toBeVisible();
+});
+
 test('split divider responds to keyboard ArrowLeft and ArrowRight', async ({
   page,
 }) => {

@@ -159,7 +159,7 @@ Four modes, selected from the topbar tabs:
 
 Two panes separated by a draggable divider.
 
-**Right-pane picker.** A dropdown selects what fills the right pane: another document, the Brain Space (`dump`), **Citations**, or the **Library** (the PDF reading list, § 4.16).
+**Right-pane picker.** A dropdown selects what fills the right pane: another document, the Brain Space (`dump`), **Citations**, or the **Library** (the PDF reading list, § 4.16). Opening a PDF from the library pane keeps the split: the reader renders **inside the pane** (`with=media:<id>`, deep-linkable), with a back affordance returning the pane to the list.
 
 **Resizable divider.** Implements ARIA separator semantics (`role="separator"`, `aria-valuenow`, `aria-label="Resize split panes"`).
 
@@ -615,6 +615,12 @@ a card grid:
   dragging); both paths share one `useMediaUpload` controller and one banner.
 - Filtering, sorting and grouping are pure (`src/lib/media/libraryView.ts`); the
   surface owns only view state.
+- The library topbar carries the always-present **focus toggle**; focus mode
+  (`?focus=1`) folds the space rail and doc sidebar so the list owns the full
+  width, reversible from the same spot.
+- Hosted in the **split view's right pane**, opening a row keeps the split: the
+  reader renders in-pane (`with=media:<id>`) with a back affordance to the list
+  (§ 4.4).
 
 **The reader.** Opening a PDF (`/s/:spaceId/library/:mediaId`) marks it opened
 (`markMediaOpened` stamps `openedAt`, clearing it from Unread) and shows the

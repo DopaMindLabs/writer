@@ -221,6 +221,21 @@ test('dropping a pdf on the page adds it', async ({ page }) => {
   await expect(page.getByText('dropped.pdf')).toBeVisible();
 });
 
+test('the focus toggle in the topbar folds the rails and reverses', async ({ page }) => {
+  await gotoLibrary(page);
+
+  // The toggle sits in the shared topbar; entering focus folds the doc sidebar.
+  const topbar = page.getByTestId('topbar');
+  await expect(page.getByTestId('sidebar-brain-space-link')).toBeVisible();
+  await topbar.getByTestId('pdf-focus-toggle').click();
+  await expect(page.getByTestId('sidebar-brain-space-link')).toHaveCount(0);
+  await expect(page.getByTestId('media-library-screen')).toBeVisible();
+
+  // Reversible from the same spot.
+  await topbar.getByTestId('pdf-focus-toggle').click();
+  await expect(page.getByTestId('sidebar-brain-space-link')).toBeVisible();
+});
+
 test('library list has no detectable a11y violations', async ({ page }) => {
   await gotoLibrary(page);
   await upload(page, TINY_PDF);

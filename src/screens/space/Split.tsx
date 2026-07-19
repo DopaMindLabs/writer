@@ -44,14 +44,23 @@ const MediaLibrarySurface = lazy(() =>
   })),
 );
 
+const SplitMediaPane = lazy(() =>
+  import('./SplitMediaPane').then((m) => ({ default: m.SplitMediaPane })),
+);
+
 const BRAIN_SPACE_PANE = 'dump';
 const CITATIONS_PANE = 'citations';
 const LIBRARY_PANE = 'library';
+/** `media:<id>` keeps an opened PDF inside the pane, deep-linkable like the rest. */
+const MEDIA_PANE_PREFIX = 'media:';
 const SPECIAL_PANES = new Set<string>([
   BRAIN_SPACE_PANE,
   CITATIONS_PANE,
   LIBRARY_PANE,
 ]);
+
+const isSpecialPane = (withParam: string): boolean =>
+  SPECIAL_PANES.has(withParam) || withParam.startsWith(MEDIA_PANE_PREFIX);
 
 const MIN_PCT = 25;
 const MAX_PCT = 75;
@@ -95,7 +104,7 @@ export const SplitScreen = () => {
       setDefault();
       return;
     }
-    if (SPECIAL_PANES.has(withParam)) return;
+    if (isSpecialPane(withParam)) return;
     if (candidates.length === 0) return;
     if (candidates.some((d) => d.id === withParam)) return;
     setDefault();
@@ -120,8 +129,21 @@ const resolveRightPane = (withParam: string | null) => ({
   rightIsBrainSpace: withParam === BRAIN_SPACE_PANE,
   rightIsCitations: withParam === CITATIONS_PANE,
   rightIsLibrary: withParam === LIBRARY_PANE,
-  rightIsSpecial: withParam !== null && SPECIAL_PANES.has(withParam),
+  rightMediaId: withParam?.startsWith(MEDIA_PANE_PREFIX)
+    ? withParam.slice(MEDIA_PANE_PREFIX.length)
+    : null,
+  rightIsSpecial: withParam !== null && isSpecialPane(withParam),
 });
+
+/** Writes the right pane's `with` URL param in place (replace, not push). */
+const useSetPane = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  return (value: string) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('with', value);
+    setSearchParams(next, { replace: true });
+  };
+};
 
 const SplitMain = ({
   spaceId,
@@ -135,16 +157,14 @@ const SplitMain = ({
   candidates: Doc[];
 }) => {
   const { t } = useTranslation('screens');
-  const [searchParams, setSearchParams] = useSearchParams();
   const space = useSpace(spaceId);
   const leftDoc = useDocument(docId);
   const pane = resolveRightPane(withParam);
   const rightDoc = useDocument(pane.rightIsSpecial ? null : withParam);
+  const setPane = useSetPane();
 
   const onPickRight = (e: ChangeEvent<HTMLSelectElement>) => {
-    const next = new URLSearchParams(searchParams);
-    next.set('with', e.target.value);
-    setSearchParams(next, { replace: true });
+    setPane(e.target.value);
   };
 
   return (
@@ -174,7 +194,9 @@ const SplitMain = ({
             rightIsBrainSpace={pane.rightIsBrainSpace}
             rightIsCitations={pane.rightIsCitations}
             rightIsLibrary={pane.rightIsLibrary}
+            rightMediaId={pane.rightMediaId}
             rightDoc={rightDoc}
+            onSetPane={setPane}
           />
         }
         aside={<CitationsSidePanel spaceId={spaceId} />}
@@ -258,6 +280,10 @@ const SplitRightHeader = ({
         { value: BRAIN_SPACE_PANE, label: 'Brain space' },
         { value: CITATIONS_PANE, label: 'Citations' },
         { value: LIBRARY_PANE, label: 'Library' },
+        // A PDF opened from the library pane keeps the select on "Library".
+        ...(withParam?.startsWith(MEDIA_PANE_PREFIX)
+          ? [{ value: withParam, label: 'Library' }]
+          : []),
       ]}
     />
   </>
@@ -269,20 +295,37 @@ const SplitRightContent = ({
   rightIsBrainSpace,
   rightIsCitations,
   rightIsLibrary,
+  rightMediaId,
   rightDoc,
+  onSetPane,
 }: {
   spaceId: string;
   spaceName: string | undefined;
   rightIsBrainSpace: boolean;
   rightIsCitations: boolean;
   rightIsLibrary: boolean;
+  rightMediaId: string | null;
   rightDoc: Doc | undefined;
+  onSetPane: (value: string) => void;
 }) => {
   if (rightIsBrainSpace) return <BrainSpaceCanvas spaceId={spaceId} />;
+  if (rightMediaId !== null)
+    return (
+      <Suspense fallback={null}>
+        <SplitMediaPane
+          spaceId={spaceId}
+          mediaId={rightMediaId}
+          onBackToLibrary={() => { onSetPane(LIBRARY_PANE); }}
+        />
+      </Suspense>
+    );
   if (rightIsLibrary)
     return (
       <Suspense fallback={null}>
-        <MediaLibrarySurface spaceId={spaceId} />
+        <MediaLibrarySurface
+          spaceId={spaceId}
+          onOpenItem={(item) => { onSetPane(`${MEDIA_PANE_PREFIX}${item.id}`); }}
+        />
       </Suspense>
     );
   if (rightIsCitations) {

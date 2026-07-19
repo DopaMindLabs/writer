@@ -1,4 +1,4 @@
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/chrome/Sidebar';
 import { Topbar } from '@/components/chrome/Topbar';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
 import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
+import { PdfReaderFocusToggle } from '@/components/pdf/reader/PdfReaderFocusToggle';
 import { MediaLibrarySurface } from '@/components/surfaces/MediaLibrarySurface';
 import { useSpace } from '@/hooks/useSpaces';
 import { useUI } from '@/store/ui';
@@ -14,6 +15,8 @@ import { routes } from '@/lib/routes';
 export const MediaLibraryScreen = () => {
   const { t } = useTranslation('screens');
   const { spaceId } = useParams<{ spaceId: string }>();
+  const [searchParams] = useSearchParams();
+  const focused = searchParams.get('focus') === '1';
   const space = useSpace(spaceId);
   const setCurrentSpaceId = useUI((s) => s.setCurrentSpaceId);
   const lastDocId = useUI((s) => s.currentDocId);
@@ -26,10 +29,14 @@ export const MediaLibraryScreen = () => {
 
   return (
     <div className="flex h-full w-full">
-      <div className="hidden md:contents">
-        <SpaceRail activeSpaceId={spaceId} />
-        <Sidebar spaceId={spaceId} activeDocId={lastDocId} />
-      </div>
+      {/* Focus mode folds the rails away so the list owns the full width; the
+          toggle stays in the topbar so it is always reversible. */}
+      {!focused && (
+        <div className="hidden md:contents">
+          <SpaceRail activeSpaceId={spaceId} />
+          <Sidebar spaceId={spaceId} activeDocId={lastDocId} />
+        </div>
+      )}
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
           spaceId={spaceId}
@@ -38,6 +45,7 @@ export const MediaLibraryScreen = () => {
           spaceName={space?.name}
           mode="write"
           fallbackDocId={lastDocId}
+          trailing={<PdfReaderFocusToggle />}
         />
         <main
           id="main-content"

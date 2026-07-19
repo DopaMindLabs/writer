@@ -36,6 +36,16 @@ strike it through, and attach notes — see
 [Annotations & highlights](annotations-and-highlights) for the full flow, the
 Highlights & notes panel, and the page thumbnails.
 
+Need the whole width? The **focus toggle** in the top bar folds the side rails
+away — click it again to bring them back.
+
+## Reading beside a document
+
+In **Split** view, pick **Library** for the right pane to browse your PDFs
+beside a document. Opening a PDF there keeps the split — the reader loads
+inside the pane, and the **back to library** control returns you to the list
+without leaving your document.
+
 ## Filing into a brain space
 
 Filing a PDF into a [brain space](brainspace) is **optional**. Add it from the

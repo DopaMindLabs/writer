@@ -94,6 +94,14 @@ describe('SplitScreen', () => {
         await screen.findByTestId('media-library-surface'),
       ).toBeInTheDocument();
     });
+
+    it('should render the in-pane reader when with=media:<id>, keeping the left editor', async () => {
+      renderAt('/s/s1/d/d1/split?with=media:missing-media');
+      // The pane resolves the id itself; a missing item shows the in-pane
+      // missing state rather than navigating away — the split survives.
+      expect(await screen.findByTestId('split-media-missing')).toBeInTheDocument();
+      expect(screen.getByTestId('editor-stub')).toBeInTheDocument();
+    });
   });
 
   describe('right-pane select', () => {

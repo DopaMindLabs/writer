@@ -23,6 +23,12 @@ import type { MediaItem } from '@/db/schema';
 
 interface MediaLibrarySurfaceProps {
   spaceId: string;
+  /**
+   * Overrides where a row's open lands. The standalone library screen
+   * navigates to the full-page reader (the default); a split-view host passes
+   * this so the PDF opens inside its own pane instead.
+   */
+  onOpenItem?: (item: MediaItem) => void;
 }
 
 /** Recent sort is grouped by date; name and pages sorts render as one flat list. */
@@ -48,11 +54,29 @@ const buildSections = (
 };
 
 /**
+ * A row's open lands on the host's override when given (a split pane keeping
+ * the PDF in-pane), else navigates to the full-page reader.
+ */
+const openVia =
+  (
+    navigate: ReturnType<typeof useNavigate>,
+    spaceId: string,
+    onOpenItem?: (item: MediaItem) => void,
+  ) =>
+  (item: MediaItem): void => {
+    if (onOpenItem) {
+      onOpenItem(item);
+      return;
+    }
+    void navigate(routes.mediaView(spaceId, item.id));
+  };
+
+/**
  * The library as a reading list: a counted header, a search/filter/sort control
  * row, the grouped rows, and a footer. Filtering, sorting and grouping are pure
  * (see `libraryView`); this surface owns only the view state and composition.
  */
-export const MediaLibrarySurface = ({ spaceId }: MediaLibrarySurfaceProps) => {
+export const MediaLibrarySurface = ({ spaceId, onOpenItem }: MediaLibrarySurfaceProps) => {
   const { t } = useTranslation('screens');
   const navigate = useNavigate();
   const items = useMediaItems(spaceId);
@@ -63,9 +87,7 @@ export const MediaLibrarySurface = ({ spaceId }: MediaLibrarySurfaceProps) => {
   const [filter, setFilter] = useState<MediaFilter>('all');
   const [sort, setSort] = useState<MediaSort>('recent');
 
-  const openMedia = (item: MediaItem): void => {
-    void navigate(routes.mediaView(spaceId, item.id));
-  };
+  const openMedia = openVia(navigate, spaceId, onOpenItem);
 
   const visible = sortMedia(filterMedia(items, counts, filter, query), sort);
   const sections = buildSections(visible, sort, new Date(), {

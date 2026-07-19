@@ -64,4 +64,26 @@ describe('MediaLibraryScreen', () => {
     const docLink = await findByRole('link', { name: /sample doc/i });
     expect(docLink).toHaveAttribute('href', '/s/s1/d/d1');
   });
+
+  it('keeps the focus toggle in the topbar', async () => {
+    await db.spaces.put(sampleSpace);
+    const { findByTestId, getByTestId } = renderScreen();
+    const topbar = await findByTestId('topbar');
+    expect(topbar.contains(getByTestId('pdf-focus-toggle'))).toBe(true);
+  });
+
+  it('folds the rails away in focus mode, keeping the toggle reversible', async () => {
+    await seedBasicSpace();
+    act(() => {
+      useUI.getState().setCurrentDocId('d1');
+    });
+    const { findByTestId, queryByRole } = renderAtRoute(<MediaLibraryScreen />, {
+      path: '/s/:spaceId/library',
+      initialEntries: ['/s/s1/library?focus=1'],
+    });
+    expect(await findByTestId('media-library-screen')).toBeInTheDocument();
+    expect(await findByTestId('pdf-focus-toggle')).toBeInTheDocument();
+    // The doc sidebar (asserted present in the unfocused test above) is folded.
+    expect(queryByRole('link', { name: /sample doc/i })).not.toBeInTheDocument();
+  });
 });
