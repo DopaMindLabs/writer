@@ -35,15 +35,18 @@ beforeEach(async () => {
 });
 
 describe('SplitMediaPane', () => {
-  it('renders the reader for the item with a back-to-library affordance', async () => {
+  it('renders the reader under the same grey toolbar as the full reader', async () => {
     await db.media.put(item);
     const onBack = vi.fn();
     renderWithProviders(
       <SplitMediaPane spaceId="s1" mediaId="m1" onBackToLibrary={onBack} />,
     );
     expect(await screen.findByTestId('split-media-pane')).toBeInTheDocument();
-    expect(screen.getByText('thesis.pdf')).toBeInTheDocument();
-    await userEvent.click(screen.getByTestId('split-media-back'));
+    // The pane's bar is the reader toolbar: icon back + the thumbnail toggle.
+    expect(screen.getByTestId('media-reader-toolbar')).toBeInTheDocument();
+    expect(screen.getByTestId('pdf-thumbs-toggle')).toBeInTheDocument();
+    // Back swaps the pane instead of navigating to the library route.
+    await userEvent.click(screen.getByTestId('media-viewer-back'));
     expect(onBack).toHaveBeenCalledTimes(1);
   });
 
@@ -53,7 +56,8 @@ describe('SplitMediaPane', () => {
       <SplitMediaPane spaceId="s1" mediaId="gone" onBackToLibrary={onBack} />,
     );
     expect(await screen.findByTestId('split-media-missing')).toBeInTheDocument();
-    await userEvent.click(screen.getByTestId('split-media-back'));
+    expect(screen.queryByTestId('pdf-thumbs-toggle')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByTestId('media-viewer-back'));
     expect(onBack).toHaveBeenCalledTimes(1);
   });
 });

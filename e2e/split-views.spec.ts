@@ -62,16 +62,19 @@ test('opening a pdf from the library pane keeps the split and reads in-pane', as
   await expect(page.getByTestId('media-library-surface')).toBeVisible();
 
   // Upload into the pane, then open the row: the reader renders inside the
-  // right pane — the split (and the left editor) survives.
+  // right pane — the split (and the left editor) survives — under the same
+  // grey toolbar as the full reader (icon back + thumbnail toggle).
   await page.getByTestId('media-upload-input').setInputFiles('e2e/fixtures/tiny.pdf');
   await page.locator('[data-testid^="media-row-"][data-testid$="-open"]').first().click();
   await expect(page.getByTestId('split-media-pane')).toBeVisible();
+  await expect(page.getByTestId('media-reader-toolbar')).toBeVisible();
+  await expect(page.getByTestId('pdf-thumbs-toggle')).toBeVisible();
   await expect(page.getByTestId('pdf-viewer')).toBeVisible();
   await expect(page.getByTestId('split-divider')).toBeVisible();
   await expect(page).toHaveURL(/with=media%3A|with=media:/);
 
   // Back returns the pane to the library list, still inside the split.
-  await page.getByTestId('split-media-back').click();
+  await page.getByTestId('media-viewer-back').click();
   await expect(page.getByTestId('media-library-surface')).toBeVisible();
   await expect(page.getByTestId('split-divider')).toBeVisible();
 });

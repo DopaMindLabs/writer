@@ -9,6 +9,8 @@ interface MediaReaderToolbarProps {
   mediaId: string;
   /** The reader toggles only appear once the item has loaded. */
   hasItem: boolean;
+  /** Overrides where back lands (see {@link ReaderBackLink}). */
+  onBack?: () => void;
 }
 
 /**
@@ -22,6 +24,7 @@ export const MediaReaderToolbar = ({
   spaceId,
   mediaId,
   hasItem,
+  onBack,
 }: MediaReaderToolbarProps) => {
   const { t } = useTranslation('screens');
   const [searchParams] = useSearchParams();
@@ -32,7 +35,7 @@ export const MediaReaderToolbar = ({
       data-testid="media-reader-toolbar"
       className="flex h-9 shrink-0 items-center gap-1 border-b border-rule bg-paper-2 px-3 md:px-4"
     >
-      <ReaderBackLink spaceId={spaceId} />
+      <ReaderBackLink spaceId={spaceId} onBack={onBack} />
       {hasItem && !focused ? (
         <PdfReaderToggle
           mediaId={mediaId}

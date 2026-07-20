@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { useUI } from '@/store/ui';
 import { MediaReaderToolbar } from './MediaReaderToolbar';
@@ -46,5 +47,14 @@ describe('MediaReaderToolbar', () => {
     );
     expect(screen.getByTestId('media-viewer-back')).toBeInTheDocument();
     expect(screen.queryByTestId('pdf-thumbs-toggle')).not.toBeInTheDocument();
+  });
+
+  it('routes back through the onBack override instead of navigating', async () => {
+    const onBack = vi.fn();
+    renderWithProviders(
+      <MediaReaderToolbar spaceId="s1" mediaId="m1" hasItem onBack={onBack} />,
+    );
+    await userEvent.click(screen.getByTestId('media-viewer-back'));
+    expect(onBack).toHaveBeenCalledTimes(1);
   });
 });
