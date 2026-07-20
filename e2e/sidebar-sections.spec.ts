@@ -26,6 +26,25 @@ test('sidebar shows section headers with add buttons', async ({ page }) => {
   expect(await addBtns.count()).toBeGreaterThan(0);
 });
 
+test('sidebar section header label renders in uppercase', async ({ page }) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}`);
+  await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
+
+  const sidebar = page.locator('aside').last();
+  const label = sidebar.locator('[data-testid$="-label"]').first();
+  await expect(label).toBeVisible();
+
+  // The eyebrow-style section heading must read as uppercase (design system
+  // §3.10). The label text lives inside a <button>, and the browser resets
+  // `text-transform` on form controls, so the utility must sit on the button
+  // itself — not only on the wrapping header row — for the cast to take effect.
+  const transform = await label.evaluate(
+    (el) => getComputedStyle(el).textTransform,
+  );
+  expect(transform).toBe('uppercase');
+});
+
 test('sidebar space title can be renamed inline', async ({ page }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}`);
