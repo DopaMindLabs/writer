@@ -5,7 +5,6 @@ import {
   readDocBodyBaseline,
   updateDocBody,
 } from '@/lib/docs';
-import { invariant } from '@/lib/invariant';
 import { createRevision } from '@/lib/revisions';
 import { applyPulledBody } from './applyPulledBody';
 
@@ -30,6 +29,11 @@ import { applyPulledBody } from './applyPulledBody';
  *   brought up to date.
  * - **row differs from the baseline** — the body was written elsewhere and pulled
  *   in. The body wins; the losing CRDT is kept as a recoverable revision first.
+ * - **no baseline at all** — provenance cannot be proved, so the row is treated as
+ *   the one that may have come from elsewhere and wins. Preferring the CRDT would
+ *   push unprovable local text into a *synced* row and on to every other device,
+ *   whereas a wrong guess this way stays local: the losing CRDT is kept as a
+ *   recoverable revision either way, so neither side is lost.
  *
  * Idempotent: a doc whose CRDT already equals its body is left untouched.
  */
@@ -52,10 +56,14 @@ export const reconcileDocForMount = async (
   }
 
   const baseline = await readDocBodyBaseline(docId);
-  invariant(
-    baseline !== null,
-    `reconcileDocForMount: no body baseline for divergent doc ${docId}`,
-  );
+  if (baseline === null) {
+    // The marker is written transactionally with every row write, so its absence
+    // means something upstream went wrong. Report it — but do not fail the gate:
+    // a throw here is deterministic, so retry can never clear it and the document
+    // becomes permanently unopenable. Fall through to the row-wins path, which
+    // discards nothing.
+    console.warn('reconcile: no body baseline for divergent doc', docId);
+  }
   if (baseline === body) {
     // Unsaved keystrokes: the row still equals what we last wrote, so persist the
     // CRDT snapshot rather than discarding it.

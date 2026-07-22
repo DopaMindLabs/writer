@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/db/db';
 import {
   writeDocBodyBaseline,
@@ -74,13 +74,63 @@ describe('reconcileDocForMount', () => {
     expect(await readDocBodyBaseline('d1')).toBe(canon('already in sync'));
   });
 
-  it('rejects a divergent non-empty log with no baseline, without a silent fallback', async () => {
-    await seedLocalDoc('d1', canon('local content'));
-    await deleteDocBodyBaseline('d1');
+  describe('when the baseline is missing entirely', () => {
+    /** A divergent doc whose provenance marker is gone — the row cannot be proved
+     *  to be ours, so the mount must still open without discarding either side. */
+    const seedUnprovableDoc = async (): Promise<void> => {
+      await seedLocalDoc('d1', canon('local content'));
+      await deleteDocBodyBaseline('d1');
+    };
 
-    await expect(
-      reconcileDocForMount('d1', canon('different pulled content')),
-    ).rejects.toThrow(/baseline/);
+    it('opens the doc rather than failing the gate for good', async () => {
+      await seedUnprovableDoc();
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      await expect(
+        reconcileDocForMount('d1', canon('different pulled content')),
+      ).resolves.toBeUndefined();
+
+      warn.mockRestore();
+    });
+
+    it('lets the row win, since a wrong guess must not propagate through sync', async () => {
+      await seedUnprovableDoc();
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      await reconcileDocForMount('d1', canon('different pulled content'));
+
+      // Preferring the CRDT here would push unprovable local text into a synced
+      // row and on to every other device; preferring the row keeps the guess local.
+      expect(await crdtSnapshot('d1')).toBe(canon('different pulled content'));
+      expect(await readDocBodyBaseline('d1')).toBe(canon('different pulled content'));
+      warn.mockRestore();
+    });
+
+    it('keeps the losing local side recoverable, so the fallback loses nothing', async () => {
+      await seedUnprovableDoc();
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      await reconcileDocForMount('d1', canon('different pulled content'));
+
+      const revisions = await db.revisions.where('docId').equals('d1').toArray();
+      expect(revisions).toHaveLength(1);
+      expect(revisions[0]?.text).toContain('local content');
+      warn.mockRestore();
+    });
+
+    it('reports the unprovable state rather than falling back silently', async () => {
+      await seedUnprovableDoc();
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      await reconcileDocForMount('d1', canon('different pulled content'));
+
+      expect(warn).toHaveBeenCalledTimes(1);
+      // Diagnostics identify the doc without carrying its text.
+      const logged = warn.mock.calls[0]?.join(' ') ?? '';
+      expect(logged).toContain('d1');
+      expect(logged).not.toContain('local content');
+      warn.mockRestore();
+    });
   });
 
   it('decides the same winner regardless of the row updatedAt (no wall-clock comparison)', async () => {
