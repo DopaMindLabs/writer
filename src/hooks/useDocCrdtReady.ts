@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { reconcileDocForMount } from '@/lib/cloud/cloudClient';
+import { reconcileDocForMount } from '@/lib/reconcile';
 import { crdtMountFailDocId } from '@/lib/boot/e2eFaults';
 
 /**
