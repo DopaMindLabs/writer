@@ -123,6 +123,7 @@ describe('PassphraseUnlockDialog', () => {
     const unlock = vi.fn().mockResolvedValue(undefined);
     const provider: SyncProvider = {
       id: 'test-cloud',
+      kind: 'dexie-cloud',
       keyDelivery: {
         setUp: () => Promise.resolve('code'),
         unlock,
@@ -137,7 +138,12 @@ describe('PassphraseUnlockDialog', () => {
     };
     const onUnlocked = vi.fn();
     renderWithProviders(
-      <WriterSyncProvider coordinator={createSyncCoordinator({ providers: [provider] })}>
+      <WriterSyncProvider
+        coordinator={createSyncCoordinator({
+          providers: [provider],
+          defaultProviderInstanceId: 'test-cloud',
+        })}
+      >
         <PassphraseUnlockDialog open onOpenChange={noop} onUnlocked={onUnlocked} />
       </WriterSyncProvider>,
     );

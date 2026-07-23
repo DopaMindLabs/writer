@@ -2,21 +2,30 @@ import type { SyncCoordinator } from '@/lib/syncProviders/coordinator';
 import { createWriterSyncCoordinator } from './createWriterSyncCoordinator';
 
 /**
- * Start durable sync for every provider the coordinator holds that offers it,
- * and return a single teardown for all of them. Providers with no `frameSync`
- * capability (a realtime peer transport, say) are not started here — they are
- * per-document, not per-session.
+ * Start durable, session-level sync for every provider that offers it, and return
+ * a single teardown for all of them. Providers with only a realtime capability (a
+ * peer transport) are not started here — those transports are per-scope /
+ * per-document, created on demand, not at boot.
  *
- * A provider that fails to start propagates, so boot surfaces the failure
- * rather than coming up in a half-synced state.
+ * Providers start in sequence so a failure can be unwound deterministically: if
+ * one fails to start, every provider already started is torn down before the
+ * failure propagates, so boot never comes up half-synced.
  */
 export const startWriterSync = async (
   coordinator: SyncCoordinator = createWriterSyncCoordinator(),
 ): Promise<() => void> => {
-  const stops = await Promise.all(
-    coordinator.providersWith('frameSync').map((provider) => provider.frameSync.start()),
-  );
-  return () => {
-    for (const stop of stops) stop();
+  const stops: (() => void)[] = [];
+  const teardown = () => {
+    // Unwind in reverse so teardown mirrors start order.
+    for (const stop of [...stops].reverse()) stop();
   };
+  try {
+    for (const provider of coordinator.providersWith('durableSync')) {
+      stops.push(await provider.durableSync.start());
+    }
+  } catch (error) {
+    teardown();
+    throw error;
+  }
+  return teardown;
 };

@@ -44,7 +44,7 @@ const emittedStatus = (phase: SyncState['phase']): SyncStatus | undefined => {
   vi.mocked(cloudSyncState).mockReturnValue(constant(syncState(phase)));
   const provider = createDexieCloudProvider();
   let seen: SyncStatus | undefined;
-  provider.frameSync?.status.subscribe((status) => {
+  provider.durableSync?.status.subscribe((status) => {
     seen = status;
   });
   return seen;
@@ -67,7 +67,8 @@ describe('createDexieCloudProvider', () => {
     const provider = createDexieCloudProvider();
 
     expect(provider.id).toBe('dexie-cloud');
-    expect(hasCapability(provider, 'frameSync')).toBe(true);
+    expect(provider.kind).toBe('dexie-cloud');
+    expect(hasCapability(provider, 'durableSync')).toBe(true);
     expect(hasCapability(provider, 'keyDelivery')).toBe(true);
   });
 
@@ -82,13 +83,13 @@ describe('createDexieCloudProvider', () => {
   });
 });
 
-describe('frameSync', () => {
+describe('durableSync', () => {
   it('starts the cloud session and passes its teardown through', async () => {
     const stop = vi.fn();
     vi.mocked(startCloudSession).mockResolvedValue(stop);
     const provider = createDexieCloudProvider();
 
-    const teardown = await provider.frameSync?.start();
+    const teardown = await provider.durableSync?.start();
     teardown?.();
 
     expect(startCloudSession).toHaveBeenCalledOnce();
@@ -98,7 +99,7 @@ describe('frameSync', () => {
   it('delegates a sync request to the facade', async () => {
     const provider = createDexieCloudProvider();
 
-    await provider.frameSync?.requestSync();
+    await provider.durableSync?.requestSync();
 
     expect(requestCloudSync).toHaveBeenCalledOnce();
   });
@@ -108,7 +109,7 @@ describe('frameSync', () => {
     vi.mocked(requestCloudSync).mockRejectedValue(failure);
     const provider = createDexieCloudProvider();
 
-    await expect(provider.frameSync?.requestSync()).rejects.toThrow(failure);
+    await expect(provider.durableSync?.requestSync()).rejects.toThrow(failure);
   });
 
   it('relays each settled sync round', () => {
@@ -122,7 +123,7 @@ describe('frameSync', () => {
     const provider = createDexieCloudProvider();
     const onComplete = vi.fn();
 
-    provider.frameSync?.syncComplete.subscribe(onComplete);
+    provider.durableSync?.syncComplete.subscribe(onComplete);
     subscribers.forEach((notify) => notify());
 
     expect(onComplete).toHaveBeenCalledOnce();
@@ -135,7 +136,7 @@ describe('frameSync', () => {
     });
     const provider = createDexieCloudProvider();
 
-    provider.frameSync?.status.subscribe(() => undefined).unsubscribe();
+    provider.durableSync?.status.subscribe(() => undefined).unsubscribe();
 
     expect(unsubscribe).toHaveBeenCalledOnce();
   });
@@ -162,7 +163,7 @@ describe('status phase mapping', () => {
     const provider = createDexieCloudProvider();
 
     let seen: SyncStatus | undefined;
-    provider.frameSync?.status.subscribe((status) => {
+    provider.durableSync?.status.subscribe((status) => {
       seen = status;
     });
 

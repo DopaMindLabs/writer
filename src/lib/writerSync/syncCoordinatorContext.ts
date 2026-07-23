@@ -1,6 +1,16 @@
 import { createContext, useContext } from 'react';
 import type { SyncCoordinator } from '@/lib/syncProviders/coordinator';
-import type { SyncCapability, SyncProvider } from '@/lib/syncProviders/types';
+import type {
+  SyncCapability,
+  SyncProvider,
+  SyncProviderInstanceId,
+} from '@/lib/syncProviders/types';
+import { hasCapability } from '@/lib/syncProviders/types';
+
+/** One provider narrowed to definitely offer `C`; `[C]` is that capability. */
+type WithCapability<C extends SyncCapability> = SyncProvider &
+  Required<Pick<SyncProvider, C>>;
+type Capability<C extends SyncCapability> = WithCapability<C>[C];
 
 /**
  * Makes the sync coordinator reachable from the UI, so components consume
@@ -19,18 +29,42 @@ export const useSyncCoordinator = (): SyncCoordinator => {
 };
 
 /**
- * The first provider's implementation of `capability`, or `undefined` when no
- * configured provider offers it — and likewise outside a provider, which is how
- * a fully injected component renders in a test or story. Callers must handle
- * the absence: which capabilities exist depends on which providers are
- * configured, so a surface that needs one degrades rather than assumes.
+ * The `capability` on one *named* provider instance, or `undefined` when the
+ * instance is unknown, does not offer it, or the tree is outside a provider (how
+ * a fully injected component renders in a test or story). Explicit selection by
+ * id — never "the first capable provider".
  */
 export const useSyncCapability = <C extends SyncCapability>(
+  providerInstanceId: SyncProviderInstanceId,
   capability: C,
-): SyncProvider[C] => {
+): Capability<C> | undefined => {
   const coordinator = useContext(SyncCoordinatorContext);
-  // `.at` rather than `[0]`: indexing types as present even when the array is
-  // empty, which is exactly the case this hook exists to report.
-  const provider = coordinator?.providersWith(capability).at(0);
-  return provider?.[capability];
+  return coordinator?.capability(providerInstanceId, capability);
+};
+
+/**
+ * The `capability` on the application's *default* provider, or `undefined` when
+ * configuration names no default, the default does not offer it, or the tree is
+ * outside a provider. Callers must handle the absence: a surface that needs a
+ * capability degrades rather than assumes one is configured.
+ */
+export const useDefaultSyncCapability = <C extends SyncCapability>(
+  capability: C,
+): Capability<C> | undefined => {
+  const coordinator = useContext(SyncCoordinatorContext);
+  const provider = coordinator?.defaultProvider();
+  if (!provider || !hasCapability(provider, capability)) return undefined;
+  return provider[capability];
+};
+
+/**
+ * Every provider's `capability`, for surfaces that aggregate across all
+ * configured providers without collapsing to one. Empty outside a provider or
+ * when none offers it.
+ */
+export const useSyncCapabilities = <C extends SyncCapability>(
+  capability: C,
+): Capability<C>[] => {
+  const coordinator = useContext(SyncCoordinatorContext);
+  return coordinator?.capabilities(capability) ?? [];
 };

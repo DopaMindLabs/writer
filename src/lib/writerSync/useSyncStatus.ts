@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useCloudObservable } from '@/lib/cloud/cloudObservable';
 import type { SyncStatus } from '@/lib/syncProviders/types';
 import { SyncPhase } from '@/lib/syncProviders/types';
-import { useSyncCapability } from './syncCoordinatorContext';
+import { useDefaultSyncCapability } from './syncCoordinatorContext';
 
 const INITIAL: SyncStatus = { phase: SyncPhase.Initial };
 
@@ -10,14 +10,15 @@ const INITIAL: SyncStatus = { phase: SyncPhase.Initial };
 const NONE = { subscribe: () => ({ unsubscribe: () => undefined }) };
 
 /**
- * The replication status of the first provider that offers durable sync, in the
- * provider-neutral vocabulary. Reports {@link SyncPhase.Initial} when no
- * provider does — nothing has run, because nothing can.
+ * The replication status of the application's default durable-sync provider, in
+ * the provider-neutral vocabulary. Reports {@link SyncPhase.Initial} when the
+ * default offers no durable sync (or none is configured) — nothing has run,
+ * because nothing can.
  */
 export const useSyncStatus = (): SyncStatus => {
-  const frameSync = useSyncCapability('frameSync');
+  const durableSync = useDefaultSyncCapability('durableSync');
   return useCloudObservable(
-    useMemo(() => frameSync?.status ?? NONE, [frameSync]),
+    useMemo(() => durableSync?.status ?? NONE, [durableSync]),
     INITIAL,
   );
 };

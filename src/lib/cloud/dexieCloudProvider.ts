@@ -1,7 +1,7 @@
 import type { SyncState } from 'dexie-cloud-addon';
 import { assertNever } from '@/lib/invariant';
 import type {
-  EncryptedFrameSync,
+  DurableSyncCapability,
   KeyDeliveryAdapter,
   SyncProvider,
   SyncStatus,
@@ -27,11 +27,12 @@ import {
  * vocabulary: mapping the addon's seven-phase sync state onto the neutral
  * phases, and passing observables through where the shapes already agree.
  *
- * `frameSync` and `keyDelivery` are declared. `accessControl` lands with the
+ * `durableSync` and `keyDelivery` are declared. `accessControl` lands with the
  * realm tables and its first caller; the addon has no realtime transport or
  * peer discovery of its own, so neither is declared at all.
  */
 export const DEXIE_CLOUD_PROVIDER_ID = 'dexie-cloud';
+export const DEXIE_CLOUD_PROVIDER_KIND = 'dexie-cloud';
 
 /** Map the addon's phase onto the provider-neutral one. Total by construction. */
 const toSyncPhase = (phase: SyncState['phase']): SyncPhase => {
@@ -60,7 +61,7 @@ const toSyncStatus = (state: SyncState): SyncStatus => ({
   error: state.error,
 });
 
-const frameSync = (): EncryptedFrameSync => ({
+const durableSync = (): DurableSyncCapability => ({
   start: () => startCloudSession(),
   requestSync: () => requestCloudSync(),
   status: {
@@ -105,6 +106,7 @@ const keyDelivery = (): KeyDeliveryAdapter => ({
 
 export const createDexieCloudProvider = (): SyncProvider => ({
   id: DEXIE_CLOUD_PROVIDER_ID,
-  frameSync: frameSync(),
+  kind: DEXIE_CLOUD_PROVIDER_KIND,
+  durableSync: durableSync(),
   keyDelivery: keyDelivery(),
 });

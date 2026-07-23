@@ -16,9 +16,10 @@ vi.mock('@/lib/cloud/cloudClient', () => ({
 
 import { startCloudSession } from '@/lib/cloud/cloudClient';
 
-const frameSyncProvider = (id: string, start: () => Promise<() => void>): SyncProvider => ({
+const durableSyncProvider = (id: string, start: () => Promise<() => void>): SyncProvider => ({
   id,
-  frameSync: {
+  kind: id,
+  durableSync: {
     start,
     requestSync: () => Promise.resolve(),
     status: { subscribe: () => ({ unsubscribe: () => undefined }) },
@@ -28,11 +29,15 @@ const frameSyncProvider = (id: string, start: () => Promise<() => void>): SyncPr
 
 const realtimeOnlyProvider = (id: string): SyncProvider => ({
   id,
+  kind: id,
   realtime: {
-    send: () => undefined,
-    onMessage: () => () => undefined,
-    close: () => undefined,
-    sharesStore: false,
+    createTransport: () =>
+      Promise.resolve({
+        send: () => undefined,
+        onMessage: () => () => undefined,
+        close: () => undefined,
+        sharesStore: false,
+      }),
   },
 });
 
@@ -51,7 +56,7 @@ describe('startWriterSync', () => {
     const second = vi.fn().mockResolvedValue(() => undefined);
 
     await startWriterSync(
-      coordinatorOf(frameSyncProvider('a', first), frameSyncProvider('b', second)),
+      coordinatorOf(durableSyncProvider('a', first), durableSyncProvider('b', second)),
     );
 
     expect(first).toHaveBeenCalledOnce();
@@ -62,7 +67,7 @@ describe('startWriterSync', () => {
     const start = vi.fn().mockResolvedValue(() => undefined);
 
     const stop = await startWriterSync(
-      coordinatorOf(realtimeOnlyProvider('webrtc'), frameSyncProvider('cloud', start)),
+      coordinatorOf(realtimeOnlyProvider('webrtc'), durableSyncProvider('cloud', start)),
     );
     stop();
 
@@ -75,8 +80,8 @@ describe('startWriterSync', () => {
 
     const stop = await startWriterSync(
       coordinatorOf(
-        frameSyncProvider('a', () => Promise.resolve(stopFirst)),
-        frameSyncProvider('b', () => Promise.resolve(stopSecond)),
+        durableSyncProvider('a', () => Promise.resolve(stopFirst)),
+        durableSyncProvider('b', () => Promise.resolve(stopSecond)),
       ),
     );
     stop();
@@ -89,8 +94,24 @@ describe('startWriterSync', () => {
     const failure = new Error('cloud unreachable');
 
     await expect(
-      startWriterSync(coordinatorOf(frameSyncProvider('a', () => Promise.reject(failure)))),
+      startWriterSync(coordinatorOf(durableSyncProvider('a', () => Promise.reject(failure)))),
     ).rejects.toThrow(failure);
+  });
+
+  it('tears down already-started providers when a later one fails', async () => {
+    const stopFirst = vi.fn();
+    const failure = new Error('second provider unreachable');
+
+    await expect(
+      startWriterSync(
+        coordinatorOf(
+          durableSyncProvider('a', () => Promise.resolve(stopFirst)),
+          durableSyncProvider('b', () => Promise.reject(failure)),
+        ),
+      ),
+    ).rejects.toThrow(failure);
+
+    expect(stopFirst).toHaveBeenCalledOnce();
   });
 
   it('starts nothing when no provider offers durable sync', async () => {

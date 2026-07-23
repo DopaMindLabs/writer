@@ -100,6 +100,7 @@ describe('PassphraseSetupDialog', () => {
     const setUp = vi.fn().mockResolvedValue('PROVIDER-CODE');
     const provider: SyncProvider = {
       id: 'test-cloud',
+      kind: 'dexie-cloud',
       keyDelivery: {
         setUp,
         unlock: () => Promise.resolve(),
@@ -114,7 +115,12 @@ describe('PassphraseSetupDialog', () => {
     };
     const onRecoveryCode = vi.fn();
     renderWithProviders(
-      <WriterSyncProvider coordinator={createSyncCoordinator({ providers: [provider] })}>
+      <WriterSyncProvider
+        coordinator={createSyncCoordinator({
+          providers: [provider],
+          defaultProviderInstanceId: 'test-cloud',
+        })}
+      >
         <PassphraseSetupDialog open onOpenChange={noop} onRecoveryCode={onRecoveryCode} />
       </WriterSyncProvider>,
     );

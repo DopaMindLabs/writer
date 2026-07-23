@@ -1,16 +1,17 @@
 import { createSyncCoordinator } from '@/lib/syncProviders/coordinator';
 import type { SyncCoordinator } from '@/lib/syncProviders/coordinator';
-import type { WriterSyncOptions } from '@/lib/syncProviders/types';
-import { createDexieCloudProvider } from '@/lib/cloud/dexieCloudProvider';
+import type { SyncConfiguration } from '@/lib/syncProviders/types';
+import { writerSyncConfiguration } from './writerSyncConfiguration';
 
 /**
  * The composition root for Writer Sync: the single place that knows both the
- * coordinator and the concrete providers. `@/lib/syncProviders` stays free of
- * any provider implementation, and providers stay unaware of each other.
+ * coordinator and Writer's configuration. `@/lib/syncProviders` stays free of any
+ * provider implementation and of Writer's defaults; providers stay unaware of
+ * each other.
  *
- * Adding a second provider — a peer transport, a local folder — is a change
- * here and nowhere else.
+ * Changing which providers Writer runs, or which is its default, is a change to
+ * {@link writerSyncConfiguration} and nowhere else.
  */
 export const createWriterSyncCoordinator = (
-  options: WriterSyncOptions = { providers: [createDexieCloudProvider()] },
-): SyncCoordinator => createSyncCoordinator(options);
+  configuration: SyncConfiguration = writerSyncConfiguration(),
+): SyncCoordinator => createSyncCoordinator(configuration);

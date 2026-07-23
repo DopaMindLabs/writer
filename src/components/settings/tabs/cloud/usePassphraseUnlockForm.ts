@@ -2,7 +2,7 @@ import { useState, type SyntheticEvent } from 'react';
 import { EscrowMissingError } from '@/lib/cloud/crypto/errors';
 import { WrongPassphraseError } from '@/lib/cloud/crypto/keys';
 import type { KeyDeliveryAdapter } from '@/lib/syncProviders/types';
-import { useSyncCapability } from '@/lib/writerSync/syncCoordinatorContext';
+import { useDefaultSyncCapability } from '@/lib/writerSync/syncCoordinatorContext';
 
 type Mode = 'passphrase' | 'recovery';
 
@@ -57,7 +57,7 @@ export const usePassphraseUnlockForm = (options: {
   errorLabel: (key: string) => string;
 }): PassphraseUnlockForm => {
   const { injected, onUnlocked, onOpenChange, errorLabel } = options;
-  const keyDelivery = useSyncCapability('keyDelivery');
+  const keyDelivery = useDefaultSyncCapability('keyDelivery');
   const [mode, setMode] = useState<Mode>('passphrase');
   const [value, setValue] = useState('');
   const [error, setError] = useState<string | null>(null);

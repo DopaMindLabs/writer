@@ -10,7 +10,7 @@ import {
 // A pure NFKC normaliser, not backend behaviour — imported from its own module
 // rather than routed through a capability.
 import { canonicalisePassphrase } from '@/lib/cloud/crypto/keys';
-import { useSyncCapability } from '@/lib/writerSync/syncCoordinatorContext';
+import { useDefaultSyncCapability } from '@/lib/writerSync/syncCoordinatorContext';
 import { PassphraseSetupFields } from './PassphraseSetupFields';
 
 const MIN_LENGTH = 12;
@@ -68,7 +68,7 @@ export const PassphraseSetupDialog = ({
   onRecoveryCode,
   onCreate,
 }: PassphraseSetupDialogProps) => {
-  const keyDelivery = useSyncCapability('keyDelivery');
+  const keyDelivery = useDefaultSyncCapability('keyDelivery');
   const create = onCreate ?? keyDelivery?.setUp;
   const { t } = useTranslation('screens');
   const k = (name: string) => t(`settings.account.cloud.passphrase.${name}`);

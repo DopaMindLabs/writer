@@ -65,6 +65,7 @@ vi.mock('./useCloudPanelState', () => ({
 /** Escrow presence reaches the panel through the provider, not the facade. */
 const keyDeliveryProvider = (): SyncProvider => ({
   id: 'test-cloud',
+  kind: 'dexie-cloud',
   keyDelivery: {
     setUp: () => Promise.resolve('code'),
     unlock: () => Promise.resolve(),
@@ -75,7 +76,12 @@ const keyDeliveryProvider = (): SyncProvider => ({
 
 const renderPanel = () =>
   renderWithProviders(
-    <WriterSyncProvider coordinator={createSyncCoordinator({ providers: [keyDeliveryProvider()] })}>
+    <WriterSyncProvider
+      coordinator={createSyncCoordinator({
+        providers: [keyDeliveryProvider()],
+        defaultProviderInstanceId: 'test-cloud',
+      })}
+    >
       <CloudSectionPanel />
     </WriterSyncProvider>,
   );
