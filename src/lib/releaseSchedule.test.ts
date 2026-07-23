@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { NEXT_RELEASE_AT, daysUntilNextRelease } from './releaseSchedule';
 
 describe('releaseSchedule', () => {
-  it('pins the release moment to 3 August 2026, 22:00 CEST (20:00 UTC)', () => {
-    expect(new Date(NEXT_RELEASE_AT).toISOString()).toBe('2026-08-03T20:00:00.000Z');
+  it('pins the release moment to 23 August 2026, 22:00 CEST (20:00 UTC)', () => {
+    expect(new Date(NEXT_RELEASE_AT).toISOString()).toBe('2026-08-23T20:00:00.000Z');
   });
 
   it('rounds a partial day up so the evening before reads one day remaining', () => {

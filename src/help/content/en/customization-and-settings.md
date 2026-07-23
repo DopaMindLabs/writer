@@ -15,14 +15,19 @@ from **Quick settings**.
 ## Quick settings
 
 The **Quick settings** popover gives you the everyday controls without leaving
-your document. Open it from the app rail. Controls are grouped by purpose:
+your document. Open it from the **⋮** button on the app rail — on a phone, open
+the navigation drawer first, where the rail lives. Controls are grouped by purpose:
 
-- **Appearance** — the **theme** switch and **reading width**.
 - **Writing** — the **focus mode** and **floating toolbar** toggles.
-- **Help tour** — replay a guided tour.
-- **More** — what's new, accessibility, and about.
-- A **help center →** link (the same way it links to **universal settings →**), so
-  help and settings are always one click away.
+- **Settings** — **universal settings →** and **account →** links, so the full
+  settings screen is always one click away.
+- **Appearance** — the **theme** switch and **reading width**.
+- **Help tour** — replay a guided tour (desktop only).
+- A **help center →** link, followed by **More** — what's new, accessibility,
+  and about.
+
+Keyboard shortcut hints (such as **⌘\\** for focus mode) show next to a control on
+computers and are hidden on touch devices, where there's no keyboard to press.
 
 ## Finding a setting
 

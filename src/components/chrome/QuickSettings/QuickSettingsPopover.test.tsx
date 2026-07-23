@@ -89,7 +89,7 @@ describe('QuickSettingsPopover', () => {
   });
 
   describe('grouping', () => {
-    it('should group the controls under Appearance and Writing section labels', () => {
+    it('should group the controls under Writing, Settings, and Appearance section labels', () => {
       renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
       expect(
         screen.getByTestId('quick-settings-section-appearance'),
@@ -97,20 +97,31 @@ describe('QuickSettingsPopover', () => {
       expect(
         screen.getByTestId('quick-settings-section-writing'),
       ).toHaveTextContent(/writing/i);
+      expect(
+        screen.getByTestId('quick-settings-section-settings'),
+      ).toHaveTextContent(/settings/i);
 
-      // Appearance holds theme + reading width, Writing holds focus +
-      // floating toolbar, in document order.
+      // Writing leads with the focus + floating-toolbar toggles, the Settings
+      // group (universal settings + account) follows, then Appearance (theme +
+      // reading width), the guided tours, and the help-centre link ahead of
+      // the More group — no footer.
       const popover = screen.getByTestId('quick-settings-popover');
       const order = Array.from(popover.querySelectorAll('[data-testid]')).map(
         (el) => el.getAttribute('data-testid'),
       );
       const expectedOrder = [
-        'quick-settings-section-appearance',
-        'quick-settings-theme-light',
-        'quick-settings-width-m',
         'quick-settings-section-writing',
         'quick-settings-focus-toggle',
         'quick-settings-floating-toolbar-toggle',
+        'quick-settings-section-settings',
+        'quick-settings-full-settings',
+        'quick-settings-account',
+        'quick-settings-section-appearance',
+        'quick-settings-theme-light',
+        'quick-settings-width-m',
+        'quick-settings-section-help-tours',
+        'quick-settings-help',
+        'quick-settings-section-more',
       ];
       const positions = expectedOrder.map((id) => order.indexOf(id));
       expect(positions).not.toContain(-1);
@@ -198,19 +209,23 @@ describe('QuickSettingsPopover', () => {
       expect(replayMock).toHaveBeenCalledWith('welcome');
     });
 
-    it('should render the ⌘? keyboard shortcut on the welcome tour row only', () => {
+    it('should render the platform shortcut on the welcome tour row only', () => {
       renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
       const kbd = screen.getByTestId('quick-settings-tour-welcome-kbd');
-      expect(kbd).toHaveTextContent('⌘?');
+      // ⌘? on Apple, Ctrl+? elsewhere — derived from the running platform.
+      expect(kbd.textContent).toMatch(/⌘\?|Ctrl\+\?/);
     });
 
-    it('should mark completed tours with an opaque check and others with a hidden check', () => {
+    it('marks a completed tour row as checked and leaves an unrun tour unchecked', () => {
       getCompletedMock.mockReturnValue(['welcome']);
       renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
-      const welcomeCheck = screen.getByTestId(
-        'quick-settings-tour-welcome-check',
+      expect(screen.getByTestId('quick-settings-tour-welcome')).toHaveAttribute(
+        'data-checked',
+        'true',
       );
-      expect(welcomeCheck.getAttribute('class')).toContain('opacity-100');
+      expect(screen.getByTestId('quick-settings-tour-writer')).not.toHaveAttribute(
+        'data-checked',
+      );
     });
   });
 
@@ -302,6 +317,45 @@ describe('QuickSettingsPopover', () => {
       expect(
         screen.getByTestId('quick-settings-tour-welcome'),
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('keyboard hints on touch', () => {
+    const realMatchMedia = window.matchMedia;
+    afterEach(() => {
+      window.matchMedia = realMatchMedia;
+    });
+
+    const setCoarsePointer = () => {
+      window.matchMedia = ((query: string) => ({
+        matches: query.includes('pointer: coarse'),
+        media: query,
+        onchange: null,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        addListener: () => {},
+        removeListener: () => {},
+        dispatchEvent: () => false,
+      })) as unknown as typeof window.matchMedia;
+    };
+
+    it('hides shortcut hints on a coarse pointer while keeping the controls', () => {
+      setCoarsePointer();
+      renderWithProviders(<Harness />, { initialEntries: ['/s/s1/d/d1'] });
+      // The tour row stays but its keyboard hint is dropped.
+      expect(
+        screen.getByTestId('quick-settings-tour-welcome'),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('quick-settings-tour-welcome-kbd'),
+      ).not.toBeInTheDocument();
+      // The controls and links remain reachable.
+      expect(
+        screen.getByTestId('quick-settings-focus-toggle'),
+      ).toBeInTheDocument();
+      expect(screen.getByTestId('quick-settings-help')).toBeInTheDocument();
+      // No stray keyboard glyphs anywhere.
+      expect(screen.queryByText(/⌘|Ctrl\+/)).not.toBeInTheDocument();
     });
   });
 });
