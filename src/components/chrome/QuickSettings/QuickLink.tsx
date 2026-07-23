@@ -4,7 +4,7 @@ import { Link } from '@/components/ui/Link';
 import { useCoarsePointer } from '@/hooks/useCoarsePointer';
 import { cn } from '@/lib/utils';
 
-export interface FooterLinkProps {
+export interface QuickLinkProps {
   to: string;
   label: string;
   /** A keyboard hint (compose a `Kbd`). Hidden on touch, where there's no key. */
@@ -13,7 +13,12 @@ export interface FooterLinkProps {
   divider?: boolean;
 }
 
-export const FooterLink = ({ to, label, kbd, testId, divider }: FooterLinkProps) => {
+/**
+ * A single navigation-link row in Quick Settings: the underlined link on the
+ * left, an optional keyboard hint on the right. Closes the popover on
+ * navigation.
+ */
+export const QuickLink = ({ to, label, kbd, testId, divider }: QuickLinkProps) => {
   const coarsePointer = useCoarsePointer();
   return (
     <div

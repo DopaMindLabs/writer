@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Kbd } from '@/components/ui/Kbd';
-import { FooterLink } from './FooterLink';
+import { QuickLink } from './QuickLink';
 import { popoverAppMenuLink } from './appMenuLinks';
 
 export const QuickLinksFooter = () => {
@@ -10,19 +10,19 @@ export const QuickLinksFooter = () => {
   const fullSettings = popoverAppMenuLink('universal-settings');
   return (
     <div className="mt-1 border-t border-rule bg-paper-2">
-      <FooterLink
+      <QuickLink
         to={help.href}
         label={t(help.labelKey)}
         kbd={<Kbd keys="mod+?" />}
         testId={help.testId}
       />
-      <FooterLink
+      <QuickLink
         to={account.href}
         label={t(account.labelKey)}
         testId={account.testId}
         divider
       />
-      <FooterLink
+      <QuickLink
         to={fullSettings.href}
         label={t(fullSettings.labelKey)}
         kbd={<Kbd keys="mod+," />}
