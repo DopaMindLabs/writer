@@ -46,8 +46,10 @@ export enum SyncPhase {
   Initial = 'initial',
   /** Work is outstanding, but no round is in flight. */
   Pending = 'pending',
-  /** A round is in flight, in either direction. */
-  Syncing = 'syncing',
+  /** Sending local changes. */
+  Pushing = 'pushing',
+  /** Receiving remote changes. */
+  Pulling = 'pulling',
   /** Settled, nothing outstanding. */
   InSync = 'in-sync',
   /** The backend is unreachable. */

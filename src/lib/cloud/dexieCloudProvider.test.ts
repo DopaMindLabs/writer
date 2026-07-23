@@ -145,8 +145,8 @@ describe('status phase mapping', () => {
   it.each<[SyncState['phase'], SyncPhase]>([
     ['initial', SyncPhase.Initial],
     ['not-in-sync', SyncPhase.Pending],
-    ['pushing', SyncPhase.Syncing],
-    ['pulling', SyncPhase.Syncing],
+    ['pushing', SyncPhase.Pushing],
+    ['pulling', SyncPhase.Pulling],
     ['in-sync', SyncPhase.InSync],
     ['offline', SyncPhase.Offline],
     ['error', SyncPhase.Error],

@@ -51,3 +51,5 @@ e2e-coverage
 storybook-static
 # Playwright preview: temporary Vercel bypass cookie (created + deleted per run)
 .preview-auth/
+
+.demo-tours/**/*

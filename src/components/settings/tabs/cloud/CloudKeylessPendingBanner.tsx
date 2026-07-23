@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { InlineBanner } from '@/components/ui/InlineBanner';
-import type { CloudSyncPhase } from '@/lib/cloud/cloudClient';
+import { SyncPhase } from '@/lib/syncProviders/types';
 
 export interface CloudKeylessPendingBannerProps {
   /** The sync phase, so a stalled pull can be told from one still in progress. */
-  syncPhase: CloudSyncPhase;
+  syncPhase: SyncPhase;
   /** Retry a stalled account fetch by forcing a fresh pull. */
   onRetry: () => void;
 }
@@ -24,7 +24,7 @@ export const CloudKeylessPendingBanner = ({
   const { t } = useTranslation('screens');
   const k = (name: string) => t(`settings.account.cloud.keyless.${name}`);
 
-  if (syncPhase === 'error') {
+  if (syncPhase === SyncPhase.Error) {
     return (
       <InlineBanner
         kind="warning"
@@ -38,7 +38,7 @@ export const CloudKeylessPendingBanner = ({
       </InlineBanner>
     );
   }
-  if (syncPhase === 'offline') {
+  if (syncPhase === SyncPhase.Offline) {
     return (
       <InlineBanner
         kind="info"
