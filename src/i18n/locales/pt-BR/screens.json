@@ -12,7 +12,7 @@
     "syncOnTitle": "Sincronização de pasta ativada",
     "syncOnBody": "Seu trabalho sincroniza com a pasta “{{folder}}” neste dispositivo.",
     "warningTitle": "Build de pré-lançamento",
-    "warningBody": "Sem sincronização de dados. Tudo vive no seu navegador e limpar o cache perde seu trabalho. Você pode ativar a sincronização com uma pasta local em Configurações → Sync.",
+    "warningBody": "Sem sincronização de dados. Tudo vive no seu navegador e limpar o cache perde seu trabalho. Você pode ativar a sincronização com uma pasta local em Configurações → Local Sync.",
     "versionLine": "Versão {{version}}"
   },
   "about": {

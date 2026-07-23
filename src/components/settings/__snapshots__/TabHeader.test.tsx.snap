@@ -11,7 +11,7 @@ exports[`TabHeader > snapshot > should match the snapshot for global and space b
     <h1
       class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
     >
-      Sync
+      Local Sync
     </h1>
     <p
       class="font-serif italic text-ink-3 mb-6 max-w-[540px] text-[14px]"
