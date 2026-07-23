@@ -3,7 +3,7 @@
 **Status:** implementation plan  
 **Prepared against:** `DopaMindLabs/writer` → `feat/collaborative-editing` at `9a94c59`  
 **Date:** 23 July 2026  
-**Delivery model:** Stage 1 completes the provider-neutral foundation. Stage 2A ships same-user, serverless QR-paired P2P over the same local network as Writer’s configured default. Stage 2B later adds internet rendezvous and relay support. Multi-user collaboration remains a later stage.
+**Delivery model:** Stage 1 completes the provider-neutral, independently consumable foundation. Stage 2A ships same-user, serverless QR-paired P2P over the same local network as Writer’s configured default. Stage 2B later adds internet rendezvous and relay support. Stage 3 may add an optional content-blind hosted sync service. Multi-user collaboration remains a later stage.
 
 ---
 
@@ -23,10 +23,14 @@ The reusable boundary should become one package:
 ```text
 @dopamind/writer-sync
 ├── /core
+├── /protocol
 ├── /crypto
 ├── /pairing
 ├── /providers/webrtc
+├── /providers/hosted       # later optional client adapter
 └── /adapters/yjs
+
+@dopamind/writer-sync-server  # later optional companion service
 ```
 
 The similar directory names must not represent parallel engines:
@@ -116,6 +120,55 @@ Stage 2A deliberately requires:
 Bluetooth is not the browser baseline. A future native adapter may use Bluetooth for discovery or pairing and then switch bulk transfer to local Wi-Fi; it must not be assumed by the P2P core.
 
 Stage 2B is the later internet release. It may add content-blind hosted signalling for a one-scan flow, STUN for NAT discovery and TURN as a ciphertext relay when direct connectivity fails. Those services implement existing ports; they do not change the Writer Sync operation, trust or encryption model.
+### 2.5 Can the same system run embedded or hosted?
+
+Yes, but the package and the service are different deployable units.
+
+`@dopamind/writer-sync` is a headless library. An application imports only the subpaths it needs, and importing it must never start, bundle or require a server. `@dopamind/writer-sync-server` is a possible later companion service that implements hosted provider ports. The server is not the centre of the design and is never a transitive runtime dependency of the embedded package.
+
+| Consumption mode | Application configuration | Server required? | Intended use |
+|---|---|---:|---|
+| Embedded | Import core plus local providers such as WebRTC | No | Writer Stage 2A, offline/local applications and other repositories |
+| Hosted | Import core plus `HostedSyncProvider`; connect to a deployed compatible service | Yes | Internet/offline delivery through an opaque durable provider |
+| Hybrid | Configure local P2P and one or more durable providers together | Optional | Low-latency local sessions plus durable catch-up |
+
+The embedded mode must support narrow imports without pulling unused providers:
+
+```ts
+import { createSyncEngine } from '@dopamind/writer-sync/core';
+import { createWebRtcProvider } from '@dopamind/writer-sync/providers/webrtc';
+
+const sync = createSyncEngine({
+  application: writerApplicationAdapter,
+  providers: [createWebRtcProvider({ signalling: qrSignalling })],
+});
+```
+
+A hosted consumer changes configuration rather than its domain model or operation format:
+
+```ts
+import { createSyncEngine } from '@dopamind/writer-sync/core';
+import { createHostedSyncProvider } from '@dopamind/writer-sync/providers/hosted';
+
+const sync = createSyncEngine({
+  application: applicationAdapter,
+  providers: [createHostedSyncProvider({ endpoint })],
+});
+```
+
+Writer-specific entities must enter through an application adapter rather than package imports from Writer:
+
+```ts
+interface SyncApplicationAdapter {
+  readonly entityPolicy: EntityPolicyRegistry;
+  readonly operations: OperationMaterializer;
+  readonly snapshots: SnapshotProvider;
+}
+```
+
+The exact interface may be split into smaller ports during Stage 1, but the dependency direction is fixed: the reusable engine calls application ports; Writer integration implements them. Another repository can implement the same ports for its own entities.
+
+Stage 2B hosted signalling is only rendezvous/relay infrastructure for WebRTC. It is not a durable hosted sync provider. Offline delivery and opaque frame storage belong to the separate optional Stage 3 service.
 
 ---
 
@@ -134,7 +187,8 @@ Stage 2B is the later internet release. It may add content-blind hosted signalli
 - one authoritative sync-table policy;
 - a versioned, encrypted operation format;
 - an idempotent operation journal, inbox and tombstones;
-- application materialisation ports;
+- application materialisation, entity-policy and snapshot ports so another repository can integrate without Writer schema imports;
+- independently buildable subpath exports with no server dependency;
 - a Dexie Cloud adapter that no longer leaks realm concepts into the core;
 - package extraction inside the repository;
 - contract, crypto, persistence and integration tests;
@@ -145,6 +199,8 @@ Stage 2B is the later internet release. It may add content-blind hosted signalli
 - P2P networking;
 - QR UI or camera access;
 - a hosted signalling service;
+- a durable hosted sync service or server runtime;
+- a hosted-provider implementation;
 - STUN/TURN deployment;
 - multi-user invitations;
 - cross-user key delivery;
@@ -189,7 +245,18 @@ Stage 2B is the later internet release. It may add content-blind hosted signalli
 - reconnection across network changes;
 - the operating, abuse-control, retention and cost decisions required by those services.
 
-Stage 2B must reuse the Stage 2A ports. It must not make hosted infrastructure, QR, WebRTC or any single provider an architectural default.
+Stage 2B must reuse the Stage 2A ports. It must not make hosted infrastructure, QR, WebRTC or any single provider an architectural default. It provides reachability while peers are active; it does not provide opaque durable frame storage or offline delivery.
+
+### Stage 3 may later add an optional hosted sync service
+
+- `@dopamind/writer-sync-server` as a separately deployable companion, never a dependency of embedded mode;
+- `HostedSyncProvider` in the client package;
+- content-blind encrypted-frame storage, routing, acknowledgements and offline catch-up;
+- optional reuse of the Stage 2B signalling endpoint behind the same deployment;
+- authentication, quotas, abuse controls, retention, monitoring and disaster-recovery operations;
+- self-hosted and DopaMind-hosted deployment profiles using the same protocol.
+
+Stage 3 must remain optional. Writer can run embedded P2P only, hosted only, Dexie only, or a hybrid configuration without changing Writer entities or encrypted operations.
 
 ---
 
@@ -236,6 +303,8 @@ The application creates and encrypts one logical operation. Providers transport 
 
 QR is one `PairingMethod` and one serverless `SignallingAdapter`; WebRTC is one transport used by the P2P `SyncProvider`. Writer selects them in configuration. The package does not privilege them, and Stage 2B can add a hosted signalling adapter without changing the P2P provider’s core contracts.
 
+Deployment is also adapter-driven. Embedded consumers instantiate the engine in-process. Hosted consumers add a remote provider that speaks the same encrypted-frame protocol. Hybrid consumers enable both, with idempotence and provider-specific acknowledgements handled by the common coordinator. A future service stores opaque frames; it does not import Writer repositories or materialise Writer entities.
+
 Yjs remains authoritative for concurrent live document edits. The generic operation journal carries materialised document snapshots and every non-document entity. On reconnect, Yjs state-vector exchange catches up document CRDT state; the operation protocol catches up the rest of the scope.
 
 ## 6. Canonical terminology
@@ -258,6 +327,9 @@ Use these terms consistently in code and documentation:
 | `OperationMaterializer` | Application adapter that applies an accepted operation to local state |
 | `ScopeKeyResolver` | Resolves encryption material for one access scope and key epoch |
 | `TrustedDevice` | Device identity accepted for future sessions |
+| `SyncApplicationAdapter` | Composite application boundary supplying entity policy, materialisation and snapshot ports without exposing Writer types to the package |
+| `HostedSyncProvider` | Optional client adapter that transports encrypted frames to a compatible remote service |
+| `WriterSyncService` | Optional content-blind server implementation; never required by embedded core |
 
 Keep `realmId`, Dexie `owner`, member rows and Dexie role syntax inside the Dexie adapter. Keep `replication` as an internal technical term only.
 
@@ -811,6 +883,7 @@ packages/writer-sync/
   tsconfig.json
   src/
     core/
+    protocol/
     crypto/
     pairing/
     operations/
@@ -824,13 +897,14 @@ Initial subpath exports:
 ```json
 {
   "./core": "./src/core/index.ts",
+  "./protocol": "./src/protocol/index.ts",
   "./crypto": "./src/crypto/index.ts",
   "./pairing": "./src/pairing/index.ts",
   "./adapters/yjs": "./src/adapters/yjs/index.ts"
 }
 ```
 
-Do not export unfinished internal files through a wildcard.
+Do not export unfinished internal files through a wildcard. Do not export `./providers/hosted` until the Stage 3 adapter exists. Consumers must be able to import `/core` and one provider without installing or bundling other providers or any server runtime.
 
 ### Move into the package
 
@@ -842,6 +916,7 @@ Do not export unfinished internal files through a wildcard.
 - operation codec and convergence;
 - encryption envelope and resolver interfaces;
 - framework-neutral operation-store/materialiser ports;
+- framework-neutral entity-policy and snapshot ports, optionally composed as `SyncApplicationAdapter`;
 - transport-independent Yjs adapter contracts.
 
 ### Keep in Writer
@@ -852,7 +927,7 @@ Do not export unfinished internal files through a wildcard.
 - Writer schema/table policy;
 - Dexie database implementations;
 - cloud account UI and escrow reconciliation;
-- Writer operation materialiser;
+- Writer operation materialiser, entity policy, snapshot provider and concrete `SyncApplicationAdapter`;
 - route/help/design-system files.
 
 ### Package quality gates
@@ -863,7 +938,10 @@ Do not export unfinished internal files through a wildcard.
 - explicit public exports;
 - API Extractor or TypeScript declaration check;
 - package can be built and tested independently;
-- a small fixture consumer outside Writer imports the public subpaths;
+- package manifests contain no dependency on a server package and browser bundles contain no Node/server entry point;
+- importing `/core` has no network, storage or process-start side effect;
+- a small fixture consumer outside Writer imports only `/core` plus one selected provider;
+- a second fixture configures a fake remote provider without importing Writer schema types;
 - no reusable implementation remains under `src/lib/writerSync` or `src/lib/syncProviders`;
 - no import path uses `writer-sync` and `writerSync` as interchangeable names.
 
@@ -876,12 +954,15 @@ Do not create a separate repository or publish `1.0.0`. Keep the package private
 - security review accepts the protocol;
 - public API changes no longer occur in every slice.
 
+A separately published package or repository may follow those gates. A hosted service is not a publication prerequisite, and publishing the library must not imply that users must run DopaMind infrastructure.
+
 ## 15. Stage 1 documentation updates
 
 Update in the same Stage 1 PR:
 
 - `docs/architecture.md`
   - target layers;
+  - embedded, hosted and hybrid deployment modes;
   - operation/materialisation flow;
   - one-to-many provider semantics;
   - domain versus adapter metadata;
@@ -919,6 +1000,8 @@ Stage 1 is complete only when all of the following are true:
 - [ ] Dexie Cloud transports the same encrypted operation frames used by other providers, not a separate logical mutation.
 - [ ] Dexie Cloud still passes its existing encryption, keyless, recovery and real-device tests.
 - [ ] The reusable package builds independently and Writer consumes only its public exports.
+- [ ] Core plus a selected provider can run without installing, importing or starting server code.
+- [ ] Writer entities are integrated only through application ports; the package imports no Writer schema.
 - [ ] `src/lib/writerSync` and `src/lib/syncProviders` no longer contain a parallel reusable engine; Writer-only wiring is clearly named `writerSyncIntegration` or placed in ordinary hooks/contexts.
 - [ ] Architecture, technical specification and cloud design note match the implementation.
 
@@ -1403,7 +1486,82 @@ Stage 2B completion requires:
 
 ---
 
-## 29. Suggested commit sequence
+## 29. Stage 3 — Optional hosted sync service (later release)
+
+Stage 3 is separate from Stage 2B. Stage 2B helps two simultaneously active peers find and reach one another. Stage 3 adds a durable provider that can accept encrypted operations while another device is offline.
+
+### Deployable units
+
+```text
+packages/writer-sync/
+  core/                       # embedded engine and public ports
+  protocol/                   # shared encrypted-frame and acknowledgement formats
+  providers/hosted/           # optional browser/client adapter
+
+packages/writer-sync-server/
+  api/                        # authenticated frame push/pull/ack endpoints
+  frame-store/                # opaque ciphertext and tombstone persistence
+  routing/                    # scope/provider cursors without Writer entity knowledge
+  signalling/                # optional Stage 2B rendezvous implementation
+  operations/                 # quotas, retention, monitoring and maintenance
+
+src/lib/writerSyncIntegration/
+  writerApplicationAdapter.ts # Writer schema/materialisation remains in Writer
+  writerSyncConfiguration.ts  # selects embedded, hosted or hybrid mode
+```
+
+The server package may be deployed by DopaMind, self-hosted by another application, or replaced by any compatible provider. The client package must depend only on the wire contract, not on the server implementation.
+
+### Hosted provider contract
+
+The hosted client implements the same `SyncProvider` capabilities and transports the same `EncryptedSyncFrame` used by P2P and Dexie. At minimum it needs bounded push, pull, acknowledgement, resumable attachment transfer, provider-specific cursors/status and idempotent retry.
+
+The service may know operational routing data required to deliver frames, such as opaque scope handles, device/account authentication, frame IDs, sizes, cursors and expiry. It must not receive:
+
+- account or scope keys;
+- passphrases or recovery codes;
+- decrypted operations, document bodies or attachment contents;
+- Writer table names when an opaque entity-kind code is sufficient;
+- Writer’s materialiser or schema package.
+
+Metadata leakage must be threat-modelled rather than described as zero knowledge. Traffic timing, ciphertext size, account identity and opaque routing relationships may remain observable unless additional padding or privacy mechanisms are deliberately implemented.
+
+### Deployment profiles
+
+| Profile | Providers | Behaviour |
+|---|---|---|
+| Embedded local | P2P only | No server; both devices active and locally reachable |
+| Hosted durable | Hosted provider only | Internet/offline catch-up through opaque storage |
+| Hybrid | P2P plus hosted and/or Dexie | Direct sessions when available; durable providers catch up later; duplicate frames apply once |
+
+Writer chooses its profile through `writerSyncConfiguration`. The reusable engine has no deployment default. Another repository can choose a different provider set and implement its own `SyncApplicationAdapter`.
+
+### Stage 3 execution slices
+
+1. Write the hosted-service threat model, metadata inventory and wire/API ADR.
+2. Add protocol conformance fixtures shared by browser clients and the service.
+3. Implement the hosted client provider against an in-memory reference service.
+4. Implement authenticated opaque frame push/pull/ack and resumable attachment storage.
+5. Add quotas, expiry/retention, abuse protection, audit events, monitoring and disaster recovery.
+6. Add a self-hosted deployment profile and version-compatibility policy.
+7. Integrate Writer through configuration only; do not add hosted branches to Writer repositories.
+8. Verify hosted-only and hybrid P2P-plus-hosted convergence, retry and duplicate delivery.
+
+### Stage 3 completion gate
+
+- [ ] Embedded package tests and builds remain independent of the server package.
+- [ ] A non-Writer fixture application uses the hosted provider through public ports only.
+- [ ] Server persists and routes only encrypted frames and bounded operational metadata.
+- [ ] Offline device catch-up works without changing the operation format.
+- [ ] P2P and hosted delivery of the same frame materialise once.
+- [ ] Client/server protocol versions fail compatibly and support rolling deployment.
+- [ ] Retention, erasure, quotas, abuse controls, monitoring, backup and recovery are documented and tested.
+- [ ] Self-hosting instructions do not require Writer source code.
+- [ ] Security and privacy review accepts the metadata exposure and operational model.
+
+---
+
+## 30. Suggested commit sequence
 
 Keep these reviewable and revertible:
 
@@ -1448,11 +1606,22 @@ Keep these reviewable and revertible:
 4. `test(p2p): add cross-network and TURN-forced coverage`.
 5. `docs(p2p): publish internet connectivity operations runbook`.
 
+### Stage 3
+
+1. `docs(sync-server): define hosted threat model and protocol ADR`.
+2. `test(sync-server): add shared client/server protocol fixtures`.
+3. `feat(sync): add optional hosted provider client`.
+4. `feat(sync-server): add opaque frame push pull and ack`.
+5. `feat(sync-server): add resumable encrypted attachment storage`.
+6. `feat(sync-server): add retention quotas and operations`.
+7. `test(sync-server): verify offline and hybrid convergence`.
+8. `docs(sync-server): publish self-hosting and operations guidance`.
+
 If a touched file is non-compliant, insert the required behaviour-free `refactor:` commit immediately before its feature slice rather than accumulating one broad clean-up.
 
 ---
 
-## 30. Stop-and-ask decisions
+## 31. Stop-and-ask decisions
 
 Implementation must stop for explicit review at these points:
 
@@ -1462,20 +1631,22 @@ Implementation must stop for explicit review at these points:
    - Provide bundle size, browser support and accessibility fallback.
 3. **Stage 2B hosted signalling/STUN/TURN deployment**
    - Choose service ownership, cost, retention, abuse controls and production operations. This stop does not block the serverless Stage 2A release.
-4. **Optional native one-scan local rendezvous**
+4. **Stage 3 hosted sync service**
+   - Choose hosting ownership, authentication, storage backend, metadata budget, quotas, retention, regional deployment, self-hosting support, backup/recovery and cost model. This decision does not block embedded Stage 1 or Stage 2A.
+5. **Optional native one-scan local rendezvous**
    - Review host APIs, platform support and the security boundary before adding Electron, Tauri or native integration.
-5. **Package publication**
+6. **Package publication**
    - Decide private workspace-only, prerelease npm package or separate repository.
-6. **Any cross-user scope**
+7. **Any cross-user scope**
    - That triggers per-scope member key wrapping, revocation and group protocol design.
-7. **Any promise of erasure**
+8. **Any promise of erasure**
    - Impossible for data already downloaded to an offline device.
-8. **Any change to the repository’s schema-version rule**
+9. **Any change to the repository’s schema-version rule**
    - `AGENTS.md` currently requires a new Dexie version when `STORES` changes.
 
 ---
 
-## 31. Handover format for every implementation slice
+## 32. Handover format for every implementation slice
 
 Use the repository handover skill and include:
 
@@ -1494,7 +1665,7 @@ Never report P2P as complete because mocked WebRTC tests pass. Real-browser and 
 
 ---
 
-## 32. External standards and implementation references
+## 33. External standards and implementation references
 
 - [MDN: WebRTC signalling and offer/answer exchange](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling)
 - [MDN: Using WebRTC data channels](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Using_data_channels)
