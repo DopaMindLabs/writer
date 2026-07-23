@@ -3,7 +3,7 @@
 exports[`snapshot > matches the open drawer with the seeded space contents 1`] = `
 <div
   aria-labelledby="radix-_r_*_"
-  class="fixed inset-y-0 left-0 z-50 flex w-[min(320px,85vw)] bg-paper-2 shadow-lg md:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left duration-200"
+  class="fixed inset-y-0 left-0 z-50 flex w-[min(320px,85vw)] bg-paper-2 pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] shadow-overlay-drawer-start md:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left duration-200"
   data-state="open"
   id="radix-_r_*_"
   role="dialog"

@@ -1,0 +1,1 @@
+export { QuickSettingsPopover } from './QuickSettingsPopover';

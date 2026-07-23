@@ -44,6 +44,15 @@ describe('MobileMoreSheet', () => {
     expect(
       screen.getByRole('link', { name: /what's new/i }),
     ).toHaveAttribute('href', '/help/whats-new');
+    // Accessibility and Account reach the sheet from the shared app-menu
+    // config, matching the desktop Quick Settings surface.
+    expect(
+      screen.getByRole('link', { name: /accessibility/i }),
+    ).toHaveAttribute('href', '/settings?tab=accessibility');
+    expect(screen.getByRole('link', { name: /account/i })).toHaveAttribute(
+      'href',
+      '/settings?tab=account',
+    );
     // Items are grouped by context.
     expect(screen.getByText('This doc')).toBeInTheDocument();
     expect(screen.getByText('This space')).toBeInTheDocument();

@@ -30,6 +30,35 @@ describe('MenuItem', () => {
       expect(screen.queryByText('M')).not.toBeInTheDocument();
     });
 
+    it('reflects the checked state on the row via data-checked', () => {
+      const { rerender } = render(<MenuItem label="Medium" />);
+      expect(screen.getByRole('button', { name: 'Medium' })).not.toHaveAttribute(
+        'data-checked',
+      );
+      rerender(<MenuItem label="Medium" checked />);
+      expect(screen.getByRole('button', { name: 'Medium' })).toHaveAttribute(
+        'data-checked',
+        'true',
+      );
+    });
+
+    it('keeps the shortcut visible with a leading check', () => {
+      render(
+        <MenuItem
+          label="Welcome tour"
+          shortcut="?"
+          checked
+          checkPosition="leading"
+        />,
+      );
+      // Leading check reserves its own gutter, so the trailing shortcut stays.
+      expect(screen.getByText('?')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Welcome tour/ })).toHaveAttribute(
+        'data-checked',
+        'true',
+      );
+    });
+
     it('marks the destructive item and forwards data-danger', () => {
       render(<MenuItem label="Delete" danger />);
       expect(screen.getByRole('button', { name: 'Delete' })).toHaveAttribute(

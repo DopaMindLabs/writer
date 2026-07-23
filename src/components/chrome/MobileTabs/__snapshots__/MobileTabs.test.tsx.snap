@@ -9,7 +9,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
   >
     <a
       aria-current="page"
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink"
       data-discover="true"
       data-testid="mobile-tabs-write"
       href="/"
@@ -42,7 +42,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
     </a>
     <button
       aria-pressed="false"
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink-3 hover:text-ink"
       data-testid="mobile-tabs-read"
       type="button"
     >
@@ -74,7 +74,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
     </button>
     <button
       aria-pressed="false"
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink-3 hover:text-ink"
       data-testid="mobile-tabs-brain"
       type="button"
     >
@@ -124,7 +124,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
     </button>
     <button
       aria-pressed="false"
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink-3 hover:text-ink"
       data-testid="mobile-tabs-cite"
       type="button"
     >
@@ -156,7 +156,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
     </button>
     <button
       aria-pressed="false"
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink-3 hover:text-ink"
       data-testid="mobile-tabs-more"
       type="button"
     >
@@ -208,7 +208,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
   >
     <a
       aria-current="page"
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink"
       data-discover="true"
       data-testid="mobile-tabs-write"
       href="/s/s1"
@@ -241,7 +241,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
     </a>
     <button
       aria-pressed="false"
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink-3 hover:text-ink"
       data-testid="mobile-tabs-read"
       type="button"
     >
@@ -272,7 +272,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
       </span>
     </button>
     <a
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink-3 hover:text-ink"
       data-discover="true"
       data-testid="mobile-tabs-brain"
       href="/s/s1/brain-space"
@@ -323,7 +323,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
     </a>
     <button
       aria-pressed="false"
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink-3 hover:text-ink"
       data-testid="mobile-tabs-cite"
       type="button"
     >
@@ -355,7 +355,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
     </button>
     <button
       aria-pressed="false"
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink-3 hover:text-ink"
       data-testid="mobile-tabs-more"
       type="button"
     >
@@ -407,7 +407,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
   >
     <a
       aria-current="page"
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink"
       data-discover="true"
       data-testid="mobile-tabs-write"
       href="/s/s1/d/d1"
@@ -439,7 +439,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
       </span>
     </a>
     <a
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink-3 hover:text-ink"
       data-discover="true"
       data-testid="mobile-tabs-read"
       href="/s/s1/d/d1/read"
@@ -471,7 +471,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
       </span>
     </a>
     <a
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink-3 hover:text-ink"
       data-discover="true"
       data-testid="mobile-tabs-brain"
       href="/s/s1/brain-space"
@@ -522,7 +522,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
     </a>
     <button
       aria-pressed="false"
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink-3 hover:text-ink"
       data-testid="mobile-tabs-cite"
       type="button"
     >
@@ -554,7 +554,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
     </button>
     <button
       aria-pressed="false"
-      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors text-ink-3 hover:text-ink"
+      class="flex flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors active:text-ink text-ink-3 hover:text-ink"
       data-testid="mobile-tabs-more"
       type="button"
     >
