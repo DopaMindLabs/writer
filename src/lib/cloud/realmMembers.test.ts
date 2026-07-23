@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { buildDb } from '@/db/buildDb';
 import type { LoremDB } from '@/db/LoremDB';
 import { CLOUD_FLAG_KEY } from '@/lib/cloud/flag';
-import { InvariantError } from '@/lib/invariant';
+import { invariant, InvariantError } from '@/lib/invariant';
 import { ScopeRole } from '@/lib/syncProviders/types';
 import {
   addSpaceMember,
@@ -13,11 +13,13 @@ import {
 
 /**
  * Members live only on a cloud-enabled database — the addon injects the table —
- * so unlike the realm stamping these run against one. Each is closed before it
- * is deleted, which stops the addon's sync loop — an open cloud database keeps
- * retrying its endpoint and logging the failures.
+ * so unlike the realm stamping these run against one. The fixture is hermetic:
+ * fetch and WebSocket are stubbed before construction so the addon's sync loop
+ * never reaches the network, and the console spies assert it stays quiet.
  */
 let db: LoremDB;
+let consoleError: ReturnType<typeof vi.spyOn>;
+let consoleWarn: ReturnType<typeof vi.spyOn>;
 
 const SHARED_REALM = 'rlm-shared';
 
@@ -34,19 +36,70 @@ const seedSpaces = async (): Promise<void> => {
   ]);
 };
 
+/**
+ * The smallest server reply the addon's initial sync accepts (the fields
+ * `applySyncResponse` reads). Serving it from the fetch stub lets the initial
+ * sync complete silently instead of error-logging against a dead endpoint —
+ * the addon performs that sync unconditionally on first open, so a rejecting
+ * stub would fail every test's console-silence assertion.
+ */
+const SYNC_RESPONSE = {
+  serverRevision: 1,
+  dbId: 'dbid-test',
+  realms: [],
+  inviteRealms: [],
+  schema: {},
+  changes: [],
+  yMessages: [],
+};
+
 beforeEach(async () => {
+  // Keep the cloud instance hermetic and deterministic: stub the network
+  // before the addon can touch it (cf. buildDb.test.ts).
+  vi.spyOn(globalThis, 'fetch').mockImplementation(async () =>
+    new Response(JSON.stringify(SYNC_RESPONSE), {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+    }),
+  );
+  vi.stubGlobal(
+    'WebSocket',
+    class {
+      close() {}
+      addEventListener() {}
+      removeEventListener() {}
+      send() {}
+    },
+  );
+  consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+  consoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
   vi.stubEnv('VITE_DEXIE_CLOUD_URL', 'https://spike.dexie.cloud');
   localStorage.setItem(CLOUD_FLAG_KEY, 'on');
   db = buildDb(`members-${String(Math.random()).slice(2)}`);
+  // Membership operations are local row writes — the sync machinery is
+  // irrelevant here, so switch off everything optional (the initial sync is
+  // unconditional; the fetch stub answers it). `blobMode: 'lazy'` stops the
+  // eager blob sweep, whose post-sync timer would otherwise fire after the
+  // test closed the database and error-log once per synced table. The addon
+  // reads these options when the db opens.
+  invariant(db.cloud.options, 'cloud instance expected');
+  db.cloud.options.disableEagerSync = true;
+  db.cloud.options.disableWebSocket = true;
+  db.cloud.options.blobMode = 'lazy';
   await seedSpaces();
 });
 
 afterEach(async () => {
   // Close before deleting: an open cloud database keeps a sync loop running,
-  // and its failed attempts against the stub endpoint would log for the rest of
-  // the run.
+  // and its failed attempts would log for the rest of the run.
   db.close();
   await db.delete();
+  // The suite's contract is silence: membership operations are local row
+  // writes and must not produce sync noise.
+  expect(consoleError).not.toHaveBeenCalled();
+  expect(consoleWarn).not.toHaveBeenCalled();
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
   vi.unstubAllEnvs();
   localStorage.clear();
 });
@@ -131,6 +184,39 @@ describe('listSpaceMembers', () => {
 
   it('is empty for a shared space nobody has joined', async () => {
     expect(await listSpaceMembers('shared', db)).toEqual([]);
+  });
+
+  it('reads a role name outside the contract as a viewer — synced state is untrusted', async () => {
+    await db.members.add({
+      id: db.members.newId(), realmId: SHARED_REALM, email: 'legacy@example.com',
+      roles: ['manager'],
+    });
+
+    const [member] = await listSpaceMembers('shared', db);
+
+    expect(member.role).toBe(ScopeRole.Viewer);
+  });
+
+  it('reads several recognised roles as the least privileged of them', async () => {
+    await db.members.add({
+      id: db.members.newId(), realmId: SHARED_REALM, email: 'both@example.com',
+      roles: [ScopeRole.Owner, ScopeRole.Editor],
+    });
+
+    const [member] = await listSpaceMembers('shared', db);
+
+    expect(member.role).toBe(ScopeRole.Editor);
+  });
+
+  it('ignores unrecognised names alongside a recognised role', async () => {
+    await db.members.add({
+      id: db.members.newId(), realmId: SHARED_REALM, email: 'mixed@example.com',
+      roles: ['manager', ScopeRole.Owner],
+    });
+
+    const [member] = await listSpaceMembers('shared', db);
+
+    expect(member.role).toBe(ScopeRole.Owner);
   });
 });
 
