@@ -5,12 +5,10 @@ import { collabStore } from '@/lib/collab/collabStore';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { getEditorHandle, mountedDocIds } from '@/lib/collab/editorRegistry';
 import {
-  seedDocCrdt,
-  updateDocBody,
-  acceptPulledDocBody,
-  readDocBodyBaseline,
-} from '@/lib/docs';
-import { invariant } from '@/lib/invariant';
+  applyPulledBody,
+  type Reconcilable,
+  type ReconcileResult,
+} from '@/lib/reconcile';
 import { createRevision } from '@/lib/revisions';
 import { NO_FLUSH, type FlushResult } from '@/lib/collab/flush.types';
 import { cloudSyncState, cloudSyncComplete, cloudCurrentUser } from './cloudClient';
@@ -34,42 +32,13 @@ export type { ReconcileTrigger } from './reconcileStatus';
  * not produce: cross-device concurrent edits resolve **whole-document
  * last-writer-wins**, with the losing local side kept as a recoverable revision.
  * Lossless CRDT-level merge is a recorded Stage 3 open decision, not attempted here.
+ *
+ * Scope: the sync-driven sweep only. The mount-time gate that runs regardless of
+ * any provider lives in `@/lib/reconcile`, which also owns the shared
+ * {@link applyPulledBody} primitive both paths apply a winning body through.
  */
 
-export interface ReconcileResult {
-  docId: string;
-  /** `restored`/`reseeded`: pulled body applied. `kept-local`: unsaved local edits
-   *  won, and the pulled body was preserved as a recoverable safety revision. */
-  action: 'restored' | 'reseeded' | 'kept-local';
-}
-
-/** The slice of a document reconciliation needs: its id and current row body. */
-type Reconcilable = Pick<Doc, 'id' | 'body'>;
-
-/** Clear the stale CRDT lineage and reseed from the pulled body (unmounted doc). */
-const reseedFromBody = async (docId: string, body: string): Promise<void> => {
-  await collabStore.deleteDoc(docId);
-  await seedDocCrdt(docId, body);
-};
-
-/**
- * Bring the pulled body in, through the live editor if mounted, else the log,
- * then record it as the local body baseline — only after the CRDT write succeeds,
- * so a failed restore leaves the doc to retry rather than recording a false accept.
- */
-const applyPulledBody = async (doc: Reconcilable): Promise<ReconcileResult> => {
-  const handle = getEditorHandle(doc.id);
-  if (handle) {
-    // Await the restore so a failed CRDT write throws here (and the doc is left
-    // to retry on the next sweep) rather than being recorded as a success.
-    await handle.restoreBody(doc.body);
-    await acceptPulledDocBody(doc.id, doc.body);
-    return { docId: doc.id, action: 'restored' };
-  }
-  await reseedFromBody(doc.id, doc.body);
-  await acceptPulledDocBody(doc.id, doc.body);
-  return { docId: doc.id, action: 'reseeded' };
-};
+export type { ReconcileResult } from '@/lib/reconcile';
 
 const reconcileDoc = async (doc: Reconcilable): Promise<ReconcileResult | null> => {
   const updates = await collabStore.loadAll(doc.id);
@@ -283,59 +252,6 @@ const reconcileLibrary = async (): Promise<ReconcileSummary> => {
  */
 export const reconcilePulledDocs = async (): Promise<ReconcileResult[]> =>
   (await reconcileLibrary()).results;
-
-/**
- * Reconcile a single document's CRDT against its row body **before its editor
- * mounts**, so the editor opens over a CRDT that already equals `docs.body` — and
- * therefore equals the autosave baseline captured at mount, closing the window
- * where a stale CRDT is mistaken for unsaved edits.
- *
- * The winner is decided by local body provenance, not wall clocks (which clock
- * skew between devices could invert). {@link readDocBodyBaseline} holds the exact
- * `docs.body` this device last wrote; Dexie Cloud changes `docs.body` directly and
- * never touches it:
- *
- * - **row equals the baseline** — the row is unchanged since our last local write,
- *   so the divergent CRDT holds unsaved keystrokes. The CRDT wins; the body is
- *   brought up to date.
- * - **row differs from the baseline** — the body was written elsewhere and pulled
- *   in. The body wins; the losing CRDT is kept as a recoverable revision first.
- *
- * Idempotent: a doc whose CRDT already equals its body is left untouched.
- */
-export const reconcileDocForMount = async (
-  docId: string,
-  body: string,
-): Promise<void> => {
-  const updates = await collabStore.loadAll(docId);
-  const localSnapshot = serializeDocSnapshot(docId, updates);
-  if (localSnapshot === body) {
-    await acceptPulledDocBody(docId, body);
-    return;
-  }
-
-  // No CRDT lineage (a cloud sign-out clears the local-only log) but the row still
-  // has a body: there is nothing local to preserve, so heal straight from it.
-  if (updates.length === 0) {
-    await applyPulledBody({ id: docId, body });
-    return;
-  }
-
-  const baseline = await readDocBodyBaseline(docId);
-  invariant(
-    baseline !== null,
-    `reconcileDocForMount: no body baseline for divergent doc ${docId}`,
-  );
-  if (baseline === body) {
-    // Unsaved keystrokes: the row still equals what we last wrote, so persist the
-    // CRDT snapshot rather than discarding it.
-    await updateDocBody(docId, localSnapshot);
-    return;
-  }
-
-  await createRevision(docId, localSnapshot, { kind: 'manual', label: 'pre-sync' });
-  await applyPulledBody({ id: docId, body });
-};
 
 /**
  * Run a reconcile sweep and record its outcome in {@link reconcileStatus} for the

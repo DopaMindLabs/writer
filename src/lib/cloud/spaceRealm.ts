@@ -46,7 +46,7 @@ const tablesFor = (db: LoremDB) => [
  * The realm a row sits in when it belongs to nobody but its owner. The addon
  * reports `'unauthorized'` until the user signs in and its rows are syncified.
  */
-const privateRealmOf = (db: LoremDB): string =>
+export const privateRealmOf = (db: LoremDB): string =>
   (db as unknown as { cloud?: { currentUserId?: string } }).cloud?.currentUserId ??
   UNAUTHORIZED;
 
@@ -59,7 +59,7 @@ const privateRealmOf = (db: LoremDB): string =>
 const UNAUTHORIZED = 'unauthorized';
 
 /** Whether a space has been moved out of its owner's private realm. */
-const isShared = (realmId: string | undefined, privateRealm: string): boolean =>
+export const isShared = (realmId: string | undefined, privateRealm: string): boolean =>
   realmId !== undefined && realmId !== privateRealm;
 
 /**

@@ -1,15 +1,15 @@
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { CloudSyncStatusRow } from './CloudSyncStatusRow';
-import type { CloudSyncPhase } from '@/lib/cloud/cloudClient';
+import { SyncPhase } from '@/lib/syncProviders/types';
 
-const CASES: { phase: CloudSyncPhase; label: RegExp; klass: string }[] = [
-  { phase: 'in-sync', label: /Up to date/i, klass: 'text-success' },
-  { phase: 'pushing', label: /Uploading changes/i, klass: 'text-info' },
-  { phase: 'pulling', label: /Downloading changes/i, klass: 'text-info' },
-  { phase: 'initial', label: /Starting up/i, klass: 'text-info' },
-  { phase: 'offline', label: /Offline/i, klass: 'text-warning' },
-  { phase: 'not-in-sync', label: /Waiting to sync/i, klass: 'text-warning' },
-  { phase: 'error', label: /Sync problem/i, klass: 'text-danger' },
+const CASES: { phase: SyncPhase; label: RegExp; klass: string }[] = [
+  { phase: SyncPhase.InSync, label: /Up to date/i, klass: 'text-success' },
+  { phase: SyncPhase.Pushing, label: /Uploading changes/i, klass: 'text-info' },
+  { phase: SyncPhase.Pulling, label: /Downloading changes/i, klass: 'text-info' },
+  { phase: SyncPhase.Initial, label: /Starting up/i, klass: 'text-info' },
+  { phase: SyncPhase.Offline, label: /Offline/i, klass: 'text-warning' },
+  { phase: SyncPhase.Pending, label: /Waiting to sync/i, klass: 'text-warning' },
+  { phase: SyncPhase.Error, label: /Sync problem/i, klass: 'text-danger' },
 ];
 
 describe('CloudSyncStatusRow', () => {
@@ -21,7 +21,7 @@ describe('CloudSyncStatusRow', () => {
   });
 
   it('appends the error detail in the error phase', () => {
-    renderWithProviders(<CloudSyncStatusRow phase="error" message="boom" />);
+    renderWithProviders(<CloudSyncStatusRow phase={SyncPhase.Error} message="boom" />);
     expect(screen.getByTestId('cloud-sync-status')).toHaveTextContent(/Sync problem: boom/i);
   });
 });

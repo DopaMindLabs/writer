@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { InlineBanner } from '@/components/ui/InlineBanner';
-import type { CloudSyncPhase } from '@/lib/cloud/cloudClient';
+import { SyncPhase } from '@/lib/syncProviders/types';
 import { KeyEscrowPresence } from '@/lib/syncProviders/types';
 import { CloudKeylessPendingBanner } from './CloudKeylessPendingBanner';
 
@@ -8,7 +8,7 @@ export interface CloudKeylessAccountSectionProps {
   /** The account's escrow presence, once its pull is confirmed. */
   presence: KeyEscrowPresence;
   /** The sync phase, so a stalled pull can be told from one still in progress. */
-  syncPhase: CloudSyncPhase;
+  syncPhase: SyncPhase;
   /** Open the passphrase-unlock dialog (adopt the account key). */
   onUnlock: () => void;
   /** Open the set-up dialog (this account has no key yet). */
