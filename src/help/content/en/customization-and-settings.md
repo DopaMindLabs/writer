@@ -19,11 +19,12 @@ your document. Open it from the **⋮** button on the app rail — on a phone, o
 the navigation drawer first, where the rail lives. Controls are grouped by purpose:
 
 - **Appearance** — the **theme** switch and **reading width**.
-- **Writing** — the **focus mode** and **floating toolbar** toggles.
+- **Writing** — the **focus mode** and **floating toolbar** toggles, with
+  **universal settings →** and **account →** links right beneath them, so the
+  full settings screen is always one click away.
 - **Help tour** — replay a guided tour (desktop only).
 - **More** — what's new, accessibility, and about.
-- A **help center →** link (the same way it links to **universal settings →**), so
-  help and settings are always one click away.
+- A **help center →** link at the bottom, so help is never far.
 
 Keyboard shortcut hints (such as **⌘\\** for focus mode) show next to a control on
 computers and are hidden on touch devices, where there's no keyboard to press.

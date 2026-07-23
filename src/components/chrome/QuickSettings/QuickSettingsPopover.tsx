@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { Kbd } from '@/components/ui/Kbd';
 import { SectionLabel } from './QuickSettingsSectionLabel';
 import { ThemeRow } from './ThemeRow';
 import { ReadingWidthRow } from './ReadingWidthRow';
@@ -7,6 +8,8 @@ import { FocusModeRow } from './FocusModeRow';
 import { FloatingToolbarRow } from './FloatingToolbarRow';
 import { HelpToursSection } from './HelpToursSection';
 import { MoreSection } from './MoreSection';
+import { QuickLink } from './QuickLink';
+import { popoverAppMenuLink } from './appMenuLinks';
 
 export const QuickSettingsPopover = () => {
   const { t } = useTranslation('chrome');
@@ -14,6 +17,8 @@ export const QuickSettingsPopover = () => {
   // not on the thumb-height mobile sheet where it pushes the real controls
   // (theme, width, focus) below the fold.
   const isMobile = useMediaQuery('(max-width: 767px)');
+  const fullSettings = popoverAppMenuLink('universal-settings');
+  const account = popoverAppMenuLink('account');
 
   return (
     <div
@@ -41,6 +46,19 @@ export const QuickSettingsPopover = () => {
       <FocusModeRow />
 
       <FloatingToolbarRow />
+
+      <QuickLink
+        to={fullSettings.href}
+        label={t(fullSettings.labelKey)}
+        kbd={<Kbd keys="mod+," />}
+        testId={fullSettings.testId}
+      />
+
+      <QuickLink
+        to={account.href}
+        label={t(account.labelKey)}
+        testId={account.testId}
+      />
 
       {!isMobile && <HelpToursSection />}
 

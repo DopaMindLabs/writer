@@ -1,10 +1,13 @@
 import type { ReactNode } from 'react';
 import { useCoarsePointer } from '@/hooks/useCoarsePointer';
+import { cn } from '@/lib/utils';
 
 export interface QuickSettingRowProps {
   label: string;
   hint?: ReactNode;
   children: ReactNode;
+  /** Draw the hairline under the row. On by default; off merges the row with the next. */
+  divider?: boolean;
 }
 
 /**
@@ -13,11 +16,21 @@ export interface QuickSettingRowProps {
  * dropped on a coarse pointer, since a keyboard cue is meaningless without a
  * keyboard.
  */
-export const QuickSettingRow = ({ label, hint, children }: QuickSettingRowProps) => {
+export const QuickSettingRow = ({
+  label,
+  hint,
+  children,
+  divider = true,
+}: QuickSettingRowProps) => {
   const coarsePointer = useCoarsePointer();
   const showHint = hint && !coarsePointer;
   return (
-    <div className="grid grid-cols-[1fr_auto] items-start gap-3 border-b border-rule/60 px-4 py-2.5">
+    <div
+      className={cn(
+        'grid grid-cols-[1fr_auto] items-start gap-3 px-4 py-2.5',
+        divider && 'border-b border-rule/60',
+      )}
+    >
       <div className="min-w-0 pt-px">
         <div className="text-[12px] font-medium text-ink">{label}</div>
         {showHint && (

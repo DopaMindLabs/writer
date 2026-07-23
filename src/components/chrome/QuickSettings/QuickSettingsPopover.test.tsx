@@ -99,7 +99,9 @@ describe('QuickSettingsPopover', () => {
       ).toHaveTextContent(/writing/i);
 
       // Appearance holds theme + reading width, Writing holds focus +
-      // floating toolbar, in document order.
+      // floating toolbar, in document order. The universal-settings and
+      // account links follow the toggles directly — ahead of the guided-tour
+      // list, not down in the footer.
       const popover = screen.getByTestId('quick-settings-popover');
       const order = Array.from(popover.querySelectorAll('[data-testid]')).map(
         (el) => el.getAttribute('data-testid'),
@@ -111,6 +113,9 @@ describe('QuickSettingsPopover', () => {
         'quick-settings-section-writing',
         'quick-settings-focus-toggle',
         'quick-settings-floating-toolbar-toggle',
+        'quick-settings-full-settings',
+        'quick-settings-account',
+        'quick-settings-section-help-tours',
       ];
       const positions = expectedOrder.map((id) => order.indexOf(id));
       expect(positions).not.toContain(-1);

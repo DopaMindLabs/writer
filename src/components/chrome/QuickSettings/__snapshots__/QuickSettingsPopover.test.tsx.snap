@@ -21,7 +21,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     Appearance
   </div>
   <div
-    class="grid grid-cols-[1fr_auto] items-start gap-3 border-b border-rule/60 px-4 py-2.5"
+    class="grid grid-cols-[1fr_auto] items-start gap-3 px-4 py-2.5 border-b border-rule/60"
   >
     <div
       class="min-w-0 pt-px"
@@ -85,7 +85,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     </div>
   </div>
   <div
-    class="grid grid-cols-[1fr_auto] items-start gap-3 border-b border-rule/60 px-4 py-2.5"
+    class="grid grid-cols-[1fr_auto] items-start gap-3 px-4 py-2.5 border-b border-rule/60"
   >
     <div
       class="min-w-0 pt-px"
@@ -141,7 +141,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     Writing
   </div>
   <div
-    class="grid grid-cols-[1fr_auto] items-start gap-3 border-b border-rule/60 px-4 py-2.5"
+    class="grid grid-cols-[1fr_auto] items-start gap-3 px-4 py-2.5"
   >
     <div
       class="min-w-0 pt-px"
@@ -180,7 +180,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     </div>
   </div>
   <div
-    class="grid grid-cols-[1fr_auto] items-start gap-3 border-b border-rule/60 px-4 py-2.5"
+    class="grid grid-cols-[1fr_auto] items-start gap-3 px-4 py-2.5 border-b border-rule/60"
   >
     <div
       class="min-w-0 pt-px"
@@ -208,6 +208,43 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
         />
       </button>
     </div>
+  </div>
+  <div
+    class="flex items-center gap-3 px-4 py-2.5"
+  >
+    <a
+      class="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
+      data-discover="true"
+      data-testid="quick-settings-full-settings"
+      href="/settings"
+      type="button"
+    >
+      universal settings →
+    </a>
+    <span
+      class="flex-1"
+    />
+    <kbd
+      class="font-mono text-[10px] tracking-wide text-ink-4"
+    >
+      Ctrl+,
+    </kbd>
+  </div>
+  <div
+    class="flex items-center gap-3 px-4 py-2.5"
+  >
+    <a
+      class="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
+      data-discover="true"
+      data-testid="quick-settings-account"
+      href="/settings?tab=account"
+      type="button"
+    >
+      Account
+    </a>
+    <span
+      class="flex-1"
+    />
   </div>
   <div
     class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
@@ -427,43 +464,6 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
         class="font-mono text-[10px] tracking-wide text-ink-4"
       >
         Ctrl+?
-      </kbd>
-    </div>
-    <div
-      class="flex items-center gap-3 px-4 py-2.5 border-t border-rule/60"
-    >
-      <a
-        class="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
-        data-discover="true"
-        data-testid="quick-settings-account"
-        href="/settings?tab=account"
-        type="button"
-      >
-        Account
-      </a>
-      <span
-        class="flex-1"
-      />
-    </div>
-    <div
-      class="flex items-center gap-3 px-4 py-2.5"
-    >
-      <a
-        class="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
-        data-discover="true"
-        data-testid="quick-settings-full-settings"
-        href="/settings"
-        type="button"
-      >
-        universal settings →
-      </a>
-      <span
-        class="flex-1"
-      />
-      <kbd
-        class="font-mono text-[10px] tracking-wide text-ink-4"
-      >
-        Ctrl+,
       </kbd>
     </div>
   </div>

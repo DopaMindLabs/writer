@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import { PopoverClose } from '@/components/ui/popover';
 import { Link } from '@/components/ui/Link';
 import { useCoarsePointer } from '@/hooks/useCoarsePointer';
-import { cn } from '@/lib/utils';
 
 export interface QuickLinkProps {
   to: string;
@@ -10,7 +9,6 @@ export interface QuickLinkProps {
   /** A keyboard hint (compose a `Kbd`). Hidden on touch, where there's no key. */
   kbd?: ReactNode;
   testId: string;
-  divider?: boolean;
 }
 
 /**
@@ -18,15 +16,10 @@ export interface QuickLinkProps {
  * left, an optional keyboard hint on the right. Closes the popover on
  * navigation.
  */
-export const QuickLink = ({ to, label, kbd, testId, divider }: QuickLinkProps) => {
+export const QuickLink = ({ to, label, kbd, testId }: QuickLinkProps) => {
   const coarsePointer = useCoarsePointer();
   return (
-    <div
-      className={cn(
-        'flex items-center gap-3 px-4 py-2.5',
-        divider && 'border-t border-rule/60',
-      )}
-    >
+    <div className="flex items-center gap-3 px-4 py-2.5">
       <PopoverClose asChild>
         <Link
           to={to}

@@ -20,6 +20,7 @@ export const FocusModeRow = () => {
     <QuickSettingRow
       label={t('quickSettings.focusLabel')}
       hint={<Kbd keys="mod+\" />}
+      divider={false}
     >
       <PillToggle
         on={focused}
