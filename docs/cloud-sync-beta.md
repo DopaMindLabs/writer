@@ -193,9 +193,13 @@ body pulled from another device would sit in `docs.body` while a mounted editor 
 rendering the stale local Y.Doc, and the next local autosave would overwrite the pulled
 body — the remote edit would silently vanish.
 
-`src/lib/cloud/reconcile.ts` closes this. After each transition **out of the `pulling`
-phase** (and once when a fresh device first reaches `in-sync`), `startCloudReconciler`
-runs `reconcilePulledDocs`:
+Two modules close this. The **sync-driven sweep** (`src/lib/cloud/reconcile.ts`) reacts to
+sync phases; the **mount gate** (`src/lib/reconcile/`) runs on every editor open, provider
+or not — a page closed inside the autosave debounce diverges a doc on a purely local device
+too, so the gate is deliberately not part of the cloud subsystem. Both apply a winning body
+through the same shared `applyPulledBody` primitive. After each transition **out of the
+`pulling` phase** (and once when a fresh device first reaches `in-sync`),
+`startCloudReconciler` runs `reconcilePulledDocs`:
 
 - **Detection.** For each doc it rebuilds the local Y.Doc from `docUpdates` and serialises
   it back to a Lexical body (`serializeDocSnapshot` — the inverse of the seed, kept inside
@@ -218,7 +222,13 @@ runs `reconcilePulledDocs`:
   log, or — for a populated log that diverged from a body pulled while the doc was closed —
   keeps the local snapshot as a revision and reseeds from the body. The editor therefore
   always mounts over a CRDT that already equals `docs.body`, so the baseline it captures is
-  consistent and a stale local Y.Doc is never mistaken for unsaved edits.
+  consistent and a stale local Y.Doc is never mistaken for unsaved edits. Provenance comes
+  from the local `docs.body` baseline (in the unsynced `meta` table, written transactionally
+  with every row write). Should that marker ever be missing, the gate does **not** fail — a
+  throw there is deterministic and would jam that doc's editor for good — it falls through to
+  the row-wins path, keeping the local side as a recoverable revision and warning with the
+  doc id (no body text). Preferring the row is deliberate: a wrong guess stays local, whereas
+  preferring the CRDT would push unprovable text into a synced row and out to every device.
 - **Resolution (whole-document last-writer-wins).** For a genuinely divergent doc it first
   writes a **safety revision** of the local (losing) side, so a cross-device conflict is
   always recoverable. Then, if an editor is **mounted** (an `editorRegistry` handle exists),

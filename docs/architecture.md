@@ -84,8 +84,12 @@ External packages     (dexie, yjs, lexical, zustand, …)
   The enforced write boundary is `src/lib/docs/docRepository.ts`; the enforced sync boundary
   for UI is the `SyncProvider` capability layer, and `src/lib/cloud/cloudClient.ts` is the
   enforced boundary onto `db.cloud`. Migrating the remaining direct facade importers
-  (sync status, device registry, sign-in/out, mount reconciliation) is tracked work — do not
-  add new ones.
+  (device registry, sign-in/out) is tracked work — do not add new ones.
+- `src/lib/reconcile/` holds **local** CRDT ↔ row-body reconciliation, including the
+  mount gate every editor open passes through. It is deliberately *not* a `SyncProvider`
+  capability: it must run with zero providers configured (a page closed inside the autosave
+  debounce diverges on a purely local device too). The cloud sweep in
+  `src/lib/cloud/reconcile.ts` builds on it, never the reverse.
 
 ---
 
@@ -314,6 +318,7 @@ Route mounts WriteScreen / ReadScreen / SplitScreen
 | `src/lib/writerSync/createWriterSyncCoordinator.ts` | Composition root — the only module that knows both the coordinator and the concrete providers | `App.tsx` |
 | `src/lib/cloud/dexieCloudProvider.ts` | Dexie Cloud as a `SyncProvider`; maps the addon's seven sync phases and its escrow union onto the neutral vocabulary | The composition root |
 | `src/lib/cloud/cloudClient.ts` | Sole module touching `db.cloud`; an implementation detail of the adapter, **not** a UI import | `dexieCloudProvider.ts`, cloud subsystem internals |
+| `src/lib/reconcile/index.ts` | Local CRDT ↔ row-body reconciliation: `reconcileDocForMount` (the mount gate, runs with or without any provider) and the shared `applyPulledBody` primitive | `useDocCrdtReady`, `src/lib/cloud/reconcile.ts` |
 | `src/lib/docs/docRepository.ts` | Single write path for `docs` table (`createDoc`, `updateDocBody`, `renameDoc`, `seedDocCrdt`, …) | Hooks, import/restore flows |
 | `src/lib/collab/types.ts` | Engine-agnostic interfaces (`SyncTransport`, `CollabStore`, `PresenceState`) — imports nothing from `yjs` | `YjsProvider`, `DexieCollabStore`, `BroadcastChannelTransport` |
 | `src/editor/EditorFacade.tsx` | Public boundary for the editor: accepts `EditorProps` (`docId`, `providerFactory`, `mode`, `onChange`, …) and renders `<LexicalEditor>` | `WriteSurface.tsx` is the **sole direct importer**; `Write`, `Read`, `Split` screens use it via `WriteSurface`; `FocusScreen` redirects to the Write route with `?focus=1` |
@@ -327,6 +332,7 @@ Route mounts WriteScreen / ReadScreen / SplitScreen
 | CRDT / collab | Unit (Vitest) | `src/lib/collab/**/*.test.ts` |
 | DB / schema | Unit | `src/db/**/*.test.ts` |
 | Cloud crypto | Unit — P1–P6 middleware spike | `src/lib/cloud/crypto/middleware.test.ts` |
+| Local reconcile | Unit | `src/lib/reconcile/*.test.ts` |
 | Cloud reconcile | Unit | `src/lib/cloud/reconcile.test.ts`, `escrowReconcile.test.ts` |
 | Editor | Unit | `src/editor/**/*.test.{ts,tsx}` |
 | Hooks | Unit | `src/hooks/**/*.test.{ts,tsx}` |
