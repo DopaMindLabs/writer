@@ -7,6 +7,7 @@ import { db } from '@/db/db';
 import type { Doc } from '@/db/schema';
 import { useUI, type ReadingWidth } from '@/store/ui';
 import { useEffectiveInspectorConfig } from '@/hooks/useDocInspectorConfig';
+import { useEffectiveEditorTypography } from '@/hooks/useEffectiveEditorTypography';
 import {
   captureAutoRevision,
   captureBaselineRevision,
@@ -50,6 +51,7 @@ const LockBanner = ({ doc }: { doc: Doc }) => {
 export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) => {
   const readingWidth = useUI((s) => s.readingWidth);
   const restoreNonce = useUI((s) => s.restoreNonces[doc.id] ?? 0);
+  const typography = useEffectiveEditorTypography(doc);
 
   const { effective } = useEffectiveInspectorConfig(doc.spaceId);
   const highlightOn = effective.highlightOverLimit;
@@ -95,6 +97,10 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
           locked={locked}
           wordLimit={wordLimit}
           charLimit={charLimit}
+          font={typography.font}
+          size={typography.size}
+          sizeScale={typography.sizeScale}
+          followA11y={typography.followA11y}
           placeholder="Start writing…"
         />
       </div>

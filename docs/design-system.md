@@ -84,14 +84,24 @@ them.
 - Use `text-wrap: balance` on headlines and `text-wrap: pretty` on prose.
 
 **`Type.sans` · Geist** — buttons, nav labels, mode tabs, settings labels.
-- UI text only. Never set body prose in sans.
+- UI text only. Never set body prose in sans **by default**.
 - Weight 400 at rest, 500 when active or interactive.
 - Primary CTA: ink fill + white text. Secondary: 1 px underline.
 
 **`Type.mono` · Geist Mono** — eyebrows, dates, counts, shortcuts.
 - 9–11 px, letter-spaced 0.6–1.2. All caps unless it's a number/date.
 - Mono italics don't exist. Mono is always upright.
-- Use for meta only — never as a substitute for sans UI text.
+- Use for meta only — never as a substitute for sans UI text **by default**.
+
+**User-preference exception (editor body only).** The editor body typeface and
+size are user-selectable from **Universal settings → Typography** (with a
+per-document override in the Document inspector). The user can choose **serif**
+(default), **sans**, or **mono** for the editor body, and one of four body sizes
+(small / default / large / extra large). This is the **only** sanctioned route
+for body prose in sans or mono — every other surface (UI chrome, navigation,
+headings inside a document, the help centre, other reading surfaces) keeps the
+fixed role described above. Components must still default to serif body prose,
+sans UI, and mono meta.
 
 ---
 
@@ -138,7 +148,10 @@ them.
 
 > **In this repo:** font families are wired in [`tailwind.config.ts`](../tailwind.config.ts)
 > (`font-sans` = Geist, `font-serif` = Source Serif 4, `font-mono` = Geist Mono). Heading and
-> body presets live in `src/components/ui/typography/`.
+> body presets live in `src/components/ui/typography/`. The user-preference exception (editor
+> body typeface and size) is plumbed through `src/lib/editorTypography.ts` and applied via the
+> `--editor-font-family` and `--editor-size-scale` CSS custom properties on the editor surface
+> in `src/editor/LexicalEditor.tsx`; defaults resolve via `useEffectiveEditorTypography`.
 
 ### 2.3 Rules & radius
 

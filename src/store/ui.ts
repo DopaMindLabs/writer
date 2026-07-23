@@ -1,4 +1,12 @@
 import { create } from 'zustand';
+import {
+  DEFAULT_EDITOR_FONT,
+  DEFAULT_EDITOR_SIZE,
+  sanitizeEditorFont,
+  sanitizeEditorSize,
+  type EditorFont,
+  type EditorSize,
+} from '@/lib/editorTypography';
 
 export type Theme = 'light' | 'dark' | 'hc-light' | 'hc-dark';
 export type InspectorMode = 'none' | 'icons' | 'expanded';
@@ -22,6 +30,9 @@ interface UIState {
   inspectorMode: InspectorMode;
   inspectorSection: InspectorSection;
   readingWidth: ReadingWidth;
+  editorFont: EditorFont;
+  editorSize: EditorSize;
+  editorSizeFollowsA11y: boolean;
   restoreNonces: Record<string, number>;
   versionModalOpen: boolean;
   saveVersionOpen: boolean;
@@ -45,6 +56,9 @@ interface UIState {
   toggleInspector: () => void;
   setInspectorSection: (section: InspectorSection) => void;
   setReadingWidth: (width: ReadingWidth) => void;
+  setEditorFont: (font: EditorFont) => void;
+  setEditorSize: (size: EditorSize) => void;
+  setEditorSizeFollowsA11y: (follow: boolean) => void;
   bumpRestoreNonce: (docId: string) => void;
   setVersionModalOpen: (open: boolean) => void;
   setSaveVersionOpen: (open: boolean) => void;
@@ -77,6 +91,9 @@ type PersistedShape = Pick<
   | 'inspectorMode'
   | 'inspectorSection'
   | 'readingWidth'
+  | 'editorFont'
+  | 'editorSize'
+  | 'editorSizeFollowsA11y'
   | 'diffMode'
 >;
 
@@ -141,6 +158,9 @@ const buildSnapshot = (
   inspectorMode: s.inspectorMode,
   inspectorSection: s.inspectorSection,
   readingWidth: s.readingWidth,
+  editorFont: s.editorFont,
+  editorSize: s.editorSize,
+  editorSizeFollowsA11y: s.editorSizeFollowsA11y,
   diffMode: s.diffMode,
   ...overrides,
 });
@@ -167,6 +187,16 @@ const initialState = () => ({
   inspectorMode: sanitizeInspectorMode(persisted.inspectorMode),
   inspectorSection: sanitizeInspectorSection(persisted.inspectorSection),
   readingWidth: sanitizeReadingWidth(persisted.readingWidth),
+  editorFont: persisted.editorFont
+    ? sanitizeEditorFont(persisted.editorFont)
+    : DEFAULT_EDITOR_FONT,
+  editorSize: persisted.editorSize
+    ? sanitizeEditorSize(persisted.editorSize)
+    : DEFAULT_EDITOR_SIZE,
+  editorSizeFollowsA11y:
+    typeof persisted.editorSizeFollowsA11y === 'boolean'
+      ? persisted.editorSizeFollowsA11y
+      : true,
   restoreNonces: {},
   versionModalOpen: false,
   saveVersionOpen: false,
@@ -256,6 +286,18 @@ const createInspectorActions = (
   setReadingWidth: (readingWidth: ReadingWidth) => {
     set({ readingWidth });
     persist(snapshot({ readingWidth }));
+  },
+  setEditorFont: (editorFont: EditorFont) => {
+    set({ editorFont });
+    persist(snapshot({ editorFont }));
+  },
+  setEditorSize: (editorSize: EditorSize) => {
+    set({ editorSize });
+    persist(snapshot({ editorSize }));
+  },
+  setEditorSizeFollowsA11y: (editorSizeFollowsA11y: boolean) => {
+    set({ editorSizeFollowsA11y });
+    persist(snapshot({ editorSizeFollowsA11y }));
   },
   setDiffMode: (diffMode: DiffMode) => {
     set({ diffMode });

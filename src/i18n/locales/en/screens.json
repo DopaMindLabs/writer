@@ -326,7 +326,7 @@
     },
     "typography": {
       "title": "Typography",
-      "subtitle": "Defaults across all worlds. Individual worlds may override.",
+      "subtitle": "Defaults for the editor body across all documents. Individual documents can override these from the document inspector.",
       "comingSoonBody": "Pick the prose font, UI font, default reading size, line height, and measure for new worlds.",
       "proseFontLabel": "Prose font",
       "uiFontLabel": "UI font",
@@ -335,7 +335,32 @@
       "lineHeightLabel": "Line height",
       "measureLabel": "Measure",
       "measureHint": "Maximum line width.",
-      "measureValue": "64 ch · ~620 px"
+      "measureValue": "64 ch · ~620 px",
+      "editorFontLabel": "Editor typeface",
+      "editorFontHint": "The font used for the editor body. Headings and the rest of the interface are unaffected.",
+      "editorFontOptions": {
+        "serif": "Serif",
+        "sans": "Sans",
+        "mono": "Monospace"
+      },
+      "editorSizeLabel": "Editor body size",
+      "editorSizeHint": "Size of the editor body text. Affects the editor only.",
+      "editorSizeOptions": {
+        "sm": "Small",
+        "base": "Default",
+        "lg": "Large",
+        "xl": "Extra large"
+      },
+      "previewLabel": "Preview",
+      "previewBody": "The quick brown fox jumps over the lazy dog. Cwm fjord-bank glyphs vext quiz. Pack my box with five dozen liquor jugs.",
+      "perDocLabel": "Editor typography",
+      "perDocHint": "Override the universal default for this document.",
+      "perDocFontLabel": "Typeface",
+      "perDocSizeLabel": "Body size",
+      "perDocUseDefault": "Use default",
+      "perDocInheritedSuffix": "(default)",
+      "followA11yLabel": "Follow Accessibility text size",
+      "followA11yHint": "When on, the editor body also scales with the Accessibility tab's Text size preference. Turn this off to make the editor body size independent of accessibility scaling."
     },
     "shortcuts": {
       "title": "Shortcuts",

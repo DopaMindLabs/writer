@@ -29,6 +29,9 @@ describe('useUI store', () => {
         inspectorMode: 'none',
         inspectorSection: 'outline',
         readingWidth: 'm',
+        editorFont: 'serif',
+        editorSize: 'base',
+        editorSizeFollowsA11y: true,
         diffMode: 'side-by-side',
       },
     );
@@ -71,6 +74,9 @@ describe('useUI store', () => {
         inspectorMode: 'none',
         inspectorSection: 'outline',
         readingWidth: 'm',
+        editorFont: 'serif',
+        editorSize: 'base',
+        editorSizeFollowsA11y: true,
         diffMode: 'side-by-side',
       },
     );
@@ -99,6 +105,9 @@ describe('useUI store', () => {
         inspectorMode: 'expanded',
         inspectorSection: 'history',
         readingWidth: 'l',
+        editorFont: 'sans',
+        editorSize: 'lg',
+        editorSizeFollowsA11y: false,
         diffMode: 'inline',
       }),
     );
@@ -112,6 +121,9 @@ describe('useUI store', () => {
     expect(s.inspectorMode).toBe('expanded');
     expect(s.inspectorSection).toBe('history');
     expect(s.readingWidth).toBe('l');
+    expect(s.editorFont).toBe('sans');
+    expect(s.editorSize).toBe('lg');
+    expect(s.editorSizeFollowsA11y).toBe(false);
     expect(s.diffMode).toBe('inline');
   });
 
@@ -123,6 +135,9 @@ describe('useUI store', () => {
         inspectorSection: 42,
         readingWidth: 'XL',
         splitDividerPct: Number.POSITIVE_INFINITY,
+        editorFont: 'comic-sans',
+        editorSize: 'massive',
+        editorSizeFollowsA11y: 'yes',
         diffMode: 'nonsense',
       }),
     );
@@ -133,7 +148,43 @@ describe('useUI store', () => {
     expect(s.inspectorSection).toBe('outline');
     expect(s.readingWidth).toBe('m');
     expect(s.splitDividerPct).toBe(50);
+    expect(s.editorFont).toBe('serif');
+    expect(s.editorSize).toBe('base');
+    expect(s.editorSizeFollowsA11y).toBe(true);
     expect(s.diffMode).toBe('side-by-side');
+  });
+
+  it('editorFont and editorSize default to serif and base', () => {
+    expect(useUI.getState().editorFont).toBe('serif');
+    expect(useUI.getState().editorSize).toBe('base');
+  });
+
+  it('editorSizeFollowsA11y defaults to true', () => {
+    expect(useUI.getState().editorSizeFollowsA11y).toBe(true);
+  });
+
+  it('setEditorSizeFollowsA11y updates state and persists', () => {
+    act(() => { useUI.getState().setEditorSizeFollowsA11y(false); });
+    expect(useUI.getState().editorSizeFollowsA11y).toBe(false);
+    expect(
+      JSON.parse(window.localStorage.getItem('lorem-ui') ?? '{}').editorSizeFollowsA11y,
+    ).toBe(false);
+  });
+
+  it('setEditorFont updates state and persists', () => {
+    act(() => { useUI.getState().setEditorFont('sans'); });
+    expect(useUI.getState().editorFont).toBe('sans');
+    expect(
+      JSON.parse(window.localStorage.getItem('lorem-ui') ?? '{}').editorFont,
+    ).toBe('sans');
+  });
+
+  it('setEditorSize updates state and persists', () => {
+    act(() => { useUI.getState().setEditorSize('xl'); });
+    expect(useUI.getState().editorSize).toBe('xl');
+    expect(
+      JSON.parse(window.localStorage.getItem('lorem-ui') ?? '{}').editorSize,
+    ).toBe('xl');
   });
 
   it('setDiffMode updates state and persists', () => {

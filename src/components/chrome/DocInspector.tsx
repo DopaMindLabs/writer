@@ -22,6 +22,7 @@ import { lexicalJsonToOutline, type OutlineEntry } from '@/lib/docInspector/outl
 import { resolveStatus } from '@/lib/docInspector/status';
 import type { InspectorToggleKey } from '@/lib/docInspector/features';
 import { ComingSoon } from '@/components/settings/ComingSoon';
+import { EditorTypographyControl } from '@/components/docInspector/EditorTypographyControl';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
@@ -464,6 +465,7 @@ const InfoPane = ({ docId, readOnly }: { docId: string; readOnly: boolean }) => 
         value={sectionName}
       />
       <InfoFields doc={doc} eff={eff} readOnly={readOnly} />
+      <EditorTypographyControl doc={doc} readOnly={readOnly} />
     </div>
   );
 };
