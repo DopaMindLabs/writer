@@ -3,7 +3,7 @@
 **Status:** implementation plan  
 **Prepared against:** `DopaMindLabs/writer` → `feat/collaborative-editing` at `9a94c59`  
 **Date:** 23 July 2026  
-**Delivery model:** Stage 1 completes the provider-neutral foundation. Stage 2 ships same-user, QR-paired P2P as Writer’s configured default. Multi-user collaboration remains a later stage.
+**Delivery model:** Stage 1 completes the provider-neutral foundation. Stage 2A ships same-user, serverless QR-paired P2P over the same local network as Writer’s configured default. Stage 2B later adds internet rendezvous and relay support. Multi-user collaboration remains a later stage.
 
 ---
 
@@ -29,9 +29,19 @@ The reusable boundary should become one package:
 └── /adapters/yjs
 ```
 
-Writer-specific React integration, UI, Dexie row materialisation and access to Writer’s tables stay in the Writer app. The Dexie Cloud adapter should remain in the app until it no longer depends on Writer’s concrete database and cloud-account flows; it can then move behind an additional package export without changing the core API.
+The similar directory names must not represent parallel engines:
 
-Do not create a separate repository yet. Establish the package inside the Writer repository, exercise it against the real app, and publish or extract it only after Stage 2 stabilises its public contracts.
+| Path | Responsibility |
+|---|---|
+| `packages/writer-sync/` | The reusable, framework-neutral Writer Sync engine. The kebab-case name matches the npm package `@dopamind/writer-sync`. |
+| `src/lib/writerSync` | The current Writer-specific composition and React integration. It is temporary and must be renamed or split during extraction. |
+| `src/lib/syncProviders` | The current provider-neutral contracts. They move into `packages/writer-sync`; this directory must not survive as a second core. |
+
+Stage 1 must finish with `packages/writer-sync/` for reusable logic and `src/lib/writerSyncIntegration/` (plus ordinary hooks/contexts where appropriate) for Writer-specific configuration, startup and React wiring. After the move, neither `src/lib/writerSync` nor `src/lib/syncProviders` may retain duplicate general sync logic.
+
+Writer-specific UI, Dexie row materialisation and access to Writer’s tables stay in the Writer app. The Dexie Cloud adapter should remain in the app until it no longer depends on Writer’s concrete database and cloud-account flows; it can then move behind an additional package export without changing the core API.
+
+Do not create a separate repository yet. Establish the package inside the Writer repository, exercise it against the real app, and publish or extract it only after Stage 2A stabilises its public contracts.
 
 ---
 
@@ -56,21 +66,21 @@ Another repository should be able to provide:
 
 Public npm release can wait. The boundary cannot.
 
-Stage 1 should first make the existing in-app modules obey the intended dependency direction and contract tests. Once those tests pass, move the pure modules into the workspace package without changing behaviour. Stage 2 should then build the P2P implementation against the package, preventing it from becoming inseparable from Writer.
+Stage 1 should first make the existing in-app modules obey the intended dependency direction and contract tests. Once those tests pass, move the pure modules into the workspace package without changing behaviour. Stage 2A should then build the P2P implementation against the package, preventing it from becoming inseparable from Writer.
 
 ### 2.3 Do we need Signal?
 
-Not for Stage 2.
+Not for Stage 2A.
 
-Signal Protocol solves asynchronous, pairwise secure messaging using identity keys, pre-keys and a Double Ratchet. It does not discover peers, exchange WebRTC offers and answers, traverse NATs, or synchronise application records. Adding it would not remove the need for WebRTC signalling, STUN/TURN, a sync protocol, a key vault, operation deduplication or CRDT integration.
+Signal Protocol solves asynchronous, pairwise secure messaging using identity keys, pre-keys and a Double Ratchet. It does not discover peers, exchange WebRTC offers and answers, synchronise Writer records or integrate Yjs. Adding it would not remove the need for a pairing protocol, device trust, a key vault, operation deduplication or CRDT integration.
 
-Stage 2 needs:
+Stage 2A needs:
 
-- QR as a trust-bootstrap and pairing method;
-- a small, content-blind signalling channel to exchange WebRTC offer/answer and ICE data;
-- WebRTC data channels for peer transport;
+- QR as the trust-bootstrap and serverless signalling method;
+- a two-way QR offer/answer exchange containing complete WebRTC session descriptions and gathered local ICE candidates;
+- WebRTC data channels for direct transport between devices on the same reachable LAN;
 - Writer Sync application-layer encryption and signed device identity;
-- a provider-neutral operation protocol for durable catch-up;
+- a provider-neutral operation protocol for catch-up;
 - the existing Yjs protocol for live document collaboration.
 
 WebRTC data channels are already protected by DTLS, but application-layer encryption remains required so security does not depend on the selected transport and the same operation format can later cross a relay or durable provider.
@@ -81,20 +91,31 @@ Re-evaluate Signal or MLS only when the product enters cross-user collaboration:
 - consider Messaging Layer Security for larger changing groups;
 - do not design either into the same-user P2P release speculatively.
 
-### 2.4 Is a server still required?
+### 2.4 Is a server required?
 
-For a smooth one-scan QR flow over the internet, yes, but only for rendezvous and possibly TURN relay.
+No—not for Stage 2A.
 
-WebRTC does not define a signalling transport. The two browsers must exchange offers, answers and ICE candidates somehow. A two-way offline QR exchange can replace a signalling server, but it requires Device B to show an answer QR that Device A scans. Writer’s default one-scan flow should use an expiring, content-blind signalling session.
+WebRTC requires offer, answer and ICE information to be exchanged, but it does not require that exchange to use a server. In the browser-only first release, QR itself is the signalling channel:
 
-The signalling service must not receive:
+1. Device A gathers local candidates and displays an offer QR.
+2. Device B scans the offer, creates an answer and displays an answer QR.
+3. Device A scans the answer.
+4. The peers authenticate the transcript and open a direct WebRTC data channel over the local network.
 
-- account or scope content keys;
-- passphrases or recovery codes;
-- decrypted operations;
-- document titles, bodies or other content.
+This is a two-scan flow. A pure browser cannot reliably expose a temporary inbound TCP/UDP endpoint, so one scan cannot also return Device B’s answer without another channel. A future Electron, Tauri or native host may provide a one-scan local rendezvous adapter, but that must remain an interchangeable adapter rather than a core assumption.
 
-TURN may be required when a direct route cannot be established. TURN relays WebRTC packets; it does not need the application plaintext.
+Stage 2A deliberately requires:
+
+- both devices to be active at the same time;
+- both devices to be on the same reachable Wi-Fi/LAN or personal hotspot;
+- no hosted signalling service;
+- no STUN service;
+- no TURN relay;
+- explicit failure guidance for guest Wi-Fi or client isolation.
+
+Bluetooth is not the browser baseline. A future native adapter may use Bluetooth for discovery or pairing and then switch bulk transfer to local Wi-Fi; it must not be assumed by the P2P core.
+
+Stage 2B is the later internet release. It may add content-blind hosted signalling for a one-scan flow, STUN for NAT discovery and TURN as a ciphertext relay when direct connectivity fails. Those services implement existing ports; they do not change the Writer Sync operation, trust or encryption model.
 
 ---
 
@@ -123,7 +144,7 @@ TURN may be required when a direct route cannot be established. TURN relays WebR
 
 - P2P networking;
 - QR UI or camera access;
-- a signalling service;
+- a hosted signalling service;
 - STUN/TURN deployment;
 - multi-user invitations;
 - cross-user key delivery;
@@ -132,29 +153,43 @@ TURN may be required when a direct route cannot be established. TURN relays WebR
 - secure device revocation through content-key rotation;
 - a Signal/Double Ratchet or MLS implementation.
 
-### Stage 2 includes
+### Stage 2A includes
 
 - same-user device identity and trust records;
-- QR pairing as Writer’s default pairing method;
-- a content-blind signalling adapter and Writer signalling service;
-- WebRTC peer sessions with STUN/TURN;
+- two-way QR pairing and signalling as Writer’s default local pairing method;
+- same-Wi-Fi/LAN WebRTC peer sessions with no hosted infrastructure;
 - a P2P `SyncProvider`;
-- initial full-scope transfer and incremental catch-up;
+- initial full-scope transfer and incremental catch-up while both peers are active;
+- authenticated two-way QR reconnection for later browser sessions, without repeating key transfer;
 - live Yjs updates and presence over the peer session;
 - spaces, sections, documents, notes, attachments, annotations, citations, connections, revisions and palettes;
 - deletion tombstones;
 - deduplication when P2P and Dexie Cloud both deliver a change;
 - device-list, pairing and removal UI;
-- two-browser-context, real-device and adverse-network verification.
+- two-browser-context, same-LAN and real-device verification;
+- clear detection and explanation of network/client-isolation failure.
 
-### Stage 2 does not include
+### Stage 2A does not include
 
 - sharing content with another person;
 - server-authoritative RBAC;
 - a guarantee that removing a device erases data it already downloaded;
 - offline delivery while every peer is offline and no durable provider is enabled;
-- Bluetooth implementation;
+- hosted signalling, STUN or TURN;
+- automatic browser peer discovery or background reconnection after both pages close;
+- cross-network or internet pairing;
+- browser-to-browser Bluetooth;
 - arbitrary relay storage of content.
+
+### Stage 2B later adds
+
+- a content-blind hosted signalling adapter for internet rendezvous and a smoother one-scan flow;
+- STUN configuration for NAT discovery;
+- TURN fallback that relays only encrypted WebRTC/application traffic;
+- reconnection across network changes;
+- the operating, abuse-control, retention and cost decisions required by those services.
+
+Stage 2B must reuse the Stage 2A ports. It must not make hosted infrastructure, QR, WebRTC or any single provider an architectural default.
 
 ---
 
@@ -164,7 +199,9 @@ TURN may be required when a direct route cannot be established. TURN relays WebR
 |---|---|---|
 | Provider vocabulary | `src/lib/syncProviders/types.ts` defines optional capabilities | `EncryptedFrameSync` is implemented by Dexie row replication, not a common frame protocol |
 | Coordinator | Registers several providers and starts every `frameSync` provider | Binding and UI capability resolution use first-provider-wins semantics |
-| Writer composition | `createWriterSyncCoordinator.ts` is a concrete composition root | Dexie Cloud is hard-coded as the default inside the factory rather than supplied by application configuration |
+| Writer composition | `src/lib/writerSync` contains the concrete composition root and React context | The name is easily confused with the planned package; it must become an integration-only layer and must not retain reusable engine code |
+| Reusable core location | `src/lib/syncProviders` contains provider-neutral contracts | The contracts are not yet an independently buildable package; extraction must move rather than copy them |
+| Default configuration | `createWriterSyncCoordinator.ts` supplies Dexie Cloud by default | Application configuration must choose defaults; the reusable core chooses none |
 | Dexie adapter | Maps status and escrow vocabulary | Does not expose the dormant access-control implementation; remains coupled to cloud-specific key delivery |
 | Access scopes | `AccessScopeId` exists as a type | Replicable entities do not carry it; provider bindings are not persisted; `realmId` is in domain row interfaces |
 | Audit | Local profile has `authorId` | Replicable rows do not consistently carry `createdBy` and `updatedBy` |
@@ -190,16 +227,16 @@ flowchart TD
     D --> E["P2P provider"]
     D --> F["Dexie Cloud adapter"]
     D --> G["Future provider"]
-    E --> H["WebRTC peer session"]
-    H --> I["Yjs document transport"]
-    F --> J["Dexie realms and account sync"]
+    E --> H["QR signalling adapter"]
+    H --> I["Same-LAN WebRTC session"]
+    I --> J["Yjs document transport"]
 ```
 
 The application creates and encrypts one logical operation. Providers transport that same frame independently. The receiver records the operation ID before materialising it, so receiving it through P2P and Dexie cannot apply it twice.
 
-Yjs remains authoritative for concurrent live document edits. The generic operation journal carries materialised document snapshots and every non-document entity. On reconnect, Yjs state-vector exchange catches up document CRDT state; the operation protocol catches up the rest of the scope.
+QR is one `PairingMethod` and one serverless `SignallingAdapter`; WebRTC is one transport used by the P2P `SyncProvider`. Writer selects them in configuration. The package does not privilege them, and Stage 2B can add a hosted signalling adapter without changing the P2P provider’s core contracts.
 
----
+Yjs remains authoritative for concurrent live document edits. The generic operation journal carries materialised document snapshots and every non-document entity. On reconnect, Yjs state-vector exchange catches up document CRDT state; the operation protocol catches up the rest of the scope.
 
 ## 6. Canonical terminology
 
@@ -214,6 +251,7 @@ Use these terms consistently in code and documentation:
 | `DeviceId` | A cryptographic device identity, separate from the principal |
 | `SyncProviderBinding` | Mapping from one logical scope to one provider instance |
 | `PairingMethod` | Interchangeable trust-bootstrap method such as QR |
+| `SignallingAdapter` | Interchangeable offer/answer exchange; QR is the Stage 2A implementation and a hosted rendezvous may be added in Stage 2B |
 | `OperationId` | Globally unique id used for idempotence across providers |
 | `SyncOperation` | Versioned logical mutation before wire encoding |
 | `EncryptedSyncFrame` | Encrypted and authenticated wire representation of an operation |
@@ -283,7 +321,7 @@ Make the public API accurately support zero, one or many providers without choos
 4. `src/lib/writerSync/createWriterSyncCoordinator.ts`
    - Accept a complete Writer configuration.
    - Move Writer’s default choice to a new `writerSyncConfiguration.ts`.
-   - During Stage 1, preserve current behaviour by configuring Dexie Cloud as Writer’s default. Stage 2 changes Writer’s default to P2P.
+   - During Stage 1, preserve current behaviour by configuring Dexie Cloud as Writer’s default. Stage 2A changes Writer’s default to P2P.
 
 5. `src/lib/writerSync/startWriterSync.ts`
    - Start all enabled session-level capabilities.
@@ -727,7 +765,7 @@ Retain the current cloud beta while preventing Dexie terminology and behaviour f
 - encrypted operation frames in the Dexie mutation queue and on the wire;
 - keyless write lock;
 - device refresh no-write invariant;
-- materialised `docs.body` recovery until Stage 2 provides a live CRDT route.
+- materialised `docs.body` recovery until Stage 2A provides a live CRDT route.
 
 Because this is greenfield, do not add a dual path that indefinitely syncs both materialised rows and operation frames. Tests may reset beta data. The completed Stage 1 architecture should have providers exchanging the common operation frame while Writer owns materialised rows.
 
@@ -746,6 +784,22 @@ Because this is greenfield, do not add a dual path that indefinitely syncs both 
 ### Goal
 
 Move only proven pure modules into a package without changing behaviour.
+
+### Naming and ownership migration
+
+The migration is a move, not the creation of a second implementation:
+
+| Before Slice 1G | After Slice 1G |
+|---|---|
+| `src/lib/syncProviders/**` | Move provider-neutral contracts, coordinator and tests into `packages/writer-sync/src/core/**`. Remove the old directory after imports are updated. |
+| Reusable code temporarily developed under `src/lib/writerSync/{entityMetadata,crypto,operations}/**` | Move it into the matching package subpaths. Do not leave forwarding copies. |
+| `src/lib/writerSync/writerTablePolicy.ts` and `src/lib/writerSync/materialization/**` | Move to `src/lib/writerSyncIntegration/`; these depend on Writer’s concrete tables and repositories. |
+| `src/lib/writerSync/createWriterSyncCoordinator.ts` | Move to `src/lib/writerSyncIntegration/createWriterSyncCoordinator.ts`. |
+| `src/lib/writerSync/startWriterSync.ts` | Move to `src/lib/writerSyncIntegration/startWriterSync.ts`. |
+| `src/lib/writerSync/writerSyncConfiguration.ts` | Move to `src/lib/writerSyncIntegration/writerSyncConfiguration.ts`. |
+| `src/lib/writerSync/syncCoordinatorContext.ts` and `WriterSyncProvider.tsx` | Keep as Writer React integration, either under `src/lib/writerSyncIntegration/` or split into ordinary context/hook modules in the same commit. |
+
+The end state has one reusable engine and one application integration layer. The application layer may import package public exports; the package must never import Writer integration.
 
 ### Workspace changes
 
@@ -792,8 +846,9 @@ Do not export unfinished internal files through a wildcard.
 
 ### Keep in Writer
 
+- `src/lib/writerSyncIntegration/` for composition, startup and Writer configuration;
 - React context/hooks and settings UI;
-- `writerSyncConfiguration.ts`;
+- `src/lib/writerSyncIntegration/writerSyncConfiguration.ts`;
 - Writer schema/table policy;
 - Dexie database implementations;
 - cloud account UI and escrow reconciliation;
@@ -808,13 +863,15 @@ Do not export unfinished internal files through a wildcard.
 - explicit public exports;
 - API Extractor or TypeScript declaration check;
 - package can be built and tested independently;
-- a small fixture consumer outside Writer imports the public subpaths.
+- a small fixture consumer outside Writer imports the public subpaths;
+- no reusable implementation remains under `src/lib/writerSync` or `src/lib/syncProviders`;
+- no import path uses `writer-sync` and `writerSync` as interchangeable names.
 
 ### Extraction criterion
 
 Do not create a separate repository or publish `1.0.0`. Keep the package private or `0.x` until:
 
-- Stage 2 passes;
+- Stage 2A passes;
 - a second small consumer proves the ports are sufficient;
 - security review accepts the protocol;
 - public API changes no longer occur in every slice.
@@ -862,31 +919,34 @@ Stage 1 is complete only when all of the following are true:
 - [ ] Dexie Cloud transports the same encrypted operation frames used by other providers, not a separate logical mutation.
 - [ ] Dexie Cloud still passes its existing encryption, keyless, recovery and real-device tests.
 - [ ] The reusable package builds independently and Writer consumes only its public exports.
+- [ ] `src/lib/writerSync` and `src/lib/syncProviders` no longer contain a parallel reusable engine; Writer-only wiring is clearly named `writerSyncIntegration` or placed in ordinary hooks/contexts.
 - [ ] Architecture, technical specification and cloud design note match the implementation.
 
 ---
 
-# Stage 2 — Ship QR-paired P2P
+# Stage 2A — Ship serverless same-Wi-Fi QR-paired P2P
 
-## 17. Stage 2 product contract
+## 17. Stage 2A product contract
 
-Stage 2 pairs two devices belonging to the same principal.
+Stage 2A pairs two devices belonging to the same principal with no internet service operated by Writer.
 
 Default Writer flow:
 
-1. Device A opens **Pair another device** and displays a short-lived QR code.
-2. Device B scans the QR code.
-3. Both devices establish an authenticated pairing session.
-4. Device A asks the user to confirm the named device.
-5. Device A wraps the account bootstrap material for Device B.
-6. The devices exchange scope manifests and missing operations.
-7. Open documents additionally exchange Yjs state vectors and updates.
-8. The trusted-device record permits later reconnection.
-9. Dexie Cloud may remain enabled independently.
+1. Device A opens **Pair another device**, gathers a local WebRTC offer and displays a short-lived offer QR.
+2. Device B scans the offer QR and validates its version, expiry and initiator identity material.
+3. Device B gathers a WebRTC answer and displays a short-lived answer QR.
+4. Device A scans the answer QR.
+5. Both devices authenticate the complete offer/answer transcript and establish a direct same-LAN WebRTC session.
+6. Device A asks the user to confirm the named device.
+7. Device A wraps the account bootstrap material for Device B.
+8. The devices exchange scope manifests and missing operations.
+9. Open documents additionally exchange Yjs state vectors and updates.
+10. The trusted-device record preserves identity and trust for future sessions.
+11. Dexie Cloud may remain enabled independently.
 
-The QR payload must never contain a passphrase, recovery code, account root or content key.
+The QR payload must never contain a passphrase, recovery code, account root or content key. A trusted-device record does not make an offline peer reachable, preserve a WebRTC connection after both pages close or imply background delivery. In the browser-only Stage 2A release, a later session requires another two-way QR offer/answer exchange; it authenticates against the existing trusted-device record and does not repeat account-key transfer.
 
-## 18. Slice 2A — Write the threat model and protocol specification
+## 18. Slice 2A.1 — Write the threat model and protocol specification
 
 Before adding a dependency or UI, add:
 
@@ -901,8 +961,8 @@ Threats to cover:
 
 - QR copied or photographed by an attacker;
 - expired/replayed pairing session;
-- malicious or compromised signalling service;
-- WebRTC MITM through altered offer/answer;
+- forged, altered or substituted offer/answer QR payload;
+- local-network peer impersonation or WebRTC MITM through an altered transcript;
 - untrusted inbound operation;
 - operation replay;
 - wrong-scope frame;
@@ -910,7 +970,7 @@ Threats to cover:
 - compromised trusted device;
 - removed device reconnecting;
 - XSS using keys in the browser;
-- traffic metadata visible to signalling, STUN or TURN;
+- local-network metadata exposure in Stage 2A and signalling/STUN/TURN metadata exposure reserved for the Stage 2B threat model;
 - denial of service through message flood or reconnection loop.
 
 Protocol specification must define:
@@ -931,7 +991,7 @@ Protocol specification must define:
 
 Do not merge a cryptographic protocol described only by TypeScript implementation.
 
-## 19. Slice 2B — Device identity and trust registry
+## 19. Slice 2A.2 — Device identity and trust registry
 
 ### Package work
 
@@ -978,7 +1038,7 @@ Do not store user agents or unnecessary fingerprinting data.
 
 ### Removal semantics
 
-Stage 2 removal:
+Stage 2A removal:
 
 - blocks new authenticated sessions from that device;
 - stops new key delivery;
@@ -988,7 +1048,7 @@ Stage 2 removal:
 
 State this clearly in UI and help content.
 
-## 20. Slice 2C — Pairing state machine and QR codec
+## 20. Slice 2A.3 — Pairing state machine and QR codec
 
 ### Package contracts
 
@@ -1018,12 +1078,13 @@ Include only:
 - session ID;
 - initiator device ID and public identity material;
 - ephemeral pairing public key;
-- signalling rendezvous locator;
+- payload kind (`offer` or `answer`);
+- complete gathered WebRTC session description for that role;
 - expiry;
 - random nonce;
 - integrity/signature data.
 
-Use a compact, versioned encoding with a strict maximum size. Reject unknown mandatory fields and malformed base encodings.
+Use a compact, versioned encoding with a strict maximum size. Reject unknown mandatory fields and malformed base encodings. The QR dependency ADR must measure real offer/answer payload sizes across the supported browsers. If a payload does not fit one code at the chosen error-correction level, use a bounded, ordered multi-QR sequence or the file/copy fallback; never truncate SDP or silently lower validation.
 
 ### Writer UI dependencies
 
@@ -1035,42 +1096,46 @@ Evaluate, then record an ADR for:
 
 Adding dependencies is a repository stop-and-review point. Prefer small, actively maintained libraries with browser tests, no analytics and compatible licences.
 
-## 21. Slice 2D — Signalling and rendezvous
+## 21. Slice 2A.4 — Serverless QR signalling and local rendezvous
 
 ### Package port
 
 ```ts
 interface SignallingAdapter {
-  createSession(options: CreateSignalSessionOptions): Promise<SignalSession>;
-  joinSession(token: JoinToken): Promise<SignalSession>;
+  createOffer(options: CreateOfferOptions): Promise<SignallingOffer>;
+  acceptOffer(offer: SignallingOffer): Promise<SignallingAnswer>;
+  acceptAnswer(answer: SignallingAnswer): Promise<AuthenticatedPeerParameters>;
 }
 ```
 
-The WebRTC provider must depend on this port, not a Writer URL or WebSocket implementation.
+The WebRTC provider depends on this port, not on a Writer URL, WebSocket, QR library or camera API. Pairing establishes trust; signalling exchanges connection parameters. They may share a UI flow but remain separate contracts.
 
-### Writer default service
+### Writer default: two-way QR
 
-Create a separately deployable, content-blind signalling service:
+Implement `QrSignallingAdapter` as the infrastructure-free Writer default:
 
-- WebSocket or equivalent bidirectional channel;
-- random, unguessable session IDs;
-- short TTL;
-- single initiator and single joiner;
-- bounded message count and size;
-- rate limits;
-- no persistent SDP/ICE logging;
-- no account login required for the short-lived session;
-- no document or key material;
-- automatic deletion on completion/expiry;
-- origin and protocol-version validation.
+1. create the peer connection and wait for ICE gathering to complete;
+2. encode the complete offer as a bounded, expiring QR payload;
+3. scan and strictly validate the offer on Device B;
+4. create the answer and wait for ICE gathering to complete;
+5. encode the complete answer as a second bounded, expiring QR payload;
+6. scan and strictly validate the answer on Device A;
+7. bind both payloads into the authenticated pairing transcript;
+8. open the direct data channel or report a typed local-connectivity failure.
 
-Deployment choice requires an explicit ADR because Writer is currently static. Do not bury a new service inside a Vite module.
+Do not trickle ICE through repeated QR updates. Do not call a hosted endpoint. Do not silently fall back to a public STUN server.
 
-### Offline alternative
+### Reconnection and optional native one-scan adapter
 
-Retain a second signalling adapter design for two-way QR offer/answer exchange. It does not need to ship in the first Stage 2 release, but the default QR pairing API must not prevent it.
+A closed browser session has no listener that a trusted peer can rediscover. The browser Stage 2A reconnect flow therefore repeats the two-way QR offer/answer exchange, verifies both payloads against the stored device identities and skips the original account-key transfer.
 
-## 22. Slice 2E — WebRTC peer session
+An Electron, Tauri or native host may expose a short-lived local rendezvous endpoint or mDNS/Bonjour discovery so Device B can return its answer over the LAN after one scan and trusted peers can reconnect more smoothly. Model this as another `SignallingAdapter` or `PeerDiscoveryAdapter`. It is not required for the browser Stage 2A gate and must not leak host APIs into package core.
+
+### Later hosted adapter
+
+Reserve `HostedSignallingAdapter` for Stage 2B. Its deployment, retention, abuse controls and costs are explicitly outside Stage 2A.
+
+## 22. Slice 2A.5 — WebRTC peer session
 
 ### Package files
 
@@ -1094,8 +1159,9 @@ packages/writer-sync/src/providers/webrtc/
 - reconnect with bounded exponential backoff and jitter;
 - no write-on-settle loop;
 - explicit close and teardown;
-- STUN configuration;
-- TURN fallback;
+- empty `iceServers` by default for the Stage 2A local-only configuration;
+- complete local ICE gathering before QR encoding;
+- typed timeout and client-isolation failure rather than an infinite connecting state;
 - connection state observable;
 - no provider-global singleton peer connection.
 
@@ -1105,12 +1171,13 @@ packages/writer-sync/src/providers/webrtc/
 
 Bind the authenticated pairing transcript to the WebRTC session. DTLS protects transport, while the application frame remains encrypted and device-signed.
 
-## 23. Slice 2F — Implement the P2P `SyncProvider`
+## 23. Slice 2A.6 — Implement the P2P `SyncProvider`
 
 The P2P provider should expose:
 
 - `pairing`;
-- `discovery` or trusted-peer availability;
+- manual trusted-peer session initiation through the configured signalling adapter;
+- `discovery` only when a native or future hosted adapter genuinely provides it;
 - `realtime` transport factory;
 - durable/catch-up operation exchange while a peer session is connected;
 - provider-specific status.
@@ -1134,7 +1201,7 @@ const writerSyncConfiguration = {
 
 Core defaults remain absent.
 
-## 24. Slice 2G — Initial transfer and incremental catch-up
+## 24. Slice 2A.7 — Initial transfer and incremental catch-up
 
 ### Scope negotiation
 
@@ -1174,7 +1241,7 @@ When Dexie and P2P are enabled:
 
 Add an end-to-end test where the same change arrives first by P2P and later by the fake durable provider.
 
-## 25. Slice 2H — Writer UI and application defaults
+## 25. Slice 2A.8 — Writer UI and application defaults
 
 Follow `build-writer-ui`, `docs/design-system.md`, accessibility rules and one-component-per-file.
 
@@ -1186,9 +1253,10 @@ Follow `build-writer-ui`, `docs/design-system.md`, accessibility rules and one-c
   - Dexie Cloud as optional;
   - aggregate status without hiding individual provider failures.
 - Pair-device dialog:
-  - QR display;
-  - scanner;
+  - offer QR display and scanning;
+  - answer QR display and scanning;
   - camera permission handling;
+  - file/image and typed-payload fallback for both directions;
   - expiry countdown;
   - device confirmation;
   - clear progress and error recovery.
@@ -1220,7 +1288,7 @@ Update:
 - `src/help/content/en/your-account.md`;
 - `src/help/content/en/your-data.md`.
 
-## 26. Slice 2I — Verification matrix
+## 26. Slice 2A.9 — Verification matrix
 
 ### Unit and contract
 
@@ -1231,7 +1299,7 @@ Update:
 - signature and wrong-scope rejection;
 - operation deduplication and tombstones;
 - WebRTC multiplexing and backpressure;
-- reconnect policy;
+- reconnect policy within a live session and explicit re-signalling after session loss;
 - materialiser coverage for every table;
 - attachment chunking and resume.
 
@@ -1247,11 +1315,11 @@ Update:
 
 Use two browser contexts, not merely two pages sharing one IndexedDB:
 
-- pair through generated QR payload;
+- pair through generated offer and answer QR payloads with no signalling server;
 - initial data transfer;
 - create/update/delete Space children;
 - simultaneous document editing convergence;
-- offline edit then reconnect;
+- offline edit then reconnect through a fresh authenticated offer/answer QR exchange;
 - large attachment;
 - interrupted transfer resume;
 - remove device and reject reconnect;
@@ -1262,19 +1330,18 @@ Use two browser contexts, not merely two pages sharing one IndexedDB:
 
 At minimum:
 
-- Chromium desktop ↔ Chromium desktop;
-- Safari/iOS ↔ Chromium desktop;
-- Firefox ↔ Chromium desktop;
-- same LAN;
-- different networks;
-- TURN-forced path;
-- laptop sleep/wake;
-- one device offline during edits;
+- Chromium desktop ↔ Chromium desktop on the same Wi-Fi;
+- Safari/iOS ↔ Chromium desktop on the same Wi-Fi;
+- Firefox ↔ Chromium desktop on the same Wi-Fi;
+- personal-hotspot path;
+- guest-network/client-isolation failure with actionable UI;
+- laptop sleep/wake while both peers later return to the same reachable LAN;
+- one device offline during edits, followed by simultaneous local reconnection;
 - Dexie enabled on both;
 - Dexie enabled on only one;
 - no Dexie provider.
 
-Record any unsupported browser combination explicitly. Do not replace this matrix with mocked CI claims.
+Different-network, hosted-signalling and TURN-forced paths belong to Stage 2B and do not block Stage 2A. Record any unsupported browser combination explicitly. Do not replace this matrix with mocked CI claims.
 
 ### Full repository gates
 
@@ -1288,16 +1355,17 @@ npm run test:e2e:coverage
 
 Run focused package tests before the full gates. Keep the existing coverage ratchet.
 
-## 27. Stage 2 completion gate
+## 27. Stage 2A completion gate
 
 - [ ] Writer config selects QR-paired P2P by default; core selects nothing by default.
 - [ ] Pairing QR contains no passphrase, recovery code or content key.
 - [ ] Pairing sessions expire and cannot be replayed.
-- [ ] Signalling cannot decrypt pairing or sync content.
-- [ ] Direct and TURN-relayed WebRTC paths work.
+- [ ] Offer and answer QR signalling completes without any hosted service, STUN or TURN.
+- [ ] Direct same-LAN and personal-hotspot WebRTC paths work.
+- [ ] Client-isolated networks fail with a bounded, actionable error.
 - [ ] Two devices converge every synced table and deletion.
 - [ ] Concurrent document edits converge through Yjs.
-- [ ] Reconnecting devices catch up without a full destructive reset.
+- [ ] A later browser session reconnects through a fresh two-way QR exchange, trusts only the stored device identity and catches up without repeating key transfer or performing a destructive reset.
 - [ ] Duplicate delivery through P2P and Dexie applies once.
 - [ ] Attachments are bounded, hashed, resumable and backpressured.
 - [ ] Removed devices cannot establish new authenticated sessions.
@@ -1308,7 +1376,34 @@ Run focused package tests before the full gates. Keep the existing coverage ratc
 
 ---
 
-## 28. Suggested commit sequence
+## 28. Stage 2B — Internet reachability (later release)
+
+Stage 2B is a separate release and must begin only after Stage 2A is complete. It adds reachability, not a new logical sync model.
+
+Implement through the existing ports:
+
+- `HostedSignallingAdapter` for expiring, content-blind offer/answer and ICE exchange;
+- STUN configuration for public-address discovery;
+- TURN fallback for networks where a direct connection cannot be established;
+- a one-scan QR invitation containing only the hosted rendezvous locator and authenticated ephemeral material;
+- bounded reconnection when devices change networks;
+- provider-specific status that distinguishes signalling, direct-connect and relay failures.
+
+The hosted service must not receive account/scope keys, passphrases, recovery codes, decrypted operations or document metadata. TURN handles WebRTC traffic while Writer operations remain application-encrypted.
+
+Stage 2B has its own threat-model extension, deployment ADR, cost/abuse controls, data-retention policy, cross-network real-device matrix and operational runbook. A durable provider is still required for delivery when devices are not online simultaneously; hosted signalling/TURN alone does not provide offline storage.
+
+Stage 2B completion requires:
+
+- [ ] one-scan internet pairing through the hosted signalling adapter;
+- [ ] direct cross-network connection where NAT permits;
+- [ ] TURN-forced connection where it does not;
+- [ ] no change to core defaults or the encrypted operation format;
+- [ ] documented service ownership, retention, abuse controls, monitoring and cost limits.
+
+---
+
+## 29. Suggested commit sequence
 
 Keep these reviewable and revertible:
 
@@ -1327,29 +1422,37 @@ Keep these reviewable and revertible:
 11. `test(sync): specify idempotent operation convergence`.
 12. `feat(sync): add operation journal and materialiser`.
 13. `refactor(cloud): move realms behind the Dexie adapter`.
-14. `refactor(sync): extract writer-sync workspace package`.
+14. `refactor(sync): extract writer-sync workspace package and rename Writer integration`.
 15. `docs(sync): document provider-neutral foundation`.
 
-### Stage 2
+### Stage 2A
 
-1. `docs(p2p): define threat model and protocols`.
+1. `docs(p2p): define local pairing threat model and protocols`.
 2. `test(p2p): add pairing and frame protocol vectors`.
 3. `feat(p2p): add device identity and trust registry`.
 4. `feat(p2p): add QR pairing state machine`.
-5. `feat(p2p): add signalling adapter`.
-6. `feat(p2p): add WebRTC peer session`.
+5. `feat(p2p): add two-way QR signalling adapter`.
+6. `feat(p2p): add local WebRTC peer session`.
 7. `feat(p2p): add P2P sync provider`.
 8. `feat(p2p): add operation and Yjs catch-up`.
 9. `feat(p2p): add resumable attachment transfer`.
 10. `feat(settings): add device pairing and management`.
-11. `test(p2p): add two-device and adverse-network coverage`.
-12. `docs(p2p): publish user and architecture guidance`.
+11. `test(p2p): add two-device and local-network failure coverage`.
+12. `docs(p2p): publish serverless local-sync guidance`.
+
+### Stage 2B
+
+1. `docs(p2p): extend threat model for internet rendezvous and relay`.
+2. `feat(p2p): add hosted signalling adapter`.
+3. `feat(p2p): add STUN and TURN configuration`.
+4. `test(p2p): add cross-network and TURN-forced coverage`.
+5. `docs(p2p): publish internet connectivity operations runbook`.
 
 If a touched file is non-compliant, insert the required behaviour-free `refactor:` commit immediately before its feature slice rather than accumulating one broad clean-up.
 
 ---
 
-## 29. Stop-and-ask decisions
+## 30. Stop-and-ask decisions
 
 Implementation must stop for explicit review at these points:
 
@@ -1357,20 +1460,22 @@ Implementation must stop for explicit review at these points:
    - Provide the compatibility, maintenance, licence and audit evidence.
 2. **QR encoder/scanner dependency**
    - Provide bundle size, browser support and accessibility fallback.
-3. **Signalling/TURN deployment**
-   - Choose service ownership, cost, retention, abuse controls and production operations.
-4. **Package publication**
+3. **Stage 2B hosted signalling/STUN/TURN deployment**
+   - Choose service ownership, cost, retention, abuse controls and production operations. This stop does not block the serverless Stage 2A release.
+4. **Optional native one-scan local rendezvous**
+   - Review host APIs, platform support and the security boundary before adding Electron, Tauri or native integration.
+5. **Package publication**
    - Decide private workspace-only, prerelease npm package or separate repository.
-5. **Any cross-user scope**
+6. **Any cross-user scope**
    - That triggers per-scope member key wrapping, revocation and group protocol design.
-6. **Any promise of secure remote erasure**
+7. **Any promise of erasure**
    - Impossible for data already downloaded to an offline device.
-7. **Any change to the repository’s schema-version rule**
+8. **Any change to the repository’s schema-version rule**
    - `AGENTS.md` currently requires a new Dexie version when `STORES` changes.
 
 ---
 
-## 30. Handover format for every implementation slice
+## 31. Handover format for every implementation slice
 
 Use the repository handover skill and include:
 
@@ -1389,11 +1494,12 @@ Never report P2P as complete because mocked WebRTC tests pass. Real-browser and 
 
 ---
 
-## 31. External standards and implementation references
+## 32. External standards and implementation references
 
 - [MDN: WebRTC signalling and offer/answer exchange](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling)
 - [MDN: Using WebRTC data channels](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Using_data_channels)
 - [W3C: WebRTC 1.0](https://www.w3.org/TR/webrtc/)
+- [Web Bluetooth specification](https://webbluetoothcg.github.io/web-bluetooth/)
 - [Signal’s official libsignal repository](https://github.com/signalapp/libsignal)
 - [RFC 9420: Messaging Layer Security](https://www.rfc-editor.org/rfc/rfc9420)
 
