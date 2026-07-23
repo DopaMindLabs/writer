@@ -48,8 +48,8 @@ test('the header sign-in action stays within a narrow mobile viewport', async ({
 });
 
 test.describe('release notice banner', () => {
-  // 3 August 2026, 22:00 CEST — mirrored from src/lib/releaseSchedule.ts.
-  const RELEASE_AT = Date.UTC(2026, 7, 3, 20, 0, 0);
+  // 23 August 2026, 22:00 CEST — mirrored from src/lib/releaseSchedule.ts.
+  const RELEASE_AT = Date.UTC(2026, 7, 23, 20, 0, 0);
   const DAY_MS = 24 * 60 * 60 * 1000;
 
   test('counts down the days to the release and urges a local sync or backup', async ({
@@ -59,7 +59,7 @@ test.describe('release notice banner', () => {
     await reseedAndGoHome(page);
     const banner = page.getByTestId('release-notice-banner');
     await expect(banner).toBeVisible();
-    await expect(banner).toContainText(/3 August, 22:00 CEST/);
+    await expect(banner).toContainText(/23 August, 22:00 CEST/);
     await expect(banner).toContainText(/local sync folder or backup/i);
     await expect(page.getByTestId('release-notice-countdown')).toHaveText(
       /16 days remaining/i,
