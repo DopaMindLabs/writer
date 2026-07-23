@@ -16,6 +16,124 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
   </div>
   <div
     class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
+    data-testid="quick-settings-section-writing"
+  >
+    Writing
+  </div>
+  <div
+    class="grid grid-cols-[1fr_auto] items-start gap-3 px-4 py-2.5"
+  >
+    <div
+      class="min-w-0 pt-px"
+    >
+      <div
+        class="text-[12px] font-medium text-ink"
+      >
+        Focus mode
+      </div>
+      <div
+        class="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
+      >
+        <kbd
+          class="font-mono text-[10px] tracking-wide text-ink-4"
+        >
+          Ctrl+\\
+        </kbd>
+      </div>
+    </div>
+    <div
+      class="flex shrink-0 items-center justify-end"
+    >
+      <button
+        aria-checked="false"
+        aria-label="Focus mode"
+        class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-rule bg-paper-2"
+        data-testid="quick-settings-focus-toggle"
+        role="switch"
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+          class="absolute top-[1px] left-[1px] h-3 w-3 rounded-full bg-paper transition-transform translate-x-0"
+        />
+      </button>
+    </div>
+  </div>
+  <div
+    class="grid grid-cols-[1fr_auto] items-start gap-3 px-4 py-2.5 border-b border-rule/60"
+  >
+    <div
+      class="min-w-0 pt-px"
+    >
+      <div
+        class="text-[12px] font-medium text-ink"
+      >
+        Floating toolbar
+      </div>
+    </div>
+    <div
+      class="flex shrink-0 items-center justify-end"
+    >
+      <button
+        aria-checked="false"
+        aria-label="Floating toolbar"
+        class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-rule bg-paper-2"
+        data-testid="quick-settings-floating-toolbar-toggle"
+        role="switch"
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+          class="absolute top-[1px] left-[1px] h-3 w-3 rounded-full bg-paper transition-transform translate-x-0"
+        />
+      </button>
+    </div>
+  </div>
+  <div
+    class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
+    data-testid="quick-settings-section-settings"
+  >
+    Settings
+  </div>
+  <div
+    class="flex items-center gap-3 px-4 py-2.5"
+  >
+    <a
+      class="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
+      data-discover="true"
+      data-testid="quick-settings-full-settings"
+      href="/settings"
+      type="button"
+    >
+      universal settings →
+    </a>
+    <span
+      class="flex-1"
+    />
+    <kbd
+      class="font-mono text-[10px] tracking-wide text-ink-4"
+    >
+      Ctrl+,
+    </kbd>
+  </div>
+  <div
+    class="flex items-center gap-3 px-4 py-2.5"
+  >
+    <a
+      class="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
+      data-discover="true"
+      data-testid="quick-settings-account"
+      href="/settings?tab=account"
+      type="button"
+    >
+      Account
+    </a>
+    <span
+      class="flex-1"
+    />
+  </div>
+  <div
+    class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
     data-testid="quick-settings-section-appearance"
   >
     Appearance
@@ -39,13 +157,10 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
         class="flex flex-wrap gap-1"
       >
         <button
-          aria-describedby="radix-_r_*_"
           aria-label="Light"
           aria-pressed="true"
           class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper px-2 py-0.5 text-[10px]"
-          data-radix-popper-align="center"
-          data-radix-popper-side="bottom"
-          data-state="instant-open"
+          data-state="closed"
           data-testid="quick-settings-theme-light"
           type="button"
         >
@@ -133,118 +248,6 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
         </button>
       </div>
     </div>
-  </div>
-  <div
-    class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
-    data-testid="quick-settings-section-writing"
-  >
-    Writing
-  </div>
-  <div
-    class="grid grid-cols-[1fr_auto] items-start gap-3 px-4 py-2.5"
-  >
-    <div
-      class="min-w-0 pt-px"
-    >
-      <div
-        class="text-[12px] font-medium text-ink"
-      >
-        Focus mode
-      </div>
-      <div
-        class="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-4"
-      >
-        <kbd
-          class="font-mono text-[10px] tracking-wide text-ink-4"
-        >
-          Ctrl+\\
-        </kbd>
-      </div>
-    </div>
-    <div
-      class="flex shrink-0 items-center justify-end"
-    >
-      <button
-        aria-checked="false"
-        aria-label="Focus mode"
-        class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-rule bg-paper-2"
-        data-testid="quick-settings-focus-toggle"
-        role="switch"
-        type="button"
-      >
-        <span
-          aria-hidden="true"
-          class="absolute top-[1px] left-[1px] h-3 w-3 rounded-full bg-paper transition-transform translate-x-0"
-        />
-      </button>
-    </div>
-  </div>
-  <div
-    class="grid grid-cols-[1fr_auto] items-start gap-3 px-4 py-2.5 border-b border-rule/60"
-  >
-    <div
-      class="min-w-0 pt-px"
-    >
-      <div
-        class="text-[12px] font-medium text-ink"
-      >
-        Floating toolbar
-      </div>
-    </div>
-    <div
-      class="flex shrink-0 items-center justify-end"
-    >
-      <button
-        aria-checked="false"
-        aria-label="Floating toolbar"
-        class="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink border-rule bg-paper-2"
-        data-testid="quick-settings-floating-toolbar-toggle"
-        role="switch"
-        type="button"
-      >
-        <span
-          aria-hidden="true"
-          class="absolute top-[1px] left-[1px] h-3 w-3 rounded-full bg-paper transition-transform translate-x-0"
-        />
-      </button>
-    </div>
-  </div>
-  <div
-    class="flex items-center gap-3 px-4 py-2.5"
-  >
-    <a
-      class="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
-      data-discover="true"
-      data-testid="quick-settings-full-settings"
-      href="/settings"
-      type="button"
-    >
-      universal settings →
-    </a>
-    <span
-      class="flex-1"
-    />
-    <kbd
-      class="font-mono text-[10px] tracking-wide text-ink-4"
-    >
-      Ctrl+,
-    </kbd>
-  </div>
-  <div
-    class="flex items-center gap-3 px-4 py-2.5"
-  >
-    <a
-      class="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
-      data-discover="true"
-      data-testid="quick-settings-account"
-      href="/settings?tab=account"
-      type="button"
-    >
-      Account
-    </a>
-    <span
-      class="flex-1"
-    />
   </div>
   <div
     class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
@@ -395,6 +398,27 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     </span>
   </button>
   <div
+    class="flex items-center gap-3 px-4 py-2.5"
+  >
+    <a
+      class="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
+      data-discover="true"
+      data-testid="quick-settings-help"
+      href="/help"
+      type="button"
+    >
+      help center →
+    </a>
+    <span
+      class="flex-1"
+    />
+    <kbd
+      class="font-mono text-[10px] tracking-wide text-ink-4"
+    >
+      Ctrl+?
+    </kbd>
+  </div>
+  <div
     class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
     data-testid="quick-settings-section-more"
   >
@@ -442,30 +466,5 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
   >
     About
   </a>
-  <div
-    class="mt-1 border-t border-rule bg-paper-2"
-  >
-    <div
-      class="flex items-center gap-3 px-4 py-2.5"
-    >
-      <a
-        class="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
-        data-discover="true"
-        data-testid="quick-settings-help"
-        href="/help"
-        type="button"
-      >
-        help center →
-      </a>
-      <span
-        class="flex-1"
-      />
-      <kbd
-        class="font-mono text-[10px] tracking-wide text-ink-4"
-      >
-        Ctrl+?
-      </kbd>
-    </div>
-  </div>
 </div>
 `;

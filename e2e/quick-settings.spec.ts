@@ -85,15 +85,15 @@ test('jumps to the Accessibility settings tab from quick settings', async ({
 test.describe('short viewport', () => {
   test.use({ viewport: { width: 1280, height: 480 } });
 
-  test('keeps the footer links reachable when the window is short', async ({
+  test('keeps the bottom links reachable when the window is short', async ({
     page,
   }) => {
     const { spaceId, docId } = await gotoFirstDoc(page);
     await page.goto(`/#/s/${spaceId}/d/${docId}`);
     await openQuickSettings(page);
-    // The popover scrolls within the available height; the footer link at the
+    // The popover scrolls within the available height; the last link at the
     // bottom stays clickable (Playwright auto-scrolls it into view).
-    await page.getByTestId('quick-settings-full-settings').click();
-    await expect(page).toHaveURL(/#\/settings$/);
+    await page.getByTestId('quick-settings-about').click();
+    await expect(page).toHaveURL(/#\/about$/);
   });
 });

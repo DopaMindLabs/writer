@@ -19,6 +19,7 @@ export const QuickSettingsPopover = () => {
   const isMobile = useMediaQuery('(max-width: 767px)');
   const fullSettings = popoverAppMenuLink('universal-settings');
   const account = popoverAppMenuLink('account');
+  const help = popoverAppMenuLink('help');
 
   return (
     <div
@@ -31,14 +32,6 @@ export const QuickSettingsPopover = () => {
         </div>
       </div>
 
-      <SectionLabel testId="quick-settings-section-appearance">
-        {t('quickSettings.appearanceLabel')}
-      </SectionLabel>
-
-      <ThemeRow />
-
-      <ReadingWidthRow />
-
       <SectionLabel testId="quick-settings-section-writing">
         {t('quickSettings.writingLabel')}
       </SectionLabel>
@@ -46,6 +39,10 @@ export const QuickSettingsPopover = () => {
       <FocusModeRow />
 
       <FloatingToolbarRow />
+
+      <SectionLabel testId="quick-settings-section-settings">
+        {t('quickSettings.settingsLabel')}
+      </SectionLabel>
 
       <QuickLink
         to={fullSettings.href}
@@ -60,7 +57,22 @@ export const QuickSettingsPopover = () => {
         testId={account.testId}
       />
 
+      <SectionLabel testId="quick-settings-section-appearance">
+        {t('quickSettings.appearanceLabel')}
+      </SectionLabel>
+
+      <ThemeRow />
+
+      <ReadingWidthRow />
+
       {!isMobile && <HelpToursSection />}
+
+      <QuickLink
+        to={help.href}
+        label={t(help.labelKey)}
+        kbd={<Kbd keys="mod+?" />}
+        testId={help.testId}
+      />
 
       <MoreSection />
     </div>

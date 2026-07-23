@@ -4,7 +4,6 @@ import { MenuItem } from '@/components/ui/MenuItem';
 import { PopoverClose } from '@/components/ui/popover';
 import { Link } from '@/components/ui/Link';
 import { SectionLabel } from './QuickSettingsSectionLabel';
-import { QuickLinksFooter } from './QuickLinksFooter';
 import { popoverAppMenuLink } from './appMenuLinks';
 
 const PopoverMoreLink = ({ id }: { id: string }) => {
@@ -38,8 +37,6 @@ export const MoreSection = () => {
       <PopoverMoreLink id="accessibility" />
 
       <PopoverMoreLink id="about" />
-
-      <QuickLinksFooter />
     </>
   );
 };
