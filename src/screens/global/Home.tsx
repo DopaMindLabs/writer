@@ -5,7 +5,8 @@ import { BlockQuote } from '@/components/ui/block-quote';
 import { Link } from '@/components/ui/Link';
 import { TypographyH1, TypographyP } from '@/components/ui/typography';
 import { PageNav } from '@/components/chrome/PageNav';
-import { HomeCloudRow } from '@/components/chrome/HomeCloudRow';
+import { HomeCloudSignInButton } from '@/components/chrome/HomeCloudSignInButton';
+import { ReleaseNoticeBanner } from '@/components/chrome/ReleaseNoticeBanner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { routes } from '@/lib/routes';
 import { APP_VERSION_LABEL } from '@/lib/version';
@@ -38,12 +39,13 @@ export const HomeScreen = () => {
 
   return (
     <div className="flex h-full w-full flex-col overflow-auto bg-paper text-ink">
-      <PageNav showBack={false} />
+      <PageNav showBack={false} actions={<HomeCloudSignInButton />} />
       <div
         id="main-content"
         tabIndex={-1}
         className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 py-10 md:px-12 md:py-16"
       >
+        <ReleaseNoticeBanner />
         <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
           {t('home.subtitle')}
         </div>
@@ -96,7 +98,6 @@ const HomeActions = ({
           </span>
         </Link>
       )}
-      <HomeCloudRow />
       <Link
         to={routes.templates()}
         data-testid="home-start-new-space"

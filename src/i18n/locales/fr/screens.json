@@ -12,7 +12,7 @@
     "syncOnTitle": "Synchronisation de dossier activée",
     "syncOnBody": "Ton travail se synchronise vers le dossier « {{folder}} » sur cet appareil.",
     "warningTitle": "Build préliminaire",
-    "warningBody": "Pas de synchronisation des données. Tout vit dans ton navigateur et vider le cache fait perdre ton travail. Tu peux activer la synchronisation vers un dossier local dans Réglages → Sync.",
+    "warningBody": "Pas de synchronisation des données. Tout vit dans ton navigateur et vider le cache fait perdre ton travail. Tu peux activer la synchronisation vers un dossier local dans Réglages → Local Sync.",
     "versionLine": "Version {{version}}"
   },
   "about": {
