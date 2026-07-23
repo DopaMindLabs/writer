@@ -16,13 +16,24 @@ export interface MenuItemProps
   label?: ReactNode;
   /** Leading glyph. Ignored when `danger` is set (danger always shows the ✕ icon). */
   icon?: LucideIcon;
-  /** Trailing shortcut hint (a `Kbd`, or any node). Hidden when `checked`. */
+  /**
+   * Trailing shortcut hint (a `Kbd`, or any node). Hidden when `checked` under
+   * the default trailing check; kept visible when `checkPosition="leading"`.
+   */
   shortcut?: ReactNode;
   /** Destructive item: shows the ✕ icon and is placed under a divider by the caller. */
   danger?: boolean;
   disabled?: boolean;
-  /** Shows a trailing check; the row still reads as a normal item. */
+  /** Shows a check; the row still reads as a normal item. */
   checked?: boolean;
+  /**
+   * Where the check sits. `trailing` (default) replaces the shortcut with a
+   * trailing tick when checked — the on/off menu idiom. `leading` reserves a
+   * fixed gutter so a list of rows aligns whether ticked or not, and keeps the
+   * trailing shortcut visible alongside the tick (e.g. a completed guided tour
+   * that still shows its ⌘? hint).
+   */
+  checkPosition?: 'leading' | 'trailing';
   /**
    * Render the row as the provided child (e.g. a router `Link`) instead of a
    * `<button>`. In this mode the child owns the content — the structured
@@ -44,10 +55,7 @@ const leadingGlyph = (icon: LucideIcon, danger: boolean): ReactNode => (
   </span>
 );
 
-const trailing = (checked: boolean, shortcut: ReactNode): ReactNode => {
-  if (checked) {
-    return <Icon icon={Check} size="xs" className="shrink-0 text-ink" />;
-  }
+const trailingShortcut = (shortcut: ReactNode): ReactNode => {
   if (shortcut === undefined || shortcut === null) return null;
   return (
     <span className="shrink-0 font-mono text-[10px] tracking-wide text-ink-4">
@@ -56,9 +64,36 @@ const trailing = (checked: boolean, shortcut: ReactNode): ReactNode => {
   );
 };
 
+const trailing = (checked: boolean, shortcut: ReactNode): ReactNode => {
+  if (checked) {
+    return <Icon icon={Check} size="xs" className="shrink-0 text-ink" />;
+  }
+  return trailingShortcut(shortcut);
+};
+
+/** A leading tick that always occupies its gutter, so rows align when unticked. */
+const leadingCheck = (checked: boolean): ReactNode => (
+  <span className="flex w-3.5 shrink-0 items-center justify-center">
+    <Icon
+      icon={Check}
+      size="xs"
+      className={cn('text-ink', checked ? 'opacity-100' : 'opacity-0')}
+      aria-hidden
+    />
+  </span>
+);
+
+const leadingSlot = (
+  icon: LucideIcon | undefined,
+  danger: boolean | undefined,
+): ReactNode => {
+  const leadingIcon = danger ? X : icon;
+  return leadingIcon ? leadingGlyph(leadingIcon, danger ?? false) : null;
+};
+
 type StructuredContent = Pick<
   MenuItemProps,
-  'label' | 'icon' | 'danger' | 'checked' | 'shortcut'
+  'label' | 'icon' | 'danger' | 'checked' | 'shortcut' | 'checkPosition'
 >;
 
 const structuredContent = ({
@@ -67,13 +102,14 @@ const structuredContent = ({
   danger,
   checked,
   shortcut,
+  checkPosition = 'trailing',
 }: StructuredContent): ReactNode => {
-  const leadingIcon = danger ? X : icon;
+  const leads = checkPosition === 'leading';
   return (
     <>
-      {leadingIcon && leadingGlyph(leadingIcon, danger ?? false)}
+      {leads ? leadingCheck(checked ?? false) : leadingSlot(icon, danger)}
       <span className="flex-1 truncate">{label}</span>
-      {trailing(checked ?? false, shortcut)}
+      {leads ? trailingShortcut(shortcut) : trailing(checked ?? false, shortcut)}
     </>
   );
 };
@@ -135,6 +171,7 @@ export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(
       danger = false,
       disabled = false,
       checked = false,
+      checkPosition = 'trailing',
       asChild = false,
       className,
       children,
@@ -151,11 +188,12 @@ export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(
         ref={ref}
         {...rest}
         {...interactiveProps({ asChild, disabled, danger, type, tabIndex, onClick })}
+        data-checked={checked || undefined}
         className={cn(menuItemRecipe({ disabled }), className)}
       >
         {asChild
           ? children
-          : structuredContent({ label, icon, danger, checked, shortcut })}
+          : structuredContent({ label, icon, danger, checked, shortcut, checkPosition })}
       </Comp>
     );
   },

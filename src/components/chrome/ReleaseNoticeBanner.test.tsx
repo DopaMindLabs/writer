@@ -10,7 +10,7 @@ describe('ReleaseNoticeBanner', () => {
   it('announces the release date and urges a local sync or backup', () => {
     renderWithProviders(<ReleaseNoticeBanner now={NEXT_RELEASE_AT - 16 * DAY_MS} />);
     const banner = screen.getByTestId('release-notice-banner');
-    expect(banner).toHaveTextContent(/3 August, 22:00 CEST/);
+    expect(banner).toHaveTextContent(/23 August, 22:00 CEST/);
     expect(banner).toHaveTextContent(/local sync folder or backup/i);
   });
 

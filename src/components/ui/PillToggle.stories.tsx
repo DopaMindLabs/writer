@@ -19,6 +19,10 @@ export const On: Story = {
   args: { on: true, label: 'Focus mode', onToggle: () => {} },
 };
 
+export const Medium: Story = {
+  args: { on: true, size: 'md', label: 'Floating toolbar', onToggle: () => {} },
+};
+
 export const Interactive: Story = {
   render: () => {
     const Stateful = () => {

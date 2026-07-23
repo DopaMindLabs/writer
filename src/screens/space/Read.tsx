@@ -7,7 +7,7 @@ import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
 import { DocInspector } from '@/components/chrome/DocInspector';
 import { DocInspectorIcons } from '@/components/chrome/DocInspectorIcons';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
-import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
+import { MobileMoreSheet } from '@/components/chrome/MobileMore';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocument } from '@/hooks/useDocuments';
 import { useUI, type InspectorMode } from '@/store/ui';
