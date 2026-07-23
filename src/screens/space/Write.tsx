@@ -12,7 +12,7 @@ import { DocInspectorIcons } from '@/components/chrome/DocInspectorIcons';
 import { VersionHistoryModal } from '@/components/chrome/VersionHistoryModal';
 import { SaveVersionDialog } from '@/components/chrome/SaveVersionDialog';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
-import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
+import { MobileMoreSheet } from '@/components/chrome/MobileMore';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments, useDocument } from '@/hooks/useDocuments';
 import { useUI, type InspectorMode } from '@/store/ui';

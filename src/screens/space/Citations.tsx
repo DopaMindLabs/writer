@@ -5,7 +5,7 @@ import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { Topbar } from '@/components/chrome/Topbar';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
-import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
+import { MobileMoreSheet } from '@/components/chrome/MobileMore';
 import { useSpace } from '@/hooks/useSpaces';
 import { useUI } from '@/store/ui';
 import { CitationsPane } from '@/components/surfaces/CitationsPane';
