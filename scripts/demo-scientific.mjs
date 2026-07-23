@@ -6,7 +6,7 @@
  * standalone Playwright script, deliberately outside the pass/fail test runner.
  * It drives a real Chromium profile through the research flow — seeded space,
  * drafting in the editor, then the citations workflow (add references, sort,
- * select, inspect) — and writes a `.webm` screencast.
+ * select, and remove an unused source) — and writes a `.webm` screencast.
  *
  * Nothing here asserts. It exists to show the feature working, repeatably.
  *
@@ -32,15 +32,15 @@ const SLOW_MO = Number(arg('slow', process.env.DEMO_SLOW_MO ?? '350'));
 const TYPE_DELAY = Number(arg('type-delay', process.env.DEMO_TYPE_DELAY ?? '22'));
 
 const PARAGRAPHS = [
-  'Differential expression was assessed across the three treatment arms, with counts normalised per sample before testing.',
-  'Genes passing the adjusted significance threshold clustered into two coherent programmes, consistent with the pathway enrichment reported below.',
+  'Differential expression was assessed across the three treatment arms with DESeq2, using moderated estimation of fold change and dispersion (Love et al., 2014).',
+  'Genes passing the adjusted significance threshold clustered into two coherent programmes. The result was compared with an edgeR analysis based on negative-binomial models (Robinson et al., 2010).',
   'The remaining variance tracked batch rather than condition, so batch was retained as a covariate throughout.',
 ];
 
 const CITATIONS = [
-  '@article{love2014deseq2, author={Love, Michael I. and Huber, Wolfgang and Anders, Simon}, title={Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2}, journal={Genome Biology}, year={2014}}',
-  '@article{robinson2010edger, author={Robinson, Mark D. and McCarthy, Davis J. and Smyth, Gordon K.}, title={edgeR: a Bioconductor package for differential expression analysis of digital gene expression data}, journal={Bioinformatics}, year={2010}}',
-  '@article{wolf2018scanpy, author={Wolf, F. Alexander and Angerer, Philipp and Theis, Fabian J.}, title={SCANPY: large-scale single-cell gene expression data analysis}, journal={Genome Biology}, year={2018}}',
+  '@article{love2014deseq2, author={Love, Michael I. and Huber, Wolfgang and Anders, Simon}, title={Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2}, journal={Genome Biology}, year={2014}, volume={15}, pages={550}, doi={10.1186/s13059-014-0550-8}}',
+  '@article{robinson2010edger, author={Robinson, Mark D. and McCarthy, Davis J. and Smyth, Gordon K.}, title={edgeR: a Bioconductor package for differential expression analysis of digital gene expression data}, journal={Bioinformatics}, year={2010}, volume={26}, number={1}, pages={139--140}, doi={10.1093/bioinformatics/btp616}}',
+  '@article{wolf2018scanpy, author={Wolf, F. Alexander and Angerer, Philipp and Theis, Fabian J.}, title={SCANPY: large-scale single-cell gene expression data analysis}, journal={Genome Biology}, year={2018}, volume={19}, pages={15}, doi={10.1186/s13059-017-1382-0}}',
 ];
 
 const settle = (page, ms = 700) => page.waitForTimeout(ms);
@@ -101,10 +101,27 @@ const draft = async (page, spaceId) => {
 
 const addCitation = async (page, bibtex) => {
   await page.getByRole('button', { name: '+ add' }).click();
-  await page.getByTestId('citations-manual-add').waitFor();
+  const form = page.getByTestId('citations-manual-add');
+  await form.waitFor();
   await page.getByTestId('citations-manual-add-input').fill(bibtex);
   await page.getByTestId('citations-manual-add-submit').click();
+  await form.waitFor({ state: 'hidden' });
   await settle(page, 600);
+};
+
+const removeUnusedCitation = async (page) => {
+  const row = page.getByRole('button', {
+    name: 'View citation wolf2018scanpy',
+  });
+  await row.click();
+  const detail = page
+    .locator('[data-testid^="citation-detail-"]')
+    .filter({ hasText: 'SCANPY' });
+  await detail.waitFor();
+  page.once('dialog', (dialog) => void dialog.accept());
+  await detail.locator('[data-testid$="-delete"]').click();
+  await row.waitFor({ state: 'detached' });
+  await settle(page, 700);
 };
 
 const tourCitations = async (page, spaceId) => {
@@ -132,6 +149,8 @@ const tourCitations = async (page, spaceId) => {
     await clear.click();
     await settle(page);
   }
+
+  await removeUnusedCitation(page);
 };
 
 const main = async () => {
@@ -155,7 +174,7 @@ const main = async () => {
     await draft(page, spaceId);
     console.log('  drafted the results section');
     await tourCitations(page, spaceId);
-    console.log('  toured citations');
+    console.log('  added cited sources and removed the unused reference');
     await settle(page, 1000);
   } finally {
     await context.close();

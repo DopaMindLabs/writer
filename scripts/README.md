@@ -9,21 +9,23 @@ Scripted Playwright sessions that drive the real app and write a `.webm`
 screencast to `.demo-tours/` (git-ignored). They assert nothing — they exist to
 show a feature working, repeatably. Same shape as the multi-device harness.
 
-Both need the app running with a DEV build, because they use the `?reseed`
+All tours need the app running with a DEV build, because they use the `?reseed`
 affordance to start from a known state:
 
 ```bash
 npm run dev            # in another terminal
 node scripts/demo-scientific.mjs
 node scripts/demo-fiction.mjs
+node scripts/demo-montresor.mjs
 ```
 
 | Script | Tour |
 |---|---|
-| `demo-scientific.mjs` | Seeded research space → drafts a results section → citations: add references, sort by year, select and clear. |
+| `demo-scientific.mjs` | Seeded research space → drafts a cited results section → adds references, sorts and selects them, then removes an unused source. |
 | `demo-fiction.mjs` | Creates a space from the fiction template → drafts opening scenes → opens Brain Space. |
+| `demo-montresor.mjs` | Creates *The Road Back to Montrésor* → organises twelve chapters → adds Minette and Grandmother Seeli → drafts the closing homecoming passage. |
 
-Options (both):
+Options:
 
 | Flag / env | Default | Effect |
 |---|---|---|
