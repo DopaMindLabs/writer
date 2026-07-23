@@ -2,29 +2,29 @@ import { useTranslation } from 'react-i18next';
 import { StatusGlyph } from '@/components/ui/StatusGlyph';
 import type { StatusKind } from '@/components/ui/statusRole';
 import { assertNever } from '@/lib/invariant';
-import type { CloudSyncPhase } from '@/lib/cloud/cloudClient';
+import { SyncPhase } from '@/lib/syncProviders/types';
 
 export interface CloudSyncStatusRowProps {
-  phase: CloudSyncPhase;
+  phase: SyncPhase;
   message?: string;
 }
 
 /** Map a sync phase to its status glyph kind and copy key (exhaustive). */
-const phaseMeta = (phase: CloudSyncPhase): { kind: StatusKind; key: string } => {
+const phaseMeta = (phase: SyncPhase): { kind: StatusKind; key: string } => {
   switch (phase) {
-    case 'in-sync':
+    case SyncPhase.InSync:
       return { kind: 'success', key: 'inSync' };
-    case 'pushing':
+    case SyncPhase.Pushing:
       return { kind: 'info', key: 'pushing' };
-    case 'pulling':
+    case SyncPhase.Pulling:
       return { kind: 'info', key: 'pulling' };
-    case 'initial':
+    case SyncPhase.Initial:
       return { kind: 'info', key: 'initial' };
-    case 'offline':
+    case SyncPhase.Offline:
       return { kind: 'warning', key: 'offline' };
-    case 'not-in-sync':
+    case SyncPhase.Pending:
       return { kind: 'warning', key: 'notInSync' };
-    case 'error':
+    case SyncPhase.Error:
       return { kind: 'error', key: 'error' };
     default:
       return assertNever(phase);
@@ -45,7 +45,7 @@ export const CloudSyncStatusRow = ({ phase, message }: CloudSyncStatusRowProps) 
         {t('settings.account.cloud.status.label')}
       </span>
       <StatusGlyph kind={kind} mono={false}>
-        {phase === 'error' && message ? `${label}: ${message}` : label}
+        {phase === SyncPhase.Error && message ? `${label}: ${message}` : label}
       </StatusGlyph>
     </div>
   );

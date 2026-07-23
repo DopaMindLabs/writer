@@ -808,7 +808,7 @@ const SectionHeader = ({
           onDoubleClick={rename.beginEdit}
           title={t('sidebar.renameSection')}
           data-testid={`sidebar-section-${sectionId}-label`}
-          className="flex-1 cursor-text truncate text-left"
+          className="flex-1 cursor-text truncate text-left uppercase"
         >
           {label}
         </button>

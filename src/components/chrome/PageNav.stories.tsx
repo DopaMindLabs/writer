@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Button } from '@/components/ui/Button';
 import { PageNav } from './PageNav';
 
 const meta = {
@@ -18,4 +19,15 @@ export const WithoutBack: Story = {
 
 export const CustomBackTarget: Story = {
   args: { backTo: '/s/s1' },
+};
+
+export const WithActions: Story = {
+  args: {
+    showBack: false,
+    actions: (
+      <Button kind="secondary" size="sm">
+        Sign in to sync
+      </Button>
+    ),
+  },
 };

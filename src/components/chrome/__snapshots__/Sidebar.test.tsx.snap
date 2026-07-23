@@ -76,7 +76,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
           data-testid="sidebar-section-sec1-header"
         >
           <button
-            class="flex-1 cursor-text truncate text-left"
+            class="flex-1 cursor-text truncate text-left uppercase"
             data-testid="sidebar-section-sec1-label"
             title="Rename (double-click)"
             type="button"

@@ -6,10 +6,10 @@ import { seedDocCrdt, writeDocBodyBaseline } from '@/lib/docs';
 import { collabStore } from '@/lib/collab/collabStore';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
-import { reconcileDocForMount as realReconcile } from '@/lib/cloud/reconcile';
+import { reconcileDocForMount as realReconcile } from '@/lib/reconcile/reconcileDocForMount';
 
 const reconcileMock = vi.fn(realReconcile);
-vi.mock('@/lib/cloud/cloudClient', () => ({
+vi.mock('@/lib/reconcile', () => ({
   reconcileDocForMount: (docId: string, body: string) => reconcileMock(docId, body),
 }));
 

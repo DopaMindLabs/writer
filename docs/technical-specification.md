@@ -56,7 +56,7 @@
 
 | Path | Screen | Purpose |
 |------|--------|---------|
-| `/` | Home | Landing page. Shows "Continue writing" (most recent space) and "Start a new space". |
+| `/` | Home | Landing page. Shows "Continue writing" (most recent space) and "Start a new space", a pre-release notification (info banner) counting down to the next release (3 August, 22:00 CEST) that urges setting up a local sync folder or backup, and — flag-gated — a "Sign in to sync" button at the top right of the header linking to the account settings tab. |
 | `/about` | About | Creator note, license, source links. |
 | `/settings` | Settings | Global user preferences. |
 | `/new` | Templates | Pick a template and create a new space. |
@@ -357,7 +357,10 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   lossless cross-device merge is a recorded open decision for a future release. A doc is also
   reconciled **before its editor mounts**, so the editor always opens over a CRDT that matches the
   current row body — closing the window where a body pulled while the doc was closed would show
-  stale content. The mounted-editor flush is **awaitable and reports which body it persisted**: if
+  stale content. That mount gate never leaves a document unopenable: if a divergent doc's local
+  provenance marker is missing (so it cannot be proved locally authored) it still opens, taking the
+  current row body and keeping the local side as a recoverable revision, rather than blocking the
+  editor for good. The mounted-editor flush is **awaitable and reports which body it persisted**: if
   the editor holds unsaved local edits the pulled remote body is preserved as a recoverable safety
   revision and the live local text is kept, so neither side is ever silently overwritten. A
   freshly-mounted, never-edited editor is correctly seen as clean — the autosave seeds its baseline
@@ -426,9 +429,19 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   its own — the presence-gated keyless section is the single source of key actions, so a set-up
   can never mint a key that diverges from a not-yet-pulled account escrow, and space creation is
   blocked with the same inline notice while the lock holds. Sign-in is surfaced on
-  the Home page (flag-gated) so it is discoverable before a space exists; the **Quick settings**
+  the Home page (flag-gated) as a button at the top right of the header so it is discoverable
+  before a space exists; the **Quick settings**
   popover always offers a direct **Account** link to the account settings tab (where sign-in and
-  encryption live), regardless of the flag. Opting out is **non-destructive** —
+  encryption live), regardless of the flag. Every sign-in attempt first opens an
+  **evaluation-account acknowledgement** dialog: a red (danger) warning banner states that
+  cloud sync is a demonstration
+  only, the app has no server of its own (local-first, client-side), and that signing in
+  automatically creates a Dexie Cloud evaluation account valid for 3 days after which synced
+  data may be lost. The continue action stays disabled until the acknowledgement checkbox is
+  ticked, the tick is forgotten between openings (every attempt re-acknowledges), and cancel
+  backs out without contacting the network. A second, **optional** checkbox ("I have enabled
+  local device sync and/or backup") invites confirming a local safety net but never gates
+  continue. Opting out is **non-destructive** —
   the cloud schema is sticky so a rebuild never erases local content.
 - **Four-device beta limit.** An account holds at most **four devices** while the beta runs,
   tracked in a synced, deliberately unencrypted `cloudDevices` registry — one row per joined
@@ -461,7 +474,8 @@ mismatch-lock spike), `envelope.test.ts`, `keys.test.ts` (incl. fingerprints),
 `recoveryCode.test.ts`, `setup.test.ts` (incl. adopt/erase, add-only publish, sign-in guard),
 `escrowReconcile.test.ts` (incl. re-arm and the deferred pull-gate), `cloudClient.test.ts`
 (pull-complete + sign-in guard), `buildDb.test.ts`, `reconcile.test.ts` (cross-device
-reconciliation and empty-log healing), `useDocCrdtReady.test.tsx`, `snapshot.test.ts` (the
+reconciliation and empty-log healing), `reconcileDocForMount.test.ts` (the pre-mount gate,
+incl. the missing-baseline fallback), `useDocCrdtReady.test.tsx`, `snapshot.test.ts` (the
 CRDT ⇄ body round-trip), the `src/components/errors/`, `src/components/templates/` (the
 write-lock notice) and `src/components/settings/tabs/cloud/` component tests, and
 `cloud-sync.spec.ts` / `cloud-crdt-recovery.spec.ts` / `templates-form.spec.ts`.

@@ -1,13 +1,8 @@
 import { useMemo } from 'react';
 import { useCloudObservable } from '@/lib/cloud/cloudObservable';
-import {
-  cloudUserInteraction,
-  cloudSyncState,
-  cloudCurrentUser,
-  type SyncState,
-} from '@/lib/cloud/cloudClient';
-import { KeyEscrowPresence } from '@/lib/syncProviders/types';
-import { useSyncCapability } from '@/lib/writerSync/syncCoordinatorContext';
+import { cloudUserInteraction, cloudCurrentUser } from '@/lib/cloud/cloudClient';
+import { useSyncStatus } from '@/lib/writerSync/useSyncStatus';
+import { useEscrowPresence } from '@/lib/writerSync/useEscrowPresence';
 import { InlineBanner } from '@/components/ui/InlineBanner';
 import { useKeyMismatch } from '@/hooks/useKeyMismatch';
 import { useCloudPanelState } from './useCloudPanelState';
@@ -25,11 +20,6 @@ import { CloudSectionDialogs } from './CloudSectionDialogs';
 import { CloudKeyConflictSection } from './CloudKeyConflictSection';
 import { CloudBackupNudge } from './CloudBackupNudge';
 
-const INITIAL_STATE: SyncState = { status: 'not-started', phase: 'initial' };
-const INITIAL_PRESENCE: KeyEscrowPresence = KeyEscrowPresence.Unknown;
-/** Never emits, for when no configured provider delivers keys. */
-const NO_PRESENCE = { subscribe: () => ({ unsubscribe: () => undefined }) };
-
 /**
  * The active cloud-sync panel (rendered only behind both gates). A clean device
  * may sign in before setting a passphrase; a device with unencrypted writing is
@@ -38,14 +28,10 @@ const NO_PRESENCE = { subscribe: () => ({ unsubscribe: () => undefined }) };
  */
 export const CloudSectionPanel = () => {
   const interaction = useCloudObservable(useMemo(cloudUserInteraction, []), undefined);
-  const sync = useCloudObservable(useMemo(cloudSyncState, []), INITIAL_STATE);
+  const sync = useSyncStatus();
   const user = useCloudObservable(useMemo(cloudCurrentUser, []), undefined);
 
-  const keyDelivery = useSyncCapability('keyDelivery');
-  const presence = useCloudObservable(
-    useMemo(() => keyDelivery?.escrowPresence ?? NO_PRESENCE, [keyDelivery]),
-    INITIAL_PRESENCE,
-  );
+  const presence = useEscrowPresence();
   const panel = useCloudPanelState();
   const mismatch = useKeyMismatch();
   const flags = useCloudPanelFlags(user, panel.hasKey, presence);
@@ -92,6 +78,7 @@ export const CloudSectionPanel = () => {
         recoveryCode={panel.recoveryCode}
         setRecoveryCode={panel.setRecoveryCode}
         onKeyAcquired={panel.onKeyAcquired}
+        onSignInConfirmed={panel.onSignInConfirmed}
         interaction={interaction ?? null}
       />
     </section>
