@@ -41,8 +41,9 @@ const toSyncPhase = (phase: SyncState['phase']): SyncPhase => {
     case 'not-in-sync':
       return SyncPhase.Pending;
     case 'pushing':
+      return SyncPhase.Pushing;
     case 'pulling':
-      return SyncPhase.Syncing;
+      return SyncPhase.Pulling;
     case 'in-sync':
       return SyncPhase.InSync;
     case 'offline':

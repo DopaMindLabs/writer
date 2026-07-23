@@ -354,7 +354,10 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   lossless cross-device merge is a recorded open decision for a future release. A doc is also
   reconciled **before its editor mounts**, so the editor always opens over a CRDT that matches the
   current row body — closing the window where a body pulled while the doc was closed would show
-  stale content. The mounted-editor flush is **awaitable and reports which body it persisted**: if
+  stale content. That mount gate never leaves a document unopenable: if a divergent doc's local
+  provenance marker is missing (so it cannot be proved locally authored) it still opens, taking the
+  current row body and keeping the local side as a recoverable revision, rather than blocking the
+  editor for good. The mounted-editor flush is **awaitable and reports which body it persisted**: if
   the editor holds unsaved local edits the pulled remote body is preserved as a recoverable safety
   revision and the live local text is kept, so neither side is ever silently overwritten. A
   freshly-mounted, never-edited editor is correctly seen as clean — the autosave seeds its baseline
@@ -458,7 +461,8 @@ mismatch-lock spike), `envelope.test.ts`, `keys.test.ts` (incl. fingerprints),
 `recoveryCode.test.ts`, `setup.test.ts` (incl. adopt/erase, add-only publish, sign-in guard),
 `escrowReconcile.test.ts` (incl. re-arm and the deferred pull-gate), `cloudClient.test.ts`
 (pull-complete + sign-in guard), `buildDb.test.ts`, `reconcile.test.ts` (cross-device
-reconciliation and empty-log healing), `useDocCrdtReady.test.tsx`, `snapshot.test.ts` (the
+reconciliation and empty-log healing), `reconcileDocForMount.test.ts` (the pre-mount gate,
+incl. the missing-baseline fallback), `useDocCrdtReady.test.tsx`, `snapshot.test.ts` (the
 CRDT ⇄ body round-trip), the `src/components/errors/`, `src/components/templates/` (the
 write-lock notice) and `src/components/settings/tabs/cloud/` component tests, and
 `cloud-sync.spec.ts` / `cloud-crdt-recovery.spec.ts` / `templates-form.spec.ts`.
