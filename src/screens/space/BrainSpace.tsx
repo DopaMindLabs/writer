@@ -8,7 +8,7 @@ import { Topbar } from '@/components/chrome/Topbar';
 import { BrainSpaceCanvas } from '@/components/surfaces/BrainSpaceCanvas';
 import { CitationsSidePanel } from '@/components/surfaces/CitationsSidePanel';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
-import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
+import { MobileMoreSheet } from '@/components/chrome/MobileMore';
 import { useSpace } from '@/hooks/useSpaces';
 import { useDocuments } from '@/hooks/useDocuments';
 import { useNotes } from '@/hooks/useNotes';

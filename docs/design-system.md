@@ -201,11 +201,14 @@ Borderless icon in a 28 px hit-zone.
 
 ### 3.3 `PillToggle` (source: `final.jsx · Toggle`)
 
-The familiar 28×16 pill switch. Rail is hairline at rest, ink at on.
+The familiar 28×16 pill switch. Rail is hairline at rest, ink at on. The `md` size
+(44×24) is for a touch row — a full-height mobile control where the compact `sm`
+default would be an undersized tap target.
 
 | Prop | Type | Default |
 |---|---|---|
 | `on` | boolean | `false` |
+| `size` | `'sm' \| 'md'` | `'sm'` |
 
 > **In this repo:** `src/components/ui/PillToggle.tsx`.
 
@@ -310,7 +313,10 @@ menu is a **list, not a card**: the row has no background at rest; hover and key
 highlight paint the faint `paper-2` wash and darken the label from `ink-2` to `ink` (and the
 leading glyph from `ink-3` to `ink`). Square corners, sans 13 px label, an optional 14-px
 leading glyph slot, and an optional trailing slot — a mono `Kbd` shortcut, or a `Check` when
-`checked`. The destructive row shows the `X` icon (never Unicode, never a coloured row) and is
+`checked`. A `checked` row exposes `data-checked` for callers that style or query row state.
+Set `checkPosition="leading"` for a menu of peers where each row can be ticked (a guided-tour
+replay list): the tick moves to a reserved leading gutter so ticked and unticked rows align,
+and the trailing shortcut stays visible. The destructive row shows the `X` icon (never Unicode, never a coloured row) and is
 placed under a `MenuDivider` by the caller; the ink-fill `dangerous` Button stays reserved for
 the `ConfirmDialog` footer alone (§4.5, §5a).
 
@@ -318,9 +324,10 @@ the `ConfirmDialog` footer alone (§4.5, §5a).
 |---|---|---|---|
 | `label` | `ReactNode` | — | Row label (omitted in `asChild` mode). |
 | `icon` | `LucideIcon` | — | Leading glyph; ignored when `danger` is set. |
-| `shortcut` | `ReactNode` | — | Trailing hint (compose a `Kbd`); hidden when `checked`. |
+| `shortcut` | `ReactNode` | — | Trailing hint (compose a `Kbd`); hidden when `checked` under the default trailing tick. |
 | `danger` | boolean | `false` | Destructive row: shows the `X` icon. |
-| `checked` | boolean | `false` | Shows a trailing `Check`. |
+| `checked` | boolean | `false` | Shows a `Check` and reflects on the row as `data-checked`. |
+| `checkPosition` | `'leading' \| 'trailing'` | `'trailing'` | `trailing` swaps the shortcut for a tick (on/off idiom); `leading` reserves a fixed leading gutter so rows align ticked or not and keeps the shortcut visible (e.g. a replayed tour list). |
 | `disabled` | boolean | `false` | Non-interactive; sets `aria-disabled`. |
 | `asChild` | boolean | `false` | Render the row as the provided child (e.g. a router `Link`). |
 
@@ -645,7 +652,7 @@ corners (no radius), a 1 px `rule` border, `paper` ground, and a dimmed scrim. T
 | **ConfirmDialog** | `src/components/ui/ConfirmDialog.tsx` | A yes/no confirm for an irreversible or destructive action. Two `Button`s: `secondary` cancel + a confirm whose `confirmKind` is `dangerous` for destructive verbs. Autofocuses confirm; wires `aria-describedby`. |
 | **Popover** | `src/components/ui/popover.tsx` | A small panel anchored to a trigger (Quick Settings, Space menu). Not modal. |
 | **ContextMenu** | `src/components/ui/context-menu.tsx` | Right-click / long-press actions on a specific object (e.g. remove / recolour / annotate a highlight). Opens at the pointer; a `ContextMenuRadioGroup` holds mutually-exclusive choices. **Never the only path to an action** — always provide a visible affordance too. |
-| **Bottom sheet** | `src/components/chrome/MobileMoreSheet.tsx` | The mobile-only slide-up menu. The one place radius is allowed (16 px scrim corners, per §1/§2.3). |
+| **Bottom sheet** | `src/components/chrome/MobileMore/MobileMoreSheet.tsx` | The mobile-only slide-up menu. The one place radius is allowed (16 px scrim corners, per §1/§2.3). |
 
 **Rules**
 - **Never** use `window.alert` / `window.confirm` / `window.prompt`. For a confirm, use
@@ -655,6 +662,15 @@ corners (no radius), a 1 px `rule` border, `paper` ground, and a dimmed scrim. T
   consequence is stated. Keep the confirm button's verb specific ("Restore", "Delete"), not
   "OK".
 - Buttons live bottom-right, cancel before confirm, built from the `Button` primitive (§4).
+- **Scrim + shadow are token-driven, and the scrim never blurs.** Overlays veil the page with
+  the `scrim` tokens — `bg-scrim` for the bottom sheet, the lighter `bg-scrim-drawer` for the
+  side drawers (mobile nav, mobile inspector) — and cast a direction-matched shadow: the sheet
+  uses `shadow-overlay-sheet` (upward), the right-anchored inspector uses `shadow-overlay-drawer`
+  (leftward), and the left-anchored nav drawer uses `shadow-overlay-drawer-start` (rightward, the
+  mirror added so a left drawer's shadow falls onto the page, not off-screen). Never hard-code a
+  `bg-black/NN` scrim, a `shadow-lg/xl`, or a `backdrop-blur` on these surfaces.
+- Side drawers and the bottom sheet pad for the device safe-area insets
+  (`env(safe-area-inset-*)`) so content clears notches and home indicators.
 
 > **Gap → DS update.** `ConfirmDialog` was added to close the "destructive confirm" gap that
 > previously fell back to `window.confirm`. The native `Toast` notification remains a future
@@ -769,7 +785,7 @@ Mobile chrome for the writer. Compact, 60-px tall.
 | `docName` | string | `"The bell-keeper"` |
 | `menuOpen` | boolean | `false` |
 
-> **In this repo:** `src/components/chrome/MobileNavDrawer.tsx` + `MobileMoreSheet.tsx`.
+> **In this repo:** `src/components/chrome/MobileNavDrawer.tsx` + `MobileMore/MobileMoreSheet.tsx`.
 
 ---
 

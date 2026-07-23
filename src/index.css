@@ -54,6 +54,7 @@
   --shadow-overlay-popover: 0 8px 28px rgb(17 17 17 / 0.09), 0 1px 3px rgb(17 17 17 / 0.05);
   --shadow-overlay-dialog: 0 18px 50px rgb(17 17 17 / 0.14), 0 2px 8px rgb(17 17 17 / 0.06);
   --shadow-overlay-drawer: -18px 0 50px rgb(17 17 17 / 0.12);
+  --shadow-overlay-drawer-start: 18px 0 50px rgb(17 17 17 / 0.12);
   --shadow-overlay-sheet: 0 -14px 40px rgb(17 17 17 / 0.12);
 
   /* Scrim — a flat ink veil behind modal overlays; never a blur. Kept dark
@@ -96,6 +97,7 @@
   --shadow-overlay-popover: 0 8px 28px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
   --shadow-overlay-dialog: 0 18px 50px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35);
   --shadow-overlay-drawer: -18px 0 50px rgb(0 0 0 / 0.5);
+  --shadow-overlay-drawer-start: 18px 0 50px rgb(0 0 0 / 0.5);
   --shadow-overlay-sheet: 0 -14px 40px rgb(0 0 0 / 0.5);
 }
 

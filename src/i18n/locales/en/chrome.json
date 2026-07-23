@@ -100,6 +100,8 @@
     "about": "About",
     "help": "Help & shortcuts",
     "whatsNew": "What's new",
+    "accessibility": "Accessibility",
+    "account": "Account",
     "contact": "Contact"
   },
   "quickSettings": {
@@ -107,6 +109,7 @@
     "title": "Quick settings",
     "appearanceLabel": "Appearance",
     "writingLabel": "Writing",
+    "settingsLabel": "Settings",
     "themeLabel": "Theme",
     "focusLabel": "Focus mode",
     "focusHint": "⌘\\",

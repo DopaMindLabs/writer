@@ -5,7 +5,7 @@ import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
 import { Topbar } from '@/components/chrome/Topbar';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
-import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
+import { MobileMoreSheet } from '@/components/chrome/MobileMore';
 import { PdfReaderFocusToggle } from '@/components/pdf/reader/PdfReaderFocusToggle';
 import { MediaLibrarySurface } from '@/components/surfaces/MediaLibrarySurface';
 import { useSpace } from '@/hooks/useSpaces';

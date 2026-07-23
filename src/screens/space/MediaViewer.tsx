@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
-import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
+import { MobileMoreSheet } from '@/components/chrome/MobileMore';
 import { MediaViewerContent } from './MediaViewerContent';
 import { MediaReaderTopbar } from './MediaReaderTopbar';
 import { usePdfViewport } from '@/components/pdf/PdfViewer/usePdfViewport';

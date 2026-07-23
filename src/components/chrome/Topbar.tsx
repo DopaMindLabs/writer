@@ -11,7 +11,7 @@ import { TextField } from '@/components/ui/TextField';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { routes } from '@/lib/routes';
 import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
-import { MobileNavDrawer } from './MobileNavDrawer';
+import { MobileNavDrawer } from './MobileNav';
 import { cn } from '@/lib/utils';
 
 interface TopbarProps {
