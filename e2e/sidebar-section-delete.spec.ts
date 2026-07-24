@@ -1,10 +1,11 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from './_helpers';
-import { createSpaceFromTemplate } from './_helpers';
+import { reseedAndGoHome, createSpaceFromTemplate } from './_helpers';
 
 // The Technical template seeds Report / Data & figures / Code & math / Workshop,
 // each with documents — a good fixture for section deletion.
 test.beforeEach(async ({ page }) => {
+  await reseedAndGoHome(page);
   await createSpaceFromTemplate(page, 'technical');
 });
 
