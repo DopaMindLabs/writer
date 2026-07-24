@@ -17,6 +17,8 @@ interface SectionRowMenuProps {
   containsActiveDoc: boolean;
   /** Whether rename/delete are offered (false for Workshop or locked templates). */
   canModify: boolean;
+  /** The Workshop labels its add action "Add workspace" rather than "Add document". */
+  isWorkshop: boolean;
   onAddDoc: () => void;
   onRename: () => void;
 }
@@ -26,9 +28,15 @@ interface SectionRowMenuProps {
  * deleting are offered only when the section is modifiable. Composed from the
  * design-system IconButton + DropdownMenu, mirroring DocRowMenu.
  */
-export const SectionRowMenu = (props: SectionRowMenuProps) => {
-  const { section, docCount, containsActiveDoc, canModify, onAddDoc, onRename } =
-    props;
+export const SectionRowMenu = ({
+  section,
+  docCount,
+  containsActiveDoc,
+  canModify,
+  isWorkshop,
+  onAddDoc,
+  onRename,
+}: SectionRowMenuProps) => {
   const { t } = useTranslation('chrome');
   const [menuOpen, setMenuOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -67,6 +75,7 @@ export const SectionRowMenu = (props: SectionRowMenuProps) => {
           <SectionMenuItems
             sectionId={id}
             canModify={canModify}
+            isWorkshop={isWorkshop}
             onAddDoc={select(onAddDoc)}
             onRename={select(() => { setPendingRename(true); })}
             onDelete={select(() => { setDeleteOpen(true); })}

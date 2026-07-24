@@ -30,7 +30,8 @@ export const SectionHeader = ({
   const rename = useInlineRename(section.label, (next) =>
     renameSection(section.id, next),
   );
-  const canModify = canManage && !isWorkshopSection(section);
+  const isWorkshop = isWorkshopSection(section);
+  const canModify = canManage && !isWorkshop;
   const dragProps = dragActivator
     ? surfaceDragProps(dragActivator.attributes, dragActivator.listeners)
     : {};
@@ -57,6 +58,7 @@ export const SectionHeader = ({
         docCount={docCount}
         containsActiveDoc={containsActiveDoc}
         canModify={canModify}
+        isWorkshop={isWorkshop}
         onAddDoc={onAdd}
         onRename={rename.beginEdit}
       />

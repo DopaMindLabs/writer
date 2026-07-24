@@ -4,19 +4,23 @@ import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 interface SectionMenuItemsProps {
   sectionId: string;
   canModify: boolean;
+  /** The Workshop holds workspaces, so its add action is labelled accordingly. */
+  isWorkshop: boolean;
   onAddDoc: (e: Event) => void;
   onRename: (e: Event) => void;
   onDelete: (e: Event) => void;
 }
 
 /**
- * The item list for a section's kebab menu. Every section can add a document;
- * rename and delete appear only when the section is modifiable. Rendered inside
- * a {@link SectionRowMenu}'s DropdownMenuContent.
+ * The item list for a section's kebab menu. Every section can add a document
+ * (a workspace, for the Workshop); rename and delete appear only when the
+ * section is modifiable. Rendered inside a {@link SectionRowMenu}'s
+ * DropdownMenuContent.
  */
 export const SectionMenuItems = ({
   sectionId,
   canModify,
+  isWorkshop,
   onAddDoc,
   onRename,
   onDelete,
@@ -28,7 +32,7 @@ export const SectionMenuItems = ({
         data-testid={`sidebar-section-${sectionId}-add-doc`}
         onSelect={onAddDoc}
       >
-        {t('sidebar.sectionAddDoc')}
+        {t(isWorkshop ? 'sidebar.sectionAddWorkspace' : 'sidebar.sectionAddDoc')}
       </DropdownMenuItem>
       {canModify && (
         <DropdownMenuItem

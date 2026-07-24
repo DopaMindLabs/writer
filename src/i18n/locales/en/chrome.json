@@ -35,6 +35,7 @@
     "renameSectionAria": "Rename section {{label}}",
     "sectionMenuAria": "Options for {{label}} section",
     "sectionAddDoc": "Add document",
+    "sectionAddWorkspace": "Add workspace",
     "sectionRename": "Rename",
     "sectionDelete": "Delete…",
     "dragAnnouncePickedUp": "Picked up {{label}}.",

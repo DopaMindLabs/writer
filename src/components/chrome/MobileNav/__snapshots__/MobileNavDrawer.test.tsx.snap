@@ -375,7 +375,7 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
           Workshop
         </div>
         <a
-          class="-ml-px flex items-center gap-2 border-l-2 px-5 py-1.5 transition-colors border-transparent text-ink-2 hover:bg-paper"
+          class="-ml-px flex items-center gap-2 border-l-2 py-1.5 pl-5 pr-9 transition-colors border-transparent text-ink-2 hover:bg-paper"
           data-discover="true"
           data-testid="sidebar-brain-space-link"
           href="/s/s1/brain-space"

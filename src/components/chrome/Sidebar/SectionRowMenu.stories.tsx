@@ -27,6 +27,7 @@ const meta = {
     docCount: 3,
     containsActiveDoc: false,
     canModify: true,
+    isWorkshop: false,
     onAddDoc: () => {},
     onRename: () => {},
   },
@@ -38,5 +39,9 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const AddOnly: Story = {
-  args: { section: { ...sampleSection, label: 'Workshop' }, canModify: false },
+  args: {
+    section: { ...sampleSection, label: 'Workshop' },
+    canModify: false,
+    isWorkshop: true,
+  },
 };
