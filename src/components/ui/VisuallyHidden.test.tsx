@@ -23,6 +23,13 @@ describe('VisuallyHidden', () => {
     ).toHaveClass('sr-only');
   });
 
+  it('forwards standard span attributes such as aria-live', () => {
+    render(<VisuallyHidden aria-live="polite">saving</VisuallyHidden>);
+    const el = screen.getByText('saving');
+    expect(el).toHaveAttribute('aria-live', 'polite');
+    expect(el).toHaveClass('sr-only');
+  });
+
   it('matches the snapshot', () => {
     const { container } = render(<VisuallyHidden>screen-reader text</VisuallyHidden>);
     expect(container).toMatchSnapshot();

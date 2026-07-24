@@ -37,6 +37,10 @@
     "sectionAddDoc": "Add document",
     "sectionRename": "Rename",
     "sectionDelete": "Delete…",
+    "dragAnnouncePickedUp": "Picked up {{label}}.",
+    "dragAnnounceReordered": "Moved {{label}}.",
+    "dragAnnounceMovedToSection": "Moved {{label}} to {{section}}.",
+    "dragAnnounceDropped": "Dropped {{label}}.",
     "deleteSectionDialog": {
       "title": "Delete section",
       "descriptionEmpty": "“{{label}}” will be permanently deleted. This cannot be undone.",

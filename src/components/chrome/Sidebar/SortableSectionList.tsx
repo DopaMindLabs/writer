@@ -3,12 +3,17 @@ import {
   SortableContext,
   closestCenter,
   verticalListSortingStrategy,
+  type DragEndEvent,
+  type DragStartEvent,
 } from '@/components/libs/dnd';
+import { VisuallyHidden } from '@/components/ui/VisuallyHidden';
 import type { Doc, Section } from '@/db/schema';
 import type { AddController } from './Sidebar.types';
 import { SortableSection } from './SortableSection';
 import { useSortableSensors } from './useSortableSensors';
 import { useSidebarDrag } from './useSidebarDrag';
+import { useDragAnnounce } from './useDragAnnounce';
+import { useHiddenLiveRegionHost } from './useHiddenLiveRegionHost';
 
 interface SortableSectionListProps {
   topSections: Section[];
@@ -28,21 +33,45 @@ interface SortableSectionListProps {
  * documents reorder within or move across sections. Positions come from
  * {@link useSidebarDrag}, which keeps an optimistic order so a drop lands
  * without a flash while it persists.
+ *
+ * dnd-kit's built-in `role="status"` live region is portaled into an
+ * `aria-hidden` host (see {@link useHiddenLiveRegionHost}) so it neither
+ * collides with the app's status announcers nor reads raw ids; a labelled
+ * announcer ({@link useDragAnnounce}) narrates drags instead.
  */
 export const SortableSectionList = (props: SortableSectionListProps) => {
   const sensors = useSortableSensors();
+  const host = useHiddenLiveRegionHost();
   const { orderedSections, sectionIds, onDragStart, onDragEnd } = useSidebarDrag(
     props.topSections,
     props.docsForSection,
   );
+  const { announcement, announceStart, announceEnd } = useDragAnnounce(
+    props.topSections,
+    props.docsForSection,
+  );
+
+  const handleStart = (event: DragStartEvent): void => {
+    announceStart(event);
+    onDragStart();
+  };
+  const handleEnd = (event: DragEndEvent): void => {
+    announceEnd(event);
+    onDragEnd(event);
+  };
+
   return (
     <DndContext
       id="sidebar-dnd"
       sensors={sensors}
       collisionDetection={closestCenter}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
+      accessibility={{ container: host }}
+      onDragStart={handleStart}
+      onDragEnd={handleEnd}
     >
+      <VisuallyHidden aria-live="polite" aria-atomic="true">
+        {announcement}
+      </VisuallyHidden>
       <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
         {orderedSections.map(({ section, docs }) => (
           <SortableSection

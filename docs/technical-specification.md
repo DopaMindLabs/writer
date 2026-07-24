@@ -245,8 +245,9 @@ A full citation manager scoped to each space. Available in three surfaces:
 The per-space navigation column.
 
 - **Header:** editable space title + settings cog (links to per-space settings).
-- **Sections:** grouped doc lists, each header carrying a **⋯ menu** (Add document, Rename, Delete…) and a hover-revealed drag grip. A section's list also includes the docs of its subsections, flattened in — subsections render no header row of their own in the nav (the data model keeps the nesting; only the rendering is flat, so new docs are added at section level). Sections reorder among themselves by drag or keyboard; documents reorder within their section the same way. The Workshop section's menu offers only Add document.
-- **Doc row menu:** each document row has a **⋯ menu** (Rename, Delete…) — revealed on row hover/focus on desktop, always visible on mobile — and a hover-revealed drag grip for reordering.
+- **Sections:** grouped doc lists, each header carrying a **⋯ menu** (Add document, Rename, Delete…). Dragging is press-and-hold on the header itself — there is no separate grip. A section's list also includes the docs of its subsections, flattened in — subsections render no header row of their own in the nav (the data model keeps the nesting; only the rendering is flat, so new docs are added at section level). Sections reorder among themselves by drag or keyboard; documents reorder within their section the same way. The Workshop section's menu offers only Add document.
+- **Doc row menu:** each document row has a **⋯ menu** (Rename, Delete…) — revealed on row hover/focus on desktop, always visible on mobile. Dragging is press-and-hold on the row itself, with no separate grip.
+- **Drag announcements:** dnd-kit's default id-based live region is hidden (portaled into an `aria-hidden` host so its `role="status"` never collides with the app's status announcers); a labelled `aria-live` announcer narrates each drag ("Picked up…", "Moved … to …") for assistive technology.
 - **Brain space link:** routes to `/s/:spaceId/brain-space`; shows the unsorted-note count and highlights when active.
 - **Footer:** Home, About, GitHub links.
 - **Mobile:** replaced by a hamburger button in the topbar that opens the same content (the SpaceRail plus the sidebar) in a dialog drawer. The drawer closes when the user taps a destination.
