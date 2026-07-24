@@ -68,127 +68,282 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
       data-tour="tour-sidebar-sections"
     >
       <div
-        class="mb-2"
-        data-testid="sidebar-section-sec1"
+        class="group/drag relative"
       >
-        <div
-          class="group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 pl-5"
-          data-testid="sidebar-section-sec1-header"
+        <button
+          aria-describedby="DndDescribedBy-114"
+          aria-disabled="false"
+          aria-label="Reorder Drafts section"
+          aria-roledescription="sortable"
+          class="inline-flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink absolute -left-1 top-1.5 z-10 h-5 w-4 cursor-grab text-ink-4 opacity-0 hover:bg-transparent hover:text-ink focus-visible:opacity-100 group-hover/drag:opacity-100"
+          data-testid="sidebar-section-sec1-drag"
+          role="button"
+          tabindex="0"
+          type="button"
         >
-          <button
-            class="items-center justify-center gap-2 whitespace-nowrap rounded-none transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 block flex-1 truncate text-left font-mono font-normal uppercase tracking-[0.08em] cursor-text"
-            data-testid="sidebar-section-sec1-label"
-            title="Rename (double-click)"
-            type="button"
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-grip-vertical h-3 w-3"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.25"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            Drafts
-          </button>
-          <button
-            aria-expanded="false"
-            aria-haspopup="menu"
-            aria-label="Options for Drafts section"
-            class="inline-flex items-center justify-center h-7 w-7 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:text-ink text-ink-4 transition-opacity hover:bg-transparent data-[state=open]:bg-transparent md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
-            data-state="closed"
-            data-testid="sidebar-section-sec1-menu"
-            id="radix-_r_*_"
-            type="button"
-          >
-            <svg
-              aria-hidden="true"
-              class="lucide lucide-ellipsis-vertical h-3 w-3"
-              fill="none"
-              height="24"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.25"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle
-                cx="12"
-                cy="12"
-                r="1"
-              />
-              <circle
-                cx="12"
-                cy="5"
-                r="1"
-              />
-              <circle
-                cx="12"
-                cy="19"
-                r="1"
-              />
-            </svg>
-          </button>
-        </div>
+            <circle
+              cx="9"
+              cy="12"
+              r="1"
+            />
+            <circle
+              cx="9"
+              cy="5"
+              r="1"
+            />
+            <circle
+              cx="9"
+              cy="19"
+              r="1"
+            />
+            <circle
+              cx="15"
+              cy="12"
+              r="1"
+            />
+            <circle
+              cx="15"
+              cy="5"
+              r="1"
+            />
+            <circle
+              cx="15"
+              cy="19"
+              r="1"
+            />
+          </svg>
+        </button>
         <div
-          class="group -ml-px flex items-center gap-2 border-l-2 transition-colors pl-5 border-ink bg-paper"
+          class="mb-2"
+          data-testid="sidebar-section-sec1"
         >
-          <a
-            class="flex min-w-0 flex-1 items-center gap-2 py-1.5"
-            data-discover="true"
-            data-testid="sidebar-doc-d1"
-            href="/s/s1/d/d1"
-            title="Rename (double-click)"
+          <div
+            class="group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 pl-5"
+            data-testid="sidebar-section-sec1-header"
           >
-            <span
-              class="flex-1 truncate text-[13px] font-medium text-ink"
-              data-testid="sidebar-doc-d1-name"
+            <button
+              class="items-center justify-center gap-2 whitespace-nowrap rounded-none transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 block flex-1 truncate text-left font-mono font-normal uppercase tracking-[0.08em] cursor-text"
+              data-testid="sidebar-section-sec1-label"
+              title="Rename (double-click)"
+              type="button"
             >
-              Sample Doc
-            </span>
-            <span
-              class="inline-flex h-3 min-w-3 items-center justify-center font-mono text-[10px] text-ink-4"
-              data-testid="sidebar-doc-d1-count"
+              Drafts
+            </button>
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              aria-label="Options for Drafts section"
+              class="inline-flex items-center justify-center h-7 w-7 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:text-ink text-ink-4 transition-opacity hover:bg-transparent data-[state=open]:bg-transparent md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
+              data-state="closed"
+              data-testid="sidebar-section-sec1-menu"
+              id="radix-_r_*_"
+              type="button"
             >
-              ◌
-            </span>
-          </a>
-          <button
-            aria-expanded="false"
-            aria-haspopup="menu"
-            aria-label="Options for Sample Doc"
-            class="inline-flex items-center justify-center h-7 w-7 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:text-ink text-ink-4 transition-opacity hover:bg-transparent data-[state=open]:bg-transparent md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
-            data-state="closed"
-            data-testid="sidebar-doc-d1-menu"
-            id="radix-_r_*_"
-            type="button"
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-ellipsis-vertical h-3 w-3"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.25"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="1"
+                />
+                <circle
+                  cx="12"
+                  cy="5"
+                  r="1"
+                />
+                <circle
+                  cx="12"
+                  cy="19"
+                  r="1"
+                />
+              </svg>
+            </button>
+          </div>
+          <div
+            class="group/drag relative"
+            style="transition: transform 0ms linear;"
           >
-            <svg
-              aria-hidden="true"
-              class="lucide lucide-ellipsis-vertical h-3 w-3"
-              fill="none"
-              height="24"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.25"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
+            <button
+              aria-describedby="DndDescribedBy-115"
+              aria-disabled="false"
+              aria-label="Reorder Sample Doc"
+              aria-roledescription="sortable"
+              class="inline-flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink absolute -left-1 top-1/2 z-10 h-5 w-4 -translate-y-1/2 cursor-grab text-ink-4 opacity-0 hover:bg-transparent hover:text-ink focus-visible:opacity-100 group-hover/drag:opacity-100"
+              data-testid="sidebar-doc-d1-drag"
+              role="button"
+              tabindex="0"
+              type="button"
             >
-              <circle
-                cx="12"
-                cy="12"
-                r="1"
-              />
-              <circle
-                cx="12"
-                cy="5"
-                r="1"
-              />
-              <circle
-                cx="12"
-                cy="19"
-                r="1"
-              />
-            </svg>
-          </button>
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-grip-vertical h-3 w-3"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.25"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="9"
+                  cy="12"
+                  r="1"
+                />
+                <circle
+                  cx="9"
+                  cy="5"
+                  r="1"
+                />
+                <circle
+                  cx="9"
+                  cy="19"
+                  r="1"
+                />
+                <circle
+                  cx="15"
+                  cy="12"
+                  r="1"
+                />
+                <circle
+                  cx="15"
+                  cy="5"
+                  r="1"
+                />
+                <circle
+                  cx="15"
+                  cy="19"
+                  r="1"
+                />
+              </svg>
+            </button>
+            <div
+              class="group -ml-px flex items-center gap-2 border-l-2 transition-colors pl-5 border-ink bg-paper"
+            >
+              <a
+                class="flex min-w-0 flex-1 items-center gap-2 py-1.5"
+                data-discover="true"
+                data-testid="sidebar-doc-d1"
+                href="/s/s1/d/d1"
+                title="Rename (double-click)"
+              >
+                <span
+                  class="flex-1 truncate text-[13px] font-medium text-ink"
+                  data-testid="sidebar-doc-d1-name"
+                >
+                  Sample Doc
+                </span>
+                <span
+                  class="inline-flex h-3 min-w-3 items-center justify-center font-mono text-[10px] text-ink-4"
+                  data-testid="sidebar-doc-d1-count"
+                >
+                  ◌
+                </span>
+              </a>
+              <button
+                aria-expanded="false"
+                aria-haspopup="menu"
+                aria-label="Options for Sample Doc"
+                class="inline-flex items-center justify-center h-7 w-7 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:text-ink text-ink-4 transition-opacity hover:bg-transparent data-[state=open]:bg-transparent md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
+                data-state="closed"
+                data-testid="sidebar-doc-d1-menu"
+                id="radix-_r_*_"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-ellipsis-vertical h-3 w-3"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.25"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="1"
+                  />
+                  <circle
+                    cx="12"
+                    cy="5"
+                    r="1"
+                  />
+                  <circle
+                    cx="12"
+                    cy="19"
+                    r="1"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div
+            id="DndDescribedBy-115"
+            style="display: none;"
+          >
+            
+    To pick up a draggable item, press the space bar.
+    While dragging, use the arrow keys to move the item.
+    Press space again to drop the item in its new position, or press escape to cancel.
+  
+          </div>
+          <div
+            aria-atomic="true"
+            aria-live="assertive"
+            id="DndLiveRegion-115"
+            role="status"
+            style="position: fixed; top: 0px; left: 0px; width: 1px; height: 1px; margin: -1px; border: 0px; padding: 0px; overflow: hidden; clip: rect(0px); clip-path: inset(100%); white-space: nowrap;"
+          />
         </div>
       </div>
+      <div
+        id="DndDescribedBy-114"
+        style="display: none;"
+      >
+        
+    To pick up a draggable item, press the space bar.
+    While dragging, use the arrow keys to move the item.
+    Press space again to drop the item in its new position, or press escape to cancel.
+  
+      </div>
+      <div
+        aria-atomic="true"
+        aria-live="assertive"
+        id="DndLiveRegion-114"
+        role="status"
+        style="position: fixed; top: 0px; left: 0px; width: 1px; height: 1px; margin: -1px; border: 0px; padding: 0px; overflow: hidden; clip: rect(0px); clip-path: inset(100%); white-space: nowrap;"
+      />
       <div
         class="group mt-1 px-5 py-1"
         data-testid="sidebar-add-section-row"

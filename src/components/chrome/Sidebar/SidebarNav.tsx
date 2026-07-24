@@ -3,7 +3,7 @@ import { useDocuments } from '@/hooks/useDocuments';
 import { getTemplate, templateAllowsConfiguration } from '@/data/templates';
 import { routes } from '@/lib/routes';
 import type { Section, Space } from '@/db/schema';
-import { SidebarSection } from './SidebarSection';
+import { SortableSectionList } from './SortableSectionList';
 import { AddSectionRow } from './AddSectionRow';
 import { WorkshopFallback } from './WorkshopFallback';
 import { useAddDoc } from './useAddDoc';
@@ -46,21 +46,18 @@ export const SidebarNav = ({
       className="flex-1 overflow-auto py-2"
       data-tour="tour-sidebar-sections"
     >
-      {topSections.map((sec) => (
-        <SidebarSection
-          key={sec.id}
-          sec={sec}
-          docs={docsForSection.get(sec.id) ?? []}
-          spaceId={spaceId}
-          activeDocId={activeDocId}
-          onBrainSpace={onBrainSpace}
-          notesCount={notesCount}
-          canManage={allowConfiguration}
-          docHref={docHref}
-          startAdd={startAdd}
-          add={add}
-        />
-      ))}
+      <SortableSectionList
+        topSections={topSections}
+        docsForSection={docsForSection}
+        spaceId={spaceId}
+        activeDocId={activeDocId}
+        onBrainSpace={onBrainSpace}
+        notesCount={notesCount}
+        canManage={allowConfiguration}
+        docHref={docHref}
+        startAdd={startAdd}
+        add={add}
+      />
       {allowConfiguration && <AddSectionRow add={addSection} />}
       {!topSections.some((s) => s.label === 'Workshop') && (
         <WorkshopFallback

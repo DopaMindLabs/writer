@@ -14,6 +14,7 @@ export {
   Database,
   ExternalLink,
   Globe,
+  GripVertical,
   HelpCircle,
   Highlighter,
   History,

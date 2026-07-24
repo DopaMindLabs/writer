@@ -3,7 +3,7 @@ import type { Doc, Section } from '@/db/schema';
 import type { AddController } from './Sidebar.types';
 import { SectionHeader } from './SectionHeader';
 import { BrainSpaceLink } from './BrainSpaceLink';
-import { DocLink } from './DocLink';
+import { SortableDocList } from './SortableDocList';
 import { MaybeAddInput } from './MaybeAddInput';
 import { SectionEmpty } from './SectionEmpty';
 
@@ -51,14 +51,13 @@ export const SidebarSection = ({
           count={notesCount}
         />
       )}
-      {docs.map((d) => (
-        <DocLink
-          key={d.id}
-          doc={d}
-          href={docHref(d.id)}
-          active={d.id === activeDocId}
-        />
-      ))}
+      <SortableDocList
+        docs={docs}
+        sectionId={sec.id}
+        activeDocId={activeDocId}
+        canManage={canManage}
+        docHref={docHref}
+      />
       <MaybeAddInput sectionId={sec.id} add={add} />
       {showEmpty && <SectionEmpty sectionId={sec.id} />}
     </div>

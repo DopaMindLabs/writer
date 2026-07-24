@@ -33,6 +33,8 @@
     "renameDocAria": "Rename document {{name}}",
     "renameSection": "Rename (double-click)",
     "renameSectionAria": "Rename section {{label}}",
+    "dragSection": "Reorder {{label}} section",
+    "dragDoc": "Reorder {{name}}",
     "sectionMenuAria": "Options for {{label}} section",
     "sectionAddDoc": "Add document",
     "sectionRename": "Rename",
