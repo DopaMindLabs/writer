@@ -20,8 +20,10 @@ const doc = (id: string, sectionId: string): Doc => ({
 });
 
 const topSections = [section('sec1', 0), section('sec2', 1)];
+// dSub lives in a subsection of sec1 but renders flattened under sec1, like
+// the nav's docsForSection map.
 const docsForSection = new Map<string, Doc[]>([
-  ['sec1', [doc('dA', 'sec1'), doc('dB', 'sec1')]],
+  ['sec1', [doc('dA', 'sec1'), doc('dB', 'sec1'), doc('dSub', 'sub1')]],
   ['sec2', [doc('dC', 'sec2')]],
 ]);
 
@@ -69,6 +71,18 @@ describe('resolveSidebarDrop', () => {
       docId: 'dA',
       toSectionId: 'sec2',
       toIndex: 1,
+    });
+  });
+
+  it('re-homes a flattened subsection document to the top-level section it is dropped in', () => {
+    // Deliberate semantics until subsections are a real feature: dragging a
+    // document that renders flattened moves it to the top-level target section,
+    // dropping its subsection membership.
+    expect(resolve('dSub', 'dA')).toEqual({
+      kind: 'doc',
+      docId: 'dSub',
+      toSectionId: 'sec1',
+      toIndex: 0,
     });
   });
 
