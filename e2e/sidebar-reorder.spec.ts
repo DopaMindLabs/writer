@@ -1,4 +1,4 @@
-import type { Locator } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { test, expect } from './_helpers';
 import { reseedAndGoHome, createSpaceFromTemplate } from './_helpers';
 
@@ -10,17 +10,36 @@ test.beforeEach(async ({ page }) => {
 
 const text = async (loc: Locator) => ((await loc.textContent()) ?? '').trim();
 
-// A section header / document row is itself the drag surface: focus it and use
-// the arrow keys (dnd-kit's keyboard sensor). Pointer drag is a press-and-hold,
-// which a spec can't drive without a hard-coded wait, so keyboard covers it.
-const keyboardMoveDown = async (page: import('@playwright/test').Page, surface: Locator) => {
-  await surface.focus();
-  await page.keyboard.press('Space');
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('Space');
+/**
+ * Press-and-hold `handle`, wait for the drag to be picked up (a condition, not a
+ * timed wait — the `data-dragging` marker), drop it on `target`. Pointer drag is
+ * a hold, so keyboard/timeout-free driving needs this shape.
+ */
+const dragOnto = async (
+  page: Page,
+  handle: Locator,
+  marker: Locator,
+  target: Locator,
+) => {
+  const from = await handle.boundingBox();
+  if (!from) throw new Error('missing handle box');
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  await page.mouse.down();
+  await expect(marker).toHaveAttribute('data-dragging', 'true');
+  const to = await target.boundingBox();
+  if (!to) throw new Error('missing target box');
+  await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 });
+  await page.mouse.up();
+  await expect(marker).not.toHaveAttribute('data-dragging', 'true');
 };
 
-test('reorders top-level sections with the keyboard', async ({ page }) => {
+const sectionWrappers = (page: Page) =>
+  page
+    .locator('aside')
+    .last()
+    .locator('[data-testid^="sidebar-section-"][data-testid$="-sortable"]');
+
+test('reorders top-level sections by dragging the header', async ({ page }) => {
   const sidebar = page.locator('aside').last();
   const labels = sidebar.locator(
     '[data-testid^="sidebar-section-"][data-testid$="-label"]',
@@ -28,19 +47,18 @@ test('reorders top-level sections with the keyboard', async ({ page }) => {
   const firstLabel = await text(labels.first());
   const secondLabel = await text(labels.nth(1));
 
-  const firstHeader = sidebar
-    .locator('[data-testid^="sidebar-section-"][data-testid$="-header"]')
-    .first();
-  await keyboardMoveDown(page, firstHeader);
+  const firstWrapper = sectionWrappers(page).first();
+  const firstHeader = firstWrapper.locator('[data-testid$="-header"]');
+  const secondHeader = sectionWrappers(page)
+    .nth(1)
+    .locator('[data-testid$="-header"]');
+  await dragOnto(page, firstHeader, firstWrapper, secondHeader);
 
-  // The first two sections have swapped.
   await expect(labels.first()).toHaveText(secondLabel);
   await expect(labels.nth(1)).toHaveText(firstLabel);
 });
 
-test('reorders documents within a section with the keyboard', async ({
-  page,
-}) => {
+test('reorders documents within a section by dragging', async ({ page }) => {
   const sidebar = page.locator('aside').last();
   const names = sidebar.locator(
     '[data-testid^="sidebar-doc-"][data-testid$="-name"]',
@@ -48,11 +66,28 @@ test('reorders documents within a section with the keyboard', async ({
   const firstDoc = await text(names.first());
   const secondDoc = await text(names.nth(1));
 
-  const firstRow = sidebar
-    .locator('[data-testid^="sidebar-doc-"][data-testid$="-sortable"]')
-    .first();
-  await keyboardMoveDown(page, firstRow);
+  const rows = sidebar.locator(
+    '[data-testid^="sidebar-doc-"][data-testid$="-sortable"]',
+  );
+  await dragOnto(page, rows.first(), rows.first(), rows.nth(1));
 
   await expect(names.first()).toHaveText(secondDoc);
   await expect(names.nth(1)).toHaveText(firstDoc);
+});
+
+test('moves a document into another section by dragging', async ({ page }) => {
+  const sidebar = page.locator('aside').last();
+  const firstRow = sidebar
+    .locator('[data-testid^="sidebar-doc-"][data-testid$="-sortable"]')
+    .first();
+  const movedName = await text(firstRow.locator('[data-testid$="-name"]'));
+
+  const secondSection = sectionWrappers(page).nth(1);
+  const secondHeader = secondSection.locator('[data-testid$="-header"]');
+  await dragOnto(page, firstRow, firstRow, secondHeader);
+
+  // The document now lives in the second section.
+  await expect(
+    secondSection.locator('[data-testid$="-name"]', { hasText: movedName }),
+  ).toBeVisible();
 });

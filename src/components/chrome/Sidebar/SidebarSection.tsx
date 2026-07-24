@@ -56,7 +56,6 @@ export const SidebarSection = ({
       )}
       <SortableDocList
         docs={docs}
-        sectionId={sec.id}
         activeDocId={activeDocId}
         canManage={canManage}
         docHref={docHref}

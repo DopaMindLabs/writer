@@ -3,13 +3,12 @@ import {
   SortableContext,
   closestCenter,
   verticalListSortingStrategy,
-  type DragEndEvent,
 } from '@/components/libs/dnd';
-import { reorderSection } from '@/lib/sections';
 import type { Doc, Section } from '@/db/schema';
 import type { AddController } from './Sidebar.types';
 import { SortableSection } from './SortableSection';
 import { useSortableSensors } from './useSortableSensors';
+import { useSidebarDrag } from './useSidebarDrag';
 
 interface SortableSectionListProps {
   topSections: Section[];
@@ -25,37 +24,31 @@ interface SortableSectionListProps {
 }
 
 /**
- * The draggable list of top-level sections. A drop reorders them via
- * {@link reorderSection}; the target index is the position of the section
- * dropped onto (the `arrayMove` convention).
+ * One drag space for the whole nav: sections reorder among themselves and
+ * documents reorder within or move across sections. Positions come from
+ * {@link useSidebarDrag}, which keeps an optimistic order so a drop lands
+ * without a flash while it persists.
  */
 export const SortableSectionList = (props: SortableSectionListProps) => {
-  const { topSections, docsForSection } = props;
   const sensors = useSortableSensors();
-  const onDragEnd = ({ active, over }: DragEndEvent): void => {
-    if (!over || active.id === over.id) return;
-    const overIndex = topSections.findIndex((s) => s.id === over.id);
-    if (overIndex < 0) return;
-    void reorderSection(String(active.id), overIndex).catch((err: unknown) => {
-      console.error('Failed to reorder section', err);
-    });
-  };
+  const { orderedSections, sectionIds, onDragStart, onDragEnd } = useSidebarDrag(
+    props.topSections,
+    props.docsForSection,
+  );
   return (
     <DndContext
-      id="sidebar-sections"
+      id="sidebar-dnd"
       sensors={sensors}
       collisionDetection={closestCenter}
+      onDragStart={onDragStart}
       onDragEnd={onDragEnd}
     >
-      <SortableContext
-        items={topSections.map((s) => s.id)}
-        strategy={verticalListSortingStrategy}
-      >
-        {topSections.map((sec) => (
+      <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
+        {orderedSections.map(({ section, docs }) => (
           <SortableSection
-            key={sec.id}
-            sec={sec}
-            docs={docsForSection.get(sec.id) ?? []}
+            key={section.id}
+            sec={section}
+            docs={docs}
             spaceId={props.spaceId}
             activeDocId={props.activeDocId}
             onBrainSpace={props.onBrainSpace}

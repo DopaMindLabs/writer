@@ -76,7 +76,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
           data-testid="sidebar-section-sec1"
         >
           <div
-            aria-describedby="sidebar-sections"
+            aria-describedby="sidebar-dnd"
             aria-disabled="false"
             aria-roledescription="sortable"
             class="group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 pl-5 cursor-grab focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink active:cursor-grabbing"
@@ -133,7 +133,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
             </button>
           </div>
           <div
-            aria-describedby="sidebar-docs-sec1"
+            aria-describedby="sidebar-dnd"
             aria-disabled="false"
             aria-roledescription="sortable"
             class="focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink cursor-grab active:cursor-grabbing"
@@ -206,27 +206,10 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
               </button>
             </div>
           </div>
-          <div
-            id="sidebar-docs-sec1"
-            style="display: none;"
-          >
-            
-    To pick up a draggable item, press the space bar.
-    While dragging, use the arrow keys to move the item.
-    Press space again to drop the item in its new position, or press escape to cancel.
-  
-          </div>
-          <div
-            aria-atomic="true"
-            aria-live="assertive"
-            id="DndLiveRegion-*"
-            role="status"
-            style="position: fixed; top: 0px; left: 0px; width: 1px; height: 1px; margin: -1px; border: 0px; padding: 0px; overflow: hidden; clip: rect(0px); clip-path: inset(100%); white-space: nowrap;"
-          />
         </div>
       </div>
       <div
-        id="sidebar-sections"
+        id="sidebar-dnd"
         style="display: none;"
       >
         

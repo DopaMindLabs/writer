@@ -11,11 +11,13 @@ export {
   useSensor,
   useSensors,
   type DragEndEvent,
+  type DragStartEvent,
   type DraggableAttributes,
   type DraggableSyntheticListeners,
 } from '@dnd-kit/core';
 export {
   SortableContext,
+  arrayMove,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,

@@ -27,6 +27,7 @@ export const SortableDoc = ({ doc, href, active, canManage }: SortableDocProps) 
       ref={setNodeRef}
       style={style}
       data-testid={`sidebar-doc-${doc.id}-sortable`}
+      data-dragging={isDragging ? 'true' : undefined}
       className={cn(
         'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink',
         canManage && 'cursor-grab active:cursor-grabbing',

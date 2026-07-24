@@ -31,6 +31,7 @@ export const SortableSection = (props: SortableSectionProps) => {
       ref={setNodeRef}
       style={style}
       data-testid={`sidebar-section-${props.sec.id}-sortable`}
+      data-dragging={isDragging ? 'true' : undefined}
       className={cn('relative', isDragging && 'z-10 opacity-70')}
     >
       <SidebarSection
