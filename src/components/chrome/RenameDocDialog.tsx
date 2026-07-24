@@ -11,6 +11,7 @@ import {
 import { TextField } from '@/components/ui/TextField';
 import { Button } from '@/components/ui/Button';
 import { renameDoc } from '@/lib/doc-actions';
+import { appLogger } from '@/lib/appLogger';
 
 interface RenameDocDialogProps {
   docId: string;
@@ -32,7 +33,7 @@ const RenameDocForm = ({ docId, docName, onClose }: RenameDocFormProps) => {
   const onSubmit = (e: React.SyntheticEvent): void => {
     e.preventDefault();
     void renameDoc(docId, name).catch((err: unknown) => {
-      console.error('Failed to rename document', err);
+      appLogger.error('Failed to rename document', err);
     });
     onClose();
   };

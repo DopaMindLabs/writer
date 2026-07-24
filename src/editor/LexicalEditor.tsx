@@ -18,6 +18,7 @@ import { FloatingToolbarPlugin } from './plugins/FloatingToolbarPlugin';
 import { LimitHighlightPlugin } from './plugins/LimitHighlightPlugin';
 import { useUI } from '@/store/ui';
 import { cn } from '@/lib/utils';
+import { appLogger } from '@/lib/appLogger';
 import type { EditorMode } from './EditorFacade';
 
 interface LexicalEditorProps {
@@ -75,7 +76,7 @@ export const LexicalEditor = ({
       theme: editorTheme,
       editable: baseEditable,
       onError(error: Error) {
-        console.error('Lexical error:', error);
+        appLogger.error('Lexical error:', error);
       },
       nodes: [
         HeadingNode,

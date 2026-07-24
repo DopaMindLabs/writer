@@ -24,6 +24,7 @@ import {
   restoreRevision,
 } from '@/lib/revisions';
 import { cn } from '@/lib/utils';
+import { appLogger } from '@/lib/appLogger';
 import {
   formatRevisionAge,
   formatRevisionSubtitle,
@@ -182,7 +183,7 @@ const DiffPanel = ({ doc, selected }: DiffPanelProps) => {
     void restoreRevision(doc.id, selected.id)
       .then(() => { setOpen(false); })
       .catch((err: unknown) => {
-        console.error('Failed to restore revision', err);
+        appLogger.error('Failed to restore revision', err);
       });
   };
 

@@ -29,6 +29,7 @@ import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { cn } from '@/lib/utils';
 import { downloadBlob } from '@/lib/file-download';
+import { appLogger } from '@/lib/appLogger';
 import type { Citation } from '@/db/schema';
 import { TypographyMuted, TypographyP } from '@/components/ui/typography';
 import { Button } from '@/components/ui/Button';
@@ -98,7 +99,7 @@ const useImportActions = ({
         }),
       );
     } catch (err) {
-      console.error(err);
+      appLogger.error(err);
       setStatus(
         t('citations.failed', {
           message:

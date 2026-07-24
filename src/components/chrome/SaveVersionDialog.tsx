@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/Button';
 import { useUI } from '@/store/ui';
 import { db } from '@/db/db';
 import { createRevision } from '@/lib/revisions';
+import { appLogger } from '@/lib/appLogger';
 
 interface SaveVersionDialogProps {
   docId: string;
@@ -33,7 +34,7 @@ const saveLabelledVersion = (docId: string, label: string): void => {
       label: trimmed || undefined,
     });
   })().catch((err: unknown) => {
-    console.error('Failed to save version', err);
+    appLogger.error('Failed to save version', err);
   });
 };
 

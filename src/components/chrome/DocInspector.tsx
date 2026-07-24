@@ -21,6 +21,7 @@ import { enabledStages } from '@/lib/docInspector/config';
 import { lexicalJsonToOutline, type OutlineEntry } from '@/lib/docInspector/outline';
 import { resolveStatus } from '@/lib/docInspector/status';
 import type { InspectorToggleKey } from '@/lib/docInspector/features';
+import { appLogger } from '@/lib/appLogger';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Button } from '@/components/ui/Button';
@@ -562,7 +563,7 @@ const RevisionRowActions = ({ revision }: { revision: Revision }) => {
   };
   const restore = (): void => {
     void restoreRevision(revision.docId, revision.id).catch((err: unknown) => {
-      console.error('Failed to restore revision', err);
+      appLogger.error('Failed to restore revision', err);
     });
   };
   return (
