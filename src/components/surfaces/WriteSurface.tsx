@@ -13,6 +13,7 @@ import {
   resetAutoThrottle,
 } from '@/lib/revisions';
 import { cn } from '@/lib/utils';
+import { appLogger } from '@/lib/appLogger';
 
 interface WriteSurfaceProps {
   doc: Doc;
@@ -60,7 +61,7 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
 
   useEffect(() => {
     void captureBaselineRevision(doc.id, doc.body).catch((err: unknown) => {
-      console.error('Failed to capture baseline revision', err);
+      appLogger.error('Failed to capture baseline revision', err);
     });
     return () => { resetAutoThrottle(doc.id); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -74,7 +75,7 @@ export const WriteSurface = ({ doc, mode, locked = false }: WriteSurfaceProps) =
     });
     void captureAutoRevision(doc.id, serialized).catch(
       (err: unknown) => {
-        console.error('Failed to capture revision', err);
+        appLogger.error('Failed to capture revision', err);
       },
     );
   }, [doc.id]);
