@@ -1,5 +1,9 @@
 import { test, expect } from './_helpers';
-import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
+import {
+  reseedAndGoHome,
+  getFirstSpaceIdFromHome,
+  openSectionAddDoc,
+} from './_helpers';
 
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
@@ -23,9 +27,7 @@ test('sidebar reflects the brain-space note count and cancels add-doc on Escape'
   );
 
   const sidebar = page.locator('aside').last();
-  await sidebar.getByRole('button', { name: /Add doc to/ }).first().click();
-  const addInput = sidebar.getByPlaceholder(/Doc name/i);
-  await expect(addInput).toBeVisible();
+  const addInput = await openSectionAddDoc(page, sidebar);
   await addInput.press('Escape');
   await expect(addInput).toHaveCount(0);
 });

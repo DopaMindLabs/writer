@@ -26,6 +26,10 @@ test('renames a doc from the nav drawer row menu on mobile', async ({ page }) =>
     drawer.getByTestId(`sidebar-doc-${docId}-name`),
   ).toHaveText('Renamed on mobile');
 
+  // The rename dialog fully dismisses first, so Escape targets the drawer
+  // rather than the rename dialog's still-closing layer.
+  await expect(page.getByTestId('rename-doc-dialog')).toHaveCount(0);
+
   // Closing the drawer (Escape) reveals the topbar with the new name.
   await page.keyboard.press('Escape');
   await expect(drawer).toBeHidden();

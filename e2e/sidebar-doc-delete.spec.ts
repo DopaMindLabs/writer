@@ -1,5 +1,9 @@
 import { test, expect } from './_helpers';
-import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
+import {
+  reseedAndGoHome,
+  getFirstSpaceIdFromHome,
+  openSectionAddDoc,
+} from './_helpers';
 import type { Page } from '@playwright/test';
 
 const activeDocId = (page: Page): string => {
@@ -28,8 +32,7 @@ test('deletes a non-active document and leaves the open one untouched', async ({
 
   // Add a second doc; creating it navigates to it, so the first doc is now inactive.
   const sidebar = page.locator('aside').last();
-  await sidebar.locator('[data-testid$="-add"]').first().click();
-  const input = sidebar.locator('[data-testid$="-add-input"]');
+  const input = await openSectionAddDoc(page, sidebar);
   await input.fill('Keeper');
   await input.press('Enter');
   await page.waitForURL(
