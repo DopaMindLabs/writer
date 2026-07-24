@@ -969,5 +969,152 @@
     "manualAdd": {
       "bibtexPlaceholder": "@article{smith2024,\n  author = {Smith, J.},\n  title  = {…},\n  year   = {2024},\n}"
     }
+  },
+  "mediaLibrary": {
+    "title": "Library",
+    "heading": "Library",
+    "emptyCaption": "Upload a PDF to read and highlight it alongside your writing.",
+    "upload": {
+      "action": "Add PDF",
+      "busy": "Adding PDF…",
+      "reason": {
+        "mime": "{{name}} is not a PDF.",
+        "size": "{{name}} is larger than the 50 MB limit.",
+        "not-pdf": "{{name}} is not a valid PDF.",
+        "corrupt": "{{name}} could not be read — it may be damaged."
+      }
+    },
+    "card": {
+      "meta": "{{pages}} · {{size}}",
+      "pages_one": "{{count}} page",
+      "pages_other": "{{count}} pages",
+      "openAria": "Open {{name}}",
+      "deleteAria": "Delete {{name}}",
+      "deleteTitle": "Delete this PDF?",
+      "deleteDescription": "Its highlights will be deleted, and any notes will keep their text but lose the source.",
+      "deleteConfirm": "Delete",
+      "deleteCancel": "Cancel"
+    },
+    "row": {
+      "highlights_one": "{{count}} highlight",
+      "highlights_other": "{{count}} highlights",
+      "noHighlights": "—",
+      "menuAria": "Actions for {{name}}",
+      "menuOpen": "Open",
+      "menuDelete": "Delete…"
+    },
+    "list": {
+      "counts": "{{pdfs}} PDFs · {{annotations}} annotations",
+      "searchPlaceholder": "Search title, author, tag…",
+      "searchLabel": "Search the library",
+      "filtersLabel": "Filter the library",
+      "filterAll": "All",
+      "filterUnread": "Unread",
+      "filterAnnotated": "Annotated",
+      "filterCited": "Cited",
+      "citedUnavailable": "Needs citation links — not available yet.",
+      "sortLabel": "Sort the library",
+      "sortValue": "Sort: {{value}}",
+      "sortRecent": "Recent",
+      "sortName": "Name",
+      "sortPages": "Pages",
+      "groupToday": "Added today",
+      "groupThisWeek": "Earlier this week",
+      "empty": "No PDFs match.",
+      "footerShowing": "Showing {{shown}} of {{total}} · Drop files anywhere on this page",
+      "footerBrainSpace": "Adding to <strong>brain space</strong> is optional — from the reader, or drag a row onto the canvas",
+      "dropHint": "Drop PDFs to add them"
+    },
+    "viewer": {
+      "prevPage": "Previous page",
+      "nextPage": "Next page",
+      "pageReadout": "Page {{page}} / {{total}}",
+      "pageLabel": "Page {{page}} of {{total}}",
+      "loading": "Rendering page…",
+      "errorTitle": "This PDF could not be displayed.",
+      "errorBody": "The file may be damaged, or the reader could not start.",
+      "retry": "Try again"
+    }
+  },
+  "mediaViewer": {
+    "back": "Back to library",
+    "missingTitle": "PDF not found",
+    "missingCaption": "This PDF is no longer in the library."
+  },
+  "mediaPicker": {
+    "title": "Choose a PDF",
+    "description": "Attach a PDF from your library, or upload a new one.",
+    "empty": "No PDFs yet — upload one to attach it.",
+    "choose": "Choose"
+  },
+  "pdfHighlight": {
+    "colors": {
+      "yellow": "Yellow",
+      "pink": "Pink",
+      "blue": "Blue",
+      "green": "Green",
+      "ash": "Lavender"
+    },
+    "markAria": "Highlight, {{color}}: {{quote}}"
+  },
+  "pdfStrip": {
+    "toolbar": "Annotate selection",
+    "underline": "Underline",
+    "strikethrough": "Strikethrough",
+    "note": "note",
+    "cite": "cite",
+    "noteEyebrow": "P.{{page}} · HIGHLIGHT + NOTE",
+    "noteCancelHint": "ESC CANCELS",
+    "noteSaveHint": "↵ SAVE",
+    "notePlaceholder": "Add a note…"
+  },
+  "pdfMarkMenu": {
+    "addNote": "Add note…",
+    "editNote": "Edit note…",
+    "remove": "Remove {{kind}}",
+    "kinds": {
+      "highlight": "highlight",
+      "underline": "underline",
+      "strikethrough": "strikethrough"
+    }
+  },
+  "pdfHighlights": {
+    "title": "Highlights & notes",
+    "pageLabel": "P. {{page}}",
+    "emptyCaption": "Select text in the PDF to highlight it."
+  },
+  "pdfReader": {
+    "thumbsToggle": "Page thumbnails",
+    "railToggle": "Reader panels",
+    "info": "Document info",
+    "overflow": "More",
+    "focus": {
+      "enter": "Focus mode",
+      "exit": "Exit focus mode"
+    },
+    "tick": "Highlight on page {{page}}",
+    "crumbSuffix": " · page {{page}} of {{total}}",
+    "thumbs": {
+      "region": "Page thumbnails",
+      "page": "Page {{page}}"
+    },
+    "rows": {
+      "name": "Name",
+      "pages": "Pages",
+      "size": "Size",
+      "added": "Added",
+      "highlights": "Highlights"
+    },
+    "menu": {
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "resetZoom": "Reset zoom",
+      "openLibrary": "Open library"
+    },
+    "zoom": {
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "reset": "Reset zoom, currently {{pct}}%"
+    }
   }
 }

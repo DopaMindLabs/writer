@@ -12,6 +12,8 @@ const RESTORE_TABLES = [
   db.docs,
   db.notes,
   db.noteAttachments,
+  db.media,
+  db.pdfAnnotations,
   db.annotations,
   db.citations,
   db.connections,
@@ -37,6 +39,8 @@ const deleteSpaceContent = async (spaceId: string): Promise<void> => {
   await db.sections.where({ spaceId }).delete();
   await db.notes.where({ spaceId }).delete();
   await db.noteAttachments.where({ spaceId }).delete();
+  await db.media.where({ spaceId }).delete();
+  await db.pdfAnnotations.where({ spaceId }).delete();
   await db.citations.where({ spaceId }).delete();
   await db.connections.where({ spaceId }).delete();
   await db.palettes.where({ spaceId }).delete();
@@ -49,6 +53,8 @@ const putArchiveContent = async (archive: ParsedSpaceArchive): Promise<void> => 
   await restoreDocs(archive.docs);
   await db.notes.bulkPut(archive.notes);
   await db.noteAttachments.bulkPut(archive.attachments);
+  await db.media.bulkPut(archive.media);
+  await db.pdfAnnotations.bulkPut(archive.pdfAnnotations);
   await db.annotations.bulkPut(archive.annotations);
   await db.citations.bulkPut(archive.citations);
   await db.connections.bulkPut(archive.connections);

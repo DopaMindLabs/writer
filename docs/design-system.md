@@ -651,6 +651,7 @@ corners (no radius), a 1 px `rule` border, `paper` ground, and a dimmed scrim. T
 | **Dialog** | `src/components/ui/dialog.tsx` | A centred modal task (compose `DialogContent` + `DialogHeader`/`DialogTitle`/`DialogDescription`). Default `max-w-lg`; override the `className` width as needed (e.g. `HelpPalette`, `VersionHistoryModal`). |
 | **ConfirmDialog** | `src/components/ui/ConfirmDialog.tsx` | A yes/no confirm for an irreversible or destructive action. Two `Button`s: `secondary` cancel + a confirm whose `confirmKind` is `dangerous` for destructive verbs. Autofocuses confirm; wires `aria-describedby`. |
 | **Popover** | `src/components/ui/popover.tsx` | A small panel anchored to a trigger (Quick Settings, Space menu). Not modal. |
+| **ContextMenu** | `src/components/ui/context-menu.tsx` | Right-click / long-press actions on a specific object (e.g. remove / recolour / annotate a highlight). Opens at the pointer; a `ContextMenuRadioGroup` holds mutually-exclusive choices. **Never the only path to an action** — always provide a visible affordance too. |
 | **Bottom sheet** | `src/components/chrome/MobileMore/MobileMoreSheet.tsx` | The mobile-only slide-up menu. The one place radius is allowed (16 px scrim corners, per §1/§2.3). |
 
 **Rules**

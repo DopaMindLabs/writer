@@ -4,12 +4,13 @@ import {
   backupFilename,
   generateZipBlob,
   readSpaceSnapshot,
+  slugify,
   writeMarkdownProjection,
   type NoteAssets,
   type SpaceSnapshot,
 } from '@/lib/backup/buildSpaceMarkdownZip';
 import { buildManifest, MANIFEST_FILENAME } from './manifest';
-import { serializeNoteAttachment } from './codecs';
+import { serializeNoteAttachment, serializeMediaItem } from './codecs';
 
 export const RECORDS_DIR = 'records';
 
@@ -43,6 +44,20 @@ const writeAttachmentRecords = (
   }
 };
 
+// Media PDFs are canonical-archive-only (not part of the human markdown
+// projection): each blob is written to its own asset path and referenced by an
+// assetPath on the record, mirroring note attachments.
+const writeMediaRecords = (zip: JSZip, snapshot: SpaceSnapshot): void => {
+  for (const media of snapshot.media) {
+    const path = `assets/media/${media.id}/${slugify(media.name, media.id)}.pdf`;
+    zip.file(
+      path,
+      media.blob.arrayBuffer().then((buf) => new Uint8Array(buf)),
+    );
+    zip.file(recordPath('media', media.id), toJson(serializeMediaItem(media, path)));
+  }
+};
+
 const writeRecords = (
   zip: JSZip,
   snapshot: SpaceSnapshot,
@@ -53,6 +68,8 @@ const writeRecords = (
   writeTable(zip, 'docs', snapshot.docs);
   writeTable(zip, 'notes', snapshot.notes);
   writeAttachmentRecords(zip, snapshot, assets);
+  writeMediaRecords(zip, snapshot);
+  writeTable(zip, 'pdfAnnotations', snapshot.pdfAnnotations);
   writeTable(zip, 'annotations', snapshot.annotations);
   writeTable(zip, 'citations', snapshot.citations);
   writeTable(zip, 'connections', snapshot.connections);

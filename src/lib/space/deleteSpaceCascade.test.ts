@@ -58,6 +58,30 @@ const seedSpace = async (spaceId: string) => {
     key: docBodyBaselineKey(`doc-${spaceId}`),
     value: EMPTY_LEXICAL_JSON,
   });
+  await db.media.put({
+    id: `media-${spaceId}`,
+    spaceId,
+    name: 'f.pdf',
+    mime: 'application/pdf',
+    size: 3,
+    pageCount: 1,
+    blob: new Blob(['x']),
+    createdAt: FIXED_TIME,
+    updatedAt: FIXED_TIME,
+  });
+  await db.pdfAnnotations.put({
+    id: `hl-${spaceId}`,
+    mediaId: `media-${spaceId}`,
+    spaceId,
+    kind: 'highlight',
+    page: 1,
+    rects: [{ x: 0.1, y: 0.1, w: 0.2, h: 0.05 }],
+    quote: 'q',
+    color: 'yellow',
+    author: 'me',
+    createdAt: FIXED_TIME,
+    updatedAt: FIXED_TIME,
+  });
 };
 
 describe('deleteSpaceCascade', () => {
@@ -89,6 +113,13 @@ describe('deleteSpaceCascade', () => {
     expect(await db.meta.get(docBodyBaselineKey('doc-s1'))).toBeUndefined();
   });
 
+  it('deletes the space’s media items and pdf highlights', async () => {
+    await deleteSpaceCascade('s1');
+
+    expect(await db.media.get('media-s1')).toBeUndefined();
+    expect(await db.pdfAnnotations.get('hl-s1')).toBeUndefined();
+  });
+
   it('leaves other spaces’ rows untouched', async () => {
     await deleteSpaceCascade('s1');
 
@@ -99,5 +130,7 @@ describe('deleteSpaceCascade', () => {
     expect(await db.docUpdates.where('docId').equals('doc-s2').count()).toBe(1);
     expect(await db.meta.get(collabSeedKey('doc-s2'))).toBeDefined();
     expect(await db.meta.get(docBodyBaselineKey('doc-s2'))).toBeDefined();
+    expect(await db.media.get('media-s2')).toBeDefined();
+    expect(await db.pdfAnnotations.get('hl-s2')).toBeDefined();
   });
 });

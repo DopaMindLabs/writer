@@ -10,6 +10,8 @@ export enum RouteName {
   DocRead = 'docRead',
   DocSplit = 'docSplit',
   BrainSpace = 'brainSpace',
+  MediaLibrary = 'mediaLibrary',
+  MediaView = 'mediaView',
   Citations = 'citations',
   Help = 'help',
   HelpArticle = 'helpArticle',
@@ -27,6 +29,8 @@ export const ROUTE_PATHS: Record<RouteName, string> = {
   [RouteName.DocRead]: '/s/:spaceId/d/:docId/read',
   [RouteName.DocSplit]: '/s/:spaceId/d/:docId/split',
   [RouteName.BrainSpace]: '/s/:spaceId/brain-space',
+  [RouteName.MediaLibrary]: '/s/:spaceId/library',
+  [RouteName.MediaView]: '/s/:spaceId/library/:mediaId',
   [RouteName.Citations]: '/s/:spaceId/citations',
   [RouteName.Help]: '/help',
   [RouteName.HelpArticle]: '/help/:slug',
@@ -46,6 +50,9 @@ export const routes = {
   docSplit: (spaceId: string, docId: string) =>
     `/s/${spaceId}/d/${docId}/split`,
   brainSpace: (spaceId: string) => `/s/${spaceId}/brain-space`,
+  mediaLibrary: (spaceId: string) => `/s/${spaceId}/library`,
+  mediaView: (spaceId: string, mediaId: string) =>
+    `/s/${spaceId}/library/${mediaId}`,
   citations: (spaceId: string) => `/s/${spaceId}/citations`,
   help: () => '/help',
   helpArticle: (slug: string, anchor?: string) =>

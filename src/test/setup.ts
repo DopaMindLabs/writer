@@ -32,6 +32,10 @@ if (typeof Element !== 'undefined') {
   if (!proto.setPointerCapture) proto.setPointerCapture = () => {};
   if (!proto.hasPointerCapture) proto.hasPointerCapture = () => false;
   if (!proto.releasePointerCapture) proto.releasePointerCapture = () => {};
+  // jsdom does not implement scrollIntoView; the continuous PDF reader scrolls a
+  // page into view on a jump, so provide a no-op it can safely call.
+  const withScroll = Element.prototype as { scrollIntoView?: () => void };
+  if (!withScroll.scrollIntoView) withScroll.scrollIntoView = () => {};
 }
 
 if (typeof File !== 'undefined' && !('text' in File.prototype)) {
@@ -55,6 +59,25 @@ if (typeof URL !== 'undefined') {
   let counter = 0;
   u.createObjectURL = () => `blob:mock/${String(++counter)}`;
   u.revokeObjectURL = () => {};
+}
+
+if (typeof globalThis !== 'undefined' && !('IntersectionObserver' in globalThis)) {
+  // jsdom ships no IntersectionObserver; a no-op keeps components that lazily
+  // observe (e.g. the thumbnail rail) from throwing. Tests that need to drive
+  // visibility stub their own via vi.stubGlobal, which overrides this default.
+  class NoopIntersectionObserver {
+    readonly root = null;
+    readonly rootMargin = '';
+    readonly thresholds: readonly number[] = [];
+    observe(): void {}
+    unobserve(): void {}
+    disconnect(): void {}
+    takeRecords(): IntersectionObserverEntry[] {
+      return [];
+    }
+  }
+  (globalThis as unknown as { IntersectionObserver: unknown }).IntersectionObserver =
+    NoopIntersectionObserver;
 }
 
 if (typeof window !== 'undefined') {

@@ -9,6 +9,8 @@ const IMPORT_TABLES = [
   db.docs,
   db.notes,
   db.noteAttachments,
+  db.media,
+  db.pdfAnnotations,
   db.annotations,
   db.citations,
   db.connections,
@@ -54,6 +56,7 @@ const remapManuscript = (
     spaceId,
     linkedDocId:
       n.linkedDocId === undefined ? undefined : mapId(ids, n.linkedDocId),
+    mediaId: n.mediaId === undefined ? undefined : mapId(ids, n.mediaId),
   })),
 });
 
@@ -64,6 +67,8 @@ const remapAnnex = (
 ): Pick<
   ParsedSpaceArchive,
   | 'attachments'
+  | 'media'
+  | 'pdfAnnotations'
   | 'annotations'
   | 'citations'
   | 'connections'
@@ -76,6 +81,13 @@ const remapAnnex = (
     id: mapId(ids, a.id),
     spaceId,
     noteId: mapId(ids, a.noteId),
+  })),
+  media: archive.media.map((m) => ({ ...m, id: mapId(ids, m.id), spaceId })),
+  pdfAnnotations: archive.pdfAnnotations.map((p) => ({
+    ...p,
+    id: mapId(ids, p.id),
+    spaceId,
+    mediaId: mapId(ids, p.mediaId),
   })),
   annotations: archive.annotations.map((a) => ({
     ...a,
@@ -131,6 +143,9 @@ const putRemapped = async (archive: ParsedSpaceArchive): Promise<void> => {
   await createDocs(archive.docs.map(intoPrivateRealm));
   await db.notes.bulkPut(archive.notes.map(intoPrivateRealm));
   await db.noteAttachments.bulkPut(archive.attachments.map(intoPrivateRealm));
+  // Local-only tables (never synced) carry no realmId; write them as-is.
+  await db.media.bulkPut(archive.media);
+  await db.pdfAnnotations.bulkPut(archive.pdfAnnotations);
   await db.annotations.bulkPut(archive.annotations.map(intoPrivateRealm));
   await db.citations.bulkPut(archive.citations.map(intoPrivateRealm));
   await db.connections.bulkPut(archive.connections.map(intoPrivateRealm));

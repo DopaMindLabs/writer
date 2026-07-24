@@ -1,9 +1,12 @@
 /**
- * The single source of truth for the `version(1)` schema spec. Kept separate
- * from the {@link LoremDB} class so the cloud-sync layer can derive per-table
- * rules (which fields sync, which are encrypted) from the same definition.
+ * The base `version(1)` schema spec — the tables the collaborative-editing branch
+ * shipped. Kept separate from the {@link LoremDB} class so the cloud-sync layer
+ * can derive per-table rules (which fields sync, which are encrypted) from the
+ * same definition. Do not change these specs: existing installs created the DB
+ * at version 1 with exactly this shape, so new tables belong in a later version
+ * (see {@link PDF_STORES}), never here.
  */
-export const STORES: Record<string, string> = {
+export const BASE_STORES: Record<string, string> = {
   spaces: 'id, createdAt, updatedAt',
   sections:
     'id, spaceId, parentSectionId, order, [spaceId+order], [spaceId+parentSectionId]',
@@ -24,3 +27,15 @@ export const STORES: Record<string, string> = {
   syncConfigs: 'spaceId',
   docInspectorConfigs: 'spaceId',
 };
+
+/**
+ * PDF media library tables, added in `version(2)`. Local-only (never synced);
+ * see the cloud `UNSYNCED` list. `pdfAnnotations` joins here in its own task.
+ */
+export const PDF_STORES: Record<string, string> = {
+  media: 'id, spaceId, createdAt, [spaceId+createdAt]',
+  pdfAnnotations: 'id, mediaId, spaceId, page, createdAt, [mediaId+page]',
+};
+
+/** The full schema across all versions — the single source of truth for table names. */
+export const STORES: Record<string, string> = { ...BASE_STORES, ...PDF_STORES };

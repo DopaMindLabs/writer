@@ -176,4 +176,16 @@ export default tseslint.config(
       ],
     },
   },
+
+  {
+    // The `pdf-annotator` module is a self-contained, extractable package: it
+    // uses relative imports only and must never depend on the "@/" alias (that
+    // boundary is enforced by src/pdf-annotator/boundary.test.ts). The repo-wide
+    // preference for "@/" over relative parent imports therefore does not apply
+    // inside it.
+    files: ['src/pdf-annotator/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': 'off',
+    },
+  },
 );

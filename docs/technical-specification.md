@@ -1,6 +1,6 @@
 # LIpsum Writer — Technical Specification
 
-> Derived from the test suite (16 Playwright e2e specs + 60+ Vitest unit/component specs) and source layout. Each feature below is grounded in tests that verify it, so this doc doubles as the source of truth for user-facing documentation.
+> Derived from the test suite (the Playwright e2e specs + the Vitest unit/component specs) and source layout. Each feature below is grounded in tests that verify it, so this doc doubles as the source of truth for user-facing documentation.
 
 ---
 
@@ -46,6 +46,7 @@
 | 12 | **Theming** | Four themes: light, dark, high-contrast light, high-contrast dark. Choice persists in `localStorage`. |
 | 13 | **Tours / onboarding** | Driver.js guided tours; auto-trigger on first visit; replay from help menu; per-tour completion tracked in `localStorage`. |
 | 14 | **i18n** | i18next scaffolding (currently English-only; namespaces: `common`, `chrome`, `screens`, `app`, `templates`). |
+| 15 | **PDF library & reader** | A per-space media library of uploaded PDFs — a searchable, filterable, date-grouped reading list with page-wide drop upload — and a reader with a quiet pager, zoom, a glyph rail, side panels, a thumbnail column, and text selection → highlights / underline / strikethrough / notes. File a PDF into the brain space from the reader or by dragging a row onto the canvas. |
 
 ---
 
@@ -66,12 +67,14 @@
 | `/s/:spaceId/d/:docId/split` | Split | Two-pane view with right-pane picker. |
 | `/s/:spaceId/brain-space` | Brain Space | Visual note canvas. |
 | `/s/:spaceId/citations` | Citations | Full-page citations table. |
+| `/s/:spaceId/library` | Media library | Reading-list of uploaded PDFs. |
+| `/s/:spaceId/library/:mediaId` | PDF reader | Read and highlight one PDF. |
 | `/s/:spaceId/settings` | Space settings | Per-space configuration. |
 | `*` | Not Found | 404. |
 
 ### 3.2 Data model (Dexie tables)
 
-`Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `DocUpdate` (append-only CRDT payloads for collaborative editing; `Doc.body` stays the serialized read model), `Note` (state machine: `seed-prompt → seed-fetched → user`), `Connection`, `Annotation`, `Citation`, `Backup` (binary `payload: Blob`, discriminated by `format` — currently only `md-zip`), `Settings`, `HighlightPalette`, `Meta`.
+`Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `DocUpdate` (append-only CRDT payloads for collaborative editing; `Doc.body` stays the serialized read model), `Note` (state machine: `seed-prompt → seed-fetched → user`; a `pdf`-kind note carries a `mediaId` linking a library PDF), `Connection`, `Annotation`, `Citation`, `MediaItem` (an uploaded PDF; `blob` bytes plus `pageCount`, `size`, optional `openedAt`; never synced), `PdfAnnotation` (a highlight/underline/strikethrough on a `MediaItem`, anchored by page + fractional rects; never synced), `Backup` (binary `payload: Blob`, discriminated by `format` — currently only `md-zip`), `Settings`, `HighlightPalette`, `Meta`.
 
 The schema is declared in a single Dexie version. When the encrypted cloud-sync beta
 (§ 4.9.1) is active, one extra store — `cloudCrypto` (the passphrase-wrapped escrow) — is
@@ -156,7 +159,7 @@ Four modes, selected from the topbar tabs:
 
 Two panes separated by a draggable divider.
 
-**Right-pane picker.** A dropdown selects what fills the right pane: another document, the Brain Space (`dump`), or **Citations**.
+**Right-pane picker.** A dropdown selects what fills the right pane: another document, the Brain Space (`dump`), **Citations**, or the **Library** (the PDF reading list, § 4.16). Opening a PDF from the library pane keeps the split: the reader renders **inside the pane** (`with=media:<id>`, deep-linkable), with a back affordance returning the pane to the list.
 
 **Resizable divider.** Implements ARIA separator semantics (`role="separator"`, `aria-valuenow`, `aria-label="Resize split panes"`).
 
@@ -593,6 +596,131 @@ A disabled `↑ restore from file · soon` hint sits beside the snapshot button 
 
 ---
 
+### 4.16 PDF media library & reader
+
+Each space has a **media library** of uploaded PDFs, read and highlighted in a
+dedicated reader. PDFs and their highlights are stored locally in IndexedDB
+(`media` blobs, `pdfAnnotations`) and **never synced**; they travel with the
+space in the Markdown archive.
+
+**The engine seam.** react-pdf / pdf.js is imported from exactly one module,
+`src/lib/pdf/pdfAdapter.ts` (which also loads react-pdf's text- and
+annotation-layer stylesheets, so the text layer is a transparent, selectable
+overlay rather than opaque glyphs below the canvas). The worker is configured
+in `pdfWorker.ts` from a same-origin bundled asset (CSP `worker-src 'self'`).
+pdf.js detaches the buffer it is handed, so every consumer receives a fresh
+`clonePdfBytes` copy of a retained master, never the master.
+
+**Library list.** The library (`/s/:spaceId/library`) is a **reading list**, not
+a card grid:
+
+- A counted header (`{n} PDFs · {m} annotations`) and an **Add PDF** button.
+- Each PDF is a **row** with a page glyph (ink when added within the hour), the
+  serif title, and fixed columns for pages, size, highlight count (ink when
+  > 0, a muted dash at 0) and the added date. The whole row opens the reader; a
+  hover-revealed **⋮** menu offers Open and Delete….
+- **Search** filters by name (case-insensitive substring). **Filter tabs** are
+  All / Unread (`openedAt` unset) / Annotated (has a highlight); a **Cited** tab
+  is present but inert (aria-disabled, tooltip) because citation links do not
+  exist yet. **Sort** is Recent (default) / Name / Pages; only Recent is grouped
+  by date (Today / Earlier this week / month, with the year when not current).
+- **Upload** validates each file (PDF mime, ≤ 50 MB, `%PDF` magic, parseable);
+  rejects surface an `InlineBanner`. Files can be added by the button or by
+  **dropping them anywhere on the library page** (a dashed overlay appears while
+  dragging); both paths share one `useMediaUpload` controller and one banner.
+- Filtering, sorting and grouping are pure (`src/lib/media/libraryView.ts`); the
+  surface owns only view state.
+- The library topbar carries the always-present **focus toggle**; focus mode
+  (`?focus=1`) folds the space rail and doc sidebar so the list owns the full
+  width, reversible from the same spot.
+- Hosted in the **split view's right pane**, opening a row keeps the split: the
+  reader renders in-pane (`with=media:<id>`) with a back affordance to the list
+  (§ 4.4).
+
+**The reader.** Opening a PDF (`/s/:spaceId/library/:mediaId`) marks it opened
+(`markMediaOpened` stamps `openedAt`, clearing it from Unread) and shows the
+quiet reader chrome:
+
+0. **Continuous scroll** — every page is mounted top-to-bottom in one scroll
+   column, so reading is a scroll rather than a page-at-a-time flip. The **active
+   page** (what the pager, crumb and thumbnails track) is the page under the
+   viewport midpoint, updated as the reader scrolls; a jump (pager, thumbnail,
+   key, or a highlight row) scrolls that page to the top. Page jumps honour the
+   motion preference — instant under reduced motion, smooth otherwise.
+1. No standing toolbar — navigation and zoom live in the chrome, not a bar.
+2. A floating **pager** (`n / m`, prev/next) centred at the foot of the page,
+   tracking the scroll position; prev/next scroll to the adjacent page.
+3. A floating **zoom cluster** (in/out/reset) — a recorded reversal of the
+   runbook's "zoom lives in the overflow only" decision, drawn in-view.
+4. A 44px **glyph rail**: a Highlights (¶) glyph with a live count badge and an
+   Info glyph, each opening its side panel; while no panel is open, highlight
+   **ticks** run down the rail, proportional to each mark's position, and
+   navigate on click.
+5. The **Highlights & notes** panel lists every mark grouped by page; selecting
+   a row jumps to that page and focuses the mark.
+6. The **Info** panel lists the file facts (name, pages, size, added, highlight
+   count).
+7. A **thumbnail column** renders page thumbnails lazily (only visible pages,
+   one at a time), each showing a colour tick per distinct highlight on the
+   page; clicking a thumbnail navigates, and while it is open the centre pager
+   folds into the column's foot.
+8. Per-document **chrome memory** (which panel is open, whether the rail or
+   thumbnails are shown) is keyed by media id, persisted (sanitised, capped at
+   50 documents), and never leaks between documents.
+9. The shared **topbar** renders exactly as on every other screen — breadcrumb
+   (with the page readout as the crumb suffix) and the Write/Focus/Read/Split
+   mode tabs — with the reader's always-present **focus toggle** and the
+   **side-panel toggle** in its right cluster, the same slots the doc screens
+   use (the side-panel affordance carries one icon everywhere; on the reader it
+   drives the vertical glyph rail). A **secondary grey toolbar** beneath it
+   carries the **back** link (un-underlined icon) and the page-thumbnail
+   toggle.
+10. **Focus mode** (`?focus=1`, driven by the focus toggle and held across a
+    reload) folds away every piece of side chrome — the space rail, the
+    thumbnail column, the side panel and the glyph rail — so the page owns the
+    full width; the focus toggle itself stays visible so focus is always
+    reversible from the same spot.
+
+**Selection & highlighting.** Selecting text on the page summons the
+**selection strip**: five highlight colours plus underline, strikethrough, and a
+note action. Applying a mark writes a `PdfAnnotation` (kind
+`highlight`/`underline`/`strikethrough`, page, fractional rects, quote, colour,
+optional note). Overlap is macOS-Preview-style: a new highlight claims the
+region it covers and trims same-kind marks underneath (recolouring part of a
+highlight splits it rather than wiping it); a fully-covered mark's note is
+inherited. Marks are pointer-transparent so selection starts and drags freely
+over them; a right-click resolves to a mark by geometry and opens a context menu
+to recolour, edit the note, or remove it. The tint layer multiplies against the
+canvas as one isolated group, so overlapping tints never compound and text stays
+legible.
+
+**PDF source notes & filing.** Filing a PDF into a [brain space](#45-brain-space-visual-note-canvas)
+is optional. A PDF card is a `Note` of kind `pdf` anchored to the media item via
+`mediaId`, created through the single `filePdfToBrainSpace` facade — from the
+reader, or by **dragging a library row onto the brain-space canvas** (the row
+carries its media id on an `application/x-lipsum-media-id` drag type; the canvas
+accepts only that payload and drops the card at the point). The library is also
+available as a **right-pane option in [Split view](#44-split-view)**, beside a
+document.
+
+**Deletion & archive.** Deleting a PDF (`deleteMediaCascade`) removes the item
+and its highlights and **detaches** referencing notes (they keep their text,
+lose the `mediaId`). The Markdown archive round-trips media records (with the
+optional `openedAt`), their bytes, and highlights, remapping ids on import.
+
+**The pdf-annotator module.** The selection/overlap/rect maths lives in a
+self-contained module, `src/pdf-annotator/` (no app imports, no react-pdf /
+pdfjs / i18n / Dexie dependencies), consumed through its `@/pdf-annotator` index.
+See [`src/pdf-annotator/README.md`](../src/pdf-annotator/README.md).
+
+*Covered by:* `pdf-viewer.spec.ts`, `pdf-annotation-strip.spec.ts`,
+`pdf-reader-chrome.spec.ts`, `media-library.spec.ts`,
+`media-library-list.spec.ts`, `split-views.spec.ts`, and the `src/lib/media`,
+`src/lib/pdf`, `src/lib/brain`, `src/components/media`, `src/components/pdf`,
+`src/pdf-annotator`, and `src/screens/space/Media*` unit suites.
+
+---
+
 ## 5. State management
 
 A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`): `theme`, `currentSpaceId`, `floatingToolbarEnabled`, `splitDividerPct`. Session-only: `currentDocId`, `citationsDrawerOpen`, `mobileNavOpen`, `focusedNoteId`, `detailNoteId`, plus an export flag.
@@ -645,6 +773,12 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 | `split-sidebar.spec.ts` | Redundant split + sidebar coverage |
 | `brain-space.spec.ts` | Brain Space mount + count |
 | `mobile-nav.spec.ts` | Mobile nav drawer |
+| `split-views.spec.ts` | Split right-pane picker (brain space, citations, library) |
+| `pdf-viewer.spec.ts` | PDF render, text layer, zoom, paging, corrupt-file recovery |
+| `pdf-annotation-strip.spec.ts` | Selection strip: highlight/underline/strikethrough, notes, overlap split, context menu |
+| `pdf-reader-chrome.spec.ts` | Reader rail, panels, per-document memory, thumbnails |
+| `media-library.spec.ts` | Upload, reject, delete, persistence |
+| `media-library-list.spec.ts` | Row counts, search, filters, sort, date groups, page-wide drop |
 
 ### 7.2 Unit / component (Vitest) — 60+ specs
 

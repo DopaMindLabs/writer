@@ -15,6 +15,7 @@ import {
   attachmentsForNote,
 } from '@/hooks/useNoteAttachments';
 import { useConnections } from '@/hooks/useConnections';
+import { useCanvasPdfDrop } from '@/hooks/useCanvasPdfDrop';
 import { useSpace } from '@/hooks/useSpaces';
 import { useUI } from '@/store/ui';
 import { getTemplate } from '@/data/templates';
@@ -321,6 +322,7 @@ export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
 
   const { pendingFrom, addNote, handlePick, onBackgroundPointerDown } =
     useCanvasInteractions(spaceId, notes.length, scrollRef);
+  const pdfDrop = useCanvasPdfDrop(spaceId, scrollRef);
 
   const extent = useMemo(() => contentExtent(notes), [notes]);
 
@@ -329,6 +331,8 @@ export const BrainSpaceCanvas = ({ spaceId }: BrainSpaceCanvasProps) => {
       data-tour="tour-brainspace-canvas"
       data-testid="brain-canvas"
       onPointerDown={onBackgroundPointerDown}
+      onDragOver={pdfDrop.onDragOver}
+      onDrop={pdfDrop.onDrop}
       className="relative h-full min-w-0 flex-1 overflow-hidden bg-paper"
     >
       <CanvasScroll

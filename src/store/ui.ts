@@ -1,10 +1,20 @@
 import { create } from 'zustand';
+import { HL_COLORS, type HighlightColor } from '@/theme/tokens';
 
 export type Theme = 'light' | 'dark' | 'hc-light' | 'hc-dark';
 export type InspectorMode = 'none' | 'icons' | 'expanded';
 export type InspectorSection = 'outline' | 'info' | 'history' | 'actions';
 export type ReadingWidth = 's' | 'm' | 'l';
 export type DiffMode = 'inline' | 'side-by-side';
+export type PdfReaderPanel = 'highlights' | 'info' | null;
+
+/** Per-document reader chrome memory: which side panel is open, whether the rail
+ * and the thumbnail column are shown. Keyed by media id in {@link UIState}. */
+export interface PdfReaderPref {
+  railHidden: boolean;
+  panel: PdfReaderPanel;
+  thumbs: boolean;
+}
 
 interface UIState {
   currentSpaceId: string | null;
@@ -26,6 +36,8 @@ interface UIState {
   saveVersionOpen: boolean;
   diffMode: DiffMode;
   compareRevisionIds: { base: string | null; compare: string | null };
+  pdfHighlightColor: HighlightColor;
+  pdfReaderPrefs: Record<string, PdfReaderPref>;
   setCurrentSpaceId: (id: string | null) => void;
   setCurrentDocId: (id: string | null) => void;
   setTheme: (theme: Theme) => void;
@@ -51,6 +63,8 @@ interface UIState {
     base: string | null;
     compare: string | null;
   }) => void;
+  setPdfHighlightColor: (color: HighlightColor) => void;
+  setPdfReaderPref: (mediaId: string, patch: Partial<PdfReaderPref>) => void;
 }
 
 const PERSIST_KEY = 'lorem-ui';
@@ -76,6 +90,8 @@ type PersistedShape = Pick<
   | 'inspectorSection'
   | 'readingWidth'
   | 'diffMode'
+  | 'pdfHighlightColor'
+  | 'pdfReaderPrefs'
 >;
 
 const READING_WIDTHS: ReadingWidth[] = ['s', 'm', 'l'];
@@ -109,6 +125,43 @@ const sanitizeDiffMode = (v: unknown): DiffMode =>
     ? (v as DiffMode)
     : 'side-by-side';
 
+const sanitizePdfHighlightColor = (v: unknown): HighlightColor =>
+  typeof v === 'string' && Object.prototype.hasOwnProperty.call(HL_COLORS, v)
+    ? (v as HighlightColor)
+    : 'yellow';
+
+export const DEFAULT_PDF_READER_PREF: PdfReaderPref = {
+  railHidden: false,
+  panel: null,
+  thumbs: false,
+};
+
+/** Newest inserts win once the record is full; oldest key (insertion order) is
+ * evicted. A bound keeps the persisted blob small without any LRU machinery. */
+const PDF_READER_PREFS_CAP = 50;
+
+const isPdfReaderPref = (v: unknown): v is PdfReaderPref => {
+  if (typeof v !== 'object' || v === null) return false;
+  const p = v as Record<string, unknown>;
+  if (Object.keys(p).length !== 3) return false;
+  return (
+    typeof p.railHidden === 'boolean' &&
+    typeof p.thumbs === 'boolean' &&
+    (p.panel === 'highlights' || p.panel === 'info' || p.panel === null)
+  );
+};
+
+const sanitizePdfReaderPrefs = (
+  v: unknown,
+): Record<string, PdfReaderPref> => {
+  if (typeof v !== 'object' || v === null) return {};
+  const out: Record<string, PdfReaderPref> = {};
+  for (const [key, value] of Object.entries(v)) {
+    if (isPdfReaderPref(value)) out[key] = value;
+  }
+  return out;
+};
+
 const DEFAULT_SPLIT_DIVIDER_PCT = 50;
 const MIN_SPLIT_DIVIDER_PCT = 25;
 const MAX_SPLIT_DIVIDER_PCT = 75;
@@ -140,6 +193,8 @@ const buildSnapshot = (
   inspectorSection: s.inspectorSection,
   readingWidth: s.readingWidth,
   diffMode: s.diffMode,
+  pdfHighlightColor: s.pdfHighlightColor,
+  pdfReaderPrefs: s.pdfReaderPrefs,
   ...overrides,
 });
 
@@ -169,6 +224,8 @@ const initialState = () => ({
   saveVersionOpen: false,
   diffMode: sanitizeDiffMode(persisted.diffMode),
   compareRevisionIds: { base: null, compare: null },
+  pdfHighlightColor: sanitizePdfHighlightColor(persisted.pdfHighlightColor),
+  pdfReaderPrefs: sanitizePdfReaderPrefs(persisted.pdfReaderPrefs),
 });
 
 const createActions = (
@@ -179,6 +236,31 @@ const createActions = (
   ...createDocActions(set, snapshot),
   ...createToggleActions(set),
   ...createInspectorActions(set, get, snapshot),
+  ...createPdfReaderActions(set, get, snapshot),
+});
+
+const createPdfReaderActions = (
+  set: SetState,
+  get: GetState,
+  snapshot: Snapshot,
+) => ({
+  setPdfReaderPref: (mediaId: string, patch: Partial<PdfReaderPref>) => {
+    const prev = get().pdfReaderPrefs;
+    const current = prev[mediaId] ?? DEFAULT_PDF_READER_PREF;
+    const merged: Record<string, PdfReaderPref> = {
+      ...prev,
+      [mediaId]: { ...current, ...patch },
+    };
+    // Keep the newest entries once the cap is passed; insertion order evicts the
+    // oldest (a new key appends, an update keeps its place, so count is stable).
+    const entries = Object.entries(merged);
+    const next =
+      entries.length > PDF_READER_PREFS_CAP
+        ? Object.fromEntries(entries.slice(entries.length - PDF_READER_PREFS_CAP))
+        : merged;
+    set({ pdfReaderPrefs: next });
+    persist(snapshot({ pdfReaderPrefs: next }));
+  },
 });
 
 const createDocActions = (set: SetState, snapshot: Snapshot) => ({
@@ -199,6 +281,10 @@ const createDocActions = (set: SetState, snapshot: Snapshot) => ({
     const clamped = clampDividerPct(pct);
     set({ splitDividerPct: clamped });
     persist(snapshot({ splitDividerPct: clamped }));
+  },
+  setPdfHighlightColor: (pdfHighlightColor: HighlightColor) => {
+    set({ pdfHighlightColor });
+    persist(snapshot({ pdfHighlightColor }));
   },
 });
 

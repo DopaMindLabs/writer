@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { lazy, Suspense, useMemo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   createBrowserRouter,
@@ -31,6 +31,33 @@ import { HelpScreen } from '@/screens/global/Help';
 import { NotFoundScreen } from '@/screens/global/NotFound';
 import { RouteErrorScreen } from '@/components/errors/RouteErrorScreen';
 
+// Lazily loaded so the pdf.js engine chunk stays out of the entry bundle — the
+// library and viewer are its only entry points and share the pdf engine chunk.
+const MediaLibraryScreen = lazy(() =>
+  import('@/screens/space/MediaLibrary').then((m) => ({
+    default: m.MediaLibraryScreen,
+  })),
+);
+
+const MediaViewerScreen = lazy(() =>
+  import('@/screens/space/MediaViewer').then((m) => ({
+    default: m.MediaViewerScreen,
+  })),
+);
+
+const RouteSuspenseFallback = () => {
+  const { t } = useTranslation('app');
+  return (
+    <div className="flex h-full items-center justify-center font-sans text-ink-3">
+      <TypographyMuted>{t('booting')}</TypographyMuted>
+    </div>
+  );
+};
+
+const LazyRoute = ({ children }: { children: ReactNode }) => (
+  <Suspense fallback={<RouteSuspenseFallback />}>{children}</Suspense>
+);
+
 const createAppRouter =
   import.meta.env.VITE_ROUTER === 'browser'
     ? createBrowserRouter
@@ -57,6 +84,22 @@ const router = createAppRouter([
       { path: ROUTE_PATHS[RouteName.DocRead], element: <ReadScreen /> },
       { path: ROUTE_PATHS[RouteName.DocSplit], element: <SplitScreen /> },
       { path: ROUTE_PATHS[RouteName.BrainSpace], element: <BrainSpaceScreen /> },
+      {
+        path: ROUTE_PATHS[RouteName.MediaLibrary],
+        element: (
+          <LazyRoute>
+            <MediaLibraryScreen />
+          </LazyRoute>
+        ),
+      },
+      {
+        path: ROUTE_PATHS[RouteName.MediaView],
+        element: (
+          <LazyRoute>
+            <MediaViewerScreen />
+          </LazyRoute>
+        ),
+      },
       { path: ROUTE_PATHS[RouteName.Citations], element: <CitationsScreen /> },
       { path: '*', element: <NotFoundScreen /> },
     ],

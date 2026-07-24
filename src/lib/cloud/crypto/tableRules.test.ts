@@ -44,4 +44,11 @@ describe('tableRules', () => {
     expect(SYNCED_TABLES).toContain('noteAttachments');
     expect(SYNCED_TABLES).not.toContain('backups');
   });
+
+  it('does not sync or encrypt the media or pdfAnnotations tables', () => {
+    expect(isEncryptedTable('media')).toBe(false);
+    expect(isEncryptedTable('pdfAnnotations')).toBe(false);
+    expect(SYNCED_TABLES).not.toContain('media');
+    expect(SYNCED_TABLES).not.toContain('pdfAnnotations');
+  });
 });

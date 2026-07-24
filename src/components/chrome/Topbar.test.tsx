@@ -328,4 +328,41 @@ describe('Topbar', () => {
       expect(focusContainer).toMatchSnapshot('focus');
     });
   });
+
+  describe('reader slots', () => {
+    it('renders the leading and trailing slots and the crumb suffix', () => {
+      renderWithProviders(
+        <Topbar
+          spaceId="s1"
+          docId={null}
+          docName="thesis.pdf"
+          spaceName="Test"
+          mode="read"
+          leading={<button data-testid="lead">lead</button>}
+          trailing={<button data-testid="trail">trail</button>}
+          crumbSuffix=" · page 3 of 9"
+        />,
+        { initialEntries: ['/s/s1/library/m1'] },
+      );
+      expect(screen.getByTestId('lead')).toBeInTheDocument();
+      expect(screen.getByTestId('trail')).toBeInTheDocument();
+      expect(screen.getByTestId('topbar-crumb-suffix')).toHaveTextContent(
+        '· page 3 of 9',
+      );
+    });
+
+    it('omits the crumb suffix when not supplied', () => {
+      renderWithProviders(
+        <Topbar
+          spaceId="s1"
+          docId={null}
+          docName="thesis.pdf"
+          spaceName="Test"
+          mode="read"
+        />,
+        { initialEntries: ['/s/s1/library/m1'] },
+      );
+      expect(screen.queryByTestId('topbar-crumb-suffix')).not.toBeInTheDocument();
+    });
+  });
 });

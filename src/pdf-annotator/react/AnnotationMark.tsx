@@ -1,0 +1,79 @@
+import { clsx } from 'clsx';
+import { swatchRecipe, type SwatchVariants } from './swatchRecipe';
+import type { AnnotationKind, AnnotatorAnnotation, PdfRect } from '../core/types';
+import type { CSSProperties } from 'react';
+
+const pct = (n: number): string => `${(n * 100).toString()}%`;
+
+const unionBox = (rects: PdfRect[]): PdfRect => {
+  const left = Math.min(...rects.map((r) => r.x));
+  const top = Math.min(...rects.map((r) => r.y));
+  const right = Math.max(...rects.map((r) => r.x + r.w));
+  const bottom = Math.max(...rects.map((r) => r.y + r.h));
+  return { x: left, y: top, w: right - left, h: bottom - top };
+};
+
+/** The tint span geometry for one rect, by kind. Underline sits on the rect's
+ * bottom edge and strikethrough on its vertical centre — both 2px bars — while
+ * a highlight fills the whole rect. */
+const rectStyle = (kind: AnnotationKind, rect: PdfRect): CSSProperties => {
+  const base = { left: pct(rect.x), width: pct(rect.w) };
+  if (kind === 'underline') {
+    return { ...base, top: `calc(${pct(rect.y + rect.h)} - 2px)`, height: '2px' };
+  }
+  if (kind === 'strikethrough') {
+    return { ...base, top: `calc(${pct(rect.y + rect.h / 2)} - 1px)`, height: '2px' };
+  }
+  return { ...base, top: pct(rect.y), height: pct(rect.h) };
+};
+
+interface AnnotationMarkProps {
+  annotation: AnnotatorAnnotation;
+  /** Builds the mark's accessible name; supplied by the host so the module
+   * stays free of i18n. */
+  getMarkLabel: (annotation: AnnotatorAnnotation) => string;
+}
+
+/**
+ * One mark: a tinted, pointer-transparent `<span>` per rect (positioned as
+ * fractions of the page box, so it re-projects at any zoom), plus a single
+ * invisible, pointer-interactive button over the union box carrying the id,
+ * kind, colour and an accessible name for the context menu and the panel to
+ * target. A highlight fills each rect; underline and strikethrough draw a solid
+ * 2px bar. The multiply blend that keeps text legible lives on the layer, not
+ * here (see `AnnotationLayer`), so overlapping marks never compound.
+ *
+ * The whole mark is pointer-transparent (`pointer-events-none`): the tints sit
+ * over the canvas glyphs, and the button never sits between the text and the
+ * pointer — so text selection starts and drags freely over a highlight. The
+ * button stays in the DOM as the focusable, labelled handle for keyboard users
+ * (the menu key still emits a `contextmenu` on it); mouse right-clicks resolve to
+ * a mark by geometry instead (see `PdfMarkContextMenu`).
+ */
+export const AnnotationMark = ({ annotation, getMarkLabel }: AnnotationMarkProps) => {
+  const box = unionBox(annotation.rects);
+  const swatch = swatchRecipe({ color: annotation.color as SwatchVariants['color'] });
+
+  return (
+    <>
+      {annotation.rects.map((rect, i) => (
+        <span
+          key={`${annotation.id}-${i.toString()}`}
+          aria-hidden="true"
+          className={clsx('absolute', swatch)}
+          style={rectStyle(annotation.kind, rect)}
+        />
+      ))}
+      <button
+        type="button"
+        aria-label={getMarkLabel(annotation)}
+        data-testid="pdf-highlight-mark"
+        data-highlight-id={annotation.id}
+        data-kind={annotation.kind}
+        data-color={annotation.color}
+        className="pointer-events-none absolute h-auto min-h-0 border-0 bg-transparent p-0"
+        style={{ left: pct(box.x), top: pct(box.y), width: pct(box.w), height: pct(box.h) }}
+      />
+    </>
+  );
+};

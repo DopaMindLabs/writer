@@ -9,6 +9,7 @@ export const FEATURE_AREAS = [
   'citations',
   'brainspace',
   'annotations',
+  'media',
   'customization',
   'accessibility',
   'shortcuts',
@@ -176,7 +177,18 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     category: 'annotations',
     featureArea: 'annotations',
     keywords: ['highlight', 'annotation', 'palette', 'mark', 'color', 'note'],
-    related: ['brainspace', 'customization-and-settings'],
+    related: ['brainspace', 'customization-and-settings', 'media-library'],
+  },
+  {
+    slug: 'media-library',
+    category: 'research',
+    featureArea: 'media',
+    keywords: ['pdf', 'upload', 'library', 'reading', 'highlight', 'source', 'drop'],
+    related: [
+      'annotations-and-highlights',
+      'brainspace',
+      'citations-and-bibliography',
+    ],
   },
   {
     slug: 'customization-and-settings',

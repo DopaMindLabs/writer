@@ -8,8 +8,10 @@ import type {
   Doc,
   DocInspectorConfig,
   HighlightPalette,
+  MediaItem,
   Note,
   NoteAttachment,
+  PdfAnnotation,
   Revision,
   Section,
   Space,
@@ -22,6 +24,8 @@ export interface SpaceSnapshot {
   docs: Doc[];
   notes: Note[];
   attachments: NoteAttachment[];
+  media: MediaItem[];
+  pdfAnnotations: PdfAnnotation[];
   annotations: Annotation[];
   citations: Citation[];
   connections: Connection[];
@@ -36,6 +40,8 @@ const SNAPSHOT_TABLES = [
   db.docs,
   db.notes,
   db.noteAttachments,
+  db.media,
+  db.pdfAnnotations,
   db.annotations,
   db.citations,
   db.connections,
@@ -56,6 +62,11 @@ export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot>
       const docs = await db.docs.where('spaceId').equals(spaceId).toArray();
       const notes = await db.notes.where('spaceId').equals(spaceId).toArray();
       const attachments = await db.noteAttachments
+        .where('spaceId')
+        .equals(spaceId)
+        .toArray();
+      const media = await db.media.where('spaceId').equals(spaceId).toArray();
+      const pdfAnnotations = await db.pdfAnnotations
         .where('spaceId')
         .equals(spaceId)
         .toArray();
@@ -86,6 +97,8 @@ export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot>
         docs,
         notes,
         attachments,
+        media,
+        pdfAnnotations,
         annotations,
         citations,
         connections,

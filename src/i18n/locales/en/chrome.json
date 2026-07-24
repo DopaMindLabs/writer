@@ -17,6 +17,8 @@
     "ageMonths": "{{count}}mo",
     "ageYears": "{{count}}y",
     "workshop": "Workshop",
+    "mediaLibrary": "Library",
+    "mediaLibraryHint": "PDF library",
     "empty": "(empty)",
     "addDocAria": "Add doc to {{label}}",
     "addDocInputAria": "New document name",

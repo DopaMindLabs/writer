@@ -1,7 +1,7 @@
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { useEffect, useState, type KeyboardEvent } from 'react';
+import { useEffect, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Quote, Menu, Search, MoreHorizontal } from '@/components/libs/icons';
+import { Quote, Menu, Search, PanelRight } from '@/components/libs/icons';
 import { renameDoc } from '@/lib/docs';
 import { useUI } from '@/store/ui';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -21,6 +21,12 @@ interface TopbarProps {
   spaceName?: string;
   mode: Mode;
   fallbackDocId?: string | null;
+  /** Optional slot rendered before the crumb (e.g. the reader thumbnail toggle). */
+  leading?: ReactNode;
+  /** Optional slot rendered after the mode switcher (e.g. the reader panel toggle). */
+  trailing?: ReactNode;
+  /** Muted continuation appended after the doc name (e.g. the reader page readout). */
+  crumbSuffix?: string;
 }
 
 interface DocBreadcrumbProps {
@@ -28,6 +34,7 @@ interface DocBreadcrumbProps {
   docName?: string;
   spaceName?: string;
   focus: boolean;
+  crumbSuffix?: string;
 }
 
 interface EditableDocNameProps {
@@ -98,6 +105,7 @@ const DocBreadcrumb = ({
   docName,
   spaceName,
   focus,
+  crumbSuffix,
 }: DocBreadcrumbProps) => {
   return (
     <div className="flex min-w-0 items-center gap-1.5 font-serif text-[14px] text-ink-3">
@@ -108,6 +116,14 @@ const DocBreadcrumb = ({
             <span className="hidden text-ink-4 md:inline">/</span>
           )}
           <EditableDocName docId={docId} docName={docName} />
+          {crumbSuffix && (
+            <span
+              data-testid="topbar-crumb-suffix"
+              className="hidden shrink-0 text-ink-4 md:inline"
+            >
+              {crumbSuffix}
+            </span>
+          )}
         </>
       )}
     </div>
@@ -183,7 +199,7 @@ const InspectorToggle = () => {
       <TooltipTrigger asChild>
         <IconButton
           data-testid="topbar-inspector-toggle"
-          icon={MoreHorizontal}
+          icon={PanelRight}
           label={t('topbar.inspector')}
           active={inspectorOpen}
           strokeWidth={inspectorOpen ? 2.6 : 2}
@@ -273,6 +289,9 @@ export const Topbar = ({
   spaceName,
   mode,
   fallbackDocId,
+  leading,
+  trailing,
+  crumbSuffix,
 }: TopbarProps) => {
   const { t } = useTranslation('chrome');
   const location = useLocation();
@@ -300,11 +319,13 @@ export const Topbar = ({
         onClick={() => { setMobileNavOpen(true); }}
         className="md:hidden"
       />
+      {leading}
       <DocBreadcrumb
         docId={docId}
         docName={docName}
         spaceName={spaceName}
         focus={focus}
+        crumbSuffix={crumbSuffix}
       />
       <div className="flex-1" />
       <TopbarTools
@@ -315,6 +336,7 @@ export const Topbar = ({
         focus={focus}
         onCitations={onCitations}
       />
+      {trailing}
       <MobileNavDrawer spaceId={spaceId} activeDocId={docId} />
     </header>
   );

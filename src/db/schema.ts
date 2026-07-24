@@ -1,5 +1,6 @@
 import type { HighlightColor } from '@/theme/tokens';
 import type { DocStatus } from '@/lib/docInspector/status';
+import type { PdfRect } from '@/pdf-annotator/core/types';
 
 export interface Space {
   id: string;
@@ -75,6 +76,7 @@ export enum NoteKind {
   LooseEnd = 'loose-end',
   Blank = 'blank',
   Image = 'image',
+  Pdf = 'pdf',
 }
 
 export enum NoteLayout {
@@ -105,6 +107,8 @@ export interface Note {
   openedAt?: number;
   layout?: NoteLayout;
   typeVersion?: string;
+  /** Set on PDF source notes; points at a {@link MediaItem}. Unindexed. */
+  mediaId?: string;
   /** Access-control realm; see {@link Space.realmId}. */
   realmId?: string;
 }
@@ -239,4 +243,52 @@ export interface DocInspectorConfig {
   dueDate: InspectorToggle;
   highlightOverLimit: InspectorToggle;
   statusStages?: Partial<Record<DocStatus, boolean>>;
+}
+
+/**
+ * An uploaded PDF held in the per-space media library. The bytes live in
+ * IndexedDB as a Blob (the noteAttachments precedent); the library and viewer
+ * read them locally. Never synced (see cloud `UNSYNCED`).
+ */
+export interface MediaItem {
+  id: string;
+  spaceId: string;
+  name: string;
+  mime: 'application/pdf';
+  size: number;
+  pageCount: number;
+  blob: Blob;
+  createdAt: number;
+  updatedAt: number;
+  /** When the reader last opened this item; unset until first opened. Drives the
+   * library's "unread" filter. Not indexed — filtered in memory over the space. */
+  openedAt?: number;
+}
+
+/** The annotator module owns the page-rect type; the schema re-exports it. */
+export type { PdfRect };
+
+/** The mark kinds the selection strip can write; all reuse the `hl-*` palette. */
+export type PdfAnnotationKind = 'highlight' | 'underline' | 'strikethrough';
+
+/**
+ * A highlight on an uploaded PDF, anchored to the media item (not a note) so it
+ * survives note deletion and has a single cascade path. `spaceId` is denormalised
+ * for space-scoped cascade and archive. Reuses the editor's {@link HighlightColor}
+ * palette so theming (including the AAA high-contrast themes) comes for free.
+ * Never synced (see cloud `UNSYNCED`).
+ */
+export interface PdfAnnotation {
+  id: string;
+  mediaId: string;
+  spaceId: string;
+  kind: PdfAnnotationKind;
+  page: number;
+  rects: PdfRect[];
+  quote: string;
+  color: HighlightColor;
+  note?: string;
+  author: string;
+  createdAt: number;
+  updatedAt: number;
 }

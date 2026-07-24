@@ -1,7 +1,9 @@
 import { invariant } from '@/lib/invariant';
 import type { SpaceSnapshot } from '@/lib/backup/buildSpaceMarkdownZip';
 
-export const ARCHIVE_FORMAT_VERSION = 2;
+export const ARCHIVE_FORMAT_VERSION = 3;
+/** Format versions this app can still read. v2 predates the media library. */
+export const SUPPORTED_FORMAT_VERSIONS: readonly number[] = [2, 3];
 export const MANIFEST_FILENAME = 'manifest.json';
 
 export interface ArchiveManifest {
@@ -14,6 +16,8 @@ export interface ArchiveManifest {
     docs: number;
     notes: number;
     noteAttachments: number;
+    media: number;
+    pdfAnnotations: number;
     annotations: number;
     citations: number;
     connections: number;
@@ -40,6 +44,8 @@ export const buildManifest = (
     docs: snapshot.docs.length,
     notes: snapshot.notes.length,
     noteAttachments: snapshot.attachments.length,
+    media: snapshot.media.length,
+    pdfAnnotations: snapshot.pdfAnnotations.length,
     annotations: snapshot.annotations.length,
     citations: snapshot.citations.length,
     connections: snapshot.connections.length,
@@ -61,6 +67,14 @@ const readCount = (raw: Record<string, unknown>, field: string): number => {
   return value;
 };
 
+// media and pdfAnnotations arrived in format v3; a v2 archive has no such
+// records, so their absence reads as zero. checkCounts still cross-checks them
+// against the actual records.
+const readOptionalCount = (
+  raw: Record<string, unknown>,
+  field: string,
+): number => (raw[field] === undefined ? 0 : readCount(raw, field));
+
 const parseCounts = (value: unknown): ArchiveManifest['counts'] => {
   invariant(isRaw(value), 'manifest.counts: expected an object');
   return {
@@ -68,6 +82,8 @@ const parseCounts = (value: unknown): ArchiveManifest['counts'] => {
     docs: readCount(value, 'docs'),
     notes: readCount(value, 'notes'),
     noteAttachments: readCount(value, 'noteAttachments'),
+    media: readOptionalCount(value, 'media'),
+    pdfAnnotations: readOptionalCount(value, 'pdfAnnotations'),
     annotations: readCount(value, 'annotations'),
     citations: readCount(value, 'citations'),
     connections: readCount(value, 'connections'),
@@ -94,9 +110,9 @@ export const parseManifest = (value: unknown): ArchiveManifest => {
     'manifest.formatVersion: expected a number',
   );
   invariant(
-    formatVersion === ARCHIVE_FORMAT_VERSION,
+    SUPPORTED_FORMAT_VERSIONS.includes(formatVersion),
     `Unsupported archive format version ${String(formatVersion)} — ` +
-      `this app reads version ${String(ARCHIVE_FORMAT_VERSION)}`,
+      `this app reads version(s) ${SUPPORTED_FORMAT_VERSIONS.join(', ')}`,
   );
   invariant(
     typeof exportedAt === 'number' && Number.isFinite(exportedAt),

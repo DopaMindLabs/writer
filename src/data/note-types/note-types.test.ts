@@ -34,6 +34,12 @@ describe('note-types registry', () => {
     }
   });
 
+  it('registers the pdf note type with a label and a text layout', () => {
+    const descriptor = getNoteType(NoteKind.Pdf);
+    expect(descriptor.label).toBe('PDF');
+    expect(descriptor.layout).toBe(NoteLayout.Text);
+  });
+
   it('treats the image kind as an image-first layout with no body', () => {
     expect(getNoteType(NoteKind.Image).layout).toBe(NoteLayout.Image);
     const config = NOTE_LAYOUT_CONFIG[NoteLayout.Image];

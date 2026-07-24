@@ -15,6 +15,13 @@ vi.mock('@/editor/EditorFacade', () => ({
   ),
 }));
 
+// The library pane pulls the media facade (pdfjs) transitively; mock the seam so
+// jsdom does not load real pdfjs.
+const { getDocument } = vi.hoisted(() => ({ getDocument: vi.fn() }));
+vi.mock('@/lib/pdf/pdfAdapter', () => ({
+  pdfjs: { getDocument, GlobalWorkerOptions: { workerSrc: '' } },
+}));
+
 const { SplitScreen } = await import('./Split');
 
 const docA: Doc = {
@@ -80,6 +87,21 @@ describe('SplitScreen', () => {
       renderAt('/s/s1/d/d1/split?with=citations');
       expect(await screen.findByTestId('citations-pane')).toBeInTheDocument();
     });
+
+    it('should render the library on the right when with=library', async () => {
+      renderAt('/s/s1/d/d1/split?with=library');
+      expect(
+        await screen.findByTestId('media-library-surface'),
+      ).toBeInTheDocument();
+    });
+
+    it('should render the in-pane reader when with=media:<id>, keeping the left editor', async () => {
+      renderAt('/s/s1/d/d1/split?with=media:missing-media');
+      // The pane resolves the id itself; a missing item shows the in-pane
+      // missing state rather than navigating away — the split survives.
+      expect(await screen.findByTestId('split-media-missing')).toBeInTheDocument();
+      expect(screen.getByTestId('editor-stub')).toBeInTheDocument();
+    });
   });
 
   describe('right-pane select', () => {
@@ -89,6 +111,9 @@ describe('SplitScreen', () => {
         'split-right-pane-select',
       )) as HTMLSelectElement;
       expect(select).toHaveAttribute('aria-label', 'Right pane document');
+      // The candidate docs load asynchronously; wait for the option to appear
+      // before selecting it, or selectOptions can race an empty list.
+      await screen.findByRole('option', { name: 'Third Doc' });
       await userEvent.selectOptions(select, 'd3');
       await waitFor(() => { expect(select.value).toBe('d3'); });
     });
