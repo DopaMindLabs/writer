@@ -1,3 +1,4 @@
+import { isWorkshopSection } from '@/lib/sections';
 import type { Doc, Section } from '@/db/schema';
 import type { AddController } from './Sidebar.types';
 import { SectionHeader } from './SectionHeader';
@@ -13,6 +14,7 @@ interface SidebarSectionProps {
   activeDocId: string | null;
   onBrainSpace: boolean;
   notesCount: number;
+  canManage: boolean;
   docHref: (docId: string) => string;
   startAdd: (sectionId: string, parentLabel: string, subLabel: string | null) => void;
   add: AddController;
@@ -25,17 +27,21 @@ export const SidebarSection = ({
   activeDocId,
   onBrainSpace,
   notesCount,
+  canManage,
   docHref,
   startAdd,
   add,
 }: SidebarSectionProps) => {
-  const isWorkshop = sec.label === 'Workshop';
+  const isWorkshop = isWorkshopSection(sec);
   const showEmpty = docs.length === 0 && add.adding?.sectionId !== sec.id;
+  const containsActiveDoc = docs.some((d) => d.id === activeDocId);
   return (
     <div data-testid={`sidebar-section-${sec.id}`} className="mb-2">
       <SectionHeader
-        sectionId={sec.id}
-        label={sec.label}
+        section={sec}
+        docCount={docs.length}
+        containsActiveDoc={containsActiveDoc}
+        canManage={canManage}
         onAdd={() => { startAdd(sec.id, sec.label, null); }}
       />
       {isWorkshop && (

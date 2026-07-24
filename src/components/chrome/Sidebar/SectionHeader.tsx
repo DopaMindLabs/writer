@@ -1,25 +1,33 @@
 import { useTranslation } from 'react-i18next';
-import { Plus } from '@/components/libs/icons';
 import { TextField } from '@/components/ui/TextField';
-import { renameSection } from '@/lib/sections';
+import { renameSection, isWorkshopSection } from '@/lib/sections';
+import type { Section } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import { useInlineRename } from './useInlineRename';
+import { SectionRowMenu } from './SectionRowMenu';
 
-export const SectionHeader = ({
-  sectionId,
-  label,
-  indented = false,
-  onAdd,
-}: {
-  sectionId: string;
-  label: string;
+interface SectionHeaderProps {
+  section: Section;
+  docCount: number;
+  containsActiveDoc: boolean;
+  /** Whether the space's template lets its sections be managed. */
+  canManage: boolean;
   indented?: boolean;
   onAdd: () => void;
-}) => {
+}
+
+export const SectionHeader = ({
+  section,
+  docCount,
+  containsActiveDoc,
+  canManage,
+  indented = false,
+  onAdd,
+}: SectionHeaderProps) => {
   const { t } = useTranslation('chrome');
-  const rename = useInlineRename(label, (next) =>
-    renameSection(sectionId, next),
-  );
+  const { id: sectionId, label } = section;
+  const rename = useInlineRename(label, (next) => renameSection(sectionId, next));
+  const canModify = canManage && !isWorkshopSection(section);
   return (
     <div
       data-testid={`sidebar-section-${sectionId}-header`}
@@ -44,23 +52,25 @@ export const SectionHeader = ({
       ) : (
         <button
           type="button"
-          onDoubleClick={rename.beginEdit}
-          title={t('sidebar.renameSection')}
+          onDoubleClick={canModify ? rename.beginEdit : undefined}
+          title={canModify ? t('sidebar.renameSection') : undefined}
           data-testid={`sidebar-section-${sectionId}-label`}
-          className="flex-1 cursor-text truncate text-left uppercase"
+          className={cn(
+            'flex-1 truncate text-left uppercase',
+            canModify ? 'cursor-text' : 'cursor-default',
+          )}
         >
           {label}
         </button>
       )}
-      <button
-        type="button"
-        onClick={onAdd}
-        aria-label={t('sidebar.addDocAria', { label })}
-        data-testid={`sidebar-section-${sectionId}-add`}
-        className="rounded-sm text-ink-4 opacity-0 transition-opacity hover:text-ink focus:opacity-100 focus-visible:outline-none group-hover:opacity-100"
-      >
-        <Plus className="h-3 w-3" />
-      </button>
+      <SectionRowMenu
+        section={section}
+        docCount={docCount}
+        containsActiveDoc={containsActiveDoc}
+        canModify={canModify}
+        onAddDoc={onAdd}
+        onRename={rename.beginEdit}
+      />
     </div>
   );
 };

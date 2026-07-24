@@ -33,6 +33,18 @@
     "renameDocAria": "Rename document {{name}}",
     "renameSection": "Rename (double-click)",
     "renameSectionAria": "Rename section {{label}}",
+    "sectionMenuAria": "Options for {{label}} section",
+    "sectionAddDoc": "Add document",
+    "sectionRename": "Rename",
+    "sectionDelete": "Delete…",
+    "deleteSectionDialog": {
+      "title": "Delete section",
+      "descriptionEmpty": "“{{label}}” will be permanently deleted. This cannot be undone.",
+      "description": "“{{label}}” and its {{count}} document will be permanently deleted, along with their content and history. This cannot be undone.",
+      "description_other": "“{{label}}” and its {{count}} documents will be permanently deleted, along with their content and history. This cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete section"
+    },
     "renameDialog": {
       "title": "Rename document",
       "description": "Choose a new name for this document.",

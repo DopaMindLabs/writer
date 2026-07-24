@@ -55,6 +55,7 @@ export const SidebarNav = ({
           activeDocId={activeDocId}
           onBrainSpace={onBrainSpace}
           notesCount={notesCount}
+          canManage={allowConfiguration}
           docHref={docHref}
           startAdd={startAdd}
           add={add}
