@@ -66,4 +66,14 @@ describe('SortableSection', () => {
       screen.getByTestId('sidebar-section-sec1-header'),
     ).not.toHaveClass('cursor-grab');
   });
+
+  it('never wires a drag surface for the reserved Workshop section', () => {
+    renderSection({
+      canManage: true,
+      sec: { ...sampleSection, label: 'Workshop' },
+    });
+    expect(
+      screen.getByTestId('sidebar-section-sec1-header'),
+    ).not.toHaveClass('cursor-grab');
+  });
 });

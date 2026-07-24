@@ -6,7 +6,10 @@ import type { Section } from '@/db/schema';
 const { createSectionMock } = vi.hoisted(() => ({
   createSectionMock: vi.fn<typeof import('@/lib/sections').createSection>(),
 }));
-vi.mock('@/lib/sections', () => ({ createSection: createSectionMock }));
+vi.mock('@/lib/sections', async (orig) => ({
+  ...(await orig<typeof import('@/lib/sections')>()),
+  createSection: createSectionMock,
+}));
 
 import { useAddSection } from './useAddSection';
 
@@ -89,6 +92,22 @@ describe('useAddSection', () => {
     });
     expect(createSectionMock).not.toHaveBeenCalled();
     expect(result.current.adding).toBe(false);
+  });
+
+  it('does not create a section for the reserved Workshop label', async () => {
+    const { result } = renderHook(() => useAddSection('s1', []));
+    act(() => {
+      result.current.onStart();
+    });
+    act(() => {
+      result.current.onChange('Workshop');
+    });
+    await act(async () => {
+      result.current.onKeyDown(keyEvent('Enter'));
+    });
+    expect(createSectionMock).not.toHaveBeenCalled();
+    expect(result.current.adding).toBe(false);
+    expect(result.current.value).toBe('');
   });
 
   it('cancels without creating on Escape', () => {

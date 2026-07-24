@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { createSection } from '@/lib/sections';
+import { createSection, isWorkshopLabel } from '@/lib/sections';
 import type { Section } from '@/db/schema';
 import type { AddSectionController } from './Sidebar.types';
 
@@ -17,7 +17,8 @@ export const useAddSection = (
 
   const commit = async () => {
     const label = value.trim();
-    if (!label) {
+    // Treat an empty entry or the reserved Workshop label as no section to add.
+    if (!label || isWorkshopLabel(label)) {
       setAdding(false);
       setValue('');
       return;

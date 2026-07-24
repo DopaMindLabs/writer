@@ -28,6 +28,14 @@ describe('renameSection', () => {
     expect(section?.label).toBe(sampleSection.label);
   });
 
+  it('rejects renaming to the reserved Workshop label', async () => {
+    await expect(renameSection(sampleSection.id, 'Workshop')).rejects.toThrow(
+      InvariantError,
+    );
+    const section = await db.sections.get(sampleSection.id);
+    expect(section?.label).toBe(sampleSection.label);
+  });
+
   it('throws on an empty section id', async () => {
     await expect(renameSection('', 'Name')).rejects.toThrow(InvariantError);
   });

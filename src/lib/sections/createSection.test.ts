@@ -1,5 +1,6 @@
 import { db } from '@/db/db';
 import { seedBasicSpace } from '@/test/fixtures';
+import { InvariantError } from '@/lib/invariant';
 import { createSection } from './createSection';
 
 describe('createSection', () => {
@@ -25,5 +26,14 @@ describe('createSection', () => {
     const first = await createSection('s1', 'One', 1);
     const second = await createSection('s1', 'Two', 2);
     expect(first).not.toBe(second);
+  });
+
+  it('rejects the reserved Workshop label', async () => {
+    await expect(createSection('s1', 'Workshop', 3)).rejects.toThrow(
+      InvariantError,
+    );
+    await expect(createSection('s1', '  Workshop  ', 3)).rejects.toThrow(
+      InvariantError,
+    );
   });
 });
