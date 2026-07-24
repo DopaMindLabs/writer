@@ -1063,6 +1063,41 @@ describe('Sidebar', () => {
     });
   });
 
+  describe('locked template (no configuration)', () => {
+    it('does not wire dragging or the add-section affordance', async () => {
+      // An unresolved template is treated as not configurable.
+      await db.spaces.put({ ...sampleSpace, template: 'locked-xyz' });
+      await db.sections.put({
+        id: 'sec-x',
+        spaceId: 's1',
+        parentSectionId: null,
+        label: 'Locked',
+        order: 0,
+      });
+      await db.docs.put({
+        id: 'd-x',
+        spaceId: 's1',
+        sectionId: 'sec-x',
+        name: 'Locked doc',
+        body: EMPTY_LEXICAL_JSON,
+        meta: { wordCount: 0 },
+        updatedAt: 0,
+      });
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      const header = await screen.findByTestId('sidebar-section-sec-x-header');
+      // No drag surface: the header is not a sortable and carries no grab cursor.
+      expect(header).not.toHaveAttribute('aria-roledescription', 'sortable');
+      expect(header.className).not.toMatch(/cursor-grab/);
+      const docRow = await screen.findByTestId('sidebar-doc-d-x-sortable');
+      expect(docRow.className).not.toMatch(/cursor-grab/);
+      expect(
+        screen.queryByTestId('sidebar-add-section-trigger'),
+      ).not.toBeInTheDocument();
+    });
+  });
+
   describe('snapshot', () => {
     beforeEach(() => {
       vi.useFakeTimers({
