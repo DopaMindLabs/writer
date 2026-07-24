@@ -3,6 +3,7 @@ export {
   createDoc,
   createDocs,
   ensureDocCrdtSeeded,
+  moveDoc,
   renameDoc,
   restoreDocs,
   seedDocCrdt,
@@ -11,6 +12,7 @@ export {
   updateDocBody,
   updateDocMeta,
   type CreateDocInput,
+  type MoveDocInput,
 } from './docRepository';
 export {
   docBodyBaselineKey,

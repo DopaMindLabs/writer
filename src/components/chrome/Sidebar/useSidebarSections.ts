@@ -27,6 +27,15 @@ export const useSidebarSections = (sections: Section[], docs: Doc[]) => {
       arr.push(d);
       map.set(d.sectionId, arr);
     }
+    // Order within a section by `order`; legacy rows without it (sentinel) keep
+    // their insertion order via the stable sort, and new docs append.
+    for (const arr of map.values()) {
+      arr.sort(
+        (a, b) =>
+          (a.order ?? Number.MAX_SAFE_INTEGER) -
+          (b.order ?? Number.MAX_SAFE_INTEGER),
+      );
+    }
     return map;
   }, [docs]);
 
