@@ -1,7 +1,7 @@
 import { db } from '@/db/db';
 import { sampleSection, seedBasicSpace } from '@/test/fixtures';
 import { InvariantError } from '@/lib/invariant';
-import { renameSection } from './section-actions';
+import { renameSection } from './renameSection';
 
 describe('renameSection', () => {
   beforeEach(async () => {

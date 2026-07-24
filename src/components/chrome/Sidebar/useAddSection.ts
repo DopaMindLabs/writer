@@ -1,24 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { db } from '@/db/db';
-import { newId } from '@/lib/ids';
+import { createSection } from '@/lib/sections';
 import type { Section } from '@/db/schema';
 import type { AddSectionController } from './Sidebar.types';
-
-const createSection = async (
-  spaceId: string,
-  label: string,
-  order: number,
-): Promise<string> => {
-  const id = newId();
-  await db.sections.add({
-    id,
-    spaceId,
-    parentSectionId: null,
-    label,
-    order,
-  });
-  return id;
-};
 
 export const useAddSection = (
   spaceId: string,

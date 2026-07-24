@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Plus } from '@/components/libs/icons';
 import { TextField } from '@/components/ui/TextField';
-import { renameSection } from '@/lib/section-actions';
+import { renameSection } from '@/lib/sections';
 import { cn } from '@/lib/utils';
 import { useInlineRename } from './useInlineRename';
 
