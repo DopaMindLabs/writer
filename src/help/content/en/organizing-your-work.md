@@ -18,20 +18,24 @@ screen.
 
 ## Sections and documents
 
-Within a space, group related documents into sections. From each section
-header, click the **+** button to add a new doc. Type a name and press
-**Enter** — or simply click away — to save and open the new doc; **Escape**
-cancels. Empty inputs clear silently when you click away.
+Within a space, group related documents into sections. Each section header has
+a **⋯ menu** (it appears when you hover the header). Choose **Add document**,
+type a name, and press **Enter** — or simply click away — to save and open the
+new doc; **Escape** cancels. Empty inputs clear silently when you click away.
 
 ### Adding your own sections
 
-Some templates — such as **Blank** — let you add new sections to organise the
-space your way. When the template allows it, an **Add section** button appears
+You can shape a space to suit your work: an **Add section** button appears
 below the sections list when you hover that area. Click it, type a section
 name, and press **Enter** — or simply click away — to create. **Escape**
-cancels. Structured templates (Fiction, Thesis, Technical, Bioinformatics)
-keep their seeded sections fixed so the shape stays consistent with the
-workflow they encode.
+cancels. Every template supports this by default.
+
+### Reordering
+
+Sections and documents can be rearranged. Hover a section header or a document
+row to reveal a **drag handle** on the left, then drag it into place. You can
+also reorder from the keyboard: focus the handle with **Tab**, then use the
+**arrow keys** to move the item and drop it.
 
 ## Templates
 
@@ -57,6 +61,16 @@ dialogue explains what happens; confirm to delete.
 Deletion is **permanent and cannot be undone** — the document's **version
 history** is removed along with it. If you delete the document you're currently
 editing, you're taken to the next document in the space.
+
+## Deleting sections
+
+Open a section's **⋯ menu** and choose **Delete…**. If the section still holds
+documents, the confirmation tells you how many will go — deleting a section
+**also deletes every document inside it**, permanently. An empty section is
+removed with a lighter prompt.
+
+The **Workshop** section is protected: it keeps your BrainSpace within reach, so
+it can't be renamed or deleted.
 
 ## Related
 

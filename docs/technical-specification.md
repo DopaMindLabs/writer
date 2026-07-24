@@ -33,12 +33,12 @@
 | # | Area | What the user gets |
 |---|------|-------------------|
 | 1 | **Spaces** | Create independent writing projects from templates (Fiction, Research, Essay, Journal). Rename, delete, configure per-space settings. |
-| 2 | **Documents** | Multi-document spaces organized into sections. Inline rename, add docs to sections, autosaved Lexical editor. |
+| 2 | **Documents** | Multi-document spaces organized into sections. Add / rename / delete / reorder documents and sections from the sidebar, autosaved Lexical editor. |
 | 3 | **View modes** | Write, Focus, Read, Split — switch from the topbar. Each mode swaps the chrome around the same document. |
 | 4 | **Split view** | Two-pane layout with a keyboard-and-mouse resizable divider. Right pane can show another doc, the Brain Space, or Citations. |
 | 5 | **Brain Space** | A freeform visual canvas for unsorted notes. Multiple note kinds (Note, Char, Place, Lore, Question, Source, Claim, Figure, Todo, Loose End, Blank). Notes can be connected and linked to documents. |
 | 6 | **Citations** | Manual + BibTeX import (paste or `.bib` upload), tag-based search, bulk edit / bulk delete, `.bib` export. Available as a screen, a split-view pane, and a drawer. |
-| 7 | **Sidebar** | Per-space navigation: section list, doc list, add doc, add section (when the template's `allowExtraSections` is on), inline rename, Brain Space link with unsorted-note count, settings cog. |
+| 7 | **Sidebar** | Per-space navigation: section list, doc list, a per-section ⋯ menu (add document, rename, delete), add section (on every template unless it sets `allowConfiguration: false`), drag / keyboard reordering of sections and documents, Brain Space link with unsorted-note count, settings cog. The Workshop section is protected from rename and delete. |
 | 8 | **Mobile nav** | Hamburger drawer on small viewports; a bottom **more** sheet whose App group (settings, about, help, what's new, accessibility, account, contact) is shared with the desktop Quick Settings menu so the two cannot drift; settings tabs reflow without horizontal overflow. On the settings shells the wordmark / tag badge is the "back to root" affordance (the SpaceRail's own home link is hidden on mobile). |
 | 9 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), a local **Account** (display name + presence colour), plus Typography, Shortcuts, and Backups tabs. |
 | 10 | **Per-space settings** | General (name, tag), Sharing (coming soon), Template (coming soon), Members, Backups (manual `.md` snapshots + history + download), Danger Zone (delete with typed confirmation). |
@@ -110,15 +110,21 @@ A **space** is an independent writing project with its own sections, documents, 
 
 A space is structured as **sections** containing **documents**. The default sections vary by template (e.g., Fiction has *Manuscript* and *Characters*; Research has *Manuscript* and *Data*).
 
-**Add a doc.** In the sidebar, each section has an **+ Add doc to *<Section>*** button. Clicking it reveals an inline input. **Enter** creates the doc and navigates to it; **blur** (clicking away) saves the doc in place without navigating, or silently clears the input when empty; **Escape** cancels.
+**Section menu.** Each section header carries a **⋯ menu** (a design-system kebab, revealed on hover) with **Add document**, **Rename**, and **Delete…**. It replaces the earlier bare **+**, which was ambiguous — it added a document but read as "add section". The **Workshop** section (which hosts the Brain Space link) is reserved: its menu offers only **Add document**, never Rename or Delete.
 
-**Add a section.** When a space's template sets `allowExtraSections: true` (currently the **Blank** template), an **Add section** affordance appears below the sidebar's section list, hover-revealed on the row. Clicking it reveals an inline input. **Enter** — or **blur** (clicking away) — appends a new top-level section at the next order; **Escape** cancels. Templates that encode a specific workflow (Fiction, Thesis, Technical, Bioinformatics) keep `allowExtraSections` unset so their seeded shape is preserved.
+**Add a doc.** From a section's **⋯ menu**, choose **Add document** to reveal an inline input. **Enter** creates the doc and navigates to it; **blur** (clicking away) saves the doc in place without navigating, or silently clears the input when empty; **Escape** cancels. (Selecting a menu item moves focus into the input it opens, so the input is not committed prematurely.)
+
+**Add a section.** Section structure is user-configurable by default: a template opts out only by setting `allowConfiguration: false`, so the **Add section** affordance appears below the section list on every shipped template (Blank, Fiction, Humanities, Technical, Bioinformatics), hover-revealed on the row. Clicking it reveals an inline input. **Enter** — or **blur** (clicking away) — appends a new top-level section at the next order; **Escape** cancels. (This replaces the earlier opt-in `allowExtraSections`, which limited section management to the Blank template.)
 
 **Rename a doc.** Double-click the doc name in the topbar breadcrumb, or **double-click a doc name in the sidebar**. Rename input appears. **Enter** commits; **Escape** reverts. Blurring (clicking away) also commits when the value changed.
 
-**Rename a section.** **Double-click** a section label in the sidebar to switch it to an inline rename input. **Enter** or blur commits; **Escape** reverts. The same `useInlineRename` state machine drives both section and doc inline renames.
+**Rename a section.** From the section **⋯ menu** choose **Rename**, or **double-click** the section label. Either switches it to an inline rename input. **Enter** or blur commits; **Escape** reverts. The same `useInlineRename` state machine drives both section and doc inline renames. The Workshop section cannot be renamed (its identity is label-based).
 
 **Delete a doc.** Each document row carries a **⋯ menu** (revealed on hover on desktop, always shown on mobile) with a **Delete…** action that opens a destructive confirmation dialogue. Confirming cascades the delete — the document, its annotations, its revision history, and its collaborative CRDT state (`docUpdates` log + `collab-seed` marker) are all removed. Brain Space notes that linked to the document are **unlinked** (the note survives; only its dead link is cleared). If the deleted document is the one currently open, the app navigates back to the space so the first remaining document loads.
+
+**Delete a section.** From the section **⋯ menu** choose **Delete…**. When the section still holds documents the confirmation names the count ("… and its *N* documents will be permanently deleted"); an empty section shows a lighter warning. Confirming cascades through `deleteSectionCascade`: the section, its subsections, and every document they contain are removed (each document via the same doc cascade above). If the open document lived inside, the app navigates back to the space. The Workshop section is refused at the service layer, not just hidden in the UI.
+
+**Reorder sections and documents.** A hover-revealed grip on each section header and document row makes both lists sortable — by pointer drag or from the keyboard (focus the grip, then the arrow keys, via dnd-kit's keyboard sensor). Sections reorder among the top-level list (`reorderSection`); documents reorder within their section (`moveDoc`). Both renumber the affected list densely and persist through an unindexed `Doc.order` / `Section.order`; a reorder does not bump `updatedAt`. Reordering is offered only where the template allows configuration.
 
 **Autosave.** Edits flush to IndexedDB ~600 ms after the last keystroke. Content survives navigation and hard reload. Autosave is collaboration-aware: it persists local and undo/redo (`historic`) edits on that debounce, but skips remote (`collaboration`) reconciliations — with a bounded-staleness backstop (twice the debounce) so a local edit coalesced into a remote reconciliation is never lost.
 
@@ -126,7 +132,7 @@ A space is structured as **sections** containing **documents**. The default sect
 
 **Empty space.** Visiting `/s/:spaceId` without a docId redirects to the first doc; if none exists, the user sees an empty state.
 
-*Covered by:* `editor.spec.ts`, `multi-tab-sync.spec.ts`, `sidebar-doc-delete.spec.ts`, `persistence.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `DeleteDocDialog.test.tsx`, `deleteDocCascade.test.ts`, `WriteSurface.test.tsx`, `Topbar.test.tsx`.
+*Covered by:* `editor.spec.ts`, `multi-tab-sync.spec.ts`, `sidebar-doc-delete.spec.ts`, `sidebar-sections.spec.ts`, `sidebar-section-delete.spec.ts`, `sidebar-reorder.spec.ts`, `persistence.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `SectionRowMenu.test.tsx`, `DeleteSectionDialog.test.tsx`, `DeleteDocDialog.test.tsx`, `deleteDocCascade.test.ts`, `deleteSectionCascade.test.ts`, `moveDoc.test.ts`, `reorderSection.test.ts`, `WriteSurface.test.tsx`, `Topbar.test.tsx`.
 
 #### 4.2.1 Restore semantics
 
@@ -239,13 +245,13 @@ A full citation manager scoped to each space. Available in three surfaces:
 The per-space navigation column.
 
 - **Header:** editable space title + settings cog (links to per-space settings).
-- **Sections:** grouped doc lists, with an **+ Add doc to *<Section>*** button under each. A section's list also includes the docs of its subsections, flattened in — subsections render no header row of their own in the nav (the data model keeps the nesting; only the rendering is flat, so new docs are added at section level).
-- **Doc row menu:** each document row has a **⋯ menu** (Rename, Delete…) — revealed on row hover/focus on desktop, always visible on mobile.
+- **Sections:** grouped doc lists, each header carrying a **⋯ menu** (Add document, Rename, Delete…) and a hover-revealed drag grip. A section's list also includes the docs of its subsections, flattened in — subsections render no header row of their own in the nav (the data model keeps the nesting; only the rendering is flat, so new docs are added at section level). Sections reorder among themselves by drag or keyboard; documents reorder within their section the same way. The Workshop section's menu offers only Add document.
+- **Doc row menu:** each document row has a **⋯ menu** (Rename, Delete…) — revealed on row hover/focus on desktop, always visible on mobile — and a hover-revealed drag grip for reordering.
 - **Brain space link:** routes to `/s/:spaceId/brain-space`; shows the unsorted-note count and highlights when active.
 - **Footer:** Home, About, GitHub links.
 - **Mobile:** replaced by a hamburger button in the topbar that opens the same content (the SpaceRail plus the sidebar) in a dialog drawer. The drawer closes when the user taps a destination.
 
-*Covered by:* `mobile-nav.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `MobileNavDrawer.test.tsx`.
+*Covered by:* `mobile-nav.spec.ts`, `split-and-sidebar.spec.ts`, `sidebar-sections.spec.ts`, `sidebar-section-delete.spec.ts`, `sidebar-reorder.spec.ts`, `Sidebar.test.tsx`, `MobileNavDrawer.test.tsx`.
 
 ---
 
