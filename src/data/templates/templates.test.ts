@@ -1,5 +1,4 @@
-import { getTemplate, listTemplates, templateAllowsConfiguration } from './index';
-import type { Template } from './types';
+import { getTemplate, listTemplates } from './index';
 
 describe('listTemplates', () => {
   it('returns only enabled templates', () => {
@@ -13,8 +12,8 @@ describe('listTemplates', () => {
     for (let i = 1; i < list.length; i += 1) {
       const a = list[i - 1];
       const b = list[i];
-      const ao = a.pickerOrder ?? Number.MAX_SAFE_INTEGER;
-      const bo = b.pickerOrder ?? Number.MAX_SAFE_INTEGER;
+      const ao = a.pickerOrder;
+      const bo = b.pickerOrder;
       if (ao === bo) {
         expect(a.label.localeCompare(b.label)).toBeLessThanOrEqual(0);
       } else {
@@ -57,7 +56,7 @@ describe('seed wording', () => {
     const fiction = getTemplate('fiction');
     const titles = (fiction?.seedNotes ?? [])
       .map((n) => n.title)
-      .filter((title): title is string => Boolean(title));
+      .filter((title) => title !== '');
     expect(titles).toEqual([
       'Character — Name',
       'Place — Name',
@@ -78,30 +77,18 @@ describe('getTemplate', () => {
   });
 });
 
-describe('templateAllowsConfiguration', () => {
-  it('defaults to true for every shipped template', () => {
+describe('allowConfiguration', () => {
+  it('is set true on every shipped template (sections are user-managed by default)', () => {
     for (const template of listTemplates()) {
-      expect(templateAllowsConfiguration(template)).toBe(true);
+      expect(template.allowConfiguration).toBe(true);
     }
   });
 
-  it('is true for the Blank template', () => {
-    expect(templateAllowsConfiguration(getTemplate('blank'))).toBe(true);
-  });
-
-  it('is true for structured templates (sections are user-managed by default)', () => {
-    expect(templateAllowsConfiguration(getTemplate('fiction'))).toBe(true);
-    expect(templateAllowsConfiguration(getTemplate('humanities'))).toBe(true);
-    expect(templateAllowsConfiguration(getTemplate('technical'))).toBe(true);
-    expect(templateAllowsConfiguration(getTemplate('bioinformatics'))).toBe(true);
-  });
-
-  it('is false only when a template opts out with allowConfiguration: false', () => {
-    const locked = { allowConfiguration: false } as Template;
-    expect(templateAllowsConfiguration(locked)).toBe(false);
-  });
-
-  it('treats a missing template as not configurable', () => {
-    expect(templateAllowsConfiguration(undefined)).toBe(false);
+  it('is present as a boolean on each template looked up by id', () => {
+    expect(getTemplate('blank')?.allowConfiguration).toBe(true);
+    expect(getTemplate('fiction')?.allowConfiguration).toBe(true);
+    expect(getTemplate('humanities')?.allowConfiguration).toBe(true);
+    expect(getTemplate('technical')?.allowConfiguration).toBe(true);
+    expect(getTemplate('bioinformatics')?.allowConfiguration).toBe(true);
   });
 });

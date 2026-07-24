@@ -8,7 +8,10 @@ const { navigateMock, createDocMock } = vi.hoisted(() => ({
   createDocMock: vi.fn<typeof import('@/lib/docs').createDoc>(),
 }));
 vi.mock('react-router-dom', () => ({ useNavigate: () => navigateMock }));
-vi.mock('@/lib/docs', () => ({ createDoc: createDocMock }));
+vi.mock('@/lib/docs', async (orig) => ({
+  ...(await orig<typeof import('@/lib/docs')>()),
+  createDoc: createDocMock,
+}));
 
 import { useAddDoc } from './useAddDoc';
 

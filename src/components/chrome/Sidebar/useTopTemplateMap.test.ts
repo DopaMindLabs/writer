@@ -25,7 +25,7 @@ describe('useTopTemplateMap', () => {
       'Streak',
     ]);
     expect(result.current.get('Daily')?.defaultDocName).toBe('{{date}}');
-    expect(result.current.get('Streak')?.defaultDocName).toBeUndefined();
+    expect(result.current.get('Streak')?.defaultDocName).toBe('');
   });
 
   it('returns an empty map when no space is provided', () => {

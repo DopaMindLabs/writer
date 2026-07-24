@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useDocuments } from '@/hooks/useDocuments';
-import { getTemplate, templateAllowsConfiguration } from '@/data/templates';
+import { getTemplate } from '@/data/templates';
 import { routes } from '@/lib/routes';
 import type { Section, Space } from '@/db/schema';
 import { SortableSectionList } from './SortableSectionList';
@@ -35,7 +35,9 @@ export const SidebarNav = ({
   const { add, startAdd } = useAddDoc(spaceId, space);
   const addSection = useAddSection(spaceId, sections);
   const templateDef = space ? getTemplate(space.template) : undefined;
-  const allowConfiguration = templateAllowsConfiguration(templateDef);
+  // An unresolved template (space not loaded, or an unknown id) stays
+  // non-configurable so the management affordances hold until it resolves.
+  const allowConfiguration = !!templateDef?.allowConfiguration;
 
   const docHref = (docId: string): string =>
     `${routes.docWrite(spaceId, docId)}${modeSuffix}`;

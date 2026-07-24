@@ -9,9 +9,7 @@ const REGISTRY: Record<string, Template> = Object.fromEntries(
 );
 
 const compareForPicker = (a: Template, b: Template): number => {
-  const ao = a.pickerOrder ?? Number.MAX_SAFE_INTEGER;
-  const bo = b.pickerOrder ?? Number.MAX_SAFE_INTEGER;
-  if (ao !== bo) return ao - bo;
+  if (a.pickerOrder !== b.pickerOrder) return a.pickerOrder - b.pickerOrder;
   return a.label.localeCompare(b.label);
 };
 
@@ -25,11 +23,5 @@ export const getTemplate = (id: string): Template | undefined => {
   return REGISTRY[id];
 };
 
-export { templateAllowsConfiguration } from './templateConfiguration';
-
-export type {
-  Template,
-  TemplateSection,
-  TemplateSeedDoc,
-  TemplateStage,
-} from './types';
+export { TemplateStage } from './types';
+export type { Template, TemplateSection, TemplateSeedDoc } from './types';

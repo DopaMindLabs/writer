@@ -1,4 +1,5 @@
 import { NoteKind } from '@/db/schema';
+import { EMPTY_LEXICAL_JSON } from '@/lib/docs';
 import { TemplateStage, type Template } from './types';
 
 const template: Template = {
@@ -10,20 +11,22 @@ const template: Template = {
   enabled: false,
   description: 'shared world · multiple writers',
   pickerOrder: 5,
+  allowConfiguration: true,
   sections: [
-    { label: 'Manuscript', order: 0 },
-    { label: 'Shared world', order: 1 },
-    { label: 'Together', order: 2 },
+    { label: 'Manuscript', order: 0, defaultDocName: '' },
+    { label: 'Shared world', order: 1, defaultDocName: '' },
+    { label: 'Together', order: 2, defaultDocName: '' },
   ],
   seedDocs: [
-    { sectionLabel: 'Manuscript', name: 'My door — fifth' },
-    { sectionLabel: 'Manuscript', name: "Rae's door — second" },
-    { sectionLabel: 'Manuscript', name: "Kit's door — third" },
-    { sectionLabel: 'Shared world', name: 'Characters' },
-    { sectionLabel: 'Shared world', name: 'Places' },
-    { sectionLabel: 'Shared world', name: 'Common lore' },
-    { sectionLabel: 'Together', name: 'Chat' },
+    { sectionLabel: 'Manuscript', subsectionLabel: '', name: 'My door — fifth', body: EMPTY_LEXICAL_JSON },
+    { sectionLabel: 'Manuscript', subsectionLabel: '', name: "Rae's door — second", body: EMPTY_LEXICAL_JSON },
+    { sectionLabel: 'Manuscript', subsectionLabel: '', name: "Kit's door — third", body: EMPTY_LEXICAL_JSON },
+    { sectionLabel: 'Shared world', subsectionLabel: '', name: 'Characters', body: EMPTY_LEXICAL_JSON },
+    { sectionLabel: 'Shared world', subsectionLabel: '', name: 'Places', body: EMPTY_LEXICAL_JSON },
+    { sectionLabel: 'Shared world', subsectionLabel: '', name: 'Common lore', body: EMPTY_LEXICAL_JSON },
+    { sectionLabel: 'Together', subsectionLabel: '', name: 'Chat', body: EMPTY_LEXICAL_JSON },
   ],
+  seedNotes: [],
   noteKinds: [
     NoteKind.Note,
     NoteKind.Char,

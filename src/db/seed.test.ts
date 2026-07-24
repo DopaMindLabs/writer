@@ -5,7 +5,8 @@ import {
   seedIfEmpty,
 } from './seed';
 import { NoteKind, NoteState } from './schema';
-import type { Template } from '@/data/templates';
+import { TemplateStage, type Template } from '@/data/templates';
+import { EMPTY_LEXICAL_JSON } from '@/lib/docs';
 import { FIXED_TIME, serializedBody } from '@/test/fixtures';
 import { isParseableBody } from '@/lib/revisions';
 
@@ -16,26 +17,45 @@ const TEST_TEMPLATE: Template = {
   label: 'Test Template',
   tag: 'tst',
   version: '0.1.0',
+  stage: TemplateStage.Alpha,
   enabled: true,
+  description: '',
   pickerOrder: 0,
+  allowConfiguration: true,
   sections: [
     {
       label: 'Drafts',
       order: 0,
-      sections: [{ label: 'Ideas', order: 0 }],
+      defaultDocName: '',
+      sections: [{ label: 'Ideas', order: 0, defaultDocName: '' }],
     },
-    { label: 'Final', order: 1 },
+    { label: 'Final', order: 1, defaultDocName: '' },
   ],
   seedDocs: [
-    { sectionLabel: 'Drafts', name: 'Doc A' },
+    {
+      sectionLabel: 'Drafts',
+      subsectionLabel: '',
+      name: 'Doc A',
+      body: EMPTY_LEXICAL_JSON,
+    },
     {
       sectionLabel: 'Drafts',
       subsectionLabel: 'Ideas',
       name: 'Doc B',
       body: DOC_B_BODY,
     },
-    { sectionLabel: 'Final', name: 'Doc C' },
-    { sectionLabel: 'Nonexistent', name: 'Skipped' },
+    {
+      sectionLabel: 'Final',
+      subsectionLabel: '',
+      name: 'Doc C',
+      body: EMPTY_LEXICAL_JSON,
+    },
+    {
+      sectionLabel: 'Nonexistent',
+      subsectionLabel: '',
+      name: 'Skipped',
+      body: EMPTY_LEXICAL_JSON,
+    },
   ],
   seedNotes: [
     {

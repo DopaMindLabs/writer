@@ -120,10 +120,12 @@ describe('resolveDefaultName', () => {
         label: 'Chapters',
         order: 0,
         defaultDocName: 'Chapter',
-        sections: [{ label: 'Scenes', order: 0, defaultDocName: 'Scene' }],
+        sections: [
+          { label: 'Scenes', order: 0, defaultDocName: 'Scene' },
+        ],
       },
     ],
-    ['Notes', { label: 'Notes', order: 1 }],
+    ['Notes', { label: 'Notes', order: 1, defaultDocName: '' }],
   ]);
 
   it('falls back to untitled when the parent label is unknown', () => {
