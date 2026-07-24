@@ -13,7 +13,6 @@ const template: Template = {
   sections: [{ label: 'Notes', order: 0 }],
   seedDocs: [{ sectionLabel: 'Notes', name: 'Untitled' }],
   noteKinds: [NoteKind.Blank, NoteKind.Image],
-  allowExtraSections: true,
 };
 
 export default template;

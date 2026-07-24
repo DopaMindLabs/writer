@@ -45,5 +45,9 @@ export interface Template {
   seedDocs: TemplateSeedDoc[];
   seedNotes?: TemplateSeedNote[];
   noteKinds: NoteKind[];
-  allowExtraSections?: boolean;
+  /**
+   * Whether the user may manage this space's section structure (add, rename,
+   * delete, reorder). Defaults to true; set to false to lock the seeded shape.
+   */
+  allowConfiguration?: boolean;
 }

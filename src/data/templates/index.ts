@@ -25,6 +25,8 @@ export const getTemplate = (id: string): Template | undefined => {
   return REGISTRY[id];
 };
 
+export { templateAllowsConfiguration } from './templateConfiguration';
+
 export type {
   Template,
   TemplateSection,

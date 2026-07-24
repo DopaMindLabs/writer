@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useDocuments } from '@/hooks/useDocuments';
-import { getTemplate } from '@/data/templates';
+import { getTemplate, templateAllowsConfiguration } from '@/data/templates';
 import { routes } from '@/lib/routes';
 import type { Section, Space } from '@/db/schema';
 import { SidebarSection } from './SidebarSection';
@@ -35,7 +35,7 @@ export const SidebarNav = ({
   const { add, startAdd } = useAddDoc(spaceId, space);
   const addSection = useAddSection(spaceId, sections);
   const templateDef = space ? getTemplate(space.template) : undefined;
-  const allowExtraSections = templateDef?.allowExtraSections === true;
+  const allowConfiguration = templateAllowsConfiguration(templateDef);
 
   const docHref = (docId: string): string =>
     `${routes.docWrite(spaceId, docId)}${modeSuffix}`;
@@ -60,7 +60,7 @@ export const SidebarNav = ({
           add={add}
         />
       ))}
-      {allowExtraSections && <AddSectionRow add={addSection} />}
+      {allowConfiguration && <AddSectionRow add={addSection} />}
       {!topSections.some((s) => s.label === 'Workshop') && (
         <WorkshopFallback
           spaceId={spaceId}

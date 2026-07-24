@@ -1,4 +1,5 @@
-import { getTemplate, listTemplates } from './index';
+import { getTemplate, listTemplates, templateAllowsConfiguration } from './index';
+import type { Template } from './types';
 
 describe('listTemplates', () => {
   it('returns only enabled templates', () => {
@@ -77,15 +78,30 @@ describe('getTemplate', () => {
   });
 });
 
-describe('allowExtraSections', () => {
-  it('is true for the Blank template', () => {
-    expect(getTemplate('blank')?.allowExtraSections).toBe(true);
+describe('templateAllowsConfiguration', () => {
+  it('defaults to true for every shipped template', () => {
+    for (const template of listTemplates()) {
+      expect(templateAllowsConfiguration(template)).toBe(true);
+    }
   });
 
-  it('is unset (falsy) on structured templates that should keep their seeded shape', () => {
-    expect(getTemplate('fiction')?.allowExtraSections).toBeFalsy();
-    expect(getTemplate('humanities')?.allowExtraSections).toBeFalsy();
-    expect(getTemplate('technical')?.allowExtraSections).toBeFalsy();
-    expect(getTemplate('bioinformatics')?.allowExtraSections).toBeFalsy();
+  it('is true for the Blank template', () => {
+    expect(templateAllowsConfiguration(getTemplate('blank'))).toBe(true);
+  });
+
+  it('is true for structured templates (sections are user-managed by default)', () => {
+    expect(templateAllowsConfiguration(getTemplate('fiction'))).toBe(true);
+    expect(templateAllowsConfiguration(getTemplate('humanities'))).toBe(true);
+    expect(templateAllowsConfiguration(getTemplate('technical'))).toBe(true);
+    expect(templateAllowsConfiguration(getTemplate('bioinformatics'))).toBe(true);
+  });
+
+  it('is false only when a template opts out with allowConfiguration: false', () => {
+    const locked = { allowConfiguration: false } as Template;
+    expect(templateAllowsConfiguration(locked)).toBe(false);
+  });
+
+  it('treats a missing template as not configurable', () => {
+    expect(templateAllowsConfiguration(undefined)).toBe(false);
   });
 });

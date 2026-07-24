@@ -805,7 +805,7 @@ describe('Sidebar', () => {
       expect(row.className).toMatch(/\bgroup\b/);
     });
 
-    it('should hide the add-section trigger when the template does not allow extra sections', async () => {
+    it('should show the add-section trigger for a structured template (sections are configurable by default)', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'fiction' });
       await db.sections.put({
         id: 'sec-ms',
@@ -819,8 +819,8 @@ describe('Sidebar', () => {
       });
       await screen.findByTestId('sidebar-section-sec-ms');
       expect(
-        screen.queryByTestId('sidebar-add-section-trigger'),
-      ).not.toBeInTheDocument();
+        await screen.findByTestId('sidebar-add-section-trigger'),
+      ).toBeInTheDocument();
     });
 
     it('should open an input when the add-section trigger is clicked', async () => {
