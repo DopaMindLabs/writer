@@ -1,10 +1,10 @@
-import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/Button';
-import { TextField } from '@/components/ui/TextField';
 import { renameSection, isWorkshopSection } from '@/lib/sections';
 import type { Section } from '@/db/schema';
 import { cn } from '@/lib/utils';
+import type { DragActivator } from './Sidebar.types';
+import { surfaceDragProps } from './dragListeners';
 import { useInlineRename } from './useInlineRename';
+import { SectionLabel } from './SectionLabel';
 import { SectionRowMenu } from './SectionRowMenu';
 
 interface SectionHeaderProps {
@@ -15,6 +15,7 @@ interface SectionHeaderProps {
   canManage: boolean;
   indented?: boolean;
   onAdd: () => void;
+  dragActivator?: DragActivator;
 }
 
 export const SectionHeader = ({
@@ -24,47 +25,33 @@ export const SectionHeader = ({
   canManage,
   indented = false,
   onAdd,
+  dragActivator,
 }: SectionHeaderProps) => {
-  const { t } = useTranslation('chrome');
-  const { id: sectionId, label } = section;
-  const rename = useInlineRename(label, (next) => renameSection(sectionId, next));
+  const rename = useInlineRename(section.label, (next) =>
+    renameSection(section.id, next),
+  );
   const canModify = canManage && !isWorkshopSection(section);
+  const dragProps = dragActivator
+    ? surfaceDragProps(dragActivator.attributes, dragActivator.listeners)
+    : {};
   return (
     <div
-      data-testid={`sidebar-section-${sectionId}-header`}
+      ref={dragActivator?.ref}
+      data-testid={`sidebar-section-${section.id}-header`}
       className={cn(
         'group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4',
         indented ? 'pl-7' : 'pl-5',
+        dragActivator &&
+          'cursor-grab focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink active:cursor-grabbing',
       )}
+      {...dragProps}
     >
-      {rename.editing ? (
-        <TextField
-          variant="bare"
-          autoFocus
-          value={rename.draft}
-          onChange={(e) => { rename.setDraft(e.target.value); }}
-          onBlur={() => { void rename.commit(); }}
-          onFocus={(e) => { e.currentTarget.select(); }}
-          onKeyDown={rename.onKeyDown}
-          aria-label={t('sidebar.renameSectionAria', { label })}
-          data-testid={`sidebar-section-${sectionId}-rename-input`}
-          className="flex-1 font-mono text-[9px] uppercase tracking-[0.08em]"
-        />
-      ) : (
-        <Button
-          kind="bare"
-          size="none"
-          onDoubleClick={canModify ? rename.beginEdit : undefined}
-          title={canModify ? t('sidebar.renameSection') : undefined}
-          data-testid={`sidebar-section-${sectionId}-label`}
-          className={cn(
-            'block flex-1 truncate text-left font-mono font-normal uppercase tracking-[0.08em]',
-            canModify ? 'cursor-text' : 'cursor-default',
-          )}
-        >
-          {label}
-        </Button>
-      )}
+      <SectionLabel
+        sectionId={section.id}
+        label={section.label}
+        canModify={canModify}
+        rename={rename}
+      />
       <SectionRowMenu
         section={section}
         docCount={docCount}

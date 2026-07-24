@@ -1,8 +1,10 @@
-import { DndContext, closestCenter, type DragEndEvent } from '@dnd-kit/core';
 import {
+  DndContext,
   SortableContext,
+  closestCenter,
   verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+  type DragEndEvent,
+} from '@/components/libs/dnd';
 import { moveDoc } from '@/lib/docs';
 import type { Doc } from '@/db/schema';
 import { SortableDoc } from './SortableDoc';
@@ -43,6 +45,7 @@ export const SortableDocList = ({
   };
   return (
     <DndContext
+      id={`sidebar-docs-${sectionId}`}
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragEnd={onDragEnd}

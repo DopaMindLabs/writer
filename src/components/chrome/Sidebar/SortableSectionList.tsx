@@ -1,8 +1,10 @@
-import { DndContext, closestCenter, type DragEndEvent } from '@dnd-kit/core';
 import {
+  DndContext,
   SortableContext,
+  closestCenter,
   verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+  type DragEndEvent,
+} from '@/components/libs/dnd';
 import { reorderSection } from '@/lib/sections';
 import type { Doc, Section } from '@/db/schema';
 import type { AddController } from './Sidebar.types';
@@ -40,6 +42,7 @@ export const SortableSectionList = (props: SortableSectionListProps) => {
   };
   return (
     <DndContext
+      id="sidebar-sections"
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragEnd={onDragEnd}

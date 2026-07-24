@@ -1,11 +1,8 @@
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { useTranslation } from 'react-i18next';
-import { GripVertical } from '@/components/libs/icons';
-import { IconButton } from '@/components/ui/icon';
+import { CSS, useSortable } from '@/components/libs/dnd';
 import type { Doc } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import { DocLink } from './DocLink';
+import { surfaceDragProps } from './dragListeners';
 
 interface SortableDocProps {
   doc: Doc;
@@ -15,33 +12,28 @@ interface SortableDocProps {
 }
 
 /**
- * Wraps a {@link DocLink} as a sortable item: a hover-revealed grip (pointer +
- * keyboard draggable) reorders documents within their section. Dragging is
- * disabled when the template locks its structure.
+ * Makes a {@link DocLink} draggable: press and hold the row to reorder documents
+ * within their section (or use the keyboard once the row is focused). A quick
+ * click still follows the link — the pointer sensor only engages on a hold.
+ * Dragging is disabled when the template locks its structure.
  */
 export const SortableDoc = ({ doc, href, active, canManage }: SortableDocProps) => {
-  const { t } = useTranslation('chrome');
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: doc.id, disabled: !canManage });
   const style = { transform: CSS.Transform.toString(transform), transition };
+  const dragProps = canManage ? surfaceDragProps(attributes, listeners) : {};
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={cn('group/drag relative', isDragging && 'z-10 opacity-70')}
-    >
-      {canManage && (
-        <IconButton
-          icon={GripVertical}
-          iconSize="xs"
-          strokeWidth={1.25}
-          label={t('sidebar.dragDoc', { name: doc.name })}
-          data-testid={`sidebar-doc-${doc.id}-drag`}
-          className="absolute -left-1 top-1/2 z-10 h-5 w-4 -translate-y-1/2 cursor-grab text-ink-4 opacity-0 hover:bg-transparent hover:text-ink focus-visible:opacity-100 group-hover/drag:opacity-100"
-          {...attributes}
-          {...listeners}
-        />
+      data-testid={`sidebar-doc-${doc.id}-sortable`}
+      className={cn(
+        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink',
+        canManage && 'cursor-grab active:cursor-grabbing',
+        isDragging && 'relative z-10 opacity-70',
       )}
+      {...dragProps}
+    >
       <DocLink doc={doc} href={href} active={active} />
     </div>
   );

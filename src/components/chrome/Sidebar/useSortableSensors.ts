@@ -1,19 +1,23 @@
 import {
   KeyboardSensor,
   PointerSensor,
+  sortableKeyboardCoordinates,
   useSensor,
   useSensors,
-} from '@dnd-kit/core';
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+} from '@/components/libs/dnd';
 
 /**
- * Sensors shared by the sidebar's sortable lists: a pointer sensor with a small
- * activation distance (so clicks on links and menus still register) and a
- * keyboard sensor for accessible drag with the arrow keys.
+ * Sensors shared by the sidebar's sortable lists. The pointer sensor activates
+ * on a short press-and-hold (delay) rather than a handle, so a quick click still
+ * navigates or opens a menu while pressing and holding a row begins a drag — the
+ * `tolerance` cancels the drag if the pointer moves first (a scroll or a click).
+ * The keyboard sensor makes the same drag operable with the arrow keys.
  */
 export const useSortableSensors = () =>
   useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(PointerSensor, {
+      activationConstraint: { delay: 180, tolerance: 8 },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),

@@ -22,6 +22,22 @@ expect.addSnapshotSerializer({
     ),
 });
 
+// dnd-kit tags its live region / description elements with a module-level
+// counter (e.g. `DndLiveRegion-114`) that varies with test order; normalise it
+// so snapshots stay deterministic.
+const DND_ID_TOKEN = /^Dnd[A-Za-z]+-\d+$/;
+expect.addSnapshotSerializer({
+  test: (val) => typeof val === 'string' && DND_ID_TOKEN.test(val),
+  serialize: (val, config, indentation, depth, refs, printer) =>
+    printer(
+      (val as string).replace(/-\d+$/, '-*'),
+      config,
+      indentation,
+      depth,
+      refs,
+    ),
+});
+
 if (typeof Element !== 'undefined') {
   type WithPointerCapture = Element & {
     setPointerCapture: (id: number) => void;

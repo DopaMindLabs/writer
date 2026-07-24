@@ -1,6 +1,6 @@
 import { isWorkshopSection } from '@/lib/sections';
 import type { Doc, Section } from '@/db/schema';
-import type { AddController } from './Sidebar.types';
+import type { AddController, DragActivator } from './Sidebar.types';
 import { SectionHeader } from './SectionHeader';
 import { BrainSpaceLink } from './BrainSpaceLink';
 import { SortableDocList } from './SortableDocList';
@@ -18,6 +18,7 @@ interface SidebarSectionProps {
   docHref: (docId: string) => string;
   startAdd: (sectionId: string, parentLabel: string, subLabel: string | null) => void;
   add: AddController;
+  dragActivator?: DragActivator;
 }
 
 export const SidebarSection = ({
@@ -31,6 +32,7 @@ export const SidebarSection = ({
   docHref,
   startAdd,
   add,
+  dragActivator,
 }: SidebarSectionProps) => {
   const isWorkshop = isWorkshopSection(sec);
   const showEmpty = docs.length === 0 && add.adding?.sectionId !== sec.id;
@@ -43,6 +45,7 @@ export const SidebarSection = ({
         containsActiveDoc={containsActiveDoc}
         canManage={canManage}
         onAdd={() => { startAdd(sec.id, sec.label, null); }}
+        dragActivator={dragActivator}
       />
       {isWorkshop && (
         <BrainSpaceLink

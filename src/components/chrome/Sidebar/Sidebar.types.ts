@@ -1,4 +1,18 @@
 import type { KeyboardEvent, RefObject } from 'react';
+import type {
+  DraggableAttributes,
+  DraggableSyntheticListeners,
+} from '@/components/libs/dnd';
+
+/**
+ * The props a sortable wrapper hands to the element that should act as the drag
+ * grab surface (press-and-hold to drag, focusable for keyboard reordering).
+ */
+export interface DragActivator {
+  ref: (element: HTMLElement | null) => void;
+  attributes: DraggableAttributes;
+  listeners: DraggableSyntheticListeners;
+}
 
 export interface SidebarProps {
   spaceId: string;

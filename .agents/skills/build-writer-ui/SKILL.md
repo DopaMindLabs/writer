@@ -32,8 +32,8 @@ and update `docs/design-system.md` — do not work around the gap.
 
 ### Composition helpers
 `cva` from `@/components/libs/variants`, `cn` from `@/lib/utils`, Radix wrappers from
-`@/components/libs/primitives`, icons from `@/components/libs/icons` (never raw
-`lucide-react` imports).
+`@/components/libs/primitives`, icons from `@/components/libs/icons`, drag-and-drop from
+`@/components/libs/dnd` (never raw `lucide-react` or `@dnd-kit/*` imports).
 
 ## Accessibility requirements (every UI change)
 
