@@ -14,7 +14,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
         data-tour="tour-sidebar-space-title"
       >
         <button
-          class="block min-w-0 flex-1 cursor-text truncate text-left font-serif text-lg font-medium leading-tight tracking-tight text-ink"
+          class="items-center justify-center gap-2 whitespace-nowrap rounded-none transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 block min-w-0 flex-1 cursor-text truncate text-left font-serif text-lg font-medium leading-tight tracking-tight text-ink"
           data-testid="sidebar-space-title"
           title="Rename space"
           type="button"
@@ -76,7 +76,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
           data-testid="sidebar-section-sec1-header"
         >
           <button
-            class="flex-1 truncate text-left uppercase cursor-text"
+            class="items-center justify-center gap-2 whitespace-nowrap rounded-none transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 block flex-1 truncate text-left font-mono font-normal uppercase tracking-[0.08em] cursor-text"
             data-testid="sidebar-section-sec1-label"
             title="Rename (double-click)"
             type="button"
@@ -87,7 +87,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
             aria-expanded="false"
             aria-haspopup="menu"
             aria-label="Options for Drafts section"
-            class="inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:text-ink h-5 w-5 text-ink-4 transition-opacity hover:bg-transparent hover:text-ink data-[state=open]:bg-transparent md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
+            class="inline-flex items-center justify-center h-7 w-7 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:text-ink text-ink-4 transition-opacity hover:bg-transparent data-[state=open]:bg-transparent md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
             data-state="closed"
             data-testid="sidebar-section-sec1-menu"
             id="radix-_r_*_"
@@ -195,7 +195,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
       >
         <button
           aria-label="Add section to this space"
-          class="flex w-full items-center gap-1 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:text-ink focus-visible:opacity-100 focus-visible:outline-none group-hover:opacity-100"
+          class="whitespace-nowrap rounded-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 flex w-full items-center justify-start gap-1 font-mono text-[9px] font-normal uppercase tracking-[0.08em] text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:text-ink focus-visible:opacity-100 focus-visible:outline-none group-hover:opacity-100"
           data-testid="sidebar-add-section-trigger"
           type="button"
         >

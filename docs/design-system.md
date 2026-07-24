@@ -456,7 +456,7 @@ fit one line.
 
 ### 4.5 `Button`
 
-Four kinds. Square corners always.
+Four styled kinds, plus a `bare` escape hatch. Square corners always.
 
 | Kind | Look | Use for |
 |---|---|---|
@@ -464,14 +464,15 @@ Four kinds. Square corners always.
 | `secondary` | Hairline outline, ink text, transparent ground. | Secondary CTA next to a primary (e.g. *cancel* next to *save*). |
 | `ghost` | Geist 500, ink, single 1-px underline. | Most actions: *continue reading →*, *peek inside*. |
 | `dangerous` | Same as primary — context, not colour, signals risk. | Delete / archive / destructive verbs. |
+| `bare` | No surface of its own — the button reset only (focus ring, disabled handling). | Bespoke inline text triggers that own their type and layout via `className` — an editable title, an eyebrow section label, an eyebrow *Add section* affordance. Never a raw `<button>`. Pair with `size="none"`. |
 
 **Sizes**: `sm` (12 px text, 6×12 padding), `md` default (13 px text, 9×16), `lg` (14 px text,
-12×22).
+12×22), `none` (no box — the caller sizes it, used with `bare`).
 
 | Prop | Type | Default |
 |---|---|---|
-| `kind` | `"primary" \| "secondary" \| "ghost" \| "dangerous"` | `"primary"` |
-| `size` | `"sm" \| "md" \| "lg"` | `"md"` |
+| `kind` | `"primary" \| "secondary" \| "ghost" \| "dangerous" \| "bare"` | `"primary"` |
+| `size` | `"sm" \| "md" \| "lg" \| "none"` | `"md"` |
 | `disabled` | boolean | `false` |
 
 > **In this repo:** `src/components/ui/Button.tsx` — implemented with `cva`

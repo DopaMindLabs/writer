@@ -60,7 +60,7 @@ export const SectionRowMenu = (props: SectionRowMenuProps) => {
             iconSize="xs"
             strokeWidth={1.25}
             label={t('sidebar.sectionMenuAria', { label: section.label })}
-            className="h-5 w-5 text-ink-4 transition-opacity hover:bg-transparent hover:text-ink data-[state=open]:bg-transparent md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
+            className="text-ink-4 transition-opacity hover:bg-transparent data-[state=open]:bg-transparent md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" onCloseAutoFocus={closeAutoFocus}>

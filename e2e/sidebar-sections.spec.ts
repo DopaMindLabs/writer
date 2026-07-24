@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
 });
 
-test('sidebar shows section headers with add buttons', async ({ page }) => {
+test('sidebar shows section headers with a management menu', async ({ page }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}`);
   await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
@@ -21,9 +21,11 @@ test('sidebar shows section headers with add buttons', async ({ page }) => {
   const headerCount = await headers.count();
   expect(headerCount).toBeGreaterThan(0);
 
-  // Each header has an add button
-  const addBtns = sidebar.locator('[data-testid$="-add"]');
-  expect(await addBtns.count()).toBeGreaterThan(0);
+  // Each header carries a kebab menu (Add document / Rename / Delete)
+  const sectionMenus = sidebar.locator(
+    '[data-testid^="sidebar-section-"][data-testid$="-menu"]',
+  );
+  expect(await sectionMenus.count()).toBeGreaterThan(0);
 });
 
 test('sidebar section header label renders in uppercase', async ({ page }) => {
@@ -106,11 +108,15 @@ test('sidebar doc items show context menu with rename', async ({ page }) => {
 
   const sidebar = page.locator('aside').last();
   // The trigger is revealed on row hover on desktop; open the first doc's menu.
-  const docMenu = sidebar.locator('[data-testid$="-menu"]').first();
+  const docMenu = sidebar
+    .locator('[data-testid^="sidebar-doc-"][data-testid$="-menu"]')
+    .first();
   await docMenu.click();
 
   // The dropdown content is portaled to the document body, not inside the aside.
-  await expect(page.locator('[data-testid$="-rename"]').first()).toBeVisible();
+  await expect(
+    page.locator('[data-testid^="sidebar-doc-"][data-testid$="-rename"]').first(),
+  ).toBeVisible();
 });
 
 test('sidebar space menu trigger opens the space menu popover', async ({
@@ -145,10 +151,15 @@ test('adding a doc via section input and submitting creates a new doc', async ({
   await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
 
   const sidebar = page.locator('aside').last();
-  const addBtns = sidebar.locator('[data-testid$="-add"]');
   const initialDocCount = await sidebar.locator('a[href*="/d/"]').count();
 
-  await addBtns.first().click();
+  // Open the first section's menu and choose Add document.
+  await sidebar
+    .locator('[data-testid^="sidebar-section-"][data-testid$="-menu"]')
+    .first()
+    .click();
+  await page.locator('[data-testid$="-add-doc"]').first().click();
+
   const input = sidebar.locator('[data-testid$="-add-input"]');
   await expect(input).toBeVisible();
   await input.fill('Added Doc');
@@ -169,11 +180,15 @@ test('adding a doc commits on blur without navigating away from the current doc'
   const urlBefore = page.url();
 
   const sidebar = page.locator('aside').last();
-  const addBtns = sidebar.locator('[data-testid$="-add"]');
   const initialDocCount = await sidebar.locator('a[href*="/d/"]').count();
 
-  await addBtns.first().click();
+  await sidebar
+    .locator('[data-testid^="sidebar-section-"][data-testid$="-menu"]')
+    .first()
+    .click();
+  await page.locator('[data-testid$="-add-doc"]').first().click();
   const input = sidebar.locator('[data-testid$="-add-input"]');
+  await expect(input).toBeVisible();
   await input.fill('Saved on blur');
   // Blur by clicking the sidebar background (a known stable target)
   await sidebar.getByTestId('sidebar-space-subtitle').click();
@@ -212,13 +227,26 @@ test('blank template surfaces an Add section affordance that creates a new top-l
   ).toBeVisible();
 });
 
-test('structured templates do not surface the Add section affordance', async ({
+test('structured templates also surface the Add section affordance', async ({
   page,
 }) => {
   await createSpaceFromTemplate(page, 'fiction');
 
   const sidebar = page.locator('aside').last();
-  await expect(
-    sidebar.getByTestId('sidebar-add-section-trigger'),
-  ).toHaveCount(0);
+  const trigger = sidebar.getByTestId('sidebar-add-section-trigger');
+  await expect(trigger).toBeVisible();
+
+  const initialHeaderCount = await sidebar
+    .locator('[data-testid$="-header"]')
+    .count();
+
+  await trigger.click();
+  const input = sidebar.getByTestId('sidebar-add-section-input');
+  await expect(input).toBeVisible();
+  await input.fill('Appendix');
+  await input.press('Enter');
+
+  await expect(sidebar.locator('[data-testid$="-header"]')).toHaveCount(
+    initialHeaderCount + 1,
+  );
 });

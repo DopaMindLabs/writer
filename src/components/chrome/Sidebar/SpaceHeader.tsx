@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/Button';
 import { TextField } from '@/components/ui/TextField';
 import { db } from '@/db/db';
 import type { Space } from '@/db/schema';
@@ -50,8 +51,9 @@ export const SpaceHeader = ({ spaceId, space }: SpaceHeaderProps) => {
         />
       ) : (
         <div className="flex items-center gap-2" data-tour="tour-sidebar-space-title">
-          <button
-            type="button"
+          <Button
+            kind="bare"
+            size="none"
             onClick={() => { if (space) setEditingSpaceName(true); }}
             disabled={!space}
             title={space ? t('chrome:sidebar.renameSpace') : undefined}
@@ -59,7 +61,7 @@ export const SpaceHeader = ({ spaceId, space }: SpaceHeaderProps) => {
             className="block min-w-0 flex-1 cursor-text truncate text-left font-serif text-lg font-medium leading-tight tracking-tight text-ink"
           >
             {space?.name ?? '…'}
-          </button>
+          </Button>
           {space ? (
             <SpaceMenu
               space={space}

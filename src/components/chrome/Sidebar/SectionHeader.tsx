@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/Button';
 import { TextField } from '@/components/ui/TextField';
 import { renameSection, isWorkshopSection } from '@/lib/sections';
 import type { Section } from '@/db/schema';
@@ -50,18 +51,19 @@ export const SectionHeader = ({
           className="flex-1 font-mono text-[9px] uppercase tracking-[0.08em]"
         />
       ) : (
-        <button
-          type="button"
+        <Button
+          kind="bare"
+          size="none"
           onDoubleClick={canModify ? rename.beginEdit : undefined}
           title={canModify ? t('sidebar.renameSection') : undefined}
           data-testid={`sidebar-section-${sectionId}-label`}
           className={cn(
-            'flex-1 truncate text-left uppercase',
+            'block flex-1 truncate text-left font-mono font-normal uppercase tracking-[0.08em]',
             canModify ? 'cursor-text' : 'cursor-default',
           )}
         >
           {label}
-        </button>
+        </Button>
       )}
       <SectionRowMenu
         section={section}
