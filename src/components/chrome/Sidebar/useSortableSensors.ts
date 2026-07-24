@@ -16,7 +16,7 @@ import {
 export const useSortableSensors = () =>
   useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { delay: 180, tolerance: 8 },
+      activationConstraint: { delay: 90, tolerance: 8 },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
