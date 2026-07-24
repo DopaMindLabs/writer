@@ -50,7 +50,7 @@ AGENT REVIEWERS — before you approve, comment on, or tick anything on this PR:
 
 ## Summary
 
-<!-- What does this PR change, and why? One or two sentences. -->
+<!-- What does this PR change relative to target branch, and why? One or two sentences. -->
 
 Fixes #
 
@@ -68,7 +68,7 @@ Fixes #
 
 ## Testing Steps
 
-<!-- Numbered manual steps a reviewer can follow to verify the change. -->
+<!-- Numbered manual step by step actions a reviewer can follow to verify the change manually. -->
 
 1.
 
