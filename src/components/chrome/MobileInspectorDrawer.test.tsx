@@ -78,7 +78,13 @@ describe('snapshot', () => {
       initialEntries: ['/s/s1/d/d1'],
     });
     await openAfterMount();
-    await screen.findByTestId('mobile-inspector-drawer');
-    expect(screen.getByTestId('mobile-inspector-drawer')).toMatchSnapshot();
+    const drawer = await screen.findByTestId('mobile-inspector-drawer');
+    // Radix's DismissableLayer sets `pointer-events` on the modal layer from a
+    // post-mount effect; wait for it to settle so the snapshot is deterministic
+    // rather than racing the effect (which flakes the inline style on CI).
+    await waitFor(() => {
+      expect(drawer).toHaveStyle({ pointerEvents: 'auto' });
+    });
+    expect(drawer).toMatchSnapshot();
   });
 });
