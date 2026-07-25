@@ -32,6 +32,10 @@ if (typeof Element !== 'undefined') {
   if (!proto.setPointerCapture) proto.setPointerCapture = () => {};
   if (!proto.hasPointerCapture) proto.hasPointerCapture = () => false;
   if (!proto.releasePointerCapture) proto.releasePointerCapture = () => {};
+  const scrollProto = Element.prototype as Partial<{
+    scrollIntoView: () => void;
+  }>;
+  if (!scrollProto.scrollIntoView) scrollProto.scrollIntoView = () => {};
 }
 
 if (typeof File !== 'undefined' && !('text' in File.prototype)) {

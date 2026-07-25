@@ -340,6 +340,59 @@ instead of hand-rolling its own.
 
 ---
 
+### 3.8a Submenu (nested menu)
+
+A menu row that opens a second panel of rows to its side — for a branching choice too long
+or too dynamic to sit inline (e.g. "Move to section" over the space's sections). Compose
+`DropdownMenuSub` (state) + `DropdownMenuSubTrigger` (the row; inherits the `MenuItem`
+grammar and carries a trailing `ChevronRight`) + `DropdownMenuSubContent` (the nested panel;
+same hairline `paper` panel grammar as `DropdownMenuContent`). The submenu shares the parent
+menu's roving focus, `Escape`, and click-outside behaviour, so it is keyboard-operable by
+default.
+
+- Reach for a submenu when the branch is a **list of peer targets** (sections, projects,
+  labels); keep flat inline rows for a handful of fixed actions.
+- When that list is long enough to need filtering, put a **`SearchableMenuList` (§3.8b)** inside
+  the `DropdownMenuSubContent` rather than a bare stack of rows.
+
+> **In this repo:** `src/components/ui/dropdown-menu.tsx` re-exports `DropdownMenuSub` /
+> `DropdownMenuSubTrigger` / `DropdownMenuSubContent` (Radix `DropdownMenu.Sub*`, styled in
+> `dropdown-menu.components.tsx`).
+
+---
+
+### 3.8b `SearchableMenuList`
+
+A search field over a filterable, single-select list of rows — the "type to narrow, then
+pick" pattern for when a menu's choices are too many to scan (move a document to one of many
+sections; assign a label). Composes the `SearchField` (§4.7) over a `listbox` of rows that
+reuse the `MenuItem` row grammar (hover/active `paper-2` wash, a trailing `Check` on the
+current value). Host-agnostic: drop it inside a `DropdownMenuSubContent` (§3.8a), a `Popover`,
+or render it standalone.
+
+- **One combobox, not a menu of menu-items.** Keyboard focus stays in the search input;
+  Arrow keys move a highlight through the rows via `aria-activedescendant` and Enter commits
+  the active row. This is what lets the input coexist with a parent Radix menu — the list is
+  not a second roving menu, and the component stops the parent menu's typeahead from stealing
+  the user's keystrokes. Escape/Tab still bubble so the surrounding menu closes normally.
+- Pass `selectedId` for the ticked current value, `emptyLabel` for the no-match message, and a
+  `label` that names both the input and the listbox for assistive tech.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `items` | `readonly { id, label }[]` | — | The choices. |
+| `selectedId` | `string \| null` | — | The current value; shown with a persistent tick. |
+| `onSelect` | `(id) => void` | — | Fired on click or Enter. The host owns closing the menu. |
+| `label` | `string` | — | Accessible name for the search input and the listbox. |
+| `placeholder` | `string` | — | Search-field placeholder. |
+| `emptyLabel` | `string` | — | Shown when the filter matches nothing. |
+| `autoFocus` | boolean | `true` | Focus the search input on mount. |
+
+> **In this repo:** `src/components/ui/SearchableMenuList/` (`SearchableMenuList.tsx` +
+> `SearchableMenuOptions.tsx` / `SearchableMenuOption.tsx` rows + `useSearchableMenu.ts`).
+
+---
+
 ### 3.9 `Kbd`
 
 A keyboard-shortcut hint in the mono meta voice (10 px, `ink-4`, letter-spaced). The
