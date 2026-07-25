@@ -6,6 +6,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from './dropdown-menu';
 
@@ -47,6 +50,41 @@ describe('DropdownMenu primitives', () => {
     await userEvent.click(screen.getByRole('button', { name: 'open' }));
     const del = await screen.findByRole('menuitem', { name: 'Delete' });
     expect(del).toHaveAttribute('data-disabled');
+  });
+
+  describe('submenu', () => {
+    const SubHarness = ({ onSelect = vi.fn() }: { onSelect?: () => void }) => (
+      <DropdownMenu>
+        <DropdownMenuTrigger>open</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Move to</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem onSelect={onSelect}>Drafts</DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+
+    it('exposes the sub trigger as a menuitem that owns a submenu', async () => {
+      renderWithProviders(<SubHarness />);
+      await userEvent.click(screen.getByRole('button', { name: 'open' }));
+      const trigger = await screen.findByRole('menuitem', { name: 'Move to' });
+      expect(trigger).toHaveAttribute('aria-haspopup', 'menu');
+      expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    it('opens the submenu with ArrowRight and selects a nested item', async () => {
+      const onSelect = vi.fn();
+      renderWithProviders(<SubHarness onSelect={onSelect} />);
+      await userEvent.click(screen.getByRole('button', { name: 'open' }));
+      await userEvent.keyboard('{ArrowDown}{ArrowRight}');
+      await userEvent.click(
+        await screen.findByRole('menuitem', { name: 'Drafts' }),
+      );
+      expect(onSelect).toHaveBeenCalledOnce();
+    });
   });
 
   describe('snapshot', () => {

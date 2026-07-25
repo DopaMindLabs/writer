@@ -6,6 +6,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from './dropdown-menu';
 import { Button } from './Button';
@@ -61,6 +64,36 @@ export const OpenByDefault: Story = {
             <DropdownMenuSeparator />
             <DropdownMenuItem>Rename</DropdownMenuItem>
             <DropdownMenuItem disabled>Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    };
+    return <Stateful />;
+  },
+};
+
+export const WithSubmenu: Story = {
+  render: () => {
+    const Stateful = () => {
+      const [open, setOpen] = useState(true);
+      return (
+        <DropdownMenu open={open} onOpenChange={setOpen}>
+          <DropdownMenuTrigger asChild>
+            <Button kind="secondary" size="sm">
+              Actions
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>Rename</DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>Move to</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem>Drafts</DropdownMenuItem>
+                <DropdownMenuItem>Research</DropdownMenuItem>
+                <DropdownMenuItem>Published</DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            <DropdownMenuItem>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

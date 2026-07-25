@@ -338,6 +338,16 @@ instead of hand-rolling its own.
 
 > **In this repo:** `src/components/ui/MenuItem.tsx` (+ `MenuItem.recipe.ts`).
 
+**Nested menus.** When a menu row branches into a nested list of choices (e.g. *Move to* →
+one row per section), compose `DropdownMenuSub` / `DropdownMenuSubTrigger` /
+`DropdownMenuSubContent` (`src/components/ui/dropdown-menu.tsx`). The `SubTrigger` shares the
+`DropdownMenuItem` grammar and adds a trailing `ChevronRight` affordance that lights while the
+submenu is open (`data-[state=open]`); the `SubContent` mirrors `DropdownMenuContent` (hairline
+border, `paper` ground, square corners, portalled). Disable the `SubTrigger` when there is
+nothing to branch into rather than opening an empty panel. Radix supplies the roles
+(`aria-haspopup="menu"`, `aria-expanded`) and arrow-key open/close, so a submenu is keyboard-
+operable for free.
+
 ---
 
 ### 3.9 `Kbd`
