@@ -20,7 +20,8 @@
     "openSpaceSettings": "Impostazioni dello spazio",
     "openSpaceMenu": "Apri menu spazio",
     "docMenuAria": "Opzioni per {{name}}",
-    "renameDoc": "Rinomina"
+    "renameDoc": "Rinomina",
+    "moveDoc": "Sposta in"
   },
   "topbar": {
     "openNav": "Apri navigazione",

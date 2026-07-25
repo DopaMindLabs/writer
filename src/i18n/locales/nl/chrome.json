@@ -20,7 +20,8 @@
     "openSpaceSettings": "Space-instellingen",
     "openSpaceMenu": "Space-menu openen",
     "docMenuAria": "Opties voor {{name}}",
-    "renameDoc": "Hernoemen"
+    "renameDoc": "Hernoemen",
+    "moveDoc": "Verplaatsen naar"
   },
   "topbar": {
     "openNav": "Navigatie openen",

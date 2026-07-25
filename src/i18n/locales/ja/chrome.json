@@ -20,7 +20,8 @@
     "openSpaceSettings": "スペース設定",
     "openSpaceMenu": "スペースメニューを開く",
     "docMenuAria": "{{name}} のオプション",
-    "renameDoc": "名前を変更"
+    "renameDoc": "名前を変更",
+    "moveDoc": "移動先"
   },
   "topbar": {
     "openNav": "ナビゲーションを開く",

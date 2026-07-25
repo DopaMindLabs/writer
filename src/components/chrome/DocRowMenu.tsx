@@ -11,6 +11,7 @@ import {
 import type { Doc } from '@/db/schema';
 import { useDeferredMenuAction } from './useDeferredMenuAction';
 import { DeleteDocDialog } from './DeleteDocDialog';
+import { MoveDocSubmenu } from './MoveDocSubmenu';
 
 interface DocRowMenuProps {
   doc: Doc;
@@ -57,6 +58,7 @@ export const DocRowMenu = ({ doc, active, onRename }: DocRowMenuProps) => {
           >
             {t('sidebar.renameDoc')}
           </DropdownMenuItem>
+          <MoveDocSubmenu doc={doc} />
           <DropdownMenuItem
             data-testid={`sidebar-doc-${doc.id}-delete`}
             onSelect={select(() => {

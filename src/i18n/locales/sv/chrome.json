@@ -20,7 +20,8 @@
     "openSpaceSettings": "Utrymmesinställningar",
     "openSpaceMenu": "Öppna utrymmesmeny",
     "docMenuAria": "Alternativ för {{name}}",
-    "renameDoc": "Byt namn"
+    "renameDoc": "Byt namn",
+    "moveDoc": "Flytta till"
   },
   "topbar": {
     "openNav": "Öppna navigering",

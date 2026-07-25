@@ -29,6 +29,7 @@
     "openSpaceMenu": "Open space menu",
     "docMenuAria": "Options for {{name}}",
     "renameDoc": "Rename",
+    "moveDoc": "Move to",
     "renameDocHint": "Rename (double-click)",
     "renameDocAria": "Rename document {{name}}",
     "renameSection": "Rename (double-click)",

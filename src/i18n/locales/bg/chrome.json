@@ -20,7 +20,8 @@
     "openSpaceSettings": "Настройки на пространството",
     "openSpaceMenu": "Отвори меню на пространството",
     "docMenuAria": "Опции за {{name}}",
-    "renameDoc": "Преименувай"
+    "renameDoc": "Преименувай",
+    "moveDoc": "Преместване в"
   },
   "topbar": {
     "openNav": "Отвори навигация",

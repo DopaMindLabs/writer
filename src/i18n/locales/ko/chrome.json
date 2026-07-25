@@ -20,7 +20,8 @@
     "openSpaceSettings": "스페이스 설정",
     "openSpaceMenu": "스페이스 메뉴 열기",
     "docMenuAria": "{{name}} 옵션",
-    "renameDoc": "이름 변경"
+    "renameDoc": "이름 변경",
+    "moveDoc": "이동 위치"
   },
   "topbar": {
     "openNav": "탐색 열기",

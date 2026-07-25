@@ -20,7 +20,8 @@
     "openSpaceSettings": "Mipangilio ya nafasi",
     "openSpaceMenu": "Fungua menyu ya nafasi",
     "docMenuAria": "Chaguo za {{name}}",
-    "renameDoc": "Pa jina jipya"
+    "renameDoc": "Pa jina jipya",
+    "moveDoc": "Hamishia kwa"
   },
   "topbar": {
     "openNav": "Fungua urambazaji",

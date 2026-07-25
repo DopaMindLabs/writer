@@ -29,7 +29,8 @@ tag badge takes you back to that space.
 
 In the nav drawer, tap the **⋮** button on a document row and choose
 **Rename** — the row turns into a name field. Confirm with return, or clear
-the field and tap away to keep the old name.
+the field and tap away to keep the old name. The same menu's **Move to** sends
+the document to another section without dragging.
 
 ## The document inspector
 

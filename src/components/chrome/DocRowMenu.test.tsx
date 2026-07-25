@@ -17,13 +17,16 @@ describe('DocRowMenu', () => {
     await seedBasicSpace();
   });
 
-  it('opens the row menu with rename and delete items', async () => {
+  it('opens the row menu with rename, move-to, and delete items', async () => {
     setup();
     await userEvent.click(
       screen.getByTestId(`sidebar-doc-${sampleDoc.id}-menu`),
     );
     expect(
       await screen.findByTestId(`sidebar-doc-${sampleDoc.id}-rename`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(`sidebar-doc-${sampleDoc.id}-move`),
     ).toBeInTheDocument();
     expect(
       screen.getByTestId(`sidebar-doc-${sampleDoc.id}-delete`),

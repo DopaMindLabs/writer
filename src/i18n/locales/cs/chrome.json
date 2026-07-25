@@ -20,7 +20,8 @@
     "openSpaceSettings": "Nastavení prostoru",
     "openSpaceMenu": "Otevřít menu prostoru",
     "docMenuAria": "Možnosti pro {{name}}",
-    "renameDoc": "Přejmenovat"
+    "renameDoc": "Přejmenovat",
+    "moveDoc": "Přesunout do"
   },
   "topbar": {
     "openNav": "Otevřít navigaci",

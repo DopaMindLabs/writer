@@ -20,7 +20,8 @@
     "openSpaceSettings": "Ruumi seaded",
     "openSpaceMenu": "Ava ruumi menüü",
     "docMenuAria": "Valikud: {{name}}",
-    "renameDoc": "Nimeta ümber"
+    "renameDoc": "Nimeta ümber",
+    "moveDoc": "Teisalda"
   },
   "topbar": {
     "openNav": "Ava navigatsioon",

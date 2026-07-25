@@ -20,7 +20,8 @@
     "openSpaceSettings": "Socruithe an spáis",
     "openSpaceMenu": "Oscail roghchlár an spáis",
     "docMenuAria": "Roghanna do {{name}}",
-    "renameDoc": "Athainmnigh"
+    "renameDoc": "Athainmnigh",
+    "moveDoc": "Bog go"
   },
   "topbar": {
     "openNav": "Oscail nascleanúint",

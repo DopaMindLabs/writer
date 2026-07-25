@@ -20,7 +20,8 @@
     "openSpaceSettings": "Tautuhinga wāhi",
     "openSpaceMenu": "Whakatuwhera tahua wāhi",
     "docMenuAria": "Ngā kōwhiringa mō {{name}}",
-    "renameDoc": "Whakaingoa anō"
+    "renameDoc": "Whakaingoa anō",
+    "moveDoc": "Nekehia ki"
   },
   "topbar": {
     "openNav": "Whakatuwhera te whakatere",

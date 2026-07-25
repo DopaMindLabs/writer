@@ -20,7 +20,8 @@
     "openSpaceSettings": "Rumindstillinger",
     "openSpaceMenu": "Åbn rummenu",
     "docMenuAria": "Muligheder for {{name}}",
-    "renameDoc": "Omdøb"
+    "renameDoc": "Omdøb",
+    "moveDoc": "Flyt til"
   },
   "topbar": {
     "openNav": "Åbn navigation",

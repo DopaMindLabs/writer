@@ -20,7 +20,8 @@
     "openSpaceSettings": "இட அமைப்புகள்",
     "openSpaceMenu": "இட பட்டியலைத் திற",
     "docMenuAria": "{{name}} விருப்பங்கள்",
-    "renameDoc": "மறுபெயரிடு"
+    "renameDoc": "மறுபெயரிடு",
+    "moveDoc": "இதற்கு நகர்த்து"
   },
   "topbar": {
     "openNav": "வழிசெலுத்தலைத் திற",

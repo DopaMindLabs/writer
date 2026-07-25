@@ -20,7 +20,8 @@
     "openSpaceSettings": "Stillingar svæðis",
     "openSpaceMenu": "Opna valmynd svæðis",
     "docMenuAria": "Valkostir fyrir {{name}}",
-    "renameDoc": "Endurnefna"
+    "renameDoc": "Endurnefna",
+    "moveDoc": "Færa í"
   },
   "topbar": {
     "openNav": "Opna leiðsögn",

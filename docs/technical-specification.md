@@ -33,7 +33,7 @@
 | # | Area | What the user gets |
 |---|------|-------------------|
 | 1 | **Spaces** | Create independent writing projects from templates (Fiction, Research, Essay, Journal). Rename, delete, configure per-space settings. |
-| 2 | **Documents** | Multi-document spaces organized into sections. Add / rename / delete / reorder documents and sections from the sidebar, autosaved Lexical editor. |
+| 2 | **Documents** | Multi-document spaces organized into sections. Add / rename / delete / reorder documents and sections from the sidebar, move a document to another section from its row menu, autosaved Lexical editor. |
 | 3 | **View modes** | Write, Focus, Read, Split — switch from the topbar. Each mode swaps the chrome around the same document. |
 | 4 | **Split view** | Two-pane layout with a keyboard-and-mouse resizable divider. Right pane can show another doc, the Brain Space, or Citations. |
 | 5 | **Brain Space** | A freeform visual canvas for unsorted notes. Multiple note kinds (Note, Char, Place, Lore, Question, Source, Claim, Figure, Todo, Loose End, Blank). Notes can be connected and linked to documents. |
@@ -118,6 +118,8 @@ A space is structured as **sections** containing **documents**. The default sect
 
 **Rename a doc.** Double-click the doc name in the topbar breadcrumb, **double-click a doc name in the sidebar**, or choose **Rename** from the doc row's **⋯ menu** — the menu defers until it has closed, then switches the row to the same inline rename input (there is no rename dialogue). **Enter** commits; **Escape** reverts. Blurring (clicking away) also commits when the value changed.
 
+**Move a doc between sections.** From the doc row's **⋯ menu**, **Move to** opens a submenu of the space's *other* top-level sections — the doc's own section and the reserved **Workshop** are omitted. Choosing one relocates the document to the end of that section via `moveDoc`; like a drag move it changes only `sectionId` / `order` (never `updatedAt`), and the live query re-homes the row under its new section. When the space has no other top-level section to receive the doc, **Move to** is disabled.
+
 **Rename a section.** From the section **⋯ menu** choose **Rename**, or **double-click** the section label. Either switches it to an inline rename input. **Enter** or blur commits; **Escape** reverts. The same `useInlineRename` state machine drives both section and doc inline renames. The Workshop section cannot be renamed (its identity is label-based).
 
 **Delete a doc.** Each document row carries a **⋯ menu** (revealed on hover on desktop, always shown on mobile) with a **Delete…** action that opens a destructive confirmation dialogue. Confirming cascades the delete — the document, its annotations, its revision history, and its collaborative CRDT state (`docUpdates` log + `collab-seed` marker) are all removed. Brain Space notes that linked to the document are **unlinked** (the note survives; only its dead link is cleared). If the deleted document is the one currently open, the app navigates back to the space so the first remaining document loads.
@@ -132,7 +134,7 @@ A space is structured as **sections** containing **documents**. The default sect
 
 **Empty space.** Visiting `/s/:spaceId` without a docId redirects to the first doc; if none exists, the user sees an empty state.
 
-*Covered by:* `editor.spec.ts`, `multi-tab-sync.spec.ts`, `sidebar-doc-delete.spec.ts`, `sidebar-sections.spec.ts`, `sidebar-section-delete.spec.ts`, `sidebar-reorder.spec.ts`, `persistence.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `SectionRowMenu.test.tsx`, `DeleteSectionDialog.test.tsx`, `DeleteDocDialog.test.tsx`, `deleteDocCascade.test.ts`, `deleteSectionCascade.test.ts`, `moveDoc.test.ts`, `reorderSection.test.ts`, `WriteSurface.test.tsx`, `Topbar.test.tsx`.
+*Covered by:* `editor.spec.ts`, `multi-tab-sync.spec.ts`, `sidebar-doc-delete.spec.ts`, `sidebar-sections.spec.ts`, `sidebar-section-delete.spec.ts`, `sidebar-reorder.spec.ts`, `persistence.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `SectionRowMenu.test.tsx`, `DeleteSectionDialog.test.tsx`, `DeleteDocDialog.test.tsx`, `deleteDocCascade.test.ts`, `deleteSectionCascade.test.ts`, `moveDoc.test.ts`, `reorderSection.test.ts`, `MoveDocSubmenu.test.tsx`, `DocRowMenu.test.tsx`, `sidebar-doc-move.spec.ts`, `WriteSurface.test.tsx`, `Topbar.test.tsx`.
 
 #### 4.2.1 Restore semantics
 
@@ -246,7 +248,7 @@ The per-space navigation column.
 
 - **Header:** editable space title + settings cog (links to per-space settings).
 - **Sections:** grouped doc lists, each header carrying a **⋯ menu** (Add document, Rename, Delete…). Dragging is press-and-move on the header itself (long-press on touch) — there is no separate grip. A section's list also includes the docs of its subsections, flattened in — subsections render no header row of their own in the nav (the data model keeps the nesting; only the rendering is flat, so new docs are added at section level). Sections reorder among themselves by drag or keyboard; documents reorder within their section the same way. The Workshop section's menu offers only its add action, labelled **Add workspace** (the Workshop holds workspaces). Its Brain Space link carries the unsorted-note count aligned to the same trailing column as the document counts, reserving the (absent) kebab gutter.
-- **Doc row menu:** each document row has a **⋯ menu** (Rename, Delete…) — revealed on row hover/focus on desktop, always visible on mobile. Dragging is press-and-move on the row itself (long-press on touch), with no separate grip.
+- **Doc row menu:** each document row has a **⋯ menu** (Rename, Move to, Delete…) — revealed on row hover/focus on desktop, always visible on mobile. **Move to** is a submenu of the space's other top-level sections. Dragging is press-and-move on the row itself (long-press on touch), with no separate grip.
 - **Drag announcements:** dnd-kit's default id-based live region is hidden (portaled into an `aria-hidden` host so its `role="status"` never collides with the app's status announcers); a labelled `aria-live` announcer narrates each drag ("Picked up…", "Moved … to …") for assistive technology.
 - **Brain space link:** routes to `/s/:spaceId/brain-space`; shows the unsorted-note count and highlights when active.
 - **Footer:** Home, About, GitHub links.

@@ -20,7 +20,8 @@
     "openSpaceSettings": "空间设置",
     "openSpaceMenu": "打开空间菜单",
     "docMenuAria": "{{name}} 的选项",
-    "renameDoc": "重命名"
+    "renameDoc": "重命名",
+    "moveDoc": "移动到"
   },
   "topbar": {
     "openNav": "打开导航",

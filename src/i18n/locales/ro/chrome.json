@@ -20,7 +20,8 @@
     "openSpaceSettings": "Setări spațiu",
     "openSpaceMenu": "Deschide meniul spațiului",
     "docMenuAria": "Opțiuni pentru {{name}}",
-    "renameDoc": "Redenumește"
+    "renameDoc": "Redenumește",
+    "moveDoc": "Mută în"
   },
   "topbar": {
     "openNav": "Deschide navigația",

@@ -20,7 +20,8 @@
     "openSpaceSettings": "Rominnstillinger",
     "openSpaceMenu": "Åpne rommeny",
     "docMenuAria": "Alternativer for {{name}}",
-    "renameDoc": "Gi nytt navn"
+    "renameDoc": "Gi nytt navn",
+    "moveDoc": "Flytt til"
   },
   "topbar": {
     "openNav": "Åpne navigasjon",

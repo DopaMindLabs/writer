@@ -20,7 +20,8 @@
     "openSpaceSettings": "Telpas iestatījumi",
     "openSpaceMenu": "Atvērt telpas izvēlni",
     "docMenuAria": "Opcijas: {{name}}",
-    "renameDoc": "Pārdēvēt"
+    "renameDoc": "Pārdēvēt",
+    "moveDoc": "Pārvietot uz"
   },
   "topbar": {
     "openNav": "Atvērt navigāciju",

@@ -20,7 +20,8 @@
     "openSpaceSettings": "Ρυθμίσεις χώρου",
     "openSpaceMenu": "Άνοιγμα μενού χώρου",
     "docMenuAria": "Επιλογές για {{name}}",
-    "renameDoc": "Μετονομασία"
+    "renameDoc": "Μετονομασία",
+    "moveDoc": "Μετακίνηση σε"
   },
   "topbar": {
     "openNav": "Άνοιγμα πλοήγησης",

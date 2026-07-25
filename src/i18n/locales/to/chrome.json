@@ -20,7 +20,8 @@
     "openSpaceSettings": "Ngaahi fokotuʻutuʻu vāhā",
     "openSpaceMenu": "Fakaʻata ʻa e meinū vāhā",
     "docMenuAria": "Ngaahi fili ki he {{name}}",
-    "renameDoc": "Toe fakahingoa"
+    "renameDoc": "Toe fakahingoa",
+    "moveDoc": "Hiki ki"
   },
   "topbar": {
     "openNav": "Fakaʻata ʻa e folau",

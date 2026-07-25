@@ -20,7 +20,8 @@
     "openSpaceSettings": "Erdvės nustatymai",
     "openSpaceMenu": "Atverti erdvės meniu",
     "docMenuAria": "„{{name}}“ parinktys",
-    "renameDoc": "Pervadinti"
+    "renameDoc": "Pervadinti",
+    "moveDoc": "Perkelti į"
   },
   "topbar": {
     "openNav": "Atverti navigaciją",

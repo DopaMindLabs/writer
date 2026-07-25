@@ -20,7 +20,8 @@
     "openSpaceSettings": "Izilungiselelo zesikhala",
     "openSpaceMenu": "Vula imenyu yesikhala",
     "docMenuAria": "Izinketho ze-{{name}}",
-    "renameDoc": "Qamba kabusha"
+    "renameDoc": "Qamba kabusha",
+    "moveDoc": "Hambisa ku-"
   },
   "topbar": {
     "openNav": "Vula ukuzulazula",

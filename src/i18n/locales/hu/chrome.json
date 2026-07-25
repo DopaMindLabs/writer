@@ -20,7 +20,8 @@
     "openSpaceSettings": "Tér beállításai",
     "openSpaceMenu": "Tér menü megnyitása",
     "docMenuAria": "Beállítások ehhez: {{name}}",
-    "renameDoc": "Átnevezés"
+    "renameDoc": "Átnevezés",
+    "moveDoc": "Áthelyezés ide"
   },
   "topbar": {
     "openNav": "Navigáció megnyitása",

@@ -20,7 +20,8 @@
     "openSpaceSettings": "የቦታ ቅንብሮች",
     "openSpaceMenu": "የቦታ ምናሌን ክፈት",
     "docMenuAria": "ለ {{name}} አማራጮች",
-    "renameDoc": "እንደገና ሰይም"
+    "renameDoc": "እንደገና ሰይም",
+    "moveDoc": "ወደ አዛውር"
   },
   "topbar": {
     "openNav": "ዳሰሳ ክፈት",

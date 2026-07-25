@@ -20,7 +20,8 @@
     "openSpaceSettings": "स्पेस सेटिंग्स",
     "openSpaceMenu": "स्पेस मेनू खोलें",
     "docMenuAria": "{{name}} के लिए विकल्प",
-    "renameDoc": "नाम बदलें"
+    "renameDoc": "नाम बदलें",
+    "moveDoc": "में ले जाएँ"
   },
   "topbar": {
     "openNav": "नेविगेशन खोलें",

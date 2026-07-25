@@ -38,6 +38,11 @@ still opens or navigates as usual, and a double click still renames. Drag a
 document onto **another section** to move it there. The change sticks the moment
 you drop; nothing jumps back.
 
+Prefer not to drag? Open a document's **⋯ menu** and choose **Move to**, then
+pick a section — the document moves to the end of it. The submenu lists the
+space's other sections (its current section and the Workshop are left out), so
+**Move to** is greyed out when there's nowhere else to move the document.
+
 ## Templates
 
 When you create something new, start from a **template** instead of a blank
