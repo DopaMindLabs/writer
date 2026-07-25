@@ -37,7 +37,7 @@
     "sectionAddDoc": "Add document",
     "sectionAddWorkspace": "Add workspace",
     "sectionRename": "Rename",
-    "sectionDelete": "Delete…",
+    "sectionDelete": "Delete",
     "dragAnnouncePickedUp": "Picked up {{label}}.",
     "dragAnnounceReordered": "Moved {{label}}.",
     "dragAnnounceMovedToSection": "Moved {{label}} to {{section}}.",
@@ -50,14 +50,7 @@
       "cancel": "Cancel",
       "confirm": "Delete section"
     },
-    "renameDialog": {
-      "title": "Rename document",
-      "description": "Choose a new name for this document.",
-      "label": "Document name",
-      "cancel": "Cancel",
-      "save": "Rename"
-    },
-    "deleteDoc": "Delete…",
+    "deleteDoc": "Delete",
     "deleteDialog": {
       "title": "Delete document",
       "description": "“{{name}}” and its version history will be permanently deleted. This cannot be undone.",

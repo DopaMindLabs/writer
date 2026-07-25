@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
 });
 
-test('renames a doc from the nav drawer row menu on mobile', async ({ page }) => {
+test('renames a doc inline from the nav drawer row menu on mobile', async ({ page }) => {
   const { docId } = await gotoFirstDoc(page);
 
   await page.getByRole('button', { name: /open nav/i }).click();
@@ -16,19 +16,17 @@ test('renames a doc from the nav drawer row menu on mobile', async ({ page }) =>
   await drawer.getByTestId(`sidebar-doc-${docId}-menu`).click();
   await page.getByTestId(`sidebar-doc-${docId}-rename`).click();
 
-  const input = page.getByTestId('rename-doc-input');
+  // The row itself switches to the same inline input double-click opens.
+  const input = drawer.getByTestId(`sidebar-doc-${docId}-rename-input`);
   await expect(input).toBeVisible();
+  await expect(input).toBeFocused();
   await input.fill('Renamed on mobile');
-  await page.getByTestId('rename-doc-submit').click();
+  await input.press('Enter');
 
   // The row updates live and the drawer stays open.
   await expect(
     drawer.getByTestId(`sidebar-doc-${docId}-name`),
   ).toHaveText('Renamed on mobile');
-
-  // The rename dialog fully dismisses first, so Escape targets the drawer
-  // rather than the rename dialog's still-closing layer.
-  await expect(page.getByTestId('rename-doc-dialog')).toHaveCount(0);
 
   // Closing the drawer (Escape) reveals the topbar with the new name.
   await page.keyboard.press('Escape');
@@ -44,7 +42,7 @@ test('renames a doc from the nav drawer row menu on mobile', async ({ page }) =>
   );
 });
 
-test('cancelling the rename dialog leaves the doc name unchanged', async ({
+test('escaping the inline rename leaves the doc name unchanged', async ({
   page,
 }) => {
   const { docId } = await gotoFirstDoc(page);
@@ -59,10 +57,13 @@ test('cancelling the rename dialog leaves the doc name unchanged', async ({
   await drawer.getByTestId(`sidebar-doc-${docId}-menu`).click();
   await page.getByTestId(`sidebar-doc-${docId}-rename`).click();
 
-  const input = page.getByTestId('rename-doc-input');
+  const input = drawer.getByTestId(`sidebar-doc-${docId}-rename-input`);
+  await expect(input).toBeFocused();
   await input.fill('Discarded name');
-  await page.getByTestId('rename-doc-cancel').click();
+  await input.press('Escape');
 
-  await expect(page.getByTestId('rename-doc-dialog')).toBeHidden();
+  // Escape reverts the edit and restores the row; the drawer stays open.
+  await expect(input).toHaveCount(0);
   await expect(row).toHaveText(originalName);
+  await expect(drawer).toBeVisible();
 });

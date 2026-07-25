@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Àwọn àyè" },
+  "spaceRail": {
+    "landmarkLabel": "Àwọn àyè"
+  },
   "sidebar": {
     "landmarkLabel": "Àyè",
     "navLabel": "Àwọn doko",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "Àwọn ètò àyè",
     "openSpaceMenu": "Ṣílẹ̀kùn àkójọpọ̀ àyè",
     "docMenuAria": "Àwọn àṣàyàn fún {{name}}",
-    "renameDoc": "Tún sọ orúkọ",
-    "renameDialog": {
-      "title": "Tún doko sọ orúkọ",
-      "description": "Yan orúkọ tuntun fún doko yìí.",
-      "label": "Orúkọ doko",
-      "cancel": "Fagilé",
-      "save": "Tún sọ orúkọ"
-    }
+    "renameDoc": "Tún sọ orúkọ"
   },
   "topbar": {
     "openNav": "Ṣílẹ̀kùn ìrìnàjò",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "Ìfọkànsí (⌘\\)",
     "findInDoc": "Wá nínú doko",
     "inspector": "Olùyẹ̀wò doko",
-    "themes": { "light": "Ìmọ́lẹ̀", "dark": "Òkùnkùn", "hcLight": "Ìyàtọ̀ gíga (ìmọ́lẹ̀)", "hcDark": "Ìyàtọ̀ gíga (òkùnkùn)" }
+    "themes": {
+      "light": "Ìmọ́lẹ̀",
+      "dark": "Òkùnkùn",
+      "hcLight": "Ìyàtọ̀ gíga (ìmọ́lẹ̀)",
+      "hcDark": "Ìyàtọ̀ gíga (òkùnkùn)"
+    }
   },
-  "modeToggle": { "write": "kọ", "read": "kà", "split": "pínyà", "space": "àyè" },
-  "mobileNav": { "title": "Ìrìnàjò", "close": "Pa ìrìnàjò" },
-  "mobileTabs": { "write": "kọ", "read": "kà", "split": "pin", "brain": "brain", "cite": "yọ àyọkà", "more": "síwájú" },
+  "modeToggle": {
+    "write": "kọ",
+    "read": "kà",
+    "split": "pínyà",
+    "space": "àyè"
+  },
+  "mobileNav": {
+    "title": "Ìrìnàjò",
+    "close": "Pa ìrìnàjò"
+  },
+  "mobileTabs": {
+    "write": "kọ",
+    "read": "kà",
+    "split": "pin",
+    "brain": "brain",
+    "cite": "yọ àyọkà",
+    "more": "síwájú"
+  },
   "mobileMore": {
     "title": "Síwájú",
     "close": "Pa síwájú",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "Pẹpẹ irinṣẹ́ tó ń léfòó",
     "readingWidthLabel": "Ìbúrúkú kíkà",
     "readingWidthHint": "Ìwọ̀n fún doko kọ̀ọ̀kan",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Síwájú",
     "helpToursLabel": "Ìṣèwò ìrànlọ́wọ́",
     "helpItem": "Ìrànlọ́wọ́ àti àwọn ọ̀nà àbúyọ",
-    "themes": { "light": "Ìmọ́lẹ̀", "dark": "Òkùnkùn", "hcLight": "HC ìmọ́lẹ̀", "hcDark": "HC òkùnkùn" },
+    "themes": {
+      "light": "Ìmọ́lẹ̀",
+      "dark": "Òkùnkùn",
+      "hcLight": "HC ìmọ́lẹ̀",
+      "hcDark": "HC òkùnkùn"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Ohun tuntun",
     "feedback": "Fi èrò ránṣẹ́…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "Faagun olùyẹ̀wò",
     "collapse": "Dín olùyẹ̀wò kù",
-    "tabs": { "outline": "ÀKÓJỌPỌ̀", "info": "ÌTÀNYỌ", "history": "ÌTÀN", "actions": "ÌGBÉSÉ" },
-    "outline": { "title": "ÀKÓJỌPỌ̀", "sectionSummary": "{{count}} ÀWỌN APÁ", "empty": "Ko si awọn akọle sibẹsibẹ. Fi awọn akọle kun si iwe naa lati kọ eto rẹ." },
+    "tabs": {
+      "outline": "ÀKÓJỌPỌ̀",
+      "info": "ÌTÀNYỌ",
+      "history": "ÌTÀN",
+      "actions": "ÌGBÉSÉ"
+    },
+    "outline": {
+      "title": "ÀKÓJỌPỌ̀",
+      "sectionSummary": "{{count}} ÀWỌN APÁ",
+      "empty": "Ko si awọn akọle sibẹsibẹ. Fi awọn akọle kun si iwe naa lati kọ eto rẹ."
+    },
     "info": {
       "title": "ÌTÀNYỌ",
       "words": "Àwọn ọ̀rọ̀",
@@ -119,8 +152,18 @@
       "noLimit": "Kò sí ààlà",
       "noDueDate": "Kò sí ọjọ́"
     },
-    "status": { "draft": "Àfọwọ́kọ", "in-progress": "Ń lọ", "in-review": "Nínú àyẹ̀wò", "complete": "Ti parí", "published": "Ti tẹ̀ jáde" },
-    "lock": { "title": "Tí dí fún àtúnṣe", "body": "Ipò doko yìí dí i láti pa á mọ́. Ṣílẹ̀kùn rẹ̀ láti ṣe àyípadà.", "unlock": "Ṣílẹ̀kùn fún àtúnṣe" },
+    "status": {
+      "draft": "Àfọwọ́kọ",
+      "in-progress": "Ń lọ",
+      "in-review": "Nínú àyẹ̀wò",
+      "complete": "Ti parí",
+      "published": "Ti tẹ̀ jáde"
+    },
+    "lock": {
+      "title": "Tí dí fún àtúnṣe",
+      "body": "Ipò doko yìí dí i láti pa á mọ́. Ṣílẹ̀kùn rẹ̀ láti ṣe àyípadà.",
+      "unlock": "Ṣílẹ̀kùn fún àtúnṣe"
+    },
     "history": {
       "title": "ÀWỌN ẸLẸ́LẸ́",
       "now": "NÍSISÌYÍ",
@@ -132,7 +175,11 @@
       "pin": "Pín ẹlẹ́lẹ́",
       "unpin": "Yọ pín kúrò",
       "restore": "Padà",
-      "kind": { "auto": "auto", "manual": "ọwọ́", "baseline": "ìpilẹ̀ṣẹ̀" },
+      "kind": {
+        "auto": "auto",
+        "manual": "ọwọ́",
+        "baseline": "ìpilẹ̀ṣẹ̀"
+      },
       "ageNow": "nísisìyí",
       "ageMinutes": "{{count}}m sẹ́yìn",
       "ageHours": "{{count}}wk sẹ́yìn",

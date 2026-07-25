@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Ngaahi vāhā" },
+  "spaceRail": {
+    "landmarkLabel": "Ngaahi vāhā"
+  },
   "sidebar": {
     "landmarkLabel": "Vāhā",
     "navLabel": "Ngaahi tohi",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "Ngaahi fokotuʻutuʻu vāhā",
     "openSpaceMenu": "Fakaʻata ʻa e meinū vāhā",
     "docMenuAria": "Ngaahi fili ki he {{name}}",
-    "renameDoc": "Toe fakahingoa",
-    "renameDialog": {
-      "title": "Toe fakahingoa ʻa e tohi",
-      "description": "Fili ha hingoa foʻou ki he tohi ko ʻeni.",
-      "label": "Hingoa ʻo e tohi",
-      "cancel": "Fakaʻikai",
-      "save": "Toe fakahingoa"
-    }
+    "renameDoc": "Toe fakahingoa"
   },
   "topbar": {
     "openNav": "Fakaʻata ʻa e folau",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "Fakatokangaʻi (⌘\\)",
     "findInDoc": "Kumi ʻi he tohi",
     "inspector": "Fakatonutonu tohi",
-    "themes": { "light": "Maama", "dark": "Fakapoʻuli", "hcLight": "Faikehekehe māʻolunga (maama)", "hcDark": "Faikehekehe māʻolunga (fakapoʻuli)" }
+    "themes": {
+      "light": "Maama",
+      "dark": "Fakapoʻuli",
+      "hcLight": "Faikehekehe māʻolunga (maama)",
+      "hcDark": "Faikehekehe māʻolunga (fakapoʻuli)"
+    }
   },
-  "modeToggle": { "write": "tohi", "read": "lau", "split": "vaeua", "space": "vāhā" },
-  "mobileNav": { "title": "Folau", "close": "Tāpuni folau" },
-  "mobileTabs": { "write": "tohi", "read": "lau", "split": "vahevahe", "brain": "brain", "cite": "lave", "more": "lahi" },
+  "modeToggle": {
+    "write": "tohi",
+    "read": "lau",
+    "split": "vaeua",
+    "space": "vāhā"
+  },
+  "mobileNav": {
+    "title": "Folau",
+    "close": "Tāpuni folau"
+  },
+  "mobileTabs": {
+    "write": "tohi",
+    "read": "lau",
+    "split": "vahevahe",
+    "brain": "brain",
+    "cite": "lave",
+    "more": "lahi"
+  },
   "mobileMore": {
     "title": "Lahi",
     "close": "Tāpuni lahi",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "Peniti meʻangāue tāpula",
     "readingWidthLabel": "Lahi ʻo e lau",
     "readingWidthHint": "Fakafuofua taki taha tohi",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Lahi",
     "helpToursLabel": "ʻAʻahi tokoni",
     "helpItem": "Tokoni mo e ngaahi hala fakanounou",
-    "themes": { "light": "Maama", "dark": "Fakapoʻuli", "hcLight": "HC maama", "hcDark": "HC fakapoʻuli" },
+    "themes": {
+      "light": "Maama",
+      "dark": "Fakapoʻuli",
+      "hcLight": "HC maama",
+      "hcDark": "HC fakapoʻuli"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Ko e hā ʻa e foʻou",
     "feedback": "ʻOmai fakamatala…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "Fakalahi fakatonutonu",
     "collapse": "Fakaiti fakatonutonu",
-    "tabs": { "outline": "FAKAMATALA", "info": "FAKAMATALA", "history": "HISITŌLIA", "actions": "NGAAHI NGĀUE" },
-    "outline": { "title": "FAKAMATALA", "sectionSummary": "{{count}} NGAAHI KONGA", "empty": "ʻIkai ha ngaahi ʻulungāanga. Fakaʻaongaʻi ha ngaahi ʻulungāanga ki he tohi ke langa hono fotunga." },
+    "tabs": {
+      "outline": "FAKAMATALA",
+      "info": "FAKAMATALA",
+      "history": "HISITŌLIA",
+      "actions": "NGAAHI NGĀUE"
+    },
+    "outline": {
+      "title": "FAKAMATALA",
+      "sectionSummary": "{{count}} NGAAHI KONGA",
+      "empty": "ʻIkai ha ngaahi ʻulungāanga. Fakaʻaongaʻi ha ngaahi ʻulungāanga ki he tohi ke langa hono fotunga."
+    },
     "info": {
       "title": "FAKAMATALA",
       "words": "Ngaahi foʻi lea",
@@ -119,8 +152,18 @@
       "noLimit": "ʻIkai ha ngataʻanga",
       "noDueDate": "ʻIkai ha aho"
     },
-    "status": { "draft": "Hiki kamata", "in-progress": "Lolotonga", "in-review": "ʻI he vakai", "complete": "ʻOsi", "published": "Pulusi" },
-    "lock": { "title": "Lōka ki he fakalelei", "body": "Ko e tuʻunga ʻo e tohi ni ʻoku ne lōkaʻi ke tauhi. Veteʻi ke fai ha liliu.", "unlock": "Veteʻi ke fakalelei" },
+    "status": {
+      "draft": "Hiki kamata",
+      "in-progress": "Lolotonga",
+      "in-review": "ʻI he vakai",
+      "complete": "ʻOsi",
+      "published": "Pulusi"
+    },
+    "lock": {
+      "title": "Lōka ki he fakalelei",
+      "body": "Ko e tuʻunga ʻo e tohi ni ʻoku ne lōkaʻi ke tauhi. Veteʻi ke fai ha liliu.",
+      "unlock": "Veteʻi ke fakalelei"
+    },
     "history": {
       "title": "NGAAHI HIKI",
       "now": "TAIMI NI",
@@ -132,7 +175,11 @@
       "pin": "Fakamaʻu hiki",
       "unpin": "Veteʻi fakamaʻu",
       "restore": "Toe fakafoki",
-      "kind": { "auto": "auto", "manual": "nima", "baseline": "kamata" },
+      "kind": {
+        "auto": "auto",
+        "manual": "nima",
+        "baseline": "kamata"
+      },
       "ageNow": "taimi ni",
       "ageMinutes": "{{count}}m kuoʻosi",
       "ageHours": "{{count}}h kuoʻosi",

@@ -35,7 +35,7 @@ export const DocLink = ({
         wordCount={wordCount}
         rename={rename}
       />
-      <DocRowMenu doc={doc} active={active} />
+      <DocRowMenu doc={doc} active={active} onRename={rename.beginEdit} />
     </div>
   );
 };

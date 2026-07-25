@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Prostory" },
+  "spaceRail": {
+    "landmarkLabel": "Prostory"
+  },
   "sidebar": {
     "landmarkLabel": "Prostor",
     "navLabel": "Dokumenty",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "Nastavení prostoru",
     "openSpaceMenu": "Otevřít menu prostoru",
     "docMenuAria": "Možnosti pro {{name}}",
-    "renameDoc": "Přejmenovat",
-    "renameDialog": {
-      "title": "Přejmenovat dokument",
-      "description": "Zvolte nový název pro tento dokument.",
-      "label": "Název dokumentu",
-      "cancel": "Zrušit",
-      "save": "Přejmenovat"
-    }
+    "renameDoc": "Přejmenovat"
   },
   "topbar": {
     "openNav": "Otevřít navigaci",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "Soustředění (⌘\\)",
     "findInDoc": "Najít v dokumentu",
     "inspector": "Inspektor dokumentu",
-    "themes": { "light": "Světlý", "dark": "Tmavý", "hcLight": "Vysoký kontrast (světlý)", "hcDark": "Vysoký kontrast (tmavý)" }
+    "themes": {
+      "light": "Světlý",
+      "dark": "Tmavý",
+      "hcLight": "Vysoký kontrast (světlý)",
+      "hcDark": "Vysoký kontrast (tmavý)"
+    }
   },
-  "modeToggle": { "write": "psát", "read": "číst", "split": "rozdělit", "space": "prostor" },
-  "mobileNav": { "title": "Navigace", "close": "Zavřít navigaci" },
-  "mobileTabs": { "write": "psát", "read": "číst", "split": "rozdělit", "brain": "brain", "cite": "citovat", "more": "víc" },
+  "modeToggle": {
+    "write": "psát",
+    "read": "číst",
+    "split": "rozdělit",
+    "space": "prostor"
+  },
+  "mobileNav": {
+    "title": "Navigace",
+    "close": "Zavřít navigaci"
+  },
+  "mobileTabs": {
+    "write": "psát",
+    "read": "číst",
+    "split": "rozdělit",
+    "brain": "brain",
+    "cite": "citovat",
+    "more": "víc"
+  },
   "mobileMore": {
     "title": "Víc",
     "close": "Zavřít víc",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "Plovoucí panel nástrojů",
     "readingWidthLabel": "Šířka čtení",
     "readingWidthHint": "Míra na dokument",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Víc",
     "helpToursLabel": "Prohlídka nápovědy",
     "helpItem": "Nápověda a zkratky",
-    "themes": { "light": "Světlý", "dark": "Tmavý", "hcLight": "VK světlý", "hcDark": "VK tmavý" },
+    "themes": {
+      "light": "Světlý",
+      "dark": "Tmavý",
+      "hcLight": "VK světlý",
+      "hcDark": "VK tmavý"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Co je nového",
     "feedback": "Poslat zpětnou vazbu…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "Rozbalit inspektor",
     "collapse": "Sbalit inspektor",
-    "tabs": { "outline": "OSNOVA", "info": "INFO", "history": "HISTORIE", "actions": "AKCE" },
-    "outline": { "title": "OSNOVA", "sectionSummary": "{{count}} SEKCÍ", "empty": "Zatím žádné nadpisy. Přidejte do dokumentu nadpisy a vytvořte jeho osnovu." },
+    "tabs": {
+      "outline": "OSNOVA",
+      "info": "INFO",
+      "history": "HISTORIE",
+      "actions": "AKCE"
+    },
+    "outline": {
+      "title": "OSNOVA",
+      "sectionSummary": "{{count}} SEKCÍ",
+      "empty": "Zatím žádné nadpisy. Přidejte do dokumentu nadpisy a vytvořte jeho osnovu."
+    },
     "info": {
       "title": "INFO",
       "words": "Slova",
@@ -119,8 +152,18 @@
       "noLimit": "Bez limitu",
       "noDueDate": "Bez termínu"
     },
-    "status": { "draft": "Koncept", "in-progress": "Probíhá", "in-review": "V revizi", "complete": "Hotovo", "published": "Publikováno" },
-    "lock": { "title": "Uzamčeno pro úpravy", "body": "Stav tohoto dokumentu jej zamyká pro zachování. Odemkněte pro provedení změn.", "unlock": "Odemknout pro úpravy" },
+    "status": {
+      "draft": "Koncept",
+      "in-progress": "Probíhá",
+      "in-review": "V revizi",
+      "complete": "Hotovo",
+      "published": "Publikováno"
+    },
+    "lock": {
+      "title": "Uzamčeno pro úpravy",
+      "body": "Stav tohoto dokumentu jej zamyká pro zachování. Odemkněte pro provedení změn.",
+      "unlock": "Odemknout pro úpravy"
+    },
     "history": {
       "title": "VERZE",
       "now": "TEĎ",
@@ -132,7 +175,11 @@
       "pin": "Připnout verzi",
       "unpin": "Odepnout verzi",
       "restore": "Obnovit",
-      "kind": { "auto": "auto", "manual": "ruční", "baseline": "výchozí" },
+      "kind": {
+        "auto": "auto",
+        "manual": "ruční",
+        "baseline": "výchozí"
+      },
       "ageNow": "teď",
       "ageMinutes": "před {{count}}m",
       "ageHours": "před {{count}}h",

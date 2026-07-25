@@ -505,7 +505,7 @@ describe('Sidebar', () => {
       expect(link).toHaveTextContent('Sample Doc');
     });
 
-    it('should open the rename dialog from the Rename menu item', async () => {
+    it('should switch the row to the inline rename input from the Rename menu item', async () => {
       const user = userEvent.setup();
       await seedBasicSpace();
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
@@ -513,12 +513,12 @@ describe('Sidebar', () => {
       });
       await user.click(await screen.findByTestId('sidebar-doc-d1-menu'));
       await user.click(await screen.findByTestId('sidebar-doc-d1-rename'));
-      const input = await screen.findByTestId('rename-doc-input');
+      const input = await screen.findByTestId('sidebar-doc-d1-rename-input');
       expect(input).toHaveValue('Sample Doc');
-      expect(input).toHaveAccessibleName('Document name');
+      expect(input).toHaveFocus();
     });
 
-    it('should rename the doc and update the row when submitted', async () => {
+    it('should rename the doc and update the row on Enter', async () => {
       const user = userEvent.setup();
       await seedBasicSpace();
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
@@ -526,10 +526,9 @@ describe('Sidebar', () => {
       });
       await user.click(await screen.findByTestId('sidebar-doc-d1-menu'));
       await user.click(await screen.findByTestId('sidebar-doc-d1-rename'));
-      const input = await screen.findByTestId('rename-doc-input');
+      const input = await screen.findByTestId('sidebar-doc-d1-rename-input');
       await user.clear(input);
-      await user.type(input, 'Chapter one');
-      await user.click(screen.getByTestId('rename-doc-submit'));
+      await user.type(input, 'Chapter one{Enter}');
       await waitFor(async () => {
         expect((await db.docs.get('d1'))?.name).toBe('Chapter one');
       });
@@ -538,10 +537,9 @@ describe('Sidebar', () => {
           'Chapter one',
         );
       });
-      expect(screen.queryByTestId('rename-doc-dialog')).not.toBeInTheDocument();
     });
 
-    it('should not rename the doc when the dialog is cancelled', async () => {
+    it('should not rename the doc when the inline edit is escaped', async () => {
       const user = userEvent.setup();
       await seedBasicSpace();
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
@@ -549,13 +547,12 @@ describe('Sidebar', () => {
       });
       await user.click(await screen.findByTestId('sidebar-doc-d1-menu'));
       await user.click(await screen.findByTestId('sidebar-doc-d1-rename'));
-      const input = await screen.findByTestId('rename-doc-input');
+      const input = await screen.findByTestId('sidebar-doc-d1-rename-input');
       await user.clear(input);
-      await user.type(input, 'Discarded');
-      await user.click(screen.getByTestId('rename-doc-cancel'));
+      await user.type(input, 'Discarded{Escape}');
       await waitFor(() => {
         expect(
-          screen.queryByTestId('rename-doc-dialog'),
+          screen.queryByTestId('sidebar-doc-d1-rename-input'),
         ).not.toBeInTheDocument();
       });
       expect((await db.docs.get('d1'))?.name).toBe('Sample Doc');

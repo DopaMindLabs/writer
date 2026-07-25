@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "இடங்கள்" },
+  "spaceRail": {
+    "landmarkLabel": "இடங்கள்"
+  },
   "sidebar": {
     "landmarkLabel": "இடம்",
     "navLabel": "ஆவணங்கள்",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "இட அமைப்புகள்",
     "openSpaceMenu": "இட பட்டியலைத் திற",
     "docMenuAria": "{{name}} விருப்பங்கள்",
-    "renameDoc": "மறுபெயரிடு",
-    "renameDialog": {
-      "title": "ஆவணத்தை மறுபெயரிடு",
-      "description": "இந்த ஆவணத்திற்கு புதிய பெயரைத் தேர்ந்தெடுக்கவும்.",
-      "label": "ஆவணப் பெயர்",
-      "cancel": "ரத்து",
-      "save": "மறுபெயரிடு"
-    }
+    "renameDoc": "மறுபெயரிடு"
   },
   "topbar": {
     "openNav": "வழிசெலுத்தலைத் திற",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "கவனம் (⌘\\)",
     "findInDoc": "ஆவணத்தில் கண்டுபிடி",
     "inspector": "ஆவண பரிசோதகர்",
-    "themes": { "light": "ஒளி", "dark": "இருள்", "hcLight": "உயர் மாறுபாடு (ஒளி)", "hcDark": "உயர் மாறுபாடு (இருள்)" }
+    "themes": {
+      "light": "ஒளி",
+      "dark": "இருள்",
+      "hcLight": "உயர் மாறுபாடு (ஒளி)",
+      "hcDark": "உயர் மாறுபாடு (இருள்)"
+    }
   },
-  "modeToggle": { "write": "எழுது", "read": "படி", "split": "பிரி", "space": "இடம்" },
-  "mobileNav": { "title": "வழிசெலுத்தல்", "close": "வழிசெலுத்தலை மூடு" },
-  "mobileTabs": { "write": "எழுது", "read": "படி", "split": "பிரி", "brain": "brain", "cite": "மேற்கோள்", "more": "மேலும்" },
+  "modeToggle": {
+    "write": "எழுது",
+    "read": "படி",
+    "split": "பிரி",
+    "space": "இடம்"
+  },
+  "mobileNav": {
+    "title": "வழிசெலுத்தல்",
+    "close": "வழிசெலுத்தலை மூடு"
+  },
+  "mobileTabs": {
+    "write": "எழுது",
+    "read": "படி",
+    "split": "பிரி",
+    "brain": "brain",
+    "cite": "மேற்கோள்",
+    "more": "மேலும்"
+  },
   "mobileMore": {
     "title": "மேலும்",
     "close": "மேலும் மூடு",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "மிதக்கும் கருவிப்பட்டை",
     "readingWidthLabel": "வாசிப்பு அகலம்",
     "readingWidthHint": "ஆவணத்துக்கான அளவு",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "மேலும்",
     "helpToursLabel": "உதவி சுற்று",
     "helpItem": "உதவி மற்றும் குறுக்குவழிகள்",
-    "themes": { "light": "ஒளி", "dark": "இருள்", "hcLight": "HC ஒளி", "hcDark": "HC இருள்" },
+    "themes": {
+      "light": "ஒளி",
+      "dark": "இருள்",
+      "hcLight": "HC ஒளி",
+      "hcDark": "HC இருள்"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "புதியது என்ன",
     "feedback": "கருத்தை அனுப்பு…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "பரிசோதகரை விரிவாக்கு",
     "collapse": "பரிசோதகரை சுருக்கு",
-    "tabs": { "outline": "வரைபடம்", "info": "தகவல்", "history": "வரலாறு", "actions": "செயல்கள்" },
-    "outline": { "title": "வரைபடம்", "sectionSummary": "{{count}} பிரிவுகள்", "empty": "இன்னும் தலைப்புகள் இல்லை. ஆவணத்தின் அமைப்பை உருவாக்க தலைப்புகள் சேர்க்கவும்." },
+    "tabs": {
+      "outline": "வரைபடம்",
+      "info": "தகவல்",
+      "history": "வரலாறு",
+      "actions": "செயல்கள்"
+    },
+    "outline": {
+      "title": "வரைபடம்",
+      "sectionSummary": "{{count}} பிரிவுகள்",
+      "empty": "இன்னும் தலைப்புகள் இல்லை. ஆவணத்தின் அமைப்பை உருவாக்க தலைப்புகள் சேர்க்கவும்."
+    },
     "info": {
       "title": "தகவல்",
       "words": "சொற்கள்",
@@ -119,8 +152,18 @@
       "noLimit": "வரம்பு இல்லை",
       "noDueDate": "காலக்கெடு இல்லை"
     },
-    "status": { "draft": "வரைவு", "in-progress": "முன்னேற்றம்", "in-review": "மறுபார்வை", "complete": "முடிந்தது", "published": "வெளியிடப்பட்டது" },
-    "lock": { "title": "திருத்தத்திற்கு பூட்டப்பட்டது", "body": "இந்த ஆவணத்தின் நிலை அதை பாதுகாக்க பூட்டுகிறது. மாற்றங்களைச் செய்ய திற.", "unlock": "திருத்த திற" },
+    "status": {
+      "draft": "வரைவு",
+      "in-progress": "முன்னேற்றம்",
+      "in-review": "மறுபார்வை",
+      "complete": "முடிந்தது",
+      "published": "வெளியிடப்பட்டது"
+    },
+    "lock": {
+      "title": "திருத்தத்திற்கு பூட்டப்பட்டது",
+      "body": "இந்த ஆவணத்தின் நிலை அதை பாதுகாக்க பூட்டுகிறது. மாற்றங்களைச் செய்ய திற.",
+      "unlock": "திருத்த திற"
+    },
     "history": {
       "title": "பதிப்புகள்",
       "now": "இப்போது",
@@ -132,7 +175,11 @@
       "pin": "பதிப்பை பின் செய்",
       "unpin": "பின் நீக்கு",
       "restore": "மீட்டெடு",
-      "kind": { "auto": "தானியங்கி", "manual": "கைமுறை", "baseline": "அடிப்படை" },
+      "kind": {
+        "auto": "தானியங்கி",
+        "manual": "கைமுறை",
+        "baseline": "அடிப்படை"
+      },
       "ageNow": "இப்போது",
       "ageMinutes": "{{count}}நிமி முன்",
       "ageHours": "{{count}}மணி முன்",

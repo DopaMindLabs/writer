@@ -20,14 +20,7 @@
     "openSpaceSettings": "Space-Einstellungen",
     "openSpaceMenu": "Space-Menü öffnen",
     "docMenuAria": "Optionen für {{name}}",
-    "renameDoc": "Umbenennen",
-    "renameDialog": {
-      "title": "Dokument umbenennen",
-      "description": "Wähle einen neuen Namen für dieses Dokument.",
-      "label": "Dokumentname",
-      "cancel": "Abbrechen",
-      "save": "Umbenennen"
-    }
+    "renameDoc": "Umbenennen"
   },
   "topbar": {
     "openNav": "Navigation öffnen",

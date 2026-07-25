@@ -1,7 +1,16 @@
+import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, screen } from '@/test/test-utils';
+import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { sampleDoc, seedBasicSpace } from '@/test/fixtures';
 import { DocRowMenu } from './DocRowMenu';
+
+const setup = () => {
+  const onRename = vi.fn();
+  renderWithProviders(
+    <DocRowMenu doc={sampleDoc} active={false} onRename={onRename} />,
+  );
+  return { onRename };
+};
 
 describe('DocRowMenu', () => {
   beforeEach(async () => {
@@ -9,7 +18,7 @@ describe('DocRowMenu', () => {
   });
 
   it('opens the row menu with rename and delete items', async () => {
-    renderWithProviders(<DocRowMenu doc={sampleDoc} active={false} />);
+    setup();
     await userEvent.click(
       screen.getByTestId(`sidebar-doc-${sampleDoc.id}-menu`),
     );
@@ -21,19 +30,21 @@ describe('DocRowMenu', () => {
     ).toBeInTheDocument();
   });
 
-  it('opens the rename dialog from the menu', async () => {
-    renderWithProviders(<DocRowMenu doc={sampleDoc} active={false} />);
+  it('begins the inline rename once the menu has closed', async () => {
+    const { onRename } = setup();
     await userEvent.click(
       screen.getByTestId(`sidebar-doc-${sampleDoc.id}-menu`),
     );
     await userEvent.click(
       await screen.findByTestId(`sidebar-doc-${sampleDoc.id}-rename`),
     );
-    expect(await screen.findByTestId('rename-doc-input')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(onRename).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('opens the delete confirmation from the menu', async () => {
-    renderWithProviders(<DocRowMenu doc={sampleDoc} active={false} />);
+    setup();
     await userEvent.click(
       screen.getByTestId(`sidebar-doc-${sampleDoc.id}-menu`),
     );

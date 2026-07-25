@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { Section } from '@/db/schema';
+import { useDeferredMenuAction } from '@/components/chrome/useDeferredMenuAction';
 import { DeleteSectionDialog } from './DeleteSectionDialog';
 import { SectionMenuItems } from './SectionMenuItems';
 
@@ -40,22 +41,13 @@ export const SectionRowMenu = ({
   const { t } = useTranslation('chrome');
   const [menuOpen, setMenuOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [pendingRename, setPendingRename] = useState(false);
+  const deferred = useDeferredMenuAction();
   const id = section.id;
 
   const select = (run: () => void) => (e: Event) => {
     e.preventDefault();
     setMenuOpen(false);
     run();
-  };
-  // Begin the inline rename only once the menu has finished closing: doing it
-  // earlier lets the menu's focus teardown blur and commit the rename field.
-  const closeAutoFocus = (e: Event) => {
-    e.preventDefault();
-    if (pendingRename) {
-      setPendingRename(false);
-      onRename();
-    }
   };
 
   return (
@@ -71,13 +63,13 @@ export const SectionRowMenu = ({
             className="text-ink-4 transition-opacity hover:bg-transparent data-[state=open]:bg-transparent md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
           />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" onCloseAutoFocus={closeAutoFocus}>
+        <DropdownMenuContent align="end" onCloseAutoFocus={deferred.onCloseAutoFocus}>
           <SectionMenuItems
             sectionId={id}
             canModify={canModify}
             isWorkshop={isWorkshop}
             onAddDoc={select(onAddDoc)}
-            onRename={select(() => { setPendingRename(true); })}
+            onRename={select(() => { deferred.defer(onRename); })}
             onDelete={select(() => { setDeleteOpen(true); })}
           />
         </DropdownMenuContent>

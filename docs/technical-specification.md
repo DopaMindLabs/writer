@@ -116,7 +116,7 @@ A space is structured as **sections** containing **documents**. The default sect
 
 **Add a section.** Section structure is user-configurable by default: a template opts out only by setting `allowConfiguration: false`, so the **Add section** affordance appears below the section list on every shipped template (Blank, Fiction, Humanities, Technical, Bioinformatics), hover-revealed on the row. Clicking it reveals an inline input. **Enter** — or **blur** (clicking away) — appends a new top-level section at the next order; **Escape** cancels. (This replaces the earlier opt-in `allowExtraSections`, which limited section management to the Blank template.)
 
-**Rename a doc.** Double-click the doc name in the topbar breadcrumb, or **double-click a doc name in the sidebar**. Rename input appears. **Enter** commits; **Escape** reverts. Blurring (clicking away) also commits when the value changed.
+**Rename a doc.** Double-click the doc name in the topbar breadcrumb, **double-click a doc name in the sidebar**, or choose **Rename** from the doc row's **⋯ menu** — the menu defers until it has closed, then switches the row to the same inline rename input (there is no rename dialogue). **Enter** commits; **Escape** reverts. Blurring (clicking away) also commits when the value changed.
 
 **Rename a section.** From the section **⋯ menu** choose **Rename**, or **double-click** the section label. Either switches it to an inline rename input. **Enter** or blur commits; **Escape** reverts. The same `useInlineRename` state machine drives both section and doc inline renames. The Workshop section cannot be renamed (its identity is label-based).
 

@@ -9,20 +9,29 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { Doc } from '@/db/schema';
-import { RenameDocDialog } from './RenameDocDialog';
+import { useDeferredMenuAction } from './useDeferredMenuAction';
 import { DeleteDocDialog } from './DeleteDocDialog';
 
 interface DocRowMenuProps {
   doc: Doc;
   /** Whether this row's doc is the one currently open in the editor. */
   active: boolean;
+  /** Begins the row's inline rename (the same one double-click opens). */
+  onRename: () => void;
 }
 
-export const DocRowMenu = ({ doc, active }: DocRowMenuProps) => {
+export const DocRowMenu = ({ doc, active, onRename }: DocRowMenuProps) => {
   const { t } = useTranslation('chrome');
   const [menuOpen, setMenuOpen] = useState(false);
-  const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const deferred = useDeferredMenuAction();
+
+  const select = (run: () => void) => (e: Event) => {
+    e.preventDefault();
+    setMenuOpen(false);
+    run();
+  };
+
   return (
     <>
       <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
@@ -36,35 +45,28 @@ export const DocRowMenu = ({ doc, active }: DocRowMenuProps) => {
             className="text-ink-4 transition-opacity hover:bg-transparent data-[state=open]:bg-transparent md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
           />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent
+          align="end"
+          onCloseAutoFocus={deferred.onCloseAutoFocus}
+        >
           <DropdownMenuItem
             data-testid={`sidebar-doc-${doc.id}-rename`}
-            onSelect={(e) => {
-              e.preventDefault();
-              setMenuOpen(false);
-              setRenameOpen(true);
-            }}
+            onSelect={select(() => {
+              deferred.defer(onRename);
+            })}
           >
             {t('sidebar.renameDoc')}
           </DropdownMenuItem>
           <DropdownMenuItem
             data-testid={`sidebar-doc-${doc.id}-delete`}
-            onSelect={(e) => {
-              e.preventDefault();
-              setMenuOpen(false);
+            onSelect={select(() => {
               setDeleteOpen(true);
-            }}
+            })}
           >
             {t('sidebar.deleteDoc')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <RenameDocDialog
-        docId={doc.id}
-        docName={doc.name}
-        open={renameOpen}
-        onOpenChange={setRenameOpen}
-      />
       <DeleteDocDialog
         doc={doc}
         isActiveDoc={active}

@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "空间" },
+  "spaceRail": {
+    "landmarkLabel": "空间"
+  },
   "sidebar": {
     "landmarkLabel": "空间",
     "navLabel": "文档",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "空间设置",
     "openSpaceMenu": "打开空间菜单",
     "docMenuAria": "{{name}} 的选项",
-    "renameDoc": "重命名",
-    "renameDialog": {
-      "title": "重命名文档",
-      "description": "为此文档选择一个新名称。",
-      "label": "文档名称",
-      "cancel": "取消",
-      "save": "重命名"
-    }
+    "renameDoc": "重命名"
   },
   "topbar": {
     "openNav": "打开导航",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "专注 (⌘\\)",
     "findInDoc": "在文档中查找",
     "inspector": "文档检查器",
-    "themes": { "light": "浅色", "dark": "深色", "hcLight": "高对比度(浅色)", "hcDark": "高对比度(深色)" }
+    "themes": {
+      "light": "浅色",
+      "dark": "深色",
+      "hcLight": "高对比度(浅色)",
+      "hcDark": "高对比度(深色)"
+    }
   },
-  "modeToggle": { "write": "写作", "read": "阅读", "split": "分屏", "space": "空间" },
-  "mobileNav": { "title": "导航", "close": "关闭导航" },
-  "mobileTabs": { "write": "写作", "read": "阅读", "split": "分屏", "brain": "brain", "cite": "引用", "more": "更多" },
+  "modeToggle": {
+    "write": "写作",
+    "read": "阅读",
+    "split": "分屏",
+    "space": "空间"
+  },
+  "mobileNav": {
+    "title": "导航",
+    "close": "关闭导航"
+  },
+  "mobileTabs": {
+    "write": "写作",
+    "read": "阅读",
+    "split": "分屏",
+    "brain": "brain",
+    "cite": "引用",
+    "more": "更多"
+  },
   "mobileMore": {
     "title": "更多",
     "close": "关闭更多",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "浮动工具栏",
     "readingWidthLabel": "阅读宽度",
     "readingWidthHint": "按文档度量",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "更多",
     "helpToursLabel": "帮助导览",
     "helpItem": "帮助和快捷键",
-    "themes": { "light": "浅色", "dark": "深色", "hcLight": "HC 浅色", "hcDark": "HC 深色" },
+    "themes": {
+      "light": "浅色",
+      "dark": "深色",
+      "hcLight": "HC 浅色",
+      "hcDark": "HC 深色"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "新功能",
     "feedback": "发送反馈…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "展开检查器",
     "collapse": "折叠检查器",
-    "tabs": { "outline": "大纲", "info": "信息", "history": "历史", "actions": "操作" },
-    "outline": { "title": "大纲", "sectionSummary": "{{count}} 个章节", "empty": "暂无标题。在文档中添加标题以构建大纲。" },
+    "tabs": {
+      "outline": "大纲",
+      "info": "信息",
+      "history": "历史",
+      "actions": "操作"
+    },
+    "outline": {
+      "title": "大纲",
+      "sectionSummary": "{{count}} 个章节",
+      "empty": "暂无标题。在文档中添加标题以构建大纲。"
+    },
     "info": {
       "title": "信息",
       "words": "字数",
@@ -119,8 +152,18 @@
       "noLimit": "无限制",
       "noDueDate": "无截止日期"
     },
-    "status": { "draft": "草稿", "in-progress": "进行中", "in-review": "审阅中", "complete": "完成", "published": "已发布" },
-    "lock": { "title": "已锁定编辑", "body": "此文档的状态将其锁定以保留。解锁以进行更改。", "unlock": "解锁编辑" },
+    "status": {
+      "draft": "草稿",
+      "in-progress": "进行中",
+      "in-review": "审阅中",
+      "complete": "完成",
+      "published": "已发布"
+    },
+    "lock": {
+      "title": "已锁定编辑",
+      "body": "此文档的状态将其锁定以保留。解锁以进行更改。",
+      "unlock": "解锁编辑"
+    },
     "history": {
       "title": "版本",
       "now": "现在",
@@ -132,7 +175,11 @@
       "pin": "固定版本",
       "unpin": "取消固定",
       "restore": "恢复",
-      "kind": { "auto": "自动", "manual": "手动", "baseline": "基线" },
+      "kind": {
+        "auto": "自动",
+        "manual": "手动",
+        "baseline": "基线"
+      },
       "ageNow": "现在",
       "ageMinutes": "{{count}}分钟前",
       "ageHours": "{{count}}小时前",
