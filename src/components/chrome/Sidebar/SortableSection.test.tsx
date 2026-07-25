@@ -1,10 +1,22 @@
 import { vi } from 'vitest';
 import type { ComponentProps } from 'react';
-import { DndContext } from '@/components/libs/dnd';
+import { DndContext, useSortable } from '@/components/libs/dnd';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { sampleDoc, sampleSection } from '@/test/fixtures';
 import type { AddController } from './Sidebar.types';
 import { SortableSection } from './SortableSection';
+
+const useSortableSpy = vi.hoisted(() => vi.fn());
+vi.mock('@/components/libs/dnd', async (orig) => {
+  const real = await orig<typeof import('@/components/libs/dnd')>();
+  return {
+    ...real,
+    useSortable: (args: Parameters<typeof useSortable>[0]) => {
+      useSortableSpy(args);
+      return real.useSortable(args);
+    },
+  };
+});
 
 const idleAdd = (): AddController => ({
   adding: null,
@@ -75,5 +87,39 @@ describe('SortableSection', () => {
     expect(
       screen.getByTestId('sidebar-section-sec1-header'),
     ).not.toHaveClass('cursor-grab');
+  });
+
+  describe('sortable enablement', () => {
+    beforeEach(() => { useSortableSpy.mockClear(); });
+
+    it('is draggable and droppable for an ordinary manageable section', () => {
+      renderSection({ canManage: true });
+      expect(useSortableSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          disabled: { draggable: false, droppable: false },
+        }),
+      );
+    });
+
+    it('keeps the Workshop droppable while never draggable', () => {
+      renderSection({
+        canManage: true,
+        sec: { ...sampleSection, label: 'Workshop' },
+      });
+      expect(useSortableSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          disabled: { draggable: true, droppable: false },
+        }),
+      );
+    });
+
+    it('is neither draggable nor droppable when the template is locked', () => {
+      renderSection({ canManage: false });
+      expect(useSortableSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          disabled: { draggable: true, droppable: true },
+        }),
+      );
+    });
   });
 });

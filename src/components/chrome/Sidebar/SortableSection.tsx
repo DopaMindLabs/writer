@@ -16,7 +16,9 @@ type SortableSectionProps = Omit<
  * The whole section block is the moved node; only the header is the grab
  * surface, so dragging a document inside starts a document drag, not this one.
  * Dragging is disabled when the template locks its structure, and the reserved
- * Workshop section is never draggable so it keeps its place.
+ * Workshop section is never draggable so it keeps its place — but it stays a
+ * drop target (object-form `disabled`), or an empty Workshop could never
+ * receive a document again.
  */
 export const SortableSection = (props: SortableSectionProps) => {
   const draggable = props.canManage && !isWorkshopSection(props.sec);
@@ -28,7 +30,10 @@ export const SortableSection = (props: SortableSectionProps) => {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: props.sec.id, disabled: !draggable });
+  } = useSortable({
+    id: props.sec.id,
+    disabled: { draggable: !draggable, droppable: !props.canManage },
+  });
   const style = { transform: CSS.Transform.toString(transform), transition };
   return (
     <div
