@@ -29,6 +29,20 @@ describe('SectionLabel', () => {
     );
   });
 
+  it('marks the label as drag-through so pressing it can start a section drag', () => {
+    renderWithProviders(
+      <SectionLabel
+        sectionId="sec1"
+        label="Drafts"
+        canModify
+        rename={makeRename()}
+      />,
+    );
+    expect(screen.getByTestId('sidebar-section-sec1-label')).toHaveAttribute(
+      'data-drag-through',
+    );
+  });
+
   it('offers a rename hint and begins editing on double-click when modifiable', async () => {
     const user = userEvent.setup();
     const beginEdit = vi.fn();

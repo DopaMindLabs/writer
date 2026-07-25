@@ -32,10 +32,11 @@ cancels. Every template supports this by default.
 
 ### Reordering and moving
 
-Sections and documents can be rearranged. **Press and hold** a section header or
-a document row, then drag it into place — a quick click still opens or navigates
-as usual. Drag a document onto **another section** to move it there. The change
-sticks the moment you drop; nothing jumps back.
+Sections and documents can be rearranged. **Press and drag** a section header or
+a document row into place (on a touch screen, press and hold first) — a click
+still opens or navigates as usual, and a double click still renames. Drag a
+document onto **another section** to move it there. The change sticks the moment
+you drop; nothing jumps back.
 
 ## Templates
 

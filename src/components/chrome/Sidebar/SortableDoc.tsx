@@ -12,10 +12,12 @@ interface SortableDocProps {
 }
 
 /**
- * Makes a {@link DocLink} draggable: press and hold the row to reorder documents
- * within their section (or use the keyboard once the row is focused). A quick
- * click still follows the link — the pointer sensor only engages on a hold.
- * Dragging is disabled when the template locks its structure.
+ * Makes a {@link DocLink} draggable: press the row and move to reorder documents
+ * within their section (long-press on touch, or use the keyboard once the row is
+ * focused). A click or double-click still reaches the link — the mouse sensor
+ * only engages once the pointer travels, and presses on the row's interactive
+ * children never start a drag. Dragging is disabled when the template locks its
+ * structure.
  */
 export const SortableDoc = ({ doc, href, active, canManage }: SortableDocProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =

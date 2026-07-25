@@ -6,7 +6,8 @@ import type {
 
 /**
  * The props a sortable wrapper hands to the element that should act as the drag
- * grab surface (press-and-hold to drag, focusable for keyboard reordering).
+ * grab surface (press-and-move to drag — long-press on touch — and focusable
+ * for keyboard reordering).
  */
 export interface DragActivator {
   ref: (element: HTMLElement | null) => void;

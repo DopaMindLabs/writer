@@ -11,9 +11,11 @@ test.beforeEach(async ({ page }) => {
 const text = async (loc: Locator) => ((await loc.textContent()) ?? '').trim();
 
 /**
- * Press-and-hold `handle`, wait for the drag to be picked up (a condition, not a
- * timed wait — the `data-dragging` marker), drop it on `target`. Pointer drag is
- * a hold, so keyboard/timeout-free driving needs this shape.
+ * Press `handle`, travel past the mouse sensor's 8px activation distance, wait
+ * for the drag to be picked up (a condition, not a timed wait — the
+ * `data-dragging` marker), then drop it on `target`. Mouse drags activate on
+ * movement, so a press alone must never become a drag — the initial nudge is
+ * what starts it.
  */
 const dragOnto = async (
   page: Page,
@@ -23,8 +25,12 @@ const dragOnto = async (
 ) => {
   const from = await handle.boundingBox();
   if (!from) throw new Error('missing handle box');
-  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  const cx = from.x + from.width / 2;
+  const cy = from.y + from.height / 2;
+  await page.mouse.move(cx, cy);
   await page.mouse.down();
+  // Cross the activation distance so the sensor engages.
+  await page.mouse.move(cx + 12, cy, { steps: 3 });
   await expect(marker).toHaveAttribute('data-dragging', 'true');
   const to = await target.boundingBox();
   if (!to) throw new Error('missing target box');

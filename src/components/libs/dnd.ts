@@ -6,7 +6,9 @@
 export {
   DndContext,
   KeyboardSensor,
+  MouseSensor,
   PointerSensor,
+  TouchSensor,
   closestCenter,
   useSensor,
   useSensors,

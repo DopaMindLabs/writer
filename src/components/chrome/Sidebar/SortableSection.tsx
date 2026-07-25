@@ -10,8 +10,9 @@ type SortableSectionProps = Omit<
 >;
 
 /**
- * Makes a {@link SidebarSection} draggable by its header: press and hold the
- * header to reorder top-level sections (or use the keyboard once it is focused).
+ * Makes a {@link SidebarSection} draggable by its header: press the header and
+ * move to reorder top-level sections (long-press on touch, or use the keyboard
+ * once it is focused).
  * The whole section block is the moved node; only the header is the grab
  * surface, so dragging a document inside starts a document drag, not this one.
  * Dragging is disabled when the template locks its structure, and the reserved

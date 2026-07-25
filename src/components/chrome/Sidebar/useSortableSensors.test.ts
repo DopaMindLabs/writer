@@ -2,36 +2,45 @@ import { describe, expect, it } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import {
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   sortableKeyboardCoordinates,
 } from '@/components/libs/dnd';
 import { useSortableSensors } from './useSortableSensors';
 
 describe('useSortableSensors', () => {
-  it('configures a press-and-hold pointer sensor and a keyboard sensor', () => {
+  it('activates mouse drags on movement, touch drags on long-press, plus keyboard', () => {
     const { result } = renderHook(() => useSortableSensors());
 
-    expect(result.current).toHaveLength(2);
-    expect(result.current[0].sensor).toBe(PointerSensor);
+    expect(result.current).toHaveLength(3);
+    // Mouse: distance-based — a click or double-click (no movement) is never
+    // misclassified as a drag, whatever its press duration.
+    expect(result.current[0].sensor).toBe(MouseSensor);
     expect(result.current[0].options).toEqual({
-      activationConstraint: { delay: 90, tolerance: 8 },
+      activationConstraint: { distance: 8 },
     });
-    expect(result.current[1].sensor).toBe(KeyboardSensor);
-    const keyboardOptions = result.current[1].options as {
+    // Touch: long-press — the platform convention for touch drags.
+    expect(result.current[1].sensor).toBe(TouchSensor);
+    expect(result.current[1].options).toEqual({
+      activationConstraint: { delay: 200, tolerance: 8 },
+    });
+    expect(result.current[2].sensor).toBe(KeyboardSensor);
+    const keyboardOptions = result.current[2].options as {
       coordinateGetter: typeof sortableKeyboardCoordinates;
     };
     expect(keyboardOptions.coordinateGetter).toBe(sortableKeyboardCoordinates);
   });
 
-  it('keeps the same two-sensor configuration across renders', () => {
+  it('keeps the same sensor configuration across renders', () => {
     const { result, rerender } = renderHook(() => useSortableSensors());
     rerender();
     expect(result.current.map((descriptor) => descriptor.sensor)).toEqual([
-      PointerSensor,
+      MouseSensor,
+      TouchSensor,
       KeyboardSensor,
     ]);
     expect(result.current[0].options).toEqual({
-      activationConstraint: { delay: 90, tolerance: 8 },
+      activationConstraint: { distance: 8 },
     });
   });
 });
