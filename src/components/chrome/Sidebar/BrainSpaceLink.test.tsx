@@ -39,6 +39,17 @@ describe('BrainSpaceLink', () => {
     expect(screen.getByTestId('sidebar-brain-space-link')).toHaveClass('pr-9');
   });
 
+  it('centres the count glyph in the same fixed box as document rows', () => {
+    renderWithProviders(
+      <BrainSpaceLink spaceId="sp1" active={false} count={0} />,
+    );
+    // Mirrors DocLinkBody's count box so the glyph lines up with the doc rows
+    // below it instead of floating on the text baseline.
+    expect(
+      screen.getByTestId('sidebar-brain-space-link-count'),
+    ).toHaveClass('inline-flex', 'h-3', 'min-w-3', 'items-center', 'justify-center');
+  });
+
   it('marks itself active with the ink rule', () => {
     renderWithProviders(
       <BrainSpaceLink spaceId="sp1" active count={0} />,

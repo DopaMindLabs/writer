@@ -272,7 +272,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
             Brain space
           </span>
           <span
-            class="font-mono text-[10px] text-ink-4"
+            class="inline-flex h-3 min-w-3 items-center justify-center font-mono text-[10px] text-ink-4"
             data-testid="sidebar-brain-space-link-count"
           >
             1◦

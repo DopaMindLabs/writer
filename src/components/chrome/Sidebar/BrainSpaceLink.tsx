@@ -35,8 +35,12 @@ export const BrainSpaceLink = ({
       </span>
       <span
         data-testid="sidebar-brain-space-link-count"
-        className="font-mono text-[10px] text-ink-4"
+        // inline-flex h-3 min-w-3 centre-box mirrors DocLinkBody's count so the
+        // glyph aligns with the document rows below rather than the text baseline.
+        className="inline-flex h-3 min-w-3 items-center justify-center font-mono text-[10px] text-ink-4"
       >
+        {/* TODO: replace the ◦/◌ text glyphs with a proper SVG icon (see
+            @/components/libs/icons) so the count marker isn't font-dependent. */}
         {count > 0 ? `${String(count)}◦` : '◌'}
       </span>
     </Link>
