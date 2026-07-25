@@ -25,6 +25,20 @@ export const buildOrder = (
   ),
 });
 
+/** Whether two orders place the same sections and documents identically. */
+export const ordersEqual = (a: SidebarOrder, b: SidebarOrder): boolean => {
+  if (a.sectionIds.length !== b.sectionIds.length) return false;
+  if (a.sectionIds.some((id, i) => b.sectionIds[i] !== id)) return false;
+  return a.sectionIds.every((sectionId) => {
+    const ours = a.docIds[sectionId] ?? [];
+    const theirs = b.docIds[sectionId] ?? [];
+    return (
+      ours.length === theirs.length &&
+      ours.every((docId, i) => theirs[i] === docId)
+    );
+  });
+};
+
 export interface OrderedSection {
   section: Section;
   docs: Doc[];

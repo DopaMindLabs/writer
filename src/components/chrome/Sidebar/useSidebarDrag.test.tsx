@@ -145,6 +145,45 @@ describe('useSidebarDrag', () => {
     expect(result.current.sectionIds).toEqual(['sec2', 'sec1']);
   });
 
+  it('holds through an unrelated emission while the write is still in flight', () => {
+    const { result, rerender } = setupLive();
+    act(() => { result.current.onDragStart(); });
+    act(() => { result.current.onDragEnd(evt('sec2', 'sec1')); });
+    expect(result.current.sectionIds).toEqual(['sec2', 'sec1']);
+
+    // An unrelated update (e.g. a rename in another tab) emits NEW instances
+    // whose order is still the stale one. New identity alone must not release
+    // the hold — that would rebuild from stale data and snap the order back.
+    rerender({
+      sections: [section('sec1', 0), section('sec2', 1)],
+      docs: new Map(docsForSection),
+    });
+    expect(result.current.sectionIds).toEqual(['sec2', 'sec1']);
+
+    // The emission that reflects the drop settles it.
+    rerender({
+      sections: [section('sec2', 0), section('sec1', 1)],
+      docs: new Map(docsForSection),
+    });
+    expect(result.current.sectionIds).toEqual(['sec2', 'sec1']);
+  });
+
+  it('accepts a non-matching emission once the write has committed', async () => {
+    const { result, rerender } = setupLive();
+    act(() => { result.current.onDragStart(); });
+    act(() => { result.current.onDragEnd(evt('sec2', 'sec1')); });
+    // Flush the resolved persistence promise: the write has committed.
+    await act(async () => { await Promise.resolve(); });
+
+    // A concurrent writer produced an order that never matches the expected
+    // one; after commit the live data is authoritative and must win.
+    rerender({
+      sections: [section('sec1', 0), section('sec2', 1)],
+      docs: new Map(docsForSection),
+    });
+    expect(result.current.sectionIds).toEqual(['sec1', 'sec2']);
+  });
+
   it('rolls the order back when persisting the drop fails', async () => {
     reorderSectionMock.mockRejectedValue(new Error('offline'));
     const consoleError = vi

@@ -1,5 +1,10 @@
 import type { Doc, Section } from '@/db/schema';
-import { applyDrop, buildOrder, type SidebarOrder } from './sidebarOrder';
+import {
+  applyDrop,
+  buildOrder,
+  ordersEqual,
+  type SidebarOrder,
+} from './sidebarOrder';
 
 const section = (id: string): Section => ({
   id,
@@ -81,5 +86,57 @@ describe('applyDrop', () => {
     expect(applyDrop(base, { kind: 'section', sectionId: 'ghost', toIndex: 0 })).toBe(
       base,
     );
+  });
+});
+
+describe('ordersEqual', () => {
+  const base: SidebarOrder = {
+    sectionIds: ['a', 'b'],
+    docIds: { a: ['d1', 'd2'], b: ['d3'] },
+  };
+
+  it('matches an order with identical placement', () => {
+    expect(
+      ordersEqual(base, {
+        sectionIds: ['a', 'b'],
+        docIds: { a: ['d1', 'd2'], b: ['d3'] },
+      }),
+    ).toBe(true);
+  });
+
+  it('rejects a different section order', () => {
+    expect(
+      ordersEqual(base, {
+        sectionIds: ['b', 'a'],
+        docIds: { a: ['d1', 'd2'], b: ['d3'] },
+      }),
+    ).toBe(false);
+  });
+
+  it('rejects a document moved between sections', () => {
+    expect(
+      ordersEqual(base, {
+        sectionIds: ['a', 'b'],
+        docIds: { a: ['d2'], b: ['d3', 'd1'] },
+      }),
+    ).toBe(false);
+  });
+
+  it('rejects a document reordered within its section', () => {
+    expect(
+      ordersEqual(base, {
+        sectionIds: ['a', 'b'],
+        docIds: { a: ['d2', 'd1'], b: ['d3'] },
+      }),
+    ).toBe(false);
+  });
+
+  it('treats a missing doc list as empty', () => {
+    expect(
+      ordersEqual(
+        { sectionIds: ['a'], docIds: {} },
+        { sectionIds: ['a'], docIds: { a: [] } },
+      ),
+    ).toBe(true);
   });
 });
