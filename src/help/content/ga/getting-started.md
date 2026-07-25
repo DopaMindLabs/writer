@@ -34,5 +34,5 @@ nó [Socruithe tapaidh](customization-and-settings#quick-settings).
 
 - [Gach gné](features) — liosta iomlán, inscanta de cad is féidir leat a dhéanamh.
 - [Scríbhneoireacht & eagarthóireacht](writing-and-editing) — foghlaim an t-eagarthóir.
-- [Do chuid oibre a eagrú](organizing-your-work) — tionscadal níos mó a struchtúrú.
+- [Do chuid oibre a eagrú](organising-your-work) — tionscadal níos mó a struchtúrú.
 - [Aicearraí méarchláir](keyboard-shortcuts) — tiomáin gach rud ón méarchlár.

@@ -67,4 +67,4 @@ sem síðasta úrræði og geymdu útflutningar á öruggum stað.
 ## Tengd efni
 
 - [Tilvitnanir og heimildaskrá](citations-and-bibliography) — BibTeX útflutningur.
-- [Skipulag verka þinna](organizing-your-work) — hvað svæði inniheldur.
+- [Skipulag verka þinna](organising-your-work) — hvað svæði inniheldur.

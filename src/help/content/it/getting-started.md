@@ -35,5 +35,5 @@ vuoi dal menu **?** o dalle [Impostazioni rapide](customization-and-settings#qui
 
 - [Tutte le funzionalità](features) — un elenco completo e scorrevole di tutto ciò che puoi fare.
 - [Scrittura e modifica](writing-and-editing) — impara a usare l'editor.
-- [Organizzare il lavoro](organizing-your-work) — struttura un progetto più grande.
+- [Organizzare il lavoro](organising-your-work) — struttura un progetto più grande.
 - [Scorciatoie da tastiera](keyboard-shortcuts) — gestisci tutto dalla tastiera.

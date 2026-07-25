@@ -34,5 +34,5 @@ au [Mipangilio ya haraka](customization-and-settings#quick-settings).
 
 - [Vipengele vyote](features) — orodha kamili inayoweza kuchanganuliwa ya unachoweza kufanya.
 - [Kuandika na kuhariri](writing-and-editing) — jifunza kihariri.
-- [Kupanga kazi yako](organizing-your-work) — panga mradi mkubwa zaidi.
+- [Kupanga kazi yako](organising-your-work) — panga mradi mkubwa zaidi.
 - [Njia za mkato za kibodi](keyboard-shortcuts) — endesha kila kitu kutoka kwenye kibodi.

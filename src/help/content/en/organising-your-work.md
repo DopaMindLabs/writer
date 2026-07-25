@@ -38,6 +38,12 @@ still opens or navigates as usual, and a double click still renames. Drag a
 document onto **another section** to move it there. The change sticks the moment
 you drop; nothing jumps back.
 
+Prefer not to drag? Open a document's **⋯ menu** and choose **Move to section**.
+A small search box lists the space's sections with the current one ticked; type
+to narrow the list, then click a section (or highlight it with the arrow keys
+and press **Enter**) to move the document there. This option appears only in
+spaces whose structure you can change.
+
 ## Templates
 
 When you create something new, start from a **template** instead of a blank

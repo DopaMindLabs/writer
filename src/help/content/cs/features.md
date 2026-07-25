@@ -17,9 +17,9 @@ svého průvodce, takže můžete přejít přímo na detail.
 
 ## Organizace
 
-- **Prostory** — samostatné projekty. [Více](organizing-your-work#spaces)
-- **Sekce a dokumenty** — přidávejte, přejmenujte a přeuspořádejte z postranního panelu. [Více](organizing-your-work#sections-and-documents)
-- **Šablony** — začněte od struktury, ne od prázdné stránky. [Více](organizing-your-work#templates)
+- **Prostory** — samostatné projekty. [Více](organising-your-work#spaces)
+- **Sekce a dokumenty** — přidávejte, přejmenujte a přeuspořádejte z postranního panelu. [Více](organising-your-work#sections-and-documents)
+- **Šablony** — začněte od struktury, ne od prázdné stránky. [Více](organising-your-work#templates)
 
 ## Zobrazení a režimy
 

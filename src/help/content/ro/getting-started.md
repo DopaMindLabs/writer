@@ -34,5 +34,5 @@ pe alte ecrane. Reluați orice tur oricând din meniul de ajutor (**?**) sau din
 
 - [Toate funcțiile](features) — o listă completă, consultabilă rapid, cu ce puteți face.
 - [Scriere și editare](writing-and-editing) — descoperiți editorul.
-- [Organizarea muncii](organizing-your-work) — structurați un proiect mai mare.
+- [Organizarea muncii](organising-your-work) — structurați un proiect mai mare.
 - [Comenzi rapide de tastatură](keyboard-shortcuts) — controlați totul de la tastatură.

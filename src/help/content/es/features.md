@@ -17,9 +17,9 @@ enlaza con su guía para que saltes directamente al detalle.
 
 ## Organización
 
-- **Espacios** — proyectos autocontenidos. [Más](organizing-your-work)
-- **Secciones y documentos** — añade, renombra y reordena desde la barra lateral. [Más](organizing-your-work)
-- **Plantillas** — parte de una estructura, no de una página en blanco. [Más](organizing-your-work)
+- **Espacios** — proyectos autocontenidos. [Más](organising-your-work)
+- **Secciones y documentos** — añade, renombra y reordena desde la barra lateral. [Más](organising-your-work)
+- **Plantillas** — parte de una estructura, no de una página en blanco. [Más](organising-your-work)
 
 ## Vistas y modos
 

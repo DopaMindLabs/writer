@@ -73,4 +73,4 @@ alkalmazáson belüli biztonsági mentéseket, ezért tartsa ezt végső megold�
 ## Kapcsolódó
 
 - [Hivatkozások és bibliográfia](citations-and-bibliography) — BibTeX export.
-- [A munka rendszerezése](organizing-your-work) — mit tartalmaz egy terület.
+- [A munka rendszerezése](organising-your-work) — mit tartalmaz egy terület.

@@ -34,5 +34,5 @@ te montre l'essentiel. Replay une visite plus tard depuis le menu d'aide
 
 - [Toutes les fonctionnalités](features) — une liste complète et scannable.
 - [Écriture et édition](writing-and-editing) — apprends l'éditeur.
-- [Organiser ton travail](organizing-your-work) — structure un projet plus grand.
+- [Organiser ton travail](organising-your-work) — structure un projet plus grand.
 - [Raccourcis clavier](keyboard-shortcuts) — pilote tout depuis le clavier.

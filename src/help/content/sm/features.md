@@ -18,9 +18,9 @@ fa'amatalaga.
 
 ## Fa'atulagaina galuega
 
-- **Spaces** — poloketi e nofoa'i. [A'oa'o atili](organizing-your-work#spaces)
-- **Itu & pepa** — fa'aopoopo, fa'aigoaina, ma toe fa'atulagaina mai le saolaga. [A'oa'o atili](organizing-your-work#sections-and-documents)
-- **Fa'ata'ita'i** — amata mai se fausaga, ae le o se itulau gaogao. [A'oa'o atili](organizing-your-work#templates)
+- **Spaces** — poloketi e nofoa'i. [A'oa'o atili](organising-your-work#spaces)
+- **Itu & pepa** — fa'aopoopo, fa'aigoaina, ma toe fa'atulagaina mai le saolaga. [A'oa'o atili](organising-your-work#sections-and-documents)
+- **Fa'ata'ita'i** — amata mai se fausaga, ae le o se itulau gaogao. [A'oa'o atili](organising-your-work#templates)
 
 ## Va'aiga & auivi
 

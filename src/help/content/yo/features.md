@@ -16,9 +16,9 @@ Gbogbo ohun tí ètò lè ṣe, ní àtòjọ ọ̀kan tó rọrùn láti yẹ̀
 
 ## Ṣíṣe àtòjọ iṣẹ́
 
-- **Àwọn aaye** — àwọn iṣẹ́akanṣe tó ní àkóónú wọn. [Kọ́ síi](organizing-your-work#spaces)
-- **Àwọn abala & ìwé** — fi kun, tún sọ orúkọ, kí o sì tò wọn padà láti ìgbẹ̀yìn. [Kọ́ síi](organizing-your-work#sections-and-documents)
-- **Àwọn àdàkọ ètò** — bẹ̀rẹ̀ láti ètò, kì í ṣe ojú-ìwé ṣòfò. [Kọ́ síi](organizing-your-work#templates)
+- **Àwọn aaye** — àwọn iṣẹ́akanṣe tó ní àkóónú wọn. [Kọ́ síi](organising-your-work#spaces)
+- **Àwọn abala & ìwé** — fi kun, tún sọ orúkọ, kí o sì tò wọn padà láti ìgbẹ̀yìn. [Kọ́ síi](organising-your-work#sections-and-documents)
+- **Àwọn àdàkọ ètò** — bẹ̀rẹ̀ láti ètò, kì í ṣe ojú-ìwé ṣòfò. [Kọ́ síi](organising-your-work#templates)
 
 ## Àwọn ìwòye & ìṣàkóso
 

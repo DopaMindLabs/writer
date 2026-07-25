@@ -34,5 +34,5 @@ ekrānos. Atskaņojiet jebkuru tūri no palīdzības (**?**) izvēlnes vai
 
 - [Visas funkcijas](features) — pilns, pārskatāms saraksts ar to, ko varat darīt.
 - [Rakstīšana un rediģēšana](writing-and-editing) — iepazīstiet redaktoru.
-- [Darba organizēšana](organizing-your-work) — strukturējiet lielāku projektu.
+- [Darba organizēšana](organising-your-work) — strukturējiet lielāku projektu.
 - [Tastatūras īsceļi](keyboard-shortcuts) — vadiet visu no tastatūras.

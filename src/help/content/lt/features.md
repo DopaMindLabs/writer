@@ -17,9 +17,9 @@ kad galėtumėte iškart pereiti prie detalių.
 
 ## Organizavimas
 
-- **Erdvės** — savarankiški projektai. [Sužinoti daugiau](organizing-your-work#spaces)
-- **Skyriai ir dokumentai** — pridėti, pervardinti ir pertvarkyti iš šoninės juostos. [Sužinoti daugiau](organizing-your-work#sections-and-documents)
-- **Šablonai** — pradėkite nuo struktūros, o ne nuo tuščio lapo. [Sužinoti daugiau](organizing-your-work#templates)
+- **Erdvės** — savarankiški projektai. [Sužinoti daugiau](organising-your-work#spaces)
+- **Skyriai ir dokumentai** — pridėti, pervardinti ir pertvarkyti iš šoninės juostos. [Sužinoti daugiau](organising-your-work#sections-and-documents)
+- **Šablonai** — pradėkite nuo struktūros, o ne nuo tuščio lapo. [Sužinoti daugiau](organising-your-work#templates)
 
 ## Rodiniai ir režimai
 

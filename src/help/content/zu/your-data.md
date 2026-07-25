@@ -44,4 +44,4 @@ Uma isikhelo singakwazi ukuvula isizinda saso sendawo, sibonisa isikrini sephose
 ## Okuhlobene
 
 - [Izisho nezibhaloloyi](citations-and-bibliography) — ukukhipha kwe-BibTeX.
-- [Ukuhlela umsebenzi wakho](organizing-your-work) — okuqukethwe kwenani.
+- [Ukuhlela umsebenzi wakho](organising-your-work) — okuqukethwe kwenani.

@@ -30,5 +30,5 @@ Isikhathi sokuqala uvula isikrini esibalulekile, uhambo olufushane olunqindisiwe
 
 - [Zonke izici](features) — uhlwili olugcwele oluhlelekayo walokho ongakwenza.
 - [Ukubhala nokuhlela](writing-and-editing) — funda umhleli.
-- [Ukuhlela umsebenzi wakho](organizing-your-work) — hlelisa iphrojekthi enkulu.
+- [Ukuhlela umsebenzi wakho](organising-your-work) — hlelisa iphrojekthi enkulu.
 - [Izinhlelo-mfutho zezibhebhezeli](keyboard-shortcuts) — shayela konke kusaka ezibhebhezeli.

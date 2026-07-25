@@ -70,4 +70,4 @@ usafirishaji mahali salama.
 ## Zinazohusiana
 
 - [Marejeo na orodha ya marejeo](citations-and-bibliography) — usafirishaji wa BibTeX.
-- [Kupanga kazi yako](organizing-your-work) — maudhui ya nafasi.
+- [Kupanga kazi yako](organising-your-work) — maudhui ya nafasi.

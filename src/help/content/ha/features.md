@@ -16,9 +16,9 @@ Duk abin da app din zai iya yi, a cikin jerin da za a iya dubawa cikin sauri. Ko
 
 ## Tsarawa
 
-- **Wurare** — ayyukan da ke tsaye da kansu. [Ƙara koyo](organizing-your-work#spaces)
-- **Sasanni da takaddun** — ƙara, sake suna, da sake tsari daga gefe. [Ƙara koyo](organizing-your-work#sections-and-documents)
-- **Templates** — fara daga tsari, ba shafi fanko. [Ƙara koyo](organizing-your-work#templates)
+- **Wurare** — ayyukan da ke tsaye da kansu. [Ƙara koyo](organising-your-work#spaces)
+- **Sasanni da takaddun** — ƙara, sake suna, da sake tsari daga gefe. [Ƙara koyo](organising-your-work#sections-and-documents)
+- **Templates** — fara daga tsari, ba shafi fanko. [Ƙara koyo](organising-your-work#templates)
 
 ## Ra'ayoyi da yanayi
 

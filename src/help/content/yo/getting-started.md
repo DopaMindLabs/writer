@@ -30,5 +30,5 @@ Ibi kíkọ tó jẹ ìbílẹ̀-àkọ́kọ́. Iṣẹ́ rẹ wà nínú **àw
 
 - [Gbogbo àwọn ẹ̀yà](features) — àtòjọ kíkún tí ó rọrùn láti yẹ̀wò ti ohun tí o lè ṣe.
 - [Kíkọ & ìṣàtunṣe](writing-and-editing) — kọ́ nípa olùṣàtúpò.
-- [Ṣíṣe àtòjọ iṣẹ́ rẹ](organizing-your-work) — ṣe ètò iṣẹ́akanṣe nla kan.
+- [Ṣíṣe àtòjọ iṣẹ́ rẹ](organising-your-work) — ṣe ètò iṣẹ́akanṣe nla kan.
 - [Àwọn keyboard shortcut](keyboard-shortcuts) — ṣakoso gbogbo rẹ̀ láti keyboard.

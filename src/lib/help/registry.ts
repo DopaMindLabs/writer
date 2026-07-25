@@ -52,7 +52,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     category: 'getting-started',
     featureArea: 'getting-started',
     keywords: ['start', 'intro', 'welcome', 'first', 'tour', 'basics'],
-    related: ['features', 'organizing-your-work', 'writing-and-editing'],
+    related: ['features', 'organising-your-work', 'writing-and-editing'],
     tourId: 'welcome',
   },
   {
@@ -129,7 +129,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     related: ['writing-and-editing', 'keyboard-shortcuts'],
   },
   {
-    slug: 'organizing-your-work',
+    slug: 'organising-your-work',
     category: 'organizing',
     featureArea: 'organizing',
     keywords: ['space', 'section', 'document', 'template', 'folder', 'organize'],

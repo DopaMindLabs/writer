@@ -78,4 +78,4 @@ somewhere safe.
 ## Related
 
 - [Citations & bibliography](citations-and-bibliography) — BibTeX export.
-- [Organising your work](organizing-your-work) — what a space contains.
+- [Organising your work](organising-your-work) — what a space contains.

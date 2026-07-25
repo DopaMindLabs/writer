@@ -17,9 +17,9 @@ Minden, amit az alkalmazás tud, egy áttekinthető listában. Minden elem a saj
 
 ## Rendszerezés
 
-- **Területek** — önálló projektek. [Részletek](organizing-your-work#spaces)
-- **Szakaszok és dokumentumok** — hozzáadás, átnevezés és átrendezés az oldalsávból. [Részletek](organizing-your-work#sections-and-documents)
-- **Sablonok** — egy struktúrából induljon, ne üres oldalról. [Részletek](organizing-your-work#templates)
+- **Területek** — önálló projektek. [Részletek](organising-your-work#spaces)
+- **Szakaszok és dokumentumok** — hozzáadás, átnevezés és átrendezés az oldalsávból. [Részletek](organising-your-work#sections-and-documents)
+- **Sablonok** — egy struktúrából induljon, ne üres oldalról. [Részletek](organising-your-work#templates)
 
 ## Nézetek és módok
 

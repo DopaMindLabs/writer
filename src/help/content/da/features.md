@@ -17,9 +17,9 @@ så du kan springe direkte til detaljerne.
 
 ## Organisering
 
-- **Rum** — selvstændige projekter. [Læs mere](organizing-your-work#spaces)
-- **Afsnit og dokumenter** — tilføj, omdøb og omorganisér fra sidebjælken. [Læs mere](organizing-your-work#sections-and-documents)
-- **Skabeloner** — start fra en struktur, ikke en blank side. [Læs mere](organizing-your-work#templates)
+- **Rum** — selvstændige projekter. [Læs mere](organising-your-work#spaces)
+- **Afsnit og dokumenter** — tilføj, omdøb og omorganisér fra sidebjælken. [Læs mere](organising-your-work#sections-and-documents)
+- **Skabeloner** — start fra en struktur, ikke en blank side. [Læs mere](organising-your-work#templates)
 
 ## Visninger og tilstande
 

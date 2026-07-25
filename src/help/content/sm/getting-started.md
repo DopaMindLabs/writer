@@ -36,5 +36,5 @@ mai le fua 'autonu fesoasoani (**?**) pe [Fa'atulagaga Vave](customization-and-s
 
 - [Fa'asologa atoa](features) — se lisi atoatoa e mafai ona su'ega o mea e mafai.
 - [Tusitusiga & fa'atulaga](writing-and-editing) — a'oa'o le fa'atonu.
-- [Fa'atulagaina ou galuega](organizing-your-work) — fa'atulagaina se poloketi tele.
+- [Fa'atulagaina ou galuega](organising-your-work) — fa'atulagaina se poloketi tele.
 - [Fa'ailoga ki'iboard](keyboard-shortcuts) — ta'ita'i mea uma mai le ki'iboard.

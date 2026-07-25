@@ -34,5 +34,5 @@ menu or [Quick settings](customization-and-settings#quick-settings).
 
 - [All features](features) — a complete, scannable list of what you can do.
 - [Writing & editing](writing-and-editing) — learn the editor.
-- [Organising your work](organizing-your-work) — structure a bigger project.
+- [Organising your work](organising-your-work) — structure a bigger project.
 - [Keyboard shortcuts](keyboard-shortcuts) — drive everything from the keyboard.

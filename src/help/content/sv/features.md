@@ -17,9 +17,9 @@ så du kan hoppa direkt till detaljerna.
 
 ## Organisering
 
-- **Utrymmen** — självständiga projekt. [Läs mer](organizing-your-work#spaces)
-- **Avsnitt och dokument** — lägg till, byt namn och ordna om från sidopanelen. [Läs mer](organizing-your-work#sections-and-documents)
-- **Mallar** — börja från en struktur, inte en tom sida. [Läs mer](organizing-your-work#templates)
+- **Utrymmen** — självständiga projekt. [Läs mer](organising-your-work#spaces)
+- **Avsnitt och dokument** — lägg till, byt namn och ordna om från sidopanelen. [Läs mer](organising-your-work#sections-and-documents)
+- **Mallar** — börja från en struktur, inte en tom sida. [Läs mer](organising-your-work#templates)
 
 ## Vyer och lägen
 

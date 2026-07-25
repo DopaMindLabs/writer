@@ -17,9 +17,9 @@ slik at du kan hoppe direkte til detaljene.
 
 ## Organisering
 
-- **Rom** — selvstendige prosjekter. [Les mer](organizing-your-work#spaces)
-- **Seksjoner og dokumenter** — legg til, gi nytt navn og sorter fra sidepanelet. [Les mer](organizing-your-work#sections-and-documents)
-- **Maler** — start fra en struktur, ikke en tom side. [Les mer](organizing-your-work#templates)
+- **Rom** — selvstendige prosjekter. [Les mer](organising-your-work#spaces)
+- **Seksjoner og dokumenter** — legg til, gi nytt navn og sorter fra sidepanelet. [Les mer](organising-your-work#sections-and-documents)
+- **Maler** — start fra en struktur, ikke en tom side. [Les mer](organising-your-work#templates)
 
 ## Visninger og modi
 

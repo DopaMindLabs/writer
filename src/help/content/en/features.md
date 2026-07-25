@@ -17,9 +17,9 @@ so you can jump straight to the detail.
 
 ## Organising
 
-- **Spaces** — self-contained projects. [Learn more](organizing-your-work#spaces)
-- **Sections & documents** — add, rename, reorder, and delete from the sidebar. [Learn more](organizing-your-work#sections-and-documents)
-- **Templates** — start from a structure, not a blank page. [Learn more](organizing-your-work#templates)
+- **Spaces** — self-contained projects. [Learn more](organising-your-work#spaces)
+- **Sections & documents** — add, rename, reorder, and delete from the sidebar. [Learn more](organising-your-work#sections-and-documents)
+- **Templates** — start from a structure, not a blank page. [Learn more](organising-your-work#templates)
 
 ## Views & modes
 

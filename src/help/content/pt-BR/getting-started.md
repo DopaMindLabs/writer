@@ -34,5 +34,5 @@ nas outras telas também. Reproduza qualquer tour quando quiser pelo menu **?** 
 
 - [Todas as funcionalidades](features) — uma lista completa e fácil de percorrer.
 - [Escrita e edição](writing-and-editing) — aprenda o editor.
-- [Organizando seu trabalho](organizing-your-work) — estruture um projeto maior.
+- [Organizando seu trabalho](organising-your-work) — estruture um projeto maior.
 - [Atalhos de teclado](keyboard-shortcuts) — controle tudo pelo teclado.

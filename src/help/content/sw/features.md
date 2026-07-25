@@ -17,9 +17,9 @@ kipengele kinaelekeza kwenye mwongozo wake ili uweze kuruka moja kwa moja kwenye
 
 ## Kupanga
 
-- **Nafasi** — miradi inayojitegemea. [Jifunza zaidi](organizing-your-work#spaces)
-- **Sehemu na hati** — ongeza, badilisha jina, na panga upya kutoka upande wa kulia. [Jifunza zaidi](organizing-your-work#sections-and-documents)
-- **Violezo** — anza kutoka kwa muundo, si ukurasa tupu. [Jifunza zaidi](organizing-your-work#templates)
+- **Nafasi** — miradi inayojitegemea. [Jifunza zaidi](organising-your-work#spaces)
+- **Sehemu na hati** — ongeza, badilisha jina, na panga upya kutoka upande wa kulia. [Jifunza zaidi](organising-your-work#sections-and-documents)
+- **Violezo** — anza kutoka kwa muundo, si ukurasa tupu. [Jifunza zaidi](organising-your-work#templates)
 
 ## Maoni na hali
 

@@ -63,4 +63,4 @@
 ## 関連項目
 
 - [引用と参考文献](citations-and-bibliography) — BibTeXエクスポート。
-- [作業の整理](organizing-your-work) — スペースの中身について。
+- [作業の整理](organising-your-work) — スペースの中身について。

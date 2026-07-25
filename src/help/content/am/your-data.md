@@ -44,4 +44,4 @@
 ## ተዛማጅ
 
 - [ጥቅሶች እና ያጣቀሷቸው ምንጮች](citations-and-bibliography) — BibTeX ወደ ውጭ መላክ።
-- [ሥራዎን ማደራጀት](organizing-your-work) — ስፔስ ምን ይይዛሉ።
+- [ሥራዎን ማደራጀት](organising-your-work) — ስፔስ ምን ይይዛሉ።

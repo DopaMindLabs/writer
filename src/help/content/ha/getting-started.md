@@ -30,5 +30,5 @@ Karo na farko da kuka buɗe allon muhimmi, gajeren yawon shakatawa na mu'amala y
 
 - [Dukkan fasalolin](features) — cikakken jerin da za a iya dubawa na abin da za ku iya yi.
 - [Rubutu da gyara](writing-and-editing) — koyi mai gyara.
-- [Tsara aikinku](organizing-your-work) — tsara babban aiki.
+- [Tsara aikinku](organising-your-work) — tsara babban aiki.
 - [Gajerun hanyoyin madanni](keyboard-shortcuts) — tafiya komai daga madanni.
