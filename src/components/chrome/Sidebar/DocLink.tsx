@@ -9,11 +9,14 @@ export const DocLink = ({
   doc,
   href,
   active,
+  canManage,
   indented = false,
 }: {
   doc: Doc;
   href: string;
   active: boolean;
+  /** Passed to the row menu to gate structural actions (move to section). */
+  canManage: boolean;
   indented?: boolean;
 }) => {
   const wordCount = doc.meta.wordCount;
@@ -35,7 +38,12 @@ export const DocLink = ({
         wordCount={wordCount}
         rename={rename}
       />
-      <DocRowMenu doc={doc} active={active} onRename={rename.beginEdit} />
+      <DocRowMenu
+        doc={doc}
+        active={active}
+        onRename={rename.beginEdit}
+        canManage={canManage}
+      />
     </div>
   );
 };

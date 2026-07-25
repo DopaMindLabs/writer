@@ -4,13 +4,19 @@ import { sampleDoc } from '@/test/fixtures';
 import { DocLink } from './DocLink';
 
 const setup = (
-  over: { active?: boolean; href?: string; indented?: boolean } = {},
+  over: {
+    active?: boolean;
+    href?: string;
+    indented?: boolean;
+    canManage?: boolean;
+  } = {},
 ) => {
   renderWithProviders(
     <DocLink
       doc={sampleDoc}
       href={over.href ?? '/s/s1/d/d1'}
       active={over.active ?? false}
+      canManage={over.canManage ?? true}
       indented={over.indented}
     />,
   );

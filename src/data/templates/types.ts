@@ -52,7 +52,13 @@ export interface Template {
   noteKinds: NoteKind[];
   /**
    * Whether the user may manage this space's section structure (add, rename,
-   * delete, reorder). Set false to lock the seeded shape.
+   * delete, reorder) and move documents between sections. Set false to lock the
+   * seeded shape.
+   *
+   * TODO: this is a single coarse switch. It may need to split into granular
+   * permissions (e.g. allowRename, allowMove, allowDelete, allowReorder) so a
+   * template can lock some structural actions while permitting others. Keep the
+   * one flag for now; revisit when a template needs finer control.
    */
   allowConfiguration: boolean;
 }

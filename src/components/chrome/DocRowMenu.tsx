@@ -11,6 +11,7 @@ import {
 import type { Doc } from '@/db/schema';
 import { useDeferredMenuAction } from './useDeferredMenuAction';
 import { DeleteDocDialog } from './DeleteDocDialog';
+import { DocSectionSubmenu } from './DocSectionSubmenu';
 
 interface DocRowMenuProps {
   doc: Doc;
@@ -18,9 +19,15 @@ interface DocRowMenuProps {
   active: boolean;
   /** Begins the row's inline rename (the same one double-click opens). */
   onRename: () => void;
+  /**
+   * Whether the space's structure may be reshaped (the template's
+   * `allowConfiguration`). Gates "Move to section" the same way it gates drag
+   * reordering, so a locked space keeps its seeded shape.
+   */
+  canManage: boolean;
 }
 
-export const DocRowMenu = ({ doc, active, onRename }: DocRowMenuProps) => {
+export const DocRowMenu = ({ doc, active, onRename, canManage }: DocRowMenuProps) => {
   const { t } = useTranslation('chrome');
   const [menuOpen, setMenuOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -57,6 +64,12 @@ export const DocRowMenu = ({ doc, active, onRename }: DocRowMenuProps) => {
           >
             {t('sidebar.renameDoc')}
           </DropdownMenuItem>
+          {canManage && (
+            <DocSectionSubmenu
+              doc={doc}
+              onDone={() => { setMenuOpen(false); }}
+            />
+          )}
           <DropdownMenuItem
             data-testid={`sidebar-doc-${doc.id}-delete`}
             onSelect={select(() => {

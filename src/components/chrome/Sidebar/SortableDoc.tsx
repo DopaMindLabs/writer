@@ -37,7 +37,7 @@ export const SortableDoc = ({ doc, href, active, canManage }: SortableDocProps) 
       )}
       {...dragProps}
     >
-      <DocLink doc={doc} href={href} active={active} />
+      <DocLink doc={doc} href={href} active={active} canManage={canManage} />
     </div>
   );
 };

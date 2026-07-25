@@ -118,6 +118,8 @@ A space is structured as **sections** containing **documents**. The default sect
 
 **Rename a doc.** Double-click the doc name in the topbar breadcrumb, **double-click a doc name in the sidebar**, or choose **Rename** from the doc row's **⋯ menu** — the menu defers until it has closed, then switches the row to the same inline rename input (there is no rename dialogue). **Enter** commits; **Escape** reverts. Blurring (clicking away) also commits when the value changed.
 
+**Move a doc to another section.** Besides dragging, the doc row's **⋯ menu** offers **Move to section** — a submenu holding a **search field over the space's top-level sections**, the document's current section ticked. Typing filters the list (arrow keys roam it, **Enter** commits the highlighted row); choosing a section relocates the document to the **end** of it (`moveDoc`) and closes the menu, while choosing the current section is a no-op. The action is offered **only where the template allows configuration** (`allowConfiguration`) — the same gate as drag reordering — so a locked space keeps its seeded shape. Subsections are not yet offered as targets (the data path already supports them; only the list is limited). Brain Space has no row menu and so cannot be moved. The submenu is built from the reusable `SearchableMenuList` design-system primitive over the new `DropdownMenu` submenu parts.
+
 **Rename a section.** From the section **⋯ menu** choose **Rename**, or **double-click** the section label. Either switches it to an inline rename input. **Enter** or blur commits; **Escape** reverts. The same `useInlineRename` state machine drives both section and doc inline renames. The Workshop section cannot be renamed (its identity is label-based).
 
 **Delete a doc.** Each document row carries a **⋯ menu** (revealed on hover on desktop, always shown on mobile) with a **Delete…** action that opens a destructive confirmation dialogue. Confirming cascades the delete — the document, its annotations, its revision history, and its collaborative CRDT state (`docUpdates` log + `collab-seed` marker) are all removed. Brain Space notes that linked to the document are **unlinked** (the note survives; only its dead link is cleared). If the deleted document is the one currently open, the app navigates back to the space so the first remaining document loads.
@@ -132,7 +134,7 @@ A space is structured as **sections** containing **documents**. The default sect
 
 **Empty space.** Visiting `/s/:spaceId` without a docId redirects to the first doc; if none exists, the user sees an empty state.
 
-*Covered by:* `editor.spec.ts`, `multi-tab-sync.spec.ts`, `sidebar-doc-delete.spec.ts`, `sidebar-sections.spec.ts`, `sidebar-section-delete.spec.ts`, `sidebar-reorder.spec.ts`, `persistence.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `SectionRowMenu.test.tsx`, `DeleteSectionDialog.test.tsx`, `DeleteDocDialog.test.tsx`, `deleteDocCascade.test.ts`, `deleteSectionCascade.test.ts`, `moveDoc.test.ts`, `reorderSection.test.ts`, `WriteSurface.test.tsx`, `Topbar.test.tsx`.
+*Covered by:* `editor.spec.ts`, `multi-tab-sync.spec.ts`, `sidebar-doc-delete.spec.ts`, `sidebar-sections.spec.ts`, `sidebar-section-delete.spec.ts`, `sidebar-reorder.spec.ts`, `persistence.spec.ts`, `split-and-sidebar.spec.ts`, `Sidebar.test.tsx`, `SectionRowMenu.test.tsx`, `DeleteSectionDialog.test.tsx`, `DeleteDocDialog.test.tsx`, `deleteDocCascade.test.ts`, `deleteSectionCascade.test.ts`, `moveDoc.test.ts`, `reorderSection.test.ts`, `doc-move-section.spec.ts`, `DocSectionSubmenu.test.tsx`, `SearchableMenuList.test.tsx`, `WriteSurface.test.tsx`, `Topbar.test.tsx`.
 
 #### 4.2.1 Restore semantics
 
@@ -246,13 +248,13 @@ The per-space navigation column.
 
 - **Header:** editable space title + settings cog (links to per-space settings).
 - **Sections:** grouped doc lists, each header carrying a **⋯ menu** (Add document, Rename, Delete…). Dragging is press-and-move on the header itself (long-press on touch) — there is no separate grip. A section's list also includes the docs of its subsections, flattened in — subsections render no header row of their own in the nav (the data model keeps the nesting; only the rendering is flat, so new docs are added at section level). Sections reorder among themselves by drag or keyboard; documents reorder within their section the same way. The Workshop section's menu offers only its add action, labelled **Add workspace** (the Workshop holds workspaces). Its Brain Space link carries the unsorted-note count aligned to the same trailing column as the document counts, reserving the (absent) kebab gutter.
-- **Doc row menu:** each document row has a **⋯ menu** (Rename, Delete…) — revealed on row hover/focus on desktop, always visible on mobile. Dragging is press-and-move on the row itself (long-press on touch), with no separate grip.
+- **Doc row menu:** each document row has a **⋯ menu** (Rename, **Move to section**, Delete…) — revealed on row hover/focus on desktop, always visible on mobile. **Move to section** opens a searchable submenu of the space's top-level sections (current one ticked), gated on the template's `allowConfiguration`. Dragging is press-and-move on the row itself (long-press on touch), with no separate grip.
 - **Drag announcements:** dnd-kit's default id-based live region is hidden (portaled into an `aria-hidden` host so its `role="status"` never collides with the app's status announcers); a labelled `aria-live` announcer narrates each drag ("Picked up…", "Moved … to …") for assistive technology.
 - **Brain space link:** routes to `/s/:spaceId/brain-space`; shows the unsorted-note count and highlights when active.
 - **Footer:** Home, About, GitHub links.
 - **Mobile:** replaced by a hamburger button in the topbar that opens the same content (the SpaceRail plus the sidebar) in a dialog drawer. The drawer closes when the user taps a destination.
 
-*Covered by:* `mobile-nav.spec.ts`, `split-and-sidebar.spec.ts`, `sidebar-sections.spec.ts`, `sidebar-section-delete.spec.ts`, `sidebar-reorder.spec.ts`, `Sidebar.test.tsx`, `MobileNavDrawer.test.tsx`.
+*Covered by:* `mobile-nav.spec.ts`, `split-and-sidebar.spec.ts`, `sidebar-sections.spec.ts`, `sidebar-section-delete.spec.ts`, `sidebar-reorder.spec.ts`, `doc-move-section.spec.ts`, `Sidebar.test.tsx`, `DocSectionSubmenu.test.tsx`, `MobileNavDrawer.test.tsx`.
 
 ---
 

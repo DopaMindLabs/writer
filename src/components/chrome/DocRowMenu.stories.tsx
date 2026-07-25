@@ -18,7 +18,7 @@ const meta = {
   title: 'Navigation/DocRowMenu',
   component: DocRowMenu,
   parameters: { layout: 'fullscreen', seed: 'basicSpace' },
-  args: { doc: sampleDoc, active: false, onRename: fn() },
+  args: { doc: sampleDoc, active: false, onRename: fn(), canManage: true },
 } satisfies Meta<typeof DocRowMenu>;
 
 export default meta;
