@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from '@/components/ui/Link';
-import { TextField } from '@/components/ui/TextField';
 import type { Doc } from '@/db/schema';
 import { cn } from '@/lib/utils';
+import { DocRenameField } from './DocRenameField';
 import type { InlineRename } from './Sidebar.types';
 
 interface DocLinkBodyProps {
@@ -22,20 +22,7 @@ export const DocLinkBody = ({
 }: DocLinkBodyProps) => {
   const { t } = useTranslation('chrome');
   if (rename.editing) {
-    return (
-      <TextField
-        variant="bare"
-        autoFocus
-        value={rename.draft}
-        onChange={(e) => { rename.setDraft(e.target.value); }}
-        onBlur={() => { void rename.commit(); }}
-        onFocus={(e) => { e.currentTarget.select(); }}
-        onKeyDown={rename.onKeyDown}
-        aria-label={t('sidebar.renameDocAria', { name: doc.name })}
-        data-testid={`sidebar-doc-${doc.id}-rename-input`}
-        className="flex-1 py-1.5 text-[13px]"
-      />
-    );
+    return <DocRenameField doc={doc} rename={rename} />;
   }
   return (
     <Link

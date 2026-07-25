@@ -52,8 +52,11 @@ export interface AddSectionController {
 export interface InlineRename {
   editing: boolean;
   draft: string;
+  /** Message of a failed save; editing stays open until it is resolved. */
+  error: string | null;
   setDraft: (next: string) => void;
   beginEdit: () => void;
-  commit: () => Promise<void>;
+  /** Resolves true when the rename saved (or was a no-op) and editing closed. */
+  commit: () => Promise<boolean>;
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
 }

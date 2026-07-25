@@ -100,6 +100,59 @@ describe('useInlineRename', () => {
     expect(result.current.draft).toBe('typing');
   });
 
+  it('keeps editing and exposes the error when the save fails', async () => {
+    const save = vi
+      .fn<(next: string) => Promise<void>>()
+      .mockRejectedValue(new Error('“Workshop” is a reserved section name'));
+    const { result } = renderHook(() => useInlineRename('Chapter 1', save));
+    act(() => { result.current.beginEdit(); });
+    act(() => { result.current.setDraft('Workshop'); });
+    let committed: boolean | undefined;
+    await act(async () => {
+      committed = await result.current.commit();
+    });
+    expect(committed).toBe(false);
+    expect(result.current.editing).toBe(true);
+    expect(result.current.error).toBe('“Workshop” is a reserved section name');
+    expect(result.current.draft).toBe('Workshop');
+  });
+
+  it('clears the error when the draft changes or on Escape', async () => {
+    const save = vi
+      .fn<(next: string) => Promise<void>>()
+      .mockRejectedValue(new Error('reserved'));
+    const { result } = renderHook(() => useInlineRename('Chapter 1', save));
+    act(() => { result.current.beginEdit(); });
+    act(() => { result.current.setDraft('Workshop'); });
+    await act(async () => { await result.current.commit(); });
+    expect(result.current.error).toBe('reserved');
+
+    act(() => { result.current.setDraft('Worksho'); });
+    expect(result.current.error).toBeNull();
+
+    await act(async () => { await result.current.commit(); });
+    expect(result.current.error).toBe('reserved');
+    const { event } = keyEvent('Escape');
+    act(() => { result.current.onKeyDown(event); });
+    expect(result.current.error).toBeNull();
+    expect(result.current.editing).toBe(false);
+    expect(result.current.draft).toBe('Chapter 1');
+  });
+
+  it('resolves true and closes on a successful commit', async () => {
+    const save = vi.fn<(next: string) => Promise<void>>().mockResolvedValue();
+    const { result } = renderHook(() => useInlineRename('Chapter 1', save));
+    act(() => { result.current.beginEdit(); });
+    act(() => { result.current.setDraft('Chapter 2'); });
+    let committed: boolean | undefined;
+    await act(async () => {
+      committed = await result.current.commit();
+    });
+    expect(committed).toBe(true);
+    expect(result.current.editing).toBe(false);
+    expect(result.current.error).toBeNull();
+  });
+
   it('blurs the field on Enter to trigger the commit path', () => {
     const save = vi.fn<(next: string) => Promise<void>>();
     const { result } = renderHook(() => useInlineRename('Chapter 1', save));

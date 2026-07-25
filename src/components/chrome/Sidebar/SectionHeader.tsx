@@ -1,4 +1,5 @@
-import { renameSection, isWorkshopSection } from '@/lib/sections';
+import { useTranslation } from 'react-i18next';
+import { renameSection, isWorkshopLabel, isWorkshopSection } from '@/lib/sections';
 import type { Section } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import type { DragActivator } from './Sidebar.types';
@@ -27,9 +28,15 @@ export const SectionHeader = ({
   onAdd,
   dragActivator,
 }: SectionHeaderProps) => {
-  const rename = useInlineRename(section.label, (next) =>
-    renameSection(section.id, next),
-  );
+  const { t } = useTranslation('chrome');
+  const rename = useInlineRename(section.label, async (next) => {
+    // Pre-validate the reserved label with user-facing copy; the service's
+    // invariant remains the backstop.
+    if (isWorkshopLabel(next)) {
+      throw new Error(t('sidebar.renameSectionReserved'));
+    }
+    await renameSection(section.id, next);
+  });
   const isWorkshop = isWorkshopSection(section);
   const canModify = canManage && !isWorkshop;
   const dragProps = dragActivator

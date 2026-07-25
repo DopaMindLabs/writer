@@ -25,19 +25,34 @@ export const SectionLabel = ({
 }: SectionLabelProps) => {
   const { t } = useTranslation('chrome');
   if (rename.editing) {
+    const errorId = `sidebar-section-${sectionId}-rename-error`;
     return (
-      <TextField
-        variant="bare"
-        autoFocus
-        value={rename.draft}
-        onChange={(e) => { rename.setDraft(e.target.value); }}
-        onBlur={() => { void rename.commit(); }}
-        onFocus={(e) => { e.currentTarget.select(); }}
-        onKeyDown={rename.onKeyDown}
-        aria-label={t('sidebar.renameSectionAria', { label })}
-        data-testid={`sidebar-section-${sectionId}-rename-input`}
-        className="flex-1 font-mono text-[9px] uppercase tracking-[0.08em]"
-      />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <TextField
+          variant="bare"
+          autoFocus
+          value={rename.draft}
+          onChange={(e) => { rename.setDraft(e.target.value); }}
+          onBlur={() => { void rename.commit(); }}
+          onFocus={(e) => { e.currentTarget.select(); }}
+          onKeyDown={rename.onKeyDown}
+          aria-label={t('sidebar.renameSectionAria', { label })}
+          aria-invalid={rename.error !== null || undefined}
+          aria-describedby={rename.error !== null ? errorId : undefined}
+          data-testid={`sidebar-section-${sectionId}-rename-input`}
+          className="flex-1 font-mono text-[9px] uppercase tracking-[0.08em]"
+        />
+        {rename.error !== null && (
+          <span
+            id={errorId}
+            role="alert"
+            data-testid={`sidebar-section-${sectionId}-rename-error`}
+            className="pt-0.5 font-mono text-[9px] normal-case tracking-normal text-danger"
+          >
+            {rename.error}
+          </span>
+        )}
+      </div>
     );
   }
   return (

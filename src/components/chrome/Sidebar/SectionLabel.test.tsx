@@ -7,9 +7,10 @@ import { SectionLabel } from './SectionLabel';
 const makeRename = (over: Partial<InlineRename> = {}): InlineRename => ({
   editing: false,
   draft: 'Drafts',
+  error: null,
   setDraft: vi.fn(),
   beginEdit: vi.fn(),
-  commit: vi.fn(() => Promise.resolve()),
+  commit: vi.fn(() => Promise.resolve(true)),
   onKeyDown: vi.fn(),
   ...over,
 });
@@ -95,7 +96,7 @@ describe('SectionLabel', () => {
     const user = userEvent.setup();
     const setDraft = vi.fn();
     const onKeyDown = vi.fn();
-    const commit = vi.fn(() => Promise.resolve());
+    const commit = vi.fn(() => Promise.resolve(true));
     renderWithProviders(
       <SectionLabel
         sectionId="sec1"

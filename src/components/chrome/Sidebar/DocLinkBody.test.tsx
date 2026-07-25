@@ -17,11 +17,12 @@ const setup = (
 ) => {
   const setDraft = vi.fn<(next: string) => void>();
   const beginEdit = vi.fn<() => void>();
-  const commit = vi.fn<() => Promise<void>>(() => Promise.resolve());
+  const commit = vi.fn<() => Promise<boolean>>(() => Promise.resolve(true));
   const onKeyDown = vi.fn<(e: KeyboardEvent<HTMLInputElement>) => void>();
   const rename: InlineRename = {
     editing: over.editing ?? false,
     draft: over.draft ?? sampleDoc.name,
+    error: null,
     setDraft,
     beginEdit,
     commit,
