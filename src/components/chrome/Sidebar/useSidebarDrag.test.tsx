@@ -47,6 +47,14 @@ const evt = (activeId: string, overId: string | null): DragEndEvent =>
 
 const setup = () => renderHook(() => useSidebarDrag(topSections, docsForSection));
 
+/** Harness whose live inputs can be swapped, as the live query would on emit. */
+const setupLive = () =>
+  renderHook(
+    ({ sections, docs }: { sections: Section[]; docs: Map<string, Doc[]> }) =>
+      useSidebarDrag(sections, docs),
+    { initialProps: { sections: topSections, docs: docsForSection } },
+  );
+
 describe('useSidebarDrag', () => {
   beforeEach(() => {
     moveDocMock.mockReset().mockResolvedValue(undefined);
@@ -102,5 +110,56 @@ describe('useSidebarDrag', () => {
     const { result } = setup();
     act(() => { result.current.onDragStart(); });
     expect(result.current.sectionIds).toEqual(['sec1', 'sec2']);
+  });
+
+  it('resumes reconciling live data after a cancelled drag', () => {
+    const { result, rerender } = setupLive();
+    act(() => { result.current.onDragStart(); });
+    act(() => { result.current.onDragCancel(); });
+    // The live query emits a new order (e.g. another tab moved sec2 first).
+    rerender({
+      sections: [section('sec2', 0), section('sec1', 1)],
+      docs: docsForSection,
+    });
+    expect(result.current.sectionIds).toEqual(['sec2', 'sec1']);
+    expect(moveDocMock).not.toHaveBeenCalled();
+    expect(reorderSectionMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps the optimistic order until the live query reflects the drop', () => {
+    const { result, rerender } = setupLive();
+    act(() => { result.current.onDragStart(); });
+    act(() => { result.current.onDragEnd(evt('sec2', 'sec1')); });
+    expect(result.current.sectionIds).toEqual(['sec2', 'sec1']);
+
+    // A rerender with the SAME still-stale inputs (persistence not yet
+    // reflected) must not snap the order back.
+    rerender({ sections: topSections, docs: docsForSection });
+    expect(result.current.sectionIds).toEqual(['sec2', 'sec1']);
+
+    // Fresh live data (new identities, persisted order) reconciles it.
+    rerender({
+      sections: [section('sec2', 0), section('sec1', 1)],
+      docs: new Map(docsForSection),
+    });
+    expect(result.current.sectionIds).toEqual(['sec2', 'sec1']);
+  });
+
+  it('rolls the order back when persisting the drop fails', async () => {
+    reorderSectionMock.mockRejectedValue(new Error('offline'));
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    const { result } = setupLive();
+    act(() => { result.current.onDragStart(); });
+    act(() => { result.current.onDragEnd(evt('sec2', 'sec1')); });
+    expect(result.current.sectionIds).toEqual(['sec2', 'sec1']);
+
+    // Flush the rejected persistence promise; the hold is released and the
+    // (unchanged) live inputs rebuild the original order.
+    await act(async () => { await Promise.resolve(); });
+    expect(result.current.sectionIds).toEqual(['sec1', 'sec2']);
+    expect(consoleError).toHaveBeenCalled();
+    consoleError.mockRestore();
   });
 });

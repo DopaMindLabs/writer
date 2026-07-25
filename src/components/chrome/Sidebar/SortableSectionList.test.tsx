@@ -77,6 +77,31 @@ describe('SortableSectionList', () => {
     expect(within(b).getByTestId('sidebar-doc-dB')).toHaveTextContent('Beta');
   });
 
+  it('wires each drag surface to the custom keyboard instructions', () => {
+    renderList();
+    // Each drag surface (the section header activator) references the
+    // instructions; aria-describedby resolves into the accessible description
+    // regardless of the target's visibility (dnd-kit's own instructions
+    // element is display:none for the same reason).
+    const surface = screen.getByTestId('sidebar-section-secA-header');
+    const describedBy = surface.getAttribute('aria-describedby');
+    expect(describedBy).toBeTruthy();
+    const instructions = document.getElementById(String(describedBy));
+    expect(instructions).toHaveTextContent(/press Space or Enter/);
+  });
+
+  it("keeps dnd-kit's status region out of role queries and silent", () => {
+    renderList();
+    // The region lives in an aria-hidden host so its role="status" never
+    // collides with the app's own status regions (a strict getByRole('status')
+    // elsewhere must not resolve to it), and the silent announcements keep it
+    // from ever reading raw ids.
+    expect(screen.queryAllByRole('status')).toHaveLength(0);
+    const region = document.querySelector('[id^="DndLiveRegion"]');
+    expect(region?.closest('[aria-hidden="true"]')).not.toBeNull();
+    expect(region).toHaveTextContent('');
+  });
+
   it('renders a Brain space link inside a Workshop section', () => {
     const workshop: Section = { ...secA, id: 'secW', label: 'Workshop' };
     renderList({

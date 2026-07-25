@@ -25,6 +25,36 @@ export const buildOrder = (
   ),
 });
 
+export interface OrderedSection {
+  section: Section;
+  docs: Doc[];
+}
+
+/**
+ * Materialise an optimistic order back into rows, dropping ids the live data
+ * no longer knows (deleted elsewhere) rather than rendering holes.
+ */
+export const materialiseOrder = (
+  order: SidebarOrder,
+  topSections: Section[],
+  docsForSection: Map<string, Doc[]>,
+): OrderedSection[] => {
+  const sectionById = new Map(topSections.map((s) => [s.id, s]));
+  const docById = new Map<string, Doc>();
+  for (const docs of docsForSection.values()) {
+    for (const doc of docs) docById.set(doc.id, doc);
+  }
+  return order.sectionIds
+    .map((id) => sectionById.get(id))
+    .filter((s): s is Section => s !== undefined)
+    .map((section) => ({
+      section,
+      docs: (order.docIds[section.id] ?? [])
+        .map((id) => docById.get(id))
+        .filter((d): d is Doc => d !== undefined),
+    }));
+};
+
 const findDocSection = (order: SidebarOrder, docId: string): string | null => {
   for (const sectionId of order.sectionIds) {
     if ((order.docIds[sectionId] ?? []).includes(docId)) return sectionId;

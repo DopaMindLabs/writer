@@ -65,6 +65,13 @@ describe('useDragAnnounce', () => {
     expect(result.current.announcement).toBe('Dropped Intro.');
   });
 
+  it('announces a cancelled drag by label', () => {
+    const { result } = setup();
+    act(() => { result.current.announceStart(start('dA')); });
+    act(() => { result.current.announceCancel(end('dA', null)); });
+    expect(result.current.announcement).toBe('Cancelled moving Intro.');
+  });
+
   it('falls back to the id when the dragged item has no known label', () => {
     const { result } = setup();
     act(() => { result.current.announceStart(start('ghost')); });

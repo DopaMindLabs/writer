@@ -1,6 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { DragEndEvent, DragStartEvent } from '@/components/libs/dnd';
+import type {
+  DragCancelEvent,
+  DragEndEvent,
+  DragStartEvent,
+} from '@/components/libs/dnd';
 import type { Doc, Section } from '@/db/schema';
 import { resolveSidebarDrop } from './resolveSidebarDrop';
 import { dropMessage, type DragLabels } from './dragAnnounceText';
@@ -28,13 +32,14 @@ export interface DragAnnounce {
   announcement: string;
   announceStart: (event: DragStartEvent) => void;
   announceEnd: (event: DragEndEvent) => void;
+  announceCancel: (event: DragCancelEvent) => void;
 }
 
 /**
  * Human-readable screen-reader announcements for sidebar drags, replacing
- * dnd-kit's default id-based region (which is hidden — see
- * {@link useHiddenLiveRegionHost}). Announces the picked-up item on start and
- * the resolved move on end.
+ * dnd-kit's default id-based announcements (silenced at the source — see
+ * `SILENT_ANNOUNCEMENTS` in `SortableSectionList`). Announces the picked-up
+ * item on start, the resolved move on end, and a cancellation by label.
  */
 export const useDragAnnounce = (
   topSections: Section[],
@@ -67,5 +72,13 @@ export const useDragAnnounce = (
     setAnnouncement(t(message.key, message.vars));
   };
 
-  return { announcement, announceStart, announceEnd };
+  const announceCancel = ({ active }: DragCancelEvent): void => {
+    setAnnouncement(
+      t('sidebar.dragAnnounceCancelled', {
+        label: labels.label(String(active.id)),
+      }),
+    );
+  };
+
+  return { announcement, announceStart, announceEnd, announceCancel };
 };

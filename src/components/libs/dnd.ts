@@ -12,10 +12,13 @@ export {
   closestCenter,
   useSensor,
   useSensors,
+  type Announcements,
+  type DragCancelEvent,
   type DragEndEvent,
   type DragStartEvent,
   type DraggableAttributes,
   type DraggableSyntheticListeners,
+  type ScreenReaderInstructions,
 } from '@dnd-kit/core';
 export {
   SortableContext,
