@@ -81,6 +81,41 @@ test('reorders documents within a section by dragging', async ({ page }) => {
   await expect(names.nth(1)).toHaveText(firstDoc);
 });
 
+test('drops a document onto the emptied Workshop header', async ({ page }) => {
+  const sidebar = page.locator('aside').last();
+  const workshop = sectionWrappers(page).filter({
+    has: page.locator('[data-testid$="-label"]', { hasText: 'Workshop' }),
+  });
+  const workshopDocs = workshop.locator(
+    '[data-testid^="sidebar-doc-"][data-testid$="-sortable"]',
+  );
+
+  // Empty the Workshop: move its seeded doc out via the row menu.
+  const seededLink = workshopDocs.first().locator('a[href*="/d/"]').first();
+  const docId = String(await seededLink.getAttribute('data-testid')).replace(
+    'sidebar-doc-',
+    '',
+  );
+  await workshop.getByTestId(`sidebar-doc-${docId}-menu`).click();
+  await page.getByTestId(`sidebar-doc-${docId}-move`).click();
+  await page.getByTestId(`sidebar-doc-${docId}-move-list-search`).fill('rep');
+  await page.getByRole('option', { name: 'Report' }).click();
+  await expect(workshopDocs).toHaveCount(0);
+
+  // The Workshop is never draggable, but it must remain a drop target: drag a
+  // document from another section onto the now-empty Workshop's header.
+  const sourceRow = sidebar
+    .locator('[data-testid^="sidebar-doc-"][data-testid$="-sortable"]')
+    .first();
+  const movedName = await text(sourceRow.locator('[data-testid$="-name"]'));
+  const workshopHeader = workshop.locator('[data-testid$="-header"]');
+  await dragOnto(page, sourceRow, sourceRow, workshopHeader);
+
+  await expect(
+    workshop.locator('[data-testid$="-name"]', { hasText: movedName }),
+  ).toBeVisible();
+});
+
 test('moves a document into another section by dragging', async ({ page }) => {
   const sidebar = page.locator('aside').last();
   const firstRow = sidebar
