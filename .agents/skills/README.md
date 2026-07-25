@@ -2,7 +2,7 @@
 
 `AGENTS.md` is the universal entry point. Read it first, then compose skills:
 
-1. Choose one task skill: navigate, plan, implement, or audit.
+1. Choose one task skill: navigate, plan, implement, audit, or debug.
 2. Add every matching domain skill: UI, persistence, collaboration, or cloud.
 3. Add `test-writer-changes` whenever tests or behaviour change.
 4. Reach for `handover-writer-work` when pausing or passing work to another session.

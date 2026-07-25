@@ -19,6 +19,7 @@
 | "plan", "design", "what files", "scope", "impact", "before I code" | [`plan-writer-change`](.agents/skills/plan-writer-change/SKILL.md) |
 | "implement", "code it", "make the change", "write the code" | [`implement-writer-change`](.agents/skills/implement-writer-change/SKILL.md) |
 | "audit", "review", "check", "risks in", "is this safe" | [`audit-writer-change`](.agents/skills/audit-writer-change/SKILL.md) |
+| "broken", "stopped working", "regression", "flash", "flicker", "root cause", "bisect", "why did this break" | [`debug-writer-regression`](.agents/skills/debug-writer-regression/SKILL.md) |
 | "test", "TDD", "vitest", "playwright", "coverage", "spec" | [`test-writer-changes`](.agents/skills/test-writer-changes/SKILL.md) |
 | "component", "UI", "design system", "a11y", "i18n", "copy", "storybook" | [`build-writer-ui`](.agents/skills/build-writer-ui/SKILL.md) |
 | "schema", "migration", "dexie", "table", "stores.ts", "LoremDB" | [`change-writer-persistence`](.agents/skills/change-writer-persistence/SKILL.md) |
