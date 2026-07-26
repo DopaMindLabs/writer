@@ -231,6 +231,7 @@ describe('accessControl binding resolution', () => {
   it('resolves nothing for an unshared (private-realm) space', async () => {
     const { db } = await import('@/db/db');
     const { sampleSpace } = await import('@/test/fixtures');
+    // No binding row: the scope was never moved out of the private realm.
     await db.spaces.put({ ...sampleSpace, id: 'private-space' });
     const provider = createDexieCloudProvider();
 
@@ -239,15 +240,18 @@ describe('accessControl binding resolution', () => {
     ).resolves.toBeUndefined();
   });
 
-  it('maps a shared space onto its realm through the binding — never the domain row', async () => {
+  it('maps a scope onto its realm through the persisted binding, not a domain row', async () => {
     const { db } = await import('@/db/db');
     const { sampleSpace } = await import('@/test/fixtures');
-    // The persisted adapter row carries the realm; the domain type does not.
-    await db.spaces.put({
-      ...sampleSpace,
-      id: 'shared-space',
-      realmId: 'rlm-shared',
-    } as typeof sampleSpace);
+    // No domain row carries a realm since the frame cutover: the binding is
+    // adapter state the scope transition wrote.
+    await db.spaces.put({ ...sampleSpace, id: 'shared-space' });
+    await db.syncProviderBindings.put({
+      scopeId: 'shared-space',
+      providerInstanceId: 'dexie-cloud',
+      externalScopeId: 'rlm-shared',
+      enabled: true,
+    });
     const provider = createDexieCloudProvider();
 
     const binding = await provider.accessControl?.resolveBinding('shared-space');
@@ -258,5 +262,6 @@ describe('accessControl binding resolution', () => {
       externalScopeId: 'rlm-shared',
       enabled: true,
     });
+    expect(await db.spaces.get('shared-space')).not.toHaveProperty('realmId');
   });
 });

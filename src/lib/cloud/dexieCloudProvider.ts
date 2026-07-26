@@ -1,7 +1,6 @@
 import type { SyncState } from 'dexie-cloud-addon';
 import { assertNever } from '@/lib/invariant';
 import { db as appDb } from '@/db/db';
-import type { Space } from '@/db/schema';
 import type {
   AccessControlAdapter,
   DurableSyncCapability,
@@ -12,7 +11,10 @@ import type {
 } from '@/lib/syncProviders/types';
 import { KeyEscrowPresence, SyncPhase } from '@/lib/syncProviders/types';
 import type { EscrowPresence } from './cloudClient';
-import type { DexieRow } from './dexieRow';
+import {
+  DEXIE_CLOUD_PROVIDER_ID,
+  DEXIE_CLOUD_PROVIDER_KIND,
+} from './dexieCloudProviderId';
 import { createSpaceRealm, dropSpaceRealm, isShared, privateRealmOf } from './spaceRealm';
 import {
   addSpaceMember,
@@ -43,8 +45,7 @@ import {
  * realm tables and its first caller; the addon has no realtime transport or
  * peer discovery of its own, so neither is declared at all.
  */
-export const DEXIE_CLOUD_PROVIDER_ID = 'dexie-cloud';
-export const DEXIE_CLOUD_PROVIDER_KIND = 'dexie-cloud';
+export { DEXIE_CLOUD_PROVIDER_ID, DEXIE_CLOUD_PROVIDER_KIND };
 
 /** Map the addon's phase onto the provider-neutral one. Total by construction. */
 const toSyncPhase = (phase: SyncState['phase']): SyncPhase => {
@@ -136,18 +137,16 @@ const accessControl = (): AccessControlAdapter => ({
   setMemberRole: ({ scopeId, memberId, role }) =>
     setSpaceMemberRole({ spaceId: scopeId, memberId, role }),
   resolveBinding: async (scopeId): Promise<SyncProviderBinding | undefined> => {
-    const space: DexieRow<Space> | undefined = await appDb.spaces.get(scopeId);
-    if (!space) return undefined;
-    const { realmId } = space;
-    if (realmId === undefined || !isShared(realmId, privateRealmOf(appDb))) {
-      return undefined;
-    }
-    return {
+    // The binding is persisted state, not something re-derived from a content
+    // row: since the frame cutover no domain row carries a realm at all.
+    const binding = await appDb.syncProviderBindings.get([
       scopeId,
-      providerInstanceId: DEXIE_CLOUD_PROVIDER_ID,
-      externalScopeId: realmId,
-      enabled: true,
-    };
+      DEXIE_CLOUD_PROVIDER_ID,
+    ]);
+    if (!binding) return undefined;
+    return isShared(binding.externalScopeId, privateRealmOf(appDb))
+      ? binding
+      : undefined;
   },
 });
 

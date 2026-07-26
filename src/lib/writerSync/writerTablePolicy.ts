@@ -3,10 +3,11 @@
  * replicates, how it is encrypted, which access-scope kind its rows resolve to,
  * and whether its mutations enter the generic operation journal.
  *
- * Replication, encryption and realm fan-out previously lived in three
- * independent lists (`SYNCED_TABLES`, `UNSYNCED`, `REALM_TABLE_NAMES`) that
- * could drift apart silently. Those consumers now derive from this policy, and
- * the policy's own test fails when a table is added without being classified.
+ * Replication, encryption and scope fan-out previously lived in three
+ * independent lists (`SYNCED_TABLES`, `UNSYNCED` and a hand-maintained realm
+ * table list) that could drift apart silently. Those consumers now derive from
+ * this policy, and the policy's own test fails when a table is added without
+ * being classified.
  */
 
 /** How a table's rows leave (or never leave) this device. */
