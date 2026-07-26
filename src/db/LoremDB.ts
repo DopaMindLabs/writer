@@ -25,7 +25,7 @@ import type {
   SyncInboxEntry,
   SyncTombstone,
 } from 'writer-sync/operations';
-import type { SyncProviderBinding } from 'writer-sync/core';
+import type { SyncProviderBinding, TrustedDeviceRecord } from 'writer-sync/core';
 import { STORES } from './stores';
 
 /**
@@ -66,6 +66,8 @@ export class LoremDB extends Dexie {
   syncTombstones!: Table<SyncTombstone, [string, string]>;
   /** Local provider configuration per access scope. */
   syncProviderBindings!: Table<SyncProviderBinding, [string, string]>;
+  /** Peers this device has paired with — the authentication boundary. */
+  trustedDevices!: Table<TrustedDeviceRecord, string>;
   /** Present only on cloud-enabled instances (`options.cloud`). */
   cloudCrypto!: Table<EscrowRecord, string>;
   /** Present only on cloud-enabled instances (`options.cloud`). */

@@ -40,6 +40,7 @@ describe('LoremDB schema', () => {
         'syncTombstones',
         'syncs',
         'syncConfigs',
+        'trustedDevices',
       ].sort(),
     );
   });

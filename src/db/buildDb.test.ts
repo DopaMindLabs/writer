@@ -21,7 +21,7 @@ const CLOUD_URL = 'https://spike.dexie.cloud';
 const UNSYNCED = [
   'settings', 'backups', 'syncs', 'syncConfigs',
   'docInspectorConfigs', 'meta', 'docUpdates',
-  'syncInbox', 'syncTombstones', 'syncProviderBindings',
+  'syncInbox', 'syncTombstones', 'syncProviderBindings', 'trustedDevices',
   'spaces', 'sections', 'docs', 'notes', 'noteAttachments',
   'citations', 'connections', 'palettes', 'annotations', 'revisions',
 ];
