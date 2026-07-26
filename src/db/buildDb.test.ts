@@ -9,6 +9,7 @@ import {
   forgetDeviceKeyRing,
 } from '@/lib/cloud/crypto/keyStore';
 import { CIPHER_FIELD } from '@/lib/cloud/crypto/tableRules';
+import { sampleMetadata } from '@/test/fixtures';
 
 const CLOUD_URL = 'https://spike.dexie.cloud';
 /**
@@ -116,7 +117,8 @@ describe('buildDb — cloud activation gates', () => {
     await db.open();
 
     await db.table('notes').put({
-      id: 'n1', spaceId: 's1', kind: 'text', createdAt: 1, accessScopeId: 's1', title: 'SECRET',
+      id: 'n1', spaceId: 's1', kind: 'text', createdAt: 1, title: 'SECRET',
+      ...sampleMetadata(),
     });
     const raw = await db.transaction('r', db.table('notes'), async () => {
       const tx = Dexie.currentTransaction as unknown as {
@@ -160,7 +162,8 @@ describe('buildDb — cloud activation gates', () => {
     await db.open();
 
     await db.table('notes').put({
-      id: 'n1', spaceId: 's1', kind: 'text', createdAt: 1, accessScopeId: 's1', title: 'SECRET',
+      id: 'n1', spaceId: 's1', kind: 'text', createdAt: 1, title: 'SECRET',
+      ...sampleMetadata(),
     });
     // Read the stored bytes past the middleware via its blob-resolve bypass;
     // nulling the key would now be hidden by the keyless read protection.

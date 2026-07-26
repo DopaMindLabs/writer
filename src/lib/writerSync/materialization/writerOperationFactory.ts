@@ -5,7 +5,10 @@ import type { SyncKeyRing } from '@/lib/writerSync/crypto/keyResolver';
 import { sealOperationPayload } from '@/lib/writerSync/crypto/operationCrypto';
 import { keyIdOf } from '@/lib/cloud/crypto/envelope';
 import { createHybridLogicalClock } from '@/lib/writerSync/hybridLogicalClock';
-import { hashPayload } from '@/lib/writerSync/operations/operationCodec';
+import {
+  EMPTY_PAYLOAD_HASH,
+  hashPayload,
+} from '@/lib/writerSync/operations/operationCodec';
 import {
   SYNC_OPERATION_VERSION,
   type EncryptedSyncFrame,
@@ -24,11 +27,13 @@ import type { ReplicatedEntityMetadata } from '@/lib/writerSync/entityMetadata';
 const clock = createHybridLogicalClock();
 
 interface FrameInputs {
-  db: LoremDB;
   ring: SyncKeyRing;
   deviceId: DeviceId;
   entityTable: string;
 }
+
+/** Frame inputs plus the database a journalled commit writes to. */
+type JournalInputs = FrameInputs & { db: LoremDB };
 
 /** Build the put frame for a domain row (its content becomes the payload). */
 export const makePutFrame = async (
@@ -56,10 +61,15 @@ export const makePutFrame = async (
   };
 };
 
-/** Build the delete frame (tombstone source) for an entity. */
-export const makeDeleteFrame = async (
+/**
+ * Build the delete frame (tombstone source) for an entity. Synchronous by
+ * design: a delete carries no payload, so it needs no Web Crypto — and framing
+ * a deletion therefore never suspends the IndexedDB transaction the deletion
+ * commits in (see the operation-journal middleware).
+ */
+export const makeDeleteFrame = (
   options: FrameInputs & { entityId: string; accessScopeId: string },
-): Promise<EncryptedSyncFrame> => {
+): EncryptedSyncFrame => {
   const { ring, deviceId, entityTable, entityId, accessScopeId } = options;
   const header: FrameHeader = {
     v: SYNC_OPERATION_VERSION,
@@ -76,14 +86,14 @@ export const makeDeleteFrame = async (
     ...header,
     logicalAt: clock.now(),
     payload: '',
-    payloadHash: await hashPayload(''),
+    payloadHash: EMPTY_PAYLOAD_HASH,
     signature: '',
   };
 };
 
 /** Commit a domain put and its journal frame in one transaction. */
 export const journalledPut = async (
-  options: FrameInputs & { row: ReplicatedEntityMetadata & { id: string } },
+  options: JournalInputs & { row: ReplicatedEntityMetadata & { id: string } },
 ): Promise<EncryptedSyncFrame> => {
   const frame = await makePutFrame(options);
   await options.db.transaction(
@@ -99,9 +109,9 @@ export const journalledPut = async (
 
 /** Commit a domain delete and its journal frame in one transaction. */
 export const journalledDelete = async (
-  options: FrameInputs & { entityId: string; accessScopeId: string },
+  options: JournalInputs & { entityId: string; accessScopeId: string },
 ): Promise<EncryptedSyncFrame> => {
-  const frame = await makeDeleteFrame(options);
+  const frame = makeDeleteFrame(options);
   await options.db.transaction(
     'rw',
     [options.db.table(options.entityTable), options.db.syncOperations],

@@ -78,6 +78,16 @@ const requireKind = (raw: Record<string, unknown>): SyncOperationKind => {
   return value;
 };
 
+/**
+ * SHA-256 of the empty payload (`hashPayload('')`), precomputed. A delete frame
+ * carries no payload, so its hash is a constant — which lets delete framing stay
+ * synchronous and therefore safe to run inside a live IndexedDB transaction
+ * (Web Crypto suspends one; see the operation-journal middleware). The
+ * equivalence is asserted in this module's test suite.
+ */
+export const EMPTY_PAYLOAD_HASH =
+  '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';
+
 /** SHA-256 of a frame's base64 payload, as base64. */
 export const hashPayload = async (payload: string): Promise<string> => {
   const bytes = new TextEncoder().encode(payload);

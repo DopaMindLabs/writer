@@ -130,7 +130,6 @@ describe('two-database operation convergence (hermetic)', () => {
     // A stale put (older logical time than the delete) arrives late through
     // another provider — it must not resurrect the note on either side.
     const stale = await makePutFrame({
-      db: dbA,
       ring,
       deviceId: DEVICE_A,
       entityTable: 'notes',

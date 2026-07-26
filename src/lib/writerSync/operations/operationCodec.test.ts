@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { asDeviceId, asOperationId } from '@/lib/syncProviders/ids';
 import type { EncryptedSyncFrame } from './operation.types';
 import {
+  EMPTY_PAYLOAD_HASH,
   FramePayloadMismatchError,
   MalformedFrameError,
   WrongScopeFrameError,
@@ -31,6 +32,14 @@ const frame = async (
     ...overrides,
   };
 };
+
+describe('hashPayload', () => {
+  it('matches the precomputed empty-payload constant', async () => {
+    // Delete framing relies on this constant to stay synchronous inside a live
+    // IndexedDB transaction; a drift here would silently break frame verification.
+    expect(await hashPayload('')).toBe(EMPTY_PAYLOAD_HASH);
+  });
+});
 
 describe('decodeFrame', () => {
   it('round-trips a valid frame through JSON', async () => {

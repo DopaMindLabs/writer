@@ -45,7 +45,6 @@ describe('sweepUnappliedFrames', () => {
   it('applies nothing while the device is keyless — frames wait in the journal', async () => {
     const remoteRing = await deriveKeyRing(generateMasterSecret(), 1);
     const frame = await makePutFrame({
-      db,
       ring: remoteRing,
       deviceId: DEVICE_REMOTE,
       entityTable: 'notes',
@@ -62,7 +61,6 @@ describe('sweepUnappliedFrames', () => {
     const ring = await deriveKeyRing(master, 1);
     await saveDeviceKeyRing({ accountId: null, ring });
     const frame = await makePutFrame({
-      db,
       ring,
       deviceId: DEVICE_REMOTE,
       entityTable: 'notes',
@@ -82,7 +80,6 @@ describe('sweepUnappliedFrames', () => {
     const ring = await deriveKeyRing(generateMasterSecret(), 1);
     await saveDeviceKeyRing({ accountId: null, ring });
     const frame = await makePutFrame({
-      db,
       ring,
       deviceId: DEVICE_REMOTE,
       entityTable: 'notes',
@@ -104,7 +101,6 @@ describe('sweepUnappliedFrames', () => {
     const ring = await deriveKeyRing(generateMasterSecret(), 1);
     await saveDeviceKeyRing({ accountId: null, ring });
     const good = await makePutFrame({
-      db,
       ring,
       deviceId: DEVICE_REMOTE,
       entityTable: 'notes',

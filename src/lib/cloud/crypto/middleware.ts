@@ -20,6 +20,7 @@ import { sealRow, openRow, EnvelopeIntegrityError, MalformedEnvelopeError } from
 import { CloudKeyMismatchError, CloudKeylessWriteError } from './errors';
 import { keyMismatchState } from './keyMismatch';
 import { currentLockReason, type LockReason } from './lockReason';
+import { isSyncApplied, isInternalBlobTx } from './transactionFlags';
 
 /**
  * Key material reaches the middleware through a {@link ScopeKeyResolver}: every
@@ -33,32 +34,15 @@ import { currentLockReason, type LockReason } from './lockReason';
 
 type Row = Record<string, unknown>;
 
-/**
- * Whether a mutation is the cloud addon applying rows it just pulled from the
- * server, rather than an app write. The addon runs `applyServerChanges` (and its
- * WebSocket equivalent) inside a transaction it marks `disableChangeTracking` —
- * the same flag it reads back off `req.trans` to skip its own change queue. Those
- * rows are ciphertext the addon pulled, so they must pass the write lock even
- * while the device is keyless or mismatched: blocking them aborts the initial
- * pull, so `initiallySynced` is never set and setup deadlocks on "fetching your
- * account…". A safe read of an addon-set flag, not a validation bypass.
+/*
+ * Sync-applied and blob-plumbing transactions must pass through untouched. Why
+ * for this middleware specifically: blocking a sync-applied write while keyless
+ * or mismatched would abort the initial pull (so `initiallySynced` is never set
+ * and setup deadlocks on "fetching your account…"), and decrypting inside the
+ * blob transaction would corrupt the addon's ciphertext write-back and leave
+ * `_hasBlobRefs` set — an infinite download loop. The predicates live in
+ * `./transactionFlags` and are shared with the operation-journal middleware.
  */
-const isSyncApplied = (trans: DBCoreMutateRequest['trans']): boolean =>
-  (trans as { disableChangeTracking?: boolean }).disableChangeTracking === true;
-
-/**
- * Whether a request runs inside the addon's internal blob-plumbing transaction,
- * which it marks `disableBlobResolve` (the same flag the addon's blob-resolve
- * middleware reads to skip itself). Inside it the addon reads a row back to patch
- * a downloaded blob into place and writes it out again — pure ciphertext
- * plumbing. This middleware must stay inert there: decrypting the read would
- * fail (the row still holds an unresolved ref) and return `undefined`, which
- * corrupts the addon's write-back and leaves `_hasBlobRefs` set — an infinite
- * download loop that saturates the main thread. Passing the raw row straight
- * through keeps the plumbing working on the ciphertext it expects.
- */
-const isInternalBlobTx = (trans: DBCoreMutateRequest['trans']): boolean =>
-  (trans as { disableBlobResolve?: boolean }).disableBlobResolve === true;
 
 /** The stored primary key of a row, as a string for the envelope's row binding. */
 const pkString = (table: DBCoreTable, value: Row, fallback?: unknown): string => {
