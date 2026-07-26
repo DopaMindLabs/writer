@@ -1,10 +1,10 @@
 import { STORES } from '@/db/stores';
-import { rowEnvelopeTables } from '@/lib/writerSync/writerTablePolicy';
+import { rowEnvelopeTables } from '@/lib/writerSyncIntegration/writerTablePolicy';
 
 /**
  * Which tables sync, and which of their fields must stay plaintext. The
  * encrypted-table set derives from the authoritative
- * {@link import('@/lib/writerSync/writerTablePolicy').WRITER_TABLE_POLICIES | table policy}
+ * {@link import('@/lib/writerSyncIntegration/writerTablePolicy').WRITER_TABLE_POLICIES | table policy}
  * (row-envelope classification), and plaintext fields derive from the
  * {@link STORES} schema, so neither can drift from its source of truth: a field
  * is plaintext iff it is the primary key, an index (indexes must be queryable,

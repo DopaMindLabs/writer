@@ -5,7 +5,7 @@ import type { Revision, RevisionKind } from '@/db/schema';
 import {
   currentPrincipal,
   newEntityMetadata,
-} from '@/lib/writerSync/writerEntityMetadata';
+} from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import { countWords, lexicalJsonToPlainText } from './lexicalJsonToPlainText';
 
 export const MAX_AUTO_REVISIONS_PER_DOC = 30;

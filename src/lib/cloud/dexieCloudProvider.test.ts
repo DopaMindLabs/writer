@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SyncState } from 'dexie-cloud-addon';
 import type { CloudObservable } from './cloudObservable';
 import type { EscrowPresence } from './cloudClient';
-import type { SyncStatus } from '@/lib/syncProviders/types';
-import { KeyEscrowPresence, SyncPhase, hasCapability } from '@/lib/syncProviders/types';
+import type { SyncStatus } from 'writer-sync/core';
+import { KeyEscrowPresence, SyncPhase, hasCapability } from 'writer-sync/core';
 import { createDexieCloudProvider } from './dexieCloudProvider';
 
 vi.mock('./cloudClient', () => ({

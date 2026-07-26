@@ -30,7 +30,7 @@ import { newId } from '@/lib/ids';
 import {
   currentPrincipal,
   newEntityMetadata,
-} from '@/lib/writerSync/writerEntityMetadata';
+} from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import { cn } from '@/lib/utils';
 import { downloadBlob } from '@/lib/file-download';
 import { appLogger } from '@/lib/appLogger';

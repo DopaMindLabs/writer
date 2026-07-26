@@ -5,7 +5,7 @@ import { collabStore } from '@/lib/collab/collabStore';
 import {
   currentPrincipal,
   touchedMetadataFields,
-} from '@/lib/writerSync/writerEntityMetadata';
+} from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import { docBodyBaselineKey } from './docBodyBaseline';
 
 /**

@@ -1,14 +1,14 @@
 import Dexie, { type Table } from 'dexie';
 import { invariant } from '@/lib/invariant';
 import { newId } from '@/lib/ids';
-import { asDeviceId, type DeviceId, type PrincipalId } from '@/lib/syncProviders/ids';
-import type { SyncKeyRing } from '@/lib/writerSync/crypto/keyResolver';
+import { asDeviceId, type DeviceId, type PrincipalId } from 'writer-sync/core';
+import type { SyncKeyRing } from 'writer-sync/crypto';
 import type {
   DeviceKeyVault,
   PairingRootWrapper,
-} from '@/lib/writerSync/crypto/keyVault.types';
+} from 'writer-sync/crypto';
 import { deriveKeyRing } from './keys';
-import { toBase64, fromBase64 } from './binaryJsonCodec';
+import { toBase64, fromBase64 } from 'writer-sync/crypto';
 
 /**
  * The Writer implementation of the provider-neutral {@link DeviceKeyVault}.

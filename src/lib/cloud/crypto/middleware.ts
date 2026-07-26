@@ -14,7 +14,7 @@ import type {
   ScopeKeyContext,
   ScopeKeyResolver,
   SyncKeyRing,
-} from '@/lib/writerSync/crypto/keyResolver';
+} from 'writer-sync/crypto';
 import { isEncryptedTable, plaintextFieldsFor, CIPHER_FIELD } from './tableRules';
 import { sealRow, openRow, EnvelopeIntegrityError, MalformedEnvelopeError } from './envelope';
 import { CloudKeyMismatchError, CloudKeylessWriteError } from './errors';

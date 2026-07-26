@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { NoteKind, NoteState, type Connection, type Note } from '@/db/schema';
-import { asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
+import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { BrainSpaceConnection } from './BrainSpaceConnection';
 
 const FIXED_TIME = 1704067200000;

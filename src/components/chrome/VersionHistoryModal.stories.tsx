@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useUI } from '@/store/ui';
 import type { Doc } from '@/db/schema';
-import { asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
+import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { VersionHistoryModal } from './VersionHistoryModal';
 
 const entityMetadata = {

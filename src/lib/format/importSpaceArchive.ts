@@ -1,9 +1,9 @@
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { createDocs, seedDocsCrdt } from '@/lib/docs';
-import { asOperationId } from '@/lib/syncProviders/ids';
-import type { ReplicatedEntityMetadata } from '@/lib/writerSync/entityMetadata';
-import { createHybridLogicalClock } from '@/lib/writerSync/hybridLogicalClock';
+import { asOperationId } from 'writer-sync/core';
+import type { ReplicatedEntityMetadata } from 'writer-sync/core';
+import { createHybridLogicalClock } from 'writer-sync/core';
 import type { ParsedSpaceArchive } from './parseSpaceArchive';
 
 const IMPORT_TABLES = [

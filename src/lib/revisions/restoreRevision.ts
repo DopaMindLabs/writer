@@ -4,7 +4,7 @@ import { getEditorHandle } from '@/lib/collab/editorRegistry';
 import {
   currentPrincipal,
   touchedMetadataFields,
-} from '@/lib/writerSync/writerEntityMetadata';
+} from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import { createRevision } from './createRevision';
 import { isParseableBody } from './lexicalJsonToPlainText';
 

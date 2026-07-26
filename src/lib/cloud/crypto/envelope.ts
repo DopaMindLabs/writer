@@ -1,6 +1,6 @@
 import type { CloudKeyRing } from './keys';
 import { CIPHER_FIELD } from './tableRules';
-import { tagBinary, untagBinary, toBase64, fromBase64 } from './binaryJsonCodec';
+import { tagBinary, untagBinary, toBase64, fromBase64 } from 'writer-sync/crypto';
 
 /**
  * The encrypted payload stored on a sealed row under {@link CIPHER_FIELD}.

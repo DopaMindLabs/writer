@@ -1,6 +1,6 @@
 import type { HighlightColor } from '@/theme/tokens';
 import type { DocStatus } from '@/lib/docInspector/status';
-import type { ReplicatedEntityMetadata } from '@/lib/writerSync/entityMetadata';
+import type { ReplicatedEntityMetadata } from 'writer-sync/core';
 
 /**
  * Every synced content row carries {@link ReplicatedEntityMetadata}: a

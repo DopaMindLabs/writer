@@ -4,7 +4,7 @@ import { invariant } from '@/lib/invariant';
 import {
   currentPrincipal,
   newEntityMetadata,
-} from '@/lib/writerSync/writerEntityMetadata';
+} from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import { isWorkshopLabel } from './workshop';
 
 /**

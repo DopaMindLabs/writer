@@ -13,7 +13,7 @@ import { STORES } from '@/db/stores';
 import { generateMasterSecret, deriveKeyRing, type CloudKeyRing } from './keys';
 import { CIPHER_FIELD, SYNCED_TABLES } from './tableRules';
 import { createEncryptionMiddleware } from './middleware';
-import type { ScopeKeyResolver } from '@/lib/writerSync/crypto/keyResolver';
+import type { ScopeKeyResolver } from 'writer-sync/crypto';
 import { CloudKeyMismatchError, CloudKeylessWriteError } from './errors';
 import { keyMismatchState } from './keyMismatch';
 import { keylessLockState } from './keylessLock';
@@ -788,7 +788,7 @@ describe('replicated entity metadata crosses the middleware correctly', () => {
 
 describe('the resolver receives the full scope-key context', () => {
   it('passes scope, table, primary key and operation on write and read', async () => {
-    const contexts: import('@/lib/writerSync/crypto/keyResolver').ScopeKeyContext[] = [];
+    const contexts: import('writer-sync/crypto').ScopeKeyContext[] = [];
     const spying: ScopeKeyResolver = {
       keyFor: (context) => {
         contexts.push(context);

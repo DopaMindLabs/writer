@@ -15,9 +15,9 @@ import {
   type Section,
   type Space,
 } from '@/db/schema';
-import type { AccessScopeId } from '@/lib/syncProviders/types';
-import { asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
-import type { ReplicatedEntityMetadata } from '@/lib/writerSync/entityMetadata';
+import type { AccessScopeId } from 'writer-sync/core';
+import { asOperationId, asPrincipalId } from 'writer-sync/core';
+import type { ReplicatedEntityMetadata } from 'writer-sync/core';
 
 export const FIXED_TIME = 1704067200000;
 

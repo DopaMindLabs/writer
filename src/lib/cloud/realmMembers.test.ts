@@ -5,7 +5,7 @@ import type { Space } from '@/db/schema';
 import type { DexieRow } from '@/lib/cloud/dexieRow';
 import { CLOUD_FLAG_KEY } from '@/lib/cloud/flag';
 import { invariant, InvariantError } from '@/lib/invariant';
-import { ScopeRole } from '@/lib/syncProviders/types';
+import { ScopeRole } from 'writer-sync/core';
 import { sampleMetadata } from '@/test/fixtures';
 import {
   addSpaceMember,

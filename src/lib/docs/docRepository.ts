@@ -5,12 +5,12 @@ import { countWords } from '@/editor/wordCount';
 import { newId } from '@/lib/ids';
 import { collabStore } from '@/lib/collab/collabStore';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
-import type { PrincipalId } from '@/lib/syncProviders/ids';
+import type { PrincipalId } from 'writer-sync/core';
 import {
   currentPrincipal,
   newEntityMetadata,
   touchedMetadataFields,
-} from '@/lib/writerSync/writerEntityMetadata';
+} from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import { writeDocBodyBaseline } from './docBodyBaseline';
 import { EMPTY_LEXICAL_JSON } from './emptyBody';
 

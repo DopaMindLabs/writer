@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { db } from '@/db/db';
 import type { Citation } from '@/db/schema';
-import { asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
+import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { CitationsPane } from './CitationsPane';
 
 const entityMetadata = {

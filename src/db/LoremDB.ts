@@ -24,8 +24,8 @@ import type {
   EncryptedSyncFrame,
   SyncInboxEntry,
   SyncTombstone,
-} from '@/lib/writerSync/operations/operation.types';
-import type { SyncProviderBinding } from '@/lib/syncProviders/types';
+} from 'writer-sync/operations';
+import type { SyncProviderBinding } from 'writer-sync/core';
 import { STORES, STORES_V1 } from './stores';
 
 /**

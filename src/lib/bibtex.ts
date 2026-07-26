@@ -2,8 +2,8 @@ import * as bibParser from '@retorquere/bibtex-parser';
 import { db } from '@/db/db';
 import { newId } from './ids';
 import type { Citation } from '@/db/schema';
-import type { PrincipalId } from '@/lib/syncProviders/ids';
-import { newEntityMetadata } from '@/lib/writerSync/writerEntityMetadata';
+import type { PrincipalId } from 'writer-sync/core';
+import { newEntityMetadata } from '@/lib/writerSyncIntegration/writerEntityMetadata';
 
 interface Creator {
   name?: string;

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { InvariantError } from '@/lib/invariant';
-import { asPrincipalId } from '@/lib/syncProviders/ids';
+import { asPrincipalId } from 'writer-sync/core';
 import { deviceKeyVault, unwrapPairingRoot } from './deviceKeyVault';
 import { generateMasterSecret, deriveKeyRing, fingerprintsEqual } from './keys';
 

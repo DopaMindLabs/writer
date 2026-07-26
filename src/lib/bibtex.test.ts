@@ -1,6 +1,6 @@
 import { db } from '@/db/db';
 import type { Citation } from '@/db/schema';
-import { asPrincipalId } from '@/lib/syncProviders/ids';
+import { asPrincipalId } from 'writer-sync/core';
 import { sampleMetadata } from '@/test/fixtures';
 import {
   importCitations,

@@ -1,8 +1,8 @@
 import { invariant } from '@/lib/invariant';
 import { isDocStatus } from '@/lib/docInspector/status';
 import type { HighlightColor } from '@/theme/tokens';
-import { asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
-import type { ReplicatedEntityMetadata } from '@/lib/writerSync/entityMetadata';
+import { asOperationId, asPrincipalId } from 'writer-sync/core';
+import type { ReplicatedEntityMetadata } from 'writer-sync/core';
 import {
   NoteKind,
   NoteLayout,

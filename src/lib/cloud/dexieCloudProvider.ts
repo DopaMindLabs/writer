@@ -8,8 +8,8 @@ import type {
   SyncProvider,
   SyncProviderBinding,
   SyncStatus,
-} from '@/lib/syncProviders/types';
-import { KeyEscrowPresence, SyncPhase } from '@/lib/syncProviders/types';
+} from 'writer-sync/core';
+import { KeyEscrowPresence, SyncPhase } from 'writer-sync/core';
 import type { EscrowPresence } from './cloudClient';
 import {
   DEXIE_CLOUD_PROVIDER_ID,

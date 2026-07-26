@@ -20,7 +20,7 @@ export type PresenceHue = (typeof PRESENCE_HUES)[number];
  * are user-editable.
  *
  * `authorId` is the *principal* — a person's attribution identity (see
- * `PrincipalId` in `@/lib/syncProviders/ids`, converted at the writerSync
+ * `PrincipalId` in `writer-sync/core`, converted at the writerSync
  * facade). It must never double as a device identity: a `DeviceId` is a
  * separate, cryptographic identity introduced by the pairing layer.
  */

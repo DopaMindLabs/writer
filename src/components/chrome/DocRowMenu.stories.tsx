@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 import type { Doc } from '@/db/schema';
-import { asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
+import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { DocRowMenu } from './DocRowMenu';
 
 const entityMetadata = {

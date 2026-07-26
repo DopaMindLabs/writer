@@ -10,7 +10,7 @@ import {
   liveDevices,
   type DeviceRecord,
 } from '@/lib/cloud/devicePolicy';
-import type { KeyEscrowPresence } from '@/lib/syncProviders/types';
+import type { KeyEscrowPresence } from 'writer-sync/core';
 import { deviceLimitState } from '@/lib/cloud/deviceLimit';
 
 /** What the registry read needs to decide the blocked state. */

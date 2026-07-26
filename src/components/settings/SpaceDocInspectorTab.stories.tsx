@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
+import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { SpaceDocInspectorTab } from './SpaceDocInspectorTab';
 
 const entityMetadata = {

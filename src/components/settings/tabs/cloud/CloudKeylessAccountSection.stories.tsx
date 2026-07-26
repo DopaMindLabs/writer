@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CloudKeylessAccountSection } from './CloudKeylessAccountSection';
-import { KeyEscrowPresence, SyncPhase } from '@/lib/syncProviders/types';
+import { KeyEscrowPresence, SyncPhase } from 'writer-sync/core';
 
 const noop = () => {};
 

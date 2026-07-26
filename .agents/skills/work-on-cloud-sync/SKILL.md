@@ -74,7 +74,7 @@ Escrow row (cloudCrypto table, id='v1')
 
 > **Superseded for UI callers.** Components and hooks now consume sync behaviour through the
 > `SyncProvider` capability adapter — `useSyncCapability('keyDelivery')` and friends, from
-> `src/lib/writerSync/syncCoordinatorContext.ts` — because the facade exposes
+> `src/lib/writerSyncIntegration/syncCoordinatorContext.ts` — because the facade exposes
 > Dexie-Cloud-shaped types and would couple every cloud surface to one backend. The facade
 > stays the only module that touches `db.cloud`, and is an implementation detail of
 > `src/lib/cloud/dexieCloudProvider.ts`. Some surfaces (sync status, device registry,

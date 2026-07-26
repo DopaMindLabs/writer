@@ -3,8 +3,8 @@ import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
 import type { Space } from '@/db/schema';
 import { invariant } from '@/lib/invariant';
-import type { AccessScopeId } from '@/lib/syncProviders/types';
-import type { EncryptedSyncFrame } from '@/lib/writerSync/operations/operation.types';
+import type { AccessScopeId } from 'writer-sync/core';
+import type { EncryptedSyncFrame } from 'writer-sync/operations';
 import { DEXIE_CLOUD_PROVIDER_ID } from './dexieCloudProviderId';
 import type { DexieRow } from './dexieRow';
 

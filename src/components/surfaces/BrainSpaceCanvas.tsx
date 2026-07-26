@@ -9,11 +9,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
-import type { PrincipalId } from '@/lib/syncProviders/ids';
+import type { PrincipalId } from 'writer-sync/core';
 import {
   currentPrincipal,
   newEntityMetadata,
-} from '@/lib/writerSync/writerEntityMetadata';
+} from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import { useNotes } from '@/hooks/useNotes';
 import {
   useNoteAttachmentsBySpace,

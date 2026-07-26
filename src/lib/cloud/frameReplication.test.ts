@@ -2,13 +2,13 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import Dexie from 'dexie';
 import dexieCloud from 'dexie-cloud-addon';
 import { STORES } from '@/db/stores';
-import { asDeviceId, asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
-import type { ScopeKeyResolver } from '@/lib/writerSync/crypto/keyResolver';
-import { createOperationJournalMiddleware } from '@/lib/writerSync/materialization/operationJournalMiddleware';
+import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
+import type { ScopeKeyResolver } from 'writer-sync/crypto';
+import { createOperationJournalMiddleware } from '@/lib/writerSyncIntegration/materialization/operationJournalMiddleware';
 import {
   localOnlyTables,
   rowEnvelopeTables,
-} from '@/lib/writerSync/writerTablePolicy';
+} from '@/lib/writerSyncIntegration/writerTablePolicy';
 import { generateMasterSecret, deriveKeyRing, type CloudKeyRing } from './crypto/keys';
 import { createEncryptionMiddleware } from './crypto/middleware';
 import { CIPHER_FIELD } from './crypto/tableRules';
@@ -52,7 +52,7 @@ const resolver: ScopeKeyResolver = {
   hasAnyKey: () => ring !== null,
 };
 
-const table = (name: string): Dexie.Table<AnyRow, unknown> => db.table<AnyRow>(name);
+const table = (name: string) => db.table<AnyRow>(name);
 
 /** dexie-cloud only queues mutations for a logged-in user. */
 const signIn = (): void =>

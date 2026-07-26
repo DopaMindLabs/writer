@@ -1,8 +1,8 @@
 import { useState, type SyntheticEvent } from 'react';
 import { EscrowMissingError } from '@/lib/cloud/crypto/errors';
 import { WrongPassphraseError } from '@/lib/cloud/crypto/keys';
-import type { KeyDeliveryAdapter } from '@/lib/syncProviders/types';
-import { useDefaultSyncCapability } from '@/lib/writerSync/syncCoordinatorContext';
+import type { KeyDeliveryAdapter } from 'writer-sync/core';
+import { useDefaultSyncCapability } from '@/lib/writerSyncIntegration/syncCoordinatorContext';
 
 type Mode = 'passphrase' | 'recovery';
 

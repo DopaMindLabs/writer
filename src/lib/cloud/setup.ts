@@ -24,7 +24,7 @@ import {
 } from './crypto/keyStore';
 import { keyMismatchState } from './crypto/keyMismatch';
 import { deviceKeyVault } from './crypto/deviceKeyVault';
-import { currentPrincipal } from '@/lib/writerSync/writerEntityMetadata';
+import { currentPrincipal } from '@/lib/writerSyncIntegration/writerEntityMetadata';
 
 /** The initial key epoch (the escrow row id comes from `./crypto/keys`). */
 const EPOCH = 1;

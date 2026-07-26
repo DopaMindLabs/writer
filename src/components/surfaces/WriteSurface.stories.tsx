@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { Doc } from '@/db/schema';
 import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
-import { asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
+import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { WriteSurface } from './WriteSurface';
 
 const FIXED_TIME = 1704067200000;

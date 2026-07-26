@@ -4,10 +4,10 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { WrongPassphraseError } from '@/lib/cloud/crypto/keys';
 import { EscrowMissingError } from '@/lib/cloud/crypto/errors';
-import { createSyncCoordinator } from '@/lib/syncProviders/coordinator';
-import type { SyncProvider } from '@/lib/syncProviders/types';
-import { KeyEscrowPresence } from '@/lib/syncProviders/types';
-import { WriterSyncProvider } from '@/lib/writerSync/WriterSyncProvider';
+import { createSyncCoordinator } from 'writer-sync/core';
+import type { SyncProvider } from 'writer-sync/core';
+import { KeyEscrowPresence } from 'writer-sync/core';
+import { WriterSyncProvider } from '@/lib/writerSyncIntegration/WriterSyncProvider';
 import { PassphraseUnlockDialog } from './PassphraseUnlockDialog';
 
 const noop = () => {};

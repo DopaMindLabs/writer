@@ -4,10 +4,10 @@ import type { CloudObservable } from '@/lib/cloud/cloudObservable';
 import type { SyncState } from '@/lib/cloud/cloudClient';
 import { reconcileStatus, type ReconcileStatus } from '@/lib/cloud/reconcileStatus';
 import type { CloudPanelState } from './useCloudPanelState';
-import { createSyncCoordinator } from '@/lib/syncProviders/coordinator';
-import type { SyncProvider } from '@/lib/syncProviders/types';
-import { KeyEscrowPresence } from '@/lib/syncProviders/types';
-import { WriterSyncProvider } from '@/lib/writerSync/WriterSyncProvider';
+import { createSyncCoordinator } from 'writer-sync/core';
+import type { SyncProvider } from 'writer-sync/core';
+import { KeyEscrowPresence } from 'writer-sync/core';
+import { WriterSyncProvider } from '@/lib/writerSyncIntegration/WriterSyncProvider';
 import { CloudSectionPanel } from './CloudSectionPanel';
 
 const constant = <T,>(value: T): CloudObservable<T> => ({

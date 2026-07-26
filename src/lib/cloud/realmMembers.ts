@@ -2,8 +2,8 @@ import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
 import type { Space } from '@/db/schema';
 import { invariant } from '@/lib/invariant';
-import type { ScopeMember } from '@/lib/syncProviders/types';
-import { ScopeRole } from '@/lib/syncProviders/types';
+import type { ScopeMember } from 'writer-sync/core';
+import { ScopeRole } from 'writer-sync/core';
 import type { DexieRow } from './dexieRow';
 import { isShared, privateRealmOf } from './spaceRealm';
 

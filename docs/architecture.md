@@ -68,7 +68,7 @@ External packages     (dexie, yjs, lexical, zustand, …)
 
 **Invariants:**
 - `src/lib/collab/types.ts` imports **nothing** from `yjs` — it is the engine-agnostic seam.
-- `src/lib/syncProviders/types.ts` is the provider-neutral sync seam — it imports nothing
+- `writer-sync/core` is the provider-neutral sync seam — it imports nothing
   from `src/lib/cloud/**`, `dexie-cloud-addon`, or `yjs`.
 - Components and hooks reach sync behaviour through the `SyncProvider` capability adapter
   (`useSyncCapability`), **not** through `src/lib/cloud/cloudClient.ts`. The facade hides the
@@ -208,7 +208,7 @@ reads are opened after. `KeyProvider.current() === null` means no key — the mi
 passes rows through unchanged (keyless pass-through). A `KeylessSignInBlockedError` blocks
 sign-in until existing plaintext rows are sealed first (§5.2 of `cloud-sync-beta.md`).
 
-**Table policy:** `src/lib/writerSync/writerTablePolicy.ts` is the single authoritative
+**Table policy:** `src/lib/writerSyncIntegration/writerTablePolicy.ts` is the single authoritative
 classification of every table — replication (`synced-content` / `provider-control` /
 `local-only`), encryption (`row-envelope` / `already-wrapped` / `plaintext-control` /
 `none`), scope kind (`space` / `document` / `account` / `local`) and whether mutations
@@ -260,11 +260,12 @@ The sync layer is provider-, transport- and pairing-method-agnostic. Its layers,
 neutral core to Writer wiring:
 
 ```
-src/lib/syncProviders/          provider contracts, coordinator, selection policy, ids
-src/lib/writerSync/crypto/      ScopeKeyResolver, DeviceKeyVault contract, frame payload crypto
-src/lib/writerSync/operations/  SyncOperation header/frame, strict codec, convergence, ports
-src/lib/writerSync/materialization/  Writer factory/materialiser/stores + frame ingestion
-src/lib/writerSync/             Writer configuration, boot, React context (integration)
+packages/writer-sync/src/core/        provider contracts, coordinator, selection policy, ids,
+                                     logical clock, entity metadata, transport seam
+packages/writer-sync/src/crypto/      ScopeKeyResolver, DeviceKeyVault contract, payload crypto
+packages/writer-sync/src/operations/  operation header/frame, strict codec, convergence, ports
+src/lib/writerSyncIntegration/materialization/  Writer factory/materialiser/journal + ingestion
+src/lib/writerSyncIntegration/        Writer table policy, configuration, boot, React context
 src/lib/cloud/                  the Dexie Cloud adapter (realms, members, escrow, facade)
 ```
 
@@ -297,9 +298,14 @@ src/lib/cloud/                  the Dexie Cloud adapter (realms, members, escrow
   (`accessScopeId`, `createdBy`, `updatedBy`, `mutationId`, `logicalUpdatedAt`);
   `realmId`/`owner` exist only on the adapter's persisted row type
   (`src/lib/cloud/dexieRow.ts`) and inside `src/lib/cloud/`.
-- **Package boundary (in progress).** The provider contracts, crypto and operation
-  modules are extraction-ready for `packages/writer-sync`; Writer-specific
-  composition stays in the app as the integration layer.
+- **Package boundary.** The engine lives in `packages/writer-sync` and is consumed
+  only through its three public subpaths — `writer-sync/core`, `writer-sync/crypto`,
+  `writer-sync/operations`. It never imports from Writer: no `@/` alias, no React,
+  Dexie, Yjs or Lexical, no `node:` builtin, and no wildcard re-exports. Those rules
+  are tests (`packages/writer-sync/test/packageBoundary.test.ts`), and a fixture
+  consumer (`test/consumer.test.ts`) proves the ports suffice without the app.
+  Everything Writer-specific — table policy, materialisation, configuration, boot and
+  React context — stays in `src/lib/writerSyncIntegration/`.
 
 ---
 
@@ -367,9 +373,9 @@ Route mounts WriteScreen / ReadScreen / SplitScreen
 
 | Symbol / File | Role | Consumers |
 |---|---|---|
-| `src/lib/syncProviders/types.ts` | The capability vocabulary: `SyncProvider` with optional `frameSync` / `realtime` / `discovery` / `accessControl` / `keyDelivery`, plus `SyncProviderBinding`. Backend-neutral; imports nothing from the cloud subsystem | `createSyncCoordinator`, provider adapters |
-| `src/lib/writerSync/syncCoordinatorContext.ts` | How UI reaches sync: `useSyncCapability(name)` resolves one capability from the coordinator, or reports its absence | Cloud settings components, boot |
-| `src/lib/writerSync/createWriterSyncCoordinator.ts` | Composition root — the only module that knows both the coordinator and the concrete providers | `App.tsx` |
+| `writer-sync/core` (`packages/writer-sync/src/core/providers.types.ts`) | The capability vocabulary: `SyncProvider` with optional `frameSync` / `realtime` / `discovery` / `accessControl` / `keyDelivery`, plus `SyncProviderBinding`. Backend-neutral; imports nothing from the cloud subsystem | `createSyncCoordinator`, provider adapters |
+| `src/lib/writerSyncIntegration/syncCoordinatorContext.ts` | How UI reaches sync: `useSyncCapability(name)` resolves one capability from the coordinator, or reports its absence | Cloud settings components, boot |
+| `src/lib/writerSyncIntegration/createWriterSyncCoordinator.ts` | Composition root — the only module that knows both the coordinator and the concrete providers | `App.tsx` |
 | `src/lib/cloud/dexieCloudProvider.ts` | Dexie Cloud as a `SyncProvider`; maps the addon's seven sync phases and its escrow union onto the neutral vocabulary | The composition root |
 | `src/lib/cloud/cloudClient.ts` | Sole module touching `db.cloud`; an implementation detail of the adapter, **not** a UI import | `dexieCloudProvider.ts`, cloud subsystem internals |
 | `src/lib/reconcile/index.ts` | Local CRDT ↔ row-body reconciliation: `reconcileDocForMount` (the mount gate, runs with or without any provider) and the shared `applyPulledBody` primitive | `useDocCrdtReady`, `src/lib/cloud/reconcile.ts` |

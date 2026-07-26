@@ -10,11 +10,11 @@ import { cloudDatabaseUrl, hasCloudEnv } from '@/lib/cloud/env';
 import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
 import { deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
 import { deviceKeyVault } from '@/lib/cloud/crypto/deviceKeyVault';
-import { createOperationJournalMiddleware } from '@/lib/writerSync/materialization/operationJournalMiddleware';
+import { createOperationJournalMiddleware } from '@/lib/writerSyncIntegration/materialization/operationJournalMiddleware';
 import {
   localOnlyTables,
   rowEnvelopeTables,
-} from '@/lib/writerSync/writerTablePolicy';
+} from '@/lib/writerSyncIntegration/writerTablePolicy';
 import { LoremDB } from './LoremDB';
 
 /**

@@ -1,6 +1,6 @@
 import Dexie, { type Table } from 'dexie';
 import { invariant } from '@/lib/invariant';
-import type { ScopeKeyContext } from '@/lib/writerSync/crypto/keyResolver';
+import type { ScopeKeyContext } from 'writer-sync/crypto';
 import type { CloudKeyRing, EscrowRecord } from './keys';
 import { broadcastKeyRingChange } from './keyRingChannel';
 

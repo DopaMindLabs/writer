@@ -10,7 +10,7 @@ import {
 // A pure NFKC normaliser, not backend behaviour — imported from its own module
 // rather than routed through a capability.
 import { canonicalisePassphrase } from '@/lib/cloud/crypto/keys';
-import { useDefaultSyncCapability } from '@/lib/writerSync/syncCoordinatorContext';
+import { useDefaultSyncCapability } from '@/lib/writerSyncIntegration/syncCoordinatorContext';
 import { PassphraseSetupFields } from './PassphraseSetupFields';
 
 const MIN_LENGTH = 12;

@@ -2,12 +2,12 @@ import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { invariant } from '@/lib/invariant';
 import { NoteState, type Note, type NoteAttachment } from '@/db/schema';
-import type { PrincipalId } from '@/lib/syncProviders/ids';
+import type { PrincipalId } from 'writer-sync/core';
 import {
   currentPrincipal,
   newEntityMetadata,
   touchedMetadataFields,
-} from '@/lib/writerSync/writerEntityMetadata';
+} from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import {
   MAX_IMAGE_BYTES,
   MAX_NOTE_IMAGES,
