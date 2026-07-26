@@ -27,6 +27,13 @@ interface StoredFrame {
   updatedBy?: string;
 }
 
+interface InboxEntry {
+  operationId: string;
+  entityTable: string;
+  entityId: string;
+  result: string;
+}
+
 /** Set up encryption so a content key exists to seal frame payloads with. */
 const setUpEncryption = async (page: import('@playwright/test').Page) => {
   await page.getByTestId('cloud-setup').click();
@@ -46,6 +53,16 @@ const readJournal = (page: import('@playwright/test').Page): Promise<StoredFrame
     };
     if (!db?.syncOperations) throw new Error('the app database is not exposed');
     return db.syncOperations.toArray();
+  });
+
+/** Read the inbox of accepted operations through the same exposed handle. */
+const readInbox = (page: import('@playwright/test').Page): Promise<InboxEntry[]> =>
+  page.evaluate(async () => {
+    const { db } = window as unknown as {
+      db?: { syncInbox?: { toArray: () => Promise<InboxEntry[]> } };
+    };
+    if (!db?.syncInbox) throw new Error('the app database is not exposed');
+    return db.syncInbox.toArray();
   });
 
 /** Wait until the journal holds at least one frame, then return them. */
@@ -120,6 +137,65 @@ test.describe('the operation journal (real IndexedDB)', () => {
     expect(deletion?.payload).toBe('');
 
     expect(uncaught, `uncaught page errors:\n${uncaught.join('\n')}`).toEqual([]);
+  });
+
+  test('materialises a journalled deletion without resurrecting the note', async ({
+    page,
+  }) => {
+    // The inbound half in a real browser: the ingestion sweep replays whatever
+    // sits in the journal, so a deletion has to survive being materialised —
+    // tombstoned, applied once, and never resurrected by the put frame that
+    // still sits in the journal beside it.
+    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=account');
+    await expect(page.getByTestId('cloud-section')).toBeVisible();
+    await setUpEncryption(page);
+    await page.reload();
+
+    await page.goto('/#/');
+    const spaceId = await getFirstSpaceIdFromHome(page);
+    await page.goto(`/#/s/${spaceId}/brain-space`);
+    await expect(page.getByTestId('brain-canvas-toolbar')).toBeVisible();
+
+    const noteCards = page
+      .getByTestId('brain-canvas-content')
+      .locator(':scope > [data-testid^="brain-note-"]');
+    const before = await noteCards.count();
+    await page.getByTestId('brain-canvas-tool-question').click();
+    await expect(noteCards).toHaveCount(before + 1);
+    await waitForFrames(page);
+
+    const card = noteCards.last();
+    await card.hover();
+    await card.locator('[data-testid$="-open-details"]').click();
+    await expect(page.getByTestId('brain-detail-drawer')).toBeVisible();
+    await page.getByTestId('brain-detail-drawer-delete').click();
+    await expect(noteCards).toHaveCount(before);
+
+    await expect
+      .poll(
+        async () =>
+          (await readJournal(page)).filter((frame) => frame.kind === 'delete').length,
+        { message: 'the deletion was never journalled' },
+      )
+      .toBeGreaterThan(0);
+    const deletion = (await readJournal(page)).find((frame) => frame.kind === 'delete');
+
+    // Reloading unlocks the key ring again, which is what drives a sweep of the
+    // frames the journal is holding.
+    await page.reload();
+    await expect(page.getByTestId('brain-canvas-toolbar')).toBeVisible();
+    const acceptedDeletion = async (): Promise<InboxEntry | undefined> =>
+      (await readInbox(page)).find((entry) => entry.operationId === deletion?.operationId);
+    await expect
+      .poll(async () => (await acceptedDeletion())?.result, {
+        message: 'the ingestion sweep never materialised the deletion',
+      })
+      .toBe('applied');
+
+    expect((await acceptedDeletion())?.entityTable).toBe('notes');
+    // The put frame is still in the journal beside the deletion; the tombstone
+    // is what stops the sweep resurrecting the note from it.
+    await expect(noteCards).toHaveCount(before);
   });
 
   test('backfills frames for writing done before a passphrase existed', async ({
