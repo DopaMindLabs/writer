@@ -139,6 +139,17 @@ startKeylessLockMonitor (lock editor if signed in keyless)
 `docs/cloud-sync-beta.md` — full design note including the key derivation model,
 escrow recovery flow, and the two-gate architecture.
 
+`packages/writer-sync/docs/` — the sync engine's own normative documents. Read
+these before touching pairing, device identity, or anything that produces or
+consumes an operation frame:
+
+| Document | What it covers |
+|---|---|
+| `threat-model.md` | Assets, trust boundaries and the threats the P2P release defends against |
+| `pairing-protocol.md` | The QR offer/answer pairing exchange — encoding, transcript binding, key agreement, states, error codes |
+| `pairing-test-vectors.md` | Canonical-encoding, transcript and verification-code vectors |
+| `sync-frame-protocol.md` | The operation frame format as implemented — AAD binding, validation, convergence, provider obligations |
+
 ## Track this work as a todo list
 
 Before you start, seed a todo list from the decisions this skill requires — for each table
