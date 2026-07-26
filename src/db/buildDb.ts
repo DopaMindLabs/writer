@@ -9,23 +9,18 @@ import {
 import { cloudDatabaseUrl, hasCloudEnv } from '@/lib/cloud/env';
 import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
 import { deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
+import { localOnlyTables } from '@/lib/writerSync/writerTablePolicy';
 import { LoremDB } from './LoremDB';
 
 /**
  * Local-only tables that must never leave the device: preferences, backups, sync
- * bookkeeping and the per-doc CRDT update log. Everything else is content that
- * syncs (field-encrypted) plus `cloudCrypto` (the passphrase-wrapped escrow,
- * which must sync so a second device can recover the key).
+ * bookkeeping and the per-doc CRDT update log. Derived from the authoritative
+ * table policy so replication can never drift from the classification. Everything
+ * else is content that syncs (field-encrypted) plus `cloudCrypto` (the
+ * passphrase-wrapped escrow, which must sync so a second device can recover the
+ * key).
  */
-const UNSYNCED = [
-  'settings',
-  'backups',
-  'syncs',
-  'syncConfigs',
-  'docInspectorConfigs',
-  'meta',
-  'docUpdates',
-] as const;
+const UNSYNCED: readonly string[] = localOnlyTables();
 
 /**
  * Constructs the app database. It builds a Dexie Cloud instance with the

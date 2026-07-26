@@ -3,6 +3,7 @@ import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
 import type { Space } from '@/db/schema';
 import { invariant } from '@/lib/invariant';
+import { scopeGroup } from '@/lib/writerSync/writerTablePolicy';
 import type { DexieRow } from './dexieRow';
 
 /**
@@ -21,22 +22,23 @@ import type { DexieRow } from './dexieRow';
  * giving it a realm would be meaningless at best and misleading at worst.
  */
 
-/** Synced descendants reachable by the `spaceId` index. */
-const SPACE_SCOPED = [
-  'sections',
-  'docs',
-  'notes',
-  'noteAttachments',
-  'citations',
-  'connections',
-  'palettes',
-] as const;
+/**
+ * Synced descendants reachable by the `spaceId` index — the policy's
+ * space-scoped content tables, minus the space row itself (stamped separately).
+ */
+const SPACE_SCOPED: readonly string[] = scopeGroup('space').filter(
+  (table) => table !== 'spaces',
+);
 
 /** Synced descendants reachable only through their document. */
-const DOC_SCOPED = ['annotations', 'revisions'] as const;
+const DOC_SCOPED: readonly string[] = scopeGroup('document');
 
 /** Every table a realm stamp touches — exactly the synced content tables. */
-export const REALM_TABLE_NAMES = ['spaces', ...SPACE_SCOPED, ...DOC_SCOPED] as const;
+export const REALM_TABLE_NAMES: readonly string[] = [
+  'spaces',
+  ...SPACE_SCOPED,
+  ...DOC_SCOPED,
+];
 
 const tablesFor = (db: LoremDB) => [
   ...REALM_TABLE_NAMES.map((name) => db.table(name)),

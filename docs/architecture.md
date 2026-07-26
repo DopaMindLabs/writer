@@ -197,7 +197,10 @@ Lossless CRDT-level merge across devices is a recorded open decision for a futur
 **Schema invariant:** `STORES` in `src/db/stores.ts` is the single source of truth for
 index definitions. `tableRules.ts` derives which fields stay plaintext from it — a field
 is plaintext iff it is the primary key, an indexed field, a cloud-reserved field
-(`realmId`, `owner`), or the `$lipsumCipher` envelope itself.
+(`realmId`, `owner`), provider-neutral routing metadata (`accessScopeId`, `mutationId`,
+`logicalUpdatedAt` — a provider must route, deduplicate and order without a content
+key), or the `$lipsumCipher` envelope itself. Attribution (`createdBy`, `updatedBy`)
+is sealed content.
 
 **Encryption invariant:** The `createEncryptionMiddleware` middleware sits above the Dexie
 Cloud addon (`level: 10`). Writes are sealed **before** they reach the sync push queue;
@@ -205,12 +208,16 @@ reads are opened after. `KeyProvider.current() === null` means no key — the mi
 passes rows through unchanged (keyless pass-through). A `KeylessSignInBlockedError` blocks
 sign-in until existing plaintext rows are sealed first (§5.2 of `cloud-sync-beta.md`).
 
-`SYNCED_TABLES` (in `src/lib/cloud/crypto/tableRules.ts`) lists the ten content tables
-the middleware encrypts. `cloudCrypto` is **not** in this list — it is already the
-passphrase-wrapped escrow envelope and must not be re-encrypted by the row middleware. It
-syncs via the Dexie Cloud addon's own mechanism (`UNSYNCED` in `buildDb.ts` does not
-include it). `UNSYNCED` and `SYNCED_TABLES` are therefore complementary but not mirror
-images: each covers a different concern.
+**Table policy:** `src/lib/writerSync/writerTablePolicy.ts` is the single authoritative
+classification of every table — replication (`synced-content` / `provider-control` /
+`local-only`), encryption (`row-envelope` / `already-wrapped` / `plaintext-control` /
+`none`), scope kind (`space` / `document` / `account` / `local`) and whether mutations
+enter the operation journal. The previously independent lists all derive from it:
+`SYNCED_TABLES` (row-envelope tables, in `tableRules.ts`), `UNSYNCED` (local-only tables,
+in `buildDb.ts`) and the realm fan-out sets (`spaceRealm.ts`). `cloudCrypto` is classified
+`already-wrapped` — it is the passphrase-wrapped escrow envelope and must not be
+re-encrypted by the row middleware; it syncs via the Dexie Cloud addon's own mechanism.
+Adding a table without classifying it fails `writerTablePolicy.test.ts`.
 
 **Sticky schema:** Once a device builds the cloud-enabled DB, `buildDb` keeps using it even
 if the flag is switched off (guarded by `wasCloudProvisioned()`). The Dexie Cloud addon
