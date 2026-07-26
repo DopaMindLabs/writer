@@ -84,7 +84,7 @@ deterministic convergence, plus encrypted `createdBy`/`updatedBy` attribution
 (principal ids from the local profile — never emails, and never mapped to any
 provider's authorisation field). Replication, encryption, scope kind and journal
 membership per table are classified once in
-`src/lib/writerSync/writerTablePolicy.ts`. When the encrypted cloud-sync beta
+`src/lib/writerSyncIntegration/writerTablePolicy.ts`. When the encrypted cloud-sync beta
 (§ 4.9.1) is active, one extra store — `cloudCrypto` (the passphrase-wrapped escrow) —
 is added, and synced content rows carry a `$lipsumCipher` envelope; the device key ring
 is held in a separate, never-synced keystore database rather than a table here.
@@ -102,6 +102,21 @@ mutation (a reorder that moves three documents emits three operations, not one).
 the device holds no content key nothing is journalled; setting up or unlocking
 encryption re-seals what was written keyless and backfills its operations at the same
 time.
+
+**Every material change mints a new operation.** A partial update (a rename, a note
+edit, a reorder, a bulk retype) and every row an archive restore writes back take a
+fresh `mutationId` and logical time. Reusing the stored one would journal an operation
+the other devices have already accepted, and they would discard the change as a replay
+— the edit would appear to save locally and never arrive anywhere else.
+
+**Convergence is decided by logical time, then device id — never by arrival order.**
+The rule is symmetric: an inbound deletion that lost to a later update is recorded as
+superseded instead of removing the row, and where two deletions race the later one owns
+the tombstone. Accepting an operation merges its logical time into this device's clock
+(ignoring readings more than five minutes ahead of local wall time), so a device whose
+clock lags still stamps its next edit after everything it has already accepted. The
+logical time travels inside the payload's authenticated header, so a provider or peer
+cannot retime an operation without invalidating its ciphertext.
 
 **Local account.** The `Meta` table holds singleton app state keyed by string. Among its keys is the on-device **account profile** (`profile`): a stable `authorId` (the attribution key that edits and presence attach to) plus the user-editable `displayName` and `presenceHue`. It is created with sensible defaults on first read and repaired in place if a stored value is invalid; it never leaves the browser (§4.9). A per-tab id lives separately in `sessionStorage`, not in Dexie.
 

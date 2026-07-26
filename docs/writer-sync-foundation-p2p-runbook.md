@@ -684,6 +684,10 @@ Rules:
 7. Applying an inbound operation must not emit a distinct new local operation.
 8. Provider source is diagnostic metadata, never part of convergence ordering.
 9. The encrypted frame stored in `syncOperations` is immutable; providers do not independently re-encrypt or reinterpret its payload.
+10. Every material change to a synced row stamps a fresh `mutationId` and logical time — partial updates and archive restores included. A frame carrying an already-accepted operation ID is dropped by every receiver as a replay, so a write that reuses one never replicates.
+11. Rule 4 is symmetric: a delete is compared against the current journal winner exactly as a put is. A delete that lost to a later put is recorded as superseded, and the later of two deletes owns the tombstone.
+12. Accepting an operation merges its logical time into the local hybrid logical clock, bounded by a maximum tolerated drift ahead of local wall time. One clock instance serves the whole application: stamping and merging must not be separate clocks.
+13. The logical timestamp is part of the payload's additional authenticated data. A transport that retimes a frame invalidates its ciphertext rather than silently reordering convergence.
 
 ### Attachments
 
