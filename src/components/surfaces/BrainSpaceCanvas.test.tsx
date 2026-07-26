@@ -19,11 +19,17 @@ const waitForNoteRendered = async (): Promise<void> => {
   // across polls: the trailing focusNote()/live-query renders then commit inside
   // act() instead of in an inter-poll gap or after the test body returns.
   await act(async () => {
-    await waitFor(() => {
-      expect(
-        document.querySelector('[data-testid^="brain-note-"]'),
-      ).not.toBeNull();
-    });
+    // Generous timeout: creating a note now also resolves the current principal
+    // (a db.meta read), which under a fully parallel suite run can push the
+    // write past waitFor's default 1s.
+    await waitFor(
+      () => {
+        expect(
+          document.querySelector('[data-testid^="brain-note-"]'),
+        ).not.toBeNull();
+      },
+      { timeout: 4000 },
+    );
   });
 };
 
