@@ -8,7 +8,13 @@ import type {
   PairingRootWrapper,
 } from 'writer-sync/crypto';
 import { deriveKeyRing } from './keys';
-import { toBase64, fromBase64 } from 'writer-sync/crypto';
+import {
+  derivePairingKey,
+  ephemeralPublicJwkOf,
+  fromBase64,
+  generatePairingEphemeral,
+  toBase64,
+} from 'writer-sync/crypto';
 
 /**
  * The Writer implementation of the provider-neutral {@link DeviceKeyVault}.
@@ -63,27 +69,21 @@ const generateWrapKey = (): Promise<CryptoKey> =>
     'decrypt',
   ]);
 
-const ECDH_CURVE = 'P-256';
+/**
+ * AAD for the account-bootstrap wrapper: the domain label, a separator, then the
+ * pairing transcript. Binding the transcript is what stops a wrapper captured
+ * from one session being replayed into another — the ciphertext simply fails to
+ * open under a transcript it was not sealed for.
+ */
+const PAIRING_ROOT_LABEL = 'lipsum-pair-root-v1';
 
-/** Derive the pairing transfer key from an ECDH exchange. */
-const deriveSharedKey = async (
-  privateKey: CryptoKey,
-  peerPublicJwk: JsonWebKey,
-): Promise<CryptoKey> => {
-  const peerKey = await crypto.subtle.importKey(
-    'jwk',
-    peerPublicJwk,
-    { name: 'ECDH', namedCurve: ECDH_CURVE },
-    false,
-    [],
-  );
-  return crypto.subtle.deriveKey(
-    { name: 'ECDH', public: peerKey },
-    privateKey,
-    { name: 'AES-GCM', length: 256 },
-    false,
-    ['encrypt', 'decrypt'],
-  );
+const wrapperAad = (transcript: Uint8Array): ArrayBuffer => {
+  const label = new TextEncoder().encode(PAIRING_ROOT_LABEL);
+  const aad = new Uint8Array(label.length + 1 + transcript.length);
+  aad.set(label, 0);
+  aad[label.length] = 0;
+  aad.set(transcript, label.length + 1);
+  return asBuffer(aad);
 };
 
 const mintDeviceId = async (db: DeviceVaultDb): Promise<DeviceId> => {
@@ -148,26 +148,31 @@ const wrapRootRow = async (options: {
   });
 };
 
-const wrapForPairing = async (
-  root: Uint8Array,
-  peerEphemeralPublicJwk: JsonWebKey,
-): Promise<PairingRootWrapper> => {
-  const ephemeral = await crypto.subtle.generateKey(
-    { name: 'ECDH', namedCurve: ECDH_CURVE },
-    false,
-    ['deriveKey'],
-  );
-  const shared = await deriveSharedKey(ephemeral.privateKey, peerEphemeralPublicJwk);
+const wrapForPairing = async (options: {
+  root: Uint8Array;
+  peerEphemeralPublicJwk: JsonWebKey;
+  transcript: Uint8Array;
+}): Promise<PairingRootWrapper> => {
+  const ephemeral = await generatePairingEphemeral();
+  const shared = await derivePairingKey({
+    privateKey: ephemeral.privateKey,
+    peerPublicJwk: options.peerEphemeralPublicJwk,
+    transcript: options.transcript,
+  });
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const wrapped = new Uint8Array(
     await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv: asBuffer(iv) },
+      {
+        name: 'AES-GCM',
+        iv: asBuffer(iv),
+        additionalData: wrapperAad(options.transcript),
+      },
       shared,
-      asBuffer(root),
+      asBuffer(options.root),
     ),
   );
   return {
-    ephemeralPublicJwk: await crypto.subtle.exportKey('jwk', ephemeral.publicKey),
+    ephemeralPublicJwk: await ephemeralPublicJwkOf(ephemeral.publicKey),
     iv: toBase64(iv),
     wrapped: toBase64(wrapped),
   };
@@ -191,11 +196,19 @@ const createDeviceKeyVault = (): DeviceKeyVault => {
       root.fill(0);
       return ring;
     },
-    wrapAccountRootForPairing: async ({ peerEphemeralPublicJwk, principalId }) => {
+    wrapAccountRootForPairing: async ({
+      peerEphemeralPublicJwk,
+      principalId,
+      transcript,
+    }) => {
       const row = await boundRow(db(), principalId);
       invariant(row, 'device key vault: no account root is stored');
       const root = await unwrapRoot(row);
-      const wrapper = await wrapForPairing(root, peerEphemeralPublicJwk);
+      const wrapper = await wrapForPairing({
+        root,
+        peerEphemeralPublicJwk,
+        transcript,
+      });
       root.fill(0);
       return wrapper;
     },
@@ -209,19 +222,30 @@ const createDeviceKeyVault = (): DeviceKeyVault => {
 export const deviceKeyVault: DeviceKeyVault = createDeviceKeyVault();
 
 /**
- * Test-side counterpart of the pairing exchange: derive the shared key from the
- * peer's ephemeral private half and unwrap the root. Exported for the vault's
- * test suite (a joining device in Stage 2A performs exactly this), never used
- * by UI or provider code.
+ * The joining half of the pairing exchange: derive the shared key from this
+ * device's ephemeral private half and open the wrapper.
+ *
+ * Both the derived key and the AAD are bound to the transcript, so this throws
+ * for a wrapper from another session, for another peer, or for a session whose
+ * offer or answer differed by a byte — without needing to distinguish which.
  */
 export const unwrapPairingRoot = async (
   wrapper: PairingRootWrapper,
   peerPrivateKey: CryptoKey,
+  transcript: Uint8Array,
 ): Promise<Uint8Array> => {
-  const shared = await deriveSharedKey(peerPrivateKey, wrapper.ephemeralPublicJwk);
+  const shared = await derivePairingKey({
+    privateKey: peerPrivateKey,
+    peerPublicJwk: wrapper.ephemeralPublicJwk,
+    transcript,
+  });
   return new Uint8Array(
     await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: asBuffer(fromBase64(wrapper.iv)) },
+      {
+        name: 'AES-GCM',
+        iv: asBuffer(fromBase64(wrapper.iv)),
+        additionalData: wrapperAad(transcript),
+      },
       shared,
       asBuffer(fromBase64(wrapper.wrapped)),
     ),
