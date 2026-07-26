@@ -54,11 +54,15 @@ export interface DeviceKeyVault {
   }) => Promise<SyncKeyRing | null>;
   /**
    * Wrap the stored root for a pairing peer identified by its ephemeral ECDH
-   * public key. Requires the caller to prove the binding it acts for.
+   * public key. Requires the caller to prove the binding it acts for, and the
+   * transcript of the session the wrapper belongs to — the transcript is bound
+   * into the wrapper's AAD, so a wrapper captured from one session cannot be
+   * replayed into another.
    */
   wrapAccountRootForPairing: (options: {
     peerEphemeralPublicJwk: JsonWebKey;
     principalId: PrincipalId;
+    transcript: Uint8Array;
   }) => Promise<PairingRootWrapper>;
   /** Erase the stored root and wrapping key (device reset / sign-out wipe). */
   forget: () => Promise<void>;

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { InvariantError } from '@/lib/invariant';
 import { asPrincipalId } from 'writer-sync/core';
+import { ephemeralPublicJwkOf, generatePairingEphemeral } from 'writer-sync/crypto';
 import { deviceKeyVault, unwrapPairingRoot } from './deviceKeyVault';
 import { generateMasterSecret, deriveKeyRing, fingerprintsEqual } from './keys';
 
@@ -63,19 +64,20 @@ describe('account root storage', () => {
 });
 
 describe('pairing wrapper', () => {
+  /** A joining peer's ephemeral half, as slice 2A.3 will mint it. */
+  const joiningPeer = () => generatePairingEphemeral();
+
+  const TRANSCRIPT = new Uint8Array(32).fill(7);
+
   it('round-trips the root to a peer without exposing it through the API', async () => {
     const root = generateMasterSecret();
     await deviceKeyVault.storeAccountRoot(root, PRINCIPAL);
 
-    // The joining peer mints its own ephemeral ECDH pair and sends the public half.
-    const peer = await crypto.subtle.generateKey(
-      { name: 'ECDH', namedCurve: 'P-256' },
-      false,
-      ['deriveKey'],
-    );
+    const peer = await joiningPeer();
     const wrapper = await deviceKeyVault.wrapAccountRootForPairing({
-      peerEphemeralPublicJwk: await crypto.subtle.exportKey('jwk', peer.publicKey),
+      peerEphemeralPublicJwk: await ephemeralPublicJwkOf(peer.publicKey),
       principalId: PRINCIPAL,
+      transcript: TRANSCRIPT,
     });
 
     // The wrapper carries only ciphertext and public material — never the root.
@@ -83,35 +85,60 @@ describe('pairing wrapper', () => {
     expect(wrapper.ephemeralPublicJwk.kty).toBe('EC');
     expect(wrapper.ephemeralPublicJwk.d).toBeUndefined();
 
-    const unwrapped = await unwrapPairingRoot(wrapper, peer.privateKey);
+    const unwrapped = await unwrapPairingRoot(wrapper, peer.privateKey, TRANSCRIPT);
     expect(Array.from(unwrapped)).toEqual(Array.from(root));
+  });
+
+  it('refuses to unwrap under a different transcript', async () => {
+    // A wrapper captured from one pairing session must be useless in another,
+    // even to the peer it was addressed to: the transcript is in the AAD.
+    await deviceKeyVault.storeAccountRoot(generateMasterSecret(), PRINCIPAL);
+    const peer = await joiningPeer();
+    const wrapper = await deviceKeyVault.wrapAccountRootForPairing({
+      peerEphemeralPublicJwk: await ephemeralPublicJwkOf(peer.publicKey),
+      principalId: PRINCIPAL,
+      transcript: TRANSCRIPT,
+    });
+
+    await expect(
+      unwrapPairingRoot(wrapper, peer.privateKey, new Uint8Array(32).fill(8)),
+    ).rejects.toThrow();
+  });
+
+  it('refuses to unwrap for a different peer', async () => {
+    await deviceKeyVault.storeAccountRoot(generateMasterSecret(), PRINCIPAL);
+    const peer = await joiningPeer();
+    const attacker = await joiningPeer();
+    const wrapper = await deviceKeyVault.wrapAccountRootForPairing({
+      peerEphemeralPublicJwk: await ephemeralPublicJwkOf(peer.publicKey),
+      principalId: PRINCIPAL,
+      transcript: TRANSCRIPT,
+    });
+
+    await expect(
+      unwrapPairingRoot(wrapper, attacker.privateKey, TRANSCRIPT),
+    ).rejects.toThrow();
   });
 
   it('refuses to wrap for the wrong principal', async () => {
     await deviceKeyVault.storeAccountRoot(generateMasterSecret(), PRINCIPAL);
-    const peer = await crypto.subtle.generateKey(
-      { name: 'ECDH', namedCurve: 'P-256' },
-      false,
-      ['deriveKey'],
-    );
+    const peer = await joiningPeer();
     await expect(
       deviceKeyVault.wrapAccountRootForPairing({
-        peerEphemeralPublicJwk: await crypto.subtle.exportKey('jwk', peer.publicKey),
+        peerEphemeralPublicJwk: await ephemeralPublicJwkOf(peer.publicKey),
         principalId: asPrincipalId('intruder'),
+        transcript: TRANSCRIPT,
       }),
     ).rejects.toBeInstanceOf(InvariantError);
   });
 
   it('refuses to wrap when no root is stored', async () => {
-    const peer = await crypto.subtle.generateKey(
-      { name: 'ECDH', namedCurve: 'P-256' },
-      false,
-      ['deriveKey'],
-    );
+    const peer = await joiningPeer();
     await expect(
       deviceKeyVault.wrapAccountRootForPairing({
-        peerEphemeralPublicJwk: await crypto.subtle.exportKey('jwk', peer.publicKey),
+        peerEphemeralPublicJwk: await ephemeralPublicJwkOf(peer.publicKey),
         principalId: PRINCIPAL,
+        transcript: TRANSCRIPT,
       }),
     ).rejects.toBeInstanceOf(InvariantError);
   });
