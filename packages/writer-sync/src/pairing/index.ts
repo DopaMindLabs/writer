@@ -43,3 +43,23 @@ export type { QrPart } from './qrSequence';
 
 export { createPairingSession } from './pairingSession';
 export type { PairingEvent, PairingRole, PairingSession } from './pairingSession';
+
+export {
+  MAX_CLOCK_SKEW_MILLIS,
+  REPLAY_CACHE_CAPACITY,
+  createReplayCache,
+} from './replayCache';
+export type { ReplayCache } from './replayCache';
+
+export {
+  MAX_SESSION_TTL_MILLIS,
+  SESSION_TTL_MILLIS,
+  validateInboundPayload,
+} from './payloadValidation';
+export type { ValidatePayloadOptions } from './payloadValidation';
+
+export type {
+  AuthenticatedPeerParameters,
+  CreateOfferOptions,
+  SignallingAdapter,
+} from './signalling.types';
