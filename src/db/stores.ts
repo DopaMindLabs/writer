@@ -13,6 +13,7 @@ export const STORES: Record<string, string> = {
   syncInbox: 'operationId, [entityTable+entityId]',
   syncTombstones: '[entityTable+entityId], accessScopeId',
   syncProviderBindings: '[scopeId+providerInstanceId], scopeId',
+  trustedDevices: 'deviceId, principalId',
   spaces: 'id, createdAt, updatedAt',
   sections:
     'id, spaceId, parentSectionId, order, [spaceId+order], [spaceId+parentSectionId]',

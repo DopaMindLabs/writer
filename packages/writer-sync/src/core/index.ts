@@ -59,3 +59,7 @@ export type {
   EntityUpdateInput,
   ReplicatedEntityMetadata,
 } from './entityMetadata';
+
+export { TrustedDeviceStatus, isTrustedForSession } from './trustedDevice.types';
+export type { TrustedDeviceRecord } from './trustedDevice.types';
+export type { TrustedDeviceRegistry } from './trustedDeviceRegistry.types';

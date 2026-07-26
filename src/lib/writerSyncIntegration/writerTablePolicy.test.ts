@@ -100,6 +100,7 @@ describe('derived sets match the established behaviour', () => {
         'syncProviderBindings',
         'syncTombstones',
         'syncs',
+        'trustedDevices',
       ].sort(),
     );
   });
