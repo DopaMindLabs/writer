@@ -97,6 +97,28 @@ test.describe('the operation journal (real IndexedDB)', () => {
     expect(note?.createdBy).toBeUndefined();
     expect(note?.updatedBy).toBeUndefined();
 
+    // Deleting the note journals the matching tombstone source: a delete frame
+    // carries the entity and scope but no payload, so a peer can converge the
+    // removal without ever decrypting anything.
+    const card = noteCards.last();
+    await card.hover();
+    await card.locator('[data-testid$="-open-details"]').click();
+    await expect(page.getByTestId('brain-detail-drawer')).toBeVisible();
+    await page.getByTestId('brain-detail-drawer-delete').click();
+    await expect(noteCards).toHaveCount(before);
+
+    await expect
+      .poll(
+        async () =>
+          (await readJournal(page)).filter((frame) => frame.kind === 'delete').length,
+        { message: 'the deletion was never journalled' },
+      )
+      .toBeGreaterThan(0);
+    const deletion = (await readJournal(page)).find((frame) => frame.kind === 'delete');
+    expect(deletion?.entityTable).toBe('notes');
+    expect(deletion?.entityId).toBe(note?.entityId);
+    expect(deletion?.payload).toBe('');
+
     expect(uncaught, `uncaught page errors:\n${uncaught.join('\n')}`).toEqual([]);
   });
 
