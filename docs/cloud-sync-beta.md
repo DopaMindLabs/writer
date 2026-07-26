@@ -214,6 +214,58 @@ plaintext rows through the unwrapped cursor and re-writes them with `bulkPut` (w
 middleware seals) rather than `.modify()`, whose change-detection would skip a no-op
 rewrite.
 
+Since the cutover it does double duty: a keyless write journals no frame (there is no key
+to seal a payload with), so the same re-put is what **backfills the operation journal** for
+everything written before setup. Nothing else is needed to make pre-setup writing
+replicable.
+
+### 4.1 The operation journal middleware (outbound chokepoint)
+
+`createOperationJournalMiddleware`
+(`src/lib/writerSync/materialization/operationJournalMiddleware.ts`) sits at DBCore level
+20, above the row-encryption middleware. Every add, put and delete on a journalled content
+table emits its encrypted `EncryptedSyncFrame` into `syncOperations` inside the same
+transaction as the domain write, so a write can never be separated from its frame and no
+call site can forget to journal one — outbound coverage holds by construction rather than
+by discipline.
+
+Ordering inside it is load-bearing, and for two independent reasons:
+
+- **Zone.** Dexie tracks the live transaction in its own promise zone. An `await` on a
+  native promise (every Web Crypto call) leaves that zone, and the addon's hooks middleware
+  below then reads an undefined current transaction. Only `Dexie.waitFor` results and
+  Dexie's own promises may be awaited between DBCore calls.
+- **Keep-alive.** `Dexie.waitFor` spins a keep-alive request only while it is the
+  *outermost* wait. The encryption middleware below opens its own wait when it seals a row,
+  so crypto run *after* delegating downward would sit outside any keep-alive and the
+  transaction could commit underneath it.
+
+Both push the same way: **all framing happens before the mutation is delegated down**, and
+afterwards only IndexedDB requests remain. A delete carries no payload, so its hash is the
+precomputed `EMPTY_PAYLOAD_HASH` and delete framing is fully synchronous.
+
+Four write classes are deliberately **not** journalled: materialisation of inbound frames
+(its transaction pairs a content table with `syncInbox`, which is the signal), keyless
+writes (backfilled by the re-seal above), the addon's own sync-applied and blob-plumbing
+transactions, and `deleteRange` — `Table.clear()` is a local reset, never a synced deletion.
+
+### 4.2 Realms bind frames, not rows
+
+A realm is Dexie's access-control boundary and stays inside the adapter. Because the
+materialised tables are now device-local, a scope transition
+(`src/lib/cloud/spaceRealm.ts`) stamps the scope's **enqueued frames** and records the
+binding in `syncProviderBindings`; that binding is what `resolveBinding` answers from, and
+no domain row carries `realmId` any more. Stamping a frame never touches its ciphertext —
+the realm is provider routing, not content.
+
+If an operation's **access scope** itself changes, relabelling is not enough: the scope is
+bound into the frame's AAD, so `rescopeFrames`
+(`src/lib/writerSync/materialization/rescopeFrames.ts`) opens each frame under the source
+scope's key and reseals it under the destination's, keeping its operation id (dedup) and
+logical time (convergence). Every frame is resealed before anything is written and the
+writes commit together, so a failed transition cannot leave a scope's history split across
+two keys.
+
 ## 5. Cross-device reconciliation (pulled bodies → the CRDT)
 
 The collaborative editor renders each document from a per-device CRDT — the Y.Doc rebuilt

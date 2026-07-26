@@ -95,6 +95,14 @@ tombstones prevent deleted entities resurrecting from stale updates. Dormant rea
 member groundwork inside the Dexie adapter does **not** enable sharing: no invitation,
 role provisioning or cross-user key delivery exists.
 
+Every synced write is journalled at one chokepoint: a database middleware emits the
+write's encrypted frame in the same transaction as the write itself, so a mutation and
+its replicated operation cannot come apart, and each touched row is its own logical
+mutation (a reorder that moves three documents emits three operations, not one). While
+the device holds no content key nothing is journalled; setting up or unlocking
+encryption re-seals what was written keyless and backfills its operations at the same
+time.
+
 **Local account.** The `Meta` table holds singleton app state keyed by string. Among its keys is the on-device **account profile** (`profile`): a stable `authorId` (the attribution key that edits and presence attach to) plus the user-editable `displayName` and `presenceHue`. It is created with sensible defaults on first read and repaired in place if a stored value is invalid; it never leaves the browser (§4.9). A per-tab id lives separately in `sessionStorage`, not in Dexie.
 
 ---

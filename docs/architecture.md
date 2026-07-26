@@ -281,6 +281,18 @@ src/lib/cloud/                  the Dexie Cloud adapter (realms, members, escrow
   in the same transaction as materialising it, so a frame arriving through two
   providers applies once; conflicts converge by hybrid logical time then device id;
   deletes tombstone (`syncTombstones`) and stale puts cannot resurrect.
+- **One outbound chokepoint.** Framing is a DBCore middleware
+  (`operationJournalMiddleware.ts`, level 20 — above row encryption at level 10), so
+  every synced-content write emits its frame in the same transaction as the domain
+  mutation and no call site can forget to. Framing completes *before* the mutation is
+  delegated downward: Dexie's transaction lives in its own promise zone and its
+  `waitFor` keep-alive only spins for the outermost wait, so crypto after a nested
+  seal would both lose the zone and outlive the keep-alive. Materialisation, keyless
+  writes (backfilled by the unlock re-seal), addon-internal transactions and
+  `Table.clear()` are deliberately not journalled.
+- **Scope binds through the adapter, not the row.** A provider realm is bound to the
+  scope's frames plus a `syncProviderBindings` record; changing an operation's scope
+  re-encrypts it (`rescopeFrames.ts`), because the scope is part of the frame's AAD.
 - **Domain vs adapter metadata.** Domain rows carry only provider-neutral metadata
   (`accessScopeId`, `createdBy`, `updatedBy`, `mutationId`, `logicalUpdatedAt`);
   `realmId`/`owner` exist only on the adapter's persisted row type
