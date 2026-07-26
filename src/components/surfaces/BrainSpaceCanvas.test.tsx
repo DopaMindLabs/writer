@@ -123,6 +123,12 @@ describe('BrainSpaceCanvas', () => {
         expect(await db.notes.count()).toBe(0);
       });
       await user.click(button);
+      // Wait for the write to land before waiting on the render: creating a
+      // note resolves the current principal and journals an encrypted
+      // operation frame, so under a fully parallel suite run the write itself
+      // can take longer than a render wait should have to budget for. Once the
+      // row exists, the render is only a live-query tick away.
+      await waitForStoredNote();
       await waitForNoteRendered();
       expect(await db.notes.count()).toBe(1);
     });
