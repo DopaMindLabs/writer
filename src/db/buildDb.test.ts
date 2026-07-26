@@ -15,11 +15,20 @@ const CLOUD_URL = 'https://spike.dexie.cloud';
 const UNSYNCED = [
   'settings', 'backups', 'syncs', 'syncConfigs',
   'docInspectorConfigs', 'meta', 'docUpdates',
+  'syncInbox', 'syncTombstones', 'syncProviderBindings',
 ];
 
-/** Primary-key path a STORES spec declares, stripped of Dexie modifiers. */
-const primKeyPath = (spec: string): string =>
-  spec.split(',')[0].trim().replace(/^\+\+/, '').replace(/^&/, '');
+/**
+ * Primary-key path a STORES spec declares, stripped of Dexie modifiers. A
+ * compound key (`[a+b]`) surfaces from Dexie as an array key path.
+ */
+const primKeyPath = (spec: string): string | string[] => {
+  const raw = spec.split(',')[0].trim().replace(/^\+\+/, '').replace(/^&/, '');
+  if (raw.startsWith('[') && raw.endsWith(']')) {
+    return raw.slice(1, -1).split('+').map((part) => part.trim());
+  }
+  return raw;
+};
 
 const enableCloud = (): void => {
   vi.stubEnv('VITE_DEXIE_CLOUD_URL', CLOUD_URL);
@@ -39,16 +48,16 @@ describe('buildDb', () => {
     db.close();
   });
 
-  it('applies the STORES schema table-for-table at version 1', async () => {
+  it('applies the STORES schema table-for-table at the current version', async () => {
     const db = buildDb('build-db-schema-test');
     await db.open();
 
-    expect(db.verno).toBe(1);
+    expect(db.verno).toBe(2);
     expect(db.tables.map((t) => t.name).sort()).toEqual(
       Object.keys(STORES).sort(),
     );
     for (const table of db.tables) {
-      expect(table.schema.primKey.keyPath).toBe(primKeyPath(STORES[table.name]));
+      expect(table.schema.primKey.keyPath).toEqual(primKeyPath(STORES[table.name]));
     }
 
     await db.delete();
@@ -193,8 +202,8 @@ describe('buildDb — cloud activation gates', () => {
 
     const names = cloudDb.tables.map((t) => t.name);
     expect(names).toEqual(expect.arrayContaining(['realms', 'members', 'roles']));
-    // Injected, not declared: the app's own schema stays at version 1.
-    expect(cloudDb.verno).toBe(1);
+    // Injected, not declared: the app's own schema stays at its own version.
+    expect(cloudDb.verno).toBe(2);
 
     await cloudDb.delete();
   });

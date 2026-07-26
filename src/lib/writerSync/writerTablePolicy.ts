@@ -97,6 +97,20 @@ export const WRITER_TABLE_POLICIES: readonly WriterTablePolicy[] = [
   providerControl('cloudDevices', 'plaintext-control'),
   providerControl('realms', 'plaintext-control'),
   providerControl('members', 'plaintext-control'),
+  // The operation protocol. `syncOperations` is the provider-neutral replicated
+  // store: append-only frames whose payloads are already encrypted, so row
+  // encryption must not touch them. Inbox, tombstones and provider bindings are
+  // receiver-local state and never leave the device.
+  {
+    table: 'syncOperations',
+    replication: 'synced-content',
+    encryption: 'already-wrapped',
+    scope: 'space',
+    operationJournal: false,
+  },
+  localOnly('syncInbox'),
+  localOnly('syncTombstones'),
+  localOnly('syncProviderBindings'),
 ];
 
 const byTable = new Map(WRITER_TABLE_POLICIES.map((policy) => [policy.table, policy]));
@@ -123,8 +137,13 @@ export const journalledTables = (): string[] =>
     (policy) => policy.table,
   );
 
-/** Synced content tables resolving to the given scope kind. */
+/**
+ * Row-envelope content tables resolving to the given scope kind — the set a
+ * realm restamp fans out over. Deliberately excludes `syncOperations`: frames
+ * are scope-bound but already wrapped, and their provider binding is a
+ * `SyncProviderBinding`, never a per-row restamp.
+ */
 export const scopeGroup = (scope: 'space' | 'document'): string[] =>
   WRITER_TABLE_POLICIES.filter(
-    (policy) => policy.replication === 'synced-content' && policy.scope === scope,
+    (policy) => policy.encryption === 'row-envelope' && policy.scope === scope,
   ).map((policy) => policy.table);

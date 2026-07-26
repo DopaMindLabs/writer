@@ -6,8 +6,8 @@ import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
 import { sampleMetadata } from '@/test/fixtures';
 
 describe('LoremDB schema', () => {
-  it('declares exactly version 1', () => {
-    expect(db.verno).toBe(1);
+  it('declares version 2 — the operation-protocol schema', () => {
+    expect(db.verno).toBe(2);
   });
 
   it('exposes every table, including docUpdates', async () => {
@@ -30,6 +30,10 @@ describe('LoremDB schema', () => {
         'sections',
         'settings',
         'spaces',
+        'syncInbox',
+        'syncOperations',
+        'syncProviderBindings',
+        'syncTombstones',
         'syncs',
         'syncConfigs',
       ].sort(),

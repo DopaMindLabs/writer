@@ -96,9 +96,19 @@ describe('derived sets match the established behaviour', () => {
         'meta',
         'settings',
         'syncConfigs',
+        'syncInbox',
+        'syncProviderBindings',
+        'syncTombstones',
         'syncs',
       ].sort(),
     );
+  });
+
+  it('replicates the operation journal as already-wrapped frames', () => {
+    const policy = policyFor('syncOperations');
+    expect(policy?.replication).toBe('synced-content');
+    expect(policy?.encryption).toBe('already-wrapped');
+    expect(policy?.operationJournal).toBe(false);
   });
 
   it('groups synced content by scope for realm fan-out', () => {
