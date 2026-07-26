@@ -1,0 +1,210 @@
+import { describe, expect, it, vi } from 'vitest';
+import { PairingError, PairingErrorCode } from '../../pairing/pairing.types';
+import {
+  LOCAL_ONLY_ICE_CONFIGURATION,
+  createPeerSession,
+  type PeerConnectionLike,
+  type SessionDescriptionLike,
+} from './peerSession';
+import type { DataChannelLike } from './webRtcTransport';
+
+/**
+ * A scriptable stand-in for `RTCPeerConnection`. These tests prove the
+ * orchestration — that gathering completes before a description is handed out,
+ * that a stall is a typed failure, that teardown is explicit. They prove nothing
+ * about real ICE; that is slice 2A.9.
+ */
+const fakeConnection = (options: { gatheringCompletesImmediately?: boolean } = {}) => {
+  const listeners = new Map<string, (() => void)[]>();
+  const channels: string[] = [];
+  const connection: PeerConnectionLike & {
+    channels: string[];
+    finishGathering: () => void;
+    remote: SessionDescriptionLike | null;
+    closed: boolean;
+    channelOrdered: boolean | undefined;
+  } = {
+    iceGatheringState: options.gatheringCompletesImmediately === true ? 'complete' : 'gathering',
+    connectionState: 'new',
+    localDescription: null,
+    remote: null,
+    closed: false,
+    channels,
+    channelOrdered: undefined,
+    createDataChannel: (label, opts) => {
+      channels.push(label);
+      connection.channelOrdered = opts?.ordered;
+      return { close: vi.fn() } as unknown as DataChannelLike;
+    },
+    createOffer: () => Promise.resolve({ type: 'offer', sdp: 'v=0\r\nOFFER\r\n' }),
+    createAnswer: () => Promise.resolve({ type: 'answer', sdp: 'v=0\r\nANSWER\r\n' }),
+    setLocalDescription: (description) => {
+      connection.localDescription = description;
+      return Promise.resolve();
+    },
+    setRemoteDescription: (description) => {
+      connection.remote = description;
+      return Promise.resolve();
+    },
+    close: () => {
+      connection.closed = true;
+    },
+    addEventListener: (type, listener) => {
+      listeners.set(type, [...(listeners.get(type) ?? []), listener]);
+    },
+    removeEventListener: (type, listener) => {
+      listeners.set(type, (listeners.get(type) ?? []).filter((l) => l !== listener));
+    },
+    finishGathering: () => {
+      (connection as { iceGatheringState: string }).iceGatheringState = 'complete';
+      for (const listener of listeners.get('icegatheringstatechange') ?? []) listener();
+    },
+  };
+  return Object.assign(connection, {
+    listenerCount: (type: string) => (listeners.get(type) ?? []).length,
+  });
+};
+
+/** A timer the test fires by hand, so nothing waits on the wall clock. */
+const manualTimers = () => {
+  const fired: (() => void)[] = [];
+  return {
+    setTimer: (callback: () => void) => {
+      fired.push(callback);
+      return fired.length - 1;
+    },
+    clearTimer: () => undefined,
+    count: () => fired.length,
+    fireAll: () => {
+      for (const callback of [...fired]) callback();
+    },
+  };
+};
+
+/**
+ * Wait until the session has actually reached its gathering wait. `createOffer`
+ * awaits two promises before it registers anything, so firing a timer or an
+ * event straight after calling it lands on nothing and the test hangs.
+ */
+const untilWaiting = async (registered: () => boolean): Promise<void> => {
+  await vi.waitFor(() => {
+    expect(registered()).toBe(true);
+  });
+};
+
+describe('local-only configuration', () => {
+  it('contacts no STUN or TURN server', () => {
+    // Stage 2A must never silently reach a third party for connectivity.
+    expect(LOCAL_ONLY_ICE_CONFIGURATION.iceServers).toEqual([]);
+  });
+});
+
+describe('createOffer', () => {
+  it('resolves the complete description only after gathering finishes', async () => {
+    const connection = fakeConnection();
+    const timers = manualTimers();
+    const session = createPeerSession({ createConnection: () => connection, ...timers });
+
+    const pending = session.createOffer();
+    let settled = false;
+    void pending.then(() => (settled = true));
+    await untilWaiting(() => connection.listenerCount('icegatheringstatechange') > 0);
+    // Still gathering: a partial description must not travel in a QR payload.
+    expect(settled).toBe(false);
+
+    connection.finishGathering();
+    expect(await pending).toBe('v=0\r\nOFFER\r\n');
+  });
+
+  it('resolves immediately when gathering is already complete', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection, ...manualTimers() });
+    expect(await session.createOffer()).toBe('v=0\r\nOFFER\r\n');
+  });
+
+  it('opens an ordered, reliable control channel', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection, ...manualTimers() });
+    await session.createOffer();
+    expect(connection.channels).toEqual(['writer-sync-control']);
+    expect(connection.channelOrdered).toBe(true);
+    expect(session.channel()).not.toBeNull();
+  });
+
+  it('reports a stall as a typed local-connectivity failure', async () => {
+    // Not an infinite "connecting" state.
+    const connection = fakeConnection();
+    const timers = manualTimers();
+    const session = createPeerSession({ createConnection: () => connection, ...timers });
+    const pending = session.createOffer();
+    await untilWaiting(() => timers.count() > 0);
+    timers.fireAll();
+    await expect(pending).rejects.toBeInstanceOf(PairingError);
+    await pending.catch((error: unknown) => {
+      expect((error as PairingError).code).toBe(PairingErrorCode.LocalConnectivity);
+    });
+  });
+});
+
+describe('acceptOffer', () => {
+  it('applies the peer description and answers with a gathered description', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection, ...manualTimers() });
+    expect(await session.acceptOffer('v=0\r\nTHEIRS\r\n')).toBe('v=0\r\nANSWER\r\n');
+    expect(connection.remote).toEqual({ type: 'offer', sdp: 'v=0\r\nTHEIRS\r\n' });
+  });
+
+  it('does not open a second control channel — the initiator owns it', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection, ...manualTimers() });
+    await session.acceptOffer('v=0\r\nTHEIRS\r\n');
+    expect(connection.channels).toEqual([]);
+  });
+});
+
+describe('acceptAnswer', () => {
+  it('applies the peer answer', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection, ...manualTimers() });
+    await session.acceptAnswer('v=0\r\nTHEIR-ANSWER\r\n');
+    expect(connection.remote).toEqual({ type: 'answer', sdp: 'v=0\r\nTHEIR-ANSWER\r\n' });
+  });
+});
+
+describe('close', () => {
+  it('tears down the connection explicitly', () => {
+    const connection = fakeConnection();
+    const session = createPeerSession({ createConnection: () => connection, ...manualTimers() });
+    session.close();
+    expect(connection.closed).toBe(true);
+  });
+
+  it('is idempotent', () => {
+    const connection = fakeConnection();
+    const session = createPeerSession({ createConnection: () => connection, ...manualTimers() });
+    session.close();
+    expect(() => session.close()).not.toThrow();
+  });
+
+  it('refuses further work once closed', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection, ...manualTimers() });
+    session.close();
+    await expect(session.createOffer()).rejects.toBeInstanceOf(PairingError);
+    await expect(session.acceptOffer('v=0\r\n')).rejects.toBeInstanceOf(PairingError);
+    await expect(session.acceptAnswer('v=0\r\n')).rejects.toBeInstanceOf(PairingError);
+  });
+
+  it('creates a connection per session rather than sharing a global one', () => {
+    const created: PeerConnectionLike[] = [];
+    const factory = () => {
+      const connection = fakeConnection();
+      created.push(connection);
+      return connection;
+    };
+    createPeerSession({ createConnection: factory, ...manualTimers() });
+    createPeerSession({ createConnection: factory, ...manualTimers() });
+    expect(created).toHaveLength(2);
+    expect(created[0]).not.toBe(created[1]);
+  });
+});
