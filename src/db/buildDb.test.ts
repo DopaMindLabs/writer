@@ -56,11 +56,11 @@ describe('buildDb', () => {
     db.close();
   });
 
-  it('applies the STORES schema table-for-table at the current version', async () => {
+  it('applies the STORES schema table-for-table at the single declared version', async () => {
     const db = buildDb('build-db-schema-test');
     await db.open();
 
-    expect(db.verno).toBe(2);
+    expect(db.verno).toBe(1);
     expect(db.tables.map((t) => t.name).sort()).toEqual(
       Object.keys(STORES).sort(),
     );
@@ -213,7 +213,7 @@ describe('buildDb — cloud activation gates', () => {
     const names = cloudDb.tables.map((t) => t.name);
     expect(names).toEqual(expect.arrayContaining(['realms', 'members', 'roles']));
     // Injected, not declared: the app's own schema stays at its own version.
-    expect(cloudDb.verno).toBe(2);
+    expect(cloudDb.verno).toBe(1);
 
     await cloudDb.delete();
   });

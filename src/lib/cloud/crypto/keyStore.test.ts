@@ -129,8 +129,7 @@ describe('device keyStore account binding', () => {
     const ring = await deriveKeyRing(generateMasterSecret(), 1);
     // Write a malformed row directly (no accountId) into the keystore database.
     const raw = new Dexie('lipsum-cloud-keystore');
-    raw.version(1).stores({ rings: 'id' });
-    raw.version(2).stores({ rings: 'id', pendingEscrows: 'id' });
+    raw.version(1).stores({ rings: 'id', pendingEscrows: 'id' });
     await raw.table('rings').put({ id: 'device', ring });
     raw.close();
 
