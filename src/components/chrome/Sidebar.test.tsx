@@ -1140,6 +1140,15 @@ describe('Sidebar', () => {
       // snapshot deterministically captures the populated state.
       await screen.findByText('Test Space');
       await screen.findByText('Sample Doc');
+      // dnd-kit puts an inline `transition` on whichever sortable it has
+      // measured, and which one that is depends on when its layout effects
+      // settle — so the attribute lands on a different element between runs and
+      // fails the snapshot intermittently under load. It describes drag
+      // animation rather than anything the sidebar renders, so normalise it out
+      // instead of letting timing decide whether the suite passes.
+      for (const sortable of container.querySelectorAll('[data-testid$="-sortable"]')) {
+        sortable.removeAttribute('style');
+      }
       expect(container).toMatchSnapshot();
     });
   });
