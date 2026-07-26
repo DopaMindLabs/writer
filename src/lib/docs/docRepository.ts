@@ -5,11 +5,11 @@ import { countWords } from '@/editor/wordCount';
 import { newId } from '@/lib/ids';
 import { collabStore } from '@/lib/collab/collabStore';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
+import type { PrincipalId } from '@/lib/syncProviders/ids';
 import {
   currentPrincipal,
   newEntityMetadata,
   touchedMetadataFields,
-  type TouchedMetadataFields,
 } from '@/lib/writerSync/writerEntityMetadata';
 import { writeDocBodyBaseline } from './docBodyBaseline';
 import { EMPTY_LEXICAL_JSON } from './emptyBody';
@@ -169,16 +169,20 @@ const sortByOrder = (docs: Doc[]): Doc[] =>
 
 /**
  * Write dense 0..n-1 `order` to a list already in its intended sequence. Rows
- * whose order already matches are left untouched, so a reorder mints mutation
- * metadata only for rows that actually change.
+ * whose order already matches are left untouched, and each row that changes
+ * mints its own mutation metadata: the operation journal keys frames by
+ * mutation id, so two rows must never share one.
  */
 const writeDenseOrder = async (
   docs: Doc[],
-  touched: TouchedMetadataFields,
+  principal: PrincipalId,
 ): Promise<void> => {
   for (let i = 0; i < docs.length; i += 1) {
     if (docs[i].order === i) continue;
-    await db.docs.update(docs[i].id, { order: i, ...touched });
+    await db.docs.update(docs[i].id, {
+      order: i,
+      ...touchedMetadataFields(principal),
+    });
   }
 };
 
@@ -209,7 +213,7 @@ export interface MoveDocInput {
 export const moveDoc = async (input: MoveDocInput): Promise<void> => {
   invariant(input.docId, 'moveDoc: docId is required');
   invariant(input.toSectionId, 'moveDoc: toSectionId is required');
-  const touched = touchedMetadataFields(await currentPrincipal());
+  const principal = await currentPrincipal();
   await db.transaction('rw', db.docs, async () => {
     const doc = await db.docs.get(input.docId);
     if (!doc) return;
@@ -218,13 +222,16 @@ export const moveDoc = async (input: MoveDocInput): Promise<void> => {
     const index = Math.max(0, Math.min(input.toIndex, target.length));
     target.splice(index, 0, doc);
     if (fromSectionId !== input.toSectionId) {
-      await db.docs.update(input.docId, { sectionId: input.toSectionId, ...touched });
+      await db.docs.update(input.docId, {
+        sectionId: input.toSectionId,
+        ...touchedMetadataFields(principal),
+      });
     }
-    await writeDenseOrder(target, touched);
+    await writeDenseOrder(target, principal);
     if (fromSectionId !== input.toSectionId) {
       await writeDenseOrder(
         await sectionDocsExcept(fromSectionId, input.docId),
-        touched,
+        principal,
       );
     }
   });

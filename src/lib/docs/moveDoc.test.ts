@@ -53,6 +53,19 @@ describe('moveDoc', () => {
     expect(await orderOf('c')).toBe(1);
   });
 
+  it('mints a distinct mutation id for every row a move touches', async () => {
+    await moveDoc({ docId: 'c', toSectionId: 'sec1', toIndex: 0 });
+    // Every reordered row is its own logical mutation: the operation journal
+    // keys frames by mutation id, so a shared id would collapse the moves of
+    // different documents into one operation.
+    const touched = (await db.docs.toArray()).filter(
+      (doc) => doc.mutationId !== sampleMetadata().mutationId,
+    );
+    expect(touched.length).toBeGreaterThan(1);
+    const ids = touched.map((doc) => doc.mutationId);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
   it('is a no-op for an unknown document', async () => {
     await moveDoc({ docId: 'missing', toSectionId: 'sec1', toIndex: 0 });
     expect(await orderOf('a')).toBe(0);

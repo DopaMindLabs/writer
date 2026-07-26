@@ -96,6 +96,24 @@ describe('deleteDocCascade', () => {
   it('rejects an empty docId', async () => {
     await expect(deleteDocCascade('')).rejects.toThrow();
   });
+
+  it('mints a distinct mutation id for every note it unlinks', async () => {
+    // Two independent notes link to the same doc; each unlink is its own
+    // logical mutation, so their mutation ids must differ (the operation
+    // journal keys frames by mutation id).
+    await db.notes.put({
+      ...sampleNote,
+      id: 'note-d1-b',
+      linkedDocId: 'd1',
+    });
+    await deleteDocCascade('d1');
+
+    const first = await db.notes.get('note-d1');
+    const second = await db.notes.get('note-d1-b');
+    expect(first?.linkedDocId).toBeUndefined();
+    expect(second?.linkedDocId).toBeUndefined();
+    expect(first?.mutationId).not.toBe(second?.mutationId);
+  });
 });
 
 describe('deleteDocCascade under cloud encryption', () => {

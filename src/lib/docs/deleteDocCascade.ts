@@ -24,7 +24,7 @@ export const deleteDocCascade = async (
   database: LoremDB = db,
 ): Promise<void> => {
   invariant(docId, 'deleteDocCascade: docId is required');
-  const touched = touchedMetadataFields(await currentPrincipal());
+  const principal = await currentPrincipal();
   await database.transaction(
     'rw',
     [
@@ -44,9 +44,15 @@ export const deleteDocCascade = async (
       const linked = (await database.notes.toArray()).filter(
         (note) => note.linkedDocId === docId,
       );
+      // Each unlink is its own logical mutation — the operation journal keys
+      // frames by mutation id, so every touched note mints a fresh one.
       await Promise.all(
         linked.map((note) =>
-          database.notes.put({ ...note, linkedDocId: undefined, ...touched }),
+          database.notes.put({
+            ...note,
+            linkedDocId: undefined,
+            ...touchedMetadataFields(principal),
+          }),
         ),
       );
       await database.docs.delete(docId);
