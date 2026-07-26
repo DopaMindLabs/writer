@@ -2,6 +2,7 @@ import userEvent from '@testing-library/user-event';
 import { fireEvent } from '@testing-library/react';
 import { act, renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
+import type { Note } from '@/db/schema';
 import {
   seedBrainSpaceCanvas,
   sampleMetadata,
@@ -34,7 +35,7 @@ const waitForNoteRendered = async (): Promise<void> => {
 };
 
 /** Wait until the clicked note lands in Dexie and return the stored rows. */
-const waitForStoredNote = async (): Promise<Awaited<ReturnType<typeof db.notes.toArray>>> => {
+const waitForStoredNote = async (): Promise<Note[]> => {
   await act(async () => {
     await waitFor(
       async () => {
