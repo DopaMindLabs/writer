@@ -7,7 +7,7 @@ vi.mock('@/lib/cloud/cloudClient', () => ({
   startCloudSession: vi.fn().mockResolvedValue(() => undefined),
   requestCloudSync: vi.fn(),
   cloudSyncState: vi.fn(),
-  cloudSyncComplete: vi.fn(),
+  cloudSyncComplete: vi.fn(() => ({ subscribe: () => ({ unsubscribe: () => undefined }) })),
   cloudEscrowPresence: vi.fn(),
   createCloudEncryption: vi.fn(),
   unlockCloudEncryption: vi.fn(),

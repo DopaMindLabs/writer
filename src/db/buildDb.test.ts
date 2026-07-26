@@ -11,11 +11,18 @@ import {
 import { CIPHER_FIELD } from '@/lib/cloud/crypto/tableRules';
 
 const CLOUD_URL = 'https://spike.dexie.cloud';
-/** Mirrors buildDb's local-only list; the escrow table (`cloudCrypto`) syncs. */
+/**
+ * Mirrors buildDb's unsynced list. Since the frame cutover the addon replicates
+ * only the operation journal and control tables (plus the `cloudCrypto`
+ * escrow): local-only state AND the materialised content tables stay on the
+ * device — Writer owns its projections; frames carry the content.
+ */
 const UNSYNCED = [
   'settings', 'backups', 'syncs', 'syncConfigs',
   'docInspectorConfigs', 'meta', 'docUpdates',
   'syncInbox', 'syncTombstones', 'syncProviderBindings',
+  'spaces', 'sections', 'docs', 'notes', 'noteAttachments',
+  'citations', 'connections', 'palettes', 'annotations', 'revisions',
 ];
 
 /**

@@ -9,18 +9,25 @@ import {
 import { cloudDatabaseUrl, hasCloudEnv } from '@/lib/cloud/env';
 import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
 import { deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
-import { localOnlyTables } from '@/lib/writerSync/writerTablePolicy';
+import {
+  localOnlyTables,
+  rowEnvelopeTables,
+} from '@/lib/writerSync/writerTablePolicy';
 import { LoremDB } from './LoremDB';
 
 /**
- * Local-only tables that must never leave the device: preferences, backups, sync
- * bookkeeping and the per-doc CRDT update log. Derived from the authoritative
- * table policy so replication can never drift from the classification. Everything
- * else is content that syncs (field-encrypted) plus `cloudCrypto` (the
- * passphrase-wrapped escrow, which must sync so a second device can recover the
- * key).
+ * Tables the Dexie Cloud addon must not replicate, derived from the
+ * authoritative table policy so replication can never drift from the
+ * classification.
+ *
+ * Two groups compose it: the local-only tables (preferences, backups, sync
+ * bookkeeping, the CRDT update log and the operation-protocol receiver state),
+ * and — since the frame cutover — the materialised content tables. Writer owns
+ * its materialised rows as local projections; what replicates is the
+ * `syncOperations` journal of immutable encrypted frames, plus `cloudCrypto`
+ * (the passphrase-wrapped escrow) and the addon's own control tables.
  */
-const UNSYNCED: readonly string[] = localOnlyTables();
+const UNSYNCED: readonly string[] = [...localOnlyTables(), ...rowEnvelopeTables()];
 
 /**
  * Constructs the app database. It builds a Dexie Cloud instance with the

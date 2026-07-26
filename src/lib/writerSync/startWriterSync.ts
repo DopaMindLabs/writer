@@ -1,11 +1,17 @@
 import type { SyncCoordinator } from '@/lib/syncProviders/coordinator';
+import { db } from '@/db/db';
 import { createWriterSyncCoordinator } from './createWriterSyncCoordinator';
+import { startFrameIngestion } from './materialization/frameIngestion';
 
 /**
  * Start durable, session-level sync for every provider that offers it, and return
  * a single teardown for all of them. Providers with only a realtime capability (a
  * peer transport) are not started here — those transports are per-scope /
  * per-document, created on demand, not at boot.
+ *
+ * Frame ingestion starts alongside the application's default durable provider:
+ * frames it replicates into the journal are materialised through the shared
+ * inbox path after every settled round.
  *
  * Providers start in sequence so a failure can be unwound deterministically: if
  * one fails to start, every provider already started is torn down before the
@@ -22,6 +28,10 @@ export const startWriterSync = async (
   try {
     for (const provider of coordinator.providersWith('durableSync')) {
       stops.push(await provider.durableSync.start());
+    }
+    const durable = coordinator.defaultProvider()?.durableSync;
+    if (durable) {
+      stops.push(startFrameIngestion({ db, syncComplete: durable.syncComplete }));
     }
   } catch (error) {
     teardown();
