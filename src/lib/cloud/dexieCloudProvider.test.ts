@@ -72,12 +72,12 @@ describe('createDexieCloudProvider', () => {
     expect(hasCapability(provider, 'keyDelivery')).toBe(true);
   });
 
-  it('declares no capability that has no caller yet', () => {
+  it('declares access control, but no realtime or discovery', () => {
     const provider = createDexieCloudProvider();
 
-    // Access control arrives with the realm tables; the addon has no realtime
-    // transport or peer discovery of its own.
-    expect(hasCapability(provider, 'accessControl')).toBe(false);
+    // Realm-backed scope and membership control lives behind the adapter; the
+    // addon has no realtime transport or peer discovery of its own.
+    expect(hasCapability(provider, 'accessControl')).toBe(true);
     expect(hasCapability(provider, 'realtime')).toBe(false);
     expect(hasCapability(provider, 'discovery')).toBe(false);
   });
@@ -217,5 +217,46 @@ describe('keyDelivery', () => {
     });
 
     expect(seen).toEqual([expected]);
+  });
+});
+
+describe('accessControl binding resolution', () => {
+  it('resolves nothing for an unknown space', async () => {
+    const provider = createDexieCloudProvider();
+    await expect(
+      provider.accessControl?.resolveBinding('missing-space'),
+    ).resolves.toBeUndefined();
+  });
+
+  it('resolves nothing for an unshared (private-realm) space', async () => {
+    const { db } = await import('@/db/db');
+    const { sampleSpace } = await import('@/test/fixtures');
+    await db.spaces.put({ ...sampleSpace, id: 'private-space' });
+    const provider = createDexieCloudProvider();
+
+    await expect(
+      provider.accessControl?.resolveBinding('private-space'),
+    ).resolves.toBeUndefined();
+  });
+
+  it('maps a shared space onto its realm through the binding — never the domain row', async () => {
+    const { db } = await import('@/db/db');
+    const { sampleSpace } = await import('@/test/fixtures');
+    // The persisted adapter row carries the realm; the domain type does not.
+    await db.spaces.put({
+      ...sampleSpace,
+      id: 'shared-space',
+      realmId: 'rlm-shared',
+    } as typeof sampleSpace);
+    const provider = createDexieCloudProvider();
+
+    const binding = await provider.accessControl?.resolveBinding('shared-space');
+
+    expect(binding).toEqual({
+      scopeId: 'shared-space',
+      providerInstanceId: 'dexie-cloud',
+      externalScopeId: 'rlm-shared',
+      enabled: true,
+    });
   });
 });

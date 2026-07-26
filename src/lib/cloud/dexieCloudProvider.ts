@@ -1,13 +1,25 @@
 import type { SyncState } from 'dexie-cloud-addon';
 import { assertNever } from '@/lib/invariant';
+import { db as appDb } from '@/db/db';
+import type { Space } from '@/db/schema';
 import type {
+  AccessControlAdapter,
   DurableSyncCapability,
   KeyDeliveryAdapter,
   SyncProvider,
+  SyncProviderBinding,
   SyncStatus,
 } from '@/lib/syncProviders/types';
 import { KeyEscrowPresence, SyncPhase } from '@/lib/syncProviders/types';
 import type { EscrowPresence } from './cloudClient';
+import type { DexieRow } from './dexieRow';
+import { createSpaceRealm, dropSpaceRealm, isShared, privateRealmOf } from './spaceRealm';
+import {
+  addSpaceMember,
+  listSpaceMembers,
+  removeSpaceMember,
+  setSpaceMemberRole,
+} from './realmMembers';
 import {
   cloudEscrowPresence,
   cloudSyncComplete,
@@ -104,9 +116,45 @@ const keyDelivery = (): KeyDeliveryAdapter => ({
   },
 });
 
+/**
+ * Membership and scope control, delegated to the adapter-owned realm services.
+ * Every Dexie-specific concept stays here: `realmId`, member rows and the
+ * private-realm rule never reach a caller — a scope maps onto its realm through
+ * the returned {@link SyncProviderBinding} only. Role provisioning and
+ * cross-user key delivery remain absent (dormant groundwork, not sharing).
+ */
+const accessControl = (): AccessControlAdapter => ({
+  createScope: async (scopeId) => {
+    await createSpaceRealm(scopeId);
+  },
+  dropScope: (scopeId) => dropSpaceRealm(scopeId),
+  listMembers: (scopeId) => listSpaceMembers(scopeId),
+  addMember: async ({ scopeId, email, role }) => {
+    await addSpaceMember({ spaceId: scopeId, email, role });
+  },
+  removeMember: (scopeId, memberId) => removeSpaceMember(scopeId, memberId),
+  setMemberRole: ({ scopeId, memberId, role }) =>
+    setSpaceMemberRole({ spaceId: scopeId, memberId, role }),
+  resolveBinding: async (scopeId): Promise<SyncProviderBinding | undefined> => {
+    const space: DexieRow<Space> | undefined = await appDb.spaces.get(scopeId);
+    if (!space) return undefined;
+    const { realmId } = space;
+    if (realmId === undefined || !isShared(realmId, privateRealmOf(appDb))) {
+      return undefined;
+    }
+    return {
+      scopeId,
+      providerInstanceId: DEXIE_CLOUD_PROVIDER_ID,
+      externalScopeId: realmId,
+      enabled: true,
+    };
+  },
+});
+
 export const createDexieCloudProvider = (): SyncProvider => ({
   id: DEXIE_CLOUD_PROVIDER_ID,
   kind: DEXIE_CLOUD_PROVIDER_KIND,
   durableSync: durableSync(),
   keyDelivery: keyDelivery(),
+  accessControl: accessControl(),
 });
