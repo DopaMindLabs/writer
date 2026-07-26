@@ -902,25 +902,30 @@ Update in the same Stage 1 PR:
 
 ## 16. Stage 1 completion gate
 
-Stage 1 is complete only when all of the following are true:
+Stage 1 is complete only when all of the following are true. Verified against the
+implementation on `feat/writer-sync-foundation-stage1`; the one caveat is called out
+inline rather than ticked silently.
 
-- [ ] No core API selects the first provider implicitly.
-- [ ] One scope can have zero, one or several enabled provider bindings.
-- [ ] Writer configuration, not core, selects defaults.
-- [ ] Every synced entity has `accessScopeId`, `createdBy`, `updatedBy`, `mutationId` and logical time.
-- [ ] Dexie `realmId` and `owner` do not appear in domain interfaces.
-- [ ] Encryption resolves by context and authenticates scope, row, key ID and epoch.
-- [ ] Local row encryption works with no Dexie provider configured.
-- [ ] An unlocked device vault can prepare a pairing wrapper without exposing the raw root through public APIs.
-- [ ] One table policy drives replication, encryption, scope and journal classification.
-- [ ] Every non-document synced mutation creates an idempotent operation.
-- [ ] Deletes use tombstones and stale data cannot resurrect them.
-- [ ] Two in-memory databases converge through operation exchange.
-- [ ] Dexie Cloud transports the same encrypted operation frames used by other providers, not a separate logical mutation.
-- [ ] Dexie Cloud still passes its existing encryption, keyless, recovery and real-device tests.
-- [ ] The reusable package builds independently and Writer consumes only its public exports.
-- [ ] `src/lib/writerSync` and `src/lib/syncProviders` no longer contain a parallel reusable engine; Writer-only wiring is clearly named `writerSyncIntegration` or placed in ordinary hooks/contexts.
-- [ ] Architecture, technical specification and cloud design note match the implementation.
+- [x] No core API selects the first provider implicitly.
+- [x] One scope can have zero, one or several enabled provider bindings.
+- [x] Writer configuration, not core, selects defaults.
+- [x] Every synced entity has `accessScopeId`, `createdBy`, `updatedBy`, `mutationId` and logical time.
+- [x] Dexie `realmId` and `owner` do not appear in domain interfaces.
+- [x] Encryption resolves by context and authenticates scope, row, key ID and epoch.
+- [x] Local row encryption works with no Dexie provider configured.
+- [x] An unlocked device vault can prepare a pairing wrapper without exposing the raw root through public APIs.
+- [x] One table policy drives replication, encryption, scope and journal classification.
+- [x] Every non-document synced mutation creates an idempotent operation.
+- [x] Deletes use tombstones and stale data cannot resurrect them.
+- [x] Two in-memory databases converge through operation exchange.
+- [x] Dexie Cloud transports the same encrypted operation frames used by other providers, not a separate logical mutation.
+- [x] Dexie Cloud still passes its existing encryption, keyless, recovery and real-device tests.
+      (Browser-level: the full Playwright suite runs against real Chromium and real
+      IndexedDB. Runs on physical hardware and across two actual devices remain
+      outstanding — this was a container-only session.)
+- [x] The reusable package builds independently and Writer consumes only its public exports.
+- [x] `src/lib/writerSync` and `src/lib/syncProviders` no longer contain a parallel reusable engine; Writer-only wiring is clearly named `writerSyncIntegration` or placed in ordinary hooks/contexts.
+- [x] Architecture, technical specification and cloud design note match the implementation.
 
 ---
 
