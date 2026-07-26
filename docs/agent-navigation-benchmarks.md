@@ -200,7 +200,7 @@ middleware tests, and migration considerations.
 ```
 src/db/schema.ts                              — Doc interface: add `template` field
 src/db/stores.ts                              — STORES['docs'] index spec (no index needed for template)
-src/db/LoremDB.ts                             — confirm no version bump needed (same store spec)
+src/db/LoremDB.ts                             — confirm no typed Table property needed (no new store)
 src/lib/cloud/crypto/tableRules.ts            — verify `template` is NOT in the plaintext index list
 src/lib/cloud/crypto/tableRules.test.ts       — assert `template` is encrypted
 src/lib/cloud/crypto/middleware.ts            — no change if tableRules derives from stores.ts
@@ -227,8 +227,10 @@ src/db/buildDb.ts                             — check UNSYNCED list (template 
    it is a primary key, an indexed field, a cloud-reserved field, or the envelope itself.
    A non-indexed `template` field is automatically encrypted — no change to `tableRules.ts`
    is needed, but the test must assert it.
-2. **No version bump** is needed if the store spec (`STORES`) does not change (no new
-   index). A new non-indexed field is transparent to Dexie's schema validation.
+2. **No schema change at all** is needed: a non-indexed `template` field is transparent to
+   Dexie's schema validation, so `STORES` is untouched. (The version number is not the
+   discriminator — `LoremDB` declares a single Dexie version regardless; see
+   [AGENTS.md § "Database schema versions"](../AGENTS.md).)
 3. **`UNSYNCED` check.** If `template` is sensitive, confirm `docs` is **not** in
    `UNSYNCED` (it is not — `docs` syncs). The field will sync encrypted.
 4. **Middleware test P1.** The middleware spike must be extended: after a `db.docs.add()`
@@ -246,7 +248,7 @@ src/db/buildDb.ts                             — check UNSYNCED list (template 
 
 - Agent identifies that `tableRules.ts` derives rules from `STORES` automatically —
   no manual rule addition is needed.
-- Agent correctly notes that a non-indexed field addition does **not** require a Dexie
-  version bump.
+- Agent correctly notes that a non-indexed field addition does **not** change `STORES`,
+  and does not propose a Dexie version change (the schema declares a single version).
 - Agent identifies `middleware.test.ts` P1 as the go/no-go test that must be updated.
 - Agent reads ≤ 11 files.

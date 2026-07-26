@@ -200,7 +200,9 @@ is plaintext iff it is the primary key, an indexed field, a cloud-reserved field
 (`realmId`, `owner`), provider-neutral routing metadata (`accessScopeId`, `mutationId`,
 `logicalUpdatedAt` — a provider must route, deduplicate and order without a content
 key), or the `$lipsumCipher` envelope itself. Attribution (`createdBy`, `updatedBy`)
-is sealed content.
+is sealed content. `LoremDB` declares a **single** Dexie version and new tables are added
+to `STORES` under it — see [AGENTS.md § "Database schema versions"](../AGENTS.md) and
+[ADR 0002](./adr/0002-single-dexie-schema-version.md).
 
 **Encryption invariant:** The `createEncryptionMiddleware` middleware sits above the Dexie
 Cloud addon (`level: 10`). Writes are sealed **before** they reach the sync push queue;
@@ -221,7 +223,8 @@ Adding a table without classifying it fails `writerTablePolicy.test.ts`.
 
 **Sticky schema:** Once a device builds the cloud-enabled DB, `buildDb` keeps using it even
 if the flag is switched off (guarded by `wasCloudProvisioned()`). The Dexie Cloud addon
-raises the native IndexedDB version, so downgrading the schema would drop stores.
+raises the *native* IndexedDB version — the app's own *declared* version stays at 1 — so
+downgrading the schema would drop stores.
 
 ---
 

@@ -72,8 +72,9 @@ Output format:
 ## Spec sections to update
 - docs/technical-specification.md §<section> — <change>
 
-## DB migration needed?
-<yes/no — reason>
+## DB schema change?
+<none / non-indexed field only / `STORES` change — plus the `writerTablePolicy.ts`
+classification for any new table. Never plan a new Dexie `version(n)`.>
 
 ## Verification commands
 - npm run typecheck
@@ -88,8 +89,11 @@ Do not begin implementation until this plan is reviewed and approved.
 
 - Never plan to add legacy support without explicit user approval.
 - Never plan to weaken a lint rule, coverage floor, or type safety boundary.
-- If a schema change is needed, include the migration checklist from
+- If a schema change is needed, include the schema-change checklist from
   `change-writer-persistence` in the plan.
+- Never plan a new Dexie `version(n)`. If the change is destructive — a store dropped, a
+  primary key changed, an indexed field renamed — stop and ask the user before planning
+  it: there is no `upgrade()` machinery in this repository to carry rows across.
 
 ## Track this work as a todo list
 
