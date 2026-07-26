@@ -23,6 +23,9 @@
       "writer-sync/crypto": ["./packages/writer-sync/src/crypto/index.ts"],
       "writer-sync/operations": ["./packages/writer-sync/src/operations/index.ts"],
       "writer-sync/pairing": ["./packages/writer-sync/src/pairing/index.ts"],
+      "writer-sync/providers/webrtc": [
+        "./packages/writer-sync/src/providers/webrtc/index.ts"
+      ],
       "writer-qr/encode": ["./packages/writer-qr/src/encode/index.ts"],
       "writer-qr/scan": ["./packages/writer-qr/src/scan/index.ts"]
     },
