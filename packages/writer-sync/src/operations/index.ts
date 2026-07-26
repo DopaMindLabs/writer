@@ -15,6 +15,19 @@ export type {
 } from './operation.types';
 
 export {
+  ChunkIntegrityError,
+  MAX_ATTACHMENT_BYTES,
+  MAX_CHUNK_BYTES,
+  MAX_CHUNK_COUNT,
+  MalformedManifestError,
+  assembleChunks,
+  buildChunkManifest,
+  missingChunkIndices,
+  validateChunkManifest,
+  verifyChunk,
+} from './attachmentChunking';
+
+export {
   EMPTY_PAYLOAD_HASH,
   FramePayloadMismatchError,
   MalformedFrameError,
