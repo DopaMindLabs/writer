@@ -42,6 +42,14 @@ export default defineConfig({
             if (path.includes('src/editor/')) return false;
             if (path.includes('src/test/')) return false;
             if (path.includes('src/tours/')) return false;
+            // The reusable sync engine is a separate workspace with its own
+            // suites (including a fixture consumer and the boundary gates), and
+            // most of it cannot be driven from a browser at all: pairing, the
+            // inbound codec and materialiser need a second device, and the
+            // multi-provider branches need more than the one configured
+            // provider. It is measured by `npm run test:run`, not from here —
+            // the same treatment `src/editor/` and `src/tours/` already get.
+            if (path.includes('packages/writer-sync/')) return false;
             if (path.includes('.test.')) return false;
             if (path.includes('__snapshots__')) return false;
             return true;
