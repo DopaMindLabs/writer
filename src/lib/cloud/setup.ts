@@ -23,6 +23,8 @@ import {
   clearPendingEscrow,
 } from './crypto/keyStore';
 import { keyMismatchState } from './crypto/keyMismatch';
+import { deviceKeyVault } from './crypto/deviceKeyVault';
+import { currentPrincipal } from '@/lib/writerSync/writerEntityMetadata';
 
 /** The initial key epoch (the escrow row id comes from `./crypto/keys`). */
 const EPOCH = 1;
@@ -127,8 +129,21 @@ export const createCloudEncryption = async (
   const escrow = await wrapMasterSecret(master, passphrase, iterations);
   await savePendingEscrow({ accountId, escrow });
   await saveDeviceKeyRing({ accountId, ring: await deriveKeyRing(master, escrow.epoch) });
+  await storeVaultRoot(master);
   await sealExistingRows(db);
   return encodeRecoveryCode(master);
+};
+
+
+/**
+ * Retain the account root in the device vault whenever it is legitimately in
+ * memory (setup, unlock, recovery, adoption), bound to the local principal.
+ * This is what lets an already-unlocked device later wrap the root for a
+ * pairing peer without a passphrase — the root itself still never rests
+ * unwrapped and never crosses a public API.
+ */
+const storeVaultRoot = async (master: Uint8Array): Promise<void> => {
+  await deviceKeyVault.storeAccountRoot(master, await currentPrincipal());
 };
 
 /** What {@link publishPendingEscrow} did with this device's held-back escrow. */
@@ -188,6 +203,7 @@ export const unlockCloudEncryption = async (
     accountId: resolveAccountId(db),
     ring: await deriveKeyRing(master, escrow.epoch),
   });
+  await storeVaultRoot(master);
   await sealExistingRows(db);
 };
 
@@ -224,12 +240,14 @@ export const recoverCloudEncryption = async (
   const sealed = await findSealedRow(db);
   if (sealed) await openRow(ring, sealed.ref, sealed.row);
   await saveDeviceKeyRing({ accountId: resolveAccountId(db), ring });
+  await storeVaultRoot(master);
   await sealExistingRows(db);
 };
 
 /** Forget the device's key ring and any escrow it was holding; the published
  *  escrow and other devices are untouched. */
 export const forgetThisDevice = async (): Promise<void> => {
+  await deviceKeyVault.forget();
   await forgetDeviceKeyRing();
   await clearPendingEscrow();
 };
@@ -284,6 +302,7 @@ export const adoptAccountKey = async (
     accountId: readCurrentAccountId(db),
     ring: await deriveKeyRing(master, serverEscrow.epoch),
   });
+  await storeVaultRoot(master);
   // The device now holds the account key — the mismatch is resolved, so clear it
   // before re-sealing (the write lock would otherwise refuse the bulkPut).
   keyMismatchState.set(false);
