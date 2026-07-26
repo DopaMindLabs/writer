@@ -26,11 +26,13 @@ import {
   serializeCitationsToBibtex,
 } from '@/lib/bibtex';
 import { db } from '@/db/db';
+import { updateReplicatedRow } from '@/lib/writerSyncIntegration/replicatedRowUpdate';
 import { newId } from '@/lib/ids';
 import {
   currentPrincipal,
   newEntityMetadata,
 } from '@/lib/writerSyncIntegration/writerEntityMetadata';
+import { setCitationsType } from '@/lib/citations/citationRepository';
 import { cn } from '@/lib/utils';
 import { downloadBlob } from '@/lib/file-download';
 import { appLogger } from '@/lib/appLogger';
@@ -184,11 +186,7 @@ const useMutationActions = ({
   const handleBulkSetType = async (type: Citation['type']) => {
     const ids = Array.from(selected);
     if (ids.length === 0) return;
-    await db.transaction('rw', db.citations, async () => {
-      for (const id of ids) {
-        await db.citations.update(id, { type });
-      }
-    });
+    await setCitationsType(ids, type);
     setStatus(
       t('citations.bulk.typeApplied', { type, count: ids.length }),
     );
@@ -1336,7 +1334,7 @@ const useCitationEdit = (
         }
       }
 
-      await db.citations.update(c.id, {
+      await updateReplicatedRow(db.citations, c.id, {
         key: trimmedKey,
         authors: trimmedAuthors,
         title: trimmedTitle,

@@ -1,9 +1,8 @@
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { createDocs, seedDocsCrdt } from '@/lib/docs';
-import { asOperationId } from 'writer-sync/core';
 import type { ReplicatedEntityMetadata } from 'writer-sync/core';
-import { createHybridLogicalClock } from 'writer-sync/core';
+import { remintedMetadata } from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import type { ParsedSpaceArchive } from './parseSpaceArchive';
 
 const IMPORT_TABLES = [
@@ -122,15 +121,12 @@ const remapArchive = (archive: ParsedSpaceArchive): ParsedSpaceArchive => {
  * (`createdBy`/`updatedBy`) is history and travels with the content unchanged.
  * Applied at the single write step so no per-table remap can forget it.
  */
-const remintMetadata = (accessScopeId: string) => {
-  const clock = createHybridLogicalClock();
-  return <T extends ReplicatedEntityMetadata>(row: T): T => ({
-    ...row,
+const remintMetadata =
+  (accessScopeId: string) =>
+  <T extends ReplicatedEntityMetadata>(row: T): T => ({
+    ...remintedMetadata(row),
     accessScopeId,
-    mutationId: asOperationId(newId()),
-    logicalUpdatedAt: clock.now(),
   });
-};
 
 const putRemapped = async (archive: ParsedSpaceArchive): Promise<void> => {
   const remint = remintMetadata(archive.space.id);

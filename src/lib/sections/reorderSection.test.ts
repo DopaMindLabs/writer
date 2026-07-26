@@ -39,6 +39,20 @@ describe('reorderSection', () => {
     expect(await orderOf('c')).toBe(2);
   });
 
+  it('gives every renumbered section its own fresh mutation id', async () => {
+    const before = await db.sections.toArray();
+
+    await reorderSection('c', 0);
+
+    const after = await db.sections.toArray();
+    const ids = after.map((section) => section.mutationId);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const section of after) {
+      const previous = before.find((candidate) => candidate.id === section.id);
+      expect(section.mutationId).not.toBe(previous?.mutationId);
+    }
+  });
+
   it('is a no-op for an unknown section', async () => {
     await reorderSection('missing', 0);
     expect(await orderOf('a')).toBe(0);
