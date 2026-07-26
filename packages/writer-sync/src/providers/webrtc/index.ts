@@ -29,3 +29,10 @@ export type {
 
 export { createReconnectPolicy } from './reconnectPolicy';
 export type { ReconnectPolicy, ReconnectPolicyOptions } from './reconnectPolicy';
+
+export { createWebRtcSyncProvider } from './webRtcSyncProvider';
+export type {
+  PeerChannelFactory,
+  WebRtcSyncProvider,
+  WebRtcSyncProviderOptions,
+} from './webRtcSyncProvider';
