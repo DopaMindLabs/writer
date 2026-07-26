@@ -254,6 +254,41 @@ The escrow is held on-device until sign-in confirms the account has no escrow, t
 published as the single `cloudCrypto['v1']` row via an **add-only** path (never
 overwrites a differing fingerprint).
 
+### Writer Sync foundation (provider-neutral engine)
+
+The sync layer is provider-, transport- and pairing-method-agnostic. Its layers, from
+neutral core to Writer wiring:
+
+```
+src/lib/syncProviders/          provider contracts, coordinator, selection policy, ids
+src/lib/writerSync/crypto/      ScopeKeyResolver, DeviceKeyVault contract, frame payload crypto
+src/lib/writerSync/operations/  SyncOperation header/frame, strict codec, convergence, ports
+src/lib/writerSync/materialization/  Writer factory/materialiser/stores + frame ingestion
+src/lib/writerSync/             Writer configuration, boot, React context (integration)
+src/lib/cloud/                  the Dexie Cloud adapter (realms, members, escrow, facade)
+```
+
+- **Zero/one/many providers.** The coordinator honours only configuration
+  (`writerSyncConfiguration.ts` names Writer's providers and default); registration
+  order carries no authority, and one `AccessScopeId` may bind to zero, one or several
+  provider-specific scopes (`SyncProviderBinding`, `resolveBindings`).
+- **One logical operation, encrypted once.** A mutation becomes an
+  `EncryptedSyncFrame`: a plaintext routing header (operation id, scope, entity, kind,
+  device id, hybrid logical time, key id/epoch, payload hash) around an AES-GCM
+  payload whose AAD binds the header. Every provider transports the identical
+  immutable bytes; `syncOperations` is the append-only journal.
+- **Idempotent materialisation.** A receiver records the operation id in `syncInbox`
+  in the same transaction as materialising it, so a frame arriving through two
+  providers applies once; conflicts converge by hybrid logical time then device id;
+  deletes tombstone (`syncTombstones`) and stale puts cannot resurrect.
+- **Domain vs adapter metadata.** Domain rows carry only provider-neutral metadata
+  (`accessScopeId`, `createdBy`, `updatedBy`, `mutationId`, `logicalUpdatedAt`);
+  `realmId`/`owner` exist only on the adapter's persisted row type
+  (`src/lib/cloud/dexieRow.ts`) and inside `src/lib/cloud/`.
+- **Package boundary (in progress).** The provider contracts, crypto and operation
+  modules are extraction-ready for `packages/writer-sync`; Writer-specific
+  composition stays in the app as the integration layer.
+
 ---
 
 ## 7. Local/folder sync distinction

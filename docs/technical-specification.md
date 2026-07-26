@@ -73,10 +73,27 @@
 
 `Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `DocUpdate` (append-only CRDT payloads for collaborative editing; `Doc.body` stays the serialized read model), `Note` (state machine: `seed-prompt → seed-fetched → user`), `Connection`, `Annotation`, `Citation`, `Backup` (binary `payload: Blob`, discriminated by `format` — currently only `md-zip`), `Settings`, `HighlightPalette`, `Meta`.
 
-The schema is declared in a single Dexie version. When the encrypted cloud-sync beta
-(§ 4.9.1) is active, one extra store — `cloudCrypto` (the passphrase-wrapped escrow) — is
-added, and synced content rows carry a `$lipsumCipher` envelope; the device key ring is
-held in a separate, never-synced keystore database rather than a table here.
+The schema is declared in two Dexie versions: version 1 (the original stores) and
+version 2, which adds the Writer Sync operation-protocol stores — `syncOperations`
+(the append-only journal of immutable encrypted operation frames), `syncInbox`
+(accepted operation ids), `syncTombstones` (deletion tombstones) and
+`syncProviderBindings` (per-scope provider configuration). Every synced entity row
+carries provider-neutral replication metadata: a plaintext `accessScopeId`,
+`mutationId` and hybrid-logical `logicalUpdatedAt` for routing, deduplication and
+deterministic convergence, plus encrypted `createdBy`/`updatedBy` attribution
+(principal ids from the local profile — never emails, and never mapped to any
+provider's authorisation field). Replication, encryption, scope kind and journal
+membership per table are classified once in
+`src/lib/writerSync/writerTablePolicy.ts`. When the encrypted cloud-sync beta
+(§ 4.9.1) is active, one extra store — `cloudCrypto` (the passphrase-wrapped escrow) —
+is added, and synced content rows carry a `$lipsumCipher` envelope; the device key ring
+is held in a separate, never-synced keystore database rather than a table here.
+
+**Sync remains single-user.** The operation journal deduplicates the same logical
+mutation across providers (an accepted `operationId` never applies twice) and
+tombstones prevent deleted entities resurrecting from stale updates. Dormant realm and
+member groundwork inside the Dexie adapter does **not** enable sharing: no invitation,
+role provisioning or cross-user key delivery exists.
 
 **Local account.** The `Meta` table holds singleton app state keyed by string. Among its keys is the on-device **account profile** (`profile`): a stable `authorId` (the attribution key that edits and presence attach to) plus the user-editable `displayName` and `presenceHue`. It is created with sensible defaults on first read and repaired in place if a stored value is invalid; it never leaves the browser (§4.9). A per-tab id lives separately in `sessionStorage`, not in Dexie.
 
