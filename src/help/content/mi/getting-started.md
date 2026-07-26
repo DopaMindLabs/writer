@@ -34,5 +34,5 @@ rānei [Tautuhinga Tere](customization-and-settings#quick-settings).
 
 - [Ngā āhuatanga katoa](features) — tētahi rārangi katoa āta tirohia o ngā mea ka taea.
 - [Tuhituhi & ētita](writing-and-editing) — ākona te ētita.
-- [Whakaraupapa i tōu mahi](organizing-your-work) — hangaia tētahi kaupeka nui ake.
+- [Whakaraupapa i tōu mahi](organising-your-work) — hangaia tētahi kaupeka nui ake.
 - [Ngā tohutohu papapātuhi](keyboard-shortcuts) — whakatere katoa mai i te papapātuhi.

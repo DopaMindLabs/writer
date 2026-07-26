@@ -11,6 +11,15 @@ import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
 import { FIXED_TIME, sampleSpace, seedBasicSpace } from '@/test/fixtures';
 import { Sidebar } from './Sidebar';
 
+type User = ReturnType<typeof userEvent.setup>;
+
+// Adding a document is now reached through the section's kebab menu rather than
+// a bare "+"; open the menu then pick "Add document".
+const openAddDoc = async (user: User, sectionId: string): Promise<void> => {
+  await user.click(await screen.findByTestId(`sidebar-section-${sectionId}-menu`));
+  await user.click(await screen.findByTestId(`sidebar-section-${sectionId}-add-doc`));
+};
+
 describe('Sidebar', () => {
   describe('rendering', () => {
     it('should render the space title and a seeded doc link', async () => {
@@ -213,9 +222,7 @@ describe('Sidebar', () => {
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
         initialEntries: ['/s/s1/d/d1'],
       });
-      await user.click(
-        await screen.findByTestId('sidebar-section-sec1-add'),
-      );
+      await openAddDoc(user, 'sec1');
       const input = await screen.findByTestId(
         'sidebar-section-sec1-add-input',
       );
@@ -229,9 +236,7 @@ describe('Sidebar', () => {
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
         initialEntries: ['/s/s1/d/d1'],
       });
-      await user.click(
-        await screen.findByTestId('sidebar-section-sec1-add'),
-      );
+      await openAddDoc(user, 'sec1');
       const input = await screen.findByTestId(
         'sidebar-section-sec1-add-input',
       );
@@ -248,9 +253,7 @@ describe('Sidebar', () => {
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
         initialEntries: ['/s/s1/d/d1'],
       });
-      await user.click(
-        await screen.findByTestId('sidebar-section-sec1-add'),
-      );
+      await openAddDoc(user, 'sec1');
       const input = await screen.findByTestId(
         'sidebar-section-sec1-add-input',
       );
@@ -269,9 +272,7 @@ describe('Sidebar', () => {
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
         initialEntries: ['/s/s1/d/d1'],
       });
-      await user.click(
-        await screen.findByTestId('sidebar-section-sec1-add'),
-      );
+      await openAddDoc(user, 'sec1');
       const input = await screen.findByTestId(
         'sidebar-section-sec1-add-input',
       );
@@ -295,9 +296,7 @@ describe('Sidebar', () => {
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
         initialEntries: ['/s/s1/d/d1'],
       });
-      await user.click(
-        await screen.findByTestId('sidebar-section-sec1-add'),
-      );
+      await openAddDoc(user, 'sec1');
       const input = await screen.findByTestId(
         'sidebar-section-sec1-add-input',
       );
@@ -317,9 +316,7 @@ describe('Sidebar', () => {
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
         initialEntries: ['/s/s1/d/d1'],
       });
-      await user.click(
-        await screen.findByTestId('sidebar-section-sec1-add'),
-      );
+      await openAddDoc(user, 'sec1');
       const input = await screen.findByTestId(
         'sidebar-section-sec1-add-input',
       );
@@ -347,9 +344,7 @@ describe('Sidebar', () => {
       renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
         initialEntries: ['/s/s1'],
       });
-      await user.click(
-        await screen.findByTestId('sidebar-section-sec-ms-add'),
-      );
+      await openAddDoc(user, 'sec-ms');
       const input = (await screen.findByTestId(
         'sidebar-section-sec-ms-add-input',
       )) as HTMLInputElement;
@@ -369,9 +364,7 @@ describe('Sidebar', () => {
       renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
         initialEntries: ['/s/s1'],
       });
-      await user.click(
-        await screen.findByTestId('sidebar-section-sec-w-add'),
-      );
+      await openAddDoc(user, 'sec-w');
       const input = (await screen.findByTestId(
         'sidebar-section-sec-w-add-input',
       )) as HTMLInputElement;
@@ -512,7 +505,7 @@ describe('Sidebar', () => {
       expect(link).toHaveTextContent('Sample Doc');
     });
 
-    it('should open the rename dialog from the Rename menu item', async () => {
+    it('should switch the row to the inline rename input from the Rename menu item', async () => {
       const user = userEvent.setup();
       await seedBasicSpace();
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
@@ -520,12 +513,12 @@ describe('Sidebar', () => {
       });
       await user.click(await screen.findByTestId('sidebar-doc-d1-menu'));
       await user.click(await screen.findByTestId('sidebar-doc-d1-rename'));
-      const input = await screen.findByTestId('rename-doc-input');
+      const input = await screen.findByTestId('sidebar-doc-d1-rename-input');
       expect(input).toHaveValue('Sample Doc');
-      expect(input).toHaveAccessibleName('Document name');
+      expect(input).toHaveFocus();
     });
 
-    it('should rename the doc and update the row when submitted', async () => {
+    it('should rename the doc and update the row on Enter', async () => {
       const user = userEvent.setup();
       await seedBasicSpace();
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
@@ -533,10 +526,9 @@ describe('Sidebar', () => {
       });
       await user.click(await screen.findByTestId('sidebar-doc-d1-menu'));
       await user.click(await screen.findByTestId('sidebar-doc-d1-rename'));
-      const input = await screen.findByTestId('rename-doc-input');
+      const input = await screen.findByTestId('sidebar-doc-d1-rename-input');
       await user.clear(input);
-      await user.type(input, 'Chapter one');
-      await user.click(screen.getByTestId('rename-doc-submit'));
+      await user.type(input, 'Chapter one{Enter}');
       await waitFor(async () => {
         expect((await db.docs.get('d1'))?.name).toBe('Chapter one');
       });
@@ -545,10 +537,9 @@ describe('Sidebar', () => {
           'Chapter one',
         );
       });
-      expect(screen.queryByTestId('rename-doc-dialog')).not.toBeInTheDocument();
     });
 
-    it('should not rename the doc when the dialog is cancelled', async () => {
+    it('should not rename the doc when the inline edit is escaped', async () => {
       const user = userEvent.setup();
       await seedBasicSpace();
       renderWithProviders(<Sidebar spaceId="s1" activeDocId="d1" />, {
@@ -556,13 +547,12 @@ describe('Sidebar', () => {
       });
       await user.click(await screen.findByTestId('sidebar-doc-d1-menu'));
       await user.click(await screen.findByTestId('sidebar-doc-d1-rename'));
-      const input = await screen.findByTestId('rename-doc-input');
+      const input = await screen.findByTestId('sidebar-doc-d1-rename-input');
       await user.clear(input);
-      await user.type(input, 'Discarded');
-      await user.click(screen.getByTestId('rename-doc-cancel'));
+      await user.type(input, 'Discarded{Escape}');
       await waitFor(() => {
         expect(
-          screen.queryByTestId('rename-doc-dialog'),
+          screen.queryByTestId('sidebar-doc-d1-rename-input'),
         ).not.toBeInTheDocument();
       });
       expect((await db.docs.get('d1'))?.name).toBe('Sample Doc');
@@ -805,7 +795,7 @@ describe('Sidebar', () => {
       expect(row.className).toMatch(/\bgroup\b/);
     });
 
-    it('should hide the add-section trigger when the template does not allow extra sections', async () => {
+    it('should show the add-section trigger for a structured template (sections are configurable by default)', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'fiction' });
       await db.sections.put({
         id: 'sec-ms',
@@ -819,8 +809,8 @@ describe('Sidebar', () => {
       });
       await screen.findByTestId('sidebar-section-sec-ms');
       expect(
-        screen.queryByTestId('sidebar-add-section-trigger'),
-      ).not.toBeInTheDocument();
+        await screen.findByTestId('sidebar-add-section-trigger'),
+      ).toBeInTheDocument();
     });
 
     it('should open an input when the add-section trigger is clicked', async () => {
@@ -983,6 +973,125 @@ describe('Sidebar', () => {
         ).not.toBeInTheDocument();
       });
       expect(await db.sections.count()).toBe(beforeCount);
+    });
+  });
+
+  describe('section row menu', () => {
+    it('deletes a section and its documents from the sidebar via the menu', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      await user.click(await screen.findByTestId('sidebar-section-sec1-menu'));
+      await user.click(await screen.findByTestId('sidebar-section-sec1-delete'));
+      // The warning names the document that will be lost.
+      expect(
+        await screen.findByText(/“Drafts” and its 1 document will be permanently/),
+      ).toBeInTheDocument();
+      await user.click(await screen.findByTestId('confirm-dialog-confirm'));
+
+      await waitFor(async () => {
+        expect(await db.sections.get('sec1')).toBeUndefined();
+      });
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId('sidebar-section-sec1'),
+        ).not.toBeInTheDocument();
+      });
+      expect(await db.docs.get('d1')).toBeUndefined();
+    });
+
+    it('keeps the section when the delete confirmation is cancelled', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      await user.click(await screen.findByTestId('sidebar-section-sec1-menu'));
+      await user.click(await screen.findByTestId('sidebar-section-sec1-delete'));
+      await user.click(await screen.findByTestId('confirm-dialog-cancel'));
+      await waitFor(() => {
+        expect(screen.queryByTestId('confirm-dialog')).not.toBeInTheDocument();
+      });
+      expect(await db.sections.get('sec1')).toBeDefined();
+      expect(screen.getByTestId('sidebar-section-sec1')).toBeInTheDocument();
+    });
+
+    it('does not offer rename or delete for the Workshop section', async () => {
+      await db.spaces.put(sampleSpace);
+      await db.sections.put({
+        id: 'sec-ws',
+        spaceId: 's1',
+        parentSectionId: null,
+        label: 'Workshop',
+        order: 0,
+      });
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      await user.click(await screen.findByTestId('sidebar-section-sec-ws-menu'));
+      expect(
+        screen.getByTestId('sidebar-section-sec-ws-add-doc'),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('sidebar-section-sec-ws-rename'),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('sidebar-section-sec-ws-delete'),
+      ).not.toBeInTheDocument();
+    });
+
+    it('renames a section from the menu', async () => {
+      await seedBasicSpace();
+      const user = userEvent.setup();
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      await user.click(await screen.findByTestId('sidebar-section-sec1-menu'));
+      await user.click(await screen.findByTestId('sidebar-section-sec1-rename'));
+      const input = await screen.findByTestId('sidebar-section-sec1-rename-input');
+      await user.clear(input);
+      await user.type(input, 'Chapters{enter}');
+      await waitFor(async () => {
+        expect((await db.sections.get('sec1'))?.label).toBe('Chapters');
+      });
+    });
+  });
+
+  describe('locked template (no configuration)', () => {
+    it('does not wire dragging or the add-section affordance', async () => {
+      // An unresolved template is treated as not configurable.
+      await db.spaces.put({ ...sampleSpace, template: 'locked-xyz' });
+      await db.sections.put({
+        id: 'sec-x',
+        spaceId: 's1',
+        parentSectionId: null,
+        label: 'Locked',
+        order: 0,
+      });
+      await db.docs.put({
+        id: 'd-x',
+        spaceId: 's1',
+        sectionId: 'sec-x',
+        name: 'Locked doc',
+        body: EMPTY_LEXICAL_JSON,
+        meta: { wordCount: 0 },
+        updatedAt: 0,
+      });
+      renderWithProviders(<Sidebar spaceId="s1" activeDocId={null} />, {
+        initialEntries: ['/s/s1'],
+      });
+      const header = await screen.findByTestId('sidebar-section-sec-x-header');
+      // No drag surface: the header is not a sortable and carries no grab cursor.
+      expect(header).not.toHaveAttribute('aria-roledescription', 'sortable');
+      expect(header.className).not.toMatch(/cursor-grab/);
+      const docRow = await screen.findByTestId('sidebar-doc-d-x-sortable');
+      expect(docRow.className).not.toMatch(/cursor-grab/);
+      expect(
+        screen.queryByTestId('sidebar-add-section-trigger'),
+      ).not.toBeInTheDocument();
     });
   });
 

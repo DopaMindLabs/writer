@@ -30,5 +30,5 @@ Esimest korda põhiekraani avades osutab lühike interaktiivne tuur põhilistele
 
 - [Kõik funktsioonid](features) — täielik ülevaatlik nimekiri kõigest, mida saad teha.
 - [Kirjutamine ja redigeerimine](writing-and-editing) — tutvu redaktoriga.
-- [Töö korraldamine](organizing-your-work) — suurema projekti struktureerimine.
+- [Töö korraldamine](organising-your-work) — suurema projekti struktureerimine.
 - [Klaviatuuri otseteed](keyboard-shortcuts) — juhi kõike klaviatuurilt.

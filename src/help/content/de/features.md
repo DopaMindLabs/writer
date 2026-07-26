@@ -17,9 +17,9 @@ verlinkt zu seinem Leitfaden, damit du direkt zum Detail springst.
 
 ## Organisation
 
-- **Spaces** — eigenständige Projekte. [Mehr](organizing-your-work)
-- **Abschnitte und Dokumente** — hinzufügen, umbenennen und neu ordnen aus der Seitenleiste. [Mehr](organizing-your-work)
-- **Vorlagen** — starte aus einer Struktur, nicht aus einer leeren Seite. [Mehr](organizing-your-work)
+- **Spaces** — eigenständige Projekte. [Mehr](organising-your-work)
+- **Abschnitte und Dokumente** — hinzufügen, umbenennen und neu ordnen aus der Seitenleiste. [Mehr](organising-your-work)
+- **Vorlagen** — starte aus einer Struktur, nicht aus einer leeren Seite. [Mehr](organising-your-work)
 
 ## Ansichten und Modi
 

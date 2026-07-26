@@ -1,4 +1,5 @@
 import { NoteKind } from '@/db/schema';
+import { EMPTY_LEXICAL_JSON } from '@/lib/docs';
 import { TemplateStage, type Template } from './types';
 
 const template: Template = {
@@ -10,10 +11,18 @@ const template: Template = {
   enabled: true,
   description: 'start from nothing',
   pickerOrder: 8,
-  sections: [{ label: 'Notes', order: 0 }],
-  seedDocs: [{ sectionLabel: 'Notes', name: 'Untitled' }],
+  allowConfiguration: true,
+  sections: [{ label: 'Notes', order: 0, defaultDocName: '' }],
+  seedDocs: [
+    {
+      sectionLabel: 'Notes',
+      subsectionLabel: '',
+      name: 'Untitled',
+      body: EMPTY_LEXICAL_JSON,
+    },
+  ],
+  seedNotes: [],
   noteKinds: [NoteKind.Blank, NoteKind.Image],
-  allowExtraSections: true,
 };
 
 export default template;

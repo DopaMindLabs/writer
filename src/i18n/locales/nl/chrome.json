@@ -20,14 +20,7 @@
     "openSpaceSettings": "Space-instellingen",
     "openSpaceMenu": "Space-menu openen",
     "docMenuAria": "Opties voor {{name}}",
-    "renameDoc": "Hernoemen",
-    "renameDialog": {
-      "title": "Document hernoemen",
-      "description": "Kies een nieuwe naam voor dit document.",
-      "label": "Documentnaam",
-      "cancel": "Annuleren",
-      "save": "Hernoemen"
-    }
+    "renameDoc": "Hernoemen"
   },
   "topbar": {
     "openNav": "Navigatie openen",

@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Rum" },
+  "spaceRail": {
+    "landmarkLabel": "Rum"
+  },
   "sidebar": {
     "landmarkLabel": "Rum",
     "navLabel": "Dokumenter",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "Rumindstillinger",
     "openSpaceMenu": "Åbn rummenu",
     "docMenuAria": "Muligheder for {{name}}",
-    "renameDoc": "Omdøb",
-    "renameDialog": {
-      "title": "Omdøb dokument",
-      "description": "Vælg et nyt navn til dette dokument.",
-      "label": "Dokumentnavn",
-      "cancel": "Annullér",
-      "save": "Omdøb"
-    }
+    "renameDoc": "Omdøb"
   },
   "topbar": {
     "openNav": "Åbn navigation",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "Fokus (⌘\\)",
     "findInDoc": "Find i dokumentet",
     "inspector": "Dokumentinspektør",
-    "themes": { "light": "Lyst", "dark": "Mørkt", "hcLight": "Høj kontrast (lyst)", "hcDark": "Høj kontrast (mørkt)" }
+    "themes": {
+      "light": "Lyst",
+      "dark": "Mørkt",
+      "hcLight": "Høj kontrast (lyst)",
+      "hcDark": "Høj kontrast (mørkt)"
+    }
   },
-  "modeToggle": { "write": "skriv", "read": "læs", "split": "del", "space": "rum" },
-  "mobileNav": { "title": "Navigation", "close": "Luk navigation" },
-  "mobileTabs": { "write": "skriv", "read": "læs", "split": "del", "brain": "brain", "cite": "citér", "more": "mere" },
+  "modeToggle": {
+    "write": "skriv",
+    "read": "læs",
+    "split": "del",
+    "space": "rum"
+  },
+  "mobileNav": {
+    "title": "Navigation",
+    "close": "Luk navigation"
+  },
+  "mobileTabs": {
+    "write": "skriv",
+    "read": "læs",
+    "split": "del",
+    "brain": "brain",
+    "cite": "citér",
+    "more": "mere"
+  },
   "mobileMore": {
     "title": "Mere",
     "close": "Luk mere",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "Flydende værktøjslinje",
     "readingWidthLabel": "Læsebredde",
     "readingWidthHint": "Mål pr. dokument",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Mere",
     "helpToursLabel": "Hjælperundvisning",
     "helpItem": "Hjælp og genveje",
-    "themes": { "light": "Lyst", "dark": "Mørkt", "hcLight": "HK lyst", "hcDark": "HK mørkt" },
+    "themes": {
+      "light": "Lyst",
+      "dark": "Mørkt",
+      "hcLight": "HK lyst",
+      "hcDark": "HK mørkt"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Nyheder",
     "feedback": "Send feedback…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "Udvid inspektør",
     "collapse": "Skjul inspektør",
-    "tabs": { "outline": "OVERSIGT", "info": "INFO", "history": "HISTORIK", "actions": "HANDLINGER" },
-    "outline": { "title": "OVERSIGT", "sectionSummary": "{{count}} SEKTIONER", "empty": "Ingen overskrifter endnu. Tilføj overskrifter til dokumentet for at opbygge dets disposition." },
+    "tabs": {
+      "outline": "OVERSIGT",
+      "info": "INFO",
+      "history": "HISTORIK",
+      "actions": "HANDLINGER"
+    },
+    "outline": {
+      "title": "OVERSIGT",
+      "sectionSummary": "{{count}} SEKTIONER",
+      "empty": "Ingen overskrifter endnu. Tilføj overskrifter til dokumentet for at opbygge dets disposition."
+    },
     "info": {
       "title": "INFO",
       "words": "Ord",
@@ -119,8 +152,18 @@
       "noLimit": "Ingen grænse",
       "noDueDate": "Ingen dato"
     },
-    "status": { "draft": "Udkast", "in-progress": "I gang", "in-review": "Til gennemgang", "complete": "Færdig", "published": "Udgivet" },
-    "lock": { "title": "Låst for redigering", "body": "Dokumentets status låser det for at bevare det. Lås op for at foretage ændringer.", "unlock": "Lås op for at redigere" },
+    "status": {
+      "draft": "Udkast",
+      "in-progress": "I gang",
+      "in-review": "Til gennemgang",
+      "complete": "Færdig",
+      "published": "Udgivet"
+    },
+    "lock": {
+      "title": "Låst for redigering",
+      "body": "Dokumentets status låser det for at bevare det. Lås op for at foretage ændringer.",
+      "unlock": "Lås op for at redigere"
+    },
     "history": {
       "title": "VERSIONER",
       "now": "NU",
@@ -132,7 +175,11 @@
       "pin": "Fastgør version",
       "unpin": "Frigør version",
       "restore": "Gendan",
-      "kind": { "auto": "auto", "manual": "manuel", "baseline": "udgangs" },
+      "kind": {
+        "auto": "auto",
+        "manual": "manuel",
+        "baseline": "udgangs"
+      },
       "ageNow": "nu",
       "ageMinutes": "{{count}}m siden",
       "ageHours": "{{count}}h siden",

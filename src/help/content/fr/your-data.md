@@ -43,4 +43,4 @@ changer d'appareil, ou d'essayer quelque chose de nouveau.
 ## Voir aussi
 
 - [Citations et bibliographie](citations-and-bibliography) — export BibTeX.
-- [Organiser ton travail](organizing-your-work) — ce que contient un espace.
+- [Organiser ton travail](organising-your-work) — ce que contient un espace.

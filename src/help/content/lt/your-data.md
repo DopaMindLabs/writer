@@ -67,4 +67,4 @@ todėl tai laikykite paskutiniu išeities keliu ir saugokite eksportus saugioje 
 ## Susiję
 
 - [Citatos ir bibliografija](citations-and-bibliography) — BibTeX eksportas.
-- [Darbo organizavimas](organizing-your-work) — kas yra erdvėje.
+- [Darbo organizavimas](organising-your-work) — kas yra erdvėje.

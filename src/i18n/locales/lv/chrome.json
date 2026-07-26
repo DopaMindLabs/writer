@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Telpas" },
+  "spaceRail": {
+    "landmarkLabel": "Telpas"
+  },
   "sidebar": {
     "landmarkLabel": "Telpa",
     "navLabel": "Dokumenti",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "Telpas iestatījumi",
     "openSpaceMenu": "Atvērt telpas izvēlni",
     "docMenuAria": "Opcijas: {{name}}",
-    "renameDoc": "Pārdēvēt",
-    "renameDialog": {
-      "title": "Pārdēvēt dokumentu",
-      "description": "Izvēlieties jaunu nosaukumu šim dokumentam.",
-      "label": "Dokumenta nosaukums",
-      "cancel": "Atcelt",
-      "save": "Pārdēvēt"
-    }
+    "renameDoc": "Pārdēvēt"
   },
   "topbar": {
     "openNav": "Atvērt navigāciju",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "Fokuss (⌘\\)",
     "findInDoc": "Atrast dokumentā",
     "inspector": "Dokumenta inspektors",
-    "themes": { "light": "Gaiša", "dark": "Tumša", "hcLight": "Augsts kontrasts (gaiša)", "hcDark": "Augsts kontrasts (tumša)" }
+    "themes": {
+      "light": "Gaiša",
+      "dark": "Tumša",
+      "hcLight": "Augsts kontrasts (gaiša)",
+      "hcDark": "Augsts kontrasts (tumša)"
+    }
   },
-  "modeToggle": { "write": "rakstīt", "read": "lasīt", "split": "sadalīt", "space": "telpa" },
-  "mobileNav": { "title": "Navigācija", "close": "Aizvērt navigāciju" },
-  "mobileTabs": { "write": "rakstīt", "read": "lasīt", "split": "sadalīt", "brain": "brain", "cite": "citēt", "more": "vairāk" },
+  "modeToggle": {
+    "write": "rakstīt",
+    "read": "lasīt",
+    "split": "sadalīt",
+    "space": "telpa"
+  },
+  "mobileNav": {
+    "title": "Navigācija",
+    "close": "Aizvērt navigāciju"
+  },
+  "mobileTabs": {
+    "write": "rakstīt",
+    "read": "lasīt",
+    "split": "sadalīt",
+    "brain": "brain",
+    "cite": "citēt",
+    "more": "vairāk"
+  },
   "mobileMore": {
     "title": "Vairāk",
     "close": "Aizvērt vairāk",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "Peldošā rīkjosla",
     "readingWidthLabel": "Lasīšanas platums",
     "readingWidthHint": "Mērs vienam dokumentam",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Vairāk",
     "helpToursLabel": "Palīdzības tūre",
     "helpItem": "Palīdzība un saīsnes",
-    "themes": { "light": "Gaiša", "dark": "Tumša", "hcLight": "AK gaiša", "hcDark": "AK tumša" },
+    "themes": {
+      "light": "Gaiša",
+      "dark": "Tumša",
+      "hcLight": "AK gaiša",
+      "hcDark": "AK tumša"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Jaunumi",
     "feedback": "Sūtīt atsauksmes…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "Izvērst inspektoru",
     "collapse": "Sakļaut inspektoru",
-    "tabs": { "outline": "STRUKTŪRA", "info": "INFO", "history": "VĒSTURE", "actions": "DARBĪBAS" },
-    "outline": { "title": "STRUKTŪRA", "sectionSummary": "{{count}} SADAĻAS", "empty": "Vēl nav virsrakstu. Pievienojiet dokumentam virsrakstus, lai veidotu tā struktūru." },
+    "tabs": {
+      "outline": "STRUKTŪRA",
+      "info": "INFO",
+      "history": "VĒSTURE",
+      "actions": "DARBĪBAS"
+    },
+    "outline": {
+      "title": "STRUKTŪRA",
+      "sectionSummary": "{{count}} SADAĻAS",
+      "empty": "Vēl nav virsrakstu. Pievienojiet dokumentam virsrakstus, lai veidotu tā struktūru."
+    },
     "info": {
       "title": "INFO",
       "words": "Vārdi",
@@ -119,8 +152,18 @@
       "noLimit": "Bez limita",
       "noDueDate": "Bez termiņa"
     },
-    "status": { "draft": "Melnraksts", "in-progress": "Notiek", "in-review": "Pārskatā", "complete": "Pabeigts", "published": "Publicēts" },
-    "lock": { "title": "Bloķēts rediģēšanai", "body": "Šī dokumenta statuss to bloķē, lai saglabātu. Atbloķējiet, lai veiktu izmaiņas.", "unlock": "Atbloķēt rediģēšanai" },
+    "status": {
+      "draft": "Melnraksts",
+      "in-progress": "Notiek",
+      "in-review": "Pārskatā",
+      "complete": "Pabeigts",
+      "published": "Publicēts"
+    },
+    "lock": {
+      "title": "Bloķēts rediģēšanai",
+      "body": "Šī dokumenta statuss to bloķē, lai saglabātu. Atbloķējiet, lai veiktu izmaiņas.",
+      "unlock": "Atbloķēt rediģēšanai"
+    },
     "history": {
       "title": "VERSIJAS",
       "now": "TAGAD",
@@ -132,7 +175,11 @@
       "pin": "Piespraust versiju",
       "unpin": "Atspraust versiju",
       "restore": "Atjaunot",
-      "kind": { "auto": "auto", "manual": "manuāla", "baseline": "sākotnējā" },
+      "kind": {
+        "auto": "auto",
+        "manual": "manuāla",
+        "baseline": "sākotnējā"
+      },
       "ageNow": "tagad",
       "ageMinutes": "pirms {{count}}m",
       "ageHours": "pirms {{count}}st",

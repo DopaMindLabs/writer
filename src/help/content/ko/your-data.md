@@ -63,4 +63,4 @@
 ## 관련 항목
 
 - [인용 & 참고문헌](citations-and-bibliography) — BibTeX 내보내기.
-- [작업 정리하기](organizing-your-work) — 스페이스에 포함된 내용.
+- [작업 정리하기](organising-your-work) — 스페이스에 포함된 내용.

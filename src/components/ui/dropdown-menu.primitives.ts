@@ -7,3 +7,6 @@ export const DropdownMenuPrimitiveContent = DropdownMenuPrimitive.Content;
 export const DropdownMenuPrimitiveItem = DropdownMenuPrimitive.Item;
 export const DropdownMenuPrimitiveLabel = DropdownMenuPrimitive.Label;
 export const DropdownMenuPrimitiveSeparator = DropdownMenuPrimitive.Separator;
+export const DropdownMenuPrimitiveSub = DropdownMenuPrimitive.Sub;
+export const DropdownMenuPrimitiveSubTrigger = DropdownMenuPrimitive.SubTrigger;
+export const DropdownMenuPrimitiveSubContent = DropdownMenuPrimitive.SubContent;

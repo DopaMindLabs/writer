@@ -34,5 +34,5 @@ menu **?** ou das [Definições rápidas](customization-and-settings#quick-setti
 
 - [Todas as funcionalidades](features) — uma lista completa e fácil de percorrer.
 - [Escrita e edição](writing-and-editing) — aprenda a usar o editor.
-- [Organizar o trabalho](organizing-your-work) — estruture um projecto maior.
+- [Organizar o trabalho](organising-your-work) — estruture um projecto maior.
 - [Atalhos de teclado](keyboard-shortcuts) — controle tudo pelo teclado.

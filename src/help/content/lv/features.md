@@ -17,9 +17,9 @@ rokasgrāmatu, lai varētu uzreiz pāriet uz detaļām.
 
 ## Organizēšana
 
-- **Telpas** — pašpietiekamas darba vides. [Uzzināt vairāk](organizing-your-work#spaces)
-- **Sadaļas un dokumenti** — pievienojiet, pārdēvējiet un pārkārtojiet no sānjoslas. [Uzzināt vairāk](organizing-your-work#sections-and-documents)
-- **Veidnes** — sāciet no struktūras, nevis tukšas lapas. [Uzzināt vairāk](organizing-your-work#templates)
+- **Telpas** — pašpietiekamas darba vides. [Uzzināt vairāk](organising-your-work#spaces)
+- **Sadaļas un dokumenti** — pievienojiet, pārdēvējiet un pārkārtojiet no sānjoslas. [Uzzināt vairāk](organising-your-work#sections-and-documents)
+- **Veidnes** — sāciet no struktūras, nevis tukšas lapas. [Uzzināt vairāk](organising-your-work#templates)
 
 ## Skati un režīmi
 

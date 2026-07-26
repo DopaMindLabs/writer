@@ -34,5 +34,5 @@ gewenst moment opnieuw af via het **?**-menu of [Snelle instellingen](customizat
 
 - [Alle functies](features) — een volledige, overzichtelijke lijst van alles wat je kunt doen.
 - [Schrijven en bewerken](writing-and-editing) — leer de editor kennen.
-- [Je werk organiseren](organizing-your-work) — structureer een groter project.
+- [Je werk organiseren](organising-your-work) — structureer een groter project.
 - [Sneltoetsen](keyboard-shortcuts) — stuur alles vanuit het toetsenbord.

@@ -44,4 +44,4 @@
 ## අදාළ
 
 - [උද්ධෘත සහ ග්‍රන්ථ නාමාවලිය](citations-and-bibliography) — BibTeX අපනයනය.
-- [ඔබේ කාර්යය සංවිධානය කිරීම](organizing-your-work) — ඉඩකඩ් අඩංගු කරන දේ.
+- [ඔබේ කාර්යය සංවිධානය කිරීම](organising-your-work) — ඉඩකඩ් අඩංගු කරන දේ.

@@ -71,4 +71,4 @@ på ett säkert ställe.
 ## Relaterat
 
 - [Citat och bibliografi](citations-and-bibliography) — BibTeX-export.
-- [Organisera ditt arbete](organizing-your-work) — vad ett utrymme innehåller.
+- [Organisera ditt arbete](organising-your-work) — vad ett utrymme innehåller.

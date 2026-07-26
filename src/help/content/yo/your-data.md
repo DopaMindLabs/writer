@@ -44,4 +44,4 @@ Tí ètò kò bá lè ṣí ìpamọ́ ìbílẹ̀ rẹ̀, ó ń fihàn ojú ìw
 ## Jẹmọ́
 
 - [Àwọn ìtọ́kasí & ìkájọ ìtọ́kasí](citations-and-bibliography) — gbígbé jáde BibTeX.
-- [Ṣíṣe àtòjọ iṣẹ́ rẹ](organizing-your-work) — ohun tí aaye ní nínú rẹ̀.
+- [Ṣíṣe àtòjọ iṣẹ́ rẹ](organising-your-work) — ohun tí aaye ní nínú rẹ̀.

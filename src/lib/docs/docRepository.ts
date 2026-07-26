@@ -144,3 +144,59 @@ export const setDocStatus = async (
 ): Promise<void> => {
   await updateDocMeta(docId, { status });
 };
+
+const orderKey = (doc: Doc): number => doc.order ?? Number.MAX_SAFE_INTEGER;
+
+const sortByOrder = (docs: Doc[]): Doc[] =>
+  [...docs].sort((a, b) => orderKey(a) - orderKey(b));
+
+/** Write dense 0..n-1 `order` to a list already in its intended sequence. */
+const writeDenseOrder = async (docs: Doc[]): Promise<void> => {
+  for (let i = 0; i < docs.length; i += 1) {
+    await db.docs.update(docs[i].id, { order: i });
+  }
+};
+
+const sectionDocsExcept = async (
+  sectionId: string,
+  excludeId: string,
+): Promise<Doc[]> =>
+  sortByOrder(
+    (await db.docs.where('sectionId').equals(sectionId).toArray()).filter(
+      (d) => d.id !== excludeId,
+    ),
+  );
+
+export interface MoveDocInput {
+  docId: string;
+  toSectionId: string;
+  /** Insertion index within the target section (clamped to its bounds). */
+  toIndex: number;
+}
+
+/**
+ * Move a document to a position within a section — reordering in place when the
+ * target section is its own, or relocating it across sections. Both the target
+ * and (on a cross-section move) the source section are renumbered densely. Only
+ * `sectionId` and `order` change; `updatedAt` is left alone so a reorder is not
+ * mistaken for a content edit.
+ */
+export const moveDoc = async (input: MoveDocInput): Promise<void> => {
+  invariant(input.docId, 'moveDoc: docId is required');
+  invariant(input.toSectionId, 'moveDoc: toSectionId is required');
+  await db.transaction('rw', db.docs, async () => {
+    const doc = await db.docs.get(input.docId);
+    if (!doc) return;
+    const fromSectionId = doc.sectionId;
+    const target = await sectionDocsExcept(input.toSectionId, input.docId);
+    const index = Math.max(0, Math.min(input.toIndex, target.length));
+    target.splice(index, 0, doc);
+    if (fromSectionId !== input.toSectionId) {
+      await db.docs.update(input.docId, { sectionId: input.toSectionId });
+    }
+    await writeDenseOrder(target);
+    if (fromSectionId !== input.toSectionId) {
+      await writeDenseOrder(await sectionDocsExcept(fromSectionId, input.docId));
+    }
+  });
+};

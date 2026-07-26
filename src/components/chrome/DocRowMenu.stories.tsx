@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { fn } from 'storybook/test';
 import type { Doc } from '@/db/schema';
 import { DocRowMenu } from './DocRowMenu';
 
@@ -17,7 +18,7 @@ const meta = {
   title: 'Navigation/DocRowMenu',
   component: DocRowMenu,
   parameters: { layout: 'fullscreen', seed: 'basicSpace' },
-  args: { doc: sampleDoc, active: false },
+  args: { doc: sampleDoc, active: false, onRename: fn(), canManage: true },
 } satisfies Meta<typeof DocRowMenu>;
 
 export default meta;

@@ -1,0 +1,102 @@
+import { arrayMove } from '@/components/libs/dnd';
+import type { Doc, Section } from '@/db/schema';
+import type { SidebarDrop } from './resolveSidebarDrop';
+
+/**
+ * The sidebar's optimistic order: which sections are shown, in order, and the
+ * ordered document ids within each. Held locally so a drop reflects instantly
+ * (no snap-back flash) while the move persists; the live query then reconciles.
+ */
+export interface SidebarOrder {
+  sectionIds: string[];
+  docIds: Record<string, string[]>;
+}
+
+export const buildOrder = (
+  topSections: Section[],
+  docsForSection: Map<string, Doc[]>,
+): SidebarOrder => ({
+  sectionIds: topSections.map((s) => s.id),
+  docIds: Object.fromEntries(
+    topSections.map((s) => [
+      s.id,
+      (docsForSection.get(s.id) ?? []).map((d) => d.id),
+    ]),
+  ),
+});
+
+/** Whether two orders place the same sections and documents identically. */
+export const ordersEqual = (a: SidebarOrder, b: SidebarOrder): boolean => {
+  if (a.sectionIds.length !== b.sectionIds.length) return false;
+  if (a.sectionIds.some((id, i) => b.sectionIds[i] !== id)) return false;
+  return a.sectionIds.every((sectionId) => {
+    const ours = a.docIds[sectionId] ?? [];
+    const theirs = b.docIds[sectionId] ?? [];
+    return (
+      ours.length === theirs.length &&
+      ours.every((docId, i) => theirs[i] === docId)
+    );
+  });
+};
+
+export interface OrderedSection {
+  section: Section;
+  docs: Doc[];
+}
+
+/**
+ * Materialise an optimistic order back into rows, dropping ids the live data
+ * no longer knows (deleted elsewhere) rather than rendering holes.
+ */
+export const materialiseOrder = (
+  order: SidebarOrder,
+  topSections: Section[],
+  docsForSection: Map<string, Doc[]>,
+): OrderedSection[] => {
+  const sectionById = new Map(topSections.map((s) => [s.id, s]));
+  const docById = new Map<string, Doc>();
+  for (const docs of docsForSection.values()) {
+    for (const doc of docs) docById.set(doc.id, doc);
+  }
+  return order.sectionIds
+    .map((id) => sectionById.get(id))
+    .filter((s): s is Section => s !== undefined)
+    .map((section) => ({
+      section,
+      docs: (order.docIds[section.id] ?? [])
+        .map((id) => docById.get(id))
+        .filter((d): d is Doc => d !== undefined),
+    }));
+};
+
+const findDocSection = (order: SidebarOrder, docId: string): string | null => {
+  for (const sectionId of order.sectionIds) {
+    if ((order.docIds[sectionId] ?? []).includes(docId)) return sectionId;
+  }
+  return null;
+};
+
+/** Apply a resolved drop to the local order, mirroring what will be persisted. */
+export const applyDrop = (
+  order: SidebarOrder,
+  drop: SidebarDrop,
+): SidebarOrder => {
+  if (drop.kind === 'section') {
+    const from = order.sectionIds.indexOf(drop.sectionId);
+    if (from < 0) return order;
+    return { ...order, sectionIds: arrayMove(order.sectionIds, from, drop.toIndex) };
+  }
+  const fromSection = findDocSection(order, drop.docId);
+  if (!fromSection) return order;
+  const docIds = { ...order.docIds };
+  if (fromSection === drop.toSectionId) {
+    const from = docIds[fromSection].indexOf(drop.docId);
+    docIds[fromSection] = arrayMove(docIds[fromSection], from, drop.toIndex);
+    return { ...order, docIds };
+  }
+  docIds[fromSection] = docIds[fromSection].filter((id) => id !== drop.docId);
+  const target = [...(docIds[drop.toSectionId] ?? [])];
+  target.splice(drop.toIndex, 0, drop.docId);
+  docIds[drop.toSectionId] = target;
+  return { ...order, docIds };
+};

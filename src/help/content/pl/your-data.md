@@ -71,4 +71,4 @@ w aplikacji, więc traktuj to jako ostateczność i przechowuj eksporty w bezpie
 ## Powiązane
 
 - [Cytaty i bibliografia](citations-and-bibliography) — eksport BibTeX.
-- [Organizowanie pracy](organizing-your-work) — co zawiera przestrzeń.
+- [Organizowanie pracy](organising-your-work) — co zawiera przestrzeń.

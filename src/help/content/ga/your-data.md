@@ -71,4 +71,4 @@ shábháilte.
 ## Gaolmhar
 
 - [Toghcháin & leabharliosta](citations-and-bibliography) — easpórtáil BibTeX.
-- [Do chuid oibre a eagrú](organizing-your-work) — cad atá i spás.
+- [Do chuid oibre a eagrú](organising-your-work) — cad atá i spás.

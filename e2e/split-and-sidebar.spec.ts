@@ -1,5 +1,9 @@
 import { test, expect } from './_helpers';
-import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
+import {
+  reseedAndGoHome,
+  getFirstSpaceIdFromHome,
+  openSectionAddDoc,
+} from './_helpers';
 
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
@@ -95,12 +99,7 @@ test('sidebar add-doc button creates a new doc under a section and navigates to 
   await page.waitForURL(new RegExp(`/s/${spaceId}/d/`));
 
   const sidebar = page.locator('aside').last();
-  await sidebar
-    .getByRole('button', { name: 'Add doc to Manuscript' })
-    .click();
-
-  const docInput = sidebar.getByPlaceholder(/Doc name \(Enter to create\)/i);
-  await expect(docInput).toBeVisible();
+  const docInput = await openSectionAddDoc(page, sidebar);
   await docInput.fill('My Spec-Created Doc');
   await docInput.press('Enter');
 
@@ -119,11 +118,7 @@ test('sidebar add-doc input cancels via Escape without creating a doc', async ({
   await page.waitForURL(new RegExp(`/s/${spaceId}/d/`));
 
   const sidebar = page.locator('aside').last();
-  await sidebar
-    .getByRole('button', { name: 'Add doc to Manuscript' })
-    .click();
-
-  const docInput = sidebar.getByPlaceholder(/Doc name \(Enter to create\)/i);
+  const docInput = await openSectionAddDoc(page, sidebar);
   await docInput.fill('Should Not Persist');
   await docInput.press('Escape');
 

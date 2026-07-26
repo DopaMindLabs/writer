@@ -33,5 +33,5 @@ kurį turą kada norite iš pagalbos (**?**) meniu arba [Greituosiuose nustatymu
 
 - [Visos funkcijos](features) — išsamus, peržiūrimas sąrašas to, ką galite daryti.
 - [Rašymas ir redagavimas](writing-and-editing) — susipažinkite su redaktoriumi.
-- [Darbo organizavimas](organizing-your-work) — didesnio projekto struktūravimas.
+- [Darbo organizavimas](organising-your-work) — didesnio projekto struktūravimas.
 - [Klaviatūros spartieji klavišai](keyboard-shortcuts) — valdykite viską klaviatūra.

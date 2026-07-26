@@ -17,9 +17,9 @@ do swojego przewodnika, dzięki czemu możesz przejść bezpośrednio do szczeg�
 
 ## Organizowanie
 
-- **Przestrzenie** — samodzielne projekty. [Dowiedz się więcej](organizing-your-work#spaces)
-- **Sekcje i dokumenty** — dodawaj, zmieniaj nazwy i porządkuj z paska bocznego. [Dowiedz się więcej](organizing-your-work#sections-and-documents)
-- **Szablony** — zacznij od struktury, nie od pustej strony. [Dowiedz się więcej](organizing-your-work#templates)
+- **Przestrzenie** — samodzielne projekty. [Dowiedz się więcej](organising-your-work#spaces)
+- **Sekcje i dokumenty** — dodawaj, zmieniaj nazwy i porządkuj z paska bocznego. [Dowiedz się więcej](organising-your-work#sections-and-documents)
+- **Szablony** — zacznij od struktury, nie od pustej strony. [Dowiedz się więcej](organising-your-work#templates)
 
 ## Widoki i tryby
 

@@ -45,6 +45,26 @@ export const gotoFirstDoc = async (
   return { spaceId, docId };
 };
 
+/**
+ * Add-doc now lives in a section's ⋯ menu (no direct add button). Open the
+ * first section's menu, choose "Add document", and return the inline name
+ * input so callers can fill and submit it. `sidebar` defaults to the last
+ * `<aside>` (the nav column).
+ */
+export const openSectionAddDoc = async (
+  page: Page,
+  sidebar = page.locator('aside').last(),
+): Promise<ReturnType<Page['locator']>> => {
+  await sidebar
+    .locator('[data-testid^="sidebar-section-"][data-testid$="-menu"]')
+    .first()
+    .click();
+  await page.locator('[data-testid$="-add-doc"]').first().click();
+  const input = sidebar.locator('[data-testid$="-add-input"]');
+  await expect(input).toBeVisible();
+  return input;
+};
+
 export const createSpaceFromTemplate = async (
   page: Page,
   templateId: string,

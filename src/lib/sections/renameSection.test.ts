@@ -1,7 +1,7 @@
 import { db } from '@/db/db';
 import { sampleSection, seedBasicSpace } from '@/test/fixtures';
 import { InvariantError } from '@/lib/invariant';
-import { renameSection } from './section-actions';
+import { renameSection } from './renameSection';
 
 describe('renameSection', () => {
   beforeEach(async () => {
@@ -24,6 +24,14 @@ describe('renameSection', () => {
 
   it('is a no-op for an empty or whitespace-only label', async () => {
     await renameSection(sampleSection.id, '   ');
+    const section = await db.sections.get(sampleSection.id);
+    expect(section?.label).toBe(sampleSection.label);
+  });
+
+  it('rejects renaming to the reserved Workshop label', async () => {
+    await expect(renameSection(sampleSection.id, 'Workshop')).rejects.toThrow(
+      InvariantError,
+    );
     const section = await db.sections.get(sampleSection.id);
     expect(section?.label).toBe(sampleSection.label);
   });

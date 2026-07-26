@@ -17,9 +17,9 @@ kotoa 'oku hōhoko ki hono teuteu ke ke teke hangatonu ki he fakaikiiki.
 
 ## Fakakatoa
 
-- **Ngaahi Spesi** — ngaahi polōseki fakataha. [Ako lahi ange](organizing-your-work#spaces)
-- **Ngaahi Vahe & Ngaahi Tohi** — dohi, fakahingoa, mo e tohi 'i he tafatafa. [Ako lahi ange](organizing-your-work#sections-and-documents)
-- **Ngaahi Sipinga** — kamata mei ha faka'ilonga, 'ikai ha lau kātoa 'e taha. [Ako lahi ange](organizing-your-work#templates)
+- **Ngaahi Spesi** — ngaahi polōseki fakataha. [Ako lahi ange](organising-your-work#spaces)
+- **Ngaahi Vahe & Ngaahi Tohi** — dohi, fakahingoa, mo e tohi 'i he tafatafa. [Ako lahi ange](organising-your-work#sections-and-documents)
+- **Ngaahi Sipinga** — kamata mei ha faka'ilonga, 'ikai ha lau kātoa 'e taha. [Ako lahi ange](organising-your-work#templates)
 
 ## Ngaahi Vakai & Ngaahi Fōtunga
 

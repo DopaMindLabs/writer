@@ -1,4 +1,5 @@
-import { renderHook, waitFor, act } from '@testing-library/react';
+import { render, renderHook, waitFor, act } from '@testing-library/react';
+import { useEffect } from 'react';
 import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
 import { db } from '@/db/db';
 import { serializedBody } from '@/test/fixtures';
@@ -148,6 +149,37 @@ describe('useDocCrdtReady', () => {
       expect(result.current.state).toBe('ready');
     });
     expect(reconcileMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('never commits a stale ready frame when switching documents (no flash)', async () => {
+    reconcileMock.mockReset();
+    reconcileMock.mockResolvedValue(undefined);
+
+    // Record each *committed* readiness frame — the flash is a committed frame
+    // where the new doc briefly renders with the previous doc's `ready`,
+    // mounting the editor before the gate unmounts it again.
+    const frames: string[] = [];
+    const Probe = ({ id }: { id: string }) => {
+      const readiness = useDocCrdtReady(id, BODY);
+      useEffect(() => {
+        frames.push(`${id}:${readiness.state}`);
+      });
+      return null;
+    };
+
+    const { rerender } = render(<Probe id="a" />);
+    await waitFor(() => {
+      expect(frames).toContain('a:ready');
+    });
+
+    frames.length = 0;
+    rerender(<Probe id="b" />);
+    await waitFor(() => {
+      expect(frames).toContain('b:ready');
+    });
+    // The first committed frame for doc b must already be pending — a stale
+    // `b:ready` first frame is the mount → unmount → remount flash.
+    expect(frames[0]).toBe('b:pending');
   });
 
   it('invalidates the previous request when the document changes', async () => {

@@ -14,7 +14,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
         data-tour="tour-sidebar-space-title"
       >
         <button
-          class="block min-w-0 flex-1 cursor-text truncate text-left font-serif text-lg font-medium leading-tight tracking-tight text-ink"
+          class="items-center justify-center gap-2 whitespace-nowrap rounded-none transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 block min-w-0 flex-1 cursor-text truncate text-left font-serif text-lg font-medium leading-tight tracking-tight text-ink"
           data-testid="sidebar-space-title"
           title="Rename space"
           type="button"
@@ -67,113 +67,151 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
       class="flex-1 overflow-auto py-2"
       data-tour="tour-sidebar-sections"
     >
+      <span
+        aria-atomic="true"
+        aria-live="polite"
+        class="sr-only"
+      />
       <div
-        class="mb-2"
-        data-testid="sidebar-section-sec1"
+        class="relative"
+        data-testid="sidebar-section-sec1-sortable"
       >
         <div
-          class="group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 pl-5"
-          data-testid="sidebar-section-sec1-header"
+          class="mb-2"
+          data-testid="sidebar-section-sec1"
         >
-          <button
-            class="flex-1 cursor-text truncate text-left uppercase"
-            data-testid="sidebar-section-sec1-label"
-            title="Rename (double-click)"
-            type="button"
+          <div
+            aria-describedby="sidebar-dnd"
+            aria-disabled="false"
+            aria-roledescription="sortable"
+            class="group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 pl-5 cursor-grab focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink active:cursor-grabbing"
+            data-testid="sidebar-section-sec1-header"
+            tabindex="0"
           >
-            Drafts
-          </button>
-          <button
-            aria-label="Add doc to Drafts"
-            class="rounded-sm text-ink-4 opacity-0 transition-opacity hover:text-ink focus:opacity-100 focus-visible:outline-none group-hover:opacity-100"
-            data-testid="sidebar-section-sec1-add"
-            type="button"
+            <button
+              class="items-center justify-center gap-2 whitespace-nowrap rounded-none transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 block flex-1 truncate text-left font-mono font-normal uppercase tracking-[0.08em] cursor-text"
+              data-drag-through=""
+              data-testid="sidebar-section-sec1-label"
+              title="Rename (double-click)"
+              type="button"
+            >
+              Drafts
+            </button>
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              aria-label="Options for Drafts section"
+              class="inline-flex items-center justify-center h-7 w-7 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:text-ink text-ink-4 transition-opacity hover:bg-transparent data-[state=open]:bg-transparent md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
+              data-state="closed"
+              data-testid="sidebar-section-sec1-menu"
+              id="radix-_r_*_"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-ellipsis-vertical h-3 w-3"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.25"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="1"
+                />
+                <circle
+                  cx="12"
+                  cy="5"
+                  r="1"
+                />
+                <circle
+                  cx="12"
+                  cy="19"
+                  r="1"
+                />
+              </svg>
+            </button>
+          </div>
+          <div
+            aria-describedby="sidebar-dnd"
+            aria-disabled="false"
+            aria-roledescription="sortable"
+            class="focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink cursor-grab active:cursor-grabbing"
+            data-testid="sidebar-doc-d1-sortable"
+            style="transition: transform 0ms linear;"
+            tabindex="0"
           >
-            <svg
-              aria-hidden="true"
-              class="lucide lucide-plus h-3 w-3"
-              fill="none"
-              height="24"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
+            <div
+              class="group -ml-px flex items-center gap-2 border-l-2 transition-colors pl-5 border-ink bg-paper"
             >
-              <path
-                d="M5 12h14"
-              />
-              <path
-                d="M12 5v14"
-              />
-            </svg>
-          </button>
-        </div>
-        <div
-          class="group -ml-px flex items-center gap-2 border-l-2 transition-colors pl-5 border-ink bg-paper"
-        >
-          <a
-            class="flex min-w-0 flex-1 items-center gap-2 py-1.5"
-            data-discover="true"
-            data-testid="sidebar-doc-d1"
-            href="/s/s1/d/d1"
-            title="Rename (double-click)"
-          >
-            <span
-              class="flex-1 truncate text-[13px] font-medium text-ink"
-              data-testid="sidebar-doc-d1-name"
-            >
-              Sample Doc
-            </span>
-            <span
-              class="inline-flex h-3 min-w-3 items-center justify-center font-mono text-[10px] text-ink-4"
-              data-testid="sidebar-doc-d1-count"
-            >
-              ◌
-            </span>
-          </a>
-          <button
-            aria-expanded="false"
-            aria-haspopup="menu"
-            aria-label="Options for Sample Doc"
-            class="inline-flex items-center justify-center h-7 w-7 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:text-ink text-ink-4 transition-opacity hover:bg-transparent data-[state=open]:bg-transparent md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
-            data-state="closed"
-            data-testid="sidebar-doc-d1-menu"
-            id="radix-_r_*_"
-            type="button"
-          >
-            <svg
-              aria-hidden="true"
-              class="lucide lucide-ellipsis-vertical h-3 w-3"
-              fill="none"
-              height="24"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.25"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle
-                cx="12"
-                cy="12"
-                r="1"
-              />
-              <circle
-                cx="12"
-                cy="5"
-                r="1"
-              />
-              <circle
-                cx="12"
-                cy="19"
-                r="1"
-              />
-            </svg>
-          </button>
+              <a
+                class="flex min-w-0 flex-1 items-center gap-2 py-1.5"
+                data-discover="true"
+                data-testid="sidebar-doc-d1"
+                href="/s/s1/d/d1"
+                title="Rename (double-click)"
+              >
+                <span
+                  class="flex-1 truncate text-[13px] font-medium text-ink"
+                  data-testid="sidebar-doc-d1-name"
+                >
+                  Sample Doc
+                </span>
+                <span
+                  class="inline-flex h-3 min-w-3 items-center justify-center font-mono text-[10px] text-ink-4"
+                  data-testid="sidebar-doc-d1-count"
+                >
+                  ◌
+                </span>
+              </a>
+              <button
+                aria-expanded="false"
+                aria-haspopup="menu"
+                aria-label="Options for Sample Doc"
+                class="inline-flex items-center justify-center h-7 w-7 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:text-ink text-ink-4 transition-opacity hover:bg-transparent data-[state=open]:bg-transparent md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
+                data-state="closed"
+                data-testid="sidebar-doc-d1-menu"
+                id="radix-_r_*_"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-ellipsis-vertical h-3 w-3"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.25"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="1"
+                  />
+                  <circle
+                    cx="12"
+                    cy="5"
+                    r="1"
+                  />
+                  <circle
+                    cx="12"
+                    cy="19"
+                    r="1"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <div
@@ -182,7 +220,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
       >
         <button
           aria-label="Add section to this space"
-          class="flex w-full items-center gap-1 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:text-ink focus-visible:opacity-100 focus-visible:outline-none group-hover:opacity-100"
+          class="whitespace-nowrap rounded-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 flex w-full items-center justify-start gap-1 font-mono text-[9px] font-normal uppercase tracking-[0.08em] text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:text-ink focus-visible:opacity-100 focus-visible:outline-none group-hover:opacity-100"
           data-testid="sidebar-add-section-trigger"
           type="button"
         >
@@ -222,7 +260,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
           Workshop
         </div>
         <a
-          class="-ml-px flex items-center gap-2 border-l-2 px-5 py-1.5 transition-colors border-transparent text-ink-2 hover:bg-paper"
+          class="-ml-px flex items-center gap-2 border-l-2 py-1.5 pl-5 pr-9 transition-colors border-transparent text-ink-2 hover:bg-paper"
           data-discover="true"
           data-testid="sidebar-brain-space-link"
           href="/s/s1/brain-space"
@@ -234,7 +272,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
             Brain space
           </span>
           <span
-            class="font-mono text-[10px] text-ink-4"
+            class="inline-flex h-3 min-w-3 items-center justify-center font-mono text-[10px] text-ink-4"
             data-testid="sidebar-brain-space-link-count"
           >
             1◦

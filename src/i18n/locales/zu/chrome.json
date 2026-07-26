@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Izikhala" },
+  "spaceRail": {
+    "landmarkLabel": "Izikhala"
+  },
   "sidebar": {
     "landmarkLabel": "Isikhala",
     "navLabel": "Amadokhumenti",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "Izilungiselelo zesikhala",
     "openSpaceMenu": "Vula imenyu yesikhala",
     "docMenuAria": "Izinketho ze-{{name}}",
-    "renameDoc": "Qamba kabusha",
-    "renameDialog": {
-      "title": "Qamba kabusha idokhumenti",
-      "description": "Khetha igama elisha lale dokhumenti.",
-      "label": "Igama ledokhumenti",
-      "cancel": "Khansela",
-      "save": "Qamba kabusha"
-    }
+    "renameDoc": "Qamba kabusha"
   },
   "topbar": {
     "openNav": "Vula ukuzulazula",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "Ukugxila (⌘\\)",
     "findInDoc": "Thola kudokhumenti",
     "inspector": "Umhloli wedokhumenti",
-    "themes": { "light": "Okukhanyayo", "dark": "Okumnyama", "hcLight": "Umphumela ophezulu (okukhanyayo)", "hcDark": "Umphumela ophezulu (okumnyama)" }
+    "themes": {
+      "light": "Okukhanyayo",
+      "dark": "Okumnyama",
+      "hcLight": "Umphumela ophezulu (okukhanyayo)",
+      "hcDark": "Umphumela ophezulu (okumnyama)"
+    }
   },
-  "modeToggle": { "write": "bhala", "read": "funda", "split": "hlukanisa", "space": "isikhala" },
-  "mobileNav": { "title": "Ukuzulazula", "close": "Vala ukuzulazula" },
-  "mobileTabs": { "write": "bhala", "read": "funda", "split": "hlukanisa", "brain": "brain", "cite": "caphuna", "more": "okuningi" },
+  "modeToggle": {
+    "write": "bhala",
+    "read": "funda",
+    "split": "hlukanisa",
+    "space": "isikhala"
+  },
+  "mobileNav": {
+    "title": "Ukuzulazula",
+    "close": "Vala ukuzulazula"
+  },
+  "mobileTabs": {
+    "write": "bhala",
+    "read": "funda",
+    "split": "hlukanisa",
+    "brain": "brain",
+    "cite": "caphuna",
+    "more": "okuningi"
+  },
   "mobileMore": {
     "title": "Okuningi",
     "close": "Vala okuningi",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "Ibha yamathuluzi entanta",
     "readingWidthLabel": "Ububanzi bokufunda",
     "readingWidthHint": "Isilinganiso ngalinye idokhumenti",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Okuningi",
     "helpToursLabel": "Uhambo losizo",
     "helpItem": "Usizo nezinqamuleli",
-    "themes": { "light": "Okukhanyayo", "dark": "Okumnyama", "hcLight": "HC okukhanyayo", "hcDark": "HC okumnyama" },
+    "themes": {
+      "light": "Okukhanyayo",
+      "dark": "Okumnyama",
+      "hcLight": "HC okukhanyayo",
+      "hcDark": "HC okumnyama"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Yini okusha",
     "feedback": "Thumela impendulo…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "Nweba umhloli",
     "collapse": "Phinda umhloli",
-    "tabs": { "outline": "ISIQEPHU", "info": "INFO", "history": "UMLANDO", "actions": "IZENZO" },
-    "outline": { "title": "ISIQEPHU", "sectionSummary": "{{count}} IZIGABA", "empty": "Awekho amakhanda okwamanje. Engeza amakhanda esibhalweni ukwakha uhlaka laso." },
+    "tabs": {
+      "outline": "ISIQEPHU",
+      "info": "INFO",
+      "history": "UMLANDO",
+      "actions": "IZENZO"
+    },
+    "outline": {
+      "title": "ISIQEPHU",
+      "sectionSummary": "{{count}} IZIGABA",
+      "empty": "Awekho amakhanda okwamanje. Engeza amakhanda esibhalweni ukwakha uhlaka laso."
+    },
     "info": {
       "title": "INFO",
       "words": "Amagama",
@@ -119,8 +152,18 @@
       "noLimit": "Akukho mkhawulo",
       "noDueDate": "Akukho usuku"
     },
-    "status": { "draft": "Idrafu", "in-progress": "Kuyaqhubeka", "in-review": "Kubuyekezwa", "complete": "Kuphelele", "published": "Kushicilelwe" },
-    "lock": { "title": "Kukhiyiwe kokuhlela", "body": "Isimo saleli dokhumenti sikhiya leli ukuze sigcine. Vula ukuze wenze ushintsho.", "unlock": "Vula ukuze uhlele" },
+    "status": {
+      "draft": "Idrafu",
+      "in-progress": "Kuyaqhubeka",
+      "in-review": "Kubuyekezwa",
+      "complete": "Kuphelele",
+      "published": "Kushicilelwe"
+    },
+    "lock": {
+      "title": "Kukhiyiwe kokuhlela",
+      "body": "Isimo saleli dokhumenti sikhiya leli ukuze sigcine. Vula ukuze wenze ushintsho.",
+      "unlock": "Vula ukuze uhlele"
+    },
     "history": {
       "title": "IZINGUQULELO",
       "now": "MANJE",
@@ -132,7 +175,11 @@
       "pin": "Khaxa inguqulelo",
       "unpin": "Susa ukukhaxa",
       "restore": "Buyisela",
-      "kind": { "auto": "auto", "manual": "isandla", "baseline": "isiqalo" },
+      "kind": {
+        "auto": "auto",
+        "manual": "isandla",
+        "baseline": "isiqalo"
+      },
       "ageNow": "manje",
       "ageMinutes": "{{count}}m edlule",
       "ageHours": "{{count}}h edlule",

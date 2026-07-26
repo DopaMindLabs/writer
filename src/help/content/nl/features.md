@@ -17,9 +17,9 @@ gids zodat je direct naar de details kunt springen.
 
 ## Organiseren
 
-- **Ruimtes** — op zichzelf staande projecten. [Meer informatie](organizing-your-work#spaces)
-- **Secties en documenten** — toevoegen, hernoemen en herordenen vanuit de zijbalk. [Meer informatie](organizing-your-work#sections-and-documents)
-- **Sjablonen** — begin vanuit een structuur, niet een lege pagina. [Meer informatie](organizing-your-work#templates)
+- **Ruimtes** — op zichzelf staande projecten. [Meer informatie](organising-your-work#spaces)
+- **Secties en documenten** — toevoegen, hernoemen en herordenen vanuit de zijbalk. [Meer informatie](organising-your-work#sections-and-documents)
+- **Sjablonen** — begin vanuit een structuur, niet een lege pagina. [Meer informatie](organising-your-work#templates)
 
 ## Weergaven en modi
 

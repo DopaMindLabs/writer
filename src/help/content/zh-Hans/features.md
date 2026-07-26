@@ -16,9 +16,9 @@
 
 ## 组织管理
 
-- **空间** — 独立的项目单元。[了解更多](organizing-your-work#spaces)
-- **章节与文档** — 从侧边栏添加、重命名和排序。[了解更多](organizing-your-work#sections-and-documents)
-- **模板** — 从结构开始，而非空白页面。[了解更多](organizing-your-work#templates)
+- **空间** — 独立的项目单元。[了解更多](organising-your-work#spaces)
+- **章节与文档** — 从侧边栏添加、重命名和排序。[了解更多](organising-your-work#sections-and-documents)
+- **模板** — 从结构开始，而非空白页面。[了解更多](organising-your-work#templates)
 
 ## 视图与模式
 

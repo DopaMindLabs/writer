@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Svæði" },
+  "spaceRail": {
+    "landmarkLabel": "Svæði"
+  },
   "sidebar": {
     "landmarkLabel": "Svæði",
     "navLabel": "Skjöl",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "Stillingar svæðis",
     "openSpaceMenu": "Opna valmynd svæðis",
     "docMenuAria": "Valkostir fyrir {{name}}",
-    "renameDoc": "Endurnefna",
-    "renameDialog": {
-      "title": "Endurnefna skjal",
-      "description": "Veldu nýtt nafn fyrir þetta skjal.",
-      "label": "Heiti skjals",
-      "cancel": "Hætta við",
-      "save": "Endurnefna"
-    }
+    "renameDoc": "Endurnefna"
   },
   "topbar": {
     "openNav": "Opna leiðsögn",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "Einbeiting (⌘\\)",
     "findInDoc": "Finna í skjali",
     "inspector": "Skjalskoðari",
-    "themes": { "light": "Ljóst", "dark": "Dökkt", "hcLight": "Há birta (ljóst)", "hcDark": "Há birta (dökkt)" }
+    "themes": {
+      "light": "Ljóst",
+      "dark": "Dökkt",
+      "hcLight": "Há birta (ljóst)",
+      "hcDark": "Há birta (dökkt)"
+    }
   },
-  "modeToggle": { "write": "skrifa", "read": "lesa", "split": "skipta", "space": "svæði" },
-  "mobileNav": { "title": "Leiðsögn", "close": "Loka leiðsögn" },
-  "mobileTabs": { "write": "skrifa", "read": "lesa", "split": "skipta", "brain": "brain", "cite": "vitna", "more": "meira" },
+  "modeToggle": {
+    "write": "skrifa",
+    "read": "lesa",
+    "split": "skipta",
+    "space": "svæði"
+  },
+  "mobileNav": {
+    "title": "Leiðsögn",
+    "close": "Loka leiðsögn"
+  },
+  "mobileTabs": {
+    "write": "skrifa",
+    "read": "lesa",
+    "split": "skipta",
+    "brain": "brain",
+    "cite": "vitna",
+    "more": "meira"
+  },
   "mobileMore": {
     "title": "Meira",
     "close": "Loka meira",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "Fljótandi tækjastika",
     "readingWidthLabel": "Lesbreidd",
     "readingWidthHint": "Mál á skjal",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Meira",
     "helpToursLabel": "Hjálparskoðun",
     "helpItem": "Hjálp og flýtileiðir",
-    "themes": { "light": "Ljóst", "dark": "Dökkt", "hcLight": "HB ljóst", "hcDark": "HB dökkt" },
+    "themes": {
+      "light": "Ljóst",
+      "dark": "Dökkt",
+      "hcLight": "HB ljóst",
+      "hcDark": "HB dökkt"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Hvað er nýtt",
     "feedback": "Senda ábendingu…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "Stækka skoðara",
     "collapse": "Minnka skoðara",
-    "tabs": { "outline": "YFIRLIT", "info": "UPPL", "history": "SAGA", "actions": "AÐGERÐIR" },
-    "outline": { "title": "YFIRLIT", "sectionSummary": "{{count}} KAFLAR", "empty": "Engar fyrirsagnir enn. Bættu fyrirsögnum við skjalið til að búa til yfirlit þess." },
+    "tabs": {
+      "outline": "YFIRLIT",
+      "info": "UPPL",
+      "history": "SAGA",
+      "actions": "AÐGERÐIR"
+    },
+    "outline": {
+      "title": "YFIRLIT",
+      "sectionSummary": "{{count}} KAFLAR",
+      "empty": "Engar fyrirsagnir enn. Bættu fyrirsögnum við skjalið til að búa til yfirlit þess."
+    },
     "info": {
       "title": "UPPL",
       "words": "Orð",
@@ -119,8 +152,18 @@
       "noLimit": "Engin mörk",
       "noDueDate": "Enginn skiladagur"
     },
-    "status": { "draft": "Drög", "in-progress": "Í vinnslu", "in-review": "Í yfirferð", "complete": "Lokið", "published": "Birt" },
-    "lock": { "title": "Læst til breytinga", "body": "Staða þessa skjals læsir því til verndar. Opnaðu til að gera breytingar.", "unlock": "Opna til breytinga" },
+    "status": {
+      "draft": "Drög",
+      "in-progress": "Í vinnslu",
+      "in-review": "Í yfirferð",
+      "complete": "Lokið",
+      "published": "Birt"
+    },
+    "lock": {
+      "title": "Læst til breytinga",
+      "body": "Staða þessa skjals læsir því til verndar. Opnaðu til að gera breytingar.",
+      "unlock": "Opna til breytinga"
+    },
     "history": {
       "title": "ÚTGÁFUR",
       "now": "NÚNA",
@@ -132,7 +175,11 @@
       "pin": "Festa útgáfu",
       "unpin": "Losa útgáfu",
       "restore": "Endurheimta",
-      "kind": { "auto": "auto", "manual": "handvirk", "baseline": "upphafs" },
+      "kind": {
+        "auto": "auto",
+        "manual": "handvirk",
+        "baseline": "upphafs"
+      },
       "ageNow": "núna",
       "ageMinutes": "fyrir {{count}}m",
       "ageHours": "fyrir {{count}}k",

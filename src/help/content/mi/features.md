@@ -17,9 +17,9 @@ ki tōna aratohu kia taea ai e koe te tere ki te taipitopito.
 
 ## Whakaraupapa
 
-- **Ngā wāhi** — ngā kaupeka-ōkawa. [Akohia ake](organizing-your-work#spaces)
-- **Ngā wāhanga & tuhinga** — tāpiri, whakaingoa anō, me te raupapa anō mai i te pātaka. [Akohia ake](organizing-your-work#sections-and-documents)
-- **Ngā tauira** — tīmata mai i tētahi hanganga, kaua i tētahi whārangi kūare. [Akohia ake](organizing-your-work#templates)
+- **Ngā wāhi** — ngā kaupeka-ōkawa. [Akohia ake](organising-your-work#spaces)
+- **Ngā wāhanga & tuhinga** — tāpiri, whakaingoa anō, me te raupapa anō mai i te pātaka. [Akohia ake](organising-your-work#sections-and-documents)
+- **Ngā tauira** — tīmata mai i tētahi hanganga, kaua i tētahi whārangi kūare. [Akohia ake](organising-your-work#templates)
 
 ## Ngā tirohanga & aratahi
 

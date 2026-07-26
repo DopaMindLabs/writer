@@ -340,6 +340,59 @@ instead of hand-rolling its own.
 
 ---
 
+### 3.8a Submenu (nested menu)
+
+A menu row that opens a second panel of rows to its side — for a branching choice too long
+or too dynamic to sit inline (e.g. "Move to section" over the space's sections). Compose
+`DropdownMenuSub` (state) + `DropdownMenuSubTrigger` (the row; inherits the `MenuItem`
+grammar and carries a trailing `ChevronRight`) + `DropdownMenuSubContent` (the nested panel;
+same hairline `paper` panel grammar as `DropdownMenuContent`). The submenu shares the parent
+menu's roving focus, `Escape`, and click-outside behaviour, so it is keyboard-operable by
+default.
+
+- Reach for a submenu when the branch is a **list of peer targets** (sections, projects,
+  labels); keep flat inline rows for a handful of fixed actions.
+- When that list is long enough to need filtering, put a **`SearchableMenuList` (§3.8b)** inside
+  the `DropdownMenuSubContent` rather than a bare stack of rows.
+
+> **In this repo:** `src/components/ui/dropdown-menu.tsx` re-exports `DropdownMenuSub` /
+> `DropdownMenuSubTrigger` / `DropdownMenuSubContent` (Radix `DropdownMenu.Sub*`, styled in
+> `dropdown-menu.components.tsx`).
+
+---
+
+### 3.8b `SearchableMenuList`
+
+A search field over a filterable, single-select list of rows — the "type to narrow, then
+pick" pattern for when a menu's choices are too many to scan (move a document to one of many
+sections; assign a label). Composes the `SearchField` (§4.7) over a `listbox` of rows that
+reuse the `MenuItem` row grammar (hover/active `paper-2` wash, a trailing `Check` on the
+current value). Host-agnostic: drop it inside a `DropdownMenuSubContent` (§3.8a), a `Popover`,
+or render it standalone.
+
+- **One combobox, not a menu of menu-items.** Keyboard focus stays in the search input;
+  Arrow keys move a highlight through the rows via `aria-activedescendant` and Enter commits
+  the active row. This is what lets the input coexist with a parent Radix menu — the list is
+  not a second roving menu, and the component stops the parent menu's typeahead from stealing
+  the user's keystrokes. Escape/Tab still bubble so the surrounding menu closes normally.
+- Pass `selectedId` for the ticked current value, `emptyLabel` for the no-match message, and a
+  `label` that names both the input and the listbox for assistive tech.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `items` | `readonly { id, label }[]` | — | The choices. |
+| `selectedId` | `string \| null` | — | The current value; shown with a persistent tick. |
+| `onSelect` | `(id) => void` | — | Fired on click or Enter. The host owns closing the menu. |
+| `label` | `string` | — | Accessible name for the search input and the listbox. |
+| `placeholder` | `string` | — | Search-field placeholder. |
+| `emptyLabel` | `string` | — | Shown when the filter matches nothing. |
+| `autoFocus` | boolean | `true` | Focus the search input on mount. |
+
+> **In this repo:** `src/components/ui/SearchableMenuList/` (`SearchableMenuList.tsx` +
+> `SearchableMenuOptions.tsx` / `SearchableMenuOption.tsx` rows + `useSearchableMenu.ts`).
+
+---
+
 ### 3.9 `Kbd`
 
 A keyboard-shortcut hint in the mono meta voice (10 px, `ink-4`, letter-spaced). The
@@ -456,7 +509,7 @@ fit one line.
 
 ### 4.5 `Button`
 
-Four kinds. Square corners always.
+Four styled kinds, plus a `bare` escape hatch. Square corners always.
 
 | Kind | Look | Use for |
 |---|---|---|
@@ -464,14 +517,15 @@ Four kinds. Square corners always.
 | `secondary` | Hairline outline, ink text, transparent ground. | Secondary CTA next to a primary (e.g. *cancel* next to *save*). |
 | `ghost` | Geist 500, ink, single 1-px underline. | Most actions: *continue reading →*, *peek inside*. |
 | `dangerous` | Same as primary — context, not colour, signals risk. | Delete / archive / destructive verbs. |
+| `bare` | No surface of its own — the button reset only (focus ring, disabled handling). | Bespoke inline text triggers that own their type and layout via `className` — an editable title, an eyebrow section label, an eyebrow *Add section* affordance. Never a raw `<button>`. Pair with `size="none"`. |
 
 **Sizes**: `sm` (12 px text, 6×12 padding), `md` default (13 px text, 9×16), `lg` (14 px text,
-12×22).
+12×22), `none` (no box — the caller sizes it, used with `bare`).
 
 | Prop | Type | Default |
 |---|---|---|
-| `kind` | `"primary" \| "secondary" \| "ghost" \| "dangerous"` | `"primary"` |
-| `size` | `"sm" \| "md" \| "lg"` | `"md"` |
+| `kind` | `"primary" \| "secondary" \| "ghost" \| "dangerous" \| "bare"` | `"primary"` |
+| `size` | `"sm" \| "md" \| "lg" \| "none"` | `"md"` |
 | `disabled` | boolean | `false` |
 
 > **In this repo:** `src/components/ui/Button.tsx` — implemented with `cva`

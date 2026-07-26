@@ -17,9 +17,9 @@ face legătura cu ghidul său, astfel încât puteți sări direct la detalii.
 
 ## Organizare
 
-- **Spații** — proiecte de sine stătătoare. [Detalii](organizing-your-work#spaces)
-- **Secțiuni și documente** — adăugați, redenumiți și reordonați din bara laterală. [Detalii](organizing-your-work#sections-and-documents)
-- **Șabloane** — porniți de la o structură, nu de la o pagină goală. [Detalii](organizing-your-work#templates)
+- **Spații** — proiecte de sine stătătoare. [Detalii](organising-your-work#spaces)
+- **Secțiuni și documente** — adăugați, redenumiți și reordonați din bara laterală. [Detalii](organising-your-work#sections-and-documents)
+- **Șabloane** — porniți de la o structură, nu de la o pagină goală. [Detalii](organising-your-work#templates)
 
 ## Vizualizări și moduri
 

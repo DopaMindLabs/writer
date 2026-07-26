@@ -1,4 +1,5 @@
 import { NoteKind } from '@/db/schema';
+import { EMPTY_LEXICAL_JSON } from '@/lib/docs';
 import { TemplateStage, type Template } from './types';
 
 const template: Template = {
@@ -11,7 +12,7 @@ const template: Template = {
   description: 'pipelines · methods · lab notebook',
   pickerOrder: 1,
   sections: [
-    { label: 'Manuscript', order: 0 },
+    { label: 'Manuscript', order: 0, defaultDocName: '' },
     {
       label: 'Methods',
       order: 1,
@@ -19,44 +20,80 @@ const template: Template = {
         { label: 'Pipeline', order: 0, defaultDocName: 'Step' },
         { label: 'Stats', order: 1, defaultDocName: 'Analysis' },
       ],
+      defaultDocName: '',
     },
-    { label: 'Data', order: 2 },
-    { label: 'Results', order: 3 },
-    { label: 'References', order: 4 },
-    { label: 'Notebook', order: 5, defaultDocName: 'Lab notes — {{date}}' },
+    { label: 'Data', order: 2, defaultDocName: '' },
+    { label: 'Results', order: 3, defaultDocName: '' },
+    { label: 'References', order: 4, defaultDocName: '' },
+    {
+      label: 'Notebook',
+      order: 5,
+      defaultDocName: 'Lab notes — {{date}}',
+    },
   ],
   seedDocs: [
-    { sectionLabel: 'Manuscript', name: 'Abstract' },
-    { sectionLabel: 'Manuscript', name: 'Introduction' },
+    {
+      sectionLabel: 'Manuscript',
+      subsectionLabel: '',
+      name: 'Abstract',
+      body: EMPTY_LEXICAL_JSON,
+    },
+    {
+      sectionLabel: 'Manuscript',
+      subsectionLabel: '',
+      name: 'Introduction',
+      body: EMPTY_LEXICAL_JSON,
+    },
     {
       sectionLabel: 'Methods',
       subsectionLabel: 'Pipeline',
       name: 'Quality control',
+      body: EMPTY_LEXICAL_JSON,
     },
     {
       sectionLabel: 'Methods',
       subsectionLabel: 'Pipeline',
       name: 'Alignment',
+      body: EMPTY_LEXICAL_JSON,
     },
     {
       sectionLabel: 'Methods',
       subsectionLabel: 'Pipeline',
       name: 'Variant calling',
+      body: EMPTY_LEXICAL_JSON,
     },
     {
       sectionLabel: 'Methods',
       subsectionLabel: 'Stats',
       name: 'Differential expression',
+      body: EMPTY_LEXICAL_JSON,
     },
     {
       sectionLabel: 'Methods',
       subsectionLabel: 'Stats',
       name: 'Multiple testing',
+      body: EMPTY_LEXICAL_JSON,
     },
-    { sectionLabel: 'Data', name: 'Datasets & accessions' },
-    { sectionLabel: 'Results', name: 'Findings' },
-    { sectionLabel: 'Notebook', name: 'Lab notes — day 1' },
+    {
+      sectionLabel: 'Data',
+      subsectionLabel: '',
+      name: 'Datasets & accessions',
+      body: EMPTY_LEXICAL_JSON,
+    },
+    {
+      sectionLabel: 'Results',
+      subsectionLabel: '',
+      name: 'Findings',
+      body: EMPTY_LEXICAL_JSON,
+    },
+    {
+      sectionLabel: 'Notebook',
+      subsectionLabel: '',
+      name: 'Lab notes — day 1',
+      body: EMPTY_LEXICAL_JSON,
+    },
   ],
+  seedNotes: [],
   noteKinds: [
     NoteKind.Question,
     NoteKind.Source,
@@ -66,6 +103,7 @@ const template: Template = {
     NoteKind.LooseEnd,
     NoteKind.Image,
   ],
+  allowConfiguration: true,
 };
 
 export default template;

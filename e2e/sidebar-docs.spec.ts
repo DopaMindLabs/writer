@@ -1,5 +1,9 @@
 import { test, expect } from './_helpers';
-import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
+import {
+  reseedAndGoHome,
+  getFirstSpaceIdFromHome,
+  openSectionAddDoc,
+} from './_helpers';
 
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
@@ -23,13 +27,8 @@ test('sidebar flattens subsection docs under their parent section and adds at se
   await expect(sidebar.locator('a', { hasText: 'Alignment' })).toBeVisible();
   await expect(sidebar.getByText('↳')).toHaveCount(0);
 
-  // Adding a doc now targets the section level (the only add affordance).
-  const addBtns = sidebar.locator('[data-testid$="-add"]');
-  expect(await addBtns.count()).toBeGreaterThan(0);
-  await addBtns.first().click();
-  const input = sidebar.locator('[data-testid$="-add-input"]');
-  await expect(input).toBeVisible();
-
+  // Adding a doc now targets the section level via the ⋯ menu.
+  const input = await openSectionAddDoc(page, sidebar);
   await input.fill('New Test Doc');
   await input.press('Enter');
 
@@ -43,10 +42,7 @@ test('sidebar add doc input is dismissed on Escape', async ({ page }) => {
   await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
 
   const sidebar = page.locator('aside').last();
-  const addBtns = sidebar.locator('[data-testid$="-add"]');
-  await addBtns.first().click();
-  const input = sidebar.locator('[data-testid$="-add-input"]');
-  await expect(input).toBeVisible();
+  const input = await openSectionAddDoc(page, sidebar);
 
   await input.press('Escape');
   await expect(input).toHaveCount(0);

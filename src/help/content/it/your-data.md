@@ -72,4 +72,4 @@ e backup in-app, quindi consideralo come ultima risorsa e tieni le esportazioni 
 ## Correlato
 
 - [Citazioni e bibliografia](citations-and-bibliography) — esportazione BibTeX.
-- [Organizzare il lavoro](organizing-your-work) — cosa contiene uno spazio.
+- [Organizzare il lavoro](organising-your-work) — cosa contiene uno spazio.

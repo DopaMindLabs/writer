@@ -17,9 +17,9 @@
 
 ## 정리
 
-- **스페이스** — 독립적인 프로젝트. [자세히 보기](organizing-your-work#spaces)
-- **섹션 & 문서** — 사이드바에서 추가, 이름 변경, 순서 변경. [자세히 보기](organizing-your-work#sections-and-documents)
-- **템플릿** — 빈 페이지가 아닌 구조에서 시작. [자세히 보기](organizing-your-work#templates)
+- **스페이스** — 독립적인 프로젝트. [자세히 보기](organising-your-work#spaces)
+- **섹션 & 문서** — 사이드바에서 추가, 이름 변경, 순서 변경. [자세히 보기](organising-your-work#sections-and-documents)
+- **템플릿** — 빈 페이지가 아닌 구조에서 시작. [자세히 보기](organising-your-work#templates)
 
 ## 보기 & 모드
 

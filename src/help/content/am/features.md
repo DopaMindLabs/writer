@@ -16,9 +16,9 @@
 
 ## ማደራጀት
 
-- **ስፔሶች** — ራሳቸውን ቻሉ ፕሮጀክቶች። [ዝርዝር ለማወቅ](organizing-your-work#spaces)
-- **ክፍሎች እና ሰነዶች** — ከጎን አሞሌ ጨምር፣ ሰይም እና ደርድር። [ዝርዝር ለማወቅ](organizing-your-work#sections-and-documents)
-- **ቅጾች** — ባዶ ገጽ ሳይሆን ከመዋቅር ጀምር። [ዝርዝር ለማወቅ](organizing-your-work#templates)
+- **ስፔሶች** — ራሳቸውን ቻሉ ፕሮጀክቶች። [ዝርዝር ለማወቅ](organising-your-work#spaces)
+- **ክፍሎች እና ሰነዶች** — ከጎን አሞሌ ጨምር፣ ሰይም እና ደርድር። [ዝርዝር ለማወቅ](organising-your-work#sections-and-documents)
+- **ቅጾች** — ባዶ ገጽ ሳይሆን ከመዋቅር ጀምር። [ዝርዝር ለማወቅ](organising-your-work#templates)
 
 ## ዕይታዎች እና ሁነታዎች
 

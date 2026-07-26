@@ -28,7 +28,8 @@ tag badge takes you back to that space.
 ## Renaming a document
 
 In the nav drawer, tap the **⋮** button on a document row and choose
-**Rename** to give the document a new name.
+**Rename** — the row turns into a name field. Confirm with return, or clear
+the field and tap away to keep the old name.
 
 ## The document inspector
 

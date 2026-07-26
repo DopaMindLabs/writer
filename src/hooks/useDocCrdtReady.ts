@@ -27,8 +27,19 @@ const toError = (value: unknown): Error =>
 export const useDocCrdtReady = (docId: string, body: string): DocCrdtReadiness => {
   const [readiness, setReadiness] = useState<DocCrdtReadiness>({ state: 'pending' });
   const [attempt, setAttempt] = useState(0);
+  const [lastDocId, setLastDocId] = useState(docId);
   const bodyRef = useRef(body);
   bodyRef.current = body;
+
+  // Adjust during render (React's sanctioned pattern for prop-driven state):
+  // switching documents must not commit a frame that still carries the previous
+  // doc's `ready` — that stale frame mounts the new editor once, the effect
+  // below then unmounts it (`pending`), and reconciliation remounts it: a
+  // visible flash on every doc switch.
+  if (lastDocId !== docId) {
+    setLastDocId(docId);
+    setReadiness({ state: 'pending' });
+  }
 
   const retry = useCallback(() => {
     setAttempt((n) => n + 1);

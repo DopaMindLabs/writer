@@ -17,9 +17,9 @@ così puoi passare direttamente ai dettagli.
 
 ## Organizzazione
 
-- **Spazi** — progetti autonomi. [Scopri di più](organizing-your-work#spaces)
-- **Sezioni e documenti** — aggiungi, rinomina e riordina dalla barra laterale. [Scopri di più](organizing-your-work#sections-and-documents)
-- **Modelli** — inizia da una struttura, non da una pagina vuota. [Scopri di più](organizing-your-work#templates)
+- **Spazi** — progetti autonomi. [Scopri di più](organising-your-work#spaces)
+- **Sezioni e documenti** — aggiungi, rinomina e riordina dalla barra laterale. [Scopri di più](organising-your-work#sections-and-documents)
+- **Modelli** — inizia da una struttura, non da una pagina vuota. [Scopri di più](organising-your-work#templates)
 
 ## Viste e modalità
 

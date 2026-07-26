@@ -12,8 +12,8 @@ describe('listTemplates', () => {
     for (let i = 1; i < list.length; i += 1) {
       const a = list[i - 1];
       const b = list[i];
-      const ao = a.pickerOrder ?? Number.MAX_SAFE_INTEGER;
-      const bo = b.pickerOrder ?? Number.MAX_SAFE_INTEGER;
+      const ao = a.pickerOrder;
+      const bo = b.pickerOrder;
       if (ao === bo) {
         expect(a.label.localeCompare(b.label)).toBeLessThanOrEqual(0);
       } else {
@@ -56,7 +56,7 @@ describe('seed wording', () => {
     const fiction = getTemplate('fiction');
     const titles = (fiction?.seedNotes ?? [])
       .map((n) => n.title)
-      .filter((title): title is string => Boolean(title));
+      .filter((title) => title !== '');
     expect(titles).toEqual([
       'Character — Name',
       'Place — Name',
@@ -77,15 +77,18 @@ describe('getTemplate', () => {
   });
 });
 
-describe('allowExtraSections', () => {
-  it('is true for the Blank template', () => {
-    expect(getTemplate('blank')?.allowExtraSections).toBe(true);
+describe('allowConfiguration', () => {
+  it('is set true on every shipped template (sections are user-managed by default)', () => {
+    for (const template of listTemplates()) {
+      expect(template.allowConfiguration).toBe(true);
+    }
   });
 
-  it('is unset (falsy) on structured templates that should keep their seeded shape', () => {
-    expect(getTemplate('fiction')?.allowExtraSections).toBeFalsy();
-    expect(getTemplate('humanities')?.allowExtraSections).toBeFalsy();
-    expect(getTemplate('technical')?.allowExtraSections).toBeFalsy();
-    expect(getTemplate('bioinformatics')?.allowExtraSections).toBeFalsy();
+  it('is present as a boolean on each template looked up by id', () => {
+    expect(getTemplate('blank')?.allowConfiguration).toBe(true);
+    expect(getTemplate('fiction')?.allowConfiguration).toBe(true);
+    expect(getTemplate('humanities')?.allowConfiguration).toBe(true);
+    expect(getTemplate('technical')?.allowConfiguration).toBe(true);
+    expect(getTemplate('bioinformatics')?.allowConfiguration).toBe(true);
   });
 });

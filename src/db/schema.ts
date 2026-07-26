@@ -42,6 +42,13 @@ export interface Doc {
     charLimit?: number;
     dueDate?: number;
   };
+  /**
+   * Position within its section, ascending. Optional and unindexed: legacy rows
+   * without it sort after ordered ones in insertion order, and it is assigned
+   * densely (0..n-1) whenever the section is reordered. Not an index, so it
+   * needs no schema version bump and syncs encrypted like the rest of the row.
+   */
+  order?: number;
   updatedAt: number;
   /** Access-control realm; see {@link Space.realmId}. */
   realmId?: string;

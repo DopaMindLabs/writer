@@ -71,4 +71,4 @@ copiile de rezervă din aplicație, deci tratați-o ca ultimă soluție și păs
 ## Resurse conexe
 
 - [Citări și bibliografie](citations-and-bibliography) — export BibTeX.
-- [Organizarea muncii](organizing-your-work) — ce conține un spațiu.
+- [Organizarea muncii](organising-your-work) — ce conține un spațiu.
