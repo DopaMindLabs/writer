@@ -25,6 +25,15 @@ export const CIPHER_FIELD = '$lipsumCipher';
 
 const CLOUD_RESERVED = ['realmId', 'owner', CIPHER_FIELD] as const;
 
+/**
+ * Provider-neutral routing and convergence metadata that must be readable
+ * *before* content decryption: a provider routes a frame by scope, deduplicates
+ * by mutation id and orders changes by logical time without ever holding a
+ * content key. Deliberately excludes `createdBy`/`updatedBy` — attribution
+ * names a person and is sealed with the rest of the row.
+ */
+const ROUTING_METADATA = ['accessScopeId', 'mutationId', 'logicalUpdatedAt'] as const;
+
 /** Parse a Dexie schema spec into its primary-key and index field names. */
 const schemaFields = (spec: string): Set<string> => {
   const fields = new Set<string>();
@@ -48,5 +57,6 @@ export const isEncryptedTable = (table: string): boolean =>
 export const plaintextFieldsFor = (table: string): ReadonlySet<string> => {
   const fields = schemaFields(STORES[table] ?? '');
   for (const reserved of CLOUD_RESERVED) fields.add(reserved);
+  for (const field of ROUTING_METADATA) fields.add(field);
   return fields;
 };

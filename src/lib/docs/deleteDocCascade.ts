@@ -2,6 +2,10 @@ import { db } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
 import { invariant } from '@/lib/invariant';
 import { collabStore } from '@/lib/collab/collabStore';
+import {
+  currentPrincipal,
+  touchedMetadataFields,
+} from '@/lib/writerSync/writerEntityMetadata';
 import { docBodyBaselineKey } from './docBodyBaseline';
 
 /**
@@ -20,6 +24,7 @@ export const deleteDocCascade = async (
   database: LoremDB = db,
 ): Promise<void> => {
   invariant(docId, 'deleteDocCascade: docId is required');
+  const touched = touchedMetadataFields(await currentPrincipal());
   await database.transaction(
     'rw',
     [
@@ -40,7 +45,9 @@ export const deleteDocCascade = async (
         (note) => note.linkedDocId === docId,
       );
       await Promise.all(
-        linked.map((note) => database.notes.put({ ...note, linkedDocId: undefined })),
+        linked.map((note) =>
+          database.notes.put({ ...note, linkedDocId: undefined, ...touched }),
+        ),
       );
       await database.docs.delete(docId);
     },

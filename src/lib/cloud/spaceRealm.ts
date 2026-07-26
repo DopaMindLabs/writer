@@ -1,7 +1,9 @@
 import type { Collection, Table } from 'dexie';
 import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
+import type { Space } from '@/db/schema';
 import { invariant } from '@/lib/invariant';
+import type { DexieRow } from './dexieRow';
 
 /**
  * Moving a space into its own access-control realm, and back out again.
@@ -95,7 +97,10 @@ export const restampSpace = async (options: {
   stamp: (row: { realmId?: string }) => void;
 }): Promise<void> => {
   const { db, spaceId, stamp } = options;
-  await restampRows({ matches: db.spaces.where({ id: spaceId }), table: db.spaces, stamp });
+  // The domain `Space` carries no realm; the *persisted* row does. This is the
+  // adapter boundary, so the table is read and written as its adapter row type.
+  const spaces = db.spaces as Table<DexieRow<Space>, string>;
+  await restampRows({ matches: spaces.where({ id: spaceId }), table: spaces, stamp });
   for (const name of SPACE_SCOPED) {
     const table = db.table<{ realmId?: string }, string>(name);
     await restampRows({ matches: table.where({ spaceId }), table, stamp });
@@ -128,7 +133,7 @@ export const createSpaceRealm = async (
     privateRealm !== UNAUTHORIZED,
     'Cannot share a space while signed out of the cloud',
   );
-  const space = await db.spaces.get(spaceId);
+  const space: DexieRow<Space> | undefined = await db.spaces.get(spaceId);
   invariant(space, `Cannot share unknown space: ${spaceId}`);
   invariant(
     !isShared(space.realmId, privateRealm),
@@ -160,7 +165,7 @@ export const dropSpaceRealm = async (
   spaceId: string,
   db: LoremDB = appDb,
 ): Promise<void> => {
-  const space = await db.spaces.get(spaceId);
+  const space: DexieRow<Space> | undefined = await db.spaces.get(spaceId);
   invariant(space, `Cannot unshare unknown space: ${spaceId}`);
   const privateRealm = privateRealmOf(db);
   const { realmId } = space;

@@ -1,6 +1,10 @@
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { invariant } from '@/lib/invariant';
+import {
+  currentPrincipal,
+  newEntityMetadata,
+} from '@/lib/writerSync/writerEntityMetadata';
 import { isWorkshopLabel } from './workshop';
 
 /**
@@ -20,6 +24,8 @@ export const createSection = async (
   );
   const id = newId();
   await db.sections.add({
+    // A section's access scope is the space it belongs to.
+    ...newEntityMetadata(spaceId, await currentPrincipal()),
     id,
     spaceId,
     parentSectionId: null,

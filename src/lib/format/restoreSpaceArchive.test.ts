@@ -10,6 +10,7 @@ import {
 } from '@/lib/backup/buildSpaceMarkdownZip';
 import {
   ATTACHMENT_BYTES,
+  sampleMetadata,
   sampleSpace,
   seedRichSpace,
   serializedBody,
@@ -42,6 +43,7 @@ const mutateSpace = async (): Promise<void> => {
   await db.notes.delete('n2');
   await db.connections.delete('c1');
   await db.citations.add({
+    ...sampleMetadata(),
     id: 'cit-extra',
     spaceId: 's1',
     key: 'extra',

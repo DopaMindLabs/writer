@@ -1,9 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { buildDb } from '@/db/buildDb';
 import type { LoremDB } from '@/db/LoremDB';
+import type { Space } from '@/db/schema';
+import type { DexieRow } from '@/lib/cloud/dexieRow';
 import { CLOUD_FLAG_KEY } from '@/lib/cloud/flag';
 import { invariant, InvariantError } from '@/lib/invariant';
 import { ScopeRole } from '@/lib/syncProviders/types';
+import { sampleMetadata } from '@/test/fixtures';
 import {
   addSpaceMember,
   listSpaceMembers,
@@ -24,16 +27,19 @@ let consoleWarn: ReturnType<typeof vi.spyOn>;
 const SHARED_REALM = 'rlm-shared';
 
 const seedSpaces = async (): Promise<void> => {
-  await db.spaces.bulkPut([
+  const rows: DexieRow<Space>[] = [
     {
+      ...sampleMetadata('shared'),
       id: 'shared', tag: 'SHR', name: 'Shared', shared: false, template: 'blank',
       createdAt: 1, updatedAt: 1, realmId: SHARED_REALM,
     },
     {
+      ...sampleMetadata('private'),
       id: 'private', tag: 'PRV', name: 'Private', shared: false, template: 'blank',
       createdAt: 1, updatedAt: 1,
     },
-  ]);
+  ];
+  await db.spaces.bulkPut(rows);
 };
 
 /**

@@ -2,7 +2,12 @@ import userEvent from '@testing-library/user-event';
 import { fireEvent, renderAtRoute, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
-import { sampleDoc, sampleNote, sampleSpace } from '@/test/fixtures';
+import {
+  sampleDoc,
+  sampleMetadata,
+  sampleNote,
+  sampleSpace,
+} from '@/test/fixtures';
 import { NoteKind, NoteState, type Note } from '@/db/schema';
 import {
   useNoteAttachmentsBySpace,
@@ -597,6 +602,7 @@ describe('BrainSpaceNote', () => {
 
     const seedAttachment = async (id: string, noteId = sampleNote.id) => {
       await db.noteAttachments.put({
+        ...sampleMetadata(),
         id,
         noteId,
         spaceId: sampleSpace.id,
@@ -617,6 +623,7 @@ describe('BrainSpaceNote', () => {
           pending={false}
           attachments={[
             {
+              ...sampleMetadata(),
               id: 'prop1',
               noteId: sampleNote.id,
               spaceId: sampleSpace.id,
@@ -701,6 +708,7 @@ describe('BrainSpaceNote', () => {
   describe('full-size viewer', () => {
     const seedAttachment = async (id: string, noteId = sampleNote.id) => {
       await db.noteAttachments.put({
+        ...sampleMetadata(),
         id,
         noteId,
         spaceId: sampleSpace.id,
@@ -738,6 +746,7 @@ describe('BrainSpaceNote', () => {
 
     const seedAttachment = async (id: string) => {
       await db.noteAttachments.put({
+        ...sampleMetadata(),
         id,
         noteId: imageNote.id,
         spaceId: sampleSpace.id,

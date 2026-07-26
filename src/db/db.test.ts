@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { db } from './db';
 import type { DocUpdate } from './schema';
 import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
+import { sampleMetadata } from '@/test/fixtures';
 
 describe('LoremDB schema', () => {
   it('declares exactly version 1', () => {
@@ -72,16 +73,16 @@ describe('LoremDB schema', () => {
 
   it('supports the compound indexes callers rely on', async () => {
     await db.docs.bulkPut([
-      { id: 'd1', spaceId: 's1', sectionId: 'sec1', name: 'A', body: EMPTY_LEXICAL_JSON, meta: { wordCount: 0 }, updatedAt: 1 },
-      { id: 'd2', spaceId: 's1', sectionId: 'sec2', name: 'B', body: EMPTY_LEXICAL_JSON, meta: { wordCount: 0 }, updatedAt: 2 },
+      { ...sampleMetadata(), id: 'd1', spaceId: 's1', sectionId: 'sec1', name: 'A', body: EMPTY_LEXICAL_JSON, meta: { wordCount: 0 }, updatedAt: 1 },
+      { ...sampleMetadata(), id: 'd2', spaceId: 's1', sectionId: 'sec2', name: 'B', body: EMPTY_LEXICAL_JSON, meta: { wordCount: 0 }, updatedAt: 2 },
     ]);
     expect(
       await db.docs.where('[spaceId+sectionId]').equals(['s1', 'sec1']).count(),
     ).toBe(1);
 
     await db.citations.bulkPut([
-      { id: 'c-old', spaceId: 's1', key: 'old', authors: 'B', title: 'U', year: 1995, type: 'misc', useCount: 0 },
-      { id: 'c-new', spaceId: 's1', key: 'new', authors: 'A', title: 'T', year: 2020, type: 'misc', useCount: 0 },
+      { ...sampleMetadata(), id: 'c-old', spaceId: 's1', key: 'old', authors: 'B', title: 'U', year: 1995, type: 'misc', useCount: 0 },
+      { ...sampleMetadata(), id: 'c-new', spaceId: 's1', key: 'new', authors: 'A', title: 'T', year: 2020, type: 'misc', useCount: 0 },
     ]);
     const ordered = await db.citations
       .where('[spaceId+year]')

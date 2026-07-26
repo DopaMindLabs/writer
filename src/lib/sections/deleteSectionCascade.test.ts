@@ -15,6 +15,7 @@ import {
   FIXED_TIME,
   sampleAnnotation,
   sampleDoc,
+  sampleMetadata,
   sampleRevision,
 } from '@/test/fixtures';
 import type { Section } from '@/db/schema';
@@ -43,6 +44,7 @@ const seedDocGraph = async (docId: string, sectionId: string): Promise<void> => 
 
 const putSection = (over: Partial<Section> & Pick<Section, 'id' | 'label'>) =>
   db.sections.put({
+    ...sampleMetadata(),
     spaceId: 's1',
     parentSectionId: null,
     order: 0,

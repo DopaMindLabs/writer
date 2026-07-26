@@ -1,11 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 import { NoteKind, NoteState, type Note } from '@/db/schema';
+import { asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
 import { BrainSpaceNote } from './BrainSpaceNote';
 
 const FIXED_TIME = 1704067200000;
 
+const entityMetadata = {
+  accessScopeId: 's1',
+  createdBy: asPrincipalId('me'),
+  updatedBy: asPrincipalId('me'),
+  mutationId: asOperationId('op-1'),
+  logicalUpdatedAt: { millis: 0, counter: 0 },
+};
+
 const baseNote: Note = {
+  ...entityMetadata,
   id: 'n1',
   spaceId: 's1',
   l: 24,

@@ -4,6 +4,7 @@ import { act, renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
 import {
   seedBrainSpaceCanvas,
+  sampleMetadata,
   sampleNote,
   sampleSpace,
 } from '@/test/fixtures';
@@ -200,6 +201,7 @@ describe('BrainSpaceCanvas', () => {
       // empty <g> alone would also pass if connection rendering were broken
       // entirely, so we assert exactly the valid connection survives.
       await db.connections.put({
+        ...sampleMetadata(),
         id: 'c-valid',
         spaceId: 's1',
         fromNoteId: 'n1',
@@ -207,6 +209,7 @@ describe('BrainSpaceCanvas', () => {
         createdAt: 0,
       });
       await db.connections.put({
+        ...sampleMetadata(),
         id: 'c-orphan',
         spaceId: 's1',
         fromNoteId: 'n1',

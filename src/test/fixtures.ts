@@ -15,8 +15,27 @@ import {
   type Section,
   type Space,
 } from '@/db/schema';
+import type { AccessScopeId } from '@/lib/syncProviders/types';
+import { asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
+import type { ReplicatedEntityMetadata } from '@/lib/writerSync/entityMetadata';
 
 export const FIXED_TIME = 1704067200000;
+
+/**
+ * Deterministic {@link ReplicatedEntityMetadata} for fixtures. Every sample entity
+ * spreads this, so the test surface carries scope and audit attribution the same
+ * way production rows do.
+ */
+export const sampleMetadata = (
+  accessScopeId: AccessScopeId = 's1',
+  principal = 'me',
+): ReplicatedEntityMetadata => ({
+  accessScopeId,
+  createdBy: asPrincipalId(principal),
+  updatedBy: asPrincipalId(principal),
+  mutationId: asOperationId(`op-${accessScopeId}`),
+  logicalUpdatedAt: { millis: FIXED_TIME, counter: 0 },
+});
 
 export interface BodyBlock {
   text: string;
@@ -58,6 +77,7 @@ export const serializedBody = (text: string): string =>
   serializedBlocks(text.split('\n').map((line) => ({ text: line })));
 
 export const sampleSpace: Space = {
+  ...sampleMetadata(),
   id: 's1',
   tag: 'TST',
   name: 'Test Space',
@@ -68,6 +88,7 @@ export const sampleSpace: Space = {
 };
 
 export const sampleSection: Section = {
+  ...sampleMetadata(),
   id: 'sec1',
   spaceId: 's1',
   parentSectionId: null,
@@ -76,6 +97,7 @@ export const sampleSection: Section = {
 };
 
 export const sampleSubsection: Section = {
+  ...sampleMetadata(),
   id: 'sec1a',
   spaceId: 's1',
   parentSectionId: 'sec1',
@@ -84,6 +106,7 @@ export const sampleSubsection: Section = {
 };
 
 export const sampleDoc: Doc = {
+  ...sampleMetadata(),
   id: 'd1',
   spaceId: 's1',
   sectionId: 'sec1',
@@ -94,6 +117,7 @@ export const sampleDoc: Doc = {
 };
 
 export const sampleNote: Note = {
+  ...sampleMetadata(),
   id: 'n1',
   spaceId: 's1',
   l: 24,
@@ -107,6 +131,7 @@ export const sampleNote: Note = {
 };
 
 export const sampleRevision: Revision = {
+  ...sampleMetadata(),
   id: 'rev1',
   docId: 'd1',
   body: serializedBody('First draft.'),
@@ -164,6 +189,7 @@ export async function seedDocWithRevisions() {
 }
 
 export const sampleCitation: Citation = {
+  ...sampleMetadata(),
   id: 'cit1',
   spaceId: 's1',
   key: 'doe2020',
@@ -176,6 +202,7 @@ export const sampleCitation: Citation = {
 };
 
 export const sampleAnnotation: Annotation = {
+  ...sampleMetadata(),
   id: 'ann1',
   docId: 'd1',
   rangeStart: 0,
@@ -190,6 +217,7 @@ export const sampleAnnotation: Annotation = {
 export const ATTACHMENT_BYTES = 'png-bytes';
 
 export const sampleAttachment: NoteAttachment = {
+  ...sampleMetadata(),
   id: 'att1',
   noteId: 'n1',
   spaceId: 's1',
@@ -201,6 +229,7 @@ export const sampleAttachment: NoteAttachment = {
 };
 
 export const samplePalette: HighlightPalette = {
+  ...sampleMetadata(),
   id: 'pal1',
   spaceId: 's1',
   slots: [
@@ -236,6 +265,7 @@ export async function seedRichSpace() {
     linkedDocId: 'd1',
   });
   await db.connections.put({
+    ...sampleMetadata(),
     id: 'c1',
     spaceId: 's1',
     fromNoteId: 'n1',
@@ -263,6 +293,7 @@ export async function seedBrainSpaceCanvas() {
   const n2: Note = { ...sampleNote, id: 'n2', l: 240, t: 120 };
   await db.notes.bulkPut([n1, n2]);
   const conn: Connection = {
+    ...sampleMetadata(),
     id: 'c1',
     spaceId: 's1',
     fromNoteId: 'n1',

@@ -2,8 +2,10 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import dexieCloud from 'dexie-cloud-addon';
 import { buildDb } from '@/db/buildDb';
 import { LoremDB } from '@/db/LoremDB';
-import { NoteKind, NoteLayout, NoteState } from '@/db/schema';
+import { NoteKind, NoteLayout, NoteState, type Doc, type Space } from '@/db/schema';
+import type { DexieRow } from '@/lib/cloud/dexieRow';
 import { InvariantError } from '@/lib/invariant';
+import { sampleMetadata } from '@/test/fixtures';
 import {
   REALM_TABLE_NAMES,
   createSpaceRealm,
@@ -27,34 +29,41 @@ let db: LoremDB;
 /** A space with one row in every table sharing must reach, plus a local-only one. */
 const seedSpace = async (): Promise<void> => {
   await db.spaces.put({
+    ...sampleMetadata(),
     id: 's1', tag: 'TST', name: 'Space', shared: false, template: 'blank',
     createdAt: 1, updatedAt: 1,
   });
   await db.sections.put({
+    ...sampleMetadata(),
     id: 'sec1', spaceId: 's1', parentSectionId: null, label: 'Part', order: 1,
   });
   await db.docs.put({
+    ...sampleMetadata(),
     id: 'd1', spaceId: 's1', sectionId: 'sec1', name: 'Doc', body: '',
     meta: { wordCount: 0 }, updatedAt: 1,
   });
   await db.notes.put({
+    ...sampleMetadata(),
     id: 'n1', spaceId: 's1', l: 0, t: 0, w: 1, h: 1, kind: NoteKind.Note,
     state: NoteState.User, title: 'Note', body: '', layout: NoteLayout.Text,
     createdAt: 1,
   });
   await db.annotations.put({
+    ...sampleMetadata(),
     id: 'ann1', docId: 'd1', rangeStart: 0, rangeEnd: 1, kind: 'highlight',
     author: 'me', createdAt: 1,
   });
   await db.revisions.put({
+    ...sampleMetadata(),
     id: 'rev1', docId: 'd1', body: '', text: '', wordCount: 0,
     kind: 'manual', createdAt: 1,
   });
   await db.citations.put({
+    ...sampleMetadata(),
     id: 'cit1', spaceId: 's1', key: 'k', authors: 'A', title: 'T', year: 2020,
     type: 'book', useCount: 0,
   });
-  await db.palettes.put({ id: 'pal1', spaceId: 's1', slots: [] });
+  await db.palettes.put({ ...sampleMetadata(), id: 'pal1', spaceId: 's1', slots: [] });
   // Local-only: never leaves the device, so it must never carry a realm.
   await db.syncConfigs.put({ spaceId: 's1', intervalMin: 30 });
 };
@@ -127,18 +136,20 @@ describe('restampSpace', () => {
 
   it('leaves a sibling space and its documents alone', async () => {
     await db.spaces.put({
+      ...sampleMetadata('s2'),
       id: 's2', tag: 'OTH', name: 'Other', shared: false, template: 'blank',
       createdAt: 1, updatedAt: 1,
     });
     await db.docs.put({
+      ...sampleMetadata('s2'),
       id: 'd2', spaceId: 's2', sectionId: 'sec2', name: 'Other doc', body: '',
       meta: { wordCount: 0 }, updatedAt: 1,
     });
 
     await restamp('rlm-shared');
 
-    expect((await db.spaces.get('s2'))?.realmId).toBeUndefined();
-    expect((await db.docs.get('d2'))?.realmId).toBeUndefined();
+    expect((await db.table<DexieRow<Space>>('spaces').get('s2'))?.realmId).toBeUndefined();
+    expect((await db.table<DexieRow<Doc>>('docs').get('d2'))?.realmId).toBeUndefined();
   });
 
   it('copes with a space that has no documents', async () => {
@@ -147,7 +158,7 @@ describe('restampSpace', () => {
     await db.revisions.clear();
 
     await expect(restamp('rlm-shared')).resolves.toBeUndefined();
-    expect((await db.spaces.get('s1'))?.realmId).toBe('rlm-shared');
+    expect((await db.table<DexieRow<Space>>('spaces').get('s1'))?.realmId).toBe('rlm-shared');
   });
 });
 

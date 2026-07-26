@@ -1,9 +1,10 @@
 import { db } from '@/db/db';
 import { InvariantError } from '@/lib/invariant';
+import { sampleMetadata } from '@/test/fixtures';
 import { reorderSection } from './reorderSection';
 
 const putSection = (id: string, order: number, parentSectionId: string | null = null) =>
-  db.sections.put({ id, spaceId: 's1', parentSectionId, label: id, order });
+  db.sections.put({ ...sampleMetadata(), id, spaceId: 's1', parentSectionId, label: id, order });
 
 const orderOf = async (id: string) => (await db.sections.get(id))?.order;
 

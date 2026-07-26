@@ -1,7 +1,14 @@
 import type { HighlightColor } from '@/theme/tokens';
 import type { DocStatus } from '@/lib/docInspector/status';
+import type { ReplicatedEntityMetadata } from '@/lib/writerSync/entityMetadata';
 
-export interface Space {
+/**
+ * Every synced content row carries {@link ReplicatedEntityMetadata}: a
+ * provider-neutral access scope, audit attribution and convergence metadata. A
+ * provider-specific id such as a Dexie Cloud realm never appears on a domain
+ * row — it lives on the adapter row (`DexieRow` in the cloud adapter) instead.
+ */
+export interface Space extends ReplicatedEntityMetadata {
   id: string;
   tag: string;
   name: string;
@@ -9,27 +16,17 @@ export interface Space {
   template: string;
   createdAt: number;
   updatedAt: number;
-  /**
-   * The access-control realm this row belongs to, when its space has been
-   * shared. Absent means the creator's private realm — the default, and the
-   * only state until a space is shared. Stamped by the sync layer and kept
-   * plaintext on the wire (it is in `CLOUD_RESERVED`) so the server can enforce
-   * access; the row's content is sealed around it.
-   */
-  realmId?: string;
 }
 
-export interface Section {
+export interface Section extends ReplicatedEntityMetadata {
   id: string;
   spaceId: string;
   parentSectionId: string | null;
   label: string;
   order: number;
-  /** Access-control realm; see {@link Space.realmId}. */
-  realmId?: string;
 }
 
-export interface Doc {
+export interface Doc extends ReplicatedEntityMetadata {
   id: string;
   spaceId: string;
   sectionId: string;
@@ -50,8 +47,6 @@ export interface Doc {
    */
   order?: number;
   updatedAt: number;
-  /** Access-control realm; see {@link Space.realmId}. */
-  realmId?: string;
 }
 
 /**
@@ -95,7 +90,7 @@ export enum NoteState {
   User = 'user',
 }
 
-export interface Note {
+export interface Note extends ReplicatedEntityMetadata {
   id: string;
   spaceId: string;
   l: number;
@@ -112,11 +107,9 @@ export interface Note {
   openedAt?: number;
   layout?: NoteLayout;
   typeVersion?: string;
-  /** Access-control realm; see {@link Space.realmId}. */
-  realmId?: string;
 }
 
-export interface NoteAttachment {
+export interface NoteAttachment extends ReplicatedEntityMetadata {
   id: string;
   noteId: string;
   spaceId: string;
@@ -125,11 +118,9 @@ export interface NoteAttachment {
   size: number;
   blob: Blob;
   createdAt: number;
-  /** Access-control realm; see {@link Space.realmId}. */
-  realmId?: string;
 }
 
-export interface Annotation {
+export interface Annotation extends ReplicatedEntityMetadata {
   id: string;
   docId: string;
   rangeStart: number;
@@ -139,21 +130,17 @@ export interface Annotation {
   body?: string;
   author: string;
   createdAt: number;
-  /** Access-control realm; see {@link Space.realmId}. */
-  realmId?: string;
 }
 
-export interface Connection {
+export interface Connection extends ReplicatedEntityMetadata {
   id: string;
   spaceId: string;
   fromNoteId: string;
   toNoteId: string;
   createdAt: number;
-  /** Access-control realm; see {@link Space.realmId}. */
-  realmId?: string;
 }
 
-export interface Citation {
+export interface Citation extends ReplicatedEntityMetadata {
   id: string;
   spaceId: string;
   key: string;
@@ -163,13 +150,11 @@ export interface Citation {
   type: 'book' | 'article' | 'chapter' | 'misc';
   useCount: number;
   raw?: string;
-  /** Access-control realm; see {@link Space.realmId}. */
-  realmId?: string;
 }
 
 export type RevisionKind = 'auto' | 'manual' | 'baseline';
 
-export interface Revision {
+export interface Revision extends ReplicatedEntityMetadata {
   id: string;
   docId: string;
   body: string;
@@ -180,8 +165,6 @@ export interface Revision {
   pinned?: boolean;
   createdAt: number;
   meta?: Record<string, unknown>;
-  /** Access-control realm; see {@link Space.realmId}. */
-  realmId?: string;
 }
 
 export type BackupFormat = 'md-zip' | 'archive-v2';
@@ -207,12 +190,10 @@ export interface Settings {
   theme: 'light' | 'dark';
 }
 
-export interface HighlightPalette {
+export interface HighlightPalette extends ReplicatedEntityMetadata {
   id: string;
   spaceId: string;
   slots: { name: string; color: string }[];
-  /** Access-control realm; see {@link Space.realmId}. */
-  realmId?: string;
 }
 
 export interface Meta {

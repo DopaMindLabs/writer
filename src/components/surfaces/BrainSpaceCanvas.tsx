@@ -9,6 +9,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
+import type { PrincipalId } from '@/lib/syncProviders/ids';
+import {
+  currentPrincipal,
+  newEntityMetadata,
+} from '@/lib/writerSync/writerEntityMetadata';
 import { useNotes } from '@/hooks/useNotes';
 import {
   useNoteAttachmentsBySpace,
@@ -155,16 +160,22 @@ const viewportOrigin = (scroller: HTMLDivElement | null) => ({
   t: scroller ? Math.round(scroller.scrollTop) : 0,
 });
 
-const buildNote = (
-  spaceId: string,
-  kind: NoteKind,
-  noteCount: number,
-  origin: { l: number; t: number },
-): Note => {
+interface BuildNoteArgs {
+  spaceId: string;
+  kind: NoteKind;
+  noteCount: number;
+  origin: { l: number; t: number };
+  principal: PrincipalId;
+}
+
+const buildNote = (args: BuildNoteArgs): Note => {
+  const { spaceId, kind, noteCount, origin, principal } = args;
   const jitter = (noteCount * 24) % 240;
   const type = getNoteType(kind);
   const isImage = type.layout === NoteLayout.Image;
   return {
+    // A note's access scope is the space it lives in.
+    ...newEntityMetadata(spaceId, principal),
     id: newId(),
     spaceId,
     l: origin.l + 24 + jitter,
@@ -189,12 +200,13 @@ const useCanvasInteractions = (
 
   const addNote = useCallback(
     async (kind: NoteKind) => {
-      const note = buildNote(
+      const note = buildNote({
         spaceId,
         kind,
         noteCount,
-        viewportOrigin(scrollRef.current),
-      );
+        origin: viewportOrigin(scrollRef.current),
+        principal: await currentPrincipal(),
+      });
       await db.notes.add(note);
       focusNote(note.id);
     },
@@ -208,6 +220,7 @@ const useCanvasInteractions = (
           setPendingFrom(id);
         } else if (pendingFrom !== id) {
           await db.connections.add({
+            ...newEntityMetadata(spaceId, await currentPrincipal()),
             id: newId(),
             spaceId,
             fromNoteId: pendingFrom,

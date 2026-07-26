@@ -1,6 +1,11 @@
 import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
+import { invariant } from '@/lib/invariant';
 import type { Revision, RevisionKind } from '@/db/schema';
+import {
+  currentPrincipal,
+  newEntityMetadata,
+} from '@/lib/writerSync/writerEntityMetadata';
 import { countWords, lexicalJsonToPlainText } from './lexicalJsonToPlainText';
 
 export const MAX_AUTO_REVISIONS_PER_DOC = 30;
@@ -38,7 +43,11 @@ export const createRevision = async (
 ): Promise<Revision> => {
   const now = opts.now ?? Date.now;
   const text = lexicalJsonToPlainText(body);
+  // A revision shares the access scope of the document it snapshots.
+  const doc = await db.docs.get(docId);
+  invariant(doc, 'createRevision: document not found');
   const revision: Revision = {
+    ...newEntityMetadata(doc.accessScopeId, await currentPrincipal()),
     id: newId(),
     docId,
     body,

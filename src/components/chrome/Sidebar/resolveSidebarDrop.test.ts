@@ -1,7 +1,9 @@
 import type { Doc, Section } from '@/db/schema';
+import { sampleMetadata } from '@/test/fixtures';
 import { resolveSidebarDrop } from './resolveSidebarDrop';
 
 const section = (id: string, order: number): Section => ({
+  ...sampleMetadata(),
   id,
   spaceId: 's1',
   parentSectionId: null,
@@ -10,6 +12,7 @@ const section = (id: string, order: number): Section => ({
 });
 
 const doc = (id: string, sectionId: string): Doc => ({
+  ...sampleMetadata(),
   id,
   spaceId: 's1',
   sectionId,

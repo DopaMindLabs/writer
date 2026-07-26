@@ -2,9 +2,19 @@ import { useEffect } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useUI } from '@/store/ui';
 import type { Doc } from '@/db/schema';
+import { asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
 import { VersionHistoryModal } from './VersionHistoryModal';
 
+const entityMetadata = {
+  accessScopeId: 's1',
+  createdBy: asPrincipalId('me'),
+  updatedBy: asPrincipalId('me'),
+  mutationId: asOperationId('op-1'),
+  logicalUpdatedAt: { millis: 0, counter: 0 },
+};
+
 const doc: Doc = {
+  ...entityMetadata,
   id: 'd1',
   spaceId: 's1',
   sectionId: 'sec1',

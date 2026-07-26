@@ -1,6 +1,10 @@
 import { db } from '@/db/db';
 import { invariant } from '@/lib/invariant';
 import { getEditorHandle } from '@/lib/collab/editorRegistry';
+import {
+  currentPrincipal,
+  touchedMetadataFields,
+} from '@/lib/writerSync/writerEntityMetadata';
 import { createRevision } from './createRevision';
 import { isParseableBody } from './lexicalJsonToPlainText';
 
@@ -15,9 +19,12 @@ export const restoreRevision = async (
   opts: RestoreRevisionOpts = {},
 ): Promise<void> => {
   const now = opts.now ?? Date.now;
+  const touched = touchedMetadataFields(await currentPrincipal());
   let restoredBody = '';
 
-  await db.transaction('rw', db.revisions, db.docs, async () => {
+  // `db.meta` joins the transaction because the nested createRevision resolves
+  // the current principal from the profile, which lives in the meta table.
+  await db.transaction('rw', db.revisions, db.docs, db.meta, async () => {
     const target = await db.revisions.get(revisionId);
     invariant(target, () => `revision ${revisionId} not found`);
     invariant(
@@ -42,6 +49,7 @@ export const restoreRevision = async (
       body: target.body,
       updatedAt: now(),
       meta: { ...doc.meta, wordCount: target.wordCount },
+      ...touched,
     });
     restoredBody = target.body;
   });

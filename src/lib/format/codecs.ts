@@ -1,6 +1,8 @@
 import { invariant } from '@/lib/invariant';
 import { isDocStatus } from '@/lib/docInspector/status';
 import type { HighlightColor } from '@/theme/tokens';
+import { asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
+import type { ReplicatedEntityMetadata } from '@/lib/writerSync/entityMetadata';
 import {
   NoteKind,
   NoteLayout,
@@ -26,7 +28,7 @@ import {
  * invariant() before constructing a clean record object.
  */
 
-export interface NoteAttachmentRecord {
+export interface NoteAttachmentRecord extends ReplicatedEntityMetadata {
   id: string;
   noteId: string;
   spaceId: string;
@@ -41,6 +43,11 @@ export const serializeNoteAttachment = (
   attachment: NoteAttachment,
   assetPath: string,
 ): NoteAttachmentRecord => ({
+  accessScopeId: attachment.accessScopeId,
+  createdBy: attachment.createdBy,
+  updatedBy: attachment.updatedBy,
+  mutationId: attachment.mutationId,
+  logicalUpdatedAt: attachment.logicalUpdatedAt,
   id: attachment.id,
   noteId: attachment.noteId,
   spaceId: attachment.spaceId,
@@ -138,6 +145,28 @@ const readEnum = <T extends string>(
   return value;
 };
 
+/**
+ * The provider-neutral sync metadata every archived content record carries
+ * (v2 archives serialise rows wholesale, so the fields are always present).
+ * Validated as strictly as any other field: an archive is untrusted input.
+ */
+const parseEntityMetadata = (
+  raw: Record<string, unknown>,
+  label: string,
+): ReplicatedEntityMetadata => {
+  const at = asRaw(raw.logicalUpdatedAt, `${label}.logicalUpdatedAt`);
+  return {
+    accessScopeId: readString(raw, 'accessScopeId', label),
+    createdBy: asPrincipalId(readString(raw, 'createdBy', label)),
+    updatedBy: asPrincipalId(readString(raw, 'updatedBy', label)),
+    mutationId: asOperationId(readString(raw, 'mutationId', label)),
+    logicalUpdatedAt: {
+      millis: readNumber(at, 'millis', `${label}.logicalUpdatedAt`),
+      counter: readNumber(at, 'counter', `${label}.logicalUpdatedAt`),
+    },
+  };
+};
+
 const NOTE_KINDS: readonly NoteKind[] = Object.values(NoteKind);
 const NOTE_STATES: readonly NoteState[] = Object.values(NoteState);
 const NOTE_LAYOUTS: readonly NoteLayout[] = Object.values(NoteLayout);
@@ -165,6 +194,7 @@ const INSPECTOR_TOGGLES: readonly InspectorToggle[] = ['on', 'off', 'inherit'];
 export const parseSpaceRecord = (value: unknown): Space => {
   const raw = asRaw(value, 'space');
   return {
+    ...parseEntityMetadata(raw, 'space'),
     id: readString(raw, 'id', 'space'),
     tag: readString(raw, 'tag', 'space'),
     name: readString(raw, 'name', 'space'),
@@ -183,6 +213,7 @@ export const parseSectionRecord = (value: unknown): Section => {
     'section.parentSectionId: expected a string or null',
   );
   return {
+    ...parseEntityMetadata(raw, 'section'),
     id: readString(raw, 'id', 'section'),
     spaceId: readString(raw, 'spaceId', 'section'),
     parentSectionId: parent,
@@ -205,6 +236,7 @@ const parseDocMeta = (value: unknown): Doc['meta'] => {
 export const parseDocRecord = (value: unknown): Doc => {
   const raw = asRaw(value, 'doc');
   return {
+    ...parseEntityMetadata(raw, 'doc'),
     id: readString(raw, 'id', 'doc'),
     spaceId: readString(raw, 'spaceId', 'doc'),
     sectionId: readString(raw, 'sectionId', 'doc'),
@@ -219,6 +251,7 @@ export const parseNoteRecord = (value: unknown): Note => {
   const raw = asRaw(value, 'note');
   const layout = raw.layout;
   return {
+    ...parseEntityMetadata(raw, 'note'),
     id: readString(raw, 'id', 'note'),
     spaceId: readString(raw, 'spaceId', 'note'),
     l: readNumber(raw, 'l', 'note'),
@@ -242,6 +275,7 @@ export const parseNoteAttachmentRecord = (
 ): NoteAttachmentRecord => {
   const raw = asRaw(value, 'noteAttachment');
   return {
+    ...parseEntityMetadata(raw, 'noteAttachment'),
     id: readString(raw, 'id', 'noteAttachment'),
     noteId: readString(raw, 'noteId', 'noteAttachment'),
     spaceId: readString(raw, 'spaceId', 'noteAttachment'),
@@ -257,6 +291,7 @@ export const parseAnnotationRecord = (value: unknown): Annotation => {
   const raw = asRaw(value, 'annotation');
   const color = raw.color;
   return {
+    ...parseEntityMetadata(raw, 'annotation'),
     id: readString(raw, 'id', 'annotation'),
     docId: readString(raw, 'docId', 'annotation'),
     rangeStart: readNumber(raw, 'rangeStart', 'annotation'),
@@ -275,6 +310,7 @@ export const parseAnnotationRecord = (value: unknown): Annotation => {
 export const parseCitationRecord = (value: unknown): Citation => {
   const raw = asRaw(value, 'citation');
   return {
+    ...parseEntityMetadata(raw, 'citation'),
     id: readString(raw, 'id', 'citation'),
     spaceId: readString(raw, 'spaceId', 'citation'),
     key: readString(raw, 'key', 'citation'),
@@ -290,6 +326,7 @@ export const parseCitationRecord = (value: unknown): Citation => {
 export const parseConnectionRecord = (value: unknown): Connection => {
   const raw = asRaw(value, 'connection');
   return {
+    ...parseEntityMetadata(raw, 'connection'),
     id: readString(raw, 'id', 'connection'),
     spaceId: readString(raw, 'spaceId', 'connection'),
     fromNoteId: readString(raw, 'fromNoteId', 'connection'),
@@ -306,6 +343,7 @@ export const parseRevisionRecord = (value: unknown): Revision => {
     'revision.meta: expected an object',
   );
   return {
+    ...parseEntityMetadata(raw, 'revision'),
     id: readString(raw, 'id', 'revision'),
     docId: readString(raw, 'docId', 'revision'),
     body: readString(raw, 'body', 'revision'),
@@ -334,6 +372,7 @@ export const parsePaletteRecord = (value: unknown): HighlightPalette => {
   const slots = raw.slots;
   invariant(Array.isArray(slots), 'palette.slots: expected an array');
   return {
+    ...parseEntityMetadata(raw, 'palette'),
     id: readString(raw, 'id', 'palette'),
     spaceId: readString(raw, 'spaceId', 'palette'),
     slots: slots.map(parsePaletteSlot),

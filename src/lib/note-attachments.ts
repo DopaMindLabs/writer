@@ -2,6 +2,12 @@ import { db } from '@/db/db';
 import { newId } from '@/lib/ids';
 import { invariant } from '@/lib/invariant';
 import { NoteState, type Note, type NoteAttachment } from '@/db/schema';
+import type { PrincipalId } from '@/lib/syncProviders/ids';
+import {
+  currentPrincipal,
+  newEntityMetadata,
+  touchedMetadataFields,
+} from '@/lib/writerSync/writerEntityMetadata';
 import {
   MAX_IMAGE_BYTES,
   MAX_NOTE_IMAGES,
@@ -28,7 +34,14 @@ const rejectionReason = (file: File): string | null => {
   return null;
 };
 
-const toAttachment = (note: Note, file: File, blob: Blob): NoteAttachment => ({
+const toAttachment = (
+  note: Note,
+  file: File,
+  blob: Blob,
+  principal: PrincipalId,
+): NoteAttachment => ({
+  // An attachment shares the access scope of the note it belongs to.
+  ...newEntityMetadata(note.accessScopeId, principal),
   id: newId(),
   noteId: note.id,
   spaceId: note.spaceId,
@@ -44,6 +57,7 @@ export const addNoteImages = async (
   files: readonly File[],
 ): Promise<AddImagesResult> => {
   invariant(note.id, 'addNoteImages: note must have an id');
+  const principal = await currentPrincipal();
 
   const rejected: string[] = [];
   const candidates: NoteAttachment[] = [];
@@ -53,7 +67,7 @@ export const addNoteImages = async (
       rejected.push(reason);
       continue;
     }
-    candidates.push(toAttachment(note, file, await readFileBlob(file)));
+    candidates.push(toAttachment(note, file, await readFileBlob(file), principal));
   }
 
   if (candidates.length === 0) return { added: [], rejected };
@@ -74,7 +88,10 @@ export const addNoteImages = async (
       if (accepted.length > 0) {
         await db.noteAttachments.bulkAdd(accepted);
         if (note.state !== NoteState.User) {
-          await db.notes.update(note.id, { state: NoteState.User });
+          await db.notes.update(note.id, {
+            state: NoteState.User,
+            ...touchedMetadataFields(principal),
+          });
         }
       }
       return accepted;

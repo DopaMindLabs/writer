@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { fireEvent } from '@testing-library/react';
 import { renderAtRoute, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
-import { FIXED_TIME, sampleSpace, serializedBody } from '@/test/fixtures';
+import { FIXED_TIME, sampleMetadata, sampleSpace, serializedBody } from '@/test/fixtures';
 import type { Doc } from '@/db/schema';
 import { useUI } from '@/store/ui';
 
@@ -18,6 +18,7 @@ vi.mock('@/editor/EditorFacade', () => ({
 const { SplitScreen } = await import('./Split');
 
 const docA: Doc = {
+  ...sampleMetadata(),
   id: 'd1',
   spaceId: 's1',
   sectionId: 'sec1',

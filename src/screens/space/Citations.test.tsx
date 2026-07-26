@@ -1,12 +1,13 @@
 import userEvent from '@testing-library/user-event';
 import { act, renderAtRoute, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
-import { sampleSpace, seedBasicSpace } from '@/test/fixtures';
+import { sampleMetadata, sampleSpace, seedBasicSpace } from '@/test/fixtures';
 import { useUI } from '@/store/ui';
 import type { Citation } from '@/db/schema';
 import { CitationsScreen } from './Citations';
 
 const sampleCitation: Citation = {
+  ...sampleMetadata(),
   id: 'c1',
   spaceId: 's1',
   key: 'smith2020',

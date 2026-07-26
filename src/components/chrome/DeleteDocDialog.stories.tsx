@@ -1,8 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { Doc } from '@/db/schema';
+import { asOperationId, asPrincipalId } from '@/lib/syncProviders/ids';
 import { DeleteDocDialog } from './DeleteDocDialog';
 
+const entityMetadata = {
+  accessScopeId: 's1',
+  createdBy: asPrincipalId('me'),
+  updatedBy: asPrincipalId('me'),
+  mutationId: asOperationId('op-1'),
+  logicalUpdatedAt: { millis: 0, counter: 0 },
+};
+
 const sampleDoc: Doc = {
+  ...entityMetadata,
   id: 'd1',
   spaceId: 's1',
   sectionId: 'sec1',

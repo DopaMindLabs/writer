@@ -5,6 +5,12 @@ import { countWords } from '@/editor/wordCount';
 import { newId } from '@/lib/ids';
 import { collabStore } from '@/lib/collab/collabStore';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
+import {
+  currentPrincipal,
+  newEntityMetadata,
+  touchedMetadataFields,
+  type TouchedMetadataFields,
+} from '@/lib/writerSync/writerEntityMetadata';
 import { writeDocBodyBaseline } from './docBodyBaseline';
 import { EMPTY_LEXICAL_JSON } from './emptyBody';
 
@@ -57,6 +63,8 @@ export const createDoc = async (input: CreateDocInput): Promise<Doc> => {
   invariant(input.sectionId, 'createDoc: sectionId is required');
   const body = input.body ?? EMPTY_LEXICAL_JSON;
   const doc: Doc = {
+    // The space a document lives in is its access scope.
+    ...newEntityMetadata(input.spaceId, await currentPrincipal()),
     id: newId(),
     spaceId: input.spaceId,
     sectionId: input.sectionId,
@@ -95,7 +103,11 @@ export const renameDoc = async (docId: string, name: string): Promise<void> => {
   invariant(docId, 'renameDoc: docId is required');
   const next = name.trim();
   if (!next) return;
-  await db.docs.update(docId, { name: next, updatedAt: Date.now() });
+  await db.docs.update(docId, {
+    name: next,
+    updatedAt: Date.now(),
+    ...touchedMetadataFields(await currentPrincipal()),
+  });
 };
 
 export const updateDocBody = async (
@@ -103,11 +115,13 @@ export const updateDocBody = async (
   serialized: string,
 ): Promise<void> => {
   invariant(docId, 'updateDocBody: docId is required');
+  const touched = touchedMetadataFields(await currentPrincipal());
   await db.transaction('rw', db.docs, db.meta, async () => {
     await db.docs.update(docId, {
       body: serialized,
       updatedAt: Date.now(),
       'meta.wordCount': countWords(serialized),
+      ...touched,
     });
     await writeDocBodyBaseline(docId, serialized);
   });
@@ -131,7 +145,10 @@ export const updateDocMeta = async (
   meta: Partial<Doc['meta']>,
 ): Promise<void> => {
   invariant(docId, 'updateDocMeta: docId is required');
-  const changes: Record<string, unknown> = { updatedAt: Date.now() };
+  const changes: Record<string, unknown> = {
+    updatedAt: Date.now(),
+    ...touchedMetadataFields(await currentPrincipal()),
+  };
   for (const [key, value] of Object.entries(meta)) {
     changes[`meta.${key}`] = value;
   }
@@ -150,10 +167,18 @@ const orderKey = (doc: Doc): number => doc.order ?? Number.MAX_SAFE_INTEGER;
 const sortByOrder = (docs: Doc[]): Doc[] =>
   [...docs].sort((a, b) => orderKey(a) - orderKey(b));
 
-/** Write dense 0..n-1 `order` to a list already in its intended sequence. */
-const writeDenseOrder = async (docs: Doc[]): Promise<void> => {
+/**
+ * Write dense 0..n-1 `order` to a list already in its intended sequence. Rows
+ * whose order already matches are left untouched, so a reorder mints mutation
+ * metadata only for rows that actually change.
+ */
+const writeDenseOrder = async (
+  docs: Doc[],
+  touched: TouchedMetadataFields,
+): Promise<void> => {
   for (let i = 0; i < docs.length; i += 1) {
-    await db.docs.update(docs[i].id, { order: i });
+    if (docs[i].order === i) continue;
+    await db.docs.update(docs[i].id, { order: i, ...touched });
   }
 };
 
@@ -184,6 +209,7 @@ export interface MoveDocInput {
 export const moveDoc = async (input: MoveDocInput): Promise<void> => {
   invariant(input.docId, 'moveDoc: docId is required');
   invariant(input.toSectionId, 'moveDoc: toSectionId is required');
+  const touched = touchedMetadataFields(await currentPrincipal());
   await db.transaction('rw', db.docs, async () => {
     const doc = await db.docs.get(input.docId);
     if (!doc) return;
@@ -192,11 +218,14 @@ export const moveDoc = async (input: MoveDocInput): Promise<void> => {
     const index = Math.max(0, Math.min(input.toIndex, target.length));
     target.splice(index, 0, doc);
     if (fromSectionId !== input.toSectionId) {
-      await db.docs.update(input.docId, { sectionId: input.toSectionId });
+      await db.docs.update(input.docId, { sectionId: input.toSectionId, ...touched });
     }
-    await writeDenseOrder(target);
+    await writeDenseOrder(target, touched);
     if (fromSectionId !== input.toSectionId) {
-      await writeDenseOrder(await sectionDocsExcept(fromSectionId, input.docId));
+      await writeDenseOrder(
+        await sectionDocsExcept(fromSectionId, input.docId),
+        touched,
+      );
     }
   });
 };

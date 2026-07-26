@@ -735,3 +735,52 @@ describe('createEncryptionMiddleware — transaction lifetime safety', () => {
     expect(waitForSpy).not.toHaveBeenCalled();
   });
 });
+
+describe('replicated entity metadata crosses the middleware correctly', () => {
+  /** A doc row carrying the provider-neutral sync metadata. */
+  const docWithMetadata = (): AnyRow => ({
+    id: 'd-meta',
+    spaceId: 's1',
+    sectionId: 'sec1',
+    name: 'Metadata doc',
+    body: 'plain body',
+    meta: { wordCount: 2 },
+    updatedAt: 1,
+    accessScopeId: 's1',
+    createdBy: 'author-1',
+    updatedBy: 'author-1',
+    mutationId: 'op-1',
+    logicalUpdatedAt: { millis: 1, counter: 0 },
+  });
+
+  it('keeps routing metadata plaintext at rest so a keyless provider can route', async () => {
+    await table('docs').put(docWithMetadata());
+
+    const raw = await readRaw('docs', 'd-meta');
+    expect(raw?.accessScopeId).toBe('s1');
+    expect(raw?.mutationId).toBe('op-1');
+    expect(raw?.logicalUpdatedAt).toEqual({ millis: 1, counter: 0 });
+  });
+
+  it('seals attribution — createdBy and updatedBy exist only inside the envelope', async () => {
+    await table('docs').put(docWithMetadata());
+
+    const raw = await readRaw('docs', 'd-meta');
+    expect(raw?.[CIPHER_FIELD]).toBeDefined();
+    expect(raw?.createdBy).toBeUndefined();
+    expect(raw?.updatedBy).toBeUndefined();
+
+    // The decrypted read restores attribution alongside the content.
+    const opened = await table('docs').get('d-meta');
+    expect(opened?.createdBy).toBe('author-1');
+    expect(opened?.updatedBy).toBe('author-1');
+  });
+
+  it('never stores an email address in the attribution fields', async () => {
+    await table('docs').put(docWithMetadata());
+
+    const opened = await table('docs').get('d-meta');
+    expect(String(opened?.createdBy)).not.toContain('@');
+    expect(String(opened?.updatedBy)).not.toContain('@');
+  });
+});

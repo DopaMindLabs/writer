@@ -1,9 +1,11 @@
 import { db } from '@/db/db';
+import { sampleMetadata } from '@/test/fixtures';
 import { EMPTY_LEXICAL_JSON } from './emptyBody';
 import { moveDoc } from './docRepository';
 
 const putDoc = (id: string, sectionId: string, order?: number) =>
   db.docs.put({
+    ...sampleMetadata(),
     id,
     spaceId: 's1',
     sectionId,
