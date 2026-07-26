@@ -2,13 +2,20 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
 import { NoteKind, NoteState, type Note } from '@/db/schema';
 import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
-import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
+import {
+  asDeviceId,
+  asOperationId,
+  asPrincipalId,
+  compareTimestamps,
+} from 'writer-sync/core';
+import { newEntityMetadata } from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import type { SyncKeyRing } from 'writer-sync/crypto';
 import type { EncryptedSyncFrame } from 'writer-sync/operations';
 import { FramePayloadMismatchError } from 'writer-sync/operations';
 import {
   journalledDelete,
   journalledPut,
+  makeDeleteFrame,
   makePutFrame,
 } from './writerOperationFactory';
 import { applyInboundFrame } from './writerOperationMaterializer';
@@ -140,6 +147,81 @@ describe('two-database operation convergence (hermetic)', () => {
     expect(await dbB.notes.get('n1')).toBeUndefined();
     const tombstone = await dbB.syncTombstones.get(['notes', 'n1']);
     expect(tombstone).toBeDefined();
+  });
+
+  it('keeps newer content when a stale delete arrives out of order', async () => {
+    const base = note();
+    await journalledPut({ db: dbA, ring, deviceId: DEVICE_A, entityTable: 'notes', row: base });
+    await shipAll(dbA, dbB);
+
+    // B holds a newer put; a delete stamped *before* it then arrives late
+    // through another provider. Delivery order must not decide the outcome.
+    const newer = note({
+      body: 'newer',
+      mutationId: asOperationId('op-n1-3'),
+      logicalUpdatedAt: { millis: 3000, counter: 0 },
+    });
+    await journalledPut({ db: dbB, ring, deviceId: DEVICE_B, entityTable: 'notes', row: newer });
+    const staleDelete = {
+      ...makeDeleteFrame({
+        ring,
+        deviceId: DEVICE_A,
+        entityTable: 'notes',
+        entityId: 'n1',
+        accessScopeId: 's1',
+      }),
+      logicalAt: { millis: 2000, counter: 0 },
+    };
+
+    const result = await applyInboundFrame({
+      db: dbB,
+      frame: JSON.parse(JSON.stringify(staleDelete)),
+      ring,
+    });
+
+    expect(result).toBe('superseded');
+    expect((await dbB.notes.get('n1'))?.body).toBe('newer');
+  });
+
+  it('keeps the later of two deletes as the tombstone', async () => {
+    await journalledPut({ db: dbA, ring, deviceId: DEVICE_A, entityTable: 'notes', row: note() });
+    await shipAll(dbA, dbB);
+
+    const deletion = makeDeleteFrame({
+      ring,
+      deviceId: DEVICE_A,
+      entityTable: 'notes',
+      entityId: 'n1',
+      accessScopeId: 's1',
+    });
+    const later = { ...deletion, logicalAt: { millis: 4000, counter: 0 } };
+    const earlier = {
+      ...deletion,
+      operationId: asOperationId('op-del-earlier'),
+      deviceId: DEVICE_B,
+      logicalAt: { millis: 3000, counter: 0 },
+    };
+    await applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(later)), ring });
+    await applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(earlier)), ring });
+
+    const tombstone = await dbB.syncTombstones.get(['notes', 'n1']);
+    expect(tombstone?.logicalAt).toEqual({ millis: 4000, counter: 0 });
+    expect(await dbB.notes.get('n1')).toBeUndefined();
+  });
+
+  it('stamps later than an accepted frame from a device running ahead', async () => {
+    const ahead = { millis: Date.now() + 60_000, counter: 4 };
+    const frame = await makePutFrame({
+      ring,
+      deviceId: DEVICE_A,
+      entityTable: 'notes',
+      row: note({ mutationId: asOperationId('op-ahead'), logicalUpdatedAt: ahead }),
+    });
+
+    await applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(frame)), ring });
+    const local = newEntityMetadata('s1', asPrincipalId('me'));
+
+    expect(compareTimestamps(local.logicalUpdatedAt, ahead)).toBeGreaterThan(0);
   });
 
   it('applying an inbound frame does not mint a new local operation', async () => {

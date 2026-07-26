@@ -4,7 +4,7 @@ import { asOperationId, type DeviceId } from 'writer-sync/core';
 import type { SyncKeyRing } from 'writer-sync/crypto';
 import { sealOperationPayload } from 'writer-sync/crypto';
 import { keyIdOf } from '@/lib/cloud/crypto/envelope';
-import { createHybridLogicalClock } from 'writer-sync/core';
+import { writerClock } from '@/lib/writerSyncIntegration/writerLogicalClock';
 import {
   EMPTY_PAYLOAD_HASH,
   hashPayload,
@@ -15,7 +15,7 @@ import {
   type SyncOperationHeader,
 } from 'writer-sync/operations';
 
-type FrameHeader = Omit<SyncOperationHeader, 'payloadHash' | 'logicalAt'>;
+type FrameHeader = Omit<SyncOperationHeader, 'payloadHash'>;
 import type { ReplicatedEntityMetadata } from 'writer-sync/core';
 
 /**
@@ -23,8 +23,6 @@ import type { ReplicatedEntityMetadata } from 'writer-sync/core';
  * the domain mutation they describe. The frame is encrypted exactly once here;
  * every provider transports the identical immutable bytes.
  */
-
-const clock = createHybridLogicalClock();
 
 interface FrameInputs {
   ring: SyncKeyRing;
@@ -48,13 +46,13 @@ export const makePutFrame = async (
     entityId: row.id,
     kind: 'put' as const,
     deviceId,
+    logicalAt: row.logicalUpdatedAt,
     keyId: keyIdOf(ring),
     epoch: ring.epoch,
   };
   const payload = await sealOperationPayload(ring, header, { ...row });
   return {
     ...header,
-    logicalAt: row.logicalUpdatedAt,
     payload,
     payloadHash: await hashPayload(payload),
     signature: '',
@@ -79,12 +77,12 @@ export const makeDeleteFrame = (
     entityId,
     kind: 'delete' as const,
     deviceId,
+    logicalAt: writerClock.now(),
     keyId: keyIdOf(ring),
     epoch: ring.epoch,
   };
   return {
     ...header,
-    logicalAt: clock.now(),
     payload: '',
     payloadHash: EMPTY_PAYLOAD_HASH,
     signature: '',

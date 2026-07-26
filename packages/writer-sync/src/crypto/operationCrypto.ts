@@ -6,8 +6,13 @@ import type { SyncKeyRing } from './keyResolver';
  * Payload encryption for operation frames. One logical operation is encrypted
  * once; every provider then carries the identical ciphertext. The AES-GCM AAD
  * binds the payload to its routing header — operation id, scope, entity, kind,
- * device, key id and epoch — so a frame whose header was altered in transit
- * fails authentication on the receiving device.
+ * device, logical time, key id and epoch — so a frame whose header was altered
+ * in transit fails authentication on the receiving device.
+ *
+ * The logical timestamp is bound deliberately: it decides which write wins on
+ * every receiver, so a transport able to retime a frame without invalidating it
+ * could force stale content over newer content. `payloadHash` stays out of the
+ * AAD because it is derived from the ciphertext the AAD already protects.
  */
 
 /** Thrown when a payload fails authentication against its header. */
@@ -24,7 +29,7 @@ const asBuffer = (bytes: Uint8Array): ArrayBuffer =>
     bytes.byteOffset + bytes.byteLength,
   ) as ArrayBuffer;
 
-type BindableHeader = Omit<SyncOperationHeader, 'payloadHash' | 'logicalAt'>;
+type BindableHeader = Omit<SyncOperationHeader, 'payloadHash'>;
 
 const aad = (header: BindableHeader): ArrayBuffer =>
   asBuffer(
@@ -38,6 +43,8 @@ const aad = (header: BindableHeader): ArrayBuffer =>
         header.entityId,
         header.kind,
         String(header.deviceId),
+        String(header.logicalAt.millis),
+        String(header.logicalAt.counter),
         header.keyId,
         String(header.epoch),
       ].join(':'),

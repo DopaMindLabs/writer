@@ -8,6 +8,7 @@ import type {
   EncryptedSyncFrame,
   SyncTombstone,
 } from 'writer-sync/operations';
+import { writerClock } from '@/lib/writerSyncIntegration/writerLogicalClock';
 
 /**
  * Applies inbound operation frames to Writer's local state. The invariants the
@@ -16,9 +17,11 @@ import type {
  * - an accepted operation id replays as a no-op (the inbox is checked and
  *   written in the same transaction as materialisation);
  * - entity conflicts resolve deterministically (hybrid logical time, then
- *   device id — never provider arrival order);
+ *   device id — never provider arrival order), for deletions as much as puts;
  * - deletes create tombstones, and a stale put can never resurrect a
  *   tombstoned entity;
+ * - the logical time of an accepted operation merges into this device's clock,
+ *   so local edits are stamped after everything the device has seen;
  * - applying an inbound operation never emits a new local operation (writes go
  *   straight to the table; only the explicit factory journalises);
  * - the frame stored in the journal is the immutable ciphertext as received.
@@ -39,6 +42,13 @@ const applyDelete = async (
   db: LoremDB,
   frame: EncryptedSyncFrame,
 ): Promise<MaterializeResult> => {
+  const winner = await journalWinner(db, frame);
+  if (winner && compareOperations(winner, frame) > 0 && winner.kind === 'put') {
+    // A strictly later put is already journalled locally; this deletion lost.
+    // Removing the row here would let provider arrival order discard newer
+    // content — the same rule `applyPut` applies in the other direction.
+    return 'superseded';
+  }
   const tombstone: SyncTombstone = {
     entityId: frame.entityId,
     entityTable: frame.entityTable,
@@ -48,7 +58,12 @@ const applyDelete = async (
     logicalAt: frame.logicalAt,
     acknowledgedBy: [],
   };
-  await db.syncTombstones.put(tombstone);
+  const recorded = await db.syncTombstones.get([frame.entityTable, frame.entityId]);
+  // Keep the latest deletion: an older delete arriving afterwards must not
+  // rewrite the tombstone a later put is compared against.
+  if (!recorded || supersedes(frame, { ...frame, ...recorded })) {
+    await db.syncTombstones.put(tombstone);
+  }
   await db.table(frame.entityTable).delete(frame.entityId);
   return 'applied';
 };
@@ -92,7 +107,7 @@ export const applyInboundFrame = async (options: {
   const row =
     frame.kind === 'put' ? await openOperationPayload(ring, frame, frame.payload) : null;
 
-  return db.transaction(
+  const result = await db.transaction(
     'rw',
     [
       db.table(frame.entityTable),
@@ -121,4 +136,9 @@ export const applyInboundFrame = async (options: {
       return result;
     },
   );
+  // The frame's logical time joins this device's clock, so the next local edit
+  // is stamped after every operation this device has accepted — a device whose
+  // wall clock lags would otherwise keep losing conflicts it should win.
+  writerClock.observe(frame.logicalAt);
+  return result;
 };

@@ -4,25 +4,25 @@ import {
   asOperationId,
   asPrincipalId,
   createEntityMetadata,
-  createHybridLogicalClock,
   updateEntityMetadata,
   type AccessScopeId,
   type PrincipalId,
   type ReplicatedEntityMetadata,
 } from 'writer-sync/core';
+import { writerClock } from '@/lib/writerSyncIntegration/writerLogicalClock';
 
 
 /**
  * Writer's stamping facade for provider-neutral entity metadata. It resolves the
  * current principal from the local profile, mints an operation id per mutation
- * and ticks one shared hybrid logical clock, then applies the pure metadata
- * constructors. Every synced write stamps through here rather than hand-rolling
- * the five metadata fields, so attribution and convergence stay consistent.
+ * and ticks {@link writerClock}, then applies the pure metadata constructors.
+ * Every synced write stamps through here rather than hand-rolling the five
+ * metadata fields, so attribution and convergence stay consistent.
  *
- * The clock is process-local and its state is fully encapsulated; the operation
- * protocol (slice 1E) takes over convergence and cross-device merge.
+ * The clock is shared with the materialiser, which merges the logical time of
+ * every accepted inbound frame into it — so a stamp minted here always follows
+ * the operations this device has already seen.
  */
-const clock = createHybridLogicalClock();
 
 /** The current principal — the local profile's stable author id. */
 export const currentPrincipal = async (): Promise<PrincipalId> =>
@@ -37,7 +37,7 @@ export const newEntityMetadata = (
     accessScopeId,
     principal,
     mutationId: asOperationId(newId()),
-    at: clock.now(),
+    at: writerClock.now(),
   });
 
 /** Metadata after a material change to `previous`, edited by `principal`. */
@@ -48,8 +48,22 @@ export const touchedEntityMetadata = (
   updateEntityMetadata(previous, {
     principal,
     mutationId: asOperationId(newId()),
-    at: clock.now(),
+    at: writerClock.now(),
   });
+
+/**
+ * Metadata for a row this device writes back wholesale — an archive import or
+ * restore. Attribution and scope survive (the archive records who wrote the
+ * row), but the mutation identity does not: replaying a stored `mutationId`
+ * would journal an operation every other device has already accepted, so the
+ * write would be discarded as a replay and the restored content would never
+ * reach them.
+ */
+export const remintedMetadata = <T extends ReplicatedEntityMetadata>(row: T): T => ({
+  ...row,
+  mutationId: asOperationId(newId()),
+  logicalUpdatedAt: writerClock.now(),
+});
 
 /** The metadata fields a material change refreshes — for a partial row update. */
 export type TouchedMetadataFields = Pick<
@@ -65,5 +79,5 @@ export type TouchedMetadataFields = Pick<
 export const touchedMetadataFields = (principal: PrincipalId): TouchedMetadataFields => ({
   updatedBy: principal,
   mutationId: asOperationId(newId()),
-  logicalUpdatedAt: clock.now(),
+  logicalUpdatedAt: writerClock.now(),
 });
