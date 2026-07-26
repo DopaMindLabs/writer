@@ -3,19 +3,10 @@
  * {@link LoremDB} class so the cloud-sync layer can derive per-table rules
  * (which fields sync, which are encrypted) from the same definition.
  *
- * **One declared version, deliberately.** Writer is pre-release with no
- * installed databases to upgrade, so a table is added here rather than behind a
- * new `version(n)`. This costs nothing at runtime: Dexie's declared version is
- * not the IndexedDB version — it scales the declared number by ten and bumps the
- * underlying counter itself whenever the physical schema has to change. A
- * database created before a table was added therefore still opens, keeps its
- * rows, and gains the new store on next open.
- *
- * This covers *additive* changes only. Dropping a store, changing a primary key
- * or renaming an indexed field still discards rows on every existing database,
- * and there is no `upgrade()` callback anywhere in this repository to carry them
- * across — so a destructive change is a stop-and-ask. See
- * `docs/adr/0002-single-dexie-schema-version.md`.
+ * **One declared version.** Writer has no users, so there is nothing to migrate
+ * and no backward compatibility to keep. Add a table here; do not add a
+ * `version(n)`. Wipe and reseed a stale local database rather than writing a
+ * migration for it.
  */
 export const STORES: Record<string, string> = {
   syncOperations: 'operationId, accessScopeId, [entityTable+entityId]',

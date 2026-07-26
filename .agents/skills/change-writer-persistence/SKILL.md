@@ -62,12 +62,10 @@ First classify the change.
 
 1. Update `STORES` in `src/db/stores.ts`.
 2. Add or update the typed `Table` property in `src/db/LoremDB.ts`.
-3. Do **not** add a Dexie `version()`. `LoremDB` declares one version and the change lands
-   in `STORES` under it — Dexie raises the underlying IndexedDB counter itself when the
-   physical schema changes, so existing databases still open and keep their rows. A
-   **destructive** change (dropping a store, changing a primary key, renaming an indexed
-   field) discards data on every existing database and has no upgrade path here: stop and
-   ask the user first. See [AGENTS.md § "Database schema versions"](../../../AGENTS.md).
+3. Do **not** add a Dexie `version()` or an `upgrade()` callback. `LoremDB` declares one
+   version and the change lands in `STORES` under it. Writer has no users, so wipe and
+   reseed a stale local database rather than migrating it. See
+   [AGENTS.md § "Database schema versions"](../../../AGENTS.md).
 4. Add a focused DB schema test alongside the DB implementation, and classify any new
    table in `src/lib/writerSyncIntegration/writerTablePolicy.ts` — an unclassified table
    fails `writerTablePolicy.test.ts`.
@@ -90,12 +88,8 @@ First classify the change.
 ## Hard rules
 
 - `LoremDB` declares **one** Dexie version and new tables are added straight to
-  `STORES`. Writer is pre-release with no installed databases to upgrade, and
-  Dexie's declared version is not the IndexedDB version — it scales the declared
-  number by ten and bumps the underlying counter itself when the physical schema
-  changes, so an existing database still opens and keeps its rows. Do **not** add
-  a `version(2)`; adding historical versions becomes necessary only once real
-  users hold data, and that is a decision to raise with the user, not to take.
+  `STORES`. Do **not** add a `version(2)`, an `upgrade()` callback, or any other
+  migration path — Writer has no users and keeps no backward compatibility.
 - Never add a field to a synced table without verifying the encryption middleware
   covers it (`plaintextFieldsFor` in `src/lib/cloud/crypto/tableRules.ts`).
 - `docUpdates` must remain local-only — it is the CRDT update log and is rebuilt

@@ -419,7 +419,7 @@ Do not map `createdBy` to Dexie `owner`. Dexie `owner` is an authorisation overr
 
 These are non-indexed fields except for explicitly plaintext routing metadata. Follow the repository’s non-indexed-field checklist. Do not alter `STORES` merely to store a non-indexed field.
 
-The repository declares one Dexie version and new tables are added straight to `STORES` (see [ADR 0002](adr/0002-single-dexie-schema-version.md)). Follow that rule for later new tables.
+The repository declares one Dexie version and new tables are added straight to `STORES`. Follow that rule for later new tables.
 
 ### Tests
 
@@ -1479,9 +1479,8 @@ Implementation must stop for explicit review at these points:
    - That triggers per-scope member key wrapping, revocation and group protocol design.
 7. **Any promise of erasure**
    - Impossible for data already downloaded to an offline device.
-8. **Any change to the repository’s schema-version rule**
-   - Answered for the current rule — see [ADR 0002](adr/0002-single-dexie-schema-version.md) (user sign-off, 2026-07-26): `LoremDB` declares one Dexie version and new tables go straight into `STORES`.
-   - The stop remains open for any *further* change, and specifically for a destructive schema change or for reinstating a historical `version(n)` once real users hold data.
+8. **Any change to the repository’s schema-version rule** — answered, 2026-07-26.
+   - `LoremDB` declares one Dexie version and new tables go straight into `STORES`. Writer has no users, so no migration or backward-compatibility path is written. See [AGENTS.md § "Database schema versions"](../AGENTS.md).
 
 ---
 

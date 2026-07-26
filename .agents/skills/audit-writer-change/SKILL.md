@@ -61,10 +61,8 @@ the screen or hook that owns the flow down to the changed symbol and back up.
   index-based, not field-based.
 - **Store or index changes** (new table, new index, renamed primary key) are made
   in `STORES` itself, under the single `version(1)` that `src/db/LoremDB.ts`
-  declares. Writer is pre-release, so there is no installed data to migrate, and
-  Dexie bumps the underlying IndexedDB counter on its own when the physical schema
-  changes. Flag any new `version(n)` as a finding: historical versions are needed
-  only once real users hold data, and adding one is the user's decision.
+  declares. Writer has no users, so no migration is written. Flag any new
+  `version(n)` or `upgrade()` callback as a finding.
 - CRDT-seeded tables: any new row creation must call `seedDocCrdt` after the
   Dexie transaction commits (never inside it).
 - Synced vs unsynced: new tables default to synced unless added to `UNSYNCED` in
