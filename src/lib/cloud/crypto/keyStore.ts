@@ -1,5 +1,6 @@
 import Dexie, { type Table } from 'dexie';
 import { invariant } from '@/lib/invariant';
+import type { ScopeKeyContext } from '@/lib/writerSync/crypto/keyResolver';
 import type { CloudKeyRing, EscrowRecord } from './keys';
 import { broadcastKeyRingChange } from './keyRingChannel';
 
@@ -226,12 +227,24 @@ export const clearPendingEscrow = (): Promise<void> =>
   keystoreService.clearPendingEscrow();
 
 /**
- * A synchronous view of the current key ring for the DBCore middleware: `null`
- * until a ring is loaded or unlocked (the middleware's keyless pass-through
- * covers that gap). `accountId` exposes the cached ring's binding synchronously,
- * so the identity-change guard can compare it the instant sign-in changes.
+ * A synchronous view of the current key ring: `null` until a ring is loaded or
+ * unlocked (the middleware's keyless pass-through covers that gap). `accountId`
+ * exposes the cached ring's binding synchronously, so the identity-change guard
+ * can compare it the instant sign-in changes.
+ *
+ * `keyFor` makes this the Stage 1 `ScopeKeyResolver`: it receives the full
+ * per-row context (access scope, table, primary key, operation) but resolves
+ * every scope to the one account content key. Per-scope keys are a change to
+ * this resolution — never another middleware API change.
  */
 export const deviceKeyProvider = {
   current: (): CloudKeyRing | null => keystoreService.currentRing(),
   accountId: (): string | null => keystoreService.currentAccountId(),
+  keyFor: (context: ScopeKeyContext): CloudKeyRing | null => {
+    // Stage 1: every scope resolves to the one account content key. The context
+    // is accepted (and exercised by the middleware tests) so per-scope keys are
+    // a change to this body alone.
+    void context;
+    return keystoreService.currentRing();
+  },
 };

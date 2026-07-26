@@ -12,7 +12,8 @@ import dexieCloud from 'dexie-cloud-addon';
 import { STORES } from '@/db/stores';
 import { generateMasterSecret, deriveKeyRing, type CloudKeyRing } from './keys';
 import { CIPHER_FIELD, SYNCED_TABLES } from './tableRules';
-import { createEncryptionMiddleware, type KeyProvider } from './middleware';
+import { createEncryptionMiddleware } from './middleware';
+import type { ScopeKeyResolver } from '@/lib/writerSync/crypto/keyResolver';
 import { CloudKeyMismatchError, CloudKeylessWriteError } from './errors';
 import { keyMismatchState } from './keyMismatch';
 import { keylessLockState } from './keylessLock';
@@ -57,7 +58,7 @@ const signIn = (): void =>
 
 let db: CloudDexie;
 let ring: CloudKeyRing | null = null;
-const provider: KeyProvider = { current: () => ring };
+const provider: ScopeKeyResolver = { keyFor: () => ring };
 
 const table = (name: string) => db.table<AnyRow>(name);
 
@@ -113,7 +114,7 @@ afterEach(async () => {
 describe('cloud encryption middleware (P1–P6 spike)', () => {
   it('P1: content fields are ciphertext at rest; indexes stay plaintext', async () => {
     await table('notes').put({
-      id: 'n1', spaceId: 's1', kind: 'text', createdAt: 1,
+      id: 'n1', spaceId: 's1', kind: 'text', createdAt: 1, accessScopeId: 's1',
       title: 'TOPSECRET', linkedDocId: 'd1',
     });
     const raw = await readRaw('notes', 'n1');
@@ -128,7 +129,7 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
   it('P2 (GO/NO-GO): the sync mutation queue holds only ciphertext', async () => {
     signIn();
     await table('notes').put({
-      id: 'n2', spaceId: 's1', kind: 'text', createdAt: 1,
+      id: 'n2', spaceId: 's1', kind: 'text', createdAt: 1, accessScopeId: 's1',
       title: 'TOPSECRET', body: 'hidden-body',
     });
     const mutations = await table('$notes_mutations').toArray();
@@ -142,7 +143,7 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
   it('P2b (GO/NO-GO): Table.update() never leaks a plaintext changeSpec into the sync queue', async () => {
     signIn();
     await table('docs').put({
-      id: 'd-upd', spaceId: 's1', sectionId: 'x', updatedAt: 1,
+      id: 'd-upd', spaceId: 's1', sectionId: 'x', updatedAt: 1, accessScopeId: 's1',
       name: 'Original', body: 'hidden-body',
     });
     // Dexie's Table.update() routes through Collection.modify, which attaches the
@@ -164,7 +165,7 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
 
   it('P2c: Table.update() keeps every sealed field intact locally', async () => {
     await table('docs').put({
-      id: 'd-keep', spaceId: 's1', sectionId: 'x', updatedAt: 1,
+      id: 'd-keep', spaceId: 's1', sectionId: 'x', updatedAt: 1, accessScopeId: 's1',
       name: 'Original', body: 'secret body', meta: { wordCount: 2, status: 'draft' },
     });
     await table('docs').update('d-keep', { name: 'Renamed', updatedAt: 2 });
@@ -180,7 +181,7 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
 
   it('P3: the app reads its own writes back as plaintext', async () => {
     await table('docs').put({
-      id: 'd1', spaceId: 's1', sectionId: 'sec1', updatedAt: 1,
+      id: 'd1', spaceId: 's1', sectionId: 'sec1', updatedAt: 1, accessScopeId: 's1',
       name: 'My Doc', body: { text: 'plain again' },
     });
     const doc = await table('docs').get('d1');
@@ -190,8 +191,8 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
   });
 
   it('P4: each sealed row uses a fresh IV', async () => {
-    await table('docs').put({ id: 'a', spaceId: 's', sectionId: 'x', updatedAt: 1, body: 'same' });
-    await table('docs').put({ id: 'b', spaceId: 's', sectionId: 'x', updatedAt: 1, body: 'same' });
+    await table('docs').put({ id: 'a', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', body: 'same' });
+    await table('docs').put({ id: 'b', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', body: 'same' });
     const rawA = await readRaw('docs', 'a');
     const rawB = await readRaw('docs', 'b');
     const ivA = (rawA?.[CIPHER_FIELD] as { iv: Uint8Array }).iv;
@@ -202,7 +203,7 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
   it('P5: binary Blob field values round-trip through encryption', async () => {
     const file = new Blob([new Uint8Array([7, 8, 9])], { type: 'image/png' });
     await table('noteAttachments').put({
-      id: 'att1', noteId: 'n1', spaceId: 's1', createdAt: 1, file,
+      id: 'att1', noteId: 'n1', spaceId: 's1', createdAt: 1, accessScopeId: 's1', file,
     });
     const raw = await readRaw('noteAttachments', 'att1');
     expect(raw?.file).toBeUndefined();
@@ -227,7 +228,7 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
 
   it('passes rows through untouched before a key is available', async () => {
     ring = null;
-    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, body: 'B' });
+    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', body: 'B' });
     const raw = await readRaw('docs', 'plain');
     expect(raw?.[CIPHER_FIELD]).toBeUndefined();
     expect(raw?.body).toBe('B');
@@ -238,7 +239,7 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     keyMismatchState.set(true);
     await expect(
       table('notes').put({
-        id: 'n8', spaceId: 's1', kind: 'text', createdAt: 1, title: 'TOPSECRET',
+        id: 'n8', spaceId: 's1', kind: 'text', createdAt: 1, accessScopeId: 's1', title: 'TOPSECRET',
       }),
     ).rejects.toBeInstanceOf(CloudKeyMismatchError);
     // Nothing was written, so nothing is queued for the server.
@@ -256,7 +257,7 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     // prior key sealed. Reads must degrade, not crash the app to the recovery
     // screen (which would trap the user, unable to reach settings to resolve it).
     await table('docs').put({
-      id: 'foreign', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'sealed',
+      id: 'foreign', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'sealed',
     });
     ring = await deriveKeyRing(generateMasterSecret(), 1);
 
@@ -270,11 +271,11 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
 
   it('still reads rows sealed under the current key while another is unreadable', async () => {
     await table('docs').put({
-      id: 'old', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'old-key',
+      id: 'old', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'old-key',
     });
     ring = await deriveKeyRing(generateMasterSecret(), 1);
     await table('docs').put({
-      id: 'new', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'new-key',
+      id: 'new', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'new-key',
     });
 
     const rows = await table('docs').toArray();
@@ -285,12 +286,12 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
   it('refuses content add/put while signed-in-keyless, but lets deletes pass', async () => {
     // Seal a row while a key exists, then drop the ring and engage the keyless
     // lock (signed in, no key): new writes must not leak plaintext into the queue.
-    await table('docs').put({ id: 'd1', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'seed' });
+    await table('docs').put({ id: 'd1', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'seed' });
     ring = null;
     keylessLockState.set(true);
 
     await expect(
-      table('docs').put({ id: 'd2', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'plain' }),
+      table('docs').put({ id: 'd2', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'plain' }),
     ).rejects.toBeInstanceOf(CloudKeylessWriteError);
     expect(await table('$docs_mutations').toArray()).toHaveLength(0);
     // Deletes still pass (needed by the erase escape hatch).
@@ -298,10 +299,10 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
   });
 
   it('hides sealed rows from keyless reads, but passes plaintext rows through', async () => {
-    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'secret' });
+    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'secret' });
     ring = null;
     // A plaintext row written while keyless (pre-setup, lock off).
-    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'clear' });
+    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'clear' });
 
     keylessLockState.set(true);
     // The sealed row is hidden (unreadable without a key); the plaintext one shows.
@@ -311,7 +312,7 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
   });
 
   it('hides sealed rows from a no-ring read even when the keyless lock is off', async () => {
-    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'secret' });
+    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'secret' });
     ring = null;
     keylessLockState.set(false); // signed-out, key forgotten — not "keyless-locked"
     // The sealed row must not reach a typed consumer, whatever the lock state.
@@ -321,18 +322,18 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
   });
 
   it('omits sealed rows from a no-ring list query when the lock is off', async () => {
-    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'secret' });
+    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'secret' });
     ring = null;
     keylessLockState.set(false);
-    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'clear' });
+    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'clear' });
 
     const rows = await table('docs').toArray();
     expect(rows.map((r) => r.id)).toEqual(['plain']);
   });
 
   it('decrypts a keyed bulkGet, returning plaintext for every requested row', async () => {
-    await table('docs').put({ id: 'a', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'Alpha' });
-    await table('docs').put({ id: 'b', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'Beta' });
+    await table('docs').put({ id: 'a', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'Alpha' });
+    await table('docs').put({ id: 'b', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'Beta' });
 
     // bulkGet drives the middleware's getMany path.
     const rows = await table('docs').bulkGet(['a', 'b']);
@@ -341,10 +342,10 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
   });
 
   it('hides sealed rows from a keyless bulkGet, keeping plaintext ones', async () => {
-    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'secret' });
+    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'secret' });
     ring = null;
     // A plaintext row written while keyless (pre-setup, lock off).
-    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'clear' });
+    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'clear' });
 
     keylessLockState.set(true);
     const rows = await table('docs').bulkGet(['sealed', 'plain']);
@@ -354,10 +355,10 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
   });
 
   it('hides sealed rows from a no-ring bulkGet when the lock is off, preserving positions', async () => {
-    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'secret' });
+    await table('docs').put({ id: 'sealed', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'secret' });
     ring = null;
     keylessLockState.set(false);
-    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'clear' });
+    await table('docs').put({ id: 'plain', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'clear' });
 
     const rows = await table('docs').bulkGet(['sealed', 'missing', 'plain']);
     // The sealed row is hidden; positions of missing/plaintext rows are preserved.
@@ -368,7 +369,7 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
 
   it('P7: re-putting an already-sealed row preserves its ciphertext (no double-seal)', async () => {
     await table('docs').put({
-      id: 'd1', spaceId: 's1', sectionId: 'x', updatedAt: 1,
+      id: 'd1', spaceId: 's1', sectionId: 'x', updatedAt: 1, accessScopeId: 's1',
       name: 'My Doc', body: 'secret body', meta: { wordCount: 3 },
     });
     // The at-rest row keeps only its plaintext/indexed fields plus the envelope;
@@ -390,7 +391,7 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
 
   it('P7b: preserves the envelope when a pulled row carries stray plaintext secret fields', async () => {
     await table('docs').put({
-      id: 'd7b', spaceId: 's1', sectionId: 'x', updatedAt: 1,
+      id: 'd7b', spaceId: 's1', sectionId: 'x', updatedAt: 1, accessScopeId: 's1',
       name: 'My Doc', body: 'secret body', meta: { wordCount: 3 },
     });
     const raw = await readRaw('docs', 'd7b');
@@ -426,7 +427,7 @@ describe('createEncryptionMiddleware — sync-applied writes bypass the write lo
   const makeWrapped = (
     ring: CloudKeyRing | null,
   ): { wrapped: DBCoreTable; mutate: ReturnType<typeof vi.fn> } => {
-    const provider: KeyProvider = { current: () => ring };
+    const provider: ScopeKeyResolver = { keyFor: () => ring };
     const mutate = vi.fn().mockResolvedValue({
       numFailures: 0,
       failures: [],
@@ -444,7 +445,7 @@ describe('createEncryptionMiddleware — sync-applied writes bypass the write lo
     ({
       type: 'put',
       trans: { disableChangeTracking: syncApplied } as never,
-      values: [{ id: 'r1', spaceId: 's', sectionId: 'x', updatedAt: 1 }],
+      values: [{ id: 'r1', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's' }],
     }) as unknown as DBCoreMutateRequest;
 
   afterEach(() => {
@@ -513,7 +514,7 @@ describe('createEncryptionMiddleware — internal blob-plumbing transactions pas
   const makeWrapped = (
     ring: CloudKeyRing,
   ): { wrapped: DBCoreTable; get: ReturnType<typeof vi.fn>; mutate: ReturnType<typeof vi.fn> } => {
-    const provider: KeyProvider = { current: () => ring };
+    const provider: ScopeKeyResolver = { keyFor: () => ring };
     const get = vi.fn().mockResolvedValue(rowWithBlobRef);
     const mutate = vi.fn().mockResolvedValue({ numFailures: 0, failures: [], results: [], lastResult: undefined });
     const fake = { name: 'docs', schema: { primaryKey }, get, mutate } as unknown as DBCoreTable;
@@ -677,7 +678,7 @@ describe('createEncryptionMiddleware — transaction lifetime safety', () => {
   // Never dereferenced: every fake row below carries no cipher envelope, so
   // openRow's pass-through branch returns it untouched without touching the ring.
   const fakeRing = {} as CloudKeyRing;
-  const provider: KeyProvider = { current: () => fakeRing };
+  const provider: ScopeKeyResolver = { keyFor: () => fakeRing };
   const primaryKey = { extractKey: (v: { id: string }) => v.id };
 
   const wrap = (overrides: Partial<DBCoreTable>): DBCoreTable => {
@@ -782,5 +783,45 @@ describe('replicated entity metadata crosses the middleware correctly', () => {
     const opened = await table('docs').get('d-meta');
     expect(String(opened?.createdBy)).not.toContain('@');
     expect(String(opened?.updatedBy)).not.toContain('@');
+  });
+});
+
+describe('the resolver receives the full scope-key context', () => {
+  it('passes scope, table, primary key and operation on write and read', async () => {
+    const contexts: import('@/lib/writerSync/crypto/keyResolver').ScopeKeyContext[] = [];
+    const spying: ScopeKeyResolver = {
+      keyFor: (context) => {
+        contexts.push(context);
+        return ring;
+      },
+    };
+    const spied = new Dexie('resolver-context-spy') as CloudDexie;
+    spied.version(1).stores(STORES);
+    spied.use(createEncryptionMiddleware(spying, () => 'none'));
+    try {
+      await spied.open();
+      await spied.table<AnyRow>('docs').put({
+        id: 'ctx-1', spaceId: 's9', sectionId: 'x', updatedAt: 1,
+        accessScopeId: 's9', name: 'ctx',
+      });
+      await spied.table<AnyRow>('docs').get('ctx-1');
+
+      const write = contexts.find((c) => c.operation === 'write');
+      expect(write).toEqual({
+        accessScopeId: 's9',
+        table: 'docs',
+        primaryKey: 'ctx-1',
+        operation: 'write',
+      });
+      const read = contexts.find((c) => c.operation === 'read');
+      expect(read).toEqual({
+        accessScopeId: 's9',
+        table: 'docs',
+        primaryKey: 'ctx-1',
+        operation: 'read',
+      });
+    } finally {
+      await spied.delete();
+    }
   });
 });

@@ -2,12 +2,17 @@ import Dexie, {
   type DBCore,
   type DBCoreTable,
   type DBCoreMutateRequest,
+  type DBCoreMutateResponse,
   type DBCoreGetRequest,
   type DBCoreGetManyRequest,
   type DBCoreQueryRequest,
   type Middleware,
 } from 'dexie';
-import type { CloudKeyRing } from './keys';
+import type {
+  ScopeKeyContext,
+  ScopeKeyResolver,
+  SyncKeyRing,
+} from '@/lib/writerSync/crypto/keyResolver';
 import { isEncryptedTable, plaintextFieldsFor, CIPHER_FIELD } from './tableRules';
 import { sealRow, openRow, EnvelopeIntegrityError, MalformedEnvelopeError } from './envelope';
 import { CloudKeyMismatchError, CloudKeylessWriteError } from './errors';
@@ -15,14 +20,14 @@ import { keyMismatchState } from './keyMismatch';
 import { currentLockReason, type LockReason } from './lockReason';
 
 /**
- * A synchronous view of the active key ring for the encryption middleware.
- * `null` means "no key yet" — the middleware then passes rows through untouched
- * so the app keeps working before setup and the sync engine ships ciphertext
- * verbatim.
+ * Key material reaches the middleware through a {@link ScopeKeyResolver}: every
+ * row operation resolves with its full context (access scope, table, primary
+ * key, read/write), so scope-specific keys are a resolver change, never another
+ * middleware change. `null` from the resolver means "no key for this context" —
+ * the middleware then passes plaintext rows through untouched (so the app keeps
+ * working before setup) and hides sealed rows (a device without the key must
+ * never hand raw ciphertext to a typed consumer).
  */
-export interface KeyProvider {
-  current(): CloudKeyRing | null;
-}
 
 type Row = Record<string, unknown>;
 
@@ -59,6 +64,22 @@ const pkString = (table: DBCoreTable, value: Row, fallback?: unknown): string =>
   return String(extract ? extract(value) : fallback);
 };
 
+/** The resolver context for one row. Scope comes from the row's plaintext metadata. */
+const contextFor = (options: {
+  table: DBCoreTable;
+  row: Row;
+  fallbackKey: unknown;
+  operation: 'read' | 'write';
+}): ScopeKeyContext => {
+  const scope = options.row.accessScopeId;
+  return {
+    accessScopeId: typeof scope === 'string' ? scope : '',
+    table: options.table.name,
+    primaryKey: pkString(options.table, options.row, options.fallbackKey),
+    operation: options.operation,
+  };
+};
+
 /**
  * Strip the plaintext update descriptors off a put request. `Table.update()` /
  * `Collection.modify()` attach the raw changes as `criteria` + `changeSpec`
@@ -79,19 +100,36 @@ const stripUpdateDescriptors = (req: DBCoreMutateRequest): DBCoreMutateRequest =
   return stripped;
 };
 
-/** Seal every value in an add/put request; other mutations pass through. */
+/**
+ * Seal every value in an add/put request; other mutations pass through. Each row
+ * resolves its own key by context; a row whose context resolves no key is
+ * written as-is (the keyless pre-setup flow).
+ */
 const sealMutate = async (
   table: DBCoreTable,
-  ring: CloudKeyRing,
+  resolver: ScopeKeyResolver,
   req: DBCoreMutateRequest,
 ): Promise<DBCoreMutateRequest> => {
   if (req.type !== 'add' && req.type !== 'put') return req;
   const rules = plaintextFieldsFor(table.name);
   const rows = req.values as readonly Row[];
   const values = await Promise.all(
-    rows.map((value, i) =>
-      sealRow(ring, { table: table.name, primaryKey: pkString(table, value, req.keys?.[i]) }, value, rules),
-    ),
+    rows.map(async (value, i) => {
+      const context = contextFor({
+        table,
+        row: value,
+        fallbackKey: req.keys?.[i],
+        operation: 'write',
+      });
+      const ring = resolver.keyFor(context);
+      if (!ring) return value;
+      return sealRow(
+        ring,
+        { table: context.table, primaryKey: context.primaryKey },
+        value,
+        rules,
+      );
+    }),
   );
   return { ...req, values };
 };
@@ -107,11 +145,10 @@ const sealMutate = async (
  */
 const openOrDrop = async (
   table: DBCoreTable,
-  ring: CloudKeyRing,
-  value: Row | undefined,
+  ring: SyncKeyRing,
+  value: Row,
   onUnreadable: () => void,
 ): Promise<Row | undefined> => {
-  if (!value) return value;
   try {
     return await openRow(
       ring,
@@ -136,6 +173,31 @@ const openOrDrop = async (
   }
 };
 
+/** Whether a stored row carries a ciphertext envelope (was sealed under a key). */
+const isSealed = (value: Row | undefined): boolean =>
+  value?.[CIPHER_FIELD] !== undefined;
+
+/**
+ * Resolve-and-open a stored row: plaintext rows pass through, sealed rows open
+ * under the key their context resolves — or vanish (`undefined`) when no key is
+ * available, so a keyless device never hands raw ciphertext to a typed consumer.
+ */
+const resolveAndOpen = async (options: {
+  table: DBCoreTable;
+  resolver: ScopeKeyResolver;
+  value: Row | undefined;
+  onUnreadable: () => void;
+}): Promise<Row | undefined> => {
+  const { table, resolver, value, onUnreadable } = options;
+  if (!value) return value;
+  if (!isSealed(value)) return value;
+  const ring = resolver.keyFor(
+    contextFor({ table, row: value, fallbackKey: undefined, operation: 'read' }),
+  );
+  if (!ring) return undefined;
+  return openOrDrop(table, ring, value, onUnreadable);
+};
+
 /**
  * Web Crypto is asynchronous, but Dexie commits a transaction the moment control
  * returns to the event loop on a non-Dexie promise. {@link Dexie.waitFor} keeps
@@ -151,14 +213,21 @@ const openOrDrop = async (
  */
 const inTx = <T,>(work: Promise<T>): Promise<T> => Dexie.waitFor(work);
 
-const openMany = (
-  table: DBCoreTable,
-  ring: CloudKeyRing,
-  values: readonly unknown[],
-  onUnreadable: () => void,
-): Promise<(Row | undefined)[]> =>
+const openMany = (options: {
+  table: DBCoreTable;
+  resolver: ScopeKeyResolver;
+  values: readonly unknown[];
+  onUnreadable: () => void;
+}): Promise<(Row | undefined)[]> =>
   Promise.all(
-    values.map((v) => openOrDrop(table, ring, v as Row | undefined, onUnreadable)),
+    options.values.map((value) =>
+      resolveAndOpen({
+        table: options.table,
+        resolver: options.resolver,
+        value: value as Row | undefined,
+        onUnreadable: options.onUnreadable,
+      }),
+    ),
   );
 
 /**
@@ -172,93 +241,81 @@ const openMany = (
  * key/query paths instead (read via `get`/`toArray`, then write explicitly);
  * callers are adapted where the encrypted database is constructed.
  */
-/** Whether a stored row carries a ciphertext envelope (was sealed under a key). */
-const isSealed = (value: Row | undefined): boolean =>
-  value?.[CIPHER_FIELD] !== undefined;
-
-/** Keyless single read: drop a sealed row (no key can open it), pass plaintext. */
-const keylessGet = async (read: Promise<unknown>): Promise<unknown> => {
-  const row = (await read) as Row | undefined;
-  return isSealed(row) ? undefined : row;
-};
-
-/** Keyless batch read: replace sealed rows with undefined, preserving positions. */
-const keylessGetMany = async (read: Promise<unknown[]>): Promise<unknown[]> => {
-  const rows = await read;
-  return rows.map((row) => (isSealed(row as Row | undefined) ? undefined : row));
-};
-
-/** Keyless list read: omit sealed rows. */
-const keylessQuery = async (
-  read: Promise<{ result: unknown[] }>,
-): Promise<{ result: unknown[] }> => {
-  const res = await read;
-  return { ...res, result: res.result.filter((row) => !isSealed(row as Row | undefined)) };
+const sealedMutate = async (options: {
+  table: DBCoreTable;
+  resolver: ScopeKeyResolver;
+  lockReason: () => LockReason;
+  req: DBCoreMutateRequest;
+}): Promise<DBCoreMutateResponse> => {
+  const { table, resolver, lockReason, req } = options;
+  // Addon blob-plumbing writes the raw ciphertext row back — never reseal it.
+  if (isInternalBlobTx(req.trans)) return table.mutate(req);
+  // Refuse content add/put while locked: under a mismatch the account holds a
+  // different key (a push would pollute it); while signed-in-keyless there is
+  // no key to seal with (a push would leak plaintext). Deletes still pass, so
+  // the mismatch escape hatch can drop unreadable rows. A sync-applied write is
+  // exempt: it is ciphertext the addon just pulled, and blocking it would abort
+  // the initial pull and deadlock setup — reads already hide sealed rows while
+  // keyless, and the seal path below preserves an existing envelope untouched.
+  const reason = lockReason();
+  const appWrite = req.type === 'add' || req.type === 'put';
+  if (reason !== 'none' && appWrite && !isSyncApplied(req.trans)) {
+    throw reason === 'mismatch'
+      ? new CloudKeyMismatchError()
+      : new CloudKeylessWriteError();
+  }
+  const safeReq = stripUpdateDescriptors(req);
+  return table.mutate(await inTx(sealMutate(table, resolver, safeReq)));
 };
 
 const wrapTable = (
   table: DBCoreTable,
-  provider: KeyProvider,
+  resolver: ScopeKeyResolver,
   lockReason: () => LockReason,
   flagMismatch: () => void,
 ): DBCoreTable => {
   if (!isEncryptedTable(table.name)) return table;
-  // Whenever no key is loaded, sealed rows are hidden from application reads
-  // regardless of sign-in state — a device that forgot its key (or never had one)
-  // must never hand a raw `$lipsumCipher` row to a typed consumer, which would
-  // read undefined fields and can crash the route. Plaintext pre-setup rows still
-  // pass (they carry no envelope); the internal blob-transaction bypass still
-  // receives raw sealed rows.
   return {
     ...table,
-    mutate: async (req: DBCoreMutateRequest) => {
-      // Addon blob-plumbing writes the raw ciphertext row back — never reseal it.
-      if (isInternalBlobTx(req.trans)) return table.mutate(req);
-      // Refuse content add/put while locked: under a mismatch the account holds a
-      // different key (a push would pollute it); while signed-in-keyless there is
-      // no key to seal with (a push would leak plaintext). Deletes still pass, so
-      // the mismatch escape hatch can drop unreadable rows. A sync-applied write is
-      // exempt: it is ciphertext the addon just pulled, and blocking it would abort
-      // the initial pull and deadlock setup — reads already hide sealed rows while
-      // keyless, and the seal path below preserves an existing envelope untouched.
-      const reason = lockReason();
-      const appWrite = req.type === 'add' || req.type === 'put';
-      if (reason !== 'none' && appWrite && !isSyncApplied(req.trans)) {
-        throw reason === 'mismatch'
-          ? new CloudKeyMismatchError()
-          : new CloudKeylessWriteError();
-      }
-      const ring = provider.current();
-      const safeReq = stripUpdateDescriptors(req);
-      return table.mutate(ring ? await inTx(sealMutate(table, ring, safeReq)) : safeReq);
-    },
+    mutate: (req: DBCoreMutateRequest) =>
+      sealedMutate({ table, resolver, lockReason, req }),
     get: (req: DBCoreGetRequest) => {
       // Addon blob-plumbing reads the raw ciphertext row — never decrypt here.
       if (isInternalBlobTx(req.trans)) return table.get(req);
-      const ring = provider.current();
-      if (!ring) return keylessGet(table.get(req));
       return inTx(
         (async () =>
-          openOrDrop(table, ring, (await table.get(req)) as Row | undefined, flagMismatch))(),
+          resolveAndOpen({
+            table,
+            resolver,
+            value: (await table.get(req)) as Row | undefined,
+            onUnreadable: flagMismatch,
+          }))(),
       );
     },
     getMany: (req: DBCoreGetManyRequest) => {
       if (isInternalBlobTx(req.trans)) return table.getMany(req);
-      const ring = provider.current();
-      if (!ring) return keylessGetMany(table.getMany(req));
       return inTx(
-        (async () => openMany(table, ring, await table.getMany(req), flagMismatch))(),
+        (async () =>
+          openMany({
+            table,
+            resolver,
+            values: await table.getMany(req),
+            onUnreadable: flagMismatch,
+          }))(),
       );
     },
     query: (req: DBCoreQueryRequest) => {
-      const ring = provider.current();
       if (req.values === false) return table.query(req);
       if (isInternalBlobTx(req.trans)) return table.query(req);
-      if (!ring) return keylessQuery(table.query(req));
       return inTx(
         (async () => {
           const res = await table.query(req);
-          const opened = await openMany(table, ring, res.result, flagMismatch);
+          const opened = await openMany({
+            table,
+            resolver,
+            values: res.result,
+            onUnreadable: flagMismatch,
+          });
           // Unreadable rows are dropped rather than crashing the read; the list
           // just omits them until the mismatch is resolved.
           return { ...res, result: opened.filter((row): row is Row => row !== undefined) };
@@ -274,7 +331,7 @@ const wrapTable = (
  * are sealed before they reach the sync queue, reads are opened after.
  */
 export const createEncryptionMiddleware = (
-  provider: KeyProvider,
+  resolver: ScopeKeyResolver,
   lockReason: () => LockReason = currentLockReason,
   flagMismatch: () => void = () => {
     keyMismatchState.set(true);
@@ -285,6 +342,6 @@ export const createEncryptionMiddleware = (
   level: 10,
   create: (down: DBCore) => ({
     ...down,
-    table: (name: string) => wrapTable(down.table(name), provider, lockReason, flagMismatch),
+    table: (name: string) => wrapTable(down.table(name), resolver, lockReason, flagMismatch),
   }),
 });

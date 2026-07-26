@@ -34,7 +34,15 @@ const UNSYNCED: readonly string[] = localOnlyTables();
 export const buildDb = (name = 'lipsum'): LoremDB => {
   applyCloudFlagFromUrl();
   const cloud = hasCloudEnv() && (readCloudFlag() || wasCloudProvisioned());
-  if (!cloud) return new LoremDB(name);
+  if (!cloud) {
+    // Local row encryption is independent of any provider: a P2P-only Writer
+    // must not become a plaintext local database merely because no cloud URL is
+    // configured. Pre-setup the resolver holds no key, so the middleware passes
+    // plaintext through — the keyless local-first flow is unchanged.
+    const db = new LoremDB(name);
+    db.use(createEncryptionMiddleware(deviceKeyProvider));
+    return db;
+  }
 
   const databaseUrl = cloudDatabaseUrl();
   invariant(databaseUrl, 'cloud sync enabled without a database URL');

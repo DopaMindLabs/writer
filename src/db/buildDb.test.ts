@@ -92,6 +92,29 @@ describe('buildDb — cloud activation gates', () => {
     await expectBaseSchema(buildDb('gate-env-only'));
   });
 
+  it('encrypts locally with no cloud provider configured at all', async () => {
+    // No env, no flag: the plain local database still carries the encryption
+    // middleware — a P2P-only Writer must never be a plaintext local database.
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+    const db = buildDb('gate-local-encrypted');
+    await db.open();
+
+    await db.table('notes').put({
+      id: 'n1', spaceId: 's1', kind: 'text', createdAt: 1, accessScopeId: 's1', title: 'SECRET',
+    });
+    const raw = await db.transaction('r', db.table('notes'), async () => {
+      const tx = Dexie.currentTransaction as unknown as {
+        idbtrans?: { disableBlobResolve?: boolean };
+      };
+      if (tx.idbtrans) tx.idbtrans.disableBlobResolve = true;
+      return db.table<Record<string, unknown>>('notes').get('n1');
+    });
+    expect(raw?.[CIPHER_FIELD]).toBeDefined();
+    expect(raw?.title).toBeUndefined();
+
+    await db.delete();
+  });
+
   it('flag only (no env) builds the plain local database', async () => {
     localStorage.setItem(CLOUD_FLAG_KEY, 'on');
     await expectBaseSchema(buildDb('gate-flag-only'));
@@ -121,7 +144,7 @@ describe('buildDb — cloud activation gates', () => {
     await db.open();
 
     await db.table('notes').put({
-      id: 'n1', spaceId: 's1', kind: 'text', createdAt: 1, title: 'SECRET',
+      id: 'n1', spaceId: 's1', kind: 'text', createdAt: 1, accessScopeId: 's1', title: 'SECRET',
     });
     // Read the stored bytes past the middleware via its blob-resolve bypass;
     // nulling the key would now be hidden by the keyless read protection.
@@ -141,7 +164,7 @@ describe('buildDb — cloud activation gates', () => {
   it('opting out (flag off) stays on the cloud schema and keeps rows', async () => {
     enableCloud();
     const cloudDb = buildDb('gate-optout');
-    await cloudDb.table('docs').put({ id: 'keep', spaceId: 's', sectionId: 'x', updatedAt: 1 });
+    await cloudDb.table('docs').put({ id: 'keep', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's' });
     cloudDb.close();
 
     // Flag off but the device is provisioned: the cloud schema is sticky, so a
