@@ -183,33 +183,19 @@ wiring — table policy, materialisation, configuration, boot and React context 
 
 `LoremDB` (`src/db/LoremDB.ts`) declares **one** Dexie version. New tables and index
 changes go straight into `STORES` (`src/db/stores.ts`) under that single `version(1)` —
-do **not** add a `version(2)`. Dexie's declared version is not the IndexedDB version: it
-maps declared `N` to raw IndexedDB version `N × 10` and raises the raw counter itself
-whenever the physical schema changes, so an existing database still opens, keeps its
-rows, and gains new stores on next open. This is enforced — `src/db/db.test.ts` and
-`src/db/buildDb.test.ts` assert `verno === 1`. The same applies to the other
-device-local databases (`lipsum-cloud-keystore`, `lipsum-device-vault`).
+do **not** add a `version(2)`, an `upgrade()` callback, or any other migration path. The
+same applies to the other device-local databases (`lipsum-cloud-keystore`,
+`lipsum-device-vault`). This is enforced: `src/db/db.test.ts` and `src/db/buildDb.test.ts`
+assert `verno === 1`.
 
-- **While this holds.** Writer is pre-release and every existing database is disposable
-  — nobody holds writing in it that we are unwilling to delete and reseed. That is a
-  statement about *data*, not a release date: a private beta in which testers keep real
-  work ends it; a public alpha of explicitly disposable data does not.
-- **Additive only.** One declared version absorbs *additive* changes for free. A
-  **destructive** change — dropping a store, changing a primary key, renaming an indexed
-  field — still discards data on every existing database, and this repository has no
-  `.upgrade()` callback anywhere to carry rows across. **Destructive schema changes are
-  stop-and-ask even while Writer is pre-release.**
-- **Reinstating historical versions** (once real users hold data) is also stop-and-ask,
-  and the number matters: a reinstated `version(N)` runs its `upgrade()` callback only
-  when `N × 10` exceeds the raw IndexedDB version already in the field. A `version(2)`
-  over a raw counter of 21 opens cleanly, reports `verno === 2`, and silently skips the
-  migration.
-- Every table in `STORES` must also be classified in
-  `src/lib/writerSyncIntegration/writerTablePolicy.ts` — an unclassified table fails
-  `writerTablePolicy.test.ts`. That check, not the version number, is what guards a new
-  table.
+Writer has no users. There is no installed data to preserve and no backward compatibility
+to keep — if a local database goes stale, wipe and reseed it (`?reseed=1`) rather than
+writing a migration.
 
-Rationale and measurements: [`docs/adr/0002-single-dexie-schema-version.md`](./docs/adr/0002-single-dexie-schema-version.md).
+Every table in `STORES` must also be classified in
+`src/lib/writerSyncIntegration/writerTablePolicy.ts` — an unclassified table fails
+`writerTablePolicy.test.ts`. That classification, not a version number, is what guards a
+new table.
 
 ## Design system (read before building UI)
 
