@@ -44,6 +44,23 @@ describe('keylessLockState', () => {
     expect(keylessLockState.current()).toBe(false);
   });
 
+  it("releasing this tab cannot erase another tab's active barrier", () => {
+    expect(keylessLockState.beginBarrier()).toBe(true);
+    const ownKey = Object.keys(localStorage).find((key) =>
+      key.startsWith('lipsum-cloud-write-barrier:'),
+    );
+    expect(ownKey).toBeDefined();
+    const ownLease = JSON.parse(localStorage.getItem(ownKey ?? '') ?? '{}') as object;
+    localStorage.setItem(
+      'lipsum-cloud-write-barrier:peer',
+      JSON.stringify({ ...ownLease, source: 'peer' }),
+    );
+
+    keylessLockState.releaseBarrier();
+
+    expect(keylessLockState.current()).toBe(true);
+  });
+
   it('makes an active write barrier visible to another tab module instance', async () => {
     expect(keylessLockState.beginBarrier()).toBe(true);
     vi.resetModules();

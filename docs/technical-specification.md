@@ -436,9 +436,10 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   retryable notice (a **Try again** that forces a fresh pull), and an **offline** phase says so
   and resumes on its own — neither offers a key-minting action, so the divergence guard holds.
   The asynchronous sign-in transition is protected across tabs by a renewable, expiring
-  `localStorage` write-barrier lease containing no key or account data. The sign-in owner
-  always scans for plaintext immediately before login, even when a ring is cached, while
-  sibling tabs refuse app writes until the lease is released or expires. Setup uses the same
+  per-tab `localStorage` write-barrier lease containing no key or account data. The sign-in
+  owner always scans for plaintext immediately before login, even when a ring is cached, while
+  sibling tabs refuse app writes until the lease is released or expires. Separate lease keys
+  prevent concurrent transitions from clearing each other's barrier. Setup uses the same
   owner-aware barrier so sealing can continue while sibling app writes stay locked.
   Presence itself resolves only once **both** the pull is confirmed complete **and** the local
   escrow-row query has settled at least once: on a reloading device the persisted pull flag is

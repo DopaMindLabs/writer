@@ -355,13 +355,14 @@ weakening the guarantee that plaintext never leaves the device:
   `useCloudLockReason` on the New-space screen — a notice explains that the device is signed in
   without a key and space creation is disabled until one is set up or adopted.
 - **Cross-tab transition barrier.** Before the asynchronous OTP sign-in starts, the tab
-  acquires a renewable, expiring `localStorage` lease and scans for plaintext rows even if
-  its key provider already has a cached ring. Sibling tabs observe the lease and refuse
+  acquires its own renewable, expiring `localStorage` lease and scans for plaintext rows even
+  if its key provider already has a cached ring. Sibling tabs observe the lease and refuse
   content writes until sign-in completes or fails, closing the check-then-login window where
   another tab could create plaintext after the first scan. The lease stores only a random
   owner id, mode, and timestamps — never key or account data — and expires if its tab
-  crashes. Encryption setup uses the same owner-aware barrier so its own sealing writes can
-  proceed while sibling app writes remain locked.
+  crashes. Per-tab lease keys ensure concurrent transitions cannot release each other's
+  protection. Encryption setup uses the same owner-aware barrier so its own sealing writes
+  can proceed while sibling app writes remain locked.
 - **Sealed-row hiding.** A keyless signed-in device drops sealed rows it cannot open from
   reads (rather than returning raw ciphertext), so the UI never renders undefined fields.
 - **Adopt or set up.** Once the account pull is confirmed, `cloudEscrowPresence`
