@@ -57,10 +57,14 @@ the screen or hook that owns the flow down to the changed symbol and back up.
 ### 7. Apply the persistence checklist (DB / schema changes)
 
 - **Non-indexed field additions** (new fields on an existing store that add no
-  index) do **not** require a Dexie version bump — the store spec in `STORES` is
-  unchanged and Dexie's schema validation is index-based, not field-based.
-- **Store or index changes** (new table, new index, renamed primary key) require
-  a monotonically higher `version()` in `src/db/LoremDB.ts` plus a migration test.
+  index) leave the store spec in `STORES` unchanged — Dexie's schema validation is
+  index-based, not field-based.
+- **Store or index changes** (new table, new index, renamed primary key) are made
+  in `STORES` itself, under the single `version(1)` that `src/db/LoremDB.ts`
+  declares. Writer is pre-release, so there is no installed data to migrate, and
+  Dexie bumps the underlying IndexedDB counter on its own when the physical schema
+  changes. Flag any new `version(n)` as a finding: historical versions are needed
+  only once real users hold data, and adding one is the user's decision.
 - CRDT-seeded tables: any new row creation must call `seedDocCrdt` after the
   Dexie transaction commits (never inside it).
 - Synced vs unsynced: new tables default to synced unless added to `UNSYNCED` in

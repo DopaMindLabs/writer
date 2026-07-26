@@ -419,7 +419,7 @@ Do not map `createdBy` to Dexie `owner`. Dexie `owner` is an authorisation overr
 
 These are non-indexed fields except for explicitly plaintext routing metadata. Follow the repository’s non-indexed-field checklist. Do not alter `STORES` merely to store a non-indexed field.
 
-Although the product is greenfield, the current repository rule requires a Dexie version change whenever `STORES` changes. Follow that rule for later new tables.
+The repository declares one Dexie version and new tables are added straight to `STORES` (see [ADR 0002](adr/0002-single-dexie-schema-version.md)). Follow that rule for later new tables.
 
 ### Tests
 
@@ -660,7 +660,7 @@ Update:
 - `src/db/buildDb.ts`;
 - `src/lib/writerSync/writerTablePolicy.ts`.
 
-Follow the repository schema checklist and add a new Dexie version. `syncOperations` is classified as `already-wrapped` rather than row-envelope encrypted. Slice 1F must make Dexie Cloud replicate this table. `syncInbox`, local acknowledgement state and provider bindings remain local-only.
+Follow the repository schema checklist and add the stores to the single declared version. `syncOperations` is classified as `already-wrapped` rather than row-envelope encrypted. Slice 1F must make Dexie Cloud replicate this table. `syncInbox`, local acknowledgement state and provider bindings remain local-only.
 
 ### Materialisation
 
@@ -1480,7 +1480,8 @@ Implementation must stop for explicit review at these points:
 7. **Any promise of erasure**
    - Impossible for data already downloaded to an offline device.
 8. **Any change to the repository’s schema-version rule**
-   - `AGENTS.md` currently requires a new Dexie version when `STORES` changes.
+   - Answered for the current rule — see [ADR 0002](adr/0002-single-dexie-schema-version.md) (user sign-off, 2026-07-26): `LoremDB` declares one Dexie version and new tables go straight into `STORES`.
+   - The stop remains open for any *further* change, and specifically for a destructive schema change or for reinstating a historical `version(n)` once real users hold data.
 
 ---
 

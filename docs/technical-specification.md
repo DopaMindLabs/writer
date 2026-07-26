@@ -73,9 +73,9 @@
 
 `Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `DocUpdate` (append-only CRDT payloads for collaborative editing; `Doc.body` stays the serialized read model), `Note` (state machine: `seed-prompt → seed-fetched → user`), `Connection`, `Annotation`, `Citation`, `Backup` (binary `payload: Blob`, discriminated by `format` — currently only `md-zip`), `Settings`, `HighlightPalette`, `Meta`.
 
-The schema is declared in two Dexie versions: version 1 (the original stores) and
-version 2, which adds the Writer Sync operation-protocol stores — `syncOperations`
-(the append-only journal of immutable encrypted operation frames), `syncInbox`
+The schema is declared in a single Dexie version, which includes the Writer Sync
+operation-protocol stores — `syncOperations` (the append-only journal of immutable
+encrypted operation frames), `syncInbox`
 (accepted operation ids), `syncTombstones` (deletion tombstones) and
 `syncProviderBindings` (per-scope provider configuration). Every synced entity row
 carries provider-neutral replication metadata: a plaintext `accessScopeId`,
@@ -627,7 +627,7 @@ Subsections nest under their parent section folder. Docs whose `sectionId` doesn
 
 A disabled `↑ restore from file · soon` hint sits beside the snapshot button to telegraph the next step on this surface.
 
-**Storage cost.** Blobs sit inside IndexedDB on the `backups` object store. The `payload` field is not indexed (index spec: `'id, when, scope, kind'`) so changing its type to `Blob` did not require a Dexie version bump. Practical implication: many snapshots of a large space can accumulate quickly — there is no auto-prune in v1.
+**Storage cost.** Blobs sit inside IndexedDB on the `backups` object store. The `payload` field is not indexed (index spec: `'id, when, scope, kind'`) so changing its type to `Blob` required no change to the schema spec at all. Practical implication: many snapshots of a large space can accumulate quickly — there is no auto-prune in v1.
 
 **Key files.**
 
