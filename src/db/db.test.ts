@@ -6,8 +6,12 @@ import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
 import { sampleMetadata } from '@/test/fixtures';
 
 describe('LoremDB schema', () => {
-  it('declares version 2 — the operation-protocol schema', () => {
-    expect(db.verno).toBe(2);
+  it('declares a single schema version', () => {
+    // Writer is pre-release, so every table lives in one declaration rather
+    // than behind a historical version. Dexie bumps the underlying IndexedDB
+    // counter itself when the physical schema changes, so a database created
+    // before a table was added still opens and keeps its rows.
+    expect(db.verno).toBe(1);
   });
 
   it('exposes every table, including docUpdates', async () => {

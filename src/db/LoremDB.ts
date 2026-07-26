@@ -26,7 +26,7 @@ import type {
   SyncTombstone,
 } from 'writer-sync/operations';
 import type { SyncProviderBinding } from 'writer-sync/core';
-import { STORES, STORES_V1 } from './stores';
+import { STORES } from './stores';
 
 /**
  * Construction options for {@link LoremDB}. `cloud` opts the instance into the
@@ -76,9 +76,8 @@ export class LoremDB extends Dexie {
     const cloudStores: Record<string, string> = options.cloud
       ? { cloudCrypto: 'id', cloudDevices: 'id' }
       : {};
-    this.version(1).stores({ ...STORES_V1, ...cloudStores });
-    // Version 2 adds the operation-protocol stores; existing rows need no
-    // migration — the new tables simply start empty.
-    this.version(2).stores({ ...STORES, ...cloudStores });
+    // One declared version while Writer is pre-release — see the note on
+    // {@link STORES}. New tables are added there, not behind a new version.
+    this.version(1).stores({ ...STORES, ...cloudStores });
   }
 }

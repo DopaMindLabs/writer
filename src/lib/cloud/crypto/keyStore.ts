@@ -49,8 +49,9 @@ class KeystoreDb extends Dexie {
   pendingEscrows!: Table<EscrowRow, string>;
   constructor() {
     super('lipsum-cloud-keystore');
-    this.version(1).stores({ rings: 'id' });
-    this.version(2).stores({ rings: 'id', pendingEscrows: 'id' });
+    // One declared version while Writer is pre-release, matching the app schema
+    // (see the note on `STORES` in `@/db/stores`).
+    this.version(1).stores({ rings: 'id', pendingEscrows: 'id' });
   }
 }
 
