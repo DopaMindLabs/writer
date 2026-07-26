@@ -11,23 +11,33 @@ on:
         description: 'Origin URL to whitelist (e.g. https://lipsumwriter-git-branch-shavindra.vercel.app)'
         required: true
 
+permissions:
+  contents: read
+
 jobs:
   whitelist:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v4
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: 24
+          cache: npm
+          cache-dependency-path: .github/tools/dexie-cloud-cli/package-lock.json
 
-      - name: Validate and whitelist origin
+      - name: Install pinned tooling without lifecycle scripts
+        run: npm ci --ignore-scripts --prefix .github/tools/dexie-cloud-cli
+
+      - name: Validate origin
+        id: origin
         env:
           # Event data reaches the shell through env, never interpolated into the
           # script body — a quote or newline in the value cannot become shell.
           DISPATCH_URL: ${{ github.event.client_payload.url }}
           INPUT_URL: ${{ github.event.inputs.url }}
-          DEXIE_CLOUD_JSON: ${{ secrets.DEXIE_CLOUD_JSON }}
-          DEXIE_CLOUD_KEY: ${{ secrets.DEXIE_CLOUD_KEY }}
         run: |
           set -euo pipefail
 
@@ -36,7 +46,16 @@ jobs:
           # scheme is never silently prepended.
           RAW="${DISPATCH_URL:-$INPUT_URL}"
           ORIGIN="$(node scripts/preview-origin.mjs "$RAW")"
+          echo "origin=$ORIGIN" >> "$GITHUB_OUTPUT"
           echo "Whitelisting validated origin: $ORIGIN"
+
+      - name: Whitelist validated origin
+        env:
+          ORIGIN: ${{ steps.origin.outputs.origin }}
+          DEXIE_CLOUD_JSON: ${{ secrets.DEXIE_CLOUD_JSON }}
+          DEXIE_CLOUD_KEY: ${{ secrets.DEXIE_CLOUD_KEY }}
+        run: |
+          set -euo pipefail
 
           umask 077
           WORKDIR="$(mktemp -d)"
@@ -46,4 +65,7 @@ jobs:
           printf '%s' "$DEXIE_CLOUD_JSON" > "$WORKDIR/dexie-cloud.json"
           printf '%s' "$DEXIE_CLOUD_KEY" > "$WORKDIR/dexie-cloud.key"
 
-          ( cd "$WORKDIR" && npx --yes dexie-cloud whitelist "$ORIGIN" )
+          (
+            cd "$WORKDIR"
+            "$GITHUB_WORKSPACE/.github/tools/dexie-cloud-cli/node_modules/.bin/dexie-cloud" whitelist "$ORIGIN"
+          )

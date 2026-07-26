@@ -19,6 +19,9 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+
 concurrency:
   group: e2e-preview-${{ github.event.deployment.id || github.event.inputs.preview_url }}
   cancel-in-progress: true
@@ -52,7 +55,10 @@ jobs:
       - if: steps.guard.outputs.run == 'true'
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          ref: ${{ github.event.deployment.sha || github.sha }}
+          # deployment_status can name attacker-controlled code. The smoke
+          # harness and lockfile must always come from the trusted default branch.
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
 
       - if: steps.guard.outputs.run == 'true'
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
@@ -61,7 +67,7 @@ jobs:
           cache: npm
 
       - if: steps.guard.outputs.run == 'true'
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Cache Playwright browsers
         if: steps.guard.outputs.run == 'true'
@@ -71,14 +77,14 @@ jobs:
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
       - if: steps.guard.outputs.run == 'true'
-        run: npx playwright install --with-deps chromium
+        run: ./node_modules/.bin/playwright install --with-deps chromium
 
       - name: E2E smoke test against the deployed preview
         if: steps.guard.outputs.run == 'true'
         env:
           E2E_BASE_URL: ${{ github.event.inputs.preview_url || github.event.deployment_status.environment_url || github.event.deployment_status.target_url }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-        run: npx playwright test --config=playwright.preview.config.ts
+        run: ./node_modules/.bin/playwright test --config=playwright.preview.config.ts
 
       - if: failure() && steps.guard.outputs.run == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

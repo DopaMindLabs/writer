@@ -1,0 +1,11 @@
+{
+  "name": "writer-dexie-cloud-cli",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "dexie-cloud": "3.0.4"
+  },
+  "overrides": {
+    "brace-expansion": "5.0.8"
+  }
+}
