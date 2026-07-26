@@ -224,21 +224,22 @@ export const signOutOfCloud = async (): Promise<void> => {
 };
 
 /**
- * Revoke another device's slot, freeing it at once.
+ * Free another device's beta slot.
  *
- * The row is **tombstoned, not deleted**: `revokedAt` is how the revoked device
- * learns it was removed rather than silently losing its slot, and the registrar
- * sweeps the tombstone once that device has had time to see it. The slot itself is
- * free immediately — a revoked row never counts as live.
+ * The row is **tombstoned, not deleted**: `revokedAt` is an internal registry
+ * signal that lets the other browser explain why its slot disappeared before
+ * the registrar sweeps the row. It is not session revocation: without a
+ * server-side revocation endpoint, that browser remains signed in and may keep
+ * syncing. The slot itself is free immediately.
  *
- * Refuses this device's own id: revoking yourself is meaningless while you hold
- * the session, since the registrar would simply rejoin on the next sync. Sign out
- * instead, which releases the slot outright.
+ * Refuses this device's own id: freeing your own slot is meaningless while you
+ * hold the session, since the registrar would simply rejoin on the next sync.
+ * Sign out instead, which releases the slot outright.
  *
- * The deletion is flushed with an explicit push, best-effort: an offline revoke
+ * The tombstone is flushed with an explicit push, best-effort: an offline change
  * still applies locally and travels on the next sync.
  */
-export const removeCloudDevice = async (id: string): Promise<void> => {
+export const freeCloudDeviceSlot = async (id: string): Promise<void> => {
   const api = cloudApi();
   if (!api) return;
   if (id === cloudClientIdentity()) return;

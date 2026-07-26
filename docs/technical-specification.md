@@ -325,18 +325,20 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
 - **Device registry.** The beta allows **four devices per account**, tracked in a synced
   but **unencrypted** `cloudDevices` table so a device that holds no key yet can still count
   the slots and be told it is past the cap. A row carries only the addon's random per-device
-  client identity and timestamps (`joinedAt`, `lastSeenAt`, and `revokedAt` once revoked) —
+  client identity and timestamps (`joinedAt`, `lastSeenAt`, and an internal `revokedAt`
+  tombstone once a slot is freed remotely) —
   never a device name, user agent, or content. A registered device refreshes `lastSeenAt` at
   most **once an hour**: the table is synced, so an unconditional refresh would push, settle
   the sync round, re-trigger the registrar and push again — an unbounded sync loop. A slot
   goes **stale after 7 days** of silence and is then reclaimable, which is what stops a
   discarded browser profile holding a slot for ever; only live slots count against the limit,
-  so stale and revoked rows never lock a new device out. Users see their devices in Cloud
-  settings and can **sign out** of the current one or **revoke** any other, which frees its
-  slot at once and leaves a tombstone so the revoked device can tell it was removed. The limit
-  is a **client-side beta courtesy, not a security boundary**: the server does not enforce it,
-  a revoked device keeps its Dexie Cloud session, and two devices racing for the last slot can
-  transiently both take it. Both windows are overridable per deployment, in seconds, via
+  so stale and tombstoned rows never lock a new device out. Users see their devices in Cloud
+  settings and can **sign out** of the current one or **free the slot** used by any other.
+  The latter leaves a registry tombstone but does not sign the other device out or stop it
+  syncing. The limit is a **client-side beta courtesy, not a security boundary**: the server
+  does not enforce it, a device whose slot was freed keeps its Dexie Cloud session, and two
+  devices racing for the last slot can transiently both take it. Both windows are overridable
+  per deployment, in seconds, via
   `VITE_DEVICE_REFRESH_SECONDS` and `VITE_DEVICE_STALE_SECONDS`, so the reclaim can be
   exercised in minutes rather than days; a malformed or non-positive value falls back to the
   default.
@@ -344,12 +346,13 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   first, with the count in use, each row showing only when it joined and when it was last seen —
   a device has no name to show, by design. The current device is badged **This device** and a
   reclaimable one **Inactive**. Every row can free its own slot by the means that fits it: the
-  current device **signs out** (revoking itself would be pointless — it holds the session and
-  would rejoin), any other is **removed** behind a confirmation. The list is shown to a
+  current device **signs out** (freeing its own row would be pointless — it holds the session
+  and would rejoin), any other has its **slot freed** behind a confirmation. The list is shown to a
   *blocked* device too: that is the device that most needs to free a slot, and until now the
   only way to free one was to sign out on the machine holding it — useless for a laptop that
-  was wiped or given away. A removed device sees **This device was removed from your account**
-  and is asked to sign out; nothing of its writing is deleted.
+  was wiped or given away. A device whose slot was freed sees **This device no longer holds a
+  beta slot** and is told that it remains signed in and may keep syncing until it signs out
+  locally; nothing of its writing is deleted.
 - **Reconciliation.** Because the CRDT `docUpdates` log is per-device, cross-device
   changes travel as `Doc.body` snapshots. Reconciliation is **single-flight** — one run at a
   time, with a trigger during a run coalescing into exactly one follow-up — and armed on four
@@ -386,9 +389,13 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   **without a page reload**. An invalidation-only `BroadcastChannel` propagates the change to other
   tabs (never any key material), so unlocking one tab refreshes them all.
 - **Key reconciliation.** Setup holds the escrow on the device, not in `cloudCrypto`, and —
-  while signed out — drops any escrow already in the local database (residue from an earlier
-  local session) so a fresh key can never trip a spurious mismatch. Reconciliation **re-runs on
-  every sync settle and sign-in change** (not once per boot); it compares the account escrow's
+  while signed out — drops an old ready escrow in the local database (residue from an earlier
+  local session) so a fresh key can never trip a spurious mismatch. A new pending escrow is
+  first stored as `sealing`; its ring is hidden from the normal provider and its escrow cannot
+  publish until every existing row is sealed and verified, when setup marks it `ready`. An
+  interrupted retry unwraps that same escrow and resumes with the same master and recovery
+  code, so already-sealed rows are never orphaned under an abandoned key. Reconciliation
+  **re-runs on every sync settle and sign-in change** (not once per boot); it compares the account escrow's
   fingerprint with the device ring's (or, as a fallback, the pending escrow's): absent →
   publish this device's escrow, but **only once the initial account pull is confirmed**
   (`persistedSyncState.initiallySynced` — set in the same sync round that applies the pulled
@@ -428,6 +435,11 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   does not sit on “fetching your account…” indefinitely: a sync **error** phase turns it into a
   retryable notice (a **Try again** that forces a fresh pull), and an **offline** phase says so
   and resumes on its own — neither offers a key-minting action, so the divergence guard holds.
+  The asynchronous sign-in transition is protected across tabs by a renewable, expiring
+  `localStorage` write-barrier lease containing no key or account data. The sign-in owner
+  always scans for plaintext immediately before login, even when a ring is cached, while
+  sibling tabs refuse app writes until the lease is released or expires. Setup uses the same
+  owner-aware barrier so sealing can continue while sibling app writes stay locked.
   Presence itself resolves only once **both** the pull is confirmed complete **and** the local
   escrow-row query has settled at least once: on a reloading device the persisted pull flag is
   already `true` while the row read is still in flight, and reporting “no key” in that gap
@@ -452,16 +464,19 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
 - **Four-device beta limit.** An account holds at most **four devices** while the beta runs,
   tracked in a synced, deliberately unencrypted `cloudDevices` registry — one row per joined
   device carrying only the addon's random per-device client identity (which the server already
-  receives on every sync) and joined/last-seen/revoked timestamps; never a device name, user
-  agent, or content. Ids and counts are readable while keyless by design, so a signed-in further
+  receives on every sync) and joined/last-seen/tombstone timestamps; never a device name, user
+  agent, or content. `revokedAt` is retained as an internal registry tombstone name; it does
+  not represent server-side session revocation. Ids and counts are readable while keyless by
+  design, so a signed-in further
   device is **hard-blocked** before it can act: the keyless section is replaced by a banner
   naming the limit, and no unlock or set-up is offered. A device registers itself once it is
   signed in and holds a key, and refreshes its slot at most hourly — the registry is a synced
   table, so an unconditional refresh would push, settle the sync, re-trigger the registrar and
   push again, an unbounded loop (§ 4.9.1). Forgetting the key keeps the slot (the device is
   still signed in and expected to unlock again). A slot is freed in three ways: **signing out**
-  on the device holding it, **removing** it from any other device (which stamps a tombstone the
-  removed device can see, and frees the slot at once), or by the device going quiet for seven
+  on the device holding it, **freeing its beta slot** from any other device (which stamps a
+  tombstone the other device can see and frees the slot at once, but does not sign it out or
+  stop it syncing), or by the device going quiet for seven
   days, after which its slot is **reclaimed** — so a wiped or discarded browser profile cannot
   hold a slot for ever. Only live slots count against the limit. The gate is a client-side beta
   courtesy, not a security boundary; the section heading carries a persistent beta notice naming
@@ -475,7 +490,8 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
 See [`docs/cloud-sync-beta.md`](cloud-sync-beta.md) for the full design note and the
 manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P8 ciphertext and
 mismatch-lock spike), `envelope.test.ts`, `keys.test.ts` (incl. fingerprints),
-`errors.test.ts`, `keyMismatch.test.ts`, `keylessLock.test.ts`, `lockReason.test.ts`,
+`errors.test.ts`, `keyMismatch.test.ts`, `keylessLock.test.ts` (including the cross-tab
+transition barrier), `lockReason.test.ts`,
 `keylessGuard.test.ts`, `useCloudLockReason.test.tsx`,
 `recoveryCode.test.ts`, `setup.test.ts` (incl. adopt/erase, add-only publish, sign-in guard),
 `escrowReconcile.test.ts` (incl. re-arm and the deferred pull-gate), `cloudClient.test.ts`

@@ -28,6 +28,10 @@ Do this once, on the device that already has your writing.
 > **Warning:** if you lose both the passphrase and the recovery code, your
 > encrypted writing cannot be recovered. No one can reset it for you.
 
+If setup is interrupted, return here and select **Set up encryption** again with
+the same passphrase. The app resumes the protected setup instead of replacing its
+key; you receive the same recovery code.
+
 ## Unlock a second device
 
 Your writing arrives locked on a new device until you unlock it.
@@ -51,9 +55,9 @@ A fifth device that signs in sees **This account already has four devices** and
 cannot unlock or set up until you free a slot. You can free one without leaving
 the device you are on — see **Manage your devices** below.
 
-A device you have not used for **7 days** stops holding its slot, so a laptop you
-wiped or gave away frees its place on its own — you do not have to dig it out to
-sign out. If you use it again and a slot is free, it simply takes one back.
+A device you have not used for **7 days** stops holding its slot, so a browser
+profile you wiped frees its place on its own. This only controls beta capacity:
+it does not revoke a still-active session on a device you gave away.
 
 While the beta runs, keep local backups of important writing on at least one
 device (**Settings → Backups**).
@@ -71,12 +75,13 @@ synced. The device you are using is marked **This device**. One marked
 To free a slot:
 
 - **On the device you are using**, select **Sign out**.
-- **On any other device**, select **Remove**, then confirm.
+- **On any other device**, select **Free slot**, then confirm.
 
-**Remove** frees the slot straight away, so a new device can take it. If the
-device you removed is still signed in somewhere, it stops holding a slot and is
-asked to sign out — it will not quietly take another. Its writing stays on it, and
-nothing is deleted from your account.
+**Free slot** only frees beta capacity so a new device can take the slot. It does
+**not** sign that device out, revoke its session, or stop it syncing. A still-active
+device may keep syncing until someone signs out on that device. Do not use this as
+a security control for a lost, shared, or given-away device. Its writing stays on
+it, and nothing is deleted from your account.
 
 ## Check that sync is healthy
 

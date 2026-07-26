@@ -11,7 +11,7 @@ const meta = {
   args: {
     number: 2,
     onSignOut: () => undefined,
-    onRevoke: () => undefined,
+    onFreeSlot: () => undefined,
   },
   decorators: [
     (Story) => (
@@ -25,7 +25,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Another device on the account: it can be removed from here. */
+/** Another device on the account: its beta slot can be freed from here. */
 export const Peer: Story = {
   args: {
     device: {
@@ -38,7 +38,7 @@ export const Peer: Story = {
   },
 };
 
-/** The device in front of the user: it signs out rather than revoking itself. */
+/** The device in front of the user: it signs out rather than freeing its row. */
 export const ThisDevice: Story = {
   args: {
     device: {

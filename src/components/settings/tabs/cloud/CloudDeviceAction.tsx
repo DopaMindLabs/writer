@@ -6,22 +6,23 @@ export interface CloudDeviceActionProps {
   /** The row's display name, so the action says which device it acts on. */
   name: string;
   onSignOut: () => void;
-  onRevoke: () => void;
+  onFreeSlot: () => void;
 }
 
 /**
  * The one action a device row offers to free its slot — but by the means that fits
  * the device.
  *
- * This device signs out, which releases its slot outright. Revoking your own row
- * would be pointless: this device holds the session, so the registrar would simply
- * rejoin it on the next sync. Any other device is removed.
+ * This device signs out, which releases its slot outright. Freeing its own row
+ * would be pointless: this browser holds the session, so the registrar would
+ * simply rejoin it on the next sync. Another row can only have its beta slot
+ * freed; this client cannot sign that browser out.
  */
 export const CloudDeviceAction = ({
   isThisDevice,
   name,
   onSignOut,
-  onRevoke,
+  onFreeSlot,
 }: CloudDeviceActionProps) => {
   const { t } = useTranslation('screens');
   const k = (key: string) => `settings.account.cloud.devices.${key}`;
@@ -43,11 +44,11 @@ export const CloudDeviceAction = ({
     <Button
       kind="ghost"
       size="sm"
-      onClick={onRevoke}
-      aria-label={t(k('revokeAria'), { name })}
-      data-testid="cloud-device-revoke"
+      onClick={onFreeSlot}
+      aria-label={t(k('freeSlotAria'), { name })}
+      data-testid="cloud-device-free-slot"
     >
-      {t(k('revoke'))}
+      {t(k('freeSlot'))}
     </Button>
   );
 };

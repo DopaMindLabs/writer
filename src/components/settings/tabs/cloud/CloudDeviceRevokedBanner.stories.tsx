@@ -10,5 +10,5 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** This device's slot was removed from another device. */
-export const Revoked: Story = {};
+/** Another browser freed this device's beta slot without ending its session. */
+export const SlotFreed: Story = {};

@@ -281,10 +281,15 @@ and idempotent. It compares fingerprints (§2):
   also logs both fingerprints, to tell a real other-device key from stale residue.
 
 To keep a fresh device from tripping that mismatch on residue, setup is add-only in the
-other direction too: `createCloudEncryption` mints a new master, so any escrow already in
-the local database is a **different** key. While the device is signed out that row can only
-be residue from an earlier local session, so setup drops it before deriving the fresh key.
-Signed in, the row is the account's real escrow and is left for the mismatch/adopt flow.
+other direction too. While the device is signed out, an old **ready** escrow row can only be
+residue from an earlier local session, so setup drops it before deriving a fresh key. A new
+pending escrow starts in a `sealing` state: the device saves the ring, seals and verifies
+every existing row, then marks the escrow `ready` and saves the ring again. Neither the ring
+nor the escrow is exposed to the normal key provider or publisher before that transition.
+If setup is interrupted, retry unwraps the same pending escrow and resumes with the same
+master and recovery code instead of minting a replacement that would orphan rows already
+sealed under the first key. Signed in, an account escrow is left for the mismatch/adopt
+flow.
 
 While a mismatch is unresolved the write middleware refuses content `add`/`put` with
 `CloudKeyMismatchError`, so no row sealed under the wrong key can reach the sync queue
@@ -349,6 +354,14 @@ weakening the guarantee that plaintext never leaves the device:
   reach the sync queue before a key exists. Like the mismatch lock, this reason surfaces through
   `useCloudLockReason` on the New-space screen — a notice explains that the device is signed in
   without a key and space creation is disabled until one is set up or adopted.
+- **Cross-tab transition barrier.** Before the asynchronous OTP sign-in starts, the tab
+  acquires a renewable, expiring `localStorage` lease and scans for plaintext rows even if
+  its key provider already has a cached ring. Sibling tabs observe the lease and refuse
+  content writes until sign-in completes or fails, closing the check-then-login window where
+  another tab could create plaintext after the first scan. The lease stores only a random
+  owner id, mode, and timestamps — never key or account data — and expires if its tab
+  crashes. Encryption setup uses the same owner-aware barrier so its own sealing writes can
+  proceed while sibling app writes remain locked.
 - **Sealed-row hiding.** A keyless signed-in device drops sealed rows it cannot open from
   reads (rather than returning raw ciphertext), so the UI never renders undefined fields.
 - **Adopt or set up.** Once the account pull is confirmed, `cloudEscrowPresence`
@@ -399,8 +412,9 @@ The beta allows **four devices per account**, tracked in `cloudDevices` — a ta
 device that has signed in but holds no key yet must still be able to count the slots and
 learn it is past the cap, and it cannot read a sealed row. A row carries only the addon's
 random per-device client identity — which the server already receives on every sync — and
-timestamps: `joinedAt`, `lastSeenAt`, and `revokedAt` once revoked. **Never** a device
-name, user agent, or content. `src/lib/cloud/devicePolicy.ts` holds the rules (pure, no
+timestamps: `joinedAt`, `lastSeenAt`, and the internal `revokedAt` tombstone once a slot is
+freed remotely. **Never** a device name, user agent, or content.
+`src/lib/cloud/devicePolicy.ts` holds the rules (pure, no
 Dexie, no clock), `deviceRegistry.ts` the IO, `deviceRegistrar.ts` the subscriptions.
 
 ### The refresh interval is load-bearing
@@ -435,13 +449,14 @@ Authority is split, and both halves are needed:
   so it cannot prune anything; if dead rows still counted it would be trapped for ever.
   Filtering on read lets it unlock, gain a key, and only then prune.
 
-### Revoking
+### Freeing a slot
 
-Removing a device stamps `revokedAt` rather than deleting the row: the tombstone is how the
-revoked device *learns* it was removed (the registrar surfaces it via `deviceRevokedState`).
-It frees its slot immediately — `liveDevices` excludes it — and is swept once it is older
-than the stale window. It is swept on `revokedAt`, never `lastSeenAt`: a revoked device
-stops refreshing, so its `lastSeenAt` freezes at revocation and the two clocks would race.
+Freeing another device's slot stamps the internal `revokedAt` field rather than deleting the
+row: the tombstone is how that device *learns* its beta slot was freed (the registrar
+surfaces it via `deviceRevokedState`). It frees the slot immediately — `liveDevices`
+excludes it — and is swept once it is older than the stale window. It is swept on
+`revokedAt`, never `lastSeenAt`: the tombstoned row stops refreshing, so `lastSeenAt`
+freezes and the two clocks would otherwise race.
 
 ### Tuning the windows
 
@@ -462,11 +477,13 @@ since an override deliberately tightens it for testing.
 
 ### It is a courtesy, not a boundary
 
-The server does not enforce the limit — Dexie Cloud knows nothing about this table. A
-revoked device keeps its session and its key and can still sync content; what revoking
-guarantees is that it will not silently retake a slot, and that its user is told. Two
-devices racing for the last free slot can transiently both take it. Treat the limit as a
-beta courtesy, and never as a security control.
+The server does not enforce the limit — Dexie Cloud knows nothing about this table.
+**Freeing a slot is not remote sign-out or session revocation.** That device keeps its
+session and key and may keep syncing until someone signs out on the device itself. The
+tombstone prevents the row from counting towards the courtesy limit and tells its user what
+happened; it is not an authorisation control. Two devices racing for the last free slot can
+transiently both take it. Treat the limit as a beta courtesy, and never as a security
+control.
 
 ## 7. What the server can and cannot see
 

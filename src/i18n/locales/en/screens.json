@@ -470,7 +470,7 @@
         },
         "deviceLimit": {
           "title": "This account already has four devices",
-          "body": "Cloud sync is in beta and supports four devices for now. Remove a device you no longer use, or sign out on one of them, then try again here.",
+          "body": "Cloud sync is in beta and supports four devices for now. Free a slot used by another device, or sign out on one of them, then try again here.",
           "betaNotice": "Cloud sync is in beta: four devices per account for now, with more to come. Keep local backups of important writing on at least one device."
         },
         "devices": {
@@ -485,16 +485,16 @@
           "empty": "No devices yet. This one joins the list once your writing is encrypted.",
           "signOut": "Sign out",
           "signOutAria": "Sign out of this device",
-          "revoke": "Remove",
-          "revokeAria": "Remove {{name}} from this account",
-          "revokeTitle": "Remove this device?",
-          "revokeBody": "It frees the slot straight away, so another device can take it. If that device is still signed in, it stops syncing and is asked to sign out.",
-          "revokeConfirm": "Remove device",
-          "revokeCancel": "Cancel"
+          "freeSlot": "Free slot",
+          "freeSlotAria": "Free the slot used by {{name}}",
+          "freeSlotTitle": "Free this device slot?",
+          "freeSlotBody": "This frees the beta slot, but it does not sign that device out or stop it syncing. It may keep syncing until someone signs out on that device.",
+          "freeSlotConfirm": "Free slot",
+          "freeSlotCancel": "Cancel"
         },
         "revoked": {
-          "title": "This device was removed from your account",
-          "body": "Someone removed it from another device, so it no longer holds a slot. Sign out to finish — your writing stays on this device."
+          "title": "This device no longer holds a beta slot",
+          "body": "Another device freed this slot. You are still signed in and may keep syncing. Sign out on this device when you are finished."
         },
         "backupNudge": {
           "title": "These notes are only on this device",

@@ -15,7 +15,7 @@ const entry = (overrides: Partial<DeviceListEntry> = {}): DeviceListEntry => ({
 const renderRow = (device: DeviceListEntry, handlers = {}) => {
   const props = {
     onSignOut: vi.fn(),
-    onRevoke: vi.fn(),
+    onFreeSlot: vi.fn(),
     ...handlers,
   };
   renderWithProviders(<CloudDeviceListRow device={device} number={2} {...props} />);
@@ -30,18 +30,17 @@ describe('CloudDeviceListRow', () => {
     expect(row).toHaveTextContent(/Joined 12 March 2026/);
   });
 
-  it('offers Remove on a peer device and reports which one', async () => {
-    const { onRevoke } = renderRow(entry());
-    await userEvent.click(screen.getByTestId('cloud-device-revoke'));
-    expect(onRevoke).toHaveBeenCalledWith('device-2');
+  it('offers Free slot on a peer device and reports which one', async () => {
+    const { onFreeSlot } = renderRow(entry());
+    await userEvent.click(screen.getByTestId('cloud-device-free-slot'));
+    expect(onFreeSlot).toHaveBeenCalledWith('device-2');
   });
 
-  it('offers Sign out — never Remove — on this device', async () => {
-    // Revoking your own row is meaningless: this device holds the session, so the
-    // registrar would simply rejoin it on the next sync. Signing out releases the
-    // slot for real.
+  it('offers Sign out — never Free slot — on this device', async () => {
+    // Freeing your own row is meaningless: this device holds the session, so the
+    // registrar would simply rejoin it on the next sync. Signing out releases its slot.
     const { onSignOut } = renderRow(entry({ isThisDevice: true }));
-    expect(screen.queryByTestId('cloud-device-revoke')).toBeNull();
+    expect(screen.queryByTestId('cloud-device-free-slot')).toBeNull();
     await userEvent.click(screen.getByTestId('cloud-device-sign-out'));
     expect(onSignOut).toHaveBeenCalledTimes(1);
   });
@@ -60,10 +59,10 @@ describe('CloudDeviceListRow', () => {
     );
   });
 
-  it('gives the remove button an accessible name that says which device it removes', () => {
+  it('gives the slot button an accessible name that says which slot it frees', () => {
     renderRow(entry());
     expect(
-      screen.getByRole('button', { name: /Remove Device 2 from this account/i }),
+      screen.getByRole('button', { name: /Free the slot used by Device 2/i }),
     ).toBeInTheDocument();
   });
 });

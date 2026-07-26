@@ -6,7 +6,7 @@ describe('CloudDeviceLimitBanner', () => {
     renderWithProviders(<CloudDeviceLimitBanner />);
     expect(screen.getByTestId('cloud-device-limit')).toBeInTheDocument();
     expect(screen.getByText(/already has four devices/i)).toBeInTheDocument();
-    expect(screen.getByText(/remove a device you no longer use/i)).toBeInTheDocument();
+    expect(screen.getByText(/free a slot used by another device/i)).toBeInTheDocument();
     expect(screen.queryByRole('button')).toBeNull();
   });
 });

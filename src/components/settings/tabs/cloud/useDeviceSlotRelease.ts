@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
-import { removeCloudDevice } from '@/lib/cloud/cloudClient';
+import { freeCloudDeviceSlot } from '@/lib/cloud/cloudClient';
 
-export interface DeviceRemoval {
+export interface DeviceSlotRelease {
   /** The device awaiting confirmation, or `null` when the dialog is closed. */
   pending: string | null;
   ask: (id: string) => void;
@@ -10,12 +10,11 @@ export interface DeviceRemoval {
 }
 
 /**
- * Confirmation state for revoking a device. Removing a slot is not destructive —
- * nothing is deleted and the device keeps its writing — but it does reach across
- * to another machine, so it is worth a deliberate second step rather than a stray
- * click on a list row.
+ * Confirmation state for freeing another browser's beta slot. This is not remote
+ * sign-out: that browser keeps its session and may continue syncing. The explicit
+ * confirmation prevents a stray click from unexpectedly changing slot capacity.
  */
-export const useDeviceRemoval = (): DeviceRemoval => {
+export const useDeviceSlotRelease = (): DeviceSlotRelease => {
   const [pending, setPending] = useState<string | null>(null);
 
   const cancel = useCallback(() => {
@@ -24,7 +23,7 @@ export const useDeviceRemoval = (): DeviceRemoval => {
 
   const confirm = useCallback(() => {
     if (pending === null) return;
-    void removeCloudDevice(pending);
+    void freeCloudDeviceSlot(pending);
     setPending(null);
   }, [pending]);
 

@@ -10,7 +10,7 @@ export interface CloudDeviceListRowProps {
   /** 1-based, by join order — the only stable name a row can have (see below). */
   number: number;
   onSignOut: () => void;
-  onRevoke: (id: string) => void;
+  onFreeSlot: (id: string) => void;
 }
 
 /**
@@ -26,7 +26,7 @@ export const CloudDeviceListRow = ({
   device,
   number,
   onSignOut,
-  onRevoke,
+  onFreeSlot,
 }: CloudDeviceListRowProps) => {
   const { t, i18n } = useTranslation('screens');
   const k = (key: string) => `settings.account.cloud.devices.${key}`;
@@ -62,8 +62,8 @@ export const CloudDeviceListRow = ({
         isThisDevice={device.isThisDevice}
         name={name}
         onSignOut={onSignOut}
-        onRevoke={() => {
-          onRevoke(device.id);
+        onFreeSlot={() => {
+          onFreeSlot(device.id);
         }}
       />
     </li>

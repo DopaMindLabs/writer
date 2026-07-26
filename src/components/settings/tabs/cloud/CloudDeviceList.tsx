@@ -5,7 +5,7 @@ import { SectionLabel } from '@/components/ui/SectionLabel';
 import { TypographyP } from '@/components/ui/typography';
 import { CloudDeviceListRow } from './CloudDeviceListRow';
 import { useDeviceList } from './useDeviceList';
-import { useDeviceRemoval } from './useDeviceRemoval';
+import { useDeviceSlotRelease } from './useDeviceSlotRelease';
 
 export interface CloudDeviceListProps {
   onSignOut: () => void;
@@ -24,7 +24,7 @@ export const CloudDeviceList = ({ onSignOut }: CloudDeviceListProps) => {
   const { t } = useTranslation('screens');
   const key = (name: string) => `settings.account.cloud.devices.${name}`;
   const list = useDeviceList();
-  const removal = useDeviceRemoval();
+  const slotRelease = useDeviceSlotRelease();
 
   // Undefined while the live query resolves: render nothing rather than flashing
   // an empty state over a registry that is about to arrive.
@@ -47,23 +47,22 @@ export const CloudDeviceList = ({ onSignOut }: CloudDeviceListProps) => {
                 device={device}
                 number={index + 1}
                 onSignOut={onSignOut}
-                onRevoke={removal.ask}
+                onFreeSlot={slotRelease.ask}
               />
             ))}
           </ul>
         </>
       )}
       <ConfirmDialog
-        open={removal.pending !== null}
+        open={slotRelease.pending !== null}
         onOpenChange={(open) => {
-          if (!open) removal.cancel();
+          if (!open) slotRelease.cancel();
         }}
-        title={t(key('revokeTitle'))}
-        description={t(key('revokeBody'))}
-        confirmLabel={t(key('revokeConfirm'))}
-        cancelLabel={t(key('revokeCancel'))}
-        confirmKind="dangerous"
-        onConfirm={removal.confirm}
+        title={t(key('freeSlotTitle'))}
+        description={t(key('freeSlotBody'))}
+        confirmLabel={t(key('freeSlotConfirm'))}
+        cancelLabel={t(key('freeSlotCancel'))}
+        onConfirm={slotRelease.confirm}
       />
     </section>
   );
