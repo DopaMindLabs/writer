@@ -33,6 +33,19 @@ const waitForNoteRendered = async (): Promise<void> => {
   });
 };
 
+/** Wait until the clicked note lands in Dexie and return the stored rows. */
+const waitForStoredNote = async (): Promise<Awaited<ReturnType<typeof db.notes.toArray>>> => {
+  await act(async () => {
+    await waitFor(
+      async () => {
+        expect(await db.notes.count()).toBeGreaterThan(0);
+      },
+      { timeout: 4000 },
+    );
+  });
+  return db.notes.toArray();
+};
+
 describe('BrainSpaceCanvas', () => {
   describe('rendering', () => {
     it('should render the canvas root with the toolbar', async () => {
@@ -119,8 +132,10 @@ describe('BrainSpaceCanvas', () => {
       renderWithProviders(<BrainSpaceCanvas spaceId="s1" />);
       const button = await screen.findByTestId('brain-canvas-tool-blank');
       await user.click(button);
-      await waitForNoteRendered();
-      const [note] = await db.notes.toArray();
+      // Placement is a database assertion; rendering is covered by the
+      // add-to-Dexie test above. Waiting on the row keeps this independent of
+      // live-query re-render timing between tests in this file.
+      const [note] = await waitForStoredNote();
       expect(note.l).toBe(24);
       expect(note.t).toBe(24);
     });
@@ -134,8 +149,7 @@ describe('BrainSpaceCanvas', () => {
       scroll.scrollTop = 1300;
       const button = await screen.findByTestId('brain-canvas-tool-blank');
       await user.click(button);
-      await waitForNoteRendered();
-      const [note] = await db.notes.toArray();
+      const [note] = await waitForStoredNote();
       expect(note.l).toBe(1824);
       expect(note.t).toBe(1324);
     });
