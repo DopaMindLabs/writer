@@ -31,4 +31,11 @@ export interface ScopeKeyContext {
  */
 export interface ScopeKeyResolver {
   keyFor: (context: ScopeKeyContext) => SyncKeyRing | null;
+  /**
+   * Whether any key material is currently available at all. `false` lets a
+   * caller take a synchronous keyless fast path (no decrypt can succeed);
+   * `true` only promises that `keyFor` may resolve — not that every context
+   * will. A per-scope resolver must answer `true` when it holds any key.
+   */
+  hasAnyKey: () => boolean;
 }

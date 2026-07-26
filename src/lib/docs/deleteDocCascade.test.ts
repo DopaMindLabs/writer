@@ -132,10 +132,10 @@ describe('deleteDocCascade under cloud encryption', () => {
 
   it('unlinks notes even though linkedDocId is encrypted', async () => {
     await cloudDb.table<Row>('docs').put({
-      id: 'cd', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'D',
+      id: 'cd', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'D',
     });
     await cloudDb.table<Row>('notes').put({
-      id: 'cn', spaceId: 's', kind: 'text', createdAt: 1, linkedDocId: 'cd',
+      id: 'cn', spaceId: 's', kind: 'text', createdAt: 1, accessScopeId: 's', linkedDocId: 'cd',
     });
 
     await deleteDocCascade('cd', cloudDb);

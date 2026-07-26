@@ -1,6 +1,8 @@
 import Dexie, {
   type DBCore,
   type DBCoreTable,
+  type DBCoreAddRequest,
+  type DBCorePutRequest,
   type DBCoreMutateRequest,
   type DBCoreMutateResponse,
   type DBCoreGetRequest,
@@ -101,31 +103,43 @@ const stripUpdateDescriptors = (req: DBCoreMutateRequest): DBCoreMutateRequest =
 };
 
 /**
- * Seal every value in an add/put request; other mutations pass through. Each row
- * resolves its own key by context; a row whose context resolves no key is
- * written as-is (the keyless pre-setup flow).
+ * The per-row key resolutions for an add/put request, computed synchronously so
+ * the caller can tell — before any async work — whether sealing is needed at
+ * all. A row whose context resolves no key is written as-is (the keyless
+ * pre-setup flow).
  */
-const sealMutate = async (
+const resolveWriteRings = (
   table: DBCoreTable,
   resolver: ScopeKeyResolver,
-  req: DBCoreMutateRequest,
+  req: DBCoreAddRequest | DBCorePutRequest,
+): { ring: SyncKeyRing | null; primaryKey: string }[] => {
+  const rows = req.values as readonly Row[];
+  return rows.map((value, i) => {
+    const context = contextFor({
+      table,
+      row: value,
+      fallbackKey: req.keys?.[i],
+      operation: 'write',
+    });
+    return { ring: resolver.keyFor(context), primaryKey: context.primaryKey };
+  });
+};
+
+/** Seal every keyed value in an add/put request using pre-resolved rings. */
+const sealMutate = async (
+  table: DBCoreTable,
+  rings: { ring: SyncKeyRing | null; primaryKey: string }[],
+  req: DBCoreAddRequest | DBCorePutRequest,
 ): Promise<DBCoreMutateRequest> => {
-  if (req.type !== 'add' && req.type !== 'put') return req;
   const rules = plaintextFieldsFor(table.name);
   const rows = req.values as readonly Row[];
   const values = await Promise.all(
     rows.map(async (value, i) => {
-      const context = contextFor({
-        table,
-        row: value,
-        fallbackKey: req.keys?.[i],
-        operation: 'write',
-      });
-      const ring = resolver.keyFor(context);
-      if (!ring) return value;
+      const resolution = rings[i];
+      if (!resolution.ring) return value;
       return sealRow(
-        ring,
-        { table: context.table, primaryKey: context.primaryKey },
+        resolution.ring,
+        { table: table.name, primaryKey: resolution.primaryKey },
         value,
         rules,
       );
@@ -176,6 +190,26 @@ const openOrDrop = async (
 /** Whether a stored row carries a ciphertext envelope (was sealed under a key). */
 const isSealed = (value: Row | undefined): boolean =>
   value?.[CIPHER_FIELD] !== undefined;
+
+/** Keyless single read: drop a sealed row (no key can open it), pass plaintext. */
+const keylessGet = async (read: Promise<unknown>): Promise<unknown> => {
+  const row = (await read) as Row | undefined;
+  return isSealed(row) ? undefined : row;
+};
+
+/** Keyless batch read: replace sealed rows with undefined, preserving positions. */
+const keylessGetMany = async (read: Promise<unknown[]>): Promise<unknown[]> => {
+  const rows = await read;
+  return rows.map((row) => (isSealed(row as Row | undefined) ? undefined : row));
+};
+
+/** Keyless list read: omit sealed rows. */
+const keylessQuery = async (
+  read: Promise<{ result: unknown[] }>,
+): Promise<{ result: unknown[] }> => {
+  const res = await read;
+  return { ...res, result: res.result.filter((row) => !isSealed(row as Row | undefined)) };
+};
 
 /**
  * Resolve-and-open a stored row: plaintext rows pass through, sealed rows open
@@ -265,7 +299,14 @@ const sealedMutate = async (options: {
       : new CloudKeylessWriteError();
   }
   const safeReq = stripUpdateDescriptors(req);
-  return table.mutate(await inTx(sealMutate(table, resolver, safeReq)));
+  if (safeReq.type !== 'add' && safeReq.type !== 'put') return table.mutate(safeReq);
+  const rings = resolveWriteRings(table, resolver, safeReq);
+  // Keyless fast path: with nothing to seal there must be no async detour at
+  // all — `Dexie.waitFor` inside a nested transaction commits it prematurely.
+  if (rings.every((resolution) => resolution.ring === null)) {
+    return table.mutate(safeReq);
+  }
+  return table.mutate(await inTx(sealMutate(table, rings, safeReq)));
 };
 
 const wrapTable = (
@@ -282,6 +323,9 @@ const wrapTable = (
     get: (req: DBCoreGetRequest) => {
       // Addon blob-plumbing reads the raw ciphertext row — never decrypt here.
       if (isInternalBlobTx(req.trans)) return table.get(req);
+      // Keyless fast path: no decrypt can succeed, so hide sealed rows without
+      // the async waitFor detour (which would break nested transactions).
+      if (!resolver.hasAnyKey()) return keylessGet(table.get(req));
       return inTx(
         (async () =>
           resolveAndOpen({
@@ -294,6 +338,7 @@ const wrapTable = (
     },
     getMany: (req: DBCoreGetManyRequest) => {
       if (isInternalBlobTx(req.trans)) return table.getMany(req);
+      if (!resolver.hasAnyKey()) return keylessGetMany(table.getMany(req));
       return inTx(
         (async () =>
           openMany({
@@ -307,6 +352,7 @@ const wrapTable = (
     query: (req: DBCoreQueryRequest) => {
       if (req.values === false) return table.query(req);
       if (isInternalBlobTx(req.trans)) return table.query(req);
+      if (!resolver.hasAnyKey()) return keylessQuery(table.query(req));
       return inTx(
         (async () => {
           const res = await table.query(req);

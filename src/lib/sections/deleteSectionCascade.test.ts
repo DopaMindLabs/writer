@@ -145,10 +145,10 @@ describe('deleteSectionCascade under cloud encryption', () => {
 
   it('deletes the section and its documents even though rows are encrypted', async () => {
     await cloudDb.table<Row>('sections').put({
-      id: 'cs', spaceId: 's', parentSectionId: null, label: 'Cloud', order: 0,
+      id: 'cs', spaceId: 's', parentSectionId: null, accessScopeId: 's', label: 'Cloud', order: 0,
     });
     await cloudDb.table<Row>('docs').put({
-      id: 'cd', spaceId: 's', sectionId: 'cs', updatedAt: 1, name: 'D',
+      id: 'cd', spaceId: 's', sectionId: 'cs', updatedAt: 1, accessScopeId: 's', name: 'D',
     });
 
     await deleteSectionCascade('cs', cloudDb);

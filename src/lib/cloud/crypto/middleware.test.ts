@@ -58,7 +58,7 @@ const signIn = (): void =>
 
 let db: CloudDexie;
 let ring: CloudKeyRing | null = null;
-const provider: ScopeKeyResolver = { keyFor: () => ring };
+const provider: ScopeKeyResolver = { keyFor: () => ring, hasAnyKey: () => ring !== null };
 
 const table = (name: string) => db.table<AnyRow>(name);
 
@@ -427,7 +427,7 @@ describe('createEncryptionMiddleware — sync-applied writes bypass the write lo
   const makeWrapped = (
     ring: CloudKeyRing | null,
   ): { wrapped: DBCoreTable; mutate: ReturnType<typeof vi.fn> } => {
-    const provider: ScopeKeyResolver = { keyFor: () => ring };
+    const provider: ScopeKeyResolver = { keyFor: () => ring, hasAnyKey: () => ring !== null };
     const mutate = vi.fn().mockResolvedValue({
       numFailures: 0,
       failures: [],
@@ -514,7 +514,7 @@ describe('createEncryptionMiddleware — internal blob-plumbing transactions pas
   const makeWrapped = (
     ring: CloudKeyRing,
   ): { wrapped: DBCoreTable; get: ReturnType<typeof vi.fn>; mutate: ReturnType<typeof vi.fn> } => {
-    const provider: ScopeKeyResolver = { keyFor: () => ring };
+    const provider: ScopeKeyResolver = { keyFor: () => ring, hasAnyKey: () => ring !== null };
     const get = vi.fn().mockResolvedValue(rowWithBlobRef);
     const mutate = vi.fn().mockResolvedValue({ numFailures: 0, failures: [], results: [], lastResult: undefined });
     const fake = { name: 'docs', schema: { primaryKey }, get, mutate } as unknown as DBCoreTable;
@@ -678,7 +678,7 @@ describe('createEncryptionMiddleware — transaction lifetime safety', () => {
   // Never dereferenced: every fake row below carries no cipher envelope, so
   // openRow's pass-through branch returns it untouched without touching the ring.
   const fakeRing = {} as CloudKeyRing;
-  const provider: ScopeKeyResolver = { keyFor: () => fakeRing };
+  const provider: ScopeKeyResolver = { keyFor: () => fakeRing, hasAnyKey: () => fakeRing !== null };
   const primaryKey = { extractKey: (v: { id: string }) => v.id };
 
   const wrap = (overrides: Partial<DBCoreTable>): DBCoreTable => {
@@ -794,6 +794,7 @@ describe('the resolver receives the full scope-key context', () => {
         contexts.push(context);
         return ring;
       },
+      hasAnyKey: () => true,
     };
     const spied = new Dexie('resolver-context-spy') as CloudDexie;
     spied.version(1).stores(STORES);

@@ -247,4 +247,5 @@ export const deviceKeyProvider = {
     void context;
     return keystoreService.currentRing();
   },
+  hasAnyKey: (): boolean => keystoreService.currentRing() !== null,
 };
