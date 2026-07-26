@@ -1,8 +1,10 @@
-import { describe, it, expect, afterEach } from 'vitest';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import { keylessLockState } from './keylessLock';
 
 afterEach(() => {
+  keylessLockState.releaseBarrier();
   keylessLockState.set(false);
+  localStorage.clear();
 });
 
 describe('keylessLockState', () => {
@@ -24,5 +26,33 @@ describe('keylessLockState', () => {
     stop();
     keylessLockState.set(true);
     expect(calls).toBe(2); // unsubscribed
+  });
+
+  it('holds a synchronous write barrier independently of the monitor flag', () => {
+    expect(keylessLockState.beginBarrier()).toBe(true);
+    expect(keylessLockState.current()).toBe(true);
+
+    keylessLockState.set(false);
+    expect(keylessLockState.current()).toBe(true);
+
+    keylessLockState.releaseBarrier();
+    expect(keylessLockState.current()).toBe(false);
+  });
+
+  it('lets the provisioning tab write while keeping the shared barrier active', () => {
+    expect(keylessLockState.beginBarrier(true)).toBe(true);
+    expect(keylessLockState.current()).toBe(false);
+  });
+
+  it('makes an active write barrier visible to another tab module instance', async () => {
+    expect(keylessLockState.beginBarrier()).toBe(true);
+    vi.resetModules();
+
+    const sibling = await import('./keylessLock');
+
+    expect(sibling.keylessLockState.current()).toBe(true);
+    expect(sibling.keylessLockState.beginBarrier()).toBe(false);
+    keylessLockState.releaseBarrier();
+    expect(sibling.keylessLockState.current()).toBe(false);
   });
 });

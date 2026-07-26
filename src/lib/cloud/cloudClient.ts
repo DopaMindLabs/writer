@@ -4,7 +4,7 @@ import type { DXCUserInteraction, SyncState, UserLogin } from 'dexie-cloud-addon
 import type { CloudObservable } from './cloudObservable';
 import { hasCloudEnv } from './env';
 import { readCloudFlag, wasCloudProvisioned } from './flag';
-import { loadDeviceKeyRing, deviceKeyProvider } from './crypto/keyStore';
+import { loadDeviceKeyRing } from './crypto/keyStore';
 import { ESCROW_ID } from './crypto/keys';
 import { hasPlaintextSyncedRows, forgetThisDevice } from './setup';
 import { releaseThisDevice } from './deviceRegistry';
@@ -186,14 +186,22 @@ export const cloudEscrowPresence = (): CloudObservable<EscrowPresence> => {
 export const signInToCloud = async (): Promise<void> => {
   const api = cloudApi();
   if (!api) return;
-  // First device: it has unencrypted writing but no key. Keep it on
-  // passphrase-before-sign-in so that writing is sealed before it can sync —
-  // signing in now would let the addon push it in the clear. A clean device
-  // (no plaintext synced rows) may sign in first and unlock afterwards.
-  if (deviceKeyProvider.current() === null && (await hasPlaintextSyncedRows())) {
-    throw new KeylessSignInBlockedError();
+  if (!keylessLockState.beginBarrier()) {
+    throw new Error('Another cloud key transition is already in progress');
   }
-  await api.login();
+  try {
+    // Acquire the shared write barrier before scanning. A write already in
+    // flight settles before this read transaction; later writes in every tab are
+    // refused by the middleware until login finishes. Always inspect storage,
+    // even when a ring is cached: an interrupted setup may have persisted that
+    // ring before its plaintext rows were sealed.
+    if (await hasPlaintextSyncedRows()) {
+      throw new KeylessSignInBlockedError();
+    }
+    await api.login();
+  } finally {
+    keylessLockState.releaseBarrier();
+  }
 };
 
 /**

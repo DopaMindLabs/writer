@@ -18,11 +18,14 @@ import { encodeRecoveryCode, decodeRecoveryCode } from './crypto/recoveryCode';
 import {
   saveDeviceKeyRing,
   forgetDeviceKeyRing,
+  invalidateCachedRing,
   savePendingEscrow,
   loadPendingEscrow,
   clearPendingEscrow,
+  type PendingEscrowRecord,
 } from './crypto/keyStore';
 import { keyMismatchState } from './crypto/keyMismatch';
+import { keylessLockState } from './crypto/keylessLock';
 
 /** The initial key epoch (the escrow row id comes from `./crypto/keys`). */
 const EPOCH = 1;
@@ -97,10 +100,74 @@ export const hasPlaintextSyncedRows = async (
   return false;
 };
 
+interface ProvisioningMaterial {
+  accountId: string | null;
+  escrow: PendingEscrowRecord['escrow'];
+  master: Uint8Array;
+}
+
+const prepareProvisioning = async (
+  passphrase: string,
+  db: LoremDB,
+  accountId: string | null,
+): Promise<ProvisioningMaterial> => {
+  const pending = await loadPendingEscrow();
+  if (pending) {
+    invariant(
+      accountId === null ||
+        pending.accountId === null ||
+        pending.accountId === accountId,
+      'pending cloud encryption belongs to a different account',
+    );
+    return {
+      accountId: pending.accountId ?? accountId,
+      escrow: pending.escrow,
+      master: await unwrapMasterSecret(pending.escrow, passphrase),
+    };
+  }
+  if (accountId === null) await dropResidualEscrow(db);
+  const master = generateMasterSecret();
+  const iterations = await calibrateIterations();
+  return {
+    accountId,
+    master,
+    escrow: await wrapMasterSecret(master, passphrase, iterations),
+  };
+};
+
+const provisionMaterial = async (
+  material: ProvisioningMaterial,
+  db: LoremDB,
+): Promise<string> => {
+  const pending = {
+    accountId: material.accountId,
+    escrow: material.escrow,
+  };
+  await savePendingEscrow({ ...pending, provisioningState: 'sealing' });
+  const ring = await deriveKeyRing(material.master, material.escrow.epoch);
+  await saveDeviceKeyRing({ accountId: material.accountId, ring });
+  try {
+    await sealExistingRows(db);
+    invariant(
+      !(await hasPlaintextSyncedRows(db)),
+      'cloud encryption provisioning left plaintext synced rows',
+    );
+  } catch (error) {
+    invalidateCachedRing();
+    throw error;
+  }
+  await savePendingEscrow({ ...pending, provisioningState: 'ready' });
+  await saveDeviceKeyRing({ accountId: material.accountId, ring });
+  return encodeRecoveryCode(material.master);
+};
+
 /**
- * Provision cloud encryption: mint a master secret, wrap it under the passphrase
- * for escrow, derive and store the device key ring, seal existing rows, and
- * return the one-time recovery code for the UI to show once.
+ * Provision cloud encryption, or resume an interrupted attempt using its held
+ * escrow. The pending record stays `sealing` until every synced row is verified
+ * as ciphertext, so neither publication nor a sibling-tab key load can expose a
+ * half-provisioned device. Retrying the same passphrase unwraps the same master
+ * and returns its original recovery code instead of orphaning rows under a new
+ * key.
  *
  * The escrow is held on the device ({@link savePendingEscrow}), **not** written
  * to the synced `cloudCrypto` table. Reconciliation publishes it only once
@@ -112,23 +179,19 @@ export const createCloudEncryption = async (
   db: LoremDB = appDb,
   resolveAccountId: (db: LoremDB) => string | null = readCurrentAccountId,
 ): Promise<string> => {
-  // Bind the new material to the signed-in account (`null` before sign-in). Fresh
-  // setup mints a brand-new master, so any escrow already in the local database is
-  // protected by a *different* key. While signed out (`accountId === null`), that
-  // row can only be residue from an earlier local session (a live account's escrow
-  // is pulled only while signed in) — drop it, so the escrow reconciler cannot
-  // later read its stale fingerprint and lock this device out with a spurious
-  // mismatch. Signed in, the row is the account's real escrow: leave it for the
-  // mismatch/adopt flow, never delete it here.
   const accountId = resolveAccountId(db);
-  if (accountId === null) await dropResidualEscrow(db);
-  const master = generateMasterSecret();
-  const iterations = await calibrateIterations();
-  const escrow = await wrapMasterSecret(master, passphrase, iterations);
-  await savePendingEscrow({ accountId, escrow });
-  await saveDeviceKeyRing({ accountId, ring: await deriveKeyRing(master, escrow.epoch) });
-  await sealExistingRows(db);
-  return encodeRecoveryCode(master);
+  invariant(
+    keylessLockState.beginBarrier(true),
+    'another cloud key transition is already in progress',
+  );
+  try {
+    return await provisionMaterial(
+      await prepareProvisioning(passphrase, db, accountId),
+      db,
+    );
+  } finally {
+    keylessLockState.releaseBarrier();
+  }
 };
 
 /** What {@link publishPendingEscrow} did with this device's held-back escrow. */
@@ -149,6 +212,7 @@ export const publishPendingEscrow = async (
 ): Promise<EscrowPublishResult> => {
   const pending = await loadPendingEscrow();
   if (!pending) return 'none';
+  if (pending.provisioningState !== 'ready') return 'none';
   // Never publish escrow bound to a *different* account into the current one: a
   // pending copy minted for account A must not become account B's key. An unbound
   // (pre-sign-in) escrow may publish to whichever account it first signs into.

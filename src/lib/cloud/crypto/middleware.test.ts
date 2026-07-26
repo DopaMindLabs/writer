@@ -105,6 +105,7 @@ beforeEach(async () => {
 afterEach(async () => {
   ring = null;
   keyMismatchState.set(false);
+  keylessLockState.releaseBarrier();
   keylessLockState.set(false);
   await db.delete();
   vi.restoreAllMocks();
@@ -295,6 +296,22 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     expect(await table('$docs_mutations').toArray()).toHaveLength(0);
     // Deletes still pass (needed by the erase escape hatch).
     await expect(table('docs').delete('d1')).resolves.toBeUndefined();
+  });
+
+  it('refuses app writes while a cross-tab cloud transition barrier is active', async () => {
+    ring = null;
+    expect(keylessLockState.beginBarrier()).toBe(true);
+
+    await expect(
+      table('docs').put({
+        id: 'barrier',
+        spaceId: 's',
+        sectionId: 'x',
+        updatedAt: 1,
+        name: 'must not land',
+      }),
+    ).rejects.toBeInstanceOf(CloudKeylessWriteError);
+    expect(await readRaw('docs', 'barrier')).toBeUndefined();
   });
 
   it('hides sealed rows from keyless reads, but passes plaintext rows through', async () => {

@@ -33,6 +33,8 @@ export interface DeviceKeyRingRecord {
 export interface PendingEscrowRecord {
   accountId: string | null;
   escrow: EscrowRecord;
+  /** `sealing` is not safe to publish or expose as a usable device key. */
+  provisioningState: 'sealing' | 'ready';
 }
 
 interface KeyRingRow extends DeviceKeyRingRecord {
@@ -68,6 +70,16 @@ const requireAccountId = (value: unknown, kind: string): string | null => {
   return value;
 };
 
+const requireProvisioningState = (
+  value: unknown,
+): PendingEscrowRecord['provisioningState'] => {
+  invariant(
+    value === 'sealing' || value === 'ready',
+    'keystore pending escrow row has a missing or malformed provisioningState',
+  );
+  return value;
+};
+
 /** Map a stored ring row to a validated in-memory record (or `null` if absent). */
 const toRingRecord = (row: KeyRingRow | undefined): DeviceKeyRingRecord | null =>
   row ? { accountId: requireAccountId(row.accountId, 'ring'), ring: row.ring } : null;
@@ -75,7 +87,11 @@ const toRingRecord = (row: KeyRingRow | undefined): DeviceKeyRingRecord | null =
 /** Map a stored escrow row to a validated record (or `null` if absent). */
 const toEscrowRecord = (row: EscrowRow | undefined): PendingEscrowRecord | null =>
   row
-    ? { accountId: requireAccountId(row.accountId, 'pending escrow'), escrow: row.escrow }
+    ? {
+        accountId: requireAccountId(row.accountId, 'pending escrow'),
+        escrow: row.escrow,
+        provisioningState: requireProvisioningState(row.provisioningState),
+      }
     : null;
 
 interface KeystoreService {
@@ -92,6 +108,23 @@ interface KeystoreService {
   currentRing: () => CloudKeyRing | null;
   currentAccountId: () => string | null;
 }
+
+const readAvailableRing = async (
+  db: KeystoreDb,
+): Promise<DeviceKeyRingRecord | null> => {
+  const [ring, pending] = await Promise.all([
+    db.rings.get(DEVICE),
+    db.pendingEscrows.get(DEVICE),
+  ]);
+  const pendingRecord = toEscrowRecord(pending);
+  return pendingRecord?.provisioningState === 'sealing' ? null : toRingRecord(ring);
+};
+
+const putPendingEscrow = (
+  db: KeystoreDb,
+  record: PendingEscrowRecord,
+): Promise<void> =>
+  db.pendingEscrows.put({ id: DEVICE, ...record }).then(() => undefined);
 
 /**
  * Own all mutable keystore state in one service instance instead of module-level
@@ -135,7 +168,7 @@ const createKeystoreService = (): KeystoreService => {
       broadcastKeyRingChange('changed');
     },
     loadDeviceKeyRing: async () => {
-      cached = toRingRecord(await db().rings.get(DEVICE));
+      cached = await readAvailableRing(db());
       notifyRingChange();
       return cached?.ring ?? null;
     },
@@ -155,9 +188,7 @@ const createKeystoreService = (): KeystoreService => {
       cached = null;
       notifyRingChange();
     },
-    savePendingEscrow: async ({ accountId, escrow }) => {
-      await db().pendingEscrows.put({ id: DEVICE, accountId, escrow });
-    },
+    savePendingEscrow: (record) => putPendingEscrow(db(), record),
     loadPendingEscrow: async () =>
       toEscrowRecord(await db().pendingEscrows.get(DEVICE)),
     clearPendingEscrow: async () => {

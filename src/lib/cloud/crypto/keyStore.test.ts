@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import Dexie from 'dexie';
-import { generateMasterSecret, deriveKeyRing } from './keys';
+import { generateMasterSecret, deriveKeyRing, wrapMasterSecret } from './keys';
 import {
   saveDeviceKeyRing,
   loadDeviceKeyRing,
@@ -10,6 +10,9 @@ import {
   deviceKeyProvider,
   onDeviceKeyRingChange,
   getDeviceKeyRevision,
+  savePendingEscrow,
+  loadPendingEscrow,
+  clearPendingEscrow,
 } from './keyStore';
 
 /** Prove a loaded ring's content key is usable without ever exporting it. */
@@ -24,6 +27,7 @@ const roundTripsAProbe = async (key: CryptoKey): Promise<boolean> => {
 describe('device keyStore', () => {
   beforeEach(async () => {
     await forgetDeviceKeyRing();
+    await clearPendingEscrow();
   });
 
   it('persists and reloads a usable non-extractable content key', async () => {
@@ -85,6 +89,7 @@ describe('device keyStore', () => {
 describe('device keyStore account binding', () => {
   beforeEach(async () => {
     await forgetDeviceKeyRing();
+    await clearPendingEscrow();
   });
 
   it('stores and exposes the ring account binding synchronously', async () => {
@@ -135,5 +140,39 @@ describe('device keyStore account binding', () => {
     raw.close();
 
     await expect(loadDeviceKeyRing()).rejects.toThrow(/accountId/);
+  });
+
+  it('does not expose a persisted ring while its pending escrow is still sealing', async () => {
+    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const escrow = await wrapMasterSecret(generateMasterSecret(), 'passphrase', 1);
+    await savePendingEscrow({
+      accountId: null,
+      escrow,
+      provisioningState: 'sealing',
+    });
+    await saveDeviceKeyRing({ accountId: null, ring });
+
+    expect(await loadDeviceKeyRing()).toBeNull();
+
+    await savePendingEscrow({
+      accountId: null,
+      escrow,
+      provisioningState: 'ready',
+    });
+    expect(await loadDeviceKeyRing()).not.toBeNull();
+  });
+
+  it('rejects a pending escrow whose provisioning state is missing', async () => {
+    const raw = new Dexie('lipsum-cloud-keystore');
+    raw.version(1).stores({ rings: 'id' });
+    raw.version(2).stores({ rings: 'id', pendingEscrows: 'id' });
+    await raw.table('pendingEscrows').put({
+      id: 'device',
+      accountId: null,
+      escrow: await wrapMasterSecret(generateMasterSecret(), 'passphrase', 1),
+    });
+    raw.close();
+
+    await expect(loadPendingEscrow()).rejects.toThrow(/provisioningState/);
   });
 });

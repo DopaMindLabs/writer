@@ -6,7 +6,9 @@ import { createEncryptionMiddleware } from './crypto/middleware';
 import {
   deviceKeyProvider,
   saveDeviceKeyRing,
+  loadDeviceKeyRing,
   forgetDeviceKeyRing,
+  invalidateCachedRing,
   loadPendingEscrow,
   clearPendingEscrow,
 } from './crypto/keyStore';
@@ -168,6 +170,44 @@ describe('cloud setup', () => {
 
     // Setting up encryption seals it, so no plaintext synced rows remain.
     await createCloudEncryption('pw', db);
+    expect(await hasPlaintextSyncedRows(db)).toBe(false);
+  });
+
+  it('resumes interrupted setup with the same master before exposing or publishing it', async () => {
+    await db.docs.put({
+      id: 'interrupted',
+      spaceId: 's',
+      sectionId: 'x',
+      name: 'draft',
+      body: 'plain',
+      meta: { wordCount: 1 },
+      updatedAt: 1,
+    });
+    const tablePrototype = Object.getPrototypeOf(db.docs) as {
+      bulkPut: typeof db.docs.bulkPut;
+    };
+    const bulkPut = vi
+      .spyOn(tablePrototype, 'bulkPut')
+      .mockRejectedValueOnce(new Error('forced sealing failure'));
+
+    await expect(createCloudEncryption('correct horse battery', db)).rejects.toThrow(
+      'forced sealing failure',
+    );
+    const interrupted = await loadPendingEscrow();
+    expect(interrupted?.provisioningState).toBe('sealing');
+    expect(await publishPendingEscrow(db)).toBe('none');
+
+    invalidateCachedRing();
+    expect(await loadDeviceKeyRing()).toBeNull();
+    bulkPut.mockRestore();
+
+    const code = await createCloudEncryption('correct horse battery', db);
+    const completed = await loadPendingEscrow();
+    expect(completed?.provisioningState).toBe('ready');
+    expect(Array.from(completed?.escrow.fingerprint ?? [])).toEqual(
+      Array.from(interrupted?.escrow.fingerprint ?? []),
+    );
+    expect(code).toMatch(/^[0-9A-Z-]+$/);
     expect(await hasPlaintextSyncedRows(db)).toBe(false);
   });
 

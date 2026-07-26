@@ -157,6 +157,7 @@ describe('signInToCloud guard (clean vs dirty keyless device)', () => {
 
   afterEach(async () => {
     delete (db as { cloud?: unknown }).cloud;
+    keylessLockState.releaseBarrier();
     await db.delete();
     await db.open();
   });
@@ -175,6 +176,45 @@ describe('signInToCloud guard (clean vs dirty keyless device)', () => {
     withCloudLogin();
     await expect(signInToCloud()).resolves.toBeUndefined();
     expect(login).toHaveBeenCalledTimes(1);
+  });
+
+  it('blocks sign-in when plaintext remains even if a ring was persisted', async () => {
+    withCloudLogin();
+    await db.docs.add({
+      id: 'd',
+      spaceId: 's',
+      sectionId: 'x',
+      name: 'n',
+      body: 'plain',
+      meta: { wordCount: 1 },
+      updatedAt: 1,
+    });
+    await saveDeviceKeyRing({
+      accountId: null,
+      ring: await deriveKeyRing(generateMasterSecret(), 1),
+    });
+
+    await expect(signInToCloud()).rejects.toBeInstanceOf(KeylessSignInBlockedError);
+    expect(login).not.toHaveBeenCalled();
+  });
+
+  it('locks writes for the whole asynchronous sign-in window', async () => {
+    let finishLogin: (() => void) | undefined;
+    login.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          finishLogin = resolve;
+        }),
+    );
+    withCloudLogin();
+
+    const signingIn = signInToCloud();
+    await waitFor(() => expect(login).toHaveBeenCalledTimes(1));
+    expect(keylessLockState.current()).toBe(true);
+
+    finishLogin?.();
+    await signingIn;
+    expect(keylessLockState.current()).toBe(false);
   });
 });
 

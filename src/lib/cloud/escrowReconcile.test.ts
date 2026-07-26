@@ -157,7 +157,11 @@ describe('reconcileEscrow', () => {
     const masterM = generateMasterSecret();
     const escrowM = await wrapMasterSecret(masterM, 'pw', 1000);
     await db.cloudCrypto.put(escrowM); // server holds M
-    await savePendingEscrow({ accountId: null, escrow: escrowM }); // pending still M
+    await savePendingEscrow({
+      accountId: null,
+      escrow: escrowM,
+      provisioningState: 'ready',
+    }); // pending still M
     await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) }); // ring N
 
     expect(await reconcileEscrow(db)).toBe('matched');
