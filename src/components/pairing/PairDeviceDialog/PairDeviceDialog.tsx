@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import type { QrScanner } from 'writer-qr/scan';
 import {
   Dialog,
   DialogContent,
@@ -6,14 +7,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { InlineBanner } from '@/components/ui/InlineBanner';
-import { StatusGlyph } from '@/components/ui/StatusGlyph';
-import { PairingCodeDisplay } from '@/components/pairing/PairingCodeDisplay/PairingCodeDisplay';
-import { usePairingOffer, type UsePairingOfferOptions } from './usePairingOffer';
+import { PairDeviceDialogBody } from './PairDeviceDialogBody';
+import { usePairingExchange, type UsePairingExchangeOptions } from './usePairingExchange';
 
 /**
- * The first half of pairing: this device gathers its offer and shows it for the
- * other device to read.
+ * Pairing, from this device's side: gather an offer, show it, read the other
+ * device's reply, then hold at the verification gate until a human confirms the
+ * codes match.
  *
  * Gathering starts when the dialog opens and stops when it closes, so nothing is
  * held open in the background. The code shown here carries no secret — no
@@ -22,18 +22,22 @@ import { usePairingOffer, type UsePairingOfferOptions } from './usePairingOffer'
  * confirmed.
  */
 
-export interface PairDeviceDialogProps extends Pick<UsePairingOfferOptions, 'createSignaller'> {
+export interface PairDeviceDialogProps
+  extends Pick<UsePairingExchangeOptions, 'createSignaller'> {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** Injected in tests and stories; defaults to the real detector. */
+  scanner?: QrScanner;
 }
 
 export const PairDeviceDialog = ({
   open,
   onOpenChange,
   createSignaller,
+  scanner,
 }: PairDeviceDialogProps) => {
   const { t } = useTranslation('screens');
-  const offer = usePairingOffer({ open, createSignaller });
+  const exchange = usePairingExchange({ open, createSignaller });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -42,26 +46,7 @@ export const PairDeviceDialog = ({
           <DialogTitle>{t('settings.pairing.title')}</DialogTitle>
           <DialogDescription>{t('settings.pairing.subtitle')}</DialogDescription>
         </DialogHeader>
-
-        {offer.status === 'creating' && (
-          <StatusGlyph kind="info" role="status" data-testid="pair-device-gathering">
-            {t('settings.pairing.creating')}
-          </StatusGlyph>
-        )}
-
-        {offer.status === 'failed' && (
-          <InlineBanner kind="error" data-testid="pair-device-failed">
-            {t('settings.pairing.failed')}
-          </InlineBanner>
-        )}
-
-        {offer.status === 'ready' && offer.payload !== null && offer.sessionId !== null && (
-          <PairingCodeDisplay
-            payload={offer.payload}
-            sessionId={offer.sessionId}
-            kind="offer"
-          />
-        )}
+        <PairDeviceDialogBody exchange={exchange} scanner={scanner} />
       </DialogContent>
     </Dialog>
   );
