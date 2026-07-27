@@ -769,6 +769,19 @@
         "cancel": "Cancel",
         "confirm": "Delete space"
       }
+    },
+    "pairing": {
+      "title": "Pair another device",
+      "subtitle": "Show this code to your other device, then read the code it shows back.",
+      "qrLabel": {
+        "offer": "Pairing code from this device",
+        "answer": "Reply code from this device"
+      },
+      "payloadLabel": "Or copy this text to the other device",
+      "tooLarge": "This pairing code is too large to display. Cancel and try again.",
+      "symbolPosition": "Symbol {{index}} of {{total}}",
+      "previousSymbol": "Previous",
+      "nextSymbol": "Next"
     }
   },
   "notFound": {
