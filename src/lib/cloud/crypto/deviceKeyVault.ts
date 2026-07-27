@@ -1,12 +1,12 @@
 import { invariant } from '@/lib/invariant';
-import { newId } from '@/lib/ids';
-import { asDeviceId, type DeviceId, type PrincipalId } from 'writer-sync/core';
+import type { DeviceId, PrincipalId } from 'writer-sync/core';
 import type { SyncKeyRing } from 'writer-sync/crypto';
 import type {
   DeviceKeyVault,
   PairingRootWrapper,
 } from 'writer-sync/crypto';
 import { deriveKeyRing } from './keys';
+import { deviceIdentityStore } from './deviceIdentityStore';
 import {
   DEVICE_RECORD,
   DeviceVaultDb,
@@ -65,13 +65,13 @@ const wrapperAad = (transcript: Uint8Array): ArrayBuffer => {
   return asBuffer(aad);
 };
 
-const mintDeviceId = async (db: DeviceVaultDb): Promise<DeviceId> => {
-  const existing = await db.identity.get(DEVICE_RECORD);
-  if (existing) return asDeviceId(existing.deviceId);
-  const minted = newId();
-  await db.identity.put({ id: DEVICE_RECORD, deviceId: minted });
-  return asDeviceId(minted);
-};
+/**
+ * The vault does not mint an id of its own: the identity store owns it, derived
+ * from this device's signing key. Two sources would let a stored record be bound
+ * to an id the pairing layer never asserts.
+ */
+const currentDeviceId = async (): Promise<DeviceId> =>
+  (await deviceIdentityStore.load()).deviceId;
 
 /** The stored row for `principalId`, validated against both bindings. */
 const boundRow = async (
@@ -80,7 +80,7 @@ const boundRow = async (
 ): Promise<VaultRow | null> => {
   const row = await db.vault.get(DEVICE_RECORD);
   if (!row) return null;
-  const device = await mintDeviceId(db);
+  const device = await currentDeviceId();
   invariant(
     row.deviceId === String(device),
     'device key vault: record is bound to a different device',
@@ -107,7 +107,7 @@ const wrapRootRow = async (options: {
   root: Uint8Array;
   principalId: PrincipalId;
 }): Promise<void> => {
-  const device = await mintDeviceId(options.db);
+  const device = await currentDeviceId();
   const wrapKey = await generateWrapKey();
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const wrappedRoot = new Uint8Array(
@@ -162,7 +162,7 @@ const createDeviceKeyVault = (): DeviceKeyVault => {
   const db = (): DeviceVaultDb => (database ??= new DeviceVaultDb());
 
   return {
-    deviceId: () => mintDeviceId(db()),
+    deviceId: () => currentDeviceId(),
     hasAccountRoot: async () => (await db().vault.get(DEVICE_RECORD)) !== undefined,
     storeAccountRoot: (root, principalId) => wrapRootRow({ db: db(), root, principalId }),
     deriveScopeKey: async ({ epoch, principalId }) => {
