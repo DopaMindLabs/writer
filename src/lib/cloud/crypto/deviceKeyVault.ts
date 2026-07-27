@@ -1,4 +1,3 @@
-import Dexie, { type Table } from 'dexie';
 import { invariant } from '@/lib/invariant';
 import { newId } from '@/lib/ids';
 import { asDeviceId, type DeviceId, type PrincipalId } from 'writer-sync/core';
@@ -8,6 +7,11 @@ import type {
   PairingRootWrapper,
 } from 'writer-sync/crypto';
 import { deriveKeyRing } from './keys';
+import {
+  DEVICE_RECORD,
+  DeviceVaultDb,
+  type VaultRow,
+} from './deviceVaultDb';
 import {
   derivePairingKey,
   ephemeralPublicJwkOf,
@@ -30,31 +34,6 @@ import {
  * identity. The Stage 2A pairing layer replaces the minted id with a
  * cryptographic device identity; the binding contract stays the same.
  */
-
-interface VaultRow {
-  id: string;
-  deviceId: string;
-  principalId: string;
-  wrapKey: CryptoKey;
-  iv: Uint8Array;
-  wrappedRoot: Uint8Array;
-}
-
-interface IdentityRow {
-  id: string;
-  deviceId: string;
-}
-
-class DeviceVaultDb extends Dexie {
-  vault!: Table<VaultRow, string>;
-  identity!: Table<IdentityRow, string>;
-  constructor() {
-    super('lipsum-device-vault');
-    this.version(1).stores({ vault: 'id', identity: 'id' });
-  }
-}
-
-const RECORD = 'device';
 
 const asBuffer = (bytes: Uint8Array): ArrayBuffer =>
   bytes.buffer.slice(
@@ -87,10 +66,10 @@ const wrapperAad = (transcript: Uint8Array): ArrayBuffer => {
 };
 
 const mintDeviceId = async (db: DeviceVaultDb): Promise<DeviceId> => {
-  const existing = await db.identity.get(RECORD);
+  const existing = await db.identity.get(DEVICE_RECORD);
   if (existing) return asDeviceId(existing.deviceId);
   const minted = newId();
-  await db.identity.put({ id: RECORD, deviceId: minted });
+  await db.identity.put({ id: DEVICE_RECORD, deviceId: minted });
   return asDeviceId(minted);
 };
 
@@ -99,7 +78,7 @@ const boundRow = async (
   db: DeviceVaultDb,
   principalId: PrincipalId,
 ): Promise<VaultRow | null> => {
-  const row = await db.vault.get(RECORD);
+  const row = await db.vault.get(DEVICE_RECORD);
   if (!row) return null;
   const device = await mintDeviceId(db);
   invariant(
@@ -139,7 +118,7 @@ const wrapRootRow = async (options: {
     ),
   );
   await options.db.vault.put({
-    id: RECORD,
+    id: DEVICE_RECORD,
     deviceId: String(device),
     principalId: String(options.principalId),
     wrapKey,
@@ -184,7 +163,7 @@ const createDeviceKeyVault = (): DeviceKeyVault => {
 
   return {
     deviceId: () => mintDeviceId(db()),
-    hasAccountRoot: async () => (await db().vault.get(RECORD)) !== undefined,
+    hasAccountRoot: async () => (await db().vault.get(DEVICE_RECORD)) !== undefined,
     storeAccountRoot: (root, principalId) => wrapRootRow({ db: db(), root, principalId }),
     deriveScopeKey: async ({ epoch, principalId }) => {
       // Stage 1: every scope derives the account content key; the scope id is
@@ -213,7 +192,7 @@ const createDeviceKeyVault = (): DeviceKeyVault => {
       return wrapper;
     },
     forget: async () => {
-      await db().vault.delete(RECORD);
+      await db().vault.delete(DEVICE_RECORD);
     },
   };
 };
