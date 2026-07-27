@@ -552,6 +552,11 @@ wired into the app.
 - **Verification gate.** Both devices hold at the same gate and complete only on
   an explicit human confirmation that the six digits match. Nothing is
   transferred on authentication alone.
+- **Reading a code.** A symbol can be scanned from an uploaded photograph or
+  pasted as text; both paths need no camera permission. Decoding happens
+  entirely on the device — where the browser has no `BarcodeDetector` the WASM
+  engine is **served by the app**, never fetched from a CDN, so scanning works
+  offline and contacts nobody.
 - **Pairing code display.** A payload larger than one symbol is split into the
   codec's bounded sequence (max 8 parts) and stepped through manually — no
   timed cycling, so nothing needs reduced-motion gating. The symbol's own text
