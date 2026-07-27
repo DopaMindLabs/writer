@@ -41,6 +41,9 @@ export {
 } from './qrSequence';
 export type { QrPart } from './qrSequence';
 
+export { createQrPartCollector } from './qrPartCollector';
+export type { QrCollectionProgress, QrPartCollector } from './qrPartCollector';
+
 export { createPairingSession } from './pairingSession';
 export type { PairingEvent, PairingRole, PairingSession } from './pairingSession';
 
