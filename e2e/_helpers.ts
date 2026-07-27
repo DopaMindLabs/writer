@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import type { BrowserContext, ConsoleMessage, Page } from '@playwright/test';
+import type { Browser, BrowserContext, ConsoleMessage, Page } from '@playwright/test';
 import { addCoverageReport } from 'monocart-reporter';
 import axe from 'axe-core';
 
@@ -7,6 +7,10 @@ import axe from 'axe-core';
 // instrumented for coverage here and flushed in the autoCoverage teardown so
 // their line hits reach the ratchet — the default fixture only tracks `page`.
 const coveredPages: Page[] = [];
+// Contexts opened for a second device. Closed in the teardown *after* their
+// coverage is flushed — closing one inside a test closes its pages first, and
+// a closed page reports nothing.
+const coveredContexts: BrowserContext[] = [];
 
 export const openCoveredPage = async (
   context: BrowserContext,
@@ -18,6 +22,19 @@ export const openCoveredPage = async (
     coveredPages.push(extra);
   }
   return extra;
+};
+
+/**
+ * A second device: its own context, so it holds its own storage and its own
+ * device identity rather than sharing the first device's.
+ */
+export const openCoveredContext = async (
+  browser: Browser,
+  browserName: string,
+): Promise<Page> => {
+  const context = await browser.newContext();
+  coveredContexts.push(context);
+  return openCoveredPage(context, browserName);
 };
 
 export const reseedAndGoHome = async (page: Page): Promise<void> => {
@@ -141,6 +158,7 @@ export const test = base.extend<{ autoCoverage: void; failOnCspViolation: void }
           await addCoverageReport(cov, test.info());
         }
       }
+      for (const extra of coveredContexts.splice(0)) await extra.close();
     },
     { scope: 'test', auto: true },
   ],

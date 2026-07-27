@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { createQrScanner, type QrScanner } from 'writer-qr/scan';
+import type { QrScanner } from 'writer-qr/scan';
+import { createAppQrScanner } from '@/lib/qr/appQrScanner';
 import { cn } from '@/lib/utils';
 import { QrScanFileField } from './QrScanFileField';
 import { QrScanPasteField } from './QrScanPasteField';
@@ -37,7 +38,7 @@ export const QrScanInput = ({
   className,
 }: QrScanInputProps) => {
   const [problem, setProblem] = useState<string | null>(null);
-  const [detector] = useState<QrScanner>(() => scanner ?? createQrScanner());
+  const [detector] = useState<QrScanner>(() => scanner ?? createAppQrScanner());
 
   return (
     <div className={cn('flex flex-col gap-4', className)}>

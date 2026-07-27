@@ -44,7 +44,12 @@ export class QrEncodingError extends Error {
 /** Byte-mode capacity of the largest symbol (version 40) at ECC level `L`. */
 export const QR_MAX_TEXT_CHARS = 2953;
 
-const DEFAULT_BORDER = 2;
+/**
+ * Four modules, the quiet zone ISO/IEC 18004 requires. Narrower borders often
+ * still decode on a clean render and then fail on a photograph, where the
+ * symbol's edge has no margin to separate it from whatever is behind it.
+ */
+const DEFAULT_BORDER = 4;
 
 /** Encode text into a boolean module matrix. */
 export const encodeQrMatrix = (
