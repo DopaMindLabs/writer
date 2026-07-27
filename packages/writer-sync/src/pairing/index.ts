@@ -63,3 +63,10 @@ export type {
   CreateOfferOptions,
   SignallingAdapter,
 } from './signalling.types';
+
+export { createQrSignallingAdapter } from './qrSignallingAdapter';
+export type {
+  QrSignallingAdapter,
+  QrSignallingAdapterOptions,
+  SignallingPeer,
+} from './qrSignallingAdapter';
