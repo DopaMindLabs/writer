@@ -39,5 +39,14 @@ export {
 
 export { compareOperations, supersedes } from './convergence';
 
+export {
+  JOURNAL_RETENTION_DEFAULT_DAYS,
+  MILLIS_PER_DAY,
+  expiredOperationIds,
+  requiresFullExchange,
+  retentionCutoff,
+} from './journalRetention';
+export type { RetentionOptions } from './journalRetention';
+
 export type { OperationInbox, OperationStore } from './operationStore.types';
 export type { MaterializeResult, OperationMaterializer } from './materializer.types';

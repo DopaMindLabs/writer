@@ -1481,6 +1481,8 @@ Implementation must stop for explicit review at these points:
    - Impossible for data already downloaded to an offline device.
 8. **Any change to the repository’s schema-version rule** — answered, 2026-07-26.
    - `LoremDB` declares one Dexie version and new tables go straight into `STORES`. Writer has no users, so no migration or backward-compatibility path is written. See [AGENTS.md § "Database schema versions"](../AGENTS.md).
+9. **Journal compaction rule** — answered, 2026-07-27.
+   - Time-based retention, not acknowledgement-based: operations are kept for a user-configurable window (default **30 days**, bounded 1–365) and pruned at sync boot. A device last seen beyond the window — or never seen, as a freshly paired device is — resynchronises by full state exchange, never by journal replay (`requiresFullExchange` in `writer-sync/operations`). Deletion tombstones are exempt: they outlive the frames that produced them so a long-absent device cannot resurrect a deleted entity. `SyncTombstone.acknowledgedBy` stays as a future early-close optimisation, never the sole condition.
 
 ---
 

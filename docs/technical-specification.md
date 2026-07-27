@@ -327,7 +327,7 @@ Tabbed user-wide preferences. The shell-header wordmark badge (`L`) links back t
 | **Typography** | Active | Prose / UI font settings (component present, see `Settings.test.tsx`). |
 | **Shortcuts** | Active | Keyboard reference. |
 | **Backups** | Active | Backup management. |
-| **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only. A **gated encrypted cloud-sync beta** (§ 4.9.1) can appear at the bottom of this tab, hidden by default. |
+| **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only. A **Pair another device** row opens the pairing dialog (§ 4.9.2), and a **Keep sync history for** row sets the journal retention window (7 / 30 / 90 days / 1 year chips, default 30 days). A **gated encrypted cloud-sync beta** (§ 4.9.1) can appear at the bottom of this tab, hidden by default. |
 | **About** | Active | Build information and links: app **version**, the **commit** SHA and **build time** embedded at build time (`vite.config.ts` defines → `lib/version`), the licence, and Source / Changelog / Send-feedback links to the repository. |
 
 Mobile: all tabs reflow without horizontal overflow at 390×800.
@@ -525,6 +525,54 @@ incl. the missing-baseline fallback), `useDocCrdtReady.test.tsx`, `snapshot.test
 CRDT ⇄ body round-trip), the `src/components/errors/`, `src/components/templates/` (the
 write-lock notice) and `src/components/settings/tabs/cloud/` component tests, and
 `cloud-sync.spec.ts` / `cloud-crdt-recovery.spec.ts` / `templates-form.spec.ts`.
+
+#### 4.9.2 Device pairing (Stage 2A, in progress)
+
+Direct device-to-device sync over the local network, with no Writer-operated
+server. The normative protocol lives in `packages/writer-sync/docs/`
+(threat model, pairing protocol, test vectors); this section tracks what is
+wired into the app.
+
+- **Entry point.** Settings → Account → **Pair another device** opens the
+  pairing dialog. The dialog is mounted only while open; opening it gathers a
+  WebRTC offer over a connection with **no ICE servers** (same-network only,
+  never a public STUN fallback) and shows it as one or more QR symbols.
+- **Pairing code display.** A payload larger than one symbol is split into the
+  codec's bounded sequence (max 8 parts) and stepped through manually — no
+  timed cycling, so nothing needs reduced-motion gating. The full payload text
+  sits beneath the symbol as selectable text, so the exchange works with no
+  camera at all. A payload past the symbol ceiling reports an error rather than
+  rendering nothing. Progress and failure are announced via `role="status"` /
+  an error banner, and failure copy never embeds peer-supplied text.
+- **Device identity.** Created on first use and stored in the never-synced
+  device vault: a non-extractable ECDSA P-256 pair persisted as `CryptoKey`s.
+  The device id is **derived from the public key** (SHA-256 over its SPKI form,
+  first 16 bytes), never minted, so id and key cannot disagree. The account
+  vault binds stored roots to this same id.
+- **Journal retention.** Settings → Account → **Keep sync history for** sets
+  how long journalled operations are kept: 7 / 30 / 90 days or 1 year, default
+  **30 days**, stored in `meta` (`journalRetentionDays`, malformed values read
+  as the default). Expired frames are pruned once per sync boot, off the boot
+  path (best-effort, logged on failure). Inbox rows and deletion tombstones are
+  **never** pruned: the inbox is the replay guard, and a tombstone must outlive
+  its frames so a long-absent device cannot resurrect a deleted entity. A peer
+  last seen beyond the window resynchronises by full state exchange, not
+  journal replay.
+- **Not yet wired.** Scanning the peer's answer, the joiner flow, the
+  verification-code confirmation gate, key transfer, the trusted-devices list,
+  and the P2P `SyncProvider` end-to-end path. The pairing engine
+  (`writer-sync/pairing`, `writer-sync/providers/webrtc`) is implemented and
+  unit-tested against fakes; nothing peer-to-peer has yet run against real
+  WebRTC on real devices.
+
+*Covered by:* `qrSignallingAdapter.test.ts`, `pairingSession.test.ts`,
+`payloadValidation.test.ts`, `replayCache.test.ts`, `pairingCodec.test.ts`,
+`qrSequence.test.ts` (package); `deviceIdentityStore.test.ts`,
+`createPairingSignaller.test.ts`, `journalRetentionPreference.test.ts`,
+`pruneExpiredOperations.test.ts`, `journalRetention.test.ts`,
+`PairingCodeDisplay.test.tsx`, `PairingCodePager.test.tsx`,
+`PairDeviceDialog.test.tsx`, `PairDeviceSection.test.tsx`,
+`JournalRetentionSelector.test.tsx`.
 
 ---
 

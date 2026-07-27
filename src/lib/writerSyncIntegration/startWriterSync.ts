@@ -1,7 +1,9 @@
 import type { SyncCoordinator } from 'writer-sync/core';
 import { db } from '@/db/db';
+import { appLogger } from '@/lib/appLogger';
 import { createWriterSyncCoordinator } from './createWriterSyncCoordinator';
 import { startFrameIngestion } from './materialization/frameIngestion';
+import { pruneExpiredOperations } from './materialization/pruneExpiredOperations';
 
 /**
  * Start durable, session-level sync for every provider that offers it, and return
@@ -37,5 +39,11 @@ export const startWriterSync = async (
     teardown();
     throw error;
   }
+  // Retention pruning is best-effort housekeeping after boot has succeeded: a
+  // failure to prune must never stop sync from starting, and boot must never
+  // wait on a journal scan.
+  pruneExpiredOperations(db).catch((error: unknown) => {
+    appLogger.warn('journal retention pruning failed', error);
+  });
   return teardown;
 };
