@@ -301,9 +301,11 @@ devices are exchanging data. Content stays sealed, but the *existence* and timin
 of a session are visible on the LAN, and the routing header is visible to the
 peer.
 
-**Mitigation.** Stage 2A configures empty `iceServers` and completes local ICE
+**Mitigation.** Stage 2A configures empty `iceServers` and settles local ICE
 gathering before encoding the QR, so nothing is sent to a third party and no
-public STUN server is contacted as a silent fallback. This bounds exposure to the
+public STUN server is contacted as a silent fallback. The gathering deadline
+(pairing protocol §5) only ever releases candidates already gathered locally; it
+never widens where they were gathered from. This bounds exposure to the
 local network the user is already on.
 
 **Deferred.** Signalling, STUN and TURN metadata exposure belongs to the Stage 2B

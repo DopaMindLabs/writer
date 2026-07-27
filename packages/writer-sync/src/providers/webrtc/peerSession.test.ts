@@ -14,7 +14,10 @@ import type { DataChannelLike } from './webRtcTransport';
  * that a stall is a typed failure, that teardown is explicit. They prove nothing
  * about real ICE; that is slice 2A.9.
  */
-const fakeConnection = (options: { gatheringCompletesImmediately?: boolean } = {}) => {
+const fakeConnection = (
+  options: { gatheringCompletesImmediately?: boolean; offerSdp?: string } = {},
+) => {
+  const offerSdp = options.offerSdp ?? 'v=0\r\nOFFER\r\n';
   const listeners = new Map<string, (() => void)[]>();
   const channels: string[] = [];
   const connection: PeerConnectionLike & {
@@ -36,7 +39,7 @@ const fakeConnection = (options: { gatheringCompletesImmediately?: boolean } = {
       connection.channelOrdered = opts?.ordered;
       return { close: vi.fn() } as unknown as DataChannelLike;
     },
-    createOffer: () => Promise.resolve({ type: 'offer', sdp: 'v=0\r\nOFFER\r\n' }),
+    createOffer: () => Promise.resolve({ type: 'offer', sdp: offerSdp }),
     createAnswer: () => Promise.resolve({ type: 'answer', sdp: 'v=0\r\nANSWER\r\n' }),
     setLocalDescription: (description) => {
       connection.localDescription = description;
@@ -131,8 +134,31 @@ describe('createOffer', () => {
     expect(session.channel()).not.toBeNull();
   });
 
-  it('reports a stall as a typed local-connectivity failure', async () => {
-    // Not an infinite "connecting" state.
+  it('hands out what was gathered when the deadline passes mid-gathering', async () => {
+    // Chromium registers an mDNS hostname for each host candidate, and on a host
+    // where that responder cannot bind, gathering never reports complete even
+    // though usable candidates are already in the description. Refusing to pair
+    // there would be refusing over a formality: a LAN pair needs host candidates
+    // and nothing more.
+    const connection = fakeConnection({
+      offerSdp: 'v=0\r\nOFFER\r\na=candidate:1 1 udp 1 10.0.0.2 4000 typ host\r\n',
+    });
+    const timers = manualTimers();
+    const session = createPeerSession({ createConnection: () => connection, ...timers });
+
+    const pending = session.createOffer();
+    await untilWaiting(() => timers.count() > 0);
+    timers.fireAll();
+
+    expect(await pending).toContain('a=candidate');
+    // The connection is still gathering — the deadline released the description,
+    // it did not end the gathering.
+    expect(connection.iceGatheringState).toBe('gathering');
+  });
+
+  it('reports a stall with nothing gathered as a typed local-connectivity failure', async () => {
+    // Not an infinite "connecting" state, and not a candidate-free description
+    // that could only ever fail to connect.
     const connection = fakeConnection();
     const timers = manualTimers();
     const session = createPeerSession({ createConnection: () => connection, ...timers });

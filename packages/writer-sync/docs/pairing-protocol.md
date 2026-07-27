@@ -151,15 +151,22 @@ string in the user's field of view.
 
 ## 5. ICE gathering
 
-The `sdp` field carries the **complete** session description for its role, with
-local ICE gathering finished before encoding. Trickle ICE through repeated QR
+The `sdp` field carries the session description for its role in **one** payload,
+with local ICE gathering settled before encoding. Trickle ICE through repeated QR
 updates is prohibited: it multiplies the number of scans, and each additional
 scan is another chance for the user to accept a substituted payload.
 
+Gathering is bounded by a deadline (`ICE_GATHERING_TIMEOUT_MILLIS`). Reaching the
+deadline is not itself a failure: an implementation encodes whatever candidates
+the description holds at that point, provided it holds at least one. Gathering
+routinely stalls short of `complete` on hosts where the browser's mDNS responder
+cannot bind, long after the host candidates a local pair needs have arrived, and
+a pair that would have worked must not be refused over that.
+
 Stage 2A configures empty `iceServers`. No hosted endpoint is called, and there is
-no silent fallback to a public STUN server. A device that cannot reach its peer on
-the local network reports a typed `local-connectivity` failure (§13) rather than
-waiting.
+no silent fallback to a public STUN server. A device that reaches the deadline
+with **no** candidate at all, or that cannot reach its peer on the local network,
+reports a typed `local-connectivity` failure (§13) rather than waiting.
 
 ---
 
