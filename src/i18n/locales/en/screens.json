@@ -785,7 +785,13 @@
       "creating": "Preparing this device…",
       "failed": "This device could not prepare a pairing code. Close this and try again.",
       "openLabel": "Pair another device",
-      "openHint": "Show a code your other device can read, so the two can sync directly."
+      "openHint": "Show a code your other device can read, so the two can sync directly.",
+      "retention": {
+        "label": "Keep sync history for",
+        "hint": "Devices away longer than this rebuild from current content instead of replaying history.",
+        "days": "{{count}} days",
+        "oneYear": "1 year"
+      }
     }
   },
   "notFound": {
