@@ -64,45 +64,45 @@ export interface PeerSession {
 const CONTROL_CHANNEL = 'writer-sync-control';
 
 /**
- * Resolve once candidate gathering has finished.
+ * Wait for candidate gathering to finish, or for the deadline to pass.
  *
  * Waiting for *complete* gathering is what lets the whole description travel in
  * one QR payload: trickling candidates would mean repeated symbols, and every
  * extra scan is another chance for a user to accept a substituted payload.
- * A timeout surfaces as a typed local-connectivity failure rather than an
- * infinite "connecting" state.
+ *
+ * The deadline is not a failure on its own. Gathering stalls on hosts where
+ * Chromium's mDNS responder cannot bind, long after the host candidates a LAN
+ * pair actually needs are already in the description — so the deadline releases
+ * what has been gathered and leaves it to the caller to judge whether that is
+ * enough. It resolves `false` to say so.
  */
 const awaitGathering = (
   connection: PeerConnectionLike,
   options: Required<Pick<PeerSessionOptions, 'setTimer' | 'clearTimer'>> & {
     timeoutMillis: number;
   },
-): Promise<void> =>
-  new Promise((resolve, reject) => {
+): Promise<boolean> =>
+  new Promise((resolve) => {
     if (connection.iceGatheringState === 'complete') {
-      resolve();
+      resolve(true);
       return;
     }
-    const settle = (outcome: () => void): void => {
+    const settle = (complete: boolean): void => {
       connection.removeEventListener('icegatheringstatechange', onChange);
       options.clearTimer(handle);
-      outcome();
+      resolve(complete);
     };
     const onChange = (): void => {
-      if (connection.iceGatheringState === 'complete') settle(resolve);
+      if (connection.iceGatheringState === 'complete') settle(true);
     };
     const handle = options.setTimer(() => {
-      settle(() => {
-        reject(
-          new PairingError(
-            PairingErrorCode.LocalConnectivity,
-            'candidate gathering did not complete',
-          ),
-        );
-      });
+      settle(false);
     }, options.timeoutMillis);
     connection.addEventListener('icegatheringstatechange', onChange);
   });
+
+/** An SDP with no candidate of its own can never connect, however it was produced. */
+const hasCandidate = (sdp: string): boolean => sdp.includes('a=candidate');
 
 export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
   const setTimer = options.setTimer ?? ((cb, ms) => setTimeout(cb, ms));
@@ -118,12 +118,18 @@ export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
   let closed = false;
 
   const gathered = async (): Promise<string> => {
-    await awaitGathering(connection, { setTimer, clearTimer, timeoutMillis });
+    const complete = await awaitGathering(connection, { setTimer, clearTimer, timeoutMillis });
     const description = connection.localDescription;
     if (description === null) {
       throw new PairingError(
         PairingErrorCode.LocalConnectivity,
         'no local description after gathering',
+      );
+    }
+    if (!complete && !hasCandidate(description.sdp)) {
+      throw new PairingError(
+        PairingErrorCode.LocalConnectivity,
+        'candidate gathering stalled before any candidate was found',
       );
     }
     return description.sdp;
