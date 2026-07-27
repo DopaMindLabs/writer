@@ -1,0 +1,59 @@
+import { toBase64Url } from 'writer-sync/crypto';
+import {
+  createQrSignallingAdapter,
+  createReplayCache,
+  type QrSignallingAdapter,
+} from 'writer-sync/pairing';
+import { createPeerSession, type PeerConnectionLike } from 'writer-sync/providers/webrtc';
+import { deviceIdentityStore } from '@/lib/cloud/crypto/deviceIdentityStore';
+import { createBrowserPeerConnection } from './browserPeerConnection';
+
+/**
+ * Writer's wiring of the pairing engine: this device's identity, a real peer
+ * connection and the QR signalling adapter, assembled for one exchange.
+ *
+ * The replay cache is deliberately *not* per exchange. It is device-local by
+ * specification (pairing protocol §14), so a nonce presented to a second attempt
+ * must still be recognised — a fresh cache per dialog would let a photographed
+ * code be replayed simply by reopening it.
+ */
+
+const SESSION_ID_BYTES = 16;
+
+export interface PairingSignaller {
+  adapter: QrSignallingAdapter;
+  /** A session id for this exchange, minted by the initiator. */
+  sessionId: string;
+  /** Tear the connection down. Safe to call more than once. */
+  close: () => void;
+}
+
+export interface PairingSignallerOptions {
+  /** Injected in tests; defaults to the browser's connection. */
+  createConnection?: () => PeerConnectionLike;
+}
+
+const createSignallerFactory = () => {
+  const replayCache = createReplayCache();
+
+  return async (options: PairingSignallerOptions = {}): Promise<PairingSignaller> => {
+    const identity = await deviceIdentityStore.load();
+    const session = createPeerSession({
+      createConnection: options.createConnection ?? createBrowserPeerConnection,
+    });
+
+    return {
+      adapter: createQrSignallingAdapter({
+        identity: identity.keys,
+        peer: session,
+        replayCache,
+      }),
+      sessionId: toBase64Url(crypto.getRandomValues(new Uint8Array(SESSION_ID_BYTES))),
+      close: () => {
+        session.close();
+      },
+    };
+  };
+};
+
+export const createPairingSignaller = createSignallerFactory();
