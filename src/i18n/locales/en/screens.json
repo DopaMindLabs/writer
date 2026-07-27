@@ -772,7 +772,7 @@
     },
     "pairing": {
       "title": "Pair another device",
-      "subtitle": "Show this code to your other device, then read the code it shows back.",
+      "subtitle": "One device shows a code; the other reads it. Choose which this device does.",
       "qrLabel": {
         "offer": "Pairing code from this device",
         "answer": "Reply code from this device"
@@ -814,7 +814,14 @@
       "complete": {
         "title": "Devices paired",
         "body": "This device and your other device now trust each other."
-      }
+      },
+      "role": {
+        "show": "Show a code on this device",
+        "showHint": "Choose this on one device. It shows a code for the other to read.",
+        "read": "Read the other device's code",
+        "readHint": "Choose this on the second device, then scan or paste the first code."
+      },
+      "answerHint": "Now show this reply code to the other device."
     }
   },
   "notFound": {

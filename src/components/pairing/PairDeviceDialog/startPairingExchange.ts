@@ -2,6 +2,7 @@ import {
   SESSION_TTL_MILLIS,
   createPairingSession,
   encodePairingPayload,
+  type PairingRole,
   type PairingSession,
 } from 'writer-sync/pairing';
 import type {
@@ -11,15 +12,21 @@ import type {
 import type { PairingExchangeAction } from './pairingExchangeReducer';
 
 /**
- * Open a signaller, start the protocol machine and gather this device's offer.
+ * Open a signaller, start the protocol machine, and — for the initiator —
+ * gather this device's offer.
  *
  * Split from the hook because the ordering matters and reads better as one
  * sequence than as an effect body: the machine starts before anything is
  * gathered, and the offer is only announced once `payload-ready` has been
  * accepted — so the view can never show a code the machine has not reached.
+ *
+ * The joiner stops after `start`. It has nothing to gather until it has seen an
+ * offer: its connection is answered *against* the peer's description, so
+ * gathering first would produce a description bound to nothing.
  */
 
-export interface GatherOfferOptions {
+export interface StartExchangeOptions {
+  role: PairingRole;
   createSignaller: (options?: PairingSignallerOptions) => Promise<PairingSignaller>;
   /** Whether the dialog has closed since this began. */
   isDismissed: () => boolean;
@@ -28,8 +35,25 @@ export interface GatherOfferOptions {
   dispatch: (action: PairingExchangeAction) => void;
 }
 
-export const gatherPairingOffer = async (options: GatherOfferOptions): Promise<void> => {
-  const { createSignaller, isDismissed, adopt, dispatch } = options;
+const gatherOffer = async (
+  options: Pick<StartExchangeOptions, 'isDismissed' | 'dispatch'> & {
+    signaller: PairingSignaller;
+    machine: PairingSession;
+  },
+): Promise<void> => {
+  const { signaller, machine, isDismissed, dispatch } = options;
+  const offer = await signaller.adapter.createOffer({
+    sessionId: signaller.sessionId,
+    expiresAt: Date.now() + SESSION_TTL_MILLIS,
+  });
+  const payload = await encodePairingPayload(offer);
+  if (isDismissed()) return;
+  machine.apply('payload-ready');
+  dispatch({ type: 'offer-ready', payload, sessionId: offer.sessionId });
+};
+
+export const startPairingExchange = async (options: StartExchangeOptions): Promise<void> => {
+  const { role, createSignaller, isDismissed, adopt, dispatch } = options;
   try {
     const signaller = await createSignaller();
     // Dismissed while opening: close what was opened rather than leaving a
@@ -38,18 +62,11 @@ export const gatherPairingOffer = async (options: GatherOfferOptions): Promise<v
       signaller.close();
       return;
     }
-    const machine = createPairingSession('initiator');
+    const machine = createPairingSession(role);
     machine.apply('start');
     adopt(signaller, machine);
-
-    const offer = await signaller.adapter.createOffer({
-      sessionId: signaller.sessionId,
-      expiresAt: Date.now() + SESSION_TTL_MILLIS,
-    });
-    const payload = await encodePairingPayload(offer);
-    if (isDismissed()) return;
-    machine.apply('payload-ready');
-    dispatch({ type: 'offer-ready', payload, sessionId: offer.sessionId });
+    if (role !== 'initiator') return;
+    await gatherOffer({ signaller, machine, isDismissed, dispatch });
   } catch {
     // The reason is for developers: a pairing failure must never put
     // peer-supplied text on screen (threat model §5.11).

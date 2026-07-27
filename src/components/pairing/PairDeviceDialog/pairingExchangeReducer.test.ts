@@ -14,17 +14,30 @@ const peer = (): AuthenticatedPeerParameters => ({
   verificationCode: '048213',
 });
 
+const begun = (role: 'initiator' | 'joiner'): PairingExchangeState =>
+  pairingExchangeReducer(initialExchangeState, { type: 'begin', role });
+
 const afterOffer = (): PairingExchangeState =>
-  pairingExchangeReducer(initialExchangeState, {
+  pairingExchangeReducer(begun('initiator'), {
     type: 'offer-ready',
     payload: 'encoded',
     sessionId: 'session-1',
   });
 
 describe('pairingExchangeReducer', () => {
-  it('starts by gathering', () => {
-    expect(initialExchangeState.phase).toBe('creating');
-    expect(initialExchangeState.offerPayload).toBeNull();
+  it('starts by asking which half of the exchange this device runs', () => {
+    expect(initialExchangeState.phase).toBe('choosing');
+    expect(initialExchangeState.role).toBeNull();
+  });
+
+  it('gathers first when this device shows the code', () => {
+    expect(begun('initiator').phase).toBe('creating');
+  });
+
+  it('reads first when this device is the one scanning', () => {
+    // Nothing to gather yet: the joiner's connection is answered against an
+    // offer it has not seen.
+    expect(begun('joiner').phase).toBe('awaiting-offer');
   });
 
   it('waits for the peer once the offer is ready', () => {
@@ -35,8 +48,8 @@ describe('pairingExchangeReducer', () => {
     expect(state.sessionId).toBe('session-1');
   });
 
-  it('keeps the offer on screen while the answer is checked', () => {
-    const state = pairingExchangeReducer(afterOffer(), { type: 'answer-received' });
+  it('keeps the offer on screen while the peer payload is checked', () => {
+    const state = pairingExchangeReducer(afterOffer(), { type: 'peer-payload-received' });
 
     expect(state.phase).toBe('authenticating');
     expect(state.offerPayload).toBe('encoded');
@@ -50,6 +63,20 @@ describe('pairingExchangeReducer', () => {
 
     expect(authenticated.phase).toBe('awaiting-confirmation');
     expect(authenticated.peer?.verificationCode).toBe('048213');
+  });
+
+  it('holds the joiner at the same gate, with a reply for the peer to read', () => {
+    const state = pairingExchangeReducer(begun('joiner'), {
+      type: 'answer-ready',
+      payload: 'encoded-answer',
+      sessionId: 'session-1',
+      peer: peer(),
+    });
+
+    expect(state.phase).toBe('awaiting-confirmation');
+    expect(state.answerPayload).toBe('encoded-answer');
+    expect(state.sessionId).toBe('session-1');
+    expect(state.peer?.verificationCode).toBe('048213');
   });
 
   it('completes only on an explicit confirmation', () => {
@@ -74,5 +101,16 @@ describe('pairingExchangeReducer', () => {
     expect(pairingExchangeReducer(authenticated, { type: 'restart' })).toEqual(
       initialExchangeState,
     );
+  });
+
+  it('discards a previous attempt when a role is chosen again', () => {
+    // Reopening after a failure must not leave the earlier offer on screen.
+    const failed = pairingExchangeReducer(afterOffer(), { type: 'failed' });
+
+    expect(pairingExchangeReducer(failed, { type: 'begin', role: 'initiator' })).toEqual({
+      ...initialExchangeState,
+      role: 'initiator',
+      phase: 'creating',
+    });
   });
 });

@@ -1,15 +1,13 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react';
-import {
-  PairingState,
-  decodePairingPayload,
-  type PairingSession,
-} from 'writer-sync/pairing';
+import { PairingState, type PairingRole, type PairingSession } from 'writer-sync/pairing';
 import {
   createPairingSignaller,
   type PairingSignaller,
   type PairingSignallerOptions,
 } from '@/lib/writerSyncIntegration/createPairingSignaller';
-import { gatherPairingOffer } from './gatherPairingOffer';
+import { acceptPairingAnswer } from './acceptPairingAnswer';
+import { answerPairingOffer } from './answerPairingOffer';
+import { startPairingExchange } from './startPairingExchange';
 import {
   initialExchangeState,
   pairingExchangeReducer,
@@ -17,9 +15,11 @@ import {
 } from './pairingExchangeReducer';
 
 /**
- * Drives the initiator's half of a pairing exchange for as long as the dialog
- * is open: gather an offer, take the peer's answer, authenticate, and hold at
- * the confirmation gate.
+ * Drives one half of a pairing exchange for as long as the dialog is open.
+ *
+ * Which half is the user's choice, made once and never switched: a device that
+ * changed role mid-exchange would be holding a connection answered against a
+ * description it had also authored.
  *
  * The protocol's state machine runs alongside the view state and is the
  * authority on ordering. `awaiting-confirmation` is not a nicety — the account
@@ -34,7 +34,11 @@ export interface UsePairingExchangeOptions {
 }
 
 export interface PairingExchange extends PairingExchangeState {
-  /** Take the peer's reassembled answer payload. */
+  /** Choose which half of the exchange this device runs. */
+  begin: (role: PairingRole) => void;
+  /** Take the peer's reassembled offer payload (joiner). */
+  submitOffer: (payload: string) => void;
+  /** Take the peer's reassembled answer payload (initiator). */
   acceptAnswer: (payload: string) => void;
   /** Record that the user has compared the codes and they match. */
   confirm: () => void;
@@ -47,52 +51,51 @@ export const usePairingExchange = ({
   const [state, dispatch] = useReducer(pairingExchangeReducer, initialExchangeState);
   const signaller = useRef<PairingSignaller | null>(null);
   const session = useRef<PairingSession | null>(null);
+  const dismissed = useRef(false);
+  const { role } = state;
 
   useEffect(() => {
     if (!open) return;
+    dismissed.current = false;
+    return () => {
+      dismissed.current = true;
+      signaller.current?.close();
+      signaller.current = null;
+      session.current = null;
+    };
+  }, [open]);
 
-    let dismissed = false;
-    dispatch({ type: 'restart' });
+  useEffect(() => {
+    if (!open || role === null) return;
 
-    void gatherPairingOffer({
+    void startPairingExchange({
+      role,
       createSignaller,
       dispatch,
-      isDismissed: () => dismissed,
+      isDismissed: () => dismissed.current,
       adopt: (opened, machine) => {
         signaller.current = opened;
         session.current = machine;
       },
     });
+  }, [open, role, createSignaller]);
 
-    return () => {
-      dismissed = true;
-      signaller.current?.close();
-      signaller.current = null;
-      session.current = null;
-    };
-  }, [open, createSignaller]);
+  const begin = useCallback((chosen: PairingRole): void => {
+    dispatch({ type: 'begin', role: chosen });
+  }, []);
+
+  const submitOffer = useCallback((payload: string): void => {
+    const opened = signaller.current;
+    const machine = session.current;
+    if (opened === null || machine === null) return;
+    void answerPairingOffer({ payload, signaller: opened, machine, dispatch });
+  }, []);
 
   const acceptAnswer = useCallback((payload: string): void => {
     const opened = signaller.current;
     const machine = session.current;
     if (opened === null || machine === null) return;
-
-    const authenticate = async (): Promise<void> => {
-      try {
-        machine.apply('peer-payload-received');
-        dispatch({ type: 'answer-received' });
-        const answer = await decodePairingPayload(payload);
-        if (answer.kind !== 'answer') throw new Error('not an answer payload');
-        const peer = await opened.adapter.acceptAnswer(answer);
-        machine.apply('authenticated');
-        dispatch({ type: 'authenticated', peer });
-      } catch {
-        machine.apply('fail');
-        dispatch({ type: 'failed' });
-      }
-    };
-
-    void authenticate();
+    void acceptPairingAnswer({ payload, signaller: opened, machine, dispatch });
   }, []);
 
   const confirm = useCallback((): void => {
@@ -104,5 +107,5 @@ export const usePairingExchange = ({
     dispatch({ type: 'confirmed' });
   }, []);
 
-  return { ...state, acceptAnswer, confirm };
+  return { ...state, begin, submitOffer, acceptAnswer, confirm };
 };

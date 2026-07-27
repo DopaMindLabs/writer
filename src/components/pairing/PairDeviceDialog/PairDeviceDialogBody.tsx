@@ -2,17 +2,19 @@ import { useTranslation } from 'react-i18next';
 import type { QrScanner } from 'writer-qr/scan';
 import { InlineBanner } from '@/components/ui/InlineBanner';
 import { StatusGlyph } from '@/components/ui/StatusGlyph';
-import { PairingCodeDisplay } from '@/components/pairing/PairingCodeDisplay/PairingCodeDisplay';
-import { PairingCodeScanner } from '@/components/pairing/PairingCodeScanner/PairingCodeScanner';
+import { PairingRoleChoice } from '@/components/pairing/PairingRoleChoice/PairingRoleChoice';
 import { PairingVerification } from '@/components/pairing/PairingVerification/PairingVerification';
+import { InitiatorPairingView } from './InitiatorPairingView';
+import { JoinerPairingView } from './JoinerPairingView';
 import type { PairingExchange } from './usePairingExchange';
 
 /**
  * What the dialog shows for the phase the exchange is in.
  *
  * Separated from the dialog frame so each stays one readable unit: the frame
- * owns the modal, this owns the flow. The offer stays on screen alongside the
- * scanner, because the other device is still reading it while this one waits.
+ * owns the modal, this owns the flow. The phases every role shares live here;
+ * the two that differ delegate to a view of their own rather than growing a
+ * second dimension of branching in one component.
  */
 
 export interface PairDeviceDialogBodyProps {
@@ -23,6 +25,10 @@ export interface PairDeviceDialogBodyProps {
 
 export const PairDeviceDialogBody = ({ exchange, scanner }: PairDeviceDialogBodyProps) => {
   const { t } = useTranslation('screens');
+
+  if (exchange.phase === 'choosing') {
+    return <PairingRoleChoice onChoose={exchange.begin} />;
+  }
 
   if (exchange.phase === 'creating') {
     return (
@@ -48,15 +54,6 @@ export const PairDeviceDialogBody = ({ exchange, scanner }: PairDeviceDialogBody
     );
   }
 
-  if (exchange.phase === 'awaiting-confirmation' && exchange.peer !== null) {
-    return (
-      <PairingVerification
-        code={exchange.peer.verificationCode}
-        onConfirm={exchange.confirm}
-      />
-    );
-  }
-
   if (exchange.phase === 'complete') {
     return (
       <InlineBanner
@@ -69,16 +66,18 @@ export const PairDeviceDialogBody = ({ exchange, scanner }: PairDeviceDialogBody
     );
   }
 
-  if (exchange.offerPayload === null || exchange.sessionId === null) return null;
+  if (exchange.role === 'joiner') {
+    return <JoinerPairingView exchange={exchange} scanner={scanner} />;
+  }
 
-  return (
-    <>
-      <PairingCodeDisplay
-        payload={exchange.offerPayload}
-        sessionId={exchange.sessionId}
-        kind="offer"
+  if (exchange.phase === 'awaiting-confirmation' && exchange.peer !== null) {
+    return (
+      <PairingVerification
+        code={exchange.peer.verificationCode}
+        onConfirm={exchange.confirm}
       />
-      <PairingCodeScanner onPayload={exchange.acceptAnswer} scanner={scanner} />
-    </>
-  );
+    );
+  }
+
+  return <InitiatorPairingView exchange={exchange} scanner={scanner} />;
 };
