@@ -802,6 +802,18 @@
         "wrongSession": "That code belongs to a different pairing attempt. Start again to use it.",
         "progress": "Read {{received}} of {{total}} symbols. Still needed: {{missing}}.",
         "complete": "All symbols read."
+      },
+      "authenticating": "Checking the code from your other device…",
+      "confirm": {
+        "title": "Check the codes match",
+        "body": "Both devices should show the same six digits. Only continue if they do.",
+        "codeLabel": "Verification code",
+        "action": "The codes match",
+        "mismatch": "If they differ, close this and start again."
+      },
+      "complete": {
+        "title": "Devices paired",
+        "body": "This device and your other device now trust each other."
       }
     }
   },
