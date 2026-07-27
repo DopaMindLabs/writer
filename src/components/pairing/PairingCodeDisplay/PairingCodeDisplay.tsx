@@ -53,12 +53,16 @@ export const PairingCodeDisplay = ({
   }
 
   const index = Math.min(requested, parts.length - 1);
+  // One source for both the symbol and the text beneath it. The receiving side
+  // reads symbols, so offering the bare payload here would leave the
+  // camera-free path unable to complete a pairing at all.
+  const symbol = parts.at(index) ?? payload;
 
   return (
     <div className="flex flex-col gap-4" data-testid="pairing-code-display">
       <div className="w-64 max-w-full self-center text-ink">
         <QrCode
-          value={parts.at(index) ?? payload}
+          value={symbol}
           label={t(`settings.pairing.qrLabel.${kind}`)}
           unencodableLabel={t('settings.pairing.tooLarge')}
         />
@@ -73,7 +77,7 @@ export const PairingCodeDisplay = ({
         <TextArea
           id={payloadFieldId}
           readOnly
-          value={payload}
+          value={symbol}
           rows={3}
           data-testid="pairing-code-payload"
         />

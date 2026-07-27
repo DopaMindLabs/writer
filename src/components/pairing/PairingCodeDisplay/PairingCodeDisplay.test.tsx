@@ -27,14 +27,35 @@ describe('PairingCodeDisplay', () => {
     expect(screen.getByRole('img', { name: 'Reply code from this device' })).toBeInTheDocument();
   });
 
-  it('offers the payload as selectable text so no camera is needed', () => {
+  it('offers the symbol as selectable text so no camera is needed', () => {
+    // The text must be what the symbol encodes, prefix and all. The receiving
+    // side reads symbols, so handing over a bare payload would make the
+    // camera-free path the one path that cannot complete a pairing.
     const payload = payloadOf(1);
 
     renderWithProviders(
       <PairingCodeDisplay payload={payload} sessionId={SESSION} kind="offer" />,
     );
 
-    expect(screen.getByTestId('pairing-code-payload')).toHaveValue(payload);
+    expect(screen.getByTestId('pairing-code-payload')).toHaveValue(
+      `W1:${SESSION}:1/1:${payload}`,
+    );
+  });
+
+  it('follows the pager, so the text and the symbol never disagree', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <PairingCodeDisplay payload={payloadOf(2)} sessionId={SESSION} kind="offer" />,
+    );
+
+    const copyable = (): string =>
+      screen.getByTestId<HTMLTextAreaElement>('pairing-code-payload').value;
+
+    expect(copyable()).toContain(`W1:${SESSION}:1/2:`);
+
+    await user.click(screen.getByRole('button', { name: 'Next' }));
+
+    expect(copyable()).toContain(`W1:${SESSION}:2/2:`);
   });
 
   it('associates the payload field with its label', () => {
