@@ -301,7 +301,9 @@ devices are exchanging data. Content stays sealed, but the *existence* and timin
 of a session are visible on the LAN, and the routing header is visible to the
 peer.
 
-**Mitigation.** Stage 2A configures empty `iceServers` and settles local ICE
+**Mitigation.** Decoding is local: the scanner's WASM engine is served by the
+host application rather than fetched from a CDN, so reading a code tells no
+third party that a pairing is happening. Stage 2A configures empty `iceServers` and settles local ICE
 gathering before encoding the QR, so nothing is sent to a third party and no
 public STUN server is contacted as a silent fallback. The gathering deadline
 (pairing protocol §5) only ever releases candidates already gathered locally; it
