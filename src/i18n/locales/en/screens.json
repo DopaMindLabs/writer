@@ -781,7 +781,11 @@
       "tooLarge": "This pairing code is too large to display. Cancel and try again.",
       "symbolPosition": "Symbol {{index}} of {{total}}",
       "previousSymbol": "Previous",
-      "nextSymbol": "Next"
+      "nextSymbol": "Next",
+      "creating": "Preparing this device…",
+      "failed": "This device could not prepare a pairing code. Close this and try again.",
+      "openLabel": "Pair another device",
+      "openHint": "Show a code your other device can read, so the two can sync directly."
     }
   },
   "notFound": {

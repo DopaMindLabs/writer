@@ -7,6 +7,7 @@ import { useProfile } from '@/lib/account/useProfile';
 import { updateProfile } from '@/lib/account/profile';
 import { PresenceHuePicker } from './PresenceHuePicker';
 import { CloudSection } from './cloud/CloudSection';
+import { PairDeviceSection } from './pairing/PairDeviceSection';
 
 export const AccountTab = () => {
   const { t } = useTranslation('screens');
@@ -69,6 +70,8 @@ export const AccountTab = () => {
       >
         {t('settings.account.privacyNotice')}
       </div>
+
+      <PairDeviceSection />
 
       <CloudSection />
     </section>
