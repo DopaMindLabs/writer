@@ -1,19 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { asDeviceId } from 'writer-sync/core';
 import { PairDeviceDialogBody } from './PairDeviceDialogBody';
-import type { PairingExchange } from './usePairingExchange';
-
-const exchange = (overrides: Partial<PairingExchange> = {}): PairingExchange => ({
-  phase: 'creating',
-  offerPayload: null,
-  sessionId: null,
-  peer: null,
-  acceptAnswer: () => undefined,
-  confirm: () => undefined,
-  ...overrides,
-});
+import { fixtureExchange as exchange, fixturePeer } from './pairingExchange.fixture';
 
 const PAYLOAD = 'eJwrSS0uUS9KLEjNyclXKMlIVUjOSC0qUShJLS7RS87PLShKLS4pSy0qBgB'.repeat(8);
+
+const PEER = fixturePeer();
 
 const meta = {
   title: 'Pairing/PairDeviceDialogBody',
@@ -24,6 +15,11 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/** The opening question: neither device can work out its role unaided. */
+export const Choosing: Story = {
+  args: { exchange: exchange({ phase: 'choosing', role: null }) },
+};
 
 /** Gathering local candidates before a code can be shown. */
 export const Gathering: Story = {};
@@ -43,17 +39,30 @@ export const Authenticating: Story = {
   args: { exchange: exchange({ phase: 'authenticating' }) },
 };
 
+/** The reading device before it has seen anything. */
+export const AwaitingOffer: Story = {
+  args: { exchange: exchange({ phase: 'awaiting-offer', role: 'joiner' }) },
+};
+
+/** The reading device: reply and gate together, because its peer needs both. */
+export const JoinerAwaitingConfirmation: Story = {
+  args: {
+    exchange: exchange({
+      phase: 'awaiting-confirmation',
+      role: 'joiner',
+      answerPayload: PAYLOAD,
+      sessionId: 'c2Vzc2lvbi1pZC0xMjM0',
+      peer: PEER,
+    }),
+  },
+};
+
 /** The gate: nothing proceeds until a human says the digits match. */
 export const AwaitingConfirmation: Story = {
   args: {
     exchange: exchange({
       phase: 'awaiting-confirmation',
-      peer: {
-        deviceId: asDeviceId('cGVlci1kZXZpY2UtaWQwMA'),
-        publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },
-        transcript: new Uint8Array([1, 2, 3]),
-        verificationCode: '048213',
-      },
+      peer: PEER,
     }),
   },
 };
