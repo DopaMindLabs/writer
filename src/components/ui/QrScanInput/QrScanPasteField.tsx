@@ -1,5 +1,6 @@
 import { useId, useState, type SyntheticEvent } from 'react';
 import { Button } from '@/components/ui/Button';
+import { Label } from '@/components/ui/Label';
 import { TextField } from '@/components/ui/TextField';
 
 /**
@@ -9,6 +10,10 @@ import { TextField } from '@/components/ui/TextField';
  * keyboard, so a user with no camera and no image can still pair. Submitting on
  * Enter matters as much as the button — a pasted code is usually followed by a
  * return key, not a reach for the mouse.
+ *
+ * The field empties on a successful submit. A payload can span several symbols,
+ * and leaving the previous one in place means the next paste lands *after* it,
+ * producing a code that is invalid for a reason the user cannot see.
  */
 
 export interface QrScanPasteFieldProps {
@@ -26,14 +31,15 @@ export const QrScanPasteField = ({ label, submitLabel, onScan }: QrScanPasteFiel
     // Copying a code off a screen tends to bring whitespace with it.
     const value = typed.trim();
     if (value.length === 0) return;
+    setTyped('');
     onScan(value);
   };
 
   return (
     <form className="flex flex-col gap-1" onSubmit={submit}>
-      <label htmlFor={fieldId} className="text-caption text-ink-2">
+      <Label htmlFor={fieldId} tone="ink2">
         {label}
-      </label>
+      </Label>
       <div className="flex gap-2">
         <TextField
           id={fieldId}

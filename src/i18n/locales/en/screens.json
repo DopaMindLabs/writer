@@ -791,6 +791,17 @@
         "hint": "Devices away longer than this rebuild from current content instead of replaying history.",
         "days": "{{count}} days",
         "oneYear": "1 year"
+      },
+      "scan": {
+        "title": "Read the code from your other device",
+        "fileLabel": "Upload a photo of the code",
+        "pasteLabel": "Or paste the code text",
+        "submitLabel": "Use this code",
+        "unreadableLabel": "No pairing code could be read from that image.",
+        "unrecognised": "That does not look like a pairing code from this device's partner.",
+        "wrongSession": "That code belongs to a different pairing attempt. Start again to use it.",
+        "progress": "Read {{received}} of {{total}} symbols. Still needed: {{missing}}.",
+        "complete": "All symbols read."
       }
     }
   },

@@ -93,6 +93,24 @@ describe('paste fallback', () => {
     await userEvent.type(screen.getByLabelText(labels.pasteLabel), 'TYPED{Enter}');
     expect(onScan).toHaveBeenCalledWith('TYPED');
   });
+
+  it('empties the field after a submit', async () => {
+    // A payload can span several symbols. Leaving the previous one in place
+    // makes the next paste land after it, producing an invalid code for a
+    // reason the user cannot see.
+    render(<QrScanInput {...labels} scanner={scannerReturning([])} onScan={vi.fn()} />);
+    await userEvent.type(screen.getByLabelText(labels.pasteLabel), 'FIRST{Enter}');
+    expect(screen.getByLabelText(labels.pasteLabel)).toHaveValue('');
+  });
+
+  it('reads consecutive symbols without them accumulating', async () => {
+    const onScan = vi.fn();
+    render(<QrScanInput {...labels} scanner={scannerReturning([])} onScan={onScan} />);
+    await userEvent.type(screen.getByLabelText(labels.pasteLabel), 'SYMBOL-1{Enter}');
+    await userEvent.type(screen.getByLabelText(labels.pasteLabel), 'SYMBOL-2{Enter}');
+    expect(onScan).toHaveBeenNthCalledWith(1, 'SYMBOL-1');
+    expect(onScan).toHaveBeenNthCalledWith(2, 'SYMBOL-2');
+  });
 });
 
 describe('accessibility', () => {
