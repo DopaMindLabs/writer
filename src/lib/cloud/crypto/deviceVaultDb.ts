@@ -23,9 +23,19 @@ export interface VaultRow {
   wrappedRoot: Uint8Array;
 }
 
+/**
+ * This device's identity. `deviceId` is derived from `publicKey` rather than
+ * minted, so a device cannot claim an id its key does not produce and the two
+ * columns can never disagree (pairing protocol §9).
+ *
+ * The key pair is optional only so a record written before an identity existed
+ * still loads; reading one is what triggers the identity being created.
+ */
 export interface IdentityRow {
   id: string;
   deviceId: string;
+  privateKey?: CryptoKey;
+  publicKey?: CryptoKey;
 }
 
 export class DeviceVaultDb extends Dexie {
