@@ -5,7 +5,10 @@ import {
   type QrScanCapability,
   type QrScanner,
 } from './scan.types';
-import { defaultQrDetectorFactory } from './defaultQrDetectorFactory';
+import {
+  defaultQrDetectorFactory,
+  type QrDetectorFactoryOptions,
+} from './defaultQrDetectorFactory';
 
 /**
  * The scanning facade. The detector is created lazily — on non-Chromium
@@ -13,16 +16,21 @@ import { defaultQrDetectorFactory } from './defaultQrDetectorFactory';
  * user actually opens a scanning surface — and exactly once, however many
  * images are scanned through it.
  */
-export const createQrScanner = (
-  factory: QrDetectorFactory = defaultQrDetectorFactory(),
-): QrScanner => {
+export interface QrScannerOptions extends QrDetectorFactoryOptions {
+  /** Injected in tests; defaults to the platform detector or the ponyfill. */
+  factory?: QrDetectorFactory;
+}
+
+export const createQrScanner = (options: QrScannerOptions = {}): QrScanner => {
+  const resolved: QrDetectorFactory =
+    options.factory ?? defaultQrDetectorFactory({ wasmUrl: options.wasmUrl });
   let detector: Promise<QrDetector> | null = null;
 
-  const detectorOnce = (): Promise<QrDetector> => (detector ??= factory.create());
+  const detectorOnce = (): Promise<QrDetector> => (detector ??= resolved.create());
 
   return {
     capability: (): Promise<QrScanCapability> =>
-      Promise.resolve(factory.native ? 'native' : 'polyfill'),
+      Promise.resolve(resolved.native ? 'native' : 'polyfill'),
     scanImage: async (source) => {
       let ready: QrDetector;
       try {

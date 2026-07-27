@@ -1,6 +1,6 @@
-import type { BrowserContext, Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { test, expect } from './_helpers';
-import { openCoveredPage } from './_helpers';
+import { openCoveredContext } from './_helpers';
 
 /**
  * Pairing two devices, end to end.
@@ -49,19 +49,12 @@ const pasteSymbols = async (page: Page, symbols: readonly string[]): Promise<voi
 
 const verificationCode = (page: Page) => page.getByTestId('pairing-verification-code');
 
-/** A second device: its own context, instrumented so its lines reach coverage. */
-const openSecondDevice = async (
-  context: BrowserContext,
-  browserName: string,
-): Promise<Page> => openCoveredPage(context, browserName);
-
 test('two devices pair over QR symbols and agree on one verification code', async ({
   page,
   browser,
   browserName,
 }) => {
-  const joinerContext = await browser.newContext();
-  const joiner = await openSecondDevice(joinerContext, browserName);
+  const joiner = await openCoveredContext(browser, browserName);
 
   await openPairing(page);
   await openPairing(joiner);
@@ -90,8 +83,6 @@ test('two devices pair over QR symbols and agree on one verification code', asyn
 
   await expect(page.getByTestId('pair-device-complete')).toBeVisible();
   await expect(joiner.getByTestId('pair-device-complete')).toBeVisible();
-
-  await joinerContext.close();
 });
 
 test('a symbol from an unrelated session is refused mid-scan', async ({
@@ -100,10 +91,8 @@ test('a symbol from an unrelated session is refused mid-scan', async ({
   browserName,
 }) => {
   // Two devices showing codes, so there are two distinct sessions to confuse.
-  const firstContext = await browser.newContext();
-  const secondContext = await browser.newContext();
-  const first = await openSecondDevice(firstContext, browserName);
-  const second = await openSecondDevice(secondContext, browserName);
+  const first = await openCoveredContext(browser, browserName);
+  const second = await openCoveredContext(browser, browserName);
 
   await openPairing(first);
   await openPairing(second);
@@ -120,9 +109,39 @@ test('a symbol from an unrelated session is refused mid-scan', async ({
   // Adopting the stray would let a substituted code take over a scan the user
   // believes is still collecting their own device's answer.
   await expect(page.getByTestId('pairing-scan-problem')).toBeVisible();
+});
 
-  await firstContext.close();
-  await secondContext.close();
+test('a photographed code is read from an uploaded image', async ({
+  page,
+  browser,
+  browserName,
+}) => {
+  // The path a user without a paired camera takes: point a phone at the screen,
+  // then upload the picture. Rendering the symbol and reading it back proves
+  // the encoder and the detector agree on a real image, not on a fixture.
+  const shower = await openCoveredContext(browser, browserName);
+  await openPairing(shower);
+  await shower.getByTestId('pairing-role-show').click();
+
+  const symbol = shower.getByRole('img', { name: 'Pairing code from this device' });
+  await expect(symbol).toBeVisible({ timeout: GATHERING_TIMEOUT });
+  const photograph = await symbol.screenshot();
+
+  await openPairing(page);
+  await page.getByTestId('pairing-role-read').click();
+  await page
+    .getByLabel('Upload a photo of the code')
+    .setInputFiles({ name: 'code.png', mimeType: 'image/png', buffer: photograph });
+
+  // Either the payload was complete and this device answered, or it was one of
+  // several symbols and the scanner says which are outstanding. Both mean the
+  // image was decoded; neither is the unreadable-image message.
+  await expect(
+    page
+      .getByTestId('pairing-scan-progress')
+      .or(page.getByRole('img', { name: 'Reply code from this device' }))
+      .or(page.getByTestId('pair-device-authenticating')),
+  ).toBeVisible({ timeout: GATHERING_TIMEOUT });
 });
 
 test('the pairing dialog is reachable and named from Account settings', async ({ page }) => {

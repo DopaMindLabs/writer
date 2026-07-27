@@ -36,6 +36,12 @@ describe('encodeQrMatrix', () => {
     expect(matrix.size).toBe(matrix.version * 4 + 17 + 2 * matrix.border);
   });
 
+  it('leaves the quiet zone a scanner needs', () => {
+    // Four modules is what ISO/IEC 18004 requires; a narrower margin decodes
+    // on a clean render and fails on a photograph.
+    expect(encodeQrMatrix('hello').border).toBe(4);
+  });
+
   it('honours the requested error-correction level', () => {
     const low = encodeQrMatrix(measuredPayload, { ecc: 'L' });
     const high = encodeQrMatrix(measuredPayload, { ecc: 'H' });
