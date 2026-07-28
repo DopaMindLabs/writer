@@ -1,4 +1,6 @@
 import {
+  JOURNAL_RETENTION_DEFAULT_DAYS,
+  retentionCutoff,
   startCatchUpSession,
   type CatchUpPorts,
   type CatchUpSession,
@@ -14,7 +16,10 @@ import type { LoremDB } from '@/db/LoremDB';
 import { appLogger } from '@/lib/appLogger';
 import { deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
 import { createTrustedDeviceStore } from './trustedDeviceStore';
+import { getJournalRetentionDaysFor } from './journalRetentionPreference';
 import { createWriterOperationStore } from './materialization/writerOperationStore';
+import { createWriterFullState } from './materialization/writerFullState';
+import { writerJournalDeps } from './materialization/writerJournalDeps';
 import { sweepUnappliedFrames } from './materialization/frameIngestion';
 
 /**
@@ -73,6 +78,8 @@ interface CatchUpPortsOptions {
   db: LoremDB;
   peer: AdoptedPeer;
   registry: TrustedDeviceRegistry;
+  /** This device's retention window, as it stood when catch-up was adopted. */
+  retentionDays: () => number;
 }
 
 /**
@@ -83,10 +90,16 @@ const catchUpPorts = ({
   db,
   peer,
   registry,
+  retentionDays,
 }: CatchUpPortsOptions): Omit<CatchUpPorts, 'send'> => ({
   journal: createWriterOperationStore(db),
   accessibleScopeIds: () => accessibleScopeIds(db),
   verifySignature: createTrustedFrameVerifier(registry),
+  // A peer the journal cannot honestly answer is served the scope as it stands
+  // now. Without this it would get the surviving tail of history and be told it
+  // was caught up, which is the one wrong answer to that request.
+  fullState: createWriterFullState({ db, ...writerJournalDeps }),
+  retentionCutoff: () => retentionCutoff({ retentionDays: retentionDays(), now: Date.now() }),
   recordPeerAcknowledgement: (acknowledgement) =>
     registry.acknowledge({
       // The peer on this connection is what has read up to here; the origin is
@@ -117,13 +130,24 @@ export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
   const registry = createTrustedDeviceStore(db);
   const sessions = new Set<PeerSession>();
   const exchanges = new Set<CatchUpSession>();
+  // Read once and held, because the engine asks for the cutoff synchronously
+  // while answering a request. Until the stored preference resolves this is the
+  // same default a device that never changed it keeps.
+  let days = JOURNAL_RETENTION_DEFAULT_DAYS;
+  void getJournalRetentionDaysFor(db)
+    .then((stored) => {
+      days = stored;
+    })
+    .catch((error: unknown) => {
+      appLogger.warn('reading the journal retention window failed', error);
+    });
 
   const startOver = (peer: AdoptedPeer): void => {
     const open = (channel: DataChannelLike): void => {
       exchanges.add(
         startCatchUpSession({
           transport: createWebRtcTransport(channel),
-          ports: catchUpPorts({ db, peer, registry }),
+          ports: catchUpPorts({ db, peer, registry, retentionDays: () => days }),
           onError: (error: unknown) => {
             appLogger.warn('peer catch-up failed', error);
           },
