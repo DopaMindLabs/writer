@@ -27,11 +27,21 @@ const PEER = asDeviceId('peer-device');
 let db: LoremDB;
 
 /** A channel that records what was written and replays what is fed to it. */
-const fakeChannel = () => {
+const fakeChannel = (readyState: 'open' | 'connecting' = 'open') => {
   const listeners = new Map<string, ((event: MessageEvent<unknown>) => void)[]>();
   const sent: CatchUpMessage[] = [];
+  const fire = (type: string): void => {
+    for (const listener of listeners.get(type) ?? []) {
+      listener({} as MessageEvent<unknown>);
+    }
+  };
   return {
     sent,
+    /** Bring a connecting channel up, the way a real one settles. */
+    open: (channel: { readyState: string }) => {
+      channel.readyState = 'open';
+      fire('open');
+    },
     /** Deliver a message as the peer, over the wire the transport listens on. */
     deliver: (message: CatchUpMessage) => {
       const event = {
@@ -40,7 +50,8 @@ const fakeChannel = () => {
       for (const listener of listeners.get('message') ?? []) listener(event);
     },
     channel: {
-      readyState: 'open',
+      label: 'writer-sync-control',
+      readyState,
       bufferedAmount: 0,
       bufferedAmountLowThreshold: 0,
       send: (data: ArrayBuffer) => sent.push(decodeCatchUpMessage(new Uint8Array(data))),
@@ -73,6 +84,7 @@ const fakeSession = (existing: DataChannelLike | null = null) => {
       subscribers.add(listener);
       return () => subscribers.delete(listener);
     },
+    openChannel: () => new Promise<never>(() => undefined),
     createOffer: () => Promise.resolve(''),
     acceptOffer: () => Promise.resolve(''),
     acceptAnswer: () => Promise.resolve(),
@@ -214,6 +226,27 @@ describe('createPeerCatchUp', () => {
       expect(
         frames[0].kind === 'frames' && frames[0].frames.map((f) => f.entityId).sort(),
       ).toEqual(['n1', 's1']);
+    });
+    catchUp.stop();
+  });
+
+  it('waits for a channel that is still connecting before writing to it', async () => {
+    const wire = fakeChannel('connecting');
+    const peer = fakeSession(wire.channel);
+    const catchUp = createPeerCatchUp(db);
+
+    catchUp.adopt({ session: peer.session, deviceId: PEER });
+
+    // The device that creates a channel holds it in `connecting` while the
+    // connection forms, and writing to it then throws — which is how one side
+    // of a pairing ended up sending nothing at all.
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(wire.sent).toEqual([]);
+
+    wire.open(wire.channel as unknown as { readyState: string });
+
+    await vi.waitFor(() => {
+      expect(wire.sent).toEqual([{ v: 1, kind: 'manifest', manifests: [] }]);
     });
     catchUp.stop();
   });

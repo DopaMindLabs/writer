@@ -51,7 +51,7 @@ const fakeConnection = (
     createDataChannel: (label, opts) => {
       channels.push(label);
       connection.channelOrdered = opts?.ordered;
-      return { close: vi.fn() } as unknown as DataChannelLike;
+      return { label, close: vi.fn() } as unknown as DataChannelLike;
     },
     createOffer: () => Promise.resolve({ type: 'offer', sdp: offerSdp }),
     createAnswer: () => Promise.resolve({ type: 'answer', sdp: 'v=0\r\nANSWER\r\n' }),
@@ -250,8 +250,56 @@ describe('close', () => {
 });
 
 describe('the control channel on the answering side', () => {
-  const remoteChannel = (): DataChannelLike =>
-    ({ close: vi.fn() }) as unknown as DataChannelLike;
+  const remoteChannel = (label = 'writer-sync-control'): DataChannelLike =>
+    ({ label, close: vi.fn() }) as unknown as DataChannelLike;
+
+  it('opens a channel per purpose on the offering side', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    await session.createOffer();
+
+    const first = await session.openChannel('scope-1/awareness');
+    const again = await session.openChannel('scope-1/awareness');
+    await session.openChannel('scope-2/awareness');
+
+    // One channel per purpose, and the same one for the same purpose: a second
+    // channel for something already carried would leave each end reading a
+    // different one.
+    expect(first).toBe(again);
+    expect(connection.channels).toEqual([
+      'writer-sync-control',
+      'scope-1/awareness',
+      'scope-2/awareness',
+    ]);
+  });
+
+  it('waits for the peer to open a channel on the answering side', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    await session.acceptOffer('v=0\r\nOFFER\r\na=candidate\r\n');
+
+    const pending = session.openChannel('scope-1/awareness');
+    const opened = remoteChannel('scope-1/awareness');
+    connection.peerOpensChannel(opened);
+
+    // The answering device creates nothing: both creating one for the same
+    // purpose would leave each holding a channel the other never reads.
+    expect(await pending).toBe(opened);
+    expect(connection.channels).toEqual([]);
+  });
+
+  it('keeps channels for different purposes apart', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    await session.acceptOffer('v=0\r\nOFFER\r\na=candidate\r\n');
+    connection.peerOpensChannel(remoteChannel());
+
+    const awareness = remoteChannel('scope-1/awareness');
+    connection.peerOpensChannel(awareness);
+
+    expect(session.channel()?.label).toBe('writer-sync-control');
+    expect(await session.openChannel('scope-1/awareness')).toBe(awareness);
+  });
 
   it('adopts the channel the peer opens, having created none itself', async () => {
     const connection = fakeConnection({ gatheringCompletesImmediately: true });

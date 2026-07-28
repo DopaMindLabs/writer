@@ -41,8 +41,19 @@ import type { AttachmentTransfer } from './attachmentTransfer';
 
 export interface CatchUpPorts {
   journal: OperationStore;
-  /** The scopes this device can actually decrypt. */
+  /** The scopes this device holds frames for, and so can advertise. */
   accessibleScopeIds: () => Promise<AccessScopeId[]>;
+  /**
+   * Whether this device could decrypt a scope it is being offered.
+   *
+   * Distinct from {@link accessibleScopeIds}, which answers what this device
+   * *holds*. A device that has just been paired holds nothing at all, and if
+   * "can I read this?" were answered from what it already has, it would ask for
+   * nothing and so never receive the first scope — the state that would have let
+   * it ask. Defaults to membership of the advertised list for a host whose key
+   * material really is per scope.
+   */
+  canAccessScope?: (accessScopeId: AccessScopeId) => boolean;
   send: (message: CatchUpMessage) => void;
   /** Verify the originating device's signature over the frame. */
   verifySignature: (frame: EncryptedSyncFrame) => Promise<boolean>;
@@ -117,6 +128,27 @@ const acknowledgementsFor = (
     operationId: frame.operationId,
   }));
 
+/**
+ * Whether a scope may be read, by whichever rule the host supplies.
+ *
+ * Resolved once per exchange step rather than per scope, so a host that answers
+ * from storage is not asked the same question repeatedly.
+ */
+const scopeAccessFor = async (
+  ports: CatchUpPorts,
+): Promise<(accessScopeId: AccessScopeId) => boolean> => {
+  if (ports.canAccessScope !== undefined) return ports.canAccessScope;
+  const accessible = new Set(await ports.accessibleScopeIds());
+  return (accessScopeId) => accessible.has(accessScopeId);
+};
+
+const scopeFilterFor = async (
+  ports: CatchUpPorts,
+): Promise<(request: CatchUpRequest) => boolean> => {
+  const canAccess = await scopeAccessFor(ports);
+  return (request) => canAccess(request.accessScopeId);
+};
+
 /** Everything this device holds in the scopes it can decrypt. */
 const heldFrames = async (ports: CatchUpPorts): Promise<EncryptedSyncFrame[]> => {
   const scopes = await ports.accessibleScopeIds();
@@ -154,8 +186,7 @@ const answer = async (
   ports: CatchUpPorts,
   requests: readonly CatchUpRequest[],
 ): Promise<void> => {
-  const accessible = new Set(await ports.accessibleScopeIds());
-  const permitted = requests.filter((request) => accessible.has(request.accessScopeId));
+  const permitted = requests.filter(await scopeFilterFor(ports));
   const rebuild = scopesNeedingFullState(ports, permitted);
   const buildState = ports.fullState;
 
@@ -193,7 +224,7 @@ const requestMissing = async (
     requests: planCatchUp({
       local: await localManifests(ports),
       remote,
-      accessibleScopeIds: await ports.accessibleScopeIds(),
+      canAccessScope: await scopeAccessFor(ports),
     }),
   });
 };
@@ -202,11 +233,11 @@ const requestMissing = async (
 const admit = async (options: {
   ports: CatchUpPorts;
   frame: EncryptedSyncFrame;
-  accessible: ReadonlySet<AccessScopeId>;
+  canAccess: (accessScopeId: AccessScopeId) => boolean;
 }): Promise<boolean> => {
-  const { ports, frame, accessible } = options;
+  const { ports, frame, canAccess } = options;
   try {
-    if (!accessible.has(frame.accessScopeId)) {
+    if (!canAccess(frame.accessScopeId)) {
       throw new Error('frame names a scope this device has no key for');
     }
     const verified = await verifyFrame(frame, { expectedScope: frame.accessScopeId });
@@ -231,9 +262,9 @@ const createIngester = (
   let taken = new Map<string, EncryptedSyncFrame>();
 
   return async (message) => {
-    const accessible = new Set(await ports.accessibleScopeIds());
+    const canAccess = await scopeAccessFor(ports);
     for (const frame of message.frames) {
-      if (await admit({ ports, frame, accessible })) rememberNewest(taken, frame);
+      if (await admit({ ports, frame, canAccess })) rememberNewest(taken, frame);
     }
     if (message.frames.length > 0) ports.onFramesJournalled?.();
     if (!message.final) return;

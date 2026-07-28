@@ -664,10 +664,24 @@ wired into the app.
   arrives before anything is listening. The root is zeroed as soon as it is
   stored, and the receiving device derives its ring exactly as a passphrase
   unlock would; there is no separate paired-device key path.
-- **Not yet wired.** The P2P `SyncProvider` end-to-end path — the transfer engine
-  is implemented and unit-tested, and both key transfer and catch-up run against
-  a live peer session once a pairing is confirmed, but no provider carries
-  document sync between paired devices yet. The pairing exchange
+- **What a device may ask for.** A peer's manifest is filtered by whether this
+  device *could decrypt* a scope, which is not the same question as which scopes
+  it already holds. Stage 1 derives one content key for every scope, so a device
+  holding the account key can read any scope offered; deciding from what it
+  already had would leave a freshly paired device — holding none — asking for
+  nothing, and so never receiving the first scope that would let it ask.
+- **Channels are used only once open.** A device that creates a data channel
+  holds it in `connecting` while the connection forms, and writing then throws;
+  the answering device never sees that state, since its channel arrives open.
+  Catch-up and key transfer therefore wait for `open` rather than for the channel
+  to exist.
+- **Proven end to end.** `pair-sync.spec.ts` drives two browser contexts through
+  a real WebRTC pairing and asserts that writing held by one device appears on
+  the other, live and after a reload. Two physical devices on a network remain
+  slice 2A.9 and are not discharged by it.
+- **Not yet wired.** The P2P `SyncProvider` — catch-up carries what a device
+  holds at the moment of pairing, and changes made *after* it need the provider's
+  live transport, which no boot path creates yet. The pairing exchange
   runs against real WebRTC between two browser profiles, driven end to end by
   `pair-device.spec.ts`; it has not yet been verified between two physical devices
   on a real network.

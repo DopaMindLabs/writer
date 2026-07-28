@@ -20,6 +20,8 @@ export const BUFFER_HIGH_WATER_BYTES = 1_048_576;
 
 /** The subset of `RTCDataChannel` this transport needs, so tests need no WebRTC. */
 export interface DataChannelLike {
+  /** What the channel is for. Routes a channel the peer opened to its purpose. */
+  readonly label: string;
   readonly readyState: string;
   bufferedAmount: number;
   bufferedAmountLowThreshold: number;

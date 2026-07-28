@@ -31,6 +31,11 @@ const frameOf = (options: {
 
 const ALL_SCOPES = ['scope-1', 'scope-2'];
 
+/** A device holding the account key can read any scope it is offered. */
+const readsAnyScope = () => true;
+/** A device whose key material really is per scope reads only what it has. */
+const readsListedScopes = (accessScopeId: string) => ALL_SCOPES.includes(accessScopeId);
+
 describe('buildScopeManifests', () => {
   it('summarises each origin within each scope', () => {
     const manifests = buildScopeManifests([
@@ -109,7 +114,7 @@ describe('planCatchUp', () => {
     const plan = planCatchUp({
       local: [],
       remote: [manifest({ mark: 'op-a1', millis: 10 })],
-      accessibleScopeIds: ALL_SCOPES,
+      canAccessScope: readsAnyScope,
     });
 
     expect(plan).toEqual([
@@ -121,7 +126,7 @@ describe('planCatchUp', () => {
     const plan = planCatchUp({
       local: [manifest({ mark: 'op-a1', millis: 10 })],
       remote: [manifest({ mark: 'op-a2', millis: 20, count: 2 })],
-      accessibleScopeIds: ALL_SCOPES,
+      canAccessScope: readsAnyScope,
     });
 
     expect(plan).toEqual([
@@ -137,7 +142,7 @@ describe('planCatchUp', () => {
     const local = [manifest({ mark: 'op-a1', millis: 10 })];
 
     expect(
-      planCatchUp({ local, remote: local, accessibleScopeIds: ALL_SCOPES }),
+      planCatchUp({ local, remote: local, canAccessScope: readsAnyScope }),
     ).toEqual([]);
   });
 
@@ -145,7 +150,7 @@ describe('planCatchUp', () => {
     const plan = planCatchUp({
       local: [manifest({ mark: 'op-a2', millis: 20, count: 2 })],
       remote: [manifest({ mark: 'op-a1', millis: 10 })],
-      accessibleScopeIds: ALL_SCOPES,
+      canAccessScope: readsAnyScope,
     });
 
     expect(plan).toEqual([]);
@@ -155,7 +160,7 @@ describe('planCatchUp', () => {
     const plan = planCatchUp({
       local: [manifest({ mark: 'op-a2', millis: 20, count: 1 })],
       remote: [manifest({ mark: 'op-a2', millis: 20, count: 4 })],
-      accessibleScopeIds: ALL_SCOPES,
+      canAccessScope: readsAnyScope,
     });
 
     expect(plan).toEqual([
@@ -167,17 +172,19 @@ describe('planCatchUp', () => {
     const plan = planCatchUp({
       local: [],
       remote: [manifest({ scope: 'scope-9', mark: 'op-x', millis: 10 })],
-      accessibleScopeIds: ALL_SCOPES,
+      canAccessScope: readsListedScopes,
     });
 
     expect(plan).toEqual([]);
   });
 
-  it('requests an accessible scope it holds nothing in at all', () => {
+  it('requests a scope it holds nothing in at all', () => {
+    // A device that has just been paired holds nothing. Deciding what it may
+    // ask for from what it already has would leave it asking for nothing.
     const plan = planCatchUp({
       local: [manifest({ mark: 'op-a1', millis: 10 })],
       remote: [manifest({ scope: 'scope-2', mark: 'op-s1', millis: 10 })],
-      accessibleScopeIds: ALL_SCOPES,
+      canAccessScope: readsAnyScope,
     });
 
     expect(plan).toEqual([

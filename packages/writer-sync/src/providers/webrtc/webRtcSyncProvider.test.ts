@@ -6,7 +6,8 @@ import type { DataChannelLike } from './webRtcTransport';
 
 const fakeChannel = (): DataChannelLike & { closed: boolean } => {
   const channel = {
-    readyState: 'open',
+    label: 'writer-sync-control',
+  readyState: 'open',
     bufferedAmount: 0,
     bufferedAmountLowThreshold: 0,
     closed: false,

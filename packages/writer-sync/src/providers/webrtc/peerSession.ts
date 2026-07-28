@@ -66,6 +66,15 @@ export interface PeerSession {
    * unsubscribe.
    */
   onChannel: (listener: (channel: DataChannelLike) => void) => () => void;
+  /**
+   * A channel for one logical purpose, created here or awaited from the peer.
+   *
+   * The device that made the offer creates; the other waits. Both creating one
+   * for the same purpose would leave each holding a channel the other never
+   * reads, so the side that opens is decided by the exchange rather than by
+   * whoever asks first.
+   */
+  openChannel: (label: string) => Promise<DataChannelLike>;
   /** Gather locally, then resolve the complete offer SDP. */
   createOffer: () => Promise<string>;
   /** Apply the peer's offer, gather locally, then resolve the answer SDP. */
@@ -119,39 +128,124 @@ const awaitGathering = (
 const hasCandidate = (sdp: string): boolean => sdp.includes('a=candidate');
 
 /**
- * Holds the one control channel a session carries and who is watching for it.
+ * Holds the channels a session carries, by what each is for, and who is watching
+ * for them.
  *
- * Separate from the session because the channel arrives by two different routes
- * — created here as the initiator, handed over by the peer as the answerer — and
+ * Separate from the session because a channel arrives by two different routes —
+ * created here as the initiator, handed over by the peer as the answerer — and
  * both must land in the same place for `channel()` to mean the same thing on
  * either side.
+ *
+ * Keyed by label because one connection carries more than the control channel:
+ * a live transport is made per scope and logical channel, and a registry that
+ * kept only the first would drop every one of them. Within a label the first
+ * still wins — a second channel for the same purpose must not displace one
+ * already in use.
  */
 const createChannelRegistry = () => {
-  const listeners = new Set<(channel: DataChannelLike) => void>();
-  let current: DataChannelLike | null = null;
+  const listeners = new Map<string, Set<(channel: DataChannelLike) => void>>();
+  const channels = new Map<string, DataChannelLike>();
+
+  const watchers = (label: string): Set<(channel: DataChannelLike) => void> => {
+    const existing = listeners.get(label);
+    if (existing) return existing;
+    const created = new Set<(channel: DataChannelLike) => void>();
+    listeners.set(label, created);
+    return created;
+  };
 
   return {
-    current: () => current,
-    /** First one wins: a second channel must not displace one already in use. */
+    current: (label: string) => channels.get(label) ?? null,
     adopt: (channel: DataChannelLike): void => {
-      if (current !== null) return;
-      current = channel;
-      for (const listener of listeners) listener(channel);
+      if (channels.has(channel.label)) return;
+      channels.set(channel.label, channel);
+      for (const listener of watchers(channel.label)) listener(channel);
     },
-    subscribe: (listener: (channel: DataChannelLike) => void): (() => void) => {
-      listeners.add(listener);
-      if (current !== null) listener(current);
+    subscribe: (
+      label: string,
+      listener: (channel: DataChannelLike) => void,
+    ): (() => void) => {
+      watchers(label).add(listener);
+      const existing = channels.get(label);
+      if (existing) listener(existing);
       return () => {
-        listeners.delete(listener);
+        watchers(label).delete(listener);
       };
     },
     release: (): void => {
       listeners.clear();
-      current?.close();
-      current = null;
+      for (const channel of channels.values()) channel.close();
+      channels.clear();
     },
   };
 };
+
+/**
+ * The complete local description, once gathering has finished or run out of
+ * time. A deadline reached is not itself a failure — only a description with no
+ * candidate at all can never connect.
+ */
+const gatheredDescription = async (
+  connection: PeerConnectionLike,
+  options: Required<Pick<PeerSessionOptions, 'setTimer' | 'clearTimer'>> & {
+    timeoutMillis: number;
+  },
+): Promise<string> => {
+  const complete = await awaitGathering(connection, options);
+  const description = connection.localDescription;
+  if (description === null) {
+    throw new PairingError(
+      PairingErrorCode.LocalConnectivity,
+      'no local description after gathering',
+    );
+  }
+  if (!complete && !hasCandidate(description.sdp)) {
+    throw new PairingError(
+      PairingErrorCode.LocalConnectivity,
+      'candidate gathering stalled before any candidate was found',
+    );
+  }
+  return description.sdp;
+};
+
+interface OpenChannelOptions {
+  label: string;
+  channels: ReturnType<typeof createChannelRegistry>;
+  connection: PeerConnectionLike;
+  /** Whether this session made the offer, and so is the side that opens. */
+  offered: () => boolean;
+}
+
+/**
+ * The channel for one purpose: created here, or awaited from the peer.
+ *
+ * Only the device that made the offer creates. Both creating one for the same
+ * purpose would leave each holding a channel the other never reads, so which
+ * side opens follows from the exchange rather than from whoever asks first.
+ */
+const openChannelFor = ({
+  label,
+  channels,
+  connection,
+  offered,
+}: OpenChannelOptions): Promise<DataChannelLike> =>
+  new Promise((resolve) => {
+    const existing = channels.current(label);
+    if (existing !== null) {
+      resolve(existing);
+      return;
+    }
+    if (offered()) {
+      channels.adopt(connection.createDataChannel(label, { ordered: true }));
+      const created = channels.current(label);
+      if (created !== null) resolve(created);
+      return;
+    }
+    const unsubscribe = channels.subscribe(label, (channel) => {
+      unsubscribe();
+      resolve(channel);
+    });
+  });
 
 export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
   const setTimer = options.setTimer ?? ((cb, ms) => setTimeout(cb, ms));
@@ -165,28 +259,16 @@ export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
   const connection = options.createConnection();
   const channels = createChannelRegistry();
   let closed = false;
+  // Which half this session ran. The device that offered is the one that opens
+  // channels; its peer takes what arrives.
+  let offered = false;
 
   // Registered before any offer or answer, so a channel the peer opens the
   // instant the connection establishes is never missed.
   const offDataChannel = connection.onDataChannel(channels.adopt);
 
-  const gathered = async (): Promise<string> => {
-    const complete = await awaitGathering(connection, { setTimer, clearTimer, timeoutMillis });
-    const description = connection.localDescription;
-    if (description === null) {
-      throw new PairingError(
-        PairingErrorCode.LocalConnectivity,
-        'no local description after gathering',
-      );
-    }
-    if (!complete && !hasCandidate(description.sdp)) {
-      throw new PairingError(
-        PairingErrorCode.LocalConnectivity,
-        'candidate gathering stalled before any candidate was found',
-      );
-    }
-    return description.sdp;
-  };
+  const gathered = (): Promise<string> =>
+    gatheredDescription(connection, { setTimer, clearTimer, timeoutMillis });
 
   const requireOpen = (): void => {
     if (closed) {
@@ -195,12 +277,15 @@ export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
   };
 
   return {
-    channel: channels.current,
-    onChannel: channels.subscribe,
+    channel: () => channels.current(CONTROL_CHANNEL),
+    onChannel: (listener) => channels.subscribe(CONTROL_CHANNEL, listener),
+    openChannel: (label) =>
+      openChannelFor({ label, channels, connection, offered: () => offered }),
     createOffer: async () => {
       requireOpen();
       // Ordered and reliable: the operation protocol depends on a frame arriving
       // once and intact, not on best effort.
+      offered = true;
       channels.adopt(connection.createDataChannel(CONTROL_CHANNEL, { ordered: true }));
       await connection.setLocalDescription(await connection.createOffer());
       return gathered();
