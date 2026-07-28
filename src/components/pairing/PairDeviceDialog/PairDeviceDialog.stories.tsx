@@ -18,8 +18,19 @@ const offer = (): PairingOffer => ({
   signature: 'c2lnbmF0dXJl'.repeat(6),
 });
 
+/** A peer session that never opens a channel; nothing here drives sync. */
+const idlePeerSession = () => ({
+  channel: () => null,
+  onChannel: () => () => undefined,
+  createOffer: () => Promise.resolve(''),
+  acceptOffer: () => Promise.resolve(''),
+  acceptAnswer: () => Promise.resolve(),
+  close: () => undefined,
+});
+
 const signaller = (): PairingSignaller => ({
   sessionId: SESSION,
+  session: idlePeerSession(),
   adapter: {
     createOffer: () => Promise.resolve(offer()),
     acceptOffer: () => Promise.reject(new Error('not used')),

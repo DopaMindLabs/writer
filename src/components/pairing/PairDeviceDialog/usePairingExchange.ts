@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 import { PairingState, type PairingRole, type PairingSession } from 'writer-sync/pairing';
+import { usePeerCatchUp } from '@/lib/writerSyncIntegration/peerCatchUpContext';
+import type { PeerCatchUp } from '@/lib/writerSyncIntegration/peerCatchUp';
 import {
   createPairingSignaller,
   type PairingSignaller,
@@ -44,12 +46,32 @@ export interface PairingExchange extends PairingExchangeState {
   confirm: () => void;
 }
 
+/**
+ * Hand a confirmed pairing's connection to the holder that outlives this dialog.
+ *
+ * Only ever after confirmation: before it no human has agreed the codes match,
+ * and an unconfirmed peer must not be left holding an open channel. Returns
+ * whether the session was taken, which is what tells teardown to leave it alone.
+ */
+const handOverSession = (
+  catchUp: PeerCatchUp | null,
+  opened: PairingSignaller | null,
+): boolean => {
+  const peer = opened?.adapter.parameters();
+  if (catchUp === null || !opened || !peer) return false;
+  catchUp.adopt({ session: opened.session, deviceId: peer.deviceId });
+  return true;
+};
+
 export const usePairingExchange = ({
   open,
   createSignaller = createPairingSignaller,
 }: UsePairingExchangeOptions): PairingExchange => {
   const [state, dispatch] = useReducer(pairingExchangeReducer, initialExchangeState);
+  const catchUp = usePeerCatchUp();
   const signaller = useRef<PairingSignaller | null>(null);
+  // Set once the session has been handed on, so teardown stops closing it.
+  const adopted = useRef(false);
   const session = useRef<PairingSession | null>(null);
   const dismissed = useRef(false);
   const { role } = state;
@@ -59,7 +81,10 @@ export const usePairingExchange = ({
     dismissed.current = false;
     return () => {
       dismissed.current = true;
-      signaller.current?.close();
+      // A session handed to the catch-up holder is no longer this dialog's to
+      // close: sync has to keep the connection the pairing established.
+      if (!adopted.current) signaller.current?.close();
+      adopted.current = false;
       signaller.current = null;
       session.current = null;
     };
@@ -104,8 +129,9 @@ export const usePairingExchange = ({
     // state but `awaiting-confirmation`, so a stray call cannot skip ahead.
     if (machine?.state() !== PairingState.AwaitingConfirmation) return;
     machine.apply('confirmed');
+    adopted.current = handOverSession(catchUp, signaller.current);
     dispatch({ type: 'confirmed' });
-  }, []);
+  }, [catchUp]);
 
   return { ...state, begin, submitOffer, acceptAnswer, confirm };
 };
