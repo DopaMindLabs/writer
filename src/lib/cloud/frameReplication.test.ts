@@ -4,6 +4,7 @@ import dexieCloud from 'dexie-cloud-addon';
 import { STORES } from '@/db/stores';
 import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
 import type { ScopeKeyResolver } from 'writer-sync/crypto';
+import { generateDeviceIdentity } from 'writer-sync/crypto';
 import { createOperationJournalMiddleware } from '@/lib/writerSyncIntegration/materialization/operationJournalMiddleware';
 import {
   localOnlyTables,
@@ -92,7 +93,10 @@ beforeEach(async () => {
   db.use(
     createOperationJournalMiddleware({
       resolver,
-      deviceId: () => Promise.resolve(DEVICE),
+      identity: async () => ({
+        deviceId: DEVICE,
+        privateKey: (await generateDeviceIdentity()).privateKey,
+      }),
     }),
   );
   await db.open();
