@@ -65,6 +65,12 @@ const harness = (options: {
   };
 };
 
+const READY = { v: ROOT_TRANSFER_VERSION, kind: 'ready' } as const;
+
+/** What this device said, ignoring the "nothing further" it repeats at the end. */
+const substance = (sent: readonly RootTransferMessage[]) =>
+  sent.filter((message) => message.kind !== 'ready');
+
 describe('startRootTransfer', () => {
   it('announces what this device holds as soon as it starts', () => {
     const withRoot = harness({ holdsRoot: true });
@@ -87,10 +93,10 @@ describe('startRootTransfer', () => {
     expect(device.sent).toHaveLength(3);
 
     void transfer.receive({ v: ROOT_TRANSFER_VERSION, kind: 'holds-root' });
-    device.tick();
 
-    // Nothing more to say once both know where they stand.
-    expect(device.sent).toHaveLength(3);
+    // Both know where they stand, so what it repeats now is that it has
+    // finished — until the peer says the same.
+    expect(device.sent.at(-1)).toEqual(READY);
   });
 
   it('seals the root for a peer that says it needs one', async () => {
@@ -100,12 +106,14 @@ describe('startRootTransfer', () => {
 
     await transfer.receive({ v: ROOT_TRANSFER_VERSION, kind: 'needs-root' });
 
-    expect(device.sent.at(-1)).toEqual({
+    expect(substance(device.sent).at(-1)).toEqual({
       v: ROOT_TRANSFER_VERSION,
       kind: 'root',
       wrapper: wrapper(),
       epoch: 2,
     });
+
+    await transfer.receive(READY);
     await expect(transfer.settled()).resolves.toBe('sent');
   });
 
@@ -119,7 +127,7 @@ describe('startRootTransfer', () => {
     transfer.start();
 
     await vi.waitFor(() => {
-      expect(device.sent.at(-1)?.kind).toBe('root');
+      expect(substance(device.sent).at(-1)?.kind).toBe('root');
     });
   });
 
@@ -133,6 +141,8 @@ describe('startRootTransfer', () => {
     await transfer.receive(sealed);
 
     expect(device.accepted).toEqual([{ wrapper: wrapper(), epoch: 2 }]);
+
+    await transfer.receive(READY);
     await expect(transfer.settled()).resolves.toBe('received');
   });
 
@@ -159,7 +169,31 @@ describe('startRootTransfer', () => {
     transfer.start();
 
     await transfer.receive({ v: ROOT_TRANSFER_VERSION, kind: 'holds-root' });
+    await transfer.receive(READY);
 
+    await expect(transfer.settled()).resolves.toBe('not-needed');
+  });
+
+  it('waits for the peer before handing the channel on', async () => {
+    // Sync follows on this channel with a decoder of its own. A device that
+    // returned to sync while its peer was still reading for keys would have its
+    // first message swallowed and never repeated — which is exactly how a
+    // pairing ends up connected, trusted and silent.
+    const device = harness({ holdsRoot: true });
+    const transfer = startRootTransfer(device.ports);
+    transfer.start();
+    let handedOn = false;
+    void transfer.settled().then(() => {
+      handedOn = true;
+    });
+
+    await transfer.receive({ v: ROOT_TRANSFER_VERSION, kind: 'holds-root' });
+    await Promise.resolve();
+
+    expect(handedOn).toBe(false);
+    expect(device.sent.at(-1)).toEqual(READY);
+
+    await transfer.receive(READY);
     await expect(transfer.settled()).resolves.toBe('not-needed');
   });
 
@@ -175,7 +209,9 @@ describe('startRootTransfer', () => {
     await transfer.receive({ v: ROOT_TRANSFER_VERSION, kind: 'needs-root' });
 
     expect(minted).toHaveBeenCalledTimes(1);
-    expect(device.sent.at(-1)?.kind).toBe('root');
+    expect(substance(device.sent).at(-1)?.kind).toBe('root');
+
+    await transfer.receive(READY);
     await expect(transfer.settled()).resolves.toBe('sent');
   });
 

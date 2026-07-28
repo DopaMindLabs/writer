@@ -11,7 +11,11 @@ import {
   type DataChannelLike,
   type PeerSession,
 } from 'writer-sync/providers/webrtc';
-import type { DeviceId, TrustedDeviceRegistry } from 'writer-sync/core';
+import {
+  TrustedDeviceStatus,
+  type DeviceId,
+  type TrustedDeviceRegistry,
+} from 'writer-sync/core';
 import type { LoremDB } from '@/db/LoremDB';
 import { appLogger } from '@/lib/appLogger';
 import { deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
@@ -22,6 +26,7 @@ import {
 } from './accountRootTransfer';
 import { createTrustedDeviceStore } from './trustedDeviceStore';
 import { getJournalRetentionDaysFor } from './journalRetentionPreference';
+import { currentPrincipal } from './writerEntityMetadata';
 import { createWriterOperationStore } from './materialization/writerOperationStore';
 import { createWriterFullState } from './materialization/writerFullState';
 import { writerJournalDeps } from './materialization/writerJournalDeps';
@@ -193,6 +198,42 @@ const onPeerChannel = ({
   );
 };
 
+/**
+ * Remember the peer a confirmed pairing just authenticated.
+ *
+ * This is the record every later frame is checked against: the verifier tests a
+ * signature against the identity key a pairing established, so a device with no
+ * record has nothing to be verified against and everything it sends is refused.
+ * It is also what the device list reads.
+ *
+ * An identity already known is left exactly as it stands. Re-pairing a device is
+ * a new session, not a new trust relationship, and rewriting the record would
+ * let a peer replace the key an earlier pairing established — or quietly
+ * resurrect one the user revoked.
+ */
+const rememberPeer = async (
+  registry: TrustedDeviceRegistry,
+  peer: AdoptedPeer,
+): Promise<void> => {
+  const { keyTransfer } = peer;
+  if (keyTransfer === undefined) return;
+  const now = Date.now();
+  if ((await registry.find(peer.deviceId)) !== null) {
+    await registry.recordSession({ deviceId: peer.deviceId, at: now });
+    return;
+  }
+  await registry.trust({
+    deviceId: peer.deviceId,
+    publicIdentityJwk: keyTransfer.peer.publicIdentityJwk,
+    principalId: await currentPrincipal(),
+    addedAt: now,
+    lastSessionAt: now,
+    displayName: '',
+    status: TrustedDeviceStatus.Active,
+    acknowledgedOperations: {},
+  });
+};
+
 export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
   const registry = createTrustedDeviceStore(db);
   const sessions = new Set<PeerSession>();
@@ -235,7 +276,16 @@ export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
     adopt: (peer) => {
       if (sessions.has(peer.session)) return;
       sessions.add(peer.session);
-      startOver(peer);
+      // Trust is recorded before anything is exchanged: a frame arriving from a
+      // device this one has no record of is refused, and the first frames can
+      // arrive as soon as the channel is read.
+      void rememberPeer(registry, peer)
+        .catch((error: unknown) => {
+          appLogger.warn('recording a paired device failed', error);
+        })
+        .finally(() => {
+          startOver(peer);
+        });
     },
     stop: () => {
       for (const transfer of transfers) transfer.stop();

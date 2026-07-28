@@ -20,6 +20,12 @@ import { ROOT_TRANSFER_VERSION, type RootTransferMessage } from './rootTransferM
  * match" at the same instant, so a single announcement would be lost whenever
  * one device confirmed first. Repeating costs one small message; the alternative
  * is a pairing that completes and silently transfers nothing.
+ *
+ * **Both devices leave together.** Sync follows on the same channel with a
+ * decoder of its own, so a device that returned to sync while its peer was still
+ * reading for keys would have its first message swallowed and never repeated.
+ * Each side therefore says `ready` once it has settled and waits to hear the
+ * same before handing the channel on.
  */
 
 export type RootTransferOutcome =
@@ -79,10 +85,15 @@ export interface RootTransfer {
 
 interface Announcer {
   start: () => void;
+  /** Change what is being repeated, and say it now. */
+  say: (refrain: Refrain) => void;
   stop: () => void;
 }
 
-/** Says what this device holds, again and again, until told to stop. */
+/** What this device is saying while it waits for the peer to catch up. */
+type Refrain = 'state' | 'ready';
+
+/** Says the same thing, again and again, until told to stop. */
 const createAnnouncer = (ports: RootTransferPorts): Announcer => {
   const setTimer = ports.setTimer ?? ((callback, millis) => setTimeout(callback, millis));
   const clearTimer =
@@ -91,8 +102,13 @@ const createAnnouncer = (ports: RootTransferPorts): Announcer => {
       clearTimeout(handle as ReturnType<typeof setTimeout>);
     });
   let handle: unknown = null;
+  let saying: Refrain = 'state';
 
   const announce = (): void => {
+    if (saying === 'ready') {
+      ports.send({ v: ROOT_TRANSFER_VERSION, kind: 'ready' });
+      return;
+    }
     ports.send({
       v: ROOT_TRANSFER_VERSION,
       kind: ports.holdsRoot() ? 'holds-root' : 'needs-root',
@@ -116,9 +132,22 @@ const createAnnouncer = (ports: RootTransferPorts): Announcer => {
       announce();
       repeat();
     },
+    say: (refrain: Refrain) => {
+      saying = refrain;
+      announce();
+    },
     stop,
   };
 };
+
+interface TransferState {
+  started: boolean;
+  peerNeedsRoot: boolean;
+  /** The peer has said it has nothing further to say about keys. */
+  peerReady: boolean;
+  /** What happened here, once it has; the exchange still awaits the peer. */
+  outcome: RootTransferOutcome | null;
+}
 
 /** What one side of the exchange needs in order to answer a message. */
 interface TransferContext {
@@ -129,15 +158,17 @@ interface TransferContext {
   sealForPeer: () => Promise<void>;
   /** Create the account, then hand it straight to the peer that has none. */
   mintAndSeal: () => Promise<void>;
-  /** Mutable because its two facts arrive from opposite directions in time. */
-  state: { started: boolean; peerNeedsRoot: boolean };
+  /** Leave the conversation, but only once both ends have finished it. */
+  finishTogether: () => void;
+  /** Mutable because these facts arrive from opposite directions in time. */
+  state: TransferState;
 }
 
 const receiveMessage = async (
   context: TransferContext,
   message: RootTransferMessage,
 ): Promise<void> => {
-  const { ports, announcer, settle, attempt, sealForPeer, state } = context;
+  const { ports, settle, attempt, sealForPeer, state } = context;
   if (message.kind === 'needs-root') {
     // A peer that confirmed first announced into a channel nobody was reading
     // yet. Remembering the request is what lets this device answer its repeat —
@@ -148,8 +179,12 @@ const receiveMessage = async (
     else if (ports.holdsRoot()) await sealForPeer();
     return;
   }
+  if (message.kind === 'ready') {
+    state.peerReady = true;
+    context.finishTogether();
+    return;
+  }
   if (message.kind === 'holds-root') {
-    announcer.stop();
     if (ports.holdsRoot()) settle('not-needed');
     return;
   }
@@ -166,22 +201,38 @@ const receiveMessage = async (
 const createActions = (
   ports: RootTransferPorts,
   announcer: Announcer,
+  state: TransferState,
   resolve: (outcome: RootTransferOutcome) => void,
 ) => {
   let finished = false;
 
-  const settle = (result: RootTransferOutcome): void => {
-    if (finished) return;
+  /**
+   * Hand the channel on, once neither end is still listening for keys. Sync
+   * follows here with a decoder of its own, and a message sent to a device still
+   * reading for keys is swallowed rather than repeated.
+   */
+  const finishTogether = (): void => {
+    const result = state.outcome;
+    if (finished || result === null || !state.peerReady) return;
     finished = true;
     announcer.stop();
     resolve(result);
+  };
+
+  const settle = (result: RootTransferOutcome): void => {
+    if (finished || state.outcome !== null) return;
+    state.outcome = result;
+    // Nothing further to say about keys — but keep saying *that* until the peer
+    // agrees, so neither device leaves the conversation alone.
+    announcer.say('ready');
+    finishTogether();
   };
 
   const attempt = async (
     work: () => Promise<void>,
     result: RootTransferOutcome,
   ): Promise<void> => {
-    if (finished) return;
+    if (finished || state.outcome !== null) return;
     try {
       await work();
       settle(result);
@@ -217,18 +268,25 @@ const createActions = (
     await sealForPeer();
   };
 
-  return { settle, attempt, sealForPeer, mintAndSeal };
+  return { settle, attempt, sealForPeer, mintAndSeal, finishTogether };
 };
 
 export const startRootTransfer = (ports: RootTransferPorts): RootTransfer => {
   const announcer = createAnnouncer(ports);
-  const state = { started: false, peerNeedsRoot: false };
+  const state: TransferState = {
+    started: false,
+    peerNeedsRoot: false,
+    peerReady: false,
+    outcome: null,
+  };
   let resolveOutcome: ((outcome: RootTransferOutcome) => void) | null = null;
   const outcome = new Promise<RootTransferOutcome>((resolve) => {
     resolveOutcome = resolve;
   });
 
-  const actions = createActions(ports, announcer, (result) => resolveOutcome?.(result));
+  const actions = createActions(ports, announcer, state, (result) => {
+    resolveOutcome?.(result);
+  });
   const context: TransferContext = { ports, announcer, state, ...actions };
 
   return {

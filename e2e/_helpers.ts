@@ -34,7 +34,12 @@ export const openCoveredContext = async (
 ): Promise<Page> => {
   const context = await browser.newContext();
   coveredContexts.push(context);
-  return openCoveredPage(context, browserName);
+  const page = await openCoveredPage(context, browserName);
+  // The default `page` fixture marks the tours seen before its first
+  // navigation; a second device is a genuinely fresh install and would meet the
+  // welcome tour over whatever the spec came to do.
+  await completeTours(page);
+  return page;
 };
 
 export const reseedAndGoHome = async (page: Page): Promise<void> => {
@@ -114,6 +119,19 @@ export const stubDirectoryPicker = async (page: Page): Promise<void> => {
 
 const TOURS_STORAGE_KEY = 'lipsum-tours';
 const ALL_TOUR_IDS = ['welcome', 'writer', 'citations', 'brainspace'];
+
+/** Mark every guided tour seen, before the page this belongs to navigates. */
+export const completeTours = (page: Page): Promise<void> =>
+  page.addInitScript(
+    ({ key, ids }) => {
+      try {
+        localStorage.setItem(key, JSON.stringify({ version: 1, completed: ids }));
+      } catch {
+        /* ignore quota / disabled storage */
+      }
+    },
+    { key: TOURS_STORAGE_KEY, ids: ALL_TOUR_IDS },
+  );
 
 /**
  * `vercel.json`'s CSP only applies to a real Vercel deployment, never to the
