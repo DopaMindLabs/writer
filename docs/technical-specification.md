@@ -554,11 +554,22 @@ wired into the app.
 - **Verification gate.** Both devices hold at the same gate and complete only on
   an explicit human confirmation that the six digits match. Nothing is
   transferred on authentication alone.
-- **Reading a code.** A symbol can be scanned from an uploaded photograph or
-  pasted as text; both paths need no camera permission. Decoding happens
-  entirely on the device — where the browser has no `BarcodeDetector` the WASM
-  engine is **served by the app**, never fetched from a CDN, so scanning works
-  offline and contacts nobody.
+- **Reading a code.** Three paths, offered together: the **live camera**, an
+  **uploaded photograph**, or **pasted text**. The camera is offered first
+  because it is the only one that works between a desktop and a phone unaided,
+  but it is never the only one — the other two need no permission and remain
+  present regardless. `getUserMedia` is called on an explicit press, never on
+  mount, and asks for the rear camera by preference. Frames are sampled every
+  300 ms and passed straight to the decoder; a frame that will not decode is the
+  normal case, not an error. The stream is released on every exit — a successful
+  scan, an explicit stop, or the surface unmounting — so no camera outlives the
+  dialog. A refusal (`NotAllowedError` / `SecurityError`) and an absent camera
+  are reported as distinct, non-terminal states with the fallbacks intact, and
+  the user may try again. Delivery requires `Permissions-Policy: camera=(self)`
+  in `vercel.json`; without it the browser blocks the camera in production while
+  local development works. Decoding happens entirely on the device — where the
+  browser has no `BarcodeDetector` the WASM engine is **served by the app**,
+  never fetched from a CDN, so scanning works offline and contacts nobody.
 - **Pairing code display.** A payload larger than one symbol is split into the
   codec's bounded sequence (max 8 parts) and stepped through manually — no
   timed cycling, so nothing needs reduced-motion gating. The symbol's own text

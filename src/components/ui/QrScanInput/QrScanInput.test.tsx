@@ -15,10 +15,19 @@ const failingScanner = (): QrScanner => ({
 });
 
 const labels = {
+  cameraLabel: 'Point your camera at the code',
+  cameraStartLabel: 'Use the camera',
+  cameraStopLabel: 'Stop the camera',
+  cameraScanningLabel: 'Looking for a code…',
+  cameraDeniedLabel: 'Camera access was declined.',
+  cameraUnavailableLabel: 'No camera is available on this device.',
   fileLabel: 'Upload a photo of the code',
   pasteLabel: 'Or paste the code',
   submitLabel: 'Use this code',
   unreadableLabel: 'No code found in that image.',
+  // Nothing here exercises the camera; a rejecting stub keeps these tests off
+  // the real `getUserMedia`, which a test environment does not have.
+  requestCamera: () => Promise.reject(new Error('no camera in tests')),
 };
 
 const imageFile = () =>
@@ -114,8 +123,11 @@ describe('paste fallback', () => {
 });
 
 describe('accessibility', () => {
-  it('labels both inputs so neither depends on a placeholder', async () => {
+  it('labels every input so none depends on a placeholder', async () => {
     render(<QrScanInput {...labels} scanner={scannerReturning([])} onScan={vi.fn()} />);
+    expect(
+      screen.getByRole('button', { name: labels.cameraStartLabel }),
+    ).toBeInTheDocument();
     expect(screen.getByLabelText(labels.fileLabel)).toBeInTheDocument();
     expect(screen.getByLabelText(labels.pasteLabel)).toBeInTheDocument();
   });
@@ -123,7 +135,11 @@ describe('accessibility', () => {
   it('is fully operable from the keyboard', async () => {
     const onScan = vi.fn();
     render(<QrScanInput {...labels} scanner={scannerReturning([])} onScan={onScan} />);
+    // Camera first, then the two camera-free paths, in the order they appear.
     await userEvent.tab();
+    expect(screen.getByRole('button', { name: labels.cameraStartLabel })).toHaveFocus();
+    await userEvent.tab();
+    expect(screen.getByLabelText(labels.fileLabel)).toHaveFocus();
     await userEvent.tab();
     expect(screen.getByLabelText(labels.pasteLabel)).toHaveFocus();
     await userEvent.keyboard('KEYBOARD{Enter}');
