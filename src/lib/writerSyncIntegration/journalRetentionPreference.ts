@@ -1,4 +1,5 @@
 import { JOURNAL_RETENTION_DEFAULT_DAYS } from 'writer-sync/operations';
+import type { LoremDB } from '@/db/LoremDB';
 import { db } from '@/db/db';
 
 /**
@@ -23,10 +24,19 @@ export const RETENTION_OPTIONS: readonly number[] = [7, 30, 90, 365];
 const isValidDays = (value: unknown): value is number =>
   typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 365;
 
-export const getJournalRetentionDays = async (): Promise<number> => {
-  const row = await db.meta.get(KEY);
+/**
+ * The preference held by one database. Parameterised because catch-up reads it
+ * for whichever database it was given, and a helper bound to the application
+ * singleton would answer for a different device's journal than the one being
+ * served.
+ */
+export const getJournalRetentionDaysFor = async (database: LoremDB): Promise<number> => {
+  const row = await database.meta.get(KEY);
   return isValidDays(row?.value) ? row.value : JOURNAL_RETENTION_DEFAULT_DAYS;
 };
+
+export const getJournalRetentionDays = (): Promise<number> =>
+  getJournalRetentionDaysFor(db);
 
 export const setJournalRetentionDays = async (days: number): Promise<void> => {
   if (!isValidDays(days)) {
