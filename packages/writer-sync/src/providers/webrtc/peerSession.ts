@@ -37,6 +37,13 @@ export interface PeerConnectionLike {
   setLocalDescription: (description: SessionDescriptionLike) => Promise<void>;
   setRemoteDescription: (description: SessionDescriptionLike) => Promise<void>;
   close: () => void;
+  /**
+   * Observe the channel the *remote* peer opened. The answering side never calls
+   * `createDataChannel`, so this is its only way to obtain one; without it a
+   * paired device could complete the exchange and still have nothing to sync
+   * over. Returns its own unsubscribe.
+   */
+  onDataChannel: (listener: (channel: DataChannelLike) => void) => () => void;
   addEventListener: (type: string, listener: () => void) => void;
   removeEventListener: (type: string, listener: () => void) => void;
 }
@@ -52,6 +59,13 @@ export interface PeerSessionOptions {
 export interface PeerSession {
   /** The control channel; ordered and reliable, created by the initiator. */
   channel: () => DataChannelLike | null;
+  /**
+   * Observe the control channel however this side came by it — created here as
+   * the initiator, or opened by the peer as the answerer. Fires at once when one
+   * already exists, so a late subscriber cannot miss it. Returns its own
+   * unsubscribe.
+   */
+  onChannel: (listener: (channel: DataChannelLike) => void) => () => void;
   /** Gather locally, then resolve the complete offer SDP. */
   createOffer: () => Promise<string>;
   /** Apply the peer's offer, gather locally, then resolve the answer SDP. */
@@ -104,6 +118,41 @@ const awaitGathering = (
 /** An SDP with no candidate of its own can never connect, however it was produced. */
 const hasCandidate = (sdp: string): boolean => sdp.includes('a=candidate');
 
+/**
+ * Holds the one control channel a session carries and who is watching for it.
+ *
+ * Separate from the session because the channel arrives by two different routes
+ * — created here as the initiator, handed over by the peer as the answerer — and
+ * both must land in the same place for `channel()` to mean the same thing on
+ * either side.
+ */
+const createChannelRegistry = () => {
+  const listeners = new Set<(channel: DataChannelLike) => void>();
+  let current: DataChannelLike | null = null;
+
+  return {
+    current: () => current,
+    /** First one wins: a second channel must not displace one already in use. */
+    adopt: (channel: DataChannelLike): void => {
+      if (current !== null) return;
+      current = channel;
+      for (const listener of listeners) listener(channel);
+    },
+    subscribe: (listener: (channel: DataChannelLike) => void): (() => void) => {
+      listeners.add(listener);
+      if (current !== null) listener(current);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    release: (): void => {
+      listeners.clear();
+      current?.close();
+      current = null;
+    },
+  };
+};
+
 export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
   const setTimer = options.setTimer ?? ((cb, ms) => setTimeout(cb, ms));
   const clearTimer = options.clearTimer ?? ((handle) => {
@@ -114,8 +163,12 @@ export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
   // Created per session, never a provider-global singleton: two pairings must
   // not share a connection.
   const connection = options.createConnection();
-  let channel: DataChannelLike | null = null;
+  const channels = createChannelRegistry();
   let closed = false;
+
+  // Registered before any offer or answer, so a channel the peer opens the
+  // instant the connection establishes is never missed.
+  const offDataChannel = connection.onDataChannel(channels.adopt);
 
   const gathered = async (): Promise<string> => {
     const complete = await awaitGathering(connection, { setTimer, clearTimer, timeoutMillis });
@@ -142,12 +195,13 @@ export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
   };
 
   return {
-    channel: () => channel,
+    channel: channels.current,
+    onChannel: channels.subscribe,
     createOffer: async () => {
       requireOpen();
       // Ordered and reliable: the operation protocol depends on a frame arriving
       // once and intact, not on best effort.
-      channel = connection.createDataChannel(CONTROL_CHANNEL, { ordered: true });
+      channels.adopt(connection.createDataChannel(CONTROL_CHANNEL, { ordered: true }));
       await connection.setLocalDescription(await connection.createOffer());
       return gathered();
     },
@@ -164,8 +218,8 @@ export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
     close: () => {
       if (closed) return;
       closed = true;
-      channel?.close();
-      channel = null;
+      offDataChannel();
+      channels.release();
       connection.close();
     },
   };

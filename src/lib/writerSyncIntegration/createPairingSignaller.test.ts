@@ -25,6 +25,7 @@ const fakeConnection = (): PeerConnectionLike & { closed: () => boolean } => {
       addEventListener: () => undefined,
       removeEventListener: () => undefined,
     }),
+    onDataChannel: () => () => undefined,
     createOffer: () => Promise.resolve(description),
     createAnswer: () => Promise.resolve({ type: 'answer', sdp: OFFER_SDP }),
     setLocalDescription: () => Promise.resolve(),
