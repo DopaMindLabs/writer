@@ -440,14 +440,15 @@
           "retry": "Try again"
         },
         "disclosure": {
-          "title": "What the server can and can't see",
-          "encrypted": "Your writing — document and note bodies, titles, annotations and citation details — is encrypted on this device before upload. The server only ever stores ciphertext.",
+          "title": "What the server can and cannot see",
+          "hiddenTitle": "What it never sees",
+          "visibleTitle": "What it does see",
+          "encrypted": "Your writing. Document and note bodies, titles, annotations and citation details are encrypted on this device before they are uploaded, so the server only ever stores ciphertext.",
           "ids": "Record identifiers and how they relate to each other",
           "timestamps": "When records were created and changed",
           "kinds": "Note kinds, and citation keys and years",
           "email": "The email address you sign in with",
-          "network": "Sync timing and your IP address",
-          "invite": "Sign-in is invite-only while this beta is running."
+          "network": "Sync timing and your IP address"
         },
         "conflict": {
           "bannerTitle": "These notes were locked on another device",

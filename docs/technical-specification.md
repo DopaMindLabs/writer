@@ -336,7 +336,7 @@ Mobile: all tabs reflow without horizontal overflow at 390×800.
 
 *Covered by:* `settings.spec.ts`, `settings-mobile.spec.ts`, `Settings.test.tsx`, `AccountTab.test.tsx`, `AboutTab.test.tsx`, `PresenceHuePicker.test.tsx`, `profile.test.ts`.
 
-#### 4.9.1 Encrypted cloud sync (invite-only beta, hidden by default)
+#### 4.9.1 Encrypted cloud sync (beta, hidden by default)
 
 An opt-in beta that replicates a space's content across a user's devices via
 [Dexie Cloud](https://dexie.org/cloud/), with **all content encrypted on the client
@@ -512,7 +512,7 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   metadata, attachment bytes. Can: record ids and relationships, timestamps, note kinds,
   citation keys and years, the sign-in email, sync timing/IP, and the device-registry rows
   (random per-device client identity plus joined/last-seen timestamps — identifiers and timing
-  the sync protocol already exposes). Sign-in is invite-only.
+  the sync protocol already exposes). Account creation is not supported.
 
 See [`docs/cloud-sync-beta.md`](cloud-sync-beta.md) for the full design note and the
 manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P8 ciphertext and
@@ -830,7 +830,7 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 
 These exist as scaffolding only — they are visible in the UI but not yet functional:
 
-- **Global Settings → Account → sign-in & cloud sync** — the Account tab manages a local, on-device profile (display name + presence colour). An **encrypted cloud-sync beta** (§ 4.9.1) exists behind two activation gates but is **hidden by default** and invite-only; it is not part of the default experience.
+- **Global Settings → Account → sign-in & cloud sync** — the Account tab manages a local, on-device profile (display name + presence colour). An **encrypted cloud-sync beta** (§ 4.9.1) exists behind two activation gates but is **hidden by default**; account creation is not supported, and it is not part of the default experience.
 - **Cross-device / multi-writer collaboration** — live collaboration and presence cursors work **across tabs on the same device** today (a same-origin BroadcastChannel over the `DocUpdate` CRDT log; see § 4.2). The encrypted cloud-sync beta (§ 4.9.1) now replicates a user's own documents **across their devices**, reconciling pulled bodies into the editor at **whole-document last-writer-wins**. What is still not wired: **real-time** cross-device editing and **live cross-device presence** (a network CRDT transport), and multi-*writer* collaboration between different people.
 - **Space settings → Sharing** (per-space visibility, shared links).
 - **Space settings → Template** (change template after creation).
