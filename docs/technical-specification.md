@@ -1,6 +1,6 @@
 # LIpsum Writer — Technical Specification
 
-> Derived from the test suite (16 Playwright e2e specs + 60+ Vitest unit/component specs) and source layout. Each feature below is grounded in tests that verify it, so this doc doubles as the source of truth for user-facing documentation.
+> Derived from the test suite (95 Playwright e2e spec files, 359 tests; 446 Vitest unit/component spec files, 3277 tests) and source layout. Each feature below is grounded in tests that verify it, so this doc doubles as the source of truth for user-facing documentation.
 
 ---
 
@@ -93,7 +93,9 @@ is held in a separate, never-synced keystore database rather than a table here.
 mutation across providers (an accepted `operationId` never applies twice) and
 tombstones prevent deleted entities resurrecting from stale updates. Dormant realm and
 member groundwork inside the Dexie adapter does **not** enable sharing: no invitation,
-role provisioning or cross-user key delivery exists.
+role provisioning or cross-user key delivery exists. Frames are signed by the device
+that authored them and verified against the trusted-device registry (§ 4.9.2), so
+attribution is checkable rather than merely asserted.
 
 Every synced write is journalled at one chokepoint: a database middleware emits the
 write's encrypted frame in the same transaction as the write itself, so a mutation and
@@ -570,19 +572,52 @@ wired into the app.
   The device id is **derived from the public key** (SHA-256 over its SPKI form,
   first 16 bytes), never minted, so id and key cannot disagree. The account
   vault binds stored roots to this same id.
-- **Journal retention.** Settings → Account → **Keep sync history for** sets
-  how long journalled operations are kept: 7 / 30 / 90 days or 1 year, default
-  **30 days**, stored in `meta` (`journalRetentionDays`, malformed values read
-  as the default). Expired frames are pruned once per sync boot, off the boot
-  path (best-effort, logged on failure). Inbox rows and deletion tombstones are
-  **never** pruned: the inbox is the replay guard, and a tombstone must outlive
-  its frames so a long-absent device cannot resurrect a deleted entity. A peer
-  last seen beyond the window resynchronises by full state exchange, not
-  journal replay.
+- **Journal retention and compaction.** Settings → Account → **Keep sync history
+  for** sets how long journalled operations are kept: 7 / 30 / 90 days or 1 year,
+  default **30 days**, stored in `meta` (`journalRetentionDays`, malformed values
+  read as the default). The journal is compacted once per sync boot, off the boot
+  path (best-effort, logged on failure). A frame is dropped once **every
+  currently-trusted device has acknowledged it**, or once the window has elapsed —
+  whichever comes first, so a device that never returns cannot hold the journal
+  open. With no trusted device paired, the window governs alone. Acknowledgements
+  are tracked per originating device within a scope, never as one mark per scope:
+  an operation from one device that is logically older than an acknowledged
+  operation from another has not thereby been seen. Inbox rows are **never**
+  pruned — the inbox is the replay guard — and deletion tombstones are exempt from
+  the window, retiring only once every still-trusted device has acknowledged them,
+  so a long-absent device cannot resurrect a deleted entity. A peer last seen
+  beyond the window resynchronises by full state exchange, not journal replay:
+  it is sent freshly minted `put` frames for current state, which merge by the
+  normal convergence rules rather than overwriting what it changed while away.
+- **Frames are device-signed.** Every journalled frame carries an ECDSA P-256
+  signature made with this device's identity key, computed over the whole frame
+  except the signature itself under a domain label distinct from the pairing
+  labels. A receiver verifies it after structural and payload-hash validation and
+  before decryption, against the public key in its trusted-device record. A frame
+  whose origin is unknown, removed or revoked — or whose signature is absent or
+  does not verify — is refused and never journalled. The AAD already proved a
+  frame's header and payload belonged together; the signature is what makes its
+  `deviceId` a claim the receiver can check, since every device in the account
+  holds the same content key. One consequence: a device accepts operations only
+  from devices it has itself paired with, so a device paired with two others
+  cannot relay their operations to each other.
+- **Transfer and catch-up.** Paired devices exchange one manifest per accessible
+  scope — a high-water mark and a count per originating device — and each asks
+  only for what it lacks. Counts, not marks alone, reveal a gap: a peer holding
+  more operations behind the same mark is missing frames no mark can name, so
+  that origin is requested whole. A scope this device cannot decrypt is never
+  requested. Verified frames are appended to the journal and materialised by the
+  same inbox-guarded sweep every provider shares, so an operation arriving by two
+  providers still applies exactly once. Attachments transfer in the same
+  conversation: the holder offers a chunk manifest, the peer asks only for the
+  chunks it lacks, each chunk is verified on arrival, and an interrupted transfer
+  resumes from the gap rather than restarting.
 - **Not yet wired.** Key transfer, the trusted-devices list, and the P2P
-  `SyncProvider` end-to-end path. The exchange runs against real WebRTC between
-  two browser profiles, driven end to end by `pair-device.spec.ts`; it has not
-  yet been verified between two physical devices on a real network.
+  `SyncProvider` end-to-end path — the transfer engine above is implemented and
+  unit-tested but not yet connected to a live peer session. The pairing exchange
+  runs against real WebRTC between two browser profiles, driven end to end by
+  `pair-device.spec.ts`; it has not yet been verified between two physical devices
+  on a real network.
 
 *Covered by:* `qrSignallingAdapter.test.ts`, `pairingSession.test.ts`,
 `payloadValidation.test.ts`, `replayCache.test.ts`, `pairingCodec.test.ts`,
