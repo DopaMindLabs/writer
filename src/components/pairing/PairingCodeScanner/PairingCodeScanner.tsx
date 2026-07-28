@@ -80,6 +80,7 @@ export const PairingCodeScanner = ({
       {incomplete && (
         <StatusGlyph kind="info" role="status" data-testid="pairing-scan-progress">
           {t('settings.pairing.scan.progress', {
+            count: progress.missing.length,
             received: progress.received,
             total: progress.total,
             missing: progress.missing.join(', '),

@@ -2,13 +2,21 @@ import { describe, expect, it, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@/test/test-utils';
-import { splitIntoQrParts } from 'writer-sync/pairing';
+import { MAX_QR_CHUNK_BYTES, splitIntoQrParts } from 'writer-sync/pairing';
 import { PairingCodeScanner } from './PairingCodeScanner';
 
 const SESSION = 'c2Vzc2lvbi1pZC0xMjM0';
 
 const symbolsFor = (text: string, sessionId = SESSION): string[] =>
   splitIntoQrParts({ sessionId, text });
+
+/**
+ * Text long enough to need `parts` symbols, expressed against the codec's own
+ * chunk size — a literal length would silently collapse to one symbol the next
+ * time that limit moves.
+ */
+const spanning = (character: string, parts: number): string =>
+  character.repeat(MAX_QR_CHUNK_BYTES * (parts - 1) + 1);
 
 /**
  * Paste is the camera-free path, and the one a test can drive honestly. No
@@ -33,7 +41,7 @@ describe('PairingCodeScanner', () => {
   });
 
   it('withholds a multi-symbol payload until the set is complete', async () => {
-    const text = 'a'.repeat(2500);
+    const text = spanning('a', 3);
     const onPayload = vi.fn<(payload: string) => void>();
     renderWithProviders(<PairingCodeScanner onPayload={onPayload} />);
     const symbols = symbolsFor(text);
@@ -50,10 +58,22 @@ describe('PairingCodeScanner', () => {
   it('names the symbols it still needs', async () => {
     renderWithProviders(<PairingCodeScanner onPayload={vi.fn()} />);
 
-    await paste(symbolsFor('b'.repeat(2500))[1]);
+    await paste(symbolsFor(spanning('b', 3))[1]);
 
     expect(screen.getByTestId('pairing-scan-progress')).toHaveTextContent(
-      'Read 1 of 3 symbols. Still needed: 1, 3.',
+      'Read 1 of 3 symbols. Still to scan: symbols 1, 3.',
+    );
+  });
+
+  it('names a single outstanding symbol as one symbol, not a count', async () => {
+    renderWithProviders(<PairingCodeScanner onPayload={vi.fn()} />);
+    const symbols = symbolsFor(spanning('b', 2));
+
+    await paste(symbols[0]);
+
+    // "Still needed: 2" read as two more symbols when it meant symbol two.
+    expect(screen.getByTestId('pairing-scan-progress')).toHaveTextContent(
+      'Read 1 of 2 symbols. Still to scan: symbol 2.',
     );
   });
 
@@ -79,8 +99,8 @@ describe('PairingCodeScanner', () => {
     const onPayload = vi.fn<(payload: string) => void>();
     renderWithProviders(<PairingCodeScanner onPayload={onPayload} />);
 
-    await paste(symbolsFor('c'.repeat(2500))[0]);
-    await paste(symbolsFor('d'.repeat(2500), 'YW5vdGhlci1zZXNzaW9u')[0]);
+    await paste(symbolsFor(spanning('c', 3))[0]);
+    await paste(symbolsFor(spanning('d', 3), 'YW5vdGhlci1zZXNzaW9u')[0]);
 
     expect(screen.getByTestId('pairing-scan-problem')).toBeInTheDocument();
     expect(onPayload).not.toHaveBeenCalled();
@@ -90,7 +110,7 @@ describe('PairingCodeScanner', () => {
     renderWithProviders(<PairingCodeScanner onPayload={vi.fn()} />);
 
     await paste('nonsense');
-    await paste(symbolsFor('e'.repeat(2500))[0]);
+    await paste(symbolsFor(spanning('e', 3))[0]);
 
     expect(screen.queryByTestId('pairing-scan-problem')).not.toBeInTheDocument();
   });

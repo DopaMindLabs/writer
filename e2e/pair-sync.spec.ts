@@ -21,7 +21,18 @@ const openPairing = async (page: Page): Promise<void> => {
   await page.goto('/#/settings?tab=deviceSync');
   await expect(page.getByTestId('pair-device-open')).toBeVisible();
   await page.getByTestId('pair-device-open').click();
-  await expect(page.getByTestId('pairing-offer-step')).toBeVisible({
+  // The dialog opens on the choice, not on a code: one device shows, the other
+  // scans, and neither surface appears before someone has picked.
+  await expect(page.getByTestId('pairing-start-step')).toBeVisible();
+};
+
+/**
+ * Take the showing half, and wait for the code itself: the step appears at once
+ * and names the wait while the device is still gathering.
+ */
+const showCode = async (page: Page): Promise<void> => {
+  await page.getByTestId('pairing-start-show').click();
+  await expect(page.getByRole('img', { name: 'Pairing code from this device' })).toBeVisible({
     timeout: GATHERING_TIMEOUT,
   });
 };
@@ -38,8 +49,17 @@ const readSymbols = async (page: Page): Promise<string[]> => {
   }
 };
 
-const pasteSymbols = async (page: Page, symbols: readonly string[]): Promise<void> => {
-  await page.getByTestId('pairing-scan-start').click();
+/**
+ * Hand symbols over the camera-free path. The scanner is reached from the start
+ * choice, or — on a device already showing its code — from the action that says
+ * the code has been read.
+ */
+const pasteSymbols = async (
+  page: Page,
+  symbols: readonly string[],
+  from: 'start' | 'showing' = 'start',
+): Promise<void> => {
+  await page.getByTestId(from === 'start' ? 'pairing-start-scan' : 'pairing-scan-start').click();
   for (const symbol of symbols) {
     await page.getByLabel('Or paste the code text').fill(symbol);
     await page.getByRole('button', { name: 'Use this code' }).click();
@@ -51,12 +71,14 @@ const pair = async (shower: Page, reader: Page): Promise<void> => {
   await openPairing(shower);
   await openPairing(reader);
 
+  // Sequenced rather than simultaneous: one device shows, the other scans.
+  await showCode(shower);
   await pasteSymbols(reader, await readSymbols(shower));
   await expect(reader.getByTestId('pairing-reply-step')).toBeVisible({
     timeout: GATHERING_TIMEOUT,
   });
 
-  await pasteSymbols(shower, await readSymbols(reader));
+  await pasteSymbols(shower, await readSymbols(reader), 'showing');
   await reader.getByTestId('pairing-reply-shown').click();
 
   await expect(shower.getByTestId('pairing-verification-code')).toBeVisible({

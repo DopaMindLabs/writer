@@ -9,10 +9,10 @@ devices, and it takes about a minute.
 - Both devices need to be on the **same network** — the same Wi‑Fi, or the same
   wired network.
 - Keep both devices in front of you. Pairing is a back‑and‑forth: each device
-  shows the other a code.
-- **Neither device has to go first.** Both show a code as soon as you open the
-  screen, and whichever one you scan with becomes the reader. Pick up whichever
-  device is easier to point at the other.
+  shows the other a code, one step at a time.
+- **It does not matter which device you start on.** Each device asks what you
+  want it to do — show a code, or scan the one on your other device — so pick
+  whichever is easier to point at the other and let that one show.
 - There are three ways to read a code: point the device's **camera** at it,
   **upload a photo** of it, or **paste the code text**. Writer asks for the
   camera only when you press "Use the camera" — never before.
@@ -23,13 +23,15 @@ devices, and it takes about a minute.
 ## Pairing step by step
 
 1. On **both** devices, open **Settings → Device sync** and choose **Pair
-   another device**. Each takes a moment to prepare, then shows a square code.
-2. On one of them, choose **Scan the other device's code**. Its own code makes
-   way for the scanner.
-3. Point it at the other device's code, or upload a photo of it, or copy the
-   text underneath that code across and paste it in.
-4. That device now shows a **reply code**. Read it back with the other device,
-   the same way round, then choose **They have scanned it**.
+   another device**. Each one asks what you want it to do.
+2. On the first device, choose **Show a code to start pairing**. It takes a
+   moment to prepare, then shows a square code.
+3. On the second device, choose **Scan the code on your other device**. Point it
+   at the first device's code, or upload a photo of it, or copy the text
+   underneath that code across and paste it in.
+4. The second device now shows a **reply code**. On the first device, choose
+   **It's been scanned — scan the reply** and read that reply back the same way
+   round. Then, on the second device, choose **They have scanned it**.
 5. Both devices now show the **same six digits**.
 
 ## Checking the six digits
@@ -47,10 +49,11 @@ device with that something else instead.
 
 ## If the code spans more than one square
 
-A long code is split across several squares, shown as "Symbol 1 of 2" and so on.
-Use **Next** and **Previous** to step through them, and read each one in turn.
-The receiving device tells you which ones it is still waiting for, so you can
-go back to the one it missed.
+Almost every pairing code fits in a single square. Occasionally a long one is
+split across several, shown as "Symbol 1 of 2" and so on. Use **Next** and
+**Previous** to step through them, and read each one in turn. The receiving
+device names the squares it is still waiting for — "Still to scan: symbol 2" —
+so you can go back to the one it missed.
 
 ## If something goes wrong
 
