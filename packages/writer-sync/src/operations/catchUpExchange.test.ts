@@ -1,0 +1,316 @@
+import { describe, expect, it, vi } from 'vitest';
+import { asDeviceId, asOperationId } from '../core/ids';
+import type { AccessScopeId } from '../core/providers.types';
+import type { EncryptedSyncFrame } from './operation.types';
+import type { OperationStore } from './operationStore.types';
+import { hashPayload } from './operationCodec';
+import { buildScopeManifests } from './scopeManifest';
+import {
+  CATCH_UP_PROTOCOL_VERSION,
+  type CatchUpMessage,
+  type OperationAcknowledgement,
+} from './catchUpMessage';
+import { createCatchUpExchange, type CatchUpPorts } from './catchUpExchange';
+
+const PAYLOAD = 'cGF5bG9hZA';
+
+const frameOf = async (options: {
+  id: string;
+  millis: number;
+  device?: string;
+  scope?: string;
+}): Promise<EncryptedSyncFrame> => ({
+  v: 1,
+  operationId: asOperationId(options.id),
+  accessScopeId: options.scope ?? 'scope-1',
+  entityTable: 'notes',
+  entityId: `entity-${options.id}`,
+  kind: 'put',
+  deviceId: asDeviceId(options.device ?? 'device-a'),
+  logicalAt: { millis: options.millis, counter: 0 },
+  keyId: 'key-1',
+  epoch: 1,
+  payloadHash: await hashPayload(PAYLOAD),
+  payload: PAYLOAD,
+  signature: 'signed',
+});
+
+const memoryStore = (frames: EncryptedSyncFrame[]): OperationStore => ({
+  append: async (frame) => {
+    if (!frames.some((held) => String(held.operationId) === String(frame.operationId))) {
+      frames.push(frame);
+    }
+  },
+  byId: async (operationId) =>
+    frames.find((frame) => String(frame.operationId) === String(operationId)),
+  forScope: async (accessScopeId) =>
+    frames.filter((frame) => frame.accessScopeId === accessScopeId),
+});
+
+const harness = (options: {
+  frames?: EncryptedSyncFrame[];
+  scopes?: AccessScopeId[];
+  verifySignature?: (frame: EncryptedSyncFrame) => Promise<boolean>;
+} = {}) => {
+  const frames = options.frames ?? [];
+  const sent: CatchUpMessage[] = [];
+  const acknowledged: OperationAcknowledgement[] = [];
+  const rejected: EncryptedSyncFrame[] = [];
+  const onFramesJournalled = vi.fn();
+
+  const ports: CatchUpPorts = {
+    journal: memoryStore(frames),
+    accessibleScopeIds: async () => options.scopes ?? ['scope-1'],
+    send: (message) => sent.push(message),
+    verifySignature: options.verifySignature ?? (async () => true),
+    recordPeerAcknowledgement: async (ack) => {
+      acknowledged.push(ack);
+    },
+    onFramesJournalled,
+    onRejectedFrame: (frame) => rejected.push(frame),
+  };
+
+  return {
+    exchange: createCatchUpExchange(ports),
+    frames,
+    sent,
+    acknowledged,
+    rejected,
+    onFramesJournalled,
+  };
+};
+
+const manifestMessage = (manifests: ReturnType<typeof buildScopeManifests>): CatchUpMessage => ({
+  v: CATCH_UP_PROTOCOL_VERSION,
+  kind: 'manifest',
+  manifests,
+});
+
+describe('createCatchUpExchange start', () => {
+  it('opens by publishing a manifest of every accessible scope', async () => {
+    const local = await frameOf({ id: 'op-1', millis: 10 });
+    const { exchange, sent } = harness({ frames: [local] });
+
+    await exchange.start();
+
+    expect(sent).toEqual([manifestMessage(buildScopeManifests([local]))]);
+  });
+
+  it('publishes an empty manifest when it holds nothing', async () => {
+    const { exchange, sent } = harness();
+
+    await exchange.start();
+
+    expect(sent).toEqual([{ v: 1, kind: 'manifest', manifests: [] }]);
+  });
+});
+
+describe('createCatchUpExchange on a peer manifest', () => {
+  it('requests what it is missing', async () => {
+    const { exchange, sent } = harness();
+    const remote = await frameOf({ id: 'op-1', millis: 10 });
+
+    await exchange.receive(manifestMessage(buildScopeManifests([remote])));
+
+    expect(sent).toEqual([
+      {
+        v: 1,
+        kind: 'request',
+        requests: [
+          { accessScopeId: 'scope-1', originDeviceId: 'device-a', after: undefined },
+        ],
+      },
+    ]);
+  });
+
+  it('still answers when it needs nothing, so the peer is not left waiting', async () => {
+    const local = await frameOf({ id: 'op-1', millis: 10 });
+    const { exchange, sent } = harness({ frames: [local] });
+
+    await exchange.receive(manifestMessage(buildScopeManifests([local])));
+
+    expect(sent).toEqual([{ v: 1, kind: 'request', requests: [] }]);
+  });
+
+  it('ignores a scope it cannot decrypt', async () => {
+    const { exchange, sent } = harness({ scopes: ['scope-1'] });
+    const remote = await frameOf({ id: 'op-x', millis: 10, scope: 'scope-9' });
+
+    await exchange.receive(manifestMessage(buildScopeManifests([remote])));
+
+    expect(sent).toEqual([{ v: 1, kind: 'request', requests: [] }]);
+  });
+});
+
+describe('createCatchUpExchange on a peer request', () => {
+  it('answers with the requested frames and marks the reply final', async () => {
+    const held = await frameOf({ id: 'op-1', millis: 10 });
+    const { exchange, sent } = harness({ frames: [held] });
+
+    await exchange.receive({
+      v: 1,
+      kind: 'request',
+      requests: [{ accessScopeId: 'scope-1', originDeviceId: asDeviceId('device-a') }],
+    });
+
+    expect(sent).toEqual([{ v: 1, kind: 'frames', frames: [held], final: true }]);
+  });
+
+  it('answers an empty request with an empty final reply', async () => {
+    const { exchange, sent } = harness();
+
+    await exchange.receive({ v: 1, kind: 'request', requests: [] });
+
+    expect(sent).toEqual([{ v: 1, kind: 'frames', frames: [], final: true }]);
+  });
+
+  it('never answers for a scope it does not itself hold access to', async () => {
+    const held = await frameOf({ id: 'op-x', millis: 10, scope: 'scope-9' });
+    const { exchange, sent } = harness({ frames: [held], scopes: ['scope-1'] });
+
+    await exchange.receive({
+      v: 1,
+      kind: 'request',
+      requests: [{ accessScopeId: 'scope-9', originDeviceId: asDeviceId('device-a') }],
+    });
+
+    expect(sent).toEqual([{ v: 1, kind: 'frames', frames: [], final: true }]);
+  });
+});
+
+describe('createCatchUpExchange on inbound frames', () => {
+  it('journals a verified frame and acknowledges it on the final batch', async () => {
+    const { exchange, frames, sent, onFramesJournalled } = harness();
+    const inbound = await frameOf({ id: 'op-1', millis: 10 });
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [inbound], final: true });
+
+    expect(frames).toEqual([inbound]);
+    expect(onFramesJournalled).toHaveBeenCalledTimes(1);
+    expect(sent).toEqual([
+      {
+        v: 1,
+        kind: 'ack',
+        acknowledgements: [
+          {
+            accessScopeId: 'scope-1',
+            originDeviceId: 'device-a',
+            operationId: 'op-1',
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('acknowledges only once the reply is complete', async () => {
+    const { exchange, sent, frames } = harness();
+    const inbound = await frameOf({ id: 'op-1', millis: 10 });
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [inbound], final: false });
+
+    expect(frames).toEqual([inbound]);
+    expect(sent).toEqual([]);
+  });
+
+  it('rejects a frame whose payload does not match its hash', async () => {
+    const { exchange, frames, rejected } = harness();
+    const tampered = { ...(await frameOf({ id: 'op-1', millis: 10 })), payload: 'b3RoZXI' };
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [tampered], final: true });
+
+    expect(frames).toEqual([]);
+    expect(rejected.map((frame) => String(frame.operationId))).toEqual(['op-1']);
+  });
+
+  it('rejects a frame whose signature does not verify', async () => {
+    const { exchange, frames, rejected } = harness({
+      verifySignature: async () => false,
+    });
+    const inbound = await frameOf({ id: 'op-1', millis: 10 });
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [inbound], final: true });
+
+    expect(frames).toEqual([]);
+    expect(rejected.map((frame) => String(frame.operationId))).toEqual(['op-1']);
+  });
+
+  it('rejects a frame for a scope it has no key for', async () => {
+    const { exchange, frames, rejected } = harness({ scopes: ['scope-1'] });
+    const inbound = await frameOf({ id: 'op-x', millis: 10, scope: 'scope-9' });
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [inbound], final: true });
+
+    expect(frames).toEqual([]);
+    expect(rejected.map((frame) => String(frame.operationId))).toEqual(['op-x']);
+  });
+
+  it('keeps the rest of a batch when one frame is rejected', async () => {
+    const { exchange, frames, rejected } = harness();
+    const good = await frameOf({ id: 'op-good', millis: 10 });
+    const bad = { ...(await frameOf({ id: 'op-bad', millis: 20 })), payload: 'b3RoZXI' };
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [bad, good], final: true });
+
+    expect(frames).toEqual([good]);
+    expect(rejected.map((frame) => String(frame.operationId))).toEqual(['op-bad']);
+  });
+
+  it('applies the same frame twice without journalling it twice', async () => {
+    const { exchange, frames } = harness();
+    const inbound = await frameOf({ id: 'op-1', millis: 10 });
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [inbound], final: true });
+    await exchange.receive({ v: 1, kind: 'frames', frames: [inbound], final: true });
+
+    expect(frames).toEqual([inbound]);
+  });
+
+  it('acknowledges the newest operation per origin, not each one', async () => {
+    const { exchange, sent } = harness();
+    const first = await frameOf({ id: 'op-1', millis: 10 });
+    const second = await frameOf({ id: 'op-2', millis: 20 });
+    const other = await frameOf({ id: 'op-b', millis: 5, device: 'device-b' });
+
+    await exchange.receive({
+      v: 1,
+      kind: 'frames',
+      frames: [first, second, other],
+      final: true,
+    });
+
+    expect(sent).toEqual([
+      {
+        v: 1,
+        kind: 'ack',
+        acknowledgements: [
+          { accessScopeId: 'scope-1', originDeviceId: 'device-a', operationId: 'op-2' },
+          { accessScopeId: 'scope-1', originDeviceId: 'device-b', operationId: 'op-b' },
+        ],
+      },
+    ]);
+  });
+
+  it('sends no acknowledgement when the whole reply was empty', async () => {
+    const { exchange, sent, onFramesJournalled } = harness();
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [], final: true });
+
+    expect(sent).toEqual([]);
+    expect(onFramesJournalled).not.toHaveBeenCalled();
+  });
+});
+
+describe('createCatchUpExchange on a peer acknowledgement', () => {
+  it('records how far the peer has read', async () => {
+    const { exchange, acknowledged } = harness();
+    const ack = {
+      accessScopeId: 'scope-1',
+      originDeviceId: asDeviceId('device-a'),
+      operationId: asOperationId('op-1'),
+    };
+
+    await exchange.receive({ v: 1, kind: 'ack', acknowledgements: [ack] });
+
+    expect(acknowledged).toEqual([ack]);
+  });
+});

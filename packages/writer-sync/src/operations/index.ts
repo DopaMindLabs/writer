@@ -54,5 +54,21 @@ export type { CompactionOptions, PeerAcknowledgement } from './journalCompaction
 export { buildScopeManifests, framesForRequest, planCatchUp } from './scopeManifest';
 export type { CatchUpRequest, OriginSummary, ScopeManifest } from './scopeManifest';
 
+export {
+  CATCH_UP_PROTOCOL_VERSION,
+  MAX_ACKNOWLEDGEMENTS,
+  MAX_FRAMES_PER_MESSAGE,
+  MAX_MANIFESTS,
+  MAX_ORIGINS_PER_SCOPE,
+  MAX_REQUESTS,
+  MalformedCatchUpMessageError,
+  decodeCatchUpMessage,
+  encodeCatchUpMessage,
+} from './catchUpMessage';
+export type { CatchUpMessage, OperationAcknowledgement } from './catchUpMessage';
+
+export { createCatchUpExchange } from './catchUpExchange';
+export type { CatchUpExchange, CatchUpPorts } from './catchUpExchange';
+
 export type { OperationInbox, OperationStore } from './operationStore.types';
 export type { MaterializeResult, OperationMaterializer } from './materializer.types';
