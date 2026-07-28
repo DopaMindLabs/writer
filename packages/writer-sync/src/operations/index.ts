@@ -70,5 +70,8 @@ export type { CatchUpMessage, OperationAcknowledgement } from './catchUpMessage'
 export { createCatchUpExchange } from './catchUpExchange';
 export type { CatchUpExchange, CatchUpPorts } from './catchUpExchange';
 
+export { startCatchUpSession } from './catchUpSession';
+export type { CatchUpSession } from './catchUpSession';
+
 export type { OperationInbox, OperationStore } from './operationStore.types';
 export type { MaterializeResult, OperationMaterializer } from './materializer.types';
