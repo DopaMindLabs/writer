@@ -68,3 +68,39 @@ prove who they are. Your passphrase, your recovery code and the keys that
 protect your writing are **never** in a pairing code — nothing secret is on
 screen, which is why it is safe to hold up a code before you have confirmed
 anything.
+
+## What happens after pairing
+
+Once two devices trust each other, they compare what each one holds and send
+only the difference. Neither device re-sends work the other already has, so
+catching up after a few days apart is quick.
+
+Every change carries a signature from the device that made it, and the receiving
+device checks that signature before accepting anything. A device you have
+removed, or one you never paired with, cannot slip changes in.
+
+Attachments travel in pieces. If a transfer is interrupted — you close the lid,
+you walk out of range — the next connection picks up from the pieces still
+missing rather than starting the file again.
+
+Each device accepts changes only from devices it has paired with itself. If you
+have three devices, pair each one with each of the others; a device in the
+middle will not pass changes along on their behalf.
+
+## Devices you have not used for a while
+
+Writer keeps a history of recent changes so a device that has been offline can
+catch up. How long it keeps that history is up to you — Settings → Account →
+**Keep sync history for**, which offers 7, 30 or 90 days, or a year. Thirty days
+is the default.
+
+A device that has been switched off for longer than that has fallen past the
+history, so it is sent a fresh copy of everything as it currently stands instead.
+Anything you wrote on it while it was away is not lost: the two versions are
+merged the same way any other change is, rather than one silently replacing the
+other.
+
+Once every device you have paired has confirmed it holds a change, Writer stops
+keeping that piece of history early — there is nobody left who needs it. If one
+device never comes back, the window above still closes eventually, so a device
+you have lost cannot make the history grow forever.
