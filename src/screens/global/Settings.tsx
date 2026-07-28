@@ -13,6 +13,7 @@ import { ComingSoon } from '@/components/settings/ComingSoon';
 import { ComingSoonRow } from '@/components/settings/ComingSoonRow';
 import { TabHeader } from '@/components/settings/TabHeader';
 import { SyncTab } from '@/components/settings/SyncTab';
+import { DeviceSyncTab } from '@/components/settings/tabs/DeviceSyncTab';
 import { AccessibilityTab } from '@/components/settings/tabs/AccessibilityTab';
 import { DocInspectorTab } from '@/components/settings/tabs/DocInspectorTab';
 import { ExportImportTab } from '@/components/settings/tabs/ExportImportTab';
@@ -45,6 +46,7 @@ const TAB_IDS = [
   'annotation',
   'backups',
   'sync',
+  'deviceSync',
   'export',
   'data',
   'account',
@@ -56,6 +58,7 @@ type PlaceholderTabId = Exclude<
   | 'editor'
   | 'docInspector'
   | 'sync'
+  | 'deviceSync'
   | 'accessibility'
   | 'language'
   | 'export'
@@ -93,7 +96,7 @@ const GROUPED_TABS: { label: string; ids: readonly TabId[] }[] = [
     ],
   },
   { label: 'writing', ids: ['palettes', 'citations', 'annotation'] },
-  { label: 'data', ids: ['backups', 'sync', 'export', 'data'] },
+  { label: 'data', ids: ['backups', 'sync', 'deviceSync', 'export', 'data'] },
   { label: 'account', ids: ['account', 'about'] },
 ];
 
@@ -108,6 +111,7 @@ const renderSection = (id: TabId): ReactElement => {
   if (id === 'docInspector') return <DocInspectorTab />;
   if (id === 'accessibility') return <AccessibilityTab />;
   if (id === 'sync') return <SyncTab />;
+  if (id === 'deviceSync') return <DeviceSyncTab />;
   if (id === 'language') return <LanguageTab />;
   if (id === 'export') return <ExportImportTab />;
   if (id === 'account') return <AccountTab />;

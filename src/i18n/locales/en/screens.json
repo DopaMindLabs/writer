@@ -68,7 +68,8 @@
       "citations": "Citation style",
       "annotation": "Annotations",
       "backups": "Backups",
-      "sync": "Local Sync",
+      "sync": "Folder sync",
+      "deviceSync": "Device sync",
       "export": "Export / import",
       "data": "Your data",
       "account": "Account",
@@ -829,6 +830,20 @@
         "readHint": "Choose this on the second device, then scan or paste the first code."
       },
       "answerHint": "Now show this reply code to the other device."
+    },
+    "devices": {
+      "title": "Device sync",
+      "subtitle": "Keep your writing the same across your devices. Devices connect directly to each other — nothing passes through a server.",
+      "list": {
+        "empty": "No other devices yet. Pair one to keep your writing the same on both.",
+        "thisDevice": "This device",
+        "removed": "Removed",
+        "added": "Paired {{date}}",
+        "lastConnected": "last connected {{when}}",
+        "neverConnected": "not connected since pairing",
+        "remove": "Remove",
+        "removalLimitation": "Removing a device stops it connecting again, but it cannot reach back and erase the writing already on it. Treat a lost device as still holding whatever it had."
+      }
     }
   },
   "notFound": {

@@ -20,7 +20,7 @@ import { openCoveredContext } from './_helpers';
 const GATHERING_TIMEOUT = 30_000;
 
 const openPairing = async (page: Page): Promise<void> => {
-  await page.goto('/#/settings?tab=account');
+  await page.goto('/#/settings?tab=deviceSync');
   await expect(page.getByTestId('pair-device-open')).toBeVisible();
   await page.getByTestId('pair-device-open').click();
   await expect(page.getByTestId('pairing-role-choice')).toBeVisible();
@@ -144,7 +144,9 @@ test('a photographed code is read from an uploaded image', async ({
   ).toBeVisible({ timeout: GATHERING_TIMEOUT });
 });
 
-test('the pairing dialog is reachable and named from Account settings', async ({ page }) => {
+test('the pairing dialog is reachable and named from Device sync settings', async ({
+  page,
+}) => {
   await openPairing(page);
 
   await expect(page.getByRole('dialog', { name: 'Pair another device' })).toBeVisible();
@@ -171,7 +173,9 @@ test('the reading device can start and stop its camera', async ({ page }) => {
   await start.click();
 
   await expect(page.getByTestId('qr-scan-camera')).toBeVisible();
-  await expect(page.getByRole('status')).toHaveText('Looking for a code…');
+  await expect(
+    page.getByTestId('pairing-code-scanner').getByRole('status'),
+  ).toHaveText('Looking for a code…');
 
   const stop = page.getByRole('button', { name: 'Stop the camera' });
   await expect(stop).toBeVisible();
@@ -195,4 +199,22 @@ test('the camera never displaces the ways in that need no permission', async ({
   // gives up on it has somewhere to go without closing the dialog.
   await expect(page.getByLabel('Upload a photo of the code')).toBeVisible();
   await expect(page.getByLabel('Or paste the code text')).toBeVisible();
+});
+
+test('Device sync lists no devices until one is paired', async ({ page }) => {
+  await page.goto('/#/settings?tab=deviceSync');
+
+  await expect(page.getByTestId('trusted-devices-empty')).toBeVisible();
+  // The entry point to pairing lives with the list it fills.
+  await expect(page.getByTestId('pair-device-open')).toBeVisible();
+  // Retention moved here from Account: it governs how long a device can be away
+  // and still catch up, which is meaningless without other devices.
+  await expect(page.getByTestId('setting-journal-retention')).toBeVisible();
+});
+
+test('Account no longer carries the pairing entry point', async ({ page }) => {
+  await page.goto('/#/settings?tab=account');
+
+  await expect(page.getByTestId('pair-device-open')).toHaveCount(0);
+  await expect(page.getByTestId('setting-journal-retention')).toHaveCount(0);
 });
