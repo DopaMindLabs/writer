@@ -2,19 +2,18 @@ import { useTranslation } from 'react-i18next';
 import type { QrScanner } from 'writer-qr/scan';
 import { InlineBanner } from '@/components/ui/InlineBanner';
 import { StatusGlyph } from '@/components/ui/StatusGlyph';
-import { PairingRoleChoice } from '@/components/pairing/PairingRoleChoice/PairingRoleChoice';
 import { PairingVerification } from '@/components/pairing/PairingVerification/PairingVerification';
-import { InitiatorPairingView } from './InitiatorPairingView';
-import { JoinerPairingView } from './JoinerPairingView';
+import { PairingOfferStep } from './PairingOfferStep';
+import { PairingReplyStep } from './PairingReplyStep';
 import type { PairingExchange } from './usePairingExchange';
 
 /**
- * What the dialog shows for the phase the exchange is in.
+ * What the dialog shows for the phase the exchange is in — one thing at a time.
  *
  * Separated from the dialog frame so each stays one readable unit: the frame
- * owns the modal, this owns the flow. The phases every role shares live here;
- * the two that differ delegate to a view of their own rather than growing a
- * second dimension of branching in one component.
+ * owns the modal, this owns the flow. Every phase resolves to a single step with
+ * a single action, so the user is never looking at a code beside a scanner, or a
+ * code beside a verification gate, working out which of the two is their turn.
  */
 
 export interface PairDeviceDialogBodyProps {
@@ -23,12 +22,14 @@ export interface PairDeviceDialogBodyProps {
   scanner?: QrScanner;
 }
 
+/** The comparison, once this device has nothing left to hand over. */
+const verification = (exchange: PairingExchange) =>
+  exchange.peer === null ? null : (
+    <PairingVerification code={exchange.peer.verificationCode} onConfirm={exchange.confirm} />
+  );
+
 export const PairDeviceDialogBody = ({ exchange, scanner }: PairDeviceDialogBodyProps) => {
   const { t } = useTranslation('screens');
-
-  if (exchange.phase === 'choosing') {
-    return <PairingRoleChoice onChoose={exchange.begin} />;
-  }
 
   if (exchange.phase === 'creating') {
     return (
@@ -66,18 +67,15 @@ export const PairDeviceDialogBody = ({ exchange, scanner }: PairDeviceDialogBody
     );
   }
 
-  if (exchange.role === 'joiner') {
-    return <JoinerPairingView exchange={exchange} scanner={scanner} />;
-  }
-
-  if (exchange.phase === 'awaiting-confirmation' && exchange.peer !== null) {
-    return (
-      <PairingVerification
-        code={exchange.peer.verificationCode}
-        onConfirm={exchange.confirm}
-      />
+  if (exchange.phase === 'awaiting-confirmation') {
+    // The reading device has a code to hand back before anyone can compare
+    // digits; the device that was read has nothing left but the comparison.
+    return exchange.role === 'joiner' ? (
+      <PairingReplyStep exchange={exchange} />
+    ) : (
+      verification(exchange)
     );
   }
 
-  return <InitiatorPairingView exchange={exchange} scanner={scanner} />;
+  return <PairingOfferStep exchange={exchange} scanner={scanner} />;
 };

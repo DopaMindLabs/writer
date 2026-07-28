@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useReducer, useRef } from 'react';
-import { PairingState, type PairingRole, type PairingSession } from 'writer-sync/pairing';
+import { useCallback, useEffect, useReducer } from 'react';
+import { PairingState, type PairingSession } from 'writer-sync/pairing';
 import { usePeerCatchUp } from '@/lib/writerSyncIntegration/peerCatchUpContext';
 import type { PeerCatchUp } from '@/lib/writerSyncIntegration/peerCatchUp';
 import {
@@ -7,21 +7,25 @@ import {
   type PairingSignaller,
   type PairingSignallerOptions,
 } from '@/lib/writerSyncIntegration/createPairingSignaller';
-import { acceptPairingAnswer } from './acceptPairingAnswer';
-import { answerPairingOffer } from './answerPairingOffer';
 import { startPairingExchange } from './startPairingExchange';
+import { takeScannedPayload } from './takeScannedPayload';
+import { usePairingSessionRefs } from './usePairingSessionRefs';
 import {
   initialExchangeState,
   pairingExchangeReducer,
+  type PairingExchangeAction,
   type PairingExchangeState,
 } from './pairingExchangeReducer';
 
 /**
- * Drives one half of a pairing exchange for as long as the dialog is open.
+ * Drives one half of a pairing exchange for as long as the dialog is open —
+ * which half being something this device discovers rather than something the
+ * user is asked.
  *
- * Which half is the user's choice, made once and never switched: a device that
- * changed role mid-exchange would be holding a connection answered against a
- * description it had also authored.
+ * Every device offers its own code and watches for the other's. The first
+ * payload to arrive settles the roles (`resolvePairingRole`), so neither person
+ * has to work out which device goes first, and the case where both scanned
+ * resolves without a further round trip.
  *
  * The protocol's state machine runs alongside the view state and is the
  * authority on ordering. `awaiting-confirmation` is not a nicety — the account
@@ -36,12 +40,8 @@ export interface UsePairingExchangeOptions {
 }
 
 export interface PairingExchange extends PairingExchangeState {
-  /** Choose which half of the exchange this device runs. */
-  begin: (role: PairingRole) => void;
-  /** Take the peer's reassembled offer payload (joiner). */
-  submitOffer: (payload: string) => void;
-  /** Take the peer's reassembled answer payload (initiator). */
-  acceptAnswer: (payload: string) => void;
+  /** Take a payload read from the other device, whatever half it turns out to be. */
+  submitPayload: (payload: string) => void;
   /** Record that the user has compared the codes and they match. */
   confirm: () => void;
 }
@@ -63,75 +63,75 @@ const handOverSession = (
   return true;
 };
 
+/**
+ * Take the user's word that the digits match, and hand the connection on.
+ *
+ * The machine is the gate, not the caller: it refuses `confirmed` from any
+ * state but `awaiting-confirmation`, so a stray call cannot skip ahead. Returns
+ * whether the session was taken, which is what tells teardown to leave it alone.
+ */
+const confirmPairing = (options: {
+  machine: PairingSession | null;
+  signaller: PairingSignaller | null;
+  catchUp: PeerCatchUp | null;
+  dispatch: (action: PairingExchangeAction) => void;
+}): boolean => {
+  const { machine, signaller, catchUp, dispatch } = options;
+  if (machine?.state() !== PairingState.AwaitingConfirmation) return false;
+  machine.apply('confirmed');
+  const taken = handOverSession(catchUp, signaller);
+  dispatch({ type: 'confirmed' });
+  return taken;
+};
+
 export const usePairingExchange = ({
   open,
   createSignaller = createPairingSignaller,
 }: UsePairingExchangeOptions): PairingExchange => {
   const [state, dispatch] = useReducer(pairingExchangeReducer, initialExchangeState);
   const catchUp = usePeerCatchUp();
-  const signaller = useRef<PairingSignaller | null>(null);
-  // Set once the session has been handed on, so teardown stops closing it.
-  const adopted = useRef(false);
-  const session = useRef<PairingSession | null>(null);
-  const dismissed = useRef(false);
-  const { role } = state;
+  const live = usePairingSessionRefs(open);
+  const { signaller, session, isDismissed, adopt, markHandedOver } = live;
 
   useEffect(() => {
     if (!open) return;
-    dismissed.current = false;
-    return () => {
-      dismissed.current = true;
-      // A session handed to the catch-up holder is no longer this dialog's to
-      // close: sync has to keep the connection the pairing established.
-      if (!adopted.current) signaller.current?.close();
-      adopted.current = false;
-      signaller.current = null;
-      session.current = null;
-    };
-  }, [open]);
-
-  useEffect(() => {
-    if (!open || role === null) return;
-
     void startPairingExchange({
-      role,
+      role: 'initiator',
       createSignaller,
       dispatch,
-      isDismissed: () => dismissed.current,
-      adopt: (opened, machine) => {
-        signaller.current = opened;
-        session.current = machine;
-      },
+      isDismissed,
+      adopt,
     });
-  }, [open, role, createSignaller]);
+  }, [open, createSignaller, isDismissed, adopt]);
 
-  const begin = useCallback((chosen: PairingRole): void => {
-    dispatch({ type: 'begin', role: chosen });
-  }, []);
-
-  const submitOffer = useCallback((payload: string): void => {
-    const opened = signaller.current;
-    const machine = session.current;
-    if (opened === null || machine === null) return;
-    void answerPairingOffer({ payload, signaller: opened, machine, dispatch });
-  }, []);
-
-  const acceptAnswer = useCallback((payload: string): void => {
-    const opened = signaller.current;
-    const machine = session.current;
-    if (opened === null || machine === null) return;
-    void acceptPairingAnswer({ payload, signaller: opened, machine, dispatch });
-  }, []);
+  const submitPayload = useCallback(
+    (payload: string): void => {
+      const opened = signaller.current;
+      const machine = session.current;
+      if (opened === null || machine === null) return;
+      void takeScannedPayload({
+        payload,
+        signaller: opened,
+        machine,
+        createSignaller,
+        isDismissed,
+        adopt,
+        dispatch,
+      });
+    },
+    [createSignaller, isDismissed, adopt, signaller, session],
+  );
 
   const confirm = useCallback((): void => {
-    const machine = session.current;
-    // The machine is the gate, not this check: it refuses `confirmed` from any
-    // state but `awaiting-confirmation`, so a stray call cannot skip ahead.
-    if (machine?.state() !== PairingState.AwaitingConfirmation) return;
-    machine.apply('confirmed');
-    adopted.current = handOverSession(catchUp, signaller.current);
-    dispatch({ type: 'confirmed' });
-  }, [catchUp]);
+    markHandedOver(
+      confirmPairing({
+        machine: session.current,
+        signaller: signaller.current,
+        catchUp,
+        dispatch,
+      }),
+    );
+  }, [catchUp, markHandedOver, signaller, session]);
 
-  return { ...state, begin, submitOffer, acceptAnswer, confirm };
+  return { ...state, submitPayload, confirm };
 };

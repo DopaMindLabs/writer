@@ -774,7 +774,7 @@
     },
     "pairing": {
       "title": "Pair another device",
-      "subtitle": "One device shows a code; the other reads it. Choose which this device does.",
+      "subtitle": "Show this code on one device and scan it with the other. Either device can do either part.",
       "qrLabel": {
         "offer": "Pairing code from this device",
         "answer": "Reply code from this device"
@@ -784,10 +784,10 @@
       "symbolPosition": "Symbol {{index}} of {{total}}",
       "previousSymbol": "Previous",
       "nextSymbol": "Next",
-      "creating": "Preparing this device…",
+      "creating": "Preparing this device's code…",
       "failed": "This device could not prepare a pairing code. Close this and try again.",
       "openLabel": "Pair another device",
-      "openHint": "Show a code your other device can read, so the two can sync directly.",
+      "openHint": "Show a code your other device can scan, so the two can sync directly.",
       "retention": {
         "label": "Keep sync history for",
         "hint": "Devices away longer than this rebuild from current content instead of replaying history.",
@@ -823,13 +823,16 @@
         "title": "Devices paired",
         "body": "This device and your other device now trust each other."
       },
-      "role": {
-        "show": "Show a code on this device",
-        "showHint": "Choose this on one device. It shows a code for the other to read.",
-        "read": "Read the other device's code",
-        "readHint": "Choose this on the second device, then scan or paste the first code."
+      "offerStep": {
+        "body": "On your other device, open Pair another device, then scan this code.",
+        "scanAction": "Scan the other device's code",
+        "showAction": "Show my code again",
+        "ownCode": "That is this device's own code. Scan the one showing on your other device."
       },
-      "answerHint": "Now show this reply code to the other device."
+      "replyStep": {
+        "body": "Nearly there. Scan this reply with the device you started on.",
+        "done": "They have scanned it"
+      }
     },
     "devices": {
       "title": "Device sync",

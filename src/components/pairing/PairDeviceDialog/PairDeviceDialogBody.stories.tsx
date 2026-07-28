@@ -16,15 +16,10 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** The opening question: neither device can work out its role unaided. */
-export const Choosing: Story = {
-  args: { exchange: exchange({ phase: 'choosing', role: null }) },
-};
-
 /** Gathering local candidates before a code can be shown. */
 export const Gathering: Story = {};
 
-/** The code is up, and this device is watching for the reply. */
+/** The opening step on either device: one code, one way to read the other's. */
 export const AwaitingPeer: Story = {
   args: {
     exchange: exchange({
@@ -39,12 +34,7 @@ export const Authenticating: Story = {
   args: { exchange: exchange({ phase: 'authenticating' }) },
 };
 
-/** The reading device before it has seen anything. */
-export const AwaitingOffer: Story = {
-  args: { exchange: exchange({ phase: 'awaiting-offer', role: 'joiner' }) },
-};
-
-/** The reading device: reply and gate together, because its peer needs both. */
+/** The reading device, with a reply to hand back before anyone compares digits. */
 export const JoinerAwaitingConfirmation: Story = {
   args: {
     exchange: exchange({

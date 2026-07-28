@@ -1489,6 +1489,17 @@ Implementation must stop for explicit review at these points:
    - Acknowledgements are recorded **per originating device** within a scope, not as one mark per scope. A single mark is unsound once three devices write: an operation from device C, logically older than an acknowledged operation from device A, would be judged covered although the peer never saw it. See `TrustedDeviceRecord.acknowledgedOperations` and `journalCompaction.ts`.
    - Deletion tombstones remain exempt from the window — they must outlive the frames that produced them — and are retired **only** on unanimous acknowledgement by the devices still trusted (`releasableTombstones`). Removing a device is what releases a tombstone it never acknowledged. This is sound only because a device returning from beyond the window rebuilds by full state exchange rather than replaying its own stale journal; if that ever changes, this rule must change with it.
 
+10. **Which device pairs first** — answered, 2026-07-28.
+    - Neither. Both devices gather and show a code, and **the device that reads a code answers it** (`resolvePairingRole`). Asking the user to nominate a shower and a reader asks them to understand the protocol before they can start, and from either device both options read as equally plausible.
+    - The rule replaces an earlier device-id tie-break, which let only the greater id answer so that two devices scanning at once could not both answer and then both wait. That is sound for two devices watching a channel and wrong for two watching a camera: a payload arrives only when a human points one device at another, and in the ordinary flow exactly one of them ever does. A reader whose id sorted lower refused to answer and waited for a reply nobody was preparing — a hang on roughly half of all pairings, indistinguishable on screen from a slow one, and reproduced by `pair-device.spec.ts` before the change.
+    - The race the old rule guarded against now resolves **visibly**: scanning on both devices leaves each holding a reply the other cannot accept, and the next scan fails and says to start again. A failure the user can see and recover from beats a hang they cannot explain.
+    - A device that reads **its own** code is told so and the scanner stays open; answering a description it authored would pair a device with itself.
+    - The dialog shows one step per screen as a consequence: a code and a scanner are never on screen together, nor a reply code beside the verification gate. Two QR surfaces at once give no clue which device is meant to be doing which.
+11. **Rebuilding a scope for a peer the journal cannot serve** — answered, 2026-07-28.
+    - Writer supplies the engine's `fullState` port from its **materialised rows**, as freshly signed `put` frames — one per journalled row in the scope, ordinary in every respect so the receiver needs no second way to apply them. Explicitly **not** the backup archive, which exists to hand a snapshot to a human.
+    - A scope this device holds no key for is not rebuilt at all: one it cannot seal for is one it cannot serve, and framing those rows in plaintext would hand a peer content the pairing never authorised.
+    - The retention cutoff is supplied with it. Without a cutoff only a peer that had never synchronised would ever qualify, so a device away past the window would silently receive the surviving tail of history and be told it was caught up.
+
 ---
 
 ## 31. Handover format for every implementation slice

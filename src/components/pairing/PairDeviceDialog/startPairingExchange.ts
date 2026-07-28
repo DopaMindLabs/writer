@@ -52,7 +52,15 @@ const gatherOffer = async (
   dispatch({ type: 'offer-ready', payload, sessionId: offer.sessionId });
 };
 
-export const startPairingExchange = async (options: StartExchangeOptions): Promise<void> => {
+/** What was opened, for a caller that has to drive it straight away. */
+export interface StartedExchange {
+  signaller: PairingSignaller;
+  machine: PairingSession;
+}
+
+export const startPairingExchange = async (
+  options: StartExchangeOptions,
+): Promise<StartedExchange | null> => {
   const { role, createSignaller, isDismissed, adopt, dispatch } = options;
   try {
     const signaller = await createSignaller();
@@ -60,16 +68,19 @@ export const startPairingExchange = async (options: StartExchangeOptions): Promi
     // connection behind for the garbage collector to maybe notice.
     if (isDismissed()) {
       signaller.close();
-      return;
+      return null;
     }
     const machine = createPairingSession(role);
     machine.apply('start');
     adopt(signaller, machine);
-    if (role !== 'initiator') return;
-    await gatherOffer({ signaller, machine, isDismissed, dispatch });
+    if (role === 'initiator') {
+      await gatherOffer({ signaller, machine, isDismissed, dispatch });
+    }
+    return { signaller, machine };
   } catch {
     // The reason is for developers: a pairing failure must never put
     // peer-supplied text on screen (threat model §5.11).
     if (!isDismissed()) dispatch({ type: 'failed' });
+    return null;
   }
 };

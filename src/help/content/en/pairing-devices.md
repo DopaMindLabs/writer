@@ -10,6 +10,9 @@ devices, and it takes about a minute.
   wired network.
 - Keep both devices in front of you. Pairing is a back‑and‑forth: each device
   shows the other a code.
+- **Neither device has to go first.** Both show a code as soon as you open the
+  screen, and whichever one you scan with becomes the reader. Pick up whichever
+  device is easier to point at the other.
 - There are three ways to read a code: point the device's **camera** at it,
   **upload a photo** of it, or **paste the code text**. Writer asks for the
   camera only when you press "Use the camera" — never before.
@@ -19,17 +22,15 @@ devices, and it takes about a minute.
 
 ## Pairing step by step
 
-1. On the **first** device, open **Settings → Account** and choose **Pair
-   another device**.
-2. Choose **Show a code on this device**. It takes a moment to prepare, then a
-   square code appears.
-3. On the **second** device, open the same screen and choose **Read the other
-   device's code**.
-4. Point the second device's camera at the first device's code, or upload a
-   photo of it, or copy the text underneath the code across and paste it in.
-5. The second device now shows a **reply code**. Read that one back with the
-   first device, the same way round.
-6. Both devices now show the **same six digits**.
+1. On **both** devices, open **Settings → Device sync** and choose **Pair
+   another device**. Each takes a moment to prepare, then shows a square code.
+2. On one of them, choose **Scan the other device's code**. Its own code makes
+   way for the scanner.
+3. Point it at the other device's code, or upload a photo of it, or copy the
+   text underneath that code across and paste it in.
+4. That device now shows a **reply code**. Read it back with the other device,
+   the same way round, then choose **They have scanned it**.
+5. Both devices now show the **same six digits**.
 
 ## Checking the six digits
 
@@ -59,6 +60,9 @@ go back to the one it missed.
 - **"That does not look like a pairing code from this device's partner."** The
   code came from a different pairing attempt — for example, one you started
   earlier and left open. Close the dialog on both devices and start fresh.
+- **"That is this device's own code."** The camera was pointed at the screen it
+  is scanning from, or you pasted the text from underneath this device's own
+  code. Use the code on the *other* device.
 - **"No pairing code could be read from that image."** The photo is too blurry,
   too dark, or the code is cut off. Take another photo straight on, or copy the
   text across instead.
@@ -103,7 +107,7 @@ middle will not pass changes along on their behalf.
 ## Devices you have not used for a while
 
 Writer keeps a history of recent changes so a device that has been offline can
-catch up. How long it keeps that history is up to you — Settings → Account →
+catch up. How long it keeps that history is up to you — Settings → Device sync →
 **Keep sync history for**, which offers 7, 30 or 90 days, or a year. Thirty days
 is the default.
 

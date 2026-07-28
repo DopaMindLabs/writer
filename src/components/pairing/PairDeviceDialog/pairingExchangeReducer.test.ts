@@ -14,30 +14,17 @@ const peer = (): AuthenticatedPeerParameters => ({
   verificationCode: '048213',
 });
 
-const begun = (role: 'initiator' | 'joiner'): PairingExchangeState =>
-  pairingExchangeReducer(initialExchangeState, { type: 'begin', role });
-
 const afterOffer = (): PairingExchangeState =>
-  pairingExchangeReducer(begun('initiator'), {
+  pairingExchangeReducer(initialExchangeState, {
     type: 'offer-ready',
     payload: 'encoded',
     sessionId: 'session-1',
   });
 
 describe('pairingExchangeReducer', () => {
-  it('starts by asking which half of the exchange this device runs', () => {
-    expect(initialExchangeState.phase).toBe('choosing');
-    expect(initialExchangeState.role).toBeNull();
-  });
-
-  it('gathers first when this device shows the code', () => {
-    expect(begun('initiator').phase).toBe('creating');
-  });
-
-  it('reads first when this device is the one scanning', () => {
-    // Nothing to gather yet: the joiner's connection is answered against an
-    // offer it has not seen.
-    expect(begun('joiner').phase).toBe('awaiting-offer');
+  it('starts by gathering a code on this device, asking nothing', () => {
+    expect(initialExchangeState.phase).toBe('creating');
+    expect(initialExchangeState.role).toBe('initiator');
   });
 
   it('waits for the peer once the offer is ready', () => {
@@ -46,6 +33,24 @@ describe('pairingExchangeReducer', () => {
     expect(state.phase).toBe('awaiting-peer');
     expect(state.offerPayload).toBe('encoded');
     expect(state.sessionId).toBe('session-1');
+  });
+
+  it('notes a device pointed at its own screen, keeping the code up', () => {
+    const state = pairingExchangeReducer(afterOffer(), { type: 'own-code-scanned' });
+
+    expect(state.ownCodeScanned).toBe(true);
+    expect(state.offerPayload).toBe('encoded');
+    expect(state.phase).toBe('awaiting-peer');
+  });
+
+  it('drops its own offer when it turns out to be the answering device', () => {
+    // A device cannot answer a description it authored, so the code it was
+    // showing is not one anybody can finish the exchange with.
+    const state = pairingExchangeReducer(afterOffer(), { type: 'answering' });
+
+    expect(state.role).toBe('joiner');
+    expect(state.phase).toBe('authenticating');
+    expect(state.offerPayload).toBeNull();
   });
 
   it('keeps the offer on screen while the peer payload is checked', () => {
@@ -65,8 +70,9 @@ describe('pairingExchangeReducer', () => {
     expect(authenticated.peer?.verificationCode).toBe('048213');
   });
 
-  it('holds the joiner at the same gate, with a reply for the peer to read', () => {
-    const state = pairingExchangeReducer(begun('joiner'), {
+  it('holds the answering device at the same gate, with a reply to hand back', () => {
+    const answering = pairingExchangeReducer(afterOffer(), { type: 'answering' });
+    const state = pairingExchangeReducer(answering, {
       type: 'answer-ready',
       payload: 'encoded-answer',
       sessionId: 'session-1',
@@ -101,16 +107,5 @@ describe('pairingExchangeReducer', () => {
     expect(pairingExchangeReducer(authenticated, { type: 'restart' })).toEqual(
       initialExchangeState,
     );
-  });
-
-  it('discards a previous attempt when a role is chosen again', () => {
-    // Reopening after a failure must not leave the earlier offer on screen.
-    const failed = pairingExchangeReducer(afterOffer(), { type: 'failed' });
-
-    expect(pairingExchangeReducer(failed, { type: 'begin', role: 'initiator' })).toEqual({
-      ...initialExchangeState,
-      role: 'initiator',
-      phase: 'creating',
-    });
   });
 });
