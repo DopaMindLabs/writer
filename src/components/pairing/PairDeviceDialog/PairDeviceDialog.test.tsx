@@ -53,11 +53,22 @@ interface SignallerScript {
   onAcceptOffer?: () => Promise<PairingAnswer>;
 }
 
+/** A peer session that never opens a channel; nothing here drives sync. */
+const idlePeerSession = () => ({
+  channel: () => null,
+  onChannel: () => () => undefined,
+  createOffer: () => Promise.resolve(''),
+  acceptOffer: () => Promise.resolve(''),
+  acceptAnswer: () => Promise.resolve(),
+  close: () => undefined,
+});
+
 const readySignaller = (script: SignallerScript = {}): FakeSignaller => {
   let closed = false;
   let answered = false;
   return {
     sessionId: SESSION,
+    session: idlePeerSession(),
     adapter: {
       createOffer: () => Promise.resolve(offer()),
       acceptOffer: async () => {

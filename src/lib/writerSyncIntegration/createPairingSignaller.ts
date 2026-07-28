@@ -4,7 +4,11 @@ import {
   createReplayCache,
   type QrSignallingAdapter,
 } from 'writer-sync/pairing';
-import { createPeerSession, type PeerConnectionLike } from 'writer-sync/providers/webrtc';
+import {
+  createPeerSession,
+  type PeerConnectionLike,
+  type PeerSession,
+} from 'writer-sync/providers/webrtc';
 import { deviceIdentityStore } from '@/lib/cloud/crypto/deviceIdentityStore';
 import { createBrowserPeerConnection } from './browserPeerConnection';
 
@@ -24,6 +28,13 @@ export interface PairingSignaller {
   adapter: QrSignallingAdapter;
   /** A session id for this exchange, minted by the initiator. */
   sessionId: string;
+  /**
+   * The live peer connection. Exposed so a confirmed pairing can hand it to
+   * something that outlives the dialog: pairing is a conversation that ends,
+   * sync is a connection that persists, and closing this on dismissal would end
+   * both.
+   */
+  session: PeerSession;
   /** Tear the connection down. Safe to call more than once. */
   close: () => void;
 }
@@ -49,6 +60,7 @@ const createSignallerFactory = () => {
         replayCache,
       }),
       sessionId: toBase64Url(crypto.getRandomValues(new Uint8Array(SESSION_ID_BYTES))),
+      session,
       close: () => {
         session.close();
       },
