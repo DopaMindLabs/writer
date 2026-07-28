@@ -46,6 +46,18 @@ export interface CatchUpPorts {
   send: (message: CatchUpMessage) => void;
   /** Verify the originating device's signature over the frame. */
   verifySignature: (frame: EncryptedSyncFrame) => Promise<boolean>;
+  /**
+   * Fresh `put` frames describing a scope as it stands now — signed, stamped and
+   * ordinary in every respect. Served to a peer the journal can no longer honestly
+   * answer. Absent when the host cannot rebuild state, in which case such a peer
+   * gets whatever history survives.
+   */
+  fullState?: (accessScopeId: AccessScopeId) => Promise<EncryptedSyncFrame[]>;
+  /**
+   * The instant before which this device's journal has been compacted away.
+   * A request reaching behind it cannot be answered from history.
+   */
+  retentionCutoff?: () => number;
   /** Record how far the peer has read — the input to journal compaction. */
   recordPeerAcknowledgement: (acknowledgement: OperationAcknowledgement) => Promise<void>;
   /**
@@ -101,17 +113,50 @@ const heldFrames = async (ports: CatchUpPorts): Promise<EncryptedSyncFrame[]> =>
 const localManifests = async (ports: CatchUpPorts): Promise<ScopeManifest[]> =>
   buildScopeManifests(await heldFrames(ports));
 
+/**
+ * The scopes this device must rebuild rather than replay.
+ *
+ * A request with no starting point is a peer that has never synchronised, and
+ * one reaching behind the compaction cutoff is a peer that has been away too
+ * long. Neither can be answered from history — the frames are simply gone — so
+ * serving the journal's surviving tail would silently hand over a partial
+ * account of the scope and call it caught up.
+ */
+const scopesNeedingFullState = (
+  ports: CatchUpPorts,
+  requests: readonly CatchUpRequest[],
+): Set<AccessScopeId> => {
+  if (ports.fullState === undefined) return new Set();
+  const cutoff = ports.retentionCutoff?.() ?? Number.NEGATIVE_INFINITY;
+  return new Set(
+    requests
+      .filter((request) => request.after === undefined || request.after.millis <= cutoff)
+      .map((request) => request.accessScopeId),
+  );
+};
+
 /** Reply to a peer's requests, batched so no message outgrows the channel. */
 const answer = async (
   ports: CatchUpPorts,
   requests: readonly CatchUpRequest[],
 ): Promise<void> => {
   const accessible = new Set(await ports.accessibleScopeIds());
-  const held = await heldFrames(ports);
-  const replies = requests
-    .filter((request) => accessible.has(request.accessScopeId))
-    .flatMap((request) => framesForRequest(held, request));
+  const permitted = requests.filter((request) => accessible.has(request.accessScopeId));
+  const rebuild = scopesNeedingFullState(ports, permitted);
+  const buildState = ports.fullState;
 
+  const held = await heldFrames(ports);
+  const fromJournal = permitted
+    .filter((request) => !rebuild.has(request.accessScopeId))
+    .flatMap((request) => framesForRequest(held, request));
+  // Once per scope, however many origins asked for it: current state is not
+  // per-origin, and sending it again per origin would multiply the transfer.
+  const fromState =
+    buildState === undefined
+      ? []
+      : (await Promise.all([...rebuild].map((scope) => buildState(scope)))).flat();
+
+  const replies = [...fromState, ...fromJournal];
   const batches = batched(replies, MAX_FRAMES_PER_MESSAGE);
   batches.forEach((frames, index) => {
     ports.send({

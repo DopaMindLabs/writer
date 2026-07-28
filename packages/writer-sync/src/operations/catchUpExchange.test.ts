@@ -51,6 +51,8 @@ const harness = (options: {
   frames?: EncryptedSyncFrame[];
   scopes?: AccessScopeId[];
   verifySignature?: (frame: EncryptedSyncFrame) => Promise<boolean>;
+  fullState?: (accessScopeId: AccessScopeId) => Promise<EncryptedSyncFrame[]>;
+  retentionCutoff?: () => number;
 } = {}) => {
   const frames = options.frames ?? [];
   const sent: CatchUpMessage[] = [];
@@ -63,6 +65,8 @@ const harness = (options: {
     accessibleScopeIds: async () => options.scopes ?? ['scope-1'],
     send: (message) => sent.push(message),
     verifySignature: options.verifySignature ?? (async () => true),
+    fullState: options.fullState,
+    retentionCutoff: options.retentionCutoff,
     recordPeerAcknowledgement: async (ack) => {
       acknowledged.push(ack);
     },
@@ -175,6 +179,101 @@ describe('createCatchUpExchange on a peer request', () => {
     });
 
     expect(sent).toEqual([{ v: 1, kind: 'frames', frames: [], final: true }]);
+  });
+});
+
+describe('createCatchUpExchange answering a peer the journal cannot serve', () => {
+  it('rebuilds current state for a peer that has never synchronised', async () => {
+    const held = await frameOf({ id: 'op-old', millis: 10 });
+    const rebuilt = await frameOf({ id: 'op-now', millis: 900 });
+    const { exchange, sent } = harness({
+      frames: [held],
+      fullState: async () => [rebuilt],
+    });
+
+    await exchange.receive({
+      v: 1,
+      kind: 'request',
+      requests: [{ accessScopeId: 'scope-1', originDeviceId: asDeviceId('device-a') }],
+    });
+
+    expect(sent).toEqual([{ v: 1, kind: 'frames', frames: [rebuilt], final: true }]);
+  });
+
+  it('rebuilds for a peer asking from behind the compaction cutoff', async () => {
+    const rebuilt = await frameOf({ id: 'op-now', millis: 900 });
+    const { exchange, sent } = harness({
+      fullState: async () => [rebuilt],
+      retentionCutoff: () => 500,
+    });
+
+    await exchange.receive({
+      v: 1,
+      kind: 'request',
+      requests: [
+        {
+          accessScopeId: 'scope-1',
+          originDeviceId: asDeviceId('device-a'),
+          after: { millis: 100, counter: 0 },
+        },
+      ],
+    });
+
+    expect(sent).toEqual([{ v: 1, kind: 'frames', frames: [rebuilt], final: true }]);
+  });
+
+  it('replays history for a peer still inside the window', async () => {
+    const held = await frameOf({ id: 'op-recent', millis: 800 });
+    const { exchange, sent } = harness({
+      frames: [held],
+      fullState: async () => [await frameOf({ id: 'op-now', millis: 900 })],
+      retentionCutoff: () => 500,
+    });
+
+    await exchange.receive({
+      v: 1,
+      kind: 'request',
+      requests: [
+        {
+          accessScopeId: 'scope-1',
+          originDeviceId: asDeviceId('device-a'),
+          after: { millis: 700, counter: 0 },
+        },
+      ],
+    });
+
+    expect(sent).toEqual([{ v: 1, kind: 'frames', frames: [held], final: true }]);
+  });
+
+  it('rebuilds a scope once however many origins asked for it', async () => {
+    const rebuilt = await frameOf({ id: 'op-now', millis: 900 });
+    const fullState = vi.fn().mockResolvedValue([rebuilt]);
+    const { exchange, sent } = harness({ fullState });
+
+    await exchange.receive({
+      v: 1,
+      kind: 'request',
+      requests: [
+        { accessScopeId: 'scope-1', originDeviceId: asDeviceId('device-a') },
+        { accessScopeId: 'scope-1', originDeviceId: asDeviceId('device-b') },
+      ],
+    });
+
+    expect(fullState).toHaveBeenCalledTimes(1);
+    expect(sent).toEqual([{ v: 1, kind: 'frames', frames: [rebuilt], final: true }]);
+  });
+
+  it('falls back to surviving history when it cannot rebuild', async () => {
+    const held = await frameOf({ id: 'op-old', millis: 10 });
+    const { exchange, sent } = harness({ frames: [held] });
+
+    await exchange.receive({
+      v: 1,
+      kind: 'request',
+      requests: [{ accessScopeId: 'scope-1', originDeviceId: asDeviceId('device-a') }],
+    });
+
+    expect(sent).toEqual([{ v: 1, kind: 'frames', frames: [held], final: true }]);
   });
 });
 
