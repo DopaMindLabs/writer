@@ -69,6 +69,16 @@ export interface QrSignallingAdapter extends SignallingAdapter {
    * why it is an accessor rather than only a return value.
    */
   parameters: () => AuthenticatedPeerParameters | null;
+  /**
+   * This session's ephemeral private key, or `null` before one is minted.
+   *
+   * Exposed because the account root arrives sealed to this session's ephemeral
+   * public key, and only its private half can open it. The key is
+   * non-extractable and belongs to one exchange, so what escapes here is a
+   * handle usable for this session and nothing else — the raw material never
+   * leaves Web Crypto.
+   */
+  sessionPrivateKey: () => CryptoKey | null;
 }
 
 /** Everything one exchange accumulates. Created per adapter, never shared. */
@@ -208,5 +218,6 @@ export const createQrSignallingAdapter = (
     acceptOffer: (offer) => acceptOfferFor(context, offer),
     acceptAnswer: (answer) => acceptAnswerFor(context, answer),
     parameters: () => context.state.authenticated,
+    sessionPrivateKey: () => context.state.ephemeral?.privateKey ?? null,
   };
 };

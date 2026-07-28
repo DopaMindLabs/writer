@@ -154,6 +154,7 @@ export const bindTranscript = async (
   return {
     deviceId: asDeviceId(options.peer.deviceId),
     publicIdentityJwk: options.peer.identityJwk,
+    peerEphemeralPublicJwk: options.peer.ephemeralJwk,
     transcript,
     verificationCode: await verificationCode(transcript),
   };

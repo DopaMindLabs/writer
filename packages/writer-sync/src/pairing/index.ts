@@ -76,3 +76,21 @@ export type {
 
 export { resolvePairingRole } from './roleResolution';
 export type { PairingRoleDecision } from './roleResolution';
+
+export {
+  ANNOUNCE_INTERVAL_MILLIS,
+  startRootTransfer,
+} from './rootTransfer';
+export type {
+  RootTransfer,
+  RootTransferOutcome,
+  RootTransferPorts,
+} from './rootTransfer';
+
+export {
+  MAX_WRAPPED_BYTES,
+  ROOT_TRANSFER_VERSION,
+  decodeRootTransferMessage,
+  encodeRootTransferMessage,
+} from './rootTransferMessage';
+export type { RootTransferMessage } from './rootTransferMessage';

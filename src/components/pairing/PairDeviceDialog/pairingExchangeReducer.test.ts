@@ -10,6 +10,7 @@ import {
 const peer = (): AuthenticatedPeerParameters => ({
   deviceId: asDeviceId('peer-device'),
   publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },
+  peerEphemeralPublicJwk: { kty: 'EC', crv: 'P-256', x: 'e', y: 'f' },
   transcript: new Uint8Array([1, 2, 3]),
   verificationCode: '048213',
 });

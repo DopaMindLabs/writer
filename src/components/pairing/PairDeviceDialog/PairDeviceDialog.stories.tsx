@@ -38,6 +38,7 @@ const signaller = (): PairingSignaller => ({
     acceptOffer: () => Promise.reject(new Error('not used')),
     acceptAnswer: () => Promise.reject(new Error('not used')),
     parameters: () => null,
+    sessionPrivateKey: () => null,
   },
   close: () => undefined,
 });
