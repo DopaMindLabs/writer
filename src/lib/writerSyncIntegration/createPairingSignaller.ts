@@ -1,3 +1,4 @@
+import type { DeviceId } from 'writer-sync/core';
 import { toBase64Url } from 'writer-sync/crypto';
 import {
   createQrSignallingAdapter,
@@ -26,6 +27,12 @@ const SESSION_ID_BYTES = 16;
 
 export interface PairingSignaller {
   adapter: QrSignallingAdapter;
+  /**
+   * This device's own identity. Exposed because a scanned payload decides which
+   * half of the exchange this device runs, and that comparison needs both ids —
+   * the peer's arrives in the payload, this one has to come from here.
+   */
+  deviceId: DeviceId;
   /** A session id for this exchange, minted by the initiator. */
   sessionId: string;
   /**
@@ -59,6 +66,7 @@ const createSignallerFactory = () => {
         peer: session,
         replayCache,
       }),
+      deviceId: identity.deviceId,
       sessionId: toBase64Url(crypto.getRandomValues(new Uint8Array(SESSION_ID_BYTES))),
       session,
       close: () => {

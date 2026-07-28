@@ -7,17 +7,17 @@ import type { AuthenticatedPeerParameters, PairingRole } from 'writer-sync/pairi
  * machine in the package decides whether an event is legal, and this decides
  * what the user sees once it has.
  *
- * Both roles share one reducer because they share one shape. Which half of the
- * exchange a device is running changes what it *shows* at a phase, not what the
- * phases are — the initiator shows an offer while it waits, the joiner shows a
- * reply, and both hold at the same confirmation gate.
+ * Every device starts the same way — offering its own code and watching for the
+ * other's — because neither can work out which half it runs without a channel it
+ * does not yet have, and asking the user to choose asks them to understand the
+ * protocol before they can begin. The role is settled by the payload that
+ * arrives (`resolvePairingRole`), which is why it is state here rather than
+ * something the dialog is told.
  */
 
 export type ExchangePhase =
-  | 'choosing'
   | 'creating'
   | 'awaiting-peer'
-  | 'awaiting-offer'
   | 'authenticating'
   | 'awaiting-confirmation'
   | 'complete'
@@ -25,21 +25,28 @@ export type ExchangePhase =
 
 export interface PairingExchangeState {
   phase: ExchangePhase;
-  /** Which half of the exchange this device runs, once chosen. */
-  role: PairingRole | null;
-  /** The encoded offer, once gathered by the initiator. */
+  /** Which half of the exchange this device turned out to run. */
+  role: PairingRole;
+  /** The encoded offer, once gathered. */
   offerPayload: string | null;
-  /** The encoded reply, once minted by the joiner. */
+  /** The encoded reply, once minted in answer to a peer's offer. */
   answerPayload: string | null;
   sessionId: string | null;
   /** What the peer proved, once both payloads are in hand. */
   peer: AuthenticatedPeerParameters | null;
+  /**
+   * The last code read was this device's own. Kept as state rather than shown
+   * and forgotten, because the scanner stays open: the user has to be told what
+   * happened and left where they can try the other device's code.
+   */
+  ownCodeScanned: boolean;
 }
 
 export type PairingExchangeAction =
   | { type: 'restart' }
-  | { type: 'begin'; role: PairingRole }
   | { type: 'offer-ready'; payload: string; sessionId: string }
+  | { type: 'own-code-scanned' }
+  | { type: 'answering' }
   | { type: 'peer-payload-received' }
   | { type: 'authenticated'; peer: AuthenticatedPeerParameters }
   | {
@@ -52,17 +59,14 @@ export type PairingExchangeAction =
   | { type: 'failed' };
 
 export const initialExchangeState: PairingExchangeState = {
-  phase: 'choosing',
-  role: null,
+  phase: 'creating',
+  role: 'initiator',
   offerPayload: null,
   answerPayload: null,
   sessionId: null,
   peer: null,
+  ownCodeScanned: false,
 };
-
-/** The initiator gathers before it can show anything; the joiner reads first. */
-const openingPhase = (role: PairingRole): ExchangePhase =>
-  role === 'initiator' ? 'creating' : 'awaiting-offer';
 
 export const pairingExchangeReducer = (
   state: PairingExchangeState,
@@ -71,8 +75,6 @@ export const pairingExchangeReducer = (
   switch (action.type) {
     case 'restart':
       return initialExchangeState;
-    case 'begin':
-      return { ...initialExchangeState, role: action.role, phase: openingPhase(action.role) };
     case 'offer-ready':
       return {
         ...state,
@@ -80,6 +82,13 @@ export const pairingExchangeReducer = (
         offerPayload: action.payload,
         sessionId: action.sessionId,
       };
+    case 'own-code-scanned':
+      return { ...state, ownCodeScanned: true };
+    case 'answering':
+      // The offer this device was showing is dropped rather than kept beside
+      // the reply: a device cannot answer a description it authored itself, so
+      // leaving it up would show a code nobody can finish the exchange with.
+      return { ...initialExchangeState, role: 'joiner', phase: 'authenticating' };
     case 'peer-payload-received':
       return { ...state, phase: 'authenticating' };
     case 'authenticated':

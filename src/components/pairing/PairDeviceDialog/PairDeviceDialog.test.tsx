@@ -13,15 +13,27 @@ import {
 import type { PairingSignaller } from '@/lib/writerSyncIntegration/createPairingSignaller';
 import { PairDeviceDialog } from './PairDeviceDialog';
 
+/**
+ * Pairing as the user meets it: no question about which device goes first.
+ *
+ * Both devices offer a code, and reading one is what settles the roles — so
+ * these exercise the flow by what arrives. A reply means this device was the one
+ * read; an offer means it is the one reading; its own code means the camera was
+ * pointed at the wrong screen.
+ */
+
 const SESSION = 'c2Vzc2lvbi1pZC0xMjM0';
 const JWK = { kty: 'EC', crv: 'P-256', x: 'x'.repeat(43), y: 'y'.repeat(43) };
 const CODE = '048213';
 
-const offer = (): PairingOffer => ({
+const LOCAL_DEVICE = 'bG9jYWwtZGV2aWNlLTAw';
+const PEER_DEVICE = 'ZGV2aWNlLWlkLTAwMDA';
+
+const offer = (deviceId = PEER_DEVICE): PairingOffer => ({
   v: 1,
   sessionId: SESSION,
   kind: 'offer',
-  deviceId: 'ZGV2aWNlLWlkLTAwMDA',
+  deviceId,
   identityJwk: JWK,
   ephemeralJwk: JWK,
   sdp: 'v=0\r\no=- 1 1 IN IP4 127.0.0.1\r\na=candidate:offer\r\n',
@@ -31,9 +43,8 @@ const offer = (): PairingOffer => ({
 });
 
 const answer = (): PairingAnswer => ({
-  ...offer(),
+  ...offer('cGVlci1kZXZpY2UtaWQwMA'),
   kind: 'answer',
-  deviceId: 'cGVlci1kZXZpY2UtaWQwMA',
   offerHash: 'b2ZmZXItaGFzaC0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMA',
 });
 
@@ -68,6 +79,7 @@ const readySignaller = (script: SignallerScript = {}): FakeSignaller => {
   let answered = false;
   return {
     sessionId: SESSION,
+    deviceId: asDeviceId(LOCAL_DEVICE),
     session: idlePeerSession(),
     adapter: {
       createOffer: () => Promise.resolve(offer()),
@@ -96,15 +108,13 @@ const renderDialog = (signaller: PairingSignaller = readySignaller()) =>
     />,
   );
 
-/** Choose which half of the exchange this device runs. */
-const choose = async (which: 'show' | 'read'): Promise<void> => {
-  const user = userEvent.setup();
-  await user.click(screen.getByTestId(`pairing-role-${which}`));
-};
+/** Wait for this device's own code, which every device gathers on opening. */
+const ownCode = () => screen.findByRole('img', { name: 'Pairing code from this device' });
 
-/** Hand the dialog a peer payload through the camera-free paste path. */
+/** Hand the dialog a peer payload the way a user without a camera would. */
 const pastePayload = async (payload: PairingOffer | PairingAnswer): Promise<void> => {
   const user = userEvent.setup();
+  await user.click(screen.getByTestId('pairing-scan-start'));
   const encoded = await encodePairingPayload(payload);
   const [symbol] = splitIntoQrParts({ sessionId: SESSION, text: encoded });
   await user.click(screen.getByLabelText('Or paste the code text'));
@@ -113,17 +123,17 @@ const pastePayload = async (payload: PairingOffer | PairingAnswer): Promise<void
 };
 
 describe('PairDeviceDialog', () => {
-  it('asks which half of the exchange this device runs before gathering', () => {
+  it('gathers a code the moment it opens, asking nothing first', async () => {
     const createSignaller = vi.fn(() => Promise.resolve(readySignaller()));
     renderWithProviders(
       <PairDeviceDialog open onOpenChange={vi.fn()} createSignaller={createSignaller} />,
     );
 
-    expect(screen.getByTestId('pairing-role-choice')).toBeInTheDocument();
-    expect(createSignaller).not.toHaveBeenCalled();
+    expect(await ownCode()).toBeInTheDocument();
+    expect(createSignaller).toHaveBeenCalled();
   });
 
-  it('shows progress while the device gathers', async () => {
+  it('shows progress while the device gathers', () => {
     renderWithProviders(
       <PairDeviceDialog
         open
@@ -132,26 +142,36 @@ describe('PairDeviceDialog', () => {
       />,
     );
 
-    await choose('show');
-
     expect(screen.getByTestId('pair-device-gathering')).toBeInTheDocument();
   });
 
-  it('shows the pairing code once gathering completes', async () => {
+  it('keeps the scanner behind an action rather than beside the code', async () => {
+    const user = userEvent.setup();
     renderDialog();
-    await choose('show');
+    await ownCode();
 
-    expect(
-      await screen.findByRole('img', { name: 'Pairing code from this device' }),
-    ).toBeInTheDocument();
-  });
+    // Two ways in at once is the confusion this flow exists to remove: with a
+    // code and a camera side by side, neither device looks like the one that
+    // should be scanning.
+    expect(screen.queryByTestId('pairing-code-scanner')).not.toBeInTheDocument();
 
-  it('offers a way to read the reply back at the same time', async () => {
-    renderDialog();
-    await choose('show');
-    await screen.findByRole('img', { name: 'Pairing code from this device' });
+    await user.click(screen.getByTestId('pairing-scan-start'));
 
     expect(screen.getByTestId('pairing-code-scanner')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('img', { name: 'Pairing code from this device' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('returns to the code from the scanner', async () => {
+    const user = userEvent.setup();
+    renderDialog();
+    await ownCode();
+    await user.click(screen.getByTestId('pairing-scan-start'));
+
+    await user.click(screen.getByTestId('pairing-show-code'));
+
+    expect(await ownCode()).toBeInTheDocument();
   });
 
   it('reports a failure without putting the underlying reason on screen', async () => {
@@ -162,8 +182,6 @@ describe('PairDeviceDialog', () => {
         createSignaller={() => Promise.reject(new Error('ICE gathering stalled'))}
       />,
     );
-
-    await choose('show');
 
     const banner = await screen.findByTestId('pair-device-failed');
     expect(banner).toBeInTheDocument();
@@ -195,8 +213,7 @@ describe('PairDeviceDialog', () => {
   it('closes the connection when the dialog is dismissed', async () => {
     const signaller = readySignaller();
     const { rerender } = renderDialog(signaller);
-    await choose('show');
-    await screen.findByRole('img', { name: 'Pairing code from this device' });
+    await ownCode();
 
     rerender(
       <PairDeviceDialog
@@ -210,11 +227,12 @@ describe('PairDeviceDialog', () => {
       expect(signaller.closed()).toBe(true);
     });
   });
+});
 
-  it('shows the verification code once the answer authenticates', async () => {
+describe('PairDeviceDialog, once its code has been read', () => {
+  it('shows the verification code when a reply arrives', async () => {
     renderDialog();
-    await choose('show');
-    await screen.findByRole('img', { name: 'Pairing code from this device' });
+    await ownCode();
 
     await pastePayload(answer());
 
@@ -223,8 +241,7 @@ describe('PairDeviceDialog', () => {
 
   it('does not complete pairing on authentication alone', async () => {
     renderDialog();
-    await choose('show');
-    await screen.findByRole('img', { name: 'Pairing code from this device' });
+    await ownCode();
 
     await pastePayload(answer());
     await screen.findByTestId('pairing-verification-code');
@@ -235,8 +252,7 @@ describe('PairDeviceDialog', () => {
   it('completes only after the user confirms the codes match', async () => {
     const user = userEvent.setup();
     renderDialog();
-    await choose('show');
-    await screen.findByRole('img', { name: 'Pairing code from this device' });
+    await ownCode();
     await pastePayload(answer());
     await screen.findByTestId('pairing-verification-code');
 
@@ -247,8 +263,7 @@ describe('PairDeviceDialog', () => {
 
   it('reports a failure to authenticate rather than showing a code', async () => {
     renderDialog(readySignaller({ onAcceptAnswer: () => Promise.reject(new Error('bad sig')) }));
-    await choose('show');
-    await screen.findByRole('img', { name: 'Pairing code from this device' });
+    await ownCode();
 
     await pastePayload(answer());
 
@@ -257,47 +272,45 @@ describe('PairDeviceDialog', () => {
   });
 });
 
-describe('PairDeviceDialog, reading the other device', () => {
-  it('asks for the peer code first, with nothing of its own to show', async () => {
+describe('PairDeviceDialog, when it is the device that read a code', () => {
+  it('answers a scanned offer and hands the reply back', async () => {
     renderDialog();
-
-    await choose('read');
-
-    expect(await screen.findByTestId('pairing-code-scanner')).toBeInTheDocument();
-    expect(screen.queryByRole('img')).not.toBeInTheDocument();
-  });
-
-  it('shows the reply for the peer to read once the offer is answered', async () => {
-    renderDialog();
-    await choose('read');
-    await screen.findByTestId('pairing-code-scanner');
+    await ownCode();
 
     await pastePayload(offer());
 
     expect(
       await screen.findByRole('img', { name: 'Reply code from this device' }),
     ).toBeInTheDocument();
+    // Its own offer goes with the role: a device cannot answer a description it
+    // authored, so that code would finish nothing.
+    expect(
+      screen.queryByRole('img', { name: 'Pairing code from this device' }),
+    ).not.toBeInTheDocument();
   });
 
-  it('reaches the same gate, showing the code the peer must match', async () => {
+  it('holds the digits back until the reply has been handed over', async () => {
+    const user = userEvent.setup();
     renderDialog();
-    await choose('read');
-    await screen.findByTestId('pairing-code-scanner');
-
+    await ownCode();
     await pastePayload(offer());
+    await screen.findByRole('img', { name: 'Reply code from this device' });
+
+    // The peer cannot show its digits until it has read this code, so comparing
+    // them now would be a comparison with nothing.
+    expect(screen.queryByTestId('pairing-verification-code')).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId('pairing-reply-shown'));
 
     expect(await screen.findByTestId('pairing-verification-code')).toHaveTextContent(CODE);
-    // The reply stays on screen: the peer cannot show its digits until it has
-    // read this code.
-    expect(screen.getByRole('img', { name: 'Reply code from this device' })).toBeInTheDocument();
   });
 
   it('does not complete until this user confirms too', async () => {
     const user = userEvent.setup();
     renderDialog();
-    await choose('read');
-    await screen.findByTestId('pairing-code-scanner');
+    await ownCode();
     await pastePayload(offer());
+    await user.click(await screen.findByTestId('pairing-reply-shown'));
     await screen.findByTestId('pairing-verification-code');
 
     expect(screen.queryByTestId('pair-device-complete')).not.toBeInTheDocument();
@@ -307,25 +320,15 @@ describe('PairDeviceDialog, reading the other device', () => {
     expect(await screen.findByTestId('pair-device-complete')).toBeInTheDocument();
   });
 
-  it('refuses a payload that is not an offer', async () => {
-    // A reply pasted into the reading device is a mistake, not an exchange.
+  it('says so when the camera was pointed at this screen', async () => {
     renderDialog();
-    await choose('read');
-    await screen.findByTestId('pairing-code-scanner');
+    await ownCode();
 
-    await pastePayload(answer());
+    // Answering a description this device authored would pair it with itself.
+    await pastePayload(offer(LOCAL_DEVICE));
 
-    expect(await screen.findByTestId('pair-device-failed')).toBeInTheDocument();
-  });
-
-  it('reports a refused offer without echoing the reason', async () => {
-    renderDialog(readySignaller({ onAcceptOffer: () => Promise.reject(new Error('replayed')) }));
-    await choose('read');
-    await screen.findByTestId('pairing-code-scanner');
-
-    await pastePayload(offer());
-
-    const banner = await screen.findByTestId('pair-device-failed');
-    expect(banner).not.toHaveTextContent('replayed');
+    expect(await screen.findByTestId('pairing-own-code')).toBeInTheDocument();
+    // The scanner stays open: the user has somewhere to go with the right code.
+    expect(screen.getByTestId('pairing-code-scanner')).toBeInTheDocument();
   });
 });

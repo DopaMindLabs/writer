@@ -23,9 +23,8 @@ export const fixtureExchange = (
   answerPayload: null,
   sessionId: null,
   peer: null,
-  begin: () => undefined,
-  submitOffer: () => undefined,
-  acceptAnswer: () => undefined,
+  ownCodeScanned: false,
+  submitPayload: () => undefined,
   confirm: () => undefined,
   ...overrides,
 });

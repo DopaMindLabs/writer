@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { asDeviceId } from 'writer-sync/core';
 import type { PairingOffer } from 'writer-sync/pairing';
 import type { PairingSignaller } from '@/lib/writerSyncIntegration/createPairingSignaller';
 import { PairDeviceDialog } from './PairDeviceDialog';
@@ -30,6 +31,7 @@ const idlePeerSession = () => ({
 
 const signaller = (): PairingSignaller => ({
   sessionId: SESSION,
+  deviceId: asDeviceId('bG9jYWwtZGV2aWNlLTAw'),
   session: idlePeerSession(),
   adapter: {
     createOffer: () => Promise.resolve(offer()),

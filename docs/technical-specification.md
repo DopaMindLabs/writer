@@ -329,7 +329,7 @@ Tabbed user-wide preferences. The shell-header wordmark badge (`L`) links back t
 | **Typography** | Active | Prose / UI font settings (component present, see `Settings.test.tsx`). |
 | **Shortcuts** | Active | Keyboard reference. |
 | **Backups** | Active | Backup management. |
-| **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only. A **Pair another device** row opens the pairing dialog (§ 4.9.2), where this device either shows a code or reads the other's, and a **Keep sync history for** row sets the journal retention window (7 / 30 / 90 days / 1 year chips, default 30 days). A **gated encrypted cloud-sync beta** (§ 4.9.1) can appear at the bottom of this tab, hidden by default. |
+| **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only. A **gated encrypted cloud-sync beta** (§ 4.9.1) can appear at the bottom of this tab, hidden by default. |
 | **About** | Active | Build information and links: app **version**, the **commit** SHA and **build time** embedded at build time (`vite.config.ts` defines → `lib/version`), the licence, and Source / Changelog / Send-feedback links to the repository. |
 
 Mobile: all tabs reflow without horizontal overflow at 390×800.
@@ -535,22 +535,38 @@ server. The normative protocol lives in `packages/writer-sync/docs/`
 (threat model, pairing protocol, test vectors); this section tracks what is
 wired into the app.
 
-- **Entry point.** Settings → Account → **Pair another device** opens the
-  pairing dialog. The dialog is mounted only while open, and asks first which
-  half of the exchange this device runs — **Show a code on this device** or
-  **Read the other device's code**. Neither device can determine that unaided,
-  so it is asked once and never switched mid-exchange.
-- **Showing device.** Choosing to show gathers a WebRTC offer over a connection
-  with **no ICE servers** (same-network only, never a public STUN fallback) and
-  displays it as one or more QR symbols, with the scanner alongside it — the
-  peer is still reading the code while this device waits for the reply.
-  Candidate gathering is bounded by a deadline; reaching it is not a failure,
-  and the code is shown from whatever candidates were gathered. Only a
-  description with **no** candidate at all fails.
-- **Reading device.** Choosing to read shows the scanner alone. Once it has the
-  peer's offer it answers it, then shows the reply for the peer to read back
-  **beside** the verification gate: this device knows the six digits as soon as
-  it has answered, but its peer only learns them once it has read the reply.
+- **Entry point.** Settings → Device sync → **Pair another device** opens the
+  pairing dialog. The dialog is mounted only while open and asks **nothing**:
+  both devices gather and show a code, and reading one is what settles the
+  roles. The user is never asked which device goes first, because there is no
+  first — either device can be the one that scans.
+- **One step per screen.** A code and a scanner are never shown together, nor a
+  code beside the verification gate. Two QR surfaces at once read as two things
+  to do at once and give no clue which device is meant to be doing which.
+- **Showing.** Every device gathers a WebRTC offer over a connection with **no
+  ICE servers** (same-network only, never a public STUN fallback) and displays
+  it as one or more QR symbols, with a single action — **Scan the other device's
+  code** — that replaces the code with the scanner and back. Candidate gathering
+  is bounded by a deadline; reaching it is not a failure, and the code is shown
+  from whatever candidates were gathered. Only a description with **no**
+  candidate at all fails.
+- **Reading.** A device that reads an offer answers it, from a session opened
+  for the purpose: it cannot answer a description it authored, so the offer it
+  was showing is closed and replaced. It then shows the reply for the peer to
+  read back, and moves to the digits only when the user says the reply was
+  taken — nothing reaches this device when its peer reads a code. That ordering
+  is why the reply and the gate are separate screens: this device knows the six
+  digits as soon as it has answered, but its peer learns them only after reading
+  the reply.
+- **Role resolution.** Decided from the payload (`resolvePairingRole`): a reply
+  is accepted by the device whose offer it answers, and an offer is answered by
+  whichever device read it. An earlier rule ranked the two device ids and let
+  only the greater answer, which is sound for two devices watching a channel and
+  wrong for two watching a camera — in the ordinary flow only one device ever
+  reads anything, so the lower-ranked reader waited on a reply nobody was
+  preparing. Scanning on both devices now fails visibly on the next scan instead
+  of hanging. A device that reads **its own** code is told so, with the scanner
+  left open.
 - **Verification gate.** Both devices hold at the same gate and complete only on
   an explicit human confirmation that the six digits match. Nothing is
   transferred on authentication alone.
@@ -569,7 +585,10 @@ wired into the app.
   in `vercel.json`; without it the browser blocks the camera in production while
   local development works. Decoding happens entirely on the device — where the
   browser has no `BarcodeDetector` the WASM engine is **served by the app**,
-  never fetched from a CDN, so scanning works offline and contacts nobody.
+  never fetched from a CDN, so scanning works offline and contacts nobody. An
+  uploaded photograph is decoded to a bitmap before the platform detector sees
+  it: Chromium's own `BarcodeDetector` refuses a `Blob` although the IDL admits
+  one, and a chosen file is exactly that.
 - **Pairing code display.** A payload larger than one symbol is split into the
   codec's bounded sequence (max 8 parts) and stepped through manually — no
   timed cycling, so nothing needs reduced-motion gating. The symbol's own text
@@ -623,9 +642,17 @@ wired into the app.
   conversation: the holder offers a chunk manifest, the peer asks only for the
   chunks it lacks, each chunk is verified on arrival, and an interrupted transfer
   resumes from the gap rather than restarting.
-- **Not yet wired.** Key transfer, the trusted-devices list, and the P2P
-  `SyncProvider` end-to-end path — the transfer engine above is implemented and
-  unit-tested but not yet connected to a live peer session. The pairing exchange
+- **Rebuilding a scope.** A request with no starting point, or one reaching
+  behind this device's compaction cutoff, cannot be answered from history — the
+  frames are gone — so the scope is described as it stands now: one freshly
+  signed `put` frame per journalled row, indistinguishable from a journalled
+  frame, so the receiver needs no second way to apply it. This is not the backup
+  path, which exports a snapshot for a human. A scope this device holds no key
+  for is not rebuilt: one it cannot seal for is one it cannot serve.
+- **Not yet wired.** Key transfer and the P2P `SyncProvider` end-to-end path —
+  the transfer engine above is implemented and unit-tested, and catch-up starts
+  against a live peer session once a pairing is confirmed, but no provider
+  carries document sync between paired devices yet. The pairing exchange
   runs against real WebRTC between two browser profiles, driven end to end by
   `pair-device.spec.ts`; it has not yet been verified between two physical devices
   on a real network.
