@@ -1465,8 +1465,10 @@ If a touched file is non-compliant, insert the required behaviour-free `refactor
 
 Implementation must stop for explicit review at these points:
 
-1. **Cryptographic dependency/algorithm choice**
-   - Provide the compatibility, maintenance, licence and audit evidence.
+1. **Cryptographic dependency/algorithm choice** — answered, 2026-07-28.
+   - Frame signing is **ECDSA P-256 over SHA-256** via WebCrypto, reusing the device identity key already established for pairing (`DEVICE_IDENTITY_ALGORITHM` in `crypto/deviceIdentity.ts`). Evidence: no new dependency is added, so there is nothing to maintain, licence or audit beyond the platform; WebCrypto ECDSA P-256 is supported by every browser Writer targets; and the primitive is already load-bearing in the pairing exchange, so a weakness in it would compromise pairing regardless of this choice.
+   - Signing input is the domain label `lipsum-frame-sign-v1`, a `0x00` separator, then the canonical JSON of the frame minus `signature` — distinct from every pairing label, so signatures cannot cross contexts. See `crypto/frameSignature.ts` and `packages/writer-sync/docs/sync-frame-protocol.md` §9.
+   - Acceptance of empty (Stage 1) signatures ends here: `createTrustedFrameVerifier` refuses them, and refuses any frame whose origin is unknown, removed or revoked in the trusted-device registry.
 2. **QR encoder/scanner dependency**
    - Provide bundle size, browser support and accessibility fallback.
 3. **Stage 2B hosted signalling/STUN/TURN deployment**

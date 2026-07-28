@@ -57,6 +57,14 @@ export {
   verifyPairingPayload,
 } from './deviceSignature';
 
+export {
+  MissingFrameSignatureError,
+  signFrame,
+  verifyFrameSignature,
+} from './frameSignature';
+
+export { createTrustedFrameVerifier } from './trustedFrameVerifier';
+
 export { pairingTranscript, verificationCode } from './pairingTranscript';
 
 export {

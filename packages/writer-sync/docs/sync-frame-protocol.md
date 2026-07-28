@@ -253,18 +253,23 @@ same operation through two providers cannot both pass.
 
 ---
 
-## 9. The signature seam
+## 9. The signature
 
-`signature` exists on every frame and Stage 1 writes `''`.
+`signature` exists on every frame. Stage 1 wrote `''`; Stage 2A fills it.
 
-Stage 2A.2 fills it: the sending device signs with its cryptographic device
-identity, and a receiver verifies against the trusted-device registry before
-materialising. Until then the frame is authenticated *as content* — the AAD proves
-the header and payload belong together — but not attributed *to a device*: any
-holder of the content key could author a frame naming another device.
+The sending device signs with its cryptographic device identity, and a receiver
+verifies against the trusted-device registry before materialising. Without it a
+frame is authenticated *as content* — the AAD proves the header and payload
+belong together — but not attributed *to a device*: any holder of the content key
+could author a frame naming another device.
 
-Requirements for the signature, so that 2A.2 does not have to reinterpret this
-section:
+**Decided 2026-07-28** (runbook §30.1): **ECDSA P-256 over SHA-256**, via
+WebCrypto, reusing the device identity key from `deviceIdentity.ts`. No new
+dependency, no second key to manage, and the same primitive pairing already
+depends on. Implemented in `crypto/frameSignature.ts`, with the registry check in
+`crypto/trustedFrameVerifier.ts`.
+
+The requirements the implementation satisfies:
 
 - It is computed over the complete frame **minus** `signature` itself, including
   `payloadHash`, under a domain-separated label distinct from the pairing labels
@@ -276,13 +281,22 @@ section:
   rejected with a typed error and is not journalled. Journalling it would let a
   removed device fill the journal.
 - Verification failure is not retried and not partially applied.
-- The algorithm follows the device identity decision, which is a stop-and-ask
-  (runbook §30.1). No signing code lands before that sign-off.
+- The signing input is the domain label `lipsum-frame-sign-v1`, a `0x00`
+  separator, then the canonical JSON of the frame minus `signature`. The label
+  differs from every pairing label in `pairing-protocol.md` §10, so a pairing
+  signature can never verify as a frame signature — asserted in
+  `frameSignature.test.ts`.
 
-Empty signatures are accepted today because Stage 1 writes them. Stage 2A must
-decide, explicitly and in the open, when that acceptance ends — an engine that
-silently keeps accepting `''` after 2A.2 has shipped has a signature field and no
-signature check.
+**When acceptance of `''` ends.** It has ended: `createTrustedFrameVerifier`
+refuses an empty signature. It refuses rather than throws, because Stage 1 frames
+with `''` are ordinary old data on disk, not a caller's mistake — such a frame is
+simply no longer attributable and is not journalled from a peer.
+
+**A consequence worth stating.** Refusing unknown origins means a device accepts
+operations only from devices it has itself paired with. Where A–B and B–C are
+paired but A–C are not, B cannot relay A's operations onward to C. That is the
+conservative reading of the rule above; widening it needs a way for C to learn
+A's identity key that does not amount to B vouching for it.
 
 ---
 
