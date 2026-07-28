@@ -3,7 +3,7 @@ import { db } from '@/db/db';
 import { appLogger } from '@/lib/appLogger';
 import { createWriterSyncCoordinator } from './createWriterSyncCoordinator';
 import { startFrameIngestion } from './materialization/frameIngestion';
-import { pruneExpiredOperations } from './materialization/pruneExpiredOperations';
+import { compactJournal } from './materialization/compactJournal';
 
 /**
  * Start durable, session-level sync for every provider that offers it, and return
@@ -39,11 +39,11 @@ export const startWriterSync = async (
     teardown();
     throw error;
   }
-  // Retention pruning is best-effort housekeeping after boot has succeeded: a
-  // failure to prune must never stop sync from starting, and boot must never
-  // wait on a journal scan.
-  pruneExpiredOperations(db).catch((error: unknown) => {
-    appLogger.warn('journal retention pruning failed', error);
+  // Compaction is best-effort housekeeping after boot has succeeded: a failure
+  // to compact must never stop sync from starting, and boot must never wait on a
+  // journal scan.
+  compactJournal(db).catch((error: unknown) => {
+    appLogger.warn('journal compaction failed', error);
   });
   return teardown;
 };

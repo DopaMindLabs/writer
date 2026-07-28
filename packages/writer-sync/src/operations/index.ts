@@ -48,5 +48,8 @@ export {
 } from './journalRetention';
 export type { RetentionOptions } from './journalRetention';
 
+export { compactableOperationIds, releasableTombstones } from './journalCompaction';
+export type { CompactionOptions, PeerAcknowledgement } from './journalCompaction';
+
 export type { OperationInbox, OperationStore } from './operationStore.types';
 export type { MaterializeResult, OperationMaterializer } from './materializer.types';

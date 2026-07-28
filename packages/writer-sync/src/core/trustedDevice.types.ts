@@ -12,6 +12,17 @@ import type { DeviceId, OperationId, PrincipalId } from './ids';
  * turn a trust record into a tracking record.
  */
 
+/**
+ * How far a peer has read each originating device within one scope, keyed by the
+ * originating {@link DeviceId}.
+ *
+ * Per origin rather than one mark per scope: an operation from device C that is
+ * logically older than an acknowledged operation from device A has not thereby
+ * been seen by the peer, and a single mark would wrongly declare it covered. See
+ * `operations/journalCompaction.ts`.
+ */
+export type ScopeAcknowledgements = Readonly<Record<string, OperationId>>;
+
 export enum TrustedDeviceStatus {
   /** Paired and permitted to open new sessions. */
   Active = 'active',
@@ -43,11 +54,13 @@ export interface TrustedDeviceRecord {
   /** When the record was revoked; absent while active. */
   revokedAt?: number;
   /**
-   * The last operation this peer has acknowledged, per scope — the other half of
-   * journal compaction (`SyncTombstone.acknowledgedBy`). Absent scopes mean the
-   * peer has acknowledged nothing there yet.
+   * How far this peer has read each originating device, per scope — the other
+   * half of journal compaction (`SyncTombstone.acknowledgedBy`). Absent scopes
+   * and absent origins mean the peer has acknowledged nothing there yet.
    */
-  acknowledgedOperations: Readonly<Partial<Record<AccessScopeId, OperationId>>>;
+  acknowledgedOperations: Readonly<
+    Partial<Record<AccessScopeId, ScopeAcknowledgements>>
+  >;
 }
 
 /**
