@@ -39,6 +39,19 @@ export interface SealedRoot {
 export interface RootTransferPorts {
   /** Whether this device already holds key material. */
   holdsRoot: () => boolean;
+  /**
+   * Whether this is the device to create the account when neither holds one.
+   *
+   * Two devices that have never been used cannot each wait for the other, and
+   * if both minted they would seal their writing under two different keys. Both
+   * already learned each other's identity during the exchange, so the answer
+   * needs no further round trip — and unlike the *role* rule, both devices are
+   * running this protocol and will hear each other, so a device that defers is
+   * deferring to one that is certainly about to act.
+   */
+  mintsFirst: () => boolean;
+  /** Create this device's account root, so it has one to seal and to share. */
+  createRoot: () => Promise<void>;
   /** Seal this device's root for the authenticated peer, with its epoch. */
   wrapForPeer: () => Promise<SealedRoot>;
   /** Open a wrapper and install what it carries at the epoch it names. */
@@ -114,6 +127,8 @@ interface TransferContext {
   settle: (result: RootTransferOutcome) => void;
   attempt: (work: () => Promise<void>, result: RootTransferOutcome) => Promise<void>;
   sealForPeer: () => Promise<void>;
+  /** Create the account, then hand it straight to the peer that has none. */
+  mintAndSeal: () => Promise<void>;
   /** Mutable because its two facts arrive from opposite directions in time. */
   state: { started: boolean; peerNeedsRoot: boolean };
 }
@@ -128,7 +143,9 @@ const receiveMessage = async (
     // yet. Remembering the request is what lets this device answer its repeat —
     // or answer at once, if it has since started.
     state.peerNeedsRoot = true;
-    if (state.started && ports.holdsRoot()) await sealForPeer();
+    if (!state.started) return;
+    if (!ports.holdsRoot() && ports.mintsFirst()) await context.mintAndSeal();
+    else if (ports.holdsRoot()) await sealForPeer();
     return;
   }
   if (message.kind === 'holds-root') {
@@ -145,20 +162,19 @@ const receiveMessage = async (
   );
 };
 
-export const startRootTransfer = (ports: RootTransferPorts): RootTransfer => {
-  const announcer = createAnnouncer(ports);
-  const state = { started: false, peerNeedsRoot: false };
+/** The steps either device may take, and the one-shot guard around them. */
+const createActions = (
+  ports: RootTransferPorts,
+  announcer: Announcer,
+  resolve: (outcome: RootTransferOutcome) => void,
+) => {
   let finished = false;
-  let resolveOutcome: ((outcome: RootTransferOutcome) => void) | null = null;
-  const outcome = new Promise<RootTransferOutcome>((resolve) => {
-    resolveOutcome = resolve;
-  });
 
   const settle = (result: RootTransferOutcome): void => {
     if (finished) return;
     finished = true;
     announcer.stop();
-    resolveOutcome?.(result);
+    resolve(result);
   };
 
   const attempt = async (
@@ -185,20 +201,43 @@ export const startRootTransfer = (ports: RootTransferPorts): RootTransfer => {
       });
     }, 'sent');
 
-  const context: TransferContext = {
-    ports,
-    announcer,
-    settle,
-    attempt,
-    sealForPeer,
-    state,
+  /**
+   * Create the account, then hand it straight on. Minting is not wrapped in
+   * `attempt`: it is a step towards sending rather than an outcome of its own,
+   * and a device that created a root but failed to seal it must keep what it
+   * created — it is now the only copy.
+   */
+  const mintAndSeal = async (): Promise<void> => {
+    try {
+      await ports.createRoot();
+    } catch (error) {
+      ports.onError?.(error);
+      return;
+    }
+    await sealForPeer();
   };
+
+  return { settle, attempt, sealForPeer, mintAndSeal };
+};
+
+export const startRootTransfer = (ports: RootTransferPorts): RootTransfer => {
+  const announcer = createAnnouncer(ports);
+  const state = { started: false, peerNeedsRoot: false };
+  let resolveOutcome: ((outcome: RootTransferOutcome) => void) | null = null;
+  const outcome = new Promise<RootTransferOutcome>((resolve) => {
+    resolveOutcome = resolve;
+  });
+
+  const actions = createActions(ports, announcer, (result) => resolveOutcome?.(result));
+  const context: TransferContext = { ports, announcer, state, ...actions };
 
   return {
     start: () => {
       state.started = true;
       announcer.start();
-      if (state.peerNeedsRoot && ports.holdsRoot()) void sealForPeer();
+      if (!state.peerNeedsRoot) return;
+      if (ports.holdsRoot()) void actions.sealForPeer();
+      else if (ports.mintsFirst()) void actions.mintAndSeal();
     },
     receive: (message) => receiveMessage(context, message),
     settled: () => outcome,

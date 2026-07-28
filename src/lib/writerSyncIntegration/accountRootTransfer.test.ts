@@ -25,6 +25,7 @@ import { accountRootTransferPorts } from './accountRootTransfer';
  */
 
 const EPOCH = 4;
+const HERE = asDeviceId('this-device');
 
 let ephemeral: PairingEphemeralKeys;
 let root: Uint8Array;
@@ -55,6 +56,7 @@ describe('accountRootTransferPorts', () => {
     const ports = accountRootTransferPorts({
       peer: await peerFor(transcript),
       sessionPrivateKey: ephemeral.privateKey,
+      deviceId: HERE,
     });
 
     expect(ports.holdsRoot()).toBe(true);
@@ -71,6 +73,7 @@ describe('accountRootTransferPorts', () => {
     const ports = accountRootTransferPorts({
       peer: await peerFor(transcript),
       sessionPrivateKey: ephemeral.privateKey,
+      deviceId: HERE,
     });
 
     const sealed = await ports.wrapForPeer();
@@ -86,6 +89,7 @@ describe('accountRootTransferPorts', () => {
     const ports = accountRootTransferPorts({
       peer: await peerFor(transcript),
       sessionPrivateKey: ephemeral.privateKey,
+      deviceId: HERE,
     });
     const sealed = await ports.wrapForPeer();
     await forgetDeviceKeyRing();
@@ -98,10 +102,41 @@ describe('accountRootTransferPorts', () => {
     expect(await deviceKeyVault.hasAccountRoot()).toBe(true);
   });
 
+  it('creates an account when this device is the one to do it', async () => {
+    // Two devices that have never been used: one has to mint, and the ids they
+    // exchanged decide which without another round trip.
+    await forgetDeviceKeyRing();
+    await deviceKeyVault.forget();
+    const ports = accountRootTransferPorts({
+      peer: await peerFor(new Uint8Array([7])),
+      sessionPrivateKey: ephemeral.privateKey,
+      deviceId: HERE,
+    });
+
+    expect(ports.holdsRoot()).toBe(false);
+
+    await ports.createRoot();
+
+    expect(ports.holdsRoot()).toBe(true);
+    expect(await deviceKeyVault.hasAccountRoot()).toBe(true);
+  });
+
+  it('defers to the peer that sorts above it', async () => {
+    const ports = accountRootTransferPorts({
+      peer: await peerFor(new Uint8Array([7])),
+      sessionPrivateKey: ephemeral.privateKey,
+      deviceId: asDeviceId('aaa-below-the-peer'),
+    });
+
+    // The peer's id is 'peer-device'; this one sorts below it, so the peer mints.
+    expect(ports.mintsFirst()).toBe(false);
+  });
+
   it('refuses a wrapper sealed in a different session', async () => {
     const sealed = await accountRootTransferPorts({
       peer: await peerFor(new Uint8Array([1, 1, 1])),
       sessionPrivateKey: ephemeral.privateKey,
+      deviceId: HERE,
     }).wrapForPeer();
 
     // The key and the AAD are both bound to the transcript, so a wrapper lifted
@@ -109,6 +144,7 @@ describe('accountRootTransferPorts', () => {
     const elsewhere = accountRootTransferPorts({
       peer: await peerFor(new Uint8Array([2, 2, 2])),
       sessionPrivateKey: ephemeral.privateKey,
+      deviceId: HERE,
     });
 
     await expect(elsewhere.acceptWrapper(sealed)).rejects.toThrow();
@@ -119,12 +155,14 @@ describe('accountRootTransferPorts', () => {
     const ports = accountRootTransferPorts({
       peer: await peerFor(transcript),
       sessionPrivateKey: ephemeral.privateKey,
+      deviceId: HERE,
     });
     const sealed = await ports.wrapForPeer();
 
     const keyless = accountRootTransferPorts({
       peer: await peerFor(transcript),
       sessionPrivateKey: null,
+      deviceId: HERE,
     });
 
     await expect(keyless.acceptWrapper(sealed)).rejects.toThrow();

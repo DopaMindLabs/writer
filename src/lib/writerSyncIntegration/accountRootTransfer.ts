@@ -6,9 +6,11 @@ import {
   type RootTransferPorts,
 } from 'writer-sync/pairing';
 import type { DataChannelLike } from 'writer-sync/providers/webrtc';
+import type { DeviceId } from 'writer-sync/core';
 import { appLogger } from '@/lib/appLogger';
 import { deviceKeyVault, unwrapPairingRoot } from '@/lib/cloud/crypto/deviceKeyVault';
-import { deriveKeyRing } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { sealExistingRows } from '@/lib/cloud/setup';
 import { deviceKeyProvider, saveDeviceKeyRing } from '@/lib/cloud/crypto/keyStore';
 import { currentPrincipal } from './writerEntityMetadata';
 
@@ -35,8 +37,31 @@ export interface AccountRootTransferOptions {
   peer: AuthenticatedPeerParameters;
   /** This session's ephemeral private key, which the peer sealed to. */
   sessionPrivateKey: CryptoKey | null;
+  /** This device's own identity, for deciding who creates an account. */
+  deviceId: DeviceId;
   onError?: (error: unknown) => void;
 }
+
+/**
+ * Take a root into use: store it, derive the ring, and seal what was written
+ * before there was a key.
+ *
+ * The re-seal is what makes a pairing carry a device's existing writing. Rows
+ * written while keyless are plaintext and never entered the journal — putting
+ * them back through the middleware is what seals them and backfills the frames
+ * a peer can be sent.
+ */
+const adoptRoot = async (root: Uint8Array, epoch: number): Promise<void> => {
+  try {
+    await deviceKeyVault.storeAccountRoot(root, await currentPrincipal());
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(root, epoch) });
+  } finally {
+    // The root exists in this process for as long as it takes to store and
+    // derive, and no longer.
+    root.fill(0);
+  }
+  await sealExistingRows();
+};
 
 /**
  * The epoch this device's ring is at. A device holding a ring seals at the epoch
@@ -71,6 +96,15 @@ export const accountRootTransferPorts = (
     epoch: currentEpoch(),
   }),
 
+  // Both devices are new: one of them has to create the account, and the ids
+  // they exchanged decide which without another round trip. Both are running
+  // this protocol and hear each other, so the one that defers is deferring to a
+  // device that is certainly about to act.
+  mintsFirst: () =>
+    String(options.deviceId) > String(options.peer.deviceId),
+
+  createRoot: () => adoptRoot(generateMasterSecret(), DEFAULT_EPOCH),
+
   acceptWrapper: async ({ wrapper, epoch }) => {
     const { sessionPrivateKey } = options;
     if (sessionPrivateKey === null) {
@@ -79,15 +113,10 @@ export const accountRootTransferPorts = (
     // Opening it is the check. The key and the AAD are both bound to the
     // transcript, so a wrapper from another session, another peer, or an
     // exchange that differed by a byte simply fails to decrypt.
-    const root = await unwrapPairingRoot(wrapper, sessionPrivateKey, options.peer.transcript);
-    try {
-      await deviceKeyVault.storeAccountRoot(root, await currentPrincipal());
-      await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(root, epoch) });
-    } finally {
-      // The root exists in this process for as long as it takes to store and
-      // derive, and no longer.
-      root.fill(0);
-    }
+    await adoptRoot(
+      await unwrapPairingRoot(wrapper, sessionPrivateKey, options.peer.transcript),
+      epoch,
+    );
   },
 
   onError: options.onError,
@@ -98,6 +127,8 @@ export interface KeyTransferSession {
   peer: AuthenticatedPeerParameters;
   /** This session's ephemeral private key, which the peer sealed to. */
   sessionPrivateKey: CryptoKey | null;
+  /** This device's own identity, for deciding who creates an account. */
+  deviceId: DeviceId;
 }
 
 /**
@@ -139,6 +170,7 @@ export const runAccountRootTransfer = (
     ...accountRootTransferPorts({
       peer: session.peer,
       sessionPrivateKey: session.sessionPrivateKey,
+      deviceId: session.deviceId,
       onError: (error: unknown) => {
         appLogger.warn('account root transfer failed', error);
       },
