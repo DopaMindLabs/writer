@@ -73,3 +73,6 @@ export type {
   QrSignallingAdapterOptions,
   SignallingPeer,
 } from './qrSignallingAdapter';
+
+export { resolvePairingRole } from './roleResolution';
+export type { PairingRoleDecision } from './roleResolution';
