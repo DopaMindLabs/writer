@@ -536,20 +536,31 @@ server. The normative protocol lives in `packages/writer-sync/docs/`
 wired into the app.
 
 - **Entry point.** Settings → Device sync → **Pair another device** opens the
-  pairing dialog. The dialog is mounted only while open and asks **nothing**:
-  both devices gather and show a code, and reading one is what settles the
-  roles. The user is never asked which device goes first, because there is no
-  first — either device can be the one that scans.
+  pairing dialog. The dialog is mounted only while open and opens on a **start
+  choice**: *Show a code to start pairing* or *Scan the code on your other
+  device*. Nothing protocol-shaped is on that screen — no code, no symbol pager,
+  no scanner — so the flow reads as a sequence (one device shows, the other
+  scans) instead of two codes appearing at once with nothing to say whose turn
+  it is.
+- **The choice is presentational.** It selects what this screen displays and
+  nothing else; the protocol half a device plays is still settled by the payload
+  that arrives (`resolvePairingRole` — a reply is accepted by the device whose
+  offer it answers, an offer is answered by whichever device read it). Choosing
+  *show* on both devices costs a tap, not a stuck exchange: the showing screen's
+  own action leads to the scanner. This is not the earlier role question, which
+  committed a device to a half before anything had been scanned.
 - **One step per screen.** A code and a scanner are never shown together, nor a
   code beside the verification gate. Two QR surfaces at once read as two things
   to do at once and give no clue which device is meant to be doing which.
-- **Showing.** Every device gathers a WebRTC offer over a connection with **no
-  ICE servers** (same-network only, never a public STUN fallback) and displays
-  it as one or more QR symbols, with a single action — **Scan the other device's
-  code** — that replaces the code with the scanner and back. Candidate gathering
-  is bounded by a deadline; reaching it is not a failure, and the code is shown
-  from whatever candidates were gathered. Only a description with **no**
-  candidate at all fails.
+- **Showing.** Gathering starts when the dialog opens, not when the code is
+  asked for, so choosing *show* reveals a code that is usually already prepared;
+  until it is, the wait is named in place. Every device gathers a WebRTC offer
+  over a connection with **no ICE servers** (same-network only, never a public
+  STUN fallback) and displays it as one or more QR symbols, with a single
+  action — **It's been scanned — scan the reply** — that replaces the code with
+  the scanner and back. Candidate gathering is bounded by a deadline; reaching
+  it is not a failure, and the code is shown from whatever candidates were
+  gathered. Only a description with **no** candidate at all fails.
 - **Reading.** A device that reads an offer answers it, from a session opened
   for the purpose: it cannot answer a description it authored, so the offer it
   was showing is closed and replaced. It then shows the reply for the peer to
@@ -589,13 +600,17 @@ wired into the app.
   uploaded photograph is decoded to a bitmap before the platform detector sees
   it: Chromium's own `BarcodeDetector` refuses a `Blob` although the IDL admits
   one, and a chosen file is exactly that.
-- **Pairing code display.** A payload larger than one symbol is split into the
-  codec's bounded sequence (max 8 parts) and stepped through manually — no
-  timed cycling, so nothing needs reduced-motion gating. The symbol's own text
-  sits beneath it as selectable text and follows the pager, so the exchange
-  works with no camera at all. A payload past the symbol ceiling reports an
-  error rather than rendering nothing. Progress and failure are announced via
-  `role="status"` / an error banner, and failure copy never embeds
+- **Pairing code display.** The codec carries **2600 characters per symbol**
+  (headroom under the encoder's 2953-character version-40/EC-L ceiling for the
+  part prefix), so an ordinary offer is a single symbol and no pager appears.
+  A payload larger than that is split into the codec's bounded sequence (max 8
+  parts) and stepped through manually — no timed cycling, so nothing needs
+  reduced-motion gating. The symbol's own text sits beneath it as selectable
+  text and follows the pager, so the exchange works with no camera at all. A
+  payload past the symbol ceiling reports an error rather than rendering
+  nothing. Outstanding symbols are named individually ("Still to scan: symbol
+  2"), never as a bare count that reads as a quantity. Progress and failure are
+  announced via `role="status"` / an error banner, and failure copy never embeds
   peer-supplied text.
 - **Device identity.** Created on first use and stored in the never-synced
   device vault: a non-extractable ECDSA P-256 pair persisted as `CryptoKey`s.

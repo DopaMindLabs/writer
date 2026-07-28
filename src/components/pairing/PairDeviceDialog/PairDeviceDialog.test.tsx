@@ -112,13 +112,29 @@ const renderDialog = (signaller: PairingSignaller = readySignaller()) =>
     />,
   );
 
-/** Wait for this device's own code, which every device gathers on opening. */
+/** This device's own code, once the user has chosen to show it. */
 const ownCode = () => screen.findByRole('img', { name: 'Pairing code from this device' });
 
-/** Hand the dialog a peer payload the way a user without a camera would. */
-const pastePayload = async (payload: PairingOffer | PairingAnswer): Promise<void> => {
+/** Choose "show" on the start screen and wait for the code it reveals. */
+const showOwnCode = async (): Promise<HTMLElement> => {
   const user = userEvent.setup();
-  await user.click(screen.getByTestId('pairing-scan-start'));
+  await user.click(await screen.findByTestId('pairing-start-show'));
+  return ownCode();
+};
+
+/**
+ * Hand the dialog a peer payload the way a user without a camera would. The
+ * scanner is reached from the start screen by default; a device already
+ * showing its code goes via its own "scan the reply" action instead.
+ */
+const pastePayload = async (
+  payload: PairingOffer | PairingAnswer,
+  from: 'start' | 'showing' = 'showing',
+): Promise<void> => {
+  const user = userEvent.setup();
+  await user.click(
+    screen.getByTestId(from === 'start' ? 'pairing-start-scan' : 'pairing-scan-start'),
+  );
   const encoded = await encodePairingPayload(payload);
   const [symbol] = splitIntoQrParts({ sessionId: SESSION, text: encoded });
   await user.click(screen.getByLabelText('Or paste the code text'));
@@ -127,17 +143,31 @@ const pastePayload = async (payload: PairingOffer | PairingAnswer): Promise<void
 };
 
 describe('PairDeviceDialog', () => {
-  it('gathers a code the moment it opens, asking nothing first', async () => {
+  it('opens on the start choice, gathering underneath but showing no code', async () => {
     const createSignaller = vi.fn(() => Promise.resolve(readySignaller()));
     renderWithProviders(
       <PairDeviceDialog open onOpenChange={vi.fn()} createSignaller={createSignaller} />,
     );
 
-    expect(await ownCode()).toBeInTheDocument();
+    expect(await screen.findByTestId('pairing-start-step')).toBeInTheDocument();
+    // The choice is presentational: the exchange gathers from the moment the
+    // dialog opens, so the code is ready the instant "show" is chosen.
     expect(createSignaller).toHaveBeenCalled();
+    // Neither protocol surface exists yet — no code, no pager, no scanner.
+    expect(
+      screen.queryByRole('img', { name: 'Pairing code from this device' }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pairing-code-scanner')).not.toBeInTheDocument();
   });
 
-  it('shows progress while the device gathers', () => {
+  it('reveals the code when the user chooses to show one', async () => {
+    renderDialog();
+
+    expect(await showOwnCode()).toBeInTheDocument();
+  });
+
+  it('shows progress while the device gathers', async () => {
+    const user = userEvent.setup();
     renderWithProviders(
       <PairDeviceDialog
         open
@@ -146,13 +176,15 @@ describe('PairDeviceDialog', () => {
       />,
     );
 
+    await user.click(await screen.findByTestId('pairing-start-show'));
+
     expect(screen.getByTestId('pair-device-gathering')).toBeInTheDocument();
   });
 
   it('keeps the scanner behind an action rather than beside the code', async () => {
     const user = userEvent.setup();
     renderDialog();
-    await ownCode();
+    await showOwnCode();
 
     // Two ways in at once is the confusion this flow exists to remove: with a
     // code and a camera side by side, neither device looks like the one that
@@ -170,7 +202,7 @@ describe('PairDeviceDialog', () => {
   it('returns to the code from the scanner', async () => {
     const user = userEvent.setup();
     renderDialog();
-    await ownCode();
+    await showOwnCode();
     await user.click(screen.getByTestId('pairing-scan-start'));
 
     await user.click(screen.getByTestId('pairing-show-code'));
@@ -217,7 +249,7 @@ describe('PairDeviceDialog', () => {
   it('closes the connection when the dialog is dismissed', async () => {
     const signaller = readySignaller();
     const { rerender } = renderDialog(signaller);
-    await ownCode();
+    await showOwnCode();
 
     rerender(
       <PairDeviceDialog
@@ -236,7 +268,7 @@ describe('PairDeviceDialog', () => {
 describe('PairDeviceDialog, once its code has been read', () => {
   it('shows the verification code when a reply arrives', async () => {
     renderDialog();
-    await ownCode();
+    await showOwnCode();
 
     await pastePayload(answer());
 
@@ -245,7 +277,7 @@ describe('PairDeviceDialog, once its code has been read', () => {
 
   it('does not complete pairing on authentication alone', async () => {
     renderDialog();
-    await ownCode();
+    await showOwnCode();
 
     await pastePayload(answer());
     await screen.findByTestId('pairing-verification-code');
@@ -256,7 +288,7 @@ describe('PairDeviceDialog, once its code has been read', () => {
   it('completes only after the user confirms the codes match', async () => {
     const user = userEvent.setup();
     renderDialog();
-    await ownCode();
+    await showOwnCode();
     await pastePayload(answer());
     await screen.findByTestId('pairing-verification-code');
 
@@ -267,7 +299,7 @@ describe('PairDeviceDialog, once its code has been read', () => {
 
   it('reports a failure to authenticate rather than showing a code', async () => {
     renderDialog(readySignaller({ onAcceptAnswer: () => Promise.reject(new Error('bad sig')) }));
-    await ownCode();
+    await showOwnCode();
 
     await pastePayload(answer());
 
@@ -279,9 +311,9 @@ describe('PairDeviceDialog, once its code has been read', () => {
 describe('PairDeviceDialog, when it is the device that read a code', () => {
   it('answers a scanned offer and hands the reply back', async () => {
     renderDialog();
-    await ownCode();
+    await screen.findByTestId('pairing-start-step');
 
-    await pastePayload(offer());
+    await pastePayload(offer(), 'start');
 
     expect(
       await screen.findByRole('img', { name: 'Reply code from this device' }),
@@ -296,8 +328,8 @@ describe('PairDeviceDialog, when it is the device that read a code', () => {
   it('holds the digits back until the reply has been handed over', async () => {
     const user = userEvent.setup();
     renderDialog();
-    await ownCode();
-    await pastePayload(offer());
+    await screen.findByTestId('pairing-start-step');
+    await pastePayload(offer(), 'start');
     await screen.findByRole('img', { name: 'Reply code from this device' });
 
     // The peer cannot show its digits until it has read this code, so comparing
@@ -312,8 +344,8 @@ describe('PairDeviceDialog, when it is the device that read a code', () => {
   it('does not complete until this user confirms too', async () => {
     const user = userEvent.setup();
     renderDialog();
-    await ownCode();
-    await pastePayload(offer());
+    await screen.findByTestId('pairing-start-step');
+    await pastePayload(offer(), 'start');
     await user.click(await screen.findByTestId('pairing-reply-shown'));
     await screen.findByTestId('pairing-verification-code');
 
@@ -326,10 +358,10 @@ describe('PairDeviceDialog, when it is the device that read a code', () => {
 
   it('says so when the camera was pointed at this screen', async () => {
     renderDialog();
-    await ownCode();
+    await screen.findByTestId('pairing-start-step');
 
     // Answering a description this device authored would pair it with itself.
-    await pastePayload(offer(LOCAL_DEVICE));
+    await pastePayload(offer(LOCAL_DEVICE), 'start');
 
     expect(await screen.findByTestId('pairing-own-code')).toBeInTheDocument();
     // The scanner stays open: the user has somewhere to go with the right code.

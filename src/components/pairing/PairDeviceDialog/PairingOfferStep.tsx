@@ -1,25 +1,26 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import type { QrScanner } from 'writer-qr/scan';
-import { PairingCodeDisplay } from '@/components/pairing/PairingCodeDisplay/PairingCodeDisplay';
-import { PairingCodeScanner } from '@/components/pairing/PairingCodeScanner/PairingCodeScanner';
-import { Button } from '@/components/ui/Button';
-import { StatusGlyph } from '@/components/ui/StatusGlyph';
-import { TypographyMuted } from '@/components/ui/typography';
+import { PairingOfferCode } from './PairingOfferCode';
+import { PairingOfferScan } from './PairingOfferScan';
+import { PairingStartStep } from './PairingStartStep';
 import type { PairingExchange } from './usePairingExchange';
 
 /**
- * The opening step, and the same one on both devices: this device's code, and
- * one way to read the other's.
+ * The opening step, and the same one on both devices: a choice first, then one
+ * thing at a time — this device's code, or a way to read the other's.
  *
- * The code and the scanner are alternatives rather than neighbours. Shown
- * together they read as two things to do at once, and a user with a code on
+ * The postures are alternatives rather than neighbours. A code and a scanner
+ * shown together read as two things to do at once, and a user with a code on
  * screen and a camera beside it has no way to tell which device is meant to be
  * doing which — the very question this flow exists to stop asking.
  *
- * Once the peer is replying, the way in disappears: it holds this device's code
- * already, so scanning its offer as well would leave both waiting on each other.
+ * The posture is view state only. The exchange gathers from the moment the
+ * dialog opens, so choosing "show" reveals a code that is usually already
+ * prepared, and a payload read in any posture still settles the roles
+ * (`resolvePairingRole`) — neither choice commits the protocol to anything.
  */
+
+type OfferPosture = 'start' | 'show' | 'scan';
 
 export interface PairingOfferStepProps {
   exchange: PairingExchange;
@@ -28,49 +29,20 @@ export interface PairingOfferStepProps {
 }
 
 export const PairingOfferStep = ({ exchange, scanner }: PairingOfferStepProps) => {
-  const { t } = useTranslation('screens');
-  const [scanning, setScanning] = useState(false);
+  const [posture, setPosture] = useState<OfferPosture>('start');
 
-  if (exchange.offerPayload === null || exchange.sessionId === null) return null;
+  const show = () => {
+    setPosture('show');
+  };
+  const scan = () => {
+    setPosture('scan');
+  };
 
-  if (scanning) {
-    return (
-      <div className="flex flex-col gap-4" data-testid="pairing-offer-scanning">
-        {exchange.ownCodeScanned && (
-          <StatusGlyph kind="error" role="alert" data-testid="pairing-own-code">
-            {t('settings.pairing.offerStep.ownCode')}
-          </StatusGlyph>
-        )}
-        <PairingCodeScanner onPayload={exchange.submitPayload} scanner={scanner} />
-        <Button
-          kind="secondary"
-          data-testid="pairing-show-code"
-          onClick={() => {
-            setScanning(false);
-          }}
-        >
-          {t('settings.pairing.offerStep.showAction')}
-        </Button>
-      </div>
-    );
+  if (posture === 'start') return <PairingStartStep onShow={show} onScan={scan} />;
+
+  if (posture === 'scan') {
+    return <PairingOfferScan exchange={exchange} onShowCode={show} scanner={scanner} />;
   }
 
-  return (
-    <div className="flex flex-col gap-4" data-testid="pairing-offer-step">
-      <TypographyMuted variant="xs">{t('settings.pairing.offerStep.body')}</TypographyMuted>
-      <PairingCodeDisplay
-        payload={exchange.offerPayload}
-        sessionId={exchange.sessionId}
-        kind="offer"
-      />
-      <Button
-        data-testid="pairing-scan-start"
-        onClick={() => {
-          setScanning(true);
-        }}
-      >
-        {t('settings.pairing.offerStep.scanAction')}
-      </Button>
-    </div>
-  );
+  return <PairingOfferCode exchange={exchange} onScanReply={scan} />;
 };

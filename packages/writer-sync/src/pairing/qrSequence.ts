@@ -12,7 +12,10 @@ import { PairingError, PairingErrorCode } from './pairing.types';
  * parts of one session apart from a stray scan without parsing the payload.
  */
 
-export const MAX_QR_CHUNK_BYTES = 1024;
+// 2600 keeps a typical offer (~1.2–2k chars) in a single symbol while leaving
+// headroom under the encoder's 2953-char version-40/EC-L ceiling for the
+// `W1:<sessionId>:<index>/<total>:` prefix.
+export const MAX_QR_CHUNK_BYTES = 2600;
 export const MAX_QR_PARTS = 8;
 
 const PREFIX = /^W1:([A-Za-z0-9_-]+):(\d+)\/(\d+):(.*)$/s;

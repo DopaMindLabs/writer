@@ -1,13 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import { PairingErrorCode } from './pairing.types';
 import { createQrPartCollector } from './qrPartCollector';
-import { splitIntoQrParts } from './qrSequence';
+import { MAX_QR_CHUNK_BYTES, splitIntoQrParts } from './qrSequence';
 
 const SESSION = 'c2Vzc2lvbi1pZC0xMjM0';
 const OTHER_SESSION = 'YW5vdGhlci1zZXNzaW9u';
 
 const symbolsFor = (text: string, sessionId = SESSION): string[] =>
   splitIntoQrParts({ sessionId, text });
+
+/**
+ * Text long enough to need `parts` symbols, expressed against the codec's own
+ * chunk size — a literal length would silently collapse to one symbol the next
+ * time that limit moves, leaving these multi-part cases asserting nothing.
+ */
+const spanning = (character: string, parts: number): string =>
+  character.repeat(MAX_QR_CHUNK_BYTES * (parts - 1) + 1);
 
 describe('createQrPartCollector', () => {
   it('reports nothing collected before the first scan', () => {
@@ -35,7 +43,7 @@ describe('createQrPartCollector', () => {
   });
 
   it('withholds the payload until every symbol has arrived', () => {
-    const text = 'a'.repeat(2500);
+    const text = spanning('a', 3);
     const collector = createQrPartCollector();
     const symbols = symbolsFor(text);
 
@@ -50,7 +58,7 @@ describe('createQrPartCollector', () => {
 
   it('names the symbols still outstanding', () => {
     const collector = createQrPartCollector();
-    const symbols = symbolsFor('b'.repeat(2500));
+    const symbols = symbolsFor(spanning('b', 3));
 
     const progress = collector.accept(symbols[1]);
 
@@ -60,7 +68,7 @@ describe('createQrPartCollector', () => {
   });
 
   it('accepts symbols in any order', () => {
-    const text = 'c'.repeat(2500);
+    const text = spanning('c', 3);
     const collector = createQrPartCollector();
     const symbols = symbolsFor(text);
 
@@ -72,7 +80,7 @@ describe('createQrPartCollector', () => {
 
   it('treats a re-scanned symbol as no new progress', () => {
     const collector = createQrPartCollector();
-    const symbols = symbolsFor('d'.repeat(2500));
+    const symbols = symbolsFor(spanning('d', 3));
 
     collector.accept(symbols[0]);
     const progress = collector.accept(symbols[0]);
@@ -83,9 +91,9 @@ describe('createQrPartCollector', () => {
 
   it('refuses a symbol from a different session rather than switching', () => {
     const collector = createQrPartCollector();
-    collector.accept(symbolsFor('e'.repeat(2500))[0]);
+    collector.accept(symbolsFor(spanning('e', 3))[0]);
 
-    expect(() => collector.accept(symbolsFor('f'.repeat(2500), OTHER_SESSION)[0])).toThrow(
+    expect(() => collector.accept(symbolsFor(spanning('f', 3), OTHER_SESSION)[0])).toThrow(
       expect.objectContaining({ code: PairingErrorCode.BadQrSequence }),
     );
   });
@@ -100,7 +108,7 @@ describe('createQrPartCollector', () => {
 
   it('starts over after a reset', () => {
     const collector = createQrPartCollector();
-    collector.accept(symbolsFor('g'.repeat(2500))[0]);
+    collector.accept(symbolsFor(spanning('g', 3))[0]);
 
     collector.reset();
 
@@ -109,7 +117,7 @@ describe('createQrPartCollector', () => {
   });
 
   it('accepts a different session once reset', () => {
-    const text = 'h'.repeat(2500);
+    const text = spanning('h', 3);
     const collector = createQrPartCollector();
     collector.accept(symbolsFor(text)[0]);
 

@@ -23,15 +23,33 @@ const openPairing = async (page: Page): Promise<void> => {
   await page.goto('/#/settings?tab=deviceSync');
   await expect(page.getByTestId('pair-device-open')).toBeVisible();
   await page.getByTestId('pair-device-open').click();
-  // No question about which device goes first: every device gathers a code of
-  // its own and offers one way to read the other's.
-  await expect(page.getByTestId('pairing-offer-step')).toBeVisible({
+  // One step at a time: the dialog opens on the choice between showing a code
+  // and scanning one, so neither device is left guessing whose turn it is.
+  await expect(page.getByTestId('pairing-start-step')).toBeVisible();
+};
+
+/**
+ * Take the showing half, and wait for the code itself rather than the screen
+ * around it: the step appears at once and names the wait while the device is
+ * still gathering, so stopping at the step would hand the next assertion an
+ * empty frame.
+ */
+const showCode = async (page: Page): Promise<void> => {
+  await page.getByTestId('pairing-start-show').click();
+  await expect(page.getByTestId('pairing-offer-step')).toBeVisible();
+  await expect(page.getByRole('img', { name: 'Pairing code from this device' })).toBeVisible({
     timeout: GATHERING_TIMEOUT,
   });
 };
 
-/** Open the way in that needs no camera. */
+/** Open the way in that needs no camera, from the start choice. */
 const openScanner = async (page: Page): Promise<void> => {
+  await page.getByTestId('pairing-start-scan').click();
+  await expect(page.getByTestId('pairing-code-scanner')).toBeVisible();
+};
+
+/** The same scanner, reached from a device that has been showing its code. */
+const scanReply = async (page: Page): Promise<void> => {
   await page.getByTestId('pairing-scan-start').click();
   await expect(page.getByTestId('pairing-code-scanner')).toBeVisible();
 };
@@ -69,8 +87,10 @@ test('two devices pair over QR symbols and agree on one verification code', asyn
   await openPairing(page);
   await openPairing(joiner);
 
-  // Whichever device reads first becomes the reader; nobody was asked. Here it
-  // is the second one, which takes the first device's code.
+  // Whichever device reads first becomes the reader; nobody was asked which
+  // half to play, only what to do next. Here the first device shows and the
+  // second reads.
+  await showCode(page);
   const offered = await readSymbols(page);
   await openScanner(joiner);
   await pasteSymbols(joiner, offered);
@@ -81,7 +101,7 @@ test('two devices pair over QR symbols and agree on one verification code', asyn
     timeout: GATHERING_TIMEOUT,
   });
   const reply = await readSymbols(joiner);
-  await openScanner(page);
+  await scanReply(page);
   await pasteSymbols(page, reply);
 
   // The reader moves on when the user says the code was taken: nothing arrives
@@ -104,24 +124,51 @@ test('two devices pair over QR symbols and agree on one verification code', asyn
   await expect(joiner.getByTestId('pair-device-complete')).toBeVisible();
 });
 
+/**
+ * The same symbol, presented as the first of two.
+ *
+ * An ordinary code now fits one symbol, which completes a scan the moment it
+ * lands — so a half-collected scan, the state the wrong-session guard exists
+ * to protect, only occurs for a payload over the chunk size. Re-labelling a
+ * real symbol reproduces that state through the real surface rather than
+ * waiting for a description long enough to split on its own.
+ */
+const asFirstOfTwo = (symbol: string): string =>
+  symbol.replace(/^W1:([A-Za-z0-9_-]+):1\/1:/, 'W1:$1:1/2:');
+
 test('a symbol from an unrelated session is refused mid-scan', async ({
   page,
   browser,
   browserName,
 }) => {
+  // Three contexts, two of them gathering a session description of their own
+  // against the engine's deadline, so this one legitimately outruns the default
+  // budget on a loaded runner.
+  test.slow();
+
   // Two devices showing codes, so there are two distinct sessions to confuse.
   const first = await openCoveredContext(browser, browserName);
   const second = await openCoveredContext(browser, browserName);
 
   await openPairing(first);
   await openPairing(second);
+  await showCode(first);
+  await showCode(second);
 
   const [fromFirst] = await readSymbols(first);
   const [fromSecond] = await readSymbols(second);
 
   await openPairing(page);
   await openScanner(page);
-  await pasteSymbols(page, [fromFirst, fromSecond]);
+  await pasteSymbols(page, [asFirstOfTwo(fromFirst)]);
+
+  // Mid-scan, and the outstanding symbol is named as a symbol rather than left
+  // as a bare count that reads as "two more to go".
+  await expect(page.getByTestId('pairing-scan-progress')).toHaveText(
+    'Read 1 of 2 symbols. Still to scan: symbol 2.',
+  );
+
+  await pasteSymbols(page, [fromSecond]);
 
   // Adopting the stray would let a substituted code take over a scan the user
   // believes is still collecting their own device's answer.
@@ -138,6 +185,7 @@ test('a photographed code is read from an uploaded image', async ({
   // the encoder and the detector agree on a real image, not on a fixture.
   const shower = await openCoveredContext(browser, browserName);
   await openPairing(shower);
+  await showCode(shower);
 
   const symbol = shower.getByRole('img', { name: 'Pairing code from this device' });
   await expect(symbol).toBeVisible({ timeout: GATHERING_TIMEOUT });
@@ -166,10 +214,30 @@ test('the pairing dialog is reachable and named from Device sync settings', asyn
   await openPairing(page);
 
   await expect(page.getByRole('dialog', { name: 'Pair another device' })).toBeVisible();
+  // Nothing protocol-shaped on the first screen: no code, so no pager reading
+  // "Symbol 1 of 2" before anyone has asked for one, and no scanner either.
+  await expect(page.getByRole('img', { name: 'Pairing code from this device' })).toHaveCount(0);
+  await expect(page.getByTestId('pairing-code-scanner')).toHaveCount(0);
+  await expect(page.getByTestId('pairing-start-show')).toBeEnabled();
+  await expect(page.getByTestId('pairing-start-scan')).toBeEnabled();
+
   // One code and one way in — never a code beside a live scanner.
+  await showCode(page);
   await expect(page.getByRole('img', { name: 'Pairing code from this device' })).toBeVisible();
   await expect(page.getByTestId('pairing-scan-start')).toBeEnabled();
   await expect(page.getByTestId('pairing-code-scanner')).toHaveCount(0);
+});
+
+test('a typical pairing code fits a single symbol, with no pager', async ({ page }) => {
+  await openPairing(page);
+  await showCode(page);
+
+  // The pager is carriage detail for an oversized payload; an ordinary offer
+  // should never surface it.
+  await expect(page.getByTestId('pairing-code-payload')).toBeVisible({
+    timeout: GATHERING_TIMEOUT,
+  });
+  await expect(page.getByRole('button', { name: 'Next' })).toHaveCount(0);
 });
 
 /**

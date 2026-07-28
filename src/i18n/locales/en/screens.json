@@ -774,7 +774,7 @@
     },
     "pairing": {
       "title": "Pair another device",
-      "subtitle": "Show this code on one device and scan it with the other. Either device can do either part.",
+      "subtitle": "One device shows a code; the other scans it. Start on either.",
       "qrLabel": {
         "offer": "Pairing code from this device",
         "answer": "Reply code from this device"
@@ -808,7 +808,8 @@
         "unreadableLabel": "No pairing code could be read from that image.",
         "unrecognised": "That does not look like a pairing code from this device's partner.",
         "wrongSession": "That code belongs to a different pairing attempt. Start again to use it.",
-        "progress": "Read {{received}} of {{total}} symbols. Still needed: {{missing}}.",
+        "progress_one": "Read {{received}} of {{total}} symbols. Still to scan: symbol {{missing}}.",
+        "progress_other": "Read {{received}} of {{total}} symbols. Still to scan: symbols {{missing}}.",
         "complete": "All symbols read."
       },
       "authenticating": "Checking the code from your other device…",
@@ -823,9 +824,14 @@
         "title": "Devices paired",
         "body": "This device and your other device now trust each other."
       },
+      "startStep": {
+        "body": "One device shows a code and the other scans it. Choose what this device does first.",
+        "showAction": "Show a code to start pairing",
+        "scanAction": "Scan the code on your other device"
+      },
       "offerStep": {
         "body": "On your other device, open Pair another device, then scan this code.",
-        "scanAction": "Scan the other device's code",
+        "scanAction": "It's been scanned — scan the reply",
         "showAction": "Show my code again",
         "ownCode": "That is this device's own code. Scan the one showing on your other device."
       },

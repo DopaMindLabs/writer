@@ -31,13 +31,9 @@ const verification = (exchange: PairingExchange) =>
 export const PairDeviceDialogBody = ({ exchange, scanner }: PairDeviceDialogBodyProps) => {
   const { t } = useTranslation('screens');
 
-  if (exchange.phase === 'creating') {
-    return (
-      <StatusGlyph kind="info" role="status" data-testid="pair-device-gathering">
-        {t('settings.pairing.creating')}
-      </StatusGlyph>
-    );
-  }
+  // `creating` deliberately falls through to the offer step: the start choice
+  // needs no payload, so gathering never blocks the first screen — only the
+  // showing posture waits, and it names the wait itself.
 
   if (exchange.phase === 'failed') {
     return (

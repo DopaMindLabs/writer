@@ -177,7 +177,7 @@ reports a typed `local-connectivity` failure (§13) rather than waiting.
 | `MAX_PAYLOAD_BYTES` | 8192 | Canonical JSON, before compression. A ceiling on parser and buffer work. |
 | `MAX_SDP_BYTES` | 6144 | The dominant field; bounds the rest by subtraction. |
 | `MAX_JWK_BYTES` | 512 | Per JWK, both `identityJwk` and `ephemeralJwk`. |
-| `MAX_QR_CHUNK_BYTES` | 1024 | Encoded text per QR symbol. |
+| `MAX_QR_CHUNK_BYTES` | 2600 | Encoded text per QR symbol; a typical offer fits one symbol, with headroom under the 2953-char version-40/EC-L encoder ceiling for the part prefix. |
 | `MAX_QR_PARTS` | 8 | Bounded, ordered sequence. |
 | `SESSION_TTL_MILLIS` | 120 000 | Default validity (§7). |
 | `MAX_SESSION_TTL_MILLIS` | 300 000 | Hard ceiling on `expiresAt`. |
