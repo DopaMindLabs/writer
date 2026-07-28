@@ -151,3 +151,48 @@ test('the pairing dialog is reachable and named from Account settings', async ({
   await expect(page.getByTestId('pairing-role-show')).toBeEnabled();
   await expect(page.getByTestId('pairing-role-read')).toBeEnabled();
 });
+
+/**
+ * The camera path, driven against Chromium's synthetic capture device (see the
+ * launch args in `playwright.config.ts`). The fake device emits a rolling
+ * pattern rather than a code, so scanning runs and finds nothing — which is
+ * exactly the loop worth exercising here. That the reading device *can* start,
+ * report, and release a camera is what the unit suite cannot prove.
+ */
+test('the reading device can start and stop its camera', async ({ page }) => {
+  await openPairing(page);
+  await page.getByTestId('pairing-role-read').click();
+
+  const start = page.getByRole('button', { name: 'Use the camera' });
+  await expect(start).toBeVisible();
+  // Nothing is asked for until the user asks: no viewfinder before the press.
+  await expect(page.getByTestId('qr-scan-camera')).toBeHidden();
+
+  await start.click();
+
+  await expect(page.getByTestId('qr-scan-camera')).toBeVisible();
+  await expect(page.getByRole('status')).toHaveText('Looking for a code…');
+
+  const stop = page.getByRole('button', { name: 'Stop the camera' });
+  await expect(stop).toBeVisible();
+  await stop.click();
+
+  // Back to the offer state, viewfinder gone — the camera is not left running.
+  await expect(start).toBeVisible();
+  await expect(page.getByTestId('qr-scan-camera')).toBeHidden();
+});
+
+test('the camera never displaces the ways in that need no permission', async ({
+  page,
+}) => {
+  await openPairing(page);
+  await page.getByTestId('pairing-role-read').click();
+
+  await page.getByRole('button', { name: 'Use the camera' }).click();
+  await expect(page.getByTestId('qr-scan-camera')).toBeVisible();
+
+  // Both camera-free paths stay put while the camera is live, so a user who
+  // gives up on it has somewhere to go without closing the dialog.
+  await expect(page.getByLabel('Upload a photo of the code')).toBeVisible();
+  await expect(page.getByLabel('Or paste the code text')).toBeVisible();
+});

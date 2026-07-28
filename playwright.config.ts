@@ -86,7 +86,25 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        launchOptions: {
+          // A synthetic camera, auto-granted. The pairing scanner's camera path
+          // is otherwise unreachable headlessly, and asserting only that it
+          // reports "no camera" would leave the path users actually take
+          // untested. The fake device emits a rolling pattern rather than a QR,
+          // so scanning runs and finds nothing — which is the loop under test.
+          args: [
+            '--use-fake-device-for-media-stream',
+            '--use-fake-ui-for-media-stream',
+          ],
+        },
+      },
+    },
+  ],
   webServer: {
     command: 'npm run build:e2e && npm run preview:e2e',
     url: 'http://localhost:4173',
