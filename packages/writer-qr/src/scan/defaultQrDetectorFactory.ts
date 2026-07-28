@@ -36,9 +36,26 @@ export interface QrDetectorFactoryOptions {
   wasmUrl?: string;
 }
 
+/**
+ * Give the detector a source it will actually take.
+ *
+ * Chromium's own detector refuses a `Blob` — "Unsupported source" — although
+ * the IDL admits one, and a photograph the user uploaded arrives as exactly
+ * that. Decoding it here keeps the refusal out of every caller; a source that
+ * is not a `Blob` is already acceptable and is passed through, so a live camera
+ * frame costs no copy. The bitmap is released either way: it holds decoded
+ * pixels, and a scan may take many attempts before one reads.
+ */
 const asQrDetector = (platform: PlatformBarcodeDetector): QrDetector => ({
-  detect: async (source) =>
-    (await platform.detect(source)).map((found) => found.rawValue),
+  detect: async (source) => {
+    const bitmap = source instanceof Blob ? await createImageBitmap(source) : null;
+    try {
+      const found = await platform.detect(bitmap ?? source);
+      return found.map((detected) => detected.rawValue);
+    } finally {
+      bitmap?.close();
+    }
+  },
 });
 
 const nativeConstructor = (): BarcodeDetectorConstructor | null => {
