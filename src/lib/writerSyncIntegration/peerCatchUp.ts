@@ -7,6 +7,7 @@ import {
 } from 'writer-sync/operations';
 import { createTrustedFrameVerifier } from 'writer-sync/crypto';
 import {
+  CONTROL_CHANNEL,
   createWebRtcTransport,
   type DataChannelLike,
   type PeerSession,
@@ -266,6 +267,39 @@ const rememberPeer = async (
   });
 };
 
+interface ListenOptions {
+  peer: AdoptedPeer;
+  exchangeOver: (channel: DataChannelLike) => void;
+  track: (running: RunningAccountRootTransfer) => void;
+}
+
+/**
+ * Take up every channel this connection carries.
+ *
+ * The control channel hands over key material first and syncs after. Every other
+ * channel is a scope its peer opened — which is how this device receives work in
+ * a scope it is not writing to itself, and so has never asked for a channel for.
+ */
+const listenToPeer = ({ peer, exchangeOver, track }: ListenOptions): void => {
+  openChannelOnce(peer.session, (channel) => {
+    onPeerChannel({
+      channel,
+      peer,
+      startCatchUp: () => {
+        exchangeOver(channel);
+      },
+      track,
+    });
+  });
+
+  peer.session.onAnyChannel((channel) => {
+    if (channel.label === CONTROL_CHANNEL) return;
+    whenOpen(channel, () => {
+      exchangeOver(channel);
+    });
+  });
+};
+
 export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
   const registry = createTrustedDeviceStore(db);
   const sessions = new Set<PeerSession>();
@@ -284,24 +318,18 @@ export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
     });
 
   const startOver = (peer: AdoptedPeer): void => {
-    openChannelOnce(peer.session, (channel) => {
-      onPeerChannel({
-        channel,
-        peer,
-        startCatchUp: () => {
-          exchanges.add(
-            startCatchUpSession({
-              transport: createWebRtcTransport(channel),
-              ports: catchUpPorts({ db, peer, registry, retentionDays: () => days }),
-              onError: (error: unknown) => {
-                appLogger.warn('peer catch-up failed', error);
-              },
-            }),
-          );
-        },
-        track: (running) => transfers.add(running),
-      });
-    });
+    const exchangeOver = (channel: DataChannelLike): void => {
+      exchanges.add(
+        startCatchUpSession({
+          transport: createWebRtcTransport(channel),
+          ports: catchUpPorts({ db, peer, registry, retentionDays: () => days }),
+          onError: (error: unknown) => {
+            appLogger.warn('peer catch-up failed', error);
+          },
+        }),
+      );
+    };
+    listenToPeer({ peer, exchangeOver, track: (running) => transfers.add(running) });
   };
 
   return {

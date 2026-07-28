@@ -288,6 +288,33 @@ describe('the control channel on the answering side', () => {
     expect(connection.channels).toEqual([]);
   });
 
+  it('reports every channel the peer opens, whatever it is for', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    await session.acceptOffer('v=0\r\nOFFER\r\na=candidate\r\n');
+    const seen: string[] = [];
+    session.onAnyChannel((channel) => seen.push(channel.label));
+
+    connection.peerOpensChannel(remoteChannel());
+    connection.peerOpensChannel(remoteChannel('scope-1/operations'));
+
+    // A device only asks for the channels it needs itself; one opened for a
+    // scope it is not writing to is how it receives someone else's work.
+    expect(seen).toEqual(['writer-sync-control', 'scope-1/operations']);
+  });
+
+  it('reports channels already adopted to a late subscriber', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    await session.acceptOffer('v=0\r\nOFFER\r\na=candidate\r\n');
+    connection.peerOpensChannel(remoteChannel('scope-1/operations'));
+
+    const seen: string[] = [];
+    session.onAnyChannel((channel) => seen.push(channel.label));
+
+    expect(seen).toEqual(['scope-1/operations']);
+  });
+
   it('keeps channels for different purposes apart', async () => {
     const connection = fakeConnection({ gatheringCompletesImmediately: true });
     const session = createPeerSession({ createConnection: () => connection });

@@ -75,6 +75,16 @@ export interface PeerSession {
    * whoever asks first.
    */
   openChannel: (label: string) => Promise<DataChannelLike>;
+  /**
+   * Observe every channel the *peer* opens, whatever it is for.
+   *
+   * A device only asks for the channels it needs itself. Its peer may open one
+   * for a scope this device is not writing to — which is the ordinary case for
+   * receiving someone else's work — and without this that channel would sit
+   * unread. Fires for channels already adopted, so a late subscriber misses
+   * none.
+   */
+  onAnyChannel: (listener: (channel: DataChannelLike) => void) => () => void;
   /** Gather locally, then resolve the complete offer SDP. */
   createOffer: () => Promise<string>;
   /** Apply the peer's offer, gather locally, then resolve the answer SDP. */
@@ -84,7 +94,8 @@ export interface PeerSession {
   close: () => void;
 }
 
-const CONTROL_CHANNEL = 'writer-sync-control';
+/** What the control channel is called, so a host can tell it from the rest. */
+export const CONTROL_CHANNEL = 'writer-sync-control';
 
 /**
  * Wait for candidate gathering to finish, or for the deadline to pass.
@@ -154,12 +165,22 @@ const createChannelRegistry = () => {
     return created;
   };
 
+  const anyWatchers = new Set<(channel: DataChannelLike) => void>();
+
   return {
     current: (label: string) => channels.get(label) ?? null,
     adopt: (channel: DataChannelLike): void => {
       if (channels.has(channel.label)) return;
       channels.set(channel.label, channel);
       for (const listener of watchers(channel.label)) listener(channel);
+      for (const listener of anyWatchers) listener(channel);
+    },
+    subscribeAny: (listener: (channel: DataChannelLike) => void): (() => void) => {
+      anyWatchers.add(listener);
+      for (const channel of channels.values()) listener(channel);
+      return () => {
+        anyWatchers.delete(listener);
+      };
     },
     subscribe: (
       label: string,
@@ -174,6 +195,7 @@ const createChannelRegistry = () => {
     },
     release: (): void => {
       listeners.clear();
+      anyWatchers.clear();
       for (const channel of channels.values()) channel.close();
       channels.clear();
     },
@@ -281,6 +303,7 @@ export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
     onChannel: (listener) => channels.subscribe(CONTROL_CHANNEL, listener),
     openChannel: (label) =>
       openChannelFor({ label, channels, connection, offered: () => offered }),
+    onAnyChannel: (listener) => channels.subscribeAny(listener),
     createOffer: async () => {
       requireOpen();
       // Ordered and reliable: the operation protocol depends on a frame arriving

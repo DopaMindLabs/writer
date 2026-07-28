@@ -24,6 +24,7 @@ const idlePeerSession = () => ({
   channel: () => null,
   onChannel: () => () => undefined,
   openChannel: () => new Promise<never>(() => undefined),
+  onAnyChannel: () => () => undefined,
   createOffer: () => Promise.resolve(''),
   acceptOffer: () => Promise.resolve(''),
   acceptAnswer: () => Promise.resolve(),

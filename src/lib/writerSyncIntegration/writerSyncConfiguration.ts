@@ -18,10 +18,13 @@ import { createPeerChannelFactory } from './peerChannelFactory';
  * offers live transport and deliberately nothing else — no access control, no key
  * delivery, since a peer is no authority on either.
  */
+/** Names the peer provider, so boot can find the one that carries live work. */
+export const P2P_PROVIDER_ID = 'writer-p2p';
+
 export const writerSyncConfiguration = (): SyncConfiguration => {
   const dexieCloud = createDexieCloudProvider();
   const peers = createWebRtcSyncProvider({
-    id: 'writer-p2p',
+    id: P2P_PROVIDER_ID,
     openChannel: createPeerChannelFactory(),
   });
   return {

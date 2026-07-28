@@ -2,7 +2,10 @@ import type { SyncCoordinator } from 'writer-sync/core';
 import { db } from '@/db/db';
 import { appLogger } from '@/lib/appLogger';
 import { createWriterSyncCoordinator } from './createWriterSyncCoordinator';
+import { P2P_PROVIDER_ID } from './writerSyncConfiguration';
 import { startFrameIngestion } from './materialization/frameIngestion';
+import { startLivePeerSync } from './livePeerSync';
+import { writerJournalIdentity } from './materialization/writerJournalDeps';
 import { compactJournal } from './materialization/compactJournal';
 
 /**
@@ -35,6 +38,16 @@ export const startWriterSync = async (
     if (durable) {
       stops.push(startFrameIngestion({ db, syncComplete: durable.syncComplete }));
     }
+    // Catch-up carries what a peer missed when a connection opens; this carries
+    // what this device writes while one is already open.
+    stops.push(
+      startLivePeerSync({
+        db,
+        coordinator,
+        providerId: P2P_PROVIDER_ID,
+        deviceId: async () => String((await writerJournalIdentity()).deviceId),
+      }),
+    );
   } catch (error) {
     teardown();
     throw error;

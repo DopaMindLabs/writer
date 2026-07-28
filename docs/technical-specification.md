@@ -679,9 +679,20 @@ wired into the app.
   a real WebRTC pairing and asserts that writing held by one device appears on
   the other, live and after a reload. Two physical devices on a network remain
   slice 2A.9 and are not discharged by it.
-- **Not yet wired.** The P2P `SyncProvider` — catch-up carries what a device
-  holds at the moment of pairing, and changes made *after* it need the provider's
-  live transport, which no boot path creates yet. The pairing exchange
+- **Live peer sync.** Catch-up answers "what did I miss?" when a connection
+  opens; work written *while* a peer is connected reaches it as it is journalled.
+  The P2P provider is named at boot beside Dexie Cloud and supplies a transport
+  per scope over the paired connection; a registry stands between it and pairing,
+  so the provider never depends on the dialog's lifetime. Only frames this device
+  authored are sent — one that arrived from a peer is already held there. The
+  message is the same `frames` message catch-up speaks, so a receiver verifies,
+  journals and materialises it by exactly the path everything else takes.
+  A device accepts any channel its peer opens, which is how it receives work in a
+  scope it never writes to and so never asks for a channel for. Both directions
+  are covered by `pair-sync.spec.ts`.
+- **Not yet wired.** More than two devices: the channel factory takes the peer
+  that is connected, and fanning a scope across several needs a send that reaches
+  all of them and a receipt credited to one. The pairing exchange
   runs against real WebRTC between two browser profiles, driven end to end by
   `pair-device.spec.ts`; it has not yet been verified between two physical devices
   on a real network.
