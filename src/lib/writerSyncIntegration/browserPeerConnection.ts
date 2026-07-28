@@ -64,6 +64,15 @@ export const createBrowserPeerConnection = (): PeerConnectionLike => {
     close: () => {
       connection.close();
     },
+    onDataChannel: (listener) => {
+      const onEvent = (event: RTCDataChannelEvent): void => {
+        listener(event.channel);
+      };
+      connection.addEventListener('datachannel', onEvent);
+      return () => {
+        connection.removeEventListener('datachannel', onEvent);
+      };
+    },
     addEventListener: (type, listener) => {
       connection.addEventListener(type, listener);
     },

@@ -20,13 +20,27 @@ const fakeConnection = (
   const offerSdp = options.offerSdp ?? 'v=0\r\nOFFER\r\n';
   const listeners = new Map<string, (() => void)[]>();
   const channels: string[] = [];
+  const remoteChannelListeners = new Set<(channel: DataChannelLike) => void>();
   const connection: PeerConnectionLike & {
     channels: string[];
     finishGathering: () => void;
     remote: SessionDescriptionLike | null;
     closed: boolean;
     channelOrdered: boolean | undefined;
+    /** Stand in for the peer opening a channel on this connection. */
+    peerOpensChannel: (channel: DataChannelLike) => void;
+    remoteChannelListenerCount: () => number;
   } = {
+    onDataChannel: (listener) => {
+      remoteChannelListeners.add(listener);
+      return () => {
+        remoteChannelListeners.delete(listener);
+      };
+    },
+    peerOpensChannel: (channel) => {
+      for (const listener of remoteChannelListeners) listener(channel);
+    },
+    remoteChannelListenerCount: () => remoteChannelListeners.size,
     iceGatheringState: options.gatheringCompletesImmediately === true ? 'complete' : 'gathering',
     connectionState: 'new',
     localDescription: null,
@@ -232,5 +246,80 @@ describe('close', () => {
     createPeerSession({ createConnection: factory, ...manualTimers() });
     expect(created).toHaveLength(2);
     expect(created[0]).not.toBe(created[1]);
+  });
+});
+
+describe('the control channel on the answering side', () => {
+  const remoteChannel = (): DataChannelLike =>
+    ({ close: vi.fn() }) as unknown as DataChannelLike;
+
+  it('adopts the channel the peer opens, having created none itself', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    await session.acceptOffer('v=0\r\nOFFER\r\na=candidate\r\n');
+    expect(session.channel()).toBeNull();
+
+    const opened = remoteChannel();
+    connection.peerOpensChannel(opened);
+
+    expect(session.channel()).toBe(opened);
+    expect(connection.channels).toEqual([]);
+  });
+
+  it('notifies a subscriber when the peer opens the channel', () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    const seen: DataChannelLike[] = [];
+    session.onChannel((channel) => seen.push(channel));
+
+    const opened = remoteChannel();
+    connection.peerOpensChannel(opened);
+
+    expect(seen).toEqual([opened]);
+  });
+
+  it('notifies a late subscriber at once rather than never', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    await session.createOffer();
+
+    const seen: DataChannelLike[] = [];
+    session.onChannel((channel) => seen.push(channel));
+
+    expect(seen).toHaveLength(1);
+    expect(seen[0]).toBe(session.channel());
+  });
+
+  it('keeps the first channel when the peer opens a second', async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    await session.createOffer();
+    const first = session.channel();
+
+    connection.peerOpensChannel(remoteChannel());
+
+    expect(session.channel()).toBe(first);
+  });
+
+  it('stops listening for a remote channel once closed', () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    expect(connection.remoteChannelListenerCount()).toBe(1);
+
+    session.close();
+
+    expect(connection.remoteChannelListenerCount()).toBe(0);
+  });
+
+  it('unsubscribes a channel listener on request', () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    const seen: DataChannelLike[] = [];
+    const off = session.onChannel((channel) => seen.push(channel));
+
+    off();
+    connection.peerOpensChannel(remoteChannel());
+
+    expect(seen).toEqual([]);
   });
 });
