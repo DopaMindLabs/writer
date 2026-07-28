@@ -1,0 +1,167 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { asDeviceId, asOperationId, type SyncCoordinator } from 'writer-sync/core';
+import {
+  decodeCatchUpMessage,
+  type CatchUpMessage,
+  type EncryptedSyncFrame,
+} from 'writer-sync/operations';
+import { LoremDB } from '@/db/LoremDB';
+import { startLivePeerSync } from './livePeerSync';
+
+/**
+ * The other half of catch-up: work written *while* a peer is connected.
+ *
+ * Catch-up answers "what did I miss?" once, when a connection opens. Without
+ * this, a device could pair, receive everything, and then watch its peer type
+ * for an hour without seeing a word of it.
+ */
+
+const HERE = 'device-here';
+const THERE = 'device-there';
+const PROVIDER = 'writer-p2p';
+
+let db: LoremDB;
+
+const frameOf = (overrides: Partial<EncryptedSyncFrame> = {}): EncryptedSyncFrame => ({
+  v: 1,
+  operationId: asOperationId('op-1'),
+  accessScopeId: 'space-1',
+  entityTable: 'docs',
+  entityId: 'doc-1',
+  kind: 'put',
+  deviceId: asDeviceId(HERE),
+  logicalAt: { millis: 1_700_000_000_000, counter: 0 },
+  keyId: 'key-1',
+  epoch: 1,
+  payloadHash: 'hash',
+  payload: 'sealed',
+  signature: 'signed',
+  ...overrides,
+});
+
+/** A coordinator offering one realtime provider, and a record of what it sent. */
+const fakeCoordinator = () => {
+  const sent: { scope: string; message: CatchUpMessage }[] = [];
+  const closed: string[] = [];
+  const created: string[] = [];
+  const coordinator = {
+    provider: (id: string) =>
+      id === PROVIDER
+        ? {
+            realtime: {
+              createTransport: ({ accessScopeId }: { accessScopeId: string }) => {
+                created.push(accessScopeId);
+                return Promise.resolve({
+                  sharesStore: false,
+                  send: (bytes: Uint8Array) => {
+                    sent.push({
+                      scope: accessScopeId,
+                      message: decodeCatchUpMessage(bytes),
+                    });
+                  },
+                  onMessage: () => () => undefined,
+                  close: () => closed.push(accessScopeId),
+                });
+              },
+            },
+          }
+        : undefined,
+  } as unknown as SyncCoordinator;
+  return { coordinator, sent, closed, created };
+};
+
+const start = (peer: ReturnType<typeof fakeCoordinator>) =>
+  startLivePeerSync({
+    db,
+    coordinator: peer.coordinator,
+    providerId: PROVIDER,
+    deviceId: () => Promise.resolve(HERE),
+  });
+
+beforeEach(async () => {
+  db = new LoremDB('live-peer-sync');
+  await db.open();
+});
+
+afterEach(async () => {
+  await db.delete();
+});
+
+describe('startLivePeerSync', () => {
+  it('sends a frame this device journals to the connected peer', async () => {
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+
+    await db.syncOperations.put(frameOf());
+
+    await vi.waitFor(() => {
+      expect(peer.sent).toEqual([
+        {
+          scope: 'space-1',
+          message: { v: 1, kind: 'frames', frames: [frameOf()], final: true },
+        },
+      ]);
+    });
+    stop();
+  });
+
+  it('never echoes a frame that came from the peer', async () => {
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+
+    await db.syncOperations.put(frameOf({ deviceId: asDeviceId(THERE) }));
+
+    // The device it came from already holds it; sending it back would spend the
+    // connection restating what both ends have.
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    expect(peer.sent).toEqual([]);
+    stop();
+  });
+
+  it('opens one transport per scope, not one per frame', async () => {
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+
+    await db.syncOperations.put(frameOf());
+    await db.syncOperations.put(frameOf({ operationId: asOperationId('op-2') }));
+    await db.syncOperations.put(
+      frameOf({ operationId: asOperationId('op-3'), accessScopeId: 'space-2' }),
+    );
+
+    await vi.waitFor(() => {
+      expect(peer.sent).toHaveLength(3);
+    });
+    // A channel per frame would open one per keystroke.
+    expect(peer.created.sort()).toEqual(['space-1', 'space-2']);
+    stop();
+  });
+
+  it('stops sending, and releases its transports, when it is stopped', async () => {
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+    await db.syncOperations.put(frameOf());
+    await vi.waitFor(() => {
+      expect(peer.sent).toHaveLength(1);
+    });
+
+    stop();
+    await db.syncOperations.put(frameOf({ operationId: asOperationId('op-later') }));
+
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    expect(peer.sent).toHaveLength(1);
+    expect(peer.closed).toEqual(['space-1']);
+  });
+
+  it('does nothing at all when no peer provider is configured', async () => {
+    const stop = startLivePeerSync({
+      db,
+      coordinator: { provider: () => undefined } as unknown as SyncCoordinator,
+      providerId: PROVIDER,
+      deviceId: () => Promise.resolve(HERE),
+    });
+
+    await db.syncOperations.put(frameOf());
+
+    stop();
+  });
+});

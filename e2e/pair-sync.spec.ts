@@ -100,3 +100,31 @@ test('a paired device receives writing the other one already had', async ({
     timeout: SYNC_TIMEOUT,
   });
 });
+
+test('writing done after pairing reaches the other device too', async ({
+  page,
+  browser,
+  browserName,
+}) => {
+  const second = await openCoveredContext(browser, browserName);
+  await reseedAndGoHome(page);
+  await second.goto('/#/');
+
+  await pair(page, second);
+  await expect(second.locator('[data-testid^="space-rail-space-"]').first()).toBeVisible({
+    timeout: SYNC_TIMEOUT,
+  });
+
+  // Catch-up answered what the second device had missed. This is the other
+  // half: a document created while the two are connected, which no exchange
+  // was opened for.
+  await page.goto('/#/new');
+  await expect(page.locator('[data-testid^="templates-card-"]').first()).toBeVisible();
+  await page.getByTestId('templates-name-input').fill('Written after pairing');
+  await page.getByTestId('templates-submit').click();
+  await page.waitForURL(/#\/s\//);
+
+  await expect(
+    second.locator('[data-testid^="space-rail-space-"]'),
+  ).toHaveCount(2, { timeout: SYNC_TIMEOUT });
+});

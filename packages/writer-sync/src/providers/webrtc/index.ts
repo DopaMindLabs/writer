@@ -7,6 +7,7 @@
  * networks and real devices are slice 2A.9.
  */
 
+export { CONTROL_CHANNEL } from './peerSession';
 export {
   BUFFER_HIGH_WATER_BYTES,
   FrameTooLargeError,

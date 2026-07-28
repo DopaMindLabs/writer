@@ -85,6 +85,7 @@ const fakeSession = (existing: DataChannelLike | null = null) => {
       return () => subscribers.delete(listener);
     },
     openChannel: () => new Promise<never>(() => undefined),
+    onAnyChannel: () => () => undefined,
     createOffer: () => Promise.resolve(''),
     acceptOffer: () => Promise.resolve(''),
     acceptAnswer: () => Promise.resolve(),
