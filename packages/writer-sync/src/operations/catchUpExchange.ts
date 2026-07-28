@@ -86,22 +86,36 @@ const batched = <T>(items: readonly T[], size: number): T[][] =>
         items.slice(index * size, index * size + size),
       );
 
+const originKey = (frame: EncryptedSyncFrame): string =>
+  `${frame.accessScopeId} ${String(frame.deviceId)}`;
+
+/**
+ * Remember a frame only if it is the newest yet taken from its scope and origin.
+ *
+ * Keeping the running maximum rather than every frame is what bounds this: an
+ * acknowledgement names one operation per scope and origin, so the rest are never
+ * needed — and a peer that streams batches without ever marking one final would
+ * otherwise grow an unbounded list on this device.
+ */
+const rememberNewest = (
+  newest: Map<string, EncryptedSyncFrame>,
+  frame: EncryptedSyncFrame,
+): void => {
+  const held = newest.get(originKey(frame));
+  if (held === undefined || compareOperations(frame, held) > 0) {
+    newest.set(originKey(frame), frame);
+  }
+};
+
 /** The newest operation taken from each scope and origin in one reply. */
 const acknowledgementsFor = (
-  frames: readonly EncryptedSyncFrame[],
-): OperationAcknowledgement[] => {
-  const newest = new Map<string, EncryptedSyncFrame>();
-  for (const frame of frames) {
-    const key = `${frame.accessScopeId} ${String(frame.deviceId)}`;
-    const held = newest.get(key);
-    if (held === undefined || compareOperations(frame, held) > 0) newest.set(key, frame);
-  }
-  return [...newest.values()].map((frame) => ({
+  newest: ReadonlyMap<string, EncryptedSyncFrame>,
+): OperationAcknowledgement[] =>
+  [...newest.values()].map((frame) => ({
     accessScopeId: frame.accessScopeId,
     originDeviceId: frame.deviceId,
     operationId: frame.operationId,
   }));
-};
 
 /** Everything this device holds in the scopes it can decrypt. */
 const heldFrames = async (ports: CatchUpPorts): Promise<EncryptedSyncFrame[]> => {
@@ -214,18 +228,18 @@ const admit = async (options: {
 const createIngester = (
   ports: CatchUpPorts,
 ): ((message: { frames: readonly EncryptedSyncFrame[]; final: boolean }) => Promise<void>) => {
-  let taken: EncryptedSyncFrame[] = [];
+  let taken = new Map<string, EncryptedSyncFrame>();
 
   return async (message) => {
     const accessible = new Set(await ports.accessibleScopeIds());
     for (const frame of message.frames) {
-      if (await admit({ ports, frame, accessible })) taken.push(frame);
+      if (await admit({ ports, frame, accessible })) rememberNewest(taken, frame);
     }
     if (message.frames.length > 0) ports.onFramesJournalled?.();
     if (!message.final) return;
 
     const acknowledgements = acknowledgementsFor(taken);
-    taken = [];
+    taken = new Map();
     if (acknowledgements.length === 0) return;
     ports.send({ v: CATCH_UP_PROTOCOL_VERSION, kind: 'ack', acknowledgements });
   };
