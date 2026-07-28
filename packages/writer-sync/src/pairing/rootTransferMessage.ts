@@ -33,6 +33,13 @@ export const MAX_WRAPPED_BYTES = 4096;
 export type RootTransferMessage =
   | { v: typeof ROOT_TRANSFER_VERSION; kind: 'holds-root' }
   | { v: typeof ROOT_TRANSFER_VERSION; kind: 'needs-root' }
+  /**
+   * This device has nothing left to say about keys. Sent after settling and
+   * repeated until the peer says the same, so both leave the conversation
+   * together — whatever follows on this channel belongs to the next protocol,
+   * and a device still reading for keys would swallow it.
+   */
+  | { v: typeof ROOT_TRANSFER_VERSION; kind: 'ready' }
   | {
       v: typeof ROOT_TRANSFER_VERSION;
       kind: 'root';
@@ -82,7 +89,11 @@ export const decodeRootTransferMessage = (bytes: Uint8Array): RootTransferMessag
   }
   const message = asRecord(parsed);
   if (message.v !== ROOT_TRANSFER_VERSION) refuse('an unsupported protocol version');
-  if (message.kind === 'holds-root' || message.kind === 'needs-root') {
+  if (
+    message.kind === 'holds-root' ||
+    message.kind === 'needs-root' ||
+    message.kind === 'ready'
+  ) {
     return { v: ROOT_TRANSFER_VERSION, kind: message.kind };
   }
   if (message.kind === 'root') {

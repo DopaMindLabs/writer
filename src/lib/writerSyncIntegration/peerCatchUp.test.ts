@@ -8,6 +8,7 @@ import {
   encodeCatchUpMessage,
   type CatchUpMessage,
 } from 'writer-sync/operations';
+import { TrustedDeviceStatus } from 'writer-sync/core';
 import { LoremDB } from '@/db/LoremDB';
 import { NoteKind, NoteState } from '@/db/schema';
 import { asOperationId, asPrincipalId } from 'writer-sync/core';
@@ -213,6 +214,37 @@ describe('createPeerCatchUp', () => {
       expect(
         frames[0].kind === 'frames' && frames[0].frames.map((f) => f.entityId).sort(),
       ).toEqual(['n1', 's1']);
+    });
+    catchUp.stop();
+  });
+
+  it('records the peer as trusted when a pairing is adopted', async () => {
+    const peer = fakeSession();
+    const catchUp = createPeerCatchUp(db);
+
+    catchUp.adopt({
+      session: peer.session,
+      deviceId: PEER,
+      keyTransfer: {
+        peer: {
+          deviceId: PEER,
+          publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },
+          peerEphemeralPublicJwk: { kty: 'EC', crv: 'P-256', x: 'e', y: 'f' },
+          transcript: new Uint8Array([1, 2, 3]),
+          verificationCode: '048213',
+        },
+        sessionPrivateKey: null,
+        deviceId: asDeviceId('this-device'),
+      },
+    });
+
+    // Without this record every frame the peer sends is refused: the verifier
+    // checks a signature against the identity key a pairing established, and a
+    // device it has never heard of has none.
+    await vi.waitFor(async () => {
+      const record = await db.trustedDevices.get(String(PEER));
+      expect(record?.status).toBe(TrustedDeviceStatus.Active);
+      expect(record?.publicIdentityJwk).toEqual({ kty: 'EC', crv: 'P-256', x: 'x', y: 'y' });
     });
     catchUp.stop();
   });
