@@ -65,7 +65,11 @@ const handOverSession = (
     // What the account root travels on. It goes with the session because this
     // is the moment a human confirmed the codes, and the ephemeral key it is
     // sealed to belongs to this exchange and dies with it.
-    keyTransfer: { peer, sessionPrivateKey: opened.adapter.sessionPrivateKey() },
+    keyTransfer: {
+      peer,
+      sessionPrivateKey: opened.adapter.sessionPrivateKey(),
+      deviceId: opened.deviceId,
+    },
   });
   return true;
 };

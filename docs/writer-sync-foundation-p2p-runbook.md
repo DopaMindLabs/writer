@@ -1509,6 +1509,12 @@ Implementation must stop for explicit review at these points:
     - `PairingRootWrapper` carries the root alone, so the receiving device would have to guess which rotation epoch to derive its content key at. A wrong guess derives a key that decrypts nothing — indistinguishable, from the outside, from a peer that simply has no writing to send.
     - The epoch is therefore carried beside the wrapper in the transfer message rather than inside it, leaving the reviewed wrapper type unchanged.
 
+14. **Where a P2P-only device's key material comes from** — answered, 2026-07-28.
+    - **Pairing mints it when neither device holds any.** Until now the only account root Writer ever created came from cloud setup, behind a passphrase, so a P2P-only device had no key — nothing was journalled, and two paired devices had nothing to sync however well the pairing worked.
+    - When both devices announce `needs-root`, one creates the account and seals it for the other in the same exchange. Which one is decided by comparing device ids: both learned the other's during the exchange, so it costs no round trip, and — unlike the *role* rule this replaced (§30.10) — both devices are running this protocol and will hear each other, so a device that defers is deferring to one that is certainly about to act.
+    - Taking a root into use, minted or received, re-seals what was written before there was a key (`sealExistingRows`). Rows written while keyless are plaintext and never entered the journal; putting them back through the middleware seals them and backfills the frames a peer can be sent. It is what makes a pairing carry a device's existing writing rather than only what it writes next.
+    - **The cost, stated plainly:** an account created this way has no passphrase and no escrow, so it cannot be recovered from a recovery code. Losing every paired device loses the writing. A user who later sets a passphrase gets escrow from that point; a user who never does is relying on having more than one device.
+
 ---
 
 ## 31. Handover format for every implementation slice

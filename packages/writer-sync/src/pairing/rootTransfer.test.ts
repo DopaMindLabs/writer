@@ -27,16 +27,27 @@ interface Harness {
   tick: () => void;
 }
 
-const harness = (options: { holdsRoot: boolean }): Harness => {
+const harness = (options: {
+  holdsRoot: boolean;
+  mintsFirst?: boolean;
+  onMint?: () => void;
+}): Harness => {
   const sent: RootTransferMessage[] = [];
   const accepted: unknown[] = [];
+  let held = options.holdsRoot;
   let pending: (() => void) | null = null;
   return {
     sent,
     accepted,
     tick: () => pending?.(),
     ports: {
-      holdsRoot: () => options.holdsRoot,
+      holdsRoot: () => held,
+      mintsFirst: () => options.mintsFirst ?? false,
+      createRoot: () => {
+        held = true;
+        options.onMint?.();
+        return Promise.resolve();
+      },
       wrapForPeer: () => Promise.resolve({ wrapper: wrapper(), epoch: 2 }),
       acceptWrapper: (received) => {
         accepted.push(received);
@@ -150,6 +161,35 @@ describe('startRootTransfer', () => {
     await transfer.receive({ v: ROOT_TRANSFER_VERSION, kind: 'holds-root' });
 
     await expect(transfer.settled()).resolves.toBe('not-needed');
+  });
+
+  it('mints a root when neither device has one and this is the device to do it', async () => {
+    // Two devices that have never been used cannot wait for each other. One of
+    // them has to create the account, and both already know which — the ids
+    // they exchanged say so, with no further round trip.
+    const minted = vi.fn();
+    const device = harness({ holdsRoot: false, mintsFirst: true, onMint: minted });
+    const transfer = startRootTransfer(device.ports);
+    transfer.start();
+
+    await transfer.receive({ v: ROOT_TRANSFER_VERSION, kind: 'needs-root' });
+
+    expect(minted).toHaveBeenCalledTimes(1);
+    expect(device.sent.at(-1)?.kind).toBe('root');
+    await expect(transfer.settled()).resolves.toBe('sent');
+  });
+
+  it('waits for the other device to mint when it is not the one to do it', async () => {
+    const minted = vi.fn();
+    const device = harness({ holdsRoot: false, mintsFirst: false, onMint: minted });
+    const transfer = startRootTransfer(device.ports);
+    transfer.start();
+
+    await transfer.receive({ v: ROOT_TRANSFER_VERSION, kind: 'needs-root' });
+
+    expect(minted).not.toHaveBeenCalled();
+    // Still announcing: the peer is about to mint and send.
+    expect(device.sent.every((message) => message.kind === 'needs-root')).toBe(true);
   });
 
   it('stops announcing when it is stopped', () => {
