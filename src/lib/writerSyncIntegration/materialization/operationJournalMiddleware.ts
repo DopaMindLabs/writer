@@ -15,7 +15,6 @@ import type {
   ScopeKeyResolver,
   SyncKeyRing,
 } from 'writer-sync/crypto';
-import type { ReplicatedEntityMetadata } from 'writer-sync/core';
 import type { EncryptedSyncFrame } from 'writer-sync/operations';
 import { journalledTables } from '@/lib/writerSyncIntegration/writerTablePolicy';
 import {
@@ -27,6 +26,7 @@ import {
   makePutFrame,
   signAuthoredFrames,
 } from './writerOperationFactory';
+import { isJournalledRow, type UnknownRow } from './journalledRow';
 
 /**
  * DBCore middleware that journals an encrypted operation frame for every
@@ -46,7 +46,7 @@ import {
  * - `deleteRange` (`Table.clear()` is a local reset, never a synced deletion).
  */
 
-type Row = Record<string, unknown>;
+type Row = UnknownRow;
 
 /**
  * This device's cryptographic identity: the attribution a frame carries and the
@@ -75,23 +75,6 @@ const isMaterialisationTx = (trans: DBCoreTransaction): boolean =>
   (
     trans as { objectStoreNames?: { contains(name: string): boolean } }
   ).objectStoreNames?.contains('syncInbox') === true;
-
-const isTimestamp = (value: unknown): value is { millis: number; counter: number } =>
-  typeof value === 'object' &&
-  value !== null &&
-  typeof (value as { millis?: unknown }).millis === 'number' &&
-  typeof (value as { counter?: unknown }).counter === 'number';
-
-/** A row carrying the replication metadata every synced-content row must have. */
-const isJournalledRow = (
-  row: Row,
-): row is Row & ReplicatedEntityMetadata & { id: string } =>
-  typeof row.id === 'string' &&
-  typeof row.accessScopeId === 'string' &&
-  typeof row.createdBy === 'string' &&
-  typeof row.updatedBy === 'string' &&
-  typeof row.mutationId === 'string' &&
-  isTimestamp(row.logicalUpdatedAt);
 
 /** Resolve the write-context ring for one row of `table` (sync, may be null). */
 const ringFor = (options: {
