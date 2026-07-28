@@ -32,10 +32,15 @@ export interface TrustedDeviceRegistry {
    * cryptographic revocation until the scope keys rotate — say so in the UI.
    */
   revoke: (options: { deviceId: DeviceId; at: number }) => Promise<void>;
-  /** Advance the last operation a peer has acknowledged in one scope. */
+  /**
+   * Advance how far a peer has read one originating device within one scope.
+   * `deviceId` is the acknowledging peer; `originDeviceId` is the device whose
+   * operations it has read up to `operationId`.
+   */
   acknowledge: (options: {
     deviceId: DeviceId;
     accessScopeId: AccessScopeId;
+    originDeviceId: DeviceId;
     operationId: OperationId;
   }) => Promise<void>;
 }

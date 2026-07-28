@@ -62,12 +62,15 @@ export const createTrustedDeviceStore = (db: LoremDB): TrustedDeviceRegistry => 
         revokedAt: at,
       })),
 
-    acknowledge: ({ deviceId, accessScopeId, operationId }) =>
+    acknowledge: ({ deviceId, accessScopeId, originDeviceId, operationId }) =>
       mutate(deviceId, (record) => ({
         ...record,
         acknowledgedOperations: {
           ...record.acknowledgedOperations,
-          [accessScopeId]: operationId,
+          [accessScopeId]: {
+            ...record.acknowledgedOperations[accessScopeId],
+            [String(originDeviceId)]: operationId,
+          },
         },
       })),
   };

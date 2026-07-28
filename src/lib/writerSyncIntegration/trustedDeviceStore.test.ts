@@ -122,22 +122,27 @@ describe('revoke', () => {
   });
 });
 
+const ORIGIN = asDeviceId('origin-device-a');
+const OTHER_ORIGIN = asDeviceId('origin-device-b');
+
 describe('acknowledge', () => {
-  it('records the last acknowledged operation per scope', async () => {
+  it('records how far the peer has read each origin, per scope', async () => {
     await store.trust(recordFor());
     await store.acknowledge({
       deviceId: DEVICE,
       accessScopeId: 'space-1',
+      originDeviceId: ORIGIN,
       operationId: asOperationId('op-1'),
     });
     await store.acknowledge({
       deviceId: DEVICE,
       accessScopeId: 'space-2',
+      originDeviceId: ORIGIN,
       operationId: asOperationId('op-2'),
     });
     expect((await store.find(DEVICE))?.acknowledgedOperations).toEqual({
-      'space-1': 'op-1',
-      'space-2': 'op-2',
+      'space-1': { 'origin-device-a': 'op-1' },
+      'space-2': { 'origin-device-a': 'op-2' },
     });
   });
 
@@ -146,13 +151,36 @@ describe('acknowledge', () => {
     await store.acknowledge({
       deviceId: DEVICE,
       accessScopeId: 'space-1',
+      originDeviceId: ORIGIN,
       operationId: asOperationId('op-1'),
     });
     await store.acknowledge({
       deviceId: DEVICE,
       accessScopeId: 'space-1',
+      originDeviceId: ORIGIN,
       operationId: asOperationId('op-9'),
     });
-    expect((await store.find(DEVICE))?.acknowledgedOperations).toEqual({ 'space-1': 'op-9' });
+    expect((await store.find(DEVICE))?.acknowledgedOperations).toEqual({
+      'space-1': { 'origin-device-a': 'op-9' },
+    });
+  });
+
+  it('advances one origin without disturbing another in the same scope', async () => {
+    await store.trust(recordFor());
+    await store.acknowledge({
+      deviceId: DEVICE,
+      accessScopeId: 'space-1',
+      originDeviceId: ORIGIN,
+      operationId: asOperationId('op-1'),
+    });
+    await store.acknowledge({
+      deviceId: DEVICE,
+      accessScopeId: 'space-1',
+      originDeviceId: OTHER_ORIGIN,
+      operationId: asOperationId('op-2'),
+    });
+    expect((await store.find(DEVICE))?.acknowledgedOperations).toEqual({
+      'space-1': { 'origin-device-a': 'op-1', 'origin-device-b': 'op-2' },
+    });
   });
 });

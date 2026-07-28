@@ -61,5 +61,5 @@ export type {
 } from './entityMetadata';
 
 export { TrustedDeviceStatus, isTrustedForSession } from './trustedDevice.types';
-export type { TrustedDeviceRecord } from './trustedDevice.types';
+export type { ScopeAcknowledgements, TrustedDeviceRecord } from './trustedDevice.types';
 export type { TrustedDeviceRegistry } from './trustedDeviceRegistry.types';

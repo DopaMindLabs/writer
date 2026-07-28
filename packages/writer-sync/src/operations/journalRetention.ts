@@ -6,15 +6,21 @@ import type { EncryptedSyncFrame } from './operation.types';
  * peer that falls behind it resynchronises from current state, never from
  * replayed history.
  *
- * Time-based rather than acknowledgement-based by decision of the repository
- * owner: waiting for every device to confirm receipt lets one lost device hold
- * the journal open forever, and a paired device that never returns is an
- * expected fate, not an edge case. The window is user-configurable; thirty days
- * is the default.
+ * This module owns the **window** half of the policy only. Waiting for every
+ * device to confirm receipt cannot be the whole rule — one lost device would
+ * hold the journal open forever, and a paired device that never returns is an
+ * expected fate, not an edge case — so the window is the backstop that always
+ * applies. The window is user-configurable; thirty days is the default.
+ *
+ * The acknowledgement half, which lets a frame every trusted peer already holds
+ * go early, lives in `journalCompaction.ts` and composes the cutoff computed
+ * here. Callers wanting the complete rule should use `compactableOperationIds`
+ * rather than `expiredOperationIds`.
  *
  * Deletion tombstones are deliberately *not* covered by this policy. They are
  * what stops a device returning from beyond the window resurrecting an entity
- * it still holds a copy of, so they must outlive the frames that produced them.
+ * it still holds a copy of, so they must outlive the frames that produced them;
+ * `releasableTombstones` retires them on unanimous acknowledgement alone.
  */
 
 export const JOURNAL_RETENTION_DEFAULT_DAYS = 30;
