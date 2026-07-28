@@ -2,8 +2,9 @@ import { asDeviceId, asOperationId } from '../core/ids';
 import type { DeviceId, OperationId } from '../core/ids';
 import type { AccessScopeId } from '../core/providers.types';
 import type { HybridLogicalTimestamp } from '../core/hybridLogicalClock';
-import type { EncryptedSyncFrame } from './operation.types';
+import type { AttachmentChunkManifest, EncryptedSyncFrame } from './operation.types';
 import { decodeFrame } from './operationCodec';
+import { MAX_CHUNK_COUNT, validateChunkManifest } from './attachmentChunking';
 import type { CatchUpRequest, ScopeManifest } from './scopeManifest';
 
 /**
@@ -29,6 +30,8 @@ export const MAX_ORIGINS_PER_SCOPE = 256;
 export const MAX_REQUESTS = 1024;
 export const MAX_FRAMES_PER_MESSAGE = 64;
 export const MAX_ACKNOWLEDGEMENTS = 1024;
+export const MAX_ATTACHMENT_OFFERS = 256;
+export const MAX_REQUESTED_CHUNKS = 256;
 
 /** How far one peer has read one origin within one scope. */
 export interface OperationAcknowledgement {
@@ -37,9 +40,32 @@ export interface OperationAcknowledgement {
   operationId: OperationId;
 }
 
+/** One chunk in flight. `bytes` is base64url — JSON carries no binary. */
+export interface AttachmentChunkPayload {
+  attachmentId: string;
+  index: number;
+  bytes: string;
+}
+
 export type CatchUpMessage =
   | { v: typeof CATCH_UP_PROTOCOL_VERSION; kind: 'manifest'; manifests: ScopeManifest[] }
   | { v: typeof CATCH_UP_PROTOCOL_VERSION; kind: 'request'; requests: CatchUpRequest[] }
+  | {
+      v: typeof CATCH_UP_PROTOCOL_VERSION;
+      kind: 'attachment-offer';
+      manifests: AttachmentChunkManifest[];
+    }
+  | {
+      v: typeof CATCH_UP_PROTOCOL_VERSION;
+      kind: 'attachment-request';
+      attachmentId: string;
+      indices: number[];
+    }
+  | {
+      v: typeof CATCH_UP_PROTOCOL_VERSION;
+      kind: 'attachment-chunk';
+      chunk: AttachmentChunkPayload;
+    }
   | {
       v: typeof CATCH_UP_PROTOCOL_VERSION;
       kind: 'frames';
@@ -144,6 +170,72 @@ const decodeAcknowledgement = (value: unknown): OperationAcknowledgement => {
   };
 };
 
+const decodeAttachmentManifest = (value: unknown): AttachmentChunkManifest => {
+  const raw = decodeObject(value, 'attachment manifest');
+  const hashes = requireArray(raw.chunkHashes, 'chunkHashes', MAX_CHUNK_COUNT).map(
+    (hash, index) =>
+      typeof hash === 'string' && hash.length > 0
+        ? hash
+        : fail(`chunkHashes[${String(index)}] must be a non-empty string`),
+  );
+  const manifest: AttachmentChunkManifest = {
+    attachmentId: requireText(raw, 'attachmentId'),
+    contentHash: requireText(raw, 'contentHash'),
+    totalBytes: requireCount(raw, 'totalBytes'),
+    chunkBytes: requireCount(raw, 'chunkBytes'),
+    chunkCount: requireCount(raw, 'chunkCount'),
+    chunkHashes: hashes,
+  };
+  // The manifest's own ceilings and internal consistency, before a byte is
+  // allocated for it — a peer chooses every number in here.
+  validateChunkManifest(manifest);
+  return manifest;
+};
+
+const decodeChunkIndex = (value: unknown, index: number): number =>
+  typeof value === 'number' && Number.isInteger(value) && value >= 0
+    ? value
+    : fail(`indices[${String(index)}] must be a non-negative integer`);
+
+const decodeAttachmentBody = (
+  raw: Record<string, unknown>,
+): CatchUpMessage | undefined => {
+  const v = CATCH_UP_PROTOCOL_VERSION;
+  switch (raw.kind) {
+    case 'attachment-offer':
+      return {
+        v,
+        kind: 'attachment-offer',
+        manifests: requireArray(raw.manifests, 'manifests', MAX_ATTACHMENT_OFFERS).map(
+          decodeAttachmentManifest,
+        ),
+      };
+    case 'attachment-request':
+      return {
+        v,
+        kind: 'attachment-request',
+        attachmentId: requireText(raw, 'attachmentId'),
+        indices: requireArray(raw.indices, 'indices', MAX_REQUESTED_CHUNKS).map(
+          decodeChunkIndex,
+        ),
+      };
+    case 'attachment-chunk': {
+      const chunk = decodeObject(raw.chunk, 'chunk');
+      return {
+        v,
+        kind: 'attachment-chunk',
+        chunk: {
+          attachmentId: requireText(chunk, 'attachmentId'),
+          index: requireCount(chunk, 'index'),
+          bytes: requireText(chunk, 'bytes'),
+        },
+      };
+    }
+    default:
+      return undefined;
+  }
+};
+
 const decodeBody = (raw: Record<string, unknown>): CatchUpMessage => {
   const v = CATCH_UP_PROTOCOL_VERSION;
   switch (raw.kind) {
@@ -177,7 +269,9 @@ const decodeBody = (raw: Record<string, unknown>): CatchUpMessage => {
         ).map(decodeAcknowledgement),
       };
     default:
-      return fail(`unsupported kind ${String(raw.kind)}`);
+      return (
+        decodeAttachmentBody(raw) ?? fail(`unsupported kind ${String(raw.kind)}`)
+      );
   }
 };
 

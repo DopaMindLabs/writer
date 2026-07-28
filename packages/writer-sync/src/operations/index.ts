@@ -57,21 +57,34 @@ export type { CatchUpRequest, OriginSummary, ScopeManifest } from './scopeManife
 export {
   CATCH_UP_PROTOCOL_VERSION,
   MAX_ACKNOWLEDGEMENTS,
+  MAX_ATTACHMENT_OFFERS,
   MAX_FRAMES_PER_MESSAGE,
   MAX_MANIFESTS,
   MAX_ORIGINS_PER_SCOPE,
+  MAX_REQUESTED_CHUNKS,
   MAX_REQUESTS,
   MalformedCatchUpMessageError,
   decodeCatchUpMessage,
   encodeCatchUpMessage,
 } from './catchUpMessage';
-export type { CatchUpMessage, OperationAcknowledgement } from './catchUpMessage';
+export type {
+  AttachmentChunkPayload,
+  CatchUpMessage,
+  OperationAcknowledgement,
+} from './catchUpMessage';
 
 export { createCatchUpExchange } from './catchUpExchange';
 export type { CatchUpExchange, CatchUpPorts } from './catchUpExchange';
 
 export { startCatchUpSession } from './catchUpSession';
 export type { CatchUpSession } from './catchUpSession';
+
+export {
+  MAX_INFLIGHT_ATTACHMENTS,
+  TRANSFER_CHUNK_BYTES,
+  createAttachmentTransfer,
+} from './attachmentTransfer';
+export type { AttachmentTransfer, AttachmentTransferPorts } from './attachmentTransfer';
 
 export type { OperationInbox, OperationStore } from './operationStore.types';
 export type { MaterializeResult, OperationMaterializer } from './materializer.types';

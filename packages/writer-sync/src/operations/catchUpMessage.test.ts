@@ -104,6 +104,87 @@ describe('catch-up message round trip', () => {
   });
 });
 
+const attachmentManifest = {
+  attachmentId: 'att-1',
+  contentHash: 'Y29udGVudA',
+  totalBytes: 20,
+  chunkBytes: 8,
+  chunkCount: 3,
+  chunkHashes: ['aA', 'bB', 'cC'],
+};
+
+describe('attachment message round trip', () => {
+  it('carries an offer', () => {
+    const message: CatchUpMessage = {
+      v: CATCH_UP_PROTOCOL_VERSION,
+      kind: 'attachment-offer',
+      manifests: [attachmentManifest],
+    };
+
+    expect(roundTrip(message)).toEqual(message);
+  });
+
+  it('carries a chunk request', () => {
+    const message: CatchUpMessage = {
+      v: CATCH_UP_PROTOCOL_VERSION,
+      kind: 'attachment-request',
+      attachmentId: 'att-1',
+      indices: [0, 2],
+    };
+
+    expect(roundTrip(message)).toEqual(message);
+  });
+
+  it('carries a chunk', () => {
+    const message: CatchUpMessage = {
+      v: CATCH_UP_PROTOCOL_VERSION,
+      kind: 'attachment-chunk',
+      chunk: { attachmentId: 'att-1', index: 1, bytes: 'AAEC' },
+    };
+
+    expect(roundTrip(message)).toEqual(message);
+  });
+});
+
+describe('decodeCatchUpMessage rejects an attachment manifest', () => {
+  const offerOf = (manifest: Record<string, unknown>) =>
+    bytesOf({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+
+  it('whose chunk count disagrees with its hashes', () => {
+    expect(() =>
+      decodeCatchUpMessage(offerOf({ ...attachmentManifest, chunkHashes: ['aA'] })),
+    ).toThrow(/chunkCount disagrees with chunkHashes/);
+  });
+
+  it('whose chunk count disagrees with its declared size', () => {
+    expect(() =>
+      decodeCatchUpMessage(offerOf({ ...attachmentManifest, totalBytes: 100 })),
+    ).toThrow(/chunkCount disagrees with the declared size/);
+  });
+
+  it('that claims more than the size ceiling', () => {
+    expect(() =>
+      decodeCatchUpMessage(
+        offerOf({
+          ...attachmentManifest,
+          totalBytes: 1_073_741_824,
+          chunkBytes: 1_048_576,
+          chunkCount: 1024,
+          chunkHashes: Array.from({ length: 1024 }, () => 'aA'),
+        }),
+      ),
+    ).toThrow(/totalBytes exceeds the ceiling/);
+  });
+
+  it('with a non-integer chunk index in a request', () => {
+    expect(() =>
+      decodeCatchUpMessage(
+        bytesOf({ v: 1, kind: 'attachment-request', attachmentId: 'a', indices: [1.5] }),
+      ),
+    ).toThrow(/indices\[0\] must be a non-negative integer/);
+  });
+});
+
 describe('decodeCatchUpMessage rejects', () => {
   it('bytes that are not JSON', () => {
     expect(() => decodeCatchUpMessage(new TextEncoder().encode('{'))).toThrow(

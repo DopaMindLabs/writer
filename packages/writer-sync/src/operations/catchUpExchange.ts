@@ -16,6 +16,7 @@ import {
   type CatchUpRequest,
   type ScopeManifest,
 } from './scopeManifest';
+import type { AttachmentTransfer } from './attachmentTransfer';
 
 /**
  * The initial-transfer and incremental catch-up exchange, per runbook §24.
@@ -47,6 +48,12 @@ export interface CatchUpPorts {
   verifySignature: (frame: EncryptedSyncFrame) => Promise<boolean>;
   /** Record how far the peer has read — the input to journal compaction. */
   recordPeerAcknowledgement: (acknowledgement: OperationAcknowledgement) => Promise<void>;
+  /**
+   * Attachment chunk exchange — step 7 of the same catch-up sequence, so it
+   * shares this conversation rather than opening a protocol of its own. Absent
+   * when the host has no attachments to move.
+   */
+  attachments?: AttachmentTransfer;
   /** New frames are in the journal and await the host's materialiser. */
   onFramesJournalled?: () => void;
   /** Diagnostics for a refused frame. One bad frame never fails a batch. */
@@ -201,6 +208,11 @@ export const createCatchUpExchange = (ports: CatchUpPorts): CatchUpExchange => {
           return ingest(message);
         case 'ack':
           await Promise.all(message.acknowledgements.map(ports.recordPeerAcknowledgement));
+          return;
+        case 'attachment-offer':
+        case 'attachment-request':
+        case 'attachment-chunk':
+          await ports.attachments?.receive(message);
           return;
       }
     },
