@@ -25,6 +25,7 @@ import {
   type RunningAccountRootTransfer,
 } from './accountRootTransfer';
 import { createTrustedDeviceStore } from './trustedDeviceStore';
+import { peerSessions } from './peerSessionRegistry';
 import { getJournalRetentionDaysFor } from './journalRetentionPreference';
 import { currentPrincipal } from './writerEntityMetadata';
 import { createWriterOperationStore } from './materialization/writerOperationStore';
@@ -307,6 +308,9 @@ export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
     adopt: (peer) => {
       if (sessions.has(peer.session)) return;
       sessions.add(peer.session);
+      // Published for the P2P provider, which asks for a channel without knowing
+      // anything about pairing.
+      peerSessions.add({ session: peer.session, deviceId: peer.deviceId });
       // Trust is recorded before anything is exchanged: a frame arriving from a
       // device this one has no record of is refused, and the first frames can
       // arrive as soon as the channel is read.
@@ -323,7 +327,10 @@ export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
       transfers.clear();
       for (const exchange of exchanges) exchange.stop();
       exchanges.clear();
-      for (const session of sessions) session.close();
+      for (const session of sessions) {
+        peerSessions.remove(session);
+        session.close();
+      }
       sessions.clear();
     },
   };
