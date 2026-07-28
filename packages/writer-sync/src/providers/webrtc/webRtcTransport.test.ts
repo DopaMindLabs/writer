@@ -16,6 +16,7 @@ const fakeChannel = () => {
     emit: (type: string, data?: unknown) => void;
     closed: boolean;
   } = {
+    label: 'writer-sync-control',
     readyState: 'open',
     bufferedAmount: 0,
     bufferedAmountLowThreshold: 0,

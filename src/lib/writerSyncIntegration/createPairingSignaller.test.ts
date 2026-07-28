@@ -17,7 +17,8 @@ const fakeConnection = (): PeerConnectionLike & { closed: () => boolean } => {
     connectionState: 'new',
     localDescription: description,
     createDataChannel: () => ({
-      readyState: 'open',
+      label: 'writer-sync-control',
+  readyState: 'open',
       bufferedAmount: 0,
       bufferedAmountLowThreshold: 0,
       send: () => undefined,

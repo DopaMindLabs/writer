@@ -46,7 +46,7 @@ import { sweepUnappliedFrames } from './materialization/frameIngestion';
  * by both P2P and Dexie still applies exactly once.
  */
 
-/** The scopes this device holds a key for — the only ones it can ask for. */
+/** The scopes this device holds frames for — what it can advertise. */
 const accessibleScopeIds = async (db: LoremDB): Promise<string[]> => {
   if (!deviceKeyProvider.hasAnyKey()) return [];
   const spaces = await db.spaces.toArray();
@@ -111,6 +111,11 @@ const catchUpPorts = ({
 }: CatchUpPortsOptions): Omit<CatchUpPorts, 'send'> => ({
   journal: createWriterOperationStore(db),
   accessibleScopeIds: () => accessibleScopeIds(db),
+  // Stage 1 derives one content key for every scope, so a device holding the
+  // account key can read any scope it is offered. Answering from the scopes it
+  // already holds would leave a freshly paired device — which holds none — asking
+  // for nothing, and so never receiving the first scope that would let it ask.
+  canAccessScope: () => deviceKeyProvider.hasAnyKey(),
   verifySignature: createTrustedFrameVerifier(registry),
   // A peer the journal cannot honestly answer is served the scope as it stands
   // now. Without this it would get the surviving tail of history and be told it
@@ -144,8 +149,29 @@ const catchUpPorts = ({
 });
 
 /**
+ * Run `listener` once the channel can actually carry a message.
+ *
+ * A channel exists well before it is usable: the device that creates one holds
+ * it in `connecting` while the connection is still forming, and writing to it
+ * then throws. The answering device never sees that state — its channel arrives
+ * already open — which is why sending too early failed on one side of a pairing
+ * and not the other.
+ */
+const whenOpen = (channel: DataChannelLike, run: () => void): void => {
+  if (channel.readyState === 'open') {
+    run();
+    return;
+  }
+  const onOpen = (): void => {
+    channel.removeEventListener('open', onOpen);
+    run();
+  };
+  channel.addEventListener('open', onOpen);
+};
+
+/**
  * Run `listener` for the first channel a session comes by, however it comes by
- * it.
+ * it, once it is open.
  *
  * A channel the session already holds is delivered *during* the subscription,
  * when no handle to unsubscribe with exists yet. Taking that case on its own
@@ -156,14 +182,19 @@ const openChannelOnce = (
   session: PeerSession,
   listener: (channel: DataChannelLike) => void,
 ): void => {
+  const deliver = (channel: DataChannelLike): void => {
+    whenOpen(channel, () => {
+      listener(channel);
+    });
+  };
   const existing = session.channel();
   if (existing !== null) {
-    listener(existing);
+    deliver(existing);
     return;
   }
   const unsubscribe = session.onChannel((channel) => {
     unsubscribe();
-    listener(channel);
+    deliver(channel);
   });
 };
 

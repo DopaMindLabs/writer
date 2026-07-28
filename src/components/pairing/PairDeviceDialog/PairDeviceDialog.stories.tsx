@@ -23,6 +23,7 @@ const offer = (): PairingOffer => ({
 const idlePeerSession = () => ({
   channel: () => null,
   onChannel: () => () => undefined,
+  openChannel: () => new Promise<never>(() => undefined),
   createOffer: () => Promise.resolve(''),
   acceptOffer: () => Promise.resolve(''),
   acceptAnswer: () => Promise.resolve(),

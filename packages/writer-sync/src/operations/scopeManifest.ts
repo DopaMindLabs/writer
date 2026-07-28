@@ -121,12 +121,11 @@ const requestForOrigin = (options: {
 export const planCatchUp = (options: {
   local: readonly ScopeManifest[];
   remote: readonly ScopeManifest[];
-  accessibleScopeIds: readonly AccessScopeId[];
-}): CatchUpRequest[] => {
-  const accessible = new Set(options.accessibleScopeIds);
-
-  return options.remote
-    .filter((manifest) => accessible.has(manifest.accessScopeId))
+  /** Whether this device could read a scope the peer is offering. */
+  canAccessScope: (accessScopeId: AccessScopeId) => boolean;
+}): CatchUpRequest[] =>
+  options.remote
+    .filter((manifest) => options.canAccessScope(manifest.accessScopeId))
     .flatMap(({ accessScopeId, origins }) =>
       origins.flatMap((remote) =>
         requestForOrigin({
@@ -139,7 +138,6 @@ export const planCatchUp = (options: {
         }),
       ),
     );
-};
 
 /**
  * The frames answering one request, in convergence order so the asker can apply
