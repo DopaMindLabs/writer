@@ -301,6 +301,44 @@ describe('createCatchUpExchange on inbound frames', () => {
     ]);
   });
 
+  it('acknowledges across the batches of one reply, once it completes', async () => {
+    const { exchange, sent } = harness();
+    const first = await frameOf({ id: 'op-1', millis: 10 });
+    const second = await frameOf({ id: 'op-2', millis: 20 });
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [first], final: false });
+    await exchange.receive({ v: 1, kind: 'frames', frames: [second], final: true });
+
+    expect(sent).toEqual([
+      {
+        v: 1,
+        kind: 'ack',
+        acknowledgements: [
+          { accessScopeId: 'scope-1', originDeviceId: 'device-a', operationId: 'op-2' },
+        ],
+      },
+    ]);
+  });
+
+  it('never lets an older frame in a later batch walk the mark backwards', async () => {
+    const { exchange, sent } = harness();
+    const newer = await frameOf({ id: 'op-2', millis: 20 });
+    const older = await frameOf({ id: 'op-1', millis: 10 });
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [newer], final: false });
+    await exchange.receive({ v: 1, kind: 'frames', frames: [older], final: true });
+
+    expect(sent).toEqual([
+      {
+        v: 1,
+        kind: 'ack',
+        acknowledgements: [
+          { accessScopeId: 'scope-1', originDeviceId: 'device-a', operationId: 'op-2' },
+        ],
+      },
+    ]);
+  });
+
   it('acknowledges only once the reply is complete', async () => {
     const { exchange, sent, frames } = harness();
     const inbound = await frameOf({ id: 'op-1', millis: 10 });
