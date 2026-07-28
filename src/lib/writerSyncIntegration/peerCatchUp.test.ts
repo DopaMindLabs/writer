@@ -39,13 +39,23 @@ const fakeChannel = () => {
   };
 };
 
-/** A session whose channel arrives only when the test says so. */
-const fakeSession = () => {
+/**
+ * A session whose channel arrives when the test says so — or is already there.
+ *
+ * Delivering an existing channel synchronously on subscribe is not a
+ * convenience: it is the real session's contract, and it is the normal case for
+ * the device that created the channel itself. A double that only ever called
+ * back later would agree with a subscriber that cannot survive being called
+ * during its own subscription.
+ */
+const fakeSession = (existing: DataChannelLike | null = null) => {
   const subscribers = new Set<(channel: DataChannelLike) => void>();
   const close = vi.fn();
+  let current = existing;
   const session: PeerSession = {
-    channel: () => null,
+    channel: () => current,
     onChannel: (listener) => {
+      if (current !== null) listener(current);
       subscribers.add(listener);
       return () => subscribers.delete(listener);
     },
@@ -58,6 +68,7 @@ const fakeSession = () => {
     session,
     close,
     openChannel: (channel: DataChannelLike) => {
+      current = channel;
       for (const listener of subscribers) listener(channel);
     },
   };
@@ -84,6 +95,21 @@ describe('createPeerCatchUp', () => {
     expect(wire.sent).toEqual([]);
 
     peer.openChannel(wire.channel);
+
+    await vi.waitFor(() => {
+      expect(wire.sent).toEqual([{ v: 1, kind: 'manifest', manifests: [] }]);
+    });
+    catchUp.stop();
+  });
+
+  it('opens the exchange over a channel the session already holds', async () => {
+    const wire = fakeChannel();
+    // The initiating device created the control channel during pairing, so by
+    // the time a human has confirmed the codes it is already open.
+    const peer = fakeSession(wire.channel);
+    const catchUp = createPeerCatchUp(db);
+
+    catchUp.adopt({ session: peer.session, deviceId: PEER });
 
     await vi.waitFor(() => {
       expect(wire.sent).toEqual([{ v: 1, kind: 'manifest', manifests: [] }]);
