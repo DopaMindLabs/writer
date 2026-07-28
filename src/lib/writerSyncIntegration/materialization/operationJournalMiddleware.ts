@@ -22,7 +22,11 @@ import {
   isInternalBlobTx,
   isSyncApplied,
 } from '@/lib/cloud/crypto/transactionFlags';
-import { makeDeleteFrame, makePutFrame } from './writerOperationFactory';
+import {
+  makeDeleteFrame,
+  makePutFrame,
+  signAuthoredFrames,
+} from './writerOperationFactory';
 
 /**
  * DBCore middleware that journals an encrypted operation frame for every
@@ -44,10 +48,21 @@ import { makeDeleteFrame, makePutFrame } from './writerOperationFactory';
 
 type Row = Record<string, unknown>;
 
+/**
+ * This device's cryptographic identity: the attribution a frame carries and the
+ * key that signs it. Resolved together because a signature is only meaningful
+ * against the device id it claims — fetching them separately would let the two
+ * drift apart.
+ */
+export interface JournalIdentity {
+  deviceId: DeviceId;
+  privateKey: CryptoKey;
+}
+
 export interface OperationJournalDeps {
   resolver: ScopeKeyResolver;
   /** This device's stable identity; resolved once, then cached. */
-  deviceId: () => Promise<DeviceId>;
+  identity: () => Promise<JournalIdentity>;
 }
 
 /**
@@ -202,10 +217,10 @@ const journalPut = async (options: {
   table: DBCoreTable;
   syncOps: DBCoreTable;
   resolver: ScopeKeyResolver;
-  deviceId: () => Promise<DeviceId>;
+  identity: () => Promise<JournalIdentity>;
   req: DBCoreAddRequest | DBCorePutRequest;
 }): Promise<DBCoreMutateResponse> => {
-  const { table, syncOps, resolver, deviceId, req } = options;
+  const { table, syncOps, resolver, identity, req } = options;
   const rows = req.values as readonly Row[];
   const rings = rows.map((row, i) =>
     ringFor({ table, resolver, row, fallbackKey: req.keys?.[i] }),
@@ -215,7 +230,12 @@ const journalPut = async (options: {
   // prematurely), so the write passes straight through.
   if (rings.every((ring) => ring === null)) return table.mutate(req);
   const frames = await inTx(
-    deviceId().then((device) => putFrames({ table, rings, deviceId: device, req })),
+    identity().then(async (device) =>
+      signAuthoredFrames(
+        device.privateKey,
+        await putFrames({ table, rings, deviceId: device.deviceId, req }),
+      ),
+    ),
   );
   const response = await table.mutate(req);
   // A row the store rejected (a duplicate `add`) never happened, so its frame is
@@ -236,17 +256,25 @@ const journalDelete = async (options: {
   table: DBCoreTable;
   syncOps: DBCoreTable;
   resolver: ScopeKeyResolver;
-  deviceId: () => Promise<DeviceId>;
+  identity: () => Promise<JournalIdentity>;
   req: DBCoreDeleteRequest;
 }): Promise<DBCoreMutateResponse> => {
-  const { table, syncOps, resolver, deviceId, req } = options;
+  const { table, syncOps, resolver, identity, req } = options;
   if (!resolver.hasAnyKey()) return table.mutate(req);
-  const device = await inTx(deviceId());
+  const device = await inTx(identity());
   const rows = (await table.getMany({
     trans: req.trans,
     keys: req.keys,
   })) as (Row | undefined)[];
-  const frames = deleteFrames({ table, resolver, deviceId: device, req, rows });
+  // Framing a deletion still needs no Web Crypto; signing one does, so the
+  // signature is applied in its own wrapped wait — the same shape `journalPut`
+  // uses, and the reason the frames are built before the mutation is delegated.
+  const frames = await inTx(
+    signAuthoredFrames(
+      device.privateKey,
+      deleteFrames({ table, resolver, deviceId: device.deviceId, req, rows }),
+    ),
+  );
   const response = await table.mutate(req);
   await writeFrames({ syncOps, trans: req.trans, frames });
   return response;
@@ -256,10 +284,10 @@ const journalMutate = (options: {
   table: DBCoreTable;
   syncOps: DBCoreTable;
   deps: OperationJournalDeps;
-  deviceId: () => Promise<DeviceId>;
+  identity: () => Promise<JournalIdentity>;
   req: DBCoreMutateRequest;
 }): Promise<DBCoreMutateResponse> => {
-  const { table, syncOps, deps, deviceId, req } = options;
+  const { table, syncOps, deps, identity, req } = options;
   if (req.type === 'deleteRange') return table.mutate(req);
   if (
     isMaterialisationTx(req.trans) ||
@@ -268,7 +296,7 @@ const journalMutate = (options: {
   ) {
     return table.mutate(req);
   }
-  const shared = { table, syncOps, resolver: deps.resolver, deviceId };
+  const shared = { table, syncOps, resolver: deps.resolver, identity };
   if (req.type === 'delete') return journalDelete({ ...shared, req });
   return journalPut({ ...shared, req });
 };
@@ -288,9 +316,9 @@ export const createOperationJournalMiddleware = (
   level: 20,
   create: (down: DBCore) => {
     const journalled = new Set(journalledTables());
-    let device: DeviceId | null = null;
-    const deviceId = async (): Promise<DeviceId> =>
-      (device ??= await deps.deviceId());
+    let device: JournalIdentity | null = null;
+    const identity = async (): Promise<JournalIdentity> =>
+      (device ??= await deps.identity());
     return {
       ...down,
       transaction: (stores, mode, options) =>
@@ -309,7 +337,7 @@ export const createOperationJournalMiddleware = (
               table,
               syncOps: down.table('syncOperations'),
               deps,
-              deviceId,
+              identity,
               req,
             }),
         };

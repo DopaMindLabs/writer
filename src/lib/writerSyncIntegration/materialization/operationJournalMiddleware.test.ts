@@ -10,7 +10,12 @@ import type {
   ScopeKeyResolver,
   SyncKeyRing,
 } from 'writer-sync/crypto';
-import { openOperationPayload } from 'writer-sync/crypto';
+import {
+  generateDeviceIdentity,
+  openOperationPayload,
+  verifyFrameSignature,
+  type DeviceIdentityKeys,
+} from 'writer-sync/crypto';
 import { verifyFrame } from 'writer-sync/operations';
 import { createOperationJournalMiddleware } from './operationJournalMiddleware';
 import { makePutFrame } from './writerOperationFactory';
@@ -27,6 +32,7 @@ const DEVICE_REMOTE = asDeviceId('device-remote');
 
 let db: LoremDB;
 let ring: SyncKeyRing;
+let identityKeys: DeviceIdentityKeys;
 const holder: { ring: SyncKeyRing | null } = { ring: null };
 
 const resolver: ScopeKeyResolver = {
@@ -56,12 +62,17 @@ const note = (overrides: Partial<Note> = {}): Note => ({
 beforeEach(async () => {
   ring = await deriveKeyRing(generateMasterSecret(), 1);
   holder.ring = ring;
+  identityKeys = await generateDeviceIdentity();
   db = new LoremDB('op-journal');
   db.use(createEncryptionMiddleware(resolver, () => 'none'));
   db.use(
     createOperationJournalMiddleware({
       resolver,
-      deviceId: () => Promise.resolve(DEVICE_LOCAL),
+      identity: () =>
+        Promise.resolve({
+          deviceId: DEVICE_LOCAL,
+          privateKey: identityKeys.privateKey,
+        }),
     }),
   );
   await db.open();
@@ -116,6 +127,36 @@ describe('operation journal middleware', () => {
       accessScopeId: 's1',
       payload: '',
     });
+  });
+
+  it('signs the put frames it journals with this device’s identity key', async () => {
+    await db.notes.put(note());
+
+    const [frame] = await db.syncOperations.toArray();
+    expect(frame.signature).not.toBe('');
+    await expect(verifyFrameSignature(identityKeys.publicKey, frame)).resolves.toBe(true);
+  });
+
+  it('signs the delete frames it journals', async () => {
+    await db.notes.put(note());
+    await db.notes.delete('n1');
+
+    const frames = await db.syncOperations.toArray();
+    const deletion = frames.find((frame) => frame.kind === 'delete');
+    expect(deletion).toBeDefined();
+    if (!deletion) return;
+    await expect(verifyFrameSignature(identityKeys.publicKey, deletion)).resolves.toBe(
+      true,
+    );
+  });
+
+  it('signs over the sealed payload, so an altered frame no longer verifies', async () => {
+    await db.notes.put(note());
+
+    const [frame] = await db.syncOperations.toArray();
+    await expect(
+      verifyFrameSignature(identityKeys.publicKey, { ...frame, entityId: 'n2' }),
+    ).resolves.toBe(false);
   });
 
   it('journals nothing while the device is keyless', async () => {

@@ -10,6 +10,7 @@ import {
   compareTimestamps,
 } from 'writer-sync/core';
 import type { ScopeKeyResolver, SyncKeyRing } from 'writer-sync/crypto';
+import { generateDeviceIdentity } from 'writer-sync/crypto';
 import { createOperationJournalMiddleware } from './materialization/operationJournalMiddleware';
 import { updateReplicatedRow } from './replicatedRowUpdate';
 
@@ -54,7 +55,10 @@ beforeEach(async () => {
   db.use(
     createOperationJournalMiddleware({
       resolver,
-      deviceId: () => Promise.resolve(asDeviceId('device-local')),
+      identity: async () => ({
+        deviceId: asDeviceId('device-local'),
+        privateKey: (await generateDeviceIdentity()).privateKey,
+      }),
     }),
   );
   await db.open();
