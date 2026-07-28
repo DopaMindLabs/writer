@@ -27,6 +27,8 @@ export interface PairingCodeScannerProps {
   onPayload: (payload: string) => void;
   /** Injected in tests and stories; defaults to the real detector. */
   scanner?: QrScanner;
+  /** Injected in tests and stories; defaults to the browser's camera. */
+  requestCamera?: () => Promise<MediaStream>;
 }
 
 /** A refused symbol maps to fixed copy — never to the offending text. */
@@ -35,7 +37,11 @@ const problemKey = (error: unknown): string =>
     ? 'settings.pairing.scan.unrecognised'
     : 'settings.pairing.scan.wrongSession';
 
-export const PairingCodeScanner = ({ onPayload, scanner }: PairingCodeScannerProps) => {
+export const PairingCodeScanner = ({
+  onPayload,
+  scanner,
+  requestCamera,
+}: PairingCodeScannerProps) => {
   const { t } = useTranslation('screens');
   const collector = useRef(createQrPartCollector());
   const [progress, setProgress] = useState<QrCollectionProgress | null>(null);
@@ -59,6 +65,13 @@ export const PairingCodeScanner = ({ onPayload, scanner }: PairingCodeScannerPro
       <QrScanInput
         onScan={handleScan}
         scanner={scanner}
+        requestCamera={requestCamera}
+        cameraLabel={t('settings.pairing.scan.cameraLabel')}
+        cameraStartLabel={t('settings.pairing.scan.cameraStartLabel')}
+        cameraStopLabel={t('settings.pairing.scan.cameraStopLabel')}
+        cameraScanningLabel={t('settings.pairing.scan.cameraScanningLabel')}
+        cameraDeniedLabel={t('settings.pairing.scan.cameraDeniedLabel')}
+        cameraUnavailableLabel={t('settings.pairing.scan.cameraUnavailableLabel')}
         fileLabel={t('settings.pairing.scan.fileLabel')}
         pasteLabel={t('settings.pairing.scan.pasteLabel')}
         submitLabel={t('settings.pairing.scan.submitLabel')}

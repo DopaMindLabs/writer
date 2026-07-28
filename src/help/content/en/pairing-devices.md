@@ -10,8 +10,12 @@ devices, and it takes about a minute.
   wired network.
 - Keep both devices in front of you. Pairing is a back‑and‑forth: each device
   shows the other a code.
+- There are three ways to read a code: point the device's **camera** at it,
+  **upload a photo** of it, or **paste the code text**. Writer asks for the
+  camera only when you press "Use the camera" — never before.
 - You do **not** need a camera. If either device has no camera, or you would
-  rather not use it, you can copy the code across as text instead.
+  rather not use it, or you decline the permission, the upload and paste
+  options stay exactly where they are. Declining costs you nothing.
 
 ## Pairing step by step
 
@@ -58,6 +62,15 @@ go back to the one it missed.
 - **"No pairing code could be read from that image."** The photo is too blurry,
   too dark, or the code is cut off. Take another photo straight on, or copy the
   text across instead.
+- **"Camera access was declined."** Your browser blocked the camera, either
+  because you said no or because it remembers a previous no. You can change that
+  in your browser's site settings — or simply upload a photo or paste the code
+  instead, which works just as well.
+- **"No camera is available on this device."** Nothing is wrong; many desktops
+  have no camera. Use the upload or paste option.
+- **The camera is on but nothing happens.** Hold the code steady and fill more
+  of the frame with it. Writer keeps looking until you stop it, and says
+  "Looking for a code…" the whole time it is trying.
 - **The codes do not match.** Do not continue. Start again, and if it happens
   repeatedly, pair on a network you trust.
 

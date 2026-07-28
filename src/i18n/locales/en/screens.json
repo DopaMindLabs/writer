@@ -794,6 +794,12 @@
       },
       "scan": {
         "title": "Read the code from your other device",
+        "cameraLabel": "Point your camera at the code",
+        "cameraStartLabel": "Use the camera",
+        "cameraStopLabel": "Stop the camera",
+        "cameraScanningLabel": "Looking for a code…",
+        "cameraDeniedLabel": "Camera access was declined. You can still upload a photo or paste the code below.",
+        "cameraUnavailableLabel": "No camera is available on this device. You can still upload a photo or paste the code below.",
         "fileLabel": "Upload a photo of the code",
         "pasteLabel": "Or paste the code text",
         "submitLabel": "Use this code",
