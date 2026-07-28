@@ -51,5 +51,8 @@ export type { RetentionOptions } from './journalRetention';
 export { compactableOperationIds, releasableTombstones } from './journalCompaction';
 export type { CompactionOptions, PeerAcknowledgement } from './journalCompaction';
 
+export { buildScopeManifests, framesForRequest, planCatchUp } from './scopeManifest';
+export type { CatchUpRequest, OriginSummary, ScopeManifest } from './scopeManifest';
+
 export type { OperationInbox, OperationStore } from './operationStore.types';
 export type { MaterializeResult, OperationMaterializer } from './materializer.types';
