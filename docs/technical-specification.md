@@ -649,10 +649,25 @@ wired into the app.
   frame, so the receiver needs no second way to apply it. This is not the backup
   path, which exports a snapshot for a human. A scope this device holds no key
   for is not rebuilt: one it cannot seal for is one it cannot serve.
-- **Not yet wired.** Key transfer and the P2P `SyncProvider` end-to-end path —
-  the transfer engine above is implemented and unit-tested, and catch-up starts
-  against a live peer session once a pairing is confirmed, but no provider
-  carries document sync between paired devices yet. The pairing exchange
+- **Account-root handover.** A device paired for the first time holds no key
+  material, so it could decrypt nothing it was sent. After confirmation — never
+  on connectivity alone — each device announces whether it holds a root, and the
+  holder seals its own for the one that lacks it: ECDH P-256 to the peer's
+  session ephemeral key, AES-256-GCM, with the transcript bound into the AAD so
+  a wrapper lifted from another exchange cannot be replayed. Which device sends
+  follows from who holds key material, not from the pairing role. The rotation
+  epoch travels beside the wrapper, since a receiver that guessed it would derive
+  a key that decrypts nothing and look exactly like a peer with nothing to send.
+  A device that already holds a root refuses an unasked-for one — its rows are
+  sealed under the key it has. Announcements repeat until the peer is heard,
+  because two people never confirm at the same instant and a channel drops what
+  arrives before anything is listening. The root is zeroed as soon as it is
+  stored, and the receiving device derives its ring exactly as a passphrase
+  unlock would; there is no separate paired-device key path.
+- **Not yet wired.** The P2P `SyncProvider` end-to-end path — the transfer engine
+  is implemented and unit-tested, and both key transfer and catch-up run against
+  a live peer session once a pairing is confirmed, but no provider carries
+  document sync between paired devices yet. The pairing exchange
   runs against real WebRTC between two browser profiles, driven end to end by
   `pair-device.spec.ts`; it has not yet been verified between two physical devices
   on a real network.

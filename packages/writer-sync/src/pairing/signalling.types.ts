@@ -27,6 +27,16 @@ export interface CreateOfferOptions {
 export interface AuthenticatedPeerParameters {
   deviceId: DeviceId;
   publicIdentityJwk: JsonWebKey;
+  /**
+   * The peer's ephemeral public key for this session, as carried in its payload.
+   *
+   * Kept because the account root is sealed *to* it once a human has confirmed
+   * the codes (`docs/pairing-protocol.md` §11), and by then the payload it
+   * arrived in is long gone. It is ephemeral by construction — one pair per
+   * session, never reused — so retaining the public half proves nothing beyond
+   * this exchange.
+   */
+  peerEphemeralPublicJwk: JsonWebKey;
   /** The transcript both ends computed independently. */
   transcript: Uint8Array;
   /** Derived from the transcript; displayed for the user to compare. */

@@ -51,6 +51,7 @@ const answer = (): PairingAnswer => ({
 const peerParameters = (): AuthenticatedPeerParameters => ({
   deviceId: asDeviceId('cGVlci1kZXZpY2UtaWQwMA'),
   publicIdentityJwk: JWK,
+  peerEphemeralPublicJwk: JWK,
   transcript: new Uint8Array([1, 2, 3]),
   verificationCode: CODE,
 });
@@ -91,6 +92,7 @@ const readySignaller = (script: SignallerScript = {}): FakeSignaller => {
       acceptAnswer: script.onAcceptAnswer ?? (() => Promise.resolve(peerParameters())),
       // The joiner learns the parameters by answering, not by being told.
       parameters: () => (answered ? peerParameters() : null),
+      sessionPrivateKey: () => null,
     },
     close: () => {
       closed = true;

@@ -59,7 +59,14 @@ const handOverSession = (
 ): boolean => {
   const peer = opened?.adapter.parameters();
   if (catchUp === null || !opened || !peer) return false;
-  catchUp.adopt({ session: opened.session, deviceId: peer.deviceId });
+  catchUp.adopt({
+    session: opened.session,
+    deviceId: peer.deviceId,
+    // What the account root travels on. It goes with the session because this
+    // is the moment a human confirmed the codes, and the ephemeral key it is
+    // sealed to belongs to this exchange and dies with it.
+    keyTransfer: { peer, sessionPrivateKey: opened.adapter.sessionPrivateKey() },
+  });
   return true;
 };
 

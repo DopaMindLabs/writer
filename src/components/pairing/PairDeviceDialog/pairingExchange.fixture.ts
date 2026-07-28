@@ -10,6 +10,7 @@ import type { PairingExchange } from './usePairingExchange';
 export const fixturePeer = (): AuthenticatedPeerParameters => ({
   deviceId: asDeviceId('cGVlci1kZXZpY2UtaWQwMA'),
   publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },
+  peerEphemeralPublicJwk: { kty: 'EC', crv: 'P-256', x: 'e', y: 'f' },
   transcript: new Uint8Array([1, 2, 3]),
   verificationCode: '048213',
 });

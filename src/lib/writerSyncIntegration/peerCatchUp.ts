@@ -15,6 +15,11 @@ import type { DeviceId, TrustedDeviceRegistry } from 'writer-sync/core';
 import type { LoremDB } from '@/db/LoremDB';
 import { appLogger } from '@/lib/appLogger';
 import { deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
+import {
+  runAccountRootTransfer,
+  type KeyTransferSession,
+  type RunningAccountRootTransfer,
+} from './accountRootTransfer';
 import { createTrustedDeviceStore } from './trustedDeviceStore';
 import { getJournalRetentionDaysFor } from './journalRetentionPreference';
 import { createWriterOperationStore } from './materialization/writerOperationStore';
@@ -61,6 +66,13 @@ export interface AdoptedPeer {
    * so the identity pairing authenticated has to be carried in.
    */
   deviceId: DeviceId;
+  /**
+   * What the account root can be sealed with, and opened by, for this session.
+   * Absent when a session is adopted without a fresh pairing behind it — a
+   * reconnection between devices that already trust each other never sends a
+   * root twice (`docs/pairing-protocol.md` §12).
+   */
+  keyTransfer?: KeyTransferSession;
 }
 
 export interface PeerCatchUp {
@@ -126,10 +138,66 @@ const catchUpPorts = ({
   },
 });
 
+/**
+ * Run `listener` for the first channel a session comes by, however it comes by
+ * it.
+ *
+ * A channel the session already holds is delivered *during* the subscription,
+ * when no handle to unsubscribe with exists yet. Taking that case on its own
+ * leaves the subscription for the case that needs one: the answering device,
+ * whose channel its peer has still to open.
+ */
+const openChannelOnce = (
+  session: PeerSession,
+  listener: (channel: DataChannelLike) => void,
+): void => {
+  const existing = session.channel();
+  if (existing !== null) {
+    listener(existing);
+    return;
+  }
+  const unsubscribe = session.onChannel((channel) => {
+    unsubscribe();
+    listener(channel);
+  });
+};
+
+interface PeerChannelOptions {
+  channel: DataChannelLike;
+  peer: AdoptedPeer;
+  startCatchUp: () => void;
+  track: (running: RunningAccountRootTransfer) => void;
+}
+
+/**
+ * Hand over key material first, then sync.
+ *
+ * The two protocols share one channel and are read by different decoders, so
+ * they take turns rather than interleave. Catch-up second is also the only order
+ * that means anything: a device still waiting for a root can decrypt nothing, so
+ * it would advertise no scopes and be told, wrongly, that it is caught up.
+ */
+const onPeerChannel = ({
+  channel,
+  peer,
+  startCatchUp,
+  track,
+}: PeerChannelOptions): void => {
+  const { keyTransfer } = peer;
+  if (keyTransfer === undefined) {
+    startCatchUp();
+    return;
+  }
+  track(
+    runAccountRootTransfer({ channel, session: keyTransfer, onSettled: startCatchUp }),
+  );
+};
+
 export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
   const registry = createTrustedDeviceStore(db);
   const sessions = new Set<PeerSession>();
   const exchanges = new Set<CatchUpSession>();
+  const transfers = new Set<RunningAccountRootTransfer>();
   // Read once and held, because the engine asks for the cutoff synchronously
   // while answering a request. Until the stored preference resolves this is the
   // same default a device that never changed it keeps.
@@ -143,31 +211,23 @@ export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
     });
 
   const startOver = (peer: AdoptedPeer): void => {
-    const open = (channel: DataChannelLike): void => {
-      exchanges.add(
-        startCatchUpSession({
-          transport: createWebRtcTransport(channel),
-          ports: catchUpPorts({ db, peer, registry, retentionDays: () => days }),
-          onError: (error: unknown) => {
-            appLogger.warn('peer catch-up failed', error);
-          },
-        }),
-      );
-    };
-
-    // A channel the session already holds — the normal case for the device that
-    // created one during pairing — is delivered *during* the subscription, when
-    // no handle to unsubscribe with exists yet. Taking that case on its own
-    // leaves the subscription for the case that needs one: the answering
-    // device, whose channel its peer has still to open.
-    const existing = peer.session.channel();
-    if (existing !== null) {
-      open(existing);
-      return;
-    }
-    const unsubscribe = peer.session.onChannel((channel) => {
-      unsubscribe();
-      open(channel);
+    openChannelOnce(peer.session, (channel) => {
+      onPeerChannel({
+        channel,
+        peer,
+        startCatchUp: () => {
+          exchanges.add(
+            startCatchUpSession({
+              transport: createWebRtcTransport(channel),
+              ports: catchUpPorts({ db, peer, registry, retentionDays: () => days }),
+              onError: (error: unknown) => {
+                appLogger.warn('peer catch-up failed', error);
+              },
+            }),
+          );
+        },
+        track: (running) => transfers.add(running),
+      });
     });
   };
 
@@ -178,6 +238,8 @@ export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
       startOver(peer);
     },
     stop: () => {
+      for (const transfer of transfers) transfer.stop();
+      transfers.clear();
       for (const exchange of exchanges) exchange.stop();
       exchanges.clear();
       for (const session of sessions) session.close();

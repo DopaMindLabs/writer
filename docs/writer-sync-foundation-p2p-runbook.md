@@ -1500,6 +1500,15 @@ Implementation must stop for explicit review at these points:
     - A scope this device holds no key for is not rebuilt at all: one it cannot seal for is one it cannot serve, and framing those rows in plaintext would hand a peer content the pairing never authorised.
     - The retention cutoff is supplied with it. Without a cutoff only a peer that had never synchronised would ever qualify, so a device away past the window would silently receive the surviving tail of history and be told it was caught up.
 
+12. **Which device sends the account root** — answered, 2026-07-28.
+    - The device that **holds key material**, not the device that holds a protocol role. `docs/pairing-protocol.md` §11 assumes the initiator is the unlocked one; that assumption died with the device-id tie-break (§30.10), since the device that scans — and so becomes the joiner — may equally be the one that has been used all along.
+    - Each side announces `holds-root` or `needs-root` after confirmation, and the holder seals for the one that lacks it. Announcements repeat until the peer has been heard: a data channel drops what arrives before anything is listening, and two people do not press "the codes match" at the same instant, so a single announcement would be lost whenever one device confirmed first.
+    - A device that already holds a root **refuses** an unasked-for one. Its rows are sealed under the key it has, and replacing that key would orphan every one of them.
+    - Key transfer runs before catch-up on the same channel, and the two take turns rather than interleave — they are read by different decoders. The order is also the only one that means anything: a device still waiting for a root can decrypt nothing, so it would advertise no scopes and be told, wrongly, that it was caught up. A transfer that never settles gives up after ten seconds so a confirmed pairing still syncs whatever both ends can already read.
+13. **The epoch travels with the root** — answered, 2026-07-28.
+    - `PairingRootWrapper` carries the root alone, so the receiving device would have to guess which rotation epoch to derive its content key at. A wrong guess derives a key that decrypts nothing — indistinguishable, from the outside, from a peer that simply has no writing to send.
+    - The epoch is therefore carried beside the wrapper in the transfer message rather than inside it, leaving the reviewed wrapper type unchanged.
+
 ---
 
 ## 31. Handover format for every implementation slice
