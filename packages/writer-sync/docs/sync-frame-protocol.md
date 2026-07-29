@@ -1,14 +1,15 @@
 # Writer Sync operation frame protocol
 
-Status: Stage 2A, slice 2A.1. Unlike the [pairing protocol](./pairing-protocol.md),
-this document is **descriptive**: the frame format, its authenticated binding and
-its convergence rules were fixed by Stage 1 and are implemented today. It is
-written down here because Stage 2A adds a second transport, and a second
-transport must meet the format rather than negotiate with it.
+Status: Stage 2A, through slice 2A.7. Unlike the
+[pairing protocol](./pairing-protocol.md), this document is **descriptive**: the
+frame format, its authenticated binding and its convergence rules were fixed by
+Stage 1 and are implemented today. It is written down here because Stage 2A adds
+a second transport, and a second transport must meet the format rather than
+negotiate with it.
 
 Where a rule is *not* yet implemented it says so explicitly, with the slice that
-owns it. Two such gaps exist: the device signature (§9) and the attachment chunk
-manifest (§10).
+owns it. Sections 9 and 10 record the device signature and attachment transfer
+that Stage 2A added to the Stage 1 frame.
 
 Source of truth for behaviour, in order of precedence: the code named in each
 section, then this document. A disagreement between them is a bug in one of the
@@ -113,6 +114,14 @@ without distinguishing a wrong key from a tampered header — the distinction wo
 be an oracle and is not offered.
 
 A `delete` carries an empty payload.
+
+`noteAttachments` is the bounded exception to putting the complete row inside
+that ciphertext. Its `blob` is sealed once as raw bytes with AES-GCM, bound by
+AAD to `{ accessScopeId, entityTable, entityId, keyId, epoch }`, then split as
+described in §10. The row payload carries `blobRef: AttachmentChunkManifest`
+instead of `blob`; every other field remains inside the ordinary frame
+ciphertext. The receiver restores the required `Blob` only after the referenced
+ciphertext is complete and authenticated.
 
 The content key is derived per epoch by HKDF-SHA-256 from the account root with
 info `lipsum-content-v1`, and is non-extractable. `keyId` and `epoch` name the key
@@ -302,7 +311,8 @@ A's identity key that does not amount to B vouching for it.
 
 ## 10. Attachment chunk manifest
 
-`AttachmentChunkManifest` is declared and unimplemented:
+`AttachmentChunkManifest` describes the sealed attachment ciphertext carried
+outside the thin operation frame:
 
 ```ts
 interface AttachmentChunkManifest {
@@ -315,13 +325,28 @@ interface AttachmentChunkManifest {
 }
 ```
 
-Transfer happens chunk by chunk, resumable by asking for the missing indices, each
-chunk verifiable on its own. Slice 2A.7 implements it and must, per threat model
-§5.8, treat the manifest as untrusted input: absolute ceilings on `totalBytes`,
-`chunkBytes` and `chunkCount`; a consistency check that `chunkCount` equals
-`chunkHashes.length` and agrees with `ceil(totalBytes / chunkBytes)`; per-chunk
-verification on arrival; whole-content verification against `contentHash`; and
-incremental storage so an aborted transfer cannot reserve the ceiling.
+The attachment bytes are encrypted once before chunking. This avoids the former
+base64-inside-JSON-inside-base64 framing cost and makes every hash verifiable
+without opening the content. Writer uses 131,072-byte transfer chunks so a
+base64url chunk plus its JSON envelope remains below WebRTC's 262,144-byte
+message ceiling.
+
+Every manifest is untrusted input. `validateChunkManifest` refuses content above
+104,857,600 bytes, chunks above 1,048,576 bytes, or more than 4,096 chunks, and
+requires `chunkCount` to equal both `chunkHashes.length` and
+`ceil(totalBytes / chunkBytes)`. Each received chunk is size- and SHA-256-checked
+before incremental storage; the assembled ciphertext is checked against
+`contentHash`, then AES-GCM authentication binds it to the framed row before a
+`Blob` is materialised.
+
+Transfer is resumable. A holder offers manifests only after the catch-up frame
+batches and their final marker; the receiver asks only for missing indices.
+Verified chunks persist immediately, so a later peer session resumes from the
+stored gap. A thin attachment frame stays journalled but absent from `syncInbox`
+while chunks are missing, and the ordinary ingestion sweep retries it when the
+transfer completes. Dexie Cloud carries the same bounded ciphertext as replicated
+`syncAttachmentChunks` rows, so the thin frame contract is identical across
+providers.
 
 ---
 

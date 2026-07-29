@@ -241,8 +241,13 @@ arrival, and the assembled content against `contentHash`; a chunk that fails is
 discarded without being written. Storage is committed incrementally so an aborted
 transfer cannot be used to reserve the ceiling.
 
-**Status.** Declared but unimplemented at end of Stage 1. Lands in 2A.7; the
-ceilings must be chosen there and stated in the protocol specification.
+**Status — delivered in 2A.7.** `validateChunkManifest` enforces ceilings of
+104,857,600 total bytes, 1,048,576 bytes per declared chunk and 4,096 chunks;
+the WebRTC carrier uses smaller 131,072-byte chunks to remain below its message
+ceiling after encoding. `createAttachmentTransfer` verifies before its optional
+incremental `saveChunk` port, requests only missing indices on a later session,
+and verifies the assembled ciphertext whole. Opening it then authenticates the
+scope, table, entity, key id and epoch before the domain `Blob` is written.
 
 ### 5.9 Compromised trusted device
 

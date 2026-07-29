@@ -663,9 +663,16 @@ wired into the app.
   frames are appended to the journal and materialised by the
   same inbox-guarded sweep every provider shares, so an operation arriving by two
   providers still applies exactly once. Attachments transfer in the same
-  conversation: the holder offers a chunk manifest, the peer asks only for the
-  chunks it lacks, each chunk is verified on arrival, and an interrupted transfer
-  resumes from the gap rather than restarting.
+  conversation, but never as an oversized frame: the raw `noteAttachments.blob`
+  is AES-GCM-sealed once, split into 128 KiB ciphertext chunks, and replaced in
+  the row payload by its authenticated manifest. The holder offers manifests
+  after the final catch-up frame batch, the peer asks only for the chunks it
+  lacks, each chunk is verified before it is stored, and an interrupted transfer
+  resumes from the persisted gap rather than restarting. The receiver keeps the
+  thin frame journalled but unstamped in the inbox until the complete ciphertext
+  verifies and opens into the domain `Blob`. Dexie Cloud replicates the same
+  bounded ciphertext as `syncAttachmentChunks` rows, so cloud and WebRTC carry
+  one provider-neutral thin-frame contract.
 - **Rebuilding a scope.** A request with no starting point, or one reaching
   behind this device's compaction cutoff, cannot be answered from history — the
   frames are gone — so the scope is described as it stands now: one freshly
@@ -713,8 +720,10 @@ wired into the app.
   to exist.
 - **Proven end to end.** `pair-sync.spec.ts` drives two browser contexts through
   a real WebRTC pairing and asserts that writing held by one device appears on
-  the other, live and after a reload. Two physical devices on a network remain
-  slice 2A.9 and are not discharged by it.
+  the other, live and after a reload. `attachments-pair-sync.spec.ts` adds an
+  image larger than two transfer chunks on one context and proves it renders on
+  the peer and survives reload. Two physical devices on a network remain slice
+  2A.9 and are not discharged by either test.
 - **Live peer sync.** Catch-up answers "what did I miss?" when a connection
   opens; work written *while* a peer is connected reaches it as it is journalled.
   The P2P provider is named at boot beside Dexie Cloud and supplies a transport
@@ -726,9 +735,13 @@ wired into the app.
   A device accepts any channel its peer opens, which is how it receives work in a
   scope it never writes to and so never asks for a channel for. Both directions
   are covered by `pair-sync.spec.ts`.
-- **Not yet wired.** More than two devices: the channel factory takes the peer
-  that is connected, and fanning a scope across several needs a send that reaches
-  all of them and a receipt credited to one. The pairing exchange
+- **Recorded limits.** Revision payloads are not chunked: an individual revision
+  that exceeds the carrier budget is skipped and reported, then offered again on
+  a later catch-up. Attachment chunk rows are removed transactionally when their
+  attachment is deleted, but orphan collection beyond that same-transaction
+  path is deferred. More than two devices is also not wired: the channel factory
+  takes the peer that is connected, and fanning a scope across several needs a
+  send that reaches all of them and a receipt credited to one. The pairing exchange
   runs against real WebRTC between two browser profiles, driven end to end by
   `pair-device.spec.ts`; it has not yet been verified between two physical devices
   on a real network.
@@ -743,6 +756,11 @@ wired into the app.
 `PairingRoleChoice.test.tsx`, `InitiatorPairingView.test.tsx`,
 `JoinerPairingView.test.tsx`, `pairingExchangeReducer.test.ts`,
 `JournalRetentionSelector.test.tsx`; and `pair-device.spec.ts`.
+Attachment framing, assembly and transfer are covered by
+`operationJournalMiddleware.test.ts`, `writerFullState.test.ts`,
+`writerOperationMaterializer.test.ts`, `attachmentChunkStore.test.ts`,
+`attachmentTransfer.test.ts`, `peerCatchUp.test.ts`, and
+`attachments-pair-sync.spec.ts`.
 
 ---
 
