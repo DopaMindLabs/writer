@@ -42,6 +42,37 @@ export const openCoveredContext = async (
   return page;
 };
 
+/**
+ * The persisted body of one doc, read straight from IndexedDB.
+ *
+ * For specs that must know an autosave has durably landed before acting on the
+ * database underneath it — polled with `expect.poll` rather than guessed at
+ * with a clock, per the no-hardcoded-waits rule. Returns an empty string while
+ * the row is absent so a poll can simply keep waiting.
+ */
+export const readDocBody = (page: Page, docId: string): Promise<string> =>
+  page.evaluate(
+    (id) =>
+      new Promise<string>((resolve, reject) => {
+        const open = indexedDB.open('lipsum');
+        open.onerror = () => reject(new Error('could not open lipsum db'));
+        open.onsuccess = () => {
+          const db = open.result;
+          const request = db.transaction('docs', 'readonly').objectStore('docs').get(id);
+          request.onsuccess = () => {
+            const row = request.result as { body?: string } | undefined;
+            resolve(row?.body ?? '');
+            db.close();
+          };
+          request.onerror = () => {
+            db.close();
+            reject(new Error('could not read the docs row'));
+          };
+        };
+      }),
+    docId,
+  );
+
 export const reseedAndGoHome = async (page: Page): Promise<void> => {
   await page.goto('/?reseed=1#/');
   await page.waitForFunction(() => !document.body.innerText.includes('Booting…'));
