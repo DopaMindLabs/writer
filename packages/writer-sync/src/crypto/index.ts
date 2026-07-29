@@ -33,6 +33,13 @@ export {
   sealOperationPayload,
 } from './operationCrypto';
 
+export {
+  AttachmentContentIntegrityError,
+  openAttachmentContent,
+  sealAttachmentContent,
+} from './attachmentContentCrypto';
+export type { AttachmentContentBinding } from './attachmentContentCrypto';
+
 export { fromBase64Url, toBase64Url } from './base64url';
 
 export {
