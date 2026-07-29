@@ -27,9 +27,9 @@ test.describe('cloud sync beta gating', () => {
   test('the cloud section is absent without the flag', async ({ page }) => {
     await reseedAndGoHome(page);
     await page.goto('/#/settings?tab=cloudSync');
-    await expect(page.getByTestId('account-privacy-notice')).toBeVisible();
+    await expect(page.getByRole('heading', { name: /^Cloud sync$/ })).toBeVisible();
     await expect(page.getByTestId('cloud-section')).toHaveCount(0);
-    await expectNoA11yViolations(page, { context: 'account tab without cloud sync', ...STRUCTURE_ONLY });
+    await expectNoA11yViolations(page, { context: 'cloud sync tab without the flag', ...STRUCTURE_ONLY });
   });
 
   test('?cloud-sync=on reveals the section, strips the param and survives reload', async ({
@@ -42,7 +42,7 @@ test.describe('cloud sync beta gating', () => {
     expect(page.url()).not.toContain('cloud-sync');
     // Sign-in is available before a passphrase exists (a clean device signs in first).
     await expect(page.getByTestId('cloud-sign-in')).toBeEnabled();
-    await expectNoA11yViolations(page, { context: 'account tab with cloud sync', ...STRUCTURE_ONLY });
+    await expectNoA11yViolations(page, { context: 'cloud sync tab with the flag', ...STRUCTURE_ONLY });
     // The opt-in persists across a reload.
     await page.reload();
     await expect(page.getByTestId('cloud-section')).toBeVisible();

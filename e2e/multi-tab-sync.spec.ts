@@ -146,7 +146,7 @@ test("shows a collaborator's presence cursor in the other tab", async ({
   // document — awareness is published from the profile when the provider connects.
   const spaceId = await getFirstSpaceIdFromHome(page);
   const name = `Ada ${Date.now()}`;
-  await page.goto('/#/settings?tab=cloudSync');
+  await page.goto('/#/settings?tab=profile');
   const nameField = page.getByTestId('setting-display-name').getByRole('textbox');
   await nameField.fill(name);
   await nameField.blur();

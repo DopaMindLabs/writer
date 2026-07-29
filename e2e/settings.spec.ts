@@ -45,7 +45,7 @@ test('stacks a group on one page and scrolls to the selected section', async ({
   ).toBeInViewport();
 
   await page.getByTestId('settings-tab-profile').click();
-  await expect(page.getByRole('heading', { name: /^Account$/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Profile$/ })).toBeVisible();
   await expect(page.getByRole('heading', { name: /^Editor$/ })).toHaveCount(0);
 });
 
@@ -64,7 +64,8 @@ test('cycles through every universal settings tab without crashing', async ({ pa
     { id: 'backups', heading: /^Backups$/i },
     { id: 'export', heading: /^Export \/ import$/i },
     { id: 'data', heading: /^Your data$/i },
-    { id: 'account', heading: /^Account$/i },
+    { id: 'cloudSync', heading: /^Cloud sync$/i },
+    { id: 'profile', heading: /^Profile$/i },
     { id: 'about', heading: /^About$/i },
   ];
   for (const { id, heading } of tabs) {
