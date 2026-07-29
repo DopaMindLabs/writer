@@ -6,6 +6,7 @@ import {
   sampleCitation,
   sampleDoc,
   sampleInspectorConfig,
+  sampleMetadata,
   sampleNote,
   samplePalette,
   sampleRevision,
@@ -87,6 +88,7 @@ describe('record codecs', () => {
     );
     expect(parseCitationRecord(viaJson(sampleCitation))).toEqual(sampleCitation);
     const connection = {
+      ...sampleMetadata(),
       id: 'c1',
       spaceId: 's1',
       fromNoteId: 'n1',

@@ -1,9 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { db } from '@/db/db';
 import type { Citation } from '@/db/schema';
+import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { CitationsPane } from './CitationsPane';
 
+const entityMetadata = {
+  accessScopeId: 's1',
+  createdBy: asPrincipalId('me'),
+  updatedBy: asPrincipalId('me'),
+  mutationId: asOperationId('op-1'),
+  logicalUpdatedAt: { millis: 0, counter: 0 },
+};
+
 const citation = (overrides: Partial<Citation> = {}): Citation => ({
+  ...entityMetadata,
   id: 'c-base',
   spaceId: 's1',
   key: 'smith2020',

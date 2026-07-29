@@ -12,6 +12,16 @@ Cloud sync replicates a space's content across a user's devices through
 client before it leaves the device**. The server stores ciphertext; it never receives
 plaintext note or document bodies.
 
+Since the operation-frame cutover (Writer Sync foundation, Stage 1), what the addon
+replicates is the **`syncOperations` journal** — immutable, already-encrypted operation
+frames shared by every provider — plus the `cloudCrypto` escrow and its own control
+tables. The ten materialised content tables are device-local projections; inbound
+frames materialise through the shared inbox path
+(`src/lib/writerSync/materialization/frameIngestion.ts`), so the same operation
+arriving through Dexie Cloud and any second provider applies exactly once. Dexie Cloud
+is one `SyncProvider` behind `src/lib/cloud/dexieCloudProvider.ts`; realm and member
+concepts never leave that adapter.
+
 The feature is inert unless **both** activation gates are on:
 
 1. **Build gate** — `VITE_DEXIE_CLOUD_URL` must be a valid `https://` URL
@@ -100,13 +110,21 @@ queryable) and moves **every other top-level field** into one `$lipsumCipher` en
 (`src/lib/cloud/crypto/envelope.ts`):
 
 ```
-CipherEnvelope { v: 1, epoch, iv: base64 string, data: base64 string }
+CipherEnvelopeV2 {
+  v: 2, keyId, epoch, accessScopeId,
+  algorithm: 'AES-256-GCM', iv: base64 string, data: base64 string
+}
 ```
 
 - **Algorithm** — AES-256-GCM, a fresh 12-byte random IV per seal.
-- **AAD (row binding)** — `lipsum:1:<epoch>:<table>:<primaryKey>`. Because the table,
-  primary key and epoch are authenticated, a ciphertext moved to another row or table
-  fails authentication (`EnvelopeIntegrityError`) instead of silently decrypting.
+- **AAD (scope and row binding)** —
+  `lipsum:2:<keyId>:<epoch>:<accessScopeId>:<table>:<primaryKey>`. Because the key id,
+  epoch, access scope, table and primary key are all authenticated, a ciphertext moved
+  to another row or table — or a row whose plaintext `accessScopeId` was restamped
+  without re-encrypting — fails authentication (`EnvelopeIntegrityError`) instead of
+  silently decrypting. Changing a row's scope therefore requires decrypting under the
+  old context and re-encrypting under the new one, by design. There is no v1 dual-read:
+  the project is greenfield and pre-v2 beta data is reset, never migrated.
 - **Payload** — the secret fields are JSON-serialised with a tagged encoding so
   `Uint8Array` and `Blob` values round-trip; function values are rejected.
 - **Inline base64, never binary** — `iv` and `data` are base64 **strings**, not
@@ -125,10 +143,15 @@ CipherEnvelope { v: 1, epoch, iv: base64 string, data: base64 string }
 Which fields stay plaintext is derived from the single schema source of truth
 (`src/db/stores.ts`) by `src/lib/cloud/crypto/tableRules.ts`: a field is plaintext iff it
 is the primary key, an index (including compound-index members), a cloud-reserved field
-(`realmId`, `owner`) or the envelope itself. Everything else is sealed.
+(`realmId`, `owner`), provider-neutral routing metadata (`accessScopeId`, `mutationId`,
+`logicalUpdatedAt` — a provider must route, deduplicate and order without a content key)
+or the envelope itself. Everything else is sealed — including the `createdBy`/`updatedBy`
+attribution, which names a person and never travels in the clear.
 
-**Encrypted tables** (`SYNCED_TABLES`): `spaces`, `sections`, `docs`, `notes`,
-`noteAttachments`, `annotations`, `citations`, `connections`, `revisions`, `palettes`.
+**Encrypted tables** derive from the authoritative table policy
+(`src/lib/writerSync/writerTablePolicy.ts`, row-envelope classification): `spaces`,
+`sections`, `docs`, `notes`, `noteAttachments`, `annotations`, `citations`,
+`connections`, `revisions`, `palettes`.
 
 ## 4. The encryption middleware
 
@@ -136,9 +159,17 @@ is the primary key, an index (including compound-index members), a cloud-reserve
 addon (`level: 10`) so the addon — and therefore the sync push queue — only ever sees
 ciphertext. Writes are sealed before they reach the sync queue; reads are opened after.
 
-- **Key source** — a synchronous `KeyProvider` (`deviceKeyProvider`). `null` means "no
-  key yet": the middleware then passes rows through untouched, so the app keeps working
-  before setup and the sync engine ships ciphertext verbatim.
+- **Key source** — a provider-neutral `ScopeKeyResolver`
+  (`src/lib/writerSync/crypto/keyResolver.ts`, implemented by `deviceKeyProvider`).
+  Every row operation resolves key material with its full context — access scope,
+  table, primary key, read/write — so per-scope keys are a resolver change, never
+  another middleware change. Stage 1 resolves every scope to the one account content
+  key. `null` for a context means "no key": the middleware passes plaintext rows
+  through untouched (the app keeps working before setup) and hides sealed rows
+  (`hasAnyKey()` gates a synchronous keyless fast path, which must never detour
+  through `Dexie.waitFor` — that would commit a nested transaction prematurely).
+- **Encryption is provider-independent** — `buildDb` installs the middleware on the
+  plain local database too: a P2P-only Writer is never a plaintext local database.
 - **Async crypto inside transactions** — WebCrypto is asynchronous, but Dexie commits a
   transaction the moment control returns to the event loop on a non-Dexie promise. Every
   seal/open is wrapped in `Dexie.waitFor`, which keeps the surrounding transaction alive
@@ -182,6 +213,58 @@ write middleware seals them and the addon queues them for the initial push. It r
 plaintext rows through the unwrapped cursor and re-writes them with `bulkPut` (which the
 middleware seals) rather than `.modify()`, whose change-detection would skip a no-op
 rewrite.
+
+Since the cutover it does double duty: a keyless write journals no frame (there is no key
+to seal a payload with), so the same re-put is what **backfills the operation journal** for
+everything written before setup. Nothing else is needed to make pre-setup writing
+replicable.
+
+### 4.1 The operation journal middleware (outbound chokepoint)
+
+`createOperationJournalMiddleware`
+(`src/lib/writerSync/materialization/operationJournalMiddleware.ts`) sits at DBCore level
+20, above the row-encryption middleware. Every add, put and delete on a journalled content
+table emits its encrypted `EncryptedSyncFrame` into `syncOperations` inside the same
+transaction as the domain write, so a write can never be separated from its frame and no
+call site can forget to journal one — outbound coverage holds by construction rather than
+by discipline.
+
+Ordering inside it is load-bearing, and for two independent reasons:
+
+- **Zone.** Dexie tracks the live transaction in its own promise zone. An `await` on a
+  native promise (every Web Crypto call) leaves that zone, and the addon's hooks middleware
+  below then reads an undefined current transaction. Only `Dexie.waitFor` results and
+  Dexie's own promises may be awaited between DBCore calls.
+- **Keep-alive.** `Dexie.waitFor` spins a keep-alive request only while it is the
+  *outermost* wait. The encryption middleware below opens its own wait when it seals a row,
+  so crypto run *after* delegating downward would sit outside any keep-alive and the
+  transaction could commit underneath it.
+
+Both push the same way: **all framing happens before the mutation is delegated down**, and
+afterwards only IndexedDB requests remain. A delete carries no payload, so its hash is the
+precomputed `EMPTY_PAYLOAD_HASH` and delete framing is fully synchronous.
+
+Four write classes are deliberately **not** journalled: materialisation of inbound frames
+(its transaction pairs a content table with `syncInbox`, which is the signal), keyless
+writes (backfilled by the re-seal above), the addon's own sync-applied and blob-plumbing
+transactions, and `deleteRange` — `Table.clear()` is a local reset, never a synced deletion.
+
+### 4.2 Realms bind frames, not rows
+
+A realm is Dexie's access-control boundary and stays inside the adapter. Because the
+materialised tables are now device-local, a scope transition
+(`src/lib/cloud/spaceRealm.ts`) stamps the scope's **enqueued frames** and records the
+binding in `syncProviderBindings`; that binding is what `resolveBinding` answers from, and
+no domain row carries `realmId` any more. Stamping a frame never touches its ciphertext —
+the realm is provider routing, not content.
+
+If an operation's **access scope** itself changes, relabelling is not enough: the scope is
+bound into the frame's AAD, so `rescopeFrames`
+(`src/lib/writerSync/materialization/rescopeFrames.ts`) opens each frame under the source
+scope's key and reseals it under the destination's, keeping its operation id (dedup) and
+logical time (convergence). Every frame is resealed before anything is written and the
+writes commit together, so a failed transition cannot leave a scope's history split across
+two keys.
 
 ## 5. Cross-device reconciliation (pulled bodies → the CRDT)
 
@@ -383,6 +466,21 @@ a shared machine must clear the device, and content heals from the row body anyw
   body. The only true loss is per-device undo lineage — acceptable, and recorded here.
 
 ## 6. Device keystore (deviation from the original plan)
+
+### 6.1 Device key vault (pairing-capable root retention)
+
+Alongside the derived ring, the device retains the **account root** in a vault
+(`src/lib/cloud/crypto/deviceKeyVault.ts`, contract in
+`src/lib/writerSync/crypto/keyVault.types.ts`): the root is AES-GCM-wrapped under a
+non-extractable device wrapping key in a dedicated never-synced database
+(`lipsum-device-vault`), bound to both the local principal and a minted device id. The
+raw root exists only transiently inside vault operations and never crosses the public
+API. Setup, unlock, recovery and account-key adoption store it at the moments the root
+is legitimately in memory; `forgetThisDevice()` erases the vault record.
+`wrapAccountRootForPairing()` re-wraps the root under an ephemeral ECDH (P-256) derived
+AES-GCM key for a pairing peer — which is what lets Stage 2A QR pairing deliver the key
+to a new device with no passphrase or recovery code, and `deriveScopeKey()` is the seam
+through which per-scope keys later arrive.
 
 The device's derived key ring is persisted in a **dedicated, never-synced Dexie
 database** (`lipsum-cloud-keystore`, `src/lib/cloud/crypto/keyStore.ts`) rather than a

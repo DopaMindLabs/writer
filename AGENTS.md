@@ -26,6 +26,7 @@
 | "collab", "yjs", "crdt", "multi-tab", "BroadcastChannel", "presence" | [`work-on-editor-collaboration`](.agents/skills/work-on-editor-collaboration/SKILL.md) |
 | "cloud", "dexie cloud", "sync", "encryption", "escrow", "passphrase" | [`work-on-cloud-sync`](.agents/skills/work-on-cloud-sync/SKILL.md) |
 | "sync hangs", "sync loop", "flashing", "downloading forever", "won't sync", "device limit", "reproduce sync bug" | [`debug-cloud-sync`](.agents/skills/debug-cloud-sync/SKILL.md) |
+| "writer-sync", "sync engine", "provider contract", "operation frame", "pairing", "P2P", "package boundary" | [`work-on-cloud-sync`](.agents/skills/work-on-cloud-sync/SKILL.md) — then read `packages/writer-sync/` before editing the engine |
 | "handover", "hand off", "handoff", "pause", "resume later", "context running out", "pick up where" | [`handover-writer-work`](.agents/skills/handover-writer-work/SKILL.md) |
 
 ---
@@ -158,6 +159,25 @@ and docs.
   identifiers, not prose), as do established product/proper names already used across the app
   (e.g. **Help Center**). Don't rename a slug just to spell it the British way.
 - When adding or editing copy, match the British spellings already in surrounding text.
+
+## Sync engine boundary (read before touching sync)
+
+The reusable engine lives in **`packages/writer-sync/`** and is consumed only through
+`writer-sync/core`, `writer-sync/crypto` and `writer-sync/operations`. Writer-specific
+wiring — table policy, materialisation, configuration, boot and React context — lives in
+**`src/lib/writerSyncIntegration/`**. The old `src/lib/syncProviders/` and
+`src/lib/writerSync/` directories no longer exist; do not recreate either name.
+
+- The package must never import from the app: no `@/` alias, no path into `src/`, no React,
+  Dexie, Yjs or Lexical, no `node:` builtin, and no wildcard re-export. These are enforced by
+  `packages/writer-sync/test/packageBoundary.test.ts` — a failure there is a boundary breach,
+  not a test to relax.
+- Anything new that is genuinely provider-, transport- and framework-neutral belongs in the
+  package, behind an explicit barrel export. Anything that knows a Writer table, a Dexie
+  handle or a React hook belongs in the integration layer.
+- `packages/writer-sync/test/consumer.test.ts` is a second consumer standing in for a future
+  host application. If a change forces it to reach past the public subpaths, the port is
+  wrong — fix the port, not the fixture.
 
 ## Design system (read before building UI)
 

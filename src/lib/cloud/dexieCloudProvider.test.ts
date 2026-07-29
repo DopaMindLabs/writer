@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SyncState } from 'dexie-cloud-addon';
 import type { CloudObservable } from './cloudObservable';
 import type { EscrowPresence } from './cloudClient';
-import type { SyncStatus } from '@/lib/syncProviders/types';
-import { KeyEscrowPresence, SyncPhase, hasCapability } from '@/lib/syncProviders/types';
+import type { SyncStatus } from 'writer-sync/core';
+import { KeyEscrowPresence, SyncPhase, hasCapability } from 'writer-sync/core';
 import { createDexieCloudProvider } from './dexieCloudProvider';
 
 vi.mock('./cloudClient', () => ({
@@ -44,7 +44,7 @@ const emittedStatus = (phase: SyncState['phase']): SyncStatus | undefined => {
   vi.mocked(cloudSyncState).mockReturnValue(constant(syncState(phase)));
   const provider = createDexieCloudProvider();
   let seen: SyncStatus | undefined;
-  provider.frameSync?.status.subscribe((status) => {
+  provider.durableSync?.status.subscribe((status) => {
     seen = status;
   });
   return seen;
@@ -67,28 +67,29 @@ describe('createDexieCloudProvider', () => {
     const provider = createDexieCloudProvider();
 
     expect(provider.id).toBe('dexie-cloud');
-    expect(hasCapability(provider, 'frameSync')).toBe(true);
+    expect(provider.kind).toBe('dexie-cloud');
+    expect(hasCapability(provider, 'durableSync')).toBe(true);
     expect(hasCapability(provider, 'keyDelivery')).toBe(true);
   });
 
-  it('declares no capability that has no caller yet', () => {
+  it('declares access control, but no realtime or discovery', () => {
     const provider = createDexieCloudProvider();
 
-    // Access control arrives with the realm tables; the addon has no realtime
-    // transport or peer discovery of its own.
-    expect(hasCapability(provider, 'accessControl')).toBe(false);
+    // Realm-backed scope and membership control lives behind the adapter; the
+    // addon has no realtime transport or peer discovery of its own.
+    expect(hasCapability(provider, 'accessControl')).toBe(true);
     expect(hasCapability(provider, 'realtime')).toBe(false);
     expect(hasCapability(provider, 'discovery')).toBe(false);
   });
 });
 
-describe('frameSync', () => {
+describe('durableSync', () => {
   it('starts the cloud session and passes its teardown through', async () => {
     const stop = vi.fn();
     vi.mocked(startCloudSession).mockResolvedValue(stop);
     const provider = createDexieCloudProvider();
 
-    const teardown = await provider.frameSync?.start();
+    const teardown = await provider.durableSync?.start();
     teardown?.();
 
     expect(startCloudSession).toHaveBeenCalledOnce();
@@ -98,7 +99,7 @@ describe('frameSync', () => {
   it('delegates a sync request to the facade', async () => {
     const provider = createDexieCloudProvider();
 
-    await provider.frameSync?.requestSync();
+    await provider.durableSync?.requestSync();
 
     expect(requestCloudSync).toHaveBeenCalledOnce();
   });
@@ -108,7 +109,7 @@ describe('frameSync', () => {
     vi.mocked(requestCloudSync).mockRejectedValue(failure);
     const provider = createDexieCloudProvider();
 
-    await expect(provider.frameSync?.requestSync()).rejects.toThrow(failure);
+    await expect(provider.durableSync?.requestSync()).rejects.toThrow(failure);
   });
 
   it('relays each settled sync round', () => {
@@ -122,7 +123,7 @@ describe('frameSync', () => {
     const provider = createDexieCloudProvider();
     const onComplete = vi.fn();
 
-    provider.frameSync?.syncComplete.subscribe(onComplete);
+    provider.durableSync?.syncComplete.subscribe(onComplete);
     subscribers.forEach((notify) => notify());
 
     expect(onComplete).toHaveBeenCalledOnce();
@@ -135,7 +136,7 @@ describe('frameSync', () => {
     });
     const provider = createDexieCloudProvider();
 
-    provider.frameSync?.status.subscribe(() => undefined).unsubscribe();
+    provider.durableSync?.status.subscribe(() => undefined).unsubscribe();
 
     expect(unsubscribe).toHaveBeenCalledOnce();
   });
@@ -162,7 +163,7 @@ describe('status phase mapping', () => {
     const provider = createDexieCloudProvider();
 
     let seen: SyncStatus | undefined;
-    provider.frameSync?.status.subscribe((status) => {
+    provider.durableSync?.status.subscribe((status) => {
       seen = status;
     });
 
@@ -216,5 +217,51 @@ describe('keyDelivery', () => {
     });
 
     expect(seen).toEqual([expected]);
+  });
+});
+
+describe('accessControl binding resolution', () => {
+  it('resolves nothing for an unknown space', async () => {
+    const provider = createDexieCloudProvider();
+    await expect(
+      provider.accessControl?.resolveBinding('missing-space'),
+    ).resolves.toBeUndefined();
+  });
+
+  it('resolves nothing for an unshared (private-realm) space', async () => {
+    const { db } = await import('@/db/db');
+    const { sampleSpace } = await import('@/test/fixtures');
+    // No binding row: the scope was never moved out of the private realm.
+    await db.spaces.put({ ...sampleSpace, id: 'private-space' });
+    const provider = createDexieCloudProvider();
+
+    await expect(
+      provider.accessControl?.resolveBinding('private-space'),
+    ).resolves.toBeUndefined();
+  });
+
+  it('maps a scope onto its realm through the persisted binding, not a domain row', async () => {
+    const { db } = await import('@/db/db');
+    const { sampleSpace } = await import('@/test/fixtures');
+    // No domain row carries a realm since the frame cutover: the binding is
+    // adapter state the scope transition wrote.
+    await db.spaces.put({ ...sampleSpace, id: 'shared-space' });
+    await db.syncProviderBindings.put({
+      scopeId: 'shared-space',
+      providerInstanceId: 'dexie-cloud',
+      externalScopeId: 'rlm-shared',
+      enabled: true,
+    });
+    const provider = createDexieCloudProvider();
+
+    const binding = await provider.accessControl?.resolveBinding('shared-space');
+
+    expect(binding).toEqual({
+      scopeId: 'shared-space',
+      providerInstanceId: 'dexie-cloud',
+      externalScopeId: 'rlm-shared',
+      enabled: true,
+    });
+    expect(await db.spaces.get('shared-space')).not.toHaveProperty('realmId');
   });
 });

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { TextField } from '@/components/ui/TextField';
-import { db } from '@/db/db';
+import { renameSpace } from '@/lib/space/spaceRepository';
 import type { Space } from '@/db/schema';
 import { SpaceMenu } from './SpaceMenu';
 import { SpaceSubtitle } from './SpaceSubtitle';
@@ -23,9 +23,8 @@ export const SpaceHeader = ({ spaceId, space }: SpaceHeaderProps) => {
 
   const commitSpaceName = async () => {
     setEditingSpaceName(false);
-    const next = draftSpaceName.trim();
-    if (!next || next === space?.name) return;
-    await db.spaces.update(spaceId, { name: next, updatedAt: Date.now() });
+    if (draftSpaceName.trim() === space?.name) return;
+    await renameSpace(spaceId, draftSpaceName);
   };
 
   return (
