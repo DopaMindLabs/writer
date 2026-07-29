@@ -14,12 +14,43 @@ import type { DataChannelLike } from './webRtcTransport';
  * that a stall is a typed failure, that teardown is explicit. They prove nothing
  * about real ICE; that is slice 2A.9.
  */
+/** A channel that can report itself gone, the way a real one does. */
+const fakeDataChannel = (label: string) => {
+  const listeners = new Map<string, ((event: MessageEvent<unknown>) => void)[]>();
+  const channel = {
+    label,
+    readyState: 'connecting',
+    bufferedAmount: 0,
+    bufferedAmountLowThreshold: 0,
+    send: vi.fn(),
+    close: vi.fn(),
+    addEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => {
+      listeners.set(type, [...(listeners.get(type) ?? []), listener]);
+    },
+    removeEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => {
+      listeners.set(
+        type,
+        (listeners.get(type) ?? []).filter((held) => held !== listener),
+      );
+    },
+    die: () => {
+      (channel as { readyState: string }).readyState = 'closed';
+      for (const listener of [...(listeners.get('close') ?? [])]) {
+        listener({} as MessageEvent<unknown>);
+      }
+    },
+  };
+  return channel as unknown as DataChannelLike & { die: () => void };
+};
+
 const fakeConnection = (
   options: { gatheringCompletesImmediately?: boolean; offerSdp?: string } = {},
 ) => {
   const offerSdp = options.offerSdp ?? 'v=0\r\nOFFER\r\n';
   const listeners = new Map<string, (() => void)[]>();
   const channels: string[] = [];
+  /** The channels this connection created, so a test can play one dying. */
+  const opened: (DataChannelLike & { die: () => void })[] = [];
   const remoteChannelListeners = new Set<(channel: DataChannelLike) => void>();
   const connection: PeerConnectionLike & {
     channels: string[];
@@ -30,7 +61,9 @@ const fakeConnection = (
     /** Stand in for the peer opening a channel on this connection. */
     peerOpensChannel: (channel: DataChannelLike) => void;
     remoteChannelListenerCount: () => number;
+    opened: (DataChannelLike & { die: () => void })[];
   } = {
+    opened,
     onDataChannel: (listener) => {
       remoteChannelListeners.add(listener);
       return () => {
@@ -51,7 +84,9 @@ const fakeConnection = (
     createDataChannel: (label, opts) => {
       channels.push(label);
       connection.channelOrdered = opts?.ordered;
-      return { label, close: vi.fn() } as unknown as DataChannelLike;
+      const channel = fakeDataChannel(label);
+      opened.push(channel);
+      return channel;
     },
     createOffer: () => Promise.resolve({ type: 'offer', sdp: offerSdp }),
     createAnswer: () => Promise.resolve({ type: 'answer', sdp: 'v=0\r\nANSWER\r\n' }),
@@ -146,6 +181,22 @@ describe('createOffer', () => {
     expect(connection.channels).toEqual(['writer-sync-control']);
     expect(connection.channelOrdered).toBe(true);
     expect(session.channel()).not.toBeNull();
+  });
+
+  it('lets go of a channel that has closed, and opens a new one when asked again', async () => {
+    // A channel that dies used to stay in the session, so every later request for
+    // that purpose was answered with the dead one — which is why re-pairing did
+    // not restore live sync on a connection that had dropped.
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection, ...manualTimers() });
+    await session.createOffer();
+    expect(session.channel()).not.toBeNull();
+
+    connection.opened[0].die();
+
+    expect(session.channel()).toBeNull();
+    await session.openChannel('writer-sync-control');
+    expect(connection.channels).toEqual(['writer-sync-control', 'writer-sync-control']);
   });
 
   it('hands out what was gathered when the deadline passes mid-gathering', async () => {
@@ -250,8 +301,7 @@ describe('close', () => {
 });
 
 describe('the control channel on the answering side', () => {
-  const remoteChannel = (label = 'writer-sync-control'): DataChannelLike =>
-    ({ label, close: vi.fn() }) as unknown as DataChannelLike;
+  const remoteChannel = (label = 'writer-sync-control') => fakeDataChannel(label);
 
   it('opens a channel per purpose on the offering side', async () => {
     const connection = fakeConnection({ gatheringCompletesImmediately: true });

@@ -73,4 +73,31 @@ describe('createPeerSessionRegistry', () => {
 
     expect(registry.peers()).toEqual([]);
   });
+
+  it('replaces the session for a device that has paired again', async () => {
+    // A device has one live connection. Pairing again after one dropped used to
+    // leave the dead session registered and first in line, so every later frame
+    // was offered a connection that was gone and the fresh pairing carried
+    // nothing.
+    const registry = createPeerSessionRegistry();
+    const gone = peerOf(fakeSession());
+    const fresh = peerOf(fakeSession());
+
+    registry.add(gone);
+    registry.add(fresh);
+
+    expect(registry.peers()).toEqual([fresh]);
+    expect(await registry.next()).toBe(fresh);
+  });
+
+  it('keeps the sessions of devices that are not each other', () => {
+    const registry = createPeerSessionRegistry();
+    const first = { session: fakeSession(), deviceId: asDeviceId('peer-1') };
+    const second = { session: fakeSession(), deviceId: asDeviceId('peer-2') };
+
+    registry.add(first);
+    registry.add(second);
+
+    expect(registry.peers()).toEqual([first, second]);
+  });
 });

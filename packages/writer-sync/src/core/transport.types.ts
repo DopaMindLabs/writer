@@ -26,5 +26,17 @@ export interface SyncTransport {
   readonly send: (bytes: Uint8Array) => void;
   /** Register a listener for inbound messages; returns an unsubscribe fn. */
   readonly onMessage: (cb: (bytes: Uint8Array) => void) => () => void;
+  /**
+   * Register a listener for the bearer going away on its own — the far end
+   * closing, or the connection failing — and get back an unsubscribe fn.
+   *
+   * Not called for a {@link close} from this side, which is not news to whoever
+   * asked for it. A consumer that keeps a transport rather than making one per
+   * message needs this: without it, it has no way to tell that what it is holding
+   * will never carry anything again, and every later message is written into
+   * nothing. A bearer that cannot know (a `BroadcastChannel` between tabs of one
+   * browser) leaves it unset.
+   */
+  readonly onClosed?: (cb: () => void) => () => void;
   readonly close: () => void;
 }

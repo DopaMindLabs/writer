@@ -43,6 +43,12 @@ export const createPeerSessionRegistry = (): PeerSessionRegistry => {
   return {
     add: (peer) => {
       if (registered.some((known) => known.session === peer.session)) return;
+      // A device has one live connection. Pairing again supersedes whatever was
+      // registered for it, which is what lets the next frame reach a device that
+      // was re-paired after its connection dropped — the stale session used to
+      // stay, and stay first in line.
+      const stale = registered.findIndex((known) => known.deviceId === peer.deviceId);
+      if (stale >= 0) registered.splice(stale, 1);
       registered.push(peer);
       for (const resolve of [...waiting]) resolve(peer);
       waiting.clear();

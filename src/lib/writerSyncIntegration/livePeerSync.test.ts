@@ -53,13 +53,27 @@ const fakeCoordinator = (transportCeiling?: number) => {
   const closed: string[] = [];
   const created: string[] = [];
   const listeners = new Map<string, (bytes: Uint8Array) => void>();
+  /** Every bearer handed out, in order, each able to report itself gone. */
+  const handles: { scope: string; die: () => void }[] = [];
+  let refuseNext = false;
   const coordinator = {
     provider: (id: string) =>
       id === PROVIDER
         ? {
             realtime: {
               createTransport: ({ accessScopeId }: { accessScopeId: string }) => {
+                if (refuseNext) {
+                  refuseNext = false;
+                  return Promise.reject(new Error('no peer session to open a channel on'));
+                }
                 created.push(accessScopeId);
+                const closers = new Set<() => void>();
+                handles.push({
+                  scope: accessScopeId,
+                  die: () => {
+                    for (const closer of [...closers]) closer();
+                  },
+                });
                 return Promise.resolve({
                   sharesStore: false,
                   maxMessageBytes: transportCeiling,
@@ -75,6 +89,12 @@ const fakeCoordinator = (transportCeiling?: number) => {
                       listeners.delete(accessScopeId);
                     };
                   },
+                  onClosed: (callback: () => void) => {
+                    closers.add(callback);
+                    return () => {
+                      closers.delete(callback);
+                    };
+                  },
                   close: () => closed.push(accessScopeId),
                 });
               },
@@ -87,6 +107,11 @@ const fakeCoordinator = (transportCeiling?: number) => {
     sent,
     closed,
     created,
+    handles,
+    /** Refuse the next request for a bearer, as a dead peer session would. */
+    refuseNext: () => {
+      refuseNext = true;
+    },
     receive: (scope: string, message: CatchUpMessage) => {
       listeners.get(scope)?.(encodeCatchUpMessage(message));
     },
@@ -245,6 +270,89 @@ describe('startLivePeerSync', () => {
     await new Promise((resolve) => setTimeout(resolve, 30));
     expect(peer.sent).toHaveLength(1);
     expect(peer.closed).toEqual(['space-1']);
+  });
+
+  it('opens a fresh bearer once the one it was keeping has gone', async () => {
+    // A transport is made once per scope and kept, so a connection that drops
+    // used to leave every later frame written into a channel that was gone —
+    // the device reported itself synced and threw on each keystroke.
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+
+    await db.syncOperations.put(frameOf());
+    await vi.waitFor(() => {
+      expect(peer.sent).toHaveLength(1);
+    });
+
+    peer.handles[0].die();
+    await db.syncOperations.put(frameOf({ operationId: asOperationId('op-2') }));
+
+    await vi.waitFor(() => {
+      expect(peer.created).toEqual(['space-1', 'space-1']);
+      expect(peer.sent).toHaveLength(2);
+    });
+    stop();
+  });
+
+  it('lets go of the bearer it drops', async () => {
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+
+    await db.syncOperations.put(frameOf());
+    await vi.waitFor(() => {
+      expect(peer.sent).toHaveLength(1);
+    });
+
+    peer.handles[0].die();
+
+    await vi.waitFor(() => {
+      expect(peer.closed).toEqual(['space-1']);
+    });
+    stop();
+  });
+
+  it('asks again after a bearer it could not open at all', async () => {
+    // A refusal used to be kept as readily as a bearer: the rejected promise
+    // stayed in the cache and every later frame was answered with it.
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+    peer.refuseNext();
+
+    await db.syncOperations.put(frameOf());
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    expect(peer.sent).toHaveLength(0);
+
+    await db.syncOperations.put(frameOf({ operationId: asOperationId('op-2') }));
+
+    await vi.waitFor(() => {
+      expect(peer.sent).toHaveLength(1);
+    });
+    stop();
+  });
+
+  it('keeps the bearer it has when an older one reports itself gone late', async () => {
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+
+    await db.syncOperations.put(frameOf());
+    await vi.waitFor(() => {
+      expect(peer.sent).toHaveLength(1);
+    });
+    peer.handles[0].die();
+    await db.syncOperations.put(frameOf({ operationId: asOperationId('op-2') }));
+    await vi.waitFor(() => {
+      expect(peer.created).toHaveLength(2);
+    });
+
+    // The one that already went reports it again; the live one must survive.
+    peer.handles[0].die();
+    await db.syncOperations.put(frameOf({ operationId: asOperationId('op-3') }));
+
+    await vi.waitFor(() => {
+      expect(peer.sent).toHaveLength(3);
+    });
+    expect(peer.created).toHaveLength(2);
+    stop();
   });
 
   it('does nothing at all when no peer provider is configured', async () => {

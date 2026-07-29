@@ -85,10 +85,13 @@ export const createWebRtcSyncProvider = (
       createTransport: async ({ accessScopeId, channelId }) => {
         const channel = await options.openChannel.open({ accessScopeId, channelId });
         const transport = createWebRtcTransport(channel);
+        // The closure notice travels with the transport: it is how a consumer
+        // holding one per scope learns to stop using a bearer that is gone.
         const tracked: SyncTransport = {
           sharesStore: transport.sharesStore,
           send: transport.send,
           onMessage: transport.onMessage,
+          onClosed: transport.onClosed,
           close: () => {
             transports.delete(tracked);
             transport.close();

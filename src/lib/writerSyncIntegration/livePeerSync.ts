@@ -70,12 +70,38 @@ const linkCache = (
   create: (accessScopeId: AccessScopeId) => Promise<LiveLink>,
 ) => {
   const open = new Map<string, Promise<LiveLink>>();
+
+  /**
+   * Stop serving this link, if it is still the one being served.
+   *
+   * The guard matters because a bearer reports itself gone whenever it likes,
+   * including after the scope has already moved on to a fresh link — which must
+   * survive its predecessor's news.
+   */
+  const forget = (accessScopeId: string, entry: Promise<LiveLink>): void => {
+    if (open.get(accessScopeId) === entry) open.delete(accessScopeId);
+  };
+
   return {
     for: (accessScopeId: AccessScopeId): Promise<LiveLink> => {
       const existing = open.get(accessScopeId);
       if (existing !== undefined) return existing;
       const created = create(accessScopeId);
       open.set(accessScopeId, created);
+      // A bearer that goes away, and a link that never opened at all, must not be
+      // handed out again: the next frame opens a fresh one instead of writing
+      // into a channel that is gone, or being answered with an old refusal.
+      void created.then(
+        (link) => {
+          link.transport.onClosed?.(() => {
+            forget(accessScopeId, created);
+            link.close();
+          });
+        },
+        () => {
+          forget(accessScopeId, created);
+        },
+      );
       return created;
     },
     closeAll: () => {

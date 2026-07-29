@@ -4,10 +4,11 @@ import type { SyncStatus } from '../../core/providers.types';
 import { createWebRtcSyncProvider } from './webRtcSyncProvider';
 import type { DataChannelLike } from './webRtcTransport';
 
-const fakeChannel = (): DataChannelLike & { closed: boolean } => {
+const fakeChannel = (): DataChannelLike & { closed: boolean; die: () => void } => {
+  const listeners = new Map<string, ((event: MessageEvent<unknown>) => void)[]>();
   const channel = {
     label: 'writer-sync-control',
-  readyState: 'open',
+    readyState: 'open',
     bufferedAmount: 0,
     bufferedAmountLowThreshold: 0,
     closed: false,
@@ -15,8 +16,22 @@ const fakeChannel = (): DataChannelLike & { closed: boolean } => {
     close: () => {
       channel.closed = true;
     },
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
+    addEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => {
+      listeners.set(type, [...(listeners.get(type) ?? []), listener]);
+    },
+    removeEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => {
+      listeners.set(
+        type,
+        (listeners.get(type) ?? []).filter((held) => held !== listener),
+      );
+    },
+    /** The connection drops, the way a real channel reports it. */
+    die: () => {
+      (channel as { readyState: string }).readyState = 'closed';
+      for (const listener of [...(listeners.get('close') ?? [])]) {
+        listener({} as MessageEvent<unknown>);
+      }
+    },
   };
   return channel;
 };
@@ -87,6 +102,23 @@ describe('realtime transport', () => {
       channelId: 'doc-1',
     });
     expect(transport?.sharesStore).toBe(false);
+  });
+
+  it('passes on the bearer going away, so a consumer can stop holding it', async () => {
+    // The consumer keeps one transport per scope. If the provider swallows this,
+    // it never learns the channel is gone and writes every later frame into it.
+    const channel = fakeChannel();
+    const { provider } = providerWith(vi.fn(() => Promise.resolve(channel)));
+    const transport = await provider.realtime?.createTransport({
+      accessScopeId: 'space-1',
+      channelId: 'doc-1',
+    });
+    const onClosed = vi.fn();
+    transport?.onClosed?.(onClosed);
+
+    channel.die();
+
+    expect(onClosed).toHaveBeenCalledTimes(1);
   });
 });
 

@@ -172,6 +172,15 @@ const createChannelRegistry = () => {
     adopt: (channel: DataChannelLike): void => {
       if (channels.has(channel.label)) return;
       channels.set(channel.label, channel);
+      // A channel that dies leaves, so the next request for that purpose opens a
+      // new one instead of being handed a channel nothing can be written to. Only
+      // if it is still the one held: a replacement must outlive its predecessor's
+      // news.
+      const forget = (): void => {
+        if (channels.get(channel.label) === channel) channels.delete(channel.label);
+      };
+      channel.addEventListener('close', forget);
+      channel.addEventListener('error', forget);
       for (const listener of watchers(channel.label)) listener(channel);
       for (const listener of anyWatchers) listener(channel);
     },

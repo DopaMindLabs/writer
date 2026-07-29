@@ -7,24 +7,43 @@ import {
   type DataChannelLike,
 } from './webRtcTransport';
 
-/** A scriptable stand-in for `RTCDataChannel`, so no WebRTC is involved. */
-const fakeChannel = () => {
+/**
+ * A scriptable stand-in for `RTCDataChannel`, so no WebRTC is involved.
+ *
+ * `send` throws off an open channel exactly as the real one does — that throw is
+ * the whole failure being guarded against, so a double that quietly accepted the
+ * write could not tell whether the guard was there.
+ */
+const fakeChannel = (readyState = 'open') => {
   const listeners = new Map<string, ((event: MessageEvent<unknown>) => void)[]>();
   const sent: ArrayBuffer[] = [];
   const channel: DataChannelLike & {
     sent: ArrayBuffer[];
     emit: (type: string, data?: unknown) => void;
+    /** Put the channel into a state, the way a connection settling or dying does. */
+    settle: (state: string) => void;
     closed: boolean;
   } = {
     label: 'writer-sync-control',
-    readyState: 'open',
+    readyState,
     bufferedAmount: 0,
     bufferedAmountLowThreshold: 0,
     closed: false,
     sent,
     send: (data) => {
+      if (channel.readyState !== 'open') {
+        throw new DOMException(
+          `Failed to execute 'send' on 'RTCDataChannel': RTCDataChannel.readyState is not 'open'`,
+          'InvalidStateError',
+        );
+      }
       sent.push(data);
       channel.bufferedAmount += data.byteLength;
+    },
+    settle: (state) => {
+      (channel as { readyState: string }).readyState = state;
+      if (state === 'open') channel.emit('open');
+      if (state === 'closed') channel.emit('close');
     },
     close: () => {
       channel.closed = true;
@@ -184,5 +203,116 @@ describe('close', () => {
     const transport = createWebRtcTransport(channel);
     transport.close();
     expect(() => transport.close()).not.toThrow();
+  });
+});
+
+describe('a channel that is not open', () => {
+  it('holds what is written to one still connecting, and sends it when it opens', () => {
+    // The device that creates a channel holds it in `connecting` while the
+    // connection forms. Writing then throws, which is how the first frames after
+    // a pairing were lost one by one as the user typed.
+    const channel = fakeChannel('connecting');
+    const transport = createWebRtcTransport(channel);
+
+    expect(() => transport.send(new Uint8Array([1]))).not.toThrow();
+    expect(channel.sent).toHaveLength(0);
+
+    channel.settle('open');
+
+    expect(channel.sent).toHaveLength(1);
+  });
+
+  it('ignores a write to one that has gone away', () => {
+    const channel = fakeChannel();
+    const transport = createWebRtcTransport(channel);
+    channel.settle('closed');
+
+    expect(() => transport.send(new Uint8Array([1]))).not.toThrow();
+    expect(channel.sent).toHaveLength(0);
+  });
+
+  it('ignores a write to one that is closing', () => {
+    const channel = fakeChannel();
+    const transport = createWebRtcTransport(channel);
+    (channel as { readyState: string }).readyState = 'closing';
+
+    expect(() => transport.send(new Uint8Array([1]))).not.toThrow();
+    expect(channel.sent).toHaveLength(0);
+  });
+
+  it('does not drain what it queued into a channel that died waiting', () => {
+    const channel = fakeChannel();
+    const transport = createWebRtcTransport(channel);
+    channel.bufferedAmount = BUFFER_HIGH_WATER_BYTES;
+    transport.send(new Uint8Array([1]));
+
+    channel.settle('closed');
+    channel.bufferedAmount = 0;
+    channel.emit('bufferedamountlow');
+
+    expect(channel.sent).toHaveLength(0);
+  });
+});
+
+describe('closure', () => {
+  it('tells its consumer when the channel goes away by itself', () => {
+    // The consumer caches this transport per scope. Without being told, it would
+    // hand the same dead one back for every later frame.
+    const channel = fakeChannel();
+    const transport = createWebRtcTransport(channel);
+    const onClosed = vi.fn();
+    transport.onClosed?.(onClosed);
+
+    channel.settle('closed');
+
+    expect(onClosed).toHaveBeenCalledTimes(1);
+  });
+
+  it('says so once, however many times the channel reports it', () => {
+    const channel = fakeChannel();
+    const transport = createWebRtcTransport(channel);
+    const onClosed = vi.fn();
+    transport.onClosed?.(onClosed);
+
+    channel.emit('close');
+    channel.emit('close');
+    channel.emit('error');
+
+    expect(onClosed).toHaveBeenCalledTimes(1);
+  });
+
+  it('reports a channel that errors as gone', () => {
+    const channel = fakeChannel();
+    const transport = createWebRtcTransport(channel);
+    const onClosed = vi.fn();
+    transport.onClosed?.(onClosed);
+
+    channel.emit('error');
+
+    expect(onClosed).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops telling a consumer that unsubscribed', () => {
+    const channel = fakeChannel();
+    const transport = createWebRtcTransport(channel);
+    const onClosed = vi.fn();
+    transport.onClosed?.(onClosed)?.();
+
+    channel.settle('closed');
+
+    expect(onClosed).not.toHaveBeenCalled();
+  });
+
+  it('does not report a close the consumer asked for itself', () => {
+    // Closing is not news to whoever called it, and a consumer evicting its own
+    // cache entry on the way out would be told about an entry it is discarding.
+    const channel = fakeChannel();
+    const transport = createWebRtcTransport(channel);
+    const onClosed = vi.fn();
+    transport.onClosed?.(onClosed);
+
+    transport.close();
+
+    expect(onClosed).not.toHaveBeenCalled();
   });
 });
