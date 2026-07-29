@@ -11,6 +11,7 @@ import { startPairingExchange } from './startPairingExchange';
 import { takeScannedPayload } from './takeScannedPayload';
 import { usePairingSessionRefs } from './usePairingSessionRefs';
 import {
+  failureActionFor,
   initialExchangeState,
   pairingExchangeReducer,
   type PairingExchangeAction,
@@ -50,16 +51,16 @@ export interface PairingExchange extends PairingExchangeState {
  * Hand a confirmed pairing's connection to the holder that outlives this dialog.
  *
  * Only ever after confirmation: before it no human has agreed the codes match,
- * and an unconfirmed peer must not be left holding an open channel. Returns
+ * and an unconfirmed peer must not be left holding an open channel. Resolves to
  * whether the session was taken, which is what tells teardown to leave it alone.
  */
-const handOverSession = (
+const handOverSession = async (
   catchUp: PeerCatchUp | null,
   opened: PairingSignaller | null,
-): boolean => {
+): Promise<boolean> => {
   const peer = opened?.adapter.parameters();
   if (catchUp === null || !opened || !peer) return false;
-  catchUp.adopt({
+  await catchUp.adopt({
     session: opened.session,
     deviceId: peer.deviceId,
     // What the account root travels on. It goes with the session because this
@@ -78,21 +79,31 @@ const handOverSession = (
  * Take the user's word that the digits match, and hand the connection on.
  *
  * The machine is the gate, not the caller: it refuses `confirmed` from any
- * state but `awaiting-confirmation`, so a stray call cannot skip ahead. Returns
- * whether the session was taken, which is what tells teardown to leave it alone.
+ * state but `awaiting-confirmation`, so a stray call cannot skip ahead.
+ *
+ * "Devices paired" is dispatched only once adoption has recorded the peer:
+ * adoption can refuse — a known device presenting a different identity key —
+ * and a dialog that had already declared success would be lying about the one
+ * thing it exists to establish. Resolves to whether the session was taken,
+ * which is what tells teardown to leave it alone.
  */
-const confirmPairing = (options: {
+const confirmPairing = async (options: {
   machine: PairingSession | null;
   signaller: PairingSignaller | null;
   catchUp: PeerCatchUp | null;
   dispatch: (action: PairingExchangeAction) => void;
-}): boolean => {
+}): Promise<boolean> => {
   const { machine, signaller, catchUp, dispatch } = options;
   if (machine?.state() !== PairingState.AwaitingConfirmation) return false;
   machine.apply('confirmed');
-  const taken = handOverSession(catchUp, signaller);
-  dispatch({ type: 'confirmed' });
-  return taken;
+  try {
+    const taken = await handOverSession(catchUp, signaller);
+    dispatch({ type: 'confirmed' });
+    return taken;
+  } catch (error) {
+    dispatch(failureActionFor(error));
+    return false;
+  }
 };
 
 export const usePairingExchange = ({
@@ -134,14 +145,12 @@ export const usePairingExchange = ({
   );
 
   const confirm = useCallback((): void => {
-    markHandedOver(
-      confirmPairing({
-        machine: session.current,
-        signaller: signaller.current,
-        catchUp,
-        dispatch,
-      }),
-    );
+    void confirmPairing({
+      machine: session.current,
+      signaller: signaller.current,
+      catchUp,
+      dispatch,
+    }).then(markHandedOver);
   }, [catchUp, markHandedOver, signaller, session]);
 
   return { ...state, submitPayload, confirm };

@@ -103,4 +103,14 @@ describe('TrustedDeviceList', () => {
       /cannot reach back and erase the writing already on it/i,
     );
   });
+
+  it('says how removal is undone, beside what it cannot do', () => {
+    // The remedy lives where the removal decision is made: a fresh pairing,
+    // digits confirmed on both screens, restores sync for the same identity.
+    renderWithProviders(<TrustedDeviceList devices={[device()]} onRemove={vi.fn()} />);
+
+    expect(screen.getByTestId('trusted-devices-removal-note')).toHaveTextContent(
+      /pairing the device afresh .* restores sync/i,
+    );
+  });
 });

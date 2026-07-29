@@ -37,12 +37,17 @@ export const PairDeviceDialogBody = ({ exchange, scanner }: PairDeviceDialogBody
 
   if (exchange.phase === 'failed') {
     // A named reason carries its own advice — a too-large payload will not
-    // shrink on retry, an expired code needs a fresh one. Every other failure
+    // shrink on retry, an expired code needs a fresh one, and a device whose
+    // identity key changed must not be retried at all. Every other failure
     // stays generic (threat model §5.11).
     const reason = exchange.failureReason;
     const named = {
       'too-large': { testId: 'pair-device-too-large', copy: 'settings.pairing.tooLarge' },
       expired: { testId: 'pair-device-expired', copy: 'settings.pairing.expired' },
+      'trusted-key-mismatch': {
+        testId: 'pair-device-key-mismatch',
+        copy: 'settings.pairing.keyMismatch',
+      },
     } as const;
     const shown =
       reason === null

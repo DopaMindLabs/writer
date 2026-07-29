@@ -683,6 +683,18 @@ wired into the app.
   arrives before anything is listening. The root is zeroed as soon as it is
   stored, and the receiving device derives its ring exactly as a passphrase
   unlock would; there is no separate paired-device key path.
+- **The device list, removal, and re-pairing.** Settings → Device sync lists
+  every device the account has paired with, revoked ones included and badged as
+  removed — a list that silently forgot a removal would leave "never paired"
+  and "paired and removed" indistinguishable. Removing a device marks its
+  trust record revoked (kept, never deleted): it can open no new authenticated
+  session and every frame it signs is refused, but nothing already copied to it
+  can be recalled, and the list says so beside the action. Removal is undone
+  only by pairing the device afresh: a completed, digit-confirmed exchange
+  reactivates the record if — and only if — the presented identity key equals
+  the stored one, and the dialog declares success only after that adoption has
+  been recorded. A known device id presenting a different key fails the pairing
+  with named copy (`trusted-key-mismatch`) and leaves the record untouched.
 - **What a device may ask for.** A peer's manifest is filtered by whether this
   device *could decrypt* a scope, which is not the same question as which scopes
   it already holds. Stage 1 derives one content key for every scope, so a device

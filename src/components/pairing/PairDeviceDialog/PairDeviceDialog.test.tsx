@@ -13,6 +13,8 @@ import {
   type PairingOffer,
 } from 'writer-sync/pairing';
 import type { PairingSignaller } from '@/lib/writerSyncIntegration/createPairingSignaller';
+import type { PeerCatchUp } from '@/lib/writerSyncIntegration/peerCatchUp';
+import { PeerCatchUpContext } from '@/lib/writerSyncIntegration/peerCatchUpContext';
 import { PairDeviceDialog } from './PairDeviceDialog';
 
 /**
@@ -112,6 +114,18 @@ const renderDialog = (signaller: PairingSignaller = readySignaller()) =>
       onOpenChange={vi.fn()}
       createSignaller={() => Promise.resolve(signaller)}
     />,
+  );
+
+/** The dialog with somewhere to hand a confirmed session — the adoption seam. */
+const renderDialogWithCatchUp = (catchUp: PeerCatchUp) =>
+  renderWithProviders(
+    <PeerCatchUpContext.Provider value={catchUp}>
+      <PairDeviceDialog
+        open
+        onOpenChange={vi.fn()}
+        createSignaller={() => Promise.resolve(readySignaller())}
+      />
+    </PeerCatchUpContext.Provider>,
   );
 
 /** This device's own code, once the user has chosen to show it. */
@@ -340,6 +354,33 @@ describe('PairDeviceDialog, once its code has been read', () => {
 
     expect(await screen.findByTestId('pair-device-failed')).toBeInTheDocument();
     expect(screen.queryByTestId('pairing-verification-code')).not.toBeInTheDocument();
+  });
+
+  it('does not declare devices paired when adoption refuses the identity', async () => {
+    // The registry refuses a known device presenting a different key. The
+    // dialog must show that refusal — a "Devices paired" it had already
+    // declared would be a lie about the one thing it exists to establish.
+    // Driven as the answering device, whose fixture holds peer parameters once
+    // it has answered — the showing half's fixture never mints them.
+    const catchUp: PeerCatchUp = {
+      adopt: () =>
+        Promise.reject(
+          new PairingError(PairingErrorCode.TrustedKeyMismatch, 'stored key differs'),
+        ),
+      stop: () => undefined,
+    };
+    const user = userEvent.setup();
+    renderDialogWithCatchUp(catchUp);
+    await screen.findByTestId('pairing-start-step');
+    await pastePayload(offer(), 'start');
+    await screen.findByRole('img', { name: 'Reply code from this device' });
+    await user.click(screen.getByTestId('pairing-reply-shown'));
+    await screen.findByTestId('pairing-verification-code');
+
+    await user.click(screen.getByTestId('pairing-verification-confirm'));
+
+    expect(await screen.findByTestId('pair-device-key-mismatch')).toBeInTheDocument();
+    expect(screen.queryByTestId('pair-device-complete')).not.toBeInTheDocument();
   });
 });
 

@@ -150,6 +150,12 @@ describe('failureActionFor', () => {
     ).toEqual({ type: 'failed', reason: 'expired' });
   });
 
+  it('names a known device that proved a different identity', () => {
+    expect(
+      failureActionFor(new PairingError(PairingErrorCode.TrustedKeyMismatch, 'key differs')),
+    ).toEqual({ type: 'failed', reason: 'trusted-key-mismatch' });
+  });
+
   it('keeps every other failure generic', () => {
     expect(
       failureActionFor(new PairingError(PairingErrorCode.BadSignature, 'forged')),

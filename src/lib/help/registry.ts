@@ -269,6 +269,8 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
       'peer to peer',
       'direct sync',
       'another device',
+      'remove device',
+      'pair again',
     ],
     related: ['cloud-sync', 'your-account', 'working-in-multiple-tabs'],
   },

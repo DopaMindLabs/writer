@@ -787,6 +787,7 @@
       "creating": "Preparing this device's code…",
       "failed": "This device could not prepare a pairing code. Close this and try again.",
       "expired": "That code has expired. Close this on both devices and start again — a fresh code only takes a moment.",
+      "keyMismatch": "This device could not verify the other one: it is a device you have paired with before, but it proved a different identity. Do not pair it again — remove it from the device list, and if you did not expect this, be careful about what network you are on.",
       "openLabel": "Pair another device",
       "openHint": "Show a code your other device can scan, so the two can sync directly.",
       "retention": {
@@ -852,7 +853,7 @@
         "lastConnected": "last connected {{when}}",
         "neverConnected": "not connected since pairing",
         "remove": "Remove",
-        "removalLimitation": "Removing a device stops it connecting again, but it cannot reach back and erase the writing already on it. Treat a lost device as still holding whatever it had."
+        "removalLimitation": "Removing a device stops it connecting again, but it cannot reach back and erase the writing already on it. Treat a lost device as still holding whatever it had. Removal is not final: pairing the device afresh — with both of you confirming the digits again — restores sync."
       }
     }
   },

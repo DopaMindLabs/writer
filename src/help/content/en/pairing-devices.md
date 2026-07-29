@@ -122,6 +122,26 @@ Each device accepts changes only from devices it has paired with itself. If you
 have three devices, pair each one with each of the others; a device in the
 middle will not pass changes along on their behalf.
 
+## Removing a device, and pairing it again
+
+Settings → Device sync lists every device you have paired. **Remove** stops a
+device connecting again: nothing it sends is accepted from that moment on. It
+stays in the list marked as removed, so you can always tell a device you
+removed apart from one you never paired.
+
+Removing cannot reach back and erase the writing already on the other device —
+treat a lost device as still holding whatever it had when you removed it.
+
+Removal is not final. To bring a device back, pair it again the ordinary way:
+show a code, scan it, and confirm the digits on both screens. Confirming is
+what restores trust — the device proves it is still the same one you paired
+with before, and syncing resumes from where it left off.
+
+If a device you have paired with before ever fails re-pairing with a message
+about proving a different identity, do not keep trying. Remove it from the
+list, and be careful about the network you are on — that message means the
+thing on the other end is not the device your list remembers.
+
 ## Devices you have not used for a while
 
 Writer keeps a history of recent changes so a device that has been offline can
