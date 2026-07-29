@@ -124,17 +124,95 @@ test('two devices pair over QR symbols and agree on one verification code', asyn
   await expect(joiner.getByTestId('pair-device-complete')).toBeVisible();
 });
 
+/** How much padding the advertised description carries. See below. */
+const PAD_CHARACTERS = 3200;
+
 /**
- * The same symbol, presented as the first of two.
+ * Make this device advertise a session description too long for one symbol.
  *
- * An ordinary code now fits one symbol, which completes a scan the moment it
- * lands — so a half-collected scan, the state the wrong-session guard exists
- * to protect, only occurs for a payload over the chunk size. Re-labelling a
- * real symbol reproduces that state through the real surface rather than
- * waiting for a description long enough to split on its own.
+ * A device on a host with several network interfaces gathers a description that
+ * outgrows the symbol on its own; a headless runner with one interface never
+ * does, so the multi-symbol path would otherwise be unreachable from here. Only
+ * the description this device *advertises* is padded — the connection keeps the
+ * real one, and the padding is an attribute the peer's parser ignores — so the
+ * pairing that follows is a real one, carried in parts.
+ *
+ * The padding is deterministic and high-entropy on purpose: the payload is
+ * DEFLATE-compressed before it is split, and repetitive padding would compress
+ * away to nothing without ever reaching a second symbol.
  */
-const asFirstOfTwo = (symbol: string): string =>
-  symbol.replace(/^W1:([A-Za-z0-9_-]+):1\/1:/, 'W1:$1:1/2:');
+const advertiseAnOversizedDescription = (page: Page): Promise<void> =>
+  page.addInitScript((count: number) => {
+    // xorshift32, kept in 32-bit lanes: a multiplicative generator overflows
+    // JavaScript's integer precision and decays into a repeating sequence,
+    // which would compress away and never reach a second symbol.
+    let seed = 0x2f6e2b1;
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+    const noise = Array.from({ length: count }, () => {
+      seed ^= seed << 13;
+      seed ^= seed >>> 17;
+      seed ^= seed << 5;
+      seed |= 0;
+      return alphabet[Math.abs(seed) % alphabet.length];
+    }).join('');
+
+    const own = Object.getOwnPropertyDescriptor(
+      RTCPeerConnection.prototype,
+      'localDescription',
+    );
+    const read = own?.get;
+    if (!own || !read) return;
+    Object.defineProperty(RTCPeerConnection.prototype, 'localDescription', {
+      ...own,
+      get(this: RTCPeerConnection): RTCSessionDescription | null {
+        const description = read.call(this) as RTCSessionDescription | null;
+        if (description === null || description.type !== 'offer') return description;
+        return {
+          ...description,
+          type: description.type,
+          sdp: `${description.sdp}a=x-writer-pad:${noise}\r\n`,
+        } as RTCSessionDescription;
+      },
+    });
+  }, PAD_CHARACTERS);
+
+test('a code too long for one symbol is carried across in parts', async ({
+  page,
+  browser,
+  browserName,
+}) => {
+  test.slow();
+
+  const shower = await openCoveredContext(browser, browserName);
+  await advertiseAnOversizedDescription(shower);
+
+  await openPairing(shower);
+  await showCode(shower);
+
+  // The pager belongs to this case and this case only: several symbols, stepped
+  // by hand, each naming its place in the sequence.
+  await expect(shower.getByText(/^Symbol 1 of [2-8]$/)).toBeVisible();
+  const symbols = await readSymbols(shower);
+  expect(symbols.length).toBeGreaterThan(1);
+
+  await openPairing(page);
+  await openScanner(page);
+  await pasteSymbols(page, symbols.slice(0, 1));
+
+  // Mid-scan, the outstanding symbol is named as a symbol rather than left as a
+  // bare count that reads as "two more to go".
+  await expect(page.getByTestId('pairing-scan-progress')).toHaveText(
+    `Read 1 of ${String(symbols.length)} symbols. Still to scan: symbol 2.`,
+  );
+
+  await pasteSymbols(page, symbols.slice(1));
+
+  // Answering proves the parts were reassembled into the payload that was
+  // split, not merely collected: a mis-joined description would not validate.
+  await expect(page.getByTestId('pairing-reply-step')).toBeVisible({
+    timeout: GATHERING_TIMEOUT,
+  });
+});
 
 test('a symbol from an unrelated session is refused mid-scan', async ({
   page,
@@ -147,8 +225,12 @@ test('a symbol from an unrelated session is refused mid-scan', async ({
   test.slow();
 
   // Two devices showing codes, so there are two distinct sessions to confuse.
+  // The first is padded into several symbols, because the guard protects a scan
+  // that is still collecting — a single-symbol code completes before a stray
+  // one could arrive.
   const first = await openCoveredContext(browser, browserName);
   const second = await openCoveredContext(browser, browserName);
+  await advertiseAnOversizedDescription(first);
 
   await openPairing(first);
   await openPairing(second);
@@ -160,13 +242,8 @@ test('a symbol from an unrelated session is refused mid-scan', async ({
 
   await openPairing(page);
   await openScanner(page);
-  await pasteSymbols(page, [asFirstOfTwo(fromFirst)]);
-
-  // Mid-scan, and the outstanding symbol is named as a symbol rather than left
-  // as a bare count that reads as "two more to go".
-  await expect(page.getByTestId('pairing-scan-progress')).toHaveText(
-    'Read 1 of 2 symbols. Still to scan: symbol 2.',
-  );
+  await pasteSymbols(page, [fromFirst]);
+  await expect(page.getByTestId('pairing-scan-progress')).toBeVisible();
 
   await pasteSymbols(page, [fromSecond]);
 
