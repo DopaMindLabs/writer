@@ -1,7 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createSyncCoordinator } from 'writer-sync/core';
 import type { SyncProvider } from 'writer-sync/core';
+import { appLogger } from '@/lib/appLogger';
+import { compactJournal } from './materialization/compactJournal';
 import { startWriterSync } from './startWriterSync';
+
+vi.mock('./materialization/compactJournal', () => ({
+  compactJournal: vi.fn(() => Promise.resolve()),
+}));
 
 vi.mock('@/lib/cloud/cloudClient', () => ({
   startCloudSession: vi.fn().mockResolvedValue(() => undefined),
@@ -118,5 +124,33 @@ describe('startWriterSync', () => {
     const stop = await startWriterSync(coordinatorOf(realtimeOnlyProvider('webrtc')));
 
     expect(() => stop()).not.toThrow();
+  });
+
+  it('compacts the journal after boot, without waiting on it', async () => {
+    vi.mocked(compactJournal).mockClear();
+
+    await startWriterSync(coordinatorOf(durableSyncProvider('a', () => Promise.resolve(() => undefined))));
+
+    // Housekeeping, not a boot step: sync is already started by the time this
+    // runs, and a journal scan must never be on the path to a usable app.
+    expect(compactJournal).toHaveBeenCalledOnce();
+  });
+
+  it('reports a failed compaction rather than failing the boot it followed', async () => {
+    const warn = vi.spyOn(appLogger, 'warn').mockImplementation(() => undefined);
+    vi.mocked(compactJournal).mockRejectedValueOnce(new Error('journal unreadable'));
+    try {
+      const stop = await startWriterSync(
+        coordinatorOf(durableSyncProvider('a', () => Promise.resolve(() => undefined))),
+      );
+
+      // Sync is up; only the housekeeping failed, and it is best-effort.
+      expect(stop).toBeInstanceOf(Function);
+      await vi.waitFor(() => {
+        expect(warn).toHaveBeenCalledWith('journal compaction failed', expect.anything());
+      });
+    } finally {
+      warn.mockRestore();
+    }
   });
 });
