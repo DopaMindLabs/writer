@@ -271,7 +271,7 @@ describe('QuickSettingsPopover', () => {
   });
 
   describe('mobile', () => {
-    const realMatchMedia = window.matchMedia;
+    const realMatchMedia = window.matchMedia.bind(window);
     afterEach(() => {
       window.matchMedia = realMatchMedia;
     });
@@ -321,7 +321,7 @@ describe('QuickSettingsPopover', () => {
   });
 
   describe('keyboard hints on touch', () => {
-    const realMatchMedia = window.matchMedia;
+    const realMatchMedia = window.matchMedia.bind(window);
     afterEach(() => {
       window.matchMedia = realMatchMedia;
     });

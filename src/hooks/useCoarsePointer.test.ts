@@ -1,7 +1,7 @@
 import { renderHook } from '@/test/test-utils';
 import { useCoarsePointer } from './useCoarsePointer';
 
-const realMatchMedia = window.matchMedia;
+const realMatchMedia = window.matchMedia.bind(window);
 
 const setPointer = (coarse: boolean) => {
   window.matchMedia = ((query: string) => ({
