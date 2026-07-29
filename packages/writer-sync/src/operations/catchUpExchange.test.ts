@@ -53,6 +53,7 @@ const harness = (options: {
   verifySignature?: (frame: EncryptedSyncFrame) => Promise<boolean>;
   fullState?: (accessScopeId: AccessScopeId) => Promise<EncryptedSyncFrame[]>;
   retentionCutoff?: () => number;
+  maxMessageBytes?: number;
 } = {}) => {
   const frames = options.frames ?? [];
   const sent: CatchUpMessage[] = [];
@@ -64,6 +65,7 @@ const harness = (options: {
     journal: memoryStore(frames),
     accessibleScopeIds: async () => options.scopes ?? ['scope-1'],
     send: (message) => sent.push(message),
+    maxMessageBytes: options.maxMessageBytes,
     verifySignature: options.verifySignature ?? (async () => true),
     fullState: options.fullState,
     retentionCutoff: options.retentionCutoff,
@@ -158,6 +160,34 @@ describe('createCatchUpExchange on a peer request', () => {
     });
 
     expect(sent).toEqual([{ v: 1, kind: 'frames', frames: [held], final: true }]);
+  });
+
+  it('splits a reply that would outgrow the transport, final on the last part', async () => {
+    // Frames that fit individually but not together: the count ceiling alone
+    // would put all of them in one message the channel then refuses.
+    const held = await Promise.all(
+      Array.from({ length: 6 }, (_, index) => frameOf({ id: `op-${String(index)}`, millis: 10 })),
+    );
+    const { exchange, sent } = harness({ frames: held, maxMessageBytes: 900 });
+
+    await exchange.receive({
+      v: 1,
+      kind: 'request',
+      requests: [{ accessScopeId: 'scope-1', originDeviceId: asDeviceId('device-a') }],
+    });
+
+    const replies = sent.filter((message) => message.kind === 'frames');
+    expect(replies.length).toBeGreaterThan(1);
+    for (const reply of replies) {
+      expect(
+        new TextEncoder().encode(JSON.stringify(reply)).byteLength,
+      ).toBeLessThanOrEqual(900);
+    }
+    expect(replies.flatMap((reply) => reply.frames)).toEqual(held);
+    expect(replies.map((reply) => reply.final)).toEqual([
+      ...Array.from({ length: replies.length - 1 }, () => false),
+      true,
+    ]);
   });
 
   it('answers an empty request with an empty final reply', async () => {

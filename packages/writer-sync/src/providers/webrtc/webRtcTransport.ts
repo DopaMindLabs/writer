@@ -85,6 +85,7 @@ export const createWebRtcTransport = (channel: DataChannelLike): SyncTransport =
 
   return {
     sharesStore: false,
+    maxMessageBytes: MAX_FRAME_BYTES,
     send: (bytes) => {
       if (closed) return;
       if (bytes.byteLength > MAX_FRAME_BYTES) throw new FrameTooLargeError(bytes.byteLength);

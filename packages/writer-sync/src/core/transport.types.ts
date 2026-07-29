@@ -16,6 +16,13 @@
  */
 export interface SyncTransport {
   readonly sharesStore: boolean;
+  /**
+   * The largest message this bearer will carry, in bytes, when it has such a
+   * ceiling. A sender must size what it hands to {@link send} against this —
+   * a WebRTC data channel refuses larger frames — and a transport with no
+   * ceiling (a BroadcastChannel between tabs) simply leaves it unset.
+   */
+  readonly maxMessageBytes?: number;
   readonly send: (bytes: Uint8Array) => void;
   /** Register a listener for inbound messages; returns an unsubscribe fn. */
   readonly onMessage: (cb: (bytes: Uint8Array) => void) => () => void;

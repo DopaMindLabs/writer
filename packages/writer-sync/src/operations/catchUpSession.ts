@@ -37,6 +37,9 @@ export const startCatchUpSession = (options: {
 
   const exchange = createCatchUpExchange({
     ...ports,
+    // The bearer's ceiling travels with its send: replies are packed against
+    // the same budget the transport will enforce.
+    maxMessageBytes: transport.maxMessageBytes,
     send: (message) => {
       transport.send(encodeCatchUpMessage(message));
     },

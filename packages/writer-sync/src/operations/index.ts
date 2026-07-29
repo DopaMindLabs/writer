@@ -78,6 +78,8 @@ export type { CatchUpExchange, CatchUpPorts } from './catchUpExchange';
 
 export { startCatchUpSession } from './catchUpSession';
 export type { CatchUpSession } from './catchUpSession';
+export { fitsMessageBudget, packFrames } from './catchUpBatching';
+export type { PackedFrames } from './catchUpBatching';
 
 export {
   MAX_INFLIGHT_ATTACHMENTS,

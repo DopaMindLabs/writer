@@ -17,6 +17,7 @@ import {
   type ScopeManifest,
 } from './scopeManifest';
 import type { AttachmentTransfer } from './attachmentTransfer';
+import { packFrames } from './catchUpBatching';
 
 /**
  * The initial-transfer and incremental catch-up exchange, per runbook §24.
@@ -55,6 +56,11 @@ export interface CatchUpPorts {
    */
   canAccessScope?: (accessScopeId: AccessScopeId) => boolean;
   send: (message: CatchUpMessage) => void;
+  /**
+   * The transport's message ceiling, when it has one. Replies are packed so
+   * no message outgrows it; absent, batching is by frame count alone.
+   */
+  maxMessageBytes?: number;
   /** Verify the originating device's signature over the frame. */
   verifySignature: (frame: EncryptedSyncFrame) => Promise<boolean>;
   /**
@@ -89,13 +95,6 @@ export interface CatchUpExchange {
   /** Handle one decoded message from the peer. */
   receive: (message: CatchUpMessage) => Promise<void>;
 }
-
-const batched = <T>(items: readonly T[], size: number): T[][] =>
-  items.length === 0
-    ? [[]]
-    : Array.from({ length: Math.ceil(items.length / size) }, (_, index) =>
-        items.slice(index * size, index * size + size),
-      );
 
 const originKey = (frame: EncryptedSyncFrame): string =>
   `${frame.accessScopeId} ${String(frame.deviceId)}`;
@@ -202,7 +201,15 @@ const answer = async (
       : (await Promise.all([...rebuild].map((scope) => buildState(scope)))).flat();
 
   const replies = [...fromState, ...fromJournal];
-  const batches = batched(replies, MAX_FRAMES_PER_MESSAGE);
+  const packed = packFrames({
+    frames: replies,
+    maxFrames: MAX_FRAMES_PER_MESSAGE,
+    maxBytes: ports.maxMessageBytes,
+  });
+  // A frame too large for any message is still attempted, alone: the transport
+  // refuses it exactly as before this packing existed. Skipping it instead is
+  // the next change, not this one.
+  const batches = [...packed.batches, ...packed.oversized.map((frame) => [frame])];
   batches.forEach((frames, index) => {
     ports.send({
       v: CATCH_UP_PROTOCOL_VERSION,

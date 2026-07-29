@@ -73,6 +73,10 @@ describe('createWebRtcTransport', () => {
       FrameTooLargeError,
     );
   });
+
+  it('advertises the ceiling it enforces, so senders can pack against it', () => {
+    expect(createWebRtcTransport(fakeChannel()).maxMessageBytes).toBe(MAX_FRAME_BYTES);
+  });
 });
 
 describe('inbound', () => {
