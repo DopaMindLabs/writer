@@ -50,7 +50,7 @@ export const TemplatesNotice = ({ lockReason, submitError }: TemplatesNoticeProp
           data-testid="templates-lock-banner"
           title={k(`${variant}Title`)}
           action={k('action')}
-          onAction={() => { void navigate(routes.settings('profile')); }}
+          onAction={() => { void navigate(routes.settings('cloudSync')); }}
         >
           {k(`${variant}Body`)}
         </InlineBanner>

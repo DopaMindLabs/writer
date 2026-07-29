@@ -100,7 +100,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
       'presence',
       'cursor',
     ],
-    related: ['writing-and-editing', 'version-history', 'your-account'],
+    related: ['writing-and-editing', 'version-history', 'your-profile'],
   },
   {
     slug: 'doc-inspector',
@@ -183,10 +183,10 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     category: 'customization',
     featureArea: 'customization',
     keywords: ['theme', 'dark', 'typography', 'settings', 'preferences', 'editor'],
-    related: ['keyboard-shortcuts', 'your-data', 'your-account'],
+    related: ['keyboard-shortcuts', 'your-data', 'your-profile'],
   },
   {
-    slug: 'your-account',
+    slug: 'your-profile',
     category: 'customization',
     featureArea: 'customization',
     keywords: [
@@ -250,7 +250,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
       'device limit',
       'sign out',
     ],
-    related: ['your-data', 'your-account', 'working-in-multiple-tabs'],
+    related: ['your-data', 'your-profile', 'working-in-multiple-tabs'],
   },
   {
     slug: 'pairing-devices',
@@ -272,7 +272,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
       'remove device',
       'pair again',
     ],
-    related: ['cloud-sync', 'your-account', 'working-in-multiple-tabs'],
+    related: ['cloud-sync', 'your-profile', 'working-in-multiple-tabs'],
   },
   {
     slug: 'version-history',

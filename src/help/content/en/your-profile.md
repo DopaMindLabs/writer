@@ -1,10 +1,10 @@
-# Your account
+# Your profile
 
-Your **account** is how you'll appear to others when you collaborate — a name and
+Your **profile** is how you'll appear to others when you collaborate — a name and
 a colour, stored only on this device. There's no sign-in, and nothing is sent
-anywhere. Open it from **Settings → Account**.
+anywhere. Open it from **Settings → Profile**.
 
-Collaborative editing isn't available yet, so your account has no visible effect
+Collaborative editing isn't available yet, so your profile has no visible effect
 today — setting it now means you're ready the moment it arrives.
 
 ## At a glance
@@ -13,7 +13,7 @@ today — setting it now means you're ready the moment it arrives.
   collaborate. Optional; left blank, you appear as *Anonymous*.
 - **Presence colour** — the hue that will mark your cursor and text selection to
   other people.
-- **On-device only** — your account never leaves this browser.
+- **On-device only** — your profile never leaves this browser.
 
 ## Display name
 
@@ -33,7 +33,7 @@ from the keyboard: **Left**/**Up** and **Right**/**Down** step through the hues
 
 ## Your privacy
 
-Your account never leaves this device. It's saved locally in your browser and
+Your profile never leaves this device. It's saved locally in your browser and
 shared only with collaborators you invite. Clearing your browser data removes it,
 along with the rest of your work — see [Your data](your-data) for what's stored
 locally and how to back it up.

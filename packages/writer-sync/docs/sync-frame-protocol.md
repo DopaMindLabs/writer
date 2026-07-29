@@ -123,7 +123,7 @@ instead of `blob`; every other field remains inside the ordinary frame
 ciphertext. The receiver restores the required `Blob` only after the referenced
 ciphertext is complete and authenticated.
 
-The content key is derived per epoch by HKDF-SHA-256 from the account root with
+The content key is derived per epoch by HKDF-SHA-256 from the root secret with
 info `lipsum-content-v1`, and is non-extractable. `keyId` and `epoch` name the key
 so a receiver can select the right one; they are not themselves secrets.
 

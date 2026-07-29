@@ -140,5 +140,5 @@ Your synced data and your other devices are unaffected.
 ## Related
 
 - [Your data](your-data) — local storage, export, import, and backups.
-- [Your account](your-account) — display name and presence for collaboration.
+- [Your profile](your-profile) — display name and presence for collaboration.
 - [Working in multiple tabs](working-in-multiple-tabs) — live editing across tabs on one device.

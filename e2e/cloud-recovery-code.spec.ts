@@ -47,7 +47,7 @@ test.describe('recovery by printed code', () => {
   test('restores the key on a forgotten device and reopens sealed content', async ({
     page,
   }) => {
-    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=account');
+    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     const code = await setUpEncryption(page);
     expect(code).not.toHaveLength(0);
@@ -72,7 +72,7 @@ test.describe('recovery by printed code', () => {
   });
 
   test('rejects a code that does not match the account key', async ({ page }) => {
-    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=account');
+    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     const code = await setUpEncryption(page);
     await page.getByTestId('cloud-forget').click();

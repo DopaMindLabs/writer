@@ -894,7 +894,7 @@
       "lockedBody": "The space couldn't be created because encryption is locked on this device. Sort this out in your account settings, then try again.",
       "failedTitle": "Something went wrong",
       "failedBody": "The space couldn't be created. Please try again.",
-      "action": "Open account settings"
+      "action": "Open cloud sync settings"
     }
   },
   "dump": {

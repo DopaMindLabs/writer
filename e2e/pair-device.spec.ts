@@ -375,8 +375,8 @@ test('Device sync lists no devices until one is paired', async ({ page }) => {
   await expect(page.getByTestId('setting-journal-retention')).toBeVisible();
 });
 
-test('Account no longer carries the pairing entry point', async ({ page }) => {
-  await page.goto('/#/settings?tab=account');
+test('Profile no longer carries the pairing entry point', async ({ page }) => {
+  await page.goto('/#/settings?tab=profile');
 
   await expect(page.getByTestId('pair-device-open')).toHaveCount(0);
   await expect(page.getByTestId('setting-journal-retention')).toHaveCount(0);

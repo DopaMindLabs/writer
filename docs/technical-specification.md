@@ -40,7 +40,7 @@
 | 6 | **Citations** | Manual + BibTeX import (paste or `.bib` upload), tag-based search, bulk edit / bulk delete, `.bib` export. Available as a screen, a split-view pane, and a drawer. |
 | 7 | **Sidebar** | Per-space navigation: section list, doc list, a per-section ⋯ menu (add document, rename, delete), add section (on every template unless it sets `allowConfiguration: false`), drag / keyboard reordering of sections and documents, Brain Space link with unsorted-note count, settings cog. The Workshop section is protected from rename and delete. |
 | 8 | **Mobile nav** | Hamburger drawer on small viewports; a bottom **more** sheet whose App group (settings, about, help, what's new, accessibility, account, contact) is shared with the desktop Quick Settings menu so the two cannot drift; settings tabs reflow without horizontal overflow. On the settings shells the wordmark / tag badge is the "back to root" affordance (the SpaceRail's own home link is hidden on mobile). |
-| 9 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), a local **Account** (display name + presence colour), plus Typography, Shortcuts, and Backups tabs. |
+| 9 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), a local **Profile** (display name + presence colour), plus Typography, Shortcuts, and Backups tabs. |
 | 10 | **Per-space settings** | General (name, tag), Sharing (coming soon), Template (coming soon), Members, Backups (manual `.md` snapshots + history + download), Danger Zone (delete with typed confirmation). |
 | 11 | **Persistence** | IndexedDB autosave (~600 ms debounce). Survives reload, route changes, browser restart. |
 | 12 | **Theming** | Four themes: light, dark, high-contrast light, high-contrast dark. Choice persists in `localStorage`. |
@@ -136,7 +136,7 @@ A **space** is an independent writing project with its own sections, documents, 
 3. Enter a **name** and a **tag** (short label).
 4. Submit. The space is created in IndexedDB and the user lands on its first doc. While the cloud
    write lock is engaged (a key mismatch, or signed in without a key), an inline notice explains
-   the reason and links to the Account tab, and submission is disabled until it is resolved.
+   the reason and links to the Cloud sync tab, and submission is disabled until it is resolved.
 
 **Switch spaces.** The SpaceRail on the left lists existing spaces in Write mode. In Focus mode it collapses to a compact FocusRail.
 
@@ -329,12 +329,12 @@ Tabbed user-wide preferences. The shell-header wordmark badge (`L`) links back t
 | **Typography** | Active | Prose / UI font settings (component present, see `Settings.test.tsx`). |
 | **Shortcuts** | Active | Keyboard reference. |
 | **Backups** | Active | Backup management. |
-| **Account** | Active | On-device account: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only. A **gated encrypted cloud-sync beta** (§ 4.9.1) can appear at the bottom of this tab, hidden by default. |
+| **Profile** | Active | On-device profile: an editable **display name** and a **presence colour** (five-hue picker). The name and colour label your cursor to collaborators — today across your own tabs on this device (see § 4.2). Stored locally only. Cloud sync lives in its own tab (§ 4.9.1), not here. |
 | **About** | Active | Build information and links: app **version**, the **commit** SHA and **build time** embedded at build time (`vite.config.ts` defines → `lib/version`), the licence, and Source / Changelog / Send-feedback links to the repository. |
 
 Mobile: all tabs reflow without horizontal overflow at 390×800.
 
-*Covered by:* `settings.spec.ts`, `settings-mobile.spec.ts`, `Settings.test.tsx`, `AccountTab.test.tsx`, `AboutTab.test.tsx`, `PresenceHuePicker.test.tsx`, `profile.test.ts`.
+*Covered by:* `settings.spec.ts`, `settings-mobile.spec.ts`, `Settings.test.tsx`, `ProfileTab.test.tsx`, `CloudSyncTab.test.tsx`, `AboutTab.test.tsx`, `PresenceHuePicker.test.tsx`, `profile.test.ts`.
 
 #### 4.9.1 Encrypted cloud sync (beta, hidden by default)
 
@@ -345,7 +345,7 @@ are on: a build gate (`VITE_DEXIE_CLOUD_URL` must be an `https://` URL) and a pe
 gate (`?cloud-sync=on`, persisted to `localStorage`). With either gate off there are no
 cloud code paths, no cloud UI, and the schema is identical to the base app.
 
-- **Key model.** A 32-byte master secret is minted on setup. An `AES-256-GCM` content
+- **Key model.** A 32-byte root secret is minted on setup. An `AES-256-GCM` content
   key is derived from it (HKDF-SHA-256, non-extractable), plus a public one-way
   **fingerprint** (a second HKDF info string) that identifies the key without revealing it.
   The master is wrapped under a passphrase-derived key (PBKDF2-SHA-512, ≥ 800 000 calibrated
@@ -452,9 +452,9 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   the whole account keyless. If no account escrow exists either, the flag protects nothing and
   erase clears it. The route-level
   recovery screen still catches a genuine read failure, and its **Unlock in settings** action
-  is a full navigation to the Account tab. Never clobbers, never silently loses. The New-space
+  is a full navigation to the Cloud sync tab. Never clobbers, never silently loses. The New-space
   (Templates) screen also surfaces the lock **proactively**: `useCloudLockReason` (mismatch >
-  keyless > none) drives an inline notice that names the reason and links to the Account tab, and
+  keyless > none) drives an inline notice that names the reason and links to the Cloud sync tab, and
   space creation is disabled while a lock holds; a submit that still races the lock is caught and
   mapped to the same notice (`CloudKeyError` → locked, anything else → a generic failure), so a
   refused write is never an unhandled rejection.
@@ -479,7 +479,7 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   blocked with the same inline notice while the lock holds. Sign-in is surfaced on
   the Home page (flag-gated) as a button at the top right of the header so it is discoverable
   before a space exists; the **Quick settings**
-  popover always offers a direct **Account** link to the account settings tab (where sign-in and
+  popover always offers a direct **Profile** link to the profile settings tab (where the display name and
   encryption live), regardless of the flag. Every sign-in attempt first opens an
   **evaluation-account acknowledgement** dialog: a red (danger) warning banner states that
   cloud sync is a demonstration
@@ -680,7 +680,7 @@ wired into the app.
   frame, so the receiver needs no second way to apply it. This is not the backup
   path, which exports a snapshot for a human. A scope this device holds no key
   for is not rebuilt: one it cannot seal for is one it cannot serve.
-- **Account-root handover.** A device paired for the first time holds no key
+- **Root-secret handover.** A device paired for the first time holds no key
   material, so it could decrypt nothing it was sent. After confirmation — never
   on connectivity alone — each device announces whether it holds a root, and the
   holder seals its own for the one that lacks it: ECDH P-256 to the peer's

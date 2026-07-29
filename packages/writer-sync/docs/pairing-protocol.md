@@ -20,7 +20,7 @@ must not proceed past them without an explicit decision.
 ## 1. Roles, session model and goals
 
 Two devices, **initiator** (A) and **joiner** (B), both belonging to the same
-principal. A is already unlocked and holds the account root; B does not.
+principal. A is already unlocked and holds the root secret; B does not.
 
 The protocol must achieve, in this order:
 
@@ -28,7 +28,7 @@ The protocol must achieve, in this order:
    the user has confirmed that the two ends are the two devices in front of them.
 2. **Channel establishment** — a direct WebRTC data channel between exactly those
    two devices.
-3. **Account bootstrap** — A delivers the account root to B, sealed so that only B
+3. **Root-secret hand-over** — A delivers the root secret to B, sealed so that only B
    can open it.
 4. **Durable trust** — both ends record the other in the trusted-device registry,
    so later sessions authenticate without repeating step 3.
@@ -220,7 +220,7 @@ same bytes.
 - `sessionId` is 16 CSPRNG bytes, minted by the initiator. The joiner echoes it;
   an answer whose `sessionId` differs from the offer's is rejected with
   `session-mismatch`.
-- Expiry is evaluated **once, at acceptance**, and again before the account root is
+- Expiry is evaluated **once, at acceptance**, and again before the root secret is
   wrapped. A session that expires mid-flow fails to `expired`; it does not
   continue on the grounds that it was valid when it started.
 
@@ -245,7 +245,7 @@ input.
 
 The transcript is computed independently on both devices and is the input to the
 verification code (§8.2), to the pairing key agreement (§10) and to the AAD of the
-account-bootstrap wrapper (§11). A substituted payload therefore diverges the
+root-secret hand-over wrapper (§11). A substituted payload therefore diverges the
 transcript, which in turn breaks the code, the derived key and the wrapper — three
 independent detections, not one.
 
@@ -324,7 +324,7 @@ means.
 >
 > - **ECDSA P-256 with SHA-256** — available in `crypto.subtle` in every browser
 >   Writer supports, needs no dependency, and matches the P-256 ECDH the vault
->   already uses for `wrapAccountRootForPairing`, so one curve covers both. Its
+>   already uses for `wrapRootSecretForPairing`, so one curve covers both. Its
 >   costs are real: signatures need a good CSPRNG per operation, and the encoding
 >   has more room for implementation error than the alternative.
 > - **Ed25519** — smaller keys and signatures (a material saving against the QR
@@ -369,7 +369,7 @@ Derivation labels used by this protocol, all versioned, matching the existing
 | `lipsum-pair-sign-v1` | Payload signature domain (§9) |
 | `lipsum-device-id-v1` | Device id derivation (§9) |
 | `lipsum-pair-key-v1` | Pairing transfer key (this section) |
-| `lipsum-pair-root-v1` | Account-bootstrap wrapper AAD (§11) |
+| `lipsum-pair-root-v1` | Root-secret hand-over wrapper AAD (§11) |
 
 These sit beside the labels Stage 1 already uses — `lipsum-content-v1`,
 `lipsum-keycheck-v1` and the `lipsum-op` frame AAD prefix — and must stay
@@ -384,20 +384,20 @@ disjoint from them.
 
 ---
 
-## 11. Encrypted account-bootstrap wrapper
+## 11. Encrypted root-secret hand-over wrapper
 
-The initiator wraps the account root for the joiner. The wire form already exists
+The initiator wraps the root secret for the joiner. The wire form already exists
 as `PairingRootWrapper`:
 
 ```ts
 interface PairingRootWrapper {
   ephemeralPublicJwk: JsonWebKey;  // the wrapping device's ephemeral public key
   iv: string;                      // AES-GCM iv, base64
-  wrapped: string;                 // the account root, AES-GCM sealed, base64
+  wrapped: string;                 // the root secret, AES-GCM sealed, base64
 }
 ```
 
-and `wrapAccountRootForPairing` implements it with ECDH P-256 plus AES-256-GCM.
+and `wrapRootSecretForPairing` implements it with ECDH P-256 plus AES-256-GCM.
 The joining half, `unwrapPairingRoot`, exists and is exercised by the vault's test
 suite; slice 2A.2 gives it its first real caller.
 
@@ -411,7 +411,7 @@ suite; slice 2A.2 gives it its first real caller.
   implementation does this (`root.fill(0)`); it must stay.
 - The wrapper is single-use, bound to one session id, and rejected if the session
   has since expired.
-- On success the joiner stores the root through `storeAccountRoot`, bound to its
+- On success the joiner stores the root through `storeRootSecret`, bound to its
   own device id and the principal id, and derives its key ring exactly as a device
   that had unlocked by passphrase would. There is no separate "paired device" key
   path.
@@ -421,7 +421,7 @@ suite; slice 2A.2 gives it its first real caller.
 > transcript. Slice 2A.2 must add
 > `additionalData = "lipsum-pair-root-v1" || 0x00 || transcript` to both the wrap
 > and the unwrap, so that a wrapper captured from one session cannot be replayed
-> into another. Both `wrapAccountRootForPairing` and `unwrapPairingRoot` change
+> into another. Both `wrapRootSecretForPairing` and `unwrapPairingRoot` change
 > together, and the vault's tests change with them.
 
 ---
@@ -464,7 +464,7 @@ after it, never before.
 **Reconnection.** A later session between already-trusted devices repeats the
 two-way QR exchange — a closed browser page leaves no listener to rediscover — but
 authenticates against the stored device identities and **skips
-`transferring-keys`** entirely. The registry record is the proof; the account root
+`transferring-keys`** entirely. The registry record is the proof; the root secret
 is never sent twice.
 
 **Re-pairing a removed device.** A completed exchange with a device whose

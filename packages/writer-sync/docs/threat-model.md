@@ -38,10 +38,10 @@ afterwards.
 
 | Asset | Where it lives | Exposure if lost |
 |---|---|---|
-| Account root (32 bytes of CSPRNG output) | `DeviceKeyVault`, AES-GCM-wrapped under a non-extractable device wrapping key, in a dedicated never-synced database | Every scope's content, on every device, past and future |
+| Root secret (32 bytes of CSPRNG output) | `DeviceKeyVault`, AES-GCM-wrapped under a non-extractable device wrapping key, in a dedicated never-synced database | Every scope's content, on every device, past and future |
 | Content key ring (AES-256-GCM, non-extractable) | Derived per epoch by HKDF-SHA-256 from the root | All content sealed under that epoch |
 | Device signing identity (private half) | Slice 2A.2, non-extractable where the platform permits | Ability to impersonate a trusted device |
-| Ephemeral pairing ECDH private key | Memory, one pairing session only | The account root, if the wrapper is also captured |
+| Ephemeral pairing ECDH private key | Memory, one pairing session only | The root secret, if the wrapper is also captured |
 | Entity content | Frame payload, AES-GCM-sealed | The user's documents |
 | Attribution (`createdBy` / `updatedBy`) | Sealed *inside* the payload, never in the header | Who wrote what |
 | Routing header | Plaintext to every provider: scope id, entity table and id, kind, device id, logical time, key id, epoch, payload hash | Structural metadata — see §5.12 |
@@ -55,7 +55,7 @@ in particular the acting principal stays inside the payload.
 
 ## 3. Trust boundaries
 
-1. **Vault ↔ application.** The raw account root exists only transiently inside
+1. **Vault ↔ application.** The raw root secret exists only transiently inside
    vault operations and never crosses the public API. Callers receive a
    non-extractable `CryptoKey` or a wrapper, never bytes.
 2. **Device ↔ QR channel.** Optical, out-of-band, and *observable by anyone who
@@ -99,8 +99,8 @@ sends nothing across the internet.
 
 A QR shown during pairing may be photographed, screen-shared or shoulder-surfed.
 
-**Mitigation.** The payload carries no passphrase, no recovery code, no account
-root and no content key — only a protocol version, a session id, the initiator's
+**Mitigation.** The payload carries no passphrase, no recovery code, no root
+secret and no content key — only a protocol version, a session id, the initiator's
 device id and public identity material, an ephemeral pairing *public* key, the
 payload kind, the gathered session description, an expiry, a nonce and integrity
 data. Capturing it therefore yields no key material.
@@ -151,7 +151,7 @@ intends.
 
 The strongest threat in Stage 2A. An attacker who photographs the offer QR races
 the legitimate joiner, returns their own answer, and — if accepted — receives the
-wrapped account root.
+wrapped root secret.
 
 **Mitigation, in layers.**
 
@@ -163,7 +163,7 @@ wrapped account root.
    transcript and displayed on *both* devices. The user confirms they match. An
    attacker who substituted a payload cannot produce the same code on the screen
    the user is comparing against.
-3. **Explicit confirmation before key transfer.** Device A wraps the account root
+3. **Explicit confirmation before key transfer.** Device A wraps the root secret
    only after the user confirms the named device. Confirmation is a distinct
    state (`awaiting-confirmation`), never implied by connectivity.
 
@@ -253,7 +253,7 @@ scope, table, entity, key id and epoch before the domain `Blob` is written.
 
 *Capability:* former holder of a paired device.
 
-The device holds the account root and can decrypt everything the principal owns.
+The device holds the root secret and can decrypt everything the principal owns.
 
 **Mitigation.** Limited, and this must be stated honestly to users. Removal blocks
 new authenticated sessions from that device and stops new key delivery, but it

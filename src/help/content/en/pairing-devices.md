@@ -1,7 +1,7 @@
 # Pairing two devices
 
 Pairing lets two of your devices sync directly with each other over your local
-network, with no account and no server in between. You do it once per pair of
+network, with no sign-up and no server in between. You do it once per pair of
 devices, and it takes about a minute.
 
 ## Before you start

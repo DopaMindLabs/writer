@@ -247,7 +247,10 @@ Use these terms consistently in code and documentation:
 | `SyncProvider` | One configured mechanism offering one or more sync capabilities |
 | `SyncProviderInstanceId` | Identifies one configured provider instance, not merely its provider kind |
 | `AccessScopeId` | Stable application access boundary, normally a Space |
-| `PrincipalId` | A person/account attribution identity |
+| `PrincipalId` | The person writing is attributed to |
+| Root secret | The 32-byte encryption secret a pairing hands over; the key ring is derived from it |
+| Cloud account | A Dexie Cloud sign-in — storage and transport only, never readability |
+| Profile | A display name and colour held on one device; never leaves it |
 | `DeviceId` | A cryptographic device identity, separate from the principal |
 | `SyncProviderBinding` | Mapping from one logical scope to one provider instance |
 | `PairingMethod` | Interchangeable trust-bootstrap method such as QR |
@@ -540,15 +543,15 @@ The project has no production users. Do not add a v1 dual-read or legacy migrati
 
 ### Device vault
 
-The current keystore retains only a non-extractable derived content key. That is insufficient for no-passphrase QR pairing because an already-unlocked device cannot re-wrap the account root.
+The current keystore retains only a non-extractable derived content key. That is insufficient for no-passphrase QR pairing because an already-unlocked device cannot re-wrap the root secret.
 
 Refactor `src/lib/cloud/crypto/keyStore.ts` behind a provider-neutral `DeviceKeyVault`:
 
 - generate a non-extractable device wrapping key;
 - store it by structured clone in the dedicated keystore database;
-- store the account root encrypted under that device wrapping key;
-- expose high-level operations such as `deriveScopeKey()` and `wrapAccountRootForPairing()`;
-- never return the raw account root to UI or provider code;
+- store the root secret encrypted under that device wrapping key;
+- expose high-level operations such as `deriveScopeKey()` and `wrapRootSecretForPairing()`;
+- never return the raw root secret to UI or provider code;
 - retain passphrase escrow and recovery-code compatibility through adapter methods;
 - bind every vault record to both `PrincipalId` and `DeviceId`.
 
@@ -947,13 +950,13 @@ Default Writer flow:
 4. Device A scans the answer QR.
 5. Both devices authenticate the complete offer/answer transcript and establish a direct same-LAN WebRTC session.
 6. Device A asks the user to confirm the named device.
-7. Device A wraps the account bootstrap material for Device B.
+7. Device A wraps the root-secret hand-over material for Device B.
 8. The devices exchange scope manifests and missing operations.
 9. Open documents additionally exchange Yjs state vectors and updates.
 10. The trusted-device record preserves identity and trust for future sessions.
 11. Dexie Cloud may remain enabled independently.
 
-The QR payload must never contain a passphrase, recovery code, account root or content key. A trusted-device record does not make an offline peer reachable, preserve a WebRTC connection after both pages close or imply background delivery. In the browser-only Stage 2A release, a later session requires another two-way QR offer/answer exchange; it authenticates against the existing trusted-device record and does not repeat account-key transfer.
+The QR payload must never contain a passphrase, recovery code, root secret or content key. A trusted-device record does not make an offline peer reachable, preserve a WebRTC connection after both pages close or imply background delivery. In the browser-only Stage 2A release, a later session requires another two-way QR offer/answer exchange; it authenticates against the existing trusted-device record and does not repeat account-key transfer.
 
 ## 18. Slice 2A.1 — Write the threat model and protocol specification
 
@@ -992,7 +995,7 @@ Protocol specification must define:
 - device identity and signature algorithms;
 - ephemeral key agreement;
 - key derivation labels;
-- encrypted account-bootstrap wrapper;
+- encrypted root-secret hand-over wrapper;
 - confirmation state;
 - error codes;
 - replay cache;
@@ -1500,7 +1503,7 @@ Implementation must stop for explicit review at these points:
     - A scope this device holds no key for is not rebuilt at all: one it cannot seal for is one it cannot serve, and framing those rows in plaintext would hand a peer content the pairing never authorised.
     - The retention cutoff is supplied with it. Without a cutoff only a peer that had never synchronised would ever qualify, so a device away past the window would silently receive the surviving tail of history and be told it was caught up.
 
-12. **Which device sends the account root** — answered, 2026-07-28.
+12. **Which device sends the root secret** — answered, 2026-07-28.
     - The device that **holds key material**, not the device that holds a protocol role. `docs/pairing-protocol.md` §11 assumes the initiator is the unlocked one; that assumption died with the device-id tie-break (§30.10), since the device that scans — and so becomes the joiner — may equally be the one that has been used all along.
     - Each side announces `holds-root` or `needs-root` after confirmation, and the holder seals for the one that lacks it. Announcements repeat until the peer has been heard: a data channel drops what arrives before anything is listening, and two people do not press "the codes match" at the same instant, so a single announcement would be lost whenever one device confirmed first.
     - A device that already holds a root **refuses** an unasked-for one. Its rows are sealed under the key it has, and replacing that key would orphan every one of them.
@@ -1510,7 +1513,7 @@ Implementation must stop for explicit review at these points:
     - The epoch is therefore carried beside the wrapper in the transfer message rather than inside it, leaving the reviewed wrapper type unchanged.
 
 14. **Where a P2P-only device's key material comes from** — answered, 2026-07-28.
-    - **Pairing mints it when neither device holds any.** Until now the only account root Writer ever created came from cloud setup, behind a passphrase, so a P2P-only device had no key — nothing was journalled, and two paired devices had nothing to sync however well the pairing worked.
+    - **Pairing mints it when neither device holds any.** Until now the only root secret Writer ever created came from cloud setup, behind a passphrase, so a P2P-only device had no key — nothing was journalled, and two paired devices had nothing to sync however well the pairing worked.
     - When both devices announce `needs-root`, one creates the account and seals it for the other in the same exchange. Which one is decided by comparing device ids: both learned the other's during the exchange, so it costs no round trip, and — unlike the *role* rule this replaced (§30.10) — both devices are running this protocol and will hear each other, so a device that defers is deferring to one that is certainly about to act.
     - Taking a root into use, minted or received, re-seals what was written before there was a key (`sealExistingRows`). Rows written while keyless are plaintext and never entered the journal; putting them back through the middleware seals them and backfills the frames a peer can be sent. It is what makes a pairing carry a device's existing writing rather than only what it writes next.
     - **The cost, stated plainly:** an account created this way has no passphrase and no escrow, so it cannot be recovered from a recovery code. Losing every paired device loses the writing. A user who later sets a passphrase gets escrow from that point; a user who never does is relying on having more than one device.

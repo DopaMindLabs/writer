@@ -246,7 +246,7 @@ Before any device is provisioned, with either gate off, zero cloud code paths ex
 Key model (abbreviated — full detail in `docs/cloud-sync-beta.md`):
 
 ```
-32-byte master secret (CSPRNG)
+32-byte root secret (CSPRNG)
   ├── HKDF → AES-256-GCM content key (non-extractable CryptoKey)
   ├── HKDF → 16-byte fingerprint (key identity tag, public)
   └── PBKDF2 (passphrase, ≥ 800 000 iter) → KEK → AES-256-GCM wrap → escrow

@@ -20,11 +20,11 @@ test('switching to the Appearance tab renders its placeholder heading', async ({
   ).toBeVisible();
 });
 
-test('Account tab renders the Account panel', async ({ page }) => {
-  await page.goto('/#/settings?tab=account');
-  await expect(page.getByRole('heading', { name: /^Account$/ })).toBeVisible();
+test('Profile tab renders the profile panel', async ({ page }) => {
+  await page.goto('/#/settings?tab=profile');
+  await expect(page.getByRole('heading', { name: /^Profile$/ })).toBeVisible();
   await expect(page.getByTestId('setting-display-name')).toBeVisible();
-  await expect(page.getByTestId('account-privacy-notice')).toBeVisible();
+  await expect(page.getByTestId('profile-privacy-notice')).toBeVisible();
 });
 
 test('stacks a group on one page and scrolls to the selected section', async ({
@@ -44,7 +44,7 @@ test('stacks a group on one page and scrolls to the selected section', async ({
     page.getByRole('heading', { name: /^Shortcuts$/ }),
   ).toBeInViewport();
 
-  await page.getByTestId('settings-tab-account').click();
+  await page.getByTestId('settings-tab-profile').click();
   await expect(page.getByRole('heading', { name: /^Account$/ })).toBeVisible();
   await expect(page.getByRole('heading', { name: /^Editor$/ })).toHaveCount(0);
 });

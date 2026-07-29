@@ -13,7 +13,7 @@ own device. Nothing is uploaded to a server, and the app works fully offline.
 ## What local-first means
 
 - Documents, spaces, notes, and citations live in your browser's local storage.
-- There's no account and no automatic cloud sync — privacy by default, but your
+- There's no sign-up and no automatic cloud sync — privacy by default, but your
   data is tied to this browser on this device.
 - Clearing your browser's site data will remove your work, so keep backups.
 
