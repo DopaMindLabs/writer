@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { fireEvent, waitFor } from '@testing-library/react';
 import { renderWithProviders, screen } from '@/test/test-utils';
@@ -89,5 +89,47 @@ describe('ExportImportTab', () => {
     expect(alert).toHaveTextContent(/import failed/i);
     expect(alert).toHaveTextContent(/not a readable \.zip/i);
     expect(await db.spaces.count()).toBe(0);
+  });
+
+  describe('storage protection row', () => {
+    const stubStorage = (persisted: boolean): void => {
+      Object.defineProperty(navigator, 'storage', {
+        value: { persisted: async () => persisted },
+        configurable: true,
+      });
+    };
+
+    afterEach(() => {
+      Reflect.deleteProperty(navigator, 'storage');
+    });
+
+    it('reports protected storage when the browser granted persistence', async () => {
+      stubStorage(true);
+      renderTab();
+      const row = screen.getByTestId('settings-storage-protection');
+      expect(row).toHaveTextContent(/storage protection/i);
+      await waitFor(() => {
+        expect(row).toHaveTextContent(/protected/i);
+      });
+    });
+
+    it('reports best-effort storage when persistence was not granted', async () => {
+      stubStorage(false);
+      renderTab();
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('settings-storage-protection'),
+        ).toHaveTextContent(/best effort/i);
+      });
+    });
+
+    it('reports when the browser does not support persistence', async () => {
+      renderTab();
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('settings-storage-protection'),
+        ).toHaveTextContent(/not supported/i);
+      });
+    });
   });
 });

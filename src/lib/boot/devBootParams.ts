@@ -5,6 +5,7 @@ import { devicePreviewState, PREVIEW_OWN_ID } from '@/lib/cloud/devicePreview';
 import { seedDevicePreview } from '@/lib/cloud/devicePreviewSeed';
 import { installRegistrarPreview } from '@/lib/cloud/devicePreviewCloud';
 import { deviceRevokedState } from '@/lib/cloud/deviceRevoked';
+import { pwaUpdateState } from '@/lib/pwa/updateState';
 import { resetAndReseed } from '@/db/seed';
 
 /**
@@ -74,6 +75,12 @@ export const applyDevBootParams = async (): Promise<void> => {
   if (url.searchParams.has('cloud-keyless')) {
     keylessLockState.set(true);
     stripParam(url, 'cloud-keyless');
+  }
+  if (url.searchParams.has('pwa-update')) {
+    // Force the update banner: a real waiting service worker needs two
+    // successive production builds, which a headless run can never stage.
+    pwaUpdateState.set(true);
+    stripParam(url, 'pwa-update');
   }
   const devices = url.searchParams.get('cloud-devices');
   if (devices !== null) {

@@ -6,6 +6,7 @@ import { SettingRow } from '@/components/settings/SettingRow';
 import { ComingSoonRow } from '@/components/settings/ComingSoonRow';
 import { Button } from '@/components/ui/Button';
 import { StatusGlyph } from '@/components/ui/StatusGlyph';
+import { StoragePersistenceRow } from '@/components/settings/tabs/StoragePersistenceRow';
 
 export const ExportImportTab = () => {
   const { t } = useTranslation('screens');
@@ -63,6 +64,8 @@ export const ExportImportTab = () => {
           </StatusGlyph>
         )}
       </div>
+
+      <StoragePersistenceRow />
 
       <ComingSoonRow
         label={t('settings.export.comingSoonLabel')}

@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { SkipLink } from '@/components/ui/SkipLink';
 import { HelpPalette } from '@/components/help/HelpPalette';
+import { PwaUpdateBanner } from '@/components/chrome/PwaUpdateBanner';
 import { useGlobalShortcuts } from '@/hooks/useGlobalShortcuts';
 
 /**
@@ -13,6 +14,7 @@ export const RootLayout = () => {
   return (
     <>
       <SkipLink />
+      <PwaUpdateBanner />
       <Outlet />
       <HelpPalette />
     </>

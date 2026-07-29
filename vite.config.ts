@@ -1,12 +1,62 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 import { readFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 
 const { version: appVersion } = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8')
 ) as { version: string };
+
+/**
+ * Installable PWA with a prompt-based update flow. The generated service
+ * worker precaches the whole build — the data layer is already local-first in
+ * IndexedDB, so precaching the shell is all offline needs. `registerType:
+ * 'prompt'` means a new build is never activated behind the writer's back
+ * (tabs share one origin; a silent swap would mix chunk versions mid-session);
+ * the update banner applies it explicitly. No runtime caching rules: Dexie
+ * Cloud fetch/websocket traffic passes straight through to the network.
+ * `start_url`/`scope`/icon paths are relative so the one config serves both
+ * deploy bases (`/writer/` on GitHub Pages, `/` on Vercel).
+ */
+const pwaPlugin = () =>
+  VitePWA({
+    registerType: 'prompt',
+    includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
+    manifest: {
+      id: './',
+      name: 'LIpsum Writer',
+      short_name: 'LIpsum',
+      description:
+        'A clutter-free space for long-form writing — fiction, research, essays, journals.',
+      start_url: './',
+      scope: './',
+      display: 'standalone',
+      background_color: '#ffffff',
+      theme_color: '#111111',
+      icons: [
+        { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
+        { src: 'pwa-512.png', sizes: '512x512', type: 'image/png' },
+        {
+          src: 'pwa-maskable-512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'maskable',
+        },
+      ],
+    },
+    workbox: {
+      globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+      navigateFallback: 'index.html',
+      // The single app chunk (Lexical + Yjs + React) is ~5.5 MB — above
+      // Workbox's 2 MiB default. Offline is the point of the precache, so the
+      // shell chunk must be admitted; 8 MiB leaves headroom without silently
+      // swallowing a future runaway bundle.
+      maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
+    },
+    devOptions: { enabled: false },
+  });
 
 /** Short commit SHA for the About build info: Vercel's env first, else git,
  *  else a stable fallback so a build in a shallow / no-git context still works. */
@@ -32,7 +82,7 @@ export default defineConfig(({ command, mode }) => ({
     command === 'build'
       ? process.env.VITE_BASE ?? '/writer/'
       : process.env.VITE_BASE ?? '/',
-  plugins: [react()],
+  plugins: [react(), pwaPlugin()],
   resolve: {
     tsconfigPaths: true,
   },
@@ -48,6 +98,14 @@ export default defineConfig(({ command, mode }) => ({
   test: {
     globals: true,
     environment: 'jsdom',
+    // `virtual:pwa-register` exists only inside a vite-plugin-pwa build; unit
+    // tests resolve it to a stub so the suite stays hermetic.
+    alias: {
+      'virtual:pwa-register': new URL(
+        './src/test/pwaRegisterStub.ts',
+        import.meta.url,
+      ).pathname,
+    },
     // Keep the suite hermetic: a developer's `.env.local` cloud-sync gates must
     // never leak into tests. Cases that need them stub the values explicitly.
     // The device-registry windows are shortened to seconds in a local .env.local
