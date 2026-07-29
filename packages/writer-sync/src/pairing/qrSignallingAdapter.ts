@@ -72,7 +72,7 @@ export interface QrSignallingAdapter extends SignallingAdapter {
   /**
    * This session's ephemeral private key, or `null` before one is minted.
    *
-   * Exposed because the account root arrives sealed to this session's ephemeral
+   * Exposed because the root secret arrives sealed to this session's ephemeral
    * public key, and only its private half can open it. The key is
    * non-extractable and belongs to one exchange, so what escapes here is a
    * handle usable for this session and nothing else — the raw material never

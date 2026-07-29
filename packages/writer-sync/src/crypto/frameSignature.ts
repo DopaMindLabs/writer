@@ -7,7 +7,7 @@ import type { EncryptedSyncFrame } from '../operations/operation.types';
  * `docs/sync-frame-protocol.md` §9.
  *
  * The AAD in §3 already proves a frame's header and payload belong together —
- * but only to whoever holds the content key, which every device in the account
+ * but only to whoever holds the content key, which every device sharing the root
  * does. That authenticates the frame *as content*, not *to a device*: without a
  * signature, any key holder can author a frame naming another device, and a
  * removed device's own key still opens everything it ever held. The signature is

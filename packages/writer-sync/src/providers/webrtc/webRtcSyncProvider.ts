@@ -14,7 +14,7 @@ import { createWebRtcTransport, type DataChannelLike } from './webRtcTransport';
  * What it deliberately does **not** offer is as much of the design as what it
  * does. There is no `accessControl`: membership and permissions need a
  * server-side authority, and a provider with none would have to invent answers.
- * There is no `keyDelivery` either — a peer does not hold an account escrow;
+ * There is no `keyDelivery` either — a peer holds no key escrow;
  * key material reaches a device through pairing, which is a different mechanism
  * with a different threat model. Omitting a capability is how a provider says
  * "ask someone else", and `hasCapability` lets callers branch on that honestly

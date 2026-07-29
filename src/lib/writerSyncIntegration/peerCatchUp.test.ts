@@ -15,7 +15,7 @@ import { TrustedDeviceStatus } from 'writer-sync/core';
 import { LoremDB } from '@/db/LoremDB';
 import { NoteKind, NoteState } from '@/db/schema';
 import { asOperationId, asPrincipalId } from 'writer-sync/core';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { forgetDeviceKeyRing, saveDeviceKeyRing } from '@/lib/cloud/crypto/keyStore';
 import {
   decodeRootTransferMessage,
@@ -140,7 +140,7 @@ afterEach(async () => {
 /** A space this device holds a key for, with one row of content in it. */
 const seedScope = async (): Promise<void> => {
   await saveDeviceKeyRing({
-    ring: await deriveKeyRing(generateMasterSecret(), 1),
+    ring: await deriveKeyRing(generateRootSecret(), 1),
     accountId: null,
   });
   await db.spaces.put({
@@ -285,7 +285,7 @@ describe('createPeerCatchUp', () => {
     await catchUp.adopt({
       session: peer.session,
       deviceId: PEER,
-      keyTransfer: {
+      secretHandover: {
         peer: {
           deviceId: PEER,
           publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },
@@ -359,7 +359,7 @@ describe('createPeerCatchUp', () => {
       catchUp.adopt({
         session: peer.session,
         deviceId: PEER,
-        keyTransfer: {
+        secretHandover: {
           peer: {
             deviceId: PEER,
             publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'second', y: 'key' },
@@ -404,7 +404,7 @@ describe('createPeerCatchUp', () => {
     await catchUp.adopt({
       session: peer.session,
       deviceId: PEER,
-      keyTransfer: {
+      secretHandover: {
         peer: {
           deviceId: PEER,
           // The identity the record already vouches for, as a fresh export
@@ -463,7 +463,7 @@ describe('createPeerCatchUp', () => {
     // Both devices already hold key material, so nothing moves — the key
     // conversation is still had, and catch-up still waits for it to finish.
     await saveDeviceKeyRing({
-      ring: await deriveKeyRing(generateMasterSecret(), 1),
+      ring: await deriveKeyRing(generateRootSecret(), 1),
       accountId: null,
     });
     // Raw capture: two protocols take turns on this channel, so one decoder
@@ -488,7 +488,7 @@ describe('createPeerCatchUp', () => {
     await catchUp.adopt({
       session: peer.session,
       deviceId: PEER,
-      keyTransfer: {
+      secretHandover: {
         peer: {
           deviceId: PEER,
           publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },

@@ -3,7 +3,7 @@ import Dexie from 'dexie';
 import { buildDb } from './buildDb';
 import { STORES } from './stores';
 import { CLOUD_FLAG_KEY } from '@/lib/cloud/flag';
-import { generateMasterSecret, deriveKeyRing } from '@/lib/cloud/crypto/keys';
+import { generateRootSecret, deriveKeyRing } from '@/lib/cloud/crypto/keys';
 import {
   saveDeviceKeyRing,
   forgetDeviceKeyRing,
@@ -112,7 +112,7 @@ describe('buildDb — cloud activation gates', () => {
   it('encrypts locally with no cloud provider configured at all', async () => {
     // No env, no flag: the plain local database still carries the encryption
     // middleware — a P2P-only Writer must never be a plaintext local database.
-    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateRootSecret(), 1) });
     const db = buildDb('gate-local-encrypted');
     await db.open();
 
@@ -157,7 +157,7 @@ describe('buildDb — cloud activation gates', () => {
 
   it('registers the encryption middleware (content is ciphertext at rest)', async () => {
     enableCloud();
-    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateRootSecret(), 1) });
     const db = buildDb('gate-middleware');
     await db.open();
 

@@ -6,7 +6,7 @@ import {
   type Note,
   type NoteAttachment,
 } from '@/db/schema';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import {
   asDeviceId,
   asOperationId,
@@ -122,7 +122,7 @@ const shipAll = async (from: LoremDB, to: LoremDB): Promise<void> => {
 };
 
 beforeEach(async () => {
-  ring = await deriveKeyRing(generateMasterSecret(), 1);
+  ring = await deriveKeyRing(generateRootSecret(), 1);
   dbA = new LoremDB('op-conv-a');
   dbB = new LoremDB('op-conv-b');
   await dbA.open();

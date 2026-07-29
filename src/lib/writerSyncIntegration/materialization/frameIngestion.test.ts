@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { saveDeviceKeyRing, forgetDeviceKeyRing } from '@/lib/cloud/crypto/keyStore';
 import {
   NoteKind,
@@ -84,7 +84,7 @@ afterEach(async () => {
 
 describe('sweepUnappliedFrames', () => {
   it('applies nothing while the device is keyless — frames wait in the journal', async () => {
-    const remoteRing = await deriveKeyRing(generateMasterSecret(), 1);
+    const remoteRing = await deriveKeyRing(generateRootSecret(), 1);
     const frame = await makePutFrame({
       ring: remoteRing,
       deviceId: DEVICE_REMOTE,
@@ -98,7 +98,7 @@ describe('sweepUnappliedFrames', () => {
   });
 
   it('materialises a provider-replicated frame through the shared inbox path', async () => {
-    const master = generateMasterSecret();
+    const master = generateRootSecret();
     const ring = await deriveKeyRing(master, 1);
     await saveDeviceKeyRing({ accountId: null, ring });
     const frame = await makePutFrame({
@@ -118,7 +118,7 @@ describe('sweepUnappliedFrames', () => {
   });
 
   it('applies once when the same frame arrives through Dexie and a second provider', async () => {
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     await saveDeviceKeyRing({ accountId: null, ring });
     const frame = await makePutFrame({
       ring,
@@ -139,7 +139,7 @@ describe('sweepUnappliedFrames', () => {
 
   it('quietly retries an incomplete attachment after its chunks arrive', async () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     await saveDeviceKeyRing({ accountId: null, ring });
     const { frame, chunks } = await attachmentFrame(ring);
     await db.syncOperations.put(frame);
@@ -156,7 +156,7 @@ describe('sweepUnappliedFrames', () => {
 
   it('contains an invalid frame instead of blocking the rest of the journal', async () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     await saveDeviceKeyRing({ accountId: null, ring });
     const good = await makePutFrame({
       ring,

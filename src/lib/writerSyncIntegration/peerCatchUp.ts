@@ -21,10 +21,10 @@ import type { LoremDB } from '@/db/LoremDB';
 import { appLogger } from '@/lib/appLogger';
 import { deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
 import {
-  runAccountRootTransfer,
-  type KeyTransferSession,
-  type RunningAccountRootTransfer,
-} from './accountRootTransfer';
+  runRootSecretHandover,
+  type SecretHandoverSession,
+  type RunningRootSecretHandover,
+} from './rootSecretHandover';
 import { createTrustedDeviceStore } from './trustedDeviceStore';
 import { peerSessions } from './peerSessionRegistry';
 import { getJournalRetentionDaysFor } from './journalRetentionPreference';
@@ -75,12 +75,12 @@ export interface AdoptedPeer {
    */
   deviceId: DeviceId;
   /**
-   * What the account root can be sealed with, and opened by, for this session.
+   * What the root secret can be sealed with, and opened by, for this session.
    * Absent when a session is adopted without a fresh pairing behind it — a
    * reconnection between devices that already trust each other never sends a
    * root twice (`docs/pairing-protocol.md` §12).
    */
-  keyTransfer?: KeyTransferSession;
+  secretHandover?: SecretHandoverSession;
 }
 
 export interface PeerCatchUp {
@@ -216,7 +216,7 @@ interface PeerChannelOptions {
   channel: DataChannelLike;
   peer: AdoptedPeer;
   startCatchUp: () => void;
-  track: (running: RunningAccountRootTransfer) => void;
+  track: (running: RunningRootSecretHandover) => void;
 }
 
 /**
@@ -233,13 +233,13 @@ const onPeerChannel = ({
   startCatchUp,
   track,
 }: PeerChannelOptions): void => {
-  const { keyTransfer } = peer;
-  if (keyTransfer === undefined) {
+  const { secretHandover } = peer;
+  if (secretHandover === undefined) {
     startCatchUp();
     return;
   }
   track(
-    runAccountRootTransfer({ channel, session: keyTransfer, onSettled: startCatchUp }),
+    runRootSecretHandover({ channel, session: secretHandover, onSettled: startCatchUp }),
   );
 };
 
@@ -261,20 +261,20 @@ const rememberPeer = async (
   registry: TrustedDeviceRegistry,
   peer: AdoptedPeer,
 ): Promise<void> => {
-  const { keyTransfer } = peer;
-  if (keyTransfer === undefined) return;
+  const { secretHandover } = peer;
+  if (secretHandover === undefined) return;
   const now = Date.now();
   if ((await registry.find(peer.deviceId)) !== null) {
     await registry.refreshTrust({
       deviceId: peer.deviceId,
-      publicIdentityJwk: keyTransfer.peer.publicIdentityJwk,
+      publicIdentityJwk: secretHandover.peer.publicIdentityJwk,
       at: now,
     });
     return;
   }
   await registry.trust({
     deviceId: peer.deviceId,
-    publicIdentityJwk: keyTransfer.peer.publicIdentityJwk,
+    publicIdentityJwk: secretHandover.peer.publicIdentityJwk,
     principalId: await currentPrincipal(),
     addedAt: now,
     lastSessionAt: now,
@@ -287,7 +287,7 @@ const rememberPeer = async (
 interface ListenOptions {
   peer: AdoptedPeer;
   exchangeOver: (channel: DataChannelLike) => void;
-  track: (running: RunningAccountRootTransfer) => void;
+  track: (running: RunningRootSecretHandover) => void;
 }
 
 /**
@@ -321,7 +321,7 @@ export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
   const registry = createTrustedDeviceStore(db);
   const sessions = new Set<PeerSession>();
   const exchanges = new Set<CatchUpSession>();
-  const transfers = new Set<RunningAccountRootTransfer>();
+  const transfers = new Set<RunningRootSecretHandover>();
   // Read once and held, because the engine asks for the cutoff synchronously
   // while answering a request. Until the stored preference resolves this is the
   // same default a device that never changed it keeps.

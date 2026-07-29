@@ -6,7 +6,7 @@ import {
   type Note,
   type NoteAttachment,
 } from '@/db/schema';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { saveDeviceKeyRing, forgetDeviceKeyRing } from '@/lib/cloud/crypto/keyStore';
 import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
 import type { SyncKeyRing } from 'writer-sync/crypto';
@@ -105,7 +105,7 @@ const deliverThroughSecondProvider = (frame: EncryptedSyncFrame) =>
   });
 
 beforeEach(async () => {
-  const master = generateMasterSecret();
+  const master = generateRootSecret();
   ring = await deriveKeyRing(master, 1);
   await saveDeviceKeyRing({ accountId: null, ring });
   db = new LoremDB('multi-provider-contract');

@@ -2,7 +2,7 @@ import type { PairingRootWrapper } from '../crypto/keyVault.types';
 import { ROOT_TRANSFER_VERSION, type RootTransferMessage } from './rootTransferMessage';
 
 /**
- * Handing an account root to a device that has just been paired.
+ * Handing an root secret to a device that has just been paired.
  *
  * A device paired for the first time holds no key material, so it can decrypt
  * nothing it is sent and would sit connected and empty. This is the step that
@@ -46,7 +46,7 @@ export interface RootTransferPorts {
   /** Whether this device already holds key material. */
   holdsRoot: () => boolean;
   /**
-   * Whether this is the device to create the account when neither holds one.
+   * Whether this is the device to mint the root secret when neither holds one.
    *
    * Two devices that have never been used cannot each wait for the other, and
    * if both minted they would seal their writing under two different keys. Both
@@ -56,7 +56,7 @@ export interface RootTransferPorts {
    * deferring to one that is certainly about to act.
    */
   mintsFirst: () => boolean;
-  /** Create this device's account root, so it has one to seal and to share. */
+  /** Create this device's root secret, so it has one to seal and to share. */
   createRoot: () => Promise<void>;
   /** Seal this device's root for the authenticated peer, with its epoch. */
   wrapForPeer: () => Promise<SealedRoot>;
@@ -156,7 +156,7 @@ interface TransferContext {
   settle: (result: RootTransferOutcome) => void;
   attempt: (work: () => Promise<void>, result: RootTransferOutcome) => Promise<void>;
   sealForPeer: () => Promise<void>;
-  /** Create the account, then hand it straight to the peer that has none. */
+  /** Mint the root secret, then hand it straight to the peer that has none. */
   mintAndSeal: () => Promise<void>;
   /** Leave the conversation, but only once both ends have finished it. */
   finishTogether: () => void;
@@ -253,7 +253,7 @@ const createActions = (
     }, 'sent');
 
   /**
-   * Create the account, then hand it straight on. Minting is not wrapped in
+   * Mint the root secret, then hand it straight on. Minting is not wrapped in
    * `attempt`: it is a step towards sending rather than an outcome of its own,
    * and a device that created a root but failed to seal it must keep what it
    * created — it is now the only copy.

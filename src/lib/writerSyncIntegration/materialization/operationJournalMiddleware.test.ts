@@ -6,7 +6,7 @@ import {
   type Note,
   type NoteAttachment,
 } from '@/db/schema';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { keyIdOf } from '@/lib/cloud/crypto/envelope';
 import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
 import { hasPlaintextSyncedRows, sealExistingRows } from '@/lib/cloud/setup';
@@ -99,7 +99,7 @@ const attachment = (
 };
 
 beforeEach(async () => {
-  ring = await deriveKeyRing(generateMasterSecret(), 1);
+  ring = await deriveKeyRing(generateRootSecret(), 1);
   holder.ring = ring;
   identityKeys = await generateDeviceIdentity();
   db = new LoremDB('op-journal');

@@ -10,7 +10,7 @@ import {
   localOnlyTables,
   rowEnvelopeTables,
 } from '@/lib/writerSyncIntegration/writerTablePolicy';
-import { generateMasterSecret, deriveKeyRing, type CloudKeyRing } from './crypto/keys';
+import { generateRootSecret, deriveKeyRing, type CloudKeyRing } from './crypto/keys';
 import { createEncryptionMiddleware } from './crypto/middleware';
 import { CIPHER_FIELD } from './crypto/tableRules';
 
@@ -100,7 +100,7 @@ beforeEach(async () => {
     }),
   );
   await db.open();
-  ring = await deriveKeyRing(generateMasterSecret(), 1);
+  ring = await deriveKeyRing(generateRootSecret(), 1);
 });
 
 afterEach(async () => {

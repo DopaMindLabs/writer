@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
 import { NoteKind, NoteState, type Note } from '@/db/schema';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
 import {
   asDeviceId,
@@ -49,7 +49,7 @@ const note = (): Note => ({
 });
 
 beforeEach(async () => {
-  holder.ring = await deriveKeyRing(generateMasterSecret(), 1);
+  holder.ring = await deriveKeyRing(generateRootSecret(), 1);
   db = new LoremDB('replicated-row-update');
   db.use(createEncryptionMiddleware(resolver, () => 'none'));
   db.use(

@@ -23,7 +23,7 @@ import {
 /**
  * The Writer implementation of the provider-neutral {@link DeviceKeyVault}.
  *
- * The account root is stored AES-GCM-wrapped under a non-extractable device
+ * The root secret is stored AES-GCM-wrapped under a non-extractable device
  * wrapping key; both live in a dedicated, never-synced database (`CryptoKey`s
  * ride IndexedDB's structured clone, so the wrapping key never exists as
  * raw/JWK bytes). The raw root appears only transiently in memory inside vault
@@ -49,7 +49,7 @@ const generateWrapKey = (): Promise<CryptoKey> =>
   ]);
 
 /**
- * AAD for the account-bootstrap wrapper: the domain label, a separator, then the
+ * AAD for the root-secret wrapper: the domain label, a separator, then the
  * pairing transcript. Binding the transcript is what stops a wrapper captured
  * from one session being replayed into another — the ciphertext simply fails to
  * open under a transcript it was not sealed for.
@@ -163,8 +163,8 @@ const createDeviceKeyVault = (): DeviceKeyVault => {
 
   return {
     deviceId: () => currentDeviceId(),
-    hasAccountRoot: async () => (await db().vault.get(DEVICE_RECORD)) !== undefined,
-    storeAccountRoot: (root, principalId) => wrapRootRow({ db: db(), root, principalId }),
+    hasRootSecret: async () => (await db().vault.get(DEVICE_RECORD)) !== undefined,
+    storeRootSecret: (root, principalId) => wrapRootRow({ db: db(), root, principalId }),
     deriveScopeKey: async ({ epoch, principalId }) => {
       // Stage 1: every scope derives the account content key; the scope id is
       // accepted so per-scope derivation changes only this implementation.
@@ -175,13 +175,13 @@ const createDeviceKeyVault = (): DeviceKeyVault => {
       root.fill(0);
       return ring;
     },
-    wrapAccountRootForPairing: async ({
+    wrapRootSecretForPairing: async ({
       peerEphemeralPublicJwk,
       principalId,
       transcript,
     }) => {
       const row = await boundRow(db(), principalId);
-      invariant(row, 'device key vault: no account root is stored');
+      invariant(row, 'device key vault: no root secret is stored');
       const root = await unwrapRoot(row);
       const wrapper = await wrapForPairing({
         root,

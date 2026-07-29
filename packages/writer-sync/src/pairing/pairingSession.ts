@@ -9,7 +9,7 @@ import {
  * The pairing state machine, specified in `docs/pairing-protocol.md` §12.
  *
  * Modelled as a machine rather than a bag of UI callbacks because the ordering
- * *is* the security property: `awaiting-confirmation` exists so that the account
+ * *is* the security property: `awaiting-confirmation` exists so that the root
  * root is never wrapped before a human has compared the verification code, and a
  * machine is what makes "never" checkable. Every transition validates the state
  * it is leaving, so an event arriving out of order is a typed error rather than

@@ -6,7 +6,7 @@ import {
   type Note,
   type NoteAttachment,
 } from '@/db/schema';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
 import type { ScopeKeyResolver, SyncKeyRing } from 'writer-sync/crypto';
 import {
@@ -91,7 +91,7 @@ const fullState = () =>
   });
 
 beforeEach(async () => {
-  ring = await deriveKeyRing(generateMasterSecret(), 1);
+  ring = await deriveKeyRing(generateRootSecret(), 1);
   holder.ring = ring;
   identityKeys = await generateDeviceIdentity();
   db = new LoremDB('writer-full-state');

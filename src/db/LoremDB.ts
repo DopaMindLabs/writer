@@ -32,7 +32,7 @@ import { STORES } from './stores';
 /**
  * Construction options for {@link LoremDB}. `cloud` opts the instance into the
  * encrypted cloud-sync schema — a single extra store, `cloudCrypto`, holding the
- * passphrase-wrapped master secret (escrow) that lets another device recover the
+ * passphrase-wrapped root secret (escrow) that lets another device recover the
  * key. The device's own derived key ring lives in a separate, never-synced
  * database (see `@/lib/cloud/crypto/keyStore`), so it is deliberately absent here.
  */

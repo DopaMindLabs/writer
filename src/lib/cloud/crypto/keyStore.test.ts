@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import Dexie from 'dexie';
-import { generateMasterSecret, deriveKeyRing } from './keys';
+import { generateRootSecret, deriveKeyRing } from './keys';
 import {
   saveDeviceKeyRing,
   loadDeviceKeyRing,
@@ -27,7 +27,7 @@ describe('device keyStore', () => {
   });
 
   it('persists and reloads a usable non-extractable content key', async () => {
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     await saveDeviceKeyRing({ accountId: null, ring });
 
     const loaded = await loadDeviceKeyRing();
@@ -39,13 +39,13 @@ describe('device keyStore', () => {
 
   it('exposes the loaded ring synchronously via deviceKeyProvider', async () => {
     expect(deviceKeyProvider.current()).toBeNull();
-    const ring = await deriveKeyRing(generateMasterSecret(), 2);
+    const ring = await deriveKeyRing(generateRootSecret(), 2);
     await saveDeviceKeyRing({ accountId: null, ring });
     expect(deviceKeyProvider.current()?.epoch).toBe(2);
   });
 
   it('forgets the ring without leaving it retrievable', async () => {
-    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateRootSecret(), 1) });
     await forgetDeviceKeyRing();
     expect(await loadDeviceKeyRing()).toBeNull();
     expect(deviceKeyProvider.current()).toBeNull();
@@ -56,12 +56,12 @@ describe('device keyStore', () => {
     const stop = onDeviceKeyRingChange(() => {
       calls += 1;
     });
-    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateRootSecret(), 1) });
     await loadDeviceKeyRing();
     await forgetDeviceKeyRing();
     expect(calls).toBe(3);
     stop();
-    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateRootSecret(), 1) });
     expect(calls).toBe(3); // unsubscribed
   });
 
@@ -69,7 +69,7 @@ describe('device keyStore', () => {
     // Acquiring a key changes no IndexedDB content row, so encrypted live queries
     // need this monotonic bump to re-run. It must move on save, load, and forget.
     const before = getDeviceKeyRevision();
-    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateRootSecret(), 1) });
     const afterSave = getDeviceKeyRevision();
     expect(afterSave).toBeGreaterThan(before);
 
@@ -88,7 +88,7 @@ describe('device keyStore account binding', () => {
   });
 
   it('stores and exposes the ring account binding synchronously', async () => {
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     await saveDeviceKeyRing({ accountId: 'acct-a', ring });
     expect(deviceKeyProvider.accountId()).toBe('acct-a');
     await forgetDeviceKeyRing();
@@ -96,7 +96,7 @@ describe('device keyStore account binding', () => {
   });
 
   it('keeps an unbound (pre-sign-in) ring null until it is claimed', async () => {
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     await saveDeviceKeyRing({ accountId: null, ring });
     expect(deviceKeyProvider.accountId()).toBeNull();
 
@@ -108,14 +108,14 @@ describe('device keyStore account binding', () => {
   });
 
   it('never rebinds a ring already bound to a different account', async () => {
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     await saveDeviceKeyRing({ accountId: 'acct-a', ring });
     await bindDeviceKeyRing('acct-b');
     expect(deviceKeyProvider.accountId()).toBe('acct-a');
   });
 
   it('invalidateCachedRing drops the cache synchronously without deleting the row', async () => {
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     await saveDeviceKeyRing({ accountId: 'acct-a', ring });
 
     invalidateCachedRing();
@@ -126,7 +126,7 @@ describe('device keyStore account binding', () => {
   });
 
   it('rejects a stored ring whose accountId binding is missing (no silent repair)', async () => {
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     // Write a malformed row directly (no accountId) into the keystore database.
     const raw = new Dexie('lipsum-cloud-keystore');
     raw.version(1).stores({ rings: 'id', pendingEscrows: 'id' });

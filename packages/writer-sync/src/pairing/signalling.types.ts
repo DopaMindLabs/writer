@@ -30,7 +30,7 @@ export interface AuthenticatedPeerParameters {
   /**
    * The peer's ephemeral public key for this session, as carried in its payload.
    *
-   * Kept because the account root is sealed *to* it once a human has confirmed
+   * Kept because the root secret is sealed *to* it once a human has confirmed
    * the codes (`docs/pairing-protocol.md` §11), and by then the payload it
    * arrived in is long gone. It is ephemeral by construction — one pair per
    * session, never reused — so retaining the public half proves nothing beyond

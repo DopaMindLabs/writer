@@ -14,7 +14,7 @@ interface Branded<B extends string> {
   readonly [brand]: B;
 }
 
-/** A person / account attribution identity. */
+/** The person writing is attributed to. */
 export type PrincipalId = string & Branded<'PrincipalId'>;
 
 /** A cryptographic device identity, separate from the principal. */

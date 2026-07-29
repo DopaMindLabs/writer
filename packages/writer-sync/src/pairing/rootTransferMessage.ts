@@ -5,7 +5,7 @@ import { PairingError, PairingErrorCode } from './pairing.types';
  * What two confirmed devices say to each other about key material, and its
  * strict codec.
  *
- * A freshly paired device holds no account root, so it can decrypt nothing and
+ * A freshly paired device holds no root secret, so it can decrypt nothing and
  * would sit connected and empty. The root reaches it here — over the established
  * channel, after a human has confirmed the codes, never in a QR payload
  * (`docs/pairing-protocol.md` §11).
@@ -71,7 +71,7 @@ const decodeWrapper = (value: unknown): PairingRootWrapper => {
     return refuse('a wrapper names the key it was sealed to');
   }
   if (wrapped.length > MAX_WRAPPED_BYTES || iv.length > MAX_WRAPPED_BYTES) {
-    return refuse('a wrapper larger than an account root');
+    return refuse('a wrapper larger than an root secret');
   }
   return { ephemeralPublicJwk, iv, wrapped };
 };

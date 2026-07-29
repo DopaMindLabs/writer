@@ -39,7 +39,7 @@ describe('capabilities', () => {
     expect(hasCapability(provider, 'accessControl')).toBe(false);
   });
 
-  it('does not offer key delivery — a peer holds no account escrow', () => {
+  it('does not offer key delivery — a peer holds no key escrow', () => {
     // Key material reaches a device through pairing, a different mechanism
     // with a different threat model.
     const { provider } = providerWith();

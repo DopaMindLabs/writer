@@ -17,7 +17,7 @@ import { usePairingExchange, type UsePairingExchangeOptions } from './usePairing
  *
  * Gathering starts when the dialog opens and stops when it closes, so nothing is
  * held open in the background. The code shown here carries no secret — no
- * passphrase, recovery code, account root or content key ever rides a QR payload
+ * passphrase, recovery code, root secret or content key ever rides a QR payload
  * (runbook §17) — which is why it is safe to display before any device has been
  * confirmed.
  */

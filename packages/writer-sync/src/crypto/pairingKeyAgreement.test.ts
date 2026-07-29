@@ -10,7 +10,7 @@ const transcriptOf = (seed: number): Uint8Array => new Uint8Array(32).fill(seed)
 
 const roundTrip = async (sealWith: CryptoKey, openWith: CryptoKey): Promise<boolean> => {
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const message = new TextEncoder().encode('account root');
+  const message = new TextEncoder().encode('root secret');
   const sealed = await crypto.subtle.encrypt(
     { name: 'AES-GCM', iv },
     sealWith,
@@ -18,7 +18,7 @@ const roundTrip = async (sealWith: CryptoKey, openWith: CryptoKey): Promise<bool
   );
   try {
     const opened = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, openWith, sealed);
-    return new TextDecoder().decode(opened) === 'account root';
+    return new TextDecoder().decode(opened) === 'root secret';
   } catch {
     return false;
   }

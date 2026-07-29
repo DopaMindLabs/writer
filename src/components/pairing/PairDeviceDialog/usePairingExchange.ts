@@ -63,10 +63,10 @@ const handOverSession = async (
   await catchUp.adopt({
     session: opened.session,
     deviceId: peer.deviceId,
-    // What the account root travels on. It goes with the session because this
+    // What the root secret travels on. It goes with the session because this
     // is the moment a human confirmed the codes, and the ephemeral key it is
     // sealed to belongs to this exchange and dies with it.
-    keyTransfer: {
+    secretHandover: {
       peer,
       sessionPrivateKey: opened.adapter.sessionPrivateKey(),
       deviceId: opened.deviceId,

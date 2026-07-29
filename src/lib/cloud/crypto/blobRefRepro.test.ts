@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateMasterSecret, deriveKeyRing } from './keys';
+import { generateRootSecret, deriveKeyRing } from './keys';
 import { plaintextFieldsFor, CIPHER_FIELD } from './tableRules';
 import {
   sealRow,
@@ -26,7 +26,7 @@ import {
  */
 describe('blob-offload safety of the cipher envelope', () => {
   const rules = plaintextFieldsFor('docs');
-  const ring = () => deriveKeyRing(generateMasterSecret(), 1);
+  const ring = () => deriveKeyRing(generateRootSecret(), 1);
 
   it('seals a large doc body into inline strings, never an offloadable Uint8Array', async () => {
     const keyRing = await ring();

@@ -5,7 +5,7 @@ import {
   forgetDeviceKeyRing,
   saveDeviceKeyRing,
 } from '@/lib/cloud/crypto/keyStore';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
 import { toBase64Url } from 'writer-sync/crypto';
 import {
@@ -48,7 +48,7 @@ const attachment = (bytes: Uint8Array): NoteAttachment => {
 };
 
 const thinFrame = async () => {
-  const ring = await deriveKeyRing(generateMasterSecret(), 1);
+  const ring = await deriveKeyRing(generateRootSecret(), 1);
   const prepared = await prepareFramePayload({
     entityTable: 'noteAttachments',
     row: { ...attachment(bytesOf()) },

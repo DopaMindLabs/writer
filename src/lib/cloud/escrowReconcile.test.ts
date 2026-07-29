@@ -17,8 +17,8 @@ import { keyMismatchState } from './crypto/keyMismatch';
 import { keylessLockState } from './crypto/keylessLock';
 import { startKeylessLockMonitor } from './keylessGuard';
 import {
-  generateMasterSecret,
-  wrapMasterSecret,
+  generateRootSecret,
+  wrapRootSecret,
   deriveKeyRing,
 } from './crypto/keys';
 import {
@@ -129,7 +129,7 @@ describe('reconcileEscrow', () => {
     // A real foreign escrow is only present locally while signed into that
     // account, so set up as a signed-in device (skipping the residue clear).
     await db.cloudCrypto.put(
-      await wrapMasterSecret(generateMasterSecret(), 'x', 1000),
+      await wrapRootSecret(generateRootSecret(), 'x', 1000),
     );
     await createCloudEncryption('pw', db, () => 'acct-a');
 
@@ -139,7 +139,7 @@ describe('reconcileEscrow', () => {
 
   it('warns with both fingerprints on a genuine mismatch (dev/e2e diagnostic)', async () => {
     await db.cloudCrypto.put(
-      await wrapMasterSecret(generateMasterSecret(), 'x', 1000),
+      await wrapRootSecret(generateRootSecret(), 'x', 1000),
     );
     await createCloudEncryption('pw', db, () => 'acct-a');
 
@@ -154,11 +154,11 @@ describe('reconcileEscrow', () => {
     // A device that published its escrow (server holds master M) but whose ring
     // was later re-derived from a different master N, with the original escrow
     // still pending locally. The server row is still ours — no mismatch.
-    const masterM = generateMasterSecret();
-    const escrowM = await wrapMasterSecret(masterM, 'pw', 1000);
+    const masterM = generateRootSecret();
+    const escrowM = await wrapRootSecret(masterM, 'pw', 1000);
     await db.cloudCrypto.put(escrowM); // server holds M
     await savePendingEscrow({ accountId: null, escrow: escrowM }); // pending still M
-    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) }); // ring N
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateRootSecret(), 1) }); // ring N
 
     expect(await reconcileEscrow(db)).toBe('matched');
     expect(keyMismatchState.current()).toBe(false);
@@ -192,7 +192,7 @@ describe('reconcileEscrow', () => {
     // A ring with nothing to publish and no account escrow is unusable here.
     await saveDeviceKeyRing({
       accountId: null,
-      ring: await deriveKeyRing(generateMasterSecret(), 1),
+      ring: await deriveKeyRing(generateRootSecret(), 1),
     });
     expect(await loadPendingEscrow()).toBeNull();
 

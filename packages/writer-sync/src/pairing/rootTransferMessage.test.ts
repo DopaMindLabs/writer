@@ -96,7 +96,7 @@ describe('root transfer codec', () => {
     expect(() => decodeRootTransferMessage(bytes)).toThrow();
   });
 
-  it('refuses a wrapper larger than an account root could ever need', () => {
+  it('refuses a wrapper larger than an root secret could ever need', () => {
     // A peer cannot make this device allocate for a payload that is not a root:
     // the sealed material is a fixed handful of bytes, not a file.
     const bytes = new TextEncoder().encode(

@@ -20,7 +20,7 @@ beforeEach(() => {
 describe('hydrateDeviceKeys', () => {
   it('restores the stored ring whatever route delivered it', async () => {
     // The defect this exists for: hydration used to be gated on cloud
-    // provisioning flags, so a device handed the account root over a pairing
+    // provisioning flags, so a device handed the root secret over a pairing
     // never rehydrated and read every sealed row as undecryptable.
     await hydrateDeviceKeys();
 

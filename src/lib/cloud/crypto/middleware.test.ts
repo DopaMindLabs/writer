@@ -10,7 +10,7 @@ import Dexie, {
 } from 'dexie';
 import dexieCloud from 'dexie-cloud-addon';
 import { STORES } from '@/db/stores';
-import { generateMasterSecret, deriveKeyRing, type CloudKeyRing } from './keys';
+import { generateRootSecret, deriveKeyRing, type CloudKeyRing } from './keys';
 import { CIPHER_FIELD, SYNCED_TABLES } from './tableRules';
 import { createEncryptionMiddleware } from './middleware';
 import type { ScopeKeyResolver } from 'writer-sync/crypto';
@@ -100,7 +100,7 @@ beforeEach(async () => {
   });
   db.use(createEncryptionMiddleware(provider));
   await db.open();
-  ring = await deriveKeyRing(generateMasterSecret(), 1);
+  ring = await deriveKeyRing(generateRootSecret(), 1);
 });
 
 afterEach(async () => {
@@ -259,7 +259,7 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     await table('docs').put({
       id: 'foreign', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'sealed',
     });
-    ring = await deriveKeyRing(generateMasterSecret(), 1);
+    ring = await deriveKeyRing(generateRootSecret(), 1);
 
     // A single get returns undefined rather than throwing EnvelopeIntegrityError.
     expect(await table('docs').get('foreign')).toBeUndefined();
@@ -273,7 +273,7 @@ describe('cloud encryption middleware (P1–P6 spike)', () => {
     await table('docs').put({
       id: 'old', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'old-key',
     });
-    ring = await deriveKeyRing(generateMasterSecret(), 1);
+    ring = await deriveKeyRing(generateRootSecret(), 1);
     await table('docs').put({
       id: 'new', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'new-key',
     });
@@ -464,7 +464,7 @@ describe('createEncryptionMiddleware — sync-applied writes bypass the write lo
 
   it('lets the addon apply a pulled row under a key mismatch (foreign ring held)', async () => {
     keyMismatchState.set(true);
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     const { wrapped, mutate } = makeWrapped(ring);
 
     await expect(wrapped.mutate(putReq(true))).resolves.toBeDefined();
@@ -483,7 +483,7 @@ describe('createEncryptionMiddleware — sync-applied writes bypass the write lo
 
   it('still refuses an ordinary app write under a mismatch (change tracking on)', async () => {
     keyMismatchState.set(true);
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     const { wrapped, mutate } = makeWrapped(ring);
 
     await expect(wrapped.mutate(putReq(false))).rejects.toBeInstanceOf(
@@ -532,7 +532,7 @@ describe('createEncryptionMiddleware — internal blob-plumbing transactions pas
   });
 
   it('returns the raw unresolved row inside a blob-plumbing read (never decrypts or drops it)', async () => {
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     const { wrapped } = makeWrapped(ring);
 
     const row: unknown = await wrapped.get(getReq(true));
@@ -542,7 +542,7 @@ describe('createEncryptionMiddleware — internal blob-plumbing transactions pas
   });
 
   it('drops the same unresolved row (and never crashes) on an ordinary read', async () => {
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     const { wrapped } = makeWrapped(ring);
 
     // Outside the blob transaction the row cannot be opened; it is dropped, and
@@ -552,7 +552,7 @@ describe('createEncryptionMiddleware — internal blob-plumbing transactions pas
   });
 
   it('writes the raw row back inside a blob-plumbing mutate (never reseals)', async () => {
-    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
     const { wrapped, mutate } = makeWrapped(ring);
 
     const req = {

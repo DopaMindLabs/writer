@@ -31,7 +31,7 @@ const frameOf = (options: {
 
 const ALL_SCOPES = ['scope-1', 'scope-2'];
 
-/** A device holding the account key can read any scope it is offered. */
+/** A device holding the content key can read any scope it is offered. */
 const readsAnyScope = () => true;
 /** A device whose key material really is per scope reads only what it has. */
 const readsListedScopes = (accessScopeId: string) => ALL_SCOPES.includes(accessScopeId);

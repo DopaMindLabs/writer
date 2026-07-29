@@ -39,7 +39,7 @@ export interface TrustedDeviceRecord {
   deviceId: DeviceId;
   /** The peer's public identity key — what a signature is verified against. */
   publicIdentityJwk: JsonWebKey;
-  /** The account both devices belong to. */
+  /** The principal both devices belong to. */
   principalId: PrincipalId;
   addedAt: number;
   /** Last successfully authenticated session, absent until one completes. */

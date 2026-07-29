@@ -19,16 +19,16 @@ import {
   forgetDeviceKeyRing,
   saveDeviceKeyRing,
 } from '@/lib/cloud/crypto/keyStore';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { currentPrincipal } from './writerEntityMetadata';
 import {
   TRANSFER_DEADLINE_MILLIS,
-  accountRootTransferPorts,
-  runAccountRootTransfer,
-} from './accountRootTransfer';
+  rootSecretHandoverPorts,
+  runRootSecretHandover,
+} from './rootSecretHandover';
 
 /**
- * Writer's half of the account-root handover, against real Web Crypto.
+ * Writer's half of the root-secret handover, against real Web Crypto.
  *
  * What matters here is that a device which receives a root ends up exactly where
  * one that unlocked by passphrase does — same vault, same ring — and that a
@@ -51,8 +51,8 @@ const peerFor = async (transcript: Uint8Array): Promise<AuthenticatedPeerParamet
 
 beforeEach(async () => {
   ephemeral = await generatePairingEphemeral();
-  root = generateMasterSecret();
-  await deviceKeyVault.storeAccountRoot(root, await currentPrincipal());
+  root = generateRootSecret();
+  await deviceKeyVault.storeRootSecret(root, await currentPrincipal());
   await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(root, EPOCH) });
 });
 
@@ -61,10 +61,10 @@ afterEach(async () => {
   await deviceKeyVault.forget();
 });
 
-describe('accountRootTransferPorts', () => {
+describe('rootSecretHandoverPorts', () => {
   it('holds a root exactly when this device can seal a row', async () => {
     const transcript = new Uint8Array([1, 2, 3, 4]);
-    const ports = accountRootTransferPorts({
+    const ports = rootSecretHandoverPorts({
       peer: await peerFor(transcript),
       sessionPrivateKey: ephemeral.privateKey,
       deviceId: HERE,
@@ -81,7 +81,7 @@ describe('accountRootTransferPorts', () => {
 
   it('seals the root at the epoch its ring derives with', async () => {
     const transcript = new Uint8Array([1, 2, 3, 4]);
-    const ports = accountRootTransferPorts({
+    const ports = rootSecretHandoverPorts({
       peer: await peerFor(transcript),
       sessionPrivateKey: ephemeral.privateKey,
       deviceId: HERE,
@@ -97,7 +97,7 @@ describe('accountRootTransferPorts', () => {
 
   it('installs a root it receives, leaving the device able to seal', async () => {
     const transcript = new Uint8Array([9, 9, 9]);
-    const ports = accountRootTransferPorts({
+    const ports = rootSecretHandoverPorts({
       peer: await peerFor(transcript),
       sessionPrivateKey: ephemeral.privateKey,
       deviceId: HERE,
@@ -110,7 +110,7 @@ describe('accountRootTransferPorts', () => {
 
     expect(deviceKeyProvider.hasAnyKey()).toBe(true);
     expect(deviceKeyProvider.current()?.epoch).toBe(EPOCH);
-    expect(await deviceKeyVault.hasAccountRoot()).toBe(true);
+    expect(await deviceKeyVault.hasRootSecret()).toBe(true);
   });
 
   it('creates an account when this device is the one to do it', async () => {
@@ -118,7 +118,7 @@ describe('accountRootTransferPorts', () => {
     // exchanged decide which without another round trip.
     await forgetDeviceKeyRing();
     await deviceKeyVault.forget();
-    const ports = accountRootTransferPorts({
+    const ports = rootSecretHandoverPorts({
       peer: await peerFor(new Uint8Array([7])),
       sessionPrivateKey: ephemeral.privateKey,
       deviceId: HERE,
@@ -129,11 +129,11 @@ describe('accountRootTransferPorts', () => {
     await ports.createRoot();
 
     expect(ports.holdsRoot()).toBe(true);
-    expect(await deviceKeyVault.hasAccountRoot()).toBe(true);
+    expect(await deviceKeyVault.hasRootSecret()).toBe(true);
   });
 
   it('defers to the peer that sorts above it', async () => {
-    const ports = accountRootTransferPorts({
+    const ports = rootSecretHandoverPorts({
       peer: await peerFor(new Uint8Array([7])),
       sessionPrivateKey: ephemeral.privateKey,
       deviceId: asDeviceId('aaa-below-the-peer'),
@@ -144,7 +144,7 @@ describe('accountRootTransferPorts', () => {
   });
 
   it('refuses a wrapper sealed in a different session', async () => {
-    const sealed = await accountRootTransferPorts({
+    const sealed = await rootSecretHandoverPorts({
       peer: await peerFor(new Uint8Array([1, 1, 1])),
       sessionPrivateKey: ephemeral.privateKey,
       deviceId: HERE,
@@ -152,7 +152,7 @@ describe('accountRootTransferPorts', () => {
 
     // The key and the AAD are both bound to the transcript, so a wrapper lifted
     // from another exchange simply fails to open.
-    const elsewhere = accountRootTransferPorts({
+    const elsewhere = rootSecretHandoverPorts({
       peer: await peerFor(new Uint8Array([2, 2, 2])),
       sessionPrivateKey: ephemeral.privateKey,
       deviceId: HERE,
@@ -163,14 +163,14 @@ describe('accountRootTransferPorts', () => {
 
   it('refuses to open anything when this session minted no ephemeral key', async () => {
     const transcript = new Uint8Array([5, 5]);
-    const ports = accountRootTransferPorts({
+    const ports = rootSecretHandoverPorts({
       peer: await peerFor(transcript),
       sessionPrivateKey: ephemeral.privateKey,
       deviceId: HERE,
     });
     const sealed = await ports.wrapForPeer();
 
-    const keyless = accountRootTransferPorts({
+    const keyless = rootSecretHandoverPorts({
       peer: await peerFor(transcript),
       sessionPrivateKey: null,
       deviceId: HERE,
@@ -236,13 +236,13 @@ const bytesOf = (message: RootTransferMessage): ArrayBuffer => {
   return buffer;
 };
 
-describe('runAccountRootTransfer', () => {
+describe('runRootSecretHandover', () => {
   it('settles once both peers are ready, and leaves the channel to the next protocol', async () => {
     // This device holds a root (beforeEach); a peer that also holds one means
     // nothing moves — the conversation is two announcements and two readies.
     const wire = fakeChannel();
     const onSettled = vi.fn();
-    runAccountRootTransfer({
+    runRootSecretHandover({
       channel: wire.channel,
       session: {
         peer: await peerFor(new Uint8Array([3, 3])),
@@ -268,7 +268,7 @@ describe('runAccountRootTransfer', () => {
   it('takes bytes however the browser delivers them', async () => {
     const wire = fakeChannel();
     const onSettled = vi.fn();
-    runAccountRootTransfer({
+    runRootSecretHandover({
       channel: wire.channel,
       session: {
         peer: await peerFor(new Uint8Array([4, 4])),
@@ -294,7 +294,7 @@ describe('runAccountRootTransfer', () => {
     try {
       const wire = fakeChannel();
       const onSettled = vi.fn();
-      runAccountRootTransfer({
+      runRootSecretHandover({
         channel: wire.channel,
         session: {
           peer: await peerFor(new Uint8Array([5, 5])),
@@ -312,7 +312,7 @@ describe('runAccountRootTransfer', () => {
         expect(onSettled).toHaveBeenCalledTimes(1);
       });
       expect(warn).toHaveBeenCalledWith(
-        'refused a message during account root transfer',
+        'refused a message during root secret transfer',
         expect.anything(),
       );
     } finally {
@@ -325,7 +325,7 @@ describe('runAccountRootTransfer', () => {
     try {
       const wire = fakeChannel();
       const onSettled = vi.fn();
-      const running = runAccountRootTransfer({
+      const running = runRootSecretHandover({
         channel: wire.channel,
         session: {
           peer: await peerFor(new Uint8Array([6, 6])),

@@ -1,5 +1,5 @@
 /**
- * Cloud-sync key management. The master secret is 32 bytes of CSPRNG output; a
+ * Cloud-sync key management. The root secret is 32 bytes of CSPRNG output; a
  * non-extractable AES-256-GCM content key is derived from it via HKDF, and the
  * master itself is wrapped for escrow under a PBKDF2 key-encryption key derived
  * from the user's passphrase. Raw key bytes never leave this module except as
@@ -67,8 +67,8 @@ const asBuffer = (bytes: Uint8Array): ArrayBuffer =>
     bytes.byteOffset + bytes.byteLength,
   ) as ArrayBuffer;
 
-/** 32 bytes of cryptographically-random master secret. */
-export const generateMasterSecret = (): Uint8Array =>
+/** 32 bytes of cryptographically-random root secret. */
+export const generateRootSecret = (): Uint8Array =>
   crypto.getRandomValues(new Uint8Array(32));
 
 /**
@@ -182,8 +182,8 @@ const deriveKek = async (
   );
 };
 
-/** AES-GCM-wrap the master secret under a passphrase-derived KEK for escrow. */
-export const wrapMasterSecret = async (
+/** AES-GCM-wrap the root secret under a passphrase-derived KEK for escrow. */
+export const wrapRootSecret = async (
   master: Uint8Array,
   passphrase: string,
   iterations: number,
@@ -209,7 +209,7 @@ export const wrapMasterSecret = async (
 };
 
 /** Unwrap the escrowed master; throws {@link WrongPassphraseError} on auth failure. */
-export const unwrapMasterSecret = async (
+export const unwrapRootSecret = async (
   escrow: EscrowRecord,
   passphrase: string,
 ): Promise<Uint8Array> => {

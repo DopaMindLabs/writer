@@ -9,13 +9,13 @@ import type { DataChannelLike } from 'writer-sync/providers/webrtc';
 import type { DeviceId } from 'writer-sync/core';
 import { appLogger } from '@/lib/appLogger';
 import { deviceKeyVault, unwrapPairingRoot } from '@/lib/cloud/crypto/deviceKeyVault';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { sealExistingRows } from '@/lib/cloud/setup';
 import { deviceKeyProvider, saveDeviceKeyRing } from '@/lib/cloud/crypto/keyStore';
 import { currentPrincipal } from './writerEntityMetadata';
 
 /**
- * Writer's half of the account-root handover: what this device can seal, and
+ * Writer's half of the root-secret handover: what this device can seal, and
  * what it does with a root that arrives.
  *
  * The protocol in the package decides *whether* a root moves and in which
@@ -32,7 +32,7 @@ import { currentPrincipal } from './writerEntityMetadata';
  */
 const DEFAULT_EPOCH = 1;
 
-export interface AccountRootTransferOptions {
+export interface RootSecretHandoverOptions {
   /** What the pairing proved: the peer's ephemeral key and the transcript. */
   peer: AuthenticatedPeerParameters;
   /** This session's ephemeral private key, which the peer sealed to. */
@@ -53,7 +53,7 @@ export interface AccountRootTransferOptions {
  */
 const adoptRoot = async (root: Uint8Array, epoch: number): Promise<void> => {
   try {
-    await deviceKeyVault.storeAccountRoot(root, await currentPrincipal());
+    await deviceKeyVault.storeRootSecret(root, await currentPrincipal());
     await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(root, epoch) });
   } finally {
     // The root exists in this process for as long as it takes to store and
@@ -77,18 +77,18 @@ const asBytes = (data: unknown): Uint8Array => {
     return new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
   }
   if (typeof data === 'string') return new TextEncoder().encode(data);
-  throw new TypeError('account root transfer: a message carried no bytes');
+  throw new TypeError('root secret transfer: a message carried no bytes');
 };
 
-export const accountRootTransferPorts = (
-  options: AccountRootTransferOptions,
+export const rootSecretHandoverPorts = (
+  options: RootSecretHandoverOptions,
 ): Omit<RootTransferPorts, 'send'> => ({
   // Read through the resolver rather than the vault: what matters is whether
   // this device can actually seal a row right now, not whether bytes are stored.
   holdsRoot: () => deviceKeyProvider.hasAnyKey(),
 
   wrapForPeer: async () => ({
-    wrapper: await deviceKeyVault.wrapAccountRootForPairing({
+    wrapper: await deviceKeyVault.wrapRootSecretForPairing({
       peerEphemeralPublicJwk: options.peer.peerEphemeralPublicJwk,
       principalId: await currentPrincipal(),
       transcript: options.peer.transcript,
@@ -103,12 +103,12 @@ export const accountRootTransferPorts = (
   mintsFirst: () =>
     String(options.deviceId) > String(options.peer.deviceId),
 
-  createRoot: () => adoptRoot(generateMasterSecret(), DEFAULT_EPOCH),
+  createRoot: () => adoptRoot(generateRootSecret(), DEFAULT_EPOCH),
 
   acceptWrapper: async ({ wrapper, epoch }) => {
     const { sessionPrivateKey } = options;
     if (sessionPrivateKey === null) {
-      throw new Error('account root transfer: this session minted no ephemeral key');
+      throw new Error('root secret transfer: this session minted no ephemeral key');
     }
     // Opening it is the check. The key and the AAD are both bound to the
     // transcript, so a wrapper from another session, another peer, or an
@@ -123,7 +123,7 @@ export const accountRootTransferPorts = (
 });
 
 /** What a fresh pairing leaves behind for the root to travel on. */
-export interface KeyTransferSession {
+export interface SecretHandoverSession {
   peer: AuthenticatedPeerParameters;
   /** This session's ephemeral private key, which the peer sealed to. */
   sessionPrivateKey: CryptoKey | null;
@@ -141,14 +141,14 @@ export interface KeyTransferSession {
  */
 export const TRANSFER_DEADLINE_MILLIS = 10_000;
 
-export interface RunAccountRootTransferOptions {
+export interface RunRootSecretHandoverOptions {
   channel: DataChannelLike;
-  session: KeyTransferSession;
+  session: SecretHandoverSession;
   /** Called once, when the root has moved or the deadline has passed. */
   onSettled: () => void;
 }
 
-export interface RunningAccountRootTransfer {
+export interface RunningRootSecretHandover {
   stop: () => void;
 }
 
@@ -160,19 +160,19 @@ export interface RunningAccountRootTransfer {
  * turns, and a listener left behind would report every sync message as an
  * unreadable root transfer.
  */
-export const runAccountRootTransfer = (
-  options: RunAccountRootTransferOptions,
-): RunningAccountRootTransfer => {
+export const runRootSecretHandover = (
+  options: RunRootSecretHandoverOptions,
+): RunningRootSecretHandover => {
   const { channel, session, onSettled } = options;
   let done = false;
 
   const transfer = startRootTransfer({
-    ...accountRootTransferPorts({
+    ...rootSecretHandoverPorts({
       peer: session.peer,
       sessionPrivateKey: session.sessionPrivateKey,
       deviceId: session.deviceId,
       onError: (error: unknown) => {
-        appLogger.warn('account root transfer failed', error);
+        appLogger.warn('root secret transfer failed', error);
       },
     }),
     send: (message) => {
@@ -186,7 +186,7 @@ export const runAccountRootTransfer = (
     } catch (error) {
       // Anything that is not a root-transfer message is not this protocol's to
       // interpret, and never reaches the user.
-      appLogger.warn('refused a message during account root transfer', error);
+      appLogger.warn('refused a message during root secret transfer', error);
     }
   };
 

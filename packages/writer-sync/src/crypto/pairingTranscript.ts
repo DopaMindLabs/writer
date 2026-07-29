@@ -4,7 +4,7 @@
  *
  * The transcript is the single value that binds a pairing session together: both
  * devices compute it independently over the complete offer and answer bytes, and
- * it feeds the key agreement, the account-bootstrap wrapper's AAD, and the code
+ * it feeds the key agreement, the root-secret wrapper's AAD, and the code
  * the user compares on the two screens. A substituted payload therefore diverges
  * all three at once, rather than relying on anyone noticing one mismatch.
  */

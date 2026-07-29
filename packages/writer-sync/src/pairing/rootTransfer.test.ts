@@ -3,7 +3,7 @@ import { ROOT_TRANSFER_VERSION, type RootTransferMessage } from './rootTransferM
 import { startRootTransfer, type RootTransferPorts } from './rootTransfer';
 
 /**
- * Handing an account root to a device that has just been paired.
+ * Handing an root secret to a device that has just been paired.
  *
  * The exchange is symmetric because the pairing roles say nothing about which
  * device has been used before: each announces whether it holds key material, and
@@ -199,7 +199,7 @@ describe('startRootTransfer', () => {
 
   it('mints a root when neither device has one and this is the device to do it', async () => {
     // Two devices that have never been used cannot wait for each other. One of
-    // them has to create the account, and both already know which — the ids
+    // them has to mint the root secret, and both already know which — the ids
     // they exchanged say so, with no further round trip.
     const minted = vi.fn();
     const device = harness({ holdsRoot: false, mintsFirst: true, onMint: minted });
