@@ -1,4 +1,9 @@
-import type { AuthenticatedPeerParameters, PairingRole } from 'writer-sync/pairing';
+import {
+  PairingError,
+  PairingErrorCode,
+  type AuthenticatedPeerParameters,
+  type PairingRole,
+} from 'writer-sync/pairing';
 
 /**
  * What the pairing dialog shows, as a value rather than a scatter of booleans.
@@ -23,6 +28,13 @@ export type ExchangePhase =
   | 'complete'
   | 'failed';
 
+/**
+ * Why the exchange failed, when the reason changes what the user should do.
+ * Always one of a fixed set — never derived from error text, which may carry
+ * peer-supplied content (threat model §5.11).
+ */
+export type ExchangeFailureReason = 'too-large';
+
 export interface PairingExchangeState {
   phase: ExchangePhase;
   /** Which half of the exchange this device turned out to run. */
@@ -40,6 +52,8 @@ export interface PairingExchangeState {
    * happened and left where they can try the other device's code.
    */
   ownCodeScanned: boolean;
+  /** Set only in the `failed` phase, and only when the cause is nameable. */
+  failureReason: ExchangeFailureReason | null;
 }
 
 export type PairingExchangeAction =
@@ -56,7 +70,20 @@ export type PairingExchangeAction =
       peer: AuthenticatedPeerParameters;
     }
   | { type: 'confirmed' }
-  | { type: 'failed' };
+  | { type: 'failed'; reason?: ExchangeFailureReason };
+
+/**
+ * The one mapping from a caught error to a failure action.
+ *
+ * A payload too large to encode is the only failure whose advice differs —
+ * retrying will not shrink it — so it is the only one named. Everything else
+ * stays generic: the reason is for developers, and failure copy must never
+ * carry peer-supplied text.
+ */
+export const failureActionFor = (error: unknown): PairingExchangeAction =>
+  error instanceof PairingError && error.code === PairingErrorCode.OversizedPayload
+    ? { type: 'failed', reason: 'too-large' }
+    : { type: 'failed' };
 
 export const initialExchangeState: PairingExchangeState = {
   phase: 'creating',
@@ -66,6 +93,7 @@ export const initialExchangeState: PairingExchangeState = {
   sessionId: null,
   peer: null,
   ownCodeScanned: false,
+  failureReason: null,
 };
 
 export const pairingExchangeReducer = (
@@ -104,6 +132,6 @@ export const pairingExchangeReducer = (
     case 'confirmed':
       return { ...state, phase: 'complete' };
     case 'failed':
-      return { ...state, phase: 'failed' };
+      return { ...state, phase: 'failed', failureReason: action.reason ?? null };
   }
 };

@@ -36,9 +36,15 @@ export const PairDeviceDialogBody = ({ exchange, scanner }: PairDeviceDialogBody
   // showing posture waits, and it names the wait itself.
 
   if (exchange.phase === 'failed') {
+    // A payload too large to encode gets its own advice — retrying will not
+    // shrink it. Every other failure stays generic (threat model §5.11).
+    const tooLarge = exchange.failureReason === 'too-large';
     return (
-      <InlineBanner kind="error" data-testid="pair-device-failed">
-        {t('settings.pairing.failed')}
+      <InlineBanner
+        kind="error"
+        data-testid={tooLarge ? 'pair-device-too-large' : 'pair-device-failed'}
+      >
+        {t(tooLarge ? 'settings.pairing.tooLarge' : 'settings.pairing.failed')}
       </InlineBanner>
     );
   }

@@ -4,7 +4,7 @@ import {
   type PairingSession,
 } from 'writer-sync/pairing';
 import type { PairingSignaller } from '@/lib/writerSyncIntegration/createPairingSignaller';
-import type { PairingExchangeAction } from './pairingExchangeReducer';
+import { failureActionFor, type PairingExchangeAction } from './pairingExchangeReducer';
 
 /**
  * The joiner's half: take the initiator's offer, answer it, and hold the reply
@@ -44,9 +44,9 @@ export const answerPairingOffer = async (options: AnswerOfferOptions): Promise<v
       sessionId: answer.sessionId,
       peer,
     });
-  } catch {
-    // As above: never surface peer-supplied detail.
+  } catch (error) {
+    // As above: never surface peer-supplied detail — only a nameable cause.
     machine.apply('fail');
-    dispatch({ type: 'failed' });
+    dispatch(failureActionFor(error));
   }
 };

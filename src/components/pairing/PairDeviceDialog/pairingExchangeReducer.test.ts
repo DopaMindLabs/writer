@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { asDeviceId } from 'writer-sync/core';
-import type { AuthenticatedPeerParameters } from 'writer-sync/pairing';
 import {
+  PairingError,
+  PairingErrorCode,
+  type AuthenticatedPeerParameters,
+} from 'writer-sync/pairing';
+import {
+  failureActionFor,
   initialExchangeState,
   pairingExchangeReducer,
   type PairingExchangeState,
@@ -108,5 +113,42 @@ describe('pairingExchangeReducer', () => {
     expect(pairingExchangeReducer(authenticated, { type: 'restart' })).toEqual(
       initialExchangeState,
     );
+  });
+
+  it('carries a nameable failure reason, and clears it on the next failure', () => {
+    const tooLarge = pairingExchangeReducer(afterOffer(), {
+      type: 'failed',
+      reason: 'too-large',
+    });
+    expect(tooLarge.phase).toBe('failed');
+    expect(tooLarge.failureReason).toBe('too-large');
+
+    // A later generic failure must not inherit the old reason.
+    expect(pairingExchangeReducer(tooLarge, { type: 'failed' }).failureReason).toBeNull();
+  });
+
+  it('clears the failure reason on a restart', () => {
+    const tooLarge = pairingExchangeReducer(afterOffer(), {
+      type: 'failed',
+      reason: 'too-large',
+    });
+
+    expect(pairingExchangeReducer(tooLarge, { type: 'restart' }).failureReason).toBeNull();
+  });
+});
+
+describe('failureActionFor', () => {
+  it('names only an oversized payload', () => {
+    expect(
+      failureActionFor(new PairingError(PairingErrorCode.OversizedPayload, 'too big')),
+    ).toEqual({ type: 'failed', reason: 'too-large' });
+  });
+
+  it('keeps every other failure generic', () => {
+    expect(
+      failureActionFor(new PairingError(PairingErrorCode.BadSignature, 'forged')),
+    ).toEqual({ type: 'failed' });
+    expect(failureActionFor(new Error('network down'))).toEqual({ type: 'failed' });
+    expect(failureActionFor('a thrown string')).toEqual({ type: 'failed' });
   });
 });
