@@ -1,11 +1,18 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { asDeviceId } from 'writer-sync/core';
 import {
   ephemeralPublicJwkOf,
   generatePairingEphemeral,
   type PairingEphemeralKeys,
 } from 'writer-sync/crypto';
-import type { AuthenticatedPeerParameters } from 'writer-sync/pairing';
+import {
+  decodeRootTransferMessage,
+  encodeRootTransferMessage,
+  type AuthenticatedPeerParameters,
+  type RootTransferMessage,
+} from 'writer-sync/pairing';
+import type { DataChannelLike } from 'writer-sync/providers/webrtc';
+import { appLogger } from '@/lib/appLogger';
 import { deviceKeyVault } from '@/lib/cloud/crypto/deviceKeyVault';
 import {
   deviceKeyProvider,
@@ -14,7 +21,11 @@ import {
 } from '@/lib/cloud/crypto/keyStore';
 import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
 import { currentPrincipal } from './writerEntityMetadata';
-import { accountRootTransferPorts } from './accountRootTransfer';
+import {
+  TRANSFER_DEADLINE_MILLIS,
+  accountRootTransferPorts,
+  runAccountRootTransfer,
+} from './accountRootTransfer';
 
 /**
  * Writer's half of the account-root handover, against real Web Crypto.
@@ -166,5 +177,175 @@ describe('accountRootTransferPorts', () => {
     });
 
     await expect(keyless.acceptWrapper(sealed)).rejects.toThrow();
+  });
+});
+
+/**
+ * One end of a message channel, with the other end held by the test.
+ *
+ * Mirrors `peerCatchUp.test.ts`: listeners are recorded so the test can act as
+ * the peer, and everything sent is decoded so assertions read protocol
+ * messages rather than bytes.
+ */
+const fakeChannel = () => {
+  const listeners = new Map<string, ((event: MessageEvent<unknown>) => void)[]>();
+  const sent: RootTransferMessage[] = [];
+  return {
+    sent,
+    listenerCount: () => (listeners.get('message') ?? []).length,
+    /** Deliver as the peer would: bytes on the wire. */
+    deliver: (data: unknown) => {
+      for (const listener of listeners.get('message') ?? []) {
+        listener({ data } as MessageEvent<unknown>);
+      }
+    },
+    channel: {
+      label: 'writer-sync-control',
+      readyState: 'open',
+      bufferedAmount: 0,
+      bufferedAmountLowThreshold: 0,
+      send: (data: ArrayBuffer) => {
+        sent.push(decodeRootTransferMessage(new Uint8Array(data)));
+      },
+      close: vi.fn(),
+      addEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => {
+        listeners.set(type, [...(listeners.get(type) ?? []), listener]);
+      },
+      removeEventListener: (
+        type: string,
+        listener: (event: MessageEvent<unknown>) => void,
+      ) => {
+        listeners.set(
+          type,
+          (listeners.get(type) ?? []).filter((held) => held !== listener),
+        );
+      },
+    } as unknown as DataChannelLike,
+  };
+};
+
+/**
+ * Encode into this realm's own ArrayBuffer. The encoder's `.buffer` belongs to
+ * Node's realm under jsdom and fails the module's `instanceof` check — a real
+ * channel would hand over a same-realm buffer, so the test builds one too.
+ */
+const bytesOf = (message: RootTransferMessage): ArrayBuffer => {
+  const encoded = encodeRootTransferMessage(message);
+  const buffer = new ArrayBuffer(encoded.byteLength);
+  new Uint8Array(buffer).set(encoded);
+  return buffer;
+};
+
+describe('runAccountRootTransfer', () => {
+  it('settles once both peers are ready, and leaves the channel to the next protocol', async () => {
+    // This device holds a root (beforeEach); a peer that also holds one means
+    // nothing moves — the conversation is two announcements and two readies.
+    const wire = fakeChannel();
+    const onSettled = vi.fn();
+    runAccountRootTransfer({
+      channel: wire.channel,
+      session: {
+        peer: await peerFor(new Uint8Array([3, 3])),
+        sessionPrivateKey: ephemeral.privateKey,
+        deviceId: HERE,
+      },
+      onSettled,
+    });
+
+    expect(wire.sent.some((message) => message.kind === 'holds-root')).toBe(true);
+
+    wire.deliver(bytesOf({ v: 1, kind: 'holds-root' }));
+    wire.deliver(bytesOf({ v: 1, kind: 'ready' }));
+
+    await vi.waitFor(() => {
+      expect(onSettled).toHaveBeenCalledTimes(1);
+    });
+    // Catch-up reads this channel next with a decoder of its own; a listener
+    // left behind would report every sync message as an unreadable transfer.
+    expect(wire.listenerCount()).toBe(0);
+  });
+
+  it('takes bytes however the browser delivers them', async () => {
+    const wire = fakeChannel();
+    const onSettled = vi.fn();
+    runAccountRootTransfer({
+      channel: wire.channel,
+      session: {
+        peer: await peerFor(new Uint8Array([4, 4])),
+        sessionPrivateKey: ephemeral.privateKey,
+        deviceId: HERE,
+      },
+      onSettled,
+    });
+
+    // A channel delivers ArrayBuffer, a typed-array view, or text, depending
+    // on the browser and the sender; all three carry the same message.
+    wire.deliver(bytesOf({ v: 1, kind: 'holds-root' }));
+    wire.deliver(new DataView(bytesOf({ v: 1, kind: 'ready' })));
+    wire.deliver(JSON.stringify({ v: 1, kind: 'ready' }));
+
+    await vi.waitFor(() => {
+      expect(onSettled).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('refuses a message that is not this protocol without dying', async () => {
+    const warn = vi.spyOn(appLogger, 'warn').mockImplementation(() => undefined);
+    try {
+      const wire = fakeChannel();
+      const onSettled = vi.fn();
+      runAccountRootTransfer({
+        channel: wire.channel,
+        session: {
+          peer: await peerFor(new Uint8Array([5, 5])),
+          sessionPrivateKey: ephemeral.privateKey,
+          deviceId: HERE,
+        },
+        onSettled,
+      });
+
+      wire.deliver(42); // not bytes at all
+      wire.deliver(bytesOf({ v: 1, kind: 'holds-root' }));
+      wire.deliver(bytesOf({ v: 1, kind: 'ready' }));
+
+      await vi.waitFor(() => {
+        expect(onSettled).toHaveBeenCalledTimes(1);
+      });
+      expect(warn).toHaveBeenCalledWith(
+        'refused a message during account root transfer',
+        expect.anything(),
+      );
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  it('gives up at the deadline when the peer never speaks, exactly once', async () => {
+    vi.useFakeTimers();
+    try {
+      const wire = fakeChannel();
+      const onSettled = vi.fn();
+      const running = runAccountRootTransfer({
+        channel: wire.channel,
+        session: {
+          peer: await peerFor(new Uint8Array([6, 6])),
+          sessionPrivateKey: ephemeral.privateKey,
+          deviceId: HERE,
+        },
+        onSettled,
+      });
+
+      expect(onSettled).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(TRANSFER_DEADLINE_MILLIS);
+
+      expect(onSettled).toHaveBeenCalledTimes(1);
+      expect(wire.listenerCount()).toBe(0);
+
+      // Settling twice would hand the channel over twice.
+      running.stop();
+      expect(onSettled).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
