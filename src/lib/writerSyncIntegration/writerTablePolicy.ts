@@ -30,6 +30,14 @@ export interface WriterTablePolicy {
   scope: TableScope;
   /** Whether mutations of this table enter the generic operation journal. */
   operationJournal: boolean;
+  /**
+   * The binary field whose content is sealed once, chunked and carried by the
+   * chunk store rather than inside the row's frame payload. Set only on tables
+   * whose blobs outgrow a transport message; `revisions.payload` deliberately
+   * stays fat-framed for now — an oversized revision is skipped with a report
+   * (`onUndeliverableFrame`) rather than chunked, a recorded limit.
+   */
+  chunkedBlobField?: string;
 }
 
 const content = (
@@ -76,7 +84,7 @@ export const WRITER_TABLE_POLICIES: readonly WriterTablePolicy[] = [
   content('sections', 'space'),
   content('docs', 'space'),
   content('notes', 'space'),
-  content('noteAttachments', 'space'),
+  { ...content('noteAttachments', 'space'), chunkedBlobField: 'blob' },
   content('citations', 'space'),
   content('connections', 'space'),
   content('palettes', 'space'),
@@ -104,6 +112,20 @@ export const WRITER_TABLE_POLICIES: readonly WriterTablePolicy[] = [
   // receiver-local state and never leave the device.
   {
     table: 'syncOperations',
+    replication: 'synced-content',
+    encryption: 'already-wrapped',
+    scope: 'space',
+    operationJournal: false,
+  },
+  // Sealed attachment ciphertext, chunked for transfer. Replicated like the
+  // journal — a cloud device needs the chunks to rebuild the blob a thin frame
+  // names — and already encrypted, so row encryption must not touch it. Chunk
+  // bytes are stored as base64 strings, not binary: the addon auto-offloads
+  // binary values to blob storage, whose ref lifecycle is incompatible with
+  // the middleware (see buildDb's largeStringThreshold note); strings stay
+  // inline at a 1.33× cost that is accepted and recorded here.
+  {
+    table: 'syncAttachmentChunks',
     replication: 'synced-content',
     encryption: 'already-wrapped',
     scope: 'space',
@@ -141,6 +163,10 @@ export const journalledTables = (): string[] =>
   WRITER_TABLE_POLICIES.filter((policy) => policy.operationJournal).map(
     (policy) => policy.table,
   );
+
+/** The binary field carried by the chunk store for `table`, if any. */
+export const chunkedBlobFieldFor = (table: string): string | undefined =>
+  byTable.get(table)?.chunkedBlobField;
 
 /**
  * Row-envelope content tables resolving to the given scope kind — the set a

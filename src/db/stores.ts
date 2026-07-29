@@ -10,6 +10,7 @@
  */
 export const STORES: Record<string, string> = {
   syncOperations: 'operationId, accessScopeId, [entityTable+entityId]',
+  syncAttachmentChunks: '[attachmentId+index], attachmentId, accessScopeId',
   syncInbox: 'operationId, [entityTable+entityId]',
   syncTombstones: '[entityTable+entityId], accessScopeId',
   syncProviderBindings: '[scopeId+providerInstanceId], scopeId',

@@ -139,6 +139,9 @@ describe('encrypted frame replication through Dexie Cloud', () => {
     expect(queued).toEqual([]);
     expect(UNSYNCED).toContain('notes');
     expect(UNSYNCED).not.toContain('syncOperations');
+    // Chunk rows replicate like the journal: a cloud device needs them to
+    // rebuild the blob a thin frame names.
+    expect(UNSYNCED).not.toContain('syncAttachmentChunks');
   });
 
   it('never maps createdBy or updatedBy onto the Dexie owner property', async () => {

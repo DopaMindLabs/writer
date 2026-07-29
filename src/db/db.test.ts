@@ -34,6 +34,7 @@ describe('LoremDB schema', () => {
         'sections',
         'settings',
         'spaces',
+        'syncAttachmentChunks',
         'syncInbox',
         'syncOperations',
         'syncProviderBindings',
