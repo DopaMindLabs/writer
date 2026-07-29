@@ -1,7 +1,10 @@
 import type { LoremDB } from '@/db/LoremDB';
 import { onDeviceKeyRingChange, deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
 import type { SyncObservable } from 'writer-sync/core';
-import { applyInboundFrame } from './writerOperationMaterializer';
+import {
+  AttachmentChunksPendingError,
+  applyInboundFrame,
+} from './writerOperationMaterializer';
 
 /**
  * Materialises frames a durable provider replicated into `syncOperations`.
@@ -26,6 +29,7 @@ export const sweepUnappliedFrames = async (db: LoremDB): Promise<number> => {
       await applyInboundFrame({ db, frame, ring });
       applied += 1;
     } catch (error) {
+      if (error instanceof AttachmentChunksPendingError) continue;
       // One invalid frame must not block the rest of the journal.
       console.error('Rejected an inbound sync frame', {
         operationId: frame.operationId,

@@ -1,6 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
-import { NoteKind, NoteState, type Note } from '@/db/schema';
+import {
+  NoteKind,
+  NoteState,
+  type Note,
+  type NoteAttachment,
+} from '@/db/schema';
 import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
 import {
   asDeviceId,
@@ -9,16 +14,28 @@ import {
   compareTimestamps,
 } from 'writer-sync/core';
 import { newEntityMetadata } from '@/lib/writerSyncIntegration/writerEntityMetadata';
-import type { SyncKeyRing } from 'writer-sync/crypto';
+import {
+  fromBase64,
+  toBase64,
+  type SyncKeyRing,
+} from 'writer-sync/crypto';
 import type { EncryptedSyncFrame } from 'writer-sync/operations';
-import { FramePayloadMismatchError } from 'writer-sync/operations';
+import {
+  ChunkIntegrityError,
+  FramePayloadMismatchError,
+  TRANSFER_CHUNK_BYTES,
+} from 'writer-sync/operations';
+import { prepareFramePayload } from './attachmentFramePayload';
 import {
   journalledDelete,
   journalledPut,
   makeDeleteFrame,
   makePutFrame,
 } from './writerOperationFactory';
-import { applyInboundFrame } from './writerOperationMaterializer';
+import {
+  AttachmentChunksPendingError,
+  applyInboundFrame,
+} from './writerOperationMaterializer';
 
 /**
  * The slice 1E acceptance gate: two in-memory Writer databases exchange plain
@@ -51,6 +68,50 @@ const note = (overrides: Partial<Note> = {}): Note => ({
   createdAt: 1000,
   ...overrides,
 });
+
+const attachmentBytes = (): Uint8Array =>
+  Uint8Array.from(
+    { length: TRANSFER_CHUNK_BYTES + 17 },
+    (_unused, index) => index % 251,
+  );
+
+const attachment = (): NoteAttachment => {
+  const bytes = attachmentBytes();
+  const content = bytes.buffer.slice(
+    bytes.byteOffset,
+    bytes.byteOffset + bytes.byteLength,
+  ) as ArrayBuffer;
+  return {
+    accessScopeId: 's1',
+    createdBy: asPrincipalId('me'),
+    updatedBy: asPrincipalId('me'),
+    mutationId: asOperationId('op-a1'),
+    logicalUpdatedAt: { millis: 1000, counter: 0 },
+    id: 'a1',
+    noteId: 'n1',
+    spaceId: 's1',
+    name: 'figure.png',
+    mime: 'image/png',
+    size: bytes.length,
+    blob: new Blob([content], { type: 'image/png' }),
+    createdAt: 1000,
+  };
+};
+
+const chunkedAttachmentFrame = async () => {
+  const prepared = await prepareFramePayload({
+    entityTable: 'noteAttachments',
+    row: { ...attachment() },
+    ring,
+  });
+  const frame = await makePutFrame({
+    ring,
+    deviceId: DEVICE_A,
+    entityTable: 'noteAttachments',
+    row: prepared.row,
+  });
+  return { frame, chunks: prepared.chunks };
+};
 
 /** Ship every journalled frame from one database into the other. */
 const shipAll = async (from: LoremDB, to: LoremDB): Promise<void> => {
@@ -243,6 +304,54 @@ describe('two-database operation convergence (hermetic)', () => {
       applyInboundFrame({ db: dbB, frame: tampered, ring }),
     ).rejects.toBeInstanceOf(FramePayloadMismatchError);
     expect(await dbB.notes.get('n1')).toBeUndefined();
+  });
+
+  it('assembles a thin attachment frame into the required Blob row', async () => {
+    const { frame, chunks } = await chunkedAttachmentFrame();
+    await dbB.syncAttachmentChunks.bulkPut(chunks);
+
+    expect(await applyInboundFrame({ db: dbB, frame, ring })).toBe('applied');
+
+    const landed = await dbB.noteAttachments.get('a1');
+    expect(landed).toBeDefined();
+    if (!landed) throw new Error('attachment did not materialise');
+    expect(landed.blob).toBeInstanceOf(Blob);
+    expect(landed.blob.type).toBe('image/png');
+    expect(new Uint8Array(await landed.blob.arrayBuffer())).toEqual(attachmentBytes());
+    expect(landed).not.toHaveProperty('blobRef');
+  });
+
+  it('journals an incomplete attachment without stamping the inbox, then retries', async () => {
+    const { frame, chunks } = await chunkedAttachmentFrame();
+
+    await expect(
+      applyInboundFrame({ db: dbB, frame, ring }),
+    ).rejects.toBeInstanceOf(AttachmentChunksPendingError);
+    expect(await dbB.syncOperations.get(String(frame.operationId))).toEqual(frame);
+    expect(await dbB.syncInbox.count()).toBe(0);
+    expect(await dbB.noteAttachments.get('a1')).toBeUndefined();
+
+    await dbB.syncAttachmentChunks.bulkPut(chunks);
+    expect(await applyInboundFrame({ db: dbB, frame, ring })).toBe('applied');
+    expect(await dbB.syncInbox.count()).toBe(1);
+    expect(await dbB.noteAttachments.get('a1')).toBeDefined();
+  });
+
+  it('refuses a tampered attachment chunk without materialising or stamping it', async () => {
+    const { frame, chunks } = await chunkedAttachmentFrame();
+    const [first, ...rest] = chunks;
+    const bytes = fromBase64(first.bytes);
+    bytes[0] ^= 1;
+    await dbB.syncAttachmentChunks.bulkPut([
+      { ...first, bytes: toBase64(bytes) },
+      ...rest,
+    ]);
+
+    await expect(
+      applyInboundFrame({ db: dbB, frame, ring }),
+    ).rejects.toBeInstanceOf(ChunkIntegrityError);
+    expect(await dbB.noteAttachments.get('a1')).toBeUndefined();
+    expect(await dbB.syncInbox.count()).toBe(0);
   });
 
   it('converges every synced content table through the same protocol', async () => {

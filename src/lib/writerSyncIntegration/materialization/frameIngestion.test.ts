@@ -2,8 +2,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
 import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
 import { saveDeviceKeyRing, forgetDeviceKeyRing } from '@/lib/cloud/crypto/keyStore';
-import { NoteKind, NoteState, type Note } from '@/db/schema';
+import {
+  NoteKind,
+  NoteState,
+  type Note,
+  type NoteAttachment,
+} from '@/db/schema';
 import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
+import type { SyncKeyRing } from 'writer-sync/crypto';
+import { TRANSFER_CHUNK_BYTES } from 'writer-sync/operations';
+import { prepareFramePayload } from './attachmentFramePayload';
 import { makePutFrame } from './writerOperationFactory';
 import { applyInboundFrame } from './writerOperationMaterializer';
 import { sweepUnappliedFrames } from './frameIngestion';
@@ -29,6 +37,39 @@ const note = (): Note => ({
   body: 'from-remote',
   createdAt: 1000,
 });
+
+const attachmentFrame = async (ring: SyncKeyRing) => {
+  const bytes = new Uint8Array(TRANSFER_CHUNK_BYTES + 3);
+  const row: NoteAttachment = {
+    accessScopeId: 's1',
+    createdBy: asPrincipalId('me'),
+    updatedBy: asPrincipalId('me'),
+    mutationId: asOperationId('op-a1'),
+    logicalUpdatedAt: { millis: 1000, counter: 0 },
+    id: 'a1',
+    noteId: 'n1',
+    spaceId: 's1',
+    name: 'figure.png',
+    mime: 'image/png',
+    size: bytes.length,
+    blob: new Blob([bytes], { type: 'image/png' }),
+    createdAt: 1000,
+  };
+  const prepared = await prepareFramePayload({
+    entityTable: 'noteAttachments',
+    row: { ...row },
+    ring,
+  });
+  return {
+    chunks: prepared.chunks,
+    frame: await makePutFrame({
+      ring,
+      deviceId: DEVICE_REMOTE,
+      entityTable: 'noteAttachments',
+      row: prepared.row,
+    }),
+  };
+};
 
 beforeEach(async () => {
   db = new LoremDB('frame-ingestion-test');
@@ -94,6 +135,23 @@ describe('sweepUnappliedFrames', () => {
     expect(await sweepUnappliedFrames(db)).toBe(0);
     expect(await db.syncInbox.count()).toBe(1);
     expect((await db.notes.get('n1'))?.body).toBe('from-remote');
+  });
+
+  it('quietly retries an incomplete attachment after its chunks arrive', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const ring = await deriveKeyRing(generateMasterSecret(), 1);
+    await saveDeviceKeyRing({ accountId: null, ring });
+    const { frame, chunks } = await attachmentFrame(ring);
+    await db.syncOperations.put(frame);
+
+    expect(await sweepUnappliedFrames(db)).toBe(0);
+    expect(await db.syncInbox.count()).toBe(0);
+    expect(consoleError).not.toHaveBeenCalled();
+
+    await db.syncAttachmentChunks.bulkPut(chunks);
+    expect(await sweepUnappliedFrames(db)).toBe(1);
+    expect(await db.noteAttachments.get('a1')).toBeDefined();
+    expect(await db.syncInbox.count()).toBe(1);
   });
 
   it('contains an invalid frame instead of blocking the rest of the journal', async () => {
