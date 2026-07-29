@@ -31,6 +31,7 @@ const harness = (options: {
 } = {}) => {
   const sent: CatchUpMessage[] = [];
   const saved: { attachmentId: string; content: Uint8Array }[] = [];
+  const savedChunks: { attachmentId: string; index: number; bytes: Uint8Array }[] = [];
   const rejected: { attachmentId: string; reason: unknown }[] = [];
 
   const ports: AttachmentTransferPorts = {
@@ -41,11 +42,14 @@ const harness = (options: {
     saveAttachment: async ({ attachmentId, content }) => {
       saved.push({ attachmentId, content });
     },
+    saveChunk: async ({ attachmentId, index, bytes }) => {
+      savedChunks.push({ attachmentId, index, bytes });
+    },
     send: (message) => sent.push(message),
     onRejected: (attachmentId, reason) => rejected.push({ attachmentId, reason }),
   };
 
-  return { transfer: createAttachmentTransfer(ports), sent, saved, rejected };
+  return { transfer: createAttachmentTransfer(ports), sent, saved, savedChunks, rejected };
 };
 
 const chunkMessage = (options: {
@@ -192,6 +196,38 @@ describe('createAttachmentTransfer receiving chunks', () => {
     await deliverAll(transfer, content, manifest);
 
     expect(saved).toEqual([{ attachmentId: 'att-1', content }]);
+  });
+
+  it('persists each verified chunk as it arrives, not only the whole', async () => {
+    // §10 demands incremental storage: an aborted transfer must leave its
+    // verified chunks behind, or resuming has nothing to resume from and a
+    // half-received file reserves an in-flight slot for nothing.
+    const content = contentOf(20);
+    const manifest = await manifestFor('att-1', content);
+    const { transfer, savedChunks } = harness();
+
+    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive(
+      chunkMessage({ attachmentId: 'att-1', index: 0, bytes: chunkOf(content, 0) }),
+    );
+
+    expect(savedChunks).toEqual([
+      { attachmentId: 'att-1', index: 0, bytes: chunkOf(content, 0) },
+    ]);
+  });
+
+  it('does not persist a chunk that failed verification', async () => {
+    const content = contentOf(20);
+    const manifest = await manifestFor('att-1', content);
+    const { transfer, savedChunks, rejected } = harness();
+
+    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive(
+      chunkMessage({ attachmentId: 'att-1', index: 0, bytes: contentOf(7) }),
+    );
+
+    expect(savedChunks).toEqual([]);
+    expect(rejected).toHaveLength(1);
   });
 
   it('saves nothing until the transfer is complete', async () => {

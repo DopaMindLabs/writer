@@ -51,6 +51,17 @@ export interface AttachmentTransferPorts {
   }) => Promise<Uint8Array | undefined>;
   /** Store content that has been assembled and verified whole. */
   saveAttachment: (options: { attachmentId: string; content: Uint8Array }) => Promise<void>;
+  /**
+   * Persist one verified chunk the moment it arrives — the incremental storage
+   * §10 of the frame protocol demands, and what `heldChunkIndices` reads on a
+   * later transfer so an interrupted one resumes from the gap. Optional only
+   * for a host that keeps no partial state and accepts restarting instead.
+   */
+  saveChunk?: (options: {
+    attachmentId: string;
+    index: number;
+    bytes: Uint8Array;
+  }) => Promise<void>;
   send: (message: CatchUpMessage) => void;
   /** Diagnostics for a refused offer or chunk. */
   onRejected?: (attachmentId: string, reason: unknown) => void;
@@ -167,6 +178,13 @@ const take = async (
     const bytes = fromBase64Url(chunk.bytes);
     await verifyChunk({ manifest: pending.manifest, index: chunk.index, bytes });
     pending.chunks.set(chunk.index, bytes);
+    // Persisted only after verification: a stored chunk is later read back as
+    // evidence of progress, and an unverified one would be forged progress.
+    await ports.saveChunk?.({
+      attachmentId: chunk.attachmentId,
+      index: chunk.index,
+      bytes,
+    });
     const outstanding = missingChunkIndices({
       manifest: pending.manifest,
       have: new Set([...pending.held, ...pending.chunks.keys()]),
