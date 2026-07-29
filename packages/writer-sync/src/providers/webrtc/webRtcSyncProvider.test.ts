@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { SyncPhase, hasCapability } from '../../core/providers.types';
 import type { SyncStatus } from '../../core/providers.types';
 import { createWebRtcSyncProvider } from './webRtcSyncProvider';
-import type { DataChannelLike } from './webRtcTransport';
+import { MAX_FRAME_BYTES, type DataChannelLike } from './webRtcTransport';
 
 const fakeChannel = (): DataChannelLike & { closed: boolean; die: () => void } => {
   const listeners = new Map<string, ((event: MessageEvent<unknown>) => void)[]>();
@@ -102,6 +102,18 @@ describe('realtime transport', () => {
       channelId: 'doc-1',
     });
     expect(transport?.sharesStore).toBe(false);
+  });
+
+  it('carries the ceiling the bearer enforces, so senders can pack against it', async () => {
+    // Left off, the consumer's ceiling check has no ceiling to check against and
+    // passes everything — so an oversized frame reaches the channel and throws
+    // there, instead of being skipped with its name in the log.
+    const { provider } = providerWith();
+    const transport = await provider.realtime?.createTransport({
+      accessScopeId: 'space-1',
+      channelId: 'doc-1',
+    });
+    expect(transport?.maxMessageBytes).toBe(MAX_FRAME_BYTES);
   });
 
   it('passes on the bearer going away, so a consumer can stop holding it', async () => {

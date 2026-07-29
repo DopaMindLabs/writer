@@ -86,9 +86,11 @@ export const createWebRtcSyncProvider = (
         const channel = await options.openChannel.open({ accessScopeId, channelId });
         const transport = createWebRtcTransport(channel);
         // The closure notice travels with the transport: it is how a consumer
-        // holding one per scope learns to stop using a bearer that is gone.
+        // holding one per scope learns to stop using a bearer that is gone. So
+        // does the ceiling, which is what a sender packs against.
         const tracked: SyncTransport = {
           sharesStore: transport.sharesStore,
+          maxMessageBytes: transport.maxMessageBytes,
           send: transport.send,
           onMessage: transport.onMessage,
           onClosed: transport.onClosed,
