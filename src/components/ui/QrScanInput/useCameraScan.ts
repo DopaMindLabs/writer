@@ -58,20 +58,37 @@ const browserCamera = (): Promise<MediaStream> => {
   return media.getUserMedia(CAMERA_CONSTRAINTS);
 };
 
+const stopStream = (stream: MediaStream): void => {
+  for (const track of stream.getTracks()) track.stop();
+};
+
 /** A denial is the user's choice; anything else is the platform falling short. */
 const stateForFailure = (reason: unknown): CameraScanState =>
   reason instanceof Error && (reason.name === 'NotAllowedError' || reason.name === 'SecurityError')
     ? 'denied'
     : 'unavailable';
 
+const useReleaseOnUnmount = (
+  mounted: { current: boolean },
+  release: () => void,
+): void => {
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      release();
+    };
+  }, [mounted, release]);
+};
+
 export const useCameraScan = (options: CameraScanOptions) => {
   const { scanner, onScan, requestCamera = browserCamera } = options;
-  const interval = options.intervalMillis ?? SCAN_INTERVAL_MILLIS;
 
   const [state, setState] = useState<CameraScanState>('idle');
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const mountedRef = useRef(true);
   // Read by the sampling loop, which must not fire again while a decode is in
   // flight — a slow decoder would otherwise queue frames without limit.
   const busyRef = useRef(false);
@@ -79,7 +96,7 @@ export const useCameraScan = (options: CameraScanOptions) => {
   const release = useCallback((): void => {
     if (timerRef.current !== null) clearInterval(timerRef.current);
     timerRef.current = null;
-    for (const track of streamRef.current?.getTracks() ?? []) track.stop();
+    if (streamRef.current !== null) stopStream(streamRef.current);
     streamRef.current = null;
     busyRef.current = false;
     if (videoRef.current !== null) videoRef.current.srcObject = null;
@@ -96,12 +113,11 @@ export const useCameraScan = (options: CameraScanOptions) => {
     busyRef.current = true;
     try {
       const found = await scanner.scanImage(video);
-      if (found.length > 0) {
-        release();
-        setState('idle');
-        onScan(found[0]);
-        return;
-      }
+      if (!mountedRef.current) return;
+      if (found.length === 0) return;
+      release();
+      setState('idle');
+      onScan(found[0]);
     } catch {
       // A frame that will not decode is the normal case, not a failure: the
       // camera is pointed at a wall, or the code is still out of focus.
@@ -114,22 +130,27 @@ export const useCameraScan = (options: CameraScanOptions) => {
     setState('starting');
     requestCamera()
       .then((stream) => {
+        if (!mountedRef.current) {
+          stopStream(stream);
+          return;
+        }
         streamRef.current = stream;
         if (videoRef.current !== null) videoRef.current.srcObject = stream;
         setState('scanning');
         timerRef.current = setInterval(() => {
           void sample();
-        }, interval);
+        }, options.intervalMillis ?? SCAN_INTERVAL_MILLIS);
       })
       .catch((reason: unknown) => {
+        if (!mountedRef.current) return;
         release();
         setState(stateForFailure(reason));
       });
-  }, [interval, release, requestCamera, sample]);
+  }, [options.intervalMillis, release, requestCamera, sample]);
 
   // Unmounting must release the camera even mid-scan; the dialog closing is the
   // commonest way this component goes away.
-  useEffect(() => release, [release]);
+  useReleaseOnUnmount(mountedRef, release);
 
   return { state, start, stop, videoRef };
 };

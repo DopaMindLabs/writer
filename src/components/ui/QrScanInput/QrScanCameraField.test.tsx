@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { QrScanner } from 'writer-qr/scan';
 import { QrScanCameraField } from './QrScanCameraField';
@@ -186,6 +186,31 @@ describe('releasing the camera', () => {
     view.unmount();
 
     expect(stopped.stop).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops a stream that arrives after the surface has gone away', async () => {
+    vi.useFakeTimers();
+    const stopped = track();
+    let resolveCamera: ((stream: MediaStream) => void) | undefined;
+    const requestCamera = () =>
+      new Promise<MediaStream>((resolve) => {
+        resolveCamera = resolve;
+      });
+    const { view } = renderField({ requestCamera });
+
+    try {
+      fireEvent.click(screen.getByRole('button', { name: labels.startLabel }));
+      view.unmount();
+      await act(async () => {
+        resolveCamera?.(streamOf([stopped]));
+        await Promise.resolve();
+      });
+
+      expect(stopped.stop).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.clearAllTimers();
+      vi.useRealTimers();
+    }
   });
 
   it('stops every track, not only the first', async () => {
