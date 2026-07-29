@@ -14,8 +14,11 @@ import { NoteKind, NoteState } from '@/db/schema';
 import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
 import { forgetDeviceKeyRing, saveDeviceKeyRing } from '@/lib/cloud/crypto/keyStore';
-import { decodeRootTransferMessage } from 'writer-sync/pairing';
-import { TRANSFER_DEADLINE_MILLIS } from './accountRootTransfer';
+import {
+  decodeRootTransferMessage,
+  encodeRootTransferMessage,
+  type RootTransferMessage,
+} from 'writer-sync/pairing';
 import { createPeerCatchUp } from './peerCatchUp';
 
 /**
@@ -399,69 +402,83 @@ describe('createPeerCatchUp', () => {
   });
 
   it('hands the channel to the root transfer first, and syncs only after', async () => {
-    vi.useFakeTimers();
-    try {
-      // Raw capture: two protocols take turns on this channel, so one decoder
-      // cannot read everything sent.
-      const raw: Uint8Array[] = [];
-      const listeners: ((event: MessageEvent<unknown>) => void)[] = [];
-      const channel = {
-        label: 'writer-sync-control',
-        readyState: 'open',
-        bufferedAmount: 0,
-        bufferedAmountLowThreshold: 0,
-        send: (data: ArrayBuffer) => raw.push(new Uint8Array(data)),
-        close: vi.fn(),
-        addEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => {
-          if (type === 'message') listeners.push(listener);
+    // Both devices already hold key material, so nothing moves — the key
+    // conversation is still had, and catch-up still waits for it to finish.
+    await saveDeviceKeyRing({
+      ring: await deriveKeyRing(generateMasterSecret(), 1),
+      accountId: null,
+    });
+    // Raw capture: two protocols take turns on this channel, so one decoder
+    // cannot read everything sent.
+    const raw: Uint8Array[] = [];
+    const listeners: ((event: MessageEvent<unknown>) => void)[] = [];
+    const channel = {
+      label: 'writer-sync-control',
+      readyState: 'open',
+      bufferedAmount: 0,
+      bufferedAmountLowThreshold: 0,
+      send: (data: ArrayBuffer) => raw.push(new Uint8Array(data)),
+      close: vi.fn(),
+      addEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => {
+        if (type === 'message') listeners.push(listener);
+      },
+      removeEventListener: () => undefined,
+    } as unknown as DataChannelLike;
+    const peer = fakeSession(channel);
+    const catchUp = createPeerCatchUp(db);
+
+    catchUp.adopt({
+      session: peer.session,
+      deviceId: PEER,
+      keyTransfer: {
+        peer: {
+          deviceId: PEER,
+          publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },
+          peerEphemeralPublicJwk: { kty: 'EC', crv: 'P-256', x: 'e', y: 'f' },
+          transcript: new Uint8Array([9]),
+          verificationCode: '048213',
         },
-        removeEventListener: () => undefined,
-      } as unknown as DataChannelLike;
-      const peer = fakeSession(channel);
-      const catchUp = createPeerCatchUp(db);
+        sessionPrivateKey: null,
+        deviceId: asDeviceId('this-device'),
+      },
+    });
 
-      catchUp.adopt({
-        session: peer.session,
-        deviceId: PEER,
-        keyTransfer: {
-          peer: {
-            deviceId: PEER,
-            publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },
-            peerEphemeralPublicJwk: { kty: 'EC', crv: 'P-256', x: 'e', y: 'f' },
-            transcript: new Uint8Array([9]),
-            verificationCode: '048213',
-          },
-          sessionPrivateKey: null,
-          deviceId: asDeviceId('this-device'),
-        },
+    // Key material first: what goes out is the transfer's announcement, and no
+    // catch-up manifest — a device still waiting for a root can decrypt
+    // nothing, so syncing now would tell it, wrongly, that it is caught up.
+    await vi.waitFor(() => {
+      expect(raw.length).toBeGreaterThan(0);
+    });
+    expect(decodeRootTransferMessage(raw[0]).kind).toBe('holds-root');
+    expect(() => decodeCatchUpMessage(raw[0])).toThrow();
+
+    // The peer answers and both sides finish the key conversation; only then
+    // does catch-up open over the same channel.
+    const deliver = (message: RootTransferMessage): void => {
+      const encoded = encodeRootTransferMessage(message);
+      const buffer = new ArrayBuffer(encoded.byteLength);
+      new Uint8Array(buffer).set(encoded);
+      for (const listener of listeners) listener({ data: buffer } as MessageEvent<unknown>);
+    };
+    deliver({ v: 1, kind: 'holds-root' });
+    deliver({ v: 1, kind: 'ready' });
+
+    const kindsSoFar = (): string[] =>
+      raw.map((bytes) => {
+        try {
+          return decodeCatchUpMessage(bytes).kind;
+        } catch {
+          return 'root-transfer';
+        }
       });
 
-      // Key material first: what goes out is the transfer's announcement, and
-      // no catch-up manifest — a device still waiting for a root can decrypt
-      // nothing, so syncing now would tell it, wrongly, that it is caught up.
-      await vi.waitFor(() => {
-        expect(raw.length).toBeGreaterThan(0);
-      });
-      expect(decodeRootTransferMessage(raw[0]).kind).toBe('needs-root');
-      expect(() => decodeCatchUpMessage(raw[0])).toThrow();
-
-      // A peer that never speaks: the deadline settles the transfer, and only
-      // then does catch-up open over the same channel.
-      await vi.advanceTimersByTimeAsync(TRANSFER_DEADLINE_MILLIS);
-      await vi.waitFor(() => {
-        const kinds = raw.map((bytes) => {
-          try {
-            return decodeCatchUpMessage(bytes).kind;
-          } catch {
-            return 'root-transfer';
-          }
-        });
-        expect(kinds.at(-1)).toBe('manifest');
-      });
-      catchUp.stop();
-    } finally {
-      vi.useRealTimers();
-    }
+    await vi.waitFor(() => {
+      expect(kindsSoFar()).toContain('manifest');
+    });
+    // Order is the point, not adjacency: the transfer keeps saying its piece
+    // until the peer agrees, so what matters is that no manifest preceded it.
+    expect(kindsSoFar().indexOf('manifest')).toBeGreaterThan(0);
+    catchUp.stop();
   });
 });
 
