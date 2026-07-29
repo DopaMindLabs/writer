@@ -96,3 +96,70 @@ describe('defaultQrDetectorFactory', () => {
     expect(close).toHaveBeenCalledTimes(1);
   });
 });
+
+/**
+ * The ponyfill branch — the path every WebKit browser takes, since none of them
+ * ship a platform `BarcodeDetector`. The module is mocked: what matters here is
+ * the wiring, above all that the WASM engine is pointed at the URL the host
+ * serves rather than the ponyfill's default CDN.
+ */
+describe('defaultQrDetectorFactory, without a platform detector', () => {
+  it('falls back to the ponyfill and points its engine at the served WASM', async () => {
+    vi.resetModules();
+    const prepareZXingModule = vi.fn();
+    const detect = vi.fn(() => Promise.resolve([{ rawValue: 'W1:abc:1/1:x' }]));
+    vi.doMock('barcode-detector/ponyfill', () => ({
+      BarcodeDetector: function BarcodeDetector(this: { detect: typeof detect }) {
+        this.detect = detect;
+      },
+      prepareZXingModule,
+    }));
+    try {
+      delete globals.BarcodeDetector;
+      const { defaultQrDetectorFactory: fresh } = await import('../src/scan/index');
+
+      const factory = fresh({ wasmUrl: '/assets/zxing_reader.wasm' });
+      expect(factory.native).toBe(false);
+
+      const detector = await factory.create();
+      expect(prepareZXingModule).toHaveBeenCalledTimes(1);
+      const overrides = prepareZXingModule.mock.calls[0][0] as {
+        overrides: { locateFile: () => string };
+        fireImmediately: boolean;
+      };
+      // Left to its own devices the ponyfill fetches its engine from a public
+      // CDN at first use — offline scanning and contacting nobody both depend
+      // on this override.
+      expect(overrides.overrides.locateFile()).toBe('/assets/zxing_reader.wasm');
+      expect(overrides.fireImmediately).toBe(false);
+
+      const video = { tagName: 'VIDEO' } as unknown as ImageBitmapSource;
+      expect(await detector.detect(video)).toEqual(['W1:abc:1/1:x']);
+    } finally {
+      vi.doUnmock('barcode-detector/ponyfill');
+      vi.resetModules();
+    }
+  });
+
+  it('leaves the engine alone when no WASM URL is given', async () => {
+    vi.resetModules();
+    const prepareZXingModule = vi.fn();
+    vi.doMock('barcode-detector/ponyfill', () => ({
+      BarcodeDetector: function BarcodeDetector(this: { detect: () => Promise<never[]> }) {
+        this.detect = () => Promise.resolve([]);
+      },
+      prepareZXingModule,
+    }));
+    try {
+      delete globals.BarcodeDetector;
+      const { defaultQrDetectorFactory: fresh } = await import('../src/scan/index');
+
+      await fresh().create();
+
+      expect(prepareZXingModule).not.toHaveBeenCalled();
+    } finally {
+      vi.doUnmock('barcode-detector/ponyfill');
+      vi.resetModules();
+    }
+  });
+});

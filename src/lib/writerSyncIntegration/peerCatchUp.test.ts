@@ -14,6 +14,8 @@ import { NoteKind, NoteState } from '@/db/schema';
 import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
 import { forgetDeviceKeyRing, saveDeviceKeyRing } from '@/lib/cloud/crypto/keyStore';
+import { decodeRootTransferMessage } from 'writer-sync/pairing';
+import { TRANSFER_DEADLINE_MILLIS } from './accountRootTransfer';
 import { createPeerCatchUp } from './peerCatchUp';
 
 /**
@@ -75,6 +77,7 @@ const fakeChannel = (readyState: 'open' | 'connecting' = 'open') => {
  */
 const fakeSession = (existing: DataChannelLike | null = null) => {
   const subscribers = new Set<(channel: DataChannelLike) => void>();
+  const anySubscribers = new Set<(channel: DataChannelLike) => void>();
   const close = vi.fn();
   let current = existing;
   const session: PeerSession = {
@@ -85,7 +88,10 @@ const fakeSession = (existing: DataChannelLike | null = null) => {
       return () => subscribers.delete(listener);
     },
     openChannel: () => new Promise<never>(() => undefined),
-    onAnyChannel: () => () => undefined,
+    onAnyChannel: (listener) => {
+      anySubscribers.add(listener);
+      return () => anySubscribers.delete(listener);
+    },
     createOffer: () => Promise.resolve(''),
     acceptOffer: () => Promise.resolve(''),
     acceptAnswer: () => Promise.resolve(),
@@ -98,6 +104,12 @@ const fakeSession = (existing: DataChannelLike | null = null) => {
       current = channel;
       for (const listener of subscribers) listener(channel);
     },
+    /** A channel the peer opened arriving on the connection, scope or control. */
+    arriveChannel: (channel: DataChannelLike) => {
+      for (const listener of anySubscribers) listener(channel);
+    },
+    /** Whether adoption has reached the point of listening for peer channels. */
+    listeningForChannels: () => anySubscribers.size > 0,
   };
 };
 
@@ -311,4 +323,145 @@ describe('createPeerCatchUp', () => {
     });
     catchUp.stop();
   });
+
+  it('leaves an existing trust record untouched when a device re-pairs', async () => {
+    const now = Date.now();
+    const original = { kty: 'EC', crv: 'P-256', x: 'first', y: 'key' };
+    await db.trustedDevices.put({
+      deviceId: PEER,
+      publicIdentityJwk: original,
+      principalId: asPrincipalId('me'),
+      addedAt: now - 5_000,
+      lastSessionAt: now - 5_000,
+      displayName: 'Old laptop',
+      status: TrustedDeviceStatus.Active,
+      acknowledgedOperations: {},
+    });
+    const peer = fakeSession();
+    const catchUp = createPeerCatchUp(db);
+
+    catchUp.adopt({
+      session: peer.session,
+      deviceId: PEER,
+      keyTransfer: {
+        peer: {
+          deviceId: PEER,
+          // A different key than the record holds: re-pairing must not adopt it.
+          publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'second', y: 'key' },
+          peerEphemeralPublicJwk: { kty: 'EC', crv: 'P-256', x: 'e', y: 'f' },
+          transcript: new Uint8Array([1, 2, 3]),
+          verificationCode: '048213',
+        },
+        sessionPrivateKey: null,
+        deviceId: asDeviceId('this-device'),
+      },
+    });
+
+    // Rewriting the record would let a peer replace the key an earlier pairing
+    // established — or quietly resurrect one the user revoked. Only the session
+    // timestamp moves.
+    await vi.waitFor(async () => {
+      const record = await db.trustedDevices.get(String(PEER));
+      expect(record?.publicIdentityJwk).toEqual(original);
+      expect(record?.displayName).toBe('Old laptop');
+      expect(record?.lastSessionAt).toBeGreaterThanOrEqual(now);
+    });
+    catchUp.stop();
+  });
+
+  it('syncs over a scope channel its peer opened, ignoring the control label', async () => {
+    const peer = fakeSession();
+    const catchUp = createPeerCatchUp(db);
+    catchUp.adopt({ session: peer.session, deviceId: PEER });
+    // Adoption records trust before it listens; a channel can only arrive once
+    // someone is listening for it.
+    await vi.waitFor(() => {
+      expect(peer.listeningForChannels()).toBe(true);
+    });
+
+    // The control channel is spoken for; a second listener on it would race the
+    // one the adoption already set up.
+    const control = fakeChannel();
+    (control.channel as unknown as { label: string }).label = 'writer-sync-control';
+    peer.arriveChannel(control.channel);
+
+    // A scope channel is how this device receives work in a scope it is not
+    // writing to itself, and so has never asked for a channel for.
+    const scope = fakeChannel();
+    (scope.channel as unknown as { label: string }).label = 's1/doc-updates';
+    peer.arriveChannel(scope.channel);
+
+    await vi.waitFor(() => {
+      expect(scope.sent).toEqual([{ v: 1, kind: 'manifest', manifests: [] }]);
+    });
+    expect(control.sent).toEqual([]);
+    catchUp.stop();
+  });
+
+  it('hands the channel to the root transfer first, and syncs only after', async () => {
+    vi.useFakeTimers();
+    try {
+      // Raw capture: two protocols take turns on this channel, so one decoder
+      // cannot read everything sent.
+      const raw: Uint8Array[] = [];
+      const listeners: ((event: MessageEvent<unknown>) => void)[] = [];
+      const channel = {
+        label: 'writer-sync-control',
+        readyState: 'open',
+        bufferedAmount: 0,
+        bufferedAmountLowThreshold: 0,
+        send: (data: ArrayBuffer) => raw.push(new Uint8Array(data)),
+        close: vi.fn(),
+        addEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => {
+          if (type === 'message') listeners.push(listener);
+        },
+        removeEventListener: () => undefined,
+      } as unknown as DataChannelLike;
+      const peer = fakeSession(channel);
+      const catchUp = createPeerCatchUp(db);
+
+      catchUp.adopt({
+        session: peer.session,
+        deviceId: PEER,
+        keyTransfer: {
+          peer: {
+            deviceId: PEER,
+            publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },
+            peerEphemeralPublicJwk: { kty: 'EC', crv: 'P-256', x: 'e', y: 'f' },
+            transcript: new Uint8Array([9]),
+            verificationCode: '048213',
+          },
+          sessionPrivateKey: null,
+          deviceId: asDeviceId('this-device'),
+        },
+      });
+
+      // Key material first: what goes out is the transfer's announcement, and
+      // no catch-up manifest — a device still waiting for a root can decrypt
+      // nothing, so syncing now would tell it, wrongly, that it is caught up.
+      await vi.waitFor(() => {
+        expect(raw.length).toBeGreaterThan(0);
+      });
+      expect(decodeRootTransferMessage(raw[0]).kind).toBe('needs-root');
+      expect(() => decodeCatchUpMessage(raw[0])).toThrow();
+
+      // A peer that never speaks: the deadline settles the transfer, and only
+      // then does catch-up open over the same channel.
+      await vi.advanceTimersByTimeAsync(TRANSFER_DEADLINE_MILLIS);
+      await vi.waitFor(() => {
+        const kinds = raw.map((bytes) => {
+          try {
+            return decodeCatchUpMessage(bytes).kind;
+          } catch {
+            return 'root-transfer';
+          }
+        });
+        expect(kinds.at(-1)).toBe('manifest');
+      });
+      catchUp.stop();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
+
