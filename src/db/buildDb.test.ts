@@ -9,17 +9,34 @@ import {
   forgetDeviceKeyRing,
 } from '@/lib/cloud/crypto/keyStore';
 import { CIPHER_FIELD } from '@/lib/cloud/crypto/tableRules';
+import { sampleMetadata } from '@/test/fixtures';
 
 const CLOUD_URL = 'https://spike.dexie.cloud';
-/** Mirrors buildDb's local-only list; the escrow table (`cloudCrypto`) syncs. */
+/**
+ * Mirrors buildDb's unsynced list. Since the frame cutover the addon replicates
+ * only the operation journal and control tables (plus the `cloudCrypto`
+ * escrow): local-only state AND the materialised content tables stay on the
+ * device — Writer owns its projections; frames carry the content.
+ */
 const UNSYNCED = [
   'settings', 'backups', 'syncs', 'syncConfigs',
   'docInspectorConfigs', 'meta', 'docUpdates',
+  'syncInbox', 'syncTombstones', 'syncProviderBindings',
+  'spaces', 'sections', 'docs', 'notes', 'noteAttachments',
+  'citations', 'connections', 'palettes', 'annotations', 'revisions',
 ];
 
-/** Primary-key path a STORES spec declares, stripped of Dexie modifiers. */
-const primKeyPath = (spec: string): string =>
-  spec.split(',')[0].trim().replace(/^\+\+/, '').replace(/^&/, '');
+/**
+ * Primary-key path a STORES spec declares, stripped of Dexie modifiers. A
+ * compound key (`[a+b]`) surfaces from Dexie as an array key path.
+ */
+const primKeyPath = (spec: string): string | string[] => {
+  const raw = spec.split(',')[0].trim().replace(/^\+\+/, '').replace(/^&/, '');
+  if (raw.startsWith('[') && raw.endsWith(']')) {
+    return raw.slice(1, -1).split('+').map((part) => part.trim());
+  }
+  return raw;
+};
 
 const enableCloud = (): void => {
   vi.stubEnv('VITE_DEXIE_CLOUD_URL', CLOUD_URL);
@@ -39,16 +56,16 @@ describe('buildDb', () => {
     db.close();
   });
 
-  it('applies the STORES schema table-for-table at version 1', async () => {
+  it('applies the STORES schema table-for-table at the current version', async () => {
     const db = buildDb('build-db-schema-test');
     await db.open();
 
-    expect(db.verno).toBe(1);
+    expect(db.verno).toBe(2);
     expect(db.tables.map((t) => t.name).sort()).toEqual(
       Object.keys(STORES).sort(),
     );
     for (const table of db.tables) {
-      expect(table.schema.primKey.keyPath).toBe(primKeyPath(STORES[table.name]));
+      expect(table.schema.primKey.keyPath).toEqual(primKeyPath(STORES[table.name]));
     }
 
     await db.delete();
@@ -92,6 +109,30 @@ describe('buildDb — cloud activation gates', () => {
     await expectBaseSchema(buildDb('gate-env-only'));
   });
 
+  it('encrypts locally with no cloud provider configured at all', async () => {
+    // No env, no flag: the plain local database still carries the encryption
+    // middleware — a P2P-only Writer must never be a plaintext local database.
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+    const db = buildDb('gate-local-encrypted');
+    await db.open();
+
+    await db.table('notes').put({
+      id: 'n1', spaceId: 's1', kind: 'text', createdAt: 1, title: 'SECRET',
+      ...sampleMetadata(),
+    });
+    const raw = await db.transaction('r', db.table('notes'), async () => {
+      const tx = Dexie.currentTransaction as unknown as {
+        idbtrans?: { disableBlobResolve?: boolean };
+      };
+      if (tx.idbtrans) tx.idbtrans.disableBlobResolve = true;
+      return db.table<Record<string, unknown>>('notes').get('n1');
+    });
+    expect(raw?.[CIPHER_FIELD]).toBeDefined();
+    expect(raw?.title).toBeUndefined();
+
+    await db.delete();
+  });
+
   it('flag only (no env) builds the plain local database', async () => {
     localStorage.setItem(CLOUD_FLAG_KEY, 'on');
     await expectBaseSchema(buildDb('gate-flag-only'));
@@ -122,6 +163,7 @@ describe('buildDb — cloud activation gates', () => {
 
     await db.table('notes').put({
       id: 'n1', spaceId: 's1', kind: 'text', createdAt: 1, title: 'SECRET',
+      ...sampleMetadata(),
     });
     // Read the stored bytes past the middleware via its blob-resolve bypass;
     // nulling the key would now be hidden by the keyless read protection.
@@ -141,7 +183,7 @@ describe('buildDb — cloud activation gates', () => {
   it('opting out (flag off) stays on the cloud schema and keeps rows', async () => {
     enableCloud();
     const cloudDb = buildDb('gate-optout');
-    await cloudDb.table('docs').put({ id: 'keep', spaceId: 's', sectionId: 'x', updatedAt: 1 });
+    await cloudDb.table('docs').put({ id: 'keep', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's' });
     cloudDb.close();
 
     // Flag off but the device is provisioned: the cloud schema is sticky, so a
@@ -170,8 +212,8 @@ describe('buildDb — cloud activation gates', () => {
 
     const names = cloudDb.tables.map((t) => t.name);
     expect(names).toEqual(expect.arrayContaining(['realms', 'members', 'roles']));
-    // Injected, not declared: the app's own schema stays at version 1.
-    expect(cloudDb.verno).toBe(1);
+    // Injected, not declared: the app's own schema stays at its own version.
+    expect(cloudDb.verno).toBe(2);
 
     await cloudDb.delete();
   });

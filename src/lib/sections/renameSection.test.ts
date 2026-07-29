@@ -1,4 +1,5 @@
 import { db } from '@/db/db';
+import { compareTimestamps } from 'writer-sync/core';
 import { sampleSection, seedBasicSpace } from '@/test/fixtures';
 import { InvariantError } from '@/lib/invariant';
 import { renameSection } from './renameSection';
@@ -14,6 +15,21 @@ describe('renameSection', () => {
     await renameSection(sampleSection.id, 'Renamed section');
     const section = await db.sections.get(sampleSection.id);
     expect(section?.label).toBe('Renamed section');
+  });
+
+  it('advances the convergence metadata so the rename replicates', async () => {
+    const before = await db.sections.get(sampleSection.id);
+
+    await renameSection(sampleSection.id, 'Renamed section');
+
+    const after = await db.sections.get(sampleSection.id);
+    expect(after?.mutationId).not.toBe(before?.mutationId);
+    expect(
+      compareTimestamps(
+        after?.logicalUpdatedAt ?? { millis: 0, counter: 0 },
+        before?.logicalUpdatedAt ?? { millis: 0, counter: 0 },
+      ),
+    ).toBeGreaterThan(0);
   });
 
   it('trims surrounding whitespace', async () => {

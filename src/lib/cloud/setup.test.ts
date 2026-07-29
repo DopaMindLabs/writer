@@ -162,7 +162,7 @@ describe('cloud setup', () => {
     // Written while keyless — plaintext at rest.
     await forgetThisDevice();
     await db.table<Row>('docs').put({
-      id: 'p', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'plain',
+      id: 'p', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'plain',
     });
     expect(await hasPlaintextSyncedRows(db)).toBe(true);
 
@@ -209,7 +209,7 @@ describe('cloud setup', () => {
     await unlockCloudEncryption('pw', db);
     expect(deviceKeyProvider.current()).not.toBeNull();
     await db.table<Row>('docs').put({
-      id: 'd', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'hi',
+      id: 'd', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'hi',
     });
     const doc = await db.table<Row>('docs').get('d');
     expect(doc?.name).toBe('hi');
@@ -237,10 +237,10 @@ describe('cloud setup', () => {
   it('seals every synced row and is idempotent', async () => {
     // Written before any key exists, so plaintext at rest.
     await db.table<Row>('docs').put({
-      id: 'd1', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'A',
+      id: 'd1', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'A',
     });
     await db.table<Row>('notes').put({
-      id: 'n1', spaceId: 's', kind: 'text', createdAt: 1, title: 'B',
+      id: 'n1', spaceId: 's', kind: 'text', createdAt: 1, accessScopeId: 's', title: 'B',
     });
 
     await createCloudEncryption('pw', db);
@@ -260,7 +260,7 @@ describe('cloud setup', () => {
     await forgetThisDevice();
     // Keyless write: the middleware passes it through as plaintext.
     await db.table<Row>('notes').put({
-      id: 'n2', spaceId: 's', kind: 'text', createdAt: 1, title: 'LATER',
+      id: 'n2', spaceId: 's', kind: 'text', createdAt: 1, accessScopeId: 's', title: 'LATER',
     });
     expect((await db.table<Row>('notes').get('n2'))?.title).toBe('LATER');
 
@@ -283,7 +283,7 @@ describe('cloud setup', () => {
   it('rejects a wrong recovery code and stays keyless', async () => {
     await createCloudEncryption('pw', db);
     await db.table<Row>('docs').put({
-      id: 'd', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'X',
+      id: 'd', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'X',
     });
     await forgetThisDevice();
 
@@ -334,13 +334,13 @@ describe('cloud key conflict resolution', () => {
     const accountMaster = generateMasterSecret();
     await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(accountMaster, 1) });
     await db.table<Row>('docs').put({
-      id: 'acc', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'account note',
+      id: 'acc', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'account note',
     });
     await db.cloudCrypto.put(await wrapMasterSecret(accountMaster, 'old-pass', FAST));
     // Re-signing-in: signed into the account, so the account escrow is kept.
     await createCloudEncryption('new-pass', db, () => 'acct-a');
     await db.table<Row>('docs').put({
-      id: 'mine', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'my note',
+      id: 'mine', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'my note',
     });
     keyMismatchState.set(true);
     return accountMaster;

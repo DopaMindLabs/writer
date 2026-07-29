@@ -28,6 +28,7 @@ import { keyMismatchState } from './crypto/keyMismatch';
 import { keylessLockState } from './crypto/keylessLock';
 import { deriveKeyRing, generateMasterSecret, ESCROW_ID, type EscrowRecord } from './crypto/keys';
 import { resetAndReseed } from '@/db/seed';
+import { sampleMetadata } from '@/test/fixtures';
 
 vi.mock('@/db/seed', () => ({ resetAndReseed: vi.fn(async () => {}) }));
 
@@ -164,6 +165,7 @@ describe('signInToCloud guard (clean vs dirty keyless device)', () => {
   it('blocks sign-in while keyless with unencrypted writing on the device', async () => {
     withCloudLogin();
     await db.docs.add({
+      ...sampleMetadata('s'),
       id: 'd', spaceId: 's', sectionId: 'x', name: 'n', body: 'plain',
       meta: { wordCount: 1 }, updatedAt: 1,
     });

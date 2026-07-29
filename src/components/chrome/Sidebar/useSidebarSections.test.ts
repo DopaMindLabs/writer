@@ -1,15 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import type { Doc, Section } from '@/db/schema';
+import { sampleMetadata } from '@/test/fixtures';
 import { useSidebarSections } from './useSidebarSections';
 
 const section = (
   id: string,
   order: number,
   parentSectionId: string | null = null,
-): Section => ({ id, spaceId: 's1', parentSectionId, label: id, order });
+): Section => ({
+  ...sampleMetadata(),
+  id,
+  spaceId: 's1',
+  parentSectionId,
+  label: id,
+  order,
+});
 
 const doc = (id: string, sectionId: string, order?: number): Doc => ({
+  ...sampleMetadata(),
   id,
   spaceId: 's1',
   sectionId,

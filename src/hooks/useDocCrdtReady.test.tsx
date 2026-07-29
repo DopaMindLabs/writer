@@ -2,7 +2,7 @@ import { render, renderHook, waitFor, act } from '@testing-library/react';
 import { useEffect } from 'react';
 import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
 import { db } from '@/db/db';
-import { serializedBody } from '@/test/fixtures';
+import { sampleMetadata, serializedBody } from '@/test/fixtures';
 import { seedDocCrdt, writeDocBodyBaseline } from '@/lib/docs';
 import { collabStore } from '@/lib/collab/collabStore';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
@@ -56,6 +56,7 @@ describe('useDocCrdtReady', () => {
 
   it('heals a wiped log from the row body and reports ready', async () => {
     await db.docs.add({
+      ...sampleMetadata('s'),
       id: DOC, spaceId: 's', sectionId: 'x', name: 'd', body: BODY,
       meta: { wordCount: 0 }, updatedAt: 0,
     });
@@ -71,6 +72,13 @@ describe('useDocCrdtReady', () => {
   it('reseeds a populated log that diverged from a body pulled while closed', async () => {
     const stale = serializedBody('stale local');
     const pulled = serializedBody('newer pulled');
+    // The row exists with the pulled body — reconciliation snapshots the losing
+    // CRDT as a revision, whose access scope is derived from the doc row.
+    await db.docs.add({
+      ...sampleMetadata('s'),
+      id: DOC, spaceId: 's', sectionId: 'x', name: 'd', body: pulled,
+      meta: { wordCount: 0 }, updatedAt: 0,
+    });
     await seedDocCrdt(DOC, stale);
     await writeDocBodyBaseline(DOC, stale);
 

@@ -74,11 +74,18 @@ Escrow row (cloudCrypto table, id='v1')
 
 > **Superseded for UI callers.** Components and hooks now consume sync behaviour through the
 > `SyncProvider` capability adapter — `useSyncCapability('keyDelivery')` and friends, from
-> `src/lib/writerSync/syncCoordinatorContext.ts` — because the facade exposes
+> `src/lib/writerSyncIntegration/syncCoordinatorContext.ts` — because the facade exposes
 > Dexie-Cloud-shaped types and would couple every cloud surface to one backend. The facade
 > stays the only module that touches `db.cloud`, and is an implementation detail of
 > `src/lib/cloud/dexieCloudProvider.ts`. Some surfaces (sync status, device registry,
 > sign-in/out, mount reconciliation) still import it directly — tracked work; don't add more.
+>
+> Those remaining callers are **blocked on contracts, not on effort**: the capability set
+> models `durableSync`, `realtime`, `discovery`, `accessControl` and `keyDelivery`, and the
+> surfaces still on the facade need session/sign-in and device-registry capabilities that do
+> not exist yet. Adding them is a design decision (what a non-account provider answers for
+> "who is signed in" and "which devices exist") — raise it rather than inventing a contract
+> to move imports around.
 
 `src/lib/cloud/cloudClient.ts` is the **only** module UI components import for cloud
 observables and actions. It re-exports: `SyncState`, `CloudSyncPhase`, `isCloudSyncEnabled`,

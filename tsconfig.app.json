@@ -18,9 +18,12 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "writer-sync/core": ["./packages/writer-sync/src/core/index.ts"],
+      "writer-sync/crypto": ["./packages/writer-sync/src/crypto/index.ts"],
+      "writer-sync/operations": ["./packages/writer-sync/src/operations/index.ts"]
     },
     "types": ["vite/client", "vitest/globals"]
   },
-  "include": ["src"]
+  "include": ["src", "packages/writer-sync/src", "packages/writer-sync/test"]
 }

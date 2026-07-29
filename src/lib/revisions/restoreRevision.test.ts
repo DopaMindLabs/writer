@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { db } from '@/db/db';
 import { registerEditorHandle } from '@/lib/collab/editorRegistry';
-import { sampleDoc, sampleSpace, sampleSection } from '@/test/fixtures';
+import { sampleDoc, sampleMetadata, sampleSpace, sampleSection } from '@/test/fixtures';
 import { createRevision } from './createRevision';
 import { restoreRevision } from './restoreRevision';
 import { InvariantError } from '@/lib/invariant';
@@ -71,6 +71,9 @@ describe('restoreRevision', () => {
   });
 
   it('rejects a revision that belongs to a different document', async () => {
+    // createRevision derives its access scope from the doc row, so the other
+    // document must exist before a revision can be taken of it.
+    await db.docs.put({ ...sampleDoc, id: 'other-doc', name: 'Other Doc' });
     const other = await createRevision('other-doc', serializedBody('x'), { kind: 'manual' });
     await expect(
       restoreRevision(sampleDoc.id, other.id),
@@ -92,6 +95,7 @@ describe('restoreRevision', () => {
       '{"root":{"children":[{"type":"no-such-node","version":1}],' +
       '"direction":null,"format":"","indent":0,"type":"root","version":1}}';
     await db.revisions.put({
+      ...sampleMetadata(),
       id: 'rev-corrupt',
       docId: sampleDoc.id,
       body: corrupt,

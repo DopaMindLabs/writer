@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { StatusGlyph } from '@/components/ui/StatusGlyph';
 import type { StatusKind } from '@/components/ui/statusRole';
 import { assertNever } from '@/lib/invariant';
-import { SyncPhase } from '@/lib/syncProviders/types';
+import { SyncPhase } from 'writer-sync/core';
 
 export interface CloudSyncStatusRowProps {
   phase: SyncPhase;
