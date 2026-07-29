@@ -9,6 +9,10 @@ vi.mock('./materialization/compactJournal', () => ({
   compactJournal: vi.fn(() => Promise.resolve()),
 }));
 
+vi.mock('./hydrateDeviceKeys', () => ({
+  hydrateDeviceKeys: vi.fn(() => Promise.resolve()),
+}));
+
 vi.mock('@/lib/cloud/cloudClient', () => ({
   startCloudSession: vi.fn().mockResolvedValue(() => undefined),
   requestCloudSync: vi.fn(),
@@ -21,6 +25,7 @@ vi.mock('@/lib/cloud/cloudClient', () => ({
 }));
 
 import { startCloudSession } from '@/lib/cloud/cloudClient';
+import { hydrateDeviceKeys } from './hydrateDeviceKeys';
 
 const durableSyncProvider = (id: string, start: () => Promise<() => void>): SyncProvider => ({
   id,
@@ -50,6 +55,36 @@ const realtimeOnlyProvider = (id: string): SyncProvider => ({
 const coordinatorOf = (...providers: SyncProvider[]) => createSyncCoordinator({ providers });
 
 describe('startWriterSync', () => {
+  it('hydrates this device’s key ring before any provider starts', async () => {
+    // A device acquires key material two ways: by minting the account, or by
+    // being handed the account root over a pairing. Only the first used to
+    // rehydrate on boot, so a paired device came back keyless and every sealed
+    // row was silently dropped from every read. Hydration belongs to boot, not
+    // to whichever provider happens to be configured.
+    const order: string[] = [];
+    vi.mocked(hydrateDeviceKeys).mockImplementation(async () => {
+      order.push('hydrate');
+    });
+    const provider = durableSyncProvider('p', async () => {
+      order.push('provider');
+      return () => undefined;
+    });
+
+    await startWriterSync(coordinatorOf(provider));
+
+    expect(order).toEqual(['hydrate', 'provider']);
+  });
+
+  it('hydrates even when no provider offers durable sync at all', async () => {
+    // The pairing-only device: no Dexie Cloud, nothing to start — and it is
+    // exactly the device that used to lose its keys.
+    vi.mocked(hydrateDeviceKeys).mockClear();
+
+    await startWriterSync(coordinatorOf(realtimeOnlyProvider('peer')));
+
+    expect(hydrateDeviceKeys).toHaveBeenCalledTimes(1);
+  });
+
   it('starts Dexie Cloud when no coordinator is supplied', async () => {
     const stop = await startWriterSync();
 

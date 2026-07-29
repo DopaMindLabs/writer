@@ -7,6 +7,7 @@ import { startFrameIngestion } from './materialization/frameIngestion';
 import { startLivePeerSync } from './livePeerSync';
 import { writerJournalIdentity } from './materialization/writerJournalDeps';
 import { compactJournal } from './materialization/compactJournal';
+import { hydrateDeviceKeys } from './hydrateDeviceKeys';
 
 /**
  * Start durable, session-level sync for every provider that offers it, and return
@@ -31,6 +32,11 @@ export const startWriterSync = async (
     for (const stop of [...stops].reverse()) stop();
   };
   try {
+    // Before anything reads or writes a sealed row. A device is keyed by
+    // minting an account or by being handed the root over a pairing, and boot
+    // must restore either — a provider's session start cannot, because a
+    // pairing-only device configures no durable provider to run one.
+    await hydrateDeviceKeys();
     for (const provider of coordinator.providersWith('durableSync')) {
       stops.push(await provider.durableSync.start());
     }
