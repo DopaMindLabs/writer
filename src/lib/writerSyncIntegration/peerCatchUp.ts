@@ -33,6 +33,7 @@ import { createWriterOperationStore } from './materialization/writerOperationSto
 import { createWriterFullState } from './materialization/writerFullState';
 import { writerJournalDeps } from './materialization/writerJournalDeps';
 import { sweepUnappliedFrames } from './materialization/frameIngestion';
+import { createAttachmentChunkStore } from './attachmentChunkStore';
 
 /**
  * Writer's wiring of the catch-up exchange onto a paired peer's connection.
@@ -122,6 +123,7 @@ const catchUpPorts = ({
   // already holds would leave a freshly paired device — which holds none — asking
   // for nothing, and so never receiving the first scope that would let it ask.
   canAccessScope: () => deviceKeyProvider.hasAnyKey(),
+  attachments: createAttachmentChunkStore(db),
   verifySignature: createTrustedFrameVerifier(registry),
   // A peer the journal cannot honestly answer is served the scope as it stands
   // now. Without this it would get the surviving tail of history and be told it

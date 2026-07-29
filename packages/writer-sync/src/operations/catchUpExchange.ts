@@ -1,5 +1,8 @@
 import type { AccessScopeId } from '../core/providers.types';
-import type { EncryptedSyncFrame } from './operation.types';
+import type {
+  AttachmentChunkManifest,
+  EncryptedSyncFrame,
+} from './operation.types';
 import type { OperationStore } from './operationStore.types';
 import { verifyFrame } from './operationCodec';
 import { compareOperations } from './convergence';
@@ -18,6 +21,15 @@ import {
 } from './scopeManifest';
 import type { AttachmentTransfer } from './attachmentTransfer';
 import { packFrames } from './catchUpBatching';
+
+export interface CatchUpAttachments {
+  /** Bind attachment messages to this exchange's composed transport send. */
+  create: (send: (message: CatchUpMessage) => void) => AttachmentTransfer;
+  /** Complete attachment ciphertext available in the permitted scopes. */
+  manifestsForScopes: (
+    accessScopeIds: readonly AccessScopeId[],
+  ) => Promise<AttachmentChunkManifest[]>;
+}
 
 /**
  * The initial-transfer and incremental catch-up exchange, per runbook §24.
@@ -82,7 +94,7 @@ export interface CatchUpPorts {
    * shares this conversation rather than opening a protocol of its own. Absent
    * when the host has no attachments to move.
    */
-  attachments?: AttachmentTransfer;
+  attachments?: CatchUpAttachments;
   /** New frames are in the journal and await the host's materialiser. */
   onFramesJournalled?: () => void;
   /** Diagnostics for a refused frame. One bad frame never fails a batch. */
@@ -191,6 +203,7 @@ const scopesNeedingFullState = (
 /** Reply to a peer's requests, batched so no message outgrows the channel. */
 const answer = async (
   ports: CatchUpPorts,
+  attachments: AttachmentTransfer | undefined,
   requests: readonly CatchUpRequest[],
 ): Promise<void> => {
   const permitted = requests.filter(await scopeFilterFor(ports));
@@ -221,6 +234,10 @@ const answer = async (
     ports.onUndeliverableFrame?.(frame, new UndeliverableFrameError(frame));
   }
   sendReplies(ports, packed.batches);
+  if (attachments === undefined || ports.attachments === undefined) return;
+  const scopes = [...new Set(permitted.map((request) => request.accessScopeId))];
+  const manifests = await ports.attachments.manifestsForScopes(scopes);
+  if (manifests.length > 0) attachments.offer(manifests);
 };
 
 /** A frame whose lone-message encoding exceeds the transport's ceiling. */
@@ -324,6 +341,7 @@ const createIngester = (
 
 export const createCatchUpExchange = (ports: CatchUpPorts): CatchUpExchange => {
   const ingest = createIngester(ports);
+  const attachments = ports.attachments?.create(ports.send);
 
   return {
     start: async () => {
@@ -339,7 +357,7 @@ export const createCatchUpExchange = (ports: CatchUpPorts): CatchUpExchange => {
         case 'manifest':
           return requestMissing(ports, message.manifests);
         case 'request':
-          return answer(ports, message.requests);
+          return answer(ports, attachments, message.requests);
         case 'frames':
           return ingest(message);
         case 'ack':
@@ -348,7 +366,7 @@ export const createCatchUpExchange = (ports: CatchUpPorts): CatchUpExchange => {
         case 'attachment-offer':
         case 'attachment-request':
         case 'attachment-chunk':
-          await ports.attachments?.receive(message);
+          await attachments?.receive(message);
           return;
       }
     },

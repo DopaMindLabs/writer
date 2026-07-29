@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 import { asDeviceId, asOperationId } from '../core/ids';
 import type { AccessScopeId } from '../core/providers.types';
-import type { EncryptedSyncFrame } from './operation.types';
+import type {
+  AttachmentChunkManifest,
+  EncryptedSyncFrame,
+} from './operation.types';
 import type { OperationStore } from './operationStore.types';
 import { hashPayload } from './operationCodec';
 import { buildScopeManifests } from './scopeManifest';
@@ -55,6 +58,7 @@ const harness = (options: {
   retentionCutoff?: () => number;
   maxMessageBytes?: number;
   onUndeliverableFrame?: (frame: EncryptedSyncFrame, reason: unknown) => void;
+  attachments?: CatchUpPorts['attachments'];
 } = {}) => {
   const frames = options.frames ?? [];
   const sent: CatchUpMessage[] = [];
@@ -75,6 +79,7 @@ const harness = (options: {
     },
     maxMessageBytes: options.maxMessageBytes,
     onUndeliverableFrame: options.onUndeliverableFrame,
+    attachments: options.attachments,
     verifySignature: options.verifySignature ?? (async () => true),
     fullState: options.fullState,
     retentionCutoff: options.retentionCutoff,
@@ -172,6 +177,50 @@ describe('createCatchUpExchange on a peer request', () => {
     });
 
     expect(sent).toEqual([{ v: 1, kind: 'frames', frames: [held], final: true }]);
+  });
+
+  it('offers permitted attachment manifests after the final frame batch', async () => {
+    const manifest: AttachmentChunkManifest = {
+      attachmentId: 'attachment-1',
+      contentHash: 'whole',
+      totalBytes: 3,
+      chunkBytes: 3,
+      chunkCount: 1,
+      chunkHashes: ['part'],
+    };
+    const manifestsForScopes = vi.fn().mockResolvedValue([manifest]);
+    const { exchange, sent } = harness({
+      attachments: {
+        manifestsForScopes,
+        create: (send) => ({
+          offer: (manifests) => {
+            send({
+              v: CATCH_UP_PROTOCOL_VERSION,
+              kind: 'attachment-offer',
+              manifests: [...manifests],
+            });
+          },
+          receive: async () => undefined,
+        }),
+      },
+    });
+
+    await exchange.receive({
+      v: 1,
+      kind: 'request',
+      requests: [
+        {
+          accessScopeId: 'scope-1',
+          originDeviceId: asDeviceId('device-a'),
+        },
+      ],
+    });
+
+    expect(manifestsForScopes).toHaveBeenCalledWith(['scope-1']);
+    expect(sent).toEqual([
+      { v: 1, kind: 'frames', frames: [], final: true },
+      { v: 1, kind: 'attachment-offer', manifests: [manifest] },
+    ]);
   });
 
   it('splits a reply that would outgrow the transport, final on the last part', async () => {

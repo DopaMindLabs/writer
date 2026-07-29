@@ -74,7 +74,11 @@ export type {
 } from './catchUpMessage';
 
 export { createCatchUpExchange, UndeliverableFrameError } from './catchUpExchange';
-export type { CatchUpExchange, CatchUpPorts } from './catchUpExchange';
+export type {
+  CatchUpAttachments,
+  CatchUpExchange,
+  CatchUpPorts,
+} from './catchUpExchange';
 
 export { startCatchUpSession } from './catchUpSession';
 export type { CatchUpSession } from './catchUpSession';

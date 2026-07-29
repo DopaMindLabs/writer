@@ -3,11 +3,14 @@ import { asDeviceId } from 'writer-sync/core';
 import type { PeerSession } from 'writer-sync/providers/webrtc';
 import type { DataChannelLike } from 'writer-sync/providers/webrtc';
 import {
+  buildChunkManifest,
   CATCH_UP_PROTOCOL_VERSION,
   decodeCatchUpMessage,
   encodeCatchUpMessage,
+  TRANSFER_CHUNK_BYTES,
   type CatchUpMessage,
 } from 'writer-sync/operations';
+import { toBase64Url } from 'writer-sync/crypto';
 import { TrustedDeviceStatus } from 'writer-sync/core';
 import { LoremDB } from '@/db/LoremDB';
 import { NoteKind, NoteState } from '@/db/schema';
@@ -64,7 +67,15 @@ const fakeChannel = (readyState: 'open' | 'connecting' = 'open') => {
       addEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => {
         listeners.set(type, [...(listeners.get(type) ?? []), listener]);
       },
-      removeEventListener: () => undefined,
+      removeEventListener: (
+        type: string,
+        listener: (event: MessageEvent<unknown>) => void,
+      ) => {
+        listeners.set(
+          type,
+          (listeners.get(type) ?? []).filter((held) => held !== listener),
+        );
+      },
     } as unknown as DataChannelLike,
   };
 };
@@ -527,5 +538,83 @@ describe('createPeerCatchUp', () => {
     expect(kindsSoFar().indexOf('manifest')).toBeGreaterThan(0);
     catchUp.stop();
   });
-});
 
+  it('persists attachment progress and resumes it over a later peer exchange', async () => {
+    const content = new Uint8Array(TRANSFER_CHUNK_BYTES + 3);
+    const manifest = await buildChunkManifest({
+      attachmentId: 'a1',
+      content,
+      chunkBytes: TRANSFER_CHUNK_BYTES,
+    });
+    await db.syncOperations.put({
+      v: 1,
+      operationId: asOperationId('op-a1'),
+      accessScopeId: 's1',
+      entityTable: 'noteAttachments',
+      entityId: 'a1',
+      kind: 'put',
+      deviceId: PEER,
+      logicalAt: { millis: 1000, counter: 0 },
+      keyId: 'key-1',
+      epoch: 1,
+      payloadHash: 'hash',
+      payload: 'sealed',
+      signature: 'signed',
+    });
+
+    const firstWire = fakeChannel();
+    const firstSession = fakeSession(firstWire.channel);
+    const firstCatchUp = createPeerCatchUp(db);
+    await firstCatchUp.adopt({
+      session: firstSession.session,
+      deviceId: PEER,
+    });
+    await vi.waitFor(() => {
+      expect(firstWire.sent[0]?.kind).toBe('manifest');
+    });
+    firstWire.deliver({
+      v: 1,
+      kind: 'attachment-offer',
+      manifests: [manifest],
+    });
+    await vi.waitFor(() => {
+      expect(firstWire.sent.at(-1)).toMatchObject({
+        kind: 'attachment-request',
+        indices: [0, 1],
+      });
+    });
+    firstWire.deliver({
+      v: 1,
+      kind: 'attachment-chunk',
+      chunk: {
+        attachmentId: 'a1',
+        index: 0,
+        bytes: toBase64Url(content.subarray(0, TRANSFER_CHUNK_BYTES)),
+      },
+    });
+    await vi.waitFor(async () => {
+      expect(await db.syncAttachmentChunks.get(['a1', 0])).toBeDefined();
+    });
+    firstCatchUp.stop();
+
+    const resumedWire = fakeChannel();
+    const resumedSession = fakeSession(resumedWire.channel);
+    const resumedCatchUp = createPeerCatchUp(db);
+    await resumedCatchUp.adopt({
+      session: resumedSession.session,
+      deviceId: PEER,
+    });
+    resumedWire.deliver({
+      v: 1,
+      kind: 'attachment-offer',
+      manifests: [manifest],
+    });
+    await vi.waitFor(() => {
+      expect(resumedWire.sent.at(-1)).toMatchObject({
+        kind: 'attachment-request',
+        indices: [1],
+      });
+    });
+    resumedCatchUp.stop();
+  });
+});

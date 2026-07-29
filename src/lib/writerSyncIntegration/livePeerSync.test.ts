@@ -1,11 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { asDeviceId, asOperationId, type SyncCoordinator } from 'writer-sync/core';
+import {
+  asDeviceId,
+  asOperationId,
+  asPrincipalId,
+  type SyncCoordinator,
+} from 'writer-sync/core';
+import { toBase64 } from 'writer-sync/crypto';
 import {
   decodeCatchUpMessage,
+  encodeCatchUpMessage,
   type CatchUpMessage,
   type EncryptedSyncFrame,
 } from 'writer-sync/operations';
 import { LoremDB } from '@/db/LoremDB';
+import type { NoteAttachment } from '@/db/schema';
 import { startLivePeerSync } from './livePeerSync';
 
 /**
@@ -44,6 +52,7 @@ const fakeCoordinator = (transportCeiling?: number) => {
   const sent: { scope: string; message: CatchUpMessage }[] = [];
   const closed: string[] = [];
   const created: string[] = [];
+  const listeners = new Map<string, (bytes: Uint8Array) => void>();
   const coordinator = {
     provider: (id: string) =>
       id === PROVIDER
@@ -60,7 +69,12 @@ const fakeCoordinator = (transportCeiling?: number) => {
                       message: decodeCatchUpMessage(bytes),
                     });
                   },
-                  onMessage: () => () => undefined,
+                  onMessage: (callback: (bytes: Uint8Array) => void) => {
+                    listeners.set(accessScopeId, callback);
+                    return () => {
+                      listeners.delete(accessScopeId);
+                    };
+                  },
                   close: () => closed.push(accessScopeId),
                 });
               },
@@ -68,7 +82,15 @@ const fakeCoordinator = (transportCeiling?: number) => {
           }
         : undefined,
   } as unknown as SyncCoordinator;
-  return { coordinator, sent, closed, created };
+  return {
+    coordinator,
+    sent,
+    closed,
+    created,
+    receive: (scope: string, message: CatchUpMessage) => {
+      listeners.get(scope)?.(encodeCatchUpMessage(message));
+    },
+  };
 };
 
 const start = (peer: ReturnType<typeof fakeCoordinator>) =>
@@ -78,6 +100,22 @@ const start = (peer: ReturnType<typeof fakeCoordinator>) =>
     providerId: PROVIDER,
     deviceId: () => Promise.resolve(HERE),
   });
+
+const attachment = (): NoteAttachment => ({
+  accessScopeId: 'space-1',
+  createdBy: asPrincipalId('me'),
+  updatedBy: asPrincipalId('me'),
+  mutationId: asOperationId('op-a1'),
+  logicalUpdatedAt: { millis: 1_700_000_000_000, counter: 0 },
+  id: 'attachment-1',
+  noteId: 'note-1',
+  spaceId: 'space-1',
+  name: 'figure.png',
+  mime: 'image/png',
+  size: 3,
+  blob: new Blob([new ArrayBuffer(3)], { type: 'image/png' }),
+  createdAt: 1_700_000_000_000,
+});
 
 beforeEach(async () => {
   db = new LoremDB('live-peer-sync');
@@ -119,6 +157,44 @@ describe('startLivePeerSync', () => {
       expect(peer.sent[0]?.message).toMatchObject({
         kind: 'frames',
         frames: [{ operationId: 'op-fits' }],
+      });
+    });
+    stop();
+  });
+
+  it('offers and serves the chunks for a locally authored attachment frame', async () => {
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+    await db.noteAttachments.put(attachment());
+    await db.syncAttachmentChunks.put({
+      attachmentId: 'attachment-1',
+      index: 0,
+      accessScopeId: 'space-1',
+      bytes: toBase64(new Uint8Array([1, 2, 3])),
+    });
+    await db.syncOperations.put(
+      frameOf({
+        entityTable: 'noteAttachments',
+        entityId: 'attachment-1',
+      }),
+    );
+
+    await vi.waitFor(() => {
+      expect(peer.sent.map(({ message }) => message.kind)).toEqual([
+        'frames',
+        'attachment-offer',
+      ]);
+    });
+    peer.receive('space-1', {
+      v: 1,
+      kind: 'attachment-request',
+      attachmentId: 'attachment-1',
+      indices: [0],
+    });
+    await vi.waitFor(() => {
+      expect(peer.sent.at(-1)?.message).toMatchObject({
+        kind: 'attachment-chunk',
+        chunk: { attachmentId: 'attachment-1', index: 0 },
       });
     });
     stop();

@@ -1,13 +1,18 @@
 import type { AccessScopeId, SyncCoordinator } from 'writer-sync/core';
+import Dexie from 'dexie';
 import {
   CATCH_UP_PROTOCOL_VERSION,
+  decodeCatchUpMessage,
   encodeCatchUpMessage,
   fitsMessageBudget,
+  type AttachmentTransfer,
+  type CatchUpMessage,
   type EncryptedSyncFrame,
 } from 'writer-sync/operations';
 import type { SyncTransport } from 'writer-sync/core';
 import type { LoremDB } from '@/db/LoremDB';
 import { appLogger } from '@/lib/appLogger';
+import { createAttachmentChunkStore } from './attachmentChunkStore';
 
 /**
  * Sending this device's new work to the devices it is paired with, as it is
@@ -30,6 +35,17 @@ import { appLogger } from '@/lib/appLogger';
 /** One channel per scope, named for what it carries. */
 const OPERATIONS_CHANNEL = 'operations';
 
+const afterCurrentTransaction = (): Promise<void> => {
+  const transaction = Dexie.currentTransaction;
+  if (!transaction.active) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    transaction.on('complete', resolve);
+    transaction.on('abort', () => {
+      reject(transaction.idbtrans.error ?? new Error('live frame transaction aborted'));
+    });
+  });
+};
+
 export interface LivePeerSyncOptions {
   db: LoremDB;
   coordinator: SyncCoordinator;
@@ -43,12 +59,19 @@ export interface LivePeerSyncOptions {
  * Transports are made once per scope and kept: creating one asks the peer
  * session for a channel, and a channel per frame would open one per keystroke.
  */
-const transportCache = (
-  create: (accessScopeId: AccessScopeId) => Promise<SyncTransport>,
+interface LiveLink {
+  transport: SyncTransport;
+  attachments: AttachmentTransfer;
+  offerAttachment: (attachmentId: string) => Promise<void>;
+  close: () => void;
+}
+
+const linkCache = (
+  create: (accessScopeId: AccessScopeId) => Promise<LiveLink>,
 ) => {
-  const open = new Map<string, Promise<SyncTransport>>();
+  const open = new Map<string, Promise<LiveLink>>();
   return {
-    for: (accessScopeId: AccessScopeId): Promise<SyncTransport> => {
+    for: (accessScopeId: AccessScopeId): Promise<LiveLink> => {
       const existing = open.get(accessScopeId);
       if (existing !== undefined) return existing;
       const created = create(accessScopeId);
@@ -57,11 +80,47 @@ const transportCache = (
     },
     closeAll: () => {
       for (const pending of open.values()) {
-        void pending.then((transport) => {
-          transport.close();
+        void pending.then((link) => {
+          link.close();
         }).catch(() => undefined);
       }
       open.clear();
+    },
+  };
+};
+
+const openLiveLink = async (options: {
+  db: LoremDB;
+  accessScopeId: AccessScopeId;
+  createTransport: () => Promise<SyncTransport>;
+}): Promise<LiveLink> => {
+  const { db, accessScopeId } = options;
+  const transport = await options.createTransport();
+  const store = createAttachmentChunkStore(db);
+  const send = (message: CatchUpMessage): void => {
+    transport.send(encodeCatchUpMessage(message));
+  };
+  const attachments = store.create(send);
+  const off = transport.onMessage((bytes) => {
+    void attachments
+      .receive(decodeCatchUpMessage(bytes))
+      .catch((error: unknown) => {
+        appLogger.warn('receiving a live attachment message failed', error);
+      });
+  });
+  return {
+    transport,
+    attachments,
+    offerAttachment: async (attachmentId) => {
+      const manifests = await store.manifestsForScopes([accessScopeId]);
+      const selected = manifests.filter(
+        (manifest) => manifest.attachmentId === attachmentId,
+      );
+      if (selected.length > 0) attachments.offer(selected);
+    },
+    close: () => {
+      off();
+      transport.close();
     },
   };
 };
@@ -71,12 +130,23 @@ export const startLivePeerSync = (options: LivePeerSyncOptions): (() => void) =>
   const realtime = coordinator.provider(providerId)?.realtime;
   if (realtime === undefined) return () => undefined;
 
-  const transports = transportCache((accessScopeId) =>
-    realtime.createTransport({ accessScopeId, channelId: OPERATIONS_CHANNEL }),
+  const links = linkCache((accessScopeId) =>
+    openLiveLink({
+      db,
+      accessScopeId,
+      createTransport: () =>
+        realtime.createTransport({
+          accessScopeId,
+          channelId: OPERATIONS_CHANNEL,
+        }),
+    }),
   );
 
-  const send = async (frame: EncryptedSyncFrame): Promise<void> => {
-    const transport = await transports.for(frame.accessScopeId);
+  const send = async (
+    frame: EncryptedSyncFrame,
+    committed: Promise<void>,
+  ): Promise<void> => {
+    const link = await links.for(frame.accessScopeId);
     const bytes = encodeCatchUpMessage({
       v: CATCH_UP_PROTOCOL_VERSION,
       kind: 'frames',
@@ -86,24 +156,29 @@ export const startLivePeerSync = (options: LivePeerSyncOptions): (() => void) =>
     // A frame the bearer cannot carry is skipped with its name in the log, not
     // thrown at the transport: catch-up meets the same ceiling, so this frame
     // does not cross the peer link at all until it is thinned.
-    if (!fitsMessageBudget(bytes.byteLength, transport.maxMessageBytes)) {
+    if (!fitsMessageBudget(bytes.byteLength, link.transport.maxMessageBytes)) {
       appLogger.warn('live frame exceeds the transport ceiling, not sent', {
         operationId: String(frame.operationId),
         byteLength: bytes.byteLength,
       });
       return;
     }
-    transport.send(bytes);
+    link.transport.send(bytes);
+    if (frame.entityTable === 'noteAttachments') {
+      await committed;
+      await Dexie.ignoreTransaction(() => link.offerAttachment(frame.entityId));
+    }
   };
 
   const onCreated = (_key: unknown, frame: EncryptedSyncFrame): void => {
+    const committed = afterCurrentTransaction();
     void options
       .deviceId()
       .then(async (here) => {
         // Only this device's own work: a frame that arrived from a peer is
         // already held by the peer it came from.
         if (String(frame.deviceId) !== here) return;
-        await send(frame);
+        await send(frame, committed);
       })
       .catch((error: unknown) => {
         // A peer that cannot be reached is not a failed write. The frame is in
@@ -116,6 +191,6 @@ export const startLivePeerSync = (options: LivePeerSyncOptions): (() => void) =>
 
   return () => {
     db.syncOperations.hook('creating').unsubscribe(onCreated);
-    transports.closeAll();
+    links.closeAll();
   };
 };
