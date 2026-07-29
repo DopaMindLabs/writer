@@ -335,6 +335,9 @@ commit on a misnamed branch (fail fast), the `pre-push` hook blocks the push, th
 name** CI check gates the PR, and the `post-checkout` hook prints a non-blocking warning
 the moment a misnamed branch is checked out (`--warn` mode):
 
+- **Never bypass Git hooks.** Do not use `--no-verify` with `git commit`, `git push`, or any
+  other Git command. Pre-commit, commit-message, and pre-push hooks must run and pass; fix
+  failures instead of bypassing them.
 - Form: `<type>/<kebab-description>` — e.g. `feat/user-login`, `fix/date-parse`,
   `chore/bump-deps`. Underscores are allowed for suffixes (`feat/user-login_v2`).
 - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`,
