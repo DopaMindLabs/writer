@@ -53,6 +53,33 @@ export type RootTransferMessage =
       epoch: number;
     };
 
+/**
+ * Every kind this protocol speaks, as a lookup so the compiler proves the list
+ * stays complete: a kind added to or dropped from the union above stops this
+ * table from satisfying it.
+ */
+const ROOT_TRANSFER_KIND_TABLE = {
+  'holds-root': true,
+  'needs-root': true,
+  ready: true,
+  root: true,
+} satisfies Record<RootTransferMessage['kind'], true>;
+
+export const ROOT_TRANSFER_MESSAGE_KINDS: readonly RootTransferMessage['kind'][] =
+  Object.keys(ROOT_TRANSFER_KIND_TABLE) as RootTransferMessage['kind'][];
+
+/**
+ * Whether a kind belongs to this protocol, for a host that carries more than one
+ * protocol over a single channel and has to know whose message it is holding.
+ *
+ * Answers for a kind alone, because that is all a router can read without
+ * decoding: the version field cannot separate protocols that each number
+ * themselves from 1. Own properties only — a peer chooses the string, and
+ * `toString` is not a kind.
+ */
+export const isRootTransferMessageKind = (kind: string): boolean =>
+  Object.hasOwn(ROOT_TRANSFER_KIND_TABLE, kind);
+
 const refuse = (reason: string): never => {
   throw new PairingError(PairingErrorCode.MalformedPayload, `root transfer: ${reason}`);
 };

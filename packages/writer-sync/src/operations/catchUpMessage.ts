@@ -79,6 +79,37 @@ export type CatchUpMessage =
       acknowledgements: OperationAcknowledgement[];
     };
 
+/**
+ * Every kind this protocol speaks, as a lookup so the compiler proves the list
+ * stays complete: a kind added to or dropped from the union above stops this
+ * table from satisfying it.
+ */
+const CATCH_UP_KIND_TABLE = {
+  manifest: true,
+  request: true,
+  'attachment-offer': true,
+  'attachment-request': true,
+  'attachment-chunk': true,
+  frames: true,
+  ack: true,
+} satisfies Record<CatchUpMessage['kind'], true>;
+
+export const CATCH_UP_MESSAGE_KINDS: readonly CatchUpMessage['kind'][] = Object.keys(
+  CATCH_UP_KIND_TABLE,
+) as CatchUpMessage['kind'][];
+
+/**
+ * Whether a kind belongs to this protocol, for a host that carries more than one
+ * protocol over a single channel and has to know whose message it is holding.
+ *
+ * Answers for a kind alone, because that is all a router can read without
+ * decoding: the version field cannot separate protocols that each number
+ * themselves from 1. Own properties only — a peer chooses the string, and
+ * `toString` is not a kind.
+ */
+export const isCatchUpMessageKind = (kind: string): boolean =>
+  Object.hasOwn(CATCH_UP_KIND_TABLE, kind);
+
 export class MalformedCatchUpMessageError extends Error {
   constructor(reason: string) {
     super(`Malformed catch-up message: ${reason}`);

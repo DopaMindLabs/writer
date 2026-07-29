@@ -9,6 +9,7 @@ import { createTrustedFrameVerifier } from 'writer-sync/crypto';
 import {
   CONTROL_CHANNEL,
   createWebRtcTransport,
+  splitPairingChannel,
   type DataChannelLike,
   type PeerSession,
 } from 'writer-sync/providers/webrtc';
@@ -215,17 +216,28 @@ const openChannelOnce = (
 interface PeerChannelOptions {
   channel: DataChannelLike;
   peer: AdoptedPeer;
-  startCatchUp: () => void;
+  /** Begin syncing, over the channel key material has finished with. */
+  startCatchUp: (channel: DataChannelLike) => void;
   track: (running: RunningRootSecretHandover) => void;
 }
 
 /**
  * Hand over key material first, then sync.
  *
- * The two protocols share one channel and are read by different decoders, so
- * they take turns rather than interleave. Catch-up second is also the only order
- * that means anything: a device still waiting for a root can decrypt nothing, so
- * it would advertise no scopes and be told, wrongly, that it is caught up.
+ * Catch-up second is the only order that means anything: a device still waiting
+ * for a root can decrypt nothing, so it would advertise no scopes and be told,
+ * wrongly, that it is caught up.
+ *
+ * Waiting is not the same as not listening. Both protocols read the channel from
+ * the moment it opens, each through a view of its own, because neither device can
+ * see when its peer moves on: each waits on a deadline of its own, so the one
+ * whose deadline passes first starts syncing while the other is still reading for
+ * keys. A manifest is sent once and never repeated — refused, it cost the
+ * exchange in that direction for the life of the session.
+ *
+ * A session adopted without a fresh pairing sends no key material at all, so its
+ * channel carries one protocol and is handed over whole: nothing is filtered, and
+ * anything a peer sends that catch-up cannot read is refused as loudly as before.
  */
 const onPeerChannel = ({
   channel,
@@ -235,11 +247,23 @@ const onPeerChannel = ({
 }: PeerChannelOptions): void => {
   const { secretHandover } = peer;
   if (secretHandover === undefined) {
-    startCatchUp();
+    startCatchUp(channel);
     return;
   }
+  const { rootTransfer, catchUp } = splitPairingChannel({
+    channel,
+    onOverflow: (protocol) => {
+      appLogger.warn('a peer sent more than the pairing channel holds', { protocol });
+    },
+  });
   track(
-    runRootSecretHandover({ channel, session: secretHandover, onSettled: startCatchUp }),
+    runRootSecretHandover({
+      channel: rootTransfer,
+      session: secretHandover,
+      onSettled: () => {
+        startCatchUp(catchUp);
+      },
+    }),
   );
 };
 
@@ -299,14 +323,7 @@ interface ListenOptions {
  */
 const listenToPeer = ({ peer, exchangeOver, track }: ListenOptions): void => {
   openChannelOnce(peer.session, (channel) => {
-    onPeerChannel({
-      channel,
-      peer,
-      startCatchUp: () => {
-        exchangeOver(channel);
-      },
-      track,
-    });
+    onPeerChannel({ channel, peer, startCatchUp: exchangeOver, track });
   });
 
   peer.session.onAnyChannel((channel) => {

@@ -55,6 +55,7 @@ export { buildScopeManifests, framesForRequest, planCatchUp } from './scopeManif
 export type { CatchUpRequest, OriginSummary, ScopeManifest } from './scopeManifest';
 
 export {
+  CATCH_UP_MESSAGE_KINDS,
   CATCH_UP_PROTOCOL_VERSION,
   MAX_ACKNOWLEDGEMENTS,
   MAX_ATTACHMENT_OFFERS,
@@ -66,6 +67,7 @@ export {
   MalformedCatchUpMessageError,
   decodeCatchUpMessage,
   encodeCatchUpMessage,
+  isCatchUpMessageKind,
 } from './catchUpMessage';
 export type {
   AttachmentChunkPayload,

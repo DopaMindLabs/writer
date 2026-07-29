@@ -155,10 +155,11 @@ export interface RunningRootSecretHandover {
 /**
  * Drive the handover over one channel, then get out of the way.
  *
- * The listener is removed on the way out because catch-up reads the same
- * channel next, with a decoder of its own: two protocols sharing a channel take
- * turns, and a listener left behind would report every sync message as an
- * unreadable root transfer.
+ * The listener is removed on the way out. The caller hands this protocol a view
+ * of the channel rather than the channel itself, so sync traffic never reaches
+ * this decoder — but a peer that has not finished repeats `ready` until it hears
+ * back, and detaching is what stops those late repeats being answered by a
+ * conversation that is over.
  */
 export const runRootSecretHandover = (
   options: RunRootSecretHandoverOptions,

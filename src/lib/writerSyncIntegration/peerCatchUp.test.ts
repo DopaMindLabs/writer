@@ -13,6 +13,7 @@ import {
 import { toBase64Url } from 'writer-sync/crypto';
 import { TrustedDeviceStatus } from 'writer-sync/core';
 import { LoremDB } from '@/db/LoremDB';
+import { appLogger } from '@/lib/appLogger';
 import { NoteKind, NoteState } from '@/db/schema';
 import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
@@ -126,6 +127,74 @@ const fakeSession = (existing: DataChannelLike | null = null) => {
     listeningForChannels: () => anySubscribers.size > 0,
   };
 };
+
+/**
+ * A channel that keeps every byte written to it and lets a test play the peer in
+ * either protocol.
+ *
+ * Two protocols share this channel, so no single decoder can read everything
+ * that crosses it — and unsubscribing has to work, because settling the key
+ * conversation is what hands the channel on.
+ */
+const rawWire = () => {
+  const raw: Uint8Array[] = [];
+  const listeners: ((event: MessageEvent<unknown>) => void)[] = [];
+  const channel = {
+    label: 'writer-sync-control',
+    readyState: 'open',
+    bufferedAmount: 0,
+    bufferedAmountLowThreshold: 0,
+    send: (data: ArrayBuffer) => raw.push(new Uint8Array(data)),
+    close: vi.fn(),
+    addEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => {
+      if (type === 'message') listeners.push(listener);
+    },
+    removeEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => {
+      if (type !== 'message') return;
+      const at = listeners.indexOf(listener);
+      if (at >= 0) listeners.splice(at, 1);
+    },
+  } as unknown as DataChannelLike;
+
+  const deliver = (bytes: Uint8Array): void => {
+    // This realm's own buffer: the encoder's belongs to Node's under jsdom.
+    const buffer = new ArrayBuffer(bytes.byteLength);
+    new Uint8Array(buffer).set(bytes);
+    for (const listener of [...listeners]) {
+      listener({ data: buffer } as MessageEvent<unknown>);
+    }
+  };
+
+  return {
+    channel,
+    raw,
+    deliverRoot: (message: RootTransferMessage) =>
+      deliver(encodeRootTransferMessage(message)),
+    deliverCatchUp: (message: CatchUpMessage) => deliver(encodeCatchUpMessage(message)),
+    /** What crossed the wire, naming anything catch-up cannot read as the other protocol. */
+    kinds: (): string[] =>
+      raw.map((bytes) => {
+        try {
+          return decodeCatchUpMessage(bytes).kind;
+        } catch {
+          return 'root-transfer';
+        }
+      }),
+  };
+};
+
+/** What a freshly confirmed pairing leaves behind for the root to travel on. */
+const handoverFor = () => ({
+  peer: {
+    deviceId: PEER,
+    publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },
+    peerEphemeralPublicJwk: { kty: 'EC', crv: 'P-256', x: 'e', y: 'f' },
+    transcript: new Uint8Array([9]),
+    verificationCode: '048213',
+  },
+  sessionPrivateKey: null,
+  deviceId: asDeviceId('this-device'),
+});
 
 beforeEach(async () => {
   db = new LoremDB('peer-catch-up');
@@ -536,6 +605,85 @@ describe('createPeerCatchUp', () => {
     // Order is the point, not adjacency: the transfer keeps saying its piece
     // until the peer agrees, so what matters is that no manifest preceded it.
     expect(kindsSoFar().indexOf('manifest')).toBeGreaterThan(0);
+    catchUp.stop();
+  });
+
+  it('answers a peer that started syncing before the key conversation ended', async () => {
+    // Neither device can see when its peer moves on: each waits for key material
+    // on a deadline of its own, so the one whose deadline passes first starts
+    // syncing while the other is still listening for keys. A manifest is sent
+    // once and never repeated, so refusing it cost the exchange in that
+    // direction for the life of the session — the device reported itself synced
+    // and then never asked for anything.
+    await saveDeviceKeyRing({
+      ring: await deriveKeyRing(generateRootSecret(), 1),
+      accountId: null,
+    });
+    const wire = rawWire();
+    const peer = fakeSession(wire.channel);
+    const catchUp = createPeerCatchUp(db);
+
+    await catchUp.adopt({
+      session: peer.session,
+      deviceId: PEER,
+      secretHandover: handoverFor(),
+    });
+    await vi.waitFor(() => {
+      expect(wire.raw.length).toBeGreaterThan(0);
+    });
+
+    // Early: this device is still reading for key material.
+    wire.deliverCatchUp({
+      v: CATCH_UP_PROTOCOL_VERSION,
+      kind: 'manifest',
+      manifests: [],
+    });
+    // Now the key conversation finishes and catch-up takes the channel over.
+    wire.deliverRoot({ v: 1, kind: 'holds-root' });
+    wire.deliverRoot({ v: 1, kind: 'ready' });
+
+    // The manifest is answered, late but answered: a request is this device
+    // asking for what that manifest said the peer holds.
+    await vi.waitFor(() => {
+      expect(wire.kinds()).toContain('request');
+    });
+    catchUp.stop();
+  });
+
+  it('does not report the tail of the key conversation as a sync failure', async () => {
+    // The slower device keeps saying `ready` every half second until it hears
+    // back, and those repeats arrive after the faster one has handed the channel
+    // to catch-up, whose decoder knows nothing of that word.
+    const warn = vi.spyOn(appLogger, 'warn').mockImplementation(() => undefined);
+    await saveDeviceKeyRing({
+      ring: await deriveKeyRing(generateRootSecret(), 1),
+      accountId: null,
+    });
+    const wire = rawWire();
+    const peer = fakeSession(wire.channel);
+    const catchUp = createPeerCatchUp(db);
+
+    await catchUp.adopt({
+      session: peer.session,
+      deviceId: PEER,
+      secretHandover: handoverFor(),
+    });
+    await vi.waitFor(() => {
+      expect(wire.raw.length).toBeGreaterThan(0);
+    });
+    wire.deliverRoot({ v: 1, kind: 'holds-root' });
+    wire.deliverRoot({ v: 1, kind: 'ready' });
+    await vi.waitFor(() => {
+      expect(wire.kinds()).toContain('manifest');
+    });
+
+    wire.deliverRoot({ v: 1, kind: 'ready' });
+    // A refusal is reported from a rejected promise, so give it its turn before
+    // concluding that none happened.
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(warn).not.toHaveBeenCalledWith('peer catch-up failed', expect.anything());
     catchUp.stop();
   });
 

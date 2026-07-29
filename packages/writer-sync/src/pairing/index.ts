@@ -89,8 +89,10 @@ export type {
 
 export {
   MAX_WRAPPED_BYTES,
+  ROOT_TRANSFER_MESSAGE_KINDS,
   ROOT_TRANSFER_VERSION,
   decodeRootTransferMessage,
   encodeRootTransferMessage,
+  isRootTransferMessageKind,
 } from './rootTransferMessage';
 export type { RootTransferMessage } from './rootTransferMessage';

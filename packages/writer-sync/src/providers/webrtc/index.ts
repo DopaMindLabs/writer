@@ -16,6 +16,16 @@ export {
 } from './webRtcTransport';
 export type { DataChannelLike } from './webRtcTransport';
 
+export { MAX_HELD_MESSAGES, filterChannelByKind } from './filterChannelByKind';
+export type { FilterChannelByKindOptions } from './filterChannelByKind';
+
+export { splitPairingChannel } from './pairingChannelSplit';
+export type {
+  PairingChannelProtocol,
+  PairingChannelViews,
+  SplitPairingChannelOptions,
+} from './pairingChannelSplit';
+
 export {
   ICE_GATHERING_TIMEOUT_MILLIS,
   LOCAL_ONLY_ICE_CONFIGURATION,
