@@ -40,7 +40,7 @@ const frameOf = (overrides: Partial<EncryptedSyncFrame> = {}): EncryptedSyncFram
 });
 
 /** A coordinator offering one realtime provider, and a record of what it sent. */
-const fakeCoordinator = () => {
+const fakeCoordinator = (transportCeiling?: number) => {
   const sent: { scope: string; message: CatchUpMessage }[] = [];
   const closed: string[] = [];
   const created: string[] = [];
@@ -53,6 +53,7 @@ const fakeCoordinator = () => {
                 created.push(accessScopeId);
                 return Promise.resolve({
                   sharesStore: false,
+                  maxMessageBytes: transportCeiling,
                   send: (bytes: Uint8Array) => {
                     sent.push({
                       scope: accessScopeId,
@@ -101,6 +102,24 @@ describe('startLivePeerSync', () => {
           message: { v: 1, kind: 'frames', frames: [frameOf()], final: true },
         },
       ]);
+    });
+    stop();
+  });
+
+  it('skips a frame the transport cannot carry rather than throwing at it', async () => {
+    const peer = fakeCoordinator(1_000);
+    const stop = start(peer);
+
+    await db.syncOperations.put(frameOf({ payload: 'p'.repeat(4_000) }));
+    await db.syncOperations.put(frameOf({ operationId: asOperationId('op-fits') }));
+
+    // The oversized frame stays in the journal; only the one that fits crosses.
+    await vi.waitFor(() => {
+      expect(peer.sent).toHaveLength(1);
+      expect(peer.sent[0]?.message).toMatchObject({
+        kind: 'frames',
+        frames: [{ operationId: 'op-fits' }],
+      });
     });
     stop();
   });

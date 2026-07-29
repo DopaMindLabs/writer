@@ -87,6 +87,14 @@ export interface CatchUpPorts {
   onFramesJournalled?: () => void;
   /** Diagnostics for a refused frame. One bad frame never fails a batch. */
   onRejectedFrame?: (frame: EncryptedSyncFrame, reason: unknown) => void;
+  /**
+   * An outbound frame no message can carry — too large for the transport even
+   * alone. Deliberately distinct from {@link onRejectedFrame}, which is
+   * inbound. The frame is skipped, the rest of the reply still travels, and
+   * the peer's next manifest will show the gap and ask again — a reported
+   * loop, not a dead exchange.
+   */
+  onUndeliverableFrame?: (frame: EncryptedSyncFrame, reason: unknown) => void;
 }
 
 export interface CatchUpExchange {
@@ -206,18 +214,49 @@ const answer = async (
     maxFrames: MAX_FRAMES_PER_MESSAGE,
     maxBytes: ports.maxMessageBytes,
   });
-  // A frame too large for any message is still attempted, alone: the transport
-  // refuses it exactly as before this packing existed. Skipping it instead is
-  // the next change, not this one.
-  const batches = [...packed.batches, ...packed.oversized.map((frame) => [frame])];
+  // A frame no message can carry is skipped and reported, never attempted:
+  // the transport would refuse it and the throw would take the rest of the
+  // reply — and its final marker — down with it.
+  for (const frame of packed.oversized) {
+    ports.onUndeliverableFrame?.(frame, new UndeliverableFrameError(frame));
+  }
+  sendReplies(ports, packed.batches);
+};
+
+/** A frame whose lone-message encoding exceeds the transport's ceiling. */
+export class UndeliverableFrameError extends Error {
+  constructor(frame: EncryptedSyncFrame) {
+    super(
+      `catch-up: frame ${String(frame.operationId)} exceeds the transport's message ceiling`,
+    );
+    this.name = 'UndeliverableFrameError';
+  }
+}
+
+/**
+ * Send every batch, containing per-batch failures so the final marker still
+ * goes out: a reply that dies mid-way leaves the peer holding frames it will
+ * never acknowledge, and the same catch-up then re-runs on every connection.
+ * The first failure is rethrown after the loop so the session still reports.
+ */
+const sendReplies = (
+  ports: CatchUpPorts,
+  batches: readonly EncryptedSyncFrame[][],
+): void => {
+  let firstFailure: Error | undefined;
   batches.forEach((frames, index) => {
-    ports.send({
-      v: CATCH_UP_PROTOCOL_VERSION,
-      kind: 'frames',
-      frames,
-      final: index === batches.length - 1,
-    });
+    try {
+      ports.send({
+        v: CATCH_UP_PROTOCOL_VERSION,
+        kind: 'frames',
+        frames,
+        final: index === batches.length - 1,
+      });
+    } catch (error) {
+      firstFailure = firstFailure ?? (error instanceof Error ? error : new Error(String(error)));
+    }
   });
+  if (firstFailure !== undefined) throw firstFailure;
 };
 
 /** Ask the peer for what its manifest shows this device is missing. */

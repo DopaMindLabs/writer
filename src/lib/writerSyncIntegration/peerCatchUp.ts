@@ -152,6 +152,12 @@ const catchUpPorts = ({
       reason,
     });
   },
+  onUndeliverableFrame: (frame, reason) => {
+    appLogger.warn('a frame for the peer exceeds the transport ceiling', {
+      operationId: frame.operationId,
+      reason,
+    });
+  },
 });
 
 /**

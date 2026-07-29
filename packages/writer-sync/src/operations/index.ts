@@ -73,7 +73,7 @@ export type {
   OperationAcknowledgement,
 } from './catchUpMessage';
 
-export { createCatchUpExchange } from './catchUpExchange';
+export { createCatchUpExchange, UndeliverableFrameError } from './catchUpExchange';
 export type { CatchUpExchange, CatchUpPorts } from './catchUpExchange';
 
 export { startCatchUpSession } from './catchUpSession';

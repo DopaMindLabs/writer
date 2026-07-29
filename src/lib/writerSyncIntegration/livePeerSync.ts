@@ -2,6 +2,7 @@ import type { AccessScopeId, SyncCoordinator } from 'writer-sync/core';
 import {
   CATCH_UP_PROTOCOL_VERSION,
   encodeCatchUpMessage,
+  fitsMessageBudget,
   type EncryptedSyncFrame,
 } from 'writer-sync/operations';
 import type { SyncTransport } from 'writer-sync/core';
@@ -76,14 +77,23 @@ export const startLivePeerSync = (options: LivePeerSyncOptions): (() => void) =>
 
   const send = async (frame: EncryptedSyncFrame): Promise<void> => {
     const transport = await transports.for(frame.accessScopeId);
-    transport.send(
-      encodeCatchUpMessage({
-        v: CATCH_UP_PROTOCOL_VERSION,
-        kind: 'frames',
-        frames: [frame],
-        final: true,
-      }),
-    );
+    const bytes = encodeCatchUpMessage({
+      v: CATCH_UP_PROTOCOL_VERSION,
+      kind: 'frames',
+      frames: [frame],
+      final: true,
+    });
+    // A frame the bearer cannot carry is skipped with its name in the log, not
+    // thrown at the transport: catch-up meets the same ceiling, so this frame
+    // does not cross the peer link at all until it is thinned.
+    if (!fitsMessageBudget(bytes.byteLength, transport.maxMessageBytes)) {
+      appLogger.warn('live frame exceeds the transport ceiling, not sent', {
+        operationId: String(frame.operationId),
+        byteLength: bytes.byteLength,
+      });
+      return;
+    }
+    transport.send(bytes);
   };
 
   const onCreated = (_key: unknown, frame: EncryptedSyncFrame): void => {

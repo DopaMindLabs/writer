@@ -655,7 +655,12 @@ wired into the app.
   only for what it lacks. Counts, not marks alone, reveal a gap: a peer holding
   more operations behind the same mark is missing frames no mark can name, so
   that origin is requested whole. A scope this device cannot decrypt is never
-  requested. Verified frames are appended to the journal and materialised by the
+  requested. Replies are batched under both the protocol's frame-count ceiling
+  and the byte budget the transport advertises, so no message outgrows the
+  channel; a frame too large for any message even alone is skipped and
+  reported rather than allowed to kill the reply, and a send failure mid-reply
+  never withholds the final marker the acknowledgement depends on. Verified
+  frames are appended to the journal and materialised by the
   same inbox-guarded sweep every provider shares, so an operation arriving by two
   providers still applies exactly once. Attachments transfer in the same
   conversation: the holder offers a chunk manifest, the peer asks only for the

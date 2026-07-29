@@ -54,18 +54,27 @@ const harness = (options: {
   fullState?: (accessScopeId: AccessScopeId) => Promise<EncryptedSyncFrame[]>;
   retentionCutoff?: () => number;
   maxMessageBytes?: number;
+  onUndeliverableFrame?: (frame: EncryptedSyncFrame, reason: unknown) => void;
 } = {}) => {
   const frames = options.frames ?? [];
   const sent: CatchUpMessage[] = [];
   const acknowledged: OperationAcknowledgement[] = [];
   const rejected: EncryptedSyncFrame[] = [];
   const onFramesJournalled = vi.fn();
+  let failNext = false;
 
   const ports: CatchUpPorts = {
     journal: memoryStore(frames),
     accessibleScopeIds: async () => options.scopes ?? ['scope-1'],
-    send: (message) => sent.push(message),
+    send: (message) => {
+      if (failNext && message.kind === 'frames') {
+        failNext = false;
+        throw new Error('channel refused the message');
+      }
+      sent.push(message);
+    },
     maxMessageBytes: options.maxMessageBytes,
+    onUndeliverableFrame: options.onUndeliverableFrame,
     verifySignature: options.verifySignature ?? (async () => true),
     fullState: options.fullState,
     retentionCutoff: options.retentionCutoff,
@@ -83,6 +92,9 @@ const harness = (options: {
     acknowledged,
     rejected,
     onFramesJournalled,
+    failSendsOnce: () => {
+      failNext = true;
+    },
   };
 };
 
@@ -188,6 +200,58 @@ describe('createCatchUpExchange on a peer request', () => {
       ...Array.from({ length: replies.length - 1 }, () => false),
       true,
     ]);
+  });
+
+  it('skips a frame no message can carry, reports it, and still finishes', async () => {
+    const small = await frameOf({ id: 'op-small', millis: 10 });
+    const huge = {
+      ...(await frameOf({ id: 'op-huge', millis: 11 })),
+      payload: 'p'.repeat(4_000),
+      payloadHash: await hashPayload('p'.repeat(4_000)),
+    };
+    const undeliverable: EncryptedSyncFrame[] = [];
+    const { exchange, sent } = harness({
+      frames: [huge, small],
+      maxMessageBytes: 2_000,
+      onUndeliverableFrame: (frame) => undeliverable.push(frame),
+    });
+
+    await exchange.receive({
+      v: 1,
+      kind: 'request',
+      requests: [{ accessScopeId: 'scope-1', originDeviceId: asDeviceId('device-a') }],
+    });
+
+    const replies = sent.filter((message) => message.kind === 'frames');
+    expect(undeliverable).toEqual([huge]);
+    expect(replies.flatMap((reply) => reply.frames)).toEqual([small]);
+    expect(replies.at(-1)?.final).toBe(true);
+  });
+
+  it('keeps sending after a send that throws, so the final marker still goes out', async () => {
+    const held = await Promise.all(
+      Array.from({ length: 6 }, (_, index) => frameOf({ id: `op-${String(index)}`, millis: 10 })),
+    );
+    const { exchange, sent, failSendsOnce } = harness({
+      frames: held,
+      maxMessageBytes: 900,
+    });
+    failSendsOnce();
+
+    await expect(
+      exchange.receive({
+        v: 1,
+        kind: 'request',
+        requests: [{ accessScopeId: 'scope-1', originDeviceId: asDeviceId('device-a') }],
+      }),
+    ).rejects.toThrow(/channel refused/);
+
+    // The failed batch is lost — its frames travel on the next catch-up — but
+    // the reply still closed, so what did arrive is acknowledged rather than
+    // re-sent for ever.
+    const replies = sent.filter((message) => message.kind === 'frames');
+    expect(replies.length).toBeGreaterThan(0);
+    expect(replies.at(-1)?.final).toBe(true);
   });
 
   it('answers an empty request with an empty final reply', async () => {
