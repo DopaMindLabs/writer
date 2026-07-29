@@ -13,11 +13,13 @@
 main.tsx
   └── <App />
         └── useAppBoot()
-              1. hydrateCloudDevice()         — load persisted device key ring before any DB read
-              2. startCloudReconciler()        — watch sync state; reconcile pulled doc bodies
-              3. startEscrowReconciler()       — watch sign-in; publish/compare escrow
-              4. startKeylessLockMonitor()     — lock writes while signed-in without a key
-              5. applyDevBootParams()          — DEV/E2E only: force mismatch/keyless signals
+              1. registerPwa()                 — prompt-based service-worker registration (production builds)
+              2. requestPersistentStorage()    — silent bid to protect IndexedDB from eviction
+              3. hydrateCloudDevice()         — load persisted device key ring before any DB read
+              4. startCloudReconciler()        — watch sync state; reconcile pulled doc bodies
+              5. startEscrowReconciler()       — watch sign-in; publish/compare escrow
+              6. startKeylessLockMonitor()     — lock writes while signed-in without a key
+              7. applyDevBootParams()          — DEV/E2E only: force mismatch/keyless/pwa-update signals
               → setReady(true)
         └── <ThemeProvider>
               └── <A11yPreferenceProvider>
@@ -25,8 +27,26 @@ main.tsx
                     └── <RouterProvider />    — React Router
 ```
 
-Steps 2–4 are no-ops on a plain (non-cloud) database. The router mounts only after
+Steps 4–6 are no-ops on a plain (non-cloud) database; steps 1–2 are no-ops in dev
+builds and in browsers without the respective APIs. The router mounts only after
 `ready` is true; a boot failure shows `<BootErrorScreen>`.
+
+### PWA shell and update policy
+
+The app ships as an installable PWA (`vite-plugin-pwa`, Workbox `generateSW`).
+The service worker precaches the entire build — the data layer is already
+local-first in IndexedDB, so a cached shell is all offline needs — with no
+runtime caching rules: Dexie Cloud fetch/websocket traffic always passes
+through to the network. Updates use `registerType: 'prompt'`: a waiting worker
+is **never** activated silently, because same-origin tabs collaborating over
+`BroadcastChannel` would end up on mixed chunk versions mid-session and lazy
+chunks of the old build would vanish from the precache. Instead
+`onNeedRefresh` raises the `pwaUpdateState` signal (`src/lib/pwa/updateState.ts`,
+same observable shape as `keyMismatchState`), `<PwaUpdateBanner>` in
+`RootLayout` offers a reload, and only that action activates the worker — per
+tab; other tabs keep the old build until they too reload, which the stable CRDT
+update format (`formatVersion: 1`) tolerates. Relative `start_url`/`scope` let
+one config serve both deploy bases (`/writer/` on GitHub Pages, `/` on Vercel).
 
 ### Routes (`src/lib/routes.ts`)
 
