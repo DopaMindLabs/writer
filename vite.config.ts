@@ -23,7 +23,13 @@ const { version: appVersion } = JSON.parse(
 const pwaPlugin = () =>
   VitePWA({
     registerType: 'prompt',
-    includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
+    includeAssets: [
+      'favicon.svg',
+      'icon.svg',
+      'icon-maskable.svg',
+      'icon-monochrome.svg',
+      'apple-touch-icon.png',
+    ],
     manifest: {
       id: './',
       name: 'LIpsum Writer',
@@ -36,13 +42,41 @@ const pwaPlugin = () =>
       background_color: '#ffffff',
       theme_color: '#111111',
       icons: [
-        { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
-        { src: 'pwa-512.png', sizes: '512x512', type: 'image/png' },
+        {
+          src: 'icon.svg',
+          sizes: 'any',
+          type: 'image/svg+xml',
+          purpose: 'any',
+        },
+        {
+          src: 'pwa-192.png',
+          sizes: '192x192',
+          type: 'image/png',
+          purpose: 'any',
+        },
+        {
+          src: 'pwa-512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'any',
+        },
+        {
+          src: 'icon-maskable.svg',
+          sizes: 'any',
+          type: 'image/svg+xml',
+          purpose: 'maskable',
+        },
         {
           src: 'pwa-maskable-512.png',
           sizes: '512x512',
           type: 'image/png',
           purpose: 'maskable',
+        },
+        {
+          src: 'icon-monochrome.svg',
+          sizes: 'any',
+          type: 'image/svg+xml',
+          purpose: 'monochrome',
         },
       ],
     },

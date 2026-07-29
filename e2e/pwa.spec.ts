@@ -11,11 +11,37 @@ test('the page links a fetchable web app manifest', async ({ page }) => {
   const manifest = (await response.json()) as {
     name: string;
     display: string;
-    icons: { purpose?: string }[];
+    icons: {
+      src: string;
+      sizes: string;
+      type: string;
+      purpose?: string;
+    }[];
   };
   expect(manifest.name).toBe('LIpsum Writer');
   expect(manifest.display).toBe('standalone');
-  expect(manifest.icons.some((icon) => icon.purpose === 'maskable')).toBe(true);
+  expect(manifest.icons).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        src: 'icon.svg',
+        sizes: 'any',
+        type: 'image/svg+xml',
+        purpose: 'any',
+      }),
+      expect.objectContaining({
+        src: 'icon-maskable.svg',
+        sizes: 'any',
+        type: 'image/svg+xml',
+        purpose: 'maskable',
+      }),
+      expect.objectContaining({
+        src: 'icon-monochrome.svg',
+        sizes: 'any',
+        type: 'image/svg+xml',
+        purpose: 'monochrome',
+      }),
+    ]),
+  );
 });
 
 test('the service worker activates and the app shell survives offline reloads', async ({
