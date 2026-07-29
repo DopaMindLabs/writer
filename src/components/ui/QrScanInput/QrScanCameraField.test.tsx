@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { QrScanner } from 'writer-qr/scan';
 import { QrScanCameraField } from './QrScanCameraField';
+import { CAMERA_CONSTRAINTS } from './useCameraScan';
 
 /**
  * The camera path, driven without a camera. `getUserMedia` is injected, so these
@@ -197,5 +198,32 @@ describe('releasing the camera', () => {
 
     expect(first.stop).toHaveBeenCalledTimes(1);
     expect(second.stop).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('what the browser camera is asked for', () => {
+  it('requests the rear lens and enough pixels for a dense symbol', async () => {
+    // Without a stated resolution phones default to 640×480, which leaves a
+    // dense pairing symbol at two or three pixels per module — unreadable.
+    const getUserMedia = vi.fn(() => Promise.resolve(streamOf([track()])));
+    Object.defineProperty(navigator, 'mediaDevices', {
+      value: { getUserMedia },
+      configurable: true,
+    });
+    try {
+      renderField({ requestCamera: undefined });
+
+      await userEvent.click(screen.getByRole('button', { name: labels.startLabel }));
+
+      await waitFor(() => {
+        expect(getUserMedia).toHaveBeenCalledWith(CAMERA_CONSTRAINTS);
+      });
+      const video = CAMERA_CONSTRAINTS.video as MediaTrackConstraints;
+      expect(video.facingMode).toBe('environment');
+      expect(video.width).toEqual({ ideal: 2560 });
+      expect(video.height).toEqual({ ideal: 1440 });
+    } finally {
+      Reflect.deleteProperty(navigator, 'mediaDevices');
+    }
   });
 });

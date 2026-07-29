@@ -33,7 +33,7 @@ export type ExchangePhase =
  * Always one of a fixed set — never derived from error text, which may carry
  * peer-supplied content (threat model §5.11).
  */
-export type ExchangeFailureReason = 'too-large';
+export type ExchangeFailureReason = 'too-large' | 'expired';
 
 export interface PairingExchangeState {
   phase: ExchangePhase;
@@ -72,18 +72,25 @@ export type PairingExchangeAction =
   | { type: 'confirmed' }
   | { type: 'failed'; reason?: ExchangeFailureReason };
 
+/** The failure codes whose advice differs enough to be named to the user. */
+const NAMED_FAILURES: Partial<Record<PairingErrorCode, ExchangeFailureReason>> = {
+  [PairingErrorCode.OversizedPayload]: 'too-large',
+  [PairingErrorCode.Expired]: 'expired',
+};
+
 /**
  * The one mapping from a caught error to a failure action.
  *
- * A payload too large to encode is the only failure whose advice differs —
- * retrying will not shrink it — so it is the only one named. Everything else
- * stays generic: the reason is for developers, and failure copy must never
- * carry peer-supplied text.
+ * Only failures whose advice differs are named: a payload too large to encode
+ * (retrying will not shrink it) and an expired code (the fix is a fresh code,
+ * not a different one — the paste path through a photo app routinely outlives
+ * the code it carries). Everything else stays generic: the reason is for
+ * developers, and failure copy must never carry peer-supplied text.
  */
-export const failureActionFor = (error: unknown): PairingExchangeAction =>
-  error instanceof PairingError && error.code === PairingErrorCode.OversizedPayload
-    ? { type: 'failed', reason: 'too-large' }
-    : { type: 'failed' };
+export const failureActionFor = (error: unknown): PairingExchangeAction => {
+  const reason = error instanceof PairingError ? NAMED_FAILURES[error.code] : undefined;
+  return reason === undefined ? { type: 'failed' } : { type: 'failed', reason };
+};
 
 export const initialExchangeState: PairingExchangeState = {
   phase: 'creating',

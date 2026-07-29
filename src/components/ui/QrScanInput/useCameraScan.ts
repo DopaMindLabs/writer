@@ -35,14 +35,27 @@ export interface CameraScanOptions {
   intervalMillis?: number;
 }
 
+/**
+ * What the camera is asked for. The rear camera is the one pointed at another
+ * device's screen, and the resolution is a stated need, not a nicety: without
+ * it phones default to 640×480, which leaves a dense pairing symbol at two or
+ * three pixels per module — below what any detector can read. `ideal` degrades
+ * gracefully on hardware that has less to give.
+ */
+export const CAMERA_CONSTRAINTS: MediaStreamConstraints = {
+  video: {
+    facingMode: 'environment',
+    width: { ideal: 2560 },
+    height: { ideal: 1440 },
+  },
+};
+
 const browserCamera = (): Promise<MediaStream> => {
   const media = navigator.mediaDevices as MediaDevices | undefined;
   if (media === undefined) {
     return Promise.reject(new Error('this browser exposes no camera'));
   }
-  // The rear camera is the one pointed at another device's screen; a browser
-  // with only one honours this as a preference rather than failing.
-  return media.getUserMedia({ video: { facingMode: 'environment' } });
+  return media.getUserMedia(CAMERA_CONSTRAINTS);
 };
 
 /** A denial is the user's choice; anything else is the platform falling short. */

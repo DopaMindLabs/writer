@@ -144,6 +144,12 @@ describe('failureActionFor', () => {
     ).toEqual({ type: 'failed', reason: 'too-large' });
   });
 
+  it('names an expired code, whose fix is a fresh one', () => {
+    expect(
+      failureActionFor(new PairingError(PairingErrorCode.Expired, 'payload has expired')),
+    ).toEqual({ type: 'failed', reason: 'expired' });
+  });
+
   it('keeps every other failure generic', () => {
     expect(
       failureActionFor(new PairingError(PairingErrorCode.BadSignature, 'forged')),

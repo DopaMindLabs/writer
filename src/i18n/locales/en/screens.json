@@ -786,6 +786,7 @@
       "nextSymbol": "Next",
       "creating": "Preparing this device's code…",
       "failed": "This device could not prepare a pairing code. Close this and try again.",
+      "expired": "That code has expired. Close this on both devices and start again — a fresh code only takes a moment.",
       "openLabel": "Pair another device",
       "openHint": "Show a code your other device can scan, so the two can sync directly.",
       "retention": {
