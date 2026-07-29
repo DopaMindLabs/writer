@@ -90,6 +90,21 @@ export const importDevicePublicKey = async (jwk: JsonWebKey): Promise<CryptoKey>
 };
 
 /**
+ * Whether two public JWKs name the same identity key. Only `kty`, `crv`, `x`
+ * and `y` are the identity — exactly the members {@link importDevicePublicKey}
+ * reads. A JWK straight from `crypto.subtle.exportKey` also carries `ext` and
+ * `key_ops`, which describe the exported handle rather than the key, so a
+ * whole-object comparison would never match a stored record.
+ */
+export const sameIdentityKey = (a: JsonWebKey, b: JsonWebKey): boolean =>
+  a.kty === b.kty &&
+  a.crv === b.crv &&
+  typeof a.x === 'string' &&
+  a.x === b.x &&
+  typeof a.y === 'string' &&
+  a.y === b.y;
+
+/**
  * The device id: the first 128 bits of a domain-separated SHA-256 over the key's
  * SPKI encoding, base64url. SPKI rather than JWK because it is a canonical byte
  * encoding — a JWK is JSON, and two encoders could order its members differently

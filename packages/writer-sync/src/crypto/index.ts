@@ -48,6 +48,7 @@ export {
   generateDeviceIdentity,
   importDevicePublicKey,
   publicJwkOf,
+  sameIdentityKey,
 } from './deviceIdentity';
 export type { DeviceIdentityKeys } from './deviceIdentity';
 

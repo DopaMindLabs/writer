@@ -34,6 +34,7 @@ const registryOf = (record: TrustedDeviceRecord | null): TrustedDeviceRegistry =
   find: async () => record,
   trust: async () => undefined,
   recordSession: async () => undefined,
+  refreshTrust: async () => undefined,
   revoke: async () => undefined,
   acknowledge: async () => undefined,
 });

@@ -87,8 +87,12 @@ export interface PeerCatchUp {
    * Take over a peer session once pairing has been confirmed. Catch-up starts
    * as soon as the session has a control channel — which for the answering
    * device is when its peer opens one, not when the exchange finished.
+   *
+   * Resolves once the peer is recorded in the trust registry. Rejects — with
+   * the session closed and nothing exchanged — when recording is refused,
+   * which happens when a known device id presents a different identity key.
    */
-  adopt: (peer: AdoptedPeer) => void;
+  adopt: (peer: AdoptedPeer) => Promise<void>;
   /** Close every adopted session. */
   stop: () => void;
 }
@@ -239,10 +243,11 @@ const onPeerChannel = ({
  * record has nothing to be verified against and everything it sends is refused.
  * It is also what the device list reads.
  *
- * An identity already known is left exactly as it stands. Re-pairing a device is
- * a new session, not a new trust relationship, and rewriting the record would
- * let a peer replace the key an earlier pairing established — or quietly
- * resurrect one the user revoked.
+ * An identity already known is refreshed, never rewritten: the registry
+ * reactivates a revoked record only when the presented key is the stored one,
+ * so a completed pairing undoes a removal while a peer presenting a different
+ * key under a known id is refused — and that refusal must abort the adoption,
+ * not be logged past (`registry.refreshTrust`).
  */
 const rememberPeer = async (
   registry: TrustedDeviceRegistry,
@@ -252,7 +257,11 @@ const rememberPeer = async (
   if (keyTransfer === undefined) return;
   const now = Date.now();
   if ((await registry.find(peer.deviceId)) !== null) {
-    await registry.recordSession({ deviceId: peer.deviceId, at: now });
+    await registry.refreshTrust({
+      deviceId: peer.deviceId,
+      publicIdentityJwk: keyTransfer.peer.publicIdentityJwk,
+      at: now,
+    });
     return;
   }
   await registry.trust({
@@ -333,7 +342,7 @@ export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
   };
 
   return {
-    adopt: (peer) => {
+    adopt: async (peer) => {
       if (sessions.has(peer.session)) return;
       sessions.add(peer.session);
       // Published for the P2P provider, which asks for a channel without knowing
@@ -341,14 +350,19 @@ export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
       peerSessions.add({ session: peer.session, deviceId: peer.deviceId });
       // Trust is recorded before anything is exchanged: a frame arriving from a
       // device this one has no record of is refused, and the first frames can
-      // arrive as soon as the channel is read.
-      void rememberPeer(registry, peer)
-        .catch((error: unknown) => {
-          appLogger.warn('recording a paired device failed', error);
-        })
-        .finally(() => {
-          startOver(peer);
-        });
+      // arrive as soon as the channel is read. A refusal here is a refusal to
+      // sync at all — carrying on would open an exchange whose every frame the
+      // verifier then rejects, which is exactly the silent dead pairing this
+      // path once produced.
+      try {
+        await rememberPeer(registry, peer);
+      } catch (error) {
+        sessions.delete(peer.session);
+        peerSessions.remove(peer.session);
+        peer.session.close();
+        throw error;
+      }
+      startOver(peer);
     },
     stop: () => {
       for (const transfer of transfers) transfer.stop();

@@ -6,6 +6,8 @@ import {
   type TrustedDeviceRecord,
   type TrustedDeviceRegistry,
 } from 'writer-sync/core';
+import { sameIdentityKey } from 'writer-sync/crypto';
+import { PairingError, PairingErrorCode } from 'writer-sync/pairing';
 
 /**
  * Writer's {@link TrustedDeviceRegistry}, backed by its own `trustedDevices`
@@ -20,6 +22,24 @@ import {
  * completing at once would otherwise read the same record, and the second write
  * would silently discard the first's acknowledgement state.
  */
+/** A known device id under a different key is substitution, not reconnection. */
+const substitutionRefusal = (): PairingError =>
+  new PairingError(
+    PairingErrorCode.TrustedKeyMismatch,
+    'the stored identity for this device does not match the key it presented',
+  );
+
+/** The record as a successful refresh leaves it: active, session stamped. */
+const reactivated = (existing: TrustedDeviceRecord, at: number): TrustedDeviceRecord => {
+  const refreshed: TrustedDeviceRecord = {
+    ...existing,
+    status: TrustedDeviceStatus.Active,
+    lastSessionAt: at,
+  };
+  delete refreshed.revokedAt;
+  return refreshed;
+};
+
 export const createTrustedDeviceStore = (db: LoremDB): TrustedDeviceRegistry => {
   const mutate = async (
     deviceId: DeviceId,
@@ -54,6 +74,22 @@ export const createTrustedDeviceStore = (db: LoremDB): TrustedDeviceRegistry => 
 
     recordSession: ({ deviceId, at }) =>
       mutate(deviceId, (record) => ({ ...record, lastSessionAt: at })),
+
+    // The one path back from removal: the same human checkpoint that
+    // authorised trust, presenting the same identity key. The refusal is
+    // decided inside the transaction but thrown outside it — a throw
+    // mid-transaction makes Dexie abort noisily on its own internal promise
+    // as well as the caller's.
+    refreshTrust: async ({ deviceId, publicIdentityJwk, at }) => {
+      const refused = await db.transaction('rw', db.trustedDevices, async () => {
+        const existing = await db.trustedDevices.get(String(deviceId));
+        if (!existing) return false;
+        if (!sameIdentityKey(existing.publicIdentityJwk, publicIdentityJwk)) return true;
+        await db.trustedDevices.put(reactivated(existing, at));
+        return false;
+      });
+      if (refused) throw substitutionRefusal();
+    },
 
     revoke: ({ deviceId, at }) =>
       mutate(deviceId, (record) => ({

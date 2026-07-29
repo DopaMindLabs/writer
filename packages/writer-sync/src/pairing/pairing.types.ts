@@ -59,7 +59,13 @@ export enum PairingErrorCode {
   BadSignature = 'bad-signature',
   TranscriptMismatch = 'transcript-mismatch',
   Unconfirmed = 'unconfirmed',
-  DeviceRevoked = 'device-revoked',
+  /**
+   * A re-pairing presented an identity key that differs from the one stored for
+   * the same device id. A completed pairing refreshes trust in a revoked
+   * record only on proof of the *same* identity; a different key under a known
+   * id is key substitution, not reconnection.
+   */
+  TrustedKeyMismatch = 'trusted-key-mismatch',
   LocalConnectivity = 'local-connectivity',
   InvalidState = 'invalid-state',
   Cancelled = 'cancelled',

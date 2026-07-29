@@ -60,6 +60,112 @@ describe('trust', () => {
   });
 });
 
+describe('refreshTrust', () => {
+  const presentedKey = (overrides: Partial<JsonWebKey> = {}): JsonWebKey => ({
+    kty: 'EC',
+    crv: 'P-256',
+    x: 'aQ',
+    y: 'ag',
+    ...overrides,
+  });
+
+  it('reactivates a revoked record when the same identity proves itself again', async () => {
+    await store.trust(recordFor());
+    await store.revoke({ deviceId: DEVICE, at: 1_700_000_100_000 });
+    await store.refreshTrust({
+      deviceId: DEVICE,
+      publicIdentityJwk: presentedKey(),
+      at: 1_700_000_200_000,
+    });
+    const found = await store.find(DEVICE);
+    expect(found?.status).toBe(TrustedDeviceStatus.Active);
+    expect(found?.revokedAt).toBeUndefined();
+    expect(found?.lastSessionAt).toBe(1_700_000_200_000);
+    expect(isTrustedForSession(found)).toBe(true);
+  });
+
+  it('preserves everything but the revocation when it reactivates', async () => {
+    await store.trust(
+      recordFor({
+        acknowledgedOperations: { 'space-1': { 'origin-device-a': asOperationId('op-1') } },
+      }),
+    );
+    await store.revoke({ deviceId: DEVICE, at: 1_700_000_100_000 });
+    await store.refreshTrust({
+      deviceId: DEVICE,
+      publicIdentityJwk: presentedKey(),
+      at: 1_700_000_200_000,
+    });
+    const found = await store.find(DEVICE);
+    expect(found?.addedAt).toBe(1_700_000_000_000);
+    expect(found?.displayName).toBe('Laptop');
+    expect(found?.acknowledgedOperations).toEqual({
+      'space-1': { 'origin-device-a': 'op-1' },
+    });
+  });
+
+  it('tolerates export-time members on the presented key', async () => {
+    // A JWK straight from crypto.subtle.exportKey carries ext/key_ops; only
+    // kty/crv/x/y are the identity.
+    await store.trust(recordFor());
+    await store.revoke({ deviceId: DEVICE, at: 1_700_000_100_000 });
+    await store.refreshTrust({
+      deviceId: DEVICE,
+      publicIdentityJwk: presentedKey({ ext: true, key_ops: [] }),
+      at: 1_700_000_200_000,
+    });
+    expect((await store.find(DEVICE))?.status).toBe(TrustedDeviceStatus.Active);
+  });
+
+  it('stamps the session on a record that is already active', async () => {
+    await store.trust(recordFor());
+    await store.refreshTrust({
+      deviceId: DEVICE,
+      publicIdentityJwk: presentedKey(),
+      at: 1_700_000_300_000,
+    });
+    const found = await store.find(DEVICE);
+    expect(found?.status).toBe(TrustedDeviceStatus.Active);
+    expect(found?.lastSessionAt).toBe(1_700_000_300_000);
+  });
+
+  it('rejects a differing key and leaves the revoked record untouched', async () => {
+    await store.trust(recordFor());
+    await store.revoke({ deviceId: DEVICE, at: 1_700_000_100_000 });
+    await expect(
+      store.refreshTrust({
+        deviceId: DEVICE,
+        publicIdentityJwk: presentedKey({ x: 'ZZ' }),
+        at: 1_700_000_200_000,
+      }),
+    ).rejects.toThrow(/trusted-key-mismatch/);
+    const found = await store.find(DEVICE);
+    expect(found?.status).toBe(TrustedDeviceStatus.Revoked);
+    expect(found?.revokedAt).toBe(1_700_000_100_000);
+  });
+
+  it('rejects a differing key on an active record too', async () => {
+    await store.trust(recordFor());
+    await expect(
+      store.refreshTrust({
+        deviceId: DEVICE,
+        publicIdentityJwk: presentedKey({ y: 'YY' }),
+        at: 1_700_000_200_000,
+      }),
+    ).rejects.toThrow(/trusted-key-mismatch/);
+    expect((await store.find(DEVICE))?.publicIdentityJwk).toMatchObject({ y: 'ag' });
+  });
+
+  it('does nothing for a device that has never paired', async () => {
+    await store.refreshTrust({
+      deviceId: asDeviceId('ghost'),
+      publicIdentityJwk: presentedKey(),
+      at: 1,
+    });
+    expect(await store.find(asDeviceId('ghost'))).toBeNull();
+  });
+});
+
 describe('find', () => {
   it('returns null for a device that has never paired', async () => {
     expect(await store.find(asDeviceId('unknown-device-id'))).toBeNull();

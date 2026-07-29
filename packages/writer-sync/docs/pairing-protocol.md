@@ -467,6 +467,18 @@ authenticates against the stored device identities and **skips
 `transferring-keys`** entirely. The registry record is the proof; the account root
 is never sent twice.
 
+**Re-pairing a removed device.** A completed exchange with a device whose
+registry record is revoked **refreshes trust**: the record is reactivated if —
+and only if — the presented identity key equals the stored one, member for
+member over `kty`/`crv`/`x`/`y`. The confirmation step is the authorisation:
+the same human checkpoint that established trust originally is passed again,
+and strictly more evidence is demanded than first pairing required (a
+completed, validated exchange *and* the identical stored key). A known device
+id presenting any other key fails with `trusted-key-mismatch` and the record —
+including its revocation — is left untouched: that is key substitution, not
+reconnection, whatever the payload's self-consistent id-to-key derivation
+claims.
+
 ---
 
 ## 13. Error codes
@@ -487,7 +499,7 @@ Typed, stable, and safe to log. Every failure maps to exactly one.
 | `bad-signature` | Signature verification failed |
 | `transcript-mismatch` | `offerHash` or the transcript disagreed between ends |
 | `unconfirmed` | Key transfer was attempted before user confirmation |
-| `device-revoked` | The peer's identity is revoked in the trusted-device registry |
+| `trusted-key-mismatch` | A known device id presented an identity key that differs from the stored one |
 | `local-connectivity` | No data channel could be established on the local network |
 | `invalid-state` | An event arrived in a state that does not accept it |
 | `cancelled` | The user cancelled |
@@ -564,6 +576,8 @@ Stated so that no implementation quietly assumes otherwise.
   network, with a user present at each.
 - It does not revoke. Removing a device blocks new sessions and stops new key
   delivery; it cannot recall data or keys already copied (threat model §5.9).
+  Removal is reversed only by a fresh, human-confirmed pairing proving the same
+  identity key (§12, "Re-pairing a removed device").
 - It does not cross principals. Everything here assumes both devices belong to the
   same account; cross-user scopes are a stop-and-ask (runbook §30.6).
 - It does not replace Dexie Cloud. Cloud sync may remain enabled independently,

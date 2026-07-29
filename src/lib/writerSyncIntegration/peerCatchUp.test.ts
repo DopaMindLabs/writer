@@ -171,7 +171,7 @@ describe('createPeerCatchUp', () => {
     const wire = fakeChannel();
     const catchUp = createPeerCatchUp(db);
 
-    catchUp.adopt({ session: peer.session, deviceId: PEER });
+    await catchUp.adopt({ session: peer.session, deviceId: PEER });
     // Nothing is sent before a channel exists — the answering device has none
     // until its peer opens one.
     expect(wire.sent).toEqual([]);
@@ -191,7 +191,7 @@ describe('createPeerCatchUp', () => {
     const peer = fakeSession(wire.channel);
     const catchUp = createPeerCatchUp(db);
 
-    catchUp.adopt({ session: peer.session, deviceId: PEER });
+    await catchUp.adopt({ session: peer.session, deviceId: PEER });
 
     await vi.waitFor(() => {
       expect(wire.sent).toEqual([{ v: 1, kind: 'manifest', manifests: [] }]);
@@ -204,8 +204,8 @@ describe('createPeerCatchUp', () => {
     const wire = fakeChannel();
     const catchUp = createPeerCatchUp(db);
 
-    catchUp.adopt({ session: peer.session, deviceId: PEER });
-    catchUp.adopt({ session: peer.session, deviceId: PEER });
+    await catchUp.adopt({ session: peer.session, deviceId: PEER });
+    await catchUp.adopt({ session: peer.session, deviceId: PEER });
     peer.openChannel(wire.channel);
 
     await vi.waitFor(() => {
@@ -220,7 +220,7 @@ describe('createPeerCatchUp', () => {
     const peer = fakeSession(wire.channel);
     const catchUp = createPeerCatchUp(db);
 
-    catchUp.adopt({ session: peer.session, deviceId: PEER });
+    await catchUp.adopt({ session: peer.session, deviceId: PEER });
     await vi.waitFor(() => {
       expect(wire.sent).toHaveLength(1);
     });
@@ -251,7 +251,7 @@ describe('createPeerCatchUp', () => {
     const peer = fakeSession(wire.channel);
     const catchUp = createPeerCatchUp(db);
 
-    catchUp.adopt({ session: peer.session, deviceId: PEER });
+    await catchUp.adopt({ session: peer.session, deviceId: PEER });
 
     // The device that creates a channel holds it in `connecting` while the
     // connection forms, and writing to it then throws — which is how one side
@@ -271,7 +271,7 @@ describe('createPeerCatchUp', () => {
     const peer = fakeSession();
     const catchUp = createPeerCatchUp(db);
 
-    catchUp.adopt({
+    await catchUp.adopt({
       session: peer.session,
       deviceId: PEER,
       keyTransfer: {
@@ -298,13 +298,13 @@ describe('createPeerCatchUp', () => {
     catchUp.stop();
   });
 
-  it('closes every adopted session when it stops', () => {
+  it('closes every adopted session when it stops', async () => {
     const first = fakeSession();
     const second = fakeSession();
     const catchUp = createPeerCatchUp(db);
 
-    catchUp.adopt({ session: first.session, deviceId: PEER });
-    catchUp.adopt({ session: second.session, deviceId: asDeviceId('other-device') });
+    await catchUp.adopt({ session: first.session, deviceId: PEER });
+    await catchUp.adopt({ session: second.session, deviceId: asDeviceId('other-device') });
     catchUp.stop();
 
     expect(first.close).toHaveBeenCalledTimes(1);
@@ -316,7 +316,7 @@ describe('createPeerCatchUp', () => {
     const wire = fakeChannel();
     const catchUp = createPeerCatchUp(db);
 
-    catchUp.adopt({ session: peer.session, deviceId: PEER });
+    await catchUp.adopt({ session: peer.session, deviceId: PEER });
     peer.openChannel(wire.channel);
 
     // A keyless device can decrypt no scope, so it advertises none rather than
@@ -327,7 +327,7 @@ describe('createPeerCatchUp', () => {
     catchUp.stop();
   });
 
-  it('leaves an existing trust record untouched when a device re-pairs', async () => {
+  it('refuses a re-pairing whose identity key differs, and opens nothing', async () => {
     const now = Date.now();
     const original = { kty: 'EC', crv: 'P-256', x: 'first', y: 'key' };
     await db.trustedDevices.put({
@@ -343,14 +343,62 @@ describe('createPeerCatchUp', () => {
     const peer = fakeSession();
     const catchUp = createPeerCatchUp(db);
 
-    catchUp.adopt({
+    // A different key than the record holds: substitution, not reconnection.
+    await expect(
+      catchUp.adopt({
+        session: peer.session,
+        deviceId: PEER,
+        keyTransfer: {
+          peer: {
+            deviceId: PEER,
+            publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'second', y: 'key' },
+            peerEphemeralPublicJwk: { kty: 'EC', crv: 'P-256', x: 'e', y: 'f' },
+            transcript: new Uint8Array([1, 2, 3]),
+            verificationCode: '048213',
+          },
+          sessionPrivateKey: null,
+          deviceId: asDeviceId('this-device'),
+        },
+      }),
+    ).rejects.toThrow(/trusted-key-mismatch/);
+
+    // The record is untouched — not even the session timestamp moves — and the
+    // session is closed rather than left to exchange frames the verifier would
+    // refuse one by one.
+    const record = await db.trustedDevices.get(String(PEER));
+    expect(record?.publicIdentityJwk).toEqual(original);
+    expect(record?.displayName).toBe('Old laptop');
+    expect(record?.lastSessionAt).toBe(now - 5_000);
+    expect(peer.close).toHaveBeenCalledTimes(1);
+    catchUp.stop();
+  });
+
+  it('reactivates a revoked device when it re-pairs with the key it always had', async () => {
+    const now = Date.now();
+    const key = { kty: 'EC', crv: 'P-256', x: 'first', y: 'key' };
+    await db.trustedDevices.put({
+      deviceId: PEER,
+      publicIdentityJwk: key,
+      principalId: asPrincipalId('me'),
+      addedAt: now - 5_000,
+      lastSessionAt: now - 5_000,
+      displayName: 'Old laptop',
+      status: TrustedDeviceStatus.Revoked,
+      revokedAt: now - 1_000,
+      acknowledgedOperations: {},
+    });
+    const peer = fakeSession();
+    const catchUp = createPeerCatchUp(db);
+
+    await catchUp.adopt({
       session: peer.session,
       deviceId: PEER,
       keyTransfer: {
         peer: {
           deviceId: PEER,
-          // A different key than the record holds: re-pairing must not adopt it.
-          publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'second', y: 'key' },
+          // The identity the record already vouches for, as a fresh export
+          // carries it — extra members and all.
+          publicIdentityJwk: { ...key, ext: true },
           peerEphemeralPublicJwk: { kty: 'EC', crv: 'P-256', x: 'e', y: 'f' },
           transcript: new Uint8Array([1, 2, 3]),
           verificationCode: '048213',
@@ -360,22 +408,21 @@ describe('createPeerCatchUp', () => {
       },
     });
 
-    // Rewriting the record would let a peer replace the key an earlier pairing
-    // established — or quietly resurrect one the user revoked. Only the session
-    // timestamp moves.
-    await vi.waitFor(async () => {
-      const record = await db.trustedDevices.get(String(PEER));
-      expect(record?.publicIdentityJwk).toEqual(original);
-      expect(record?.displayName).toBe('Old laptop');
-      expect(record?.lastSessionAt).toBeGreaterThanOrEqual(now);
-    });
+    // The digits were confirmed on both screens again: the removal is undone,
+    // the key is untouched, and adoption went on to listen for the peer's
+    // channels rather than staying dead.
+    const record = await db.trustedDevices.get(String(PEER));
+    expect(record?.status).toBe(TrustedDeviceStatus.Active);
+    expect(record?.revokedAt).toBeUndefined();
+    expect(record?.publicIdentityJwk).toEqual(key);
+    expect(peer.listeningForChannels()).toBe(true);
     catchUp.stop();
   });
 
   it('syncs over a scope channel its peer opened, ignoring the control label', async () => {
     const peer = fakeSession();
     const catchUp = createPeerCatchUp(db);
-    catchUp.adopt({ session: peer.session, deviceId: PEER });
+    await catchUp.adopt({ session: peer.session, deviceId: PEER });
     // Adoption records trust before it listens; a channel can only arrive once
     // someone is listening for it.
     await vi.waitFor(() => {
@@ -427,7 +474,7 @@ describe('createPeerCatchUp', () => {
     const peer = fakeSession(channel);
     const catchUp = createPeerCatchUp(db);
 
-    catchUp.adopt({
+    await catchUp.adopt({
       session: peer.session,
       deviceId: PEER,
       keyTransfer: {

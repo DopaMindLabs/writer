@@ -270,9 +270,21 @@ accepted one. Because Stage 2A has no listener while a page is closed, every
 later session repeats the two-way QR exchange, which is itself a checkpoint: a
 removed device cannot reconnect without a user standing at both screens.
 
+That checkpoint is also the one path back. A *completed* pairing — payloads
+validated, transcripts agreed, digits confirmed by a human on both screens —
+refreshes a revoked record to active, if and only if the presented identity key
+equals the stored one. The six-digit comparison is the same human authorisation
+that established trust originally, and refresh demands strictly more evidence
+than first pairing did: a completed validated exchange *and* the identical
+stored key. A known device id under any other key fails with
+`trusted-key-mismatch` and touches nothing; only the side holding the revoked
+record detects this — the peer's own exchange completes and then loses the
+connection, which is acceptable for an event of this class.
+
 The registry keeps `status` and `revokedTime`, so a removed record is retained
 rather than deleted; deleting it would let the same identity re-pair as though
-it were new.
+it were new — and retention is also what makes "same identity" checkable when a
+removed device asks back in.
 
 ### 5.11 Cross-site scripting using keys in the browser
 

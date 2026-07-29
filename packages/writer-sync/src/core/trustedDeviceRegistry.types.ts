@@ -8,9 +8,11 @@ import type { TrustedDeviceRecord } from './trustedDevice.types';
  * the shape, so a second host application authenticates identically.
  *
  * Every mutation is expressed as an intent (`recordSession`, `revoke`,
- * `acknowledge`) rather than a general "save this record". A general save would
- * let a caller resurrect a revoked device or rewrite an identity key by passing a
- * whole object; these cannot.
+ * `refreshTrust`, `acknowledge`) rather than a general "save this record". A
+ * general save would let a caller rewrite an identity key by passing a whole
+ * object; these cannot. Reactivating a revoked record exists only as
+ * `refreshTrust`, which demands proof of the same identity — no intent can
+ * swap the key a pairing established.
  */
 export interface TrustedDeviceRegistry {
   /** Every record for a principal, revoked ones included. */
@@ -26,6 +28,20 @@ export interface TrustedDeviceRegistry {
   trust: (record: TrustedDeviceRecord) => Promise<void>;
   /** Stamp a successful authenticated session. */
   recordSession: (options: { deviceId: DeviceId; at: number }) => Promise<void>;
+  /**
+   * A completed, human-confirmed pairing with a device this registry already
+   * knows. When the presented key is the stored identity, the record is
+   * reactivated if it was revoked and the session stamped — removal is undone
+   * only by the same human checkpoint that authorised trust in the first
+   * place. A presented key that differs from the stored one must reject
+   * without touching the record: a known id under a new key is substitution.
+   * Unknown devices are a no-op — refreshing cannot forge first trust.
+   */
+  refreshTrust: (options: {
+    deviceId: DeviceId;
+    publicIdentityJwk: JsonWebKey;
+    at: number;
+  }) => Promise<void>;
   /**
    * Revoke a device: it can open no new session and receives no further key
    * delivery. This cannot recall data or keys already copied to it, and is not

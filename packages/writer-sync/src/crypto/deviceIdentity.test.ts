@@ -6,6 +6,7 @@ import {
   generateDeviceIdentity,
   importDevicePublicKey,
   publicJwkOf,
+  sameIdentityKey,
 } from './deviceIdentity';
 
 describe('generateDeviceIdentity', () => {
@@ -100,5 +101,32 @@ describe('importDevicePublicKey', () => {
     await expect(
       importDevicePublicKey({ ...jwk, x: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' }),
     ).rejects.toBeInstanceOf(MalformedDeviceKeyError);
+  });
+});
+
+describe('sameIdentityKey', () => {
+  const KEY: JsonWebKey = { kty: 'EC', crv: 'P-256', x: 'aQ', y: 'ag' };
+
+  it('matches two keys that agree on the identity members', () => {
+    expect(sameIdentityKey(KEY, { ...KEY })).toBe(true);
+  });
+
+  it('ignores export-time members a subtle export carries', () => {
+    // ext and key_ops describe the exported handle, not the key. A stored
+    // record and a freshly exported JWK must still compare equal.
+    expect(sameIdentityKey(KEY, { ...KEY, ext: true, key_ops: [] })).toBe(true);
+  });
+
+  it.each([
+    ['kty', { kty: 'OKP' }],
+    ['crv', { crv: 'P-384' }],
+    ['x', { x: 'ZZ' }],
+    ['y', { y: 'YY' }],
+  ])('differs when %s differs', (_member, override) => {
+    expect(sameIdentityKey(KEY, { ...KEY, ...override })).toBe(false);
+  });
+
+  it('differs when an identity member is missing entirely', () => {
+    expect(sameIdentityKey(KEY, { kty: 'EC', crv: 'P-256', x: 'aQ' })).toBe(false);
   });
 });
