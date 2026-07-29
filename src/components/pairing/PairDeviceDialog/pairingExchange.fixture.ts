@@ -25,6 +25,7 @@ export const fixtureExchange = (
   sessionId: null,
   peer: null,
   ownCodeScanned: false,
+  failureReason: null,
   submitPayload: () => undefined,
   confirm: () => undefined,
   ...overrides,

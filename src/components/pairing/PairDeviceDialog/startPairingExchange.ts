@@ -9,7 +9,7 @@ import type {
   PairingSignaller,
   PairingSignallerOptions,
 } from '@/lib/writerSyncIntegration/createPairingSignaller';
-import type { PairingExchangeAction } from './pairingExchangeReducer';
+import { failureActionFor, type PairingExchangeAction } from './pairingExchangeReducer';
 
 /**
  * Open a signaller, start the protocol machine, and — for the initiator —
@@ -77,10 +77,11 @@ export const startPairingExchange = async (
       await gatherOffer({ signaller, machine, isDismissed, dispatch });
     }
     return { signaller, machine };
-  } catch {
+  } catch (error) {
     // The reason is for developers: a pairing failure must never put
-    // peer-supplied text on screen (threat model §5.11).
-    if (!isDismissed()) dispatch({ type: 'failed' });
+    // peer-supplied text on screen (threat model §5.11). The one exception is
+    // a payload too large to encode, which is named — retrying cannot shrink it.
+    if (!isDismissed()) dispatch(failureActionFor(error));
     return null;
   }
 };

@@ -60,6 +60,10 @@ so you can go back to the one it missed.
 - **"This device could not prepare a pairing code."** The device could not find
   a way to reach the network. Check you are connected, then close the dialog and
   try again.
+- **"This pairing code is too large to display."** The connection details this
+  device gathered are too big to fit in a code — usually a machine with very
+  many network connections (VPNs, virtual adapters). Disconnect what you are not
+  using, then close the dialog and try again.
 - **"That does not look like a pairing code from this device's partner."** The
   code came from a different pairing attempt — for example, one you started
   earlier and left open. Close the dialog on both devices and start fresh.

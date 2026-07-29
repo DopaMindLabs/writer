@@ -4,6 +4,8 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@/test/test-utils';
 import { asDeviceId } from 'writer-sync/core';
 import {
+  PairingError,
+  PairingErrorCode,
   encodePairingPayload,
   splitIntoQrParts,
   type AuthenticatedPeerParameters,
@@ -222,6 +224,21 @@ describe('PairDeviceDialog', () => {
     const banner = await screen.findByTestId('pair-device-failed');
     expect(banner).toBeInTheDocument();
     expect(banner).not.toHaveTextContent('ICE gathering stalled');
+  });
+
+  it('names a code too large to encode, since retrying cannot shrink it', async () => {
+    const signaller = readySignaller();
+    signaller.adapter.createOffer = () =>
+      Promise.reject(
+        new PairingError(PairingErrorCode.OversizedPayload, 'payload needs 9 symbols'),
+      );
+    renderDialog(signaller);
+
+    const banner = await screen.findByTestId('pair-device-too-large');
+    expect(banner).toHaveTextContent('too large');
+    // Named is not detailed: the developer-facing reason stays off screen.
+    expect(banner).not.toHaveTextContent('9 symbols');
+    expect(screen.queryByTestId('pair-device-failed')).not.toBeInTheDocument();
   });
 
   it('names the dialog and describes what to do', () => {
