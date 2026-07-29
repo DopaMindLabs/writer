@@ -5,6 +5,7 @@ import { useUI } from '@/store/ui';
 import { db } from '@/db/db';
 import type { Doc, Revision } from '@/db/schema';
 import { sampleDoc, sampleSpace, sampleSection, serializedBody } from '@/test/fixtures';
+import { registerEditorHandle } from '@/lib/collab/editorRegistry';
 import { VersionHistoryModal } from './VersionHistoryModal';
 
 const doc: Doc = {
@@ -98,6 +99,10 @@ describe('VersionHistoryModal', () => {
     await db.revisions.put(
       makeRevision({ id: 'rev1', text: 'old text', body: serializedBody('old text'), createdAt: 10 }),
     );
+    // The doc's editor is mounted behind the modal in the app; restore replays
+    // the body through its live handle.
+    const restoreBody = vi.fn();
+    const unregister = registerEditorHandle(doc.id, { restoreBody });
     openModal();
     renderWithProviders(<VersionHistoryModal doc={doc} />);
 
@@ -110,6 +115,8 @@ describe('VersionHistoryModal', () => {
     });
     const rows = await db.revisions.where('docId').equals(doc.id).toArray();
     expect(rows.some((r) => r.label === 'pre-restore')).toBe(true);
+    expect(restoreBody).toHaveBeenCalledWith(serializedBody('old text'));
+    unregister();
   });
 
   it('does not restore when the confirm dialog is cancelled', async () => {

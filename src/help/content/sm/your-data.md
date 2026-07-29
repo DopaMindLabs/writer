@@ -77,4 +77,4 @@ taofi auina i se nofoaga saogalemu.
 ## Feso'ota'i
 
 - [Fa'amatalaga & fa'aupuga](citations-and-bibliography) — auina BibTeX.
-- [Fa'atulagaina ou galuega](organizing-your-work) — le mea o loo iai i se space.
+- [Fa'atulagaina ou galuega](organising-your-work) — le mea o loo iai i se space.

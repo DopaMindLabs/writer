@@ -17,9 +17,9 @@ threoir ionas gur féidir leat léim díreach go dtí an mionsonra.
 
 ## Eagrú
 
-- **Spásanna** — tionscadail féin-chuimsithe. [Foghlaim tuilleadh](organizing-your-work#spaces)
-- **Rannáin & cáipéisí** — cuir leis, athainmnigh, agus athordaigh ón mbarra cliathánach. [Foghlaim tuilleadh](organizing-your-work#sections-and-documents)
-- **Teimpléid** — tosaigh ó struchtúr, ní ó leathanach bán. [Foghlaim tuilleadh](organizing-your-work#templates)
+- **Spásanna** — tionscadail féin-chuimsithe. [Foghlaim tuilleadh](organising-your-work#spaces)
+- **Rannáin & cáipéisí** — cuir leis, athainmnigh, agus athordaigh ón mbarra cliathánach. [Foghlaim tuilleadh](organising-your-work#sections-and-documents)
+- **Teimpléid** — tosaigh ó struchtúr, ní ó leathanach bán. [Foghlaim tuilleadh](organising-your-work#templates)
 
 ## Radhairc & móid
 

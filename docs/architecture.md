@@ -68,15 +68,28 @@ External packages     (dexie, yjs, lexical, zustand, …)
 
 **Invariants:**
 - `src/lib/collab/types.ts` imports **nothing** from `yjs` — it is the engine-agnostic seam.
-- `src/lib/cloud/cloudClient.ts` is the only module components import for cloud
-  observables/actions.
+- `src/lib/syncProviders/types.ts` is the provider-neutral sync seam — it imports nothing
+  from `src/lib/cloud/**`, `dexie-cloud-addon`, or `yjs`.
+- Components and hooks reach sync behaviour through the `SyncProvider` capability adapter
+  (`useSyncCapability`), **not** through `src/lib/cloud/cloudClient.ts`. The facade hides the
+  `db.cloud` subsystem's complexity but not its identity — it exposes Dexie-Cloud-shaped
+  types — so UI written against it is UI coupled to one backend.
+- `src/lib/cloud/cloudClient.ts` remains the only module that touches `db.cloud`, and is now
+  an implementation detail of the Dexie Cloud adapter.
 - `src/lib/docs/docRepository.ts` is the single write path for the `docs` table.
 - `src/editor/EditorFacade.tsx` is the public boundary for the editor subsystem;
   `WriteSurface.tsx` is its **sole production importer and direct caller**.
 - The above are enforced architectural boundaries. Many screens and components import
   `db` and schema types from `src/db/` directly for reads — this is accepted practice.
-  The enforced write boundary is `src/lib/docs/docRepository.ts`; the enforced cloud
-  boundary is `src/lib/cloud/cloudClient.ts`.
+  The enforced write boundary is `src/lib/docs/docRepository.ts`; the enforced sync boundary
+  for UI is the `SyncProvider` capability layer, and `src/lib/cloud/cloudClient.ts` is the
+  enforced boundary onto `db.cloud`. Migrating the remaining direct facade importers
+  (device registry, sign-in/out) is tracked work — do not add new ones.
+- `src/lib/reconcile/` holds **local** CRDT ↔ row-body reconciliation, including the
+  mount gate every editor open passes through. It is deliberately *not* a `SyncProvider`
+  capability: it must run with zero providers configured (a page closed inside the autosave
+  debounce diverges on a purely local device too). The cloud sweep in
+  `src/lib/cloud/reconcile.ts` builds on it, never the reverse.
 
 ---
 
@@ -300,7 +313,12 @@ Route mounts WriteScreen / ReadScreen / SplitScreen
 
 | Symbol / File | Role | Consumers |
 |---|---|---|
-| `src/lib/cloud/cloudClient.ts` | Sole import for cloud observables (`cloudSyncState`, `cloudCurrentUser`, `cloudEscrowPresence`) and actions (`signInToCloud`, `signOutOfCloud`, `hydrateCloudDevice`) | UI hooks, `App.tsx` boot |
+| `src/lib/syncProviders/types.ts` | The capability vocabulary: `SyncProvider` with optional `frameSync` / `realtime` / `discovery` / `accessControl` / `keyDelivery`, plus `SyncProviderBinding`. Backend-neutral; imports nothing from the cloud subsystem | `createSyncCoordinator`, provider adapters |
+| `src/lib/writerSync/syncCoordinatorContext.ts` | How UI reaches sync: `useSyncCapability(name)` resolves one capability from the coordinator, or reports its absence | Cloud settings components, boot |
+| `src/lib/writerSync/createWriterSyncCoordinator.ts` | Composition root — the only module that knows both the coordinator and the concrete providers | `App.tsx` |
+| `src/lib/cloud/dexieCloudProvider.ts` | Dexie Cloud as a `SyncProvider`; maps the addon's seven sync phases and its escrow union onto the neutral vocabulary | The composition root |
+| `src/lib/cloud/cloudClient.ts` | Sole module touching `db.cloud`; an implementation detail of the adapter, **not** a UI import | `dexieCloudProvider.ts`, cloud subsystem internals |
+| `src/lib/reconcile/index.ts` | Local CRDT ↔ row-body reconciliation: `reconcileDocForMount` (the mount gate, runs with or without any provider) and the shared `applyPulledBody` primitive | `useDocCrdtReady`, `src/lib/cloud/reconcile.ts` |
 | `src/lib/docs/docRepository.ts` | Single write path for `docs` table (`createDoc`, `updateDocBody`, `renameDoc`, `seedDocCrdt`, …) | Hooks, import/restore flows |
 | `src/lib/collab/types.ts` | Engine-agnostic interfaces (`SyncTransport`, `CollabStore`, `PresenceState`) — imports nothing from `yjs` | `YjsProvider`, `DexieCollabStore`, `BroadcastChannelTransport` |
 | `src/editor/EditorFacade.tsx` | Public boundary for the editor: accepts `EditorProps` (`docId`, `providerFactory`, `mode`, `onChange`, …) and renders `<LexicalEditor>` | `WriteSurface.tsx` is the **sole direct importer**; `Write`, `Read`, `Split` screens use it via `WriteSurface`; `FocusScreen` redirects to the Write route with `?focus=1` |
@@ -314,6 +332,7 @@ Route mounts WriteScreen / ReadScreen / SplitScreen
 | CRDT / collab | Unit (Vitest) | `src/lib/collab/**/*.test.ts` |
 | DB / schema | Unit | `src/db/**/*.test.ts` |
 | Cloud crypto | Unit — P1–P6 middleware spike | `src/lib/cloud/crypto/middleware.test.ts` |
+| Local reconcile | Unit | `src/lib/reconcile/*.test.ts` |
 | Cloud reconcile | Unit | `src/lib/cloud/reconcile.test.ts`, `escrowReconcile.test.ts` |
 | Editor | Unit | `src/editor/**/*.test.{ts,tsx}` |
 | Hooks | Unit | `src/hooks/**/*.test.{ts,tsx}` |

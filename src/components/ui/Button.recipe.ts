@@ -10,12 +10,18 @@ export const buttonRecipe = cva(
         ghost:
           'border-b border-ink bg-transparent px-0 text-ink hover:text-ink-2',
         dangerous: 'bg-ink text-paper hover:bg-ink-2',
+        // Unstyled: no surface of its own — the base reset (focus ring, disabled
+        // handling) only. For bespoke inline triggers that own their layout and
+        // type via className; pair with `size: 'none'`.
+        bare: '',
       },
       size: {
         xs: 'h-7 px-3 text-[10px]',
         sm: 'h-7 px-3 text-xs',
         md: 'h-9 px-4 text-[13px]',
         lg: 'h-11 px-[22px] text-sm',
+        // No box: caller sizes it via className (used with `kind: 'bare'`).
+        none: '',
       },
     },
     compoundVariants: [

@@ -34,5 +34,5 @@ af hjálparvalmyndinni (**?**) eða [Flýtistillingum](customization-and-setting
 
 - [Allir eiginleikar](features) — heildarlisti yfir það sem þú getur gert.
 - [Ritun og klipping](writing-and-editing) — kynntu þér ritilinn.
-- [Skipulag verka þinna](organizing-your-work) — skipulagðu stærra verkefni.
+- [Skipulag verka þinna](organising-your-work) — skipulagðu stærra verkefni.
 - [Lyklaborðsflýtilyklar](keyboard-shortcuts) — keyrðu allt af lyklaborðinu.

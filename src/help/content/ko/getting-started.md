@@ -33,5 +33,5 @@
 
 - [전체 기능](features) — 할 수 있는 모든 것의 완전한 목록.
 - [글쓰기 & 편집](writing-and-editing) — 편집기 배우기.
-- [작업 정리하기](organizing-your-work) — 큰 프로젝트 구조화하기.
+- [작업 정리하기](organising-your-work) — 큰 프로젝트 구조화하기.
 - [키보드 단축키](keyboard-shortcuts) — 키보드로 모든 것 제어하기.

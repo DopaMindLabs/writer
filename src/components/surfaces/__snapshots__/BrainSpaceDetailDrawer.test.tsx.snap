@@ -46,7 +46,7 @@ exports[`BrainSpaceDetailDrawer > snapshot > should match the snapshot of the op
     </div>
     <button
       aria-label="Close drawer"
-      class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink ml-2 text-ink-4"
+      class="inline-flex items-center justify-center transition-colors h-7 w-7 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink ml-2 text-ink-4"
       data-testid="brain-detail-drawer-close"
       type="button"
     >
@@ -303,7 +303,7 @@ exports[`BrainSpaceDetailDrawer > snapshot > should match the snapshot of the op
           </button>
           <button
             aria-label="Remove connection"
-            class="inline-flex items-center justify-center rounded-md transition-colors hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5 text-ink-4"
+            class="inline-flex items-center justify-center transition-colors hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink h-5 w-5 text-ink-4"
             data-testid="brain-detail-drawer-connection-c1-remove"
             type="button"
           >

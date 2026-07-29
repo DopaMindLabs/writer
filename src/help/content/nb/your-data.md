@@ -69,4 +69,4 @@ så behandle det som en siste utvei og oppbevar eksporter et sikkert sted.
 ## Relatert
 
 - [Siteringer og bibliografi](citations-and-bibliography) — BibTeX-eksport.
-- [Organisering av arbeidet](organizing-your-work) — hva et rom inneholder.
+- [Organisering av arbeidet](organising-your-work) — hva et rom inneholder.

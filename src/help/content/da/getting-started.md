@@ -34,5 +34,5 @@ andre skærme. Afspil en tur igen, når du vil, fra **?**-menuen eller
 
 - [Alle funktioner](features) — en komplet, overskuelig liste over, hvad du kan gøre.
 - [Skrivning og redigering](writing-and-editing) — lær editoren at kende.
-- [Organisering af dit arbejde](organizing-your-work) — strukturér et større projekt.
+- [Organisering af dit arbejde](organising-your-work) — strukturér et større projekt.
 - [Tastaturgenveje](keyboard-shortcuts) — styr alt fra tastaturet.

@@ -44,4 +44,4 @@
 ## 相关
 
 - [引用与参考文献](citations-and-bibliography)——BibTeX 导出。
-- [整理您的工作](organizing-your-work)——空间包含的内容。
+- [整理您的工作](organising-your-work)——空间包含的内容。

@@ -8,9 +8,9 @@ import type { Doc } from '@/db/schema';
 import { useUI } from '@/store/ui';
 
 vi.mock('@/editor/EditorFacade', () => ({
-  Editor: (p: { initialValue: string; mode: string }) => (
-    <div data-testid="editor-stub" data-mode={p.mode}>
-      {p.initialValue || '(empty)'}
+  Editor: (p: { docId: string; mode: string }) => (
+    <div data-testid="editor-stub" data-mode={p.mode} data-doc-id={p.docId}>
+      editor
     </div>
   ),
 }));
@@ -55,9 +55,12 @@ describe('SplitScreen', () => {
 
   describe('rendering', () => {
     it('should render both editor panes', async () => {
-      const { findAllByTestId } = renderAt('/s/s1/d/d1/split?with=d2');
-      const editors = await findAllByTestId('editor-stub');
-      expect(editors).toHaveLength(2);
+      renderAt('/s/s1/d/d1/split?with=d2');
+      // Each pane mounts its editor once its CRDT log is confirmed seeded, so
+      // wait for both rather than the first match.
+      await waitFor(() => {
+        expect(screen.getAllByTestId('editor-stub')).toHaveLength(2);
+      });
     });
 
     it('should redirect when params are missing', () => {

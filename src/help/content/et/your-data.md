@@ -44,4 +44,4 @@ Kui rakendus ei suuda oma kohalikku andmebaasi avada, näitab see käivitusvea e
 ## Seotud
 
 - [Viited ja bibliograafia](citations-and-bibliography) — BibTeX-i eksport.
-- [Töö korraldamine](organizing-your-work) — mida ruum sisaldab.
+- [Töö korraldamine](organising-your-work) — mida ruum sisaldab.

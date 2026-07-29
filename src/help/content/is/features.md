@@ -17,9 +17,9 @@ svo þú getir stökkið beint í smáatriðin.
 
 ## Skipulag
 
-- **Svæði** — sjálfstæð verkefni. [Frekari upplýsingar](organizing-your-work#spaces)
-- **Hlutar og skjöl** — bættu við, endurnefndu og endurraðaðu af hliðarborðinu. [Frekari upplýsingar](organizing-your-work#sections-and-documents)
-- **Sniðmát** — byrjaðu með uppbyggingu, ekki auðan síðu. [Frekari upplýsingar](organizing-your-work#templates)
+- **Svæði** — sjálfstæð verkefni. [Frekari upplýsingar](organising-your-work#spaces)
+- **Hlutar og skjöl** — bættu við, endurnefndu og endurraðaðu af hliðarborðinu. [Frekari upplýsingar](organising-your-work#sections-and-documents)
+- **Sniðmát** — byrjaðu með uppbyggingu, ekki auðan síðu. [Frekari upplýsingar](organising-your-work#templates)
 
 ## Sýnir og hami
 

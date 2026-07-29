@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "스페이스" },
+  "spaceRail": {
+    "landmarkLabel": "스페이스"
+  },
   "sidebar": {
     "landmarkLabel": "스페이스",
     "navLabel": "문서",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "스페이스 설정",
     "openSpaceMenu": "스페이스 메뉴 열기",
     "docMenuAria": "{{name}} 옵션",
-    "renameDoc": "이름 변경",
-    "renameDialog": {
-      "title": "문서 이름 변경",
-      "description": "이 문서의 새 이름을 선택하세요.",
-      "label": "문서 이름",
-      "cancel": "취소",
-      "save": "이름 변경"
-    }
+    "renameDoc": "이름 변경"
   },
   "topbar": {
     "openNav": "탐색 열기",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "포커스 (⌘\\)",
     "findInDoc": "문서에서 찾기",
     "inspector": "문서 검사기",
-    "themes": { "light": "라이트", "dark": "다크", "hcLight": "고대비 (라이트)", "hcDark": "고대비 (다크)" }
+    "themes": {
+      "light": "라이트",
+      "dark": "다크",
+      "hcLight": "고대비 (라이트)",
+      "hcDark": "고대비 (다크)"
+    }
   },
-  "modeToggle": { "write": "쓰기", "read": "읽기", "split": "분할", "space": "스페이스" },
-  "mobileNav": { "title": "탐색", "close": "탐색 닫기" },
-  "mobileTabs": { "write": "쓰기", "read": "읽기", "split": "분할", "brain": "brain", "cite": "인용", "more": "더보기" },
+  "modeToggle": {
+    "write": "쓰기",
+    "read": "읽기",
+    "split": "분할",
+    "space": "스페이스"
+  },
+  "mobileNav": {
+    "title": "탐색",
+    "close": "탐색 닫기"
+  },
+  "mobileTabs": {
+    "write": "쓰기",
+    "read": "읽기",
+    "split": "분할",
+    "brain": "brain",
+    "cite": "인용",
+    "more": "더보기"
+  },
   "mobileMore": {
     "title": "더보기",
     "close": "더보기 닫기",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "플로팅 도구 모음",
     "readingWidthLabel": "읽기 너비",
     "readingWidthHint": "문서별 측정",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "더보기",
     "helpToursLabel": "도움말 투어",
     "helpItem": "도움말 및 단축키",
-    "themes": { "light": "라이트", "dark": "다크", "hcLight": "HC 라이트", "hcDark": "HC 다크" },
+    "themes": {
+      "light": "라이트",
+      "dark": "다크",
+      "hcLight": "HC 라이트",
+      "hcDark": "HC 다크"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "새 소식",
     "feedback": "피드백 보내기…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "검사기 확장",
     "collapse": "검사기 축소",
-    "tabs": { "outline": "개요", "info": "정보", "history": "기록", "actions": "작업" },
-    "outline": { "title": "개요", "sectionSummary": "{{count}}개 섹션", "empty": "아직 제목이 없습니다. 문서에 제목을 추가하여 개요를 만드세요." },
+    "tabs": {
+      "outline": "개요",
+      "info": "정보",
+      "history": "기록",
+      "actions": "작업"
+    },
+    "outline": {
+      "title": "개요",
+      "sectionSummary": "{{count}}개 섹션",
+      "empty": "아직 제목이 없습니다. 문서에 제목을 추가하여 개요를 만드세요."
+    },
     "info": {
       "title": "정보",
       "words": "단어",
@@ -119,8 +152,18 @@
       "noLimit": "제한 없음",
       "noDueDate": "마감일 없음"
     },
-    "status": { "draft": "초안", "in-progress": "진행 중", "in-review": "검토 중", "complete": "완료", "published": "게시됨" },
-    "lock": { "title": "편집 잠금", "body": "이 문서의 상태가 보존을 위해 잠겨 있습니다. 변경하려면 잠금을 해제하세요.", "unlock": "편집을 위해 잠금 해제" },
+    "status": {
+      "draft": "초안",
+      "in-progress": "진행 중",
+      "in-review": "검토 중",
+      "complete": "완료",
+      "published": "게시됨"
+    },
+    "lock": {
+      "title": "편집 잠금",
+      "body": "이 문서의 상태가 보존을 위해 잠겨 있습니다. 변경하려면 잠금을 해제하세요.",
+      "unlock": "편집을 위해 잠금 해제"
+    },
     "history": {
       "title": "버전",
       "now": "지금",
@@ -132,7 +175,11 @@
       "pin": "버전 고정",
       "unpin": "고정 해제",
       "restore": "복원",
-      "kind": { "auto": "자동", "manual": "수동", "baseline": "기준" },
+      "kind": {
+        "auto": "자동",
+        "manual": "수동",
+        "baseline": "기준"
+      },
       "ageNow": "지금",
       "ageMinutes": "{{count}}분 전",
       "ageHours": "{{count}}시간 전",

@@ -31,14 +31,38 @@
     "renameDoc": "Rename",
     "renameDocHint": "Rename (double-click)",
     "renameDocAria": "Rename document {{name}}",
+    "moveDocToSection": "Move to section",
+    "moveDocSearch": "Search sections…",
+    "moveDocSearchAria": "Search sections",
+    "moveDocNoSections": "No sections found",
     "renameSection": "Rename (double-click)",
     "renameSectionAria": "Rename section {{label}}",
-    "renameDialog": {
-      "title": "Rename document",
-      "description": "Choose a new name for this document.",
-      "label": "Document name",
+    "renameSectionReserved": "“Workshop” is a reserved section name",
+    "sectionMenuAria": "Options for {{label}} section",
+    "sectionAddDoc": "Add document",
+    "sectionAddWorkspace": "Add workspace",
+    "sectionRename": "Rename",
+    "sectionDelete": "Delete",
+    "dragAnnouncePickedUp": "Picked up {{label}}.",
+    "dragAnnounceReordered": "Moved {{label}}.",
+    "dragAnnounceMovedToSection": "Moved {{label}} to {{section}}.",
+    "dragAnnounceDropped": "Dropped {{label}}.",
+    "dragAnnounceCancelled": "Cancelled moving {{label}}.",
+    "dragInstructions": "To pick up a section or document, press Space or Enter. While dragging, use the arrow keys to move it, press Space or Enter again to drop it, or press Escape to cancel.",
+    "deleteSectionDialog": {
+      "title": "Delete section",
+      "descriptionEmpty": "“{{label}}” will be permanently deleted. This cannot be undone.",
+      "description": "“{{label}}” and its {{count}} document will be permanently deleted, along with their content and history. This cannot be undone.",
+      "description_other": "“{{label}}” and its {{count}} documents will be permanently deleted, along with their content and history. This cannot be undone.",
       "cancel": "Cancel",
-      "save": "Rename"
+      "confirm": "Delete section"
+    },
+    "deleteDoc": "Delete",
+    "deleteDialog": {
+      "title": "Delete document",
+      "description": "“{{name}}” and its version history will be permanently deleted. This cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
     }
   },
   "topbar": {
@@ -91,6 +115,8 @@
     "about": "About",
     "help": "Help & shortcuts",
     "whatsNew": "What's new",
+    "accessibility": "Accessibility",
+    "account": "Account",
     "contact": "Contact"
   },
   "quickSettings": {
@@ -98,6 +124,7 @@
     "title": "Quick settings",
     "appearanceLabel": "Appearance",
     "writingLabel": "Writing",
+    "settingsLabel": "Settings",
     "themeLabel": "Theme",
     "focusLabel": "Focus mode",
     "focusHint": "⌘\\",
@@ -121,6 +148,7 @@
     "helpKbd": "⌘?",
     "whatsNew": "What's new",
     "feedback": "Send feedback…",
+    "account": "Account",
     "accessibility": "Accessibility",
     "about": "About",
     "helpLink": "help center →",

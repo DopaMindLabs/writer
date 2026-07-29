@@ -43,4 +43,4 @@ Gerätewechsel oder dem Ausprobieren von etwas Neuem.
 ## Verwandt
 
 - [Zitate und Bibliografie](citations-and-bibliography) — BibTeX-Export.
-- [Deine Arbeit organisieren](organizing-your-work) — was ein Space enthält.
+- [Deine Arbeit organisieren](organising-your-work) — was ein Space enthält.

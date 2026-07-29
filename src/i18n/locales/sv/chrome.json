@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Utrymmen" },
+  "spaceRail": {
+    "landmarkLabel": "Utrymmen"
+  },
   "sidebar": {
     "landmarkLabel": "Utrymme",
     "navLabel": "Dokument",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "Utrymmesinställningar",
     "openSpaceMenu": "Öppna utrymmesmeny",
     "docMenuAria": "Alternativ för {{name}}",
-    "renameDoc": "Byt namn",
-    "renameDialog": {
-      "title": "Byt namn på dokument",
-      "description": "Välj ett nytt namn för det här dokumentet.",
-      "label": "Dokumentnamn",
-      "cancel": "Avbryt",
-      "save": "Byt namn"
-    }
+    "renameDoc": "Byt namn"
   },
   "topbar": {
     "openNav": "Öppna navigering",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "Fokus (⌘\\)",
     "findInDoc": "Sök i dokumentet",
     "inspector": "Dokumentinspektör",
-    "themes": { "light": "Ljust", "dark": "Mörkt", "hcLight": "Hög kontrast (ljust)", "hcDark": "Hög kontrast (mörkt)" }
+    "themes": {
+      "light": "Ljust",
+      "dark": "Mörkt",
+      "hcLight": "Hög kontrast (ljust)",
+      "hcDark": "Hög kontrast (mörkt)"
+    }
   },
-  "modeToggle": { "write": "skriv", "read": "läs", "split": "dela", "space": "utrymme" },
-  "mobileNav": { "title": "Navigering", "close": "Stäng navigering" },
-  "mobileTabs": { "write": "skriv", "read": "läs", "split": "dela", "brain": "brain", "cite": "citera", "more": "mer" },
+  "modeToggle": {
+    "write": "skriv",
+    "read": "läs",
+    "split": "dela",
+    "space": "utrymme"
+  },
+  "mobileNav": {
+    "title": "Navigering",
+    "close": "Stäng navigering"
+  },
+  "mobileTabs": {
+    "write": "skriv",
+    "read": "läs",
+    "split": "dela",
+    "brain": "brain",
+    "cite": "citera",
+    "more": "mer"
+  },
   "mobileMore": {
     "title": "Mer",
     "close": "Stäng mer",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "Flytande verktygsfält",
     "readingWidthLabel": "Läsbredd",
     "readingWidthHint": "Mått per dokument",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Mer",
     "helpToursLabel": "Hjälprundtur",
     "helpItem": "Hjälp och genvägar",
-    "themes": { "light": "Ljust", "dark": "Mörkt", "hcLight": "HK ljust", "hcDark": "HK mörkt" },
+    "themes": {
+      "light": "Ljust",
+      "dark": "Mörkt",
+      "hcLight": "HK ljust",
+      "hcDark": "HK mörkt"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Nyheter",
     "feedback": "Skicka feedback…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "Expandera inspektören",
     "collapse": "Komprimera inspektören",
-    "tabs": { "outline": "DISPOSITION", "info": "INFO", "history": "HISTORIK", "actions": "ÅTGÄRDER" },
-    "outline": { "title": "DISPOSITION", "sectionSummary": "{{count}} SEKTIONER", "empty": "Inga rubriker ännu. Lägg till rubriker i dokumentet för att bygga dess disposition." },
+    "tabs": {
+      "outline": "DISPOSITION",
+      "info": "INFO",
+      "history": "HISTORIK",
+      "actions": "ÅTGÄRDER"
+    },
+    "outline": {
+      "title": "DISPOSITION",
+      "sectionSummary": "{{count}} SEKTIONER",
+      "empty": "Inga rubriker ännu. Lägg till rubriker i dokumentet för att bygga dess disposition."
+    },
     "info": {
       "title": "INFO",
       "words": "Ord",
@@ -119,8 +152,18 @@
       "noLimit": "Ingen gräns",
       "noDueDate": "Inget förfallodatum"
     },
-    "status": { "draft": "Utkast", "in-progress": "Pågående", "in-review": "Under granskning", "complete": "Klar", "published": "Publicerad" },
-    "lock": { "title": "Låst för redigering", "body": "Dokumentets status låser det för att bevara det. Lås upp för att göra ändringar.", "unlock": "Lås upp för att redigera" },
+    "status": {
+      "draft": "Utkast",
+      "in-progress": "Pågående",
+      "in-review": "Under granskning",
+      "complete": "Klar",
+      "published": "Publicerad"
+    },
+    "lock": {
+      "title": "Låst för redigering",
+      "body": "Dokumentets status låser det för att bevara det. Lås upp för att göra ändringar.",
+      "unlock": "Lås upp för att redigera"
+    },
     "history": {
       "title": "VERSIONER",
       "now": "NU",
@@ -132,7 +175,11 @@
       "pin": "Fäst version",
       "unpin": "Lossa version",
       "restore": "Återställ",
-      "kind": { "auto": "auto", "manual": "manuell", "baseline": "utgångs" },
+      "kind": {
+        "auto": "auto",
+        "manual": "manuell",
+        "baseline": "utgångs"
+      },
       "ageNow": "nu",
       "ageMinutes": "för {{count}}m sedan",
       "ageHours": "för {{count}}h sedan",

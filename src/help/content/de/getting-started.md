@@ -36,5 +36,5 @@ später erneut aus dem Hilfe-Menü (**?**) oder den
 
 - [Alle Funktionen](features) — eine vollständige, scannbare Liste.
 - [Schreiben und Bearbeiten](writing-and-editing) — lerne den Editor.
-- [Deine Arbeit organisieren](organizing-your-work) — strukturiere ein größeres Projekt.
+- [Deine Arbeit organisieren](organising-your-work) — strukturiere ein größeres Projekt.
 - [Tastenkürzel](keyboard-shortcuts) — steuere alles über die Tastatur.

@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Пространства" },
+  "spaceRail": {
+    "landmarkLabel": "Пространства"
+  },
   "sidebar": {
     "landmarkLabel": "Пространство",
     "navLabel": "Документи",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "Настройки на пространството",
     "openSpaceMenu": "Отвори меню на пространството",
     "docMenuAria": "Опции за {{name}}",
-    "renameDoc": "Преименувай",
-    "renameDialog": {
-      "title": "Преименувай документ",
-      "description": "Изберете ново име за този документ.",
-      "label": "Име на документа",
-      "cancel": "Отказ",
-      "save": "Преименувай"
-    }
+    "renameDoc": "Преименувай"
   },
   "topbar": {
     "openNav": "Отвори навигация",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "Фокус (⌘\\)",
     "findInDoc": "Намери в документа",
     "inspector": "Инспектор на документ",
-    "themes": { "light": "Светла", "dark": "Тъмна", "hcLight": "Висок контраст (светла)", "hcDark": "Висок контраст (тъмна)" }
+    "themes": {
+      "light": "Светла",
+      "dark": "Тъмна",
+      "hcLight": "Висок контраст (светла)",
+      "hcDark": "Висок контраст (тъмна)"
+    }
   },
-  "modeToggle": { "write": "пиши", "read": "чети", "split": "раздели", "space": "пространство" },
-  "mobileNav": { "title": "Навигация", "close": "Затвори навигация" },
-  "mobileTabs": { "write": "пиши", "read": "чети", "split": "раздели", "brain": "brain", "cite": "цитирай", "more": "още" },
+  "modeToggle": {
+    "write": "пиши",
+    "read": "чети",
+    "split": "раздели",
+    "space": "пространство"
+  },
+  "mobileNav": {
+    "title": "Навигация",
+    "close": "Затвори навигация"
+  },
+  "mobileTabs": {
+    "write": "пиши",
+    "read": "чети",
+    "split": "раздели",
+    "brain": "brain",
+    "cite": "цитирай",
+    "more": "още"
+  },
   "mobileMore": {
     "title": "Още",
     "close": "Затвори още",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "Плаваща лента с инструменти",
     "readingWidthLabel": "Ширина на четене",
     "readingWidthHint": "Мярка за документ",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Още",
     "helpToursLabel": "Помощна обиколка",
     "helpItem": "Помощ и преки пътища",
-    "themes": { "light": "Светла", "dark": "Тъмна", "hcLight": "ВК светла", "hcDark": "ВК тъмна" },
+    "themes": {
+      "light": "Светла",
+      "dark": "Тъмна",
+      "hcLight": "ВК светла",
+      "hcDark": "ВК тъмна"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Какво е новото",
     "feedback": "Изпрати обратна връзка…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "Разшири инспектора",
     "collapse": "Свий инспектора",
-    "tabs": { "outline": "СТРУКТУРА", "info": "ИНФО", "history": "ИСТОРИЯ", "actions": "ДЕЙСТВИЯ" },
-    "outline": { "title": "СТРУКТУРА", "sectionSummary": "{{count}} СЕКЦИИ", "empty": "Все още няма заглавия. Добавете заглавия към документа, за да изградите неговото съдържание." },
+    "tabs": {
+      "outline": "СТРУКТУРА",
+      "info": "ИНФО",
+      "history": "ИСТОРИЯ",
+      "actions": "ДЕЙСТВИЯ"
+    },
+    "outline": {
+      "title": "СТРУКТУРА",
+      "sectionSummary": "{{count}} СЕКЦИИ",
+      "empty": "Все още няма заглавия. Добавете заглавия към документа, за да изградите неговото съдържание."
+    },
     "info": {
       "title": "ИНФО",
       "words": "Думи",
@@ -119,8 +152,18 @@
       "noLimit": "Без лимит",
       "noDueDate": "Без срок"
     },
-    "status": { "draft": "Чернова", "in-progress": "В ход", "in-review": "На преглед", "complete": "Завършено", "published": "Публикувано" },
-    "lock": { "title": "Заключен за редактиране", "body": "Статусът на документа го заключва, за да го запази. Отключи, за да правиш промени.", "unlock": "Отключи за редактиране" },
+    "status": {
+      "draft": "Чернова",
+      "in-progress": "В ход",
+      "in-review": "На преглед",
+      "complete": "Завършено",
+      "published": "Публикувано"
+    },
+    "lock": {
+      "title": "Заключен за редактиране",
+      "body": "Статусът на документа го заключва, за да го запази. Отключи, за да правиш промени.",
+      "unlock": "Отключи за редактиране"
+    },
     "history": {
       "title": "ВЕРСИИ",
       "now": "СЕГА",
@@ -132,7 +175,11 @@
       "pin": "Закачи версия",
       "unpin": "Откачи версия",
       "restore": "Възстанови",
-      "kind": { "auto": "авто", "manual": "ръчно", "baseline": "изходна" },
+      "kind": {
+        "auto": "авто",
+        "manual": "ръчно",
+        "baseline": "изходна"
+      },
       "ageNow": "сега",
       "ageMinutes": "преди {{count}}м",
       "ageHours": "преди {{count}}ч",

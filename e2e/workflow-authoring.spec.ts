@@ -1,5 +1,9 @@
 import { test, expect } from './_helpers';
-import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
+import {
+  reseedAndGoHome,
+  getFirstSpaceIdFromHome,
+  openSectionAddDoc,
+} from './_helpers';
 
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
@@ -40,8 +44,7 @@ test.describe('Workflow: authoring a manuscript', () => {
 
     await test.step('And they add a new doc under the Manuscript section', async () => {
       const sidebar = page.locator('aside').last();
-      await sidebar.getByRole('button', { name: 'Add doc to Manuscript' }).click();
-      const docInput = sidebar.getByPlaceholder(/Doc name \(Enter to create\)/i);
+      const docInput = await openSectionAddDoc(page, sidebar);
       await docInput.fill('Methods');
       await docInput.press('Enter');
       await page.waitForURL(new RegExp(`/s/${spaceId}/d/[^/?#]+$`));

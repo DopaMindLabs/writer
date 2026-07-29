@@ -55,6 +55,14 @@ anything; this is also the way to move a space between devices.
 Storage is local, so **regular backups are essential**. Export before clearing
 browser data, switching devices, or trying something new.
 
+## Before the next release
+
+The next release is on **23 August at 22:00 CEST**. Until then, the home
+screen shows a notification counting down the days remaining. A release can change
+how data is stored, so make sure a **local sync folder** is connected or a
+recent **backup** is exported before that date — data that lives only in this
+browser may otherwise be lost.
+
 ## If the app fails to start
 
 If the app can't open its local database, it shows a boot error screen. From
@@ -70,4 +78,4 @@ somewhere safe.
 ## Related
 
 - [Citations & bibliography](citations-and-bibliography) — BibTeX export.
-- [Organising your work](organizing-your-work) — what a space contains.
+- [Organising your work](organising-your-work) — what a space contains.

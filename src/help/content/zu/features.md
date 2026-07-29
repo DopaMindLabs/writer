@@ -16,9 +16,9 @@ Konke okungakwenziwa yizikhelo, ohlelweni olulodwa oluhlolekayo. Into nganye ixh
 
 ## Ukuhlela
 
-- **Izinani** — amaphrojekthi azimele. [Funda kabanzi](organizing-your-work#spaces)
-- **Izigaba nezidokhumenti** — engeza, qamba kabusha, futhi hlelisa kabusha kusandla. [Funda kabanzi](organizing-your-work#sections-and-documents)
-- **Izifanekiso** — qala kusukela esinqandamisweni, hhayi ikhasi elingenalutho. [Funda kabanzi](organizing-your-work#templates)
+- **Izinani** — amaphrojekthi azimele. [Funda kabanzi](organising-your-work#spaces)
+- **Izigaba nezidokhumenti** — engeza, qamba kabusha, futhi hlelisa kabusha kusandla. [Funda kabanzi](organising-your-work#sections-and-documents)
+- **Izifanekiso** — qala kusukela esinqandamisweni, hhayi ikhasi elingenalutho. [Funda kabanzi](organising-your-work#templates)
 
 ## Izibonelo nezimodi
 

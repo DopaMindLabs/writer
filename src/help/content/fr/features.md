@@ -17,9 +17,9 @@ mène à son guide pour que tu sautes directement au détail.
 
 ## Organisation
 
-- **Espaces** — projets autonomes. [En savoir plus](organizing-your-work)
-- **Sections et documents** — ajoute, renomme et réorganise depuis la barre latérale. [En savoir plus](organizing-your-work)
-- **Modèles** — pars d'une structure, pas d'une page blanche. [En savoir plus](organizing-your-work)
+- **Espaces** — projets autonomes. [En savoir plus](organising-your-work)
+- **Sections et documents** — ajoute, renomme et réorganise depuis la barre latérale. [En savoir plus](organising-your-work)
+- **Modèles** — pars d'une structure, pas d'une page blanche. [En savoir plus](organising-your-work)
 
 ## Vues et modes
 

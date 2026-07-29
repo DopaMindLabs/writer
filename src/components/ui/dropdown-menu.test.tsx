@@ -6,6 +6,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from './dropdown-menu';
 
@@ -22,6 +25,20 @@ const Harness = ({ onSelect = vi.fn() }: { onSelect?: () => void }) => {
     </DropdownMenu>
   );
 };
+
+const SubHarness = ({ onSelect = vi.fn() }: { onSelect?: () => void }) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger>open</DropdownMenuTrigger>
+    <DropdownMenuContent>
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>Move to</DropdownMenuSubTrigger>
+        <DropdownMenuSubContent>
+          <DropdownMenuItem onSelect={onSelect}>Inbox</DropdownMenuItem>
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
 
 describe('DropdownMenu primitives', () => {
   it('opens on trigger click and renders label, separator, items', async () => {
@@ -47,6 +64,18 @@ describe('DropdownMenu primitives', () => {
     await userEvent.click(screen.getByRole('button', { name: 'open' }));
     const del = await screen.findByRole('menuitem', { name: 'Delete' });
     expect(del).toHaveAttribute('data-disabled');
+  });
+
+  it('opens a submenu from its trigger and selects a nested item', async () => {
+    const onSelect = vi.fn();
+    renderWithProviders(<SubHarness onSelect={onSelect} />);
+    await userEvent.click(screen.getByRole('button', { name: 'open' }));
+    const subTrigger = await screen.findByRole('menuitem', { name: 'Move to' });
+    await userEvent.click(subTrigger);
+    await userEvent.click(
+      await screen.findByRole('menuitem', { name: 'Inbox' }),
+    );
+    expect(onSelect).toHaveBeenCalledOnce();
   });
 
   describe('snapshot', () => {

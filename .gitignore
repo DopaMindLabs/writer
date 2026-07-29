@@ -23,6 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 
+# TypeScript incremental build info
+*.tsbuildinfo
+
 # Vite cache
 .vite
 project
@@ -34,6 +37,9 @@ plans
 /playwright-report/
 /playwright/.cache/
 
+# Multi-device cloud harness: browser profiles and per-device traffic logs.
+/.cloud-harness/
+
 coverage
 e2e-coverage
 .claude/*
@@ -43,4 +49,7 @@ e2e-coverage
 
 # Storybook
 storybook-static
+
+# Playwright preview: temporary Vercel bypass cookie (created + deleted per run)
+.preview-auth/
 .demo-tours

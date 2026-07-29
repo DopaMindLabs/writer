@@ -34,5 +34,5 @@ andra skärmar också. Spela upp valfri tur när du vill från **?**-menyn eller
 
 - [Alla funktioner](features) — en fullständig, överskådlig lista med vad du kan göra.
 - [Skrivande och redigering](writing-and-editing) — lär dig redigeraren.
-- [Organisera ditt arbete](organizing-your-work) — strukturera ett större projekt.
+- [Organisera ditt arbete](organising-your-work) — strukturera ett större projekt.
 - [Kortkommandon](keyboard-shortcuts) — styr allt från tangentbordet.

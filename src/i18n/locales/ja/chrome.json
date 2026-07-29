@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "スペース" },
+  "spaceRail": {
+    "landmarkLabel": "スペース"
+  },
   "sidebar": {
     "landmarkLabel": "スペース",
     "navLabel": "ドキュメント",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "スペース設定",
     "openSpaceMenu": "スペースメニューを開く",
     "docMenuAria": "{{name}} のオプション",
-    "renameDoc": "名前を変更",
-    "renameDialog": {
-      "title": "ドキュメントの名前変更",
-      "description": "このドキュメントの新しい名前を選択してください。",
-      "label": "ドキュメント名",
-      "cancel": "キャンセル",
-      "save": "名前を変更"
-    }
+    "renameDoc": "名前を変更"
   },
   "topbar": {
     "openNav": "ナビゲーションを開く",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "フォーカス (⌘\\)",
     "findInDoc": "ドキュメント内を検索",
     "inspector": "ドキュメントインスペクター",
-    "themes": { "light": "ライト", "dark": "ダーク", "hcLight": "ハイコントラスト (ライト)", "hcDark": "ハイコントラスト (ダーク)" }
+    "themes": {
+      "light": "ライト",
+      "dark": "ダーク",
+      "hcLight": "ハイコントラスト (ライト)",
+      "hcDark": "ハイコントラスト (ダーク)"
+    }
   },
-  "modeToggle": { "write": "書く", "read": "読む", "split": "分割", "space": "スペース" },
-  "mobileNav": { "title": "ナビゲーション", "close": "ナビゲーションを閉じる" },
-  "mobileTabs": { "write": "書く", "read": "読む", "split": "分割", "brain": "brain", "cite": "引用", "more": "詳細" },
+  "modeToggle": {
+    "write": "書く",
+    "read": "読む",
+    "split": "分割",
+    "space": "スペース"
+  },
+  "mobileNav": {
+    "title": "ナビゲーション",
+    "close": "ナビゲーションを閉じる"
+  },
+  "mobileTabs": {
+    "write": "書く",
+    "read": "読む",
+    "split": "分割",
+    "brain": "brain",
+    "cite": "引用",
+    "more": "詳細"
+  },
   "mobileMore": {
     "title": "詳細",
     "close": "詳細を閉じる",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "フローティングツールバー",
     "readingWidthLabel": "読み取り幅",
     "readingWidthHint": "ドキュメント単位",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "詳細",
     "helpToursLabel": "ヘルプツアー",
     "helpItem": "ヘルプとショートカット",
-    "themes": { "light": "ライト", "dark": "ダーク", "hcLight": "HC ライト", "hcDark": "HC ダーク" },
+    "themes": {
+      "light": "ライト",
+      "dark": "ダーク",
+      "hcLight": "HC ライト",
+      "hcDark": "HC ダーク"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "新着情報",
     "feedback": "フィードバックを送信…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "インスペクターを展開",
     "collapse": "インスペクターを折りたたむ",
-    "tabs": { "outline": "アウトライン", "info": "情報", "history": "履歴", "actions": "アクション" },
-    "outline": { "title": "アウトライン", "sectionSummary": "{{count}} セクション", "empty": "見出しはまだありません。文書に見出しを追加してアウトラインを作成してください。" },
+    "tabs": {
+      "outline": "アウトライン",
+      "info": "情報",
+      "history": "履歴",
+      "actions": "アクション"
+    },
+    "outline": {
+      "title": "アウトライン",
+      "sectionSummary": "{{count}} セクション",
+      "empty": "見出しはまだありません。文書に見出しを追加してアウトラインを作成してください。"
+    },
     "info": {
       "title": "情報",
       "words": "単語数",
@@ -119,8 +152,18 @@
       "noLimit": "制限なし",
       "noDueDate": "期限なし"
     },
-    "status": { "draft": "下書き", "in-progress": "進行中", "in-review": "レビュー中", "complete": "完了", "published": "公開済み" },
-    "lock": { "title": "編集ロック", "body": "このドキュメントのステータスにより、保護のためロックされています。変更するにはロックを解除してください。", "unlock": "編集のためロック解除" },
+    "status": {
+      "draft": "下書き",
+      "in-progress": "進行中",
+      "in-review": "レビュー中",
+      "complete": "完了",
+      "published": "公開済み"
+    },
+    "lock": {
+      "title": "編集ロック",
+      "body": "このドキュメントのステータスにより、保護のためロックされています。変更するにはロックを解除してください。",
+      "unlock": "編集のためロック解除"
+    },
     "history": {
       "title": "バージョン",
       "now": "現在",
@@ -132,7 +175,11 @@
       "pin": "バージョンをピン留め",
       "unpin": "ピン留めを外す",
       "restore": "復元",
-      "kind": { "auto": "自動", "manual": "手動", "baseline": "起点" },
+      "kind": {
+        "auto": "自動",
+        "manual": "手動",
+        "baseline": "起点"
+      },
       "ageNow": "今",
       "ageMinutes": "{{count}}分前",
       "ageHours": "{{count}}時間前",

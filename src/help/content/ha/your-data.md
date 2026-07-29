@@ -44,4 +44,4 @@ Idan app din ba zai iya buɗe bayanan gida na shi ba, yana nuna allon kuskuren f
 ## Masu alaƙa
 
 - [Ambatoni da jerin kwalekwale](citations-and-bibliography) — fitar da BibTeX.
-- [Tsara aikinku](organizing-your-work) — abin da wuri ke ƙunshe da shi.
+- [Tsara aikinku](organising-your-work) — abin da wuri ke ƙunshe da shi.

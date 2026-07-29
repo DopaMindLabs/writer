@@ -43,4 +43,4 @@ algo nuevo.
 ## Relacionado
 
 - [Citas y bibliografía](citations-and-bibliography) — exportación BibTeX.
-- [Organizar tu trabajo](organizing-your-work) — qué contiene un espacio.
+- [Organizar tu trabajo](organising-your-work) — qué contiene un espacio.

@@ -2,7 +2,7 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import { useEffect, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Quote, Menu, Search, MoreHorizontal } from '@/components/libs/icons';
-import { renameDoc } from '@/lib/doc-actions';
+import { renameDoc } from '@/lib/docs';
 import { useUI } from '@/store/ui';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { IconButton } from '@/components/ui/icon';
@@ -11,7 +11,7 @@ import { TextField } from '@/components/ui/TextField';
 import { ComingSoon } from '@/components/settings/ComingSoon';
 import { routes } from '@/lib/routes';
 import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
-import { MobileNavDrawer } from './MobileNavDrawer';
+import { MobileNavDrawer } from './MobileNav';
 import { cn } from '@/lib/utils';
 
 interface TopbarProps {

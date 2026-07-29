@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Wurare" },
+  "spaceRail": {
+    "landmarkLabel": "Wurare"
+  },
   "sidebar": {
     "landmarkLabel": "Wuri",
     "navLabel": "Takardun",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "Saituna na wuri",
     "openSpaceMenu": "Bude menu na wuri",
     "docMenuAria": "Zaɓuɓɓuka don {{name}}",
-    "renameDoc": "Sake suna",
-    "renameDialog": {
-      "title": "Sake suna takarda",
-      "description": "Zaɓi sabon suna don wannan takarda.",
-      "label": "Sunan takarda",
-      "cancel": "Soke",
-      "save": "Sake suna"
-    }
+    "renameDoc": "Sake suna"
   },
   "topbar": {
     "openNav": "Bude kewayawa",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "Mai da hankali (⌘\\)",
     "findInDoc": "Nemo a cikin takarda",
     "inspector": "Mai duba takarda",
-    "themes": { "light": "Mai haske", "dark": "Mai duhu", "hcLight": "Babban bambanci (mai haske)", "hcDark": "Babban bambanci (mai duhu)" }
+    "themes": {
+      "light": "Mai haske",
+      "dark": "Mai duhu",
+      "hcLight": "Babban bambanci (mai haske)",
+      "hcDark": "Babban bambanci (mai duhu)"
+    }
   },
-  "modeToggle": { "write": "rubuta", "read": "karanta", "split": "raba", "space": "wuri" },
-  "mobileNav": { "title": "Kewayawa", "close": "Rufe kewayawa" },
-  "mobileTabs": { "write": "rubuta", "read": "karanta", "split": "raba", "brain": "brain", "cite": "ambato", "more": "ƙari" },
+  "modeToggle": {
+    "write": "rubuta",
+    "read": "karanta",
+    "split": "raba",
+    "space": "wuri"
+  },
+  "mobileNav": {
+    "title": "Kewayawa",
+    "close": "Rufe kewayawa"
+  },
+  "mobileTabs": {
+    "write": "rubuta",
+    "read": "karanta",
+    "split": "raba",
+    "brain": "brain",
+    "cite": "ambato",
+    "more": "ƙari"
+  },
   "mobileMore": {
     "title": "Ƙari",
     "close": "Rufe ƙari",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "Mai daukar kayan aiki",
     "readingWidthLabel": "Faɗin karatu",
     "readingWidthHint": "Ma'aunin kowane takarda",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Ƙari",
     "helpToursLabel": "Yawon taimako",
     "helpItem": "Taimako da gajerun hanyoyi",
-    "themes": { "light": "Mai haske", "dark": "Mai duhu", "hcLight": "HC mai haske", "hcDark": "HC mai duhu" },
+    "themes": {
+      "light": "Mai haske",
+      "dark": "Mai duhu",
+      "hcLight": "HC mai haske",
+      "hcDark": "HC mai duhu"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Sabbin abubuwa",
     "feedback": "Aiko ra'ayi…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "Faɗaɗa mai duba",
     "collapse": "Murƙushe mai duba",
-    "tabs": { "outline": "TSARI", "info": "BAYANI", "history": "TARIHI", "actions": "AYYUKA" },
-    "outline": { "title": "TSARI", "sectionSummary": "{{count}} SASHE", "empty": "Babu taken labarai har yanzu. Ƙara taken labarai zuwa takardar don gina taƙaitaccen bayani." },
+    "tabs": {
+      "outline": "TSARI",
+      "info": "BAYANI",
+      "history": "TARIHI",
+      "actions": "AYYUKA"
+    },
+    "outline": {
+      "title": "TSARI",
+      "sectionSummary": "{{count}} SASHE",
+      "empty": "Babu taken labarai har yanzu. Ƙara taken labarai zuwa takardar don gina taƙaitaccen bayani."
+    },
     "info": {
       "title": "BAYANI",
       "words": "Kalmomi",
@@ -119,8 +152,18 @@
       "noLimit": "Babu iyaka",
       "noDueDate": "Babu rana"
     },
-    "status": { "draft": "Daftari", "in-progress": "Ana ci gaba", "in-review": "Ana sake duba", "complete": "An kammala", "published": "An buga" },
-    "lock": { "title": "An kulle don gyara", "body": "Halin wannan takarda ya kulle ta don kiyaye ta. Sake bude don yin canje-canje.", "unlock": "Sake bude don gyara" },
+    "status": {
+      "draft": "Daftari",
+      "in-progress": "Ana ci gaba",
+      "in-review": "Ana sake duba",
+      "complete": "An kammala",
+      "published": "An buga"
+    },
+    "lock": {
+      "title": "An kulle don gyara",
+      "body": "Halin wannan takarda ya kulle ta don kiyaye ta. Sake bude don yin canje-canje.",
+      "unlock": "Sake bude don gyara"
+    },
     "history": {
       "title": "FITARWA",
       "now": "YANZU",
@@ -132,7 +175,11 @@
       "pin": "Hada siga",
       "unpin": "Cire hadawa",
       "restore": "Maido",
-      "kind": { "auto": "auto", "manual": "da hannu", "baseline": "tushe" },
+      "kind": {
+        "auto": "auto",
+        "manual": "da hannu",
+        "baseline": "tushe"
+      },
       "ageNow": "yanzu",
       "ageMinutes": "{{count}}m da suka shige",
       "ageHours": "{{count}}sh da suka shige",

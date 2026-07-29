@@ -5,29 +5,57 @@ import {
   seedIfEmpty,
 } from './seed';
 import { NoteKind, NoteState } from './schema';
-import type { Template } from '@/data/templates';
-import { FIXED_TIME } from '@/test/fixtures';
+import { TemplateStage, type Template } from '@/data/templates';
+import { EMPTY_LEXICAL_JSON } from '@/lib/docs';
+import { FIXED_TIME, serializedBody } from '@/test/fixtures';
+import { isParseableBody } from '@/lib/revisions';
+
+const DOC_B_BODY = serializedBody('b');
 
 const TEST_TEMPLATE: Template = {
   id: 'test-tpl',
   label: 'Test Template',
   tag: 'tst',
   version: '0.1.0',
+  stage: TemplateStage.Alpha,
   enabled: true,
+  description: '',
   pickerOrder: 0,
+  allowConfiguration: true,
   sections: [
     {
       label: 'Drafts',
       order: 0,
-      sections: [{ label: 'Ideas', order: 0 }],
+      defaultDocName: '',
+      sections: [{ label: 'Ideas', order: 0, defaultDocName: '' }],
     },
-    { label: 'Final', order: 1 },
+    { label: 'Final', order: 1, defaultDocName: '' },
   ],
   seedDocs: [
-    { sectionLabel: 'Drafts', name: 'Doc A' },
-    { sectionLabel: 'Drafts', subsectionLabel: 'Ideas', name: 'Doc B', body: 'b' },
-    { sectionLabel: 'Final', name: 'Doc C' },
-    { sectionLabel: 'Nonexistent', name: 'Skipped' },
+    {
+      sectionLabel: 'Drafts',
+      subsectionLabel: '',
+      name: 'Doc A',
+      body: EMPTY_LEXICAL_JSON,
+    },
+    {
+      sectionLabel: 'Drafts',
+      subsectionLabel: 'Ideas',
+      name: 'Doc B',
+      body: DOC_B_BODY,
+    },
+    {
+      sectionLabel: 'Final',
+      subsectionLabel: '',
+      name: 'Doc C',
+      body: EMPTY_LEXICAL_JSON,
+    },
+    {
+      sectionLabel: 'Nonexistent',
+      subsectionLabel: '',
+      name: 'Skipped',
+      body: EMPTY_LEXICAL_JSON,
+    },
   ],
   seedNotes: [
     {
@@ -59,7 +87,7 @@ describe('createSpaceFromTemplate', () => {
 
     const docs = await db.docs.where('spaceId').equals(id).toArray();
     expect(docs).toHaveLength(3);
-    expect(docs.some((d) => d.body === 'b')).toBe(true);
+    expect(docs.some((d) => d.body === DOC_B_BODY)).toBe(true);
 
     const notes = await db.notes.where('spaceId').equals(id).toArray();
     expect(notes).toHaveLength(1);
@@ -87,6 +115,15 @@ describe('seedIfEmpty', () => {
 
     await seedIfEmpty();
     expect(await db.spaces.count()).toBe(spaceCount);
+  });
+
+  it('gives every seeded doc a valid Lexical body', async () => {
+    await seedIfEmpty();
+    const docs = await db.docs.toArray();
+    expect(docs.length).toBeGreaterThan(0);
+    for (const doc of docs) {
+      expect(isParseableBody(doc.body)).toBe(true);
+    }
   });
 });
 

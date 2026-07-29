@@ -1,11 +1,15 @@
 import { test, expect } from './_helpers';
-import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
+import {
+  reseedAndGoHome,
+  getFirstSpaceIdFromHome,
+  openSectionAddDoc,
+} from './_helpers';
 
 test.beforeEach(async ({ page }) => {
   await reseedAndGoHome(page);
 });
 
-test('sidebar shows subsections and allows adding a doc to a subsection', async ({
+test('sidebar flattens subsection docs under their parent section and adds at section level', async ({
   page,
 }) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
@@ -14,20 +18,17 @@ test('sidebar shows subsections and allows adding a doc to a subsection', async 
 
   const sidebar = page.locator('aside').last();
   const sections = sidebar.locator('[data-testid^="sidebar-section-"]');
-  const sectionCount = await sections.count();
-  expect(sectionCount).toBeGreaterThan(0);
+  expect(await sections.count()).toBeGreaterThan(0);
 
-  // Find an "add doc" button in the sidebar (uses sidebar-section-{id}-add pattern)
-  const addBtns = sidebar.locator('[data-testid$="-add"]');
-  const addCount = await addBtns.count();
-  expect(addCount).toBeGreaterThan(0);
+  // The default template seeds docs under Methods → Pipeline/Stats subsections.
+  // These now render flattened under their parent section, so a subsection doc
+  // like "Alignment" is visible with no subsection header — the `↳` glyph never
+  // appears anywhere in the nav.
+  await expect(sidebar.locator('a', { hasText: 'Alignment' })).toBeVisible();
+  await expect(sidebar.getByText('↳')).toHaveCount(0);
 
-  // Click the first add button to start adding a doc
-  await addBtns.first().click();
-  const input = sidebar.locator('[data-testid$="-add-input"]');
-  await expect(input).toBeVisible();
-
-  // Type a doc name and submit
+  // Adding a doc now targets the section level via the ⋯ menu.
+  const input = await openSectionAddDoc(page, sidebar);
   await input.fill('New Test Doc');
   await input.press('Enter');
 
@@ -41,10 +42,7 @@ test('sidebar add doc input is dismissed on Escape', async ({ page }) => {
   await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
 
   const sidebar = page.locator('aside').last();
-  const addBtns = sidebar.locator('[data-testid$="-add"]');
-  await addBtns.first().click();
-  const input = sidebar.locator('[data-testid$="-add-input"]');
-  await expect(input).toBeVisible();
+  const input = await openSectionAddDoc(page, sidebar);
 
   await input.press('Escape');
   await expect(input).toHaveCount(0);

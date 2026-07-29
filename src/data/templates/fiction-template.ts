@@ -1,4 +1,5 @@
 import { NoteKind } from '@/db/schema';
+import { EMPTY_LEXICAL_JSON } from '@/lib/docs';
 import { TemplateStage, type Template } from './types';
 
 const template: Template = {
@@ -11,18 +12,57 @@ const template: Template = {
   description: 'novel · short story · script',
   pickerOrder: 4,
   sections: [
-    { label: 'Manuscript', order: 0, defaultDocName: 'Untitled chapter' },
-    { label: 'World', order: 1 },
-    { label: 'Workshop', order: 2 },
+    {
+      label: 'Manuscript',
+      order: 0,
+      defaultDocName: 'Untitled chapter',
+    },
+    { label: 'World', order: 1, defaultDocName: '' },
+    { label: 'Workshop', order: 2, defaultDocName: '' },
   ],
   seedDocs: [
-    { sectionLabel: 'Manuscript', name: 'Chapter 01' },
-    { sectionLabel: 'Manuscript', name: 'Chapter 02' },
-    { sectionLabel: 'Manuscript', name: 'Chapter 03' },
-    { sectionLabel: 'World', name: 'Characters' },
-    { sectionLabel: 'World', name: 'Places' },
-    { sectionLabel: 'World', name: 'Lore & rules' },
-    { sectionLabel: 'Workshop', name: 'Sessions' },
+    {
+      sectionLabel: 'Manuscript',
+      subsectionLabel: '',
+      name: 'Chapter 01',
+      body: EMPTY_LEXICAL_JSON,
+    },
+    {
+      sectionLabel: 'Manuscript',
+      subsectionLabel: '',
+      name: 'Chapter 02',
+      body: EMPTY_LEXICAL_JSON,
+    },
+    {
+      sectionLabel: 'Manuscript',
+      subsectionLabel: '',
+      name: 'Chapter 03',
+      body: EMPTY_LEXICAL_JSON,
+    },
+    {
+      sectionLabel: 'World',
+      subsectionLabel: '',
+      name: 'Characters',
+      body: EMPTY_LEXICAL_JSON,
+    },
+    {
+      sectionLabel: 'World',
+      subsectionLabel: '',
+      name: 'Places',
+      body: EMPTY_LEXICAL_JSON,
+    },
+    {
+      sectionLabel: 'World',
+      subsectionLabel: '',
+      name: 'Lore & rules',
+      body: EMPTY_LEXICAL_JSON,
+    },
+    {
+      sectionLabel: 'Workshop',
+      subsectionLabel: '',
+      name: 'Sessions',
+      body: EMPTY_LEXICAL_JSON,
+    },
   ],
   seedNotes: [
     {
@@ -31,6 +71,7 @@ const template: Template = {
       w: 196,
       h: 76,
       kind: NoteKind.Note,
+      title: '',
       body: 'a loose plot thread — a detail that does not add up yet. where does it lead?',
     },
     {
@@ -48,6 +89,7 @@ const template: Template = {
       w: 184,
       h: 64,
       kind: NoteKind.Note,
+      title: '',
       body: 'a sensory detail worth keeping — a smell, a sound, a texture that brings a scene to life.',
     },
     {
@@ -65,6 +107,7 @@ const template: Template = {
       w: 152,
       h: 56,
       kind: NoteKind.Note,
+      title: '',
       body: '"an opening line you do not want to lose" — opener?',
     },
     {
@@ -93,6 +136,7 @@ const template: Template = {
     NoteKind.Lore,
     NoteKind.Image,
   ],
+  allowConfiguration: true,
 };
 
 export default template;

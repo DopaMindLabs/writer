@@ -70,4 +70,4 @@ whakamutunga me te pupuri tiaki i wāhi haumaru.
 ## Pānga
 
 - [Tūtohutanga me te rārangi pukapuka](citations-and-bibliography) — kaweatu BibTeX.
-- [Whakaraupapa i tōu mahi](organizing-your-work) — ngā mea kei roto i tētahi wāhi.
+- [Whakaraupapa i tōu mahi](organising-your-work) — ngā mea kei roto i tētahi wāhi.

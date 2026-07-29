@@ -3,7 +3,7 @@
 exports[`snapshot > matches the open inspector drawer 1`] = `
 <div
   aria-labelledby="radix-_r_*_"
-  class="fixed inset-y-0 right-0 z-50 flex w-[min(320px,85vw)] bg-paper-2 shadow-lg md:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right duration-200"
+  class="fixed inset-y-0 right-0 z-50 flex w-[min(320px,85vw)] bg-paper-2 pb-[env(safe-area-inset-bottom)] pr-[env(safe-area-inset-right)] shadow-overlay-drawer md:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right duration-200"
   data-state="open"
   data-testid="mobile-inspector-drawer"
   id="radix-_r_*_"
@@ -32,7 +32,7 @@ exports[`snapshot > matches the open inspector drawer 1`] = `
       </span>
       <button
         aria-label="Collapse inspector"
-        class="items-center justify-center rounded-md transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink hidden h-5 w-5 md:inline-flex"
+        class="items-center justify-center transition-colors text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink hidden h-5 w-5 md:inline-flex"
         data-testid="doc-inspector-collapse"
         type="button"
       >

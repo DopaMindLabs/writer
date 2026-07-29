@@ -8,7 +8,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > cit
   >
     <button
       aria-label="Open navigation"
-      class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink md:hidden"
+      class="inline-flex items-center justify-center transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink md:hidden"
       data-testid="topbar-open-nav"
       type="button"
     >
@@ -112,7 +112,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > foc
   >
     <button
       aria-label="Open navigation"
-      class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink md:hidden"
+      class="inline-flex items-center justify-center transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink md:hidden"
       data-testid="topbar-open-nav"
       type="button"
     >
@@ -375,7 +375,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > wri
   >
     <button
       aria-label="Open navigation"
-      class="inline-flex items-center justify-center rounded-md transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink md:hidden"
+      class="inline-flex items-center justify-center transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink md:hidden"
       data-testid="topbar-open-nav"
       type="button"
     >
@@ -559,7 +559,7 @@ exports[`Topbar > snapshot > should match the snapshot across all variants > wri
     <button
       aria-label="Doc inspector"
       aria-pressed="false"
-      class="items-center justify-center rounded-md transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink hidden md:inline-flex"
+      class="items-center justify-center transition-colors h-7 w-7 text-ink-3 hover:bg-paper-2 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink data-[state=open]:bg-paper-2 data-[state=open]:text-ink hidden md:inline-flex"
       data-state="closed"
       data-testid="topbar-inspector-toggle"
       type="button"

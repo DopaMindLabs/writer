@@ -36,15 +36,18 @@ test('divider can be dragged with touch in stacked (portrait) mode', async ({
   const x = box!.x + box!.width / 2;
   const startY = box!.y + box!.height / 2;
 
+  // A stable touch-point `id` across start/move lets Chromium correlate the
+  // sequence into one continuous gesture; without it the synthesised
+  // pointermove stream can break and the drag never registers.
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('Input.dispatchTouchEvent', {
     type: 'touchStart',
-    touchPoints: [{ x, y: startY }],
+    touchPoints: [{ x, y: startY, id: 0 }],
   });
   for (let i = 1; i <= 10; i++) {
     await cdp.send('Input.dispatchTouchEvent', {
       type: 'touchMove',
-      touchPoints: [{ x, y: startY + i * 15 }],
+      touchPoints: [{ x, y: startY + i * 15, id: 0 }],
     });
   }
   await cdp.send('Input.dispatchTouchEvent', {

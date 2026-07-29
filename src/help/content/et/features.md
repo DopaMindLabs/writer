@@ -16,9 +16,9 @@ Kõik, mida rakendus teha oskab, ühes ülevaatlikus nimekirjas. Iga üksus ling
 
 ## Korraldamine
 
-- **Ruumid** — iseseisvad projektid. [Uuri lähemalt](organizing-your-work#spaces)
-- **Jaotised ja dokumendid** — lisa, nimeta ümber ja järjesta külgribalt. [Uuri lähemalt](organizing-your-work#sections-and-documents)
-- **Mallid** — alusta struktuurist, mitte tühjalt lehelt. [Uuri lähemalt](organizing-your-work#templates)
+- **Ruumid** — iseseisvad projektid. [Uuri lähemalt](organising-your-work#spaces)
+- **Jaotised ja dokumendid** — lisa, nimeta ümber ja järjesta külgribalt. [Uuri lähemalt](organising-your-work#sections-and-documents)
+- **Mallid** — alusta struktuurist, mitte tühjalt lehelt. [Uuri lähemalt](organising-your-work#templates)
 
 ## Vaated ja režiimid
 

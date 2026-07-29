@@ -34,5 +34,5 @@ vil fra **?**-menyen eller [Hurtiginnstillinger](customization-and-settings#quic
 
 - [Alle funksjoner](features) — en komplett, oversiktlig liste over hva du kan gjøre.
 - [Skriving og redigering](writing-and-editing) — lær editoren å kjenne.
-- [Organisering av arbeidet](organizing-your-work) — strukturer et større prosjekt.
+- [Organisering av arbeidet](organising-your-work) — strukturer et større prosjekt.
 - [Tastatursnarveier](keyboard-shortcuts) — styr alt fra tastaturet.

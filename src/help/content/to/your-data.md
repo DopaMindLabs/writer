@@ -71,4 +71,4 @@ tauhi 'a e ngaahi hu-atu 'i ha potu malu.
 ## Kaunga
 
 - [Ngaahi Kuomu & Fokotu'utu'u](citations-and-bibliography) — hu-atu BibTeX.
-- [Fakakatoa Ho'o Ngāue](organizing-your-work) — ko e ha 'oku 'i ai 'i ha spesi.
+- [Fakakatoa Ho'o Ngāue](organising-your-work) — ko e ha 'oku 'i ai 'i ha spesi.

@@ -33,5 +33,5 @@ muestra lo esencial. Vuelve a reproducir cualquier tour desde el menú de ayuda
 
 - [Todas las funciones](features) — una lista completa y escaneable de lo que puedes hacer.
 - [Escritura y edición](writing-and-editing) — aprende el editor.
-- [Organizar tu trabajo](organizing-your-work) — estructura un proyecto grande.
+- [Organizar tu trabajo](organising-your-work) — estructura un proyecto grande.
 - [Atajos de teclado](keyboard-shortcuts) — manéjalo todo desde el teclado.

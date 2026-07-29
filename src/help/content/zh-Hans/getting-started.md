@@ -30,5 +30,5 @@
 
 - [全部功能](features) — 完整的功能列表，一目了然。
 - [写作与编辑](writing-and-editing) — 了解编辑器。
-- [组织您的工作](organizing-your-work) — 为大型项目建立结构。
+- [组织您的工作](organising-your-work) — 为大型项目建立结构。
 - [键盘快捷键](keyboard-shortcuts) — 用键盘控制一切。

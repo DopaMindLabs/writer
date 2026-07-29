@@ -20,14 +20,7 @@
     "openSpaceSettings": "Configuración del espacio",
     "openSpaceMenu": "Abrir menú del espacio",
     "docMenuAria": "Opciones para {{name}}",
-    "renameDoc": "Renombrar",
-    "renameDialog": {
-      "title": "Renombrar documento",
-      "description": "Elige un nuevo nombre para este documento.",
-      "label": "Nombre del documento",
-      "cancel": "Cancelar",
-      "save": "Renombrar"
-    }
+    "renameDoc": "Renombrar"
   },
   "topbar": {
     "openNav": "Abrir navegación",

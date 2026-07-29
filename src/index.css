@@ -18,6 +18,12 @@
   --hl-green: #d6ebcf;
   --hl-ash: #e8e8e8;
 
+  --presence-1: #a85c44;
+  --presence-2: #566a8c;
+  --presence-3: #5f7347;
+  --presence-4: #855074;
+  --presence-5: #8a6a34;
+
   --warning: #a8392c;
   --warning-bg: #fbe2dc;
 
@@ -34,6 +40,21 @@
   --reading-leading-scale: 1;
   --focus-ring-width: 1px;
   --motion-duration: 150ms;
+
+  /* Overlay envelope — a gentle diffuse shadow scaled by elevation, so a
+     floating surface lifts off the page rather than being outlined in ink.
+     Static surfaces (cards, inputs, page chrome) never carry these. */
+  --shadow-overlay-tooltip: 0 4px 14px rgb(17 17 17 / 0.1), 0 1px 2px rgb(17 17 17 / 0.05);
+  --shadow-overlay-popover: 0 8px 28px rgb(17 17 17 / 0.09), 0 1px 3px rgb(17 17 17 / 0.05);
+  --shadow-overlay-dialog: 0 18px 50px rgb(17 17 17 / 0.14), 0 2px 8px rgb(17 17 17 / 0.06);
+  --shadow-overlay-drawer: -18px 0 50px rgb(17 17 17 / 0.12);
+  --shadow-overlay-drawer-start: 18px 0 50px rgb(17 17 17 / 0.12);
+  --shadow-overlay-sheet: 0 -14px 40px rgb(17 17 17 / 0.12);
+
+  /* Scrim — a flat ink veil behind modal overlays; never a blur. Kept dark
+     across every theme so it always dims the page beneath. */
+  --scrim: rgb(17 17 17 / 0.4);
+  --scrim-drawer: rgb(17 17 17 / 0.3);
 }
 
 [data-theme='dark'] {
@@ -58,6 +79,20 @@
 
   --info: #8ab6e6;
   --info-bg: #16222f;
+
+  --presence-1: #d59680;
+  --presence-2: #93a6c6;
+  --presence-3: #9fb283;
+  --presence-4: #c294b0;
+  --presence-5: #c6a874;
+
+  /* Deeper alpha on the dark ground; the hairline still carries the edge. */
+  --shadow-overlay-tooltip: 0 4px 14px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-overlay-popover: 0 8px 28px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
+  --shadow-overlay-dialog: 0 18px 50px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35);
+  --shadow-overlay-drawer: -18px 0 50px rgb(0 0 0 / 0.5);
+  --shadow-overlay-drawer-start: 18px 0 50px rgb(0 0 0 / 0.5);
+  --shadow-overlay-sheet: 0 -14px 40px rgb(0 0 0 / 0.5);
 }
 
 [data-theme='hc-light'] {
@@ -76,6 +111,12 @@
   --hl-blue: #56b4e9;
   --hl-green: #009e73;
   --hl-ash: #999999;
+
+  --presence-1: #8f3f28;
+  --presence-2: #33507f;
+  --presence-3: #3a5a24;
+  --presence-4: #743c60;
+  --presence-5: #6e5320;
 
   --warning: #a00000;
   --warning-bg: #ffe5e5;
@@ -106,6 +147,12 @@
   --hl-blue: #56b4e9;
   --hl-green: #009e73;
   --hl-ash: #999999;
+
+  --presence-1: #ff9c7a;
+  --presence-2: #7ab0ff;
+  --presence-3: #86d46a;
+  --presence-4: #e59ccb;
+  --presence-5: #e0b95a;
 
   --warning: #ff8a7a;
   --warning-bg: #330000;

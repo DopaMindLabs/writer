@@ -30,5 +30,5 @@
 
 - [ሁሉም ባህሪያት](features) — ሊሠሩ የሚቻሉ ሁሉ ሙሉ ዝርዝር።
 - [መጻፍ እና ማርትዕ](writing-and-editing) — አርታዒውን ተዋወቅ።
-- [ሥራዎን ማደራጀት](organizing-your-work) — ትልቅ ፕሮጀክት አዋቅር።
+- [ሥራዎን ማደራጀት](organising-your-work) — ትልቅ ፕሮጀክት አዋቅር።
 - [የቁልፍ ሰሌዳ አቋራጮች](keyboard-shortcuts) — ሁሉንም ከቁልፍ ሰሌዳ ያቀናብሩ።

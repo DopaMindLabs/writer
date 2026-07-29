@@ -34,5 +34,5 @@ lisi tokoni (**?**) pe [Ngaahi Setenga Vave](customization-and-settings#quick-se
 
 - [Ngaahi Me'angāue Kotoa](features) — ko e lisi kakato 'e lava ke sio vave 'o e me'a 'e lava ke ke fai.
 - [Tohi & Liliu](writing-and-editing) — ako 'a e kī-tohi.
-- [Fakakatoa Ho'o Ngāue](organizing-your-work) — faka'ilonga ha polōseki lahi ange.
+- [Fakakatoa Ho'o Ngāue](organising-your-work) — faka'ilonga ha polōseki lahi ange.
 - [Ngaahi Fo'i Kī-Boto](keyboard-shortcuts) — teuteu 'aki e kī-boto.

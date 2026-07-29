@@ -9,6 +9,14 @@ export interface Space {
   template: string;
   createdAt: number;
   updatedAt: number;
+  /**
+   * The access-control realm this row belongs to, when its space has been
+   * shared. Absent means the creator's private realm — the default, and the
+   * only state until a space is shared. Stamped by the sync layer and kept
+   * plaintext on the wire (it is in `CLOUD_RESERVED`) so the server can enforce
+   * access; the row's content is sealed around it.
+   */
+  realmId?: string;
 }
 
 export interface Section {
@@ -17,6 +25,8 @@ export interface Section {
   parentSectionId: string | null;
   label: string;
   order: number;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export interface Doc {
@@ -32,7 +42,31 @@ export interface Doc {
     charLimit?: number;
     dueDate?: number;
   };
+  /**
+   * Position within its section, ascending. Optional and unindexed: legacy rows
+   * without it sort after ordered ones in insertion order, and it is assigned
+   * densely (0..n-1) whenever the section is reordered. Not an index, so it
+   * needs no schema version bump and syncs encrypted like the rest of the row.
+   */
+  order?: number;
   updatedAt: number;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
+}
+
+/**
+ * An append-only CRDT update for a document. The editing source of truth for a
+ * collaborative doc is the sequence of these payloads; `Doc.body` remains the
+ * serialized read model. `engine`/`formatVersion` tag the payload so a future
+ * CRDT engine can coexist. Keyed by an auto-increment id (absent before insert).
+ */
+export interface DocUpdate {
+  id?: number;
+  docId: string;
+  engine: 'yjs';
+  formatVersion: 1;
+  payload: Uint8Array;
+  createdAt: number;
 }
 
 export enum NoteKind {
@@ -74,8 +108,12 @@ export interface Note {
   body: string;
   linkedDocId?: string;
   createdAt: number;
+  /** When the note was last opened, if ever (epoch ms). */
+  openedAt?: number;
   layout?: NoteLayout;
   typeVersion?: string;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export interface NoteAttachment {
@@ -87,6 +125,8 @@ export interface NoteAttachment {
   size: number;
   blob: Blob;
   createdAt: number;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export interface Annotation {
@@ -99,6 +139,8 @@ export interface Annotation {
   body?: string;
   author: string;
   createdAt: number;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export interface Connection {
@@ -107,6 +149,8 @@ export interface Connection {
   fromNoteId: string;
   toNoteId: string;
   createdAt: number;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export interface Citation {
@@ -119,6 +163,8 @@ export interface Citation {
   type: 'book' | 'article' | 'chapter' | 'misc';
   useCount: number;
   raw?: string;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export type RevisionKind = 'auto' | 'manual' | 'baseline';
@@ -134,6 +180,8 @@ export interface Revision {
   pinned?: boolean;
   createdAt: number;
   meta?: Record<string, unknown>;
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export type BackupFormat = 'md-zip' | 'archive-v2';
@@ -163,6 +211,8 @@ export interface HighlightPalette {
   id: string;
   spaceId: string;
   slots: { name: string; color: string }[];
+  /** Access-control realm; see {@link Space.realmId}. */
+  realmId?: string;
 }
 
 export interface Meta {

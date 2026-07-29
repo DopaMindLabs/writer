@@ -35,5 +35,5 @@ z menu **?** lub [Szybkich ustawień](customization-and-settings#quick-settings)
 
 - [Wszystkie funkcje](features) — kompletna, przejrzysta lista tego, co możesz robić.
 - [Pisanie i edycja](writing-and-editing) — poznaj edytor.
-- [Organizowanie pracy](organizing-your-work) — strukturyzuj większy projekt.
+- [Organizowanie pracy](organising-your-work) — strukturyzuj większy projekt.
 - [Skróty klawiszowe](keyboard-shortcuts) — steruj wszystkim z klawiatury.

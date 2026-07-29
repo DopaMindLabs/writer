@@ -71,4 +71,4 @@ a uchovávejte exporty na bezpečném místě.
 ## Viz také
 
 - [Citace a bibliografie](citations-and-bibliography) — export BibTeX.
-- [Organizace práce](organizing-your-work) — co prostor obsahuje.
+- [Organizace práce](organising-your-work) — co prostor obsahuje.

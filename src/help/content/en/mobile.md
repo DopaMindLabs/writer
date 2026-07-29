@@ -5,7 +5,7 @@ The app adapts to small screens so you can read and write on a phone or tablet.
 ## At a glance
 
 - A **bottom tab bar** replaces the sidebar on small screens.
-- The **more** tab opens a drawer with settings, help, and about.
+- The **more** tab opens a sheet with settings, accessibility, your account, help, and about.
 - **Read** mode and [BrainSpace](brainspace) are usable on a phone.
 - **Split view** is available on larger screens.
 
@@ -28,7 +28,8 @@ tag badge takes you back to that space.
 ## Renaming a document
 
 In the nav drawer, tap the **⋮** button on a document row and choose
-**Rename** to give the document a new name.
+**Rename** — the row turns into a name field. Confirm with return, or clear
+the field and tap away to keep the old name.
 
 ## The document inspector
 

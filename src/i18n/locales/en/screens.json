@@ -1,4 +1,9 @@
 {
+  "editor": {
+    "crdtErrorTitle": "Couldn't open this document",
+    "crdtErrorBody": "Something went wrong preparing this document for editing. Your saved work is safe.",
+    "crdtErrorRetry": "Try again"
+  },
   "home": {
     "subtitle": "Free writing multiverse",
     "titleMain": "LIpsum",
@@ -7,12 +12,17 @@
     "tagline": "A clutter-free space for long-form writing — fiction, research, essays, journals.",
     "continueWriting": "Continue writing",
     "startNewSpace": "Start a new space",
+    "signInToSync": "Sign in to sync",
+    "releaseTitle": "Next release: {{date}}",
+    "releaseBody": "Before the release, make sure a local sync folder or backup is set up — data stored only in this browser may be lost.",
+    "releaseCountdown_one": "{{count}} day remaining",
+    "releaseCountdown_other": "{{count}} days remaining",
     "syncOffChip": "sync/backups not enabled · data can be lost",
     "syncOnChip": "folder sync on",
     "syncOnTitle": "Folder sync enabled",
     "syncOnBody": "Your work syncs to the “{{folder}}” folder on this device.",
     "warningTitle": "Pre-release build",
-    "warningBody": "No data sync. Everything lives in your browser and clearing its cache loses your work. You can enable sync to a local folder in Universal settings → Sync.",
+    "warningBody": "No data sync. Everything lives in your browser and clearing its cache loses your work. You can enable sync to a local folder in Universal settings → Local Sync.",
     "versionLine": "Version {{version}}"
   },
   "about": {
@@ -58,7 +68,7 @@
       "citations": "Citation style",
       "annotation": "Annotations",
       "backups": "Backups",
-      "sync": "Sync",
+      "sync": "Local Sync",
       "export": "Export / import",
       "data": "Your data",
       "account": "Account",
@@ -299,12 +309,11 @@
     },
     "about": {
       "title": "About",
-      "subtitle": "Build info and links.",
-      "comingSoonBody": "See the /about page for the story; this tab will host build info, license, and changelog.",
+      "subtitle": "Build information and links.",
       "versionLabel": "Version",
       "versionValue": "{{version}}",
-      "buildLabel": "Build",
-      "buildValue": "local",
+      "commitLabel": "Commit",
+      "builtLabel": "Built",
       "licenseLabel": "License",
       "licenseValue": "PolyForm Noncommercial 1.0.0",
       "linksLabel": "Links",
@@ -316,13 +325,182 @@
     },
     "account": {
       "title": "Account",
-      "subtitle": "Sign-in, sync across devices, and shared workspaces.",
-      "comingSoonBody": "Cloud sync is unavailable today — Lotem is local-only. Account, sign-in, and shared workspaces land when sync ships.",
-      "signedOutLabel": "Sign in",
-      "signedOutHint": "Cloud sync is not available yet. This is here to show the design.",
-      "signInButton": "Sign in with email",
-      "syncLabel": "Sync this device",
-      "syncHint": "Once you sign in, your spaces will replicate to other devices."
+      "subtitle": "How you appear when collaborating. Stored only on this device.",
+      "nameLabel": "Display name",
+      "nameHint": "Shown beside your cursor when you collaborate. Optional.",
+      "namePlaceholder": "Anonymous",
+      "hueLabel": "Presence colour",
+      "hueHint": "The colour that marks your cursor and selection to others.",
+      "hues": {
+        "presence-1": "Terracotta",
+        "presence-2": "Slate blue",
+        "presence-3": "Moss",
+        "presence-4": "Plum",
+        "presence-5": "Ochre"
+      },
+      "privacyNotice": "Your account never leaves this device. It's saved locally and shared only with collaborators you invite.",
+      "cloud": {
+        "title": "Cloud sync (beta)",
+        "subtitle": "Sync this space across your devices. Your writing is encrypted on this device before it's uploaded — we can never read it.",
+        "signIn": "Sign in",
+        "signOut": "Sign out",
+        "signInHint": "Set up your passphrase first — sync can't start until your writing can be encrypted.",
+        "signInBlocked": "There's unencrypted writing on this device. Set up your passphrase first so it's encrypted before it syncs.",
+        "signInFailed": "Couldn't sign in. Please try again.",
+        "ack": {
+          "title": "Before you sign in",
+          "description": "Cloud sync here demonstrates sync functionality only.",
+          "noServer": "This app has no server of its own — it is a local-first, client-side app and your writing lives on this device. Sync is provided for evaluation through Dexie Cloud.",
+          "evaluation": "Signing in automatically creates an evaluation account if you don't already have one. Evaluation accounts are valid for 3 days only — after that, the account and any synced data may be lost.",
+          "confirmLabel": "I understand this is a temporary evaluation account and synced data may be lost after 3 days",
+          "backupLabel": "I have enabled local device sync and/or backup (optional)",
+          "continue": "Continue",
+          "cancel": "Cancel"
+        },
+        "keyless": {
+          "checkingTitle": "Fetching your account…",
+          "checkingBody": "Checking whether your account already has an encryption key. This only takes a moment.",
+          "fetchFailedTitle": "We couldn't fetch your account",
+          "fetchFailedBody": "We couldn't reach the sync service to check your account. Your writing on this device is safe.",
+          "fetchRetry": "Try again",
+          "offlineTitle": "You're offline",
+          "offlineBody": "We'll finish fetching your account as soon as you're back online.",
+          "lockedTitle": "Your writing is locked on this device",
+          "lockedBody": "This account already has an encryption key. Enter the passphrase you created on another device to unlock it here.",
+          "lockedAction": "Unlock now",
+          "noKeyTitle": "This account has no encryption key yet",
+          "noKeyBody": "Set up a passphrase to encrypt your writing before it syncs. You'll use it to unlock your other devices.",
+          "noKeyAction": "Set up encryption"
+        },
+        "forgetDevice": "Forget encryption on this device",
+        "forgetDeviceHint": "Removes the key from this browser. Your synced data and other devices are unaffected.",
+        "setUp": "Set up encryption",
+        "unlock": "Unlock on this device",
+        "email": {
+          "label": "Email",
+          "placeholder": "you@example.com",
+          "submit": "Continue",
+          "cancel": "Cancel"
+        },
+        "otp": {
+          "label": "One-time code",
+          "submit": "Verify",
+          "cancel": "Cancel"
+        },
+        "passphrase": {
+          "title": "Create your passphrase",
+          "description": "Your passphrase encrypts your writing before it's uploaded. Choose something long you'll remember — at least 12 characters.",
+          "label": "Passphrase",
+          "confirmLabel": "Confirm passphrase",
+          "placeholder": "At least 12 characters",
+          "tooShort": "Use at least 12 characters.",
+          "mismatch": "The passphrases don't match.",
+          "strength": "Strength",
+          "hintWeak": "Weak",
+          "hintFair": "Fair",
+          "hintStrong": "Strong",
+          "submit": "Create",
+          "cancel": "Cancel"
+        },
+        "unlockDialog": {
+          "title": "Unlock this device",
+          "description": "Enter your passphrase to decrypt your writing on this device.",
+          "label": "Passphrase",
+          "submit": "Unlock",
+          "cancel": "Cancel",
+          "wrong": "That passphrase doesn't match. Try again, or use your recovery code.",
+          "useRecovery": "Use a recovery code instead",
+          "recoveryLabel": "Recovery code",
+          "recoverySubmit": "Recover",
+          "recoveryWrong": "That recovery code doesn't match this account.",
+          "noEscrow": "There's no key to unlock on this device yet. Sign in first — your encrypted key arrives with your account's data.",
+          "failed": "Something went wrong while unlocking. Please try again."
+        },
+        "recovery": {
+          "title": "Save your recovery code",
+          "description": "This is the only way back into your encrypted writing if every device forgets the passphrase. Store it somewhere safe — we can't show it again.",
+          "passphraseNote": "Remembering your passphrase on this device is convenient and protects the copy stored on our servers — but it won't help if this device is lost or stolen.",
+          "codeNote": "The recovery code is the only way back if every device forgets the passphrase. Lose both the passphrase and this code and your writing can't be recovered.",
+          "confirmStored": "I've stored my recovery code somewhere safe",
+          "done": "Done"
+        },
+        "status": {
+          "label": "Sync",
+          "initial": "Starting up",
+          "notInSync": "Waiting to sync",
+          "pushing": "Uploading changes",
+          "pulling": "Downloading changes",
+          "inSync": "Up to date",
+          "offline": "Offline",
+          "error": "Sync problem"
+        },
+        "reconcile": {
+          "failedTitle": "Sync couldn't finish",
+          "failedBody": "Some changes from your other devices haven't been applied yet. Your writing is safe — nothing has been lost.",
+          "retry": "Try again"
+        },
+        "disclosure": {
+          "title": "What the server can and can't see",
+          "encrypted": "Your writing — document and note bodies, titles, annotations and citation details — is encrypted on this device before upload. The server only ever stores ciphertext.",
+          "ids": "Record identifiers and how they relate to each other",
+          "timestamps": "When records were created and changed",
+          "kinds": "Note kinds, and citation keys and years",
+          "email": "The email address you sign in with",
+          "network": "Sync timing and your IP address",
+          "invite": "Sign-in is invite-only while this beta is running."
+        },
+        "conflict": {
+          "bannerTitle": "These notes were locked on another device",
+          "bannerBody": "Enter the passphrase you created there to unlock them.",
+          "bannerAction": "Unlock now",
+          "unlockTitle": "Unlock your notes",
+          "unlockDescription": "Enter the passphrase you created on your other device. You'll use that one from now on.",
+          "unlockLabel": "Passphrase",
+          "unlockSubmit": "Unlock",
+          "unlockWrong": "That passphrase doesn't match. Try again.",
+          "noPassphrase": "I don't have that passphrase",
+          "eraseTitle": "Erase the account's copy?",
+          "eraseBody": "Your other devices will lose their synced copy. The notes on this device are kept.",
+          "eraseWarningTitle": "This can't be undone",
+          "eraseWarningBody": "The account's encrypted notes are erased permanently — they can't be recovered afterwards, from any device or by support.",
+          "eraseWord": "ERASE",
+          "eraseConfirmLabel": "Type {{word}} to confirm",
+          "eraseConfirm": "Erase the account's copy",
+          "eraseBack": "Back"
+        },
+        "deviceLimit": {
+          "title": "This account already has four devices",
+          "body": "Cloud sync is in beta and supports four devices for now. Remove a device you no longer use, or sign out on one of them, then try again here.",
+          "betaNotice": "Cloud sync is in beta: four devices per account for now, with more to come. Keep local backups of important writing on at least one device."
+        },
+        "devices": {
+          "title": "Your devices",
+          "count": "{{used}} of {{limit}} devices in use",
+          "thisDevice": "This device",
+          "deviceLabel": "Device {{number}}",
+          "thisDeviceBadge": "This device",
+          "inactiveBadge": "Inactive",
+          "joined": "Joined {{date}}",
+          "lastSeen": "last seen {{when}}",
+          "empty": "No devices yet. This one joins the list once your writing is encrypted.",
+          "signOut": "Sign out",
+          "signOutAria": "Sign out of this device",
+          "revoke": "Remove",
+          "revokeAria": "Remove {{name}} from this account",
+          "revokeTitle": "Remove this device?",
+          "revokeBody": "It frees the slot straight away, so another device can take it. If that device is still signed in, it stops syncing and is asked to sign out.",
+          "revokeConfirm": "Remove device",
+          "revokeCancel": "Cancel"
+        },
+        "revoked": {
+          "title": "This device was removed from your account",
+          "body": "Someone removed it from another device, so it no longer holds a slot. Sign out to finish — your writing stays on this device."
+        },
+        "backupNudge": {
+          "title": "These notes are only on this device",
+          "body": "Sign in to back them up. Until you do, clearing this browser loses them."
+        }
+      }
     },
     "typography": {
       "title": "Typography",
@@ -382,7 +560,7 @@
       "latestValue": "12 min ago · 1,190 words"
     },
     "sync": {
-      "title": "Sync",
+      "title": "Local Sync",
       "subtitle": "Push your spaces to a folder you choose. Point it at a Google Drive, Dropbox, or iCloud folder to sync across devices.",
       "unsupportedTitle": "Not available in this browser",
       "unsupportedBody": "Folder sync needs the File System Access API, available in Chrome, Edge, and other Chromium browsers on desktop. Switch to a supported browser to use it.",
@@ -575,7 +753,7 @@
       "sync": {
         "title": "Sync",
         "subtitle": "Push this space to the connected folder, manually or on a schedule. Sync is separate from Backups.",
-        "folderHint": "Connect a folder in Universal settings → Sync. The same folder is used for every space.",
+        "folderHint": "Connect a folder in Universal settings → Local Sync. The same folder is used for every space.",
         "intervalHint": "How often this space syncs automatically. Choose Default to follow the universal auto-sync setting.",
         "syncNow": "Sync this space"
       },
@@ -617,7 +795,18 @@
     "creating": "creating…",
     "submitLabel": "enter {{name}} →",
     "newSpace": "new space",
-    "back": "back"
+    "back": "back",
+    "lock": {
+      "mismatchTitle": "Your account's encryption key has changed",
+      "mismatchBody": "This device holds a different key, so creating a space is paused. Resolve the key conflict in your account settings.",
+      "keylessTitle": "Your writing is locked on this device",
+      "keylessBody": "You're signed in without an encryption key, so creating a space is paused. Unlock or set up encryption in your account settings.",
+      "lockedTitle": "Your writing is locked",
+      "lockedBody": "The space couldn't be created because encryption is locked on this device. Sort this out in your account settings, then try again.",
+      "failedTitle": "Something went wrong",
+      "failedBody": "The space couldn't be created. Please try again.",
+      "action": "Open account settings"
+    }
   },
   "dump": {
     "headerCount": "Brain space · {{count}} unsorted",

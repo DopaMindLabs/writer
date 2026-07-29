@@ -72,4 +72,4 @@ em lugar seguro.
 ## Relacionado
 
 - [Citações e bibliografia](citations-and-bibliography) — exportação BibTeX.
-- [Organizando seu trabalho](organizing-your-work) — o que um espaço contém.
+- [Organizando seu trabalho](organising-your-work) — o que um espaço contém.

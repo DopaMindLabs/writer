@@ -69,4 +69,4 @@ dus behandel het als laatste redmiddel en bewaar exports op een veilige plek.
 ## Gerelateerd
 
 - [Citaten en bibliografie](citations-and-bibliography) — BibTeX-export.
-- [Je werk organiseren](organizing-your-work) — wat een ruimte bevat.
+- [Je werk organiseren](organising-your-work) — wat een ruimte bevat.

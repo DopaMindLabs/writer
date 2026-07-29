@@ -17,9 +17,9 @@ ao seu guia para ir directamente aos detalhes.
 
 ## Organização
 
-- **Espaços** — projectos independentes. [Saber mais](organizing-your-work#spaces)
-- **Secções e documentos** — adicione, mude o nome e reordene a partir da barra lateral. [Saber mais](organizing-your-work#sections-and-documents)
-- **Modelos** — comece a partir de uma estrutura, não de uma página em branco. [Saber mais](organizing-your-work#templates)
+- **Espaços** — projectos independentes. [Saber mais](organising-your-work#spaces)
+- **Secções e documentos** — adicione, mude o nome e reordene a partir da barra lateral. [Saber mais](organising-your-work#sections-and-documents)
+- **Modelos** — comece a partir de uma estrutura, não de uma página em branco. [Saber mais](organising-your-work#templates)
 
 ## Vistas e modos
 

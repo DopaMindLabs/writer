@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "ቦታዎች" },
+  "spaceRail": {
+    "landmarkLabel": "ቦታዎች"
+  },
   "sidebar": {
     "landmarkLabel": "ቦታ",
     "navLabel": "ሰነዶች",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "የቦታ ቅንብሮች",
     "openSpaceMenu": "የቦታ ምናሌን ክፈት",
     "docMenuAria": "ለ {{name}} አማራጮች",
-    "renameDoc": "እንደገና ሰይም",
-    "renameDialog": {
-      "title": "ሰነድ እንደገና ሰይም",
-      "description": "ለዚህ ሰነድ አዲስ ስም ይምረጡ።",
-      "label": "የሰነድ ስም",
-      "cancel": "ሰርዝ",
-      "save": "እንደገና ሰይም"
-    }
+    "renameDoc": "እንደገና ሰይም"
   },
   "topbar": {
     "openNav": "ዳሰሳ ክፈት",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "ትኩረት (⌘\\)",
     "findInDoc": "በሰነድ ውስጥ ፈልግ",
     "inspector": "የሰነድ መርማሪ",
-    "themes": { "light": "ብርሃን", "dark": "ጨለማ", "hcLight": "ከፍተኛ ንፅፅር (ብርሃን)", "hcDark": "ከፍተኛ ንፅፅር (ጨለማ)" }
+    "themes": {
+      "light": "ብርሃን",
+      "dark": "ጨለማ",
+      "hcLight": "ከፍተኛ ንፅፅር (ብርሃን)",
+      "hcDark": "ከፍተኛ ንፅፅር (ጨለማ)"
+    }
   },
-  "modeToggle": { "write": "ጻፍ", "read": "አንብብ", "split": "ክፈል", "space": "ቦታ" },
-  "mobileNav": { "title": "ዳሰሳ", "close": "ዳሰሳ ዝጋ" },
-  "mobileTabs": { "write": "ጻፍ", "read": "አንብብ", "split": "ክፈፍ", "brain": "brain", "cite": "ጥቀስ", "more": "ተጨማሪ" },
+  "modeToggle": {
+    "write": "ጻፍ",
+    "read": "አንብብ",
+    "split": "ክፈል",
+    "space": "ቦታ"
+  },
+  "mobileNav": {
+    "title": "ዳሰሳ",
+    "close": "ዳሰሳ ዝጋ"
+  },
+  "mobileTabs": {
+    "write": "ጻፍ",
+    "read": "አንብብ",
+    "split": "ክፈፍ",
+    "brain": "brain",
+    "cite": "ጥቀስ",
+    "more": "ተጨማሪ"
+  },
   "mobileMore": {
     "title": "ተጨማሪ",
     "close": "ተጨማሪ ዝጋ",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "ተንሳፋፊ መሳሪያ ሳጥን",
     "readingWidthLabel": "የንባብ ስፋት",
     "readingWidthHint": "በሰነድ ልኬት",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "ተጨማሪ",
     "helpToursLabel": "የእገዛ ጉብኝት",
     "helpItem": "እገዛ እና አቋራጭ",
-    "themes": { "light": "ብርሃን", "dark": "ጨለማ", "hcLight": "HC ብርሃን", "hcDark": "HC ጨለማ" },
+    "themes": {
+      "light": "ብርሃን",
+      "dark": "ጨለማ",
+      "hcLight": "HC ብርሃን",
+      "hcDark": "HC ጨለማ"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "አዲስ ምን አለ",
     "feedback": "አስተያየት ላክ…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "መርማሪ አስፋ",
     "collapse": "መርማሪ ሰብስብ",
-    "tabs": { "outline": "አጠቃላይ", "info": "መረጃ", "history": "ታሪክ", "actions": "ድርጊቶች" },
-    "outline": { "title": "አጠቃላይ", "sectionSummary": "{{count}} ክፍሎች", "empty": "እስካሁን ርዕሶች የሉም። የሰነዱን ዝርዝር ለመፍጠር ርዕሶች ያክሉ።" },
+    "tabs": {
+      "outline": "አጠቃላይ",
+      "info": "መረጃ",
+      "history": "ታሪክ",
+      "actions": "ድርጊቶች"
+    },
+    "outline": {
+      "title": "አጠቃላይ",
+      "sectionSummary": "{{count}} ክፍሎች",
+      "empty": "እስካሁን ርዕሶች የሉም። የሰነዱን ዝርዝር ለመፍጠር ርዕሶች ያክሉ።"
+    },
     "info": {
       "title": "መረጃ",
       "words": "ቃላት",
@@ -119,8 +152,18 @@
       "noLimit": "ገደብ የለም",
       "noDueDate": "ቀን የለም"
     },
-    "status": { "draft": "ረቂቅ", "in-progress": "በሂደት ላይ", "in-review": "በመገምገም", "complete": "ተጠናቋል", "published": "ታትሟል" },
-    "lock": { "title": "ለማስተካከያ ተቆልፏል", "body": "የዚህ ሰነድ ሁኔታ ለመጠበቅ ቆልፎታል. ለለውጥ ይክፈቱ.", "unlock": "ለማስተካከያ ክፈት" },
+    "status": {
+      "draft": "ረቂቅ",
+      "in-progress": "በሂደት ላይ",
+      "in-review": "በመገምገም",
+      "complete": "ተጠናቋል",
+      "published": "ታትሟል"
+    },
+    "lock": {
+      "title": "ለማስተካከያ ተቆልፏል",
+      "body": "የዚህ ሰነድ ሁኔታ ለመጠበቅ ቆልፎታል. ለለውጥ ይክፈቱ.",
+      "unlock": "ለማስተካከያ ክፈት"
+    },
     "history": {
       "title": "ስሪቶች",
       "now": "አሁን",
@@ -132,7 +175,11 @@
       "pin": "ስሪት ሰካ",
       "unpin": "ሰካ አስወግድ",
       "restore": "መልስ",
-      "kind": { "auto": "ራስ-ሰር", "manual": "በእጅ", "baseline": "መነሻ" },
+      "kind": {
+        "auto": "ራስ-ሰር",
+        "manual": "በእጅ",
+        "baseline": "መነሻ"
+      },
       "ageNow": "አሁን",
       "ageMinutes": "{{count}}ደ በፊት",
       "ageHours": "{{count}}ሰ በፊት",

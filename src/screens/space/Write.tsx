@@ -1,5 +1,11 @@
-import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SpaceRail } from '@/components/chrome/SpaceRail';
 import { Sidebar } from '@/components/chrome/Sidebar';
@@ -12,7 +18,7 @@ import { DocInspectorIcons } from '@/components/chrome/DocInspectorIcons';
 import { VersionHistoryModal } from '@/components/chrome/VersionHistoryModal';
 import { SaveVersionDialog } from '@/components/chrome/SaveVersionDialog';
 import { MobileTabs } from '@/components/chrome/MobileTabs';
-import { MobileMoreSheet } from '@/components/chrome/MobileMoreSheet';
+import { MobileMoreSheet } from '@/components/chrome/MobileMore';
 import { useSpace } from '@/hooks/useSpaces';
 import { useSections, useDocuments, useDocument } from '@/hooks/useDocuments';
 import { useUI, type InspectorMode } from '@/store/ui';
@@ -37,7 +43,8 @@ export const WriteScreen = () => {
 
   useAutoTour('writer', { ready: !focus && !!doc });
 
-  const redirecting = useFirstDocRedirect(spaceId, docId, sections, docs);
+  const redirect = resolveFirstDocRedirect(spaceId, docId, sections, docs);
+  useAssertedRedirect(redirect.to);
 
   useEffect(() => {
     if (spaceId) setCurrentSpaceId(spaceId);
@@ -50,7 +57,7 @@ export const WriteScreen = () => {
   if (!spaceId) return <Navigate to={routes.home()} replace />;
 
   const editorMode = focus ? 'focus' : 'write';
-  const contentLoading = redirecting || isSelectedDocLoading(docId, doc, docs);
+  const contentLoading = redirect.loading || isSelectedDocLoading(docId, doc, docs);
 
   return (
     <div className="flex h-full w-full">
@@ -137,22 +144,52 @@ const pickFirstDocId = (
   return firstDoc.id;
 };
 
-const useFirstDocRedirect = (
+/**
+ * Where the space root should land while the screen waits at `/s/:spaceId`.
+ * `loading` covers the window before the live queries resolve. Pure — the
+ * navigation itself is asserted by {@link useAssertedRedirect}.
+ */
+const resolveFirstDocRedirect = (
   spaceId: string | undefined,
   docId: string | undefined,
   sections: Section[] | undefined,
   docs: Doc[] | undefined,
-): boolean => {
+): { to: string | null; loading: boolean } => {
+  if (docId || !spaceId) return { to: null, loading: false };
+  if (sections === undefined || docs === undefined) {
+    return { to: null, loading: true };
+  }
+  const firstDocId = pickFirstDocId(sections, docs);
+  return firstDocId
+    ? { to: routes.docWrite(spaceId, firstDocId), loading: true }
+    : { to: null, loading: false };
+};
+
+/**
+ * Assert the redirect once per `(target, location)` pair. Two failure modes
+ * shape this:
+ *
+ * - A `to`-memoised effect (or `<Navigate>`, which memoises on `to`) drops the
+ *   navigation when a hash re-entry to `/s/:spaceId` cancels the router
+ *   transition without `to` changing — the screen hangs on "Loading space…".
+ *   Stamping with `location.key` re-arms the redirect on every router
+ *   transition, so a replayed entry always re-fires it.
+ * - An unguarded every-commit `navigate` storms under load: the router wraps
+ *   transitions in `startTransition`, so several commits can land before the
+ *   params update, each firing another navigation. The stamp makes the assert
+ *   idempotent per location.
+ */
+const useAssertedRedirect = (to: string | null): void => {
   const navigate = useNavigate();
-  const dataReady = sections !== undefined && docs !== undefined;
-  const firstDocId =
-    !docId && dataReady ? pickFirstDocId(sections, docs) : undefined;
+  const location = useLocation();
+  const asserted = useRef<string | null>(null);
   useEffect(() => {
-    if (spaceId && firstDocId) {
-      void navigate(routes.docWrite(spaceId, firstDocId), { replace: true });
-    }
-  }, [spaceId, firstDocId, navigate]);
-  return !docId && (!dataReady || firstDocId !== undefined);
+    if (!to) return;
+    const stamp = `${to}@${location.key}`;
+    if (asserted.current === stamp) return;
+    asserted.current = stamp;
+    void navigate(to, { replace: true });
+  });
 };
 
 const isSelectedDocLoading = (

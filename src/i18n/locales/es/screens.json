@@ -12,7 +12,7 @@
     "syncOnTitle": "Sincronización de carpeta activada",
     "syncOnBody": "Tu trabajo se sincroniza con la carpeta “{{folder}}” en este dispositivo.",
     "warningTitle": "Build preliminar",
-    "warningBody": "Sin sincronización de datos. Todo vive en tu navegador y, si borras la caché, perderás tu trabajo. Puedes activar la sincronización con una carpeta local en Configuración → Sync.",
+    "warningBody": "Sin sincronización de datos. Todo vive en tu navegador y, si borras la caché, perderás tu trabajo. Puedes activar la sincronización con una carpeta local en Configuración → Local Sync.",
     "versionLine": "Versión {{version}}"
   },
   "about": {

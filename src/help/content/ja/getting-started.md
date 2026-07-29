@@ -34,5 +34,5 @@
 
 - [すべての機能](features) — できることの完全なリスト。
 - [執筆と編集](writing-and-editing) — エディターを学ぶ。
-- [作業の整理](organizing-your-work) — 大きなプロジェクトを構造化する。
+- [作業の整理](organising-your-work) — 大きなプロジェクトを構造化する。
 - [キーボードショートカット](keyboard-shortcuts) — キーボードですべてを操作。

@@ -20,7 +20,8 @@
     "test:e2e:report": "playwright show-report",
     "test:e2e:coverage": "playwright test && node scripts/coverage-ratchet.mjs e2e",
     "coverage:ratchet": "node scripts/coverage-ratchet.mjs e2e",
-    "build:e2e": "VITE_E2E=1 VITE_BASE=/ vite build",
+    "cloud:harness": "node scripts/cloud-device-harness.mjs",
+    "build:e2e": "VITE_CLOUD_SYNC_FLAG= VITE_DEVICE_REFRESH_SECONDS= VITE_DEVICE_STALE_SECONDS= VITE_E2E=1 VITE_E2E_CRDT_FAIL_DOC=e2e-crdt-fail VITE_E2E_KEY_ERROR_DOC=e2e-key-error VITE_E2E_RESET_FAIL=1 VITE_COMPACT_THRESHOLD=5 VITE_BASE=/ VITE_DEXIE_CLOUD_URL=https://cloud.example.invalid vite build",
     "preview:e2e": "VITE_BASE=/ vite preview --port 4173",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -36,6 +37,9 @@
     "*.{ts,tsx}": "eslint --max-warnings=0 --no-warn-ignored"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@fontsource/geist": "^5.3.0",
     "@fontsource/geist-mono": "^5.3.0",
     "@fontsource/source-serif-4": "^5.3.0",
@@ -49,6 +53,7 @@
     "@lexical/rich-text": "^0.48.0",
     "@lexical/selection": "^0.48.0",
     "@lexical/utils": "^0.48.0",
+    "@lexical/yjs": "^0.48.0",
     "@radix-ui/react-dialog": "^1.1.22",
     "@radix-ui/react-dropdown-menu": "^2.1.23",
     "@radix-ui/react-popover": "^1.1.22",
@@ -61,6 +66,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dexie": "^4.4.4",
+    "dexie-cloud-addon": "^4.4.13",
     "dexie-react-hooks": "^4.4.0",
     "diff": "^9.0.0",
     "driver.js": "^1.8.0",
@@ -77,6 +83,8 @@
     "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.6.0",
     "typescript": "^6.0.3",
+    "y-protocols": "^1.0.7",
+    "yjs": "^13.6.31",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

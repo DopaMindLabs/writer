@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/popover';
 import { IconButton } from '@/components/ui/icon';
 import { Link } from '@/components/ui/Link';
-import { QuickSettingsPopover } from './QuickSettingsPopover';
+import { QuickSettingsPopover } from './QuickSettings';
 
 interface FocusRailProps {
   activeSpaceId: string | null;

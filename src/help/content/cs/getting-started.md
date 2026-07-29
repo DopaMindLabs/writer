@@ -34,5 +34,5 @@ nápovědy (**?**) nebo z [Rychlého nastavení](customization-and-settings#quic
 
 - [Všechny funkce](features) — úplný přehledný seznam toho, co můžete dělat.
 - [Psaní a úpravy](writing-and-editing) — naučte se ovládat editor.
-- [Organizace práce](organizing-your-work) — strukturujte větší projekt.
+- [Organizace práce](organising-your-work) — strukturujte větší projekt.
 - [Klávesové zkratky](keyboard-shortcuts) — ovládejte vše z klávesnice.

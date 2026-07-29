@@ -34,5 +34,5 @@ súgó (**?**) menüből vagy a [Gyors beállításokból](customization-and-set
 
 - [Minden funkció](features) — teljes, áttekinthető lista arról, mit tehet.
 - [Írás és szerkesztés](writing-and-editing) — ismerje meg a szerkesztőt.
-- [Munka rendszerezése](organizing-your-work) — strukturáljon egy nagyobb projektet.
+- [Munka rendszerezése](organising-your-work) — strukturáljon egy nagyobb projektet.
 - [Billentyűparancsok](keyboard-shortcuts) — mindent irányítson billentyűzetről.

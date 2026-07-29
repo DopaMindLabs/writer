@@ -70,4 +70,4 @@ drošā vietā.
 ## Saistītais
 
 - [Citāti un bibliogrāfija](citations-and-bibliography) — BibTeX eksports.
-- [Darba organizēšana](organizing-your-work) — ko satur telpa.
+- [Darba organizēšana](organising-your-work) — ko satur telpa.

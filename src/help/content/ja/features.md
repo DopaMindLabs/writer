@@ -16,9 +16,9 @@
 
 ## 整理
 
-- **スペース** — 独立したプロジェクト。[詳細を見る](organizing-your-work#spaces)
-- **セクションとドキュメント** — サイドバーから追加、名称変更、並べ替え。[詳細を見る](organizing-your-work#sections-and-documents)
-- **テンプレート** — 白紙のページではなく構造から開始。[詳細を見る](organizing-your-work#templates)
+- **スペース** — 独立したプロジェクト。[詳細を見る](organising-your-work#spaces)
+- **セクションとドキュメント** — サイドバーから追加、名称変更、並べ替え。[詳細を見る](organising-your-work#sections-and-documents)
+- **テンプレート** — 白紙のページではなく構造から開始。[詳細を見る](organising-your-work#templates)
 
 ## ビューとモード
 

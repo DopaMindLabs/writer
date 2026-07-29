@@ -29,10 +29,11 @@ them.
 1. **Hairline grammar, no ornament.** Two rule weights (1 px `#e5e5e5` and 1 px `#f0f0f0`);
    nothing thicker. No shadows except on the desktop window chrome. No gradients. No rounded
    corners except the 8 px on the desktop window itself and 16 px on mobile bottom-sheet tops.
-2. **Pure grayscale palette; status is the one exception.** The ink scale is strict
-   black-to-white. The single typed exception is the **status palette** (error · warning ·
-   success · info), defined in §5 — used only in toasts, banners, field errors, badges, and
-   inline glyphs. Never in branding, layout, or hierarchy.
+2. **Pure grayscale palette; a few typed colour exceptions.** The ink scale is strict
+   black-to-white. The only typed colour exceptions are the **status palette** (error · warning ·
+   success · info, §5), the **annotation highlight palette** (§7.4), and the **presence hues**
+   (§7.6) — each confined to one purpose (feedback, annotation, collaboration presence). Never in
+   branding, layout, or hierarchy.
 3. **Three families, no more.** Source Serif 4 is editorial (titles, prose, captions). Geist
    is UI (buttons, nav labels). Geist Mono is meta (eyebrows, dates, counts, shortcuts).
 4. **Borderless icons.** Glyphs sit in 28 px hit zones with transparent backgrounds at rest;
@@ -53,14 +54,16 @@ them.
 - **Drop shadows on cards.** The system uses hairlines, never elevation. Only the desktop
   window has a shadow.
 - **A brand accent colour for hierarchy.** If a primary CTA needs emphasis, flip it to a solid
-  ink fill. Never introduce a brand accent. The status palette (§5) is the single exception,
-  and only for feedback.
+  ink fill. Never introduce a brand accent. The status palette (§5), annotation highlights
+  (§7.4), and presence hues (§7.6) are the only typed colour exceptions, each for its stated
+  purpose.
 - **Decorative emoji or stroked icons.** Icons are typographic glyphs (`⌕ ⤢ ⋯ ⋮ ◐ §`) on
   transparent grounds.
 - **More than two type sizes per block.** Eyebrow + title + body — that's the upper bound. If
   you need a third size, you're building a new block.
-- **Soft tints for status.** Status is text + glyph, not a coloured pill. The single exception
-  is the highlight-colour palette inside annotations.
+- **Soft tints for status.** Status is text + glyph, not a coloured pill. The tinted-colour
+  exceptions are the highlight-colour palette inside annotations (§7.4) and the presence hues
+  (§7.6).
 
 ### 1.3 When to use which ink
 
@@ -198,11 +201,14 @@ Borderless icon in a 28 px hit-zone.
 
 ### 3.3 `PillToggle` (source: `final.jsx · Toggle`)
 
-The familiar 28×16 pill switch. Rail is hairline at rest, ink at on.
+The familiar 28×16 pill switch. Rail is hairline at rest, ink at on. The `md` size
+(44×24) is for a touch row — a full-height mobile control where the compact `sm`
+default would be an undersized tap target.
 
 | Prop | Type | Default |
 |---|---|---|
 | `on` | boolean | `false` |
+| `size` | `'sm' \| 'md'` | `'sm'` |
 
 > **In this repo:** `src/components/ui/PillToggle.tsx`.
 
@@ -300,6 +306,137 @@ the hover-revealed `IconButton`).
 
 ---
 
+### 3.8 `MenuItem`
+
+A single row inside a menu (a `DropdownMenu`, or a `Popover` acting as an action list). A
+menu is a **list, not a card**: the row has no background at rest; hover and keyboard
+highlight paint the faint `paper-2` wash and darken the label from `ink-2` to `ink` (and the
+leading glyph from `ink-3` to `ink`). Square corners, sans 13 px label, an optional 14-px
+leading glyph slot, and an optional trailing slot — a mono `Kbd` shortcut, or a `Check` when
+`checked`. A `checked` row exposes `data-checked` for callers that style or query row state.
+Set `checkPosition="leading"` for a menu of peers where each row can be ticked (a guided-tour
+replay list): the tick moves to a reserved leading gutter so ticked and unticked rows align,
+and the trailing shortcut stays visible. The destructive row shows the `X` icon (never Unicode, never a coloured row) and is
+placed under a `MenuDivider` by the caller; the ink-fill `dangerous` Button stays reserved for
+the `ConfirmDialog` footer alone (§4.5, §5a).
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `label` | `ReactNode` | — | Row label (omitted in `asChild` mode). |
+| `icon` | `LucideIcon` | — | Leading glyph; ignored when `danger` is set. |
+| `shortcut` | `ReactNode` | — | Trailing hint (compose a `Kbd`); hidden when `checked` under the default trailing tick. |
+| `danger` | boolean | `false` | Destructive row: shows the `X` icon. |
+| `checked` | boolean | `false` | Shows a `Check` and reflects on the row as `data-checked`. |
+| `checkPosition` | `'leading' \| 'trailing'` | `'trailing'` | `trailing` swaps the shortcut for a tick (on/off idiom); `leading` reserves a fixed leading gutter so rows align ticked or not and keeps the shortcut visible (e.g. a replayed tour list). |
+| `disabled` | boolean | `false` | Non-interactive; sets `aria-disabled`. |
+| `asChild` | boolean | `false` | Render the row as the provided child (e.g. a router `Link`). |
+
+Renders a `<button>` by default. Compose it via the parent's `asChild` to inherit menu
+semantics — `<DropdownMenuItem asChild>` gives it `role="menuitem"` and arrow-key navigation,
+`<PopoverClose asChild>` makes it dismiss the panel — so every menu shares one row grammar
+instead of hand-rolling its own.
+
+> **In this repo:** `src/components/ui/MenuItem.tsx` (+ `MenuItem.recipe.ts`).
+
+---
+
+### 3.8a Submenu (nested menu)
+
+A menu row that opens a second panel of rows to its side — for a branching choice too long
+or too dynamic to sit inline (e.g. "Move to section" over the space's sections). Compose
+`DropdownMenuSub` (state) + `DropdownMenuSubTrigger` (the row; inherits the `MenuItem`
+grammar and carries a trailing `ChevronRight`) + `DropdownMenuSubContent` (the nested panel;
+same hairline `paper` panel grammar as `DropdownMenuContent`). The submenu shares the parent
+menu's roving focus, `Escape`, and click-outside behaviour, so it is keyboard-operable by
+default.
+
+- Reach for a submenu when the branch is a **list of peer targets** (sections, projects,
+  labels); keep flat inline rows for a handful of fixed actions.
+- When that list is long enough to need filtering, put a **`SearchableMenuList` (§3.8b)** inside
+  the `DropdownMenuSubContent` rather than a bare stack of rows.
+
+> **In this repo:** `src/components/ui/dropdown-menu.tsx` re-exports `DropdownMenuSub` /
+> `DropdownMenuSubTrigger` / `DropdownMenuSubContent` (Radix `DropdownMenu.Sub*`, styled in
+> `dropdown-menu.components.tsx`).
+
+---
+
+### 3.8b `SearchableMenuList`
+
+A search field over a filterable, single-select list of rows — the "type to narrow, then
+pick" pattern for when a menu's choices are too many to scan (move a document to one of many
+sections; assign a label). Composes the `SearchField` (§4.7) over a `listbox` of rows that
+reuse the `MenuItem` row grammar (hover/active `paper-2` wash, a trailing `Check` on the
+current value). Host-agnostic: drop it inside a `DropdownMenuSubContent` (§3.8a), a `Popover`,
+or render it standalone.
+
+- **One combobox, not a menu of menu-items.** Keyboard focus stays in the search input;
+  Arrow keys move a highlight through the rows via `aria-activedescendant` and Enter commits
+  the active row. This is what lets the input coexist with a parent Radix menu — the list is
+  not a second roving menu, and the component stops the parent menu's typeahead from stealing
+  the user's keystrokes. Escape/Tab still bubble so the surrounding menu closes normally.
+- Pass `selectedId` for the ticked current value, `emptyLabel` for the no-match message, and a
+  `label` that names both the input and the listbox for assistive tech.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `items` | `readonly { id, label }[]` | — | The choices. |
+| `selectedId` | `string \| null` | — | The current value; shown with a persistent tick. |
+| `onSelect` | `(id) => void` | — | Fired on click or Enter. The host owns closing the menu. |
+| `label` | `string` | — | Accessible name for the search input and the listbox. |
+| `placeholder` | `string` | — | Search-field placeholder. |
+| `emptyLabel` | `string` | — | Shown when the filter matches nothing. |
+| `autoFocus` | boolean | `true` | Focus the search input on mount. |
+
+> **In this repo:** `src/components/ui/SearchableMenuList/` (`SearchableMenuList.tsx` +
+> `SearchableMenuOptions.tsx` / `SearchableMenuOption.tsx` rows + `useSearchableMenu.ts`).
+
+---
+
+### 3.9 `Kbd`
+
+A keyboard-shortcut hint in the mono meta voice (10 px, `ink-4`, letter-spaced). The
+modifier is **derived from the running platform at render** — ⌘ on macOS, Ctrl on
+Linux/Windows — so each user sees the key they actually press. Write chords
+platform-neutrally and never hard-code a glyph: `mod` resolves to the platform modifier,
+alongside `shift` / `alt` / `enter`, joined with `+` (e.g. `mod+,`, `mod+shift+m`, or a bare
+`?`). On Apple the glyphs sit adjacent (`⌘⇧M`); elsewhere the words join with `+`
+(`Ctrl+Shift+M`). Locale strings hold only the bare key — the modifier is never translated
+or stored.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `keys` | string | — | A platform-neutral chord (`mod`/`shift`/`alt`/`enter` + keys, `+`-joined). |
+
+Renders a semantic `<kbd>`. The handler side stays on `event.metaKey || event.ctrlKey`
+(§11); `Kbd` is its display companion.
+
+> **In this repo:** `src/components/ui/Kbd.tsx`, backed by
+> `src/lib/shortcuts/platform.ts` (`isApplePlatform` / `getModifierLabel`, injectable for
+> tests).
+
+---
+
+### 3.10 `SectionLabel`
+
+The one uppercase-mono heading for a group of rows — the "APPEARANCE" / "WRITING" labels in
+Quick Settings, the group eyebrows inside menus, the settings-nav group headings. It is a
+named specialisation of `Eyebrow` (§3.1) that shares the same recipe
+(`Eyebrow.recipe.ts`), narrowed to the group-label sizes and tones — so every section label
+reads identically instead of being hand-rolled per surface. `DropdownMenuLabel` is rebased
+onto the same recipe.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `size` | `9 \| 10` | `10` | `9` for the tightest group eyebrow, `10` for a standard section label. |
+| `tone` | `"ink3" \| "ink4"` | `"ink3"` | Label colour. |
+| `asChild` | boolean | `false` | Render as the provided element (e.g. an `<h2>` for a labelled landmark). |
+
+> **In this repo:** `src/components/ui/SectionLabel.tsx` (over `Eyebrow` /
+> `Eyebrow.recipe.ts`).
+
+---
+
 ## 4. Forms
 
 Every form primitive follows the same rule set: hairline borders, ink fill on active focus,
@@ -372,7 +509,7 @@ fit one line.
 
 ### 4.5 `Button`
 
-Four kinds. Square corners always.
+Four styled kinds, plus a `bare` escape hatch. Square corners always.
 
 | Kind | Look | Use for |
 |---|---|---|
@@ -380,14 +517,15 @@ Four kinds. Square corners always.
 | `secondary` | Hairline outline, ink text, transparent ground. | Secondary CTA next to a primary (e.g. *cancel* next to *save*). |
 | `ghost` | Geist 500, ink, single 1-px underline. | Most actions: *continue reading →*, *peek inside*. |
 | `dangerous` | Same as primary — context, not colour, signals risk. | Delete / archive / destructive verbs. |
+| `bare` | No surface of its own — the button reset only (focus ring, disabled handling). | Bespoke inline text triggers that own their type and layout via `className` — an editable title, an eyebrow section label, an eyebrow *Add section* affordance. Never a raw `<button>`. Pair with `size="none"`. |
 
 **Sizes**: `sm` (12 px text, 6×12 padding), `md` default (13 px text, 9×16), `lg` (14 px text,
-12×22).
+12×22), `none` (no box — the caller sizes it, used with `bare`).
 
 | Prop | Type | Default |
 |---|---|---|
-| `kind` | `"primary" \| "secondary" \| "ghost" \| "dangerous"` | `"primary"` |
-| `size` | `"sm" \| "md" \| "lg"` | `"md"` |
+| `kind` | `"primary" \| "secondary" \| "ghost" \| "dangerous" \| "bare"` | `"primary"` |
+| `size` | `"sm" \| "md" \| "lg" \| "none"` | `"md"` |
 | `disabled` | boolean | `false` |
 
 > **In this repo:** `src/components/ui/Button.tsx` — implemented with `cva`
@@ -567,7 +705,7 @@ corners (no radius), a 1 px `rule` border, `paper` ground, and a dimmed scrim. T
 | **Dialog** | `src/components/ui/dialog.tsx` | A centred modal task (compose `DialogContent` + `DialogHeader`/`DialogTitle`/`DialogDescription`). Default `max-w-lg`; override the `className` width as needed (e.g. `HelpPalette`, `VersionHistoryModal`). |
 | **ConfirmDialog** | `src/components/ui/ConfirmDialog.tsx` | A yes/no confirm for an irreversible or destructive action. Two `Button`s: `secondary` cancel + a confirm whose `confirmKind` is `dangerous` for destructive verbs. Autofocuses confirm; wires `aria-describedby`. |
 | **Popover** | `src/components/ui/popover.tsx` | A small panel anchored to a trigger (Quick Settings, Space menu). Not modal. |
-| **Bottom sheet** | `src/components/chrome/MobileMoreSheet.tsx` | The mobile-only slide-up menu. The one place radius is allowed (16 px scrim corners, per §1/§2.3). |
+| **Bottom sheet** | `src/components/chrome/MobileMore/MobileMoreSheet.tsx` | The mobile-only slide-up menu. The one place radius is allowed (16 px scrim corners, per §1/§2.3). |
 
 **Rules**
 - **Never** use `window.alert` / `window.confirm` / `window.prompt`. For a confirm, use
@@ -577,6 +715,15 @@ corners (no radius), a 1 px `rule` border, `paper` ground, and a dimmed scrim. T
   consequence is stated. Keep the confirm button's verb specific ("Restore", "Delete"), not
   "OK".
 - Buttons live bottom-right, cancel before confirm, built from the `Button` primitive (§4).
+- **Scrim + shadow are token-driven, and the scrim never blurs.** Overlays veil the page with
+  the `scrim` tokens — `bg-scrim` for the bottom sheet, the lighter `bg-scrim-drawer` for the
+  side drawers (mobile nav, mobile inspector) — and cast a direction-matched shadow: the sheet
+  uses `shadow-overlay-sheet` (upward), the right-anchored inspector uses `shadow-overlay-drawer`
+  (leftward), and the left-anchored nav drawer uses `shadow-overlay-drawer-start` (rightward, the
+  mirror added so a left drawer's shadow falls onto the page, not off-screen). Never hard-code a
+  `bg-black/NN` scrim, a `shadow-lg/xl`, or a `backdrop-blur` on these surfaces.
+- Side drawers and the bottom sheet pad for the device safe-area insets
+  (`env(safe-area-inset-*)`) so content clears notches and home indicators.
 
 > **Gap → DS update.** `ConfirmDialog` was added to close the "destructive confirm" gap that
 > previously fell back to `window.confirm`. The native `Toast` notification remains a future
@@ -691,7 +838,7 @@ Mobile chrome for the writer. Compact, 60-px tall.
 | `docName` | string | `"The bell-keeper"` |
 | `menuOpen` | boolean | `false` |
 
-> **In this repo:** `src/components/chrome/MobileNavDrawer.tsx` + `MobileMoreSheet.tsx`.
+> **In this repo:** `src/components/chrome/MobileNavDrawer.tsx` + `MobileMore/MobileMoreSheet.tsx`.
 
 ---
 
@@ -806,6 +953,34 @@ SettingRows for choice fields.
 >
 > **In this repo:** `src/components/settings/SettingsTabs.tsx`, `SettingRow.tsx`, and the
 > `Chip` / `ChipGroup` primitives under `src/components/ui/`.
+
+---
+
+### 7.6 Presence hues (`--presence-1 … --presence-5`)
+
+A small muted palette reserved exclusively for **collaboration presence** — remote carets,
+selections, and name flags. Not semantic, and never used for hierarchy, branding, or status.
+
+| Token | Light hue |
+|---|---|
+| `--presence-1` | terracotta |
+| `--presence-2` | slate blue |
+| `--presence-3` | moss |
+| `--presence-4` | plum |
+| `--presence-5` | ochre |
+
+- **Assignment.** Each participant is given one hue (their `presenceHue` in their local identity
+  profile); it labels their caret, selection tint, and name flag.
+- **Contrast.** Presence marks are non-text graphical objects. Each hue follows the same
+  per-theme floor as the status palette against `--paper` — **≥ 3:1** in light/dark (WCAG SC
+  1.4.11) and **≥ 7:1** in the high-contrast themes — with values running deeper or lighter to
+  suit the ground. Enforced by `src/theme/contrast.test.ts`.
+- **Motion.** Caret and name-flag transitions are gated by `data-motion` /
+  `prefers-reduced-motion`.
+
+> **In this repo:** defined in [`src/index.css`](../src/index.css) as `--presence-1 …
+> --presence-5` across `:root`, `[data-theme='dark']`, and both `hc-*` blocks, mapped to the
+> `presence-1 … presence-5` Tailwind colours in `tailwind.config.ts`.
 
 ---
 

@@ -7,31 +7,59 @@ import type { Doc } from '@/db/schema';
 
 const editorMocks = vi.hoisted(() => ({
   capturedOnChange: undefined as ((s: string) => void) | undefined,
+  mountCount: 0,
+  crdtState: 'ready' as 'pending' | 'ready' | 'failed',
+  retry: (): void => undefined,
 }));
 
-vi.mock('@/editor/EditorFacade', () => ({
-  Editor: (props: {
-    initialValue: string;
-    mode: string;
-    placeholder?: string;
-    locked?: boolean;
-    onChange?: (s: string) => void;
-  }) => {
-    editorMocks.capturedOnChange = props.onChange;
-    return (
+vi.mock('@/hooks/useCollab', () => ({
+  useCollab: () => ({
+    providerFactory: () => ({}),
+    username: 'Ada',
+    cursorColor: 'var(--presence-1)',
+  }),
+}));
+
+// The CRDT-seed gate is exercised in its own hook test + e2e; here it is forced
+// ready by default so the editor-wiring assertions stay synchronous, and toggled
+// to pending/failed in the dedicated gate tests below.
+vi.mock('@/hooks/useDocCrdtReady', () => ({
+  useDocCrdtReady: () =>
+    editorMocks.crdtState === 'failed'
+      ? { state: 'failed', error: new Error('gate failed'), retry: editorMocks.retry }
+      : { state: editorMocks.crdtState },
+}));
+
+vi.mock('@/editor/EditorFacade', async () => {
+  const { useEffect } = await import('react');
+  return {
+    Editor: (props: {
+      docId: string;
+      mode: string;
+      placeholder?: string;
+      locked?: boolean;
+      onChange?: (s: string) => void;
+    }) => {
+      editorMocks.capturedOnChange = props.onChange;
+      useEffect(() => {
+        editorMocks.mountCount += 1;
+      }, []);
+      return (
       <button
       type="button"
       data-testid="editor-stub"
       data-mode={props.mode}
+      data-doc-id={props.docId}
       data-locked={props.locked ? 'true' : undefined}
       data-placeholder={props.placeholder}
         onClick={() => props.onChange?.(NEW_BODY)}
       >
-        {props.initialValue || '(empty)'}
+        editor
       </button>
-    );
-  },
-}));
+      );
+    },
+  };
+});
 
 const { WriteSurface } = await import('./WriteSurface');
 
@@ -48,16 +76,67 @@ const doc: Doc = {
 };
 
 describe('WriteSurface', () => {
+  afterEach(() => {
+    editorMocks.crdtState = 'ready';
+  });
+
+  it('holds the editor back until the CRDT log is ready (no blank mount over a wiped log)', () => {
+    editorMocks.crdtState = 'pending';
+    const { queryByTestId } = render(<WriteSurface doc={doc} mode="write" />);
+    expect(queryByTestId('editor-stub')).toBeNull();
+  });
+
+  it('keeps the editor closed and shows a retryable error when the gate fails', async () => {
+    const retry = vi.fn();
+    editorMocks.crdtState = 'failed';
+    editorMocks.retry = retry;
+    const { queryByTestId, getByRole } = render(
+      <WriteSurface doc={doc} mode="write" />,
+    );
+
+    expect(queryByTestId('editor-stub')).toBeNull();
+    expect(getByRole('alert')).toHaveTextContent(/couldn't open this document/i);
+
+    await userEvent.click(getByRole('button', { name: /try again/i }));
+    expect(retry).toHaveBeenCalledTimes(1);
+  });
+
+  it('remounts the editor when another tab signals a reload for this doc', async () => {
+    const { broadcastDocReload } = await import('@/lib/collab/docReloadChannel');
+    editorMocks.mountCount = 0;
+    render(<WriteSurface doc={doc} mode="write" />);
+    expect(editorMocks.mountCount).toBe(1);
+
+    await act(async () => {
+      broadcastDocReload([doc.id]);
+      await new Promise((resolve) => setTimeout(resolve, 40));
+    });
+    expect(editorMocks.mountCount).toBe(2);
+  });
+
+  it('does not remount when the reload is for a different doc', async () => {
+    const { broadcastDocReload } = await import('@/lib/collab/docReloadChannel');
+    editorMocks.mountCount = 0;
+    render(<WriteSurface doc={doc} mode="write" />);
+    expect(editorMocks.mountCount).toBe(1);
+
+    await act(async () => {
+      broadcastDocReload(['some-other-doc']);
+      await new Promise((resolve) => setTimeout(resolve, 40));
+    });
+    expect(editorMocks.mountCount).toBe(1);
+  });
+
   it('renders editor stub with doc body and mode', () => {
     const { container, getByTestId } = render(
       <WriteSurface doc={doc} mode="write" />,
     );
     const stub = getByTestId('editor-stub');
     // Explicitly pin the wiring the snapshot would otherwise silently absorb:
-    // the editor receives the doc body verbatim, the active mode, and is not
-    // locked.
+    // the editor receives the doc id (content now flows through the CRDT, not a
+    // body prop), the active mode, and is not locked.
     expect(stub).toHaveAttribute('data-mode', 'write');
-    expect(stub.textContent).toBe(doc.body);
+    expect(stub).toHaveAttribute('data-doc-id', doc.id);
     expect(stub).not.toHaveAttribute('data-locked');
     expect(container).toMatchSnapshot();
   });

@@ -1,5 +1,7 @@
 {
-  "spaceRail": { "landmarkLabel": "Ruumid" },
+  "spaceRail": {
+    "landmarkLabel": "Ruumid"
+  },
   "sidebar": {
     "landmarkLabel": "Ruum",
     "navLabel": "Dokumendid",
@@ -18,14 +20,7 @@
     "openSpaceSettings": "Ruumi seaded",
     "openSpaceMenu": "Ava ruumi menüü",
     "docMenuAria": "Valikud: {{name}}",
-    "renameDoc": "Nimeta ümber",
-    "renameDialog": {
-      "title": "Nimeta dokument ümber",
-      "description": "Vali sellele dokumendile uus nimi.",
-      "label": "Dokumendi nimi",
-      "cancel": "Tühista",
-      "save": "Nimeta ümber"
-    }
+    "renameDoc": "Nimeta ümber"
   },
   "topbar": {
     "openNav": "Ava navigatsioon",
@@ -41,11 +36,31 @@
     "focusTitleFocus": "Fookus (⌘\\)",
     "findInDoc": "Otsi dokumendist",
     "inspector": "Dokumendiinspektor",
-    "themes": { "light": "Hele", "dark": "Tume", "hcLight": "Kõrge kontrast (hele)", "hcDark": "Kõrge kontrast (tume)" }
+    "themes": {
+      "light": "Hele",
+      "dark": "Tume",
+      "hcLight": "Kõrge kontrast (hele)",
+      "hcDark": "Kõrge kontrast (tume)"
+    }
   },
-  "modeToggle": { "write": "kirjuta", "read": "loe", "split": "jaga", "space": "ruum" },
-  "mobileNav": { "title": "Navigatsioon", "close": "Sulge navigatsioon" },
-  "mobileTabs": { "write": "kirjuta", "read": "loe", "split": "jaga", "brain": "brain", "cite": "tsiteeri", "more": "rohkem" },
+  "modeToggle": {
+    "write": "kirjuta",
+    "read": "loe",
+    "split": "jaga",
+    "space": "ruum"
+  },
+  "mobileNav": {
+    "title": "Navigatsioon",
+    "close": "Sulge navigatsioon"
+  },
+  "mobileTabs": {
+    "write": "kirjuta",
+    "read": "loe",
+    "split": "jaga",
+    "brain": "brain",
+    "cite": "tsiteeri",
+    "more": "rohkem"
+  },
   "mobileMore": {
     "title": "Rohkem",
     "close": "Sulge rohkem",
@@ -73,11 +88,20 @@
     "floatingToolbarLabel": "Hõljuv tööriistariba",
     "readingWidthLabel": "Lugemise laius",
     "readingWidthHint": "Mõõt dokumendi kohta",
-    "readingWidth": { "s": "S", "m": "M", "l": "L" },
+    "readingWidth": {
+      "s": "S",
+      "m": "M",
+      "l": "L"
+    },
     "moreLabel": "Rohkem",
     "helpToursLabel": "Abituur",
     "helpItem": "Abi ja otseteed",
-    "themes": { "light": "Hele", "dark": "Tume", "hcLight": "KK hele", "hcDark": "KK tume" },
+    "themes": {
+      "light": "Hele",
+      "dark": "Tume",
+      "hcLight": "KK hele",
+      "hcDark": "KK tume"
+    },
     "helpKbd": "⌘?",
     "whatsNew": "Mis uut",
     "feedback": "Saada tagasisidet…",
@@ -104,8 +128,17 @@
   "inspector": {
     "expand": "Laienda inspektorit",
     "collapse": "Ahenda inspektorit",
-    "tabs": { "outline": "ÜLEVAADE", "info": "INFO", "history": "AJALUGU", "actions": "TEGEVUSED" },
-    "outline": { "title": "ÜLEVAADE", "sectionSummary": "{{count}} SEKTSIOONI", "empty": "Pole veel pealkirju. Lisa dokumenti pealkirjad, et luua selle ülevaade." },
+    "tabs": {
+      "outline": "ÜLEVAADE",
+      "info": "INFO",
+      "history": "AJALUGU",
+      "actions": "TEGEVUSED"
+    },
+    "outline": {
+      "title": "ÜLEVAADE",
+      "sectionSummary": "{{count}} SEKTSIOONI",
+      "empty": "Pole veel pealkirju. Lisa dokumenti pealkirjad, et luua selle ülevaade."
+    },
     "info": {
       "title": "INFO",
       "words": "Sõnad",
@@ -119,8 +152,18 @@
       "noLimit": "Piiranguta",
       "noDueDate": "Tähtajata"
     },
-    "status": { "draft": "Mustand", "in-progress": "Käib", "in-review": "Ülevaatuses", "complete": "Valmis", "published": "Avaldatud" },
-    "lock": { "title": "Lukus muutmiseks", "body": "Dokumendi olek lukustab selle säilitamiseks. Avage muudatuste tegemiseks lukk.", "unlock": "Ava lukk muutmiseks" },
+    "status": {
+      "draft": "Mustand",
+      "in-progress": "Käib",
+      "in-review": "Ülevaatuses",
+      "complete": "Valmis",
+      "published": "Avaldatud"
+    },
+    "lock": {
+      "title": "Lukus muutmiseks",
+      "body": "Dokumendi olek lukustab selle säilitamiseks. Avage muudatuste tegemiseks lukk.",
+      "unlock": "Ava lukk muutmiseks"
+    },
     "history": {
       "title": "VERSIOONID",
       "now": "NÜÜD",
@@ -132,7 +175,11 @@
       "pin": "Kinnita versioon",
       "unpin": "Eemalda kinnitus",
       "restore": "Taasta",
-      "kind": { "auto": "auto", "manual": "käsitsi", "baseline": "lähte" },
+      "kind": {
+        "auto": "auto",
+        "manual": "käsitsi",
+        "baseline": "lähte"
+      },
       "ageNow": "nüüd",
       "ageMinutes": "{{count}}m tagasi",
       "ageHours": "{{count}}t tagasi",
