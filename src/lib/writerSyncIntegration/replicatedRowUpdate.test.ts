@@ -14,7 +14,7 @@ import { generateDeviceIdentity } from 'writer-sync/crypto';
 import { createOperationJournalMiddleware } from './materialization/operationJournalMiddleware';
 import { updateReplicatedRow } from './replicatedRowUpdate';
 
-vi.mock('@/lib/account/profile', () => ({
+vi.mock('@/lib/profile/profile', () => ({
   getProfile: vi.fn().mockResolvedValue({
     authorId: 'editor-1',
     displayName: 'A. Writer',

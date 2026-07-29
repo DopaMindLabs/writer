@@ -33,7 +33,7 @@ export const CloudKeylessAccountSection = ({
   onRetry,
 }: CloudKeylessAccountSectionProps) => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.keyless.${name}`);
+  const k = (name: string) => t(`settings.cloud.keyless.${name}`);
 
   if (presence === KeyEscrowPresence.Unknown) {
     return <CloudKeylessPendingBanner syncPhase={syncPhase} onRetry={onRetry} />;

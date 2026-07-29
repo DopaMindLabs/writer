@@ -116,7 +116,7 @@
     "help": "Help & shortcuts",
     "whatsNew": "What's new",
     "accessibility": "Accessibility",
-    "account": "Account",
+    "profile": "Profile",
     "contact": "Contact"
   },
   "quickSettings": {
@@ -148,7 +148,7 @@
     "helpKbd": "⌘?",
     "whatsNew": "What's new",
     "feedback": "Send feedback…",
-    "account": "Account",
+    "profile": "Profile",
     "accessibility": "Accessibility",
     "about": "About",
     "helpLink": "help center →",

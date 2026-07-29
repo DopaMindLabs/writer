@@ -25,7 +25,7 @@ export const PassphraseSetupFields = ({
   onConfirm,
 }: PassphraseSetupFieldsProps) => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.passphrase.${name}`);
+  const k = (name: string) => t(`settings.cloud.passphrase.${name}`);
   return (
     <>
       <SecretField

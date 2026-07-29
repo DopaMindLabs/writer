@@ -15,7 +15,7 @@ const SERVER_VISIBLE = ['ids', 'timestamps', 'kinds', 'email', 'network'] as con
  */
 export const CloudPrivacyDisclosure = () => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.disclosure.${name}`);
+  const k = (name: string) => t(`settings.cloud.disclosure.${name}`);
   return (
     <div
       role="note"

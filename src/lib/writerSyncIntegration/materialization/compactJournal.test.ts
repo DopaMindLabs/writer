@@ -12,7 +12,7 @@ import { db } from '@/db/db';
 import { setJournalRetentionDays } from '@/lib/writerSyncIntegration/journalRetentionPreference';
 import { compactJournal } from './compactJournal';
 
-vi.mock('@/lib/account/profile', () => ({
+vi.mock('@/lib/profile/profile', () => ({
   getProfile: vi.fn().mockResolvedValue({
     authorId: 'author-1',
     displayName: 'A. Writer',

@@ -18,7 +18,7 @@ export const HomeCloudSignInButton = () => {
   if (!isCloudSyncEnabled() || user?.isLoggedIn) return null;
   return (
     <Button asChild kind="secondary" size="sm">
-      <Link to={routes.settings('account')} data-testid="home-cloud-sign-in">
+      <Link to={routes.settings('cloudSync')} data-testid="home-cloud-sign-in">
         {t('home.signInToSync')}
       </Link>
     </Button>

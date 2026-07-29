@@ -3,12 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { SettingRow } from '@/components/settings/SettingRow';
 import { TabHeader } from '@/components/settings/TabHeader';
 import { TextField } from '@/components/ui/TextField';
-import { useProfile } from '@/lib/account/useProfile';
-import { updateProfile } from '@/lib/account/profile';
+import { useProfile } from '@/lib/profile/useProfile';
+import { updateProfile } from '@/lib/profile/profile';
 import { PresenceHuePicker } from './PresenceHuePicker';
-import { CloudSection } from './cloud/CloudSection';
 
-export const AccountTab = () => {
+export const ProfileTab = () => {
   const { t } = useTranslation('screens');
   const profile = useProfile();
   const [name, setName] = useState('');
@@ -26,18 +25,18 @@ export const AccountTab = () => {
   return (
     <section>
       <TabHeader
-        titleKey="settings.account.title"
-        subtitleKey="settings.account.subtitle"
+        titleKey="settings.profile.title"
+        subtitleKey="settings.profile.subtitle"
       />
 
       <SettingRow
         data-testid="setting-display-name"
-        label={t('settings.account.nameLabel')}
-        hint={t('settings.account.nameHint')}
+        label={t('settings.profile.nameLabel')}
+        hint={t('settings.profile.nameHint')}
       >
         <TextField
-          aria-label={t('settings.account.nameLabel')}
-          placeholder={t('settings.account.namePlaceholder')}
+          aria-label={t('settings.profile.nameLabel')}
+          placeholder={t('settings.profile.namePlaceholder')}
           value={name}
           disabled={!profile}
           onChange={(e) => {
@@ -50,11 +49,11 @@ export const AccountTab = () => {
 
       <SettingRow
         data-testid="setting-presence-hue"
-        label={t('settings.account.hueLabel')}
-        hint={t('settings.account.hueHint')}
+        label={t('settings.profile.hueLabel')}
+        hint={t('settings.profile.hueHint')}
       >
         <PresenceHuePicker
-          label={t('settings.account.hueLabel')}
+          label={t('settings.profile.hueLabel')}
           value={profile?.presenceHue ?? 'presence-1'}
           onChange={(hue) => {
             void updateProfile({ presenceHue: hue });
@@ -64,14 +63,11 @@ export const AccountTab = () => {
 
       <div
         role="note"
-        data-testid="account-privacy-notice"
+        data-testid="profile-privacy-notice"
         className="mt-4 border border-rule bg-paper-2 p-3 text-[13px] text-ink-2"
       >
-        {t('settings.account.privacyNotice')}
+        {t('settings.profile.privacyNotice')}
       </div>
-
-
-      <CloudSection />
     </section>
   );
 };

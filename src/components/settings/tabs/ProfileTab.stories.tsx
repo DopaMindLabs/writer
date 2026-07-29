@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AccountTab } from './AccountTab';
+import { ProfileTab } from './ProfileTab';
 
 const meta = {
-  title: 'Settings/AccountTab',
-  component: AccountTab,
+  title: 'Settings/ProfileTab',
+  component: ProfileTab,
   parameters: { layout: 'fullscreen' },
   decorators: [
     (Story) => (
@@ -12,7 +12,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof AccountTab>;
+} satisfies Meta<typeof ProfileTab>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
