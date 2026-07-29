@@ -213,6 +213,51 @@ describe('releasing the camera', () => {
     }
   });
 
+  it('can scan after two surfaces close while their cameras are still starting', async () => {
+    const first = track();
+    const second = track();
+    const third = track();
+    const earlyTracks = [first, second];
+    const resolveCamera: ((stream: MediaStream) => void)[] = [];
+    let attempt = 0;
+    const requestCamera = vi.fn((): Promise<MediaStream> => {
+      const index = attempt;
+      attempt += 1;
+      if (index < earlyTracks.length) {
+        return new Promise((resolve) => {
+          resolveCamera[index] = resolve;
+        });
+      }
+      const released = earlyTracks.every((item) => item.stop.mock.calls.length === 1);
+      return released
+        ? Promise.resolve(streamOf([third]))
+        : Promise.reject(new Error('camera is still held by an earlier surface'));
+    });
+
+    for (const [index, stopped] of earlyTracks.entries()) {
+      const { view } = renderField({ requestCamera });
+      fireEvent.click(screen.getByRole('button', { name: labels.startLabel }));
+      view.unmount();
+      await act(async () => {
+        resolveCamera[index]?.(streamOf([stopped]));
+        await Promise.resolve();
+      });
+    }
+
+    const { onScan } = renderField({
+      requestCamera,
+      scanner: scannerFinding(['PAYLOAD-3']),
+    });
+    fireEvent.click(screen.getByRole('button', { name: labels.startLabel }));
+
+    await waitFor(() => {
+      expect(onScan).toHaveBeenCalledWith('PAYLOAD-3');
+    });
+    expect(requestCamera).toHaveBeenCalledTimes(3);
+    expect(first.stop).toHaveBeenCalledTimes(1);
+    expect(second.stop).toHaveBeenCalledTimes(1);
+  });
+
   it('stops every track, not only the first', async () => {
     const first = track();
     const second = track();
