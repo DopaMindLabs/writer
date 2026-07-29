@@ -226,6 +226,24 @@ describe('PairDeviceDialog', () => {
     expect(banner).not.toHaveTextContent('ICE gathering stalled');
   });
 
+  it('names an expired code, since its fix is a fresh one', async () => {
+    // The paste path through a photo app — photograph, gallery, copy, switch
+    // apps, paste — routinely outlives the code it carries.
+    renderDialog(
+      readySignaller({
+        onAcceptAnswer: () =>
+          Promise.reject(new PairingError(PairingErrorCode.Expired, 'payload has expired')),
+      }),
+    );
+    await showOwnCode();
+
+    await pastePayload(answer());
+
+    const banner = await screen.findByTestId('pair-device-expired');
+    expect(banner).toHaveTextContent('expired');
+    expect(screen.queryByTestId('pair-device-failed')).not.toBeInTheDocument();
+  });
+
   it('names a code too large to encode, since retrying cannot shrink it', async () => {
     const signaller = readySignaller();
     signaller.adapter.createOffer = () =>

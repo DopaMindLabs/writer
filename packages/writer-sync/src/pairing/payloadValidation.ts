@@ -23,7 +23,12 @@ import { MAX_CLOCK_SKEW_MILLIS, type ReplayCache } from './replayCache';
  * code and explicit confirmation establish.
  */
 
-export const SESSION_TTL_MILLIS = 120_000;
+// Five minutes, the protocol's own ceiling. Two minutes proved too short for
+// the camera-free path a phone actually takes — photograph the code, open the
+// gallery, copy the decoded text, switch apps, paste — which routinely outlived
+// the code it was carrying. The one-attempt property (§8.2) rests on the
+// single-use session and the nonce cache, not on the window's length.
+export const SESSION_TTL_MILLIS = 300_000;
 export const MAX_SESSION_TTL_MILLIS = 300_000;
 
 export interface ValidatePayloadOptions {

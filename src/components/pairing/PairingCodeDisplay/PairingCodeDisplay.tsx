@@ -60,7 +60,9 @@ export const PairingCodeDisplay = ({
 
   return (
     <div className="flex flex-col gap-4" data-testid="pairing-code-display">
-      <div className="w-64 max-w-full self-center text-ink">
+      {/* As wide as the dialog allows on a phone: the symbol's modules are the
+          thing a camera has to resolve, and every extra pixel helps. */}
+      <div className="w-80 max-w-full self-center text-ink">
         <QrCode
           value={symbol}
           label={t(`settings.pairing.qrLabel.${kind}`)}

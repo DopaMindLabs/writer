@@ -561,9 +561,10 @@ wired into the app.
   the scanner and back. Candidate gathering is bounded by a deadline; reaching
   it is not a failure, and the code is shown from whatever candidates were
   gathered. Only a description with **no** candidate at all fails. Failures are
-  reported generically (never peer-supplied text), with one named exception: a
-  payload too large to encode shows the too-large message, because retrying
-  cannot shrink it.
+  reported generically (never peer-supplied text), with two named exceptions
+  whose advice differs: a payload too large to encode (retrying cannot shrink
+  it) and an expired code (the fix is a fresh code — payloads are valid for
+  five minutes, sized for the photograph-and-paste path).
 - **Reading.** A device that reads an offer answers it, from a session opened
   for the purpose: it cannot answer a description it authored, so the offer it
   was showing is closed and replaced. It then shows the reply for the peer to

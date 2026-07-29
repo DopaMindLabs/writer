@@ -179,7 +179,7 @@ reports a typed `local-connectivity` failure (§13) rather than waiting.
 | `MAX_JWK_BYTES` | 512 | Per JWK, both `identityJwk` and `ephemeralJwk`. |
 | `MAX_QR_CHUNK_BYTES` | 2600 | Encoded text per QR symbol; a typical offer fits one symbol, with headroom under the 2953-char version-40/EC-L encoder ceiling for the part prefix. |
 | `MAX_QR_PARTS` | 8 | Bounded, ordered sequence. |
-| `SESSION_TTL_MILLIS` | 120 000 | Default validity (§7). |
+| `SESSION_TTL_MILLIS` | 300 000 | Default validity (§7); sized for the photograph-and-paste path, which routinely outlives a shorter window. |
 | `MAX_SESSION_TTL_MILLIS` | 300 000 | Hard ceiling on `expiresAt`. |
 
 **Carriage.** The canonical bytes are DEFLATE-compressed (raw, no zlib wrapper)
@@ -267,7 +267,7 @@ observer who photographs the offer and races the legitimate joiner (threat model
 §5.4).
 
 **On 6 digits.** An attacker gets one attempt: the session is single-use, the
-nonce is cached, and the expiry is two minutes. A one-in-a-million chance per
+nonce is cached, and the expiry is five minutes. A one-in-a-million chance per
 session, with no ability to retry against the same user without their visible
 cooperation, is proportionate. A longer code costs comparison accuracy, and a code
 users do not actually compare is worth nothing.

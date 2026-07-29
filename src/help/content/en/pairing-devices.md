@@ -64,6 +64,10 @@ so you can go back to the one it missed.
   device gathered are too big to fit in a code — usually a machine with very
   many network connections (VPNs, virtual adapters). Disconnect what you are not
   using, then close the dialog and try again.
+- **"That code has expired."** A code is valid for five minutes. Reading it in
+  a roundabout way — photographing it, opening the photo, copying the text and
+  pasting it — can take longer than that. Close the dialog on both devices and
+  start again; the fresh code is quicker to read the second time.
 - **"That does not look like a pairing code from this device's partner."** The
   code came from a different pairing attempt — for example, one you started
   earlier and left open. Close the dialog on both devices and start fresh.
@@ -81,7 +85,14 @@ so you can go back to the one it missed.
   have no camera. Use the upload or paste option.
 - **The camera is on but nothing happens.** Hold the code steady and fill more
   of the frame with it. Writer keeps looking until you stop it, and says
-  "Looking for a code…" the whole time it is trying.
+  "Looking for a code…" the whole time it is trying. A pairing code is denser
+  than most QR codes, so it needs more of the frame than you might expect —
+  move closer until the code nearly fills the picture.
+- **Your phone's own camera app sees the code but offers nothing** (on iPhone,
+  "No usable data found"). That is normal: a pairing code carries text, not a
+  web address, and phone camera apps only offer to open addresses. Read the
+  code from **inside Writer** instead — the "Use the camera" button on the
+  scanning screen — or photograph it and use "Upload a photo of the code".
 - **The codes do not match.** Do not continue. Start again, and if it happens
   repeatedly, pair on a network you trust.
 

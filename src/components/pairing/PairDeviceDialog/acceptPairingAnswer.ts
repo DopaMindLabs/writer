@@ -1,6 +1,6 @@
 import { decodePairingPayload, type PairingSession } from 'writer-sync/pairing';
 import type { PairingSignaller } from '@/lib/writerSyncIntegration/createPairingSignaller';
-import type { PairingExchangeAction } from './pairingExchangeReducer';
+import { failureActionFor, type PairingExchangeAction } from './pairingExchangeReducer';
 
 /**
  * The initiator's second half: take the joiner's reply and authenticate it.
@@ -28,10 +28,11 @@ export const acceptPairingAnswer = async (options: AcceptAnswerOptions): Promise
     const peer = await signaller.adapter.acceptAnswer(answer);
     machine.apply('authenticated');
     dispatch({ type: 'authenticated', peer });
-  } catch {
+  } catch (error) {
     // The reason is for developers: a pairing failure must never put
-    // peer-supplied text on screen (threat model §5.11).
+    // peer-supplied text on screen (threat model §5.11) — only a nameable
+    // cause from the fixed set, of which an expired reply is the common one.
     machine.apply('fail');
-    dispatch({ type: 'failed' });
+    dispatch(failureActionFor(error));
   }
 };
