@@ -120,6 +120,20 @@ export interface NoteAttachment extends ReplicatedEntityMetadata {
   createdAt: number;
 }
 
+/**
+ * One bounded piece of an attachment's already-sealed ciphertext.
+ *
+ * The compound primary key keeps a transfer resumable by attachment and
+ * position. `bytes` is base64 rather than binary so the Dexie Cloud adapter
+ * leaves it inline instead of replacing it with an addon-managed blob ref.
+ */
+export interface SyncAttachmentChunk {
+  attachmentId: string;
+  index: number;
+  accessScopeId: string;
+  bytes: string;
+}
+
 export interface Annotation extends ReplicatedEntityMetadata {
   id: string;
   docId: string;

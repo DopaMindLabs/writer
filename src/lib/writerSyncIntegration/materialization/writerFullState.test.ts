@@ -1,6 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
-import { NoteKind, NoteState, type Note } from '@/db/schema';
+import {
+  NoteKind,
+  NoteState,
+  type Note,
+  type NoteAttachment,
+} from '@/db/schema';
 import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
 import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
 import type { ScopeKeyResolver, SyncKeyRing } from 'writer-sync/crypto';
@@ -10,6 +15,10 @@ import {
   verifyFrameSignature,
   type DeviceIdentityKeys,
 } from 'writer-sync/crypto';
+import {
+  TRANSFER_CHUNK_BYTES,
+  type AttachmentChunkManifest,
+} from 'writer-sync/operations';
 import { createWriterFullState } from './writerFullState';
 
 /**
@@ -53,6 +62,25 @@ const note = (overrides: Partial<Note> = {}): Note => ({
   createdAt: 1000,
   ...overrides,
 });
+
+const attachment = (): NoteAttachment => {
+  const bytes = new Uint8Array(TRANSFER_CHUNK_BYTES + 7);
+  return {
+    accessScopeId: 's1',
+    createdBy: asPrincipalId('me'),
+    updatedBy: asPrincipalId('me'),
+    mutationId: asOperationId('op-a1'),
+    logicalUpdatedAt: { millis: 1000, counter: 0 },
+    id: 'a1',
+    noteId: 'n1',
+    spaceId: 's1',
+    name: 'figure.png',
+    mime: 'image/png',
+    size: bytes.length,
+    blob: new Blob([bytes], { type: 'image/png' }),
+    createdAt: 1000,
+  };
+};
 
 const fullState = () =>
   createWriterFullState({
@@ -116,5 +144,24 @@ describe('createWriterFullState', () => {
     // A scope this device cannot seal for is one it cannot serve. Framing the
     // rows in plaintext would hand a peer content the pairing never authorised.
     expect(await fullState()('s1')).toEqual([]);
+  });
+
+  it('rebuilds attachment rows as thin frames and persists their chunks', async () => {
+    await db.noteAttachments.put(attachment());
+
+    const [frame] = await fullState()('s1');
+    const payload = await openOperationPayload(ring, frame, frame.payload);
+    const manifest = payload.blobRef as AttachmentChunkManifest;
+
+    expect(frame.entityTable).toBe('noteAttachments');
+    expect(payload).not.toHaveProperty('blob');
+    expect(manifest).toMatchObject({
+      attachmentId: 'a1',
+      chunkBytes: TRANSFER_CHUNK_BYTES,
+      chunkCount: 2,
+    });
+    expect(
+      await db.syncAttachmentChunks.where('attachmentId').equals('a1').count(),
+    ).toBe(2);
   });
 });

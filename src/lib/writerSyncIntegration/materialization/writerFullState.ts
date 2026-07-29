@@ -2,10 +2,12 @@ import type { AccessScopeId } from 'writer-sync/core';
 import type { ScopeKeyResolver, SyncKeyRing } from 'writer-sync/crypto';
 import type { EncryptedSyncFrame } from 'writer-sync/operations';
 import type { LoremDB } from '@/db/LoremDB';
+import type { SyncAttachmentChunk } from '@/db/schema';
 import { journalledTables } from '@/lib/writerSyncIntegration/writerTablePolicy';
 import { isJournalledRow, type JournalledRow } from './journalledRow';
 import { makePutFrame, signAuthoredFrames } from './writerOperationFactory';
 import type { JournalIdentity } from './operationJournalMiddleware';
+import { prepareFramePayload } from './attachmentFramePayload';
 
 /**
  * Writer's answer to "what does this scope look like now?", for a peer whose
@@ -48,13 +50,33 @@ interface ScopeFramesOptions {
   rows: readonly JournalledRow[];
 }
 
-const framesForRows = ({
+interface ScopeFrames {
+  frames: EncryptedSyncFrame[];
+  chunks: SyncAttachmentChunk[];
+}
+
+const framesForRows = async ({
   ring,
   deviceId,
   entityTable,
   rows,
-}: ScopeFramesOptions): Promise<EncryptedSyncFrame[]> =>
-  Promise.all(rows.map((row) => makePutFrame({ ring, deviceId, entityTable, row })));
+}: ScopeFramesOptions): Promise<ScopeFrames> => {
+  const frames: EncryptedSyncFrame[] = [];
+  const chunks: SyncAttachmentChunk[] = [];
+  for (const row of rows) {
+    const prepared = await prepareFramePayload({ entityTable, row, ring });
+    frames.push(
+      await makePutFrame({
+        ring,
+        deviceId,
+        entityTable,
+        row: prepared.row,
+      }),
+    );
+    chunks.push(...prepared.chunks);
+  }
+  return { frames, chunks };
+};
 
 export const createWriterFullState =
   ({ db, resolver, identity }: WriterFullStateDeps) =>
@@ -62,6 +84,7 @@ export const createWriterFullState =
     if (!resolver.hasAnyKey()) return [];
     const { deviceId, privateKey } = await identity();
     const built: EncryptedSyncFrame[] = [];
+    const chunks: SyncAttachmentChunk[] = [];
 
     for (const entityTable of journalledTables()) {
       const rows = await rowsInScope(db, entityTable, accessScopeId);
@@ -76,8 +99,17 @@ export const createWriterFullState =
         operation: 'write',
       });
       if (ring === null) continue;
-      built.push(...(await framesForRows({ ring, deviceId, entityTable, rows })));
+      const prepared = await framesForRows({
+        ring,
+        deviceId,
+        entityTable,
+        rows,
+      });
+      built.push(...prepared.frames);
+      chunks.push(...prepared.chunks);
     }
 
-    return signAuthoredFrames(privateKey, built);
+    const signed = await signAuthoredFrames(privateKey, built);
+    if (chunks.length > 0) await db.syncAttachmentChunks.bulkPut(chunks);
+    return signed;
   };

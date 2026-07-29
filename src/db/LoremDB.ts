@@ -6,6 +6,7 @@ import type {
   DocUpdate,
   Note,
   NoteAttachment,
+  SyncAttachmentChunk,
   Annotation,
   Citation,
   Connection,
@@ -60,6 +61,8 @@ export class LoremDB extends Dexie {
   docInspectorConfigs!: Table<DocInspectorConfig, string>;
   /** The append-only operation journal — immutable encrypted frames. */
   syncOperations!: Table<EncryptedSyncFrame, string>;
+  /** Bounded pieces of already-sealed attachment ciphertext. */
+  syncAttachmentChunks!: Table<SyncAttachmentChunk, [string, number]>;
   /** Accepted operation ids and their materialisation result. */
   syncInbox!: Table<SyncInboxEntry, string>;
   /** Deletion tombstones with acknowledgement state. */

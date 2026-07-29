@@ -1,6 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
-import { NoteKind, NoteState, type Note } from '@/db/schema';
+import {
+  NoteKind,
+  NoteState,
+  type Note,
+  type NoteAttachment,
+} from '@/db/schema';
 import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
 import { keyIdOf } from '@/lib/cloud/crypto/envelope';
 import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
@@ -11,12 +16,17 @@ import type {
   SyncKeyRing,
 } from 'writer-sync/crypto';
 import {
+  fromBase64,
   generateDeviceIdentity,
   openOperationPayload,
   verifyFrameSignature,
   type DeviceIdentityKeys,
 } from 'writer-sync/crypto';
-import { verifyFrame } from 'writer-sync/operations';
+import {
+  TRANSFER_CHUNK_BYTES,
+  verifyFrame,
+  type AttachmentChunkManifest,
+} from 'writer-sync/operations';
 import { createOperationJournalMiddleware } from './operationJournalMiddleware';
 import { makePutFrame } from './writerOperationFactory';
 import { applyInboundFrame } from './writerOperationMaterializer';
@@ -58,6 +68,35 @@ const note = (overrides: Partial<Note> = {}): Note => ({
   createdAt: 1000,
   ...overrides,
 });
+
+const attachmentBytes = (length = TRANSFER_CHUNK_BYTES + 19): Uint8Array =>
+  Uint8Array.from({ length }, (_unused, index) => index % 251);
+
+const attachment = (
+  overrides: Partial<NoteAttachment> = {},
+): NoteAttachment => {
+  const bytes = attachmentBytes();
+  const content = bytes.buffer.slice(
+    bytes.byteOffset,
+    bytes.byteOffset + bytes.byteLength,
+  ) as ArrayBuffer;
+  return {
+    accessScopeId: 's1',
+    createdBy: asPrincipalId('me'),
+    updatedBy: asPrincipalId('me'),
+    mutationId: asOperationId(`op-${overrides.id ?? 'a1'}-1`),
+    logicalUpdatedAt: { millis: 1000, counter: 0 },
+    id: 'a1',
+    noteId: 'n1',
+    spaceId: 's1',
+    name: 'figure.png',
+    mime: 'image/png',
+    size: bytes.length,
+    blob: new Blob([content], { type: 'image/png' }),
+    createdAt: 1000,
+    ...overrides,
+  };
+};
 
 beforeEach(async () => {
   ring = await deriveKeyRing(generateMasterSecret(), 1);
@@ -236,5 +275,73 @@ describe('operation journal middleware', () => {
     await db.notes.clear();
 
     expect(await db.syncOperations.count()).toBe(0);
+  });
+
+  it('journals an attachment as a thin frame and bounded ciphertext chunks', async () => {
+    await db.noteAttachments.put(attachment());
+
+    const [frame] = await db.syncOperations.toArray();
+    const payload = await openOperationPayload(ring, frame, frame.payload);
+    const manifest = payload.blobRef as AttachmentChunkManifest;
+    expect(payload).not.toHaveProperty('blob');
+    expect(manifest).toMatchObject({
+      attachmentId: 'a1',
+      chunkBytes: TRANSFER_CHUNK_BYTES,
+      chunkCount: 2,
+    });
+
+    const chunks = await db.syncAttachmentChunks
+      .where('attachmentId')
+      .equals('a1')
+      .sortBy('index');
+    expect(chunks).toHaveLength(2);
+    expect(chunks.map((chunk) => chunk.accessScopeId)).toEqual(['s1', 's1']);
+    expect(chunks.map((chunk) => fromBase64(chunk.bytes).length)).toEqual([
+      TRANSFER_CHUNK_BYTES,
+      manifest.totalBytes - TRANSFER_CHUNK_BYTES,
+    ]);
+  });
+
+  it('rolls back the attachment, its thin frame and its chunks together', async () => {
+    await expect(
+      db.transaction('rw', db.noteAttachments, async () => {
+        await db.noteAttachments.put(attachment());
+        expect(await db.syncAttachmentChunks.count()).toBe(2);
+        expect(await db.syncOperations.count()).toBe(1);
+        throw new Error('abort attachment write');
+      }),
+    ).rejects.toThrow('abort attachment write');
+
+    expect(await db.noteAttachments.count()).toBe(0);
+    expect(await db.syncOperations.count()).toBe(0);
+    expect(await db.syncAttachmentChunks.count()).toBe(0);
+  });
+
+  it('removes an attachment’s chunks in the same transaction as its delete', async () => {
+    await db.noteAttachments.put(attachment());
+    expect(
+      await db.syncAttachmentChunks.where('attachmentId').equals('a1').count(),
+    ).toBe(2);
+
+    await db.noteAttachments.delete('a1');
+
+    expect(await db.noteAttachments.get('a1')).toBeUndefined();
+    expect(
+      await db.syncAttachmentChunks.where('attachmentId').equals('a1').count(),
+    ).toBe(0);
+    expect(
+      (await db.syncOperations.toArray()).filter((frame) => frame.kind === 'delete'),
+    ).toHaveLength(1);
+  });
+
+  it('removes attachment chunks on a keyless local delete without journalling it', async () => {
+    await db.noteAttachments.put(attachment());
+    const framesBeforeDelete = await db.syncOperations.count();
+    holder.ring = null;
+
+    await db.noteAttachments.delete('a1');
+
+    expect(await db.syncAttachmentChunks.count()).toBe(0);
+    expect(await db.syncOperations.count()).toBe(framesBeforeDelete);
   });
 });
