@@ -155,7 +155,7 @@ const hasCandidate = (sdp: string): boolean => sdp.includes('a=candidate');
  */
 const createChannelRegistry = () => {
   const listeners = new Map<string, Set<(channel: DataChannelLike) => void>>();
-  const channels = new Map<string, DataChannelLike>();
+  const channels = new Map<string, DataChannelLike[]>();
 
   const watchers = (label: string): Set<(channel: DataChannelLike) => void> => {
     const existing = listeners.get(label);
@@ -168,16 +168,24 @@ const createChannelRegistry = () => {
   const anyWatchers = new Set<(channel: DataChannelLike) => void>();
 
   return {
-    current: (label: string) => channels.get(label) ?? null,
+    current: (label: string) => channels.get(label)?.[0] ?? null,
     adopt: (channel: DataChannelLike): void => {
-      if (channels.has(channel.label)) return;
-      channels.set(channel.label, channel);
+      const held = channels.get(channel.label) ?? [];
+      if (held.includes(channel)) return;
+      // Kept alongside whatever is already here rather than instead of it. Both
+      // devices may open one for the same purpose at the same moment, neither
+      // having heard of the other's, and the one dropped would be the one the
+      // peer is talking to. What this device *writes* to stays the first, so a
+      // later arrival never moves the conversation out from under it.
+      channels.set(channel.label, [...held, channel]);
       // A channel that dies leaves, so the next request for that purpose opens a
-      // new one instead of being handed a channel nothing can be written to. Only
-      // if it is still the one held: a replacement must outlive its predecessor's
-      // news.
+      // new one instead of being handed a channel nothing can be written to.
       const forget = (): void => {
-        if (channels.get(channel.label) === channel) channels.delete(channel.label);
+        const remaining = (channels.get(channel.label) ?? []).filter(
+          (held) => held !== channel,
+        );
+        if (remaining.length > 0) channels.set(channel.label, remaining);
+        else channels.delete(channel.label);
       };
       channel.addEventListener('close', forget);
       channel.addEventListener('error', forget);
@@ -186,7 +194,7 @@ const createChannelRegistry = () => {
     },
     subscribeAny: (listener: (channel: DataChannelLike) => void): (() => void) => {
       anyWatchers.add(listener);
-      for (const channel of channels.values()) listener(channel);
+      for (const held of channels.values()) for (const channel of held) listener(channel);
       return () => {
         anyWatchers.delete(listener);
       };
@@ -196,7 +204,7 @@ const createChannelRegistry = () => {
       listener: (channel: DataChannelLike) => void,
     ): (() => void) => {
       watchers(label).add(listener);
-      const existing = channels.get(label);
+      const existing = channels.get(label)?.[0];
       if (existing) listener(existing);
       return () => {
         watchers(label).delete(listener);
@@ -205,7 +213,7 @@ const createChannelRegistry = () => {
     release: (): void => {
       listeners.clear();
       anyWatchers.clear();
-      for (const channel of channels.values()) channel.close();
+      for (const held of channels.values()) for (const channel of held) channel.close();
       channels.clear();
     },
   };
@@ -243,22 +251,22 @@ interface OpenChannelOptions {
   label: string;
   channels: ReturnType<typeof createChannelRegistry>;
   connection: PeerConnectionLike;
-  /** Whether this session made the offer, and so is the side that opens. */
-  offered: () => boolean;
 }
 
 /**
- * The channel for one purpose: created here, or awaited from the peer.
+ * The channel for one purpose: whichever end has something to carry opens one.
  *
- * Only the device that made the offer creates. Both creating one for the same
- * purpose would leave each holding a channel the other never reads, so which
- * side opens follows from the exchange rather than from whoever asks first.
+ * Either device may, because either may be the one being written on. Waiting for
+ * the peer instead is waiting for it to guess: it has no reason to open a channel
+ * for a scope it has never heard of, so a device that could only wait had no way
+ * to send its own work at all, and the pair drifted apart while appearing to
+ * sync. Both ends opening one for the same purpose is the ordinary case, not a
+ * collision — each writes to the one it opened and reads whatever arrives.
  */
 const openChannelFor = ({
   label,
   channels,
   connection,
-  offered,
 }: OpenChannelOptions): Promise<DataChannelLike> =>
   new Promise((resolve) => {
     const existing = channels.current(label);
@@ -266,10 +274,10 @@ const openChannelFor = ({
       resolve(existing);
       return;
     }
-    if (offered()) {
-      channels.adopt(connection.createDataChannel(label, { ordered: true }));
-      const created = channels.current(label);
-      if (created !== null) resolve(created);
+    channels.adopt(connection.createDataChannel(label, { ordered: true }));
+    const created = channels.current(label);
+    if (created !== null) {
+      resolve(created);
       return;
     }
     const unsubscribe = channels.subscribe(label, (channel) => {
@@ -290,9 +298,6 @@ export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
   const connection = options.createConnection();
   const channels = createChannelRegistry();
   let closed = false;
-  // Which half this session ran. The device that offered is the one that opens
-  // channels; its peer takes what arrives.
-  let offered = false;
 
   // Registered before any offer or answer, so a channel the peer opens the
   // instant the connection establishes is never missed.
@@ -311,13 +316,12 @@ export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
     channel: () => channels.current(CONTROL_CHANNEL),
     onChannel: (listener) => channels.subscribe(CONTROL_CHANNEL, listener),
     openChannel: (label) =>
-      openChannelFor({ label, channels, connection, offered: () => offered }),
+      openChannelFor({ label, channels, connection }),
     onAnyChannel: (listener) => channels.subscribeAny(listener),
     createOffer: async () => {
       requireOpen();
       // Ordered and reliable: the operation protocol depends on a frame arriving
       // once and intact, not on best effort.
-      offered = true;
       channels.adopt(connection.createDataChannel(CONTROL_CHANNEL, { ordered: true }));
       await connection.setLocalDescription(await connection.createOffer());
       return gathered();

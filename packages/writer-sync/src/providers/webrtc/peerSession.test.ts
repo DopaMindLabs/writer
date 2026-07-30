@@ -303,6 +303,40 @@ describe('close', () => {
 describe('the control channel on the answering side', () => {
   const remoteChannel = (label = 'writer-sync-control') => fakeDataChannel(label);
 
+  it('opens a channel for its own work even though it answered the pairing', async () => {
+    // Both devices are written on, so both need to send. A device that could
+    // only wait for its peer to open a channel had no way to offer what it
+    // wrote: the peer has no reason to open one for a scope it has never heard
+    // of, so that device's work never left it and the pair silently diverged.
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    await session.acceptOffer('v=0\r\nOFFER\r\n');
+
+    const channel = await session.openChannel('scope-1/operations');
+
+    expect(channel.label).toBe('scope-1/operations');
+    expect(connection.channels).toEqual(['scope-1/operations']);
+  });
+
+  it('takes the channel a peer opens for a purpose it is already carrying', async () => {
+    // Both ends may open one for the same scope at the same moment, neither
+    // having heard of the other's. Both are kept: each device writes to the one
+    // it opened, and a channel dropped here would be one the peer is talking to.
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    await session.createOffer();
+    const mine = await session.openChannel('scope-1/operations');
+
+    const seen: string[] = [];
+    session.onAnyChannel((channel) => seen.push(channel.label));
+    const theirs = fakeDataChannel('scope-1/operations');
+    connection.peerOpensChannel(theirs);
+
+    // What this device sends on does not change under it.
+    expect(await session.openChannel('scope-1/operations')).toBe(mine);
+    expect(seen.filter((label) => label === 'scope-1/operations')).toHaveLength(2);
+  });
+
   it('opens a channel per purpose on the offering side', async () => {
     const connection = fakeConnection({ gatheringCompletesImmediately: true });
     const session = createPeerSession({ createConnection: () => connection });
@@ -323,18 +357,17 @@ describe('the control channel on the answering side', () => {
     ]);
   });
 
-  it('waits for the peer to open a channel on the answering side', async () => {
+  it('takes a channel the peer has already opened rather than opening a second', async () => {
     const connection = fakeConnection({ gatheringCompletesImmediately: true });
     const session = createPeerSession({ createConnection: () => connection });
     await session.acceptOffer('v=0\r\nOFFER\r\na=candidate\r\n');
 
-    const pending = session.openChannel('scope-1/awareness');
+    // Already carried, so there is nothing to open: a device opens one of its
+    // own only when the purpose has no channel yet.
     const opened = remoteChannel('scope-1/awareness');
     connection.peerOpensChannel(opened);
 
-    // The answering device creates nothing: both creating one for the same
-    // purpose would leave each holding a channel the other never reads.
-    expect(await pending).toBe(opened);
+    expect(await session.openChannel('scope-1/awareness')).toBe(opened);
     expect(connection.channels).toEqual([]);
   });
 

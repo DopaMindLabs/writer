@@ -45,16 +45,29 @@ const deleteSpace = async (page: Page, spaceId: string, name: string): Promise<v
   await page.getByTestId('space-settings-delete-dialog-confirm').click();
 };
 
-/*
- * Not yet here: spaces made on *both* devices reaching each other.
- *
- * Only the device that offered the pairing can open a channel — `openChannelFor`
- * creates one when `offered()`, and the device that scanned waits for a channel
- * its peer has no reason to open. So work made on the answering device never
- * leaves it, and a spec for it would be red for a reason no test can fix. The
- * reproduction is one line either side of this file's first test: add a space on
- * each device, then expect both rails to hold both. Restore it with the fix.
- */
+test('spaces made on both devices reach the other one', async ({
+  page,
+  browser,
+  browserName,
+}) => {
+  const second = await openCoveredContext(browser, browserName);
+  await reseedAndGoHome(page);
+  await second.goto('/#/');
+
+  await pair(page, second);
+  // The seeded writing crosses first; everything after it is the actual subject.
+  await expect(spaceRail(second).first()).toBeVisible({ timeout: SYNC_TIMEOUT });
+  const held = await spaceRail(page).count();
+
+  // Each device makes something of its own. The device that scanned is the one
+  // that used to be stranded: it could only wait for a channel its peer had no
+  // reason to open, so its work never left it while the pair looked synced.
+  await addSpace(page, 'Alpha from A');
+  await addSpace(second, 'Beta from B');
+
+  await expect(spaceRail(page)).toHaveCount(held + 2, { timeout: SYNC_TIMEOUT });
+  await expect(spaceRail(second)).toHaveCount(held + 2, { timeout: SYNC_TIMEOUT });
+});
 
 test('a space deleted on one device stops existing on the other', async ({
   page,
