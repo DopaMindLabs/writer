@@ -644,6 +644,90 @@ describe('createPeerCatchUp', () => {
     catchUp.stop();
   });
 
+  it('credits an acknowledgement to the peer that read it, not to its author', async () => {
+    // The peer on the connection is what has read up to here; the origin is
+    // whose operations it read. Conflating them credits the wrong device and
+    // lets compaction drop frames that peer never received.
+    await db.trustedDevices.put({
+      deviceId: PEER,
+      publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },
+      principalId: asPrincipalId('me'),
+      addedAt: 1000,
+      displayName: 'Phone',
+      status: TrustedDeviceStatus.Active,
+      acknowledgedOperations: {},
+    });
+    const wire = fakeChannel();
+    const catchUp = createPeerCatchUp(db);
+    await catchUp.adopt({ session: fakeSession(wire.channel).session, deviceId: PEER });
+
+    wire.deliver({
+      v: CATCH_UP_PROTOCOL_VERSION,
+      kind: 'ack',
+      acknowledgements: [
+        {
+          accessScopeId: 's1',
+          originDeviceId: asDeviceId('some-other-device'),
+          operationId: asOperationId('op-read'),
+        },
+      ],
+    });
+
+    await vi.waitFor(async () => {
+      const record = await db.trustedDevices.get(String(PEER));
+      expect(record?.acknowledgedOperations).toEqual({
+        s1: { 'some-other-device': 'op-read' },
+      });
+    });
+    // The author of the operations is not the reader, and gains no record here.
+    expect(await db.trustedDevices.get('some-other-device')).toBeUndefined();
+    catchUp.stop();
+  });
+
+  it('logs a frame it refuses instead of failing the exchange', async () => {
+    await seedScope();
+    const warn = vi.spyOn(appLogger, 'warn').mockImplementation(() => undefined);
+    const wire = fakeChannel();
+    const catchUp = createPeerCatchUp(db);
+    await catchUp.adopt({ session: fakeSession(wire.channel).session, deviceId: PEER });
+
+    // Nothing about this frame checks out — its payload does not match its
+    // hash, and it is signed by a device no pairing established. A refusal is
+    // one bad frame, not a broken connection: the exchange stays up.
+    wire.deliver({
+      v: CATCH_UP_PROTOCOL_VERSION,
+      kind: 'frames',
+      frames: [
+        {
+          v: 1,
+          operationId: asOperationId('op-untrusted'),
+          accessScopeId: 's1',
+          entityTable: 'notes',
+          entityId: 'n9',
+          kind: 'put',
+          deviceId: asDeviceId('stranger'),
+          logicalAt: { millis: 2000, counter: 0 },
+          keyId: 'key-1',
+          epoch: 1,
+          payloadHash: 'hash',
+          payload: 'sealed',
+          signature: 'signed',
+        },
+      ],
+      final: true,
+    });
+
+    await vi.waitFor(() => {
+      expect(warn).toHaveBeenCalledTimes(1);
+    });
+    // Named in the log, so a refusal can be traced to the frame it was about.
+    // Which error the engine refused it with is the engine's business.
+    expect(warn.mock.calls[0]?.[0]).toBe('refused a frame from a peer');
+    expect(warn.mock.calls[0]?.[1]).toMatchObject({ operationId: 'op-untrusted' });
+    expect(await db.syncOperations.get('op-untrusted')).toBeUndefined();
+    catchUp.stop();
+  });
+
   it('syncs over a scope channel its peer opened, ignoring the control label', async () => {
     const peer = fakeSession();
     const catchUp = createPeerCatchUp(db);
