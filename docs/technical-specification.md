@@ -692,7 +692,15 @@ wired into the app.
   A device that already holds a root refuses an unasked-for one — its rows are
   sealed under the key it has. Announcements repeat until the peer is heard,
   because two people never confirm at the same instant and a channel drops what
-  arrives before anything is listening. The root is zeroed as soon as it is
+  arrives before anything is listening. Key material and catch-up share the one
+  channel, and both are read from the moment it opens rather than in turn: each
+  device waits for key material on a deadline of its own, so a peer whose
+  deadline passes first starts syncing while this one is still listening for
+  keys. Its opening manifest is held until catch-up reads it, rather than being
+  refused — sent once and never repeated, a refusal cost that direction of the
+  exchange for the whole session. Each protocol withholds only what certainly
+  belongs to the other, so a message belonging to neither still reaches both
+  decoders and is refused by each. The root is zeroed as soon as it is
   stored, and the receiving device derives its ring exactly as a passphrase
   unlock would; there is no separate paired-device key path.
 - **The device list, removal, and re-pairing.** Settings → Device sync lists
@@ -734,7 +742,14 @@ wired into the app.
   journals and materialises it by exactly the path everything else takes.
   A device accepts any channel its peer opens, which is how it receives work in a
   scope it never writes to and so never asks for a channel for. Both directions
-  are covered by `pair-sync.spec.ts`.
+  are covered by `pair-sync.spec.ts`. A transport is made once per scope and
+  kept, so it is only ever written to while it can carry something: a frame
+  journalled before the channel has finished connecting waits for it to open, and
+  a bearer that goes away is given up rather than written into — the channel
+  leaves its session, the link is dropped, and the next frame opens a fresh one.
+  Pairing a device again replaces whatever session was registered for it, which
+  is what lets a device carry live work again after a connection dropped. A frame
+  that misses the peer either way stays journalled, and catch-up carries it.
 - **Recorded limits.** Revision payloads are not chunked: an individual revision
   that exceeds the carrier budget is skipped and reported, then offered again on
   a later catch-up. Attachment chunk rows are removed transactionally when their
