@@ -50,21 +50,33 @@ import { createAttachmentChunkStore } from './attachmentChunkStore';
  * by both P2P and Dexie still applies exactly once.
  */
 
-/** The scopes this device holds frames for — what it can advertise. */
+/**
+ * The scopes this device holds frames for — what it can advertise.
+ *
+ * Read from the journal, not from the rows that survive. The two differ exactly
+ * when it matters most: deleting a space removes every row it had and journals a
+ * tombstone, so a device answering from its rows dropped the scope from its
+ * manifest altogether and the peer was never told there was anything newer to
+ * ask for. The deletion had no route across, and the peer kept the space.
+ *
+ * The journal is also what a request is served from, so this is the honest
+ * answer to what can be offered — bounded, like all history here, by the
+ * retention window.
+ */
 const accessibleScopeIds = async (db: LoremDB): Promise<string[]> => {
   if (!deviceKeyProvider.hasAnyKey()) return [];
-  const spaces = await db.spaces.toArray();
-  return spaces
+  const scopes = await db.syncOperations.orderBy('accessScopeId').uniqueKeys();
+  return scopes
+    .map(String)
     .filter(
-      (space) =>
+      (accessScopeId) =>
         deviceKeyProvider.keyFor({
-          accessScopeId: space.id,
+          accessScopeId,
           table: 'spaces',
-          primaryKey: space.id,
+          primaryKey: accessScopeId,
           operation: 'read',
         }) !== null,
-    )
-    .map((space) => space.id);
+    );
 };
 
 export interface AdoptedPeer {

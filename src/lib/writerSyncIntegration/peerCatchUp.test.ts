@@ -326,6 +326,151 @@ describe('createPeerCatchUp', () => {
     catchUp.stop();
   });
 
+  describe('what it offers a peer', () => {
+    /** One journalled operation, as the middleware would have written it. */
+    const journal = async (options: {
+      accessScopeId: string;
+      entityId: string;
+      kind: 'put' | 'delete';
+      operationId: string;
+      millis?: number;
+    }): Promise<void> => {
+      await db.syncOperations.put({
+        v: 1,
+        operationId: asOperationId(options.operationId),
+        accessScopeId: options.accessScopeId,
+        entityTable: 'spaces',
+        entityId: options.entityId,
+        kind: options.kind,
+        deviceId: asDeviceId('this-device'),
+        logicalAt: { millis: options.millis ?? 1000, counter: 0 },
+        keyId: 'key-1',
+        epoch: 1,
+        payloadHash: 'hash',
+        payload: 'sealed',
+        signature: 'signed',
+      });
+    };
+
+    const scopesOffered = async (): Promise<string[]> => {
+      const wire = fakeChannel();
+      const peer = fakeSession(wire.channel);
+      const catchUp = createPeerCatchUp(db);
+      await catchUp.adopt({ session: peer.session, deviceId: PEER });
+      await vi.waitFor(() => {
+        expect(wire.sent).toHaveLength(1);
+      });
+      const [first] = wire.sent;
+      catchUp.stop();
+      return first.kind === 'manifest'
+        ? first.manifests.map((scope) => scope.accessScopeId).sort()
+        : [];
+    };
+
+    beforeEach(async () => {
+      await saveDeviceKeyRing({
+        ring: await deriveKeyRing(generateRootSecret(), 1),
+        accountId: null,
+      });
+    });
+
+    it('offers a scope whose rows are gone, so a deletion can travel', async () => {
+      // Deleting a space removes every row it had and journals a tombstone.
+      // Answering from the rows that survive dropped the scope from the manifest
+      // altogether, so the peer was never told there was anything newer to ask
+      // for: it kept the space, and the deletion had no route across at all.
+      await journal({
+        accessScopeId: 's1',
+        entityId: 's1',
+        kind: 'delete',
+        operationId: 'op-s1-gone',
+      });
+
+      expect(await db.spaces.get('s1')).toBeUndefined();
+      expect(await scopesOffered()).toEqual(['s1']);
+    });
+
+    it('offers every scope it holds, deleted and living alike', async () => {
+      // The case a real device is in: several spaces, some still here, one
+      // deleted. All of them have history the peer may be missing.
+      await seedScope();
+      await journal({
+        accessScopeId: 's1',
+        entityId: 's1',
+        kind: 'put',
+        operationId: 'op-s1',
+      });
+      await journal({
+        accessScopeId: 's2',
+        entityId: 's2',
+        kind: 'put',
+        operationId: 'op-s2',
+      });
+      await journal({
+        accessScopeId: 's3',
+        entityId: 's3',
+        kind: 'delete',
+        operationId: 'op-s3-gone',
+        millis: 2000,
+      });
+
+      expect(await scopesOffered()).toEqual(['s1', 's2', 's3']);
+    });
+
+    it('offers a scope added since the last exchange', async () => {
+      await journal({
+        accessScopeId: 's1',
+        entityId: 's1',
+        kind: 'put',
+        operationId: 'op-s1',
+      });
+      expect(await scopesOffered()).toEqual(['s1']);
+
+      await journal({
+        accessScopeId: 's2',
+        entityId: 's2',
+        kind: 'put',
+        operationId: 'op-s2',
+        millis: 3000,
+      });
+
+      expect(await scopesOffered()).toEqual(['s1', 's2']);
+    });
+
+    it('offers a scope it deleted and then made again', async () => {
+      // Deleting and recreating leaves both operations in the journal under one
+      // scope; convergence decides which stands, and the peer needs both.
+      await journal({
+        accessScopeId: 's1',
+        entityId: 's1',
+        kind: 'delete',
+        operationId: 'op-s1-gone',
+        millis: 1000,
+      });
+      await journal({
+        accessScopeId: 's1',
+        entityId: 's1',
+        kind: 'put',
+        operationId: 'op-s1-again',
+        millis: 2000,
+      });
+
+      expect(await scopesOffered()).toEqual(['s1']);
+    });
+
+    it('offers nothing at all while the device holds no key', async () => {
+      await forgetDeviceKeyRing();
+      await journal({
+        accessScopeId: 's1',
+        entityId: 's1',
+        kind: 'put',
+        operationId: 'op-s1',
+      });
+
+      expect(await scopesOffered()).toEqual([]);
+    });
+  });
+
   it('waits for a channel that is still connecting before writing to it', async () => {
     const wire = fakeChannel('connecting');
     const peer = fakeSession(wire.channel);
