@@ -90,6 +90,9 @@ describe('SplitScreen', () => {
         'split-right-pane-select',
       )) as HTMLSelectElement;
       expect(select).toHaveAttribute('aria-label', 'Right pane document');
+      // The doc list is a live query, so the select is on screen before it has
+      // any docs in it — picking one before then finds nothing to pick.
+      await screen.findByRole('option', { name: 'Third Doc' });
       await userEvent.selectOptions(select, 'd3');
       await waitFor(() => { expect(select.value).toBe('d3'); });
     });
