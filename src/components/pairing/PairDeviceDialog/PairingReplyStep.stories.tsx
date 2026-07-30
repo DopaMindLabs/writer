@@ -23,7 +23,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * The reply, waiting to be handed back. The digits come next rather than
- * alongside: the other device cannot show its own until it has read this.
+ * The reply, waiting to be asked for. This screen replaces the scanner the
+ * instant a payload decodes, so the code stays behind a deliberate press rather
+ * than appearing under a finger already moving. The screens it leads to have
+ * their own stories — `PairingCodeDisplay` and `PairingVerification`.
  */
-export const HandingBack: Story = {};
+export const BeforeReveal: Story = {};

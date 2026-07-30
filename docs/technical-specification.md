@@ -55,7 +55,7 @@
 
 | Path | Screen | Purpose |
 |------|--------|---------|
-| `/` | Home | Landing page. Shows "Continue writing" (most recent space) and "Start a new space", a pre-release notification (info banner) counting down to the next release (23 August, 22:00 CEST) that urges setting up a local sync folder or backup, and — flag-gated — a "Sign in to sync" button at the top right of the header linking to the account settings tab. |
+| `/` | Home | Landing page. Shows "Continue writing" (most recent space) and "Start a new space", a pre-release notification (info banner) counting down to the next release (23 August, 22:00 CEST) that urges setting up a local sync folder or backup, and a **"Device sync"** link at the top right of the header, in the nav's own voice, leading to Settings → Device sync (§ 4.9.2). That link is unconditional and carries no live state: it replaced a flag-gated "Sign in to sync" button, which left the sync that needs no account with no way in from Home, and connection state belongs beside the device it describes rather than in a header on every screen. |
 | `/about` | About | Creator note, license, source links. |
 | `/settings` | Settings | Global user preferences. |
 | `/new` | Templates | Pick a template and create a new space. |
@@ -540,9 +540,9 @@ server. The normative protocol lives in `packages/writer-sync/docs/`
 wired into the app.
 
 - **Entry point.** Settings → Device sync → **Pair another device** opens the
-  pairing dialog. The dialog is mounted only while open and opens on a **start
-  choice**: *Show a code to start pairing* or *Scan the code on your other
-  device*. Nothing protocol-shaped is on that screen — no code, no symbol pager,
+  pairing dialog; the tab itself is one link away from Home (§ 4.9 route table).
+  The dialog is mounted only while open and opens on a **start choice**: *Show a
+  code to start pairing* or *Scan the code on your other device*. Nothing protocol-shaped is on that screen — no code, no symbol pager,
   no scanner — so the flow reads as a sequence (one device shows, the other
   scans) instead of two codes appearing at once with nothing to say whose turn
   it is.
@@ -577,6 +577,16 @@ wired into the app.
   is why the reply and the gate are separate screens: this device knows the six
   digits as soon as it has answered, but its peer learns them only after reading
   the reply.
+- **Nothing lands under a moving finger.** The reply step replaces the scanner
+  the instant a payload decodes, so it holds the reply **behind a reveal**
+  (*Reveal the code for your other device*) rather than showing a code beside the
+  action that dismisses it; the digits that follow keep a secondary way back
+  (*Show the code again*), which re-shows the same reply rather than minting a
+  new one — answering is replay-guarded, and a second answer would move the
+  digits the peer is comparing against. Without both, a reflex press cost the
+  whole exchange: the code could not be recovered, so both devices had to start
+  again. The reply is valid for the same five minutes as any payload; the guard
+  buys deliberation, not a longer life.
 - **Role resolution.** Decided from the payload (`resolvePairingRole`): a reply
   is accepted by the device whose offer it answers, and an offer is answered by
   whichever device read it. An earlier rule ranked the two device ids and let

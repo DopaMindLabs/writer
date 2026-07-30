@@ -29,10 +29,18 @@ devices, and it takes about a minute.
 3. On the second device, choose **Scan the code on your other device**. Point it
    at the first device's code, or upload a photo of it, or copy the text
    underneath that code across and paste it in.
-4. The second device now shows a **reply code**. On the first device, choose
-   **It's been scanned — scan the reply** and read that reply back the same way
-   round. Then, on the second device, choose **They have scanned it**.
-5. Both devices now show the **same six digits**.
+4. The second device now offers a **reply code**, kept out of sight until you
+   ask for it: choose **Reveal the code for your other device**. It waits behind
+   a press because this screen appears the moment your scan succeeds, with your
+   finger already on the way down.
+5. On the first device, choose **It's been scanned — scan the reply** and read
+   that reply back the same way round. Then, on the second device, choose **They
+   have scanned it**.
+6. Both devices now show the **same six digits**.
+
+If you press **They have scanned it** too early — before the first device has
+actually read the reply — nothing is lost. Choose **Show the code again** on
+that device and the same reply comes back, ready to be read.
 
 ## Checking the six digits
 

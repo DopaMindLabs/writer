@@ -12,7 +12,7 @@
     "tagline": "A clutter-free space for long-form writing — fiction, research, essays, journals.",
     "continueWriting": "Continue writing",
     "startNewSpace": "Start a new space",
-    "signInToSync": "Sign in to sync",
+    "deviceSync": "Device sync",
     "releaseTitle": "Next release: {{date}}",
     "releaseBody": "Before the release, make sure a local sync folder or backup is set up — data stored only in this browser may be lost.",
     "releaseCountdown_one": "{{count}} day remaining",
@@ -660,7 +660,9 @@
       },
       "replyStep": {
         "body": "Nearly there. Scan this reply with the device you started on.",
-        "done": "They have scanned it"
+        "revealAction": "Reveal the code for your other device",
+        "done": "They have scanned it",
+        "showAction": "Show the code again"
       }
     },
     "devices": {

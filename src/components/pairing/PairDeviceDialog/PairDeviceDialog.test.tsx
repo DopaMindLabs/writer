@@ -158,6 +158,17 @@ const pastePayload = async (
   await user.click(screen.getByRole('button', { name: 'Use this code' }));
 };
 
+/**
+ * Take the reply out from behind its reveal. The step lands under the press that
+ * finished the scan, so it holds the code back until it is asked for — the
+ * reading device's own screens are the ones a reflex press can cost an exchange.
+ */
+const revealReply = async (): Promise<HTMLElement> => {
+  const user = userEvent.setup();
+  await user.click(await screen.findByTestId('pairing-reply-reveal'));
+  return screen.findByRole('img', { name: 'Reply code from this device' });
+};
+
 describe('PairDeviceDialog', () => {
   it('opens on the start choice, gathering underneath but showing no code', async () => {
     const createSignaller = vi.fn(() => Promise.resolve(readySignaller()));
@@ -373,7 +384,7 @@ describe('PairDeviceDialog, once its code has been read', () => {
     renderDialogWithCatchUp(catchUp);
     await screen.findByTestId('pairing-start-step');
     await pastePayload(offer(), 'start');
-    await screen.findByRole('img', { name: 'Reply code from this device' });
+    await revealReply();
     await user.click(screen.getByTestId('pairing-reply-shown'));
     await screen.findByTestId('pairing-verification-code');
 
@@ -391,9 +402,7 @@ describe('PairDeviceDialog, when it is the device that read a code', () => {
 
     await pastePayload(offer(), 'start');
 
-    expect(
-      await screen.findByRole('img', { name: 'Reply code from this device' }),
-    ).toBeInTheDocument();
+    expect(await revealReply()).toBeInTheDocument();
     // Its own offer goes with the role: a device cannot answer a description it
     // authored, so that code would finish nothing.
     expect(
@@ -401,12 +410,28 @@ describe('PairDeviceDialog, when it is the device that read a code', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('shows no code on the screen the scan itself lands on', async () => {
+    renderDialog();
+    await screen.findByTestId('pairing-start-step');
+
+    await pastePayload(offer(), 'start');
+
+    // The step replaces the scanner the instant the payload decodes, with the
+    // press that submitted it still under the user's finger. A code here would
+    // share its screen with the action that dismisses it, and the reply cannot
+    // be minted twice — so the exchange would have to start again on both
+    // devices.
+    expect(await screen.findByTestId('pairing-reply-step')).toBeInTheDocument();
+    expect(screen.queryByTestId('pairing-code-display')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pairing-reply-shown')).not.toBeInTheDocument();
+  });
+
   it('holds the digits back until the reply has been handed over', async () => {
     const user = userEvent.setup();
     renderDialog();
     await screen.findByTestId('pairing-start-step');
     await pastePayload(offer(), 'start');
-    await screen.findByRole('img', { name: 'Reply code from this device' });
+    await revealReply();
 
     // The peer cannot show its digits until it has read this code, so comparing
     // them now would be a comparison with nothing.
@@ -417,12 +442,32 @@ describe('PairDeviceDialog, when it is the device that read a code', () => {
     expect(await screen.findByTestId('pairing-verification-code')).toHaveTextContent(CODE);
   });
 
+  it('lets the digits give the reply code back, in case the peer missed it', async () => {
+    const user = userEvent.setup();
+    renderDialog();
+    await screen.findByTestId('pairing-start-step');
+    await pastePayload(offer(), 'start');
+    await revealReply();
+    await user.click(screen.getByTestId('pairing-reply-shown'));
+    await screen.findByTestId('pairing-verification-code');
+
+    await user.click(screen.getByTestId('pairing-reply-show-code'));
+
+    // The same reply, not a fresh one: answering is replay-guarded, and a second
+    // answer would move the digits the peer is already comparing against.
+    expect(
+      await screen.findByRole('img', { name: 'Reply code from this device' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('pairing-verification-code')).not.toBeInTheDocument();
+  });
+
   it('does not complete until this user confirms too', async () => {
     const user = userEvent.setup();
     renderDialog();
     await screen.findByTestId('pairing-start-step');
     await pastePayload(offer(), 'start');
-    await user.click(await screen.findByTestId('pairing-reply-shown'));
+    await revealReply();
+    await user.click(screen.getByTestId('pairing-reply-shown'));
     await screen.findByTestId('pairing-verification-code');
 
     expect(screen.queryByTestId('pair-device-complete')).not.toBeInTheDocument();

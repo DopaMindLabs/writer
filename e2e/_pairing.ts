@@ -31,6 +31,18 @@ export const showCode = async (page: Page): Promise<void> => {
   });
 };
 
+/**
+ * Ask the reading device for its reply. The step lands under the press that
+ * finished the scan, so the code stays behind a reveal — nothing is on screen
+ * for that press to dismiss.
+ */
+export const revealReply = async (page: Page): Promise<void> => {
+  await page.getByTestId('pairing-reply-reveal').click();
+  await expect(page.getByRole('img', { name: 'Reply code from this device' })).toBeVisible({
+    timeout: GATHERING_TIMEOUT,
+  });
+};
+
 export const readSymbols = async (page: Page): Promise<string[]> => {
   const field = page.getByTestId('pairing-code-payload');
   await expect(field).toBeVisible({ timeout: GATHERING_TIMEOUT });
@@ -71,6 +83,7 @@ export const pair = async (shower: Page, reader: Page): Promise<void> => {
   await expect(reader.getByTestId('pairing-reply-step')).toBeVisible({
     timeout: GATHERING_TIMEOUT,
   });
+  await revealReply(reader);
 
   await pasteSymbols(shower, await readSymbols(reader), 'showing');
   await reader.getByTestId('pairing-reply-shown').click();

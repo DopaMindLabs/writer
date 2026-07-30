@@ -54,6 +54,21 @@ const scanReply = async (page: Page): Promise<void> => {
   await expect(page.getByTestId('pairing-code-scanner')).toBeVisible();
 };
 
+/**
+ * Ask the reading device for its reply. The step arrives under the press that
+ * finished the scan, so the code waits behind a reveal rather than sharing a
+ * screen with the action that dismisses it.
+ */
+const revealReply = async (page: Page): Promise<void> => {
+  await expect(page.getByTestId('pairing-reply-step')).toBeVisible({
+    timeout: GATHERING_TIMEOUT,
+  });
+  await page.getByTestId('pairing-reply-reveal').click();
+  await expect(page.getByRole('img', { name: 'Reply code from this device' })).toBeVisible({
+    timeout: GATHERING_TIMEOUT,
+  });
+};
+
 /** Read every symbol of the code currently on screen, stepping the pager. */
 const readSymbols = async (page: Page): Promise<string[]> => {
   const field = page.getByTestId('pairing-code-payload');
@@ -97,9 +112,7 @@ test('two devices pair over QR symbols and agree on one verification code', asyn
 
   // Answering is what binds the transcript, so the reading device knows the
   // digits first — its peer learns them only once it has read the reply back.
-  await expect(joiner.getByTestId('pairing-reply-step')).toBeVisible({
-    timeout: GATHERING_TIMEOUT,
-  });
+  await revealReply(joiner);
   const reply = await readSymbols(joiner);
   await scanReply(page);
   await pasteSymbols(page, reply);
@@ -117,6 +130,43 @@ test('two devices pair over QR symbols and agree on one verification code', asyn
   // Neither side completes on authentication alone.
   await expect(page.getByTestId('pair-device-complete')).toHaveCount(0);
 
+  await page.getByTestId('pairing-verification-confirm').click();
+  await joiner.getByTestId('pairing-verification-confirm').click();
+
+  await expect(page.getByTestId('pair-device-complete')).toBeVisible();
+  await expect(joiner.getByTestId('pair-device-complete')).toBeVisible();
+});
+
+test('a reply pressed past can be shown again', async ({ page, browser, browserName }) => {
+  // The exchange this protects: the reading device cannot mint a second reply,
+  // so a press on "they have scanned it" before the other device has actually
+  // read the code used to cost both devices the whole pairing.
+  const joiner = await openCoveredContext(browser, browserName);
+
+  await openPairing(page);
+  await openPairing(joiner);
+  await showCode(page);
+  await openScanner(joiner);
+  await pasteSymbols(joiner, await readSymbols(page));
+  await revealReply(joiner);
+  const reply = await readSymbols(joiner);
+
+  // The misclick: moving on before the peer has read anything.
+  await joiner.getByTestId('pairing-reply-shown').click();
+  await expect(verificationCode(joiner)).toBeVisible();
+
+  await joiner.getByTestId('pairing-reply-show-code').click();
+
+  // The same reply, symbol for symbol — a re-minted one would move the digits
+  // the peer is about to compare against.
+  await expect(joiner.getByRole('img', { name: 'Reply code from this device' })).toBeVisible();
+  expect(await readSymbols(joiner)).toEqual(reply);
+  await expect(verificationCode(joiner)).toHaveCount(0);
+
+  // And the exchange still finishes from there, on the code that survived.
+  await scanReply(page);
+  await pasteSymbols(page, reply);
+  await joiner.getByTestId('pairing-reply-shown').click();
   await page.getByTestId('pairing-verification-confirm').click();
   await joiner.getByTestId('pairing-verification-confirm').click();
 
@@ -276,11 +326,13 @@ test('a photographed code is read from an uploaded image', async ({
 
   // Either the payload was complete and this device answered, or it was one of
   // several symbols and the scanner says which are outstanding. Both mean the
-  // image was decoded; neither is the unreadable-image message.
+  // image was decoded; neither is the unreadable-image message. The reply step
+  // stands in for the answer rather than the code itself, which waits behind
+  // its reveal.
   await expect(
     page
       .getByTestId('pairing-scan-progress')
-      .or(page.getByRole('img', { name: 'Reply code from this device' }))
+      .or(page.getByTestId('pairing-reply-step'))
       .or(page.getByTestId('pair-device-authenticating')),
   ).toBeVisible({ timeout: GATHERING_TIMEOUT });
 });
