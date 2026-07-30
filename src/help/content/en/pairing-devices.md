@@ -114,6 +114,14 @@ Every change carries a signature from the device that made it, and the receiving
 device checks that signature before accepting anything. A device you have
 removed, or one you never paired with, cannot slip changes in.
 
+A document open on both devices updates in place as the other device writes. You
+do not need to close it and open it again to see the words arrive.
+
+Writer sends whole documents rather than merging two people's typing together,
+so if you had unsaved changes on this device when the other device's version
+arrives, that version takes the page. Nothing is lost: what you had is kept as a
+version you can restore from the document's history.
+
 Attachments travel in pieces. If a transfer is interrupted — you close the lid,
 you walk out of range — the next connection picks up from the pieces still
 missing rather than starting the file again.

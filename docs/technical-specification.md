@@ -408,7 +408,11 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   stale content. That mount gate never leaves a document unopenable: if a divergent doc's local
   provenance marker is missing (so it cannot be proved locally authored) it still opens, taking the
   current row body and keeping the local side as a recoverable revision, rather than blocking the
-  editor for good. The mounted-editor flush is **awaitable and reports which body it persisted**: if
+  editor for good. The same gate is driven again whenever a paired device's writing lands
+  underneath an editor that is already open (§ 4.9.2), so it no longer runs only at mount; one
+  reconciliation of a document runs at a time, chained in the order they were asked for, since
+  two at once would each read the state before either had written and both would mint the same
+  safety revision. The mounted-editor flush is **awaitable and reports which body it persisted**: if
   the editor holds unsaved local edits the pulled remote body is preserved as a recoverable safety
   revision and the live local text is kept, so neither side is ever silently overwritten. A
   freshly-mounted, never-edited editor is correctly seen as clean — the autosave seeds its baseline
@@ -728,10 +732,15 @@ wired into the app.
   to exist.
 - **Proven end to end.** `pair-sync.spec.ts` drives two browser contexts through
   a real WebRTC pairing and asserts that writing held by one device appears on
-  the other, live and after a reload. `attachments-pair-sync.spec.ts` adds an
+  the other, live and after a reload. `pair-sync-content.spec.ts` goes inside a
+  space: a brain-space note and the text typed into it cross to a canvas that is
+  already on screen, and text typed into a document reaches an editor the other
+  context already has open — with no navigation on the receiving side, which is
+  what separates a document that syncs from one that merely would on a revisit.
+  `attachments-pair-sync.spec.ts` adds an
   image larger than two transfer chunks on one context and proves it renders on
   the peer and survives reload. Two physical devices on a network remain slice
-  2A.9 and are not discharged by either test.
+  2A.9 and are not discharged by any of them.
 - **Live peer sync.** Catch-up answers "what did I miss?" when a connection
   opens; work written *while* a peer is connected reaches it as it is journalled.
   The P2P provider is named at boot beside Dexie Cloud and supplies a transport
@@ -740,6 +749,22 @@ wired into the app.
   authored are sent — one that arrived from a peer is already held there. The
   message is the same `frames` message catch-up speaks, so a receiver verifies,
   journals and materialises it by exactly the path everything else takes.
+- **An arrived document reaches the screen.** Materialising a frame updates a
+  row, and every surface but one refreshes itself from there. A document is the
+  exception: its editor renders from the CRDT log, which is local-only and which
+  no frame touches, so an arriving body used to stay invisible until the editor
+  was remounted by navigating away and back. Each document another device wrote
+  to is therefore put through the same gate a mount uses (§ 4.9.1): the arriving
+  body replaces what an open editor is showing at once, and a document no editor
+  holds has its log reseeded and other tabs told to remount onto it. A document
+  the gate found already in agreement is announced to nobody. Local work that
+  was never written to the row is kept first as a recoverable **pre-sync**
+  revision, and only then replaced — but a revision is minted only where there
+  is something to protect, since a body arrives on every pause in the other
+  person's typing and revisions replicate. This device's own frames are skipped:
+  it already shows what it typed. Convergence remains whole-document
+  last-writer-wins; merging concurrent edits needs the CRDT itself to cross the
+  peer link, which is still not wired.
   A device accepts any channel its peer opens, which is how it receives work in a
   scope it never writes to and so never asks for a channel for. Both directions
   are covered by `pair-sync.spec.ts`. A transport is made once per scope and
