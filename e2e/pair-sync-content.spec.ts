@@ -3,6 +3,7 @@ import {
   openCoveredContext,
   reseedAndGoHome,
   getFirstSpaceIdFromHome,
+  gotoFirstDoc,
 } from './_helpers';
 import { pair } from './_pairing';
 
@@ -14,6 +15,9 @@ import { pair } from './_pairing';
  * a user actually writes stay put. A brain-space note is an ordinary synced row,
  * so it and the text inside it should cross with the far canvas already on
  * screen, without anyone reopening anything.
+ *
+ * A document is the harder half: its editor renders from a CRDT log no frame
+ * ever touches, so the arriving row is not enough on its own.
  */
 
 const SYNC_TIMEOUT = 30_000;
@@ -62,4 +66,38 @@ test('a note written after pairing reaches the other device', async ({
   await expect(
     second.getByTestId(`brain-note-${id}-body`),
   ).toContainText('Written on the far side', { timeout: SYNC_TIMEOUT });
+});
+
+test('text typed after pairing reaches an editor the other device already has open', async ({
+  page,
+  browser,
+  browserName,
+}) => {
+  const second = await openCoveredContext(browser, browserName);
+  await reseedAndGoHome(page);
+  // Before pairing, for the same reason as above.
+  const { spaceId, docId } = await gotoFirstDoc(page);
+  await second.goto('/#/');
+
+  await pair(page, second);
+  await expect(second.locator('[data-testid^="space-rail-space-"]').first()).toBeVisible({
+    timeout: SYNC_TIMEOUT,
+  });
+
+  // The far editor is opened first and never touched again: the words have to
+  // reach the document on screen, not the one a revisit would rebuild.
+  await second.goto(`/#/s/${spaceId}/d/${docId}`);
+  await expect(second.getByTestId('document-body')).toBeVisible({
+    timeout: SYNC_TIMEOUT,
+  });
+
+  await page.goto(`/#/s/${spaceId}/d/${docId}`);
+  await expect(page.getByTestId('document-body')).toBeVisible();
+  await page.getByTestId('document-body').click();
+  await page.keyboard.type('Crossing the pairing');
+
+  await expect(second.getByTestId('document-body')).toContainText(
+    'Crossing the pairing',
+    { timeout: SYNC_TIMEOUT },
+  );
 });
