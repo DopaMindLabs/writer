@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@/test/test-utils';
@@ -6,33 +6,39 @@ import { PairDeviceSection } from './PairDeviceSection';
 
 describe('PairDeviceSection', () => {
   it('offers a way into pairing', () => {
-    renderWithProviders(<PairDeviceSection />);
+    renderWithProviders(<PairDeviceSection onPair={vi.fn()} />);
 
     expect(screen.getByTestId('pair-device-open')).toBeInTheDocument();
   });
 
-  it('mounts no dialog until asked', () => {
-    renderWithProviders(<PairDeviceSection />);
+  it('asks for the dialog rather than holding one', () => {
+    // Ownership sits with the tab: the device list offers to re-pair a dropped
+    // device too, and two owners of one dialog would be two dialogs.
+    const onPair = vi.fn();
+    renderWithProviders(<PairDeviceSection onPair={onPair} />);
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(onPair).not.toHaveBeenCalled();
   });
 
-  it('opens the dialog on activation', async () => {
+  it('reports the request on activation', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<PairDeviceSection />);
+    const onPair = vi.fn();
+    renderWithProviders(<PairDeviceSection onPair={onPair} />);
 
     await user.click(screen.getByTestId('pair-device-open'));
 
-    expect(await screen.findByRole('dialog', { name: 'Pair another device' })).toBeInTheDocument();
+    expect(onPair).toHaveBeenCalledOnce();
   });
 
-  it('opens from the keyboard', async () => {
+  it('reports it from the keyboard too', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<PairDeviceSection />);
+    const onPair = vi.fn();
+    renderWithProviders(<PairDeviceSection onPair={onPair} />);
 
     await user.tab();
     await user.keyboard('{Enter}');
 
-    expect(await screen.findByRole('dialog', { name: 'Pair another device' })).toBeInTheDocument();
+    expect(onPair).toHaveBeenCalledOnce();
   });
 });

@@ -28,6 +28,8 @@ const idlePeerSession = () => ({
   createOffer: () => Promise.resolve(''),
   acceptOffer: () => Promise.resolve(''),
   acceptAnswer: () => Promise.resolve(),
+  linkState: () => 'connecting' as const,
+  onLinkStateChange: () => () => undefined,
   close: () => undefined,
 });
 

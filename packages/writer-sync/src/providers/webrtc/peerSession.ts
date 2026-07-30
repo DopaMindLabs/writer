@@ -1,4 +1,5 @@
 import { PairingError, PairingErrorCode } from '../../pairing/pairing.types';
+import { toPeerLinkState, type PeerLinkState } from './peerLinkState';
 import type { DataChannelLike } from './webRtcTransport';
 
 /**
@@ -91,6 +92,14 @@ export interface PeerSession {
   acceptOffer: (sdp: string) => Promise<string>;
   /** Apply the peer's answer. */
   acceptAnswer: (sdp: string) => Promise<void>;
+  /** Whether this link is carrying anything, as {@link PeerLinkState} puts it. */
+  linkState: () => PeerLinkState;
+  /**
+   * Observe the link state. Fires at once with the state as it stands, so a late
+   * subscriber cannot miss a transition that has already happened — the same
+   * contract {@link PeerSession.onChannel} keeps. Returns its own unsubscribe.
+   */
+  onLinkStateChange: (listener: (state: PeerLinkState) => void) => () => void;
   close: () => void;
 }
 
@@ -247,6 +256,67 @@ const gatheredDescription = async (
   return description.sdp;
 };
 
+/**
+ * The link's state, and whoever is watching it.
+ *
+ * Kept here rather than left to the caller because the connection itself is
+ * never handed out: a host that had to subscribe to `connectionstatechange`
+ * would need the raw `RTCPeerConnection` back, which is the very thing this
+ * session exists to keep to itself.
+ *
+ * Repeats are suppressed, so a listener hears transitions rather than events —
+ * ICE re-checks can report the same state twice, and a caller acting on "the
+ * link dropped" must not act twice on one drop.
+ */
+const createLinkWatch = (connection: PeerConnectionLike) => {
+  const listeners = new Set<(state: PeerLinkState) => void>();
+  let state = toPeerLinkState(connection.connectionState);
+
+  const publish = (next: PeerLinkState): void => {
+    if (next === state) return;
+    state = next;
+    for (const listener of [...listeners]) listener(next);
+  };
+
+  const onChange = (): void => {
+    publish(toPeerLinkState(connection.connectionState));
+  };
+  connection.addEventListener('connectionstatechange', onChange);
+
+  return {
+    current: (): PeerLinkState => state,
+    subscribe: (listener: (state: PeerLinkState) => void): (() => void) => {
+      listeners.add(listener);
+      listener(state);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    /**
+     * Say the link is closed, once, on the way down. A browser need not fire
+     * `connectionstatechange` for a close this side asked for, so the event is
+     * released first and the state announced by hand — otherwise a watcher would
+     * be left holding `connected` for a session that no longer exists.
+     */
+    release: (): void => {
+      connection.removeEventListener('connectionstatechange', onChange);
+      publish('closed');
+      listeners.clear();
+    },
+  };
+};
+
+/** Timers and deadline, defaulted once so the session body stays about sessions. */
+const resolveTimers = (options: PeerSessionOptions) => ({
+  setTimer: options.setTimer ?? ((callback: () => void, millis: number) => setTimeout(callback, millis)),
+  clearTimer:
+    options.clearTimer ??
+    ((handle: unknown) => {
+      clearTimeout(handle as ReturnType<typeof setTimeout>);
+    }),
+  timeoutMillis: options.gatheringTimeoutMillis ?? ICE_GATHERING_TIMEOUT_MILLIS,
+});
+
 interface OpenChannelOptions {
   label: string;
   channels: ReturnType<typeof createChannelRegistry>;
@@ -287,11 +357,7 @@ const openChannelFor = ({
   });
 
 export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
-  const setTimer = options.setTimer ?? ((cb, ms) => setTimeout(cb, ms));
-  const clearTimer = options.clearTimer ?? ((handle) => {
-    clearTimeout(handle as ReturnType<typeof setTimeout>);
-  });
-  const timeoutMillis = options.gatheringTimeoutMillis ?? ICE_GATHERING_TIMEOUT_MILLIS;
+  const timers = resolveTimers(options);
 
   // Created per session, never a provider-global singleton: two pairings must
   // not share a connection.
@@ -300,11 +366,12 @@ export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
   let closed = false;
 
   // Registered before any offer or answer, so a channel the peer opens the
-  // instant the connection establishes is never missed.
+  // instant the connection establishes is never missed — and so is the link
+  // state, which can reach `connected` before anything asks about it.
   const offDataChannel = connection.onDataChannel(channels.adopt);
+  const link = createLinkWatch(connection);
 
-  const gathered = (): Promise<string> =>
-    gatheredDescription(connection, { setTimer, clearTimer, timeoutMillis });
+  const gathered = (): Promise<string> => gatheredDescription(connection, timers);
 
   const requireOpen = (): void => {
     if (closed) {
@@ -336,9 +403,14 @@ export const createPeerSession = (options: PeerSessionOptions): PeerSession => {
       requireOpen();
       await connection.setRemoteDescription({ type: 'answer', sdp });
     },
+    linkState: link.current,
+    onLinkStateChange: link.subscribe,
     close: () => {
       if (closed) return;
       closed = true;
+      // Before the teardown, so a watcher hears `closed` from a session that
+      // still exists rather than inferring it from silence.
+      link.release();
       offDataChannel();
       channels.release();
       connection.close();

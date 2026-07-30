@@ -24,6 +24,8 @@ import {
   type RootTransferMessage,
 } from 'writer-sync/pairing';
 import { createPeerCatchUp } from './peerCatchUp';
+import { peerLinkStatus } from './peerLinkStatus';
+import { peerSessions } from './peerSessionRegistry';
 
 /**
  * The lifetime seam: a confirmed pairing hands its connection here, and catch-up
@@ -110,6 +112,13 @@ const fakeSession = (existing: DataChannelLike | null = null) => {
     createOffer: () => Promise.resolve(''),
     acceptOffer: () => Promise.resolve(''),
     acceptAnswer: () => Promise.resolve(),
+    // Catch-up cares about channels, not liveness: a session that never reports
+    // a link state is enough here, and the registry's own tests drive drops.
+    linkState: () => 'connected',
+    onLinkStateChange: (listener) => {
+      listener('connected');
+      return () => undefined;
+    },
     close,
   };
   return {
@@ -204,6 +213,10 @@ beforeEach(async () => {
 afterEach(async () => {
   await forgetDeviceKeyRing();
   await db.delete();
+  // Both are page-lifetime singletons: anything a test leaves in them is state
+  // the next test inherits.
+  peerSessions.clear();
+  peerLinkStatus.reset();
 });
 
 /** A space this device holds a key for, with one row of content in it. */

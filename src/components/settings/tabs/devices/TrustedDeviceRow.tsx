@@ -1,16 +1,22 @@
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/Button';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { TypographyP } from '@/components/ui/typography';
 import {
   formatJoinedAt,
   formatLastSeen,
 } from '@/components/settings/tabs/cloud/deviceTimestamps';
+import type { DeviceLinkState } from '@/lib/writerSyncIntegration/peerLinkStatus';
 import type { TrustedDeviceEntry } from '@/lib/writerSyncIntegration/useTrustedDevices';
+import { TrustedDeviceLinkBadge } from './TrustedDeviceLinkBadge';
+import { TrustedDeviceRowActions } from './TrustedDeviceRowActions';
 
 export interface TrustedDeviceRowProps {
   device: TrustedDeviceEntry;
   onRemove: (deviceId: string) => void;
+  /** Absent when this page has had no link to the device — the usual case. */
+  linkState?: DeviceLinkState;
+  /** Start a fresh pairing exchange. Absent where nothing can offer one. */
+  onReconnect?: () => void;
 }
 
 /**
@@ -20,8 +26,19 @@ export interface TrustedDeviceRowProps {
  * from the peer over the authenticated channel. It is presentation only and is
  * rendered as text: it is never part of identity, and a peer that names itself
  * after another device changes nothing about which key verifies its frames.
+ *
+ * A link that dropped is offered a way back rather than a reassurance. There is
+ * no channel left to renegotiate over — signalling happens only through the QR
+ * exchange — so the honest remedy is a fresh code on both screens. It is not
+ * starting over: trust is already recorded, both devices hold the root secret,
+ * and only the transport is rebuilt.
  */
-export const TrustedDeviceRow = ({ device, onRemove }: TrustedDeviceRowProps) => {
+export const TrustedDeviceRow = ({
+  device,
+  onRemove,
+  linkState,
+  onReconnect,
+}: TrustedDeviceRowProps) => {
   const { t, i18n } = useTranslation('screens');
   const k = (key: string) => `settings.devices.list.${key}`;
 
@@ -37,6 +54,9 @@ export const TrustedDeviceRow = ({ device, onRemove }: TrustedDeviceRowProps) =>
           <span className="truncate text-[13px] text-ink">{device.displayName}</span>
           {device.isThisDevice && <StatusBadge kind="info">{t(k('thisDevice'))}</StatusBadge>}
           {device.isRevoked && <StatusBadge kind="warning">{t(k('removed'))}</StatusBadge>}
+          {!device.isThisDevice && !device.isRevoked && (
+            <TrustedDeviceLinkBadge state={linkState} />
+          )}
         </div>
         <TypographyP variant="caption" className="mt-0.5">
           {t(k('added'), { date: formatJoinedAt(device.addedAt, i18n.language) })}
@@ -49,16 +69,12 @@ export const TrustedDeviceRow = ({ device, onRemove }: TrustedDeviceRowProps) =>
         </TypographyP>
       </div>
       {!device.isThisDevice && !device.isRevoked && (
-        <Button
-          kind="secondary"
-          size="sm"
-          data-testid={`trusted-device-remove-${device.deviceId}`}
-          onClick={() => {
-            onRemove(device.deviceId);
-          }}
-        >
-          {t(k('remove'))}
-        </Button>
+        <TrustedDeviceRowActions
+          device={device}
+          onRemove={onRemove}
+          linkState={linkState}
+          onReconnect={onReconnect}
+        />
       )}
     </li>
   );

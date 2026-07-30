@@ -269,5 +269,10 @@
     "placeholder": "Name this version (optional)",
     "save": "Save version",
     "cancel": "Cancel"
+  },
+  "peerLink": {
+    "droppedTitle": "A paired device is no longer connected",
+    "droppedBody": "Your writing is safe on this device. Devices connect directly, so bringing it back needs a code on both screens again \u2014 no keys change hands a second time.",
+    "droppedAction": "Open device sync"
   }
 }

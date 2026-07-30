@@ -30,17 +30,16 @@ devices, and it takes about a minute.
    at the first device's code, or upload a photo of it, or copy the text
    underneath that code across and paste it in.
 4. The second device now offers a **reply code**, kept out of sight until you
-   ask for it: choose **Reveal the code for your other device**. It waits behind
-   a press because this screen appears the moment your scan succeeds, with your
-   finger already on the way down.
+   ask: choose **Reveal the code for your other device**. It waits behind a
+   press because this screen arrives the moment your scan succeeds, with your
+   finger still coming down.
 5. On the first device, choose **It's been scanned — scan the reply** and read
    that reply back the same way round. Then, on the second device, choose **They
    have scanned it**.
 6. Both devices now show the **same six digits**.
 
-If you press **They have scanned it** too early — before the first device has
-actually read the reply — nothing is lost. Choose **Show the code again** on
-that device and the same reply comes back, ready to be read.
+Pressed **They have scanned it** too early? Nothing is lost — choose **Show the
+code again** and the same reply comes back.
 
 ## Checking the six digits
 
@@ -137,6 +136,30 @@ missing rather than starting the file again.
 Each device accepts changes only from devices it has paired with itself. If you
 have three devices, pair each one with each of the others; a device in the
 middle will not pass changes along on their behalf.
+
+## When a device stops being connected
+
+Settings → Device sync says, for each device, whether you are **connected** to
+it right now. **Not connected** is the usual state and is not a fault — but
+while it says that, nothing you write reaches that device.
+
+Two devices are connected only while both have Writer open. The connection is
+made by the pairing exchange and is never saved, so closing the tab, reloading,
+sleeping the laptop or walking out of range ends it. That is why a freshly
+opened Writer says nothing about connections.
+
+If a device that *was* connected drops away while you work, a small notice
+appears in the corner. It never interrupts: nothing moves on the page, nothing
+takes what you are typing.
+
+**Nothing is lost.** Your writing stays where you wrote it, and the devices
+catch up next time they are connected.
+
+To connect again, choose **Reconnect** beside the device and go through the
+codes on both screens. This is not pairing from scratch: the devices still
+trust each other and still share the same keys, so nothing secret changes hands
+again — only the connection is rebuilt. The codes are needed because the
+devices talk directly, with no server in the middle to arrange a new one.
 
 ## Removing a device, and pairing it again
 

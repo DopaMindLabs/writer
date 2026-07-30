@@ -4,6 +4,7 @@ import { PairDeviceSection } from './PairDeviceSection';
 const meta = {
   title: 'Settings/PairDeviceSection',
   component: PairDeviceSection,
+  args: { onPair: () => undefined },
 } satisfies Meta<typeof PairDeviceSection>;
 
 export default meta;

@@ -55,6 +55,7 @@ const fakeConnection = (
   const connection: PeerConnectionLike & {
     channels: string[];
     finishGathering: () => void;
+    entersConnectionState: (state: string) => void;
     remote: SessionDescriptionLike | null;
     closed: boolean;
     channelOrdered: boolean | undefined;
@@ -110,6 +111,11 @@ const fakeConnection = (
     finishGathering: () => {
       (connection as { iceGatheringState: string }).iceGatheringState = 'complete';
       for (const listener of listeners.get('icegatheringstatechange') ?? []) listener();
+    },
+    /** Stand in for the browser reporting the link's state changing. */
+    entersConnectionState: (state: string) => {
+      (connection as { connectionState: string }).connectionState = state;
+      for (const listener of listeners.get('connectionstatechange') ?? []) listener();
     },
   };
   return Object.assign(connection, {
@@ -479,5 +485,112 @@ describe('the control channel on the answering side', () => {
     connection.peerOpensChannel(remoteChannel());
 
     expect(seen).toEqual([]);
+  });
+});
+
+describe('the link state', () => {
+  it('starts from the connection as it stands, before any event', () => {
+    const connection = fakeConnection();
+    const session = createPeerSession({ createConnection: () => connection });
+
+    expect(session.linkState()).toBe('connecting');
+  });
+
+  it('follows the connection as it comes up and goes down', () => {
+    const connection = fakeConnection();
+    const session = createPeerSession({ createConnection: () => connection });
+
+    connection.entersConnectionState('connected');
+    expect(session.linkState()).toBe('connected');
+
+    connection.entersConnectionState('failed');
+    expect(session.linkState()).toBe('interrupted');
+  });
+
+  it('tells a subscriber the state at once, so a late one misses nothing', () => {
+    const connection = fakeConnection();
+    const session = createPeerSession({ createConnection: () => connection });
+    connection.entersConnectionState('connected');
+
+    const seen: string[] = [];
+    session.onLinkStateChange((state) => seen.push(state));
+
+    expect(seen).toEqual(['connected']);
+  });
+
+  it('reports transitions rather than events', () => {
+    const connection = fakeConnection();
+    const session = createPeerSession({ createConnection: () => connection });
+    const seen: string[] = [];
+    session.onLinkStateChange((state) => seen.push(state));
+
+    connection.entersConnectionState('connected');
+    connection.entersConnectionState('connected');
+    // Two ways down, one interruption: a caller acting on "the link dropped"
+    // must not act twice on a single drop.
+    connection.entersConnectionState('disconnected');
+    connection.entersConnectionState('failed');
+
+    expect(seen).toEqual(['connecting', 'connected', 'interrupted']);
+  });
+
+  it('comes back on its own when ICE re-checks succeed', () => {
+    const connection = fakeConnection();
+    const session = createPeerSession({ createConnection: () => connection });
+    connection.entersConnectionState('connected');
+    connection.entersConnectionState('disconnected');
+
+    connection.entersConnectionState('connected');
+
+    expect(session.linkState()).toBe('connected');
+  });
+
+  it('says the link is closed when this side tears it down', () => {
+    // A browser need not fire the event for a close this side asked for, so a
+    // watcher left waiting for one would hold `connected` for a dead session.
+    const connection = fakeConnection();
+    const session = createPeerSession({ createConnection: () => connection });
+    connection.entersConnectionState('connected');
+    const seen: string[] = [];
+    session.onLinkStateChange((state) => seen.push(state));
+
+    session.close();
+
+    expect(seen).toEqual(['connected', 'closed']);
+    expect(session.linkState()).toBe('closed');
+  });
+
+  it('stops listening to the connection once closed', () => {
+    const connection = fakeConnection();
+    const session = createPeerSession({ createConnection: () => connection });
+    expect(connection.listenerCount('connectionstatechange')).toBe(1);
+
+    session.close();
+
+    expect(connection.listenerCount('connectionstatechange')).toBe(0);
+  });
+
+  it('reports nothing further after a close, however the connection behaves', () => {
+    const connection = fakeConnection();
+    const session = createPeerSession({ createConnection: () => connection });
+    const seen: string[] = [];
+    session.onLinkStateChange((state) => seen.push(state));
+    session.close();
+
+    connection.entersConnectionState('failed');
+
+    expect(seen).toEqual(['connecting', 'closed']);
+  });
+
+  it('unsubscribes a link listener on request', () => {
+    const connection = fakeConnection();
+    const session = createPeerSession({ createConnection: () => connection });
+    const seen: string[] = [];
+    const off = session.onLinkStateChange((state) => seen.push(state));
+
+    off();
+    connection.entersConnectionState('connected');
+
+    expect(seen).toEqual(['connecting']);
   });
 });

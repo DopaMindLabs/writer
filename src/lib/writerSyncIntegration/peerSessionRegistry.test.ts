@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { asDeviceId } from 'writer-sync/core';
-import type { PeerSession } from 'writer-sync/providers/webrtc';
+import type { PeerLinkState, PeerSession } from 'writer-sync/providers/webrtc';
 import { createPeerSessionRegistry } from './peerSessionRegistry';
 
 /**
@@ -11,16 +11,39 @@ import { createPeerSessionRegistry } from './peerSessionRegistry';
  * catch-up holder exists to avoid.
  */
 
-const fakeSession = (): PeerSession =>
-  ({
+/** A session whose link state a test can drive, and whose close it records. */
+const fakeSession = () => {
+  const listeners = new Set<(state: PeerLinkState) => void>();
+  let state: PeerLinkState = 'connecting';
+  let closed = false;
+  const session = {
     channel: () => null,
     onChannel: () => () => undefined,
     openChannel: () => new Promise<never>(() => undefined),
     createOffer: () => Promise.resolve(''),
     acceptOffer: () => Promise.resolve(''),
     acceptAnswer: () => Promise.resolve(),
-    close: () => undefined,
-  }) as unknown as PeerSession;
+    linkState: () => state,
+    onLinkStateChange: (listener: (state: PeerLinkState) => void) => {
+      listeners.add(listener);
+      listener(state);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    close: () => {
+      closed = true;
+    },
+  } as unknown as PeerSession;
+  return Object.assign(session, {
+    enters: (next: PeerLinkState) => {
+      state = next;
+      for (const listener of [...listeners]) listener(next);
+    },
+    isClosed: () => closed,
+    watcherCount: () => listeners.size,
+  });
+};
 
 const peerOf = (session: PeerSession) => ({ session, deviceId: asDeviceId('peer-1') });
 
@@ -99,5 +122,93 @@ describe('createPeerSessionRegistry', () => {
     registry.add(second);
 
     expect(registry.peers()).toEqual([first, second]);
+  });
+});
+
+describe('the link state a registered session reports', () => {
+  it('reaches the observer it was given, per device', () => {
+    const seen: [string, PeerLinkState][] = [];
+    const registry = createPeerSessionRegistry({
+      onLinkState: (deviceId, state) => seen.push([String(deviceId), state]),
+    });
+    const session = fakeSession();
+
+    registry.add(peerOf(session));
+    session.enters('connected');
+
+    expect(seen).toEqual([
+      ['peer-1', 'connecting'],
+      ['peer-1', 'connected'],
+    ]);
+  });
+
+  it('forgets a session whose link has closed for good', () => {
+    // A registry that kept it would go on handing out a corpse: every later
+    // frame offered a connection that no longer exists.
+    const registry = createPeerSessionRegistry();
+    const session = fakeSession();
+    registry.add(peerOf(session));
+
+    session.enters('closed');
+
+    expect(registry.peers()).toEqual([]);
+  });
+
+  it('keeps a session whose link is merely interrupted', () => {
+    // ICE re-checks can bring one back on their own; dropping it here would
+    // throw away a link that is about to work again.
+    const registry = createPeerSessionRegistry();
+    const session = fakeSession();
+    registry.add(peerOf(session));
+
+    session.enters('connected');
+    session.enters('interrupted');
+
+    expect(registry.peers()).toHaveLength(1);
+  });
+
+  it('stops listening to a session it has let go of', () => {
+    const registry = createPeerSessionRegistry();
+    const session = fakeSession();
+    registry.add(peerOf(session));
+
+    registry.remove(session);
+
+    expect(session.watcherCount()).toBe(0);
+  });
+
+  it('says nothing more about a device whose superseded session dies', () => {
+    // The ordering that matters: a re-pairing supersedes a session which is then
+    // closed, and a report from the dead one would announce a drop for a device
+    // that is at that moment freshly connected.
+    const seen: [string, PeerLinkState][] = [];
+    const registry = createPeerSessionRegistry({
+      onLinkState: (deviceId, state) => seen.push([String(deviceId), state]),
+    });
+    const gone = fakeSession();
+    const fresh = fakeSession();
+    registry.add(peerOf(gone));
+    gone.enters('connected');
+    seen.length = 0;
+
+    registry.add(peerOf(fresh));
+    fresh.enters('connected');
+
+    expect(gone.isClosed()).toBe(true);
+    expect(seen).toEqual([
+      ['peer-1', 'connecting'],
+      ['peer-1', 'connected'],
+    ]);
+  });
+
+  it('lets go of every session it holds when cleared', () => {
+    const registry = createPeerSessionRegistry();
+    const session = fakeSession();
+    registry.add(peerOf(session));
+
+    registry.clear();
+
+    expect(session.watcherCount()).toBe(0);
+    expect(registry.peers()).toEqual([]);
   });
 });

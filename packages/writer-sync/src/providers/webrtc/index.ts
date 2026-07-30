@@ -26,6 +26,9 @@ export type {
   SplitPairingChannelOptions,
 } from './pairingChannelSplit';
 
+export { toPeerLinkState } from './peerLinkState';
+export type { PeerLinkState } from './peerLinkState';
+
 export {
   ICE_GATHERING_TIMEOUT_MILLIS,
   LOCAL_ONLY_ICE_CONFIGURATION,

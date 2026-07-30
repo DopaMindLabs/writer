@@ -21,6 +21,13 @@ const sessionOpening = (opened: string[]): PeerSession =>
     createOffer: () => Promise.resolve(''),
     acceptOffer: () => Promise.resolve(''),
     acceptAnswer: () => Promise.resolve(),
+    // Registration watches the link; a channel factory cares about neither, so
+    // this one reports a link that is simply up and never changes.
+    linkState: () => 'connected',
+    onLinkStateChange: (listener: (state: 'connected') => void) => {
+      listener('connected');
+      return () => undefined;
+    },
     close: vi.fn(),
   }) as unknown as PeerSession;
 

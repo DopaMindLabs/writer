@@ -73,27 +73,27 @@ export const pasteSymbols = async (
 };
 
 /** Take two devices all the way through to "Devices paired" on both. */
-export const pair = async (shower: Page, reader: Page): Promise<void> => {
-  await openPairing(shower);
-  await openPairing(reader);
+export const pair = async (showingDevice: Page, readingDevice: Page): Promise<void> => {
+  await openPairing(showingDevice);
+  await openPairing(readingDevice);
 
   // Sequenced rather than simultaneous: one device shows, the other scans.
-  await showCode(shower);
-  await pasteSymbols(reader, await readSymbols(shower));
-  await expect(reader.getByTestId('pairing-reply-step')).toBeVisible({
+  await showCode(showingDevice);
+  await pasteSymbols(readingDevice, await readSymbols(showingDevice));
+  await expect(readingDevice.getByTestId('pairing-reply-step')).toBeVisible({
     timeout: GATHERING_TIMEOUT,
   });
-  await revealReply(reader);
+  await revealReply(readingDevice);
 
-  await pasteSymbols(shower, await readSymbols(reader), 'showing');
-  await reader.getByTestId('pairing-reply-shown').click();
+  await pasteSymbols(showingDevice, await readSymbols(readingDevice), 'showing');
+  await readingDevice.getByTestId('pairing-reply-shown').click();
 
-  await expect(shower.getByTestId('pairing-verification-code')).toBeVisible({
+  await expect(showingDevice.getByTestId('pairing-verification-code')).toBeVisible({
     timeout: GATHERING_TIMEOUT,
   });
-  await shower.getByTestId('pairing-verification-confirm').click();
-  await reader.getByTestId('pairing-verification-confirm').click();
+  await showingDevice.getByTestId('pairing-verification-confirm').click();
+  await readingDevice.getByTestId('pairing-verification-confirm').click();
 
-  await expect(shower.getByTestId('pair-device-complete')).toBeVisible();
-  await expect(reader.getByTestId('pair-device-complete')).toBeVisible();
+  await expect(showingDevice.getByTestId('pair-device-complete')).toBeVisible();
+  await expect(readingDevice.getByTestId('pair-device-complete')).toBeVisible();
 };

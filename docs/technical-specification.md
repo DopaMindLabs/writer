@@ -55,7 +55,7 @@
 
 | Path | Screen | Purpose |
 |------|--------|---------|
-| `/` | Home | Landing page. Shows "Continue writing" (most recent space) and "Start a new space", a pre-release notification (info banner) counting down to the next release (23 August, 22:00 CEST) that urges setting up a local sync folder or backup, and a **"Device sync"** link at the top right of the header, in the nav's own voice, leading to Settings → Device sync (§ 4.9.2). That link is unconditional and carries no live state: it replaced a flag-gated "Sign in to sync" button, which left the sync that needs no account with no way in from Home, and connection state belongs beside the device it describes rather than in a header on every screen. |
+| `/` | Home | Landing page. Shows "Continue writing" (most recent space) and "Start a new space", a pre-release notification (info banner) counting down to the next release (23 August, 22:00 CEST) that urges setting up a local sync folder or backup, and a **"Device sync"** link at the top right of the header leading to Settings → Device sync (§ 4.9.2). Unconditional, in the nav's own voice, carrying no live state — connection state belongs beside the device it describes. It replaced a flag-gated "Sign in to sync" button, which left the sync needing no account with no way in from Home. |
 | `/about` | About | Creator note, license, source links. |
 | `/settings` | Settings | Global user preferences. |
 | `/new` | Templates | Pick a template and create a new space. |
@@ -578,15 +578,13 @@ wired into the app.
   digits as soon as it has answered, but its peer learns them only after reading
   the reply.
 - **Nothing lands under a moving finger.** The reply step replaces the scanner
-  the instant a payload decodes, so it holds the reply **behind a reveal**
-  (*Reveal the code for your other device*) rather than showing a code beside the
-  action that dismisses it; the digits that follow keep a secondary way back
-  (*Show the code again*), which re-shows the same reply rather than minting a
-  new one — answering is replay-guarded, and a second answer would move the
-  digits the peer is comparing against. Without both, a reflex press cost the
-  whole exchange: the code could not be recovered, so both devices had to start
-  again. The reply is valid for the same five minutes as any payload; the guard
-  buys deliberation, not a longer life.
+  the instant a payload decodes, so the reply waits **behind a reveal** rather
+  than sharing a screen with the action that dismisses it, and the digits keep a
+  secondary way back to it. That way back re-shows the same reply: answering is
+  replay-guarded, and a second answer would move the digits the peer is
+  comparing against. Without both, a reflex press cost the whole exchange. The
+  reply keeps the usual five-minute validity — the guard buys deliberation, not
+  a longer life.
 - **Role resolution.** Decided from the payload (`resolvePairingRole`): a reply
   is accepted by the device whose offer it answers, and an offer is answered by
   whichever device read it. An earlier rule ranked the two device ids and let
@@ -729,6 +727,25 @@ wired into the app.
   the stored one, and the dialog declares success only after that adoption has
   been recorded. A known device id presenting a different key fails the pairing
   with named copy (`trusted-key-mismatch`) and leaves the record untouched.
+- **Connection state.** Sessions are made by the pairing exchange and survive no
+  reload, so *not connected* is the resting state on every app start. Every row
+  states it — a blank row left a paired device looking ready to sync when
+  nothing could reach it — and every row not carrying offers **Reconnect**.
+  Only the app-wide notice is gated to a live loss. Each session publishes a `PeerLinkState`
+  (`connecting` / `connected` / `interrupted` / `closed`); `disconnected` and
+  `failed` collapse into `interrupted`, since with signalling only through the QR
+  exchange there is no ICE restart to attempt. The registry reports these to a
+  page-lifetime store (`peerLinkStatus`) holding `connecting` / `connected` /
+  `dropped` per device, where **`dropped` is reachable only from `connected`** —
+  so a pairing that never came up, and a session torn down locally, both leave
+  nothing behind. Liveness lives there rather than in the provider observable:
+  `useSyncStatus` reads `durableSync`, which P2P does not offer. A row shows its
+  state as a `StatusBadge` (*Not connected* at rest, glyphless; *Disconnected*
+  for a link lost mid-session); that loss also raises one app-wide notice (`NoticeDock` → `InlineBanner`, `role="status"`, out of flow,
+  no dialog, no focus taken). Its action opens the device list; the row offers
+  **Reconnect**, a fresh exchange — the transport is gone and no channel remains
+  to renegotiate over. The trust record persists and both devices already hold
+  the root secret, so **no second key handover** occurs.
 - **What a device may ask for.** A peer's manifest is filtered by whether this
   device *could decrypt* a scope, which is not the same question as which scopes
   it already holds. Stage 1 derives one content key for every scope, so a device
@@ -749,8 +766,12 @@ wired into the app.
   what separates a document that syncs from one that merely would on a revisit.
   `attachments-pair-sync.spec.ts` adds an
   image larger than two transfer chunks on one context and proves it renders on
-  the peer and survives reload. Two physical devices on a network remain slice
-  2A.9 and are not discharged by any of them.
+  the peer and survives reload. `peer-link-state.spec.ts` drives the real
+  registry, store and surfaces through every state around a lost link, faking
+  only the browser event (`window.peerLink`, dev/E2E builds only);
+  `pair-device-drop.spec.ts` pairs two contexts for real and closes one, proving
+  a genuine drop reaches the same place. Two physical devices on a network remain
+  slice 2A.9 and are not discharged by any of them.
 - **Live peer sync.** Catch-up answers "what did I miss?" when a connection
   opens; work written *while* a peer is connected reaches it as it is journalled.
   The P2P provider is named at boot beside Dexie Cloud and supplies a transport

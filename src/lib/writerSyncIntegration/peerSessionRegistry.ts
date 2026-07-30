@@ -1,5 +1,6 @@
 import type { DeviceId } from 'writer-sync/core';
-import type { PeerSession } from 'writer-sync/providers/webrtc';
+import type { PeerLinkState, PeerSession } from 'writer-sync/providers/webrtc';
+import { peerLinkStatus } from './peerLinkStatus';
 
 /**
  * The peer connections this device currently holds.
@@ -36,9 +37,44 @@ export interface PeerSessionRegistry {
   clear: () => void;
 }
 
-export const createPeerSessionRegistry = (): PeerSessionRegistry => {
+export interface PeerSessionRegistryOptions {
+  /**
+   * Told what each registered session reports about its link, per device.
+   *
+   * Injected rather than imported so this stays a registry: what a link state
+   * *means* to a person — a connected device, a device that dropped — belongs to
+   * whatever is showing it, not to the thing holding sessions.
+   */
+  onLinkState?: (deviceId: DeviceId, state: PeerLinkState) => void;
+}
+
+export const createPeerSessionRegistry = (
+  options: PeerSessionRegistryOptions = {},
+): PeerSessionRegistry => {
   const registered: RegisteredPeer[] = [];
   const waiting = new Set<(peer: RegisteredPeer) => void>();
+  /** Kept here rather than on `RegisteredPeer`, which is the published shape. */
+  const watching = new Map<PeerSession, () => void>();
+
+  const forget = (session: PeerSession): void => {
+    watching.get(session)?.();
+    watching.delete(session);
+    const at = registered.findIndex((known) => known.session === session);
+    if (at >= 0) registered.splice(at, 1);
+  };
+
+  const watch = (peer: RegisteredPeer): void => {
+    watching.set(
+      peer.session,
+      peer.session.onLinkStateChange((state) => {
+        options.onLinkState?.(peer.deviceId, state);
+        // Closed is the one state nothing recovers from: a session that reports
+        // it will never carry anything again, and holding it would keep offering
+        // a connection that no longer exists.
+        if (state === 'closed') forget(peer.session);
+      }),
+    );
+  };
 
   return {
     add: (peer) => {
@@ -47,27 +83,38 @@ export const createPeerSessionRegistry = (): PeerSessionRegistry => {
       // registered for it, which is what lets the next frame reach a device that
       // was re-paired after its connection dropped — the stale session used to
       // stay, and stay first in line.
-      const stale = registered.findIndex((known) => known.deviceId === peer.deviceId);
-      if (stale >= 0) registered.splice(stale, 1);
+      //
+      // The order is load-bearing. The stale session is let go of *before* the
+      // fresh one is watched and closed only afterwards, so its own teardown
+      // cannot report a lost link for a device that is at that moment freshly
+      // connected.
+      const stale = registered.find((known) => known.deviceId === peer.deviceId);
+      if (stale) forget(stale.session);
       registered.push(peer);
+      watch(peer);
       for (const resolve of [...waiting]) resolve(peer);
       waiting.clear();
+      stale?.session.close();
     },
-    remove: (session) => {
-      const at = registered.findIndex((known) => known.session === session);
-      if (at >= 0) registered.splice(at, 1);
-    },
+    remove: forget,
     peers: () => [...registered],
     next: () => {
       if (registered.length > 0) return Promise.resolve(registered[0]);
       return new Promise<RegisteredPeer>((resolve) => waiting.add(resolve));
     },
     clear: () => {
+      for (const unsubscribe of watching.values()) unsubscribe();
+      watching.clear();
       registered.length = 0;
       waiting.clear();
     },
   };
 };
 
-/** The registry this application runs against. */
-export const peerSessions = createPeerSessionRegistry();
+/**
+ * The registry this application runs against, reporting what it sees to the
+ * page-lifetime link store the device list and the drop notice read.
+ */
+export const peerSessions = createPeerSessionRegistry({
+  onLinkState: peerLinkStatus.observe,
+});

@@ -102,7 +102,7 @@ test('two devices pair over QR symbols and agree on one verification code', asyn
   await openPairing(page);
   await openPairing(joiner);
 
-  // Whichever device reads first becomes the reader; nobody was asked which
+  // Whichever device reads first becomes the reading half; nobody was asked which
   // half to play, only what to do next. Here the first device shows and the
   // second reads.
   await showCode(page);
@@ -117,7 +117,7 @@ test('two devices pair over QR symbols and agree on one verification code', asyn
   await scanReply(page);
   await pasteSymbols(page, reply);
 
-  // The reader moves on when the user says the code was taken: nothing arrives
+  // The reading device moves on when the user says the code was taken: nothing arrives
   // on this device when the other one reads it.
   await joiner.getByTestId('pairing-reply-shown').click();
 
@@ -233,16 +233,16 @@ test('a code too long for one symbol is carried across in parts', async ({
 }) => {
   test.slow();
 
-  const shower = await openCoveredContext(browser, browserName);
-  await advertiseAnOversizedDescription(shower);
+  const showingDevice = await openCoveredContext(browser, browserName);
+  await advertiseAnOversizedDescription(showingDevice);
 
-  await openPairing(shower);
-  await showCode(shower);
+  await openPairing(showingDevice);
+  await showCode(showingDevice);
 
   // The pager belongs to this case and this case only: several symbols, stepped
   // by hand, each naming its place in the sequence.
-  await expect(shower.getByText(/^Symbol 1 of [2-8]$/)).toBeVisible();
-  const symbols = await readSymbols(shower);
+  await expect(showingDevice.getByText(/^Symbol 1 of [2-8]$/)).toBeVisible();
+  const symbols = await readSymbols(showingDevice);
   expect(symbols.length).toBeGreaterThan(1);
 
   await openPairing(page);
@@ -310,11 +310,11 @@ test('a photographed code is read from an uploaded image', async ({
   // The path a user without a paired camera takes: point a phone at the screen,
   // then upload the picture. Rendering the symbol and reading it back proves
   // the encoder and the detector agree on a real image, not on a fixture.
-  const shower = await openCoveredContext(browser, browserName);
-  await openPairing(shower);
-  await showCode(shower);
+  const showingDevice = await openCoveredContext(browser, browserName);
+  await openPairing(showingDevice);
+  await showCode(showingDevice);
 
-  const symbol = shower.getByRole('img', { name: 'Pairing code from this device' });
+  const symbol = showingDevice.getByRole('img', { name: 'Pairing code from this device' });
   await expect(symbol).toBeVisible({ timeout: GATHERING_TIMEOUT });
   const photograph = await symbol.screenshot();
 

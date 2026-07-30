@@ -1,22 +1,27 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SettingRow } from '@/components/settings/SettingRow';
 import { Button } from '@/components/ui/Button';
-import { PairDeviceDialog } from '@/components/pairing/PairDeviceDialog/PairDeviceDialog';
 import { setJournalRetentionDays } from '@/lib/writerSyncIntegration/journalRetentionPreference';
 import { useJournalRetention } from '@/lib/writerSyncIntegration/useJournalRetention';
 import { JournalRetentionSelector } from './JournalRetentionSelector';
 
 /**
- * The entry point to pairing, in Account settings beside the cloud section.
+ * The settings rows that lead into pairing: the way in, and how long sync
+ * history is kept.
  *
- * The dialog is mounted only while open, so no peer connection is gathered for a
- * settings screen nobody has asked to pair from.
+ * It asks for the dialog rather than holding it. The tab is where a device list
+ * also offers to re-pair a device that dropped, and two owners of the same
+ * dialog would be two dialogs — so ownership sits one level up, and this stays
+ * presentational.
  */
 
-export const PairDeviceSection = () => {
+export interface PairDeviceSectionProps {
+  /** Open the pairing dialog, which the tab owns. */
+  onPair: () => void;
+}
+
+export const PairDeviceSection = ({ onPair }: PairDeviceSectionProps) => {
   const { t } = useTranslation('screens');
-  const [open, setOpen] = useState(false);
   const retentionDays = useJournalRetention();
 
   return (
@@ -26,14 +31,7 @@ export const PairDeviceSection = () => {
         label={t('settings.pairing.openLabel')}
         hint={t('settings.pairing.openHint')}
       >
-        <Button
-          kind="secondary"
-          size="sm"
-          data-testid="pair-device-open"
-          onClick={() => {
-            setOpen(true);
-          }}
-        >
+        <Button kind="secondary" size="sm" data-testid="pair-device-open" onClick={onPair}>
           {t('settings.pairing.openLabel')}
         </Button>
       </SettingRow>
@@ -50,7 +48,6 @@ export const PairDeviceSection = () => {
           ariaLabel={t('settings.pairing.retention.label')}
         />
       </SettingRow>
-      {open && <PairDeviceDialog open={open} onOpenChange={setOpen} />}
     </>
   );
 };
