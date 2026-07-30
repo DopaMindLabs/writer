@@ -132,7 +132,7 @@ const catchUpPorts = ({
   journal: createWriterOperationStore(db),
   accessibleScopeIds: () => accessibleScopeIds(db),
   // Stage 1 derives one content key for every scope, so a device holding the
-  // account key can read any scope it is offered. Answering from the scopes it
+  // root secret can read any scope it is offered. Answering from the scopes it
   // already holds would leave a freshly paired device — which holds none — asking
   // for nothing, and so never receiving the first scope that would let it ask.
   canAccessScope: () => deviceKeyProvider.hasAnyKey(),

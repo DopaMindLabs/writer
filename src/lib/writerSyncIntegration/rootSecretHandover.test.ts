@@ -113,7 +113,7 @@ describe('rootSecretHandoverPorts', () => {
     expect(await deviceKeyVault.hasRootSecret()).toBe(true);
   });
 
-  it('creates an account when this device is the one to do it', async () => {
+  it('mints the root secret when this device is the one to do it', async () => {
     // Two devices that have never been used: one has to mint, and the ids they
     // exchanged decide which without another round trip.
     await forgetDeviceKeyRing();

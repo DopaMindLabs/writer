@@ -11,10 +11,10 @@ import { currentPrincipal } from './writerEntityMetadata';
 import { createTrustedDeviceStore } from './trustedDeviceStore';
 
 /**
- * The devices this account has paired with, as the settings list renders them.
+ * The devices this principal has paired with, as the settings list renders them.
  *
  * Revoked records are kept and shown rather than hidden: a device the user
- * removed is a fact about their account, and a list that silently forgot it
+ * removed is a fact about their setup, and a list that silently forgot it
  * would leave them unable to tell "never paired" from "paired and removed".
  *
  * Identity and principal are both resolved *outside* the live query on purpose.

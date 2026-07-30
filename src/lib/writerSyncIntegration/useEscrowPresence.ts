@@ -7,7 +7,7 @@ import { useDefaultSyncCapability } from './syncCoordinatorContext';
 const NONE = { subscribe: () => ({ unsubscribe: () => undefined }) };
 
 /**
- * Whether the account holds key material this device could adopt, from the
+ * Whether the cloud account holds key material this device could adopt, from the
  * application's default key-delivery provider. {@link KeyEscrowPresence.Unknown}
  * when the default delivers no keys (or none is configured), which is also the
  * safe answer: never offer set-up on an unknown.

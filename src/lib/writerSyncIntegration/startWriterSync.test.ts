@@ -56,7 +56,7 @@ const coordinatorOf = (...providers: SyncProvider[]) => createSyncCoordinator({ 
 
 describe('startWriterSync', () => {
   it('hydrates this device’s key ring before any provider starts', async () => {
-    // A device acquires key material two ways: by minting the account, or by
+    // A device acquires key material two ways: by minting a root secret, or by
     // being handed the root secret over a pairing. Only the first used to
     // rehydrate on boot, so a paired device came back keyless and every sealed
     // row was silently dropped from every read. Hydration belongs to boot, not

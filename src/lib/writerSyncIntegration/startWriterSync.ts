@@ -33,7 +33,7 @@ export const startWriterSync = async (
   };
   try {
     // Before anything reads or writes a sealed row. A device is keyed by
-    // minting an account or by being handed the root over a pairing, and boot
+    // minting a root secret or by being handed one over a pairing, and boot
     // must restore either — a provider's session start cannot, because a
     // pairing-only device configures no durable provider to run one.
     await hydrateDeviceKeys();

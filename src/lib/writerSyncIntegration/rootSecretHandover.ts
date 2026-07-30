@@ -27,8 +27,8 @@ import { currentPrincipal } from './writerEntityMetadata';
 
 /**
  * The rotation epoch a device with no escrow derives at. It matches cloud
- * setup's own default, so a pair that later signs in agrees with the account
- * rather than deriving a second, incompatible key.
+ * setup's own default, so a pair that later signs in agrees with the cloud
+ * account rather than deriving a second, incompatible key.
  */
 const DEFAULT_EPOCH = 1;
 
@@ -37,7 +37,7 @@ export interface RootSecretHandoverOptions {
   peer: AuthenticatedPeerParameters;
   /** This session's ephemeral private key, which the peer sealed to. */
   sessionPrivateKey: CryptoKey | null;
-  /** This device's own identity, for deciding who creates an account. */
+  /** This device's own identity, for deciding who mints the root secret. */
   deviceId: DeviceId;
   onError?: (error: unknown) => void;
 }
@@ -96,7 +96,7 @@ export const rootSecretHandoverPorts = (
     epoch: currentEpoch(),
   }),
 
-  // Both devices are new: one of them has to create the account, and the ids
+  // Both devices are new: one of them has to mint the root secret, and the ids
   // they exchanged decide which without another round trip. Both are running
   // this protocol and hear each other, so the one that defers is deferring to a
   // device that is certainly about to act.
@@ -127,7 +127,7 @@ export interface SecretHandoverSession {
   peer: AuthenticatedPeerParameters;
   /** This session's ephemeral private key, which the peer sealed to. */
   sessionPrivateKey: CryptoKey | null;
-  /** This device's own identity, for deciding who creates an account. */
+  /** This device's own identity, for deciding who mints the root secret. */
   deviceId: DeviceId;
 }
 

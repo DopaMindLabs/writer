@@ -6,14 +6,14 @@ import { appLogger } from '@/lib/appLogger';
  * anything reads or writes a sealed row.
  *
  * **Why boot owns this.** A device acquires key material by one of two routes:
- * it mints the account itself, or it is handed the root secret over a pairing
+ * it mints a root secret itself, or it is handed one over a pairing
  * (`rootSecretHandover`). Hydration used to live behind the Dexie Cloud
  * provider's session start, gated on cloud-provisioning flags — so it ran only
  * for the first route, and only when that provider was configured at all. A
  * device paired over QR therefore came back from a reload with no ring: its
  * rows were all present and correctly sealed, and the middleware's keyless read
  * path dropped every one of them, silently, with nothing in the console. The
- * account simply looked empty.
+ * app simply looked empty.
  *
  * Whether this device holds key material is a question for the keystore, not
  * for a flag describing how the material arrived, and not for whichever
