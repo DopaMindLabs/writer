@@ -99,6 +99,14 @@ const applyPut = async (
  * accepted operation id returns its recorded result without touching state.
  * The payload is decrypted before the transaction opens (Web Crypto must not
  * suspend a live IndexedDB transaction); everything stateful commits atomically.
+ *
+ * TODO (#209): `verifyFrame` checks structure and the payload hash — it does not
+ * authenticate the author. A frame arriving over a peer link is signature-checked
+ * by the catch-up exchange before it is journalled, but a frame a durable
+ * provider replicates straight into `syncOperations` reaches here with nothing
+ * having vouched for it, so a hostile provider can forge one and have it applied.
+ * The check belongs here, on every caller, once a cloud-only device has a way to
+ * become trusted (`trustedDevices` is local-only and written only by pairing).
  */
 export const applyInboundFrame = async (options: {
   db: LoremDB;

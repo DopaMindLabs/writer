@@ -38,7 +38,15 @@ interface ScopeKeyRings {
   destination: SyncKeyRing;
 }
 
-/** Reseal one frame under `accessScopeId`, preserving identity and ordering. */
+/**
+ * Reseal one frame under `accessScopeId`, preserving identity and ordering.
+ *
+ * TODO (#210): the signature is carried across unchanged while `accessScopeId`,
+ * `keyId`, `epoch`, `payload` and `payloadHash` are all rebuilt — every one of
+ * them a signed field — so a resealed frame verifies against nothing. Nothing in
+ * production rescopes a frame today, and re-authoring it the way
+ * `writerFullState` re-signs a rebuild is the fix.
+ */
 const rescopeFrame = async (options: {
   frame: EncryptedSyncFrame;
   rings: ScopeKeyRings;

@@ -18,6 +18,11 @@ import { writerJournalIdentity } from './writerJournalDeps';
  * apply twice. Sweeps run after every settled sync round and whenever the
  * device key ring changes (a keyless device cannot decrypt payloads, so frames
  * simply wait in the journal until unlock).
+ *
+ * TODO (#209): what a provider put in the journal is applied without any check
+ * on who signed it. The peer exchange verifies a frame before journalling it;
+ * this route has no equivalent, so a provider able to write to `syncOperations`
+ * can have a forged frame materialised. See {@link applyInboundFrame}.
  */
 interface TouchedDoc {
   entityId: string;
