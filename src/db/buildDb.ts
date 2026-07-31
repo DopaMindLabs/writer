@@ -9,7 +9,7 @@ import {
 import { cloudDatabaseUrl, hasCloudEnv } from '@/lib/cloud/env';
 import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
 import { deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
-import { deviceKeyVault } from '@/lib/cloud/crypto/deviceKeyVault';
+import { writerJournalDeps } from '@/lib/writerSyncIntegration/materialization/writerJournalDeps';
 import { createOperationJournalMiddleware } from '@/lib/writerSyncIntegration/materialization/operationJournalMiddleware';
 import {
   localOnlyTables,
@@ -33,13 +33,10 @@ const UNSYNCED: readonly string[] = [...localOnlyTables(), ...rowEnvelopeTables(
 
 /**
  * Outbound framing dependencies: keys resolve through the same provider the
- * encryption middleware polls, and the frame's device attribution comes from
- * the vault's minted device identity (a cryptographic identity in Stage 2A).
+ * encryption middleware polls, and both the frame's device attribution and the
+ * key that signs it come from this device's cryptographic identity — read
+ * together so a signature can never claim a device id it does not belong to.
  */
-const journalDeps = {
-  resolver: deviceKeyProvider,
-  deviceId: () => deviceKeyVault.deviceId(),
-};
 
 /**
  * Constructs the app database. It builds a Dexie Cloud instance with the
@@ -60,7 +57,7 @@ export const buildDb = (name = 'lipsum'): LoremDB => {
     // plaintext through — the keyless local-first flow is unchanged.
     const db = new LoremDB(name);
     db.use(createEncryptionMiddleware(deviceKeyProvider));
-    db.use(createOperationJournalMiddleware(journalDeps));
+    db.use(createOperationJournalMiddleware(writerJournalDeps));
     return db;
   }
 
@@ -82,6 +79,6 @@ export const buildDb = (name = 'lipsum'): LoremDB => {
     largeStringThreshold: Infinity,
   });
   db.use(createEncryptionMiddleware(deviceKeyProvider));
-  db.use(createOperationJournalMiddleware(journalDeps));
+  db.use(createOperationJournalMiddleware(writerJournalDeps));
   return db;
 };

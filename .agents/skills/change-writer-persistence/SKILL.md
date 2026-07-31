@@ -18,7 +18,8 @@ src/db/
 ├── stores.ts       STORES constant — single source of truth for the schema spec.
 │                   The cloud crypto layer derives per-table encryption rules from this.
 ├── schema.ts       TypeScript row types (Doc, Space, Section, …).
-├── LoremDB.ts      Dexie subclass; tables typed from schema.ts; version(1) applies STORES.
+├── LoremDB.ts      Dexie subclass; tables typed from schema.ts; one declared version(1)
+│                   applies all of STORES — see "Hard rules" below.
 ├── db.ts           Singleton export: buildDb() → LoremDB (re-exported as `db`).
 ├── buildDb.ts      Factory: plain LoremDB or cloud-enabled LoremDB depending on gates.
 ├── seed.ts         resetAndReseed — wipes and re-populates for dev/test.
@@ -52,7 +53,8 @@ First classify the change.
 
 1. Update the type in `src/db/schema.ts`.
 2. Update constructors, repositories, codecs, archive/import paths, and tests that create the row.
-3. Do **not** change `STORES` or bump Dexie's version when indexes are unchanged.
+3. Do **not** change `STORES` when indexes are unchanged — Dexie's schema validation is
+   index-based, not field-based, so a non-indexed field needs no schema edit at all.
 4. For a synced table, verify the field is absent from `plaintextFieldsFor()` and add
    `tableRules` / middleware assertions proving it is encrypted at rest.
 
@@ -60,10 +62,15 @@ First classify the change.
 
 1. Update `STORES` in `src/db/stores.ts`.
 2. Add or update the typed `Table` property in `src/db/LoremDB.ts`.
-3. Add a monotonically higher Dexie `version()` and an upgrade callback when existing rows
-   need migration. Never reuse a version.
-4. Add a focused DB migration/schema test alongside the DB implementation.
-5. Decide replication separately: add local-only tables to `UNSYNCED` in `buildDb.ts`.
+3. Do **not** add a Dexie `version()` or an `upgrade()` callback. `LoremDB` declares one
+   version and the change lands in `STORES` under it. Writer has no users, so wipe and
+   reseed a stale local database rather than migrating it. See
+   [AGENTS.md § "Database schema versions"](../../../AGENTS.md).
+4. Add a focused DB schema test alongside the DB implementation, and classify any new
+   table in `src/lib/writerSyncIntegration/writerTablePolicy.ts` — an unclassified table
+   fails `writerTablePolicy.test.ts`.
+5. Decide replication separately: `UNSYNCED` in `buildDb.ts` is *derived* from the table
+   policy, so classify the table rather than editing a list.
 6. Add a synced content table to `SYNCED_TABLES`; `cloudCrypto` is the special synced,
    already-wrapped escrow and is not row-encrypted.
 7. Update cascades, archives, restore/import, backup, and revision paths where relevant.
@@ -80,7 +87,9 @@ First classify the change.
 
 ## Hard rules
 
-- Never mutate `STORES` without a version bump in `LoremDB`.
+- `LoremDB` declares **one** Dexie version and new tables are added straight to
+  `STORES`. Do **not** add a `version(2)`, an `upgrade()` callback, or any other
+  migration path — Writer has no users and keeps no backward compatibility.
 - Never add a field to a synced table without verifying the encryption middleware
   covers it (`plaintextFieldsFor` in `src/lib/cloud/crypto/tableRules.ts`).
 - `docUpdates` must remain local-only — it is the CRDT update log and is rebuilt

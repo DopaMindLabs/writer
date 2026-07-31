@@ -22,7 +22,7 @@ export const CloudKeylessPendingBanner = ({
   onRetry,
 }: CloudKeylessPendingBannerProps) => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.keyless.${name}`);
+  const k = (name: string) => t(`settings.cloud.keyless.${name}`);
 
   if (syncPhase === SyncPhase.Error) {
     return (

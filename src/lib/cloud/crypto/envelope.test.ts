@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateMasterSecret, deriveKeyRing } from './keys';
+import { generateRootSecret, deriveKeyRing } from './keys';
 import { CIPHER_FIELD, plaintextFieldsFor } from './tableRules';
 import {
   sealRow,
@@ -10,7 +10,7 @@ import {
   type CipherEnvelopeV2,
 } from './envelope';
 
-const ring = async () => deriveKeyRing(generateMasterSecret(), 1);
+const ring = async () => deriveKeyRing(generateRootSecret(), 1);
 const rules = plaintextFieldsFor('docs');
 
 describe('cipher envelope', () => {

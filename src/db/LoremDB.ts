@@ -6,6 +6,7 @@ import type {
   DocUpdate,
   Note,
   NoteAttachment,
+  SyncAttachmentChunk,
   Annotation,
   Citation,
   Connection,
@@ -25,13 +26,13 @@ import type {
   SyncInboxEntry,
   SyncTombstone,
 } from 'writer-sync/operations';
-import type { SyncProviderBinding } from 'writer-sync/core';
-import { STORES, STORES_V1 } from './stores';
+import type { SyncProviderBinding, TrustedDeviceRecord } from 'writer-sync/core';
+import { STORES } from './stores';
 
 /**
  * Construction options for {@link LoremDB}. `cloud` opts the instance into the
  * encrypted cloud-sync schema — a single extra store, `cloudCrypto`, holding the
- * passphrase-wrapped master secret (escrow) that lets another device recover the
+ * passphrase-wrapped root secret (escrow) that lets another device recover the
  * key. The device's own derived key ring lives in a separate, never-synced
  * database (see `@/lib/cloud/crypto/keyStore`), so it is deliberately absent here.
  */
@@ -60,12 +61,16 @@ export class LoremDB extends Dexie {
   docInspectorConfigs!: Table<DocInspectorConfig, string>;
   /** The append-only operation journal — immutable encrypted frames. */
   syncOperations!: Table<EncryptedSyncFrame, string>;
+  /** Bounded pieces of already-sealed attachment ciphertext. */
+  syncAttachmentChunks!: Table<SyncAttachmentChunk, [string, number]>;
   /** Accepted operation ids and their materialisation result. */
   syncInbox!: Table<SyncInboxEntry, string>;
   /** Deletion tombstones with acknowledgement state. */
   syncTombstones!: Table<SyncTombstone, [string, string]>;
   /** Local provider configuration per access scope. */
   syncProviderBindings!: Table<SyncProviderBinding, [string, string]>;
+  /** Peers this device has paired with — the authentication boundary. */
+  trustedDevices!: Table<TrustedDeviceRecord, string>;
   /** Present only on cloud-enabled instances (`options.cloud`). */
   cloudCrypto!: Table<EscrowRecord, string>;
   /** Present only on cloud-enabled instances (`options.cloud`). */
@@ -76,9 +81,8 @@ export class LoremDB extends Dexie {
     const cloudStores: Record<string, string> = options.cloud
       ? { cloudCrypto: 'id', cloudDevices: 'id' }
       : {};
-    this.version(1).stores({ ...STORES_V1, ...cloudStores });
-    // Version 2 adds the operation-protocol stores; existing rows need no
-    // migration — the new tables simply start empty.
-    this.version(2).stores({ ...STORES, ...cloudStores });
+    // One declared version while Writer is pre-release — see the note on
+    // {@link STORES}. New tables are added there, not behind a new version.
+    this.version(1).stores({ ...STORES, ...cloudStores });
   }
 }

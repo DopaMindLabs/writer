@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import dexieCloud from 'dexie-cloud-addon';
 import { buildDb } from '@/db/buildDb';
 import { LoremDB } from '@/db/LoremDB';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { InvariantError } from '@/lib/invariant';
 import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
 import type { SyncKeyRing } from 'writer-sync/crypto';
@@ -86,7 +86,7 @@ const bindingFor = (scopeId: string) =>
   db.syncProviderBindings.get([scopeId, DEXIE_CLOUD_PROVIDER_ID]);
 
 beforeEach(async () => {
-  ring = await deriveKeyRing(generateMasterSecret(), 1);
+  ring = await deriveKeyRing(generateRootSecret(), 1);
   db = buildDb(`realm-${String(Math.random()).slice(2)}`);
   await db.open();
   await seedSpace();

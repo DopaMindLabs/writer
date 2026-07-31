@@ -7,7 +7,7 @@ import { gotoFirstDoc } from './_helpers';
  * The recovery code is the only way back into encrypted content when the
  * passphrase is gone, so the path has to work against real IndexedDB: the code
  * must re-derive the same key ring, prove itself against a stored ciphertext
- * row, and re-seat the account root in the device vault. A unit test cannot
+ * row, and re-seat the root secret in the device vault. A unit test cannot
  * show the last part — the vault lives in its own database and is written as a
  * side effect of the recovery flow the UI drives.
  */
@@ -47,12 +47,12 @@ test.describe('recovery by printed code', () => {
   test('restores the key on a forgotten device and reopens sealed content', async ({
     page,
   }) => {
-    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=account');
+    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     const code = await setUpEncryption(page);
     expect(code).not.toHaveLength(0);
 
-    // Forget the device: the key ring and the vault's account root both go, so
+    // Forget the device: the key ring and the vault’s root secret both go, so
     // recovery has to rebuild them from the code alone.
     await page.getByTestId('cloud-forget').click();
     await expect(page.getByTestId('cloud-setup')).toBeVisible();
@@ -72,7 +72,7 @@ test.describe('recovery by printed code', () => {
   });
 
   test('rejects a code that does not match the account key', async ({ page }) => {
-    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=account');
+    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     const code = await setUpEncryption(page);
     await page.getByTestId('cloud-forget').click();

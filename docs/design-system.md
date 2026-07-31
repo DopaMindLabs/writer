@@ -671,6 +671,15 @@ themes and mapped in [`tailwind.config.ts`](../tailwind.config.ts):
 | `StatusGlyph` | Inline icon + label for status that reads as text (e.g. a failed-sync `role="alert"` line). |
 | `StatusBadge` | Tinted pill for state attached to a table row (e.g. a sync history row: success / error). |
 | `InlineBanner` | Full-width strip with a coloured left rail for a persistent notice (e.g. the sync reconnect prompt). |
+| `NoticeDock` | Fixed bottom-left host for a notice that must be visible from any screen without interrupting one (e.g. a peer link that dropped while writing). Holds a feedback component — typically `InlineBanner` — rather than styling anything itself. |
+
+> **Where an app-wide notice goes.** `NoticeDock` is the only place for status that
+> outlives its screen. **Out of the flow** (an in-flow element would move the writing
+> surface as it appeared) and **bottom-left**, clear of the reading column and of the
+> bottom-right actions. The wrapper is `pointer-events-none` with an interactive child, so
+> it never swallows a press meant for the page beneath. It takes no focus and traps none;
+> what it holds announces itself politely (`role="status"`) or not at all. Anything that
+> must interrupt is a dialog, not a dock.
 
 > **Semantic use: diff highlighting.** The version-history diff viewer
 > (`VersionHistoryModal`) reuses the success/danger two-token form to mark

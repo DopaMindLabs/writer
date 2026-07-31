@@ -10,7 +10,7 @@ import {
   saveDeviceKeyRing,
   forgetDeviceKeyRing,
 } from '@/lib/cloud/crypto/keyStore';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import {
   FIXED_TIME,
   sampleAnnotation,
@@ -133,7 +133,7 @@ describe('deleteSectionCascade under cloud encryption', () => {
     });
     cloudDb.use(createEncryptionMiddleware(deviceKeyProvider));
     await cloudDb.open();
-    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateRootSecret(), 1) });
   });
 
   afterEach(async () => {

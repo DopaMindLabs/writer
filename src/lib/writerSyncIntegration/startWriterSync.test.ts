@@ -1,7 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createSyncCoordinator } from 'writer-sync/core';
 import type { SyncProvider } from 'writer-sync/core';
+import { appLogger } from '@/lib/appLogger';
+import { compactJournal } from './materialization/compactJournal';
 import { startWriterSync } from './startWriterSync';
+
+vi.mock('./materialization/compactJournal', () => ({
+  compactJournal: vi.fn(() => Promise.resolve()),
+}));
+
+vi.mock('./hydrateDeviceKeys', () => ({
+  hydrateDeviceKeys: vi.fn(() => Promise.resolve()),
+}));
 
 vi.mock('@/lib/cloud/cloudClient', () => ({
   startCloudSession: vi.fn().mockResolvedValue(() => undefined),
@@ -15,6 +25,7 @@ vi.mock('@/lib/cloud/cloudClient', () => ({
 }));
 
 import { startCloudSession } from '@/lib/cloud/cloudClient';
+import { hydrateDeviceKeys } from './hydrateDeviceKeys';
 
 const durableSyncProvider = (id: string, start: () => Promise<() => void>): SyncProvider => ({
   id,
@@ -44,6 +55,36 @@ const realtimeOnlyProvider = (id: string): SyncProvider => ({
 const coordinatorOf = (...providers: SyncProvider[]) => createSyncCoordinator({ providers });
 
 describe('startWriterSync', () => {
+  it('hydrates this device’s key ring before any provider starts', async () => {
+    // A device acquires key material two ways: by minting a root secret, or by
+    // being handed the root secret over a pairing. Only the first used to
+    // rehydrate on boot, so a paired device came back keyless and every sealed
+    // row was silently dropped from every read. Hydration belongs to boot, not
+    // to whichever provider happens to be configured.
+    const order: string[] = [];
+    vi.mocked(hydrateDeviceKeys).mockImplementation(async () => {
+      order.push('hydrate');
+    });
+    const provider = durableSyncProvider('p', async () => {
+      order.push('provider');
+      return () => undefined;
+    });
+
+    await startWriterSync(coordinatorOf(provider));
+
+    expect(order).toEqual(['hydrate', 'provider']);
+  });
+
+  it('hydrates even when no provider offers durable sync at all', async () => {
+    // The pairing-only device: no Dexie Cloud, nothing to start — and it is
+    // exactly the device that used to lose its keys.
+    vi.mocked(hydrateDeviceKeys).mockClear();
+
+    await startWriterSync(coordinatorOf(realtimeOnlyProvider('peer')));
+
+    expect(hydrateDeviceKeys).toHaveBeenCalledTimes(1);
+  });
+
   it('starts Dexie Cloud when no coordinator is supplied', async () => {
     const stop = await startWriterSync();
 
@@ -118,5 +159,33 @@ describe('startWriterSync', () => {
     const stop = await startWriterSync(coordinatorOf(realtimeOnlyProvider('webrtc')));
 
     expect(() => stop()).not.toThrow();
+  });
+
+  it('compacts the journal after boot, without waiting on it', async () => {
+    vi.mocked(compactJournal).mockClear();
+
+    await startWriterSync(coordinatorOf(durableSyncProvider('a', () => Promise.resolve(() => undefined))));
+
+    // Housekeeping, not a boot step: sync is already started by the time this
+    // runs, and a journal scan must never be on the path to a usable app.
+    expect(compactJournal).toHaveBeenCalledOnce();
+  });
+
+  it('reports a failed compaction rather than failing the boot it followed', async () => {
+    const warn = vi.spyOn(appLogger, 'warn').mockImplementation(() => undefined);
+    vi.mocked(compactJournal).mockRejectedValueOnce(new Error('journal unreadable'));
+    try {
+      const stop = await startWriterSync(
+        coordinatorOf(durableSyncProvider('a', () => Promise.resolve(() => undefined))),
+      );
+
+      // Sync is up; only the housekeeping failed, and it is best-effort.
+      expect(stop).toBeInstanceOf(Function);
+      await vi.waitFor(() => {
+        expect(warn).toHaveBeenCalledWith('journal compaction failed', expect.anything());
+      });
+    } finally {
+      warn.mockRestore();
+    }
   });
 });

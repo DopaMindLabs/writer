@@ -2,7 +2,7 @@ import type { LoremDB } from '@/db/LoremDB';
 import { newId } from '@/lib/ids';
 import { asOperationId, type DeviceId } from 'writer-sync/core';
 import type { SyncKeyRing } from 'writer-sync/crypto';
-import { sealOperationPayload } from 'writer-sync/crypto';
+import { sealOperationPayload, signFrame } from 'writer-sync/crypto';
 import { keyIdOf } from '@/lib/cloud/crypto/envelope';
 import { writerClock } from '@/lib/writerSyncIntegration/writerLogicalClock';
 import {
@@ -88,6 +88,29 @@ export const makeDeleteFrame = (
     signature: '',
   };
 };
+
+/**
+ * Attach this device's signature to frames it authored.
+ *
+ * Signing is a separate pass rather than part of frame construction so that
+ * `makeDeleteFrame` can stay synchronous: a deletion is framed inside a live
+ * IndexedDB transaction, and the signature — the only Web Crypto a delete needs
+ * — is applied in the caller's own wrapped wait instead.
+ *
+ * `null` entries pass through untouched: they mark rows that produced no frame,
+ * and inventing one for them would journal a write that never happened.
+ */
+export const signAuthoredFrames = <T extends EncryptedSyncFrame | null>(
+  privateKey: CryptoKey,
+  frames: readonly T[],
+): Promise<T[]> =>
+  Promise.all(
+    frames.map(async (frame): Promise<T> => {
+      if (frame === null) return frame;
+      const signature = await signFrame(privateKey, frame);
+      return { ...frame, signature };
+    }),
+  );
 
 /** Commit a domain put and its journal frame in one transaction. */
 export const journalledPut = async (

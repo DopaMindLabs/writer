@@ -20,7 +20,7 @@ export const CloudBackupNudge = ({ hasKey }: CloudBackupNudgeProps) => {
   const hasLocalData = useHasLocalSyncedData();
   const signedIn = user?.isLoggedIn ?? false;
   if (!hasKey || signedIn || !hasLocalData) return null;
-  const k = (name: string) => t(`settings.account.cloud.backupNudge.${name}`);
+  const k = (name: string) => t(`settings.cloud.backupNudge.${name}`);
   return (
     <InlineBanner kind="warning" className="mt-4" title={k('title')}>
       {k('body')}

@@ -32,3 +32,53 @@ export {
   openOperationPayload,
   sealOperationPayload,
 } from './operationCrypto';
+
+export {
+  AttachmentContentIntegrityError,
+  openAttachmentContent,
+  sealAttachmentContent,
+} from './attachmentContentCrypto';
+export type { AttachmentContentBinding } from './attachmentContentCrypto';
+
+export { fromBase64Url, toBase64Url } from './base64url';
+
+export {
+  NonCanonicalJsonError,
+  canonicalJson,
+  parseCanonicalJson,
+} from './canonicalJson';
+
+export {
+  DEVICE_IDENTITY_ALGORITHM,
+  MalformedDeviceKeyError,
+  deviceIdFor,
+  generateDeviceIdentity,
+  importDevicePublicKey,
+  publicJwkOf,
+  sameIdentityKey,
+} from './deviceIdentity';
+export type { DeviceIdentityKeys } from './deviceIdentity';
+
+export {
+  MissingSignatureError,
+  signPairingPayload,
+  verifyPairingPayload,
+} from './deviceSignature';
+
+export {
+  MissingFrameSignatureError,
+  signFrame,
+  verifyFrameSignature,
+} from './frameSignature';
+
+export { createTrustedFrameVerifier } from './trustedFrameVerifier';
+
+export { pairingTranscript, verificationCode } from './pairingTranscript';
+
+export {
+  MalformedEphemeralKeyError,
+  derivePairingKey,
+  ephemeralPublicJwkOf,
+  generatePairingEphemeral,
+} from './pairingKeyAgreement';
+export type { PairingEphemeralKeys, PairingKeyOptions } from './pairingKeyAgreement';

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
 import { NoteKind, NoteState, type Note } from '@/db/schema';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
 import type {
   ScopeKeyContext,
@@ -58,10 +58,10 @@ const enqueuePut = async (row: Note): Promise<void> => {
 };
 
 beforeEach(async () => {
-  const master = generateMasterSecret();
+  const master = generateRootSecret();
   scopeKeys = new Map([
     ['space-a', await deriveKeyRing(master, 1)],
-    ['space-b', await deriveKeyRing(generateMasterSecret(), 1)],
+    ['space-b', await deriveKeyRing(generateRootSecret(), 1)],
   ]);
   db = new LoremDB('rescope-frames');
   await db.open();

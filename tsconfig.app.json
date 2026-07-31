@@ -21,9 +21,21 @@
       "@/*": ["./src/*"],
       "writer-sync/core": ["./packages/writer-sync/src/core/index.ts"],
       "writer-sync/crypto": ["./packages/writer-sync/src/crypto/index.ts"],
-      "writer-sync/operations": ["./packages/writer-sync/src/operations/index.ts"]
+      "writer-sync/operations": ["./packages/writer-sync/src/operations/index.ts"],
+      "writer-sync/pairing": ["./packages/writer-sync/src/pairing/index.ts"],
+      "writer-sync/providers/webrtc": [
+        "./packages/writer-sync/src/providers/webrtc/index.ts"
+      ],
+      "writer-qr/encode": ["./packages/writer-qr/src/encode/index.ts"],
+      "writer-qr/scan": ["./packages/writer-qr/src/scan/index.ts"]
     },
     "types": ["vite/client", "vitest/globals"]
   },
-  "include": ["src", "packages/writer-sync/src", "packages/writer-sync/test"]
+  "include": [
+    "src",
+    "packages/writer-sync/src",
+    "packages/writer-sync/test",
+    "packages/writer-qr/src",
+    "packages/writer-qr/test"
+  ]
 }

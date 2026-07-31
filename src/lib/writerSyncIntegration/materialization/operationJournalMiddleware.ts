@@ -9,29 +9,38 @@ import Dexie, {
   type DBCoreTransaction,
   type Middleware,
 } from 'dexie';
+import type { SyncAttachmentChunk } from '@/db/schema';
 import { invariant } from '@/lib/invariant';
 import type { DeviceId } from 'writer-sync/core';
 import type {
   ScopeKeyResolver,
   SyncKeyRing,
 } from 'writer-sync/crypto';
-import type { ReplicatedEntityMetadata } from 'writer-sync/core';
 import type { EncryptedSyncFrame } from 'writer-sync/operations';
-import { journalledTables } from '@/lib/writerSyncIntegration/writerTablePolicy';
+import {
+  chunkedBlobFieldFor,
+  journalledTables,
+} from '@/lib/writerSyncIntegration/writerTablePolicy';
 import {
   isInternalBlobTx,
   isSyncApplied,
 } from '@/lib/cloud/crypto/transactionFlags';
-import { makeDeleteFrame, makePutFrame } from './writerOperationFactory';
+import {
+  makeDeleteFrame,
+  makePutFrame,
+  signAuthoredFrames,
+} from './writerOperationFactory';
+import { isJournalledRow, type UnknownRow } from './journalledRow';
+import { prepareFramePayload } from './attachmentFramePayload';
 
 /**
  * DBCore middleware that journals an encrypted operation frame for every
  * synced-content write — the single outbound chokepoint of the operation
  * protocol. Sitting above the row-encryption middleware (higher `level`), it
- * sees each mutation's plaintext rows, commits the domain write first, then
- * appends the matching {@link EncryptedSyncFrame}s to `syncOperations` inside
- * the same transaction, so a write and its frame can never be torn apart. No
- * call site can forget to journal: coverage holds by construction.
+ * sees each mutation's plaintext rows, prepares frames and attachment chunks
+ * before delegating, then commits every store inside the same transaction, so
+ * a write and its wire representation can never be torn apart. No call site
+ * can forget to journal: coverage holds by construction.
  *
  * Writes it deliberately does **not** journal:
  * - materialisation of inbound frames (their transaction pairs a content table
@@ -42,12 +51,24 @@ import { makeDeleteFrame, makePutFrame } from './writerOperationFactory';
  * - `deleteRange` (`Table.clear()` is a local reset, never a synced deletion).
  */
 
-type Row = Record<string, unknown>;
+type Row = UnknownRow;
+const DBCORE_RANGE_BETWEEN = 2;
+
+/**
+ * This device's cryptographic identity: the attribution a frame carries and the
+ * key that signs it. Resolved together because a signature is only meaningful
+ * against the device id it claims — fetching them separately would let the two
+ * drift apart.
+ */
+export interface JournalIdentity {
+  deviceId: DeviceId;
+  privateKey: CryptoKey;
+}
 
 export interface OperationJournalDeps {
   resolver: ScopeKeyResolver;
   /** This device's stable identity; resolved once, then cached. */
-  deviceId: () => Promise<DeviceId>;
+  identity: () => Promise<JournalIdentity>;
 }
 
 /**
@@ -60,23 +81,6 @@ const isMaterialisationTx = (trans: DBCoreTransaction): boolean =>
   (
     trans as { objectStoreNames?: { contains(name: string): boolean } }
   ).objectStoreNames?.contains('syncInbox') === true;
-
-const isTimestamp = (value: unknown): value is { millis: number; counter: number } =>
-  typeof value === 'object' &&
-  value !== null &&
-  typeof (value as { millis?: unknown }).millis === 'number' &&
-  typeof (value as { counter?: unknown }).counter === 'number';
-
-/** A row carrying the replication metadata every synced-content row must have. */
-const isJournalledRow = (
-  row: Row,
-): row is Row & ReplicatedEntityMetadata & { id: string } =>
-  typeof row.id === 'string' &&
-  typeof row.accessScopeId === 'string' &&
-  typeof row.createdBy === 'string' &&
-  typeof row.updatedBy === 'string' &&
-  typeof row.mutationId === 'string' &&
-  isTimestamp(row.logicalUpdatedAt);
 
 /** Resolve the write-context ring for one row of `table` (sync, may be null). */
 const ringFor = (options: {
@@ -110,6 +114,25 @@ const writeFrames = async (options: {
   });
 };
 
+/** Append already-sealed attachment chunks within the live transaction. */
+const writeChunks = async (options: {
+  syncChunks?: DBCoreTable;
+  trans: DBCoreTransaction;
+  chunks: SyncAttachmentChunk[];
+}): Promise<void> => {
+  if (!options.syncChunks || options.chunks.length === 0) return;
+  await options.syncChunks.mutate({
+    type: 'put',
+    trans: options.trans,
+    values: options.chunks,
+  });
+};
+
+interface PreparedPuts {
+  frames: (EncryptedSyncFrame | null)[];
+  chunksByRow: SyncAttachmentChunk[][];
+}
+
 /**
  * Build one put frame per keyed row, indexed by the row's position in the
  * request so a rejected row's frame can be dropped without re-running crypto.
@@ -119,14 +142,16 @@ const putFrames = async (options: {
   rings: (SyncKeyRing | null)[];
   deviceId: DeviceId;
   req: DBCoreAddRequest | DBCorePutRequest;
-}): Promise<(EncryptedSyncFrame | null)[]> => {
+}): Promise<PreparedPuts> => {
   const { table, rings, deviceId, req } = options;
   const rows = req.values as readonly Row[];
   const frames: (EncryptedSyncFrame | null)[] = [];
+  const chunksByRow: SyncAttachmentChunk[][] = [];
   for (let i = 0; i < rows.length; i += 1) {
     const ring = rings[i];
     if (!ring) {
       frames.push(null);
+      chunksByRow.push([]);
       continue;
     }
     const row = rows[i];
@@ -134,9 +159,22 @@ const putFrames = async (options: {
       isJournalledRow(row),
       () => `operation journal: a ${table.name} row lacks replication metadata`,
     );
-    frames.push(await makePutFrame({ ring, deviceId, entityTable: table.name, row }));
+    const prepared = await prepareFramePayload({
+      entityTable: table.name,
+      row,
+      ring,
+    });
+    frames.push(
+      await makePutFrame({
+        ring,
+        deviceId,
+        entityTable: table.name,
+        row: prepared.row,
+      }),
+    );
+    chunksByRow.push(prepared.chunks);
   }
-  return frames;
+  return { frames, chunksByRow };
 };
 
 /**
@@ -201,11 +239,12 @@ const inTx = <T,>(work: Promise<T>): Promise<T> => Dexie.waitFor(work);
 const journalPut = async (options: {
   table: DBCoreTable;
   syncOps: DBCoreTable;
+  syncChunks?: DBCoreTable;
   resolver: ScopeKeyResolver;
-  deviceId: () => Promise<DeviceId>;
+  identity: () => Promise<JournalIdentity>;
   req: DBCoreAddRequest | DBCorePutRequest;
 }): Promise<DBCoreMutateResponse> => {
-  const { table, syncOps, resolver, deviceId, req } = options;
+  const { table, syncOps, syncChunks, resolver, identity, req } = options;
   const rows = req.values as readonly Row[];
   const rings = rows.map((row, i) =>
     ringFor({ table, resolver, row, fallbackKey: req.keys?.[i] }),
@@ -214,8 +253,19 @@ const journalPut = async (options: {
   // detour either (`Dexie.waitFor` inside a nested transaction commits it
   // prematurely), so the write passes straight through.
   if (rings.every((ring) => ring === null)) return table.mutate(req);
-  const frames = await inTx(
-    deviceId().then((device) => putFrames({ table, rings, deviceId: device, req })),
+  const prepared = await inTx(
+    identity().then(async (device) => {
+      const built = await putFrames({
+        table,
+        rings,
+        deviceId: device.deviceId,
+        req,
+      });
+      return {
+        ...built,
+        frames: await signAuthoredFrames(device.privateKey, built.frames),
+      };
+    }),
   );
   const response = await table.mutate(req);
   // A row the store rejected (a duplicate `add`) never happened, so its frame is
@@ -223,31 +273,86 @@ const journalPut = async (options: {
   await writeFrames({
     syncOps,
     trans: req.trans,
-    frames: frames.filter(
+    frames: prepared.frames.filter(
       (frame, i): frame is EncryptedSyncFrame =>
         frame !== null && !(i in response.failures),
     ),
   });
+  await writeChunks({
+    syncChunks,
+    trans: req.trans,
+    chunks: prepared.chunksByRow.flatMap((chunks, index) =>
+      index in response.failures ? [] : chunks,
+    ),
+  });
   return response;
+};
+
+/** Delete every stored chunk belonging to one attachment id. */
+const deleteChunks = async (options: {
+  syncChunks?: DBCoreTable;
+  trans: DBCoreTransaction;
+  attachmentIds: string[];
+}): Promise<void> => {
+  if (!options.syncChunks) return;
+  for (const attachmentId of options.attachmentIds) {
+    await options.syncChunks.mutate({
+      type: 'deleteRange',
+      trans: options.trans,
+      range: {
+        type: DBCORE_RANGE_BETWEEN,
+        lower: [attachmentId, Dexie.minKey],
+        upper: [attachmentId, Dexie.maxKey],
+        lowerOpen: false,
+        upperOpen: false,
+      },
+    });
+  }
 };
 
 /** Journal a delete: frame the stored rows, then commit delete and frames. */
 const journalDelete = async (options: {
   table: DBCoreTable;
   syncOps: DBCoreTable;
+  syncChunks?: DBCoreTable;
   resolver: ScopeKeyResolver;
-  deviceId: () => Promise<DeviceId>;
+  identity: () => Promise<JournalIdentity>;
   req: DBCoreDeleteRequest;
 }): Promise<DBCoreMutateResponse> => {
-  const { table, syncOps, resolver, deviceId, req } = options;
-  if (!resolver.hasAnyKey()) return table.mutate(req);
-  const device = await inTx(deviceId());
+  const { table, syncOps, syncChunks, resolver, identity, req } = options;
+  if (!resolver.hasAnyKey()) {
+    const response = await table.mutate(req);
+    await deleteChunks({
+      syncChunks,
+      trans: req.trans,
+      attachmentIds: req.keys.flatMap((key, index) =>
+        index in response.failures ? [] : [String(key)],
+      ),
+    });
+    return response;
+  }
+  const device = await inTx(identity());
   const rows = (await table.getMany({
     trans: req.trans,
     keys: req.keys,
   })) as (Row | undefined)[];
-  const frames = deleteFrames({ table, resolver, deviceId: device, req, rows });
+  // Framing a deletion still needs no Web Crypto; signing one does, so the
+  // signature is applied in its own wrapped wait — the same shape `journalPut`
+  // uses, and the reason the frames are built before the mutation is delegated.
+  const frames = await inTx(
+    signAuthoredFrames(
+      device.privateKey,
+      deleteFrames({ table, resolver, deviceId: device.deviceId, req, rows }),
+    ),
+  );
   const response = await table.mutate(req);
+  await deleteChunks({
+    syncChunks,
+    trans: req.trans,
+    attachmentIds: rows.flatMap((row, index) =>
+      row && !(index in response.failures) ? [String(row.id)] : [],
+    ),
+  });
   await writeFrames({ syncOps, trans: req.trans, frames });
   return response;
 };
@@ -255,11 +360,12 @@ const journalDelete = async (options: {
 const journalMutate = (options: {
   table: DBCoreTable;
   syncOps: DBCoreTable;
+  syncChunks?: DBCoreTable;
   deps: OperationJournalDeps;
-  deviceId: () => Promise<DeviceId>;
+  identity: () => Promise<JournalIdentity>;
   req: DBCoreMutateRequest;
 }): Promise<DBCoreMutateResponse> => {
-  const { table, syncOps, deps, deviceId, req } = options;
+  const { table, syncOps, syncChunks, deps, identity, req } = options;
   if (req.type === 'deleteRange') return table.mutate(req);
   if (
     isMaterialisationTx(req.trans) ||
@@ -268,9 +374,30 @@ const journalMutate = (options: {
   ) {
     return table.mutate(req);
   }
-  const shared = { table, syncOps, resolver: deps.resolver, deviceId };
+  const shared = {
+    table,
+    syncOps,
+    syncChunks,
+    resolver: deps.resolver,
+    identity,
+  };
   if (req.type === 'delete') return journalDelete({ ...shared, req });
   return journalPut({ ...shared, req });
+};
+
+const widenStores = (
+  stores: string[],
+  journalled: ReadonlySet<string>,
+  chunked: ReadonlySet<string>,
+): string[] => {
+  if (!stores.some((store) => journalled.has(store))) return stores;
+  const widened = stores.includes('syncOperations')
+    ? [...stores]
+    : [...stores, 'syncOperations'];
+  return stores.some((store) => chunked.has(store)) &&
+    !widened.includes('syncAttachmentChunks')
+    ? [...widened, 'syncAttachmentChunks']
+    : widened;
 };
 
 /**
@@ -288,17 +415,24 @@ export const createOperationJournalMiddleware = (
   level: 20,
   create: (down: DBCore) => {
     const journalled = new Set(journalledTables());
-    let device: DeviceId | null = null;
-    const deviceId = async (): Promise<DeviceId> =>
-      (device ??= await deps.deviceId());
+    const chunked = new Set(
+      journalledTables().filter(
+        (table) => chunkedBlobFieldFor(table) !== undefined,
+      ),
+    );
+    let device: JournalIdentity | null = null;
+    const identity = async (): Promise<JournalIdentity> =>
+      (device ??= await deps.identity());
     return {
       ...down,
       transaction: (stores, mode, options) =>
-        mode === 'readwrite' &&
-        stores.some((store) => journalled.has(store)) &&
-        !stores.includes('syncOperations')
-          ? down.transaction([...stores, 'syncOperations'], mode, options)
-          : down.transaction(stores, mode, options),
+        down.transaction(
+          mode === 'readwrite'
+            ? widenStores(stores, journalled, chunked)
+            : stores,
+          mode,
+          options,
+        ),
       table: (name: string) => {
         const table = down.table(name);
         if (!journalled.has(name)) return table;
@@ -308,8 +442,11 @@ export const createOperationJournalMiddleware = (
             journalMutate({
               table,
               syncOps: down.table('syncOperations'),
+              syncChunks: chunked.has(name)
+                ? down.table('syncAttachmentChunks')
+                : undefined,
               deps,
-              deviceId,
+              identity,
               req,
             }),
         };

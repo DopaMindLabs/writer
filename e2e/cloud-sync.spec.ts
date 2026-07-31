@@ -26,23 +26,23 @@ const setUpEncryption = async (page: import('@playwright/test').Page) => {
 test.describe('cloud sync beta gating', () => {
   test('the cloud section is absent without the flag', async ({ page }) => {
     await reseedAndGoHome(page);
-    await page.goto('/#/settings?tab=account');
-    await expect(page.getByTestId('account-privacy-notice')).toBeVisible();
+    await page.goto('/#/settings?tab=cloudSync');
+    await expect(page.getByRole('heading', { name: /^Cloud sync$/ })).toBeVisible();
     await expect(page.getByTestId('cloud-section')).toHaveCount(0);
-    await expectNoA11yViolations(page, { context: 'account tab without cloud sync', ...STRUCTURE_ONLY });
+    await expectNoA11yViolations(page, { context: 'cloud sync tab without the flag', ...STRUCTURE_ONLY });
   });
 
   test('?cloud-sync=on reveals the section, strips the param and survives reload', async ({
     page,
   }) => {
     await reseedAndGoHome(page);
-    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await page.goto('/?cloud-sync=on#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     // The activation param is stripped from the URL once consumed.
     expect(page.url()).not.toContain('cloud-sync');
     // Sign-in is available before a passphrase exists (a clean device signs in first).
     await expect(page.getByTestId('cloud-sign-in')).toBeEnabled();
-    await expectNoA11yViolations(page, { context: 'account tab with cloud sync', ...STRUCTURE_ONLY });
+    await expectNoA11yViolations(page, { context: 'cloud sync tab with the flag', ...STRUCTURE_ONLY });
     // The opt-in persists across a reload.
     await page.reload();
     await expect(page.getByTestId('cloud-section')).toBeVisible();
@@ -50,7 +50,7 @@ test.describe('cloud sync beta gating', () => {
 
   test('sign-in is available before a passphrase exists', async ({ page }) => {
     await reseedAndGoHome(page);
-    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await page.goto('/?cloud-sync=on#/settings?tab=cloudSync');
     // A clean device may sign in first; the button is no longer disabled.
     await expect(page.getByTestId('cloud-sign-in')).toBeEnabled();
   });
@@ -60,7 +60,7 @@ test.describe('cloud sync beta gating', () => {
   }) => {
     // Reseed in cloud mode so the seeded rows are plaintext at rest on this
     // keyless device — the exact "unencrypted writing" the guard turns back.
-    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=account');
+    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     // The device is turned back with a "set up first" notice (after the
     // evaluation acknowledgement, which always precedes sign-in).
@@ -80,7 +80,7 @@ test.describe('cloud sync beta gating', () => {
     page,
   }) => {
     await reseedAndGoHome(page);
-    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await page.goto('/?cloud-sync=on#/settings?tab=cloudSync');
     await page.getByTestId('cloud-unlock').click();
     await page.getByTestId('unlock-input').fill('some-passphrase');
     await page.getByTestId('unlock-submit').click();
@@ -95,7 +95,7 @@ test.describe('cloud sync beta gating', () => {
     page,
   }) => {
     await reseedAndGoHome(page);
-    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await page.goto('/?cloud-sync=on#/settings?tab=cloudSync');
     await page.getByTestId('cloud-sign-in').click();
     const dialog = page.getByTestId('cloud-signin-ack-dialog');
     await expect(dialog).toBeVisible();
@@ -121,7 +121,7 @@ test.describe('cloud sync beta gating', () => {
     page,
   }) => {
     await reseedAndGoHome(page);
-    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await page.goto('/?cloud-sync=on#/settings?tab=cloudSync');
     await page.getByTestId('cloud-sign-in').click();
     await expect(page.getByTestId('cloud-signin-ack-dialog')).toBeVisible();
     await page.keyboard.press('Escape');
@@ -133,7 +133,7 @@ test.describe('cloud sync beta gating', () => {
     page,
   }) => {
     await reseedAndGoHome(page);
-    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await page.goto('/?cloud-sync=on#/settings?tab=cloudSync');
     await setUpEncryption(page);
     // With a key present the row offers sign-in/forget; forgetting drops the
     // key and the keyless actions (set-up, unlock) return.
@@ -144,7 +144,7 @@ test.describe('cloud sync beta gating', () => {
 
   test('sign-in opens the email step and cancel dismisses it', async ({ page }) => {
     await reseedAndGoHome(page);
-    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await page.goto('/?cloud-sync=on#/settings?tab=cloudSync');
     await setUpEncryption(page);
     await page.getByTestId('cloud-sign-in').click();
     await acknowledgeSignIn(page);
@@ -156,9 +156,9 @@ test.describe('cloud sync beta gating', () => {
 
   test('?cloud-sync=off hides the section again', async ({ page }) => {
     await reseedAndGoHome(page);
-    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await page.goto('/?cloud-sync=on#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
-    await page.goto('/?cloud-sync=off#/settings?tab=account');
+    await page.goto('/?cloud-sync=off#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toHaveCount(0);
   });
 });
@@ -170,7 +170,7 @@ test.describe('cloud sync key conflict', () => {
     // The real trigger (a fingerprint mismatch) needs a live two-device sign-in;
     // the ?cloud-mismatch affordance forces the signal so the conflict surface is
     // drivable headlessly. It is gated to the e2e/dev build only.
-    await page.goto('/?cloud-sync=on&reseed=1&cloud-mismatch=1#/settings?tab=account');
+    await page.goto('/?cloud-sync=on&reseed=1&cloud-mismatch=1#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     await expect(page.getByText(/locked on another device/i)).toBeVisible();
 
@@ -202,7 +202,7 @@ test.describe('cloud sync four-device beta limit', () => {
     // The real trigger (a signed-in fifth device against a full registry) needs
     // a live account; the ?cloud-devices affordance forces the blocked signal so
     // the surface is drivable headlessly. Gated to the e2e/dev build only.
-    await page.goto('/?cloud-sync=on&reseed=1&cloud-devices=full#/settings?tab=account');
+    await page.goto('/?cloud-sync=on&reseed=1&cloud-devices=full#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
 
     await expect(page.getByTestId('cloud-device-limit')).toBeVisible();
@@ -218,7 +218,7 @@ test.describe('cloud sync four-device beta limit', () => {
   });
 
   test('the beta notice names the four-device limit', async ({ page }) => {
-    await page.goto('/?cloud-sync=on#/settings?tab=account');
+    await page.goto('/?cloud-sync=on#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     await expect(page.getByText(/four devices per account/i)).toBeVisible();
   });
@@ -243,7 +243,7 @@ test.describe('cloud sync encrypted reads (real IndexedDB)', () => {
     // plain database first and enabling cloud afterwards does not carry the rows
     // across the addon's IndexedDB version bump.) setUpEncryption only succeeds
     // when the cloud section is live, so this also proves the path is active.
-    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=account');
+    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     await setUpEncryption(page);
 

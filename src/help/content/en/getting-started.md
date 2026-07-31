@@ -1,7 +1,7 @@
 # Getting started
 
 A local-first place to write. Your work lives in **spaces** and saves to your
-browser automatically. No accounts, no cloud, no save button.
+browser automatically. No sign-up, no cloud, no save button.
 
 ## At a glance
 

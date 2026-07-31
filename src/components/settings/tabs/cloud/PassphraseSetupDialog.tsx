@@ -71,7 +71,7 @@ export const PassphraseSetupDialog = ({
   const keyDelivery = useDefaultSyncCapability('keyDelivery');
   const create = onCreate ?? keyDelivery?.setUp;
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.passphrase.${name}`);
+  const k = (name: string) => t(`settings.cloud.passphrase.${name}`);
   const [passphrase, setPassphrase] = useState('');
   const [confirm, setConfirm] = useState('');
   const [busy, setBusy] = useState(false);

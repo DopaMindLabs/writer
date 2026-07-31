@@ -37,7 +37,7 @@ test('switching tabs on mobile keeps content within viewport', async ({ page }) 
   await page.goto('/#/settings');
   await page.waitForLoadState('networkidle');
 
-  for (const tabName of ['Appearance', 'Account', 'Editor']) {
+  for (const tabName of ['Appearance', 'Profile', 'Editor']) {
     await page.getByRole('button', { name: new RegExp(`^${tabName}$`) }).click();
     await expectNoHorizontalOverflow(page);
   }

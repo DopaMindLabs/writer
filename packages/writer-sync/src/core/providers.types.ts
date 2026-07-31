@@ -165,13 +165,13 @@ export interface AccessControlAdapter {
   resolveBinding: (scopeId: AccessScopeId) => Promise<SyncProviderBinding | undefined>;
 }
 
-/** Whether the account holds key material this device can adopt. */
+/** Whether key material exists that this device can adopt. */
 export enum KeyEscrowPresence {
   /** The provider cannot answer yet — never offer set-up on this. */
   Unknown = 'unknown',
-  /** The account holds no key material: offer set-up. */
+  /** No key material exists yet: offer set-up. */
   None = 'none',
-  /** The account holds key material: offer unlock or adopt. */
+  /** Key material exists: offer unlock or adopt. */
   Present = 'present',
 }
 

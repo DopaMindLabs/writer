@@ -11,7 +11,7 @@ nothing to switch on and no button to press.
 - **Merged automatically** — if two tabs change the document at the same time,
   both sets of changes are kept and merged; nothing is overwritten.
 - **Your cursor is shared** — each tab shows the others' cursors, labelled with
-  your display name and colour from [Your account](your-account).
+  your display name and colour from [Your profile](your-profile).
 - **Still local** — collaboration happens entirely in your browser. Your writing
   never leaves your device unless you export it — see [Your data](your-data).
 
@@ -32,9 +32,9 @@ another tab.
 ## Presence
 
 When another tab has its cursor in the document, you'll see a small labelled
-caret where that cursor sits, in the colour set for your account. Change your
+caret where that cursor sits, in the colour set for your profile. Change your
 name or colour under **Settings → Account** — see
-[Your account](your-account).
+[Your profile](your-profile).
 
 ## Restoring a version
 
@@ -47,4 +47,4 @@ case you change your mind. See [Version history](version-history).
 
 - [Writing & editing](writing-and-editing) — autosave and the editor basics.
 - [Version history](version-history) — save, compare, and restore versions.
-- [Your account](your-account) — set the name and colour others see.
+- [Your profile](your-profile) — set the name and colour others see.

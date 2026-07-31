@@ -12,10 +12,10 @@ import {
 } from './crypto/keyStore';
 import { CIPHER_FIELD } from './crypto/tableRules';
 import {
-  generateMasterSecret,
+  generateRootSecret,
   deriveKeyRing,
-  wrapMasterSecret,
-  unwrapMasterSecret,
+  wrapRootSecret,
+  unwrapRootSecret,
   WrongPassphraseError,
   ESCROW_ID,
 } from './crypto/keys';
@@ -121,7 +121,7 @@ describe('cloud setup', () => {
   it('publishPendingEscrow keeps a foreign account escrow and retains the pending one', async () => {
     // A different device's account key already occupies the row. Add-only publish
     // must never overwrite it, and must keep our escrow pending for adoption.
-    const foreign = await wrapMasterSecret(generateMasterSecret(), 'other', 1000);
+    const foreign = await wrapRootSecret(generateRootSecret(), 'other', 1000);
     await db.cloudCrypto.put(foreign);
     await createCloudEncryption('mine', db, () => 'acct-a'); // signed in: keep the row
 
@@ -175,7 +175,7 @@ describe('cloud setup', () => {
     // Residue from an earlier local session: a foreign escrow left in the local
     // database. A signed-out fresh setup must drop it, so the reconciler cannot
     // later read its stale fingerprint and lock the device out.
-    await db.cloudCrypto.put(await wrapMasterSecret(generateMasterSecret(), 'x', 1000));
+    await db.cloudCrypto.put(await wrapRootSecret(generateRootSecret(), 'x', 1000));
     await createCloudEncryption('pw', db); // default: signed out
     expect(await db.cloudCrypto.toArray()).toHaveLength(0);
   });
@@ -183,7 +183,7 @@ describe('cloud setup', () => {
   it('keeps the account escrow when setting up while signed in', async () => {
     // Signed in, the local escrow is the account's real key — it must survive so
     // the mismatch/adopt flow can resolve against it.
-    await db.cloudCrypto.put(await wrapMasterSecret(generateMasterSecret(), 'x', 1000));
+    await db.cloudCrypto.put(await wrapRootSecret(generateRootSecret(), 'x', 1000));
     await createCloudEncryption('pw', db, () => 'acct-a');
     expect(await db.cloudCrypto.toArray()).toHaveLength(1);
   });
@@ -287,7 +287,7 @@ describe('cloud setup', () => {
     });
     await forgetThisDevice();
 
-    const wrong = encodeRecoveryCode(generateMasterSecret());
+    const wrong = encodeRecoveryCode(generateRootSecret());
     await expect(recoverCloudEncryption(wrong, db)).rejects.toBeInstanceOf(
       EnvelopeIntegrityError,
     );
@@ -300,7 +300,7 @@ describe('cloud setup', () => {
     await forgetThisDevice();
     expect(await db.cloudCrypto.get(ESCROW_ID)).toBeDefined();
 
-    const foreign = encodeRecoveryCode(generateMasterSecret());
+    const foreign = encodeRecoveryCode(generateRootSecret());
     await expect(recoverCloudEncryption(foreign, db)).rejects.toBeInstanceOf(
       EnvelopeIntegrityError,
     );
@@ -331,12 +331,12 @@ describe('cloud key conflict resolution', () => {
         cloud: { currentUser: { value: { isLoggedIn: boolean; userId: string } } };
       }
     ).cloud.currentUser = { value: { isLoggedIn: true, userId: 'acct-a' } };
-    const accountMaster = generateMasterSecret();
+    const accountMaster = generateRootSecret();
     await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(accountMaster, 1) });
     await db.table<Row>('docs').put({
       id: 'acc', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'account note',
     });
-    await db.cloudCrypto.put(await wrapMasterSecret(accountMaster, 'old-pass', FAST));
+    await db.cloudCrypto.put(await wrapRootSecret(accountMaster, 'old-pass', FAST));
     // Re-signing-in: signed into the account, so the account escrow is kept.
     await createCloudEncryption('new-pass', db, () => 'acct-a');
     await db.table<Row>('docs').put({
@@ -356,7 +356,7 @@ describe('cloud key conflict resolution', () => {
     expect((await db.table<Row>('docs').get('mine'))?.name).toBe('my note');
     const escrow = await db.cloudCrypto.get(ESCROW_ID);
     if (!escrow) throw new Error('expected an escrow after adoption');
-    const recovered = await unwrapMasterSecret(escrow, 'new-pass');
+    const recovered = await unwrapRootSecret(escrow, 'new-pass');
     expect(Array.from(recovered)).toEqual(Array.from(accountMaster));
   });
 
@@ -378,7 +378,7 @@ describe('cloud key conflict resolution', () => {
     expect((await db.table<Row>('docs').get('mine'))?.name).toBe('my note');
     const escrow = await db.cloudCrypto.get(ESCROW_ID);
     if (!escrow) throw new Error('expected the device escrow to be published');
-    const recovered = await unwrapMasterSecret(escrow, 'new-pass');
+    const recovered = await unwrapRootSecret(escrow, 'new-pass');
     expect(Array.from(recovered)).not.toEqual(Array.from(accountMaster));
   });
 
@@ -397,7 +397,7 @@ describe('cloud key conflict resolution', () => {
     expect((await db.table<Row>('docs').get('mine'))?.name).toBe('my note');
     const escrow = await db.cloudCrypto.get(ESCROW_ID);
     if (!escrow) throw new Error('expected the account escrow to survive');
-    const recovered = await unwrapMasterSecret(escrow, 'old-pass');
+    const recovered = await unwrapRootSecret(escrow, 'old-pass');
     expect(Array.from(recovered)).toEqual(Array.from(accountMaster));
     expect(keyMismatchState.current()).toBe(true);
   });

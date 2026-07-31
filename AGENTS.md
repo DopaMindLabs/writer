@@ -179,6 +179,24 @@ wiring — table policy, materialisation, configuration, boot and React context 
   host application. If a change forces it to reach past the public subpaths, the port is
   wrong — fix the port, not the fixture.
 
+## Database schema versions (read before touching `STORES`)
+
+`LoremDB` (`src/db/LoremDB.ts`) declares **one** Dexie version. New tables and index
+changes go straight into `STORES` (`src/db/stores.ts`) under that single `version(1)` —
+do **not** add a `version(2)`, an `upgrade()` callback, or any other migration path. The
+same applies to the other device-local databases (`lipsum-cloud-keystore`,
+`lipsum-device-vault`). This is enforced: `src/db/db.test.ts` and `src/db/buildDb.test.ts`
+assert `verno === 1`.
+
+Writer has no users. There is no installed data to preserve and no backward compatibility
+to keep — if a local database goes stale, wipe and reseed it (`?reseed=1`) rather than
+writing a migration.
+
+Every table in `STORES` must also be classified in
+`src/lib/writerSyncIntegration/writerTablePolicy.ts` — an unclassified table fails
+`writerTablePolicy.test.ts`. That classification, not a version number, is what guards a
+new table.
+
 ## Design system (read before building UI)
 
 [`docs/design-system.md`](./docs/design-system.md) is the **single source of truth** for

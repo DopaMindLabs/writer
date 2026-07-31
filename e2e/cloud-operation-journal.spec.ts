@@ -85,7 +85,7 @@ test.describe('the operation journal (real IndexedDB)', () => {
     // Seed straight into a cloud-enabled database, as the encrypted-reads spec
     // does: rows seeded into the plain database do not survive the addon's
     // version bump.
-    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=account');
+    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     await setUpEncryption(page);
     await page.reload();
@@ -146,7 +146,7 @@ test.describe('the operation journal (real IndexedDB)', () => {
     // sits in the journal, so a deletion has to survive being materialised —
     // tombstoned, applied once, and never resurrected by the put frame that
     // still sits in the journal beside it.
-    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=account');
+    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     await setUpEncryption(page);
     await page.reload();
@@ -217,7 +217,7 @@ test.describe('the operation journal (real IndexedDB)', () => {
     await expect(noteCards).toHaveCount(before + 1);
     expect(await readJournal(page)).toEqual([]);
 
-    await page.goto('/#/settings?tab=account');
+    await page.goto('/#/settings?tab=cloudSync');
     await expect(page.getByTestId('cloud-section')).toBeVisible();
     await setUpEncryption(page);
 
