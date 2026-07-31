@@ -169,6 +169,49 @@ describe('startLivePeerSync', () => {
     stop();
   });
 
+  it('sends nothing for a frame whose transaction rolled back', async () => {
+    // The hook fires while the transaction is still open, so a frame that never
+    // commits locally used to reach the peer anyway — it would journal and
+    // materialise an operation this device does not have, and the two would
+    // disagree with nothing to reconcile them.
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+
+    await expect(
+      db.transaction('rw', db.syncOperations, async () => {
+        await db.syncOperations.put(frameOf());
+        throw new Error('rolled back');
+      }),
+    ).rejects.toThrow('rolled back');
+
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    expect(peer.sent).toEqual([]);
+    // Not even a bearer: opening one asks the peer session for a channel, which
+    // is already a side effect of a write that did not happen.
+    expect(peer.created).toEqual([]);
+    expect(await db.syncOperations.get('op-1')).toBeUndefined();
+    stop();
+  });
+
+  it('offers no attachment chunks for a transaction that rolled back', async () => {
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+    await db.noteAttachments.put(attachment());
+
+    await expect(
+      db.transaction('rw', db.syncOperations, async () => {
+        await db.syncOperations.put(
+          frameOf({ entityTable: 'noteAttachments', entityId: 'attachment-1' }),
+        );
+        throw new Error('rolled back');
+      }),
+    ).rejects.toThrow('rolled back');
+
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    expect(peer.sent).toEqual([]);
+    stop();
+  });
+
   it('skips a frame the transport cannot carry rather than throwing at it', async () => {
     const peer = fakeCoordinator(1_000);
     const stop = start(peer);

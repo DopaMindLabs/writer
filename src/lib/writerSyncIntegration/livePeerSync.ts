@@ -168,10 +168,7 @@ export const startLivePeerSync = (options: LivePeerSyncOptions): (() => void) =>
     }),
   );
 
-  const send = async (
-    frame: EncryptedSyncFrame,
-    committed: Promise<void>,
-  ): Promise<void> => {
+  const send = async (frame: EncryptedSyncFrame): Promise<void> => {
     const link = await links.for(frame.accessScopeId);
     const bytes = encodeCatchUpMessage({
       v: CATCH_UP_PROTOCOL_VERSION,
@@ -191,24 +188,34 @@ export const startLivePeerSync = (options: LivePeerSyncOptions): (() => void) =>
     }
     link.transport.send(bytes);
     if (frame.entityTable === 'noteAttachments') {
-      await committed;
       await Dexie.ignoreTransaction(() => link.offerAttachment(frame.entityId));
     }
   };
 
   const onCreated = (_key: unknown, frame: EncryptedSyncFrame): void => {
+    // Captured synchronously — the transaction has to be read while it is still
+    // the current one — but waited on before anything crosses the link. The hook
+    // runs mid-transaction, so a frame sent from here would reach the peer even
+    // when the write that produced it never commits, and the peer would hold an
+    // operation this device does not.
     const committed = afterCurrentTransaction();
-    void options
-      .deviceId()
-      .then(async (here) => {
-        // Only this device's own work: a frame that arrived from a peer is
-        // already held by the peer it came from.
-        if (String(frame.deviceId) !== here) return;
-        await send(frame, committed);
-      })
+    void committed
+      .then(
+        async () => {
+          const here = await options.deviceId();
+          // Only this device's own work: a frame that arrived from a peer is
+          // already held by the peer it came from.
+          if (String(frame.deviceId) !== here) return;
+          await send(frame);
+        },
+        // Rolled back: there is no operation, so there is nothing to carry and
+        // nothing has gone wrong. Said quietly, because a discarded write is not
+        // a failure to sync.
+        () => undefined,
+      )
       .catch((error: unknown) => {
-        // A peer that cannot be reached is not a failed write. The frame is in
-        // the journal, and catch-up carries it the next time one connects.
+        // A peer that cannot be reached is not a failed write either: the frame
+        // is in the journal, and catch-up carries it the next time one connects.
         appLogger.warn('sending a frame to a peer failed', error);
       });
   };
