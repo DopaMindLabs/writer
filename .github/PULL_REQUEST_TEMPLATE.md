@@ -83,12 +83,12 @@ Fixes #
 <!-- Do not add sections beyond those in this template — if this PR introduces a new primitive or design token, use the "Design System Additions" section at the end instead. -->
 
 ## Checklist
-<!-- AGENT confirmations: Go through first 3 bullet points and confirm each point. If not leave PR in draft status with a comment to user.>
+<!-- AGENT confirmations: Go through first 3 bullet points and confirm each point. If not leave PR in draft status with a comment to user. -->
 - [ ] Tests written first (TDD) and all gates pass: `npm run lint`, `npm run typecheck`, `npm run test:run` (+ e2e for UI-facing changes)
 - [ ] Spec (`docs/technical-specification.md`) and Help Center updated for user-facing changes — or no user-facing change (stated in summary)
 - [ ] Accessibility and design-system rules followed (tokens/primitives, keyboard operability, British English)
 - [ ] Confirm changes are done with accordance to Repo guidelines
 - [ ] Agent reviewer: I re-read `.github/PULL_REQUEST_TEMPLATE.md` and confirm this PR's title and description conform to it exactly — any deviation was flagged as a PR comment <!-- AGENT-REVIEWER attestation only: an agent reviewer ticks this only after verifying conformance against the issue / AGENTS.md guidance; leave it unticked if unchecked or if any deviation was flagged. This is separate from the HUMAN-ONLY item below, which an agent must never tick. -->
-<!-- AGENT must not make changes from this point.>
+<!-- AGENT must not make changes from this point. -->
 - [ ] **I as a human** understand this contribution is submitted under the project's [LICENSE](../LICENSE) (PolyForm Noncommercial 1.0.0) and I have the right to submit it
 - [ ] **I as a human** confirm all changes were reviewed prior to opening this PR <!-- HUMAN-ONLY: agents must never tick this (hard rule in AGENTS.md) -->
