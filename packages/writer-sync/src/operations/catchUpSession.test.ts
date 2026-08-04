@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { SyncTransport } from '../core/transport.types';
+import { InboundRateLimitError } from '../providers/webrtc/inboundLimiter';
 import type { EncryptedSyncFrame } from './operation.types';
 import type { OperationStore } from './operationStore.types';
 import type { CatchUpPorts } from './catchUpExchange';
@@ -84,6 +85,19 @@ const arrayStore = (frames: EncryptedSyncFrame[]): OperationStore => ({
   forScope: async (accessScopeId) =>
     frames.filter((frame) => frame.accessScopeId === accessScopeId),
 });
+
+/**
+ * Let everything already queued run to the end.
+ *
+ * Proving a message was *not* handled needs the queue given every chance to
+ * handle it: a chain of continuations, and the promises they await, resolve
+ * across both microtask and macrotask turns.
+ */
+const settled = async (): Promise<void> => {
+  for (let turn = 0; turn < 4; turn += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  }
+};
 
 const idsOf = (frames: readonly EncryptedSyncFrame[]): string[] =>
   frames.map((frame) => String(frame.operationId)).sort();
@@ -387,6 +401,98 @@ describe('startCatchUpSession', () => {
     session.stop();
   });
 
+  it('never admits a message that was queued behind one that failed', async () => {
+    const [local, remote] = linkedTransports();
+    const onError = vi.fn();
+    const appended: string[] = [];
+    const session = startCatchUpSession({
+      transport: { ...local, close: () => undefined },
+      ports: portsFor({
+        journal: {
+          ...emptyStore(),
+          append: async (frame) => {
+            appended.push(String(frame.operationId));
+          },
+        },
+      }),
+      onError,
+    });
+    await session.opened;
+
+    // Both arrive before either is handled, which is the whole point: the
+    // second was already queued when the first took the session down.
+    const queued = await frameOf({ id: 'op-1', millis: 10, device: 'device-a' });
+    remote.send(new TextEncoder().encode('not json'));
+    remote.send(
+      encodeCatchUpMessage({ v: 1, kind: 'frames', frames: [queued], final: true }),
+    );
+
+    await vi.waitFor(() => {
+      expect(onError).toHaveBeenCalledTimes(1);
+    });
+    // Ending the session has to mean ending it: a batch admitted after the
+    // failure would write to a journal the peer is no longer being answered
+    // over, and would move the acknowledgement map with it.
+    expect(appended).toEqual([]);
+
+    session.stop();
+  });
+
+  it('never admits a message that was queued when the transport closed', async () => {
+    const [local, remote] = linkedTransports();
+    const onError = vi.fn();
+    const attempted: string[] = [];
+    let notify: ((reason?: Error) => void) | undefined;
+    let release = (): void => undefined;
+    const blocked = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+
+    const session = startCatchUpSession({
+      transport: {
+        ...local,
+        onClosed: (callback) => {
+          notify = callback;
+          return () => undefined;
+        },
+      },
+      ports: portsFor({
+        journal: {
+          ...emptyStore(),
+          append: async (frame) => {
+            attempted.push(String(frame.operationId));
+            if (String(frame.operationId) === 'op-1') await blocked;
+          },
+        },
+      }),
+      onError,
+    });
+    await session.opened;
+
+    const first = await frameOf({ id: 'op-1', millis: 10, device: 'device-a' });
+    const second = await frameOf({ id: 'op-2', millis: 20, device: 'device-a' });
+    remote.send(
+      encodeCatchUpMessage({ v: 1, kind: 'frames', frames: [first], final: false }),
+    );
+    remote.send(
+      encodeCatchUpMessage({ v: 1, kind: 'frames', frames: [second], final: true }),
+    );
+
+    // The bearer goes away while the first batch is still being written and the
+    // second is waiting behind it.
+    await vi.waitFor(() => {
+      expect(attempted).toEqual(['op-1']);
+    });
+    notify?.(new Error('the peer went away'));
+    release();
+
+    await settled();
+    expect(attempted).toEqual(['op-1']);
+    expect(onError).toHaveBeenCalledTimes(1);
+
+    session.stop();
+  });
+
   it('ends the session rather than queueing without bound', async () => {
     const [local, remote] = linkedTransports();
     const onError = vi.fn();
@@ -486,8 +592,9 @@ describe('startCatchUpSession', () => {
     await session.opened;
 
     // A peer that floods is refused by the transport, not by this session; the
-    // reason has to reach the consumer that shows sync stopped.
-    const reason = new Error('a peer exceeded what this session will carry');
+    // typed reason it fails with has to reach the consumer that shows sync
+    // stopped, rather than ending at the transport that raised it.
+    const reason = new InboundRateLimitError();
     notify?.(reason);
 
     expect(onError).toHaveBeenCalledWith(reason);

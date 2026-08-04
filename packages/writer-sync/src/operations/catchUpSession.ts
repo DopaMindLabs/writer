@@ -159,12 +159,20 @@ export const startCatchUpSession = (options: {
     // buffer it reuses, and this one is held until the queue reaches it.
     const owned = bytes.slice();
     tail = tail
-      .then(() => exchange.receive(decodeCatchUpMessage(owned)))
+      .then(async () => {
+        // The session can end while this message waits its turn — a message
+        // ahead of it failed, or the bearer closed under it. Whether it may be
+        // handled is therefore decided here and not on arrival: the exchange
+        // carries state across the batches of one reply, and admitting a batch
+        // after the session ended would run it against state that a failure
+        // left half-updated, or against a transport that is already gone.
+        if (stopped) return;
+        await exchange.receive(decodeCatchUpMessage(owned));
+      })
       .catch((error: unknown) => {
-        // The exchange carries state across the batches of one reply, so a
-        // message that failed part-way leaves it half-updated. Later messages
-        // must not run against that, and a peer whose session has failed is
-        // told by the connection going away rather than by silence.
+        // A peer whose session has failed is told by the connection going away
+        // rather than by silence — once, for the message that failed.
+        if (stopped) return;
         fail(error);
       })
       .finally(() => {
