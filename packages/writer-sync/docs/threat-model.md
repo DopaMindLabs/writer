@@ -366,6 +366,15 @@ or sending a message that carries no bytes at all, fails the session with a
 typed `InboundRateLimitError` or `NonBinaryMessageError` that reaches the
 consumer through `onClosed`.
 
+`MAX_FRAME_BYTES` binds inbound as well as outbound: one message inside the
+rate budget could otherwise be the whole of it, and be handed to JSON decoding
+in one allocation. Past the transport, `startCatchUpSession` bounds what it
+holds undecoded (`MAX_SESSION_QUEUE_MESSAGES`, `MAX_SESSION_QUEUE_BYTES`),
+because ordering means every message arriving while one is being handled is
+retained, and a rate limit bounds a rate rather than a quantity — a peer
+arriving faster than crypto and IndexedDB drain, window after window, would
+grow that queue without ever exceeding its rate.
+
 ---
 
 ## 6. Residual risks

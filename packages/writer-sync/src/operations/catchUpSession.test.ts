@@ -5,7 +5,11 @@ import type { OperationStore } from './operationStore.types';
 import type { CatchUpPorts } from './catchUpExchange';
 import { decodeCatchUpMessage, encodeCatchUpMessage } from './catchUpMessage';
 import { createAttachmentTransfer } from './attachmentTransfer';
-import { startCatchUpSession } from './catchUpSession';
+import {
+  MAX_SESSION_QUEUE_MESSAGES,
+  SessionQueueOverflowError,
+  startCatchUpSession,
+} from './catchUpSession';
 import { asDeviceId, asOperationId } from '../core/ids';
 import { hashPayload } from './operationCodec';
 
@@ -380,6 +384,114 @@ describe('startCatchUpSession', () => {
     expect(onError).toHaveBeenCalledTimes(1);
 
     session.stop();
+  });
+
+  it('ends the session rather than queueing without bound', async () => {
+    const [local, remote] = linkedTransports();
+    const onError = vi.fn();
+    const closed = vi.fn();
+    let release = (): void => undefined;
+    const blocked = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+
+    const session = startCatchUpSession({
+      transport: { ...local, close: closed },
+      ports: portsFor({
+        journal: {
+          ...emptyStore(),
+          append: async () => {
+            await blocked;
+          },
+        },
+      }),
+      onError,
+    });
+    await session.opened;
+
+    const frame = await frameOf({ id: 'op-1', millis: 10, device: 'device-a' });
+    const message = encodeCatchUpMessage({
+      v: 1,
+      kind: 'frames',
+      frames: [frame],
+      final: false,
+    });
+    // A peer can arrive faster than crypto and IndexedDB drain, so the queue in
+    // front of them needs a bound of its own — the rate window is a rate, not a
+    // ceiling on retained work.
+    for (let i = 0; i <= MAX_SESSION_QUEUE_MESSAGES; i += 1) remote.send(message);
+
+    await vi.waitFor(() => {
+      expect(onError).toHaveBeenCalledTimes(1);
+    });
+    expect(onError.mock.calls[0][0]).toBeInstanceOf(SessionQueueOverflowError);
+    expect(closed).toHaveBeenCalledTimes(1);
+
+    release();
+  });
+
+  it('releases what it queued as each message is handled', async () => {
+    const [local, remote] = linkedTransports();
+    const onError = vi.fn();
+    const session = startCatchUpSession({
+      transport: local,
+      ports: portsFor(),
+      onError,
+    });
+    await session.opened;
+
+    // Each request draws a reply, so the reply count says when the session has
+    // worked through what it was sent.
+    let replies = 0;
+    remote.onMessage(() => {
+      replies += 1;
+    });
+
+    const message = encodeCatchUpMessage({ v: 1, kind: 'request', requests: [] });
+    // Comfortably past the bound: without release, the queue would refuse
+    // somewhere in the second half of this loop.
+    const total = MAX_SESSION_QUEUE_MESSAGES + 8;
+    for (let i = 0; i < total; i += 1) {
+      remote.send(message);
+      await vi.waitFor(
+        () => {
+          expect(replies).toBe(i + 1);
+        },
+        { interval: 1 },
+      );
+    }
+
+    // Far more than the bound over the session's life, none of it retained.
+    expect(onError).not.toHaveBeenCalled();
+
+    session.stop();
+  });
+
+  it('reports the transport failing under it', async () => {
+    const [local, remote] = linkedTransports();
+    const onError = vi.fn();
+    let notify: ((reason?: Error) => void) | undefined;
+    const session = startCatchUpSession({
+      transport: {
+        ...local,
+        onClosed: (callback) => {
+          notify = callback;
+          return () => undefined;
+        },
+      },
+      ports: portsFor(),
+      onError,
+    });
+    await session.opened;
+
+    // A peer that floods is refused by the transport, not by this session; the
+    // reason has to reach the consumer that shows sync stopped.
+    const reason = new Error('a peer exceeded what this session will carry');
+    notify?.(reason);
+
+    expect(onError).toHaveBeenCalledWith(reason);
+    remote.send(new TextEncoder().encode('not json'));
+    expect(onError).toHaveBeenCalledTimes(1);
   });
 
   it('stops listening once stopped', async () => {

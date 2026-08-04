@@ -158,6 +158,14 @@ const inboundHandler = (options: {
       fail(new NonBinaryMessageError());
       return;
     }
+    // The ceiling binds in both directions. Outbound it stops a caller sending
+    // what the channel would refuse; inbound it is what stops one message
+    // becoming one enormous allocation and parse, whatever the rate budget
+    // still has left.
+    if (bytes.byteLength > MAX_FRAME_BYTES) {
+      fail(new FrameTooLargeError(bytes.byteLength));
+      return;
+    }
     // Refusing the excess and staying open would leave an apparently healthy
     // session whose catch-up can never complete.
     if (!limiter.consume({ messages: 1, bytes: bytes.byteLength })) {

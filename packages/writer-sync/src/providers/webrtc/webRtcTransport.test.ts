@@ -310,6 +310,26 @@ describe('inbound rate limit', () => {
     channel.emit('message', new Uint8Array(bytes).buffer);
   };
 
+  it('refuses a message past the frame ceiling before decoding it', () => {
+    const { channel, seen, onClosed } = limited(() => 0);
+
+    deliver(channel, MAX_FRAME_BYTES + 1);
+
+    // The ceiling bounds what this transport will carry in either direction:
+    // inbound it is what stops one message becoming one enormous allocation.
+    expect(seen).toHaveLength(0);
+    expect(channel.closed).toBe(true);
+    expect(onClosed).toHaveBeenCalledWith(expect.any(FrameTooLargeError));
+  });
+
+  it('carries a message at the ceiling itself', () => {
+    const { channel, seen } = limited(() => 0);
+
+    deliver(channel, MAX_FRAME_BYTES);
+
+    expect(seen).toHaveLength(1);
+  });
+
   it('carries a burst that stays inside both bounds', () => {
     const { channel, seen, onClosed } = limited(() => 0);
 

@@ -82,7 +82,12 @@ export type {
   CatchUpPorts,
 } from './catchUpExchange';
 
-export { startCatchUpSession } from './catchUpSession';
+export {
+  MAX_SESSION_QUEUE_BYTES,
+  MAX_SESSION_QUEUE_MESSAGES,
+  SessionQueueOverflowError,
+  startCatchUpSession,
+} from './catchUpSession';
 export type { CatchUpSession } from './catchUpSession';
 export { fitsMessageBudget, packFrames } from './catchUpBatching';
 export type { PackedFrames } from './catchUpBatching';
