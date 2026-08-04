@@ -3,6 +3,9 @@ import {
   BUFFER_HIGH_WATER_BYTES,
   FrameTooLargeError,
   MAX_FRAME_BYTES,
+  MAX_OUTBOX_BYTES,
+  MAX_OUTBOX_MESSAGES,
+  TransportBackpressureError,
   createWebRtcTransport,
   type DataChannelLike,
 } from './webRtcTransport';
@@ -164,6 +167,117 @@ describe('backpressure', () => {
     createWebRtcTransport(channel);
     expect(channel.bufferedAmountLowThreshold).toBeGreaterThan(0);
     expect(channel.bufferedAmountLowThreshold).toBeLessThan(BUFFER_HIGH_WATER_BYTES);
+  });
+});
+
+describe('outbox bounds', () => {
+  /** A message at the frame ceiling: the largest one legally queued. */
+  const full = (): Uint8Array => new Uint8Array(MAX_FRAME_BYTES);
+  /** How many of those the byte bound holds. */
+  const capacity = MAX_OUTBOX_BYTES / MAX_FRAME_BYTES;
+
+  /** Stall the channel so everything written to it queues. */
+  const stalled = () => {
+    const channel = fakeChannel();
+    const transport = createWebRtcTransport(channel);
+    channel.bufferedAmount = BUFFER_HIGH_WATER_BYTES;
+    return { channel, transport };
+  };
+
+  it('holds the byte bound in full messages, and refuses one byte past it', () => {
+    const { transport } = stalled();
+
+    for (let i = 0; i < capacity; i += 1) transport.send(full());
+
+    // The boundary itself fits; the next byte is what the session fails on.
+    expect(() => transport.send(new Uint8Array([1]))).toThrow(TransportBackpressureError);
+  });
+
+  it('refuses past the message bound even when the bytes would fit', () => {
+    const { transport } = stalled();
+
+    for (let i = 0; i < MAX_OUTBOX_MESSAGES; i += 1) transport.send(new Uint8Array([1]));
+
+    expect(() => transport.send(new Uint8Array([1]))).toThrow(TransportBackpressureError);
+  });
+
+  it('reports what was queued and what would not fit', () => {
+    const { transport } = stalled();
+    for (let i = 0; i < capacity; i += 1) transport.send(full());
+
+    try {
+      transport.send(new Uint8Array(8));
+      expect.unreachable('the outbox accepted a message beyond its bound');
+    } catch (error) {
+      expect(error).toBeInstanceOf(TransportBackpressureError);
+      expect(error).toMatchObject({
+        pendingBytes: MAX_OUTBOX_BYTES,
+        attemptedBytes: 8,
+      });
+    }
+  });
+
+  it('fails the session visibly rather than dropping a frame', () => {
+    const { channel, transport } = stalled();
+    const onClosed = vi.fn();
+    transport.onClosed?.(onClosed);
+    for (let i = 0; i < capacity; i += 1) transport.send(full());
+
+    expect(() => transport.send(new Uint8Array([1]))).toThrow(TransportBackpressureError);
+
+    // Operations stay in the journal, so a failed session reconnects and catches
+    // up; a silent drop would be indistinguishable from success.
+    expect(channel.closed).toBe(true);
+    expect(onClosed).toHaveBeenCalledTimes(1);
+  });
+
+  it('counts down as the queue drains, so room comes back', () => {
+    const { channel, transport } = stalled();
+    for (let i = 0; i < capacity; i += 1) transport.send(full());
+
+    // Draining stops at the channel's own high-water mark, so only part of the
+    // queue leaves — and only that part's room comes back.
+    channel.bufferedAmount = 0;
+    channel.emit('bufferedamountlow');
+    const drained = BUFFER_HIGH_WATER_BYTES / MAX_FRAME_BYTES;
+    expect(channel.sent).toHaveLength(drained);
+
+    for (let i = 0; i < drained; i += 1) {
+      expect(() => transport.send(full())).not.toThrow();
+    }
+    expect(() => transport.send(new Uint8Array([1]))).toThrow(TransportBackpressureError);
+  });
+
+  it('accounts for a partial flush, not just a complete one', () => {
+    const { channel, transport } = stalled();
+    for (let i = 0; i < capacity; i += 1) transport.send(full());
+
+    // The channel takes one message and fills up again.
+    channel.bufferedAmount = 0;
+    channel.send = ((data: ArrayBuffer) => {
+      channel.sent.push(data);
+      channel.bufferedAmount = BUFFER_HIGH_WATER_BYTES;
+    }) as DataChannelLike['send'];
+    channel.emit('bufferedamountlow');
+    expect(channel.sent).toHaveLength(1);
+
+    // One message left the queue, so room for exactly one came back.
+    expect(() => transport.send(full())).not.toThrow();
+    expect(() => transport.send(new Uint8Array([1]))).toThrow(TransportBackpressureError);
+  });
+
+  it('starts a replacement session with an empty outbox', () => {
+    const { channel, transport } = stalled();
+    for (let i = 0; i < capacity; i += 1) transport.send(full());
+    transport.close();
+
+    // The same channel, taken up again: what the failed session queued is gone,
+    // and the catch-up that follows is not refused on its first frame.
+    const replacement = createWebRtcTransport(channel);
+    channel.bufferedAmount = BUFFER_HIGH_WATER_BYTES;
+    for (let i = 0; i < capacity; i += 1) {
+      expect(() => replacement.send(full())).not.toThrow();
+    }
   });
 });
 

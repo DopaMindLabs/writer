@@ -1,4 +1,17 @@
 import type { SyncTransport } from '../../core/transport.types';
+import {
+  BUFFER_HIGH_WATER_BYTES,
+  FrameTooLargeError,
+  MAX_FRAME_BYTES,
+} from './frameCeiling';
+import { TransportBackpressureError, createOutboxQueue } from './outboxQueue';
+
+export { BUFFER_HIGH_WATER_BYTES, FrameTooLargeError, MAX_FRAME_BYTES } from './frameCeiling';
+export {
+  MAX_OUTBOX_BYTES,
+  MAX_OUTBOX_MESSAGES,
+  TransportBackpressureError,
+} from './outboxQueue';
 
 /**
  * A {@link SyncTransport} over one WebRTC data channel, per runbook §22.
@@ -12,12 +25,6 @@ import type { SyncTransport } from '../../core/transport.types';
  * compromised channel still cannot forge or read content.
  */
 
-/** Above this, a peer is flooding rather than syncing (threat model §5.13). */
-export const MAX_FRAME_BYTES = 262_144;
-
-/** Stop writing once this much is queued; resume on `bufferedamountlow`. */
-export const BUFFER_HIGH_WATER_BYTES = 1_048_576;
-
 /** The subset of `RTCDataChannel` this transport needs, so tests need no WebRTC. */
 export interface DataChannelLike {
   /** What the channel is for. Routes a channel the peer opened to its purpose. */
@@ -29,13 +36,6 @@ export interface DataChannelLike {
   close: () => void;
   addEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => void;
   removeEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => void;
-}
-
-export class FrameTooLargeError extends Error {
-  constructor(size: number) {
-    super(`Frame of ${String(size)} bytes exceeds the ${String(MAX_FRAME_BYTES)} byte limit`);
-    this.name = 'FrameTooLargeError';
-  }
 }
 
 const toBytes = (data: unknown): Uint8Array | null => {
@@ -68,15 +68,15 @@ const isGone = (channel: DataChannelLike): boolean =>
  * timer, so there is no write-on-settle loop.
  */
 const createChannelOutbox = (channel: DataChannelLike) => {
-  const pending: ArrayBuffer[] = [];
+  const pending = createOutboxQueue();
   const watchers = new Set<() => void>();
   let closed = false;
 
   return {
     flush: (): void => {
-      while (pending.length > 0 && isOpen(channel)) {
+      while (pending.size > 0 && isOpen(channel)) {
         if (channel.bufferedAmount >= BUFFER_HIGH_WATER_BYTES) return;
-        const next = pending.shift();
+        const next = pending.take();
         if (next === undefined) return;
         channel.send(next);
       }
@@ -87,7 +87,7 @@ const createChannelOutbox = (channel: DataChannelLike) => {
       const copy = new Uint8Array(bytes.byteLength);
       copy.set(bytes);
       if (!isOpen(channel) || channel.bufferedAmount >= BUFFER_HIGH_WATER_BYTES) {
-        pending.push(copy.buffer);
+        pending.add(copy.buffer);
         return;
       }
       channel.send(copy.buffer);
@@ -96,7 +96,7 @@ const createChannelOutbox = (channel: DataChannelLike) => {
     markClosed: (): void => {
       if (closed) return;
       closed = true;
-      pending.length = 0;
+      pending.discard();
       for (const watcher of [...watchers]) watcher();
     },
     onClosed: (callback: () => void): (() => void) => {
@@ -108,7 +108,7 @@ const createChannelOutbox = (channel: DataChannelLike) => {
     /** Let go without a word: whoever closed this transport already knows. */
     release: (): void => {
       closed = true;
-      pending.length = 0;
+      pending.discard();
       watchers.clear();
     },
   };
@@ -157,10 +157,35 @@ export const createWebRtcTransport = (channel: DataChannelLike): SyncTransport =
   channel.addEventListener('close', outbox.markClosed);
   channel.addEventListener('error', outbox.markClosed);
 
+  /**
+   * End the session on a failure the consumer must see.
+   *
+   * The queue is discarded, the listeners detached and the channel closed, and
+   * whoever is watching is told the transport has gone — the same signal a
+   * channel dying on its own produces, because to a consumer it is the same
+   * fact. The error itself goes to the caller, which is the only party that can
+   * say what it was trying to send.
+   */
+  const failAndClose = (): void => {
+    if (released) return;
+    released = true;
+    outbox.markClosed();
+    listeners.clear();
+    detach();
+    channel.close();
+  };
+
   return {
     sharesStore: false,
     maxMessageBytes: MAX_FRAME_BYTES,
-    send: outbox.send,
+    send: (bytes) => {
+      try {
+        outbox.send(bytes);
+      } catch (error) {
+        if (error instanceof TransportBackpressureError) failAndClose();
+        throw error;
+      }
+    },
     onMessage: (callback) => {
       listeners.add(callback);
       return () => {

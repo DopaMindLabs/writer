@@ -339,7 +339,14 @@ An open data channel that floods frames, or a peer that reconnects in a tight
 loop, exhausting CPU (every frame costs AES-GCM plus SHA-256), memory or storage.
 
 **Mitigation.** Bounded application frame sizes; backpressure through
-`bufferedAmount` and `bufferedamountlow` rather than unbounded queueing; reconnect
+`bufferedAmount` and `bufferedamountlow` rather than unbounded queueing, and the
+queue in front of the channel bounded in its own right by both message count and
+total bytes (`MAX_OUTBOX_MESSAGES`, `MAX_OUTBOX_BYTES`) — `bufferedAmount` bounds
+only the browser's buffer, so a stalled connection with the user still writing
+would otherwise grow the application's queue until the tab died. Exceeding either
+bound fails the session with a typed `TransportBackpressureError` rather than
+dropping a frame: the operation is still journalled, so a reconnection catches
+up, whereas a silent drop makes success and data loss look the same. Reconnect
 with bounded exponential backoff and jitter, and no write-on-settle loop; typed
 timeout and client-isolation failures instead of an infinite connecting state.
 Inbound frames are rate-limited per peer, and a peer exceeding it has its session
