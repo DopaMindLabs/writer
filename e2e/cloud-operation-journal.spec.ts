@@ -77,6 +77,33 @@ const waitForFrames = async (
   return readJournal(page);
 };
 
+
+/** Plant a frame in the journal the way a durable provider replicates one in. */
+const plantFrame = (
+  page: import('@playwright/test').Page,
+  frame: StoredFrame & Record<string, unknown>,
+): Promise<void> =>
+  page.evaluate(async (planted) => {
+    const { db } = window as unknown as {
+      db?: { syncOperations?: { put: (row: unknown) => Promise<unknown> } };
+    };
+    if (!db?.syncOperations) throw new Error('the app database is not exposed');
+    await db.syncOperations.put(planted);
+  }, frame);
+
+/** Read a table's rows through the same handle, for tables a peer must not touch. */
+const countRows = (
+  page: import('@playwright/test').Page,
+  table: string,
+): Promise<number> =>
+  page.evaluate(async (name) => {
+    const { db } = window as unknown as {
+      db?: { table: (name: string) => { count: () => Promise<number> } };
+    };
+    if (!db?.table) throw new Error('the app database is not exposed');
+    return db.table(name).count();
+  }, table);
+
 test.describe('the operation journal (real IndexedDB)', () => {
   test('journals an encrypted frame for a note created after setup', async ({ page }) => {
     const uncaught: string[] = [];
@@ -224,5 +251,107 @@ test.describe('the operation journal (real IndexedDB)', () => {
     const frames = await waitForFrames(page);
     expect(frames.some((frame) => frame.entityTable === 'notes')).toBe(true);
     expect(frames.every((frame) => frame.payload.length > 0)).toBe(true);
+  });
+});
+
+test.describe('what the sweep refuses (real IndexedDB)', () => {
+  /**
+   * Set up encryption, write a note, and hand back a frame the app authored,
+   * with the space it lives in — a sweep only runs where the key ring unlocks,
+   * so every later load has to carry the cloud flag too.
+   */
+  const journalledNote = async (
+    page: import('@playwright/test').Page,
+  ): Promise<{ note: StoredFrame; spaceId: string }> => {
+    await page.goto('/?cloud-sync=on&reseed=1#/settings?tab=cloudSync');
+    await expect(page.getByTestId('cloud-section')).toBeVisible();
+    await setUpEncryption(page);
+    await page.reload();
+
+    await page.goto('/#/');
+    const spaceId = await getFirstSpaceIdFromHome(page);
+    await page.goto(`/#/s/${spaceId}/brain-space`);
+    await expect(page.getByTestId('brain-canvas-toolbar')).toBeVisible();
+    const noteCards = page
+      .getByTestId('brain-canvas-content')
+      .locator(':scope > [data-testid^="brain-note-"]');
+    const before = await noteCards.count();
+    await page.getByTestId('brain-canvas-tool-question').click();
+    await expect(noteCards).toHaveCount(before + 1);
+
+    const frames = await waitForFrames(page);
+    const note = frames.find((frame) => frame.entityTable === 'notes');
+    if (note === undefined) throw new Error('no note frame was journalled');
+    return { note, spaceId };
+  };
+
+  /** Load the space again with sync on, which is what drives an ingestion sweep. */
+  const sweepAgain = async (
+    page: import('@playwright/test').Page,
+    spaceId: string,
+  ): Promise<void> => {
+    await page.goto(`/?cloud-sync=on#/s/${spaceId}/brain-space`);
+    await expect(page.getByTestId('brain-canvas-toolbar')).toBeVisible();
+  };
+
+  test('applies nothing for a table a peer may not write to', async ({ page }) => {
+    const refusals: string[] = [];
+    page.on('console', (message) => {
+      if (message.type() === 'error') refusals.push(message.text());
+    });
+    const { note, spaceId } = await journalledNote(page);
+    const settingsBefore = await countRows(page, 'settings');
+
+    // A provider can write whatever it likes into the journal. Retargeting a
+    // frame the app itself authored keeps the payload hash intact, so what
+    // refuses this is the table policy rather than the codec.
+    await plantFrame(page, {
+      ...(note as StoredFrame & Record<string, unknown>),
+      operationId: 'op-forged-table',
+      entityTable: 'settings',
+      entityId: 'global',
+    });
+    await sweepAgain(page, spaceId);
+
+    // The planted frame is still sitting in the journal: a provider's write is
+    // not undone, it is simply never applied.
+    expect(
+      (await readJournal(page)).some((frame) => frame.operationId === 'op-forged-table'),
+    ).toBe(true);
+
+    // The sweep runs at boot. Nothing about this frame may reach the settings
+    // table, and it must never be recorded as accepted.
+    await expect.poll(() => countRows(page, 'settings')).toBe(settingsBefore);
+    const accepted = await readInbox(page);
+    expect(accepted.some((entry) => entry.operationId === 'op-forged-table')).toBe(false);
+    // The refusal is said out loud: an attempted boundary violation that left
+    // no trace would be indistinguishable from a frame that never arrived.
+    await expect
+      .poll(() => refusals.filter((text) => /Rejected an inbound sync frame/.test(text)))
+      .not.toEqual([]);
+  });
+
+  test('applies nothing signed by a device it has never paired with', async ({ page }) => {
+    const { note, spaceId } = await journalledNote(page);
+    const inboxBefore = (await readInbox(page)).length;
+
+    // Same frame, claiming another author. Its signature can no longer be
+    // checked against anything this device trusts.
+    await plantFrame(page, {
+      ...(note as StoredFrame & Record<string, unknown>),
+      operationId: 'op-forged-author',
+      deviceId: 'a-device-this-one-never-paired-with',
+    });
+    await sweepAgain(page, spaceId);
+
+    // The sweep did run: the frames this device authored are accepted on the
+    // way past, which is what makes the forged one's absence meaningful.
+    await expect
+      .poll(async () => (await readInbox(page)).length, {
+        message: 'the sweep never ran after the forged frame was planted',
+      })
+      .toBeGreaterThan(inboxBefore);
+    const accepted = await readInbox(page);
+    expect(accepted.some((entry) => entry.operationId === 'op-forged-author')).toBe(false);
   });
 });
