@@ -91,3 +91,59 @@ test('a space deleted on one device stops existing on the other', async ({
 
   await expect(spaceRail(second)).toHaveCount(held, { timeout: SYNC_TIMEOUT });
 });
+
+/** What deletion state this device is still holding, read through the app's handle. */
+const heldDeletions = (page: Page): Promise<number> =>
+  page.evaluate(async () => {
+    const { db } = window as unknown as {
+      db?: { syncTombstones?: { count: () => Promise<number> } };
+    };
+    if (!db?.syncTombstones) throw new Error('the app database is not exposed');
+    return db.syncTombstones.count();
+  });
+
+test('removing the last device lets go of the deletions kept for it', async ({
+  page,
+  browser,
+  browserName,
+}) => {
+  // Pairing twice over is the expensive part of this file, and this test only
+  // needs one.
+  test.setTimeout(120_000);
+  const second = await openCoveredContext(browser, browserName);
+  await reseedAndGoHome(page);
+  await second.goto('/#/');
+
+  await pair(page, second);
+  await expect(spaceRail(second).first()).toBeVisible({ timeout: SYNC_TIMEOUT });
+  const held = await spaceRail(second).count();
+
+  const doomed = await addSpace(page, 'Doomed');
+  await expect(spaceRail(second)).toHaveCount(held + 1, { timeout: SYNC_TIMEOUT });
+  await deleteSpace(page, doomed, 'Doomed');
+  await expect(spaceRail(second)).toHaveCount(held, { timeout: SYNC_TIMEOUT });
+
+  // A deletion is kept until every paired device has confirmed it, with no
+  // window that would ever take it: this device is holding that state now.
+  await expect.poll(() => heldDeletions(page)).toBeGreaterThan(0);
+
+  // Sync boot compacts the journal, which is where a deletion every device has
+  // confirmed is let go of. This one has been confirmed by the only peer there
+  // is, so the reload is what should release it.
+  // Deleting the space left this device on the settings screen of a space that
+  // no longer exists; the device list is somewhere else entirely. Loading it
+  // afresh is also what boots sync again, and boot is when the journal is
+  // compacted.
+  await page.goto('/#/settings?tab=deviceSync');
+  await page.reload();
+  await page.locator('[data-testid^="trusted-device-remove-"]').first().click();
+  await expect(page.getByText('Removed', { exact: true })).toBeVisible();
+
+  // Removing the device is the release valve. With nobody left to confirm the
+  // deletion, what was being held is held for no one.
+  await expect
+    .poll(() => heldDeletions(page), {
+      message: 'removing the last device did not release its deletion state',
+    })
+    .toBe(0);
+});
