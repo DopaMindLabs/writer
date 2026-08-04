@@ -646,10 +646,16 @@ wired into the app.
   operation from another has not thereby been seen. Inbox rows are **never**
   pruned — the inbox is the replay guard — and a deletion is exempt from the
   window entirely: a tombstone and the signed delete frame it names are one
-  retention unit, released together once every still-trusted device has
-  acknowledged the deletion, or when that device is removed. Age alone can take
-  neither, so a long-absent device can neither resurrect a deleted entity nor be
-  left holding it. A peer last seen beyond the window resynchronises by full
+  retention unit, dropped together in one transaction. A peer's acknowledgement
+  marks every deletion from that origin it has read past, recorded with the
+  watermark it arrived with, so the evidence outlives the frames the comparison
+  was made against. Release needs every still-trusted device to have marked it;
+  age alone can take neither half, so a long-absent device can neither resurrect
+  a deleted entity nor be left holding it. Removing a device is the other
+  release: it is what lets go of what was only being kept for that device, and
+  what releases everything when the last device goes — a routine pass with no
+  devices paired deliberately holds, because a peer paired tomorrow could still
+  be holding what was deleted today. A peer last seen beyond the window resynchronises by full
   state exchange, not journal replay: it is sent freshly minted `put` frames for
   current state alongside the scope's retained deletions, which merge by the
   normal convergence rules rather than overwriting what it changed while away.

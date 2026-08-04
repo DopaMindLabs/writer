@@ -123,8 +123,14 @@ export const compactableOperationIds = (
 export const releasableTombstones = (
   tombstones: readonly SyncTombstone[],
   peers: readonly PeerAcknowledgement[],
+  options: { withoutPeersIsUnanimous?: boolean } = {},
 ): SyncTombstone[] => {
-  if (peers.length === 0) return [];
+  // With nobody to wait for, unanimity is vacuous. A routine pass therefore
+  // holds: a device between pairings is not a device that has finished with
+  // them, and a peer paired tomorrow could still be holding what was deleted
+  // today. Removal is the exception, because there the user has said the
+  // relationship is over — see `withoutPeersIsUnanimous`.
+  if (peers.length === 0) return options.withoutPeersIsUnanimous ? [...tombstones] : [];
   return tombstones.filter((tombstone) => {
     const acknowledged = new Set(tombstone.acknowledgedBy);
     return peers.every((peer) => acknowledged.has(String(peer.deviceId)));

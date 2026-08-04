@@ -30,6 +30,7 @@ import { createTrustedDeviceStore } from './trustedDeviceStore';
 import { peerSessions } from './peerSessionRegistry';
 import { getJournalRetentionDaysFor } from './journalRetentionPreference';
 import { currentPrincipal } from './writerEntityMetadata';
+import { recordPeerAcknowledgement } from './materialization/acknowledgeDeletions';
 import { createWriterOperationStore } from './materialization/writerOperationStore';
 import { createWriterFullState } from './materialization/writerFullState';
 import { writerJournalDeps } from './materialization/writerJournalDeps';
@@ -144,15 +145,19 @@ const catchUpPorts = ({
   fullState: createWriterFullState({ db, ...writerJournalDeps }),
   retentionCutoff: () => retentionCutoff({ retentionDays: retentionDays(), now: Date.now() }),
   recordPeerAcknowledgement: (acknowledgement) =>
-    registry.acknowledge({
-      // The peer on this connection is what has read up to here; the origin is
-      // whose operations it read. Conflating the two would credit an
-      // acknowledgement to the wrong device and let compaction drop frames that
-      // peer never received.
-      deviceId: peer.deviceId,
-      accessScopeId: acknowledgement.accessScopeId,
-      originDeviceId: acknowledgement.originDeviceId,
-      operationId: acknowledgement.operationId,
+    recordPeerAcknowledgement({
+      db,
+      registry,
+      acknowledgement: {
+        // The peer on this connection is what has read up to here; the origin is
+        // whose operations it read. Conflating the two would credit an
+        // acknowledgement to the wrong device and let compaction drop frames that
+        // peer never received.
+        deviceId: peer.deviceId,
+        accessScopeId: acknowledgement.accessScopeId,
+        originDeviceId: acknowledgement.originDeviceId,
+        operationId: acknowledgement.operationId,
+      },
     }),
   // New frames are journalled, not applied: the shared sweep is what applies
   // them, and it is what makes double delivery harmless.
