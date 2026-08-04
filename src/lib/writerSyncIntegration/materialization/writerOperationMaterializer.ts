@@ -11,15 +11,22 @@ import type {
 } from 'writer-sync/operations';
 import { writerClock } from '@/lib/writerSyncIntegration/writerLogicalClock';
 import { materializeAttachmentFrame } from './attachmentFrameMaterializer';
-import { requireJournalledTable, type JournalledTable } from './frameAdmission';
+import {
+  UntrustedFrameError,
+  requireJournalledTable,
+  type JournalledTable,
+} from './frameAdmission';
+import type { FrameVerifier } from './writerFrameVerifier';
 
 export { AttachmentChunksPendingError } from './attachmentFrameMaterializer';
-export { DisallowedOperationTableError } from './frameAdmission';
+export { DisallowedOperationTableError, UntrustedFrameError } from './frameAdmission';
 
 /**
  * Applies inbound operation frames to Writer's local state. The invariants the
  * runbook demands live here:
  *
+ * - an operation is applied only if a device this one trusts signed it, whatever
+ *   route it arrived by;
  * - an operation may only name a table the policy journals as synced content,
  *   so a paired device cannot reach this device's control tables;
  * - an operation stamped further ahead than the clock will merge is refused
@@ -111,18 +118,22 @@ const applyPut = async (options: {
  * The payload is decrypted before the transaction opens (Web Crypto must not
  * suspend a live IndexedDB transaction); everything stateful commits atomically.
  *
- * TODO (#209): `verifyFrame` checks structure and the payload hash — it does not
- * authenticate the author. A frame arriving over a peer link is signature-checked
- * by the catch-up exchange before it is journalled, but a frame a durable
- * provider replicates straight into `syncOperations` reaches here with nothing
- * having vouched for it, so a hostile provider can forge one and have it applied.
- * The check belongs here, on every caller, once a cloud-only device has a way to
- * become trusted (`trustedDevices` is local-only and written only by pairing).
+ * Admission runs in one order for every provider: structure and payload hash,
+ * then the table policy, then the author, then the clock. The peer exchange
+ * verifies signatures again before journalling — the two are defence in depth,
+ * not a duplicate, because a frame reaching this point may never have crossed a
+ * peer link at all.
  */
 export const applyInboundFrame = async (options: {
   db: LoremDB;
   frame: unknown;
   ring: SyncKeyRing;
+  /**
+   * Who this device is willing to accept an operation from. Required rather
+   * than defaulted: an ingestion path that forgot it would apply whatever a
+   * provider chose to write into the journal.
+   */
+  verifySignature: FrameVerifier;
   /** This device's wall clock, injectable so boundary tests are deterministic. */
   now?: () => number;
 }): Promise<MaterializeResult> => {
@@ -132,6 +143,12 @@ export const applyInboundFrame = async (options: {
   // Nothing below this line — decryption, the journal, the transaction — runs
   // for an operation naming a table peers do not own.
   const table = requireJournalledTable(db, frame.entityTable);
+  // Nor is a hash any evidence of an author: whoever wrote this frame into the
+  // journal must be someone this device trusts, checked here so the check
+  // cannot be skipped by the route the frame took to get here.
+  if (!(await options.verifySignature(frame))) {
+    throw new UntrustedFrameError(String(frame.deviceId));
+  }
   // Nor may it be stamped in a future this device's clock refuses to merge:
   // such an operation would win every conflict it entered while the clock that
   // rejected it stood still.

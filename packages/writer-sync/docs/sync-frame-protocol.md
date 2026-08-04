@@ -301,11 +301,20 @@ refuses an empty signature. It refuses rather than throws, because Stage 1 frame
 with `''` are ordinary old data on disk, not a caller's mistake — such a frame is
 simply no longer attributable and is not journalled from a peer.
 
+**Every route, not just the peer link.** Materialisation verifies the signature
+itself, so a frame a durable provider replicates straight into the journal is
+attributed before it is decrypted, journalled or applied. The host supplies the
+verifier; Writer's (`writerFrameVerifier.ts`) accepts a paired device from the
+registry, and this device's own frames against its own public key — a frame
+forged under this device's id fails like any other.
+
 **A consequence worth stating.** Refusing unknown origins means a device accepts
 operations only from devices it has itself paired with. Where A–B and B–C are
-paired but A–C are not, B cannot relay A's operations onward to C. That is the
-conservative reading of the rule above; widening it needs a way for C to learn
-A's identity key that does not amount to B vouching for it.
+paired but A–C are not, B cannot relay A's operations onward to C — and a device
+that reaches another only through a durable provider, having never paired with
+it, converges nothing. That is the conservative reading of the rule above;
+widening it needs a way for C to learn A's identity key that does not amount to
+B vouching for it.
 
 ---
 

@@ -8,16 +8,32 @@ import {
 } from '@/db/schema';
 import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { saveDeviceKeyRing, forgetDeviceKeyRing } from '@/lib/cloud/crypto/keyStore';
-import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
-import type { SyncKeyRing } from 'writer-sync/crypto';
+import {
+  TrustedDeviceStatus,
+  asDeviceId,
+  asOperationId,
+  asPrincipalId,
+} from 'writer-sync/core';
+import {
+  generateDeviceIdentity,
+  publicJwkOf,
+  type DeviceIdentityKeys,
+  type SyncKeyRing,
+} from 'writer-sync/crypto';
 import {
   TRANSFER_CHUNK_BYTES,
   type EncryptedSyncFrame,
 } from 'writer-sync/operations';
+import { createTrustedDeviceStore } from '@/lib/writerSyncIntegration/trustedDeviceStore';
 import { prepareFramePayload } from './attachmentFramePayload';
 import { sweepUnappliedFrames } from './frameIngestion';
-import { makeDeleteFrame, makePutFrame } from './writerOperationFactory';
-import { applyInboundFrame } from './writerOperationMaterializer';
+import {
+  makeDeleteFrame,
+  makePutFrame,
+  signAuthoredFrames,
+} from './writerOperationFactory';
+import { createWriterFrameVerifier } from './writerFrameVerifier';
+import { UntrustedFrameError, applyInboundFrame } from './writerOperationMaterializer';
 
 /**
  * The provider contract: an operation frame is immutable and the receiver is
@@ -33,6 +49,13 @@ const DEVICE_REMOTE = asDeviceId('remote-device');
 
 let db: LoremDB;
 let ring: SyncKeyRing;
+/** The remote device's identity, as a pairing would have left it recorded. */
+let remote: DeviceIdentityKeys;
+
+/** Sign a frame as the remote device, the way its author would have. */
+const authoredByRemote = async (
+  frame: EncryptedSyncFrame,
+): Promise<EncryptedSyncFrame> => (await signAuthoredFrames(remote.privateKey, [frame]))[0];
 
 const note = (overrides: Partial<Note> = {}): Note => ({
   accessScopeId: 's1',
@@ -77,12 +100,14 @@ const attachmentFrame = async () => {
   });
   return {
     chunks: prepared.chunks,
-    frame: await makePutFrame({
-      ring,
-      deviceId: DEVICE_REMOTE,
-      entityTable: 'noteAttachments',
-      row: prepared.row,
-    }),
+    frame: await authoredByRemote(
+      await makePutFrame({
+        ring,
+        deviceId: DEVICE_REMOTE,
+        entityTable: 'noteAttachments',
+        row: prepared.row,
+      }),
+    ),
   };
 };
 
@@ -102,6 +127,7 @@ const deliverThroughSecondProvider = (frame: EncryptedSyncFrame) =>
     // never the in-memory object this process already holds.
     frame: JSON.parse(JSON.stringify(frame)) as unknown,
     ring,
+    verifySignature: createWriterFrameVerifier(db),
   });
 
 beforeEach(async () => {
@@ -110,6 +136,19 @@ beforeEach(async () => {
   await saveDeviceKeyRing({ accountId: null, ring });
   db = new LoremDB('multi-provider-contract');
   await db.open();
+  // Both routes verify attribution, so the remote device is one this database
+  // has paired with — otherwise nothing it authored would be applied by either.
+  remote = await generateDeviceIdentity();
+  await createTrustedDeviceStore(db).trust({
+    deviceId: DEVICE_REMOTE,
+    publicIdentityJwk: await publicJwkOf(remote.publicKey),
+    principalId: asPrincipalId('remote-author'),
+    addedAt: 1_700_000_000_000,
+    lastSessionAt: 1_700_000_000_000,
+    displayName: 'Remote',
+    status: TrustedDeviceStatus.Active,
+    acknowledgedOperations: {},
+  });
 });
 
 afterEach(async () => {
@@ -119,12 +158,14 @@ afterEach(async () => {
 
 describe('the same frame through two providers', () => {
   it('materialises once when the durable provider delivers first', async () => {
-    const frame = await makePutFrame({
-      ring,
-      deviceId: DEVICE_REMOTE,
-      entityTable: 'notes',
-      row: note(),
-    });
+    const frame = await authoredByRemote(
+      await makePutFrame({
+        ring,
+        deviceId: DEVICE_REMOTE,
+        entityTable: 'notes',
+        row: note(),
+      }),
+    );
 
     expect(await deliverThroughDurableProvider(frame)).toBe(1);
     expect(await deliverThroughSecondProvider(frame)).toBe('applied');
@@ -137,12 +178,14 @@ describe('the same frame through two providers', () => {
   });
 
   it('materialises once when the second provider delivers first', async () => {
-    const frame = await makePutFrame({
-      ring,
-      deviceId: DEVICE_REMOTE,
-      entityTable: 'notes',
-      row: note(),
-    });
+    const frame = await authoredByRemote(
+      await makePutFrame({
+        ring,
+        deviceId: DEVICE_REMOTE,
+        entityTable: 'notes',
+        row: note(),
+      }),
+    );
 
     expect(await deliverThroughSecondProvider(frame)).toBe('applied');
     // The durable provider still replicates the row into the journal, but the
@@ -154,12 +197,14 @@ describe('the same frame through two providers', () => {
   });
 
   it('journals the received ciphertext verbatim, so it can be served onward', async () => {
-    const frame = await makePutFrame({
-      ring,
-      deviceId: DEVICE_REMOTE,
-      entityTable: 'notes',
-      row: note(),
-    });
+    const frame = await authoredByRemote(
+      await makePutFrame({
+        ring,
+        deviceId: DEVICE_REMOTE,
+        entityTable: 'notes',
+        row: note(),
+      }),
+    );
 
     await deliverThroughSecondProvider(frame);
 
@@ -180,21 +225,25 @@ describe('the same frame through two providers', () => {
   });
 
   it('converges a delete identically through either provider', async () => {
-    const put = await makePutFrame({
-      ring,
-      deviceId: DEVICE_REMOTE,
-      entityTable: 'notes',
-      row: note(),
-    });
+    const put = await authoredByRemote(
+      await makePutFrame({
+        ring,
+        deviceId: DEVICE_REMOTE,
+        entityTable: 'notes',
+        row: note(),
+      }),
+    );
     await deliverThroughSecondProvider(put);
 
-    const deletion = makeDeleteFrame({
-      ring,
-      deviceId: DEVICE_REMOTE,
-      entityTable: 'notes',
-      entityId: 'n1',
-      accessScopeId: 's1',
-    });
+    const deletion = await authoredByRemote(
+      makeDeleteFrame({
+        ring,
+        deviceId: DEVICE_REMOTE,
+        entityTable: 'notes',
+        entityId: 'n1',
+        accessScopeId: 's1',
+      }),
+    );
     expect(await deliverThroughDurableProvider(deletion)).toBe(1);
     expect(await deliverThroughSecondProvider(deletion)).toBe('applied');
 
@@ -209,17 +258,60 @@ describe('the same frame through two providers', () => {
     // A put this device has never seen, still older than the deletion, is
     // rejected on its merits rather than by the inbox: it must not resurrect
     // the note whichever provider carries it.
-    const stalePut = await makePutFrame({
-      ring,
-      deviceId: DEVICE_REMOTE,
-      entityTable: 'notes',
-      row: note({
-        mutationId: asOperationId('op-n1-stale'),
-        logicalUpdatedAt: { millis: 500, counter: 0 },
-        body: 'resurrected',
+    const stalePut = await authoredByRemote(
+      await makePutFrame({
+        ring,
+        deviceId: DEVICE_REMOTE,
+        entityTable: 'notes',
+        row: note({
+          mutationId: asOperationId('op-n1-stale'),
+          logicalUpdatedAt: { millis: 500, counter: 0 },
+          body: 'resurrected',
+        }),
       }),
-    });
+    );
     expect(await deliverThroughSecondProvider(stalePut)).toBe('tombstoned');
     expect(await db.notes.get('n1')).toBeUndefined();
+  });
+
+  it('applies nothing a durable provider forged into the journal', async () => {
+    const impostor = await generateDeviceIdentity();
+    // A deletion needs no payload, so forging one costs an attacker nothing but
+    // the signature it cannot produce.
+    const forged = (
+      await signAuthoredFrames(
+        impostor.privateKey,
+        [
+          makeDeleteFrame({
+            ring,
+            deviceId: DEVICE_REMOTE,
+            entityTable: 'notes',
+            entityId: 'n1',
+            accessScopeId: 's1',
+          }),
+        ],
+      )
+    )[0];
+    await deliverThroughSecondProvider(
+      await authoredByRemote(
+        await makePutFrame({
+          ring,
+          deviceId: DEVICE_REMOTE,
+          entityTable: 'notes',
+          row: note(),
+        }),
+      ),
+    );
+
+    expect(await deliverThroughDurableProvider(forged)).toBe(0);
+    await expect(deliverThroughSecondProvider(forged)).rejects.toBeInstanceOf(
+      UntrustedFrameError,
+    );
+
+    // The note the trusted device wrote is untouched, and the forgery was
+    // never accepted into the inbox.
+    expect((await db.notes.get('n1'))?.body).toBe('from-remote');
+    expect(await db.syncTombstones.count()).toBe(0);
+    expect(await db.syncInbox.count()).toBe(1);
   });
 });

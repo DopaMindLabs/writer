@@ -13,6 +13,14 @@ import { policyFor } from '@/lib/writerSyncIntegration/writerTablePolicy';
  * list would be a second place for the rule to drift.
  */
 
+/** An inbound operation nothing this device trusts is willing to vouch for. */
+export class UntrustedFrameError extends Error {
+  constructor(deviceId: string) {
+    super(`No trusted identity signed the operation device ${deviceId} claims`);
+    this.name = 'UntrustedFrameError';
+  }
+}
+
 /** An inbound operation named a table no peer may mutate on this device. */
 export class DisallowedOperationTableError extends Error {
   constructor(entityTable: string) {

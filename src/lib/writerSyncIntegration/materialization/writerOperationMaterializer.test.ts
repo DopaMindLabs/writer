@@ -28,7 +28,11 @@ import {
   TRANSFER_CHUNK_BYTES,
 } from 'writer-sync/operations';
 import { prepareFramePayload } from './attachmentFramePayload';
-import { DisallowedOperationTableError } from './frameAdmission';
+import {
+  DisallowedOperationTableError,
+  UntrustedFrameError,
+} from './frameAdmission';
+import { createWriterFrameVerifier } from './writerFrameVerifier';
 import {
   journalledDelete,
   journalledPut,
@@ -48,6 +52,14 @@ import {
 
 const DEVICE_A = asDeviceId('device-a');
 const DEVICE_B = asDeviceId('device-b');
+
+/**
+ * Attribution is not what these cases are about — convergence is — so the
+ * author check is satisfied outright here. What this device will actually
+ * accept as an author is `writerFrameVerifier.test.ts`, and what happens to a
+ * frame it will not is the refusal case at the end of this suite.
+ */
+const acceptAnyAuthor = (): Promise<boolean> => Promise.resolve(true);
 
 let dbA: LoremDB;
 let dbB: LoremDB;
@@ -120,7 +132,7 @@ const chunkedAttachmentFrame = async () => {
 const shipAll = async (from: LoremDB, to: LoremDB): Promise<void> => {
   const frames = await from.syncOperations.toArray();
   for (const frame of frames) {
-    await applyInboundFrame({ db: to, frame: JSON.parse(JSON.stringify(frame)), ring });
+    await applyInboundFrame({ db: to, frame: JSON.parse(JSON.stringify(frame)), ring, verifySignature: acceptAnyAuthor });
   }
 };
 
@@ -206,7 +218,7 @@ describe('two-database operation convergence (hermetic)', () => {
       entityTable: 'notes',
       row: note({ mutationId: asOperationId('op-stale'), logicalUpdatedAt: { millis: 500, counter: 0 } }),
     });
-    await applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(stale)), ring });
+    await applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(stale)), ring, verifySignature: acceptAnyAuthor });
 
     expect(await dbB.notes.get('n1')).toBeUndefined();
     const tombstone = await dbB.syncTombstones.get(['notes', 'n1']);
@@ -240,7 +252,7 @@ describe('two-database operation convergence (hermetic)', () => {
     const result = await applyInboundFrame({
       db: dbB,
       frame: JSON.parse(JSON.stringify(staleDelete)),
-      ring,
+      ring, verifySignature: acceptAnyAuthor,
     });
 
     expect(result).toBe('superseded');
@@ -265,8 +277,8 @@ describe('two-database operation convergence (hermetic)', () => {
       deviceId: DEVICE_B,
       logicalAt: { millis: 3000, counter: 0 },
     };
-    await applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(later)), ring });
-    await applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(earlier)), ring });
+    await applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(later)), ring, verifySignature: acceptAnyAuthor });
+    await applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(earlier)), ring, verifySignature: acceptAnyAuthor });
 
     const tombstone = await dbB.syncTombstones.get(['notes', 'n1']);
     expect(tombstone?.logicalAt).toEqual({ millis: 4000, counter: 0 });
@@ -282,7 +294,7 @@ describe('two-database operation convergence (hermetic)', () => {
       row: note({ mutationId: asOperationId('op-ahead'), logicalUpdatedAt: ahead }),
     });
 
-    await applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(frame)), ring });
+    await applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(frame)), ring, verifySignature: acceptAnyAuthor });
     const local = newEntityMetadata('s1', asPrincipalId('me'));
 
     expect(compareTimestamps(local.logicalUpdatedAt, ahead)).toBeGreaterThan(0);
@@ -304,7 +316,7 @@ describe('two-database operation convergence (hermetic)', () => {
     const tampered: EncryptedSyncFrame = { ...frame, payload: btoa('evil-bytes') };
 
     await expect(
-      applyInboundFrame({ db: dbB, frame: tampered, ring }),
+      applyInboundFrame({ db: dbB, frame: tampered, ring, verifySignature: acceptAnyAuthor }),
     ).rejects.toBeInstanceOf(FramePayloadMismatchError);
     expect(await dbB.notes.get('n1')).toBeUndefined();
   });
@@ -313,7 +325,7 @@ describe('two-database operation convergence (hermetic)', () => {
     const { frame, chunks } = await chunkedAttachmentFrame();
     await dbB.syncAttachmentChunks.bulkPut(chunks);
 
-    expect(await applyInboundFrame({ db: dbB, frame, ring })).toBe('applied');
+    expect(await applyInboundFrame({ db: dbB, frame, ring, verifySignature: acceptAnyAuthor })).toBe('applied');
 
     const landed = await dbB.noteAttachments.get('a1');
     expect(landed).toBeDefined();
@@ -328,14 +340,14 @@ describe('two-database operation convergence (hermetic)', () => {
     const { frame, chunks } = await chunkedAttachmentFrame();
 
     await expect(
-      applyInboundFrame({ db: dbB, frame, ring }),
+      applyInboundFrame({ db: dbB, frame, ring, verifySignature: acceptAnyAuthor }),
     ).rejects.toBeInstanceOf(AttachmentChunksPendingError);
     expect(await dbB.syncOperations.get(String(frame.operationId))).toEqual(frame);
     expect(await dbB.syncInbox.count()).toBe(0);
     expect(await dbB.noteAttachments.get('a1')).toBeUndefined();
 
     await dbB.syncAttachmentChunks.bulkPut(chunks);
-    expect(await applyInboundFrame({ db: dbB, frame, ring })).toBe('applied');
+    expect(await applyInboundFrame({ db: dbB, frame, ring, verifySignature: acceptAnyAuthor })).toBe('applied');
     expect(await dbB.syncInbox.count()).toBe(1);
     expect(await dbB.noteAttachments.get('a1')).toBeDefined();
   });
@@ -351,7 +363,7 @@ describe('two-database operation convergence (hermetic)', () => {
     ]);
 
     await expect(
-      applyInboundFrame({ db: dbB, frame, ring }),
+      applyInboundFrame({ db: dbB, frame, ring, verifySignature: acceptAnyAuthor }),
     ).rejects.toBeInstanceOf(ChunkIntegrityError);
     expect(await dbB.noteAttachments.get('a1')).toBeUndefined();
     expect(await dbB.syncInbox.count()).toBe(0);
@@ -371,7 +383,7 @@ describe('two-database operation convergence (hermetic)', () => {
       applyInboundFrame({
         db: dbB,
         frame: JSON.parse(JSON.stringify(frame)),
-        ring,
+        ring, verifySignature: acceptAnyAuthor,
         now: () => wall,
       }),
     ).rejects.toBeInstanceOf(RemoteClockDriftError);
@@ -397,7 +409,7 @@ describe('two-database operation convergence (hermetic)', () => {
     const result = await applyInboundFrame({
       db: dbB,
       frame: JSON.parse(JSON.stringify(frame)),
-      ring,
+      ring, verifySignature: acceptAnyAuthor,
       now: () => wall,
     });
 
@@ -423,7 +435,7 @@ describe('two-database operation convergence (hermetic)', () => {
       applyInboundFrame({
         db: dbB,
         frame: JSON.parse(JSON.stringify(forged)),
-        ring,
+        ring, verifySignature: acceptAnyAuthor,
         now: () => wall,
       }),
     ).rejects.toBeInstanceOf(RemoteClockDriftError);
@@ -451,7 +463,7 @@ describe('two-database operation convergence (hermetic)', () => {
     });
 
     await expect(
-      applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(forged)), ring }),
+      applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(forged)), ring, verifySignature: acceptAnyAuthor }),
     ).rejects.toBeInstanceOf(DisallowedOperationTableError);
     expect(await dbB.settings.get('global')).toBeDefined();
     expect(await dbB.syncOperations.count()).toBe(0);
@@ -472,8 +484,30 @@ describe('two-database operation convergence (hermetic)', () => {
     const forged = { ...sealed, entityTable: 'cloudCrypto' };
 
     await expect(
-      applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(forged)), ring }),
+      applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(forged)), ring, verifySignature: acceptAnyAuthor }),
     ).rejects.toBeInstanceOf(DisallowedOperationTableError);
+    expect(await dbB.syncOperations.count()).toBe(0);
+    expect(await dbB.syncInbox.count()).toBe(0);
+  });
+
+  it('refuses a frame no trusted identity signed, before touching any state', async () => {
+    const frame = await makePutFrame({
+      ring,
+      deviceId: DEVICE_A,
+      entityTable: 'notes',
+      row: note(),
+    });
+
+    await expect(
+      applyInboundFrame({
+        db: dbB,
+        frame: JSON.parse(JSON.stringify(frame)),
+        ring,
+        // The real rule: device-a has never paired with this database.
+        verifySignature: createWriterFrameVerifier(dbB),
+      }),
+    ).rejects.toBeInstanceOf(UntrustedFrameError);
+    expect(await dbB.notes.get('n1')).toBeUndefined();
     expect(await dbB.syncOperations.count()).toBe(0);
     expect(await dbB.syncInbox.count()).toBe(0);
   });

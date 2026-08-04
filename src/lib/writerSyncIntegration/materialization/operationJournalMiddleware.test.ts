@@ -40,6 +40,9 @@ import { applyInboundFrame } from './writerOperationMaterializer';
 const DEVICE_LOCAL = asDeviceId('device-local');
 const DEVICE_REMOTE = asDeviceId('device-remote');
 
+/** What this device accepts as an author is `writerFrameVerifier.test.ts`. */
+const acceptAnyAuthor = (): Promise<boolean> => Promise.resolve(true);
+
 let db: LoremDB;
 let ring: SyncKeyRing;
 let identityKeys: DeviceIdentityKeys;
@@ -229,7 +232,7 @@ describe('operation journal middleware', () => {
       row,
     });
 
-    await applyInboundFrame({ db, frame, ring });
+    await applyInboundFrame({ db, frame, ring, verifySignature: acceptAnyAuthor });
 
     const frames = await db.syncOperations.toArray();
     expect(frames).toHaveLength(1);

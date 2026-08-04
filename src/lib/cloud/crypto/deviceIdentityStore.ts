@@ -42,18 +42,25 @@ const createDeviceIdentityStore = () => {
     return { deviceId, keys };
   };
 
+  const stored = async (): Promise<DeviceIdentity | null> => {
+    const row = await db().identity.get(DEVICE_RECORD);
+    if (row?.privateKey === undefined || row.publicKey === undefined) return null;
+    return {
+      deviceId: asDeviceId(row.deviceId),
+      keys: { privateKey: row.privateKey, publicKey: row.publicKey },
+    };
+  };
+
   return {
     /** The stored identity, creating one on first use. */
-    load: async (): Promise<DeviceIdentity> => {
-      const row = await db().identity.get(DEVICE_RECORD);
-      if (row?.privateKey === undefined || row.publicKey === undefined) {
-        return create();
-      }
-      return {
-        deviceId: asDeviceId(row.deviceId),
-        keys: { privateKey: row.privateKey, publicKey: row.publicKey },
-      };
-    },
+    load: async (): Promise<DeviceIdentity> => (await stored()) ?? create(),
+
+    /**
+     * The stored identity, or `null`. For readers that must not bring one into
+     * existence: a device with no identity has authored nothing, so asking
+     * whether a frame is its own must not be what mints its first key.
+     */
+    current: stored,
 
     /**
      * Discard the identity. Every trusted-device record naming it becomes
