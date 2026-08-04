@@ -41,6 +41,31 @@ export const TRANSFER_CHUNK_BYTES = 131_072;
 /** How many attachments this device will assemble at once. */
 export const MAX_INFLIGHT_ATTACHMENTS = 8;
 
+/**
+ * A peer put the offer catalogue somewhere neither device is reading it.
+ *
+ * The cursor is protocol state, not a hint. A page replayed, skipped past, or
+ * sent while the one before it is still being worked through would overwrite
+ * what is outstanding — losing the attachments in it, and leaving both devices
+ * acknowledging a place in a catalogue neither is at. There is no recovering a
+ * shared position from inside a session that has lost it, so the session ends.
+ */
+export class AttachmentCursorError extends Error {
+  readonly expected: number | null;
+  readonly received: number;
+
+  constructor(options: { expected: number | null; received: number }) {
+    super(
+      options.expected === null
+        ? `Attachment cursor ${String(options.received)} arrived where no page was expected`
+        : `Attachment cursor ${String(options.received)} is not the expected ${String(options.expected)}`,
+    );
+    this.name = 'AttachmentCursorError';
+    this.expected = options.expected;
+    this.received = options.received;
+  }
+}
+
 /** A peer has said it cannot serve a chunk this device is waiting on. */
 export class StalledAttachmentTransferError extends Error {
   constructor(attachmentId: string, indices: readonly number[]) {
@@ -163,8 +188,15 @@ interface TransferContext {
   inFlight: InFlightMap;
   /** What this device is being offered, page by page. */
   page: OfferPage | null;
+  /** Where the next page of offers must start for this device to take it. */
+  expectedOfferCursor: number;
   /** What this device has to offer, and how far the peer has read it. */
   catalogue: readonly AttachmentChunkManifest[];
+  /**
+   * The cursor the peer must answer the page in flight with, or `null` when
+   * this device is not waiting to be asked for anything.
+   */
+  awaitingCursor: number | null;
 }
 
 /**
@@ -188,9 +220,16 @@ const settle = (context: TransferContext, attachmentId: string): void => {
   });
 };
 
-/** Send one page of the catalogue, if it has one to send. */
+/**
+ * Send one page of the catalogue, if it has one to send.
+ *
+ * What the peer must answer with is recorded as the page goes out: a catalogue
+ * that has run out expects nothing further, so a later ask is unsolicited
+ * rather than the next page.
+ */
 const offerPage = (context: TransferContext, cursor: number): void => {
   const manifests = context.catalogue.slice(cursor, cursor + MAX_OFFERS_PER_PAGE);
+  context.awaitingCursor = manifests.length === 0 ? null : cursor + manifests.length;
   if (manifests.length === 0) return;
   context.ports.send({
     v: CATCH_UP_PROTOCOL_VERSION,
@@ -230,6 +269,41 @@ const consider = async (
   };
   inFlight.set(manifest.attachmentId, pending);
   requestNextPage({ ports, pending });
+};
+
+/** Take the page of offers the peer sent, if it is the page this device awaits. */
+const takeOfferPage = async (
+  context: TransferContext,
+  message: Extract<CatchUpMessage, { kind: 'attachment-offer' }>,
+): Promise<void> => {
+  // A page while one is still outstanding, or a page offering nothing, is not
+  // a position this device can move to — there is no cursor it would be at.
+  if (context.page !== null || message.manifests.length === 0) {
+    throw new AttachmentCursorError({ expected: null, received: message.cursor });
+  }
+  if (message.cursor !== context.expectedOfferCursor) {
+    throw new AttachmentCursorError({
+      expected: context.expectedOfferCursor,
+      received: message.cursor,
+    });
+  }
+  const cursor = message.cursor + message.manifests.length;
+  context.expectedOfferCursor = cursor;
+  // A page is worked through as a unit, so what is outstanding is known before
+  // any of it is considered.
+  context.page = {
+    cursor,
+    outstanding: new Set(message.manifests.map((one) => one.attachmentId)),
+  };
+  for (const manifest of message.manifests) await consider(context, manifest);
+};
+
+/** Serve the page after the one the peer has settled, if that is what it asked for. */
+const takeOfferNext = (context: TransferContext, cursor: number): void => {
+  if (context.awaitingCursor === null || cursor !== context.awaitingCursor) {
+    throw new AttachmentCursorError({ expected: context.awaitingCursor, received: cursor });
+  }
+  offerPage(context, cursor);
 };
 
 /**
@@ -364,7 +438,9 @@ export const createAttachmentTransfer = (
     ports,
     inFlight: new Map(),
     page: null,
+    expectedOfferCursor: 0,
     catalogue: [],
+    awaitingCursor: null,
   };
 
   return {
@@ -379,18 +455,10 @@ export const createAttachmentTransfer = (
 
     receive: async (message) => {
       switch (message.kind) {
-        case 'attachment-offer': {
-          // A page is worked through as a unit, so what is outstanding is known
-          // before any of it is considered.
-          context.page = {
-            cursor: message.cursor + message.manifests.length,
-            outstanding: new Set(message.manifests.map((one) => one.attachmentId)),
-          };
-          for (const manifest of message.manifests) await consider(context, manifest);
-          return;
-        }
+        case 'attachment-offer':
+          return takeOfferPage(context, message);
         case 'attachment-offer-next':
-          offerPage(context, message.cursor);
+          takeOfferNext(context, message.cursor);
           return;
         case 'attachment-request':
           return serve(ports, message.attachmentId, message.indices);

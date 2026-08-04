@@ -93,6 +93,7 @@ export { fitsMessageBudget, packFrames } from './catchUpBatching';
 export type { PackedFrames } from './catchUpBatching';
 
 export {
+  AttachmentCursorError,
   MAX_INFLIGHT_ATTACHMENTS,
   TRANSFER_CHUNK_BYTES,
   createAttachmentTransfer,

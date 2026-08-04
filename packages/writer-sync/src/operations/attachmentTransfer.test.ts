@@ -10,6 +10,7 @@ import {
   type CatchUpMessage,
 } from './catchUpMessage';
 import {
+  AttachmentCursorError,
   MAX_INFLIGHT_ATTACHMENTS,
   MAX_OFFERS_PER_PAGE,
   StalledAttachmentTransferError,
@@ -125,13 +126,16 @@ describe('createAttachmentTransfer receiving an offer', () => {
     expect(sent).toEqual([{ v: 1, kind: 'attachment-offer-next', cursor: 1 }]);
   });
 
-  it('does not re-request an attachment already in flight', async () => {
+  it('does not re-request an attachment offered twice in one page', async () => {
     const { transfer, sent } = harness();
     const manifest = await manifestFor('att-1', contentOf(24));
-    const offer: CatchUpMessage = { v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] };
 
-    await transfer.receive(offer);
-    await transfer.receive(offer);
+    await transfer.receive({
+      v: 1,
+      kind: 'attachment-offer',
+      cursor: 0,
+      manifests: [manifest, manifest],
+    });
 
     expect(sent).toHaveLength(1);
   });
@@ -460,10 +464,101 @@ describe('paging', () => {
     const { transfer, sent } = harness({ held: () => new Set([0]) });
 
     // Both are already held, so the page settles without a chunk moving.
-    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 4, manifests });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests });
 
-    expect(sent).toContainEqual({ v: 1, kind: 'attachment-offer-next', cursor: 6 });
+    expect(sent).toContainEqual({ v: 1, kind: 'attachment-offer-next', cursor: 2 });
     expect(sent.filter((message) => message.kind === 'attachment-request')).toHaveLength(0);
+  });
+
+  describe('where the catalogue is being read from', () => {
+    /** A first page taken and settled on arrival, leaving the cursor at two. */
+    const afterFirstPage = async () => {
+      const { transfer, sent } = harness({ held: () => new Set([0]) });
+      const manifests = await Promise.all(
+        Array.from({ length: 2 }, (_unused, index) =>
+          manifestFor(`a${String(index)}`, contentOf(CHUNK)),
+        ),
+      );
+      await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests });
+      sent.length = 0;
+      return { transfer, sent };
+    };
+
+    it.each([
+      ['replays a page already taken', 0],
+      ['overlaps a page already taken', 1],
+      ['skips past the page that is due', 4],
+    ])('refuses an offer page that %s', async (_named, cursor) => {
+      const { transfer, sent } = await afterFirstPage();
+      const manifest = await manifestFor('later', contentOf(CHUNK));
+
+      await expect(
+        transfer.receive({ v: 1, kind: 'attachment-offer', cursor, manifests: [manifest] }),
+      ).rejects.toBeInstanceOf(AttachmentCursorError);
+      // Nothing was taken from it, so nothing was asked for either.
+      expect(sent).toEqual([]);
+    });
+
+    it('refuses a page that arrives while the one before it is outstanding', async () => {
+      const { transfer } = harness();
+      const first = await manifestFor('att-1', contentOf(24));
+      const second = await manifestFor('att-2', contentOf(24));
+
+      // Nothing is held, so the first page is still being worked through.
+      await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [first] });
+
+      // Taking this one would overwrite what is outstanding, losing the
+      // attachments in the page it replaced.
+      await expect(
+        transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 1, manifests: [second] }),
+      ).rejects.toBeInstanceOf(AttachmentCursorError);
+    });
+
+    it('refuses a page that offers nothing', async () => {
+      const { transfer } = harness();
+
+      // There is no cursor a page of no manifests would move either device to.
+      await expect(
+        transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [] }),
+      ).rejects.toBeInstanceOf(AttachmentCursorError);
+    });
+
+    it('refuses an ask for a page it is not waiting to serve', async () => {
+      const { transfer, sent } = harness();
+      const manifests = await Promise.all(
+        Array.from({ length: MAX_OFFERS_PER_PAGE + 2 }, (_unused, index) =>
+          manifestFor(`a${String(index)}`, contentOf(CHUNK)),
+        ),
+      );
+
+      transfer.offer(manifests);
+      sent.length = 0;
+
+      // The page in flight ends where it ends: any other cursor is a peer
+      // asking to be re-sent a place in the catalogue it has already had.
+      await expect(
+        transfer.receive({ v: 1, kind: 'attachment-offer-next', cursor: 0 }),
+      ).rejects.toBeInstanceOf(AttachmentCursorError);
+      expect(sent).toEqual([]);
+    });
+
+    it('refuses an ask repeated once the catalogue has run out', async () => {
+      const { transfer, sent } = harness();
+      const manifests = await Promise.all(
+        Array.from({ length: 2 }, (_unused, index) =>
+          manifestFor(`a${String(index)}`, contentOf(CHUNK)),
+        ),
+      );
+
+      transfer.offer(manifests);
+      await transfer.receive({ v: 1, kind: 'attachment-offer-next', cursor: 2 });
+      sent.length = 0;
+
+      await expect(
+        transfer.receive({ v: 1, kind: 'attachment-offer-next', cursor: 2 }),
+      ).rejects.toBeInstanceOf(AttachmentCursorError);
+      expect(sent).toEqual([]);
+    });
   });
 
   it('fails observably when the sender cannot supply a chunk it was asked for', async () => {
@@ -485,8 +580,8 @@ describe('paging', () => {
     expect(rejected).toHaveLength(1);
     expect(rejected[0].reason).toBeInstanceOf(StalledAttachmentTransferError);
     expect(saved).toHaveLength(0);
-    // The transfer is dropped, so a later offer can start it again.
-    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
+    // The transfer is dropped, so a later page offering it starts it again.
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 1, manifests: [manifest] });
     expect(sent.some((message) => message.kind === 'attachment-request')).toBe(true);
   });
 

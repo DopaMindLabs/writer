@@ -356,6 +356,17 @@ everything past its in-flight ceiling and those attachments are never mentioned
 again. Each page carries a `cursor` into the holder's catalogue, and the
 receiver answers with `attachment-offer-next` once every manifest in the page is
 complete, already held or refused, which is what walks a catalogue of any size.
+
+The cursor is session state on both sides, and only one value is legal at a
+time: the receiver takes a page only at the cursor after the last one it
+settled, and the holder serves an `attachment-offer-next` only for the page it
+is waiting to be asked for. A cursor that is replayed, points backwards,
+overlaps a page already taken, skips one, or arrives while a page is still
+outstanding fails the session with `AttachmentCursorError`, as does a page
+offering no manifests. Silently re-offering or overwriting the page in flight
+would drop the attachments in it and leave both devices acknowledging a place in
+the catalogue neither is at.
+
 The receiver asks only for missing indices, at most `MAX_REQUESTED_CHUNKS` at a
 time, and asks for the next page only once the one in flight has been answered:
 asking after every chunk would have the holder serve indices it is already
