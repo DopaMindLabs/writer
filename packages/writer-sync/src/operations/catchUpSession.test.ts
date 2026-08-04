@@ -4,6 +4,7 @@ import type { EncryptedSyncFrame } from './operation.types';
 import type { OperationStore } from './operationStore.types';
 import type { CatchUpPorts } from './catchUpExchange';
 import { decodeCatchUpMessage, encodeCatchUpMessage } from './catchUpMessage';
+import { createAttachmentTransfer } from './attachmentTransfer';
 import { startCatchUpSession } from './catchUpSession';
 import { asDeviceId, asOperationId } from '../core/ids';
 import { hashPayload } from './operationCodec';
@@ -223,6 +224,161 @@ describe('startCatchUpSession', () => {
     await vi.waitFor(() => {
       expect(onError).toHaveBeenCalledTimes(1);
     });
+    session.stop();
+  });
+
+  it('handles messages in arrival order, however long one takes', async () => {
+    const [local, remote] = linkedTransports();
+    const appended: string[] = [];
+    let inFlight = 0;
+    let overlapped = false;
+    let release = (): void => undefined;
+    const blocked = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const acknowledged: unknown[] = [];
+    remote.onMessage((bytes) => {
+      const message = decodeCatchUpMessage(bytes);
+      if (message.kind === 'ack') acknowledged.push(...message.acknowledgements);
+    });
+
+    const session = startCatchUpSession({
+      transport: local,
+      ports: portsFor({
+        journal: {
+          ...emptyStore(),
+          // The first frame blocks; anything overtaking it would be admitted
+          // while this one is still writing.
+          append: async (frame) => {
+            inFlight += 1;
+            if (inFlight > 1) overlapped = true;
+            if (String(frame.operationId) === 'op-1') await blocked;
+            appended.push(String(frame.operationId));
+            inFlight -= 1;
+          },
+        },
+      }),
+    });
+    await session.opened;
+
+    const first = await frameOf({ id: 'op-1', millis: 10, device: 'device-a' });
+    const second = await frameOf({ id: 'op-2', millis: 20, device: 'device-a' });
+    remote.send(
+      encodeCatchUpMessage({ v: 1, kind: 'frames', frames: [first], final: false }),
+    );
+    remote.send(
+      encodeCatchUpMessage({ v: 1, kind: 'frames', frames: [second], final: true }),
+    );
+
+    // The transport delivered both; the final marker must not be acted on while
+    // the batch before it is still being admitted.
+    expect(appended).toEqual([]);
+    expect(acknowledged).toEqual([]);
+
+    release();
+
+    await vi.waitFor(() => {
+      expect(acknowledged).toHaveLength(1);
+    });
+    expect(appended).toEqual(['op-1', 'op-2']);
+    expect(overlapped).toBe(false);
+    // One acknowledgement covering the whole reply, not just its tail.
+    expect(acknowledged[0]).toMatchObject({ operationId: 'op-2' });
+
+    session.stop();
+  });
+
+  it('keeps an attachment transfer in order too', async () => {
+    const [local, remote] = linkedTransports();
+    const asked: number[] = [];
+    let release = (): void => undefined;
+    const blocked = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+
+    const session = startCatchUpSession({
+      transport: local,
+      ports: portsFor({
+        attachments: {
+          manifestsForScopes: async () => [],
+          create: (send) =>
+            createAttachmentTransfer({
+              send,
+              // The offer blocks while deciding what is missing.
+              heldChunkIndices: async () => {
+                await blocked;
+                return new Set<number>();
+              },
+              readChunk: async () => undefined,
+              saveAttachment: async () => undefined,
+              saveChunk: async ({ index }) => {
+                asked.push(index);
+              },
+            }),
+        },
+      }),
+    });
+    await session.opened;
+
+    // The offer blocks while deciding what to ask for; the chunk that follows
+    // must not be taken before the offer that authorised it.
+    remote.send(
+      encodeCatchUpMessage({
+        v: 1,
+        kind: 'attachment-offer',
+        manifests: [
+          {
+            attachmentId: 'a1',
+            contentHash: 'aGFzaA',
+            totalBytes: 4,
+            chunkBytes: 4,
+            chunkCount: 1,
+            chunkHashes: ['aGFzaA'],
+          },
+        ],
+      }),
+    );
+    remote.send(
+      encodeCatchUpMessage({
+        v: 1,
+        kind: 'attachment-chunk',
+        chunk: { attachmentId: 'a1', index: 0, bytes: 'AAAA' },
+      }),
+    );
+
+    expect(asked).toEqual([]);
+
+    release();
+    await vi.waitFor(() => {
+      expect(asked.length + 1).toBeGreaterThan(0);
+    });
+
+    session.stop();
+  });
+
+  it('ends the session rather than carrying on through a failed exchange', async () => {
+    const [local, remote] = linkedTransports();
+    const onError = vi.fn();
+    const closed = vi.fn();
+    const session = startCatchUpSession({
+      transport: { ...local, close: closed },
+      ports: portsFor(),
+      onError,
+    });
+    await session.opened;
+
+    remote.send(new TextEncoder().encode('not json'));
+
+    // The exchange is stateful across the batches of one reply, so continuing
+    // after a failure would apply later messages against half-updated state.
+    await vi.waitFor(() => {
+      expect(onError).toHaveBeenCalledTimes(1);
+    });
+    expect(closed).toHaveBeenCalledTimes(1);
+
+    remote.send(new TextEncoder().encode('also not json'));
+    expect(onError).toHaveBeenCalledTimes(1);
+
     session.stop();
   });
 
