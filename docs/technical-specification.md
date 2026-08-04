@@ -644,11 +644,14 @@ wired into the app.
   are tracked per originating device within a scope, never as one mark per scope:
   an operation from one device that is logically older than an acknowledged
   operation from another has not thereby been seen. Inbox rows are **never**
-  pruned — the inbox is the replay guard — and deletion tombstones are exempt from
-  the window, retiring only once every still-trusted device has acknowledged them,
-  so a long-absent device cannot resurrect a deleted entity. A peer last seen
-  beyond the window resynchronises by full state exchange, not journal replay:
-  it is sent freshly minted `put` frames for current state, which merge by the
+  pruned — the inbox is the replay guard — and a deletion is exempt from the
+  window entirely: a tombstone and the signed delete frame it names are one
+  retention unit, released together once every still-trusted device has
+  acknowledged the deletion, or when that device is removed. Age alone can take
+  neither, so a long-absent device can neither resurrect a deleted entity nor be
+  left holding it. A peer last seen beyond the window resynchronises by full
+  state exchange, not journal replay: it is sent freshly minted `put` frames for
+  current state alongside the scope's retained deletions, which merge by the
   normal convergence rules rather than overwriting what it changed while away.
 - **Frames are device-signed.** Every journalled frame carries an ECDSA P-256
   signature made with this device's identity key, computed over the whole frame
@@ -689,9 +692,12 @@ wired into the app.
   behind this device's compaction cutoff, cannot be answered from history — the
   frames are gone — so the scope is described as it stands now: one freshly
   signed `put` frame per journalled row, indistinguishable from a journalled
-  frame, so the receiver needs no second way to apply it. This is not the backup
-  path, which exports a snapshot for a human. A scope this device holds no key
-  for is not rebuilt: one it cannot seal for is one it cannot serve.
+  frame, so the receiver needs no second way to apply it, plus the scope's
+  retained deletions as the frames their authors signed rather than replacements
+  minted here. Absence describes nothing, so a scope whose every row was deleted
+  answers with deletions rather than with silence. This is not the backup path,
+  which exports a snapshot for a human. A scope this device holds no key for is
+  not rebuilt: one it cannot seal for is one it cannot serve.
 - **Root-secret handover.** A device paired for the first time holds no key
   material, so it could decrypt nothing it was sent. After confirmation — never
   on connectivity alone — each device announces whether it holds a root, and the

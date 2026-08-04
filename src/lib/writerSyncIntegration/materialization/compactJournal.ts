@@ -51,18 +51,27 @@ export const compactJournal = async (
   const peers = await activePeers(db);
   const retention = { retentionDays, now: now() };
 
-  const frames = await db.syncOperations.toArray();
-  const compactable = compactableOperationIds(frames, { retention, peers });
-  if (compactable.length > 0) {
-    await db.syncOperations.bulkDelete(compactable.map((id) => String(id)));
-  }
-
+  // Tombstones go first, and what survives them decides what the journal may
+  // drop: a delete frame is released by its tombstone, never by the window.
   const tombstones = await db.syncTombstones.toArray();
   const releasable = releasableTombstones(tombstones, peers);
   if (releasable.length > 0) {
     await db.syncTombstones.bulkDelete(
       releasable.map((tombstone) => [tombstone.entityTable, tombstone.entityId]),
     );
+  }
+  const released = new Set(releasable.map((tombstone) => String(tombstone.operationId)));
+
+  const frames = await db.syncOperations.toArray();
+  const compactable = compactableOperationIds(frames, {
+    retention,
+    peers,
+    tombstones: tombstones.filter(
+      (tombstone) => !released.has(String(tombstone.operationId)),
+    ),
+  });
+  if (compactable.length > 0) {
+    await db.syncOperations.bulkDelete(compactable.map((id) => String(id)));
   }
 
   return { operations: compactable.length, tombstones: releasable.length };
