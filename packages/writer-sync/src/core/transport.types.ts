@@ -24,6 +24,18 @@ export interface SyncTransport {
    */
   readonly maxMessageBytes?: number;
   readonly send: (bytes: Uint8Array) => void;
+  /**
+   * Write, resolving once the bearer has actually taken the bytes.
+   *
+   * {@link send} queues what a full or still-connecting channel cannot take, and
+   * that queue is bounded — a sender with more to say than the bearer can carry
+   * fails the session rather than growing without limit. A sender that knows how
+   * much it has (attachment chunks, page after page) uses this instead and lets
+   * the bearer set the pace, which is backpressure rather than a larger bound.
+   *
+   * A bearer with nowhere to queue simply resolves.
+   */
+  readonly sendWhenReady?: (bytes: Uint8Array) => Promise<void>;
   /** Register a listener for inbound messages; returns an unsubscribe fn. */
   readonly onMessage: (cb: (bytes: Uint8Array) => void) => () => void;
   /**

@@ -4,7 +4,6 @@ import type { AttachmentChunkManifest } from './operation.types';
 import { buildChunkManifest } from './attachmentChunking';
 import { MAX_FRAME_BYTES } from '../providers/webrtc/webRtcTransport';
 import {
-  MAX_ATTACHMENT_OFFERS,
   MAX_REQUESTED_CHUNKS,
   decodeCatchUpMessage,
   encodeCatchUpMessage,
@@ -12,6 +11,7 @@ import {
 } from './catchUpMessage';
 import {
   MAX_INFLIGHT_ATTACHMENTS,
+  MAX_OFFERS_PER_PAGE,
   StalledAttachmentTransferError,
   TRANSFER_CHUNK_BYTES,
   createAttachmentTransfer,
@@ -97,7 +97,7 @@ describe('createAttachmentTransfer offer', () => {
 
     transfer.offer([manifest]);
 
-    expect(sent).toEqual([{ v: 1, kind: 'attachment-offer', manifests: [manifest] }]);
+    expect(sent).toEqual([{ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] }]);
   });
 });
 
@@ -106,26 +106,29 @@ describe('createAttachmentTransfer receiving an offer', () => {
     const { transfer, sent } = harness({ held: () => new Set([0, 2]) });
     const manifest = await manifestFor('att-1', contentOf(24));
 
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
 
     expect(sent).toEqual([
       { v: 1, kind: 'attachment-request', attachmentId: 'att-1', indices: [1] },
     ]);
   });
 
-  it('asks for nothing when it already holds every chunk', async () => {
+  it('asks for no chunks when it already holds every one of them', async () => {
     const { transfer, sent } = harness({ held: () => new Set([0, 1, 2]) });
     const manifest = await manifestFor('att-1', contentOf(24));
 
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
 
-    expect(sent).toEqual([]);
+    // Nothing to fetch, so nothing is asked for — but the page is settled, and
+    // saying so is what brings the next one.
+    expect(sent.filter((message) => message.kind === 'attachment-request')).toEqual([]);
+    expect(sent).toEqual([{ v: 1, kind: 'attachment-offer-next', cursor: 1 }]);
   });
 
   it('does not re-request an attachment already in flight', async () => {
     const { transfer, sent } = harness();
     const manifest = await manifestFor('att-1', contentOf(24));
-    const offer: CatchUpMessage = { v: 1, kind: 'attachment-offer', manifests: [manifest] };
+    const offer: CatchUpMessage = { v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] };
 
     await transfer.receive(offer);
     await transfer.receive(offer);
@@ -141,7 +144,8 @@ describe('createAttachmentTransfer receiving an offer', () => {
       ),
     );
 
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests });
+    await transfer.receive({ v: 1, kind: 'attachment-offer',
+      cursor: 0, manifests });
 
     expect(sent).toHaveLength(MAX_INFLIGHT_ATTACHMENTS);
     expect(rejected).toHaveLength(1);
@@ -207,7 +211,7 @@ describe('createAttachmentTransfer receiving chunks', () => {
     const manifest = await manifestFor('att-1', content);
     const { transfer, saved } = harness();
 
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
     await deliverAll(transfer, content, manifest);
 
     expect(saved).toEqual([{ attachmentId: 'att-1', content }]);
@@ -221,7 +225,7 @@ describe('createAttachmentTransfer receiving chunks', () => {
     const manifest = await manifestFor('att-1', content);
     const { transfer, savedChunks } = harness();
 
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
     await transfer.receive(
       chunkMessage({ attachmentId: 'att-1', index: 0, bytes: chunkOf(content, 0) }),
     );
@@ -236,7 +240,7 @@ describe('createAttachmentTransfer receiving chunks', () => {
     const manifest = await manifestFor('att-1', content);
     const { transfer, savedChunks, rejected } = harness();
 
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
     await transfer.receive(
       chunkMessage({ attachmentId: 'att-1', index: 0, bytes: contentOf(7) }),
     );
@@ -250,7 +254,7 @@ describe('createAttachmentTransfer receiving chunks', () => {
     const manifest = await manifestFor('att-1', content);
     const { transfer, saved } = harness();
 
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
     await transfer.receive(
       chunkMessage({ attachmentId: 'att-1', index: 0, bytes: chunkOf(content, 0) }),
     );
@@ -266,7 +270,7 @@ describe('createAttachmentTransfer receiving chunks', () => {
       serve: content,
     });
 
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
     expect(sent).toEqual([
       { v: 1, kind: 'attachment-request', attachmentId: 'att-1', indices: [2] },
     ]);
@@ -288,7 +292,7 @@ describe('createAttachmentTransfer receiving chunks', () => {
       serve: contentOf(24).fill(7),
     });
 
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
     await transfer.receive(
       chunkMessage({ attachmentId: 'att-1', index: 2, bytes: chunkOf(content, 2) }),
     );
@@ -302,7 +306,7 @@ describe('createAttachmentTransfer receiving chunks', () => {
     const manifest = await manifestFor('att-1', content);
     const { transfer, saved, rejected } = harness();
 
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
     await transfer.receive(
       chunkMessage({
         attachmentId: 'att-1',
@@ -373,7 +377,7 @@ describe('paging', () => {
     const manifest = await manifestFor('a1', content);
     const { transfer, sent, saved } = harness();
 
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
     const pages = await drain({ transfer, sent, content });
 
     // Every page is inside the wire limit, and no index is asked for twice.
@@ -391,7 +395,7 @@ describe('paging', () => {
     const manifest = await manifestFor('a1', content);
     const { transfer, sent } = harness();
 
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
     const [first] = sent.filter((message) => message.kind === 'attachment-request');
     sent.length = 0;
 
@@ -407,7 +411,7 @@ describe('paging', () => {
     expect(sent.filter((message) => message.kind === 'attachment-request')).toHaveLength(0);
   });
 
-  it.each([257, 600])('offers %i manifests in messages the decoder accepts', async (count) => {
+  it.each([257, 600])('walks a catalogue of %i manifests a page at a time', async (count) => {
     const manifests = await Promise.all(
       Array.from({ length: count }, (_unused, index) =>
         manifestFor(`a${String(index)}`, contentOf(CHUNK)),
@@ -417,20 +421,49 @@ describe('paging', () => {
 
     transfer.offer(manifests);
 
-    const offers = sent.filter(
-      (message): message is Extract<CatchUpMessage, { kind: 'attachment-offer' }> =>
-        message.kind === 'attachment-offer',
-    );
-    expect(offers.every((offer) => offer.manifests.length <= MAX_ATTACHMENT_OFFERS)).toBe(
-      true,
-    );
-    // Every manifest travels, once: a single oversized message would be refused
-    // by the peer's decoder and the whole offer lost.
-    const offered = offers.flatMap((offer) => offer.manifests.map((one) => one.attachmentId));
+    // One page, sized to what a receiver will assemble at once. Offering the
+    // whole catalogue would have all but the first few declined and never
+    // mentioned again.
+    const offers = () =>
+      sent.filter(
+        (message): message is Extract<CatchUpMessage, { kind: 'attachment-offer' }> =>
+          message.kind === 'attachment-offer',
+      );
+    expect(offers()).toHaveLength(1);
+    expect(offers()[0].manifests.length).toBeLessThanOrEqual(MAX_OFFERS_PER_PAGE);
+
+    // The receiver asks for what follows the page it has finished with, and
+    // keeps asking until the catalogue runs out.
+    for (;;) {
+      const last = offers().at(-1);
+      if (last === undefined) break;
+      const next = last.cursor + last.manifests.length;
+      if (next >= count) break;
+      await transfer.receive({ v: 1, kind: 'attachment-offer-next', cursor: next });
+    }
+
+    const offered = offers().flatMap((offer) => offer.manifests.map((one) => one.attachmentId));
     expect(new Set(offered).size).toBe(count);
-    for (const message of offers) {
+    for (const message of offers()) {
+      expect(message.manifests.length).toBeLessThanOrEqual(MAX_OFFERS_PER_PAGE);
       expect(() => decodeCatchUpMessage(encodeCatchUpMessage(message))).not.toThrow();
     }
+  });
+
+  it('asks for the page after the one it has settled', async () => {
+    const content = contentOf(CHUNK);
+    const manifests = await Promise.all(
+      Array.from({ length: 2 }, (_unused, index) =>
+        manifestFor(`a${String(index)}`, content),
+      ),
+    );
+    const { transfer, sent } = harness({ held: () => new Set([0]) });
+
+    // Both are already held, so the page settles without a chunk moving.
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 4, manifests });
+
+    expect(sent).toContainEqual({ v: 1, kind: 'attachment-offer-next', cursor: 6 });
+    expect(sent.filter((message) => message.kind === 'attachment-request')).toHaveLength(0);
   });
 
   it('fails observably when the sender cannot supply a chunk it was asked for', async () => {
@@ -438,7 +471,7 @@ describe('paging', () => {
     const manifest = await manifestFor('a1', content);
     const { transfer, sent, rejected, saved } = harness();
 
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
     sent.length = 0;
     await transfer.receive({
       v: 1,
@@ -453,7 +486,7 @@ describe('paging', () => {
     expect(rejected[0].reason).toBeInstanceOf(StalledAttachmentTransferError);
     expect(saved).toHaveLength(0);
     // The transfer is dropped, so a later offer can start it again.
-    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    await transfer.receive({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
     expect(sent.some((message) => message.kind === 'attachment-request')).toBe(true);
   });
 

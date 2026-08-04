@@ -116,11 +116,12 @@ describe('createAttachmentChunkStore', () => {
     await db.syncOperations.put(frame);
     const adapter = createAttachmentChunkStore(db);
     const firstSent: CatchUpMessage[] = [];
-    const first = adapter.create((message) => firstSent.push(message));
+    const first = adapter.create({ send: (message) => { firstSent.push(message); } });
 
     await first.receive({
       v: 1,
       kind: 'attachment-offer',
+      cursor: 0,
       manifests: [manifest],
     });
     await first.receive({
@@ -134,10 +135,11 @@ describe('createAttachmentChunkStore', () => {
     });
 
     const resumedSent: CatchUpMessage[] = [];
-    const resumed = adapter.create((message) => resumedSent.push(message));
+    const resumed = adapter.create({ send: (message) => { resumedSent.push(message); } });
     await resumed.receive({
       v: 1,
       kind: 'attachment-offer',
+      cursor: 0,
       manifests: [manifest],
     });
 
@@ -158,7 +160,7 @@ describe('createAttachmentChunkStore', () => {
     await db.syncOperations.put(frame);
     const adapter = createAttachmentChunkStore(db);
     const sent: CatchUpMessage[] = [];
-    const transfer = adapter.create((message) => sent.push(message));
+    const transfer = adapter.create({ send: (message) => { sent.push(message); } });
     const content = new Uint8Array(
       chunks.reduce((total, chunk) => total + atob(chunk.bytes).length, 0),
     );
@@ -179,6 +181,7 @@ describe('createAttachmentChunkStore', () => {
     await transfer.receive({
       v: 1,
       kind: 'attachment-offer',
+      cursor: 0,
       manifests: [manifest],
     });
     for (const chunk of chunks) {

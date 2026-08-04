@@ -4,6 +4,7 @@ import {
   FrameTooLargeError,
   MAX_FRAME_BYTES,
 } from './frameCeiling';
+import { createRoomGate } from './channelRoom';
 import { TransportBackpressureError, createOutboxQueue } from './outboxQueue';
 import {
   INBOUND_WINDOW_MILLIS,
@@ -94,14 +95,23 @@ const createChannelOutbox = (channel: DataChannelLike) => {
   const watchers = new Set<(reason?: Error) => void>();
   let closed = false;
 
+  /** Whether a write would be taken now, or never will be. */
+  const settled = (): boolean =>
+    closed ||
+    isGone(channel) ||
+    (isOpen(channel) && channel.bufferedAmount < BUFFER_HIGH_WATER_BYTES);
+  const room = createRoomGate(settled);
+
   return {
+    whenReady: room.whenReady,
     flush: (): void => {
       while (pending.size > 0 && isOpen(channel)) {
-        if (channel.bufferedAmount >= BUFFER_HIGH_WATER_BYTES) return;
+        if (channel.bufferedAmount >= BUFFER_HIGH_WATER_BYTES) break;
         const next = pending.take();
-        if (next === undefined) return;
+        if (next === undefined) break;
         channel.send(next);
       }
+      room.wake();
     },
     send: (bytes: Uint8Array): void => {
       if (closed || isGone(channel)) return;
@@ -123,6 +133,9 @@ const createChannelOutbox = (channel: DataChannelLike) => {
       if (closed) return;
       closed = true;
       pending.discard();
+      // Nobody is left to write to, and a sender parked forever would never
+      // learn that. It is woken to find a transport that is gone.
+      room.wake();
       for (const watcher of [...watchers]) watcher(reason);
     },
     onClosed: (callback: (reason?: Error) => void): (() => void) => {
@@ -135,6 +148,7 @@ const createChannelOutbox = (channel: DataChannelLike) => {
     release: (): void => {
       closed = true;
       pending.discard();
+      room.wake();
       watchers.clear();
     },
   };
@@ -219,6 +233,15 @@ const guardedSend = (
   }
 };
 
+/** The inbound limiter this transport runs, at the protocol's own constants. */
+const inboundLimiterFor = (now: () => number): InboundLimiter =>
+  createInboundLimiter({
+    messagesPerWindow: MAX_INBOUND_MESSAGES,
+    bytesPerWindow: MAX_INBOUND_BYTES,
+    windowMs: INBOUND_WINDOW_MILLIS,
+    now,
+  });
+
 /**
  * Wrap a data channel as a transport.
  *
@@ -239,12 +262,7 @@ export const createWebRtcTransport = (
 ): SyncTransport => {
   const listeners = new Set<(bytes: Uint8Array) => void>();
   const outbox = createChannelOutbox(channel);
-  const limiter = createInboundLimiter({
-    messagesPerWindow: MAX_INBOUND_MESSAGES,
-    bytesPerWindow: MAX_INBOUND_BYTES,
-    windowMs: INBOUND_WINDOW_MILLIS,
-    now: options.now ?? (() => Date.now()),
-  });
+  const limiter = inboundLimiterFor(options.now ?? (() => Date.now()));
   let released = false;
 
   channel.bufferedAmountLowThreshold = BUFFER_HIGH_WATER_BYTES / 2;
@@ -283,10 +301,19 @@ export const createWebRtcTransport = (
     channel.close();
   };
 
+  const write = guardedSend(outbox, failAndClose);
+
   return {
     sharesStore: false,
     maxMessageBytes: MAX_FRAME_BYTES,
-    send: guardedSend(outbox, failAndClose),
+    send: write,
+    sendWhenReady: async (bytes) => {
+      // Waits for the bearer rather than filling the queue in front of it: a
+      // sender that knows how much it has to say sets its own pace against the
+      // channel, instead of discovering the bound as a failure.
+      await outbox.whenReady();
+      write(bytes);
+    },
     onMessage: (callback) => {
       listeners.add(callback);
       return () => {

@@ -30,6 +30,7 @@ describe('pairing and catch-up message kinds', () => {
       'ack',
       'attachment-chunk',
       'attachment-offer',
+      'attachment-offer-next',
       'attachment-request',
       'attachment-unavailable',
       'frames',

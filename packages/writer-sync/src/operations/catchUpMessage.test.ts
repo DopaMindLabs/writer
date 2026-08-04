@@ -118,6 +118,7 @@ describe('attachment message round trip', () => {
     const message: CatchUpMessage = {
       v: CATCH_UP_PROTOCOL_VERSION,
       kind: 'attachment-offer',
+      cursor: 0,
       manifests: [attachmentManifest],
     };
 
@@ -148,7 +149,7 @@ describe('attachment message round trip', () => {
 
 describe('decodeCatchUpMessage rejects an attachment manifest', () => {
   const offerOf = (manifest: Record<string, unknown>) =>
-    bytesOf({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    bytesOf({ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] });
 
   it('whose chunk count disagrees with its hashes', () => {
     expect(() =>

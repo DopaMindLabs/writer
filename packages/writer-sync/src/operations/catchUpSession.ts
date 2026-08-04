@@ -93,6 +93,24 @@ const createQueueBudget = () => {
   };
 };
 
+/**
+ * The exchange's writes, over one bearer: everything says itself immediately,
+ * and what can wait for room waits — which is what stops a page of chunks
+ * outrunning the outbox in front of the channel.
+ */
+const writesOver = (transport: SyncTransport): Pick<CatchUpPorts, 'send' | 'sendWhenReady'> => {
+  const whenReady = transport.sendWhenReady?.bind(transport);
+  return {
+    send: (message) => {
+      transport.send(encodeCatchUpMessage(message));
+    },
+    sendWhenReady:
+      whenReady === undefined
+        ? undefined
+        : (message) => whenReady(encodeCatchUpMessage(message)),
+  };
+};
+
 export const startCatchUpSession = (options: {
   transport: SyncTransport;
   ports: Omit<CatchUpPorts, 'send'>;
@@ -105,9 +123,7 @@ export const startCatchUpSession = (options: {
     // The bearer's ceiling travels with its send: replies are packed against
     // the same budget the transport will enforce.
     maxMessageBytes: transport.maxMessageBytes,
-    send: (message) => {
-      transport.send(encodeCatchUpMessage(message));
-    },
+    ...writesOver(transport),
   });
 
   const report = (error: unknown): void => {

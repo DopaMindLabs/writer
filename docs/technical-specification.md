@@ -687,10 +687,14 @@ wired into the app.
   conversation, but never as an oversized frame: the raw `noteAttachments.blob`
   is AES-GCM-sealed once, split into 128 KiB ciphertext chunks, and replaced in
   the row payload by its authenticated manifest. The holder offers manifests
-  after the final catch-up frame batch, in messages small enough for the peer's
-  decoder to accept; the peer asks only for the chunks it lacks, a page at a
-  time, and asks for the next page only once the one in flight has been
-  answered. A holder that cannot supply a chunk it was asked for says so rather
+  after the final catch-up frame batch, one page at a time and only as many as
+  the peer will take at once; the peer asks for the page after the one it has
+  finished with, so a space with hundreds of images is walked rather than
+  offered once and refused. The peer asks only for the chunks it lacks, a page
+  at a time, and asks for the next page only once the one in flight has been
+  answered. Chunks are served at the connection's pace rather than written as
+  fast as they are read, so a large attachment cannot outrun the link and end
+  its own session. A holder that cannot supply a chunk it was asked for says so rather
   than falling silent, and the receiver drops that transfer instead of waiting
   on it for the life of the session. Each chunk is verified before it is stored,
   and an interrupted transfer resumes from the persisted gap rather than

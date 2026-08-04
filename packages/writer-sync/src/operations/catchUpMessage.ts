@@ -31,6 +31,11 @@ export const MAX_REQUESTS = 1024;
 export const MAX_FRAMES_PER_MESSAGE = 64;
 export const MAX_ACKNOWLEDGEMENTS = 1024;
 export const MAX_ATTACHMENT_OFFERS = 256;
+/**
+ * The furthest into a catalogue a cursor may point. Attachments are offered a
+ * page at a time, so this bounds the conversation rather than one message.
+ */
+export const MAX_CATALOGUE_OFFERS = 65_536;
 export const MAX_REQUESTED_CHUNKS = 256;
 
 /** How far one peer has read one origin within one scope. */
@@ -53,7 +58,19 @@ export type CatchUpMessage =
   | {
       v: typeof CATCH_UP_PROTOCOL_VERSION;
       kind: 'attachment-offer';
+      /**
+       * Where this page starts in the offering device's catalogue. Session-local
+       * and monotonic: it is how the receiver asks for what comes after what it
+       * has, without either end holding the whole catalogue in one message.
+       */
+      cursor: number;
       manifests: AttachmentChunkManifest[];
+    }
+  | {
+      /** The current page is settled; send what follows it. */
+      v: typeof CATCH_UP_PROTOCOL_VERSION;
+      kind: 'attachment-offer-next';
+      cursor: number;
     }
   | {
       v: typeof CATCH_UP_PROTOCOL_VERSION;
@@ -99,6 +116,7 @@ const CATCH_UP_KIND_TABLE = {
   manifest: true,
   request: true,
   'attachment-offer': true,
+  'attachment-offer-next': true,
   'attachment-request': true,
   'attachment-chunk': true,
   'attachment-unavailable': true,
@@ -235,6 +253,21 @@ const decodeAttachmentManifest = (value: unknown): AttachmentChunkManifest => {
   return manifest;
 };
 
+/**
+ * A cursor into the offering device's catalogue. Bounded as well as
+ * non-negative: a peer naming an enormous position would otherwise have this
+ * device hold it as a number it can never reach.
+ */
+const requireCursor = (raw: Record<string, unknown>): number => {
+  const value = raw.cursor;
+  return typeof value === 'number' &&
+    Number.isInteger(value) &&
+    value >= 0 &&
+    value <= MAX_CATALOGUE_OFFERS
+    ? value
+    : fail(`cursor must be an integer in [0, ${String(MAX_CATALOGUE_OFFERS)}]`);
+};
+
 const decodeChunkIndex = (value: unknown, index: number): number =>
   typeof value === 'number' && Number.isInteger(value) && value >= 0
     ? value
@@ -249,10 +282,13 @@ const decodeAttachmentBody = (
       return {
         v,
         kind: 'attachment-offer',
+        cursor: requireCursor(raw),
         manifests: requireArray(raw.manifests, 'manifests', MAX_ATTACHMENT_OFFERS).map(
           decodeAttachmentManifest,
         ),
       };
+    case 'attachment-offer-next':
+      return { v, kind: 'attachment-offer-next', cursor: requireCursor(raw) };
     case 'attachment-request':
       return {
         v,

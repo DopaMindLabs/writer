@@ -305,7 +305,7 @@ describe('startCatchUpSession', () => {
       ports: portsFor({
         attachments: {
           manifestsForScopes: async () => [],
-          create: (send) =>
+          create: ({ send }) =>
             createAttachmentTransfer({
               send,
               // The offer blocks while deciding what is missing.
@@ -330,6 +330,7 @@ describe('startCatchUpSession', () => {
       encodeCatchUpMessage({
         v: 1,
         kind: 'attachment-offer',
+        cursor: 0,
         manifests: [
           {
             attachmentId: 'a1',

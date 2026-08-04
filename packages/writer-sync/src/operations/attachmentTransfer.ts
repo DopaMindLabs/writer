@@ -7,7 +7,6 @@ import {
 } from './attachmentChunking';
 import {
   CATCH_UP_PROTOCOL_VERSION,
-  MAX_ATTACHMENT_OFFERS,
   MAX_REQUESTED_CHUNKS,
   type AttachmentChunkPayload,
   type CatchUpMessage,
@@ -53,6 +52,12 @@ export class StalledAttachmentTransferError extends Error {
 }
 
 export interface AttachmentTransferPorts {
+  /**
+   * Write, resolving once the bearer has taken it. Serving chunks uses this so
+   * the holder moves at the channel's pace; without it a legal request of 256
+   * chunks outruns the outbox and fails a session neither peer misused.
+   */
+  sendWhenReady?: (message: CatchUpMessage) => Promise<void>;
   /** Which chunks of an attachment this device already holds. */
   heldChunkIndices: (attachmentId: string) => Promise<ReadonlySet<number>>;
   /** One chunk of an attachment this device can serve, or `undefined`. */
@@ -79,11 +84,22 @@ export interface AttachmentTransferPorts {
 }
 
 export interface AttachmentTransfer {
-  /** Offer what this device can serve. */
+  /** Offer what this device can serve, a page at a time. */
   offer: (manifests: readonly AttachmentChunkManifest[]) => void;
   /** Handle one attachment message from the peer. */
   receive: (message: CatchUpMessage) => Promise<void>;
 }
+
+/**
+ * A page of offers is at most what the receiver can take at once.
+ *
+ * Sending the catalogue in decoder-sized pages was still wrong in the way that
+ * matters: the receiver assembles `MAX_INFLIGHT_ATTACHMENTS` at a time and
+ * refuses the rest, so 248 of every 256 offered were declined and never
+ * mentioned again. The receiver asks for the page after the one it has
+ * finished, and the offer is paced by what it can actually accept.
+ */
+export const MAX_OFFERS_PER_PAGE = MAX_INFLIGHT_ATTACHMENTS;
 
 interface InFlight {
   manifest: AttachmentChunkManifest;
@@ -93,6 +109,13 @@ interface InFlight {
   held: ReadonlySet<number>;
   /** The page currently asked for, and not yet answered. */
   requested: Set<number>;
+}
+
+/** The page of offers this device is working through, and where it ends. */
+interface OfferPage {
+  cursor: number;
+  /** Attachments from this page not yet complete, held or refused. */
+  outstanding: Set<string>;
 }
 
 const requestFor = (options: {
@@ -133,21 +156,49 @@ const requestNextPage = (options: {
   ports.send(requestFor({ attachmentId: pending.manifest.attachmentId, indices: page }));
 };
 
-/** Split a list into messages the peer's decoder will accept. */
-const inPages = <T,>(items: readonly T[], size: number): T[][] => {
-  const pages: T[][] = [];
-  for (let start = 0; start < items.length; start += size) {
-    pages.push(items.slice(start, start + size));
-  }
-  return pages;
-};
-
 type InFlightMap = Map<string, InFlight>;
 
 interface TransferContext {
   ports: AttachmentTransferPorts;
   inFlight: InFlightMap;
+  /** What this device is being offered, page by page. */
+  page: OfferPage | null;
+  /** What this device has to offer, and how far the peer has read it. */
+  catalogue: readonly AttachmentChunkManifest[];
 }
+
+/**
+ * One attachment of the current page is finished with, however it finished.
+ *
+ * Complete, already held, or refused are the same fact to the page: there is
+ * nothing further to wait for. Once none are left, the peer is asked for what
+ * comes next — which is what keeps a catalogue larger than one page moving
+ * instead of being offered once and declined.
+ */
+const settle = (context: TransferContext, attachmentId: string): void => {
+  const { page, ports } = context;
+  if (page === null) return;
+  page.outstanding.delete(attachmentId);
+  if (page.outstanding.size > 0) return;
+  context.page = null;
+  ports.send({
+    v: CATCH_UP_PROTOCOL_VERSION,
+    kind: 'attachment-offer-next',
+    cursor: page.cursor,
+  });
+};
+
+/** Send one page of the catalogue, if it has one to send. */
+const offerPage = (context: TransferContext, cursor: number): void => {
+  const manifests = context.catalogue.slice(cursor, cursor + MAX_OFFERS_PER_PAGE);
+  if (manifests.length === 0) return;
+  context.ports.send({
+    v: CATCH_UP_PROTOCOL_VERSION,
+    kind: 'attachment-offer',
+    cursor,
+    manifests: [...manifests],
+  });
+};
 
 /** Decide whether to accept an offered attachment, and ask for its gaps. */
 const consider = async (
@@ -158,12 +209,17 @@ const consider = async (
   if (inFlight.has(manifest.attachmentId)) return;
   const have = await ports.heldChunkIndices(manifest.attachmentId);
   const missing = missingChunkIndices({ manifest, have });
-  if (missing.length === 0) return;
+  // Nothing to fetch: this one is settled the moment it is offered.
+  if (missing.length === 0) {
+    settle(context, manifest.attachmentId);
+    return;
+  }
   if (inFlight.size >= MAX_INFLIGHT_ATTACHMENTS) {
     ports.onRejected?.(
       manifest.attachmentId,
       new Error('too many attachments already in flight'),
     );
+    settle(context, manifest.attachmentId);
     return;
   }
   const pending: InFlight = {
@@ -189,13 +245,22 @@ const serve = async (
   indices: readonly number[],
 ): Promise<void> => {
   const unavailable: number[] = [];
+  // One chunk at a time, each awaiting the bearer. A page may legally hold 256
+  // of them, which is more than any outbox should be asked to swallow at once:
+  // the request is not too large, only faster than the channel.
+  const write =
+    ports.sendWhenReady ??
+    ((message: CatchUpMessage) => {
+      ports.send(message);
+      return Promise.resolve();
+    });
   for (const index of indices.slice(0, MAX_REQUESTED_CHUNKS)) {
     const bytes = await ports.readChunk({ attachmentId, index });
     if (bytes === undefined) {
       unavailable.push(index);
       continue;
     }
-    ports.send({
+    await write({
       v: CATCH_UP_PROTOCOL_VERSION,
       kind: 'attachment-chunk',
       chunk: { attachmentId, index, bytes: toBase64Url(bytes) },
@@ -249,6 +314,7 @@ const abandon = (
   const { ports, inFlight } = context;
   if (!inFlight.delete(attachmentId)) return;
   ports.onRejected?.(attachmentId, new StalledAttachmentTransferError(attachmentId, indices));
+  settle(context, attachmentId);
 };
 
 /** Verify and keep one inbound chunk, completing the transfer when it closes the gap. */
@@ -276,6 +342,7 @@ const take = async (
     if (outstandingFor(pending).length === 0) {
       await complete(ports, pending);
       inFlight.delete(chunk.attachmentId);
+      settle(context, chunk.attachmentId);
       return;
     }
     // Only once the page in flight has been answered in full: asking per chunk
@@ -286,31 +353,44 @@ const take = async (
     // fails verification means the offer cannot be trusted as a whole.
     inFlight.delete(chunk.attachmentId);
     ports.onRejected?.(chunk.attachmentId, reason);
+    settle(context, chunk.attachmentId);
   }
 };
 
 export const createAttachmentTransfer = (
   ports: AttachmentTransferPorts,
 ): AttachmentTransfer => {
-  const context: TransferContext = { ports, inFlight: new Map() };
+  const context: TransferContext = {
+    ports,
+    inFlight: new Map(),
+    page: null,
+    catalogue: [],
+  };
 
   return {
     offer: (manifests) => {
-      // Batched to the decoder's own bound: one oversized message is refused
-      // whole, so a space with many images would offer nothing at all.
-      for (const page of inPages(manifests, MAX_ATTACHMENT_OFFERS)) {
-        ports.send({
-          v: CATCH_UP_PROTOCOL_VERSION,
-          kind: 'attachment-offer',
-          manifests: page,
-        });
-      }
+      // Held, and sent one page at a time: the receiver takes only what it can
+      // assemble at once, and asks for the next page when it has room. Sending
+      // the whole catalogue would have every offer past the first few refused
+      // and never repeated.
+      context.catalogue = [...manifests];
+      offerPage(context, 0);
     },
 
     receive: async (message) => {
       switch (message.kind) {
-        case 'attachment-offer':
+        case 'attachment-offer': {
+          // A page is worked through as a unit, so what is outstanding is known
+          // before any of it is considered.
+          context.page = {
+            cursor: message.cursor + message.manifests.length,
+            outstanding: new Set(message.manifests.map((one) => one.attachmentId)),
+          };
           for (const manifest of message.manifests) await consider(context, manifest);
+          return;
+        }
+        case 'attachment-offer-next':
+          offerPage(context, message.cursor);
           return;
         case 'attachment-request':
           return serve(ports, message.attachmentId, message.indices);

@@ -1006,6 +1006,7 @@ describe('createPeerCatchUp', () => {
     firstWire.deliver({
       v: 1,
       kind: 'attachment-offer',
+      cursor: 0,
       manifests: [manifest],
     });
     await vi.waitFor(() => {
@@ -1038,6 +1039,7 @@ describe('createPeerCatchUp', () => {
     resumedWire.deliver({
       v: 1,
       kind: 'attachment-offer',
+      cursor: 0,
       manifests: [manifest],
     });
     await vi.waitFor(() => {

@@ -348,14 +348,21 @@ before incremental storage; the assembled ciphertext is checked against
 `contentHash`, then AES-GCM authentication binds it to the framed row before a
 `Blob` is materialised.
 
-Transfer is resumable, and paged in both directions. A holder offers manifests
-only after the catch-up frame batches and their final marker, in messages of at
-most `MAX_ATTACHMENT_OFFERS` — an oversized message is refused whole by the
-decoder, so a space with many images would otherwise offer nothing at all. The
-receiver asks only for missing indices, at most `MAX_REQUESTED_CHUNKS` at a
+Transfer is resumable, and demand-driven in both directions. A holder offers
+manifests only after the catch-up frame batches and their final marker, one page
+of at most `MAX_OFFERS_PER_PAGE` at a time — the number a receiver will assemble
+at once. Offering more is worse than offering fewer: the receiver refuses
+everything past its in-flight ceiling and those attachments are never mentioned
+again. Each page carries a `cursor` into the holder's catalogue, and the
+receiver answers with `attachment-offer-next` once every manifest in the page is
+complete, already held or refused, which is what walks a catalogue of any size.
+The receiver asks only for missing indices, at most `MAX_REQUESTED_CHUNKS` at a
 time, and asks for the next page only once the one in flight has been answered:
 asking after every chunk would have the holder serve indices it is already
-serving. A holder that cannot supply an index it was asked for says so with an
+serving. Chunks are served against the transport's `sendWhenReady`, so the
+holder moves at the bearer's pace — a legal request of 256 chunks answered in
+one pass would overrun the outbox in front of the channel and fail a session
+neither peer misused. A holder that cannot supply an index it was asked for says so with an
 `attachment-unavailable` message rather than falling silent — the receiver is
 waiting on that page, so silence stalls the transfer for the life of the
 session. The transfer is then dropped rather than left pending, so a later offer
