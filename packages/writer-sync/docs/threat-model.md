@@ -352,8 +352,19 @@ timeout and client-isolation failures instead of an infinite connecting state.
 Inbound frames are rate-limited per peer, and a peer exceeding it has its session
 closed rather than its frames silently dropped, so the failure is observable.
 
-**Status.** Transport requirements land in 2A.5; the rate limit must be stated in
-the protocol specification with its chosen constant.
+**Status.** Implemented. `createInboundLimiter` charges a message-rate and a
+byte-rate budget before any message is dispatched — either alone leaves a gap,
+since one enormous message a second passes a message bound and a flood of empty
+ones passes a byte bound while still costing a decode apiece. Both refill
+continuously rather than resetting on a boundary, which would let a peer spend a
+full budget on either side of one instant. The constants are
+`MAX_INBOUND_MESSAGES` (512) and `MAX_INBOUND_BYTES` (32 MiB) per
+`INBOUND_WINDOW_MILLIS` (1 s), set above the heaviest legitimate burst — an
+attachment page of 256 chunks at roughly 171 KiB, spread across windows by the
+sender's own outbox bound and the channel's high-water mark. Exceeding either,
+or sending a message that carries no bytes at all, fails the session with a
+typed `InboundRateLimitError` or `NonBinaryMessageError` that reaches the
+consumer through `onClosed`.
 
 ---
 

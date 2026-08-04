@@ -3,8 +3,13 @@ import {
   BUFFER_HIGH_WATER_BYTES,
   FrameTooLargeError,
   MAX_FRAME_BYTES,
+  INBOUND_WINDOW_MILLIS,
+  InboundRateLimitError,
+  MAX_INBOUND_BYTES,
+  MAX_INBOUND_MESSAGES,
   MAX_OUTBOX_BYTES,
   MAX_OUTBOX_MESSAGES,
+  NonBinaryMessageError,
   TransportBackpressureError,
   createWebRtcTransport,
   type DataChannelLike,
@@ -121,13 +126,21 @@ describe('inbound', () => {
     expect(seen[0]).toEqual(new Uint8Array([5]));
   });
 
-  it('drops a non-binary message rather than guessing an encoding', () => {
+  it('fails the session on a message that is not binary', () => {
     const channel = fakeChannel();
     const transport = createWebRtcTransport(channel);
     const seen: Uint8Array[] = [];
+    const onClosed = vi.fn();
     transport.onMessage((bytes) => seen.push(bytes));
+    transport.onClosed?.(onClosed);
+
     channel.emit('message', 'a string from a peer that is not speaking this protocol');
+
+    // Nothing here guesses at an encoding, and a peer that is not speaking this
+    // protocol is not one to keep a session open for.
     expect(seen).toHaveLength(0);
+    expect(channel.closed).toBe(true);
+    expect(onClosed).toHaveBeenCalledWith(expect.any(NonBinaryMessageError));
   });
 
   it('stops delivering once unsubscribed', () => {
@@ -278,6 +291,97 @@ describe('outbox bounds', () => {
     for (let i = 0; i < capacity; i += 1) {
       expect(() => replacement.send(full())).not.toThrow();
     }
+  });
+});
+
+describe('inbound rate limit', () => {
+  const limited = (now: () => number) => {
+    const channel = fakeChannel();
+    const transport = createWebRtcTransport(channel, { now });
+    const seen: Uint8Array[] = [];
+    const onClosed = vi.fn();
+    transport.onMessage((bytes) => seen.push(bytes));
+    transport.onClosed?.(onClosed);
+    return { channel, transport, seen, onClosed };
+  };
+
+  /** One message of `bytes`, as the channel delivers it. */
+  const deliver = (channel: ReturnType<typeof fakeChannel>, bytes: number): void => {
+    channel.emit('message', new Uint8Array(bytes).buffer);
+  };
+
+  it('carries a burst that stays inside both bounds', () => {
+    const { channel, seen, onClosed } = limited(() => 0);
+
+    for (let i = 0; i < MAX_INBOUND_MESSAGES; i += 1) deliver(channel, 1);
+
+    expect(seen).toHaveLength(MAX_INBOUND_MESSAGES);
+    expect(onClosed).not.toHaveBeenCalled();
+  });
+
+  it('closes the session on the message past the count bound', () => {
+    const { channel, seen, onClosed } = limited(() => 0);
+    for (let i = 0; i < MAX_INBOUND_MESSAGES; i += 1) deliver(channel, 1);
+
+    deliver(channel, 1);
+
+    // Discarding the excess and staying open would leave an apparently healthy
+    // session that can never complete its catch-up.
+    expect(seen).toHaveLength(MAX_INBOUND_MESSAGES);
+    expect(channel.closed).toBe(true);
+    expect(onClosed).toHaveBeenCalledWith(expect.any(InboundRateLimitError));
+  });
+
+  it('closes the session on the message past the byte bound', () => {
+    const { channel, seen, onClosed } = limited(() => 0);
+    const capacity = MAX_INBOUND_BYTES / MAX_FRAME_BYTES;
+
+    for (let i = 0; i < capacity; i += 1) deliver(channel, MAX_FRAME_BYTES);
+    expect(seen).toHaveLength(capacity);
+    // Well inside the count bound, so this is the byte bound speaking.
+    expect(capacity).toBeLessThan(MAX_INBOUND_MESSAGES);
+
+    deliver(channel, 1);
+
+    expect(seen).toHaveLength(capacity);
+    expect(onClosed).toHaveBeenCalledWith(expect.any(InboundRateLimitError));
+  });
+
+  it('refills as the window passes', () => {
+    let clock = 0;
+    const { channel, seen } = limited(() => clock);
+    for (let i = 0; i < MAX_INBOUND_MESSAGES; i += 1) deliver(channel, 1);
+
+    clock += INBOUND_WINDOW_MILLIS;
+    for (let i = 0; i < MAX_INBOUND_MESSAGES; i += 1) deliver(channel, 1);
+
+    expect(seen).toHaveLength(2 * MAX_INBOUND_MESSAGES);
+  });
+
+  it('refills in proportion to the time that passed, not all at once', () => {
+    let clock = 0;
+    const { channel, seen, onClosed } = limited(() => clock);
+    for (let i = 0; i < MAX_INBOUND_MESSAGES; i += 1) deliver(channel, 1);
+
+    clock += INBOUND_WINDOW_MILLIS / 2;
+    for (let i = 0; i < MAX_INBOUND_MESSAGES / 2; i += 1) deliver(channel, 1);
+    expect(onClosed).not.toHaveBeenCalled();
+
+    deliver(channel, 1);
+
+    expect(seen).toHaveLength(MAX_INBOUND_MESSAGES * 1.5);
+    expect(onClosed).toHaveBeenCalledWith(expect.any(InboundRateLimitError));
+  });
+
+  it('says nothing to a listener once the session has failed', () => {
+    const { channel, seen } = limited(() => 0);
+    for (let i = 0; i <= MAX_INBOUND_MESSAGES; i += 1) deliver(channel, 1);
+    const delivered = seen.length;
+
+    deliver(channel, 1);
+    deliver(channel, 1);
+
+    expect(seen).toHaveLength(delivered);
   });
 });
 

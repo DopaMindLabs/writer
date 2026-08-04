@@ -36,7 +36,12 @@ export interface SyncTransport {
    * will never carry anything again, and every later message is written into
    * nothing. A bearer that cannot know (a `BroadcastChannel` between tabs of one
    * browser) leaves it unset.
+   *
+   * A reason travels with it when this device is the one ending the session —
+   * a peer flooding it, or an outbox it can no longer hold — so a consumer can
+   * say why sync stopped rather than only that it did. A bearer that simply
+   * went away passes none.
    */
-  readonly onClosed?: (cb: () => void) => () => void;
+  readonly onClosed?: (cb: (reason?: Error) => void) => () => void;
   readonly close: () => void;
 }

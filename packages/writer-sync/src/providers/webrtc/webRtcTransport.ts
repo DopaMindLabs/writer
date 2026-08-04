@@ -5,6 +5,14 @@ import {
   MAX_FRAME_BYTES,
 } from './frameCeiling';
 import { TransportBackpressureError, createOutboxQueue } from './outboxQueue';
+import {
+  INBOUND_WINDOW_MILLIS,
+  InboundRateLimitError,
+  MAX_INBOUND_BYTES,
+  MAX_INBOUND_MESSAGES,
+  createInboundLimiter,
+  type InboundLimiter,
+} from './inboundLimiter';
 
 export { BUFFER_HIGH_WATER_BYTES, FrameTooLargeError, MAX_FRAME_BYTES } from './frameCeiling';
 export {
@@ -12,6 +20,20 @@ export {
   MAX_OUTBOX_MESSAGES,
   TransportBackpressureError,
 } from './outboxQueue';
+export {
+  INBOUND_WINDOW_MILLIS,
+  InboundRateLimitError,
+  MAX_INBOUND_BYTES,
+  MAX_INBOUND_MESSAGES,
+} from './inboundLimiter';
+
+/** A peer speaking something that is not this protocol at all. */
+export class NonBinaryMessageError extends Error {
+  constructor() {
+    super('A peer sent a message that carried no bytes');
+    this.name = 'NonBinaryMessageError';
+  }
+}
 
 /**
  * A {@link SyncTransport} over one WebRTC data channel, per runbook §22.
@@ -69,7 +91,7 @@ const isGone = (channel: DataChannelLike): boolean =>
  */
 const createChannelOutbox = (channel: DataChannelLike) => {
   const pending = createOutboxQueue();
-  const watchers = new Set<() => void>();
+  const watchers = new Set<(reason?: Error) => void>();
   let closed = false;
 
   return {
@@ -92,14 +114,18 @@ const createChannelOutbox = (channel: DataChannelLike) => {
       }
       channel.send(copy.buffer);
     },
-    /** The channel went away on its own. Told once, and only to those still listening. */
-    markClosed: (): void => {
+    /**
+     * The session is over. Told once, and only to those still listening; a
+     * reason travels with it when this device is the one ending it, so a
+     * consumer can say why sync stopped rather than only that it did.
+     */
+    markClosed: (reason?: Error): void => {
       if (closed) return;
       closed = true;
       pending.discard();
-      for (const watcher of [...watchers]) watcher();
+      for (const watcher of [...watchers]) watcher(reason);
     },
-    onClosed: (callback: () => void): (() => void) => {
+    onClosed: (callback: (reason?: Error) => void): (() => void) => {
       watchers.add(callback);
       return () => {
         watchers.delete(callback);
@@ -112,6 +138,77 @@ const createChannelOutbox = (channel: DataChannelLike) => {
       watchers.clear();
     },
   };
+};
+
+/**
+ * The gate every inbound message passes: is it this protocol at all, and is the
+ * peer still inside what this session will carry.
+ */
+const inboundHandler = (options: {
+  limiter: InboundLimiter;
+  deliver: (bytes: Uint8Array) => void;
+  fail: (reason: Error) => void;
+}) => {
+  const { limiter, deliver, fail } = options;
+  return (event: MessageEvent<unknown>): void => {
+    const bytes = toBytes(event.data);
+    // A peer that sends something other than binary is not speaking this
+    // protocol at all, and is not one to hold a session open for.
+    if (bytes === null) {
+      fail(new NonBinaryMessageError());
+      return;
+    }
+    // Refusing the excess and staying open would leave an apparently healthy
+    // session whose catch-up can never complete.
+    if (!limiter.consume({ messages: 1, bytes: bytes.byteLength })) {
+      fail(new InboundRateLimitError());
+      return;
+    }
+    deliver(bytes);
+  };
+};
+
+/**
+ * Subscribe to everything the channel has to say, and hand back the way to stop
+ * listening. Paired here so a listener added can never be one detach forgets.
+ */
+const attachChannel = (options: {
+  channel: DataChannelLike;
+  onMessage: (event: MessageEvent<unknown>) => void;
+  onRoom: () => void;
+  onGone: () => void;
+}): (() => void) => {
+  const { channel, onMessage, onRoom, onGone } = options;
+  channel.addEventListener('message', onMessage);
+  channel.addEventListener('bufferedamountlow', onRoom);
+  channel.addEventListener('open', onRoom);
+  channel.addEventListener('close', onGone);
+  channel.addEventListener('error', onGone);
+  return () => {
+    channel.removeEventListener('message', onMessage);
+    channel.removeEventListener('bufferedamountlow', onRoom);
+    channel.removeEventListener('open', onRoom);
+    channel.removeEventListener('close', onGone);
+    channel.removeEventListener('error', onGone);
+  };
+};
+
+/**
+ * Write, or end the session that cannot hold what it is being given.
+ *
+ * The throw still reaches the caller: it is the only party that knows what it
+ * was trying to send, and the only one that can decide whether to report it.
+ */
+const guardedSend = (
+  outbox: { send: (bytes: Uint8Array) => void },
+  fail: (reason: Error) => void,
+) => (bytes: Uint8Array): void => {
+  try {
+    outbox.send(bytes);
+  } catch (error) {
+    if (error instanceof TransportBackpressureError) fail(error);
+    throw error;
+  }
 };
 
 /**
@@ -128,48 +225,51 @@ const createChannelOutbox = (channel: DataChannelLike) => {
  * consumer told through {@link SyncTransport.onClosed} so it can stop using a
  * bearer that is gone.
  */
-export const createWebRtcTransport = (channel: DataChannelLike): SyncTransport => {
+export const createWebRtcTransport = (
+  channel: DataChannelLike,
+  options: { now?: () => number } = {},
+): SyncTransport => {
   const listeners = new Set<(bytes: Uint8Array) => void>();
   const outbox = createChannelOutbox(channel);
+  const limiter = createInboundLimiter({
+    messagesPerWindow: MAX_INBOUND_MESSAGES,
+    bytesPerWindow: MAX_INBOUND_BYTES,
+    windowMs: INBOUND_WINDOW_MILLIS,
+    now: options.now ?? (() => Date.now()),
+  });
   let released = false;
 
   channel.bufferedAmountLowThreshold = BUFFER_HIGH_WATER_BYTES / 2;
 
-  const onMessageEvent = (event: MessageEvent<unknown>): void => {
-    const bytes = toBytes(event.data);
-    // A peer that sends something other than binary is not speaking this
-    // protocol; drop it rather than guessing at an encoding.
-    if (bytes === null) return;
-    for (const listener of listeners) listener(bytes);
-  };
+  const onMessageEvent = inboundHandler({
+    limiter,
+    deliver: (bytes) => {
+      for (const listener of listeners) listener(bytes);
+    },
+    fail: (reason) => {
+      failAndClose(reason);
+    },
+  });
 
-  const detach = (): void => {
-    channel.removeEventListener('message', onMessageEvent);
-    channel.removeEventListener('bufferedamountlow', outbox.flush);
-    channel.removeEventListener('open', outbox.flush);
-    channel.removeEventListener('close', outbox.markClosed);
-    channel.removeEventListener('error', outbox.markClosed);
-  };
-
-  channel.addEventListener('message', onMessageEvent);
-  channel.addEventListener('bufferedamountlow', outbox.flush);
-  channel.addEventListener('open', outbox.flush);
-  channel.addEventListener('close', outbox.markClosed);
-  channel.addEventListener('error', outbox.markClosed);
+  const detach = attachChannel({
+    channel,
+    onMessage: onMessageEvent,
+    onRoom: outbox.flush,
+    // The bearer went away by itself, so there is no reason of ours to give.
+    onGone: () => {
+      outbox.markClosed();
+    },
+  });
 
   /**
-   * End the session on a failure the consumer must see.
-   *
-   * The queue is discarded, the listeners detached and the channel closed, and
-   * whoever is watching is told the transport has gone — the same signal a
-   * channel dying on its own produces, because to a consumer it is the same
-   * fact. The error itself goes to the caller, which is the only party that can
-   * say what it was trying to send.
+   * End the session on a failure the consumer must see: queue discarded,
+   * listeners detached, channel closed, and the reason carried to whoever is
+   * watching — the same signal a channel dying on its own produces.
    */
-  const failAndClose = (): void => {
+  const failAndClose = (reason: Error): void => {
     if (released) return;
     released = true;
-    outbox.markClosed();
+    outbox.markClosed(reason);
     listeners.clear();
     detach();
     channel.close();
@@ -178,14 +278,7 @@ export const createWebRtcTransport = (channel: DataChannelLike): SyncTransport =
   return {
     sharesStore: false,
     maxMessageBytes: MAX_FRAME_BYTES,
-    send: (bytes) => {
-      try {
-        outbox.send(bytes);
-      } catch (error) {
-        if (error instanceof TransportBackpressureError) failAndClose();
-        throw error;
-      }
-    },
+    send: guardedSend(outbox, failAndClose),
     onMessage: (callback) => {
       listeners.add(callback);
       return () => {
