@@ -72,8 +72,17 @@ export const pasteSymbols = async (
   }
 };
 
-/** Take two devices all the way through to "Devices paired" on both. */
-export const pair = async (showingDevice: Page, readingDevice: Page): Promise<void> => {
+/**
+ * Take two devices as far as the digits on both screens — everything a pairing
+ * does before a human agrees the codes match.
+ *
+ * Separate from {@link pair} because the step after it is the one with no clock
+ * on it, and a spec about a pairing that runs out of time has to stop here.
+ */
+export const walkToVerification = async (
+  showingDevice: Page,
+  readingDevice: Page,
+): Promise<void> => {
   await openPairing(showingDevice);
   await openPairing(readingDevice);
 
@@ -91,6 +100,11 @@ export const pair = async (showingDevice: Page, readingDevice: Page): Promise<vo
   await expect(showingDevice.getByTestId('pairing-verification-code')).toBeVisible({
     timeout: GATHERING_TIMEOUT,
   });
+};
+
+/** Take two devices all the way through to "Devices paired" on both. */
+export const pair = async (showingDevice: Page, readingDevice: Page): Promise<void> => {
+  await walkToVerification(showingDevice, readingDevice);
   await showingDevice.getByTestId('pairing-verification-confirm').click();
   await readingDevice.getByTestId('pairing-verification-confirm').click();
 

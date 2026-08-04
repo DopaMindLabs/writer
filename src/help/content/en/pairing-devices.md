@@ -71,10 +71,13 @@ so you can go back to the one it missed.
   device gathered are too big to fit in a code — usually a machine with very
   many network connections (VPNs, virtual adapters). Disconnect what you are not
   using, then close the dialog and try again.
-- **"That code has expired."** A code is valid for five minutes. Reading it in
-  a roundabout way — photographing it, opening the photo, copying the text and
-  pasting it — can take longer than that. Close the dialog on both devices and
-  start again; the fresh code is quicker to read the second time.
+- **"That code has expired."** A code is valid for five minutes, and that window
+  covers the whole pairing — reading the code and comparing the digits. Reading
+  it in a roundabout way — photographing it, opening the photo, copying the text
+  and pasting it — can take longer than that, and so can leaving the digits
+  sitting on screen before you confirm them. Either way nothing is transferred.
+  Close the dialog on both devices and start again; the fresh code is quicker to
+  read the second time.
 - **"That does not look like a pairing code from this device's partner."** The
   code came from a different pairing attempt — for example, one you started
   earlier and left open. Close the dialog on both devices and start fresh.
@@ -175,6 +178,11 @@ Removal is not final. To bring a device back, pair it again the ordinary way:
 show a code, scan it, and confirm the digits on both screens. Confirming is
 what restores trust — the device proves it is still the same one you paired
 with before, and syncing resumes from where it left off.
+
+Confirming the digits is not the last step: the devices still have to hand over
+the key. Until that finishes nothing is recorded, so a pairing that runs out of
+time — or one you close halfway — leaves the device exactly as it was. A device
+you removed stays removed, on the date you removed it.
 
 If a device you have paired with before ever fails re-pairing with a message
 about proving a different identity, do not keep trying. Remove it from the

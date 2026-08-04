@@ -180,20 +180,43 @@ export interface SecretHandoverSession {
  */
 export const TRANSFER_DEADLINE_MILLIS = 10_000;
 
+/**
+ * How one handover ended.
+ *
+ * Only `completed` says the key conversation reached its success state — a root
+ * sent, a root received and stored, or both devices already holding one. A
+ * timer firing, a caller unwinding, a peer going quiet and a protocol failure
+ * are each their own fact, and none of them is success. Conflating them is what
+ * let a pairing nobody finished commit durable trust.
+ */
+export type RootHandoverOutcome =
+  | { status: 'completed' }
+  | { status: 'expired' }
+  | { status: 'timed-out' }
+  | { status: 'cancelled' }
+  | { status: 'failed'; error: unknown };
+
 export interface RunRootSecretHandoverOptions {
   channel: DataChannelLike;
   session: SecretHandoverSession;
   /** This device's wall clock, injectable so expiry can be tested exactly. */
   now?: () => number;
-  /** Called once, when the root has moved or the transfer deadline has passed. */
-  onSettled: () => void;
-  /** Called instead, once, when the pairing session itself had expired. */
-  onExpired?: () => void;
+  /** The key conversation succeeded. The only route to durable trust. */
+  onCompleted: () => void;
+  /** It ended any other way: write nothing, start nothing, close the pairing. */
+  onAborted: (outcome: RootHandoverOutcome) => void;
 }
 
 export interface RunningRootSecretHandover {
+  /** Teardown, reported to `onAborted` as `cancelled`. */
   stop: () => void;
 }
+
+/** What a transfer error means for the conversation as a whole. */
+const outcomeFor = (error: unknown): RootHandoverOutcome =>
+  error instanceof PairingError && error.code === PairingErrorCode.Expired
+    ? { status: 'expired' }
+    : { status: 'failed', error };
 
 /**
  * Drive the handover over one channel, then get out of the way.
@@ -203,13 +226,31 @@ export interface RunningRootSecretHandover {
  * this decoder — but a peer that has not finished repeats `ready` until it hears
  * back, and detaching is what stops those late repeats being answered by a
  * conversation that is over.
+ *
+ * Exactly one outcome is reported, whichever of the deadline, the caller and the
+ * protocol gets there first.
  */
 export const runRootSecretHandover = (
   options: RunRootSecretHandoverOptions,
 ): RunningRootSecretHandover => {
-  const { channel, session, onSettled } = options;
+  const { channel, session } = options;
   let done = false;
-  let expired = false;
+
+  const settle = (outcome: RootHandoverOutcome): void => {
+    if (done) return;
+    done = true;
+    clearTimeout(deadline);
+    transfer.stop();
+    channel.removeEventListener('message', onMessage);
+    if (outcome.status === 'completed') {
+      options.onCompleted();
+      return;
+    }
+    // The exchange is over and its key material with it; the adapter is told so
+    // it can let the ephemeral key go.
+    if (outcome.status === 'expired') session.onExpired?.();
+    options.onAborted(outcome);
+  };
 
   const transfer = startRootTransfer({
     ...rootSecretHandoverPorts({
@@ -219,14 +260,11 @@ export const runRootSecretHandover = (
       now: options.now,
       onError: (error: unknown) => {
         appLogger.warn('root secret transfer failed', error);
-        // An expired session has nothing left to say: waiting out the deadline
-        // would only repeat an announcement no root can follow. A fresh QR
-        // exchange is what moves key material now, and everything this one
-        // established goes with it.
-        if (error instanceof PairingError && error.code === PairingErrorCode.Expired) {
-          expired = true;
-          finish();
-        }
+        // Nothing here is recoverable: an expired session can only repeat an
+        // announcement no root can follow, and any other failure has left this
+        // conversation without a conclusion. Waiting out the deadline would end
+        // it the same way, later and less clearly.
+        settle(outcomeFor(error));
       },
     }),
     send: (message) => {
@@ -239,29 +277,27 @@ export const runRootSecretHandover = (
       void transfer.receive(decodeRootTransferMessage(asBytes(event.data)));
     } catch (error) {
       // Anything that is not a root-transfer message is not this protocol's to
-      // interpret, and never reaches the user.
+      // interpret, and never reaches the user. Not terminal: a stray message
+      // says nothing about the conversation this device is having.
       appLogger.warn('refused a message during root secret transfer', error);
     }
   };
 
-  const finish = (): void => {
-    if (done) return;
-    done = true;
-    clearTimeout(deadline);
-    transfer.stop();
-    channel.removeEventListener('message', onMessage);
-    if (expired) {
-      session.onExpired?.();
-      options.onExpired?.();
-      return;
-    }
-    onSettled();
-  };
-
-  const deadline = setTimeout(finish, TRANSFER_DEADLINE_MILLIS);
+  // A timer is never a conclusion. Even a device that sealed and sent a root
+  // does not know the peer took it, so the deadline says only that the
+  // conversation ran out — never that it succeeded.
+  const deadline = setTimeout(() => {
+    settle({ status: 'timed-out' });
+  }, TRANSFER_DEADLINE_MILLIS);
   channel.addEventListener('message', onMessage);
   transfer.start();
-  void transfer.settled().then(finish);
+  void transfer.settled().then(() => {
+    settle({ status: 'completed' });
+  });
 
-  return { stop: finish };
+  return {
+    stop: () => {
+      settle({ status: 'cancelled' });
+    },
+  };
 };

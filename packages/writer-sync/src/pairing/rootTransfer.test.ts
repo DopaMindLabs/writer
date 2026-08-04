@@ -174,6 +174,35 @@ describe('startRootTransfer', () => {
     await expect(transfer.settled()).resolves.toBe('not-needed');
   });
 
+  it('settles from a ready peer whose earlier announcements were missed', async () => {
+    // The two refrains replace each other: a peer that has settled stops saying
+    // what it holds and starts saying it is ready. A device that came to the
+    // channel late hears only the second, and would otherwise wait out its
+    // deadline over a conversation both ends had already finished — which, once
+    // a timeout stopped counting as success, meant a re-pairing was thrown away.
+    const device = harness({ holdsRoot: true });
+    const transfer = startRootTransfer(device.ports);
+    transfer.start();
+
+    await transfer.receive(READY);
+
+    await expect(transfer.settled()).resolves.toBe('not-needed');
+  });
+
+  it('does not settle from a ready peer that is still waiting for a root', async () => {
+    const device = harness({ holdsRoot: true });
+    const transfer = startRootTransfer(device.ports);
+    transfer.start();
+
+    // It asked for a root, so its readiness says nothing about this device
+    // having finished: the root has still to be sealed and sent.
+    await transfer.receive({ v: ROOT_TRANSFER_VERSION, kind: 'needs-root' });
+    await transfer.receive(READY);
+
+    await expect(transfer.settled()).resolves.toBe('sent');
+    expect(device.sent.some((message) => message.kind === 'root')).toBe(true);
+  });
+
   it('waits for the peer before handing the channel on', async () => {
     // Sync follows on this channel with a decoder of its own. A device that
     // returned to sync while its peer was still reading for keys would have its

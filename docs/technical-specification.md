@@ -597,6 +597,21 @@ wired into the app.
 - **Verification gate.** Both devices hold at the same gate and complete only on
   an explicit human confirmation that the six digits match. Nothing is
   transferred on authentication alone.
+- **Trust is committed in two phases.** Confirming the digits authenticates the
+  peer in memory only. Nothing is written to `trustedDevices`, the session is not
+  published to the P2P provider, no scope channel is taken up and catch-up does
+  not start until the root secret has crossed; the device is recorded at that
+  point and gains sync authority only then. An incomplete pairing therefore
+  leaves nothing behind, whether it expired, failed or was cut short by the tab
+  closing — there is no cleanup step for a crash to skip. A known device id
+  presenting a different identity key is refused before any key material moves,
+  not after.
+- **Confirming too late.** The session deadline is the earlier of the two signed
+  ones, and is checked again when the account key is sealed — the step the human
+  confirmation gates. Past it the pairing ends instead of completing: no key is
+  sealed, the ephemeral key is discarded, the channel closes, and the dialog
+  reads *expired*. Nothing was recorded, so a device the user had removed is
+  still removed and one that was already trusted is untouched.
 - **Reading a code.** Three paths, offered together: the **live camera**, an
   **uploaded photograph**, or **pasted text**. The camera is offered first
   because it is the only one that works between a desktop and a phone unaided,

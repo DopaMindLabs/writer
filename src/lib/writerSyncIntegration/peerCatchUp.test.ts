@@ -24,6 +24,7 @@ import {
   type RootTransferMessage,
 } from 'writer-sync/pairing';
 import { createPeerCatchUp } from './peerCatchUp';
+import { TRANSFER_DEADLINE_MILLIS } from './rootSecretHandover';
 import { peerLinkStatus } from './peerLinkStatus';
 import { peerSessions } from './peerSessionRegistry';
 
@@ -34,6 +35,13 @@ import { peerSessions } from './peerSessionRegistry';
  */
 
 const PEER = asDeviceId('peer-device');
+
+/** Let every queued continuation, and the storage work behind it, run out. */
+const settled = async (): Promise<void> => {
+  for (let turn = 0; turn < 4; turn += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  }
+};
 
 let db: LoremDB;
 
@@ -506,36 +514,231 @@ describe('createPeerCatchUp', () => {
     catchUp.stop();
   });
 
-  it('records the peer as trusted when a pairing is adopted', async () => {
-    const peer = fakeSession();
+  it('records the peer as trusted once the root has crossed, and not before', async () => {
+    // Both devices hold key material, so the key conversation settles without a
+    // root moving — the conversation still has to happen.
+    await saveDeviceKeyRing({
+      ring: await deriveKeyRing(generateRootSecret(), 1),
+      accountId: null,
+    });
+    const wire = rawWire();
+    const peer = fakeSession(wire.channel);
     const catchUp = createPeerCatchUp(db);
 
     await catchUp.adopt({
       session: peer.session,
       deviceId: PEER,
-      secretHandover: {
-        peer: {
-          deviceId: PEER,
-          publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },
-          peerEphemeralPublicJwk: { kty: 'EC', crv: 'P-256', x: 'e', y: 'f' },
-          transcript: new Uint8Array([1, 2, 3]),
-          verificationCode: '048213',
-  expiresAt: Date.now() + 300_000,
-        },
-        sessionPrivateKey: null,
-        deviceId: asDeviceId('this-device'),
-      },
+      secretHandover: handoverFor(),
     });
 
-    // Without this record every frame the peer sends is refused: the verifier
-    // checks a signature against the identity key a pairing established, and a
-    // device it has never heard of has none.
+    // A pairing cut short here must leave no record: there is no cleanup step
+    // a crash cannot skip.
+    expect(await db.trustedDevices.count()).toBe(0);
+
+    wire.deliverRoot({ v: 1, kind: 'holds-root' });
+    wire.deliverRoot({ v: 1, kind: 'ready' });
+
     await vi.waitFor(async () => {
       const record = await db.trustedDevices.get(String(PEER));
       expect(record?.status).toBe(TrustedDeviceStatus.Active);
       expect(record?.publicIdentityJwk).toEqual({ kty: 'EC', crv: 'P-256', x: 'x', y: 'y' });
     });
     catchUp.stop();
+  });
+
+  it('writes nothing when the pairing is cut short while the root is still moving', async () => {
+    const warn = vi.spyOn(appLogger, 'warn').mockImplementation(() => undefined);
+    const wire = rawWire();
+    const peer = fakeSession(wire.channel);
+    const catchUp = createPeerCatchUp(db);
+
+    await catchUp.adopt({
+      session: peer.session,
+      deviceId: PEER,
+      secretHandover: handoverFor(),
+    });
+    // The tab closing, the process going and the connection dropping are the
+    // same thing here: none of them run a cleanup step.
+    catchUp.stop();
+
+    // Flushed before reading: a write queued behind the callback chain would
+    // otherwise land after the assertion and never be seen.
+    await settled();
+    expect(warn).toHaveBeenCalledWith('a pairing ended without the root moving', {
+      status: 'cancelled',
+    });
+    expect(await db.trustedDevices.count()).toBe(0);
+    warn.mockRestore();
+  });
+
+  it('writes nothing when the peer never finishes the key conversation', async () => {
+    const warn = vi.spyOn(appLogger, 'warn').mockImplementation(() => undefined);
+    // Real time keeps flowing for IndexedDB underneath; only the deadline is
+    // driven, since the storage this asserts on cannot run on a frozen clock.
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      const wire = rawWire();
+      const peer = fakeSession(wire.channel);
+      const catchUp = createPeerCatchUp(db);
+
+      await catchUp.adopt({
+        session: peer.session,
+        deviceId: PEER,
+        secretHandover: handoverFor(),
+      });
+      // Ten seconds of silence. This device once carried on and synced anyway.
+      await vi.advanceTimersByTimeAsync(TRANSFER_DEADLINE_MILLIS);
+      // Every queued continuation and the storage work behind it, before any
+      // assertion: a commit that lands late would otherwise go unseen.
+      await settled();
+
+      // Silence is not agreement. Reporting it as a settlement is what let ten
+      // seconds of nothing commit a device.
+      expect(warn).toHaveBeenCalledWith('a pairing ended without the root moving', {
+        status: 'timed-out',
+      });
+      expect(await db.trustedDevices.count()).toBe(0);
+      expect(peer.listeningForChannels()).toBe(false);
+      expect(peerSessions.peers()).toEqual([]);
+      expect(wire.kinds()).not.toContain('manifest');
+    } finally {
+      vi.useRealTimers();
+      warn.mockRestore();
+    }
+  });
+
+  it('leaves a removed device removed when the peer never finishes', async () => {
+    const warn = vi.spyOn(appLogger, 'warn').mockImplementation(() => undefined);
+    const now = Date.now();
+    await db.trustedDevices.put({
+      deviceId: PEER,
+      publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },
+      principalId: asPrincipalId('me'),
+      addedAt: now - 5_000,
+      lastSessionAt: now - 5_000,
+      displayName: 'Old laptop',
+      status: TrustedDeviceStatus.Revoked,
+      revokedAt: now - 1_000,
+      acknowledgedOperations: {},
+    });
+    // Real time keeps flowing for IndexedDB underneath; only the deadline is
+    // driven, since the storage this asserts on cannot run on a frozen clock.
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      const wire = rawWire();
+      const peer = fakeSession(wire.channel);
+      const catchUp = createPeerCatchUp(db);
+
+      await catchUp.adopt({
+        session: peer.session,
+        deviceId: PEER,
+        secretHandover: handoverFor(),
+      });
+      await vi.advanceTimersByTimeAsync(TRANSFER_DEADLINE_MILLIS);
+      // Every queued continuation and the storage work behind it, before any
+      // assertion: a commit that lands late would otherwise go unseen.
+      await settled();
+
+      expect(warn).toHaveBeenCalledWith('a pairing ended without the root moving', {
+        status: 'timed-out',
+      });
+      const record = await db.trustedDevices.get(String(PEER));
+      expect(record?.status).toBe(TrustedDeviceStatus.Revoked);
+      expect(record?.revokedAt).toBe(now - 1_000);
+      // Untouched, not restored: nothing wrote to it in the first place.
+      expect(record?.lastSessionAt).toBe(now - 5_000);
+      expect(record?.displayName).toBe('Old laptop');
+    } finally {
+      vi.useRealTimers();
+      warn.mockRestore();
+    }
+  });
+
+  it('grants no sync authority while the root is still moving', async () => {
+    const wire = rawWire();
+    const peer = fakeSession(wire.channel);
+    const catchUp = createPeerCatchUp(db);
+
+    await catchUp.adopt({
+      session: peer.session,
+      deviceId: PEER,
+      secretHandover: handoverFor(),
+    });
+
+    // A scope channel is ordinary sync authority, which an unfinished pairing
+    // does not have.
+    expect(peer.listeningForChannels()).toBe(false);
+    const scope = fakeChannel();
+    (scope.channel as unknown as { label: string }).label = 's1/doc-updates';
+    peer.arriveChannel(scope.channel);
+    expect(scope.sent).toEqual([]);
+
+    expect(peerSessions.peers()).toEqual([]);
+    expect(wire.kinds()).not.toContain('manifest');
+    catchUp.stop();
+  });
+
+  it('commits once, and only then syncs and takes up scope channels', async () => {
+    await saveDeviceKeyRing({
+      ring: await deriveKeyRing(generateRootSecret(), 1),
+      accountId: null,
+    });
+    let written = 0;
+    const count = (): void => {
+      written += 1;
+    };
+    db.trustedDevices.hook('creating', count);
+    const wire = rawWire();
+    const peer = fakeSession(wire.channel);
+    const catchUp = createPeerCatchUp(db);
+
+    await catchUp.adopt({
+      session: peer.session,
+      deviceId: PEER,
+      secretHandover: handoverFor(),
+    });
+    wire.deliverRoot({ v: 1, kind: 'holds-root' });
+    wire.deliverRoot({ v: 1, kind: 'ready' });
+
+    await vi.waitFor(() => {
+      expect(wire.kinds()).toContain('manifest');
+    });
+    db.trustedDevices.hook('creating').unsubscribe(count);
+    expect(written).toBe(1);
+    expect(peer.listeningForChannels()).toBe(true);
+    expect(peerSessions.peers().map((one) => one.deviceId)).toEqual([PEER]);
+    catchUp.stop();
+  });
+
+  it('syncs nothing when the record cannot be written', async () => {
+    await saveDeviceKeyRing({
+      ring: await deriveKeyRing(generateRootSecret(), 1),
+      accountId: null,
+    });
+    const warn = vi.spyOn(appLogger, 'warn').mockImplementation(() => undefined);
+    const refuse = (): never => {
+      throw new Error('the registry refused this device');
+    };
+    db.trustedDevices.hook('creating', refuse);
+    const wire = rawWire();
+    const peer = fakeSession(wire.channel);
+    const catchUp = createPeerCatchUp(db);
+
+    await catchUp.adopt({
+      session: peer.session,
+      deviceId: PEER,
+      secretHandover: handoverFor(),
+    });
+    wire.deliverRoot({ v: 1, kind: 'holds-root' });
+    wire.deliverRoot({ v: 1, kind: 'ready' });
+
+    await vi.waitFor(() => {
+      expect(warn).toHaveBeenCalledWith('recording a paired device failed', expect.anything());
+    });
+    db.trustedDevices.hook('creating').unsubscribe(refuse);
+    expect(wire.kinds()).not.toContain('manifest');
+    expect(peer.close).toHaveBeenCalled();
+    expect(await db.trustedDevices.count()).toBe(0);
   });
 
   it('leaves no trust behind when the pairing expired before the root moved', async () => {
@@ -571,6 +774,98 @@ describe('createPeerCatchUp', () => {
     // Nothing was sealed, and catch-up never opened over a link the peer
     // cannot read.
     expect(wire.kinds()).not.toContain('manifest');
+    catchUp.stop();
+  });
+
+  it('puts a device an expired pairing reactivated back where it found it', async () => {
+    const now = Date.now();
+    const key = { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' };
+    await db.trustedDevices.put({
+      deviceId: PEER,
+      publicIdentityJwk: key,
+      principalId: asPrincipalId('me'),
+      addedAt: now - 5_000,
+      lastSessionAt: now - 5_000,
+      displayName: 'Old laptop',
+      status: TrustedDeviceStatus.Revoked,
+      revokedAt: now - 1_000,
+      acknowledgedOperations: {},
+    });
+    const wire = rawWire();
+    const peer = fakeSession(wire.channel);
+    const catchUp = createPeerCatchUp(db);
+    const onExpired = vi.fn();
+    const handover = handoverFor();
+
+    await catchUp.adopt({
+      session: peer.session,
+      deviceId: PEER,
+      secretHandover: {
+        ...handover,
+        peer: { ...handover.peer, expiresAt: Date.now() - 1 },
+        onExpired,
+      },
+    });
+
+    wire.deliverRoot({ v: 1, kind: 'needs-root' });
+
+    await vi.waitFor(() => {
+      expect(onExpired).toHaveBeenCalledTimes(1);
+    });
+    // A removal is undone by a pairing that finished. This one did not, so the
+    // device the user removed is still removed — the record cannot be left
+    // saying the registry trusts a device the handover never reached.
+    await vi.waitFor(async () => {
+      const record = await db.trustedDevices.get(String(PEER));
+      expect(record?.status).toBe(TrustedDeviceStatus.Revoked);
+    });
+    const record = await db.trustedDevices.get(String(PEER));
+    expect(record?.revokedAt).toBe(now - 1_000);
+    expect(record?.publicIdentityJwk).toEqual(key);
+    expect(record?.displayName).toBe('Old laptop');
+    expect(record?.addedAt).toBe(now - 5_000);
+    catchUp.stop();
+  });
+
+  it('leaves a device that was already trusted trusted when a pairing expires', async () => {
+    const now = Date.now();
+    const key = { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' };
+    await db.trustedDevices.put({
+      deviceId: PEER,
+      publicIdentityJwk: key,
+      principalId: asPrincipalId('me'),
+      addedAt: now - 5_000,
+      lastSessionAt: now - 5_000,
+      displayName: 'Old laptop',
+      status: TrustedDeviceStatus.Active,
+      acknowledgedOperations: {},
+    });
+    const wire = rawWire();
+    const peer = fakeSession(wire.channel);
+    const catchUp = createPeerCatchUp(db);
+    const onExpired = vi.fn();
+    const handover = handoverFor();
+
+    await catchUp.adopt({
+      session: peer.session,
+      deviceId: PEER,
+      secretHandover: {
+        ...handover,
+        peer: { ...handover.peer, expiresAt: Date.now() - 1 },
+        onExpired,
+      },
+    });
+
+    wire.deliverRoot({ v: 1, kind: 'needs-root' });
+
+    await vi.waitFor(() => {
+      expect(onExpired).toHaveBeenCalledTimes(1);
+    });
+    // Nothing about this device's trust was this pairing's to give, so a
+    // pairing that failed has nothing to take away.
+    const record = await db.trustedDevices.get(String(PEER));
+    expect(record?.status).toBe(TrustedDeviceStatus.Active);
+    expect(record?.revokedAt).toBeUndefined();
     catchUp.stop();
   });
 
@@ -650,9 +945,13 @@ describe('createPeerCatchUp', () => {
     catchUp.stop();
   });
 
-  it('reactivates a revoked device when it re-pairs with the key it always had', async () => {
+  it('reactivates a revoked device only once the root has crossed', async () => {
+    await saveDeviceKeyRing({
+      ring: await deriveKeyRing(generateRootSecret(), 1),
+      accountId: null,
+    });
     const now = Date.now();
-    const key = { kty: 'EC', crv: 'P-256', x: 'first', y: 'key' };
+    const key = { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' };
     await db.trustedDevices.put({
       deviceId: PEER,
       publicIdentityJwk: key,
@@ -664,36 +963,33 @@ describe('createPeerCatchUp', () => {
       revokedAt: now - 1_000,
       acknowledgedOperations: {},
     });
-    const peer = fakeSession();
+    const wire = rawWire();
+    const peer = fakeSession(wire.channel);
     const catchUp = createPeerCatchUp(db);
 
     await catchUp.adopt({
       session: peer.session,
       deviceId: PEER,
-      secretHandover: {
-        peer: {
-          deviceId: PEER,
-          // The identity the record already vouches for, as a fresh export
-          // carries it — extra members and all.
-          publicIdentityJwk: { ...key, ext: true },
-          peerEphemeralPublicJwk: { kty: 'EC', crv: 'P-256', x: 'e', y: 'f' },
-          transcript: new Uint8Array([1, 2, 3]),
-          verificationCode: '048213',
-  expiresAt: Date.now() + 300_000,
-        },
-        sessionPrivateKey: null,
-        deviceId: asDeviceId('this-device'),
-      },
+      secretHandover: handoverFor(),
     });
 
-    // The digits were confirmed on both screens again: the removal is undone,
-    // the key is untouched, and adoption went on to listen for the peer's
-    // channels rather than staying dead.
+    // Confirming the digits is not finishing: until the root crosses, the
+    // device the user removed is still removed.
+    const held = await db.trustedDevices.get(String(PEER));
+    expect(held?.status).toBe(TrustedDeviceStatus.Revoked);
+    expect(held?.revokedAt).toBe(now - 1_000);
+
+    wire.deliverRoot({ v: 1, kind: 'holds-root' });
+    wire.deliverRoot({ v: 1, kind: 'ready' });
+
+    await vi.waitFor(async () => {
+      const record = await db.trustedDevices.get(String(PEER));
+      expect(record?.status).toBe(TrustedDeviceStatus.Active);
+      expect(record?.revokedAt).toBeUndefined();
+    });
     const record = await db.trustedDevices.get(String(PEER));
-    expect(record?.status).toBe(TrustedDeviceStatus.Active);
-    expect(record?.revokedAt).toBeUndefined();
     expect(record?.publicIdentityJwk).toEqual(key);
-    expect(peer.listeningForChannels()).toBe(true);
+    expect(record?.displayName).toBe('Old laptop');
     catchUp.stop();
   });
 
@@ -821,12 +1117,24 @@ describe('createPeerCatchUp', () => {
     // cannot read everything sent.
     const raw: Uint8Array[] = [];
     const listeners: ((event: MessageEvent<unknown>) => void)[] = [];
+    // Read at the moment catch-up first speaks, not after. A record written
+    // later is one that every frame arriving until then was refused against.
+    let trustedWhenSyncing: Promise<number> | null = null;
     const channel = {
       label: 'writer-sync-control',
       readyState: 'open',
       bufferedAmount: 0,
       bufferedAmountLowThreshold: 0,
-      send: (data: ArrayBuffer) => raw.push(new Uint8Array(data)),
+      send: (data: ArrayBuffer) => {
+        const bytes = new Uint8Array(data);
+        raw.push(bytes);
+        try {
+          decodeCatchUpMessage(bytes);
+        } catch {
+          return;
+        }
+        trustedWhenSyncing ??= db.trustedDevices.count();
+      },
       close: vi.fn(),
       addEventListener: (type: string, listener: (event: MessageEvent<unknown>) => void) => {
         if (type === 'message') listeners.push(listener);
@@ -888,6 +1196,10 @@ describe('createPeerCatchUp', () => {
     // Order is the point, not adjacency: the transfer keeps saying its piece
     // until the peer agrees, so what matters is that no manifest preceded it.
     expect(kindsSoFar().indexOf('manifest')).toBeGreaterThan(0);
+    // And the peer was already trusted by then. Catch-up opening first would
+    // have the verifier refuse every frame it drew, one at a time, over a
+    // connection that looked healthy.
+    expect(await trustedWhenSyncing).toBe(1);
     catchUp.stop();
   });
 
