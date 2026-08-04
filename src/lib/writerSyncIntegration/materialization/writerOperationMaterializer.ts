@@ -10,13 +10,17 @@ import type {
 } from 'writer-sync/operations';
 import { writerClock } from '@/lib/writerSyncIntegration/writerLogicalClock';
 import { materializeAttachmentFrame } from './attachmentFrameMaterializer';
+import { requireJournalledTable, type JournalledTable } from './frameAdmission';
 
 export { AttachmentChunksPendingError } from './attachmentFrameMaterializer';
+export { DisallowedOperationTableError } from './frameAdmission';
 
 /**
  * Applies inbound operation frames to Writer's local state. The invariants the
  * runbook demands live here:
  *
+ * - an operation may only name a table the policy journals as synced content,
+ *   so a paired device cannot reach this device's control tables;
  * - an accepted operation id replays as a no-op (the inbox is checked and
  *   written in the same transaction as materialisation);
  * - entity conflicts resolve deterministically (hybrid logical time, then
@@ -41,10 +45,12 @@ const journalWinner = async (
   return rivals.sort(compareOperations).at(-1);
 };
 
-const applyDelete = async (
-  db: LoremDB,
-  frame: EncryptedSyncFrame,
-): Promise<MaterializeResult> => {
+const applyDelete = async (options: {
+  db: LoremDB;
+  frame: EncryptedSyncFrame;
+  table: JournalledTable;
+}): Promise<MaterializeResult> => {
+  const { db, frame, table } = options;
   const winner = await journalWinner(db, frame);
   if (winner && compareOperations(winner, frame) > 0 && winner.kind === 'put') {
     // A strictly later put is already journalled locally; this deletion lost.
@@ -67,15 +73,17 @@ const applyDelete = async (
   if (!recorded || supersedes(frame, { ...frame, ...recorded })) {
     await db.syncTombstones.put(tombstone);
   }
-  await db.table(frame.entityTable).delete(frame.entityId);
+  await table.delete(frame.entityId);
   return 'applied';
 };
 
-const applyPut = async (
-  db: LoremDB,
-  frame: EncryptedSyncFrame,
-  row: Record<string, unknown>,
-): Promise<MaterializeResult> => {
+const applyPut = async (options: {
+  db: LoremDB;
+  frame: EncryptedSyncFrame;
+  table: JournalledTable;
+  row: Record<string, unknown>;
+}): Promise<MaterializeResult> => {
+  const { db, frame, table, row } = options;
   const tombstone = await db.syncTombstones.get([frame.entityTable, frame.entityId]);
   if (tombstone && !supersedes(frame, { ...frame, ...tombstone })) {
     // The deletion is later (or ties) — the put is stale and must not
@@ -90,7 +98,7 @@ const applyPut = async (
   if (tombstone) {
     await db.syncTombstones.delete([frame.entityTable, frame.entityId]);
   }
-  await db.table(frame.entityTable).put(row);
+  await table.put(row);
   return 'applied';
 };
 
@@ -115,6 +123,10 @@ export const applyInboundFrame = async (options: {
 }): Promise<MaterializeResult> => {
   const { db, ring } = options;
   const frame = await verifyFrame(options.frame);
+  // What a peer proved by signing is who it is, never what it may write to.
+  // Nothing below this line — decryption, the journal, the transaction — runs
+  // for an operation naming a table peers do not own.
+  const table = requireJournalledTable(db, frame.entityTable);
   const opened =
     frame.kind === 'put' ? await openOperationPayload(ring, frame, frame.payload) : null;
   const row =
@@ -124,12 +136,7 @@ export const applyInboundFrame = async (options: {
 
   const result = await db.transaction(
     'rw',
-    [
-      db.table(frame.entityTable),
-      db.syncOperations,
-      db.syncInbox,
-      db.syncTombstones,
-    ],
+    [table, db.syncOperations, db.syncInbox, db.syncTombstones],
     async () => {
       const prior = await db.syncInbox.get(String(frame.operationId));
       if (prior) return prior.result;
@@ -138,8 +145,8 @@ export const applyInboundFrame = async (options: {
       await db.syncOperations.put(frame);
       const result =
         frame.kind === 'delete'
-          ? await applyDelete(db, frame)
-          : await applyPut(db, frame, row ?? {});
+          ? await applyDelete({ db, frame, table })
+          : await applyPut({ db, frame, table, row: row ?? {} });
       await db.syncInbox.put({
         operationId: frame.operationId,
         accessScopeId: frame.accessScopeId,

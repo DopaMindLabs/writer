@@ -26,6 +26,7 @@ import {
   TRANSFER_CHUNK_BYTES,
 } from 'writer-sync/operations';
 import { prepareFramePayload } from './attachmentFramePayload';
+import { DisallowedOperationTableError } from './frameAdmission';
 import {
   journalledDelete,
   journalledPut,
@@ -351,6 +352,52 @@ describe('two-database operation convergence (hermetic)', () => {
       applyInboundFrame({ db: dbB, frame, ring }),
     ).rejects.toBeInstanceOf(ChunkIntegrityError);
     expect(await dbB.noteAttachments.get('a1')).toBeUndefined();
+    expect(await dbB.syncInbox.count()).toBe(0);
+  });
+
+  it('refuses a delete naming a table outside the journalled set', async () => {
+    await dbB.settings.put({
+      key: 'global',
+      proseFont: 'Source Serif 4',
+      uiFont: 'Geist',
+      proseSize: 18,
+      lineHeight: 1.6,
+      measure: 68,
+      theme: 'light',
+    });
+    const forged = makeDeleteFrame({
+      ring,
+      deviceId: DEVICE_A,
+      entityTable: 'settings',
+      entityId: 'global',
+      accessScopeId: 's1',
+    });
+
+    await expect(
+      applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(forged)), ring }),
+    ).rejects.toBeInstanceOf(DisallowedOperationTableError);
+    expect(await dbB.settings.get('global')).toBeDefined();
+    expect(await dbB.syncOperations.count()).toBe(0);
+    expect(await dbB.syncInbox.count()).toBe(0);
+    expect(await dbB.syncTombstones.count()).toBe(0);
+  });
+
+  it('refuses a put naming a control table before opening its payload', async () => {
+    // A frame sealed for `notes` and retargeted at the crypto escrow: the
+    // payload's own binding names `notes`, so reaching decryption at all would
+    // fail differently. The table check has to come first.
+    const sealed = await makePutFrame({
+      ring,
+      deviceId: DEVICE_A,
+      entityTable: 'notes',
+      row: note(),
+    });
+    const forged = { ...sealed, entityTable: 'cloudCrypto' };
+
+    await expect(
+      applyInboundFrame({ db: dbB, frame: JSON.parse(JSON.stringify(forged)), ring }),
+    ).rejects.toBeInstanceOf(DisallowedOperationTableError);
+    expect(await dbB.syncOperations.count()).toBe(0);
     expect(await dbB.syncInbox.count()).toBe(0);
   });
 
