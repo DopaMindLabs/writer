@@ -67,6 +67,17 @@ export type CatchUpMessage =
       chunk: AttachmentChunkPayload;
     }
   | {
+      /**
+       * Chunks a peer asked for that this device cannot serve. Silence would be
+       * indistinguishable from a slow link, leaving the asking device waiting
+       * on a chunk that is never coming.
+       */
+      v: typeof CATCH_UP_PROTOCOL_VERSION;
+      kind: 'attachment-unavailable';
+      attachmentId: string;
+      indices: number[];
+    }
+  | {
       v: typeof CATCH_UP_PROTOCOL_VERSION;
       kind: 'frames';
       frames: EncryptedSyncFrame[];
@@ -90,6 +101,7 @@ const CATCH_UP_KIND_TABLE = {
   'attachment-offer': true,
   'attachment-request': true,
   'attachment-chunk': true,
+  'attachment-unavailable': true,
   frames: true,
   ack: true,
 } satisfies Record<CatchUpMessage['kind'], true>;
@@ -245,6 +257,15 @@ const decodeAttachmentBody = (
       return {
         v,
         kind: 'attachment-request',
+        attachmentId: requireText(raw, 'attachmentId'),
+        indices: requireArray(raw.indices, 'indices', MAX_REQUESTED_CHUNKS).map(
+          decodeChunkIndex,
+        ),
+      };
+    case 'attachment-unavailable':
+      return {
+        v,
+        kind: 'attachment-unavailable',
         attachmentId: requireText(raw, 'attachmentId'),
         indices: requireArray(raw.indices, 'indices', MAX_REQUESTED_CHUNKS).map(
           decodeChunkIndex,

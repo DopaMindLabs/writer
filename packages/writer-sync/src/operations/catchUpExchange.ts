@@ -366,6 +366,7 @@ export const createCatchUpExchange = (ports: CatchUpPorts): CatchUpExchange => {
         case 'attachment-offer':
         case 'attachment-request':
         case 'attachment-chunk':
+        case 'attachment-unavailable':
           await attachments?.receive(message);
           return;
       }

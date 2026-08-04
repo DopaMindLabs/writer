@@ -348,10 +348,19 @@ before incremental storage; the assembled ciphertext is checked against
 `contentHash`, then AES-GCM authentication binds it to the framed row before a
 `Blob` is materialised.
 
-Transfer is resumable. A holder offers manifests only after the catch-up frame
-batches and their final marker; the receiver asks only for missing indices.
-Verified chunks persist immediately, so a later peer session resumes from the
-stored gap. A thin attachment frame stays journalled but absent from `syncInbox`
+Transfer is resumable, and paged in both directions. A holder offers manifests
+only after the catch-up frame batches and their final marker, in messages of at
+most `MAX_ATTACHMENT_OFFERS` — an oversized message is refused whole by the
+decoder, so a space with many images would otherwise offer nothing at all. The
+receiver asks only for missing indices, at most `MAX_REQUESTED_CHUNKS` at a
+time, and asks for the next page only once the one in flight has been answered:
+asking after every chunk would have the holder serve indices it is already
+serving. A holder that cannot supply an index it was asked for says so with an
+`attachment-unavailable` message rather than falling silent — the receiver is
+waiting on that page, so silence stalls the transfer for the life of the
+session. The transfer is then dropped rather than left pending, so a later offer
+can start it again. Verified chunks persist immediately, so a later peer session
+resumes from the stored gap. A thin attachment frame stays journalled but absent from `syncInbox`
 while chunks are missing, and the ordinary ingestion sweep retries it when the
 transfer completes. Dexie Cloud carries the same bounded ciphertext as replicated
 `syncAttachmentChunks` rows, so the thin frame contract is identical across

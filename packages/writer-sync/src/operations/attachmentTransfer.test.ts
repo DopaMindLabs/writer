@@ -3,9 +3,16 @@ import { toBase64Url } from '../crypto/base64url';
 import type { AttachmentChunkManifest } from './operation.types';
 import { buildChunkManifest } from './attachmentChunking';
 import { MAX_FRAME_BYTES } from '../providers/webrtc/webRtcTransport';
-import { encodeCatchUpMessage, type CatchUpMessage } from './catchUpMessage';
+import {
+  MAX_ATTACHMENT_OFFERS,
+  MAX_REQUESTED_CHUNKS,
+  decodeCatchUpMessage,
+  encodeCatchUpMessage,
+  type CatchUpMessage,
+} from './catchUpMessage';
 import {
   MAX_INFLIGHT_ATTACHMENTS,
+  StalledAttachmentTransferError,
   TRANSFER_CHUNK_BYTES,
   createAttachmentTransfer,
   type AttachmentTransferPorts,
@@ -37,8 +44,12 @@ const harness = (options: {
   const ports: AttachmentTransferPorts = {
     heldChunkIndices: async (attachmentId) =>
       options.held?.(attachmentId) ?? new Set<number>(),
-    readChunk: async ({ index }) =>
-      options.serve === undefined ? undefined : chunkOf(options.serve, index),
+    readChunk: async ({ index }) => {
+      if (options.serve === undefined) return undefined;
+      const bytes = chunkOf(options.serve, index);
+      // Past the end is an index this device does not hold, not an empty chunk.
+      return bytes.length > 0 ? bytes : undefined;
+    },
     saveAttachment: async ({ attachmentId, content }) => {
       saved.push({ attachmentId, content });
     },
@@ -156,7 +167,7 @@ describe('createAttachmentTransfer serving a request', () => {
     ]);
   });
 
-  it('stays silent about a chunk it does not hold', async () => {
+  it('says which chunks it does not hold rather than answering with silence', async () => {
     const { transfer, sent } = harness();
 
     await transfer.receive({
@@ -166,7 +177,11 @@ describe('createAttachmentTransfer serving a request', () => {
       indices: [0],
     });
 
-    expect(sent).toEqual([]);
+    // The asking device waits on the page it requested before asking for the
+    // next, so an unserved index it is never told about stalls the transfer.
+    expect(sent).toEqual([
+      { v: 1, kind: 'attachment-unavailable', attachmentId: 'att-1', indices: [0] },
+    ]);
   });
 });
 
@@ -321,5 +336,144 @@ describe('createAttachmentTransfer receiving chunks', () => {
 
     expect(sent).toEqual([]);
     expect(onRejected).not.toHaveBeenCalled();
+  });
+});
+
+describe('paging', () => {
+  /** Feed a transfer every chunk it asks for, page after page. */
+  const drain = async (options: {
+    transfer: ReturnType<typeof createAttachmentTransfer>;
+    sent: CatchUpMessage[];
+    content: Uint8Array;
+  }): Promise<number[][]> => {
+    const { transfer, sent, content } = options;
+    const pages: number[][] = [];
+    for (;;) {
+      const request = sent.find(
+        (message): message is Extract<CatchUpMessage, { kind: 'attachment-request' }> =>
+          message.kind === 'attachment-request',
+      );
+      if (request === undefined) return pages;
+      sent.length = 0;
+      pages.push(request.indices);
+      for (const index of request.indices) {
+        await transfer.receive(
+          chunkMessage({
+            attachmentId: request.attachmentId,
+            index,
+            bytes: chunkOf(content, index),
+          }),
+        );
+      }
+    }
+  };
+
+  it.each([257, 800])('asks for an attachment of %i chunks a page at a time', async (count) => {
+    const content = contentOf(count * CHUNK);
+    const manifest = await manifestFor('a1', content);
+    const { transfer, sent, saved } = harness();
+
+    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    const pages = await drain({ transfer, sent, content });
+
+    // Every page is inside the wire limit, and no index is asked for twice.
+    expect(pages.every((page) => page.length <= MAX_REQUESTED_CHUNKS)).toBe(true);
+    const asked = pages.flat();
+    expect(new Set(asked).size).toBe(asked.length);
+    expect(asked).toHaveLength(count);
+    expect(saved).toHaveLength(1);
+    expect(saved[0].content).toEqual(content);
+  });
+
+  it('asks once per page, not once per chunk', async () => {
+    const count = 300;
+    const content = contentOf(count * CHUNK);
+    const manifest = await manifestFor('a1', content);
+    const { transfer, sent } = harness();
+
+    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    const [first] = sent.filter((message) => message.kind === 'attachment-request');
+    sent.length = 0;
+
+    // Half of the first page arrives; nothing further is asked for until the
+    // page is satisfied, or a peer would be asked for the same index repeatedly.
+    if (first.kind !== 'attachment-request') throw new Error('no request was sent');
+    for (const index of first.indices.slice(0, 128)) {
+      await transfer.receive(
+        chunkMessage({ attachmentId: 'a1', index, bytes: chunkOf(content, index) }),
+      );
+    }
+
+    expect(sent.filter((message) => message.kind === 'attachment-request')).toHaveLength(0);
+  });
+
+  it.each([257, 600])('offers %i manifests in messages the decoder accepts', async (count) => {
+    const manifests = await Promise.all(
+      Array.from({ length: count }, (_unused, index) =>
+        manifestFor(`a${String(index)}`, contentOf(CHUNK)),
+      ),
+    );
+    const { transfer, sent } = harness();
+
+    transfer.offer(manifests);
+
+    const offers = sent.filter(
+      (message): message is Extract<CatchUpMessage, { kind: 'attachment-offer' }> =>
+        message.kind === 'attachment-offer',
+    );
+    expect(offers.every((offer) => offer.manifests.length <= MAX_ATTACHMENT_OFFERS)).toBe(
+      true,
+    );
+    // Every manifest travels, once: a single oversized message would be refused
+    // by the peer's decoder and the whole offer lost.
+    const offered = offers.flatMap((offer) => offer.manifests.map((one) => one.attachmentId));
+    expect(new Set(offered).size).toBe(count);
+    for (const message of offers) {
+      expect(() => decodeCatchUpMessage(encodeCatchUpMessage(message))).not.toThrow();
+    }
+  });
+
+  it('fails observably when the sender cannot supply a chunk it was asked for', async () => {
+    const content = contentOf(3 * CHUNK);
+    const manifest = await manifestFor('a1', content);
+    const { transfer, sent, rejected, saved } = harness();
+
+    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    sent.length = 0;
+    await transfer.receive({
+      v: 1,
+      kind: 'attachment-unavailable',
+      attachmentId: 'a1',
+      indices: [1],
+    });
+
+    // Waiting forever for a chunk the peer has said it does not hold is the one
+    // outcome that reads as a healthy transfer while never completing.
+    expect(rejected).toHaveLength(1);
+    expect(rejected[0].reason).toBeInstanceOf(StalledAttachmentTransferError);
+    expect(saved).toHaveLength(0);
+    // The transfer is dropped, so a later offer can start it again.
+    await transfer.receive({ v: 1, kind: 'attachment-offer', manifests: [manifest] });
+    expect(sent.some((message) => message.kind === 'attachment-request')).toBe(true);
+  });
+
+  it('tells a peer which chunks it asked for that cannot be served', async () => {
+    const content = contentOf(2 * CHUNK);
+    const { transfer, sent } = harness({ serve: content });
+
+    await transfer.receive({
+      v: 1,
+      kind: 'attachment-request',
+      attachmentId: 'a1',
+      indices: [0, 7],
+    });
+
+    expect(sent.filter((message) => message.kind === 'attachment-chunk')).toHaveLength(1);
+    expect(sent).toContainEqual({
+      v: 1,
+      kind: 'attachment-unavailable',
+      attachmentId: 'a1',
+      indices: [7],
+    });
   });
 });

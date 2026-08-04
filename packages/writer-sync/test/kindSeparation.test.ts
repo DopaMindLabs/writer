@@ -31,6 +31,7 @@ describe('pairing and catch-up message kinds', () => {
       'attachment-chunk',
       'attachment-offer',
       'attachment-request',
+      'attachment-unavailable',
       'frames',
       'manifest',
       'request',
