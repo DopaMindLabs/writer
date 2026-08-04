@@ -410,7 +410,11 @@ suite; slice 2A.2 gives it its first real caller.
 - The root is zeroed in memory immediately after wrapping. The existing
   implementation does this (`root.fill(0)`); it must stay.
 - The wrapper is single-use, bound to one session id, and rejected if the session
-  has since expired.
+  has since expired. The expiry the session was authenticated with travels on
+  `AuthenticatedPeerParameters`, so the boundary that seals the root reads the
+  value the payload carried rather than one a caller supplied; on expiry the
+  ephemeral private key is let go, so a wrapper arriving late cannot be opened
+  either.
 - On success the joiner stores the root through `storeRootSecret`, bound to its
   own device id and the principal id, and derives its key ring exactly as a device
   that had unlocked by passphrase would. There is no separate "paired device" key

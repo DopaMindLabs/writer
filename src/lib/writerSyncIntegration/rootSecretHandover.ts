@@ -1,4 +1,6 @@
 import {
+  PairingError,
+  PairingErrorCode,
   decodeRootTransferMessage,
   encodeRootTransferMessage,
   startRootTransfer,
@@ -39,6 +41,8 @@ export interface RootSecretHandoverOptions {
   sessionPrivateKey: CryptoKey | null;
   /** This device's own identity, for deciding who mints the root secret. */
   deviceId: DeviceId;
+  /** This device's wall clock, injectable so expiry can be tested exactly. */
+  now?: () => number;
   onError?: (error: unknown) => void;
 }
 
@@ -82,45 +86,71 @@ const asBytes = (data: unknown): Uint8Array => {
 
 export const rootSecretHandoverPorts = (
   options: RootSecretHandoverOptions,
-): Omit<RootTransferPorts, 'send'> => ({
-  // Read through the resolver rather than the vault: what matters is whether
-  // this device can actually seal a row right now, not whether bytes are stored.
-  holdsRoot: () => deviceKeyProvider.hasAnyKey(),
+): Omit<RootTransferPorts, 'send'> => {
+  const now = options.now ?? (() => Date.now());
+  // Held here rather than read from the options, so expiry can let go of it.
+  let sessionPrivateKey = options.sessionPrivateKey;
 
-  wrapForPeer: async () => ({
-    wrapper: await deviceKeyVault.wrapRootSecretForPairing({
-      peerEphemeralPublicJwk: options.peer.peerEphemeralPublicJwk,
-      principalId: await currentPrincipal(),
-      transcript: options.peer.transcript,
-    }),
-    epoch: currentEpoch(),
-  }),
-
-  // Both devices are new: one of them has to mint the root secret, and the ids
-  // they exchanged decide which without another round trip. Both are running
-  // this protocol and hear each other, so the one that defers is deferring to a
-  // device that is certainly about to act.
-  mintsFirst: () =>
-    String(options.deviceId) > String(options.peer.deviceId),
-
-  createRoot: () => adoptRoot(generateRootSecret(), DEFAULT_EPOCH),
-
-  acceptWrapper: async ({ wrapper, epoch }) => {
-    const { sessionPrivateKey } = options;
-    if (sessionPrivateKey === null) {
-      throw new Error('root secret transfer: this session minted no ephemeral key');
-    }
-    // Opening it is the check. The key and the AAD are both bound to the
-    // transcript, so a wrapper from another session, another peer, or an
-    // exchange that differed by a byte simply fails to decrypt.
-    await adoptRoot(
-      await unwrapPairingRoot(wrapper, sessionPrivateKey, options.peer.transcript),
-      epoch,
+  /**
+   * Refuse a session whose window has closed, and let go of its key.
+   *
+   * The QR payload's expiry was checked when it was accepted, but the root
+   * secret leaves this device later — after a human has compared two codes,
+   * which is a step with no clock on it at all. Without this the deliberately
+   * short-lived credential would last as long as the connection did
+   * (`docs/pairing-protocol.md` §7). Expiry is absolute: the boundary itself is
+   * already too late, and it is never refreshed or extended.
+   */
+  const requireLiveSession = (): void => {
+    if (now() < options.peer.expiresAt) return;
+    sessionPrivateKey = null;
+    throw new PairingError(
+      PairingErrorCode.Expired,
+      'the pairing session expired before the root secret moved',
     );
-  },
+  };
 
-  onError: options.onError,
-});
+  return {
+    // Read through the resolver rather than the vault: what matters is whether
+    // this device can actually seal a row right now, not whether bytes are stored.
+    holdsRoot: () => deviceKeyProvider.hasAnyKey(),
+
+    wrapForPeer: async () => {
+      requireLiveSession();
+      return {
+        wrapper: await deviceKeyVault.wrapRootSecretForPairing({
+          peerEphemeralPublicJwk: options.peer.peerEphemeralPublicJwk,
+          principalId: await currentPrincipal(),
+          transcript: options.peer.transcript,
+        }),
+        epoch: currentEpoch(),
+      };
+    },
+
+    // Both devices are new: one of them has to mint the root secret, and the ids
+    // they exchanged decide which without another round trip. Both are running
+    // this protocol and hear each other, so the one that defers is deferring to a
+    // device that is certainly about to act.
+    mintsFirst: () => String(options.deviceId) > String(options.peer.deviceId),
+
+    createRoot: () => adoptRoot(generateRootSecret(), DEFAULT_EPOCH),
+
+    acceptWrapper: async ({ wrapper, epoch }) => {
+      if (sessionPrivateKey === null) {
+        throw new Error('root secret transfer: this session minted no ephemeral key');
+      }
+      // Opening it is the check. The key and the AAD are both bound to the
+      // transcript, so a wrapper from another session, another peer, or an
+      // exchange that differed by a byte simply fails to decrypt.
+      await adoptRoot(
+        await unwrapPairingRoot(wrapper, sessionPrivateKey, options.peer.transcript),
+        epoch,
+      );
+    },
+
+    onError: options.onError,
+  };
+};
 
 /** What a fresh pairing leaves behind for the root to travel on. */
 export interface SecretHandoverSession {
@@ -144,6 +174,8 @@ export const TRANSFER_DEADLINE_MILLIS = 10_000;
 export interface RunRootSecretHandoverOptions {
   channel: DataChannelLike;
   session: SecretHandoverSession;
+  /** This device's wall clock, injectable so expiry can be tested exactly. */
+  now?: () => number;
   /** Called once, when the root has moved or the deadline has passed. */
   onSettled: () => void;
 }
@@ -172,8 +204,15 @@ export const runRootSecretHandover = (
       peer: session.peer,
       sessionPrivateKey: session.sessionPrivateKey,
       deviceId: session.deviceId,
+      now: options.now,
       onError: (error: unknown) => {
         appLogger.warn('root secret transfer failed', error);
+        // An expired session has nothing left to say: waiting out the deadline
+        // would only repeat an announcement no root can follow. A fresh QR
+        // exchange is what moves key material now.
+        if (error instanceof PairingError && error.code === PairingErrorCode.Expired) {
+          finish();
+        }
       },
     }),
     send: (message) => {

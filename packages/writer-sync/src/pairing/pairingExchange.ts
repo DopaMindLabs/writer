@@ -157,5 +157,6 @@ export const bindTranscript = async (
     peerEphemeralPublicJwk: options.peer.ephemeralJwk,
     transcript,
     verificationCode: await verificationCode(transcript),
+    expiresAt: options.peer.expiresAt,
   };
 };

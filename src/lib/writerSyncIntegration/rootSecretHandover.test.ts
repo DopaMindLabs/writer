@@ -6,6 +6,7 @@ import {
   type PairingEphemeralKeys,
 } from 'writer-sync/crypto';
 import {
+  PairingErrorCode,
   decodeRootTransferMessage,
   encodeRootTransferMessage,
   type AuthenticatedPeerParameters,
@@ -37,16 +38,25 @@ import {
 
 const EPOCH = 4;
 const HERE = asDeviceId('this-device');
+/**
+ * The window a pairing session runs in. Read once from the real clock, because
+ * the cases that do not inject one are checked against the ambient reading.
+ */
+const EXPIRES_AT = Date.now() + 300_000;
 
 let ephemeral: PairingEphemeralKeys;
 let root: Uint8Array;
 
-const peerFor = async (transcript: Uint8Array): Promise<AuthenticatedPeerParameters> => ({
+const peerFor = async (
+  transcript: Uint8Array,
+  expiresAt = EXPIRES_AT,
+): Promise<AuthenticatedPeerParameters> => ({
   deviceId: asDeviceId('peer-device'),
   publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'x', y: 'y' },
   peerEphemeralPublicJwk: await ephemeralPublicJwkOf(ephemeral.publicKey),
   transcript,
   verificationCode: '048213',
+  expiresAt,
 });
 
 beforeEach(async () => {
@@ -159,6 +169,86 @@ describe('rootSecretHandoverPorts', () => {
     });
 
     await expect(elsewhere.acceptWrapper(sealed)).rejects.toThrow();
+  });
+
+  it('seals the root while the pairing session is still live', async () => {
+    const ports = rootSecretHandoverPorts({
+      peer: await peerFor(new Uint8Array([1, 2])),
+      sessionPrivateKey: ephemeral.privateKey,
+      deviceId: HERE,
+      now: () => EXPIRES_AT - 1,
+    });
+
+    await expect(ports.wrapForPeer()).resolves.toMatchObject({ epoch: EPOCH });
+  });
+
+  it('refuses to seal the root at the moment the session expires', async () => {
+    const wrap = vi.spyOn(deviceKeyVault, 'wrapRootSecretForPairing');
+    try {
+      const ports = rootSecretHandoverPorts({
+        peer: await peerFor(new Uint8Array([1, 2])),
+        sessionPrivateKey: ephemeral.privateKey,
+        deviceId: HERE,
+        // Expiry is absolute: the boundary itself is already too late.
+        now: () => EXPIRES_AT,
+      });
+
+      await expect(ports.wrapForPeer()).rejects.toMatchObject({
+        code: PairingErrorCode.Expired,
+      });
+      expect(wrap).not.toHaveBeenCalled();
+    } finally {
+      wrap.mockRestore();
+    }
+  });
+
+  it('refuses a session confirmed after the code it was read from expired', async () => {
+    const wrap = vi.spyOn(deviceKeyVault, 'wrapRootSecretForPairing');
+    try {
+      let reading = EXPIRES_AT - 60_000;
+      const ports = rootSecretHandoverPorts({
+        peer: await peerFor(new Uint8Array([1, 2])),
+        sessionPrivateKey: ephemeral.privateKey,
+        deviceId: HERE,
+        now: () => reading,
+      });
+      // Authenticated and connected well within the window; the human compared
+      // the codes long after it closed.
+      expect(ports.holdsRoot()).toBe(true);
+      reading = EXPIRES_AT + 1;
+
+      await expect(ports.wrapForPeer()).rejects.toMatchObject({
+        code: PairingErrorCode.Expired,
+      });
+      expect(wrap).not.toHaveBeenCalled();
+    } finally {
+      wrap.mockRestore();
+    }
+  });
+
+  it('lets go of the ephemeral key once the session has expired', async () => {
+    const sealed = await rootSecretHandoverPorts({
+      peer: await peerFor(new Uint8Array([1, 2])),
+      sessionPrivateKey: ephemeral.privateKey,
+      deviceId: HERE,
+      now: () => EXPIRES_AT - 1,
+    }).wrapForPeer();
+    let reading = EXPIRES_AT - 1;
+    const ports = rootSecretHandoverPorts({
+      peer: await peerFor(new Uint8Array([1, 2])),
+      sessionPrivateKey: ephemeral.privateKey,
+      deviceId: HERE,
+      now: () => reading,
+    });
+
+    reading = EXPIRES_AT;
+    await expect(ports.wrapForPeer()).rejects.toMatchObject({
+      code: PairingErrorCode.Expired,
+    });
+
+    // The key the wrapper would open with is gone, so a root arriving late
+    // cannot be installed either.
+    await expect(ports.acceptWrapper(sealed)).rejects.toThrow();
   });
 
   it('refuses to open anything when this session minted no ephemeral key', async () => {
@@ -316,6 +406,39 @@ describe('runRootSecretHandover', () => {
         expect.anything(),
       );
     } finally {
+      warn.mockRestore();
+    }
+  });
+
+  it('sends no root for a session that expired before the peer asked', async () => {
+    const warn = vi.spyOn(appLogger, 'warn').mockImplementation(() => undefined);
+    const wrap = vi.spyOn(deviceKeyVault, 'wrapRootSecretForPairing');
+    try {
+      const wire = fakeChannel();
+      const onSettled = vi.fn();
+      runRootSecretHandover({
+        channel: wire.channel,
+        session: {
+          peer: await peerFor(new Uint8Array([8, 8])),
+          sessionPrivateKey: ephemeral.privateKey,
+          deviceId: HERE,
+        },
+        now: () => EXPIRES_AT + 1,
+        onSettled,
+      });
+
+      wire.deliver(bytesOf({ v: 1, kind: 'needs-root' }));
+
+      // The peer asked and this device holds one — but the window it was
+      // authenticated in has closed, so nothing is sealed and nothing is sent.
+      await vi.waitFor(() => {
+        expect(onSettled).toHaveBeenCalledTimes(1);
+      });
+      expect(wrap).not.toHaveBeenCalled();
+      expect(wire.sent.some((message) => message.kind === 'root')).toBe(false);
+      expect(wire.listenerCount()).toBe(0);
+    } finally {
+      wrap.mockRestore();
       warn.mockRestore();
     }
   });

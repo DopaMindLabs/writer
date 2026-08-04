@@ -58,6 +58,7 @@ const peerParameters = (): AuthenticatedPeerParameters => ({
   peerEphemeralPublicJwk: JWK,
   transcript: new Uint8Array([1, 2, 3]),
   verificationCode: CODE,
+  expiresAt: Date.now() + 300_000,
 });
 
 interface FakeSignaller extends PairingSignaller {
