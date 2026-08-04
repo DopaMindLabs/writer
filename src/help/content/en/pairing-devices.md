@@ -189,12 +189,17 @@ catch up. How long it keeps that history is up to you — Settings → Device sy
 is the default.
 
 A device that has been switched off for longer than that has fallen past the
-history, so it is sent a fresh copy of everything as it currently stands instead.
-Anything you wrote on it while it was away is not lost: the two versions are
-merged the same way any other change is, rather than one silently replacing the
-other.
+history, so it is sent a fresh copy of everything as it currently stands instead
+— including what you have deleted, so it does not come back holding pages
+everything else has let go of. Anything you wrote on it while it was away is not
+lost: the two versions are merged the same way any other change is, rather than
+one silently replacing the other.
 
 Once every device you have paired has confirmed it holds a change, Writer stops
 keeping that piece of history early — there is nobody left who needs it. If one
 device never comes back, the window above still closes eventually, so a device
-you have lost cannot make the history grow forever.
+you have lost cannot make the history grow forever. Deletions are the exception:
+they are kept until every device you have paired has confirmed them, however long
+that takes, because they are the only thing stopping a returning device from
+restoring what you removed. Removing a device you are not going back to is what
+lets go of the deletions it never confirmed.
