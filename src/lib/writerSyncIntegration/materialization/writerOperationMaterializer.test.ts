@@ -225,6 +225,43 @@ describe('two-database operation convergence (hermetic)', () => {
     expect(tombstone).toBeDefined();
   });
 
+  it('refuses a peer put older than a deletion this device made itself', async () => {
+    // `journalledDelete` stands in for the middleware: a local deletion writes
+    // its frame and its tombstone together. Without the tombstone the put would
+    // be judged against the journal alone, where a delete never beats a put —
+    // and the row this device deleted would come back while the peer that sent
+    // the put converged on the deletion.
+    await journalledPut({ db: dbB, ring, deviceId: DEVICE_B, entityTable: 'notes', row: note() });
+    await journalledDelete({
+      db: dbB,
+      ring,
+      deviceId: DEVICE_B,
+      entityTable: 'notes',
+      entityId: 'n1',
+      accessScopeId: 's1',
+    });
+
+    const stale = await makePutFrame({
+      ring,
+      deviceId: DEVICE_A,
+      entityTable: 'notes',
+      row: note({
+        mutationId: asOperationId('op-stale-peer'),
+        logicalUpdatedAt: { millis: 500, counter: 0 },
+        body: 'resurrected',
+      }),
+    });
+    const result = await applyInboundFrame({
+      db: dbB,
+      frame: JSON.parse(JSON.stringify(stale)),
+      ring,
+      verifySignature: acceptAnyAuthor,
+    });
+
+    expect(result).toBe('tombstoned');
+    expect(await dbB.notes.get('n1')).toBeUndefined();
+  });
+
   it('keeps newer content when a stale delete arrives out of order', async () => {
     const base = note();
     await journalledPut({ db: dbA, ring, deviceId: DEVICE_A, entityTable: 'notes', row: base });

@@ -171,6 +171,47 @@ describe('operation journal middleware', () => {
     });
   });
 
+  it('records a tombstone for a row this device deletes', async () => {
+    await db.notes.put(note());
+    await db.notes.delete('n1');
+
+    const deletion = (await db.syncOperations.toArray()).find(
+      (frame) => frame.kind === 'delete',
+    );
+    const tombstone = await db.syncTombstones.get(['notes', 'n1']);
+    // Deletion state is what a full-state rebuild is served from, and what
+    // stops an older edit from a peer putting the row back. A deletion this
+    // device made itself is no different in either respect.
+    expect(tombstone).toMatchObject({
+      entityTable: 'notes',
+      entityId: 'n1',
+      accessScopeId: 's1',
+      operationId: deletion?.operationId,
+      deviceId: DEVICE_LOCAL,
+      acknowledgedBy: [],
+    });
+  });
+
+  it('clears the tombstone when a deleted row is written again', async () => {
+    await db.notes.put(note());
+    await db.notes.delete('n1');
+    await db.notes.put(
+      note({ mutationId: asOperationId('op-n1-3'), logicalUpdatedAt: { millis: 3000, counter: 0 } }),
+    );
+
+    expect(await db.syncTombstones.get(['notes', 'n1'])).toBeUndefined();
+  });
+
+  it('records no tombstone for a keyless delete it does not journal', async () => {
+    holder.ring = null;
+    await db.notes.put(note());
+    await db.notes.delete('n1');
+
+    // No frame was authored, so there is no deletion to serve or defend — and a
+    // tombstone naming an operation that does not exist would fail the rebuild.
+    expect(await db.syncTombstones.count()).toBe(0);
+  });
+
   it('signs the put frames it journals with this device’s identity key', async () => {
     await db.notes.put(note());
 

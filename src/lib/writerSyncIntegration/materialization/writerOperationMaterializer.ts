@@ -5,12 +5,10 @@ import { assertAcceptableRemoteTime } from 'writer-sync/core';
 import { compareOperations, supersedes } from 'writer-sync/operations';
 import { verifyFrame } from 'writer-sync/operations';
 import type { MaterializeResult } from 'writer-sync/operations';
-import type {
-  EncryptedSyncFrame,
-  SyncTombstone,
-} from 'writer-sync/operations';
+import type { EncryptedSyncFrame } from 'writer-sync/operations';
 import { writerClock } from '@/lib/writerSyncIntegration/writerLogicalClock';
 import { materializeAttachmentFrame } from './attachmentFrameMaterializer';
+import { tombstoneOf } from './tombstone';
 import {
   UntrustedFrameError,
   requireJournalledTable,
@@ -68,15 +66,7 @@ const applyDelete = async (options: {
     // content — the same rule `applyPut` applies in the other direction.
     return 'superseded';
   }
-  const tombstone: SyncTombstone = {
-    entityId: frame.entityId,
-    entityTable: frame.entityTable,
-    accessScopeId: frame.accessScopeId,
-    operationId: frame.operationId,
-    deviceId: frame.deviceId,
-    logicalAt: frame.logicalAt,
-    acknowledgedBy: [],
-  };
+  const tombstone = tombstoneOf(frame);
   const recorded = await db.syncTombstones.get([frame.entityTable, frame.entityId]);
   // Keep the latest deletion: an older delete arriving afterwards must not
   // rewrite the tombstone a later put is compared against.
