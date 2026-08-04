@@ -1,6 +1,7 @@
 import type { LoremDB } from '@/db/LoremDB';
 import type { SyncKeyRing } from 'writer-sync/crypto';
 import { openOperationPayload } from 'writer-sync/crypto';
+import { assertAcceptableRemoteTime } from 'writer-sync/core';
 import { compareOperations, supersedes } from 'writer-sync/operations';
 import { verifyFrame } from 'writer-sync/operations';
 import type { MaterializeResult } from 'writer-sync/operations';
@@ -21,6 +22,8 @@ export { DisallowedOperationTableError } from './frameAdmission';
  *
  * - an operation may only name a table the policy journals as synced content,
  *   so a paired device cannot reach this device's control tables;
+ * - an operation stamped further ahead than the clock will merge is refused
+ *   rather than allowed to win conflicts the clock has already disowned;
  * - an accepted operation id replays as a no-op (the inbox is checked and
  *   written in the same transaction as materialisation);
  * - entity conflicts resolve deterministically (hybrid logical time, then
@@ -120,6 +123,8 @@ export const applyInboundFrame = async (options: {
   db: LoremDB;
   frame: unknown;
   ring: SyncKeyRing;
+  /** This device's wall clock, injectable so boundary tests are deterministic. */
+  now?: () => number;
 }): Promise<MaterializeResult> => {
   const { db, ring } = options;
   const frame = await verifyFrame(options.frame);
@@ -127,6 +132,10 @@ export const applyInboundFrame = async (options: {
   // Nothing below this line — decryption, the journal, the transaction — runs
   // for an operation naming a table peers do not own.
   const table = requireJournalledTable(db, frame.entityTable);
+  // Nor may it be stamped in a future this device's clock refuses to merge:
+  // such an operation would win every conflict it entered while the clock that
+  // rejected it stood still.
+  assertAcceptableRemoteTime(frame.logicalAt, options.now ?? (() => Date.now()));
   const opened =
     frame.kind === 'put' ? await openOperationPayload(ring, frame, frame.payload) : null;
   const row =

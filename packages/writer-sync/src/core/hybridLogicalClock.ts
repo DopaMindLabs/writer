@@ -34,6 +34,35 @@ export interface HybridLogicalClock {
  */
 export const MAX_OBSERVED_DRIFT_MILLIS = 5 * 60 * 1000;
 
+/** A remote timestamp further ahead of this device than a clock plausibly is. */
+export class RemoteClockDriftError extends Error {
+  constructor(millis: number) {
+    super(
+      `Remote timestamp ${String(millis)} exceeds the ${String(MAX_OBSERVED_DRIFT_MILLIS)}ms drift this device tolerates`,
+    );
+    this.name = 'RemoteClockDriftError';
+  }
+}
+
+const withinDrift = (remote: HybridLogicalTimestamp, now: () => number): boolean =>
+  remote.millis - now() <= MAX_OBSERVED_DRIFT_MILLIS;
+
+/**
+ * The admission rule for a timestamp another device authored.
+ *
+ * Refusing to *merge* an implausible reading is not enough: an operation
+ * stamped in the future still wins every convergence comparison it takes part
+ * in, so ordinary edits keep losing until wall time catches up. Whoever accepts
+ * an operation asserts this first — before decryption and before anything is
+ * persisted — and the clock keeps the same rule as its own defence.
+ */
+export const assertAcceptableRemoteTime = (
+  remote: HybridLogicalTimestamp,
+  now: () => number,
+): void => {
+  if (!withinDrift(remote, now)) throw new RemoteClockDriftError(remote.millis);
+};
+
 /** Order two timestamps: negative if `a` precedes `b`, positive if it follows. */
 export const compareTimestamps = (
   a: HybridLogicalTimestamp,
@@ -62,7 +91,7 @@ export const createHybridLogicalClock = (
       return last;
     },
     observe: (remote) => {
-      if (remote.millis - wallClock() > MAX_OBSERVED_DRIFT_MILLIS) return;
+      if (!withinDrift(remote, wallClock)) return;
       if (compareTimestamps(remote, last) > 0) last = remote;
     },
   };

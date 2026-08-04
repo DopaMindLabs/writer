@@ -8,6 +8,8 @@ import {
 } from '@/db/schema';
 import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import {
+  MAX_OBSERVED_DRIFT_MILLIS,
+  RemoteClockDriftError,
   asDeviceId,
   asOperationId,
   asPrincipalId,
@@ -352,6 +354,81 @@ describe('two-database operation convergence (hermetic)', () => {
       applyInboundFrame({ db: dbB, frame, ring }),
     ).rejects.toBeInstanceOf(ChunkIntegrityError);
     expect(await dbB.noteAttachments.get('a1')).toBeUndefined();
+    expect(await dbB.syncInbox.count()).toBe(0);
+  });
+
+  it('refuses a future-dated frame before it can win a conflict', async () => {
+    const wall = Date.now();
+    const ahead = { millis: wall + MAX_OBSERVED_DRIFT_MILLIS + 1, counter: 0 };
+    const frame = await makePutFrame({
+      ring,
+      deviceId: DEVICE_A,
+      entityTable: 'notes',
+      row: note({ mutationId: asOperationId('op-ahead'), logicalUpdatedAt: ahead }),
+    });
+
+    await expect(
+      applyInboundFrame({
+        db: dbB,
+        frame: JSON.parse(JSON.stringify(frame)),
+        ring,
+        now: () => wall,
+      }),
+    ).rejects.toBeInstanceOf(RemoteClockDriftError);
+    expect(await dbB.notes.get('n1')).toBeUndefined();
+    expect(await dbB.syncOperations.count()).toBe(0);
+    expect(await dbB.syncInbox.count()).toBe(0);
+    expect(await dbB.syncTombstones.count()).toBe(0);
+    // The refused reading did not join this device's clock either.
+    const local = newEntityMetadata('s1', asPrincipalId('me'));
+    expect(compareTimestamps(local.logicalUpdatedAt, ahead)).toBeLessThan(0);
+  });
+
+  it('accepts a frame exactly at the tolerated drift', async () => {
+    const wall = Date.now();
+    const edge = { millis: wall + MAX_OBSERVED_DRIFT_MILLIS, counter: 0 };
+    const frame = await makePutFrame({
+      ring,
+      deviceId: DEVICE_A,
+      entityTable: 'notes',
+      row: note({ mutationId: asOperationId('op-edge'), logicalUpdatedAt: edge }),
+    });
+
+    const result = await applyInboundFrame({
+      db: dbB,
+      frame: JSON.parse(JSON.stringify(frame)),
+      ring,
+      now: () => wall,
+    });
+
+    expect(result).toBe('applied');
+    expect((await dbB.notes.get('n1'))?.body).toBe('hello');
+  });
+
+  it('refuses a future-dated delete before it can tombstone a row', async () => {
+    await journalledPut({ db: dbB, ring, deviceId: DEVICE_B, entityTable: 'notes', row: note() });
+    const wall = Date.now();
+    const forged = {
+      ...makeDeleteFrame({
+        ring,
+        deviceId: DEVICE_A,
+        entityTable: 'notes',
+        entityId: 'n1',
+        accessScopeId: 's1',
+      }),
+      logicalAt: { millis: wall + MAX_OBSERVED_DRIFT_MILLIS + 1, counter: 0 },
+    };
+
+    await expect(
+      applyInboundFrame({
+        db: dbB,
+        frame: JSON.parse(JSON.stringify(forged)),
+        ring,
+        now: () => wall,
+      }),
+    ).rejects.toBeInstanceOf(RemoteClockDriftError);
+    expect(await dbB.notes.get('n1')).toBeDefined();
+    expect(await dbB.syncTombstones.count()).toBe(0);
     expect(await dbB.syncInbox.count()).toBe(0);
   });
 
