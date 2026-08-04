@@ -69,6 +69,13 @@ interface BindOptions {
   peer: PairingPayload;
   offerBytes: Uint8Array;
   answerBytes: Uint8Array;
+  /**
+   * The deadline this session runs to. Passed in rather than read from `peer`,
+   * because the two payloads carry deadlines of their own and the session is
+   * bound by the earlier: an answer minted late would otherwise hand whoever
+   * adopted it a fresh window for a code that was nearly out.
+   */
+  expiresAt: number;
 }
 
 /**
@@ -157,6 +164,6 @@ export const bindTranscript = async (
     peerEphemeralPublicJwk: options.peer.ephemeralJwk,
     transcript,
     verificationCode: await verificationCode(transcript),
-    expiresAt: options.peer.expiresAt,
+    expiresAt: options.expiresAt,
   };
 };

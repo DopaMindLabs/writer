@@ -416,6 +416,7 @@ describe('runRootSecretHandover', () => {
     try {
       const wire = fakeChannel();
       const onSettled = vi.fn();
+      const onExpired = vi.fn();
       runRootSecretHandover({
         channel: wire.channel,
         session: {
@@ -425,6 +426,7 @@ describe('runRootSecretHandover', () => {
         },
         now: () => EXPIRES_AT + 1,
         onSettled,
+        onExpired,
       });
 
       wire.deliver(bytesOf({ v: 1, kind: 'needs-root' }));
@@ -432,8 +434,11 @@ describe('runRootSecretHandover', () => {
       // The peer asked and this device holds one — but the window it was
       // authenticated in has closed, so nothing is sealed and nothing is sent.
       await vi.waitFor(() => {
-        expect(onSettled).toHaveBeenCalledTimes(1);
+        expect(onExpired).toHaveBeenCalledTimes(1);
       });
+      // Expiry is terminal, not a settlement: syncing on would present a
+      // pairing that transferred nothing as one that worked.
+      expect(onSettled).not.toHaveBeenCalled();
       expect(wrap).not.toHaveBeenCalled();
       expect(wire.sent.some((message) => message.kind === 'root')).toBe(false);
       expect(wire.listenerCount()).toBe(0);

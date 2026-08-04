@@ -411,10 +411,17 @@ suite; slice 2A.2 gives it its first real caller.
   implementation does this (`root.fill(0)`); it must stay.
 - The wrapper is single-use, bound to one session id, and rejected if the session
   has since expired. The expiry the session was authenticated with travels on
-  `AuthenticatedPeerParameters`, so the boundary that seals the root reads the
-  value the payload carried rather than one a caller supplied; on expiry the
-  ephemeral private key is let go, so a wrapper arriving late cannot be opened
-  either.
+  `AuthenticatedPeerParameters` and is the **earlier of the two signed
+  deadlines**: each half of the exchange carries its own, and adopting the
+  peer's alone would let an answer minted late hand the initiator a fresh window
+  for a code that was nearly out. Both ends therefore bind the same instant.
+- Expiry is terminal. The boundary that seals the root refuses, the ephemeral
+  private key is let go so a wrapper arriving late cannot be opened either, the
+  adapter is disposed, the channel closes, catch-up does not start, and trust
+  this pairing created is forgotten — a device the registry vouches for on the
+  strength of a handover that never happened is worse than no record at all. A
+  record that existed before the pairing is left alone. The session moves to
+  `expired`; a fresh QR exchange is what moves key material now.
 - On success the joiner stores the root through `storeRootSecret`, bound to its
   own device id and the principal id, and derives its key ring exactly as a device
   that had unlocked by passphrase would. There is no separate "paired device" key

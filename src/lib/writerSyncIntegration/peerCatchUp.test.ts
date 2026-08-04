@@ -538,6 +538,42 @@ describe('createPeerCatchUp', () => {
     catchUp.stop();
   });
 
+  it('leaves no trust behind when the pairing expired before the root moved', async () => {
+    const wire = rawWire();
+    const peer = fakeSession(wire.channel);
+    const catchUp = createPeerCatchUp(db);
+    const onExpired = vi.fn();
+    const handover = handoverFor();
+
+    await catchUp.adopt({
+      session: peer.session,
+      deviceId: PEER,
+      secretHandover: {
+        ...handover,
+        // Already past: the human compared the codes too late.
+        peer: { ...handover.peer, expiresAt: Date.now() - 1 },
+        onExpired,
+      },
+    });
+
+    // The peer asks for a root this device can no longer seal.
+    wire.deliverRoot({ v: 1, kind: 'needs-root' });
+
+    await vi.waitFor(() => {
+      expect(onExpired).toHaveBeenCalledTimes(1);
+    });
+    // A device the registry vouches for on the strength of a handover that
+    // never happened is exactly what must not be left behind.
+    await vi.waitFor(async () => {
+      expect(await db.trustedDevices.get(String(PEER))).toBeUndefined();
+    });
+    expect(peer.close).toHaveBeenCalled();
+    // Nothing was sealed, and catch-up never opened over a link the peer
+    // cannot read.
+    expect(wire.kinds()).not.toContain('manifest');
+    catchUp.stop();
+  });
+
   it('closes every adopted session when it stops', async () => {
     const first = fakeSession();
     const second = fakeSession();

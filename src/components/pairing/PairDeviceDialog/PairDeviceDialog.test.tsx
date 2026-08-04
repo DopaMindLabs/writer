@@ -102,6 +102,7 @@ const readySignaller = (script: SignallerScript = {}): FakeSignaller => {
       // The joiner learns the parameters by answering, not by being told.
       parameters: () => (answered ? peerParameters() : null),
       sessionPrivateKey: () => null,
+    dispose: () => undefined,
     },
     close: () => {
       closed = true;

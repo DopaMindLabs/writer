@@ -159,6 +159,15 @@ export interface SecretHandoverSession {
   sessionPrivateKey: CryptoKey | null;
   /** This device's own identity, for deciding who mints the root secret. */
   deviceId: DeviceId;
+  /**
+   * The pairing ran past its deadline before the root could move.
+   *
+   * Told to whoever owns the exchange, because expiry is terminal there and
+   * not here: the adapter's ephemeral key has to be let go, and the person
+   * watching has to be told the pairing did not finish rather than left
+   * looking at a success that transferred nothing.
+   */
+  onExpired?: () => void;
 }
 
 /**
@@ -176,8 +185,10 @@ export interface RunRootSecretHandoverOptions {
   session: SecretHandoverSession;
   /** This device's wall clock, injectable so expiry can be tested exactly. */
   now?: () => number;
-  /** Called once, when the root has moved or the deadline has passed. */
+  /** Called once, when the root has moved or the transfer deadline has passed. */
   onSettled: () => void;
+  /** Called instead, once, when the pairing session itself had expired. */
+  onExpired?: () => void;
 }
 
 export interface RunningRootSecretHandover {
@@ -198,6 +209,7 @@ export const runRootSecretHandover = (
 ): RunningRootSecretHandover => {
   const { channel, session, onSettled } = options;
   let done = false;
+  let expired = false;
 
   const transfer = startRootTransfer({
     ...rootSecretHandoverPorts({
@@ -209,8 +221,10 @@ export const runRootSecretHandover = (
         appLogger.warn('root secret transfer failed', error);
         // An expired session has nothing left to say: waiting out the deadline
         // would only repeat an announcement no root can follow. A fresh QR
-        // exchange is what moves key material now.
+        // exchange is what moves key material now, and everything this one
+        // established goes with it.
         if (error instanceof PairingError && error.code === PairingErrorCode.Expired) {
+          expired = true;
           finish();
         }
       },
@@ -236,6 +250,11 @@ export const runRootSecretHandover = (
     clearTimeout(deadline);
     transfer.stop();
     channel.removeEventListener('message', onMessage);
+    if (expired) {
+      session.onExpired?.();
+      options.onExpired?.();
+      return;
+    }
     onSettled();
   };
 

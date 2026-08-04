@@ -231,6 +231,8 @@ interface PeerChannelOptions {
   /** Begin syncing, over the channel key material has finished with. */
   startCatchUp: (channel: DataChannelLike) => void;
   track: (running: RunningRootSecretHandover) => void;
+  /** The pairing's own deadline passed before any key material moved. */
+  onExpired: () => void;
 }
 
 /**
@@ -256,6 +258,7 @@ const onPeerChannel = ({
   peer,
   startCatchUp,
   track,
+  onExpired,
 }: PeerChannelOptions): void => {
   const { secretHandover } = peer;
   if (secretHandover === undefined) {
@@ -275,6 +278,10 @@ const onPeerChannel = ({
       onSettled: () => {
         startCatchUp(catchUp);
       },
+      // Deliberately not `startCatchUp`: a pairing whose window closed before
+      // the root moved leaves the peer unable to read anything this device
+      // would send, and syncing anyway would present it as one that worked.
+      onExpired,
     }),
   );
 };
@@ -296,9 +303,9 @@ const onPeerChannel = ({
 const rememberPeer = async (
   registry: TrustedDeviceRegistry,
   peer: AdoptedPeer,
-): Promise<void> => {
+): Promise<boolean> => {
   const { secretHandover } = peer;
-  if (secretHandover === undefined) return;
+  if (secretHandover === undefined) return false;
   const now = Date.now();
   if ((await registry.find(peer.deviceId)) !== null) {
     await registry.refreshTrust({
@@ -306,7 +313,7 @@ const rememberPeer = async (
       publicIdentityJwk: secretHandover.peer.publicIdentityJwk,
       at: now,
     });
-    return;
+    return false;
   }
   await registry.trust({
     deviceId: peer.deviceId,
@@ -318,12 +325,37 @@ const rememberPeer = async (
     status: TrustedDeviceStatus.Active,
     acknowledgedOperations: {},
   });
+  return true;
+};
+
+/**
+ * Undo an adoption whose pairing turned out to have expired.
+ *
+ * Trust is recorded before anything is exchanged, which is right while the
+ * pairing is live and wrong once it is not: what would be left otherwise is a
+ * device the registry vouches for on the strength of a handover that never
+ * happened. A record this adoption did not create is left alone — that device
+ * was trusted before today.
+ */
+const forgetExpiredPairing = (options: {
+  peer: AdoptedPeer;
+  registry: TrustedDeviceRegistry;
+  trustCreated: boolean;
+}): void => {
+  const { peer, registry, trustCreated } = options;
+  peerSessions.remove(peer.session);
+  peer.session.close();
+  if (!trustCreated) return;
+  void registry.forget(peer.deviceId).catch((error: unknown) => {
+    appLogger.warn('forgetting an expired pairing failed', error);
+  });
 };
 
 interface ListenOptions {
   peer: AdoptedPeer;
   exchangeOver: (channel: DataChannelLike) => void;
   track: (running: RunningRootSecretHandover) => void;
+  onExpired: () => void;
 }
 
 /**
@@ -333,9 +365,9 @@ interface ListenOptions {
  * channel is a scope its peer opened — which is how this device receives work in
  * a scope it is not writing to itself, and so has never asked for a channel for.
  */
-const listenToPeer = ({ peer, exchangeOver, track }: ListenOptions): void => {
+const listenToPeer = ({ peer, exchangeOver, track, onExpired }: ListenOptions): void => {
   openChannelOnce(peer.session, (channel) => {
-    onPeerChannel({ channel, peer, startCatchUp: exchangeOver, track });
+    onPeerChannel({ channel, peer, startCatchUp: exchangeOver, track, onExpired });
   });
 
   peer.session.onAnyChannel((channel) => {
@@ -346,14 +378,14 @@ const listenToPeer = ({ peer, exchangeOver, track }: ListenOptions): void => {
   });
 };
 
-export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
-  const registry = createTrustedDeviceStore(db);
-  const sessions = new Set<PeerSession>();
-  const exchanges = new Set<CatchUpSession>();
-  const transfers = new Set<RunningRootSecretHandover>();
-  // Read once and held, because the engine asks for the cutoff synchronously
-  // while answering a request. Until the stored preference resolves this is the
-  // same default a device that never changed it keeps.
+/**
+ * The retention window, read once and held.
+ *
+ * The engine asks for the cutoff synchronously while answering a request, so it
+ * cannot wait on storage. Until the stored preference resolves this is the same
+ * default a device that never changed it keeps.
+ */
+const trackRetentionDays = (db: LoremDB): (() => number) => {
   let days = JOURNAL_RETENTION_DEFAULT_DAYS;
   void getJournalRetentionDaysFor(db)
     .then((stored) => {
@@ -362,20 +394,37 @@ export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
     .catch((error: unknown) => {
       appLogger.warn('reading the journal retention window failed', error);
     });
+  return () => days;
+};
 
-  const startOver = (peer: AdoptedPeer): void => {
+export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
+  const registry = createTrustedDeviceStore(db);
+  const sessions = new Set<PeerSession>();
+  const exchanges = new Set<CatchUpSession>();
+  const transfers = new Set<RunningRootSecretHandover>();
+  const retentionDays = trackRetentionDays(db);
+
+  const startOver = (peer: AdoptedPeer, trustCreated: boolean): void => {
     const exchangeOver = (channel: DataChannelLike): void => {
       exchanges.add(
         startCatchUpSession({
           transport: createWebRtcTransport(channel),
-          ports: catchUpPorts({ db, peer, registry, retentionDays: () => days }),
+          ports: catchUpPorts({ db, peer, registry, retentionDays }),
           onError: (error: unknown) => {
             appLogger.warn('peer catch-up failed', error);
           },
         }),
       );
     };
-    listenToPeer({ peer, exchangeOver, track: (running) => transfers.add(running) });
+    listenToPeer({
+      peer,
+      exchangeOver,
+      track: (running) => transfers.add(running),
+      onExpired: () => {
+        sessions.delete(peer.session);
+        forgetExpiredPairing({ peer, registry, trustCreated });
+      },
+    });
   };
 
   return {
@@ -391,15 +440,16 @@ export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
       // sync at all — carrying on would open an exchange whose every frame the
       // verifier then rejects, which is exactly the silent dead pairing this
       // path once produced.
+      let trustCreated: boolean;
       try {
-        await rememberPeer(registry, peer);
+        trustCreated = await rememberPeer(registry, peer);
       } catch (error) {
         sessions.delete(peer.session);
         peerSessions.remove(peer.session);
         peer.session.close();
         throw error;
       }
-      startOver(peer);
+      startOver(peer, trustCreated);
     },
     stop: () => {
       for (const transfer of transfers) transfer.stop();
