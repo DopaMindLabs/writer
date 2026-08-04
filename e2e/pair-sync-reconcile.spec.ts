@@ -92,6 +92,19 @@ test('a space deleted on one device stops existing on the other', async ({
   await expect(spaceRail(second)).toHaveCount(held, { timeout: SYNC_TIMEOUT });
 });
 
+/** How many of the deletions this device holds a peer has confirmed. */
+const confirmedDeletions = (page: Page): Promise<number> =>
+  page.evaluate(async () => {
+    const { db } = window as unknown as {
+      db?: {
+        syncTombstones?: { toArray: () => Promise<{ acknowledgedBy: string[] }[]> };
+      };
+    };
+    if (!db?.syncTombstones) throw new Error('the app database is not exposed');
+    const held = await db.syncTombstones.toArray();
+    return held.filter((tombstone) => tombstone.acknowledgedBy.length > 0).length;
+  });
+
 /** What deletion state this device is still holding, read through the app's handle. */
 const heldDeletions = (page: Page): Promise<number> =>
   page.evaluate(async () => {
@@ -146,4 +159,50 @@ test('removing the last device lets go of the deletions kept for it', async ({
       message: 'removing the last device did not release its deletion state',
     })
     .toBe(0);
+});
+
+test('a deletion the other device has confirmed is compacted away', async ({
+  page,
+  browser,
+  browserName,
+}) => {
+  test.setTimeout(120_000);
+  const second = await openCoveredContext(browser, browserName);
+  await reseedAndGoHome(page);
+  await second.goto('/#/');
+
+  await pair(page, second);
+  await expect(spaceRail(second).first()).toBeVisible({ timeout: SYNC_TIMEOUT });
+  const held = await spaceRail(second).count();
+
+  const doomed = await addSpace(page, 'Doomed');
+  await expect(spaceRail(second)).toHaveCount(held + 1, { timeout: SYNC_TIMEOUT });
+  await deleteSpace(page, doomed, 'Doomed');
+  await expect(spaceRail(second)).toHaveCount(held, { timeout: SYNC_TIMEOUT });
+
+  // The peer reads the deletion and says so. That acknowledgement is the only
+  // thing that retires a deletion while the device that sent it is still
+  // paired: there is no window that would ever do it.
+  await expect
+    .poll(() => confirmedDeletions(page), {
+      message: 'the peer never acknowledged the deletion',
+      timeout: SYNC_TIMEOUT,
+    })
+    .toBeGreaterThan(0);
+  const before = await heldDeletions(page);
+
+  // Compaction runs at sync boot, so loading the app again is what acts on an
+  // acknowledgement that arrived after the last one.
+  await page.goto('/#/settings?tab=deviceSync');
+  await page.reload();
+  await expect(
+    page.locator('[data-testid^="trusted-device-remove-"]').first(),
+  ).toBeVisible({ timeout: SYNC_TIMEOUT });
+
+  await expect
+    .poll(() => heldDeletions(page), {
+      message: 'a deletion the peer had confirmed was never compacted away',
+      timeout: SYNC_TIMEOUT,
+    })
+    .toBeLessThan(before);
 });
