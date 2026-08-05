@@ -1,8 +1,9 @@
 # Cloud sync
 
 Cloud sync keeps one account's writing in step across your devices, **end-to-end
-encrypted**. Your passphrase stays on your device, and the server stores only
-ciphertext.
+encrypted**. Writer encrypts your writing and other content on your device before
+upload. The sync service stores that encrypted content alongside the routing and
+indexing metadata it needs to synchronise it. Your passphrase stays on your device.
 
 On a healthy network, an idle device usually catches up in about **1–2
 seconds**. For live editing within one browser, use multiple tabs.
