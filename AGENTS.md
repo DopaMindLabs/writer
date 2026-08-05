@@ -184,26 +184,26 @@ tokens, primitives and preference implementation. Read `ACCESSIBILITY.md` whenev
 changes what a person can perceive, operate, understand or recover from; read the design system
 as well when the change affects UI.
 
-Writer targets **WCAG 2.2 Level AAA for every applicable success criterion**. AAA includes all
-applicable Level A and AA criteria; it is not shorthand for 7:1 contrast. Treat AA as an
-interim floor while known gaps are closed, not as the final target, and do not claim AAA until
-the conformance evidence in `ACCESSIBILITY.md` supports it.
+Use the conformance targets in `ACCESSIBILITY.md`. For contrast, the default `light` and `dark`
+themes have a **WCAG 2.2 AA minimum**; `hc-light` and `hc-dark` target **AAA enhanced
+contrast**. Do not turn the high-contrast target into a 7:1 requirement for every theme or
+claim a conformance level beyond the evidence recorded in `ACCESSIBILITY.md`.
 
-- Accessibility is a baseline, not an opt-in theme. Default themes and interactions must work
-  towards the AAA target; accessibility preferences may enhance that baseline but cannot be the
-  only conforming path.
+- Accessibility is a baseline, not an opt-in theme. Default themes must meet their AA contrast
+  minimum; high-contrast themes provide the enhanced contrast presentation.
 - Accessibility is functional as well as visual. Settings, shortcuts, focus/state transitions,
   status and error announcements, timing, gestures, preference persistence and recovery flows
   are in scope even when no component markup changes.
 - Use accessible names, semantics, keyboard operation, visible focus and reduced-motion
   behaviour from the shared primitives. Keep shortcuts cross-platform in both logic and labels.
-- For text, target WCAG 2.2 SC 1.4.6 in every theme: at least 7:1 for normal text and 4.5:1 for
-  large text, subject to the criterion's exceptions. Apply the appropriate WCAG criterion to
-  non-text UI rather than treating 7:1 as a universal graphics ratio.
+- For text, apply SC 1.4.3 to `light`/`dark` (at least 4.5:1 normal, 3:1 large) and SC 1.4.6 to
+  `hc-light`/`hc-dark` (at least 7:1 normal, 4.5:1 large), subject to each criterion's
+  exceptions. Apply the relevant criterion to non-text UI rather than treating 7:1 as a
+  universal graphics ratio.
 - Ship accessibility assertions with user-facing behaviour and manually review the applicable
-  AAA criteria. Automated axe/Storybook checks are supporting evidence, not proof of AAA.
-- Do not introduce a new accessibility gap. If a new or changed surface cannot meet an
-  applicable AAA criterion, stop and ask rather than redefining the target or hiding the gap.
+  criteria. Automated axe/Storybook checks are supporting evidence, not conformance proof.
+- Do not introduce a new accessibility gap. If a changed surface cannot meet its applicable
+  target, stop and ask rather than redefining the target or hiding the gap.
 
 ## E2E test coverage (ratcheted)
 

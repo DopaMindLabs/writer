@@ -18,6 +18,11 @@
   cross-reference the original prototypes.
 - **Props are documented as `name: type — description`.** Defaults are noted where they exist.
 - **States** (rest / hover / active / dark) appear under each component below.
+- **Storybook is the executable component catalogue.** Run `npm run storybook` and use each
+  component's `*.stories.tsx` states alongside this specification. The theme toolbar in
+  [`.storybook/preview.tsx`](../.storybook/preview.tsx) exposes `light`, `dark`, `hc-light` and
+  `hc-dark`; [`.storybook/main.ts`](../.storybook/main.ts) enables the accessibility and docs
+  addons. This document owns the design rules; Storybook shows their implemented states.
 
 ---
 
@@ -1024,12 +1029,11 @@ Things this spec doesn't pin down — open for next iteration:
 
 ## 11. Accessibility
 
-Accessibility is a **baseline requirement** of this design system. Writer targets WCAG 2.2
-Level AAA for every applicable success criterion; [`../ACCESSIBILITY.md`](../ACCESSIBILITY.md)
-is the canonical conformance statement and records current gaps. The themes (§2.1) remain the
-single source of truth for visual tokens, while accessibility preferences are orthogonal
-`data-*` modifiers that enhance that baseline. A user must not need to opt into a high-contrast
-theme or another preference for the default experience to reach the conformance target.
+Accessibility is a **baseline requirement** of this design system.
+[`../ACCESSIBILITY.md`](../ACCESSIBILITY.md) is the canonical conformance statement and records
+current gaps. The themes (§2.1) remain the source of truth for visual tokens: `light` and `dark`
+have an AA contrast minimum, while `hc-light` and `hc-dark` target AAA enhanced contrast.
+Accessibility preferences are orthogonal `data-*` modifiers that compose with those themes.
 
 ### 11.1 Preference axes
 
@@ -1059,20 +1063,19 @@ govern.
 
 ### 11.3 Contrast policy
 
-- **All themes target WCAG 2.2 AAA conformance.** For text covered by SC 1.4.6, target ≥7:1
-  for normal text and ≥4.5:1 for large text, subject to the criterion's exceptions. For
-  non-text UI covered by SC 1.4.11, use its ≥3:1 requirement; AAA does not make 7:1 a universal
-  graphics ratio.
-- **`light` / `dark`:** core text already exceeds the enhanced contrast target (≈26:1). The
+- **`light` / `dark`: WCAG 2.2 AA minimum.** For text covered by SC 1.4.3, require ≥4.5:1 for
+  normal text and ≥3:1 for large text, subject to the criterion's exceptions. For non-text UI
+  covered by SC 1.4.11, require ≥3:1 where applicable.
+- **`light` / `dark`:** core text already exceeds the AA target (≈26:1). The
   `light` status palette has known gaps: `--danger` (~3.2:1 on its tint) and
   `--success`-on-tint fall below even the 4.5:1 small-text AA threshold. Treat these as gaps to
   close, not intentional exceptions to preserve.
-- **`hc-light` / `hc-dark`** already provide ≥7:1 text/status contrast on the tested grounds
-  and retain stronger highlight overrides. They are accessibility preferences, not the only
-  route to the project target.
+- **`hc-light` / `hc-dark`: WCAG 2.2 AAA enhanced contrast.** For text covered by SC 1.4.6,
+  require ≥7:1 for normal text and ≥4.5:1 for large text, subject to the criterion's exceptions.
+  These themes retain the stronger status and highlight overrides.
 - `src/theme/contrast.test.ts` currently asserts ≥7:1 in `hc-*` and a ≥3:1 floor elsewhere.
-  That test is a **regression floor, not a conformance claim**; strengthen its default-theme
-  thresholds as the known token gaps are fixed.
+  That default-theme threshold is a **regression floor, not the AA target**; strengthen it as
+  the known token gaps are fixed.
 
 ### 11.4 Motion
 

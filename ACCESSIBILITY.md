@@ -1,8 +1,10 @@
 # Accessibility
 
-Writer targets **WCAG 2.2 Level AAA** for every applicable success criterion. This
-document is the canonical source for that target, current gaps and verification. The design
-system implements the visual and preference layer in
+Writer's default `light` and `dark` presentations target **WCAG 2.2 Level AA** as their
+minimum contrast baseline. The `hc-light` and `hc-dark` presentations target **Level AAA
+enhanced contrast**. Other accessibility requirements follow the applicable WCAG 2.2 criteria
+defined here. This document is the canonical source for those targets, current gaps and
+verification. The design system implements the visual and preference layer in
 [`docs/design-system.md` §11](./docs/design-system.md); `AGENTS.md` routes contributors here
 instead of maintaining a second accessibility policy.
 
@@ -10,8 +12,8 @@ instead of maintaining a second accessibility policy.
 
 | Area | Target | Current evidence |
 |---|---|---|
-| Overall conformance | **WCAG 2.2 Level AAA** (all applicable A, AA and AAA criteria) | Target; not yet claimed. |
-| Text contrast, every theme | SC 1.4.6 (AAA): 7:1 normal text, 4.5:1 large text | Core text exceeds AAA; known status-token gaps remain. |
+| Default-theme text contrast | SC 1.4.3 (AA): 4.5:1 normal text, 3:1 large text | Core text exceeds AAA; known status-token gaps remain. |
+| High-contrast-theme text contrast | SC 1.4.6 (AAA): 7:1 normal text, 4.5:1 large text | Target for `hc-light` and `hc-dark`. |
 | Non-text UI contrast | SC 1.4.11 (AA, required for AAA conformance): 3:1 where applicable | Covered by token tests in part; manual review still required. |
 | Keyboard operability | SC 2.1.1 and applicable AAA keyboard criteria | Skip link + native/Radix focus management. |
 | Focus not obscured | SC 2.4.12 (AAA) | Target; requires manual flow review. |
@@ -21,12 +23,8 @@ instead of maintaining a second accessibility policy.
 | Automated audit | axe-core WCAG 2 A/AA | Supporting evidence only; it cannot establish AAA conformance. |
 
 A Level AAA claim requires all applicable Level A, AA and AAA success criteria to be met for
-the claimed scope. Until that has been verified, describe AAA as the **target**, not current
-conformance. See the [W3C WCAG 2.2 conformance levels](https://www.w3.org/TR/WCAG22/#cc1).
-
-High-contrast themes are useful enhancements, but they are not an alternative conformance
-route. The default experience must progress towards the same target; known gaps below are work
-to close rather than permanent policy exceptions.
+the claimed scope. Do not describe the default themes as AAA merely because a high-contrast
+theme exists. See the [W3C WCAG 2.2 conformance levels](https://www.w3.org/TR/WCAG22/#cc1).
 
 ## What accessibility applies to
 
@@ -44,8 +42,9 @@ apply to the changed behaviour.
 
 Preferences enhance the accessible baseline and persist locally (`localStorage` key
 `lorem-a11y`, separate from `lorem-ui`). They are applied as orthogonal `data-*` attributes on
-`<html>` that compose with the active theme. Meeting the conformance target must not require a
-user to discover or enable one of these preferences first.
+`<html>` that compose with the active theme. The default themes must meet their AA contrast
+minimum without requiring a preference; the high-contrast themes provide the enhanced AAA
+contrast presentation.
 
 | Preference | Default | Effect |
 |---|---|---|
@@ -78,11 +77,11 @@ user to discover or enable one of these preferences first.
 
 - **Status colour contrast in the default `light` theme:** `--danger`
   (~3.2:1 on its tint) and `--success`-on-tint fall below the 4.5:1 small-text AA
-  bar and therefore block both AA and AAA conformance for affected text. The existing
-  `contrast.test.ts` 3:1 default-theme floor is a regression guard, not the target. Tracked in
+  bar and therefore miss the default-theme AA minimum for affected text. The existing
+  `contrast.test.ts` 3:1 default-theme floor is a regression guard, not the AA target. Tracked in
   `docs/design-system.md` §11.3.
-- **Complete AAA criterion audit:** axe and Storybook do not cover every AAA success criterion.
-  A manual criterion-by-criterion review of the claimed scope is still required.
+- **Complete criterion audit:** axe and Storybook do not cover every WCAG success criterion.
+  A manual criterion-by-criterion review of each claimed scope and level is still required.
 - The editor surface (Lexical) relies on the library's built-in semantics; deep
   rich-text screen-reader review is ongoing and remains part of the conformance work.
 
@@ -94,8 +93,8 @@ user to discover or enable one of these preferences first.
   `skip-link`, and `a11y-axe` (axe-core WCAG 2 A/AA scans) under `e2e/`. These scans support
   the audit but do not establish AAA conformance.
 - **Storybook:** the `@storybook/addon-a11y` checks component stories.
-- **Manual:** review every applicable WCAG 2.2 A, AA and AAA criterion for new or changed
-  user-facing or interaction-affecting behaviour,
+- **Manual:** review the applicable WCAG 2.2 criteria and the theme-specific contrast target for
+  new or changed user-facing or interaction-affecting behaviour,
   including keyboard-only and screen-reader flows, focus visibility/obscuring, zoom/reflow and
   criteria that automated tools cannot evaluate.
 
