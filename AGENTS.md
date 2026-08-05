@@ -57,6 +57,9 @@ this standard rather than redefine it.
 - Never weaken a rule, coverage floor or type-safety boundary, and never add a suppression to
   make a check pass. Follow the stop-and-ask rule in `CODING_STANDARDS.md` if compliance appears
   impossible.
+- Treat the root-cause, proper-typing and comment-discipline rules in `CODING_STANDARDS.md` as
+  hard gates. Do not ship a workaround or hack when the root cause cannot be fixed in scope;
+  stop and report the blocker.
 - Follow the separate compliance-refactor step in the task order below when a touched file must
   first be brought up to standard.
 - **Legacy support requires explicit permission.** Do not add new code paths, fallbacks,

@@ -19,7 +19,7 @@ domain rules in those sources rather than copying them here.
 5. **[Assert at boundaries](#5-assert-at-boundaries).** Validate all untrusted input (IndexedDB, localStorage, import, URL) with `invariant()`.
 6. **[Smallest data scope](#6-smallest-data-scope).** `const` by default; no module-level mutable state; narrowest types.
 7. **[Check every return value](#7-check-every-return-value).** No floating promises; handle nullable returns; never silently swallow errors.
-8. **[No type escape hatches](#8-no-type-escape-hatches).** No `any`, no `@ts-ignore`, no `@ts-expect-error`; keep `as` and `!` at validated boundaries.
+8. **[Proper types, no escape hatches](#8-proper-types-no-escape-hatches).** Model known data with concrete types; no `any`; keep `unknown`, `as` and `!` at validated boundaries.
 9. **[Immutability](#9-immutability).** `readonly` where possible; never mutate parameters or shared state; Zustand updates stay immutable.
 10. **[Zero lint/type errors in CI](#10-zero-linttype-errors-in-ci).** ESLint and `tsc` run clean on every push.
 
@@ -64,6 +64,28 @@ changing any config or adding a suppression; do not decide unilaterally.
 - **Separate compliance refactors.** If a file you must edit already violates these rules,
   bring it into compliance in a behaviour-preserving `refactor:` commit before the feature or
   fix commit. Do not bundle the clean-up with the behavioural change.
+
+### Root-cause fixes
+
+Fix the defect at the boundary or invariant that owns it. Reproduce or trace the failing flow
+far enough to explain why it fails before choosing the implementation. Do not mask a symptom
+with a retry, delay, fallback value, duplicate code path, compatibility branch or one-off
+condition. A regression test must exercise the failure mode the root cause produced, not merely
+pin the replacement constant or implementation detail.
+
+If the root cause cannot be repaired within the authorised scope, stop and report the blocker.
+Do not substitute a workaround or hack to make the visible symptom disappear.
+
+### Comment discipline
+
+Make names, types and control flow carry the explanation wherever they can. Add an inline
+comment only when a non-obvious invariant, safety constraint or external behaviour cannot be
+made clear in code. Explain **why** the constraint exists; do not narrate what the next line
+does.
+
+When an API or non-obvious contract needs documentation, use concise TSDoc/JSDoc (`/** … */`).
+Write comments in British English. Do not restate signatures or types, preserve debugging
+narration, address a reviewer, or add tutorial-style filler and repetitive generated prose.
 
 ### Security engineering
 
@@ -175,7 +197,14 @@ void saveDocument(doc).catch(reportError);
 A `catch` that ignores an error on purpose must say why (see the `localStorage` quota
 handlers in `src/store/ui.ts`).
 
-### 8. No type escape hatches
+### 8. Proper types, no escape hatches
+Model known shapes explicitly with domain types, interfaces, discriminated unions and typed
+generics. Do not use `any`, `unknown`, `object`, `Record<string, unknown>` or a broad cast as a
+substitute for a type the application already knows.
+
+`unknown` is appropriate only while a genuinely untyped or untrusted value crosses a boundary,
+such as parsed JSON, storage, imported content or an external message. Validate it there and
+return a concrete type; do not propagate `unknown` through domain, service or component APIs.
 Do not suppress the type checker to make an error go away.
 
 ```ts
