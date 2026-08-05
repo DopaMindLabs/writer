@@ -5,7 +5,7 @@ description: >
   Use when adding or changing any component, screen, or user-facing copy. Trigger
   terms: "component", "UI", "design system", "accessibility", "a11y", "i18n",
   "copy", "help article", "story", "storybook", "style".
-version: 1.2.0
+version: 1.3.0
 tags: [ui, design-system, accessibility, i18n, storybook]
 ---
 
@@ -37,6 +37,9 @@ and update `docs/design-system.md` — do not work around the gap.
 
 ## Accessibility requirements (every UI change)
 
+- Target WCAG 2.2 Level AAA for every applicable success criterion, including
+  the Level A and AA criteria required by AAA. Use `ACCESSIBILITY.md` as the
+  canonical target and gap list; automated checks alone are not proof of AAA.
 - Keyboard-operable: every interactive element reachable by Tab with a visible focus ring.
 - Accessible name: every control has an `aria-label` or a visible `<label>`.
 - Correct semantics: use HTML roles (`<button>`, `<nav>`, landmarks) before ARIA.
@@ -44,7 +47,9 @@ and update `docs/design-system.md` — do not work around the gap.
 - Keyboard shortcuts: always `event.metaKey || event.ctrlKey` — never one platform only.
   Derive the display label from the running platform; never hard-code `⌘` or `Ctrl`.
 - Respect `prefers-reduced-motion` and the `data-motion` token; no hard-coded durations.
-- Contrast: WCAG AA in `light`/`dark`; AAA (7:1) in `hc-*` themes.
+- For text in every theme, target SC 1.4.6: 7:1 for normal text and 4.5:1 for
+  large text, subject to its exceptions. Apply the relevant WCAG criterion to
+  non-text UI instead of treating 7:1 as a universal graphics ratio.
 - New opt-in states must be behind their own story and non-regression test (no
   behaviour-changing `data-*` applied by default).
 

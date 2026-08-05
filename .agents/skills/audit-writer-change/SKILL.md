@@ -5,7 +5,7 @@ description: >
   branch diff, or changed file set for correctness, security, accessibility, and
   persistence safety. Trigger terms: "audit", "review", "check", "risks in", "is
   this safe", "what did this change".
-version: 1.3.0
+version: 1.4.0
 tags: [review, audit, security, accessibility]
 ---
 
@@ -48,6 +48,8 @@ the screen or hook that owns the flow down to the changed symbol and back up.
 
 ### 6. Apply the accessibility checklist (UI changes only)
 
+- Check the changed surface against every applicable WCAG 2.2 A, AA and AAA
+  criterion per `ACCESSIBILITY.md`; do not treat an automated scan as AAA proof.
 - Every interactive element is keyboard-operable with a visible focus indicator.
 - No hard-coded values for properties that design tokens or preferences govern
   (colours, font sizes, transitions, focus rings).
