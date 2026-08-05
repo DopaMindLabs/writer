@@ -7,7 +7,7 @@ description: >
   Trigger terms: "implement", "code it", "make the change", "write the code",
   "execute the plan".
 metadata:
-  version: "1.2.0"
+  version: "1.3.0"
   tags: "implementation,coding"
 ---
 
@@ -52,8 +52,16 @@ model where one exists; OWASP Top 10 is a baseline, not a substitute for it.
 ## 3. Implement the smallest complete change
 
 Touch only files required by the approved plan or explicit request. Read every file in
-full before its first edit, preserve its established style, and fix the root cause rather
-than adding a compatibility path or workaround that was not requested.
+full before its first edit and preserve its established style. Apply the root-cause,
+proper-typing and comment-discipline gates in `CODING_STANDARDS.md`: repair the owning
+invariant rather than masking its symptom; give known data concrete domain types; narrow
+genuinely untyped input at its boundary; and keep comments only where they explain a
+non-obvious reason or contract. Use concise British-English TSDoc/JSDoc when documentation
+is necessary.
+
+Do not ship a workaround, hack, retry, delay, fallback, duplicate path or special case that
+only makes the visible symptom disappear. If the root cause cannot be repaired within the
+authorised scope, stop and report the blocker.
 
 Keep tests beside the behaviour they prove and follow `test-writer-changes`' TDD and
 verification workflow. Newly discovered work that materially changes behaviour, risk or

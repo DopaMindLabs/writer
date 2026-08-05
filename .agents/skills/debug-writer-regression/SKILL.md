@@ -6,7 +6,7 @@ description: >
   terms: "broken", "stopped working", "regression", "doesn't work any more", "lost",
   "flash", "flicker", "root cause", "bisect", "why did this break".
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   tags: "debugging,regression,root-cause"
 ---
 
@@ -34,16 +34,12 @@ the underlying implementation is itself the right design:
   them. A threshold inside the natural range of one class is a bug even if it "works
   on my machine".
 
-Then present **both** options when they diverge — (a) restore last-known-good, (b) fix
-the underlying pattern — with trade-offs, and **always recommend the proper fix**. A
-regression that a small parameter change could cause is evidence the pattern is
-fragile; fix the pattern. **Refactoring effort is never a tie-breaker toward the
-band-aid**: if the sound design needs a refactor, propose the refactor (scoped per
-AGENTS.md — compliance refactors in their own commit). A stopgap is the **absolute
-worst-case scenario** — reach for it only when the proper fix is genuinely impossible
-right now (e.g. blocked on an upstream release or an unanswered stop-and-ask), label
-it explicitly as a stopgap, and record the proper fix as agreed follow-up work before
-proceeding.
+Fix the root cause. A last-known-good value is a valid repair only when the value itself
+violated an otherwise sound design; prove that with the behavioural regression test. When
+the underlying pattern is wrong or fragile, repair the pattern even when that requires a
+larger refactor. Do not implement a band-aid, compatibility path, timing tweak or other
+symptom-masking stopgap. If the proper fix is blocked, report the blocker and stop rather
+than substituting a workaround.
 
 ## Debug sequence
 
@@ -86,7 +82,7 @@ and close what is closable with the fix. Classes that hide bugs by default:
   tree — menus and dialogs bubble into ancestor listeners (drag surfaces). Tests that
   render the child in isolation never see the interference.
 
-### 6. Fix per the task order
+### 6. Fix the root cause per the task order
 Follow AGENTS.md task order: failing test first (capture the regression *and* the gap
 class from step 5 where feasible), implement, run the gates. A behaviour-restoring fix
 needs no spec change; a pattern change that alters documented behaviour does.

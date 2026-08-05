@@ -6,7 +6,7 @@ description: >
   persistence safety. Trigger terms: "audit", "review", "check", "risks in", "is
   this safe", "what did this change".
 metadata:
-  version: "1.5.0"
+  version: "1.6.0"
   tags: "review,audit,security,accessibility"
 ---
 
@@ -29,8 +29,13 @@ the screen or hook that owns the flow down to the changed symbol and back up.
 
 ### 4. Apply the correctness checklist
 
-- **Types.** No `any`, `@ts-ignore`, `@ts-expect-error`, or unsafe escape hatch.
-  Safe `unknown` narrowing is allowed; flag only casts that bypass validation.
+- **Root cause.** For a fix, require evidence that the change repairs the owning invariant or
+  failure source. Flag retries, delays, fallback values, duplicate paths, compatibility
+  branches and one-off conditions that merely hide the symptom.
+- **Types.** No `any`, `@ts-ignore`, `@ts-expect-error`, unsafe escape hatch, or broad type in
+  place of a known domain shape. Allow `unknown` only at a genuinely untyped boundary and
+  require it to be validated and narrowed there before it reaches domain/service/component
+  APIs.
 - **Null safety.** Every nullable result is handled; no implicit `undefined`
   reaches a caller that does not expect it.
 - **Promises.** No floating promises; every `async` call is `await`-ed or
@@ -39,6 +44,9 @@ the screen or hook that owns the flow down to the changed symbol and back up.
   `assertNever()` at the boundary.
 - **Immutability.** Zustand state updates are pure (new object); no mutation of
   shared state or function parameters.
+- **Comments.** Flag inline comments that narrate obvious code or preserve debugging/review
+  prose. Keep only non-obvious reasons, invariants or external constraints. When documentation
+  is needed, require concise TSDoc/JSDoc in British English.
 
 ### 5. Apply the security checklist
 
@@ -53,7 +61,7 @@ the screen or hook that owns the flow down to the changed symbol and back up.
   not expose sensitive values through logs, errors, URLs or persisted plaintext.
 - For synced data, preserve the encryption, trust and replication invariants in
   `work-on-writer-sync`; do not create a path around the provider boundary.
-- Prefer a root-cause fix. Add a negative or adversarial regression test for the
+- Require a root-cause fix. Add a negative or adversarial regression test for the
   security invariant when the changed boundary is testable.
 
 ### 6. Apply the accessibility checklist (user-facing or interaction-affecting changes)

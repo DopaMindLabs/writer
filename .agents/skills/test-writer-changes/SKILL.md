@@ -5,7 +5,7 @@ description: >
   fixing, or auditing tests. Trigger terms: "test", "TDD", "vitest", "playwright",
   "e2e", "coverage", "spec", "failing test", "skip test".
 metadata:
-  version: "1.2.0"
+  version: "1.3.0"
   tags: "testing,tdd,vitest,playwright,coverage"
 ---
 
@@ -34,6 +34,9 @@ metadata:
 - Assert the **public API only** — no access to private methods via `(service as any)._x`.
 - Use `it.each` for input → output mappings.
 - No `any` in tests, including `: any`, `as any`, `<any>`, `Partial<any>`.
+- Type fixtures and mocks with the real domain contract. Use `unknown` only when a test is
+  deliberately exercising validation of untyped boundary input; narrow it through the same
+  production boundary the application uses.
 - No `console.warn` / `console.error` output from tests — resolve the root cause.
 - Run: `npm run test:run` (once) or `npm run test` (watch mode — won't exit).
 

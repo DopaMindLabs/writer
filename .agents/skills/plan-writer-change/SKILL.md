@@ -5,7 +5,7 @@ description: >
   code. Use when asked to plan, design, or scope a change to Writer. Trigger terms:
   "plan", "design", "how would I", "what files", "scope", "impact", "before I code".
 metadata:
-  version: "1.3.0"
+  version: "1.4.0"
   tags: "planning,architecture,impact-analysis"
 ---
 
@@ -103,6 +103,8 @@ separate troubleshooting, and list only verified UI labels and behaviour.
 ## Hard stops
 
 - Never plan to add legacy support without explicit user approval.
+- Never plan a workaround, hack or symptom-masking fallback in place of a root-cause fix. If
+  the root cause is not yet known, plan the diagnostic work needed to establish it first.
 - Never plan to weaken a lint rule, coverage floor, or type safety boundary.
 - If a schema change is needed, include the migration checklist from
   `change-writer-persistence` in the plan.
