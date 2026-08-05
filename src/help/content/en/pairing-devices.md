@@ -71,10 +71,13 @@ so you can go back to the one it missed.
   device gathered are too big to fit in a code — usually a machine with very
   many network connections (VPNs, virtual adapters). Disconnect what you are not
   using, then close the dialog and try again.
-- **"That code has expired."** A code is valid for five minutes. Reading it in
-  a roundabout way — photographing it, opening the photo, copying the text and
-  pasting it — can take longer than that. Close the dialog on both devices and
-  start again; the fresh code is quicker to read the second time.
+- **"That code has expired."** A code is valid for five minutes, and that window
+  covers the whole pairing — reading the code and comparing the digits. Reading
+  it in a roundabout way — photographing it, opening the photo, copying the text
+  and pasting it — can take longer than that, and so can leaving the digits
+  sitting on screen before you confirm them. Either way nothing is transferred.
+  Close the dialog on both devices and start again; the fresh code is quicker to
+  read the second time.
 - **"That does not look like a pairing code from this device's partner."** The
   code came from a different pairing attempt — for example, one you started
   earlier and left open. Close the dialog on both devices and start fresh.
@@ -176,6 +179,11 @@ show a code, scan it, and confirm the digits on both screens. Confirming is
 what restores trust — the device proves it is still the same one you paired
 with before, and syncing resumes from where it left off.
 
+Confirming the digits is not the last step: the devices still have to hand over
+the key. Until that finishes nothing is recorded, so a pairing that runs out of
+time — or one you close halfway — leaves the device exactly as it was. A device
+you removed stays removed, on the date you removed it.
+
 If a device you have paired with before ever fails re-pairing with a message
 about proving a different identity, do not keep trying. Remove it from the
 list, and be careful about the network you are on — that message means the
@@ -189,12 +197,17 @@ catch up. How long it keeps that history is up to you — Settings → Device sy
 is the default.
 
 A device that has been switched off for longer than that has fallen past the
-history, so it is sent a fresh copy of everything as it currently stands instead.
-Anything you wrote on it while it was away is not lost: the two versions are
-merged the same way any other change is, rather than one silently replacing the
-other.
+history, so it is sent a fresh copy of everything as it currently stands instead
+— including what you have deleted, so it does not come back holding pages
+everything else has let go of. Anything you wrote on it while it was away is not
+lost: the two versions are merged the same way any other change is, rather than
+one silently replacing the other.
 
 Once every device you have paired has confirmed it holds a change, Writer stops
 keeping that piece of history early — there is nobody left who needs it. If one
 device never comes back, the window above still closes eventually, so a device
-you have lost cannot make the history grow forever.
+you have lost cannot make the history grow forever. Deletions are the exception:
+they are kept until every device you have paired has confirmed them, however long
+that takes, because they are the only thing stopping a returning device from
+restoring what you removed. Removing a device you are not going back to is what
+lets go of the deletions it never confirmed.

@@ -22,6 +22,9 @@ import { applyInboundFrame } from './writerOperationMaterializer';
 
 const DEVICE = asDeviceId('device-a');
 
+/** What this device accepts as an author is `writerFrameVerifier.test.ts`. */
+const acceptAnyAuthor = (): Promise<boolean> => Promise.resolve(true);
+
 let db: LoremDB;
 let scopeKeys: Map<string, SyncKeyRing>;
 
@@ -121,6 +124,7 @@ describe('rescopeFrames', () => {
         db,
         frame: moved,
         ring: scopeKeys.get('space-b')!,
+        verifySignature: acceptAnyAuthor,
       }),
     ).toBe('applied');
     expect((await db.notes.get('n1'))?.body).toBe('secret body');

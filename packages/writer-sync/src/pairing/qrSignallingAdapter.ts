@@ -79,6 +79,16 @@ export interface QrSignallingAdapter extends SignallingAdapter {
    * leaves Web Crypto.
    */
   sessionPrivateKey: () => CryptoKey | null;
+  /**
+   * Let go of everything this exchange accumulated: the ephemeral key, what it
+   * authenticated, and the transcript state an answer would be checked against.
+   *
+   * Idempotent, and terminal — a disposed adapter cannot continue an exchange.
+   * A session whose deadline has passed must not still be able to open a
+   * wrapper sealed to its ephemeral key, which is the whole point of having a
+   * deadline at all.
+   */
+  dispose: () => void;
 }
 
 /** Everything one exchange accumulates. Created per adapter, never shared. */
@@ -88,6 +98,8 @@ interface ExchangeState {
   offerBytes: Uint8Array | null;
   offerHash: string | null;
   sessionId: string | null;
+  /** The offer's own deadline, kept so the session can bind to the earlier one. */
+  offerExpiresAt: number | null;
   authenticated: AuthenticatedPeerParameters | null;
 }
 
@@ -132,6 +144,7 @@ const createOfferFor = async (
   context.state.sessionId = offerOptions.sessionId;
   context.state.offerBytes = minted.bytes;
   context.state.offerHash = minted.hash;
+  context.state.offerExpiresAt = offerOptions.expiresAt;
   return minted.offer;
 };
 
@@ -159,10 +172,12 @@ const acceptOfferFor = async (
   });
   context.state.sessionId = offer.sessionId;
   context.state.offerBytes = offerBytes;
+  context.state.offerExpiresAt = offer.expiresAt;
   context.state.authenticated = await bindTranscript({
     peer: offer,
     offerBytes,
     answerBytes: minted.bytes,
+    expiresAt: Math.min(offer.expiresAt, minted.answer.expiresAt),
   });
   return minted.answer;
 };
@@ -171,8 +186,13 @@ const acceptAnswerFor = async (
   context: ExchangeContext,
   answer: PairingAnswer,
 ): Promise<AuthenticatedPeerParameters> => {
-  const { offerBytes, offerHash, sessionId } = context.state;
-  if (sessionId === null || offerHash === null || offerBytes === null) {
+  const { offerBytes, offerHash, sessionId, offerExpiresAt } = context.state;
+  if (
+    sessionId === null ||
+    offerHash === null ||
+    offerBytes === null ||
+    offerExpiresAt === null
+  ) {
     throw new PairingError(
       PairingErrorCode.InvalidState,
       'an answer arrived before this device created an offer',
@@ -190,6 +210,7 @@ const acceptAnswerFor = async (
     peer: answer,
     offerBytes,
     answerBytes: pairingPayloadBytes(answer),
+    expiresAt: Math.min(offerExpiresAt, answer.expiresAt),
   });
   context.state.authenticated = authenticated;
   return authenticated;
@@ -207,6 +228,7 @@ export const createQrSignallingAdapter = (
       offerBytes: null,
       offerHash: null,
       sessionId: null,
+      offerExpiresAt: null,
       authenticated: null,
     },
     now: options.now ?? (() => Date.now()),
@@ -219,5 +241,13 @@ export const createQrSignallingAdapter = (
     acceptAnswer: (answer) => acceptAnswerFor(context, answer),
     parameters: () => context.state.authenticated,
     sessionPrivateKey: () => context.state.ephemeral?.privateKey ?? null,
+    dispose: () => {
+      context.state.ephemeral = null;
+      context.state.offerBytes = null;
+      context.state.offerHash = null;
+      context.state.sessionId = null;
+      context.state.offerExpiresAt = null;
+      context.state.authenticated = null;
+    },
   };
 };

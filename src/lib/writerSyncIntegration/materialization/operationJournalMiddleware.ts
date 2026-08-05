@@ -32,6 +32,7 @@ import {
 } from './writerOperationFactory';
 import { isJournalledRow, type UnknownRow } from './journalledRow';
 import { prepareFramePayload } from './attachmentFramePayload';
+import { tombstoneOf } from './tombstone';
 
 /**
  * DBCore middleware that journals an encrypted operation frame for every
@@ -125,6 +126,43 @@ const writeChunks = async (options: {
     type: 'put',
     trans: options.trans,
     values: options.chunks,
+  });
+};
+
+/**
+ * Record the deletion state the frames just journalled leave behind.
+ *
+ * A deletion this device made is state, not an event that has passed: it is
+ * what a full-state rebuild serves the deletion from once the frame's history
+ * has been compacted, and what refuses an older edit arriving from a peer
+ * afterwards. Written in the deletion's own transaction, so the row, its frame
+ * and its tombstone can never disagree.
+ */
+const writeTombstones = async (options: {
+  syncTombstones: DBCoreTable;
+  trans: DBCoreTransaction;
+  frames: readonly EncryptedSyncFrame[];
+}): Promise<void> => {
+  if (options.frames.length === 0) return;
+  await options.syncTombstones.mutate({
+    type: 'put',
+    trans: options.trans,
+    values: options.frames.map(tombstoneOf),
+  });
+};
+
+/** Release the deletion state a row written again has just contradicted. */
+const clearTombstones = async (options: {
+  syncTombstones: DBCoreTable;
+  trans: DBCoreTransaction;
+  table: string;
+  entityIds: readonly string[];
+}): Promise<void> => {
+  if (options.entityIds.length === 0) return;
+  await options.syncTombstones.mutate({
+    type: 'delete',
+    trans: options.trans,
+    keys: options.entityIds.map((entityId) => [options.table, entityId]),
   });
 };
 
@@ -239,12 +277,13 @@ const inTx = <T,>(work: Promise<T>): Promise<T> => Dexie.waitFor(work);
 const journalPut = async (options: {
   table: DBCoreTable;
   syncOps: DBCoreTable;
+  syncTombstones: DBCoreTable;
   syncChunks?: DBCoreTable;
   resolver: ScopeKeyResolver;
   identity: () => Promise<JournalIdentity>;
   req: DBCoreAddRequest | DBCorePutRequest;
 }): Promise<DBCoreMutateResponse> => {
-  const { table, syncOps, syncChunks, resolver, identity, req } = options;
+  const { table, syncOps, syncTombstones, syncChunks, resolver, identity, req } = options;
   const rows = req.values as readonly Row[];
   const rings = rows.map((row, i) =>
     ringFor({ table, resolver, row, fallbackKey: req.keys?.[i] }),
@@ -270,13 +309,16 @@ const journalPut = async (options: {
   const response = await table.mutate(req);
   // A row the store rejected (a duplicate `add`) never happened, so its frame is
   // discarded rather than journalled.
-  await writeFrames({
-    syncOps,
+  const journalled = prepared.frames.filter(
+    (frame, i): frame is EncryptedSyncFrame =>
+      frame !== null && !(i in response.failures),
+  );
+  await writeFrames({ syncOps, trans: req.trans, frames: journalled });
+  await clearTombstones({
+    syncTombstones,
     trans: req.trans,
-    frames: prepared.frames.filter(
-      (frame, i): frame is EncryptedSyncFrame =>
-        frame !== null && !(i in response.failures),
-    ),
+    table: table.name,
+    entityIds: journalled.map((frame) => frame.entityId),
   });
   await writeChunks({
     syncChunks,
@@ -314,12 +356,13 @@ const deleteChunks = async (options: {
 const journalDelete = async (options: {
   table: DBCoreTable;
   syncOps: DBCoreTable;
+  syncTombstones: DBCoreTable;
   syncChunks?: DBCoreTable;
   resolver: ScopeKeyResolver;
   identity: () => Promise<JournalIdentity>;
   req: DBCoreDeleteRequest;
 }): Promise<DBCoreMutateResponse> => {
-  const { table, syncOps, syncChunks, resolver, identity, req } = options;
+  const { table, syncOps, syncTombstones, syncChunks, resolver, identity, req } = options;
   if (!resolver.hasAnyKey()) {
     const response = await table.mutate(req);
     await deleteChunks({
@@ -354,18 +397,20 @@ const journalDelete = async (options: {
     ),
   });
   await writeFrames({ syncOps, trans: req.trans, frames });
+  await writeTombstones({ syncTombstones, trans: req.trans, frames });
   return response;
 };
 
 const journalMutate = (options: {
   table: DBCoreTable;
   syncOps: DBCoreTable;
+  syncTombstones: DBCoreTable;
   syncChunks?: DBCoreTable;
   deps: OperationJournalDeps;
   identity: () => Promise<JournalIdentity>;
   req: DBCoreMutateRequest;
 }): Promise<DBCoreMutateResponse> => {
-  const { table, syncOps, syncChunks, deps, identity, req } = options;
+  const { table, syncOps, syncTombstones, syncChunks, deps, identity, req } = options;
   if (req.type === 'deleteRange') return table.mutate(req);
   if (
     isMaterialisationTx(req.trans) ||
@@ -377,6 +422,7 @@ const journalMutate = (options: {
   const shared = {
     table,
     syncOps,
+    syncTombstones,
     syncChunks,
     resolver: deps.resolver,
     identity,
@@ -385,18 +431,21 @@ const journalMutate = (options: {
   return journalPut({ ...shared, req });
 };
 
+/** Whatever the caller asked for, plus every store journalling has to write. */
+const withStore = (stores: readonly string[], store: string): string[] =>
+  stores.includes(store) ? [...stores] : [...stores, store];
+
 const widenStores = (
   stores: string[],
   journalled: ReadonlySet<string>,
   chunked: ReadonlySet<string>,
 ): string[] => {
   if (!stores.some((store) => journalled.has(store))) return stores;
-  const widened = stores.includes('syncOperations')
-    ? [...stores]
-    : [...stores, 'syncOperations'];
-  return stores.some((store) => chunked.has(store)) &&
-    !widened.includes('syncAttachmentChunks')
-    ? [...widened, 'syncAttachmentChunks']
+  // Deletion state commits with the deletion that produced it, so the scope a
+  // journalled write runs in has to reach it.
+  const widened = withStore(withStore(stores, 'syncOperations'), 'syncTombstones');
+  return stores.some((store) => chunked.has(store))
+    ? withStore(widened, 'syncAttachmentChunks')
     : widened;
 };
 
@@ -442,6 +491,7 @@ export const createOperationJournalMiddleware = (
             journalMutate({
               table,
               syncOps: down.table('syncOperations'),
+              syncTombstones: down.table('syncTombstones'),
               syncChunks: chunked.has(name)
                 ? down.table('syncAttachmentChunks')
                 : undefined,

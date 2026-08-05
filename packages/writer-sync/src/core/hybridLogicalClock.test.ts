@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   MAX_OBSERVED_DRIFT_MILLIS,
+  RemoteClockDriftError,
+  assertAcceptableRemoteTime,
   compareTimestamps,
   createHybridLogicalClock,
 } from './hybridLogicalClock';
@@ -100,6 +102,51 @@ describe('observe', () => {
     const next = clock.now();
 
     expect(next).toEqual({ millis: 1000 + MAX_OBSERVED_DRIFT_MILLIS, counter: 1 });
+  });
+});
+
+describe('assertAcceptableRemoteTime', () => {
+  const at = (millis: number) => () => millis;
+
+  it('accepts a timestamp behind the local wall clock', () => {
+    expect(() =>
+      assertAcceptableRemoteTime({ millis: 500, counter: 0 }, at(1000)),
+    ).not.toThrow();
+  });
+
+  it('accepts a timestamp exactly at the tolerated drift', () => {
+    expect(() =>
+      assertAcceptableRemoteTime(
+        { millis: 1000 + MAX_OBSERVED_DRIFT_MILLIS, counter: 0 },
+        at(1000),
+      ),
+    ).not.toThrow();
+  });
+
+  it('rejects a timestamp one millisecond beyond the tolerated drift', () => {
+    expect(() =>
+      assertAcceptableRemoteTime(
+        { millis: 1000 + MAX_OBSERVED_DRIFT_MILLIS + 1, counter: 0 },
+        at(1000),
+      ),
+    ).toThrow(RemoteClockDriftError);
+  });
+
+  it('rejects a timestamp years ahead', () => {
+    expect(() =>
+      assertAcceptableRemoteTime({ millis: 1000 + 5 * 365 * 86_400_000, counter: 0 }, at(1000)),
+    ).toThrow(RemoteClockDriftError);
+  });
+
+  it('agrees with what the clock will merge', () => {
+    const clock = createHybridLogicalClock(at(1000));
+    const beyond = { millis: 1000 + MAX_OBSERVED_DRIFT_MILLIS + 1, counter: 0 };
+
+    expect(() => assertAcceptableRemoteTime(beyond, at(1000))).toThrow(
+      RemoteClockDriftError,
+    );
+    clock.observe(beyond);
+    expect(clock.now()).toEqual({ millis: 1000, counter: 0 });
   });
 });
 

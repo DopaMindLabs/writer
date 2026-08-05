@@ -58,6 +58,7 @@ const peerParameters = (): AuthenticatedPeerParameters => ({
   peerEphemeralPublicJwk: JWK,
   transcript: new Uint8Array([1, 2, 3]),
   verificationCode: CODE,
+  expiresAt: Date.now() + 300_000,
 });
 
 interface FakeSignaller extends PairingSignaller {
@@ -101,6 +102,7 @@ const readySignaller = (script: SignallerScript = {}): FakeSignaller => {
       // The joiner learns the parameters by answering, not by being told.
       parameters: () => (answered ? peerParameters() : null),
       sessionPrivateKey: () => null,
+    dispose: () => undefined,
     },
     close: () => {
       closed = true;

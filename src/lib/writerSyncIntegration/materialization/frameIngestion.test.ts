@@ -8,12 +8,28 @@ import {
   type Note,
   type NoteAttachment,
 } from '@/db/schema';
-import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
-import type { SyncKeyRing } from 'writer-sync/crypto';
-import { TRANSFER_CHUNK_BYTES } from 'writer-sync/operations';
+import {
+  TrustedDeviceStatus,
+  asDeviceId,
+  asOperationId,
+  asPrincipalId,
+} from 'writer-sync/core';
+import {
+  generateDeviceIdentity,
+  publicJwkOf,
+  type DeviceIdentityKeys,
+  type SyncKeyRing,
+} from 'writer-sync/crypto';
+import { TRANSFER_CHUNK_BYTES, type EncryptedSyncFrame } from 'writer-sync/operations';
 import type { Doc } from '@/db/schema';
+import { createTrustedDeviceStore } from '@/lib/writerSyncIntegration/trustedDeviceStore';
 import { prepareFramePayload } from './attachmentFramePayload';
-import { makeDeleteFrame, makePutFrame } from './writerOperationFactory';
+import {
+  makeDeleteFrame,
+  makePutFrame,
+  signAuthoredFrames,
+} from './writerOperationFactory';
+import { createWriterFrameVerifier } from './writerFrameVerifier';
 import { applyInboundFrame } from './writerOperationMaterializer';
 import { writerJournalIdentity } from './writerJournalDeps';
 import { refreshInboundDocs } from './inboundDocRefresh';
@@ -31,6 +47,13 @@ vi.mock('./inboundDocRefresh', () => ({
 const DEVICE_REMOTE = asDeviceId('remote-device');
 
 let db: LoremDB;
+/** The remote device's identity, as its pairing left it recorded here. */
+let remote: DeviceIdentityKeys;
+
+/** Sign a frame as the remote device: the sweep applies nothing unattributed. */
+const authoredByRemote = async (
+  frame: EncryptedSyncFrame,
+): Promise<EncryptedSyncFrame> => (await signAuthoredFrames(remote.privateKey, [frame]))[0];
 
 const note = (): Note => ({
   accessScopeId: 's1',
@@ -66,13 +89,15 @@ const doc = (overrides: Partial<Doc> = {}): Doc => ({
   ...overrides,
 });
 
-const docFrame = (ring: SyncKeyRing, overrides: Partial<Doc> = {}) =>
-  makePutFrame({
-    ring,
-    deviceId: DEVICE_REMOTE,
-    entityTable: 'docs',
-    row: doc(overrides),
-  });
+const docFrame = async (ring: SyncKeyRing, overrides: Partial<Doc> = {}) =>
+  authoredByRemote(
+    await makePutFrame({
+      ring,
+      deviceId: DEVICE_REMOTE,
+      entityTable: 'docs',
+      row: doc(overrides),
+    }),
+  );
 
 const keyedRing = async (): Promise<SyncKeyRing> => {
   const ring = await deriveKeyRing(generateRootSecret(), 1);
@@ -104,18 +129,33 @@ const attachmentFrame = async (ring: SyncKeyRing) => {
   });
   return {
     chunks: prepared.chunks,
-    frame: await makePutFrame({
-      ring,
-      deviceId: DEVICE_REMOTE,
-      entityTable: 'noteAttachments',
-      row: prepared.row,
-    }),
+    frame: await authoredByRemote(
+      await makePutFrame({
+        ring,
+        deviceId: DEVICE_REMOTE,
+        entityTable: 'noteAttachments',
+        row: prepared.row,
+      }),
+    ),
   };
 };
 
 beforeEach(async () => {
   db = new LoremDB('frame-ingestion-test');
   await db.open();
+  // The sweep attributes every frame before applying it, so the device these
+  // fixtures speak for is one this database has paired with.
+  remote = await generateDeviceIdentity();
+  await createTrustedDeviceStore(db).trust({
+    deviceId: DEVICE_REMOTE,
+    publicIdentityJwk: await publicJwkOf(remote.publicKey),
+    principalId: asPrincipalId('me'),
+    addedAt: 1_700_000_000_000,
+    lastSessionAt: 1_700_000_000_000,
+    displayName: 'Remote',
+    status: TrustedDeviceStatus.Active,
+    acknowledgedOperations: {},
+  });
 });
 
 afterEach(async () => {
@@ -127,12 +167,14 @@ afterEach(async () => {
 describe('sweepUnappliedFrames', () => {
   it('applies nothing while the device is keyless — frames wait in the journal', async () => {
     const remoteRing = await deriveKeyRing(generateRootSecret(), 1);
-    const frame = await makePutFrame({
-      ring: remoteRing,
-      deviceId: DEVICE_REMOTE,
-      entityTable: 'notes',
-      row: note(),
-    });
+    const frame = await authoredByRemote(
+      await makePutFrame({
+        ring: remoteRing,
+        deviceId: DEVICE_REMOTE,
+        entityTable: 'notes',
+        row: note(),
+      }),
+    );
     await db.syncOperations.put(frame);
 
     expect(await sweepUnappliedFrames(db)).toBe(0);
@@ -143,12 +185,14 @@ describe('sweepUnappliedFrames', () => {
     const master = generateRootSecret();
     const ring = await deriveKeyRing(master, 1);
     await saveDeviceKeyRing({ accountId: null, ring });
-    const frame = await makePutFrame({
-      ring,
-      deviceId: DEVICE_REMOTE,
-      entityTable: 'notes',
-      row: note(),
-    });
+    const frame = await authoredByRemote(
+      await makePutFrame({
+        ring,
+        deviceId: DEVICE_REMOTE,
+        entityTable: 'notes',
+        row: note(),
+      }),
+    );
     // A durable provider (Dexie Cloud) lands the frame straight in the journal.
     await db.syncOperations.put(frame);
 
@@ -162,15 +206,22 @@ describe('sweepUnappliedFrames', () => {
   it('applies once when the same frame arrives through Dexie and a second provider', async () => {
     const ring = await deriveKeyRing(generateRootSecret(), 1);
     await saveDeviceKeyRing({ accountId: null, ring });
-    const frame = await makePutFrame({
-      ring,
-      deviceId: DEVICE_REMOTE,
-      entityTable: 'notes',
-      row: note(),
-    });
+    const frame = await authoredByRemote(
+      await makePutFrame({
+        ring,
+        deviceId: DEVICE_REMOTE,
+        entityTable: 'notes',
+        row: note(),
+      }),
+    );
 
     // Path one: a fake second provider hands the frame over directly.
-    await applyInboundFrame({ db, frame: JSON.parse(JSON.stringify(frame)), ring });
+    await applyInboundFrame({
+      db,
+      frame: JSON.parse(JSON.stringify(frame)),
+      ring,
+      verifySignature: createWriterFrameVerifier(db),
+    });
     // Path two: Dexie replicated the identical frame into the journal.
     await db.syncOperations.put(frame);
 
@@ -221,9 +272,18 @@ describe('sweepUnappliedFrames', () => {
 
     it('leaves this device to its own writing', async () => {
       const ring = await keyedRing();
-      const { deviceId } = await writerJournalIdentity();
+      const own = await writerJournalIdentity();
       await db.syncOperations.put(
-        await makePutFrame({ ring, deviceId, entityTable: 'docs', row: doc() }),
+        (
+          await signAuthoredFrames(own.privateKey, [
+            await makePutFrame({
+              ring,
+              deviceId: own.deviceId,
+              entityTable: 'docs',
+              row: doc(),
+            }),
+          ])
+        )[0],
       );
 
       await sweepUnappliedFrames(db);
@@ -236,21 +296,25 @@ describe('sweepUnappliedFrames', () => {
     it('says nothing for other tables, or for a document being deleted', async () => {
       const ring = await keyedRing();
       await db.syncOperations.put(
-        await makePutFrame({
-          ring,
-          deviceId: DEVICE_REMOTE,
-          entityTable: 'notes',
-          row: note(),
-        }),
+        await authoredByRemote(
+          await makePutFrame({
+            ring,
+            deviceId: DEVICE_REMOTE,
+            entityTable: 'notes',
+            row: note(),
+          }),
+        ),
       );
       await db.syncOperations.put(
-        makeDeleteFrame({
-          ring,
-          deviceId: DEVICE_REMOTE,
-          entityTable: 'docs',
-          entityId: 'd1',
-          accessScopeId: 's1',
-        }),
+        await authoredByRemote(
+          makeDeleteFrame({
+            ring,
+            deviceId: DEVICE_REMOTE,
+            entityTable: 'docs',
+            entityId: 'd1',
+            accessScopeId: 's1',
+          }),
+        ),
       );
 
       await sweepUnappliedFrames(db);
@@ -283,12 +347,14 @@ describe('sweepUnappliedFrames', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const ring = await deriveKeyRing(generateRootSecret(), 1);
     await saveDeviceKeyRing({ accountId: null, ring });
-    const good = await makePutFrame({
-      ring,
-      deviceId: DEVICE_REMOTE,
-      entityTable: 'notes',
-      row: note(),
-    });
+    const good = await authoredByRemote(
+      await makePutFrame({
+        ring,
+        deviceId: DEVICE_REMOTE,
+        entityTable: 'notes',
+        row: note(),
+      }),
+    );
     await db.syncOperations.put({ ...good, operationId: asOperationId('op-bad'), payload: btoa('junk') });
     await db.syncOperations.put(good);
 

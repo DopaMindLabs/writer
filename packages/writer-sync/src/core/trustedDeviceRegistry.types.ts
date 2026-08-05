@@ -43,6 +43,14 @@ export interface TrustedDeviceRegistry {
     at: number;
   }) => Promise<void>;
   /**
+   * Forget a device this registry should never have recorded: a pairing that
+   * was authenticated but did not complete. Distinct from {@link revoke},
+   * which is a device the user is removing — that leaves a record, because a
+   * removed device is a fact about a relationship that existed. This leaves
+   * nothing, because none did.
+   */
+  forget: (deviceId: DeviceId) => Promise<void>;
+  /**
    * Revoke a device: it can open no new session and receives no further key
    * delivery. This cannot recall data or keys already copied to it, and is not
    * cryptographic revocation until the scope keys rotate — say so in the UI.

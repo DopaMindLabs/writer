@@ -2,8 +2,9 @@ import {
   compactableOperationIds,
   releasableTombstones,
   type PeerAcknowledgement,
+  type SyncTombstone,
 } from 'writer-sync/operations';
-import { TrustedDeviceStatus } from 'writer-sync/core';
+import { TrustedDeviceStatus, type OperationId } from 'writer-sync/core';
 import type { LoremDB } from '@/db/LoremDB';
 import { getJournalRetentionDays } from '@/lib/writerSyncIntegration/journalRetentionPreference';
 import { currentPrincipal } from '@/lib/writerSyncIntegration/writerEntityMetadata';
@@ -43,6 +44,29 @@ export interface JournalCompaction {
   tombstones: number;
 }
 
+/** Drop the deletions that are finished with, and the frames they named. */
+const releasePairs = async (options: {
+  db: LoremDB;
+  releasable: readonly SyncTombstone[];
+  compactable: readonly OperationId[];
+}): Promise<void> => {
+  const { db, releasable, compactable } = options;
+  if (releasable.length === 0 && compactable.length === 0) return;
+  await db.transaction('rw', [db.syncOperations, db.syncTombstones], async () => {
+    if (releasable.length > 0) {
+      await db.syncTombstones.bulkDelete(
+        releasable.map((tombstone) => [tombstone.entityTable, tombstone.entityId]),
+      );
+      await db.syncOperations.bulkDelete(
+        releasable.map((tombstone) => String(tombstone.operationId)),
+      );
+    }
+    if (compactable.length > 0) {
+      await db.syncOperations.bulkDelete(compactable.map((id) => String(id)));
+    }
+  });
+};
+
 export const compactJournal = async (
   db: LoremDB,
   now: () => number = () => Date.now(),
@@ -51,19 +75,25 @@ export const compactJournal = async (
   const peers = await activePeers(db);
   const retention = { retentionDays, now: now() };
 
-  const frames = await db.syncOperations.toArray();
-  const compactable = compactableOperationIds(frames, { retention, peers });
-  if (compactable.length > 0) {
-    await db.syncOperations.bulkDelete(compactable.map((id) => String(id)));
-  }
-
+  // Tombstones go first, and what survives them decides what the journal may
+  // drop: a delete frame is released by its tombstone, never by the window.
   const tombstones = await db.syncTombstones.toArray();
   const releasable = releasableTombstones(tombstones, peers);
-  if (releasable.length > 0) {
-    await db.syncTombstones.bulkDelete(
-      releasable.map((tombstone) => [tombstone.entityTable, tombstone.entityId]),
-    );
-  }
+  const released = new Set(releasable.map((tombstone) => String(tombstone.operationId)));
+
+  const frames = await db.syncOperations.toArray();
+  const compactable = compactableOperationIds(frames, {
+    retention,
+    peers,
+    tombstones: tombstones.filter(
+      (tombstone) => !released.has(String(tombstone.operationId)),
+    ),
+  });
+
+  // One transaction for both halves: a tombstone released without its frame
+  // leaves a deletion no rebuild can serve, and a frame dropped without its
+  // tombstone leaves one nothing refuses.
+  await releasePairs({ db, releasable, compactable });
 
   return { operations: compactable.length, tombstones: releasable.length };
 };

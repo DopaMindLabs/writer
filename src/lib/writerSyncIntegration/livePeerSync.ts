@@ -126,7 +126,16 @@ const openLiveLink = async (options: {
   const send = (message: CatchUpMessage): void => {
     transport.send(encodeCatchUpMessage(message));
   };
-  const attachments = store.create(send);
+  const sendWhenReady = transport.sendWhenReady?.bind(transport);
+  const attachments = store.create({
+    send,
+    // The live link writes one frame at a time as rows are journalled; serving
+    // a page of chunks over it still waits on the bearer.
+    sendWhenReady:
+      sendWhenReady === undefined
+        ? undefined
+        : (message) => sendWhenReady(encodeCatchUpMessage(message)),
+  });
   const off = transport.onMessage((bytes) => {
     void attachments
       .receive(decodeCatchUpMessage(bytes))

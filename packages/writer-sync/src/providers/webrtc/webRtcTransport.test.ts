@@ -3,6 +3,14 @@ import {
   BUFFER_HIGH_WATER_BYTES,
   FrameTooLargeError,
   MAX_FRAME_BYTES,
+  INBOUND_WINDOW_MILLIS,
+  InboundRateLimitError,
+  MAX_INBOUND_BYTES,
+  MAX_INBOUND_MESSAGES,
+  MAX_OUTBOX_BYTES,
+  MAX_OUTBOX_MESSAGES,
+  NonBinaryMessageError,
+  TransportBackpressureError,
   createWebRtcTransport,
   type DataChannelLike,
 } from './webRtcTransport';
@@ -118,13 +126,21 @@ describe('inbound', () => {
     expect(seen[0]).toEqual(new Uint8Array([5]));
   });
 
-  it('drops a non-binary message rather than guessing an encoding', () => {
+  it('fails the session on a message that is not binary', () => {
     const channel = fakeChannel();
     const transport = createWebRtcTransport(channel);
     const seen: Uint8Array[] = [];
+    const onClosed = vi.fn();
     transport.onMessage((bytes) => seen.push(bytes));
+    transport.onClosed?.(onClosed);
+
     channel.emit('message', 'a string from a peer that is not speaking this protocol');
+
+    // Nothing here guesses at an encoding, and a peer that is not speaking this
+    // protocol is not one to keep a session open for.
     expect(seen).toHaveLength(0);
+    expect(channel.closed).toBe(true);
+    expect(onClosed).toHaveBeenCalledWith(expect.any(NonBinaryMessageError));
   });
 
   it('stops delivering once unsubscribed', () => {
@@ -164,6 +180,228 @@ describe('backpressure', () => {
     createWebRtcTransport(channel);
     expect(channel.bufferedAmountLowThreshold).toBeGreaterThan(0);
     expect(channel.bufferedAmountLowThreshold).toBeLessThan(BUFFER_HIGH_WATER_BYTES);
+  });
+});
+
+describe('outbox bounds', () => {
+  /** A message at the frame ceiling: the largest one legally queued. */
+  const full = (): Uint8Array => new Uint8Array(MAX_FRAME_BYTES);
+  /** How many of those the byte bound holds. */
+  const capacity = MAX_OUTBOX_BYTES / MAX_FRAME_BYTES;
+
+  /** Stall the channel so everything written to it queues. */
+  const stalled = () => {
+    const channel = fakeChannel();
+    const transport = createWebRtcTransport(channel);
+    channel.bufferedAmount = BUFFER_HIGH_WATER_BYTES;
+    return { channel, transport };
+  };
+
+  it('holds the byte bound in full messages, and refuses one byte past it', () => {
+    const { transport } = stalled();
+
+    for (let i = 0; i < capacity; i += 1) transport.send(full());
+
+    // The boundary itself fits; the next byte is what the session fails on.
+    expect(() => transport.send(new Uint8Array([1]))).toThrow(TransportBackpressureError);
+  });
+
+  it('refuses past the message bound even when the bytes would fit', () => {
+    const { transport } = stalled();
+
+    for (let i = 0; i < MAX_OUTBOX_MESSAGES; i += 1) transport.send(new Uint8Array([1]));
+
+    expect(() => transport.send(new Uint8Array([1]))).toThrow(TransportBackpressureError);
+  });
+
+  it('reports what was queued and what would not fit', () => {
+    const { transport } = stalled();
+    for (let i = 0; i < capacity; i += 1) transport.send(full());
+
+    try {
+      transport.send(new Uint8Array(8));
+      expect.unreachable('the outbox accepted a message beyond its bound');
+    } catch (error) {
+      expect(error).toBeInstanceOf(TransportBackpressureError);
+      expect(error).toMatchObject({
+        pendingBytes: MAX_OUTBOX_BYTES,
+        attemptedBytes: 8,
+      });
+    }
+  });
+
+  it('fails the session visibly rather than dropping a frame', () => {
+    const { channel, transport } = stalled();
+    const onClosed = vi.fn();
+    transport.onClosed?.(onClosed);
+    for (let i = 0; i < capacity; i += 1) transport.send(full());
+
+    expect(() => transport.send(new Uint8Array([1]))).toThrow(TransportBackpressureError);
+
+    // Operations stay in the journal, so a failed session reconnects and catches
+    // up; a silent drop would be indistinguishable from success.
+    expect(channel.closed).toBe(true);
+    expect(onClosed).toHaveBeenCalledTimes(1);
+  });
+
+  it('counts down as the queue drains, so room comes back', () => {
+    const { channel, transport } = stalled();
+    for (let i = 0; i < capacity; i += 1) transport.send(full());
+
+    // Draining stops at the channel's own high-water mark, so only part of the
+    // queue leaves — and only that part's room comes back.
+    channel.bufferedAmount = 0;
+    channel.emit('bufferedamountlow');
+    const drained = BUFFER_HIGH_WATER_BYTES / MAX_FRAME_BYTES;
+    expect(channel.sent).toHaveLength(drained);
+
+    for (let i = 0; i < drained; i += 1) {
+      expect(() => transport.send(full())).not.toThrow();
+    }
+    expect(() => transport.send(new Uint8Array([1]))).toThrow(TransportBackpressureError);
+  });
+
+  it('accounts for a partial flush, not just a complete one', () => {
+    const { channel, transport } = stalled();
+    for (let i = 0; i < capacity; i += 1) transport.send(full());
+
+    // The channel takes one message and fills up again.
+    channel.bufferedAmount = 0;
+    channel.send = ((data: ArrayBuffer) => {
+      channel.sent.push(data);
+      channel.bufferedAmount = BUFFER_HIGH_WATER_BYTES;
+    }) as DataChannelLike['send'];
+    channel.emit('bufferedamountlow');
+    expect(channel.sent).toHaveLength(1);
+
+    // One message left the queue, so room for exactly one came back.
+    expect(() => transport.send(full())).not.toThrow();
+    expect(() => transport.send(new Uint8Array([1]))).toThrow(TransportBackpressureError);
+  });
+
+  it('starts a replacement session with an empty outbox', () => {
+    const { channel, transport } = stalled();
+    for (let i = 0; i < capacity; i += 1) transport.send(full());
+    transport.close();
+
+    // The same channel, taken up again: what the failed session queued is gone,
+    // and the catch-up that follows is not refused on its first frame.
+    const replacement = createWebRtcTransport(channel);
+    channel.bufferedAmount = BUFFER_HIGH_WATER_BYTES;
+    for (let i = 0; i < capacity; i += 1) {
+      expect(() => replacement.send(full())).not.toThrow();
+    }
+  });
+});
+
+describe('inbound rate limit', () => {
+  const limited = (now: () => number) => {
+    const channel = fakeChannel();
+    const transport = createWebRtcTransport(channel, { now });
+    const seen: Uint8Array[] = [];
+    const onClosed = vi.fn();
+    transport.onMessage((bytes) => seen.push(bytes));
+    transport.onClosed?.(onClosed);
+    return { channel, transport, seen, onClosed };
+  };
+
+  /** One message of `bytes`, as the channel delivers it. */
+  const deliver = (channel: ReturnType<typeof fakeChannel>, bytes: number): void => {
+    channel.emit('message', new Uint8Array(bytes).buffer);
+  };
+
+  it('refuses a message past the frame ceiling before decoding it', () => {
+    const { channel, seen, onClosed } = limited(() => 0);
+
+    deliver(channel, MAX_FRAME_BYTES + 1);
+
+    // The ceiling bounds what this transport will carry in either direction:
+    // inbound it is what stops one message becoming one enormous allocation.
+    expect(seen).toHaveLength(0);
+    expect(channel.closed).toBe(true);
+    expect(onClosed).toHaveBeenCalledWith(expect.any(FrameTooLargeError));
+  });
+
+  it('carries a message at the ceiling itself', () => {
+    const { channel, seen } = limited(() => 0);
+
+    deliver(channel, MAX_FRAME_BYTES);
+
+    expect(seen).toHaveLength(1);
+  });
+
+  it('carries a burst that stays inside both bounds', () => {
+    const { channel, seen, onClosed } = limited(() => 0);
+
+    for (let i = 0; i < MAX_INBOUND_MESSAGES; i += 1) deliver(channel, 1);
+
+    expect(seen).toHaveLength(MAX_INBOUND_MESSAGES);
+    expect(onClosed).not.toHaveBeenCalled();
+  });
+
+  it('closes the session on the message past the count bound', () => {
+    const { channel, seen, onClosed } = limited(() => 0);
+    for (let i = 0; i < MAX_INBOUND_MESSAGES; i += 1) deliver(channel, 1);
+
+    deliver(channel, 1);
+
+    // Discarding the excess and staying open would leave an apparently healthy
+    // session that can never complete its catch-up.
+    expect(seen).toHaveLength(MAX_INBOUND_MESSAGES);
+    expect(channel.closed).toBe(true);
+    expect(onClosed).toHaveBeenCalledWith(expect.any(InboundRateLimitError));
+  });
+
+  it('closes the session on the message past the byte bound', () => {
+    const { channel, seen, onClosed } = limited(() => 0);
+    const capacity = MAX_INBOUND_BYTES / MAX_FRAME_BYTES;
+
+    for (let i = 0; i < capacity; i += 1) deliver(channel, MAX_FRAME_BYTES);
+    expect(seen).toHaveLength(capacity);
+    // Well inside the count bound, so this is the byte bound speaking.
+    expect(capacity).toBeLessThan(MAX_INBOUND_MESSAGES);
+
+    deliver(channel, 1);
+
+    expect(seen).toHaveLength(capacity);
+    expect(onClosed).toHaveBeenCalledWith(expect.any(InboundRateLimitError));
+  });
+
+  it('refills as the window passes', () => {
+    let clock = 0;
+    const { channel, seen } = limited(() => clock);
+    for (let i = 0; i < MAX_INBOUND_MESSAGES; i += 1) deliver(channel, 1);
+
+    clock += INBOUND_WINDOW_MILLIS;
+    for (let i = 0; i < MAX_INBOUND_MESSAGES; i += 1) deliver(channel, 1);
+
+    expect(seen).toHaveLength(2 * MAX_INBOUND_MESSAGES);
+  });
+
+  it('refills in proportion to the time that passed, not all at once', () => {
+    let clock = 0;
+    const { channel, seen, onClosed } = limited(() => clock);
+    for (let i = 0; i < MAX_INBOUND_MESSAGES; i += 1) deliver(channel, 1);
+
+    clock += INBOUND_WINDOW_MILLIS / 2;
+    for (let i = 0; i < MAX_INBOUND_MESSAGES / 2; i += 1) deliver(channel, 1);
+    expect(onClosed).not.toHaveBeenCalled();
+
+    deliver(channel, 1);
+
+    expect(seen).toHaveLength(MAX_INBOUND_MESSAGES * 1.5);
+    expect(onClosed).toHaveBeenCalledWith(expect.any(InboundRateLimitError));
+  });
+
+  it('says nothing to a listener once the session has failed', () => {
+    const { channel, seen } = limited(() => 0);
+    for (let i = 0; i <= MAX_INBOUND_MESSAGES; i += 1) deliver(channel, 1);
+    const delivered = seen.length;
+
+    deliver(channel, 1);
+    deliver(channel, 1);
+
+    expect(seen).toHaveLength(delivered);
   });
 });
 

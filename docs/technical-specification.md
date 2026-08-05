@@ -597,6 +597,21 @@ wired into the app.
 - **Verification gate.** Both devices hold at the same gate and complete only on
   an explicit human confirmation that the six digits match. Nothing is
   transferred on authentication alone.
+- **Trust is committed in two phases.** Confirming the digits authenticates the
+  peer in memory only. Nothing is written to `trustedDevices`, the session is not
+  published to the P2P provider, no scope channel is taken up and catch-up does
+  not start until the root secret has crossed; the device is recorded at that
+  point and gains sync authority only then. An incomplete pairing therefore
+  leaves nothing behind, whether it expired, failed or was cut short by the tab
+  closing — there is no cleanup step for a crash to skip. A known device id
+  presenting a different identity key is refused before any key material moves,
+  not after.
+- **Confirming too late.** The session deadline is the earlier of the two signed
+  ones, and is checked again when the account key is sealed — the step the human
+  confirmation gates. Past it the pairing ends instead of completing: no key is
+  sealed, the ephemeral key is discarded, the channel closes, and the dialog
+  reads *expired*. Nothing was recorded, so a device the user had removed is
+  still removed and one that was already trusted is untouched.
 - **Reading a code.** Three paths, offered together: the **live camera**, an
   **uploaded photograph**, or **pasted text**. The camera is offered first
   because it is the only one that works between a desktop and a phone unaided,
@@ -644,11 +659,20 @@ wired into the app.
   are tracked per originating device within a scope, never as one mark per scope:
   an operation from one device that is logically older than an acknowledged
   operation from another has not thereby been seen. Inbox rows are **never**
-  pruned — the inbox is the replay guard — and deletion tombstones are exempt from
-  the window, retiring only once every still-trusted device has acknowledged them,
-  so a long-absent device cannot resurrect a deleted entity. A peer last seen
-  beyond the window resynchronises by full state exchange, not journal replay:
-  it is sent freshly minted `put` frames for current state, which merge by the
+  pruned — the inbox is the replay guard — and a deletion is exempt from the
+  window entirely: a tombstone and the signed delete frame it names are one
+  retention unit, dropped together in one transaction. A peer's acknowledgement
+  marks every deletion from that origin it has read past, recorded with the
+  watermark it arrived with, so the evidence outlives the frames the comparison
+  was made against. Release needs every still-trusted device to have marked it;
+  age alone can take neither half, so a long-absent device can neither resurrect
+  a deleted entity nor be left holding it. Removing a device is the other
+  release: it is what lets go of what was only being kept for that device, and
+  what releases everything when the last device goes — a routine pass with no
+  devices paired deliberately holds, because a peer paired tomorrow could still
+  be holding what was deleted today. A peer last seen beyond the window resynchronises by full
+  state exchange, not journal replay: it is sent freshly minted `put` frames for
+  current state alongside the scope's retained deletions, which merge by the
   normal convergence rules rather than overwriting what it changed while away.
 - **Frames are device-signed.** Every journalled frame carries an ECDSA P-256
   signature made with this device's identity key, computed over the whole frame
@@ -678,9 +702,18 @@ wired into the app.
   conversation, but never as an oversized frame: the raw `noteAttachments.blob`
   is AES-GCM-sealed once, split into 128 KiB ciphertext chunks, and replaced in
   the row payload by its authenticated manifest. The holder offers manifests
-  after the final catch-up frame batch, the peer asks only for the chunks it
-  lacks, each chunk is verified before it is stored, and an interrupted transfer
-  resumes from the persisted gap rather than restarting. The receiver keeps the
+  after the final catch-up frame batch, one page at a time and only as many as
+  the peer will take at once; the peer asks for the page after the one it has
+  finished with, so a space with hundreds of images is walked rather than
+  offered once and refused. The peer asks only for the chunks it lacks, a page
+  at a time, and asks for the next page only once the one in flight has been
+  answered. Chunks are served at the connection's pace rather than written as
+  fast as they are read, so a large attachment cannot outrun the link and end
+  its own session. A holder that cannot supply a chunk it was asked for says so rather
+  than falling silent, and the receiver drops that transfer instead of waiting
+  on it for the life of the session. Each chunk is verified before it is stored,
+  and an interrupted transfer resumes from the persisted gap rather than
+  restarting. The receiver keeps the
   thin frame journalled but unstamped in the inbox until the complete ciphertext
   verifies and opens into the domain `Blob`. Dexie Cloud replicates the same
   bounded ciphertext as `syncAttachmentChunks` rows, so cloud and WebRTC carry
@@ -689,9 +722,12 @@ wired into the app.
   behind this device's compaction cutoff, cannot be answered from history — the
   frames are gone — so the scope is described as it stands now: one freshly
   signed `put` frame per journalled row, indistinguishable from a journalled
-  frame, so the receiver needs no second way to apply it. This is not the backup
-  path, which exports a snapshot for a human. A scope this device holds no key
-  for is not rebuilt: one it cannot seal for is one it cannot serve.
+  frame, so the receiver needs no second way to apply it, plus the scope's
+  retained deletions as the frames their authors signed rather than replacements
+  minted here. Absence describes nothing, so a scope whose every row was deleted
+  answers with deletions rather than with silence. This is not the backup path,
+  which exports a snapshot for a human. A scope this device holds no key for is
+  not rebuilt: one it cannot seal for is one it cannot serve.
 - **Root-secret handover.** A device paired for the first time holds no key
   material, so it could decrypt nothing it was sent. After confirmation — never
   on connectivity alone — each device announces whether it holds a root, and the

@@ -13,6 +13,7 @@ export const fixturePeer = (): AuthenticatedPeerParameters => ({
   peerEphemeralPublicJwk: { kty: 'EC', crv: 'P-256', x: 'e', y: 'f' },
   transcript: new Uint8Array([1, 2, 3]),
   verificationCode: '048213',
+  expiresAt: Date.now() + 300_000,
 });
 
 export const fixtureExchange = (

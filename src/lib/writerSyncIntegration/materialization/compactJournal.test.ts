@@ -167,6 +167,43 @@ describe('compactJournal', () => {
     await expect(db.syncInbox.count()).resolves.toBe(1);
   });
 
+  it('keeps a delete frame the window would otherwise have taken', async () => {
+    // Time alone must not release a deletion: the frame is the only signed
+    // evidence of it, and a peer returning after the window is served from it.
+    await db.syncOperations.put({
+      ...frameAt('op-delete', NOW - 400 * MILLIS_PER_DAY),
+      kind: 'delete',
+      entityId: 'entity-gone',
+      payload: '',
+    });
+    await db.syncTombstones.put(tombstone([]));
+    await db.trustedDevices.put(peerRecord({ deviceId: 'peer-1' }));
+
+    const compacted = await compactJournal(db, () => NOW);
+
+    expect(compacted.operations).toBe(0);
+    await expect(db.syncOperations.count()).resolves.toBe(1);
+  });
+
+  it('drops a delete frame in the same pass that releases its tombstone', async () => {
+    await db.syncOperations.put({
+      ...frameAt('op-delete', NOW - 400 * MILLIS_PER_DAY),
+      kind: 'delete',
+      entityId: 'entity-gone',
+      payload: '',
+    });
+    await db.syncTombstones.put(tombstone(['peer-1']));
+    await db.trustedDevices.put(peerRecord({ deviceId: 'peer-1' }));
+
+    // Unanimous acknowledgement is what releases the pair, and it releases both
+    // halves together — the frame is not left behind for the next pass.
+    const compacted = await compactJournal(db, () => NOW);
+
+    expect(compacted).toEqual({ operations: 1, tombstones: 1 });
+    await expect(db.syncOperations.count()).resolves.toBe(0);
+    await expect(db.syncTombstones.count()).resolves.toBe(0);
+  });
+
   it('keeps a tombstone however old while a trusted peer has not acknowledged it', async () => {
     await db.syncTombstones.put(tombstone([]));
     await db.trustedDevices.put(peerRecord({ deviceId: 'peer-1' }));

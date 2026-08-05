@@ -65,7 +65,7 @@ describe('compactableOperationIds', () => {
     const frames = [frameOf({ id: 'op-1', millis: NOW - MILLIS_PER_DAY })];
     const peers = [peer({ id: 'device-b', acknowledged: { 'device-a': 'op-1' } })];
 
-    const compactable = compactableOperationIds(frames, { retention: RETENTION, peers });
+    const compactable = compactableOperationIds(frames, { retention: RETENTION, peers, tombstones: [] });
 
     expect(compactable.map(String)).toEqual(['op-1']);
   });
@@ -78,7 +78,7 @@ describe('compactableOperationIds', () => {
     ];
 
     expect(
-      compactableOperationIds(frames, { retention: RETENTION, peers }),
+      compactableOperationIds(frames, { retention: RETENTION, peers, tombstones: [] }),
     ).toEqual([]);
   });
 
@@ -86,7 +86,7 @@ describe('compactableOperationIds', () => {
     const frames = [frameOf({ id: 'op-old', millis: NOW - 31 * MILLIS_PER_DAY })];
     const peers = [peer({ id: 'device-b' })];
 
-    const compactable = compactableOperationIds(frames, { retention: RETENTION, peers });
+    const compactable = compactableOperationIds(frames, { retention: RETENTION, peers, tombstones: [] });
 
     expect(compactable.map(String)).toEqual(['op-old']);
   });
@@ -100,6 +100,7 @@ describe('compactableOperationIds', () => {
     const compactable = compactableOperationIds(frames, {
       retention: RETENTION,
       peers: [],
+      tombstones: [],
     });
 
     expect(compactable.map(String)).toEqual(['op-old']);
@@ -113,7 +114,7 @@ describe('compactableOperationIds', () => {
     ];
     const peers = [peer({ id: 'device-b', acknowledged: { 'device-a': 'op-2' } })];
 
-    const compactable = compactableOperationIds(frames, { retention: RETENTION, peers });
+    const compactable = compactableOperationIds(frames, { retention: RETENTION, peers, tombstones: [] });
 
     expect(compactable.map(String)).toEqual(['op-1', 'op-2']);
   });
@@ -125,7 +126,7 @@ describe('compactableOperationIds', () => {
     ];
     const peers = [peer({ id: 'device-b', acknowledged: { 'device-a': 'op-a2' } })];
 
-    const compactable = compactableOperationIds(frames, { retention: RETENTION, peers });
+    const compactable = compactableOperationIds(frames, { retention: RETENTION, peers, tombstones: [] });
 
     expect(compactable.map(String)).toEqual(['op-a2']);
   });
@@ -139,7 +140,7 @@ describe('compactableOperationIds', () => {
     ];
 
     expect(
-      compactableOperationIds(frames, { retention: RETENTION, peers }),
+      compactableOperationIds(frames, { retention: RETENTION, peers, tombstones: [] }),
     ).toEqual([]);
   });
 
@@ -148,14 +149,83 @@ describe('compactableOperationIds', () => {
     const peers = [peer({ id: 'device-b', acknowledged: { 'device-a': 'op-gone' } })];
 
     expect(
-      compactableOperationIds(frames, { retention: RETENTION, peers }),
+      compactableOperationIds(frames, { retention: RETENTION, peers, tombstones: [] }),
     ).toEqual([]);
   });
 
   it('rejects a window of zero or less', () => {
     expect(() =>
-      compactableOperationIds([], { retention: { retentionDays: 0, now: NOW }, peers: [] }),
+      compactableOperationIds([], {
+        retention: { retentionDays: 0, now: NOW },
+        peers: [],
+        tombstones: [],
+      }),
     ).toThrow(RangeError);
+  });
+});
+
+describe('compactableOperationIds and retained deletions', () => {
+  const deleteFrame = (millis: number): EncryptedSyncFrame => ({
+    ...frameOf({ id: 'op-delete', millis }),
+    kind: 'delete',
+    entityId: 'entity-1',
+    payload: '',
+  });
+
+  it('keeps a delete frame its tombstone still needs, however old', () => {
+    // The window cannot release this: the tombstone is what a returning device
+    // is served the deletion from, and the frame is the only signed evidence of
+    // it. Age alone would drop the frame and leave the tombstone unserveable.
+    const frames = [deleteFrame(NOW - 400 * MILLIS_PER_DAY)];
+
+    const compactable = compactableOperationIds(frames, {
+      retention: RETENTION,
+      peers: [peer({ id: 'device-b' })],
+      tombstones: [tombstoneOf([])],
+    });
+
+    expect(compactable).toEqual([]);
+  });
+
+  it('keeps it even when no peer is trusted at all', () => {
+    const frames = [deleteFrame(NOW - 400 * MILLIS_PER_DAY)];
+
+    expect(
+      compactableOperationIds(frames, {
+        retention: RETENTION,
+        peers: [],
+        tombstones: [tombstoneOf([])],
+      }),
+    ).toEqual([]);
+  });
+
+  it('drops it once its tombstone has been released', () => {
+    // `releasableTombstones` decides that, on unanimous acknowledgement; by the
+    // time the tombstone is gone the frame is ordinary aged history.
+    const frames = [deleteFrame(NOW - 400 * MILLIS_PER_DAY)];
+
+    const compactable = compactableOperationIds(frames, {
+      retention: RETENTION,
+      peers: [peer({ id: 'device-b' })],
+      tombstones: [],
+    });
+
+    expect(compactable.map(String)).toEqual(['op-delete']);
+  });
+
+  it('leaves other frames of the same entity to the ordinary rules', () => {
+    const frames = [
+      deleteFrame(NOW - 400 * MILLIS_PER_DAY),
+      frameOf({ id: 'op-1', millis: NOW - 400 * MILLIS_PER_DAY }),
+    ];
+
+    const compactable = compactableOperationIds(frames, {
+      retention: RETENTION,
+      peers: [peer({ id: 'device-b' })],
+      tombstones: [tombstoneOf([])],
+    });
+
+    expect(compactable.map(String)).toEqual(['op-1']);
   });
 });
 

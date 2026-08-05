@@ -33,6 +33,7 @@ const registryOf = (record: TrustedDeviceRecord | null): TrustedDeviceRegistry =
   list: async () => (record ? [record] : []),
   find: async () => record,
   trust: async () => undefined,
+  forget: async () => undefined,
   recordSession: async () => undefined,
   refreshTrust: async () => undefined,
   revoke: async () => undefined,
