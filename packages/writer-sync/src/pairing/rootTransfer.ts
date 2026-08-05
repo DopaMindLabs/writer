@@ -2,30 +2,9 @@ import type { PairingRootWrapper } from '../crypto/keyVault.types';
 import { ROOT_TRANSFER_VERSION, type RootTransferMessage } from './rootTransferMessage';
 
 /**
- * Handing an root secret to a device that has just been paired.
- *
- * A device paired for the first time holds no key material, so it can decrypt
- * nothing it is sent and would sit connected and empty. This is the step that
- * fixes that, and it runs only after a human has confirmed the codes — key
- * transfer belongs to the state *after* `awaiting-confirmation`, never to
- * connectivity alone (`docs/pairing-protocol.md` §§11–12).
- *
- * **Neither device is told which part to play.** The pairing roles say nothing
- * about which device has been used before — the one that scanned may equally be
- * the one that holds everything — so each announces what it has and the holder
- * seals the root for the one that lacks it.
- *
- * **Announcements repeat until the peer is heard.** A data channel drops what
- * arrives before anything is listening, and two people do not press "the codes
- * match" at the same instant, so a single announcement would be lost whenever
- * one device confirmed first. Repeating costs one small message; the alternative
- * is a pairing that completes and silently transfers nothing.
- *
- * **Both devices leave together.** Sync follows on the same channel with a
- * decoder of its own, so a device that returned to sync while its peer was still
- * reading for keys would have its first message swallowed and never repeated.
- * Each side therefore says `ready` once it has settled and waits to hear the
- * same before handing the channel on.
+ * Transfers the root secret after both devices confirm the verification code.
+ * Peers advertise their key state, repeat announcements across uneven user
+ * timing, and enter sync only after both sides report readiness.
  */
 
 export type RootTransferOutcome =

@@ -1,15 +1,13 @@
 # Getting started
 
-A local-first place to write. Your work lives in **spaces** and saves to your
-browser automatically. No sign-up, no cloud, no save button.
+A local-first place to write. Your work lives in **spaces**, and every change
+saves automatically in your browser. Sync is available when you want it.
 
 ## At a glance
 
 1. From **Home**, open or create a space.
 2. Add a document from the **sidebar**.
 3. Start typing — every keystroke is saved.
-
-That's the whole loop. Everything below is detail you can come back to.
 
 ## Your first document
 

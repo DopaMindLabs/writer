@@ -3,15 +3,9 @@ import { toPeerLinkState, type PeerLinkState } from './peerLinkState';
 import type { DataChannelLike } from './webRtcTransport';
 
 /**
- * The WebRTC peer session, per runbook §22.
- *
- * Everything the browser provides sits behind {@link PeerConnectionLike} and a
- * factory, so this module is testable without WebRTC and a native host can
- * substitute its own implementation. That is also the honest limitation: mocked
- * tests prove the *orchestration* — gathering completes before the description
- * is handed out, timeouts are typed, teardown is explicit — and prove nothing
- * about real ICE. Real-device verification is slice 2A.9 and is not discharged
- * here.
+ * WebRTC session orchestration behind the host-neutral
+ * {@link PeerConnectionLike} contract. It gathers local candidates, exchanges
+ * descriptions, manages labelled channels and reports link state.
  */
 
 /** Stage 2A is local-only: no STUN, no TURN, no silent fallback to a public server. */
@@ -38,12 +32,7 @@ export interface PeerConnectionLike {
   setLocalDescription: (description: SessionDescriptionLike) => Promise<void>;
   setRemoteDescription: (description: SessionDescriptionLike) => Promise<void>;
   close: () => void;
-  /**
-   * Observe the channel the *remote* peer opened. The answering side never calls
-   * `createDataChannel`, so this is its only way to obtain one; without it a
-   * paired device could complete the exchange and still have nothing to sync
-   * over. Returns its own unsubscribe.
-   */
+  /** Observes channels opened by the remote peer and returns an unsubscribe. */
   onDataChannel: (listener: (channel: DataChannelLike) => void) => () => void;
   addEventListener: (type: string, listener: () => void) => void;
   removeEventListener: (type: string, listener: () => void) => void;
@@ -67,24 +56,9 @@ export interface PeerSession {
    * unsubscribe.
    */
   onChannel: (listener: (channel: DataChannelLike) => void) => () => void;
-  /**
-   * A channel for one logical purpose, created here or awaited from the peer.
-   *
-   * The device that made the offer creates; the other waits. Both creating one
-   * for the same purpose would leave each holding a channel the other never
-   * reads, so the side that opens is decided by the exchange rather than by
-   * whoever asks first.
-   */
+  /** Creates or awaits the channel for one logical purpose. */
   openChannel: (label: string) => Promise<DataChannelLike>;
-  /**
-   * Observe every channel the *peer* opens, whatever it is for.
-   *
-   * A device only asks for the channels it needs itself. Its peer may open one
-   * for a scope this device is not writing to — which is the ordinary case for
-   * receiving someone else's work — and without this that channel would sit
-   * unread. Fires for channels already adopted, so a late subscriber misses
-   * none.
-   */
+  /** Observes every peer-opened channel, including channels already adopted. */
   onAnyChannel: (listener: (channel: DataChannelLike) => void) => () => void;
   /** Gather locally, then resolve the complete offer SDP. */
   createOffer: () => Promise<string>;
@@ -107,17 +81,8 @@ export interface PeerSession {
 export const CONTROL_CHANNEL = 'writer-sync-control';
 
 /**
- * Wait for candidate gathering to finish, or for the deadline to pass.
- *
- * Waiting for *complete* gathering is what lets the whole description travel in
- * one QR payload: trickling candidates would mean repeated symbols, and every
- * extra scan is another chance for a user to accept a substituted payload.
- *
- * The deadline is not a failure on its own. Gathering stalls on hosts where
- * Chromium's mDNS responder cannot bind, long after the host candidates a LAN
- * pair actually needs are already in the description — so the deadline releases
- * what has been gathered and leaves it to the caller to judge whether that is
- * enough. It resolves `false` to say so.
+ * Waits for complete candidate gathering until the deadline. On timeout it
+ * releases the candidates gathered so far and resolves `false`.
  */
 const awaitGathering = (
   connection: PeerConnectionLike,
@@ -147,21 +112,7 @@ const awaitGathering = (
 /** An SDP with no candidate of its own can never connect, however it was produced. */
 const hasCandidate = (sdp: string): boolean => sdp.includes('a=candidate');
 
-/**
- * Holds the channels a session carries, by what each is for, and who is watching
- * for them.
- *
- * Separate from the session because a channel arrives by two different routes —
- * created here as the initiator, handed over by the peer as the answerer — and
- * both must land in the same place for `channel()` to mean the same thing on
- * either side.
- *
- * Keyed by label because one connection carries more than the control channel:
- * a live transport is made per scope and logical channel, and a registry that
- * kept only the first would drop every one of them. Within a label the first
- * still wins — a second channel for the same purpose must not displace one
- * already in use.
- */
+/** Stores locally and remotely opened channels by logical label. */
 const createChannelRegistry = () => {
   const listeners = new Map<string, Set<(channel: DataChannelLike) => void>>();
   const channels = new Map<string, DataChannelLike[]>();

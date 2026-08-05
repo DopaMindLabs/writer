@@ -40,40 +40,17 @@ export interface CatchUpAttachments {
 }
 
 /**
- * The initial-transfer and incremental catch-up exchange, per runbook §24.
- *
- * Both peers run the same object: each opens with a manifest, each asks for what
- * it is missing, each answers what it is asked for, and each acknowledges what it
- * has taken. Symmetry is what makes reconnection the same code path as first
- * pairing — a returning device asks for a short tail rather than everything.
- *
- * **Journalling, not materialising.** A verified frame is appended to the
- * journal and nothing more. Materialisation stays with the host's existing
- * inbox-guarded path, which is what makes the same operation arriving by two
- * providers apply exactly once; duplicating that decision here would give the
- * same frame two ways to be applied. `onFramesJournalled` is the host's cue that
- * there is new work for it.
- *
- * **An authenticated peer is still untrusted.** Pairing proves which device is
- * speaking, not that it is honest or uncompromised, so every inbound frame is
- * re-verified — hash, scope, signature — and a frame naming a scope this device
- * has no key for is refused rather than journalled as ballast.
+ * Runs initial and incremental catch-up symmetrically on both peers. Each peer
+ * advertises a manifest, requests gaps, verifies inbound frames, journals them
+ * and acknowledges progress. The host materialises accepted frames through its
+ * shared inbox-guarded path.
  */
 
 export interface CatchUpPorts {
   journal: OperationStore;
   /** The scopes this device holds frames for, and so can advertise. */
   accessibleScopeIds: () => Promise<AccessScopeId[]>;
-  /**
-   * Whether this device could decrypt a scope it is being offered.
-   *
-   * Distinct from {@link accessibleScopeIds}, which answers what this device
-   * *holds*. A device that has just been paired holds nothing at all, and if
-   * "can I read this?" were answered from what it already has, it would ask for
-   * nothing and so never receive the first scope — the state that would have let
-   * it ask. Defaults to membership of the advertised list for a host whose key
-   * material really is per scope.
-   */
+  /** Whether this device has key authority for an offered scope. */
   canAccessScope?: (accessScopeId: AccessScopeId) => boolean;
   send: (message: CatchUpMessage) => void;
   /**
@@ -132,14 +109,7 @@ export interface CatchUpExchange {
 const originKey = (frame: EncryptedSyncFrame): string =>
   `${frame.accessScopeId} ${String(frame.deviceId)}`;
 
-/**
- * Remember a frame only if it is the newest yet taken from its scope and origin.
- *
- * Keeping the running maximum rather than every frame is what bounds this: an
- * acknowledgement names one operation per scope and origin, so the rest are never
- * needed — and a peer that streams batches without ever marking one final would
- * otherwise grow an unbounded list on this device.
- */
+/** Keeps the newest frame per scope and origin for a bounded acknowledgement. */
 const rememberNewest = (
   newest: Map<string, EncryptedSyncFrame>,
   frame: EncryptedSyncFrame,
@@ -191,15 +161,7 @@ const heldFrames = async (ports: CatchUpPorts): Promise<EncryptedSyncFrame[]> =>
 const localManifests = async (ports: CatchUpPorts): Promise<ScopeManifest[]> =>
   buildScopeManifests(await heldFrames(ports));
 
-/**
- * The scopes this device must rebuild rather than replay.
- *
- * A request with no starting point is a peer that has never synchronised, and
- * one reaching behind the compaction cutoff is a peer that has been away too
- * long. Neither can be answered from history — the frames are simply gone — so
- * serving the journal's surviving tail would silently hand over a partial
- * account of the scope and call it caught up.
- */
+/** Selects scopes that require current full state because retained history is incomplete. */
 const scopesNeedingFullState = (
   ports: CatchUpPorts,
   requests: readonly CatchUpRequest[],
@@ -263,12 +225,7 @@ export class UndeliverableFrameError extends Error {
   }
 }
 
-/**
- * Send every batch, containing per-batch failures so the final marker still
- * goes out: a reply that dies mid-way leaves the peer holding frames it will
- * never acknowledge, and the same catch-up then re-runs on every connection.
- * The first failure is rethrown after the loop so the session still reports.
- */
+/** Sends every batch, then rethrows the first failure after the final marker. */
 const sendReplies = (
   ports: CatchUpPorts,
   batches: readonly EncryptedSyncFrame[][],

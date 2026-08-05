@@ -1,11 +1,14 @@
 # Cloud sync
 
 Cloud sync keeps one account's writing in step across your devices, **end-to-end
-encrypted**. Your passphrase never leaves your device, and the server only ever
-holds scrambled data.
+encrypted**. Your passphrase stays on your device, and the server stores only
+ciphertext.
 
-Sync is not instant. On a healthy network an idle device usually catches up in
-about **1–2 seconds**. This is not live, cursor-by-cursor collaboration.
+On a healthy network, an idle device usually catches up in about **1–2
+seconds**. For live editing within one browser, use multiple tabs.
+
+For direct sync on the same local network with no account and no server, see
+[Pairing two devices](pairing-devices).
 
 ## At a glance
 
@@ -139,6 +142,7 @@ Your synced data and your other devices are unaffected.
 
 ## Related
 
+- [Pairing two devices](pairing-devices) — direct sync with no account and no server.
 - [Your data](your-data) — local storage, export, import, and backups.
 - [Your profile](your-profile) — display name and presence for collaboration.
 - [Working in multiple tabs](working-in-multiple-tabs) — live editing across tabs on one device.

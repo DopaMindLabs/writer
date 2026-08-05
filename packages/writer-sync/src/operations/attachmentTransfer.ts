@@ -13,43 +13,18 @@ import {
 } from './catchUpMessage';
 
 /**
- * Attachment chunk exchange over a peer session — step 7 of the catch-up
- * sequence in runbook §24, and the transfer half of `attachmentChunking.ts`,
- * which owns the integrity rules this module obeys.
- *
- * A device offers the manifests it can serve; the peer asks only for the chunks
- * it is missing and verifies each on arrival, so a transfer that drops halfway
- * resumes from the gap rather than restarting.
- *
- * **In-flight state is bounded.** A peer can offer more attachments than this
- * device will ever assemble at once; beyond the ceiling, offers are declined
- * rather than queued, because an unbounded map of half-assembled files is a
- * memory exhaustion primitive handed to whoever is on the other end.
+ * Exchanges attachment chunks during catch-up. The receiver requests and
+ * verifies missing chunks, persists partial progress and bounds concurrent
+ * assemblies to protect memory.
  */
 
-/**
- * The chunk size a transfer uses, chosen to fit the channel's frame ceiling.
- *
- * `MAX_CHUNK_BYTES` describes what a manifest may legally declare, not what a
- * data channel can carry: base64url inflates bytes by four thirds, and the frame
- * ceiling in `webRtcTransport.ts` is 256 KiB, so a full 1 MiB chunk would be
- * rejected by the transport before it ever reached a peer. 128 KiB encodes to
- * roughly 171 KiB and leaves room for the JSON envelope.
- */
+/** 128 KiB leaves room for base64url expansion within the 256 KiB frame limit. */
 export const TRANSFER_CHUNK_BYTES = 131_072;
 
 /** How many attachments this device will assemble at once. */
 export const MAX_INFLIGHT_ATTACHMENTS = 8;
 
-/**
- * A peer put the offer catalogue somewhere neither device is reading it.
- *
- * The cursor is protocol state, not a hint. A page replayed, skipped past, or
- * sent while the one before it is still being worked through would overwrite
- * what is outstanding — losing the attachments in it, and leaving both devices
- * acknowledging a place in a catalogue neither is at. There is no recovering a
- * shared position from inside a session that has lost it, so the session ends.
- */
+/** Raised when an offer page breaks the shared catalogue cursor. */
 export class AttachmentCursorError extends Error {
   readonly expected: number | null;
   readonly received: number;
@@ -115,15 +90,7 @@ export interface AttachmentTransfer {
   receive: (message: CatchUpMessage) => Promise<void>;
 }
 
-/**
- * A page of offers is at most what the receiver can take at once.
- *
- * Sending the catalogue in decoder-sized pages was still wrong in the way that
- * matters: the receiver assembles `MAX_INFLIGHT_ATTACHMENTS` at a time and
- * refuses the rest, so 248 of every 256 offered were declined and never
- * mentioned again. The receiver asks for the page after the one it has
- * finished, and the offer is paced by what it can actually accept.
- */
+/** Offer pages match the receiver's bounded assembly capacity. */
 export const MAX_OFFERS_PER_PAGE = MAX_INFLIGHT_ATTACHMENTS;
 
 interface InFlight {
@@ -160,14 +127,7 @@ const outstandingFor = (pending: InFlight): number[] =>
     have: new Set([...pending.held, ...pending.chunks.keys()]),
   });
 
-/**
- * Ask for the next page, and only the next page.
- *
- * A request is bounded by the wire limit, so an attachment larger than one page
- * needs several — and asking again after every chunk would have the peer serve
- * the same indices over and over. The page in flight is remembered instead, and
- * the next is asked for once it has been answered.
- */
+/** Requests the next missing-chunk page after the current page settles. */
 const requestNextPage = (options: {
   ports: AttachmentTransferPorts;
   pending: InFlight;
@@ -199,14 +159,7 @@ interface TransferContext {
   awaitingCursor: number | null;
 }
 
-/**
- * One attachment of the current page is finished with, however it finished.
- *
- * Complete, already held, or refused are the same fact to the page: there is
- * nothing further to wait for. Once none are left, the peer is asked for what
- * comes next — which is what keeps a catalogue larger than one page moving
- * instead of being offered once and declined.
- */
+/** Settles one offer and advances when every offer on the page has settled. */
 const settle = (context: TransferContext, attachmentId: string): void => {
   const { page, ports } = context;
   if (page === null) return;
@@ -306,13 +259,7 @@ const takeOfferNext = (context: TransferContext, cursor: number): void => {
   offerPage(context, cursor);
 };
 
-/**
- * Send the chunks a peer asked for, and name the ones this device cannot.
- *
- * Silence is not an answer to a gap: the asking device waits on the page it
- * requested before asking for the next, so an unserved index it is never told
- * about stalls the transfer for as long as the session lasts.
- */
+/** Sends requested chunks and explicitly reports unavailable indices. */
 const serve = async (
   ports: AttachmentTransferPorts,
   attachmentId: string,
@@ -349,14 +296,7 @@ const serve = async (
   });
 };
 
-/**
- * Assemble from what arrived *and* what this device already held.
- *
- * A resumed transfer receives only the gap, so assembling from the received
- * chunks alone could never complete — the chunks already on disk have to be read
- * back in. They are verified again on the way through: a chunk stored by an
- * earlier, abandoned transfer is not evidence of anything.
- */
+/** Reassembles and re-verifies both persisted and newly received chunks. */
 const complete = async (
   ports: AttachmentTransferPorts,
   pending: InFlight,
