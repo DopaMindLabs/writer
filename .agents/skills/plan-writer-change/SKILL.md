@@ -4,8 +4,9 @@ description: >
   Produce an exact-file change plan for any Writer feature or fix before touching
   code. Use when asked to plan, design, or scope a change to Writer. Trigger terms:
   "plan", "design", "how would I", "what files", "scope", "impact", "before I code".
-version: 1.2.0
-tags: [planning, architecture, impact-analysis]
+metadata:
+  version: 1.3.0
+  tags: [planning, architecture, impact-analysis]
 ---
 
 # Plan a Writer Change
@@ -38,9 +39,14 @@ For each file you intend to touch, list:
 - Direct callers / importers
 - Shared contracts (interfaces, exported types)
 - Tests that assert the current behaviour
-- Whether a DB schema migration is needed (see `change-writer-persistence` skill)
+- Whether a DB schema/table/index change is needed (see `change-writer-persistence` skill)
 - Whether collab CRDT state is affected (see `work-on-editor-collaboration` skill)
-- Whether cloud sync is affected (see `work-on-cloud-sync` skill)
+- Whether Writer Sync, a provider or a trust boundary is affected (see
+  `work-on-writer-sync` and the OWASP baseline in `audit-writer-change`)
+- Which user-facing or interaction-affecting behaviours have accessibility impact,
+  including settings, shortcuts, state transitions, errors and recovery. Identify
+  the applicable WCAG 2.2 criteria from `ACCESSIBILITY.md`; do not reduce this to
+  whether a React component changed.
 
 ### 5. Produce an exact-file plan
 
@@ -72,8 +78,14 @@ Output format:
 ## Spec sections to update
 - docs/technical-specification.md §<section> — <change>
 
-## DB migration needed?
-<yes/no — reason>
+## DB / persistence impact
+<none, or schema/table/index/write-path change + required persistence verification>
+
+## Accessibility impact
+<none, or affected behaviour + applicable WCAG 2.2 criteria + verification>
+
+## Security impact
+<none, or trust boundary + applicable OWASP Top 10 risk / feature threat model + test>
 
 ## Verification commands
 - npm run typecheck

@@ -6,8 +6,9 @@ description: >
   span sessions, or when passing a task to someone else. Trigger terms: "handover",
   "hand off", "handoff", "pause", "resume later", "context running out", "pick up where
   I left off", "continue this later".
-version: 1.0.0
-tags: [handover, continuity, todo, resumability]
+metadata:
+  version: 1.0.0
+  tags: [handover, continuity, todo, resumability]
 ---
 
 # Hand Over Writer Work

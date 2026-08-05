@@ -5,8 +5,9 @@ description: >
   regressed, an interaction stopped working, or a visual glitch appeared. Trigger
   terms: "broken", "stopped working", "regression", "doesn't work any more", "lost",
   "flash", "flicker", "root cause", "bisect", "why did this break".
-version: 1.0.0
-tags: [debugging, regression, root-cause]
+metadata:
+  version: 1.0.0
+  tags: [debugging, regression, root-cause]
 ---
 
 # Debug a Writer Regression

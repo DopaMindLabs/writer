@@ -5,8 +5,9 @@ description: >
   layer (Yjs / Lexical / BroadcastChannel). Use when touching collab state, the Yjs
   provider, CRDT seed/snapshot, or multi-tab sync. Trigger terms: "collab", "yjs",
   "crdt", "multi-tab", "collaboration", "provider", "BroadcastChannel", "presence".
-version: 1.1.0
-tags: [collaboration, yjs, crdt, lexical]
+metadata:
+  version: 1.2.0
+  tags: [collaboration, yjs, crdt, lexical]
 ---
 
 # Work on Editor Collaboration
@@ -14,7 +15,8 @@ tags: [collaboration, yjs, crdt, lexical]
 ## What this layer is
 
 Same-browser, real-time CRDT collaboration between tabs of the same browser instance.
-It is **not** cross-device sync — that is Dexie Cloud (`work-on-cloud-sync`).
+Cross-device replication, pairing and provider behaviour belong to Writer Sync
+(`work-on-writer-sync`).
 
 Yjs maintains a shared `Y.Doc` for each open document. `BroadcastChannelTransport`
 propagates updates across tabs. The update log is persisted to `docUpdates` (local-only
