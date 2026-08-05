@@ -8,8 +8,8 @@ description: >
   "writer sync", "writer-sync", "sync engine", "cross-device", "pairing", "P2P",
   "provider", "operation frame", "dexie cloud", "escrow", "cloudClient".
 metadata:
-  version: 2.0.0
-  tags: [writer-sync, sync, providers, p2p, dexie-cloud, encryption]
+  version: "2.0.0"
+  tags: "writer-sync,sync,providers,p2p,dexie-cloud,encryption"
 ---
 
 # Work on Writer Sync

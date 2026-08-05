@@ -6,8 +6,8 @@ description: >
   provider, CRDT seed/snapshot, or multi-tab sync. Trigger terms: "collab", "yjs",
   "crdt", "multi-tab", "collaboration", "provider", "BroadcastChannel", "presence".
 metadata:
-  version: 1.2.0
-  tags: [collaboration, yjs, crdt, lexical]
+  version: "1.2.0"
+  tags: "collaboration,yjs,crdt,lexical"
 ---
 
 # Work on Editor Collaboration

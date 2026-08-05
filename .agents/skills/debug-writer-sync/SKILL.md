@@ -7,8 +7,8 @@ description: >
   "sync hangs", "sync loop", "won't sync", "pairing failed", "P2P", "frame rejected",
   "device limit", "cloud harness", "reproduce sync bug".
 metadata:
-  version: 2.0.0
-  tags: [writer-sync, sync, debugging, p2p, dexie-cloud, playwright]
+  version: "2.0.0"
+  tags: "writer-sync,sync,debugging,p2p,dexie-cloud,playwright"
 ---
 
 # Debug Writer Sync

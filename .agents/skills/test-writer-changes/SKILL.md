@@ -5,8 +5,8 @@ description: >
   fixing, or auditing tests. Trigger terms: "test", "TDD", "vitest", "playwright",
   "e2e", "coverage", "spec", "failing test", "skip test".
 metadata:
-  version: 1.2.0
-  tags: [testing, tdd, vitest, playwright, coverage]
+  version: "1.2.0"
+  tags: "testing,tdd,vitest,playwright,coverage"
 ---
 
 # Test Writer Changes

@@ -6,8 +6,8 @@ description: >
   escrow and provider work. Trigger terms: "cloud", "dexie cloud", "cloud sync",
   "encryption", "escrow", "passphrase".
 metadata:
-  version: 2.0.0
-  tags: [writer-sync, cloud, routing]
+  version: "2.0.0"
+  tags: "writer-sync,cloud,routing"
 ---
 
 # Route cloud work to Writer Sync

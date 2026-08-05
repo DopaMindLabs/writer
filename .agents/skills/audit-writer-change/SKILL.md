@@ -6,8 +6,8 @@ description: >
   persistence safety. Trigger terms: "audit", "review", "check", "risks in", "is
   this safe", "what did this change".
 metadata:
-  version: 1.5.0
-  tags: [review, audit, security, accessibility]
+  version: "1.5.0"
+  tags: "review,audit,security,accessibility"
 ---
 
 # Audit a Writer Change

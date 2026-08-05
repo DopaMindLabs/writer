@@ -7,8 +7,8 @@ description: >
   Trigger terms: "implement", "code it", "make the change", "write the code",
   "execute the plan".
 metadata:
-  version: 1.2.0
-  tags: [implementation, coding]
+  version: "1.2.0"
+  tags: "implementation,coding"
 ---
 
 # Implement a Writer Change

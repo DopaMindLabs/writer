@@ -6,8 +6,8 @@ description: >
   terms: "broken", "stopped working", "regression", "doesn't work any more", "lost",
   "flash", "flicker", "root cause", "bisect", "why did this break".
 metadata:
-  version: 1.0.0
-  tags: [debugging, regression, root-cause]
+  version: "1.0.0"
+  tags: "debugging,regression,root-cause"
 ---
 
 # Debug a Writer Regression

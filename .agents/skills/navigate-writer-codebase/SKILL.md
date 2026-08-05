@@ -6,8 +6,8 @@ description: >
   feature flow. Trigger terms: "find", "locate", "where is", "who calls", "trace",
   "navigate", "callers of", "dependants", "tests for".
 metadata:
-  version: 1.3.0
-  tags: [navigation, exploration, code-intelligence]
+  version: "1.3.0"
+  tags: "navigation,exploration,code-intelligence"
 ---
 
 # Navigate the Writer Codebase

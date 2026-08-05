@@ -7,8 +7,8 @@ description: >
   "hand off", "handoff", "pause", "resume later", "context running out", "pick up where
   I left off", "continue this later".
 metadata:
-  version: 1.0.0
-  tags: [handover, continuity, todo, resumability]
+  version: "1.0.0"
+  tags: "handover,continuity,todo,resumability"
 ---
 
 # Hand Over Writer Work

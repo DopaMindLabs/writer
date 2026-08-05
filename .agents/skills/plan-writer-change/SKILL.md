@@ -5,8 +5,8 @@ description: >
   code. Use when asked to plan, design, or scope a change to Writer. Trigger terms:
   "plan", "design", "how would I", "what files", "scope", "impact", "before I code".
 metadata:
-  version: 1.3.0
-  tags: [planning, architecture, impact-analysis]
+  version: "1.3.0"
+  tags: "planning,architecture,impact-analysis"
 ---
 
 # Plan a Writer Change

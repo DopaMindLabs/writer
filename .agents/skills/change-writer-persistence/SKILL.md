@@ -6,8 +6,8 @@ description: >
   src/db/ or src/lib/docs/. Trigger terms: "schema", "migration", "dexie", "table",
   "stores.ts", "LoremDB", "docRepository", "backup", "revision", "archive".
 metadata:
-  version: 1.3.0
-  tags: [persistence, database, dexie, schema, migration]
+  version: "1.3.0"
+  tags: "persistence,database,dexie,schema,migration"
 ---
 
 # Change Writer Persistence

@@ -6,8 +6,8 @@ description: >
   terms: "component", "UI", "design system", "accessibility", "a11y", "i18n",
   "copy", "help article", "story", "storybook", "style".
 metadata:
-  version: 1.3.0
-  tags: [ui, design-system, accessibility, i18n, storybook]
+  version: "1.3.0"
+  tags: "ui,design-system,accessibility,i18n,storybook"
 ---
 
 # Build Writer UI
