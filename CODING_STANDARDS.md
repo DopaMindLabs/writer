@@ -5,6 +5,11 @@ Safety-Critical Code"* for this TypeScript/React codebase. They keep the code ea
 and to check statically. ESLint (`eslint.config.js`) enforces most of them; the rest are
 checked in review.
 
+This file is the canonical coding standard. `AGENTS.md` owns repository workflow and hard
+stops; [`ACCESSIBILITY.md`](./ACCESSIBILITY.md) owns accessibility conformance; and
+[`docs/design-system.md`](./docs/design-system.md) owns UI tokens and primitives. Keep detailed
+domain rules in those sources rather than copying them here.
+
 ## Summary: the ten rules
 
 1. **[Simple control flow](#1-simple-control-flow).** Keep cyclomatic complexity low (≤ 12); no unbounded recursion.
@@ -43,6 +48,48 @@ limits, weaken or disable an ESLint rule, or add `// eslint-disable*`, `// nasa-
 function or file, extract a module, correct the type. If you are convinced a limit genuinely
 cannot be met by refactoring, **stop and ask the user clearly and explicitly what to do** before
 changing any config or adding a suppression; do not decide unilaterally.
+
+### Structure and file organisation
+
+- **Single responsibility and modularity.** Keep high cohesion and low coupling. Depend on
+  abstractions at subsystem boundaries and put a facade in front of complex subsystems so
+  callers do not depend on implementation detail.
+- **Functional style is the default.** Prefer pure functions, immutable data and composition.
+  These are tools for clear boundaries, not substitutes for sound module design.
+- **One component or service per file.** Put each React component in its own PascalCase file;
+  put each service in its own module. Group related files in a feature folder and compose them
+  instead of adding another component or service to an existing file.
+- **Keep types close to their owner.** Put shared or substantial types in a dedicated
+  `*.types.ts` file; otherwise co-locate them with the module they describe.
+- **Separate compliance refactors.** If a file you must edit already violates these rules,
+  bring it into compliance in a behaviour-preserving `refactor:` commit before the feature or
+  fix commit. Do not bundle the clean-up with the behavioural change.
+
+### Security engineering
+
+Use the [OWASP Top 10:2025](https://owasp.org/Top10/) as the minimum application-security
+risk taxonomy for design, implementation and review. It is a baseline, not a complete threat
+model: apply a feature-specific threat model whenever one exists, and do not force an OWASP
+category onto a finding that does not fit.
+
+- **Review every trust boundary.** Client-side code still has security boundaries: browser
+  APIs, local/IndexedDB persistence, URLs and imports, rendered content, peer/provider traffic,
+  cryptographic material, dependencies and build/configuration are all in scope.
+- **Validate before trust.** Treat external, persisted and cross-device data as untrusted at
+  the receiving boundary. Enforce shape, size, state and authorisation invariants before side
+  effects or decryption/materialisation where the domain requires it.
+- **Protect secrets and sensitive data.** Do not hard-code, log, place in URLs or persist
+  secrets/keys in plaintext. Use the repository's established crypto/key-vault boundary rather
+  than inventing primitives or bypassing it.
+- **Preserve least privilege and integrity.** Expose only the capability a caller/provider
+  actually has; verify identity/integrity before accepting privileged or replicated actions.
+- **Fail deliberately.** Exceptional conditions must not fail open, partially apply a
+  security-sensitive operation or silently downgrade a control.
+- **Test the failure path.** Security-sensitive changes ship with negative/adversarial tests
+  for the protected invariant, including malformed or exceptional input where applicable.
+
+The `audit-writer-change` skill owns the PR-review checklist and finding format; domain skills
+own additional controls such as the Writer Sync threat model.
 
 ---
 
@@ -176,6 +223,9 @@ established practice rather than local preference:
   and rule 9 (`readonly`, CONSTANT_CASE). This repo is stricter than Google on suppressions:
   Google permits `@ts-expect-error` over `@ts-ignore`; here both are forbidden (see
   [Scope and exceptions](#scope-and-exceptions)).
+- **[OWASP Top 10:2025](https://owasp.org/Top10/)**: the application-security baseline used by
+  [Security engineering](#security-engineering). It supplements rather than replaces
+  feature-specific threat models and security invariants.
 - **MISRA C and the JPL Institutional C Standard**: the Power of Ten sits on top of MISRA
   within the JPL standard and was written to be statically checkable, which is why every
   rule here maps to a lint check. The C-only rules were adapted rather than dropped: "no
