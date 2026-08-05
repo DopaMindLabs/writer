@@ -1,22 +1,34 @@
 import type { LoremDB } from '@/db/LoremDB';
 import type { SyncKeyRing } from 'writer-sync/crypto';
 import { openOperationPayload } from 'writer-sync/crypto';
+import { assertAcceptableRemoteTime } from 'writer-sync/core';
 import { compareOperations, supersedes } from 'writer-sync/operations';
 import { verifyFrame } from 'writer-sync/operations';
 import type { MaterializeResult } from 'writer-sync/operations';
-import type {
-  EncryptedSyncFrame,
-  SyncTombstone,
-} from 'writer-sync/operations';
+import type { EncryptedSyncFrame } from 'writer-sync/operations';
 import { writerClock } from '@/lib/writerSyncIntegration/writerLogicalClock';
 import { materializeAttachmentFrame } from './attachmentFrameMaterializer';
+import { tombstoneOf } from './tombstone';
+import {
+  UntrustedFrameError,
+  requireJournalledTable,
+  type JournalledTable,
+} from './frameAdmission';
+import type { FrameVerifier } from './writerFrameVerifier';
 
 export { AttachmentChunksPendingError } from './attachmentFrameMaterializer';
+export { DisallowedOperationTableError, UntrustedFrameError } from './frameAdmission';
 
 /**
  * Applies inbound operation frames to Writer's local state. The invariants the
  * runbook demands live here:
  *
+ * - an operation is applied only if a device this one trusts signed it, whatever
+ *   route it arrived by;
+ * - an operation may only name a table the policy journals as synced content,
+ *   so a paired device cannot reach this device's control tables;
+ * - an operation stamped further ahead than the clock will merge is refused
+ *   rather than allowed to win conflicts the clock has already disowned;
  * - an accepted operation id replays as a no-op (the inbox is checked and
  *   written in the same transaction as materialisation);
  * - entity conflicts resolve deterministically (hybrid logical time, then
@@ -41,10 +53,12 @@ const journalWinner = async (
   return rivals.sort(compareOperations).at(-1);
 };
 
-const applyDelete = async (
-  db: LoremDB,
-  frame: EncryptedSyncFrame,
-): Promise<MaterializeResult> => {
+const applyDelete = async (options: {
+  db: LoremDB;
+  frame: EncryptedSyncFrame;
+  table: JournalledTable;
+}): Promise<MaterializeResult> => {
+  const { db, frame, table } = options;
   const winner = await journalWinner(db, frame);
   if (winner && compareOperations(winner, frame) > 0 && winner.kind === 'put') {
     // A strictly later put is already journalled locally; this deletion lost.
@@ -52,30 +66,24 @@ const applyDelete = async (
     // content — the same rule `applyPut` applies in the other direction.
     return 'superseded';
   }
-  const tombstone: SyncTombstone = {
-    entityId: frame.entityId,
-    entityTable: frame.entityTable,
-    accessScopeId: frame.accessScopeId,
-    operationId: frame.operationId,
-    deviceId: frame.deviceId,
-    logicalAt: frame.logicalAt,
-    acknowledgedBy: [],
-  };
+  const tombstone = tombstoneOf(frame);
   const recorded = await db.syncTombstones.get([frame.entityTable, frame.entityId]);
   // Keep the latest deletion: an older delete arriving afterwards must not
   // rewrite the tombstone a later put is compared against.
   if (!recorded || supersedes(frame, { ...frame, ...recorded })) {
     await db.syncTombstones.put(tombstone);
   }
-  await db.table(frame.entityTable).delete(frame.entityId);
+  await table.delete(frame.entityId);
   return 'applied';
 };
 
-const applyPut = async (
-  db: LoremDB,
-  frame: EncryptedSyncFrame,
-  row: Record<string, unknown>,
-): Promise<MaterializeResult> => {
+const applyPut = async (options: {
+  db: LoremDB;
+  frame: EncryptedSyncFrame;
+  table: JournalledTable;
+  row: Record<string, unknown>;
+}): Promise<MaterializeResult> => {
+  const { db, frame, table, row } = options;
   const tombstone = await db.syncTombstones.get([frame.entityTable, frame.entityId]);
   if (tombstone && !supersedes(frame, { ...frame, ...tombstone })) {
     // The deletion is later (or ties) — the put is stale and must not
@@ -90,7 +98,7 @@ const applyPut = async (
   if (tombstone) {
     await db.syncTombstones.delete([frame.entityTable, frame.entityId]);
   }
-  await db.table(frame.entityTable).put(row);
+  await table.put(row);
   return 'applied';
 };
 
@@ -100,21 +108,41 @@ const applyPut = async (
  * The payload is decrypted before the transaction opens (Web Crypto must not
  * suspend a live IndexedDB transaction); everything stateful commits atomically.
  *
- * TODO (#209): `verifyFrame` checks structure and the payload hash — it does not
- * authenticate the author. A frame arriving over a peer link is signature-checked
- * by the catch-up exchange before it is journalled, but a frame a durable
- * provider replicates straight into `syncOperations` reaches here with nothing
- * having vouched for it, so a hostile provider can forge one and have it applied.
- * The check belongs here, on every caller, once a cloud-only device has a way to
- * become trusted (`trustedDevices` is local-only and written only by pairing).
+ * Admission runs in one order for every provider: structure and payload hash,
+ * then the table policy, then the author, then the clock. The peer exchange
+ * verifies signatures again before journalling — the two are defence in depth,
+ * not a duplicate, because a frame reaching this point may never have crossed a
+ * peer link at all.
  */
 export const applyInboundFrame = async (options: {
   db: LoremDB;
   frame: unknown;
   ring: SyncKeyRing;
+  /**
+   * Who this device is willing to accept an operation from. Required rather
+   * than defaulted: an ingestion path that forgot it would apply whatever a
+   * provider chose to write into the journal.
+   */
+  verifySignature: FrameVerifier;
+  /** This device's wall clock, injectable so boundary tests are deterministic. */
+  now?: () => number;
 }): Promise<MaterializeResult> => {
   const { db, ring } = options;
   const frame = await verifyFrame(options.frame);
+  // What a peer proved by signing is who it is, never what it may write to.
+  // Nothing below this line — decryption, the journal, the transaction — runs
+  // for an operation naming a table peers do not own.
+  const table = requireJournalledTable(db, frame.entityTable);
+  // Nor is a hash any evidence of an author: whoever wrote this frame into the
+  // journal must be someone this device trusts, checked here so the check
+  // cannot be skipped by the route the frame took to get here.
+  if (!(await options.verifySignature(frame))) {
+    throw new UntrustedFrameError(String(frame.deviceId));
+  }
+  // Nor may it be stamped in a future this device's clock refuses to merge:
+  // such an operation would win every conflict it entered while the clock that
+  // rejected it stood still.
+  assertAcceptableRemoteTime(frame.logicalAt, options.now ?? (() => Date.now()));
   const opened =
     frame.kind === 'put' ? await openOperationPayload(ring, frame, frame.payload) : null;
   const row =
@@ -124,12 +152,7 @@ export const applyInboundFrame = async (options: {
 
   const result = await db.transaction(
     'rw',
-    [
-      db.table(frame.entityTable),
-      db.syncOperations,
-      db.syncInbox,
-      db.syncTombstones,
-    ],
+    [table, db.syncOperations, db.syncInbox, db.syncTombstones],
     async () => {
       const prior = await db.syncInbox.get(String(frame.operationId));
       if (prior) return prior.result;
@@ -138,8 +161,8 @@ export const applyInboundFrame = async (options: {
       await db.syncOperations.put(frame);
       const result =
         frame.kind === 'delete'
-          ? await applyDelete(db, frame)
-          : await applyPut(db, frame, row ?? {});
+          ? await applyDelete({ db, frame, table })
+          : await applyPut({ db, frame, table, row: row ?? {} });
       await db.syncInbox.put({
         operationId: frame.operationId,
         accessScopeId: frame.accessScopeId,

@@ -23,8 +23,16 @@ import type { AttachmentTransfer } from './attachmentTransfer';
 import { packFrames } from './catchUpBatching';
 
 export interface CatchUpAttachments {
-  /** Bind attachment messages to this exchange's composed transport send. */
-  create: (send: (message: CatchUpMessage) => void) => AttachmentTransfer;
+  /**
+   * Bind attachment messages to this exchange's composed transport sends.
+   *
+   * Two of them: chunks are served against `sendWhenReady` so the holder moves
+   * at the bearer's pace, while everything else is said immediately.
+   */
+  create: (sends: {
+    send: (message: CatchUpMessage) => void;
+    sendWhenReady?: (message: CatchUpMessage) => Promise<void>;
+  }) => AttachmentTransfer;
   /** Complete attachment ciphertext available in the permitted scopes. */
   manifestsForScopes: (
     accessScopeIds: readonly AccessScopeId[],
@@ -73,6 +81,11 @@ export interface CatchUpPorts {
    * no message outgrows it; absent, batching is by frame count alone.
    */
   maxMessageBytes?: number;
+  /**
+   * Write, resolving once the bearer has taken it. Absent for a bearer with no
+   * pace of its own, in which case a sender simply writes.
+   */
+  sendWhenReady?: (message: CatchUpMessage) => Promise<void>;
   /** Verify the originating device's signature over the frame. */
   verifySignature: (frame: EncryptedSyncFrame) => Promise<boolean>;
   /**
@@ -341,7 +354,10 @@ const createIngester = (
 
 export const createCatchUpExchange = (ports: CatchUpPorts): CatchUpExchange => {
   const ingest = createIngester(ports);
-  const attachments = ports.attachments?.create(ports.send);
+  const attachments = ports.attachments?.create({
+    send: ports.send,
+    sendWhenReady: ports.sendWhenReady,
+  });
 
   return {
     start: async () => {
@@ -364,8 +380,10 @@ export const createCatchUpExchange = (ports: CatchUpPorts): CatchUpExchange => {
           await Promise.all(message.acknowledgements.map(ports.recordPeerAcknowledgement));
           return;
         case 'attachment-offer':
+        case 'attachment-offer-next':
         case 'attachment-request':
         case 'attachment-chunk':
+        case 'attachment-unavailable':
           await attachments?.receive(message);
           return;
       }

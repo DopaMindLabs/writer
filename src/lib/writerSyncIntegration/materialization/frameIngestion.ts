@@ -6,6 +6,7 @@ import {
   applyInboundFrame,
 } from './writerOperationMaterializer';
 import { refreshInboundDocs } from './inboundDocRefresh';
+import { createWriterFrameVerifier } from './writerFrameVerifier';
 import { writerJournalIdentity } from './writerJournalDeps';
 
 /**
@@ -19,10 +20,10 @@ import { writerJournalIdentity } from './writerJournalDeps';
  * device key ring changes (a keyless device cannot decrypt payloads, so frames
  * simply wait in the journal until unlock).
  *
- * TODO (#209): what a provider put in the journal is applied without any check
- * on who signed it. The peer exchange verifies a frame before journalling it;
- * this route has no equivalent, so a provider able to write to `syncOperations`
- * can have a forged frame materialised. See {@link applyInboundFrame}.
+ * A provider decides what lands in the journal, never what is applied: one
+ * verifier is built per sweep and every frame is attributed through it before
+ * {@link applyInboundFrame} touches any state, so a provider that writes a
+ * forged frame into `syncOperations` has written something inert.
  */
 interface TouchedDoc {
   entityId: string;
@@ -48,13 +49,14 @@ export const sweepUnappliedFrames = async (db: LoremDB): Promise<number> => {
   const ring = deviceKeyProvider.current();
   if (!ring) return 0;
   const frames = await db.syncOperations.toArray();
+  const verifySignature = createWriterFrameVerifier(db);
   const touched: TouchedDoc[] = [];
   let applied = 0;
   for (const frame of frames) {
     const accepted = await db.syncInbox.get(String(frame.operationId));
     if (accepted) continue;
     try {
-      const result = await applyInboundFrame({ db, frame, ring });
+      const result = await applyInboundFrame({ db, frame, ring, verifySignature });
       applied += 1;
       if (frame.entityTable === 'docs' && frame.kind === 'put' && result === 'applied') {
         touched.push({ entityId: frame.entityId, deviceId: frame.deviceId });

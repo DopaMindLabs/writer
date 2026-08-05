@@ -339,14 +339,41 @@ An open data channel that floods frames, or a peer that reconnects in a tight
 loop, exhausting CPU (every frame costs AES-GCM plus SHA-256), memory or storage.
 
 **Mitigation.** Bounded application frame sizes; backpressure through
-`bufferedAmount` and `bufferedamountlow` rather than unbounded queueing; reconnect
+`bufferedAmount` and `bufferedamountlow` rather than unbounded queueing, and the
+queue in front of the channel bounded in its own right by both message count and
+total bytes (`MAX_OUTBOX_MESSAGES`, `MAX_OUTBOX_BYTES`) — `bufferedAmount` bounds
+only the browser's buffer, so a stalled connection with the user still writing
+would otherwise grow the application's queue until the tab died. Exceeding either
+bound fails the session with a typed `TransportBackpressureError` rather than
+dropping a frame: the operation is still journalled, so a reconnection catches
+up, whereas a silent drop makes success and data loss look the same. Reconnect
 with bounded exponential backoff and jitter, and no write-on-settle loop; typed
 timeout and client-isolation failures instead of an infinite connecting state.
 Inbound frames are rate-limited per peer, and a peer exceeding it has its session
 closed rather than its frames silently dropped, so the failure is observable.
 
-**Status.** Transport requirements land in 2A.5; the rate limit must be stated in
-the protocol specification with its chosen constant.
+**Status.** Implemented. `createInboundLimiter` charges a message-rate and a
+byte-rate budget before any message is dispatched — either alone leaves a gap,
+since one enormous message a second passes a message bound and a flood of empty
+ones passes a byte bound while still costing a decode apiece. Both refill
+continuously rather than resetting on a boundary, which would let a peer spend a
+full budget on either side of one instant. The constants are
+`MAX_INBOUND_MESSAGES` (512) and `MAX_INBOUND_BYTES` (32 MiB) per
+`INBOUND_WINDOW_MILLIS` (1 s), set above the heaviest legitimate burst — an
+attachment page of 256 chunks at roughly 171 KiB, spread across windows by the
+sender's own outbox bound and the channel's high-water mark. Exceeding either,
+or sending a message that carries no bytes at all, fails the session with a
+typed `InboundRateLimitError` or `NonBinaryMessageError` that reaches the
+consumer through `onClosed`.
+
+`MAX_FRAME_BYTES` binds inbound as well as outbound: one message inside the
+rate budget could otherwise be the whole of it, and be handed to JSON decoding
+in one allocation. Past the transport, `startCatchUpSession` bounds what it
+holds undecoded (`MAX_SESSION_QUEUE_MESSAGES`, `MAX_SESSION_QUEUE_BYTES`),
+because ordering means every message arriving while one is being handled is
+retained, and a rate limit bounds a rate rather than a quantity — a peer
+arriving faster than crypto and IndexedDB drain, window after window, would
+grow that queue without ever exceeding its rate.
 
 ---
 

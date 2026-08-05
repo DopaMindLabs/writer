@@ -5,7 +5,8 @@ import {
   type CatchUpPorts,
   type CatchUpSession,
 } from 'writer-sync/operations';
-import { createTrustedFrameVerifier } from 'writer-sync/crypto';
+import { createTrustedFrameVerifier, sameIdentityKey } from 'writer-sync/crypto';
+import { PairingError, PairingErrorCode } from 'writer-sync/pairing';
 import {
   CONTROL_CHANNEL,
   createWebRtcTransport,
@@ -23,6 +24,7 @@ import { appLogger } from '@/lib/appLogger';
 import { deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
 import {
   runRootSecretHandover,
+  type RootHandoverOutcome,
   type SecretHandoverSession,
   type RunningRootSecretHandover,
 } from './rootSecretHandover';
@@ -30,6 +32,7 @@ import { createTrustedDeviceStore } from './trustedDeviceStore';
 import { peerSessions } from './peerSessionRegistry';
 import { getJournalRetentionDaysFor } from './journalRetentionPreference';
 import { currentPrincipal } from './writerEntityMetadata';
+import { recordPeerAcknowledgement } from './materialization/acknowledgeDeletions';
 import { createWriterOperationStore } from './materialization/writerOperationStore';
 import { createWriterFullState } from './materialization/writerFullState';
 import { writerJournalDeps } from './materialization/writerJournalDeps';
@@ -98,13 +101,18 @@ export interface AdoptedPeer {
 
 export interface PeerCatchUp {
   /**
-   * Take over a peer session once pairing has been confirmed. Catch-up starts
-   * as soon as the session has a control channel — which for the answering
-   * device is when its peer opens one, not when the exchange finished.
+   * Take over a peer session once pairing has been confirmed.
    *
-   * Resolves once the peer is recorded in the trust registry. Rejects — with
-   * the session closed and nothing exchanged — when recording is refused,
-   * which happens when a known device id presents a different identity key.
+   * Trust is committed in two phases. A fresh pairing is an in-memory identity
+   * while the root secret moves — nothing written, no session published, no
+   * scope channel, no catch-up — and is recorded only once the root has
+   * crossed. An incomplete pairing therefore leaves nothing to clean up, so no
+   * crash can strand a record. A rollback could not promise that: it is a
+   * second write, across a conversation with another device.
+   *
+   * Resolves once the pairing phase is under way, not once trust exists.
+   * Rejects, with nothing written, when a known device id presents a different
+   * identity key.
    */
   adopt: (peer: AdoptedPeer) => Promise<void>;
   /** Close every adopted session. */
@@ -144,15 +152,19 @@ const catchUpPorts = ({
   fullState: createWriterFullState({ db, ...writerJournalDeps }),
   retentionCutoff: () => retentionCutoff({ retentionDays: retentionDays(), now: Date.now() }),
   recordPeerAcknowledgement: (acknowledgement) =>
-    registry.acknowledge({
-      // The peer on this connection is what has read up to here; the origin is
-      // whose operations it read. Conflating the two would credit an
-      // acknowledgement to the wrong device and let compaction drop frames that
-      // peer never received.
-      deviceId: peer.deviceId,
-      accessScopeId: acknowledgement.accessScopeId,
-      originDeviceId: acknowledgement.originDeviceId,
-      operationId: acknowledgement.operationId,
+    recordPeerAcknowledgement({
+      db,
+      registry,
+      acknowledgement: {
+        // The peer on this connection is what has read up to here; the origin is
+        // whose operations it read. Conflating the two would credit an
+        // acknowledgement to the wrong device and let compaction drop frames that
+        // peer never received.
+        deviceId: peer.deviceId,
+        accessScopeId: acknowledgement.accessScopeId,
+        originDeviceId: acknowledgement.originDeviceId,
+        operationId: acknowledgement.operationId,
+      },
     }),
   // New frames are journalled, not applied: the shared sweep is what applies
   // them, and it is what makes double delivery harmless.
@@ -225,43 +237,34 @@ const openChannelOnce = (
   });
 };
 
-interface PeerChannelOptions {
+interface PairingPhaseOptions {
   channel: DataChannelLike;
-  peer: AdoptedPeer;
-  /** Begin syncing, over the channel key material has finished with. */
-  startCatchUp: (channel: DataChannelLike) => void;
+  handover: SecretHandoverSession;
   track: (running: RunningRootSecretHandover) => void;
+  /** The root secret crossed. Nothing before this point may be relied upon. */
+  onHandedOver: (channel: DataChannelLike) => void;
+  /** It ended any other way — expired, timed out, cancelled or failed. */
+  onAborted: (outcome: RootHandoverOutcome) => void;
 }
 
 /**
- * Hand over key material first, then sync.
+ * The pairing phase: key material, and nothing else.
  *
- * Catch-up second is the only order that means anything: a device still waiting
- * for a root can decrypt nothing, so it would advertise no scopes and be told,
- * wrongly, that it is caught up.
+ * The channel is split so this phase reads only the root transfer. The other
+ * view is held unread until the root has crossed — a peer that confirmed first
+ * and started syncing is buffered, not answered. Dropping it instead would cost
+ * the exchange in that direction for the session, since a manifest is sent once.
  *
- * Waiting is not the same as not listening. Both protocols read the channel from
- * the moment it opens, each through a view of its own, because neither device can
- * see when its peer moves on: each waits on a deadline of its own, so the one
- * whose deadline passes first starts syncing while the other is still reading for
- * keys. A manifest is sent once and never repeated — refused, it cost the
- * exchange in that direction for the life of the session.
- *
- * A session adopted without a fresh pairing sends no key material at all, so its
- * channel carries one protocol and is handed over whole: nothing is filtered, and
- * anything a peer sends that catch-up cannot read is refused as loudly as before.
+ * Catch-up second is also the only order that means anything: a device still
+ * waiting for a root would advertise no scopes and be told it is caught up.
  */
-const onPeerChannel = ({
+const runPairingPhase = ({
   channel,
-  peer,
-  startCatchUp,
+  handover,
   track,
-}: PeerChannelOptions): void => {
-  const { secretHandover } = peer;
-  if (secretHandover === undefined) {
-    startCatchUp(channel);
-    return;
-  }
+  onHandedOver,
+  onAborted,
+}: PairingPhaseOptions): void => {
   const { rootTransfer, catchUp } = splitPairingChannel({
     channel,
     onOverflow: (protocol) => {
@@ -271,29 +274,50 @@ const onPeerChannel = ({
   track(
     runRootSecretHandover({
       channel: rootTransfer,
-      session: secretHandover,
-      onSettled: () => {
-        startCatchUp(catchUp);
+      session: handover,
+      onCompleted: () => {
+        onHandedOver(catchUp);
       },
+      // Everything else ends the pairing. This device once carried on past the
+      // deadline regardless, on the grounds that syncing what both ends can
+      // already read beats syncing nothing — defensible while trust was
+      // recorded up front, and not now: it would vouch for a device on the
+      // strength of a conversation that never reached an end.
+      onAborted,
     }),
   );
 };
 
 /**
- * Remember the peer a confirmed pairing just authenticated.
+ * Refuse a known device id presenting a different key, before any key material
+ * moves. A read, not a write.
  *
- * This is the record every later frame is checked against: the verifier tests a
- * signature against the identity key a pairing established, so a device with no
- * record has nothing to be verified against and everything it sends is refused.
- * It is also what the device list reads.
- *
- * An identity already known is refreshed, never rewritten: the registry
- * reactivates a revoked record only when the presented key is the stored one,
- * so a completed pairing undoes a removal while a peer presenting a different
- * key under a known id is refused — and that refusal must abort the adoption,
- * not be logged past (`registry.refreshTrust`).
+ * The store enforces the same rule when trust is committed, and that refusal is
+ * the authoritative one — but it comes after the root would already have been
+ * sealed for whoever is on the other end.
  */
-const rememberPeer = async (
+const refuseSubstitutedIdentity = async (options: {
+  registry: TrustedDeviceRegistry;
+  deviceId: DeviceId;
+  publicIdentityJwk: JsonWebKey;
+}): Promise<void> => {
+  const existing = await options.registry.find(options.deviceId);
+  if (existing === null) return;
+  if (sameIdentityKey(existing.publicIdentityJwk, options.publicIdentityJwk)) return;
+  throw new PairingError(
+    PairingErrorCode.TrustedKeyMismatch,
+    'the stored identity for this device does not match the key it presented',
+  );
+};
+
+/**
+ * Commit the peer a completed pairing authenticated — the record every later
+ * frame is verified against, and what the device list reads.
+ *
+ * Runs only once the root secret has moved. A known identity is refreshed
+ * rather than rewritten, so a completed pairing undoes a removal.
+ */
+const commitTrust = async (
   registry: TrustedDeviceRegistry,
   peer: AdoptedPeer,
 ): Promise<void> => {
@@ -320,24 +344,17 @@ const rememberPeer = async (
   });
 };
 
-interface ListenOptions {
-  peer: AdoptedPeer;
-  exchangeOver: (channel: DataChannelLike) => void;
-  track: (running: RunningRootSecretHandover) => void;
-}
-
 /**
- * Take up every channel this connection carries.
+ * Take up the scope channels a peer opens — how this device receives work in a
+ * scope it is not writing to itself.
  *
- * The control channel hands over key material first and syncs after. Every other
- * channel is a scope its peer opened — which is how this device receives work in
- * a scope it is not writing to itself, and so has never asked for a channel for.
+ * Subscribed only once trust is committed: a scope channel is ordinary sync
+ * authority, and a pairing that has not finished has none.
  */
-const listenToPeer = ({ peer, exchangeOver, track }: ListenOptions): void => {
-  openChannelOnce(peer.session, (channel) => {
-    onPeerChannel({ channel, peer, startCatchUp: exchangeOver, track });
-  });
-
+const listenForScopeChannels = (
+  peer: AdoptedPeer,
+  exchangeOver: (channel: DataChannelLike) => void,
+): void => {
   peer.session.onAnyChannel((channel) => {
     if (channel.label === CONTROL_CHANNEL) return;
     whenOpen(channel, () => {
@@ -346,14 +363,14 @@ const listenToPeer = ({ peer, exchangeOver, track }: ListenOptions): void => {
   });
 };
 
-export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
-  const registry = createTrustedDeviceStore(db);
-  const sessions = new Set<PeerSession>();
-  const exchanges = new Set<CatchUpSession>();
-  const transfers = new Set<RunningRootSecretHandover>();
-  // Read once and held, because the engine asks for the cutoff synchronously
-  // while answering a request. Until the stored preference resolves this is the
-  // same default a device that never changed it keeps.
+/**
+ * The retention window, read once and held.
+ *
+ * The engine asks for the cutoff synchronously while answering a request, so it
+ * cannot wait on storage. Until the stored preference resolves this is the same
+ * default a device that never changed it keeps.
+ */
+const trackRetentionDays = (db: LoremDB): (() => number) => {
   let days = JOURNAL_RETENTION_DEFAULT_DAYS;
   void getJournalRetentionDaysFor(db)
     .then((stored) => {
@@ -362,45 +379,125 @@ export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
     .catch((error: unknown) => {
       appLogger.warn('reading the journal retention window failed', error);
     });
+  return () => days;
+};
 
-  const startOver = (peer: AdoptedPeer): void => {
-    const exchangeOver = (channel: DataChannelLike): void => {
-      exchanges.add(
-        startCatchUpSession({
-          transport: createWebRtcTransport(channel),
-          ports: catchUpPorts({ db, peer, registry, retentionDays: () => days }),
-          onError: (error: unknown) => {
-            appLogger.warn('peer catch-up failed', error);
-          },
-        }),
-      );
-    };
-    listenToPeer({ peer, exchangeOver, track: (running) => transfers.add(running) });
+/** Everything one `PeerCatchUp` holds, so its phases can be read on their own. */
+interface PeerRuntime {
+  db: LoremDB;
+  registry: TrustedDeviceRegistry;
+  retentionDays: () => number;
+  sessions: Set<PeerSession>;
+  exchanges: Set<CatchUpSession>;
+  transfers: Set<RunningRootSecretHandover>;
+}
+
+const exchangeOverFor =
+  (runtime: PeerRuntime, peer: AdoptedPeer) =>
+  (channel: DataChannelLike): void => {
+    const { db, registry, retentionDays, exchanges } = runtime;
+    exchanges.add(
+      startCatchUpSession({
+        transport: createWebRtcTransport(channel),
+        ports: catchUpPorts({ db, peer, registry, retentionDays }),
+        onError: (error: unknown) => {
+          appLogger.warn('peer catch-up failed', error);
+        },
+      }),
+    );
   };
 
+/** Let a pairing go without a trace, because it left none to clear up. */
+const discard = (runtime: PeerRuntime, peer: AdoptedPeer): void => {
+  runtime.sessions.delete(peer.session);
+  peerSessions.remove(peer.session);
+  peer.session.close();
+};
+
+/**
+ * Grant sync authority: publish the session and take up the peer's scope
+ * channels. Called once trust is committed, never before.
+ */
+const beginTrustedPhase = (
+  runtime: PeerRuntime,
+  peer: AdoptedPeer,
+): ((channel: DataChannelLike) => void) => {
+  const exchangeOver = exchangeOverFor(runtime, peer);
+  peerSessions.add({ session: peer.session, deviceId: peer.deviceId });
+  listenForScopeChannels(peer, exchangeOver);
+  return exchangeOver;
+};
+
+/** The root crossed: commit, then sync. A commit that fails syncs nothing. */
+const onHandedOver = async (
+  runtime: PeerRuntime,
+  peer: AdoptedPeer,
+  channel: DataChannelLike,
+): Promise<void> => {
+  try {
+    await commitTrust(runtime.registry, peer);
+  } catch (error) {
+    // Syncing without the record would refuse every frame it drew, one at a
+    // time, over a connection that looked healthy.
+    appLogger.warn('recording a paired device failed', error);
+    discard(runtime, peer);
+    return;
+  }
+  beginTrustedPhase(runtime, peer)(channel);
+};
+
+const adoptPeer = async (runtime: PeerRuntime, peer: AdoptedPeer): Promise<void> => {
+  const { sessions, registry, transfers } = runtime;
+  if (sessions.has(peer.session)) return;
+  sessions.add(peer.session);
+  const { secretHandover } = peer;
+  // No key material behind it: a reconnection between devices that already
+  // trust each other, with nothing to commit and nothing to wait for.
+  if (secretHandover === undefined) {
+    openChannelOnce(peer.session, beginTrustedPhase(runtime, peer));
+    return;
+  }
+  try {
+    await refuseSubstitutedIdentity({
+      registry,
+      deviceId: peer.deviceId,
+      publicIdentityJwk: secretHandover.peer.publicIdentityJwk,
+    });
+  } catch (error) {
+    discard(runtime, peer);
+    throw error;
+  }
+  openChannelOnce(peer.session, (channel) => {
+    runPairingPhase({
+      channel,
+      handover: secretHandover,
+      track: (running) => transfers.add(running),
+      onHandedOver: (catchUp) => {
+        void onHandedOver(runtime, peer, catchUp);
+      },
+      onAborted: (outcome) => {
+        appLogger.warn('a pairing ended without the root moving', {
+          status: outcome.status,
+        });
+        discard(runtime, peer);
+      },
+    });
+  });
+};
+
+export const createPeerCatchUp = (db: LoremDB): PeerCatchUp => {
+  const runtime: PeerRuntime = {
+    db,
+    registry: createTrustedDeviceStore(db),
+    retentionDays: trackRetentionDays(db),
+    sessions: new Set<PeerSession>(),
+    exchanges: new Set<CatchUpSession>(),
+    transfers: new Set<RunningRootSecretHandover>(),
+  };
+  const { sessions, exchanges, transfers } = runtime;
+
   return {
-    adopt: async (peer) => {
-      if (sessions.has(peer.session)) return;
-      sessions.add(peer.session);
-      // Published for the P2P provider, which asks for a channel without knowing
-      // anything about pairing.
-      peerSessions.add({ session: peer.session, deviceId: peer.deviceId });
-      // Trust is recorded before anything is exchanged: a frame arriving from a
-      // device this one has no record of is refused, and the first frames can
-      // arrive as soon as the channel is read. A refusal here is a refusal to
-      // sync at all — carrying on would open an exchange whose every frame the
-      // verifier then rejects, which is exactly the silent dead pairing this
-      // path once produced.
-      try {
-        await rememberPeer(registry, peer);
-      } catch (error) {
-        sessions.delete(peer.session);
-        peerSessions.remove(peer.session);
-        peer.session.close();
-        throw error;
-      }
-      startOver(peer);
-    },
+    adopt: (peer) => adoptPeer(runtime, peer),
     stop: () => {
       for (const transfer of transfers) transfer.stop();
       transfers.clear();

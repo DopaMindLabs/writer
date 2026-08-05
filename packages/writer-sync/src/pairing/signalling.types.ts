@@ -41,6 +41,16 @@ export interface AuthenticatedPeerParameters {
   transcript: Uint8Array;
   /** Derived from the transcript; displayed for the user to compare. */
   verificationCode: string;
+  /**
+   * When the session this authenticated ends (`docs/pairing-protocol.md` §7),
+   * taken from the peer's payload as accepted.
+   *
+   * Carried here rather than passed alongside, because everything downstream of
+   * a pairing — the root secret above all — is bound by the same short window,
+   * and a deadline travelling separately from what it governs is one a caller
+   * can substitute.
+   */
+  expiresAt: number;
 }
 
 export interface SignallingAdapter {

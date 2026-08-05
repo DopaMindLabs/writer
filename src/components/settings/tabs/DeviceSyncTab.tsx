@@ -3,7 +3,7 @@ import { TabHeader } from '@/components/settings/TabHeader';
 import { PairDeviceDialog } from '@/components/pairing/PairDeviceDialog/PairDeviceDialog';
 import { db } from '@/db/db';
 import { usePeerLinkStates } from '@/hooks/usePeerLinkStates';
-import { createTrustedDeviceStore } from '@/lib/writerSyncIntegration/trustedDeviceStore';
+import { removeTrustedDevice } from '@/lib/writerSyncIntegration/removeTrustedDevice';
 import { useTrustedDevices } from '@/lib/writerSyncIntegration/useTrustedDevices';
 import { asDeviceId } from 'writer-sync/core';
 import { PairDeviceSection } from './pairing/PairDeviceSection';
@@ -31,10 +31,9 @@ export const DeviceSyncTab = () => {
   const [pairing, setPairing] = useState(false);
 
   const remove = (deviceId: string): void => {
-    void createTrustedDeviceStore(db).revoke({
-      deviceId: asDeviceId(deviceId),
-      at: Date.now(),
-    });
+    // Removal is also what releases the deletion state that was only being kept
+    // for this device, so it goes through the one operation that does both.
+    void removeTrustedDevice({ db, deviceId: asDeviceId(deviceId) });
   };
 
   const pair = (): void => {

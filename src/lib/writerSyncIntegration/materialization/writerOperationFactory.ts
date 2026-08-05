@@ -14,6 +14,7 @@ import {
   type EncryptedSyncFrame,
   type SyncOperationHeader,
 } from 'writer-sync/operations';
+import { tombstoneOf } from './tombstone';
 
 type FrameHeader = Omit<SyncOperationHeader, 'payloadHash'>;
 import type { ReplicatedEntityMetadata } from 'writer-sync/core';
@@ -119,26 +120,43 @@ export const journalledPut = async (
   const frame = await makePutFrame(options);
   await options.db.transaction(
     'rw',
-    [options.db.table(options.entityTable), options.db.syncOperations],
+    [
+      options.db.table(options.entityTable),
+      options.db.syncOperations,
+      options.db.syncTombstones,
+    ],
     async () => {
       await options.db.table(options.entityTable).put(options.row);
       await options.db.syncOperations.put(frame);
+      // Writing the row again contradicts the deletion this device recorded for
+      // it; leaving the tombstone would have the rebuild describe both.
+      await options.db.syncTombstones.delete([options.entityTable, options.row.id]);
     },
   );
   return frame;
 };
 
-/** Commit a domain delete and its journal frame in one transaction. */
+/**
+ * Commit a domain delete, its journal frame and its tombstone in one
+ * transaction. The tombstone is not bookkeeping for later: it is what a
+ * full-state rebuild serves the deletion from once history has been compacted,
+ * and what refuses an older edit arriving from a peer afterwards.
+ */
 export const journalledDelete = async (
   options: JournalInputs & { entityId: string; accessScopeId: string },
 ): Promise<EncryptedSyncFrame> => {
   const frame = makeDeleteFrame(options);
   await options.db.transaction(
     'rw',
-    [options.db.table(options.entityTable), options.db.syncOperations],
+    [
+      options.db.table(options.entityTable),
+      options.db.syncOperations,
+      options.db.syncTombstones,
+    ],
     async () => {
       await options.db.table(options.entityTable).delete(options.entityId);
       await options.db.syncOperations.put(frame);
+      await options.db.syncTombstones.put(tombstoneOf(frame));
     },
   );
   return frame;

@@ -72,6 +72,10 @@ export const createTrustedDeviceStore = (db: LoremDB): TrustedDeviceRegistry => 
       });
     },
 
+    forget: async (deviceId) => {
+      await db.trustedDevices.delete(String(deviceId));
+    },
+
     recordSession: ({ deviceId, at }) =>
       mutate(deviceId, (record) => ({ ...record, lastSessionAt: at })),
 

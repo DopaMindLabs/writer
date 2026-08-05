@@ -54,10 +54,12 @@ export interface PairingExchange extends PairingExchangeState {
  * and an unconfirmed peer must not be left holding an open channel. Resolves to
  * whether the session was taken, which is what tells teardown to leave it alone.
  */
-const handOverSession = async (
-  catchUp: PeerCatchUp | null,
-  opened: PairingSignaller | null,
-): Promise<boolean> => {
+const handOverSession = async (options: {
+  catchUp: PeerCatchUp | null;
+  opened: PairingSignaller | null;
+  onExpired: () => void;
+}): Promise<boolean> => {
+  const { catchUp, opened, onExpired } = options;
   const peer = opened?.adapter.parameters();
   if (catchUp === null || !opened || !peer) return false;
   await catchUp.adopt({
@@ -70,9 +72,36 @@ const handOverSession = async (
       peer,
       sessionPrivateKey: opened.adapter.sessionPrivateKey(),
       deviceId: opened.deviceId,
+      onExpired: () => {
+        // The exchange is over and its key material with it. Disposing here
+        // rather than in the sync layer is what stops an ephemeral key
+        // outliving the window it belongs to.
+        opened.adapter.dispose();
+        onExpired();
+      },
     },
   });
   return true;
+};
+
+/**
+ * Move a pairing whose window closed to its terminal state.
+ *
+ * A confirmation that arrives too late leaves a machine mid-transfer and a
+ * dialog showing success. The machine refuses the transition once it is already
+ * terminal — cancelled by a dismissal, say — and that refusal is nothing to
+ * report: the pairing had ended either way.
+ */
+const expirePairing = (
+  machine: PairingSession,
+  dispatch: (action: PairingExchangeAction) => void,
+): void => {
+  try {
+    machine.apply('expire');
+  } catch {
+    return;
+  }
+  dispatch({ type: 'failed', reason: 'expired' });
 };
 
 /**
@@ -97,7 +126,15 @@ const confirmPairing = async (options: {
   if (machine?.state() !== PairingState.AwaitingConfirmation) return false;
   machine.apply('confirmed');
   try {
-    const taken = await handOverSession(catchUp, signaller);
+    const taken = await handOverSession({
+      catchUp,
+      opened: signaller,
+      // Expiry arrives after this promise has resolved — the transfer runs on
+      // its own — so it is reported here rather than thrown from adoption.
+      onExpired: () => {
+        expirePairing(machine, dispatch);
+      },
+    });
     dispatch({ type: 'confirmed' });
     return taken;
   } catch (error) {

@@ -8,7 +8,6 @@ import {
   createAttachmentTransfer,
   TRANSFER_CHUNK_BYTES,
   type CatchUpAttachments,
-  type CatchUpMessage,
 } from 'writer-sync/operations';
 import { sweepUnappliedFrames } from './materialization/frameIngestion';
 
@@ -91,8 +90,9 @@ const manifestsForScopes = async (
 export const createAttachmentChunkStore = (db: LoremDB): CatchUpAttachments => ({
   manifestsForScopes: (accessScopeIds) =>
     manifestsForScopes(db, accessScopeIds),
-  create: (send: (message: CatchUpMessage) => void) =>
+  create: (sends) =>
     createAttachmentTransfer({
+      ...sends,
       heldChunkIndices: async (attachmentId) => {
         const rows = await db.syncAttachmentChunks
           .where('attachmentId')
@@ -115,7 +115,6 @@ export const createAttachmentChunkStore = (db: LoremDB): CatchUpAttachments => (
       saveAttachment: async () => {
         await sweepUnappliedFrames(db);
       },
-      send,
       onRejected: (attachmentId, reason) => {
         appLogger.warn('refused an attachment from a peer', {
           attachmentId,

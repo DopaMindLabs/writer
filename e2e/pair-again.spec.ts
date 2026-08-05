@@ -49,8 +49,12 @@ test('sync survives removing a device and pairing it again', async ({
   await page.keyboard.press('Escape');
   await second.keyboard.press('Escape');
 
-  // The badge is gone: the record was reactivated, not duplicated.
-  await expect(page.getByText('Removed', { exact: true })).toHaveCount(0);
+  // The badge is gone: the record was reactivated, not duplicated. Trust is
+  // committed when the key conversation finishes, not when the digits are
+  // confirmed, so this lands a beat after the dialog says the devices paired.
+  await expect(page.getByText('Removed', { exact: true })).toHaveCount(0, {
+    timeout: SYNC_TIMEOUT,
+  });
 
   // Writing done on the once-removed device reaches this one — the direction
   // the revoked record used to silence.

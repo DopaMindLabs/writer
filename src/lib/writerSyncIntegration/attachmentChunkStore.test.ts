@@ -6,18 +6,36 @@ import {
   saveDeviceKeyRing,
 } from '@/lib/cloud/crypto/keyStore';
 import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
-import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
-import { toBase64Url } from 'writer-sync/crypto';
+import {
+  TrustedDeviceStatus,
+  asDeviceId,
+  asOperationId,
+  asPrincipalId,
+} from 'writer-sync/core';
+import {
+  generateDeviceIdentity,
+  publicJwkOf,
+  toBase64Url,
+  type DeviceIdentityKeys,
+} from 'writer-sync/crypto';
 import {
   buildChunkManifest,
   TRANSFER_CHUNK_BYTES,
   type CatchUpMessage,
 } from 'writer-sync/operations';
 import { prepareFramePayload } from './materialization/attachmentFramePayload';
-import { makePutFrame } from './materialization/writerOperationFactory';
+import {
+  makePutFrame,
+  signAuthoredFrames,
+} from './materialization/writerOperationFactory';
+import { createTrustedDeviceStore } from './trustedDeviceStore';
 import { createAttachmentChunkStore } from './attachmentChunkStore';
 
+const DEVICE_REMOTE = asDeviceId('remote-device');
+
 let db: LoremDB;
+/** The device the fixtures speak for, as its pairing left it recorded here. */
+let remote: DeviceIdentityKeys;
 
 const bytesOf = (): Uint8Array =>
   Uint8Array.from(
@@ -56,16 +74,29 @@ const thinFrame = async () => {
   });
   const frame = await makePutFrame({
     ring,
-    deviceId: asDeviceId('remote-device'),
+    deviceId: DEVICE_REMOTE,
     entityTable: 'noteAttachments',
     row: prepared.row,
   });
-  return { frame, chunks: prepared.chunks, ring };
+  // The sweep this store triggers attributes a frame before applying it.
+  const [signed] = await signAuthoredFrames(remote.privateKey, [frame]);
+  return { frame: signed, chunks: prepared.chunks, ring };
 };
 
 beforeEach(async () => {
   db = new LoremDB('attachment-chunk-store');
   await db.open();
+  remote = await generateDeviceIdentity();
+  await createTrustedDeviceStore(db).trust({
+    deviceId: DEVICE_REMOTE,
+    publicIdentityJwk: await publicJwkOf(remote.publicKey),
+    principalId: asPrincipalId('remote'),
+    addedAt: 1_700_000_000_000,
+    lastSessionAt: 1_700_000_000_000,
+    displayName: 'Remote',
+    status: TrustedDeviceStatus.Active,
+    acknowledgedOperations: {},
+  });
 });
 
 afterEach(async () => {
@@ -85,11 +116,12 @@ describe('createAttachmentChunkStore', () => {
     await db.syncOperations.put(frame);
     const adapter = createAttachmentChunkStore(db);
     const firstSent: CatchUpMessage[] = [];
-    const first = adapter.create((message) => firstSent.push(message));
+    const first = adapter.create({ send: (message) => { firstSent.push(message); } });
 
     await first.receive({
       v: 1,
       kind: 'attachment-offer',
+      cursor: 0,
       manifests: [manifest],
     });
     await first.receive({
@@ -103,10 +135,11 @@ describe('createAttachmentChunkStore', () => {
     });
 
     const resumedSent: CatchUpMessage[] = [];
-    const resumed = adapter.create((message) => resumedSent.push(message));
+    const resumed = adapter.create({ send: (message) => { resumedSent.push(message); } });
     await resumed.receive({
       v: 1,
       kind: 'attachment-offer',
+      cursor: 0,
       manifests: [manifest],
     });
 
@@ -127,7 +160,7 @@ describe('createAttachmentChunkStore', () => {
     await db.syncOperations.put(frame);
     const adapter = createAttachmentChunkStore(db);
     const sent: CatchUpMessage[] = [];
-    const transfer = adapter.create((message) => sent.push(message));
+    const transfer = adapter.create({ send: (message) => { sent.push(message); } });
     const content = new Uint8Array(
       chunks.reduce((total, chunk) => total + atob(chunk.bytes).length, 0),
     );
@@ -148,6 +181,7 @@ describe('createAttachmentChunkStore', () => {
     await transfer.receive({
       v: 1,
       kind: 'attachment-offer',
+      cursor: 0,
       manifests: [manifest],
     });
     for (const chunk of chunks) {

@@ -164,6 +164,25 @@ interface TransferContext {
   state: TransferState;
 }
 
+/**
+ * The peer has nothing further to say about keys.
+ *
+ * A peer that is ready has stopped saying what it holds — the two refrains
+ * replace each other, so a device that missed the earlier ones would never
+ * learn there was nothing to move, and would wait out a deadline over a
+ * conversation both ends had in fact finished. It never asked for a root and
+ * this device has one, so there is nothing either of them needs.
+ */
+const takePeerReady = (context: TransferContext): void => {
+  const { ports, settle, state } = context;
+  state.peerReady = true;
+  if (state.outcome === null && ports.holdsRoot() && !state.peerNeedsRoot) {
+    settle('not-needed');
+    return;
+  }
+  context.finishTogether();
+};
+
 const receiveMessage = async (
   context: TransferContext,
   message: RootTransferMessage,
@@ -180,8 +199,7 @@ const receiveMessage = async (
     return;
   }
   if (message.kind === 'ready') {
-    state.peerReady = true;
-    context.finishTogether();
+    takePeerReady(context);
     return;
   }
   if (message.kind === 'holds-root') {

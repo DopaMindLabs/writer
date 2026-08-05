@@ -50,7 +50,13 @@ export type { SyncTransport } from './transport.types';
 export { asDeviceId, asOperationId, asPrincipalId } from './ids';
 export type { DeviceId, OperationId, PrincipalId } from './ids';
 
-export { compareTimestamps, createHybridLogicalClock } from './hybridLogicalClock';
+export {
+  MAX_OBSERVED_DRIFT_MILLIS,
+  RemoteClockDriftError,
+  assertAcceptableRemoteTime,
+  compareTimestamps,
+  createHybridLogicalClock,
+} from './hybridLogicalClock';
 export type { HybridLogicalClock, HybridLogicalTimestamp } from './hybridLogicalClock';
 
 export { createEntityMetadata, updateEntityMetadata } from './entityMetadata';

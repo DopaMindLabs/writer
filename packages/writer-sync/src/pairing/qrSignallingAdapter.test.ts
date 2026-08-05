@@ -271,3 +271,91 @@ describe('authenticated parameters', () => {
     expect(adapter.parameters()).toBeNull();
   });
 });
+
+describe('the authenticated deadline', () => {
+  /** An exchange whose two halves were stamped at different instants. */
+  const staggered = async (options: {
+    offerExpiresAt: number;
+    answerAt: number;
+  }) => {
+    const initiator = await buildAdapter(recordingPeer());
+    // The joiner scans late, so the answer it mints runs past the offer it is
+    // answering.
+    const joiner = await buildAdapter(recordingPeer(), () => options.answerAt);
+
+    const offer = await initiator.createOffer({
+      sessionId: 'session-one',
+      expiresAt: options.offerExpiresAt,
+    });
+    const answer = await joiner.acceptOffer(offer);
+    await initiator.acceptAnswer(answer);
+
+    return { initiator, joiner, offer, answer };
+  };
+
+  it('is the earlier of the two signed deadlines, on the initiator', async () => {
+    const offerExpiresAt = NOW + 60_000;
+    const { initiator, answer } = await staggered({
+      offerExpiresAt,
+      answerAt: NOW + 30_000,
+    });
+
+    // An answer minted later carries a later deadline. Adopting it would hand
+    // the initiator a fresh window for a code whose own was nearly out.
+    expect(answer.expiresAt).toBeGreaterThan(offerExpiresAt);
+    expect(initiator.parameters()?.expiresAt).toBe(offerExpiresAt);
+  });
+
+  it('is the earlier of the two signed deadlines, on the joiner', async () => {
+    const offerExpiresAt = NOW + 60_000;
+    const { joiner } = await staggered({ offerExpiresAt, answerAt: NOW + 30_000 });
+
+    // Both ends must agree, or the one with the longer window would still be
+    // wrapping a root the other had already given up on.
+    expect(joiner.parameters()?.expiresAt).toBe(offerExpiresAt);
+  });
+
+  it('keeps the answer’s deadline when it is the earlier one', async () => {
+    // A joiner whose clock trails inside the tolerated skew mints the earlier
+    // deadline of the two.
+    const { initiator, joiner, answer } = await staggered({
+      offerExpiresAt: NOW + SESSION_TTL_MILLIS,
+      answerAt: NOW - 30_000,
+    });
+    expect(answer.expiresAt).toBeLessThan(NOW + SESSION_TTL_MILLIS);
+
+    expect(initiator.parameters()?.expiresAt).toBe(answer.expiresAt);
+    expect(joiner.parameters()?.expiresAt).toBe(answer.expiresAt);
+  });
+});
+
+describe('dispose', () => {
+  it('lets go of the session key and everything it authenticated', async () => {
+    const { initiator } = await exchange();
+    expect(initiator.sessionPrivateKey()).not.toBeNull();
+    expect(initiator.parameters()).not.toBeNull();
+
+    initiator.dispose();
+
+    // An expired pairing that still holds its ephemeral key can still open a
+    // wrapper sealed to it, which is the whole reason the deadline exists.
+    expect(initiator.sessionPrivateKey()).toBeNull();
+    expect(initiator.parameters()).toBeNull();
+  });
+
+  it('is idempotent, and leaves the adapter unable to continue', async () => {
+    const { initiator } = await exchange();
+    initiator.dispose();
+
+    expect(() => initiator.dispose()).not.toThrow();
+    // The session it was authenticating is gone, so an answer arriving late
+    // has nothing to be checked against.
+    await expect(
+      initiator.acceptAnswer(
+        await (await buildAdapter(recordingPeer())).acceptOffer(
+          await (await buildAdapter(recordingPeer())).createOffer(offerOptions('other')),
+        ),
+      ),
+    ).rejects.toBeInstanceOf(PairingError);
+  });
+});

@@ -12,6 +12,14 @@ export {
   BUFFER_HIGH_WATER_BYTES,
   FrameTooLargeError,
   MAX_FRAME_BYTES,
+  INBOUND_WINDOW_MILLIS,
+  InboundRateLimitError,
+  MAX_INBOUND_BYTES,
+  MAX_INBOUND_MESSAGES,
+  MAX_OUTBOX_BYTES,
+  MAX_OUTBOX_MESSAGES,
+  NonBinaryMessageError,
+  TransportBackpressureError,
   createWebRtcTransport,
 } from './webRtcTransport';
 export type { DataChannelLike } from './webRtcTransport';

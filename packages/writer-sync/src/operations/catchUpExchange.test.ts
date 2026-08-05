@@ -192,11 +192,12 @@ describe('createCatchUpExchange on a peer request', () => {
     const { exchange, sent } = harness({
       attachments: {
         manifestsForScopes,
-        create: (send) => ({
+        create: ({ send }) => ({
           offer: (manifests) => {
             send({
               v: CATCH_UP_PROTOCOL_VERSION,
               kind: 'attachment-offer',
+              cursor: 0,
               manifests: [...manifests],
             });
           },
@@ -219,7 +220,7 @@ describe('createCatchUpExchange on a peer request', () => {
     expect(manifestsForScopes).toHaveBeenCalledWith(['scope-1']);
     expect(sent).toEqual([
       { v: 1, kind: 'frames', frames: [], final: true },
-      { v: 1, kind: 'attachment-offer', manifests: [manifest] },
+      { v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] },
     ]);
   });
 

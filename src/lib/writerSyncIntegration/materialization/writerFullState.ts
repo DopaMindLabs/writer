@@ -23,6 +23,11 @@ import { prepareFramePayload } from './attachmentFramePayload';
  * A row is described only where a key resolves for its scope. A scope this
  * device cannot seal for is one it cannot serve — framing those rows in
  * plaintext would hand a peer content the pairing never authorised.
+ *
+ * **Absence describes nothing.** Rebuilt puts alone would tell a returning peer
+ * what exists and leave it holding every row deleted while it was away — both
+ * devices reporting "caught up" over different documents. The scope's retained
+ * deletions therefore travel with them, as the frames their authors signed.
  */
 
 export interface WriterFullStateDeps {
@@ -78,6 +83,44 @@ const framesForRows = async ({
   return { frames, chunks };
 };
 
+/** A tombstone whose signed delete frame the journal no longer holds. */
+export class MissingRetainedDeleteError extends Error {
+  constructor(operationId: string) {
+    super(`The delete frame for retained operation ${operationId} is gone`);
+    this.name = 'MissingRetainedDeleteError';
+  }
+}
+
+/**
+ * The deletions this scope still owes a returning peer, as originally signed.
+ *
+ * Served from the journal rather than rebuilt: a deletion is attributed to the
+ * device that made it, and manufacturing a replacement here would put this
+ * device's name and signature on someone else's decision. Compaction keeps a
+ * delete frame for as long as its tombstone stands, so a missing one is a
+ * broken retention rule and is reported rather than skipped — skipping it would
+ * send a rebuild that silently omits a deletion, which is the failure this
+ * whole path exists to prevent.
+ */
+const retainedDeletes = async (
+  db: LoremDB,
+  accessScopeId: AccessScopeId,
+): Promise<EncryptedSyncFrame[]> => {
+  const tombstones = await db.syncTombstones
+    .where('accessScopeId')
+    .equals(accessScopeId)
+    .toArray();
+  return Promise.all(
+    tombstones.map(async ({ operationId }) => {
+      const frame = await db.syncOperations.get(String(operationId));
+      if (frame?.kind !== 'delete') {
+        throw new MissingRetainedDeleteError(String(operationId));
+      }
+      return frame;
+    }),
+  );
+};
+
 export const createWriterFullState =
   ({ db, resolver, identity }: WriterFullStateDeps) =>
   async (accessScopeId: AccessScopeId): Promise<EncryptedSyncFrame[]> => {
@@ -111,5 +154,7 @@ export const createWriterFullState =
 
     const signed = await signAuthoredFrames(privateKey, built);
     if (chunks.length > 0) await db.syncAttachmentChunks.bulkPut(chunks);
-    return signed;
+    // Deletions travel beside the rows that survive, and a scope whose rows
+    // were all deleted answers with deletions alone rather than with nothing.
+    return [...signed, ...(await retainedDeletes(db, accessScopeId))];
   };

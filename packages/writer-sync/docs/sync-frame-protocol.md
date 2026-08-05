@@ -301,11 +301,20 @@ refuses an empty signature. It refuses rather than throws, because Stage 1 frame
 with `''` are ordinary old data on disk, not a caller's mistake — such a frame is
 simply no longer attributable and is not journalled from a peer.
 
+**Every route, not just the peer link.** Materialisation verifies the signature
+itself, so a frame a durable provider replicates straight into the journal is
+attributed before it is decrypted, journalled or applied. The host supplies the
+verifier; Writer's (`writerFrameVerifier.ts`) accepts a paired device from the
+registry, and this device's own frames against its own public key — a frame
+forged under this device's id fails like any other.
+
 **A consequence worth stating.** Refusing unknown origins means a device accepts
 operations only from devices it has itself paired with. Where A–B and B–C are
-paired but A–C are not, B cannot relay A's operations onward to C. That is the
-conservative reading of the rule above; widening it needs a way for C to learn
-A's identity key that does not amount to B vouching for it.
+paired but A–C are not, B cannot relay A's operations onward to C — and a device
+that reaches another only through a durable provider, having never paired with
+it, converges nothing. That is the conservative reading of the rule above;
+widening it needs a way for C to learn A's identity key that does not amount to
+B vouching for it.
 
 ---
 
@@ -339,10 +348,37 @@ before incremental storage; the assembled ciphertext is checked against
 `contentHash`, then AES-GCM authentication binds it to the framed row before a
 `Blob` is materialised.
 
-Transfer is resumable. A holder offers manifests only after the catch-up frame
-batches and their final marker; the receiver asks only for missing indices.
-Verified chunks persist immediately, so a later peer session resumes from the
-stored gap. A thin attachment frame stays journalled but absent from `syncInbox`
+Transfer is resumable, and demand-driven in both directions. A holder offers
+manifests only after the catch-up frame batches and their final marker, one page
+of at most `MAX_OFFERS_PER_PAGE` at a time — the number a receiver will assemble
+at once. Offering more is worse than offering fewer: the receiver refuses
+everything past its in-flight ceiling and those attachments are never mentioned
+again. Each page carries a `cursor` into the holder's catalogue, and the
+receiver answers with `attachment-offer-next` once every manifest in the page is
+complete, already held or refused, which is what walks a catalogue of any size.
+
+The cursor is session state on both sides, and only one value is legal at a
+time: the receiver takes a page only at the cursor after the last one it
+settled, and the holder serves an `attachment-offer-next` only for the page it
+is waiting to be asked for. A cursor that is replayed, points backwards,
+overlaps a page already taken, skips one, or arrives while a page is still
+outstanding fails the session with `AttachmentCursorError`, as does a page
+offering no manifests. Silently re-offering or overwriting the page in flight
+would drop the attachments in it and leave both devices acknowledging a place in
+the catalogue neither is at.
+
+The receiver asks only for missing indices, at most `MAX_REQUESTED_CHUNKS` at a
+time, and asks for the next page only once the one in flight has been answered:
+asking after every chunk would have the holder serve indices it is already
+serving. Chunks are served against the transport's `sendWhenReady`, so the
+holder moves at the bearer's pace — a legal request of 256 chunks answered in
+one pass would overrun the outbox in front of the channel and fail a session
+neither peer misused. A holder that cannot supply an index it was asked for says so with an
+`attachment-unavailable` message rather than falling silent — the receiver is
+waiting on that page, so silence stalls the transfer for the life of the
+session. The transfer is then dropped rather than left pending, so a later offer
+can start it again. Verified chunks persist immediately, so a later peer session
+resumes from the stored gap. A thin attachment frame stays journalled but absent from `syncInbox`
 while chunks are missing, and the ordinary ingestion sweep retries it when the
 transfer completes. Dexie Cloud carries the same bounded ciphertext as replicated
 `syncAttachmentChunks` rows, so the thin frame contract is identical across

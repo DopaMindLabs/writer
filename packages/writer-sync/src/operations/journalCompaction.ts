@@ -29,6 +29,13 @@ import { retentionCutoff, type RetentionOptions } from './journalRetention';
  * *each* originating device, and coverage is only ever decided between
  * operations from the same origin — where that device's own clock gives a total
  * order that cannot disagree with delivery.
+ *
+ * **A deletion is state, not history.** A delete frame named by a surviving
+ * tombstone is exempt from the window entirely: it leaves when the tombstone
+ * does, on unanimous acknowledgement or the removal of the peer that never
+ * acknowledged it. Ageing it out separately would leave the deletion with
+ * nothing to serve it from, and a device returning after the window would keep
+ * a row every other device had deleted.
  */
 
 /** How far one still-trusted peer has read each originating device, per scope. */
@@ -41,6 +48,15 @@ export interface CompactionOptions {
   retention: RetentionOptions;
   /** Only currently-trusted peers hold the journal open. */
   peers: readonly PeerAcknowledgement[];
+  /**
+   * The deletion state that survives this pass. A tombstone and the signed
+   * delete frame it names are one retention unit: the tombstone is what a
+   * returning peer is served the deletion from, and the frame is the only
+   * evidence of it anyone else will accept, so the window must not take one
+   * while the other stands. Required rather than optional — a caller that
+   * omitted it would compact away deletions it still owes its peers.
+   */
+  tombstones: readonly SyncTombstone[];
 }
 
 const byOperationId = (
@@ -80,12 +96,16 @@ export const compactableOperationIds = (
   const cutoff = retentionCutoff(options.retention);
   const index = byOperationId(frames);
   const { peers } = options;
+  const retained = new Set(
+    options.tombstones.map((tombstone) => String(tombstone.operationId)),
+  );
 
   const heldByEveryPeer = (frame: EncryptedSyncFrame): boolean =>
     peers.length > 0 &&
     peers.every((peer) => isHeldByPeer({ peer, frame, frames: index }));
 
   return frames
+    .filter((frame) => !retained.has(String(frame.operationId)))
     .filter((frame) => frame.logicalAt.millis <= cutoff || heldByEveryPeer(frame))
     .map((frame) => frame.operationId);
 };
@@ -103,8 +123,14 @@ export const compactableOperationIds = (
 export const releasableTombstones = (
   tombstones: readonly SyncTombstone[],
   peers: readonly PeerAcknowledgement[],
+  options: { withoutPeersIsUnanimous?: boolean } = {},
 ): SyncTombstone[] => {
-  if (peers.length === 0) return [];
+  // With nobody to wait for, unanimity is vacuous. A routine pass therefore
+  // holds: a device between pairings is not a device that has finished with
+  // them, and a peer paired tomorrow could still be holding what was deleted
+  // today. Removal is the exception, because there the user has said the
+  // relationship is over — see `withoutPeersIsUnanimous`.
+  if (peers.length === 0) return options.withoutPeersIsUnanimous ? [...tombstones] : [];
   return tombstones.filter((tombstone) => {
     const acknowledged = new Set(tombstone.acknowledgedBy);
     return peers.every((peer) => acknowledged.has(String(peer.deviceId)));
