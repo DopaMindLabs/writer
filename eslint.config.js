@@ -112,6 +112,8 @@ export default tseslint.config(
       'src/**/*.test.{ts,tsx}',
       'src/**/*.stories.{ts,tsx}',
       'src/test/**',
+      'packages/*/src/**/*.test.ts',
+      'packages/*/test/**/*.ts',
       'e2e/**/*.ts',
       '.storybook/**/*.{ts,tsx}',
     ],

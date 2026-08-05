@@ -20,7 +20,13 @@ import type {
 } from './schema';
 import type { EscrowRecord } from '@/lib/cloud/crypto/keys';
 import type { DeviceRecord } from '@/lib/cloud/devicePolicy';
-import { STORES } from './stores';
+import type {
+  EncryptedSyncFrame,
+  SyncInboxEntry,
+  SyncTombstone,
+} from 'writer-sync/operations';
+import type { SyncProviderBinding } from 'writer-sync/core';
+import { STORES, STORES_V1 } from './stores';
 
 /**
  * Construction options for {@link LoremDB}. `cloud` opts the instance into the
@@ -52,6 +58,14 @@ export class LoremDB extends Dexie {
   syncs!: Table<SyncEntry, string>;
   syncConfigs!: Table<SyncConfig, string>;
   docInspectorConfigs!: Table<DocInspectorConfig, string>;
+  /** The append-only operation journal — immutable encrypted frames. */
+  syncOperations!: Table<EncryptedSyncFrame, string>;
+  /** Accepted operation ids and their materialisation result. */
+  syncInbox!: Table<SyncInboxEntry, string>;
+  /** Deletion tombstones with acknowledgement state. */
+  syncTombstones!: Table<SyncTombstone, [string, string]>;
+  /** Local provider configuration per access scope. */
+  syncProviderBindings!: Table<SyncProviderBinding, [string, string]>;
   /** Present only on cloud-enabled instances (`options.cloud`). */
   cloudCrypto!: Table<EscrowRecord, string>;
   /** Present only on cloud-enabled instances (`options.cloud`). */
@@ -59,9 +73,12 @@ export class LoremDB extends Dexie {
 
   constructor(name = 'lipsum', options: LoremDBOptions = {}) {
     super(name, options.addons ? { addons: options.addons } : undefined);
-    const stores = options.cloud
-      ? { ...STORES, cloudCrypto: 'id', cloudDevices: 'id' }
-      : STORES;
-    this.version(1).stores(stores);
+    const cloudStores: Record<string, string> = options.cloud
+      ? { cloudCrypto: 'id', cloudDevices: 'id' }
+      : {};
+    this.version(1).stores({ ...STORES_V1, ...cloudStores });
+    // Version 2 adds the operation-protocol stores; existing rows need no
+    // migration — the new tables simply start empty.
+    this.version(2).stores({ ...STORES, ...cloudStores });
   }
 }

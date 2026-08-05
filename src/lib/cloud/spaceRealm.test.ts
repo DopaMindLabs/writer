@@ -2,13 +2,19 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import dexieCloud from 'dexie-cloud-addon';
 import { buildDb } from '@/db/buildDb';
 import { LoremDB } from '@/db/LoremDB';
-import { NoteKind, NoteLayout, NoteState } from '@/db/schema';
+import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
 import { InvariantError } from '@/lib/invariant';
+import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
+import type { SyncKeyRing } from 'writer-sync/crypto';
+import { makePutFrame } from '@/lib/writerSyncIntegration/materialization/writerOperationFactory';
+import type { EncryptedSyncFrame } from 'writer-sync/operations';
+import { sampleMetadata } from '@/test/fixtures';
+import { DEXIE_CLOUD_PROVIDER_ID } from './dexieCloudProviderId';
+import type { DexieRow } from './dexieRow';
 import {
-  REALM_TABLE_NAMES,
   createSpaceRealm,
   dropSpaceRealm,
-  restampSpace,
+  restampScopeFrames,
 } from './spaceRealm';
 
 /**
@@ -21,80 +27,66 @@ import {
  * {@link createSpaceRealm} must refuse: minting a realm then produces one whose
  * id *is* the private realm, because the addon stamps `realmId` on every written
  * row and the `realms` table is keyed on `realmId`.
+ *
+ * Since the frame cutover, a realm binds the scope's **operation frames** —
+ * materialised content rows are local projections that never leave the device —
+ * so the fan-out these tests exercise is over `syncOperations`.
  */
 let db: LoremDB;
+let ring: SyncKeyRing;
 
-/** A space with one row in every table sharing must reach, plus a local-only one. */
+const DEVICE = asDeviceId('device-a');
+
+/** A space with one enqueued frame per scope, plus a local-only row. */
 const seedSpace = async (): Promise<void> => {
   await db.spaces.put({
+    ...sampleMetadata(),
     id: 's1', tag: 'TST', name: 'Space', shared: false, template: 'blank',
     createdAt: 1, updatedAt: 1,
   });
-  await db.sections.put({
-    id: 'sec1', spaceId: 's1', parentSectionId: null, label: 'Part', order: 1,
-  });
-  await db.docs.put({
-    id: 'd1', spaceId: 's1', sectionId: 'sec1', name: 'Doc', body: '',
-    meta: { wordCount: 0 }, updatedAt: 1,
-  });
-  await db.notes.put({
-    id: 'n1', spaceId: 's1', l: 0, t: 0, w: 1, h: 1, kind: NoteKind.Note,
-    state: NoteState.User, title: 'Note', body: '', layout: NoteLayout.Text,
-    createdAt: 1,
-  });
-  await db.annotations.put({
-    id: 'ann1', docId: 'd1', rangeStart: 0, rangeEnd: 1, kind: 'highlight',
-    author: 'me', createdAt: 1,
-  });
-  await db.revisions.put({
-    id: 'rev1', docId: 'd1', body: '', text: '', wordCount: 0,
-    kind: 'manual', createdAt: 1,
-  });
-  await db.citations.put({
-    id: 'cit1', spaceId: 's1', key: 'k', authors: 'A', title: 'T', year: 2020,
-    type: 'book', useCount: 0,
-  });
-  await db.palettes.put({ id: 'pal1', spaceId: 's1', slots: [] });
+  await enqueueFrame({ scopeId: 's1', entityId: 'n1' });
+  await enqueueFrame({ scopeId: 's1', entityId: 'n2' });
+  // A different scope's operation: it must never be caught by the fan-out.
+  await enqueueFrame({ scopeId: 's2', entityId: 'n3' });
   // Local-only: never leaves the device, so it must never carry a realm.
   await db.syncConfigs.put({ spaceId: 's1', intervalMin: 30 });
 };
 
-const SYNCED_ROWS = [
-  ['spaces', 's1'],
-  ['sections', 'sec1'],
-  ['docs', 'd1'],
-  ['notes', 'n1'],
-  ['annotations', 'ann1'],
-  ['revisions', 'rev1'],
-  ['citations', 'cit1'],
-  ['palettes', 'pal1'],
-] as const;
-
-const stampedRealms = async (): Promise<(string | undefined)[]> =>
-  Promise.all(
-    SYNCED_ROWS.map(async ([table, id]) => {
-      const row = await db.table<{ realmId?: string }>(table).get(id);
-      return row?.realmId;
+const enqueueFrame = async (options: {
+  scopeId: string;
+  entityId: string;
+}): Promise<void> => {
+  await db.syncOperations.put(
+    await makePutFrame({
+      ring,
+      deviceId: DEVICE,
+      entityTable: 'notes',
+      row: {
+        ...sampleMetadata(options.scopeId),
+        mutationId: asOperationId(`op-${options.entityId}`),
+        createdBy: asPrincipalId('me'),
+        updatedBy: asPrincipalId('me'),
+        id: options.entityId,
+      },
     }),
-  );
-
-const restamp = async (realmId: string | undefined): Promise<void> => {
-  await db.transaction(
-    'rw',
-    REALM_TABLE_NAMES.map((name) => db.table(name)),
-    () =>
-      restampSpace({
-        db,
-        spaceId: 's1',
-        stamp: (row) => {
-          if (realmId === undefined) delete row.realmId;
-          else row.realmId = realmId;
-        },
-      }),
   );
 };
 
+/** The realm stamped on each frame, keyed by operation id. */
+const stampedRealms = async (): Promise<Record<string, string | undefined>> => {
+  const frames = await db
+    .table<DexieRow<EncryptedSyncFrame>>('syncOperations')
+    .toArray();
+  return Object.fromEntries(
+    frames.map((frame) => [String(frame.operationId), frame.realmId]),
+  );
+};
+
+const bindingFor = (scopeId: string) =>
+  db.syncProviderBindings.get([scopeId, DEXIE_CLOUD_PROVIDER_ID]);
+
 beforeEach(async () => {
+  ring = await deriveKeyRing(generateMasterSecret(), 1);
   db = buildDb(`realm-${String(Math.random()).slice(2)}`);
   await db.open();
   await seedSpace();
@@ -104,50 +96,40 @@ afterEach(async () => {
   await db.delete();
 });
 
-describe('restampSpace', () => {
-  it('reaches the space and every synced descendant, including doc-scoped rows', async () => {
-    await restamp('rlm-shared');
+describe('restampScopeFrames', () => {
+  it('stamps every frame of the scope and nothing else', async () => {
+    expect(
+      await restampScopeFrames({ db, accessScopeId: 's1', realmId: 'rlm-shared' }),
+    ).toBe(2);
 
-    expect(await stampedRealms()).toEqual(Array<string>(8).fill('rlm-shared'));
+    expect(await stampedRealms()).toEqual({
+      'op-n1': 'rlm-shared',
+      'op-n2': 'rlm-shared',
+      // Another scope's operation stays where it was.
+      'op-n3': undefined,
+    });
   });
 
-  it('clears the realm again, returning every row to the private realm', async () => {
-    await restamp('rlm-shared');
+  it('leaves the ciphertext payload untouched — a realm is routing, not content', async () => {
+    const before = await db.syncOperations.get('op-n1');
+    await restampScopeFrames({ db, accessScopeId: 's1', realmId: 'rlm-shared' });
 
-    await restamp(undefined);
-
-    expect(await stampedRealms()).toEqual(Array<undefined>(8).fill(undefined));
+    const after = await db.syncOperations.get('op-n1');
+    expect(after?.payload).toBe(before?.payload);
+    expect(after?.payloadHash).toBe(before?.payloadHash);
+    expect(after?.accessScopeId).toBe('s1');
   });
 
   it('never stamps a local-only row — those never reach the server', async () => {
-    await restamp('rlm-shared');
+    await restampScopeFrames({ db, accessScopeId: 's1', realmId: 'rlm-shared' });
 
     expect(await db.syncConfigs.get('s1')).not.toHaveProperty('realmId');
   });
 
-  it('leaves a sibling space and its documents alone', async () => {
-    await db.spaces.put({
-      id: 's2', tag: 'OTH', name: 'Other', shared: false, template: 'blank',
-      createdAt: 1, updatedAt: 1,
-    });
-    await db.docs.put({
-      id: 'd2', spaceId: 's2', sectionId: 'sec2', name: 'Other doc', body: '',
-      meta: { wordCount: 0 }, updatedAt: 1,
-    });
-
-    await restamp('rlm-shared');
-
-    expect((await db.spaces.get('s2'))?.realmId).toBeUndefined();
-    expect((await db.docs.get('d2'))?.realmId).toBeUndefined();
-  });
-
-  it('copes with a space that has no documents', async () => {
-    await db.docs.clear();
-    await db.annotations.clear();
-    await db.revisions.clear();
-
-    await expect(restamp('rlm-shared')).resolves.toBeUndefined();
-    expect((await db.spaces.get('s1'))?.realmId).toBe('rlm-shared');
+  it('copes with a scope that has no enqueued operations', async () => {
+    expect(
+      await restampScopeFrames({ db, accessScopeId: 'empty', realmId: 'rlm-shared' }),
+    ).toBe(0);
   });
 });
 
@@ -155,7 +137,7 @@ describe('createSpaceRealm', () => {
   it('refuses while signed out, rather than minting a realm that grants nobody access', async () => {
     await expect(createSpaceRealm('s1', db)).rejects.toThrow(InvariantError);
 
-    expect(await stampedRealms()).toEqual(Array<undefined>(8).fill(undefined));
+    expect(await bindingFor('s1')).toBeUndefined();
   });
 
   it('refuses an unknown space', async () => {
@@ -164,14 +146,18 @@ describe('createSpaceRealm', () => {
 });
 
 describe('dropSpaceRealm', () => {
-  it("is a no-op on a space in its owner's private realm", async () => {
+  it("is a no-op on a scope in its owner's private realm", async () => {
     await expect(dropSpaceRealm('s1', db)).resolves.toBeUndefined();
 
-    expect(await stampedRealms()).toEqual(Array<undefined>(8).fill(undefined));
+    expect(await stampedRealms()).toEqual({
+      'op-n1': undefined,
+      'op-n2': undefined,
+      'op-n3': undefined,
+    });
   });
 
-  it('refuses an unknown space', async () => {
-    await expect(dropSpaceRealm('nope', db)).rejects.toThrow(InvariantError);
+  it('is a no-op on an unknown scope', async () => {
+    await expect(dropSpaceRealm('nope', db)).resolves.toBeUndefined();
   });
 });
 
@@ -193,43 +179,53 @@ describe('share and unshare against the cloud schema', () => {
     await seedSpace();
   });
 
-  /**
-   * Sign the database in as `user-a`: the addon's default-realm middleware has
-   * stamped every seeded row `'unauthorized'`, so move them into the signed-in
-   * user's private realm (what syncification does on a real login) and report
-   * that user from the addon's public `currentUserId`.
-   */
-  const signIn = async (): Promise<void> => {
-    await restamp('user-a');
+  /** Report `user-a` from the addon's public `currentUserId`, as login does. */
+  const signIn = (): void => {
     vi.spyOn(db.cloud, 'currentUserId', 'get').mockReturnValue('user-a');
   };
 
-  it('createSpaceRealm mints a realm and files every synced row into it', async () => {
-    await signIn();
+  it('mints a realm, files the scope’s frames into it and records the binding', async () => {
+    signIn();
 
     const realmId = await createSpaceRealm('s1', db);
 
-    expect(await stampedRealms()).toEqual(Array<string>(8).fill(realmId));
+    expect(await stampedRealms()).toMatchObject({
+      'op-n1': realmId,
+      'op-n2': realmId,
+    });
     expect(await db.realms.get(realmId)).toMatchObject({ name: 'Space' });
+    // The binding is what later frames inherit: the provider resolves a scope
+    // through it rather than re-reading a content row. (Matched loosely: this
+    // harness leaves the addon unconfigured, so it stamps its own realm/owner
+    // onto the row — in the app the table is local-only and it cannot.)
+    expect(await bindingFor('s1')).toMatchObject({
+      scopeId: 's1',
+      providerInstanceId: DEXIE_CLOUD_PROVIDER_ID,
+      externalScopeId: realmId,
+      enabled: true,
+    });
   });
 
-  it('createSpaceRealm refuses a space that is already shared', async () => {
-    await signIn();
+  it('refuses a scope that is already bound to a realm', async () => {
+    signIn();
     await createSpaceRealm('s1', db);
 
     await expect(createSpaceRealm('s1', db)).rejects.toThrow(InvariantError);
   });
 
-  it('dropSpaceRealm returns the rows to the private realm and deletes the realm', async () => {
-    await db.realms.put({ realmId: 'rlm-shared', name: 'Space' });
-    await db.members.add({ realmId: 'rlm-shared', email: 'a@b.c' });
-    await restamp('rlm-shared');
+  it('returns the frames to the private realm, dropping realm, members and binding', async () => {
+    signIn();
+    const realmId = await createSpaceRealm('s1', db);
+    await db.members.add({ realmId, email: 'a@b.c' });
 
     await dropSpaceRealm('s1', db);
 
-    // Signed out, the private realm is the addon's 'unauthorized' placeholder.
-    expect(await stampedRealms()).toEqual(Array<string>(8).fill('unauthorized'));
-    expect(await db.realms.get('rlm-shared')).toBeUndefined();
-    expect(await db.members.where({ realmId: 'rlm-shared' }).count()).toBe(0);
+    expect(await stampedRealms()).toMatchObject({
+      'op-n1': 'user-a',
+      'op-n2': 'user-a',
+    });
+    expect(await db.realms.get(realmId)).toBeUndefined();
+    expect(await db.members.where({ realmId }).count()).toBe(0);
+    expect(await bindingFor('s1')).toBeUndefined();
   });
 });

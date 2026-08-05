@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { InlineBanner } from '@/components/ui/InlineBanner';
-import { SyncPhase } from '@/lib/syncProviders/types';
-import { KeyEscrowPresence } from '@/lib/syncProviders/types';
+import { SyncPhase } from 'writer-sync/core';
+import { KeyEscrowPresence } from 'writer-sync/core';
 import { CloudKeylessPendingBanner } from './CloudKeylessPendingBanner';
 
 export interface CloudKeylessAccountSectionProps {

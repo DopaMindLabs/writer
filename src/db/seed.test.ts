@@ -7,7 +7,7 @@ import {
 import { NoteKind, NoteState } from './schema';
 import { TemplateStage, type Template } from '@/data/templates';
 import { EMPTY_LEXICAL_JSON } from '@/lib/docs';
-import { FIXED_TIME, serializedBody } from '@/test/fixtures';
+import { FIXED_TIME, sampleMetadata, serializedBody } from '@/test/fixtures';
 import { isParseableBody } from '@/lib/revisions';
 
 const DOC_B_BODY = serializedBody('b');
@@ -131,6 +131,7 @@ describe('deleteNoteWithCascade', () => {
   it('removes connections referencing the deleted note from either end', async () => {
     await db.notes.bulkPut([
       {
+        ...sampleMetadata(),
         id: 'n1',
         spaceId: 's1',
         l: 0,
@@ -143,6 +144,7 @@ describe('deleteNoteWithCascade', () => {
         createdAt: FIXED_TIME,
       },
       {
+        ...sampleMetadata(),
         id: 'n2',
         spaceId: 's1',
         l: 0,
@@ -155,6 +157,7 @@ describe('deleteNoteWithCascade', () => {
         createdAt: FIXED_TIME,
       },
       {
+        ...sampleMetadata(),
         id: 'n3',
         spaceId: 's1',
         l: 0,
@@ -169,6 +172,7 @@ describe('deleteNoteWithCascade', () => {
     ]);
     await db.connections.bulkPut([
       {
+        ...sampleMetadata(),
         id: 'c1',
         spaceId: 's1',
         fromNoteId: 'n1',
@@ -176,6 +180,7 @@ describe('deleteNoteWithCascade', () => {
         createdAt: FIXED_TIME,
       },
       {
+        ...sampleMetadata(),
         id: 'c2',
         spaceId: 's1',
         fromNoteId: 'n3',
@@ -183,6 +188,7 @@ describe('deleteNoteWithCascade', () => {
         createdAt: FIXED_TIME,
       },
       {
+        ...sampleMetadata(),
         id: 'c3',
         spaceId: 's1',
         fromNoteId: 'n2',
@@ -201,6 +207,7 @@ describe('deleteNoteWithCascade', () => {
   it('removes image attachments belonging to the deleted note', async () => {
     await db.notes.bulkPut([
       {
+        ...sampleMetadata(),
         id: 'n1',
         spaceId: 's1',
         l: 0,
@@ -213,6 +220,7 @@ describe('deleteNoteWithCascade', () => {
         createdAt: FIXED_TIME,
       },
       {
+        ...sampleMetadata(),
         id: 'n2',
         spaceId: 's1',
         l: 0,
@@ -227,6 +235,7 @@ describe('deleteNoteWithCascade', () => {
     ]);
     await db.noteAttachments.bulkPut([
       {
+        ...sampleMetadata(),
         id: 'att-n1',
         noteId: 'n1',
         spaceId: 's1',
@@ -237,6 +246,7 @@ describe('deleteNoteWithCascade', () => {
         createdAt: FIXED_TIME,
       },
       {
+        ...sampleMetadata(),
         id: 'att-n2',
         noteId: 'n2',
         spaceId: 's1',

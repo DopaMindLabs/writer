@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { InlineBanner } from '@/components/ui/InlineBanner';
-import { SyncPhase } from '@/lib/syncProviders/types';
+import { SyncPhase } from 'writer-sync/core';
 
 export interface CloudKeylessPendingBannerProps {
   /** The sync phase, so a stalled pull can be told from one still in progress. */

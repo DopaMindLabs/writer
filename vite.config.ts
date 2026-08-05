@@ -62,7 +62,11 @@ export default defineConfig(({ command, mode }) => ({
     reporter: process.env.CI ? 'verbose' : 'default',
     setupFiles: ['./src/test/setup.ts'],
     css: false,
-    include: ['src/**/*.test.{ts,tsx}'],
+    include: [
+      'src/**/*.test.{ts,tsx}',
+      'packages/*/src/**/*.test.ts',
+      'packages/*/test/**/*.test.ts',
+    ],
     outputDiffLines: 50,
     clearMocks: true,
     restoreMocks: true,

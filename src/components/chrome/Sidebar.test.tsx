@@ -8,7 +8,12 @@ import {
 } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
-import { FIXED_TIME, sampleSpace, seedBasicSpace } from '@/test/fixtures';
+import {
+  FIXED_TIME,
+  sampleMetadata,
+  sampleSpace,
+  seedBasicSpace,
+} from '@/test/fixtures';
 import { Sidebar } from './Sidebar';
 
 type User = ReturnType<typeof userEvent.setup>;
@@ -58,6 +63,7 @@ describe('Sidebar', () => {
     it('should render a subsection doc flattened under its parent section, not indented', async () => {
       await seedBasicSpace();
       await db.docs.put({
+        ...sampleMetadata(),
         id: 'd-sub',
         spaceId: 's1',
         sectionId: 'sec1a',
@@ -334,6 +340,7 @@ describe('Sidebar', () => {
     it('should pre-fill the add-doc input with the template defaultDocName when the section matches', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'fiction' });
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-ms',
         spaceId: 's1',
         parentSectionId: null,
@@ -354,6 +361,7 @@ describe('Sidebar', () => {
     it('should use the "untitled" fallback for a template section without a defaultDocName', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'fiction' });
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-w',
         spaceId: 's1',
         parentSectionId: null,
@@ -399,6 +407,7 @@ describe('Sidebar', () => {
     it('should render the Workshop fallback section when the template lacks Workshop', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'blank' });
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-x',
         spaceId: 's1',
         parentSectionId: null,
@@ -419,6 +428,7 @@ describe('Sidebar', () => {
     it('should render exactly one BrainSpace link inline under a seeded Workshop section', async () => {
       await db.spaces.put(sampleSpace);
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-ws',
         spaceId: 's1',
         parentSectionId: null,
@@ -733,6 +743,7 @@ describe('Sidebar', () => {
     it('should support double-click rename on a doc inside a subsection', async () => {
       await seedBasicSpace();
       await db.docs.put({
+        ...sampleMetadata(),
         id: 'd-sub',
         spaceId: 's1',
         sectionId: 'sec1a',
@@ -762,6 +773,7 @@ describe('Sidebar', () => {
     it('should render the add-section trigger when the template allows extra sections', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'blank' });
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-notes',
         spaceId: 's1',
         parentSectionId: null,
@@ -779,6 +791,7 @@ describe('Sidebar', () => {
     it('should hide the add-section trigger by default and reveal it on hover of the row', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'blank' });
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-notes',
         spaceId: 's1',
         parentSectionId: null,
@@ -798,6 +811,7 @@ describe('Sidebar', () => {
     it('should show the add-section trigger for a structured template (sections are configurable by default)', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'fiction' });
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-ms',
         spaceId: 's1',
         parentSectionId: null,
@@ -816,6 +830,7 @@ describe('Sidebar', () => {
     it('should open an input when the add-section trigger is clicked', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'blank' });
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-notes',
         spaceId: 's1',
         parentSectionId: null,
@@ -839,6 +854,7 @@ describe('Sidebar', () => {
     it('should commit a new section to Dexie on Enter at the next order', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'blank' });
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-notes',
         spaceId: 's1',
         parentSectionId: null,
@@ -869,6 +885,7 @@ describe('Sidebar', () => {
     it('should cancel on Escape without writing to Dexie', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'blank' });
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-notes',
         spaceId: 's1',
         parentSectionId: null,
@@ -896,6 +913,7 @@ describe('Sidebar', () => {
     it('should commit a new section on blur when the input has a value', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'blank' });
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-notes',
         spaceId: 's1',
         parentSectionId: null,
@@ -924,6 +942,7 @@ describe('Sidebar', () => {
     it('should clear on blur without writing when the input is empty', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'blank' });
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-notes',
         spaceId: 's1',
         parentSectionId: null,
@@ -951,6 +970,7 @@ describe('Sidebar', () => {
     it('should not commit an empty section name on Enter', async () => {
       await db.spaces.put({ ...sampleSpace, template: 'blank' });
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-notes',
         spaceId: 's1',
         parentSectionId: null,
@@ -1021,6 +1041,7 @@ describe('Sidebar', () => {
     it('does not offer rename or delete for the Workshop section', async () => {
       await db.spaces.put(sampleSpace);
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-ws',
         spaceId: 's1',
         parentSectionId: null,
@@ -1065,6 +1086,7 @@ describe('Sidebar', () => {
       // An unresolved template is treated as not configurable.
       await db.spaces.put({ ...sampleSpace, template: 'locked-xyz' });
       await db.sections.put({
+        ...sampleMetadata(),
         id: 'sec-x',
         spaceId: 's1',
         parentSectionId: null,
@@ -1072,6 +1094,7 @@ describe('Sidebar', () => {
         order: 0,
       });
       await db.docs.put({
+        ...sampleMetadata(),
         id: 'd-x',
         spaceId: 's1',
         sectionId: 'sec-x',

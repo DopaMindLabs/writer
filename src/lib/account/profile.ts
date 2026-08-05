@@ -18,6 +18,11 @@ export type PresenceHue = (typeof PRESENCE_HUES)[number];
  * The local author profile, stored only in this browser's IndexedDB.
  * `authorId` is the stable attribution key; `displayName` and `presenceHue`
  * are user-editable.
+ *
+ * `authorId` is the *principal* — a person's attribution identity (see
+ * `PrincipalId` in `writer-sync/core`, converted at the writerSync
+ * facade). It must never double as a device identity: a `DeviceId` is a
+ * separate, cryptographic identity introduced by the pairing layer.
  */
 export interface Profile {
   authorId: string;
