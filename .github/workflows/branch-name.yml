@@ -17,4 +17,9 @@ jobs:
         with:
           node-version: 24
       - name: Enforce Conventional Commit branch prefix
-        run: node scripts/validate-branch-name.mjs "${{ github.head_ref }}"
+        env:
+          # Passed through the environment rather than interpolated into the
+          # run script: a branch name is attacker-controlled, and inlining it
+          # would let a crafted name inject shell commands into the runner.
+          HEAD_REF: ${{ github.head_ref }}
+        run: node scripts/validate-branch-name.mjs "$HEAD_REF"
