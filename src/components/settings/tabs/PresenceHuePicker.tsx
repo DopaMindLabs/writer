@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import type { KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
-import { PRESENCE_HUES, type PresenceHue } from '@/lib/account/profile';
+import { PRESENCE_HUES, type PresenceHue } from '@/lib/profile/profile';
 import { nextHueIndexForKey } from './presenceHueKeyboard';
 
 interface PresenceHuePickerProps {
@@ -46,7 +46,7 @@ export const PresenceHuePicker = ({
   return (
     <div role="radiogroup" aria-label={label} className="flex gap-2">
       {PRESENCE_HUES.map((hue, index) => {
-        const name = t(`settings.account.hues.${hue}`);
+        const name = t(`settings.profile.hues.${hue}`);
         const selected = hue === value;
         return (
           <button

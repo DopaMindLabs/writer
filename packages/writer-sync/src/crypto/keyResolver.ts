@@ -25,7 +25,7 @@ export interface ScopeKeyContext {
  * key is available for that context — the caller falls back to its keyless
  * behaviour (pass plaintext through, hide sealed rows).
  *
- * The Stage 1 implementation returns the same account content key for every
+ * The Stage 1 implementation returns the same content key for every
  * scope, but the context is always passed and tested, so per-scope keys are a
  * resolver change — never another middleware API change.
  */

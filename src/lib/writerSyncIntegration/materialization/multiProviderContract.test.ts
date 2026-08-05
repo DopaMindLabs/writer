@@ -1,11 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
-import { NoteKind, NoteState, type Note } from '@/db/schema';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import {
+  NoteKind,
+  NoteState,
+  type Note,
+  type NoteAttachment,
+} from '@/db/schema';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { saveDeviceKeyRing, forgetDeviceKeyRing } from '@/lib/cloud/crypto/keyStore';
 import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
 import type { SyncKeyRing } from 'writer-sync/crypto';
-import type { EncryptedSyncFrame } from 'writer-sync/operations';
+import {
+  TRANSFER_CHUNK_BYTES,
+  type EncryptedSyncFrame,
+} from 'writer-sync/operations';
+import { prepareFramePayload } from './attachmentFramePayload';
 import { sweepUnappliedFrames } from './frameIngestion';
 import { makeDeleteFrame, makePutFrame } from './writerOperationFactory';
 import { applyInboundFrame } from './writerOperationMaterializer';
@@ -44,6 +53,39 @@ const note = (overrides: Partial<Note> = {}): Note => ({
   ...overrides,
 });
 
+const attachmentFrame = async () => {
+  const bytes = new Uint8Array(TRANSFER_CHUNK_BYTES + 5);
+  const row: NoteAttachment = {
+    accessScopeId: 's1',
+    createdBy: asPrincipalId('remote-author'),
+    updatedBy: asPrincipalId('remote-author'),
+    mutationId: asOperationId('op-a1-1'),
+    logicalUpdatedAt: { millis: 1000, counter: 0 },
+    id: 'a1',
+    noteId: 'n1',
+    spaceId: 's1',
+    name: 'figure.png',
+    mime: 'image/png',
+    size: bytes.length,
+    blob: new Blob([bytes], { type: 'image/png' }),
+    createdAt: 1000,
+  };
+  const prepared = await prepareFramePayload({
+    entityTable: 'noteAttachments',
+    row: { ...row },
+    ring,
+  });
+  return {
+    chunks: prepared.chunks,
+    frame: await makePutFrame({
+      ring,
+      deviceId: DEVICE_REMOTE,
+      entityTable: 'noteAttachments',
+      row: prepared.row,
+    }),
+  };
+};
+
 /** Deliver a frame the way a durable provider does: land it in the journal. */
 const deliverThroughDurableProvider = async (
   frame: EncryptedSyncFrame,
@@ -63,7 +105,7 @@ const deliverThroughSecondProvider = (frame: EncryptedSyncFrame) =>
   });
 
 beforeEach(async () => {
-  const master = generateMasterSecret();
+  const master = generateRootSecret();
   ring = await deriveKeyRing(master, 1);
   await saveDeviceKeyRing({ accountId: null, ring });
   db = new LoremDB('multi-provider-contract');
@@ -123,6 +165,18 @@ describe('the same frame through two providers', () => {
 
     const journalled = await db.syncOperations.get(String(frame.operationId));
     expect(journalled).toEqual(frame);
+  });
+
+  it('materialises a chunked attachment once across two providers', async () => {
+    const { frame, chunks } = await attachmentFrame();
+    await db.syncAttachmentChunks.bulkPut(chunks);
+
+    expect(await deliverThroughSecondProvider(frame)).toBe('applied');
+    expect(await deliverThroughDurableProvider(frame)).toBe(0);
+
+    expect(await db.noteAttachments.count()).toBe(1);
+    expect(await db.syncInbox.count()).toBe(1);
+    expect(await db.syncOperations.count()).toBe(1);
   });
 
   it('converges a delete identically through either provider', async () => {

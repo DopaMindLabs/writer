@@ -499,7 +499,10 @@ describe('DocInspector', () => {
       await waitFor(async () => {
         expect((await db.revisions.get('rev-pin'))?.pinned).toBe(true);
       });
-      await userEvent.click(within(row).getByLabelText(/unpin version/i));
+      // The row re-renders from a live query *after* the write commits, so the
+      // stored value settling does not mean the label has flipped yet. Query for
+      // the new label rather than assuming this tick is late enough.
+      await userEvent.click(await within(row).findByLabelText(/unpin version/i));
       await waitFor(async () => {
         expect((await db.revisions.get('rev-pin'))?.pinned).toBe(false);
       });

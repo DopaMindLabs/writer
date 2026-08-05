@@ -1,5 +1,5 @@
 import { newId } from '@/lib/ids';
-import { getProfile } from '@/lib/account/profile';
+import { getProfile } from '@/lib/profile/profile';
 import {
   asOperationId,
   asPrincipalId,

@@ -8,6 +8,7 @@ import { collabStore } from '@/lib/collab/collabStore';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
 import { reconcileDocForMount as realReconcile } from '@/lib/reconcile/reconcileDocForMount';
+import type { MountReconcileAction } from '@/lib/reconcile';
 
 const reconcileMock = vi.fn(realReconcile);
 vi.mock('@/lib/reconcile', () => ({
@@ -28,18 +29,24 @@ const canonicalSeed = (docId: string, body: string): string =>
   serializeDocSnapshot(docId, [seedFromLexicalJson(docId, body)]);
 
 interface Deferred {
-  promise: Promise<void>;
+  promise: Promise<MountReconcileAction>;
   resolve: () => void;
   reject: (error: Error) => void;
 }
 const deferred = (): Deferred => {
-  let resolve: () => void = () => undefined;
+  let settle: (action: MountReconcileAction) => void = () => undefined;
   let reject: (error: Error) => void = () => undefined;
-  const promise = new Promise<void>((res, rej) => {
-    resolve = res;
+  const promise = new Promise<MountReconcileAction>((res, rej) => {
+    settle = res;
     reject = rej;
   });
-  return { promise, resolve, reject };
+  return {
+    promise,
+    resolve: () => {
+      settle('accepted');
+    },
+    reject,
+  };
 };
 
 describe('useDocCrdtReady', () => {
@@ -140,7 +147,7 @@ describe('useDocCrdtReady', () => {
     reconcileMock.mockReset();
     reconcileMock
       .mockRejectedValueOnce(new Error('transient'))
-      .mockResolvedValueOnce(undefined);
+      .mockResolvedValueOnce('accepted');
 
     const { result } = renderHook(() => useDocCrdtReady(DOC, BODY));
     await waitFor(() => {
@@ -161,7 +168,7 @@ describe('useDocCrdtReady', () => {
 
   it('never commits a stale ready frame when switching documents (no flash)', async () => {
     reconcileMock.mockReset();
-    reconcileMock.mockResolvedValue(undefined);
+    reconcileMock.mockResolvedValue('accepted');
 
     // Record each *committed* readiness frame — the flash is a committed frame
     // where the new doc briefly renders with the previous doc's `ready`,
@@ -192,7 +199,7 @@ describe('useDocCrdtReady', () => {
 
   it('invalidates the previous request when the document changes', async () => {
     reconcileMock.mockReset();
-    reconcileMock.mockResolvedValue(undefined);
+    reconcileMock.mockResolvedValue('accepted');
 
     const { result, rerender } = renderHook(
       ({ id }: { id: string }) => useDocCrdtReady(id, BODY),

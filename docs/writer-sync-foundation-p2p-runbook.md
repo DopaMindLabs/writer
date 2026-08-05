@@ -247,7 +247,10 @@ Use these terms consistently in code and documentation:
 | `SyncProvider` | One configured mechanism offering one or more sync capabilities |
 | `SyncProviderInstanceId` | Identifies one configured provider instance, not merely its provider kind |
 | `AccessScopeId` | Stable application access boundary, normally a Space |
-| `PrincipalId` | A person/account attribution identity |
+| `PrincipalId` | The person writing is attributed to |
+| Root secret | The 32-byte encryption secret a pairing hands over; the key ring is derived from it |
+| Cloud account | A Dexie Cloud sign-in — storage and transport only, never readability |
+| Profile | A display name and colour held on one device; never leaves it |
 | `DeviceId` | A cryptographic device identity, separate from the principal |
 | `SyncProviderBinding` | Mapping from one logical scope to one provider instance |
 | `PairingMethod` | Interchangeable trust-bootstrap method such as QR |
@@ -419,7 +422,7 @@ Do not map `createdBy` to Dexie `owner`. Dexie `owner` is an authorisation overr
 
 These are non-indexed fields except for explicitly plaintext routing metadata. Follow the repository’s non-indexed-field checklist. Do not alter `STORES` merely to store a non-indexed field.
 
-Although the product is greenfield, the current repository rule requires a Dexie version change whenever `STORES` changes. Follow that rule for later new tables.
+The repository declares one Dexie version and new tables are added straight to `STORES`. Follow that rule for later new tables.
 
 ### Tests
 
@@ -540,15 +543,15 @@ The project has no production users. Do not add a v1 dual-read or legacy migrati
 
 ### Device vault
 
-The current keystore retains only a non-extractable derived content key. That is insufficient for no-passphrase QR pairing because an already-unlocked device cannot re-wrap the account root.
+The current keystore retains only a non-extractable derived content key. That is insufficient for no-passphrase QR pairing because an already-unlocked device cannot re-wrap the root secret.
 
 Refactor `src/lib/cloud/crypto/keyStore.ts` behind a provider-neutral `DeviceKeyVault`:
 
 - generate a non-extractable device wrapping key;
 - store it by structured clone in the dedicated keystore database;
-- store the account root encrypted under that device wrapping key;
-- expose high-level operations such as `deriveScopeKey()` and `wrapAccountRootForPairing()`;
-- never return the raw account root to UI or provider code;
+- store the root secret encrypted under that device wrapping key;
+- expose high-level operations such as `deriveScopeKey()` and `wrapRootSecretForPairing()`;
+- never return the raw root secret to UI or provider code;
 - retain passphrase escrow and recovery-code compatibility through adapter methods;
 - bind every vault record to both `PrincipalId` and `DeviceId`.
 
@@ -660,7 +663,7 @@ Update:
 - `src/db/buildDb.ts`;
 - `src/lib/writerSync/writerTablePolicy.ts`.
 
-Follow the repository schema checklist and add a new Dexie version. `syncOperations` is classified as `already-wrapped` rather than row-envelope encrypted. Slice 1F must make Dexie Cloud replicate this table. `syncInbox`, local acknowledgement state and provider bindings remain local-only.
+Follow the repository schema checklist and add the stores to the single declared version. `syncOperations` is classified as `already-wrapped` rather than row-envelope encrypted. Slice 1F must make Dexie Cloud replicate this table. `syncInbox`, local acknowledgement state and provider bindings remain local-only.
 
 ### Materialisation
 
@@ -947,13 +950,13 @@ Default Writer flow:
 4. Device A scans the answer QR.
 5. Both devices authenticate the complete offer/answer transcript and establish a direct same-LAN WebRTC session.
 6. Device A asks the user to confirm the named device.
-7. Device A wraps the account bootstrap material for Device B.
+7. Device A wraps the root-secret hand-over material for Device B.
 8. The devices exchange scope manifests and missing operations.
 9. Open documents additionally exchange Yjs state vectors and updates.
 10. The trusted-device record preserves identity and trust for future sessions.
 11. Dexie Cloud may remain enabled independently.
 
-The QR payload must never contain a passphrase, recovery code, account root or content key. A trusted-device record does not make an offline peer reachable, preserve a WebRTC connection after both pages close or imply background delivery. In the browser-only Stage 2A release, a later session requires another two-way QR offer/answer exchange; it authenticates against the existing trusted-device record and does not repeat account-key transfer.
+The QR payload must never contain a passphrase, recovery code, root secret or content key. A trusted-device record does not make an offline peer reachable, preserve a WebRTC connection after both pages close or imply background delivery. In the browser-only Stage 2A release, a later session requires another two-way QR offer/answer exchange; it authenticates against the existing trusted-device record and does not repeat account-key transfer.
 
 ## 18. Slice 2A.1 — Write the threat model and protocol specification
 
@@ -992,7 +995,7 @@ Protocol specification must define:
 - device identity and signature algorithms;
 - ephemeral key agreement;
 - key derivation labels;
-- encrypted account-bootstrap wrapper;
+- encrypted root-secret hand-over wrapper;
 - confirmation state;
 - error codes;
 - replay cache;
@@ -1465,8 +1468,10 @@ If a touched file is non-compliant, insert the required behaviour-free `refactor
 
 Implementation must stop for explicit review at these points:
 
-1. **Cryptographic dependency/algorithm choice**
-   - Provide the compatibility, maintenance, licence and audit evidence.
+1. **Cryptographic dependency/algorithm choice** — answered, 2026-07-28.
+   - Frame signing is **ECDSA P-256 over SHA-256** via WebCrypto, reusing the device identity key already established for pairing (`DEVICE_IDENTITY_ALGORITHM` in `crypto/deviceIdentity.ts`). Evidence: no new dependency is added, so there is nothing to maintain, licence or audit beyond the platform; WebCrypto ECDSA P-256 is supported by every browser Writer targets; and the primitive is already load-bearing in the pairing exchange, so a weakness in it would compromise pairing regardless of this choice.
+   - Signing input is the domain label `lipsum-frame-sign-v1`, a `0x00` separator, then the canonical JSON of the frame minus `signature` — distinct from every pairing label, so signatures cannot cross contexts. See `crypto/frameSignature.ts` and `packages/writer-sync/docs/sync-frame-protocol.md` §9.
+   - Acceptance of empty (Stage 1) signatures ends here: `createTrustedFrameVerifier` refuses them, and refuses any frame whose origin is unknown, removed or revoked in the trusted-device registry.
 2. **QR encoder/scanner dependency**
    - Provide bundle size, browser support and accessibility fallback.
 3. **Stage 2B hosted signalling/STUN/TURN deployment**
@@ -1479,8 +1484,39 @@ Implementation must stop for explicit review at these points:
    - That triggers per-scope member key wrapping, revocation and group protocol design.
 7. **Any promise of erasure**
    - Impossible for data already downloaded to an offline device.
-8. **Any change to the repository’s schema-version rule**
-   - `AGENTS.md` currently requires a new Dexie version when `STORES` changes.
+8. **Any change to the repository’s schema-version rule** — answered, 2026-07-26.
+   - `LoremDB` declares one Dexie version and new tables go straight into `STORES`. Writer has no users, so no migration or backward-compatibility path is written. See [AGENTS.md § "Database schema versions"](../AGENTS.md).
+9. **Journal compaction rule** — answered, 2026-07-27; extended, 2026-07-28.
+   - Time-based retention is the **backstop**, and it always applies: operations are kept for a user-configurable window (default **30 days**, bounded 1–365) and compacted at sync boot. A device last seen beyond the window — or never seen, as a freshly paired device is — resynchronises by full state exchange, never by journal replay (`requiresFullExchange` in `writer-sync/operations`).
+   - The 2026-07-28 extension adds acknowledgement as the **early-close** half, exactly the optimisation the original answer reserved: a frame every currently-trusted device has acknowledged is dropped before the window elapses. Acknowledgement is never the sole condition for an operation — the window still closes it for a device that never returns, so one lost device cannot pin the journal open. With no trusted peer at all the acknowledgement clause is disabled rather than vacuously true, leaving the window in sole charge (`compactableOperationIds` in `writer-sync/operations`).
+   - Acknowledgements are recorded **per originating device** within a scope, not as one mark per scope. A single mark is unsound once three devices write: an operation from device C, logically older than an acknowledged operation from device A, would be judged covered although the peer never saw it. See `TrustedDeviceRecord.acknowledgedOperations` and `journalCompaction.ts`.
+   - Deletion tombstones remain exempt from the window — they must outlive the frames that produced them — and are retired **only** on unanimous acknowledgement by the devices still trusted (`releasableTombstones`). Removing a device is what releases a tombstone it never acknowledged. This is sound only because a device returning from beyond the window rebuilds by full state exchange rather than replaying its own stale journal; if that ever changes, this rule must change with it.
+
+10. **Which device pairs first** — answered, 2026-07-28.
+    - Neither. Both devices gather and show a code, and **the device that reads a code answers it** (`resolvePairingRole`). Asking the user to nominate a showing device and a reading device asks them to understand the protocol before they can start, and from either device both options read as equally plausible.
+    - The rule replaces an earlier device-id tie-break, which let only the greater id answer so that two devices scanning at once could not both answer and then both wait. That is sound for two devices watching a channel and wrong for two watching a camera: a payload arrives only when a human points one device at another, and in the ordinary flow exactly one of them ever does. A reader whose id sorted lower refused to answer and waited for a reply nobody was preparing — a hang on roughly half of all pairings, indistinguishable on screen from a slow one, and reproduced by `pair-device.spec.ts` before the change.
+    - The race the old rule guarded against now resolves **visibly**: scanning on both devices leaves each holding a reply the other cannot accept, and the next scan fails and says to start again. A failure the user can see and recover from beats a hang they cannot explain.
+    - A device that reads **its own** code is told so and the scanner stays open; answering a description it authored would pair a device with itself.
+    - The dialog shows one step per screen as a consequence: a code and a scanner are never on screen together, nor a reply code beside the verification gate. Two QR surfaces at once give no clue which device is meant to be doing which.
+11. **Rebuilding a scope for a peer the journal cannot serve** — answered, 2026-07-28.
+    - Writer supplies the engine's `fullState` port from its **materialised rows**, as freshly signed `put` frames — one per journalled row in the scope, ordinary in every respect so the receiver needs no second way to apply them. Explicitly **not** the backup archive, which exists to hand a snapshot to a human.
+    - A scope this device holds no key for is not rebuilt at all: one it cannot seal for is one it cannot serve, and framing those rows in plaintext would hand a peer content the pairing never authorised.
+    - The retention cutoff is supplied with it. Without a cutoff only a peer that had never synchronised would ever qualify, so a device away past the window would silently receive the surviving tail of history and be told it was caught up.
+
+12. **Which device sends the root secret** — answered, 2026-07-28.
+    - The device that **holds key material**, not the device that holds a protocol role. `docs/pairing-protocol.md` §11 assumes the initiator is the unlocked one; that assumption died with the device-id tie-break (§30.10), since the device that scans — and so becomes the joiner — may equally be the one that has been used all along.
+    - Each side announces `holds-root` or `needs-root` after confirmation, and the holder seals for the one that lacks it. Announcements repeat until the peer has been heard: a data channel drops what arrives before anything is listening, and two people do not press "the codes match" at the same instant, so a single announcement would be lost whenever one device confirmed first.
+    - A device that already holds a root **refuses** an unasked-for one. Its rows are sealed under the key it has, and replacing that key would orphan every one of them.
+    - Key transfer runs before catch-up on the same channel, and the two take turns rather than interleave — they are read by different decoders. The order is also the only one that means anything: a device still waiting for a root can decrypt nothing, so it would advertise no scopes and be told, wrongly, that it was caught up. A transfer that never settles gives up after ten seconds so a confirmed pairing still syncs whatever both ends can already read.
+13. **The epoch travels with the root** — answered, 2026-07-28.
+    - `PairingRootWrapper` carries the root alone, so the receiving device would have to guess which rotation epoch to derive its content key at. A wrong guess derives a key that decrypts nothing — indistinguishable, from the outside, from a peer that simply has no writing to send.
+    - The epoch is therefore carried beside the wrapper in the transfer message rather than inside it, leaving the reviewed wrapper type unchanged.
+
+14. **Where a P2P-only device's key material comes from** — answered, 2026-07-28.
+    - **Pairing mints it when neither device holds any.** Until now the only root secret Writer ever created came from cloud setup, behind a passphrase, so a P2P-only device had no key — nothing was journalled, and two paired devices had nothing to sync however well the pairing worked.
+    - When both devices announce `needs-root`, one creates the account and seals it for the other in the same exchange. Which one is decided by comparing device ids: both learned the other's during the exchange, so it costs no round trip, and — unlike the *role* rule this replaced (§30.10) — both devices are running this protocol and will hear each other, so a device that defers is deferring to one that is certainly about to act.
+    - Taking a root into use, minted or received, re-seals what was written before there was a key (`sealExistingRows`). Rows written while keyless are plaintext and never entered the journal; putting them back through the middleware seals them and backfills the frames a peer can be sent. It is what makes a pairing carry a device's existing writing rather than only what it writes next.
+    - **The cost, stated plainly:** an account created this way has no passphrase and no escrow, so it cannot be recovered from a recovery code. Losing every paired device loses the writing. A user who later sets a passphrase gets escrow from that point; a user who never does is relying on having more than one device.
 
 ---
 

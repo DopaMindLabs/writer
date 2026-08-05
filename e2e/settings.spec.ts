@@ -20,11 +20,11 @@ test('switching to the Appearance tab renders its placeholder heading', async ({
   ).toBeVisible();
 });
 
-test('Account tab renders the Account panel', async ({ page }) => {
-  await page.goto('/#/settings?tab=account');
-  await expect(page.getByRole('heading', { name: /^Account$/ })).toBeVisible();
+test('Profile tab renders the profile panel', async ({ page }) => {
+  await page.goto('/#/settings?tab=profile');
+  await expect(page.getByRole('heading', { name: /^Profile$/ })).toBeVisible();
   await expect(page.getByTestId('setting-display-name')).toBeVisible();
-  await expect(page.getByTestId('account-privacy-notice')).toBeVisible();
+  await expect(page.getByTestId('profile-privacy-notice')).toBeVisible();
 });
 
 test('stacks a group on one page and scrolls to the selected section', async ({
@@ -44,8 +44,8 @@ test('stacks a group on one page and scrolls to the selected section', async ({
     page.getByRole('heading', { name: /^Shortcuts$/ }),
   ).toBeInViewport();
 
-  await page.getByTestId('settings-tab-account').click();
-  await expect(page.getByRole('heading', { name: /^Account$/ })).toBeVisible();
+  await page.getByTestId('settings-tab-profile').click();
+  await expect(page.getByRole('heading', { name: /^Profile$/ })).toBeVisible();
   await expect(page.getByRole('heading', { name: /^Editor$/ })).toHaveCount(0);
 });
 
@@ -64,7 +64,8 @@ test('cycles through every universal settings tab without crashing', async ({ pa
     { id: 'backups', heading: /^Backups$/i },
     { id: 'export', heading: /^Export \/ import$/i },
     { id: 'data', heading: /^Your data$/i },
-    { id: 'account', heading: /^Account$/i },
+    { id: 'cloudSync', heading: /^Cloud sync$/i },
+    { id: 'profile', heading: /^Profile$/i },
     { id: 'about', heading: /^About$/i },
   ];
   for (const { id, heading } of tabs) {

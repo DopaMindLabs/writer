@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createRef } from 'react';
 import { renderWithProviders, screen } from '@/test/test-utils';
-import type { Profile } from '@/lib/account/profile';
+import type { Profile } from '@/lib/profile/profile';
 import { collabStore } from '@/lib/collab/collabStore';
 import { makeProviderFactory } from '@/lib/collab/yjs/providerFactory';
 import { LexicalEditor } from './LexicalEditor';

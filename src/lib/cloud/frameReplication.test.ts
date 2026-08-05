@@ -4,12 +4,13 @@ import dexieCloud from 'dexie-cloud-addon';
 import { STORES } from '@/db/stores';
 import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
 import type { ScopeKeyResolver } from 'writer-sync/crypto';
+import { generateDeviceIdentity } from 'writer-sync/crypto';
 import { createOperationJournalMiddleware } from '@/lib/writerSyncIntegration/materialization/operationJournalMiddleware';
 import {
   localOnlyTables,
   rowEnvelopeTables,
 } from '@/lib/writerSyncIntegration/writerTablePolicy';
-import { generateMasterSecret, deriveKeyRing, type CloudKeyRing } from './crypto/keys';
+import { generateRootSecret, deriveKeyRing, type CloudKeyRing } from './crypto/keys';
 import { createEncryptionMiddleware } from './crypto/middleware';
 import { CIPHER_FIELD } from './crypto/tableRules';
 
@@ -92,11 +93,14 @@ beforeEach(async () => {
   db.use(
     createOperationJournalMiddleware({
       resolver,
-      deviceId: () => Promise.resolve(DEVICE),
+      identity: async () => ({
+        deviceId: DEVICE,
+        privateKey: (await generateDeviceIdentity()).privateKey,
+      }),
     }),
   );
   await db.open();
-  ring = await deriveKeyRing(generateMasterSecret(), 1);
+  ring = await deriveKeyRing(generateRootSecret(), 1);
 });
 
 afterEach(async () => {
@@ -135,6 +139,9 @@ describe('encrypted frame replication through Dexie Cloud', () => {
     expect(queued).toEqual([]);
     expect(UNSYNCED).toContain('notes');
     expect(UNSYNCED).not.toContain('syncOperations');
+    // Chunk rows replicate like the journal: a cloud device needs them to
+    // rebuild the blob a thin frame names.
+    expect(UNSYNCED).not.toContain('syncAttachmentChunks');
   });
 
   it('never maps createdBy or updatedBy onto the Dexie owner property', async () => {

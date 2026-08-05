@@ -7,7 +7,7 @@ import {
 } from './writerEntityMetadata';
 import { compareTimestamps } from 'writer-sync/core';
 
-vi.mock('@/lib/account/profile', () => ({
+vi.mock('@/lib/profile/profile', () => ({
   getProfile: vi.fn().mockResolvedValue({
     authorId: 'author-1',
     displayName: 'A. Writer',

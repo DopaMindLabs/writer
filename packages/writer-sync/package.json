@@ -7,7 +7,9 @@
   "exports": {
     "./core": "./src/core/index.ts",
     "./crypto": "./src/crypto/index.ts",
-    "./operations": "./src/operations/index.ts"
+    "./operations": "./src/operations/index.ts",
+    "./pairing": "./src/pairing/index.ts",
+    "./providers/webrtc": "./src/providers/webrtc/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",

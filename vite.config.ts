@@ -84,6 +84,9 @@ export default defineConfig(({ command, mode }) => ({
         'src/test/**',
         'src/**/*.test.{ts,tsx}',
         'src/**/*.stories.{ts,tsx}',
+        // Test-support data, no different from `src/test/**` — measuring it
+        // rewards writing fixtures over covering the code they exercise.
+        'src/**/*.fixture.{ts,tsx}',
         'src/**/__snapshots__/**',
       ],
       thresholds: {

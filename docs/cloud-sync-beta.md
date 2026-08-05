@@ -47,7 +47,7 @@ but never erases local content. (Verified empirically — see the toggle test in
 ## 2. Key model
 
 ```
-32-byte master secret  (CSPRNG, never persisted in the clear, never leaves the device)
+32-byte root secret  (CSPRNG, never persisted in the clear, never leaves the device)
       │
       ├── HKDF-SHA-256  (info "lipsum-content-v1")  ──▶  AES-256-GCM content key
       │                                                  (non-extractable CryptoKey,
@@ -70,7 +70,7 @@ but never erases local content. (Verified empirically — see the toggle test in
   fingerprint iff they hold the same master, and it never runs backwards to the secret —
   so it rides on the escrow and the device ring and is compared in the clear to tell
   whether a device's key is the account's (see §5.1).
-- **Escrow** (`EscrowRecord`, `src/lib/cloud/crypto/keys.ts`) — the master secret wrapped
+- **Escrow** (`EscrowRecord`, `src/lib/cloud/crypto/keys.ts`) — the root secret wrapped
   under a passphrase-derived KEK (PBKDF2-SHA-512, iteration count calibrated to ~1 s on
   the setup device, floored at 800 000). At setup it is **held on the device** (the
   never-synced keystore), not written to `cloudCrypto`; reconciliation publishes it as the
@@ -84,7 +84,7 @@ but never erases local content. (Verified empirically — see the toggle test in
   shared across every account in the database: the first account would claim it and every
   other account's escrow would be silently rejected server-side, never reaching that
   account's other devices.
-- **Recovery code** (`src/lib/cloud/crypto/recoveryCode.ts`) — the raw master secret plus
+- **Recovery code** (`src/lib/cloud/crypto/recoveryCode.ts`) — the raw root secret plus
   a checksum byte, rendered in Crockford base32, grouped into 8-character blocks. Shown
   **exactly once** at setup and never stored. It is the only way back if every device
   forgets the passphrase.
@@ -469,7 +469,7 @@ a shared machine must clear the device, and content heals from the row body anyw
 
 ### 6.1 Device key vault (pairing-capable root retention)
 
-Alongside the derived ring, the device retains the **account root** in a vault
+Alongside the derived ring, the device retains the **root secret** in a vault
 (`src/lib/cloud/crypto/deviceKeyVault.ts`, contract in
 `src/lib/writerSync/crypto/keyVault.types.ts`): the root is AES-GCM-wrapped under a
 non-extractable device wrapping key in a dedicated never-synced database
@@ -477,7 +477,7 @@ non-extractable device wrapping key in a dedicated never-synced database
 raw root exists only transiently inside vault operations and never crosses the public
 API. Setup, unlock, recovery and account-key adoption store it at the moments the root
 is legitimately in memory; `forgetThisDevice()` erases the vault record.
-`wrapAccountRootForPairing()` re-wraps the root under an ephemeral ECDH (P-256) derived
+`wrapRootSecretForPairing()` re-wraps the root under an ephemeral ECDH (P-256) derived
 AES-GCM key for a pairing peer — which is what lets Stage 2A QR pairing deliver the key
 to a new device with no passphrase or recovery code, and `deriveScopeKey()` is the seam
 through which per-scope keys later arrive.

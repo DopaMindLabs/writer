@@ -12,7 +12,7 @@ import { InlineBanner } from '@/components/ui/InlineBanner';
  */
 export const CloudDeviceRevokedBanner = () => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.revoked.${name}`);
+  const k = (name: string) => t(`settings.cloud.revoked.${name}`);
   return (
     <InlineBanner
       kind="warning"

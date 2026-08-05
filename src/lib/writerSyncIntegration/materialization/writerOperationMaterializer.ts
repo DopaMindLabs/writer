@@ -9,6 +9,9 @@ import type {
   SyncTombstone,
 } from 'writer-sync/operations';
 import { writerClock } from '@/lib/writerSyncIntegration/writerLogicalClock';
+import { materializeAttachmentFrame } from './attachmentFrameMaterializer';
+
+export { AttachmentChunksPendingError } from './attachmentFrameMaterializer';
 
 /**
  * Applies inbound operation frames to Writer's local state. The invariants the
@@ -104,8 +107,12 @@ export const applyInboundFrame = async (options: {
 }): Promise<MaterializeResult> => {
   const { db, ring } = options;
   const frame = await verifyFrame(options.frame);
-  const row =
+  const opened =
     frame.kind === 'put' ? await openOperationPayload(ring, frame, frame.payload) : null;
+  const row =
+    opened === null
+      ? null
+      : await materializeAttachmentFrame({ db, frame, ring, row: opened });
 
   const result = await db.transaction(
     'rw',

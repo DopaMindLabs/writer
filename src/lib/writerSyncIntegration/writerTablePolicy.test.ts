@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { STORES } from '@/db/stores';
 import {
   WRITER_TABLE_POLICIES,
+  chunkedBlobFieldFor,
   journalledTables,
   localOnlyTables,
   policyFor,
@@ -100,6 +101,7 @@ describe('derived sets match the established behaviour', () => {
         'syncProviderBindings',
         'syncTombstones',
         'syncs',
+        'trustedDevices',
       ].sort(),
     );
   });
@@ -121,5 +123,22 @@ describe('derived sets match the established behaviour', () => {
 
   it('journals every synced content table today', () => {
     expect([...journalledTables()].sort()).toEqual([...rowEnvelopeTables()].sort());
+  });
+
+  it('replicates attachment chunks as already-wrapped ciphertext', () => {
+    const policy = policyFor('syncAttachmentChunks');
+    expect(policy?.replication).toBe('synced-content');
+    expect(policy?.encryption).toBe('already-wrapped');
+    expect(policy?.operationJournal).toBe(false);
+  });
+
+  it('chunks only the note-attachment blob, and nothing else yet', () => {
+    // revisions.payload stays fat-framed deliberately: an oversized revision is
+    // skipped with a report rather than chunked — a recorded limit.
+    expect(chunkedBlobFieldFor('noteAttachments')).toBe('blob');
+    const flagged = WRITER_TABLE_POLICIES.filter(
+      (policy) => policy.chunkedBlobField !== undefined,
+    );
+    expect(flagged.map((policy) => policy.table)).toEqual(['noteAttachments']);
   });
 });
