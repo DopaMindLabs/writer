@@ -5,7 +5,7 @@ description: >
   Use when adding or changing any component, screen, or user-facing copy. Trigger
   terms: "component", "UI", "design system", "accessibility", "a11y", "i18n",
   "copy", "help article", "story", "storybook", "style".
-version: 1.1.0
+version: 1.2.0
 tags: [ui, design-system, accessibility, i18n, storybook]
 ---
 
@@ -78,6 +78,70 @@ User-facing behaviour changes ship with a help update in the same PR:
 2. Register the article in `src/lib/help/registry.ts` (`category`, `keywords`, `featureArea`)
 3. `src/lib/help/registry.test.ts` fails if a `featureArea` has no article — treat a
    red test as a missing doc, not a test to weaken
+
+### Help article structure
+
+Use only the sections that help the reader complete or recover the task:
+
+```markdown
+# <Task or feature name>
+
+<One sentence: what it does and why it helps.>
+
+## At a glance
+
+- <Up to five facts the reader needs before starting.>
+
+## Before you start
+
+- <Prerequisites only.>
+
+## <Complete the main task>
+
+1. <One action using the exact UI label.>
+
+## After <the task>
+
+<Result, status and likely next action.>
+
+## Troubleshooting
+
+### <Visible problem or exact error>
+
+<Direct fix first.>
+
+## Privacy and security
+
+<Only information relevant to the user's decision.>
+
+## Related
+
+- [Article](slug) — <reason to open it>.
+```
+
+### Help writing rules
+
+- Lead with what the feature is, its outcome and its useful differentiator.
+  Describe capabilities directly instead of defining the feature by exclusions.
+  Negative phrasing is appropriate for a genuine product benefit such as **no
+  account and no server**.
+- Put the primary path before alternatives, edge cases and technical detail.
+- Keep each paragraph to one idea and usually one to three sentences. Use bullets
+  for independent facts and numbered lists for ordered actions; give each step one
+  user action.
+- Use clear, task-based headings so readers can find the next action without
+  reading the whole article. Keep setup, normal use, recovery and troubleshooting
+  separate.
+- Use exact visible labels and verified behaviour. Never invent a control, promise
+  an untested outcome or expose implementation detail as user guidance.
+- Explain a limitation once, beside the action it affects. Repeat or emphasise a
+  warning only for security, privacy, data loss or irreversible actions.
+- Remove conversational filler, repeated reassurance, rhetorical explanations and
+  protocol narration. State the action, result and reason directly.
+- Use British English. Keep code identifiers, slugs and established product names
+  unchanged.
+- End with two to four relevant links. Name the destination in the link text and
+  say why it is useful.
 
 ## Spec update
 

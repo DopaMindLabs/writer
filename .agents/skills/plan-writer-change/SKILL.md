@@ -4,7 +4,7 @@ description: >
   Produce an exact-file change plan for any Writer feature or fix before touching
   code. Use when asked to plan, design, or scope a change to Writer. Trigger terms:
   "plan", "design", "how would I", "what files", "scope", "impact", "before I code".
-version: 1.1.0
+version: 1.2.0
 tags: [planning, architecture, impact-analysis]
 ---
 
@@ -67,7 +67,7 @@ Output format:
 - <test file> — <what to assert>
 
 ## Help articles to add or update
-- src/help/content/en/<slug>.md — <change>
+- src/help/content/en/<slug>.md — <user task answered and sections added or changed>
 
 ## Spec sections to update
 - docs/technical-specification.md §<section> — <change>
@@ -83,6 +83,10 @@ Output format:
 ```
 
 Do not begin implementation until this plan is reviewed and approved.
+
+For every planned help article, follow the structure and writing rules in
+`build-writer-ui`: lead with the feature's outcome, give a short primary path,
+separate troubleshooting, and list only verified UI labels and behaviour.
 
 ## Hard stops
 

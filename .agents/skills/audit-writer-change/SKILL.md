@@ -5,7 +5,7 @@ description: >
   branch diff, or changed file set for correctness, security, accessibility, and
   persistence safety. Trigger terms: "audit", "review", "check", "risks in", "is
   this safe", "what did this change".
-version: 1.2.0
+version: 1.3.0
 tags: [review, audit, security, accessibility]
 ---
 
@@ -65,6 +65,20 @@ the screen or hook that owns the flow down to the changed symbol and back up.
   Dexie transaction commits (never inside it).
 - Synced vs unsynced: new tables default to synced unless added to `UNSYNCED` in
   `src/db/buildDb.ts`. Confirm the correct category explicitly.
+
+### 8. Apply the help-content checklist (user-facing changes)
+
+- Check the English help article against `build-writer-ui`'s article structure.
+  Make the user's primary task easy to find before alternatives or edge cases.
+- Lead with what the feature does, why it helps and any useful differentiator.
+  Mention limitations only where they affect a decision, safety or recovery.
+- Use exact UI labels and verified behaviour. Give each numbered step one action.
+- Keep setup, normal use, troubleshooting, privacy and related links separate
+  where those sections apply.
+- Use British English, short paragraphs and direct phrasing. Flag repeated
+  reassurance, protocol narration and implementation detail.
+- Check adjacent help articles for contradictions about storage, sync, privacy
+  or availability.
 
 ## Evidence-only severity findings
 
