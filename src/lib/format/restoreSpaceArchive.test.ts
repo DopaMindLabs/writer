@@ -52,13 +52,32 @@ const comparable = (snapshot: SpaceSnapshot): unknown => {
 const rootXml = (doc: Y.Doc): string =>
   (doc.get('root', Y.XmlText) as Y.XmlText).toString();
 
+/**
+ * Strips XML tags until the string stops changing. A single pass is not
+ * enough: removing a tag can splice its neighbours into a fresh one
+ * (`<<b>b>` leaves `<b>`), so text that looked like markup could survive.
+ * Bounded by the input length — every pass that changes the string removes
+ * at least one character.
+ */
+const stripTags = (xml: string): string => {
+  let text = xml;
+  let remaining = xml.length;
+  while (remaining > 0) {
+    const stripped = text.replace(/<[^>]*>/g, '');
+    if (stripped === text) return text;
+    text = stripped;
+    remaining -= 1;
+  }
+  return text;
+};
+
 /** Plain text of a CRDT seed payload's root shared type. */
 const seedText = (payload: Uint8Array): string => {
   const doc = new Y.Doc();
   Y.applyUpdate(doc, payload, 'test');
   const xml = rootXml(doc);
   doc.destroy();
-  return xml.replace(/<[^>]*>/g, '');
+  return stripTags(xml);
 };
 
 const mutateSpace = async (): Promise<void> => {
