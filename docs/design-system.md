@@ -18,6 +18,11 @@
   cross-reference the original prototypes.
 - **Props are documented as `name: type — description`.** Defaults are noted where they exist.
 - **States** (rest / hover / active / dark) appear under each component below.
+- **Storybook is the executable component catalogue.** Run `npm run storybook` and use each
+  component's `*.stories.tsx` states alongside this specification. The theme toolbar in
+  [`.storybook/preview.tsx`](../.storybook/preview.tsx) exposes `light`, `dark`, `hc-light` and
+  `hc-dark`; [`.storybook/main.ts`](../.storybook/main.ts) enables the accessibility and docs
+  addons. This document owns the design rules; Storybook shows their implemented states.
 
 ---
 
@@ -1024,11 +1029,11 @@ Things this spec doesn't pin down — open for next iteration:
 
 ## 11. Accessibility
 
-Accessibility is a **first-class, additive layer** over this design system — never a rewrite of
-it. The themes (§2.1) remain the single source of truth; accessibility preferences are
-**orthogonal `data-*` modifiers** on `<html>` that only override CSS custom properties, so they
-compose with any active `data-theme` and require no component changes. Every preference defaults
-to the app's current behaviour, so existing users see no change until they opt in.
+Accessibility is a **baseline requirement** of this design system.
+[`../ACCESSIBILITY.md`](../ACCESSIBILITY.md) is the canonical conformance statement and records
+current gaps. The themes (§2.1) remain the source of truth for visual tokens: `light` and `dark`
+have an AA contrast minimum, while `hc-light` and `hc-dark` target AAA enhanced contrast.
+Accessibility preferences are orthogonal `data-*` modifiers that compose with those themes.
 
 ### 11.1 Preference axes
 
@@ -1058,27 +1063,28 @@ govern.
 
 ### 11.3 Contrast policy
 
-- **`light` / `dark`** keep the grayscale aesthetic unchanged. Core text already exceeds AAA
-  (≈26:1). The status palette (§5) is mostly AA, with two **known exceptions in `light`**:
-  `--danger` (~3.2:1 on its tint) and `--success`-on-tint fall below the 4.5:1 small-text AA
-  bar. These are **not** raised, because changing the default tokens would alter the experience
-  for existing users; users who need stronger status contrast opt into the high-contrast themes.
-- **`hc-light` / `hc-dark`** meet **WCAG AAA (7:1)** for text and the full status palette (on
-  both paper and tint grounds), and override the highlight palette (§7.4) accordingly.
-  AAA-strict colour work is **quarantined to these themes** so it never compromises the default
-  visual language.
-- The policy is **locked by a test** (`src/theme/contrast.test.ts`), which parses `index.css`
-  and asserts ≥7:1 in the `hc-*` themes (and a ≥3:1 floor elsewhere) so a token edit can't
-  silently regress it.
+- **`light` / `dark`: WCAG 2.2 AA minimum.** For text covered by SC 1.4.3, require ≥4.5:1 for
+  normal text and ≥3:1 for large text, subject to the criterion's exceptions. For non-text UI
+  covered by SC 1.4.11, require ≥3:1 where applicable.
+- **`light` / `dark`:** core text already exceeds the AA target (≈26:1). The
+  `light` status palette has known gaps: `--danger` (~3.2:1 on its tint) and
+  `--success`-on-tint fall below even the 4.5:1 small-text AA threshold. Treat these as gaps to
+  close, not intentional exceptions to preserve.
+- **`hc-light` / `hc-dark`: WCAG 2.2 AAA enhanced contrast.** For text covered by SC 1.4.6,
+  require ≥7:1 for normal text and ≥4.5:1 for large text, subject to the criterion's exceptions.
+  These themes retain the stronger status and highlight overrides.
+- `src/theme/contrast.test.ts` currently asserts ≥7:1 in `hc-*` and a ≥3:1 floor elsewhere.
+  That default-theme threshold is a **regression floor, not the AA target**; strengthen it as
+  the known token gaps are fixed.
 
-### 11.5 Motion
+### 11.4 Motion
 
 `prefers-reduced-motion` and the `data-motion` preference gate animation. CSS transitions and
 animations are near-instant under reduced motion (`src/index.css`), and the guided tours
 (driver.js) disable smooth-scrolling via `tourMotionReduced()` in
 `src/tours/driver-setup.ts` — both honour `reduced`/`full`/OS in the same order.
 
-### 11.4 Primitives & rules
+### 11.5 Primitives & rules
 
 - **`SkipLink`** (`src/components/ui/SkipLink.tsx`) — "skip to content" bypass link, hidden
   until focused. Render first in the app shell, pointing at the main landmark `id`.

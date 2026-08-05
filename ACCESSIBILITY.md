@@ -1,34 +1,50 @@
 # Accessibility
 
-LIpsum Writer treats accessibility as a first-class, **additive** property of the
-app: new accessibility behaviour is opt-in and never changes the default
-experience for existing users. This document is the conformance statement; the
-design-system source of truth is [`docs/design-system.md` §11](./docs/design-system.md),
-and the rules every feature must follow live in [`AGENTS.md`](./AGENTS.md).
+Writer's default `light` and `dark` presentations target **WCAG 2.2 Level AA** as their
+minimum contrast baseline. The `hc-light` and `hc-dark` presentations target **Level AAA
+enhanced contrast**. Other accessibility requirements follow the applicable WCAG 2.2 criteria
+defined here. This document is the canonical source for those targets, current gaps and
+verification. The design system implements the visual and preference layer in
+[`docs/design-system.md` §11](./docs/design-system.md); `AGENTS.md` routes contributors here
+instead of maintaining a second accessibility policy.
 
 ## Conformance summary
 
-| Area | Target | Status |
+| Area | Target | Current evidence |
 |---|---|---|
-| Text contrast (`light`/`dark`) | WCAG AA | Core text ≈26:1 (exceeds AAA). |
-| Status palette (`light`/`dark`) | WCAG AA | Mostly AA; two known exceptions (below). |
-| Text & status contrast (`hc-light`/`hc-dark`) | **WCAG AAA (7:1)** | Met — locked by `src/theme/contrast.test.ts`. |
-| Keyboard operability | WCAG 2.1.1 | Skip link + native/Radix focus management. |
-| Bypass blocks | WCAG 2.4.1 | "Skip to content" link on every route. |
-| Reduced motion | WCAG 2.3.3 | `prefers-reduced-motion` + `data-motion` gating. |
-| Name/role/value | WCAG 4.1.2 | Roles, labels, landmarks, `aria-describedby`. |
-| Automated audit | axe-core WCAG 2 A/AA | `e2e/a11y-axe.spec.ts` scans key screens. |
+| Default-theme text contrast | SC 1.4.3 (AA): 4.5:1 normal text, 3:1 large text | Core text exceeds AAA; known status-token gaps remain. |
+| High-contrast-theme text contrast | SC 1.4.6 (AAA): 7:1 normal text, 4.5:1 large text | Target for `hc-light` and `hc-dark`. |
+| Non-text UI contrast | SC 1.4.11 (AA, required for AAA conformance): 3:1 where applicable | Covered by token tests in part; manual review still required. |
+| Keyboard operability | SC 2.1.1 and applicable AAA keyboard criteria | Skip link + native/Radix focus management. |
+| Focus not obscured | SC 2.4.12 (AAA) | Target; requires manual flow review. |
+| Focus appearance | SC 2.4.13 (AAA) | Enhanced focus is available; full default-state audit remains. |
+| Reduced motion | SC 2.3.3 (AAA) where applicable | `prefers-reduced-motion` + `data-motion` gating. |
+| Name/role/value | SC 4.1.2 (A) | Roles, labels, landmarks, `aria-describedby`. |
+| Automated audit | axe-core WCAG 2 A/AA | Supporting evidence only; it cannot establish AAA conformance. |
 
-This is a **conditional** conformance claim: we target AAA where it is achievable
-without compromising the default design (contrast in the high-contrast themes,
-focus, keyboard, motion, landmarks, headings), and AA elsewhere. We do not claim
-blanket AAA across the entire product.
+A Level AAA claim requires all applicable Level A, AA and AAA success criteria to be met for
+the claimed scope. Do not describe the default themes as AAA merely because a high-contrast
+theme exists. See the [W3C WCAG 2.2 conformance levels](https://www.w3.org/TR/WCAG22/#cc1).
+
+## What accessibility applies to
+
+Accessibility is a product and functional requirement, not only a UI-component requirement.
+Review any change that affects what a person can perceive, operate, understand or recover from.
+That includes settings, keyboard shortcuts, focus and state transitions, status/error messages,
+timed behaviour, gestures, preference persistence, import/export and recovery flows, even when
+the implementation change contains no JSX or CSS.
+
+Purely internal refactors with no observable or interaction effect can mark accessibility
+impact as not applicable. Everything else is assessed against the WCAG criteria that actually
+apply to the changed behaviour.
 
 ## Preferences (Settings → Accessibility)
 
-All preferences default to today's behaviour and persist locally
-(`localStorage` key `lorem-a11y`, separate from `lorem-ui`). They are applied as
-orthogonal `data-*` attributes on `<html>` that compose with the active theme:
+Preferences enhance the accessible baseline and persist locally (`localStorage` key
+`lorem-a11y`, separate from `lorem-ui`). They are applied as orthogonal `data-*` attributes on
+`<html>` that compose with the active theme. The default themes must meet their AA contrast
+minimum without requiring a preference; the high-contrast themes provide the enhanced AAA
+contrast presentation.
 
 | Preference | Default | Effect |
 |---|---|---|
@@ -57,26 +73,29 @@ orthogonal `data-*` attributes on `<html>` that compose with the active theme:
   `role="alert"`.
 - Use `VisuallyHidden` for screen-reader-only text rather than ad-hoc `sr-only`.
 
-## Known limitations / conditional criteria
+## Known gaps to close
 
 - **Status colour contrast in the default `light` theme:** `--danger`
   (~3.2:1 on its tint) and `--success`-on-tint fall below the 4.5:1 small-text AA
-  bar. They are intentionally **not** changed, because altering the default
-  tokens would change the experience for existing users. Users who need stronger
-  status contrast switch to a high-contrast theme (which meets AAA). Tracked in
-  `docs/design-system.md` §11.3 and asserted (with a 3:1 floor) by the contrast
-  test.
-- **AAA across all content** (e.g. 1.4.6 enhanced contrast for *every* text token,
-  2.4.9 link purpose from link alone) is not claimed for the default themes.
+  bar and therefore miss the default-theme AA minimum for affected text. The existing
+  `contrast.test.ts` 3:1 default-theme floor is a regression guard, not the AA target. Tracked in
+  `docs/design-system.md` §11.3.
+- **Complete criterion audit:** axe and Storybook do not cover every WCAG success criterion.
+  A manual criterion-by-criterion review of each claimed scope and level is still required.
 - The editor surface (Lexical) relies on the library's built-in semantics; deep
-  rich-text screen-reader review is ongoing.
+  rich-text screen-reader review is ongoing and remains part of the conformance work.
 
 ## How accessibility is tested
 
 - **Unit:** preference layer, store, provider, primitives, and the
-  `contrast.test.ts` policy lock (Vitest).
+  `contrast.test.ts` regression floor (Vitest). Its current thresholds are not proof of AAA.
 - **E2E:** `accessibility-settings`, `accessibility-non-regression`,
-  `skip-link`, and `a11y-axe` (axe-core WCAG 2 A/AA scans) under `e2e/`.
+  `skip-link`, and `a11y-axe` (axe-core WCAG 2 A/AA scans) under `e2e/`. These scans support
+  the audit but do not establish AAA conformance.
 - **Storybook:** the `@storybook/addon-a11y` checks component stories.
+- **Manual:** review the applicable WCAG 2.2 criteria and the theme-specific contrast target for
+  new or changed user-facing or interaction-affecting behaviour,
+  including keyboard-only and screen-reader flows, focus visibility/obscuring, zoom/reflow and
+  criteria that automated tools cannot evaluate.
 
 Report accessibility issues the same way as any other bug.

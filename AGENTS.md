@@ -4,10 +4,10 @@
 > relevant `.agents/skills/*/SKILL.md` files before touching any code.
 > Skills may be combined. When in doubt, read more skills, not fewer.
 >
-> This file is the **single, complete source of the non-negotiable rules**. Skills,
-> playbooks, and reference docs carry workflows, examples, and rationale; where any of
-> them appears to disagree with this file, this file wins — treat the disagreement as a
-> bug and fix it.
+> This file is the repository bootstrap: it owns workflow, routing and the hard stops that
+> apply across domains. Detailed standards live in the canonical documents named below.
+> Keep a rule in one canonical place; if a skill or playbook disagrees with that source,
+> treat the disagreement as a bug and fix it.
 
 ---
 
@@ -24,8 +24,8 @@
 | "component", "UI", "design system", "a11y", "i18n", "copy", "storybook" | [`build-writer-ui`](.agents/skills/build-writer-ui/SKILL.md) |
 | "schema", "migration", "dexie", "table", "stores.ts", "LoremDB" | [`change-writer-persistence`](.agents/skills/change-writer-persistence/SKILL.md) |
 | "collab", "yjs", "crdt", "multi-tab", "BroadcastChannel", "presence" | [`work-on-editor-collaboration`](.agents/skills/work-on-editor-collaboration/SKILL.md) |
-| "cloud", "dexie cloud", "sync", "encryption", "escrow", "passphrase" | [`work-on-cloud-sync`](.agents/skills/work-on-cloud-sync/SKILL.md) |
-| "sync hangs", "sync loop", "flashing", "downloading forever", "won't sync", "device limit", "reproduce sync bug" | [`debug-cloud-sync`](.agents/skills/debug-cloud-sync/SKILL.md) |
+| "writer sync", "writer-sync", "sync", "cross-device", "pairing", "P2P", "sync provider", "provider contract", "dexie cloud", "encryption", "escrow" | [`work-on-writer-sync`](.agents/skills/work-on-writer-sync/SKILL.md) |
+| "sync hangs", "sync loop", "won't sync", "pairing failed", "frame rejected", "device limit", "cloud harness", "reproduce sync bug" | [`debug-writer-sync`](.agents/skills/debug-writer-sync/SKILL.md) |
 | "handover", "hand off", "handoff", "pause", "resume later", "context running out", "pick up where" | [`handover-writer-work`](.agents/skills/handover-writer-work/SKILL.md) |
 
 ---
@@ -40,64 +40,45 @@
 | [`docs/cloud-sync-beta.md`](./docs/cloud-sync-beta.md) | Before any cloud/encryption work |
 | [`docs/agent-playbooks.md`](./docs/agent-playbooks.md) | Step-by-step runbooks (Locate / Plan / Audit / Change / Handover) — seed your todo list from them |
 | [`docs/agent-navigation-benchmarks.md`](./docs/agent-navigation-benchmarks.md) | Navigation benchmark cases |
-| [`CODING_STANDARDS.md`](./CODING_STANDARDS.md) | Power-of-Ten coding rules |
+| [`CODING_STANDARDS.md`](./CODING_STANDARDS.md) | Before editing code — canonical coding, security and file-organisation rules |
+| [`ACCESSIBILITY.md`](./ACCESSIBILITY.md) | Before user-facing or interaction-affecting work — canonical WCAG target, current gaps, and verification |
 
 ---
 
 ## Coding standards (read first)
 
-This repo enforces a strict standard adapted from NASA/JPL's "Power of Ten". See
-[CODING_STANDARDS.md](./CODING_STANDARDS.md). When writing or editing code:
+[`CODING_STANDARDS.md`](./CODING_STANDARDS.md) is the single source of truth for code quality,
+file organisation, structural design, lint/type safety and the Power-of-Ten limits. Read it
+before editing code. Skills may repeat a short workflow guardrail, but they must link back to
+this standard rather than redefine it.
 
-- New or edited code must pass `npx eslint <files> --max-warnings=0` (the pre-commit hook
-  enforces this on staged files). Existing warnings are a tracked backlog; do not add to it.
-- Run `npm run lint` and `npm run typecheck` before committing; both gate CI.
-- **Limits:** cyclomatic complexity ≤ 12; nesting ≤ 4; functions ≤ 60 lines and ≤ 3
-  parameters (use an options object beyond three — ESLint's `max-params` still allows 4
-  for the pre-existing backlog; do not add to it). No floating promises; handle every
-  nullable return; no module-level mutable state.
-- Use `invariant()` and `assertNever()` from `@/lib/invariant` to validate untrusted input.
-- Write all functions as arrow functions (`const f = () => …`), including utilities.
-- **Honour established design principles, not just the linters.** Code must reflect sound
-  design — **single responsibility**, **modularity** (high cohesion, low coupling), depending
-  on **abstractions** rather than concretions (**SOLID**), and a **facade layer** in front of
-  complex subsystems so callers work against a clean interface. Functional programming (arrow
-  functions, immutability, composition, pure functions) is the default style and is encouraged
-  — but it is *how* we express these principles, never a reason to abandon them. A change that
-  passes lint/types but muddies responsibilities, leaks implementation detail, or couples
-  modules together is not done. When a unit grows more than one reason to change, split it.
-- A test file's extension mirrors the file under test: `foo.ts` → `foo.test.ts`,
-  `foo.tsx` → `foo.test.tsx`.
-- Types live in a dedicated `*.types.ts` file, or co-located with the module they
-  describe.
-- **One component per file (going forward).** Each React component lives in its own file,
-  named in PascalCase to match its export (e.g. `TypographyH1.tsx`), with its `.test.tsx` and
-  `.stories.tsx` alongside. Don't co-locate multiple components in one file — extract each into
-  its own module and compose them. When a split produces several related components, group them
-  under a shared folder (e.g. `DocInspector/` containing `DocInspector.tsx` and its
-  sub-components), keeping one component per file within it. Several existing files still bundle
-  private sub-components; treat those as a backlog (like the lint backlog) — don't add new
-  co-located components, and split them out when you next touch the file. The same applies to
-  services: **one service per file**.
-- **Never relax limits or silence the linter to make code pass.** Do not raise or loosen the
-  size limits (function/file length, etc.), weaken or disable an ESLint rule, or add
-  `// eslint-disable*`, `// nasa-exception`, `@ts-ignore`/`@ts-expect-error`, or any other
-  suppression. Fix the code instead — split the function or file, extract a module, correct the
-  type. If you are convinced a limit genuinely cannot be met by refactoring, **stop and ask the
-  user clearly and explicitly what to do** before changing any config or adding a suppression;
-  do not decide unilaterally. (`src/tours/` and `src/editor/` carry pre-existing scope
-  exemptions in the lint config — that is the existing status quo, not licence to add more.)
-- **Refactor non-compliant files in a separate commit first.** When you need to edit a file
-  that already violates these standards (co-located components, oversized functions, leaked
-  abstractions, etc.), first bring it into compliance and commit that on its own (a
-  `refactor: …` commit with no behaviour change), then apply your actual change in a following
-  commit. Keep the refactor and the behavioural change in distinct commits so each stays small,
-  reviewable, and revertible on its own — never bundle a clean-up into the feature/fix diff.
+- Apply the standard to every new or edited line. Existing backlog is not permission to add a
+  new violation.
+- Never weaken a rule, coverage floor or type-safety boundary, and never add a suppression to
+  make a check pass. Follow the stop-and-ask rule in `CODING_STANDARDS.md` if compliance appears
+  impossible.
+- Treat the root-cause, proper-typing and comment-discipline rules in `CODING_STANDARDS.md` as
+  hard gates. Do not ship a workaround or hack when the root cause cannot be fixed in scope;
+  stop and report the blocker.
+- Follow the separate compliance-refactor step in the task order below when a touched file must
+  first be brought up to standard.
 - **Legacy support requires explicit permission.** Do not add new code paths, fallbacks,
   fixtures, or migrations whose purpose is to support legacy formats or behaviour (e.g.
   pre-Lexical plain-text bodies) without asking the user first and getting an explicit yes.
   Existing legacy handling stays as-is until its removal is explicitly agreed — don't extend
   it, and don't silently remove it either.
+
+## Security (read before changing a trust boundary)
+
+[`CODING_STANDARDS.md` § "Security engineering"](./CODING_STANDARDS.md#security-engineering) is the canonical
+secure-coding baseline. Review security-sensitive changes against the current
+[OWASP Top 10:2025](https://owasp.org/Top10/) and any feature-specific threat model. OWASP is
+a baseline taxonomy, not an exhaustive checklist and not a substitute for threat modelling.
+
+Security is not limited to server code. Browser APIs, local persistence, imported/rendered
+content, settings that alter security behaviour, cryptography, sync/P2P/provider boundaries,
+dependencies and build configuration can all introduce security-relevant behaviour. Apply the
+same root-cause, validation and adversarial-test standard at those boundaries.
 
 ## Task order (read before starting work)
 
@@ -195,39 +176,34 @@ System" design spec. When adding or changing any component or feature, verify it
 - Add a `.test.tsx` and a `.stories.tsx` mirroring the file under test (see
   [CODING_STANDARDS.md](./CODING_STANDARDS.md)).
 
-## Accessibility (read before building UI)
+## Accessibility (read before user-facing or interaction-affecting work)
 
-Accessibility is a first-class, **additive** property of every feature — not an afterthought
-and never a regression for existing users. [`docs/design-system.md` §11](./docs/design-system.md)
-is the source of truth for the accessibility layer; align with it when building or changing UI.
+[`ACCESSIBILITY.md`](./ACCESSIBILITY.md) is the single source of truth for conformance targets,
+known gaps and verification. [`docs/design-system.md` §11](./docs/design-system.md) owns the
+tokens, primitives and preference implementation. Read `ACCESSIBILITY.md` whenever behaviour
+changes what a person can perceive, operate, understand or recover from; read the design system
+as well when the change affects UI.
 
-- **Compose, honour the preference layer.** Build from the accessible primitives in
-  `src/components/ui/` (including `SkipLink` and `VisuallyHidden`). Consume the `data-*`
-  preference layer and its tokens (`--reading-scale`, `--reading-leading-scale`,
-  `--focus-ring-width`, motion gating) — **never hard-code** a font size, line-height, focus
-  ring, transition duration, or colour that a preference or theme should govern.
-- **Operable & perceivable.** Every interactive element must be keyboard-operable with a
-  visible focus indicator and an accessible name, use correct semantics (roles, labels,
-  landmarks, `aria-live`, `aria-describedby`, `aria-current`), and respect
-  `prefers-reduced-motion` / `data-motion`.
-- **Keyboard shortcuts must be cross-platform — in logic *and* in display.** The modifier key
-  is Cmd on macOS (`event.metaKey`) and Ctrl on Linux/Windows (`event.ctrlKey`); a handler that
-  checks only one is broken on the other platform. Always accept the chord with
-  `event.metaKey || event.ctrlKey` (the established pattern across the app), and never hard-code
-  a single platform's glyph or word (`⌘`, `Cmd`, `Ctrl`) in a shortcut hint — derive the label
-  from the running platform so each user sees the key they actually press. This applies to app
-  functionality the same way the [E2E section](#e2e-test-coverage-ratcheted)'s `ControlOrMeta+A`
-  rule applies to specs.
-- **Additive by default.** New behaviour is opt-in and must not change the default experience
-  for existing users. Defaults equal today's behaviour; persisted preferences stay
-  back-compatible (`?? default`, no destructive migration).
-- **Contrast.** Target **WCAG AA** in `light`/`dark` and **AAA (7:1)** in the `hc-*` themes;
-  keep AAA-strict colour work inside the high-contrast themes.
-- **Ships with a11y tests.** User-facing behaviour lands with accessibility tests the same way
-  it lands with tests and help: assertions in unit/e2e (query by role/label), a `.stories.tsx`
-  the Storybook a11y addon can check, and — for anything that touches the default experience —
-  a non-regression test proving no behaviour-changing `data-*` is applied until the user opts
-  in. Put new opt-in states behind their own story/test rather than editing a default snapshot.
+Use the conformance targets in `ACCESSIBILITY.md`. For contrast, the default `light` and `dark`
+themes have a **WCAG 2.2 AA minimum**; `hc-light` and `hc-dark` target **AAA enhanced
+contrast**. Do not turn the high-contrast target into a 7:1 requirement for every theme or
+claim a conformance level beyond the evidence recorded in `ACCESSIBILITY.md`.
+
+- Accessibility is a baseline, not an opt-in theme. Default themes must meet their AA contrast
+  minimum; high-contrast themes provide the enhanced contrast presentation.
+- Accessibility is functional as well as visual. Settings, shortcuts, focus/state transitions,
+  status and error announcements, timing, gestures, preference persistence and recovery flows
+  are in scope even when no component markup changes.
+- Use accessible names, semantics, keyboard operation, visible focus and reduced-motion
+  behaviour from the shared primitives. Keep shortcuts cross-platform in both logic and labels.
+- For text, apply SC 1.4.3 to `light`/`dark` (at least 4.5:1 normal, 3:1 large) and SC 1.4.6 to
+  `hc-light`/`hc-dark` (at least 7:1 normal, 4.5:1 large), subject to each criterion's
+  exceptions. Apply the relevant criterion to non-text UI rather than treating 7:1 as a
+  universal graphics ratio.
+- Ship accessibility assertions with user-facing behaviour and manually review the applicable
+  criteria. Automated axe/Storybook checks are supporting evidence, not conformance proof.
+- Do not introduce a new accessibility gap. If a changed surface cannot meet its applicable
+  target, stop and ask rather than redefining the target or hiding the gap.
 
 ## E2E test coverage (ratcheted)
 
@@ -282,11 +258,11 @@ is checked in review.
 ## Testing philosophy (read before changing tests)
 
 Unit tests (Vitest) and e2e tests (Playwright) exist to **prevent regressions** — to
-protect existing, working behavior from unintended change. Treat them as a safety net,
+protect existing, working behaviour from unintended change. Treat them as a safety net,
 not a checkbox.
 
 - **Take a TDD/BDD approach.** Before implementing a change, write or extend a test that
-  describes the intended behavior, then make it pass. New behavior ships with a test that
+  describes the intended behaviour, then make it pass. New behaviour ships with a test that
   would fail without it.
 - **A green run is not the objective.** Stability and the absence of unintended changes
   are. Passing tests are a means of confirming that, not the goal itself.
@@ -385,6 +361,9 @@ production releases and is changed only through the project's release process, n
   the PR **body** matches the template exactly — every section present and in order, none
   added, removed, or reordered, hidden comments intact. If the title or body deviates, **flag
   the specific deviation as a PR comment** and leave the agent-reviewer box unticked.
+- **Review comments follow `audit-writer-change`'s comment contract.** State one concrete
+  problem, why it matters, the proposed root-cause technical fix (pseudocode where useful),
+  and observable acceptance criteria/checklist. Map to OWASP or WCAG when genuinely applicable.
 - **The PR checklist item "Agent reviewer: I re-read `.github/PULL_REQUEST_TEMPLATE.md` and
   confirm this PR's title and description conform to it exactly" is the one attestation agents
   DO tick** — but only after actually performing that verification, and only when nothing was
@@ -410,7 +389,7 @@ it ships with a test and a help update.
 ## Help content (read before adding or changing features)
 
 The in-app **Help Center** (`/help`) is end-user documentation that lives beside the
-code. User-facing behavior changes ship with a help update, the same way they ship with
+code. User-facing behaviour changes ship with a help update, the same way they ship with
 a test. When planning a feature, identify which help article(s) it adds or changes; when
 implementing, update them in the same PR.
 
@@ -423,7 +402,9 @@ implementing, update them in the same PR.
   tour lacks an article, or a registered slug has no English body. Treat a red coverage
   test as a missing doc, not a test to weaken.
 - **Reviewers** should check that feature PRs include the corresponding help change.
-- Write for end users (task-oriented "how do I…"), not implementation detail.
+- **Structure and writing rules** live in `build-writer-ui`; use its Help article structure
+  for English authoring and `audit-writer-change` for review. Keep this bootstrap focused on
+  the shipping requirement rather than duplicating the prose rules here.
 
 ## Key commands
 
