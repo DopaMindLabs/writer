@@ -6,36 +6,10 @@ import { compareOperations } from './convergence';
 import { retentionCutoff, type RetentionOptions } from './journalRetention';
 
 /**
- * When a journalled frame may be dropped.
- *
- * A frame is compactable once **every currently-trusted peer already holds it**,
- * or once the retention window has elapsed — whichever comes first. The
- * acknowledgement half lets a small, well-connected set of devices reclaim space
- * long before the window; the window is the backstop that stops one device that
- * never returns from pinning the journal open forever. Removing a device from the
- * trust registry releases its hold immediately, because it is no longer a peer
- * whose acknowledgement is awaited.
- *
- * **Unanimity over an empty set is not evidence.** With no trusted peer, the
- * acknowledgement clause would be vacuously true and would erase the journal
- * wholesale; it is deliberately disabled there, leaving the window in sole
- * charge.
- *
- * **Acknowledgements are per origin device, not one mark per scope.** A single
- * high-water mark per scope is unsound across three or more devices: an
- * operation from device C, logically older than one from device A that the peer
- * has acknowledged, would be judged covered even though the peer never saw it,
- * and compaction would lose it. Each peer therefore records how far it has read
- * *each* originating device, and coverage is only ever decided between
- * operations from the same origin — where that device's own clock gives a total
- * order that cannot disagree with delivery.
- *
- * **A deletion is state, not history.** A delete frame named by a surviving
- * tombstone is exempt from the window entirely: it leaves when the tombstone
- * does, on unanimous acknowledgement or the removal of the peer that never
- * acknowledged it. Ageing it out separately would leave the deletion with
- * nothing to serve it from, and a device returning after the window would keep
- * a row every other device had deleted.
+ * Selects compactable journal frames. A frame expires after every trusted peer
+ * acknowledges it or its retention window closes. Acknowledgements are tracked
+ * per origin device. Delete frames remain coupled to their tombstones and leave
+ * only when the tombstone is releasable.
  */
 
 /** How far one still-trusted peer has read each originating device, per scope. */

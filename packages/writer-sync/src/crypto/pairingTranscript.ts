@@ -62,7 +62,7 @@ export const pairingTranscript = async (
  * Derived, never transmitted — a payload field carrying it would let an attacker
  * display exactly the value the user expects. Six digits is proportionate
  * because the attacker gets one attempt: the session is single-use, the nonce is
- * cached and the payload expires in two minutes.
+ * cached and the payload expires in five minutes.
  */
 export const verificationCode = async (transcript: Uint8Array): Promise<string> => {
   const base = await crypto.subtle.importKey('raw', asBuffer(transcript), 'HKDF', false, [
