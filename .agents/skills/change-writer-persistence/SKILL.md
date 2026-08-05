@@ -6,7 +6,7 @@ description: >
   src/db/ or src/lib/docs/. Trigger terms: "schema", "migration", "dexie", "table",
   "stores.ts", "LoremDB", "docRepository", "backup", "revision", "archive".
 metadata:
-  version: "1.3.0"
+  version: "1.4.0"
   tags: "persistence,database,dexie,schema,migration"
 ---
 
@@ -67,10 +67,10 @@ First classify the change.
    version and the change lands in `STORES` under it. Writer has no users, so wipe and
    reseed a stale local database rather than adding legacy migration code.
 4. Add a focused DB schema test alongside the DB implementation.
-5. Decide replication separately. When
-   `src/lib/writerSyncIntegration/writerTablePolicy.ts` exists, classify the table there
-   and let provider lists derive from that policy. On a branch without the integration
-   policy, add a local-only table to `UNSYNCED` in `buildDb.ts`.
+5. Decide replication separately. On `develop`, add a local-only table to `UNSYNCED` in
+   `src/db/buildDb.ts`; step 6 covers synced content. If the current branch contains a
+   canonical `writerTablePolicy.ts`, locate it with `navigate-writer-codebase` and use it;
+   never assume a future path.
 6. Add a synced content table to `SYNCED_TABLES`; `cloudCrypto` is the special synced,
    already-wrapped escrow and is not row-encrypted.
 7. Update cascades, archives, restore/import, backup, and revision paths where relevant.

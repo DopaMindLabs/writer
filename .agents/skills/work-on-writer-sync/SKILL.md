@@ -8,7 +8,7 @@ description: >
   "writer sync", "writer-sync", "sync engine", "cross-device", "pairing", "P2P",
   "provider", "operation frame", "dexie cloud", "escrow", "cloudClient".
 metadata:
-  version: "2.0.0"
+  version: "2.1.0"
   tags: "writer-sync,sync,providers,p2p,dexie-cloud,encryption"
 ---
 
@@ -21,9 +21,10 @@ provider-specific transport or durability. Identify the layer before editing it:
 
 | Layer | Owns | Location |
 |---|---|---|
-| Engine | provider contracts, operation frames, convergence, pairing and crypto | `packages/writer-sync/` |
-| Writer integration | table policy, materialisation, boot/config and React context | `src/lib/writerSyncIntegration/` |
-| Peer provider | WebRTC transport, realtime/discovery | `packages/writer-sync/src/providers/webrtc/` |
+| Provider contracts/coordinator | capability contracts, provider bindings and provider selection | `src/lib/syncProviders/` |
+| Writer integration | boot/composition and React capability context | `src/lib/writerSync/` |
+| Engine | operation frames, convergence, pairing and crypto | `packages/writer-sync/` when present |
+| Peer provider | WebRTC transport, realtime/discovery | `packages/writer-sync/src/providers/webrtc/` when present |
 | Cloud provider | durable Dexie Cloud transport, account/escrow integration | `src/lib/cloud/` |
 
 The engine is intentionally independent of Writer. It must not import app code,
@@ -39,10 +40,11 @@ Folder export under `src/lib/sync/` is a separate feature.
 
 ## Public capability model
 
-UI and hooks consume sync behaviour through the `SyncProvider` capability adapter
-(`useSyncCapability(...)` from the Writer Sync integration) rather than depending on
-Dexie Cloud-shaped types. Capabilities include durable sync, realtime, discovery,
-access control and key delivery; a provider advertises only what it genuinely supports.
+UI and hooks consume sync behaviour through `useSyncCapability(...)` in
+`src/lib/writerSync/syncCoordinatorContext.ts` rather than depending on Dexie Cloud-shaped
+types. Provider-neutral contracts live in `src/lib/syncProviders/types.ts`. Capabilities
+include durable sync, realtime, discovery, access control and key delivery; a provider
+advertises only what it genuinely supports.
 
 Do not fabricate a provider-neutral contract merely to hide an existing provider call.
 If a surface needs a capability that does not exist — for example account/session or
@@ -93,10 +95,10 @@ For every table or field change, decide independently:
 4. how a peer validates and materialises it;
 5. which tests prove those decisions.
 
-On branches with `writerTablePolicy.ts`, make the classification there and let derived
-provider lists follow it. On earlier branches, the equivalent Dexie Cloud decisions are
-`UNSYNCED` in `src/db/buildDb.ts` and `SYNCED_TABLES` in
-`src/lib/cloud/crypto/tableRules.ts`; they are complementary, not mirror lists.
+On `develop`, the replication decisions are `UNSYNCED` in `src/db/buildDb.ts` and
+`SYNCED_TABLES` in `src/lib/cloud/crypto/tableRules.ts`; they are complementary, not mirror
+lists. If a feature branch introduces a canonical `writerTablePolicy.ts`, use
+`navigate-writer-codebase` to locate it before relying on it; never assume a future path.
 
 `cloudCrypto` is a special synced escrow envelope. It is already wrapped and must not be
 treated as ordinary plaintext content.
