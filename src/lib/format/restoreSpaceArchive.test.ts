@@ -3,7 +3,6 @@ import * as Y from 'yjs';
 import { db } from '@/db/db';
 import { onDocReload } from '@/lib/collab/docReloadChannel';
 import { collabSeedKey } from '@/lib/collab/seedKey';
-import { stripXmlTags } from '@/lib/stripXmlTags';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
 import {
   readSpaceSnapshot,
@@ -50,16 +49,20 @@ const comparable = (snapshot: SpaceSnapshot): unknown => {
   };
 };
 
-const rootXml = (doc: Y.Doc): string =>
-  (doc.get('root', Y.XmlText) as Y.XmlText).toString();
-
-/** Plain text of a CRDT seed payload's root shared type. */
+/**
+ * Plain text of a CRDT seed payload's root shared type. Read structurally via
+ * `toDelta()` — text lives in string inserts, formatting in attributes — so no
+ * markup is ever rendered, and prose containing literal angle brackets
+ * survives intact.
+ */
 const seedText = (payload: Uint8Array): string => {
   const doc = new Y.Doc();
   Y.applyUpdate(doc, payload, 'test');
-  const xml = rootXml(doc);
+  const ops = (doc.get('root', Y.XmlText) as Y.XmlText).toDelta() as readonly {
+    readonly insert?: unknown;
+  }[];
   doc.destroy();
-  return stripXmlTags(xml);
+  return ops.map((op) => (typeof op.insert === 'string' ? op.insert : '')).join('');
 };
 
 const mutateSpace = async (): Promise<void> => {
