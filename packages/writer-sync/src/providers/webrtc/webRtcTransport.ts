@@ -37,15 +37,9 @@ export class NonBinaryMessageError extends Error {
 }
 
 /**
- * A {@link SyncTransport} over one WebRTC data channel, per runbook §22.
- *
- * `sharesStore` is `false`: a remote peer persists to its own store, so this
- * device must persist what arrives rather than assuming the write already
- * happened — the opposite of a `BroadcastChannel` between tabs.
- *
- * The channel is a bearer, not a trust boundary. DTLS protects it in transit,
- * but every frame it carries is independently encrypted and device-signed, so a
- * compromised channel still cannot forge or read content.
+ * A {@link SyncTransport} over one WebRTC data channel. Remote writes are
+ * persisted locally, while encrypted and signed frames provide the trust
+ * boundary independently of the channel.
  */
 
 /** The subset of `RTCDataChannel` this transport needs, so tests need no WebRTC. */
@@ -69,27 +63,14 @@ const toBytes = (data: unknown): Uint8Array | null => {
   return null;
 };
 
-/**
- * Whether the channel will carry a write at all.
- *
- * A channel exists in three states that are not `open`, and writing in any of
- * them throws: the device that creates one holds it in `connecting` while the
- * connection forms, and a connection that drops leaves it `closing` or `closed`.
- */
+/** Classifies whether a channel can send now, later or never. */
 const isOpen = (channel: DataChannelLike): boolean => channel.readyState === 'open';
 
 /** Past this the channel will never carry anything again. */
 const isGone = (channel: DataChannelLike): boolean =>
   channel.readyState === 'closing' || channel.readyState === 'closed';
 
-/**
- * What is waiting to go out, and whether the channel can still take it.
- *
- * Queueing serves two cases that look the same from here: a channel too full to
- * write into now, and one that has not finished connecting. Both drain on an
- * event from the channel — `bufferedamountlow` and `open` — rather than on a
- * timer, so there is no write-on-settle loop.
- */
+/** Queues writes until `open` or `bufferedamountlow` signals capacity. */
 const createChannelOutbox = (channel: DataChannelLike) => {
   const pending = createOutboxQueue();
   const watchers = new Set<(reason?: Error) => void>();
@@ -243,18 +224,9 @@ const inboundLimiterFor = (now: () => number): InboundLimiter =>
   });
 
 /**
- * Wrap a data channel as a transport.
- *
- * Outbound frames that exceed the ceiling throw rather than being split: the
- * operation protocol chunks attachments itself, so an oversized frame here is a
- * bug in the caller, and silently fragmenting would hide it.
- *
- * A channel that is not open is never written to. It is not an error for a caller
- * to try — a live frame is written the moment a row is journalled, which may be
- * before the channel has finished connecting or after the connection has dropped
- * — so what can still be carried is queued and what cannot is dropped, with the
- * consumer told through {@link SyncTransport.onClosed} so it can stop using a
- * bearer that is gone.
+ * Wraps a data channel as a bounded transport. It queues frames while the link
+ * can recover, reports closure to consumers and rejects frames that exceed the
+ * protocol ceiling; attachment splitting belongs to the operation protocol.
  */
 export const createWebRtcTransport = (
   channel: DataChannelLike,

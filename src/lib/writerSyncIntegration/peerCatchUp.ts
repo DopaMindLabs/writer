@@ -40,31 +40,14 @@ import { sweepUnappliedFrames } from './materialization/frameIngestion';
 import { createAttachmentChunkStore } from './attachmentChunkStore';
 
 /**
- * Writer's wiring of the catch-up exchange onto a paired peer's connection.
- *
- * This exists because pairing and syncing have different lifetimes. The pairing
- * dialog owns a conversation that ends; sync needs a connection that persists.
- * Adopting the session here — from something mounted for the app's lifetime
- * rather than the dialog's — is what stops the connection dying the moment the
- * user dismisses "Devices paired".
- *
- * The exchange journals verified frames and nothing more; materialisation stays
- * with the inbox-guarded sweep every provider shares, so an operation arriving
- * by both P2P and Dexie still applies exactly once.
+ * Connects a paired peer session to Writer's app-lifetime sync process.
+ * Verified frames enter the shared journal and materialisation sweep, preserving
+ * idempotence when more than one provider delivers the same operation.
  */
 
 /**
- * The scopes this device holds frames for — what it can advertise.
- *
- * Read from the journal, not from the rows that survive. The two differ exactly
- * when it matters most: deleting a space removes every row it had and journals a
- * tombstone, so a device answering from its rows dropped the scope from its
- * manifest altogether and the peer was never told there was anything newer to
- * ask for. The deletion had no route across, and the peer kept the space.
- *
- * The journal is also what a request is served from, so this is the honest
- * answer to what can be offered — bounded, like all history here, by the
- * retention window.
+ * Returns the scopes available for catch-up from the retained journal. Reading
+ * the journal includes deleted scopes whose surviving state is a tombstone.
  */
 const accessibleScopeIds = async (db: LoremDB): Promise<string[]> => {
   if (!deviceKeyProvider.hasAnyKey()) return [];
@@ -101,18 +84,8 @@ export interface AdoptedPeer {
 
 export interface PeerCatchUp {
   /**
-   * Take over a peer session once pairing has been confirmed.
-   *
-   * Trust is committed in two phases. A fresh pairing is an in-memory identity
-   * while the root secret moves — nothing written, no session published, no
-   * scope channel, no catch-up — and is recorded only once the root has
-   * crossed. An incomplete pairing therefore leaves nothing to clean up, so no
-   * crash can strand a record. A rollback could not promise that: it is a
-   * second write, across a conversation with another device.
-   *
-   * Resolves once the pairing phase is under way, not once trust exists.
-   * Rejects, with nothing written, when a known device id presents a different
-   * identity key.
+   * Adopts a confirmed peer session. Trust is persisted only after root-secret
+   * transfer succeeds; a known device presenting a different key is rejected.
    */
   adopt: (peer: AdoptedPeer) => Promise<void>;
   /** Close every adopted session. */
@@ -187,15 +160,7 @@ const catchUpPorts = ({
   },
 });
 
-/**
- * Run `listener` once the channel can actually carry a message.
- *
- * A channel exists well before it is usable: the device that creates one holds
- * it in `connecting` while the connection is still forming, and writing to it
- * then throws. The answering device never sees that state — its channel arrives
- * already open — which is why sending too early failed on one side of a pairing
- * and not the other.
- */
+/** Runs `listener` once the channel reaches its writable state. */
 const whenOpen = (channel: DataChannelLike, run: () => void): void => {
   if (channel.readyState === 'open') {
     run();
@@ -208,15 +173,7 @@ const whenOpen = (channel: DataChannelLike, run: () => void): void => {
   channel.addEventListener('open', onOpen);
 };
 
-/**
- * Run `listener` for the first channel a session comes by, however it comes by
- * it, once it is open.
- *
- * A channel the session already holds is delivered *during* the subscription,
- * when no handle to unsubscribe with exists yet. Taking that case on its own
- * leaves the subscription for the case that needs one: the answering device,
- * whose channel its peer has still to open.
- */
+/** Runs `listener` for the first available channel, including one already open. */
 const openChannelOnce = (
   session: PeerSession,
   listener: (channel: DataChannelLike) => void,
@@ -248,15 +205,8 @@ interface PairingPhaseOptions {
 }
 
 /**
- * The pairing phase: key material, and nothing else.
- *
- * The channel is split so this phase reads only the root transfer. The other
- * view is held unread until the root has crossed — a peer that confirmed first
- * and started syncing is buffered, not answered. Dropping it instead would cost
- * the exchange in that direction for the session, since a manifest is sent once.
- *
- * Catch-up second is also the only order that means anything: a device still
- * waiting for a root would advertise no scopes and be told it is caught up.
+ * Completes root-secret transfer before catch-up. The split channel buffers sync
+ * messages until the receiving device can resolve its scopes and keys.
  */
 const runPairingPhase = ({
   channel,
@@ -288,14 +238,7 @@ const runPairingPhase = ({
   );
 };
 
-/**
- * Refuse a known device id presenting a different key, before any key material
- * moves. A read, not a write.
- *
- * The store enforces the same rule when trust is committed, and that refusal is
- * the authoritative one — but it comes after the root would already have been
- * sealed for whoever is on the other end.
- */
+/** Rejects a changed identity key before root-secret transfer begins. */
 const refuseSubstitutedIdentity = async (options: {
   registry: TrustedDeviceRegistry;
   deviceId: DeviceId;
@@ -310,13 +253,7 @@ const refuseSubstitutedIdentity = async (options: {
   );
 };
 
-/**
- * Commit the peer a completed pairing authenticated — the record every later
- * frame is verified against, and what the device list reads.
- *
- * Runs only once the root secret has moved. A known identity is refreshed
- * rather than rewritten, so a completed pairing undoes a removal.
- */
+/** Persists the authenticated peer after root transfer, reactivating known identities. */
 const commitTrust = async (
   registry: TrustedDeviceRegistry,
   peer: AdoptedPeer,
@@ -344,13 +281,7 @@ const commitTrust = async (
   });
 };
 
-/**
- * Take up the scope channels a peer opens — how this device receives work in a
- * scope it is not writing to itself.
- *
- * Subscribed only once trust is committed: a scope channel is ordinary sync
- * authority, and a pairing that has not finished has none.
- */
+/** Adopts peer-opened scope channels after trust has been committed. */
 const listenForScopeChannels = (
   peer: AdoptedPeer,
   exchangeOver: (channel: DataChannelLike) => void,
@@ -363,13 +294,7 @@ const listenForScopeChannels = (
   });
 };
 
-/**
- * The retention window, read once and held.
- *
- * The engine asks for the cutoff synchronously while answering a request, so it
- * cannot wait on storage. Until the stored preference resolves this is the same
- * default a device that never changed it keeps.
- */
+/** Caches the stored retention window for the synchronous catch-up port. */
 const trackRetentionDays = (db: LoremDB): (() => number) => {
   let days = JOURNAL_RETENTION_DEFAULT_DAYS;
   void getJournalRetentionDaysFor(db)

@@ -1,18 +1,9 @@
 import type { SyncTransport } from './transport.types';
 
 /**
- * The public capability vocabulary for Writer Sync.
- *
- * A {@link SyncProvider} is one *configured instance* of a backend (Dexie Cloud,
- * a WebRTC peer, a LAN transport, a local folder) that offers *some* of the
- * capabilities below. Nothing here knows how any particular backend works: the
- * contracts are shaped after the observable surface the app already speaks, so an
- * adapter maps rather than casts.
- *
- * The engine picks no provider by default and reads no meaning into registration
- * order — defaults live in {@link SyncConfiguration}, never on a provider.
- * `replication` stays an internal implementation term; the public vocabulary is
- * provider, capability, binding and scope.
+ * Provider-neutral public contracts for Writer Sync. A {@link SyncProvider} is
+ * one configured backend instance exposing supported capabilities. Defaults and
+ * selection rules belong to {@link SyncConfiguration}.
  */
 
 /**
@@ -41,12 +32,7 @@ export interface SyncSubscription {
   unsubscribe: () => void;
 }
 
-/**
- * The minimal observable the sync layer depends on. Deliberately structurally
- * identical to `CloudObservable` in `@/lib/cloud/cloudObservable`, so a provider
- * adapter can hand an existing cloud observable straight through without a cast,
- * while this module keeps no dependency on the cloud subsystem.
- */
+/** Minimal observable contract shared by provider adapters. */
 export interface SyncObservable<T> {
   subscribe: (next: (value: T) => void) => SyncSubscription;
 }
@@ -77,15 +63,7 @@ export interface SyncStatus {
   error?: Error;
 }
 
-/**
- * Durable, session-level replication of encrypted frames. `start` boots the
- * provider's session and resolves with the teardown for everything it started.
- *
- * This is the provider *lifecycle* port. The common encrypted-frame exchange it
- * carries arrives with the operation protocol (runbook slice 1E), and Dexie
- * Cloud is made to implement it in slice 1F; until then a provider's `start`
- * drives its own existing replication.
- */
+/** Durable encrypted-frame replication and provider lifecycle. */
 export interface DurableSyncCapability {
   start: () => Promise<() => void>;
   /** Ask for a fresh round now. Rejections propagate so the UI can surface them. */
@@ -101,14 +79,7 @@ export interface RealtimeTransportOptions {
   channelId: string;
 }
 
-/**
- * Live peer-to-peer transport, created per scope + channel rather than shared
- * across the whole provider. A provider offers the *capability* to make a
- * transport; the transport itself reuses the collab layer's engine-agnostic
- * {@link SyncTransport} contract, so `sharesStore` semantics carry over
- * unchanged. Per-document / per-scope creation is deliberately kept out of
- * session boot.
- */
+/** Creates a live {@link SyncTransport} for one access scope and logical channel. */
 export interface RealtimeSyncCapability {
   createTransport: (options: RealtimeTransportOptions) => Promise<SyncTransport>;
 }
@@ -138,15 +109,7 @@ export interface ScopeMember {
   role: ScopeRole;
 }
 
-/**
- * Membership and permissions for an access scope. Providers without a server-side
- * authority (WebRTC, Bluetooth) simply omit this capability.
- *
- * `resolveBinding` answers the *provider-side* binding for a scope (a Dexie Cloud
- * realm, say) — how a provider maps {@link AccessScopeId} onto its own boundary.
- * The coordinator's own binding resolution reads configured
- * {@link SyncProviderBinding}s and never depends on registration order.
- */
+/** Membership, permissions and provider-side binding for an access scope. */
 export interface AccessControlAdapter {
   createScope: (scopeId: AccessScopeId) => Promise<void>;
   dropScope: (scopeId: AccessScopeId) => Promise<void>;
@@ -187,12 +150,7 @@ export interface KeyDeliveryAdapter {
   escrowPresence: SyncObservable<KeyEscrowPresence>;
 }
 
-/**
- * One configured provider instance. `id` identifies the instance; `kind` names
- * the backend, so two instances of one kind are both legal. A provider declares
- * only the capabilities it can honour and carries no default or priority of its
- * own — those belong to {@link SyncConfiguration}.
- */
+/** One configured backend instance and the capabilities it supports. */
 export interface SyncProvider {
   id: SyncProviderInstanceId;
   kind: SyncProviderKind;

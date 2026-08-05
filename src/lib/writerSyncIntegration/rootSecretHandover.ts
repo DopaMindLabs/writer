@@ -17,14 +17,9 @@ import { deviceKeyProvider, saveDeviceKeyRing } from '@/lib/cloud/crypto/keyStor
 import { currentPrincipal } from './writerEntityMetadata';
 
 /**
- * Writer's half of the root-secret handover: what this device can seal, and
- * what it does with a root that arrives.
- *
- * The protocol in the package decides *whether* a root moves and in which
- * direction. This decides what a root means here — the vault it is stored in,
- * the principal it is bound to, and the key ring the rest of the application
- * reads. A device that receives one ends up exactly where a device that unlocked
- * by passphrase does; there is no separate "paired device" key path.
+ * Connects the provider-neutral root-transfer protocol to Writer's vault,
+ * principal and key ring. Pairing and passphrase unlock converge on the same key
+ * path.
  */
 
 /**
@@ -46,15 +41,7 @@ export interface RootSecretHandoverOptions {
   onError?: (error: unknown) => void;
 }
 
-/**
- * Take a root into use: store it, derive the ring, and seal what was written
- * before there was a key.
- *
- * The re-seal is what makes a pairing carry a device's existing writing. Rows
- * written while keyless are plaintext and never entered the journal — putting
- * them back through the middleware is what seals them and backfills the frames
- * a peer can be sent.
- */
+/** Stores a root, derives its key ring and seals rows written before key setup. */
 const adoptRoot = async (root: Uint8Array, epoch: number): Promise<void> => {
   try {
     await deviceKeyVault.storeRootSecret(root, await currentPrincipal());
@@ -91,16 +78,7 @@ export const rootSecretHandoverPorts = (
   // Held here rather than read from the options, so expiry can let go of it.
   let sessionPrivateKey = options.sessionPrivateKey;
 
-  /**
-   * Refuse a session whose window has closed, and let go of its key.
-   *
-   * The QR payload's expiry was checked when it was accepted, but the root
-   * secret leaves this device later — after a human has compared two codes,
-   * which is a step with no clock on it at all. Without this the deliberately
-   * short-lived credential would last as long as the connection did
-   * (`docs/pairing-protocol.md` §7). Expiry is absolute: the boundary itself is
-   * already too late, and it is never refreshed or extended.
-   */
+  /** Enforces the original pairing expiry immediately before root transfer. */
   const requireLiveSession = (): void => {
     if (now() < options.peer.expiresAt) return;
     sessionPrivateKey = null;
@@ -180,15 +158,7 @@ export interface SecretHandoverSession {
  */
 export const TRANSFER_DEADLINE_MILLIS = 10_000;
 
-/**
- * How one handover ended.
- *
- * Only `completed` says the key conversation reached its success state — a root
- * sent, a root received and stored, or both devices already holding one. A
- * timer firing, a caller unwinding, a peer going quiet and a protocol failure
- * are each their own fact, and none of them is success. Conflating them is what
- * let a pairing nobody finished commit durable trust.
- */
+/** Distinguishes completed transfer from every terminal interruption. */
 export type RootHandoverOutcome =
   | { status: 'completed' }
   | { status: 'expired' }
@@ -218,18 +188,7 @@ const outcomeFor = (error: unknown): RootHandoverOutcome =>
     ? { status: 'expired' }
     : { status: 'failed', error };
 
-/**
- * Drive the handover over one channel, then get out of the way.
- *
- * The listener is removed on the way out. The caller hands this protocol a view
- * of the channel rather than the channel itself, so sync traffic never reaches
- * this decoder — but a peer that has not finished repeats `ready` until it hears
- * back, and detaching is what stops those late repeats being answered by a
- * conversation that is over.
- *
- * Exactly one outcome is reported, whichever of the deadline, the caller and the
- * protocol gets there first.
- */
+/** Runs root transfer on a channel view, detaches listeners and reports one outcome. */
 export const runRootSecretHandover = (
   options: RunRootSecretHandoverOptions,
 ): RunningRootSecretHandover => {
