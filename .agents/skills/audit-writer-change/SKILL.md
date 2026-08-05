@@ -6,7 +6,7 @@ description: >
   persistence safety. Trigger terms: "audit", "review", "check", "risks in", "is
   this safe", "what did this change".
 metadata:
-  version: "1.6.0"
+  version: "1.7.0"
   tags: "review,audit,security,accessibility"
 ---
 
@@ -66,8 +66,9 @@ the screen or hook that owns the flow down to the changed symbol and back up.
 
 ### 6. Apply the accessibility checklist (user-facing or interaction-affecting changes)
 
-- Check the changed surface against every applicable WCAG 2.2 A, AA and AAA
-  criterion per `ACCESSIBILITY.md`; do not treat an automated scan as AAA proof.
+- Check the changed surface against the applicable targets in `ACCESSIBILITY.md`. For
+  contrast, require AA in `light`/`dark` and AAA enhanced contrast in `hc-light`/`hc-dark`;
+  do not treat an automated scan as conformance proof.
 - Treat accessibility as functional behaviour, not a JSX checklist. Settings,
   shortcuts, focus/state transitions, errors, status updates, timing, gestures,
   preference persistence and recovery flows can all affect accessibility.

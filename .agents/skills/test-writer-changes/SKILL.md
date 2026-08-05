@@ -5,7 +5,7 @@ description: >
   fixing, or auditing tests. Trigger terms: "test", "TDD", "vitest", "playwright",
   "e2e", "coverage", "spec", "failing test", "skip test".
 metadata:
-  version: "1.3.0"
+  version: "1.4.0"
   tags: "testing,tdd,vitest,playwright,coverage"
 ---
 
@@ -60,8 +60,8 @@ For any user-facing or interaction-affecting change, derive tests from
 `ACCESSIBILITY.md`, including settings and functionality that change how a person
 perceives, operates, understands or recovers from the product. Cover keyboard/focus,
 status and errors, preference persistence, timing or gesture alternatives when they
-apply. Automated axe/Storybook checks are supporting evidence only; WCAG 2.2 AAA
-still requires manual review of every applicable A, AA and AAA criterion.
+apply. Automated axe/Storybook checks are supporting evidence only; manually review the
+applicable criteria and theme-specific contrast target from `ACCESSIBILITY.md`.
 
 ### Security
 

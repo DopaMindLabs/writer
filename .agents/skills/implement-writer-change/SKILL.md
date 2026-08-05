@@ -7,7 +7,7 @@ description: >
   Trigger terms: "implement", "code it", "make the change", "write the code",
   "execute the plan".
 metadata:
-  version: "1.3.0"
+  version: "1.4.0"
   tags: "implementation,coding"
 ---
 
@@ -41,9 +41,11 @@ Load every skill whose boundary the change touches:
 - `test-writer-changes` whenever behaviour or tests change.
 
 For any user-facing or interaction-affecting behaviour, read
-[`ACCESSIBILITY.md`](../../../ACCESSIBILITY.md) and plan to meet every applicable WCAG 2.2
-A, AA and AAA criterion. This includes settings, shortcuts, status/error behaviour,
-timing, gestures, focus and persisted preferences — not only rendered components.
+[`ACCESSIBILITY.md`](../../../ACCESSIBILITY.md) and plan to meet its applicable WCAG 2.2
+target. Contrast is theme-specific: `light`/`dark` have an AA minimum and `hc-light`/
+`hc-dark` target AAA enhanced contrast. Accessibility still includes settings, shortcuts,
+status/error behaviour, timing, gestures, focus and persisted preferences — not only rendered
+components.
 
 For a security-sensitive or trust-boundary change, apply the security baseline in
 `CODING_STANDARDS.md` and the checklist in `audit-writer-change`. Use the feature threat
@@ -72,7 +74,7 @@ scope is a stop-and-ask point rather than an automatic extension of the plan.
 Use `test-writer-changes` to choose the narrowest relevant checks first, then run the
 repository-required gates from `AGENTS.md` for the final changed scope. Accessibility
 and security-sensitive changes also require their domain-specific manual or adversarial
-checks; a green automated suite is not proof of WCAG AAA or of security.
+checks; a green automated suite is not proof of WCAG conformance or of security.
 
 Stop and ask before removing or weakening any lint rule, size limit, or coverage floor.
 
