@@ -4,8 +4,9 @@ description: >
   TDD workflow, test rules, and targeted commands for Writer. Use when writing,
   fixing, or auditing tests. Trigger terms: "test", "TDD", "vitest", "playwright",
   "e2e", "coverage", "spec", "failing test", "skip test".
-version: 1.1.0
-tags: [testing, tdd, vitest, playwright, coverage]
+metadata:
+  version: "1.4.0"
+  tags: "testing,tdd,vitest,playwright,coverage"
 ---
 
 # Test Writer Changes
@@ -33,6 +34,9 @@ tags: [testing, tdd, vitest, playwright, coverage]
 - Assert the **public API only** — no access to private methods via `(service as any)._x`.
 - Use `it.each` for input → output mappings.
 - No `any` in tests, including `: any`, `as any`, `<any>`, `Partial<any>`.
+- Type fixtures and mocks with the real domain contract. Use `unknown` only when a test is
+  deliberately exercising validation of untyped boundary input; narrow it through the same
+  production boundary the application uses.
 - No `console.warn` / `console.error` output from tests — resolve the root cause.
 - Run: `npm run test:run` (once) or `npm run test` (watch mode — won't exit).
 
@@ -47,6 +51,25 @@ tags: [testing, tdd, vitest, playwright, coverage]
 - Use `getByRole`, `getByText`, `getByTestId`, `data-testid` for stable selectors.
 - Run: `npm run test:e2e`
 - Coverage ratchet: `npm run test:e2e:coverage`
+
+## Cross-cutting verification
+
+### Accessibility
+
+For any user-facing or interaction-affecting change, derive tests from
+`ACCESSIBILITY.md`, including settings and functionality that change how a person
+perceives, operates, understands or recovers from the product. Cover keyboard/focus,
+status and errors, preference persistence, timing or gesture alternatives when they
+apply. Automated axe/Storybook checks are supporting evidence only; manually review the
+applicable criteria and theme-specific contrast target from `ACCESSIBILITY.md`.
+
+### Security
+
+For a security-sensitive or trust-boundary change, add negative/adversarial tests for
+the invariant being protected. Derive them from the feature threat model and the
+applicable OWASP Top 10 risk in `audit-writer-change`; include malformed input and
+exceptional/failure paths where relevant. A happy-path test does not clear a security
+boundary.
 
 ## Coverage targets
 

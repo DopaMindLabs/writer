@@ -5,39 +5,53 @@ description: >
   symbol definition, tracing callers or dependants, finding tests, or mapping a
   feature flow. Trigger terms: "find", "locate", "where is", "who calls", "trace",
   "navigate", "callers of", "dependants", "tests for".
-version: 1.2.0
-tags: [navigation, exploration, code-intelligence]
+metadata:
+  version: "1.3.0"
+  tags: "navigation,exploration,code-intelligence"
 ---
 
 # Navigate the Writer Codebase
 
 ## Code-intelligence policy
 
-**Prefer TypeScript definition/references and exact text/file search as the primary
-tools.** Use semantic/embedding search only when the exact symbol name is unknown —
-state explicitly when falling back to it.
+At the start of non-trivial navigation, check separately whether a CodeGraph/call-graph
+capability is installed/callable and whether it is indexed for the current commit. Tell
+the user the result in one line:
 
-If a call-graph tool (e.g. `code-review-graph`) is installed and indexed, prefer it
-for callers, impact radius, and affected flows. If it is not available, exact search
-and LSP references are sufficient — never require a specific vendor tool.
+```text
+CodeGraph: available and indexed — using it for impact tracing.
+CodeGraph: installed but not indexed here — continuing with exact search/LSP; index it for graph-assisted tracing.
+CodeGraph: not installed — continuing with exact search/LSP; install CodeGraph for graph-assisted tracing.
+```
+
+Never claim it is installed merely because an index or configuration file exists: confirm
+the capability can actually be called. If it is absent or unindexed, do not block. Suggest
+installation or indexing once when graph-assisted impact analysis would help, then fall back
+to this skill's exact-search and TypeScript-reference workflow.
+
+When available, prefer CodeGraph for callers, impact radius and affected flows, and verify
+important results against source. Otherwise prefer TypeScript definitions/references and
+exact text/file search. Use semantic/embedding search only when the exact symbol name is
+unknown, and state explicitly when falling back to it.
 
 Generated indexes are advisory and keyed by commit; architecture decisions remain
 human-written in `docs/architecture.md`.
 
 ## Navigation order (always follow this sequence)
 
-1. **Exact lookup first.** Search by filename or symbol name (TypeScript `Go to
+1. **Confirm code intelligence.** Perform the CodeGraph availability/index check above.
+2. **Exact lookup first.** Search by filename or symbol name (TypeScript `Go to
    Definition`, text search). Never start with a broad read of the whole directory.
-2. **Definition → references.** From the definition, find all import sites and
+3. **Definition → references.** From the definition, find all import sites and
    call sites via `Go to References` or `rg '<Symbol>'`.
-3. **Callers → dependants.** Trace one level up the call graph from each reference.
+4. **Callers → dependants.** Trace one level up the call graph from each reference.
    Complete callers and tests before stopping.
-4. **Adjacent tests.** The test file mirrors the source file: `foo.ts` →
+5. **Adjacent tests.** The test file mirrors the source file: `foo.ts` →
    `foo.test.ts`, `foo.tsx` → `foo.test.tsx`. Read it for invariants and
    expected behaviour.
-5. **Persistence side effects.** Check whether the symbol touches `src/db/`,
+6. **Persistence side effects.** Check whether the symbol touches `src/db/`,
    `src/lib/docs/`, or `src/lib/collab/` — these have cascading effects.
-6. **Semantic search last.** Use keyword or embedding search only when the exact
+7. **Semantic search last.** Use keyword or embedding search only when the exact
    name is unknown. State explicitly that you are falling back to semantic search.
 
 ## Feature flow lookup

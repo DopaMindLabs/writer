@@ -1,11 +1,14 @@
 ---
 name: implement-writer-change
 description: >
-  Execute a reviewed, exact-file plan in Writer. Use after plan-writer-change
-  produces an approved plan. Trigger terms: "implement", "code it", "make the
-  change", "write the code", "execute the plan".
-version: 1.1.0
-tags: [implementation, coding]
+  Execute a reviewed, exact-file Writer change using the repository's canonical
+  coding standards, navigation and domain skills. Use after plan-writer-change
+  produces an approved plan, or for a narrow explicit implementation request.
+  Trigger terms: "implement", "code it", "make the change", "write the code",
+  "execute the plan".
+metadata:
+  version: "1.4.0"
+  tags: "implementation,coding"
 ---
 
 # Implement a Writer Change
@@ -15,48 +18,63 @@ tags: [implementation, coding]
 Use an approved `plan-writer-change` plan for non-trivial or cross-boundary work.
 A narrow, unambiguous fix may proceed directly when the user's request defines the scope.
 
-## Implementation rules
+Read [`CODING_STANDARDS.md`](../../../CODING_STANDARDS.md) before changing code. It is
+the canonical source for code structure and engineering rules; do not duplicate those
+rules here.
 
-### Scope
-Touch only files required by the approved plan or explicit request. Stop for approval
-when newly discovered work would materially expand behaviour, risk, or scope.
+## 1. Navigate before editing
 
-### Power-of-Ten rules (all apply to new and edited code)
-1. Simple control flow — cyclomatic complexity ≤ 12; no unbounded recursion; nesting ≤ 4.
-2. Bounded loops — every loop has an obvious upper bound.
-3. No resource leaks — clean up `useEffect` side effects, event listeners, and timers.
-4. Small functions — ≤ 60 lines, ≤ 3 parameters (use an options object beyond 3).
-5. Validate at boundaries — use `invariant()` and `assertNever()` from `@/lib/invariant`.
-6. Smallest data scope — `const` by default; no module-level mutable state.
-7. No floating promises — await work or use an explicit, safely handled fire-and-forget path.
-8. No type escape hatches or suppressions — no `any`, `@ts-ignore`, `@ts-expect-error`,
-   `eslint-disable*`, or `nasa-exception`. Fix the code instead.
-9. Immutability — Zustand updates return new state; never mutate parameters or shared objects.
-10. Zero lint / type errors — run targeted checks after the logical change is complete.
+Use `navigate-writer-codebase` to confirm each definition, caller, test and persistence
+side effect named in the plan before the first edit. That skill also owns CodeGraph
+availability detection and the exact-search/LSP fallback; keep using it even when graph
+tooling is unavailable.
 
-### One component per file
-Each React component lives in its own PascalCase file with a co-located `.test.tsx`
-and `.stories.tsx`. Never add a second component to an existing file.
+## 2. Load the matching domain guidance
 
-### File read before edit
-Read every file in full before the first edit. Match the existing style, import order,
-and naming conventions exactly.
+Load every skill whose boundary the change touches:
 
-### Verification commands (run in order after changes are complete)
-```
-npm run typecheck
-npx eslint src/<changed-files> --max-warnings=0
-npm run test:run
-npm run test:e2e   # for UI-facing changes only
-```
-
-## Domain skills
-
-Load these before editing the matching boundary:
+- `build-writer-ui` for components, interaction, design-system or Help Center work.
+- `change-writer-persistence` for `src/db/`, archives, persistence or document writes.
 - `work-on-editor-collaboration` for `src/lib/collab/` or editor CRDT behaviour.
-- `change-writer-persistence` for `src/db/`, archives, or document writes.
-- `work-on-cloud-sync` for cloud, encryption, escrow, or reconciliation.
-- `test-writer-changes` before adding or changing tests.
+- `work-on-writer-sync` for sync engine, pairing, providers, encryption, replication,
+  escrow or cross-device behaviour.
+- `test-writer-changes` whenever behaviour or tests change.
+
+For any user-facing or interaction-affecting behaviour, read
+[`ACCESSIBILITY.md`](../../../ACCESSIBILITY.md) and plan to meet its applicable WCAG 2.2
+target. Contrast is theme-specific: `light`/`dark` have an AA minimum and `hc-light`/
+`hc-dark` target AAA enhanced contrast. Accessibility still includes settings, shortcuts,
+status/error behaviour, timing, gestures, focus and persisted preferences — not only rendered
+components.
+
+For a security-sensitive or trust-boundary change, apply the security baseline in
+`CODING_STANDARDS.md` and the checklist in `audit-writer-change`. Use the feature threat
+model where one exists; OWASP Top 10 is a baseline, not a substitute for it.
+
+## 3. Implement the smallest complete change
+
+Touch only files required by the approved plan or explicit request. Read every file in
+full before its first edit and preserve its established style. Apply the root-cause,
+proper-typing and comment-discipline gates in `CODING_STANDARDS.md`: repair the owning
+invariant rather than masking its symptom; give known data concrete domain types; narrow
+genuinely untyped input at its boundary; and keep comments only where they explain a
+non-obvious reason or contract. Use concise British-English TSDoc/JSDoc when documentation
+is necessary.
+
+Do not ship a workaround, hack, retry, delay, fallback, duplicate path or special case that
+only makes the visible symptom disappear. If the root cause cannot be repaired within the
+authorised scope, stop and report the blocker.
+
+Keep tests beside the behaviour they prove and follow `test-writer-changes`' TDD and
+verification workflow. Newly discovered work that materially changes behaviour, risk or
+scope is a stop-and-ask point rather than an automatic extension of the plan.
+
+## 4. Verify
+
+Use `test-writer-changes` to choose the narrowest relevant checks first, then run the
+repository-required gates from `AGENTS.md` for the final changed scope. Accessibility
+and security-sensitive changes also require their domain-specific manual or adversarial
+checks; a green automated suite is not proof of WCAG conformance or of security.
 
 Stop and ask before removing or weakening any lint rule, size limit, or coverage floor.
 
@@ -67,10 +85,10 @@ Do not commit or push unless the user explicitly requests it.
 
 ## Track this work as a todo list
 
-Before you start, seed a todo list from the approved plan's file edits and the verification
-commands — one item per planned edit and per command — and work it top to bottom (see
+Before you start, seed a todo list from the approved plan's navigation, file edits and
+verification — one item per planned edit and check — and work it top to bottom (see
 [AGENTS.md § "Todo tracking"](../../../AGENTS.md)). Mark exactly one item in-progress as you
 begin it and completed the moment it is verified done. Newly discovered work that would
 materially expand scope does not silently become a todo item — stop for approval first (see
-Scope above), then add it. Keep the list current: it is the source of truth for what remains
+step 3 above), then add it. Keep the list current: it is the source of truth for what remains
 and the backbone of any [handover](../handover-writer-work/SKILL.md).

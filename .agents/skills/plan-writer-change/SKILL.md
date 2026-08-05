@@ -4,8 +4,9 @@ description: >
   Produce an exact-file change plan for any Writer feature or fix before touching
   code. Use when asked to plan, design, or scope a change to Writer. Trigger terms:
   "plan", "design", "how would I", "what files", "scope", "impact", "before I code".
-version: 1.1.0
-tags: [planning, architecture, impact-analysis]
+metadata:
+  version: "1.4.0"
+  tags: "planning,architecture,impact-analysis"
 ---
 
 # Plan a Writer Change
@@ -38,9 +39,14 @@ For each file you intend to touch, list:
 - Direct callers / importers
 - Shared contracts (interfaces, exported types)
 - Tests that assert the current behaviour
-- Whether a DB schema migration is needed (see `change-writer-persistence` skill)
+- Whether a DB schema/table/index change is needed (see `change-writer-persistence` skill)
 - Whether collab CRDT state is affected (see `work-on-editor-collaboration` skill)
-- Whether cloud sync is affected (see `work-on-cloud-sync` skill)
+- Whether Writer Sync, a provider or a trust boundary is affected (see
+  `work-on-writer-sync` and the OWASP baseline in `audit-writer-change`)
+- Which user-facing or interaction-affecting behaviours have accessibility impact,
+  including settings, shortcuts, state transitions, errors and recovery. Identify
+  the applicable WCAG 2.2 criteria from `ACCESSIBILITY.md`; do not reduce this to
+  whether a React component changed.
 
 ### 5. Produce an exact-file plan
 
@@ -67,13 +73,19 @@ Output format:
 - <test file> — <what to assert>
 
 ## Help articles to add or update
-- src/help/content/en/<slug>.md — <change>
+- src/help/content/en/<slug>.md — <user task answered and sections added or changed>
 
 ## Spec sections to update
 - docs/technical-specification.md §<section> — <change>
 
-## DB migration needed?
-<yes/no — reason>
+## DB / persistence impact
+<none, or schema/table/index/write-path change + required persistence verification>
+
+## Accessibility impact
+<none, or affected behaviour + applicable WCAG 2.2 criteria + verification>
+
+## Security impact
+<none, or trust boundary + applicable OWASP Top 10 risk / feature threat model + test>
 
 ## Verification commands
 - npm run typecheck
@@ -84,9 +96,15 @@ Output format:
 
 Do not begin implementation until this plan is reviewed and approved.
 
+For every planned help article, follow the structure and writing rules in
+`build-writer-ui`: lead with the feature's outcome, give a short primary path,
+separate troubleshooting, and list only verified UI labels and behaviour.
+
 ## Hard stops
 
 - Never plan to add legacy support without explicit user approval.
+- Never plan a workaround, hack or symptom-masking fallback in place of a root-cause fix. If
+  the root cause is not yet known, plan the diagnostic work needed to establish it first.
 - Never plan to weaken a lint rule, coverage floor, or type safety boundary.
 - If a schema change is needed, include the migration checklist from
   `change-writer-persistence` in the plan.

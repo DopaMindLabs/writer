@@ -5,8 +5,9 @@ description: >
   Use when adding or changing any component, screen, or user-facing copy. Trigger
   terms: "component", "UI", "design system", "accessibility", "a11y", "i18n",
   "copy", "help article", "story", "storybook", "style".
-version: 1.1.0
-tags: [ui, design-system, accessibility, i18n, storybook]
+metadata:
+  version: "1.4.0"
+  tags: "ui,design-system,accessibility,i18n,storybook"
 ---
 
 # Build Writer UI
@@ -14,7 +15,8 @@ tags: [ui, design-system, accessibility, i18n, storybook]
 ## Design system (read first)
 
 `docs/design-system.md` is the single source of truth for tokens, primitives, and
-principles. Read the relevant sections before choosing any component or colour.
+principles. Read the relevant sections before choosing any component or colour; use
+Storybook as the executable catalogue of implemented component states.
 
 ### Tokens
 Use the token-backed Tailwind classes from `tailwind.config.ts` / `src/index.css`:
@@ -37,6 +39,9 @@ and update `docs/design-system.md` — do not work around the gap.
 
 ## Accessibility requirements (every UI change)
 
+- Apply the targets in `ACCESSIBILITY.md`. For contrast, `light`/`dark` have a WCAG 2.2
+  AA minimum and `hc-light`/`hc-dark` target AAA enhanced contrast. Do not turn the
+  high-contrast target into a default-theme requirement or conformance claim.
 - Keyboard-operable: every interactive element reachable by Tab with a visible focus ring.
 - Accessible name: every control has an `aria-label` or a visible `<label>`.
 - Correct semantics: use HTML roles (`<button>`, `<nav>`, landmarks) before ARIA.
@@ -44,7 +49,9 @@ and update `docs/design-system.md` — do not work around the gap.
 - Keyboard shortcuts: always `event.metaKey || event.ctrlKey` — never one platform only.
   Derive the display label from the running platform; never hard-code `⌘` or `Ctrl`.
 - Respect `prefers-reduced-motion` and the `data-motion` token; no hard-coded durations.
-- Contrast: WCAG AA in `light`/`dark`; AAA (7:1) in `hc-*` themes.
+- For text, apply SC 1.4.3 to `light`/`dark` (4.5:1 normal, 3:1 large) and SC 1.4.6
+  to `hc-light`/`hc-dark` (7:1 normal, 4.5:1 large), subject to the criteria's
+  exceptions. Apply the relevant criterion to non-text UI.
 - New opt-in states must be behind their own story and non-regression test (no
   behaviour-changing `data-*` applied by default).
 
@@ -78,6 +85,70 @@ User-facing behaviour changes ship with a help update in the same PR:
 2. Register the article in `src/lib/help/registry.ts` (`category`, `keywords`, `featureArea`)
 3. `src/lib/help/registry.test.ts` fails if a `featureArea` has no article — treat a
    red test as a missing doc, not a test to weaken
+
+### Help article structure
+
+Use only the sections that help the reader complete or recover the task:
+
+```markdown
+# <Task or feature name>
+
+<One sentence: what it does and why it helps.>
+
+## At a glance
+
+- <Up to five facts the reader needs before starting.>
+
+## Before you start
+
+- <Prerequisites only.>
+
+## <Complete the main task>
+
+1. <One action using the exact UI label.>
+
+## After <the task>
+
+<Result, status and likely next action.>
+
+## Troubleshooting
+
+### <Visible problem or exact error>
+
+<Direct fix first.>
+
+## Privacy and security
+
+<Only information relevant to the user's decision.>
+
+## Related
+
+- [Article](slug) — <reason to open it>.
+```
+
+### Help writing rules
+
+- Lead with what the feature is, its outcome and its useful differentiator.
+  Describe capabilities directly instead of defining the feature by exclusions.
+  Negative phrasing is appropriate for a genuine product benefit such as **no
+  account and no server**.
+- Put the primary path before alternatives, edge cases and technical detail.
+- Keep each paragraph to one idea and usually one to three sentences. Use bullets
+  for independent facts and numbered lists for ordered actions; give each step one
+  user action.
+- Use clear, task-based headings so readers can find the next action without
+  reading the whole article. Keep setup, normal use, recovery and troubleshooting
+  separate.
+- Use exact visible labels and verified behaviour. Never invent a control, promise
+  an untested outcome or expose implementation detail as user guidance.
+- Explain a limitation once, beside the action it affects. Repeat or emphasise a
+  warning only for security, privacy, data loss or irreversible actions.
+- Remove conversational filler, repeated reassurance, rhetorical explanations and
+  protocol narration. State the action, result and reason directly.
+- Use British English. Keep code identifiers, slugs and established product names
+  unchanged.
+- End with two to four relevant links. Name the destination in the link text and
+  say why it is useful.
 
 ## Spec update
 
