@@ -1,0 +1,165 @@
+# Confirmed findings (post-verification) — running log
+
+## standards (1/5) — 7 confirmed / 5 refuted
+- HIGH diff AGENTS.md:165 — sync-boundary allow-list omits writer-sync/pairing, writer-sync/providers/webrtc (15+ imports) and writer-qr; per its own supremacy clause the branch's architecture reads as a breach. [docs/boundary]
+- MED diff src/lib/writerSyncIntegration/peerLinkStatus.ts:44-46 + peerSessionRegistry.ts:118 — new module-level mutable state (let states, mutated Map/Set, peerSessions singleton); rule 6, not lint-tracked. [standards]
+- MED diff src/components/ui/QrScanInput/QrScanFileField.tsx:1 — new components missing mirrors: QrScanFileField+QrScanPasteField (no test/stories), QrScanCameraField (no stories), CloudSyncTab (no stories; all 7 sibling tabs have one), PairDeviceDialogBody+PairingOfferStep (no test). [test/stories mirror]
+- LOW diff src/lib/writerSyncIntegration/syncCoordinatorContext.test.tsx:1 — should be .test.ts; syncObservable.test.ts mirrors no source file. [naming]
+- LOW diff src/lib/writerSyncIntegration/writerTablePolicy.ts:77-79 — stale "arrive with slice 1E" comment; stores classified below at 113-136. [stale comment]
+- MED pre-existing e2e/settings-functional.spec.ts:41 (+8 specs, 12 occurrences) — page.waitForTimeout violates absolute no-hardcoded-waits guardrail. [test guardrail]
+- LOW pre-existing e2e/space-settings.spec.ts:16 — sole force:true click. [test guardrail]
+
+Refuted: pre-existing module state (grandfathered), folderSync nasa-exception (pre-existing), _helpers eslint-disable (pre-existing, Playwright void need), ban-ts-comment config (hypothetical), vite fixture glob (speculative).
+
+Standards clean elsewhere: zero suppressions added by branch; DB version(1) intact everywhere; all STORES tables classified; explicit barrels only, no wildcard re-exports; no legacy fallbacks (v1 envelope explicitly rejected by test).
+
+## test-quality (2/5) — 6 confirmed / 4 refuted
+- HIGH diff playwright.config.ts:52 — engine excluded from e2e coverage while vitest coverage.include stays ['src/**'] (vite.config.ts:76): ~17k-line engine under NO coverage threshold anywhere; AGENTS.md:294 disagrees; exemption taken without stop-and-ask. [coverage-policy]
+- MED diff e2e/pair-sync-reconcile.spec.ts:16-18 — no e2e anywhere writes while devices are apart and proves catch-up on reunion — the core flow journal retention serves; gap admitted in spec header, never surfaced per stop-and-ask. [coverage-gap]
+- LOW diff e2e/pair-device.spec.ts:22-91 — restates pairing walk despite shared e2e/_pairing.ts extracted to prevent that; copies already diverged. [duplication]
+- LOW diff e2e/settings.spec.ts:55 — "every universal settings tab" cycle omits new deviceSync tab; settings-tab-deviceSync clicked in no test (specs deep-link only). ('sync' tab also absent but pre-existing.) [coverage-gap]
+- LOW diff packages/writer-sync/test/packageBoundary.test.ts:24-25 — importsOf regex misses side-effect + dynamic imports; boundary gate bypassable. [test-gap]
+- LOW pre-existing e2e/split-and-sidebar.spec.ts:145,163,184 + space-switch-no-remount.spec.ts:40 — Tailwind-class assertions (toHaveClass /border-ink/, /bg-ink/) and #main-content > section structural selectors. [guardrail]
+
+Refuted: _pairing.ts for(;;) flake vector (React flush semantics), 30ms sleeps in unit suites (jsdom BroadcastChannel in-thread delivery), Meta+Enter citations chord (ctrlKey unit-tested at CitationsPane.test.tsx:561-579), coveredContexts module array (sanctioned fixture idiom).
+
+Test-quality clean elsewhere: no skips/focus/fixme anywhere, no `any` in tests, coverage-baseline.json untouched, new suites use expect.poll/vi.waitFor, failure paths genuinely tested.
+
+## docs-consistency (3/5) — 14 confirmed / 0 refuted (+1 seed disconfirmed)
+- HIGH pre README.md:13 — "Alpha — there is no data sync" on repo front door; branch's own getting-started.md:4 says "Sync is available when you want it". [docs-accuracy]
+- HIGH pre docs/technical-specification.md:21 — "there is no cloud sync" contradicts §4.9.1/§4.9.2/§8 in same doc. [spec-consistency]
+- HIGH pre src/i18n/locales/en/screens.json:40+:25 — About + Home screens tell users "no data sync" while branch adds Home "Device sync" link beside it. [copy]
+- MED diff docs/cloud-sync-beta.md:20,152,163,225,263,474 — six + lines cite deleted src/lib/writerSync/ paths; doc is mandatory pre-reading; AGENTS.md:167 forbids the name. [docs-accuracy]
+- MED diff spec:651 (+1061) — retention control placed under "Settings → Account"; actually Device sync tab; branch itself renamed Account→Profile; help article correct. [spec-consistency]
+- MED diff spec:3 — branch-rewritten header "95 e2e / 446 unit" vs tree 104 e2e / 488 unit. [docs-accuracy]
+- MED pre spec:1019-1041 — §7.1 "16 specs" + §7.2 "60+" contradict reality and branch-updated header; no sync suites listed. [spec-consistency]
+- MED pre docs/home-and-about.md:26,34 — claims GNU AGPL (LICENSE = PolyForm Noncommercial 1.0.0); claims href="#" TODOs (real URLs in routes.ts:72-75); stale About.tsx path. [docs-accuracy]
+- MED pre docs/cloud-sync-beta.md:3-6 — claims "deliberately no Help Center article" while cloud-sync.md exists + registered (registry.ts:236), extended by branch. [docs-accuracy]
+- MED diff src/help/content/en/whats-new.md:6 + features.md:~74 — discovery articles silent on pairing/device sync/retention shipped by this branch. [help-coverage]
+- MED pre screens.json:32-41 — About typos: "advertsing", "alot ideas", "other -isms hasn't been diagnosed yet", "gives your dopamine rush just as much it give me", double space. [copy]
+- LOW diff docs/writer-sync-foundation-p2p-runbook.md:3,37-38,451 — lands as "implementation plan" for shipped work; presents dead dirs as current; instructs creating forbidden src/lib/writerSync path. [docs-accuracy]
+- LOW diff screens.json:25,579 — "Universal settings → Local Sync" references; branch renamed tab to "Folder sync" (:71) without updating them (origin corrected to diff). [copy]
+- LOW pre screens.json:47 — dead windowTitle key "lotem · settings", wrong product name, propagated to all locales. [copy]
+- Seed DISCONFIRMED: vercel.json camera=(self) IS documented (spec:627-628).
+Docs clean elsewhere: all 21 registered help slugs have English bodies; new pairing/profile/cloud articles match shipped flows, clean British English; spec version tracks package.json.
+
+## ui-ds-a11y (4/5) — 13 confirmed / 0 refuted
+- HIGH pre src/components/help/HelpPalette.tsx:18-21,37-39 — hard-coded ⌘K/⌘\ glyphs shown on all platforms; Kbd primitive exists (isApplePlatform); GlobalSettingsPlaceholders.tsx:143-165 repeats. [cross-platform]
+- MED diff src/components/chrome/PeerLinkNotice.tsx:32 — live region mounted with content; drop may never announce (NVDA/VO); ExportImportTab.tsx:59 = correct always-mounted pattern. [a11y]
+- MED diff PairDeviceDialogBody.tsx:65,71-80 + QrScanCameraField.tsx:86-90 + QrScanInput.tsx:86-90 — pairing progress/complete/camera-denied all conditionally-mounted role=status; may be silent to SR. [a11y]
+- MED diff TrustedDeviceRowActions.tsx:58-67 — Remove button lacks device-named aria-label (Reconnect has one; file's own comment demands both); destructive, unconfirmed. [a11y]
+- MED diff PairingVerification.tsx:34-40 — aria-label on <p> (name-prohibited role); verification code label dropped by AT; axe fires. [a11y]
+- MED diff QrScanFileField.tsx:49-56 — bare visible native file input, only one in app; FileInputTrigger + hidden-input pattern established. [DS]
+- MED diff PairDeviceDialogBody.tsx:65 + PairingOfferCode.tsx:31 + PairingOfferScan.tsx:32 + PairingCodeScanner.tsx:81,91 — full sentences in StatusGlyph default 11px uppercase mono; DS §1.4 meta-only. (Same misuse pre-exists in SyncTab.tsx:55, ExportImportTab.tsx:61.) [DS]
+- MED pre InlineBanner.tsx:78 — aria-label="Dismiss" hard-coded English, no override prop; all 35 locales announce English. [i18n]
+- LOW diff QrScanCameraField.tsx:31-39,86-90 — camera denied/unavailable styled identically to neutral scanning progress; sibling failures use danger/error. [DS]
+- LOW diff QrCode.tsx:34,50 — default unencodableLabel hard-coded English against its own no-translated-strings contract (callers do pass label today). [i18n]
+- LOW pre GlobalSettingsPlaceholders.tsx:225-231 + SpaceSettingsPlaceholders.tsx:10-16 + PlaceholderPrimitives.tsx:107,126-160 — hard-coded hex swatches though hl-* tokens exist; no dark/hc response. [DS]
+- LOW diff DeviceSyncTab.tsx:36 — `void removeTrustedDevice(...)`, no catch/no feedback on a rejectable 3-table transaction; SyncTab.tsx:54-58 shows error pattern. [ui-behaviour]
+- LOW diff screens.json:604 — tooLarge copy advises retry the code documents as futile (PairDeviceDialogBody.tsx:39-40). [copy]
+UI clean elsewhere: new surfaces composed from DS primitives, i18n-keyed British English, keyboard-operable, camera-free path exists, no hex/lucide/single-platform handlers in new code.
+
+## architecture (5/5) — 4 confirmed / 7 refuted
+- BLOCKER diff src/lib/writerSyncIntegration/removeTrustedDevice.ts:39-67 — removal never severs the device's live peer session (peerSessions close only in peerCatchUp discard:338/stop:432; peerChannelFactory.ts:28 has no trust filter): removed device keeps receiving live frames + serving catch-up until reload; violates help promise (pairing-devices.md:137). [security/split-brain]
+- HIGH diff packages/writer-sync/src/crypto/trustedFrameVerifier.ts:40-41 — per-device key cache skips isTrustedForSession after first frame; one verifier per exchange (peerCatchUp.ts:121) → mid-session revocation unenforced; contradicts module's own contract. (Fixing #0 curtails main path; still fix cache.) [security]
+- MED pre usePassphraseUnlockForm.ts:2-3 + WriteSurface.tsx:14 + useTemplatesForm.ts:7 + TemplatesNotice.tsx:5 + RouteErrorScreen.tsx:9 — neutral keyDelivery capability has no error vocabulary; UI instanceof-checks Dexie adapter error classes; second provider's failures would collapse to generic message. [facade]
+- LOW diff docs/architecture.md:13-26 — §1 boot diagram pre-extraction stale (useAppBoot now calls startWriterSync; steps moved into startCloudSession cloudClient.ts:281-292); branch edited 88 lines of the doc elsewhere. [doc drift]
+Refuted (7): key/vault homing in cloud dir (chartered by architecture.md:271), dual row+frame carriage (documented deliberate design), direct facade imports (architecture.md:83-87 tracked migration, branch added none), single-durable-provider ingestion wiring (hypothetical), peerCatchUp SRP split (preference), pairing orchestration under components (permitted layering), trackRetentionDays default window (no concrete path).
+Architecture clean elsewhere: one HLC implementation, one outbound framing chokepoint, clean barrels + consumer fixture, no references to deleted dirs, no orphaned modules.
+
+## engine-core (cached, verified) — 10 confirmed / 1 refuted
+- BLOCKER diff packages/writer-sync/src/operations/catchUpExchange.ts:266-286,124-131 — admit() swallows per-frame failures (incl. journal.append quota rejections) yet acks the newest admitted frame; peer's compactJournal (boot-time, journalCompaction.ts:62) drops all frames ≤ mark → a frame the acking device never stored is dropped from the only journal holding it; origin then vanishes from manifests so the gap is never re-requested. Silent permanent divergence. [correctness/data-loss]
+- HIGH diff packages/writer-sync/src/operations/scopeManifest.ts:105 — compaction drops the mark frame too → origin absent from manifests → next session requests after:undefined → fullState re-authors whole scope as fresh frames (peerCatchUp.ts:125 wires it) → re-journal, re-ack, re-compact every boot. Compaction and catch-up permanently undo each other; full-scope transfer + row rewrite each boot, never settles. [correctness]
+- HIGH diff catchUpExchange.ts:229-247 — sendReplies synchronous loop into bounded outbox (64 msgs/8 MiB); no drain during loop → large catch-up reply throws TransportBackpressureError → webRtcTransport failAndClose kills session; fullState path re-mints reply fresh each attempt so it never shrinks → pairing against large scope fails forever. sendWhenReady port exists, unused for frames. [protocol-liveness]
+- MED diff packages/writer-sync/src/operations/convergence.ts:16-17 — HLC tie-break via localeCompare (no locale arg): ICU/locale-dependent order; app-minted UUID ids collate identically in practice, but hostile device choosing canonically-equivalent Unicode ids breaks total order (feeds compaction + manifests). Hardening defect, trivial fix. [correctness]
+- MED diff catchUpExchange.ts admit() — journals frames without assertAcceptableRemoteTime; only check is host materialiser AFTER persistence (writerOperationMaterializer.ts:145), contradicting hybridLogicalClock.ts:50-57 rule; future-dated frame becomes manifest high-water mark, acked, re-served; after:futureMark suppresses fetching that origin's honest ops. Triggerable by >5min clock skew, no malice. [correctness]
+- MED diff catchUpExchange.ts:320-326,250-263,305-308 — sender emits manifests/requests/acks as single unsplit messages while peer decoder hard-rejects >256/-1024/>1024 (catchUpMessage.ts) — >256 spaces = every session dies identically on reconnect. Only frames get packFrames. High trigger threshold. [protocol-consistency]
+- LOW diff operations/index.ts:95-101 — StalledAttachmentTransferError delivered to host onRejected but not exported from barrel (host can't instanceof); MAX_CATALOGUE_OFFERS likewise. [api-facade]
+- LOW diff core/providers.types.ts:208 — WriterSyncOptions dead alias: not in core/index.ts export list, zero references. [dead-code]
+- LOW diff catchUpExchange.ts:155-159,188 — heldFrames loads every accessible scope's full journal (base64 payloads) up to 3× per session per side; OperationStore has no paging. [memory]
+- LOW diff catchUpSession.ts:194 — open failure only report()ed, no stop/close (unlike fail()); FrameTooLargeError on oversized manifest leaves silent one-way-dead session. [error-propagation]
+Refuted: zero-byte attachment manifest poisoning (unreachable — ciphertext never zero-byte in this host).
+
+## crypto-pairing (cached, verified) — 5 confirmed / 2 refuted (+2 dupes of architecture findings)
+- MED diff src/lib/writerSyncIntegration/rootSecretHandover.ts:116-127 — expiry enforced only on seal side (wrapForPeer:82-97); acceptWrapper + engine receive path (rootTransfer.ts:190-194) install root and commit trust with no now()<expiresAt check; 10s transfer timer starts at channel-open (peer-controllable). "Expiry terminal" (22ccba7d/c4e4d4f3) is one-sided. [crypto]
+- LOW pre src/lib/cloud/crypto/keys.ts:104-125 — deriveKeyRing ignores epoch (fixed HKDF info, empty salt): any epoch derives identical key while rootTransferMessage.ts:47-53 + spec:738 claim wrong epoch "decrypts nothing"; no rotation flow exists today, docs disclaim key-based revocation → low, but comments mis-describe property and first rotation change will footgun. [crypto]
+- LOW diff rescopeFrames.ts:50-70 — open gap #210: rescopeFrame spreads old signature over five rebuilt signed fields → output verifies against nothing; tests-only caller; must stay blocker for any scope-transition feature. [crypto]
+- LOW diff catchUpExchange.ts:276 — vacuous scope binding: expectedScope = frame's own accessScopeId, WrongScopeFrameError can never fire; only gate is hasAnyKey(); deliberate under single content key but claims a check it doesn't make. [auth]
+- LOW diff envelope.ts:78-95 + operationCrypto.ts:34-52 + attachmentContentCrypto.ts:52 — ':'-joined AADs with adjacent variable-length fields vs 0x00 length-safe discipline in pairing modules; no exploit today; normalise on next AAD version. [crypto]
+Refuted: reconnection adopt fast-path (unreachable, future seam), frameIngestion re-verify cost (bounded by 30-day compaction, not permanent).
+
+## Gates
+- lint: PASS (0 errors) · typecheck: PASS · vitest --maxWorkers=2: PASS (includes boundary + consumer gates) · npm audit: 7 vulns — HIGH fast-uri (host confusion x2), HIGH js-yaml 4.0.0-4.2.0 (quadratic DoS merge keys), HIGH react-router 7.12.0-8.2.0 (RSC CSRF bypass; fix = downgrade 7.11.0 breaking), 2 low. Targeted e2e NOT run (user held).
+
+## British-identifier sweep (user-directed criterion, overrides AGENTS.md identifier carve-out)
+Diff: materialization/ folder (31 files) → materialisation/; materializer.types.ts (OperationMaterializer, MaterializeResult); materializeAttachmentFrame (attachmentFrameMaterializer.ts:113); serialize/deserialize in cloud/crypto/envelope.ts (file touched).
+Pre-existing: src/editor/serialize.ts (serializeState, isSerialized); serializeCitationsToBibtex bibtex.ts:164; serializeDocSnapshot snapshot.ts:18; serializeNoteAttachment codecs.ts:42; HighlightColor theme/tokens.ts:22; hasActiveBehavior ui/Link.tsx:50; Annotation.color persisted field codecs.ts:292.
+Exempt: platform APIs (ScrollBehavior, style.color).
+Decision needed: help slugs customization-and-settings / organizing-your-work (~40 locale files) — user directive vs AGENTS.md "never rename slugs".
+
+## cloud-layer (cached, verified) — 10 confirmed / 0 refuted
+- BLOCKER diff src/lib/writerSyncIntegration/materialization/writerFrameVerifier.ts:37 + writerOperationMaterializer.ts:139 — passphrase-unlock 2nd cloud device delivers NO content: trust records written only by commitTrust (peerCatchUp.ts:272, reachable only via QR/WebRTC handover); unlockCloudEncryption/adoptAccountKey write none; content tables unsynced (buildDb.ts:32) so only trust-gated frames cross → two passphrase-only cloud devices reject every frame (UntrustedFrameError). Develop synced content directly, no trust gate → branch regressed the headline flow. Contradicts cloud-sync.md:35-47. [correctness/data-delivery]
+- HIGH diff src/lib/writerSyncIntegration/materialization/frameIngestion.ts:96 — startCloudReconciler + startFrameIngestion both fire on same syncComplete, no cross-path lock; reconcileLibrary snapshots db.docs up front (reconcile.ts:199) → concurrent frame sweep writing newer body + reseeding CRDT makes reconcileDoc invert local/remote, applyPulledBody a STALE body → mounted doc autosaves it outbound with later HLC → rollback propagates account-wide. [correctness]
+- HIGH pre src/lib/cloud/cloudClient.ts:237 — removeCloudDevice only stamps revokedAt; revoked device's registrar sets deviceRevokedState (banner) but never forgets key ring / signs out / stops syncing, and re-registers via planForNewRow once peers sweep the tombstone. Contradicts screens.json:856 + cloud-sync.md:80-83. OWASP A01: cloud device controls are not access control but copy says they are. [access-control]
+- MED diff src/lib/cloud/setup.ts:344 — eraseSyncedContent emits zero outbound ops (deleteFrames skips unreadable rows operationJournalMiddleware.ts:237; content tables unsynced) → foreign frames persist in synced syncOperations, re-reject each sweep; contract comment false. (own-content escrow-swap recovery still works → med not high.) [correctness]
+- MED diff src/lib/cloud/dexieCloudProvider.ts:127 — AccessControlAdapter declared but frame-writing path never stamps realmId (only restampScopeFrames at share time) → frames written after createScope default to owner's private realm, members never receive; no cross-user key delivery. Dormant (no sharing UI). [access-control]
+- MED pre src/lib/cloud/spaceRealm.ts:129 — createSpaceRealm writes db.realms.add({name: space.name}); realms is plaintext-control (writerTablePolicy.ts:107), replicates unencrypted → sharing leaks plaintext space name to server vs E2EE claim. Dormant (no sharing UI). [privacy]
+- MED diff frameIngestion.ts:51 — sweepUnappliedFrames loads full journal every round + key-ring change; rejected frames never recorded to syncInbox (only AttachmentChunksPendingError skipped) → re-checked/re-logged every sweep for account lifetime; unbounded CPU/log; compounds the blocker + erase findings. [efficiency]
+- LOW diff src/lib/cloud/crypto/envelope.ts:82-93 — aad() ':'-joins app-controlled accessScopeId/primaryKey, non-injective if ':' present; branch rewrote AAD to add accessScopeId/keyId to the pre-existing ':'-join. Latent (nanoid colon-free). [crypto-hygiene]
+- LOW pre src/lib/cloud/env.ts:20-21 — cloudFlagFromEnv has no MODE/PROD guard despite "non-production only" doc → prod build setting VITE_CLOUD_SYNC_FLAG=on force-enables beta for everyone. [config]
+- LOW pre src/lib/cloud/crypto/keys.ts:200 — wrapRootSecret hardcodes epoch:1 while adoptAccountKey derives ring with serverEscrow.epoch → if epoch ever advanced, adoption resets published epoch to 1 vs higher-epoch ciphertext. Latent, wrong-by-construction. (origin corrected diff→pre-existing.) [correctness]
+
+## transport (cached, verified) — 14 confirmed / 0 refuted (2 downgraded med→low)
+- BLOCKER diff packages/writer-sync/src/providers/webrtc/webRtcSyncProvider.ts:91-101 — `tracked` transport wrapper omits sendWhenReady → livePeerSync.ts:129 gets undefined → attachment serve() unpaced (attachmentTransfer.ts:272-277) → outbox overflow (~chunk 53) → TransportBackpressureError → failAndClose kills live link on any >~7 MiB attachment while a peer is connected. Defeats commit 084e3c3b's own pacing fix (catch-up path keeps pacing via createWebRtcTransport directly). [backpressure]
+- HIGH diff packages/writer-sync/src/providers/webrtc/webRtcTransport.ts:97-107 — outbox send() never checks pending.size; bufferedAmountLowThreshold=512KiB → no drain event in [512KiB,1MiB) → direct send overtakes queued frames → reordering on an order-dependent reliable channel (catchUpSession.ts:22-28) corrupts exchange state. [correctness]
+- HIGH diff packages/writer-sync/src/providers/webrtc/peerSession.ts:132-154 — createChannelRegistry.adopt unbounded; listenForScopeChannels (peerCatchUp.ts:285-295) starts a full catch-up session per non-control channel, each own 32MiB/s+512msg/s limiter → compromised-but-paired device opens N channels → N× memory/CPU + N× inbound allowance; only SCTP ~1024 caps. [dos]
+- MED diff src/lib/writerSyncIntegration/livePeerSync.ts:140 — decodeCatchUpMessage called synchronously as receive() arg → MalformedCatchUpMessageError escapes .catch → uncaught out of DOM message listener (up to 512/s); session stays open. catchUpSession.ts:170 decodes inside awaited tail to avoid this. [untrusted-input]
+- MED diff src/lib/writerSyncIntegration/livePeerSync.ts:140-144 — live link logs+continues on session-fatal AttachmentCursorError (catch-up path fails+closes); overlapping offers → offering peer waits forever → silent attachment stall on healthy link. [queue-stall]
+- MED diff packages/writer-sync/src/providers/webrtc/webRtcTransport.ts:88-96 — sender pacing uncoordinated with receiver's 32MiB/s app limit → fast LAN + large attachment trips InboundRateLimitError→failAndClose repeatedly (progress saved via saveChunk so completes across session deaths). [rate-limiting]
+- LOW diff filterChannelByKind (splitPairingChannel) — pre-handover peekKind JSON-parses each msg 2× before ceiling/limiter attach; hold buffer bounds messages not bytes. (downgraded med→low: browser SCTP caps size 256KiB, rate network-bound.) [dos]
+- LOW diff webRtcTransport.ts flush() — take()-then-send drops message + escapes listener on throw, violating outbox no-drop guarantee. (downgraded med→low: needs sub-256KiB maxMessageSize non-browser peer.) [robustness]
+- LOW diff src/components/ui/QrScanInput/useCameraScan.ts:129-149 — start() no in-flight guard; disabled lags re-render → double-click races two getUserMedia → first MediaStream + interval leaked till page close (camera stays captured). [resource-leak]
+- LOW diff packages/writer-sync/src/providers/webrtc/reconnectPolicy.ts — createReconnectPolicy has no product consumer (file/test/barrel only); documented anti-lockstep backoff defence wired nowhere. [dead-code]
+- LOW diff packages/writer-sync/src/pairing/qrPartCollector.ts:75 — accept() overwrites total unconditionally → disagreement surfaces later in joinQrParts, blaming a valid symbol; no reset(). [untrusted-input]
+- LOW diff packages/writer-sync/src/providers/webrtc/peerSession.ts:336-337 — openChannel skips requireOpen guard → native InvalidStateError instead of typed PairingError on closed session. [robustness]
+- LOW diff packages/writer-qr/src/scan/createQrScanner.ts:39 — detector cache nulled on failure + sample() empty catch + 300ms loop → silent infinite import/WASM-fetch retry, no terminal state on permanent failure. [dos]
+- LOW diff packages/writer-qr/src/encode/qrEncoding.ts:59-64 — capacity guard compares UTF-16 text.length against a byte capacity → multi-byte oversize bypasses facade QrEncodingError. Latent (ASCII payloads). [input-validation]
+
+## integration (cached, verified) — 6 confirmed / 1 refuted (+2 dupes: rescopeFrames#210, direct-facade-imports)
+- HIGH diff src/hooks/useAppBoot.ts:30-43 — stopSession assigned only after `await startWriterSync`; cleanup can't cancel in-flight boot, never re-checks cancelled → StrictMode (stable coordinator via App useMemo) deterministically orphans session1: 2nd 'creating' hook + 2nd ingestion subscription live alongside session2 (every local frame sent twice); prod leaks session on any unmount-during-boot. [lifecycle]
+- HIGH diff src/lib/writerSyncIntegration/livePeerSync.ts:181 — journalPut writes a frame whenever hasAnyKey(); send() awaits links.for()→registry.next() which never resolves with no peer → on cloud-only/no-P2P config every save's continuation suspends retaining its EncryptedSyncFrame ciphertext → unbounded heap growth ∝ writes; closeAll can't release. Session-bounded (reload clears). [unbounded-growth]
+- MED diff src/lib/writerSyncIntegration/livePeerSync.ts:150 — offerAttachment→manifestsForScopes base64-decodes + sha256-hashes EVERY attachment in the scope, keeps one, per noteAttachments frame over a live link → main-thread cost ∝ total scope attachment bytes to send one image. [efficiency]
+- LOW diff src/lib/writerSyncIntegration/useTrustedDevices.ts:65 — `void loadOwner().then()` no rejection handler; IndexedDB write failure (currentPrincipal/deviceIdentityStore.load) → unhandled rejection + owner null forever → device list stuck loading. Rule 7. [error-handling]
+- LOW diff src/lib/writerSyncIntegration/peerCatchUp.ts:399,324 — exchanges/transfers Sets cleared only in stop(); discard() prunes sessions only → reconnections/re-pairings accumulate settled session+handover closures for page lifetime. Rule 3. [growing-cache]
+- LOW diff src/lib/writerSyncIntegration/livePeerSync.ts:107 — closeAll() has no closed flag → send queued behind afterCurrentTransaction() resolving post-teardown re-creates an untracked transport nothing closes. Narrow. [lifecycle]
+Refuted: frameIngestion concurrent double-reconcile (reconcileDocForMount serialises per-docId + idempotent; only redundant decrypt work remains — that efficiency half is the cloud-layer MED already logged).
+
+## owasp-app (cached, verified) — 5 confirmed / 1 refuted
+- BLOCKER diff vercel.json:10 — prod CSP `script-src 'self'` lacks `wasm-unsafe-eval`; QR scanner falls back to barcode-detector/zxing WASM ponyfill where native BarcodeDetector absent (Firefox + Safari incl. iOS); CSP3 blocks WASM compile → CompileError → camera + image/paste scan broken in production on FF/Safari; only typed-code pairing works. QR feature + camera=(self) both added in 3a5e8f25, CSP not updated. Escapes CI (prod-only header; Playwright is Chromium native path). [A05 misconfig]
+- MED pre src/lib/format/restoreSpaceArchive.ts:89-97 — doc.body validated only as a string (codecs.ts:244); seedDocsCrdt runs AFTER the destructive delete+rewrite txn; parseEditorState rethrows on non-Lexical body → crafted/corrupt archive wipes space then half-seeds; ensureDocCrdtSeeded re-fails on mount. Recoverable via pre-restore snapshot. Same gap importSpaceArchive.ts:162. [A08 integrity]
+- LOW pre src/lib/format/codecs.ts:283-284 — archive attachment path skips isAcceptedImageType/MAX_IMAGE_BYTES/MAX_NOTE_IMAGES + no decompression cap (zip-bomb); XSS nil, DoS self-inflicted import → low. [A08]
+- LOW pre src/lib/collab/transport/BroadcastChannelTransport.ts:19 — event.data cast unvalidated, handleInbound no try/catch (unlike docReloadChannel Array.isArray guard); no in-app path emits non-binary, same-origin only → low. [A08]
+- LOW pre src/store/ui.ts:153 — theme consumed raw (siblings sanitised); detectInitialTheme returns null when any theme string persists → garbage value sticks; inert markup, needs corrupted localStorage. [A08]
+Refuted: "LIpsum Writer" title (index.html:7) — intended brand stylisation, not a typo (NavShellHeader.tsx:20, tests, all locales, README:1).
+owasp-app clean elsewhere: zero dangerouslySetInnerHTML/innerHTML in src/; help markdown via react-markdown, no rehype-raw; external links rel=noopener; Lexical sanitizeUrl neutralises javascript:; prod header set (CSP/HSTS/XCTO/Referrer/frame-ancestors) strong; camera=(self) correct + minimally scoped.
+
+## RUNTIME REPRO (user-tested, not from static review) — live image doesn't sync A→B
+- BLOCKER-CLASS diff — live attachment offer cursor resets to 0 each image while receiver's expectedOfferCursor is monotonic. attachmentTransfer.ts offer():387-393 always offerPage(context,0); takeOfferPage:237-242 rejects when message.cursor !== expectedOfferCursor (advanced +manifests.length at :244, never resets). livePeerSync.ts:149 calls attachments.offer([one]) per image over ONE persistent link → 2nd+ offer in a direction throws AttachmentCursorError → swallowed at livePeerSync.ts:142 (appLogger.warn only) → image silently never transfers. Directional because each direction has independent cursor pair; side that offered first advances the peer's receive cursor. First image on a fresh link works; subsequent ones fail. Alternative/compounding cause for a first LARGE desktop image = blocker #4 (unpaced serve overflow). NEEDS: 2-image-same-direction e2e to lock the variant. Symptom (swallowed cursor error) = transport [5]; root cause was NOT traced by any reviewer — stateful cross-call bug at the engine↔integration seam, no runtime exercise, engine has no e2e gate.
+
+## ⚠️ PARKED — MUST re-verify on Opus 5 (highlight in report)
+Rule (user-set, saved to memory): any review step the Fable 5 safeguard flags (banner → routed to Opus 4.8) is PAUSED and re-verified on Opus 5; do not accept a flagged result on the fallback model.
+
+PINNED (user identified the flagged turn): the **crypto-pairing findings VERIFICATION** ran on the turn the safeguard flagged ("Verify crypto-pairing findings finished · 25m 9s" → "Switched to Opus 4.8"). So every crypto-pairing verdict below came from **Opus 4.8 under a safeguard flag**, NOT the model of record → treat as provisional until re-verified on Opus 5:
+  - MED rootSecretHandover.ts:116-127 — receive-side expiry not enforced (one-sided)
+  - LOW keys.ts:104-125 — deriveKeyRing ignores epoch (rotation no-op; docs wrong)
+  - LOW rescopeFrames.ts:50-70 — gap #210, old signature over rebuilt fields
+  - LOW catchUpExchange.ts:276 — vacuous scope binding (expectedScope = own scope)
+  - LOW envelope.ts:78-95 + operationCrypto + attachmentContentCrypto — ':'-joined AAD non-injective
+  - REFUTED (also under the flag, so recheck the refutals too): reconnection adopt fast-path; frameIngestion re-verify cost
+ACTION: re-run the crypto-pairing verifier with model: opus (claude-opus-5) and reconcile against these verdicts.
+(Opus 5 full re-run of 7 security dimensions was launched then cancelled per user — only this crypto-pairing verification gets Opus 5.)
+
+## Pending
+- 3/5 docs-consistency finder+verify; 4/5 ui-ds-a11y; 5/5 architecture
+- Verify 6 cached workflow areas: engine-core, crypto-pairing, transport, integration, owasp-app, cloud-layer (raw findings in workflow journal: ~/.claude/projects/-Users-Shavindra-Documents-dev-writer/8e8286fb-bd6d-4f35-a699-768016a71435/subagents/workflows/wf_b5db71d8-670/journal.jsonl; summaries in /private/tmp/claude-502/-Users-Shavindra-Documents-dev-writer/700620cd-b00b-4411-97df-f17dac65588a/tasks/wubgfjz5j.output)
+- Final two-part report (Part A diff, Part B pre-existing)

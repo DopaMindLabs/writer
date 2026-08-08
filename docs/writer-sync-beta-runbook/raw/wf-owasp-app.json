@@ -1,0 +1,59 @@
+{
+ "findings": [
+  {
+   "file": "vercel.json",
+   "line": 10,
+   "title": "CSP script-src lacks 'wasm-unsafe-eval', blocking the QR scanner's WASM engine in production",
+   "detail": "The production CSP is `script-src 'self'` (vercel.json:10). The QR pairing feature this branch ships (src/lib/qr/appQrScanner.ts bundles zxing-wasm's engine via `?url`; packages/writer-qr/src/scan/defaultQrDetectorFactory.ts falls back to the barcode-detector ponyfill wherever the platform BarcodeDetector is absent \u2014 i.e. Firefox and Safari) compiles WebAssembly at scan time. Under CSP3, WebAssembly compilation requires 'wasm-unsafe-eval' (or 'unsafe-eval') in script-src, enforced by Chrome 97+, Firefox 102+ and Safari 16+. So on the Vercel deployment, camera scan and image-file/paste scan of a pairing QR throw a CompileError on exactly the browsers that need the wasm fallback; only the typed-code fallback still pairs. Dev and E2E never see this because the Vite dev/preview server sends no CSP and Playwright runs Chromium (native detector). The branch touched this very header block to add camera=(self) for this feature but missed the wasm gate \u2014 camera=(self) itself is correct and minimally scoped.",
+   "severity": "high",
+   "origin": "diff",
+   "category": "a05-security-misconfiguration"
+  },
+  {
+   "file": "src/lib/format/restoreSpaceArchive.ts",
+   "line": 97,
+   "title": "Archive doc bodies are never validated as Lexical JSON before the destructive restore commits",
+   "detail": "codecs.ts validates `doc.body` only as \"a string\" (src/lib/format/codecs.ts:244), and restoreSpaceArchive runs `seedDocsCrdt(archive.docs)` (line 97) only AFTER the transaction that deletes and rewrites the whole space has committed (lines 89-92). `seedFromLexicalJson` (src/lib/collab/yjs/seed.ts:53) calls `editor.parseEditorState(serialized)`, which throws on any non-Lexical body. A crafted or corrupted archive therefore passes every manifest/count/reference invariant, wipes and replaces the space, then throws mid-seed \u2014 leaving some docs seeded and the rest with an empty CRDT log; later editor mounts re-fail on the same body via `ensureDocCrdtSeeded`, so those docs cannot be opened. The pre-restore snapshot (line 87) makes this recoverable, but the user is shown a generic error over a half-restored space. The same gap applies to file import: src/lib/format/importSpaceArchive.ts:162 seeds after `createDocs`, producing a broken new space. Bodies should be parse-checked during `parseSpaceArchive`, before anything is written.",
+   "severity": "medium",
+   "origin": "pre-existing",
+   "category": "a08-software-and-data-integrity"
+  },
+  {
+   "file": "src/lib/format/codecs.ts",
+   "line": 283,
+   "title": "Restored attachments bypass every upload-side constraint (mime allowlist, 5 MB cap, per-note cap, size honesty)",
+   "detail": "The upload path enforces `isAcceptedImageType`, `MAX_IMAGE_BYTES` (5 MB) and `MAX_NOTE_IMAGES` per note (src/lib/note-attachments.ts:27-35, 83-86). The archive path enforces none of them: `parseNoteAttachmentRecord` accepts any `mime` and `size` string/number (codecs.ts:283-284), `bindAttachmentBlobs` (parseSpaceArchive.ts:73-85) builds the Blob with the declared mime without checking the declared `size` against the actual asset bytes, and no cap bounds total decompressed archive size (JSZip inflates fully into memory \u2014 a small deflate-bomb archive can exhaust the tab before any invariant fires). A crafted archive can plant hundreds of non-image or multi-hundred-MB \"attachments\" per note into IndexedDB. XSS impact is nil today (blobs render only via `<img src={objectURL}>` in ImageThumb/ImageLightbox/BrainSpaceNote), but the rows violate the app's own invariants, can exhaust storage quota, and oversized attachments will hit the new byte-ceilinged peer attachment transfer, wedging device parity.",
+   "severity": "medium",
+   "origin": "pre-existing",
+   "category": "a08-software-and-data-integrity"
+  },
+  {
+   "file": "src/lib/collab/transport/BroadcastChannelTransport.ts",
+   "line": 19,
+   "title": "BroadcastChannel messages are blind-cast with no shape validation before entering the Yjs protocol decoder",
+   "detail": "`channel.onmessage` casts `event.data as ArrayBuffer | Uint8Array` (line 19) with no check \u2014 contrast docReloadChannel.ts, which validates with `Array.isArray` before acting, and AGENTS.md's rule to validate untrusted input with invariant(). A non-binary message on the well-known `lipsum-doc-<id>` channel (any same-origin context, e.g. a second app version or an extension content script in-page) becomes a garbage/empty Uint8Array that flows into `handleInbound` (src/lib/collab/yjs/YjsProvider.ts:111-131), where `decoding.readVarUint`/`readSyncMessage` run with no try/catch \u2014 the throw escapes the channel's onmessage handler, and repeated malformed messages silently break that tab's cross-tab doc sync. Same-origin-only surface, so low severity, but the handler should verify the payload is binary and bound its handling.",
+   "severity": "low",
+   "origin": "pre-existing",
+   "category": "a08-software-and-data-integrity"
+  },
+  {
+   "file": "src/store/ui.ts",
+   "line": 62,
+   "title": "Persisted UI state is partially unvalidated: theme, currentSpaceId and floatingToolbarEnabled load unchecked from localStorage",
+   "detail": "`loadPersisted` casts `JSON.parse(raw) as Partial<UIState>` (line 62) and `initialState` consumes `persisted.theme`, `persisted.currentSpaceId` and `persisted.floatingToolbarEnabled` raw (lines 151-160), while the very same function sanitises inspectorMode/inspectorSection/readingWidth/diffMode/splitDividerPct through dedicated sanitizers. A corrupted or foreign `lorem-ui` value therefore puts an arbitrary string into state typed as `Theme`, which lands verbatim in `document.documentElement.setAttribute('data-theme', theme)` (src/theme/ThemeProvider.tsx:15) \u2014 inert as markup but it renders the app with no matching theme rules and re-persists the bad value, so the breakage sticks across reloads. Inconsistent with the file's own validation pattern and AGENTS.md's invariant() rule for localStorage input.",
+   "severity": "low",
+   "origin": "pre-existing",
+   "category": "a08-software-and-data-integrity"
+  },
+  {
+   "file": "index.html",
+   "line": 7,
+   "title": "Browser-tab title is misspelled: \"LIpsum Writer\"",
+   "detail": "index.html:7 reads `<title>LIpsum Writer</title>` \u2014 capital I typo visible in every browser tab, bookmark and search result for the deployed app. Last touched by the pre-existing security-hardening commit, not this branch. Cosmetic, but it is the product's most-seen string and this is the last review before beta.",
+   "severity": "low",
+   "origin": "pre-existing",
+   "category": "quality"
+  }
+ ],
+ "areaSummary": "A03 posture is strong: zero dangerouslySetInnerHTML/innerHTML sinks in src/, help markdown renders through react-markdown with custom components and no rehype-raw, external links get rel=\"noopener noreferrer\" (help Markdown.tsx and the ui Link primitive), Lexical 0.48's LinkNode.sanitizeUrl neutralises javascript: hrefs, and BibTeX/archive/URL-param values are all rendered through React or validated against allowlists (Settings tabs, Split's `with` param, help slugs resolve against bundled content only). The production header set (CSP, HSTS, XCTO, Referrer-Policy, frame-ancestors) is well above par, and the newly added camera=(self) is correct and minimally scoped for QR pairing \u2014 but the same CSP lacks 'wasm-unsafe-eval', so the QR scanner's zxing-wasm fallback that this branch ships fails in production on Firefox/Safari (the one high finding). The remaining gaps are A08 integrity edges at the archive import/restore trust boundary (doc bodies and attachment mime/size validated less strictly than the rest of the otherwise-exemplary codec layer) plus two low-severity unvalidated same-origin inputs (BroadcastChannel transport, persisted UI store)."
+}

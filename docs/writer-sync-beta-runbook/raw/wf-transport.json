@@ -1,0 +1,131 @@
+{
+ "findings": [
+  {
+   "file": "packages/writer-sync/src/providers/webrtc/webRtcSyncProvider.ts",
+   "line": 91,
+   "title": "Provider's tracked transport wrapper drops sendWhenReady, unpacing live attachment serving",
+   "detail": "The `tracked` object copies sharesStore/maxMessageBytes/send/onMessage/onClosed/close from the real transport but omits `sendWhenReady` (webRtcSyncProvider.ts:91-101). `livePeerSync.ts:129` reads `transport.sendWhenReady?.bind(transport)` from exactly this wrapper, gets undefined, and passes `sendWhenReady: undefined` into the attachment transfer, whose `serve()` then falls back to unpaced `ports.send` (attachmentTransfer.ts:326-330). A legal `attachment-request` of up to 256 chunks (~175 KiB each encoded) then hits the bounded outbox: ~6 frames go direct before the 1 MiB high-water mark, ~47 more fit the 8 MiB queue, and chunk ~54 throws TransportBackpressureError, which `guardedSend` converts to failAndClose \u2014 the live link dies. Any attachment over ~7 MiB served over a live link on a link slower than local chunk reads kills the session, the exact failure commit 084e3c3b (\"make attachment transfer demand-driven and paced by the bearer\") claims to fix; the pacing works only on the pairing catch-up path (peerCatchUp.ts:401 uses createWebRtcTransport directly), not on provider-issued transports.",
+   "severity": "blocker",
+   "origin": "diff",
+   "category": "backpressure"
+  },
+  {
+   "file": "packages/writer-sync/src/providers/webrtc/webRtcTransport.ts",
+   "line": 121,
+   "title": "Outbox lets a new send overtake messages still queued, reordering frames on an ordered channel",
+   "detail": "`createChannelOutbox.send` (webRtcTransport.ts:116-126) writes straight into the channel whenever `isOpen && bufferedAmount < BUFFER_HIGH_WATER_BYTES`, without checking `pending.size`. Queued messages only drain on 'open'/'bufferedamountlow' events, and `bufferedAmountLowThreshold` is HIGH_WATER/2 (line 268), so there is a real window: message B is queued while bufferedAmount >= 1 MiB; the browser drains the buffer to e.g. 900 KiB (below high water, above the 512 KiB threshold, so no event fires and flush has not run); the next send C passes the check and is written directly \u2014 C reaches the peer before B. `sendWhenReady` has the same hole (`settled()` in channelRoom uses the same predicate), so paced chunk writes can overtake queued live frames on the same channel. The channel is ordered+reliable and the protocol depends on it \u2014 catchUpSession.ts:22-28 preserves arrival order precisely because \"the exchange is stateful across the batches of one reply\" \u2014 so sender-side reordering (e.g. frames batch 2 before batch 1, or a chunk before the offer page) corrupts exchange state. `send` must enqueue whenever `pending.size > 0`.",
+   "severity": "high",
+   "origin": "diff",
+   "category": "correctness"
+  },
+  {
+   "file": "packages/writer-sync/src/providers/webrtc/peerSession.ts",
+   "line": 189,
+   "title": "No bound on peer-opened data channels; each spawns a catch-up session and its own rate budget",
+   "detail": "`createChannelRegistry.adopt` (peerSession.ts:181-203) keeps every channel the peer opens \u2014 unbounded distinct labels, and duplicates of the same label are appended to the per-label array. Once trust is committed, `listenForScopeChannels` (src/lib/writerSyncIntegration/peerCatchUp.ts:354-364) starts a full catch-up session for every non-control channel: a transport, an inbound limiter, a session queue budget of up to 64 msgs/8 MiB, an `exchange.start()` that reads the journal and sends manifests. `runtime.exchanges` (peerCatchUp.ts:399-407) only ever shrinks on app-level stop(), so failed sessions accumulate too. The threat model adversary here is the compromised-but-paired device (inboundLimiter.ts \u00a75.13 comment): by opening N channels it multiplies memory and CPU N-fold, and because the rate limiter is per transport instance, it also gets N \u00d7 the 512 msg/s / 32 MiB/s inbound allowance. SCTP stream limits (~1024+) are the only cap. Every other axis in this area is deliberately bounded; channel count is the one left open.",
+   "severity": "high",
+   "origin": "diff",
+   "category": "dos-resource-exhaustion"
+  },
+  {
+   "file": "packages/writer-sync/src/providers/webrtc/filterChannelByKind.ts",
+   "line": 85,
+   "title": "Pairing-phase channel has no message-size ceiling or rate limit, and the hold buffer bounds count but not bytes",
+   "detail": "MAX_FRAME_BYTES and the inbound limiter are enforced only inside `createWebRtcTransport`, which for the catch-up view attaches only after the root handover completes (peerCatchUp.ts:400). Until then, every inbound message on the pairing channel is JSON.parsed in full by `peekKind` once per view (filterChannelByKind.ts:60-72 \u2014 twice per message), at unbounded rate and unbounded per-message size (bounded only by the SCTP-negotiated maximum, which can far exceed 256 KiB between non-Chromium peers), and the catch-up view's hold buffer (createHoldBuffer, lines 79-94) caps at 64 *messages* with no byte bound \u2014 up to 64 \u00d7 negotiated-max bytes held for the up-to-10 s handover window (rootSecretHandover.ts TRANSFER_DEADLINE_MILLIS). outboxQueue.ts:17 claims the outbox message bound \"matches the inbound hold bound\", but the hold bound has no byte half. A flooding peer at pairing time gets a CPU (repeated large JSON parses) and memory window that the post-handover transport would refuse.",
+   "severity": "medium",
+   "origin": "diff",
+   "category": "dos-resource-exhaustion"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/livePeerSync.ts",
+   "line": 141,
+   "title": "Malformed live-link message throws synchronously out of the channel event listener",
+   "detail": "In `openLiveLink`, `decodeCatchUpMessage(bytes)` is called synchronously inside the onMessage callback before the promise chain begins: `void attachments.receive(decodeCatchUpMessage(bytes)).catch(...)` (livePeerSync.ts:139-145). `decodeCatchUpMessage` throws MalformedCatchUpMessageError on any invalid input (catchUpMessage.ts:370-382), so the `.catch` never sees it \u2014 the exception propagates through the transport's `deliver` loop (webRtcTransport.ts:273) and out of the DOM 'message' event listener as an uncaught error, once per malformed message (up to 512/s inside the rate budget). The session meanwhile stays open. Contrast catchUpSession.ts:170, which decodes inside the awaited tail exactly to keep a malformed message from throwing out of an event listener. The decode must move inside the handled chain (and arguably a malformed message on a live link should close it, as the catch-up session does).",
+   "severity": "medium",
+   "origin": "diff",
+   "category": "untrusted-input"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/livePeerSync.ts",
+   "line": 142,
+   "title": "Session-fatal AttachmentCursorError is logged and ignored on live links, leaving a silent stall",
+   "detail": "AttachmentCursorError is documented as unrecoverable \u2014 \"There is no recovering a shared position from inside a session that has lost it, so the session ends\" (attachmentTransfer.ts:44-52), and commit 9a134bd0 exists to enforce it. On the catch-up path it does end the session (catchUpSession.ts fail() closes the transport). But on live links the same error lands in the generic catch at livePeerSync.ts:140-144, which only logs `appLogger.warn('receiving a live attachment message failed', ...)` and carries on. After a cursor violation the transfer state is desynchronised: `takeOfferPage` threw before adopting the page, the offering peer waits forever for an `attachment-offer-next` that never comes, and the scope's attachment flow is stalled for the life of an apparently healthy link. The queue-stall handling the branch added elsewhere (e207e690) has no equivalent here: fatal protocol errors need to close the live link so the next frame reopens a clean one.",
+   "severity": "medium",
+   "origin": "diff",
+   "category": "queue-stall"
+  },
+  {
+   "file": "packages/writer-sync/src/providers/webrtc/webRtcTransport.ts",
+   "line": 112,
+   "title": "flush() silently loses a frame when channel.send throws mid-drain",
+   "detail": "In `createChannelOutbox.flush` (webRtcTransport.ts:107-115) a message is removed via `pending.take()` and then `channel.send(next)` is called; if send throws, the message is already out of the queue and is gone \u2014 the exception escapes the 'open'/'bufferedamountlow' event listener, no failAndClose runs, and the session continues with a silently dropped frame. That is exactly the failure the outbox was designed against (outboxQueue.ts:48-53: \"a silent drop leaves success and data loss looking identical\"). A concrete trigger exists: RFC 8831 peers that announce no max-message-size default to 64 KiB, and an announced smaller SCTP max makes `send` of a ~175 KiB chunk frame throw TypeError while readyState is still 'open'. The direct-send path at line 125 has the sibling problem \u2014 a non-backpressure throw propagates to the caller with the copy already made but the session left open and unaware.",
+   "severity": "medium",
+   "origin": "diff",
+   "category": "robustness"
+  },
+  {
+   "file": "packages/writer-sync/src/providers/webrtc/inboundLimiter.ts",
+   "line": 20,
+   "title": "Honest bulk transfer on a fast LAN can trip the inbound limiter and kill the session",
+   "detail": "The sender's pacing (`sendWhenReady`) throttles against its own channel buffer, which drains at network speed; nothing coordinates it with the receiver's fixed inbound budget of 512 msgs / 32 MiB per second (inboundLimiter.ts:18-20). On a link sustaining more than ~256 Mbit/s \u2014 plausible for the product's stated case of two devices on one LAN, and near-certain for two browsers on one machine \u2014 a fully honest chunk stream exceeds MAX_INBOUND_BYTES, and the receiver responds by failing the whole session (webRtcTransport.ts:185-188 \u2192 failAndClose), not by shedding load. Progress is preserved via saveChunk so transfers eventually complete across repeated session deaths, but the design conflates \"faster than my budget\" with \"attack\" on a path where the sender cannot know the budget. The comment's justification (bursts spread \"by the sender's own outbox bound and the channel's high-water mark\") bounds queued bytes, not throughput.",
+   "severity": "medium",
+   "origin": "diff",
+   "category": "rate-limiting"
+  },
+  {
+   "file": "src/components/ui/QrScanInput/useCameraScan.ts",
+   "line": 129,
+   "title": "Double start() leaks a live camera stream and an uncleared sampling interval",
+   "detail": "`start` (useCameraScan.ts:129-149) has no in-flight guard: the QrScanCameraField button only disables after React re-renders with state 'starting', so a rapid double click (both events processed before re-render) invokes `start` twice. Two getUserMedia calls race; each resolution overwrites `streamRef.current` and `timerRef.current`, so the first MediaStream is never passed to stopStream \u2014 the camera stays captured (recording indicator on) until the page is closed \u2014 and the first setInterval handle is orphaned, sampling frames forever with no way for release() to clear it. Every documented exit path (\"a successful scan, an explicit stop, unmounting\") releases only the last-written refs. start needs to refuse when state is not 'idle'/'denied'/'unavailable', or release the previous stream/timer before adopting new ones.",
+   "severity": "medium",
+   "origin": "diff",
+   "category": "resource-leak"
+  },
+  {
+   "file": "packages/writer-sync/src/providers/webrtc/reconnectPolicy.ts",
+   "line": 36,
+   "title": "Reconnect policy is exported dead code \u2014 the anti-lockstep retry defence it documents is wired nowhere",
+   "detail": "`createReconnectPolicy` has zero consumers outside its own module, its test, and the barrel export (repo-wide grep over src/, e2e/ and packages/ finds none). The module's doc comment claims the jittered backoff is what stops \"a fleet of tabs reconnecting on the same tick\" being \"a self-inflicted flood (threat model \u00a75.13)\", and cites runbook \u00a722 \u2014 but no reconnection path calls it, so that defence does not exist in the running product. Either the reconnect loop that should consume it is missing (a gap given peerLinkState treats 'interrupted' as needing a fresh QR exchange), or the export is dead API that misdescribes the shipped behaviour; both are worth resolving before beta.",
+   "severity": "low",
+   "origin": "diff",
+   "category": "dead-code"
+  },
+  {
+   "file": "packages/writer-sync/src/pairing/qrPartCollector.ts",
+   "line": 75,
+   "title": "Collector accepts parts that disagree on total, then blames the next valid scan",
+   "detail": "`accept` checks that a symbol's sessionId matches the collected set but overwrites `total` unconditionally (qrPartCollector.ts:74-76). Symbols sharing a sessionId but disagreeing on total (a stray or substituted symbol) are all retained; the inconsistency only surfaces later inside `snapshot()` when `joinQrParts` throws 'parts disagree on the total' \u2014 so the error is raised while processing a *subsequent, valid* symbol (and `progress()`, a read, can throw too). PairingCodeScanner never calls reset(), so the user sees the wrong symbol blamed until re-scans happen to overwrite the stale parts. The total should be validated against the collected set at accept time, like sessionId is.",
+   "severity": "low",
+   "origin": "diff",
+   "category": "untrusted-input"
+  },
+  {
+   "file": "packages/writer-sync/src/providers/webrtc/peerSession.ts",
+   "line": 385,
+   "title": "openChannel skips the requireOpen guard, throwing a native error on a closed session",
+   "detail": "`createOffer`, `acceptOffer` and `acceptAnswer` all call `requireOpen()` and fail with a typed PairingError(InvalidState) after close, but `openChannel` (peerSession.ts:385-386) goes straight to `openChannelFor` \u2192 `connection.createDataChannel` on the closed RTCPeerConnection, which surfaces as a browser InvalidStateError rejection instead of the session's typed error. A late caller (e.g. a live link opening a scope channel as the session is torn down) gets an untyped failure the pairing error handling does not classify.",
+   "severity": "low",
+   "origin": "diff",
+   "category": "robustness"
+  },
+  {
+   "file": "packages/writer-qr/src/scan/createQrScanner.ts",
+   "line": 39,
+   "title": "Permanently failing detector creation is retried on every scan \u2014 a fetch every 300 ms under the camera loop",
+   "detail": "On creation failure the cached promise is reset (`detector = null`, createQrScanner.ts:39) so the next scanImage retries. Under useCameraScan's 300 ms sampling loop, a permanent failure (WASM asset missing/blocked, import failing offline on a non-Chromium browser) means a dynamic import plus WASM fetch attempt every 300 ms for as long as the camera is open, each swallowed by the sample()'s empty catch so the user sees a healthy 'scanning' state that can never succeed. There is no backoff and no terminal state distinguishing 'this frame did not decode' from 'the detector cannot exist'.",
+   "severity": "low",
+   "origin": "diff",
+   "category": "dos-resource-exhaustion"
+  },
+  {
+   "file": "packages/writer-qr/src/encode/qrEncoding.ts",
+   "line": 60,
+   "title": "Capacity check counts UTF-16 chars against a byte capacity, letting oversize non-ASCII text throw unwrapped",
+   "detail": "QR_MAX_TEXT_CHARS = 2953 is the *byte* capacity of a version-40/EC-L symbol, but `encodeQrMatrix` compares `text.length` \u2014 UTF-16 code units (qrEncoding.ts:59-64). Multi-byte text with length <= 2953 but a UTF-8 byte count above capacity passes the guard and reaches `encode()`, which throws uqr's raw error instead of the facade's QrEncodingError \u2014 breaking the package's promise that callers depend on its ports, never the underlying library. Current Writer payloads are base64url/ASCII so this is latent, but the facade is the package's public API and the check should count bytes.",
+   "severity": "low",
+   "origin": "diff",
+   "category": "input-validation"
+  }
+ ],
+ "areaSummary": "The WebRTC provider and writer-qr package are unusually well-defended for pre-beta code: bounded outbox (bytes and count), per-message frame ceiling, token-bucket inbound limiting, strictly bounded untrusted codecs (catch-up messages, root transfer, QR part sequence), a count-bounded hold buffer, and a camera loop that guards concurrent decodes. The serious defects are all at the seams rather than in the bounds themselves: the provider's transport wrapper silently drops the sendWhenReady pacing capability (defeating this branch's own attachment-pacing fix on live links, a blocker), the outbox can reorder frames under the high-water/threshold window, the peer-opened channel axis is the one unbounded resource left to a compromised paired device, and the live link's inbound handler both lets malformed-message decode throw out of the event listener and downgrades session-fatal cursor errors to log lines. The QR side is solid apart from a camera-stream leak on double start and small facade-robustness gaps."
+}

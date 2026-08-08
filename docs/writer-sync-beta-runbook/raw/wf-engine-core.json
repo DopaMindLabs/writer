@@ -1,0 +1,104 @@
+{
+ "findings": [
+  {
+   "file": "packages/writer-sync/src/operations/catchUpExchange.ts",
+   "line": 348,
+   "title": "Acknowledgements overstate coverage, letting the peer compact frames the acking device never journalled",
+   "detail": "The ingester acks the convergence-newest frame taken per scope/origin (acknowledgementsFor, lines 154-161) regardless of gaps: admit() deliberately skips a failing frame and continues the batch (lines 309-329, 'One bad frame never fails a batch'), and a journal.append rejection (IndexedDB quota/transaction abort) is caught by the same catch as a forged frame. So if frame t3 fails to journal while t6 succeeds, the device still acks t6. The peer's compaction treats an ack as prefix coverage \u2014 isHeldByPeer (journalCompaction.ts:79-89) declares every frame <= mark held \u2014 and compactJournal runs at every sync boot, so the peer drops t3 from the only journal that had it. The same overstatement occurs when planCatchUp requests only a tail (after: mine.logicalAt) while a gap exists below the local mark. Result: a frame silently disappears from every journal inside its retention window; state re-converges only if the host wires the optional fullState port (the engine does not require it).",
+   "severity": "blocker",
+   "origin": "diff",
+   "category": "correctness"
+  },
+  {
+   "file": "packages/writer-sync/src/operations/scopeManifest.ts",
+   "line": 105,
+   "title": "planCatchUp cannot distinguish deliberate compaction from a gap, so every compaction is undone by the next session",
+   "detail": "compactableOperationIds drops all frames every peer acked \u2014 including the newest (compare <= 0), so after a boot-time compactJournal pass the local journal can hold zero frames for an origin. buildScopeManifests then omits that origin; on the next catch-up the peer's manifest still lists it, findOrigin returns undefined, and line 105 requests everything (after: undefined) \u2014 the device even requests its own origin's operations back (there is no self-origin exclusion). The answering peer maps after === undefined to a full-state rebuild (catchUpExchange.ts scopesNeedingFullState, lines 203-214) or full history, so the compacting device re-downloads and re-journals everything it just dropped; the stored peer acks then make the next boot compact it again. Compaction and catch-up permanently undo each other: every sync boot triggers a full-scope transfer, and rebuilt frames are minted fresh by the serving device so both journals accumulate frames the other side does not hold.",
+   "severity": "high",
+   "origin": "diff",
+   "category": "correctness"
+  },
+  {
+   "file": "packages/writer-sync/src/operations/catchUpExchange.ts",
+   "line": 249,
+   "title": "Frames replies are fired synchronously into the bounded outbox, so a large catch-up reply deterministically kills the session",
+   "detail": "sendReplies (lines 272-290) pushes every packed batch through ports.send in one synchronous loop. Over WebRTC the channel absorbs ~1 MiB (BUFFER_HIGH_WATER_BYTES) and the outbox refuses beyond 64 messages / 8 MiB (outboxQueue.ts:19-20), and nothing drains during a synchronous loop \u2014 so an initial sync or full-state rebuild whose reply exceeds ~65 batches or ~9 MiB throws TransportBackpressureError, guardedSend closes the transport, and the session fails. Reconnect reproduces the identical request and reply, so pairing a device against a scope of that size fails forever. The port designed for exactly this \u2014 sendWhenReady, used by attachment serve() (attachmentTransfer.ts:331-342) \u2014 is never used for frames batches even though answer() is already async.",
+   "severity": "high",
+   "origin": "diff",
+   "category": "protocol-liveness"
+  },
+  {
+   "file": "packages/writer-sync/src/operations/convergence.ts",
+   "line": 16,
+   "title": "Conflict-resolution tie-break uses localeCompare, which is not deterministic across devices",
+   "detail": "compareOperations breaks HLC ties with String.localeCompare on deviceId and operationId with no locale argument, so the result depends on each runtime's default locale and ICU collation. The module's contract is 'Every device computes the same winner from the same set of operations'; two devices with different system locales can order the same pair differently (case weighting, '-'/'_' handling), and localeCompare can return 0 for canonically-equivalent but different strings, breaking the claimed total order. The comparator also feeds journalCompaction.isHeldByPeer and scopeManifest.summariseOrigin, so divergence would corrupt compaction and manifest marks, not just materialised winners. A plain code-unit comparison (a < b ? -1 : ...) is the deterministic tool here.",
+   "severity": "high",
+   "origin": "diff",
+   "category": "correctness"
+  },
+  {
+   "file": "packages/writer-sync/src/operations/catchUpExchange.ts",
+   "line": 323,
+   "title": "Future-dated frames are journalled: the drift refusal happens only in the host materialiser, after persistence",
+   "detail": "hybridLogicalClock.ts (lines 50-57) states the admission rule: 'Whoever accepts an operation asserts this first \u2014 before decryption and before anything is persisted.' admit() verifies hash, scope and signature but never calls assertAcceptableRemoteTime before ports.journal.append; the only caller of the guard is Writer's materialiser (src/lib/writerSyncIntegration/materialization/writerOperationMaterializer.ts:145), which runs after the frame is persisted. A frame stamped years ahead therefore sits in the journal, becomes the origin's manifest high-water mark (summariseOrigin picks the convergence-newest), is acked and re-served to other peers \u2014 the mesh replicates an operation no device will apply, and the engine offers no enforcement for hosts that do not re-implement the check. Commit b9eb37e0's stated goal ('refuse future-dated operations before they can win a conflict') is only honoured on the materialise side, not at the engine's persistence boundary.",
+   "severity": "medium",
+   "origin": "diff",
+   "category": "correctness"
+  },
+  {
+   "file": "packages/writer-sync/src/operations/catchUpExchange.ts",
+   "line": 297,
+   "title": "Sender never enforces the message bounds its own decoder polices, so a legitimately large journal kills every session",
+   "detail": "The decoder refuses manifests > MAX_MANIFESTS (256), origins > MAX_ORIGINS_PER_SCOPE (256), requests > MAX_REQUESTS (1024) and acks > MAX_ACKNOWLEDGEMENTS (1024) (catchUpMessage.ts:28-39), but the sender emits each of these as a single unsplit message: start() sends all manifests at once (line 364-368), requestMissing() sends every planned request in one message (line 297-306), and the ingester sends one ack message for a whole reply (line 351). A perfectly legal remote manifest (up to 256x256 origins) can force an honest device to emit >1024 requests, which the conforming peer rejects as malformed \u2014 failing the session identically on every reconnect. Only the frames kind gets sender-side packing (packFrames).",
+   "severity": "medium",
+   "origin": "diff",
+   "category": "protocol-consistency"
+  },
+  {
+   "file": "packages/writer-sync/src/operations/attachmentChunking.ts",
+   "line": 157,
+   "title": "buildChunkManifest mints a manifest for zero-byte content that its own validator rejects, poisoning the session",
+   "detail": "For empty content, buildChunkManifest produces totalBytes: 0 with chunkCount: Math.max(1, ceil(0/chunkBytes)) = 1. validateChunkManifest rejects that twice (positiveInteger(totalBytes) at line 61; ceil(0/chunkBytes)=0 !== chunkCount at line 77). Nothing validates on the offering side (offerPage sends manifests raw), so the peer's decodeAttachmentManifest throws, decodeCatchUpMessage fails, and the session dies \u2014 and the same offer re-poisons every reconnect, permanently stalling sync between the two devices if the host ever stores a zero-byte attachment. The builder and validator in the same module disagree about what a legal manifest is.",
+   "severity": "medium",
+   "origin": "diff",
+   "category": "correctness"
+  },
+  {
+   "file": "packages/writer-sync/src/operations/index.ts",
+   "line": 95,
+   "title": "StalledAttachmentTransferError reaches host callbacks but is not exported from the operations barrel",
+   "detail": "attachmentTransfer.ts delivers StalledAttachmentTransferError instances to the host's onRejected port (lines 70-77, 390), yet the barrel exports only AttachmentCursorError from that module. Since the package is consumed exclusively through the public subpaths (enforced by packageBoundary.test.ts), a host cannot instanceof-check or type the error it is handed \u2014 the facade leaks a private class through a public callback. MAX_CATALOGUE_OFFERS (catchUpMessage.ts:38) is similarly enforced on inbound cursors but unavailable to a host implementing a catalogue.",
+   "severity": "low",
+   "origin": "diff",
+   "category": "api-facade"
+  },
+  {
+   "file": "packages/writer-sync/src/core/providers.types.ts",
+   "line": 250,
+   "title": "WriterSyncOptions is a dead alias: exported from the module but reachable from nowhere",
+   "detail": "The type alias WriterSyncOptions = SyncConfiguration is not re-exported by core/index.ts and has zero references anywhere in the repo (package or app). It is unreachable through the public facade and unused internally \u2014 dead code in a file that otherwise defines the public vocabulary, and a name that implies it is the coordinator's input type when the barrel actually exposes SyncConfiguration.",
+   "severity": "low",
+   "origin": "diff",
+   "category": "dead-code"
+  },
+  {
+   "file": "packages/writer-sync/src/operations/catchUpExchange.ts",
+   "line": 185,
+   "title": "heldFrames loads the entire journal into memory for every manifest build and every request answered",
+   "detail": "heldFrames fetches every frame of every accessible scope (Promise.all + flat) and is called by localManifests on start(), by requestMissing on each inbound manifest, and again inside answer() for each inbound request message. The OperationStore port offers no paging or summary query, so peak memory scales with the whole retention window's journal (frames carry full base64 ciphertext payloads), twice per session per side. The protocol's inbound bounds do not cover this local amplification; a large journal makes every session an O(journal) allocation.",
+   "severity": "low",
+   "origin": "diff",
+   "category": "memory-bounds"
+  },
+  {
+   "file": "packages/writer-sync/src/operations/catchUpSession.ts",
+   "line": 194,
+   "title": "A failed session open is reported but does not fail the session",
+   "detail": "opened is exchange.start().catch(report): if publishing the opening manifest throws (e.g. TransportBackpressureError from a still-connecting bearer's full outbox), the error is reported but stop()/transport.close() are not invoked \u2014 unlike every mid-session failure, which goes through fail(). On a bearer that does not self-close on send failure, the session lingers subscribed with no manifest ever sent, so the peer waits on an exchange that never began. Inconsistent error propagation between open and steady-state.",
+   "severity": "low",
+   "origin": "diff",
+   "category": "error-propagation"
+  }
+ ],
+ "areaSummary": "packages/writer-sync/src/core and src/operations are entirely new on this branch and are, module by module, carefully built: strict untrusted-input codecs, explicit inbound bounds, bounded session queues, no module-level mutable state, no floating promises, and 257 passing unit tests. The defects are cross-module protocol soundness, not local sloppiness: acknowledgements assert prefix coverage the ingester cannot guarantee (letting peers compact frames the acking device never stored \u2014 the one blocker), ack-based compaction and the manifest count heuristic permanently undo each other, large frame replies overrun the bounded outbox instead of using the existing paced-send port, and the convergence tie-break is locale-dependent. The barrels are largely coherent, with two small leaks (an unreachable error class handed to host callbacks, a dead type alias); the future-dated-operation refusal this branch advertises is enforced only in the host materialiser, after the engine has already persisted and re-served the frame."
+}

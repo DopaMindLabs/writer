@@ -1,0 +1,77 @@
+{
+ "findings": [
+  {
+   "file": "src/hooks/useAppBoot.ts",
+   "line": 30,
+   "title": "Sync session started after unmount is never torn down; StrictMode dev double-starts the whole sync stack",
+   "detail": "The boot effect assigns `stopSession` only after `await startWriterSync(coordinator)` resolves, but the cleanup (lines 40-43) runs `stopSession?.()` with no re-check after the await: if the effect is cleaned up while boot is still in flight, `run()` continues, starts every provider, registers the `db.syncOperations.hook('creating')` (startLivePeerSync) and the frame-ingestion subscription, and the returned teardown is never invoked. React StrictMode (enabled in src/main.tsx) makes this deterministic in dev: mount -> cleanup (stopSession still null) -> remount leaves the first session permanently live alongside the second \u2014 two durable provider sessions, two 'creating' hooks (every local frame sent to a peer twice through two separate link caches), two ingestion sweep subscriptions. The same race leaks the session in production for any unmount during boot. Fix shape: check `cancelled` after the await and call the returned stop immediately.",
+   "severity": "high",
+   "origin": "diff"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/livePeerSync.ts",
+   "line": 181,
+   "title": "Unbounded pending-send backlog on a keyed device with no registered peer (rule 3: unbounded growth)",
+   "detail": "`send` awaits `links.for(frame.accessScopeId)`; the first call creates the link via `realtime.createTransport` -> `createPeerChannelFactory.open` -> `registry.next()` (peerChannelFactory.ts:28), which by design pends forever until a peer registers (peerSessionRegistry.ts:101-104). On the common beta configuration \u2014 cloud sync unlocked (keys present, so every write journals a frame) but no P2P pairing \u2014 every own frame's `send` continuation queues on that never-resolving promise, retaining the full encrypted frame (row ciphertext) in the JS heap for the rest of the session. Teardown cannot release it: `closeAll` (line 107-115) only `.then`s the pending promise and clears the map. If a peer eventually pairs hours later, the entire backlog flushes one message per frame, bypassing catch-up's pacing/dedup ordering. Memory grows without bound in proportion to operations written; a solo cloud user pays this on every save.",
+   "severity": "high",
+   "origin": "diff"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/livePeerSync.ts",
+   "line": 150,
+   "title": "Offering one attachment rebuilds and re-hashes every attachment in the scope",
+   "detail": "`offerAttachment` calls `store.manifestsForScopes([accessScopeId])` and then filters to the single `attachmentId`. `manifestsForScopes` (attachmentChunkStore.ts:55-81) loads every `syncAttachmentChunks` row in the scope, base64-decodes all chunk bytes, concatenates each attachment's full ciphertext in memory (`contentOf`), and re-computes per-chunk and content hashes via `buildChunkManifest` \u2014 for every attachment in the space \u2014 only to discard all but one manifest. This runs after every `noteAttachments` frame sent over a live link, so saving one image costs CPU/memory proportional to the total attachment bytes of the whole space, on the main thread. The catch-up path pays the same full rebuild per connection, where at least all manifests are used.",
+   "severity": "medium",
+   "origin": "diff"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/materialization/frameIngestion.ts",
+   "line": 51,
+   "title": "Full-journal scan per sweep with no serialisation of overlapping sweeps; concurrent replay can double-reconcile a doc",
+   "detail": "`sweepUnappliedFrames` does `db.syncOperations.toArray()` plus one `syncInbox.get` per frame on every trigger, and it is triggered from four unserialised places: every settled provider round, every key-ring change (frameIngestion.ts:96-98), every `onFramesJournalled` during a peer exchange (peerCatchUp.ts:171-175), and every completed attachment (attachmentChunkStore.ts:115-117). With a 30-day retention journal this is a repeated O(journal) rescan; overlapping sweeps both pass the inbox pre-check and redundantly verify/decrypt the same frames (idempotence holds only at the transaction). Worse, the losing sweep's `applyInboundFrame` returns `prior.result === 'applied'`, so both sweeps push the same doc into `touched` and `refreshInboundDocs` runs `reconcileDocForMount` for the same docId concurrently \u2014 two racing reseed decisions and duplicate reload broadcasts for one inbound edit.",
+   "severity": "medium",
+   "origin": "diff"
+  },
+  {
+   "file": "src/components/settings/tabs/cloud/CloudSectionPanel.tsx",
+   "line": 3,
+   "title": "UI imports the Dexie-shaped cloud facade directly, contradicting the adapter rule the branch codifies",
+   "detail": "syncCoordinatorContext.ts:16-19 states the contract: nothing under src/components or src/hooks should import a provider implementation or the cloud facade behind it. Yet ~25 files still import `@/lib/cloud/*` directly from UI layers, e.g. CloudSectionPanel.tsx:3 (`cloudUserInteraction`, `cloudCurrentUser` from cloudClient), useDeviceSlots.ts:7-14, useDeviceKeyState.ts:2 (`forgetThisDevice`), CloudKeyConflictDialog.tsx:2 (`adoptAccountKey`, `eraseSyncedContent`), useDeviceRemoval.ts:2, RouteErrorScreen.tsx:9, and hooks useHasLocalSyncedData/useDeviceKeyRevision/useKeyMismatch/useCloudLockReason/useReconcileStatus. The new device-sync surfaces correctly go through writerSyncIntegration, so the codebase now has two competing patterns for the same concern; every direct import bypasses the provider-neutral capability vocabulary (useSyncStatus/useEscrowPresence) and couples UI to the Dexie provider. Imports predate the branch (the branch only re-pointed the adapter-hook imports), so pre-existing \u2014 but the contract asserting it is new.",
+   "severity": "medium",
+   "origin": "pre-existing"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/useTrustedDevices.ts",
+   "line": 65,
+   "title": "loadOwner rejection is unhandled: hook hangs at undefined with an unhandled promise rejection",
+   "detail": "`void loadOwner().then((resolved) => ...)` has no rejection handler. `loadOwner` awaits `currentPrincipal()` (creates a profile on first use) and `deviceIdentityStore.load()` (mints an identity) \u2014 both IndexedDB writes that can fail (quota, private-mode, vault errors). On rejection the browser reports an unhandled promise rejection and `owner` stays null forever, so the settings device list renders the loading state indefinitely with no error surfaced. CODING_STANDARDS rule 7 requires `void x.catch(reportError)` for intentionally un-awaited promises; every comparable path in this directory (e.g. trackRetentionDays in peerCatchUp.ts:375-382) attaches a catch.",
+   "severity": "low",
+   "origin": "diff"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/materialization/rescopeFrames.ts",
+   "line": 44,
+   "title": "Rescoped frames carry the original signature over rebuilt signed fields, so they verify against nothing",
+   "detail": "`rescopeFrame` rebuilds `accessScopeId`, `keyId`, `epoch`, `payload` and `payloadHash` \u2014 all signed fields \u2014 while spreading the old `signature` through unchanged, so any receiver's `verifySignature` rejects every resealed frame and the moved operations would be silently dropped at ingestion (UntrustedFrameError per frame). The TODO acknowledges this (issue #210) and nothing in production rescopes today, but the function is exported and green-tested, so a future caller wiring a scope transition (e.g. making a space shared) would ship silent data loss. Risk recorded here so the gap is not forgotten at beta.",
+   "severity": "low",
+   "origin": "diff"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/peerCatchUp.ts",
+   "line": 399,
+   "title": "PeerRuntime exchanges/transfers sets only grow until stop()",
+   "detail": "`exchangeOverFor` adds a `CatchUpSession` to `runtime.exchanges` for every scope channel a peer opens and nothing removes it when the channel closes; `track` (line 474) adds a `RunningRootSecretHandover` per pairing attempt that is never removed when the transfer settles. Over a long-lived page with reconnections and repeated pairings the sets accumulate settled sessions (each retaining its transport and ports closures) until `stop()` runs at provider unmount \u2014 page teardown in practice. Bounded only by session length; contrary to CODING_STANDARDS rule 3's no-growing-caches discipline.",
+   "severity": "low",
+   "origin": "diff"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/livePeerSync.ts",
+   "line": 107,
+   "title": "In-flight send can re-open a live link after teardown; closeAll cannot close it",
+   "detail": "`startLivePeerSync`'s teardown unsubscribes the 'creating' hook and calls `links.closeAll()`, but a send already queued behind `afterCurrentTransaction()` (line 210-229) resolves after teardown and calls `links.for(...)` on the now-empty cache, creating a fresh transport that no teardown will ever close. Narrow window in production; systematically reachable in the StrictMode double-boot scenario (see useAppBoot finding) where the first instance's hook fires while its teardown never runs at all.",
+   "severity": "low",
+   "origin": "diff"
+  }
+ ],
+ "areaSummary": "src/lib/writerSyncIntegration/ (all 79 files new on this branch) is in strong shape overall: writerTablePolicy classifies every STORES table plus the cloud-injected ones and is enforced by test; ingestion validates untrusted frames in one admission order (codec verify, table policy, trusted signature, clock bound) with invariant() at the attachment/blob boundaries; the package boundary is clean in both directions (only the five public writer-sync subpaths are imported from src/, and tsconfig path pinning blocks deep imports; the engine imports no app code). The material pre-beta risks are lifecycle ones: the useAppBoot teardown race (guaranteed double-start under StrictMode dev, leaked session on unmount-during-boot) and livePeerSync's unbounded pending-send backlog on the common cloud-only/no-peer configuration, with secondary efficiency concerns in the per-round full-journal sweep and the scope-wide attachment manifest rebuild."
+}

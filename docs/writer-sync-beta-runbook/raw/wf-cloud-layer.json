@@ -1,0 +1,95 @@
+{
+ "findings": [
+  {
+   "file": "src/lib/writerSyncIntegration/materialization/writerFrameVerifier.ts",
+   "line": 37,
+   "title": "Cloud devices that never QR-paired refuse each other's frames \u2014 the documented passphrase-unlock flow delivers no content",
+   "detail": "applyInboundFrame (writerOperationMaterializer.ts:139) now throws UntrustedFrameError for any frame whose author is not in the trustedDevices registry, and trust records are written only by the QR pairing flow (trustedDeviceStore.trust). Two devices signed into the same Dexie Cloud account that unlocked with the passphrase \u2014 the flow the beta is built around \u2014 have no trust records for each other, so every replicated frame is rejected on every sweep and nothing ever materialises. The branch's own commit e4eda19f concedes this: \"Frames from a cloud-only device it has never paired with stay journalled and inert.\" But src/help/content/en/cloud-sync.md:31-44 still promises \"Unlock a second device ... Your spaces, sections, and document names now appear\", and neither the help nor the spec was updated to require pairing for cloud convergence. Either the verifier needs a trust path for same-account cloud devices (e.g. escrow-derived), or the entire cloud-sync UX/help/spec must change; as it stands the beta's headline flow silently syncs ciphertext that is never applied.",
+   "severity": "blocker",
+   "origin": "diff",
+   "category": "correctness"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/materialization/frameIngestion.ts",
+   "line": 96,
+   "title": "Frame ingestion and the legacy cloud reconciler race on the same syncComplete; a stale body can be restored over newer frame-applied content",
+   "detail": "startCloudSession (src/lib/cloud/cloudClient.ts:280) still starts startCloudReconciler, and startWriterSync additionally starts startFrameIngestion on the same durable syncComplete observable \u2014 both fire concurrently per sync round and on every key-ring change. reconcileLibrary (src/lib/cloud/reconcile.ts:199) snapshots db.docs.toArray() up front; if sweepUnappliedFrames materialises a frame and refreshInboundDocs reseeds the CRDT for a doc between that read and reconcileOne, reconcileDoc sees localSnapshot (new body) !== doc.body (stale snapshot), takes the LWW branch and calls applyPulledBody with the STALE body (reconcile.ts:59, 77-81) \u2014 restoring outdated text into the live editor via handle.restoreBody. The editor's next autosave journals that regression as a new operation with a later HLC stamp, propagating the rollback account-wide. The two paths share no per-doc serialisation (reconcileDoc does not go through reconcileDocForMount's chain), so the spec's \"one reconciliation of a document runs at a time\" does not hold across them. Post-cutover the addon never writes docs rows itself, so the reconciler's original purpose is gone; it now only duplicates and races the frame path.",
+   "severity": "high",
+   "origin": "diff",
+   "category": "correctness"
+  },
+  {
+   "file": "src/lib/cloud/setup.ts",
+   "line": 344,
+   "title": "eraseSyncedContent's deletions no longer replicate after the frame cutover \u2014 the mismatch escape hatch is local-only and leaves a poisoned journal",
+   "detail": "The function's contract (setup.ts:319-322: \"drop the account's rows this device cannot read ... so the deletions sync away\") is dead code-in-comment since this branch's cutover: content tables are in unsyncedTables (src/db/buildDb.ts:32) so row deletes never replicate, and the operation-journal middleware explicitly authors no delete frame for a row that opens to undefined (operationJournalMiddleware.ts:234-241: \"this device must not author frames for content it cannot read\"). So erasing produces zero outbound operations: other devices and the server keep everything. Worse, the foreign ciphertext frames remain in the synced syncOperations journal (locally and server-side) \u2014 eraseSyncedContent never touches them \u2014 so after the escrow swap installs this device's key, every device on the account re-downloads and permanently re-rejects that corpus on every sweep. The lost-passphrase recovery story shipped in the beta does not do what its code and UI claim.",
+   "severity": "high",
+   "origin": "diff",
+   "category": "correctness"
+  },
+  {
+   "file": "src/lib/cloud/cloudClient.ts",
+   "line": 237,
+   "title": "Device 'removal' revokes nothing: the revoked device keeps its key and full sync access, contradicting the shipped copy",
+   "detail": "removeCloudDevice only stamps revokedAt on a cloudDevices row. On the revoked device the registrar merely sets deviceRevokedState (deviceRegistry.ts:72), which renders a banner (CloudDeviceRevokedBanner) \u2014 nothing stops the addon syncing, forgets the key ring, or signs the device out, so it retains indefinite read/write access to all account content. The UI copy promises otherwise: screens.json:856 \"If that device is still signed in, it stops syncing and is asked to sign out\" and help cloud-sync.md:76-78 \"it will not quietly take another [slot]\" \u2014 but once other devices sweep the tombstone after DEVICE_STALE_AFTER_MS (devicePolicy.ts:115-118), the revoked device's registrar finds no own row and planForNewRow quietly re-registers it into any free slot. The DEVICE_LIMIT of 4 is likewise enforced only by well-behaved clients (planForNewRow declines to write; the UI hides key actions for keyless devices) \u2014 a device holding the recovery code or passphrase syncs regardless. For OWASP A01 purposes none of the device controls constitute access control, yet the copy tells users they do.",
+   "severity": "high",
+   "origin": "pre-existing",
+   "category": "access-control"
+  },
+  {
+   "file": "src/lib/cloud/dexieCloudProvider.ts",
+   "line": 127,
+   "title": "AccessControlAdapter is declared but its core contract is unimplemented: frames written after createScope never inherit the realm",
+   "detail": "spaceRealm.ts:19-22 claims \"the scope's binding is recorded in syncProviderBindings so frames written later inherit it without re-reading Dexie's own tables\" \u2014 but nothing in the frame-writing path reads syncProviderBindings or stamps realmId: grep shows the only integration-layer reference is the table-policy classification, and putFrames/writeFrames (operationJournalMiddleware) write frames with no realm. So after createScope, only the frames restamped at share time are in the member-visible realm; every subsequent operation lands in the owner's private realm and members would silently never receive it. Compounding gaps the module's own comments admit: members sync ciphertext they can never decrypt (no cross-user key delivery, realmMembers.ts:22-25), role names are unprovisioned server-side so editor/owner grants cannot write (realmMembers.ts:27-31), and there is no client-side authorisation on addSpaceMember/removeSpaceMember/setSpaceMemberRole. Also stale: the module doc at line 44-46 still says \"accessControl lands with ... its first caller\" although it is now declared at line 158. Nothing user-facing calls this today, but it ships as a declared provider capability whose use would silently lose member access.",
+   "severity": "medium",
+   "origin": "diff",
+   "category": "access-control"
+  },
+  {
+   "file": "src/lib/cloud/spaceRealm.ts",
+   "line": 129,
+   "title": "Sharing a space leaks its plaintext name to the server via the unencrypted realms table",
+   "detail": "createSpaceRealm writes db.realms.add({ name: space.name }). `realms` is classified plaintext-control (writerTablePolicy.ts:107) and replicates unencrypted, while a space's name is otherwise sealed inside the row envelope \u2014 the whole point of the E2EE design is that the server never sees content fields. The moment a space is shared, its decrypted name is copied into a table the server (and every realm member row consumer) reads in the clear. The convenience rationale (\"recognisable wherever realms are listed\") does not survive the product's own end-to-end-encryption claim (help cloud-sync.md: \"the server only ever holds scrambled data\"). Dormant today (no sharing UI), but the leak is wired into the shipped accessControl.createScope path.",
+   "severity": "medium",
+   "origin": "pre-existing",
+   "category": "privacy"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/materialization/frameIngestion.ts",
+   "line": 51,
+   "title": "Ingestion sweep rescans the entire journal every sync round and re-verifies permanently rejected frames forever",
+   "detail": "sweepUnappliedFrames loads db.syncOperations.toArray() (the full journal) on every settled sync round and every key-ring change, then does a per-frame syncInbox lookup. Frames that fail verification or decryption are never recorded anywhere (only AttachmentChunksPendingError is silently skipped; everything else is console.error'd and forgotten), so a rejected frame \u2014 e.g. the entire corpus from an unpaired cloud device (finding 1) or a pre-key-swap corpus (finding 3) \u2014 is re-signature-checked and re-logged on every sweep for the lifetime of the account. Cost and console noise grow unboundedly with journal size; nothing is a network retry storm, but it is the CPU/log equivalent, and it masks genuine one-off frame rejections in repeated identical errors.",
+   "severity": "medium",
+   "origin": "diff",
+   "category": "efficiency"
+  },
+  {
+   "file": "src/lib/cloud/crypto/envelope.ts",
+   "line": 82,
+   "title": "AAD encoding is non-injective: context fields are colon-joined without escaping or length prefixes",
+   "detail": "aad() builds the AES-GCM additional data as ['lipsum','2',keyId,epoch,accessScopeId,table,primaryKey].join(':'). keyId is standard base64 (no ':'), but accessScopeId and primaryKey are application strings with no charset guarantee \u2014 two different (scope, table, pk) triples containing ':' can serialise to identical AAD bytes, weakening the scope/row binding the envelope's whole design leans on (the same concern applies to the frame payload AAD if built the same way). Today's nanoid-style ids contain no colon so this is latent, but the binding is a security property and should be injective by construction (length-prefix or canonical JSON, as frameSignature.ts already does with canonicalJson).",
+   "severity": "low",
+   "origin": "diff",
+   "category": "crypto-hygiene"
+  },
+  {
+   "file": "src/lib/cloud/env.ts",
+   "line": 22,
+   "title": "cloudFlagFromEnv lacks the 'non-production only' gate its documentation claims",
+   "detail": "The comment (env.ts:14-19 and flag.ts:12) says a build-time VITE_CLOUD_SYNC_FLAG=on opts in \"(non-production only)\", but the implementation is just import.meta.env.VITE_CLOUD_SYNC_FLAG === 'on' with no import.meta.env.MODE/PROD check. A production deployment that sets the variable (copy-pasted env file, misconfigured Vercel project) silently force-enables the invite-only beta for every visitor, bypassing the localStorage opt-in the flag.ts @TODO notes is already too open.",
+   "severity": "low",
+   "origin": "pre-existing",
+   "category": "configuration"
+  },
+  {
+   "file": "src/lib/cloud/crypto/keys.ts",
+   "line": 200,
+   "title": "wrapRootSecret hardcodes epoch 1, so adoptAccountKey would regress a rotated escrow's epoch",
+   "detail": "wrapRootSecret always emits { epoch: 1 }. adoptAccountKey (setup.ts:312-315) derives the device ring with serverEscrow.epoch but then republishes the account escrow via wrapRootSecret under the kept passphrase \u2014 if the escrow's epoch ever advances past 1 (rotation is modelled: EscrowRecord.epoch, CloudKeyRing.epoch, envelope epoch in the AAD), adoption silently resets the published epoch to 1 while existing ciphertext and rings carry the higher epoch, and later devices would derive a ring whose epoch mismatches every sealed row's AAD. Latent today (epoch is always 1) but it is a wrong-by-construction API: the epoch should be a parameter, not a constant.",
+   "severity": "low",
+   "origin": "diff",
+   "category": "correctness"
+  }
+ ],
+ "areaSummary": "The crypto core of the Dexie Cloud path is genuinely solid: PBKDF2-SHA-512 with a calibrated \u2265800k-iteration floor, scope/row-bound AES-GCM envelopes that fail closed (undecryptable rows are hidden, the mismatch write-lock engages, plaintext never enters the sync queue keyless), add-only escrow publication that cannot clobber the account key, and a vault that keeps the root secret wrapped under non-extractable keys. The serious problems are all drift between this mostly pre-existing layer and the frame cutover this branch lands: cloud-only devices can no longer converge at all without QR pairing (contradicting the shipped help and the entire passphrase-unlock UX), the legacy cloud reconciler now races the new frame-ingestion path and can roll back content, and the erase-content escape hatch no longer propagates anything. Device management and the realm/member access-control groundwork are advisory or unfinished \u2014 revocation and the device limit are enforced only by cooperative clients while the UI copy claims otherwise, and the declared AccessControlAdapter would silently strand post-share frames in the private realm \u2014 so the sharing surface must stay dormant and the device-management copy corrected before beta."
+}

@@ -1,0 +1,86 @@
+{
+ "findings": [
+  {
+   "file": "src/lib/writerSyncIntegration/removeTrustedDevice.ts",
+   "line": 43,
+   "title": "Removing a device does not close its live peer session \u2014 the removed device keeps syncing until the page closes",
+   "detail": "removeTrustedDevice writes status: Revoked and releases retention, but never consults peerSessions (src/lib/writerSyncIntegration/peerSessionRegistry.ts) to close an open session for that deviceId, and nothing in peerCatchUp.ts observes revocation. A user typically removes a device while both are online; that device's adopted catch-up session, scope channels and outbound frame serving (catchUpPorts.canAccessScope is just deviceKeyProvider.hasAnyKey()) all continue, and its live session can still record acknowledgements onto its revoked record via registry.acknowledge (trustedDeviceStore.ts mutate() does not check status), influencing tombstone acknowledgedBy state. The threat model (packages/writer-sync/docs/threat-model.md \u00a75.10) claims 'Removal blocks new authenticated sessions' \u2014 true only for new sessions; the in-flight one survives indefinitely. Beta risk: user-visible security control (Remove device) does not take effect while the removed device is connected \u2014 this makes beta shipment risky and should be fixed before beta (close the registered session for the deviceId inside removeTrustedDevice).",
+   "severity": "high",
+   "origin": "diff",
+   "category": "auth-failure"
+  },
+  {
+   "file": "packages/writer-sync/src/crypto/trustedFrameVerifier.ts",
+   "line": 41,
+   "title": "Per-device key cache bypasses the trust registry after the first frame, so revocation never takes effect within a live session",
+   "detail": "The verifier caches the imported CryptoKey per deviceId and, on a cache hit, returns verifyFrameSignature(cached, frame) without re-running registry.find/isTrustedForSession. peerCatchUp builds one verifier per adopted session (peerCatchUp.ts:148) and sessions live for the page lifetime, so once a peer has sent one frame, revoking it stops nothing on that connection \u2014 every subsequent inbound frame still verifies and is journalled/materialised. The module's own contract says 'a frame from a device that is unknown, removed or revoked is refused'. Defence-in-depth gap even once the session-closing fix (removeTrustedDevice) lands, because any code path that keeps a verifier alive across a revocation inherits it. Fix: cache the imported key but re-check isTrustedForSession per frame (registry.find is an indexed IndexedDB get), or invalidate the cache on registry change.",
+   "severity": "medium",
+   "origin": "diff",
+   "category": "auth-failure"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/rootSecretHandover.ts",
+   "line": 138,
+   "title": "Session expiry is enforced only on the sealing side of the root-secret handover; the receiving side installs a root and commits trust after the deadline",
+   "detail": "requireLiveSession() (lines 104-111) is called in wrapForPeer only. acceptWrapper (lines 138-149) installs a received root and, via runRootSecretHandover onCompleted -> commitTrust (peerCatchUp.ts:432-447), commits durable trust with no check that now() < options.peer.expiresAt \u2014 despite the file's own claim that 'Expiry is absolute'. A peer whose clock is skewed (or a modified client) can seal past this device's deadline and the receiver will accept, adopt the root, and record trust for a session whose window closed; the receiver's ephemeral private key also stays usable past the deadline because expiry is only detected inside wrapForPeer (sessionPrivateKey = null, line 106). Both parties were transcript-authenticated and human-confirmed, so exploitability is limited, but the deadline the design leans on (pairing-protocol \u00a77, commits 22ccba7d/c4e4d4f3 'expiry terminal') is one-sided. Fix: call requireLiveSession() at the top of acceptWrapper too. Moderate beta risk on its own.",
+   "severity": "medium",
+   "origin": "diff",
+   "category": "crypto-failure"
+  },
+  {
+   "file": "src/lib/cloud/crypto/keys.ts",
+   "line": 104,
+   "title": "deriveKeyRing ignores its epoch parameter \u2014 every epoch derives the identical content key, so the advertised rotation seam is a cryptographic no-op",
+   "detail": "deriveKeyRing(master, epoch) derives via HKDF with fixed info 'lipsum-content-v1' and empty salt; epoch is only copied into the returned ring as metadata. Meanwhile epoch is bound into every AAD (envelope.ts aad, operationCrypto.ts aad, attachmentContentCrypto.ts aad) and travels in the root-transfer message specifically so 'a receiver that guessed the epoch would derive a key that decrypts nothing' (rootTransferMessage.ts:47-53) \u2014 which is false today: any epoch decrypts, because the key never varies. The threat model (\u00a75.9) presents epoch-based rotation as the future revocation mechanism for a compromised device ('The key ring is already epoch-based, which is the seam rotation would use'); as implemented, bumping the epoch would rotate nothing and no test guards against that. Not exploitable pre-rotation, but it is a loaded footgun for the first rotation change and the code's own comments mis-describe the property. Fix: mix epoch into the HKDF info (e.g. `lipsum-content-v1:<epoch>`) or into the salt, with a test asserting different epochs derive different keys.",
+   "severity": "medium",
+   "origin": "pre-existing",
+   "category": "crypto-failure"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/materialization/rescopeFrames.ts",
+   "line": 50,
+   "title": "Open documented gap #210: rescopeFrame carries the signature across while rebuilding five signed fields, producing frames every device now refuses",
+   "detail": "rescopeFrame rebuilds accessScopeId, keyId, epoch, payload and payloadHash \u2014 all inputs to frameSignature.signingInput \u2014 while copying frame.signature unchanged (via ...frame spread), so a resealed frame verifies against nothing. Because signature verification is now mandatory on every route (gap #209 was closed on this branch by e4eda19f: applyInboundFrame requires a FrameVerifier, and catchUpExchange.admit verifies before journalling), running rescopeFrames would bulkPut frames into syncOperations that every device \u2014 including this one \u2014 permanently refuses: a silent data-availability trap rather than a forgery vector. No production caller exists (grep confirms tests only) and the TODO tracks #210, so beta risk is low; assessment: acceptable to ship provided #210 stays a blocker for any scope-transition feature. Of the two documented gaps, #209 is fixed at HEAD and the docs (sync-frame-protocol.md \u00a79 'Every route, not just the peer link') match the code; only this one remains.",
+   "severity": "low",
+   "origin": "diff",
+   "category": "crypto-failure"
+  },
+  {
+   "file": "packages/writer-sync/src/operations/catchUpExchange.ts",
+   "line": 319,
+   "title": "Scope-binding check in catch-up admission is vacuous: expectedScope is the frame's own scope",
+   "detail": "admit() calls verifyFrame(frame, { expectedScope: frame.accessScopeId }) \u2014 comparing the frame's accessScopeId with itself, so WrongScopeFrameError can never fire on this path. The receiver does not check that delivered frames belong to a scope it actually requested; the only gate is canAccess(frame.accessScopeId), which Writer wires to deviceKeyProvider.hasAnyKey() (peerCatchUp.ts:146), i.e. true for every scope once any key is held. Under Stage 1's single content key this is by design (one key opens all scopes), and the signature does bind the author to the scope id it chose \u2014 but the check as written gives false assurance and will silently not tighten when per-scope keys land. Fix: track the scopes requested in requestMissing and pass those as expectedScope, or drop the parameter here so the code does not claim a check it does not make.",
+   "severity": "low",
+   "origin": "diff",
+   "category": "auth-failure"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/peerCatchUp.ts",
+   "line": 456,
+   "title": "Reconnection adopt path grants sync authority on a claimed deviceId without consulting the trust registry",
+   "detail": "adoptPeer with secretHandover === undefined goes straight to beginTrustedPhase (publish to peerSessions, listen for scope channels, serve catch-up) with no registry.find/isTrustedForSession check on peer.deviceId \u2014 not even a check that the device is known, let alone Active rather than Revoked. Today the sole production caller (usePairingExchange.handOverSession) always passes secretHandover from a fresh authenticated pairing, so the branch is unreachable outside tests; but it is the designated seam for future reconnection, and acknowledgements recorded through it are credited to the claimed deviceId (catchUpPorts recordPeerAcknowledgement), which feeds journal compaction and deletion release. Inbound frames remain individually signature-verified, so the exposure is outbound serving plus acknowledgement attribution. Low today because unreachable; should assert registry trust (and peer identity proof) before beginTrustedPhase so a future caller cannot inherit an unauthenticated fast path.",
+   "severity": "low",
+   "origin": "diff",
+   "category": "auth-failure"
+  },
+  {
+   "file": "src/lib/cloud/crypto/envelope.ts",
+   "line": 78,
+   "title": "AAD strings join unescaped fields with ':' \u2014 field-boundary ambiguity, unlike the 0x00-separator discipline the pairing crypto uses",
+   "detail": "envelope.ts aad(), operationCrypto.ts aad() and attachmentContentCrypto.ts aad() build the authenticated context by joining raw field values with ':'. Two different field tuples can serialise to identical AAD bytes if any component ever contains ':' (e.g. an accessScopeId ending ':2' shifting into the epoch slot). Today every component is a locally minted id, fixed table name or number, so there is no known exploit \u2014 but the pairing/signature modules in the same codebase deliberately use length-safe 0x00-separated label constructions for exactly this reason (pairingTranscript.joinWithSeparators, frameSignature/deviceSignature signingInput, deviceKeyVault.wrapperAad), and nothing validates that ids stay colon-free. Low severity, no action required for beta; worth normalising (canonicalJson the header, or length-prefix fields) next time these AADs are versioned, since the envelope is already versioned (v2).",
+   "severity": "low",
+   "origin": "diff",
+   "category": "crypto-failure"
+  },
+  {
+   "file": "src/lib/writerSyncIntegration/materialization/frameIngestion.ts",
+   "line": 51,
+   "title": "Forged or unverifiable frames are refused but never quarantined: every sweep reloads and re-verifies the whole journal",
+   "detail": "sweepUnappliedFrames does db.syncOperations.toArray() and re-runs verification for every frame not in syncInbox on every sweep (every settled provider round and every key-ring change). A frame that fails signature verification throws UntrustedFrameError, is logged, and stays in syncOperations forever \u2014 so a malicious or buggy provider that writes junk frames into the journal imposes a permanent, growing per-sweep cost (full-table load plus a signature verify per rejected frame), and the refusal is re-litigated indefinitely. The refusal itself is correct (forged deletions stay inert, matching the e2e in 2560ec8f); this is the resource-exhaustion tail of that design. Low for beta; consider recording rejected operationIds (with a bounded retry policy for the legitimately unverifiable-yet case, e.g. trust arriving after frames) so sweeps skip known-bad frames, and indexing the sweep instead of toArray().",
+   "severity": "low",
+   "origin": "diff",
+   "category": "resource-exhaustion"
+  }
+ ],
+ "areaSummary": "The crypto and pairing layers are in strong shape for a beta: fresh CSPRNG IVs at every AES-GCM call site (no nonce reuse anywhere), transcript-salted HKDF for the pairing key with strict JWK validation, domain-separated labels across every signing/derivation context, canonical-JSON byte-exactness enforced on both sides, non-extractable keys throughout, bounded hostile-input decoding (decompression ceiling, QR part limits, replay cache), root bytes zeroised after use, no secrets in logs, and no weak randomness; non-constant-time comparisons exist only over public values (fingerprints, public keys, payload hashes). Of the two documented frame-signature gaps, #209 (unverified durable-provider route) is closed on this branch \u2014 applyInboundFrame now requires a verifier on every route and the docs match \u2014 while #210 (rescopeFrames invalidating signatures) remains open but has no production caller; low beta risk if it stays a blocker for scope transitions. What makes beta shipment risky is revocation semantics, not cryptography: removing a device neither closes its live peer session nor defeats the frame verifier's per-session key cache, so a removed device keeps syncing both directions until the page closes (the high finding, plus its medium cache companion); secondary mediums are the receive-side expiry asymmetry in the root-secret handover and the epoch-ignoring key derivation that silently no-ops the advertised rotation seam."
+}
