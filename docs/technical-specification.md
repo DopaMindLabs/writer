@@ -663,7 +663,12 @@ wired into the app.
   open. With no trusted device paired, the window governs alone. Acknowledgements
   are tracked per originating device within a scope, never as one mark per scope:
   an operation from one device that is logically older than an acknowledged
-  operation from another has not thereby been seen. Inbox rows are **never**
+  operation from another has not thereby been seen. A device acknowledges only
+  what it actually stored: a frame it accepted and its journal then refused to
+  keep (a full disk, a closed database) leaves that origin unacknowledged for the
+  whole reply rather than acknowledged over the hole, so the peer keeps the frame
+  and offers it again. A frame *refused* as inauthentic is not a hole and does
+  not hold the acknowledgement back. Inbox rows are **never**
   pruned — the inbox is the replay guard — and a deletion is exempt from the
   window entirely: a tombstone and the signed delete frame it names are one
   retention unit, dropped together in one transaction. A peer's acknowledgement

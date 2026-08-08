@@ -152,6 +152,15 @@ const catchUpPorts = ({
       reason,
     });
   },
+  // Storage refused a frame this device wanted. Named apart from a refusal
+  // because it is this device's problem, not the peer's, and because the peer
+  // is deliberately not told the frame landed.
+  onUnstoredFrame: (frame, reason) => {
+    appLogger.warn('could not store a frame from a peer', {
+      operationId: frame.operationId,
+      reason,
+    });
+  },
   onUndeliverableFrame: (frame, reason) => {
     appLogger.warn('a frame for the peer exceeds the transport ceiling', {
       operationId: frame.operationId,

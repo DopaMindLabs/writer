@@ -90,6 +90,12 @@ export interface CatchUpPorts {
   /** Diagnostics for a refused frame. One bad frame never fails a batch. */
   onRejectedFrame?: (frame: EncryptedSyncFrame, reason: unknown) => void;
   /**
+   * A frame this device accepted and could not store. Distinct from
+   * {@link onRejectedFrame}: nothing is wrong with the frame, so the peer is not
+   * told it landed and will offer it again — a reported gap, not a silent one.
+   */
+  onUnstoredFrame?: (frame: EncryptedSyncFrame, reason: unknown) => void;
+  /**
    * An outbound frame no message can carry — too large for the transport even
    * alone. Deliberately distinct from {@link onRejectedFrame}, which is
    * inbound. The frame is skipped, the rest of the reply still travels, and
@@ -109,26 +115,73 @@ export interface CatchUpExchange {
 const originKey = (frame: EncryptedSyncFrame): string =>
   `${frame.accessScopeId} ${String(frame.deviceId)}`;
 
+/**
+ * What one reply left behind for one scope and origin.
+ *
+ * An acknowledgement is read by the peer as "everything from this origin up to
+ * here is held here", which is what lets it compact. That reading is only true
+ * while nothing in between went missing, so a frame this device could not store
+ * is remembered beside the newest it took.
+ */
+interface OriginProgress {
+  newest?: EncryptedSyncFrame;
+  /** The oldest frame this device failed to store, if any did. */
+  missing?: EncryptedSyncFrame;
+}
+
+const progressFor = (
+  progress: Map<string, OriginProgress>,
+  frame: EncryptedSyncFrame,
+): OriginProgress => {
+  const held = progress.get(originKey(frame)) ?? {};
+  progress.set(originKey(frame), held);
+  return held;
+};
+
 /** Keeps the newest frame per scope and origin for a bounded acknowledgement. */
 const rememberNewest = (
-  newest: Map<string, EncryptedSyncFrame>,
+  progress: Map<string, OriginProgress>,
   frame: EncryptedSyncFrame,
 ): void => {
-  const held = newest.get(originKey(frame));
-  if (held === undefined || compareOperations(frame, held) > 0) {
-    newest.set(originKey(frame), frame);
+  const held = progressFor(progress, frame);
+  if (held.newest === undefined || compareOperations(frame, held.newest) > 0) {
+    held.newest = frame;
   }
 };
 
-/** The newest operation taken from each scope and origin in one reply. */
+/** Records a frame that arrived and could not be kept — a gap, not a refusal. */
+const rememberMissing = (
+  progress: Map<string, OriginProgress>,
+  frame: EncryptedSyncFrame,
+): void => {
+  const held = progressFor(progress, frame);
+  if (held.missing === undefined || compareOperations(frame, held.missing) < 0) {
+    held.missing = frame;
+  }
+};
+
+/**
+ * The newest operation taken from each scope and origin in one reply, minus
+ * every origin whose reply had a hole in it.
+ *
+ * Saying nothing for such an origin costs one round of compaction; saying the
+ * newest would tell the peer it may drop a frame that never landed here, and
+ * nothing would ever ask for it again.
+ */
 const acknowledgementsFor = (
-  newest: ReadonlyMap<string, EncryptedSyncFrame>,
+  progress: ReadonlyMap<string, OriginProgress>,
 ): OperationAcknowledgement[] =>
-  [...newest.values()].map((frame) => ({
-    accessScopeId: frame.accessScopeId,
-    originDeviceId: frame.deviceId,
-    operationId: frame.operationId,
-  }));
+  [...progress.values()]
+    .filter(
+      (held): held is OriginProgress & { newest: EncryptedSyncFrame } =>
+        held.newest !== undefined &&
+        (held.missing === undefined || compareOperations(held.newest, held.missing) < 0),
+    )
+    .map(({ newest }) => ({
+      accessScopeId: newest.accessScopeId,
+      originDeviceId: newest.deviceId,
+      operationId: newest.operationId,
+    }));
 
 /**
  * Whether a scope may be read, by whichever rule the host supplies.
@@ -262,26 +315,44 @@ const requestMissing = async (
   });
 };
 
-/** Verify one inbound frame and journal it, or report why it was refused. */
+/**
+ * How one inbound frame ended.
+ *
+ * `refused` and `unstored` are deliberately distinct. A refused frame is one
+ * this device has decided is not authentic — nothing is owed for it. An unstored
+ * frame is one it wanted and could not keep, which is a hole in what it holds
+ * and must not be acknowledged over.
+ */
+type Admission = 'taken' | 'refused' | 'unstored';
+
+/** Verify one inbound frame and journal it, or report why it was not kept. */
 const admit = async (options: {
   ports: CatchUpPorts;
   frame: EncryptedSyncFrame;
   canAccess: (accessScopeId: AccessScopeId) => boolean;
-}): Promise<boolean> => {
+}): Promise<Admission> => {
   const { ports, frame, canAccess } = options;
+  let verified;
   try {
     if (!canAccess(frame.accessScopeId)) {
       throw new Error('frame names a scope this device has no key for');
     }
-    const verified = await verifyFrame(frame, { expectedScope: frame.accessScopeId });
+    verified = await verifyFrame(frame, { expectedScope: frame.accessScopeId });
     if (!(await ports.verifySignature(verified))) {
       throw new Error('frame signature did not verify');
     }
-    await ports.journal.append(verified);
-    return true;
   } catch (reason) {
     ports.onRejectedFrame?.(frame, reason);
-    return false;
+    return 'refused';
+  }
+  try {
+    await ports.journal.append(verified);
+    return 'taken';
+  } catch (reason) {
+    // Storage said no — a full disk, a closed database. The frame was wanted,
+    // so the peer must keep it rather than be told it landed.
+    ports.onUnstoredFrame?.(frame, reason);
+    return 'unstored';
   }
 };
 
@@ -292,18 +363,20 @@ const admit = async (options: {
 const createIngester = (
   ports: CatchUpPorts,
 ): ((message: { frames: readonly EncryptedSyncFrame[]; final: boolean }) => Promise<void>) => {
-  let taken = new Map<string, EncryptedSyncFrame>();
+  let progress = new Map<string, OriginProgress>();
 
   return async (message) => {
     const canAccess = await scopeAccessFor(ports);
     for (const frame of message.frames) {
-      if (await admit({ ports, frame, canAccess })) rememberNewest(taken, frame);
+      const admission = await admit({ ports, frame, canAccess });
+      if (admission === 'taken') rememberNewest(progress, frame);
+      if (admission === 'unstored') rememberMissing(progress, frame);
     }
     if (message.frames.length > 0) ports.onFramesJournalled?.();
     if (!message.final) return;
 
-    const acknowledgements = acknowledgementsFor(taken);
-    taken = new Map();
+    const acknowledgements = acknowledgementsFor(progress);
+    progress = new Map();
     if (acknowledgements.length === 0) return;
     ports.send({ v: CATCH_UP_PROTOCOL_VERSION, kind: 'ack', acknowledgements });
   };
