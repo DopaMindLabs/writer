@@ -118,12 +118,16 @@ const fakeCoordinator = (transportCeiling?: number) => {
   };
 };
 
-const start = (peer: ReturnType<typeof fakeCoordinator>) =>
+const start = (
+  peer: ReturnType<typeof fakeCoordinator>,
+  hasPeer: () => boolean = () => true,
+) =>
   startLivePeerSync({
     db,
     coordinator: peer.coordinator,
     providerId: PROVIDER,
     deviceId: () => Promise.resolve(HERE),
+    hasPeer,
   });
 
 const attachment = (): NoteAttachment => ({
@@ -152,6 +156,26 @@ afterEach(async () => {
 });
 
 describe('startLivePeerSync', () => {
+  it('asks for no link at all while nothing is paired', async () => {
+    // Asking parks the continuation on a peer that may never arrive, and it
+    // holds the frame's ciphertext while it waits — one per save, for as long
+    // as the page lives. A device that is cloud-only or simply alone writes
+    // all day and never has a peer to give them to.
+    const peer = fakeCoordinator();
+    const stop = start(peer, () => false);
+
+    await db.syncOperations.put(frameOf());
+    await db.syncOperations.put(frameOf({ operationId: asOperationId('op-2') }));
+    await vi.waitFor(() => {
+      expect(db.syncOperations.count()).resolves.toBe(2);
+    });
+
+    // The frames are journalled; catch-up carries them to whoever connects.
+    expect(peer.created).toEqual([]);
+    expect(peer.sent).toEqual([]);
+    stop();
+  });
+
   it('sends a frame this device journals to the connected peer', async () => {
     const peer = fakeCoordinator();
     const stop = start(peer);
