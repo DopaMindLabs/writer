@@ -630,7 +630,12 @@ wired into the app.
   never fetched from a CDN, so scanning works offline and contacts nobody. An
   uploaded photograph is decoded to a bitmap before the platform detector sees
   it: Chromium's own `BarcodeDetector` refuses a `Blob` although the IDL admits
-  one, and a chosen file is exactly that.
+  one, and a chosen file is exactly that. Compiling that engine requires
+  `script-src 'wasm-unsafe-eval'` in the same `vercel.json` header: under CSP3 a
+  bare `script-src 'self'` refuses every WebAssembly compile, so on the engines
+  that have no `BarcodeDetector` — Firefox and Safari, including iOS — scanning
+  fails in production while local development works. The directive permits
+  WebAssembly alone, not `eval`.
 - **Pairing code display.** The codec carries **2600 characters per symbol**
   (headroom under the encoder's 2953-character version-40/EC-L ceiling for the
   part prefix), so an ordinary offer is a single symbol and no pager appears.
