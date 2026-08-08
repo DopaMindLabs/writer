@@ -757,7 +757,11 @@ wired into the app.
   and "paired and removed" indistinguishable. Removing a device marks its
   trust record revoked (kept, never deleted): it can open no new authenticated
   session and every frame it signs is refused, but nothing already copied to it
-  can be recalled, and the list says so beside the action. Removal is undone
+  can be recalled, and the list says so beside the action. A device removed
+  while it is connected is disconnected as the removal commits, and any frame
+  still in flight from it is refused — trust is re-read for every inbound frame,
+  never cached for the life of a session — so removal takes effect at once
+  rather than at the next reload. Removal is undone
   only by pairing the device afresh: a completed, digit-confirmed exchange
   reactivates the record if — and only if — the presented identity key equals
   the stored one, and the dialog declares success only after that adoption has

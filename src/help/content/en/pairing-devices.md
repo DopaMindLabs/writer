@@ -70,8 +70,9 @@ does not relay changes to another device on your behalf.
 
 ## Remove or pair a device again
 
-Select **Remove** beside a device to stop accepting new connections from it.
-Writing already stored on that device remains there.
+Select **Remove** beside a device to stop syncing with it. If the device is
+connected, Writer disconnects it straight away and accepts nothing further from
+it. Writing already stored on that device remains there.
 
 To trust the same device again, pair it normally and confirm the six digits on
 both screens. If Writer says that a previously paired device has proved a

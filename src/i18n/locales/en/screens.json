@@ -683,7 +683,7 @@
       "reconnect": "Reconnect",
       "reconnectLabel": "Reconnect {{name}}",
       "reconnectUnnamed": "Reconnect this paired device",
-        "removalLimitation": "Removing a device stops it connecting again, but it cannot reach back and erase the writing already on it. Treat a lost device as still holding whatever it had. Removal is not final: pairing the device afresh — with both of you confirming the digits again — restores sync."
+        "removalLimitation": "Removing a device disconnects it straight away and stops it connecting again, but it cannot reach back and erase the writing already on it. Treat a lost device as still holding whatever it had. Removal is not final: pairing the device afresh — with both of you confirming the digits again — restores sync."
       }
     },
     "profile": {

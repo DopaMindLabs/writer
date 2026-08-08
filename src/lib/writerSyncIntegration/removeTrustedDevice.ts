@@ -3,6 +3,8 @@ import { releasableTombstones } from 'writer-sync/operations';
 import type { LoremDB } from '@/db/LoremDB';
 import { currentPrincipal } from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import { createTrustedDeviceStore } from './trustedDeviceStore';
+import { disconnectPeerSession } from './disconnectPeerSession';
+import type { PeerSessionRegistry } from './peerSessionRegistry';
 
 /**
  * Remove a device, and let go of what was only being kept for it.
@@ -23,11 +25,17 @@ import { createTrustedDeviceStore } from './trustedDeviceStore';
  * committing the first without the second would leave the deletion state pinned
  * by a device that no longer exists to release it, with nothing left that would
  * ever look again.
+ *
+ * The live connection goes once that has committed, and only then: a removal
+ * that failed to write must leave the device connected, whereas one that
+ * committed must not leave it syncing on a record that no longer trusts it.
  */
 export const removeTrustedDevice = async (options: {
   db: LoremDB;
   deviceId: DeviceId;
   at?: number;
+  /** Injected so a test can watch the connection go without a real peer. */
+  sessions?: PeerSessionRegistry;
 }): Promise<void> => {
   const { db, deviceId } = options;
   const at = options.at ?? Date.now();
@@ -65,4 +73,6 @@ export const removeTrustedDevice = async (options: {
       );
     },
   );
+
+  disconnectPeerSession({ deviceId, registry: options.sessions });
 };
