@@ -27,7 +27,17 @@ export const useAppBoot = (coordinator?: SyncCoordinator): AppBootState => {
     let cancelled = false;
     let stopSession: (() => void) | null = null;
     const run = async () => {
-      stopSession = await startWriterSync(coordinator);
+      const stop = await startWriterSync(coordinator);
+      // The cleanup may already have run: it fires the moment the effect is torn
+      // down, which under StrictMode is while this is still starting, and it had
+      // no session to stop. Stopping is therefore this continuation's to do —
+      // otherwise the session lives on unreferenced, ingesting alongside its
+      // replacement and sending every local frame twice.
+      if (cancelled) {
+        stop();
+        return;
+      }
+      stopSession = stop;
       await applyDevBootParams();
     };
     run()
