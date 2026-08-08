@@ -27,7 +27,9 @@
         "./packages/writer-sync/src/providers/webrtc/index.ts"
       ],
       "writer-qr/encode": ["./packages/writer-qr/src/encode/index.ts"],
-      "writer-qr/scan": ["./packages/writer-qr/src/scan/index.ts"]
+      "writer-qr/scan": ["./packages/writer-qr/src/scan/index.ts"],
+      "writer-notebook/core": ["./packages/writer-notebook/src/core/index.ts"],
+      "writer-notebook/browser": ["./packages/writer-notebook/src/browser/index.ts"]
     },
     "types": ["vite/client", "vitest/globals"]
   },
@@ -36,6 +38,8 @@
     "packages/writer-sync/src",
     "packages/writer-sync/test",
     "packages/writer-qr/src",
-    "packages/writer-qr/test"
+    "packages/writer-qr/test",
+    "packages/writer-notebook/src",
+    "packages/writer-notebook/test"
   ]
 }

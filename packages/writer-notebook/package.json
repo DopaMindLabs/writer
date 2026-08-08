@@ -1,0 +1,15 @@
+{
+  "name": "writer-notebook",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Portable notebook domain and browser image-processing facade for Writer Notes.",
+  "exports": {
+    "./core": "./src/core/index.ts",
+    "./browser": "./src/browser/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "TZ=UTC vitest run --root ."
+  }
+}
