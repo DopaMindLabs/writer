@@ -80,13 +80,14 @@ Architecture clean elsewhere: one HLC implementation, one outbound framing choke
 - LOW diff catchUpSession.ts:194 — open failure only report()ed, no stop/close (unlike fail()); FrameTooLargeError on oversized manifest leaves silent one-way-dead session. [error-propagation]
 Refuted: zero-byte attachment manifest poisoning (unreachable — ciphertext never zero-byte in this host).
 
-## crypto-pairing (cached, verified) — 5 confirmed / 2 refuted (+2 dupes of architecture findings)
+## crypto-pairing (re-verified on Opus 5, 2026-08-08) — 6 confirmed / 1 refuted (+2 dupes of architecture findings)
 - MED diff src/lib/writerSyncIntegration/rootSecretHandover.ts:116-127 — expiry enforced only on seal side (wrapForPeer:82-97); acceptWrapper + engine receive path (rootTransfer.ts:190-194) install root and commit trust with no now()<expiresAt check; 10s transfer timer starts at channel-open (peer-controllable). "Expiry terminal" (22ccba7d/c4e4d4f3) is one-sided. [crypto]
 - LOW pre src/lib/cloud/crypto/keys.ts:104-125 — deriveKeyRing ignores epoch (fixed HKDF info, empty salt): any epoch derives identical key while rootTransferMessage.ts:47-53 + spec:738 claim wrong epoch "decrypts nothing"; no rotation flow exists today, docs disclaim key-based revocation → low, but comments mis-describe property and first rotation change will footgun. [crypto]
 - LOW diff rescopeFrames.ts:50-70 — open gap #210: rescopeFrame spreads old signature over five rebuilt signed fields → output verifies against nothing; tests-only caller; must stay blocker for any scope-transition feature. [crypto]
 - LOW diff catchUpExchange.ts:276 — vacuous scope binding: expectedScope = frame's own accessScopeId, WrongScopeFrameError can never fire; only gate is hasAnyKey(); deliberate under single content key but claims a check it doesn't make. [auth]
 - LOW diff envelope.ts:78-95 + operationCrypto.ts:34-52 + attachmentContentCrypto.ts:52 — ':'-joined AADs with adjacent variable-length fields vs 0x00 length-safe discipline in pairing modules; no exploit today; normalise on next AAD version. [crypto]
-Refuted: reconnection adopt fast-path (unreachable, future seam), frameIngestion re-verify cost (bounded by 30-day compaction, not permanent).
+- LOW diff src/lib/writerSyncIntegration/materialization/frameIngestion.ts:48-72 — rejected frames are never quarantined: every sweep does `db.syncOperations.toArray()` + a `syncInbox.get` per frame and re-verifies each refusal. Compaction cannot bound it — the retention cutoff reads `frame.logicalAt.millis` (journalRetention.ts:56), which a hostile provider sets, so junk stamped far in the future never ages out. Record rejected operationIds (bounded retry for the trust-arrives-later case) and index the sweep. [resource-exhaustion] *(refuted on Opus 4.8, overturned on Opus 5 re-verify)*
+Refuted: reconnection adopt fast-path — `secretHandover === undefined` reaches `beginTrustedPhase` with no registry check, but the only production caller always supplies it (usePairingExchange.ts:65) → unreachable; keep as a seam note.
 
 ## Gates
 - lint: PASS (0 errors) · typecheck: PASS · vitest --maxWorkers=2: PASS (includes boundary + consumer gates) · npm audit: 7 vulns — HIGH fast-uri (host confusion x2), HIGH js-yaml 4.0.0-4.2.0 (quadratic DoS merge keys), HIGH react-router 7.12.0-8.2.0 (RSC CSRF bypass; fix = downgrade 7.11.0 breaking), 2 low. Targeted e2e NOT run (user held).
@@ -146,18 +147,23 @@ owasp-app clean elsewhere: zero dangerouslySetInnerHTML/innerHTML in src/; help 
 ## RUNTIME REPRO (user-tested, not from static review) — live image doesn't sync A→B
 - BLOCKER-CLASS diff — live attachment offer cursor resets to 0 each image while receiver's expectedOfferCursor is monotonic. attachmentTransfer.ts offer():387-393 always offerPage(context,0); takeOfferPage:237-242 rejects when message.cursor !== expectedOfferCursor (advanced +manifests.length at :244, never resets). livePeerSync.ts:149 calls attachments.offer([one]) per image over ONE persistent link → 2nd+ offer in a direction throws AttachmentCursorError → swallowed at livePeerSync.ts:142 (appLogger.warn only) → image silently never transfers. Directional because each direction has independent cursor pair; side that offered first advances the peer's receive cursor. First image on a fresh link works; subsequent ones fail. Alternative/compounding cause for a first LARGE desktop image = blocker #4 (unpaced serve overflow). NEEDS: 2-image-same-direction e2e to lock the variant. Symptom (swallowed cursor error) = transport [5]; root cause was NOT traced by any reviewer — stateful cross-call bug at the engine↔integration seam, no runtime exercise, engine has no e2e gate.
 
-## ⚠️ PARKED — MUST re-verify on Opus 5 (highlight in report)
+## ✅ RESOLVED — crypto-pairing re-verified on Opus 5 (2026-08-08)
 Rule (user-set, saved to memory): any review step the Fable 5 safeguard flags (banner → routed to Opus 4.8) is PAUSED and re-verified on Opus 5; do not accept a flagged result on the fallback model.
 
-PINNED (user identified the flagged turn): the **crypto-pairing findings VERIFICATION** ran on the turn the safeguard flagged ("Verify crypto-pairing findings finished · 25m 9s" → "Switched to Opus 4.8"). So every crypto-pairing verdict below came from **Opus 4.8 under a safeguard flag**, NOT the model of record → treat as provisional until re-verified on Opus 5:
-  - MED rootSecretHandover.ts:116-127 — receive-side expiry not enforced (one-sided)
-  - LOW keys.ts:104-125 — deriveKeyRing ignores epoch (rotation no-op; docs wrong)
-  - LOW rescopeFrames.ts:50-70 — gap #210, old signature over rebuilt fields
-  - LOW catchUpExchange.ts:276 — vacuous scope binding (expectedScope = own scope)
-  - LOW envelope.ts:78-95 + operationCrypto + attachmentContentCrypto — ':'-joined AAD non-injective
-  - REFUTED (also under the flag, so recheck the refutals too): reconnection adopt fast-path; frameIngestion re-verify cost
-ACTION: re-run the crypto-pairing verifier with model: opus (claude-opus-5) and reconcile against these verdicts.
-(Opus 5 full re-run of 7 security dimensions was launched then cancelled per user — only this crypto-pairing verification gets Opus 5.)
+The **crypto-pairing findings VERIFICATION** originally ran on the flagged turn ("Verify crypto-pairing findings finished · 25m 9s" → "Switched to Opus 4.8"). Re-verified on Opus 5 against source at `5ee1d72d`; verdicts below are now the model of record.
+
+**Upheld (all five confirmed findings stand, severities unchanged):**
+- MED `rootSecretHandover.ts:116-127` — `acceptWrapper` runs no expiry check; only `wrapForPeer:97` calls `requireLiveSession`, and `sessionPrivateKey` is nulled only by that same call, so a device that never seals never enforces `expiresAt`. The receive window is also not bounded by the 10 s `TRANSFER_DEADLINE_MILLIS`: the answering device waits on `session.onChannel` (`peerCatchUp.ts:191`), so the peer decides when the timer starts. Confirmed, and the "peer-controllable" qualifier is right.
+- LOW `keys.ts:104-125` — `deriveKeyRing` derives from fixed `CONTENT_INFO` + empty salt; `epoch` is only copied into the returned ring. Every epoch yields the same content key, so `rootTransferMessage.ts:47-53` ("a receiver that guessed the epoch would derive a key that decrypts nothing") is false today. `wrapRootSecret` also hardcodes `epoch: 1`. No rotation flow exists → LOW stands.
+- LOW `rescopeFrames.ts:50-70` — `rescopeFrame` spreads `...frame` (carrying `signature`) while rebuilding `accessScopeId`, `keyId`, `epoch`, `payload`, `payloadHash`. Grep confirms the only callers are `rescopeFrames.test.ts` → LOW stands; keep #210 blocking any scope-transition feature.
+- LOW `catchUpExchange.ts:276` — `verifyFrame(frame, { expectedScope: frame.accessScopeId })` compares the field with itself; `WrongScopeFrameError` cannot fire. Only gate is `canAccess`, wired to `hasAnyKey()`. Vacuous as described.
+- LOW `envelope.ts:78-95` + `operationCrypto.ts:34-52` + `attachmentContentCrypto.ts:52` — `':'`-joined AADs with adjacent variable-length fields (`accessScopeId`/`table`/`primaryKey`; `entityId`/`kind`). No exploit while every component is a locally minted id → LOW stands; normalise at the next AAD version.
+
+**Refutation upheld:** reconnection adopt fast-path (`peerCatchUp.ts:381`). The `secretHandover === undefined` branch reaches `beginTrustedPhase` with no registry check, but the sole production caller (`usePairingExchange.handOverSession:65`) always supplies `secretHandover` → unreachable outside tests. Keep as a seam note, not a finding.
+
+**Refutation OVERTURNED → confirm LOW:** frameIngestion re-verify cost (`frameIngestion.ts:48-72`). Opus 4.8 refuted it as "bounded by 30-day compaction". Compaction judges age by `frame.logicalAt.millis` (`journalRetention.ts:56`) — a field a hostile provider sets on the junk frames it writes — so a far-future stamp is never compacted and the per-sweep re-verify really is permanent. The refutation assumed honest timestamps inside a threat model whose premise is a malicious provider. Bounded cost for honest journals only; still LOW (a hostile provider has stronger moves), but the item is real. Fold in the same file's `db.syncOperations.toArray()` + per-frame `syncInbox.get` full scan on every sweep as the efficiency half.
+
+(Opus 5 full re-run of 7 security dimensions was launched then cancelled per user — only this crypto-pairing verification got Opus 5.)
 
 ## Pending
 - 3/5 docs-consistency finder+verify; 4/5 ui-ds-a11y; 5/5 architecture

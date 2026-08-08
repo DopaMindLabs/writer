@@ -14,7 +14,7 @@ Everything for landing the pre-beta review of `fix/writer-sync-fixes` → `devel
 ## At a glance
 
 - **6 blockers** (5 static + 1 runtime repro: image bytes don't sync A→B). See `RUNBOOK.md` §Blockers.
-- **Parked:** the crypto-pairing findings were verified on Opus 4.8 under a safeguard flag — **re-verify on Opus 5** before relying on them.
+- **Crypto-pairing:** re-verified on Opus 5 (2026-08-08). Five confirmed findings stand; one refutation (frame-ingestion re-verify cost) was overturned to a confirmed LOW.
 - **Gates:** lint / typecheck / unit pass; `npm audit` 7 vulns (5 high); targeted e2e not yet run.
 - **Method & scope:** every finding tagged `diff` (this branch) or `pre-existing`; pre-existing items ship in the beta and are reported because there is no separate review on `develop`.
 

@@ -18,10 +18,9 @@ Do not weaken a limit, silence a linter, or skip a test to pass — split/refact
 ## Order of work
 
 1. Blockers B1–B6 (ship-stoppers).
-2. Opus 5 re-verify of the parked crypto-pairing findings (some fixes below depend on those verdicts being real).
-3. High-severity H1–H12.
-4. Supply-chain + coverage + e2e gates.
-5. Medium/Low and inconsistencies (track; fix what the touched PRs cover).
+2. High-severity H1–H12.
+3. Supply-chain + coverage + e2e gates.
+4. Medium/Low and inconsistencies, including the re-verified crypto-pairing set below (track; fix what the touched PRs cover).
 
 ---
 
@@ -70,15 +69,18 @@ Do not weaken a limit, silence a linter, or skip a test to pass — split/refact
 
 ---
 
-## Parked — Opus 5 re-verify (do before relying on the crypto-pairing verdicts)
+## Crypto-pairing — re-verified on Opus 5 (2026-08-08, done)
 
-The crypto-pairing findings were **verified on Opus 4.8 under a safeguard flag**, not the model of record — treat as provisional. Re-run that verification on `claude-opus-5` and reconcile before actioning:
-- `rootSecretHandover.ts:116` receive-side expiry not enforced
-- `keys.ts:104` `deriveKeyRing` ignores epoch
-- `rescopeFrames.ts:50` gap #210 (must stay a blocker for any scope-transition feature)
-- `catchUpExchange.ts:276` vacuous scope binding
-- AAD `:`-join non-injective (`envelope.ts:78` + operation/attachment crypto)
-- Re-check the two findings that turn **refuted** (reconnection adopt fast-path; frame-ingestion re-verify cost).
+The crypto-pairing verdicts were originally produced on Opus 4.8 under a safeguard flag. Re-verified on `claude-opus-5`; provisional marks cleared. All five confirmed findings stand at their original severity and are scheduled as low/medium work, not blockers:
+- **MED** `rootSecretHandover.ts:116` — `acceptWrapper` enforces no expiry (only `wrapForPeer` does), and the 10 s transfer deadline does not bound it: the answering device waits on the peer to open the channel. **Fix:** call `requireLiveSession()` at the top of `acceptWrapper`. **Test:** unit — an expired session refuses an inbound wrapper and installs no root.
+- **LOW** `keys.ts:104` — `deriveKeyRing` ignores `epoch` (fixed HKDF info, empty salt), so `rootTransferMessage.ts:47-53` and spec:738 mis-describe the property. **Fix:** bind the epoch into the HKDF `info`, or correct both comments; whichever, do it before the first rotation flow. `wrapRootSecret` also hardcodes `epoch: 1`.
+- **LOW** `rescopeFrames.ts:50` — gap #210; tests-only caller. Must stay a blocker for any scope-transition feature.
+- **LOW** `catchUpExchange.ts:276` — vacuous scope binding. **Fix:** pass the scopes `requestMissing` asked for, or drop the parameter so the code stops claiming a check it does not make.
+- **LOW** `envelope.ts:78` + `operationCrypto.ts:34` + `attachmentContentCrypto.ts:52` — `':'`-joined AAD with adjacent variable-length fields. Normalise (length-prefix or canonical JSON) at the next AAD version.
+
+Reconciliation of the two refutations:
+- **Upheld:** reconnection adopt fast-path (`peerCatchUp.ts:381`) — unreachable; the only production caller always supplies `secretHandover`. Keep as a seam note; assert registry trust before `beginTrustedPhase` if a reconnection caller is ever added.
+- **Overturned → LOW confirmed:** frame-ingestion re-verify cost (`frameIngestion.ts:48-72`). Compaction cannot bound it — the retention cutoff reads `frame.logicalAt.millis`, set by the same hostile provider that wrote the junk frame. **Fix:** record rejected `operationId`s (bounded retry for the trust-arrives-later case) and index the sweep instead of `toArray()` + a `syncInbox.get` per frame. **Test:** unit — a frame rejected once is not re-verified on the next sweep.
 
 ---
 
@@ -113,7 +115,7 @@ Full detail in `findings-log.md`. Summary:
 ## Definition of done (beta merge)
 
 - [ ] B1–B6 fixed with regression tests (B3 and the slug rename need a human decision recorded).
-- [ ] Opus 5 re-verify of crypto-pairing complete; provisional marks cleared or findings actioned.
+- [x] Opus 5 re-verify of crypto-pairing complete; provisional marks cleared (2026-08-08).
 - [ ] `npm run lint`, `npm run typecheck`, `npm run test:run` green; targeted + full e2e green; coverage gate covers the engine.
 - [ ] `npm audit` high vulns triaged.
 - [ ] Sharing / `AccessControlAdapter` surface confirmed dormant for beta.

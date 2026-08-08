@@ -4,18 +4,15 @@
 
 ---
 
-## ⚠️ Must re-verify on Opus 5 (parked)
+## ✅ Crypto-pairing re-verified on Opus 5 (2026-08-08)
 
-The Fable 5 safeguard flagged the **"Verify crypto-pairing findings"** turn and routed it to **Opus 4.8**. Every crypto-pairing verdict in this report therefore came from the fallback model under a safeguard flag, **not the model of record** — treat them as **provisional** until re-verified on Opus 5:
+The Fable 5 safeguard had flagged the **"Verify crypto-pairing findings"** turn and routed it to **Opus 4.8**, so those verdicts were parked as provisional. Re-verified against source on `claude-opus-5`; the marks are cleared and the verdicts below are the model of record.
 
-- Root-secret handover receive-side expiry not enforced (`rootSecretHandover.ts:116`)
-- `deriveKeyRing` ignores its epoch (`keys.ts:104`)
-- rescopeFrames signature gap #210 (`rescopeFrames.ts:50`)
-- Vacuous scope binding (`catchUpExchange.ts:276`)
-- Non-injective `:`-joined AAD (`envelope.ts:78` + operation/attachment crypto)
-- …and the two findings this turn **refuted** (reconnection adopt fast-path; frame-ingestion re-verify cost) — re-check the refutals too, since they were made under the same flag.
+- **Upheld, unchanged severity:** receive-side handover expiry (`rootSecretHandover.ts:116`, MED — and the 10 s deadline does not bound it, because the answering device waits on the peer to open the channel); `deriveKeyRing` ignores its epoch (`keys.ts:104`, LOW); rescopeFrames gap #210 (`rescopeFrames.ts:50`, LOW, tests-only caller); vacuous scope binding (`catchUpExchange.ts:276`, LOW); non-injective `:`-joined AAD (`envelope.ts:78` + operation/attachment crypto, LOW).
+- **Refutation upheld:** reconnection adopt fast-path — unreachable, since the only production caller always passes `secretHandover`. Seam note, not a finding.
+- **Refutation overturned → LOW confirmed:** frame-ingestion re-verify cost (`frameIngestion.ts:48`). "Bounded by 30-day compaction" fails against the finding's own threat model: the retention cutoff reads `frame.logicalAt.millis`, which the hostile provider writing the junk frames sets.
 
-**Action:** re-run the crypto-pairing verifier on `claude-opus-5` and reconcile. (This is defensive security review; the flag is the documented over-broad false-positive class, not a refusal.)
+Full reasoning: `findings-log.md` §crypto-pairing re-verified.
 
 ---
 
@@ -34,7 +31,7 @@ The Fable 5 safeguard flagged the **"Verify crypto-pairing findings"** turn and 
 
 **Not ready to merge.** Five confirmed blockers plus one user-reproduced runtime blocker, most sitting on the beta's core promises (device removal, cloud multi-device convergence, no-data-loss, pairing-by-scan). Three also make the shipped help copy false.
 
-**Minimum before merge:** fix the six blockers; keep the sharing / `AccessControlAdapter` surface dormant (it strands or leaks); correct the "no data sync" and device-removal copy; triage the 5 high `npm audit` vulns; **run the e2e suite**; and complete the Opus 5 re-verify above. The 10 diff-highs should be scheduled before beta opens; most pre-existing items can be tracked. That the engine sits outside every coverage gate is why several of these — including the image-sync bug — reached a human tester instead of CI.
+**Minimum before merge:** fix the six blockers; keep the sharing / `AccessControlAdapter` surface dormant (it strands or leaks); correct the "no data sync" and device-removal copy; triage the 5 high `npm audit` vulns; and **run the e2e suite**. The 10 diff-highs should be scheduled before beta opens; most pre-existing items can be tracked. That the engine sits outside every coverage gate is why several of these — including the image-sync bug — reached a human tester instead of CI.
 
 ---
 
@@ -93,7 +90,7 @@ Distinct from #6 and also must-fix: `attachmentTransfer.ts` `offer()` always res
 
 ## 🟡 Medium (condensed)
 
-**Diff:** future-dated frames journalled before the clock check (`catchUpExchange.ts` `admit()`); root-secret handover expiry one-sided *(provisional)*; sender ignores the message bounds its own decoder enforces (>256 spaces kills every session); `eraseSyncedContent` emits nothing after cutover (`setup.ts:344`); `AccessControlAdapter` declared but never stamps `realmId` — members would never receive frames (`dexieCloudProvider.ts:127`, dormant); ingestion re-scans the full journal every sweep (`frameIngestion.ts:51`); live link throws malformed messages out of the event listener and swallows session-fatal cursor errors (`livePeerSync.ts:140`); inbound rate limiter kills honest fast-LAN transfers (`inboundLimiter.ts`); attachment offer re-hashes every attachment in the scope to send one (`livePeerSync.ts:150`); six new components missing their `.test`/`.stories`; new module-level mutable state (`peerLinkStatus.ts:44`, `peerSessionRegistry.ts:118`); a11y announcement cluster (conditionally-mounted `role="status"` for pairing progress / camera-denied / peer-drop; `aria-label` on a `<p>`; unnamed Remove buttons); DS misuse (raw native file input; sentences in `StatusGlyph` mono voice).
+**Diff:** future-dated frames journalled before the clock check (`catchUpExchange.ts` `admit()`); root-secret handover expiry one-sided; sender ignores the message bounds its own decoder enforces (>256 spaces kills every session); `eraseSyncedContent` emits nothing after cutover (`setup.ts:344`); `AccessControlAdapter` declared but never stamps `realmId` — members would never receive frames (`dexieCloudProvider.ts:127`, dormant); ingestion re-scans the full journal every sweep (`frameIngestion.ts:51`); live link throws malformed messages out of the event listener and swallows session-fatal cursor errors (`livePeerSync.ts:140`); inbound rate limiter kills honest fast-LAN transfers (`inboundLimiter.ts`); attachment offer re-hashes every attachment in the scope to send one (`livePeerSync.ts:150`); six new components missing their `.test`/`.stories`; new module-level mutable state (`peerLinkStatus.ts:44`, `peerSessionRegistry.ts:118`); a11y announcement cluster (conditionally-mounted `role="status"` for pairing progress / camera-denied / peer-drop; `aria-label` on a `<p>`; unnamed Remove buttons); DS misuse (raw native file input; sentences in `StatusGlyph` mono voice).
 
 **Pre-existing:** archive restore doesn't parse-check doc bodies before the destructive write (`restoreSpaceArchive.ts:89`, **A08**); capability layer has no neutral error vocabulary so UI catches Dexie error classes; space-name leak to the server on share (`spaceRealm.ts:129`, dormant).
 
@@ -101,7 +98,7 @@ Distinct from #6 and also must-fix: `attachmentTransfer.ts` `offer()` always res
 
 ## ⚪ Low (condensed)
 
-`localeCompare` tie-break non-deterministic (`convergence.ts:16`); vacuous scope binding *(provisional)*; rescopeFrames #210 *(provisional)* — must stay a blocker for any scope-transition feature; AAD `:`-join *(provisional)*; dead exports (`WriterSyncOptions`, `createReconnectPolicy` — the anti-lockstep defence is wired nowhere); barrel doesn't export `StalledAttachmentTransferError`; camera stream + interval leak on double `start()` (`useCameraScan.ts`); QR collector blames the wrong symbol; `openChannel` skips `requireOpen`; QR scanner retries a permanent WASM failure every 300 ms; QR capacity guard counts UTF-16 vs a byte cap; `useTrustedDevices` unhandled rejection → list stuck loading; growing `exchanges`/`transfers` sets; `flush()` can silently drop a frame on `send` throw; archive attachments bypass upload constraints + no zip-bomb cap (**A08**); unvalidated BroadcastChannel + persisted `theme` inputs (**A08**); test-file naming mismatches; stale "slice 1E" comment (`writerTablePolicy.ts:77`); `cloudFlagFromEnv` no prod guard; `wrapRootSecret` hardcodes `epoch:1`; `InlineBanner` dismiss label hard-coded English; hard-coded hex swatches in placeholder tabs; **12 `page.waitForTimeout`** across 9 e2e specs and one `force:true` (both violate absolute test guardrails); `ban-ts-comment` permits `@ts-expect-error` against CODING_STANDARDS §8.
+`localeCompare` tie-break non-deterministic (`convergence.ts:16`); vacuous scope binding; rescopeFrames #210 — must stay a blocker for any scope-transition feature; AAD `:`-join; dead exports (`WriterSyncOptions`, `createReconnectPolicy` — the anti-lockstep defence is wired nowhere); barrel doesn't export `StalledAttachmentTransferError`; camera stream + interval leak on double `start()` (`useCameraScan.ts`); QR collector blames the wrong symbol; `openChannel` skips `requireOpen`; QR scanner retries a permanent WASM failure every 300 ms; QR capacity guard counts UTF-16 vs a byte cap; `useTrustedDevices` unhandled rejection → list stuck loading; growing `exchanges`/`transfers` sets; `flush()` can silently drop a frame on `send` throw; archive attachments bypass upload constraints + no zip-bomb cap (**A08**); unvalidated BroadcastChannel + persisted `theme` inputs (**A08**); test-file naming mismatches; stale "slice 1E" comment (`writerTablePolicy.ts:77`); `cloudFlagFromEnv` no prod guard; `wrapRootSecret` hardcodes `epoch:1`; `InlineBanner` dismiss label hard-coded English; hard-coded hex swatches in placeholder tabs; **12 `page.waitForTimeout`** across 9 e2e specs and one `force:true` (both violate absolute test guardrails); `ban-ts-comment` permits `@ts-expect-error` against CODING_STANDARDS §8.
 
 ---
 
