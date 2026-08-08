@@ -73,9 +73,13 @@ export default defineConfig(({ command, mode }) => ({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json-summary'],
-      include: ['src/**/*.{ts,tsx}'],
+      // The app and every workspace package. A package measured nowhere is a
+      // package whose regressions reach a human before they reach CI.
+      include: ['src/**/*.{ts,tsx}', 'packages/*/src/**/*.{ts,tsx}'],
       exclude: [
         '**/*.d.ts',
+        'packages/*/src/**/*.test.{ts,tsx}',
+        'packages/*/src/**/*.types.ts',
         'src/db/schema.ts',
         'src/data/templates/types.ts',
         'src/main.tsx',
