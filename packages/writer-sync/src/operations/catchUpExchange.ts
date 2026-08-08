@@ -261,7 +261,7 @@ const answer = async (
   for (const frame of packed.oversized) {
     ports.onUndeliverableFrame?.(frame, new UndeliverableFrameError(frame));
   }
-  sendReplies(ports, packed.batches);
+  await sendReplies(ports, packed.batches);
   if (attachments === undefined || ports.attachments === undefined) return;
   const scopes = [...new Set(permitted.map((request) => request.accessScopeId))];
   const manifests = await ports.attachments.manifestsForScopes(scopes);
@@ -278,24 +278,36 @@ export class UndeliverableFrameError extends Error {
   }
 }
 
-/** Sends every batch, then rethrows the first failure after the final marker. */
-const sendReplies = (
+/**
+ * Sends every batch, then rethrows the first failure after the final marker.
+ *
+ * Paced against the bearer where one offers it. A reply is as large as the
+ * history the peer asked for, and writing it straight out fills the outbox —
+ * which is bounded, so the transport fails the session rather than growing.
+ * The `fullState` path re-mints its reply on every attempt, so a reply that
+ * overflowed once would overflow identically for ever: a scope large enough to
+ * do it could never be paired against at all.
+ */
+const sendReplies = async (
   ports: CatchUpPorts,
   batches: readonly EncryptedSyncFrame[][],
-): void => {
+): Promise<void> => {
+  const paced = ports.sendWhenReady;
   let firstFailure: Error | undefined;
-  batches.forEach((frames, index) => {
+  for (const [index, frames] of batches.entries()) {
+    const message = {
+      v: CATCH_UP_PROTOCOL_VERSION,
+      kind: 'frames',
+      frames,
+      final: index === batches.length - 1,
+    } as const;
     try {
-      ports.send({
-        v: CATCH_UP_PROTOCOL_VERSION,
-        kind: 'frames',
-        frames,
-        final: index === batches.length - 1,
-      });
+      if (paced === undefined) ports.send(message);
+      else await paced(message);
     } catch (error) {
       firstFailure = firstFailure ?? (error instanceof Error ? error : new Error(String(error)));
     }
-  });
+  }
   if (firstFailure !== undefined) throw firstFailure;
 };
 

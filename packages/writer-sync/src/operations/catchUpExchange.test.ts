@@ -65,6 +65,8 @@ const harness = (options: {
   attachments?: CatchUpPorts['attachments'];
   /** Which frames this device's journal refuses to store. */
   unstorable?: (frame: EncryptedSyncFrame) => boolean;
+  /** Offer the paced write, and hold each one until the test lets it go. */
+  pacedSends?: boolean;
 } = {}) => {
   const frames = options.frames ?? [];
   const sent: CatchUpMessage[] = [];
@@ -73,6 +75,16 @@ const harness = (options: {
   const unstored: EncryptedSyncFrame[] = [];
   const onFramesJournalled = vi.fn();
   let failNext = false;
+
+  /** Writes that are waiting for the bearer to take them. */
+  const waiting: (() => void)[] = [];
+  const paced = (message: CatchUpMessage): Promise<void> =>
+    new Promise((resolve) => {
+      waiting.push(() => {
+        sent.push(message);
+        resolve();
+      });
+    });
 
   const ports: CatchUpPorts = {
     journal: memoryStore(frames, options.unstorable),
@@ -96,6 +108,7 @@ const harness = (options: {
     onFramesJournalled,
     onRejectedFrame: (frame) => rejected.push(frame),
     onUnstoredFrame: (frame) => unstored.push(frame),
+    sendWhenReady: options.pacedSends === true ? paced : undefined,
   };
 
   return {
@@ -109,6 +122,12 @@ const harness = (options: {
     failSendsOnce: () => {
       failNext = true;
     },
+    /** Stand in for the bearer taking one paced write. */
+    takeOne: async () => {
+      waiting.shift()?.();
+      await Promise.resolve();
+    },
+    stillWaiting: () => waiting.length,
   };
 };
 
@@ -310,6 +329,46 @@ describe('createCatchUpExchange on a peer request', () => {
     // re-sent for ever.
     const replies = sent.filter((message) => message.kind === 'frames');
     expect(replies.length).toBeGreaterThan(0);
+    expect(replies.at(-1)?.final).toBe(true);
+  });
+
+  it('lets the bearer set the pace of a many-batch reply', async () => {
+    // Written straight out, the batches of a large reply fill the outbox — it
+    // is bounded — and the transport fails the session rather than growing.
+    // The `fullState` path re-mints the reply each attempt, so it never gets
+    // smaller: pairing against a large scope would fail for ever.
+    const held = await Promise.all(
+      Array.from({ length: 6 }, (_, index) => frameOf({ id: `op-${String(index)}`, millis: 10 })),
+    );
+    const { exchange, sent, stillWaiting, takeOne } = harness({
+      frames: held,
+      maxMessageBytes: 900,
+      pacedSends: true,
+    });
+
+    const answered = exchange.receive({
+      v: 1,
+      kind: 'request',
+      requests: [{ accessScopeId: 'scope-1', originDeviceId: asDeviceId('device-a') }],
+    });
+
+    // One in flight, the rest still held back: nothing is queued ahead of what
+    // the bearer has actually taken.
+    await vi.waitFor(() => {
+      expect(stillWaiting()).toBe(1);
+    });
+    expect(sent).toHaveLength(0);
+
+    while (!sent.some((message) => message.kind === 'frames' && message.final)) {
+      await vi.waitFor(() => {
+        expect(stillWaiting()).toBe(1);
+      });
+      await takeOne();
+    }
+    await answered;
+
+    const replies = sent.filter((message) => message.kind === 'frames');
+    expect(replies.length).toBeGreaterThan(1);
     expect(replies.at(-1)?.final).toBe(true);
   });
 
