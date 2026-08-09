@@ -1,7 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
 import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
-import { saveDeviceKeyRing, forgetDeviceKeyRing } from '@/lib/cloud/crypto/keyStore';
+import {
+  saveDeviceKeyRing,
+  forgetDeviceKeyRing,
+  deviceKeyProvider,
+} from '@/lib/cloud/crypto/keyStore';
+import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
+import {
+  ACCOUNT_IDENTITY_SCOPE,
+  accountDeviceIdentityId,
+} from '@/lib/writerSyncIntegration/accountDeviceIdentity.types';
+import { createAccountDeviceIdentityStore } from '@/lib/writerSyncIntegration/accountDeviceIdentityStore';
 import {
   NoteKind,
   NoteState,
@@ -13,8 +23,10 @@ import {
   asDeviceId,
   asOperationId,
   asPrincipalId,
+  type DeviceId,
 } from 'writer-sync/core';
 import {
+  deviceIdFor,
   generateDeviceIdentity,
   publicJwkOf,
   type DeviceIdentityKeys,
@@ -373,6 +385,168 @@ describe('sweepUnappliedFrames', () => {
       await sweepUnappliedFrames(db);
 
       expect(refreshInboundDocs).not.toHaveBeenCalled();
+    });
+  });
+
+  /**
+   * The retry contract for account-authorised authors reuses the ingestion
+   * loop's existing events — a rejected frame stays in the journal, every
+   * settled provider round and key-ring change sweeps again with a fresh
+   * verifier — so an identity row and an operation frame may arrive in any
+   * order, or straddle an unlock, and still converge without a timer.
+   */
+  describe('account identity ordering', () => {
+    let cloudDb: LoremDB;
+    let device: { keys: DeviceIdentityKeys; deviceId: DeviceId; jwk: JsonWebKey };
+
+    const mintDevice = async () => {
+      const keys = await generateDeviceIdentity();
+      return {
+        keys,
+        deviceId: await deviceIdFor(keys.publicKey),
+        jwk: await publicJwkOf(keys.publicKey),
+      };
+    };
+
+    const publishIdentity = (): Promise<void> =>
+      createAccountDeviceIdentityStore(cloudDb).put({
+        id: accountDeviceIdentityId(device.deviceId),
+        accessScopeId: ACCOUNT_IDENTITY_SCOPE,
+        deviceId: device.deviceId,
+        publicIdentityJwk: device.jwk,
+        authorisedAt: 1723000000000,
+      });
+
+    const accountFrame = async (
+      ring: SyncKeyRing,
+      overrides: Partial<Note> = {},
+    ): Promise<EncryptedSyncFrame> =>
+      (
+        await signAuthoredFrames(device.keys.privateKey, [
+          await makePutFrame({
+            ring,
+            deviceId: device.deviceId,
+            entityTable: 'notes',
+            row: { ...note(), ...overrides },
+          }),
+        ])
+      )[0];
+
+    beforeEach(async () => {
+      cloudDb = new LoremDB(`frame-ingestion-account-${crypto.randomUUID()}`, {
+        cloud: true,
+      });
+      cloudDb.use(createEncryptionMiddleware(deviceKeyProvider));
+      await cloudDb.open();
+      device = await mintDevice();
+    });
+
+    afterEach(async () => {
+      await cloudDb.delete();
+    });
+
+    it('leaves an operation waiting until its author’s identity replicates', async () => {
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const ring = await keyedRing();
+      await cloudDb.syncOperations.put(await accountFrame(ring));
+
+      // The author is unknown: nothing applies, nothing is marked accepted —
+      // marking it would silence the retry the next settle is entitled to.
+      expect(await sweepUnappliedFrames(cloudDb)).toBe(0);
+      expect(await cloudDb.syncInbox.count()).toBe(0);
+      expect(await cloudDb.syncOperations.count()).toBe(1);
+      expect(await cloudDb.notes.get('n1')).toBeUndefined();
+
+      // The identity row replicates; the next settled round's sweep sees both.
+      await publishIdentity();
+      expect(await sweepUnappliedFrames(cloudDb)).toBe(1);
+      expect((await cloudDb.notes.get('n1'))?.body).toBe('from-remote');
+      expect(await cloudDb.syncInbox.count()).toBe(1);
+      expect(consoleError).toHaveBeenCalled();
+    });
+
+    it('applies when the operation and the identity land in one settled round', async () => {
+      const ring = await keyedRing();
+      await publishIdentity();
+      await cloudDb.syncOperations.put(await accountFrame(ring));
+
+      expect(await sweepUnappliedFrames(cloudDb)).toBe(1);
+      expect((await cloudDb.notes.get('n1'))?.body).toBe('from-remote');
+    });
+
+    it('holds identity-authorised work while keyless and applies it on key acquisition', async () => {
+      const ring = await keyedRing();
+      await publishIdentity();
+      const frame = await accountFrame(ring);
+      await forgetDeviceKeyRing();
+      await cloudDb.syncOperations.put(frame);
+
+      expect(await sweepUnappliedFrames(cloudDb)).toBe(0);
+      expect(await cloudDb.notes.get('n1')).toBeUndefined();
+
+      // The key-ring change is one of the sweep triggers; its sweep converges.
+      await saveDeviceKeyRing({ accountId: null, ring });
+      expect(await sweepUnappliedFrames(cloudDb)).toBe(1);
+      expect((await cloudDb.notes.get('n1'))?.body).toBe('from-remote');
+    });
+
+    it('applies once when Cloud delivers first and a peer repeats the frame', async () => {
+      const ring = await keyedRing();
+      await publishIdentity();
+      // The device is also QR-paired under the same identity — the one state
+      // where both routes legitimately carry its frames.
+      await createTrustedDeviceStore(cloudDb).trust({
+        deviceId: device.deviceId,
+        publicIdentityJwk: device.jwk,
+        principalId: asPrincipalId('me'),
+        addedAt: 1_700_000_000_000,
+        lastSessionAt: 1_700_000_000_000,
+        displayName: 'Paired and cloud',
+        status: TrustedDeviceStatus.Active,
+        acknowledgedOperations: {},
+      });
+      const frame = await accountFrame(ring);
+
+      await cloudDb.syncOperations.put(frame);
+      expect(await sweepUnappliedFrames(cloudDb)).toBe(1);
+      // The peer session hands over the identical frame afterwards.
+      await applyInboundFrame({
+        db: cloudDb,
+        frame: JSON.parse(JSON.stringify(frame)) as EncryptedSyncFrame,
+        ring,
+        verifySignature: createWriterFrameVerifier(cloudDb),
+      });
+
+      expect(await cloudDb.syncInbox.count()).toBe(1);
+      expect(await cloudDb.notes.where('id').equals('n1').count()).toBe(1);
+    });
+
+    it('applies once when a peer delivers first and Cloud repeats the frame', async () => {
+      const ring = await keyedRing();
+      await publishIdentity();
+      await createTrustedDeviceStore(cloudDb).trust({
+        deviceId: device.deviceId,
+        publicIdentityJwk: device.jwk,
+        principalId: asPrincipalId('me'),
+        addedAt: 1_700_000_000_000,
+        lastSessionAt: 1_700_000_000_000,
+        displayName: 'Paired and cloud',
+        status: TrustedDeviceStatus.Active,
+        acknowledgedOperations: {},
+      });
+      const frame = await accountFrame(ring);
+
+      await applyInboundFrame({
+        db: cloudDb,
+        frame: JSON.parse(JSON.stringify(frame)) as EncryptedSyncFrame,
+        ring,
+        verifySignature: createWriterFrameVerifier(cloudDb),
+      });
+      await cloudDb.syncOperations.put(frame);
+
+      expect(await sweepUnappliedFrames(cloudDb)).toBe(0);
+      expect(await cloudDb.syncInbox.count()).toBe(1);
+      expect(await cloudDb.notes.where('id').equals('n1').count()).toBe(1);
     });
   });
 
