@@ -1,7 +1,7 @@
 import { invariant } from '@/lib/invariant';
 import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
-import { SYNCED_TABLES, CIPHER_FIELD } from './crypto/tableRules';
+import { CONTENT_TABLES, CIPHER_FIELD } from './crypto/tableRules';
 import {
   generateRootSecret,
   deriveKeyRing,
@@ -71,7 +71,7 @@ const dropResidualEscrow = async (db: LoremDB): Promise<void> => {
  * the addon queues them for the initial push.
  */
 export const sealExistingRows = async (db: LoremDB = appDb): Promise<void> => {
-  for (const table of SYNCED_TABLES) {
+  for (const table of CONTENT_TABLES) {
     const store = db.table<Row>(table);
     const plaintext = await store.filter((row) => !(CIPHER_FIELD in row)).toArray();
     if (plaintext.length > 0) await store.bulkPut(plaintext);
@@ -89,7 +89,7 @@ export const sealExistingRows = async (db: LoremDB = appDb): Promise<void> => {
 export const hasPlaintextSyncedRows = async (
   db: LoremDB = appDb,
 ): Promise<boolean> => {
-  for (const table of SYNCED_TABLES) {
+  for (const table of CONTENT_TABLES) {
     const plaintext = await db
       .table<Row>(table)
       .filter((row) => !(CIPHER_FIELD in row))
@@ -211,7 +211,7 @@ export const unlockCloudEncryption = async (
 const findSealedRow = async (
   db: LoremDB,
 ): Promise<{ ref: RowRef; row: Row } | null> => {
-  for (const table of SYNCED_TABLES) {
+  for (const table of CONTENT_TABLES) {
     const row = await db.table<Row>(table).filter((r) => CIPHER_FIELD in r).first();
     if (row) return { ref: { table, primaryKey: pkOf(db, table, row) }, row };
   }
@@ -262,7 +262,7 @@ const collectDecryptableRows = async (
   db: LoremDB,
 ): Promise<Map<string, Row[]>> => {
   const collected = new Map<string, Row[]>();
-  for (const table of SYNCED_TABLES) {
+  for (const table of CONTENT_TABLES) {
     const store = db.table<Row>(table);
     const keys = await store.toCollection().primaryKeys();
     const rows: Row[] = [];
@@ -333,7 +333,7 @@ export const adoptAccountKey = async (
 export const eraseSyncedContent = async (
   db: LoremDB = appDb,
 ): Promise<void> => {
-  for (const table of SYNCED_TABLES) {
+  for (const table of CONTENT_TABLES) {
     const store = db.table<Row>(table);
     const keys = await store.toCollection().primaryKeys();
     for (const key of keys) {

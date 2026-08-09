@@ -140,7 +140,7 @@ export const removeSpaceMember = async (
 /**
  * Change what a member may do. A keyed update patches only `roles`: the
  * members table is addon-managed and unencrypted (it is not in
- * `SYNCED_TABLES`, so the encryption middleware passes it through), and the
+ * `ROW_ENVELOPE_TABLES`, so the encryption middleware passes it through), and the
  * server maintains invitation state on the row (`userId`, `accepted`,
  * `rejected`) that a whole-row put would overwrite with a stale read.
  */
