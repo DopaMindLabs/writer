@@ -32,6 +32,7 @@ import {
 import { createWriterFrameVerifier } from './writerFrameVerifier';
 import { applyInboundFrame } from './writerOperationMaterializer';
 import { writerJournalIdentity } from './writerJournalDeps';
+import { runUnderSyncApplyLock } from '@/lib/reconcile';
 import { refreshInboundDocs } from './inboundDocRefresh';
 import { sweepUnappliedFrames } from './frameIngestion';
 
@@ -201,6 +202,38 @@ describe('sweepUnappliedFrames', () => {
     // A second sweep re-applies nothing.
     expect(await sweepUnappliedFrames(db)).toBe(0);
     expect(await db.syncInbox.count()).toBe(1);
+  });
+
+  it('waits for the shared sync-apply lock before touching any state', async () => {
+    // The cloud reconciler snapshots documents up front; a sweep interleaving
+    // with it can hand back a stale body as the winner. Both paths therefore
+    // serialise on one lock — a sweep must not start while it is held.
+    const ring = await keyedRing();
+    const frame = await authoredByRemote(
+      await makePutFrame({
+        ring,
+        deviceId: DEVICE_REMOTE,
+        entityTable: 'notes',
+        row: note(),
+      }),
+    );
+    await db.syncOperations.put(frame);
+
+    let release = (): void => undefined;
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const holder = runUnderSyncApplyLock(() => held);
+
+    const sweep = sweepUnappliedFrames(db);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(await db.notes.get('n1')).toBeUndefined();
+
+    release();
+    await holder;
+    expect(await sweep).toBe(1);
+    expect((await db.notes.get('n1'))?.body).toBe('from-remote');
   });
 
   it('applies once when the same frame arrives through Dexie and a second provider', async () => {

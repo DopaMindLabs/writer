@@ -1,5 +1,6 @@
 import type { LoremDB } from '@/db/LoremDB';
 import { onDeviceKeyRingChange, deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
+import { runUnderSyncApplyLock } from '@/lib/reconcile';
 import type { DeviceId, SyncObservable } from 'writer-sync/core';
 import {
   AttachmentChunksPendingError,
@@ -45,7 +46,13 @@ const foreignDocIds = async (touched: TouchedDoc[]): Promise<string[]> => {
   return [...new Set(foreign.map((doc) => doc.entityId))];
 };
 
-export const sweepUnappliedFrames = async (db: LoremDB): Promise<number> => {
+export const sweepUnappliedFrames = (db: LoremDB): Promise<number> =>
+  // Serialised with the cloud reconciler: it snapshots `db.docs` up front, so
+  // this sweep landing newer bodies mid-run would make it invert local and
+  // remote and re-apply a stale body (see `runUnderSyncApplyLock`).
+  runUnderSyncApplyLock(() => sweepUnappliedFramesLocked(db));
+
+const sweepUnappliedFramesLocked = async (db: LoremDB): Promise<number> => {
   const ring = deviceKeyProvider.current();
   if (!ring) return 0;
   const frames = await db.syncOperations.toArray();
