@@ -52,7 +52,12 @@ export { compactableOperationIds, releasableTombstones } from './journalCompacti
 export type { CompactionOptions, PeerAcknowledgement } from './journalCompaction';
 
 export { buildScopeManifests, framesForRequest, planCatchUp } from './scopeManifest';
-export type { CatchUpRequest, OriginSummary, ScopeManifest } from './scopeManifest';
+export type {
+  CatchUpRequest,
+  OriginSummary,
+  ScopeManifest,
+  SeenOperation,
+} from './scopeManifest';
 
 export {
   CATCH_UP_MESSAGE_KINDS,

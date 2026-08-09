@@ -18,6 +18,7 @@ import {
   planCatchUp,
   type CatchUpRequest,
   type ScopeManifest,
+  type SeenOperation,
 } from './scopeManifest';
 import type { AttachmentTransfer } from './attachmentTransfer';
 import { packFrames } from './catchUpBatching';
@@ -48,6 +49,15 @@ export interface CatchUpAttachments {
 
 export interface CatchUpPorts {
   journal: OperationStore;
+  /**
+   * Every operation this device has ever seen, per scope and origin — the
+   * manifest's source. Deliberately not the journal: compaction drops frames
+   * every peer holds, and a manifest built from what *survives* forgets whole
+   * origins, so the peer re-authors the scope as fresh frames on every session.
+   * What a device has seen only grows, so the manifests of two converged
+   * devices agree and the exchange finally goes quiet.
+   */
+  seenOperations: () => Promise<SeenOperation[]>;
   /** The scopes this device holds frames for, and so can advertise. */
   accessibleScopeIds: () => Promise<AccessScopeId[]>;
   /** Whether this device has key authority for an offered scope. */
@@ -211,8 +221,16 @@ const heldFrames = async (ports: CatchUpPorts): Promise<EncryptedSyncFrame[]> =>
   return perScope.flat();
 };
 
-const localManifests = async (ports: CatchUpPorts): Promise<ScopeManifest[]> =>
-  buildScopeManifests(await heldFrames(ports));
+const localManifests = async (ports: CatchUpPorts): Promise<ScopeManifest[]> => {
+  // Gated by scope access like every other disclosure: a keyless device
+  // advertises nothing, however much it has seen.
+  const canAccess = await scopeAccessFor(ports);
+  return buildScopeManifests(
+    (await ports.seenOperations()).filter((operation) =>
+      canAccess(operation.accessScopeId),
+    ),
+  );
+};
 
 /** Selects scopes that require current full state because retained history is incomplete. */
 const scopesNeedingFullState = (

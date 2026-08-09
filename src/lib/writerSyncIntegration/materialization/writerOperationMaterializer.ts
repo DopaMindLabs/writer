@@ -166,6 +166,8 @@ export const applyInboundFrame = async (options: {
       await db.syncInbox.put({
         operationId: frame.operationId,
         accessScopeId: frame.accessScopeId,
+        deviceId: frame.deviceId,
+        logicalAt: frame.logicalAt,
         entityTable: frame.entityTable,
         entityId: frame.entityId,
         result,

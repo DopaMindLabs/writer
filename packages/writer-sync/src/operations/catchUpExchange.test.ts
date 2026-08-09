@@ -56,6 +56,8 @@ const memoryStore = (
 
 const harness = (options: {
   frames?: EncryptedSyncFrame[];
+  /** What this device has seen, when it differs from what it still holds. */
+  seen?: EncryptedSyncFrame[];
   scopes?: AccessScopeId[];
   verifySignature?: (frame: EncryptedSyncFrame) => Promise<boolean>;
   fullState?: (accessScopeId: AccessScopeId) => Promise<EncryptedSyncFrame[]>;
@@ -88,6 +90,7 @@ const harness = (options: {
 
   const ports: CatchUpPorts = {
     journal: memoryStore(frames, options.unstorable),
+    seenOperations: async () => options.seen ?? frames,
     accessibleScopeIds: async () => options.scopes ?? ['scope-1'],
     send: (message) => {
       if (failNext && message.kind === 'frames') {
@@ -153,6 +156,44 @@ describe('createCatchUpExchange start', () => {
     await exchange.start();
 
     expect(sent).toEqual([{ v: 1, kind: 'manifest', manifests: [] }]);
+  });
+});
+
+describe('the manifest survives journal compaction', () => {
+  it('advertises what it has seen even after the journal compacted it away', async () => {
+    // Compaction drops frames every peer holds; what this device has *seen*
+    // must not shrink with them, or the origin vanishes from the manifest and
+    // the peer re-authors the whole scope every session, for ever.
+    const seen = await frameOf({ id: 'op-1', millis: 10 });
+    const { exchange, sent } = harness({ frames: [], seen: [seen] });
+
+    await exchange.start();
+
+    expect(sent).toEqual([manifestMessage(buildScopeManifests([seen]))]);
+  });
+
+  it('plans no catch-up between devices that have seen everything, however compacted', async () => {
+    const seenOps = [
+      await frameOf({ id: 'op-1', millis: 10, device: 'device-a' }),
+      await frameOf({ id: 'op-2', millis: 20, device: 'device-b' }),
+    ];
+    const { exchange, sent } = harness({ frames: [], seen: seenOps });
+
+    await exchange.receive(manifestMessage(buildScopeManifests(seenOps)));
+
+    expect(sent).toEqual([{ v: 1, kind: 'request', requests: [] }]);
+  });
+
+  it('never re-authors full state for a peer that has seen everything already', async () => {
+    const seenOps = [await frameOf({ id: 'op-1', millis: 10 })];
+    const fullState = vi.fn(async () => [] as EncryptedSyncFrame[]);
+    const { exchange, sent } = harness({ frames: [], seen: seenOps, fullState });
+
+    await exchange.receive(manifestMessage(buildScopeManifests(seenOps)));
+    expect(sent).toEqual([{ v: 1, kind: 'request', requests: [] }]);
+
+    await exchange.receive({ v: 1, kind: 'request', requests: [] });
+    expect(fullState).not.toHaveBeenCalled();
   });
 });
 

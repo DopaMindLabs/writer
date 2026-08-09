@@ -8,9 +8,15 @@ import type { SyncOperationHeader } from './operation.types';
  * winner from the same set of operations, whatever order providers delivered
  * them in — provider arrival order carries no meaning here.
  */
+/** The fields that order operations — a frame header, or any seen-record. */
+export type OperationOrder = Pick<
+  SyncOperationHeader,
+  'deviceId' | 'logicalAt' | 'operationId'
+>;
+
 export const compareOperations = (
-  a: SyncOperationHeader,
-  b: SyncOperationHeader,
+  a: OperationOrder,
+  b: OperationOrder,
 ): number =>
   compareTimestamps(a.logicalAt, b.logicalAt) ||
   String(a.deviceId).localeCompare(String(b.deviceId)) ||
