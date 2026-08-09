@@ -124,11 +124,12 @@ test('projects connections, annotations, palette and picture assets into the zip
   // any hover or drawer, so overlapping fresh cards cannot misroute it.
   await page.getByTestId('brain-canvas-tool-image').click();
   await expect(notes).toHaveCount(2);
-  const imageCard = notes.last();
-  await imageCard
-    .locator('[data-testid$="-image-dropzone-input"]')
-    .setInputFiles(pngPayload('photo.png'));
-  await expect(imageCard.locator('[data-testid$="-image-primary"]')).toBeVisible();
+  // By feature, not position: the canvas does not promise render order, and
+  // only the image card carries a drop zone.
+  const dropzone = page.locator('[data-testid$="-image-dropzone-input"]');
+  await expect(dropzone).toHaveCount(1);
+  await dropzone.setInputFiles(pngPayload('photo.png'));
+  await expect(page.locator('[data-testid$="-image-primary"]')).toBeVisible();
 
   // Shift-pick links the two notes; the projection names both ends.
   await notes.first().dispatchEvent('pointerdown', { shiftKey: true, button: 0 });
