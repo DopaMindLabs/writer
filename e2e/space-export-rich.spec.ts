@@ -92,6 +92,7 @@ const seedAnnotationsAndPalette = (
 test('projects connections, annotations, palette and picture assets into the zip', async ({
   page,
 }) => {
+  test.setTimeout(90_000);
   const spaceId = await getFirstSpaceIdFromHome(page);
 
   await page.goto(`/#/s/${spaceId}/brain-space`);

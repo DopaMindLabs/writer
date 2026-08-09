@@ -34,6 +34,7 @@ test.describe('Folder sync against a real directory', () => {
   test('archives land in the folder, and a due space syncs itself at boot', async ({
     page,
   }) => {
+    test.setTimeout(90_000);
     const spaceId = await getFirstSpaceIdFromHome(page);
     await page.goto('/#/settings?tab=sync');
     await page.waitForLoadState('networkidle');

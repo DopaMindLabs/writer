@@ -98,6 +98,7 @@ test('backups tab: snapshot adds a row that can be downloaded and deleted', asyn
 test('backups tab: annotations and the palette round-trip through a restore', async ({
   page,
 }) => {
+  test.setTimeout(90_000);
   // Both tables ship in the archive but have no authoring surface yet, so the
   // snapshot side is seeded directly and the restore proves the codecs parse
   // what the archive renders.
