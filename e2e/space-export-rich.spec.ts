@@ -52,7 +52,7 @@ const seedAnnotationsAndPalette = (
             rangeStart: 0,
             rangeEnd: 12,
             kind: 'highlight',
-            color: 'amber',
+            color: 'yellow',
             body: 'worth keeping\nacross lines',
             author: 'me',
             createdAt: 1,
@@ -119,21 +119,15 @@ test('projects connections, annotations, palette and picture assets into the zip
   await page.keyboard.press('Escape');
   await expect(drawer).toBeHidden();
 
-  await page.getByTestId('brain-canvas-tool-question').click();
+  // The third picture rides an image card: its drop zone takes files without
+  // any hover or drawer, so overlapping fresh cards cannot misroute it.
+  await page.getByTestId('brain-canvas-tool-image').click();
   await expect(notes).toHaveCount(2);
-  const second = notes.last();
-  await second.hover();
-  await second.locator('[data-testid$="-open-details"]').click();
-  await expect(drawer).toBeVisible();
-  // The drawer re-binds from the first note to the second; upload only once
-  // its content has switched, or the files land on the note already at limit.
-  await expect(drawer.getByRole('img', { name: 'figure.png' })).toHaveCount(0);
-  await drawer
-    .getByTestId('brain-detail-drawer-attachments-input')
+  const imageCard = notes.last();
+  await imageCard
+    .locator('[data-testid$="-image-dropzone-input"]')
     .setInputFiles(pngPayload('photo.png'));
-  await expect(drawer.getByRole('img', { name: 'photo.png' })).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(drawer).toBeHidden();
+  await expect(imageCard.locator('[data-testid$="-image-primary"]')).toBeVisible();
 
   // Shift-pick links the two notes; the projection names both ends.
   await notes.first().dispatchEvent('pointerdown', { shiftKey: true, button: 0 });
@@ -162,7 +156,7 @@ test('projects connections, annotations, palette and picture assets into the zip
 
   const annotations = await zip.file('annotations.md')?.async('string');
   expect(annotations).toContain('**highlight**');
-  expect(annotations).toContain('· amber');
+  expect(annotations).toContain('· yellow');
   expect(annotations).toContain('> worth keeping across lines');
   expect(annotations).toContain('**side**');
 
