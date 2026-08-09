@@ -27,7 +27,8 @@ import type {
   SyncTombstone,
 } from 'writer-sync/operations';
 import type { SyncProviderBinding, TrustedDeviceRecord } from 'writer-sync/core';
-import { STORES } from './stores';
+import type { AccountDeviceIdentity } from '@/lib/writerSyncIntegration/accountDeviceIdentity.types';
+import { CLOUD_STORES, STORES } from './stores';
 
 /**
  * Construction options for {@link LoremDB}. `cloud` opts the instance into the
@@ -75,12 +76,12 @@ export class LoremDB extends Dexie {
   cloudCrypto!: Table<EscrowRecord, string>;
   /** Present only on cloud-enabled instances (`options.cloud`). */
   cloudDevices!: Table<DeviceRecord, string>;
+  /** Present only on cloud-enabled instances (`options.cloud`). */
+  accountDeviceIdentities!: Table<AccountDeviceIdentity, string>;
 
   constructor(name = 'lipsum', options: LoremDBOptions = {}) {
     super(name, options.addons ? { addons: options.addons } : undefined);
-    const cloudStores: Record<string, string> = options.cloud
-      ? { cloudCrypto: 'id', cloudDevices: 'id' }
-      : {};
+    const cloudStores: Record<string, string> = options.cloud ? CLOUD_STORES : {};
     // One declared version while Writer is pre-release — see the note on
     // {@link STORES}. New tables are added there, not behind a new version.
     this.version(1).stores({ ...STORES, ...cloudStores });

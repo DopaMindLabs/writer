@@ -87,5 +87,19 @@ describe('encryption coverage vs content lifecycle', () => {
     for (const table of CONTENT_TABLES) {
       expect(ROW_ENVELOPE_TABLES).toContain(table);
     }
+    expect(ROW_ENVELOPE_TABLES).toContain('accountDeviceIdentities');
+    expect(CONTENT_TABLES).not.toContain('accountDeviceIdentities');
+  });
+
+  it('seals the account identity material and keeps only routing fields plaintext', () => {
+    expect(isEncryptedTable('accountDeviceIdentities')).toBe(true);
+    const fields = plaintextFieldsFor('accountDeviceIdentities');
+    // The primary key and the scope route the row; everything that states an
+    // identity stays inside the cipher envelope.
+    expect(fields.has('id')).toBe(true);
+    expect(fields.has('accessScopeId')).toBe(true);
+    expect(fields.has('deviceId')).toBe(false);
+    expect(fields.has('publicIdentityJwk')).toBe(false);
+    expect(fields.has('authorisedAt')).toBe(false);
   });
 });

@@ -1,4 +1,4 @@
-import { STORES } from '@/db/stores';
+import { CLOUD_STORES, STORES } from '@/db/stores';
 import {
   journalledTables,
   rowEnvelopeTables,
@@ -68,8 +68,16 @@ const schemaFields = (spec: string): Set<string> => {
 export const isEncryptedTable = (table: string): boolean =>
   ROW_ENVELOPE_TABLES.includes(table);
 
+/**
+ * The Dexie schema spec for a table, from the base or the cloud-only stores.
+ * Without the cloud lookup a cloud-only row-envelope table would lose its
+ * primary-key classification and seal the key it is addressed by.
+ */
+const schemaSpecFor = (table: string): string | undefined =>
+  STORES[table] ?? CLOUD_STORES[table];
+
 export const plaintextFieldsFor = (table: string): ReadonlySet<string> => {
-  const fields = schemaFields(STORES[table] ?? '');
+  const fields = schemaFields(schemaSpecFor(table) ?? '');
   for (const reserved of CLOUD_RESERVED) fields.add(reserved);
   for (const field of ROUTING_METADATA) fields.add(field);
   return fields;
