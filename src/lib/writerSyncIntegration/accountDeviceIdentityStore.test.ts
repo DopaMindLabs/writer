@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { LoremDB } from '@/db/LoremDB';
 import {
   generateRootSecret,
@@ -247,6 +247,77 @@ describe('createAccountDeviceIdentityStore — put', () => {
         error instanceof AccountIdentityConflictError,
     );
     expect(await db.table('accountDeviceIdentities').count()).toBe(1);
+  });
+});
+
+describe('createAccountDeviceIdentityStore — decrypted shape gate', () => {
+  it('refuses a sealed record whose deviceId is not a string', async () => {
+    const identity = await mintIdentity();
+    await plant({ ...recordFor(identity), deviceId: 12345 });
+
+    const store = createAccountDeviceIdentityStore(db);
+    expect(await store.find(identity.deviceId)).toBeNull();
+  });
+
+  it('refuses a sealed record with no public key object at all', async () => {
+    const identity = await mintIdentity();
+    await plant({ ...recordFor(identity), publicIdentityJwk: 'not-an-object' });
+
+    const store = createAccountDeviceIdentityStore(db);
+    expect(await store.find(identity.deviceId)).toBeNull();
+  });
+
+  it('refuses a sealed record whose authorisation time is not a number', async () => {
+    const identity = await mintIdentity();
+    await plant({ ...recordFor(identity), authorisedAt: 'yesterday' });
+
+    const store = createAccountDeviceIdentityStore(db);
+    expect(await store.find(identity.deviceId)).toBeNull();
+  });
+});
+
+describe('createAccountDeviceIdentityStore — publication races', () => {
+  it('treats losing a race to an identical write as success', async () => {
+    const identity = await mintIdentity();
+    const store = createAccountDeviceIdentityStore(db);
+    // The row is already there (the concurrent writer won), but this writer's
+    // pre-check missed it and its add hits the primary-key constraint.
+    await store.put(recordFor(identity));
+    const constraint = Object.assign(new Error('key exists'), {
+      name: 'ConstraintError',
+    });
+    const findSpy = vi
+      .spyOn(db.accountDeviceIdentities, 'get')
+      .mockResolvedValueOnce(undefined);
+    const addSpy = vi
+      .spyOn(db.accountDeviceIdentities, 'add')
+      .mockRejectedValueOnce(constraint);
+
+    await expect(store.put(recordFor(identity))).resolves.toBeUndefined();
+    findSpy.mockRestore();
+    addSpy.mockRestore();
+  });
+
+  it('fails closed when the race winner holds a different identity', async () => {
+    const identity = await mintIdentity();
+    const other = await mintIdentity();
+    const store = createAccountDeviceIdentityStore(db);
+    await plant({ ...recordFor(identity), publicIdentityJwk: other.jwk });
+    const constraint = Object.assign(new Error('key exists'), {
+      name: 'ConstraintError',
+    });
+    const findSpy = vi
+      .spyOn(db.accountDeviceIdentities, 'get')
+      .mockResolvedValueOnce(undefined);
+    const addSpy = vi
+      .spyOn(db.accountDeviceIdentities, 'add')
+      .mockRejectedValueOnce(constraint);
+
+    await expect(store.put(recordFor(identity))).rejects.toBeInstanceOf(
+      AccountIdentityConflictError,
+    );
+    findSpy.mockRestore();
+    addSpy.mockRestore();
   });
 });
 
