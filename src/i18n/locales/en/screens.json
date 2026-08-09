@@ -37,7 +37,7 @@
     "licenseLinkText": "PolyForm Noncommercial License 1.0.0",
     "statusLabel": "Status",
     "statusValueStrong": "{{version}}",
-    "statusValueRest": " — there is no data sync. All data is saved in IndexedDB in your local browser. If you clear your browser cache, your work will be lost.",
+    "statusValueRest": " — your work is saved in IndexedDB in your local browser. Device pairing syncs it directly between your devices, and encrypted cloud sync is in beta. Clearing your browser data loses anything not synced elsewhere.",
     "feedbackBefore": "I am still building this and I have alot ideas ",
     "feedbackAfter": ". I'd love to hear what works, what doesn't, and what you wish existed. Feedback is welcome.",
     "sourceLabel": "Source"

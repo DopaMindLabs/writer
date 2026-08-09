@@ -18,7 +18,7 @@
 
 **Who it's for.** Writers working on fiction, research, essays, or journals — including researchers who need to manage references.
 
-**Status.** Alpha. All data is stored locally in IndexedDB; there is no cloud sync. Clearing browser data deletes the user's work.
+**Status.** Alpha. Data is stored locally in IndexedDB. Device pairing provides direct device-to-device sync, and encrypted cloud sync is in beta. Clearing browser data deletes anything not synced elsewhere.
 
 **Tech stack.** React 19, Vite, TypeScript, Lexical (editor), Dexie (IndexedDB), Zustand (state), Tailwind, Radix UI primitives, Driver.js (tours), i18next (i18n).
 

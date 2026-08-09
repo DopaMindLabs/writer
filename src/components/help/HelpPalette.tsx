@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { SearchField } from '@/components/ui/SearchField';
+import { Kbd } from '@/components/ui/Kbd';
 import { Link } from '@/components/ui/Link';
 import { routes } from '@/lib/routes';
 import { useHelp } from '@/store/help';
@@ -16,8 +17,8 @@ import { searchHelp, type HelpSearchResult } from '@/lib/help/search';
 import { HelpResultList } from './HelpSearch';
 
 const SHORTCUTS: readonly { readonly keys: string; readonly labelKey: string }[] = [
-  { keys: '⌘K', labelKey: 'shortcuts.help' },
-  { keys: '⌘\\', labelKey: 'shortcuts.focus' },
+  { keys: 'mod+k', labelKey: 'shortcuts.help' },
+  { keys: 'mod+\\', labelKey: 'shortcuts.focus' },
 ];
 
 const ShortcutsList = () => {
@@ -34,9 +35,10 @@ const ShortcutsList = () => {
             className="flex items-center justify-between text-[14px] text-ink-2"
           >
             <span>{t(s.labelKey)}</span>
-            <kbd className="rounded-sm border border-rule bg-paper-2 px-1.5 py-0.5 font-mono text-[11px] text-ink-3">
-              {s.keys}
-            </kbd>
+            <Kbd
+              keys={s.keys}
+              className="rounded-sm border border-rule bg-paper-2 px-1.5 py-0.5 text-[11px] text-ink-3"
+            />
           </li>
         ))}
       </ul>
