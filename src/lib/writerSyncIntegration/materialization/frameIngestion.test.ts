@@ -521,6 +521,30 @@ describe('sweepUnappliedFrames', () => {
       expect(await cloudDb.notes.where('id').equals('n1').count()).toBe(1);
     });
 
+    it('never advances the paired acknowledgement watermark from cloud materialisation', async () => {
+      // Regression lock: acknowledgements drive journal/tombstone compaction,
+      // so only the authenticated peer connection may credit peer.deviceId
+      // with one. Cloud delivery says nothing about what a *peer* has stored.
+      const ring = await keyedRing();
+      await publishIdentity();
+      await createTrustedDeviceStore(cloudDb).trust({
+        deviceId: device.deviceId,
+        publicIdentityJwk: device.jwk,
+        principalId: asPrincipalId('me'),
+        addedAt: 1_700_000_000_000,
+        lastSessionAt: 1_700_000_000_000,
+        displayName: 'Paired and cloud',
+        status: TrustedDeviceStatus.Active,
+        acknowledgedOperations: {},
+      });
+      await cloudDb.syncOperations.put(await accountFrame(ring));
+
+      expect(await sweepUnappliedFrames(cloudDb)).toBe(1);
+
+      const record = await cloudDb.trustedDevices.get(String(device.deviceId));
+      expect(record?.acknowledgedOperations).toEqual({});
+    });
+
     it('applies once when a peer delivers first and Cloud repeats the frame', async () => {
       const ring = await keyedRing();
       await publishIdentity();
