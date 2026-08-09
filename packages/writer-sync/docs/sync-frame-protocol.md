@@ -365,7 +365,11 @@ overlaps a page already taken, skips one, or arrives while a page is still
 outstanding fails the session with `AttachmentCursorError`, as does a page
 offering no manifests. Silently re-offering or overwriting the page in flight
 would drop the attachments in it and leave both devices acknowledging a place in
-the catalogue neither is at.
+the catalogue neither is at. The holder's catalogue is therefore append-only for
+the life of the session: an offer made while the session is open — a live link
+naming attachments one by one as they are written — extends the catalogue and is
+served at the continued cursor, riding a round-trip already in flight where one
+is outstanding. An offer never restarts the catalogue at zero.
 
 The receiver asks only for missing indices, at most `MAX_REQUESTED_CHUNKS` at a
 time, and asks for the next page only once the one in flight has been answered:

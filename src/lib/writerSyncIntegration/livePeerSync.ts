@@ -12,7 +12,10 @@ import {
 import type { SyncTransport } from 'writer-sync/core';
 import type { LoremDB } from '@/db/LoremDB';
 import { appLogger } from '@/lib/appLogger';
-import { createAttachmentChunkStore } from './attachmentChunkStore';
+import {
+  createAttachmentChunkStore,
+  manifestForAttachment,
+} from './attachmentChunkStore';
 import { peerSessions } from './peerSessionRegistry';
 
 /**
@@ -124,10 +127,9 @@ const linkCache = (
 
 const openLiveLink = async (options: {
   db: LoremDB;
-  accessScopeId: AccessScopeId;
   createTransport: () => Promise<SyncTransport>;
 }): Promise<LiveLink> => {
-  const { db, accessScopeId } = options;
+  const { db } = options;
   const transport = await options.createTransport();
   const store = createAttachmentChunkStore(db);
   const send = (message: CatchUpMessage): void => {
@@ -154,11 +156,20 @@ const openLiveLink = async (options: {
     transport,
     attachments,
     offerAttachment: async (attachmentId) => {
-      const manifests = await store.manifestsForScopes([accessScopeId]);
-      const selected = manifests.filter(
-        (manifest) => manifest.attachmentId === attachmentId,
-      );
-      if (selected.length > 0) attachments.offer(selected);
+      // Only this attachment's manifest. Manifesting the whole scope would let
+      // one partial or poisoned attachment block every offer in it — and its
+      // failure would surface as a frame-send failure, named after the wrong
+      // thing. A manifest that cannot be built is reported per attachment; the
+      // frame that prompted the offer has already crossed.
+      try {
+        const manifest = await manifestForAttachment(db, attachmentId);
+        if (manifest !== null) attachments.offer([manifest]);
+      } catch (error) {
+        appLogger.warn('attachment cannot be offered to the peer', {
+          attachmentId,
+          error,
+        });
+      }
     },
     close: () => {
       off();
@@ -175,7 +186,6 @@ export const startLivePeerSync = (options: LivePeerSyncOptions): (() => void) =>
   const links = linkCache((accessScopeId) =>
     openLiveLink({
       db,
-      accessScopeId,
       createTransport: () =>
         realtime.createTransport({
           accessScopeId,

@@ -100,6 +100,78 @@ describe('createAttachmentTransfer offer', () => {
 
     expect(sent).toEqual([{ v: 1, kind: 'attachment-offer', cursor: 0, manifests: [manifest] }]);
   });
+
+  it('continues the catalogue cursor across later offers on the same session', async () => {
+    // The receiver's cursor is monotonic for the whole session. A later offer —
+    // a live link offering attachments one by one as they are written — must
+    // extend the catalogue and carry on from where the peer is, not restart at
+    // zero, which the peer refuses as a replay.
+    const { transfer, sent } = harness();
+    const first = await manifestFor('att-1', contentOf(20));
+    transfer.offer([first]);
+    await transfer.receive({ v: 1, kind: 'attachment-offer-next', cursor: 1 });
+    sent.length = 0;
+
+    const second = await manifestFor('att-2', contentOf(20));
+    transfer.offer([second]);
+
+    expect(sent).toEqual([
+      { v: 1, kind: 'attachment-offer', cursor: 1, manifests: [second] },
+    ]);
+  });
+
+  it('rides an appended offer on the round-trip already in flight', async () => {
+    // While a page is outstanding at the peer, a fresh page would be refused —
+    // the appended entry waits and is served when the peer asks for the next
+    // page of its own accord.
+    const { transfer, sent } = harness();
+    const first = await manifestFor('att-1', contentOf(20));
+    const second = await manifestFor('att-2', contentOf(20));
+    transfer.offer([first]);
+    expect(sent).toHaveLength(1);
+
+    transfer.offer([second]);
+    expect(sent).toHaveLength(1);
+
+    await transfer.receive({ v: 1, kind: 'attachment-offer-next', cursor: 1 });
+    expect(sent[1]).toEqual({
+      v: 1,
+      kind: 'attachment-offer',
+      cursor: 1,
+      manifests: [second],
+    });
+  });
+
+  it('delivers a second attachment offered later over the same live session', async () => {
+    // The user-reproduced shape: one persistent link, two images added in the
+    // same direction, one after the other. The second transfer must complete
+    // rather than fail the session with a cursor error.
+    const content = contentOf(20);
+    const sender = harness({ serve: content });
+    const receiver = harness();
+
+    const pump = async (): Promise<void> => {
+      // Bounded: each iteration drains everything both sides have queued.
+      for (let round = 0; round < 20; round += 1) {
+        if (sender.sent.length === 0 && receiver.sent.length === 0) return;
+        for (const message of sender.sent.splice(0)) {
+          await receiver.transfer.receive(message);
+        }
+        for (const message of receiver.sent.splice(0)) {
+          await sender.transfer.receive(message);
+        }
+      }
+    };
+
+    sender.transfer.offer([await manifestFor('att-1', content)]);
+    await pump();
+    expect(receiver.saved.map((one) => one.attachmentId)).toEqual(['att-1']);
+
+    sender.transfer.offer([await manifestFor('att-2', content)]);
+    await pump();
+    expect(receiver.saved.map((one) => one.attachmentId)).toEqual(['att-1', 'att-2']);
+    expect(receiver.rejected).toEqual([]);
+  });
 });
 
 describe('createAttachmentTransfer receiving an offer', () => {

@@ -292,6 +292,123 @@ describe('startLivePeerSync', () => {
     stop();
   });
 
+  it('offers an attachment even when another attachment in the scope cannot build a manifest', async () => {
+    // One partial or poisoned attachment must not block every offer in the
+    // scope: only the attachment being offered is manifested.
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+    // A partial attachment already in the scope — chunk 1 with no chunk 0
+    // breaks the contiguity invariant when a manifest is built over it.
+    await db.noteAttachments.put({ ...attachment(), id: 'attachment-poisoned' });
+    await db.syncAttachmentChunks.put({
+      attachmentId: 'attachment-poisoned',
+      index: 1,
+      accessScopeId: 'space-1',
+      bytes: toBase64(new Uint8Array([9])),
+    });
+    await db.noteAttachments.put(attachment());
+    await db.syncAttachmentChunks.put({
+      attachmentId: 'attachment-1',
+      index: 0,
+      accessScopeId: 'space-1',
+      bytes: toBase64(new Uint8Array([1, 2, 3])),
+    });
+    await db.syncOperations.put(
+      frameOf({ entityTable: 'noteAttachments', entityId: 'attachment-1' }),
+    );
+
+    await vi.waitFor(() => {
+      expect(peer.sent.map(({ message }) => message.kind)).toEqual([
+        'frames',
+        'attachment-offer',
+      ]);
+    });
+    expect(peer.sent.at(-1)?.message).toMatchObject({
+      kind: 'attachment-offer',
+      manifests: [{ attachmentId: 'attachment-1' }],
+    });
+    stop();
+  });
+
+  it('names a per-attachment manifest failure instead of folding it into a send failure', async () => {
+    const { appLogger } = await import('@/lib/appLogger');
+    const warn = vi.spyOn(appLogger, 'warn').mockImplementation(() => undefined);
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+    // The offered attachment itself is partial: no manifest can be built.
+    await db.noteAttachments.put(attachment());
+    await db.syncAttachmentChunks.put({
+      attachmentId: 'attachment-1',
+      index: 1,
+      accessScopeId: 'space-1',
+      bytes: toBase64(new Uint8Array([9])),
+    });
+    await db.syncOperations.put(
+      frameOf({ entityTable: 'noteAttachments', entityId: 'attachment-1' }),
+    );
+
+    await vi.waitFor(() => {
+      expect(warn).toHaveBeenCalledWith(
+        'attachment cannot be offered to the peer',
+        expect.objectContaining({ attachmentId: 'attachment-1' }),
+      );
+    });
+    // The frame itself crossed; only the offer was withheld, by name.
+    expect(peer.sent.map(({ message }) => message.kind)).toEqual(['frames']);
+    warn.mockRestore();
+    stop();
+  });
+
+  it('continues the offer cursor for a second attachment on the same link', async () => {
+    // Each direction's offer cursor is session state on the receiving side and
+    // never resets. A second image added over the same link must be offered at
+    // the continued cursor, not at zero — which the peer refuses as a replay.
+    const peer = fakeCoordinator();
+    const stop = start(peer);
+    await db.noteAttachments.put(attachment());
+    await db.syncAttachmentChunks.put({
+      attachmentId: 'attachment-1',
+      index: 0,
+      accessScopeId: 'space-1',
+      bytes: toBase64(new Uint8Array([1, 2, 3])),
+    });
+    await db.syncOperations.put(
+      frameOf({ entityTable: 'noteAttachments', entityId: 'attachment-1' }),
+    );
+    await vi.waitFor(() => {
+      expect(peer.sent.map(({ message }) => message.kind)).toEqual([
+        'frames',
+        'attachment-offer',
+      ]);
+    });
+    // The peer settles the first page and asks for the next.
+    peer.receive('space-1', { v: 1, kind: 'attachment-offer-next', cursor: 1 });
+
+    await db.noteAttachments.put({ ...attachment(), id: 'attachment-2', noteId: 'note-2' });
+    await db.syncAttachmentChunks.put({
+      attachmentId: 'attachment-2',
+      index: 0,
+      accessScopeId: 'space-1',
+      bytes: toBase64(new Uint8Array([4, 5, 6])),
+    });
+    await db.syncOperations.put(
+      frameOf({
+        operationId: asOperationId('op-a2'),
+        entityTable: 'noteAttachments',
+        entityId: 'attachment-2',
+      }),
+    );
+
+    await vi.waitFor(() => {
+      expect(peer.sent.at(-1)?.message).toMatchObject({
+        kind: 'attachment-offer',
+        cursor: 1,
+        manifests: [{ attachmentId: 'attachment-2' }],
+      });
+    });
+    stop();
+  });
+
   it('never echoes a frame that came from the peer', async () => {
     const peer = fakeCoordinator();
     const stop = start(peer);
