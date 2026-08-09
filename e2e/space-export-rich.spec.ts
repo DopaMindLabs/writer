@@ -125,6 +125,9 @@ test('projects connections, annotations, palette and picture assets into the zip
   await second.hover();
   await second.locator('[data-testid$="-open-details"]').click();
   await expect(drawer).toBeVisible();
+  // The drawer re-binds from the first note to the second; upload only once
+  // its content has switched, or the files land on the note already at limit.
+  await expect(drawer.getByRole('img', { name: 'figure.png' })).toHaveCount(0);
   await drawer
     .getByTestId('brain-detail-drawer-attachments-input')
     .setInputFiles(pngPayload('photo.png'));
