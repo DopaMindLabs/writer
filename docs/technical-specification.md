@@ -362,8 +362,35 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   moves every other field into a `$lipsumCipher` envelope (`AES-256-GCM`, fresh IV per
   seal, AAD binding `table` + `primaryKey` + `epoch`).
 - **Sync scope.** Encrypted: spaces, sections, docs, notes, note attachments,
-  annotations, citations, connections, revisions, palettes. Never synced: settings,
+  annotations, citations, connections, revisions, palettes — plus the
+  `accountDeviceIdentities` control table (below), which is row-envelope encrypted like
+  content but replicated directly rather than journalled. Never synced: settings,
   backups, sync bookkeeping, the CRDT `docUpdates` log, and the device keystore.
+- **Device authorship and account trust.** Every operation frame is signed by its
+  authoring device's identity key, and materialisation accepts a frame only after the
+  signature verifies against an **authenticated identity source**: this device's own key,
+  an active QR-paired identity (`trustedDevices`, § 4.9.2), or a same-account record in
+  the **account device identity registry** — `accountDeviceIdentities`, an encrypted
+  control table replicated through Dexie Cloud. Passphrase-unlocked devices on the same
+  cloud account therefore authenticate one another through that registry and converge
+  **without QR pairing**; QR pairing remains the independent serverless peer trust route,
+  and an unpaired peer cannot use the account registry to enter a P2P session. A registry
+  record carries only a pseudonymous device id (already present in every frame's plaintext
+  routing header), the device's **public** signing JWK and an authorisation time — all
+  sealed in the row envelope under the account content key, which is what proves the
+  record was authorised by an account-key holder. The provider sees the record's
+  pseudonymous id and routing metadata, never the JWK or authorisation fields; a
+  provider-injected plaintext registry row is dropped, never sealed locally, and never
+  authorises anything — successful payload decryption alone never does either. Each device
+  publishes its record once, idempotently, only after its key is proven authoritative
+  (signed in, initial pull complete, ring bound to the account and matching the escrow
+  fingerprint, no live mismatch); when the paired and account sources both name a device
+  id, their identities must agree or the frame is refused. Multiple providers may carry
+  the same signed frame; the shared `syncInbox` applies it exactly once, and cloud
+  delivery never advances a paired peer's acknowledgement watermark. **Removing a cloud
+  device is not key revocation**: it frees a beta slot and notifies the device, but a
+  device that already holds the account root keeps a working key until the account key is
+  rotated — a capability that does not exist yet and is out of the beta's scope.
 - **Device registry.** The beta allows **four devices per account**, tracked in a synced
   but **unencrypted** `cloudDevices` table so a device that holds no key yet can still count
   the slots and be told it is past the cap. A row carries only the addon's random per-device
@@ -513,14 +540,22 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   courtesy, not a security boundary; the section heading carries a persistent beta notice naming
   the limit and advising local backups.
 - **Server sees / does not see.** Cannot: bodies, titles, note text, citation
-  metadata, attachment bytes. Can: record ids and relationships, timestamps, note kinds,
-  citation keys and years, the sign-in email, sync timing/IP, and the device-registry rows
-  (random per-device client identity plus joined/last-seen timestamps — identifiers and timing
-  the sync protocol already exposes). Account creation is not supported.
+  metadata, attachment bytes, or the account identity registry's public signing JWKs and
+  authorisation times (sealed in the row envelope). Can: record ids and relationships,
+  timestamps, note kinds, citation keys and years, the sign-in email, sync timing/IP, the
+  device-registry rows (random per-device client identity plus joined/last-seen timestamps
+  — identifiers and timing the sync protocol already exposes), and the account identity
+  registry's pseudonymous row id — the same device id every operation frame already
+  carries in its plaintext routing header. Account creation is not supported.
 
 See [`docs/cloud-sync-beta.md`](cloud-sync-beta.md) for the full design note and the
 manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P8 ciphertext and
-mismatch-lock spike), `envelope.test.ts`, `keys.test.ts` (incl. fingerprints),
+mismatch-lock spike, plus the replicated-control-row gates),
+`accountDeviceIdentityStore.test.ts`, `accountDeviceIdentityRegistrar.test.ts`,
+`writerFrameVerifier.test.ts` (same-account trust and the two-source agreement rule),
+`frameIngestion.test.ts` (identity/operation orderings and the acknowledgement lock),
+`peerCatchUp.test.ts` (account-only identities refused at peer ingress),
+`envelope.test.ts`, `keys.test.ts` (incl. fingerprints),
 `errors.test.ts`, `keyMismatch.test.ts`, `keylessLock.test.ts`, `lockReason.test.ts`,
 `keylessGuard.test.ts`, `useCloudLockReason.test.tsx`,
 `recoveryCode.test.ts`, `setup.test.ts` (incl. adopt/erase, add-only publish, sign-in guard),
