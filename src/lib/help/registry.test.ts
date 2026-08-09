@@ -52,6 +52,14 @@ describe('help registry coverage', () => {
     expect(new Set(HELP_SLUGS).size).toBe(HELP_SLUGS.length);
   });
 
+  it('documents notebooks in the organising help area', () => {
+    expect(HELP_ARTICLES).toContainEqual(expect.objectContaining({
+      slug: 'notebooks',
+      category: 'organizing',
+      featureArea: 'organizing',
+    }));
+  });
+
   it('places every article inside exactly one of its category lists', () => {
     for (const article of HELP_ARTICLES) {
       const inCategory = getArticlesByCategory(article.category).some(

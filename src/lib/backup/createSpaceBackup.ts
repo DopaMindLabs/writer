@@ -31,7 +31,7 @@ export const createSpaceBackup = async (
     when,
     scope: spaceId,
     kind: options.kind ?? 'manual',
-    format: 'archive-v2',
+    format: 'archive-v3',
     size: blob.size,
     payload: blob,
     label: options.label,
@@ -42,4 +42,3 @@ export const createSpaceBackup = async (
   });
   return { backup, filename };
 };
-

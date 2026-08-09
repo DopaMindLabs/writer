@@ -16,5 +16,10 @@ export type {
 export type { NotebookClock, NotebookIdSource, NotebookStore } from './notebookStore';
 export { movePage, sortPages } from './pageOrder';
 export type { SafeVectorDocumentV1, SafeVectorPath } from './safeVector.types';
-export { serialiseSafeVectorSvg } from './safeVectorSerialisation';
+export {
+  parseSafeVectorBlob,
+  SAFE_VECTOR_DOCUMENT_MIME,
+  serialiseSafeVectorDocument,
+  serialiseSafeVectorSvg,
+} from './safeVectorSerialisation';
 export { parseSafeVectorDocument } from './safeVectorValidation';

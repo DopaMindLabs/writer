@@ -49,7 +49,7 @@ describe('Topbar', () => {
 
     it('should not render the inspector toggle on the citations route', () => {
       renderWithProviders(
-        <Topbar spaceId="s1" docId={null} spaceName="Test" mode="write" />,
+        <Topbar surface="citations" spaceId="s1" docId={null} spaceName="Test" mode="write" />,
         { initialEntries: ['/s/s1/citations'] },
       );
       expect(
@@ -88,6 +88,23 @@ describe('Topbar', () => {
       );
       expect(screen.queryByTestId('topbar-help')).not.toBeInTheDocument();
     });
+
+    it('shows a notebook breadcrumb without inheriting editor tools', () => {
+      renderWithProviders(
+        <Topbar
+          surface="notebook"
+          spaceId="s1"
+          docId={null}
+          docName="Research notes"
+          spaceName="Test"
+        />,
+        { initialEntries: ['/s/s1/notebooks/n1'] },
+      );
+      expect(screen.getByTestId('topbar-doc-name')).toHaveTextContent('Research notes');
+      expect(screen.queryByTestId('topbar-citations')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('focus-toggle')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('topbar-inspector-toggle')).not.toBeInTheDocument();
+    });
   });
 
   describe('citations trigger', () => {
@@ -103,7 +120,7 @@ describe('Topbar', () => {
 
     it('should render as a link to /s/:spaceId/citations when on /citations in focus mode', () => {
       renderWithProviders(
-        <Topbar spaceId="s1" docId={null} spaceName="Test" mode="focus" />,
+        <Topbar surface="citations" spaceId="s1" docId={null} spaceName="Test" mode="focus" />,
         { initialEntries: ['/s/s1/citations?focus=1'] },
       );
       const link = screen.getByTestId('topbar-citations');
@@ -266,6 +283,7 @@ describe('Topbar', () => {
     it('should hide the FocusToggle on /citations or when there is no docId and mode is not dump', () => {
       const { rerender } = renderWithProviders(
         <Topbar
+          surface="citations"
           spaceId="s1"
           docId="d1"
           docName="Sample"
@@ -306,6 +324,7 @@ describe('Topbar', () => {
 
       const { container: citationsContainer } = renderWithProviders(
         <Topbar
+          surface="citations"
           spaceId="s1"
           docId={null}
           spaceName="Test"

@@ -38,14 +38,15 @@
 | 4 | **Split view** | Two-pane layout with a keyboard-and-mouse resizable divider. Right pane can show another doc, the Brain Space, or Citations. |
 | 5 | **Brain Space** | A freeform visual canvas for unsorted notes. Multiple note kinds (Note, Char, Place, Lore, Question, Source, Claim, Figure, Todo, Loose End, Blank). Notes can be connected and linked to documents. |
 | 6 | **Citations** | Manual + BibTeX import (paste or `.bib` upload), tag-based search, bulk edit / bulk delete, `.bib` export. Available as a screen, a split-view pane, and a drawer. |
-| 7 | **Sidebar** | Per-space navigation: section list, doc list, a per-section ⋯ menu (add document, rename, delete), add section (on every template unless it sets `allowConfiguration: false`), drag / keyboard reordering of sections and documents, Brain Space link with unsorted-note count, settings cog. The Workshop section is protected from rename and delete. |
-| 8 | **Mobile nav** | Hamburger drawer on small viewports; a bottom **more** sheet whose App group (settings, about, help, what's new, accessibility, account, contact) is shared with the desktop Quick Settings menu so the two cannot drift; settings tabs reflow without horizontal overflow. On the settings shells the wordmark / tag badge is the "back to root" affordance (the SpaceRail's own home link is hidden on mobile). |
-| 9 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), a local **Profile** (display name + presence colour), plus Typography, Shortcuts, and Backups tabs. |
-| 10 | **Per-space settings** | General (name, tag), Sharing (coming soon), Template (coming soon), Members, Backups (manual `.md` snapshots + history + download), Danger Zone (delete with typed confirmation). |
-| 11 | **Persistence** | IndexedDB autosave (~600 ms debounce). Survives reload, route changes, browser restart. |
-| 12 | **Theming** | Four themes: light, dark, high-contrast light, high-contrast dark. Choice persists in `localStorage`. |
-| 13 | **Tours / onboarding** | Driver.js guided tours; auto-trigger on first visit; replay from help menu; per-tour completion tracked in `localStorage`. |
-| 14 | **i18n** | i18next scaffolding (currently English-only; namespaces: `common`, `chrome`, `screens`, `app`, `templates`). |
+| 7 | **Notebooks** | Space-scoped collections of photographed/imported pages under Workshop. Multiple pages can be added, browsed, reordered, rotated and deleted from a PDF-style page rail/viewer. |
+| 8 | **Sidebar** | Per-space navigation: section list, doc list, Workshop notebooks, a per-section ⋯ menu, add section, drag / keyboard reordering of sections and documents, Brain Space link with unsorted-note count, settings cog. The Workshop section is protected from rename and delete. |
+| 9 | **Mobile nav** | Hamburger drawer on small viewports; a bottom **more** sheet whose App group (settings, about, help, what's new, accessibility, account, contact) is shared with the desktop Quick Settings menu so the two cannot drift; settings tabs reflow without horizontal overflow. On the settings shells the wordmark / tag badge is the "back to root" affordance (the SpaceRail's own home link is hidden on mobile). |
+| 10 | **Global settings** | Editor preferences (floating toolbar toggle), Theme (Light / Dark / High Contrast), a local **Profile** (display name + presence colour), plus Typography, Shortcuts, and Backups tabs. |
+| 11 | **Per-space settings** | General (name, tag), Sharing (coming soon), Template (coming soon), Members, Backups (canonical archive snapshots + history + download/restore), Danger Zone (delete with typed confirmation). |
+| 12 | **Persistence** | IndexedDB persistence for documents and notebooks. Survives reload, route changes, browser restart. |
+| 13 | **Theming** | Four themes: light, dark, high-contrast light, high-contrast dark. Choice persists in `localStorage`. |
+| 14 | **Tours / onboarding** | Driver.js guided tours; auto-trigger on first visit; replay from help menu; per-tour completion tracked in `localStorage`. |
+| 15 | **i18n** | i18next scaffolding (currently English-only; namespaces: `common`, `chrome`, `screens`, `app`, `templates`). |
 
 ---
 
@@ -66,12 +67,18 @@
 | `/s/:spaceId/d/:docId/split` | Split | Two-pane view with right-pane picker. |
 | `/s/:spaceId/brain-space` | Brain Space | Visual note canvas. |
 | `/s/:spaceId/citations` | Citations | Full-page citations table. |
+| `/s/:spaceId/notebooks/:notebookId` | Notebook | Page rail and single-page notebook viewer; `?page=<pageId>` addresses the selected page. |
 | `/s/:spaceId/settings` | Space settings | Per-space configuration. |
 | `*` | Not Found | 404. |
 
 ### 3.2 Data model (Dexie tables)
 
-`Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `DocUpdate` (append-only CRDT payloads for collaborative editing; `Doc.body` stays the serialized read model), `Note` (state machine: `seed-prompt → seed-fetched → user`), `Connection`, `Annotation`, `Citation`, `Backup` (binary `payload: Blob`, discriminated by `format` — currently only `md-zip`), `Settings`, `HighlightPalette`, `Meta`.
+`Space`, `Section` (hierarchical via `parentSectionId`), `Doc`, `DocUpdate` (append-only CRDT payloads for collaborative editing; `Doc.body` stays the serialized read model), `Note` (state machine: `seed-prompt → seed-fetched → user`), `WriterNotebook`, `WriterNotebookPage`, `WriterNotebookAsset`, `Connection`, `Annotation`, `Citation`, `Backup` (binary `payload: Blob`; current restorable snapshots are `archive-v3`), `Settings`, `HighlightPalette`, `Meta`.
+
+Notebook domain types live in the standalone `writer-notebook/core` package and do not contain
+Writer concepts such as spaces, Dexie or replication. The Writer persistence rows add `spaceId`
+and replication metadata at the adapter boundary. `WriterNotebookAsset` owns bounded source,
+thumbnail and safe-vector blobs; a page stores asset ids rather than embedding binary data.
 
 The schema is declared in a single Dexie version, which includes the Writer Sync
 operation-protocol stores — `syncOperations` (the append-only journal of immutable
@@ -185,6 +192,44 @@ There are two restore paths, and they reach open editors differently.
 - **Revision restore** (from a document's own history) updates the mounted editor **in place**. A process-local editor registry maps the open document to a `restoreBody` handle; restore writes the pre-restore snapshot and the new body to Dexie, then replays the restored body through that handle. The replay is an ordinary (untagged) editor update, so it flows into the shared CRDT and every other open tab converges on the restored text. The document's editor must be mounted (it always is when restoring from its history).
 - **Space backup restore** (from `/settings`, where no editor is mounted) resets the document's CRDT: it clears the old update log and re-seeds a **fresh** lineage from the restored body. A same-origin BroadcastChannel then signals every tab with one of those documents open to **reload** — the editor remounts and loads the fresh seed, rather than keeping its now-stale in-memory `Y.Doc` and clobbering the restored body on its next autosave.
 
+#### 4.2.2 Notebooks
+
+Notebooks are space-scoped page collections owned by **Workshop**. The Workshop menu offers
+**New notebook** alongside its existing workspace action. Notebook rows sit above ordinary
+Workshop documents, show an accessible page count and support open, inline rename and destructive
+delete. Deleting an open notebook returns to `/s/:spaceId` after its pages and assets are removed.
+
+The notebook route is `/s/:spaceId/notebooks/:notebookId?page=<pageId>`. Reads verify both
+`notebookId` and `spaceId`; a notebook cannot be rendered through another space's route. Missing
+or unknown `page` values are replaced with the first valid page, while page selections update the
+query string so browser Back/Forward tracks them.
+
+**Page flow.** **Choose photos** accepts multiple image files; **Take photo** requests
+`capture="environment"` on browsers that honour the hint. The standalone browser package validates
+and orientation-normalises each image, strips upload metadata by re-encoding the decoded pixels,
+and derives a bounded thumbnail before Writer persists the page bundle. The desktop surface uses a
+vertical thumbnail rail and centred single-page viewer; on narrow screens the rail is horizontal.
+Page actions rotate, move earlier/later and delete. After deletion, focus moves to the nearest
+surviving page, or to the add-page action when the notebook becomes empty.
+
+The original prepared source remains viewable. Safe-vector assets use a validated data model which
+is rendered into application-owned SVG elements; arbitrary uploaded SVG markup is never rendered.
+Automatic VTracer generation remains subject to the browser/WASM feasibility gate in § 8 and is
+not part of the currently verified page-import path.
+
+**Persistence and replication.** `writer-notebook/core` owns domain invariants and a storage port;
+`src/lib/writerNotebookIntegration` adapts it to the three Writer Dexie tables, space scoping and
+replication metadata. The notebook tables are classified as encrypted, space-scoped synced content;
+the asset table declares `blob` as its chunked field. Table-generic binary transfer is a shared Writer
+Sync prerequisite deliberately outside this branch, so cross-provider notebook-asset transfer is not
+claimed complete here. Transient image-processing state is never persisted or replicated.
+
+*Covered by:* `WriterNotebook.test.tsx`, `WriterNotebookLink.test.tsx`,
+`NotebookPageRail.test.tsx`, `NotebookPageViewer.test.tsx`, `NotebookPageMenu.test.tsx`,
+`NotebookPageControls.test.tsx`, `useNotebookPageActions.test.ts`,
+`useNotebookPageSelection.test.ts`, `writerNotebookStore.test.ts` and the `writer-notebook`
+package tests. Notebook E2E coverage is intentionally deferred in this branch.
+
 ---
 
 ### 4.3 View modes
@@ -289,7 +334,7 @@ A full citation manager scoped to each space. Available in three surfaces:
 The per-space navigation column.
 
 - **Header:** editable space title + settings cog (links to per-space settings).
-- **Sections:** grouped doc lists, each header carrying a **⋯ menu** (Add document, Rename, Delete…). Dragging is press-and-move on the header itself (long-press on touch) — there is no separate grip. A section's list also includes the docs of its subsections, flattened in — subsections render no header row of their own in the nav (the data model keeps the nesting; only the rendering is flat, so new docs are added at section level). Sections reorder among themselves by drag or keyboard; documents reorder within their section the same way. The Workshop section's menu offers only its add action, labelled **Add workspace** (the Workshop holds workspaces). Its Brain Space link carries the unsorted-note count aligned to the same trailing column as the document counts, reserving the (absent) kebab gutter.
+- **Sections:** grouped doc lists, each header carrying a **⋯ menu** (Add document, Rename, Delete…). Dragging is press-and-move on the header itself (long-press on touch) — there is no separate grip. A section's list also includes the docs of its subsections, flattened in — subsections render no header row of their own in the nav (the data model keeps the nesting; only the rendering is flat, so new docs are added at section level). Sections reorder among themselves by drag or keyboard; documents reorder within their section the same way. The Workshop menu offers **Add workspace** and **New notebook**. Its notebooks render beside Brain Space and before ordinary Workshop documents; each notebook row has a page count and rename/delete menu. Brain Space keeps its unsorted-note count aligned to the same trailing column as document counts.
 - **Doc row menu:** each document row has a **⋯ menu** (Rename, **Move to section**, Delete…) — revealed on row hover/focus on desktop, always visible on mobile. **Move to section** opens a searchable submenu of the space's top-level sections (current one ticked), gated on the template's `allowConfiguration`. Dragging is press-and-move on the row itself (long-press on touch), with no separate grip.
 - **Drag announcements:** dnd-kit's default id-based live region is hidden (portaled into an `aria-hidden` host so its `role="status"` never collides with the app's status announcers); a labelled `aria-live` announcer narrates each drag ("Picked up…", "Moved … to …") for assistive technology.
 - **Brain space link:** routes to `/s/:spaceId/brain-space`; shows the unsorted-note count and highlights when active.
@@ -313,6 +358,7 @@ Adapts to screen size and mode.
 | Citations button | Opens the citations drawer / panel. |
 | Mobile nav button | Hamburger; opens the sidebar drawer on mobile. |
 | Focus toggle | Enters / exits Focus mode. |
+| Notebook surface | Shows space/notebook context only; editor mode tabs, Citations, search, focus and inspector actions are omitted. Page controls live in the notebook toolbar. |
 
 *Covered by:* `Topbar.test.tsx`, `view-modes.spec.ts`, `editor.spec.ts`.
 
@@ -895,7 +941,7 @@ Reached via the cog in the sidebar header. The **back** link returns to the acti
 | **Sharing** | Coming soon | *"Per-space visibility and shared links"* placeholder. |
 | **Template** | Coming soon | Cannot change template after creation; placeholder explains. |
 | **Members** | Present | Component scaffold (no implementation). |
-| **Backups** | Active | Manual `.md`-zip snapshots scoped to this space. Persisted in IndexedDB and re-downloadable from the history table. See § 4.15. |
+| **Backups** | Active | Manual `archive-v3` snapshots scoped to this space. Persisted in IndexedDB, re-downloadable and restorable from the history table. See § 4.15. |
 | **Danger zone** | Active | Delete button stays disabled until the typed confirmation matches the space name. Deletion redirects to Home. |
 
 *Covered by:* `space-settings.spec.ts`, `SpaceSettings.test.tsx`.
@@ -906,6 +952,7 @@ Reached via the cog in the sidebar header. The **back** link returns to the acti
 
 - **Storage:** IndexedDB via Dexie. No network calls for user content.
 - **Autosave:** ~600 ms debounce from the last keystroke.
+- **Notebooks:** notebook metadata, pages and bounded source/thumbnail/vector assets are stored in the same space database; page-bundle writes and deletes are transactional.
 - **Survival:** Hard reload, route navigation, browser restart.
 - **Continue writing:** Home shows a *Continue writing* link to the most-recently-touched space if any exists.
 
@@ -943,15 +990,15 @@ i18next is wired in with namespaces `common`, `chrome`, `screens`, `app`, `templ
 
 ### 4.15 Backups
 
-Manual export of an entire space as a Markdown `.zip` archive, with a history of past snapshots kept in IndexedDB. Reached via **Space settings → Backups**.
+Manual export of an entire space as a canonical `.zip` archive with a human-readable Markdown projection, with a history of past snapshots kept in IndexedDB. Reached via **Space settings → Backups**.
 
-**v1 scope.** Manual snapshot only — no auto-snapshots, no cloud sync, no restore yet. Restore / import is the same surface and is on the roadmap (the per-file YAML frontmatter is stable to make round-tripping straightforward when it lands). Other export formats (LaTeX, HTML, PDF) are deferred; `Backup.format` is a discriminator (`'md-zip'` today) so future formats can co-exist in the same table.
+**Current scope.** Manual snapshots use `archive-v3`; a stored v3 snapshot can restore its space from the history table, and the canonical format is also the folder-sync/import boundary. `md-zip` remains a recognised legacy/non-restorable discriminator but no v2 archive compatibility layer is retained. Other export formats (LaTeX, HTML, PDF) are deferred.
 
 **Snapshot creation.** Clicking **+ snapshot now**:
 
-1. Reads a consistent snapshot of the space inside a single Dexie read transaction (spaces, sections, docs, notes, annotations, citations, connections, palettes).
+1. Reads a consistent snapshot of the space inside a single Dexie read transaction (spaces, sections, docs, Brain Space records, citations, palettes, notebooks, notebook pages and notebook assets).
 2. Builds a `.zip` in-memory with [`JSZip`](https://www.npmjs.com/package/jszip).
-3. Inserts a `Backup` row (`kind: 'manual'`, `format: 'md-zip'`, `payload: Blob`, `size`, `when`, `scope: spaceId`).
+3. Inserts a `Backup` row (`kind: 'manual'`, `format: 'archive-v3'`, `payload: Blob`, `size`, `when`, `scope: spaceId`).
 4. Triggers a browser download of the same blob via a temporary `<a download>`.
 
 **Doc body → Markdown.** Lexical-serialized doc bodies are hydrated into a headless editor (`@lexical/headless`) and run through `$convertToMarkdownString(TRANSFORMERS)` — the same transformer set used by the live editor, so headings, lists, links, code, and quotes round-trip with high fidelity. Plain-text seed bodies (not yet serialized) pass through unchanged.
@@ -968,10 +1015,20 @@ Manual export of an entire space as a Markdown `.zip` archive, with a history of
 ├── citations.md        # bibliography
 ├── connections.md      # note-to-note edge list
 ├── annotations.md      # highlights / comments per doc
-└── palette.md          # highlight palette slots
+├── palette.md          # highlight palette slots
+├── notebooks/          # readable notebook projection + prepared source pages
+├── records/            # canonical per-row JSON for lossless restore
+├── assets/notebooks/   # canonical notebook binary assets
+└── manifest.json       # archive version, scope and record counts
 ```
 
 Subsections nest under their parent section folder. Docs whose `sectionId` doesn't resolve land in `manuscript/_unsorted/`.
+
+Notebook records use `records/writerNotebooks/`, `records/writerNotebookPages/` and
+`records/writerNotebookAssets/`; binary data lives in `assets/notebooks/`, never as base64 JSON.
+Import remaps notebook/page/asset identities and their references. Restore replaces the existing
+notebook subtree transactionally. The parser validates ownership, asset kinds and resource ceilings,
+including safe-vector documents, before any rows are written.
 
 **History table.** A live-queried list of `Backup` rows for the current space, newest first. Each row exposes:
 
@@ -980,9 +1037,7 @@ Subsections nest under their parent section folder. Docs whose `sectionId` doesn
 | WHEN | `backup.when` | Relative time ("just now", "12 min ago", "3 h ago", "2 d ago", or ISO date for older entries) |
 | KIND | `backup.kind` | Currently always `manual` |
 | SIZE | `backup.size` | Human-readable (B / kB / MB) |
-| Actions | — | `↓ download` (re-downloads the stored blob) · `delete` (confirm dialog → row removed) |
-
-A disabled `↑ restore from file · soon` hint sits beside the snapshot button to telegraph the next step on this surface.
+| Actions | — | `restore` for `archive-v3` · `↓ download` (re-downloads the stored blob) · `delete` (confirm dialog → row removed) |
 
 **Storage cost.** Blobs sit inside IndexedDB on the `backups` object store. The `payload` field is not indexed (index spec: `'id, when, scope, kind'`) so changing its type to `Blob` required no change to the schema spec at all. Practical implication: many snapshots of a large space can accumulate quickly — there is no auto-prune in v1.
 
@@ -1055,8 +1110,8 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 ### 7.2 Unit / component (Vitest) — 60+ specs
 
 - **Screens:** `App`, `Write`, `Focus`, `Read`, `Split`, `Home`, `About`, `Templates`, `Citations`, `BrainSpace`, `Settings`, `SpaceSettings`, `NotFound`.
-- **Chrome:** `Topbar`, `Sidebar`, `SpaceRail`, `FocusRail`, `MobileNavDrawer`, `ModeToggle`, `PageNav`.
-- **Surfaces:** `WriteSurface`, `BrainSpaceCanvas`, `BrainSpaceNote`, `BrainSpaceDetailDrawer`, `CitationsPane`, `CitationsSidePanel`.
+- **Chrome:** `Topbar`, `Sidebar`, `WriterNotebookLink`, `SpaceRail`, `FocusRail`, `MobileNavDrawer`, `ModeToggle`, `PageNav`.
+- **Surfaces:** `WriteSurface`, `BrainSpaceCanvas`, `BrainSpaceNote`, `BrainSpaceDetailDrawer`, `CitationsPane`, `CitationsSidePanel`, notebook rail/viewer/toolbar/page actions and safe-vector renderer.
 - **Settings primitives:** `SettingRow`, `SettingsTabs`, `Chip`, `ComingSoonRow`.
 - **UI base (snapshots):** button, card, dialog, input, scroll-area, separator, tabs, tooltip, block-quote, dropdown-menu.
 - **Hooks:** `useCitations`, `useConnections`, `useDocuments`, `useNotes`, `useSpaces`, `useBackups`.
@@ -1064,7 +1119,11 @@ A single Zustand store (`useUI`) holds UI state. Persisted (via `localStorage`):
 - **DB:** `db` (Dexie schema), `seed`.
 - **Utilities:** `bibtex`, `formatting`, `doc-naming`, `ids`, `utils`, `templates`, `i18n`.
 - **Backup pipeline:** `lexicalToMarkdown`, `buildSpaceMarkdownZip`, `createSpaceBackup` (snapshot read, zip layout, frontmatter, headless Lexical → Markdown).
+- **Notebook package/integration:** standalone package boundary/consumer tests, browser image processing, Writer store adapter, archive/import/restore and space-cascade coverage.
 - **Theme / tours:** `ThemeProvider`, `tokens`, `HelpMenu`, `storage`, `useTour`, `useAutoTour`.
+
+Notebook E2E coverage is intentionally deferred for this branch; the notebook work is not claimed
+E2E-green until those Playwright flows are added and run.
 
 ---
 
@@ -1077,23 +1136,26 @@ These exist as scaffolding only — they are visible in the UI but not yet funct
 - **Space settings → Sharing** (per-space visibility, shared links).
 - **Space settings → Template** (change template after creation).
 - **Space settings → Members** (no implementation behind the tab).
-- **Backup restore / import** — disabled `↑ restore from file · soon` hint in the Backups tab; the format is stable, the reverse path is not built.
 - **Auto-snapshots and cloud sync** — Backups are manual-only in v1; no scheduled snapshots, no off-device replication.
-- **Other export formats** — LaTeX, HTML, PDF; `Backup.format` discriminator is in place but only `md-zip` ships.
+- **Notebook automatic vectorisation** — the safe-vector model, validation, rendering and safe SVG interchange boundary exist, but the VTracer gate is not cleared. As checked on 2026-08-08, upstream's current `@visioncortex/vtracer` package is built with `wasm-pack --target nodejs`; the separate browser webapp exposes an older DOM-coupled converter that looks up canvas/SVG elements by document id rather than accepting the required dedicated-worker pixel input. This checkout also has no Rust/Cargo/wasm-pack toolchain from which to generate and provenance-pin a browser artefact. No Node shim, hand-edited WASM glue, CDN artefact, CSP weakening or substitute vectoriser is introduced by this branch.
+- **Notebook binary replication** — notebook assets are classified for chunked Writer Sync transport, but table-generic binary transfer is a shared prerequisite intentionally excluded from this branch.
+- **Other export formats** — LaTeX, HTML and PDF remain deferred; current restorable space snapshots use `archive-v3`.
 - **Languages other than English** — i18n framework is wired but only `en` resources are shipped.
 
 ---
 
 ## 9. Glossary (for user docs)
 
-- **Space** — A self-contained writing project. Has its own sections, docs, notes, citations.
+- **Space** — A self-contained writing project. Has its own sections, docs, notebooks, notes and citations.
 - **Section** — A folder-like grouping of documents within a space. Templates define the default sections.
 - **Doc** — A single document edited in the Lexical editor.
 - **Brain Space** *(also: "dump")* — The freeform visual canvas of notes attached to a space.
 - **Note** — A unit on the Brain Space canvas. Has a *kind*, a *state*, optional connections, and an optional linked doc.
+- **Notebook** — A Workshop-owned, ordered collection of photographed or imported pages within a space. Distinct from a Brain Space Note.
+- **Notebook page** — One ordered image page in a Notebook, with prepared source/thumbnail assets and optional validated vector output.
 - **Connection** — A visual link between two Brain Space notes.
 - **Citation** — A bibliographic entry, BibTeX-style, scoped to a space.
 - **View mode** — Write, Focus, Read, or Split — chrome variants around the same document.
 - **SpaceRail / FocusRail** — Left-edge navigation. SpaceRail in normal modes; FocusRail (compact) in Focus mode.
 - **Template** — A starter layout (sections, seed docs, note kinds) applied when creating a new space.
-- **Backup** — A snapshot of a space at a point in time. Stored as a binary blob in IndexedDB and re-downloadable from the Backups tab. The `format` field discriminates between formats; today only `md-zip` (a `.zip` of per-doc Markdown files) ships.
+- **Backup** — A snapshot of a space at a point in time. Stored as a binary blob in IndexedDB and re-downloadable/restorable from the Backups tab. Current canonical snapshots use `archive-v3` with a human-readable Markdown projection.

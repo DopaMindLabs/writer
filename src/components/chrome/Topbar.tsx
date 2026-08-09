@@ -1,4 +1,4 @@
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Quote, Menu, Search, MoreHorizontal } from '@/components/libs/icons';
@@ -14,14 +14,18 @@ import { ModeTabs, FocusToggle, type Mode } from './ModeToggle';
 import { MobileNavDrawer } from './MobileNav';
 import { cn } from '@/lib/utils';
 
-interface TopbarProps {
+interface BaseTopbarProps {
   spaceId: string;
   docId: string | null;
   docName?: string;
   spaceName?: string;
-  mode: Mode;
   fallbackDocId?: string | null;
 }
+
+type TopbarProps =
+  | (BaseTopbarProps & { surface?: 'editor'; mode: Mode })
+  | (BaseTopbarProps & { surface: 'citations'; mode: Mode })
+  | (BaseTopbarProps & { surface: 'notebook'; mode?: never });
 
 interface DocBreadcrumbProps {
   docId: string | null;
@@ -266,22 +270,16 @@ const TopbarTools = (props: TopbarToolsProps) => {
   );
 };
 
-export const Topbar = ({
-  spaceId,
-  docId,
-  docName,
-  spaceName,
-  mode,
-  fallbackDocId,
-}: TopbarProps) => {
+export const Topbar = (props: TopbarProps) => {
+  const { spaceId, docId, docName, spaceName, fallbackDocId } = props;
   const { t } = useTranslation('chrome');
-  const location = useLocation();
   const [searchParams] = useSearchParams();
   const focus = searchParams.get('focus') === '1';
   const setMobileNavOpen = useUI((s) => s.setMobileNavOpen);
   const inspectorMode = useUI((s) => s.inspectorMode);
   const setInspectorMode = useUI((s) => s.setInspectorMode);
-  const onCitations = location.pathname.endsWith('/citations');
+  const onCitations = props.surface === 'citations';
+  const notebookSurface = props.surface === 'notebook';
 
   useEffect(() => {
     if (focus && inspectorMode !== 'none') setInspectorMode('none');
@@ -307,14 +305,16 @@ export const Topbar = ({
         focus={focus}
       />
       <div className="flex-1" />
-      <TopbarTools
-        spaceId={spaceId}
-        docId={docId}
-        mode={mode}
-        fallbackDocId={fallbackDocId}
-        focus={focus}
-        onCitations={onCitations}
-      />
+      {!notebookSurface && (
+        <TopbarTools
+          spaceId={spaceId}
+          docId={docId}
+          mode={props.mode}
+          fallbackDocId={fallbackDocId}
+          focus={focus}
+          onCitations={onCitations}
+        />
+      )}
       <MobileNavDrawer spaceId={spaceId} activeDocId={docId} />
     </header>
   );

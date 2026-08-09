@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   createNotebookSdk,
+  SAFE_VECTOR_DOCUMENT_MIME,
+  serialiseSafeVectorDocument,
   type Notebook,
   type NotebookAsset,
   type NotebookPage,
@@ -73,9 +75,29 @@ describe('a consumer outside Writer', () => {
       height: 1600,
     });
     await sdk.rotatePage(page.id, 90);
+    const vector = serialiseSafeVectorDocument({
+      version: 1,
+      width: 1200,
+      height: 1600,
+      paths: [{ d: 'M0 0 L1 1', fill: '#000' }],
+    });
+    await sdk.attachVector({
+      pageId: page.id,
+      vector: { blob: vector, mime: SAFE_VECTOR_DOCUMENT_MIME },
+      vectorisation: {
+        engine: 'vtracer',
+        engineVersion: '1.0.0-alpha.3',
+        preset: 'handwriting-v1',
+        presetVersion: 1,
+      },
+    });
 
     expect((await sdk.listNotebooks()).map(({ title }) => title)).toEqual(['Field notes']);
     expect((await sdk.listPages(notebook.id))[0]?.rotation).toBe(90);
     expect(await store.getAsset(page.sourceAssetId)).toMatchObject({ kind: 'source' });
+    expect(await store.getAsset((await store.getPage(page.id))?.vectorAssetId ?? '')).toMatchObject({
+      kind: 'vector',
+      mime: SAFE_VECTOR_DOCUMENT_MIME,
+    });
   });
 });

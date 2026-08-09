@@ -59,6 +59,11 @@ describe('FileInputTrigger', () => {
     expect(screen.getByTestId('trigger-input')).toBeDisabled();
   });
 
+  it('passes a typed camera capture hint to the hidden input', () => {
+    renderTrigger({ capture: 'environment', multiple: false });
+    expect(screen.getByTestId('trigger-input')).toHaveAttribute('capture', 'environment');
+  });
+
   it('open() clicks the hidden input when not disabled', async () => {
     const user = userEvent.setup();
     render(

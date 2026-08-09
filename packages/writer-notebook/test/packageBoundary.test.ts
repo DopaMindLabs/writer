@@ -2,7 +2,10 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const SRC = join(process.cwd(), 'packages/writer-notebook/src');
+const packageRoot = statSync(join(process.cwd(), 'src/core/index.ts'), { throwIfNoEntry: false })
+  ? process.cwd()
+  : join(process.cwd(), 'packages/writer-notebook');
+const SRC = join(packageRoot, 'src');
 
 const sourceFiles = (dir: string): string[] =>
   readdirSync(dir).flatMap((entry) => {

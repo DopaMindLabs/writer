@@ -11,6 +11,9 @@ export const deleteSpaceCascade = async (spaceId: string): Promise<void> => {
       db.docs,
       db.notes,
       db.noteAttachments,
+      db.writerNotebooks,
+      db.writerNotebookPages,
+      db.writerNotebookAssets,
       db.annotations,
       db.revisions,
       db.citations,
@@ -24,6 +27,9 @@ export const deleteSpaceCascade = async (spaceId: string): Promise<void> => {
     ],
     async () => {
       const docIds = await db.docs.where({ spaceId }).primaryKeys();
+      const notebookIds = await db.writerNotebooks.where({ spaceId }).primaryKeys();
+      const notebookPageIds = await db.writerNotebookPages.where({ spaceId }).primaryKeys();
+      const notebookAssetIds = await db.writerNotebookAssets.where({ spaceId }).primaryKeys();
       if (docIds.length > 0) {
         await db.annotations.where('docId').anyOf(docIds).delete();
         await db.revisions.where('docId').anyOf(docIds).delete();
@@ -38,6 +44,9 @@ export const deleteSpaceCascade = async (spaceId: string): Promise<void> => {
       await db.sections.where({ spaceId }).delete();
       await db.noteAttachments.where({ spaceId }).delete();
       await db.notes.where({ spaceId }).delete();
+      if (notebookAssetIds.length > 0) await db.writerNotebookAssets.bulkDelete(notebookAssetIds);
+      if (notebookPageIds.length > 0) await db.writerNotebookPages.bulkDelete(notebookPageIds);
+      if (notebookIds.length > 0) await db.writerNotebooks.bulkDelete(notebookIds);
       await db.citations.where({ spaceId }).delete();
       await db.connections.where({ spaceId }).delete();
       await db.palettes.where({ spaceId }).delete();

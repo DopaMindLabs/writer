@@ -17,6 +17,7 @@ describe('archive manifest', () => {
   it('builds a manifest with counts for every archived table', async () => {
     const snapshot = await readSpaceSnapshot('s1');
     const manifest = buildManifest(snapshot, WHEN);
+    expect(ARCHIVE_FORMAT_VERSION).toBe(3);
     expect(manifest.formatVersion).toBe(ARCHIVE_FORMAT_VERSION);
     expect(manifest.exportedAt).toBe(WHEN);
     expect(manifest.space).toEqual({ id: 's1', tag: 'TST', name: 'Test Space' });
@@ -31,6 +32,9 @@ describe('archive manifest', () => {
       revisions: 3,
       palettes: 1,
       docInspectorConfigs: 1,
+      writerNotebooks: 1,
+      writerNotebookPages: 1,
+      writerNotebookAssets: 3,
     });
   });
 
@@ -42,7 +46,7 @@ describe('archive manifest', () => {
 
   it('rejects other format versions with a clear message', async () => {
     const snapshot = await readSpaceSnapshot('s1');
-    const manifest = { ...buildManifest(snapshot, WHEN), formatVersion: 3 };
+    const manifest = { ...buildManifest(snapshot, WHEN), formatVersion: 2 };
     expect(() => parseManifest(manifest)).toThrow(/Unsupported archive format/);
   });
 

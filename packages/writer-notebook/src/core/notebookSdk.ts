@@ -10,6 +10,7 @@ import type {
 } from './notebook.types';
 import type { NotebookClock, NotebookIdSource, NotebookStore } from './notebookStore';
 import { movePage, sortPages } from './pageOrder';
+import { SAFE_VECTOR_DOCUMENT_MIME } from './safeVectorSerialisation';
 
 export interface NotebookSdkOptions {
   readonly store: NotebookStore;
@@ -45,8 +46,16 @@ const validTitle = (title: string, limits: NotebookLimits): string => {
   return trimmed;
 };
 
-const assertAsset = (input: NotebookAssetInput, maximum: number, kind: string): void => {
-  if (input.mime !== input.blob.type || !input.mime.startsWith('image/')) {
+const assertAsset = (
+  input: NotebookAssetInput,
+  maximum: number,
+  kind: NotebookAsset['kind'],
+): void => {
+  const expectedMime = kind === 'vector' ? SAFE_VECTOR_DOCUMENT_MIME : 'image/';
+  const supported =
+    input.mime === input.blob.type &&
+    (kind === 'vector' ? input.mime === expectedMime : input.mime.startsWith(expectedMime));
+  if (!supported) {
     throw new TypeError(`${kind} asset MIME does not match its Blob`);
   }
   if (input.blob.size <= 0 || input.blob.size > maximum) {
@@ -130,8 +139,8 @@ const addPage = async (
   const existing = await options.store.listPages(input.notebookId);
   if (existing.length >= limits.maxPagesPerNotebook) throw new RangeError('Notebook page limit reached');
   assertDimensions(input, limits);
-  assertAsset(input.source, limits.maxSourceBytes, 'Source');
-  assertAsset(input.thumbnail, limits.maxThumbnailBytes, 'Thumbnail');
+  assertAsset(input.source, limits.maxSourceBytes, 'source');
+  assertAsset(input.thumbnail, limits.maxThumbnailBytes, 'thumbnail');
   const now = options.clock.now();
   const pageId = options.ids.next();
   const sourceId = options.ids.next();
@@ -153,7 +162,7 @@ const attachVector = async (
   input: AttachVectorInput,
 ): Promise<NotebookPage> => {
   const current = await requirePage(options.store, input.pageId);
-  assertAsset(input.vector, limits.maxVectorBytes, 'Vector');
+  assertAsset(input.vector, limits.maxVectorBytes, 'vector');
   const now = options.clock.now();
   const assetId = current.vectorAssetId ?? options.ids.next();
   const page: NotebookPage = { ...current, vectorAssetId: assetId, vectorisation: input.vectorisation, updatedAt: now };

@@ -2,6 +2,7 @@ import { useRef, type ChangeEvent, type ReactNode } from 'react';
 
 export interface FileInputTriggerProps {
   accept?: string;
+  capture?: 'user' | 'environment';
   multiple?: boolean;
   disabled?: boolean;
   onPick: (files: File[]) => void;
@@ -11,6 +12,7 @@ export interface FileInputTriggerProps {
 
 export const FileInputTrigger = ({
   accept,
+  capture,
   multiple = false,
   disabled = false,
   onPick,
@@ -36,6 +38,7 @@ export const FileInputTrigger = ({
         ref={inputRef}
         type="file"
         accept={accept}
+        capture={capture}
         multiple={multiple}
         disabled={disabled}
         onChange={handleChange}

@@ -35,6 +35,7 @@ export const CitationsScreen = () => {
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
+          surface="citations"
           spaceId={spaceId}
           docId={null}
           docName={t('citations.title')}

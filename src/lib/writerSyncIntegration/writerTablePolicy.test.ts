@@ -71,7 +71,7 @@ describe('classification invariants', () => {
 });
 
 describe('derived sets match the established behaviour', () => {
-  it('derives the ten row-envelope content tables', () => {
+  it('derives the thirteen row-envelope content tables', () => {
     expect([...rowEnvelopeTables()].sort()).toEqual(
       [
         'annotations',
@@ -84,6 +84,9 @@ describe('derived sets match the established behaviour', () => {
         'revisions',
         'sections',
         'spaces',
+        'writerNotebookAssets',
+        'writerNotebookPages',
+        'writerNotebooks',
       ].sort(),
     );
   });
@@ -132,13 +135,17 @@ describe('derived sets match the established behaviour', () => {
     expect(policy?.operationJournal).toBe(false);
   });
 
-  it('chunks only the note-attachment blob, and nothing else yet', () => {
+  it('chunks the two synced binary-asset tables', () => {
     // revisions.payload stays fat-framed deliberately: an oversized revision is
     // skipped with a report rather than chunked — a recorded limit.
     expect(chunkedBlobFieldFor('noteAttachments')).toBe('blob');
+    expect(chunkedBlobFieldFor('writerNotebookAssets')).toBe('blob');
     const flagged = WRITER_TABLE_POLICIES.filter(
       (policy) => policy.chunkedBlobField !== undefined,
     );
-    expect(flagged.map((policy) => policy.table)).toEqual(['noteAttachments']);
+    expect(flagged.map((policy) => policy.table)).toEqual([
+      'noteAttachments',
+      'writerNotebookAssets',
+    ]);
   });
 });

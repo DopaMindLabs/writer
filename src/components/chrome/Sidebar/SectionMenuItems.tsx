@@ -7,6 +7,7 @@ interface SectionMenuItemsProps {
   /** The Workshop holds workspaces, so its add action is labelled accordingly. */
   isWorkshop: boolean;
   onAddDoc: (e: Event) => void;
+  onAddNotebook: (e: Event) => void;
   onRename: (e: Event) => void;
   onDelete: (e: Event) => void;
 }
@@ -22,6 +23,7 @@ export const SectionMenuItems = ({
   canModify,
   isWorkshop,
   onAddDoc,
+  onAddNotebook,
   onRename,
   onDelete,
 }: SectionMenuItemsProps) => {
@@ -34,6 +36,14 @@ export const SectionMenuItems = ({
       >
         {t(isWorkshop ? 'sidebar.sectionAddWorkspace' : 'sidebar.sectionAddDoc')}
       </DropdownMenuItem>
+      {isWorkshop && (
+        <DropdownMenuItem
+          data-testid={`sidebar-section-${sectionId}-add-notebook`}
+          onSelect={onAddNotebook}
+        >
+          {t('sidebar.sectionAddNotebook')}
+        </DropdownMenuItem>
+      )}
       {canModify && (
         <DropdownMenuItem
           data-testid={`sidebar-section-${sectionId}-rename`}

@@ -72,10 +72,10 @@ describe('BackupsHistoryTable', () => {
     expect(screen.queryByTestId('backup-row-b1-restore')).not.toBeInTheDocument();
   });
 
-  it('fires restore for archive-v2 backups', () => {
+  it('fires restore for archive-v3 backups', () => {
     const onRestore = vi.fn();
     const rows = [
-      { id: 'b1', when: Date.now(), kind: 'manual', size: 1, format: 'archive-v2' },
+      { id: 'b1', when: Date.now(), kind: 'manual', size: 1, format: 'archive-v3' },
     ] as unknown as Backup[];
     renderWithProviders(
       <BackupsHistoryTable

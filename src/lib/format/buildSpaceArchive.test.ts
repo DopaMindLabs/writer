@@ -41,6 +41,16 @@ describe('buildSpaceArchive', () => {
     expect(entries).toContain('records/revisions/rev-manual.json');
     expect(entries).toContain('records/palettes/pal1.json');
     expect(entries).toContain('records/docInspectorConfigs/s1.json');
+    expect(entries).toContain('records/writerNotebooks/notebook1.json');
+    expect(entries).toContain('records/writerNotebookPages/notebook-page1.json');
+    expect(entries).toContain('records/writerNotebookAssets/notebook-source1.json');
+    expect(entries).toContain('records/writerNotebookAssets/notebook-thumbnail1.json');
+    expect(entries).toContain('records/writerNotebookAssets/notebook-vector1.json');
+    expect(entries).toContain(
+      'assets/notebooks/notebook1/notebook-page1/notebook-source1.webp',
+    );
+    expect(entries).toContain('notebooks/field-notebook/index.md');
+    expect(entries).toContain('notebooks/field-notebook/page-001.webp');
 
     expect(entries).toContain('space.md');
     expect(entries).toContain('notes.md');
@@ -65,6 +75,19 @@ describe('buildSpaceArchive', () => {
     expect(record.assetPath).toBe('assets/notes/n1/sketch.png');
     const stored = await zip.file(record.assetPath)!.async('string');
     expect(stored).toBe(ATTACHMENT_BYTES);
+  });
+
+  it('stores notebook asset bytes outside their canonical JSON records', async () => {
+    const snapshot = await readSpaceSnapshot('s1');
+    const zip = await loadZip(await buildSpaceArchive(snapshot, WHEN));
+    const record = JSON.parse(
+      await zip.file('records/writerNotebookAssets/notebook-source1.json')!.async('string'),
+    ) as { assetPath: string; blob?: string };
+    expect(record.assetPath).toBe(
+      'assets/notebooks/notebook1/notebook-page1/notebook-source1.webp',
+    );
+    expect(record.blob).toBeUndefined();
+    expect(await zip.file(record.assetPath)!.async('string')).toBe('source-image');
   });
 
   it('buildSpaceArchiveFor returns blob, filename and snapshot for a space id', async () => {

@@ -11,6 +11,7 @@ export enum RouteName {
   DocSplit = 'docSplit',
   BrainSpace = 'brainSpace',
   Citations = 'citations',
+  WriterNotebook = 'writerNotebook',
   Help = 'help',
   HelpArticle = 'helpArticle',
 }
@@ -28,6 +29,7 @@ export const ROUTE_PATHS: Record<RouteName, string> = {
   [RouteName.DocSplit]: '/s/:spaceId/d/:docId/split',
   [RouteName.BrainSpace]: '/s/:spaceId/brain-space',
   [RouteName.Citations]: '/s/:spaceId/citations',
+  [RouteName.WriterNotebook]: '/s/:spaceId/notebooks/:notebookId',
   [RouteName.Help]: '/help',
   [RouteName.HelpArticle]: '/help/:slug',
 };
@@ -47,6 +49,8 @@ export const routes = {
     `/s/${spaceId}/d/${docId}/split`,
   brainSpace: (spaceId: string) => `/s/${spaceId}/brain-space`,
   citations: (spaceId: string) => `/s/${spaceId}/citations`,
+  writerNotebook: (spaceId: string, notebookId: string) =>
+    `/s/${encodeURIComponent(spaceId)}/notebooks/${encodeURIComponent(notebookId)}`,
   help: () => '/help',
   helpArticle: (slug: string, anchor?: string) =>
     `/help/${slug}${anchor ? `#${anchor}` : ''}`,

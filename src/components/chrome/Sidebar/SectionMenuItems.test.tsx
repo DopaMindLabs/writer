@@ -12,6 +12,7 @@ const setup = (
   over: Partial<React.ComponentProps<typeof SectionMenuItems>> = {},
 ) => {
   const onAddDoc = vi.fn();
+  const onAddNotebook = vi.fn();
   const onRename = vi.fn();
   const onDelete = vi.fn();
   renderWithProviders(
@@ -25,6 +26,7 @@ const setup = (
           canModify
           isWorkshop={false}
           onAddDoc={onAddDoc}
+          onAddNotebook={onAddNotebook}
           onRename={onRename}
           onDelete={onDelete}
           {...over}
@@ -32,7 +34,7 @@ const setup = (
       </DropdownMenuContent>
     </DropdownMenu>,
   );
-  return { onAddDoc, onRename, onDelete };
+  return { onAddDoc, onAddNotebook, onRename, onDelete };
 };
 
 const openMenu = async (user: ReturnType<typeof userEvent.setup>) => {
@@ -73,6 +75,17 @@ describe('SectionMenuItems', () => {
     expect(
       await screen.findByTestId('sidebar-section-sec1-add-doc'),
     ).toHaveTextContent('Add workspace');
+    expect(screen.getByTestId('sidebar-section-sec1-add-notebook')).toHaveTextContent(
+      'New notebook',
+    );
+  });
+
+  it('calls onAddNotebook from the Workshop action', async () => {
+    const user = userEvent.setup();
+    const { onAddNotebook } = setup({ isWorkshop: true });
+    await openMenu(user);
+    await user.click(await screen.findByTestId('sidebar-section-sec1-add-notebook'));
+    expect(onAddNotebook).toHaveBeenCalledOnce();
   });
 
   it('calls onAddDoc when the add item is chosen', async () => {

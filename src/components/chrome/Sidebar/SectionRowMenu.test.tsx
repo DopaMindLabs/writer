@@ -9,6 +9,7 @@ const workshop: Section = { ...sampleSection, id: 'sec-ws', label: 'Workshop' };
 
 const setup = (over: Partial<React.ComponentProps<typeof SectionRowMenu>> = {}) => {
   const onAddDoc = vi.fn();
+  const onAddNotebook = vi.fn();
   const onRename = vi.fn();
   renderWithProviders(
     <SectionRowMenu
@@ -18,11 +19,12 @@ const setup = (over: Partial<React.ComponentProps<typeof SectionRowMenu>> = {}) 
       canModify
       isWorkshop={false}
       onAddDoc={onAddDoc}
+      onAddNotebook={onAddNotebook}
       onRename={onRename}
       {...over}
     />,
   );
-  return { onAddDoc, onRename };
+  return { onAddDoc, onAddNotebook, onRename };
 };
 
 describe('SectionRowMenu', () => {
@@ -41,13 +43,16 @@ describe('SectionRowMenu', () => {
     expect(screen.getByTestId('sidebar-section-sec1-delete')).toBeInTheDocument();
   });
 
-  it('offers only Add workspace when the section is the Workshop', async () => {
+  it('offers Add workspace and New notebook when the section is the Workshop', async () => {
     const user = userEvent.setup();
     setup({ section: workshop, canModify: false, isWorkshop: true });
     await user.click(await screen.findByTestId('sidebar-section-sec-ws-menu'));
     const addItem = screen.getByTestId('sidebar-section-sec-ws-add-doc');
     expect(addItem).toBeInTheDocument();
     expect(addItem).toHaveTextContent('Add workspace');
+    expect(screen.getByTestId('sidebar-section-sec-ws-add-notebook')).toHaveTextContent(
+      'New notebook',
+    );
     expect(
       screen.queryByTestId('sidebar-section-sec-ws-rename'),
     ).not.toBeInTheDocument();

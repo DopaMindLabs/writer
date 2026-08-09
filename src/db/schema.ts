@@ -1,6 +1,7 @@
 import type { HighlightColor } from '@/theme/tokens';
 import type { DocStatus } from '@/lib/docInspector/status';
 import type { ReplicatedEntityMetadata } from 'writer-sync/core';
+import type { Notebook, NotebookAsset, NotebookPage } from 'writer-notebook/core';
 
 /**
  * Every synced content row carries {@link ReplicatedEntityMetadata}: a
@@ -120,6 +121,18 @@ export interface NoteAttachment extends ReplicatedEntityMetadata {
   createdAt: number;
 }
 
+export interface WriterNotebook extends Notebook, ReplicatedEntityMetadata {
+  spaceId: string;
+}
+
+export interface WriterNotebookPage extends NotebookPage, ReplicatedEntityMetadata {
+  spaceId: string;
+}
+
+export interface WriterNotebookAsset extends NotebookAsset, ReplicatedEntityMetadata {
+  spaceId: string;
+}
+
 /**
  * One bounded piece of an attachment's already-sealed ciphertext.
  *
@@ -181,7 +194,7 @@ export interface Revision extends ReplicatedEntityMetadata {
   meta?: Record<string, unknown>;
 }
 
-export type BackupFormat = 'md-zip' | 'archive-v2';
+export type BackupFormat = 'md-zip' | 'archive-v3';
 
 export interface Backup {
   id: string;

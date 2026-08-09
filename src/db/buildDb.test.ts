@@ -23,6 +23,7 @@ const UNSYNCED = [
   'docInspectorConfigs', 'meta', 'docUpdates',
   'syncInbox', 'syncTombstones', 'syncProviderBindings', 'trustedDevices',
   'spaces', 'sections', 'docs', 'notes', 'noteAttachments',
+  'writerNotebooks', 'writerNotebookPages', 'writerNotebookAssets',
   'citations', 'connections', 'palettes', 'annotations', 'revisions',
 ];
 

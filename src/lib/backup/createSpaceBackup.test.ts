@@ -15,7 +15,7 @@ describe('createSpaceBackup', () => {
     await db.notes.put(sampleNote);
   });
 
-  it('writes a Backup row with kind=manual, format=archive-v2, and a Blob payload', async () => {
+  it('writes a Backup row with kind=manual, format=archive-v3, and a Blob payload', async () => {
     const fixedWhen = Date.UTC(2026, 4, 16, 12, 0);
     const { backup, filename } = await createSpaceBackup(sampleSpace.id, {
       now: () => fixedWhen,
@@ -23,7 +23,7 @@ describe('createSpaceBackup', () => {
 
     expect(filename).toBe('test-space-2026-05-16-1200.zip');
     expect(backup.kind).toBe('manual');
-    expect(backup.format).toBe('archive-v2');
+    expect(backup.format).toBe('archive-v3');
     expect(backup.scope).toBe(sampleSpace.id);
     expect(backup.when).toBe(fixedWhen);
     expect(backup.payload).toBeInstanceOf(Blob);

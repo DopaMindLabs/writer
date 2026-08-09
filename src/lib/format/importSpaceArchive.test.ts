@@ -16,6 +16,10 @@ const WHEN = 1704067200000;
 const comparable = (snapshot: SpaceSnapshot): unknown => ({
   ...snapshot,
   attachments: snapshot.attachments.map((a) => ({ ...a, blob: undefined })),
+  writerNotebookAssets: snapshot.writerNotebookAssets.map((asset) => ({
+    ...asset,
+    blob: undefined,
+  })),
 });
 
 describe('importSpaceArchive', () => {
@@ -38,6 +42,8 @@ describe('importSpaceArchive', () => {
     const originalIds = new Set([
       's1', 'sec1', 'sec1a', 'd1', 'n1', 'n2', 'c1', 'att1', 'ann1', 'cit1',
       'pal1', 'rev-base', 'rev-auto', 'rev-manual',
+      'notebook1', 'notebook-page1', 'notebook-source1', 'notebook-thumbnail1',
+      'notebook-vector1',
     ]);
     const importedIds = [
       imported.space.id,
@@ -50,6 +56,9 @@ describe('importSpaceArchive', () => {
       ...imported.connections.map((r) => r.id),
       ...imported.revisions.map((r) => r.id),
       ...imported.palettes.map((r) => r.id),
+      ...imported.writerNotebooks.map((r) => r.id),
+      ...imported.writerNotebookPages.map((r) => r.id),
+      ...imported.writerNotebookAssets.map((r) => r.id),
     ];
     for (const id of importedIds) {
       expect(originalIds.has(id)).toBe(false);
@@ -66,6 +75,9 @@ describe('importSpaceArchive', () => {
     const sectionIds = new Set(s.sections.map((r) => r.id));
     const docIds = new Set(s.docs.map((r) => r.id));
     const noteIds = new Set(s.notes.map((r) => r.id));
+    const notebookIds = new Set(s.writerNotebooks.map((r) => r.id));
+    const notebookPageIds = new Set(s.writerNotebookPages.map((r) => r.id));
+    const notebookAssetIds = new Set(s.writerNotebookAssets.map((r) => r.id));
 
     const child = s.sections.find((r) => r.parentSectionId !== null);
     expect(child).toBeDefined();
@@ -85,6 +97,14 @@ describe('importSpaceArchive', () => {
     }
     expect(s.docInspectorConfig?.spaceId).toBe(spaceId);
     expect(await s.attachments[0].blob.text()).toBe(ATTACHMENT_BYTES);
+    expect(notebookIds.has(s.writerNotebookPages[0].notebookId)).toBe(true);
+    for (const asset of s.writerNotebookAssets) {
+      expect(notebookIds.has(asset.notebookId)).toBe(true);
+      expect(notebookPageIds.has(asset.pageId)).toBe(true);
+    }
+    expect(notebookAssetIds.has(s.writerNotebookPages[0].sourceAssetId)).toBe(true);
+    expect(notebookAssetIds.has(s.writerNotebookPages[0].thumbnailAssetId)).toBe(true);
+    expect(notebookAssetIds.has(s.writerNotebookPages[0].vectorAssetId!)).toBe(true);
   });
 
   it('files an archive of a shared space into the importer\'s private realm', async () => {
@@ -139,5 +159,8 @@ describe('importSpaceArchive', () => {
     expect(s.docs).toHaveLength(1);
     expect(s.notes).toHaveLength(2);
     expect(s.revisions).toHaveLength(3);
+    expect(s.writerNotebooks).toHaveLength(1);
+    expect(s.writerNotebookPages).toHaveLength(1);
+    expect(s.writerNotebookAssets).toHaveLength(3);
   });
 });

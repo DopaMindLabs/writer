@@ -20,10 +20,13 @@ import {
   type RevisionKind,
   type Section,
   type Space,
+  type WriterNotebook,
+  type WriterNotebookAsset,
+  type WriterNotebookPage,
 } from '@/db/schema';
 
 /**
- * Record codecs for the space archive format (v2). Parsers treat their input
+ * Record codecs for the space archive format (v3). Parsers treat their input
  * as untrusted (archives can come from anywhere) and validate every field via
  * invariant() before constructing a clean record object.
  */
@@ -33,6 +36,18 @@ export interface NoteAttachmentRecord extends ReplicatedEntityMetadata {
   noteId: string;
   spaceId: string;
   name: string;
+  mime: string;
+  size: number;
+  createdAt: number;
+  assetPath: string;
+}
+
+export interface WriterNotebookAssetRecord extends ReplicatedEntityMetadata {
+  id: string;
+  notebookId: string;
+  pageId: string;
+  spaceId: string;
+  kind: WriterNotebookAsset['kind'];
   mime: string;
   size: number;
   createdAt: number;
@@ -55,6 +70,26 @@ export const serializeNoteAttachment = (
   mime: attachment.mime,
   size: attachment.size,
   createdAt: attachment.createdAt,
+  assetPath,
+});
+
+export const serializeWriterNotebookAsset = (
+  asset: WriterNotebookAsset,
+  assetPath: string,
+): WriterNotebookAssetRecord => ({
+  accessScopeId: asset.accessScopeId,
+  createdBy: asset.createdBy,
+  updatedBy: asset.updatedBy,
+  mutationId: asset.mutationId,
+  logicalUpdatedAt: asset.logicalUpdatedAt,
+  id: asset.id,
+  notebookId: asset.notebookId,
+  pageId: asset.pageId,
+  spaceId: asset.spaceId,
+  kind: asset.kind,
+  mime: asset.mime,
+  size: asset.size,
+  createdAt: asset.createdAt,
   assetPath,
 });
 
@@ -147,7 +182,7 @@ const readEnum = <T extends string>(
 
 /**
  * The provider-neutral sync metadata every archived content record carries
- * (v2 archives serialise rows wholesale, so the fields are always present).
+ * (v3 archives serialise rows wholesale, so the fields are always present).
  * Validated as strictly as any other field: an archive is untrusted input.
  */
 const parseEntityMetadata = (
@@ -190,6 +225,11 @@ const CITATION_TYPES: readonly Citation['type'][] = [
 ];
 const REVISION_KINDS: readonly RevisionKind[] = ['auto', 'manual', 'baseline'];
 const INSPECTOR_TOGGLES: readonly InspectorToggle[] = ['on', 'off', 'inherit'];
+const NOTEBOOK_ASSET_KINDS: readonly WriterNotebookAsset['kind'][] = [
+  'source',
+  'thumbnail',
+  'vector',
+];
 
 export const parseSpaceRecord = (value: unknown): Space => {
   const raw = asRaw(value, 'space');
@@ -284,6 +324,74 @@ export const parseNoteAttachmentRecord = (
     size: readNumber(raw, 'size', 'noteAttachment'),
     createdAt: readNumber(raw, 'createdAt', 'noteAttachment'),
     assetPath: readString(raw, 'assetPath', 'noteAttachment'),
+  };
+};
+
+export const parseWriterNotebookRecord = (value: unknown): WriterNotebook => {
+  const raw = asRaw(value, 'writerNotebook');
+  return {
+    ...parseEntityMetadata(raw, 'writerNotebook'),
+    id: readString(raw, 'id', 'writerNotebook'),
+    spaceId: readString(raw, 'spaceId', 'writerNotebook'),
+    title: readString(raw, 'title', 'writerNotebook'),
+    createdAt: readNumber(raw, 'createdAt', 'writerNotebook'),
+    updatedAt: readNumber(raw, 'updatedAt', 'writerNotebook'),
+  };
+};
+
+const parsePageRotation = (value: unknown): WriterNotebookPage['rotation'] => {
+  if (value === 0 || value === 90 || value === 180 || value === 270) return value;
+  throw new TypeError('writerNotebookPage.rotation: expected 0, 90, 180, or 270');
+};
+
+const parseVectorisation = (
+  value: unknown,
+): NonNullable<WriterNotebookPage['vectorisation']> => {
+  const raw = asRaw(value, 'writerNotebookPage.vectorisation');
+  return {
+    engine: readString(raw, 'engine', 'writerNotebookPage.vectorisation'),
+    engineVersion: readString(raw, 'engineVersion', 'writerNotebookPage.vectorisation'),
+    preset: readString(raw, 'preset', 'writerNotebookPage.vectorisation'),
+    presetVersion: readNumber(raw, 'presetVersion', 'writerNotebookPage.vectorisation'),
+  };
+};
+
+export const parseWriterNotebookPageRecord = (value: unknown): WriterNotebookPage => {
+  const raw = asRaw(value, 'writerNotebookPage');
+  return {
+    ...parseEntityMetadata(raw, 'writerNotebookPage'),
+    id: readString(raw, 'id', 'writerNotebookPage'),
+    notebookId: readString(raw, 'notebookId', 'writerNotebookPage'),
+    spaceId: readString(raw, 'spaceId', 'writerNotebookPage'),
+    order: readNumber(raw, 'order', 'writerNotebookPage'),
+    sourceAssetId: readString(raw, 'sourceAssetId', 'writerNotebookPage'),
+    thumbnailAssetId: readString(raw, 'thumbnailAssetId', 'writerNotebookPage'),
+    vectorAssetId: readOptionalString(raw, 'vectorAssetId', 'writerNotebookPage'),
+    width: readNumber(raw, 'width', 'writerNotebookPage'),
+    height: readNumber(raw, 'height', 'writerNotebookPage'),
+    rotation: parsePageRotation(raw.rotation),
+    createdAt: readNumber(raw, 'createdAt', 'writerNotebookPage'),
+    updatedAt: readNumber(raw, 'updatedAt', 'writerNotebookPage'),
+    vectorisation:
+      raw.vectorisation === undefined ? undefined : parseVectorisation(raw.vectorisation),
+  };
+};
+
+export const parseWriterNotebookAssetRecord = (
+  value: unknown,
+): WriterNotebookAssetRecord => {
+  const raw = asRaw(value, 'writerNotebookAsset');
+  return {
+    ...parseEntityMetadata(raw, 'writerNotebookAsset'),
+    id: readString(raw, 'id', 'writerNotebookAsset'),
+    notebookId: readString(raw, 'notebookId', 'writerNotebookAsset'),
+    pageId: readString(raw, 'pageId', 'writerNotebookAsset'),
+    spaceId: readString(raw, 'spaceId', 'writerNotebookAsset'),
+    kind: readEnum(raw, 'kind', NOTEBOOK_ASSET_KINDS, 'writerNotebookAsset'),
+    mime: readString(raw, 'mime', 'writerNotebookAsset'),
+    size: readNumber(raw, 'size', 'writerNotebookAsset'),
+    createdAt: readNumber(raw, 'createdAt', 'writerNotebookAsset'),
+    assetPath: readString(raw, 'assetPath', 'writerNotebookAsset'),
   };
 };
 

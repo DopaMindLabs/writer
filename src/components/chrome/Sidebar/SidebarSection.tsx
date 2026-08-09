@@ -1,11 +1,13 @@
 import { isWorkshopSection } from '@/lib/sections';
 import type { Doc, Section } from '@/db/schema';
+import type { WriterNotebookSummary } from '@/hooks/useWriterNotebooks';
 import type { AddController, DragActivator } from './Sidebar.types';
 import { SectionHeader } from './SectionHeader';
 import { BrainSpaceLink } from './BrainSpaceLink';
 import { SortableDocList } from './SortableDocList';
 import { MaybeAddInput } from './MaybeAddInput';
 import { SectionEmpty } from './SectionEmpty';
+import { WriterNotebookLink } from './WriterNotebookLink';
 
 interface SidebarSectionProps {
   sec: Section;
@@ -14,9 +16,12 @@ interface SidebarSectionProps {
   activeDocId: string | null;
   onBrainSpace: boolean;
   notesCount: number;
+  notebooks: readonly WriterNotebookSummary[];
+  activeNotebookId: string | null;
   canManage: boolean;
   docHref: (docId: string) => string;
   startAdd: (sectionId: string, parentLabel: string, subLabel: string | null) => void;
+  onAddNotebook: () => void;
   add: AddController;
   dragActivator?: DragActivator;
 }
@@ -28,9 +33,12 @@ export const SidebarSection = ({
   activeDocId,
   onBrainSpace,
   notesCount,
+  notebooks,
+  activeNotebookId,
   canManage,
   docHref,
   startAdd,
+  onAddNotebook,
   add,
   dragActivator,
 }: SidebarSectionProps) => {
@@ -45,6 +53,7 @@ export const SidebarSection = ({
         containsActiveDoc={containsActiveDoc}
         canManage={canManage}
         onAdd={() => { startAdd(sec.id, sec.label, null); }}
+        onAddNotebook={onAddNotebook}
         dragActivator={dragActivator}
       />
       {isWorkshop && (
@@ -54,6 +63,14 @@ export const SidebarSection = ({
           count={notesCount}
         />
       )}
+      {isWorkshop && notebooks.map(({ notebook, pageCount }) => (
+        <WriterNotebookLink
+          key={notebook.id}
+          notebook={notebook}
+          pageCount={pageCount}
+          active={notebook.id === activeNotebookId}
+        />
+      ))}
       <SortableDocList
         docs={docs}
         activeDocId={activeDocId}

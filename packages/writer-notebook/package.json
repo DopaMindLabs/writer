@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Portable notebook domain and browser image-processing facade for Writer Notes.",
+  "description": "Portable notebook domain and browser image-processing facade for Writer.",
   "exports": {
     "./core": "./src/core/index.ts",
     "./browser": "./src/browser/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "TZ=UTC vitest run --root ."
+    "test": "TZ=UTC vitest run --root ../.. --config vite.config.ts packages/writer-notebook/test"
   }
 }

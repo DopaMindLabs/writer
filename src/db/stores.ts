@@ -22,6 +22,9 @@ export const STORES: Record<string, string> = {
   docUpdates: '++id, docId',
   notes: 'id, spaceId, kind, createdAt',
   noteAttachments: 'id, noteId, spaceId, [noteId+createdAt]',
+  writerNotebooks: 'id, spaceId',
+  writerNotebookPages: 'id, notebookId, spaceId',
+  writerNotebookAssets: 'id, notebookId, spaceId',
   annotations: 'id, docId, kind, createdAt',
   citations: 'id, spaceId, year, [spaceId+key], [spaceId+year]',
   connections:

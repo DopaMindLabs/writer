@@ -505,6 +505,9 @@ describe('buildSpaceMarkdownZipFor', () => {
       connections: [],
       palettes: [],
       revisions: [],
+      writerNotebooks: [],
+      writerNotebookPages: [],
+      writerNotebookAssets: [],
       docInspectorConfig: null,
     };
     const blob = await buildSpaceMarkdownZip(snapshot, WHEN);
@@ -549,6 +552,9 @@ describe('buildSpaceMarkdownZipFor', () => {
       connections: [],
       palettes: [],
       revisions: [],
+      writerNotebooks: [],
+      writerNotebookPages: [],
+      writerNotebookAssets: [],
       docInspectorConfig: null,
     };
 
@@ -585,6 +591,9 @@ describe('buildSpaceMarkdownZipFor', () => {
       connections: [],
       palettes: [],
       revisions: [],
+      writerNotebooks: [],
+      writerNotebookPages: [],
+      writerNotebookAssets: [],
       docInspectorConfig: null,
     };
 
@@ -635,6 +644,9 @@ describe('buildSpaceMarkdownZipFor', () => {
       connections: [],
       palettes: [],
       revisions: [],
+      writerNotebooks: [],
+      writerNotebookPages: [],
+      writerNotebookAssets: [],
       docInspectorConfig: null,
     };
 

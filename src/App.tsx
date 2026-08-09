@@ -26,6 +26,7 @@ import { ReadScreen } from '@/screens/space/Read';
 import { SplitScreen } from '@/screens/space/Split';
 import { BrainSpaceScreen } from '@/screens/space/BrainSpace';
 import { CitationsScreen } from '@/screens/space/Citations';
+import { WriterNotebookScreen } from '@/screens/space/WriterNotebook';
 import { TemplatesScreen } from '@/screens/global/Templates';
 import { HelpScreen } from '@/screens/global/Help';
 import { NotFoundScreen } from '@/screens/global/NotFound';
@@ -58,6 +59,7 @@ const router = createAppRouter([
       { path: ROUTE_PATHS[RouteName.DocSplit], element: <SplitScreen /> },
       { path: ROUTE_PATHS[RouteName.BrainSpace], element: <BrainSpaceScreen /> },
       { path: ROUTE_PATHS[RouteName.Citations], element: <CitationsScreen /> },
+      { path: ROUTE_PATHS[RouteName.WriterNotebook], element: <WriterNotebookScreen /> },
       { path: '*', element: <NotFoundScreen /> },
     ],
   },

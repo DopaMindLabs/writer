@@ -51,4 +51,11 @@ describe('useTabItems', () => {
     );
     expect(result.current.map((item) => String(item.key))).not.toContain('split');
   });
+
+  it('does not classify a notebook route as Write', () => {
+    const { result } = renderHook(() =>
+      useTabItems({ spaceId: 's1', docId: 'd1' }),
+    );
+    expect(byKey(result.current).write.match?.('/s/s1/notebooks/notebook-1')).toBe(false);
+  });
 });

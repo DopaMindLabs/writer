@@ -913,6 +913,33 @@
     "mobileNote": "The canvas needs a mouse or trackpad.",
     "openInWrite": "Open in Write →"
   },
+  "notebook": {
+    "choosePhotos": "Choose photos",
+    "takePhoto": "Take photo",
+    "emptyTitle": "No pages yet",
+    "emptyBody": "Add a photo or choose several images to start this notebook.",
+    "processing": "Preparing notebook pages…",
+    "importError": "Could not add the selected photo",
+    "pageUnavailable": "This notebook page image is unavailable.",
+    "loading": "Loading notebook…",
+    "pageRail": "Notebook pages",
+    "pagePosition": "Page {{current}} of {{total}}",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "pageActions": "Page actions",
+    "rotateClockwise": "Rotate clockwise",
+    "moveEarlier": "Move earlier",
+    "moveLater": "Move later",
+    "deletePage": "Delete page",
+    "deletePageTitle": "Delete page?",
+    "deletePageDescription": "The page and its stored image assets will be permanently deleted.",
+    "cancel": "Cancel",
+    "originalView": "Original",
+    "vectorView": "Vector",
+    "vectorPage": "Page {{page}} vector",
+    "vectorInvalid": "The stored vector page could not be validated. The original image is still available.",
+    "pageActionError": "Could not update this notebook page"
+  },
   "brainSpace": {
     "canvas": {
       "emptyTitle": "start dumping",
