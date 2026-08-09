@@ -105,6 +105,25 @@ test('a note with a linked doc shows the external link icon on the card', async 
   await expect(note.locator('[data-testid$="-doc-link"]')).toBeVisible();
 });
 
+test('the doc-link icon on a linked note navigates to its document', async ({
+  page,
+}) => {
+  await gotoDump(page);
+
+  await page.getByTestId('brain-canvas-tool-question').click();
+  await expect(noteCards(page)).toHaveCount(1);
+  const note = noteCards(page).last();
+  await note.hover();
+  await note.locator('[data-testid$="-open-details"]').click();
+  await page.getByTestId('brain-detail-drawer-linked-doc').selectOption({ index: 1 });
+  await page.getByTestId('brain-detail-drawer-close').click();
+
+  await note.hover();
+  await note.locator('[data-testid$="-doc-link"]').click();
+  await expect(page).toHaveURL(/#\/s\/[^/]+\/d\/[^/?#]+/);
+  await expect(page.locator('[aria-label="Document body"]')).toBeVisible();
+});
+
 test('closes the context menu on a click elsewhere and on Escape', async ({
   page,
 }) => {

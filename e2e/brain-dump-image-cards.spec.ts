@@ -154,6 +154,39 @@ test('an existing title opens back into its editor from the card', async ({
   await expect(card.locator('[data-testid$="-title"]')).toHaveText('First words');
 });
 
+test('an image card takes a title, and its drop zone opens the file picker', async ({
+  page,
+}) => {
+  await gotoDump(page);
+
+  await page.getByTestId('brain-canvas-tool-image').click();
+  const card = lastCard(page);
+
+  // The drop zone button itself opens the native picker; feed it through the
+  // file-chooser rather than the hidden input.
+  const chooser = page.waitForEvent('filechooser');
+  await card.locator('[data-testid$="-image-dropzone"]').click();
+  await (await chooser).setFiles(pngPayload('picked.png'));
+  await expect(card.locator('[data-testid$="-image-primary"]')).toBeVisible();
+
+  // A second picture through the card's add-image button, same route.
+  await card.hover();
+  const addChooser = page.waitForEvent('filechooser');
+  await card.locator('[data-testid$="-add-image"]').click();
+  await (await addChooser).setFiles(pngPayload('added.png'));
+  await expect(card.locator('[data-testid$="-open"]')).toHaveCount(1);
+
+  // Image cards carry titles too, editable in place like any other note.
+  await card.hover();
+  await card.locator('[data-testid$="-add-title"]').click();
+  await card.locator('[data-testid$="-title-input"]').fill('Captioned');
+  await card.locator('[data-testid$="-title-input"]').press('Enter');
+  await expect(card.locator('[data-testid$="-title"]')).toHaveText('Captioned');
+  await card.locator('[data-testid$="-title"]').click();
+  await card.locator('[data-testid$="-title-input"]').press('Escape');
+  await expect(card.locator('[data-testid$="-title"]')).toHaveText('Captioned');
+});
+
 test('pages between two pictures in the viewer', async ({ page }) => {
   await gotoDump(page);
 
