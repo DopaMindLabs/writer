@@ -119,6 +119,33 @@ test.describe('account device identity registry', () => {
     expect(serialised).not.toContain('"crv"');
     expect(serialised).not.toContain('"x"');
 
+    // The provider's own outbound queue carries the same ciphertext and none of
+    // the identity: what replicates is an envelope, not a signing key.
+    const queued = await page.evaluate(async () => {
+      const appDb = (window as unknown as { db?: { name?: string } }).db;
+      const request = indexedDB.open(appDb?.name ?? 'lipsum');
+      const database = await new Promise<IDBDatabase>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      const store = '$accountDeviceIdentities_mutations';
+      if (!database.objectStoreNames.contains(store)) {
+        database.close();
+        return null;
+      }
+      const read = database.transaction(store, 'readonly').objectStore(store).getAll();
+      const rows = await new Promise<unknown[]>((resolve, reject) => {
+        read.onsuccess = () => resolve(read.result);
+        read.onerror = () => reject(read.error);
+      });
+      database.close();
+      return JSON.stringify(rows);
+    });
+    if (queued !== null) {
+      expect(queued).not.toContain('P-256');
+      expect(queued).not.toContain('"crv"');
+    }
+
     // The same row opens for the device that sealed it: the identity is
     // confidential, not lost. This is the read every trust decision depends on.
     const opened = await page.evaluate(async (id) => {
@@ -225,6 +252,78 @@ test.describe('account device identity registry', () => {
       return (await appDb?.accountDeviceIdentities?.get(id)) ?? null;
     }, planted);
     expect(read).toBeNull();
+  });
+
+  test('an id already occupied by something unreadable is never overwritten', async ({
+    page,
+  }) => {
+    await setUpOnCleanDevice(page);
+    await settleAccountState(page);
+    await expect.poll(async () => (await storedIdentityRows(page)).length).toBe(1);
+    const ownId = String((await storedIdentityRows(page))[0].id);
+
+    // Replace this device's own record with an unsealed squat on the same id —
+    // a provider that got there first. The registrar must neither read it as
+    // its own identity nor overwrite it: an occupied id it cannot prove is a
+    // fail-closed conflict, not a slot to reclaim.
+    await page.evaluate(async (id) => {
+      const appDb = (window as unknown as { db?: { name?: string } }).db;
+      const request = indexedDB.open(appDb?.name ?? 'lipsum');
+      const database = await new Promise<IDBDatabase>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      const tx = database.transaction('accountDeviceIdentities', 'readwrite');
+      tx.objectStore('accountDeviceIdentities').put({
+        id,
+        accessScopeId: 'account',
+        deviceId: 'squatter',
+        publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'squat', y: 'squat' },
+        authorisedAt: 1,
+      });
+      await new Promise((resolve, reject) => {
+        tx.oncomplete = () => resolve(undefined);
+        tx.onerror = () => reject(tx.error);
+      });
+      database.close();
+    }, ownId);
+
+    // Drive an eligible registrar pass over the squatted id.
+    await page.getByTestId('cloud-forget').click();
+    const keylessUnlock = page.getByTestId('cloud-keyless-locked');
+    await expect(keylessUnlock).toBeVisible();
+    await keylessUnlock.getByRole('button', { name: /unlock/i }).click();
+    await page.getByTestId('unlock-input').fill(PASSPHRASE);
+    await page.getByTestId('unlock-submit').click();
+    await expect(page.getByTestId('passphrase-unlock-dialog')).toHaveCount(0);
+
+    const rows = await storedIdentityRows(page);
+    expect(rows).toHaveLength(1);
+    // Untouched: still the squatter's plaintext, never resealed under this
+    // device's key and never replaced by its own record.
+    expect(rows[0].$lipsumCipher).toBeUndefined();
+    expect(rows[0].deviceId).toBe('squatter');
+  });
+
+  test('a P2P-only Writer has no account registry at all', async ({ page }) => {
+    // The registry is cloud-only. Without the beta flag the table is absent,
+    // and every consumer must keep working — frame verification included.
+    await page.goto('/?cloud-sync=off&reseed=1#/');
+    await expect(page.getByRole('link', { name: /Continue writing/i })).toBeVisible();
+
+    const stores = await page.evaluate(async () => {
+      const appDb = (window as unknown as { db?: { name?: string } }).db;
+      const request = indexedDB.open(appDb?.name ?? 'lipsum');
+      const database = await new Promise<IDBDatabase>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      const names = Array.from(database.objectStoreNames);
+      database.close();
+      return names;
+    });
+    expect(stores).not.toContain('accountDeviceIdentities');
+    expect(stores).toContain('syncOperations');
   });
 
   test('a keyless device publishes no identity at all', async ({ page }) => {
