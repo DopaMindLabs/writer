@@ -126,14 +126,27 @@ test.describe('account device identity registry', () => {
     await expect.poll(async () => (await storedIdentityRows(page)).length).toBe(1);
     const published = JSON.stringify((await storedIdentityRows(page))[0].$lipsumCipher);
 
-    // A later load must leave the record exactly as it found it. A re-seal
-    // would mint a fresh IV, so byte-identical ciphertext is what proves no
-    // second write — and no second write is what keeps the registry out of a
-    // write/sync/write loop.
-    await settleAccountState(page);
+    // Forget the key and unlock again with the passphrase — the same device,
+    // back through the account's now-published escrow. That re-run finds its
+    // own record and must leave it exactly as it was: a re-seal would mint a
+    // fresh IV, so byte-identical ciphertext is what proves no second write,
+    // and no second write is what keeps the registry out of a write/sync/write
+    // loop.
+    await page.getByTestId('cloud-forget').click();
+    // Signed in without a key, the presence-gated keyless section is the single
+    // source of key actions, and the account escrow this device published is
+    // what it offers to unlock against.
+    const keylessUnlock = page.getByTestId('cloud-keyless-locked');
+    await expect(keylessUnlock).toBeVisible();
+    await keylessUnlock.getByRole('button', { name: /unlock/i }).click();
+    await page.getByTestId('unlock-input').fill(PASSPHRASE);
+    await page.getByTestId('unlock-submit').click();
+    await expect(page.getByTestId('passphrase-unlock-dialog')).toHaveCount(0);
 
+    await expect
+      .poll(async () => (await storedIdentityRows(page)).length)
+      .toBe(1);
     const rows = await storedIdentityRows(page);
-    expect(rows).toHaveLength(1);
     expect(JSON.stringify(rows[0].$lipsumCipher)).toBe(published);
   });
 
