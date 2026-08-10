@@ -48,6 +48,12 @@ describe('parseSpaceArchive', () => {
     expect(archive.revisions).toEqual(expect.arrayContaining(snapshot.revisions));
     expect(archive.palettes).toEqual(snapshot.palettes);
     expect(archive.docInspectorConfig).toEqual(snapshot.docInspectorConfig);
+    expect(archive.writerNotebooks).toEqual(snapshot.writerNotebooks);
+    expect(archive.writerNotebookPages).toEqual(snapshot.writerNotebookPages);
+    expect(archive.writerNotebookAssets).toHaveLength(3);
+    const source = archive.writerNotebookAssets.find(({ kind }) => kind === 'source');
+    expect(source).toBeDefined();
+    expect(await source!.blob.text()).toBe('source-image');
 
     expect(archive.attachments).toHaveLength(1);
     const attachment = archive.attachments[0];
@@ -167,6 +173,20 @@ describe('parseSpaceArchive', () => {
     await expect(parseSpaceArchive(tampered)).rejects.toThrow(
       /references a missing doc/,
     );
+  });
+
+  it('rejects notebook pages that reference a missing notebook', async () => {
+    const snapshot = await readSpaceSnapshot('s1');
+    const tampered = await rebuildWith(
+      await buildSpaceArchive(snapshot, WHEN),
+      (zip) => {
+        zip.file(
+          'records/writerNotebookPages/notebook-page1.json',
+          JSON.stringify({ ...snapshot.writerNotebookPages[0], notebookId: 'missing' }),
+        );
+      },
+    );
+    await expect(parseSpaceArchive(tampered)).rejects.toThrow(/missing notebook/);
   });
 
   it('rejects truncated archives whose record counts disagree with the manifest', async () => {

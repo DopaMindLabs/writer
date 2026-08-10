@@ -46,6 +46,11 @@ const comparable = (snapshot: SpaceSnapshot): unknown => {
     connections: snapshot.connections.map(content),
     palettes: snapshot.palettes.map(content),
     revisions: snapshot.revisions.map(content),
+    writerNotebooks: snapshot.writerNotebooks.map(content),
+    writerNotebookPages: snapshot.writerNotebookPages.map(content),
+    writerNotebookAssets: snapshot.writerNotebookAssets.map((asset) =>
+      content({ ...asset, blob: undefined }),
+    ),
   };
 };
 
@@ -98,6 +103,7 @@ describe('restoreSpaceArchive', () => {
     const after = await readSpaceSnapshot('s1');
     expect(comparable(after)).toEqual(comparable(before));
     expect(await after.attachments[0].blob.text()).toBe(ATTACHMENT_BYTES);
+    expect(await after.writerNotebookAssets[0].blob.text()).toBe('source-image');
     expect(await db.citations.get('cit-extra')).toBeUndefined();
   });
 
@@ -128,7 +134,7 @@ describe('restoreSpaceArchive', () => {
     const backups = await db.backups.where('scope').equals('s1').toArray();
     expect(backups).toHaveLength(1);
     expect(backups[0].kind).toBe('snapshot');
-    expect(backups[0].format).toBe('archive-v2');
+    expect(backups[0].format).toBe('archive-v3');
     expect(backups[0].label).toBe('pre-restore');
 
     const preRestore = await parseSpaceArchive(backups[0].payload);

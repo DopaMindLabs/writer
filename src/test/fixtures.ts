@@ -14,10 +14,14 @@ import {
   type Revision,
   type Section,
   type Space,
+  type WriterNotebook,
+  type WriterNotebookAsset,
+  type WriterNotebookPage,
 } from '@/db/schema';
 import type { AccessScopeId } from 'writer-sync/core';
 import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import type { ReplicatedEntityMetadata } from 'writer-sync/core';
+import { serialiseSafeVectorDocument } from 'writer-notebook/core';
 
 export const FIXED_TIME = 1704067200000;
 
@@ -228,6 +232,84 @@ export const sampleAttachment: NoteAttachment = {
   createdAt: FIXED_TIME,
 };
 
+export const sampleWriterNotebook: WriterNotebook = {
+  ...sampleMetadata(),
+  id: 'notebook1',
+  spaceId: 's1',
+  title: 'Field notebook',
+  createdAt: FIXED_TIME,
+  updatedAt: FIXED_TIME,
+};
+
+const sampleVectorBlob = serialiseSafeVectorDocument({
+  version: 1,
+  width: 100,
+  height: 200,
+  paths: [{ d: 'M0 0L10 10', fill: '#111' }],
+});
+const SAMPLE_VECTOR_ASSET_ID = 'notebook-vector1';
+
+export const sampleWriterNotebookPage: WriterNotebookPage = {
+  ...sampleMetadata(),
+  id: 'notebook-page1',
+  notebookId: sampleWriterNotebook.id,
+  spaceId: 's1',
+  order: 0,
+  sourceAssetId: 'notebook-source1',
+  thumbnailAssetId: 'notebook-thumbnail1',
+  vectorAssetId: SAMPLE_VECTOR_ASSET_ID,
+  width: 100,
+  height: 200,
+  rotation: 0,
+  createdAt: FIXED_TIME,
+  updatedAt: FIXED_TIME,
+  vectorisation: {
+    engine: 'vtracer',
+    engineVersion: '1.0.0',
+    preset: 'handwriting-v1',
+    presetVersion: 1,
+  },
+};
+
+export const sampleWriterNotebookAssets: readonly WriterNotebookAsset[] = [
+  {
+    ...sampleMetadata(),
+    id: sampleWriterNotebookPage.sourceAssetId,
+    notebookId: sampleWriterNotebook.id,
+    pageId: sampleWriterNotebookPage.id,
+    spaceId: 's1',
+    kind: 'source',
+    mime: 'image/webp',
+    size: 12,
+    blob: new Blob(['source-image'], { type: 'image/webp' }),
+    createdAt: FIXED_TIME,
+  },
+  {
+    ...sampleMetadata(),
+    id: sampleWriterNotebookPage.thumbnailAssetId,
+    notebookId: sampleWriterNotebook.id,
+    pageId: sampleWriterNotebookPage.id,
+    spaceId: 's1',
+    kind: 'thumbnail',
+    mime: 'image/webp',
+    size: 9,
+    blob: new Blob(['thumbnail'], { type: 'image/webp' }),
+    createdAt: FIXED_TIME,
+  },
+  {
+    ...sampleMetadata(),
+    id: SAMPLE_VECTOR_ASSET_ID,
+    notebookId: sampleWriterNotebook.id,
+    pageId: sampleWriterNotebookPage.id,
+    spaceId: 's1',
+    kind: 'vector',
+    mime: sampleVectorBlob.type,
+    size: sampleVectorBlob.size,
+    blob: sampleVectorBlob,
+    createdAt: FIXED_TIME,
+  },
+];
+
 export const samplePalette: HighlightPalette = {
   ...sampleMetadata(),
   id: 'pal1',
@@ -277,6 +359,9 @@ export async function seedRichSpace() {
   await db.citations.put(sampleCitation);
   await db.palettes.put(samplePalette);
   await db.docInspectorConfigs.put(sampleInspectorConfig);
+  await db.writerNotebooks.put(sampleWriterNotebook);
+  await db.writerNotebookPages.put(sampleWriterNotebookPage);
+  await db.writerNotebookAssets.bulkPut([...sampleWriterNotebookAssets]);
 }
 
 export async function seedMultipleSpaces() {

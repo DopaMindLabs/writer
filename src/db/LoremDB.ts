@@ -6,6 +6,9 @@ import type {
   DocUpdate,
   Note,
   NoteAttachment,
+  WriterNotebook,
+  WriterNotebookPage,
+  WriterNotebookAsset,
   SyncAttachmentChunk,
   Annotation,
   Citation,
@@ -48,6 +51,9 @@ export class LoremDB extends Dexie {
   docUpdates!: Table<DocUpdate, number>;
   notes!: Table<Note, string>;
   noteAttachments!: Table<NoteAttachment, string>;
+  writerNotebooks!: Table<WriterNotebook, string>;
+  writerNotebookPages!: Table<WriterNotebookPage, string>;
+  writerNotebookAssets!: Table<WriterNotebookAsset, string>;
   annotations!: Table<Annotation, string>;
   citations!: Table<Citation, string>;
   connections!: Table<Connection, string>;

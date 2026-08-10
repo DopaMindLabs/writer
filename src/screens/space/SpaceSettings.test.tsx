@@ -475,7 +475,7 @@ describe('SpaceSettingsScreen', () => {
         when: FIXED_TIME,
         scope: 's1',
         kind: 'manual',
-        format: 'archive-v2',
+        format: 'archive-v3',
         size: 4,
         payload: new Blob(['junk']),
       });

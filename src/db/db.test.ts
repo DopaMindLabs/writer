@@ -42,6 +42,9 @@ describe('LoremDB schema', () => {
         'syncs',
         'syncConfigs',
         'trustedDevices',
+        'writerNotebookAssets',
+        'writerNotebookPages',
+        'writerNotebooks',
       ].sort(),
     );
   });

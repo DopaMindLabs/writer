@@ -39,9 +39,12 @@ describe('tableRules', () => {
     expect(connections.has('toNoteId')).toBe(true);
   });
 
-  it('lists exactly the ten synced content tables', () => {
-    expect([...SYNCED_TABLES]).toHaveLength(10);
+  it('lists exactly the thirteen row-envelope content tables', () => {
+    expect([...SYNCED_TABLES]).toHaveLength(13);
     expect(SYNCED_TABLES).toContain('noteAttachments');
+    expect(SYNCED_TABLES).toContain('writerNotebooks');
+    expect(SYNCED_TABLES).toContain('writerNotebookPages');
+    expect(SYNCED_TABLES).toContain('writerNotebookAssets');
     expect(SYNCED_TABLES).not.toContain('backups');
   });
 

@@ -15,7 +15,7 @@ export interface RestoreBackupController {
 }
 
 export const isRestorableBackup = (backup: Backup): boolean =>
-  backup.format === 'archive-v2';
+  backup.format === 'archive-v3';
 
 export const useRestoreBackup = (space: Space): RestoreBackupController => {
   const [pending, setPending] = useState<Backup | null>(null);

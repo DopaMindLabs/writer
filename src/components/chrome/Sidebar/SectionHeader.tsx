@@ -16,6 +16,7 @@ interface SectionHeaderProps {
   canManage: boolean;
   indented?: boolean;
   onAdd: () => void;
+  onAddNotebook: () => void;
   dragActivator?: DragActivator;
 }
 
@@ -26,6 +27,7 @@ export const SectionHeader = ({
   canManage,
   indented = false,
   onAdd,
+  onAddNotebook,
   dragActivator,
 }: SectionHeaderProps) => {
   const { t } = useTranslation('chrome');
@@ -67,6 +69,7 @@ export const SectionHeader = ({
         canModify={canModify}
         isWorkshop={isWorkshop}
         onAddDoc={onAdd}
+        onAddNotebook={onAddNotebook}
         onRename={rename.beginEdit}
       />
     </div>

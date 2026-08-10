@@ -11,6 +11,7 @@ const setup = (
   over: Partial<React.ComponentProps<typeof SectionHeader>> = {},
 ) => {
   const onAdd = vi.fn();
+  const onAddNotebook = vi.fn();
   renderWithProviders(
     <SectionHeader
       section={sampleSection}
@@ -18,10 +19,11 @@ const setup = (
       containsActiveDoc={false}
       canManage
       onAdd={onAdd}
+      onAddNotebook={onAddNotebook}
       {...over}
     />,
   );
-  return { onAdd };
+  return { onAdd, onAddNotebook };
 };
 
 describe('SectionHeader', () => {

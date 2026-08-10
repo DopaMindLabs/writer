@@ -17,7 +17,7 @@ const mdZipBackup = {
 } as Backup;
 
 describe('isRestorableBackup', () => {
-  it('accepts archive-v2 and rejects markdown-only backups', async () => {
+  it('accepts archive-v3 and rejects markdown-only backups', async () => {
     await seedRichSpace();
     const { backup } = await createSpaceBackup('s1');
     expect(isRestorableBackup(backup)).toBe(true);
@@ -97,7 +97,7 @@ describe('useRestoreBackup', () => {
   it('captures parse failures as an error message', async () => {
     const { result } = renderHook(() => useRestoreBackup(sampleSpace));
     act(() => {
-      result.current.request({ ...mdZipBackup, format: 'archive-v2' });
+      result.current.request({ ...mdZipBackup, format: 'archive-v3' });
     });
     await act(async () => {
       await result.current.handleConfirm();

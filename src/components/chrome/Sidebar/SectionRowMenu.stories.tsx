@@ -39,6 +39,7 @@ const meta = {
     canModify: true,
     isWorkshop: false,
     onAddDoc: () => {},
+    onAddNotebook: () => {},
     onRename: () => {},
   },
 } satisfies Meta<typeof SectionRowMenu>;

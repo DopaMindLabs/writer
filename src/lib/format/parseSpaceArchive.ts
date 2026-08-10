@@ -1,5 +1,10 @@
 import JSZip from 'jszip';
 import { invariant } from '@/lib/invariant';
+import {
+  DEFAULT_NOTEBOOK_LIMITS,
+  parseSafeVectorBlob,
+  SAFE_VECTOR_DOCUMENT_MIME,
+} from 'writer-notebook/core';
 import type {
   Annotation,
   Citation,
@@ -12,6 +17,9 @@ import type {
   Revision,
   Section,
   Space,
+  WriterNotebook,
+  WriterNotebookAsset,
+  WriterNotebookPage,
 } from '@/db/schema';
 import { MANIFEST_FILENAME, parseManifest, type ArchiveManifest } from './manifest';
 import { RECORDS_DIR } from './buildSpaceArchive';
@@ -27,7 +35,11 @@ import {
   parseRevisionRecord,
   parseSectionRecord,
   parseSpaceRecord,
+  parseWriterNotebookAssetRecord,
+  parseWriterNotebookPageRecord,
+  parseWriterNotebookRecord,
   type NoteAttachmentRecord,
+  type WriterNotebookAssetRecord,
 } from './codecs';
 
 export interface ParsedSpaceArchive {
@@ -42,6 +54,9 @@ export interface ParsedSpaceArchive {
   connections: Connection[];
   revisions: Revision[];
   palettes: HighlightPalette[];
+  writerNotebooks: WriterNotebook[];
+  writerNotebookPages: WriterNotebookPage[];
+  writerNotebookAssets: WriterNotebookAsset[];
   docInspectorConfig: DocInspectorConfig | null;
 }
 
@@ -87,6 +102,33 @@ const bindAttachmentBlobs = async (
 const parseAttachmentRecords = (zip: JSZip): Promise<NoteAttachmentRecord[]> =>
   parseTable(zip, 'noteAttachments', parseNoteAttachmentRecord);
 
+const notebookAssetMaximum = (kind: WriterNotebookAsset['kind']): number => {
+  if (kind === 'source') return DEFAULT_NOTEBOOK_LIMITS.maxSourceBytes;
+  if (kind === 'thumbnail') return DEFAULT_NOTEBOOK_LIMITS.maxThumbnailBytes;
+  return DEFAULT_NOTEBOOK_LIMITS.maxVectorBytes;
+};
+
+const bindNotebookAssetBlobs = async (
+  zip: JSZip,
+  records: readonly WriterNotebookAssetRecord[],
+): Promise<WriterNotebookAsset[]> => {
+  const out: WriterNotebookAsset[] = [];
+  for (const { assetPath, ...record } of records) {
+    invariant(assetPath.startsWith('assets/notebooks/'), 'Notebook asset path is outside its archive area');
+    const entry = zip.file(assetPath);
+    invariant(entry, `Archive is missing notebook asset ${assetPath}`);
+    const data = Uint8Array.from(await entry.async('uint8array'));
+    invariant(data.byteLength === record.size, `Notebook asset ${record.id} size does not match its record`);
+    invariant(data.byteLength > 0 && data.byteLength <= notebookAssetMaximum(record.kind), `Notebook asset ${record.id} exceeds its byte limit`);
+    if (record.kind === 'vector') invariant(record.mime === SAFE_VECTOR_DOCUMENT_MIME, `Notebook vector asset ${record.id} has an unsupported MIME type`);
+    else invariant(record.mime.startsWith('image/'), `Notebook image asset ${record.id} has an unsupported MIME type`);
+    const blob = new Blob([data], { type: record.mime });
+    if (record.kind === 'vector') await parseSafeVectorBlob(blob, DEFAULT_NOTEBOOK_LIMITS.safeVector);
+    out.push({ ...record, blob });
+  }
+  return out;
+};
+
 const COUNTED_TABLES: readonly (keyof ArchiveManifest['counts'])[] = [
   'sections',
   'docs',
@@ -98,6 +140,9 @@ const COUNTED_TABLES: readonly (keyof ArchiveManifest['counts'])[] = [
   'revisions',
   'palettes',
   'docInspectorConfigs',
+  'writerNotebooks',
+  'writerNotebookPages',
+  'writerNotebookAssets',
 ];
 
 const actualCounts = (
@@ -114,7 +159,66 @@ const actualCounts = (
   revisions: archive.revisions.length,
   palettes: archive.palettes.length,
   docInspectorConfigs: inspectorConfigCount,
+  writerNotebooks: archive.writerNotebooks.length,
+  writerNotebookPages: archive.writerNotebookPages.length,
+  writerNotebookAssets: archive.writerNotebookAssets.length,
 });
+
+const pageWithinNotebookLimits = (page: WriterNotebookPage): boolean => {
+  const pixels = page.width * page.height;
+  return Number.isInteger(page.order)
+    && page.order >= 0
+    && page.width > 0
+    && page.height > 0
+    && page.width <= DEFAULT_NOTEBOOK_LIMITS.maxImageDimension
+    && page.height <= DEFAULT_NOTEBOOK_LIMITS.maxImageDimension
+    && pixels <= DEFAULT_NOTEBOOK_LIMITS.maxDecodedPixels;
+};
+
+const checkNotebookLimits = (archive: ParsedSpaceArchive): void => {
+  const pagesPerNotebook = new Map<string, number>();
+  const bytesPerNotebook = new Map<string, number>();
+  for (const notebook of archive.writerNotebooks) {
+    const title = notebook.title.trim();
+    invariant(title.length > 0 && title.length <= DEFAULT_NOTEBOOK_LIMITS.maxTitleLength, `Notebook ${notebook.id} title exceeds its limit`);
+  }
+  for (const page of archive.writerNotebookPages) {
+    invariant(pageWithinNotebookLimits(page), `Notebook page ${page.id} exceeds its page limits`);
+    pagesPerNotebook.set(page.notebookId, (pagesPerNotebook.get(page.notebookId) ?? 0) + 1);
+  }
+  for (const asset of archive.writerNotebookAssets) {
+    bytesPerNotebook.set(asset.notebookId, (bytesPerNotebook.get(asset.notebookId) ?? 0) + asset.size);
+  }
+  invariant([...pagesPerNotebook.values()].every((count) => count <= DEFAULT_NOTEBOOK_LIMITS.maxPagesPerNotebook), 'Notebook page count exceeds its limit');
+  invariant([...bytesPerNotebook.values()].every((bytes) => bytes <= DEFAULT_NOTEBOOK_LIMITS.maxAggregateAssetBytes), 'Notebook aggregate asset size exceeds its limit');
+};
+
+const requirePageAsset = (input: {
+  readonly page: WriterNotebookPage;
+  readonly assets: ReadonlyMap<string, WriterNotebookAsset>;
+  readonly assetId: string;
+  readonly kind: WriterNotebookAsset['kind'];
+}): void => {
+  const asset = input.assets.get(input.assetId);
+  invariant(asset, `Notebook page ${input.page.id} references a missing ${input.kind} asset`);
+  invariant(asset.kind === input.kind && asset.pageId === input.page.id && asset.notebookId === input.page.notebookId, `Notebook page ${input.page.id} has an invalid ${input.kind} asset reference`);
+};
+
+const checkNotebookReferences = (archive: ParsedSpaceArchive): void => {
+  const notebooks = new Set(archive.writerNotebooks.map(({ id }) => id));
+  const pages = new Set(archive.writerNotebookPages.map(({ id }) => id));
+  const assets = new Map(archive.writerNotebookAssets.map((asset) => [asset.id, asset]));
+  for (const page of archive.writerNotebookPages) {
+    invariant(notebooks.has(page.notebookId), `Notebook page ${page.id} references a missing notebook`);
+    requirePageAsset({ page, assets, assetId: page.sourceAssetId, kind: 'source' });
+    requirePageAsset({ page, assets, assetId: page.thumbnailAssetId, kind: 'thumbnail' });
+    if (page.vectorAssetId) requirePageAsset({ page, assets, assetId: page.vectorAssetId, kind: 'vector' });
+    invariant(Boolean(page.vectorAssetId) === Boolean(page.vectorisation), `Notebook page ${page.id} vector provenance is inconsistent`);
+  }
+  for (const asset of archive.writerNotebookAssets) {
+    invariant(notebooks.has(asset.notebookId) && pages.has(asset.pageId), `Notebook asset ${asset.id} references a missing notebook or page`);
+  }
+};
 
 /**
  * A truncated zip can lose records that nothing cross-references (a citation,
@@ -147,6 +251,9 @@ const checkReferences = (archive: ParsedSpaceArchive): void => {
     ...archive.citations,
     ...archive.connections,
     ...archive.palettes,
+    ...archive.writerNotebooks,
+    ...archive.writerNotebookPages,
+    ...archive.writerNotebookAssets,
   ];
   for (const record of scoped) {
     invariant(
@@ -172,6 +279,8 @@ const checkReferences = (archive: ParsedSpaceArchive): void => {
       `Connection ${c.id} references a missing note`,
     );
   }
+  checkNotebookReferences(archive);
+  checkNotebookLimits(archive);
 };
 
 const loadZip = async (blob: Blob): Promise<JSZip> => {
@@ -228,6 +337,12 @@ export const parseSpaceArchive = async (
     connections: await parseTable(zip, 'connections', parseConnectionRecord),
     revisions: await parseTable(zip, 'revisions', parseRevisionRecord),
     palettes: await parseTable(zip, 'palettes', parsePaletteRecord),
+    writerNotebooks: await parseTable(zip, 'writerNotebooks', parseWriterNotebookRecord),
+    writerNotebookPages: await parseTable(zip, 'writerNotebookPages', parseWriterNotebookPageRecord),
+    writerNotebookAssets: await bindNotebookAssetBlobs(
+      zip,
+      await parseTable(zip, 'writerNotebookAssets', parseWriterNotebookAssetRecord),
+    ),
     docInspectorConfig: inspectorConfigs[0] ?? null,
   };
   checkCounts(archive, inspectorConfigs.length);

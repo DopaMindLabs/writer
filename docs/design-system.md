@@ -300,6 +300,7 @@ the hover-revealed `IconButton`).
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `accept` | string | — | `accept` attribute (e.g. the image MIME list). |
+| `capture` | `'user' \| 'environment'` | — | Optional camera-facing hint for direct capture on supported mobile browsers. |
 | `multiple` | boolean | `false` | Allow selecting more than one file. |
 | `disabled` | boolean | `false` | Disables the input; `open()` becomes a no-op (use at limits). |
 | `onPick` | `(files: File[]) => void` | — | Called with chosen files; the input resets after. |

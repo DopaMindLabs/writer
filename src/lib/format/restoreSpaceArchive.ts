@@ -18,6 +18,9 @@ const RESTORE_TABLES = [
   db.connections,
   db.revisions,
   db.palettes,
+  db.writerNotebooks,
+  db.writerNotebookPages,
+  db.writerNotebookAssets,
   db.docInspectorConfigs,
   db.docUpdates,
   db.meta,
@@ -25,6 +28,9 @@ const RESTORE_TABLES = [
 
 const deleteSpaceContent = async (spaceId: string): Promise<void> => {
   const docIds = await db.docs.where({ spaceId }).primaryKeys();
+  const notebookIds = await db.writerNotebooks.where({ spaceId }).primaryKeys();
+  const notebookPageIds = await db.writerNotebookPages.where({ spaceId }).primaryKeys();
+  const notebookAssetIds = await db.writerNotebookAssets.where({ spaceId }).primaryKeys();
   if (docIds.length > 0) {
     await db.annotations.where('docId').anyOf(docIds).delete();
     await db.revisions.where('docId').anyOf(docIds).delete();
@@ -41,6 +47,9 @@ const deleteSpaceContent = async (spaceId: string): Promise<void> => {
   await db.citations.where({ spaceId }).delete();
   await db.connections.where({ spaceId }).delete();
   await db.palettes.where({ spaceId }).delete();
+  if (notebookAssetIds.length > 0) await db.writerNotebookAssets.bulkDelete(notebookAssetIds);
+  if (notebookPageIds.length > 0) await db.writerNotebookPages.bulkDelete(notebookPageIds);
+  if (notebookIds.length > 0) await db.writerNotebooks.bulkDelete(notebookIds);
   await db.docInspectorConfigs.delete(spaceId);
 };
 
@@ -62,6 +71,9 @@ const putArchiveContent = async (archive: ParsedSpaceArchive): Promise<void> => 
   await db.connections.bulkPut(archive.connections.map(remintedMetadata));
   await db.revisions.bulkPut(archive.revisions.map(remintedMetadata));
   await db.palettes.bulkPut(archive.palettes.map(remintedMetadata));
+  await db.writerNotebooks.bulkPut(archive.writerNotebooks.map(remintedMetadata));
+  await db.writerNotebookPages.bulkPut(archive.writerNotebookPages.map(remintedMetadata));
+  await db.writerNotebookAssets.bulkPut(archive.writerNotebookAssets.map(remintedMetadata));
   if (archive.docInspectorConfig) {
     await db.docInspectorConfigs.put(archive.docInspectorConfig);
   }

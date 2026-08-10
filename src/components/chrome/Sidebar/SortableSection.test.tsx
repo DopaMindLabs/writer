@@ -33,9 +33,12 @@ const baseProps = (): ComponentProps<typeof SortableSection> => ({
   activeDocId: null,
   onBrainSpace: false,
   notesCount: 0,
+  notebooks: [],
+  activeNotebookId: null,
   canManage: true,
   docHref: (id: string) => `/s/s1/d/${id}`,
   startAdd: vi.fn(),
+  onAddNotebook: vi.fn(),
   add: idleAdd(),
 });
 

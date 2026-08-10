@@ -18,4 +18,10 @@ describe('STORES', () => {
       .map(([name]) => name);
     expect(autoIncrement).toEqual(['docUpdates']);
   });
+
+  it('keeps notebook indexes limited to ownership and lookup keys', () => {
+    expect(STORES.writerNotebooks).toBe('id, spaceId');
+    expect(STORES.writerNotebookPages).toBe('id, notebookId, spaceId');
+    expect(STORES.writerNotebookAssets).toBe('id, notebookId, spaceId');
+  });
 });

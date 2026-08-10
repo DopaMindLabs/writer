@@ -13,6 +13,9 @@ import type {
   Revision,
   Section,
   Space,
+  WriterNotebook,
+  WriterNotebookAsset,
+  WriterNotebookPage,
 } from '@/db/schema';
 import { lexicalJsonToMarkdown } from './lexicalToMarkdown';
 
@@ -27,6 +30,9 @@ export interface SpaceSnapshot {
   connections: Connection[];
   palettes: HighlightPalette[];
   revisions: Revision[];
+  writerNotebooks: WriterNotebook[];
+  writerNotebookPages: WriterNotebookPage[];
+  writerNotebookAssets: WriterNotebookAsset[];
   docInspectorConfig: DocInspectorConfig | null;
 }
 
@@ -41,8 +47,22 @@ const SNAPSHOT_TABLES = [
   db.connections,
   db.palettes,
   db.revisions,
+  db.writerNotebooks,
+  db.writerNotebookPages,
+  db.writerNotebookAssets,
   db.docInspectorConfigs,
 ];
+
+const readNotebookSnapshot = async (
+  spaceId: string,
+): Promise<Pick<SpaceSnapshot, 'writerNotebooks' | 'writerNotebookPages' | 'writerNotebookAssets'>> => {
+  const [writerNotebooks, writerNotebookPages, writerNotebookAssets] = await Promise.all([
+    db.writerNotebooks.where('spaceId').equals(spaceId).toArray(),
+    db.writerNotebookPages.where('spaceId').equals(spaceId).toArray(),
+    db.writerNotebookAssets.where('spaceId').equals(spaceId).toArray(),
+  ]);
+  return { writerNotebooks, writerNotebookPages, writerNotebookAssets };
+};
 
 export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot> => {
   return db.transaction('r', SNAPSHOT_TABLES, async () => {
@@ -78,6 +98,8 @@ export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot>
       const revisions = docIds.length
         ? await db.revisions.where('docId').anyOf(docIds).toArray()
         : [];
+      const { writerNotebooks, writerNotebookPages, writerNotebookAssets } =
+        await readNotebookSnapshot(spaceId);
       const docInspectorConfig =
         (await db.docInspectorConfigs.get(spaceId)) ?? null;
       return {
@@ -91,6 +113,9 @@ export const readSpaceSnapshot = async (spaceId: string): Promise<SpaceSnapshot>
         connections,
         palettes,
         revisions,
+        writerNotebooks,
+        writerNotebookPages,
+        writerNotebookAssets,
         docInspectorConfig,
       };
     },
@@ -280,6 +305,52 @@ const MIME_EXT: Record<string, string> = {
   'image/jpeg': 'jpg',
   'image/gif': 'gif',
   'image/webp': 'webp',
+};
+
+const notebookAssetExtension = (asset: WriterNotebookAsset): string =>
+  asset.kind === 'vector' ? 'json' : (MIME_EXT[asset.mime] ?? 'img');
+
+export const notebookAssetArchivePath = (asset: WriterNotebookAsset): string =>
+  `assets/notebooks/${asset.notebookId}/${asset.pageId}/${asset.id}.${notebookAssetExtension(asset)}`;
+
+const notebookProjectionFolders = (
+  notebooks: readonly WriterNotebook[],
+): Map<string, string> => {
+  const folders = new Map<string, string>();
+  const used = new Set<string>();
+  for (const notebook of notebooks) {
+    const base = slugify(notebook.title, notebook.id);
+    let folder = base;
+    let suffix = 2;
+    while (used.has(folder)) folder = `${base}-${String(suffix++)}`;
+    used.add(folder);
+    folders.set(notebook.id, folder);
+  }
+  return folders;
+};
+
+const writeNotebookProjection = (zip: JSZip, snapshot: SpaceSnapshot): void => {
+  const folders = notebookProjectionFolders(snapshot.writerNotebooks);
+  const assets = new Map(snapshot.writerNotebookAssets.map((asset) => [asset.id, asset]));
+  for (const notebook of snapshot.writerNotebooks) {
+    const folder = folders.get(notebook.id);
+    invariant(folder, `notebook ${notebook.id} has no projection folder`);
+    const pages = snapshot.writerNotebookPages
+      .filter((page) => page.notebookId === notebook.id)
+      .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
+    const lines = [`# ${notebook.title}`, ''];
+    pages.forEach((page, index) => {
+      const source = assets.get(page.sourceAssetId);
+      invariant(source?.kind === 'source', `page ${page.id} has no source asset`);
+      const filename = `page-${String(index + 1).padStart(3, '0')}.${notebookAssetExtension(source)}`;
+      zip.file(
+        `notebooks/${folder}/${filename}`,
+        source.blob.arrayBuffer().then((buffer) => new Uint8Array(buffer)),
+      );
+      lines.push(`${String(index + 1)}. [Page ${String(index + 1)}](${filename})`);
+    });
+    zip.file(`notebooks/${folder}/index.md`, `${lines.join('\n')}\n`);
+  }
 };
 
 const assetExtension = (att: NoteAttachment): string => {
@@ -518,6 +589,7 @@ export const writeMarkdownProjection = (
   }
 
   const noteAssets = writeAttachments(zip, attachments);
+  writeNotebookProjection(zip, snapshot);
 
   zip.file('notes.md', renderNotesMd(notes, noteAssets));
   zip.file('citations.md', renderCitationsMd(citations));

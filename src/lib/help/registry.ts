@@ -133,7 +133,14 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     category: 'organizing',
     featureArea: 'organizing',
     keywords: ['space', 'section', 'document', 'template', 'folder', 'organize'],
-    related: ['getting-started', 'views-and-modes'],
+    related: ['getting-started', 'notebooks', 'views-and-modes'],
+  },
+  {
+    slug: 'notebooks',
+    category: 'organizing',
+    featureArea: 'organizing',
+    keywords: ['notebook', 'photo', 'page', 'camera', 'scan', 'handwriting', 'workshop'],
+    related: ['organising-your-work', 'your-data'],
   },
   {
     slug: 'views-and-modes',

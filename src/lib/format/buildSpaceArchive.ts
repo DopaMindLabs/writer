@@ -3,13 +3,14 @@ import { invariant } from '@/lib/invariant';
 import {
   backupFilename,
   generateZipBlob,
+  notebookAssetArchivePath,
   readSpaceSnapshot,
   writeMarkdownProjection,
   type NoteAssets,
   type SpaceSnapshot,
 } from '@/lib/backup/buildSpaceMarkdownZip';
 import { buildManifest, MANIFEST_FILENAME } from './manifest';
-import { serializeNoteAttachment } from './codecs';
+import { serializeNoteAttachment, serializeWriterNotebookAsset } from './codecs';
 
 export const RECORDS_DIR = 'records';
 
@@ -43,6 +44,20 @@ const writeAttachmentRecords = (
   }
 };
 
+const writeNotebookAssetRecords = (zip: JSZip, snapshot: SpaceSnapshot): void => {
+  for (const asset of snapshot.writerNotebookAssets) {
+    const assetPath = notebookAssetArchivePath(asset);
+    zip.file(
+      assetPath,
+      asset.blob.arrayBuffer().then((buffer) => new Uint8Array(buffer)),
+    );
+    zip.file(
+      recordPath('writerNotebookAssets', asset.id),
+      toJson(serializeWriterNotebookAsset(asset, assetPath)),
+    );
+  }
+};
+
 const writeRecords = (
   zip: JSZip,
   snapshot: SpaceSnapshot,
@@ -58,6 +73,9 @@ const writeRecords = (
   writeTable(zip, 'connections', snapshot.connections);
   writeTable(zip, 'revisions', snapshot.revisions);
   writeTable(zip, 'palettes', snapshot.palettes);
+  writeTable(zip, 'writerNotebooks', snapshot.writerNotebooks);
+  writeTable(zip, 'writerNotebookPages', snapshot.writerNotebookPages);
+  writeNotebookAssetRecords(zip, snapshot);
   if (snapshot.docInspectorConfig) {
     zip.file(
       recordPath('docInspectorConfigs', snapshot.docInspectorConfig.spaceId),

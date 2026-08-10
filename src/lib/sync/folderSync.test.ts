@@ -5,7 +5,11 @@ import {
   sampleSection,
   sampleDoc,
   sampleNote,
+  sampleWriterNotebook,
+  sampleWriterNotebookAssets,
+  sampleWriterNotebookPage,
 } from '@/test/fixtures';
+import { parseSpaceArchive } from '@/lib/format/parseSpaceArchive';
 import {
   DEFAULT_INTERVAL_MIN,
   INHERIT_INTERVAL,
@@ -92,6 +96,9 @@ describe('folderSync', () => {
     await db.sections.put(sampleSection);
     await db.docs.put(sampleDoc);
     await db.notes.put(sampleNote);
+    await db.writerNotebooks.put(sampleWriterNotebook);
+    await db.writerNotebookPages.put(sampleWriterNotebookPage);
+    await db.writerNotebookAssets.bulkPut([...sampleWriterNotebookAssets]);
   });
 
   it('writes latest.zip + a history file and records a sync row (not a backup)', async () => {
@@ -111,6 +118,18 @@ describe('folderSync', () => {
     expect(syncs).toHaveLength(1);
     const backups = await db.backups.where('scope').equals(sampleSpace.id).toArray();
     expect(backups).toHaveLength(0);
+  });
+
+  it('keeps notebooks and their assets in the canonical folder-sync archive', async () => {
+    const handle = makeMockHandle();
+    await syncSpaceToFolder(asHandle(handle), sampleSpace, 'manual');
+    const latest = onlyDir(handle).files.get(LATEST_FILENAME);
+    expect(latest).toBeDefined();
+
+    const archive = await parseSpaceArchive(latest!);
+    expect(archive.writerNotebooks).toHaveLength(1);
+    expect(archive.writerNotebookPages).toHaveLength(1);
+    expect(archive.writerNotebookAssets).toHaveLength(3);
   });
 
   it('keeps same-named spaces in separate subfolders', async () => {

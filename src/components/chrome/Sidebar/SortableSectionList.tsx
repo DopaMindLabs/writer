@@ -11,6 +11,7 @@ import {
 } from '@/components/libs/dnd';
 import { VisuallyHidden } from '@/components/ui/VisuallyHidden';
 import type { Doc, Section } from '@/db/schema';
+import type { WriterNotebookSummary } from '@/hooks/useWriterNotebooks';
 import type { AddController } from './Sidebar.types';
 import { SortableSection } from './SortableSection';
 import { useSortableSensors } from './useSortableSensors';
@@ -44,9 +45,12 @@ interface SortableSectionListProps {
   activeDocId: string | null;
   onBrainSpace: boolean;
   notesCount: number;
+  notebooks: readonly WriterNotebookSummary[];
+  activeNotebookId: string | null;
   canManage: boolean;
   docHref: (docId: string) => string;
   startAdd: (sectionId: string, parentLabel: string, subLabel: string | null) => void;
+  onAddNotebook: () => void;
   add: AddController;
 }
 
@@ -65,18 +69,9 @@ export const SortableSectionList = (props: SortableSectionListProps) => {
   const { announcement, announceStart, announceEnd, announceCancel } =
     useDragAnnounce(props.topSections, props.docsForSection);
 
-  const handleStart = (event: DragStartEvent): void => {
-    announceStart(event);
-    onDragStart();
-  };
-  const handleEnd = (event: DragEndEvent): void => {
-    announceEnd(event);
-    onDragEnd(event);
-  };
-  const handleCancel = (event: DragCancelEvent): void => {
-    announceCancel(event);
-    onDragCancel();
-  };
+  const handleStart = (event: DragStartEvent): void => { announceStart(event); onDragStart(); };
+  const handleEnd = (event: DragEndEvent): void => { announceEnd(event); onDragEnd(event); };
+  const handleCancel = (event: DragCancelEvent): void => { announceCancel(event); onDragCancel(); };
 
   return (
     <DndContext
@@ -107,9 +102,12 @@ export const SortableSectionList = (props: SortableSectionListProps) => {
             activeDocId={props.activeDocId}
             onBrainSpace={props.onBrainSpace}
             notesCount={props.notesCount}
+            notebooks={props.notebooks}
+            activeNotebookId={props.activeNotebookId}
             canManage={props.canManage}
             docHref={props.docHref}
             startAdd={props.startAdd}
+            onAddNotebook={props.onAddNotebook}
             add={props.add}
           />
         ))}

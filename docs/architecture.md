@@ -44,6 +44,7 @@ Steps 2–4 are no-ops on a plain (non-cloud) database. The router mounts only a
 | `/s/:spaceId/d/:docId/split` | Split view | `SplitScreen` |
 | `/s/:spaceId/brain-space` | Brain Space | `BrainSpaceScreen` |
 | `/s/:spaceId/citations` | Citations | `CitationsScreen` |
+| `/s/:spaceId/notebooks/:notebookId` | Notebook | `WriterNotebookScreen` |
 | `/help` | Help | `HelpScreen` |
 | `/help/:slug` | Help article | `HelpScreen` |
 
@@ -77,6 +78,15 @@ External packages     (dexie, yjs, lexical, zustand, …)
 - `src/lib/cloud/cloudClient.ts` remains the only module that touches `db.cloud`, and is now
   an implementation detail of the Dexie Cloud adapter.
 - `src/lib/docs/docRepository.ts` is the single write path for the `docs` table.
+- `packages/writer-notebook` is the reusable Notebook domain/browser package. It does not import
+  Writer, React, Dexie, Lexical, Yjs or `writer-sync`; `src/lib/writerNotebookIntegration/` is the
+  host composition boundary that adds space scope, Dexie transactions and replication metadata.
+- Notebook vector assets cross the rendering boundary only as the validated safe-vector data
+  model. Application code constructs its own SVG elements; stored/uploaded SVG markup is never a
+  renderable persistence format.
+- PenEcho integration is an image interchange boundary, not a package dependency: validated
+  safe-vector data may be serialised to application-generated `image/svg+xml` for the DopaMind
+  PenEcho fork's normal image import path. A direct programmatic bridge belongs in that fork.
 - `src/editor/EditorFacade.tsx` is the public boundary for the editor subsystem;
   `WriteSurface.tsx` is its **sole production importer and direct caller**.
 - The above are enforced architectural boundaries. Many screens and components import
@@ -181,6 +191,9 @@ Lossless CRDT-level merge across devices is a recorded open decision for a futur
 | `docUpdates` | `++id` | CRDT update log | **No** | No |
 | `notes` | `id` | Brain Space cards | Yes | Yes |
 | `noteAttachments` | `id` | Note image blobs | Yes | Yes |
+| `writerNotebooks` | `id` | Space-scoped notebook metadata | Yes | Yes |
+| `writerNotebookPages` | `id` | Ordered notebook pages | Yes | Yes |
+| `writerNotebookAssets` | `id` | Prepared source, thumbnail and safe-vector blobs | Yes | Yes |
 | `annotations` | `id` | Inline annotations | Yes | Yes |
 | `citations` | `id` | BibTeX references | Yes | Yes |
 | `connections` | `id` | Note–note edges | Yes | Yes |

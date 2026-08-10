@@ -21,6 +21,7 @@ interface SectionRowMenuProps {
   /** The Workshop labels its add action "Add workspace" rather than "Add document". */
   isWorkshop: boolean;
   onAddDoc: () => void;
+  onAddNotebook: () => void;
   onRename: () => void;
 }
 
@@ -36,6 +37,7 @@ export const SectionRowMenu = ({
   canModify,
   isWorkshop,
   onAddDoc,
+  onAddNotebook,
   onRename,
 }: SectionRowMenuProps) => {
   const { t } = useTranslation('chrome');
@@ -69,6 +71,7 @@ export const SectionRowMenu = ({
             canModify={canModify}
             isWorkshop={isWorkshop}
             onAddDoc={select(onAddDoc)}
+            onAddNotebook={select(onAddNotebook)}
             onRename={select(() => { deferred.defer(onRename); })}
             onDelete={select(() => { setDeleteOpen(true); })}
           />

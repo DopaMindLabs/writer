@@ -1,7 +1,7 @@
 import { invariant } from '@/lib/invariant';
 import type { SpaceSnapshot } from '@/lib/backup/buildSpaceMarkdownZip';
 
-export const ARCHIVE_FORMAT_VERSION = 2;
+export const ARCHIVE_FORMAT_VERSION = 3;
 export const MANIFEST_FILENAME = 'manifest.json';
 
 export interface ArchiveManifest {
@@ -20,6 +20,9 @@ export interface ArchiveManifest {
     revisions: number;
     palettes: number;
     docInspectorConfigs: number;
+    writerNotebooks: number;
+    writerNotebookPages: number;
+    writerNotebookAssets: number;
   };
 }
 
@@ -46,6 +49,9 @@ export const buildManifest = (
     revisions: snapshot.revisions.length,
     palettes: snapshot.palettes.length,
     docInspectorConfigs: snapshot.docInspectorConfig ? 1 : 0,
+    writerNotebooks: snapshot.writerNotebooks.length,
+    writerNotebookPages: snapshot.writerNotebookPages.length,
+    writerNotebookAssets: snapshot.writerNotebookAssets.length,
   },
 });
 
@@ -74,6 +80,9 @@ const parseCounts = (value: unknown): ArchiveManifest['counts'] => {
     revisions: readCount(value, 'revisions'),
     palettes: readCount(value, 'palettes'),
     docInspectorConfigs: readCount(value, 'docInspectorConfigs'),
+    writerNotebooks: readCount(value, 'writerNotebooks'),
+    writerNotebookPages: readCount(value, 'writerNotebookPages'),
+    writerNotebookAssets: readCount(value, 'writerNotebookAssets'),
   };
 };
 

@@ -38,3 +38,16 @@ export const Disabled: Story = {
     ),
   },
 };
+
+export const CameraCapture: Story = {
+  args: {
+    accept: 'image/*',
+    capture: 'environment',
+    onPick: () => {},
+    children: (open: () => void) => (
+      <Button kind="secondary" size="sm" onClick={open}>
+        Take photo
+      </Button>
+    ),
+  },
+};

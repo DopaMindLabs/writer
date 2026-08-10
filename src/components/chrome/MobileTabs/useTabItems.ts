@@ -39,7 +39,8 @@ export const useTabItems = ({ spaceId, docId }: MobileTabsProps): TabItem[] => {
         !p.endsWith('/read') &&
         !p.endsWith('/split') &&
         !p.endsWith('/brain-space') &&
-        !p.endsWith('/citations'),
+        !p.endsWith('/citations') &&
+        !p.includes('/notebooks/'),
     },
     {
       key: 'read',

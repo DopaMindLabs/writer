@@ -16,6 +16,9 @@ const IMPORT_TABLES = [
   db.connections,
   db.revisions,
   db.palettes,
+  db.writerNotebooks,
+  db.writerNotebookPages,
+  db.writerNotebookAssets,
   db.docInspectorConfigs,
   // createDocs writes the per-doc body-provenance baseline into `meta` in a
   // nested transaction, so `meta` must be part of this outer import transaction.
@@ -103,6 +106,37 @@ const remapAnnex = (
     : null,
 });
 
+const remapNotebooks = (
+  ids: IdMap,
+  spaceId: string,
+  archive: ParsedSpaceArchive,
+): Pick<
+  ParsedSpaceArchive,
+  'writerNotebooks' | 'writerNotebookPages' | 'writerNotebookAssets'
+> => ({
+  writerNotebooks: archive.writerNotebooks.map((notebook) => ({
+    ...notebook,
+    id: mapId(ids, notebook.id),
+    spaceId,
+  })),
+  writerNotebookPages: archive.writerNotebookPages.map((page) => ({
+    ...page,
+    id: mapId(ids, page.id),
+    notebookId: mapId(ids, page.notebookId),
+    spaceId,
+    sourceAssetId: mapId(ids, page.sourceAssetId),
+    thumbnailAssetId: mapId(ids, page.thumbnailAssetId),
+    vectorAssetId: page.vectorAssetId ? mapId(ids, page.vectorAssetId) : undefined,
+  })),
+  writerNotebookAssets: archive.writerNotebookAssets.map((asset) => ({
+    ...asset,
+    id: mapId(ids, asset.id),
+    notebookId: mapId(ids, asset.notebookId),
+    pageId: mapId(ids, asset.pageId),
+    spaceId,
+  })),
+});
+
 const remapArchive = (archive: ParsedSpaceArchive): ParsedSpaceArchive => {
   const ids: IdMap = new Map();
   const spaceId = mapId(ids, archive.space.id);
@@ -111,6 +145,7 @@ const remapArchive = (archive: ParsedSpaceArchive): ParsedSpaceArchive => {
     space: { ...archive.space, id: spaceId },
     ...remapManuscript(ids, spaceId, archive),
     ...remapAnnex(ids, spaceId, archive),
+    ...remapNotebooks(ids, spaceId, archive),
   };
 };
 
@@ -140,6 +175,9 @@ const putRemapped = async (archive: ParsedSpaceArchive): Promise<void> => {
   await db.connections.bulkPut(archive.connections.map(remint));
   await db.revisions.bulkPut(archive.revisions.map(remint));
   await db.palettes.bulkPut(archive.palettes.map(remint));
+  await db.writerNotebooks.bulkPut(archive.writerNotebooks.map(remint));
+  await db.writerNotebookPages.bulkPut(archive.writerNotebookPages.map(remint));
+  await db.writerNotebookAssets.bulkPut(archive.writerNotebookAssets.map(remint));
   if (archive.docInspectorConfig) {
     await db.docInspectorConfigs.put(archive.docInspectorConfig);
   }

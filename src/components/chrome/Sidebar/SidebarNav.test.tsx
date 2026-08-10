@@ -1,7 +1,8 @@
 import type { ComponentProps } from 'react';
-import { renderWithProviders, screen } from '@/test/test-utils';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
-import { sampleDoc, sampleSection, sampleSpace } from '@/test/fixtures';
+import { sampleDoc, sampleMetadata, sampleSection, sampleSpace } from '@/test/fixtures';
 import type { Section } from '@/db/schema';
 import { SidebarNav } from './SidebarNav';
 
@@ -73,5 +74,34 @@ describe('SidebarNav', () => {
       screen.queryByTestId('sidebar-workshop-fallback'),
     ).not.toBeInTheDocument();
     expect(screen.getAllByTestId('sidebar-brain-space-link')).toHaveLength(1);
+  });
+
+  it('lists notebooks under Workshop before ordinary documents', async () => {
+    const workshop: Section = { ...sampleSection, id: 'sec-ws', label: 'Workshop' };
+    await db.writerNotebooks.put({
+      ...sampleMetadata('s1'),
+      id: 'notebook-1',
+      spaceId: 's1',
+      title: 'Research notebook',
+      createdAt: 1,
+      updatedAt: 1,
+    });
+    renderNav({ sections: [workshop] });
+    expect(await screen.findByTestId('sidebar-writer-notebook-notebook-1')).toHaveTextContent(
+      'Research notebook',
+    );
+  });
+
+  it('creates a notebook from the Workshop menu', async () => {
+    const user = userEvent.setup();
+    const workshop: Section = { ...sampleSection, id: 'sec-ws', label: 'Workshop' };
+    renderNav({ sections: [workshop] });
+
+    await user.click(await screen.findByTestId('sidebar-section-sec-ws-menu'));
+    await user.click(screen.getByRole('menuitem', { name: 'New notebook' }));
+
+    await waitFor(async () => {
+      expect(await db.writerNotebooks.where('spaceId').equals('s1').count()).toBe(1);
+    });
   });
 });
