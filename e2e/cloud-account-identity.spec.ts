@@ -118,6 +118,27 @@ test.describe('account device identity registry', () => {
     expect(serialised).not.toContain('P-256');
     expect(serialised).not.toContain('"crv"');
     expect(serialised).not.toContain('"x"');
+
+    // The same row opens for the device that sealed it: the identity is
+    // confidential, not lost. This is the read every trust decision depends on.
+    const opened = await page.evaluate(async (id) => {
+      const appDb = (
+        window as unknown as {
+          db?: {
+            accountDeviceIdentities?: {
+              get: (key: string) => Promise<Record<string, unknown> | undefined>;
+            };
+          };
+        }
+      ).db;
+      return (await appDb?.accountDeviceIdentities?.get(id)) ?? null;
+    }, String(row.id));
+    expect(opened).not.toBeNull();
+    expect(opened?.accessScopeId).toBe('account');
+    expect(String(opened?.deviceId)).not.toHaveLength(0);
+    // Only the public half is ever published — a private component would make
+    // the registry a key leak rather than an identity record.
+    expect((opened?.publicIdentityJwk as { d?: unknown } | undefined)?.d).toBeUndefined();
   });
 
   test('a settled account performs no further write', async ({ page }) => {
@@ -148,6 +169,62 @@ test.describe('account device identity registry', () => {
       .toBe(1);
     const rows = await storedIdentityRows(page);
     expect(JSON.stringify(rows[0].$lipsumCipher)).toBe(published);
+  });
+
+  test('a plaintext identity row is never adopted and never read as an identity', async ({
+    page,
+  }) => {
+    await setUpOnCleanDevice(page);
+    await settleAccountState(page);
+    await expect.poll(async () => (await storedIdentityRows(page)).length).toBe(1);
+
+    // A hostile provider writes an unsealed identity row straight into storage,
+    // claiming a device this account never authorised. Sealing it locally would
+    // turn provider input into authenticated account data, so the row must stay
+    // exactly as it landed and must never surface as an identity.
+    const planted = '#writer-device:injected-device';
+    await page.evaluate(async (id) => {
+      const appDb = (window as unknown as { db?: { name?: string } }).db;
+      const request = indexedDB.open(appDb?.name ?? 'lipsum');
+      const database = await new Promise<IDBDatabase>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      const tx = database.transaction('accountDeviceIdentities', 'readwrite');
+      tx.objectStore('accountDeviceIdentities').put({
+        id,
+        accessScopeId: 'account',
+        deviceId: 'injected-device',
+        publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'injected', y: 'injected' },
+        authorisedAt: 1,
+      });
+      await new Promise((resolve, reject) => {
+        tx.oncomplete = () => resolve(undefined);
+        tx.onerror = () => reject(tx.error);
+      });
+      database.close();
+    }, planted);
+
+    // Reload with the account state settled: nothing on this path may seal it.
+    await settleAccountState(page);
+
+    const rows = await storedIdentityRows(page);
+    const injected = rows.find((row) => row.id === planted);
+    expect(injected).toBeDefined();
+    expect(injected?.$lipsumCipher).toBeUndefined();
+    expect(injected?.publicIdentityJwk).toBeDefined();
+
+    // And no read surfaces it: an unsealed control row fails closed, so a
+    // consumer asking for that device id is told there is nothing there.
+    const read = await page.evaluate(async (id) => {
+      const appDb = (
+        window as unknown as {
+          db?: { accountDeviceIdentities?: { get: (key: string) => Promise<unknown> } };
+        }
+      ).db;
+      return (await appDb?.accountDeviceIdentities?.get(id)) ?? null;
+    }, planted);
+    expect(read).toBeNull();
   });
 
   test('a keyless device publishes no identity at all', async ({ page }) => {
