@@ -785,12 +785,28 @@ describe('createEncryptionMiddleware — replicated encrypted control rows fail 
     expect(await table(IDENTITY_TABLE).toArray()).toEqual([]);
   });
 
-  it('yields no identity from wrong-key ciphertext', async () => {
+  it('yields no identity from wrong-key ciphertext — without engaging the mismatch lock', async () => {
     const sealed = await sealedIdentityRow();
     await applySyncPulled(sealed);
     ring = await deriveKeyRing(generateRootSecret(), 1);
 
     expect(await table(IDENTITY_TABLE).get('#writer-device:dev-1')).toBeUndefined();
+    // A registry row another key sealed is an expected state after an account
+    // re-key (an orphaned identity), and materialisation re-reads the registry
+    // on every settle. Flagging the device-wide mismatch here would let one
+    // such row lock writes on every healthy device, forever — a self-DoS. The
+    // refusal is complete on its own; only *content* reads may flag.
+    expect(keyMismatchState.current()).toBe(false);
+
+    // Content rows keep the flag: an unreadable document really does mean the
+    // account key differs from the ring, and the conflict UI must engage.
+    ring = await deriveKeyRing(generateRootSecret(), 1);
+    await table('docs').put({
+      id: 'd-flag', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'sealed',
+    });
+    ring = await deriveKeyRing(generateRootSecret(), 1);
+    expect(await table('docs').get('d-flag')).toBeUndefined();
+    expect(keyMismatchState.current()).toBe(true);
   });
 });
 

@@ -6,7 +6,7 @@ import {
   type CloudKeyRing,
 } from '@/lib/cloud/crypto/keys';
 import { createEncryptionMiddleware } from '@/lib/cloud/crypto/middleware';
-import { CloudKeyMismatchError, CloudKeylessWriteError } from '@/lib/cloud/crypto/errors';
+import { CloudKeylessWriteError } from '@/lib/cloud/crypto/errors';
 import { keyMismatchState } from '@/lib/cloud/crypto/keyMismatch';
 import type { ScopeKeyResolver } from 'writer-sync/crypto';
 import {
@@ -236,16 +236,15 @@ describe('createAccountDeviceIdentityStore — put', () => {
     const store = createAccountDeviceIdentityStore(db);
     await store.put(recordFor(identity));
 
-    // Another key sealed the existing row (a mismatched or hostile state): it
-    // reads as absent, but the slot is occupied — never silently replaced.
-    // Reading it engages the key-mismatch lock, which refuses the write before
-    // the add-only constraint even has to; either refusal is fail-closed.
+    // Another key sealed the existing row (an orphaned identity after a
+    // re-key, or a hostile state): it reads as absent — deliberately without
+    // engaging the device-wide mismatch lock — but the slot is occupied, so
+    // the add-only publish refuses rather than silently replacing it.
     ring = await deriveKeyRing(generateRootSecret(), 1);
-    await expect(store.put(recordFor(identity))).rejects.toSatisfy(
-      (error: unknown) =>
-        error instanceof CloudKeyMismatchError ||
-        error instanceof AccountIdentityConflictError,
+    await expect(store.put(recordFor(identity))).rejects.toBeInstanceOf(
+      AccountIdentityConflictError,
     );
+    expect(keyMismatchState.current()).toBe(false);
     expect(await db.table('accountDeviceIdentities').count()).toBe(1);
   });
 });

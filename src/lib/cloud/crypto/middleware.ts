@@ -244,13 +244,22 @@ const resolveAndOpen = async (options: {
   value: Row | undefined;
   onUnreadable: () => void;
 }): Promise<Row | undefined> => {
-  const { table, resolver, value, onUnreadable } = options;
+  const { table, resolver, value } = options;
   if (!value) return value;
+  const strict = requiresAuthenticatedEnvelope(table.name);
   if (!isSealed(value)) {
     // A replicated encrypted control row that is not sealed is unauthenticated
     // provider input — fail closed rather than hand it to a trust consumer.
-    return requiresAuthenticatedEnvelope(table.name) ? undefined : value;
+    return strict ? undefined : value;
   }
+  // A control row sealed under a key this device does not hold is an expected
+  // state — an identity orphaned by an account re-key, or hostile input — and
+  // trust consumers re-read the registry on every settle. Engaging the
+  // device-wide mismatch lock here would let one such row freeze writes on
+  // every healthy device; the silent drop is the whole refusal. Content rows
+  // below keep the flag: there an unreadable row genuinely means the account
+  // key differs from the ring.
+  const onUnreadable = strict ? () => undefined : options.onUnreadable;
   const ring = resolver.keyFor(
     contextFor({ table, row: value, fallbackKey: undefined, operation: 'read' }),
   );
