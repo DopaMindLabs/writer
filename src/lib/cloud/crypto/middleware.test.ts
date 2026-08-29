@@ -11,7 +11,7 @@ import Dexie, {
 import dexieCloud from 'dexie-cloud-addon';
 import { STORES } from '@/db/stores';
 import { generateRootSecret, deriveKeyRing, type CloudKeyRing } from './keys';
-import { CIPHER_FIELD, SYNCED_TABLES } from './tableRules';
+import { CIPHER_FIELD, ROW_ENVELOPE_TABLES } from './tableRules';
 import { createEncryptionMiddleware } from './middleware';
 import type { ScopeKeyResolver } from 'writer-sync/crypto';
 import { CloudKeyMismatchError, CloudKeylessWriteError } from './errors';
@@ -21,7 +21,7 @@ import { keylessLockState } from './keylessLock';
 /** Everything the app persists that must never leave the device (Task 6 excludes
  *  these from sync); listed here so the spike mirrors the real cloud config. */
 const LOCAL_ONLY = Object.keys(STORES).filter(
-  (name) => !(SYNCED_TABLES as readonly string[]).includes(name),
+  (name) => !(ROW_ENVELOPE_TABLES as readonly string[]).includes(name),
 );
 
 /**

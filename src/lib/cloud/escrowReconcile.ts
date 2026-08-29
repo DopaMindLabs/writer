@@ -1,7 +1,7 @@
 import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
 import type { SyncState, UserLogin } from 'dexie-cloud-addon';
-import { SYNCED_TABLES } from './crypto/tableRules';
+import { CONTENT_TABLES } from './crypto/tableRules';
 import { fingerprintsEqual, ESCROW_ID } from './crypto/keys';
 import {
   deviceKeyProvider,
@@ -53,7 +53,7 @@ const warnMismatch = (
 export const hasLocalSyncedData = async (
   db: LoremDB = appDb,
 ): Promise<boolean> => {
-  for (const table of SYNCED_TABLES) {
+  for (const table of CONTENT_TABLES) {
     if ((await db.table(table).count()) > 0) return true;
   }
   return false;
