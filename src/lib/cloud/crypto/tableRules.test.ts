@@ -37,6 +37,15 @@ describe('tableRules', () => {
     expect(docs.has('name')).toBe(false);
   });
 
+  it('yields only the reserved and routing fields for an unknown table', () => {
+    // No schema spec exists, so the fallback empty spec contributes nothing.
+    const fields = plaintextFieldsFor('imaginary');
+    expect(fields.has('id')).toBe(false);
+    expect(fields.has('realmId')).toBe(true);
+    expect(fields.has(CIPHER_FIELD)).toBe(true);
+    expect(fields.has('accessScopeId')).toBe(true);
+  });
+
   it('extracts both members of a compound index', () => {
     const connections = plaintextFieldsFor('connections');
     // '... [spaceId+fromNoteId], [spaceId+toNoteId]'

@@ -190,7 +190,69 @@ describe('registerAccountIdentity — publication', () => {
   });
 });
 
+describe('registerAccountIdentity — default cloud readers', () => {
+  /** The addon slice the default readers duck-type off the database. */
+  interface CloudSlice {
+    cloud?: {
+      currentUser?: { value?: { userId?: string; isLoggedIn?: boolean } };
+      persistedSyncState?: { value?: { initiallySynced?: boolean } };
+    };
+  }
+
+  it('reads sign-in and pull state off the database when no gates are injected', async () => {
+    // A signed-in account whose pull completed, grafted the way the addon
+    // exposes it — but the ring was forgotten, so the run stops at the key
+    // gate. This exercises the default duck-typed readers end to end.
+    (db as CloudSlice).cloud = {
+      currentUser: { value: { userId: ACCOUNT, isLoggedIn: true } },
+      persistedSyncState: { value: { initiallySynced: true } },
+    };
+    await forgetDeviceKeyRing();
+
+    expect(await registerAccountIdentity({ db })).toBe('ineligible');
+    expect(await db.table('accountDeviceIdentities').count()).toBe(0);
+  });
+
+  it('treats a signed-out database as ineligible through the default readers', async () => {
+    expect(await registerAccountIdentity({ db })).toBe('ineligible');
+  });
+});
+
+describe('registerAccountIdentity — store failures', () => {
+  it('propagates an unexpected store failure instead of mapping it to a result', async () => {
+    const failure = new Error('quota exceeded');
+    await expect(
+      registerAccountIdentity(
+        deps({
+          store: {
+            find: () => Promise.resolve(null),
+            put: () => Promise.reject(failure),
+          },
+        }),
+      ),
+    ).rejects.toBe(failure);
+  });
+});
+
 describe('startAccountIdentityRegistrar', () => {
+  it('defaults to the real registrar run without throwing', async () => {
+    const listeners: ((s: { phase: string }) => void)[] = [];
+    const stop = startAccountIdentityRegistrar({
+      syncState: {
+        subscribe: (next) => {
+          listeners.push(next);
+          return { unsubscribe: () => undefined };
+        },
+      },
+    });
+
+    // The app database in this suite has no cloud schema, so the default run
+    // resolves 'ineligible' — the point is that the default wiring executes.
+    for (const listener of listeners) listener({ phase: 'in-sync' });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    stop();
+  });
+
   it('runs on the shared lifecycle signals', async () => {
     const listeners: ((s: { phase: string }) => void)[] = [];
     const run = vi.fn().mockResolvedValue('ineligible');
