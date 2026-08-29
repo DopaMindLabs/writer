@@ -16,6 +16,7 @@ import { startCloudReconciler } from './reconcile';
 import { startEscrowReconciler } from './escrowReconcile';
 import { startKeylessLockMonitor } from './keylessGuard';
 import { startDeviceRegistrar } from './deviceRegistrar';
+import { startAccountIdentityRegistrar } from './accountDeviceIdentityRegistrar';
 import { resetAndReseed } from '@/db/seed';
 import { resetShouldFail } from '@/lib/boot/e2eFaults';
 
@@ -292,6 +293,9 @@ export const startCloudSession = async (): Promise<() => void> => {
     startKeylessLockMonitor(),
     // Keep this device's row in the account's device registry current.
     startDeviceRegistrar(),
+    // Publish this device's signing identity once the account key is proven
+    // authoritative, so same-account devices can attribute its frames.
+    startAccountIdentityRegistrar(),
   ];
   return () => {
     for (const stop of stops) stop();

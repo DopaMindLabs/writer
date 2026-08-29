@@ -15,6 +15,7 @@ import type {
   ScopeKeyResolver,
   SyncKeyRing,
 } from 'writer-sync/crypto';
+import { policyFor } from '@/lib/writerSyncIntegration/writerTablePolicy';
 import { isEncryptedTable, plaintextFieldsFor, CIPHER_FIELD } from './tableRules';
 import { sealRow, openRow, EnvelopeIntegrityError, MalformedEnvelopeError } from './envelope';
 import { CloudKeyMismatchError, CloudKeylessWriteError } from './errors';
@@ -175,24 +176,61 @@ const openOrDrop = async (
 const isSealed = (value: Row | undefined): boolean =>
   value?.[CIPHER_FIELD] !== undefined;
 
-/** Keyless single read: drop a sealed row (no key can open it), pass plaintext. */
-const keylessGet = async (read: Promise<unknown>): Promise<unknown> => {
+/**
+ * Whether a table's rows are directly replicated encrypted control records —
+ * row-envelope encrypted, provider-replicated, and never journalled. Such a row
+ * crosses the untrusted provider boundary *as a row* rather than as an
+ * operation frame, so the lenient pre-setup plaintext behaviour of journalled
+ * domain content would let a hostile provider inject an unauthenticated record.
+ * Derived from the table policy, never from a table-name check.
+ */
+const requiresAuthenticatedEnvelope = (tableName: string): boolean => {
+  const policy = policyFor(tableName);
+  return (
+    policy?.replication === 'provider-control' &&
+    policy.encryption === 'row-envelope' &&
+    !policy.operationJournal
+  );
+};
+
+/** Whether every top-level field of a row is an allowed plaintext field. */
+const hasOnlyPlaintextTopLevel = (row: Row, rules: ReadonlySet<string>): boolean =>
+  Object.keys(row).every((key) => rules.has(key));
+
+/**
+ * Whether a stored row may not be surfaced by this read: sealed rows are
+ * unreadable without a key, and on a replicated encrypted control table (the
+ * `strict` flag) an *unsealed* row is unauthenticated provider input that must
+ * never reach a trust consumer either.
+ */
+const isHiddenRow = (value: Row | undefined, strict: boolean): boolean =>
+  value !== undefined && (isSealed(value) || strict);
+
+/** Keyless single read: drop hidden rows; plaintext content passes through. */
+const keylessGet = async (read: Promise<unknown>, strict: boolean): Promise<unknown> => {
   const row = (await read) as Row | undefined;
-  return isSealed(row) ? undefined : row;
+  return isHiddenRow(row, strict) ? undefined : row;
 };
 
-/** Keyless batch read: replace sealed rows with undefined, preserving positions. */
-const keylessGetMany = async (read: Promise<unknown[]>): Promise<unknown[]> => {
+/** Keyless batch read: replace hidden rows with undefined, preserving positions. */
+const keylessGetMany = async (
+  read: Promise<unknown[]>,
+  strict: boolean,
+): Promise<unknown[]> => {
   const rows = await read;
-  return rows.map((row) => (isSealed(row as Row | undefined) ? undefined : row));
+  return rows.map((row) => (isHiddenRow(row as Row | undefined, strict) ? undefined : row));
 };
 
-/** Keyless list read: omit sealed rows. */
+/** Keyless list read: omit hidden rows. */
 const keylessQuery = async (
   read: Promise<{ result: unknown[] }>,
+  strict: boolean,
 ): Promise<{ result: unknown[] }> => {
   const res = await read;
-  return { ...res, result: res.result.filter((row) => !isSealed(row as Row | undefined)) };
+  return {
+    ...res,
+    result: res.result.filter((row) => !isHiddenRow(row as Row | undefined, strict)),
+  };
 };
 
 /**
@@ -208,7 +246,11 @@ const resolveAndOpen = async (options: {
 }): Promise<Row | undefined> => {
   const { table, resolver, value, onUnreadable } = options;
   if (!value) return value;
-  if (!isSealed(value)) return value;
+  if (!isSealed(value)) {
+    // A replicated encrypted control row that is not sealed is unauthenticated
+    // provider input — fail closed rather than hand it to a trust consumer.
+    return requiresAuthenticatedEnvelope(table.name) ? undefined : value;
+  }
   const ring = resolver.keyFor(
     contextFor({ table, row: value, fallbackKey: undefined, operation: 'read' }),
   );
@@ -259,6 +301,52 @@ const openMany = (options: {
  * key/query paths instead (read via `get`/`toArray`, then write explicitly);
  * callers are adapted where the encrypted database is constructed.
  */
+/**
+ * Keep only the sync-applied rows that are already authenticated ciphertext: a
+ * pulled control row must carry the cipher envelope and no secret-class field
+ * at the top level. Anything else is provider input asking this device to
+ * authenticate plaintext — dropped, never sealed, and never a request failure
+ * (failing the mutation would abort the addon's pull and deadlock setup).
+ */
+const retainAuthenticatedRows = (
+  table: DBCoreTable,
+  req: DBCoreAddRequest | DBCorePutRequest,
+): DBCoreMutateRequest => {
+  // `$ts` is the addon's own conflict-resolution timestamp, stamped on every
+  // stored row *below* this middleware, so a pulled row legitimately carries it.
+  const rules = new Set([...plaintextFieldsFor(table.name), '$ts']);
+  const rows = req.values as readonly Row[];
+  const keep = rows.map((row) => isSealed(row) && hasOnlyPlaintextTopLevel(row, rules));
+  if (keep.every(Boolean)) return req;
+  const values = rows.filter((_, i) => keep[i]);
+  const keys = req.keys?.filter((_, i) => keep[i]);
+  return keys ? { ...req, values, keys } : { ...req, values };
+};
+
+/**
+ * Mutate a replicated encrypted control table. Sync-applied writes preserve
+ * pulled ciphertext verbatim (a keyless device must still be able to store a
+ * row it cannot yet read — sign-in-first); app writes require a resolved key
+ * for every row, because the seal under the account key is what makes a record
+ * proof of authorisation — a keyless write could only store an unauthenticated
+ * claim.
+ */
+const controlMutate = async (options: {
+  table: DBCoreTable;
+  resolver: ScopeKeyResolver;
+  req: DBCoreAddRequest | DBCorePutRequest;
+}): Promise<DBCoreMutateResponse> => {
+  const { table, resolver, req } = options;
+  if (isSyncApplied(req.trans)) {
+    return table.mutate(retainAuthenticatedRows(table, req));
+  }
+  const rings = resolveWriteRings(table, resolver, req);
+  if (rings.some((resolution) => resolution.ring === null)) {
+    throw new CloudKeylessWriteError();
+  }
+  return table.mutate(await inTx(sealMutate(table, rings, req)));
+};
+
 const sealedMutate = async (options: {
   table: DBCoreTable;
   resolver: ScopeKeyResolver;
@@ -284,6 +372,9 @@ const sealedMutate = async (options: {
   }
   const safeReq = stripUpdateDescriptors(req);
   if (safeReq.type !== 'add' && safeReq.type !== 'put') return table.mutate(safeReq);
+  if (requiresAuthenticatedEnvelope(table.name)) {
+    return controlMutate({ table, resolver, req: safeReq });
+  }
   const rings = resolveWriteRings(table, resolver, safeReq);
   // Keyless fast path: with nothing to seal there must be no async detour at
   // all — `Dexie.waitFor` inside a nested transaction commits it prematurely.
@@ -300,6 +391,7 @@ const wrapTable = (
   flagMismatch: () => void,
 ): DBCoreTable => {
   if (!isEncryptedTable(table.name)) return table;
+  const strict = requiresAuthenticatedEnvelope(table.name);
   return {
     ...table,
     mutate: (req: DBCoreMutateRequest) =>
@@ -309,7 +401,7 @@ const wrapTable = (
       if (isInternalBlobTx(req.trans)) return table.get(req);
       // Keyless fast path: no decrypt can succeed, so hide sealed rows without
       // the async waitFor detour (which would break nested transactions).
-      if (!resolver.hasAnyKey()) return keylessGet(table.get(req));
+      if (!resolver.hasAnyKey()) return keylessGet(table.get(req), strict);
       return inTx(
         (async () =>
           resolveAndOpen({
@@ -322,7 +414,7 @@ const wrapTable = (
     },
     getMany: (req: DBCoreGetManyRequest) => {
       if (isInternalBlobTx(req.trans)) return table.getMany(req);
-      if (!resolver.hasAnyKey()) return keylessGetMany(table.getMany(req));
+      if (!resolver.hasAnyKey()) return keylessGetMany(table.getMany(req), strict);
       return inTx(
         (async () =>
           openMany({
@@ -336,7 +428,7 @@ const wrapTable = (
     query: (req: DBCoreQueryRequest) => {
       if (req.values === false) return table.query(req);
       if (isInternalBlobTx(req.trans)) return table.query(req);
-      if (!resolver.hasAnyKey()) return keylessQuery(table.query(req));
+      if (!resolver.hasAnyKey()) return keylessQuery(table.query(req), strict);
       return inTx(
         (async () => {
           const res = await table.query(req);

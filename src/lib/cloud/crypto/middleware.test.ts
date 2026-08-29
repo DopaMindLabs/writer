@@ -9,7 +9,7 @@ import Dexie, {
   type DBCoreMutateRequest,
 } from 'dexie';
 import dexieCloud from 'dexie-cloud-addon';
-import { STORES } from '@/db/stores';
+import { CLOUD_STORES, STORES } from '@/db/stores';
 import { generateRootSecret, deriveKeyRing, type CloudKeyRing } from './keys';
 import { CIPHER_FIELD, ROW_ENVELOPE_TABLES } from './tableRules';
 import { createEncryptionMiddleware } from './middleware';
@@ -90,7 +90,7 @@ beforeEach(async () => {
   // fail every network call fast rather than hitting the (bogus) URL for real.
   vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('offline (spike)'));
   db = new Dexie('cloud-crypto-spike', { addons: [dexieCloud] }) as CloudDexie;
-  db.version(1).stores(STORES);
+  db.version(1).stores({ ...STORES, ...CLOUD_STORES });
   db.cloud.configure({
     databaseUrl: 'https://unset.example.invalid',
     requireAuth: false,
@@ -631,6 +631,166 @@ describe('createEncryptionMiddleware — a real disableChangeTracking transactio
     await expect(realDb.table('docs').bulkPut([pulledRow('app-1')])).rejects.toThrow();
 
     expect(await readStored('app-1')).toBeUndefined();
+  });
+});
+
+/**
+ * The account device identity registry is a directly replicated, row-envelope
+ * encrypted control table: its rows cross the untrusted provider boundary
+ * without first becoming operation frames, so the middleware enforces a
+ * stricter rule than for journalled domain content. Provider input may carry
+ * ciphertext another account device sealed; it may never ask this device to
+ * authenticate plaintext. These are security gates, not coverage assertions.
+ */
+describe('createEncryptionMiddleware — replicated encrypted control rows fail closed', () => {
+  const IDENTITY_TABLE = 'accountDeviceIdentities';
+  const JWK_X = 'jwk-x-sentinel-value';
+  const JWK_Y = 'jwk-y-sentinel-value';
+  const AUTHORISED_AT = 1723000000123;
+  const identityRow = (): AnyRow => ({
+    id: '#writer-device:dev-1',
+    accessScopeId: 'account',
+    deviceId: 'dev-1',
+    publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: JWK_X, y: JWK_Y },
+    authorisedAt: AUTHORISED_AT,
+  });
+
+  /** Write a row the way the addon applies pulled server rows. */
+  const applySyncPulled = (row: AnyRow): Promise<unknown> =>
+    db.transaction('rw', table(IDENTITY_TABLE), async () => {
+      const tx = Dexie.currentTransaction as unknown as {
+        idbtrans?: { disableChangeTracking?: boolean };
+      };
+      if (tx.idbtrans) tx.idbtrans.disableChangeTracking = true;
+      return table(IDENTITY_TABLE).put(row);
+    });
+
+  /** Plant a stored row past the middleware (the raw at-rest state). */
+  const writeRawBypass = (row: AnyRow): Promise<unknown> =>
+    db.transaction('rw', table(IDENTITY_TABLE), async () => {
+      const tx = Dexie.currentTransaction as unknown as {
+        idbtrans?: { disableBlobResolve?: boolean };
+      };
+      if (tx.idbtrans) tx.idbtrans.disableBlobResolve = true;
+      return table(IDENTITY_TABLE).put(row);
+    });
+
+  /** A genuine sealed registry row, as it rests after a keyed app write. */
+  const sealedIdentityRow = async (): Promise<AnyRow> => {
+    await table(IDENTITY_TABLE).put(identityRow());
+    const raw = await readRaw(IDENTITY_TABLE, '#writer-device:dev-1');
+    await table(IDENTITY_TABLE).delete('#writer-device:dev-1');
+    expect(raw?.[CIPHER_FIELD]).toBeDefined();
+    return raw!;
+  };
+
+  it('seals a keyed app write and opens it again at the account scope', async () => {
+    await table(IDENTITY_TABLE).put(identityRow());
+
+    // At rest: only routing plaintext plus the envelope — no identity material.
+    const raw = await readRaw(IDENTITY_TABLE, '#writer-device:dev-1');
+    expect(raw?.id).toBe('#writer-device:dev-1');
+    expect(raw?.accessScopeId).toBe('account');
+    expect(raw?.deviceId).toBeUndefined();
+    expect(raw?.publicIdentityJwk).toBeUndefined();
+    expect(raw?.authorisedAt).toBeUndefined();
+    expect(raw?.[CIPHER_FIELD]).toBeDefined();
+
+    // The `account` scope is a first outside the space/document scopes: the AAD
+    // binds it, and the row must open back under the same account key.
+    const back = await table(IDENTITY_TABLE).get('#writer-device:dev-1');
+    expect(back?.deviceId).toBe('dev-1');
+    expect(back?.publicIdentityJwk).toEqual({ kty: 'EC', crv: 'P-256', x: JWK_X, y: JWK_Y });
+    expect(back?.authorisedAt).toBe(AUTHORISED_AT);
+  });
+
+  it('queues no plaintext identity material for the server', async () => {
+    signIn();
+    await table(IDENTITY_TABLE).put(identityRow());
+
+    const mutations = await table(`$${IDENTITY_TABLE}_mutations`).toArray();
+    expect(mutations.length).toBeGreaterThan(0);
+    const serialised = JSON.stringify(mutations);
+    expect(serialised).toContain(CIPHER_FIELD);
+    expect(serialised).not.toContain(JWK_X);
+    expect(serialised).not.toContain(JWK_Y);
+    expect(serialised).not.toContain(String(AUTHORISED_AT));
+  });
+
+  it('refuses a keyless app write outright — an unsealed identity is an unauthenticated claim', async () => {
+    ring = null;
+
+    await expect(table(IDENTITY_TABLE).put(identityRow())).rejects.toBeInstanceOf(
+      CloudKeylessWriteError,
+    );
+    expect(await readRaw(IDENTITY_TABLE, '#writer-device:dev-1')).toBeUndefined();
+    // The stricter rule is table-scoped: keyless pre-setup *content* writes are
+    // untouched — a P2P-only Writer keeps working in plaintext.
+    await table('docs').put({
+      id: 'pre-setup', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'ok',
+    });
+    expect((await table('docs').get('pre-setup'))?.name).toBe('ok');
+  });
+
+  it('stores a sync-applied ciphertext row verbatim while keyless and opens it after unlock', async () => {
+    const sealed = await sealedIdentityRow();
+    const held = ring;
+    ring = null;
+
+    // Sign-in-first: the pulled ciphertext must land even with no key held…
+    await applySyncPulled(sealed);
+    const raw = await readRaw(IDENTITY_TABLE, '#writer-device:dev-1');
+    expect(raw?.[CIPHER_FIELD]).toEqual(sealed[CIPHER_FIELD]);
+    // …but it is not readable (and so never trusted) until the key arrives.
+    expect(await table(IDENTITY_TABLE).get('#writer-device:dev-1')).toBeUndefined();
+
+    ring = held;
+    const back = await table(IDENTITY_TABLE).get('#writer-device:dev-1');
+    expect(back?.publicIdentityJwk).toEqual({ kty: 'EC', crv: 'P-256', x: JWK_X, y: JWK_Y });
+  });
+
+  it('never seals a sync-applied plaintext identity row — it is dropped, not adopted', async () => {
+    // The device is keyed: sealing the pulled plaintext would sign provider
+    // input with the account key — turning an injected row into trusted data.
+    await expect(applySyncPulled(identityRow())).resolves.toBeUndefined();
+
+    expect(await readRaw(IDENTITY_TABLE, '#writer-device:dev-1')).toBeUndefined();
+    expect(await table(IDENTITY_TABLE).get('#writer-device:dev-1')).toBeUndefined();
+  });
+
+  it('drops a pulled row carrying secret-class fields beside the envelope', async () => {
+    const sealed = await sealedIdentityRow();
+    const polluted = {
+      ...sealed,
+      publicIdentityJwk: { kty: 'EC', crv: 'P-256', x: 'injected-x', y: 'injected-y' },
+    };
+
+    await applySyncPulled(polluted);
+    expect(await readRaw(IDENTITY_TABLE, '#writer-device:dev-1')).toBeUndefined();
+  });
+
+  it('fails closed on every read of an unsealed stored row', async () => {
+    await writeRawBypass(identityRow());
+    // At rest the plaintext row exists…
+    expect((await readRaw(IDENTITY_TABLE, '#writer-device:dev-1'))?.deviceId).toBe('dev-1');
+
+    // …but no read path may surface it as an identity: not keyed…
+    expect(await table(IDENTITY_TABLE).get('#writer-device:dev-1')).toBeUndefined();
+    expect(await table(IDENTITY_TABLE).toArray()).toEqual([]);
+    expect(await table(IDENTITY_TABLE).bulkGet(['#writer-device:dev-1'])).toEqual([undefined]);
+
+    // …and not keyless either (content tables pass plaintext through here).
+    ring = null;
+    expect(await table(IDENTITY_TABLE).get('#writer-device:dev-1')).toBeUndefined();
+    expect(await table(IDENTITY_TABLE).toArray()).toEqual([]);
+  });
+
+  it('yields no identity from wrong-key ciphertext', async () => {
+    const sealed = await sealedIdentityRow();
+    await applySyncPulled(sealed);
+    ring = await deriveKeyRing(generateRootSecret(), 1);
+
+    expect(await table(IDENTITY_TABLE).get('#writer-device:dev-1')).toBeUndefined();
   });
 });
 
