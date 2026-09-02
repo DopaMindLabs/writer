@@ -15,6 +15,7 @@ import { keyMismatchState } from '@/lib/cloud/crypto/keyMismatch';
 import { deviceIdentityStore } from '@/lib/cloud/crypto/deviceIdentityStore';
 import { CIPHER_FIELD } from '@/lib/cloud/crypto/tableRules';
 import { accountDeviceIdentityId } from '@/lib/writerSyncIntegration/accountDeviceIdentity.types';
+import * as accountDeviceIdentityStore from '@/lib/writerSyncIntegration/accountDeviceIdentityStore';
 import {
   registerAccountIdentity,
   startAccountIdentityRegistrar,
@@ -237,6 +238,9 @@ describe('registerAccountIdentity — store failures', () => {
 describe('startAccountIdentityRegistrar', () => {
   it('defaults to the real registrar run without throwing', async () => {
     const listeners: ((s: { phase: string }) => void)[] = [];
+    // The default run's first eligibility gate — reaching it proves the
+    // default `registerAccountIdentity` wiring executed.
+    const tableGate = vi.spyOn(accountDeviceIdentityStore, 'hasAccountIdentityTable');
     const stop = startAccountIdentityRegistrar({
       syncState: {
         subscribe: (next) => {
@@ -249,8 +253,9 @@ describe('startAccountIdentityRegistrar', () => {
     // The app database in this suite has no cloud schema, so the default run
     // resolves 'ineligible' — the point is that the default wiring executes.
     for (const listener of listeners) listener({ phase: 'in-sync' });
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await vi.waitFor(() => expect(tableGate).toHaveBeenCalled());
     stop();
+    tableGate.mockRestore();
   });
 
   it('runs on the shared lifecycle signals', async () => {
@@ -267,8 +272,7 @@ describe('startAccountIdentityRegistrar', () => {
     });
 
     for (const listener of listeners) listener({ phase: 'in-sync' });
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(run).toHaveBeenCalledTimes(1);
+    await vi.waitFor(() => expect(run).toHaveBeenCalledTimes(1));
     stop();
   });
 });
