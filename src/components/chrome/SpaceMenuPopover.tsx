@@ -9,6 +9,7 @@ import { ComingSoon } from '@/components/settings/ComingSoon';
 import { PopoverClose } from '@/components/ui/popover';
 import { Link } from '@/components/ui/Link';
 import { cn } from '@/lib/utils';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 interface SpaceMenuPopoverProps {
   space: Space;
@@ -139,9 +140,9 @@ export const SpaceMenuPopover = ({ space, onRename }: SpaceMenuPopoverProps) => 
         <div className="font-serif text-[15px] font-medium tracking-tight text-ink">
           {space.name}
         </div>
-        <div className="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3">
+        <Eyebrow size={9} className="mt-0.5">
           {t('spaceMenu.thisSpace')}
-        </div>
+        </Eyebrow>
       </div>
 
       <SpaceMenuItems

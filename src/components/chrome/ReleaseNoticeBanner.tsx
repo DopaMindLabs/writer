@@ -6,6 +6,7 @@ import {
   NEXT_RELEASE_AT,
   NEXT_RELEASE_LABEL,
 } from '@/lib/releaseSchedule';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 export interface ReleaseNoticeBannerProps {
   /** Injectable clock for tests/stories; defaults to the real, ticking time. */
@@ -31,12 +32,11 @@ export const ReleaseNoticeBanner = ({ now }: ReleaseNoticeBannerProps) => {
       title={t('home.releaseTitle', { date: NEXT_RELEASE_LABEL })}
     >
       <p>{t('home.releaseBody')}</p>
-      <p
-        data-testid="release-notice-countdown"
-        className="mt-1 font-mono text-[11px] uppercase tracking-wider"
-      >
-        {t('home.releaseCountdown', { count: days })}
-      </p>
+      <Eyebrow asChild size={11} tone="inherit">
+        <p data-testid="release-notice-countdown" className="mt-1">
+          {t('home.releaseCountdown', { count: days })}
+        </p>
+      </Eyebrow>
     </InlineBanner>
   );
 };

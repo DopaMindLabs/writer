@@ -28,7 +28,7 @@ exports[`snapshot > matches the open sheet with an active doc 1`] = `
       class="mb-3 last:mb-0"
     >
       <div
-        class="font-mono text-[9px] uppercase tracking-wider text-ink-4"
+        class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4"
       >
         This doc
       </div>
@@ -50,7 +50,7 @@ exports[`snapshot > matches the open sheet with an active doc 1`] = `
       class="mb-3 last:mb-0"
     >
       <div
-        class="font-mono text-[9px] uppercase tracking-wider text-ink-4"
+        class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4"
       >
         This space
       </div>
@@ -73,7 +73,7 @@ exports[`snapshot > matches the open sheet with an active doc 1`] = `
       class="mb-3 last:mb-0"
     >
       <div
-        class="font-mono text-[9px] uppercase tracking-wider text-ink-4"
+        class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4"
       >
         App
       </div>
@@ -185,7 +185,7 @@ exports[`snapshot > matches the space-level sheet with no active doc 1`] = `
       class="mb-3 last:mb-0"
     >
       <div
-        class="font-mono text-[9px] uppercase tracking-wider text-ink-4"
+        class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4"
       >
         This space
       </div>
@@ -208,7 +208,7 @@ exports[`snapshot > matches the space-level sheet with no active doc 1`] = `
       class="mb-3 last:mb-0"
     >
       <div
-        class="font-mono text-[9px] uppercase tracking-wider text-ink-4"
+        class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4"
       >
         App
       </div>

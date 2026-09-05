@@ -54,7 +54,7 @@ exports[`NavTabs > snapshot > should match the snapshot across all variants > ac
         class="mb-1.5 last:mb-0"
       >
         <div
-          class="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+          class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-6 pb-1 pt-2.5"
           data-testid="settings-tabs-group-0"
         >
           Preferences
@@ -85,7 +85,7 @@ exports[`NavTabs > snapshot > should match the snapshot across all variants > ac
         class="mb-1.5 last:mb-0"
       >
         <div
-          class="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+          class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-6 pb-1 pt-2.5"
           data-testid="settings-tabs-group-1"
         >
           Data
