@@ -89,7 +89,7 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
             tabindex="0"
           >
             <button
-              class="items-center justify-center gap-2 whitespace-nowrap rounded-none transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 block flex-1 truncate text-left font-mono font-normal uppercase tracking-[0.08em] cursor-text"
+              class="items-center justify-center gap-2 whitespace-nowrap rounded-none transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 font-mono uppercase tracking-[0.11em] text-[9px] block flex-1 truncate text-left font-normal cursor-text"
               data-drag-through=""
               data-testid="sidebar-section-sec1-label"
               title="Rename (double-click)"

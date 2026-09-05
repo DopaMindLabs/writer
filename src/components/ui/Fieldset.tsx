@@ -1,5 +1,6 @@
 import { forwardRef, type FieldsetHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { eyebrowRecipe } from '@/components/ui/Eyebrow.recipe';
 
 export interface FieldsetProps
   extends Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, 'children'> {
@@ -23,7 +24,8 @@ export const Fieldset = forwardRef<HTMLFieldSetElement, FieldsetProps>(
         <legend
           data-testid={legendTestId}
           className={cn(
-            'mb-2 block w-full border-b border-ink pb-1 font-mono text-[10px] uppercase tracking-[0.11em] text-ink',
+            eyebrowRecipe({ tone: 'ink' }),
+            'mb-2 block w-full border-b border-ink pb-1',
             labelClassName,
           )}
         >
