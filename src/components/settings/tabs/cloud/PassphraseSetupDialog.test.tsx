@@ -2,10 +2,10 @@ import { vi } from 'vitest';
 import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/test-utils';
-import { createSyncCoordinator } from '@/lib/syncProviders/coordinator';
-import type { SyncProvider } from '@/lib/syncProviders/types';
-import { KeyEscrowPresence } from '@/lib/syncProviders/types';
-import { WriterSyncProvider } from '@/lib/writerSync/WriterSyncProvider';
+import { createSyncCoordinator } from 'writer-sync/core';
+import type { SyncProvider } from 'writer-sync/core';
+import { KeyEscrowPresence } from 'writer-sync/core';
+import { WriterSyncProvider } from '@/lib/writerSyncIntegration/WriterSyncProvider';
 import { PassphraseSetupDialog } from './PassphraseSetupDialog';
 
 const noop = () => {};
@@ -100,6 +100,7 @@ describe('PassphraseSetupDialog', () => {
     const setUp = vi.fn().mockResolvedValue('PROVIDER-CODE');
     const provider: SyncProvider = {
       id: 'test-cloud',
+      kind: 'dexie-cloud',
       keyDelivery: {
         setUp,
         unlock: () => Promise.resolve(),
@@ -114,7 +115,12 @@ describe('PassphraseSetupDialog', () => {
     };
     const onRecoveryCode = vi.fn();
     renderWithProviders(
-      <WriterSyncProvider coordinator={createSyncCoordinator({ providers: [provider] })}>
+      <WriterSyncProvider
+        coordinator={createSyncCoordinator({
+          providers: [provider],
+          defaultProviderInstanceId: 'test-cloud',
+        })}
+      >
         <PassphraseSetupDialog open onOpenChange={noop} onRecoveryCode={onRecoveryCode} />
       </WriterSyncProvider>,
     );

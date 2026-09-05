@@ -5,7 +5,7 @@ import { BlockQuote } from '@/components/ui/block-quote';
 import { Link } from '@/components/ui/Link';
 import { TypographyH1, TypographyP } from '@/components/ui/typography';
 import { PageNav } from '@/components/chrome/PageNav';
-import { HomeCloudSignInButton } from '@/components/chrome/HomeCloudSignInButton';
+import { HomeDeviceSyncLink } from '@/components/chrome/HomeDeviceSyncLink';
 import { ReleaseNoticeBanner } from '@/components/chrome/ReleaseNoticeBanner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { routes } from '@/lib/routes';
@@ -39,7 +39,7 @@ export const HomeScreen = () => {
 
   return (
     <div className="flex h-full w-full flex-col overflow-auto bg-paper text-ink">
-      <PageNav showBack={false} actions={<HomeCloudSignInButton />} />
+      <PageNav showBack={false} actions={<HomeDeviceSyncLink />} />
       <div
         id="main-content"
         tabIndex={-1}

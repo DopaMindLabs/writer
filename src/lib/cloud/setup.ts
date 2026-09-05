@@ -3,11 +3,11 @@ import { db as appDb } from '@/db/db';
 import type { LoremDB } from '@/db/LoremDB';
 import { SYNCED_TABLES, CIPHER_FIELD } from './crypto/tableRules';
 import {
-  generateMasterSecret,
+  generateRootSecret,
   deriveKeyRing,
   calibrateIterations,
-  wrapMasterSecret,
-  unwrapMasterSecret,
+  wrapRootSecret,
+  unwrapRootSecret,
   fingerprintsEqual,
   ESCROW_ID,
 } from './crypto/keys';
@@ -23,6 +23,8 @@ import {
   clearPendingEscrow,
 } from './crypto/keyStore';
 import { keyMismatchState } from './crypto/keyMismatch';
+import { deviceKeyVault } from './crypto/deviceKeyVault';
+import { currentPrincipal } from '@/lib/writerSyncIntegration/writerEntityMetadata';
 
 /** The initial key epoch (the escrow row id comes from `./crypto/keys`). */
 const EPOCH = 1;
@@ -98,7 +100,7 @@ export const hasPlaintextSyncedRows = async (
 };
 
 /**
- * Provision cloud encryption: mint a master secret, wrap it under the passphrase
+ * Provision cloud encryption: mint a root secret, wrap it under the passphrase
  * for escrow, derive and store the device key ring, seal existing rows, and
  * return the one-time recovery code for the UI to show once.
  *
@@ -122,13 +124,26 @@ export const createCloudEncryption = async (
   // mismatch/adopt flow, never delete it here.
   const accountId = resolveAccountId(db);
   if (accountId === null) await dropResidualEscrow(db);
-  const master = generateMasterSecret();
+  const master = generateRootSecret();
   const iterations = await calibrateIterations();
-  const escrow = await wrapMasterSecret(master, passphrase, iterations);
+  const escrow = await wrapRootSecret(master, passphrase, iterations);
   await savePendingEscrow({ accountId, escrow });
   await saveDeviceKeyRing({ accountId, ring: await deriveKeyRing(master, escrow.epoch) });
+  await storeVaultRoot(master);
   await sealExistingRows(db);
   return encodeRecoveryCode(master);
+};
+
+
+/**
+ * Retain the root secret in the device vault whenever it is legitimately in
+ * memory (setup, unlock, recovery, adoption), bound to the local principal.
+ * This is what lets an already-unlocked device later wrap the root for a
+ * pairing peer without a passphrase — the root itself still never rests
+ * unwrapped and never crosses a public API.
+ */
+const storeVaultRoot = async (master: Uint8Array): Promise<void> => {
+  await deviceKeyVault.storeRootSecret(master, await currentPrincipal());
 };
 
 /** What {@link publishPendingEscrow} did with this device's held-back escrow. */
@@ -181,13 +196,14 @@ export const unlockCloudEncryption = async (
   // the account's escrow only arrives after sign-in. Raise a distinct error so
   // the UI can say "sign in first" rather than "wrong passphrase".
   if (!escrow) throw new EscrowMissingError();
-  const master = await unwrapMasterSecret(escrow, passphrase);
+  const master = await unwrapRootSecret(escrow, passphrase);
   // Unlock always runs against a signed-in account (the escrow was pulled by that
   // sign-in), so the ring is bound to it.
   await saveDeviceKeyRing({
     accountId: resolveAccountId(db),
     ring: await deriveKeyRing(master, escrow.epoch),
   });
+  await storeVaultRoot(master);
   await sealExistingRows(db);
 };
 
@@ -224,12 +240,14 @@ export const recoverCloudEncryption = async (
   const sealed = await findSealedRow(db);
   if (sealed) await openRow(ring, sealed.ref, sealed.row);
   await saveDeviceKeyRing({ accountId: resolveAccountId(db), ring });
+  await storeVaultRoot(master);
   await sealExistingRows(db);
 };
 
 /** Forget the device's key ring and any escrow it was holding; the published
  *  escrow and other devices are untouched. */
 export const forgetThisDevice = async (): Promise<void> => {
+  await deviceKeyVault.forget();
   await forgetDeviceKeyRing();
   await clearPendingEscrow();
 };
@@ -274,7 +292,7 @@ export const adoptAccountKey = async (
 ): Promise<void> => {
   const serverEscrow = await db.cloudCrypto.get(ESCROW_ID);
   invariant(serverEscrow, 'no account escrow to adopt');
-  const master = await unwrapMasterSecret(serverEscrow, accountPassphrase);
+  const master = await unwrapRootSecret(serverEscrow, accountPassphrase);
   // Collect the device's own rows (readable under its current key) before the
   // swap; reads are never blocked, so this runs even while mismatched.
   const own = await collectDecryptableRows(db);
@@ -284,6 +302,7 @@ export const adoptAccountKey = async (
     accountId: readCurrentAccountId(db),
     ring: await deriveKeyRing(master, serverEscrow.epoch),
   });
+  await storeVaultRoot(master);
   // The device now holds the account key — the mismatch is resolved, so clear it
   // before re-sealing (the write lock would otherwise refuse the bulkPut).
   keyMismatchState.set(false);
@@ -292,7 +311,7 @@ export const adoptAccountKey = async (
   }
   const iterations = await calibrateIterations();
   await db.cloudCrypto.put(
-    await wrapMasterSecret(master, keepPassphrase, iterations),
+    await wrapRootSecret(master, keepPassphrase, iterations),
   );
   await clearPendingEscrow();
 };

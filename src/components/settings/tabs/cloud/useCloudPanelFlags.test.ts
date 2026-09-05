@@ -9,7 +9,7 @@ vi.mock('./useDeviceSlots', () => ({
 
 import { deviceRevokedState } from '@/lib/cloud/deviceRevoked';
 import { useCloudPanelFlags } from './useCloudPanelFlags';
-import { KeyEscrowPresence } from '@/lib/syncProviders/types';
+import { KeyEscrowPresence } from 'writer-sync/core';
 
 const signedInUser = { isLoggedIn: true } as unknown as UserLogin;
 

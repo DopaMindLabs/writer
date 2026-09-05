@@ -25,7 +25,7 @@ describe('appMenuLinks', () => {
   });
 
   it('offers Accessibility and Account on both surfaces', () => {
-    for (const id of ['accessibility', 'account']) {
+    for (const id of ['accessibility', 'profile']) {
       expect(appMenuLink(id).surfaces).toEqual(
         expect.arrayContaining(['popover', 'sheet']),
       );
@@ -40,9 +40,9 @@ describe('appMenuLinks', () => {
   it('resolves the sheet App group with Accessibility and Account before Contact', () => {
     const ids = sheetAppMenuLinks().map((link) => link.id);
     expect(ids).toContain('accessibility');
-    expect(ids).toContain('account');
+    expect(ids).toContain('profile');
     expect(ids.indexOf('accessibility')).toBeLessThan(ids.indexOf('contact'));
-    expect(ids.indexOf('account')).toBeLessThan(ids.indexOf('contact'));
+    expect(ids.indexOf('profile')).toBeLessThan(ids.indexOf('contact'));
   });
 
   it('resolves popover links to a href, label key and test id', () => {

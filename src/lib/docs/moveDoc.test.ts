@@ -1,9 +1,11 @@
 import { db } from '@/db/db';
+import { sampleMetadata } from '@/test/fixtures';
 import { EMPTY_LEXICAL_JSON } from './emptyBody';
 import { moveDoc } from './docRepository';
 
 const putDoc = (id: string, sectionId: string, order?: number) =>
   db.docs.put({
+    ...sampleMetadata(),
     id,
     spaceId: 's1',
     sectionId,
@@ -49,6 +51,19 @@ describe('moveDoc', () => {
     // Source section closes the gap.
     expect(await orderOf('a')).toBe(0);
     expect(await orderOf('c')).toBe(1);
+  });
+
+  it('mints a distinct mutation id for every row a move touches', async () => {
+    await moveDoc({ docId: 'c', toSectionId: 'sec1', toIndex: 0 });
+    // Every reordered row is its own logical mutation: the operation journal
+    // keys frames by mutation id, so a shared id would collapse the moves of
+    // different documents into one operation.
+    const touched = (await db.docs.toArray()).filter(
+      (doc) => doc.mutationId !== sampleMetadata().mutationId,
+    );
+    expect(touched.length).toBeGreaterThan(1);
+    const ids = touched.map((doc) => doc.mutationId);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
   it('is a no-op for an unknown document', async () => {

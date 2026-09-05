@@ -43,8 +43,8 @@ test.describe('cloud write lock', () => {
     await expect(banner).toContainText(/encryption key has changed/i);
     await expect(page.getByTestId('templates-submit')).toBeDisabled();
 
-    await page.getByRole('button', { name: /open account settings/i }).click();
-    await page.waitForURL(/#\/settings\?tab=account/);
+    await page.getByRole('button', { name: /open cloud sync settings/i }).click();
+    await page.waitForURL(/#\/settings\?tab=cloudSync/);
   });
 
   test('blocks creating a space while the keyless lock is engaged', async ({ page }) => {

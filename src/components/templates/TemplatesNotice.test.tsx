@@ -14,7 +14,7 @@ describe('TemplatesNotice', () => {
     renderWithProviders(<TemplatesNotice lockReason="mismatch" submitError={null} />);
     const banner = screen.getByTestId('templates-lock-banner');
     expect(banner).toHaveTextContent(/encryption key has changed/i);
-    expect(screen.getByRole('button', { name: /open account settings/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /open cloud sync settings/i })).toBeInTheDocument();
   });
 
   it('warns with the keyless copy while signed in without a key', () => {
@@ -34,7 +34,7 @@ describe('TemplatesNotice', () => {
   it('shows an error banner without an action for a generic failure', () => {
     renderWithProviders(<TemplatesNotice lockReason="none" submitError="failed" />);
     expect(screen.getByTestId('templates-error-banner')).toHaveTextContent(/something went wrong/i);
-    expect(screen.queryByRole('button', { name: /open account settings/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: /open cloud sync settings/i })).toBeNull();
   });
 
   it('prefers a live lock reason over a caught submit error', () => {
@@ -48,7 +48,7 @@ describe('TemplatesNotice', () => {
       path: '/new',
       initialEntries: ['/new'],
     });
-    await userEvent.click(screen.getByRole('button', { name: /open account settings/i }));
+    await userEvent.click(screen.getByRole('button', { name: /open cloud sync settings/i }));
     expect(await screen.findByTestId('catch-all')).toBeInTheDocument();
   });
 });

@@ -5,7 +5,7 @@ The app adapts to small screens so you can read and write on a phone or tablet.
 ## At a glance
 
 - A **bottom tab bar** replaces the sidebar on small screens.
-- The **more** tab opens a sheet with settings, accessibility, your account, help, and about.
+- The **more** tab opens a sheet with settings, accessibility, your profile, help, and about.
 - **Read** mode and [BrainSpace](brainspace) are usable on a phone.
 - **Split view** is available on larger screens.
 
@@ -44,8 +44,8 @@ from the right.
 
 ## Tips
 
-- Storage is local to each browser, so work started on your phone stays on your
-  phone unless you export and import it — see [Your data](your-data).
+- Work stays in the phone's browser by default. Use [Device sync](pairing-devices),
+  cloud sync, or export and import to move it elsewhere.
 - Rotate to landscape for a more comfortable writing measure.
 
 ## Related

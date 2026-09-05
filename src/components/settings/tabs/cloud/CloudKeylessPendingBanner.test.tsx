@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { CloudKeylessPendingBanner } from './CloudKeylessPendingBanner';
-import { SyncPhase } from '@/lib/syncProviders/types';
+import { SyncPhase } from 'writer-sync/core';
 
 describe('CloudKeylessPendingBanner', () => {
   it('shows a neutral checking notice with no action while a pull is in progress', () => {

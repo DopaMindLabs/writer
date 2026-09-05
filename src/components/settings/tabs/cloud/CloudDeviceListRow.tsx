@@ -29,7 +29,7 @@ export const CloudDeviceListRow = ({
   onRevoke,
 }: CloudDeviceListRowProps) => {
   const { t, i18n } = useTranslation('screens');
-  const k = (key: string) => `settings.account.cloud.devices.${key}`;
+  const k = (key: string) => `settings.cloud.devices.${key}`;
 
   const name = device.isThisDevice
     ? t(k('thisDevice'))

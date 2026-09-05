@@ -1,7 +1,8 @@
 # Your data
 
-This app is **local-first**: your writing is stored in your own browser, on your
-own device. Nothing is uploaded to a server, and the app works fully offline.
+This app is **local-first**: your writing starts in the browser on your device,
+and the app works offline. Data leaves the device only when you choose an export
+or sync option.
 
 ## At a glance
 
@@ -9,12 +10,13 @@ own device. Nothing is uploaded to a server, and the app works fully offline.
 - **Export** prose and citations to take your work with you.
 - **Back up** regularly; clearing site data erases your work.
 - Optionally **sync** a space to a local folder.
+- Pair another device for direct local-network sync, or enable encrypted cloud sync.
 
 ## What local-first means
 
 - Documents, spaces, notes, and citations live in your browser's local storage.
-- There's no account and no automatic cloud sync — privacy by default, but your
-  data is tied to this browser on this device.
+- Local storage works from first use. Sync remains optional, and locally stored
+  data stays tied to this browser on this device.
 - Clearing your browser's site data will remove your work, so keep backups.
 
 ## Exporting
@@ -48,6 +50,9 @@ anything; this is also the way to move a space between devices.
   comes back as a new space, and the existing space is left untouched.
 - Connect a **sync folder** to mirror a space to local storage, set the
   interval, and run a sync on demand.
+- Use [Device sync](pairing-devices) to connect two devices directly on the same
+  local network.
+- Use [Cloud sync](cloud-sync) for encrypted account-based sync across devices.
 - The home screen shows a status chip: a warning while sync and backups are
   not enabled, switching to **folder sync on** once a sync folder is
   connected.

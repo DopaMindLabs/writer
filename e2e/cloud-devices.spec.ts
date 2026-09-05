@@ -45,7 +45,7 @@ const setUpEncryption = async (page: import('@playwright/test').Page) => {
  * write path never runs. That regression is held by the unit test asserting no
  * write is attempted, and end-to-end only by the real-account harness.
  */
-const LIST = '/?cloud-sync=on&reseed=1&cloud-devices=list#/settings?tab=account';
+const LIST = '/?cloud-sync=on&reseed=1&cloud-devices=list#/settings?tab=cloudSync';
 
 const openDeviceList = async (page: import('@playwright/test').Page) => {
   await page.goto(LIST);
@@ -137,7 +137,7 @@ test.describe('cloud sync device revoked', () => {
   test('a device removed elsewhere is told, rather than silently losing its slot', async ({
     page,
   }) => {
-    await page.goto('/?cloud-sync=on&reseed=1&cloud-devices=revoked#/settings?tab=account');
+    await page.goto('/?cloud-sync=on&reseed=1&cloud-devices=revoked#/settings?tab=cloudSync');
     const banner = page.getByTestId('cloud-device-revoked');
     await expect(banner).toBeVisible();
     await expect(banner).toContainText(/removed from your account/i);
@@ -152,7 +152,7 @@ test.describe('cloud sync device revoked', () => {
  * run, because the registrar re-runs on every device-key change.
  */
 const REGISTRAR =
-  '/?cloud-sync=on&reseed=1&cloud-devices=registrar#/settings?tab=account';
+  '/?cloud-sync=on&reseed=1&cloud-devices=registrar#/settings?tab=cloudSync';
 
 /** The registry, read straight from IndexedDB — the source of truth the UI renders. */
 const readRegistry = (page: import('@playwright/test').Page) =>

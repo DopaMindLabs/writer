@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useCloudObservable } from '@/lib/cloud/cloudObservable';
 import { cloudUserInteraction, cloudCurrentUser } from '@/lib/cloud/cloudClient';
-import { useSyncStatus } from '@/lib/writerSync/useSyncStatus';
-import { useEscrowPresence } from '@/lib/writerSync/useEscrowPresence';
+import { useSyncStatus } from '@/lib/writerSyncIntegration/useSyncStatus';
+import { useEscrowPresence } from '@/lib/writerSyncIntegration/useEscrowPresence';
 import { InlineBanner } from '@/components/ui/InlineBanner';
 import { useKeyMismatch } from '@/hooks/useKeyMismatch';
 import { useCloudPanelState } from './useCloudPanelState';

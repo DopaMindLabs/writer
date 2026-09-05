@@ -106,8 +106,10 @@ separate troubleshooting, and list only verified UI labels and behaviour.
 - Never plan a workaround, hack or symptom-masking fallback in place of a root-cause fix. If
   the root cause is not yet known, plan the diagnostic work needed to establish it first.
 - Never plan to weaken a lint rule, coverage floor, or type safety boundary.
-- If a schema change is needed, include the migration checklist from
+- If a schema change is needed, include the schema-change checklist from
   `change-writer-persistence` in the plan.
+- Never plan a new Dexie `version(n)`, an `upgrade()` callback, or a migration: Writer has
+  no users and keeps no backward compatibility.
 
 ## Track this work as a todo list
 

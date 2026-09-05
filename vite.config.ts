@@ -62,7 +62,11 @@ export default defineConfig(({ command, mode }) => ({
     reporter: process.env.CI ? 'verbose' : 'default',
     setupFiles: ['./src/test/setup.ts'],
     css: false,
-    include: ['src/**/*.test.{ts,tsx}'],
+    include: [
+      'src/**/*.test.{ts,tsx}',
+      'packages/*/src/**/*.test.ts',
+      'packages/*/test/**/*.test.ts',
+    ],
     outputDiffLines: 50,
     clearMocks: true,
     restoreMocks: true,
@@ -80,6 +84,9 @@ export default defineConfig(({ command, mode }) => ({
         'src/test/**',
         'src/**/*.test.{ts,tsx}',
         'src/**/*.stories.{ts,tsx}',
+        // Test-support data, no different from `src/test/**` — measuring it
+        // rewards writing fixtures over covering the code they exercise.
+        'src/**/*.fixture.{ts,tsx}',
         'src/**/__snapshots__/**',
       ],
       thresholds: {

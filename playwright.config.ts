@@ -42,6 +42,14 @@ export default defineConfig({
             if (path.includes('src/editor/')) return false;
             if (path.includes('src/test/')) return false;
             if (path.includes('src/tours/')) return false;
+            // The reusable sync engine is a separate workspace with its own
+            // suites (including a fixture consumer and the boundary gates), and
+            // most of it cannot be driven from a browser at all: pairing, the
+            // inbound codec and materialiser need a second device, and the
+            // multi-provider branches need more than the one configured
+            // provider. It is measured by `npm run test:run`, not from here —
+            // the same treatment `src/editor/` and `src/tours/` already get.
+            if (path.includes('packages/writer-sync/')) return false;
             if (path.includes('.test.')) return false;
             if (path.includes('__snapshots__')) return false;
             return true;
@@ -78,7 +86,25 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        launchOptions: {
+          // A synthetic camera, auto-granted. The pairing scanner's camera path
+          // is otherwise unreachable headlessly, and asserting only that it
+          // reports "no camera" would leave the path users actually take
+          // untested. The fake device emits a rolling pattern rather than a QR,
+          // so scanning runs and finds nothing — which is the loop under test.
+          args: [
+            '--use-fake-device-for-media-stream',
+            '--use-fake-ui-for-media-stream',
+          ],
+        },
+      },
+    },
+  ],
   webServer: {
     command: 'npm run build:e2e && npm run preview:e2e',
     url: 'http://localhost:4173',
