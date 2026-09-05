@@ -168,7 +168,7 @@ Tiny mono micro-label. Sits above every titled block.
 |---|---|---|---|
 | `children` | node | — | The label text. Almost always uppercase. |
 | `size` | number | `10` | Font size in px. Common values: 9, 10. |
-| `tone` | `"ink2" \| "ink3" \| "ink4"` | `"ink3"` | Colour token (ink only — status is never tinted into a label). |
+| `tone` | `"ink" \| "ink2" \| "ink3" \| "ink4" \| "paper" \| "inherit"` | `"ink3"` | Colour token (ink only — status is never tinted into a label). `inherit` names no colour, for a label whose colour is owned by a parent state (an active tab, a hovered row). |
 | `asChild` | boolean | `false` | Render through Radix `Slot` so the style lands on the child element (e.g. a `<th>`/`<td>`). |
 
 **Usage rules**

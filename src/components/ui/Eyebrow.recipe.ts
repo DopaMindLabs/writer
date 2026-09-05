@@ -16,10 +16,18 @@ export const eyebrowRecipe = cva(
         11: 'text-[11px]',
       },
       tone: {
+        ink: 'text-ink',
         ink2: 'text-ink-2',
         ink3: 'text-ink-3',
         ink4: 'text-ink-4',
         paper: 'text-paper',
+        /**
+         * Take the colour from the surrounding element instead of naming one.
+         * For labels whose colour is owned by a parent state — a tab that is
+         * active or not, a row that is hovered — where naming a tone here
+         * would override the state it is meant to express.
+         */
+        inherit: '',
       },
     },
     defaultVariants: { size: 10, tone: 'ink3' },
