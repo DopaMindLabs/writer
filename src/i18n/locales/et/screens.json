@@ -35,8 +35,8 @@
   "settings": {
     "back": "tagasi",
     "windowTitle": "lotem · seaded",
-    "breadcrumb": "UNIVERSAALSED SEADED",
-    "shellSubtitle": "UNIVERSAALSED SEADED",
+    "breadcrumb": "Universaalsed Seaded",
+    "shellSubtitle": "Universaalsed Seaded",
     "comingSoonBadge": "tulemas peagi",
     "helpAria": "Mis see on?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Hiljutised sünkroonimised",
       "historyEmpty": "Sünkroonimisi pole veel.",
       "columns": {
-        "when": "MILLAL",
-        "space": "RUUM",
-        "kind": "LIIK",
-        "size": "SUURUS",
-        "status": "STAATUS"
+        "when": "Millal",
+        "space": "Ruum",
+        "kind": "Liik",
+        "size": "Suurus",
+        "status": "Staatus"
       },
       "kind": {
         "auto": "automaatne",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "RUUM · SEADED",
-      "shellSubtitle": "RUUMI SEADED",
+      "breadcrumb": "Ruum · Seaded",
+      "shellSubtitle": "Ruumi Seaded",
       "loading": "Ruumi laadimine…",
       "groups": {
         "thisSpace": "See ruum",
@@ -545,9 +545,9 @@
         "historyTitle": "Ajalugu",
         "empty": "Hetktõmmiseid pole veel — looge üks + hetktõmmis kohe abil.",
         "columns": {
-          "when": "MILLAL",
-          "kind": "LIIK",
-          "size": "SUURUS",
+          "when": "Millal",
+          "kind": "Liik",
+          "size": "Suurus",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Mine avalehele"
   },
   "templates": {
-    "crumb": "01 — TUB A LIIK",
+    "crumb": "01 — Tub A Liik",
     "headingMain": "Mis tüüpi ruumi",
     "headingAccent": "te alustate?",
     "chooseLegend": "Vali mall",
@@ -683,8 +683,8 @@
     "mobileWarning": "Jagatud vaade vajab suuremat ekraani.",
     "mobileNote": "Avage see dokument Write'i režiimis.",
     "openInWrite": "Ava Write'is →",
-    "leftPrefix": "VASAK —",
-    "rightPrefix": "PAREM —",
+    "leftPrefix": "Vasak —",
+    "rightPrefix": "Parem —",
     "rightPaneAria": "Parema paani dokument",
     "noOtherDocs": "(teisi dok. pole)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ lisa",
     "cancel": "× tühista",
     "columns": {
-      "tag": "SILT",
-      "authors": "AUTORID",
-      "title": "PEALKIRI",
-      "year": "AASTA",
-      "type": "TÜÜP",
-      "used": "KASUTATUD"
+      "tag": "Silt",
+      "authors": "Autorid",
+      "title": "Pealkiri",
+      "year": "Aasta",
+      "type": "Tüüp",
+      "used": "Kasutatud"
     },
-    "style": "STIIL — CHICAGO (AUTOR-KUUPÄEV)",
-    "exportBib": "EKSPORDI .BIB-INA",
+    "style": "Stiil — Chicago (Autor-kuupäev)",
+    "exportBib": "Ekspordi .Bib-ina",
     "summary": "{{filtered}} KUVATUD · {{shown}} SELLEL LEHEL",
     "prevPage": "Eelmine leht",
     "nextPage": "Järgmine leht",

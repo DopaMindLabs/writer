@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Espaço",
     "navLabel": "Documentos",
-    "shared": "PARTILHADO",
-    "private": "PRIVADO · LOCAL",
+    "shared": "Partilhado",
+    "private": "Privado · Local",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "novo",
     "ageDays": "{{count}}d",
@@ -30,8 +30,8 @@
     "theme": "Tema",
     "exitFocus": "Sair do modo de foco",
     "enterFocus": "Entrar no modo de foco",
-    "normal": "NORMAL",
-    "focus": "FOCO",
+    "normal": "Normal",
+    "focus": "Foco",
     "focusTitleNormal": "Normal (⌘\\)",
     "focusTitleFocus": "Foco (⌘\\)",
     "findInDoc": "Pesquisar no documento",
@@ -115,7 +115,7 @@
     "tourCheckmark": "concluído"
   },
   "spaceMenu": {
-    "thisSpace": "ESTE ESPAÇO",
+    "thisSpace": "Este Espaço",
     "rename": "Renomear",
     "settings": "Definições",
     "backups": "Cópias e histórico",
@@ -129,18 +129,18 @@
     "expand": "Expandir inspetor",
     "collapse": "Recolher inspetor",
     "tabs": {
-      "outline": "ESTRUTURA",
-      "info": "INFO",
-      "history": "HISTÓRICO",
-      "actions": "AÇÕES"
+      "outline": "Estrutura",
+      "info": "Info",
+      "history": "Histórico",
+      "actions": "Ações"
     },
     "outline": {
-      "title": "ESTRUTURA",
+      "title": "Estrutura",
       "sectionSummary": "{{count}} SECÇÕES",
       "empty": "Sem títulos ainda. Adicione títulos ao documento para criar o seu esboço."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Palavras",
       "characters": "Caracteres",
       "updated": "Atualizado",
@@ -165,8 +165,8 @@
       "unlock": "Desbloquear para editar"
     },
     "history": {
-      "title": "VERSÕES",
-      "now": "AGORA",
+      "title": "Versões",
+      "now": "Agora",
       "full": "histórico completo de versões →",
       "empty": "Ainda sem versões. As versões são guardadas automaticamente enquanto escreves.",
       "summary": "{{count}} versão",
@@ -186,7 +186,7 @@
       "ageDays": "há {{count}}d"
     },
     "actions": {
-      "label": "AÇÕES DO DOCUMENTO",
+      "label": "Ações Do Documento",
       "rename": "Renomear",
       "move": "Mover para secção…",
       "export": "Exportar este documento…",

@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Svæði",
     "navLabel": "Skjöl",
-    "shared": "DEILT",
-    "private": "EINKA · STAÐBUNDIÐ",
+    "shared": "Deilt",
+    "private": "Einka · Staðbundið",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "nýtt",
     "ageDays": "{{count}}d",
@@ -30,8 +30,8 @@
     "theme": "Þema",
     "exitFocus": "Hætta í einbeitingarham",
     "enterFocus": "Fara í einbeitingarham",
-    "normal": "EÐLILEGT",
-    "focus": "EINBEITING",
+    "normal": "Eðlilegt",
+    "focus": "Einbeiting",
     "focusTitleNormal": "Eðlilegt (⌘\\)",
     "focusTitleFocus": "Einbeiting (⌘\\)",
     "findInDoc": "Finna í skjali",
@@ -115,7 +115,7 @@
     "tourCheckmark": "lokið"
   },
   "spaceMenu": {
-    "thisSpace": "ÞETTA SVÆÐI",
+    "thisSpace": "Þetta Svæði",
     "rename": "Endurnefna",
     "settings": "Stillingar",
     "backups": "Afrit og saga",
@@ -129,18 +129,18 @@
     "expand": "Stækka skoðara",
     "collapse": "Minnka skoðara",
     "tabs": {
-      "outline": "YFIRLIT",
-      "info": "UPPL",
-      "history": "SAGA",
-      "actions": "AÐGERÐIR"
+      "outline": "Yfirlit",
+      "info": "Uppl",
+      "history": "Saga",
+      "actions": "Aðgerðir"
     },
     "outline": {
-      "title": "YFIRLIT",
+      "title": "Yfirlit",
       "sectionSummary": "{{count}} KAFLAR",
       "empty": "Engar fyrirsagnir enn. Bættu fyrirsögnum við skjalið til að búa til yfirlit þess."
     },
     "info": {
-      "title": "UPPL",
+      "title": "Uppl",
       "words": "Orð",
       "characters": "Stafir",
       "updated": "Uppfært",
@@ -165,8 +165,8 @@
       "unlock": "Opna til breytinga"
     },
     "history": {
-      "title": "ÚTGÁFUR",
-      "now": "NÚNA",
+      "title": "Útgáfur",
+      "now": "Núna",
       "full": "fullkomin saga útgáfa →",
       "empty": "Engar útgáfur enn. Útgáfur vistast sjálfkrafa á meðan þú skrifar.",
       "summary": "{{count}} útgáfa",
@@ -186,7 +186,7 @@
       "ageDays": "fyrir {{count}}d"
     },
     "actions": {
-      "label": "AÐGERÐIR SKJALS",
+      "label": "Aðgerðir Skjals",
       "rename": "Endurnefna",
       "move": "Færa í kafla…",
       "export": "Flytja þetta skjal út…",

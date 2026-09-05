@@ -48,6 +48,8 @@ import { ImageLightbox, type LightboxImage } from '@/components/ui/ImageLightbox
 import { InlineBanner } from '@/components/ui/InlineBanner';
 import { TypographyLabel } from '@/components/ui/typography';
 import { cn } from '@/lib/utils';
+import { Eyebrow } from '@/components/ui/Eyebrow';
+import { eyebrowRecipe } from '@/components/ui/Eyebrow.recipe';
 
 interface BrainSpaceDetailDrawerProps {
   spaceId: string;
@@ -96,9 +98,9 @@ const ConnectionRow = ({
         <span className="font-mono text-[11px] text-ink-3">{arrow}</span>
         <span className="min-w-0 truncate">{label}</span>
         {note && (
-          <span className="font-mono text-[9px] uppercase tracking-wider text-ink-4">
-            {NOTE_KIND_LABEL[note.kind]}
-          </span>
+          <Eyebrow asChild size={9} tone="ink4">
+            <span>{NOTE_KIND_LABEL[note.kind]}</span>
+          </Eyebrow>
         )}
       </button>
       <IconButton
@@ -136,7 +138,10 @@ const LinkedDocSection = ({
         htmlFor="drawer-doc-link"
         tone="ink3"
         weight="regular"
-        className="mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider"
+        className={cn(
+          eyebrowRecipe({ tone: 'inherit' }),
+          'mb-2 flex items-center gap-1.5',
+        )}
       >
         <Link2 className="h-3 w-3" />
         {t('brainSpace.drawer.linkedDocLabel')}
@@ -161,7 +166,7 @@ const LinkedDocSection = ({
             data-testid="brain-detail-drawer-open"
             kind="secondary"
             onClick={onOpenDoc}
-            className="gap-1.5 border-ink px-3 py-2 font-mono text-[10px] uppercase tracking-wider"
+            className="gap-1.5 border-ink px-3 py-2 font-mono text-[10px] tracking-wider"
           >
             <ExternalLink className="h-3 w-3" />
             {t('brainSpace.drawer.openDoc')}
@@ -263,9 +268,9 @@ const DrawerHeader = ({
   return (
     <header className="flex items-start justify-between border-b border-rule p-4">
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4">
-          {NOTE_KIND_LABEL[note.kind]}
-        </span>
+        <Eyebrow asChild tone="ink4">
+          <span>{NOTE_KIND_LABEL[note.kind]}</span>
+        </Eyebrow>
         <TextField
           data-testid="brain-detail-drawer-title"
           variant="bare"
@@ -316,7 +321,7 @@ const BodySection = ({ note }: { note: Note }) => {
         htmlFor="drawer-body"
         tone="ink3"
         weight="regular"
-        className="mb-2 block font-mono text-[10px] uppercase tracking-wider"
+        className={cn(eyebrowRecipe({ tone: 'inherit' }), 'mb-2 block')}
       >
         {t('brainSpace.drawer.bodyLabel')}
       </Label>
@@ -340,7 +345,10 @@ const AttachmentsHeader = ({ count }: { count: number }) => {
       <Label
         tone="ink3"
         weight="regular"
-        className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider"
+        className={cn(
+          eyebrowRecipe({ tone: 'inherit' }),
+          'flex items-center gap-1.5',
+        )}
       >
         <ImagePlus className="h-3 w-3" />
         {t('brainSpace.drawer.picturesLabel')}
@@ -404,7 +412,7 @@ const AttachmentsUpload = ({ atLimit, onPick }: AttachmentsUploadProps) => {
             disabled={atLimit}
             onClick={open}
             data-testid="brain-detail-drawer-attachments-upload"
-            className="gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
+            className="gap-1.5 px-3 py-1.5 font-mono text-[10px] tracking-wider"
           >
             <Icon icon={ImagePlus} size="xs" />
             {t('brainSpace.drawer.addPicture')}
@@ -516,7 +524,7 @@ const DrawerDeleteFooter = ({ onDelete }: { onDelete: () => void }) => {
         kind="dangerous"
         size="sm"
         onClick={onDelete}
-        className="gap-1.5 border-0 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
+        className="gap-1.5 border-0 px-3 py-1.5 font-mono text-[10px] tracking-wider"
       >
         <Trash2 className="h-3 w-3" />
         {t('brainSpace.drawer.deleteNote')}

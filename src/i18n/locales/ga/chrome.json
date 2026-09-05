@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Spás",
     "navLabel": "Doiciméid",
-    "shared": "ROINNTE",
-    "private": "PRÍOBHÁIDEACH · ÁITIÚIL",
+    "shared": "Roinnte",
+    "private": "Príobháideach · Áitiúil",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "nua",
     "ageDays": "{{count}}l",
@@ -30,8 +30,8 @@
     "theme": "Téama",
     "exitFocus": "Fág mód fócais",
     "enterFocus": "Téigh isteach i mód fócais",
-    "normal": "NORMÁLTA",
-    "focus": "FÓCAS",
+    "normal": "Normálta",
+    "focus": "Fócas",
     "focusTitleNormal": "Normálta (⌘\\)",
     "focusTitleFocus": "Fócas (⌘\\)",
     "findInDoc": "Aimsigh sa doiciméad",
@@ -115,7 +115,7 @@
     "tourCheckmark": "críochnaithe"
   },
   "spaceMenu": {
-    "thisSpace": "AN SPÁS SEO",
+    "thisSpace": "An Spás Seo",
     "rename": "Athainmnigh",
     "settings": "Socruithe",
     "backups": "Cúltacaí agus stair",
@@ -129,13 +129,13 @@
     "expand": "Leathnaigh cigire",
     "collapse": "Cuir cigire i leataobh",
     "tabs": {
-      "outline": "IMLÍNE",
+      "outline": "Imlíne",
       "info": "EOL",
-      "history": "STAIR",
-      "actions": "GNÍOMHAÍOCHTAÍ"
+      "history": "Stair",
+      "actions": "Gníomhaíochtaí"
     },
     "outline": {
-      "title": "IMLÍNE",
+      "title": "Imlíne",
       "sectionSummary": "{{count}} RANNA",
       "empty": "Níl ceannteidil ann fós. Cuir ceannteidil leis an gcáipéis chun a léarscáil a thógáil."
     },
@@ -165,8 +165,8 @@
       "unlock": "Díghlasáil chun eagarthóireachta"
     },
     "history": {
-      "title": "LEAGAIN",
-      "now": "ANOIS",
+      "title": "Leagain",
+      "now": "Anois",
       "full": "stair iomlán leaganacha →",
       "empty": "Gan leaganacha go fóill. Sábháiltear leaganacha go huathoibríoch agus tú ag scríobh.",
       "summary": "{{count}} leagan",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}l ó shin"
     },
     "actions": {
-      "label": "GNÍOMHAÍOCHTAÍ DOICIMÉID",
+      "label": "Gníomhaíochtaí Doiciméid",
       "rename": "Athainmnigh",
       "move": "Bog go rann…",
       "export": "Easpórtáil an doiciméad seo…",

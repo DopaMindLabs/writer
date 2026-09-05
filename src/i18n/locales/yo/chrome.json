@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Àyè",
     "navLabel": "Àwọn doko",
-    "shared": "TÍ A PIN",
-    "private": "ÌKỌ̀KỌ̀ · NÍ ÀGBÈGBÈ",
+    "shared": "Tí A Pin",
+    "private": "Ìkọ̀kọ̀ · Ní Àgbègbè",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "tuntun",
     "ageDays": "{{count}}j",
@@ -30,8 +30,8 @@
     "theme": "Ìṣàlàyé",
     "exitFocus": "Jáde nínú ipo ìfọkànsí",
     "enterFocus": "Wọ ipo ìfọkànsí",
-    "normal": "DÉDÉ",
-    "focus": "ÌFỌKÀNSÍ",
+    "normal": "Dédé",
+    "focus": "Ìfọkànsí",
     "focusTitleNormal": "Dédé (⌘\\)",
     "focusTitleFocus": "Ìfọkànsí (⌘\\)",
     "findInDoc": "Wá nínú doko",
@@ -115,7 +115,7 @@
     "tourCheckmark": "tí parí"
   },
   "spaceMenu": {
-    "thisSpace": "ÀYÈ YÌÍ",
+    "thisSpace": "Àyè Yìí",
     "rename": "Tún sọ orúkọ",
     "settings": "Àwọn ètò",
     "backups": "Àwọn ẹ̀dá àkójọpọ̀ àti ìtàn",
@@ -129,18 +129,18 @@
     "expand": "Faagun olùyẹ̀wò",
     "collapse": "Dín olùyẹ̀wò kù",
     "tabs": {
-      "outline": "ÀKÓJỌPỌ̀",
-      "info": "ÌTÀNYỌ",
-      "history": "ÌTÀN",
-      "actions": "ÌGBÉSÉ"
+      "outline": "Àkójọpọ̀",
+      "info": "Ìtànyọ",
+      "history": "Ìtàn",
+      "actions": "Ìgbésé"
     },
     "outline": {
-      "title": "ÀKÓJỌPỌ̀",
+      "title": "Àkójọpọ̀",
       "sectionSummary": "{{count}} ÀWỌN APÁ",
       "empty": "Ko si awọn akọle sibẹsibẹ. Fi awọn akọle kun si iwe naa lati kọ eto rẹ."
     },
     "info": {
-      "title": "ÌTÀNYỌ",
+      "title": "Ìtànyọ",
       "words": "Àwọn ọ̀rọ̀",
       "characters": "Àwọn lẹ́tà",
       "updated": "Ti sọ di tuntun",
@@ -165,8 +165,8 @@
       "unlock": "Ṣílẹ̀kùn fún àtúnṣe"
     },
     "history": {
-      "title": "ÀWỌN ẸLẸ́LẸ́",
-      "now": "NÍSISÌYÍ",
+      "title": "Àwọn Ẹlẹ́lẹ́",
+      "now": "Nísisìyí",
       "full": "ìtàn ẹlẹ́lẹ́ pípéye →",
       "empty": "Kò sí ẹlẹ́lẹ́ síbẹ̀. Àwọn ẹlẹ́lẹ́ ni a ń tọ́jú ní àdàálẹ̀ bí o ti ń kọ.",
       "summary": "{{count}} ẹlẹ́lẹ́",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}j sẹ́yìn"
     },
     "actions": {
-      "label": "ÌGBÉSÉ DOKO",
+      "label": "Ìgbésé Doko",
       "rename": "Tún sọ orúkọ",
       "move": "Lọ sí apá…",
       "export": "Kó doko yìí jáde…",

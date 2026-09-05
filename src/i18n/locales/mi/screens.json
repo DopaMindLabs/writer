@@ -35,8 +35,8 @@
   "settings": {
     "back": "hoki",
     "windowTitle": "lotem · ngā tautuhinga",
-    "breadcrumb": "NGĀ TAUTUHINGA WHĀNUI",
-    "shellSubtitle": "NGĀ TAUTUHINGA WHĀNUI",
+    "breadcrumb": "Ngā Tautuhinga Whānui",
+    "shellSubtitle": "Ngā Tautuhinga Whānui",
     "comingSoonBadge": "ka heke mai",
     "helpAria": "He aha tēnei?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Ngā tūhono tata",
       "historyEmpty": "Kāore anō he tūhono.",
       "columns": {
-        "when": "ĀHEA",
-        "space": "WĀHI",
-        "kind": "MOMO",
-        "size": "RAHI",
-        "status": "ĀHUA"
+        "when": "Āhea",
+        "space": "Wāhi",
+        "kind": "Momo",
+        "size": "Rahi",
+        "status": "Āhua"
       },
       "kind": {
         "auto": "aunoa",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "WĀHI · TAUTUHINGA",
-      "shellSubtitle": "NGĀ TAUTUHINGA WĀHI",
+      "breadcrumb": "Wāhi · Tautuhinga",
+      "shellSubtitle": "Ngā Tautuhinga Wāhi",
       "loading": "E uta ana te wāhi…",
       "groups": {
         "thisSpace": "Tēnei wāhi",
@@ -545,9 +545,9 @@
         "historyTitle": "Hītori",
         "empty": "Kāore anō he tirohanga — hangaia tētahi mā te + tirohanga ināianei.",
         "columns": {
-          "when": "ĀHEA",
-          "kind": "MOMO",
-          "size": "RAHI",
+          "when": "Āhea",
+          "kind": "Momo",
+          "size": "Rahi",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Hoki ki te kāinga"
   },
   "templates": {
-    "crumb": "01 — HE MOMO RŪM",
+    "crumb": "01 — He Momo Rūm",
     "headingMain": "He aha te momo wāhi",
     "headingAccent": "e tīmata ana koe?",
     "chooseLegend": "Tīpakohia he tauira",
@@ -683,8 +683,8 @@
     "mobileWarning": "Me matua whai te tirohanga wehewehe i tētahi mata nui ake.",
     "mobileNote": "Tuwhera tēnei tuhinga ki te Āhua Tuhituhi.",
     "openInWrite": "Tuwhera ki te Tuhituhi →",
-    "leftPrefix": "MAUĪ —",
-    "rightPrefix": "MATAU —",
+    "leftPrefix": "Mauī —",
+    "rightPrefix": "Matau —",
     "rightPaneAria": "Tuhinga kūiti matau",
     "noOtherDocs": "(kāore ērā atu tuhinga)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ tāpiri",
     "cancel": "× whakakore",
     "columns": {
-      "tag": "TOHU",
-      "authors": "NGĀ KAITUHI",
-      "title": "TAITARA",
-      "year": "TAU",
-      "type": "MOMO",
-      "used": "WHAKAMAHIA"
+      "tag": "Tohu",
+      "authors": "Ngā Kaituhi",
+      "title": "Taitara",
+      "year": "Tau",
+      "type": "Momo",
+      "used": "Whakamahia"
     },
-    "style": "ĀHUA — CHICAGO (KAITUHI-RĀ)",
-    "exportBib": "KAWEAKEHIA HEI .BIB",
+    "style": "Āhua — Chicago (Kaituhi-rā)",
+    "exportBib": "Kaweakehia Hei .BIB",
     "summary": "{{filtered}} WHAKAATUHIA · {{shown}} I TĒNEI WHĀRANGI",
     "prevPage": "Whārangi o mua",
     "nextPage": "Whārangi e whai ake",

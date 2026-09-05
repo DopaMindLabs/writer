@@ -172,7 +172,7 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
         </button>
       </div>
       <div
-        class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 mt-1"
         data-testid="sidebar-space-subtitle"
       >
         PRIVATE · LOCAL · new
@@ -200,12 +200,12 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
             aria-describedby="sidebar-dnd"
             aria-disabled="false"
             aria-roledescription="sortable"
-            class="group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4 pl-5 cursor-grab focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink active:cursor-grabbing"
+            class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 group flex items-center gap-1 pb-1 pt-2 pl-5 cursor-grab focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink active:cursor-grabbing"
             data-testid="sidebar-section-sec1-header"
             tabindex="0"
           >
             <button
-              class="items-center justify-center gap-2 whitespace-nowrap rounded-none transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 block flex-1 truncate text-left font-mono font-normal uppercase tracking-[0.08em] cursor-text"
+              class="items-center justify-center gap-2 whitespace-nowrap rounded-none transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink disabled:pointer-events-none disabled:opacity-50 font-mono uppercase tracking-[0.11em] text-[9px] block flex-1 truncate text-left font-normal cursor-text"
               data-drag-through=""
               data-testid="sidebar-section-sec1-label"
               title="Rename (double-click)"
@@ -370,7 +370,7 @@ exports[`snapshot > matches the open drawer with the seeded space contents 1`] =
         data-testid="sidebar-workshop-fallback"
       >
         <div
-          class="px-5 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4"
+          class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-5 pb-1 pt-2"
           data-testid="sidebar-workshop-fallback-label"
         >
           Workshop

@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Space",
     "navLabel": "Dokumente",
-    "shared": "GETEILT",
-    "private": "PRIVAT · LOKAL",
+    "shared": "Geteilt",
+    "private": "Privat · Lokal",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "neu",
     "ageDays": "{{count}}T",
@@ -30,8 +30,8 @@
     "theme": "Thema",
     "exitFocus": "Fokusmodus verlassen",
     "enterFocus": "Fokusmodus aktivieren",
-    "normal": "NORMAL",
-    "focus": "FOKUS",
+    "normal": "Normal",
+    "focus": "Fokus",
     "focusTitleNormal": "Normal (⌘\\)",
     "focusTitleFocus": "Fokus (⌘\\)",
     "findInDoc": "Im Dokument suchen",
@@ -115,7 +115,7 @@
     "tourCheckmark": "abgeschlossen"
   },
   "spaceMenu": {
-    "thisSpace": "DIESER SPACE",
+    "thisSpace": "Dieser Space",
     "rename": "Umbenennen",
     "settings": "Einstellungen",
     "backups": "Sicherungen und Verlauf",
@@ -129,18 +129,18 @@
     "expand": "Inspektor erweitern",
     "collapse": "Inspektor reduzieren",
     "tabs": {
-      "outline": "GLIEDERUNG",
-      "info": "INFO",
-      "history": "VERLAUF",
-      "actions": "AKTIONEN"
+      "outline": "Gliederung",
+      "info": "Info",
+      "history": "Verlauf",
+      "actions": "Aktionen"
     },
     "outline": {
-      "title": "GLIEDERUNG",
+      "title": "Gliederung",
       "sectionSummary": "{{count}} ABSCHNITTE",
       "empty": "Noch keine Überschriften. Füge Überschriften zum Dokument hinzu, um die Gliederung zu erstellen."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Wörter",
       "characters": "Zeichen",
       "updated": "Aktualisiert",
@@ -165,8 +165,8 @@
       "unlock": "Zum Bearbeiten entsperren"
     },
     "history": {
-      "title": "VERSIONEN",
-      "now": "JETZT",
+      "title": "Versionen",
+      "now": "Jetzt",
       "full": "vollständiger Versionsverlauf →",
       "empty": "Noch keine Versionen. Versionen werden automatisch beim Schreiben gespeichert.",
       "summary": "{{count}} Version",
@@ -186,7 +186,7 @@
       "ageDays": "vor {{count}}T"
     },
     "actions": {
-      "label": "DOKUMENT-AKTIONEN",
+      "label": "Dokument-aktionen",
       "rename": "Umbenennen",
       "move": "In Abschnitt verschieben…",
       "export": "Dieses Dokument exportieren…",

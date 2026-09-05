@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useCoarsePointer } from '@/hooks/useCoarsePointer';
 import { cn } from '@/lib/utils';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 export interface QuickSettingRowProps {
   label: string;
@@ -34,9 +35,9 @@ export const QuickSettingRow = ({
       <div className="min-w-0 pt-px">
         <div className="text-[12px] font-medium text-ink">{label}</div>
         {showHint && (
-          <div className="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
+          <Eyebrow size={9} tone="ink4" className="mt-0.5">
             {hint}
-          </div>
+          </Eyebrow>
         )}
       </div>
       <div className="flex shrink-0 items-center justify-end">{children}</div>

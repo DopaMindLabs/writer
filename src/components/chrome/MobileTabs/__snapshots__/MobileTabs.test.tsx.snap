@@ -35,7 +35,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         write
       </span>
@@ -67,7 +67,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         read
       </span>
@@ -117,7 +117,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         brain
       </span>
@@ -149,7 +149,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         cite
       </span>
@@ -190,7 +190,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         more
       </span>
@@ -234,7 +234,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         write
       </span>
@@ -266,7 +266,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         read
       </span>
@@ -316,7 +316,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         brain
       </span>
@@ -348,7 +348,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         cite
       </span>
@@ -389,7 +389,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         more
       </span>
@@ -433,7 +433,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         write
       </span>
@@ -465,7 +465,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         read
       </span>
@@ -515,7 +515,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         brain
       </span>
@@ -547,7 +547,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         cite
       </span>
@@ -588,7 +588,7 @@ exports[`MobileTabs > snapshot > should match the snapshot across all variants >
         />
       </svg>
       <span
-        class="font-mono text-[9px] uppercase tracking-wider"
+        class="font-mono uppercase tracking-[0.11em] text-[9px]"
       >
         more
       </span>

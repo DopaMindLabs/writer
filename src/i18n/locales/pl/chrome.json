@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Przestrzeń",
     "navLabel": "Dokumenty",
-    "shared": "UDOSTĘPNIONE",
-    "private": "PRYWATNE · LOKALNE",
+    "shared": "Udostępnione",
+    "private": "Prywatne · Lokalne",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "nowe",
     "ageDays": "{{count}}d",
@@ -30,8 +30,8 @@
     "theme": "Motyw",
     "exitFocus": "Wyjdź z trybu skupienia",
     "enterFocus": "Wejdź w tryb skupienia",
-    "normal": "NORMALNY",
-    "focus": "SKUPIENIE",
+    "normal": "Normalny",
+    "focus": "Skupienie",
     "focusTitleNormal": "Normalny (⌘\\)",
     "focusTitleFocus": "Skupienie (⌘\\)",
     "findInDoc": "Znajdź w dokumencie",
@@ -115,7 +115,7 @@
     "tourCheckmark": "ukończono"
   },
   "spaceMenu": {
-    "thisSpace": "TA PRZESTRZEŃ",
+    "thisSpace": "Ta Przestrzeń",
     "rename": "Zmień nazwę",
     "settings": "Ustawienia",
     "backups": "Kopie zapasowe i historia",
@@ -129,18 +129,18 @@
     "expand": "Rozwiń inspektora",
     "collapse": "Zwiń inspektora",
     "tabs": {
-      "outline": "ZARYS",
-      "info": "INFO",
-      "history": "HISTORIA",
-      "actions": "AKCJE"
+      "outline": "Zarys",
+      "info": "Info",
+      "history": "Historia",
+      "actions": "Akcje"
     },
     "outline": {
-      "title": "ZARYS",
+      "title": "Zarys",
       "sectionSummary": "{{count}} SEKCJI",
       "empty": "Nie ma jeszcze nagłówków. Dodaj nagłówki do dokumentu, aby zbudować jego zarys."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Słowa",
       "characters": "Znaki",
       "updated": "Zaktualizowano",
@@ -165,8 +165,8 @@
       "unlock": "Odblokuj do edycji"
     },
     "history": {
-      "title": "WERSJE",
-      "now": "TERAZ",
+      "title": "Wersje",
+      "now": "Teraz",
       "full": "pełna historia wersji →",
       "empty": "Brak wersji. Wersje zapisują się automatycznie podczas pisania.",
       "summary": "{{count}} wersja",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}d temu"
     },
     "actions": {
-      "label": "AKCJE DOKUMENTU",
+      "label": "Akcje Dokumentu",
       "rename": "Zmień nazwę",
       "move": "Przenieś do sekcji…",
       "export": "Eksportuj ten dokument…",

@@ -87,7 +87,7 @@ exports[`FormRow > snapshot > should match the snapshot across all variants 1`] 
           />
         </div>
         <div
-          class="font-mono text-[10px] uppercase tracking-wider text-ink"
+          class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink"
           data-testid="fr-snap-err-error"
           id="_r_c_-error"
           role="alert"
@@ -134,7 +134,7 @@ exports[`FormRow > snapshot > should match the snapshot across all variants 1`] 
           />
         </div>
         <div
-          class="font-mono text-[10px] uppercase tracking-wider text-ink"
+          class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink"
           data-testid="fr-snap-full-error"
           id="_r_d_-error"
           role="alert"

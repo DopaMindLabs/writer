@@ -35,8 +35,8 @@
   "settings": {
     "back": "atpakaļ",
     "windowTitle": "lotem · iestatījumi",
-    "breadcrumb": "UNIVERSĀLIE IESTATĪJUMI",
-    "shellSubtitle": "UNIVERSĀLIE IESTATĪJUMI",
+    "breadcrumb": "Universālie Iestatījumi",
+    "shellSubtitle": "Universālie Iestatījumi",
     "comingSoonBadge": "drīzumā",
     "helpAria": "Kas tas ir?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Nesenās sinhronizācijas",
       "historyEmpty": "Sinhronizāciju vēl nav.",
       "columns": {
-        "when": "KAD",
-        "space": "TELPA",
-        "kind": "VEIDS",
-        "size": "IZMĒRS",
-        "status": "STATUSS"
+        "when": "Kad",
+        "space": "Telpa",
+        "kind": "Veids",
+        "size": "Izmērs",
+        "status": "Statuss"
       },
       "kind": {
         "auto": "automātisks",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "TELPA · IESTATĪJUMI",
-      "shellSubtitle": "TELPAS IESTATĪJUMI",
+      "breadcrumb": "Telpa · Iestatījumi",
+      "shellSubtitle": "Telpas Iestatījumi",
       "loading": "Ielādē telpu…",
       "groups": {
         "thisSpace": "Šī telpa",
@@ -545,9 +545,9 @@
         "historyTitle": "Vēsture",
         "empty": "Momentuzņēmumu vēl nav — izveidojiet vienu ar + momentuzņēmt tagad.",
         "columns": {
-          "when": "KAD",
-          "kind": "VEIDS",
-          "size": "IZMĒRS",
+          "when": "Kad",
+          "kind": "Veids",
+          "size": "Izmērs",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Doties uz sākumu"
   },
   "templates": {
-    "crumb": "01 — ISTABAS VEIDS",
+    "crumb": "01 — Istabas Veids",
     "headingMain": "Kādu telpu",
     "headingAccent": "jūs sākat?",
     "chooseLegend": "Izvēlieties veidni",
@@ -683,8 +683,8 @@
     "mobileWarning": "Dalītajam skatam nepieciešams lielāks ekrāns.",
     "mobileNote": "Tā vietā atveriet šo dokumentu rakstīšanas režīmā.",
     "openInWrite": "Atvērt rakstīšanā →",
-    "leftPrefix": "KREISĀ —",
-    "rightPrefix": "LABĀ —",
+    "leftPrefix": "Kreisā —",
+    "rightPrefix": "Labā —",
     "rightPaneAria": "Labās rūts dokuments",
     "noOtherDocs": "(nav citu dok.)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ pievienot",
     "cancel": "× atcelt",
     "columns": {
-      "tag": "BIRKA",
-      "authors": "AUTORI",
-      "title": "VIRSRAKSTS",
-      "year": "GADS",
-      "type": "VEIDS",
-      "used": "IZMANTOTS"
+      "tag": "Birka",
+      "authors": "Autori",
+      "title": "Virsraksts",
+      "year": "Gads",
+      "type": "Veids",
+      "used": "Izmantots"
     },
-    "style": "STILS — CHICAGO (AUTORS-DATUMS)",
-    "exportBib": "EKSPORTĒT KĀ .BIB",
+    "style": "Stils — Chicago (Autors-datums)",
+    "exportBib": "Eksportēt Kā .BIB",
     "summary": "{{filtered}} RĀDĪTS · {{shown}} ŠAJā LAPĀ",
     "prevPage": "Iepriekšējā lapa",
     "nextPage": "Nākamā lapa",

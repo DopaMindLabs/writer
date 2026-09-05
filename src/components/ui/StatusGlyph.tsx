@@ -13,7 +13,7 @@ const statusGlyphRecipe = cva('inline-flex items-center gap-1.5', {
       info: 'text-info',
     },
     mono: {
-      true: 'font-mono text-[11px] uppercase tracking-[0.08em]',
+      true: 'font-mono text-[11px] tracking-[0.08em]',
       false: 'font-sans text-[13px] font-medium',
     },
   },

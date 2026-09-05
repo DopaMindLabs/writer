@@ -35,8 +35,8 @@
   "settings": {
     "back": "tillbaka",
     "windowTitle": "lotem · inställningar",
-    "breadcrumb": "UNIVERSELLA INSTÄLLNINGAR",
-    "shellSubtitle": "UNIVERSELLA INSTÄLLNINGAR",
+    "breadcrumb": "Universella Inställningar",
+    "shellSubtitle": "Universella Inställningar",
     "comingSoonBadge": "kommer snart",
     "helpAria": "Vad är det här?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Nyliga synkroniseringar",
       "historyEmpty": "Inga synkroniseringar ännu.",
       "columns": {
-        "when": "NÄR",
-        "space": "UTRYMME",
-        "kind": "TYP",
-        "size": "STORLEK",
-        "status": "STATUS"
+        "when": "När",
+        "space": "Utrymme",
+        "kind": "Typ",
+        "size": "Storlek",
+        "status": "Status"
       },
       "kind": {
         "auto": "auto",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "UTRYMME · INSTÄLLNINGAR",
-      "shellSubtitle": "UTRYMMEINSTÄLLNINGAR",
+      "breadcrumb": "Utrymme · Inställningar",
+      "shellSubtitle": "Utrymmeinställningar",
       "loading": "Laddar utrymme…",
       "groups": {
         "thisSpace": "Det här utrymmet",
@@ -545,9 +545,9 @@
         "historyTitle": "Historik",
         "empty": "Inga ögonblicksbilder ännu — skapa en med + ögonblicksbild nu.",
         "columns": {
-          "when": "NÄR",
-          "kind": "TYP",
-          "size": "STORLEK",
+          "when": "När",
+          "kind": "Typ",
+          "size": "Storlek",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Gå hem"
   },
   "templates": {
-    "crumb": "01 — EN SLAGS RUM",
+    "crumb": "01 — En Slags Rum",
     "headingMain": "Vad för slags utrymme",
     "headingAccent": "startar du?",
     "chooseLegend": "Välj en mall",
@@ -683,8 +683,8 @@
     "mobileWarning": "Delad vy kräver en större skärm.",
     "mobileNote": "Öppna det här dokumentet i Skrivläge istället.",
     "openInWrite": "Öppna i Skrivläge →",
-    "leftPrefix": "VÄNSTER —",
-    "rightPrefix": "HÖGER —",
+    "leftPrefix": "Vänster —",
+    "rightPrefix": "Höger —",
     "rightPaneAria": "Dokument i höger ruta",
     "noOtherDocs": "(inga andra dokument)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ lägg till",
     "cancel": "× avbryt",
     "columns": {
-      "tag": "KOD",
-      "authors": "FÖRFATTARE",
-      "title": "TITEL",
-      "year": "ÅR",
-      "type": "TYP",
-      "used": "ANVÄND"
+      "tag": "Kod",
+      "authors": "Författare",
+      "title": "Titel",
+      "year": "År",
+      "type": "Typ",
+      "used": "Använd"
     },
-    "style": "STIL — CHICAGO (FÖRFATTARE-DATUM)",
-    "exportBib": "EXPORTERA SOM .BIB",
+    "style": "Stil — Chicago (Författare-datum)",
+    "exportBib": "Exportera Som .BIB",
     "summary": "{{filtered}} VISADE · {{shown}} PÅ DEN HÄR SIDAN",
     "prevPage": "Föregående sida",
     "nextPage": "Nästa sida",

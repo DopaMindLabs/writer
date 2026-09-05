@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/Button';
 import { TextField } from '@/components/ui/TextField';
 import { cn } from '@/lib/utils';
 import type { InlineRename } from './Sidebar.types';
+import { eyebrowRecipe } from '@/components/ui/Eyebrow.recipe';
 
 interface SectionLabelProps {
   sectionId: string;
@@ -40,7 +41,7 @@ export const SectionLabel = ({
           aria-invalid={rename.error !== null || undefined}
           aria-describedby={rename.error !== null ? errorId : undefined}
           data-testid={`sidebar-section-${sectionId}-rename-input`}
-          className="flex-1 font-mono text-[9px] uppercase tracking-[0.08em]"
+          className={cn(eyebrowRecipe({ size: 9, tone: 'inherit' }), 'flex-1')}
         />
         {rename.error !== null && (
           <span
@@ -66,7 +67,8 @@ export const SectionLabel = ({
       data-drag-through=""
       data-testid={`sidebar-section-${sectionId}-label`}
       className={cn(
-        'block flex-1 truncate text-left font-mono font-normal uppercase tracking-[0.08em]',
+        eyebrowRecipe({ size: 9, tone: 'inherit' }),
+        'block flex-1 truncate text-left font-normal',
         canModify ? 'cursor-text' : 'cursor-default',
       )}
     >

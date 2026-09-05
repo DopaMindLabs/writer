@@ -1,4 +1,6 @@
 import { Label } from '@/components/ui/Label';
+import { eyebrowRecipe } from '@/components/ui/Eyebrow.recipe';
+import { cn } from '@/lib/utils';
 
 interface DeleteConfirmFieldProps {
   label: string;
@@ -16,7 +18,7 @@ export const DeleteConfirmField = ({
   <Label
     tone="ink3"
     weight="regular"
-    className="flex flex-col gap-2 font-mono text-[10px] uppercase tracking-wider"
+    className={cn(eyebrowRecipe({ tone: 'inherit' }), 'flex flex-col gap-2')}
   >
     {label}
     <input

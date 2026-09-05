@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Avanoa",
     "navLabel": "Faamaumauga",
-    "shared": "FAASOA",
-    "private": "TUMA · I LOTU",
+    "shared": "Faasoa",
+    "private": "Tuma · I Lotu",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "fou",
     "ageDays": "{{count}}a",
@@ -30,8 +30,8 @@
     "theme": "Autu",
     "exitFocus": "Tuua le tulaga taulai",
     "enterFocus": "Ulu i le tulaga taulai",
-    "normal": "MASANI",
-    "focus": "TAULAI",
+    "normal": "Masani",
+    "focus": "Taulai",
     "focusTitleNormal": "Masani (⌘\\)",
     "focusTitleFocus": "Taulai (⌘\\)",
     "findInDoc": "Sailia i le faamaumauga",
@@ -115,7 +115,7 @@
     "tourCheckmark": "maeʻa"
   },
   "spaceMenu": {
-    "thisSpace": "LENEI AVANOA",
+    "thisSpace": "Lenei Avanoa",
     "rename": "Toe faaigoa",
     "settings": "Faatulagaga",
     "backups": "Faaolataga ma talafaasolopito",
@@ -129,18 +129,18 @@
     "expand": "Faalautele faatonu",
     "collapse": "Faaitiitia faatonu",
     "tabs": {
-      "outline": "FAAVASEGA",
-      "info": "INFO",
-      "history": "TALAFAASOLOPITO",
-      "actions": "GAOIOIGA"
+      "outline": "Faavasega",
+      "info": "Info",
+      "history": "Talafaasolopito",
+      "actions": "Gaoioiga"
     },
     "outline": {
-      "title": "FAAVASEGA",
+      "title": "Faavasega",
       "sectionSummary": "{{count}} VAEGA",
       "empty": "E leai ni ulutala. Faaopoopo ulutala i le pepa e fausia ai lona faamatalaga."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Upu",
       "characters": "Mataitusi",
       "updated": "Faafou",
@@ -165,8 +165,8 @@
       "unlock": "Tatala e fesuiai"
     },
     "history": {
-      "title": "AGA O LE LOMI",
-      "now": "NEI",
+      "title": "Aga O Le Lomi",
+      "now": "Nei",
       "full": "talafaasolopito o le aga atoa →",
       "empty": "Leai ni aga o le lomi. E teu otometi atoatoa o aga o le lomi a o e tusi.",
       "summary": "{{count}} aga",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}a ua mavae"
     },
     "actions": {
-      "label": "GAOIOIGA FAAMAUMAUGA",
+      "label": "Gaoioiga Faamaumauga",
       "rename": "Toe faaigoa",
       "move": "Si i le vaega…",
       "export": "Auina atu lenei faamaumauga…",

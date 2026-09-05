@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Space",
     "navLabel": "Documenten",
-    "shared": "GEDEELD",
-    "private": "PRIVÉ · LOKAAL",
+    "shared": "Gedeeld",
+    "private": "Privé · Lokaal",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "nieuw",
     "ageDays": "{{count}}d",
@@ -30,8 +30,8 @@
     "theme": "Thema",
     "exitFocus": "Focusmodus verlaten",
     "enterFocus": "Focusmodus openen",
-    "normal": "NORMAAL",
-    "focus": "FOCUS",
+    "normal": "Normaal",
+    "focus": "Focus",
     "focusTitleNormal": "Normaal (⌘\\)",
     "focusTitleFocus": "Focus (⌘\\)",
     "findInDoc": "Zoeken in document",
@@ -115,7 +115,7 @@
     "tourCheckmark": "voltooid"
   },
   "spaceMenu": {
-    "thisSpace": "DEZE SPACE",
+    "thisSpace": "Deze Space",
     "rename": "Hernoemen",
     "settings": "Instellingen",
     "backups": "Back-ups en geschiedenis",
@@ -129,18 +129,18 @@
     "expand": "Inspector uitvouwen",
     "collapse": "Inspector inklappen",
     "tabs": {
-      "outline": "OVERZICHT",
-      "info": "INFO",
-      "history": "GESCHIEDENIS",
-      "actions": "ACTIES"
+      "outline": "Overzicht",
+      "info": "Info",
+      "history": "Geschiedenis",
+      "actions": "Acties"
     },
     "outline": {
-      "title": "OVERZICHT",
+      "title": "Overzicht",
       "sectionSummary": "{{count}} SECTIES",
       "empty": "Nog geen koppen. Voeg koppen toe aan het document om de structuur op te bouwen."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Woorden",
       "characters": "Tekens",
       "updated": "Bijgewerkt",
@@ -165,8 +165,8 @@
       "unlock": "Ontgrendelen om te bewerken"
     },
     "history": {
-      "title": "VERSIES",
-      "now": "NU",
+      "title": "Versies",
+      "now": "Nu",
       "full": "volledige versiegeschiedenis →",
       "empty": "Nog geen versies. Versies worden automatisch opgeslagen terwijl je schrijft.",
       "summary": "{{count}} versie",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}d geleden"
     },
     "actions": {
-      "label": "DOCUMENTACTIES",
+      "label": "Documentacties",
       "rename": "Hernoemen",
       "move": "Verplaatsen naar sectie…",
       "export": "Dit document exporteren…",

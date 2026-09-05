@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Utrymme",
     "navLabel": "Dokument",
-    "shared": "DELAT",
-    "private": "PRIVAT · LOKALT",
+    "shared": "Delat",
+    "private": "Privat · Lokalt",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "nytt",
     "ageDays": "{{count}}d",
@@ -30,8 +30,8 @@
     "theme": "Tema",
     "exitFocus": "Avsluta fokusläge",
     "enterFocus": "Aktivera fokusläge",
-    "normal": "NORMAL",
-    "focus": "FOKUS",
+    "normal": "Normal",
+    "focus": "Fokus",
     "focusTitleNormal": "Normal (⌘\\)",
     "focusTitleFocus": "Fokus (⌘\\)",
     "findInDoc": "Sök i dokumentet",
@@ -115,7 +115,7 @@
     "tourCheckmark": "klar"
   },
   "spaceMenu": {
-    "thisSpace": "DETTA UTRYMME",
+    "thisSpace": "Detta Utrymme",
     "rename": "Byt namn",
     "settings": "Inställningar",
     "backups": "Säkerhetskopior och historik",
@@ -129,18 +129,18 @@
     "expand": "Expandera inspektören",
     "collapse": "Komprimera inspektören",
     "tabs": {
-      "outline": "DISPOSITION",
-      "info": "INFO",
-      "history": "HISTORIK",
-      "actions": "ÅTGÄRDER"
+      "outline": "Disposition",
+      "info": "Info",
+      "history": "Historik",
+      "actions": "Åtgärder"
     },
     "outline": {
-      "title": "DISPOSITION",
+      "title": "Disposition",
       "sectionSummary": "{{count}} SEKTIONER",
       "empty": "Inga rubriker ännu. Lägg till rubriker i dokumentet för att bygga dess disposition."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Ord",
       "characters": "Tecken",
       "updated": "Uppdaterad",
@@ -165,8 +165,8 @@
       "unlock": "Lås upp för att redigera"
     },
     "history": {
-      "title": "VERSIONER",
-      "now": "NU",
+      "title": "Versioner",
+      "now": "Nu",
       "full": "fullständig versionshistorik →",
       "empty": "Inga versioner ännu. Versioner sparas automatiskt medan du skriver.",
       "summary": "{{count}} version",
@@ -186,7 +186,7 @@
       "ageDays": "för {{count}}d sedan"
     },
     "actions": {
-      "label": "DOKUMENTÅTGÄRDER",
+      "label": "Dokumentåtgärder",
       "rename": "Byt namn",
       "move": "Flytta till sektion…",
       "export": "Exportera detta dokument…",

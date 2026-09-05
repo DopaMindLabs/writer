@@ -16,6 +16,22 @@ describe('Eyebrow', () => {
     expect(container).toMatchSnapshot();
   });
 
+  it('names no colour under the inherit tone, so a parent state owns it', () => {
+    render(
+      <div className="text-danger">
+        <Eyebrow tone="inherit">owned by the parent</Eyebrow>
+      </div>,
+    );
+    const label = screen.getByText('owned by the parent');
+    expect(label).toHaveClass('font-mono', 'uppercase');
+    expect(label.className).not.toMatch(/\btext-ink(-[234])?\b/);
+  });
+
+  it('renders the full-strength ink tone', () => {
+    render(<Eyebrow tone="ink">full strength</Eyebrow>);
+    expect(screen.getByText('full strength')).toHaveClass('text-ink');
+  });
+
   it('applies eyebrow styling to the child element when asChild is set', () => {
     render(
       <table>

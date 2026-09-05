@@ -35,8 +35,8 @@
   "settings": {
     "back": "rudi",
     "windowTitle": "lotem · mipangilio",
-    "breadcrumb": "MIPANGILIO YA ULIMWENGU",
-    "shellSubtitle": "MIPANGILIO YA ULIMWENGU",
+    "breadcrumb": "Mipangilio Ya Ulimwengu",
+    "shellSubtitle": "Mipangilio Ya Ulimwengu",
     "comingSoonBadge": "inakuja hivi karibuni",
     "helpAria": "Hii ni nini?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Ulandanishi wa hivi karibuni",
       "historyEmpty": "Hakuna ulandanishi bado.",
       "columns": {
-        "when": "LINI",
-        "space": "NAFASI",
-        "kind": "AINA",
-        "size": "UKUBWA",
-        "status": "HALI"
+        "when": "Lini",
+        "space": "Nafasi",
+        "kind": "Aina",
+        "size": "Ukubwa",
+        "status": "Hali"
       },
       "kind": {
         "auto": "otomatiki",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "NAFASI · MIPANGILIO",
-      "shellSubtitle": "MIPANGILIO YA NAFASI",
+      "breadcrumb": "Nafasi · Mipangilio",
+      "shellSubtitle": "Mipangilio Ya Nafasi",
       "loading": "Inapakia nafasi…",
       "groups": {
         "thisSpace": "Nafasi hii",
@@ -545,9 +545,9 @@
         "historyTitle": "Historia",
         "empty": "Hakuna picha za hali bado — unda moja kwa + piga picha ya hali sasa.",
         "columns": {
-          "when": "LINI",
-          "kind": "AINA",
-          "size": "UKUBWA",
+          "when": "Lini",
+          "kind": "Aina",
+          "size": "Ukubwa",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Nenda nyumbani"
   },
   "templates": {
-    "crumb": "01 — AINA YA CHUMBA",
+    "crumb": "01 — Aina Ya Chumba",
     "headingMain": "Ni nafasi ya aina gani",
     "headingAccent": "unayoanza?",
     "chooseLegend": "Chagua kiolezo",
@@ -683,8 +683,8 @@
     "mobileWarning": "Mtazamo wa kugawanya unahitaji skrini kubwa zaidi.",
     "mobileNote": "Fungua hati hii katika hali ya Write badala yake.",
     "openInWrite": "Fungua katika Write →",
-    "leftPrefix": "KUSHOTO —",
-    "rightPrefix": "KULIA —",
+    "leftPrefix": "Kushoto —",
+    "rightPrefix": "Kulia —",
     "rightPaneAria": "Hati ya sehemu ya kulia",
     "noOtherDocs": "(hakuna hati nyingine)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ ongeza",
     "cancel": "× ghairi",
     "columns": {
-      "tag": "LEBO",
-      "authors": "WAANDISHI",
-      "title": "KICHWA",
-      "year": "MWAKA",
-      "type": "AINA",
-      "used": "ILIYOTUMIWA"
+      "tag": "Lebo",
+      "authors": "Waandishi",
+      "title": "Kichwa",
+      "year": "Mwaka",
+      "type": "Aina",
+      "used": "Iliyotumiwa"
     },
-    "style": "MTINDO — CHICAGO (MWANDISHI-TAREHE)",
-    "exportBib": "HAMISHA KAMA .BIB",
+    "style": "Mtindo — Chicago (Mwandishi-tarehe)",
+    "exportBib": "Hamisha Kama .BIB",
     "summary": "{{filtered}} ZINAONYESHWA · {{shown}} KWENYE UKURASA HUU",
     "prevPage": "Ukurasa uliotangulia",
     "nextPage": "Ukurasa unaofuata",

@@ -21,6 +21,7 @@ import {
   type HelpCategory,
 } from '@/lib/help/registry';
 import { getHelpDoc } from '@/lib/help/content';
+import { SectionLabel } from '@/components/ui/SectionLabel';
 
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
   Sparkles,
@@ -46,10 +47,10 @@ const CategorySection = ({ category, locale }: CategorySectionProps) => {
   const articles = getArticlesByCategory(category.id);
   return (
     <div className="mb-5">
-      <div className="flex items-center gap-2 px-3 font-mono text-[10px] uppercase tracking-wider text-ink-3">
+      <SectionLabel className="flex items-center gap-2 px-3">
         <Icon className="h-3 w-3" aria-hidden />
         {t(`categories.${category.id}`)}
-      </div>
+      </SectionLabel>
       <ul className="mt-1.5">
         {articles.map((article) => {
           const doc = getHelpDoc(article.slug, locale);

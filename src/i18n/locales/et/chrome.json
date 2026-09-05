@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Ruum",
     "navLabel": "Dokumendid",
-    "shared": "JAGATUD",
-    "private": "ERAVIISILINE · KOHALIK",
+    "shared": "Jagatud",
+    "private": "Eraviisiline · Kohalik",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "uus",
     "ageDays": "{{count}}p",
@@ -30,8 +30,8 @@
     "theme": "Teema",
     "exitFocus": "Välju fookuse režiimist",
     "enterFocus": "Sisene fookuse režiimi",
-    "normal": "NORMAALNE",
-    "focus": "FOOKUS",
+    "normal": "Normaalne",
+    "focus": "Fookus",
     "focusTitleNormal": "Normaalne (⌘\\)",
     "focusTitleFocus": "Fookus (⌘\\)",
     "findInDoc": "Otsi dokumendist",
@@ -115,7 +115,7 @@
     "tourCheckmark": "lõpetatud"
   },
   "spaceMenu": {
-    "thisSpace": "SEE RUUM",
+    "thisSpace": "See Ruum",
     "rename": "Nimeta ümber",
     "settings": "Seaded",
     "backups": "Varundused ja ajalugu",
@@ -129,18 +129,18 @@
     "expand": "Laienda inspektorit",
     "collapse": "Ahenda inspektorit",
     "tabs": {
-      "outline": "ÜLEVAADE",
-      "info": "INFO",
-      "history": "AJALUGU",
-      "actions": "TEGEVUSED"
+      "outline": "Ülevaade",
+      "info": "Info",
+      "history": "Ajalugu",
+      "actions": "Tegevused"
     },
     "outline": {
-      "title": "ÜLEVAADE",
+      "title": "Ülevaade",
       "sectionSummary": "{{count}} SEKTSIOONI",
       "empty": "Pole veel pealkirju. Lisa dokumenti pealkirjad, et luua selle ülevaade."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Sõnad",
       "characters": "Tähemärgid",
       "updated": "Uuendatud",
@@ -165,8 +165,8 @@
       "unlock": "Ava lukk muutmiseks"
     },
     "history": {
-      "title": "VERSIOONID",
-      "now": "NÜÜD",
+      "title": "Versioonid",
+      "now": "Nüüd",
       "full": "täielik versiooniajalugu →",
       "empty": "Veel pole versioone. Versioonid salvestuvad kirjutamise ajal automaatselt.",
       "summary": "{{count}} versioon",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}p tagasi"
     },
     "actions": {
-      "label": "DOKUMENDI TEGEVUSED",
+      "label": "Dokumendi Tegevused",
       "rename": "Nimeta ümber",
       "move": "Liiguta sektsiooni…",
       "export": "Ekspordi see dokument…",

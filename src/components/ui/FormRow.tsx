@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from 'react';
 import { cn } from '@/lib/utils';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 export interface FormRowProps extends HTMLAttributes<HTMLDivElement> {
   label: ReactNode;
@@ -123,15 +124,10 @@ export const FormRow = forwardRef<HTMLDivElement, FormRowProps>(
         <div className="flex flex-col gap-1.5">
           <div>{describeChild(children, describedIds)}</div>
           {error ? (
-            <div
-              id={errorId}
-              data-testid={errorTestId}
-              role="alert"
-              className="font-mono text-[10px] uppercase tracking-wider text-ink"
-            >
+            <Eyebrow tone="ink" id={errorId} data-testid={errorTestId} role="alert">
               <span aria-hidden>✕ </span>
               {error}
-            </div>
+            </Eyebrow>
           ) : null}
         </div>
       </div>

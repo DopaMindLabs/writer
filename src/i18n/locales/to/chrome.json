@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Vāhā",
     "navLabel": "Ngaahi tohi",
-    "shared": "FETUKUTUKU",
-    "private": "FAKAMANINGA · FONUA",
+    "shared": "Fetukutuku",
+    "private": "Fakamaninga · Fonua",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "foʻou",
     "ageDays": "{{count}}ʻa",
@@ -30,8 +30,8 @@
     "theme": "Kaveinga",
     "exitFocus": "Mavahe mei he founga fakatokangaʻi",
     "enterFocus": "Hū ki he founga fakatokangaʻi",
-    "normal": "FAKAFOʻOFOʻOU",
-    "focus": "FAKATOKANGAʻI",
+    "normal": "Fakafoʻofoʻou",
+    "focus": "Fakatokangaʻi",
     "focusTitleNormal": "Fakafoʻofoʻou (⌘\\)",
     "focusTitleFocus": "Fakatokangaʻi (⌘\\)",
     "findInDoc": "Kumi ʻi he tohi",
@@ -115,7 +115,7 @@
     "tourCheckmark": "ʻosi"
   },
   "spaceMenu": {
-    "thisSpace": "KO E VĀHĀ KO ʻENI",
+    "thisSpace": "Ko E Vāhā Ko ʻeni",
     "rename": "Toe fakahingoa",
     "settings": "Fokotuʻutuʻu",
     "backups": "Ngaahi tā mo e hisitōlia",
@@ -129,18 +129,18 @@
     "expand": "Fakalahi fakatonutonu",
     "collapse": "Fakaiti fakatonutonu",
     "tabs": {
-      "outline": "FAKAMATALA",
-      "info": "FAKAMATALA",
-      "history": "HISITŌLIA",
-      "actions": "NGAAHI NGĀUE"
+      "outline": "Fakamatala",
+      "info": "Fakamatala",
+      "history": "Hisitōlia",
+      "actions": "Ngaahi Ngāue"
     },
     "outline": {
-      "title": "FAKAMATALA",
+      "title": "Fakamatala",
       "sectionSummary": "{{count}} NGAAHI KONGA",
       "empty": "ʻIkai ha ngaahi ʻulungāanga. Fakaʻaongaʻi ha ngaahi ʻulungāanga ki he tohi ke langa hono fotunga."
     },
     "info": {
-      "title": "FAKAMATALA",
+      "title": "Fakamatala",
       "words": "Ngaahi foʻi lea",
       "characters": "Ngaahi mataʻitohi",
       "updated": "Fakafoʻou",
@@ -165,8 +165,8 @@
       "unlock": "Veteʻi ke fakalelei"
     },
     "history": {
-      "title": "NGAAHI HIKI",
-      "now": "TAIMI NI",
+      "title": "Ngaahi Hiki",
+      "now": "Taimi Ni",
       "full": "hisitōlia kakato ʻo e ngaahi hiki →",
       "empty": "ʻIkai ha hiki he taimi ni. ʻOku tauhi fakaʻate ʻa e ngaahi hiki ʻi hoʻo tohi.",
       "summary": "{{count}} hiki",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}ʻa kuoʻosi"
     },
     "actions": {
-      "label": "NGAAHI NGĀUE TOHI",
+      "label": "Ngaahi Ngāue Tohi",
       "rename": "Toe fakahingoa",
       "move": "Hiki ki he konga…",
       "export": "ʻAve atu ʻa e tohi ko ʻeni…",

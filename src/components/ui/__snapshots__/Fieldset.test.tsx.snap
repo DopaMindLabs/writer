@@ -8,7 +8,7 @@ exports[`Fieldset > snapshot > should match the snapshot with and without rows 1
       data-testid="fs-snap-empty"
     >
       <legend
-        class="mb-2 block w-full border-b border-ink pb-1 font-mono text-[10px] uppercase tracking-[0.11em] text-ink"
+        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink mb-2 block w-full border-b border-ink pb-1"
         data-testid="fs-snap-empty-legend"
       >
         empty
@@ -25,7 +25,7 @@ exports[`Fieldset > snapshot > should match the snapshot with and without rows 1
       data-testid="fs-snap-rows"
     >
       <legend
-        class="mb-2 block w-full border-b border-ink pb-1 font-mono text-[10px] uppercase tracking-[0.11em] text-ink"
+        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink mb-2 block w-full border-b border-ink pb-1"
         data-testid="fs-snap-rows-legend"
       >
         rows

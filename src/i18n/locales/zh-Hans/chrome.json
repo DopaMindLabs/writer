@@ -99,8 +99,8 @@
     "themes": {
       "light": "浅色",
       "dark": "深色",
-      "hcLight": "HC 浅色",
-      "hcDark": "HC 深色"
+      "hcLight": "Hc 浅色",
+      "hcDark": "Hc 深色"
     },
     "helpKbd": "⌘?",
     "whatsNew": "新功能",

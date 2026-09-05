@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Wuri",
     "navLabel": "Takardun",
-    "shared": "AN RABA",
-    "private": "MAI ZAMAN KANSU · NA CIKIN GIDA",
+    "shared": "An Raba",
+    "private": "Mai Zaman Kansu · Na Cikin Gida",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "sabo",
     "ageDays": "{{count}}r",
@@ -30,8 +30,8 @@
     "theme": "Jigon",
     "exitFocus": "Fita daga yanayin mai da hankali",
     "enterFocus": "Shigar yanayin mai da hankali",
-    "normal": "NA YAU DA KULLUM",
-    "focus": "MAI DA HANKALI",
+    "normal": "Na Yau Da Kullum",
+    "focus": "Mai Da Hankali",
     "focusTitleNormal": "Na yau da kullum (⌘\\)",
     "focusTitleFocus": "Mai da hankali (⌘\\)",
     "findInDoc": "Nemo a cikin takarda",
@@ -115,7 +115,7 @@
     "tourCheckmark": "an gama"
   },
   "spaceMenu": {
-    "thisSpace": "WANNAN WURI",
+    "thisSpace": "Wannan Wuri",
     "rename": "Sake suna",
     "settings": "Saituna",
     "backups": "Kwafe-kwafe da tarihi",
@@ -129,18 +129,18 @@
     "expand": "Faɗaɗa mai duba",
     "collapse": "Murƙushe mai duba",
     "tabs": {
-      "outline": "TSARI",
-      "info": "BAYANI",
-      "history": "TARIHI",
-      "actions": "AYYUKA"
+      "outline": "Tsari",
+      "info": "Bayani",
+      "history": "Tarihi",
+      "actions": "Ayyuka"
     },
     "outline": {
-      "title": "TSARI",
+      "title": "Tsari",
       "sectionSummary": "{{count}} SASHE",
       "empty": "Babu taken labarai har yanzu. Ƙara taken labarai zuwa takardar don gina taƙaitaccen bayani."
     },
     "info": {
-      "title": "BAYANI",
+      "title": "Bayani",
       "words": "Kalmomi",
       "characters": "Haruffa",
       "updated": "An sabunta",
@@ -165,8 +165,8 @@
       "unlock": "Sake bude don gyara"
     },
     "history": {
-      "title": "FITARWA",
-      "now": "YANZU",
+      "title": "Fitarwa",
+      "now": "Yanzu",
       "full": "cikakken tarihin fitarwa →",
       "empty": "Babu sigogi tukuna. Sigogi suna ajiya ta atomatik yayin da kake rubutu.",
       "summary": "{{count}} siga",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}r da suka shige"
     },
     "actions": {
-      "label": "AYYUKA TAKARDA",
+      "label": "Ayyuka Takarda",
       "rename": "Sake suna",
       "move": "Matsa zuwa sashe…",
       "export": "Fitar wannan takarda…",

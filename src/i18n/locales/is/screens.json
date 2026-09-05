@@ -35,8 +35,8 @@
   "settings": {
     "back": "til baka",
     "windowTitle": "lotem · stillingar",
-    "breadcrumb": "ALTÆKAR STILLINGAR",
-    "shellSubtitle": "ALTÆKAR STILLINGAR",
+    "breadcrumb": "Altækar Stillingar",
+    "shellSubtitle": "Altækar Stillingar",
     "comingSoonBadge": "kemur fljótlega",
     "helpAria": "Hvað er þetta?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Nýlegar samstillingar",
       "historyEmpty": "Engar samstillingar enn.",
       "columns": {
-        "when": "HVENÆR",
-        "space": "RÝMI",
-        "kind": "TEGUND",
-        "size": "STÆRÐ",
-        "status": "STAÐA"
+        "when": "Hvenær",
+        "space": "Rými",
+        "kind": "Tegund",
+        "size": "Stærð",
+        "status": "Staða"
       },
       "kind": {
         "auto": "sjálfvirkt",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "RÝMI · STILLINGAR",
-      "shellSubtitle": "RÝMISSTILLINGAR",
+      "breadcrumb": "Rými · Stillingar",
+      "shellSubtitle": "Rýmisstillingar",
       "loading": "Hleður rými…",
       "groups": {
         "thisSpace": "Þetta rými",
@@ -545,9 +545,9 @@
         "historyTitle": "Saga",
         "empty": "Engar skyndimyndir enn — búðu til eina með + skyndimynd núna.",
         "columns": {
-          "when": "HVENÆR",
-          "kind": "TEGUND",
-          "size": "STÆRÐ",
+          "when": "Hvenær",
+          "kind": "Tegund",
+          "size": "Stærð",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Fara heim"
   },
   "templates": {
-    "crumb": "01 — EINS KONAR HERBERGI",
+    "crumb": "01 — Eins Konar Herbergi",
     "headingMain": "Hvers konar rými",
     "headingAccent": "ert þú að byrja?",
     "chooseLegend": "Veldu sniðmát",
@@ -683,8 +683,8 @@
     "mobileWarning": "Skiptur yfirlit þarf stærri skjá.",
     "mobileNote": "Opnaðu þetta skjal í Ritunarham í staðinn.",
     "openInWrite": "Opna í Write →",
-    "leftPrefix": "VINSTRI —",
-    "rightPrefix": "HÆGRI —",
+    "leftPrefix": "Vinstri —",
+    "rightPrefix": "Hægri —",
     "rightPaneAria": "Skjal í hægri glugga",
     "noOtherDocs": "(engin önnur skjöl)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ bæta við",
     "cancel": "× hætta við",
     "columns": {
-      "tag": "MERKI",
-      "authors": "HÖFUNDAR",
-      "title": "TITILL",
-      "year": "ÁR",
-      "type": "TEGUND",
-      "used": "NOTAÐ"
+      "tag": "Merki",
+      "authors": "Höfundar",
+      "title": "Titill",
+      "year": "Ár",
+      "type": "Tegund",
+      "used": "Notað"
     },
-    "style": "STÍLL — CHICAGO (HÖFUNDUR-DAGSETNING)",
-    "exportBib": "FLYTJA ÚT SEM .BIB",
+    "style": "Stíll — Chicago (Höfundur-dagsetning)",
+    "exportBib": "Flytja Út Sem .BIB",
     "summary": "{{filtered}} SÝND · {{shown}} Á ÞESSARI SÍÐU",
     "prevPage": "Fyrri síða",
     "nextPage": "Næsta síða",

@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Nafasi",
     "navLabel": "Hati",
-    "shared": "IMESHIRIKIWA",
-    "private": "BINAFSI · LOKALI",
+    "shared": "Imeshirikiwa",
+    "private": "Binafsi · Lokali",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "mpya",
     "ageDays": "{{count}}sk",
@@ -30,8 +30,8 @@
     "theme": "Mandhari",
     "exitFocus": "Toka kwenye hali ya umakini",
     "enterFocus": "Ingia kwenye hali ya umakini",
-    "normal": "KAWAIDA",
-    "focus": "UMAKINI",
+    "normal": "Kawaida",
+    "focus": "Umakini",
     "focusTitleNormal": "Kawaida (⌘\\)",
     "focusTitleFocus": "Umakini (⌘\\)",
     "findInDoc": "Tafuta katika hati",
@@ -115,7 +115,7 @@
     "tourCheckmark": "imekamilika"
   },
   "spaceMenu": {
-    "thisSpace": "NAFASI HII",
+    "thisSpace": "Nafasi Hii",
     "rename": "Pa jina jipya",
     "settings": "Mipangilio",
     "backups": "Nakala rudufu na historia",
@@ -129,18 +129,18 @@
     "expand": "Panua mkaguzi",
     "collapse": "Kunja mkaguzi",
     "tabs": {
-      "outline": "MUHTASARI",
-      "info": "INFO",
-      "history": "HISTORIA",
-      "actions": "VITENDO"
+      "outline": "Muhtasari",
+      "info": "Info",
+      "history": "Historia",
+      "actions": "Vitendo"
     },
     "outline": {
-      "title": "MUHTASARI",
+      "title": "Muhtasari",
       "sectionSummary": "{{count}} SEHEMU",
       "empty": "Bado hakuna vichwa vya habari. Ongeza vichwa vya habari kwenye hati ili kuunda muhtasari wake."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Maneno",
       "characters": "Herufi",
       "updated": "Imesasishwa",
@@ -165,8 +165,8 @@
       "unlock": "Fungua kuhariri"
     },
     "history": {
-      "title": "MATOLEO",
-      "now": "SASA",
+      "title": "Matoleo",
+      "now": "Sasa",
       "full": "historia kamili ya matoleo →",
       "empty": "Bado hakuna matoleo. Matoleo huhifadhiwa kiotomatiki unapoandika.",
       "summary": "{{count}} toleo",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}sk zilizopita"
     },
     "actions": {
-      "label": "VITENDO VYA HATI",
+      "label": "Vitendo Vya Hati",
       "rename": "Pa jina jipya",
       "move": "Hamishia kwenye sehemu…",
       "export": "Hamisha hati hii…",

@@ -44,6 +44,8 @@ import { TextArea } from '@/components/ui/TextArea';
 import { SearchField } from '@/components/ui/SearchField';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { Label } from '@/components/ui/Label';
+import { Eyebrow } from '@/components/ui/Eyebrow';
+import { eyebrowRecipe } from '@/components/ui/Eyebrow.recipe';
 
 export type CitationsDensity = 'comfortable' | 'compact';
 
@@ -434,13 +436,11 @@ const CitationsHeader = ({
   return (
     <div className={cn('border-b border-rule py-4', xPad, !isCompact && 'py-6')}>
       <div className="flex items-baseline justify-between">
-        <div className="font-mono text-[10px] uppercase tracking-[0.08em]">
+        <div className={eyebrowRecipe({ tone: 'inherit' })}>
           <span className="text-ink-3">{t('citations.breadcrumb')}</span>
           <span className="text-ink">{t('citations.title')}</span>
         </div>
-        <div className="font-mono text-[10px] uppercase tracking-wider text-ink-4">
-          {t('citations.entries', { count })}
-        </div>
+        <Eyebrow tone="ink4">{t('citations.entries', { count })}</Eyebrow>
       </div>
     </div>
   );
@@ -540,7 +540,8 @@ const CitationsListHeader = ({
     <div
       className={cn(
         colTemplate,
-        'sticky top-0 z-10 hidden gap-4 border-b border-rule bg-paper py-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-3',
+        eyebrowRecipe({ size: 9 }),
+        'sticky top-0 z-10 hidden gap-4 border-b border-rule bg-paper py-2',
         xPad,
       )}
     >
@@ -599,7 +600,8 @@ const CitationsBanners = ({
       {status && (
         <div
           className={cn(
-            'border-b border-rule bg-paper-2 py-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3',
+            eyebrowRecipe(),
+            'border-b border-rule bg-paper-2 py-1.5',
             xPad,
           )}
           role="status"
@@ -794,7 +796,8 @@ const CitationsFooter = ({
   return (
     <div
       className={cn(
-        'flex flex-col gap-2 border-t border-rule py-3 font-mono text-[10px] uppercase tracking-wider text-ink-3 md:flex-row md:items-center md:justify-between',
+        eyebrowRecipe(),
+        'flex flex-col gap-2 border-t border-rule py-3 md:flex-row md:items-center md:justify-between',
         xPad,
       )}
     >
@@ -990,7 +993,7 @@ const CitationRowMeta = ({
     <>
       {!isCompact && (
         <span
-          className="hidden font-mono text-[9px] uppercase tracking-wider text-ink-3 md:inline"
+          className={cn(eyebrowRecipe({ size: 9 }), 'hidden md:inline')}
           data-testid={`${rowTestId}-type`}
         >
           {c.type}
@@ -1004,7 +1007,12 @@ const CitationRowMeta = ({
           {c.useCount > 0 ? `${String(c.useCount)}×` : '—'}
         </span>
       )}
-      <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-ink-3 md:hidden">
+      <div
+        className={cn(
+          eyebrowRecipe(),
+          'flex flex-wrap items-center gap-2 md:hidden',
+        )}
+      >
         <span>{c.key}</span>
         <span className="text-ink-4">·</span>
         <span>{c.year > 0 ? c.year : '—'}</span>
@@ -1086,7 +1094,7 @@ const CitationDetailRow = ({
   onClose,
 }: CitationDetailRowProps) => {
   const { t } = useTranslation('screens');
-  const labelCls = 'font-mono text-[10px] uppercase tracking-wider text-ink-3';
+  const labelCls = eyebrowRecipe();
   const valueCls = 'text-[13px] text-ink';
 
   const detailTestId = `citation-detail-${c.id}`;
@@ -1148,7 +1156,7 @@ const CitationDetailHeader = ({
       <Label
         tone="ink3"
         weight="regular"
-        className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider"
+        className={cn(eyebrowRecipe({ tone: 'inherit' }), 'flex items-center gap-2')}
       >
         <Checkbox
           checked={isSelected}
@@ -1187,7 +1195,7 @@ const CitationDetailActions = ({
   return (
     <div className="mt-3 flex items-center justify-between text-[11px]">
       <span
-        className="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+        className={eyebrowRecipe()}
         data-testid={`${detailTestId}-used`}
       >
         {c.useCount > 0
@@ -1265,7 +1273,7 @@ const CitationDetailFields = ({
       <div className="flex flex-col gap-1">
         <span className={labelCls}>{t('citations.edit.typeLabel')}</span>
         <span
-          className={cn(valueCls, 'font-mono uppercase tracking-wider')}
+          className={cn(valueCls, 'font-mono tracking-wider')}
           data-testid={`${detailTestId}-type`}
         >
           {c.type}
@@ -1405,8 +1413,10 @@ const CitationEditRow = ({
 
 const EDIT_INPUT_CLS =
   'w-full rounded-sm border border-rule bg-paper px-2 py-1 text-[13px] text-ink outline-none focus:border-ink';
-const EDIT_LABEL_CLS =
-  'flex flex-col gap-1 font-mono text-[10px] uppercase tracking-wider';
+const EDIT_LABEL_CLS = cn(
+  eyebrowRecipe({ tone: 'inherit' }),
+  'flex flex-col gap-1',
+);
 
 interface CitationEditFieldsProps {
   draft: EditDraft;
@@ -1606,7 +1616,7 @@ const BulkBar = ({ xPad, count, onClear, onDelete, onSetType }: BulkBarProps) =>
       data-testid="citations-bulk-bar"
     >
       <span
-        className="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+        className={eyebrowRecipe()}
         data-testid="citations-bulk-bar-count"
       >
         {t('citations.bulk.selectedSummary', { count })}
@@ -1644,7 +1654,7 @@ const BulkSetTypeSelect = ({
     <Label
       tone="ink3"
       weight="regular"
-      className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider"
+      className={cn(eyebrowRecipe({ tone: 'inherit' }), 'flex items-center gap-2')}
     >
       {t('citations.bulk.setTypePrompt')}
       <select
@@ -1748,9 +1758,7 @@ const ManualAddForm = ({ spaceId, xPad, onClose, onStatus }: ManualAddFormProps)
       className={cn('border-b border-rule bg-paper-2 py-4', xPad)}
       data-testid="citations-manual-add"
     >
-      <div className="mb-2 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-        {t('citations.pasteHeader')}
-      </div>
+      <Eyebrow className="mb-2">{t('citations.pasteHeader')}</Eyebrow>
       <TextArea
         value={raw}
         onChange={(e) => { setRaw(e.target.value); }}

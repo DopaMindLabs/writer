@@ -14,7 +14,7 @@ const BADGE_BOX_CLASS =
 
 const toneClass = (isSpace: boolean): string =>
   isSpace
-    ? 'bg-ink font-mono text-[10px] font-medium uppercase tracking-[0.04em] text-paper'
+    ? 'bg-ink font-mono text-[10px] font-medium tracking-[0.04em] text-paper'
     : 'border border-rule font-serif text-[16px] text-ink';
 
 /**

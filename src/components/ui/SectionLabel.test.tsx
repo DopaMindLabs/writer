@@ -2,10 +2,9 @@ import { render, screen } from '@/test/test-utils';
 import { SectionLabel } from './SectionLabel';
 
 describe('SectionLabel', () => {
-  it('renders the label in the mono uppercase voice', () => {
+  it('renders the label in the mono voice', () => {
     render(<SectionLabel>Appearance</SectionLabel>);
-    const label = screen.getByText('Appearance');
-    expect(label).toHaveClass('font-mono', 'uppercase');
+    expect(screen.getByText('Appearance')).toHaveClass('font-mono');
   });
 
   it('defaults to size 10 / ink-3', () => {
@@ -37,6 +36,6 @@ describe('SectionLabel', () => {
     );
     const heading = screen.getByRole('heading', { name: 'Account' });
     expect(heading.tagName).toBe('H2');
-    expect(heading).toHaveClass('font-mono', 'uppercase');
+    expect(heading).toHaveClass('font-mono');
   });
 });

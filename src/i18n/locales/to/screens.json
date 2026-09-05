@@ -35,8 +35,8 @@
   "settings": {
     "back": "foki",
     "windowTitle": "lotem · ngaahi sētingi",
-    "breadcrumb": "NGAAHI SĒTINGI KOTOA",
-    "shellSubtitle": "NGAAHI SĒTINGI KOTOA",
+    "breadcrumb": "Ngaahi Sētingi Kotoa",
+    "shellSubtitle": "Ngaahi Sētingi Kotoa",
     "comingSoonBadge": "ʻoku haʻu",
     "helpAria": "Ko e hā ʻa e meʻa ko ʻeni?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Ko e ngaahi fakahoko tata",
       "historyEmpty": "ʻOku ʻikai ha ngaahi fakahoko.",
       "columns": {
-        "when": "ʻAFEI",
-        "space": "FEITU'U",
-        "kind": "FAʻAHINGA",
-        "size": "LAHIʻANGA",
-        "status": "TUʻUNGA"
+        "when": "ʻafei",
+        "space": "Feitu'u",
+        "kind": "Faʻahinga",
+        "size": "Lahiʻanga",
+        "status": "Tuʻunga"
       },
       "kind": {
         "auto": "ʻotomētiki",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "FEITU'U · NGAAHI SĒTINGI",
-      "shellSubtitle": "NGAAHI SĒTINGI FEITU'U",
+      "breadcrumb": "Feitu'u · Ngaahi Sētingi",
+      "shellSubtitle": "Ngaahi Sētingi Feitu'u",
       "loading": "ʻOku utaʻi ʻa e feituʻu…",
       "groups": {
         "thisSpace": "Ko e feituʻu ko ʻeni",
@@ -545,9 +545,9 @@
         "historyTitle": "Hisitolia",
         "empty": "ʻOku ʻikai ha ngaahi fakaʻasi — fakatupu ha taha ʻaki e + fakaʻasi he taimi ni.",
         "columns": {
-          "when": "ʻAFEI",
-          "kind": "FAʻAHINGA",
-          "size": "LAHIʻANGA",
+          "when": "ʻafei",
+          "kind": "Faʻahinga",
+          "size": "Lahiʻanga",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Foki ki fale"
   },
   "templates": {
-    "crumb": "01 — HA FAʻAHINGA TUMU",
+    "crumb": "01 — Ha Faʻahinga Tumu",
     "headingMain": "Ko e hā ʻa e faʻahinga feituʻu",
     "headingAccent": "ʻoku ke kamata?",
     "chooseLegend": "Fili ha potuʻi",
@@ -683,8 +683,8 @@
     "mobileWarning": "ʻOku fie maʻu ʻe he vaʻa vaeua ha laulau lahi ange.",
     "mobileNote": "Keli ʻa e tohi ko ʻeni ʻi he Founga Tohi.",
     "openInWrite": "Keli ʻi he Tohi →",
-    "leftPrefix": "TOʻOHEMA —",
-    "rightPrefix": "TOʻOMATAʻU —",
+    "leftPrefix": "Toʻohema —",
+    "rightPrefix": "Toʻomataʻu —",
     "rightPaneAria": "Tohi pane toʻomataʻu",
     "noOtherDocs": "(ʻoku ʻikai ha ngaahi tohi kehe)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ fakaʻaongaʻi",
     "cancel": "× fakaʻauha",
     "columns": {
-      "tag": "FAKATOHU",
-      "authors": "KAU TOHI",
-      "title": "ʻULUAKI",
-      "year": "TAʻU",
-      "type": "FAʻAHINGA",
-      "used": "KUO NGĀUEʻAKI"
+      "tag": "Fakatohu",
+      "authors": "Kau Tohi",
+      "title": "ʻuluaki",
+      "year": "Taʻu",
+      "type": "Faʻahinga",
+      "used": "Kuo Ngāueʻaki"
     },
-    "style": "FAʻAHINGA — CHICAGO (KAU TOHI-ʻAHO)",
-    "exportBib": "TUKUANGE KO HA .BIB",
+    "style": "Faʻahinga — Chicago (Kau Tohi-ʻaho)",
+    "exportBib": "Tukuange Ko Ha .BIB",
     "summary": "{{filtered}} KUO HAʻA · {{shown}} ʻI HE PEESI KO ʻENI",
     "prevPage": "Peesi kimuʻa",
     "nextPage": "Peesi ʻoku hoko",

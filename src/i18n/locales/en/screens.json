@@ -45,8 +45,8 @@
   "settings": {
     "back": "back",
     "windowTitle": "lotem · settings",
-    "breadcrumb": "UNIVERSAL SETTINGS",
-    "shellSubtitle": "UNIVERSAL SETTINGS",
+    "breadcrumb": "Universal Settings",
+    "shellSubtitle": "Universal Settings",
     "comingSoonBadge": "coming soon",
     "helpAria": "What is this?",
     "groups": {
@@ -416,11 +416,11 @@
       "historyTitle": "Recent syncs",
       "historyEmpty": "No syncs yet.",
       "columns": {
-        "when": "WHEN",
-        "space": "SPACE",
-        "kind": "KIND",
-        "size": "SIZE",
-        "status": "STATUS"
+        "when": "When",
+        "space": "Space",
+        "kind": "Kind",
+        "size": "Size",
+        "status": "Status"
       },
       "kind": {
         "auto": "auto",
@@ -432,8 +432,8 @@
       }
     },
     "space": {
-      "breadcrumb": "SPACE · SETTINGS",
-      "shellSubtitle": "SPACE SETTINGS",
+      "breadcrumb": "Space · Settings",
+      "shellSubtitle": "Space Settings",
       "loading": "Loading space…",
       "groups": {
         "thisSpace": "This space",
@@ -546,9 +546,9 @@
         "historyTitle": "History",
         "empty": "No snapshots yet — create one with + snapshot now.",
         "columns": {
-          "when": "WHEN",
-          "kind": "KIND",
-          "size": "SIZE",
+          "when": "When",
+          "kind": "Kind",
+          "size": "Size",
           "actions": ""
         },
         "kind": {
@@ -876,7 +876,7 @@
     "goHome": "Go home"
   },
   "templates": {
-    "crumb": "01 — A KIND OF ROOM",
+    "crumb": "01 — A Kind of Room",
     "headingMain": "What kind of space",
     "headingAccent": "are you starting?",
     "chooseLegend": "Choose a template",
@@ -970,8 +970,8 @@
     "mobileWarning": "Split view needs a larger screen.",
     "mobileNote": "Open this document in Write mode instead.",
     "openInWrite": "Open in Write →",
-    "leftPrefix": "LEFT —",
-    "rightPrefix": "RIGHT —",
+    "leftPrefix": "Left —",
+    "rightPrefix": "Right —",
     "rightPaneAria": "Right pane document",
     "noOtherDocs": "(no other docs)",
     "brainSpaceOption": "Brain space",
@@ -994,15 +994,15 @@
     "add": "+ add",
     "cancel": "× cancel",
     "columns": {
-      "tag": "TAG",
-      "authors": "AUTHORS",
-      "title": "TITLE",
-      "year": "YEAR",
-      "type": "TYPE",
-      "used": "USED"
+      "tag": "Tag",
+      "authors": "Authors",
+      "title": "Title",
+      "year": "Year",
+      "type": "Type",
+      "used": "Used"
     },
-    "style": "STYLE — CHICAGO (AUTHOR-DATE)",
-    "exportBib": "EXPORT AS .BIB",
+    "style": "Style — Chicago (Author-date)",
+    "exportBib": "Export as .BIB",
     "summary": "{{filtered}} SHOWN · {{shown}} ON THIS PAGE",
     "prevPage": "Previous page",
     "nextPage": "Next page",

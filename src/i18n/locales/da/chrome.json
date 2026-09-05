@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Rum",
     "navLabel": "Dokumenter",
-    "shared": "DELT",
-    "private": "PRIVAT · LOKAL",
+    "shared": "Delt",
+    "private": "Privat · Lokal",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "nyt",
     "ageDays": "{{count}}d",
@@ -30,8 +30,8 @@
     "theme": "Tema",
     "exitFocus": "Forlad fokustilstand",
     "enterFocus": "Aktivér fokustilstand",
-    "normal": "NORMAL",
-    "focus": "FOKUS",
+    "normal": "Normal",
+    "focus": "Fokus",
     "focusTitleNormal": "Normal (⌘\\)",
     "focusTitleFocus": "Fokus (⌘\\)",
     "findInDoc": "Find i dokumentet",
@@ -115,7 +115,7 @@
     "tourCheckmark": "fuldført"
   },
   "spaceMenu": {
-    "thisSpace": "DETTE RUM",
+    "thisSpace": "Dette Rum",
     "rename": "Omdøb",
     "settings": "Indstillinger",
     "backups": "Sikkerhedskopier og historik",
@@ -129,18 +129,18 @@
     "expand": "Udvid inspektør",
     "collapse": "Skjul inspektør",
     "tabs": {
-      "outline": "OVERSIGT",
-      "info": "INFO",
-      "history": "HISTORIK",
-      "actions": "HANDLINGER"
+      "outline": "Oversigt",
+      "info": "Info",
+      "history": "Historik",
+      "actions": "Handlinger"
     },
     "outline": {
-      "title": "OVERSIGT",
+      "title": "Oversigt",
       "sectionSummary": "{{count}} SEKTIONER",
       "empty": "Ingen overskrifter endnu. Tilføj overskrifter til dokumentet for at opbygge dets disposition."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Ord",
       "characters": "Tegn",
       "updated": "Opdateret",
@@ -165,8 +165,8 @@
       "unlock": "Lås op for at redigere"
     },
     "history": {
-      "title": "VERSIONER",
-      "now": "NU",
+      "title": "Versioner",
+      "now": "Nu",
       "full": "fuld versionshistorik →",
       "empty": "Ingen versioner endnu. Versioner gemmes automatisk mens du skriver.",
       "summary": "{{count}} version",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}d siden"
     },
     "actions": {
-      "label": "DOKUMENTHANDLINGER",
+      "label": "Dokumenthandlinger",
       "rename": "Omdøb",
       "move": "Flyt til sektion…",
       "export": "Eksportér dette dokument…",

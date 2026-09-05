@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Telpa",
     "navLabel": "Dokumenti",
-    "shared": "KOPLIETOTS",
-    "private": "PRIVĀTS · VIETĒJS",
+    "shared": "Koplietots",
+    "private": "Privāts · Vietējs",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "jauns",
     "ageDays": "{{count}}d",
@@ -30,8 +30,8 @@
     "theme": "Tēma",
     "exitFocus": "Iziet no fokusa režīma",
     "enterFocus": "Ieslēgt fokusa režīmu",
-    "normal": "NORMĀLS",
-    "focus": "FOKUSS",
+    "normal": "Normāls",
+    "focus": "Fokuss",
     "focusTitleNormal": "Normāls (⌘\\)",
     "focusTitleFocus": "Fokuss (⌘\\)",
     "findInDoc": "Atrast dokumentā",
@@ -115,7 +115,7 @@
     "tourCheckmark": "pabeigts"
   },
   "spaceMenu": {
-    "thisSpace": "ŠĪ TELPA",
+    "thisSpace": "Šī Telpa",
     "rename": "Pārdēvēt",
     "settings": "Iestatījumi",
     "backups": "Dublējumi un vēsture",
@@ -129,18 +129,18 @@
     "expand": "Izvērst inspektoru",
     "collapse": "Sakļaut inspektoru",
     "tabs": {
-      "outline": "STRUKTŪRA",
-      "info": "INFO",
-      "history": "VĒSTURE",
-      "actions": "DARBĪBAS"
+      "outline": "Struktūra",
+      "info": "Info",
+      "history": "Vēsture",
+      "actions": "Darbības"
     },
     "outline": {
-      "title": "STRUKTŪRA",
+      "title": "Struktūra",
       "sectionSummary": "{{count}} SADAĻAS",
       "empty": "Vēl nav virsrakstu. Pievienojiet dokumentam virsrakstus, lai veidotu tā struktūru."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Vārdi",
       "characters": "Rakstzīmes",
       "updated": "Atjaunināts",
@@ -165,8 +165,8 @@
       "unlock": "Atbloķēt rediģēšanai"
     },
     "history": {
-      "title": "VERSIJAS",
-      "now": "TAGAD",
+      "title": "Versijas",
+      "now": "Tagad",
       "full": "pilna versiju vēsture →",
       "empty": "Vēl nav versiju. Versijas saglabājas automātiski rakstīšanas laikā.",
       "summary": "{{count}} versija",
@@ -186,7 +186,7 @@
       "ageDays": "pirms {{count}}d"
     },
     "actions": {
-      "label": "DOKUMENTA DARBĪBAS",
+      "label": "Dokumenta Darbības",
       "rename": "Pārdēvēt",
       "move": "Pārvietot uz sadaļu…",
       "export": "Eksportēt šo dokumentu…",

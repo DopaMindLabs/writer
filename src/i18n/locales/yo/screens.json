@@ -35,8 +35,8 @@
   "settings": {
     "back": "padà",
     "windowTitle": "lotem · ètò",
-    "breadcrumb": "ÈTÒ ÀGBÁYÉ",
-    "shellSubtitle": "ÈTÒ ÀGBÁYÉ",
+    "breadcrumb": "Ètò Àgbáyé",
+    "shellSubtitle": "Ètò Àgbáyé",
     "comingSoonBadge": "ó ń bọ̀ ní kíákíá",
     "helpAria": "Kíní èyí?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Àwọn ìmújúpọ̀ aládìgbò",
       "historyEmpty": "Kò sí ìmújúpọ̀ síbẹ̀.",
       "columns": {
-        "when": "ÌGBÀ",
-        "space": "ÀYÈ",
-        "kind": "IRÚFẸ́",
-        "size": "ÌWỌ̀N",
-        "status": "IPÒ"
+        "when": "Ìgbà",
+        "space": "Àyè",
+        "kind": "Irúfẹ́",
+        "size": "Ìwọ̀n",
+        "status": "Ipò"
       },
       "kind": {
         "auto": "àìfọwọ́kan",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "ÀYÈ · ÈTÒ",
-      "shellSubtitle": "ÈTÒ ÀYÈ",
+      "breadcrumb": "Àyè · Ètò",
+      "shellSubtitle": "Ètò Àyè",
       "loading": "Ń gbé àyè wọlé…",
       "groups": {
         "thisSpace": "Àyè yìí",
@@ -545,9 +545,9 @@
         "historyTitle": "Ìtàn",
         "empty": "Kò sí àwòrán síbẹ̀ — ṣẹ̀dá ọ̀kan pẹ̀lú + ya àwòrán báyìí.",
         "columns": {
-          "when": "ÌGBÀ",
-          "kind": "IRÚFẸ́",
-          "size": "ÌWỌ̀N",
+          "when": "Ìgbà",
+          "kind": "Irúfẹ́",
+          "size": "Ìwọ̀n",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Padà sílé"
   },
   "templates": {
-    "crumb": "01 — IRÚ ILÉ KAN",
+    "crumb": "01 — Irú Ilé Kan",
     "headingMain": "Irú àyè wo",
     "headingAccent": "ni o ń bẹ̀rẹ̀?",
     "chooseLegend": "Yan àpẹẹrẹ",
@@ -683,8 +683,8 @@
     "mobileWarning": "Ìwòran ìpínyà nílò ibójú tó tóbi jù.",
     "mobileNote": "Ṣí ìwé yìí ní ipò Write dípò.",
     "openInWrite": "Ṣí nínú Write →",
-    "leftPrefix": "APÁ ÒSÌ —",
-    "rightPrefix": "APÁ ỌTÚ̀N —",
+    "leftPrefix": "Apá Òsì —",
+    "rightPrefix": "Apá Ọtú̀n —",
     "rightPaneAria": "Ìwé fẹ̀rẹ̀sẹ́ apá ọ̀tún",
     "noOtherDocs": "(kò sí àwọn ìwé mìíràn)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ fikún",
     "cancel": "× fagilé",
     "columns": {
-      "tag": "ÀMÌ",
-      "authors": "ÀWỌN ÒǸK̀ỌẀÉ",
-      "title": "ÀKỌLÉ",
-      "year": "ỌDÚ́N",
-      "type": "IRÚFẸ́",
-      "used": "LÒ"
+      "tag": "Àmì",
+      "authors": "Àwọn Òǹk̀ọẁé",
+      "title": "Àkọlé",
+      "year": "Ọdú́n",
+      "type": "Irúfẹ́",
+      "used": "Lò"
     },
-    "style": "ỌNÀ — CHICAGO (ÒǸKỌ̀WÉ-ỌJỌ́)",
-    "exportBib": "GBÓNÁ GẸ́GẸ́ BÍ .BIB",
+    "style": "Ọnà — Chicago (Òǹkọ̀wé-ọjọ́)",
+    "exportBib": "Gbóná Gẹ́gẹ́ Bí .BIB",
     "summary": "{{filtered}} TÍ A ṢÍ · {{shown}} LÓRí ÌWÉ YÌÍ",
     "prevPage": "Ojú-ìwé tó ṣáájú",
     "nextPage": "Ojú-ìwé tó tẹ̀le",

@@ -35,8 +35,8 @@
   "settings": {
     "back": "atgal",
     "windowTitle": "lotem · nustatymai",
-    "breadcrumb": "VISUOTINIAI NUSTATYMAI",
-    "shellSubtitle": "VISUOTINIAI NUSTATYMAI",
+    "breadcrumb": "Visuotiniai Nustatymai",
+    "shellSubtitle": "Visuotiniai Nustatymai",
     "comingSoonBadge": "greitai",
     "helpAria": "Kas tai?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Nesenūs sinchronizavimai",
       "historyEmpty": "Sinchronizavimų dar nėra.",
       "columns": {
-        "when": "KADA",
-        "space": "ERDVĖ",
-        "kind": "RŪŠIS",
-        "size": "DYDIS",
-        "status": "BŪKLĖ"
+        "when": "Kada",
+        "space": "Erdvė",
+        "kind": "Rūšis",
+        "size": "Dydis",
+        "status": "Būklė"
       },
       "kind": {
         "auto": "automatinis",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "ERDVĖ · NUSTATYMAI",
-      "shellSubtitle": "ERDVĖS NUSTATYMAI",
+      "breadcrumb": "Erdvė · Nustatymai",
+      "shellSubtitle": "Erdvės Nustatymai",
       "loading": "Įkeliama erdvė…",
       "groups": {
         "thisSpace": "Ši erdvė",
@@ -545,9 +545,9 @@
         "historyTitle": "Istorija",
         "empty": "Momentinių kopijų dar nėra — sukurkite vieną su + momentinė kopija dabar.",
         "columns": {
-          "when": "KADA",
-          "kind": "RŪŠIS",
-          "size": "DYDIS",
+          "when": "Kada",
+          "kind": "Rūšis",
+          "size": "Dydis",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Eiti namo"
   },
   "templates": {
-    "crumb": "01 — KAMBARIO RŪŠIS",
+    "crumb": "01 — Kambario Rūšis",
     "headingMain": "Kokią erdvę",
     "headingAccent": "pradedate?",
     "chooseLegend": "Pasirinkite šabloną",
@@ -683,8 +683,8 @@
     "mobileWarning": "Padalytam rodiniui reikia didesnio ekrano.",
     "mobileNote": "Atidarykite šį dokumentą rašymo režimu.",
     "openInWrite": "Atidaryti rašyme →",
-    "leftPrefix": "KAIRĖ —",
-    "rightPrefix": "DEŠINĖ —",
+    "leftPrefix": "Kairė —",
+    "rightPrefix": "Dešinė —",
     "rightPaneAria": "Dešiniosios srities dokumentas",
     "noOtherDocs": "(nėra kitų dok.)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ pridėti",
     "cancel": "× atšaukti",
     "columns": {
-      "tag": "ŽYMA",
-      "authors": "AUTORIAI",
-      "title": "PAVADINIMAS",
-      "year": "METAI",
-      "type": "TIPAS",
-      "used": "NAUDOTA"
+      "tag": "Žyma",
+      "authors": "Autoriai",
+      "title": "Pavadinimas",
+      "year": "Metai",
+      "type": "Tipas",
+      "used": "Naudota"
     },
-    "style": "STILIUS — CHICAGO (AUTORIUS-DATA)",
-    "exportBib": "EKSPORTUOTI KAIP .BIB",
+    "style": "Stilius — Chicago (Autorius-data)",
+    "exportBib": "Eksportuoti Kaip .BIB",
     "summary": "{{filtered}} RODOMA · {{shown}} ŠIAME PUSLAPYJE",
     "prevPage": "Ankstesnis puslapis",
     "nextPage": "Kitas puslapis",

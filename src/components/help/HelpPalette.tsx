@@ -15,6 +15,7 @@ import { routes } from '@/lib/routes';
 import { useHelp } from '@/store/help';
 import { searchHelp, type HelpSearchResult } from '@/lib/help/search';
 import { HelpResultList } from './HelpSearch';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 const SHORTCUTS: readonly { readonly keys: string; readonly labelKey: string }[] = [
   { keys: 'mod+k', labelKey: 'shortcuts.help' },
@@ -25,9 +26,9 @@ const ShortcutsList = () => {
   const { t } = useTranslation('help');
   return (
     <div className="py-2">
-      <div className="mb-2 font-mono text-[10px] uppercase tracking-wider text-ink-4">
+      <Eyebrow tone="ink4" className="mb-2">
         {t('palette.shortcutsHeading')}
-      </div>
+      </Eyebrow>
       <ul className="space-y-1.5">
         {SHORTCUTS.map((s) => (
           <li
@@ -120,9 +121,9 @@ export const HelpPalette = () => {
             <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
             {t('openCenter')}
           </Link>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-ink-4">
-            {t('palette.hint')}
-          </span>
+          <Eyebrow asChild tone="ink4">
+            <span>{t('palette.hint')}</span>
+          </Eyebrow>
         </div>
       </DialogContent>
     </Dialog>

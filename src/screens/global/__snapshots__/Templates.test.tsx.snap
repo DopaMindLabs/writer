@@ -10,7 +10,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
       class="flex items-center justify-between border-b border-rule px-4 py-3 md:px-12 md:py-5"
     >
       <a
-        class="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:text-ink"
+        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 inline-flex items-center gap-1.5 hover:text-ink"
         data-discover="true"
         data-testid="templates-back"
         href="/"
@@ -38,7 +38,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
         back
       </a>
       <div
-        class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
       >
         new space
       </div>
@@ -53,7 +53,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
       >
         <div>
           <div
-            class="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3"
+            class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 mb-2"
           >
             01 — A KIND OF ROOM
           </div>
@@ -358,7 +358,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
           >
             <div>
               <label
-                class="text-ink-3 font-normal block font-mono text-[10px] uppercase tracking-[0.08em]"
+                class="text-ink-3 font-normal font-mono uppercase tracking-[0.11em] text-[10px] block"
                 for="space-name"
               >
                 Name
@@ -373,7 +373,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
             </div>
             <div>
               <label
-                class="text-ink-3 font-normal block font-mono text-[10px] uppercase tracking-[0.08em]"
+                class="text-ink-3 font-normal font-mono uppercase tracking-[0.11em] text-[10px] block"
                 for="space-tag"
               >
                 Tag
@@ -406,7 +406,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
                 />
               </div>
               <span
-                class="font-mono text-[11px] uppercase tracking-wider text-ink-3"
+                class="font-mono uppercase tracking-[0.11em] text-[11px] text-ink-3"
               >
                 cloud sync —
                  

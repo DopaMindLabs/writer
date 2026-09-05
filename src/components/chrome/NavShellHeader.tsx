@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { Space } from '@/db/schema';
 import { NavShellBrandLink } from './NavShellBrandLink';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 export type NavShellVariant = 'global' | 'space';
 
@@ -29,9 +30,9 @@ export const NavShellHeader = ({
         <div className="truncate font-serif text-[20px] font-medium leading-none -tracking-[0.01em] text-ink">
           {title}
         </div>
-        <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-3">
+        <Eyebrow size={9} className="mt-1">
           {subtitle}
-        </div>
+        </Eyebrow>
       </div>
     </div>
   );

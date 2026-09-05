@@ -35,8 +35,8 @@
   "settings": {
     "back": "wstecz",
     "windowTitle": "lotem · ustawienia",
-    "breadcrumb": "USTAWIENIA GLOBALNE",
-    "shellSubtitle": "USTAWIENIA GLOBALNE",
+    "breadcrumb": "Ustawienia Globalne",
+    "shellSubtitle": "Ustawienia Globalne",
     "comingSoonBadge": "wkrótce",
     "helpAria": "Co to jest?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Ostatnie synchronizacje",
       "historyEmpty": "Brak synchronizacji.",
       "columns": {
-        "when": "KIEDY",
-        "space": "PRZESTRZEŃ",
-        "kind": "RODZAJ",
-        "size": "ROZMIAR",
-        "status": "STATUS"
+        "when": "Kiedy",
+        "space": "Przestrzeń",
+        "kind": "Rodzaj",
+        "size": "Rozmiar",
+        "status": "Status"
       },
       "kind": {
         "auto": "auto",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "PRZESTRZEŃ · USTAWIENIA",
-      "shellSubtitle": "USTAWIENIA PRZESTRZENI",
+      "breadcrumb": "Przestrzeń · Ustawienia",
+      "shellSubtitle": "Ustawienia Przestrzeni",
       "loading": "Ładowanie przestrzeni…",
       "groups": {
         "thisSpace": "Ta przestrzeń",
@@ -545,9 +545,9 @@
         "historyTitle": "Historia",
         "empty": "Brak migawek — utwórz jedną za pomocą + zrób migawkę.",
         "columns": {
-          "when": "KIEDY",
-          "kind": "RODZAJ",
-          "size": "ROZMIAR",
+          "when": "Kiedy",
+          "kind": "Rodzaj",
+          "size": "Rozmiar",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Idź do strony głównej"
   },
   "templates": {
-    "crumb": "01 — RODZAJ PRZESTRZENI",
+    "crumb": "01 — Rodzaj Przestrzeni",
     "headingMain": "Jaki rodzaj przestrzeni",
     "headingAccent": "zaczynasz?",
     "chooseLegend": "Wybierz szablon",
@@ -683,8 +683,8 @@
     "mobileWarning": "Widok podzielony wymaga większego ekranu.",
     "mobileNote": "Zamiast tego otwórz ten dokument w trybie pisania.",
     "openInWrite": "Otwórz w trybie pisania →",
-    "leftPrefix": "LEWY —",
-    "rightPrefix": "PRAWY —",
+    "leftPrefix": "Lewy —",
+    "rightPrefix": "Prawy —",
     "rightPaneAria": "Dokument w prawym panelu",
     "noOtherDocs": "(brak innych dokumentów)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ dodaj",
     "cancel": "× anuluj",
     "columns": {
-      "tag": "ETYKIETA",
-      "authors": "AUTORZY",
-      "title": "TYTUŁ",
-      "year": "ROK",
-      "type": "TYP",
-      "used": "UŻYTE"
+      "tag": "Etykieta",
+      "authors": "Autorzy",
+      "title": "Tytuł",
+      "year": "Rok",
+      "type": "Typ",
+      "used": "Użyte"
     },
-    "style": "STYL — CHICAGO (AUTOR-DATA)",
-    "exportBib": "EKSPORTUJ JAKO .BIB",
+    "style": "Styl — Chicago (Autor-data)",
+    "exportBib": "Eksportuj Jako .BIB",
     "summary": "{{filtered}} WYŚWIETLANYCH · {{shown}} NA TEJ STRONIE",
     "prevPage": "Poprzednia strona",
     "nextPage": "Następna strona",

@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Espace",
     "navLabel": "Documents",
-    "shared": "PARTAGÉ",
-    "private": "PRIVÉ · LOCAL",
+    "shared": "Partagé",
+    "private": "Privé · Local",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "nouveau",
     "ageDays": "{{count}}j",
@@ -30,8 +30,8 @@
     "theme": "Thème",
     "exitFocus": "Quitter le mode focus",
     "enterFocus": "Entrer en mode focus",
-    "normal": "NORMAL",
-    "focus": "FOCUS",
+    "normal": "Normal",
+    "focus": "Focus",
     "focusTitleNormal": "Normal (⌘\\)",
     "focusTitleFocus": "Focus (⌘\\)",
     "findInDoc": "Rechercher dans le document",
@@ -115,7 +115,7 @@
     "tourCheckmark": "terminé"
   },
   "spaceMenu": {
-    "thisSpace": "CET ESPACE",
+    "thisSpace": "Cet Espace",
     "rename": "Renommer",
     "settings": "Paramètres",
     "backups": "Sauvegardes et historique",
@@ -129,18 +129,18 @@
     "expand": "Développer l'inspecteur",
     "collapse": "Réduire l'inspecteur",
     "tabs": {
-      "outline": "PLAN",
-      "info": "INFO",
-      "history": "HISTORIQUE",
-      "actions": "ACTIONS"
+      "outline": "Plan",
+      "info": "Info",
+      "history": "Historique",
+      "actions": "Actions"
     },
     "outline": {
-      "title": "PLAN",
+      "title": "Plan",
       "sectionSummary": "{{count}} SECTIONS",
       "empty": "Pas encore de titres. Ajoutez des titres au document pour créer son plan."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Mots",
       "characters": "Caractères",
       "updated": "Mis à jour",
@@ -165,8 +165,8 @@
       "unlock": "Déverrouiller pour éditer"
     },
     "history": {
-      "title": "VERSIONS",
-      "now": "MAINTENANT",
+      "title": "Versions",
+      "now": "Maintenant",
       "full": "historique complet des versions →",
       "empty": "Pas encore de versions. Les versions sont enregistrées automatiquement pendant que tu écris.",
       "summary": "{{count}} version",
@@ -186,7 +186,7 @@
       "ageDays": "il y a {{count}}j"
     },
     "actions": {
-      "label": "ACTIONS DU DOCUMENT",
+      "label": "Actions Du Document",
       "rename": "Renommer",
       "move": "Déplacer vers une section…",
       "export": "Exporter ce document…",
