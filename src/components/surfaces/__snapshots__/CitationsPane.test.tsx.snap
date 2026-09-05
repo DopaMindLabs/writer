@@ -12,7 +12,7 @@ exports[`CitationsPane > snapshot > should match the snapshot across all variant
       class="flex items-baseline justify-between"
     >
       <div
-        class="font-mono text-[10px] uppercase tracking-[0.08em]"
+        class="font-mono uppercase tracking-[0.11em] leading-none text-[10px]"
       >
         <span
           class="text-ink-3"
@@ -26,7 +26,7 @@ exports[`CitationsPane > snapshot > should match the snapshot across all variant
         </span>
       </div>
       <div
-        class="font-mono text-[10px] uppercase tracking-wider text-ink-4"
+        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-4"
       >
         2 ENTRIES
       </div>
@@ -103,7 +103,7 @@ exports[`CitationsPane > snapshot > should match the snapshot across all variant
     data-tour="tour-citations-list"
   >
     <div
-      class="md:grid md:grid-cols-[2rem_7rem_minmax(8rem,12rem)_minmax(0,1fr)_4rem_6rem_4rem] sticky top-0 z-10 hidden gap-4 border-b border-rule bg-paper py-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-3 px-4 md:px-10"
+      class="md:grid md:grid-cols-[2rem_7rem_minmax(8rem,12rem)_minmax(0,1fr)_4rem_6rem_4rem] font-mono uppercase tracking-[0.11em] text-[9px] text-ink-3 sticky top-0 z-10 hidden gap-4 border-b border-rule bg-paper py-2 px-4 md:px-10"
     >
       <span
         class="flex items-center"
@@ -235,7 +235,7 @@ exports[`CitationsPane > snapshot > should match the snapshot across all variant
         2020
       </span>
       <span
-        class="hidden font-mono text-[9px] uppercase tracking-wider text-ink-3 md:inline"
+        class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-3 hidden md:inline"
         data-testid="citation-row-c-a-type"
       >
         article
@@ -247,7 +247,7 @@ exports[`CitationsPane > snapshot > should match the snapshot across all variant
         —
       </span>
       <div
-        class="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-ink-3 md:hidden"
+        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 flex flex-wrap items-center gap-2 md:hidden"
       >
         <span>
           alpha2020
@@ -351,7 +351,7 @@ exports[`CitationsPane > snapshot > should match the snapshot across all variant
         2021
       </span>
       <span
-        class="hidden font-mono text-[9px] uppercase tracking-wider text-ink-3 md:inline"
+        class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-3 hidden md:inline"
         data-testid="citation-row-c-b-type"
       >
         book
@@ -363,7 +363,7 @@ exports[`CitationsPane > snapshot > should match the snapshot across all variant
         2×
       </span>
       <div
-        class="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-ink-3 md:hidden"
+        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 flex flex-wrap items-center gap-2 md:hidden"
       >
         <span>
           beta2021
@@ -396,7 +396,7 @@ exports[`CitationsPane > snapshot > should match the snapshot across all variant
     </div>
   </div>
   <div
-    class="flex flex-col gap-2 border-t border-rule py-3 font-mono text-[10px] uppercase tracking-wider text-ink-3 md:flex-row md:items-center md:justify-between px-4 md:px-10"
+    class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 flex flex-col gap-2 border-t border-rule py-3 md:flex-row md:items-center md:justify-between px-4 md:px-10"
   >
     <span>
       STYLE — CHICAGO (AUTHOR-DATE)

@@ -31,7 +31,7 @@ exports[`BrainSpaceDetailDrawer > snapshot > should match the snapshot of the op
       class="flex min-w-0 flex-1 flex-col gap-1"
     >
       <span
-        class="font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4"
+        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-4"
       >
         thought
       </span>
@@ -79,7 +79,7 @@ exports[`BrainSpaceDetailDrawer > snapshot > should match the snapshot of the op
       class="mb-6"
     >
       <label
-        class="text-ink-3 font-normal mb-2 block font-mono text-[10px] uppercase tracking-wider"
+        class="text-ink-3 font-normal font-mono uppercase tracking-[0.11em] text-[10px] mb-2 block"
         for="drawer-body"
       >
         Body
@@ -102,7 +102,7 @@ exports[`BrainSpaceDetailDrawer > snapshot > should match the snapshot of the op
         class="mb-2 flex items-center justify-between"
       >
         <label
-          class="text-ink-3 font-normal flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider"
+          class="text-ink-3 font-normal font-mono uppercase tracking-[0.11em] text-[10px] flex items-center gap-1.5"
         >
           <svg
             aria-hidden="true"
@@ -198,7 +198,7 @@ exports[`BrainSpaceDetailDrawer > snapshot > should match the snapshot of the op
       class="mb-6"
     >
       <label
-        class="text-ink-3 font-normal mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider"
+        class="text-ink-3 font-normal font-mono uppercase tracking-[0.11em] text-[10px] mb-2 flex items-center gap-1.5"
         for="drawer-doc-link"
       >
         <svg
@@ -296,7 +296,7 @@ exports[`BrainSpaceDetailDrawer > snapshot > should match the snapshot of the op
               Hello
             </span>
             <span
-              class="font-mono text-[9px] uppercase tracking-wider text-ink-4"
+              class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4"
             >
               thought
             </span>
