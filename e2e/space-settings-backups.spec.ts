@@ -95,6 +95,104 @@ test('backups tab: snapshot adds a row that can be downloaded and deleted', asyn
   await expect(page.getByTestId('backups-history')).toHaveCount(0);
 });
 
+test('backups tab: annotations and the palette round-trip through a restore', async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  // Both tables ship in the archive but have no authoring surface yet, so the
+  // snapshot side is seeded directly and the restore proves the codecs parse
+  // what the archive renders.
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}`);
+  await page.waitForURL(/#\/s\/[^/]+\/d\/([^/?#]+)/);
+  const docId = /\/d\/([^/?#]+)/.exec(page.url())?.[1] ?? '';
+  expect(docId).toBeTruthy();
+
+  const seedCounts = await page.evaluate(
+    ({ scope, doc }) =>
+      new Promise<{ annotations: number; palettes: number }>((resolve, reject) => {
+        const open = indexedDB.open('lipsum');
+        open.onerror = () => reject(new Error('could not open lipsum db'));
+        open.onsuccess = () => {
+          const db = open.result;
+          const tx = db.transaction(['annotations', 'palettes'], 'readwrite');
+          const meta = {
+            accessScopeId: scope,
+            createdBy: 'me',
+            updatedBy: 'me',
+            mutationId: 'op-backup-seed',
+            logicalUpdatedAt: { millis: 1, counter: 0 },
+          };
+          tx.objectStore('annotations').put({
+            ...meta,
+            id: 'ann-roundtrip',
+            docId: doc,
+            rangeStart: 0,
+            rangeEnd: 8,
+            kind: 'highlight',
+            color: 'yellow',
+            body: 'survives the restore',
+            author: 'me',
+            createdAt: 1,
+          });
+          tx.objectStore('palettes').put({
+            ...meta,
+            id: 'palette-roundtrip',
+            spaceId: scope,
+            slots: [{ name: 'Key idea', color: '#ffd166' }],
+          });
+          tx.oncomplete = () => {
+            db.close();
+            resolve({ annotations: 1, palettes: 1 });
+          };
+          tx.onerror = () => {
+            db.close();
+            reject(new Error('could not seed annotations and palette'));
+          };
+        };
+      }),
+    { scope: spaceId, doc: docId },
+  );
+  expect(seedCounts).toEqual({ annotations: 1, palettes: 1 });
+
+  await page.goto(`/#/s/${spaceId}/settings?tab=backups`);
+  const snapDownload = page.waitForEvent('download');
+  await page.getByTestId('space-settings-backups-snapshot').click();
+  await snapDownload;
+  await expect(page.getByTestId('backups-history')).toBeVisible();
+
+  await page.getByTestId('backups-history').locator('[data-testid$="-restore"]').first().click();
+  await page.getByTestId('restore-backup-dialog-confirm').click();
+  await expect(page.getByText(/snapshot restored/i)).toBeVisible();
+
+  const restored = await page.evaluate(
+    () =>
+      new Promise<{ annotation: string; slots: number }>((resolve, reject) => {
+        const open = indexedDB.open('lipsum');
+        open.onerror = () => reject(new Error('could not open lipsum db'));
+        open.onsuccess = () => {
+          const db = open.result;
+          const tx = db.transaction(['annotations', 'palettes'], 'readonly');
+          const ann = tx.objectStore('annotations').get('ann-roundtrip');
+          const pal = tx.objectStore('palettes').get('palette-roundtrip');
+          tx.oncomplete = () => {
+            const annotation =
+              (ann.result as { body?: string } | undefined)?.body ?? '';
+            const slots =
+              (pal.result as { slots?: unknown[] } | undefined)?.slots?.length ?? 0;
+            db.close();
+            resolve({ annotation, slots });
+          };
+          tx.onerror = () => {
+            db.close();
+            reject(new Error('could not read restored rows'));
+          };
+        };
+      }),
+  );
+  expect(restored).toEqual({ annotation: 'survives the restore', slots: 1 });
+});
+
 test('backups tab: restoring a snapshot rolls the space back and keeps a pre-restore snapshot', async ({
   page,
 }) => {

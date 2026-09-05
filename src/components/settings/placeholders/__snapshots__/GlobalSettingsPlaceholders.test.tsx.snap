@@ -594,11 +594,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Open settings
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ ,
-          </span>
+            Ctrl+,
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -608,11 +608,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Quick settings
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ K
-          </span>
+            Ctrl+K
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -622,11 +622,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Find in doc
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ F
-          </span>
+            Ctrl+F
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -636,11 +636,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Toggle focus
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ .
-          </span>
+            Ctrl+.
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -650,11 +650,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Toggle inspector
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ I
-          </span>
+            Ctrl+I
+          </kbd>
         </div>
       </div>
       <div
@@ -673,11 +673,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Bold
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ B
-          </span>
+            Ctrl+B
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -687,11 +687,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Italic
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ I
-          </span>
+            Ctrl+I
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -701,11 +701,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Underline
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ U
-          </span>
+            Ctrl+U
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -715,11 +715,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Heading 1
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
             # →
-          </span>
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -729,11 +729,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Heading 2
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
             ## →
-          </span>
+          </kbd>
         </div>
       </div>
       <div
@@ -752,11 +752,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Write mode
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ 1
-          </span>
+            Ctrl+1
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -766,11 +766,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Read mode
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ 2
-          </span>
+            Ctrl+2
+          </kbd>
         </div>
         <div
           class="flex items-center justify-between border-b border-rule/60 py-2.5"
@@ -780,11 +780,11 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
           >
             Split mode
           </span>
-          <span
-            class="font-mono text-[11px] text-ink"
+          <kbd
+            class="font-mono tracking-wide text-[11px] text-ink"
           >
-            ⌘ 3
-          </span>
+            Ctrl+3
+          </kbd>
         </div>
       </div>
     </section>

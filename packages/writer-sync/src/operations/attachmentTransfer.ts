@@ -389,8 +389,16 @@ export const createAttachmentTransfer = (
       // assemble at once, and asks for the next page when it has room. Sending
       // the whole catalogue would have every offer past the first few refused
       // and never repeated.
-      context.catalogue = [...manifests];
-      offerPage(context, 0);
+      //
+      // The catalogue is append-only for the life of the session, because the
+      // receiver's cursor is monotonic for the life of the session: a later
+      // offer — a live link naming attachments one by one as they are written —
+      // continues from where the peer is, never restarts at zero, which the
+      // peer refuses as a replay. While a round-trip is in flight the appended
+      // entries simply wait; the peer's next ask serves them.
+      const start = context.catalogue.length;
+      context.catalogue = [...context.catalogue, ...manifests];
+      if (context.awaitingCursor === null) offerPage(context, start);
     },
 
     receive: async (message) => {

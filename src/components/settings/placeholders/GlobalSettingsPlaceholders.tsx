@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { SettingRow } from '@/components/settings/SettingRow';
 import { TabHeader } from '@/components/settings/TabHeader';
+import { Kbd } from '@/components/ui/Kbd';
 import { TypographyLabel } from '@/components/ui/typography';
 import {
   PlaceholderAccentDots,
@@ -140,19 +141,19 @@ export const ShortcutsPlaceholder = () => {
     [
       t('settings.shortcuts.navHeader'),
       [
-        [t('settings.shortcuts.items.openSettings'), '⌘ ,'],
-        [t('settings.shortcuts.items.quickSettings'), '⌘ K'],
-        [t('settings.shortcuts.items.findInDoc'), '⌘ F'],
-        [t('settings.shortcuts.items.toggleFocus'), '⌘ .'],
-        [t('settings.shortcuts.items.toggleInspector'), '⌘ I'],
+        [t('settings.shortcuts.items.openSettings'), 'mod+,'],
+        [t('settings.shortcuts.items.quickSettings'), 'mod+k'],
+        [t('settings.shortcuts.items.findInDoc'), 'mod+f'],
+        [t('settings.shortcuts.items.toggleFocus'), 'mod+.'],
+        [t('settings.shortcuts.items.toggleInspector'), 'mod+i'],
       ],
     ],
     [
       t('settings.shortcuts.formatHeader'),
       [
-        [t('settings.shortcuts.items.bold'), '⌘ B'],
-        [t('settings.shortcuts.items.italic'), '⌘ I'],
-        [t('settings.shortcuts.items.underline'), '⌘ U'],
+        [t('settings.shortcuts.items.bold'), 'mod+b'],
+        [t('settings.shortcuts.items.italic'), 'mod+i'],
+        [t('settings.shortcuts.items.underline'), 'mod+u'],
         [t('settings.shortcuts.items.heading1'), '# →'],
         [t('settings.shortcuts.items.heading2'), '## →'],
       ],
@@ -160,9 +161,9 @@ export const ShortcutsPlaceholder = () => {
     [
       t('settings.shortcuts.modeHeader'),
       [
-        [t('settings.shortcuts.items.write'), '⌘ 1'],
-        [t('settings.shortcuts.items.read'), '⌘ 2'],
-        [t('settings.shortcuts.items.split'), '⌘ 3'],
+        [t('settings.shortcuts.items.write'), 'mod+1'],
+        [t('settings.shortcuts.items.read'), 'mod+2'],
+        [t('settings.shortcuts.items.split'), 'mod+3'],
       ],
     ],
   ];
@@ -183,7 +184,7 @@ export const ShortcutsPlaceholder = () => {
               className="flex items-center justify-between border-b border-rule/60 py-2.5"
             >
               <span className="text-[13px] text-ink-2">{label}</span>
-              <span className="font-mono text-[11px] text-ink">{kbd}</span>
+              <Kbd keys={kbd} className="text-[11px] text-ink" />
             </div>
           ))}
         </div>

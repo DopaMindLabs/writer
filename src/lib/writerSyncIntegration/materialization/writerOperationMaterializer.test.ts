@@ -164,6 +164,25 @@ describe('two-database operation convergence (hermetic)', () => {
     expect(await dbB.syncInbox.count()).toBe(1);
   });
 
+  it('records the origin and logical time in the inbox, outliving the frame', async () => {
+    // The inbox is what the catch-up manifest is built from once compaction has
+    // dropped the frame, so the entry must carry the frame's ordering fields.
+    await journalledPut({
+      db: dbA,
+      ring,
+      deviceId: DEVICE_A,
+      entityTable: 'notes',
+      row: note(),
+    });
+    await shipAll(dbA, dbB);
+
+    const frame = await dbA.syncOperations.toCollection().first();
+    expect(frame).toBeDefined();
+    const entry = await dbB.syncInbox.get(String(frame?.operationId));
+    expect(entry?.deviceId).toBe(frame?.deviceId);
+    expect(entry?.logicalAt).toEqual(frame?.logicalAt);
+  });
+
   it('converges concurrent edits deterministically on both databases', async () => {
     const base = note();
     await journalledPut({ db: dbA, ring, deviceId: DEVICE_A, entityTable: 'notes', row: base });

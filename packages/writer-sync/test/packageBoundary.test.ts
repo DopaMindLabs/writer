@@ -74,7 +74,20 @@ describe('the package boundary', () => {
   });
 
   it('exposes each subpath through an explicit barrel, never a wildcard', () => {
-    for (const subpath of ['core', 'crypto', 'operations']) {
+    // Derived from the exports map so a new public subpath is guarded the day
+    // it is added, instead of extending a hand-kept list that goes stale.
+    const manifest: unknown = JSON.parse(
+      readFileSync(join(SRC, '..', 'package.json'), 'utf8'),
+    );
+    const exportsMap =
+      typeof manifest === 'object' && manifest !== null && 'exports' in manifest
+        ? (manifest as { exports: Record<string, string> }).exports
+        : {};
+    const subpaths = Object.keys(exportsMap).map((key) => key.slice(2));
+    expect(subpaths).toEqual(
+      expect.arrayContaining(['core', 'crypto', 'operations', 'pairing', 'providers/webrtc']),
+    );
+    for (const subpath of subpaths) {
       const barrel = files.find((file) => file.path === join(subpath, 'index.ts'));
       expect(barrel, `${subpath} has no index.ts`).toBeDefined();
       expect(barrel?.source).not.toMatch(/export\s+\*/);

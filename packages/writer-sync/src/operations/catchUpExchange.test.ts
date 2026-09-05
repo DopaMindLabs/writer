@@ -38,8 +38,12 @@ const frameOf = async (options: {
   signature: 'signed',
 });
 
-const memoryStore = (frames: EncryptedSyncFrame[]): OperationStore => ({
+const memoryStore = (
+  frames: EncryptedSyncFrame[],
+  refuses: (frame: EncryptedSyncFrame) => boolean = () => false,
+): OperationStore => ({
   append: async (frame) => {
+    if (refuses(frame)) throw new Error('the journal could not store this frame');
     if (!frames.some((held) => String(held.operationId) === String(frame.operationId))) {
       frames.push(frame);
     }
@@ -52,6 +56,8 @@ const memoryStore = (frames: EncryptedSyncFrame[]): OperationStore => ({
 
 const harness = (options: {
   frames?: EncryptedSyncFrame[];
+  /** What this device has seen, when it differs from what it still holds. */
+  seen?: EncryptedSyncFrame[];
   scopes?: AccessScopeId[];
   verifySignature?: (frame: EncryptedSyncFrame) => Promise<boolean>;
   fullState?: (accessScopeId: AccessScopeId) => Promise<EncryptedSyncFrame[]>;
@@ -59,16 +65,32 @@ const harness = (options: {
   maxMessageBytes?: number;
   onUndeliverableFrame?: (frame: EncryptedSyncFrame, reason: unknown) => void;
   attachments?: CatchUpPorts['attachments'];
+  /** Which frames this device's journal refuses to store. */
+  unstorable?: (frame: EncryptedSyncFrame) => boolean;
+  /** Offer the paced write, and hold each one until the test lets it go. */
+  pacedSends?: boolean;
 } = {}) => {
   const frames = options.frames ?? [];
   const sent: CatchUpMessage[] = [];
   const acknowledged: OperationAcknowledgement[] = [];
   const rejected: EncryptedSyncFrame[] = [];
+  const unstored: EncryptedSyncFrame[] = [];
   const onFramesJournalled = vi.fn();
   let failNext = false;
 
+  /** Writes that are waiting for the bearer to take them. */
+  const waiting: (() => void)[] = [];
+  const paced = (message: CatchUpMessage): Promise<void> =>
+    new Promise((resolve) => {
+      waiting.push(() => {
+        sent.push(message);
+        resolve();
+      });
+    });
+
   const ports: CatchUpPorts = {
-    journal: memoryStore(frames),
+    journal: memoryStore(frames, options.unstorable),
+    seenOperations: async () => options.seen ?? frames,
     accessibleScopeIds: async () => options.scopes ?? ['scope-1'],
     send: (message) => {
       if (failNext && message.kind === 'frames') {
@@ -88,6 +110,8 @@ const harness = (options: {
     },
     onFramesJournalled,
     onRejectedFrame: (frame) => rejected.push(frame),
+    onUnstoredFrame: (frame) => unstored.push(frame),
+    sendWhenReady: options.pacedSends === true ? paced : undefined,
   };
 
   return {
@@ -96,10 +120,17 @@ const harness = (options: {
     sent,
     acknowledged,
     rejected,
+    unstored,
     onFramesJournalled,
     failSendsOnce: () => {
       failNext = true;
     },
+    /** Stand in for the bearer taking one paced write. */
+    takeOne: async () => {
+      waiting.shift()?.();
+      await Promise.resolve();
+    },
+    stillWaiting: () => waiting.length,
   };
 };
 
@@ -125,6 +156,44 @@ describe('createCatchUpExchange start', () => {
     await exchange.start();
 
     expect(sent).toEqual([{ v: 1, kind: 'manifest', manifests: [] }]);
+  });
+});
+
+describe('the manifest survives journal compaction', () => {
+  it('advertises what it has seen even after the journal compacted it away', async () => {
+    // Compaction drops frames every peer holds; what this device has *seen*
+    // must not shrink with them, or the origin vanishes from the manifest and
+    // the peer re-authors the whole scope every session, for ever.
+    const seen = await frameOf({ id: 'op-1', millis: 10 });
+    const { exchange, sent } = harness({ frames: [], seen: [seen] });
+
+    await exchange.start();
+
+    expect(sent).toEqual([manifestMessage(buildScopeManifests([seen]))]);
+  });
+
+  it('plans no catch-up between devices that have seen everything, however compacted', async () => {
+    const seenOps = [
+      await frameOf({ id: 'op-1', millis: 10, device: 'device-a' }),
+      await frameOf({ id: 'op-2', millis: 20, device: 'device-b' }),
+    ];
+    const { exchange, sent } = harness({ frames: [], seen: seenOps });
+
+    await exchange.receive(manifestMessage(buildScopeManifests(seenOps)));
+
+    expect(sent).toEqual([{ v: 1, kind: 'request', requests: [] }]);
+  });
+
+  it('never re-authors full state for a peer that has seen everything already', async () => {
+    const seenOps = [await frameOf({ id: 'op-1', millis: 10 })];
+    const fullState = vi.fn(async () => [] as EncryptedSyncFrame[]);
+    const { exchange, sent } = harness({ frames: [], seen: seenOps, fullState });
+
+    await exchange.receive(manifestMessage(buildScopeManifests(seenOps)));
+    expect(sent).toEqual([{ v: 1, kind: 'request', requests: [] }]);
+
+    await exchange.receive({ v: 1, kind: 'request', requests: [] });
+    expect(fullState).not.toHaveBeenCalled();
   });
 });
 
@@ -301,6 +370,46 @@ describe('createCatchUpExchange on a peer request', () => {
     // re-sent for ever.
     const replies = sent.filter((message) => message.kind === 'frames');
     expect(replies.length).toBeGreaterThan(0);
+    expect(replies.at(-1)?.final).toBe(true);
+  });
+
+  it('lets the bearer set the pace of a many-batch reply', async () => {
+    // Written straight out, the batches of a large reply fill the outbox — it
+    // is bounded — and the transport fails the session rather than growing.
+    // The `fullState` path re-mints the reply each attempt, so it never gets
+    // smaller: pairing against a large scope would fail for ever.
+    const held = await Promise.all(
+      Array.from({ length: 6 }, (_, index) => frameOf({ id: `op-${String(index)}`, millis: 10 })),
+    );
+    const { exchange, sent, stillWaiting, takeOne } = harness({
+      frames: held,
+      maxMessageBytes: 900,
+      pacedSends: true,
+    });
+
+    const answered = exchange.receive({
+      v: 1,
+      kind: 'request',
+      requests: [{ accessScopeId: 'scope-1', originDeviceId: asDeviceId('device-a') }],
+    });
+
+    // One in flight, the rest still held back: nothing is queued ahead of what
+    // the bearer has actually taken.
+    await vi.waitFor(() => {
+      expect(stillWaiting()).toBe(1);
+    });
+    expect(sent).toHaveLength(0);
+
+    while (!sent.some((message) => message.kind === 'frames' && message.final)) {
+      await vi.waitFor(() => {
+        expect(stillWaiting()).toBe(1);
+      });
+      await takeOne();
+    }
+    await answered;
+
+    const replies = sent.filter((message) => message.kind === 'frames');
+    expect(replies.length).toBeGreaterThan(1);
     expect(replies.at(-1)?.final).toBe(true);
   });
 
@@ -566,6 +675,84 @@ describe('createCatchUpExchange on inbound frames', () => {
         acknowledgements: [
           { accessScopeId: 'scope-1', originDeviceId: 'device-a', operationId: 'op-2' },
           { accessScopeId: 'scope-1', originDeviceId: 'device-b', operationId: 'op-b' },
+        ],
+      },
+    ]);
+  });
+
+  it('acknowledges nothing for an origin whose frame it could not store', async () => {
+    // The peer reads an acknowledgement as "everything up to here is held", and
+    // compacts on it. Acknowledging the newer frame over a hole would have the
+    // peer drop the one that never landed, with nothing left to ask again.
+    const first = await frameOf({ id: 'op-1', millis: 10 });
+    const second = await frameOf({ id: 'op-2', millis: 20 });
+    const { exchange, sent, frames, unstored } = harness({
+      unstorable: (frame) => String(frame.operationId) === 'op-1',
+    });
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [first, second], final: true });
+
+    expect(frames).toEqual([second]);
+    expect(unstored.map((frame) => String(frame.operationId))).toEqual(['op-1']);
+    expect(sent).toEqual([]);
+  });
+
+  it('still acknowledges the origins whose frames all landed', async () => {
+    const first = await frameOf({ id: 'op-1', millis: 10 });
+    const other = await frameOf({ id: 'op-b', millis: 5, device: 'device-b' });
+    const { exchange, sent } = harness({
+      unstorable: (frame) => String(frame.operationId) === 'op-1',
+    });
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [first, other], final: true });
+
+    expect(sent).toEqual([
+      {
+        v: 1,
+        kind: 'ack',
+        acknowledgements: [
+          { accessScopeId: 'scope-1', originDeviceId: 'device-b', operationId: 'op-b' },
+        ],
+      },
+    ]);
+  });
+
+  it('acknowledges up to the last frame before the one it could not store', async () => {
+    const first = await frameOf({ id: 'op-1', millis: 10 });
+    const second = await frameOf({ id: 'op-2', millis: 20 });
+    const { exchange, sent } = harness({
+      unstorable: (frame) => String(frame.operationId) === 'op-2',
+    });
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [first, second], final: true });
+
+    expect(sent).toEqual([
+      {
+        v: 1,
+        kind: 'ack',
+        acknowledgements: [
+          { accessScopeId: 'scope-1', originDeviceId: 'device-a', operationId: 'op-1' },
+        ],
+      },
+    ]);
+  });
+
+  it('acknowledges over a refused frame, which is not a hole in what it holds', async () => {
+    // A frame that failed verification is one this device has decided is not
+    // authentic — there is nothing to keep and nothing to owe the peer for.
+    const tampered = { ...(await frameOf({ id: 'op-1', millis: 10 })), payload: 'b3RoZXI' };
+    const second = await frameOf({ id: 'op-2', millis: 20 });
+    const { exchange, sent, unstored } = harness();
+
+    await exchange.receive({ v: 1, kind: 'frames', frames: [tampered, second], final: true });
+
+    expect(unstored).toEqual([]);
+    expect(sent).toEqual([
+      {
+        v: 1,
+        kind: 'ack',
+        acknowledgements: [
+          { accessScopeId: 'scope-1', originDeviceId: 'device-a', operationId: 'op-2' },
         ],
       },
     ]);

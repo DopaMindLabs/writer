@@ -142,11 +142,15 @@ and docs.
 
 ## Sync engine boundary (read before touching sync)
 
-The reusable engine lives in **`packages/writer-sync/`** and is consumed only through
-`writer-sync/core`, `writer-sync/crypto` and `writer-sync/operations`. Writer-specific
-wiring — table policy, materialisation, configuration, boot and React context — lives in
-**`src/lib/writerSyncIntegration/`**. The old `src/lib/syncProviders/` and
-`src/lib/writerSync/` directories no longer exist; do not recreate either name.
+The reusable engine lives in **`packages/writer-sync/`** and is consumed only through its
+public subpaths — `writer-sync/core`, `writer-sync/crypto`, `writer-sync/operations`,
+`writer-sync/pairing` and `writer-sync/providers/webrtc` (the `exports` map in
+`packages/writer-sync/package.json` is the source of truth). Bounded QR carriage lives in
+the separate **`packages/writer-qr/`** package, consumed through `writer-qr/encode` and
+`writer-qr/scan`. Writer-specific wiring — table policy, materialisation, configuration,
+boot and React context — lives in **`src/lib/writerSyncIntegration/`**. The old
+`src/lib/syncProviders/` and `src/lib/writerSync/` directories no longer exist; do not
+recreate either name.
 
 - The package must never import from the app: no `@/` alias, no path into `src/`, no React,
   Dexie, Yjs or Lexical, no `node:` builtin, and no wildcard re-export. These are enforced by

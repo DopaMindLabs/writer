@@ -26,6 +26,7 @@ import {
 import { AutosavePlugin } from '@/editor/plugins/AutosavePlugin';
 import { EDITOR_NODES } from '@/editor/nodes';
 import { serializeState } from '@/editor/serialize';
+import { runUnderSyncApplyLock } from '@/lib/reconcile';
 import {
   reconcilePulledDocs,
   reconcileWithStatus,
@@ -75,6 +76,27 @@ describe('reconcilePulledDocs', () => {
 
     const results = await reconcilePulledDocs();
 
+    expect(results).toEqual([{ docId: 'd1', action: 'reseeded' }]);
+    expect(await crdtSnapshot('d1')).toBe(pulled);
+  });
+
+  it('runs the sweep under the shared sync-apply lock', async () => {
+    // The frame-ingestion sweep writes newer bodies and reseeds CRDTs; a
+    // reconcile snapshotting documents while that runs would invert local and
+    // remote and re-apply a stale body. Both paths serialise on one lock. A
+    // probe queued on the lock right after the sweep starts must therefore see
+    // the sweep's completed work — an unserialised sweep would let the probe
+    // (one microtask) overtake its multi-step IndexedDB work and observe the
+    // un-reconciled document.
+    await seedLocalDoc('d1', canon('the local version'));
+    const pulled = canon('the pulled remote version');
+    await simulatePull('d1', pulled);
+
+    const sweep = reconcilePulledDocs();
+    const probe = runUnderSyncApplyLock(() => crdtSnapshot('d1'));
+
+    const [results, seenByProbe] = await Promise.all([sweep, probe]);
+    expect(seenByProbe).toBe(pulled);
     expect(results).toEqual([{ docId: 'd1', action: 'reseeded' }]);
     expect(await crdtSnapshot('d1')).toBe(pulled);
   });

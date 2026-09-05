@@ -77,6 +77,8 @@ describe('createWriterOperationInbox', () => {
     await inbox.record({
       operationId: asOperationId('op-1'),
       accessScopeId: 'space-1',
+      deviceId: asDeviceId('device-1'),
+      logicalAt: { millis: 1_700_000_000_000, counter: 0 },
       entityTable: 'docs',
       entityId: 'doc-1',
       result: 'applied',

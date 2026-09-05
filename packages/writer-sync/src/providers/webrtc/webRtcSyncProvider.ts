@@ -85,15 +85,14 @@ export const createWebRtcSyncProvider = (
       createTransport: async ({ accessScopeId, channelId }) => {
         const channel = await options.openChannel.open({ accessScopeId, channelId });
         const transport = createWebRtcTransport(channel);
-        // The closure notice travels with the transport: it is how a consumer
-        // holding one per scope learns to stop using a bearer that is gone. So
-        // does the ceiling, which is what a sender packs against.
+        // Everything the bearer offers travels on, and only `close` is taken
+        // over. Re-listing the capabilities here is how one gets dropped: the
+        // wrapper keeps the shape it was written against while the transport
+        // grows, and the sender that wanted paced writing quietly gets the
+        // bounded queue instead — which fails the session on the first large
+        // attachment.
         const tracked: SyncTransport = {
-          sharesStore: transport.sharesStore,
-          maxMessageBytes: transport.maxMessageBytes,
-          send: transport.send,
-          onMessage: transport.onMessage,
-          onClosed: transport.onClosed,
+          ...transport,
           close: () => {
             transports.delete(tracked);
             transport.close();

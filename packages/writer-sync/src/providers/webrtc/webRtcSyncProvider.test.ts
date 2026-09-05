@@ -2,7 +2,11 @@ import { describe, expect, it, vi } from 'vitest';
 import { SyncPhase, hasCapability } from '../../core/providers.types';
 import type { SyncStatus } from '../../core/providers.types';
 import { createWebRtcSyncProvider } from './webRtcSyncProvider';
-import { MAX_FRAME_BYTES, type DataChannelLike } from './webRtcTransport';
+import {
+  MAX_FRAME_BYTES,
+  createWebRtcTransport,
+  type DataChannelLike,
+} from './webRtcTransport';
 
 const fakeChannel = (): DataChannelLike & { closed: boolean; die: () => void } => {
   const listeners = new Map<string, ((event: MessageEvent<unknown>) => void)[]>();
@@ -114,6 +118,34 @@ describe('realtime transport', () => {
       channelId: 'doc-1',
     });
     expect(transport?.maxMessageBytes).toBe(MAX_FRAME_BYTES);
+  });
+
+  it('offers every capability the bearer has, so none is lost in the wrapping', async () => {
+    // The provider wraps the transport to know when one is closed. A wrapper
+    // that re-lists what it passes on drops whatever the transport gained since
+    // — silently, because the capability is optional and its absence reads as a
+    // bearer that simply cannot do it.
+    const channel = fakeChannel();
+    const { provider } = providerWith(vi.fn(() => Promise.resolve(channel)));
+    const transport = await provider.realtime?.createTransport({
+      accessScopeId: 'space-1',
+      channelId: 'doc-1',
+    });
+
+    const offered = Object.keys(createWebRtcTransport(fakeChannel()));
+    expect(Object.keys(transport ?? {})).toEqual(expect.arrayContaining(offered));
+  });
+
+  it('paces a large serve rather than filling the bounded queue in front of it', async () => {
+    // Without this the attachment sender falls back to `send`, overflows the
+    // outbox and fails the session — a big image kills the live link.
+    const { provider } = providerWith();
+    const transport = await provider.realtime?.createTransport({
+      accessScopeId: 'space-1',
+      channelId: 'doc-1',
+    });
+
+    await expect(transport?.sendWhenReady?.(new Uint8Array([1, 2, 3]))).resolves.toBeUndefined();
   });
 
   it('passes on the bearer going away, so a consumer can stop holding it', async () => {

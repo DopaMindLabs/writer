@@ -83,24 +83,34 @@ const createChannelOutbox = (channel: DataChannelLike) => {
     (isOpen(channel) && channel.bufferedAmount < BUFFER_HIGH_WATER_BYTES);
   const room = createRoomGate(settled);
 
+  /** Write what is queued, oldest first, for as long as the channel will take it. */
+  const drain = (): void => {
+    while (pending.size > 0 && isOpen(channel)) {
+      if (channel.bufferedAmount >= BUFFER_HIGH_WATER_BYTES) break;
+      const next = pending.take();
+      if (next === undefined) break;
+      channel.send(next);
+    }
+    room.wake();
+  };
+
   return {
     whenReady: room.whenReady,
-    flush: (): void => {
-      while (pending.size > 0 && isOpen(channel)) {
-        if (channel.bufferedAmount >= BUFFER_HIGH_WATER_BYTES) break;
-        const next = pending.take();
-        if (next === undefined) break;
-        channel.send(next);
-      }
-      room.wake();
-    },
+    flush: drain,
     send: (bytes: Uint8Array): void => {
       if (closed || isGone(channel)) return;
       if (bytes.byteLength > MAX_FRAME_BYTES) throw new FrameTooLargeError(bytes.byteLength);
       const copy = new Uint8Array(bytes.byteLength);
       copy.set(bytes);
-      if (!isOpen(channel) || channel.bufferedAmount >= BUFFER_HIGH_WATER_BYTES) {
+      // Anything already queued goes first. The channel is ordered and the
+      // exchange above it reads a sequence, so a write that overtook the queue
+      // would not arrive early — it would arrive wrong. The low-water threshold
+      // sits below the high-water mark, so a buffer draining into the band
+      // between them offers room with no event to drain on: without this, that
+      // is exactly where a later write passes an earlier one.
+      if (pending.size > 0 || !isOpen(channel) || channel.bufferedAmount >= BUFFER_HIGH_WATER_BYTES) {
         pending.add(copy.buffer);
+        drain();
         return;
       }
       channel.send(copy.buffer);

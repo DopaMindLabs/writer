@@ -99,6 +99,7 @@ describe('buildDb — cloud activation gates', () => {
     const names = db.tables.map((t) => t.name);
     expect(names).not.toContain('cloudCrypto');
     expect(names).not.toContain('cloudDevices');
+    expect(names).not.toContain('accountDeviceIdentities');
     expect(names).not.toContain('$docs_mutations');
     expect((db as { cloud?: unknown }).cloud).toBeUndefined();
     await db.delete();
@@ -147,10 +148,16 @@ describe('buildDb — cloud activation gates', () => {
     expect(names).toContain('cloudCrypto');
     // The device registry for the two-device beta limit syncs alongside it.
     expect(names).toContain('cloudDevices');
+    // The account device identity registry replicates as encrypted control data.
+    expect(names).toContain('accountDeviceIdentities');
     // The addon is active: it created the per-table mutation queues.
     expect(names).toContain('$docs_mutations');
-    expect((db as { cloud: { options: { unsyncedTables: string[] } } }).cloud.options
-      .unsyncedTables).toEqual(UNSYNCED);
+    const unsynced = (db as { cloud: { options: { unsyncedTables: string[] } } }).cloud
+      .options.unsyncedTables;
+    expect(unsynced).toEqual(UNSYNCED);
+    // Row-envelope encryption must not imply exclusion: the directly replicated
+    // encrypted registry stays synced.
+    expect(unsynced).not.toContain('accountDeviceIdentities');
 
     await db.delete();
   });

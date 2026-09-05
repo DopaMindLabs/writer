@@ -8,4 +8,10 @@ describe('AboutScreen', () => {
     expect(getByText('Status')).toBeInTheDocument();
     expect(getByText('Source')).toBeInTheDocument();
   });
+
+  it('describes sync truthfully in the status line', () => {
+    const { container } = renderWithProviders(<AboutScreen />);
+    expect(container.textContent).not.toContain('there is no data sync');
+    expect(container.textContent).toContain('not synced elsewhere');
+  });
 });

@@ -10,6 +10,7 @@ import {
   clearPendingEscrow,
   savePendingEscrow,
   saveDeviceKeyRing,
+  loadDeviceKeyRing,
   loadPendingEscrow,
   onDeviceKeyRingChange,
 } from './crypto/keyStore';
@@ -285,6 +286,52 @@ describe('startEscrowReconciler', () => {
     user.emit({ userId: 'u1', isLoggedIn: true }); // same identity, no re-run
     await flush();
     expect(run).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the key when the user observable has not resolved a login yet', async () => {
+    // Every boot the addon publishes its user subject before it has restored
+    // the persisted login, so the first emission reads as signed-out. Treating
+    // that as an account switch deleted the device's key ring on every page
+    // load: the user unlocked, navigated, and was locked out again — observed
+    // on the live beta database, where the keystore row was gone and the panel
+    // reported "signed in without an encryption key".
+    const sync = syncStub();
+    const user = userStub();
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
+    await saveDeviceKeyRing({ accountId: 'u1', ring });
+
+    startEscrowReconciler(sync.observable, asUserObservable(user), () =>
+      Promise.resolve(),
+    );
+    user.emit(undefined); // boot: no user resolved yet
+    await flush();
+
+    expect(deviceKeyProvider.current()).not.toBeNull();
+    expect(await loadDeviceKeyRing()).not.toBeNull();
+
+    // The real login then arrives and the key is still there to unlock with.
+    user.emit({ userId: 'u1', isLoggedIn: true });
+    await flush();
+    expect(deviceKeyProvider.current()).not.toBeNull();
+  });
+
+  it('discards key material bound to a different signed-in account', async () => {
+    const sync = syncStub();
+    const user = userStub();
+    const ring = await deriveKeyRing(generateRootSecret(), 1);
+    await saveDeviceKeyRing({ accountId: 'u1', ring });
+
+    startEscrowReconciler(sync.observable, asUserObservable(user), () =>
+      Promise.resolve(),
+    );
+    // A concrete *other* account: material minted for u1 must never seal u2's.
+    user.emit({ userId: 'u2', isLoggedIn: true });
+    await flush();
+
+    expect(deviceKeyProvider.current()).toBeNull();
+    await vi.waitFor(async () => {
+      expect(await loadDeviceKeyRing()).toBeNull();
+    });
   });
 
   it('serialises overlapping runs and reruns once for triggers during a run', async () => {

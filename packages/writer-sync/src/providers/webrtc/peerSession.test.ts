@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { PairingError, PairingErrorCode } from '../../pairing/pairing.types';
 import {
   LOCAL_ONLY_ICE_CONFIGURATION,
+  MAX_REMOTE_CHANNELS,
   createPeerSession,
   type PeerConnectionLike,
   type SessionDescriptionLike,
@@ -485,6 +486,66 @@ describe('the control channel on the answering side', () => {
     connection.peerOpensChannel(remoteChannel());
 
     expect(seen).toEqual([]);
+  });
+});
+
+describe('what a peer may open', () => {
+  /** A session past the point where it takes channels from the peer. */
+  const connected = async () => {
+    const connection = fakeConnection({ gatheringCompletesImmediately: true });
+    const session = createPeerSession({ createConnection: () => connection });
+    await session.createOffer();
+    const adopted: DataChannelLike[] = [];
+    session.onAnyChannel((channel) => adopted.push(channel));
+    // The control channel this device opened is not the peer's doing, so it is
+    // not what these bounds are about.
+    const seen = (): DataChannelLike[] =>
+      adopted.filter((channel) => channel.label.startsWith('scope-1/'));
+    return { connection, session, seen };
+  };
+
+  it('takes no more channels than a session will carry', async () => {
+    // A consumer runs a whole exchange per channel, each with its own inbound
+    // allowance, so an unbounded count is an unbounded multiple of this
+    // device's memory and inbound budget — payable by any paired device.
+    const { connection, seen } = await connected();
+
+    for (let i = 0; i < MAX_REMOTE_CHANNELS; i += 1) {
+      connection.peerOpensChannel(fakeDataChannel(`scope-1/doc-${String(i)}`));
+    }
+    const excess = fakeDataChannel('scope-1/one-too-many');
+    connection.peerOpensChannel(excess);
+
+    expect(seen()).toHaveLength(MAX_REMOTE_CHANNELS);
+    // Closed rather than ignored: an ignored channel still costs a buffer.
+    expect(excess.close).toHaveBeenCalled();
+  });
+
+  it('takes one channel per purpose from the peer, not many', async () => {
+    const { connection, seen } = await connected();
+    const first = fakeDataChannel('scope-1/operations');
+    const second = fakeDataChannel('scope-1/operations');
+
+    connection.peerOpensChannel(first);
+    connection.peerOpensChannel(second);
+
+    // The simultaneous-open race produces one from each side, never two from
+    // the peer.
+    expect(seen()).toHaveLength(1);
+    expect(second.close).toHaveBeenCalled();
+  });
+
+  it("frees a peer’s slot when its channel dies", async () => {
+    const { connection, seen } = await connected();
+    const first = fakeDataChannel('scope-1/operations');
+    connection.peerOpensChannel(first);
+
+    first.die();
+    connection.peerOpensChannel(fakeDataChannel('scope-1/operations'));
+
+    // A bound that never released would turn an ordinary reconnection into a
+    // session that can no longer carry the scope it was opened for.
+    expect(seen()).toHaveLength(2);
   });
 });
 

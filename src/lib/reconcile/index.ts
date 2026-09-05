@@ -8,6 +8,7 @@
  */
 export { applyPulledBody } from './applyPulledBody';
 export { reconcileDocForMount } from './reconcileDocForMount';
+export { runUnderSyncApplyLock } from './syncApplyLock';
 export type {
   MountReconcileAction,
   Reconcilable,

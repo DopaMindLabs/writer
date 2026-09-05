@@ -34,6 +34,7 @@ import { getJournalRetentionDaysFor } from './journalRetentionPreference';
 import { currentPrincipal } from './writerEntityMetadata';
 import { recordPeerAcknowledgement } from './materialization/acknowledgeDeletions';
 import { createWriterOperationStore } from './materialization/writerOperationStore';
+import { seenOperations } from './materialization/seenOperations';
 import { createWriterFullState } from './materialization/writerFullState';
 import { writerJournalDeps } from './materialization/writerJournalDeps';
 import { sweepUnappliedFrames } from './materialization/frameIngestion';
@@ -111,6 +112,10 @@ const catchUpPorts = ({
   retentionDays,
 }: CatchUpPortsOptions): Omit<CatchUpPorts, 'send'> => ({
   journal: createWriterOperationStore(db),
+  // The manifest's source. Not the journal: compaction drops frames every peer
+  // holds, and a manifest that shrinks with them makes the peer re-author the
+  // scope as fresh frames on every session.
+  seenOperations: () => seenOperations(db),
   accessibleScopeIds: () => accessibleScopeIds(db),
   // Stage 1 derives one content key for every scope, so a device holding the
   // root secret can read any scope it is offered. Answering from the scopes it
@@ -148,6 +153,15 @@ const catchUpPorts = ({
   },
   onRejectedFrame: (frame, reason) => {
     appLogger.warn('refused a frame from a peer', {
+      operationId: frame.operationId,
+      reason,
+    });
+  },
+  // Storage refused a frame this device wanted. Named apart from a refusal
+  // because it is this device's problem, not the peer's, and because the peer
+  // is deliberately not told the frame landed.
+  onUnstoredFrame: (frame, reason) => {
+    appLogger.warn('could not store a frame from a peer', {
       operationId: frame.operationId,
       reason,
     });

@@ -18,7 +18,7 @@
 
 **Who it's for.** Writers working on fiction, research, essays, or journals — including researchers who need to manage references.
 
-**Status.** Alpha. All data is stored locally in IndexedDB; there is no cloud sync. Clearing browser data deletes the user's work.
+**Status.** Alpha. Data is stored locally in IndexedDB. Device pairing provides direct device-to-device sync, and encrypted cloud sync is in beta. Clearing browser data deletes anything not synced elsewhere.
 
 **Tech stack.** React 19, Vite, TypeScript, Lexical (editor), Dexie (IndexedDB), Zustand (state), Tailwind, Radix UI primitives, Driver.js (tours), i18next (i18n).
 
@@ -362,8 +362,35 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   moves every other field into a `$lipsumCipher` envelope (`AES-256-GCM`, fresh IV per
   seal, AAD binding `table` + `primaryKey` + `epoch`).
 - **Sync scope.** Encrypted: spaces, sections, docs, notes, note attachments,
-  annotations, citations, connections, revisions, palettes. Never synced: settings,
+  annotations, citations, connections, revisions, palettes — plus the
+  `accountDeviceIdentities` control table (below), which is row-envelope encrypted like
+  content but replicated directly rather than journalled. Never synced: settings,
   backups, sync bookkeeping, the CRDT `docUpdates` log, and the device keystore.
+- **Device authorship and account trust.** Every operation frame is signed by its
+  authoring device's identity key, and materialisation accepts a frame only after the
+  signature verifies against an **authenticated identity source**: this device's own key,
+  an active QR-paired identity (`trustedDevices`, § 4.9.2), or a same-account record in
+  the **account device identity registry** — `accountDeviceIdentities`, an encrypted
+  control table replicated through Dexie Cloud. Passphrase-unlocked devices on the same
+  cloud account therefore authenticate one another through that registry and converge
+  **without QR pairing**; QR pairing remains the independent serverless peer trust route,
+  and an unpaired peer cannot use the account registry to enter a P2P session. A registry
+  record carries only a pseudonymous device id (already present in every frame's plaintext
+  routing header), the device's **public** signing JWK and an authorisation time — all
+  sealed in the row envelope under the account content key, which is what proves the
+  record was authorised by an account-key holder. The provider sees the record's
+  pseudonymous id and routing metadata, never the JWK or authorisation fields; a
+  provider-injected plaintext registry row is dropped, never sealed locally, and never
+  authorises anything — successful payload decryption alone never does either. Each device
+  publishes its record once, idempotently, only after its key is proven authoritative
+  (signed in, initial pull complete, ring bound to the account and matching the escrow
+  fingerprint, no live mismatch); when the paired and account sources both name a device
+  id, their identities must agree or the frame is refused. Multiple providers may carry
+  the same signed frame; the shared `syncInbox` applies it exactly once, and cloud
+  delivery never advances a paired peer's acknowledgement watermark. **Removing a cloud
+  device is not key revocation**: it frees a beta slot and notifies the device, but a
+  device that already holds the account root keeps a working key until the account key is
+  rotated — a capability that does not exist yet and is out of the beta's scope.
 - **Device registry.** The beta allows **four devices per account**, tracked in a synced
   but **unencrypted** `cloudDevices` table so a device that holds no key yet can still count
   the slots and be told it is past the cap. A row carries only the addon's random per-device
@@ -513,14 +540,22 @@ cloud code paths, no cloud UI, and the schema is identical to the base app.
   courtesy, not a security boundary; the section heading carries a persistent beta notice naming
   the limit and advising local backups.
 - **Server sees / does not see.** Cannot: bodies, titles, note text, citation
-  metadata, attachment bytes. Can: record ids and relationships, timestamps, note kinds,
-  citation keys and years, the sign-in email, sync timing/IP, and the device-registry rows
-  (random per-device client identity plus joined/last-seen timestamps — identifiers and timing
-  the sync protocol already exposes). Account creation is not supported.
+  metadata, attachment bytes, or the account identity registry's public signing JWKs and
+  authorisation times (sealed in the row envelope). Can: record ids and relationships,
+  timestamps, note kinds, citation keys and years, the sign-in email, sync timing/IP, the
+  device-registry rows (random per-device client identity plus joined/last-seen timestamps
+  — identifiers and timing the sync protocol already exposes), and the account identity
+  registry's pseudonymous row id — the same device id every operation frame already
+  carries in its plaintext routing header. Account creation is not supported.
 
 See [`docs/cloud-sync-beta.md`](cloud-sync-beta.md) for the full design note and the
 manual verification protocol. *Covered by:* `middleware.test.ts` (the P1–P8 ciphertext and
-mismatch-lock spike), `envelope.test.ts`, `keys.test.ts` (incl. fingerprints),
+mismatch-lock spike, plus the replicated-control-row gates),
+`accountDeviceIdentityStore.test.ts`, `accountDeviceIdentityRegistrar.test.ts`,
+`writerFrameVerifier.test.ts` (same-account trust and the two-source agreement rule),
+`frameIngestion.test.ts` (identity/operation orderings and the acknowledgement lock),
+`peerCatchUp.test.ts` (account-only identities refused at peer ingress),
+`envelope.test.ts`, `keys.test.ts` (incl. fingerprints),
 `errors.test.ts`, `keyMismatch.test.ts`, `keylessLock.test.ts`, `lockReason.test.ts`,
 `keylessGuard.test.ts`, `useCloudLockReason.test.tsx`,
 `recoveryCode.test.ts`, `setup.test.ts` (incl. adopt/erase, add-only publish, sign-in guard),
@@ -630,7 +665,12 @@ wired into the app.
   never fetched from a CDN, so scanning works offline and contacts nobody. An
   uploaded photograph is decoded to a bitmap before the platform detector sees
   it: Chromium's own `BarcodeDetector` refuses a `Blob` although the IDL admits
-  one, and a chosen file is exactly that.
+  one, and a chosen file is exactly that. Compiling that engine requires
+  `script-src 'wasm-unsafe-eval'` in the same `vercel.json` header: under CSP3 a
+  bare `script-src 'self'` refuses every WebAssembly compile, so on the engines
+  that have no `BarcodeDetector` — Firefox and Safari, including iOS — scanning
+  fails in production while local development works. The directive permits
+  WebAssembly alone, not `eval`.
 - **Pairing code display.** The codec carries **2600 characters per symbol**
   (headroom under the encoder's 2953-character version-40/EC-L ceiling for the
   part prefix), so an ordinary offer is a single symbol and no pager appears.
@@ -658,7 +698,12 @@ wired into the app.
   open. With no trusted device paired, the window governs alone. Acknowledgements
   are tracked per originating device within a scope, never as one mark per scope:
   an operation from one device that is logically older than an acknowledged
-  operation from another has not thereby been seen. Inbox rows are **never**
+  operation from another has not thereby been seen. A device acknowledges only
+  what it actually stored: a frame it accepted and its journal then refused to
+  keep (a full disk, a closed database) leaves that origin unacknowledged for the
+  whole reply rather than acknowledged over the hole, so the peer keeps the frame
+  and offers it again. A frame *refused* as inauthentic is not a hole and does
+  not hold the acknowledgement back. Inbox rows are **never**
   pruned — the inbox is the replay guard — and a deletion is exempt from the
   window entirely: a tombstone and the signed delete frame it names are one
   retention unit, dropped together in one transaction. A peer's acknowledgement
@@ -757,7 +802,11 @@ wired into the app.
   and "paired and removed" indistinguishable. Removing a device marks its
   trust record revoked (kept, never deleted): it can open no new authenticated
   session and every frame it signs is refused, but nothing already copied to it
-  can be recalled, and the list says so beside the action. Removal is undone
+  can be recalled, and the list says so beside the action. A device removed
+  while it is connected is disconnected as the removal commits, and any frame
+  still in flight from it is refused — trust is re-read for every inbound frame,
+  never cached for the life of a session — so removal takes effect at once
+  rather than at the next reload. Removal is undone
   only by pairing the device afresh: a completed, digit-confirmed exchange
   reactivates the record if — and only if — the presented identity key equals
   the stored one, and the dialog declares success only after that adoption has
