@@ -72,7 +72,7 @@ const DocInspectorTabs = ({
             onClick={() => { setSection(id); }}
             aria-current={on ? 'page' : undefined}
             className={cn(
-              'flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors',
+              'flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] tracking-wider transition-colors',
               on
                 ? 'border-ink text-ink'
                 : 'border-transparent text-ink-3 hover:text-ink-2',
@@ -160,7 +160,7 @@ const OutlineRow = ({ entry }: { entry: OutlineEntry }) => (
     data-level={entry.level}
     className={cn('flex items-baseline gap-2 py-1.5', outlineIndent(entry.level))}
   >
-    <span className="w-5 shrink-0 font-mono text-[8px] uppercase tracking-wider text-ink-4">
+    <span className="w-5 shrink-0 font-mono text-[8px] tracking-wider text-ink-4">
       {`H${String(entry.level)}`}
     </span>
     <span className="flex-1 font-serif text-[13px] text-ink-2">{entry.text}</span>

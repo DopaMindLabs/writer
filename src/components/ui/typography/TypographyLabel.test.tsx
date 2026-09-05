@@ -8,7 +8,6 @@ describe('TypographyLabel', () => {
     expect(el.tagName).toBe('P');
     expect(el).toHaveClass(
       'font-mono',
-      'uppercase',
       'text-[10px]',
       'tracking-[0.08em]',
       'text-ink-3',
@@ -36,7 +35,7 @@ describe('TypographyLabel', () => {
     );
     const el = screen.getByText('section');
     expect(el.tagName).toBe('H3');
-    expect(el).toHaveClass('font-mono', 'uppercase');
+    expect(el).toHaveClass('font-mono');
   });
 
   it('merges custom className', () => {

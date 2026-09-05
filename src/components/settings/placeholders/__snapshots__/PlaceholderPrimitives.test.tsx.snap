@@ -78,7 +78,7 @@ exports[`PlaceholderPrimitives > snapshot > should match the snapshot across eve
     </span>
     <span
       aria-hidden="true"
-      class="inline-block border border-rule bg-paper px-2.5 py-1.5 text-ink font-mono text-[12px] uppercase tracking-wider"
+      class="inline-block border border-rule bg-paper px-2.5 py-1.5 text-ink font-mono text-[12px] tracking-wider"
       style="width: 220px;"
     >
       HELLO
@@ -146,7 +146,7 @@ exports[`PlaceholderPrimitives > snapshot > should match the snapshot across eve
             class="flex-1"
           />
           <span
-            class="font-mono uppercase tracking-[0.11em] text-[9px] opacity-60"
+            class="font-mono tracking-[0.11em] text-[9px] opacity-60"
           >
             default
           </span>
@@ -187,7 +187,7 @@ exports[`PlaceholderPrimitives > snapshot > should match the snapshot across eve
             class="flex-1"
           />
           <span
-            class="font-mono uppercase tracking-[0.11em] text-[9px] opacity-60"
+            class="font-mono tracking-[0.11em] text-[9px] opacity-60"
           >
             neutral
           </span>
@@ -222,7 +222,7 @@ exports[`PlaceholderPrimitives > snapshot > should match the snapshot across eve
             class="flex-1"
           />
           <span
-            class="font-mono uppercase tracking-[0.11em] text-[9px] opacity-60"
+            class="font-mono tracking-[0.11em] text-[9px] opacity-60"
           >
             dark
           </span>
@@ -246,7 +246,7 @@ exports[`PlaceholderPrimitives > snapshot > should match the snapshot across eve
           Bone
         </div>
         <div
-          class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
+          class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
         >
           #FAFAF6
         </div>

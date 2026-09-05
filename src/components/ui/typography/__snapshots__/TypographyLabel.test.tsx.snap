@@ -4,22 +4,22 @@ exports[`TypographyLabel > snapshot > should match the snapshot across all varia
 <div>
   <div>
     <p
-      class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em]"
+      class="font-mono text-ink-3 text-[10px] tracking-[0.08em]"
     >
       Default
     </p>
     <p
-      class="font-mono uppercase text-ink-3 text-[10px] tracking-wider"
+      class="font-mono text-ink-3 text-[10px] tracking-wider"
     >
       Wide
     </p>
     <p
-      class="font-mono uppercase text-ink-3 text-xs tracking-wider"
+      class="font-mono text-ink-3 text-xs tracking-wider"
     >
       Xs
     </p>
     <h3
-      class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em]"
+      class="font-mono text-ink-3 text-[10px] tracking-[0.08em]"
     >
       As child
     </h3>

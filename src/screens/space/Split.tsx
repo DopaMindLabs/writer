@@ -227,7 +227,7 @@ const SplitRightHeader = ({
       value={withParam ?? ''}
       onChange={onPickRight}
       aria-label="Right pane document"
-      className="flex-1 truncate font-mono text-[10px] uppercase tracking-wider focus-within:underline"
+      className="flex-1 truncate font-mono text-[10px] tracking-wider focus-within:underline"
       options={[
         ...(candidates.length === 0
           ? [{ value: '', label: '(no other docs)' }]

@@ -146,7 +146,7 @@ export const SpaceMembersPlaceholder = () => {
               key={i}
               className="flex items-center gap-3 border-b border-rule/40 py-2"
             >
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-paper-2 font-mono text-[11px] uppercase text-ink-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-paper-2 font-mono text-[11px] text-ink-2">
                 {name.charAt(0)}
               </div>
               <div className="min-w-0 flex-1">

@@ -35,8 +35,8 @@
   "settings": {
     "back": "înapoi",
     "windowTitle": "lotem · setări",
-    "breadcrumb": "SETĂRI UNIVERSALE",
-    "shellSubtitle": "SETĂRI UNIVERSALE",
+    "breadcrumb": "Setări Universale",
+    "shellSubtitle": "Setări Universale",
     "comingSoonBadge": "în curând",
     "helpAria": "Ce este aceasta?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Sincronizări recente",
       "historyEmpty": "Nicio sincronizare încă.",
       "columns": {
-        "when": "CÂND",
-        "space": "SPAȚIU",
-        "kind": "TIP",
-        "size": "DIMENSIUNE",
-        "status": "STATUS"
+        "when": "Când",
+        "space": "Spațiu",
+        "kind": "Tip",
+        "size": "Dimensiune",
+        "status": "Status"
       },
       "kind": {
         "auto": "auto",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "SPAȚIU · SETĂRI",
-      "shellSubtitle": "SETĂRI SPAȚIU",
+      "breadcrumb": "Spațiu · Setări",
+      "shellSubtitle": "Setări Spațiu",
       "loading": "Se încarcă spațiul…",
       "groups": {
         "thisSpace": "Acest spațiu",
@@ -545,9 +545,9 @@
         "historyTitle": "Istoric",
         "empty": "Niciun snapshot încă — creează unul cu + snapshot acum.",
         "columns": {
-          "when": "CÂND",
-          "kind": "TIP",
-          "size": "DIMENSIUNE",
+          "when": "Când",
+          "kind": "Tip",
+          "size": "Dimensiune",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Mergi acasă"
   },
   "templates": {
-    "crumb": "01 — UN FEL DE SPAȚIU",
+    "crumb": "01 — Un Fel De Spațiu",
     "headingMain": "Ce fel de spațiu",
     "headingAccent": "începi?",
     "chooseLegend": "Alege un șablon",
@@ -683,8 +683,8 @@
     "mobileWarning": "Vederea împărțită necesită un ecran mai mare.",
     "mobileNote": "Deschide acest document în modul Scriere.",
     "openInWrite": "Deschide în Scriere →",
-    "leftPrefix": "STÂNGA —",
-    "rightPrefix": "DREAPTA —",
+    "leftPrefix": "Stânga —",
+    "rightPrefix": "Dreapta —",
     "rightPaneAria": "Document din panoul drept",
     "noOtherDocs": "(niciun alt document)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ adaugă",
     "cancel": "× anulează",
     "columns": {
-      "tag": "ETICHETĂ",
-      "authors": "AUTORI",
-      "title": "TITLU",
-      "year": "AN",
-      "type": "TIP",
-      "used": "FOLOSIT"
+      "tag": "Etichetă",
+      "authors": "Autori",
+      "title": "Titlu",
+      "year": "An",
+      "type": "Tip",
+      "used": "Folosit"
     },
-    "style": "STIL — CHICAGO (AUTOR-DATĂ)",
-    "exportBib": "EXPORTĂ CA .BIB",
+    "style": "Stil — Chicago (Autor-dată)",
+    "exportBib": "Exportă Ca .BIB",
     "summary": "{{filtered}} AFIȘATE · {{shown}} PE ACEASTĂ PAGINĂ",
     "prevPage": "Pagina anterioară",
     "nextPage": "Pagina următoare",

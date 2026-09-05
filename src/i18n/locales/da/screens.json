@@ -35,8 +35,8 @@
   "settings": {
     "back": "tilbage",
     "windowTitle": "lotem · indstillinger",
-    "breadcrumb": "UNIVERSELLE INDSTILLINGER",
-    "shellSubtitle": "UNIVERSELLE INDSTILLINGER",
+    "breadcrumb": "Universelle Indstillinger",
+    "shellSubtitle": "Universelle Indstillinger",
     "comingSoonBadge": "kommer snart",
     "helpAria": "Hvad er dette?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Nylige synkroniseringer",
       "historyEmpty": "Ingen synkroniseringer endnu.",
       "columns": {
-        "when": "HVORNÅR",
-        "space": "RUM",
-        "kind": "TYPE",
-        "size": "STØRRELSE",
-        "status": "STATUS"
+        "when": "Hvornår",
+        "space": "Rum",
+        "kind": "Type",
+        "size": "Størrelse",
+        "status": "Status"
       },
       "kind": {
         "auto": "auto",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "RUM · INDSTILLINGER",
-      "shellSubtitle": "RUMINDSTILLINGER",
+      "breadcrumb": "Rum · Indstillinger",
+      "shellSubtitle": "Rumindstillinger",
       "loading": "Indlæser rum…",
       "groups": {
         "thisSpace": "Dette rum",
@@ -545,9 +545,9 @@
         "historyTitle": "Historik",
         "empty": "Ingen snapshots endnu — opret et med + snapshot nu.",
         "columns": {
-          "when": "HVORNÅR",
-          "kind": "TYPE",
-          "size": "STØRRELSE",
+          "when": "Hvornår",
+          "kind": "Type",
+          "size": "Størrelse",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Gå hjem"
   },
   "templates": {
-    "crumb": "01 — EN SLAGS RUM",
+    "crumb": "01 — En Slags Rum",
     "headingMain": "Hvilken slags rum",
     "headingAccent": "starter du?",
     "chooseLegend": "Vælg en skabelon",
@@ -683,8 +683,8 @@
     "mobileWarning": "Delt visning kræver en større skærm.",
     "mobileNote": "Åbn dette dokument i Skrivetilstand i stedet.",
     "openInWrite": "Åbn i Skrivetilstand →",
-    "leftPrefix": "VENSTRE —",
-    "rightPrefix": "HØJRE —",
+    "leftPrefix": "Venstre —",
+    "rightPrefix": "Højre —",
     "rightPaneAria": "Dokument i højre rude",
     "noOtherDocs": "(ingen andre dokumenter)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ tilføj",
     "cancel": "× annullér",
     "columns": {
-      "tag": "KODE",
-      "authors": "FORFATTERE",
-      "title": "TITEL",
-      "year": "ÅR",
-      "type": "TYPE",
-      "used": "BRUGT"
+      "tag": "Kode",
+      "authors": "Forfattere",
+      "title": "Titel",
+      "year": "År",
+      "type": "Type",
+      "used": "Brugt"
     },
-    "style": "STIL — CHICAGO (FORFATTER-DATO)",
-    "exportBib": "EKSPORTÉR SOM .BIB",
+    "style": "Stil — Chicago (Forfatter-dato)",
+    "exportBib": "Eksportér Som .BIB",
     "summary": "{{filtered}} VIST · {{shown}} PÅ DENNE SIDE",
     "prevPage": "Forrige side",
     "nextPage": "Næste side",

@@ -35,8 +35,8 @@
   "settings": {
     "back": "retour",
     "windowTitle": "lotem · paramètres",
-    "breadcrumb": "PARAMÈTRES",
-    "shellSubtitle": "PARAMÈTRES GLOBAUX",
+    "breadcrumb": "Paramètres",
+    "shellSubtitle": "Paramètres Globaux",
     "comingSoonBadge": "bientôt disponible",
     "helpAria": "Qu'est-ce que c'est ?",
     "groups": {
@@ -415,18 +415,18 @@
       "historyTitle": "Syncs récentes",
       "historyEmpty": "Pas encore de syncs.",
       "columns": {
-        "when": "QUAND",
-        "space": "ESPACE",
-        "kind": "TYPE",
-        "size": "TAILLE",
-        "status": "STATUT"
+        "when": "Quand",
+        "space": "Espace",
+        "kind": "Type",
+        "size": "Taille",
+        "status": "Statut"
       },
       "kind": { "auto": "auto", "manual": "manuel" },
       "status": { "ok": "ok", "error": "erreur" }
     },
     "space": {
-      "breadcrumb": "ESPACE · PARAMÈTRES",
-      "shellSubtitle": "PARAMÈTRES DE L'ESPACE",
+      "breadcrumb": "Espace · Paramètres",
+      "shellSubtitle": "Paramètres De L'espace",
       "loading": "Chargement de l'espace…",
       "groups": {
         "thisSpace": "Cet espace",
@@ -541,9 +541,9 @@
         "historyTitle": "Historique",
         "empty": "Pas encore de snapshots — crée-en un avec + snapshot maintenant.",
         "columns": {
-          "when": "QUAND",
-          "kind": "TYPE",
-          "size": "TAILLE",
+          "when": "Quand",
+          "kind": "Type",
+          "size": "Taille",
           "actions": ""
         },
         "kind": {
@@ -596,7 +596,7 @@
     "goHome": "Aller à l'accueil"
   },
   "templates": {
-    "crumb": "01 — UN TYPE DE PIÈCE",
+    "crumb": "01 — Un Type De Pièce",
     "headingMain": "Quel type d'espace",
     "headingAccent": "commences-tu ?",
     "chooseLegend": "Choisis un modèle",
@@ -679,8 +679,8 @@
     "mobileWarning": "La vue fractionnée a besoin d'un écran plus grand.",
     "mobileNote": "Ouvre ce document en mode Écrire à la place.",
     "openInWrite": "Ouvrir en Écrire →",
-    "leftPrefix": "GAUCHE —",
-    "rightPrefix": "DROITE —",
+    "leftPrefix": "Gauche —",
+    "rightPrefix": "Droite —",
     "rightPaneAria": "Document du panneau de droite",
     "noOtherDocs": "(pas d'autres docs)",
     "brainSpaceOption": "Brain space",
@@ -703,15 +703,15 @@
     "add": "+ ajouter",
     "cancel": "× annuler",
     "columns": {
-      "tag": "ÉTIQUETTE",
-      "authors": "AUTEURS",
-      "title": "TITRE",
-      "year": "ANNÉE",
-      "type": "TYPE",
-      "used": "UTILISÉ"
+      "tag": "Étiquette",
+      "authors": "Auteurs",
+      "title": "Titre",
+      "year": "Année",
+      "type": "Type",
+      "used": "Utilisé"
     },
-    "style": "STYLE — CHICAGO (AUTEUR-DATE)",
-    "exportBib": "EXPORTER EN .BIB",
+    "style": "Style — Chicago (Auteur-date)",
+    "exportBib": "Exporter En .BIB",
     "summary": "{{filtered}} AFFICHÉES · {{shown}} SUR CETTE PAGE",
     "prevPage": "Page précédente",
     "nextPage": "Page suivante",

@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Rom",
     "navLabel": "Dokumenter",
-    "shared": "DELT",
-    "private": "PRIVAT · LOKAL",
+    "shared": "Delt",
+    "private": "Privat · Lokal",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "nytt",
     "ageDays": "{{count}}d",
@@ -30,8 +30,8 @@
     "theme": "Tema",
     "exitFocus": "Avslutt fokusmodus",
     "enterFocus": "Aktiver fokusmodus",
-    "normal": "NORMAL",
-    "focus": "FOKUS",
+    "normal": "Normal",
+    "focus": "Fokus",
     "focusTitleNormal": "Normal (⌘\\)",
     "focusTitleFocus": "Fokus (⌘\\)",
     "findInDoc": "Finn i dokumentet",
@@ -115,7 +115,7 @@
     "tourCheckmark": "fullført"
   },
   "spaceMenu": {
-    "thisSpace": "DETTE ROMMET",
+    "thisSpace": "Dette Rommet",
     "rename": "Gi nytt navn",
     "settings": "Innstillinger",
     "backups": "Sikkerhetskopier og historikk",
@@ -129,18 +129,18 @@
     "expand": "Utvid inspektør",
     "collapse": "Skjul inspektør",
     "tabs": {
-      "outline": "DISPOSISJON",
-      "info": "INFO",
-      "history": "HISTORIKK",
-      "actions": "HANDLINGER"
+      "outline": "Disposisjon",
+      "info": "Info",
+      "history": "Historikk",
+      "actions": "Handlinger"
     },
     "outline": {
-      "title": "DISPOSISJON",
+      "title": "Disposisjon",
       "sectionSummary": "{{count}} SEKSJONER",
       "empty": "Ingen overskrifter ennå. Legg til overskrifter i dokumentet for å bygge dets disposisjon."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Ord",
       "characters": "Tegn",
       "updated": "Oppdatert",
@@ -165,8 +165,8 @@
       "unlock": "Lås opp for å redigere"
     },
     "history": {
-      "title": "VERSJONER",
-      "now": "NÅ",
+      "title": "Versjoner",
+      "now": "Nå",
       "full": "full versjonshistorikk →",
       "empty": "Ingen versjoner ennå. Versjoner lagres automatisk mens du skriver.",
       "summary": "{{count}} versjon",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}d siden"
     },
     "actions": {
-      "label": "DOKUMENTHANDLINGER",
+      "label": "Dokumenthandlinger",
       "rename": "Gi nytt navn",
       "move": "Flytt til seksjon…",
       "export": "Eksporter dette dokumentet…",

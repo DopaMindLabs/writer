@@ -99,8 +99,8 @@
     "themes": {
       "light": "ライト",
       "dark": "ダーク",
-      "hcLight": "HC ライト",
-      "hcDark": "HC ダーク"
+      "hcLight": "Hc ライト",
+      "hcDark": "Hc ダーク"
     },
     "helpKbd": "⌘?",
     "whatsNew": "新着情報",

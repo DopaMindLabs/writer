@@ -1273,7 +1273,7 @@ const CitationDetailFields = ({
       <div className="flex flex-col gap-1">
         <span className={labelCls}>{t('citations.edit.typeLabel')}</span>
         <span
-          className={cn(valueCls, 'font-mono uppercase tracking-wider')}
+          className={cn(valueCls, 'font-mono tracking-wider')}
           data-testid={`${detailTestId}-type`}
         >
           {c.type}

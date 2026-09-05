@@ -35,8 +35,8 @@
   "settings": {
     "back": "πίσω",
     "windowTitle": "lotem · ρυθμίσεις",
-    "breadcrumb": "ΓΕΝΙΚΕΣ ΡΥΘΜΙΣΕΙΣ",
-    "shellSubtitle": "ΓΕΝΙΚΕΣ ΡΥΘΜΙΣΕΙΣ",
+    "breadcrumb": "Γενικες Ρυθμισεις",
+    "shellSubtitle": "Γενικες Ρυθμισεις",
     "comingSoonBadge": "σύντομα",
     "helpAria": "Τι είναι αυτό;",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Πρόσφατοι συγχρονισμοί",
       "historyEmpty": "Κανένας συγχρονισμός ακόμα.",
       "columns": {
-        "when": "ΠΟΤΕ",
-        "space": "ΧΩΡΟΣ",
-        "kind": "ΕΙΔΟΣ",
-        "size": "ΜΕΓΕΘΟΣ",
-        "status": "ΚΑΤΑΣΤΑΣΗ"
+        "when": "Ποτε",
+        "space": "Χωρος",
+        "kind": "Ειδος",
+        "size": "Μεγεθος",
+        "status": "Κατασταση"
       },
       "kind": {
         "auto": "αυτόματο",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "ΧΩΡΟΣ · ΡΥΘΜΙΣΕΙΣ",
-      "shellSubtitle": "ΡΥΘΜΙΣΕΙΣ ΧΩΡΟΥ",
+      "breadcrumb": "Χωρος · Ρυθμισεις",
+      "shellSubtitle": "Ρυθμισεις Χωρου",
       "loading": "Φόρτωση χώρου…",
       "groups": {
         "thisSpace": "Αυτός ο χώρος",
@@ -545,9 +545,9 @@
         "historyTitle": "Ιστορικό",
         "empty": "Κανένα στιγμιότυπο ακόμα — δημιούργησε ένα με + στιγμιότυπο τώρα.",
         "columns": {
-          "when": "ΠΟΤΕ",
-          "kind": "ΕΙΔΟΣ",
-          "size": "ΜΕΓΕΘΟΣ",
+          "when": "Ποτε",
+          "kind": "Ειδος",
+          "size": "Μεγεθος",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Μεταβείς στην αρχική"
   },
   "templates": {
-    "crumb": "01 — ΕΝΑ ΕΙΔΟΣ ΧΩΡΟΥ",
+    "crumb": "01 — Ενα Ειδος Χωρου",
     "headingMain": "Τι είδους χώρο",
     "headingAccent": "ξεκινάς;",
     "chooseLegend": "Επέλεξε πρότυπο",
@@ -683,8 +683,8 @@
     "mobileWarning": "Η διαιρεμένη προβολή χρειάζεται μεγαλύτερη οθόνη.",
     "mobileNote": "Άνοιξε αυτό το έγγραφο σε λειτουργία Γραφής.",
     "openInWrite": "Άνοιγμα σε Γράψιμο →",
-    "leftPrefix": "ΑΡΙΣΤΕΡΑ —",
-    "rightPrefix": "ΔΕΞΙΑ —",
+    "leftPrefix": "Αριστερα —",
+    "rightPrefix": "Δεξια —",
     "rightPaneAria": "Έγγραφο δεξιού πάνελ",
     "noOtherDocs": "(κανένα άλλο έγγραφο)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ προσθήκη",
     "cancel": "× ακύρωση",
     "columns": {
-      "tag": "ΕΤΙΚΕΤΑ",
-      "authors": "ΣΥΓΓΡΑΦΕΙΣ",
-      "title": "ΤΙΤΛΟΣ",
-      "year": "ΕΤΟΣ",
-      "type": "ΕΙΔΟΣ",
-      "used": "ΧΡΗΣΙΜΟΠΟΙΗΘΗΚΕ"
+      "tag": "Ετικετα",
+      "authors": "Συγγραφεις",
+      "title": "Τιτλος",
+      "year": "Ετος",
+      "type": "Ειδος",
+      "used": "Χρησιμοποιηθηκε"
     },
-    "style": "ΣΤΥΛ — CHICAGO (ΣΥΓΓΡΑΦΕΑΣ-ΗΜΕΡΟΜΗΝΙΑ)",
-    "exportBib": "ΕΞΑΓΩΓΗ ΩΣ .BIB",
+    "style": "Στυλ — Chicago (Συγγραφεας-ημερομηνια)",
+    "exportBib": "Εξαγωγη Ως .BIB",
     "summary": "{{filtered}} ΕΜΦΑΝΙΖΟΝΤΑΙ · {{shown}} ΣΕ ΑΥΤΗ ΤΗ ΣΕΛΙΔΑ",
     "prevPage": "Προηγούμενη σελίδα",
     "nextPage": "Επόμενη σελίδα",

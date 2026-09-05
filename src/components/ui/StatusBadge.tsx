@@ -5,7 +5,7 @@ import { Icon } from './icon';
 import { STATUS_ICON, type StatusKind } from './statusRole';
 
 const statusBadgeRecipe = cva(
-  'inline-flex items-center gap-1.5 border font-mono uppercase leading-none tracking-[0.08em]',
+  'inline-flex items-center gap-1.5 border font-mono leading-none tracking-[0.08em]',
   {
     variants: {
       kind: {

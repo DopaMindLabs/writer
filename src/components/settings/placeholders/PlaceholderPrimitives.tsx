@@ -96,7 +96,7 @@ export const PlaceholderInput = ({
       style={{ width }}
       className={cn(
         'inline-block border border-rule bg-paper px-2.5 py-1.5 text-[14px] text-ink',
-        mono && 'font-mono text-[12px] uppercase tracking-wider',
+        mono && 'font-mono text-[12px] tracking-wider',
       )}
     >
       {value}

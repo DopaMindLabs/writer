@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Spazio",
     "navLabel": "Documenti",
-    "shared": "CONDIVISO",
-    "private": "PRIVATO · LOCALE",
+    "shared": "Condiviso",
+    "private": "Privato · Locale",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "nuovo",
     "ageDays": "{{count}}g",
@@ -30,8 +30,8 @@
     "theme": "Tema",
     "exitFocus": "Esci dal modo focus",
     "enterFocus": "Entra in modo focus",
-    "normal": "NORMALE",
-    "focus": "FOCUS",
+    "normal": "Normale",
+    "focus": "Focus",
     "focusTitleNormal": "Normale (⌘\\)",
     "focusTitleFocus": "Focus (⌘\\)",
     "findInDoc": "Cerca nel documento",
@@ -115,7 +115,7 @@
     "tourCheckmark": "completato"
   },
   "spaceMenu": {
-    "thisSpace": "QUESTO SPAZIO",
+    "thisSpace": "Questo Spazio",
     "rename": "Rinomina",
     "settings": "Impostazioni",
     "backups": "Backup e cronologia",
@@ -129,18 +129,18 @@
     "expand": "Espandi ispettore",
     "collapse": "Comprimi ispettore",
     "tabs": {
-      "outline": "INDICE",
-      "info": "INFO",
-      "history": "CRONOLOGIA",
-      "actions": "AZIONI"
+      "outline": "Indice",
+      "info": "Info",
+      "history": "Cronologia",
+      "actions": "Azioni"
     },
     "outline": {
-      "title": "INDICE",
+      "title": "Indice",
       "sectionSummary": "{{count}} SEZIONI",
       "empty": "Nessun titolo ancora. Aggiungi titoli al documento per costruirne la struttura."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Parole",
       "characters": "Caratteri",
       "updated": "Aggiornato",
@@ -165,8 +165,8 @@
       "unlock": "Sblocca per modificare"
     },
     "history": {
-      "title": "VERSIONI",
-      "now": "ORA",
+      "title": "Versioni",
+      "now": "Ora",
       "full": "cronologia versioni completa →",
       "empty": "Ancora nessuna versione. Le versioni si salvano automaticamente mentre scrivi.",
       "summary": "{{count}} versione",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}g fa"
     },
     "actions": {
-      "label": "AZIONI DOCUMENTO",
+      "label": "Azioni Documento",
       "rename": "Rinomina",
       "move": "Sposta in sezione…",
       "export": "Esporta questo documento…",

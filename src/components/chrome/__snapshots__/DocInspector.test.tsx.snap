@@ -10,7 +10,7 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
       class="flex items-center gap-2 border-b border-rule px-4 py-3"
     >
       <span
-        class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-3 flex-1 truncate"
+        class="font-mono tracking-[0.11em] text-[9px] text-ink-3 flex-1 truncate"
         data-testid="doc-inspector-name"
       >
         —
@@ -44,33 +44,33 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
       class="flex border-b border-rule"
     >
       <button
-        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
         data-testid="doc-inspector-tab-outline"
         type="button"
       >
-        OUTLINE
+        Outline
       </button>
       <button
         aria-current="page"
-        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-ink text-ink"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] tracking-wider transition-colors border-ink text-ink"
         data-testid="doc-inspector-tab-info"
         type="button"
       >
-        INFO
+        Info
       </button>
       <button
-        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
         data-testid="doc-inspector-tab-history"
         type="button"
       >
-        HISTORY
+        History
       </button>
       <button
-        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
         data-testid="doc-inspector-tab-actions"
         type="button"
       >
-        ACTIONS
+        Actions
       </button>
     </div>
     <div
@@ -96,7 +96,7 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
       class="flex items-center gap-2 border-b border-rule px-4 py-3"
     >
       <span
-        class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-3 flex-1 truncate"
+        class="font-mono tracking-[0.11em] text-[9px] text-ink-3 flex-1 truncate"
         data-testid="doc-inspector-name"
       >
         My doc
@@ -130,33 +130,33 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
       class="flex border-b border-rule"
     >
       <button
-        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
         data-testid="doc-inspector-tab-outline"
         type="button"
       >
-        OUTLINE
+        Outline
       </button>
       <button
         aria-current="page"
-        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-ink text-ink"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] tracking-wider transition-colors border-ink text-ink"
         data-testid="doc-inspector-tab-info"
         type="button"
       >
-        INFO
+        Info
       </button>
       <button
-        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
         data-testid="doc-inspector-tab-history"
         type="button"
       >
-        HISTORY
+        History
       </button>
       <button
-        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
         data-testid="doc-inspector-tab-actions"
         type="button"
       >
-        ACTIONS
+        Actions
       </button>
     </div>
     <div
@@ -182,7 +182,7 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
       class="flex items-center gap-2 border-b border-rule px-4 py-3"
     >
       <span
-        class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-3 flex-1 truncate"
+        class="font-mono tracking-[0.11em] text-[9px] text-ink-3 flex-1 truncate"
         data-testid="doc-inspector-name"
       >
         My doc
@@ -217,32 +217,32 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
     >
       <button
         aria-current="page"
-        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-ink text-ink"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] tracking-wider transition-colors border-ink text-ink"
         data-testid="doc-inspector-tab-outline"
         type="button"
       >
-        OUTLINE
+        Outline
       </button>
       <button
-        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
         data-testid="doc-inspector-tab-info"
         type="button"
       >
-        INFO
+        Info
       </button>
       <button
-        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
         data-testid="doc-inspector-tab-history"
         type="button"
       >
-        HISTORY
+        History
       </button>
       <button
-        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] uppercase tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
+        class="flex-1 border-b-2 px-1.5 py-2 text-center font-mono text-[9px] tracking-wider transition-colors border-transparent text-ink-3 hover:text-ink-2"
         data-testid="doc-inspector-tab-actions"
         type="button"
       >
-        ACTIONS
+        Actions
       </button>
     </div>
     <div
@@ -253,9 +253,9 @@ exports[`DocInspector > snapshot > should match the snapshot across all variants
         class="px-4 py-3.5"
       >
         <div
-          class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 mb-2"
+          class="font-mono tracking-[0.11em] text-[9px] text-ink-4 mb-2"
         >
-          OUTLINE
+          Outline
            ·
            
           0 SECTIONS

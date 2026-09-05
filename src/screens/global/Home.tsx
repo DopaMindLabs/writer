@@ -92,7 +92,7 @@ const HomeActions = ({
           <span className="font-serif text-[18px] text-ink md:text-[22px]">
             {t('home.continueWriting')}
           </span>
-          <span className="font-mono text-[11px] uppercase tracking-wider text-ink-3">
+          <span className="font-mono text-[11px] tracking-wider text-ink-3">
             →
           </span>
         </Link>
@@ -112,7 +112,7 @@ const HomeActions = ({
         >
           {t('home.startNewSpace')}
         </span>
-        <span className="font-mono text-[11px] uppercase tracking-wider text-ink-3">
+        <span className="font-mono text-[11px] tracking-wider text-ink-3">
           →
         </span>
       </Link>
@@ -129,7 +129,7 @@ const HomeStatus = () => {
           <span
             tabIndex={0}
             data-testid="home-version-chip"
-            className="cursor-help rounded-sm border border-info bg-info-bg px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-info"
+            className="cursor-help rounded-sm border border-info bg-info-bg px-1.5 py-0.5 font-mono text-[10px] tracking-wider text-info"
           >
             {APP_VERSION_LABEL}
           </span>
@@ -163,7 +163,7 @@ const SyncStatusChip = () => {
           tabIndex={0}
           data-testid="home-sync-chip"
           className={cn(
-            'cursor-help rounded-sm border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider',
+            'cursor-help rounded-sm border px-1.5 py-0.5 font-mono text-[10px] tracking-wider',
             enabled
               ? 'border-success bg-success-bg text-success'
               : 'border-warning bg-warning-bg text-warning',

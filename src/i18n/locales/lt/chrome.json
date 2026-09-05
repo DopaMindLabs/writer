@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Erdvė",
     "navLabel": "Dokumentai",
-    "shared": "DALINAMA",
-    "private": "PRIVATU · VIETINIS",
+    "shared": "Dalinama",
+    "private": "Privatu · Vietinis",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "naujas",
     "ageDays": "{{count}}d",
@@ -30,8 +30,8 @@
     "theme": "Tema",
     "exitFocus": "Išeiti iš fokuso režimo",
     "enterFocus": "Įjungti fokuso režimą",
-    "normal": "NORMALUS",
-    "focus": "FOKUSAS",
+    "normal": "Normalus",
+    "focus": "Fokusas",
     "focusTitleNormal": "Normalus (⌘\\)",
     "focusTitleFocus": "Fokusas (⌘\\)",
     "findInDoc": "Rasti dokumente",
@@ -115,7 +115,7 @@
     "tourCheckmark": "baigta"
   },
   "spaceMenu": {
-    "thisSpace": "ŠI ERDVĖ",
+    "thisSpace": "Ši Erdvė",
     "rename": "Pervadinti",
     "settings": "Nustatymai",
     "backups": "Atsarginės kopijos ir istorija",
@@ -129,18 +129,18 @@
     "expand": "Išplėsti inspektorių",
     "collapse": "Suskleisti inspektorių",
     "tabs": {
-      "outline": "STRUKTŪRA",
-      "info": "INFO",
-      "history": "ISTORIJA",
-      "actions": "VEIKSMAI"
+      "outline": "Struktūra",
+      "info": "Info",
+      "history": "Istorija",
+      "actions": "Veiksmai"
     },
     "outline": {
-      "title": "STRUKTŪRA",
+      "title": "Struktūra",
       "sectionSummary": "{{count}} SKYRIAI",
       "empty": "Dar nėra antraščių. Pridėkite antraštes į dokumentą, kad sukurtumėte jo struktūrą."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Žodžiai",
       "characters": "Simboliai",
       "updated": "Atnaujinta",
@@ -165,8 +165,8 @@
       "unlock": "Atrakinti redagavimui"
     },
     "history": {
-      "title": "VERSIJOS",
-      "now": "DABAR",
+      "title": "Versijos",
+      "now": "Dabar",
       "full": "pilna versijų istorija →",
       "empty": "Versijų dar nėra. Versijos išsaugomos automatiškai rašant.",
       "summary": "{{count}} versija",
@@ -186,7 +186,7 @@
       "ageDays": "prieš {{count}}d"
     },
     "actions": {
-      "label": "DOKUMENTO VEIKSMAI",
+      "label": "Dokumento Veiksmai",
       "rename": "Pervadinti",
       "move": "Perkelti į skyrių…",
       "export": "Eksportuoti šį dokumentą…",

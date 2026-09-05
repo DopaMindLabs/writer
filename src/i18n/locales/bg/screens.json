@@ -35,8 +35,8 @@
   "settings": {
     "back": "назад",
     "windowTitle": "lotem · настройки",
-    "breadcrumb": "УНИВЕРСАЛНИ НАСТРОЙКИ",
-    "shellSubtitle": "УНИВЕРСАЛНИ НАСТРОЙКИ",
+    "breadcrumb": "Универсални Настройки",
+    "shellSubtitle": "Универсални Настройки",
     "comingSoonBadge": "очаквайте скоро",
     "helpAria": "Какво е това?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Последни синхронизации",
       "historyEmpty": "Все още няма синхронизации.",
       "columns": {
-        "when": "КОГА",
-        "space": "ПРОСТРАНСТВО",
-        "kind": "ВИД",
-        "size": "РАЗМЕР",
-        "status": "СТАТУС"
+        "when": "Кога",
+        "space": "Пространство",
+        "kind": "Вид",
+        "size": "Размер",
+        "status": "Статус"
       },
       "kind": {
         "auto": "автоматично",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "ПРОСТРАНСТВО · НАСТРОЙКИ",
-      "shellSubtitle": "НАСТРОЙКИ НА ПРОСТРАНСТВОТО",
+      "breadcrumb": "Пространство · Настройки",
+      "shellSubtitle": "Настройки На Пространството",
       "loading": "Зарежда пространството…",
       "groups": {
         "thisSpace": "Това пространство",
@@ -545,9 +545,9 @@
         "historyTitle": "История",
         "empty": "Все още няма снимки — създай такава с + снимка сега.",
         "columns": {
-          "when": "КОГА",
-          "kind": "ВИД",
-          "size": "РАЗМЕР",
+          "when": "Кога",
+          "kind": "Вид",
+          "size": "Размер",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Към началото"
   },
   "templates": {
-    "crumb": "01 — ВИД ПРОСТРАНСТВО",
+    "crumb": "01 — Вид Пространство",
     "headingMain": "Какъв вид пространство",
     "headingAccent": "започваш?",
     "chooseLegend": "Избери шаблон",
@@ -683,8 +683,8 @@
     "mobileWarning": "Разделеният изглед изисква по-голям екран.",
     "mobileNote": "Отвори документа в режим на писане.",
     "openInWrite": "Отвори в режим на писане →",
-    "leftPrefix": "ЛЯВО —",
-    "rightPrefix": "ДЯСНО —",
+    "leftPrefix": "Ляво —",
+    "rightPrefix": "Дясно —",
     "rightPaneAria": "Документ в десния панел",
     "noOtherDocs": "(няма други документи)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ добави",
     "cancel": "× отмени",
     "columns": {
-      "tag": "ЕТИКЕТ",
-      "authors": "АВТОРИ",
-      "title": "ЗАГЛАВИЕ",
-      "year": "ГОДИНА",
-      "type": "ВИД",
-      "used": "ИЗПОЛЗВАН"
+      "tag": "Етикет",
+      "authors": "Автори",
+      "title": "Заглавие",
+      "year": "Година",
+      "type": "Вид",
+      "used": "Използван"
     },
-    "style": "СТИЛ — CHICAGO (АВТОР-ДАТА)",
-    "exportBib": "ИЗНЕСИ КАТО .BIB",
+    "style": "Стил — Chicago (Автор-дата)",
+    "exportBib": "Изнеси Като .BIB",
     "summary": "{{filtered}} ПОКАЗАНИ · {{shown}} НА ТАЗИ СТРАНИЦА",
     "prevPage": "Предишна страница",
     "nextPage": "Следваща страница",

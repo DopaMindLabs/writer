@@ -1,13 +1,13 @@
 import { cva, type VariantProps } from '@/components/libs/variants';
 
 /**
- * The mono micro-label voice — uppercase, tracked, tight leading. Shared by
+ * The mono micro-label voice — tracked, tight leading. Shared by
  * `Eyebrow` (above titled blocks) and `SectionLabel` (menu / settings group
- * headings), and by `DropdownMenuLabel`, so every uppercase-mono label is one
+ * headings), and by `DropdownMenuLabel`, so every mono micro-label is one
  * recipe rather than a hand-rolled variant per surface.
  */
 export const eyebrowRecipe = cva(
-  'font-mono uppercase tracking-[0.11em] leading-none',
+  'font-mono tracking-[0.11em] leading-none',
   {
     variants: {
       size: {

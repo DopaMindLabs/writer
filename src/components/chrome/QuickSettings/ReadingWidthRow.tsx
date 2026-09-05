@@ -18,7 +18,7 @@ export const ReadingWidthRow = () => {
             key={w}
             active={readingWidth === w}
             onClick={() => { setReadingWidth(w); }}
-            className="px-2 py-0.5 text-[10px] uppercase"
+            className="px-2 py-0.5 text-[10px]"
             data-testid={`quick-settings-width-${w}`}
           >
             {t(`quickSettings.readingWidth.${w}`)}

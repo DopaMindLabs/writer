@@ -35,8 +35,8 @@
   "settings": {
     "back": "koma baya",
     "windowTitle": "lotem · saitunan",
-    "breadcrumb": "SAITUNAN DUNIYA",
-    "shellSubtitle": "SAITUNAN DUNIYA",
+    "breadcrumb": "Saitunan Duniya",
+    "shellSubtitle": "Saitunan Duniya",
     "comingSoonBadge": "yana zuwa soon",
     "helpAria": "Mene ne wannan?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Aiko na kwanan nan",
       "historyEmpty": "Babu aiko tukuna.",
       "columns": {
-        "when": "LOKACI",
-        "space": "SARARI",
-        "kind": "NOMA",
-        "size": "GIRMA",
-        "status": "MATSAYI"
+        "when": "Lokaci",
+        "space": "Sarari",
+        "kind": "Noma",
+        "size": "Girma",
+        "status": "Matsayi"
       },
       "kind": {
         "auto": "ta atomatik",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "SARARI · SAITUNAN",
-      "shellSubtitle": "SAITUNAN SARARI",
+      "breadcrumb": "Sarari · Saitunan",
+      "shellSubtitle": "Saitunan Sarari",
       "loading": "Ana ɗaukar sarari…",
       "groups": {
         "thisSpace": "Wannan sarari",
@@ -545,9 +545,9 @@
         "historyTitle": "Tarihi",
         "empty": "Babu hotuna tukuna — ƙirƙira ɗaya da + kama hoto yanzu.",
         "columns": {
-          "when": "LOKACI",
-          "kind": "NOMA",
-          "size": "GIRMA",
+          "when": "Lokaci",
+          "kind": "Noma",
+          "size": "Girma",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Koma gida"
   },
   "templates": {
-    "crumb": "01 — WANI NOMA NA DAKI",
+    "crumb": "01 — Wani Noma Na Daki",
     "headingMain": "Wane irin sarari",
     "headingAccent": "kana farawa?",
     "chooseLegend": "Zaɓi samfuri",
@@ -683,8 +683,8 @@
     "mobileWarning": "Ra'ayin rarrabuwa yana buƙatar allon mafi girma.",
     "mobileNote": "Buɗe wannan takarda a yanayin Write maimakon.",
     "openInWrite": "Buɗe a Write →",
-    "leftPrefix": "HAGU —",
-    "rightPrefix": "DAMA —",
+    "leftPrefix": "Hagu —",
+    "rightPrefix": "Dama —",
     "rightPaneAria": "Takarda na falo na dama",
     "noOtherDocs": "(babu wasu takardu)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ ƙara",
     "cancel": "× soke",
     "columns": {
-      "tag": "TAG",
-      "authors": "MARUBUTA",
-      "title": "TAKEN",
-      "year": "SHEKARA",
-      "type": "NOMA",
-      "used": "AMFANI"
+      "tag": "Tag",
+      "authors": "Marubuta",
+      "title": "Taken",
+      "year": "Shekara",
+      "type": "Noma",
+      "used": "Amfani"
     },
-    "style": "SALO — CHICAGO (MARUBUTA-KWANAN WATA)",
-    "exportBib": "FITAR A MATSAYIN .BIB",
+    "style": "Salo — Chicago (Marubuta-kwanan Wata)",
+    "exportBib": "Fitar A Matsayin .BIB",
     "summary": "{{filtered}} ANA NUNA · {{shown}} A WANNAN SHAFI",
     "prevPage": "Shafi na baya",
     "nextPage": "Shafi na gaba",

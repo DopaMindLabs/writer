@@ -9,7 +9,7 @@ exports[`PageNav > snapshot > should match the snapshot across all variants > de
       class="flex items-center min-w-[60px]"
     >
       <a
-        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 inline-flex items-center gap-1.5 hover:text-ink"
+        class="font-mono tracking-[0.11em] text-[10px] text-ink-3 inline-flex items-center gap-1.5 hover:text-ink"
         data-discover="true"
         data-testid="page-nav-back"
         href="/"
@@ -42,7 +42,7 @@ exports[`PageNav > snapshot > should match the snapshot across all variants > de
     >
       <nav
         aria-label="Primary"
-        class="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wider md:gap-5"
+        class="flex items-center gap-3 font-mono text-[10px] tracking-wider md:gap-5"
         data-testid="page-nav"
       >
         <a
@@ -106,7 +106,7 @@ exports[`PageNav > snapshot > should match the snapshot across all variants > no
     >
       <nav
         aria-label="Primary"
-        class="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wider md:gap-5"
+        class="flex items-center gap-3 font-mono text-[10px] tracking-wider md:gap-5"
         data-testid="page-nav"
       >
         <a

@@ -35,8 +35,8 @@
   "settings": {
     "back": "atrás",
     "windowTitle": "lotem · configuración",
-    "breadcrumb": "CONFIGURACIÓN",
-    "shellSubtitle": "CONFIGURACIÓN GLOBAL",
+    "breadcrumb": "Configuración",
+    "shellSubtitle": "Configuración Global",
     "comingSoonBadge": "próximamente",
     "helpAria": "¿Qué es esto?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Sincronizaciones recientes",
       "historyEmpty": "Aún no hay sincronizaciones.",
       "columns": {
-        "when": "CUÁNDO",
-        "space": "ESPACIO",
-        "kind": "TIPO",
-        "size": "TAMAÑO",
-        "status": "ESTADO"
+        "when": "Cuándo",
+        "space": "Espacio",
+        "kind": "Tipo",
+        "size": "Tamaño",
+        "status": "Estado"
       },
       "kind": {
         "auto": "auto",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "ESPACIO · CONFIGURACIÓN",
-      "shellSubtitle": "CONFIGURACIÓN DEL ESPACIO",
+      "breadcrumb": "Espacio · Configuración",
+      "shellSubtitle": "Configuración Del Espacio",
       "loading": "Cargando espacio…",
       "groups": {
         "thisSpace": "Este espacio",
@@ -547,9 +547,9 @@
         "historyTitle": "Historial",
         "empty": "Aún no hay instantáneas — crea una con + instantánea ahora.",
         "columns": {
-          "when": "CUÁNDO",
-          "kind": "TIPO",
-          "size": "TAMAÑO",
+          "when": "Cuándo",
+          "kind": "Tipo",
+          "size": "Tamaño",
           "actions": ""
         },
         "kind": {
@@ -602,7 +602,7 @@
     "goHome": "Ir al inicio"
   },
   "templates": {
-    "crumb": "01 — UN TIPO DE SALA",
+    "crumb": "01 — Un Tipo De Sala",
     "headingMain": "Qué tipo de espacio",
     "headingAccent": "estás empezando?",
     "chooseLegend": "Elige una plantilla",
@@ -685,8 +685,8 @@
     "mobileWarning": "La vista dividida necesita una pantalla más grande.",
     "mobileNote": "Abre este documento en modo Escribir.",
     "openInWrite": "Abrir en Escribir →",
-    "leftPrefix": "IZQUIERDA —",
-    "rightPrefix": "DERECHA —",
+    "leftPrefix": "Izquierda —",
+    "rightPrefix": "Derecha —",
     "rightPaneAria": "Documento del panel derecho",
     "noOtherDocs": "(sin otros documentos)",
     "brainSpaceOption": "Brain space",
@@ -709,15 +709,15 @@
     "add": "+ añadir",
     "cancel": "× cancelar",
     "columns": {
-      "tag": "ETIQUETA",
-      "authors": "AUTORES",
-      "title": "TÍTULO",
-      "year": "AÑO",
-      "type": "TIPO",
-      "used": "USOS"
+      "tag": "Etiqueta",
+      "authors": "Autores",
+      "title": "Título",
+      "year": "Año",
+      "type": "Tipo",
+      "used": "Usos"
     },
-    "style": "ESTILO — CHICAGO (AUTOR-FECHA)",
-    "exportBib": "EXPORTAR COMO .BIB",
+    "style": "Estilo — Chicago (Autor-fecha)",
+    "exportBib": "Exportar Como .BIB",
     "summary": "{{filtered}} MOSTRADAS · {{shown}} EN ESTA PÁGINA",
     "prevPage": "Página anterior",
     "nextPage": "Página siguiente",

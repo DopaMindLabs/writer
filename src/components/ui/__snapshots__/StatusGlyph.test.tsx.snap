@@ -4,7 +4,7 @@ exports[`StatusGlyph > snapshot > should match the snapshot across kinds and mon
 <div>
   <div>
     <span
-      class="inline-flex items-center gap-1.5 text-danger font-mono text-[11px] uppercase tracking-[0.08em]"
+      class="inline-flex items-center gap-1.5 text-danger font-mono text-[11px] tracking-[0.08em]"
     >
       <svg
         aria-hidden="true"
@@ -31,7 +31,7 @@ exports[`StatusGlyph > snapshot > should match the snapshot across kinds and mon
       </span>
     </span>
     <span
-      class="inline-flex items-center gap-1.5 text-warning font-mono text-[11px] uppercase tracking-[0.08em]"
+      class="inline-flex items-center gap-1.5 text-warning font-mono text-[11px] tracking-[0.08em]"
     >
       <svg
         aria-hidden="true"
@@ -61,7 +61,7 @@ exports[`StatusGlyph > snapshot > should match the snapshot across kinds and mon
       </span>
     </span>
     <span
-      class="inline-flex items-center gap-1.5 text-success font-mono text-[11px] uppercase tracking-[0.08em]"
+      class="inline-flex items-center gap-1.5 text-success font-mono text-[11px] tracking-[0.08em]"
     >
       <svg
         aria-hidden="true"
@@ -85,7 +85,7 @@ exports[`StatusGlyph > snapshot > should match the snapshot across kinds and mon
       </span>
     </span>
     <span
-      class="inline-flex items-center gap-1.5 text-info font-mono text-[11px] uppercase tracking-[0.08em]"
+      class="inline-flex items-center gap-1.5 text-info font-mono text-[11px] tracking-[0.08em]"
     >
       <svg
         aria-hidden="true"

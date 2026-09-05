@@ -35,8 +35,8 @@
   "settings": {
     "back": "tilbake",
     "windowTitle": "lotem · innstillinger",
-    "breadcrumb": "UNIVERSELLE INNSTILLINGER",
-    "shellSubtitle": "UNIVERSELLE INNSTILLINGER",
+    "breadcrumb": "Universelle Innstillinger",
+    "shellSubtitle": "Universelle Innstillinger",
     "comingSoonBadge": "kommer snart",
     "helpAria": "Hva er dette?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Nylige synkroniseringer",
       "historyEmpty": "Ingen synkroniseringer ennå.",
       "columns": {
-        "when": "NÅR",
-        "space": "ROM",
-        "kind": "TYPE",
-        "size": "STØRRELSE",
-        "status": "STATUS"
+        "when": "Når",
+        "space": "Rom",
+        "kind": "Type",
+        "size": "Størrelse",
+        "status": "Status"
       },
       "kind": {
         "auto": "auto",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "ROM · INNSTILLINGER",
-      "shellSubtitle": "ROMINNSTILLINGER",
+      "breadcrumb": "Rom · Innstillinger",
+      "shellSubtitle": "Rominnstillinger",
       "loading": "Laster rom…",
       "groups": {
         "thisSpace": "Dette rommet",
@@ -545,9 +545,9 @@
         "historyTitle": "Historikk",
         "empty": "Ingen øyeblikksbilder ennå — opprett ett med + øyeblikksbilde nå.",
         "columns": {
-          "when": "NÅR",
-          "kind": "TYPE",
-          "size": "STØRRELSE",
+          "when": "Når",
+          "kind": "Type",
+          "size": "Størrelse",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Gå hjem"
   },
   "templates": {
-    "crumb": "01 — EN SLAGS ROM",
+    "crumb": "01 — En Slags Rom",
     "headingMain": "Hva slags rom",
     "headingAccent": "starter du?",
     "chooseLegend": "Velg en mal",
@@ -683,8 +683,8 @@
     "mobileWarning": "Delt visning krever en større skjerm.",
     "mobileNote": "Åpne dette dokumentet i Skrivetilstand i stedet.",
     "openInWrite": "Åpne i Skrivetilstand →",
-    "leftPrefix": "VENSTRE —",
-    "rightPrefix": "HØYRE —",
+    "leftPrefix": "Venstre —",
+    "rightPrefix": "Høyre —",
     "rightPaneAria": "Dokument i høyre rute",
     "noOtherDocs": "(ingen andre dokumenter)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ legg til",
     "cancel": "× avbryt",
     "columns": {
-      "tag": "KODE",
-      "authors": "FORFATTERE",
-      "title": "TITTEL",
-      "year": "ÅR",
-      "type": "TYPE",
-      "used": "BRUKT"
+      "tag": "Kode",
+      "authors": "Forfattere",
+      "title": "Tittel",
+      "year": "År",
+      "type": "Type",
+      "used": "Brukt"
     },
-    "style": "STIL — CHICAGO (FORFATTER-DATO)",
-    "exportBib": "EKSPORTER SOM .BIB",
+    "style": "Stil — Chicago (Forfatter-dato)",
+    "exportBib": "Eksporter Som .BIB",
     "summary": "{{filtered}} VIST · {{shown}} PÅ DENNE SIDEN",
     "prevPage": "Forrige side",
     "nextPage": "Neste side",

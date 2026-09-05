@@ -35,8 +35,8 @@
   "settings": {
     "back": "toe fo'i",
     "windowTitle": "lotem · fa'atulagaga",
-    "breadcrumb": "FA'ATULAGAGA AOFA'I",
-    "shellSubtitle": "FA'ATULAGAGA AOFA'I",
+    "breadcrumb": "Fa'atulagaga Aofa'i",
+    "shellSubtitle": "Fa'atulagaga Aofa'i",
     "comingSoonBadge": "o lo'o sau",
     "helpAria": "O le a lenei mea?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Fa'aogatusa tata",
       "historyEmpty": "E leai ni fa'aogatusa.",
       "columns": {
-        "when": "AFE",
-        "space": "AVANOA",
-        "kind": "ITUAIGA",
-        "size": "LAPOA",
-        "status": "TULAGA"
+        "when": "Afe",
+        "space": "Avanoa",
+        "kind": "Ituaiga",
+        "size": "Lapoa",
+        "status": "Tulaga"
       },
       "kind": {
         "auto": "aunoa",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "AVANOA · FA'ATULAGAGA",
-      "shellSubtitle": "FA'ATULAGAGA AVANOA",
+      "breadcrumb": "Avanoa · Fa'atulagaga",
+      "shellSubtitle": "Fa'atulagaga Avanoa",
       "loading": "O lo'o utaina avanoa…",
       "groups": {
         "thisSpace": "Lenei avanoa",
@@ -545,9 +545,9 @@
         "historyTitle": "Tala'aga",
         "empty": "E leai ni va'aiga — fai se tasi ma le + va'aiga nei.",
         "columns": {
-          "when": "AFE",
-          "kind": "ITUAIGA",
-          "size": "LAPOA",
+          "when": "Afe",
+          "kind": "Ituaiga",
+          "size": "Lapoa",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Fo'i i le aiga"
   },
   "templates": {
-    "crumb": "01 — SE ITUAIGA POTU",
+    "crumb": "01 — Se Ituaiga Potu",
     "headingMain": "O le a le ituaiga avanoa",
     "headingAccent": "o lo'o e amata?",
     "chooseLegend": "Filifili se fa'ata'ita'i",
@@ -683,8 +683,8 @@
     "mobileWarning": "E mana'omia e le va'aiga vaeluaina se laulau tetele.",
     "mobileNote": "Tatala lenei pepa i le Tulaga Tusitusi.",
     "openInWrite": "Tatala i le Tusitusi →",
-    "leftPrefix": "AGAVALE —",
-    "rightPrefix": "TAUMATAU —",
+    "leftPrefix": "Agavale —",
+    "rightPrefix": "Taumatau —",
     "rightPaneAria": "Pepa pane taumatau",
     "noOtherDocs": "(e leai isi pepa)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ fa'aopoopo",
     "cancel": "× fa'aleaogaina",
     "columns": {
-      "tag": "FA'AILOGA",
-      "authors": "TUSITALA",
-      "title": "ULUTALA",
-      "year": "TAUSAGA",
-      "type": "ITUAIGA",
-      "used": "FA'AAOGAINA"
+      "tag": "Fa'ailoga",
+      "authors": "Tusitala",
+      "title": "Ulutala",
+      "year": "Tausaga",
+      "type": "Ituaiga",
+      "used": "Fa'aaogaina"
     },
-    "style": "SITAILI — CHICAGO (TUSITALA-ASO)",
-    "exportBib": "AUINA ATU E PEIA .BIB",
+    "style": "Sitaili — Chicago (Tusitala-aso)",
+    "exportBib": "Auina Atu E Peia .BIB",
     "summary": "{{filtered}} FA'AALIA · {{shown}} I LENEI ITULAU",
     "prevPage": "Itulau muamua",
     "nextPage": "Itulau o lo'o mulimuli",

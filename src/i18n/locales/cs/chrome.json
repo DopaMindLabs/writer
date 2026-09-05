@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Prostor",
     "navLabel": "Dokumenty",
-    "shared": "SDÍLENO",
-    "private": "SOUKROMÉ · LOKÁLNÍ",
+    "shared": "Sdíleno",
+    "private": "Soukromé · Lokální",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "nový",
     "ageDays": "{{count}}d",
@@ -30,8 +30,8 @@
     "theme": "Motiv",
     "exitFocus": "Opustit režim soustředění",
     "enterFocus": "Vstoupit do režimu soustředění",
-    "normal": "NORMÁLNÍ",
-    "focus": "SOUSTŘEDĚNÍ",
+    "normal": "Normální",
+    "focus": "Soustředění",
     "focusTitleNormal": "Normální (⌘\\)",
     "focusTitleFocus": "Soustředění (⌘\\)",
     "findInDoc": "Najít v dokumentu",
@@ -115,7 +115,7 @@
     "tourCheckmark": "dokončeno"
   },
   "spaceMenu": {
-    "thisSpace": "TENTO PROSTOR",
+    "thisSpace": "Tento Prostor",
     "rename": "Přejmenovat",
     "settings": "Nastavení",
     "backups": "Zálohy a historie",
@@ -129,18 +129,18 @@
     "expand": "Rozbalit inspektor",
     "collapse": "Sbalit inspektor",
     "tabs": {
-      "outline": "OSNOVA",
-      "info": "INFO",
-      "history": "HISTORIE",
-      "actions": "AKCE"
+      "outline": "Osnova",
+      "info": "Info",
+      "history": "Historie",
+      "actions": "Akce"
     },
     "outline": {
-      "title": "OSNOVA",
+      "title": "Osnova",
       "sectionSummary": "{{count}} SEKCÍ",
       "empty": "Zatím žádné nadpisy. Přidejte do dokumentu nadpisy a vytvořte jeho osnovu."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Slova",
       "characters": "Znaky",
       "updated": "Aktualizováno",
@@ -165,8 +165,8 @@
       "unlock": "Odemknout pro úpravy"
     },
     "history": {
-      "title": "VERZE",
-      "now": "TEĎ",
+      "title": "Verze",
+      "now": "Teď",
       "full": "kompletní historie verzí →",
       "empty": "Zatím žádné verze. Verze se ukládají automaticky během psaní.",
       "summary": "{{count}} verze",
@@ -186,7 +186,7 @@
       "ageDays": "před {{count}}d"
     },
     "actions": {
-      "label": "AKCE DOKUMENTU",
+      "label": "Akce Dokumentu",
       "rename": "Přejmenovat",
       "move": "Přesunout do sekce…",
       "export": "Exportovat tento dokument…",

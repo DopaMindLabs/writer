@@ -35,8 +35,8 @@
   "settings": {
     "back": "vissza",
     "windowTitle": "lotem · beállítások",
-    "breadcrumb": "ÁLTALÁNOS BEÁLLÍTÁSOK",
-    "shellSubtitle": "ÁLTALÁNOS BEÁLLÍTÁSOK",
+    "breadcrumb": "Általános Beállítások",
+    "shellSubtitle": "Általános Beállítások",
     "comingSoonBadge": "hamarosan",
     "helpAria": "Mi ez?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Legutóbbi szinkronizációk",
       "historyEmpty": "Még nincs szinkronizáció.",
       "columns": {
-        "when": "MIKOR",
-        "space": "TÉR",
-        "kind": "TÍPUS",
-        "size": "MÉRET",
-        "status": "ÁLLAPOT"
+        "when": "Mikor",
+        "space": "Tér",
+        "kind": "Típus",
+        "size": "Méret",
+        "status": "Állapot"
       },
       "kind": {
         "auto": "automatikus",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "TÉR · BEÁLLÍTÁSOK",
-      "shellSubtitle": "TÉR BEÁLLÍTÁSAI",
+      "breadcrumb": "Tér · Beállítások",
+      "shellSubtitle": "Tér Beállításai",
       "loading": "Tér betöltése…",
       "groups": {
         "thisSpace": "Ez a tér",
@@ -545,9 +545,9 @@
         "historyTitle": "Előzmények",
         "empty": "Még nincs pillanatkép — hozzon létre egyet a + pillanatkép most gombbal.",
         "columns": {
-          "when": "MIKOR",
-          "kind": "TÍPUS",
-          "size": "MÉRET",
+          "when": "Mikor",
+          "kind": "Típus",
+          "size": "Méret",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Vissza a főoldalra"
   },
   "templates": {
-    "crumb": "01 — EGY TÉRTÍPUS",
+    "crumb": "01 — Egy Tértípus",
     "headingMain": "Milyen teret",
     "headingAccent": "hozol létre?",
     "chooseLegend": "Válassz sablont",
@@ -683,8 +683,8 @@
     "mobileWarning": "Az osztott nézet nagyobb képernyőt igényel.",
     "mobileNote": "Nyisd meg a dokumentumot Írás módban.",
     "openInWrite": "Megnyitás Írásban →",
-    "leftPrefix": "BAL —",
-    "rightPrefix": "JOBB —",
+    "leftPrefix": "Bal —",
+    "rightPrefix": "Jobb —",
     "rightPaneAria": "Jobb panel dokumentuma",
     "noOtherDocs": "(nincs más dokumentum)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ hozzáadás",
     "cancel": "× mégse",
     "columns": {
-      "tag": "CÍMKE",
-      "authors": "SZERZŐK",
-      "title": "CÍM",
-      "year": "ÉV",
-      "type": "TÍPUS",
-      "used": "HASZNÁLT"
+      "tag": "Címke",
+      "authors": "Szerzők",
+      "title": "Cím",
+      "year": "Év",
+      "type": "Típus",
+      "used": "Használt"
     },
-    "style": "STÍLUS — CHICAGO (SZERZŐ-DÁTUM)",
-    "exportBib": "EXPORTÁLÁS .BIB-KÉNT",
+    "style": "Stílus — Chicago (Szerző-dátum)",
+    "exportBib": "Exportálás .Bib-ként",
     "summary": "{{filtered}} MEGJELENÍTVE · {{shown}} EZen az OLDALON",
     "prevPage": "Előző oldal",
     "nextPage": "Következő oldal",

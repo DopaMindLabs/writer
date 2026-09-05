@@ -166,7 +166,7 @@ const LinkedDocSection = ({
             data-testid="brain-detail-drawer-open"
             kind="secondary"
             onClick={onOpenDoc}
-            className="gap-1.5 border-ink px-3 py-2 font-mono text-[10px] uppercase tracking-wider"
+            className="gap-1.5 border-ink px-3 py-2 font-mono text-[10px] tracking-wider"
           >
             <ExternalLink className="h-3 w-3" />
             {t('brainSpace.drawer.openDoc')}
@@ -412,7 +412,7 @@ const AttachmentsUpload = ({ atLimit, onPick }: AttachmentsUploadProps) => {
             disabled={atLimit}
             onClick={open}
             data-testid="brain-detail-drawer-attachments-upload"
-            className="gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
+            className="gap-1.5 px-3 py-1.5 font-mono text-[10px] tracking-wider"
           >
             <Icon icon={ImagePlus} size="xs" />
             {t('brainSpace.drawer.addPicture')}
@@ -524,7 +524,7 @@ const DrawerDeleteFooter = ({ onDelete }: { onDelete: () => void }) => {
         kind="dangerous"
         size="sm"
         onClick={onDelete}
-        className="gap-1.5 border-0 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider"
+        className="gap-1.5 border-0 px-3 py-1.5 font-mono text-[10px] tracking-wider"
       >
         <Trash2 className="h-3 w-3" />
         {t('brainSpace.drawer.deleteNote')}

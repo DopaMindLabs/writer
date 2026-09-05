@@ -20,7 +20,7 @@ export const SpaceRailHeader = () => {
         <TooltipTrigger asChild>
           <span
             tabIndex={0}
-            className="mb-2.5 max-w-full cursor-help truncate rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
+            className="mb-2.5 max-w-full cursor-help truncate rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] tracking-wider text-info"
           >
             {APP_VERSION_LABEL}
           </span>

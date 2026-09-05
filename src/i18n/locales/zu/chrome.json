@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Isikhala",
     "navLabel": "Amadokhumenti",
-    "shared": "KUHLANGENE",
-    "private": "OKUYIMFIHLO · OKWENDAWO",
+    "shared": "Kuhlangene",
+    "private": "Okuyimfihlo · Okwendawo",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "okusha",
     "ageDays": "{{count}}us",
@@ -30,8 +30,8 @@
     "theme": "Itimu",
     "exitFocus": "Phuma kumodi yokugxila",
     "enterFocus": "Ngena kumodi yokugxila",
-    "normal": "OKUVAMILE",
-    "focus": "UKUGXILA",
+    "normal": "Okuvamile",
+    "focus": "Ukugxila",
     "focusTitleNormal": "Okuvamile (⌘\\)",
     "focusTitleFocus": "Ukugxila (⌘\\)",
     "findInDoc": "Thola kudokhumenti",
@@ -115,7 +115,7 @@
     "tourCheckmark": "kuphelile"
   },
   "spaceMenu": {
-    "thisSpace": "LESI SIKHALA",
+    "thisSpace": "Lesi Sikhala",
     "rename": "Qamba kabusha",
     "settings": "Izilungiselelo",
     "backups": "Izipele nomlando",
@@ -129,18 +129,18 @@
     "expand": "Nweba umhloli",
     "collapse": "Phinda umhloli",
     "tabs": {
-      "outline": "ISIQEPHU",
-      "info": "INFO",
-      "history": "UMLANDO",
-      "actions": "IZENZO"
+      "outline": "Isiqephu",
+      "info": "Info",
+      "history": "Umlando",
+      "actions": "Izenzo"
     },
     "outline": {
-      "title": "ISIQEPHU",
+      "title": "Isiqephu",
       "sectionSummary": "{{count}} IZIGABA",
       "empty": "Awekho amakhanda okwamanje. Engeza amakhanda esibhalweni ukwakha uhlaka laso."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Amagama",
       "characters": "Izinhlamvu",
       "updated": "Ibuyekeziwe",
@@ -165,8 +165,8 @@
       "unlock": "Vula ukuze uhlele"
     },
     "history": {
-      "title": "IZINGUQULELO",
-      "now": "MANJE",
+      "title": "Izinguqulelo",
+      "now": "Manje",
       "full": "umlando ophelele wezinguqulelo →",
       "empty": "Azikho izinguqulelo okwamanje. Izinguqulelo zigcinwa ngokuzenzakalelayo ngenkathi ubhala.",
       "summary": "{{count}} inguqulelo",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}us edlule"
     },
     "actions": {
-      "label": "IZENZO ZEDOKHUMENTI",
+      "label": "Izenzo Zedokhumenti",
       "rename": "Qamba kabusha",
       "move": "Hambisa kusigaba…",
       "export": "Khipha leli dokhumenti…",

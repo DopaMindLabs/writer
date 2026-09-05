@@ -35,8 +35,8 @@
   "settings": {
     "back": "zpět",
     "windowTitle": "lotem · nastavení",
-    "breadcrumb": "UNIVERZÁLNÍ NASTAVENÍ",
-    "shellSubtitle": "UNIVERZÁLNÍ NASTAVENÍ",
+    "breadcrumb": "Univerzální Nastavení",
+    "shellSubtitle": "Univerzální Nastavení",
     "comingSoonBadge": "připravujeme",
     "helpAria": "Co je toto?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Nedávné synchronizace",
       "historyEmpty": "Zatím žádné synchronizace.",
       "columns": {
-        "when": "KDY",
-        "space": "PROSTOR",
-        "kind": "TYP",
-        "size": "VELIKOST",
-        "status": "STAV"
+        "when": "Kdy",
+        "space": "Prostor",
+        "kind": "Typ",
+        "size": "Velikost",
+        "status": "Stav"
       },
       "kind": {
         "auto": "auto",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "PROSTOR · NASTAVENÍ",
-      "shellSubtitle": "NASTAVENÍ PROSTORU",
+      "breadcrumb": "Prostor · Nastavení",
+      "shellSubtitle": "Nastavení Prostoru",
       "loading": "Načítání prostoru…",
       "groups": {
         "thisSpace": "Tento prostor",
@@ -545,9 +545,9 @@
         "historyTitle": "Historie",
         "empty": "Zatím žádné snímky — vytvoř jeden pomocí + snímek nyní.",
         "columns": {
-          "when": "KDY",
-          "kind": "TYP",
-          "size": "VELIKOST",
+          "when": "Kdy",
+          "kind": "Typ",
+          "size": "Velikost",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Přejít domů"
   },
   "templates": {
-    "crumb": "01 — DRUH MÍSTNOSTI",
+    "crumb": "01 — Druh Místnosti",
     "headingMain": "Jaký prostor",
     "headingAccent": "začínáš?",
     "chooseLegend": "Vyber šablonu",
@@ -683,8 +683,8 @@
     "mobileWarning": "Dělené zobrazení vyžaduje větší obrazovku.",
     "mobileNote": "Otevři tento dokument v režimu Psaní.",
     "openInWrite": "Otevřít v režimu Psaní →",
-    "leftPrefix": "VLEVO —",
-    "rightPrefix": "VPRAVO —",
+    "leftPrefix": "Vlevo —",
+    "rightPrefix": "Vpravo —",
     "rightPaneAria": "Dokument v pravém panelu",
     "noOtherDocs": "(žádné jiné dokumenty)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ přidat",
     "cancel": "× zrušit",
     "columns": {
-      "tag": "ZKRATKA",
-      "authors": "AUTOŘI",
-      "title": "NÁZEV",
-      "year": "ROK",
-      "type": "TYP",
-      "used": "POUŽITA"
+      "tag": "Zkratka",
+      "authors": "Autoři",
+      "title": "Název",
+      "year": "Rok",
+      "type": "Typ",
+      "used": "Použita"
     },
-    "style": "STYL — CHICAGO (AUTOR-DATUM)",
-    "exportBib": "EXPORTOVAT JAKO .BIB",
+    "style": "Styl — Chicago (Autor-datum)",
+    "exportBib": "Exportovat Jako .BIB",
     "summary": "{{filtered}} ZOBRAZENO · {{shown}} NA TÉTO STRÁNCE",
     "prevPage": "Předchozí stránka",
     "nextPage": "Další stránka",

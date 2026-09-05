@@ -4,7 +4,7 @@ exports[`StatusBadge > snapshot > should match the snapshot across kinds, sizes,
 <div>
   <div>
     <span
-      class="inline-flex items-center gap-1.5 border font-mono uppercase tracking-[0.08em] border-danger/30 bg-danger-bg text-danger px-1.5 py-1 text-[10px]"
+      class="inline-flex items-center gap-1.5 border font-mono tracking-[0.08em] border-danger/30 bg-danger-bg text-danger px-1.5 py-1 text-[10px]"
     >
       <svg
         aria-hidden="true"
@@ -31,7 +31,7 @@ exports[`StatusBadge > snapshot > should match the snapshot across kinds, sizes,
       </span>
     </span>
     <span
-      class="inline-flex items-center gap-1.5 border font-mono uppercase tracking-[0.08em] border-warning/30 bg-warning-bg text-warning px-1.5 py-1 text-[10px]"
+      class="inline-flex items-center gap-1.5 border font-mono tracking-[0.08em] border-warning/30 bg-warning-bg text-warning px-1.5 py-1 text-[10px]"
     >
       <svg
         aria-hidden="true"
@@ -61,7 +61,7 @@ exports[`StatusBadge > snapshot > should match the snapshot across kinds, sizes,
       </span>
     </span>
     <span
-      class="inline-flex items-center gap-1.5 border font-mono uppercase tracking-[0.08em] border-success/30 bg-success-bg text-success px-1.5 py-1 text-[10px]"
+      class="inline-flex items-center gap-1.5 border font-mono tracking-[0.08em] border-success/30 bg-success-bg text-success px-1.5 py-1 text-[10px]"
     >
       <svg
         aria-hidden="true"
@@ -85,7 +85,7 @@ exports[`StatusBadge > snapshot > should match the snapshot across kinds, sizes,
       </span>
     </span>
     <span
-      class="inline-flex items-center gap-1.5 border font-mono uppercase tracking-[0.08em] border-info/30 bg-info-bg text-info px-1.5 py-1 text-[10px]"
+      class="inline-flex items-center gap-1.5 border font-mono tracking-[0.08em] border-info/30 bg-info-bg text-info px-1.5 py-1 text-[10px]"
     >
       <svg
         aria-hidden="true"
@@ -117,7 +117,7 @@ exports[`StatusBadge > snapshot > should match the snapshot across kinds, sizes,
       </span>
     </span>
     <span
-      class="inline-flex items-center gap-1.5 border font-mono uppercase tracking-[0.08em] border-info/30 bg-info-bg text-info px-2 py-1.5 text-[11px]"
+      class="inline-flex items-center gap-1.5 border font-mono tracking-[0.08em] border-info/30 bg-info-bg text-info px-2 py-1.5 text-[11px]"
     >
       <svg
         aria-hidden="true"
@@ -149,7 +149,7 @@ exports[`StatusBadge > snapshot > should match the snapshot across kinds, sizes,
       </span>
     </span>
     <span
-      class="inline-flex items-center gap-1.5 border font-mono uppercase tracking-[0.08em] border-info/30 bg-info-bg text-info px-1.5 py-1 text-[10px]"
+      class="inline-flex items-center gap-1.5 border font-mono tracking-[0.08em] border-info/30 bg-info-bg text-info px-1.5 py-1 text-[10px]"
     >
       <span>
         NO GLYPH

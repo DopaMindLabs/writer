@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Espacio",
     "navLabel": "Documentos",
-    "shared": "COMPARTIDO",
-    "private": "PRIVADO · LOCAL",
+    "shared": "Compartido",
+    "private": "Privado · Local",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "nuevo",
     "ageDays": "{{count}}d",
@@ -30,8 +30,8 @@
     "theme": "Tema",
     "exitFocus": "Salir del modo enfoque",
     "enterFocus": "Entrar en modo enfoque",
-    "normal": "NORMAL",
-    "focus": "ENFOQUE",
+    "normal": "Normal",
+    "focus": "Enfoque",
     "focusTitleNormal": "Normal (⌘\\)",
     "focusTitleFocus": "Enfoque (⌘\\)",
     "findInDoc": "Buscar en el documento",
@@ -115,7 +115,7 @@
     "tourCheckmark": "completado"
   },
   "spaceMenu": {
-    "thisSpace": "ESTE ESPACIO",
+    "thisSpace": "Este Espacio",
     "rename": "Renombrar",
     "settings": "Configuración",
     "backups": "Copias y historial",
@@ -129,18 +129,18 @@
     "expand": "Expandir inspector",
     "collapse": "Contraer inspector",
     "tabs": {
-      "outline": "ESQUEMA",
-      "info": "INFO",
-      "history": "HISTORIAL",
-      "actions": "ACCIONES"
+      "outline": "Esquema",
+      "info": "Info",
+      "history": "Historial",
+      "actions": "Acciones"
     },
     "outline": {
-      "title": "ESQUEMA",
+      "title": "Esquema",
       "sectionSummary": "{{count}} SECCIONES",
       "empty": "Sin encabezados todavía. Añade encabezados al documento para construir su esquema."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Palabras",
       "characters": "Caracteres",
       "updated": "Actualizado",
@@ -165,8 +165,8 @@
       "unlock": "Desbloquear para editar"
     },
     "history": {
-      "title": "VERSIONES",
-      "now": "AHORA",
+      "title": "Versiones",
+      "now": "Ahora",
       "full": "historial completo de versiones →",
       "empty": "Aún no hay versiones. Las versiones se guardan automáticamente mientras escribes.",
       "summary": "{{count}} versión",
@@ -186,7 +186,7 @@
       "ageDays": "hace {{count}}d"
     },
     "actions": {
-      "label": "ACCIONES DEL DOCUMENTO",
+      "label": "Acciones Del Documento",
       "rename": "Renombrar",
       "move": "Mover a sección…",
       "export": "Exportar este documento…",

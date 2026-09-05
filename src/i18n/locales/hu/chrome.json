@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Tér",
     "navLabel": "Dokumentumok",
-    "shared": "MEGOSZTVA",
-    "private": "PRIVÁT · HELYI",
+    "shared": "Megosztva",
+    "private": "Privát · Helyi",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "új",
     "ageDays": "{{count}}n",
@@ -30,8 +30,8 @@
     "theme": "Téma",
     "exitFocus": "Kilépés a fókuszmódból",
     "enterFocus": "Belépés a fókuszmódba",
-    "normal": "NORMÁL",
-    "focus": "FÓKUSZ",
+    "normal": "Normál",
+    "focus": "Fókusz",
     "focusTitleNormal": "Normál (⌘\\)",
     "focusTitleFocus": "Fókusz (⌘\\)",
     "findInDoc": "Keresés a dokumentumban",
@@ -115,7 +115,7 @@
     "tourCheckmark": "befejezve"
   },
   "spaceMenu": {
-    "thisSpace": "EZ A TÉR",
+    "thisSpace": "Ez A Tér",
     "rename": "Átnevezés",
     "settings": "Beállítások",
     "backups": "Mentések és előzmények",
@@ -129,18 +129,18 @@
     "expand": "Ellenőrző kibontása",
     "collapse": "Ellenőrző összecsukása",
     "tabs": {
-      "outline": "VÁZLAT",
-      "info": "INFO",
-      "history": "ELŐZMÉNYEK",
-      "actions": "MŰVELETEK"
+      "outline": "Vázlat",
+      "info": "Info",
+      "history": "Előzmények",
+      "actions": "Műveletek"
     },
     "outline": {
-      "title": "VÁZLAT",
+      "title": "Vázlat",
       "sectionSummary": "{{count}} SZAKASZ",
       "empty": "Még nincs cím. Adjon hozzá címeket a dokumentumhoz a vázlat létrehozásához."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Szavak",
       "characters": "Karakterek",
       "updated": "Frissítve",
@@ -165,8 +165,8 @@
       "unlock": "Feloldás szerkesztéshez"
     },
     "history": {
-      "title": "VERZIÓK",
-      "now": "MOST",
+      "title": "Verziók",
+      "now": "Most",
       "full": "teljes verziótörténet →",
       "empty": "Még nincsenek verziók. A verziók automatikusan mentődnek írás közben.",
       "summary": "{{count}} verzió",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}n"
     },
     "actions": {
-      "label": "DOKUMENTUM MŰVELETEK",
+      "label": "Dokumentum Műveletek",
       "rename": "Átnevezés",
       "move": "Áthelyezés szakaszba…",
       "export": "Dokumentum exportálása…",

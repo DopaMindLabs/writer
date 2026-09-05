@@ -41,7 +41,7 @@ export const PageNav = ({ showBack = true, backTo, actions }: PageNavProps) => {
         <nav
           data-testid="page-nav"
           aria-label="Primary"
-          className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wider md:gap-5"
+          className="flex items-center gap-3 font-mono text-[10px] tracking-wider md:gap-5"
         >
           {PRIMARY_NAV.map((item) =>
             item.external ? (

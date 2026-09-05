@@ -75,7 +75,7 @@ exports[`BrainSpaceCanvas > snapshot > should match the snapshot across all vari
           style="left: 24px; top: 24px; width: 184px; min-height: 80px;"
         >
           <div
-            class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-4 flex items-center gap-1.5"
+            class="font-mono tracking-[0.11em] text-[10px] text-ink-4 flex items-center gap-1.5"
           >
             <span
               data-testid="brain-note-n1-kind"
@@ -175,7 +175,7 @@ exports[`BrainSpaceCanvas > snapshot > should match the snapshot across all vari
             </button>
           </div>
           <button
-            class="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
+            class="self-start font-mono text-[9px] tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
             data-no-drag="true"
             data-testid="brain-note-n1-add-title"
             type="button"
@@ -202,7 +202,7 @@ exports[`BrainSpaceCanvas > snapshot > should match the snapshot across all vari
           style="left: 240px; top: 120px; width: 184px; min-height: 80px;"
         >
           <div
-            class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-4 flex items-center gap-1.5"
+            class="font-mono tracking-[0.11em] text-[10px] text-ink-4 flex items-center gap-1.5"
           >
             <span
               data-testid="brain-note-n2-kind"
@@ -302,7 +302,7 @@ exports[`BrainSpaceCanvas > snapshot > should match the snapshot across all vari
             </button>
           </div>
           <button
-            class="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
+            class="self-start font-mono text-[9px] tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
             data-no-drag="true"
             data-testid="brain-note-n2-add-title"
             type="button"

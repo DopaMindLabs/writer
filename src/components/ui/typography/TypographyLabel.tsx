@@ -3,7 +3,7 @@ import { cva, type VariantProps } from '@/components/libs/variants';
 import { cn } from '@/lib/utils';
 import { SlotPrimitive } from '@/components/ui/slot.primitives';
 
-const typographyLabelVariants = cva('font-mono uppercase text-ink-3', {
+const typographyLabelVariants = cva('font-mono text-ink-3', {
   variants: {
     variant: {
       default: 'text-[10px] tracking-[0.08em]',

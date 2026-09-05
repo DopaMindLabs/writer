@@ -9,8 +9,8 @@
   "sidebar": {
     "landmarkLabel": "Space",
     "navLabel": "Documents",
-    "shared": "SHARED",
-    "private": "PRIVATE · LOCAL",
+    "shared": "Shared",
+    "private": "Private · Local",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "new",
     "ageDays": "{{count}}d",
@@ -73,8 +73,8 @@
     "theme": "Theme",
     "exitFocus": "Exit focus mode",
     "enterFocus": "Enter focus mode",
-    "normal": "NORMAL",
-    "focus": "FOCUS",
+    "normal": "Normal",
+    "focus": "Focus",
     "focusTitleNormal": "Normal (⌘\\)",
     "focusTitleFocus": "Focus (⌘\\)",
     "findInDoc": "Find in doc",
@@ -159,7 +159,7 @@
     "tourCheckmark": "completed"
   },
   "spaceMenu": {
-    "thisSpace": "THIS SPACE",
+    "thisSpace": "This Space",
     "rename": "Rename",
     "settings": "Settings",
     "backups": "Backups & history",
@@ -173,18 +173,18 @@
     "expand": "Expand inspector",
     "collapse": "Collapse inspector",
     "tabs": {
-      "outline": "OUTLINE",
-      "info": "INFO",
-      "history": "HISTORY",
-      "actions": "ACTIONS"
+      "outline": "Outline",
+      "info": "Info",
+      "history": "History",
+      "actions": "Actions"
     },
     "outline": {
-      "title": "OUTLINE",
+      "title": "Outline",
       "sectionSummary": "{{count}} SECTIONS",
       "empty": "No headings yet. Add headings to the document to build its outline."
     },
     "info": {
-      "title": "INFO",
+      "title": "Info",
       "words": "Words",
       "characters": "Characters",
       "updated": "Updated",
@@ -209,8 +209,8 @@
       "unlock": "Unlock to edit"
     },
     "history": {
-      "title": "VERSIONS",
-      "now": "NOW",
+      "title": "Versions",
+      "now": "Now",
       "full": "full version history →",
       "empty": "No versions yet. Versions are saved automatically as you write.",
       "summary": "{{count}} version",
@@ -230,7 +230,7 @@
       "ageDays": "{{count}}d ago"
     },
     "actions": {
-      "label": "DOC ACTIONS",
+      "label": "Doc Actions",
       "rename": "Rename",
       "move": "Move to section…",
       "export": "Export this doc…",

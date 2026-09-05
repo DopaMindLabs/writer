@@ -35,8 +35,8 @@
   "settings": {
     "back": "buyela",
     "windowTitle": "lotem · izilungiselelo",
-    "breadcrumb": "IZILUNGISELELO ZOMHLABA",
-    "shellSubtitle": "IZILUNGISELELO ZOMHLABA",
+    "breadcrumb": "Izilungiselelo Zomhlaba",
+    "shellSubtitle": "Izilungiselelo Zomhlaba",
     "comingSoonBadge": "kuzofika maduze",
     "helpAria": "Lokhu kuyini?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Ukuvumelanisa kwakamuva",
       "historyEmpty": "Akukho ukuvumelanisa okwamanje.",
       "columns": {
-        "when": "NINI",
-        "space": "INDAWO",
-        "kind": "UHLOBO",
-        "size": "UBUKHULU",
-        "status": "ISIMO"
+        "when": "Nini",
+        "space": "Indawo",
+        "kind": "Uhlobo",
+        "size": "Ubukhulu",
+        "status": "Isimo"
       },
       "kind": {
         "auto": "okuzenzakalelayo",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "INDAWO · IZILUNGISELELO",
-      "shellSubtitle": "IZILUNGISELELO ZENDAWO",
+      "breadcrumb": "Indawo · Izilungiselelo",
+      "shellSubtitle": "Izilungiselelo Zendawo",
       "loading": "Iyalayisha indawo…",
       "groups": {
         "thisSpace": "Le ndawo",
@@ -545,9 +545,9 @@
         "historyTitle": "Umlando",
         "empty": "Azikho izithombe okwamanje — dala enye nge-+ thatha isithombe sesimo manje.",
         "columns": {
-          "when": "NINI",
-          "kind": "UHLOBO",
-          "size": "UBUKHULU",
+          "when": "Nini",
+          "kind": "Uhlobo",
+          "size": "Ubukhulu",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Buyela ekhaya"
   },
   "templates": {
-    "crumb": "01 — UHLOBO LWENDLU",
+    "crumb": "01 — Uhlobo Lwendlu",
     "headingMain": "Uhlobo lwendawo",
     "headingAccent": "iqala ngani?",
     "chooseLegend": "Khetha ithempulethi",
@@ -683,8 +683,8 @@
     "mobileWarning": "Isibukeli sokuhlukanisa sidinga isikrini esikhulu.",
     "mobileNote": "Vula leli dokhumenti kwindlela ye-Write esikhundleni sayo.",
     "openInWrite": "Vula ku-Write →",
-    "leftPrefix": "KWESOBUNXELE —",
-    "rightPrefix": "KWESOKUDLA —",
+    "leftPrefix": "Kwesobunxele —",
+    "rightPrefix": "Kwesokudla —",
     "rightPaneAria": "Idokhumenti yegceke elisokudla",
     "noOtherDocs": "(azikho ezinye izindokhumenti)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ engeza",
     "cancel": "× khansela",
     "columns": {
-      "tag": "UMFANEKISO",
-      "authors": "ABABHALI",
-      "title": "ISIHLOKO",
-      "year": "UNYAKA",
-      "type": "UHLOBO",
-      "used": "ESETSHENZISIWE"
+      "tag": "Umfanekiso",
+      "authors": "Ababhali",
+      "title": "Isihloko",
+      "year": "Unyaka",
+      "type": "Uhlobo",
+      "used": "Esetshenzisiwe"
     },
-    "style": "ISITAYELA — CHICAGO (UMBHALI-USUKU)",
-    "exportBib": "THUMELA NJENGO-.BIB",
+    "style": "Isitayela — Chicago (Umbhali-usuku)",
+    "exportBib": "Thumela Njengo-.bib",
     "summary": "{{filtered}} ZIBONAKALAYO · {{shown}} KULELI KHASI",
     "prevPage": "Ikhasi langaphambilini",
     "nextPage": "Ikhasi elilandelayo",

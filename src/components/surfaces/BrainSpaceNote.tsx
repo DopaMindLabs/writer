@@ -458,7 +458,7 @@ const NoteTitle = ({
       onClick={onStartEdit}
       data-no-drag
       data-testid={`brain-note-${note.id}-add-title`}
-      className="self-start font-mono text-[9px] uppercase tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
+      className="self-start font-mono text-[9px] tracking-wider text-ink-4 opacity-0 hover:text-ink-2 group-hover:opacity-100"
     >
       {t('brainSpace.note.addTitleCta')}
     </button>
@@ -590,7 +590,7 @@ const ImageCardEmpty = ({ note, onAddImages }: ImageCardEmptyProps) => {
           className="flex flex-1 flex-col items-center justify-center gap-1.5 border border-dashed border-rule bg-paper-2 py-6 text-ink-4 hover:border-ink hover:text-ink-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
         >
           <ImagePlus className="h-5 w-5" />
-          <span className="font-mono text-[10px] uppercase tracking-wider">
+          <span className="font-mono text-[10px] tracking-wider">
             {t('brainSpace.note.addPictureCta')}
           </span>
         </button>

@@ -11,7 +11,7 @@ export const ComingSoonBadge = ({ className }: ComingSoonBadgeProps) => {
     <span
       data-testid="coming-soon-badge"
       className={cn(
-        'inline-block bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3',
+        'inline-block bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] tracking-wider text-ink-3',
         className,
       )}
     >

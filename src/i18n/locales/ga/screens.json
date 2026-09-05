@@ -35,8 +35,8 @@
   "settings": {
     "back": "ar ais",
     "windowTitle": "lotem · socruithe",
-    "breadcrumb": "SOCRUITHE UILÍOCHA",
-    "shellSubtitle": "SOCRUITHE UILÍOCHA",
+    "breadcrumb": "Socruithe Uilíocha",
+    "shellSubtitle": "Socruithe Uilíocha",
     "comingSoonBadge": "ag teacht go luath",
     "helpAria": "Cad é seo?",
     "groups": {
@@ -415,11 +415,11 @@
       "historyTitle": "Sioncanna le déanaí",
       "historyEmpty": "Gan sioncanna fós.",
       "columns": {
-        "when": "CATHAIN",
-        "space": "SPÁS",
-        "kind": "CINEÁL",
-        "size": "MÉID",
-        "status": "STÁDAS"
+        "when": "Cathain",
+        "space": "Spás",
+        "kind": "Cineál",
+        "size": "Méid",
+        "status": "Stádas"
       },
       "kind": {
         "auto": "uathoibríoch",
@@ -431,8 +431,8 @@
       }
     },
     "space": {
-      "breadcrumb": "SPÁS · SOCRUITHE",
-      "shellSubtitle": "SOCRUITHE SPÁIS",
+      "breadcrumb": "Spás · Socruithe",
+      "shellSubtitle": "Socruithe Spáis",
       "loading": "Spás á luchtú…",
       "groups": {
         "thisSpace": "An spás seo",
@@ -545,9 +545,9 @@
         "historyTitle": "Stair",
         "empty": "Gan pictiúir-ghrianghraif fós — cruthaigh ceann le + pictiúr-ghrianghraf anois.",
         "columns": {
-          "when": "CATHAIN",
-          "kind": "CINEÁL",
-          "size": "MÉID",
+          "when": "Cathain",
+          "kind": "Cineál",
+          "size": "Méid",
           "actions": ""
         },
         "kind": {
@@ -600,7 +600,7 @@
     "goHome": "Téigh abhaile"
   },
   "templates": {
-    "crumb": "01 — CINEÁL SEOMRA",
+    "crumb": "01 — Cineál Seomra",
     "headingMain": "Cén cineál spáis",
     "headingAccent": "atá tú ag tosú?",
     "chooseLegend": "Roghnaigh teimpléad",
@@ -683,8 +683,8 @@
     "mobileWarning": "Teastaíonn scáileán níos mó ón radharc roinnte.",
     "mobileNote": "Oscail an doiciméad seo i mód scríbhneoireachta ina ionad sin.",
     "openInWrite": "Oscail in Write →",
-    "leftPrefix": "CLIÉ —",
-    "rightPrefix": "DEAS —",
+    "leftPrefix": "Clié —",
+    "rightPrefix": "Deas —",
     "rightPaneAria": "Doiciméad phána deis",
     "noOtherDocs": "(gan doiciméid eile)",
     "brainSpaceOption": "Brain space",
@@ -707,15 +707,15 @@
     "add": "+ cuir leis",
     "cancel": "× cealaigh",
     "columns": {
-      "tag": "CLIB",
-      "authors": "ÚDAIR",
-      "title": "TEIDEAL",
-      "year": "BLIAIN",
-      "type": "CINEÁL",
-      "used": "ÚSÁIDTE"
+      "tag": "Clib",
+      "authors": "Údair",
+      "title": "Teideal",
+      "year": "Bliain",
+      "type": "Cineál",
+      "used": "Úsáidte"
     },
-    "style": "STÍL — CHICAGO (ÚDAR-DÁTA)",
-    "exportBib": "ONNMHAIRIGH MAR .BIB",
+    "style": "Stíl — Chicago (Údar-dáta)",
+    "exportBib": "Onnmhairigh Mar .BIB",
     "summary": "{{filtered}} Á TAISPEÁINT · {{shown}} AR AN LEATHANACH SEO",
     "prevPage": "Leathanach roimhe",
     "nextPage": "An chéad leathanach eile",

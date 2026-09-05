@@ -5,8 +5,8 @@
   "sidebar": {
     "landmarkLabel": "Wāhi",
     "navLabel": "Ngā tuhinga",
-    "shared": "TIRINGA",
-    "private": "MUNA · Ā-ROHE",
+    "shared": "Tiringa",
+    "private": "Muna · Ā-rohe",
     "subtitleWithAge": "{{base}} · {{age}}",
     "ageNew": "hou",
     "ageDays": "{{count}}r",
@@ -30,8 +30,8 @@
     "theme": "Tāhuhu",
     "exitFocus": "Puta i te aratau arotahi",
     "enterFocus": "Tomokia te aratau arotahi",
-    "normal": "ARATAU",
-    "focus": "AROTAHI",
+    "normal": "Aratau",
+    "focus": "Arotahi",
     "focusTitleNormal": "Aratau (⌘\\)",
     "focusTitleFocus": "Arotahi (⌘\\)",
     "findInDoc": "Kimi i te tuhinga",
@@ -115,7 +115,7 @@
     "tourCheckmark": "kua oti"
   },
   "spaceMenu": {
-    "thisSpace": "TĒNEI WĀHI",
+    "thisSpace": "Tēnei Wāhi",
     "rename": "Whakaingoa anō",
     "settings": "Tautuhinga",
     "backups": "Tāpiri me te hītori",
@@ -129,18 +129,18 @@
     "expand": "Whākī kaitirotiro",
     "collapse": "Whakaiti kaitirotiro",
     "tabs": {
-      "outline": "WHAKARĀPOPOTO",
-      "info": "MŌHIO",
-      "history": "HĪTORI",
-      "actions": "MAHI"
+      "outline": "Whakarāpopoto",
+      "info": "Mōhio",
+      "history": "Hītori",
+      "actions": "Mahi"
     },
     "outline": {
-      "title": "WHAKARĀPOPOTO",
+      "title": "Whakarāpopoto",
       "sectionSummary": "{{count}} WĀHANGA",
       "empty": "Kāore anō he taitara. Tāpiria ngā taitara ki te tuhinga hei hanga i tōna āhua."
     },
     "info": {
-      "title": "MŌHIO",
+      "title": "Mōhio",
       "words": "Ngā kupu",
       "characters": "Ngā pūāhua",
       "updated": "Whakahōutia",
@@ -165,8 +165,8 @@
       "unlock": "Whakawātea hei whakatika"
     },
     "history": {
-      "title": "NGĀ PUKAPUKA",
-      "now": "INĀIANEI",
+      "title": "Ngā Pukapuka",
+      "now": "Ināianei",
       "full": "hītori pukapuka katoa →",
       "empty": "Kāore anō he pukapuka. Ka tiakina ngā pukapuka aunoa i a koe e tuhi ana.",
       "summary": "{{count}} pukapuka",
@@ -186,7 +186,7 @@
       "ageDays": "{{count}}r i mua"
     },
     "actions": {
-      "label": "MAHI TUHINGA",
+      "label": "Mahi Tuhinga",
       "rename": "Whakaingoa anō",
       "move": "Nuku ki te wāhanga…",
       "export": "Kawe atu tēnei tuhinga…",
