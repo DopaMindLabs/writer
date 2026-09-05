@@ -27,6 +27,11 @@ Select text and use the floating toolbar, or use the keyboard:
 - **Bold** — the bold shortcut
 - *Italic* — the italic shortcut
 
+## Inline `code` spans {#inline-code}
+
+Wrap a fragment in backticks to mark it as code — useful for file names,
+shortcuts and anything you want kept literal.
+
 ## Headings and structure
 
 Headings define the document **outline** shown in the inspector. Use them to

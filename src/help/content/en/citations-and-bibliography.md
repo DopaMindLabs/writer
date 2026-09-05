@@ -16,6 +16,16 @@ Paste or import BibTeX and the entries are added to the space's library. The
 parser reads standard BibTeX fields and **diverse entry types**, and reports how
 many were added versus skipped as **duplicates**.
 
+A single entry looks like this:
+
+```bibtex
+@article{fitts1954,
+  author = {Fitts, Paul M.},
+  title  = {The information capacity of the human motor system},
+  year   = {1954}
+}
+```
+
 ## Managing the library
 
 - Browse and **search** entries in the citations pane; a **clear** button
