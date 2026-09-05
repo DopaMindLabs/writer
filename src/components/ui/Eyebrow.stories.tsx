@@ -24,11 +24,20 @@ export const Ink2: Story = { args: { tone: 'ink2', children: 'strong tone' } };
 export const Ink4: Story = { args: { tone: 'ink4', children: 'micro-meta' } };
 export const Ink: Story = { args: { tone: 'ink', children: 'full strength' } };
 
-/** `inherit` names no colour, so the surrounding element owns it. */
+/**
+ * `inherit` names no colour, so the surrounding element owns it — for a label
+ * whose colour expresses a parent state. Both rows below use the same tone;
+ * only the parent differs.
+ */
 export const InheritsParentColour: Story = {
   render: () => (
-    <div className="text-danger">
-      <Eyebrow tone="inherit">owned by the parent</Eyebrow>
+    <div className="flex flex-col gap-2">
+      <div className="text-ink">
+        <Eyebrow tone="inherit">active tab</Eyebrow>
+      </div>
+      <div className="text-ink-3">
+        <Eyebrow tone="inherit">inactive tab</Eyebrow>
+      </div>
     </div>
   ),
 };

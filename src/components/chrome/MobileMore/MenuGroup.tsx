@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Eyebrow } from '@/components/ui/Eyebrow';
+import { SectionLabel } from '@/components/ui/SectionLabel';
 
 export const MenuGroup = ({
   label,
@@ -9,9 +9,9 @@ export const MenuGroup = ({
   children: ReactNode;
 }) => (
   <div className="mb-3 last:mb-0">
-    <Eyebrow size={9} tone="ink4">
+    <SectionLabel size={9} tone="ink4">
       {label}
-    </Eyebrow>
+    </SectionLabel>
     <ul className="mt-1 flex flex-col">{children}</ul>
   </div>
 );

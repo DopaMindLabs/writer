@@ -20,6 +20,7 @@ import {
 import { getHelpDoc } from '@/lib/help/content';
 import { HelpArticle } from '@/components/help/HelpArticle';
 import { HelpSearch } from '@/components/help/HelpSearch';
+import { SectionLabel } from '@/components/ui/SectionLabel';
 
 const OVERVIEW_ID = 'overview';
 
@@ -33,7 +34,7 @@ const CategoryCard = ({ category, locale }: CategoryCardProps) => {
   const articles = getArticlesByCategory(category.id);
   return (
     <Card className="p-4">
-      <Eyebrow>{t(`categories.${category.id}`)}</Eyebrow>
+      <SectionLabel>{t(`categories.${category.id}`)}</SectionLabel>
       <ul className="mt-2 space-y-1">
         {articles.map((article) => {
           const doc = getHelpDoc(article.slug, locale);

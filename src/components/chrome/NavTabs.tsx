@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Eyebrow } from '@/components/ui/Eyebrow';
+import { SectionLabel } from '@/components/ui/SectionLabel';
 
 export interface NavTabDef {
   id: string;
@@ -77,14 +77,14 @@ export const NavTabs = ({ groups, active, onSelect, label = 'Settings sections' 
       >
         {groups.map((g, gi) => (
           <div key={gi} className="mb-1.5 last:mb-0">
-            <Eyebrow
+            <SectionLabel
               size={9}
               tone="ink4"
               data-testid={`settings-tabs-group-${String(gi)}`}
               className="px-6 pb-1 pt-2.5"
             >
               {g.label}
-            </Eyebrow>
+            </SectionLabel>
             <ul>
               {g.tabs.map((tab) => (
                 <li key={tab.id}>
