@@ -6,6 +6,7 @@ const { applyDevBootParams } = await import('./devBootParams');
 const { resetAndReseed } = await import('@/db/seed');
 const { keyMismatchState } = await import('@/lib/cloud/crypto/keyMismatch');
 const { keylessLockState } = await import('@/lib/cloud/crypto/keylessLock');
+const { pwaUpdateState } = await import('@/lib/pwa/updateState');
 
 describe('applyDevBootParams', () => {
   beforeEach(() => {
@@ -17,6 +18,7 @@ describe('applyDevBootParams', () => {
     vi.unstubAllEnvs();
     keyMismatchState.set(false);
     keylessLockState.set(false);
+    pwaUpdateState.set(false);
   });
 
   it('strips the reseed param but preserves the hash route', async () => {
@@ -41,6 +43,14 @@ describe('applyDevBootParams', () => {
     expect(window.location.search).not.toContain('cloud-keyless');
     expect(window.location.hash).toBe('#/help');
     expect(keylessLockState.current()).toBe(true);
+  });
+
+  it('forces the update banner via pwa-update and preserves the hash', async () => {
+    window.history.replaceState({}, '', '/?pwa-update=1#/help');
+    await applyDevBootParams();
+    expect(window.location.search).not.toContain('pwa-update');
+    expect(window.location.hash).toBe('#/help');
+    expect(pwaUpdateState.current()).toBe(true);
   });
 
   it('is a no-op outside dev/e2e builds', async () => {

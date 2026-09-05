@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import type { SyncCoordinator } from '@/lib/syncProviders/coordinator';
 import { startWriterSync } from '@/lib/writerSync/startWriterSync';
 import { applyDevBootParams } from '@/lib/boot/devBootParams';
+import { registerPwa } from '@/lib/pwa/registerPwa';
+import { requestPersistentStorage } from '@/lib/pwa/persistentStorage';
 import { resetAndReseed } from '@/db/seed';
 
 export interface AppBootState {
@@ -27,6 +29,10 @@ export const useAppBoot = (coordinator?: SyncCoordinator): AppBootState => {
     let cancelled = false;
     let stopSession: (() => void) | null = null;
     const run = async () => {
+      // Prompt-based service-worker registration and a silent bid for storage
+      // persistence; both no-op where unsupported and block nothing below.
+      registerPwa();
+      void requestPersistentStorage();
       stopSession = await startWriterSync(coordinator);
       await applyDevBootParams();
     };

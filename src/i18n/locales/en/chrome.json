@@ -269,5 +269,10 @@
     "placeholder": "Name this version (optional)",
     "save": "Save version",
     "cancel": "Cancel"
+  },
+  "pwaUpdate": {
+    "title": "A new version is available",
+    "body": "Reload to switch to the latest version. Your writing stays on this device and is not affected.",
+    "action": "Reload"
   }
 }

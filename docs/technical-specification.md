@@ -18,7 +18,7 @@
 
 **Who it's for.** Writers working on fiction, research, essays, or journals — including researchers who need to manage references.
 
-**Status.** Alpha. All data is stored locally in IndexedDB; there is no cloud sync. Clearing browser data deletes the user's work.
+**Status.** Alpha. All data is stored locally in IndexedDB; there is no cloud sync. Clearing browser data deletes the user's work. The app is an installable PWA: the shell is cached by a service worker, so the app loads and works fully offline, with updates applied only on user confirmation.
 
 **Tech stack.** React 19, Vite, TypeScript, Lexical (editor), Dexie (IndexedDB), Zustand (state), Tailwind, Radix UI primitives, Driver.js (tours), i18next (i18n).
 
@@ -46,6 +46,7 @@
 | 12 | **Theming** | Four themes: light, dark, high-contrast light, high-contrast dark. Choice persists in `localStorage`. |
 | 13 | **Tours / onboarding** | Driver.js guided tours; auto-trigger on first visit; replay from help menu; per-tour completion tracked in `localStorage`. |
 | 14 | **i18n** | i18next scaffolding (currently English-only; namespaces: `common`, `chrome`, `screens`, `app`, `templates`). |
+| 15 | **Install & offline (PWA)** | Installable progressive web app: manifest + icons, service-worker precache of the app shell (works fully offline), prompt-based updates via a global banner, and a silent persistent-storage request with a status row in Settings → Export / import. |
 
 ---
 
@@ -599,6 +600,18 @@ A disabled `↑ restore from file · soon` hint sits beside the snapshot button 
 - [src/screens/SpaceSettings.tsx](src/screens/SpaceSettings.tsx) — `BackupsTab` component and the new `'backups'` entry in `TAB_IDS`.
 
 *Covered by:* `lexicalToMarkdown.test.ts`, `buildSpaceMarkdownZip.test.ts`, `createSpaceBackup.test.ts`, `SpaceSettings.test.tsx` (Backups tab tests).
+
+### 4.16 Install & offline (PWA)
+
+The app is an installable progressive web app.
+
+- **Manifest & icons.** A web app manifest (`name: LIpsum Writer`, `display: standalone`, relative `start_url`/`scope`/`id` so both deploy bases work) with path-only SVG icons using the upright Source Serif 4 `L`: standard, maskable, and monochrome variants. PNG fallbacks are provided at 192/512, 512 maskable, and 180 apple-touch sizes. `theme-color` metas follow the light/dark colour scheme (paper/ink tokens).
+- **Offline shell.** A generated service worker (Workbox `generateSW` via `vite-plugin-pwa`) precaches the full build — scripts, styles, fonts, icons — with an `index.html` navigation fallback. Data was already local (IndexedDB), so once the shell is cached the whole app works offline. No runtime caching rules exist: Dexie Cloud traffic always passes through to the network.
+- **Prompted updates.** `registerType: 'prompt'` — a new build is never activated silently. When an update is waiting, a global `InlineBanner` (`role="status"`, testid `pwa-update-banner`) appears above every route: "A new version is available" with a **Reload** action. Only that action activates the waiting worker and reloads the tab. The banner is driven by the `pwaUpdateState` signal; the dev/E2E boot param `?pwa-update=1` forces it headlessly (stripped from the URL, hash route preserved).
+- **Storage protection.** Boot silently calls `navigator.storage.persist()`. The outcome is reported read-only in **Settings → Export / import → Storage protection** as *Protected* / *Best effort* / *Not supported in this browser* (testid `settings-storage-protection`).
+- **Boot wiring.** `useAppBoot` registers the service worker and requests persistence before the cloud session starts; both are no-ops where unsupported and in dev builds.
+
+*Covered by:* `updateState.test.ts`, `registerPwa.test.ts`, `persistentStorage.test.ts`, `usePwaUpdate.test.ts`, `useStoragePersistence.test.ts`, `useAppBoot.test.ts`, `PwaUpdateBanner.test.tsx`, `RootLayout.test.tsx`, `StoragePersistenceRow.test.tsx`, `ExportImportTab.test.tsx`, `devBootParams.test.ts`; e2e: `pwa.spec.ts`, `pwa-update-banner.spec.ts`.
 
 ---
 

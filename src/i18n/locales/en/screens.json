@@ -293,7 +293,12 @@
       "importFailed": "Import failed: {{message}}",
       "comingSoonLabel": "More formats",
       "comingSoonHint": "Bulk export and import from Markdown folders or Obsidian vaults.",
-      "comingSoonTooltip": "Planned — not available yet."
+      "comingSoonTooltip": "Planned — not available yet.",
+      "storageLabel": "Storage protection",
+      "storageHint": "Whether the browser has agreed to keep this app's data safe from automatic storage clean-up. Requested automatically; installing the app makes browsers far more likely to grant it.",
+      "storagePersistent": "Protected",
+      "storageBestEffort": "Best effort",
+      "storageUnsupported": "Not supported in this browser"
     },
     "data": {
       "title": "Your data",

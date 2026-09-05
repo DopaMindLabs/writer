@@ -10,11 +10,19 @@ vi.mock('@/lib/boot/devBootParams', () => ({
 vi.mock('@/db/seed', () => ({
   resetAndReseed: vi.fn(),
 }));
+vi.mock('@/lib/pwa/registerPwa', () => ({
+  registerPwa: vi.fn(),
+}));
+vi.mock('@/lib/pwa/persistentStorage', () => ({
+  requestPersistentStorage: vi.fn(),
+}));
 
 const { useAppBoot } = await import('./useAppBoot');
 const { startCloudSession } = await import('@/lib/cloud/cloudClient');
 const { applyDevBootParams } = await import('@/lib/boot/devBootParams');
 const { resetAndReseed } = await import('@/db/seed');
+const { registerPwa } = await import('@/lib/pwa/registerPwa');
+const { requestPersistentStorage } = await import('@/lib/pwa/persistentStorage');
 
 describe('useAppBoot', () => {
   beforeEach(() => {
@@ -24,6 +32,9 @@ describe('useAppBoot', () => {
     vi.mocked(startCloudSession).mockResolvedValue(() => undefined);
     vi.mocked(applyDevBootParams).mockResolvedValue(undefined);
     vi.mocked(resetAndReseed).mockResolvedValue(undefined);
+    vi.mocked(registerPwa).mockReset();
+    vi.mocked(requestPersistentStorage).mockReset();
+    vi.mocked(requestPersistentStorage).mockResolvedValue(false);
   });
 
   it('starts the cloud session and applies dev params, then becomes ready', async () => {
@@ -35,6 +46,15 @@ describe('useAppBoot', () => {
     expect(startCloudSession).toHaveBeenCalledTimes(1);
     expect(applyDevBootParams).toHaveBeenCalledTimes(1);
     expect(result.current.error).toBeNull();
+  });
+
+  it('registers the service worker and requests storage persistence at boot', async () => {
+    const { result } = renderHook(() => useAppBoot());
+    await waitFor(() => {
+      expect(result.current.ready).toBe(true);
+    });
+    expect(registerPwa).toHaveBeenCalledTimes(1);
+    expect(requestPersistentStorage).toHaveBeenCalledTimes(1);
   });
 
   it('surfaces a boot error when the cloud session fails to start', async () => {
