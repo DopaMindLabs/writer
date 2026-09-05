@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 export const PlaceholderToggle = ({ on = false }: { on?: boolean }) => {
   return (
@@ -147,9 +148,9 @@ export const PlaceholderThemeCards = () => {
                 {name}
               </span>
               <span className="flex-1" />
-              <span className="font-mono text-[9px] uppercase tracking-wider opacity-60">
-                {sub}
-              </span>
+              <Eyebrow asChild size={9} tone="inherit">
+                <span className="opacity-60">{sub}</span>
+              </Eyebrow>
             </div>
             {on && (
               <span
@@ -189,9 +190,7 @@ export const PlaceholderSwatchRow = ({
       />
       <div className="min-w-0 flex-1">
         <div className="font-serif text-[14px] font-medium text-ink">{name}</div>
-        <div className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
-          {color.toUpperCase()}
-        </div>
+        <Eyebrow>{color.toUpperCase()}</Eyebrow>
       </div>
       <span className="font-sans text-[11px] text-ink-3">{rename}</span>
       <span className="font-sans text-[11px] text-ink-3">{tune}</span>

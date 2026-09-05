@@ -47,6 +47,7 @@ import { ImageLightbox, type LightboxImage } from '@/components/ui/ImageLightbox
 import { TextField } from '@/components/ui/TextField';
 import { TextArea } from '@/components/ui/TextArea';
 import { cn } from '@/lib/utils';
+import { eyebrowRecipe } from '@/components/ui/Eyebrow.recipe';
 
 const MIN_W = 120;
 const MIN_H = 60;
@@ -351,7 +352,12 @@ const NoteHeader = ({
 }: NoteHeaderProps) => {
   const { t } = useTranslation('screens');
   return (
-    <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-4">
+    <div
+      className={cn(
+        eyebrowRecipe({ tone: 'ink4' }),
+        'flex items-center gap-1.5',
+      )}
+    >
       <span data-testid={`brain-note-${note.id}-kind`}>
         {NOTE_KIND_LABEL[note.kind]}
       </span>

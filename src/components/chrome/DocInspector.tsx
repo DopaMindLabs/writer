@@ -36,6 +36,7 @@ import {
   formatRevisionAge,
   formatRevisionSubtitle,
 } from './revisionDisplay';
+import { eyebrowRecipe } from '@/components/ui/Eyebrow.recipe';
 
 const TABS: InspectorSection[] = ['outline', 'info', 'history', 'actions'];
 
@@ -112,7 +113,7 @@ export const DocInspector = ({
       <div className="flex items-center gap-2 border-b border-rule px-4 py-3">
         <span
           data-testid="doc-inspector-name"
-          className="flex-1 truncate font-mono text-[9px] uppercase tracking-wider text-ink-3"
+          className={cn(eyebrowRecipe({ size: 9 }), 'flex-1 truncate')}
         >
           {docName || '—'}
         </span>
@@ -216,9 +217,9 @@ const formatCount = (count: number, limit: number | undefined): string =>
     : count.toLocaleString();
 
 const InfoLabel = ({ children }: { children: ReactNode }) => (
-  <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
-    {children}
-  </span>
+  <Eyebrow asChild>
+    <span>{children}</span>
+  </Eyebrow>
 );
 
 const MetaRow = ({
@@ -436,9 +437,9 @@ const InfoPane = ({ docId, readOnly }: { docId: string; readOnly: boolean }) => 
 
   return (
     <div data-testid="doc-inspector-info" className="px-4 py-3.5">
-      <div className="mb-2.5 font-mono text-[9px] uppercase tracking-wider text-ink-4">
+      <Eyebrow size={9} tone="ink4" className="mb-2.5">
         {t('inspector.info.title')}
-      </div>
+      </Eyebrow>
       <MetaRow
         testId="inspector-row-words"
         label={t('inspector.info.words')}

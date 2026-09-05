@@ -33,6 +33,8 @@ import { cn } from '@/lib/utils';
 import { isLockedStatus } from '@/lib/docInspector/status';
 import { routes } from '@/lib/routes';
 import { Select, type SelectOption } from '@/components/ui/Select';
+import { Eyebrow } from '@/components/ui/Eyebrow';
+import { eyebrowRecipe } from '@/components/ui/Eyebrow.recipe';
 
 const BRAIN_SPACE_PANE = 'dump';
 const CITATIONS_PANE = 'citations';
@@ -216,9 +218,9 @@ const SplitRightHeader = ({
   onPickRight: (e: ChangeEvent<HTMLSelectElement>) => void;
 }) => (
   <>
-    <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
-      RIGHT —
-    </span>
+    <Eyebrow asChild>
+      <span>RIGHT —</span>
+    </Eyebrow>
     <Select
       data-testid="split-right-pane-select"
       variant="bare"
@@ -526,7 +528,12 @@ const SplitPanes = ({
         className="flex min-w-0 flex-col"
         style={{ flexBasis: `${String(pct)}%` }}
       >
-        <div className="flex items-center justify-between border-b border-rule px-6 py-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3">
+        <div
+          className={cn(
+            eyebrowRecipe(),
+            'flex items-center justify-between border-b border-rule px-6 py-1.5',
+          )}
+        >
           {leftHeader}
         </div>
         <div className="flex-1 overflow-hidden">{leftContent}</div>

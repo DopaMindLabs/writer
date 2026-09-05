@@ -13,6 +13,7 @@ import { APP_VERSION_LABEL } from '@/lib/version';
 import { cn } from '@/lib/utils';
 import { useSyncFolder } from '@/hooks/useSyncFolder';
 import { useAutoTour } from '@/tours';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 export const HomeScreen = () => {
   const { t } = useTranslation(['screens', 'common']);
@@ -46,9 +47,7 @@ export const HomeScreen = () => {
         className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 py-10 md:px-12 md:py-16"
       >
         <ReleaseNoticeBanner />
-        <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
-          {t('home.subtitle')}
-        </div>
+        <Eyebrow className="mb-2">{t('home.subtitle')}</Eyebrow>
         <TypographyH1>
           {t('home.titleMain')}{' '}
           <span className="italic font-light text-ink-2">{t('home.titleAccent')}</span>

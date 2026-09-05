@@ -37,7 +37,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               Fiction
             </div>
             <div
-              class="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 mt-0.5"
             >
               Manuscript · World · Workshop
             </div>
@@ -104,7 +104,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               Evidence
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
             >
               #FFF3A8
             </div>
@@ -137,7 +137,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               To revise
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
             >
               #FFD6E0
             </div>
@@ -170,7 +170,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               Reference
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
             >
               #CFE3FA
             </div>
@@ -203,7 +203,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               Quote
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
             >
               #D6EBCF
             </div>
@@ -236,7 +236,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               Loose end
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
             >
               #E8E8E8
             </div>
@@ -421,7 +421,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               </div>
             </div>
             <span
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
             >
               owner
             </span>
@@ -449,7 +449,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               </div>
             </div>
             <span
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
             >
               editor
             </span>
@@ -477,7 +477,7 @@ exports[`SpaceSettingsPlaceholders > snapshot > should match the snapshot of eve
               </div>
             </div>
             <span
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
             >
               viewer
             </span>

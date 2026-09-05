@@ -196,7 +196,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
                 class="flex-1"
               />
               <span
-                class="font-mono text-[9px] uppercase tracking-wider opacity-60"
+                class="font-mono uppercase tracking-[0.11em] text-[9px] opacity-60"
               >
                 default
               </span>
@@ -237,7 +237,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
                 class="flex-1"
               />
               <span
-                class="font-mono text-[9px] uppercase tracking-wider opacity-60"
+                class="font-mono uppercase tracking-[0.11em] text-[9px] opacity-60"
               >
                 neutral
               </span>
@@ -272,7 +272,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
                 class="flex-1"
               />
               <span
-                class="font-mono text-[9px] uppercase tracking-wider opacity-60"
+                class="font-mono uppercase tracking-[0.11em] text-[9px] opacity-60"
               >
                 dark
               </span>
@@ -816,7 +816,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
             Fiction
           </div>
           <div
-            class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 mt-1"
           >
             Manuscript · World · Workshop
           </div>
@@ -830,7 +830,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
             Research
           </div>
           <div
-            class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 mt-1"
           >
             Sources · Notes · Drafts
           </div>
@@ -844,7 +844,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
             Journal
           </div>
           <div
-            class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 mt-1"
           >
             Daily · Weekly · Reflections
           </div>
@@ -858,7 +858,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
             Essay
           </div>
           <div
-            class="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
+            class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 mt-1"
           >
             Outline · Drafts · Final
           </div>
@@ -901,7 +901,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
               Evidence
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
             >
               #FFF3A8
             </div>
@@ -934,7 +934,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
               To revise
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
             >
               #FFD6E0
             </div>
@@ -967,7 +967,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
               Reference
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
             >
               #CFE3FA
             </div>
@@ -1000,7 +1000,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
               Quote
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
             >
               #D6EBCF
             </div>
@@ -1033,7 +1033,7 @@ exports[`GlobalSettingsPlaceholders > snapshot > should match the snapshot of ev
               Loose end
             </div>
             <div
-              class="font-mono text-[10px] uppercase tracking-wider text-ink-3"
+              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
             >
               #E8E8E8
             </div>

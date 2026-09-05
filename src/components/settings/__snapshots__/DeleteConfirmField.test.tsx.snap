@@ -4,7 +4,7 @@ exports[`DeleteConfirmField > snapshot > should match the snapshot for empty and
 <div>
   <div>
     <label
-      class="text-ink-3 font-normal flex flex-col gap-2 font-mono text-[10px] uppercase tracking-wider"
+      class="text-ink-3 font-normal font-mono uppercase tracking-[0.11em] text-[10px] flex flex-col gap-2"
     >
       Type "Novel" to confirm
       <input
@@ -16,7 +16,7 @@ exports[`DeleteConfirmField > snapshot > should match the snapshot for empty and
       />
     </label>
     <label
-      class="text-ink-3 font-normal flex flex-col gap-2 font-mono text-[10px] uppercase tracking-wider"
+      class="text-ink-3 font-normal font-mono uppercase tracking-[0.11em] text-[10px] flex flex-col gap-2"
     >
       Type "Novel" to confirm
       <input

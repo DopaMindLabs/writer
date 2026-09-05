@@ -6,6 +6,7 @@ import {
   PlaceholderInput,
   PlaceholderSwatchRow,
 } from './PlaceholderPrimitives';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 const PALETTE_ITEMS: [string, string][] = [
   ['evidence', '#fff3a8'],
@@ -29,9 +30,9 @@ export const SpaceTemplatePlaceholder = () => {
           <div className="font-serif text-[15px] font-medium text-ink">
             {t('settings.space.template.currentValue')}
           </div>
-          <div className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-3">
+          <Eyebrow className="mt-0.5">
             {t('settings.space.template.currentSub')}
-          </div>
+          </Eyebrow>
         </div>
       </SettingRow>
       <SettingRow
@@ -152,9 +153,9 @@ export const SpaceMembersPlaceholder = () => {
                 <div className="font-serif text-[13px] text-ink">{name}</div>
                 <div className="font-mono text-[10px] text-ink-3">{email}</div>
               </div>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
-                {role}
-              </span>
+              <Eyebrow asChild>
+                <span>{role}</span>
+              </Eyebrow>
             </div>
           ))}
         </div>
