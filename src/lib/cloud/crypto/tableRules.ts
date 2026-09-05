@@ -1,18 +1,38 @@
-import { STORES } from '@/db/stores';
-import { rowEnvelopeTables } from '@/lib/writerSyncIntegration/writerTablePolicy';
+import { CLOUD_STORES, STORES } from '@/db/stores';
+import {
+  journalledTables,
+  rowEnvelopeTables,
+} from '@/lib/writerSyncIntegration/writerTablePolicy';
 
 /**
- * Which tables sync, and which of their fields must stay plaintext. The
- * encrypted-table set derives from the authoritative
+ * Which tables the encryption middleware covers, which of their fields must
+ * stay plaintext, and which tables are domain content. All three derive from
+ * the authoritative
  * {@link import('@/lib/writerSyncIntegration/writerTablePolicy').WRITER_TABLE_POLICIES | table policy}
- * (row-envelope classification), and plaintext fields derive from the
- * {@link STORES} schema, so neither can drift from its source of truth: a field
- * is plaintext iff it is the primary key, an index (indexes must be queryable,
- * so they cross the wire in the clear by design), a cloud-reserved property,
- * routing metadata, or the cipher envelope itself. Everything else top-level is
- * encrypted.
+ * or the {@link STORES} schema, so none can drift from its source of truth: a
+ * field is plaintext iff it is the primary key, an index (indexes must be
+ * queryable, so they cross the wire in the clear by design), a cloud-reserved
+ * property, routing metadata, or the cipher envelope itself. Everything else
+ * top-level is encrypted.
  */
-export const SYNCED_TABLES: readonly string[] = rowEnvelopeTables();
+
+/**
+ * Encryption middleware coverage — every table whose rows are sealed in the row
+ * envelope. Strictly an encryption concept: being in this set says nothing
+ * about whether the provider replicates the table directly or its rows are
+ * user content.
+ */
+export const ROW_ENVELOPE_TABLES: readonly string[] = rowEnvelopeTables();
+
+/**
+ * Domain content with a materialised/journalled lifecycle — the set that
+ * participates in seal-existing-rows, plaintext-content checks, adoption
+ * re-seals and the erase escape hatch. A row-envelope control table (the
+ * account device identity registry) is deliberately *not* content: adopting,
+ * erasing or re-sealing it as though it were a document would rewrite trust
+ * records outside their own authenticated write path.
+ */
+export const CONTENT_TABLES: readonly string[] = journalledTables();
 
 /** The field carrying the encrypted envelope on a sealed row. */
 export const CIPHER_FIELD = '$lipsumCipher';
@@ -46,10 +66,18 @@ const schemaFields = (spec: string): Set<string> => {
 };
 
 export const isEncryptedTable = (table: string): boolean =>
-  SYNCED_TABLES.includes(table);
+  ROW_ENVELOPE_TABLES.includes(table);
+
+/**
+ * The Dexie schema spec for a table, from the base or the cloud-only stores.
+ * Without the cloud lookup a cloud-only row-envelope table would lose its
+ * primary-key classification and seal the key it is addressed by.
+ */
+const schemaSpecFor = (table: string): string | undefined =>
+  STORES[table] ?? CLOUD_STORES[table];
 
 export const plaintextFieldsFor = (table: string): ReadonlySet<string> => {
-  const fields = schemaFields(STORES[table] ?? '');
+  const fields = schemaFields(schemaSpecFor(table) ?? '');
   for (const reserved of CLOUD_RESERVED) fields.add(reserved);
   for (const field of ROUTING_METADATA) fields.add(field);
   return fields;

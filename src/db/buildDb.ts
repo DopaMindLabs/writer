@@ -12,8 +12,8 @@ import { deviceKeyProvider } from '@/lib/cloud/crypto/keyStore';
 import { writerJournalDeps } from '@/lib/writerSyncIntegration/materialization/writerJournalDeps';
 import { createOperationJournalMiddleware } from '@/lib/writerSyncIntegration/materialization/operationJournalMiddleware';
 import {
+  journalledTables,
   localOnlyTables,
-  rowEnvelopeTables,
 } from '@/lib/writerSyncIntegration/writerTablePolicy';
 import { LoremDB } from './LoremDB';
 
@@ -24,12 +24,16 @@ import { LoremDB } from './LoremDB';
  *
  * Two groups compose it: the local-only tables (preferences, backups, sync
  * bookkeeping, the CRDT update log and the operation-protocol receiver state),
- * and — since the frame cutover — the materialised content tables. Writer owns
- * its materialised rows as local projections; what replicates is the
- * `syncOperations` journal of immutable encrypted frames, plus `cloudCrypto`
- * (the passphrase-wrapped escrow) and the addon's own control tables.
+ * and — since the frame cutover — the journalled materialised content tables.
+ * Writer owns its materialised rows as local projections; what replicates is
+ * the `syncOperations` journal of immutable encrypted frames, plus
+ * `cloudCrypto` (the passphrase-wrapped escrow) and the addon's own control
+ * tables. The exclusion is *journalled content*, not "everything row-envelope
+ * encrypted": how a row is protected says nothing about whether the provider
+ * replicates it directly, and a row-envelope-encrypted control table (the
+ * account device identity registry) replicates as authenticated ciphertext.
  */
-const UNSYNCED: readonly string[] = [...localOnlyTables(), ...rowEnvelopeTables()];
+const UNSYNCED: readonly string[] = [...localOnlyTables(), ...journalledTables()];
 
 /**
  * Outbound framing dependencies: keys resolve through the same provider the
