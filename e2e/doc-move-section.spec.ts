@@ -73,3 +73,44 @@ test('ticks the current section and shows an empty state for no matches', async 
   await expect(page.getByRole('option')).toHaveCount(0);
   await expect(page.getByText('No sections found')).toBeVisible();
 });
+
+test('moves a document with the keyboard, without touching the list', async ({
+  page,
+}) => {
+  await createSpaceFromTemplate(page, 'fiction');
+  const docId = await firstDocId(page);
+  await openMoveList(page, docId);
+
+  const search = page.getByTestId(`sidebar-doc-${docId}-move-list-search`);
+  await search.focus();
+
+  // Down twice then up once lands on the second row — proving the active index
+  // moves in both directions rather than only forward.
+  await search.press('ArrowDown');
+  await search.press('ArrowDown');
+  await search.press('ArrowUp');
+  const target = await page
+    .getByRole('option')
+    .nth(1)
+    .textContent();
+  expect(target).toBeTruthy();
+  await search.press('Enter');
+
+  await expect(
+    sectionByLabel(page, String(target).trim()).locator(
+      `[data-testid="sidebar-doc-${docId}"]`,
+    ),
+  ).toBeVisible();
+});
+
+test('leaves the move list open for Escape to close', async ({ page }) => {
+  await createSpaceFromTemplate(page, 'fiction');
+  const docId = await firstDocId(page);
+  await openMoveList(page, docId);
+
+  const search = page.getByTestId(`sidebar-doc-${docId}-move-list-search`);
+  await search.focus();
+  // Escape is deliberately left to bubble so the surrounding menu closes.
+  await search.press('Escape');
+  await expect(search).toBeHidden();
+});
