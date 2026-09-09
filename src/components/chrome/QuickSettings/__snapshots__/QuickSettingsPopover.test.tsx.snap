@@ -15,7 +15,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     </div>
   </div>
   <div
-    class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
+    class="font-mono tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
     data-testid="quick-settings-section-writing"
   >
     Writing
@@ -32,7 +32,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
         Focus mode
       </div>
       <div
-        class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 mt-0.5"
+        class="font-mono tracking-[0.11em] text-[9px] text-ink-4 mt-0.5"
       >
         <kbd
           class="font-mono text-[10px] tracking-wide text-ink-4"
@@ -90,7 +90,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     </div>
   </div>
   <div
-    class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
+    class="font-mono tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
     data-testid="quick-settings-section-settings"
   >
     Settings
@@ -133,7 +133,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     />
   </div>
   <div
-    class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
+    class="font-mono tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
     data-testid="quick-settings-section-appearance"
   >
     Appearance
@@ -211,7 +211,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
         Reading width
       </div>
       <div
-        class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 mt-0.5"
+        class="font-mono tracking-[0.11em] text-[9px] text-ink-4 mt-0.5"
       >
         Per-doc measure
       </div>
@@ -224,7 +224,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
       >
         <button
           aria-pressed="false"
-          class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px] uppercase"
+          class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px]"
           data-testid="quick-settings-width-s"
           type="button"
         >
@@ -232,7 +232,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
         </button>
         <button
           aria-pressed="true"
-          class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper px-2 py-0.5 text-[10px] uppercase"
+          class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-ink bg-ink font-medium text-paper px-2 py-0.5 text-[10px]"
           data-testid="quick-settings-width-m"
           type="button"
         >
@@ -240,7 +240,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
         </button>
         <button
           aria-pressed="false"
-          class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px] uppercase"
+          class="inline-flex items-center justify-center border tracking-[0.01em] transition-colors border-rule bg-paper text-ink hover:border-ink px-2 py-0.5 text-[10px]"
           data-testid="quick-settings-width-l"
           type="button"
         >
@@ -250,7 +250,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     </div>
   </div>
   <div
-    class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
+    class="font-mono tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
     data-testid="quick-settings-section-help-tours"
   >
     Help tour
@@ -419,7 +419,7 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     </kbd>
   </div>
   <div
-    class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
+    class="font-mono tracking-[0.11em] text-[9px] text-ink-4 px-4 pb-1.5 pt-2.5"
     data-testid="quick-settings-section-more"
   >
     More

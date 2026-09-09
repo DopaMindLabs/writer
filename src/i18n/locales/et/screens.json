@@ -701,7 +701,7 @@
   "citations": {
     "title": "Tsitaadid",
     "breadcrumb": "Allikad / ",
-    "entries": "{{count}} KIRJET",
+    "entries": "{{count}} kirjet",
     "searchPlaceholder": "autorid, sildid, aasta…",
     "upload": "↑ lae üles .bib / .ris",
     "add": "+ lisa",
@@ -716,7 +716,7 @@
     },
     "style": "Stiil — Chicago (Autor-kuupäev)",
     "exportBib": "Ekspordi .Bib-ina",
-    "summary": "{{filtered}} KUVATUD · {{shown}} SELLEL LEHEL",
+    "summary": "{{filtered}} kuvatud · {{shown}} sellel lehel",
     "prevPage": "Eelmine leht",
     "nextPage": "Järgmine leht",
     "empty": "tsitaate pole veel",

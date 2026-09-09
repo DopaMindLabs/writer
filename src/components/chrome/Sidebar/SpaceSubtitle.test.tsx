@@ -8,8 +8,8 @@ describe('SpaceSubtitle', () => {
     renderWithProviders(<SpaceSubtitle space={undefined} />);
     const subtitle = screen.getByTestId('sidebar-space-subtitle');
     // No space means no creation date, so no age is appended to the label.
-    expect(subtitle).toHaveTextContent('PRIVATE · LOCAL');
-    expect(subtitle.textContent).toBe('PRIVATE · LOCAL');
+    expect(subtitle).toHaveTextContent('Private · Local');
+    expect(subtitle.textContent).toBe('Private · Local');
   });
 
   it('appends the age to the private label for a freshly created private space', () => {
@@ -20,7 +20,7 @@ describe('SpaceSubtitle', () => {
     };
     renderWithProviders(<SpaceSubtitle space={space} />);
     expect(screen.getByTestId('sidebar-space-subtitle')).toHaveTextContent(
-      'PRIVATE · LOCAL · new',
+      'Private · Local · new',
     );
   });
 
@@ -32,7 +32,7 @@ describe('SpaceSubtitle', () => {
     };
     renderWithProviders(<SpaceSubtitle space={space} />);
     expect(screen.getByTestId('sidebar-space-subtitle')).toHaveTextContent(
-      'SHARED · new',
+      'Shared · new',
     );
   });
 });

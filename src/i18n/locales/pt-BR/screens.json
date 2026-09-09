@@ -623,7 +623,7 @@
   "citations": {
     "title": "Citações",
     "breadcrumb": "Fontes / ",
-    "entries": "{{count}} ENTRADAS",
+    "entries": "{{count}} entradas",
     "searchPlaceholder": "autores, tags, ano…",
     "upload": "↑ enviar .bib / .ris",
     "add": "+ adicionar",
@@ -631,7 +631,7 @@
     "columns": { "tag": "Tag", "authors": "Autores", "title": "Título", "year": "Ano", "type": "Tipo", "used": "Usos" },
     "style": "Estilo — Chicago (Autor-data)",
     "exportBib": "Exportar Como .BIB",
-    "summary": "{{filtered}} EXIBIDAS · {{shown}} NESTA PÁGINA",
+    "summary": "{{filtered}} exibidas · {{shown}} nesta página",
     "prevPage": "Página anterior",
     "nextPage": "Próxima página",
     "empty": "sem citações ainda",

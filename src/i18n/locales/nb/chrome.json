@@ -136,7 +136,7 @@
     },
     "outline": {
       "title": "Disposisjon",
-      "sectionSummary": "{{count}} SEKSJONER",
+      "sectionSummary": "{{count}} seksjoner",
       "empty": "Ingen overskrifter ennå. Legg til overskrifter i dokumentet for å bygge dets disposisjon."
     },
     "info": {

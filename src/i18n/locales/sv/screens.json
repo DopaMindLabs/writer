@@ -701,7 +701,7 @@
   "citations": {
     "title": "Citat",
     "breadcrumb": "Källor / ",
-    "entries": "{{count}} POSTER",
+    "entries": "{{count}} poster",
     "searchPlaceholder": "författare, koder, år…",
     "upload": "↑ ladda upp .bib / .ris",
     "add": "+ lägg till",
@@ -716,7 +716,7 @@
     },
     "style": "Stil — Chicago (Författare-datum)",
     "exportBib": "Exportera Som .BIB",
-    "summary": "{{filtered}} VISADE · {{shown}} PÅ DEN HÄR SIDAN",
+    "summary": "{{filtered}} visade · {{shown}} på den här sidan",
     "prevPage": "Föregående sida",
     "nextPage": "Nästa sida",
     "empty": "inga citat ännu",

@@ -45,7 +45,7 @@ test('outline pane lists the document headings as they are written', async ({
   const pane = page.getByTestId('doc-inspector-pane-outline');
   await expect(pane).toBeVisible();
   await expect(pane.getByTestId('outline-empty')).toBeVisible();
-  await expect(pane).toContainText('0 SECTIONS');
+  await expect(pane).toContainText('0 sections');
 
   const body = page.getByLabel('Document body');
   await body.click();
@@ -60,7 +60,7 @@ test('outline pane lists the document headings as they are written', async ({
   await expect(rows.nth(0)).toHaveAttribute('data-level', '1');
   await expect(rows.nth(1)).toContainText('Counting');
   await expect(rows.nth(1)).toHaveAttribute('data-level', '2');
-  await expect(pane).toContainText('2 SECTIONS');
+  await expect(pane).toContainText('2 sections');
   await expect(pane).not.toContainText('Morning prose');
   await expect(pane.getByTestId('outline-empty')).toBeHidden();
 });

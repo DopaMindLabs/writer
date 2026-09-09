@@ -136,7 +136,7 @@
     },
     "outline": {
       "title": "Esquema",
-      "sectionSummary": "{{count}} SECCIONES",
+      "sectionSummary": "{{count}} secciones",
       "empty": "Sin encabezados todavía. Añade encabezados al documento para construir su esquema."
     },
     "info": {

@@ -38,7 +38,7 @@ test('captures a baseline version and lists it in the history pane', async ({
 
   const pane = page.getByTestId('doc-inspector-pane-history');
   await expect(pane.getByText(/baseline/i)).toBeVisible();
-  await expect(pane.getByText(/NOW/)).toBeVisible();
+  await expect(pane.getByText('Now', { exact: true })).toBeVisible();
 });
 
 test('saves a manual version from the history pane', async ({ page }) => {

@@ -92,7 +92,7 @@ exports[`ComingSoonRow > snapshot > should match the snapshot across all variant
           </svg>
         </button>
         <span
-          class="inline-block bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
+          class="inline-block bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] tracking-wider text-ink-3"
           data-testid="coming-soon-badge"
         >
           coming soon
@@ -189,7 +189,7 @@ exports[`ComingSoonRow > snapshot > should match the snapshot across all variant
           </svg>
         </button>
         <span
-          class="inline-block bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-ink-3"
+          class="inline-block bg-paper-2 px-1.5 py-0.5 font-mono text-[9px] tracking-wider text-ink-3"
           data-testid="coming-soon-badge"
         >
           coming soon

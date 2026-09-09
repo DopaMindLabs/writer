@@ -701,7 +701,7 @@
   "citations": {
     "title": "Cytowania",
     "breadcrumb": "Źródła / ",
-    "entries": "{{count}} WPISÓW",
+    "entries": "{{count}} wpisów",
     "searchPlaceholder": "autorzy, etykiety, rok…",
     "upload": "↑ wgraj .bib / .ris",
     "add": "+ dodaj",
@@ -716,7 +716,7 @@
     },
     "style": "Styl — Chicago (Autor-data)",
     "exportBib": "Eksportuj Jako .BIB",
-    "summary": "{{filtered}} WYŚWIETLANYCH · {{shown}} NA TEJ STRONIE",
+    "summary": "{{filtered}} wyświetlanych · {{shown}} na tej stronie",
     "prevPage": "Poprzednia strona",
     "nextPage": "Następna strona",
     "empty": "brak cytowań",

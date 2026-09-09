@@ -701,7 +701,7 @@
   "citations": {
     "title": "Ambato",
     "breadcrumb": "Tushe / ",
-    "entries": "{{count}} BAYANAN",
+    "entries": "{{count}} bayanan",
     "searchPlaceholder": "marubuta, tags, shekara…",
     "upload": "↑ ɗora .bib / .ris",
     "add": "+ ƙara",
@@ -716,7 +716,7 @@
     },
     "style": "Salo — Chicago (Marubuta-kwanan Wata)",
     "exportBib": "Fitar A Matsayin .BIB",
-    "summary": "{{filtered}} ANA NUNA · {{shown}} A WANNAN SHAFI",
+    "summary": "{{filtered}} ana nuna · {{shown}} a wannan shafi",
     "prevPage": "Shafi na baya",
     "nextPage": "Shafi na gaba",
     "empty": "babu ambato tukuna",

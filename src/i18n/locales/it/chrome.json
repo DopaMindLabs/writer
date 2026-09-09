@@ -136,7 +136,7 @@
     },
     "outline": {
       "title": "Indice",
-      "sectionSummary": "{{count}} SEZIONI",
+      "sectionSummary": "{{count}} sezioni",
       "empty": "Nessun titolo ancora. Aggiungi titoli al documento per costruirne la struttura."
     },
     "info": {

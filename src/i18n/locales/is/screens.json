@@ -701,7 +701,7 @@
   "citations": {
     "title": "Heimildir",
     "breadcrumb": "Heimildir / ",
-    "entries": "{{count}} FÆRSLUR",
+    "entries": "{{count}} færslur",
     "searchPlaceholder": "höfundar, merki, ár…",
     "upload": "↑ hlaða upp .bib / .ris",
     "add": "+ bæta við",
@@ -716,7 +716,7 @@
     },
     "style": "Stíll — Chicago (Höfundur-dagsetning)",
     "exportBib": "Flytja Út Sem .BIB",
-    "summary": "{{filtered}} SÝND · {{shown}} Á ÞESSARI SÍÐU",
+    "summary": "{{filtered}} sýnd · {{shown}} á þessari síðu",
     "prevPage": "Fyrri síða",
     "nextPage": "Næsta síða",
     "empty": "engar heimildir enn",

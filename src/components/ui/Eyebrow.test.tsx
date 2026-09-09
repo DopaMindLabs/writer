@@ -23,7 +23,7 @@ describe('Eyebrow', () => {
       </div>,
     );
     const label = screen.getByText('owned by the parent');
-    expect(label).toHaveClass('font-mono', 'uppercase');
+    expect(label).toHaveClass('font-mono');
     expect(label.className).not.toMatch(/\btext-ink(-[234])?\b/);
   });
 
@@ -46,6 +46,6 @@ describe('Eyebrow', () => {
     );
     const cell = screen.getByText('when');
     expect(cell.tagName).toBe('TH');
-    expect(cell).toHaveClass('font-mono', 'uppercase', 'text-[9px]', 'text-ink-3');
+    expect(cell).toHaveClass('font-mono', 'text-[9px]', 'text-ink-3');
   });
 });

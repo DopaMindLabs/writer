@@ -701,7 +701,7 @@
   "citations": {
     "title": "Ngaahi fakamo'oni",
     "breadcrumb": "Ngaahi Hoko / ",
-    "entries": "{{count}} NGAAHI ULUFALE",
+    "entries": "{{count}} ngaahi ulufale",
     "searchPlaceholder": "kau tohi, ngaahi fakatohu, taʻu…",
     "upload": "↑ hikiange .bib / .ris",
     "add": "+ fakaʻaongaʻi",
@@ -716,7 +716,7 @@
     },
     "style": "Faʻahinga — Chicago (Kau Tohi-ʻaho)",
     "exportBib": "Tukuange Ko Ha .BIB",
-    "summary": "{{filtered}} KUO HAʻA · {{shown}} ʻI HE PEESI KO ʻENI",
+    "summary": "{{filtered}} kuo haʻa · {{shown}} ʻi he peesi ko ʻeni",
     "prevPage": "Peesi kimuʻa",
     "nextPage": "Peesi ʻoku hoko",
     "empty": "ʻoku ʻikai ha ngaahi fakamo'oni",

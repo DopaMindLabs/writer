@@ -136,7 +136,7 @@
     },
     "outline": {
       "title": "Zarys",
-      "sectionSummary": "{{count}} SEKCJI",
+      "sectionSummary": "{{count}} sekcji",
       "empty": "Nie ma jeszcze nagłówków. Dodaj nagłówki do dokumentu, aby zbudować jego zarys."
     },
     "info": {

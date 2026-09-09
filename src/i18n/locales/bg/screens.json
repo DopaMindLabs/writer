@@ -701,7 +701,7 @@
   "citations": {
     "title": "Цитати",
     "breadcrumb": "Източници / ",
-    "entries": "{{count}} ЗАПИСА",
+    "entries": "{{count}} записа",
     "searchPlaceholder": "автори, етикети, година…",
     "upload": "↑ качи .bib / .ris",
     "add": "+ добави",
@@ -716,7 +716,7 @@
     },
     "style": "Стил — Chicago (Автор-дата)",
     "exportBib": "Изнеси Като .BIB",
-    "summary": "{{filtered}} ПОКАЗАНИ · {{shown}} НА ТАЗИ СТРАНИЦА",
+    "summary": "{{filtered}} показани · {{shown}} на тази страница",
     "prevPage": "Предишна страница",
     "nextPage": "Следваща страница",
     "empty": "все още няма цитати",

@@ -7,7 +7,7 @@ exports[`SyncHistoryTable > snapshot > should match the snapshot for empty and p
       class="mt-6"
     >
       <h3
-        class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em]"
+        class="font-mono text-ink-3 text-[10px] tracking-[0.08em]"
       >
         Recent syncs
       </h3>
@@ -25,7 +25,7 @@ exports[`SyncHistoryTable > snapshot > should match the snapshot for empty and p
       class="mt-6"
     >
       <h3
-        class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em]"
+        class="font-mono text-ink-3 text-[10px] tracking-[0.08em]"
       >
         Recent syncs
       </h3>
@@ -35,32 +35,32 @@ exports[`SyncHistoryTable > snapshot > should match the snapshot for empty and p
       >
         <thead>
           <tr
-            class="font-mono uppercase tracking-[0.11em] text-[9px] text-ink-3 border-b border-rule"
+            class="font-mono tracking-[0.11em] text-[9px] text-ink-3 border-b border-rule"
           >
             <th
               class="py-2 text-left font-normal"
             >
-              WHEN
+              When
             </th>
             <th
               class="py-2 text-left font-normal"
             >
-              SPACE
+              Space
             </th>
             <th
               class="py-2 text-left font-normal"
             >
-              KIND
+              Kind
             </th>
             <th
               class="py-2 text-right font-normal"
             >
-              SIZE
+              Size
             </th>
             <th
               class="py-2 text-right font-normal"
             >
-              STATUS
+              Status
             </th>
           </tr>
         </thead>
@@ -80,7 +80,7 @@ exports[`SyncHistoryTable > snapshot > should match the snapshot for empty and p
               Novel
             </td>
             <td
-              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-2 py-2.5"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-2 py-2.5"
             >
               manual
             </td>
@@ -93,7 +93,7 @@ exports[`SyncHistoryTable > snapshot > should match the snapshot for empty and p
               class="py-2.5 text-right"
             >
               <span
-                class="inline-flex items-center gap-1.5 border font-mono uppercase tracking-[0.08em] border-success/30 bg-success-bg text-success px-1.5 py-1 text-[10px]"
+                class="inline-flex items-center gap-1.5 border font-mono tracking-[0.08em] border-success/30 bg-success-bg text-success px-1.5 py-1 text-[10px]"
               >
                 <svg
                   aria-hidden="true"
@@ -133,7 +133,7 @@ exports[`SyncHistoryTable > snapshot > should match the snapshot for empty and p
               Essays
             </td>
             <td
-              class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-2 py-2.5"
+              class="font-mono tracking-[0.11em] text-[10px] text-ink-2 py-2.5"
             >
               auto
             </td>
@@ -146,7 +146,7 @@ exports[`SyncHistoryTable > snapshot > should match the snapshot for empty and p
               class="py-2.5 text-right"
             >
               <span
-                class="inline-flex items-center gap-1.5 border font-mono uppercase tracking-[0.08em] border-danger/30 bg-danger-bg text-danger px-1.5 py-1 text-[10px]"
+                class="inline-flex items-center gap-1.5 border font-mono tracking-[0.08em] border-danger/30 bg-danger-bg text-danger px-1.5 py-1 text-[10px]"
               >
                 <svg
                   aria-hidden="true"

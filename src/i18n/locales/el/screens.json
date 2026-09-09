@@ -701,7 +701,7 @@
   "citations": {
     "title": "Παραπομπές",
     "breadcrumb": "Πηγές / ",
-    "entries": "{{count}} ΕΓΓΡΑΦΕΣ",
+    "entries": "{{count}} εγγραφες",
     "searchPlaceholder": "συγγραφείς, ετικέτες, έτος…",
     "upload": "↑ μεταφόρτωση .bib / .ris",
     "add": "+ προσθήκη",
@@ -716,7 +716,7 @@
     },
     "style": "Στυλ — Chicago (Συγγραφεας-ημερομηνια)",
     "exportBib": "Εξαγωγη Ως .BIB",
-    "summary": "{{filtered}} ΕΜΦΑΝΙΖΟΝΤΑΙ · {{shown}} ΣΕ ΑΥΤΗ ΤΗ ΣΕΛΙΔΑ",
+    "summary": "{{filtered}} εμφανιζονται · {{shown}} σε αυτη τη σελιδα",
     "prevPage": "Προηγούμενη σελίδα",
     "nextPage": "Επόμενη σελίδα",
     "empty": "καμία παραπομπή ακόμα",

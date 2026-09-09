@@ -701,7 +701,7 @@
   "citations": {
     "title": "Tanbihi",
     "breadcrumb": "Vyanzo / ",
-    "entries": "{{count}} INGIZO",
+    "entries": "{{count}} ingizo",
     "searchPlaceholder": "waandishi, lebo, mwaka…",
     "upload": "↑ pakia .bib / .ris",
     "add": "+ ongeza",
@@ -716,7 +716,7 @@
     },
     "style": "Mtindo — Chicago (Mwandishi-tarehe)",
     "exportBib": "Hamisha Kama .BIB",
-    "summary": "{{filtered}} ZINAONYESHWA · {{shown}} KWENYE UKURASA HUU",
+    "summary": "{{filtered}} zinaonyeshwa · {{shown}} kwenye ukurasa huu",
     "prevPage": "Ukurasa uliotangulia",
     "nextPage": "Ukurasa unaofuata",
     "empty": "hakuna tanbihi bado",

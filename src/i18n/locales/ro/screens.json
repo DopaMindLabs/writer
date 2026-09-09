@@ -701,7 +701,7 @@
   "citations": {
     "title": "Citate",
     "breadcrumb": "Surse / ",
-    "entries": "{{count}} ÎNREGISTRĂRI",
+    "entries": "{{count}} înregistrări",
     "searchPlaceholder": "autori, etichete, an…",
     "upload": "↑ încarcă .bib / .ris",
     "add": "+ adaugă",
@@ -716,7 +716,7 @@
     },
     "style": "Stil — Chicago (Autor-dată)",
     "exportBib": "Exportă Ca .BIB",
-    "summary": "{{filtered}} AFIȘATE · {{shown}} PE ACEASTĂ PAGINĂ",
+    "summary": "{{filtered}} afișate · {{shown}} pe această pagină",
     "prevPage": "Pagina anterioară",
     "nextPage": "Pagina următoare",
     "empty": "nicio citație încă",

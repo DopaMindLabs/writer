@@ -28,7 +28,9 @@ test('sidebar shows section headers with a management menu', async ({ page }) =>
   expect(await sectionMenus.count()).toBeGreaterThan(0);
 });
 
-test('sidebar section header label renders in uppercase', async ({ page }) => {
+test('sidebar section header label keeps the casing of its name', async ({
+  page,
+}) => {
   const spaceId = await getFirstSpaceIdFromHome(page);
   await page.goto(`/#/s/${spaceId}`);
   await page.waitForURL(/#\/s\/[^/]+\/d\/[^/]+/);
@@ -37,14 +39,22 @@ test('sidebar section header label renders in uppercase', async ({ page }) => {
   const label = sidebar.locator('[data-testid$="-label"]').first();
   await expect(label).toBeVisible();
 
-  // The eyebrow-style section heading must read as uppercase (design system
-  // §3.10). The label text lives inside a <button>, and the browser resets
-  // `text-transform` on form controls, so the utility must sit on the button
-  // itself — not only on the wrapping header row — for the cast to take effect.
-  const transform = await label.evaluate(
-    (el) => getComputedStyle(el).textTransform,
-  );
-  expect(transform).toBe('uppercase');
+  // The eyebrow heading takes its casing from the section name, never from
+  // `text-transform` (design system §3.10) — a section a writer named "Drafts"
+  // must not read "DRAFTS". The label text lives inside a <button>, so assert
+  // the mono eyebrow style lands on the button itself and casts nothing.
+  const style = await label.evaluate((el) => {
+    const computed = getComputedStyle(el);
+    return {
+      transform: computed.textTransform,
+      fontFamily: computed.fontFamily,
+    };
+  });
+  expect(style.transform).toBe('none');
+  expect(style.fontFamily).toMatch(/mono/i);
+
+  const text = (await label.innerText()).trim();
+  expect(text).not.toBe(text.toUpperCase());
 });
 
 test('sidebar space title can be renamed inline', async ({ page }) => {

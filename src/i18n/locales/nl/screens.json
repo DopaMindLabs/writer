@@ -628,7 +628,7 @@
   "citations": {
     "title": "Citaten",
     "breadcrumb": "Bronnen / ",
-    "entries": "{{count}} ITEMS",
+    "entries": "{{count}} items",
     "searchPlaceholder": "auteurs, tags, jaar…",
     "upload": "↑ .bib / .ris uploaden",
     "add": "+ toevoegen",
@@ -636,7 +636,7 @@
     "columns": { "tag": "Tag", "authors": "Auteurs", "title": "Titel", "year": "Jaar", "type": "Type", "used": "Gebruikt" },
     "style": "Stijl — Chicago (Auteur-datum)",
     "exportBib": "Exporteren Als .BIB",
-    "summary": "{{filtered}} GETOOND · {{shown}} OP DEZE PAGINA",
+    "summary": "{{filtered}} getoond · {{shown}} op deze pagina",
     "prevPage": "Vorige pagina",
     "nextPage": "Volgende pagina",
     "empty": "nog geen citaten",

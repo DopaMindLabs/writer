@@ -50,7 +50,7 @@ exports[`DropdownMenu primitives > snapshot > should match the snapshot of the o
       tabindex="-1"
     >
       <div
-        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 px-2 py-1"
+        class="font-mono tracking-[0.11em] text-[10px] text-ink-3 px-2 py-1"
       >
         Actions
       </div>

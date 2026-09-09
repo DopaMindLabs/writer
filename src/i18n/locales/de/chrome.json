@@ -136,7 +136,7 @@
     },
     "outline": {
       "title": "Gliederung",
-      "sectionSummary": "{{count}} ABSCHNITTE",
+      "sectionSummary": "{{count}} Abschnitte",
       "empty": "Noch keine Überschriften. Füge Überschriften zum Dokument hinzu, um die Gliederung zu erstellen."
     },
     "info": {

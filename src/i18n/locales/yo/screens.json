@@ -701,7 +701,7 @@
   "citations": {
     "title": "Àwọn ìtọ́ka",
     "breadcrumb": "Àwọn orísun / ",
-    "entries": "{{count}} ÀWỌN ÌWÒ",
+    "entries": "{{count}} àwọn ìwò",
     "searchPlaceholder": "àwọn òǹkọ̀wé, àmì, ọdún…",
     "upload": "↑ gbe .bib / .ris sókè",
     "add": "+ fikún",
@@ -716,7 +716,7 @@
     },
     "style": "Ọnà — Chicago (Òǹkọ̀wé-ọjọ́)",
     "exportBib": "Gbóná Gẹ́gẹ́ Bí .BIB",
-    "summary": "{{filtered}} TÍ A ṢÍ · {{shown}} LÓRí ÌWÉ YÌÍ",
+    "summary": "{{filtered}} tí a ṣí · {{shown}} lórí ìwé yìí",
     "prevPage": "Ojú-ìwé tó ṣáájú",
     "nextPage": "Ojú-ìwé tó tẹ̀le",
     "empty": "kò sí ìtọ́ka síbẹ̀",

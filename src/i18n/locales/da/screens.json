@@ -701,7 +701,7 @@
   "citations": {
     "title": "Citationer",
     "breadcrumb": "Kilder / ",
-    "entries": "{{count}} POSTER",
+    "entries": "{{count}} poster",
     "searchPlaceholder": "forfattere, koder, år…",
     "upload": "↑ upload .bib / .ris",
     "add": "+ tilføj",
@@ -716,7 +716,7 @@
     },
     "style": "Stil — Chicago (Forfatter-dato)",
     "exportBib": "Eksportér Som .BIB",
-    "summary": "{{filtered}} VIST · {{shown}} PÅ DENNE SIDE",
+    "summary": "{{filtered}} vist · {{shown}} på denne side",
     "prevPage": "Forrige side",
     "nextPage": "Næste side",
     "empty": "ingen citationer endnu",

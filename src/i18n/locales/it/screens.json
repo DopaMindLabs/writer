@@ -701,7 +701,7 @@
   "citations": {
     "title": "Citazioni",
     "breadcrumb": "Fonti / ",
-    "entries": "{{count}} VOCI",
+    "entries": "{{count}} voci",
     "searchPlaceholder": "autori, tag, anno…",
     "upload": "↑ carica .bib / .ris",
     "add": "+ aggiungi",
@@ -716,7 +716,7 @@
     },
     "style": "Stile — Chicago (Autore-data)",
     "exportBib": "Esporta Come .BIB",
-    "summary": "{{filtered}} MOSTRATE · {{shown}} IN QUESTA PAGINA",
+    "summary": "{{filtered}} mostrate · {{shown}} in questa pagina",
     "prevPage": "Pagina precedente",
     "nextPage": "Pagina successiva",
     "empty": "nessuna citazione ancora",

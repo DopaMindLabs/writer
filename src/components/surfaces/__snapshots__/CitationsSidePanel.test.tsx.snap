@@ -9,7 +9,7 @@ exports[`CitationsSidePanel > snapshot > should match the snapshot of the open p
     class="flex h-8 shrink-0 items-center justify-between border-b border-rule px-2"
   >
     <span
-      class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 px-2"
+      class="font-mono tracking-[0.11em] text-[10px] text-ink-3 px-2"
     >
       Citations
     </span>
@@ -90,7 +90,7 @@ exports[`CitationsSidePanel > snapshot > should match the snapshot of the open p
           class="flex items-baseline justify-between"
         >
           <div
-            class="font-mono uppercase tracking-[0.11em] leading-none text-[10px]"
+            class="font-mono tracking-[0.11em] leading-none text-[10px]"
           >
             <span
               class="text-ink-3"
@@ -104,9 +104,9 @@ exports[`CitationsSidePanel > snapshot > should match the snapshot of the open p
             </span>
           </div>
           <div
-            class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-4"
+            class="font-mono tracking-[0.11em] text-[10px] text-ink-4"
           >
-            0 ENTRIES
+            0 entries
           </div>
         </div>
       </div>
@@ -181,7 +181,7 @@ exports[`CitationsSidePanel > snapshot > should match the snapshot of the open p
         data-tour="tour-citations-list"
       >
         <div
-          class="md:grid md:grid-cols-[2rem_minmax(7rem,10rem)_minmax(0,1fr)_4rem] font-mono uppercase tracking-[0.11em] text-[9px] text-ink-3 sticky top-0 z-10 hidden gap-4 border-b border-rule bg-paper py-2 px-4"
+          class="md:grid md:grid-cols-[2rem_minmax(7rem,10rem)_minmax(0,1fr)_4rem] font-mono tracking-[0.11em] text-[9px] text-ink-3 sticky top-0 z-10 hidden gap-4 border-b border-rule bg-paper py-2 px-4"
         >
           <span
             class="flex items-center"
@@ -221,13 +221,13 @@ exports[`CitationsSidePanel > snapshot > should match the snapshot of the open p
             </span>
           </span>
           <span>
-            AUTHORS
+            Authors
           </span>
           <span>
-            TITLE
+            Title
           </span>
           <span>
-            YEAR
+            Year
           </span>
         </div>
         <div
@@ -253,10 +253,10 @@ exports[`CitationsSidePanel > snapshot > should match the snapshot of the open p
         </div>
       </div>
       <div
-        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 flex flex-col gap-2 border-t border-rule py-3 md:flex-row md:items-center md:justify-between px-4"
+        class="font-mono tracking-[0.11em] text-[10px] text-ink-3 flex flex-col gap-2 border-t border-rule py-3 md:flex-row md:items-center md:justify-between px-4"
       >
         <span>
-          STYLE — CHICAGO (AUTHOR-DATE)
+          Style — Chicago (Author-date)
         </span>
         <div
           class="flex items-center gap-3"
@@ -264,7 +264,7 @@ exports[`CitationsSidePanel > snapshot > should match the snapshot of the open p
           <span
             data-testid="citations-counts"
           >
-            0 SHOWN · 0 ON THIS PAGE
+            0 shown · 0 on this page
           </span>
         </div>
         <button
@@ -273,7 +273,7 @@ exports[`CitationsSidePanel > snapshot > should match the snapshot of the open p
           disabled=""
           type="button"
         >
-          EXPORT AS .BIB
+          Export as .BIB
         </button>
       </div>
     </div>

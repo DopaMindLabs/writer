@@ -701,7 +701,7 @@
   "citations": {
     "title": "Citāti",
     "breadcrumb": "Avoti / ",
-    "entries": "{{count}} IERAKSTI",
+    "entries": "{{count}} ieraksti",
     "searchPlaceholder": "autori, birkas, gads…",
     "upload": "↑ augšupielādēt .bib / .ris",
     "add": "+ pievienot",
@@ -716,7 +716,7 @@
     },
     "style": "Stils — Chicago (Autors-datums)",
     "exportBib": "Eksportēt Kā .BIB",
-    "summary": "{{filtered}} RĀDĪTS · {{shown}} ŠAJā LAPĀ",
+    "summary": "{{filtered}} rādīts · {{shown}} šajā lapā",
     "prevPage": "Iepriekšējā lapa",
     "nextPage": "Nākamā lapa",
     "empty": "citātu vēl nav",

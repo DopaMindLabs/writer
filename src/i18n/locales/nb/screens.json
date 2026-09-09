@@ -701,7 +701,7 @@
   "citations": {
     "title": "Siteringer",
     "breadcrumb": "Kilder / ",
-    "entries": "{{count}} OPPFØRINGER",
+    "entries": "{{count}} oppføringer",
     "searchPlaceholder": "forfattere, koder, år…",
     "upload": "↑ last opp .bib / .ris",
     "add": "+ legg til",
@@ -716,7 +716,7 @@
     },
     "style": "Stil — Chicago (Forfatter-dato)",
     "exportBib": "Eksporter Som .BIB",
-    "summary": "{{filtered}} VIST · {{shown}} PÅ DENNE SIDEN",
+    "summary": "{{filtered}} vist · {{shown}} på denne siden",
     "prevPage": "Forrige side",
     "nextPage": "Neste side",
     "empty": "ingen siteringer ennå",

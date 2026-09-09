@@ -701,7 +701,7 @@
   "citations": {
     "title": "Citatos",
     "breadcrumb": "Šaltiniai / ",
-    "entries": "{{count}} ĮRAŠAI",
+    "entries": "{{count}} įrašai",
     "searchPlaceholder": "autoriai, žymos, metai…",
     "upload": "↑ įkelti .bib / .ris",
     "add": "+ pridėti",
@@ -716,7 +716,7 @@
     },
     "style": "Stilius — Chicago (Autorius-data)",
     "exportBib": "Eksportuoti Kaip .BIB",
-    "summary": "{{filtered}} RODOMA · {{shown}} ŠIAME PUSLAPYJE",
+    "summary": "{{filtered}} rodoma · {{shown}} šiame puslapyje",
     "prevPage": "Ankstesnis puslapis",
     "nextPage": "Kitas puslapis",
     "empty": "citatų dar nėra",

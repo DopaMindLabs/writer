@@ -701,7 +701,7 @@
   "citations": {
     "title": "Hivatkozások",
     "breadcrumb": "Források / ",
-    "entries": "{{count}} BEJEGYZÉS",
+    "entries": "{{count}} bejegyzés",
     "searchPlaceholder": "szerzők, címkék, év…",
     "upload": "↑ .bib / .ris feltöltése",
     "add": "+ hozzáadás",
@@ -716,7 +716,7 @@
     },
     "style": "Stílus — Chicago (Szerző-dátum)",
     "exportBib": "Exportálás .Bib-ként",
-    "summary": "{{filtered}} MEGJELENÍTVE · {{shown}} EZen az OLDALON",
+    "summary": "{{filtered}} megjelenítve · {{shown}} ezen az oldalon",
     "prevPage": "Előző oldal",
     "nextPage": "Következő oldal",
     "empty": "még nincs hivatkozás",

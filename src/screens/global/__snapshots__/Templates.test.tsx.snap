@@ -10,7 +10,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
       class="flex items-center justify-between border-b border-rule px-4 py-3 md:px-12 md:py-5"
     >
       <a
-        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 inline-flex items-center gap-1.5 hover:text-ink"
+        class="font-mono tracking-[0.11em] text-[10px] text-ink-3 inline-flex items-center gap-1.5 hover:text-ink"
         data-discover="true"
         data-testid="templates-back"
         href="/"
@@ -38,7 +38,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
         back
       </a>
       <div
-        class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3"
+        class="font-mono tracking-[0.11em] text-[10px] text-ink-3"
       >
         new space
       </div>
@@ -53,9 +53,9 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
       >
         <div>
           <div
-            class="font-mono uppercase tracking-[0.11em] text-[10px] text-ink-3 mb-2"
+            class="font-mono tracking-[0.11em] text-[10px] text-ink-3 mb-2"
           >
-            01 — A KIND OF ROOM
+            01 — A Kind of Room
           </div>
           <h1
             class="font-serif tracking-tight text-ink text-3xl leading-[1.05] md:text-5xl"
@@ -96,7 +96,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
               >
                 Technical · Scientific report
                 <span
-                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
+                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] tracking-wider text-ink-3"
                 >
                   early
                 </span>
@@ -144,7 +144,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
               >
                 Thesis · research
                 <span
-                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
+                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] tracking-wider text-ink-3"
                 >
                   early
                 </span>
@@ -188,7 +188,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
               >
                 Fictional writing
                 <span
-                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
+                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] tracking-wider text-ink-3"
                 >
                   early
                 </span>
@@ -232,7 +232,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
               >
                 Serial
                 <span
-                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
+                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] tracking-wider text-ink-3"
                 >
                   early
                 </span>
@@ -276,7 +276,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
               >
                 Journal
                 <span
-                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
+                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] tracking-wider text-ink-3"
                 >
                   early
                 </span>
@@ -320,7 +320,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
               >
                 Blank
                 <span
-                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] uppercase tracking-wider text-ink-3"
+                  class="ml-2 inline-block rounded-sm border border-rule px-1 py-0.5 align-middle font-mono text-[9px] tracking-wider text-ink-3"
                 >
                   early
                 </span>
@@ -358,7 +358,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
           >
             <div>
               <label
-                class="text-ink-3 font-normal font-mono uppercase tracking-[0.11em] text-[10px] block"
+                class="text-ink-3 font-normal font-mono tracking-[0.11em] text-[10px] block"
                 for="space-name"
               >
                 Name
@@ -373,7 +373,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
             </div>
             <div>
               <label
-                class="text-ink-3 font-normal font-mono uppercase tracking-[0.11em] text-[10px] block"
+                class="text-ink-3 font-normal font-mono tracking-[0.11em] text-[10px] block"
                 for="space-tag"
               >
                 Tag
@@ -406,7 +406,7 @@ exports[`TemplatesScreen > snapshot > should match the snapshot across all varia
                 />
               </div>
               <span
-                class="font-mono uppercase tracking-[0.11em] text-[11px] text-ink-3"
+                class="font-mono tracking-[0.11em] text-[11px] text-ink-3"
               >
                 cloud sync —
                  

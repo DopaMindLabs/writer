@@ -136,7 +136,7 @@
     },
     "outline": {
       "title": "Vázlat",
-      "sectionSummary": "{{count}} SZAKASZ",
+      "sectionSummary": "{{count}} szakasz",
       "empty": "Még nincs cím. Adjon hozzá címeket a dokumentumhoz a vázlat létrehozásához."
     },
     "info": {

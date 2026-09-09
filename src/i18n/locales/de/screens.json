@@ -641,7 +641,7 @@
   "citations": {
     "title": "Zitate",
     "breadcrumb": "Quellen / ",
-    "entries": "{{count}} EINTRÄGE",
+    "entries": "{{count}} Einträge",
     "searchPlaceholder": "Autoren, Tags, Jahr…",
     "upload": "↑ .bib / .ris hochladen",
     "add": "+ hinzufügen",
@@ -649,7 +649,7 @@
     "columns": { "tag": "Tag", "authors": "Autoren", "title": "Titel", "year": "Jahr", "type": "Typ", "used": "Verwendet" },
     "style": "Stil — Chicago (Autor-datum)",
     "exportBib": "Als .BIB Exportieren",
-    "summary": "{{filtered}} GEZEIGT · {{shown}} AUF DIESER SEITE",
+    "summary": "{{filtered}} gezeigt · {{shown}} auf dieser Seite",
     "prevPage": "Vorherige Seite",
     "nextPage": "Nächste Seite",
     "empty": "noch keine Zitate",

@@ -136,7 +136,7 @@
     },
     "outline": {
       "title": "Plan",
-      "sectionSummary": "{{count}} SECTIONS",
+      "sectionSummary": "{{count}} sections",
       "empty": "Pas encore de titres. Ajoutez des titres au document pour créer son plan."
     },
     "info": {

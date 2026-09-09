@@ -136,7 +136,7 @@
     },
     "outline": {
       "title": "Oversigt",
-      "sectionSummary": "{{count}} SEKTIONER",
+      "sectionSummary": "{{count}} sektioner",
       "empty": "Ingen overskrifter endnu. Tilføj overskrifter til dokumentet for at opbygge dets disposition."
     },
     "info": {

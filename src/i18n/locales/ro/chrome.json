@@ -136,7 +136,7 @@
     },
     "outline": {
       "title": "Structură",
-      "sectionSummary": "{{count}} SECȚIUNI",
+      "sectionSummary": "{{count}} secțiuni",
       "empty": "Fără titluri deocamdată. Adăugați titluri în document pentru a construi structura acestuia."
     },
     "info": {

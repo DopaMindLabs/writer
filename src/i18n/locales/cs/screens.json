@@ -701,7 +701,7 @@
   "citations": {
     "title": "Citace",
     "breadcrumb": "Zdroje / ",
-    "entries": "{{count}} ZÁZNAMŮ",
+    "entries": "{{count}} záznamů",
     "searchPlaceholder": "autoři, zkratky, rok…",
     "upload": "↑ nahrát .bib / .ris",
     "add": "+ přidat",
@@ -716,7 +716,7 @@
     },
     "style": "Styl — Chicago (Autor-datum)",
     "exportBib": "Exportovat Jako .BIB",
-    "summary": "{{filtered}} ZOBRAZENO · {{shown}} NA TÉTO STRÁNCE",
+    "summary": "{{filtered}} zobrazeno · {{shown}} na této stránce",
     "prevPage": "Předchozí stránka",
     "nextPage": "Další stránka",
     "empty": "zatím žádné citace",

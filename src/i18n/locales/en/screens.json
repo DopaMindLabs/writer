@@ -988,7 +988,7 @@
   "citations": {
     "title": "Citations",
     "breadcrumb": "Sources / ",
-    "entries": "{{count}} ENTRIES",
+    "entries": "{{count}} entries",
     "searchPlaceholder": "authors, tags, year…",
     "upload": "↑ upload .bib / .ris",
     "add": "+ add",
@@ -1003,7 +1003,7 @@
     },
     "style": "Style — Chicago (Author-date)",
     "exportBib": "Export as .BIB",
-    "summary": "{{filtered}} SHOWN · {{shown}} ON THIS PAGE",
+    "summary": "{{filtered}} shown · {{shown}} on this page",
     "prevPage": "Previous page",
     "nextPage": "Next page",
     "empty": "no citations yet",

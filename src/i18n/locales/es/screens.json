@@ -703,7 +703,7 @@
   "citations": {
     "title": "Citas",
     "breadcrumb": "Fuentes / ",
-    "entries": "{{count}} ENTRADAS",
+    "entries": "{{count}} entradas",
     "searchPlaceholder": "autores, etiquetas, año…",
     "upload": "↑ subir .bib / .ris",
     "add": "+ añadir",
@@ -718,7 +718,7 @@
     },
     "style": "Estilo — Chicago (Autor-fecha)",
     "exportBib": "Exportar Como .BIB",
-    "summary": "{{filtered}} MOSTRADAS · {{shown}} EN ESTA PÁGINA",
+    "summary": "{{filtered}} mostradas · {{shown}} en esta página",
     "prevPage": "Página anterior",
     "nextPage": "Página siguiente",
     "empty": "aún no hay citas",

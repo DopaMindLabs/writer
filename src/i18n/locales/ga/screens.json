@@ -701,7 +701,7 @@
   "citations": {
     "title": "Luachana",
     "breadcrumb": "Foinsí / ",
-    "entries": "{{count}} IONTRÁLACHA",
+    "entries": "{{count}} iontrálacha",
     "searchPlaceholder": "údair, clibeanna, bliain…",
     "upload": "↑ uaslódáil .bib / .ris",
     "add": "+ cuir leis",
@@ -716,7 +716,7 @@
     },
     "style": "Stíl — Chicago (Údar-dáta)",
     "exportBib": "Onnmhairigh Mar .BIB",
-    "summary": "{{filtered}} Á TAISPEÁINT · {{shown}} AR AN LEATHANACH SEO",
+    "summary": "{{filtered}} á taispeáint · {{shown}} ar an leathanach seo",
     "prevPage": "Leathanach roimhe",
     "nextPage": "An chéad leathanach eile",
     "empty": "gan luachana fós",

@@ -701,7 +701,7 @@
   "citations": {
     "title": "Izikhombo",
     "breadcrumb": "Imithombo / ",
-    "entries": "{{count}} IZINGENISO",
+    "entries": "{{count}} izingeniso",
     "searchPlaceholder": "ababhali, imilayezo, unyaka…",
     "upload": "↑ layisha .bib / .ris",
     "add": "+ engeza",
@@ -716,7 +716,7 @@
     },
     "style": "Isitayela — Chicago (Umbhali-usuku)",
     "exportBib": "Thumela Njengo-.bib",
-    "summary": "{{filtered}} ZIBONAKALAYO · {{shown}} KULELI KHASI",
+    "summary": "{{filtered}} zibonakalayo · {{shown}} kuleli khasi",
     "prevPage": "Ikhasi langaphambilini",
     "nextPage": "Ikhasi elilandelayo",
     "empty": "azikho izikhombo okwamanje",

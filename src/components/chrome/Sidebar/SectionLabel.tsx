@@ -48,7 +48,7 @@ export const SectionLabel = ({
             id={errorId}
             role="alert"
             data-testid={`sidebar-section-${sectionId}-rename-error`}
-            className="pt-0.5 font-mono text-[9px] normal-case tracking-normal text-danger"
+            className="pt-0.5 font-mono text-[9px] tracking-normal text-danger"
           >
             {rename.error}
           </span>

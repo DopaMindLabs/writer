@@ -136,7 +136,7 @@
     },
     "outline": {
       "title": "Disposition",
-      "sectionSummary": "{{count}} SEKTIONER",
+      "sectionSummary": "{{count}} sektioner",
       "empty": "Inga rubriker ännu. Lägg till rubriker i dokumentet för att bygga dess disposition."
     },
     "info": {

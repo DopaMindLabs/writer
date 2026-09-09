@@ -136,7 +136,7 @@
     },
     "outline": {
       "title": "Ülevaade",
-      "sectionSummary": "{{count}} SEKTSIOONI",
+      "sectionSummary": "{{count}} sektsiooni",
       "empty": "Pole veel pealkirju. Lisa dokumenti pealkirjad, et luua selle ülevaade."
     },
     "info": {

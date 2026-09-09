@@ -701,7 +701,7 @@
   "citations": {
     "title": "Fa'asino",
     "breadcrumb": "Puna / ",
-    "entries": "{{count}} ULUFALE",
+    "entries": "{{count}} ulufale",
     "searchPlaceholder": "tusitala, fa'ailoga, tausaga…",
     "upload": "↑ tukiake .bib / .ris",
     "add": "+ fa'aopoopo",
@@ -716,7 +716,7 @@
     },
     "style": "Sitaili — Chicago (Tusitala-aso)",
     "exportBib": "Auina Atu E Peia .BIB",
-    "summary": "{{filtered}} FA'AALIA · {{shown}} I LENEI ITULAU",
+    "summary": "{{filtered}} fa'aalia · {{shown}} i lenei itulau",
     "prevPage": "Itulau muamua",
     "nextPage": "Itulau o lo'o mulimuli",
     "empty": "e leai ni fa'asino",

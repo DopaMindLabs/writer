@@ -136,7 +136,7 @@
     },
     "outline": {
       "title": "Overzicht",
-      "sectionSummary": "{{count}} SECTIES",
+      "sectionSummary": "{{count}} secties",
       "empty": "Nog geen koppen. Voeg koppen toe aan het document om de structuur op te bouwen."
     },
     "info": {

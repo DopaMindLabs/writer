@@ -701,7 +701,7 @@
   "citations": {
     "title": "Ngā tohu",
     "breadcrumb": "Ngā Puna / ",
-    "entries": "{{count}} URUNGA",
+    "entries": "{{count}} urunga",
     "searchPlaceholder": "ngā kaituhi, ngā tohu, te tau…",
     "upload": "↑ tukiake .bib / .ris",
     "add": "+ tāpiri",
@@ -716,7 +716,7 @@
     },
     "style": "Āhua — Chicago (Kaituhi-rā)",
     "exportBib": "Kaweakehia Hei .BIB",
-    "summary": "{{filtered}} WHAKAATUHIA · {{shown}} I TĒNEI WHĀRANGI",
+    "summary": "{{filtered}} whakaatuhia · {{shown}} i tēnei whārangi",
     "prevPage": "Whārangi o mua",
     "nextPage": "Whārangi e whai ake",
     "empty": "kāore anō he tohu",
