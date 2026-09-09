@@ -38,15 +38,23 @@ test.describe('Workflow: illustrating a note', () => {
       await expect(noteCards).toHaveCount(2);
     });
 
-    await test.step('And they link the two together', async () => {
-      // Dispatched rather than clicked: freshly added cards can overlap, which
-      // fails Playwright's hit-testing.
-      await noteCards
-        .first()
-        .dispatchEvent('pointerdown', { shiftKey: true, button: 0 });
-      await noteCards
-        .last()
-        .dispatchEvent('pointerdown', { shiftKey: true, button: 0 });
+    await test.step('And they shift-click each one to link them', async () => {
+      // New cards are staggered by 24px, so the newest sits on top and the one
+      // beneath keeps an exposed strip along its top and left edge. Both are
+      // clicked for real: a dispatched event would skip hit-testing and let
+      // this pass even when a card is unreachable.
+      await noteCards.last().click({ modifiers: ['Shift'] });
+      // Near the foot of that strip: the card's own "+ title" button sits at
+      // its top-left and appears on hover, so it would take a click aimed
+      // there. The point is measured rather than guessed, so it stays inside
+      // the card whatever its height.
+      const under = noteCards.first();
+      const box = await under.boundingBox();
+      expect(box).not.toBeNull();
+      await under.click({
+        modifiers: ['Shift'],
+        position: { x: 10, y: Number(box?.height) - 8 },
+      });
     });
 
     await test.step('When they open the second note to illustrate it', async () => {

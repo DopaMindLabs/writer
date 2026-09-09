@@ -178,10 +178,24 @@ test('shows changed and removed rows in the side-by-side diff', async ({
 
   const diff = page.getByTestId('diff-view');
   await expect(diff).toBeVisible();
-  await page.getByTestId('diff-mode-toggle').click();
-  await expect(diff).toBeVisible();
 
-  // The replacement text, and the lines it displaced.
+  // Side by side is the default mode, so assert the rows it produces before
+  // touching the toggle: inline renders both strings whatever the pairing did,
+  // and would go green even if the surplus removed rows stopped being emitted.
+  //
+  // One removal pairs with the insertion to make a changed row; the rest have
+  // nothing to pair with and stay removed, which is the branch under test.
+  await expect(diff.getByTestId('diff-after-changed')).toHaveText('Merged line');
+  const removedBefore = diff.getByTestId('diff-before-removed');
+  await expect(removedBefore.filter({ hasText: 'Beta line' })).toHaveCount(1);
+  await expect(removedBefore.filter({ hasText: 'Gamma line' })).toHaveCount(1);
+  // A removed row has nothing on the after side — that is what makes it a
+  // removal rather than a change.
+  await expect(diff.getByTestId('diff-after-removed').first()).toHaveText('');
+
+  // The toggle is its own behaviour: inline keeps both texts in one column.
+  await page.getByTestId('diff-mode-toggle').click();
   await expect(diff).toContainText('Merged line');
   await expect(diff).toContainText('Gamma line');
+  await expect(diff.getByTestId('diff-before-changed')).toHaveCount(0);
 });
