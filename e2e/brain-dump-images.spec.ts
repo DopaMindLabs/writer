@@ -160,3 +160,77 @@ test('takes what fits and names the pictures beyond the limit', async ({
     drawer.getByTestId('brain-detail-drawer-attachments-reject-banner'),
   ).toContainText(/c\.png/);
 });
+
+test('deleting a note takes its pictures and connections with it', async ({
+  page,
+}) => {
+  const spaceId = await getFirstSpaceIdFromHome(page);
+  await page.goto(`/#/s/${spaceId}/brain-space`);
+  await expect(page.getByTestId('brain-canvas')).toBeVisible();
+
+  const noteCards = page
+    .getByTestId('brain-canvas-content')
+    .locator(':scope > [data-testid^="brain-note-"]');
+  await page.getByTestId('brain-canvas-tool-question').click();
+  await expect(noteCards).toHaveCount(1);
+  await page.getByTestId('brain-canvas-tool-question').click();
+  await expect(noteCards).toHaveCount(2);
+
+  // Link the two, then hang a picture off the one being deleted, so the
+  // cascade has both a connection and an attachment to clear.
+  await noteCards.first().dispatchEvent('pointerdown', { shiftKey: true, button: 0 });
+  await noteCards.last().dispatchEvent('pointerdown', { shiftKey: true, button: 0 });
+
+  const doomed = noteCards.last();
+  await doomed.hover();
+  await doomed.locator('[data-testid$="-open-details"]').click();
+  const drawer = page.getByTestId('brain-detail-drawer');
+  await expect(drawer).toBeVisible();
+  await expect(
+    drawer.getByTestId('brain-detail-drawer-connections-empty'),
+  ).toHaveCount(0);
+  await drawer
+    .getByTestId('brain-detail-drawer-attachments-input')
+    .setInputFiles(pngPayload('doomed.png'));
+  await expect(
+    drawer.getByTestId('brain-detail-drawer-attachments-count'),
+  ).toHaveText('1 / 2');
+
+  await drawer.getByTestId('brain-detail-drawer-delete').click();
+  await expect(drawer).toBeHidden();
+  await expect(noteCards).toHaveCount(1);
+
+  // The surviving note keeps no dangling link, and no orphan rows are left.
+  const orphans = await page.evaluate(
+    () =>
+      new Promise<{ connections: number; attachments: number; notes: number }>(
+        (resolve, reject) => {
+          const open = indexedDB.open('lipsum');
+          open.onerror = () => reject(new Error('could not open lipsum db'));
+          open.onsuccess = () => {
+            const db = open.result;
+            const tx = db.transaction(
+              ['connections', 'noteAttachments', 'notes'],
+              'readonly',
+            );
+            const c = tx.objectStore('connections').count();
+            const a = tx.objectStore('noteAttachments').count();
+            const n = tx.objectStore('notes').count();
+            tx.oncomplete = () => {
+              db.close();
+              resolve({
+                connections: c.result,
+                attachments: a.result,
+                notes: n.result,
+              });
+            };
+            tx.onerror = () => {
+              db.close();
+              reject(new Error('could not count the cascade tables'));
+            };
+          };
+        },
+      ),
+  );
+  expect(orphans).toEqual({ connections: 0, attachments: 0, notes: 1 });
+});
