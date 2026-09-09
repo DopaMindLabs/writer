@@ -22,7 +22,7 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
             L
           </a>
           <span
-            class="mb-2.5 max-w-full cursor-help truncate rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
+            class="mb-2.5 max-w-full cursor-help truncate rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] tracking-wider text-info"
             data-state="closed"
             tabindex="0"
           >
@@ -157,9 +157,9 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
                 LIpsum Writer
               </div>
               <div
-                class="mt-1 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-3"
+                class="font-mono tracking-[0.11em] text-[9px] text-ink-3 mt-1"
               >
-                UNIVERSAL SETTINGS
+                Universal Settings
               </div>
             </div>
           </div>
@@ -215,7 +215,7 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
                 class="mb-1.5 last:mb-0"
               >
                 <div
-                  class="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+                  class="font-mono tracking-[0.11em] text-[9px] text-ink-4 px-6 pb-1 pt-2.5"
                   data-testid="settings-tabs-group-0"
                 >
                   Preferences
@@ -246,7 +246,7 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
                 class="mb-1.5 last:mb-0"
               >
                 <div
-                  class="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+                  class="font-mono tracking-[0.11em] text-[9px] text-ink-4 px-6 pb-1 pt-2.5"
                   data-testid="settings-tabs-group-1"
                 >
                   Data
@@ -300,7 +300,7 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
             L
           </a>
           <span
-            class="mb-2.5 max-w-full cursor-help truncate rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
+            class="mb-2.5 max-w-full cursor-help truncate rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] tracking-wider text-info"
             data-state="closed"
             tabindex="0"
           >
@@ -419,7 +419,7 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
           >
             <a
               aria-label="Open Test Space"
-              class="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-md bg-ink font-mono text-[10px] font-medium uppercase tracking-[0.04em] text-paper transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink hover:bg-ink-2"
+              class="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-md bg-ink font-mono text-[10px] font-medium tracking-[0.04em] text-paper transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink hover:bg-ink-2"
               data-discover="true"
               data-testid="nav-shell-home"
               href="/s/s1"
@@ -435,9 +435,9 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
                 Test Space
               </div>
               <div
-                class="mt-1 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-3"
+                class="font-mono tracking-[0.11em] text-[9px] text-ink-3 mt-1"
               >
-                SPACE SETTINGS
+                Space Settings
               </div>
             </div>
           </div>
@@ -493,7 +493,7 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
                 class="mb-1.5 last:mb-0"
               >
                 <div
-                  class="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+                  class="font-mono tracking-[0.11em] text-[9px] text-ink-4 px-6 pb-1 pt-2.5"
                   data-testid="settings-tabs-group-0"
                 >
                   Preferences
@@ -523,7 +523,7 @@ exports[`NavShell > snapshot > should match the snapshot across global and space
                 class="mb-1.5 last:mb-0"
               >
                 <div
-                  class="px-6 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.089em] text-ink-4"
+                  class="font-mono tracking-[0.11em] text-[9px] text-ink-4 px-6 pb-1 pt-2.5"
                   data-testid="settings-tabs-group-1"
                 >
                   Data

@@ -7,6 +7,7 @@ import { surfaceDragProps } from './dragListeners';
 import { useInlineRename } from './useInlineRename';
 import { SectionLabel } from './SectionLabel';
 import { SectionRowMenu } from './SectionRowMenu';
+import { eyebrowRecipe } from '@/components/ui/Eyebrow.recipe';
 
 interface SectionHeaderProps {
   section: Section;
@@ -47,7 +48,8 @@ export const SectionHeader = ({
       ref={dragActivator?.ref}
       data-testid={`sidebar-section-${section.id}-header`}
       className={cn(
-        'group flex items-center gap-1 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4',
+        eyebrowRecipe({ size: 9, tone: 'ink4' }),
+        'group flex items-center gap-1 pb-1 pt-2',
         indented ? 'pl-7' : 'pl-5',
         dragActivator &&
           'cursor-grab focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink active:cursor-grabbing',

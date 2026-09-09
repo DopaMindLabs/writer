@@ -13,6 +13,7 @@ import { APP_VERSION_LABEL } from '@/lib/version';
 import { cn } from '@/lib/utils';
 import { useSyncFolder } from '@/hooks/useSyncFolder';
 import { useAutoTour } from '@/tours';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 export const HomeScreen = () => {
   const { t } = useTranslation(['screens', 'common']);
@@ -46,9 +47,7 @@ export const HomeScreen = () => {
         className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 py-10 md:px-12 md:py-16"
       >
         <ReleaseNoticeBanner />
-        <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
-          {t('home.subtitle')}
-        </div>
+        <Eyebrow className="mb-2">{t('home.subtitle')}</Eyebrow>
         <TypographyH1>
           {t('home.titleMain')}{' '}
           <span className="italic font-light text-ink-2">{t('home.titleAccent')}</span>
@@ -93,7 +92,7 @@ const HomeActions = ({
           <span className="font-serif text-[18px] text-ink md:text-[22px]">
             {t('home.continueWriting')}
           </span>
-          <span className="font-mono text-[11px] uppercase tracking-wider text-ink-3">
+          <span className="font-mono text-[11px] tracking-wider text-ink-3">
             →
           </span>
         </Link>
@@ -113,7 +112,7 @@ const HomeActions = ({
         >
           {t('home.startNewSpace')}
         </span>
-        <span className="font-mono text-[11px] uppercase tracking-wider text-ink-3">
+        <span className="font-mono text-[11px] tracking-wider text-ink-3">
           →
         </span>
       </Link>
@@ -130,7 +129,7 @@ const HomeStatus = () => {
           <span
             tabIndex={0}
             data-testid="home-version-chip"
-            className="cursor-help rounded-sm border border-info bg-info-bg px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-info"
+            className="cursor-help rounded-sm border border-info bg-info-bg px-1.5 py-0.5 font-mono text-[10px] tracking-wider text-info"
           >
             {APP_VERSION_LABEL}
           </span>
@@ -164,7 +163,7 @@ const SyncStatusChip = () => {
           tabIndex={0}
           data-testid="home-sync-chip"
           className={cn(
-            'cursor-help rounded-sm border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider',
+            'cursor-help rounded-sm border px-1.5 py-0.5 font-mono text-[10px] tracking-wider',
             enabled
               ? 'border-success bg-success-bg text-success'
               : 'border-warning bg-warning-bg text-warning',

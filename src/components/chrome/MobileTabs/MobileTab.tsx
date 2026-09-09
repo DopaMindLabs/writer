@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from '@/components/ui/Link';
 import { cn } from '@/lib/utils';
 import type { TabItem } from './useTabItems';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 export const MobileTab = ({ item, active }: { item: TabItem; active: boolean }) => {
   const { t } = useTranslation('chrome');
@@ -12,9 +13,9 @@ export const MobileTab = ({ item, active }: { item: TabItem; active: boolean }) 
   const inner = (
     <>
       <item.Icon className="h-4 w-4" aria-hidden />
-      <span className="font-mono text-[9px] uppercase tracking-wider">
-        {t(`mobileTabs.${item.key}`)}
-      </span>
+      <Eyebrow asChild size={9} tone="inherit">
+        <span>{t(`mobileTabs.${item.key}`)}</span>
+      </Eyebrow>
     </>
   );
   if (item.href) {

@@ -3,6 +3,7 @@ import { routes } from '@/lib/routes';
 import { APP_VERSION_LABEL } from '@/lib/version';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Link } from '@/components/ui/Link';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 export const SpaceRailHeader = () => {
   const { t } = useTranslation('screens');
@@ -19,7 +20,7 @@ export const SpaceRailHeader = () => {
         <TooltipTrigger asChild>
           <span
             tabIndex={0}
-            className="mb-2.5 max-w-full cursor-help truncate rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] uppercase tracking-wider text-info"
+            className="mb-2.5 max-w-full cursor-help truncate rounded-sm border border-info bg-info-bg px-1 py-0.5 font-mono text-[8px] tracking-wider text-info"
           >
             {APP_VERSION_LABEL}
           </span>
@@ -29,9 +30,9 @@ export const SpaceRailHeader = () => {
           <div className="mt-0.5 text-[11px] opacity-80">
             {t('home.warningBody')}
           </div>
-          <div className="mt-1 font-mono text-[10px] uppercase tracking-wider opacity-80">
+          <Eyebrow tone="inherit" className="mt-1 opacity-80">
             {t('home.versionLine', { version: APP_VERSION_LABEL })}
-          </div>
+          </Eyebrow>
         </TooltipContent>
       </Tooltip>
     </>

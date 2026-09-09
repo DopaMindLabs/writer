@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { NavShell } from '@/components/chrome/NavShell';
 import type { NavTabDef, NavTabGroup } from '@/components/chrome/NavTabs';
 import { Card } from '@/components/ui/card';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 import { LanguagePicker } from '@/components/ui/LanguagePicker';
 import { Link } from '@/components/ui/Link';
 import {
@@ -19,6 +20,7 @@ import {
 import { getHelpDoc } from '@/lib/help/content';
 import { HelpArticle } from '@/components/help/HelpArticle';
 import { HelpSearch } from '@/components/help/HelpSearch';
+import { SectionLabel } from '@/components/ui/SectionLabel';
 
 const OVERVIEW_ID = 'overview';
 
@@ -32,9 +34,7 @@ const CategoryCard = ({ category, locale }: CategoryCardProps) => {
   const articles = getArticlesByCategory(category.id);
   return (
     <Card className="p-4">
-      <div className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
-        {t(`categories.${category.id}`)}
-      </div>
+      <SectionLabel>{t(`categories.${category.id}`)}</SectionLabel>
       <ul className="mt-2 space-y-1">
         {articles.map((article) => {
           const doc = getHelpDoc(article.slug, locale);
@@ -167,9 +167,7 @@ export const HelpScreen = () => {
           className="mb-6 border border-rule bg-paper-2 p-3 text-[13px] text-ink-2"
         >
           <div className="mb-1 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-            <div className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
-              {t('machineTranslationBanner.label')}
-            </div>
+            <Eyebrow>{t('machineTranslationBanner.label')}</Eyebrow>
             <LanguagePicker
               ariaLabel={t('languagePickerLabel')}
               className="w-full sm:w-64 sm:shrink-0"

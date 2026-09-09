@@ -7,7 +7,7 @@ describe('NavShellHeader', () => {
   it('renders the wordmark, default subtitle and home link in the global variant', () => {
     renderWithProviders(<NavShellHeader variant="global" space={null} />);
     expect(screen.getByText('LIpsum Writer')).toBeInTheDocument();
-    expect(screen.getByText('UNIVERSAL SETTINGS')).toBeInTheDocument();
+    expect(screen.getByText('Universal Settings')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
   });
 
@@ -15,7 +15,7 @@ describe('NavShellHeader', () => {
     renderWithProviders(<NavShellHeader variant="space" space={sampleSpace} />);
     expect(screen.getByText(sampleSpace.name)).toBeInTheDocument();
     expect(screen.getByText(sampleSpace.tag)).toBeInTheDocument();
-    expect(screen.getByText('SPACE SETTINGS')).toBeInTheDocument();
+    expect(screen.getByText('Space Settings')).toBeInTheDocument();
   });
 
   it('falls back to placeholders when the space has not loaded yet', () => {

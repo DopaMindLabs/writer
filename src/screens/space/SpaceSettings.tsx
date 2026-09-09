@@ -222,7 +222,7 @@ const GeneralTab = ({ space }: { space: Space }) => {
         onReset={() => {
           setTag(space.tag);
         }}
-        inputClassName="max-w-[120px] font-mono text-[12px] uppercase tracking-wider"
+        inputClassName="max-w-[120px] font-mono text-[12px] tracking-wider"
       />
     </section>
   );

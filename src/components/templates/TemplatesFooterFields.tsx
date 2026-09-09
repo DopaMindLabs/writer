@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { TextField } from '@/components/ui/TextField';
 import { Label } from '@/components/ui/Label';
+import { eyebrowRecipe } from '@/components/ui/Eyebrow.recipe';
+import { cn } from '@/lib/utils';
 
 export interface TemplatesFooterFieldsProps {
   name: string;
@@ -24,7 +26,7 @@ export const TemplatesFooterFields = ({
           htmlFor="space-name"
           tone="ink3"
           weight="regular"
-          className="block font-mono text-[10px] uppercase tracking-[0.08em]"
+          className={cn(eyebrowRecipe({ tone: 'inherit' }), 'block')}
         >
           {t('templates.nameLabel')}
         </Label>
@@ -41,7 +43,7 @@ export const TemplatesFooterFields = ({
           htmlFor="space-tag"
           tone="ink3"
           weight="regular"
-          className="block font-mono text-[10px] uppercase tracking-[0.08em]"
+          className={cn(eyebrowRecipe({ tone: 'inherit' }), 'block')}
         >
           {t('templates.tagLabel')}
         </Label>

@@ -16,7 +16,7 @@ exports[`EmptyState > snapshot > should match the snapshot with and without a ti
       class="mx-auto mt-6 max-w-md border border-dashed border-rule bg-paper-2/40 p-6 text-center"
     >
       <h3
-        class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em] mb-2"
+        class="font-mono text-ink-3 text-[10px] tracking-[0.08em] mb-2"
       >
         Not supported
       </h3>

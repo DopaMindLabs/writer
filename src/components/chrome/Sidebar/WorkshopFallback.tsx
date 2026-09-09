@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { BrainSpaceLink } from './BrainSpaceLink';
+import { SectionLabel } from '@/components/ui/SectionLabel';
 
 export const WorkshopFallback = ({
   spaceId,
@@ -16,12 +17,14 @@ export const WorkshopFallback = ({
       data-testid="sidebar-workshop-fallback"
       className="mt-4 border-t border-rule pt-2"
     >
-      <div
+      <SectionLabel
+        size={9}
+        tone="ink4"
         data-testid="sidebar-workshop-fallback-label"
-        className="px-5 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-4"
+        className="px-5 pb-1 pt-2"
       >
         {t('sidebar.workshop')}
-      </div>
+      </SectionLabel>
       <BrainSpaceLink spaceId={spaceId} active={onBrainSpace} count={notesCount} />
     </div>
   );

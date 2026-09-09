@@ -12,6 +12,7 @@ import {
   PlaceholderThemeCards,
   PlaceholderToggle,
 } from './PlaceholderPrimitives';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 export const GeneralPlaceholder = () => {
   const { t } = useTranslation('screens');
@@ -213,9 +214,7 @@ export const TemplatesPlaceholder = () => {
             <div className="font-serif text-[16px] font-medium tracking-tight text-ink">
               {name}
             </div>
-            <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-              {sub}
-            </div>
+            <Eyebrow className="mt-1">{sub}</Eyebrow>
           </div>
         ))}
       </div>

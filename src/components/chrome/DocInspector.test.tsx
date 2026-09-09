@@ -133,7 +133,7 @@ describe('DocInspector', () => {
       expect(rows[2]).toHaveTextContent('Counting');
       expect(rows[2]).toHaveAttribute('data-level', '3');
       expect(pane).not.toHaveTextContent('Morning prose');
-      expect(pane).toHaveTextContent('3 SECTIONS');
+      expect(pane).toHaveTextContent('3 sections');
       expect(within(pane).queryByTestId('outline-empty')).toBeNull();
     });
 
@@ -147,7 +147,7 @@ describe('DocInspector', () => {
       expect(empty).toHaveTextContent(/no headings yet/i);
       expect(screen.queryAllByTestId('outline-row')).toHaveLength(0);
       expect(screen.getByTestId('doc-inspector-pane-outline')).toHaveTextContent(
-        '0 SECTIONS',
+        '0 sections',
       );
     });
 

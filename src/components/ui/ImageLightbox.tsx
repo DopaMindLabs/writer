@@ -11,6 +11,7 @@ import {
 import { IconButton } from '@/components/ui/icon';
 import { useObjectUrl } from '@/hooks/useObjectUrl';
 import { cn } from '@/lib/utils';
+import { Eyebrow } from '@/components/ui/Eyebrow';
 
 export interface LightboxImage {
   blob: Blob;
@@ -33,9 +34,9 @@ const LightboxHeader = ({
   onClose: () => void;
 }) => (
   <div className="flex items-center justify-between gap-2 pb-1.5">
-    <span className="min-w-0 truncate font-mono text-[10px] uppercase tracking-wider text-ink-3">
-      {name}
-    </span>
+    <Eyebrow asChild>
+      <span className="min-w-0 truncate">{name}</span>
+    </Eyebrow>
     <IconButton
       icon={X}
       label="Close image"

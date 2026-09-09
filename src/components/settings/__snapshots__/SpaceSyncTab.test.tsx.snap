@@ -6,9 +6,9 @@ exports[`SpaceSyncTab > snapshot > should match the snapshot of the connected pe
     data-testid="space-settings-tab-sync"
   >
     <p
-      class="font-mono uppercase text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
+      class="font-mono text-ink-3 text-[10px] mb-1 tracking-[0.1em]"
     >
-      SPACE · SETTINGS
+      Space · Settings
     </p>
     <h1
       class="font-serif tracking-tight text-ink text-[32px] font-normal leading-tight mb-2"
@@ -138,7 +138,7 @@ exports[`SpaceSyncTab > snapshot > should match the snapshot of the connected pe
       class="mt-6"
     >
       <h3
-        class="font-mono uppercase text-ink-3 text-[10px] tracking-[0.08em]"
+        class="font-mono text-ink-3 text-[10px] tracking-[0.08em]"
       >
         Recent syncs
       </h3>
