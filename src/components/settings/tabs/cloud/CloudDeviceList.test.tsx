@@ -60,6 +60,8 @@ describe('CloudDeviceList', () => {
     await userEvent.click(screen.getByTestId('cloud-device-revoke'));
     // Reaching across to another machine deserves a deliberate second step.
     expect(removeCloudDevice).not.toHaveBeenCalled();
+    // Freeing a slot is not access removal: the dialog says the device keeps syncing.
+    expect(screen.getByText(/keeps syncing until it does/i)).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Free slot' }));
     expect(removeCloudDevice).toHaveBeenCalledWith('other');

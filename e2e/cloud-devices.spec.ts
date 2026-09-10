@@ -103,6 +103,9 @@ test.describe('cloud sync device list', () => {
 
     // Reaching across to another machine takes a deliberate second step.
     await expect(page.getByTestId('confirm-dialog')).toBeVisible();
+    await expect(page.getByTestId('confirm-dialog')).toContainText(
+      /keeps syncing until it does/i,
+    );
     await page
       .getByTestId('confirm-dialog')
       .getByRole('button', { name: 'Free slot', exact: true })

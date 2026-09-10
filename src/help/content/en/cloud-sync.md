@@ -77,9 +77,9 @@ To free a slot:
 - **On the device you are using**, select **Sign out**.
 - **On any other device**, select **Free slot**, then confirm.
 
-The slot is free straight away, so a new device can take it. If that device is
-still signed in, it is asked to sign out. Its writing stays on it, and nothing is
-deleted from your account.
+The slot is free straight away, so a new device can take it. That device is
+asked to sign out, but it keeps syncing until it does. Its writing stays on it,
+and nothing is deleted from your account.
 
 ## Check that sync is healthy
 

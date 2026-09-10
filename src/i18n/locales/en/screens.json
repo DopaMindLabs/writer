@@ -853,7 +853,7 @@
         "revoke": "Free slot",
         "revokeAria": "Free the slot held by {{name}}",
         "revokeTitle": "Free this device’s slot?",
-        "revokeBody": "The slot is free straight away, so another device can take it. If that device is still signed in, it is asked to sign out.",
+        "revokeBody": "The slot is free straight away, so another device can take it. That device is asked to sign out, but it keeps syncing until it does.",
         "revokeConfirm": "Free slot",
         "revokeCancel": "Cancel"
       },
