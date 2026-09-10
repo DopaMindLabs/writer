@@ -32,8 +32,8 @@
     "enterFocus": "Shigar yanayin mai da hankali",
     "normal": "Na Yau Da Kullum",
     "focus": "Mai Da Hankali",
-    "focusTitleNormal": "Na yau da kullum (⌘\\)",
-    "focusTitleFocus": "Mai da hankali (⌘\\)",
+    "focusTitleNormal": "Na yau da kullum ({{shortcut}})",
+    "focusTitleFocus": "Mai da hankali ({{shortcut}})",
     "findInDoc": "Nemo a cikin takarda",
     "inspector": "Mai duba takarda",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Rubutu",
     "themeLabel": "Jigon",
     "focusLabel": "Yanayin mai da hankali",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Mai daukar kayan aiki",
     "readingWidthLabel": "Faɗin karatu",
     "readingWidthHint": "Ma'aunin kowane takarda",
@@ -102,14 +101,12 @@
       "hcLight": "HC mai haske",
       "hcDark": "HC mai duhu"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Sabbin abubuwa",
     "feedback": "Aiko ra'ayi…",
     "accessibility": "Sauƙin samun dama",
     "about": "Game da",
     "helpLink": "cibiyar taimako →",
     "fullSettings": "duk saituna →",
-    "fullSettingsKbd": "⌘,",
     "off": "Kashe",
     "on": "Kunna",
     "tourCheckmark": "an gama"
@@ -190,7 +187,6 @@
       "rename": "Sake suna",
       "move": "Matsa zuwa sashe…",
       "export": "Fitar wannan takarda…",
-      "exportKbd": "⌘E",
       "print": "Bugu…",
       "wordCount": "Kididdigar kalmomi",
       "trash": "Matsa zuwa shara"

@@ -5,7 +5,7 @@ import { STORES } from '@/db/stores';
 import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
 import type { ScopeKeyResolver } from 'writer-sync/crypto';
 import { generateDeviceIdentity } from 'writer-sync/crypto';
-import { createOperationJournalMiddleware } from '@/lib/writerSyncIntegration/materialization/operationJournalMiddleware';
+import { createOperationJournalMiddleware } from '@/lib/writerSyncIntegration/materialisation/operationJournalMiddleware';
 import {
   localOnlyTables,
   rowEnvelopeTables,

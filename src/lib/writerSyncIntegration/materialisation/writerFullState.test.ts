@@ -21,7 +21,7 @@ import {
   type AttachmentChunkManifest,
 } from 'writer-sync/operations';
 import { compactJournal } from './compactJournal';
-import { applyInboundFrame } from './writerOperationMaterializer';
+import { applyInboundFrame } from './writerOperationMaterialiser';
 import { journalledDelete, journalledPut } from './writerOperationFactory';
 import {
   MissingRetainedDeleteError,

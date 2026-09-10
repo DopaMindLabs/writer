@@ -75,8 +75,8 @@
     "enterFocus": "Enter focus mode",
     "normal": "Normal",
     "focus": "Focus",
-    "focusTitleNormal": "Normal (⌘\\)",
-    "focusTitleFocus": "Focus (⌘\\)",
+    "focusTitleNormal": "Normal ({{shortcut}})",
+    "focusTitleFocus": "Focus ({{shortcut}})",
     "findInDoc": "Find in doc",
     "inspector": "Doc inspector",
     "themes": {
@@ -127,7 +127,6 @@
     "settingsLabel": "Settings",
     "themeLabel": "Theme",
     "focusLabel": "Focus mode",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Floating toolbar",
     "readingWidthLabel": "Reading width",
     "readingWidthHint": "Per-doc measure",
@@ -145,7 +144,6 @@
       "hcLight": "HC light",
       "hcDark": "HC dark"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "What's new",
     "feedback": "Send feedback…",
     "profile": "Profile",
@@ -153,7 +151,6 @@
     "about": "About",
     "helpLink": "help center →",
     "fullSettings": "universal settings →",
-    "fullSettingsKbd": "⌘,",
     "off": "Off",
     "on": "On",
     "tourCheckmark": "completed"
@@ -234,7 +231,6 @@
       "rename": "Rename",
       "move": "Move to section…",
       "export": "Export this doc…",
-      "exportKbd": "⌘E",
       "print": "Print…",
       "wordCount": "Word count statistics",
       "trash": "Move to Trash"

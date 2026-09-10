@@ -27,7 +27,7 @@ cannot apply twice.
 This is what lets Stage 2A add a peer-to-peer provider without touching the data
 path: frames are already immutable, already encrypted, already deduplicated, and
 `applyInboundFrame` is provider-agnostic. The multi-provider contract suite
-(`src/lib/writerSyncIntegration/materialization/multiProviderContract.test.ts`)
+(`src/lib/writerSyncIntegration/materialisation/multiProviderContract.test.ts`)
 proves the same frame arriving by two routes materialises once, in either order.
 
 ```
@@ -211,7 +211,7 @@ order. **Provider arrival order carries no meaning.** Two devices given the same
 set of operations reach the same state whatever order the transports delivered
 them in.
 
-Rules the materialiser enforces (`writerOperationMaterializer.ts`):
+Rules the materialiser enforces (`writerOperationMaterialiser.ts`):
 
 - Every material change mints a **fresh** operation id and logical time.
 - Deletions are ordered against the journal winner exactly as puts are: a delete
@@ -405,9 +405,9 @@ providers.
 
 A frame cannot be relabelled into another scope — the scope is in the AAD (§3).
 Moving content between scopes legitimately goes through `rescopeFrames.ts`, which
-opens each frame under the source key and reseals it under the destination,
-all-or-nothing. Any Stage 2 flow that moves content between scopes uses it; none
-may edit `accessScopeId` in place.
+opens each frame under the source key, reseals it under the destination and
+re-signs it as the moving device, all-or-nothing. Any Stage 2 flow that moves
+content between scopes uses it; none may edit `accessScopeId` in place.
 
 ---
 

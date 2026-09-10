@@ -56,7 +56,7 @@ The package may depend on browser-standard primitives such as Web Crypto and Web
 Another repository should be able to provide:
 
 - its own `OperationStore`;
-- its own `OperationMaterializer`;
+- its own `OperationMaterialiser`;
 - its own application configuration and defaults;
 - its own pairing UI;
 - its own signalling implementation;
@@ -258,7 +258,7 @@ Use these terms consistently in code and documentation:
 | `OperationId` | Globally unique id used for idempotence across providers |
 | `SyncOperation` | Versioned logical mutation before wire encoding |
 | `EncryptedSyncFrame` | Encrypted and authenticated wire representation of an operation |
-| `OperationMaterializer` | Application adapter that applies an accepted operation to local state |
+| `OperationMaterialiser` | Application adapter that applies an accepted operation to local state |
 | `ScopeKeyResolver` | Resolves encryption material for one access scope and key epoch |
 | `TrustedDevice` | Device identity accepted for future sessions |
 
@@ -626,7 +626,7 @@ src/lib/writerSync/operations/
   operationCodec.ts
   hybridLogicalClock.ts
   operationStore.types.ts
-  materializer.types.ts
+  materialiser.types.ts
   convergence.ts
 ```
 
@@ -670,9 +670,9 @@ Follow the repository schema checklist and add the stores to the single declared
 Create Writer adapters:
 
 ```text
-src/lib/writerSync/materialization/
+src/lib/writerSync/materialisation/
   writerOperationFactory.ts
-  writerOperationMaterializer.ts
+  writerOperationMaterialiser.ts
   writerOperationStore.ts
 ```
 
@@ -800,7 +800,7 @@ The migration is a move, not the creation of a second implementation:
 |---|---|
 | `src/lib/syncProviders/**` | Move provider-neutral contracts, coordinator and tests into `packages/writer-sync/src/core/**`. Remove the old directory after imports are updated. |
 | Reusable code temporarily developed under `src/lib/writerSync/{entityMetadata,crypto,operations}/**` | Move it into the matching package subpaths. Do not leave forwarding copies. |
-| `src/lib/writerSync/writerTablePolicy.ts` and `src/lib/writerSync/materialization/**` | Move to `src/lib/writerSyncIntegration/`; these depend on Writer’s concrete tables and repositories. |
+| `src/lib/writerSync/writerTablePolicy.ts` and `src/lib/writerSync/materialisation/**` | Move to `src/lib/writerSyncIntegration/`; these depend on Writer’s concrete tables and repositories. |
 | `src/lib/writerSync/createWriterSyncCoordinator.ts` | Move to `src/lib/writerSyncIntegration/createWriterSyncCoordinator.ts`. |
 | `src/lib/writerSync/startWriterSync.ts` | Move to `src/lib/writerSyncIntegration/startWriterSync.ts`. |
 | `src/lib/writerSync/writerSyncConfiguration.ts` | Move to `src/lib/writerSyncIntegration/writerSyncConfiguration.ts`. |
@@ -1223,7 +1223,7 @@ After pairing:
 2. compare operation high-water marks and compact summaries;
 3. request missing operation IDs/ranges;
 4. verify signature, scope and ciphertext before inbox insertion;
-5. apply through `OperationMaterializer`;
+5. apply through `OperationMaterialiser`;
 6. acknowledge accepted operations;
 7. exchange missing attachment chunks;
 8. start realtime channels for open documents.

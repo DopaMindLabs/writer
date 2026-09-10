@@ -4,15 +4,21 @@ import { NoteKind, NoteState, type Note } from '@/db/schema';
 import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import { asDeviceId, asOperationId, asPrincipalId } from 'writer-sync/core';
 import type {
+  DeviceIdentityKeys,
   ScopeKeyContext,
   ScopeKeyResolver,
   SyncKeyRing,
 } from 'writer-sync/crypto';
-import { openOperationPayload } from 'writer-sync/crypto';
+import {
+  generateDeviceIdentity,
+  openOperationPayload,
+  verifyFrameSignature,
+} from 'writer-sync/crypto';
 import { verifyFrame } from 'writer-sync/operations';
+import type { JournalIdentity } from './operationJournalMiddleware';
 import { rescopeFrames } from './rescopeFrames';
 import { makeDeleteFrame, makePutFrame } from './writerOperationFactory';
-import { applyInboundFrame } from './writerOperationMaterializer';
+import { applyInboundFrame } from './writerOperationMaterialiser';
 
 /**
  * A scope transition must re-encrypt, not relabel: the scope id is bound into
@@ -20,7 +26,14 @@ import { applyInboundFrame } from './writerOperationMaterializer';
  * envelope would be unopenable — the operation would be silently lost.
  */
 
+/** The device that authored the frames before the move. */
 const DEVICE = asDeviceId('device-a');
+/** The device performing the move, which re-authors what it reseals. */
+const THIS_DEVICE = asDeviceId('device-b');
+
+let identityKeys: DeviceIdentityKeys;
+const identity = (): Promise<JournalIdentity> =>
+  Promise.resolve({ deviceId: THIS_DEVICE, privateKey: identityKeys.privateKey });
 
 /** What this device accepts as an author is `writerFrameVerifier.test.ts`. */
 const acceptAnyAuthor = (): Promise<boolean> => Promise.resolve(true);
@@ -66,6 +79,7 @@ beforeEach(async () => {
     ['space-a', await deriveKeyRing(master, 1)],
     ['space-b', await deriveKeyRing(generateRootSecret(), 1)],
   ]);
+  identityKeys = await generateDeviceIdentity();
   db = new LoremDB('rescope-frames');
   await db.open();
 });
@@ -82,6 +96,7 @@ describe('rescopeFrames', () => {
       await rescopeFrames({
         db,
         resolver,
+        identity,
         scopes: { from: 'space-a', to: 'space-b' },
       }),
     ).toBe(1);
@@ -104,9 +119,20 @@ describe('rescopeFrames', () => {
     expect(content).toMatchObject({ id: 'n1', body: 'secret body' });
   });
 
+  it('re-authors a moved frame so its signature verifies against this device', async () => {
+    await enqueuePut(note());
+    await rescopeFrames({ db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' } });
+
+    const moved = await verifyFrame(await db.syncOperations.get('op-n1-1'));
+    // Resealing rebuilds five signed fields, so the original author's signature
+    // cannot stand: the frame is this device's now, and signed as such.
+    expect(moved.deviceId).toBe(THIS_DEVICE);
+    expect(await verifyFrameSignature(identityKeys.publicKey, moved)).toBe(true);
+  });
+
   it('leaves the moved frame unopenable under the source key', async () => {
     await enqueuePut(note());
-    await rescopeFrames({ db, resolver, scopes: { from: 'space-a', to: 'space-b' } });
+    await rescopeFrames({ db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' } });
 
     const moved = await verifyFrame(await db.syncOperations.get('op-n1-1'));
     await expect(
@@ -116,7 +142,7 @@ describe('rescopeFrames', () => {
 
   it('materialises a moved frame into the destination scope', async () => {
     await enqueuePut(note());
-    await rescopeFrames({ db, resolver, scopes: { from: 'space-a', to: 'space-b' } });
+    await rescopeFrames({ db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' } });
 
     const moved = await db.syncOperations.get('op-n1-1');
     expect(
@@ -143,11 +169,14 @@ describe('rescopeFrames', () => {
     );
 
     expect(
-      await rescopeFrames({ db, resolver, scopes: { from: 'space-a', to: 'space-b' } }),
+      await rescopeFrames({ db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' } }),
     ).toBe(1);
     const [moved] = await db.syncOperations.toArray();
     expect(moved.accessScopeId).toBe('space-b');
     await expect(verifyFrame(moved, { expectedScope: 'space-b' })).resolves.toBeDefined();
+    // A deletion has no payload to reseal, but its header moved, so it is
+    // re-signed all the same.
+    expect(await verifyFrameSignature(identityKeys.publicKey, moved)).toBe(true);
   });
 
   it('rolls back entirely when one frame cannot be resealed', async () => {
@@ -160,7 +189,7 @@ describe('rescopeFrames', () => {
     await db.syncOperations.put({ ...broken, payload: btoa('not-ciphertext') });
 
     await expect(
-      rescopeFrames({ db, resolver, scopes: { from: 'space-a', to: 'space-b' } }),
+      rescopeFrames({ db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' } }),
     ).rejects.toThrow();
 
     // Both frames are still in the source scope: nothing was half-moved.
@@ -173,7 +202,7 @@ describe('rescopeFrames', () => {
     scopeKeys.delete('space-b');
 
     await expect(
-      rescopeFrames({ db, resolver, scopes: { from: 'space-a', to: 'space-b' } }),
+      rescopeFrames({ db, resolver, identity, scopes: { from: 'space-a', to: 'space-b' } }),
     ).rejects.toThrow(/scope keys must be available/);
     expect((await db.syncOperations.get('op-n1-1'))?.accessScopeId).toBe('space-a');
   });
@@ -181,10 +210,10 @@ describe('rescopeFrames', () => {
   it('is a no-op when the scope does not change or holds no frames', async () => {
     await enqueuePut(note());
     expect(
-      await rescopeFrames({ db, resolver, scopes: { from: 'space-a', to: 'space-a' } }),
+      await rescopeFrames({ db, resolver, identity, scopes: { from: 'space-a', to: 'space-a' } }),
     ).toBe(0);
     expect(
-      await rescopeFrames({ db, resolver, scopes: { from: 'space-c', to: 'space-b' } }),
+      await rescopeFrames({ db, resolver, identity, scopes: { from: 'space-c', to: 'space-b' } }),
     ).toBe(0);
   });
 });
