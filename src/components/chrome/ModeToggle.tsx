@@ -2,6 +2,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCallback, useEffect, type ComponentType, type SVGProps } from 'react';
 import { useTranslation } from 'react-i18next';
 import { invariant } from '@/lib/invariant';
+import { formatChord } from '@/lib/shortcuts/formatChord';
 import {
   BookOpen,
   Brain,
@@ -187,6 +188,9 @@ interface FocusToggleLinkProps {
 
 const FocusToggleLink = ({ to, focused }: FocusToggleLinkProps) => {
   const { t } = useTranslation('chrome');
+  // The handler in FocusToggle accepts either modifier; the hint names the one
+  // this platform uses.
+  const shortcut = formatChord('mod+\\');
   if (focused) {
     return (
       <Tooltip>
@@ -200,7 +204,7 @@ const FocusToggleLink = ({ to, focused }: FocusToggleLinkProps) => {
             <Minimize2 className="h-3.5 w-3.5" />
           </Link>
         </TooltipTrigger>
-        <TooltipContent side="bottom">{t('topbar.focusTitleNormal')}</TooltipContent>
+        <TooltipContent side="bottom">{t('topbar.focusTitleNormal', { shortcut })}</TooltipContent>
       </Tooltip>
     );
   }
@@ -211,14 +215,14 @@ const FocusToggleLink = ({ to, focused }: FocusToggleLinkProps) => {
         <Link
           data-testid="focus-toggle"
           to={to}
-          title={t('topbar.focusTitleFocus')}
+          title={t('topbar.focusTitleFocus', { shortcut })}
           aria-label={t('topbar.enterFocus')}
           className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-paper-2 hover:text-ink"
         >
           <Maximize2 className="h-3.5 w-3.5" aria-hidden />
         </Link>
       </TooltipTrigger>
-      <TooltipContent side="bottom">{t('topbar.focusTitleFocus')}</TooltipContent>
+      <TooltipContent side="bottom">{t('topbar.focusTitleFocus', { shortcut })}</TooltipContent>
     </Tooltip>
   );
 };

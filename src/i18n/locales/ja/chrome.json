@@ -32,8 +32,8 @@
     "enterFocus": "フォーカスモードに入る",
     "normal": "通常",
     "focus": "フォーカス",
-    "focusTitleNormal": "通常 (⌘\\)",
-    "focusTitleFocus": "フォーカス (⌘\\)",
+    "focusTitleNormal": "通常 ({{shortcut}})",
+    "focusTitleFocus": "フォーカス ({{shortcut}})",
     "findInDoc": "ドキュメント内を検索",
     "inspector": "ドキュメントインスペクター",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "執筆",
     "themeLabel": "テーマ",
     "focusLabel": "フォーカスモード",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "フローティングツールバー",
     "readingWidthLabel": "読み取り幅",
     "readingWidthHint": "ドキュメント単位",
@@ -102,14 +101,12 @@
       "hcLight": "Hc ライト",
       "hcDark": "Hc ダーク"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "新着情報",
     "feedback": "フィードバックを送信…",
     "accessibility": "アクセシビリティ",
     "about": "概要",
     "helpLink": "ヘルプセンター →",
     "fullSettings": "すべての設定 →",
-    "fullSettingsKbd": "⌘,",
     "off": "オフ",
     "on": "オン",
     "tourCheckmark": "完了"
@@ -190,7 +187,6 @@
       "rename": "名前を変更",
       "move": "セクションに移動…",
       "export": "このドキュメントをエクスポート…",
-      "exportKbd": "⌘E",
       "print": "印刷…",
       "wordCount": "単語数の統計",
       "trash": "ゴミ箱に移動"

@@ -32,8 +32,8 @@
     "enterFocus": "ወደ ትኩረት ሁነታ ግባ",
     "normal": "መደበኛ",
     "focus": "ትኩረት",
-    "focusTitleNormal": "መደበኛ (⌘\\)",
-    "focusTitleFocus": "ትኩረት (⌘\\)",
+    "focusTitleNormal": "መደበኛ ({{shortcut}})",
+    "focusTitleFocus": "ትኩረት ({{shortcut}})",
     "findInDoc": "በሰነድ ውስጥ ፈልግ",
     "inspector": "የሰነድ መርማሪ",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "መጻፍ",
     "themeLabel": "ገጽታ",
     "focusLabel": "የትኩረት ሁነታ",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "ተንሳፋፊ መሳሪያ ሳጥን",
     "readingWidthLabel": "የንባብ ስፋት",
     "readingWidthHint": "በሰነድ ልኬት",
@@ -102,14 +101,12 @@
       "hcLight": "Hc ብርሃን",
       "hcDark": "Hc ጨለማ"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "አዲስ ምን አለ",
     "feedback": "አስተያየት ላክ…",
     "accessibility": "ተደራሽነት",
     "about": "ስለ",
     "helpLink": "የእገዛ ማዕከል →",
     "fullSettings": "ሁሉም ቅንብሮች →",
-    "fullSettingsKbd": "⌘,",
     "off": "ጠፍቷል",
     "on": "በርቷል",
     "tourCheckmark": "ተጠናቋል"
@@ -190,7 +187,6 @@
       "rename": "እንደገና ሰይም",
       "move": "ወደ ክፍል አንቀሳቅስ…",
       "export": "ይህን ሰነድ ላክ…",
-      "exportKbd": "⌘E",
       "print": "አትም…",
       "wordCount": "የቃላት ቆጠራ ስታቲስቲክስ",
       "trash": "ወደ መጣያ አንቀሳቅስ"

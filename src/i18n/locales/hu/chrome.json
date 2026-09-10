@@ -32,8 +32,8 @@
     "enterFocus": "Belépés a fókuszmódba",
     "normal": "Normál",
     "focus": "Fókusz",
-    "focusTitleNormal": "Normál (⌘\\)",
-    "focusTitleFocus": "Fókusz (⌘\\)",
+    "focusTitleNormal": "Normál ({{shortcut}})",
+    "focusTitleFocus": "Fókusz ({{shortcut}})",
     "findInDoc": "Keresés a dokumentumban",
     "inspector": "Dokumentum-ellenőrző",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Írás",
     "themeLabel": "Téma",
     "focusLabel": "Fókuszmód",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Lebegő eszköztár",
     "readingWidthLabel": "Olvasási szélesség",
     "readingWidthHint": "Mérték dokumentumonként",
@@ -102,14 +101,12 @@
       "hcLight": "NK világos",
       "hcDark": "NK sötét"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Mi újság",
     "feedback": "Visszajelzés küldése…",
     "accessibility": "Akadálymentesítés",
     "about": "Névjegy",
     "helpLink": "súgóközpont →",
     "fullSettings": "összes beállítás →",
-    "fullSettingsKbd": "⌘,",
     "off": "Ki",
     "on": "Be",
     "tourCheckmark": "befejezve"
@@ -190,7 +187,6 @@
       "rename": "Átnevezés",
       "move": "Áthelyezés szakaszba…",
       "export": "Dokumentum exportálása…",
-      "exportKbd": "⌘E",
       "print": "Nyomtatás…",
       "wordCount": "Szószámlálási statisztikák",
       "trash": "Áthelyezés a kukába"

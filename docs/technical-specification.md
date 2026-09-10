@@ -312,7 +312,7 @@ Adapts to screen size and mode.
 | Floating-toolbar toggle | Visible only when enabled in global Settings. |
 | Citations button | Opens the citations drawer / panel. |
 | Mobile nav button | Hamburger; opens the sidebar drawer on mobile. |
-| Focus toggle | Enters / exits Focus mode. |
+| Focus toggle | Enters / exits Focus mode. Its tooltip names the `mod+\` chord for the running platform (⌘ on Apple, Ctrl elsewhere). |
 
 *Covered by:* `Topbar.test.tsx`, `view-modes.spec.ts`, `editor.spec.ts`.
 

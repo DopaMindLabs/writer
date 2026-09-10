@@ -9,7 +9,7 @@ exports[`FocusToggle > renders focus enter link in write mode 1`] = `
     data-state="closed"
     data-testid="focus-toggle"
     href="/s/s1/d/d1?focus=1"
-    title="Focus (⌘\\)"
+    title="Focus (Ctrl+\\)"
   >
     <svg
       aria-hidden="true"

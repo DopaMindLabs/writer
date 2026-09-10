@@ -32,8 +32,8 @@
     "enterFocus": "Aktivera fokusläge",
     "normal": "Normal",
     "focus": "Fokus",
-    "focusTitleNormal": "Normal (⌘\\)",
-    "focusTitleFocus": "Fokus (⌘\\)",
+    "focusTitleNormal": "Normal ({{shortcut}})",
+    "focusTitleFocus": "Fokus ({{shortcut}})",
     "findInDoc": "Sök i dokumentet",
     "inspector": "Dokumentinspektör",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Skrivande",
     "themeLabel": "Tema",
     "focusLabel": "Fokusläge",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Flytande verktygsfält",
     "readingWidthLabel": "Läsbredd",
     "readingWidthHint": "Mått per dokument",
@@ -102,14 +101,12 @@
       "hcLight": "HK ljust",
       "hcDark": "HK mörkt"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Nyheter",
     "feedback": "Skicka feedback…",
     "accessibility": "Tillgänglighet",
     "about": "Om",
     "helpLink": "hjälpcenter →",
     "fullSettings": "alla inställningar →",
-    "fullSettingsKbd": "⌘,",
     "off": "Av",
     "on": "På",
     "tourCheckmark": "klar"
@@ -190,7 +187,6 @@
       "rename": "Byt namn",
       "move": "Flytta till sektion…",
       "export": "Exportera detta dokument…",
-      "exportKbd": "⌘E",
       "print": "Skriv ut…",
       "wordCount": "Ordräkningsstatistik",
       "trash": "Flytta till papperskorgen"

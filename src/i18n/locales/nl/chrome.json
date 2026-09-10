@@ -32,8 +32,8 @@
     "enterFocus": "Focusmodus openen",
     "normal": "Normaal",
     "focus": "Focus",
-    "focusTitleNormal": "Normaal (⌘\\)",
-    "focusTitleFocus": "Focus (⌘\\)",
+    "focusTitleNormal": "Normaal ({{shortcut}})",
+    "focusTitleFocus": "Focus ({{shortcut}})",
     "findInDoc": "Zoeken in document",
     "inspector": "Documentinspector",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "Schrijven",
     "themeLabel": "Thema",
     "focusLabel": "Focusmodus",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "Zwevende werkbalk",
     "readingWidthLabel": "Leesbreedte",
     "readingWidthHint": "Per-document maat",
@@ -102,14 +101,12 @@
       "hcLight": "HC licht",
       "hcDark": "HC donker"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "Wat is er nieuw",
     "feedback": "Feedback sturen…",
     "accessibility": "Toegankelijkheid",
     "about": "Over",
     "helpLink": "helpcentrum →",
     "fullSettings": "alle instellingen →",
-    "fullSettingsKbd": "⌘,",
     "off": "Uit",
     "on": "Aan",
     "tourCheckmark": "voltooid"
@@ -190,7 +187,6 @@
       "rename": "Hernoemen",
       "move": "Verplaatsen naar sectie…",
       "export": "Dit document exporteren…",
-      "exportKbd": "⌘E",
       "print": "Afdrukken…",
       "wordCount": "Woordtelling-statistieken",
       "trash": "Naar prullenbak"

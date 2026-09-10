@@ -32,8 +32,8 @@
     "enterFocus": "கவன முறையில் நுழை",
     "normal": "சாதாரண",
     "focus": "கவனம்",
-    "focusTitleNormal": "சாதாரண (⌘\\)",
-    "focusTitleFocus": "கவனம் (⌘\\)",
+    "focusTitleNormal": "சாதாரண ({{shortcut}})",
+    "focusTitleFocus": "கவனம் ({{shortcut}})",
     "findInDoc": "ஆவணத்தில் கண்டுபிடி",
     "inspector": "ஆவண பரிசோதகர்",
     "themes": {
@@ -84,7 +84,6 @@
     "writingLabel": "எழுத்து",
     "themeLabel": "தீம்",
     "focusLabel": "கவன முறை",
-    "focusHint": "⌘\\",
     "floatingToolbarLabel": "மிதக்கும் கருவிப்பட்டை",
     "readingWidthLabel": "வாசிப்பு அகலம்",
     "readingWidthHint": "ஆவணத்துக்கான அளவு",
@@ -102,14 +101,12 @@
       "hcLight": "Hc ஒளி",
       "hcDark": "Hc இருள்"
     },
-    "helpKbd": "⌘?",
     "whatsNew": "புதியது என்ன",
     "feedback": "கருத்தை அனுப்பு…",
     "accessibility": "அணுகல்",
     "about": "பற்றி",
     "helpLink": "உதவி மையம் →",
     "fullSettings": "அனைத்து அமைப்புகள் →",
-    "fullSettingsKbd": "⌘,",
     "off": "ஆஃப்",
     "on": "ஆன்",
     "tourCheckmark": "முடிந்தது"
@@ -190,7 +187,6 @@
       "rename": "மறுபெயரிடு",
       "move": "பிரிவுக்கு நகர்த்து…",
       "export": "இந்த ஆவணத்தை ஏற்றுமதி செய்…",
-      "exportKbd": "⌘E",
       "print": "அச்சிடு…",
       "wordCount": "சொல் எண்ணிக்கை புள்ளிவிவரங்கள்",
       "trash": "குப்பைத்தொட்டிக்கு நகர்த்து"

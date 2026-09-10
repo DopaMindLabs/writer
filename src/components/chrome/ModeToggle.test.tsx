@@ -1,5 +1,6 @@
 import { fireEvent } from '@testing-library/react';
 import { renderWithProviders, screen } from '@/test/test-utils';
+import * as platform from '@/lib/shortcuts/platform';
 import { FocusToggle, ModeTabs } from './ModeToggle';
 
 describe('ModeTabs', () => {
@@ -29,6 +30,26 @@ describe('ModeTabs', () => {
 });
 
 describe('FocusToggle', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('names the focus shortcut for the running platform, not a fixed ⌘ glyph', () => {
+    vi.spyOn(platform, 'isApplePlatform').mockReturnValue(false);
+    const { unmount } = renderWithProviders(
+      <FocusToggle mode="write" spaceId="s1" docId="d1" />,
+      { initialEntries: ['/s/s1/d/d1'] },
+    );
+    expect(screen.getByTestId('focus-toggle')).toHaveAttribute('title', 'Focus (Ctrl+\\)');
+    unmount();
+
+    vi.spyOn(platform, 'isApplePlatform').mockReturnValue(true);
+    renderWithProviders(<FocusToggle mode="write" spaceId="s1" docId="d1" />, {
+      initialEntries: ['/s/s1/d/d1'],
+    });
+    expect(screen.getByTestId('focus-toggle')).toHaveAttribute('title', 'Focus (⌘\\)');
+  });
+
   it('renders focus enter link in write mode', () => {
     const { container } = renderWithProviders(
       <FocusToggle mode="write" spaceId="s1" docId="d1" />,

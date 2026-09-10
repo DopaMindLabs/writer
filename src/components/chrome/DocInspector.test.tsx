@@ -7,6 +7,7 @@ import {
 import { act, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, within } from '@/test/test-utils';
+import * as platform from '@/lib/shortcuts/platform';
 import { useUI, type InspectorSection } from '@/store/ui';
 import { db } from '@/db/db';
 import type { Doc, Revision } from '@/db/schema';
@@ -594,6 +595,17 @@ describe('DocInspector', () => {
       const pane = screen.getByTestId('doc-inspector-pane-actions');
       expect(pane).toHaveTextContent(/rename/i);
       expect(pane).toHaveTextContent(/trash/i);
+    });
+
+    it('shows the export shortcut for the running platform, not a fixed ⌘ glyph', () => {
+      vi.spyOn(platform, 'isApplePlatform').mockReturnValue(false);
+      act(() => {
+        useUI.getState().setInspectorSection('actions');
+      });
+      renderWithProviders(<DocInspector docName="X" docId="d1" />);
+      const pane = screen.getByTestId('doc-inspector-pane-actions');
+      expect(within(pane).getByText('Ctrl+E')).toBeInTheDocument();
+      expect(within(pane).queryByText(/⌘/)).not.toBeInTheDocument();
     });
 
     it('should not show version actions in the actions pane', () => {
