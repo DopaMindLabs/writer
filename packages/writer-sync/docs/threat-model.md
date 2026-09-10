@@ -223,8 +223,8 @@ A frame relabelled into a scope the receiver did not expect.
 **Mitigation — delivered in Stage 1.** The scope id is inside the AAD, so
 relabelling invalidates the payload; and `verifyFrame({ expectedScope })` rejects
 a mismatch structurally, before decryption. Moving content legitimately between
-scopes goes through `rescopeFrames`, which opens under the source key and reseals
-under the destination, all or nothing.
+scopes goes through `rescopeFrames`, which opens under the source key, reseals
+under the destination and re-signs as the moving device, all or nothing.
 
 ### 5.8 Malicious attachment size or chunk count
 

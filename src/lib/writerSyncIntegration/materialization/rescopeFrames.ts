@@ -1,5 +1,5 @@
 import type { LoremDB } from '@/db/LoremDB';
-import type { AccessScopeId } from 'writer-sync/core';
+import type { AccessScopeId, DeviceId } from 'writer-sync/core';
 import type {
   ScopeKeyResolver,
   SyncKeyRing,
@@ -15,6 +15,8 @@ import {
   hashPayload,
 } from 'writer-sync/operations';
 import type { EncryptedSyncFrame } from 'writer-sync/operations';
+import type { JournalIdentity } from './operationJournalMiddleware';
+import { signAuthoredFrames } from './writerOperationFactory';
 
 /**
  * Move every enqueued operation for one access scope into another.
@@ -25,6 +27,10 @@ import type { EncryptedSyncFrame } from 'writer-sync/operations';
  * Each frame is therefore opened under the source scope's key and resealed under
  * the destination's, keeping its operation id (so cross-provider deduplication
  * still recognises it) and its logical time (so convergence is unchanged).
+ *
+ * Resealing rebuilds signed fields, so the original signature cannot stand. The
+ * moved frame is re-authored by this device — stamped with its device id and
+ * signed with its identity key — the same way a full-state rebuild is.
  *
  * All-or-nothing: every frame is resealed before anything is written, and the
  * writes commit in one transaction. A scope transition that fails halfway would
@@ -39,23 +45,20 @@ interface ScopeKeyRings {
 }
 
 /**
- * Reseal one frame under `accessScopeId`, preserving identity and ordering.
- *
- * TODO (#210): the signature is carried across unchanged while `accessScopeId`,
- * `keyId`, `epoch`, `payload` and `payloadHash` are all rebuilt — every one of
- * them a signed field — so a resealed frame verifies against nothing. Nothing in
- * production rescopes a frame today, and re-authoring it the way
- * `writerFullState` re-signs a rebuild is the fix.
+ * Reseal one frame under `accessScopeId` as `deviceId`, preserving identity and
+ * ordering. The result is unsigned; the caller signs the batch.
  */
 const rescopeFrame = async (options: {
   frame: EncryptedSyncFrame;
   rings: ScopeKeyRings;
   accessScopeId: AccessScopeId;
+  deviceId: DeviceId;
 }): Promise<EncryptedSyncFrame> => {
-  const { frame, rings, accessScopeId } = options;
+  const { frame, rings, accessScopeId, deviceId } = options;
   const header = {
     ...frame,
     accessScopeId,
+    deviceId,
     keyId: keyIdOf(rings.destination),
     epoch: rings.destination.epoch,
   };
@@ -103,25 +106,28 @@ const ringsFor = (options: {
 export const rescopeFrames = async (options: {
   db: LoremDB;
   resolver: ScopeKeyResolver;
+  identity: () => Promise<JournalIdentity>;
   scopes: { from: AccessScopeId; to: AccessScopeId };
 }): Promise<number> => {
-  const { db, resolver, scopes } = options;
+  const { db, resolver, identity, scopes } = options;
   if (scopes.from === scopes.to) return 0;
   const enqueued = await db.syncOperations
     .where({ accessScopeId: scopes.from })
     .toArray();
   if (enqueued.length === 0) return 0;
   const rings = ringsFor({ resolver, from: scopes.from, to: scopes.to });
-  // Every reseal completes before the transaction opens: Web Crypto cannot run
-  // inside a live IndexedDB transaction, and a failure here must abort the whole
-  // transition rather than commit a partial one.
+  const { deviceId, privateKey } = await identity();
+  // Every reseal and signature completes before the transaction opens: Web
+  // Crypto cannot run inside a live IndexedDB transaction, and a failure here
+  // must abort the whole transition rather than commit a partial one.
   const rescoped = await Promise.all(
     enqueued.map((frame) =>
-      rescopeFrame({ frame, rings, accessScopeId: scopes.to }),
+      rescopeFrame({ frame, rings, accessScopeId: scopes.to, deviceId }),
     ),
   );
+  const signed = await signAuthoredFrames(privateKey, rescoped);
   await db.transaction('rw', db.syncOperations, async () => {
-    await db.syncOperations.bulkPut(rescoped);
+    await db.syncOperations.bulkPut(signed);
   });
-  return rescoped.length;
+  return signed.length;
 };

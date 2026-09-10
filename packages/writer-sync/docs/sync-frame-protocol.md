@@ -405,9 +405,9 @@ providers.
 
 A frame cannot be relabelled into another scope — the scope is in the AAD (§3).
 Moving content between scopes legitimately goes through `rescopeFrames.ts`, which
-opens each frame under the source key and reseals it under the destination,
-all-or-nothing. Any Stage 2 flow that moves content between scopes uses it; none
-may edit `accessScopeId` in place.
+opens each frame under the source key, reseals it under the destination and
+re-signs it as the moving device, all-or-nothing. Any Stage 2 flow that moves
+content between scopes uses it; none may edit `accessScopeId` in place.
 
 ---
 
