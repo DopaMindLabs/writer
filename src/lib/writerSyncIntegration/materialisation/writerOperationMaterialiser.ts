@@ -4,10 +4,10 @@ import { openOperationPayload } from 'writer-sync/crypto';
 import { assertAcceptableRemoteTime } from 'writer-sync/core';
 import { compareOperations, supersedes } from 'writer-sync/operations';
 import { verifyFrame } from 'writer-sync/operations';
-import type { MaterializeResult } from 'writer-sync/operations';
+import type { MaterialiseResult } from 'writer-sync/operations';
 import type { EncryptedSyncFrame } from 'writer-sync/operations';
 import { writerClock } from '@/lib/writerSyncIntegration/writerLogicalClock';
-import { materializeAttachmentFrame } from './attachmentFrameMaterializer';
+import { materialiseAttachmentFrame } from './attachmentFrameMaterialiser';
 import { tombstoneOf } from './tombstone';
 import {
   UntrustedFrameError,
@@ -16,7 +16,7 @@ import {
 } from './frameAdmission';
 import type { FrameVerifier } from './writerFrameVerifier';
 
-export { AttachmentChunksPendingError } from './attachmentFrameMaterializer';
+export { AttachmentChunksPendingError } from './attachmentFrameMaterialiser';
 export { DisallowedOperationTableError, UntrustedFrameError } from './frameAdmission';
 
 /**
@@ -57,7 +57,7 @@ const applyDelete = async (options: {
   db: LoremDB;
   frame: EncryptedSyncFrame;
   table: JournalledTable;
-}): Promise<MaterializeResult> => {
+}): Promise<MaterialiseResult> => {
   const { db, frame, table } = options;
   const winner = await journalWinner(db, frame);
   if (winner && compareOperations(winner, frame) > 0 && winner.kind === 'put') {
@@ -82,7 +82,7 @@ const applyPut = async (options: {
   frame: EncryptedSyncFrame;
   table: JournalledTable;
   row: Record<string, unknown>;
-}): Promise<MaterializeResult> => {
+}): Promise<MaterialiseResult> => {
   const { db, frame, table, row } = options;
   const tombstone = await db.syncTombstones.get([frame.entityTable, frame.entityId]);
   if (tombstone && !supersedes(frame, { ...frame, ...tombstone })) {
@@ -126,7 +126,7 @@ export const applyInboundFrame = async (options: {
   verifySignature: FrameVerifier;
   /** This device's wall clock, injectable so boundary tests are deterministic. */
   now?: () => number;
-}): Promise<MaterializeResult> => {
+}): Promise<MaterialiseResult> => {
   const { db, ring } = options;
   const frame = await verifyFrame(options.frame);
   // What a peer proved by signing is who it is, never what it may write to.
@@ -148,7 +148,7 @@ export const applyInboundFrame = async (options: {
   const row =
     opened === null
       ? null
-      : await materializeAttachmentFrame({ db, frame, ring, row: opened });
+      : await materialiseAttachmentFrame({ db, frame, ring, row: opened });
 
   const result = await db.transaction(
     'rw',

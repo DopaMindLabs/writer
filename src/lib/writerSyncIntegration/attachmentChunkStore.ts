@@ -9,7 +9,7 @@ import {
   TRANSFER_CHUNK_BYTES,
   type CatchUpAttachments,
 } from 'writer-sync/operations';
-import { sweepUnappliedFrames } from './materialization/frameIngestion';
+import { sweepUnappliedFrames } from './materialisation/frameIngestion';
 
 const scopeForAttachment = async (
   db: LoremDB,

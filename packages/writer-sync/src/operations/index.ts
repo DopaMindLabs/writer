@@ -106,4 +106,4 @@ export {
 export type { AttachmentTransfer, AttachmentTransferPorts } from './attachmentTransfer';
 
 export type { OperationInbox, OperationStore } from './operationStore.types';
-export type { MaterializeResult, OperationMaterializer } from './materializer.types';
+export type { MaterialiseResult, OperationMaterialiser } from './materialiser.types';

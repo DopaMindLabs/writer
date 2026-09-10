@@ -42,7 +42,7 @@ import {
 import {
   AttachmentChunksPendingError,
   applyInboundFrame,
-} from './writerOperationMaterializer';
+} from './writerOperationMaterialiser';
 
 /**
  * The slice 1E acceptance gate: two in-memory Writer databases exchange plain
