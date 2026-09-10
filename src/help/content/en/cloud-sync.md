@@ -75,12 +75,11 @@ synced. The device you are using is marked **This device**. One marked
 To free a slot:
 
 - **On the device you are using**, select **Sign out**.
-- **On any other device**, select **Remove**, then confirm.
+- **On any other device**, select **Free slot**, then confirm.
 
-**Remove** frees the slot straight away, so a new device can take it. If the
-device you removed is still signed in somewhere, it stops holding a slot and is
-asked to sign out — it will not quietly take another. Its writing stays on it, and
-nothing is deleted from your account.
+The slot is free straight away, so a new device can take it. If that device is
+still signed in, it is asked to sign out. Its writing stays on it, and nothing is
+deleted from your account.
 
 ## Check that sync is healthy
 

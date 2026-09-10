@@ -850,16 +850,16 @@
         "empty": "No devices yet. This one joins the list once your writing is encrypted.",
         "signOut": "Sign out",
         "signOutAria": "Sign out of this device",
-        "revoke": "Remove",
-        "revokeAria": "Remove {{name}} from this account",
-        "revokeTitle": "Remove this device?",
-        "revokeBody": "It frees the slot straight away, so another device can take it. If that device is still signed in, it stops syncing and is asked to sign out.",
-        "revokeConfirm": "Remove device",
+        "revoke": "Free slot",
+        "revokeAria": "Free the slot held by {{name}}",
+        "revokeTitle": "Free this device’s slot?",
+        "revokeBody": "The slot is free straight away, so another device can take it. If that device is still signed in, it is asked to sign out.",
+        "revokeConfirm": "Free slot",
         "revokeCancel": "Cancel"
       },
       "revoked": {
-        "title": "This device was removed from your account",
-        "body": "Someone removed it from another device, so it no longer holds a slot. Sign out to finish — your writing stays on this device."
+        "title": "This device’s slot on your account was freed",
+        "body": "It no longer holds a slot. Sign out to finish — your writing stays on this device."
       },
       "backupNudge": {
         "title": "These notes are only on this device",

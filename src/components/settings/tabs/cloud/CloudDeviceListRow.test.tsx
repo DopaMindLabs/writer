@@ -30,7 +30,7 @@ describe('CloudDeviceListRow', () => {
     expect(row).toHaveTextContent(/Joined 12 March 2026/);
   });
 
-  it('offers Remove on a peer device and reports which one', async () => {
+  it('offers Free slot on a peer device and reports which one', async () => {
     const { onRevoke } = renderRow(entry());
     await userEvent.click(screen.getByTestId('cloud-device-revoke'));
     expect(onRevoke).toHaveBeenCalledWith('device-2');
@@ -60,10 +60,10 @@ describe('CloudDeviceListRow', () => {
     );
   });
 
-  it('gives the remove button an accessible name that says which device it removes', () => {
+  it('gives the free-slot button an accessible name that says whose slot it frees', () => {
     renderRow(entry());
     expect(
-      screen.getByRole('button', { name: /Remove Device 2 from this account/i }),
+      screen.getByRole('button', { name: /Free the slot held by Device 2/i }),
     ).toBeInTheDocument();
   });
 });

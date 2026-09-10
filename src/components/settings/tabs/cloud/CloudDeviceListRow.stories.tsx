@@ -25,7 +25,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Another device on the account: it can be removed from here. */
+/** Another device on the account: its slot can be freed from here. */
 export const Peer: Story = {
   args: {
     device: {
