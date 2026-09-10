@@ -325,6 +325,7 @@ const DiffRow = ({
 }) => (
   <>
     <div
+      data-testid={`diff-before-${row.kind}`}
       className={cn(
         'min-h-[1.5em] whitespace-pre-wrap bg-paper px-2 py-0.5 text-ink',
         (row.kind === 'removed' || row.kind === 'changed') &&
@@ -334,6 +335,7 @@ const DiffRow = ({
       {row.left}
     </div>
     <div
+      data-testid={`diff-after-${row.kind}`}
       className={cn(
         'min-h-[1.5em] whitespace-pre-wrap bg-paper px-2 py-0.5 text-ink',
         (row.kind === 'added' || row.kind === 'changed') &&

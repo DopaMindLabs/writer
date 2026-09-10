@@ -15,7 +15,8 @@ at the default, so nothing changes until you choose it.
 ## Theme & contrast
 
 Pick **Light** or **Dark**, or one of the two **High contrast** themes. The
-high-contrast themes meet the **WCAG AAA** contrast standard for text.
+high-contrast themes meet the enhanced contrast standard for text set out in
+[WCAG 2.2](https://www.w3.org/TR/WCAG22/).
 
 ## Motion
 
