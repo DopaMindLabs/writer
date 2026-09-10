@@ -32,7 +32,7 @@ export interface CloudPanelState extends DeviceKeyState {
  */
 export const useCloudPanelState = (): CloudPanelState => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.${name}`);
+  const k = (name: string) => t(`settings.cloud.${name}`);
   const [dialog, setDialog] = useState<CloudDialogName>('none');
   const [recoveryCode, setRecoveryCode] = useState<string | null>(null);
   const [signInError, setSignInError] = useState<string | null>(null);

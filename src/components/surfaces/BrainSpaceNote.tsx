@@ -20,6 +20,7 @@ import {
   X,
 } from '@/components/libs/icons';
 import { db } from '@/db/db';
+import { updateReplicatedRow } from '@/lib/writerSyncIntegration/replicatedRowUpdate';
 import { deleteNoteWithCascade } from '@/db/seed';
 import { useUI } from '@/store/ui';
 import {
@@ -280,7 +281,7 @@ const useNoteDrag = (
         drag.kind === 'move'
           ? { l: pos.l, t: pos.t }
           : { w: pos.w, h: pos.h };
-      await db.notes.update(note.id, patch);
+      await updateReplicatedRow(db.notes, note.id, patch);
       setDrag({ kind: 'idle' });
     },
     [drag, note.id, pos.l, pos.t, pos.w, pos.h],
@@ -824,14 +825,14 @@ const useNoteEditing = (note: Note) => {
 
   const maybePromote = async () => {
     if (note.state !== NoteState.User) {
-      await db.notes.update(note.id, { state: NoteState.User });
+      await updateReplicatedRow(db.notes, note.id, { state: NoteState.User });
     }
   };
 
   const commitBody = async () => {
     setEditing('none');
     if (draftBody !== note.body) {
-      await db.notes.update(note.id, { body: draftBody });
+      await updateReplicatedRow(db.notes, note.id, { body: draftBody });
       await maybePromote();
     }
   };
@@ -840,7 +841,7 @@ const useNoteEditing = (note: Note) => {
     setEditing('none');
     const next = draftTitle.trim() || undefined;
     if (next !== note.title) {
-      await db.notes.update(note.id, { title: next });
+      await updateReplicatedRow(db.notes, note.id, { title: next });
       await maybePromote();
     }
   };

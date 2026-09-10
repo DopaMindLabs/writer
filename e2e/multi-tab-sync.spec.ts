@@ -1,5 +1,6 @@
 import { test, expect } from './_helpers';
 import {
+  readDocBody,
   reseedAndGoHome,
   gotoFirstDoc,
   getFirstSpaceIdFromHome,
@@ -145,7 +146,7 @@ test("shows a collaborator's presence cursor in the other tab", async ({
   // document — awareness is published from the profile when the provider connects.
   const spaceId = await getFirstSpaceIdFromHome(page);
   const name = `Ada ${Date.now()}`;
-  await page.goto('/#/settings?tab=account');
+  await page.goto('/#/settings?tab=profile');
   const nameField = page.getByTestId('setting-display-name').getByRole('textbox');
   await nameField.fill(name);
   await nameField.blur();
@@ -212,11 +213,17 @@ test('a backup restore from settings reloads the doc in another tab', async ({
   // Back to the doc; add a marker the restore must remove, and let it persist.
   await page.goto(`/#/s/${spaceId}/d/${docId}`);
   await expect(body(page)).toBeVisible();
+  const rowsBefore = await countUpdateRows(page, docId);
   const marker = `stale-${Date.now()}`;
   await body(page).click();
   await page.keyboard.type(` ${marker}`);
   await expect(body(page)).toContainText(marker);
-  await page.waitForTimeout(800); // autosave + CRDT append settle
+  // Tab B reads the shared CRDT log and the restore diffs the saved body, so
+  // both must have durably taken the marker first — observed, not slept for.
+  await expect.poll(() => readDocBody(page, docId), { timeout: 15_000 }).toContain(marker);
+  await expect
+    .poll(() => countUpdateRows(page, docId), { timeout: 15_000 })
+    .toBeGreaterThan(rowsBefore);
 
   // Tab B opens the same doc and sees the marker via the shared CRDT log.
   const pageB = await openCoveredPage(context, browserName);

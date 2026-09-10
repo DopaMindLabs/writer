@@ -5,6 +5,7 @@ import { db } from '@/db/db';
 import {
   FIXED_TIME,
   sampleDoc,
+  sampleMetadata,
   sampleNote,
   sampleSection,
   sampleSpace,
@@ -628,6 +629,7 @@ describe('deleteSpaceCascade', () => {
     await db.docs.put(sampleDoc);
     await db.notes.put(sampleNote);
     const annotation: Annotation = {
+      ...sampleMetadata(),
       id: 'a1',
       docId: 'd1',
       rangeStart: 0,
@@ -637,6 +639,7 @@ describe('deleteSpaceCascade', () => {
       createdAt: FIXED_TIME,
     };
     const citation: Citation = {
+      ...sampleMetadata(),
       id: 'c1',
       spaceId: 's1',
       key: 'doe2024',
@@ -647,6 +650,7 @@ describe('deleteSpaceCascade', () => {
       useCount: 0,
     };
     const connection: Connection = {
+      ...sampleMetadata(),
       id: 'cn1',
       spaceId: 's1',
       fromNoteId: 'n1',
@@ -657,6 +661,7 @@ describe('deleteSpaceCascade', () => {
     await db.citations.put(citation);
     await db.connections.put(connection);
     await db.palettes.put({
+      ...sampleMetadata(),
       id: 'p1',
       spaceId: 's1',
       slots: [{ name: 'a', color: '#fff' }],

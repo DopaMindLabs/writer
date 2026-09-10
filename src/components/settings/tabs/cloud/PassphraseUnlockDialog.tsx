@@ -31,7 +31,7 @@ export const PassphraseUnlockDialog = ({
   onRecover,
 }: PassphraseUnlockDialogProps) => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.unlockDialog.${name}`);
+  const k = (name: string) => t(`settings.cloud.unlockDialog.${name}`);
   const form = usePassphraseUnlockForm({
     injected: { onUnlock, onRecover },
     onUnlocked,

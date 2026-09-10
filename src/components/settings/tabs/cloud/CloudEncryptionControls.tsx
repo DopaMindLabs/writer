@@ -32,7 +32,7 @@ export const CloudEncryptionControls = ({
   onForget,
 }: CloudEncryptionControlsProps) => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.${name}`);
+  const k = (name: string) => t(`settings.cloud.${name}`);
   return (
     <div className="flex flex-wrap items-center gap-2 py-2">
       {hasKey ? (

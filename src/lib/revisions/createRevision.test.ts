@@ -1,12 +1,18 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { db } from '@/db/db';
 import {
   createRevision,
   MAX_AUTO_REVISIONS_PER_DOC,
 } from './createRevision';
-import { serializedBody } from '@/test/fixtures';
+import { sampleDoc, serializedBody } from '@/test/fixtures';
 
 const DOC = 'd1';
+
+// A revision derives its access scope from its document, so the doc row must
+// exist before a revision can be created for it.
+beforeEach(async () => {
+  await db.docs.put(sampleDoc);
+});
 
 describe('createRevision', () => {
   it('writes a revision row with extracted text and word count', async () => {

@@ -4,6 +4,7 @@ import { restoreDocs, seedDocsCrdt, docBodyBaselineKey } from '@/lib/docs';
 import { collabSeedKey } from '@/lib/collab/seedKey';
 import { broadcastDocReload } from '@/lib/collab/docReloadChannel';
 import { createSpaceBackup } from '@/lib/backup/createSpaceBackup';
+import { remintedMetadata } from '@/lib/writerSyncIntegration/writerEntityMetadata';
 import type { ParsedSpaceArchive } from './parseSpaceArchive';
 
 const RESTORE_TABLES = [
@@ -43,17 +44,24 @@ const deleteSpaceContent = async (spaceId: string): Promise<void> => {
   await db.docInspectorConfigs.delete(spaceId);
 };
 
+/**
+ * Write the archive back over the space. Every row takes a fresh mutation id and
+ * logical time: a restore is a material change on this device, and re-putting a
+ * stored `mutationId` would journal an operation the other devices have already
+ * accepted — they would discard the restored rows as replays while honouring the
+ * deletions that preceded them, emptying the space everywhere but here.
+ */
 const putArchiveContent = async (archive: ParsedSpaceArchive): Promise<void> => {
-  await db.spaces.put(archive.space);
-  await db.sections.bulkPut(archive.sections);
-  await restoreDocs(archive.docs);
-  await db.notes.bulkPut(archive.notes);
-  await db.noteAttachments.bulkPut(archive.attachments);
-  await db.annotations.bulkPut(archive.annotations);
-  await db.citations.bulkPut(archive.citations);
-  await db.connections.bulkPut(archive.connections);
-  await db.revisions.bulkPut(archive.revisions);
-  await db.palettes.bulkPut(archive.palettes);
+  await db.spaces.put(remintedMetadata(archive.space));
+  await db.sections.bulkPut(archive.sections.map(remintedMetadata));
+  await restoreDocs(archive.docs.map(remintedMetadata));
+  await db.notes.bulkPut(archive.notes.map(remintedMetadata));
+  await db.noteAttachments.bulkPut(archive.attachments.map(remintedMetadata));
+  await db.annotations.bulkPut(archive.annotations.map(remintedMetadata));
+  await db.citations.bulkPut(archive.citations.map(remintedMetadata));
+  await db.connections.bulkPut(archive.connections.map(remintedMetadata));
+  await db.revisions.bulkPut(archive.revisions.map(remintedMetadata));
+  await db.palettes.bulkPut(archive.palettes.map(remintedMetadata));
   if (archive.docInspectorConfig) {
     await db.docInspectorConfigs.put(archive.docInspectorConfig);
   }

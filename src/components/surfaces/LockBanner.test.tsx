@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { render } from '@/test/test-utils';
+import { sampleMetadata } from '@/test/fixtures';
 import type { Doc } from '@/db/schema';
 
 vi.mock('@/lib/docs', () => ({
@@ -11,6 +12,7 @@ const { setDocStatus } = await import('@/lib/docs');
 const { LockBanner } = await import('./LockBanner');
 
 const doc: Doc = {
+  ...sampleMetadata(),
   id: 'd1',
   spaceId: 's1',
   sectionId: 'sec1',

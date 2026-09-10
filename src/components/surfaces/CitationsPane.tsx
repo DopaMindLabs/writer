@@ -26,7 +26,13 @@ import {
   serializeCitationsToBibtex,
 } from '@/lib/bibtex';
 import { db } from '@/db/db';
+import { updateReplicatedRow } from '@/lib/writerSyncIntegration/replicatedRowUpdate';
 import { newId } from '@/lib/ids';
+import {
+  currentPrincipal,
+  newEntityMetadata,
+} from '@/lib/writerSyncIntegration/writerEntityMetadata';
+import { setCitationsType } from '@/lib/citations/citationRepository';
 import { cn } from '@/lib/utils';
 import { downloadBlob } from '@/lib/file-download';
 import { appLogger } from '@/lib/appLogger';
@@ -81,7 +87,7 @@ const useImportActions = ({
     if (!file) return;
     setStatus(t('citations.parsing', { name: file.name }));
     try {
-      const parsed = await parseBibtexFile(file, spaceId);
+      const parsed = await parseBibtexFile(file, spaceId, await currentPrincipal());
       const { added, skipped } = await importCitations(parsed);
       const addedPlural = added === 1 ? '' : 's';
       const skippedSuffix =
@@ -180,11 +186,7 @@ const useMutationActions = ({
   const handleBulkSetType = async (type: Citation['type']) => {
     const ids = Array.from(selected);
     if (ids.length === 0) return;
-    await db.transaction('rw', db.citations, async () => {
-      for (const id of ids) {
-        await db.citations.update(id, { type });
-      }
-    });
+    await setCitationsType(ids, type);
     setStatus(
       t('citations.bulk.typeApplied', { type, count: ids.length }),
     );
@@ -1332,7 +1334,7 @@ const useCitationEdit = (
         }
       }
 
-      await db.citations.update(c.id, {
+      await updateReplicatedRow(db.citations, c.id, {
         key: trimmedKey,
         authors: trimmedAuthors,
         title: trimmedTitle,
@@ -1691,7 +1693,7 @@ const useManualAdd = ({
     setSubmitting(true);
     try {
       if (raw.trim().startsWith('@')) {
-        const parsed = await parseBibtexText(raw, spaceId);
+        const parsed = await parseBibtexText(raw, spaceId, await currentPrincipal());
         const { added, skipped } = await importCitations(parsed);
         const addedPlural = added === 1 ? '' : 's';
         const skippedSuffix =
@@ -1703,6 +1705,7 @@ const useManualAdd = ({
         );
       } else {
         const newCitation: Citation = {
+          ...newEntityMetadata(spaceId, await currentPrincipal()),
           id: newId(),
           spaceId,
           key: `manual-${String(Date.now())}`,

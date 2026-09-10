@@ -122,11 +122,11 @@ exports[`QuickSettingsPopover > rendering > should render the popover surface 1`
     <a
       class="inline-flex items-center gap-1 border-b border-ink pb-px text-[12px] font-medium text-ink"
       data-discover="true"
-      data-testid="quick-settings-account"
-      href="/settings?tab=account"
+      data-testid="quick-settings-profile"
+      href="/settings?tab=profile"
       type="button"
     >
-      Account
+      Profile
     </a>
     <span
       class="flex-1"

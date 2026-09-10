@@ -4,10 +4,10 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { WrongPassphraseError } from '@/lib/cloud/crypto/keys';
 import { EscrowMissingError } from '@/lib/cloud/crypto/errors';
-import { createSyncCoordinator } from '@/lib/syncProviders/coordinator';
-import type { SyncProvider } from '@/lib/syncProviders/types';
-import { KeyEscrowPresence } from '@/lib/syncProviders/types';
-import { WriterSyncProvider } from '@/lib/writerSync/WriterSyncProvider';
+import { createSyncCoordinator } from 'writer-sync/core';
+import type { SyncProvider } from 'writer-sync/core';
+import { KeyEscrowPresence } from 'writer-sync/core';
+import { WriterSyncProvider } from '@/lib/writerSyncIntegration/WriterSyncProvider';
 import { PassphraseUnlockDialog } from './PassphraseUnlockDialog';
 
 const noop = () => {};
@@ -123,6 +123,7 @@ describe('PassphraseUnlockDialog', () => {
     const unlock = vi.fn().mockResolvedValue(undefined);
     const provider: SyncProvider = {
       id: 'test-cloud',
+      kind: 'dexie-cloud',
       keyDelivery: {
         setUp: () => Promise.resolve('code'),
         unlock,
@@ -137,7 +138,12 @@ describe('PassphraseUnlockDialog', () => {
     };
     const onUnlocked = vi.fn();
     renderWithProviders(
-      <WriterSyncProvider coordinator={createSyncCoordinator({ providers: [provider] })}>
+      <WriterSyncProvider
+        coordinator={createSyncCoordinator({
+          providers: [provider],
+          defaultProviderInstanceId: 'test-cloud',
+        })}
+      >
         <PassphraseUnlockDialog open onOpenChange={noop} onUnlocked={onUnlocked} />
       </WriterSyncProvider>,
     );

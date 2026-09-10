@@ -27,7 +27,7 @@ export const CloudKeyConflictUnlockStep = ({
   onNoPassphrase,
 }: CloudKeyConflictUnlockStepProps) => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.conflict.${name}`);
+  const k = (name: string) => t(`settings.cloud.conflict.${name}`);
   return (
     <>
       <DialogHeader>

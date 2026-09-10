@@ -69,12 +69,12 @@ export const APP_MENU_LINKS: readonly AppMenuLink[] = [
     sheetLabelKey: 'mobileMore.accessibility',
   },
   {
-    id: 'account',
-    href: routes.settings('account'),
+    id: 'profile',
+    href: routes.settings('profile'),
     surfaces: ['popover', 'sheet'],
-    popoverLabelKey: 'quickSettings.account',
-    popoverTestId: 'quick-settings-account',
-    sheetLabelKey: 'mobileMore.account',
+    popoverLabelKey: 'quickSettings.profile',
+    popoverTestId: 'quick-settings-profile',
+    sheetLabelKey: 'mobileMore.profile',
   },
   {
     id: 'contact',

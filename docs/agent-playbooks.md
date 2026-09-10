@@ -78,7 +78,7 @@ clarification.
    - Does the change affect the CRDT / `docUpdates` log? → collab tests.
    - Does the change affect `docs.body` writes? → reconciliation tests.
    - Does the change affect the DB schema (`STORES`)? → `tableRules.ts`, cloud
-     middleware tests, migration plan.
+     middleware tests, and a `writerTablePolicy.ts` classification for any new table.
    - Does the change affect the UI? → design system compliance (`docs/design-system.md`),
      a11y layer, stories.
 6. **Write the plan** as an ordered list of file edits. Each step: file path, what

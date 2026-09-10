@@ -1,0 +1,19 @@
+{
+  "name": "writer-qr",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Facade over QR generation and scanning: application code depends on these ports, never on the underlying libraries.",
+  "exports": {
+    "./encode": "./src/encode/index.ts",
+    "./scan": "./src/scan/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "TZ=UTC vitest run --root ."
+  },
+  "dependencies": {
+    "barcode-detector": "^3.0.5",
+    "uqr": "^0.1.2"
+  }
+}

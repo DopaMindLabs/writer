@@ -1,9 +1,11 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { db } from '@/db/db';
 import type { Citation } from '@/db/schema';
+import { sampleMetadata } from '@/test/fixtures';
 import { useCitations, usePagedCitations } from './useCitations';
 
 const makeCitation = (overrides: Partial<Citation>): Citation => ({
+  ...sampleMetadata(overrides.spaceId ?? 's1'),
   id: overrides.id ?? 'c',
   spaceId: overrides.spaceId ?? 's1',
   key: overrides.key ?? 'k',

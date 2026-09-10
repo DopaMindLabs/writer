@@ -68,6 +68,10 @@ describe('snapshot', () => {
     });
     await openAfterMount();
     await screen.findByText('Sample Doc');
+    // The rail's spaces resolve from a live query of their own, so waiting on
+    // the document list alone snapshots a drawer that is still filling in. On a
+    // fast enough machine that race is lost every time.
+    await screen.findByTestId('space-rail-space-s1');
     const dialog = document.body.querySelector('[role="dialog"]');
     expect(dialog).toMatchSnapshot();
   });

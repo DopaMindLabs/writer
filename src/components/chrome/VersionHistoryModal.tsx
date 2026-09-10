@@ -16,6 +16,7 @@ import { IconButton } from '@/components/ui/icon';
 import { useUI, type DiffMode } from '@/store/ui';
 import { useRevisions } from '@/hooks/useRevisions';
 import { db } from '@/db/db';
+import { updateReplicatedRow } from '@/lib/writerSyncIntegration/replicatedRowUpdate';
 import type { Doc, Revision } from '@/db/schema';
 import {
   computeInlineDiff,
@@ -125,7 +126,7 @@ const RevisionListItem = ({
 }: RevisionListItemProps) => {
   const { t } = useTranslation('chrome');
   const togglePin = (): void => {
-    void db.revisions.update(revision.id, { pinned: !revision.pinned });
+    void updateReplicatedRow(db.revisions, revision.id, { pinned: !revision.pinned });
   };
   return (
     <div

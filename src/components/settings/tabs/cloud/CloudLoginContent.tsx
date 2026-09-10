@@ -50,7 +50,7 @@ export const CloudLoginContent = ({
   interaction: DXCUserInteraction;
 }) => {
   const { t } = useTranslation('screens');
-  const label = (name: string) => t(`settings.account.cloud.${name}`);
+  const label = (name: string) => t(`settings.cloud.${name}`);
   const field = inputField(interaction, label);
 
   const onSubmit = (e: SyntheticEvent<HTMLFormElement>) => {

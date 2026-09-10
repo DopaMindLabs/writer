@@ -24,7 +24,7 @@ export const CloudDeviceAction = ({
   onRevoke,
 }: CloudDeviceActionProps) => {
   const { t } = useTranslation('screens');
-  const k = (key: string) => `settings.account.cloud.devices.${key}`;
+  const k = (key: string) => `settings.cloud.devices.${key}`;
 
   if (isThisDevice) {
     return (

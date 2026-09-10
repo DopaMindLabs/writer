@@ -22,7 +22,7 @@ export const PassphraseUnlockFields = ({
   onToggle,
 }: PassphraseUnlockFieldsProps) => {
   const { t } = useTranslation('screens');
-  const k = (name: string) => t(`settings.account.cloud.unlockDialog.${name}`);
+  const k = (name: string) => t(`settings.cloud.unlockDialog.${name}`);
   return (
     <>
       {error !== null ? (

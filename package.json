@@ -26,7 +26,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "prepare": "husky",
-    "commit": "cz"
+    "commit": "cz",
+    "test:package": "TZ=UTC vitest run --project writer-sync"
   },
   "config": {
     "commitizen": {
@@ -127,5 +128,8 @@
     "typescript-eslint": "^8.65.0",
     "vite": "^8.1.5",
     "vitest": "^4.1.7"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

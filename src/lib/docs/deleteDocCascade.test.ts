@@ -10,7 +10,7 @@ import {
   saveDeviceKeyRing,
   forgetDeviceKeyRing,
 } from '@/lib/cloud/crypto/keyStore';
-import { deriveKeyRing, generateMasterSecret } from '@/lib/cloud/crypto/keys';
+import { deriveKeyRing, generateRootSecret } from '@/lib/cloud/crypto/keys';
 import {
   FIXED_TIME,
   sampleAnnotation,
@@ -96,6 +96,24 @@ describe('deleteDocCascade', () => {
   it('rejects an empty docId', async () => {
     await expect(deleteDocCascade('')).rejects.toThrow();
   });
+
+  it('mints a distinct mutation id for every note it unlinks', async () => {
+    // Two independent notes link to the same doc; each unlink is its own
+    // logical mutation, so their mutation ids must differ (the operation
+    // journal keys frames by mutation id).
+    await db.notes.put({
+      ...sampleNote,
+      id: 'note-d1-b',
+      linkedDocId: 'd1',
+    });
+    await deleteDocCascade('d1');
+
+    const first = await db.notes.get('note-d1');
+    const second = await db.notes.get('note-d1-b');
+    expect(first?.linkedDocId).toBeUndefined();
+    expect(second?.linkedDocId).toBeUndefined();
+    expect(first?.mutationId).not.toBe(second?.mutationId);
+  });
 });
 
 describe('deleteDocCascade under cloud encryption', () => {
@@ -120,7 +138,7 @@ describe('deleteDocCascade under cloud encryption', () => {
     });
     cloudDb.use(createEncryptionMiddleware(deviceKeyProvider));
     await cloudDb.open();
-    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateRootSecret(), 1) });
   });
 
   afterEach(async () => {
@@ -132,10 +150,10 @@ describe('deleteDocCascade under cloud encryption', () => {
 
   it('unlinks notes even though linkedDocId is encrypted', async () => {
     await cloudDb.table<Row>('docs').put({
-      id: 'cd', spaceId: 's', sectionId: 'x', updatedAt: 1, name: 'D',
+      id: 'cd', spaceId: 's', sectionId: 'x', updatedAt: 1, accessScopeId: 's', name: 'D',
     });
     await cloudDb.table<Row>('notes').put({
-      id: 'cn', spaceId: 's', kind: 'text', createdAt: 1, linkedDocId: 'cd',
+      id: 'cn', spaceId: 's', kind: 'text', createdAt: 1, accessScopeId: 's', linkedDocId: 'cd',
     });
 
     await deleteDocCascade('cd', cloudDb);

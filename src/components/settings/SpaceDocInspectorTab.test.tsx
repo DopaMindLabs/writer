@@ -2,10 +2,12 @@ import { describe, it, expect, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders as render, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
+import { sampleMetadata } from '@/test/fixtures';
 import type { Space } from '@/db/schema';
 import { SpaceDocInspectorTab } from './SpaceDocInspectorTab';
 
 const space: Space = {
+  ...sampleMetadata(),
   id: 's1',
   tag: 'SP',
   name: 'Space',

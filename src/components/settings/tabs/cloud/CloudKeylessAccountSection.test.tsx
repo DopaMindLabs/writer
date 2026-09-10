@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen } from '@/test/test-utils';
 import { CloudKeylessAccountSection } from './CloudKeylessAccountSection';
-import { KeyEscrowPresence, SyncPhase } from '@/lib/syncProviders/types';
+import { KeyEscrowPresence, SyncPhase } from 'writer-sync/core';
 
 const handlers = () => ({ onUnlock: vi.fn(), onSetUp: vi.fn(), onRetry: vi.fn() });
 

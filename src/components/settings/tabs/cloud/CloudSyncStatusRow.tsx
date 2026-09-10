@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { StatusGlyph } from '@/components/ui/StatusGlyph';
 import type { StatusKind } from '@/components/ui/statusRole';
 import { assertNever } from '@/lib/invariant';
-import { SyncPhase } from '@/lib/syncProviders/types';
+import { SyncPhase } from 'writer-sync/core';
 
 export interface CloudSyncStatusRowProps {
   phase: SyncPhase;
@@ -35,14 +35,14 @@ const phaseMeta = (phase: SyncPhase): { kind: StatusKind; key: string } => {
 export const CloudSyncStatusRow = ({ phase, message }: CloudSyncStatusRowProps) => {
   const { t } = useTranslation('screens');
   const { kind, key } = phaseMeta(phase);
-  const label = t(`settings.account.cloud.status.${key}`);
+  const label = t(`settings.cloud.status.${key}`);
   return (
     <div
       data-testid="cloud-sync-status"
       className="flex items-center justify-between gap-4 border-b border-rule/60 py-4"
     >
       <span className="text-[14px] font-medium text-ink">
-        {t('settings.account.cloud.status.label')}
+        {t('settings.cloud.status.label')}
       </span>
       <StatusGlyph kind={kind} mono={false}>
         {phase === SyncPhase.Error && message ? `${label}: ${message}` : label}

@@ -1,10 +1,20 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { NoteKind, NoteState, type Connection, type Note } from '@/db/schema';
+import { asOperationId, asPrincipalId } from 'writer-sync/core';
 import { BrainSpaceConnection } from './BrainSpaceConnection';
 
 const FIXED_TIME = 1704067200000;
 
+const entityMetadata = {
+  accessScopeId: 's1',
+  createdBy: asPrincipalId('me'),
+  updatedBy: asPrincipalId('me'),
+  mutationId: asOperationId('op-1'),
+  logicalUpdatedAt: { millis: 0, counter: 0 },
+};
+
 const noteAt = (id: string, l: number, t: number): Note => ({
+  ...entityMetadata,
   id,
   spaceId: 's1',
   l,
@@ -18,6 +28,7 @@ const noteAt = (id: string, l: number, t: number): Note => ({
 });
 
 const connection: Connection = {
+  ...entityMetadata,
   id: 'c1',
   spaceId: 's1',
   fromNoteId: 'n1',

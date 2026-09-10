@@ -15,21 +15,12 @@ export interface PresenceState {
 }
 
 /**
- * A bidirectional byte channel between peers editing the same document.
- *
- * `sharesStore` is `true` when the peers on the other end persist to the *same*
- * local store as us (e.g. a `BroadcastChannel` between tabs of one browser), and
- * `false` for remote peers (e.g. a relay) whose updates we must persist
- * ourselves. The provider uses this to avoid double-persisting shared-store
- * updates.
+ * The byte channel a provider and its transports are written against. Defined by
+ * the sync engine (`writer-sync/core`) and re-exported here so the collaboration
+ * layer keeps one name for it: a transport is a transport whether it carries
+ * CRDT updates or encrypted operation frames.
  */
-export interface SyncTransport {
-  readonly sharesStore: boolean;
-  readonly send: (bytes: Uint8Array) => void;
-  /** Register a listener for inbound messages; returns an unsubscribe fn. */
-  readonly onMessage: (cb: (bytes: Uint8Array) => void) => () => void;
-  readonly close: () => void;
-}
+export type { SyncTransport } from 'writer-sync/core';
 
 /** Durable store for a document's append-only CRDT update log. */
 export interface CollabStore {

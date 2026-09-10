@@ -2,7 +2,7 @@ import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { act, render, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
-import { FIXED_TIME, serializedBody } from '@/test/fixtures';
+import { FIXED_TIME, sampleMetadata, serializedBody } from '@/test/fixtures';
 import type { Doc } from '@/db/schema';
 
 const editorMocks = vi.hoisted(() => ({
@@ -66,6 +66,7 @@ const { WriteSurface } = await import('./WriteSurface');
 const NEW_BODY = serializedBody('rewritten');
 
 const doc: Doc = {
+  ...sampleMetadata(),
   id: 'd1',
   spaceId: 's1',
   sectionId: 'sec1',

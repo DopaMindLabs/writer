@@ -1,5 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { generateMasterSecret, deriveKeyRing } from '@/lib/cloud/crypto/keys';
+import { generateRootSecret, deriveKeyRing } from '@/lib/cloud/crypto/keys';
 import {
   forgetDeviceKeyRing,
   saveDeviceKeyRing,
@@ -10,7 +10,7 @@ import {
 } from './useEncryptedLiveQuery';
 
 const acquireKey = async () =>
-  saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+  saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateRootSecret(), 1) });
 
 describe('useEncryptedLiveQuery', () => {
   beforeEach(async () => {

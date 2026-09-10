@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import type { BrowserContext, ConsoleMessage, Page } from '@playwright/test';
+import type { Browser, BrowserContext, ConsoleMessage, Page } from '@playwright/test';
 import { addCoverageReport } from 'monocart-reporter';
 import axe from 'axe-core';
 
@@ -7,6 +7,10 @@ import axe from 'axe-core';
 // instrumented for coverage here and flushed in the autoCoverage teardown so
 // their line hits reach the ratchet — the default fixture only tracks `page`.
 const coveredPages: Page[] = [];
+// Contexts opened for a second device. Closed in the teardown *after* their
+// coverage is flushed — closing one inside a test closes its pages first, and
+// a closed page reports nothing.
+const coveredContexts: BrowserContext[] = [];
 
 export const openCoveredPage = async (
   context: BrowserContext,
@@ -19,6 +23,55 @@ export const openCoveredPage = async (
   }
   return extra;
 };
+
+/**
+ * A second device: its own context, so it holds its own storage and its own
+ * device identity rather than sharing the first device's.
+ */
+export const openCoveredContext = async (
+  browser: Browser,
+  browserName: string,
+): Promise<Page> => {
+  const context = await browser.newContext();
+  coveredContexts.push(context);
+  const page = await openCoveredPage(context, browserName);
+  // The default `page` fixture marks the tours seen before its first
+  // navigation; a second device is a genuinely fresh install and would meet the
+  // welcome tour over whatever the spec came to do.
+  await completeTours(page);
+  return page;
+};
+
+/**
+ * The persisted body of one doc, read straight from IndexedDB.
+ *
+ * For specs that must know an autosave has durably landed before acting on the
+ * database underneath it — polled with `expect.poll` rather than guessed at
+ * with a clock, per the no-hardcoded-waits rule. Returns an empty string while
+ * the row is absent so a poll can simply keep waiting.
+ */
+export const readDocBody = (page: Page, docId: string): Promise<string> =>
+  page.evaluate(
+    (id) =>
+      new Promise<string>((resolve, reject) => {
+        const open = indexedDB.open('lipsum');
+        open.onerror = () => reject(new Error('could not open lipsum db'));
+        open.onsuccess = () => {
+          const db = open.result;
+          const request = db.transaction('docs', 'readonly').objectStore('docs').get(id);
+          request.onsuccess = () => {
+            const row = request.result as { body?: string } | undefined;
+            resolve(row?.body ?? '');
+            db.close();
+          };
+          request.onerror = () => {
+            db.close();
+            reject(new Error('could not read the docs row'));
+          };
+        };
+      }),
+    docId,
+  );
 
 export const reseedAndGoHome = async (page: Page): Promise<void> => {
   await page.goto('/?reseed=1#/');
@@ -98,6 +151,19 @@ export const stubDirectoryPicker = async (page: Page): Promise<void> => {
 const TOURS_STORAGE_KEY = 'lipsum-tours';
 const ALL_TOUR_IDS = ['welcome', 'writer', 'citations', 'brainspace'];
 
+/** Mark every guided tour seen, before the page this belongs to navigates. */
+export const completeTours = (page: Page): Promise<void> =>
+  page.addInitScript(
+    ({ key, ids }) => {
+      try {
+        localStorage.setItem(key, JSON.stringify({ version: 1, completed: ids }));
+      } catch {
+        /* ignore quota / disabled storage */
+      }
+    },
+    { key: TOURS_STORAGE_KEY, ids: ALL_TOUR_IDS },
+  );
+
 /**
  * `vercel.json`'s CSP only applies to a real Vercel deployment, never to the
  * local Playwright preview (Vite's preview server sets no such header), so a
@@ -141,6 +207,7 @@ export const test = base.extend<{ autoCoverage: void; failOnCspViolation: void }
           await addCoverageReport(cov, test.info());
         }
       }
+      for (const extra of coveredContexts.splice(0)) await extra.close();
     },
     { scope: 'test', auto: true },
   ],

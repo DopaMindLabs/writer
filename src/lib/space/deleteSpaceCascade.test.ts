@@ -3,10 +3,11 @@ import { EMPTY_LEXICAL_JSON } from '@/lib/docs/emptyBody';
 import { docBodyBaselineKey } from '@/lib/docs';
 import { collabSeedKey } from '@/lib/collab/seedKey';
 import { deleteSpaceCascade } from './deleteSpaceCascade';
-import { FIXED_TIME } from '@/test/fixtures';
+import { FIXED_TIME, sampleMetadata } from '@/test/fixtures';
 
 const seedSpace = async (spaceId: string) => {
   await db.spaces.put({
+    ...sampleMetadata(spaceId),
     id: spaceId,
     tag: 'tst',
     name: `Space ${spaceId}`,
@@ -16,6 +17,7 @@ const seedSpace = async (spaceId: string) => {
     updatedAt: FIXED_TIME,
   });
   await db.docs.put({
+    ...sampleMetadata(spaceId),
     id: `doc-${spaceId}`,
     spaceId,
     sectionId: `sec-${spaceId}`,
@@ -25,6 +27,7 @@ const seedSpace = async (spaceId: string) => {
     updatedAt: FIXED_TIME,
   });
   await db.noteAttachments.put({
+    ...sampleMetadata(spaceId),
     id: `att-${spaceId}`,
     noteId: `note-${spaceId}`,
     spaceId,
@@ -35,6 +38,7 @@ const seedSpace = async (spaceId: string) => {
     createdAt: FIXED_TIME,
   });
   await db.revisions.put({
+    ...sampleMetadata(spaceId),
     id: `rev-${spaceId}`,
     docId: `doc-${spaceId}`,
     body: '',

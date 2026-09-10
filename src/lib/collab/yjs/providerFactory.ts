@@ -1,6 +1,6 @@
 import * as Y from 'yjs';
 import type { Provider } from '@lexical/yjs';
-import type { Profile } from '@/lib/account/profile';
+import type { Profile } from '@/lib/profile/profile';
 import type { CollabStore, PresenceState } from '@/lib/collab/types';
 import { createBroadcastChannelTransport } from '@/lib/collab/transport/BroadcastChannelTransport';
 import { createYjsProvider } from './YjsProvider';

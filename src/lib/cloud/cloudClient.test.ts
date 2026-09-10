@@ -26,8 +26,9 @@ import {
 } from './crypto/keyStore';
 import { keyMismatchState } from './crypto/keyMismatch';
 import { keylessLockState } from './crypto/keylessLock';
-import { deriveKeyRing, generateMasterSecret, ESCROW_ID, type EscrowRecord } from './crypto/keys';
+import { deriveKeyRing, generateRootSecret, ESCROW_ID, type EscrowRecord } from './crypto/keys';
 import { resetAndReseed } from '@/db/seed';
+import { sampleMetadata } from '@/test/fixtures';
 
 vi.mock('@/db/seed', () => ({ resetAndReseed: vi.fn(async () => {}) }));
 
@@ -164,6 +165,7 @@ describe('signInToCloud guard (clean vs dirty keyless device)', () => {
   it('blocks sign-in while keyless with unencrypted writing on the device', async () => {
     withCloudLogin();
     await db.docs.add({
+      ...sampleMetadata('s'),
       id: 'd', spaceId: 's', sectionId: 'x', name: 'n', body: 'plain',
       meta: { wordCount: 1 }, updatedAt: 1,
     });
@@ -390,7 +392,7 @@ describe('hydrateCloudDevice', () => {
   it('loads the persisted device ring when the database is cloud-enabled', async () => {
     vi.stubEnv('VITE_DEXIE_CLOUD_URL', 'https://x.dexie.cloud');
     localStorage.setItem(CLOUD_FLAG_KEY, 'on');
-    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateMasterSecret(), 1) });
+    await saveDeviceKeyRing({ accountId: null, ring: await deriveKeyRing(generateRootSecret(), 1) });
 
     await hydrateCloudDevice();
     expect(deviceKeyProvider.current()).not.toBeNull();
@@ -426,7 +428,7 @@ describe('resetCloudDevice', () => {
   it('forgets the device key, clears both write locks, and reseeds', async () => {
     await saveDeviceKeyRing({
       accountId: 'acct-a',
-      ring: await deriveKeyRing(generateMasterSecret(), 1),
+      ring: await deriveKeyRing(generateRootSecret(), 1),
     });
     keyMismatchState.set(true);
     keylessLockState.set(true);

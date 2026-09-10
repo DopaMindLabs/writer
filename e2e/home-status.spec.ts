@@ -19,26 +19,26 @@ test('home shows the version chip and the sync warning chip separately', async (
   await expect(page.getByRole('tooltip')).toHaveText(/no data sync/i);
 });
 
-test('the home header offers sign-in (flag-gated) and leads to the account tab', async ({
+test('the home header leads to device sync, with nothing to enable first', async ({
   page,
 }) => {
   await reseedAndGoHome(page);
-  // Without the flag the header carries no sign-in action.
-  await expect(page.getByTestId('home-cloud-sign-in')).toHaveCount(0);
-  await page.goto('/?cloud-sync=on#/');
-  const signIn = page.getByTestId('home-cloud-sign-in');
-  await expect(signIn).toBeVisible();
-  await signIn.click();
-  await expect(page.getByTestId('cloud-section')).toBeVisible();
+
+  // Unconditional: the action it replaced hid behind the cloud-sync beta, which
+  // left the sync that needs no account with no way in from Home.
+  const deviceSync = page.getByTestId('home-device-sync');
+  await expect(deviceSync).toBeVisible();
+  await deviceSync.click();
+
+  await expect(page.getByTestId('pair-device-open')).toBeVisible();
 });
 
-test('the header sign-in action stays within a narrow mobile viewport', async ({
+test('the header device sync link stays within a narrow mobile viewport', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 640 });
   await reseedAndGoHome(page);
-  await page.goto('/?cloud-sync=on#/');
-  await expect(page.getByTestId('home-cloud-sign-in')).toBeVisible();
+  await expect(page.getByTestId('home-device-sync')).toBeVisible();
   const overflow = await page.evaluate(
     () =>
       document.documentElement.scrollWidth -

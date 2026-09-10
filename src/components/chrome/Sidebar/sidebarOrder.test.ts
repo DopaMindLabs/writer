@@ -1,4 +1,5 @@
 import type { Doc, Section } from '@/db/schema';
+import { sampleMetadata } from '@/test/fixtures';
 import {
   applyDrop,
   buildOrder,
@@ -7,6 +8,7 @@ import {
 } from './sidebarOrder';
 
 const section = (id: string): Section => ({
+  ...sampleMetadata(),
   id,
   spaceId: 's1',
   parentSectionId: null,
@@ -15,6 +17,7 @@ const section = (id: string): Section => ({
 });
 
 const doc = (id: string, sectionId: string): Doc => ({
+  ...sampleMetadata(),
   id,
   spaceId: 's1',
   sectionId,

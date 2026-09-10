@@ -20,9 +20,9 @@ const stringsUnder = (value: unknown, out: string[] = []): string[] => {
 
 const cloud = (
   screens as {
-    settings: { account: { cloud: { conflict: unknown } } };
+    settings: { cloud: { conflict: unknown } };
   }
-).settings.account.cloud;
+).settings.cloud;
 
 const recoveryStrings = [
   ...stringsUnder(cloud.conflict),

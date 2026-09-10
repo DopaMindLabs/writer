@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import type { Profile } from '@/lib/account/profile';
-import { useProfile } from '@/lib/account/useProfile';
-import { getTabId } from '@/lib/account/tabId';
+import type { Profile } from '@/lib/profile/profile';
+import { useProfile } from '@/lib/profile/useProfile';
+import { getTabId } from '@/lib/tabId';
 import { collabStore } from '@/lib/collab/collabStore';
 import {
   makeProviderFactory,

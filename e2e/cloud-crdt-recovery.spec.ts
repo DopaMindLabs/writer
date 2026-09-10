@@ -1,5 +1,5 @@
 import { test, expect } from './_helpers';
-import { reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
+import { readDocBody, reseedAndGoHome, getFirstSpaceIdFromHome } from './_helpers';
 
 /**
  * Regression for the cloud sign-out data-loss crash: signing out clears the
@@ -32,8 +32,11 @@ test('recovers a doc after its local CRDT log is wiped (sign-out simulation)', a
   await editor.click();
   await page.keyboard.type(probe);
   await expect(editor).toContainText(probe);
-  // Let the autosave debounce flush the body into the docs row.
-  await page.waitForTimeout(1000);
+  // Recovery heals from the docs row, so the wipe below must not run until the
+  // autosave has durably put the probe there — observed, not guessed at.
+  const docId = /\/d\/([^/?#]+)/.exec(docUrl)?.[1] ?? '';
+  expect(docId).not.toBe('');
+  await expect.poll(() => readDocBody(page, docId), { timeout: 15_000 }).toContain(probe);
 
   // Simulate the cloud addon's logout: clear the local-only tables while the
   // docs row (with its body) survives, exactly as a sign-out then re-pull leaves

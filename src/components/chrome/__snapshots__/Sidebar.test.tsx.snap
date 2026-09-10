@@ -144,7 +144,6 @@ exports[`Sidebar > snapshot > should match the snapshot across all variants 1`] 
             aria-roledescription="sortable"
             class="focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink cursor-grab active:cursor-grabbing"
             data-testid="sidebar-doc-d1-sortable"
-            style="transition: transform 0ms linear;"
             tabindex="0"
           >
             <div

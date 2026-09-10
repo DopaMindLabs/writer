@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { SyncCoordinator } from '@/lib/syncProviders/coordinator';
-import { startWriterSync } from '@/lib/writerSync/startWriterSync';
+import type { SyncCoordinator } from 'writer-sync/core';
+import { startWriterSync } from '@/lib/writerSyncIntegration/startWriterSync';
 import { applyDevBootParams } from '@/lib/boot/devBootParams';
 import { resetAndReseed } from '@/db/seed';
 

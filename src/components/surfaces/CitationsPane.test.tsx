@@ -2,12 +2,13 @@ import userEvent from '@testing-library/user-event';
 import { fireEvent } from '@testing-library/react';
 import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
 import { db } from '@/db/db';
-import { sampleSpace } from '@/test/fixtures';
+import { sampleMetadata, sampleSpace } from '@/test/fixtures';
 import type { Citation } from '@/db/schema';
 import { CitationsPane } from './CitationsPane';
 
 const citation = (overrides: Partial<Citation> = {}): Citation => {
   return {
+    ...sampleMetadata(),
     id: 'c-base',
     spaceId: 's1',
     key: 'smith2020',
@@ -879,6 +880,7 @@ describe('CitationsPane', () => {
     it('should paginate when more than one page of citations is present', async () => {
       await seedSpace();
       const many: Citation[] = Array.from({ length: 30 }, (_, i) => ({
+        ...sampleMetadata(),
         id: `c-${i}`,
         spaceId: 's1',
         key: `key${i}`,

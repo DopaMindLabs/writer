@@ -17,6 +17,7 @@ import {
   DialogPrimitiveTitle,
 } from '@/components/ui/dialog.primitives';
 import { db } from '@/db/db';
+import { updateReplicatedRow } from '@/lib/writerSyncIntegration/replicatedRowUpdate';
 import { deleteNoteWithCascade } from '@/db/seed';
 import { useUI } from '@/store/ui';
 import { useDocuments } from '@/hooks/useDocuments';
@@ -252,7 +253,10 @@ const DrawerHeader = ({
   const commitTitle = async () => {
     const next = draftTitle.trim() || undefined;
     if (next !== note.title) {
-      await db.notes.update(note.id, { title: next, state: NoteState.User });
+      await updateReplicatedRow(db.notes, note.id, {
+        title: next,
+        state: NoteState.User,
+      });
     }
   };
 
@@ -299,7 +303,10 @@ const BodySection = ({ note }: { note: Note }) => {
 
   const commitBody = async () => {
     if (draftBody !== note.body) {
-      await db.notes.update(note.id, { body: draftBody, state: NoteState.User });
+      await updateReplicatedRow(db.notes, note.id, {
+        body: draftBody,
+        state: NoteState.User,
+      });
     }
   };
 
@@ -531,7 +538,7 @@ const DrawerBody = ({ note, spaceId, onFocusNote, onClose }: DrawerBodyProps) =>
     : undefined;
 
   const handleLinkDoc = async (docId: string) => {
-    await db.notes.update(note.id, {
+    await updateReplicatedRow(db.notes, note.id, {
       linkedDocId: docId === '' ? undefined : docId,
     });
   };

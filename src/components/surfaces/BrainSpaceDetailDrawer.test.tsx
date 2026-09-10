@@ -3,7 +3,12 @@ import { fireEvent } from '@testing-library/react';
 import { act, renderAtRoute, screen, waitFor, within } from '@/test/test-utils';
 import { db } from '@/db/db';
 import { useUI } from '@/store/ui';
-import { sampleDoc, sampleNote, sampleSpace } from '@/test/fixtures';
+import {
+  sampleDoc,
+  sampleMetadata,
+  sampleNote,
+  sampleSpace,
+} from '@/test/fixtures';
 import type { Connection, Note } from '@/db/schema';
 import { BrainSpaceCanvas } from './BrainSpaceCanvas';
 
@@ -27,6 +32,7 @@ const SECOND_NOTE: Note = {
 };
 
 const CONNECTION: Connection = {
+  ...sampleMetadata(),
   id: 'c1',
   spaceId: sampleSpace.id,
   fromNoteId: sampleNote.id,
@@ -353,6 +359,7 @@ describe('BrainSpaceDetailDrawer', () => {
       await db.spaces.put(sampleSpace);
       await db.notes.put({ ...sampleNote, title: 'Origin' });
       const orphan: Connection = {
+        ...sampleMetadata(),
         id: 'c-orphan',
         spaceId: sampleSpace.id,
         fromNoteId: sampleNote.id,
@@ -428,6 +435,7 @@ describe('BrainSpaceDetailDrawer', () => {
 
     const seedAttachment = async (id: string) => {
       await db.noteAttachments.put({
+        ...sampleMetadata(),
         id,
         noteId: SECOND_NOTE.id,
         spaceId: sampleSpace.id,

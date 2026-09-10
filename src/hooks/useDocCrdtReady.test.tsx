@@ -2,12 +2,13 @@ import { render, renderHook, waitFor, act } from '@testing-library/react';
 import { useEffect } from 'react';
 import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
 import { db } from '@/db/db';
-import { serializedBody } from '@/test/fixtures';
+import { sampleMetadata, serializedBody } from '@/test/fixtures';
 import { seedDocCrdt, writeDocBodyBaseline } from '@/lib/docs';
 import { collabStore } from '@/lib/collab/collabStore';
 import { serializeDocSnapshot } from '@/lib/collab/yjs/snapshot';
 import { seedFromLexicalJson } from '@/lib/collab/yjs/seed';
 import { reconcileDocForMount as realReconcile } from '@/lib/reconcile/reconcileDocForMount';
+import type { MountReconcileAction } from '@/lib/reconcile';
 
 const reconcileMock = vi.fn(realReconcile);
 vi.mock('@/lib/reconcile', () => ({
@@ -28,18 +29,24 @@ const canonicalSeed = (docId: string, body: string): string =>
   serializeDocSnapshot(docId, [seedFromLexicalJson(docId, body)]);
 
 interface Deferred {
-  promise: Promise<void>;
+  promise: Promise<MountReconcileAction>;
   resolve: () => void;
   reject: (error: Error) => void;
 }
 const deferred = (): Deferred => {
-  let resolve: () => void = () => undefined;
+  let settle: (action: MountReconcileAction) => void = () => undefined;
   let reject: (error: Error) => void = () => undefined;
-  const promise = new Promise<void>((res, rej) => {
-    resolve = res;
+  const promise = new Promise<MountReconcileAction>((res, rej) => {
+    settle = res;
     reject = rej;
   });
-  return { promise, resolve, reject };
+  return {
+    promise,
+    resolve: () => {
+      settle('accepted');
+    },
+    reject,
+  };
 };
 
 describe('useDocCrdtReady', () => {
@@ -56,6 +63,7 @@ describe('useDocCrdtReady', () => {
 
   it('heals a wiped log from the row body and reports ready', async () => {
     await db.docs.add({
+      ...sampleMetadata('s'),
       id: DOC, spaceId: 's', sectionId: 'x', name: 'd', body: BODY,
       meta: { wordCount: 0 }, updatedAt: 0,
     });
@@ -71,6 +79,13 @@ describe('useDocCrdtReady', () => {
   it('reseeds a populated log that diverged from a body pulled while closed', async () => {
     const stale = serializedBody('stale local');
     const pulled = serializedBody('newer pulled');
+    // The row exists with the pulled body — reconciliation snapshots the losing
+    // CRDT as a revision, whose access scope is derived from the doc row.
+    await db.docs.add({
+      ...sampleMetadata('s'),
+      id: DOC, spaceId: 's', sectionId: 'x', name: 'd', body: pulled,
+      meta: { wordCount: 0 }, updatedAt: 0,
+    });
     await seedDocCrdt(DOC, stale);
     await writeDocBodyBaseline(DOC, stale);
 
@@ -132,7 +147,7 @@ describe('useDocCrdtReady', () => {
     reconcileMock.mockReset();
     reconcileMock
       .mockRejectedValueOnce(new Error('transient'))
-      .mockResolvedValueOnce(undefined);
+      .mockResolvedValueOnce('accepted');
 
     const { result } = renderHook(() => useDocCrdtReady(DOC, BODY));
     await waitFor(() => {
@@ -153,7 +168,7 @@ describe('useDocCrdtReady', () => {
 
   it('never commits a stale ready frame when switching documents (no flash)', async () => {
     reconcileMock.mockReset();
-    reconcileMock.mockResolvedValue(undefined);
+    reconcileMock.mockResolvedValue('accepted');
 
     // Record each *committed* readiness frame — the flash is a committed frame
     // where the new doc briefly renders with the previous doc's `ready`,
@@ -184,7 +199,7 @@ describe('useDocCrdtReady', () => {
 
   it('invalidates the previous request when the document changes', async () => {
     reconcileMock.mockReset();
-    reconcileMock.mockResolvedValue(undefined);
+    reconcileMock.mockResolvedValue('accepted');
 
     const { result, rerender } = renderHook(
       ({ id }: { id: string }) => useDocCrdtReady(id, BODY),

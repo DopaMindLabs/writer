@@ -8,12 +8,16 @@ import {
   ATTACHMENT_BYTES,
   sampleAnnotation,
   sampleInspectorConfig,
+  sampleMetadata,
   seedRichSpace,
 } from '@/test/fixtures';
 import { buildSpaceArchive } from './buildSpaceArchive';
 import { parseSpaceArchive } from './parseSpaceArchive';
 
 const WHEN = 1704067200000;
+
+/** Valid sync metadata for hand-built record JSON in tamper tests. */
+const recordMetadata = sampleMetadata();
 
 const rebuildWith = async (
   blob: Blob,
@@ -91,7 +95,11 @@ describe('parseSpaceArchive', () => {
     const tampered = await rebuildWith(
       await buildSpaceArchive(snapshot, WHEN),
       (zip) => {
-        zip.file('records/docs/d1.json', JSON.stringify({ id: 1 }));
+        // Valid sync metadata so the parser reaches — and reports — the bad id.
+        zip.file(
+          'records/docs/d1.json',
+          JSON.stringify({ ...recordMetadata, id: 1 }),
+        );
       },
     );
     await expect(parseSpaceArchive(tampered)).rejects.toThrow(/doc\.id/);
@@ -116,6 +124,7 @@ describe('parseSpaceArchive', () => {
         zip.file(
           'records/citations/cit1.json',
           JSON.stringify({
+            ...recordMetadata,
             id: 'cit1',
             spaceId: 'other-space',
             key: 'k',
@@ -192,7 +201,12 @@ describe('parseSpaceArchive', () => {
       (zip) => {
         zip.file(
           'records/palettes/pal-smuggled.json',
-          JSON.stringify({ id: 'pal-smuggled', spaceId: 's1', slots: [] }),
+          JSON.stringify({
+            ...recordMetadata,
+            id: 'pal-smuggled',
+            spaceId: 's1',
+            slots: [],
+          }),
         );
       },
     );
